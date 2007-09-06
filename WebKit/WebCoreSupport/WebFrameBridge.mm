@@ -293,21 +293,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[_frame frameView] window];
 }
 
-- (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
-{
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
-    // fall back to shared delegate's implementation of new version.
-    if ([wd respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:)])
-        *result = [wd webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:_frame];
-    else if ([wd respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
-        *result = [wd webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
-    else
-        *result = [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:_frame];
-    return *result != nil;
-}
-
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebCoreOpenPanelResultListener>)resultListener
 {
     WebView *wv = [self webView];
@@ -446,20 +431,24 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     NSView *view = nil;
     int errorCode = 0;
 
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
+    WebView *webView = [self webView];
+    SEL selector = @selector(webView:plugInViewWithArguments:);
 
-    if ([wd respondsToSelector:@selector(webView:plugInViewWithArguments:)]) {
+    if ([[webView UIDelegate] respondsToSelector:selector]) {
         NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames];
-        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+        NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:
             attributes, WebPlugInAttributesKey,
             [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
-            URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
             [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
             element, WebPlugInContainingElementKey,
+            URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
             nil];
+
+        view = CallUIDelegate(webView, selector, arguments);
+
         [attributes release];
-        view = [wd webView:wv plugInViewWithArguments:arguments];
+        [arguments release];
+
         if (view)
             return view;
     }
@@ -726,13 +715,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     WebView *webView = getWebView(_frame);
     WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations.delegateImplementsDidClearWindowObjectForFrame) {
-        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
-        implementations.didClearWindowObjectForFrameFunc(frameLoadDelegate, @selector(webView:didClearWindowObject:forFrame:), webView, m_frame->windowScriptObject(), _frame);
-    } else if (implementations.delegateImplementsWindowScriptObjectAvailable) {
-        id frameLoadDelegate = WebViewGetFrameLoadDelegate(webView);
-        implementations.windowScriptObjectAvailableFunc(frameLoadDelegate, @selector(webView:windowScriptObjectAvailable:), webView, m_frame->windowScriptObject());
-    }
+    if (implementations.didClearWindowObjectForFrameFunc)
+        CallFrameLoadDelegate(implementations.didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:), m_frame->windowScriptObject(), _frame);
+    else if (implementations.windowScriptObjectAvailableFunc)
+        CallFrameLoadDelegate(implementations.windowScriptObjectAvailableFunc, webView, @selector(webView:windowScriptObjectAvailable:), m_frame->windowScriptObject());
 
     if ([webView scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
         [_frame _detachScriptDebugger];
@@ -747,27 +733,20 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions
 {
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    
-    [wv _addScrollerDashboardRegions:regions];
-    
+    WebView *webView = [self webView];
+    [webView _addScrollerDashboardRegions:regions];
+
     if (![self _compareDashboardRegions:regions]) {
-        if ([wd respondsToSelector:@selector(webView:dashboardRegionsChanged:)]) {
-            [wd webView:wv dashboardRegionsChanged:regions];
-            [lastDashboardRegions release];
-            lastDashboardRegions = [regions retain];
-        }
+        CallUIDelegate(webView, @selector(webView:dashboardRegionsChanged:), regions);
+
+        [lastDashboardRegions release];
+        lastDashboardRegions = [regions retain];
     }
 }
 
 - (void)willPopupMenu:(NSMenu *)menu
 {
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-        
-    if ([wd respondsToSelector:@selector(webView:willPopupMenu:)])
-        [wd webView:wv willPopupMenu:menu];
+    CallUIDelegate([self webView], @selector(webView:willPopupMenu:), menu);
 }
 
 - (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect representedNode:(WebCore::Node *)node

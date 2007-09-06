@@ -2106,15 +2106,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         frame = [[self webFrame] findFrameNamed:frameName];
     
         if (frame == nil) {
-            WebView *newWebView = nil;
             WebView *currentWebView = [self webView];
-            id wd = [currentWebView UIDelegate];
-            if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)]) {
-                newWebView = [wd webView:currentWebView createWebViewWithRequest:nil];
-            } else {
-                newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
-            }
-            
+            WebView *newWebView = CallUIDelegate(currentWebView, @selector(webView:createWebViewWithRequest:), nil);
+
             if (!newWebView) {
                 if ([pluginRequest sendNotification]) {
                     [self willCallPlugInFunction];

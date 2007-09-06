@@ -458,21 +458,21 @@ void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {
     DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
     FormDelegateLog(inputElement);
-    [[m_webView _formDelegate] textFieldDidBeginEditing:inputElement inFrame:kit(element->document()->frame())];
+    CallFormDelegate(m_webView, @selector(textFieldDidBeginEditing:inFrame:), inputElement, kit(element->document()->frame()));
 }
 
 void WebEditorClient::textFieldDidEndEditing(Element* element)
 {
     DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
     FormDelegateLog(inputElement);
-    [[m_webView _formDelegate] textFieldDidEndEditing:inputElement inFrame:kit(element->document()->frame())];
+    CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement, kit(element->document()->frame()));
 }
     
 void WebEditorClient::textDidChangeInTextField(Element* element)
 {
     DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
     FormDelegateLog(inputElement);
-    [[m_webView _formDelegate] textDidChangeInTextField:(DOMHTMLInputElement *)inputElement inFrame:kit(element->document()->frame())];
+    CallFormDelegate(m_webView, @selector(textDidChangeInTextField:inFrame:), inputElement, kit(element->document()->frame()));
 }
 
 static SEL selectorForKeyEvent(KeyboardEvent* event)
@@ -500,32 +500,25 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
 bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
 {
     DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
-
-    bool result = false;
     FormDelegateLog(inputElement);
-
-    SEL selector = selectorForKeyEvent(event);
-    if (selector)
-        result = [[m_webView _formDelegate] textField:inputElement doCommandBySelector:selector inFrame:kit(element->document()->frame())];
-
-    return result;
+    if (SEL commandSelector = selectorForKeyEvent(event))
+        return CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, commandSelector, kit(element->document()->frame()));
+    return NO;
 }
 
 void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 {
     DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _wrapHTMLInputElement:(HTMLInputElement*)element];
-
-    // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
     FormDelegateLog(inputElement);
-    [[m_webView _formDelegate] textField:inputElement doCommandBySelector:@selector(deleteBackward:) inFrame:kit(element->document()->frame())];
+    // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
+    CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement, @selector(deleteBackward:), kit(element->document()->frame()));
 }
 
 void WebEditorClient::textDidChangeInTextArea(Element* element)
 {
     DOMHTMLTextAreaElement* textAreaElement = [DOMHTMLTextAreaElement _wrapHTMLTextAreaElement:(HTMLTextAreaElement*)element];
-
     FormDelegateLog(textAreaElement);
-    [[m_webView _formDelegate] textDidChangeInTextArea:textAreaElement inFrame:kit(element->document()->frame())];
+    CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element->document()->frame()));
 }
 
 void WebEditorClient::ignoreWordInSpellDocument(const String& text)

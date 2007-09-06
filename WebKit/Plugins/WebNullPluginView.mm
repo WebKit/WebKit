@@ -71,15 +71,15 @@ static NSImage *image = nil;
 
 - (void)viewDidMoveToWindow
 {
-    if(!didSendError && _window && error){
+    if (!didSendError && _window && error) {
         didSendError = YES;
         WebFrame *webFrame = kit(core(element)->document()->frame());
         WebView *webView = [webFrame webView];
         WebDataSource *dataSource = [webFrame _dataSource];
 
-        id resourceLoadDelegate = [webView resourceLoadDelegate];
-        if ([resourceLoadDelegate respondsToSelector:@selector(webView:plugInFailedWithError:dataSource:)])
-            [resourceLoadDelegate webView:webView plugInFailedWithError:error dataSource:dataSource];
+        WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
+        if (implementations.plugInFailedWithErrorFunc)
+            CallResourceLoadDelegate(implementations.plugInFailedWithErrorFunc, webView, @selector(webView:plugInFailedWithError:dataSource:), error, dataSource);
     }
 }
 

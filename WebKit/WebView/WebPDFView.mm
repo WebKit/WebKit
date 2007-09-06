@@ -493,12 +493,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     BOOL result = [self validateUserInterfaceItemWithoutDelegate:item];
-
-    id ud = [[self _webView] UIDelegate];
-    if (ud && [ud respondsToSelector:@selector(webView:validateUserInterfaceItem:defaultValidation:)])
-        return [ud webView:[self _webView] validateUserInterfaceItem:item defaultValidation:result];
-
-    return result;
+    return CallUIDelegateReturningBoolean(result, [self _webView], @selector(webView:validateUserInterfaceItem:defaultValidation:), item, result);
 }
 
 #pragma mark INTERFACE BUILDER ACTIONS FOR SAFARI
@@ -982,10 +977,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
     // Delegate method sent when the user requests downloading the PDF file to disk. We pass NO for
     // showingPanel: so that the PDF file is saved to the standard location without user intervention.
-    id UIDelegate = [[self _webView] UIDelegate];
-
-    if (UIDelegate && [UIDelegate respondsToSelector:@selector(webView:saveFrameView:showingPanel:)])
-        [UIDelegate webView:[self _webView] saveFrameView:[[dataSource webFrame] frameView] showingPanel:NO];
+    CallUIDelegate([self _webView], @selector(webView:saveFrameView:showingPanel:), [[dataSource webFrame] frameView], NO);
 }
 
 @end

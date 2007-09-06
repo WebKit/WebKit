@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,4 +102,14 @@ void WebKitInitializeLoggingChannelsIfNecessary()
 BOOL WebKitRunningOnMainThread()
 {
     return pthread_main_np() != 0;
+}
+
+void ReportDiscardedDelegateException(SEL delegateSelector, id exception)
+{
+    if ([exception isKindOfClass:[NSException class]])
+        NSLog(@"*** WebKit discarded an uncaught exception in the %s delegate: <%@> %@",
+            sel_getName(delegateSelector), [exception name], [exception reason]);
+    else
+        NSLog(@"*** WebKit discarded an uncaught exception in the %s delegate: %@",
+            sel_getName(delegateSelector), exception);
 }

@@ -259,6 +259,15 @@ static int pluginDatabaseClientCount = 0;
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item;
 @end
 
+@interface _WebSafeForwarder : NSObject
+{
+    id target; // Non-retained. Don't retain delegates.
+    id defaultTarget;
+    BOOL catchExceptions;
+}
+- (id)initWithTarget:(id)target defaultTarget:(id)defaultTarget catchExceptions:(BOOL)catchExceptions;
+@end
+
 @interface WebViewPrivate : NSObject
 {
 @public
@@ -289,7 +298,7 @@ static int pluginDatabaseClientCount = 0;
     WebPreferences *preferences;
     BOOL useSiteSpecificSpoofing;
         
-    BOOL lastElementWasNonNil;
+    BOOL lastElementWasNil;
 
     NSWindow *hostWindow;
 
@@ -310,6 +319,7 @@ static int pluginDatabaseClientCount = 0;
     BOOL becomingFirstResponderFromOutside;
     BOOL hoverFeedbackSuspended;
     BOOL usesPageCache;
+    BOOL catchesDelegateExceptions;
 
     NSColor *backgroundColor;
 
@@ -343,6 +353,9 @@ static int pluginDatabaseClientCount = 0;
 - (NSResponder *)_responderForResponderOperations;
 - (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor;
 - (void)_notifyTextSizeMultiplierChanged;
+@end
+
+@interface WebView (WebCallDelegateFunctions)
 @end
 
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
@@ -751,16 +764,11 @@ static bool debugWidget = true;
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
-    id wd = [self UIDelegate];
-    WebView *newWindowWebView = nil;
-    if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        newWindowWebView = [wd webView:self createWebViewWithRequest:request];
-    else {
-        newWindowWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:self createWebViewWithRequest: request];
-    }
+    WebView *newWindowWebView = CallUIDelegate(self, @selector(webView:createWebViewWithRequest:), request);
+    if (!newWindowWebView)
+        return nil;
 
-    [[newWindowWebView _UIDelegateForwarder] webViewShow: newWindowWebView];
-
+    CallUIDelegate(newWindowWebView, @selector(webViewShow:));
     return newWindowWebView;
 }
 
@@ -771,24 +779,21 @@ static bool debugWidget = true;
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items
 {
-    NSArray *defaultMenuItems = [[WebDefaultUIDelegate sharedUIDelegate]
-          webView:self contextMenuItemsForElement:element defaultMenuItems:items];
-    NSArray *menuItems = defaultMenuItems;
-    NSMenu *menu = nil;
-    unsigned i;
+    NSArray *defaultMenuItems = [[WebDefaultUIDelegate sharedUIDelegate] webView:self contextMenuItemsForElement:element defaultMenuItems:items];
 
-    if ([_private->UIDelegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
-        menuItems = [_private->UIDelegate webView:self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
+    NSArray *menuItems = CallUIDelegate(self, @selector(webView:contextMenuItemsForElement:defaultMenuItems:), element, defaultMenuItems);
+    if (!menuItems)
+        return nil;
 
-    if (menuItems && [menuItems count] > 0) {
-        menu = [[[NSMenu alloc] init] autorelease];
+    unsigned count = [menuItems count];
+    if (!count)
+        return nil;
 
-        for (i=0; i<[menuItems count]; i++) {
-            [menu addItem:[menuItems objectAtIndex:i]];
-        }
-    }
+    NSMenu *menu = [[NSMenu alloc] init];
+    for (unsigned i = 0; i < count; i++)
+        [menu addItem:[menuItems objectAtIndex:i]];
 
-    return menu;
+    return [menu autorelease];
 }
 
 - (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(NSUInteger)modifierFlags
@@ -796,14 +801,13 @@ static bool debugWidget = true;
     // When the mouse isn't over this view at all, we'll get called with a dictionary of nil over
     // and over again. So it's a good idea to catch that here and not send multiple calls to the delegate
     // for that case.
-    
-    if (dictionary && _private->lastElementWasNonNil) {
-        [[self _UIDelegateForwarder] webView:self mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
-    }
-    _private->lastElementWasNonNil = dictionary != nil;
+    if (!dictionary && _private->lastElementWasNil)
+        return;
+
+    _private->lastElementWasNil = !dictionary;
+
+    CallUIDelegate(self, @selector(webView:mouseDidMoveOverElement:modifierFlags:), dictionary, modifierFlags);
 }
-
-
 
 - (void)_loadBackForwardListFromOtherView:(WebView *)otherView
 {
@@ -933,19 +937,8 @@ static bool debugWidget = true;
 - (void)_cacheResourceLoadDelegateImplementations
 {
     WebResourceDelegateImplementationCache *cache = &_private->resourceLoadDelegateImplementations;
-    id delegate = [self resourceLoadDelegate];
+    id delegate = _private->resourceProgressDelegate;
     Class delegateClass = [delegate class];
-
-    cache->delegateImplementsDidCancelAuthenticationChallenge = [delegate respondsToSelector:@selector(webView:resource:didCancelAuthenticationChallenge:fromDataSource:)];
-    cache->delegateImplementsDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:)];
-    cache->delegateImplementsDidFinishLoadingFromDataSource = [delegate respondsToSelector:@selector(webView:resource:didFinishLoadingFromDataSource:)];
-    cache->delegateImplementsDidFailLoadingWithErrorFromDataSource = [delegate respondsToSelector:@selector(webView:resource:didFailLoadingWithError:fromDataSource:)];
-    cache->delegateImplementsDidReceiveContentLength = [delegate respondsToSelector:@selector(webView:resource:didReceiveContentLength:fromDataSource:)];
-    cache->delegateImplementsDidReceiveResponse = [delegate respondsToSelector:@selector(webView:resource:didReceiveResponse:fromDataSource:)];
-    cache->delegateImplementsWillSendRequest = [delegate respondsToSelector:@selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)];
-    cache->delegateImplementsIdentifierForRequest = [delegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)];
-    cache->delegateImplementsDidLoadResourceFromMemoryCache = [delegate respondsToSelector:@selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:)];
-    cache->delegateImplementsWillCacheResponse = [delegate respondsToSelector:@selector(webView:resource:willCacheResponse:fromDataSource:)];
 
 #if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
 #define GET_OBJC_METHOD_IMP(class,selector) class_getMethodImplementation(class, selector)
@@ -953,32 +946,30 @@ static bool debugWidget = true;
 #define GET_OBJC_METHOD_IMP(class,selector) class_getInstanceMethod(class, selector)->method_imp
 #endif
 
-    if (cache->delegateImplementsDidCancelAuthenticationChallenge)
-        cache->didCancelAuthenticationChallengeFunc = (WebDidCancelAuthenticationChallengeFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
-    if (cache->delegateImplementsDidReceiveAuthenticationChallenge)
-        cache->didReceiveAuthenticationChallengeFunc = (WebDidReceiveAuthenticationChallengeFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
-    if (cache->delegateImplementsDidFinishLoadingFromDataSource)
-        cache->didFinishLoadingFromDataSourceFunc = (WebDidFinishLoadingFromDataSourceFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didFinishLoadingFromDataSource:));
-    if (cache->delegateImplementsDidFailLoadingWithErrorFromDataSource)
-        cache->didFailLoadingWithErrorFromDataSourceFunc = (WebDidFailLoadingWithErrorFromDataSourceFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didFailLoadingWithError:fromDataSource:));
-    if (cache->delegateImplementsDidReceiveContentLength)
-        cache->didReceiveContentLengthFunc = (WebDidReceiveContentLengthFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveContentLength:fromDataSource:));
-    if (cache->delegateImplementsDidReceiveResponse)
-        cache->didReceiveResponseFunc = (WebDidReceiveResponseFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveResponse:fromDataSource:));
-    if (cache->delegateImplementsWillSendRequest)
-        cache->willSendRequestFunc = (WebWillSendRequestFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:));
-    if (cache->delegateImplementsIdentifierForRequest)
-        cache->identifierForRequestFunc = (WebIdentifierForRequestFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:identifierForInitialRequest:fromDataSource:));
-    if (cache->delegateImplementsDidLoadResourceFromMemoryCache)
-        cache->didLoadResourceFromMemoryCacheFunc = (WebDidLoadResourceFromMemoryCacheFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:));
-    if (cache->delegateImplementsWillCacheResponse)
-        cache->willCacheResponseFunc = (WebWillCacheResponseFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:willCacheResponse:fromDataSource:));
-#undef GET_OBJC_METHOD_IMP
-}
+    if ([delegate respondsToSelector:@selector(webView:resource:didCancelAuthenticationChallenge:fromDataSource:)])
+        cache->didCancelAuthenticationChallengeFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:)])
+        cache->didReceiveAuthenticationChallengeFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:resource:didFinishLoadingFromDataSource:)])
+        cache->didFinishLoadingFromDataSourceFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didFinishLoadingFromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:resource:didFailLoadingWithError:fromDataSource:)])
+        cache->didFailLoadingWithErrorFromDataSourceFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didFailLoadingWithError:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:resource:didReceiveContentLength:fromDataSource:)])
+        cache->didReceiveContentLengthFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveContentLength:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:resource:didReceiveResponse:fromDataSource:)])
+        cache->didReceiveResponseFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:didReceiveResponse:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)])
+        cache->willSendRequestFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
+        cache->identifierForRequestFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:identifierForInitialRequest:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:)])
+        cache->didLoadResourceFromMemoryCacheFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:resource:willCacheResponse:fromDataSource:)])
+        cache->willCacheResponseFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:resource:willCacheResponse:fromDataSource:));
+    if ([delegate respondsToSelector:@selector(webView:plugInFailedWithError:dataSource:)])
+        cache->plugInFailedWithErrorFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:plugInFailedWithError:dataSource:));
 
-id WebViewGetResourceLoadDelegate(WebView *webView)
-{
-    return webView->_private->resourceProgressDelegate;
+#undef GET_OBJC_METHOD_IMP
 }
 
 WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView)
@@ -989,26 +980,8 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (void)_cacheFrameLoadDelegateImplementations
 {
     WebFrameLoadDelegateImplementationCache *cache = &_private->frameLoadDelegateImplementations;
-    id delegate = [self frameLoadDelegate];
+    id delegate = _private->frameLoadDelegate;
     Class delegateClass = [delegate class];
-
-    cache->delegateImplementsDidClearWindowObjectForFrame = [delegate respondsToSelector:@selector(webView:didClearWindowObject:forFrame:)];
-    cache->delegateImplementsWindowScriptObjectAvailable = [delegate respondsToSelector:@selector(webView:windowScriptObjectAvailable:)];
-    cache->delegateImplementsDidHandleOnloadEventsForFrame = [delegate respondsToSelector:@selector(webView:didHandleOnloadEventsForFrame:)];
-    cache->delegateImplementsDidReceiveServerRedirectForProvisionalLoadForFrame = [delegate respondsToSelector:@selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:)];
-    cache->delegateImplementsDidCancelClientRedirectForFrame = [delegate respondsToSelector:@selector(webView:didCancelClientRedirectForFrame:)];
-    cache->delegateImplementsWillPerformClientRedirectToURLDelayFireDateForFrame = [delegate respondsToSelector:@selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:)];
-    cache->delegateImplementsDidChangeLocationWithinPageForFrame = [delegate respondsToSelector:@selector(webView:didChangeLocationWithinPageForFrame:)];
-    cache->delegateImplementsWillCloseFrame = [delegate respondsToSelector:@selector(webView:willCloseFrame:)];
-    cache->delegateImplementsDidStartProvisionalLoadForFrame = [delegate respondsToSelector:@selector(webView:didStartProvisionalLoadForFrame:)];
-    cache->delegateImplementsDidReceiveTitleForFrame = [delegate respondsToSelector:@selector(webView:didReceiveTitle:forFrame:)];
-    cache->delegateImplementsDidCommitLoadForFrame = [delegate respondsToSelector:@selector(webView:didCommitLoadForFrame:)];
-    cache->delegateImplementsDidFailProvisionalLoadWithErrorForFrame = [delegate respondsToSelector:@selector(webView:didFailProvisionalLoadWithError:forFrame:)];
-    cache->delegateImplementsDidFailLoadWithErrorForFrame = [delegate respondsToSelector:@selector(webView:didFailLoadWithError:forFrame:)];
-    cache->delegateImplementsDidFinishLoadForFrame = [delegate respondsToSelector:@selector(webView:didFinishLoadForFrame:)];
-    cache->delegateImplementsDidFirstLayoutInFrame = [delegate respondsToSelector:@selector(webView:didFirstLayoutInFrame:)];
-    cache->delegateImplementsDidReceiveIconForFrame = [delegate respondsToSelector:@selector(webView:didReceiveIcon:forFrame:)];
-    cache->delegateImplementsDidFinishDocumentLoadForFrame = [delegate respondsToSelector:@selector(webView:didFinishDocumentLoadForFrame:)];
 
 #if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
 #define GET_OBJC_METHOD_IMP(class,selector) class_getMethodImplementation(class, selector)
@@ -1016,46 +989,42 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 #define GET_OBJC_METHOD_IMP(class,selector) class_getInstanceMethod(class, selector)->method_imp
 #endif
 
-    if (cache->delegateImplementsDidClearWindowObjectForFrame)
-        cache->didClearWindowObjectForFrameFunc = (WebDidClearWindowObjectForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didClearWindowObject:forFrame:));
-    if (cache->delegateImplementsWindowScriptObjectAvailable)
-        cache->windowScriptObjectAvailableFunc = (WebWindowScriptObjectAvailableFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:windowScriptObjectAvailable:));
-    if (cache->delegateImplementsDidHandleOnloadEventsForFrame)
-        cache->didHandleOnloadEventsForFrameFunc = (WebDidHandleOnloadEventsForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didHandleOnloadEventsForFrame:));
-    if (cache->delegateImplementsDidReceiveServerRedirectForProvisionalLoadForFrame)
-        cache->didReceiveServerRedirectForProvisionalLoadForFrameFunc = (WebDidReceiveServerRedirectForProvisionalLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:));
-    if (cache->delegateImplementsDidCancelClientRedirectForFrame)
-        cache->didCancelClientRedirectForFrameFunc = (WebDidCancelClientRedirectForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didCancelClientRedirectForFrame:));
-    if (cache->delegateImplementsWillPerformClientRedirectToURLDelayFireDateForFrame)
-        cache->willPerformClientRedirectToURLDelayFireDateForFrameFunc = (WebWillPerformClientRedirectToURLDelayFireDateForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:));
-    if (cache->delegateImplementsDidChangeLocationWithinPageForFrame)
-        cache->didChangeLocationWithinPageForFrameFunc = (WebDidChangeLocationWithinPageForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didChangeLocationWithinPageForFrame:));
-    if (cache->delegateImplementsWillCloseFrame)
-        cache->willCloseFrameFunc = (WebWillCloseFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:willCloseFrame:));
-    if (cache->delegateImplementsDidStartProvisionalLoadForFrame)
-        cache->didStartProvisionalLoadForFrameFunc = (WebDidStartProvisionalLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didStartProvisionalLoadForFrame:));
-    if (cache->delegateImplementsDidReceiveTitleForFrame)
-        cache->didReceiveTitleForFrameFunc = (WebDidReceiveTitleForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveTitle:forFrame:));
-    if (cache->delegateImplementsDidCommitLoadForFrame)
-        cache->didCommitLoadForFrameFunc = (WebDidCommitLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didCommitLoadForFrame:));
-    if (cache->delegateImplementsDidFailProvisionalLoadWithErrorForFrame)
-        cache->didFailProvisionalLoadWithErrorForFrameFunc = (WebDidFailProvisionalLoadWithErrorForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFailProvisionalLoadWithError:forFrame:));
-    if (cache->delegateImplementsDidFailLoadWithErrorForFrame)
-        cache->didFailLoadWithErrorForFrameFunc = (WebDidFailLoadWithErrorForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFailLoadWithError:forFrame:));
-    if (cache->delegateImplementsDidFinishLoadForFrame)
-        cache->didFinishLoadForFrameFunc = (WebDidFinishLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFinishLoadForFrame:));
-    if (cache->delegateImplementsDidFirstLayoutInFrame)
-        cache->didFirstLayoutInFrameFunc = (WebDidFirstLayoutInFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFirstLayoutInFrame:));
-    if (cache->delegateImplementsDidReceiveIconForFrame)
-        cache->didReceiveIconForFrameFunc = (WebDidReceiveIconForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveIcon:forFrame:));
-    if (cache->delegateImplementsDidFinishDocumentLoadForFrame)
-        cache->didFinishDocumentLoadForFrameFunc = (WebDidFinishDocumentLoadForFrameFunc)GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFinishDocumentLoadForFrame:));
-#undef GET_OBJC_METHOD_IMP
-}
+    if ([delegate respondsToSelector:@selector(webView:didClearWindowObject:forFrame:)])
+        cache->didClearWindowObjectForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didClearWindowObject:forFrame:));
+    if ([delegate respondsToSelector:@selector(webView:windowScriptObjectAvailable:)])
+        cache->windowScriptObjectAvailableFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:windowScriptObjectAvailable:));
+    if ([delegate respondsToSelector:@selector(webView:didHandleOnloadEventsForFrame:)])
+        cache->didHandleOnloadEventsForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didHandleOnloadEventsForFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:)])
+        cache->didReceiveServerRedirectForProvisionalLoadForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didCancelClientRedirectForFrame:)])
+        cache->didCancelClientRedirectForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didCancelClientRedirectForFrame:));
+    if ([delegate respondsToSelector:@selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:)])
+        cache->willPerformClientRedirectToURLDelayFireDateForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didChangeLocationWithinPageForFrame:)])
+        cache->didChangeLocationWithinPageForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didChangeLocationWithinPageForFrame:));
+    if ([delegate respondsToSelector:@selector(webView:willCloseFrame:)])
+        cache->willCloseFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:willCloseFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didStartProvisionalLoadForFrame:)])
+        cache->didStartProvisionalLoadForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didStartProvisionalLoadForFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didReceiveTitle:forFrame:)])
+        cache->didReceiveTitleForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveTitle:forFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didCommitLoadForFrame:)])
+        cache->didCommitLoadForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didCommitLoadForFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didFailProvisionalLoadWithError:forFrame:)])
+        cache->didFailProvisionalLoadWithErrorForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFailProvisionalLoadWithError:forFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didFailLoadWithError:forFrame:)])
+        cache->didFailLoadWithErrorForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFailLoadWithError:forFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didFinishLoadForFrame:)])
+        cache->didFinishLoadForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFinishLoadForFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didFirstLayoutInFrame:)])
+        cache->didFirstLayoutInFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFirstLayoutInFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didReceiveIcon:forFrame:)])
+        cache->didReceiveIconForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didReceiveIcon:forFrame:));
+    if ([delegate respondsToSelector:@selector(webView:didFinishDocumentLoadForFrame:)])
+        cache->didFinishDocumentLoadForFrameFunc = GET_OBJC_METHOD_IMP(delegateClass, @selector(webView:didFinishDocumentLoadForFrame:));
 
-id WebViewGetFrameLoadDelegate(WebView *webView)
-{
-    return webView->_private->frameLoadDelegate;
+#undef GET_OBJC_METHOD_IMP
 }
 
 WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementations(WebView *webView)
@@ -1063,35 +1032,36 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     return webView->_private->frameLoadDelegateImplementations;
 }
 
-- _policyDelegateForwarder
+- (id)_policyDelegateForwarder
 {
     if (!_private->policyDelegateForwarder)
-        _private->policyDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self policyDelegate] defaultTarget: [WebDefaultPolicyDelegate sharedPolicyDelegate] templateClass: [WebDefaultPolicyDelegate class]];
+        _private->policyDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->policyDelegate defaultTarget:[WebDefaultPolicyDelegate sharedPolicyDelegate] catchExceptions:_private->catchesDelegateExceptions];
     return _private->policyDelegateForwarder;
 }
 
-- _UIDelegateForwarder
+- (id)_UIDelegateForwarder
 {
     if (!_private->UIDelegateForwarder)
-        _private->UIDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self UIDelegate] defaultTarget: [WebDefaultUIDelegate sharedUIDelegate] templateClass: [WebDefaultUIDelegate class]];
+        _private->UIDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->UIDelegate defaultTarget:[WebDefaultUIDelegate sharedUIDelegate] catchExceptions:_private->catchesDelegateExceptions];
     return _private->UIDelegateForwarder;
 }
 
-- _editingDelegateForwarder
+- (id)_editingDelegateForwarder
 {
     // This can be called during window deallocation by QTMovieView in the QuickTime Cocoa Plug-in.
     // Not sure if that is a bug or not.
     if (!_private)
         return nil;
+
     if (!_private->editingDelegateForwarder)
-        _private->editingDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self editingDelegate] defaultTarget: [WebDefaultEditingDelegate sharedEditingDelegate] templateClass: [WebDefaultEditingDelegate class]];
+        _private->editingDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->editingDelegate defaultTarget:[WebDefaultEditingDelegate sharedEditingDelegate] catchExceptions:_private->catchesDelegateExceptions];
     return _private->editingDelegateForwarder;
 }
 
-- _scriptDebugDelegateForwarder
+- (id)_scriptDebugDelegateForwarder
 {
     if (!_private->scriptDebugDelegateForwarder)
-        _private->scriptDebugDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self scriptDebugDelegate] defaultTarget: [WebDefaultScriptDebugDelegate sharedScriptDebugDelegate] templateClass: [WebDefaultScriptDebugDelegate class]];
+        _private->scriptDebugDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->scriptDebugDelegate defaultTarget:[WebDefaultScriptDebugDelegate sharedScriptDebugDelegate] catchExceptions:_private->catchesDelegateExceptions];
     return _private->scriptDebugDelegateForwarder;
 }
 
@@ -1615,55 +1585,56 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     _private->page->clearUndoRedoOperations();
 }
 
+- (void)_setCatchesDelegateExceptions:(BOOL)f
+{
+    _private->catchesDelegateExceptions = f;
+}
+
+- (BOOL)_catchesDelegateExceptions
+{
+    return _private->catchesDelegateExceptions;
+}
+
 @end
 
 @implementation _WebSafeForwarder
 
-- initWithTarget: t defaultTarget: dt templateClass: (Class)aClass
+// Used to send messages to delegates that implement informal protocols.
+
+- (id)initWithTarget:(id)t defaultTarget:(id)dt catchExceptions:(BOOL)c
 {
     self = [super init];
     if (!self)
         return nil;
-    
     target = t; // Non retained.
     defaultTarget = dt;
-    templateClass = aClass;
+    catchExceptions = c;
     return self;
 }
 
-// Used to send messages to delegates that implement informal protocols.
-+ safeForwarderWithTarget: t defaultTarget: dt templateClass: (Class)aClass;
+- (void)forwardInvocation:(NSInvocation *)invocation
 {
-    return [[[_WebSafeForwarder alloc] initWithTarget: t defaultTarget: dt templateClass: aClass] autorelease];
-}
-
-#ifndef NDEBUG
-NSMutableDictionary *countInvocations;
-#endif
-
-- (void)forwardInvocation:(NSInvocation *)anInvocation
-{
-#ifndef NDEBUG
-    if (!countInvocations){
-        countInvocations = [[NSMutableDictionary alloc] init];
+    if ([target respondsToSelector:[invocation selector]]) {
+        if (catchExceptions) {
+            @try {
+                [invocation invokeWithTarget:target];
+            } @catch(id exception) {
+                ReportDiscardedDelegateException([invocation selector], exception);
+            }
+        } else
+            [invocation invokeWithTarget:target];
+        return;
     }
-    NSNumber *count = [countInvocations objectForKey: NSStringFromSelector([anInvocation selector])];
-    if (!count)
-        count = [NSNumber numberWithInt: 1];
-    else
-        count = [NSNumber numberWithInt: [count intValue] + 1];
-    [countInvocations setObject: count forKey: NSStringFromSelector([anInvocation selector])];
-#endif
-    if ([target respondsToSelector: [anInvocation selector]])
-        [anInvocation invokeWithTarget: target];
-    else if ([defaultTarget respondsToSelector: [anInvocation selector]])
-        [anInvocation invokeWithTarget: defaultTarget];
+
+    if ([defaultTarget respondsToSelector:[invocation selector]])
+        [invocation invokeWithTarget:defaultTarget];
+
     // Do nothing quietly if method not implemented.
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    return [templateClass instanceMethodSignatureForSelector: aSelector];
+    return [defaultTarget methodSignatureForSelector:aSelector];
 }
 
 @end
@@ -1822,6 +1793,7 @@ NSMutableDictionary *countInvocations;
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    _private->catchesDelegateExceptions = YES;
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
@@ -2846,12 +2818,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     BOOL result = [self validateUserInterfaceItemWithoutDelegate:item];
-
-    id ud = [self UIDelegate];
-    if (ud && [ud respondsToSelector:@selector(webView:validateUserInterfaceItem:defaultValidation:)])
-        return [ud webView:self validateUserInterfaceItem:item defaultValidation:result];
-
-    return result;
+    return CallUIDelegateReturningBoolean(result, self, @selector(webView:validateUserInterfaceItem:defaultValidation:), item, result);
 }
 
 @end
@@ -3115,28 +3082,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (float)_headerHeight
 {
-    if ([[self UIDelegate] respondsToSelector:@selector(webViewHeaderHeight:)]) {
-        return [[self UIDelegate] webViewHeaderHeight:self];
-    }
-    
-#ifdef DEBUG_HEADER_AND_FOOTER
-    return 25;
-#else
-    return 0;
-#endif
+    return CallUIDelegateReturningFloat(self, @selector(webViewHeaderHeight:));
 }
 
 - (float)_footerHeight
 {
-    if ([[self UIDelegate] respondsToSelector:@selector(webViewFooterHeight:)]) {
-        return [[self UIDelegate] webViewFooterHeight:self];
-    }
-    
-#ifdef DEBUG_HEADER_AND_FOOTER
-    return 50;
-#else
-    return 0;
-#endif
+    return CallUIDelegateReturningFloat(self, @selector(webViewFooterHeight:));
 }
 
 - (void)_drawHeaderInRect:(NSRect)rect
@@ -3148,14 +3099,18 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     NSRectFill(rect);
     [currentContext restoreGraphicsState];
 #endif
-    
-    if ([[self UIDelegate] respondsToSelector:@selector(webView:drawHeaderInRect:)]) {
-        NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-        [currentContext saveGraphicsState];
-        NSRectClip(rect);
-        [[self UIDelegate] webView:self drawHeaderInRect:rect]; 
-        [currentContext restoreGraphicsState];
-    }
+
+    SEL selector = @selector(webView:drawHeaderInRect:);
+    if (![_private->UIDelegate respondsToSelector:selector])
+        return;
+
+    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+    [currentContext saveGraphicsState];
+
+    NSRectClip(rect);
+    CallUIDelegate(self, selector, rect);
+
+    [currentContext restoreGraphicsState];
 }
 
 - (void)_drawFooterInRect:(NSRect)rect
@@ -3168,13 +3123,17 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [currentContext restoreGraphicsState];
 #endif
     
-    if ([[self UIDelegate] respondsToSelector:@selector(webView:drawFooterInRect:)]) {
-        NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-        [currentContext saveGraphicsState];
-        NSRectClip(rect);
-        [[self UIDelegate] webView:self drawFooterInRect:rect];
-        [currentContext restoreGraphicsState];
-    }
+    SEL selector = @selector(webView:drawFooterInRect:);
+    if (![_private->UIDelegate respondsToSelector:selector])
+        return;
+
+    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+    [currentContext saveGraphicsState];
+
+    NSRectClip(rect);
+    CallUIDelegate(self, selector, rect);
+
+    [currentContext restoreGraphicsState];
 }
 
 - (void)_adjustPrintingMarginsForHeaderAndFooter
@@ -3275,7 +3234,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     // FIXME: This quirk is needed due to <rdar://problem/4985321> - We can phase it out once Aperture can adopt the new behavior on their end
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Aperture"])
         return YES;
-        
     return [[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
 }
 
@@ -3914,6 +3872,461 @@ static WebFrameView *containingFrameView(NSView *view)
     // and we should release the web view.
     if (_private->identifierMap->isEmpty())
         CFRelease(self);
+}
+
+@end
+
+// We use these functions to call the delegates and block exceptions. These functions are
+// declared inside a WebView category to get direct access to the delegate data memebers,
+// preventing more ObjC message dispatch and compensating for the expense of the @try/@catch.
+
+@implementation WebView (WebCallDelegateFunctions)
+
+#if !(defined(__i386__) || defined(__x86_64__))
+typedef double (*ObjCMsgSendFPRet)(id, SEL, ...);
+static const ObjCMsgSendFPRet objc_msgSend_fpret = reinterpret_cast<ObjCMsgSendFPRet>(objc_msgSend);
+#endif
+
+static inline id CallDelegate(WebView *self, id delegate, SEL selector)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return objc_msgSend(delegate, selector, self);
+    @try {
+        return objc_msgSend(delegate, selector, self);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(WebView *self, id delegate, SEL selector, id object)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return objc_msgSend(delegate, selector, self, object);
+    @try {
+        return objc_msgSend(delegate, selector, self, object);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(WebView *self, id delegate, SEL selector, NSRect rect)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return reinterpret_cast<id (*)(id, SEL, WebView *, NSRect)>(objc_msgSend)(delegate, selector, self, rect);
+    @try {
+        return reinterpret_cast<id (*)(id, SEL, WebView *, NSRect)>(objc_msgSend)(delegate, selector, self, rect);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(WebView *self, id delegate, SEL selector, id object1, id object2)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return objc_msgSend(delegate, selector, self, object1, object2);
+    @try {
+        return objc_msgSend(delegate, selector, self, object1, object2);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(WebView *self, id delegate, SEL selector, id object, BOOL boolean)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return objc_msgSend(delegate, selector, self, object, boolean);
+    @try {
+        return objc_msgSend(delegate, selector, self, object, boolean);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(WebView *self, id delegate, SEL selector, id object1, id object2, id object3)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return objc_msgSend(delegate, selector, self, object1, object2, object3);
+    @try {
+        return objc_msgSend(delegate, selector, self, object1, object2, object3);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(WebView *self, id delegate, SEL selector, id object, NSUInteger integer)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return objc_msgSend(delegate, selector, self, object, integer);
+    @try {
+        return objc_msgSend(delegate, selector, self, object, integer);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline float CallDelegateReturningFloat(WebView *self, id delegate, SEL selector)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return 0.0f;
+    if (!self->_private->catchesDelegateExceptions)
+        return static_cast<float>(objc_msgSend_fpret(delegate, selector, self));
+    @try {
+        return static_cast<float>(objc_msgSend_fpret(delegate, selector, self));
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return 0.0f;
+}
+
+static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id delegate, SEL selector)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return result;
+    if (!self->_private->catchesDelegateExceptions)
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *)>(objc_msgSend)(delegate, selector, self);
+    @try {
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *)>(objc_msgSend)(delegate, selector, self);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return result;
+}
+
+static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id delegate, SEL selector, id object)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return result;
+    if (!self->_private->catchesDelegateExceptions)
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id)>(objc_msgSend)(delegate, selector, self, object);
+    @try {
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id)>(objc_msgSend)(delegate, selector, self, object);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return result;
+}
+
+static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id delegate, SEL selector, id object, BOOL boolean)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return result;
+    if (!self->_private->catchesDelegateExceptions)
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, BOOL)>(objc_msgSend)(delegate, selector, self, object, boolean);
+    @try {
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, BOOL)>(objc_msgSend)(delegate, selector, self, object, boolean);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return result;
+}
+
+static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id delegate, SEL selector, id object1, id object2)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return result;
+    if (!self->_private->catchesDelegateExceptions)
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id)>(objc_msgSend)(delegate, selector, self, object1, object2);
+    @try {
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id)>(objc_msgSend)(delegate, selector, self, object1, object2);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return result;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self);
+    @try {
+        return implementation(delegate, selector, self);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object);
+    @try {
+        return implementation(delegate, selector, self, object);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, id object2)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, object2);
+    @try {
+        return implementation(delegate, selector, self, object1, object2);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, id object2, id object3)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, object2, object3);
+    @try {
+        return implementation(delegate, selector, self, object1, object2, object3);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, id object2, id object3, id object4)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, object2, object3, object4);
+    @try {
+        return implementation(delegate, selector, self, object1, object2, object3, object4);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, NSInteger integer, id object2)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, integer, object2);
+    @try {
+        return implementation(delegate, selector, self, object1, integer, object2);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, id object2, NSInteger integer, id object3)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, object2, integer, object3);
+    @try {
+        return implementation(delegate, selector, self, object1, object2, integer, object3);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, NSTimeInterval interval, id object2, id object3)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, interval, object2, object3);
+    @try {
+        return implementation(delegate, selector, self, object1, interval, object2, object3);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+id CallUIDelegate(WebView *self, SEL selector)
+{
+    return CallDelegate(self, self->_private->UIDelegate, selector);
+}
+
+id CallUIDelegate(WebView *self, SEL selector, id object)
+{
+    return CallDelegate(self, self->_private->UIDelegate, selector, object);
+}
+
+id CallUIDelegate(WebView *self, SEL selector, id object, BOOL boolean)
+{
+    return CallDelegate(self, self->_private->UIDelegate, selector, object, boolean);
+}
+
+id CallUIDelegate(WebView *self, SEL selector, NSRect rect)
+{
+    return CallDelegate(self, self->_private->UIDelegate, selector, rect);
+}
+
+id CallUIDelegate(WebView *self, SEL selector, id object1, id object2)
+{
+    return CallDelegate(self, self->_private->UIDelegate, selector, object1, object2);
+}
+
+id CallUIDelegate(WebView *self, SEL selector, id object1, id object2, id object3)
+{
+    return CallDelegate(self, self->_private->UIDelegate, selector, object1, object2, object3);
+}
+
+id CallUIDelegate(WebView *self, SEL selector, id object, NSUInteger integer)
+{
+    return CallDelegate(self, self->_private->UIDelegate, selector, object, integer);
+}
+
+float CallUIDelegateReturningFloat(WebView *self, SEL selector)
+{
+    return CallDelegateReturningFloat(self, self->_private->UIDelegate, selector);
+}
+
+BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector)
+{
+    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector);
+}
+
+BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object)
+{
+    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object);
+}
+
+BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object, BOOL boolean)
+{
+    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object, boolean);
+}
+
+BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object1, id object2)
+{
+    return CallDelegateReturningBoolean(result, self, self->_private->UIDelegate, selector, object1, object2);
+}
+
+id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector)
+{
+    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector);
+}
+
+id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object)
+{
+    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object);
+}
+
+id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2)
+{
+    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, object2);
+}
+
+id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
+{
+    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, object2, object3);
+}
+
+id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3, id object4)
+{
+    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, object2, object3, object4);
+}
+
+id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSTimeInterval interval, id object2, id object3)
+{
+    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, interval, object2, object3);
+}
+
+id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2)
+{
+    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2);
+}
+
+id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
+{
+    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, object3);
+}
+
+id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3, id object4)
+{
+    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, object3, object4);
+}
+
+id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer, id object2)
+{
+    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, integer, object2);
+}
+
+id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, NSInteger integer, id object3)
+{
+    return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2, integer, object3);
+}
+
+// The form delegate needs to have it's own implementation, because the first argument is never the WebView
+
+id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
+{
+    id delegate = self->_private->formDelegate;
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return objc_msgSend(delegate, selector, object1, object2);
+    @try {
+        return objc_msgSend(delegate, selector, object1, object2);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id object3, id object4, id object5)
+{
+    id delegate = self->_private->formDelegate;
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return objc_msgSend(delegate, selector, object1, object2, object3, object4, object5);
+    @try {
+        return objc_msgSend(delegate, selector, object1, object2, object3, object4, object5);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+BOOL CallFormDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id object1, SEL selectorArg, id object2)
+{
+    id delegate = self->_private->formDelegate;
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return result;
+    if (!self->_private->catchesDelegateExceptions)
+        return reinterpret_cast<BOOL (*)(id, SEL, id, SEL, id)>(objc_msgSend)(delegate, selector, object1, selectorArg, object2);
+    @try {
+        return reinterpret_cast<BOOL (*)(id, SEL, id, SEL, id)>(objc_msgSend)(delegate, selector, object1, selectorArg, object2);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return result;
 }
 
 @end

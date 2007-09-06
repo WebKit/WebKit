@@ -249,7 +249,8 @@ static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutab
 NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* defaultMenu)
 {
     id delegate = [m_webView UIDelegate];
-    if (![delegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
+    SEL selector = @selector(webView:contextMenuItemsForElement:defaultMenuItems:);
+    if (![delegate respondsToSelector:selector])
         return defaultMenu->platformDescription();
 
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
@@ -264,25 +265,29 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
     }
 
     NSMutableArray *defaultMenuItems = defaultMenu->platformDescription();
-    
+
     unsigned defaultItemsCount = [defaultMenuItems count];
     for (unsigned i = 0; i < defaultItemsCount; ++i)
         [[defaultMenuItems objectAtIndex:i] setRepresentedObject:element];
-            
+
     NSMutableArray *savedItems = [fixMenusToSendToOldClients(defaultMenuItems) retain];
-    NSMutableArray *newMenuItems = [[[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy] autorelease];
+    NSArray *delegateSuppliedItems = CallUIDelegate(m_webView, selector, element, defaultMenuItems);
+    NSMutableArray *newMenuItems = [delegateSuppliedItems mutableCopy];
     fixMenusReceivedFromOldClients(newMenuItems, savedItems);
     [savedItems release];
-    return newMenuItems;
+    return [newMenuItems autorelease];
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
 {
     id delegate = [m_webView UIDelegate];
-    if ([delegate respondsToSelector:@selector(webView:contextMenuItemSelected:forElement:)]) {
+    SEL selector = @selector(webView:contextMenuItemSelected:forElement:);
+    if ([delegate respondsToSelector:selector]) {
         NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:parentMenu->hitTestResult()];
         NSMenuItem *platformItem = item->releasePlatformDescription();
-        [delegate webView:m_webView contextMenuItemSelected:platformItem forElement:element];
+
+        CallUIDelegate(m_webView, selector, platformItem, element);
+
         [element release];
         [platformItem release];
     }

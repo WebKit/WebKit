@@ -1,3 +1,122 @@
+2007-09-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5443883> Uncaught Objective-C exceptions in WebKit clients lead to hard-to-diagnose crashes
+
+        Changed all the direct delegate calls to use helper functions that have direct access to
+        WebView's delegate objects. These helper methods will catch any ObjC exceptions and call
+        ReportDiscardedDelegateException to log the discarded exception. WebView's that have
+        catchesDelegateExceptions set to NO will not pay the cost of a @try/@catch. The delegate
+        forwarders also have the same behavior.
+
+        * Misc/WebKitLogging.h:
+        * Misc/WebKitLogging.m:
+        (ReportDiscardedDelegateException):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        * Plugins/WebNullPluginView.mm:
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+        (WebChromeClient::createModalDialog):
+        (WebChromeClient::runModal):
+        (WebChromeClient::toolbarsVisible):
+        (WebChromeClient::statusbarVisible):
+        (WebChromeClient::addMessageToConsole):
+        (WebChromeClient::canRunBeforeUnloadConfirmPanel):
+        (WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebChromeClient::runJavaScriptAlert):
+        (WebChromeClient::runJavaScriptConfirm):
+        (WebChromeClient::runJavaScriptPrompt):
+        (WebChromeClient::shouldInterruptJavaScript):
+        (WebChromeClient::setStatusbarText):
+        (WebChromeClient::print):
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+        (WebContextMenuClient::contextMenuItemSelected):
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::startDrag):
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::textFieldDidBeginEditing):
+        (WebEditorClient::textFieldDidEndEditing):
+        (WebEditorClient::textDidChangeInTextField):
+        (WebEditorClient::doTextFieldCommandFromEvent):
+        (WebEditorClient::textWillBeDeletedInTextField):
+        (WebEditorClient::textDidChangeInTextArea):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge viewForPluginWithFrame:URL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::willCacheResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::dispatchDidHandleOnloadEvents):
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebFrameLoaderClient::dispatchWillClose):
+        (WebFrameLoaderClient::dispatchDidReceiveIcon):
+        (WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebFrameLoaderClient::dispatchDidFirstLayout):
+        (WebFrameLoaderClient::dispatchCreatePage):
+        (WebFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebFrameLoaderClient::dispatchDidLoadMainResource):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView callDelegateDoCommandBySelectorIfNeeded:]):
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView validateUserInterfaceItem:]):
+        (-[WebPDFView PDFViewSavePDFToDownloadFolder:]):
+        * WebView/WebView.mm:
+        (-[WebView _openNewWindowWithRequest:]):
+        (-[WebView _menuForElement:defaultItems:]):
+        (-[WebView _mouseDidMoveOverElement:modifierFlags:]):
+        (-[WebView _cacheResourceLoadDelegateImplementations]):
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+        (-[WebView _policyDelegateForwarder]):
+        (-[WebView _UIDelegateForwarder]):
+        (-[WebView _editingDelegateForwarder]):
+        (-[WebView _scriptDebugDelegateForwarder]):
+        (-[WebView _setCatchesDelegateExceptions:]):
+        (-[WebView _catchesDelegateExceptions]):
+        (-[_WebSafeForwarder initWithTarget:defaultTarget:]):
+        (-[_WebSafeForwarder forwardInvocation:]):
+        (-[_WebSafeForwarder methodSignatureForSelector:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView validateUserInterfaceItem:]):
+        (-[WebView _headerHeight]):
+        (-[WebView _footerHeight]):
+        (-[WebView _drawHeaderInRect:]):
+        (-[WebView _drawFooterInRect:]):
+        (-[WebView _shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (CallDelegate):
+        (CallDelegateReturningFloat):
+        (CallDelegateReturningBoolean):
+        (CallUIDelegate):
+        (CallUIDelegateReturningFloat):
+        (CallUIDelegateReturningBoolean):
+        (CallFrameLoadDelegate):
+        (CallResourceLoadDelegate):
+        (CallFormDelegate):
+        (CallFormDelegateReturningBoolean):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2007-09-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

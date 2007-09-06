@@ -1,3 +1,12 @@
+2007-09-05  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Changed the blocked exception log message to match AppKit's blocked exception message.
+
+        * platform/mac/BlockExceptions.mm:
+        (ReportBlockedObjCException):
+
 2007-09-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

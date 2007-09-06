@@ -2058,13 +2058,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     _private->selectorForDoCommandBySelector = 0;
     if (callerAlreadyCalledDelegate)
         return NO;
-
     WebView *webView = [self _webView];
-    id editingDelegate = [webView editingDelegate];
-    if (![editingDelegate respondsToSelector:@selector(webView:doCommandBySelector:)])
-        return NO;
-
-    return [editingDelegate webView:webView doCommandBySelector:selector];
+    return [[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector];
 }
 
 - (void)callWebCoreCommand:(SEL)selector
@@ -2450,12 +2445,7 @@ WEBCORE_COMMAND(moveWordRightAndModifySelection)
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     BOOL result = [self validateUserInterfaceItemWithoutDelegate:item];
-
-    id ud = [[self _webView] UIDelegate];
-    if (ud && [ud respondsToSelector:@selector(webView:validateUserInterfaceItem:defaultValidation:)])
-        return [ud webView:[self _webView] validateUserInterfaceItem:item defaultValidation:result];
-
-    return result;
+    return CallUIDelegateReturningBoolean(result, [self _webView], @selector(webView:validateUserInterfaceItem:defaultValidation:), item, result);
 }
 
 - (BOOL)acceptsFirstResponder

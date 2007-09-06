@@ -32,6 +32,7 @@
 #import "WebFrameInternal.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHTMLViewPrivate.h"
+#import "WebKitLogging.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebUIDelegate.h"
@@ -97,13 +98,21 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
     
     [topHTMLView _stopAutoscrollTimer];
     NSPasteboard *pasteboard = static_cast<ClipboardMac*>(clipboard)->pasteboard();
-    
-    // note per kwebster, the offset arg below is always ignored in positioning the image
-    id UIDelegate = [m_webView UIDelegate];
-    if ([UIDelegate respondsToSelector:@selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:)])
-        [UIDelegate webView:m_webView dragImage:dragImage.get() at:(NSPoint)at offset:NSMakeSize(0, 0) event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
-    else
-        [topHTMLView dragImage:dragImage.get() at:(NSPoint)at offset:NSMakeSize(0, 0) event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES];
+
+    NSSize offset = {0.0, 0.0};
+    id delegate = [m_webView UIDelegate];
+    SEL selector = @selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:);
+    if ([delegate respondsToSelector:selector]) {
+        if ([m_webView _catchesDelegateExceptions]) {
+            @try {
+                [delegate webView:m_webView dragImage:dragImage.get() at:at offset:offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
+            } @catch (id exception) {
+                ReportDiscardedDelegateException(selector, exception);
+            }
+        } else
+            [delegate webView:m_webView dragImage:dragImage.get() at:at offset:offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
+    } else
+        [topHTMLView dragImage:dragImage.get() at:at offset:offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES];
 }
 
 DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& title, Frame* frame)
