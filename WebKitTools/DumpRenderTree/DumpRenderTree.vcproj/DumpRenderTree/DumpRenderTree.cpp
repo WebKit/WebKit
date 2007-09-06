@@ -117,6 +117,14 @@ extern "C" BOOL InitializeCoreGraphics();
 
 static wstring initialize(HMODULE hModule)
 {
+#ifdef NDEBUG
+    HMODULE webKitModule = LoadLibraryW(L"WebKit.dll");
+#else
+    HMODULE webKitModule = LoadLibraryW(L"WebKit_debug.dll");
+#endif
+    FARPROC dllRegisterServer = ::GetProcAddress(webKitModule, "DllRegisterServer");
+    dllRegisterServer();
+
     static LPCTSTR fontsToInstall[] = {
         TEXT("AHEM____.ttf"),
         TEXT("Apple Chancery.ttf"),
