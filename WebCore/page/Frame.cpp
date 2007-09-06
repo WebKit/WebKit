@@ -232,6 +232,7 @@ void Frame::setView(FrameView* view)
     // we wait until the view is destroyed, then things won't be
     // hooked up enough for some JavaScript calls to work.
     if (!view && d->m_doc && d->m_doc->attached() && !d->m_doc->inPageCache()) {
+        // FIXME: We don't call willRemove here. Why is that OK?
         d->m_doc->detach();
         if (d->m_view)
             d->m_view->unscheduleRelayout();
@@ -267,8 +268,10 @@ Document *Frame::document() const
 
 void Frame::setDocument(PassRefPtr<Document> newDoc)
 {
-    if (d->m_doc && d->m_doc->attached() && !d->m_doc->inPageCache())
+    if (d->m_doc && d->m_doc->attached() && !d->m_doc->inPageCache()) {
+        // FIXME: We don't call willRemove here. Why is that OK?
         d->m_doc->detach();
+    }
 
     d->m_doc = newDoc;
     if (d->m_doc && d->m_isActive)

@@ -781,8 +781,10 @@ void FrameLoader::clear(bool clearWindowProperties)
     
     if (m_frame->document() && !m_frame->document()->inPageCache()) {
         m_frame->document()->cancelParsing();
-        if (m_frame->document()->attached())
+        if (m_frame->document()->attached()) {
+            m_frame->document()->willRemove();
             m_frame->document()->detach();
+        }
     }
 
     // Do this after detaching the document so that the unload event works.

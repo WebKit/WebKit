@@ -1140,8 +1140,6 @@ void Document::detach()
     ASSERT(attached());
     ASSERT(!m_inPageCache);
 
-    willRemove();
-
     RenderObject* render = renderer();
 
     // indicate destruction mode,  i.e. attached() but renderer == 0

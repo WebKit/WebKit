@@ -1,3 +1,24 @@
+2007-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15153
+          REGRESSION: Assertion failure in FrameView::scheduleRelayout() (m_frame->view() == this)
+
+        Back out the willRemove() part of the previous patch.
+        It was incorrect and not needed to fix the bug anyway.
+
+        * dom/Document.cpp: (WebCore::Document::detach): Remove willRemove().
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::clear): Put the willRemove() call
+        back here where it was originally before the previous fix.
+
+        * history/CachedPage.cpp: (WebCore::CachedPage::clear):
+        * page/Frame.cpp:
+        (WebCore::Frame::setView):
+        (WebCore::Frame::setDocument):
+        Added FIXMEs about the fact that we call detach() on the document but not willRemove().
+
 2007-09-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
