@@ -1,3 +1,12 @@
+2007-09-06  George Staikos  <staikos@kde.org>
+
+        Reviewed by Anders.
+
+        Make popup windows work again.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+
 2007-09-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.
