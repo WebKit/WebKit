@@ -524,6 +524,8 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     // make quicker checks to possibly avoid that. Another check that we could make is
     // is whether the inline vs block flow changed since the previous visible element.
     // I think we're already in a special enough case that that won't be needed, tho.
+    // The currPos.isNotNull() check is needed because positions in non-html content
+    // (like svg) do not have visible positions, and we don't want to emit for them either.
     if (m_node == m_startContainer)
         return false;
     
@@ -532,7 +534,7 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     
     VisiblePosition startPos = VisiblePosition(m_startContainer, m_startOffset, DOWNSTREAM);
     VisiblePosition currPos = VisiblePosition(m_node, 0, DOWNSTREAM);
-    return !inSameLine(startPos, currPos);
+    return currPos.isNotNull() && !inSameLine(startPos, currPos);
 }
 
 void TextIterator::representNodeOffsetZero()
