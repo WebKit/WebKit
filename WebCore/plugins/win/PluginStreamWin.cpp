@@ -127,9 +127,34 @@ void PluginStreamWin::startStream()
     
     CString mimeTypeStr = m_resourceResponse.mimeType().utf8();
     
+    long long expectedContentLength = m_resourceResponse.expectedContentLength();
+
+    if (m_resourceResponse.isHTTP()) {
+        Vector<UChar> stringBuilder;
+        String separator(": ");
+
+        HTTPHeaderMap::const_iterator end = m_resourceResponse.httpHeaderFields().end();
+        for (HTTPHeaderMap::const_iterator it = m_resourceResponse.httpHeaderFields().begin(); it != end; ++it) {
+            stringBuilder.append(it->first.characters(), it->first.length());
+            stringBuilder.append(separator.characters(), separator.length());
+            stringBuilder.append(it->second.characters(), it->second.length());
+            stringBuilder.append((UChar)'\n');
+        }
+
+        m_headers = String::adopt(stringBuilder).utf8();
+
+        // If the content is encoded (most likely compressed), then don't send its length to the plugin,
+        // which is only interested in the decoded length, not yet known at the moment.
+        // <rdar://problem/4470599> tracks a request for -[NSURLResponse expectedContentLength] to incorporate this logic.
+        String contentEncoding = m_resourceResponse.httpHeaderField("Content-Encoding");
+        if (!contentEncoding.isNull() && contentEncoding != "identity")
+            expectedContentLength = -1;
+    }
+
+    m_stream.headers = m_headers.data();
     m_stream.pdata = 0;
     m_stream.ndata = this;
-    m_stream.end = max(m_resourceResponse.expectedContentLength(), static_cast<long long>(0));
+    m_stream.end = max(expectedContentLength, static_cast<long long>(0));
     m_stream.lastmodified = m_resourceResponse.lastModifiedDate();
     m_stream.notifyData = m_notifyData;
 
