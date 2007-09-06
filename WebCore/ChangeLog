@@ -1,3 +1,12 @@
+2007-09-06  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Darin.
+
+        The implementation of BackForwardList::clearPageCache() was removed in r21793.
+        It's now safe to remove it from the header.
+
+        * history/BackForwardList.h: Removed clearPageCache().
+
 2007-09-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Ada.

@@ -70,7 +70,6 @@ public:
     void close();
     bool closed();
     
-    void clearPageCache();
     void removeItem(HistoryItem*);
     HistoryItemVector& entries();
     
