@@ -1137,17 +1137,16 @@ void Document::attach()
 
 void Document::detach()
 {
+    ASSERT(attached());
+    ASSERT(!m_inPageCache);
+
+    willRemove();
+
     RenderObject* render = renderer();
 
     // indicate destruction mode,  i.e. attached() but renderer == 0
     setRenderer(0);
     
-    if (m_inPageCache) {
-        if (render)
-            axObjectCache()->remove(render);
-        return;
-    }
-
     // Empty out these lists as a performance optimization, since detaching
     // all the individual render objects will cause all the RenderImage
     // objects to remove themselves from the lists.

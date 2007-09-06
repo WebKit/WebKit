@@ -231,7 +231,7 @@ void Frame::setView(FrameView* view)
     // Detach the document now, so any onUnload handlers get run - if
     // we wait until the view is destroyed, then things won't be
     // hooked up enough for some JavaScript calls to work.
-    if (d->m_doc && view == 0) {
+    if (!view && d->m_doc && d->m_doc->attached() && !d->m_doc->inPageCache()) {
         d->m_doc->detach();
         if (d->m_view)
             d->m_view->unscheduleRelayout();
@@ -267,7 +267,7 @@ Document *Frame::document() const
 
 void Frame::setDocument(PassRefPtr<Document> newDoc)
 {
-    if (d->m_doc && d->m_doc->attached())
+    if (d->m_doc && d->m_doc->attached() && !d->m_doc->inPageCache())
         d->m_doc->detach();
 
     d->m_doc = newDoc;

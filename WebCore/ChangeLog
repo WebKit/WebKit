@@ -1,3 +1,43 @@
+2007-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - <rdar://problem/5457865> REGRESSION (9A527): Safari crashes when opening a page
+          that immediately redirects to a PDF
+
+        I don't know how to make an automated test that trips over this.
+
+        The immediate cause of this regression was making a back/forward list entry in
+        this case. Earlier, the quick redirect would not results in a separate entry.
+        That's possibly a bug too, but it's better to fix the crash first.
+
+        The page cache was putting the document into a strange state: Still attached but
+        with the renderer set to 0. There was no good reason to do this, so got rid of it.
+        Moved the responsibility to the caller of not calling detach() when moving into
+        the page cache. This is more of a frame loader thing than a document thing.
+
+        * dom/Document.cpp: (WebCore::Document::detach): Added assertions that this is
+        only called on a document that's attached and not in the page cache. Also moved
+        the call to willRemove in here, so that callers can't make the mistake of not
+        calling that function. Removed the incorrectly-positioned code that made this
+        function do less if it was called on a document in the page cache.
+
+        * history/CachedPage.cpp: (WebCore::CachedPage::clear): Removed the code to handle
+        a document with a renderer of 0. There was no need to put the document into this
+        state. Any document in the page cache will always be "attached".
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::clear): Added a check to prevent
+        from calling an unnecessary cancelParsing() on a document that's in the page cache
+        and guard the call to detach() with a check of attached(), like all other calls to
+        detach() on DOM objects.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setView): Added a missing check of attached(), like all other
+        calls to detach() on DOM objects. Also added code to not call detach() on the
+        document when it's in the page cache.
+        (WebCore::Frame::setDocument): This call site already had the attached() check,
+        but was missing the page cache check.
+
 2007-09-05  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

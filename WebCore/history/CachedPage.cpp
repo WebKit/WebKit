@@ -162,12 +162,9 @@ void CachedPage::clear()
     if (m_document->inPageCache()) {
         Frame::clearTimers(m_view.get());
 
-        bool detached = !m_document->renderer();
         m_document->setInPageCache(false);
-        if (detached) {
-            m_document->detach();
-            m_document->removeAllEventListenersFromAllNodes();
-        }
+        m_document->detach();
+        m_document->removeAllEventListenersFromAllNodes();
 
         m_view->clearFrame();
     }
