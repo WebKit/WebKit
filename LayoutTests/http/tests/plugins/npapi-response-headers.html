@@ -6,6 +6,8 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
+loadedFirstURL = false;
+
 var res1, res2;
 
 function test()
@@ -13,12 +15,20 @@ function test()
     try {
         res1 = document.getElementById("result1");
         res2 = document.getElementById("result2");
-        plg.getURLNotify("/plugins/resources/load-me-2.txt", null, "callback");
     } catch (ex) {
         showErr("Exception: " + ex.description);
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
+}
+
+function streamLoaded()
+{
+    if (loadedFirstURL)
+        return;
+        
+    loadedFirstURL = true;
+    plg.getURLNotify("/plugins/resources/load-me-2.txt", null, "callback");
 }
 
 function callback(errCode, streamDump)
@@ -84,7 +94,7 @@ function parseHeaders(hdrs)
 </script>
 </head>
 <body onload="test()">
-<embed name="plg" type="application/x-webkit-test-netscape" src="/plugins/resources/load-me-1.txt"></embed>
+<embed name="plg" type="application/x-webkit-test-netscape" src="/plugins/resources/load-me-1.txt" onstreamload="streamLoaded()"></embed>
 <p>Test for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=13029">bug 13029<a/>:
 Permit NPAPI plug-ins to see HTTP response headers.</p>
 <p>Expected result below is two HTTP response extracts, one for the initial stream specified in the "src"

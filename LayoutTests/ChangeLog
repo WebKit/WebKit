@@ -1,3 +1,14 @@
+2007-09-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Re-enable and the npapi-response-headers.html test so it no longer
+        relies on the ordering of the requests being made.        
+        
+        * http/tests/plugins/npapi-response-headers-expected.txt:
+        * http/tests/plugins/npapi-response-headers.html: Copied from http/tests/plugins/npapi-response-headers.html.disabled.
+        * http/tests/plugins/npapi-response-headers.html.disabled: Removed.
+
 2007-09-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam and Darin

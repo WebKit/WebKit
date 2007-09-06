@@ -14,5 +14,3 @@ Content-Type: text/plain
 http://[varies, not being tested]/plugins/resources/load-me-2.txt
 HTTP 200 OK
 Content-Type: text/plain
-
-
