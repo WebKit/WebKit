@@ -1,5 +1,11 @@
 2007-09-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Forgot the JS file.
+
+        * misc/WebKitDetect.js: Added.
+
+2007-09-06  Maciej Stachowiak  <mjs@apple.com>
+
         Not reviewed - copy of WebKitDetect script from wiki
 
         * misc/WebKitDetect.html: Added.
