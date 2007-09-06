@@ -413,7 +413,7 @@ void PopupMenu::updateFromElement()
 
 bool PopupMenu::itemWritingDirectionIsNatural() 
 { 
-    return false; 
+    return true; 
 }
 
 const int separatorPadding = 4;
@@ -491,7 +491,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
             
         unsigned length = itemText.length();
         const UChar* string = itemText.characters();
-        TextStyle textStyle(0, 0, 0, clientStyle->direction() == RTL, clientStyle->unicodeBidi() == Override);
+        TextStyle textStyle(0, 0, 0, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
         TextRun textRun(string, length);
 
         context.setFillColor(optionTextColor);

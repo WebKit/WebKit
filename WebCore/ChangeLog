@@ -1,3 +1,23 @@
+2007-09-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14685
+          <rdar://problem/5349755> text-align affects <select> button but not its drop-down menu
+
+        * platform/PlatformString.h:
+        (WebCore::String::defaultWritingDirection):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::defaultWritingDirection): Moved textDirectionForParagraph()
+        from RenderMenuList.cpp here.
+        * platform/StringImpl.h:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural): Changed to return 'true'.
+        (WebCore::PopupMenu::paint): Changed to use natural directionality for menu
+        items.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle): Use defaultWritingDirection.
+
 2007-09-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

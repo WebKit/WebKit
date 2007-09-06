@@ -76,20 +76,6 @@ void RenderMenuList::createInnerBlock()
     RenderFlexibleBox::addChild(m_innerBlock);
 }
 
-// Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
-static TextDirection textDirectionForParagraph(StringImpl* paragraph)
-{
-    int length = paragraph->length();
-    for (int i = 0; i < length; ++i) {
-        WTF::Unicode::Direction charDirection = WTF::Unicode::direction((*paragraph)[i]);
-        if (charDirection == WTF::Unicode::LeftToRight)
-            return LTR;
-        if (charDirection == WTF::Unicode::RightToLeft || charDirection == WTF::Unicode::RightToLeftArabic)
-            return RTL;
-    }
-    return LTR;
-}
-
 void RenderMenuList::adjustInnerStyle()
 {
     m_innerBlock->style()->setBoxFlex(1.0f);
@@ -103,7 +89,7 @@ void RenderMenuList::adjustInnerStyle()
         // Items in the popup will not respect the CSS text-align and direction properties,
         // so we must adjust our own style to match.
         m_innerBlock->style()->setTextAlign(LEFT);
-        TextDirection direction = m_buttonText ? textDirectionForParagraph(m_buttonText->text()) : LTR;
+        TextDirection direction = (m_buttonText && m_buttonText->text()->defaultWritingDirection() == WTF::Unicode::RightToLeft) ? RTL : LTR;
         m_innerBlock->style()->setDirection(direction);
     }
 }

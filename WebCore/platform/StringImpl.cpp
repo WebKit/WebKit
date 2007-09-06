@@ -1219,6 +1219,18 @@ Vector<char> StringImpl::ascii() const
     return buffer;
 }
 
+WTF::Unicode::Direction StringImpl::defaultWritingDirection() const
+{
+    for (unsigned i = 0; i < m_length; ++i) {
+        WTF::Unicode::Direction charDirection = WTF::Unicode::direction(m_data[i]);
+        if (charDirection == WTF::Unicode::LeftToRight)
+            return WTF::Unicode::LeftToRight;
+        if (charDirection == WTF::Unicode::RightToLeft || charDirection == WTF::Unicode::RightToLeftArabic)
+            return WTF::Unicode::RightToLeft;
+    }
+    return WTF::Unicode::LeftToRight;
+}
+
 StringImpl::StringImpl(const Identifier& str)
 {
     init(reinterpret_cast<const UChar*>(str.data()), str.size());

@@ -185,6 +185,9 @@ public:
 
     CString latin1() const;
     CString utf8() const;
+
+    // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
+    WTF::Unicode::Direction defaultWritingDirection() const { return m_impl ? m_impl->defaultWritingDirection() : WTF::Unicode::LeftToRight; }
     
     String(const DeprecatedString&);
     DeprecatedString deprecatedString() const;
