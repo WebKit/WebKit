@@ -1,6 +1,6 @@
 2007-09-05  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by Same and Darin
+        Reviewed by Sam and Darin
         
         Split the wrapper test into seperate Obj-C and JS tests so the we can use the JS tests on other platforms.
 
