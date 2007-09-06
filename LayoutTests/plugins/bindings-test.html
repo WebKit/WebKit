@@ -6,18 +6,36 @@ function doTest()
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    if (window.objCPlugin) {
-        // Type should be "object"
-        alert("typeof(objCPlugin)=" + typeof(objCPlugin));
+    // Test the C plugin
+    var cPlugin = document.getElementById("testCPlugin");
+    if (cPlugin) {
+        // Type should be "function"
+        alert("typeof(cPlugin)=" + typeof(cPlugin));
 
-        // Calling objCPlugin() should raise an exception.
+        // Calling cPlugin() should return 1
         var result;
         try {
-            result = objCPlugin();
+            result = cPlugin();
         } catch (e) {
             result = e.name;
         }
-        alert("objCPlugin()=" + result);
+        alert("cPlugin()=" + result);
+
+        // Special function that removes cPlugin's default method implementation.  The runtime should consider
+        // cPlugin an "object" if it has no default method.
+        cPlugin.removeDefaultMethod();
+
+        // Type should be "object"
+        alert("typeof(cPlugin)=" + typeof(cPlugin));
+
+        // Calling cPlugin() now should raise an exception
+        var result;
+        try {
+            result = cPlugin();
+        } catch (e) {
+            result = e.name;
+        }
+        alert("cPlugin()=" + result);
     }
 }
 </script>

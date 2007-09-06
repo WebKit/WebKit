@@ -1,5 +1,14 @@
 2007-09-05  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Kevin McCullough. 
+
+        Use correct part of the test for cross-platform testing.
+
+        * plugins/bindings-test-expected.txt:
+        * plugins/bindings-test.html:
+
+2007-09-05  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff Garen.
 
         Split out mac specific tests from plugins/bindings-test.html into its own test.
