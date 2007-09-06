@@ -1,3 +1,54 @@
+2007-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Stephanie.
+
+        Moved a number of tests from platform/mac that are not currently cross-platform,
+        but should eventually be updated to work across all platforms.
+
+        * editing/deleting/5300379-expected.checksum: Copied from platform/mac/editing/deleting/5300379-expected.checksum.
+        * editing/deleting/5300379-expected.png: Copied from platform/mac/editing/deleting/5300379-expected.png.
+        * editing/deleting/5300379-expected.txt: Copied from platform/mac/editing/deleting/5300379-expected.txt.
+        * editing/deleting/5300379.html: Copied from platform/mac/editing/deleting/5300379.html.
+        * editing/deleting/delete-to-end-of-paragraph-expected.checksum: Copied from platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.checksum.
+        * editing/deleting/delete-to-end-of-paragraph-expected.png: Copied from platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.png.
+        * editing/deleting/delete-to-end-of-paragraph-expected.txt: Copied from platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.txt.
+        * editing/deleting/delete-to-end-of-paragraph.html: Copied from platform/mac/editing/deleting/delete-to-end-of-paragraph.html.
+        * editing/deleting/smart-delete-003-expected.checksum: Copied from platform/mac/editing/deleting/smart-delete-003-expected.checksum.
+        * editing/deleting/smart-delete-003-expected.png: Copied from platform/mac/editing/deleting/smart-delete-003-expected.png.
+        * editing/deleting/smart-delete-003-expected.txt: Copied from platform/mac/editing/deleting/smart-delete-003-expected.txt.
+        * editing/deleting/smart-delete-003.html: Copied from platform/mac/editing/deleting/smart-delete-003.html.
+        * editing/deleting/smart-delete-004-expected.checksum: Copied from platform/mac/editing/deleting/smart-delete-004-expected.checksum.
+        * editing/deleting/smart-delete-004-expected.png: Copied from platform/mac/editing/deleting/smart-delete-004-expected.png.
+        * editing/deleting/smart-delete-004-expected.txt: Copied from platform/mac/editing/deleting/smart-delete-004-expected.txt.
+        * editing/deleting/smart-delete-004.html: Copied from platform/mac/editing/deleting/smart-delete-004.html.
+        * editing/execCommand/nsresponder-indent-expected.checksum: Copied from platform/mac/editing/execCommand/nsresponder-indent-expected.checksum.
+        * editing/execCommand/nsresponder-indent-expected.png: Copied from platform/mac/editing/execCommand/nsresponder-indent-expected.png.
+        * editing/execCommand/nsresponder-indent-expected.txt: Copied from platform/mac/editing/execCommand/nsresponder-indent-expected.txt.
+        * editing/execCommand/nsresponder-indent.html: Copied from platform/mac/editing/execCommand/nsresponder-indent.html.
+        * editing/execCommand/nsresponder-outdent-expected.checksum: Copied from platform/mac/editing/execCommand/nsresponder-outdent-expected.checksum.
+        * editing/execCommand/nsresponder-outdent-expected.png: Copied from platform/mac/editing/execCommand/nsresponder-outdent-expected.png.
+        * editing/execCommand/nsresponder-outdent-expected.txt: Copied from platform/mac/editing/execCommand/nsresponder-outdent-expected.txt.
+        * editing/execCommand/nsresponder-outdent.html: Copied from platform/mac/editing/execCommand/nsresponder-outdent.html.
+        * editing/selection/4947387-expected.checksum: Copied from platform/mac/editing/selection/4947387-expected.checksum.
+        * editing/selection/4947387-expected.png: Copied from platform/mac/editing/selection/4947387-expected.png.
+        * editing/selection/4947387-expected.txt: Copied from platform/mac/editing/selection/4947387-expected.txt.
+        * editing/selection/4947387.html: Copied from platform/mac/editing/selection/4947387.html.
+        * editing/selection/5195166-1-expected.checksum: Copied from platform/mac/editing/selection/5195166-1-expected.checksum.
+        * editing/selection/5195166-1-expected.png: Copied from platform/mac/editing/selection/5195166-1-expected.png.
+        * editing/selection/5195166-1-expected.txt: Copied from platform/mac/editing/selection/5195166-1-expected.txt.
+        * editing/selection/5195166-1.html: Copied from platform/mac/editing/selection/5195166-1.html.
+        * editing/selection/5195166-2-expected.checksum: Copied from platform/mac/editing/selection/5195166-2-expected.checksum.
+        * editing/selection/5195166-2-expected.png: Copied from platform/mac/editing/selection/5195166-2-expected.png.
+        * editing/selection/5195166-2-expected.txt: Copied from platform/mac/editing/selection/5195166-2-expected.txt.
+        * editing/selection/5195166-2.html: Copied from platform/mac/editing/selection/5195166-2.html.
+        * editing/selection/select-line-expected.txt: Copied from platform/mac/editing/selection/select-line-expected.txt.
+        * editing/selection/select-line.html: Copied from platform/mac/editing/selection/select-line.html.
+        * editing/selection/selection-actions-expected.checksum: Copied from platform/mac/editing/selection/selection-actions-expected.checksum.
+        * editing/selection/selection-actions-expected.png: Copied from platform/mac/editing/selection/selection-actions-expected.png.
+        * editing/selection/selection-actions-expected.txt: Copied from platform/mac/editing/selection/selection-actions-expected.txt.
+        * editing/selection/selection-actions.html: Copied from platform/mac/editing/selection/selection-actions.html.
+        * platform/win/Skipped:
+
 2007-09-05  David Harrison  <harrison@apple.com>
 
         Updated results for:

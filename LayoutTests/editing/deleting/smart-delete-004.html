@@ -1,0 +1,19 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+<p>This tests deleting a selection created with a word granularity.  To run it manually, double click on 'bar' and hit forward delete.  You should see 'foo bar'.</p>
+<div id="div" contenteditable="true">foo bar baz</div>
+
+<script>
+if (window.layoutTestController) {
+    var div = document.getElementById("div");
+    var sel = window.getSelection();
+    
+    sel.setPosition(div, 0);
+    sel.modify("move", "forward", "word");
+    sel.modify("move", "forward", "word");
+    sel.modify("extend", "backward", "word");
+    textInputController.doCommand("deleteForward:");
+}
+</script>

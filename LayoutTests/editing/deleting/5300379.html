@@ -1,0 +1,19 @@
+<div></div>
+<div contenteditable="true" id="div"></div>
+<div></div>
+
+<script>
+div = document.getElementById("div");
+sel = window.getSelection();
+sel.setPosition(div, 0);
+if (window.layoutTestController) {
+    // Test to see if deleteWordBackward: hangs.
+    textInputController.doCommand("deleteWordBackward:");
+    document.execCommand("InsertText", false, "Success FAIL");
+    // Delete 'FAIL' with deleteWordBackward: to verify that it's not a no-op.
+    textInputController.doCommand("deleteWordBackward:");
+    textInputController.doCommand("deleteBackward:");
+} else {
+    document.execCommand("InsertText", false, "To run this test manually.  Delete all this text and then option-delete.  Safari shouldn't hang.");
+}
+</script>
