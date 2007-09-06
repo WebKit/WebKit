@@ -105,14 +105,14 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
     if ([delegate respondsToSelector:selector]) {
         if ([m_webView _catchesDelegateExceptions]) {
             @try {
-                [delegate webView:m_webView dragImage:dragImage.get() at:at offset:offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
+                [delegate webView:m_webView dragImage:dragImage.get() at:at offset:(NSSize)offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
             } @catch (id exception) {
                 ReportDiscardedDelegateException(selector, exception);
             }
         } else
-            [delegate webView:m_webView dragImage:dragImage.get() at:at offset:offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
+            [delegate webView:m_webView dragImage:dragImage.get() at:at offset:(NSSize)offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
     } else
-        [topHTMLView dragImage:dragImage.get() at:at offset:offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES];
+        [topHTMLView dragImage:dragImage.get() at:at offset:(NSSize)offset event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES];
 }
 
 DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& title, Frame* frame)
