@@ -1,3 +1,14 @@
+2007-09-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fixed <rdar://problem/5455457> REGRESSION (9A527-9A535): Colloquy crash on launch in WebCoreScriptDebugger initWithDelegate (with announce.js plug-in installed)
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject): Ensure that -[WebView
+        windowScriptObject] and -[WebFrame windowObject] return null until
+        the windowScriptObjectAvailable: delegate method is sent.
+
 2007-09-05  David Harrison  <harrison@apple.com>
 
         Reviewed by Kevin Decker.
