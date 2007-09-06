@@ -6,6 +6,7 @@ PASS: Cross frame access from a javascript: URL inside another javascript: URL w
 --------
 Frame: 'aFrame'
 --------
+
 Inner iframe.
 
 --------

@@ -1,3 +1,13 @@
+2007-09-05  David Harrison  <harrison@apple.com>
+
+        Updated results for:
+        <rdar://problem/5306171> Mail: The first return after an attachment in multipart/mixed message is lost
+
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url-expected.txt:
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-to-javscript-url-expected.txt:
+        * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-level-expected.txt:
+
 2007-09-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Kevin McCullough. 

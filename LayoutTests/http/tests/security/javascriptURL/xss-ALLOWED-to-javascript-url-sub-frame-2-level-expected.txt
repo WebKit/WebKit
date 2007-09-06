@@ -7,6 +7,7 @@ PASS: Cross frame access to a javascript: URL 2 levels deep was allowed!
 --------
 Frame: 'aFrame'
 --------
+
 Inner iframe.
 
 --------
