@@ -29,6 +29,9 @@
 # Prevent the mac platform directory from running <rdar://problem/5463017>
 platform/mac 
 
+# fast/frames/onload-remove-iframe-crash.html crashes <rdar://problem/5464402>
+fast/frames/onload-remove-iframe-crash.html
+
 # Obj-C Mac only test on Windows?  That's unpossible!
 http/tests/misc/willCacheResponse-delegate-callback.html
 

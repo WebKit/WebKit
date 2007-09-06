@@ -1,3 +1,11 @@
+2007-09-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add fast/frames/onload-remove-iframe-crash.html to the windows skiplist becuase it currently crashes.
+
+        * platform/win/Skipped:
+
 2007-09-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Stephanie.
