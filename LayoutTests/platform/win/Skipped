@@ -464,7 +464,7 @@ http/tests/security/cross-frame-access-put.html
 editing/selection/drag-to-contenteditable-iframe.html
 
 
-# <rdar://problem/5463489> 
+# <rdar://problem/5463489> A number of layout tests use textInputController for operations that should be crossplatform
 editing/deleting/5300379.html
 editing/deleting/delete-to-end-of-paragraph.html
 editing/deleting/smart-delete-003.html
@@ -483,9 +483,6 @@ editing/selection/selection-actions.html
 
 # Text, caret
 editing/pasteboard/copy-paste-bidi.html
-
-# Text, RenderText, caret
-editing/deleting/delete-to-end-of-paragraph.html
 
 # Text, renderText, selection, drag&drop
 editing/pasteboard/4861080.html
