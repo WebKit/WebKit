@@ -65,6 +65,8 @@ WebDataSource::WebDataSource(WebDocumentLoader* loader)
 
 WebDataSource::~WebDataSource()
 {
+    if (m_loader)
+        m_loader->detachDataSource();
     WebDataSourceCount--;
     gClassCount--;
 }
@@ -78,7 +80,7 @@ WebDataSource* WebDataSource::createInstance(WebDocumentLoader* loader)
 
 WebDocumentLoader* WebDataSource::documentLoader() const
 {
-    return m_loader;
+    return m_loader.get();
 }
 
 // IWebDataSourcePrivate ------------------------------------------------------

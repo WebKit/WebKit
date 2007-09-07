@@ -25,8 +25,6 @@
 
 #include "WebDataSource.h"
 
-#include "COMPtr.h"
-
 #pragma warning(push, 0)
 #include <WebCore/DocumentLoader.h>
 #pragma warning(pop)
@@ -35,14 +33,16 @@ class WebDocumentLoader : public WebCore::DocumentLoader
 {
 public:
     WebDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
+    ~WebDocumentLoader();
 
     void setDataSource(WebDataSource*);
     WebDataSource* dataSource() const;
+    void detachDataSource();
 
     virtual void attachToFrame();
     virtual void detachFromFrame();
 
 private:
-    COMPtr<WebDataSource> m_dataSource;
+    WebDataSource* m_dataSource;
     WebDataSource* m_detachedDataSource; // not retained
 };

@@ -1,3 +1,31 @@
+2007-09-07  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5453494> Better lifetime management of WebDataSource and WebDocumentLoader
+        The problem was that WebDataSource does not hold a strong reference to the WebDocumentLoader.  If
+        a WebDataSource is still around after the loader has been destroyed, it'll just point to
+        a stale WebDocumentLoader.
+        To fix this without a circular reference, WebDataSource now holds a strong reference to the
+        WebDocumentLoader.  The WebDocumentLoader holds a strong reference to the WebDataSource
+        until it's detached from the WebFrame.  When the WebDataSource is destroyed, it'll notify
+        its WebDocumentLoader so the loader will clear any references to it.
+
+        Reviewed by Darin.
+
+        * WebDataSource.cpp:
+        (WebDataSource::~WebDataSource): call WebDocumentLoader::detachDataSource() so the loader
+        will clear any references to this data source
+        (WebDataSource::documentLoader): m_loader is now a RefPtr so we need to call get().
+        * WebDataSource.h:
+        * WebDocumentLoader.cpp:
+        (WebDocumentLoader::WebDocumentLoader): initialize m_dataSource since it's no longer a COMPtr.
+        (WebDocumentLoader::~WebDocumentLoader): release m_dataSource if necessary
+        (WebDocumentLoader::setDataSource): add a reference to m_dataSource
+        (WebDocumentLoader::dataSource): 
+        (WebDocumentLoader::detachDataSource): clear m_detachedDataSource.
+        (WebDocumentLoader::attachToFrame): call setDataSource() so it'll add the reference to the data source if necessary.
+        (WebDocumentLoader::detachFromFrame): release the reference to the data source
+        * WebDocumentLoader.h:
+
 2007-09-05  Dave Hyatt <hyatt@apple.com>
 
         Make sure ALT+other keys is properly sent into the DOM so that Web pages (and editing fields) can

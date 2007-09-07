@@ -28,6 +28,7 @@
 
 #include "IWebDataSource.h"
 #include "COMPtr.h"
+#include <WTF/RefPtr.h>
 
 class WebDocumentLoader;
 class WebMutableURLRequest;
@@ -113,7 +114,7 @@ public:
     WebDocumentLoader* documentLoader() const;
 protected:
     ULONG m_refCount;
-    WebDocumentLoader* m_loader;
+    RefPtr<WebDocumentLoader> m_loader;
     COMPtr<IWebDocumentRepresentation> m_representation;
 };
 
