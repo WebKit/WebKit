@@ -1,3 +1,25 @@
+2007-09-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - Remove single-threaded optimization for FastMalloc. 
+        
+        It does not appear to help anywhere but Mac OS X on PPC, due to
+        pthread_getspecific being slow there. On Intel, removing the
+        optimization results in a ~1.5% PLT speedup, a ~1-5% JS iBench
+        speedup, and a ~1.5% HTML iBench speedup. On PPC this change is a
+        speedup on some benchmarks, a slight hit on others.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/collector.cpp:
+        (KJS::Collector::registerThread):
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::GetCache):
+        (WTF::TCMalloc_ThreadCache::GetCacheIfPresent):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        (WTF::do_malloc):
+        * wtf/FastMallocInternal.h: Removed.
+
 2007-09-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam, Sam, Darin.
