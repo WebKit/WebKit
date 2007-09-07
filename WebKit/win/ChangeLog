@@ -1,3 +1,13 @@
+2007-09-07  Ada Chan  <adachan@apple.com>
+
+        Need to let the OS handle Alt+F4.
+
+        Reviewed by Hyatt.
+
+        * WebView.cpp:
+        (WebView::keyUp):
+        (WebView::keyDown):
+
 2007-09-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

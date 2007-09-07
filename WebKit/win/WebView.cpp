@@ -878,8 +878,8 @@ bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData)
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
 
-    // Don't send key events for alt+space.
-    if (keyEvent.altKey() && virtualKeyCode == VK_SPACE)
+    // Don't send key events for alt+space and alt+f4.
+    if (keyEvent.altKey() && (virtualKeyCode == VK_SPACE || virtualKeyCode == VK_F4))
         return false;
 
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
@@ -1011,8 +1011,8 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL ||  virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
         return false;
 
-    // Don't send key events for alt+space, since the OS needs to handle that.
-    if (virtualKeyCode == VK_SPACE && systemKeyDown)
+    // Don't send key events for alt+space and alt+f4, since the OS needs to handle that.
+    if (systemKeyDown && (virtualKeyCode == VK_SPACE || virtualKeyCode == VK_F4))
         return false;
 
     MSG msg;
