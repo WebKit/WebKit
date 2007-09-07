@@ -1,3 +1,42 @@
+2007-09-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5057506> Double-clicking after ToDo content doesn't select the paragraph break
+        
+        * editing/Selection.cpp:
+        (WebCore::Selection::validate):
+        Moved the code that moves across a paragraph boundary
+        when expanding selections by word granularity from
+        endOfWord to here.
+        In the word and paragraph granularity cases, if the 
+        end of the selection is at the end of the last paragraph 
+        in the last cell of a block table, expand it so that 
+        it ends at the start of the paragraph after the table, 
+        instead of just after the table, so that ToDo content 
+        gets the same double/tripled click behavior that normal 
+        paragraphs get (added two testcases).
+        When expanding the selection to include paragraph
+        breaks, pass VisiblePosition::next true so that it
+        doesn't change editability.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next): Renamed the bool because it's now also
+        used to keep non-editable positions non-editable.
+        (WebCore::VisiblePosition::previous): Ditto.
+        (WebCore::VisiblePosition::lastPositionWithSameEditabilityAtOrBefore):
+        Renamed this function and made it also work with non-editable positions.
+        (WebCore::VisiblePosition::firstPositionWithSameEditabilityAtOrAfter):
+        Ditto.
+        * editing/VisiblePosition.h:
+        * editing/visible_units.cpp:
+        (WebCore::endOfWord): Called the renamed function.
+        (WebCore::previousWordPosition): Ditto.
+        (WebCore::nextWordPosition): Ditto.
+        (WebCore::startOfLine): Ditto.
+        (WebCore::endOfLine): Ditto.
+        (WebCore::previousSentencePosition): Ditto.
+        (WebCore::nextSentencePosition): Ditto.
+
 2007-09-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam

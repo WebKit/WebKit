@@ -62,17 +62,17 @@ void VisiblePosition::init(const Position& position, EAffinity affinity)
         m_affinity = DOWNSTREAM;
 }
 
-VisiblePosition VisiblePosition::next(bool stayInEditableContent) const
+VisiblePosition VisiblePosition::next(bool dontChangeEditability) const
 {
     VisiblePosition next(nextVisuallyDistinctCandidate(m_deepPosition), m_affinity);
     
-    if (!stayInEditableContent)
+    if (!dontChangeEditability)
         return next;
     
-    return firstEditablePositionAtOrAfter(next);
+    return firstPositionWithSameEditabilityAtOrAfter(next);
 }
 
-VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
+VisiblePosition VisiblePosition::previous(bool dontChangeEditability) const
 {
     // find first previous DOM position that is visible
     Position pos = previousVisuallyDistinctCandidate(m_deepPosition);
@@ -94,40 +94,52 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
     }
 #endif
 
-    if (!stayInEditableContent)
+    if (!dontChangeEditability)
         return prev;
     
-    return lastEditablePositionAtOrBefore(prev);
+    return lastPositionWithSameEditabilityAtOrBefore(prev);
 }
 
-VisiblePosition VisiblePosition::lastEditablePositionAtOrBefore(const VisiblePosition &pos) const
+VisiblePosition VisiblePosition::lastPositionWithSameEditabilityAtOrBefore(const VisiblePosition &pos) const
 {
     if (pos.isNull())
         return pos;
     
     Node* highestRoot = highestEditableRoot(deepEquivalent());
     
-    if (!pos.deepEquivalent().node()->isDescendantOf(highestRoot))
+    if (highestRoot && !pos.deepEquivalent().node()->isDescendantOf(highestRoot))
         return VisiblePosition();
         
+    // FIXME: In the non-editable case, just because the new position is non-editable doesn't mean movement
+    // to it is allowed.  Selection::adjustForEditableContent has this problem too.
     if (highestEditableRoot(pos.deepEquivalent()) == highestRoot)
         return pos;
+    
+    // FIXME: Move to the previous non-editable region.
+    if (!highestRoot)
+        return VisiblePosition();
 
     return lastEditablePositionBeforePositionInRoot(pos.deepEquivalent(), highestRoot);
 }
 
-VisiblePosition VisiblePosition::firstEditablePositionAtOrAfter(const VisiblePosition &pos) const
+VisiblePosition VisiblePosition::firstPositionWithSameEditabilityAtOrAfter(const VisiblePosition &pos) const
 {
     if (pos.isNull())
         return pos;
     
     Node* highestRoot = highestEditableRoot(deepEquivalent());
     
-    if (!pos.deepEquivalent().node()->isDescendantOf(highestRoot))
+    if (highestRoot && !pos.deepEquivalent().node()->isDescendantOf(highestRoot))
         return VisiblePosition();
         
+    // FIXME: In the non-editable case, just because the new position is non-editable doesn't mean movement
+    // to it is allowed.  Selection::adjustForEditableContent has this problem too.
     if (highestEditableRoot(pos.deepEquivalent()) == highestRoot)
         return pos;
+        
+    // FIXME: Move to the previous non-editable region.
+    if (!highestRoot)
+        return VisiblePosition();
 
     return firstEditablePositionAfterPositionInRoot(pos.deepEquivalent(), highestRoot);
 }

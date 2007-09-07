@@ -1,3 +1,18 @@
+2007-09-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5333725> -webkit-user-select: none makes selection difficult
+
+        * editing/selection/5057506-2.html: Added.
+        * editing/selection/5057506.html: Added.
+        * platform/mac/editing/selection/5057506-2-expected.checksum: Added.
+        * platform/mac/editing/selection/5057506-2-expected.png: Added.
+        * platform/mac/editing/selection/5057506-2-expected.txt: Added.
+        * platform/mac/editing/selection/5057506-expected.checksum: Added.
+        * platform/mac/editing/selection/5057506-expected.png: Added.
+        * platform/mac/editing/selection/5057506-expected.txt: Added.
+
 2007-09-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Kevin McCullough.
