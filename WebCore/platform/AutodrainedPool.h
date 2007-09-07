@@ -55,9 +55,9 @@ private:
 };
 
 #if !PLATFORM(MAC)
-AutodrainedPool::AutodrainedPool(int) { }
-AutodrainedPool::~AutodrainedPool() { }
-void AutodrainedPool::cycle() { }
+inline AutodrainedPool::AutodrainedPool(int) { }
+inline AutodrainedPool::~AutodrainedPool() { }
+inline void AutodrainedPool::cycle() { }
 #endif
 
 } // namespace WebCore

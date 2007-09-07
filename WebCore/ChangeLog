@@ -2,6 +2,17 @@
 
         Reviewed by Darin
 
+        Inline the in-header definitions for non-Mac platforms
+
+        * platform/AutodrainedPool.h:
+        (WebCore::AutodrainedPool::AutodrainedPool):
+        (WebCore::AutodrainedPool::~AutodrainedPool):
+        (WebCore::AutodrainedPool::cycle):
+
+2007-09-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
         Add some AutoreleasePool and Threading utilities in preparation for the multi-threaded
         fix for <rdar://problem/5434431>
 
