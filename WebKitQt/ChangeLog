@@ -1,3 +1,10 @@
+2007-09-07  George Staikos  <staikos@kde.org>
+
+        Fix typo.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::onLoadProgressChanged):
+
 2007-09-07  Qing Zhao  <qing@staikos.net>
 
         Reviewed by Anders and George.

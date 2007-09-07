@@ -1,3 +1,10 @@
+2007-09-07  George Staikos  <staikos@kde.org>
+
+        Fix typo.
+
+        * loader/ProgressTracker.h:
+        (WebCore::ProgressTracker::totalPageAndResourceBytesToLoad):
+
 2007-09-07  Qing Zhao  <qing@staikos.net>
 
         Reviewed by Anders and George.

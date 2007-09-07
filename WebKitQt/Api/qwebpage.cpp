@@ -686,7 +686,7 @@ QString QWebPage::userAgentStringForUrl(const QUrl& forUrl) const {
 
 
 void QWebPage::onLoadProgressChanged(int) {
-    d->m_totalBytes = d->page->progress()->totalPageAndResourseBytesToLoad();
+    d->m_totalBytes = d->page->progress()->totalPageAndResourceBytesToLoad();
     d->m_bytesReceived = d->page->progress()->totalBytesReceived();
 }
 
