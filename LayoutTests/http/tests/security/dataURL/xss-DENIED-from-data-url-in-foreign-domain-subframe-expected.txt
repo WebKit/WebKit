@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessor-iframe.html from frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-subframe.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessor-iframe.html from frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html. Domains, protocols and ports must match.
 
 CONSOLE MESSAGE: line 1: TypeError: Undefined value
 The scenario for this test is that you have an iframe with content from a foreign domain. In that foreign content is an iframe which loads a data: URL. This tests that the data: URL loaded iframe does not have access to the main frame using top.document.

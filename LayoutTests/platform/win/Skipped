@@ -238,14 +238,14 @@ editing/pasteboard/drag-drop-modifies-page.html
 fast/dom/open-and-close-by-DOM.html
 fast/history/history_reload.html
 http/tests/navigation/target-frame-from-window.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
-http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-window-open.html
-http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-window-open.html
 
 # DRT is not fully implemented in boomer <rdar://problem/5128261>
 fast/dom/Window/setting-properties-on-closed-window.html

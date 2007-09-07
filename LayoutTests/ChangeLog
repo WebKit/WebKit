@@ -1,3 +1,47 @@
+2007-09-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Fix embarassing spelling mistakes.
+
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe-expected.txt: Copied from http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-subframe-expected.txt.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html: Copied from http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-subframe.html.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open-expected.txt: Copied from http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open-expected.txt.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html: Copied from http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open.html.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-subframe-expected.txt: Removed.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-subframe.html: Removed.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open-expected.txt: Removed.
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-window-open.html: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-expected.txt: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-expected.txt.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change-expected.txt: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-location-change-expected.txt.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-location-change.html.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe.html.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open-expected.txt: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open-expected.txt.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html: Copied from http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open.html.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-expected.txt: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-location-change-expected.txt: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-location-change.html: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe.html: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open-expected.txt: Removed.
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-window-open.html: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-subframe-expected.txt: Copied from http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-subframe-expected.txt.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-subframe.html: Copied from http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-subframe.html.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-window-open-expected.txt: Copied from http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-window-open-expected.txt.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-window-open.html: Copied from http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-window-open.html.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-subframe-expected.txt: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-subframe.html: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-window-open-expected.txt: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foriegn-domain-window-open.html: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-subframe-expected.txt: Copied from http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-subframe-expected.txt.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-subframe.html: Copied from http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-subframe.html.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-window-open-expected.txt: Copied from http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-window-open-expected.txt.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-window-open.html: Copied from http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-window-open.html.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-subframe-expected.txt: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-subframe.html: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-window-open-expected.txt: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foriegn-domain-window-open.html: Removed.
+        * platform/win/Skipped:
+
 2007-09-06  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Maciej Stachowiak.
