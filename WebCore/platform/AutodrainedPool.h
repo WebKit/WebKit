@@ -47,7 +47,7 @@ public:
     void cycle();
     
 private:
-#if !PLATFORM(MAC)
+#if PLATFORM(MAC)
     int m_iterationLimit;
     int m_iterationCount;
     NSAutoreleasePool* m_pool;
