@@ -1,3 +1,11 @@
+2007-09-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Update the Windows skiplist with the current failing tests.
+
+        * platform/win/Skipped:
+
 2007-09-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
