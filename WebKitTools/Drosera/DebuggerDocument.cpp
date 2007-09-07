@@ -131,7 +131,7 @@ JSValueRef DebuggerDocument::breakpointEditorHTML(JSContextRef context)
 
     // FIXME: Is there a way to determine the encoding?
     RetainPtr<CFStringRef> fileContents(AdoptCF, CFStringCreateWithBytes(0, charBuffer.data(), charBuffer.size(), kCFStringEncodingUTF8, true));
-    JSRetainPtr<JSStringRef> fileContentsJS(KJS::Adopt, JSStringCreateWithCFString(fileContents.get()));
+    JSRetainPtr<JSStringRef> fileContentsJS(Adopt, JSStringCreateWithCFString(fileContents.get()));
     JSValueRef ret = JSValueMakeString(context, fileContentsJS.get());
 
     return ret;
@@ -173,7 +173,7 @@ JSValueRef DebuggerDocument::evaluateScript(JSContextRef context, size_t argumen
     double callFrame = JSValueToNumber(context, arguments[1], exception);
     ASSERT(!*exception);
 
-    JSRetainPtr<JSStringRef> script(KJS::Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
     JSValueRef ret = platformEvaluateScript(context, script.get(), (int)callFrame);
@@ -214,7 +214,7 @@ JSValueRef DebuggerDocument::valueForScopeVariableNamed(JSContextRef context, si
     if (!JSValueIsString(context, arguments[0]))
         return JSValueMakeUndefined(context);
 
-    JSRetainPtr<JSStringRef> key(KJS::Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    JSRetainPtr<JSStringRef> key(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
     if (!JSValueIsNumber(context, arguments[1]))
@@ -234,7 +234,7 @@ JSValueRef DebuggerDocument::log(JSContextRef context, size_t argumentCount, con
     if (!JSValueIsString(context, arguments[0]))
         return JSValueMakeUndefined(context);
 
-    JSRetainPtr<JSStringRef> msg(KJS::Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    JSRetainPtr<JSStringRef> msg(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
     DebuggerDocument::platformLog(context, msg.get());
@@ -353,7 +353,7 @@ void DebuggerDocument::exceptionWasRaised(JSContextRef context, JSValueRef sourc
 
 void DebuggerDocument::windowScriptObjectAvailable(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> droseraStr(KJS::Adopt, JSStringCreateWithUTF8CString("DebuggerDocument"));
+    JSRetainPtr<JSStringRef> droseraStr(Adopt, JSStringCreateWithUTF8CString("DebuggerDocument"));
     JSValueRef droseraObject = JSObjectMake(context, getDroseraJSClass(), this);
 
     JSObjectSetProperty(context, windowObject, droseraStr.get(), droseraObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
@@ -362,7 +362,7 @@ void DebuggerDocument::windowScriptObjectAvailable(JSContextRef context, JSObjec
 JSValueRef DebuggerDocument::toJSArray(JSContextRef context, Vector<JSValueRef>& vectorValues, JSValueRef* exception)
 {
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
-    JSRetainPtr<JSStringRef> constructorString(KJS::Adopt, JSStringCreateWithUTF8CString("Array"));
+    JSRetainPtr<JSStringRef> constructorString(Adopt, JSStringCreateWithUTF8CString("Array"));
     JSValueRef constructorProperty = JSObjectGetProperty(context, globalObject, constructorString.get(), exception);
     ASSERT(!*exception);
 
@@ -372,7 +372,7 @@ JSValueRef DebuggerDocument::toJSArray(JSContextRef context, Vector<JSValueRef>&
     JSObjectRef array = JSObjectCallAsConstructor(context, arrayConstructor, 0, 0, exception);
     ASSERT(!*exception);
 
-    JSRetainPtr<JSStringRef> pushString(KJS::Adopt, JSStringCreateWithUTF8CString("push"));
+    JSRetainPtr<JSStringRef> pushString(Adopt, JSStringCreateWithUTF8CString("push"));
     JSValueRef pushValue = JSObjectGetProperty(context, array, pushString.get(), exception);
     ASSERT(!*exception);
 
@@ -396,7 +396,7 @@ JSValueRef DebuggerDocument::callGlobalFunction(JSContextRef context, const char
 
 JSValueRef DebuggerDocument::callFunctionOnObject(JSContextRef context, JSObjectRef object, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> string(KJS::Adopt, JSStringCreateWithUTF8CString(functionName));
+    JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithUTF8CString(functionName));
     JSValueRef objectProperty = JSObjectGetProperty(context, object, string.get(), exception);
     ASSERT(!*exception);
     
@@ -445,7 +445,7 @@ void DebuggerDocument::logException(JSContextRef context, JSValueRef exception)
     if (!exception)
         return;
     
-    JSRetainPtr<JSStringRef> msg(KJS::Adopt, JSValueToStringCopy(context, exception, 0));
+    JSRetainPtr<JSStringRef> msg(Adopt, JSValueToStringCopy(context, exception, 0));
     DebuggerDocument::platformLog(context, msg.get());
 }
 

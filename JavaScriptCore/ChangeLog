@@ -1,3 +1,28 @@
+2007-09-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej.
+
+        - Moved JSRetainPtr to the API.
+
+        * API/JSRetainPtr.h: Copied from kjs/JSRetainPtr.h.
+        (JSRetain):
+        (JSRelease):
+        (JSRetainPtr::JSRetainPtr):
+        (JSRetainPtr::~JSRetainPtr):
+        (JSRetainPtr::get):
+        (JSRetainPtr::releaseRef):
+        (JSRetainPtr::operator->):
+        (JSRetainPtr::operator!):
+        (JSRetainPtr::operator UnspecifiedBoolType):
+        (::operator):
+        (::adopt):
+        (::swap):
+        (swap):
+        (operator==):
+        (operator!=):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/JSRetainPtr.h: Removed.
+
 2007-09-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

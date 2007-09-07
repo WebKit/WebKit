@@ -1,3 +1,26 @@
+2007-09-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej.
+
+        - Changed Drosera to take advantage of the JSRetainPtr changes.
+
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::breakpointEditorHTML):
+        (DebuggerDocument::evaluateScript):
+        (DebuggerDocument::valueForScopeVariableNamed):
+        (DebuggerDocument::log):
+        (DebuggerDocument::windowScriptObjectAvailable):
+        (DebuggerDocument::toJSArray):
+        (DebuggerDocument::callFunctionOnObject):
+        (DebuggerDocument::logException):
+        * Drosera/mac/DebuggerDocumentMac.mm:
+        (-[DebuggerClientMac webView:didLoadMainResourceForDataSource:]):
+        (-[DebuggerClientMac webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+
 2007-09-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam, Sam, Darin.

@@ -530,9 +530,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     if (!documentSource)
         return;
 
-    JSRetainPtr<JSStringRef> documentSourceJS(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)documentSource));     // We already checked for NULL
+    JSRetainPtr<JSStringRef> documentSourceJS(Adopt, JSStringCreateWithCFString((CFStringRef)documentSource));     // We already checked for NULL
     NSString *url = [[[dataSource response] URL] absoluteString];
-    JSRetainPtr<JSStringRef> urlJS(KJS::Adopt, JSStringCreateWithCFString(url ? (CFStringRef)url : CFSTR("")));
+    JSRetainPtr<JSStringRef> urlJS(Adopt, JSStringCreateWithCFString(url ? (CFStringRef)url : CFSTR("")));
 
     DebuggerDocument::updateFileSource([[webView mainFrame] globalContext], documentSourceJS.get(), urlJS.get());
 }
@@ -558,9 +558,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
             urlCopy = [[[[dataSource response] URL] absoluteString] copy];
     }
 
-    JSRetainPtr<JSStringRef> sourceCopyJS(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)sourceCopy));  // We checked for NULL earlier.
-    JSRetainPtr<JSStringRef> documentSourceCopyJS(KJS::Adopt, JSStringCreateWithCFString(documentSourceCopy ? (CFStringRef)documentSourceCopy : (CFStringRef)@""));
-    JSRetainPtr<JSStringRef> urlCopyJS(KJS::Adopt, JSStringCreateWithCFString(urlCopy ? (CFStringRef)urlCopy : (CFStringRef)@""));
+    JSRetainPtr<JSStringRef> sourceCopyJS(Adopt, JSStringCreateWithCFString((CFStringRef)sourceCopy));  // We checked for NULL earlier.
+    JSRetainPtr<JSStringRef> documentSourceCopyJS(Adopt, JSStringCreateWithCFString(documentSourceCopy ? (CFStringRef)documentSourceCopy : (CFStringRef)@""));
+    JSRetainPtr<JSStringRef> urlCopyJS(Adopt, JSStringCreateWithCFString(urlCopy ? (CFStringRef)urlCopy : (CFStringRef)@""));
     JSContextRef context = [[webView mainFrame] globalContext];
     JSValueRef sidJS = JSValueMakeNumber(context, sid);     // JSValueRefs are garbage collected
     JSValueRef baseLineJS = JSValueMakeNumber(context, baseLine);
@@ -671,7 +671,7 @@ JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStri
     id value = [cframe evaluateWebScript:(NSString *)scriptCF.get()];
 
     NSString *resultString = [NSString stringOrNilFromWebScriptResult:value];
-    JSRetainPtr<JSStringRef> resultJS(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)resultString));
+    JSRetainPtr<JSStringRef> resultJS(Adopt, JSStringCreateWithCFString((CFStringRef)resultString));
     JSValueRef returnValue = JSValueMakeString(context, resultJS.get());
 
     return returnValue;
@@ -689,7 +689,7 @@ void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vec
             function = CFSTR("(global scope)");
         frame = [frame caller];
 
-        JSRetainPtr<JSStringRef> stackString(KJS::Adopt, JSStringCreateWithCFString(function));
+        JSRetainPtr<JSStringRef> stackString(Adopt, JSStringCreateWithCFString(function));
         JSValueRef stackValue = JSValueMakeString(context, stackString.get());
         currentStack.append(stackValue);
     }
@@ -710,7 +710,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
     NSArray *localScopeVariableNames = [m_debuggerClient webScriptAttributeKeysForScriptObject:scope];
 
     for (int i = 0; i < [localScopeVariableNames count]; ++i) {
-        JSRetainPtr<JSStringRef> variableName(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)[localScopeVariableNames objectAtIndex:i]));
+        JSRetainPtr<JSStringRef> variableName(Adopt, JSStringCreateWithCFString((CFStringRef)[localScopeVariableNames objectAtIndex:i]));
         JSValueRef variableNameValue = JSValueMakeString(context, variableName.get());
         variableNames.append(variableNameValue);
     }
@@ -749,7 +749,7 @@ JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef con
     if (!resultString)
         return JSValueMakeUndefined(context);
 
-    JSRetainPtr<JSStringRef> resultJS(KJS::Adopt, JSStringCreateWithCFString((CFStringRef)resultString));
+    JSRetainPtr<JSStringRef> resultJS(Adopt, JSStringCreateWithCFString((CFStringRef)resultString));
     JSValueRef retVal = JSValueMakeString(context, resultJS.get());
     return retVal;
 }
