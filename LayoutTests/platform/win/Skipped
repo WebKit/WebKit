@@ -58,8 +58,6 @@ css2.1/t1508-c527-font-08-b.html
 css2.1/t1508-c527-font-10-c.html
 css2.1/t051201-c23-first-line-00-b.html
 editing/deleting/5144139-2.html
-editing/execCommand/5119244.html
-editing/style/5091898.html
 fast/block/positioning/047.html
 fast/css/beforeSelectorOnCodeElement.html
 fast/css/font_property_normal.html
@@ -215,11 +213,7 @@ editing/undo/undo-forward-delete.html
 # ASSERT in ClipboardWin::setData <rdar://problem/5015941>
 editing/execCommand/copy-without-selection.html
 
-# Missing two containing divs on the pasted content <rdar://problem/5132021>
-editing/inserting/insert-3907422-fix.html
-
 # EventSender.leapForward does not work in DumpRenderTree on boomer <rdar://problem/5080491>
-editing/pasteboard/drag-drop-dead-frame.html
 editing/pasteboard/drop-link.html
 editing/pasteboard/drop-text-without-selection.html
 editing/selection/selection-background.html
@@ -282,7 +276,6 @@ fast/forms/select-type-ahead-non-latin.html
 
 # Selection seems to fail for some LayoutTests <rdar://problem/5130762>
 editing/selection/4402375.html
-editing/selection/extend-by-sentence-001.html
 editing/selection/image-before-linebreak.html
 editing/selection/move-begin-end.html
 editing/selection/replaced-boundaries-1.html
@@ -489,8 +482,6 @@ editing/selection/selection-actions.html
 ################################################################################
 
 # Text, caret
-editing/pasteboard/5028447.html
-editing/pasteboard/block-wrappers-necessary.html
 editing/pasteboard/copy-paste-bidi.html
 
 # Text, RenderText, caret
@@ -502,52 +493,12 @@ editing/pasteboard/4861080.html
 # Text, renderText, drag&drop
 editing/pasteboard/4947130.html
 
-
-# BR, caret
-editing/pasteboard/paste-4039777-fix.html
-
-# Spacing
-editing/pasteboard/paste-table-002.html
-
 # Caret, RenderBlock
 editing/pasteboard/copy-standalone-image.html
-editing/pasteboard/paste-table-003.html
-editing/pasteboard/paste-text-009.html
-editing/pasteboard/paste-text-012.html
-editing/pasteboard/paste-text-013.html
 
 # Text, caret, RenderBlock
-editing/pasteboard/5027857.html
-editing/pasteboard/input-field-1.html
-editing/pasteboard/paste-4038267-fix.html
 editing/pasteboard/paste-RTFD.html
 editing/pasteboard/paste-TIFF.html
-editing/pasteboard/paste-list-001.html
-editing/pasteboard/paste-pre-001.html
-editing/pasteboard/paste-pre-002.html
-editing/pasteboard/paste-table-001.html
-editing/pasteboard/paste-text-004.html
-editing/pasteboard/paste-text-005.html
-editing/pasteboard/paste-text-006.html
-editing/pasteboard/paste-text-007.html
-editing/pasteboard/paste-text-015.html
-editing/pasteboard/paste-text-016.html
-editing/pasteboard/paste-text-017.html
-
-# Text, caret
-editing/pasteboard/paste-unrendered-select.html
-editing/pasteboard/smart-paste-001.html
-editing/pasteboard/smart-paste-002.html
-editing/pasteboard/smart-paste-003.html
-editing/pasteboard/smart-paste-004.html
-editing/pasteboard/smart-paste-005.html
-editing/pasteboard/smart-paste-007.html
-editing/pasteboard/smart-paste-008.html
-
-# Caret
-editing/pasteboard/paste-4035648-fix.html
-editing/pasteboard/paste-text-014.html
-editing/pasteboard/select-element-1.html
 
 # Text
 editing/pasteboard/subframe-dragndrop-1.html
@@ -563,45 +514,7 @@ editing/pasteboard/undoable-fragment-removes.html
 
 # These tests only fail in Release builds
 editing/execCommand/find-after-replace.html
-editing/inserting/insert-3786362-fix.html
-editing/pasteboard/3976872.html
-editing/pasteboard/4076267-2.html
-editing/pasteboard/4076267-3.html
-editing/pasteboard/4076267.html
-editing/pasteboard/4242293.html
-editing/pasteboard/4641033.html
-editing/pasteboard/4944770-1.html
 editing/pasteboard/4989774.html
-editing/pasteboard/5006779.html
-editing/pasteboard/5065605.html
-editing/pasteboard/5071074.html
-editing/pasteboard/5075944-2.html
-editing/pasteboard/5075944.html
-editing/pasteboard/display-block-on-spans.html
-editing/pasteboard/paste-line-endings-001.html
-editing/pasteboard/paste-line-endings-006.html
-editing/pasteboard/paste-match-style-001.html
-editing/pasteboard/paste-match-style-002.html
-editing/pasteboard/paste-text-001.html
-editing/pasteboard/paste-text-002.html
-editing/pasteboard/paste-text-003.html
-editing/pasteboard/paste-text-008.html
-editing/pasteboard/paste-text-010.html
-editing/pasteboard/paste-text-011.html
-editing/pasteboard/paste-text-018.html
-editing/pasteboard/paste-text-019.html
-editing/pasteboard/paste-text-at-tabspan-001.html
-editing/pasteboard/paste-text-at-tabspan-002.html
-editing/pasteboard/paste-text-at-tabspan-003.html
-editing/pasteboard/paste-xml.xhtml
-editing/pasteboard/pasting-tabs.html
-editing/pasteboard/smart-paste-006.html
-editing/pasteboard/styled-element-markup.html
-editing/pasteboard/testcase-9507.html
-editing/style/5065910.html
-editing/style/smoosh-styles-001.html
-editing/style/smoosh-styles-002.html
-editing/style/smoosh-styles-003.html
 fast/forms/input-truncate-newline.html
 fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
@@ -649,3 +562,82 @@ http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/small-chunks-response-text.html
 plugins/netscape-plugin-setwindow-size.html
 svg/custom/gradient-stop-style-change.svg
+
+
+# These tests pass in both Debug and Release and should be removed as soon as the Windows build bots are stable and green.
+editing/execCommand/5119244.html
+editing/inserting/insert-3786362-fix.html
+editing/inserting/insert-3907422-fix.html
+editing/pasteboard/3976872.html
+editing/pasteboard/4076267-2.html
+editing/pasteboard/4076267-3.html
+editing/pasteboard/4076267.html
+editing/pasteboard/4242293.html
+editing/pasteboard/4641033.html
+editing/pasteboard/4944770-1.html
+editing/pasteboard/5006779.html
+editing/pasteboard/5027857.html
+editing/pasteboard/5028447.html
+editing/pasteboard/5065605.html
+editing/pasteboard/5071074.html
+editing/pasteboard/5075944-2.html
+editing/pasteboard/5075944.html
+editing/pasteboard/block-wrappers-necessary.html
+editing/pasteboard/display-block-on-spans.html
+editing/pasteboard/drag-drop-dead-frame.html
+editing/pasteboard/input-field-1.html
+editing/pasteboard/paste-4035648-fix.html
+editing/pasteboard/paste-4038267-fix.html
+editing/pasteboard/paste-4039777-fix.html
+editing/pasteboard/paste-line-endings-001.html
+editing/pasteboard/paste-line-endings-006.html
+editing/pasteboard/paste-list-001.html
+editing/pasteboard/paste-match-style-001.html
+editing/pasteboard/paste-match-style-002.html
+editing/pasteboard/paste-pre-001.html
+editing/pasteboard/paste-pre-002.html
+editing/pasteboard/paste-table-001.html
+editing/pasteboard/paste-table-002.html
+editing/pasteboard/paste-table-003.html
+editing/pasteboard/paste-text-001.html
+editing/pasteboard/paste-text-002.html
+editing/pasteboard/paste-text-003.html
+editing/pasteboard/paste-text-004.html
+editing/pasteboard/paste-text-005.html
+editing/pasteboard/paste-text-006.html
+editing/pasteboard/paste-text-007.html
+editing/pasteboard/paste-text-008.html
+editing/pasteboard/paste-text-009.html
+editing/pasteboard/paste-text-010.html
+editing/pasteboard/paste-text-011.html
+editing/pasteboard/paste-text-012.html
+editing/pasteboard/paste-text-013.html
+editing/pasteboard/paste-text-014.html
+editing/pasteboard/paste-text-015.html
+editing/pasteboard/paste-text-016.html
+editing/pasteboard/paste-text-017.html
+editing/pasteboard/paste-text-018.html
+editing/pasteboard/paste-text-019.html
+editing/pasteboard/paste-text-at-tabspan-001.html
+editing/pasteboard/paste-text-at-tabspan-002.html
+editing/pasteboard/paste-text-at-tabspan-003.html
+editing/pasteboard/paste-unrendered-select.html
+editing/pasteboard/paste-xml.xhtml
+editing/pasteboard/pasting-tabs.html
+editing/pasteboard/select-element-1.html
+editing/pasteboard/smart-paste-001.html
+editing/pasteboard/smart-paste-002.html
+editing/pasteboard/smart-paste-003.html
+editing/pasteboard/smart-paste-004.html
+editing/pasteboard/smart-paste-005.html
+editing/pasteboard/smart-paste-006.html
+editing/pasteboard/smart-paste-007.html
+editing/pasteboard/smart-paste-008.html
+editing/pasteboard/styled-element-markup.html
+editing/pasteboard/testcase-9507.html
+editing/selection/extend-by-sentence-001.html
+editing/style/5065910.html
+editing/style/5091898.html
+editing/style/smoosh-styles-001.html
+editing/style/smoosh-styles-002.html
+editing/style/smoosh-styles-003.html

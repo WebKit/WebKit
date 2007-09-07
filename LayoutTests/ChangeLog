@@ -1,3 +1,11 @@
+2007-09-07  Alice Liu  <alice.liu@apple.com>
+
+        * platform/win/Skipped:
+        moved a bunch of editing tests that actually succeed in both Debug and Release into a 
+        section at the end of the skip list.  The reason I'm not just removing these tests from 
+        the skip list right now is because the windows bots are not stable and green yet, and I 
+        was asked to do this removal at a later time when regressions are easier to spot.
+
 2007-09-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
