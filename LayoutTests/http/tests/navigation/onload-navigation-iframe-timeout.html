@@ -1,0 +1,32 @@
+<html>
+<head>
+<script type="text/javascript">
+layoutTestController.dumpBackForwardList();
+layoutTestController.dumpAsText();
+layoutTestController.waitUntilDone();
+
+function startIframeRequest() {
+    var divElm = document.createElement("div");
+    
+    var iframe = document.createElement("iframe");
+    iframe.name = "myFrame";
+    iframe.id = "myFrame";
+    divElm.appendChild(iframe);
+
+    document.body.appendChild(divElm);
+    setTimeout(start2, 200);
+}
+
+function start2() {
+    var form = document.getElementById("myForm");
+    form.submit();
+    layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body onload="startIframeRequest();">
+<form id="myForm" target="myFrame" action="about:blank" method="get">
+</form>
+In this case, Safari and Firefox adds a history item but IE doesn't.
+</body>
+</html>

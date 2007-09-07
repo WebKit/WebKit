@@ -217,6 +217,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_quickRedirectComing(false)
     , m_sentRedirectNotification(false)
     , m_inStopAllLoaders(false)
+    , m_navigationDuringLoad(false)
     , m_cachePolicy(CachePolicyVerify)
     , m_isExecutingJavaScriptFormAction(false)
     , m_isRunningScript(false)
@@ -1602,6 +1603,16 @@ void FrameLoader::handleFallbackContent()
 
 void FrameLoader::provisionalLoadStarted()
 {
+    Page* page = m_frame->page();
+    
+    // this is used to update the current history item
+    // in the event of a navigation aytime during loading
+    m_navigationDuringLoad = false;
+    if (page) {
+        Document *document = page->mainFrame()->document();
+        m_navigationDuringLoad = !page->mainFrame()->loader()->isComplete() || (document && document->processingLoadEvent());
+    }
+    
     m_firstLayoutDone = false;
     cancelRedirection(true);
     m_client->provisionalLoadStarted();
@@ -4114,14 +4125,28 @@ void FrameLoader::addHistoryForCurrentLocation()
 void FrameLoader::updateHistoryForStandardLoad()
 {
     LOG(History, "WebCoreHistory: Updating History for Standard Load in frame %s", documentLoader()->URL().url().ascii());
-
-    if (!documentLoader()->isClientRedirect()) {
-        if (!documentLoader()->urlForHistory().isEmpty()) 
+    
+    bool frameNavigationOnLoad = false;
+    
+    // if the navigation occured during on load and this is a subframe
+    // update the current history item rather than adding a new one
+    // <rdar://problem/5333496>
+    if (m_navigationDuringLoad) {
+        HTMLFrameOwnerElement* owner = m_frame->ownerElement();
+        frameNavigationOnLoad = owner && !owner->createdByParser();
+    }
+    
+    if (!frameNavigationOnLoad && !documentLoader()->isClientRedirect()) {
+        if (!documentLoader()->urlForHistory().isEmpty())
             addHistoryForCurrentLocation();
     } else if (documentLoader()->unreachableURL().isEmpty() && m_currentHistoryItem) {
         m_currentHistoryItem->setURL(documentLoader()->URL());
         m_currentHistoryItem->setFormInfoFromRequest(documentLoader()->request());
     }
+    
+    // reset navigation during on load since we no longer
+    // need it past thsi point
+    m_navigationDuringLoad = false;
 }
 
 void FrameLoader::updateHistoryForClientRedirect()

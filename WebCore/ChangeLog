@@ -1,3 +1,50 @@
+2007-09-06  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        <rdar://problem/5333496> Back button stopped working on sfgate.com (14957)
+        
+        This fix is specifically targted to address sfgate.com and reuters.com with minimal
+        impact to other areas of the frameloader.  It does not cause any regression tests to fail.
+        I've added two layout tests: One to detect this particular bug, and one to address
+        a secondary issue: if an iframe navigation occurs during onload by a timeout an
+        additional history item is added, similarly to firefox.  We tried to match firefox
+        more than IE with this fix but did gain a little bit of IE compatability.
+
+        Tests: http/tests/navigation/onload-navigation-iframe-timeout.html
+               http/tests/navigation/onload-navigation-iframe.html
+
+        * dom/Document.h:
+        (WebCore::Document::processingLoadEvent):
+        Return the m_processingLoadEvent boolean so FrameLoader knows
+        that the document is in the middle of calling <body onload>
+        
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement):
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::createdByParser):
+        (WebCore::HTMLFrameOwnerElement::setCreatedByParser):
+        Added support for a new member variable of frame elements: m_createdByParser.
+        This lets us specifically target the fix to only iframes created via JS
+        and not in-document.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        Initialize m_navigationDuringLoad to false
+        
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        Determine if the load we're about to start is occuring during
+        an onload.
+        
+        (WebCore::FrameLoader::updateHistoryForStandardLoad):
+        If the current frameloader is for a child frame, and the navigation is occuring
+        during an onload update the current history item rather than adding a new one.
+        
+        * loader/FrameLoader.h:
+        Added a new member variable, m_navigationDuringLoad to track
+        the navigation status during the on load, rather than trying to determine
+        the status after (which is nearly impossible due to a new runloop spin).
+
 2007-09-06  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Darin.

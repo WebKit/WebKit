@@ -584,6 +584,7 @@ namespace WebCore {
         bool m_quickRedirectComing;
         bool m_sentRedirectNotification;
         bool m_inStopAllLoaders;
+        bool m_navigationDuringLoad;
 
         String m_outgoingReferrer;
 

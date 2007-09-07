@@ -1,0 +1,9 @@
+In this case, Safari and Firefox adds a history item but IE doesn't.
+
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/navigation/onload-navigation-iframe-timeout.html  **nav target**
+            about:blank (in frame "myFrame")
+curr->  http://127.0.0.1:8000/navigation/onload-navigation-iframe-timeout.html
+            about:blank? (in frame "myFrame")  **nav target**
+===============================================
