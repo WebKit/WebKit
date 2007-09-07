@@ -619,7 +619,7 @@ public:
     bool onDrawItem(WPARAM, LPARAM);
     bool onInitMenuPopup(WPARAM, LPARAM);
     bool onUninitMenuPopup(WPARAM, LPARAM);
-    void performContextMenuAction(WPARAM, LPARAM);
+    void performContextMenuAction(WPARAM, LPARAM, bool byPosition);
     bool mouseWheel(WPARAM, LPARAM, bool isHorizontal);
     bool execCommand(WPARAM wParam, LPARAM lParam);
     bool keyDown(WPARAM, LPARAM, bool systemKeyDown = false);

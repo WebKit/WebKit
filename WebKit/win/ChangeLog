@@ -1,5 +1,18 @@
 2007-09-07  Ada Chan  <adachan@apple.com>
 
+        <rdar://problem/5395928> Need to be able to handle context menu item selection by index
+
+        Reviewed by Beth.
+
+        * WebView.cpp:
+        (WebView::performContextMenuAction): performContextMenuAction() can now handle context menu
+        item selection via WM_MENUCOMMAND (by specifying byPosition to be true).  In that case, we
+        get the ContextMenuItem by position rather than by action id.
+        (WebViewWndProc): handle WM_MENUCOMMAND
+        * WebView.h:
+
+2007-09-07  Ada Chan  <adachan@apple.com>
+
         <rdar://problem/5453494> Better lifetime management of WebDataSource and WebDocumentLoader
         The problem was that WebDataSource does not hold a strong reference to the WebDocumentLoader.  If
         a WebDataSource is still around after the loader has been destroyed, it'll just point to

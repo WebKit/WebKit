@@ -1,3 +1,20 @@
+2007-09-07  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5395928> Need to be able to handle context menu item selection by index
+        
+        Reviewed by Beth.
+
+        * platform/ContextMenu.h: Added method to retrieve context menu item by index
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::ContextMenu): call setPlatformDescription() since that will handle
+        adding the MNS_NOTIFYBYPOS style to the context menu.
+        (WebCore::contextMenuItemByIdOrPosition): helper method so we don't have to duplicate code
+        between itemWithAction() and itemAtIndex().
+        (WebCore::ContextMenu::itemWithAction):
+        (WebCore::ContextMenu::itemAtIndex):
+        (WebCore::ContextMenu::setPlatformDescription): add MNS_NOTIFYBYPOS style to the context menu
+        so we will get notified by menu position through WM_MENUCOMMAND when the item is selected.
+
 2007-09-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

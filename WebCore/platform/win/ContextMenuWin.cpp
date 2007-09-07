@@ -38,14 +38,16 @@ namespace WebCore {
 
 ContextMenu::ContextMenu(const HitTestResult& result)
     : m_hitTestResult(result)
-    , m_platformDescription(::CreatePopupMenu())
+    , m_platformDescription(0)
 {
+    setPlatformDescription(::CreatePopupMenu());
 }
 
 ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
     : m_hitTestResult(result)
-    , m_platformDescription(menu)
+    , m_platformDescription(0)
 {
+    setPlatformDescription(menu);
 }
 
 ContextMenu::~ContextMenu()
@@ -76,8 +78,10 @@ void ContextMenu::appendItem(ContextMenuItem& item)
     insertItem(itemCount(), item);
 }
 
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
+static ContextMenuItem* contextMenuItemByIdOrPosition(HMENU menu, unsigned id, BOOL byPosition)
 {
+    if (!menu)
+        return 0;
     LPMENUITEMINFO info = (LPMENUITEMINFO)malloc(sizeof(MENUITEMINFO));
     if (!info)
         return 0;
@@ -88,7 +92,7 @@ ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
     
     info->fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING;
 
-    if (!::GetMenuItemInfo(m_platformDescription, action, FALSE, info)) {
+    if (!::GetMenuItemInfo(menu, id, byPosition, info)) {
         free(info);
         return 0;
     }
@@ -101,10 +105,20 @@ ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
             return 0;
         }
         info->dwTypeData = buffer;
-        ::GetMenuItemInfo(m_platformDescription, action, FALSE, info);
+        ::GetMenuItemInfo(menu, id, byPosition, info);
     }
     
     return new ContextMenuItem(info);
+}
+
+ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
+{
+    return contextMenuItemByIdOrPosition(m_platformDescription, action, FALSE);
+}
+
+ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
+{
+    return contextMenuItemByIdOrPosition(platformDescription, index, TRUE);
 }
 
 void ContextMenu::setPlatformDescription(HMENU menu)
@@ -116,6 +130,16 @@ void ContextMenu::setPlatformDescription(HMENU menu)
         ::DestroyMenu(m_platformDescription);
 
     m_platformDescription = menu;
+    if (!m_platformDescription)
+        return;
+
+    MENUINFO menuInfo = {0};
+    menuInfo.cbSize = sizeof(MENUINFO);
+    menuInfo.fMask = MIM_STYLE;
+    ::GetMenuInfo(m_platformDescription, &menuInfo);
+    menuInfo.fMask = MIM_STYLE;
+    menuInfo.dwStyle |= MNS_NOTIFYBYPOS;
+    ::SetMenuInfo(m_platformDescription, &menuInfo);
 }
 
 HMENU ContextMenu::platformDescription() const
