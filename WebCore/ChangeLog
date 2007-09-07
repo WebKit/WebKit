@@ -1,3 +1,46 @@
+2007-09-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Add some AutoreleasePool and Threading utilities in preparation for the multi-threaded
+        fix for <rdar://problem/5434431>
+
+        AutodrainedPool wraps an NSAutoreleasePool and tracks a "cycle" count.  This allows clients
+        in WebCore to simply call ::cycle() and after a preset number of iterations the pool will drain
+        and recreate the underlying NSAutoreleasePool
+   
+        Threading utilities include C++ wrappers for pthread mutexes and conditions, as well as a generic
+        "callOnMainThread()" function for any non-main thread to use.
+
+        * platform/AutodrainedPool.h: Added.  
+        (WebCore::AutodrainedPool::AutodrainedPool): Empty implementations for all non-mac platforms
+        (WebCore::AutodrainedPool::~AutodrainedPool): ditto
+        (WebCore::AutodrainedPool::cycle): ditto
+        * platform/mac/AutodrainedPool.mm: Added.
+        (WebCore::AutodrainedPool::AutodrainedPool): 
+        (WebCore::AutodrainedPool::~AutodrainedPool):
+        (WebCore::AutodrainedPool::cycle): Keep track of number of cycles, and drain/recreate the pool if the
+          cycle limit is hit
+
+        * platform/Threading.h: Added.
+        (WebCore::Mutex::Mutex): C++ wrapper for pthread_mutex
+        (WebCore::Mutex::~Mutex):
+        (WebCore::Mutex::lock):
+        (WebCore::Mutex::tryLock):
+        (WebCore::Mutex::unlock):
+        (WebCore::MutexLocker::MutexLocker): Handles automatically locking/unlocking a Mutex (for early returns
+          from a function, for example)
+        (WebCore::MutexLocker::~MutexLocker):
+        (WebCore::ThreadCondition::ThreadCondition): C++ wrapper for pthread_condition
+        (WebCore::ThreadCondition::~ThreadCondition):
+        (WebCore::ThreadCondition::wait):
+        (WebCore::ThreadCondition::signal):
+        (WebCore::ThreadCondition::broadcast):
+        * platform/mac/Threading.mm: Added.
+        (-[WebCoreFunctionWrapper initWithFunction:]): Obj-C implementation of "callOnMainThread"
+        (-[WebCoreFunctionWrapper _call]):
+        (WebCore::callOnMainThread):
+
 2007-09-07  George Staikos  <staikos@kde.org>
 
         Fix typo.

@@ -350,6 +350,10 @@
 		51D3EA180A3D24D300BADA35 /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */; };
 		51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */; };
+		51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */; };
+		51E1ECB00C91C54600DC255B /* Threading.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECAE0C91C54600DC255B /* Threading.mm */; };
+		51E1ECB30C91C55600DC255B /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB10C91C55600DC255B /* AutodrainedPool.h */; };
+		51E1ECB40C91C55600DC255B /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB20C91C55600DC255B /* Threading.h */; };
 		51E4ADB60C42B4CF0042BC55 /* FTPDirectoryDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E4ADB20C42B4CF0042BC55 /* FTPDirectoryDocument.cpp */; };
 		51E4ADB70C42B4CF0042BC55 /* FTPDirectoryDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4ADB30C42B4CF0042BC55 /* FTPDirectoryDocument.h */; };
 		51F11E150A48C2920034A24E /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F11E140A48C2920034A24E /* SQLTransaction.cpp */; };
@@ -3601,6 +3605,10 @@
 		51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
 		51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadCheck.h; sourceTree = "<group>"; };
 		51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThreadCheck.mm; sourceTree = "<group>"; };
+		51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutodrainedPool.mm; sourceTree = "<group>"; };
+		51E1ECAE0C91C54600DC255B /* Threading.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Threading.mm; sourceTree = "<group>"; };
+		51E1ECB10C91C55600DC255B /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
+		51E1ECB20C91C55600DC255B /* Threading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Threading.h; sourceTree = "<group>"; };
 		51E4ADB20C42B4CF0042BC55 /* FTPDirectoryDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryDocument.cpp; sourceTree = "<group>"; };
 		51E4ADB30C42B4CF0042BC55 /* FTPDirectoryDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryDocument.h; sourceTree = "<group>"; };
 		51F11E140A48C2920034A24E /* SQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransaction.cpp; sourceTree = "<group>"; };
@@ -7216,6 +7224,7 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
 				BC0564990C6ABC1000ACE412 /* character-sets.txt */,
@@ -7270,6 +7279,7 @@
 				9352071B09BD3BBB00F2038D /* TextBoundaries.mm */,
 				AACF144C0BEC1EF000827982 /* TextBreakIteratorInternalICUMac.mm */,
 				51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */,
+				51E1ECAE0C91C54600DC255B /* Threading.mm */,
 				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
 				F5517DC3031AB56301A80180 /* WebCoreHistory.m */,
 				84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */,
@@ -9534,6 +9544,7 @@
 				93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */,
 				93CD4FD80995F9EA007ECC97 /* AtomicString.h */,
 				93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */,
+				51E1ECB10C91C55600DC255B /* AutodrainedPool.h */,
 				E11D51910B2E7A5F0056C188 /* Base64.h */,
 				E11D51920B2E7A5F0056C188 /* Base64.cpp */,
 				514AF320BE854014A7DA49FB /* BidiContext.h */,
@@ -9651,6 +9662,7 @@
 				F58786BF02DE3B8601EA4122 /* TextStream.h */,
 				93AC8DE00A955FAC00239794 /* TextStyle.h */,
 				51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */,
+				51E1ECB20C91C55600DC255B /* Threading.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
@@ -11716,6 +11728,8 @@
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
 				514B3F730C722047000530DF /* FileSystem.h in Headers */,
 				EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */,
+				51E1ECB30C91C55600DC255B /* AutodrainedPool.h in Headers */,
+				51E1ECB40C91C55600DC255B /* Threading.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13177,6 +13191,8 @@
 				BC2ED6BC0C6BD2F000920BFF /* JSAttrCustom.cpp in Sources */,
 				BC2ED7A50C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp in Sources */,
 				514B3F760C722055000530DF /* FileSystemMac.mm in Sources */,
+				51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */,
+				51E1ECB00C91C54600DC255B /* Threading.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
