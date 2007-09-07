@@ -1,3 +1,7 @@
+2007-09-07  Sam Weinig  <sam@webkit.org>
+
+        * platform/win/Skipped: fix typo
+
 2007-09-07  Alice Liu  <alice.liu@apple.com>
 
         * platform/win/Skipped:

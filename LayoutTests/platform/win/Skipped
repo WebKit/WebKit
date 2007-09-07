@@ -550,9 +550,9 @@ fast/events/standalone-image-drag-to-editable.html
 fast/forms/drag-out-of-textarea.html
 http/tests/multipart/win-boundary-crash.html
 http/tests/plugins/npapi-response-headers.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-in-foriegn-domain-subframe.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe-location-change.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foriegn-domain-subframe.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 http/tests/xmlhttprequest/connection-error-sync.html
 http/tests/xmlhttprequest/failed-auth.html

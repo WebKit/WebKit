@@ -339,8 +339,8 @@ if (!$ignoreSkipped) {
             while (<SKIPPED>) {
                 my $skipped = $_;
                 chomp $skipped;
-                $skipped =~ s/^ +//;
-                $skipped =~ s/ +$//;
+                $skipped =~ s/^[ \n\r]+//;
+                $skipped =~ s/[ \n\r]+$//;
                 if ($skipped && $skipped !~ /^#/) {
                     if ($skippedOnly) {
                         push(@ARGV, $skipped);
