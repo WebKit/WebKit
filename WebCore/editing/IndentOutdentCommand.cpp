@@ -198,7 +198,8 @@ void IndentOutdentCommand::indentRegion()
     
     RefPtr<Range> startRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), 0, startIndex);
     RefPtr<Range> endRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), 0, endIndex);
-    setEndingSelection(Selection(startRange->endPosition(), endRange->endPosition(), DOWNSTREAM));
+    if (startRange && endRange)
+        setEndingSelection(Selection(startRange->endPosition(), endRange->endPosition(), DOWNSTREAM));
 }
 
 void IndentOutdentCommand::outdentParagraph()

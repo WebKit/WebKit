@@ -571,7 +571,10 @@ void TextIterator::exitNode()
     // case it is a block, because the run should start where the 
     // emitted character is positioned visually.
     Node* baseNode = m_node->lastChild() ? m_node->lastChild() : m_node;
-    if (shouldEmitNewlineAfterNode(m_node)) {
+    // FIXME: This shouldn't require the m_lastTextNode to be true, but we can't change that without making
+    // the logic in _web_attributedStringFromRange match.  We'll get that for free when we switch to use TextIterator in _web_attributedStringFromRange.
+    // See <rdar://problem/5428427> for an example of how this mismatch will cause problems.
+    if (m_lastTextNode && shouldEmitNewlineAfterNode(m_node)) {
         // use extra newline to represent margin bottom, as needed
         bool addNewline = shouldEmitExtraNewlineForNode(m_node);
         

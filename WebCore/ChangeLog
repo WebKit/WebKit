@@ -1,3 +1,17 @@
+2007-09-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        Fix for <rdar://problem/5428427> Wrong characters are re-converted after doing reconversion with Kotoeri
+
+        Revert change for<rdar://problem/5279521> and add nil checks for the result of TextIterator::rangeFromLocationAndLength
+        TextIterator::exitNode shouldn't require the m_lastTextNode to be true, but we can't change that without making the logic in _web_attributedStringFromRange match.
+        We'll get that for free when we switch to use TextIterator in _web_attributedStringFromRange.
+
+        * editing/ApplyStyleCommand.cpp: (WebCore::ApplyStyleCommand::applyBlockStyle): Added nil checks.
+        * editing/IndentOutdentCommand.cpp: (WebCore::IndentOutdentCommand::indentRegion): ditto.
+        * editing/TextIterator.cpp: (WebCore::TextIterator::exitNode): Re-added check for m_lastTextNode before emitting newline.
+
 2007-09-07  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5395928> Need to be able to handle context menu item selection by index

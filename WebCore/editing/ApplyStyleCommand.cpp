@@ -411,8 +411,10 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
         nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    updateStartEnd(TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), startIndex, 0, true)->startPosition(),
-                   TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), endIndex, 0, true)->startPosition());
+    startRange = TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), startIndex, 0, true);
+    endRange = TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), endIndex, 0, true);
+    if (startRange && endRange)
+        updateStartEnd(startRange->startPosition(), endRange->startPosition());
 }
 
 #define NoFontDelta (0.0f)

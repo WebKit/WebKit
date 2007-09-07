@@ -1,3 +1,13 @@
+2007-09-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        Tests for <rdar://problem/5428427> Wrong characters are re-converted after doing reconversion with Kotoeri
+
+        * platform/mac/fast/text/attributed-substring-from-range-002-expected.txt: Added.
+        * platform/mac/fast/text/attributed-substring-from-range-002.html: Added.
+        * fast/forms/textarea-type-spaces-expected.txt: Revert back to old result.
+
 2007-09-07  Sam Weinig  <sam@webkit.org>
 
         * platform/win/Skipped: fix typo
