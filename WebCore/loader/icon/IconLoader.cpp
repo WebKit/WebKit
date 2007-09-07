@@ -94,10 +94,10 @@ void IconLoader::didReceiveResponse(SubresourceLoader* resourceLoader, const Res
     // ignore the data and not try to decode the error page as an icon.
     int status = response.httpStatusCode();
     LOG(IconDatabase, "IconLoader::didReceiveResponse() - Loader %p, response %i", resourceLoader, status);
+
     if (status && (status < 200 || status > 299)) {
         ResourceHandle* handle = resourceLoader->handle();
-        finishLoading(handle ? handle->request().url() : KURL());
-        m_resourceLoader = 0;
+        finishLoading(handle ? handle->request().url() : KURL(), 0);
     }
 }
 
@@ -109,33 +109,45 @@ void IconLoader::didReceiveData(SubresourceLoader* loader, const char*, int size
 void IconLoader::didFail(SubresourceLoader* resourceLoader, const ResourceError&)
 {
     LOG(IconDatabase, "IconLoader::didFail() - Loader %p", resourceLoader);
-    ASSERT(resourceLoader == m_resourceLoader);
-    ASSERT(m_loadIsInProgress);
-    ResourceHandle* handle = resourceLoader->handle();
-    finishLoading(handle ? handle->request().url() : KURL());
+    
+    // Until <rdar://problem/5463392> is resolved and we can properly cancel SubresourceLoaders when they get an error response,
+    // we need to be prepared to receive this call even after we've "finished loading" once.
+    // After it is resolved, we can restore an assertion that the load is in progress if ::didFail() is called
+    
+    if (m_loadIsInProgress) {
+        ASSERT(resourceLoader == m_resourceLoader);
+        ResourceHandle* handle = resourceLoader->handle();
+        finishLoading(handle ? handle->request().url() : KURL(), 0);
+    }
 }
 
 void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader)
 {
     LOG(IconDatabase, "IconLoader::didFinishLoading() - Loader %p", resourceLoader);
-    // If the icon load resulted in an error-response earlier, the ResourceHandle was killed and icon data commited via finishLoading().
-    // In that case this didFinishLoading callback is pointless and we bail.  Otherwise, finishLoading() as expected
+
+    // Until <rdar://problem/5463392> is resolved and we can properly cancel SubresourceLoaders when they get an error response,
+    // we need to be prepared to receive this call even after we've "finished loading" once.
+    // After it is resolved, we can restore an assertion that the load is in progress if ::didFail() is called
+    
     if (m_loadIsInProgress) {
         ASSERT(resourceLoader == m_resourceLoader);
         ResourceHandle* handle = resourceLoader->handle();
-        finishLoading(handle ? handle->request().url() : KURL());
+        finishLoading(handle ? handle->request().url() : KURL(), m_resourceLoader->resourceData());
     }
 }
 
-void IconLoader::finishLoading(const KURL& iconURL)
+void IconLoader::finishLoading(const KURL& iconURL, PassRefPtr<SharedBuffer> data)
 {
-    // <rdar://5071341> - Crash in IconLoader::finishLoading()
-    // In certain circumstance where there is no favicon and the site's 404 page is large and complex, the IconLoader can get 
-    // cancelled/failed twice.  Reproducibility of this phenomenon is unknown, so we'd like to catch this case in debug builds,
-    // but must handle it gracefully in release
-    ASSERT(m_resourceLoader);
-    if (!iconURL.isEmpty() && m_resourceLoader) {
-        iconDatabase()->setIconDataForIconURL(m_resourceLoader->resourceData(), iconURL.url());
+
+    // When an icon load results in a 404 we commit it to the database here and clear the loading state.  
+    // But the SubresourceLoader continues pulling in data in the background for the 404 page if the server sends one.  
+    // Once that data finishes loading or if the load is cancelled while that data is being read, finishLoading ends up being called a second time.
+    // We need to change SubresourceLoader to have a mode where it will stop itself after receiving a 404 so this won't happen -
+    // in the meantime, we'll only commit this data to the IconDatabase if it's the first time ::finishLoading() is called
+    // <rdar://problem/5463392> tracks that enhancement
+    
+    if (!iconURL.isEmpty() && m_loadIsInProgress) {
+        iconDatabase()->setIconDataForIconURL(data, iconURL.url());
         LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", iconURL.url().ascii());
         m_frame->loader()->commitIconURLToIconDatabase(iconURL);
         m_frame->loader()->client()->dispatchDidReceiveIcon();

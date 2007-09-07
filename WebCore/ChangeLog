@@ -1,5 +1,30 @@
 2007-09-07  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Sam
+
+        <rdar://problem/5089241> - ASSERT and other funky effects in IconLoader with large 404 pages
+
+        There were two problems:
+        1 - I originally didn't expect SubresourceLoader to keep pulling in data after it received a 404 response,
+            but if the server sends back a complex 404 page, the loader did just that.  That could result in the 
+            IconLoader "finishing" twice
+        2 - In this case, the long messy 404 page would be committed to the database as image data.  This would 
+            result in wasted space on disk, wasted space in RAM, and wasting processor time trying to parse 50k+
+            of HTML as image data
+
+        Fix is two parts - 1, monitor the "m_loadIsInProgress" flag and 2, make ::finishLoading() take an actual 
+        SharedBuffer argument that is what should be committed to the database so the ResourceHandle is unnecessary
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didReceiveResponse): If the response is not valid, commit null data 
+        (WebCore::IconLoader::didFail): If we've already finished loading once (the 404 response), don't
+          finish again!
+        (WebCore::IconLoader::didFinishLoading): Ditto
+        (WebCore::IconLoader::finishLoading): Take a SharedBuffer argumnt as the actual data to commit
+        * loader/icon/IconLoader.h: Add a SharedBuffer arg to ::finishLoading()
+
+2007-09-07  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         Inline the in-header definitions for non-Mac platforms

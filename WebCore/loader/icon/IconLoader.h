@@ -30,10 +30,12 @@
 #include "SubresourceLoaderClient.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class Frame;
+class SharedBuffer;
 
 class IconLoader : private SubresourceLoaderClient, Noncopyable {
 public:
@@ -51,7 +53,7 @@ private:
     virtual void didFinishLoading(SubresourceLoader*);
     virtual void didFail(SubresourceLoader*, const ResourceError&);
 
-    void finishLoading(const KURL&);
+    void finishLoading(const KURL&, PassRefPtr<SharedBuffer> data);
     void clearLoadingState();
 
     Frame* m_frame;
