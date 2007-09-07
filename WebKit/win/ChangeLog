@@ -1,3 +1,16 @@
+2007-09-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5461487>
+        Seed: Embedded media content (Flash Player 9) inside RSS reported as unknown MIME type.
+        
+        Don't return ObjectContentNone if the URL's extension can't be mapped to a MIME type. If the MIME type is empty, 
+        we will try to display the content in a subframe instead, just like Mac WebKit.
+        
+        * WebFrame.cpp:
+        (WebFrame::objectContentType):
+
 2007-09-07  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5395928> Need to be able to handle context menu item selection by index
