@@ -49,6 +49,7 @@
 #include "Editor.h"
 #include "PlatformScrollBar.h"
 #include "PlatformKeyboardEvent.h"
+#include "ProgressTracker.h"
 
 #include <QDebug>
 #include <QDragEnterEvent>
@@ -123,6 +124,7 @@ QWebPage::QWebPage(QWidget *parent)
 
     setPalette(pal);
     setAcceptDrops(true);
+    connect(this, SIGNAL(loadProgressChanged(int)), this, SLOT(onLoadProgressChanged(int)));
 }
 
 QWebPage::~QWebPage()
@@ -683,3 +685,17 @@ QString QWebPage::userAgentStringForUrl(const QUrl& forUrl) const {
 }
 
 
+void QWebPage::onLoadProgressChanged(int) {
+    d->m_totalBytes = d->page->progress()->totalPageAndResourseBytesToLoad();
+    d->m_bytesReceived = d->page->progress()->totalBytesReceived();
+}
+
+
+quint64 QWebPage::totalBytes() const {
+    return d->m_bytesReceived;
+}
+
+
+quint64 QWebPage::bytesReceived() const {
+    return d->m_totalBytes;
+}

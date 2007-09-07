@@ -1,3 +1,13 @@
+2007-09-07  Qing Zhao  <qing@staikos.net>
+
+        Reviewed by Anders and George.
+
+        Add accessors for these two variables.
+
+        * loader/ProgressTracker.h:
+        (WebCore::ProgressTracker::totalPageAndResourseBytesToLoad):
+        (WebCore::ProgressTracker::totalBytesReceived):
+
 2007-09-06  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Maciej Stachowiak.

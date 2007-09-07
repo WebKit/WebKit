@@ -104,6 +104,9 @@ public:
     bool canCopy() const;
     bool canPaste() const;
 
+    quint64 totalBytes() const;
+    quint64 bytesReceived() const;
+
 public slots:
     /**
      * Stops loading of the page, if loading.
@@ -167,6 +170,9 @@ signals:
     void initialLayoutComplete();
 
     void addToHistory(const QUrl&);
+
+private slots:
+    void onLoadProgressChanged(int);
 
 protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
