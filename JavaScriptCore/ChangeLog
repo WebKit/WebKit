@@ -1,3 +1,13 @@
+2007-09-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        - fix crash seen on Windows release builds
+
+        * wtf/FastMalloc.cpp: Change pthread_getspecific optimization to be done only
+        on the DARWIN platform. Also correct a couple reinterpret_cast that should be
+        static_cast instead.
+
 2007-09-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Maciej.

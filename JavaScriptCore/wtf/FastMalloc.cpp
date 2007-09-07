@@ -192,8 +192,18 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <string.h>
 
 #if WTF_CHANGES
+
 #if PLATFORM(DARWIN)
 #include "MallocZoneSupport.h"
+#endif
+
+// Calling pthread_getspecific through a global function pointer is faster than a normal
+// call to the function on Mac OS X, and it's used in performance-critical code. So we
+// use a function pointer. But that's not necessarily faster on other platforms, and we had
+// problems with this technique on Windows, so we'll do this only on Mac OS X.
+#if PLATFORM(DARWIN)
+static void* (*pthread_getspecific_function_pointer)(pthread_key_t) = pthread_getspecific;
+#define pthread_getspecific(key) pthread_getspecific_function_pointer(key)
 #endif
 
 namespace WTF {
@@ -1282,7 +1292,6 @@ static inline TCMalloc_PageHeap* getPageHeap()
 // Until then, we use a slow path to get the heap object.
 static bool tsd_inited = false;
 static pthread_key_t heap_key;
-static void* (*FM_pthread_getspecific)(pthread_key_t) = pthread_getspecific;
 
 // Allocator for thread heaps
 static PageHeapAllocator<TCMalloc_ThreadCache> threadheap_allocator;
@@ -1552,10 +1561,10 @@ ALWAYS_INLINE TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
   if (!tsd_inited) {
     InitModule();
   } else {
-    ptr = FM_pthread_getspecific(heap_key);
+    ptr = pthread_getspecific(heap_key);
   }
   if (ptr == NULL) ptr = CreateCacheIfNecessary();
-  return reinterpret_cast<TCMalloc_ThreadCache*>(ptr);
+  return static_cast<TCMalloc_ThreadCache*>(ptr);
 }
 
 // In deletion paths, we do not try to create a thread-cache.  This is
@@ -1563,8 +1572,7 @@ ALWAYS_INLINE TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
 // already cleaned up the cache for this thread.
 inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCacheIfPresent() {
   if (!tsd_inited) return NULL;
-  return reinterpret_cast<TCMalloc_ThreadCache*>
-    (FM_pthread_getspecific(heap_key));
+  return static_cast<TCMalloc_ThreadCache*>(pthread_getspecific(heap_key));
 }
 
 void TCMalloc_ThreadCache::PickNextSample() {
@@ -1680,7 +1688,7 @@ void* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
 void TCMalloc_ThreadCache::DeleteCache(void* ptr) {
   // Remove all memory from heap
   TCMalloc_ThreadCache* heap;
-  heap = reinterpret_cast<TCMalloc_ThreadCache*>(ptr);
+  heap = static_cast<TCMalloc_ThreadCache*>(ptr);
   heap->Cleanup();
 
   // Remove from linked list
