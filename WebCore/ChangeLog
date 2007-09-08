@@ -1,3 +1,10 @@
+2007-09-08  Brady Eidson  <beidson@apple.com>
+
+        Build fix for non-Mac platforms that use Icon Database
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase): Apparently only Mac has the beauty that is pthread_main_np()
+
 2007-09-08  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

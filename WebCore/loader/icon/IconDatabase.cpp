@@ -723,7 +723,9 @@ IconDatabase::IconDatabase()
     , m_imported(false)
     , m_isImportedSet(false)
 {
+#if PLATFORM(MAC)
     ASSERT(pthread_main_np());
+#endif
 }
 
 IconDatabase::~IconDatabase()
