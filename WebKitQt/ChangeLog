@@ -1,3 +1,11 @@
+2007-09-08  Brady Eidson  <beidson@apple.com>
+
+        Build fix
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClient::registerForIconNotification):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Maciej Stachowiak, Mark Rowe, Tim Hatcher.

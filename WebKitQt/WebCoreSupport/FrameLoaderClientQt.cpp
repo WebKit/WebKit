@@ -584,6 +584,11 @@ void FrameLoaderClient::didPerformFirstNavigation() const
 {
 }
 
+void FrameLoaderClient::registerForIconNotification(bool) const
+{
+    notImplemented();
+}
+
 void FrameLoaderClientQt::setDocumentViewFromCachedPage(CachedPage*)
 {
     notImplemented();

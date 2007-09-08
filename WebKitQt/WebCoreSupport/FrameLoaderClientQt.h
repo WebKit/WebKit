@@ -213,6 +213,8 @@ namespace WebCore {
         
         virtual void windowObjectCleared() const;
         virtual void didPerformFirstNavigation() const;
+        
+        virtual void registerForIconNotification(bool) const;
 
         QString chooseFile(const QString& oldFile);
 
