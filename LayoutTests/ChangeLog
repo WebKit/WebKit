@@ -1,3 +1,29 @@
+2007-09-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Re-adding a few mac specific directories that accidentally got clobbered
+        during my recent layout test rearranging
+
+        * platform/mac/editing/input: Added.
+        * platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress-expected.txt: Added.
+        * platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html: Added.
+        * platform/mac/editing/input/hangul.js: Added.
+        * platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline-expected.txt: Added.
+        * platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html: Added.
+        * platform/mac/editing/input/kotoeri.js: Added.
+        * platform/mac/editing/input/logger.js: Added.
+        * platform/mac/fast/AppleScript: Added.
+        * platform/mac/fast/AppleScript/001-expected.txt: Added.
+        * platform/mac/fast/AppleScript/001.html: Added.
+        * platform/mac/fast/AppleScript/array-expected.txt: Added.
+        * platform/mac/fast/AppleScript/array.html: Added.
+        * platform/mac/fast/AppleScript/date-expected.txt: Added.
+        * platform/mac/fast/AppleScript/date.html: Added.
+        * platform/mac/fast/objc: Added.
+        * platform/mac/fast/objc/longlongTest-expected.txt: Added.
+        * platform/mac/fast/objc/longlongTest.html: Added.
+
 2007-09-07  Justin Garcia  <justin.garcia@apple.com>
 
         Disabling the layout tests checked in with r25421 while I investigate

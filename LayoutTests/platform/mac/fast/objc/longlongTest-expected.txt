@@ -1,0 +1,11 @@
+PASS Test LongLong: result is 0 as expected!
+PASS Test LongLong: result is 1 as expected!
+PASS Test LongLong: result is -1 as expected!
+PASS Test LongLong: result is -9223372036854776000 as expected!
+PASS Test LongLong: result is -9223372036854776000 as expected!
+PASS Test UnsignedLongLong: result is 0 as expected!
+PASS Test UnsignedLongLong: result is 1 as expected!
+PASS Test UnsignedLongLong: result is 18446744073709552000 as expected!
+PASS Test UnsignedLongLong: result is 9223372036854776000 as expected!
+PASS Test UnsignedLongLong: result is 9223372036854776000 as expected!
+

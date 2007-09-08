@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>do JavaScript - converting to AppleScript types</title>
+</head>
+<body>
+An automated test for basic AppleScript "do JavaScript" support.
+<script type="text/javascript">
+
+    var console_messages = document.createElement("ol");
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    if (window.layoutTestController) {
+        
+        try {
+        
+            layoutTestController.dumpAsText();
+            document.execCommand("SelectAll");
+            
+            log(appleScriptController.doJavaScript("2*2;"));
+            log(appleScriptController.doJavaScript("new Number(2*2);"));
+            log(appleScriptController.doJavaScript("2/3;"));
+            log(appleScriptController.doJavaScript("new Number(2/3);"));
+            log(appleScriptController.doJavaScript("2/0;"));
+            log(appleScriptController.doJavaScript("new Number(-2/0);"));
+            log(appleScriptController.doJavaScript("1!=1"));
+            log(appleScriptController.doJavaScript("new Boolean"));
+            log(appleScriptController.doJavaScript("'a string'"));
+            log(appleScriptController.doJavaScript("new String('a string')"));
+            log(appleScriptController.doJavaScript("window.getSelection()"));
+            log(appleScriptController.doJavaScript("window.getSelection() + \"\""));
+            log(appleScriptController.doJavaScript("document"));
+            log(appleScriptController.doJavaScript("document.title"));
+            log(appleScriptController.doJavaScript("document.lalala"));
+            log(appleScriptController.doJavaScript("document.lalala()")); // ideally, should pass the error to AppleScript
+            log(appleScriptController.doJavaScript("function Polygon() {this.edges = 8;} new Polygon;"));
+            
+        } catch (ex) {
+            log("Exception: " + ex.description);
+        }
+
+        var console = document.createElement("p");
+        console.appendChild(console_messages);
+        document.body.appendChild(console);
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>
