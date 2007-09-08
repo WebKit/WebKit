@@ -1,3 +1,12 @@
+2007-09-07  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Housekeeping.  No test required.
+
+        * bindings/objc/WebScriptObjectInternal.h: Removed unused file.
+        * bindings/objc/WebScriptObjectPrivate.h: Updated copyright statement.
+
 2007-09-07  Justin Garcia  <justin.garcia@apple.com>
         
         Rolling out my changes from r25421 while I investigate the layout test failures

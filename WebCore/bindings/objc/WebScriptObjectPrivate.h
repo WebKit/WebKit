@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004 Apple Computer, Inc. All rights reserved.    
+    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.    
 */
 #ifndef _WEB_SCRIPT_OBJECT_PRIVATE_H_
 #define _WEB_SCRIPT_OBJECT_PRIVATE_H_
