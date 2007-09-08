@@ -1,5 +1,13 @@
 2007-09-08  Brady Eidson  <beidson@apple.com>
 
+        Better build fix
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClient::registerForIconNotification):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
+2007-09-08  Brady Eidson  <beidson@apple.com>
+
         Build fix
 
         * WebCoreSupport/FrameLoaderClientQt.cpp:
