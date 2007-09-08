@@ -195,6 +195,7 @@ private:
     virtual WebCore::String overrideMediaType() const;
     
     virtual void windowObjectCleared() const;
+    virtual void didPerformFirstNavigation() const;
 
     void deliverArchivedResourcesAfterDelay() const;
     bool canUseArchivedResource(NSURLRequest *) const;

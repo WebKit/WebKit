@@ -212,6 +212,7 @@ namespace WebCore {
         virtual String overrideMediaType() const;
         
         virtual void windowObjectCleared() const;
+        virtual void didPerformFirstNavigation() const;
 
         QString chooseFile(const QString& oldFile);
 

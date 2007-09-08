@@ -1,3 +1,25 @@
+2007-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler, Maciej Stachowiak, Mark Rowe, Tim Hatcher.
+        
+        Fixed <rdar://problem/5326009> Make non-browser WebKit clients have no 
+        memory cache, or a very tiny one
+
+        Added a client callback to notify WebKit when the first navigation has
+        taken place. "Navigation" here means a transition from one page to 
+        another that ends up in the back/forward list.
+        
+        WebKit Mac uses this notification to grow its cache model under certain
+        circumstances.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addBackForwardItemClippedAtTarget):
+        * loader/FrameLoaderClient.h:
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::didPerformFirstNavigation): Ah, 
+        SVGEmptyFrameLoaderClient, my old friend. 
+
 2007-09-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dave Harrison.

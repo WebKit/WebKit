@@ -67,7 +67,7 @@ typedef WebCore::Page WebCorePage;
 
 @interface WebView (WebViewMiscInternal)
 
-+ (void)_initializeCacheSizesIfNecessary;
++ (void)_setCacheModelIfNecessary;
 - (WebCorePage*)page;
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 - (id)_UIDelegateForwarder;

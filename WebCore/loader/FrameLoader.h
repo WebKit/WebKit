@@ -642,6 +642,8 @@ namespace WebCore {
         RefPtr<HistoryItem> m_currentHistoryItem;
         RefPtr<HistoryItem> m_previousHistoryItem;
         RefPtr<HistoryItem> m_provisionalHistoryItem;
+        
+        bool m_didPerformFirstNavigation;
 
 #if USE(LOW_BANDWIDTH_DISPLAY)
         // whether to use low bandwidth dislay, set by client

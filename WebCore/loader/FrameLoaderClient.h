@@ -207,6 +207,7 @@ namespace WebCore {
         virtual String overrideMediaType() const = 0;
 
         virtual void windowObjectCleared() const = 0;
+        virtual void didPerformFirstNavigation() const = 0; // "Navigation" here means a transition from one page to another that ends up in the back/forward list.
         
 #if PLATFORM(MAC)
         virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const = 0;

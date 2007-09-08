@@ -580,6 +580,10 @@ void FrameLoaderClientQt::windowObjectCleared() const
         emit m_webFrame->cleared();
 }
 
+void FrameLoaderClient::didPerformFirstNavigation() const
+{
+}
+
 void FrameLoaderClientQt::setDocumentViewFromCachedPage(CachedPage*)
 {
     notImplemented();

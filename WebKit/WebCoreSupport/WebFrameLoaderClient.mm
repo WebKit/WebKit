@@ -1241,6 +1241,13 @@ void WebFrameLoaderClient::windowObjectCleared() const
     [m_webFrame->_private->bridge windowObjectCleared];
 }
 
+void WebFrameLoaderClient::didPerformFirstNavigation() const
+{
+    WebPreferences *preferences = [[m_webFrame.get() webView] preferences];
+    if ([preferences automaticallyDetectsCacheModel] && [preferences cacheModel] < WebCacheModelDocumentBrowser)
+        [preferences setCacheModel:WebCacheModelDocumentBrowser];
+}
+
 @implementation WebFramePolicyListener
 
 #ifndef BUILDING_ON_TIGER

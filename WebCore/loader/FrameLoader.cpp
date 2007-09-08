@@ -238,6 +238,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_openedByDOM(false)
     , m_creatingInitialEmptyDocument(false)
     , m_committedFirstRealDocumentLoad(false)
+    , m_didPerformFirstNavigation(false)
 #if USE(LOW_BANDWIDTH_DISPLAY)
     , m_useLowBandwidthDisplay(true)
     , m_finishedParsingDuringLowBandwidthDisplay(false)
@@ -3757,7 +3758,14 @@ void FrameLoader::addBackForwardItemClippedAtTarget(bool doClip)
         if (!documentLoader()->urlForHistory().isEmpty()) {
             Frame* mainFrame = page->mainFrame();
             ASSERT(mainFrame);
-            RefPtr<HistoryItem> item = mainFrame->loader()->createHistoryItemTree(m_frame, doClip);
+            FrameLoader* frameLoader = mainFrame->loader();
+
+            if (!frameLoader->m_didPerformFirstNavigation && page->backForwardList()->entries().size() == 1) {
+                frameLoader->m_didPerformFirstNavigation = true;
+                m_client->didPerformFirstNavigation();
+            }
+
+            RefPtr<HistoryItem> item = frameLoader->createHistoryItemTree(m_frame, doClip);
             LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", item.get(), documentLoader()->URL().url().ascii());
             page->backForwardList()->addItem(item);
         }

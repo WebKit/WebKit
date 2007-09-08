@@ -1,3 +1,16 @@
+2007-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler, Maciej Stachowiak, Mark Rowe, Tim Hatcher.
+        
+        Fixed <rdar://problem/5326009> Make non-browser WebKit clients have no 
+        memory cache, or a very tiny one
+        
+        Keep the Windows build working with an empty stub.
+        
+        * WebFrame.cpp:
+        (FrameLoaderClient::didPerformFirstNavigation):
+        * WebFrame.h:
+
 2007-09-07  Ada Chan  <adachan@apple.com>
 
         Need to let the OS handle Alt+F4.

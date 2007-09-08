@@ -56,7 +56,7 @@ static void initCapabilities(void)
     }
 }
 
-vm_size_t WebSystemMainMemory(void)
+vm_size_t WebMemorySize(void)
 {
     pthread_once(&initControl, initCapabilities);
     return gHostBasicInfo.memory_size;
@@ -76,4 +76,10 @@ int WebNumberOfCPUs(void)
         sysctl(mib, 2, &numCPUs, &len, NULL, 0);
     }
     return numCPUs;
+}
+
+unsigned long long WebVolumeFreeSize(NSString *path)
+{
+    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] fileSystemAttributesAtPath:path];
+    return [[fileSystemAttributesDictionary objectForKey:NSFileSystemFreeSize] unsignedLongLongValue];
 }

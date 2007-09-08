@@ -63,6 +63,7 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
+#import "WebKitSystemBits.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
 #import "WebNSDataExtras.h"
@@ -120,6 +121,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <mach-o/dyld.h>
 #import <objc/objc-runtime.h>
 #import <wtf/RefPtr.h>
 #import <wtf/HashTraits.h>
@@ -238,6 +240,9 @@ macro(yankAndSelect) \
 #define WebKitOriginalTopPrintingMarginKey @"WebKitOriginalTopMargin"
 #define WebKitOriginalBottomPrintingMarginKey @"WebKitOriginalBottomMargin"
 
+static BOOL s_didSetCacheModel;
+static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
+
 static BOOL applicationIsTerminating;
 static int pluginDatabaseClientCount = 0;
 
@@ -343,6 +348,8 @@ static int pluginDatabaseClientCount = 0;
 @end
 
 @interface WebView (WebFileInternal)
++ (void)_setCacheModel:(WebCacheModel)cacheModel;
++ (WebCacheModel)_cacheModel;
 - (WebFrame *)_selectedOrMainFrame;
 - (WebFrameBridge *)_bridgeForSelectedOrMainFrame;
 - (BOOL)_isLoading;
@@ -451,6 +458,7 @@ static BOOL grammarCheckingEnabled;
 - (void)dealloc
 {
     ASSERT(!page);
+    ASSERT(!preferences);
 
     delete userAgent;
     delete identifierMap;
@@ -458,7 +466,6 @@ static BOOL grammarCheckingEnabled;
     [applicationNameForUserAgent release];
     [backgroundColor release];
     
-    [preferences release];
     [hostWindow release];
 
     [policyDelegateForwarder release];
@@ -706,7 +713,14 @@ static bool debugWidget = true;
     }
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
+
+    [WebPreferences _removeReferenceForIdentifier:[self preferencesIdentifier]];
+
+    WebPreferences *preferences = _private->preferences;
+    _private->preferences = nil;
+    [preferences didRemoveFromWebView];
+    [preferences release];
+
     pluginDatabaseClientCount--;
     
     // Make sure to close both sets of plug-ins databases because plug-ins need an opportunity to clean up files, etc.
@@ -880,8 +894,18 @@ static bool debugWidget = true;
     return needsQuirk;
 }
 
-- (void)_updateWebCoreSettingsFromPreferences:(WebPreferences *)preferences
+- (void)_preferencesChangedNotification:(NSNotification *)notification
 {
+    WebPreferences *preferences = (WebPreferences *)[notification object];
+    ASSERT(preferences == [self preferences]);
+
+    if (!_private->userAgentOverridden)
+        *_private->userAgent = String();
+
+    // Cache this value so we don't have to read NSUserDefaults on each page load
+    _private->useSiteSpecificSpoofing = [preferences _useSiteSpecificSpoofing];
+
+    // Update corresponding WebCore Settings object.
     if (!_private->page)
         return;
     
@@ -920,18 +944,6 @@ static bool debugWidget = true;
     } else
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
-}
-
-- (void)_preferencesChangedNotification: (NSNotification *)notification
-{
-    WebPreferences *preferences = (WebPreferences *)[notification object];
-    
-    ASSERT(preferences == [self preferences]);
-    if (!_private->userAgentOverridden)
-        *_private->userAgent = String();
-    // Cache this value so we don't have to read NSUserDefaults on each page load
-    _private->useSiteSpecificSpoofing = [preferences _useSiteSpecificSpoofing];
-    [self _updateWebCoreSettingsFromPreferences: preferences];
 }
 
 - (void)_cacheResourceLoadDelegateImplementations
@@ -1569,7 +1581,9 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 - (void)setUsesPageCache:(BOOL)usesPageCache
 {
     _private->usesPageCache = usesPageCache;
-    [self _updateWebCoreSettingsFromPreferences:[self preferences]];
+
+    // Post a notification so the WebCore settings update.
+    [[self preferences] _postPreferencesChangesNotification];
 }
 
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource 
@@ -1656,6 +1670,8 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 #endif
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];
 
     // Older versions of Safari use the pasteboard types without initializing them.
     // But they create a WebView beforehand, so if we initialize here that should be fine.
@@ -1793,12 +1809,16 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    WebPreferences *standardPreferences = [WebPreferences standardPreferences];
+    [standardPreferences willAddToWebView];
+
+    _private->preferences = [standardPreferences retain];
     _private->catchesDelegateExceptions = YES;
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
     _private->backgroundColor = [[NSColor whiteColor] retain];
-    
+
     NSRect f = [self frame];
     WebFrameView *frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
     [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -1808,7 +1828,6 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     WebKitInitializeLoggingChannelsIfNecessary();
     WebCore::InitializeLoggingChannelsIfNecessary();
     [WebHistoryItem initWindowWatcherIfNecessary];
-    [WebView _initializeCacheSizesIfNecessary];
 
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName frameView:frameView] release];
@@ -1835,19 +1854,11 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
         [WebScriptDebugServer sharedScriptDebugServer];
 
     WebPreferences *prefs = [self preferences];
-    
-    // Update WebCore with preferences.  These values will either come from an archived WebPreferences,
-    // or from the standard preferences, depending on whether this method was called from initWithCoder:
-    // or initWithFrame, respectively.
-    [self _updateWebCoreSettingsFromPreferences:prefs];
-
-    // Initialize this cached value for the common case where we're using [WebPreferences standardPreferences],
-    // since neither setPreferences: nor _preferencesChangedNotification: will be called.
-    _private->useSiteSpecificSpoofing = [prefs _useSiteSpecificSpoofing];
-    
-    // Register to receive notifications whenever preference values change.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
                                                  name:WebPreferencesChangedNotification object:prefs];
+
+    // Post a notification so the WebCore settings update.
+    [[self preferences] _postPreferencesChangesNotification];
 
     if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION))
         FrameLoader::setRestrictAccessToLocal(true);
@@ -1980,7 +1991,7 @@ NS_ENDHANDLER
 
 - (void)dealloc
 {
-    // call close to ensure we tear-down completly
+    // call close to ensure we tear-down completely
     // this maintains our old behavior for existing applications
     [self _close];
 
@@ -2044,23 +2055,33 @@ NS_ENDHANDLER
 
 - (void)setPreferences:(WebPreferences *)prefs
 {
-    if (_private->preferences != prefs) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:[self preferences]];
-        [WebPreferences _removeReferenceForIdentifier:[_private->preferences identifier]];
-        [_private->preferences release];
-        _private->preferences = [prefs retain];
-        // Cache this value so we don't have to read NSUserDefaults on each page load
-        _private->useSiteSpecificSpoofing = [prefs _useSiteSpecificSpoofing];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
-            name:WebPreferencesChangedNotification object:[self preferences]];
-        [[NSNotificationCenter defaultCenter]
-            postNotificationName:WebPreferencesChangedNotification object:prefs userInfo:nil];
-    }
+    if (!prefs)
+        prefs = [WebPreferences standardPreferences];
+
+    if (_private->preferences == prefs)
+        return;
+
+    [prefs willAddToWebView];
+
+    WebPreferences *oldPrefs = _private->preferences;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:[self preferences]];
+    [WebPreferences _removeReferenceForIdentifier:[oldPrefs identifier]];
+
+    _private->preferences = [prefs retain];
+
+    // After registering for the notification, post it so the WebCore settings update.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
+        name:WebPreferencesChangedNotification object:[self preferences]];
+    [[self preferences] _postPreferencesChangesNotification];
+
+    [oldPrefs didRemoveFromWebView];
+    [oldPrefs release];
 }
 
 - (WebPreferences *)preferences
 {
-    return _private->preferences ? _private->preferences : [WebPreferences standardPreferences];
+    return _private->preferences;
 }
 
 - (void)setPreferencesIdentifier:(NSString *)anIdentifier
@@ -3561,6 +3582,248 @@ static WebFrameView *containingFrameView(NSView *view)
 
 @implementation WebView (WebFileInternal)
 
++ (void)_setCacheModel:(WebCacheModel)cacheModel
+{
+    if (s_didSetCacheModel && cacheModel == s_cacheModel)
+        return;
+
+    // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
+    // count doesn't align exactly to a megabyte boundary.
+    vm_size_t memSize = WebMemorySize() / 1024 / 1000;
+    unsigned long long diskFreeSize = WebVolumeFreeSize(NSHomeDirectory()) / 1024 / 1000;
+    NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
+
+    unsigned cacheTotalCapacity = 0;
+    unsigned cacheMinDeadCapacity = 0;
+    unsigned cacheMaxDeadCapacity = 0;
+
+    unsigned pageCacheCapacity = 0;
+
+    unsigned nsurlCacheMemoryCapacity = 0;
+    unsigned nsurlCacheDiskCapacity = 0;
+
+    switch (cacheModel) {
+    case WebCacheModelDocumentViewer: {
+        // Page cache capacity (in pages)
+        pageCacheCapacity = 0;
+
+        // Object cache capacities (in bytes)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 256 * 1024 * 1024;
+        else if (memSize >= 3072)
+            cacheTotalCapacity = 192 * 1024 * 1024;
+        else if (memSize >= 2048)
+            cacheTotalCapacity = 128 * 1024 * 1024;
+        else if (memSize >= 1536)
+            cacheTotalCapacity = 86 * 1024 * 1024;
+        else if (memSize >= 1024)
+            cacheTotalCapacity = 64 * 1024 * 1024;
+        else if (memSize >= 512)
+            cacheTotalCapacity = 32 * 1024 * 1024;
+        else if (memSize >= 256)
+            cacheTotalCapacity = 16 * 1024 * 1024; 
+
+        cacheMinDeadCapacity = 0;
+        cacheMaxDeadCapacity = 0;
+
+        // Foundation memory cache capacity (in bytes)
+        nsurlCacheMemoryCapacity = 0;
+
+        // Foundation disk cache capacity (in bytes)
+        nsurlCacheDiskCapacity = [nsurlCache diskCapacity];
+
+        break;
+    }
+    case WebCacheModelDocumentBrowser: {
+        // Page cache capacity (in pages)
+        if (memSize >= 1024)
+            pageCacheCapacity = 3;
+        else if (memSize >= 512)
+            pageCacheCapacity = 2;
+        else if (memSize >= 256)
+            pageCacheCapacity = 1;
+        else
+            pageCacheCapacity = 0;
+
+        // Object cache capacities (in bytes)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 256 * 1024 * 1024;
+        else if (memSize >= 3072)
+            cacheTotalCapacity = 192 * 1024 * 1024;
+        else if (memSize >= 2048)
+            cacheTotalCapacity = 128 * 1024 * 1024;
+        else if (memSize >= 1536)
+            cacheTotalCapacity = 86 * 1024 * 1024;
+        else if (memSize >= 1024)
+            cacheTotalCapacity = 64 * 1024 * 1024;
+        else if (memSize >= 512)
+            cacheTotalCapacity = 32 * 1024 * 1024;
+        else if (memSize >= 256)
+            cacheTotalCapacity = 16 * 1024 * 1024; 
+
+        cacheMinDeadCapacity = cacheTotalCapacity * 0.125f;
+        cacheMaxDeadCapacity = cacheTotalCapacity * 0.25f;
+
+        // Foundation memory cache capacity (in bytes)
+        if (memSize >= 2048)
+            nsurlCacheMemoryCapacity = 4 * 1024 * 1024;
+        else if (memSize >= 1024)
+            nsurlCacheMemoryCapacity = 2 * 1024 * 1024;
+        else if (memSize >= 512)
+            nsurlCacheMemoryCapacity = 1 * 1024 * 1024;
+        else
+            nsurlCacheMemoryCapacity =      512 * 1024; 
+
+        // Foundation disk cache capacity (in bytes)
+        if (diskFreeSize >= 16384)
+            nsurlCacheDiskCapacity = 50 * 1024 * 1024;
+        else if (diskFreeSize >= 8192)
+            nsurlCacheDiskCapacity = 40 * 1024 * 1024;
+        else if (diskFreeSize >= 4096)
+            nsurlCacheDiskCapacity = 30 * 1024 * 1024;
+        else
+            nsurlCacheDiskCapacity = 20 * 1024 * 1024;
+
+        break;
+    }
+    case WebCacheModelPrimaryWebBrowser: {
+        // Page cache capacity (in pages)
+        // (Research indicates that value / page drops substantially after 3 pages.)
+        if (memSize >= 8192)
+            pageCacheCapacity = 7;
+        if (memSize >= 4096)
+            pageCacheCapacity = 6;
+        else if (memSize >= 2048)
+            pageCacheCapacity = 5;
+        else if (memSize >= 1024)
+            pageCacheCapacity = 4;
+        else if (memSize >= 512)
+            pageCacheCapacity = 3;
+        else if (memSize >= 256)
+            pageCacheCapacity = 2;
+        else
+            pageCacheCapacity = 1;
+
+        // Object cache capacities (in bytes)
+        // (Testing indicates that value / MB depends heavily on content and
+        // browsing pattern. Even growth above 128MB can have substantial 
+        // value / MB for some content / browsing patterns.)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 512 * 1024 * 1024;
+        else if (memSize >= 3072)
+            cacheTotalCapacity = 384 * 1024 * 1024;
+        else if (memSize >= 2048)
+            cacheTotalCapacity = 256 * 1024 * 1024;
+        else if (memSize >= 1536)
+            cacheTotalCapacity = 172 * 1024 * 1024;
+        else if (memSize >= 1024)
+            cacheTotalCapacity = 128 * 1024 * 1024;
+        else if (memSize >= 512)
+            cacheTotalCapacity = 64 * 1024 * 1024;
+        else if (memSize >= 256)
+            cacheTotalCapacity = 32 * 1024 * 1024; 
+
+        cacheMinDeadCapacity = cacheTotalCapacity * 0.25f;
+        cacheMaxDeadCapacity = cacheTotalCapacity * 0.50f;
+
+        // This code is here to avoid a PLT regression. We can remove it if we
+        // can prove that the overall system gain would justify the regression.
+        cacheMaxDeadCapacity = max(24u, cacheMaxDeadCapacity);
+
+        // Foundation memory cache capacity (in bytes)
+        // (These values are small because WebCore does most caching itself.)
+        if (memSize >= 1024)
+            nsurlCacheMemoryCapacity = 4 * 1024 * 1024;
+        else if (memSize >= 512)
+            nsurlCacheMemoryCapacity = 2 * 1024 * 1024;
+        else if (memSize >= 256)
+            nsurlCacheMemoryCapacity = 1 * 1024 * 1024;
+        else
+            nsurlCacheMemoryCapacity =      512 * 1024; 
+
+        // Foundation disk cache capacity (in bytes)
+        if (diskFreeSize >= 16384)
+            nsurlCacheDiskCapacity = 175 * 1024 * 1024;
+        else if (diskFreeSize >= 8192)
+            nsurlCacheDiskCapacity = 150 * 1024 * 1024;
+        else if (diskFreeSize >= 4096)
+            nsurlCacheDiskCapacity = 125 * 1024 * 1024;
+        else if (diskFreeSize >= 2048)
+            nsurlCacheDiskCapacity = 100 * 1024 * 1024;
+        else if (diskFreeSize >= 1024)
+            nsurlCacheDiskCapacity = 75 * 1024 * 1024;
+        else
+            nsurlCacheDiskCapacity = 50 * 1024 * 1024;
+
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+    };
+
+#ifdef BUILDING_ON_TIGER
+    // Don't use a big Foundation disk cache on Tiger because, according to the 
+    // PLT, the Foundation disk cache on Tiger is slower than the network. 
+    nsurlCacheDiskCapacity = [[NSURLCache sharedURLCache] diskCapacity];
+#else
+    // Don't use a big Foundation disk cache on older versions of Leopard because
+    // doing so causes a SPOD on launch (<rdar://problem/5465260>).
+    if (NSVersionOfLinkTimeLibrary("CFNetwork") < 211)
+        nsurlCacheDiskCapacity = [[NSURLCache sharedURLCache] diskCapacity];
+#endif
+
+    // Don't shrink a big disk cache, since that would cause churn.
+    nsurlCacheDiskCapacity = max(nsurlCacheDiskCapacity, [nsurlCache diskCapacity]);
+
+    cache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
+    pageCache()->setCapacity(pageCacheCapacity);
+    [nsurlCache setMemoryCapacity:nsurlCacheMemoryCapacity];
+    [nsurlCache setDiskCapacity:nsurlCacheDiskCapacity];
+
+    s_cacheModel = cacheModel;
+    s_didSetCacheModel = YES;
+}
+
++ (WebCacheModel)_cacheModel
+{
+    return s_cacheModel;
+}
+
++ (WebCacheModel)_didSetCacheModel
+{
+    return s_didSetCacheModel;
+}
+
++ (WebCacheModel)_maxCacheModelInAnyInstance
+{
+    WebCacheModel cacheModel = WebCacheModelDocumentViewer;
+    NSEnumerator *enumerator = [(NSMutableSet *)allWebViewsSet objectEnumerator];
+    while (WebPreferences *preferences = [[enumerator nextObject] preferences])
+        cacheModel = max(cacheModel, [preferences cacheModel]);
+    return cacheModel;
+}
+
++ (void)_preferencesChangedNotification:(NSNotification *)notification
+{
+    WebPreferences *preferences = (WebPreferences *)[notification object];
+    ASSERT([preferences isKindOfClass:[WebPreferences class]]);
+
+    WebCacheModel cacheModel = [preferences cacheModel];
+    if (![self _didSetCacheModel] || cacheModel > [self _cacheModel])
+        [self _setCacheModel:cacheModel];
+    else if (cacheModel < [self _cacheModel])
+        [self _setCacheModel:max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
+}
+
++ (void)_preferencesRemovedNotification:(NSNotification *)notification
+{
+    WebPreferences *preferences = (WebPreferences *)[notification object];
+    ASSERT([preferences isKindOfClass:[WebPreferences class]]);
+
+    if ([preferences cacheModel] == [self _cacheModel])
+        [self _setCacheModel:max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
+}
+
 - (WebFrame *)_focusedFrame
 {
     NSResponder *resp = [[self window] firstResponder];
@@ -3767,23 +4030,6 @@ static WebFrameView *containingFrameView(NSView *view)
 @end
 
 @implementation WebView (WebViewInternal)
-
-+ (void)_initializeCacheSizesIfNecessary
-{
-    static bool didInitialize;
-    if (didInitialize)
-        return;
-
-    WebPreferences *standardPreferences = [WebPreferences standardPreferences];
-    pageCache()->setCapacity([standardPreferences _pageCacheSize]);
-    cache()->setCapacities(0, [standardPreferences _objectCacheSize], [standardPreferences _objectCacheSize]);
-    didInitialize = true;
-
-#ifndef NDEBUG
-    LOG(CacheSizes, "Object cache size set to %d bytes.", [standardPreferences _objectCacheSize]);
-    LOG(CacheSizes, "Page cache size set to %d pages.", [standardPreferences _pageCacheSize]);
-#endif
-}
 
 - (BOOL)_becomingFirstResponderFromOutside
 {

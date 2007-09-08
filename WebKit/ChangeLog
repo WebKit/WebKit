@@ -1,3 +1,91 @@
+2007-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler, Maciej Stachowiak, Mark Rowe, Tim Hatcher.
+        
+        Fixed <rdar://problem/5326009> Make non-browser WebKit clients have no 
+        memory cache, or a very tiny one
+        
+        High level explanation:
+            - Added SPI for specifying a cache model on a per-WebView basis. 
+            (Hopefully, this will become API soon.) We balance competing
+            cache models simply by using the largest one that pertains at a
+            given time.
+
+            - Added heuristic for guessing a default cache model in WebViews
+            that don't specify one:
+                1) Default to DocumentViewer for apps linked on or after this
+                WebKit. Default to DocumentBrowser otherwise.
+
+                2) Assign specific defaults to well-known clients based on 
+                bundle ID.
+
+                3) Grow the default to DocumentBrowser if a navigation takes 
+                place.
+
+            - As a part of the DocumentBrowser & PrimaryWebBrowser settings:
+                1) Make the Foundation disk cache much much bigger than the 
+                default 20MB, if space allows. (This is a hedge against a small 
+                WebCore cache in DocumentBrowser mode, but also an all-around 
+                win for page load speed.)
+
+                2) Scaled the Foundation memory cache's capacity with physical
+                RAM, just like we do with other caches. This is a small win on
+                low memory systems.
+
+        * Misc/WebKitSystemBits.h:
+        * Misc/WebKitSystemBits.m:
+        (WebMemorySize): Renamed from "WebSystemMainMemory."
+        (WebHomeDirectoryFreeSize): Added function to measure the free space
+        on the user's home directory. We use this as a factor in determining 
+        the disk cache's cacpacity.
+
+        * Misc/WebKitVersionChecks.h: Support for linked on or after check.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::didPerformFirstNavigation): Implementation of
+        heuristic rule #3.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.m:
+        (cacheModelForMainBundle): Implementation of heuristic rule #2.
+        (-[NSMutableDictionary _web_checkLastReferenceForIdentifier:]): Added
+        notification for when a WebPreferences instance becomes inert. We use
+        this to shrink the cache model back down if possible. Moved this code
+        into a WebPreferences method, since it's not really a feature of 
+        NSDictionary.
+
+        * WebView/WebPreferencesPrivate.h: SPI declarations.
+        
+        * WebView/WebView.mm: Replaced manual notification posts with calls to
+        the _postPreferencesChangesNotification convenience method.
+
+        (-[WebView _preferencesChangedNotification:]): Merged dispersed code
+        for updating preferences-related settings into this one function. This
+        was needed for an earlier version of the patch, even though the 
+        current version could probably do without it.
+
+        (+[WebView _preferencesChangedNotification:]): Added a class-level 
+        listener for WebPreferences changes. This listener takes care of 
+        modifying the class-level global cache model setting if necessary.
+
+        (+[WebPreferences standardPreferences]): Removed call to 
+        _postPreferencesChangesNotification because the notification already 
+        posts when you create the WebPreferences object. (I noticed this 
+        inefficiency because my new _preferencesChangedNotification: method was
+        called excessively at startup.)
+
+        Also Added explicit tracking of WebPreferences clients, so we know when
+        a WebPreferences instance becomes inert:
+        
+        (-[WebPreferences didRemoveFromWebView]):
+        (-[WebPreferences willAddToWebView]):
+
+        (+[WebView _setCacheModel:]): Translates a cache model into actual 
+        settings in various APIs. Caches that have unbounded value grow 
+        linearly relative to available space. Caches that have bounded value 
+        grow inverse-squaredly relative to available space.
+
 2007-09-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

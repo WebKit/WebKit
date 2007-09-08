@@ -53,8 +53,6 @@
 #define WebKitAllowAnimatedImagesPreferenceKey @"WebKitAllowAnimatedImagesPreferenceKey"
 #define WebKitAllowAnimatedImageLoopingPreferenceKey @"WebKitAllowAnimatedImageLoopingPreferenceKey"
 #define WebKitDisplayImagesKey @"WebKitDisplayImagesKey"
-#define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
-#define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
 #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
 #define WebKitTabToLinksPreferenceKey @"WebKitTabToLinksPreferenceKey"
 #define WebKitPrivateBrowsingEnabledPreferenceKey @"WebKitPrivateBrowsingEnabled"
@@ -74,9 +72,13 @@
 #define WebKitUsePDFPreviewViewPreferenceKey @"WebKitUsePDFPreviewView"
 #define WebKitUseSiteSpecificSpoofingPreferenceKey @"WebKitUseSiteSpecificSpoofing"
 #define WebKitEditableLinkBehaviorPreferenceKey @"WebKitEditableLinkBehavior"
-
+#define WebKitCacheModelPreferenceKey @"WebKitCacheModelPreferenceKey"
 
 // CoreGraphics deferred updates are disabled if WebKitEnableCoalescedUpdatesPreferenceKey is set
 // to NO, or has no value.  For compatibility with Mac OS X 10.4.6, deferred updates are OFF by
 // default.
 #define WebKitEnableDeferredUpdatesPreferenceKey @"WebKitEnableDeferredUpdates"
+
+// For debugging only. Don't use these.
+#define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
+#define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"

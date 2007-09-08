@@ -2341,6 +2341,10 @@ void WebFrame::windowObjectCleared() const
     }
 }
 
+void FrameLoaderClient::didPerformFirstNavigation() const
+{
+}
+
 static IntRect printerRect(HDC printDC)
 {
     return IntRect(0, 0, 

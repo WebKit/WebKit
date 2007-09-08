@@ -313,6 +313,7 @@ public:
     virtual WebCore::String overrideMediaType() const;
 
     virtual void windowObjectCleared() const;
+    virtual void didPerformFirstNavigation() const;
 
     // WebFrame
     void initWithWebFrameView(IWebFrameView*, IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);

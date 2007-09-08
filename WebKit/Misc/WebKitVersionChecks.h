@@ -31,6 +31,9 @@
    For example the version 1.2.3 is returned as 0x00010203 and version 200.3.5 is returned as 0x00C80305
    A version of -1 is returned if the main executable did not link against WebKit (should never happen). */
 
+/* Please use the current WebKit version number, available in WebKit/Configurations/Version.xcconfig,
+   when adding a new version constant. */
+
 #define WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS 0x020A0000 // 522.0.0
 #define WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION 0x020A0000 // 522.0.0
 #define WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK 0x020A0000 // 522.0.0
@@ -39,6 +42,7 @@
 #define WEBKIT_FIRST_VERSION_WITH_MAIN_THREAD_EXCEPTIONS 0x020A0000 // 522.0.0
 #define WEBKIT_FIRST_VERSION_WITHOUT_ADOBE_INSTALLER_QUIRK 0x020A0000 // 522.0.0
 #define WEBKIT_FIRST_VERSION_WITH_INSPECT_ELEMENT_MENU_TAG 0x020A0C00 // 522.12.0
+#define WEBKIT_FIRST_VERSION_WITH_CACHE_MODEL_API 0x020B0500 // 523.5.0
 
 #ifdef __cplusplus
 extern "C" {
