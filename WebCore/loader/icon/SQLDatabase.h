@@ -34,6 +34,10 @@
 #include <pthread.h>
 #endif
 
+#if COMPILER(MSVC)
+#pragma warning(disable: 4800)
+#endif
+
 typedef struct sqlite3 sqlite3;
 
 namespace WebCore {

@@ -1,5 +1,12 @@
 2007-09-08  Sam Weinig  <sam@webkit.org>
 
+        Add fix to the correct file.
+
+        * loader/icon/SQLDatabase.h:
+        * loader/icon/SQLStatement.h:
+
+2007-09-08  Sam Weinig  <sam@webkit.org>
+
         Fix Windows build.
 
         * loader/icon/SQLStatement.h: Disable boolean conversion warning.
