@@ -148,7 +148,7 @@ void QWebSettings::setIconDatabaseEnabled(bool enabled, const QString &location)
 
 bool QWebSettings::iconDatabaseEnabled() const
 {
-    return WebCore::iconDatabase()->enabled() && WebCore::iconDatabase()->isOpen();
+    return WebCore::iconDatabase()->isEnabled() && WebCore::iconDatabase()->isOpen();
 }
 
 void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
