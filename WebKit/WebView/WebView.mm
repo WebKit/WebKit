@@ -3661,8 +3661,8 @@ static WebFrameView *containingFrameView(NSView *view)
         else if (memSize >= 256)
             cacheTotalCapacity = 16 * 1024 * 1024; 
 
-        cacheMinDeadCapacity = cacheTotalCapacity * 0.125f;
-        cacheMaxDeadCapacity = cacheTotalCapacity * 0.25f;
+        cacheMinDeadCapacity = static_cast<unsigned>(cacheTotalCapacity * 0.125f);
+        cacheMaxDeadCapacity = static_cast<unsigned>(cacheTotalCapacity * 0.25f);
 
         // Foundation memory cache capacity (in bytes)
         if (memSize >= 2048)
@@ -3723,8 +3723,8 @@ static WebFrameView *containingFrameView(NSView *view)
         else if (memSize >= 256)
             cacheTotalCapacity = 32 * 1024 * 1024; 
 
-        cacheMinDeadCapacity = cacheTotalCapacity * 0.25f;
-        cacheMaxDeadCapacity = cacheTotalCapacity * 0.50f;
+        cacheMinDeadCapacity = static_cast<unsigned>(cacheTotalCapacity * 0.25f);
+        cacheMaxDeadCapacity = static_cast<unsigned>(cacheTotalCapacity * 0.50f);
 
         // This code is here to avoid a PLT regression. We can remove it if we
         // can prove that the overall system gain would justify the regression.
