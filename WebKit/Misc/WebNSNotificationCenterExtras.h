@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebIconDatabasePrivate.h"
+#import "WebNSNotificationCenterExtras.h"
 
-namespace WebCore {
-    class Image;
-}
+@interface NSNotificationCenter (WebNSNotificationCenterExtras)
 
-@interface WebIconDatabasePrivate : NSObject {
-@public
-    id delegate;
-    BOOL delegateImplementsDefaultIconForURL;
-    NSMutableDictionary *htmlIcons;
-}
+- (void)postNotificationOnMainThreadWithName:(NSString *)name object:(id)object;
+- (void)postNotificationOnMainThreadWithName:(NSString *)name object:(id)object userInfo:(NSDictionary *)userInfo;
+- (void)postNotificationOnMainThreadWithName:(NSString *)name object:(id)object userInfo:(NSDictionary *)userInfo waitUntilDone:(BOOL)wait;
+
++ (void)_postNotificationName:(NSDictionary *)info;
+
 @end
-
-@interface WebIconDatabase (WebInternal)
-- (void)_sendNotificationForURL:(NSString *)URL;
-- (void)_sendDidRemoveAllIconsNotification;
-@end
-
-extern bool importToWebCoreFormat();
-NSImage *webGetNSImage(WebCore::Image*, NSSize);

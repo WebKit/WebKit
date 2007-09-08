@@ -67,6 +67,12 @@ void SharedBuffer::clear()
     m_buffer.resize(0);
 }
 
+PassRefPtr<SharedBuffer> SharedBuffer::copy() const
+{
+    return new SharedBuffer(data(), size());
+}
+
+
 #if !PLATFORM(MAC)
 
 inline void SharedBuffer::clearPlatformData()

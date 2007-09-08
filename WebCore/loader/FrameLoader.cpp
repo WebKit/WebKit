@@ -1029,6 +1029,15 @@ void FrameLoader::endIfNotLoadingMainResource()
         startIconLoader();
 }
 
+void FrameLoader::iconLoadDecisionAvailable()
+{
+    if (!m_mayLoadIconLater)
+        return;
+    LOG(IconDatabase, "FrameLoader %p was told a load decision is available for its icon", this);
+    startIconLoader();
+    m_mayLoadIconLater = false;
+}
+
 void FrameLoader::startIconLoader()
 {
     // FIXME: We kick off the icon loader when the frame is done receiving its main resource.
@@ -1036,23 +1045,53 @@ void FrameLoader::startIconLoader()
     if (!isLoadingMainFrame())
         return;
 
-    if (!iconDatabase() || !iconDatabase()->enabled())
+    if (!iconDatabase() || !iconDatabase()->isEnabled())
         return;
-
+    
     KURL url(iconURL());
     String urlString(url.url());
     if (urlString.isEmpty())
         return;
 
-    // If we already have an unexpired icon, we won't kick off a load but we *will* map the appropriate URLs to it
-    if (iconDatabase()->hasEntryForIconURL(urlString) && loadType() != FrameLoadTypeReload && !iconDatabase()->isIconExpiredForIconURL(urlString)) {
-        LOG(IconDatabase, "FrameLoader::startIconLoader() - Committing iconURL %s to database", urlString.ascii().data());
-        commitIconURLToIconDatabase(url);
-        return;
+    // If we're not reloading and the icon database doesn't say to load now then bail before we actually start the load
+    if (loadType() != FrameLoadTypeReload) {
+        IconLoadDecision decision = iconDatabase()->loadDecisionForIconURL(urlString, m_documentLoader.get());
+        if (decision == IconLoadNo) {
+            LOG(IconDatabase, "FrameLoader::startIconLoader() - Told not to load this icon, committing iconURL %s to database for pageURL mapping", urlString.ascii().data());
+            commitIconURLToIconDatabase(url);
+            
+            // We were told not to load this icon - that means this icon is already known by the database
+            // If the icon data hasn't been read in from disk yet, kick off the read of the icon from the database to make sure someone
+            // has done it.  This is after registering for the notification so the WebView can call the appropriate delegate method.
+            // Otherwise if the icon data *is* available, and this icon load was previously deferred, we need to notifiy the delegate
+            if (!iconDatabase()->iconDataKnownForIconURL(urlString)) {
+                LOG(IconDatabase, "Told not to load icon %s but icon data is not yet available - registering for notification and requesting load from disk", urlString.ascii().data());
+                m_client->registerForIconNotification();
+                iconDatabase()->iconForPageURL(m_URL.url(), IntSize(0, 0));
+                iconDatabase()->iconForPageURL(originalRequestURL().url(), IntSize(0, 0));
+            } else if (m_mayLoadIconLater)
+                m_client->dispatchDidReceiveIcon();
+                
+            return;
+        } 
+        
+        if (decision == IconLoadUnknown) {
+            // In this case, we may end up loading the icon later, but we still want to commit the icon url mapping to the database
+            // just in case we don't end up loading later - if we commit the mapping a second time after the load, that's no big deal
+            // We also tell the client to register for the notification that the icon is received now so it isn't missed in case the 
+            // icon is later read in from disk
+            LOG(IconDatabase, "FrameLoader %p might load icon %s later", this, urlString.ascii().data());
+            m_mayLoadIconLater = true;    
+            m_client->registerForIconNotification();
+            commitIconURLToIconDatabase(url);
+            return;
+        }
     }
 
+    // This is either a reload or the icon database said "yes, load the icon", so kick off the load!
     if (!m_iconLoader)
         m_iconLoader.set(IconLoader::create(m_frame).release());
+        
     m_iconLoader->startLoading();
 }
 

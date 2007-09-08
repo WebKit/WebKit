@@ -500,17 +500,7 @@ void WebFrameLoaderClient::dispatchDidReceiveIcon()
     ASSERT([m_webFrame.get() _isMainFrame]);
     WebView *webView = getWebView(m_webFrame.get());   
 
-    // FIXME: This willChangeValueForKey call is too late, because the icon has already changed by now.
-    [webView _willChangeValueForKey:_WebMainFrameIconKey];
-
-    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations.didReceiveIconForFrameFunc) {
-        Image* image = iconDatabase()->iconForPageURL(core(m_webFrame.get())->loader()->url().url(), IntSize(16, 16));
-        if (NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16)))
-            CallFrameLoadDelegate(implementations.didReceiveIconForFrameFunc, webView, @selector(webView:didReceiveIcon:forFrame:), icon, m_webFrame.get());
-    }
-
-    [webView _didChangeValueForKey:_WebMainFrameIconKey];
+    [webView _dispatchDidReceiveIconFromWebFrame:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
@@ -1239,6 +1229,11 @@ String WebFrameLoaderClient::overrideMediaType() const
 void WebFrameLoaderClient::windowObjectCleared() const
 {
     [m_webFrame->_private->bridge windowObjectCleared];
+}
+
+void WebFrameLoaderClient::registerForIconNotification(bool listen)
+{
+    [[m_webFrame.get() webView] _registerForIconNotification:listen];
 }
 
 void WebFrameLoaderClient::didPerformFirstNavigation() const

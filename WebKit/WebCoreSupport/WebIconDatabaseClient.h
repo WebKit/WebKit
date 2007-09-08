@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebIconDatabasePrivate.h"
+#import <WebCore/IconDatabaseClient.h>
 
 namespace WebCore {
-    class Image;
+    class String;
 }
 
-@interface WebIconDatabasePrivate : NSObject {
-@public
-    id delegate;
-    BOOL delegateImplementsDefaultIconForURL;
-    NSMutableDictionary *htmlIcons;
-}
-@end
-
-@interface WebIconDatabase (WebInternal)
-- (void)_sendNotificationForURL:(NSString *)URL;
-- (void)_sendDidRemoveAllIconsNotification;
-@end
-
-extern bool importToWebCoreFormat();
-NSImage *webGetNSImage(WebCore::Image*, NSSize);
+class WebIconDatabaseClient : public WebCore::IconDatabaseClient {
+public:
+    virtual bool performImport();
+    virtual void dispatchDidRemoveAllIcons();
+    virtual void dispatchDidAddIconForPageURL(const WebCore::String& pageURL);
+};

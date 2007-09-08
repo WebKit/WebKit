@@ -1,3 +1,61 @@
+2007-09-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/5434431> - Asynchronous Icon Database
+
+        WebKit side of things
+        Mainly, there are Notifications WebKit has to listen for now that tell it when to either call back into WebCore
+        for some purpose or to send the webView:didReceiveIcon: delegate call
+
+        Many smaller tweaks as well.
+
+        * Misc/WebIconDatabase.h:
+        * Misc/WebIconDatabase.mm:
+        (defaultClient):
+        (-[WebIconDatabase init]):
+        (+[WebIconDatabase delayDatabaseCleanup]): Accessor so clients can prevent the thread from cleaning up the database
+          before they've done all their necessary retaining of icons.
+        (+[WebIconDatabase allowDatabaseCleanup]):
+        (-[WebIconDatabase removeAllIcons]):
+        (-[WebIconDatabase _isEnabled]):
+        (-[WebIconDatabase _sendNotificationForURL:]):
+        (-[WebIconDatabase _sendDidRemoveAllIconsNotification]):
+        (-[WebIconDatabase _databaseDirectory]):
+
+        (-[ThreadEnabler threadEnablingSelector:]): Quick and dirty class to enabled Cocoa multithreading
+        (+[ThreadEnabler enableThreading]):
+        (importToWebCoreFormat):
+        * Misc/WebIconDatabaseInternal.h: Expose the internal methods of WebIconDatabase that are required by WebIconDatabaseClient
+
+        * Misc/WebNSNotificationCenterExtras.h: Added. - Great utility class whose design was borrowed from Colloquy
+          that allows the posting of a Cocoa notification on the main thread from *any* thread
+        * Misc/WebNSNotificationCenterExtras.m: Added.
+        (-[NSNotificationCenter postNotificationOnMainThreadWithName:object:]):
+        (-[NSNotificationCenter postNotificationOnMainThreadWithName:object:userInfo:]):
+        (-[NSNotificationCenter postNotificationOnMainThreadWithName:object:userInfo:waitUntilDone:]):
+        (+[NSNotificationCenter _postNotificationName:]):
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveIcon): Send the webView:didReceiveIcon: delegate call
+        (WebFrameLoaderClient::registerForIconNotification):
+
+        * WebCoreSupport/WebIconDatabaseClient.h: Added.
+        * WebCoreSupport/WebIconDatabaseClient.mm: Added.
+        (WebIconDatabaseClient::performImport):  Perform the Safari 2 icon import
+        (WebIconDatabaseClient::dispatchDidRemoveAllIcons): Send the NSNotification
+        (WebIconDatabaseClient::dispatchDidAddIconForPageURL): Ditto
+
+        * WebView/WebView.mm:
+        (-[WebView _receivedIconChangedNotification:]): Check and see if this notification is for this WebView's current URL by
+          calling back into the IconDatabase
+        (-[WebView _registerForIconNotification:]): Support for WebIconDatabaseClient
+        (-[WebView _dispatchDidReceiveIconFromWebFrame:]): Dispatch this delegate call as well as unregister for the notification
+        * WebView/WebViewInternal.h:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-09-07  Geoffrey Garen  <ggaren@apple.com>
 
         Suggested by Maciej Stachowiak.
@@ -102,6 +160,7 @@
         linearly relative to available space. Caches that have bounded value 
         grow inverse-squaredly relative to available space.
 
+>>>>>>> .r25438
 2007-09-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
@@ -221,6 +280,7 @@
         * WebView/WebViewInternal.h:
         * WebView/WebViewPrivate.h:
 
+>>>>>>> .r25411
 2007-09-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

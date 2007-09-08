@@ -58,7 +58,6 @@
 				DebugInformationFormat="4"
 				DisableSpecificWarnings="4099;4100;4127;4138;4189;4244;4510;4512;4610;4706;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
-				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -131,7 +130,6 @@
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4099;4100;4127;4138;4189;4244;4510;4512;4610;4706;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
-				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -206,7 +204,6 @@
 				DebugInformationFormat="4"
 				DisableSpecificWarnings="4099;4100;4127;4138;4189;4244;4510;4512;4610;4706;4800;4996;4355;4291;4068;6011;6031;6211;6246;6255;6387"
 				ForcedIncludeFiles="WebCorePrefix.h"
-				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -2677,22 +2674,22 @@
 				RelativePath="..\loader\FrameLoaderTypes.h"
 				>
 			</File>
-            <File
+			<File
 				RelativePath="..\loader\FTPDirectoryDocument.cpp"
 				>
-            </File>
-            <File
+			</File>
+			<File
 				RelativePath="..\loader\FTPDirectoryDocument.h"
 				>
-            </File>
-            <File
+			</File>
+			<File
 				RelativePath="..\loader\FTPDirectoryParser.cpp"
 				>
-            </File>
-            <File
+			</File>
+			<File
 				RelativePath="..\loader\FTPDirectoryParser.h"
 				>
-            </File>
+			</File>
 			<File
 				RelativePath="..\loader\ImageDocument.cpp"
 				>
@@ -2809,11 +2806,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\loader\icon\IconDataCache.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\icon\IconDataCache.h"
+					RelativePath="..\loader\icon\IconDatabaseClient.h"
 					>
 				</File>
 				<File
@@ -2822,6 +2815,22 @@
 				</File>
 				<File
 					RelativePath="..\loader\icon\IconLoader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\icon\IconRecord.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\icon\IconRecord.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\icon\PageURLRecord.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\icon\PageURLRecord.h"
 					>
 				</File>
 				<File
@@ -2879,6 +2888,10 @@
 			</File>
 			<File
 				RelativePath="..\platform\AtomicStringImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\AutodrainedPool.h"
 				>
 			</File>
 			<File
@@ -3386,6 +3399,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\Threading.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Timer.cpp"
 				>
 			</File>
@@ -3528,11 +3545,11 @@
 					RelativePath="..\platform\win\KeyEventWin.cpp"
 					>
 				</File>
-        <File
+				<File
 					RelativePath="..\platform\win\Language.cpp"
 					>
-        </File>
-        <File
+				</File>
+				<File
 					RelativePath="..\platform\win\MIMETypeRegistryWin.cpp"
 					>
 				</File>
@@ -3568,11 +3585,11 @@
 					RelativePath="..\platform\win\SearchPopupMenuWin.cpp"
 					>
 				</File>
-                <File
+				<File
 					RelativePath="..\platform\win\SharedBufferWin.cpp"
 					>
-                </File>
-                <File
+				</File>
+				<File
 					RelativePath="..\platform\win\SharedTimerWin.cpp"
 					>
 				</File>

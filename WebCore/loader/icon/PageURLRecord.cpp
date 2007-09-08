@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebIconDatabasePrivate.h"
+#include "config.h"
+#include "PageURLRecord.h"
+
+#include "IconRecord.h"
 
 namespace WebCore {
-    class Image;
+
+PageURLRecord::PageURLRecord(const String& pageURL)
+    : m_pageURL(pageURL)
+    , m_retainCount(0)
+{
 }
 
-@interface WebIconDatabasePrivate : NSObject {
-@public
-    id delegate;
-    BOOL delegateImplementsDefaultIconForURL;
-    NSMutableDictionary *htmlIcons;
+void PageURLRecord::setIconRecord(PassRefPtr<IconRecord> icon)
+{
+    ASSERT(icon);
+    if (m_iconRecord)
+        m_iconRecord->m_retainingPageURLs.remove(m_pageURL);
+        
+    m_iconRecord = icon;
+    m_iconRecord->m_retainingPageURLs.add(m_pageURL);
 }
-@end
+    
+PageURLSnapshot PageURLRecord::snapshot(bool forDeletion) const 
+{
+    return PageURLSnapshot(m_pageURL, (m_iconRecord && !forDeletion) ? m_iconRecord->iconURL() : String());
+}
 
-@interface WebIconDatabase (WebInternal)
-- (void)_sendNotificationForURL:(NSString *)URL;
-- (void)_sendDidRemoveAllIconsNotification;
-@end
-
-extern bool importToWebCoreFormat();
-NSImage *webGetNSImage(WebCore::Image*, NSSize);
+} // namespace WebCore

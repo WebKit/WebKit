@@ -314,6 +314,8 @@ public:
 
     virtual void windowObjectCleared() const;
     virtual void didPerformFirstNavigation() const;
+    
+    virtual void registerForIconNotification(bool listen);
 
     // WebFrame
     void initWithWebFrameView(IWebFrameView*, IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);

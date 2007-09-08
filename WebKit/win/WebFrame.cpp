@@ -2341,7 +2341,11 @@ void WebFrame::windowObjectCleared() const
     }
 }
 
-void FrameLoaderClient::didPerformFirstNavigation() const
+void WebFrame::didPerformFirstNavigation() const
+{
+}
+
+void WebFrame::registerForIconNotification(bool /*listen*/)
 {
 }
 

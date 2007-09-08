@@ -197,6 +197,8 @@ private:
     virtual void windowObjectCleared() const;
     virtual void didPerformFirstNavigation() const;
 
+    virtual void registerForIconNotification(bool listen);
+
     void deliverArchivedResourcesAfterDelay() const;
     bool canUseArchivedResource(NSURLRequest *) const;
     bool canUseArchivedResource(NSURLResponse *) const;

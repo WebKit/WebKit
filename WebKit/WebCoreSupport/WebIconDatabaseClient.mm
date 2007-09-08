@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebIconDatabasePrivate.h"
+#import "WebIconDatabaseClient.h"
 
-namespace WebCore {
-    class Image;
+#import "WebIconDatabaseInternal.h"
+
+#import <WebCore/FoundationExtras.h>
+#import <WebCore/PlatformString.h>
+
+
+bool WebIconDatabaseClient::performImport()
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    bool result = importToWebCoreFormat();
+    [pool drain];
+    return result;
 }
 
-@interface WebIconDatabasePrivate : NSObject {
-@public
-    id delegate;
-    BOOL delegateImplementsDefaultIconForURL;
-    NSMutableDictionary *htmlIcons;
+void WebIconDatabaseClient::dispatchDidRemoveAllIcons()
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    [[WebIconDatabase sharedIconDatabase] _sendDidRemoveAllIconsNotification];
+    [pool drain];
 }
-@end
 
-@interface WebIconDatabase (WebInternal)
-- (void)_sendNotificationForURL:(NSString *)URL;
-- (void)_sendDidRemoveAllIconsNotification;
-@end
-
-extern bool importToWebCoreFormat();
-NSImage *webGetNSImage(WebCore::Image*, NSSize);
+void WebIconDatabaseClient::dispatchDidAddIconForPageURL(const WebCore::String& pageURL)
+{
+    // This is a quick notification that is likely to fire in a rapidly iterating loop
+    // Therefore we let WebCore handle autorelease by draining its pool "from time to time"
+    // instead of us doing it every iteration
+    [[WebIconDatabase sharedIconDatabase] _sendNotificationForURL:pageURL];
+}

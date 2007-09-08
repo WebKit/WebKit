@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,58 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#ifndef PageURLRecord_h
+#define PageURLRecord_h
 
-#import "WebIconDatabasePrivate.h"
+#include "PlatformString.h"
+
+#include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
-    class Image;
+
+class IconRecord;
+
+class PageURLSnapshot {
+public:
+    PageURLSnapshot() { }
+    
+    PageURLSnapshot(const String& page, const String& icon)
+        : pageURL(page)
+        , iconURL(icon)
+    { }
+    
+    String pageURL;
+    String iconURL;
+};
+
+class PageURLRecord : Noncopyable {
+public:
+    PageURLRecord(const String& pageURL);
+
+    inline String url() const { return m_pageURL; }
+    
+    void setIconRecord(PassRefPtr<IconRecord>);
+    IconRecord* PageURLRecord::iconRecord() { return m_iconRecord.get(); }
+
+    PageURLSnapshot snapshot(bool forDeletion = false) const;
+
+    inline bool retain() { return ++m_retainCount; }
+
+    inline bool release()
+    {
+        ASSERT(m_retainCount > 0);
+        return --m_retainCount;
+    }
+
+    inline int retainCount() const { return m_retainCount; }
+private:
+    String m_pageURL;
+    RefPtr<IconRecord> m_iconRecord;
+    int m_retainCount;
+};
+
 }
 
-@interface WebIconDatabasePrivate : NSObject {
-@public
-    id delegate;
-    BOOL delegateImplementsDefaultIconForURL;
-    NSMutableDictionary *htmlIcons;
-}
-@end
-
-@interface WebIconDatabase (WebInternal)
-- (void)_sendNotificationForURL:(NSString *)URL;
-- (void)_sendDidRemoveAllIconsNotification;
-@end
-
-extern bool importToWebCoreFormat();
-NSImage *webGetNSImage(WebCore::Image*, NSSize);
+#endif // PageURLRecord_h

@@ -437,6 +437,7 @@ namespace WebCore {
 
         bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
 
+        void iconLoadDecisionAvailable();
     private:
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
         PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);
@@ -608,6 +609,7 @@ namespace WebCore {
         KURL m_workingURL;
 
         OwnPtr<IconLoader> m_iconLoader;
+        bool m_mayLoadIconLater;
 
         bool m_cancellingWithLoadInProgress;
 

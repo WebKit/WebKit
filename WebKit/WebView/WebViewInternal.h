@@ -111,6 +111,9 @@ typedef WebCore::Page WebCorePage;
 - (void)_removeObjectForIdentifier:(unsigned long)identifier;
 - (BOOL)_becomingFirstResponderFromOutside;
 
+- (void)_registerForIconNotification:(BOOL)listen;
+- (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
+
 @end
 
 typedef struct _WebResourceDelegateImplementationCache {

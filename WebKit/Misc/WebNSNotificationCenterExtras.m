@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebIconDatabasePrivate.h"
+#import "WebNSNotificationCenterExtras.h"
 
-namespace WebCore {
-    class Image;
+@implementation NSNotificationCenter (WebNSNotificationCenterExtras)
+
+- (void)postNotificationOnMainThreadWithName:(NSString *)name object:(id)object 
+{
+    [self postNotificationOnMainThreadWithName:name object:object userInfo:nil waitUntilDone:NO];
 }
 
-@interface WebIconDatabasePrivate : NSObject {
-@public
-    id delegate;
-    BOOL delegateImplementsDefaultIconForURL;
-    NSMutableDictionary *htmlIcons;
+- (void)postNotificationOnMainThreadWithName:(NSString *)name object:(id)object userInfo:(NSDictionary *)userInfo
+{
+    [self postNotificationOnMainThreadWithName:name object:object userInfo:userInfo waitUntilDone:NO];
 }
-@end
 
-@interface WebIconDatabase (WebInternal)
-- (void)_sendNotificationForURL:(NSString *)URL;
-- (void)_sendDidRemoveAllIconsNotification;
-@end
+- (void)postNotificationOnMainThreadWithName:(NSString *)name object:(id)object userInfo:(NSDictionary *)userInfo waitUntilDone:(BOOL)wait
+{
+    NSMutableDictionary *info = [[NSMutableDictionary alloc] initWithCapacity:3];
+    if (name) 
+        [info setObject:name forKey:@"name"];
 
-extern bool importToWebCoreFormat();
-NSImage *webGetNSImage(WebCore::Image*, NSSize);
+    if (object) 
+        [info setObject:object forKey:@"object"];
+
+    if (userInfo) 
+        [info setObject:userInfo forKey:@"userInfo"];
+
+    [[self class] performSelectorOnMainThread:@selector(_postNotificationName:) withObject:info waitUntilDone:wait];
+}
+
++ (void)_postNotificationName:(NSDictionary *)info 
+{
+    NSString *name = [info objectForKey:@"name"];
+    id object = [info objectForKey:@"object"];
+    NSDictionary *userInfo = [info objectForKey:@"userInfo"];
+
+    [[self defaultCenter] postNotificationName:name object:object userInfo:userInfo];
+
+    [info release];
+}
+
+@end

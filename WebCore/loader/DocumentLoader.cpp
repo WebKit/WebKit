@@ -711,4 +711,10 @@ void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loa
         frame->loader()->checkLoadComplete();    
 }
 
+void DocumentLoader::iconLoadDecisionAvailable()
+{
+    if (m_frame)
+        m_frame->loader()->iconLoadDecisionAvailable();
+}
+
 }

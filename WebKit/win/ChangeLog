@@ -1,3 +1,12 @@
+2007-09-08  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/5434431> - Asynchronous Icon Database
+
+        * WebFrame.cpp:
+        (WebFrame::didPerformFirstNavigation): Empty impl for now
+        (WebFrame::registerForIconNotification): Ditto
+        * WebFrame.h:
+
 2007-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Maciej Stachowiak, Mark Rowe, Tim Hatcher.

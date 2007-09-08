@@ -67,6 +67,8 @@ public:
     const char* platformData() const;
     unsigned platformDataSize() const;
 
+    PassRefPtr<SharedBuffer> copy() const;
+    
 private:
     void clearPlatformData();
     void maybeTransferPlatformData();

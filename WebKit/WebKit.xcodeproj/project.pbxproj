@@ -38,6 +38,10 @@
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */; settings = {ATTRIBUTES = (); }; };
 		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
+		51494CD60C7EBDE0004178C5 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */; };
+		51494CD70C7EBDE0004178C5 /* WebIconDatabaseClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */; };
+		51494D240C7EC1B7004178C5 /* WebNSNotificationCenterExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 51494D220C7EC1B6004178C5 /* WebNSNotificationCenterExtras.h */; };
+		51494D250C7EC1B7004178C5 /* WebNSNotificationCenterExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 51494D230C7EC1B7004178C5 /* WebNSNotificationCenterExtras.m */; };
 		51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */; };
 		51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C714FA0B20F79F00E5E33C /* WebBackForwardListInternal.h */; };
 		51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -366,6 +370,10 @@
 		51443F9A0429392B00CA2D3A /* WebPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPolicyDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9C0429392B00CA2D3A /* WebPolicyDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseClient.h; sourceTree = "<group>"; };
+		51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebIconDatabaseClient.mm; sourceTree = "<group>"; };
+		51494D220C7EC1B6004178C5 /* WebNSNotificationCenterExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSNotificationCenterExtras.h; sourceTree = "<group>"; };
+		51494D230C7EC1B7004178C5 /* WebNSNotificationCenterExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSNotificationCenterExtras.m; sourceTree = "<group>"; };
 		5152FADD033FC50400CA2ACD /* WebDefaultContextMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultContextMenuDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDefaultContextMenuDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5152FADF033FC50400CA2ACD /* WebDefaultPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultPolicyDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -762,6 +770,8 @@
 				65EEDE56084FFC9E0002DB25 /* WebNSFileManagerExtras.m */,
 				8398847A03426FB000BC5F5E /* WebNSImageExtras.h */,
 				8398847B03426FB000BC5F5E /* WebNSImageExtras.m */,
+				51494D220C7EC1B6004178C5 /* WebNSNotificationCenterExtras.h */,
+				51494D230C7EC1B7004178C5 /* WebNSNotificationCenterExtras.m */,
 				93D1FE13067EB10B009CE68A /* WebNSObjectExtras.h */,
 				ED2B2474033A2DA800C1A526 /* WebNSPasteboardExtras.h */,
 				ED2B2475033A2DA800C1A526 /* WebNSPasteboardExtras.mm */,
@@ -1014,6 +1024,8 @@
 				F5AFB45F02B94DC8018635CA /* WebFrameBridge.mm */,
 				931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */,
 				931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */,
+				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
+				51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */,
 				9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */,
 				06693DDA0BFBA85200216072 /* WebInspectorClient.h */,
 				06693DDB0BFBA85200216072 /* WebInspectorClient.mm */,
@@ -1273,6 +1285,8 @@
 				06693DDC0BFBA85200216072 /* WebInspectorClient.h in Headers */,
 				BCDFA8F90C10B6F500D3A10C /* WebKitPluginContainerView.h in Headers */,
 				5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */,
+				51494CD60C7EBDE0004178C5 /* WebIconDatabaseClient.h in Headers */,
+				51494D240C7EC1B7004178C5 /* WebNSNotificationCenterExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1551,6 +1565,8 @@
 				06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */,
 				BCDFA9130C10B93E00D3A10C /* WebKitPluginContainerView.mm in Sources */,
 				5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */,
+				51494CD70C7EBDE0004178C5 /* WebIconDatabaseClient.mm in Sources */,
+				51494D250C7EC1B7004178C5 /* WebNSNotificationCenterExtras.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

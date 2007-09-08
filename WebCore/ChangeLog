@@ -1,3 +1,210 @@
+2007-09-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/5434431> - Asynchronous Icon Database
+
+        The IconDatabase API was originally designed to be fully asynchronous - if an icon wasn't read in from disk
+        when you asked for it, you would be notified when it was.
+
+        Safari 2 did writes on a background thread, but reads blocked the main thread.
+
+        The current WebCore implementation using SQLite attempted to get rid of the background thread by defering expensive 
+        writes via timers, but falls short in moderate to extreme usage cases
+
+        Time to make the IconDatabase live up to it's fully asynchronous destiny.
+
+        This should -
+        - Make the browser instantly usable while converting Safari 2 icons in the background occurs
+        - Remedy any UI slowness/blocking when on slow network home directories
+        - Remedy random UI slowness, pauses, and stutters do to random I/O occurring at the exact wrong time or under heavy
+          disk usage from swapping or other apps on the system
+        - Allow certain long-running procedures to be interruptible (Safari 2 import, reading icons in from disk when trying to quit, etc)
+
+        This will have a noticeable effect on current Safari 2 and Safari 3 beta browsers, including icons not appearing in bookmarks, history,
+        or the location field the first time they're asked for, as current released Safari's don't properly listen for these async notifations.  
+        The second time such a menu or view is brought up, the icon should be there.
+
+        Additionally this includes a SQLite schema change which will be a lot more efficient but will result in the loss of current SQLite icons.
+        Converting from Safari 2 style icons will still work.
+
+        WebCore, welcome to multi-threadedness
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj:
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::iconLoadDecisionAvailable): Called when an Icon becomes available that was requested by this 
+          DocumentLoader (to support the webView:didReceiveIcon: delegate call in WebKit)
+        * loader/DocumentLoader.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconLoadDecisionAvailable): Called from the DocumentLoaders who get notified - if the FrameLoader 
+          ends up not caring because the WebView has transitioned to a new page, nothing occurs.  Otherwise, the FrameLoader possibly
+          starts it Icon Loader and possibly sends the webView:didReceiveIcon: delegate call
+        (WebCore::FrameLoader::startIconLoader): Instead of "Yes, load the icon now" or "No, don't load it" there is a third possibility -
+          "You might be asked to load your icon later."  Add supporting logic for receiving this state, and being called a second time
+          when the load decision is finally available.
+        * loader/FrameLoader.h:
+
+        * loader/FrameLoaderClient.h: Added "registerForIconNotification" which is a way to tell WebViews "The icon you are interested in might
+          become available via the generic WebIconDatabaseDidAddIconNotification instead of a targeted delegate call"
+          A WebView can then receive the generic notification and pass on it's own targeted delegate call.
+
+        * loader/icon/IconDataCache.cpp: Removed.
+        * loader/icon/IconDataCache.h: Removed.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::urlForLogging): Cut a URL down in length for sane logging and debugging
+        (WebCore::defaultClient): Return the default, empty IconDatabaseClient incase the API doesn't set one.
+
+        Following block of methods are for the Main thread's usage -
+        (WebCore::IconDatabase::setClient):
+        (WebCore::makeAllDirectories): Small optimization that checks to see if the entire path exists already, and doesn't try to loop
+          through each patch component if the full path is already present
+        (WebCore::IconDatabase::open): Makes all directories to the target path and kicks off the background thread - nothing more.
+        (WebCore::IconDatabase::close): Signals the thread to quit and waits for it to do so
+        (WebCore::IconDatabase::removeAllIcons): Purge the icon database
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::readIconForPageURLFromDisk):
+        (WebCore::IconDatabase::iconURLForPageURL):
+        (WebCore::IconDatabase::defaultIcon):
+        (WebCore::IconDatabase::retainIconForPageURL):
+        (WebCore::IconDatabase::releaseIconForPageURL):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::loadDecisionForIconURL): Determine if an icon loader should load now.  If the decision is "maybe later", then
+          mark the DocumentLoader to be notified later when the final decision is available.
+        (WebCore::IconDatabase::iconDataKnownForIconURL): Determine if the actual image data has been read from disk (or set from the loader) for 
+          icon URL in question
+        (WebCore::IconDatabase::setEnabled):
+        (WebCore::IconDatabase::isEnabled):
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled):
+        (WebCore::IconDatabase::isPrivateBrowsingEnabled):
+        (WebCore::IconDatabase::delayDatabaseCleanup): Restore this method from a year ago, as asynchronous pruning of icons can now occur on a 
+          background thread.
+        (WebCore::IconDatabase::allowDatabaseCleanup):
+        (WebCore::IconDatabase::checkIntegrityBeforeOpening):
+        (WebCore::IconDatabase::pageURLMappingCount):
+        (WebCore::IconDatabase::retainedPageURLCount):
+        (WebCore::IconDatabase::iconRecordCount):
+        (WebCore::IconDatabase::iconRecordCountWithData):
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::~IconDatabase):
+        (WebCore::IconDatabase::notifyPendingLoadDecisions): Tell all the registered DocumentLoaders "Hey, we've read in all URL mappings from disk,
+          so check to see if you are interested in any of them"
+        (WebCore::IconDatabase::notifyPendingLoadDecisionsInternal):
+        (WebCore::IconDatabase::wakeSyncThread): Wake the sync thread, if it is idle
+        (WebCore::IconDatabase::scheduleOrDeferSyncTimer): Even though we're on a background thread, we still defer writing out to disk during
+          periods of high activity
+        (WebCore::IconDatabase::syncTimerFired): Call wakeSyncThread()
+
+        Following block of methods may be used by either thread -
+        (WebCore::IconDatabase::isOpen):
+        (WebCore::IconDatabase::databasePath):
+        (WebCore::IconDatabase::defaultDatabaseFilename):
+        (WebCore::IconDatabase::getOrCreateIconRecord):
+        (WebCore::IconDatabase::getOrCreatePageURLRecord):
+
+        Following block of methods are used by the secondary thread only -
+        (WebCore::IconDatabase::importIconURLForPageURL): For the Safari 2 import procedure - write a URL mapping directly out to disk
+        (WebCore::IconDatabase::importIconDataForIconURL): For the Safari 2 import procedure - write an Icon directly out to disk
+        (WebCore::IconDatabase::shouldStopThreadActivity): To check and see if the thread should stop what it is doing now to do something
+          more important (such as quit, or delete all icons)
+        (WebCore::IconDatabase::iconDatabaseSyncThreadStart):
+        (WebCore::IconDatabase::iconDatabaseSyncThread): Entry point for the background thread
+        (WebCore::databaseVersionNumber):
+        (WebCore::isValidDatabase):
+        (WebCore::createDatabaseTables):
+        (WebCore::IconDatabase::performOpenInitialization): Open and validate the SQLite database, making sure it's schema jives with what
+          is expected
+        (WebCore::IconDatabase::checkIntegrity):
+        (WebCore::IconDatabase::performURLImport): Import all the Page URL -> Icon URL mappings from the database.  Done "1st thing" on startup,
+          this is necessary to be able to give the loader decisions about whether or not it should load icons from the network
+        (WebCore::IconDatabase::syncThreadMainLoop): Main loop - sleeps until woken up, then does a read cycle and a write cycle until both cycles
+          do no work - then it goes back to sleep.
+        (WebCore::IconDatabase::readFromDatabase): Reads icons from the database that clients are waiting on
+        (WebCore::IconDatabase::writeToDatabase): Writes any changes page -> icon url mappings to disk, as well as any new image data that has 
+          been received from the loader
+        (WebCore::IconDatabase::pruneUnretainedIcons): Done only once, and only after the first write to the database, this procedure removes all
+          icons and page URLs from disk that haven't been retained by any client.  Note that the prune can be delayed by utilizing delayDatabaseCleanup()
+        (WebCore::IconDatabase::checkForDanglingPageURLs): Usually part of the prune procedure, prunes any pages who point to icons that no longer exist 
+          in the database
+        (WebCore::IconDatabase::removeAllIconsOnThread): Completely purge both the on-disk and in memory records of all icons
+        (WebCore::IconDatabase::deleteAllPreparedStatements): Part of removeAllIcons and the thread cleanup procedure
+        (WebCore::IconDatabase::cleanupSyncThread): Write out any last remaining writes to disk, close the database, and then end the thread
+        (WebCore::IconDatabase::imported): Checks the DB to see if the Safari 2 import has occured
+        (WebCore::IconDatabase::setImported): Sets the "Safari 2 imported" flag
+        (WebCore::readySQLStatement):
+        (WebCore::IconDatabase::setIconURLForPageURLInSQLDatabase): This and the following "SQLDatabase" suffixed methods are pretty self explanatory
+        (WebCore::IconDatabase::setIconIDForPageURLInSQLDatabase):
+        (WebCore::IconDatabase::removePageURLFromSQLDatabase):
+        (WebCore::IconDatabase::getIconIDForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::addIconURLToSQLDatabase):
+        (WebCore::IconDatabase::getImageDataForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::removeIconFromSQLDatabase):
+        (WebCore::IconDatabase::writeIconSnapshotToSQLDatabase):
+        * loader/icon/IconDatabase.h:
+
+        * loader/icon/IconDatabaseClient.h: Added.
+        (WebCore::IconDatabaseClient::~IconDatabaseClient):
+        (WebCore::IconDatabaseClient::performImport): Perform the Safari 2 import, implemented by WebKit
+        (WebCore::IconDatabaseClient::dispatchDidRemoveAllIcons): Send the API notification
+        (WebCore::IconDatabaseClient::dispatchDidAddIconForPageURL): Ditto
+
+        * loader/icon/IconDatabaseNone.cpp: Best attempt to keep non icon-DB platforms building
+        (WebCore::IconDatabase::defaultDatabaseFilename):
+        (WebCore::IconDatabase::readIconForPageURLFromDisk):
+        (WebCore::IconDatabase::loadDecisionForIconURL):
+        (WebCore::IconDatabase::iconDataKnownForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::isEnabled):
+        (WebCore::IconDatabase::delayDatabaseCleanup):
+        (WebCore::IconDatabase::allowDatabaseCleanup):
+        (WebCore::IconDatabase::setClient):
+
+        * loader/icon/IconRecord.cpp: Added.
+        (WebCore::IconRecord::IconRecord): IconRecord used to be "IconDataCache" - it is merely a container for the url, timestamp, and image for a site icon.
+          It is Shared, and therefore ref counted - PageURLRecords are the owning containers.  This is a tricky way to track how many page urls are retaining 
+          an IconRecord and therefore tracking when we should try to get rid of one.
+        (WebCore::IconRecord::~IconRecord):
+        (WebCore::IconRecord::image):
+        (WebCore::IconRecord::setImageData):
+        (WebCore::IconRecord::loadImageFromResource):
+        (WebCore::IconRecord::imageDataStatus): Return whether the image data hasn't been read yet, exists in memory, or is absent (site with no icon)
+        (WebCore::IconRecord::snapshot): Returns a snapshot of the icon's data - url, timestamp, and image data - to be written to disk
+        * loader/icon/IconRecord.h: Added.
+        (WebCore::IconSnapshot::IconSnapshot):
+        (WebCore::IconRecord::getTimestamp):
+        (WebCore::IconRecord::setTimestamp):
+        (WebCore::IconRecord::iconURL):
+        (WebCore::IconRecord::retainingPageURLs):
+
+        * loader/icon/PageURLRecord.cpp: Added.
+        (WebCore::PageURLRecord::PageURLRecord): PageURLRecord is fundamentally a pairing of a Page URL to an Icon.  It has manual ref counting for the sake
+          of "retainIconForPageURL" and "releaseIconForPageURL", and can provide a quick snapshot of it's Page URL -> Icon URL mapping for writing to
+          the database
+        (WebCore::PageURLRecord::setIconRecord):
+        (WebCore::PageURLRecord::snapshot):
+        * loader/icon/PageURLRecord.h: Added.
+        (WebCore::PageURLSnapshot::PageURLSnapshot):
+        (WebCore::PageURLRecord::url):
+        (WebCore::PageURLRecord::PageURLRecord::iconRecord):
+        (WebCore::PageURLRecord::retain):
+        (WebCore::PageURLRecord::release):
+        (WebCore::PageURLRecord::retainCount):
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::copy): Added a deep copy method for the purposes of handing icon data across the thread boundary into the icon database
+        * platform/SharedBuffer.h:
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::registerForIconNotification):
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::callOnMainThread): Only other IconDatabase utilizing platform - keep their build going
+
 2007-09-07  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Timothy Hatcher.

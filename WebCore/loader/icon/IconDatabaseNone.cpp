@@ -45,7 +45,7 @@ const int missingIconExpirationTime = 60*60*24*7;
 
 const int updateTimerDelay = 5; 
 
-const String& IconDatabase::defaultDatabaseFilename()
+String IconDatabase::defaultDatabaseFilename()
 {
     static String defaultDatabaseFilename = "Icons.db";
     return defaultDatabaseFilename;
@@ -85,11 +85,6 @@ void IconDatabase::removeAllIcons()
 {
 }
 
-bool IconDatabase::isEmpty()
-{
-  return true;
-}
-
 void IconDatabase::setPrivateBrowsingEnabled(bool flag)
 {
 }
@@ -99,12 +94,23 @@ bool IconDatabase::isPrivateBrowsingEnabled() const
     return false;
 }
 
+void IconDatabase::readIconForPageURLFromDisk(const String&)
+{
+
+}
+
 Image* IconDatabase::iconForPageURL(const String& pageURL, const IntSize& size, bool cache)
 {
     return defaultIcon(size);
 }
 
-bool IconDatabase::isIconExpiredForIconURL(const String& iconURL)
+
+IconLoadDecision IconDatabase::loadDecisionForIconURL(const String&, DocumentLoader*)
+{
+    return IconLoadNo;
+}
+
+bool IconDatabase::iconDataKnownForIconURL(const String&)
 {
     return false;
 }
@@ -131,25 +137,15 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const St
 {
 }
 
-void IconDatabase::setHaveNoIconForIconURL(const String& iconURL)
+void IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL)
 {
-}
-
-bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL)
-{
-    return false;
-}
-
-bool IconDatabase::hasEntryForIconURL(const String& iconURL)
-{
-    return false;
 }
 
 void IconDatabase::setEnabled(bool enabled)
 {
 }
 
-bool IconDatabase::enabled() const
+bool IconDatabase::isEnabled() const
 {
     return false;
 }
@@ -174,6 +170,18 @@ bool IconDatabase::checkIntegrity()
 }
 
 void IconDatabase::checkIntegrityBeforeOpening()
+{
+}
+
+void IconDatabase::delayDatabaseCleanup()
+{
+}
+
+void IconDatabase::allowDatabaseCleanup()
+{
+}
+
+void IconDatabase::setClient(IconDatabaseClient*)
 {
 }
 

@@ -122,6 +122,22 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 */
 - (void)releaseIconForURL:(NSString *)URL;
 
+/*!
+    @method delayDatabaseCleanup:
+    @discussion Only effective if called before the database begins removing icons.
+    delayDatabaseCleanUp increments an internal counter that when 0 begins the database clean-up.
+    The counter equals 0 at initialization.
+*/
++ (void)delayDatabaseCleanup;
+
+/*!
+    @method allowDatabaseCleanup:
+    @discussion Informs the database that it now can begin removing icons.
+    allowDatabaseCleanup decrements an internal counter that when 0 begins the database clean-up.
+    The counter equals 0 at initialization.
+*/
++ (void)allowDatabaseCleanup;
+
 - (void)setDelegate:(id)delegate;
 - (id)delegate;
 

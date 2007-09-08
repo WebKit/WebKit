@@ -58,6 +58,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemInternal.h"
 #import "WebIconDatabase.h"
+#import "WebIconDatabaseInternal.h"
 #import "WebInspectorClient.h"
 #import "WebKitErrors.h"
 #import "WebKitLogging.h"
@@ -4034,6 +4035,47 @@ static WebFrameView *containingFrameView(NSView *view)
 - (BOOL)_becomingFirstResponderFromOutside
 {
     return _private->becomingFirstResponderFromOutside;
+}
+
+- (void)_receivedIconChangedNotification:(NSNotification *)notification
+{
+    // Get the URL for this notification
+    NSDictionary *userInfo = [notification userInfo];
+    ASSERT([userInfo isKindOfClass:[NSDictionary class]]);
+    NSString *urlString = [userInfo objectForKey:WebIconNotificationUserInfoURLKey];
+    ASSERT([urlString isKindOfClass:[NSString class]]);
+    
+    // If that URL matches the current main frame, dispatch the delegate call, which will also unregister
+    // us for this notification
+    if ([[self mainFrameURL] isEqualTo:urlString])
+        [self _dispatchDidReceiveIconFromWebFrame:[self mainFrame]];
+}
+
+- (void)_registerForIconNotification:(BOOL)listen
+{
+    if (listen)
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_receivedIconChangedNotification:) name:WebIconDatabaseDidAddIconNotification object:nil];        
+    else
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebIconDatabaseDidAddIconNotification object:nil];
+}
+
+- (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame
+{
+    // FIXME: This willChangeValueForKey call is too late, because the icon has already changed by now.
+    [self _willChangeValueForKey:_WebMainFrameIconKey];
+    
+    // Since we definitely have an icon and are about to send out the delegate call for that, this WebView doesn't need to listen for the general
+    // notification any longer
+    [self _registerForIconNotification:NO];
+
+    WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(self);
+    if (implementations.didReceiveIconForFrameFunc) {
+        Image* image = iconDatabase()->iconForPageURL(core(webFrame)->loader()->url().url(), IntSize(16, 16));
+        if (NSImage *icon = webGetNSImage(image, NSMakeSize(16, 16)))
+            CallFrameLoadDelegate(implementations.didReceiveIconForFrameFunc, self, @selector(webView:didReceiveIcon:forFrame:), icon, webFrame);
+    }
+
+    [self _didChangeValueForKey:_WebMainFrameIconKey];
 }
 
 - (NSString *)_userVisibleBundleVersionFromFullVersion:(NSString *)fullVersion
