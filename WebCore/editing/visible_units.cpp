@@ -217,8 +217,13 @@ VisiblePosition endOfWord(const VisiblePosition &c, EWordSide side)
         p = c.previous();
         if (p.isNull())
             return c;
-    } else if (isEndOfParagraph(c))
-        return c;
+    } else {
+        // at paragraph end, the endOfWord is the start of next paragraph
+        if (isEndOfParagraph(c)) {
+            p = c.next();
+            return p.isNotNull() ? p : c;
+        }
+    }
     
     return nextBoundary(p, endWordBoundary);
 }
@@ -231,7 +236,7 @@ static unsigned previousWordPositionBoundary(const UChar* characters, unsigned l
 VisiblePosition previousWordPosition(const VisiblePosition &c)
 {
     VisiblePosition prev = previousBoundary(c, previousWordPositionBoundary);
-    return c.firstPositionWithSameEditabilityAtOrAfter(prev);
+    return c.firstEditablePositionAtOrAfter(prev);
 }
 
 static unsigned nextWordPositionBoundary(const UChar* characters, unsigned length)
@@ -242,7 +247,7 @@ static unsigned nextWordPositionBoundary(const UChar* characters, unsigned lengt
 VisiblePosition nextWordPosition(const VisiblePosition &c)
 {
     VisiblePosition next = nextBoundary(c, nextWordPositionBoundary);    
-    return c.lastPositionWithSameEditabilityAtOrBefore(next);
+    return c.lastEditablePositionAtOrBefore(next);
 }
 
 // ---------
@@ -336,7 +341,7 @@ VisiblePosition startOfLine(const VisiblePosition& c)
         }
     }
 
-    return c.firstPositionWithSameEditabilityAtOrAfter(visPos);
+    return c.firstEditablePositionAtOrAfter(visPos);
 }
 
 static VisiblePosition endPositionForLine(const VisiblePosition& c)
@@ -403,7 +408,7 @@ VisiblePosition endOfLine(const VisiblePosition& c)
         visPos = endPositionForLine(visPos);
     }
     
-    return c.lastPositionWithSameEditabilityAtOrBefore(visPos);
+    return c.lastEditablePositionAtOrBefore(visPos);
 }
 
 bool inSameLine(const VisiblePosition &a, const VisiblePosition &b)
@@ -599,7 +604,7 @@ static unsigned previousSentencePositionBoundary(const UChar* characters, unsign
 VisiblePosition previousSentencePosition(const VisiblePosition &c)
 {
     VisiblePosition prev = previousBoundary(c, previousSentencePositionBoundary);
-    return c.firstPositionWithSameEditabilityAtOrAfter(prev);
+    return c.firstEditablePositionAtOrAfter(prev);
 }
 
 static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned length)
@@ -613,7 +618,7 @@ static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned l
 VisiblePosition nextSentencePosition(const VisiblePosition &c)
 {
     VisiblePosition next = nextBoundary(c, nextSentencePositionBoundary);    
-    return c.lastPositionWithSameEditabilityAtOrBefore(next);
+    return c.lastEditablePositionAtOrBefore(next);
 }
 
 // FIXME: Broken for positions before/after images that aren't inline (5027702)

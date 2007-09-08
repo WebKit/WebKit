@@ -1,3 +1,25 @@
+2007-09-07  Justin Garcia  <justin.garcia@apple.com>
+        
+        Rolling out my changes from r25421 while I investigate the layout test failures
+        they caused.
+        
+        * editing/Selection.cpp:
+        (WebCore::Selection::validate):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next):
+        (WebCore::VisiblePosition::previous):
+        (WebCore::VisiblePosition::lastEditablePositionAtOrBefore):
+        (WebCore::VisiblePosition::firstEditablePositionAtOrAfter):
+        * editing/VisiblePosition.h:
+        * editing/visible_units.cpp:
+        (WebCore::endOfWord):
+        (WebCore::previousWordPosition):
+        (WebCore::nextWordPosition):
+        (WebCore::startOfLine):
+        (WebCore::endOfLine):
+        (WebCore::previousSentencePosition):
+        (WebCore::nextSentencePosition):
+
 2007-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Maciej Stachowiak, Mark Rowe, Tim Hatcher.

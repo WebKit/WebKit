@@ -1,3 +1,13 @@
+2007-09-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Disabling the layout tests checked in with r25421 while I investigate
+        some layout test failures that that change caused.
+
+        * editing/selection/5057506-2.html: Removed.
+        * editing/selection/5057506-2.html-disabled: Added.
+        * editing/selection/5057506.html: Removed.
+        * editing/selection/5057506.html-disabled: Added.
+
 2007-09-07  Sam Weinig  <sam@webkit.org>
 
         * platform/win/Skipped: Remove a duplicate test.
