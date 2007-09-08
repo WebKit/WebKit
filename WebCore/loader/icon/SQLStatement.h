@@ -30,6 +30,10 @@
 #include "SQLDatabase.h"
 #include <wtf/Noncopyable.h>
 
+#if COMPILER(MSVC)
+#pragma warning(disable: 4800)
+#endif
+
 typedef struct sqlite3_stmt sqlite3_stmt;
 
 namespace WebCore {
