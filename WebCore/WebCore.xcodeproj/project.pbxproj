@@ -352,8 +352,8 @@
 		51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */; };
 		51E1ECB00C91C54600DC255B /* Threading.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECAE0C91C54600DC255B /* Threading.mm */; };
 		51E1ECB30C91C55600DC255B /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB10C91C55600DC255B /* AutodrainedPool.h */; };
-		51E1ECB40C91C55600DC255B /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB20C91C55600DC255B /* Threading.h */; };
-		51E1ECBE0C91C90400DC255B /* IconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB80C91C90400DC255B /* IconDatabaseClient.h */; };
+		51E1ECB40C91C55600DC255B /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB20C91C55600DC255B /* Threading.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51E1ECBE0C91C90400DC255B /* IconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB80C91C90400DC255B /* IconDatabaseClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECBA0C91C90400DC255B /* IconRecord.cpp */; };
 		51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBB0C91C90400DC255B /* IconRecord.h */; };
 		51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */; };
