@@ -1,5 +1,57 @@
 2007-09-07  Oliver Hunt  <oliver@apple.com>
 
+        RS=Same
+
+        r25382 moved a number of tests from platform/mac back to the cross-platform
+        directories, but did not commit the platform/mac changes themselves.
+        
+        This patch actually does.
+        
+        * platform/mac/editing/execCommand/nsresponder-outdent-expected.txt: Removed.
+        * platform/mac/editing/execCommand/nsresponder-indent-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/nsresponder-outdent-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/nsresponder-indent-expected.png: Removed.
+        * platform/mac/editing/execCommand/nsresponder-outdent-expected.png: Removed.
+        * platform/mac/editing/execCommand/nsresponder-indent.html: Removed.
+        * platform/mac/editing/execCommand/nsresponder-outdent.html: Removed.
+        * platform/mac/editing/execCommand/nsresponder-indent-expected.txt: Removed.
+        * platform/mac/editing/selection/5195166-1-expected.png: Removed.
+        * platform/mac/editing/selection/5195166-2-expected.png: Removed.
+        * platform/mac/editing/selection/select-line-expected.txt: Removed.
+        * platform/mac/editing/selection/selection-actions-expected.checksum: Removed.
+        * platform/mac/editing/selection/selection-actions.html: Removed.
+        * platform/mac/editing/selection/4947387-expected.txt: Removed.
+        * platform/mac/editing/selection/4947387-expected.png: Removed.
+        * platform/mac/editing/selection/5195166-1-expected.checksum: Removed.
+        * platform/mac/editing/selection/5195166-2-expected.checksum: Removed.
+        * platform/mac/editing/selection/selection-actions-expected.txt: Removed.
+        * platform/mac/editing/selection/5195166-1.html: Removed.
+        * platform/mac/editing/selection/5195166-2.html: Removed.
+        * platform/mac/editing/selection/selection-actions-expected.png: Removed.
+        * platform/mac/editing/selection/select-line.html: Removed.
+        * platform/mac/editing/selection/4947387-expected.checksum: Removed.
+        * platform/mac/editing/selection/5195166-1-expected.txt: Removed.
+        * platform/mac/editing/selection/4947387.html: Removed.
+        * platform/mac/editing/selection/5195166-2-expected.txt: Removed.
+        * platform/mac/editing/deleting/smart-delete-003-expected.checksum: Removed.
+        * platform/mac/editing/deleting/smart-delete-004-expected.checksum: Removed.
+        * platform/mac/editing/deleting/smart-delete-003.html: Removed.
+        * platform/mac/editing/deleting/smart-delete-004.html: Removed.
+        * platform/mac/editing/deleting/5300379-expected.checksum: Removed.
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.checksum: Removed.
+        * platform/mac/editing/deleting/5300379.html: Removed.
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph.html: Removed.
+        * platform/mac/editing/deleting/smart-delete-003-expected.txt: Removed.
+        * platform/mac/editing/deleting/smart-delete-004-expected.txt: Removed.
+        * platform/mac/editing/deleting/5300379-expected.txt: Removed.
+        * platform/mac/editing/deleting/smart-delete-003-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.txt: Removed.
+        * platform/mac/editing/deleting/smart-delete-004-expected.png: Removed.
+        * platform/mac/editing/deleting/5300379-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.png: Removed.
+
+2007-09-07  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Sam.
 
         Re-adding a few mac specific directories that accidentally got clobbered
