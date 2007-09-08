@@ -1,6 +1,6 @@
 2007-09-07  Oliver Hunt  <oliver@apple.com>
 
-        RS=Same
+        RS=Sam
 
         r25382 moved a number of tests from platform/mac back to the cross-platform
         directories, but did not commit the platform/mac changes themselves.
