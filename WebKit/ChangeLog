@@ -1,5 +1,14 @@
 2007-09-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Suggested by Maciej Stachowiak.
+        
+        Added wKiosk Browser to the browser list. Pretty sweet app.
+
+        * WebView/WebPreferences.m:
+        (cacheModelForMainBundle):
+
+2007-09-07  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix.
 
         * WebView/WebView.mm:
@@ -821,7 +830,7 @@
         Reviewed by Geoff.
 
         <rdar://problem/5390568>
-        REGRESSION: Ð[WebFrame loadHTMLString:baseURL:] leaks the data source
+        REGRESSION: -[WebFrame loadHTMLString:baseURL:] leaks the data source
         
         If the identifier is not in the map, just bail out instead of asserting. This is a better fix for
         <rdar://problem/5133420> because WebCore shouldn't have to worry about the lifetime of WebKit objects.

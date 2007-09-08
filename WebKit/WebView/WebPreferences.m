@@ -105,6 +105,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     // Apps that probably need the large setting
     static const char* const primaryWebBrowserIDs[] = {
         "com.app4mac.KidsBrowser"
+        "com.app4mac.wKiosk",
         "com.freeverse.bumpercar",
         "com.omnigroup.OmniWeb5",
         "com.sunrisebrowser.Sunrise",
