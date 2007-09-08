@@ -1,3 +1,13 @@
+2007-09-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Fix the _NSAutoreleaseNoPool() errors on launch - We were using NSFileManager on the secondary
+        thread with no NSAutoreleasePool in place
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::iconDatabaseSyncThread):
+
 2007-09-08  Sam Weinig  <sam@webkit.org>
 
         Add fix to the correct file.
