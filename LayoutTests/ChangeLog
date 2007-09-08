@@ -1,3 +1,7 @@
+2007-09-07  Sam Weinig  <sam@webkit.org>
+
+        * platform/win/Skipped: Remove a duplicate test.
+
 2007-09-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dave Harrison.

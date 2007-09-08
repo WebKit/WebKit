@@ -228,9 +228,10 @@ editing/pasteboard/drag-selected-image-to-contenteditable.html
 
 editing/pasteboard/drag-drop-modifies-page.html
 
-# DumpRenderTree doesn't support multiple windows <rdar://problem/5208288>
+# DumpRenderTree doesn't support multiple windows <rdar://problem/5132009>
 fast/dom/open-and-close-by-DOM.html
 fast/history/history_reload.html
+http/tests/navigation/new-window-redirect-history.html
 http/tests/navigation/target-frame-from-window.html
 http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
@@ -294,7 +295,6 @@ svg/custom/text-hit-test.svg
 # window.layoutTestController.setWindowIsKey is not implemented in DRT in boomer <rdar://problem/5141186>
 editing/selection/caret-and-focus-ring.html
 
-
 # Some LayoutTests use the QuickTime plugin which is not installed on the boomer build bots <rdar://problem/5138561>
 fast/dom/object-embed-plugin-scripting.html
 
@@ -344,14 +344,8 @@ fast/loader/local-JavaScript-from-local.html
 fast/loader/local-iFrame-source-from-local.html
 fast/loader/local-image-from-local.html
 
-# DRT doesn't support tests with multiple windows <rdar://problem/5133670>
-http/tests/navigation/new-window-redirect-history.html
-
 # Some LayoutTests fail when not run by themselves <rdar://problem/5224271>
 http/tests/navigation/anchor-frames.html
-
-# DRT doesn't support tests with multiple windows <rdar://problem/5133670>
-http/tests/navigation/new-window-redirect-history.html
 
 # Console messages are not being printed out for failed canLoad checks <rdar://problem/5128314>
 http/tests/security/local-CSS-from-remote.html
