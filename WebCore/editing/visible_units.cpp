@@ -217,13 +217,8 @@ VisiblePosition endOfWord(const VisiblePosition &c, EWordSide side)
         p = c.previous();
         if (p.isNull())
             return c;
-    } else {
-        // at paragraph end, the endOfWord is the start of next paragraph
-        if (isEndOfParagraph(c)) {
-            p = c.next();
-            return p.isNotNull() ? p : c;
-        }
-    }
+    } else if (isEndOfParagraph(c))
+        return c;
     
     return nextBoundary(p, endWordBoundary);
 }

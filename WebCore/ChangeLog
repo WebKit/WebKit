@@ -1,3 +1,15 @@
+2007-09-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Backing my change back in without the changes to VisiblePosition::next 
+        and previous that weren't necessary to fix the bug and were causing some
+        layout test failures.  Most of the failures appeared to be fixes but I
+        want more time to investigate and have to move to on to another task.
+
+        * editing/Selection.cpp:
+        (WebCore::Selection::validate):
+        * editing/visible_units.cpp:
+        (WebCore::endOfWord):
+
 2007-09-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe
