@@ -800,6 +800,7 @@ qt-port {
     platform/qt/DragDataQt.cpp \
     platform/qt/DragImageQt.cpp \
     platform/qt/FileChooserQt.cpp \
+    platform/qt/FileSystemQt.cpp \
     platform/qt/FontQt.cpp \
     platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
@@ -821,6 +822,7 @@ qt-port {
     platform/qt/TextBoundaries.cpp \
     platform/qt/TextBreakIteratorQt.cpp \
     platform/qt/TextCodecQt.cpp \
+    platform/qt/ThreadingQt.cpp \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
     ../WebKitQt/WebCoreSupport/ChromeClientQt.cpp \
