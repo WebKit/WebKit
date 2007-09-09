@@ -29,16 +29,16 @@ function jsWrapperClass(node)
 
 function objCWrapperClass(node)
 {
-    if (!window.layoutTestController)
+    if (!window.objCController)
         return "only works under DumpRenderTree";
-    return layoutTestController.objCClassName(node);
+    return objCController.objCClassName(node);
 }
 
 function objCObjectOfClass(name)
 {
-    if (!window.layoutTestController)
+    if (!window.objCController)
         return "only works under DumpRenderTree";
-    return layoutTestController.objCObjectOfClass(name);
+    return objCController.objCObjectOfClass(name);
 }
 
 function tagJSWrapperClass(tagName)
@@ -56,7 +56,7 @@ function testTag(tagName, className, objCClassName)
     shouldBe("tagJSWrapperClass('" + tagName + "')", "'" + className + "'");
     if (!objCClassName)
         objCClassName = "DOM" + className;
-    if (window.layoutTestController)
+    if (window.objCController)
         shouldBe("tagObjCWrapperClass('" + tagName + "')", "'" + objCClassName + "'");
 }
 
@@ -65,7 +65,7 @@ function test(expression, className, objCClassName)
     shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
     if (!objCClassName)
         objCClassName = "DOM" + className;
-    if (window.layoutTestController)
+    if (window.objCController)
         shouldBe("objCWrapperClass(" + expression + ")", "'" + objCClassName + "'");
 }
 

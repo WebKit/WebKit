@@ -1,5 +1,16 @@
 2007-09-09  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver.
+
+        Change objective-c tests to use the new ObjCController.
+
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/wrapper-classes.html:
+        * platform/mac/fast/dom/wrapper-round-tripping.html:
+        * platform/mac/fast/objc/longlongTest.html:
+
+2007-09-09  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Oliver.
 
         Disable occasionally failing tests until the reason for their failure can be determined.

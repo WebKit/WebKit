@@ -1,3 +1,80 @@
+2007-09-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Initial refactor of DumpRenderTree in preparation of making it more platform independent. 
+        - Move LayoutTestController into its own file.
+        - Move Objective-C only functions on LayoutTestController into a new controller called the
+          ObjCController. 
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.m:
+        (displayWebView):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/FrameLoadDelegate.m:
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
+        * DumpRenderTree/LayoutTestController.h: Added.
+        * DumpRenderTree/LayoutTestController.m: Added.
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController clearBackForwardList]):
+        (-[LayoutTestController setUseDashboardCompatibilityMode:]):
+        (-[LayoutTestController setCloseRemainingWindowsWhenComplete:]):
+        (-[LayoutTestController setCustomPolicyDelegate:]):
+        (-[LayoutTestController keepWebHistory]):
+        (-[LayoutTestController setCallCloseOnWebViews:]):
+        (-[LayoutTestController setCanOpenWindows]):
+        (-[LayoutTestController waitUntilDone]):
+        (-[LayoutTestController waitUntilDoneWatchdogFired]):
+        (-[LayoutTestController notifyDone]):
+        (-[LayoutTestController dumpAsText]):
+        (-[LayoutTestController addFileToPasteboardOnDrag]):
+        (-[LayoutTestController addDisallowedURL:]):
+        (-[LayoutTestController setUserStyleSheetLocation:]):
+        (-[LayoutTestController setUserStyleSheetEnabled:]):
+        (-[LayoutTestController dumpDOMAsWebArchive]):
+        (-[LayoutTestController dumpSourceAsWebArchive]):
+        (-[LayoutTestController dumpSelectionRect]):
+        (-[LayoutTestController dumpTitleChanges]):
+        (-[LayoutTestController dumpBackForwardList]):
+        (-[LayoutTestController windowCount]):
+        (-[LayoutTestController dumpChildFrameScrollPositions]):
+        (-[LayoutTestController dumpChildFramesAsText]):
+        (-[LayoutTestController dumpEditingCallbacks]):
+        (-[LayoutTestController dumpResourceLoadCallbacks]):
+        (-[LayoutTestController dumpFrameLoadCallbacks]):
+        (-[LayoutTestController setWindowIsKey:]):
+        (-[LayoutTestController setMainFrameIsFirstResponder:]):
+        (-[LayoutTestController display]):
+        (-[LayoutTestController testRepaint]):
+        (-[LayoutTestController repaintSweepHorizontally]):
+        (-[LayoutTestController invokeUndefinedMethodFromWebScript:withArguments:]):
+        (-[LayoutTestController _addWorkForTarget:selector:arg1:arg2:]):
+        (-[LayoutTestController _doLoad:target:]):
+        (-[LayoutTestController _doBackOrForwardNavigation:]):
+        (-[LayoutTestController queueBackNavigation:]):
+        (-[LayoutTestController queueForwardNavigation:]):
+        (-[LayoutTestController queueReload]):
+        (-[LayoutTestController queueScript:]):
+        (-[LayoutTestController queueLoad:target:]):
+        (-[LayoutTestController setAcceptsEditing:]):
+        (-[LayoutTestController setTabKeyCyclesThroughElements:]):
+        (-[LayoutTestController storeWebScriptObject:]):
+        (-[LayoutTestController accessStoredWebScriptObject]):
+        (-[LayoutTestController dealloc]):
+        (-[LayoutTestController decodeHostName:]):
+        (-[LayoutTestController encodeHostName:]):
+        * DumpRenderTree/ObjCController.h: Added.
+        * DumpRenderTree/ObjCController.m: Added.
+        (+[ObjCController isSelectorExcludedFromWebScript:]):
+        (+[ObjCController webScriptNameForSelector:]):
+        (-[ObjCController objCClassNameOf:]):
+        (-[ObjCController objCObjectOfClass:]):
+        (-[ObjCController objCIdentityIsEqual::]):
+        (-[ObjCController objCLongLongRoundTrip:]):
+        (-[ObjCController objCUnsignedLongLongRoundTrip:]):
+        (-[ObjCController testWrapperRoundTripping:]):
+
 2007-09-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice.

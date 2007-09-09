@@ -67,6 +67,10 @@
 		AE8259F408D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		B5A752A008AF5CD400138E45 /* ImageDiff.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A7525808AF4A3600138E45 /* ImageDiff.m */; };
 		B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
+		BCA876B70C921FA100946E9C /* ObjCController.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA876B50C921FA100946E9C /* ObjCController.h */; };
+		BCA876B80C921FA100946E9C /* ObjCController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA876B60C921FA100946E9C /* ObjCController.m */; };
+		BCA877B00C93D8F500946E9C /* LayoutTestController.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA877AE0C93D8F500946E9C /* LayoutTestController.h */; };
+		BCA877B10C93D8F500946E9C /* LayoutTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA877AF0C93D8F500946E9C /* LayoutTestController.m */; };
 		D23AE9660C56BB2100C47236 /* PolicyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AE8EA0C56B2FF00C47236 /* PolicyDelegate.m */; };
 		D23AE9690C56BB2900C47236 /* PolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = D23AE8E00C56B29E00C47236 /* PolicyDelegate.h */; };
 		E1330800099624DA00AC0A91 /* AppleScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = E13307FE099624DA00AC0A91 /* AppleScriptController.h */; };
@@ -140,6 +144,10 @@
 		B5A7525808AF4A3600138E45 /* ImageDiff.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ImageDiff.m; sourceTree = "<group>"; };
 		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5A752A108AF5D1F00138E45 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		BCA876B50C921FA100946E9C /* ObjCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCController.h; sourceTree = "<group>"; };
+		BCA876B60C921FA100946E9C /* ObjCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCController.m; sourceTree = "<group>"; };
+		BCA877AE0C93D8F500946E9C /* LayoutTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutTestController.h; sourceTree = "<group>"; };
+		BCA877AF0C93D8F500946E9C /* LayoutTestController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LayoutTestController.m; sourceTree = "<group>"; };
 		D23AE8E00C56B29E00C47236 /* PolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyDelegate.h; sourceTree = "<group>"; };
 		D23AE8EA0C56B2FF00C47236 /* PolicyDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PolicyDelegate.m; sourceTree = "<group>"; };
 		E13307FE099624DA00AC0A91 /* AppleScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleScriptController.h; sourceTree = "<group>"; };
@@ -233,6 +241,10 @@
 				14A6FB890971CAE5008B014F /* NavigationController.m */,
 				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
 				93442CF508F8BA4900BFE8CA /* TextInputController.m */,
+				BCA876B50C921FA100946E9C /* ObjCController.h */,
+				BCA876B60C921FA100946E9C /* ObjCController.m */,
+				BCA877AE0C93D8F500946E9C /* LayoutTestController.h */,
+				BCA877AF0C93D8F500946E9C /* LayoutTestController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -315,6 +327,8 @@
 				6508A2990BFABB8100AD2696 /* FrameLoadDelegate.h in Headers */,
 				6508A29A0BFABB8200AD2696 /* ResourceLoadDelegate.h in Headers */,
 				D23AE9690C56BB2900C47236 /* PolicyDelegate.h in Headers */,
+				BCA876B70C921FA100946E9C /* ObjCController.h in Headers */,
+				BCA877B00C93D8F500946E9C /* LayoutTestController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,6 +456,8 @@
 				1422A1BB0AF6EDD600E1A883 /* UIDelegate.m in Sources */,
 				6508A2980BFABB8000AD2696 /* FrameLoadDelegate.m in Sources */,
 				D23AE9660C56BB2100C47236 /* PolicyDelegate.m in Sources */,
+				BCA876B80C921FA100946E9C /* ObjCController.m in Sources */,
+				BCA877B10C93D8F500946E9C /* LayoutTestController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

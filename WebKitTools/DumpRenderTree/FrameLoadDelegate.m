@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-    * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -32,10 +32,11 @@
 #import "DumpRenderTree.h"
 #import "EventSendingController.h"
 #import "GCController.h"
+#import "LayoutTestController.h"
 #import "NavigationController.h"
+#import "ObjCController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
-
 #import "TextInputController.h"
 
 #import <JavaScriptCore/Assertions.h>
@@ -238,7 +239,11 @@
     GCController *gcc = [[GCController alloc] init];
     [obj setValue:gcc forKey:@"GCController"];
     [gcc release];
-    
+
+    ObjCController *occ = [[ObjCController alloc] init];
+    [obj setValue:occ forKey:@"objCController"];
+    [occ release];
+
     [obj setValue:navigationController forKey:@"navigationController"];
     
     ObjCPlugin *plugin = [[ObjCPlugin alloc] init];

@@ -9,7 +9,7 @@
 
             function testLongLong(num, expected)
             {
-                var result = layoutTestController.objCLongLongRoundTrip(num);
+                var result = objCController.objCLongLongRoundTrip(num);
                 if (result == expected)
                     log("PASS Test LongLong: result is " + result + " as expected!");
                 else
@@ -18,7 +18,7 @@
 
             function testUnsignedLongLong(num, expected)
             {
-                var result = layoutTestController.objCUnsignedLongLongRoundTrip(num);
+                var result = objCController.objCUnsignedLongLongRoundTrip(num);
                 if (result == expected)
                     log("PASS Test UnsignedLongLong: result is " + result + " as expected!");
                 else

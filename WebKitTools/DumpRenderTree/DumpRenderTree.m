@@ -38,8 +38,10 @@
 #import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
 #import "UIDelegate.h"
+
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
 #import <CoreFoundation/CoreFoundation.h>
+#import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/DOMElementPrivate.h>
 #import <WebKit/DOMExtensions.h>
@@ -49,18 +51,14 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
-#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <JavaScriptCore/Assertions.h>
 #import <getopt.h>
 #import <mach-o/getsect.h>
 #import <malloc/malloc.h>
@@ -91,7 +89,6 @@
 
 BOOL windowIsKey = YES;
 WebFrame *mainFrame = 0;
-BOOL shouldDumpSubframesAsText;
 BOOL shouldDumpEditingCallbacks;
 BOOL shouldDumpResourceLoadCallbacks;
 BOOL shouldDumpFrameLoadCallbacks;
@@ -104,20 +101,19 @@ BOOL addFileToPasteboardOnDrag = NO;
 
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
-static void displayWebView();
 
 volatile BOOL done;
 NavigationController *navigationController = nil;
 
-static NSTimer *waitToDumpWatchdog;
-static NSTimeInterval waitToDumpWatchdogInterval = 10; // seconds
+NSTimer *waitToDumpWatchdog;
+NSTimeInterval waitToDumpWatchdogInterval = 10; // seconds
 
 // Delegates
-static FrameLoadDelegate *frameLoadDelegate;
-static UIDelegate *uiDelegate;
-static EditingDelegate *editingDelegate;
-static ResourceLoadDelegate *resourceLoadDelegate;
-static PolicyDelegate *policyDelegate;
+FrameLoadDelegate *frameLoadDelegate;
+UIDelegate *uiDelegate;
+EditingDelegate *editingDelegate;
+ResourceLoadDelegate *resourceLoadDelegate;
+PolicyDelegate *policyDelegate;
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
@@ -132,39 +128,43 @@ static PolicyDelegate *policyDelegate;
 // that child frame is the "topmost frame that is loading".
 WebFrame *topLoadingFrame = nil;     // !nil iff a load is in progress
 
-static BOOL dumpAsText;
-static BOOL dumpDOMAsWebArchive;
-static BOOL dumpSourceAsWebArchive;
-static BOOL dumpSelectionRect;
+BOOL dumpAsText;
+BOOL dumpDOMAsWebArchive;
+BOOL dumpSourceAsWebArchive;
+BOOL dumpSelectionRect;
 BOOL dumpTitleChanges = NO;
-static BOOL dumpBackForwardList;
-static BOOL dumpChildFrameScrollPositions;
-static BOOL dumpChildFramesAsText;
+BOOL dumpBackForwardList;
+BOOL dumpChildFrameScrollPositions;
+BOOL dumpChildFramesAsText;
+BOOL testRepaint;
+BOOL repaintSweepHorizontally;
+
 static int dumpPixels;
 static int paint;
 static int dumpAllPixels;
 static int threaded;
 static BOOL readFromWindow;
 static int testRepaintDefault;
-static BOOL testRepaint;
 static int repaintSweepHorizontallyDefault;
-static BOOL repaintSweepHorizontally;
 static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
+
 static NSMutableDictionary *localPasteboards;
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
 static unsigned char* screenCaptureBuffer;
 static CGColorSpaceRef sharedColorSpace;
+
 // a queue of NSInvocations, queued by callouts from the test, to be exec'ed when the load is done
 NSMutableArray *workQueue = nil;
 // to prevent infinite loops, only the first page of a test can add to a work queue
 // (since we may well come back to that same page)
 BOOL workQueueFrozen = NO;
+
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
-static CFMutableArrayRef allWindowsRef;
+CFMutableArrayRef allWindowsRef;
 
 static pthread_mutex_t javaScriptThreadsMutex = PTHREAD_MUTEX_INITIALIZER;
 static BOOL javaScriptThreadsShouldTerminate;
@@ -1005,519 +1005,6 @@ void dump(void)
     done = YES;
 }
 
-@implementation LayoutTestController
-
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
-{
-    if (0
-            || aSelector == @selector(accessStoredWebScriptObject)
-            || aSelector == @selector(addDisallowedURL:)    
-            || aSelector == @selector(addFileToPasteboardOnDrag)
-            || aSelector == @selector(clearBackForwardList)
-            || aSelector == @selector(decodeHostName:)
-            || aSelector == @selector(display)
-            || aSelector == @selector(dumpAsText)
-            || aSelector == @selector(dumpBackForwardList)
-            || aSelector == @selector(dumpChildFrameScrollPositions)
-            || aSelector == @selector(dumpChildFramesAsText)
-            || aSelector == @selector(dumpDOMAsWebArchive)
-            || aSelector == @selector(dumpEditingCallbacks)
-            || aSelector == @selector(dumpFrameLoadCallbacks)
-            || aSelector == @selector(dumpResourceLoadCallbacks)
-            || aSelector == @selector(dumpSelectionRect)
-            || aSelector == @selector(dumpSourceAsWebArchive)
-            || aSelector == @selector(dumpTitleChanges)
-            || aSelector == @selector(encodeHostName:)
-            || aSelector == @selector(keepWebHistory)
-            || aSelector == @selector(notifyDone)
-            || aSelector == @selector(objCClassNameOf:)
-            || aSelector == @selector(objCIdentityIsEqual::)
-            || aSelector == @selector(objCObjectOfClass:)
-            || aSelector == @selector(objCLongLongRoundTrip:)
-            || aSelector == @selector(objCUnsignedLongLongRoundTrip:)
-            || aSelector == @selector(queueBackNavigation:)
-            || aSelector == @selector(queueForwardNavigation:)
-            || aSelector == @selector(queueLoad:target:)
-            || aSelector == @selector(queueReload)
-            || aSelector == @selector(queueScript:)
-            || aSelector == @selector(repaintSweepHorizontally)
-            || aSelector == @selector(setAcceptsEditing:)
-            || aSelector == @selector(setCallCloseOnWebViews:)
-            || aSelector == @selector(setCanOpenWindows)
-            || aSelector == @selector(setCloseRemainingWindowsWhenComplete:)
-            || aSelector == @selector(setCustomPolicyDelegate:)
-            || aSelector == @selector(setMainFrameIsFirstResponder:)
-            || aSelector == @selector(setTabKeyCyclesThroughElements:)
-            || aSelector == @selector(setUseDashboardCompatibilityMode:)
-            || aSelector == @selector(setUserStyleSheetEnabled:)
-            || aSelector == @selector(setUserStyleSheetLocation:)
-            || aSelector == @selector(setWindowIsKey:)
-            || aSelector == @selector(storeWebScriptObject:)
-            || aSelector == @selector(testRepaint)
-            || aSelector == @selector(testWrapperRoundTripping:)
-            || aSelector == @selector(waitUntilDone)
-            || aSelector == @selector(windowCount)
-        )
-        return NO;
-    return YES;
-}
-
-+ (NSString *)webScriptNameForSelector:(SEL)aSelector
-{
-    if (aSelector == @selector(setWindowIsKey:))
-        return @"setWindowIsKey";
-    if (aSelector == @selector(setMainFrameIsFirstResponder:))
-        return @"setMainFrameIsFirstResponder";
-    if (aSelector == @selector(queueBackNavigation:))
-        return @"queueBackNavigation";
-    if (aSelector == @selector(queueForwardNavigation:))
-        return @"queueForwardNavigation";
-    if (aSelector == @selector(queueScript:))
-        return @"queueScript";
-    if (aSelector == @selector(queueLoad:target:))
-        return @"queueLoad";
-    if (aSelector == @selector(setAcceptsEditing:))
-        return @"setAcceptsEditing";
-    if (aSelector == @selector(setTabKeyCyclesThroughElements:))
-        return @"setTabKeyCyclesThroughElements";
-    if (aSelector == @selector(storeWebScriptObject:))
-        return @"storeWebScriptObject";
-    if (aSelector == @selector(testWrapperRoundTripping:))
-        return @"testWrapperRoundTripping";
-    if (aSelector == @selector(setUserStyleSheetLocation:))
-        return @"setUserStyleSheetLocation";
-    if (aSelector == @selector(setUserStyleSheetEnabled:))
-        return @"setUserStyleSheetEnabled";
-    if (aSelector == @selector(objCClassNameOf:))
-        return @"objCClassName";
-    if (aSelector == @selector(objCObjectOfClass:))
-        return @"objCObjectOfClass";
-    if (aSelector == @selector(objCIdentityIsEqual::))
-        return @"objCIdentityIsEqual";
-    if (aSelector == @selector(addDisallowedURL:))
-        return @"addDisallowedURL";
-    if (aSelector == @selector(setCallCloseOnWebViews:))
-        return @"setCallCloseOnWebViews";
-    if (aSelector == @selector(setCloseRemainingWindowsWhenComplete:))
-        return @"setCloseRemainingWindowsWhenComplete";
-    if (aSelector == @selector(setCustomPolicyDelegate:))
-        return @"setCustomPolicyDelegate";
-    if (aSelector == @selector(setUseDashboardCompatibilityMode:))
-        return @"setUseDashboardCompatiblityMode";
-    if (aSelector == @selector(encodeHostName:))
-        return @"encodeHostName";
-    if (aSelector == @selector(decodeHostName:))
-        return @"decodeHostName";    
-    if (aSelector == @selector(objCLongLongRoundTrip:))
-        return @"objCLongLongRoundTrip";
-    if (aSelector == @selector(objCUnsignedLongLongRoundTrip:))
-        return @"objCUnsignedLongLongRoundTrip";
-    
-    return nil;
-}
-
-- (void)clearBackForwardList
-{
-    WebBackForwardList *backForwardList = [[mainFrame webView] backForwardList];
-    WebHistoryItem *item = [[backForwardList currentItem] retain];
-
-    // We clear the history by setting the back/forward list's capacity to 0
-    // then restoring it back and adding back the current item.
-    int capacity = [backForwardList capacity];
-    [backForwardList setCapacity:0];
-    [backForwardList setCapacity:capacity];
-    [backForwardList addItem:item];
-    [backForwardList goToItem:item];
-    [item release];
-}
-
-- (void)setUseDashboardCompatibilityMode:(BOOL)flag
-{
-    [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:flag];
-}
-
-- (void)setCloseRemainingWindowsWhenComplete:(BOOL)closeWindows
-{
-    closeRemainingWindowsWhenComplete = closeWindows;
-}
-
-- (void)setCustomPolicyDelegate:(BOOL)setDelegate
-{
-    if (setDelegate)
-        [[mainFrame webView] setPolicyDelegate:policyDelegate];
-    else
-        [[mainFrame webView] setPolicyDelegate:nil];
-}
-
-- (void)keepWebHistory
-{
-    if (![WebHistory optionalSharedHistory]) {
-        WebHistory *history = [[WebHistory alloc] init];
-        [WebHistory setOptionalSharedHistory:history];
-        [history release];
-    }
-}
-
-- (void)setCallCloseOnWebViews:(BOOL)callClose
-{
-    closeWebViews = callClose;
-}
-
-- (void)setCanOpenWindows
-{
-    canOpenWindows = YES;
-}
-
-- (void)waitUntilDone 
-{
-    waitToDump = YES;
-    if (!waitToDumpWatchdog)
-        waitToDumpWatchdog = [[NSTimer scheduledTimerWithTimeInterval:waitToDumpWatchdogInterval target:self selector:@selector(waitUntilDoneWatchdogFired) userInfo:nil repeats:NO] retain];
-}
-
-- (void)waitUntilDoneWatchdogFired
-{
-    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
-    fprintf(stderr, message);
-    fprintf(stdout, message);
-    dump();
-}
-
-- (void)notifyDone
-{
-    if (waitToDump && !topLoadingFrame && [workQueue count] == 0)
-        dump();
-    waitToDump = NO;
-}
-
-- (void)dumpAsText
-{
-    dumpAsText = YES;
-}
-
-- (void)addFileToPasteboardOnDrag
-{
-    addFileToPasteboardOnDrag = YES;
-}
-
-- (void)addDisallowedURL:(NSString *)urlString
-{
-    if (!disallowedURLs)
-        disallowedURLs = [[NSMutableSet alloc] init];
-    
-    
-    // Canonicalize the URL
-    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
-    request = [NSURLProtocol canonicalRequestForRequest:request];
-    
-    [disallowedURLs addObject:[request URL]];
-}
-
-- (void)setUserStyleSheetLocation:(NSString *)path
-{
-    NSURL *url = [NSURL URLWithString:path];
-    [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
-}
-
-- (void)setUserStyleSheetEnabled:(BOOL)flag
-{
-    [[WebPreferences standardPreferences] setUserStyleSheetEnabled:flag];
-}
-
-- (void)dumpDOMAsWebArchive
-{
-    dumpDOMAsWebArchive = YES;
-}
-
-- (void)dumpSourceAsWebArchive
-{
-    dumpSourceAsWebArchive = YES;
-}
-
-- (void)dumpSelectionRect
-{
-    dumpSelectionRect = YES;
-}
-
-- (void)dumpTitleChanges
-{
-    dumpTitleChanges = YES;
-}
-
-- (void)dumpBackForwardList
-{
-    dumpBackForwardList = YES;
-}
-
-- (int)windowCount
-{
-    return CFArrayGetCount(allWindowsRef);
-}
-
-- (void)dumpChildFrameScrollPositions
-{
-    dumpChildFrameScrollPositions = YES;
-}
-
-- (void)dumpChildFramesAsText
-{
-    dumpChildFramesAsText = YES;
-}
-
-- (void)dumpEditingCallbacks
-{
-    shouldDumpEditingCallbacks = YES;
-}
-
-- (void)dumpResourceLoadCallbacks
-{
-    shouldDumpResourceLoadCallbacks = YES;
-}
-
-- (void)dumpFrameLoadCallbacks
-{
-    shouldDumpFrameLoadCallbacks = YES;
-}
-
-- (void)setWindowIsKey:(BOOL)flag
-{
-    windowIsKey = flag;
-    NSView *documentView = [[mainFrame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateActiveState];
-}
-
-- (void)setMainFrameIsFirstResponder:(BOOL)flag
-{
-    NSView *documentView = [[mainFrame frameView] documentView];
-    
-    NSResponder *firstResponder = flag ? documentView : nil;
-    [[[mainFrame webView] window] makeFirstResponder:firstResponder];
-        
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateActiveState];
-}
-
-- (void)display
-{
-    displayWebView();
-}
-
-- (void)testRepaint
-{
-    testRepaint = YES;
-}
-
-- (void)repaintSweepHorizontally
-{
-    repaintSweepHorizontally = YES;
-}
-
-- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args
-{
-    return nil;
-}
-
-- (void)_addWorkForTarget:(id)target selector:(SEL)selector arg1:(id)arg1 arg2:(id)arg2
-{
-    if (workQueueFrozen)
-        return;
-    NSMethodSignature *sig = [target methodSignatureForSelector:selector];
-    NSInvocation *work = [NSInvocation invocationWithMethodSignature:sig];
-    [work retainArguments];
-    [work setTarget:target];
-    [work setSelector:selector];
-    if (arg1) {
-        [work setArgument:&arg1 atIndex:2];
-        if (arg2)
-            [work setArgument:&arg2 atIndex:3];
-    }
-    [workQueue addObject:work];
-}
-
-- (void)_doLoad:(NSURL *)url target:(NSString *)target
-{
-    WebFrame *targetFrame;
-    if (target && ![target isKindOfClass:[WebUndefined class]])
-        targetFrame = [mainFrame findFrameNamed:target];
-    else
-        targetFrame = mainFrame;
-    [targetFrame loadRequest:[NSURLRequest requestWithURL:url]];
-}
-
-- (void)_doBackOrForwardNavigation:(NSNumber *)index
-{
-    int bfIndex = [index intValue];
-    if (bfIndex == 1)
-        [[mainFrame webView] goForward];
-    if (bfIndex == -1)
-        [[mainFrame webView] goBack];
-    else {        
-        WebBackForwardList *bfList = [[mainFrame webView] backForwardList];
-        [[mainFrame webView] goToBackForwardItem:[bfList itemAtIndex:bfIndex]];
-    }
-}
-
-- (void)queueBackNavigation:(int)howFarBack
-{
-    [self _addWorkForTarget:self selector:@selector(_doBackOrForwardNavigation:) arg1:[NSNumber numberWithInt:-howFarBack] arg2:nil];
-}
-
-- (void)queueForwardNavigation:(int)howFarForward
-{
-    [self _addWorkForTarget:self selector:@selector(_doBackOrForwardNavigation:) arg1:[NSNumber numberWithInt:howFarForward] arg2:nil];
-}
-
-- (void)queueReload
-{
-    [self _addWorkForTarget:[mainFrame webView] selector:@selector(reload:) arg1:self arg2:nil];
-}
-
-- (void)queueScript:(NSString *)script
-{
-    [self _addWorkForTarget:[mainFrame webView] selector:@selector(stringByEvaluatingJavaScriptFromString:) arg1:script arg2:nil];
-}
-
-- (void)queueLoad:(NSString *)URLString target:(NSString *)target
-{
-    NSURL *URL = [NSURL URLWithString:URLString relativeToURL:[[[mainFrame dataSource] response] URL]];
-    [self _addWorkForTarget:self selector:@selector(_doLoad:target:) arg1:URL arg2:target];
-}
-
-- (void)setAcceptsEditing:(BOOL)newAcceptsEditing
-{
-    [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
-}
-
-- (void)setTabKeyCyclesThroughElements:(BOOL)newTabKeyCyclesThroughElements
-{
-    [[mainFrame webView] setTabKeyCyclesThroughElements:newTabKeyCyclesThroughElements];
-}
-
-- (void)storeWebScriptObject:(WebScriptObject *)webScriptObject
-{
-    if (webScriptObject == storedWebScriptObject)
-        return;
-
-    [storedWebScriptObject release];
-    storedWebScriptObject = [webScriptObject retain];
-}
-
-- (void)accessStoredWebScriptObject
-{
-    JSObjectRef jsObject = [storedWebScriptObject JSObject];
-    ASSERT(!jsObject);
-
-    [storedWebScriptObject callWebScriptMethod:@"" withArguments:nil];
-    [storedWebScriptObject evaluateWebScript:@""];
-    [storedWebScriptObject setValue:[WebUndefined undefined] forKey:@"key"];
-    [storedWebScriptObject valueForKey:@"key"];
-    [storedWebScriptObject removeWebScriptKey:@"key"];
-    [storedWebScriptObject stringRepresentation];
-    [storedWebScriptObject webScriptValueAtIndex:0];
-    [storedWebScriptObject setWebScriptValueAtIndex:0 value:[WebUndefined undefined]];
-    [storedWebScriptObject setException:@"exception"];
-}
-
-- (BOOL)testWrapperRoundTripping:(WebScriptObject *)webScriptObject
-{
-    JSObjectRef jsObject = [webScriptObject JSObject];
-
-    if (!jsObject)
-        return false;
-
-    if (!webScriptObject)
-        return false;
-
-    if ([[webScriptObject evaluateWebScript:@"({ })"] class] != [webScriptObject class])
-        return false;
-
-    [webScriptObject setValue:[NSNumber numberWithInt:666] forKey:@"key"];
-    if (![[webScriptObject valueForKey:@"key"] isKindOfClass:[NSNumber class]] ||
-        ![[webScriptObject valueForKey:@"key"] isEqualToNumber:[NSNumber numberWithInt:666]])
-        return false;
-
-    [webScriptObject removeWebScriptKey:@"key"];
-    @try {
-        if ([webScriptObject valueForKey:@"key"])
-            return false;
-    } @catch(NSException *exception) {
-        // NSObject throws an exception if the key doesn't exist.
-    }
-
-    [webScriptObject setWebScriptValueAtIndex:0 value:webScriptObject];
-    if ([webScriptObject webScriptValueAtIndex:0] != webScriptObject)
-        return false;
-
-    if ([[webScriptObject stringRepresentation] isEqualToString:@"[Object object]"])
-        return false;
-
-    if ([webScriptObject callWebScriptMethod:@"returnThis" withArguments:nil] != webScriptObject)
-        return false;
-
-    return true;
-}
-
-- (void)dealloc
-{
-    [storedWebScriptObject release];
-    [super dealloc];
-}
-
-- (NSString *)objCClassNameOf:(id)object
-{
-    if (!object)
-        return @"nil";
-    return NSStringFromClass([object class]);
-}
-
-- (id)objCObjectOfClass:(NSString *)aClass
-{
-    if ([aClass isEqualToString:@"NSNull"])
-        return [NSNull null];
-    if ([aClass isEqualToString:@"WebUndefined"])
-        return [WebUndefined undefined];
-    if ([aClass isEqualToString:@"NSCFBoolean"])
-        return [NSNumber numberWithBool:true];
-    if ([aClass isEqualToString:@"NSCFNumber"])
-        return [NSNumber numberWithInt:1];
-    if ([aClass isEqualToString:@"NSCFString"])
-        return @"";
-    if ([aClass isEqualToString:@"WebScriptObject"])
-        return self;
-    if ([aClass isEqualToString:@"NSArray"])
-        return [NSArray array];
-
-    return nil;
-}
-
-- (BOOL)objCIdentityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b
-{
-    return a == b;
-}
-
-- (NSString*)decodeHostName:(NSString*)name
-{
-    return [name _web_decodeHostName];
-}
-
-- (NSString*)encodeHostName:(NSString*)name
-{
-    return [name _web_encodeHostName];
-}
-
-- (long long)objCLongLongRoundTrip:(long long)num
-{
-    return num;
-}
-
-- (unsigned long long)objCUnsignedLongLongRoundTrip:(unsigned long long)num
-{
-    return num;
-}
-
-@end
-
 static bool shouldLogFrameLoadDelegates(const char *pathOrURL)
 {
     return strstr(pathOrURL, "loading/");
@@ -1660,7 +1147,7 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
     return [NSString stringWithUTF8String:hex];
 }
 
-static void displayWebView()
+void displayWebView()
 {
     NSView *webView = [mainFrame webView];
     [webView display];

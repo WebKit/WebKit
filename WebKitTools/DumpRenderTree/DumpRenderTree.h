@@ -27,35 +27,58 @@
  */
 
 @class DumpRenderTreeDraggingInfo;
+@class EditingDelegate;
+@class FrameLoadDelegate;
 @class NavigationController;
+@class PolicyDelegate;
+@class ResourceLoadDelegate;
+@class UIDelegate;
 @class WebFrame;
 @class WebScriptObject;
 @class WebView;
 
+
+extern BOOL dumpAsText;
+extern BOOL dumpDOMAsWebArchive;
+extern BOOL dumpSourceAsWebArchive;
+extern BOOL dumpSelectionRect;
+extern BOOL dumpTitleChanges;
+extern BOOL dumpBackForwardList;
+extern BOOL dumpChildFrameScrollPositions;
+extern BOOL dumpChildFramesAsText;
+extern BOOL testRepaint;
+extern BOOL repaintSweepHorizontally;
 extern BOOL windowIsKey;
+extern BOOL shouldDumpEditingCallbacks;
+extern BOOL shouldDumpResourceLoadCallbacks;
+extern BOOL shouldDumpFrameLoadCallbacks;
 extern WebFrame *mainFrame;
 extern DumpRenderTreeDraggingInfo *draggingInfo;
 extern volatile BOOL done;
 extern BOOL shouldDumpResourceLoadCallbacks;
 extern BOOL shouldDumpFrameLoadCallbacks;
-extern BOOL dumpTitleChanges;
 extern NSMutableSet *disallowedURLs;
 extern BOOL waitToDump;
 extern BOOL canOpenWindows;
 extern BOOL closeWebViews;
+extern BOOL closeRemainingWindowsWhenComplete;
 extern BOOL addFileToPasteboardOnDrag;
 extern NSMutableArray *workQueue;
 extern WebFrame *topLoadingFrame;
 extern BOOL workQueueFrozen;
 extern NavigationController *navigationController;
+extern NSTimer *waitToDumpWatchdog;
+extern NSTimeInterval waitToDumpWatchdogInterval;
+extern CFMutableArrayRef allWindowsRef;
+
+// Delegates
+extern FrameLoadDelegate *frameLoadDelegate;
+extern UIDelegate *uiDelegate;
+extern EditingDelegate *editingDelegate;
+extern ResourceLoadDelegate *resourceLoadDelegate;
+extern PolicyDelegate *policyDelegate;
 
 WebView *createWebView();
+void displayWebView();
 void dump(void);
-
-@interface LayoutTestController : NSObject
-{
-    WebScriptObject *storedWebScriptObject;
-}
-- (void)dealloc;
-@end
 
