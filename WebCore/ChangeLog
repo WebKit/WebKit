@@ -1,5 +1,12 @@
 2007-09-08  Mark Rowe  <mrowe@apple.com>
 
+        Build fix for when ENABLE(ICONDATABASE) is not set.
+
+        * loader/icon/IconDatabaseNone.cpp:
+        (WebCore::IconDatabase::~IconDatabase):
+
+2007-09-08  Mark Rowe  <mrowe@apple.com>
+
         More fixes for the Qt and Gtk builds.
 
         * WebCore.pro: Update for file changes.

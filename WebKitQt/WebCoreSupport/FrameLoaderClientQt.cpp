@@ -580,11 +580,11 @@ void FrameLoaderClientQt::windowObjectCleared() const
         emit m_webFrame->cleared();
 }
 
-void FrameLoaderClient::didPerformFirstNavigation() const
+void FrameLoaderClientQt::didPerformFirstNavigation() const
 {
 }
 
-void FrameLoaderClient::registerForIconNotification(bool)
+void FrameLoaderClientQt::registerForIconNotification(bool)
 {
     notImplemented();
 }
