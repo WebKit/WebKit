@@ -1,3 +1,18 @@
+2007-09-08  George Staikos  <staikos@kde.org>
+
+        Reviewed by Olliej.
+
+        Separate out and implement FileSystem functions,  and stub out the
+        icondatabase function for future implementation.
+
+        * WebCore.pro:
+        * platform/qt/FileSystemQt.cpp: Added.
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/qt/ThreadingQt.cpp: Added.
+        (WebCore::callOnMainThread):
+
 2007-09-08  Mark Rowe  <mrowe@apple.com>
 
         Build fix for when ENABLE(ICONDATABASE) is not set.
