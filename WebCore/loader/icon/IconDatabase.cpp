@@ -49,6 +49,8 @@
 #include <sys/stat.h>
 #endif
 
+#include <errno.h>
+
 // For methods that are meant to support API from the main thread - should not be called internally
 #define ASSERT_NOT_SYNC_THREAD() ASSERT(!m_syncThreadRunning || !IS_ICON_SYNC_THREAD())
 

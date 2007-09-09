@@ -925,7 +925,8 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
     LIBS += -lsqlite3
     SOURCES += \
         loader/icon/IconDatabase.cpp \
-        loader/icon/IconDataCache.cpp \
+        loader/icon/IconRecord.cpp \
+        loader/icon/PageURLRecord.cpp \
         loader/icon/SQLDatabase.cpp \
         loader/icon/SQLStatement.cpp \
         loader/icon/SQLTransaction.cpp
