@@ -39,6 +39,13 @@ fi
 
 echo -n `cat "$SRCPATH/VERSION"` > "$VERSIONFILE"
 
+if [ `grep -c -E "4\.|4$" "$VERSIONFILE"` -ne 0 ]; then
+    echo "Can't set WebKit's version to something that ends in a 4!"
+    echo "If we do, someone's going to think it's Netscape 4."
+    echo "Radar bug 3787996 has some details."
+    exit 1
+fi
+
 BLDMAJORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\1/' "$VERSIONFILE"`
 BLDMINORVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\2/' "$VERSIONFILE"`
 BLDVARIANTVERSION=`sed 's/\([^\.]*\)\.\([^.]*\)\(\.\([^.]*\)\)\?/\4/' "$VERSIONFILE"`
