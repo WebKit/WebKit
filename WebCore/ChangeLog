@@ -1,3 +1,12 @@
+2007-09-09  Brady Eidson <beidson@apple.com>
+
+        Rubberstamped by Darin
+
+        pthread_main_np() is a Darwin thing, not a Mac thing
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+
 2007-09-09  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Build fix for Gtk+ by adding WebCore::callOnMainThread to the TemporaryLinkStubs.
