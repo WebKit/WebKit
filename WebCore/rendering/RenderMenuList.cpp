@@ -214,8 +214,8 @@ IntRect RenderMenuList::controlClipRect(int tx, int ty) const
                    contentWidth(), 
                    contentHeight());
     
-    IntRect innerBox(tx + borderLeft() + paddingLeft() + m_innerBlock->paddingLeft(), 
-                   ty + borderTop() + paddingTop() + m_innerBlock->paddingTop(),
+    IntRect innerBox(tx + m_innerBlock->xPos() + m_innerBlock->paddingLeft(), 
+                   ty + m_innerBlock->yPos() + m_innerBlock->paddingTop(),
                    m_innerBlock->contentWidth(), 
                    m_innerBlock->contentHeight());
 

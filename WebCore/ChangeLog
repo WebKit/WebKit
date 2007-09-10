@@ -1,3 +1,17 @@
+2007-09-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15156
+          REGRESSION (r24594-r24668): The bottom of styled <select> button text is clipped out
+          <rdar://problem/5464301>
+
+        Test: fast/forms/menulist-clip.html
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::controlClipRect): Use correct coordinates for
+        the inner block's content rect.
+        
 2007-09-10  Brady Eidson  <beidson@apple.com>
 
        Reviewed by Darin, Sam, Oliver, Geoff, probably others - what a fun one to review!

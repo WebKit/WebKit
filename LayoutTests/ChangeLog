@@ -1,3 +1,16 @@
+2007-09-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15156
+          REGRESSION (r24594-r24668): The bottom of styled <select> button text is clipped out
+          <rdar://problem/5464301>
+
+        * fast/forms/menulist-clip.html: Added.
+        * platform/mac/fast/forms/menulist-clip-expected.checksum: Added.
+        * platform/mac/fast/forms/menulist-clip-expected.png: Added.
+        * platform/mac/fast/forms/menulist-clip-expected.txt: Added.
+        
 2007-09-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
