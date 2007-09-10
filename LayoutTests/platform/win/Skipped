@@ -70,7 +70,6 @@ fast/forms/select-writing-direction-natural.html
 fast/forms/visual-hebrew-text-field.html
 fast/lists/drag-into-marker.html
 fast/lists/w3-list-styles.html
-fast/table/absolute-table-at-bottom.html
 fast/text/font-initial.html
 fast/text/international/bidi-neutral-run.html
 fast/xsl/xslt-text.xml
@@ -282,9 +281,7 @@ editing/selection/move-begin-end.html
 editing/selection/replaced-boundaries-1.html
 editing/selection/replaced-boundaries-2.html
 editing/selection/replaced-boundaries-3.html
-fast/forms/focus-selection-input.html
 fast/forms/listbox-onchange.html
-fast/forms/tabbing-input-iframe.html
 fast/inline/dirtyLinesForInline.html
 fast/text/textIteratorNilRenderer.html
 svg/custom/pointer-events-image.svg
@@ -294,9 +291,6 @@ svg/custom/text-hit-test.svg
 
 # window.layoutTestController.setWindowIsKey is not implemented in DRT in boomer <rdar://problem/5141186>
 editing/selection/caret-and-focus-ring.html
-
-# Some LayoutTests use the QuickTime plugin which is not installed on the boomer build bots <rdar://problem/5138561>
-fast/dom/object-embed-plugin-scripting.html
 
 # fast/events/drag-in-frames.html fails on boomer <rdar://problem/5137413>
 fast/events/drag-in-frames.html
@@ -332,9 +326,6 @@ fast/history/clicked-link-is-visited.html
 fast/html/keygen.html
 fast/invalid/residual-style.html
 
-# Infinite recursion in JSValue::mark <rdar://problem/4928697>
-fast/js/toString-stack-overflow.html
-
 # Number LayoutTest fails on boomer <rdar://problem/5130681>
 fast/js/kde/Number.html
 
@@ -344,7 +335,7 @@ fast/loader/local-JavaScript-from-local.html
 fast/loader/local-iFrame-source-from-local.html
 fast/loader/local-image-from-local.html
 
-# Some LayoutTests fail when not run by themselves <rdar://problem/5224271>
+#<rdar://problem/5224271> Some LayoutTests fail when not run by themselves.
 http/tests/navigation/anchor-frames.html
 
 # Console messages are not being printed out for failed canLoad checks <rdar://problem/5128314>
@@ -356,7 +347,6 @@ http/tests/security/local-image-from-remote.html
 
 # No built-in plugin in DRT <rdar://problem/5074411>
 plugins/call-as-function-test.html
-plugins/embed-attributes-setting.html
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 plugins/get-url-with-blank-target.html
 plugins/jsobjc-dom-wrappers.html
@@ -389,30 +379,12 @@ webarchive
 
 # Image document in frame has no size <rdar://problem/5230233>
 dom/xhtml/level2/html/frame.xhtml
-tables/mozilla/bugs/bug50695-2.html
 
 # Some text tests are missing a trailing newline <rdar://problem/5230362>
-fast/dom/early-frame-url.html
-fast/dom/title-text-property-2.html
-fast/events/drag-outside-window.html
-fast/frames/frame-js-url-clientWidth.html
-fast/frames/frame-name-reset.html
-fast/frames/frameElement-widthheight.html
-fast/frames/negative-remaining-length-crash.html
-fast/frames/set-unloaded-frame-location.html
 fast/inspector/cssURLQuotes.html
-fast/loader/loadInProgress.html
-fast/loader/simultaneous-reloads-assert.html
-fast/parser/script-after-frameset-assert.html
-http/tests/misc/onload-remove-iframe-crash-2.html
-plugins/inner-html-display-none.html
 
 # Negatively-sized RenderView <rdar://problem/5230387>
 fast/events/focusingUnloadedFrame.html
-
-# No onChange fires <rdar://problem/5230392>
-fast/events/onchange-select-popup.html
-fast/forms/select-double-onchange.html
 
 # <rdar://problem/5230396> layoutTestController.addFileToPasteboardOnDrag is unimplemented
 fast/forms/dragging-to-file-input.html
@@ -426,9 +398,6 @@ http/tests/security/frame-loading-via-document-write.html
 
 # <rdar://problem/5309081> "plugin.logDestroy = true" not working on Windows
 plugins/netscape-destroy-plugin-script-objects.html
-
-# <rdar://problem/5309090> Output from http/tests/security/local-iFrame-from-remote.html shows a console message from the previous test
-http/tests/security/local-iFrame-from-remote.html
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html

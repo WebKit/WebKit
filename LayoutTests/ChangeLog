@@ -1,3 +1,11 @@
+2007-09-10  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        - Updated Skipped list to remove tests that are now passing.
+
+        * platform/win/Skipped:
+
 2007-09-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele Peterson.
