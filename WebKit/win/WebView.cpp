@@ -1637,38 +1637,10 @@ exit:
     return versionStr;
 }
 
-const String& WebView::userAgentForKURL(const KURL& url)
+const String& WebView::userAgentForKURL(const KURL&)
 {
     if (m_userAgentOverridden)
         return m_userAgentCustom;
-
-    static const DeprecatedString uaCustomHosts[] = {
-        "flickr.com",                       // <rdar://problem/5081617> flickr does not recognize post-2.0.4 versions of Safari
-        "volvocars.us",                     // <rdar://problem/5246665> Drop down lists are not drawn on volvocars.us
-        "investing.schwab.com"              // <rdar://problem/5213266> schwab.com menu is ridiculously big.
-    };
-    static const DeprecatedString uaCustomURLs[] = {
-        "http://www.adobe.com/shockwave/download/"  // <rdar://problem/5243655> Flash download page doesn't recognize Boomer
-    };
-    static const String uaCustomValuesForHosts[] = {
-        "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/418.9.1 (KHTML, like Gecko) Safari/419.3",
-        "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/522.7 (KHTML, like Gecko) Version/3.0 Safari/522.7",
-        "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.3) Gecko/20070309 Firefox/2.0.0.3",
-    };
-    static const String uaCustomValuesForURLs[] = {
-        "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.3) Gecko/20070309 Firefox/2.0.0.3",
-    };
-
-    if (allowSiteSpecificHacks()) {
-        for (int i = 0; i < ARRAYSIZE(uaCustomHosts); i++) {
-            if (url.host().endsWith(uaCustomHosts[i]))
-                return uaCustomValuesForHosts[i];
-        }
-        for (int i = 0; i < ARRAYSIZE(uaCustomURLs); i++) {
-            if (url.url().startsWith(uaCustomURLs[i]))
-                return uaCustomValuesForURLs[i];
-        }
-    }
 
     if (!m_userAgentStandard.length())
         m_userAgentStandard = String::format("Mozilla/5.0 (Windows; U; %s; %s) AppleWebKit/%s (KHTML, like Gecko)%s%s", osVersion().latin1().data(), defaultLanguage().latin1().data(), webKitVersion().latin1().data(), (m_applicationName.length() ? " " : ""), m_applicationName.latin1().data());

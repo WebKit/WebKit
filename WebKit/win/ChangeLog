@@ -1,3 +1,12 @@
+2007-09-10  Steve Falkenburg  <sfalken@apple.com>
+
+        Remove site-specific hacks that we don't need anymore.
+
+        Reviewed by Adam.
+
+        * WebView.cpp:
+        (WebView::userAgentForKURL):
+
 2007-09-08  Steve Falkenburg  <sfalken@apple.com>
 
         Prevent WebKit version numbers from containing "4" in Windows.
