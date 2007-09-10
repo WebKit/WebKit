@@ -48,6 +48,7 @@ public:
     int bindText(int index, const char* text, bool copy = true);
     int bindText16(int index, const String& text, bool copy = true);
     int bindInt64(int index, int64_t integer);
+    int bindNull(int index);
 
     int step();
     int finalize();

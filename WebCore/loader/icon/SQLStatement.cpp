@@ -152,6 +152,11 @@ int SQLStatement::bindInt64(int index, int64_t integer)
     return sqlite3_bind_int64(m_statement, index, integer);
 }
 
+int SQLStatement::bindNull(int index)
+{
+    return sqlite3_bind_null(m_statement, index);
+}
+
 int SQLStatement::columnCount()
 {
     if (m_statement)

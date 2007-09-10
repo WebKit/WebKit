@@ -1960,10 +1960,12 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         readySQLStatement(m_updateIconDataStatement, m_syncDB, "UPDATE IconData SET data = ? WHERE iconID = ?;");
         m_updateIconDataStatement->bindInt64(2, iconID);
                 
-        // If we *have* image data, bind it to this statement - Otherwise the DB will get "null" for the blob data, 
+        // If we *have* image data, bind it to this statement - Otherwise bind "null" for the blob data, 
         // signifying that this icon doesn't have any data    
         if (snapshot.data && snapshot.data->size())
             m_updateIconDataStatement->bindBlob(1, snapshot.data->data(), snapshot.data->size());
+        else
+            m_updateIconDataStatement->bindNull(1);
         
         if (m_updateIconDataStatement->step() != SQLResultDone)
             LOG_ERROR("Failed to update icon data for url %s", urlForLogging(snapshot.iconURL).utf8().data());
@@ -1984,10 +1986,12 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         readySQLStatement(m_setIconDataStatement, m_syncDB, "INSERT INTO IconData (iconID, data) VALUES (?, ?);");
         m_setIconDataStatement->bindInt64(1, iconID);
 
-        // If we *have* image data, bind it to this statement - Otherwise the DB will get "null" for the blob data, 
+        // If we *have* image data, bind it to this statement - Otherwise bind "null" for the blob data, 
         // signifying that this icon doesn't have any data    
         if (snapshot.data && snapshot.data->size())
             m_setIconDataStatement->bindBlob(2, snapshot.data->data(), snapshot.data->size());
+        else
+            m_setIconDataStatement->bindNull(2);
         
         if (m_setIconDataStatement->step() != SQLResultDone)
             LOG_ERROR("Failed to set icon data for url %s", urlForLogging(snapshot.iconURL).utf8().data());

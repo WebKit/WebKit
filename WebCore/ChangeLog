@@ -1,3 +1,20 @@
+2007-09-10  Brady Eidson  <beidson@apple.com>
+
+       Reviewed by Darin, Sam, Oliver, Geoff, probably others - what a fun one to review!
+
+       <rdar://problem/5471641> - URLs get the wrong icon
+
+       Turns out sqlite3_reset() doesn't clear bindings, so previously bound icons were being
+       written out for pages without icons.  Easy fix!
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::writeIconSnapshotToSQLDatabase): For null icons, manually
+          bind NULL - otherwise, the previously bound icon will be written out to disk
+
+        * loader/icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::bindNull): Access to sqlite3_bind_null
+        * loader/icon/SQLStatement.h:
+
 2007-09-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver and Darin.
