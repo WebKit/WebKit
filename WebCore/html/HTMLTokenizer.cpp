@@ -151,6 +151,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLDocument* doc, bool reportErrors)
     , scriptCodeResync(0)
     , m_executingScript(0)
     , m_requestingScript(false)
+    , m_hasScriptsWaitingForStylesheets(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
     , m_doc(doc)
     , parser(new HTMLParser(doc, reportErrors))
@@ -169,6 +170,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLViewSourceDocument* doc)
     , scriptCodeResync(0)
     , m_executingScript(0)
     , m_requestingScript(false)
+    , m_hasScriptsWaitingForStylesheets(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
     , m_doc(doc)
     , parser(0)
@@ -186,6 +188,7 @@ HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag)
     , scriptCodeResync(0)
     , m_executingScript(0)
     , m_requestingScript(false)
+    , m_hasScriptsWaitingForStylesheets(false)
     , m_timer(this, &HTMLTokenizer::timerFired)
     , m_doc(frag->document())
     , inWrite(false)
@@ -224,6 +227,7 @@ void HTMLTokenizer::begin()
 {
     m_executingScript = 0;
     m_requestingScript = false;
+    m_hasScriptsWaitingForStylesheets = false;
     m_state.setLoadingExtScript(false);
     reset();
     size = 254;
@@ -1678,6 +1682,14 @@ void HTMLTokenizer::enlargeScriptBuffer(int len)
     scriptCode = static_cast<UChar*>(fastRealloc(scriptCode, newSize * sizeof(UChar)));
     scriptCodeMaxSize = newSize;
 }
+    
+void HTMLTokenizer::executeScriptsWaitingForStylesheets()
+{
+    ASSERT(m_doc->haveStylesheetsLoaded());
+
+    if (m_hasScriptsWaitingForStylesheets)
+        notifyFinished(0);
+}
 
 void HTMLTokenizer::notifyFinished(CachedResource*)
 {
@@ -1687,6 +1699,15 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
 #endif
 
     ASSERT(!pendingScripts.isEmpty());
+
+    // Make scripts loaded from file URLs wait for stylesheets to match Tiger behavior where
+    // file loads were serialized in lower level.
+    // FIXME: this should really be done for all script loads or the same effect should be achieved by other
+    // means, like javascript suspend/resume
+    m_hasScriptsWaitingForStylesheets = !m_doc->haveStylesheetsLoaded() && pendingScripts.head()->url().startsWith("file:", false);
+    if (m_hasScriptsWaitingForStylesheets)
+        return;
+
     bool finished = false;
     while (!finished && pendingScripts.head()->isLoaded()) {
 #ifdef TOKEN_DEBUG

@@ -60,6 +60,8 @@ namespace WebCore {
 
         virtual int lineNumber() const { return -1; }
         virtual int columnNumber() const { return -1; }
+        
+        virtual void executeScriptsWaitingForStylesheets() {}
 
     protected:
         // The tokenizer has buffers, so parsing may continue even after

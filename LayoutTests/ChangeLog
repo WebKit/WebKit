@@ -1,3 +1,14 @@
+2007-09-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Kevin.
+        
+        Test for <rdar://problem/5444866>
+        REGRESSION: missing text in Acrobat "Getting Started" screen due to change in load ordering of large resources
+
+        * http/tests/local/stylesheet-and-script-load-order-expected.txt: Added.
+        * http/tests/local/stylesheet-and-script-load-order.html: Added.
+        * http/tests/local/stylesheet-dependent.js: Added.
+
 2007-09-09  Sam Weinig  <sam@webkit.org>
 
         Disable more occasionally failing tests.

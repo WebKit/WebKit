@@ -1,3 +1,28 @@
+2007-09-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Kevin.
+
+        Fix <rdar://problem/5444866>
+        REGRESSION: missing text in Acrobat "Getting Started" screen due to change in load ordering of large resources
+        
+        Make external scripts loaded using file: wait until all style sheet loads have completed before executing. 
+        Fixes a class of problems where there is a dependency between script and stylesheet and results would effectively 
+        get randomized based on which order the resources arrived. In Tiger file loads were effectively serialized by
+        lower level components, which is why this regressed. 
+
+        Test: http/tests/local/stylesheet-and-script-load-order.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::removePendingSheet):
+        * dom/Tokenizer.h:
+        (WebCore::Tokenizer::executeScriptsWaitingForStylesheets):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::begin):
+        (WebCore::HTMLTokenizer::executeScriptsWaitingForStylesheets):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * html/HTMLTokenizer.h:
+
 2007-09-08  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Maciej Stachowiak.

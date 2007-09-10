@@ -106,6 +106,8 @@ public:
     int* lineNumberPtr() { return &lineno; }
 
     bool processingContentWrittenByScript() const { return src.excludeLineNumbers(); }
+    
+    virtual void executeScriptsWaitingForStylesheets();
 
 private:
     class State;
@@ -322,6 +324,7 @@ private:
     RefPtr<Node> scriptNode;
 
     bool m_requestingScript;
+    bool m_hasScriptsWaitingForStylesheets;
 
     // if we found one broken comment, there are most likely others as well
     // store a flag to get rid of the O(n^2) behaviour in such a case.
