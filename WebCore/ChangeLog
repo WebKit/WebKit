@@ -1,3 +1,12 @@
+2007-09-10  David Kilzer  <ddkilzer@apple.com>
+
+        Rubberstamped by Kevin Decker.
+
+        No test required since there is no change in functionality.
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::BackForwardList): Fix misspelling of DefaultCapacitiy to DefaultCapacity.
+
 2007-09-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele Peterson.
@@ -11,15 +20,15 @@
         * rendering/RenderMenuList.cpp:
         (WebCore::RenderMenuList::controlClipRect): Use correct coordinates for
         the inner block's content rect.
-        
+
 2007-09-10  Brady Eidson  <beidson@apple.com>
 
-       Reviewed by Darin, Sam, Oliver, Geoff, probably others - what a fun one to review!
+        Reviewed by Darin, Sam, Oliver, Geoff, probably others - what a fun one to review!
 
-       <rdar://problem/5471641> - URLs get the wrong icon
+        <rdar://problem/5471641> - URLs get the wrong icon
 
-       Turns out sqlite3_reset() doesn't clear bindings, so previously bound icons were being
-       written out for pages without icons.  Easy fix!
+        Turns out sqlite3_reset() doesn't clear bindings, so previously bound icons were being
+        written out for pages without icons.  Easy fix!
 
         * loader/icon/IconDatabase.cpp:
         (WebCore::IconDatabase::writeIconSnapshotToSQLDatabase): For null icons, manually

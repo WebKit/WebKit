@@ -34,13 +34,13 @@ using namespace std;
 
 namespace WebCore {
 
-static const unsigned DefaultCapacitiy = 100;
+static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;
 
 BackForwardList::BackForwardList(Page* page)
     : m_page(page)
     , m_current(NoCurrentItemIndex)
-    , m_capacity(DefaultCapacitiy)
+    , m_capacity(DefaultCapacity)
     , m_closed(true)
     , m_enabled(true)
 {
