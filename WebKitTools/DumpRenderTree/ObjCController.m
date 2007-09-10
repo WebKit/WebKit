@@ -36,11 +36,11 @@
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
     if (0
-            || aSelector == @selector(objCClassNameOf:)
-            || aSelector == @selector(objCObjectOfClass:)
-            || aSelector == @selector(objCIdentityIsEqual::)
-            || aSelector == @selector(objCLongLongRoundTrip:)
-            || aSelector == @selector(objCUnsignedLongLongRoundTrip:)
+            || aSelector == @selector(classNameOf:)
+            || aSelector == @selector(objectOfClass:)
+            || aSelector == @selector(identityIsEqual::)
+            || aSelector == @selector(longLongRoundTrip:)
+            || aSelector == @selector(unsignedLongLongRoundTrip:)
             || aSelector == @selector(testWrapperRoundTripping:))
         return NO;
     return YES;
@@ -48,30 +48,30 @@
 
 + (NSString *)webScriptNameForSelector:(SEL)aSelector
 {
-    if (aSelector == @selector(objCClassNameOf:))
-        return @"objCClassName";
-    if (aSelector == @selector(objCObjectOfClass:))
-        return @"objCObjectOfClass";
-    if (aSelector == @selector(objCIdentityIsEqual::))
-        return @"objCIdentityIsEqual";
-    if (aSelector == @selector(objCLongLongRoundTrip:))
-        return @"objCLongLongRoundTrip";
-    if (aSelector == @selector(objCUnsignedLongLongRoundTrip:))
-        return @"objCUnsignedLongLongRoundTrip";
+    if (aSelector == @selector(classNameOf:))
+        return @"className";
+    if (aSelector == @selector(objectOfClass:))
+        return @"objectOfClass";
+    if (aSelector == @selector(identityIsEqual::))
+        return @"identityIsEqual";
+    if (aSelector == @selector(longLongRoundTrip:))
+        return @"longLongRoundTrip";
+    if (aSelector == @selector(unsignedLongLongRoundTrip:))
+        return @"unsignedLongLongRoundTrip";
     if (aSelector == @selector(testWrapperRoundTripping:))
         return @"testWrapperRoundTripping";
 
     return nil;
 }
 
-- (NSString *)objCClassNameOf:(id)object
+- (NSString *)classNameOf:(id)object
 {
     if (!object)
         return @"nil";
     return NSStringFromClass([object class]);
 }
 
-- (id)objCObjectOfClass:(NSString *)aClass
+- (id)objectOfClass:(NSString *)aClass
 {
     if ([aClass isEqualToString:@"NSNull"])
         return [NSNull null];
@@ -91,17 +91,17 @@
     return nil;
 }
 
-- (BOOL)objCIdentityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b
+- (BOOL)identityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b
 {
     return a == b;
 }
 
-- (long long)objCLongLongRoundTrip:(long long)num
+- (long long)longLongRoundTrip:(long long)num
 {
     return num;
 }
 
-- (unsigned long long)objCUnsignedLongLongRoundTrip:(unsigned long long)num
+- (unsigned long long)unsignedLongLongRoundTrip:(unsigned long long)num
 {
     return num;
 }

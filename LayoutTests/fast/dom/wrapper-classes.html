@@ -31,14 +31,14 @@ function objCWrapperClass(node)
 {
     if (!window.objCController)
         return "only works under DumpRenderTree";
-    return objCController.objCClassName(node);
+    return objCController.className(node);
 }
 
 function objCObjectOfClass(name)
 {
     if (!window.objCController)
         return "only works under DumpRenderTree";
-    return objCController.objCObjectOfClass(name);
+    return objCController.objectOfClass(name);
 }
 
 function tagJSWrapperClass(tagName)

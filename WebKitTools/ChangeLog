@@ -1,5 +1,20 @@
 2007-09-09  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Remove 'objC' prefix from methods now in the ObjCController. 
+
+        * DumpRenderTree/ObjCController.m:
+        (+[ObjCController isSelectorExcludedFromWebScript:]):
+        (+[ObjCController webScriptNameForSelector:]):
+        (-[ObjCController classNameOf:]):
+        (-[ObjCController objectOfClass:]):
+        (-[ObjCController identityIsEqual::]):
+        (-[ObjCController longLongRoundTrip:]):
+        (-[ObjCController unsignedLongLongRoundTrip:]):
+
+2007-09-09  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver.
 
         Initial refactor of DumpRenderTree in preparation of making it more platform independent. 
