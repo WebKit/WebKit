@@ -29,12 +29,21 @@
 #include "config.h"
 #include "DebuggerDocument.h"
 
+#include "DebuggerClient.h"
+
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 #include <JavaScriptCore/RetainPtr.h>
 #include <JavaScriptCore/Vector.h>
+
+DebuggerDocument::DebuggerDocument(DebuggerClient* debugger)
+    : m_paused(false)
+    , m_debuggerClient(debugger)
+{
+    ASSERT(m_debuggerClient);
+}
 
 //-- Callbacks
 

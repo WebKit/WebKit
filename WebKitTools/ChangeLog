@@ -1,3 +1,31 @@
+2007-09-10  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Renaming DebuggerDocument[platform] to DebuggerClient to be more clear.
+
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::DebuggerDocument):
+        * Drosera/DebuggerDocument.h:
+        * Drosera/ForwardingHeaders/wtf/Assertions.h: Added.
+        * Drosera/ForwardingHeaders/wtf/Noncopyable.h: Added.
+        * Drosera/ForwardingHeaders/wtf/OwnPtr.h: Added.
+        * Drosera/mac/DebuggerApplication.mm:
+        (-[DebuggerApplication attach:]):
+        * Drosera/mac/DebuggerClient.h: Copied from Drosera/mac/DebuggerDocumentMac.h.
+        * Drosera/mac/DebuggerClient.mm: Copied from Drosera/mac/DebuggerDocumentMac.mm.
+        (DebuggerDocument::platformPause):
+        (DebuggerDocument::platformResume):
+        (DebuggerDocument::platformStepInto):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        (DebuggerDocument::platformLog):
+        * Drosera/mac/DebuggerDocumentMac.h: Removed.
+        * Drosera/mac/DebuggerDocumentMac.mm: Removed.
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+
 2007-09-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

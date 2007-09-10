@@ -27,7 +27,8 @@
  */
 
 #import "DebuggerApplication.h"
-#import "DebuggerDocumentMac.h"
+
+#import "DebuggerClient.h"
 #import <WebKit/WebCoreStatistics.h>
 
 @implementation DebuggerApplication
@@ -106,8 +107,8 @@
     unsigned int row = [[attachTable selectedRowIndexes] firstIndex];
     NSString *key = [[knownServerNames allKeys] objectAtIndex:row];
 
-    // DebuggerDocumentMac will release on close
-    DebuggerClientMac *document = [[DebuggerClientMac alloc] initWithServerName:key];
+    // DebuggerClient will release on close
+    DebuggerClient *document = [[DebuggerClient alloc] initWithServerName:key];
     [document showWindow:sender];
 }
 

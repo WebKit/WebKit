@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "DebuggerDocumentMac.h"
+#import "DebuggerClient.h"
 
 #import "DebuggerApplication.h"
 #import "DebuggerDocument.h"
@@ -66,7 +66,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 }
 @end
 
-@implementation DebuggerClientMac
+@implementation DebuggerClient
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
     return NO;
@@ -645,22 +645,22 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 void DebuggerDocument::platformPause(JSContextRef context)
 {
-    [m_debuggerClient pause];
+    [m_debuggerClient.get() pause];
 }
 
 void DebuggerDocument::platformResume(JSContextRef context)
 {
-    [m_debuggerClient resume];
+    [m_debuggerClient.get() resume];
 }
 
 void DebuggerDocument::platformStepInto(JSContextRef)
 {
-    [m_debuggerClient stepInto];
+    [m_debuggerClient.get() stepInto];
 }
 
 JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStringRef script, int callFrame)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    WebScriptCallFrame *cframe = [m_debuggerClient.get() currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
@@ -679,7 +679,7 @@ JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStri
 
 void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vector<JSValueRef>& currentStack)
 {
-    for (WebScriptCallFrame *frame = [m_debuggerClient currentFrame]; frame;) {
+    for (WebScriptCallFrame *frame = [m_debuggerClient.get() currentFrame]; frame;) {
         CFStringRef function;
         if ([frame functionName])
             function = (CFStringRef)[frame functionName];
@@ -697,7 +697,7 @@ void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vec
 
 void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef context, int callFrame, Vector<JSValueRef>& variableNames)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    WebScriptCallFrame *cframe = [m_debuggerClient.get() currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
@@ -707,7 +707,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
         return;
 
     WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:0]; // local is always first
-    NSArray *localScopeVariableNames = [m_debuggerClient webScriptAttributeKeysForScriptObject:scope];
+    NSArray *localScopeVariableNames = [m_debuggerClient.get() webScriptAttributeKeysForScriptObject:scope];
 
     for (int i = 0; i < [localScopeVariableNames count]; ++i) {
         JSRetainPtr<JSStringRef> variableName(Adopt, JSStringCreateWithCFString((CFStringRef)[localScopeVariableNames objectAtIndex:i]));
@@ -718,7 +718,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
 
 JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef context, JSStringRef key, int callFrame)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    WebScriptCallFrame *cframe = [m_debuggerClient.get() currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
@@ -757,6 +757,6 @@ JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef con
 void DebuggerDocument::platformLog(JSContextRef context, JSStringRef msg)
 {
     RetainPtr<CFStringRef> msgCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, msg));
-    [DebuggerClientMac log:(NSString *)msgCF.get()];
+    [DebuggerClient log:(NSString *)msgCF.get()];
 }
 

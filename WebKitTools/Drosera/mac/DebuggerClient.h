@@ -29,7 +29,7 @@
 
 class DebuggerDocument;
 
-@interface DebuggerClientMac : NSWindowController <WebScriptDebugListener>
+@interface DebuggerClient : NSWindowController <WebScriptDebugListener>
 {
     IBOutlet WebView *webView;
     id<WebScriptDebugServer> server;
