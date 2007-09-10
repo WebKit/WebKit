@@ -1,3 +1,14 @@
+2007-09-10  Qing Zhao  <qing@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Don't re-encode urls, resulting in double encoding.  Fixes login to
+        GMail.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequestPrivate::init):
+        (QWebNetworkManager::started):
+
 2007-09-08  Mark Rowe  <mrowe@apple.com>
 
         Qt build fix.  Move stub method implementations to the right class.
