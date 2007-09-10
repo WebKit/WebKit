@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2007 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -1298,8 +1299,9 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
 {
     if (m_positionedObjects) {
         RenderObject* r;
-        DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-        for ( ; (r = it.current()); ++it ) {
+        Iterator end = m_positionedObjects->end();
+        for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+            r = *it;
             // When a non-positioned block element moves, it may have positioned children that are implicitly positioned relative to the
             // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
             // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
@@ -1320,9 +1322,11 @@ void RenderBlock::markPositionedObjectsForLayout()
 {
     if (m_positionedObjects) {
         RenderObject* r;
-        DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-        for (; (r = it.current()); ++it)
+        Iterator end = m_positionedObjects->end();
+        for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+            r = *it;
             r->setChildNeedsLayout(true);
+        }
     }
 }
 
@@ -2043,35 +2047,16 @@ int RenderBlock::rightSelectionOffset(RenderBlock* rootBlock, int y)
 void RenderBlock::insertPositionedObject(RenderObject *o)
 {
     // Create the list of special objects if we don't aleady have one
-    if (!m_positionedObjects) {
-        m_positionedObjects = new DeprecatedPtrList<RenderObject>;
-        m_positionedObjects->setAutoDelete(false);
-    }
-    else {
-        // Don't insert the object again if it's already in the list
-        DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-        RenderObject* f;
-        while ( (f = it.current()) ) {
-            if (f == o) return;
-            ++it;
-        }
-    }
+    if (!m_positionedObjects)
+        m_positionedObjects = new ListHashSet<RenderObject*>;
 
-    m_positionedObjects->append(o);
+    m_positionedObjects->add(o);
 }
 
 void RenderBlock::removePositionedObject(RenderObject *o)
 {
-    if (m_positionedObjects) {
-        DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-        while (it.current()) {
-            if (it.current() == o) {
-                m_positionedObjects->removeRef(it.current());
-                return;
-            }
-            ++it;
-        }
-    }
+    if (m_positionedObjects)
+        m_positionedObjects->remove(o);
 }
 
 void RenderBlock::removePositionedObjects(RenderBlock* o)
@@ -2079,24 +2064,32 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
     if (!m_positionedObjects)
         return;
     
-    DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-    while (it.current()) {
-        if (!o || it.current()->isDescendantOf(o)) {
+    RenderObject* r;
+    
+    Iterator end = m_positionedObjects->end();
+    
+    Vector<RenderObject*, 16> deadObjects;
+
+    for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+        r = *it;
+        if (!o || r->isDescendantOf(o)) {
             if (o)
-                it.current()->setChildNeedsLayout(true, false);
+                r->setChildNeedsLayout(true, false);
             
             // It is parent blocks job to add positioned child to positioned objects list of its containing block
             // Parent layout needs to be invalidated to ensure this happens.
-            RenderObject* p = it.current()->parent();
+            RenderObject* p = r->parent();
             while (p && !p->isRenderBlock())
                 p = p->parent();
             if (p)
                 p->setChildNeedsLayout(true);
             
-            m_positionedObjects->removeRef(it.current());
-        } else
-            ++it;
+            deadObjects.append(r);
+        }
     }
+    
+    for (unsigned i = 0; i < deadObjects.size(); i++)
+        m_positionedObjects->remove(deadObjects.at(i));
 }
 
 void RenderBlock::insertFloatingObject(RenderObject *o)
@@ -2406,8 +2399,9 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
         
     if (m_positionedObjects) {
         RenderObject* r;
-        DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-        for ( ; (r = it.current()); ++it ) {
+        Iterator end = m_positionedObjects->end();
+        for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+            r = *it;
             // Fixed positioned objects do not scroll and thus should not constitute
             // part of the lowest position.
             if (r->style()->position() != FixedPosition) {
@@ -2460,8 +2454,9 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
 
     if (m_positionedObjects) {
         RenderObject* r;
-        DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-        for ( ; (r = it.current()); ++it ) {
+        Iterator end = m_positionedObjects->end();
+        for (Iterator it = m_positionedObjects->begin() ; it != end; ++it) {
+            r = *it;
             // Fixed positioned objects do not scroll and thus should not constitute
             // part of the rightmost position.
             if (r->style()->position() != FixedPosition) {
@@ -2519,8 +2514,9 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
 
     if (m_positionedObjects) {
         RenderObject* r;
-        DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
-        for ( ; (r = it.current()); ++it ) {
+        Iterator end = m_positionedObjects->end();
+        for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+            r = *it;
             // Fixed positioned objects do not scroll and thus should not constitute
             // part of the leftmost position.
             if (r->style()->position() != FixedPosition) {

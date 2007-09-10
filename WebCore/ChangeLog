@@ -1,3 +1,24 @@
+2007-09-08  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=15148
+        Bug 15148: Poor performance on crazy DOM raytracer
+        
+        Switch data structures to avoid quadratic behavior.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutPositionedObjects): Update for ListHashSet
+        (WebCore::RenderBlock::markPositionedObjectsForLayout): Update for ListHashSet
+        (WebCore::RenderBlock::insertPositionedObject): Use ListHashSet to avoid expensive uniqueing
+        (WebCore::RenderBlock::removePositionedObject): Update for ListHashSet
+        (WebCore::RenderBlock::removePositionedObjects): Update for ListHashSet
+        (WebCore::RenderBlock::lowestPosition): Update for ListHashSet
+        (WebCore::RenderBlock::rightmostPosition): Update for ListHashSet
+        (WebCore::RenderBlock::leftmostPosition): Update for ListHashSet
+        (WebCore::RenderBlock::rightBottom): Update for ListHashSet
+        * rendering/RenderBlock.h: Change m_positionedObjects from DeprecatedPtrList to ListHashSet
+
 2007-09-09  Brady Eidson <beidson@apple.com>
 
         Rubberstamped by Darin
