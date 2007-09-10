@@ -1,3 +1,20 @@
+2007-09-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - <rdar://problem/5471082> Removing WebURLPboardType from headers broke SPI-using applications
+
+        Rolled out my fix for bug 4582212 and fixed it in a much simpler way.
+
+        * Misc/WebNSPasteboardExtras.h:
+        * Misc/WebNSPasteboardExtras.mm:
+        * WebCoreSupport/WebPasteboardHelper.mm:
+        * WebKit.exp:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebView.mm:
+        Rolled out the new PasteboardType functions and changed the PboardType globals to be initialized
+        with constant values.
+
 2007-09-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

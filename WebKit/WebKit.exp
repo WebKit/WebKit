@@ -93,9 +93,7 @@ _WebScriptDebugServerWillUnloadNotification
 _WebScriptErrorDescriptionKey
 _WebScriptErrorDomain
 _WebScriptErrorLineNumberKey
-_WebURLNamePasteboardType
 _WebURLNamePboardType
-_WebURLPasteboardType
 _WebURLPboardType
 _WebViewDidBeginEditingNotification
 _WebViewDidChangeNotification

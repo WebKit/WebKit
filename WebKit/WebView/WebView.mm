@@ -1673,10 +1673,6 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];
-
-    // Older versions of Safari use the pasteboard types without initializing them.
-    // But they create a WebView beforehand, so if we initialize here that should be fine.
-    WebURLPasteboardType();
 }
 
 + (void)_applicationWillTerminate
@@ -1790,7 +1786,7 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 
 + (NSString *)URLTitleFromPasteboard:(NSPasteboard *)pasteboard
 {
-    return [pasteboard stringForType:WebURLNamePasteboardType()];
+    return [pasteboard stringForType:WebURLNamePboardType];
 }
 
 + (void)registerURLSchemeAsLocal:(NSString *)protocol

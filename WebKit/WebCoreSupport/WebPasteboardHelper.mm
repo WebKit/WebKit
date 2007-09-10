@@ -40,7 +40,7 @@ String WebPasteboardHelper::urlFromPasteboard(const NSPasteboard* pasteboard, St
 {
     NSURL *URL = [pasteboard _web_bestURL];
     if (title) {
-        if (NSString *URLTitleString = [pasteboard stringForType:WebURLNamePasteboardType()])
+        if (NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType])
             *title = URLTitleString;
     }
 

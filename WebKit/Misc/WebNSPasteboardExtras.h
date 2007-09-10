@@ -36,8 +36,8 @@
 extern "C" {
 #endif
 
-NSString *WebURLPasteboardType(void);
-NSString *WebURLNamePasteboardType(void);
+extern NSString *WebURLPboardType;
+extern NSString *WebURLNamePboardType;
 
 @interface NSPasteboard (WebExtras)
 

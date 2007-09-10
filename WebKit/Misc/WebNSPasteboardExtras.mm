@@ -45,11 +45,6 @@
 #import <wtf/RetainPtr.h>
 #import <WebKitSystemInterface.h>
 
-// These are needed for compatibility with old versions of Safari. Once we don't need
-// to support Safari 2 or the first Safari 3 public beta, we can remove them.
-extern "C" NSString *WebURLPboardType;
-extern "C" NSString *WebURLNamePboardType;
-
 @interface NSFilePromiseDragSource : NSObject
 - initWithSource:(id)draggingSource;
 - (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pboard;
@@ -57,51 +52,8 @@ extern "C" NSString *WebURLNamePboardType;
 
 using namespace WebCore;
 
-NSString *WebURLPboardType = nil;
-NSString *WebURLNamePboardType = nil;
-
-static void initializePasteboardTypes()
-{
-    if (WebURLPboardType)
-        return;
-
-    // FIXME: We'd like to use UTI_PB_API code, but we can't yet. The reasons are in Radar bug 3446192.
-#ifdef UTI_PB_API
-    CFStringRef osTypeString = UTCreateStringForOSType('url ');
-    CFStringRef utiTypeString = UTTypeCreatePreferredIdentifierForTag(kUTTagClassOSType, osTypeString, NULL);
-    WebURLPboardType = (NSString *)UTTypeCopyPreferredTagWithClass(kUTTagClassNSPboardType, utiTypeString);
-    if (osTypeString != NULL)
-        CFRelease(osTypeString);
-    if (utiTypeString != NULL)
-        CFRelease(utiTypeString);
-    
-    osTypeString = UTCreateStringForOSType('urln');
-    utiTypeString = UTTypeCreatePreferredIdentifierForTag(kUTTagClassOSType, osTypeString, NULL);
-    WebURLNamePboardType = (NSString *)UTTypeCopyPreferredTagWithClass(kUTTagClassNSPboardType, utiTypeString);
-    if (osTypeString != NULL)
-        CFRelease(osTypeString);
-    if (utiTypeString != NULL)
-        CFRelease(utiTypeString);
-#else
-    WebURLPboardType = WKCreateURLPasteboardFlavorTypeName();
-    WebURLNamePboardType = WKCreateURLNPasteboardFlavorTypeName();
-#endif
-}
-
-NSString *WebURLPasteboardType()
-{
-    initializePasteboardTypes();
-    return WebURLPboardType;
-}
-
-NSString *WebURLNamePasteboardType()
-{
-    initializePasteboardTypes();
-    return WebURLNamePboardType;
-}
-
-#define WebURLPboardType DO_NOT_USE_WebURLPboardType_IN_THIS_FILE
-#define WebURLNamePboardType DO_NOT_USE_WebURLNamePboardType_IN_THIS_FILE
+NSString *WebURLPboardType = @"CorePasteboardFlavorType 0x75726C20";
+NSString *WebURLNamePboardType = @"CorePasteboardFlavorType 0x75726C6E";
 
 @implementation NSPasteboard (WebExtras)
 
@@ -112,8 +64,8 @@ NSString *WebURLNamePasteboardType()
         types = [[NSArray alloc] initWithObjects:
             WebURLsWithTitlesPboardType,
             NSURLPboardType,
-            WebURLPasteboardType(),
-            WebURLNamePasteboardType(),
+            WebURLPboardType,
+            WebURLNamePboardType,
             NSStringPboardType,
             nil];
     }
@@ -153,8 +105,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
     return [NSArray arrayWithObjects:
         WebURLsWithTitlesPboardType,
         NSURLPboardType,
-        WebURLPasteboardType(),
-        WebURLNamePasteboardType(),
+        WebURLPboardType,
+        WebURLNamePboardType,
         NSStringPboardType,
         NSFilenamesPboardType,
         nil];
@@ -208,10 +160,10 @@ static NSArray *_writableTypesForImageWithArchive (void)
     
     if ([types containsObject:NSURLPboardType])
         [URL writeToPasteboard:self];
-    if ([types containsObject:WebURLPasteboardType()])
-        [self setString:[URL _web_originalDataAsString] forType:WebURLPasteboardType()];
-    if ([types containsObject:WebURLNamePasteboardType()])
-        [self setString:title forType:WebURLNamePasteboardType()];
+    if ([types containsObject:WebURLPboardType])
+        [self setString:[URL _web_originalDataAsString] forType:WebURLPboardType];
+    if ([types containsObject:WebURLNamePboardType])
+        [self setString:title forType:WebURLNamePboardType];
     if ([types containsObject:NSStringPboardType])
         [self setString:[URL _web_userVisibleString] forType:NSStringPboardType];
     if ([types containsObject:WebURLsWithTitlesPboardType])

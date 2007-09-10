@@ -1925,7 +1925,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         NSString *URLString = [URL _web_originalDataAsString];
         if ([URLString length] == 0)
             return nil;
-        NSString *URLTitleString = [pasteboard stringForType:WebURLNamePasteboardType()];
+        NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType];
         DOMText *text = [document createTextNode:URLTitleString];
         [anchor setHref:URLString];
         [anchor appendChild:text];
