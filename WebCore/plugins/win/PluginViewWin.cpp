@@ -654,8 +654,12 @@ void PluginViewWin::stop()
     m_isStarted = false;
 
     // Unsubclass the window
-    if (m_isWindowed)
-        SetWindowLongPtr(m_window, GWLP_WNDPROC, (LONG)m_pluginWndProc);
+    if (m_isWindowed) {
+        WNDPROC currentWndProc = (WNDPROC)GetWindowLongPtr(m_window, GWLP_WNDPROC);
+        
+        if (currentWndProc == PluginViewWndProc)
+            SetWindowLongPtr(m_window, GWLP_WNDPROC, (LONG)m_pluginWndProc);
+    }
 
     KJS::JSLock::DropAllLocks;
 

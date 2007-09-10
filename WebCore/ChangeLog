@@ -1,3 +1,15 @@
+2007-09-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver and Darin.
+
+        <rdar://problem/5468613>
+        Using shockwave pages first time after plugin install crashed safari in PluginPing.
+        
+        Only restore the window proc if the plugin didn't override it.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::stop):
+
 2007-09-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
