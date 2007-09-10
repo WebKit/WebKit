@@ -1,3 +1,13 @@
+2007-09-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Always animate when calling _scrollTo.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _scrollVerticallyBy:]):
+        (-[WebFrameView _scrollHorizontallyBy:]):
+
 2007-09-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

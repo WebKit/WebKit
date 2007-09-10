@@ -74,7 +74,7 @@ using namespace WebCore;
 @end
 
 @interface NSClipView (AppKitSecretsIKnow)
-- (BOOL)_scrollTo:(const NSPoint *)newOrigin; // need the boolean result from this method
+- (BOOL)_scrollTo:(const NSPoint *)newOrigin animate:(BOOL)animate; // need the boolean result from this method
 @end
 
 enum {
@@ -524,14 +524,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     // did any scrolling or not with the public API.
     NSPoint point = [[self _contentView] bounds].origin;
     point.y += delta;
-    return [[self _contentView] _scrollTo:&point];
+    return [[self _contentView] _scrollTo:&point animate:YES];
 }
 
 - (BOOL)_scrollHorizontallyBy:(float)delta
 {
     NSPoint point = [[self _contentView] bounds].origin;
     point.x += delta;
-    return [[self _contentView] _scrollTo:&point];
+    return [[self _contentView] _scrollTo:&point animate:YES];
 }
 
 - (float)_horizontalKeyboardScrollDistance
