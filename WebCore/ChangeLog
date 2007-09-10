@@ -1,3 +1,50 @@
+2007-09-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5467405> 
+        Revert back behavior of -webkit-user-select to fix widget selection problems
+        
+        Rolled out r25086 and r25057.  I will be re-opening:
+        <rdar://problem/5333725> -webkit-user-select: none makes selection difficult
+        Which we will either to defer or fix by introducing a new value of -webkit-user-select.
+        <rdar://problem/5370059> REGRESSION: Cannot type into edit fields on a form (sccsheriff.org)
+        Which we will either defer or fix with Adele's patch that doesn't involve making 
+        -webkit-user-select inherited.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::selectAll):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::canMouseDownStartSelect):
+        * page/EventHandler.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::selectStartNode):
+        (WebCore::RenderObject::canSelect):
+        (WebCore::RenderObject::shouldSelect):
+        (WebCore::RenderObject::draggableNode):
+        * rendering/RenderObject.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        (WebCore::RenderStyle::userSelect):
+        (WebCore::RenderStyle::setUserSelect):
+        (WebCore::RenderStyle::initialUserSelect):
+
 2007-09-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Kevin.

@@ -1,3 +1,17 @@
+2007-09-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5467405> 
+        Revert back behavior of -webkit-user-select to fix widget selection problems
+
+        * editing/selection/5333725.html: Removed.
+        * editing/selection/5333725.html-disabled: Added.
+        * editing/selection/user-select-text-inside-user-select-ignore.html: Removed.
+        * editing/selection/user-select-text-inside-user-select-ignore.html-disabled: Added.
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+
 2007-09-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Kevin.

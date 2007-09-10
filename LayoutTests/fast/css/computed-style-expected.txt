@@ -125,7 +125,7 @@ z-index: auto;
 -webkit-text-stroke-width: 0;
 -webkit-user-drag: auto;
 -webkit-user-modify: read-only;
--webkit-user-select: text;
+-webkit-user-select: auto;
 -webkit-dashboard-region: null;
 -webkit-border-bottom-left-radius: 0px;
 -webkit-border-bottom-right-radius: 0px;

@@ -195,7 +195,6 @@ private:
     void hoverTimerFired(Timer<EventHandler>*);
 
     static bool canMouseDownStartSelect(Node*);
-    static bool canMouseDragExtendSelect(Node*);
 
     void handleAutoscroll(RenderObject*);
     void startAutoscrollTimer();
