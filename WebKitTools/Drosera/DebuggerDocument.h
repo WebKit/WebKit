@@ -35,7 +35,6 @@
 #pragma warning(pop)
 
 #include <JavaScriptCore/Vector.h>
-#include <wtf/OwnPtr.h>
 
 // Forward Declarations
 #if PLATFORM(MAC)
@@ -111,7 +110,7 @@ private:
 
     static void logException(JSContextRef, JSValueRef exception);
 
-    OwnPtr<DebuggerClient> m_debuggerClient;
+    DebuggerClient* m_debuggerClient;   //DebuggerClient owns the DebuggerDocument so don't delete it.  It will delete you!
     bool m_paused;
 };
 

@@ -155,9 +155,6 @@
 		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95B2A44E0C95EECD00850C41 /* DebuggerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerClient.h; sourceTree = "<group>"; };
 		95B2A44F0C95EECD00850C41 /* DebuggerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DebuggerClient.mm; sourceTree = "<group>"; };
-		95B2A50C0C96033400850C41 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OwnPtr.h; path = ../ForwardingHeaders/wtf/OwnPtr.h; sourceTree = SOURCE_ROOT; };
-		95B2A50E0C96040300850C41 /* Assertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Assertions.h; path = ../ForwardingHeaders/wtf/Assertions.h; sourceTree = SOURCE_ROOT; };
-		95B2A50F0C96040300850C41 /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Noncopyable.h; path = ../ForwardingHeaders/wtf/Noncopyable.h; sourceTree = SOURCE_ROOT; };
 		95C906AF0C8E439200F9BE0F /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = ../ForwardingHeaders/wtf/Platform.h; sourceTree = SOURCE_ROOT; };
 		D23E47C50C4460C600B7CD07 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = /System/Library/Frameworks/JavaScriptCore.framework; sourceTree = "<absolute>"; };
 		D2D794EC0C4BED83004784F7 /* config.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = config.h; path = ../config.h; sourceTree = SOURCE_ROOT; };
@@ -293,15 +290,12 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				95B2A50E0C96040300850C41 /* Assertions.h */,
-				95B2A50F0C96040300850C41 /* Noncopyable.h */,
-				95B2A50C0C96033400850C41 /* OwnPtr.h */,
 				95C906AF0C8E439200F9BE0F /* Platform.h */,
 				D2D794EC0C4BED83004784F7 /* config.h */,
 				1C74F1840A47DEE600FEC632 /* DebuggerApplication.mm */,
 				1C74F1830A47DEE600FEC632 /* DebuggerApplication.h */,
-				95B2A44E0C95EECD00850C41 /* DebuggerClient.h */,
 				95B2A44F0C95EECD00850C41 /* DebuggerClient.mm */,
+				95B2A44E0C95EECD00850C41 /* DebuggerClient.h */,
 				D2D794ED0C4BED83004784F7 /* DebuggerDocument.cpp */,
 				D2D794EE0C4BED83004784F7 /* DebuggerDocument.h */,
 				1C27AC230A413D660016ECF4 /* debugger.js */,

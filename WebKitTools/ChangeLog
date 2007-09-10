@@ -1,5 +1,25 @@
 2007-09-10  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Adam.
+
+        - Made an order-of-deletion mistake.
+
+        * Drosera/DebuggerDocument.h:
+        * Drosera/ForwardingHeaders/wtf/Assertions.h: Removed.
+        * Drosera/ForwardingHeaders/wtf/Noncopyable.h: Removed.
+        * Drosera/ForwardingHeaders/wtf/OwnPtr.h: Removed.
+        * Drosera/mac/DebuggerClient.mm:
+        (DebuggerDocument::platformPause):
+        (DebuggerDocument::platformResume):
+        (DebuggerDocument::platformStepInto):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+
+2007-09-10  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Darin.
 
         - Renaming DebuggerDocument[platform] to DebuggerClient to be more clear.

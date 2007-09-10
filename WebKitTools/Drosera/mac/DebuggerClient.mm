@@ -645,22 +645,22 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 void DebuggerDocument::platformPause(JSContextRef context)
 {
-    [m_debuggerClient.get() pause];
+    [m_debuggerClient pause];
 }
 
 void DebuggerDocument::platformResume(JSContextRef context)
 {
-    [m_debuggerClient.get() resume];
+    [m_debuggerClient resume];
 }
 
 void DebuggerDocument::platformStepInto(JSContextRef)
 {
-    [m_debuggerClient.get() stepInto];
+    [m_debuggerClient stepInto];
 }
 
 JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStringRef script, int callFrame)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient.get() currentFrame];
+    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
@@ -679,7 +679,7 @@ JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStri
 
 void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vector<JSValueRef>& currentStack)
 {
-    for (WebScriptCallFrame *frame = [m_debuggerClient.get() currentFrame]; frame;) {
+    for (WebScriptCallFrame *frame = [m_debuggerClient currentFrame]; frame;) {
         CFStringRef function;
         if ([frame functionName])
             function = (CFStringRef)[frame functionName];
@@ -697,7 +697,7 @@ void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vec
 
 void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef context, int callFrame, Vector<JSValueRef>& variableNames)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient.get() currentFrame];
+    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
@@ -707,7 +707,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
         return;
 
     WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:0]; // local is always first
-    NSArray *localScopeVariableNames = [m_debuggerClient.get() webScriptAttributeKeysForScriptObject:scope];
+    NSArray *localScopeVariableNames = [m_debuggerClient webScriptAttributeKeysForScriptObject:scope];
 
     for (int i = 0; i < [localScopeVariableNames count]; ++i) {
         JSRetainPtr<JSStringRef> variableName(Adopt, JSStringCreateWithCFString((CFStringRef)[localScopeVariableNames objectAtIndex:i]));
@@ -718,7 +718,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
 
 JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef context, JSStringRef key, int callFrame)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient.get() currentFrame];
+    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
