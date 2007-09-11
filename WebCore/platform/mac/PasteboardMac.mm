@@ -51,11 +51,12 @@
 
 namespace WebCore {
 
-NSString *WebArchivePboardType;
-NSString *WebSmartPastePboardType;
-NSString *WebURLNamePboardType;
-NSString *WebURLPboardType;
-NSString *WebURLsWithTitlesPboardType;
+// FIXME: It's not great to have these both here and in WebKit.
+NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
+NSString *WebSmartPastePboardType = @"NeXT smart paste pasteboard type";
+NSString *WebURLNamePboardType = @"public.url-name";
+NSString *WebURLPboardType = @"public.url";
+NSString *WebURLsWithTitlesPboardType = @"WebURLsWithTitlesPboardType";
 
 #ifndef BUILDING_ON_TIGER
 static NSArray* selectionPasteboardTypes(bool canSmartCopyOrDelete, bool selectionContainsAttachments)
@@ -109,11 +110,6 @@ Pasteboard* Pasteboard::generalPasteboard()
 Pasteboard::Pasteboard(NSPasteboard* pboard)
     : m_pasteboard(pboard)
 {
-    WebArchivePboardType          = @"Apple Web Archive pasteboard type";
-    WebSmartPastePboardType       = @"NeXT smart paste pasteboard type";
-    WebURLNamePboardType          = wkCreateURLNPasteboardFlavorTypeName();
-    WebURLPboardType              = wkCreateURLPasteboardFlavorTypeName();
-    WebURLsWithTitlesPboardType   = @"WebURLsWithTitlesPboardType";
 }
 
 void Pasteboard::clear()

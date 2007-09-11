@@ -1,3 +1,15 @@
+2007-09-11  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Dave Harrison.
+
+        - fixed pasteboard types here to match WebKit and use constants instead of
+          WebKitSystemInterface
+
+        * platform/mac/PasteboardMac.mm: Use constants for all pasteboard type strings.
+
+        * platform/mac/WebCoreSystemInterface.h: Removed wkCreateURLPasteboardFlavorTypeName
+        and wkCreateURLNPasteboardFlavorTypeName.
+
 2007-09-11  Sven Herzberg  <sven@imendio.com>
 
         Reviewed by Mark.

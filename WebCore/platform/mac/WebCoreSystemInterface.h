@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 Apple Computer, Inc. All rights reserved.
+ * Copyright 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,8 +82,6 @@ extern CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadS
     void *context);
 extern OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
 extern id (*wkCreateNSURLConnectionDelegateProxy)(void);
-extern NSString* (*wkCreateURLPasteboardFlavorTypeName)(void);
-extern NSString* (*wkCreateURLNPasteboardFlavorTypeName)(void);
 extern void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
 extern void (*wkDrawTextFieldCellFocusRing)(NSTextFieldCell*, NSRect);
 extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);

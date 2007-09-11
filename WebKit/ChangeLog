@@ -1,5 +1,12 @@
 2007-09-11  Darin Adler  <darin@apple.com>
 
+        Rubber-stamped by Dave Harrison.
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface):
+        Removed wkCreateURLPasteboardFlavorTypeName and wkCreateURLNPasteboardFlavorTypeName.
+
+2007-09-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Mark Rowe.
 
         - fix <rdar://problem/5472899> REGRESSION (TOT): Crash in FrameLoadDelegate loading stationery

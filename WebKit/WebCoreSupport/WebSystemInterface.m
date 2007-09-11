@@ -1,5 +1,5 @@
 /*
- * Copyright 2006 Apple Computer, Inc. All rights reserved.
+ * Copyright 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,8 +44,6 @@ void InitWebCoreSystemInterface(void)
     INIT(ConvertCharToGlyphs);
     INIT(CreateCustomCFReadStream);
     INIT(CreateNSURLConnectionDelegateProxy);
-    INIT(CreateURLNPasteboardFlavorTypeName);
-    INIT(CreateURLPasteboardFlavorTypeName);
     INIT(DrawBezeledTextArea);
     INIT(DrawBezeledTextFieldCell);
     INIT(DrawFocusRing);
