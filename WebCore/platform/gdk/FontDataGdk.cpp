@@ -65,14 +65,8 @@ void FontData::platformDestroy()
     if (m_font.m_pattern && ((FcPattern*)-1 != m_font.m_pattern))
         FcPatternDestroy(m_font.m_pattern);
 
-    if (m_font.m_fontMatrix)
-        free(m_font.m_fontMatrix);
-    if (m_font.m_fontFace)
-        cairo_font_face_destroy(m_font.m_fontFace);
     if (m_font.m_scaledFont)
         cairo_scaled_font_destroy(m_font.m_scaledFont);
-    if (m_font.m_options)
-        cairo_font_options_destroy(m_font.m_options);
     delete m_smallCapsFontData;
 }
 

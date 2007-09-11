@@ -40,17 +40,11 @@ public:
     class Deleted {};
     FontPlatformData(Deleted)
         : m_pattern(reinterpret_cast<FcPattern*>(-1))
-        , m_fontMatrix(0)
-        , m_fontFace(0)
-        , m_options(0)
         , m_scaledFont(0)
         { }
 
     FontPlatformData()
         : m_pattern(0)
-        , m_fontMatrix(0)
-        , m_fontFace(0)
-        , m_options(0)
         , m_scaledFont(0)
         { }
 
@@ -67,7 +61,7 @@ public:
 
     unsigned hash() const
     {
-        uintptr_t hashCodes[2] = { reinterpret_cast<uintptr_t>(m_pattern), reinterpret_cast<uintptr_t>(m_fontMatrix) };
+        uintptr_t hashCodes[1] = { reinterpret_cast<uintptr_t>(m_scaledFont) };
         return StringImpl::computeHash( reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
     }
 
@@ -75,9 +69,6 @@ public:
 
     FcPattern* m_pattern;
     FontDescription m_fontDescription;
-    cairo_matrix_t* m_fontMatrix;
-    cairo_font_face_t* m_fontFace;
-    cairo_font_options_t* m_options;
     cairo_scaled_font_t* m_scaledFont;
 };
 
