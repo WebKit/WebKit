@@ -468,7 +468,7 @@ void RenderBox::imageChanged(CachedImage* image)
     IntRect absoluteRect;
     RenderBox* backgroundRenderer;
 
-    if (isBody() || isRoot()) {
+    if (isRoot() || (isBody() && document()->isHTMLDocument() && !document()->documentElement()->renderer()->style()->hasBackground())) {
         // Our background propagates to the root.
         backgroundRenderer = view();
 

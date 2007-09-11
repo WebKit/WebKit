@@ -1,3 +1,16 @@
+2007-09-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=15157
+          Image defined in background-position: top center gets unexpectedly truncated
+          <rdar://problem/5469095>
+
+        * fast/repaint/body-background-image.html: Added.
+        * platform/mac/fast/repaint/body-background-image-expected.checksum: Added.
+        * platform/mac/fast/repaint/body-background-image-expected.png: Added.
+        * platform/mac/fast/repaint/body-background-image-expected.txt: Added.
+
 2007-09-10  David Harrison  <harrison@apple.com>
 
         Reviewed by Kevin and Tristan.

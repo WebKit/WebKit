@@ -1,3 +1,18 @@
+2007-09-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15157
+          Image defined in background-position: top center gets unexpectedly truncated
+          <rdar://problem/5469095>
+
+        Test: fast/repaint/body-background-image.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::imageChanged): Refined the logic for when the root takes
+        over painting the background, to match paintBoxDecorations(). In particular,
+        if the root has defined a background, the body should paint its own background.
+
 2007-09-10  David Harrison  <harrison@apple.com>
 
         Reviewed by Kevin and Tristan.
