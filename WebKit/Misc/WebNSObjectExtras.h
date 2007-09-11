@@ -44,12 +44,6 @@ static inline id WebCFAutorelease(CFTypeRef obj)
 
 #if !(defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0)
 
-static inline IMP class_getMethodImplementation(Class c, SEL s)
-{
-    Method m = class_getInstanceMethod(c, s);
-    return m ? m->method_imp : 0;
-}
-
 static inline IMP method_setImplementation(Method m, IMP i)
 {
     IMP oi = m->method_imp;
