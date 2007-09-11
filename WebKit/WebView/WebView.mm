@@ -247,6 +247,12 @@ static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 static BOOL applicationIsTerminating;
 static int pluginDatabaseClientCount = 0;
 
+// 64-bit work-around
+static inline unsigned max(unsigned a, unsigned long b)
+{
+    return a > b ? a : b;
+}
+
 @interface NSSpellChecker (AppKitSecretsIKnow)
 - (void)_preflightChosenSpellServer;
 @end

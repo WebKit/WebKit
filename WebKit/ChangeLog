@@ -1,3 +1,12 @@
+2007-09-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed 64-bit build (I think).
+
+        * WebView/WebView.mm:
+        (max): Added. In 64-bit land, -diskCapacity magically starts returning
+        unsigned long instead of unsigned, so we define a custom max() that's
+        willing to compare unsigned to unsigned long.
+
 2007-09-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
