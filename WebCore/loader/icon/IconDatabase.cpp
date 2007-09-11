@@ -222,7 +222,38 @@ void IconDatabase::removeAllIcons()
         return;
 
     LOG(IconDatabase, "Requesting background thread to remove all icons");
- 
+    
+    // Clear the in-memory record of every IconRecord, anything waiting to be read from disk, and anything waiting to be written to disk
+    {
+        MutexLocker locker(m_urlAndIconLock);
+        
+        // Clear the IconRecords for every page URL - RefCounting will cause the IconRecords themselves to be deleted
+        // We don't delete the actual PageRecords because we have the "retain icon for url" count to keep track of
+        HashMap<String, PageURLRecord*>::iterator iter = m_pageURLToRecordMap.begin();
+        HashMap<String, PageURLRecord*>::iterator end = m_pageURLToRecordMap.end();
+        for (; iter != end; ++iter)
+            (*iter).second->setIconRecord(0);
+            
+        // Clear the iconURL -> IconRecord map
+        m_iconURLToRecordMap.clear();
+                    
+        // Clear all in-memory records of things that need to be synced out to disk
+        {
+            MutexLocker locker(m_pendingSyncLock);
+            m_pageURLsPendingSync.clear();
+            m_iconsPendingSync.clear();
+        }
+        
+        // Clear all in-memory records of things that need to be read in from disk
+        {
+            MutexLocker locker(m_pendingReadingLock);
+            m_pageURLsPendingImport.clear();
+            m_pageURLsInterestedInIcons.clear();
+            m_iconsPendingReading.clear();
+            m_loadersPendingDecision.clear();
+        }
+    }
+    
     m_removeIconsRequested = true;
     wakeSyncThread();
 }
@@ -1602,35 +1633,9 @@ void IconDatabase::removeAllIconsOnThread()
     ASSERT_ICON_SYNC_THREAD();
 
     LOG(IconDatabase, "Removing all icons on the sync thread");
-
-    //Delete all the prepared statements so they can start over
+        
+    // Delete all the prepared statements so they can start over
     deleteAllPreparedStatements();    
-        
-    {
-        MutexLocker locker(m_urlAndIconLock);
-        
-        // Clear all in-memory records of pages and icons
-        m_iconURLToRecordMap.clear();
-        // Deleting the PageURLRecords derefs the IconRecords automagically
-        deleteAllValues(m_pageURLToRecordMap); 
-        m_pageURLToRecordMap.clear();
-        
-        // Clear all in-memory records of things that need to be synced out to disk
-        {
-            MutexLocker locker(m_pendingSyncLock);
-            m_pageURLsPendingSync.clear();
-            m_iconsPendingSync.clear();
-        }
-        
-        // Clear all in-memory records of things that need to be read in from disk
-        {
-            MutexLocker locker(m_pendingReadingLock);
-            m_pageURLsPendingImport.clear();
-            m_pageURLsInterestedInIcons.clear();
-            m_iconsPendingReading.clear();
-            m_loadersPendingDecision.clear();
-        }
-    }
     
     // To reset the on-disk database, we'll wipe all its tables then vacuum it
     // This is easier and safer than closing it, deleting the file, and recreating from scratch
@@ -1671,13 +1676,12 @@ void* IconDatabase::cleanupSyncThread()
 #endif 
 
     // If the removeIcons flag is set, remove all icons from the db.
-    // Otherwise, do a final write an sync out to disk
     if (m_removeIconsRequested)
         removeAllIconsOnThread();
-    else {
-        LOG(IconDatabase, "(THREAD) Doing final writeout and closure of sync thread");
-        writeToDatabase();
-    }
+
+    // Sync remaining icons out
+    LOG(IconDatabase, "(THREAD) Doing final writeout and closure of sync thread");
+    writeToDatabase();
     
     // Close the database
     MutexLocker locker(m_syncLock);

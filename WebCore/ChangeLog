@@ -1,3 +1,38 @@
+2007-09-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for <rdar://problem/5473046> - Crash when resetting all icons
+
+        Originally I'd written the "reset all icons" to be synchronous on the main thread, but it
+        was decided that it should be async since it involved I/O.  Turns out it needs to be... both!
+        Synchronous removal of all in-memory records of icons, and then continue and clean up the 
+        on-disk database on the background thread.
+
+        Also, it turns out that resetting all the page url retain counts should *not* be part of 
+        "reset all icons" because it breaks various contracts the API makes about maintaining retain counts.
+
+        The problem that occured here was removing all the icons, then all the history items that were 
+        removed as part of "Reset Safari..." would try to release their icon, but their icon doesn't exist
+        anymore.
+
+        We get around this by simply leaving the in-memory page url records and retain counts alone - they
+        are still wiped from disk.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::removeAllIcons): Clear in-memory records of all icons then tell the thread to
+          wipe the on-disk tables
+        (WebCore::IconDatabase::removeAllIconsOnThread): Only do the disk cleanup - in-memory maintenance is
+          handled on the main thread
+        (WebCore::IconDatabase::cleanupSyncThread): Now that it's possible for new "icons to be written to disk"
+          to appear while on-disk deleting is occuring, let the cleanup procedure perform 1 final write *after*
+          it does the remove all icons
+        * loader/icon/IconDatabase.h: Removed unused lock and condition
+
+        * loader/icon/PageURLRecord.cpp:
+        (WebCore::PageURLRecord::setIconRecord): Allow setting a NULL icon record, so a PageURLRecord can be
+          cleared as part of removeAllIcons()
+
 2007-09-11  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by David Harrison.

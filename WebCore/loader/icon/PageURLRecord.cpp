@@ -41,12 +41,13 @@ PageURLRecord::PageURLRecord(const String& pageURL)
 
 void PageURLRecord::setIconRecord(PassRefPtr<IconRecord> icon)
 {
-    ASSERT(icon);
     if (m_iconRecord)
         m_iconRecord->m_retainingPageURLs.remove(m_pageURL);
         
     m_iconRecord = icon;
-    m_iconRecord->m_retainingPageURLs.add(m_pageURL);
+    
+    if (m_iconRecord)
+        m_iconRecord->m_retainingPageURLs.add(m_pageURL);
 }
     
 PageURLSnapshot PageURLRecord::snapshot(bool forDeletion) const 
