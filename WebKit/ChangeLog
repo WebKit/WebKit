@@ -1,3 +1,11 @@
+2007-09-11  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        * Misc/WebNSPasteboardExtras.mm: Fix incorrect strings in my last check-in.
+        The strings I checked in were wrong and were breaking layout tests too.
+        These new ones match what WebKitSystemInterface was returning.
+
 2007-09-10  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed 64-bit build (I think).

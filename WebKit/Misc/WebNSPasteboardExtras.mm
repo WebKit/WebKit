@@ -52,8 +52,8 @@
 
 using namespace WebCore;
 
-NSString *WebURLPboardType = @"CorePasteboardFlavorType 0x75726C20";
-NSString *WebURLNamePboardType = @"CorePasteboardFlavorType 0x75726C6E";
+NSString *WebURLPboardType = @"public.url";
+NSString *WebURLNamePboardType = @"public.url-name";
 
 @implementation NSPasteboard (WebExtras)
 
