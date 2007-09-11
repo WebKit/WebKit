@@ -3724,7 +3724,7 @@ static WebFrameView *containingFrameView(NSView *view)
 #else
     // Don't use a big Foundation disk cache on older versions of Leopard because
     // doing so causes a SPOD on launch (<rdar://problem/5465260>).
-    if (NSVersionOfLinkTimeLibrary("CFNetwork") < 211)
+    if (NSVersionOfRunTimeLibrary("CFNetwork") < WEBKIT_FIRST_CFNETWORK_VERSION_WITH_LARGE_DISK_CACHE_FIX)
         nsurlCacheDiskCapacity = [[NSURLCache sharedURLCache] diskCapacity];
 #endif
 
