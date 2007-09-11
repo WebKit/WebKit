@@ -1,3 +1,15 @@
+2007-09-11  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5472130> Support NTLM authentication via CFNetwork.
+
+        Reviewed by Darin.
+
+        * platform/network/ProtectionSpace.h:
+        (WebCore::):
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::createCF):
+        (WebCore::core):
+
 2007-09-11  Darin Adler  <darin@apple.com>
 
         Rubber-stamped by Dave Harrison.
