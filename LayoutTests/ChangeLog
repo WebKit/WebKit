@@ -1,3 +1,10 @@
+2007-09-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Maciej.
+
+        * editing/execCommand/5458246-expected.txt: Added.
+        * editing/execCommand/5458246.html: Added.
+
 2007-09-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej Stachowiak.

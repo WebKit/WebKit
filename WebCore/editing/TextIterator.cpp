@@ -555,6 +555,8 @@ bool TextIterator::handleNonTextNode()
 {
     if (shouldEmitNewlineForNode(m_node))
         emitCharacter('\n', m_node->parentNode(), m_node, 0, 1);
+    else if (m_emitForReplacedElements && m_node->renderer() && m_node->renderer()->isHR())
+        emitCharacter(' ', m_node->parentNode(), m_node, 0, 1);
     else
         representNodeOffsetZero();
 

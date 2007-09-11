@@ -1,3 +1,27 @@
+2007-09-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/5458246> 
+        GoogleDocs: A hang occurs when applying list styling to selection that contains a <HR>
+        
+        List insertion moves selected paragraphs into list items, and relies on the selection
+        preservation code inside moveParagraphs to iterate over the selected paragraphs.
+        When list insertion would try to listify a paragraph that came after a list item 
+        containing an <hr>, the selection preservation code would set an incorrect ending 
+        selection because of a TextIterator bug, and we would try to listify the same 
+        paragraph over and over.
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Pass range compliant equivalents to
+        the Range constructor here.  The position [hr, 0] is not a valid DOM Range endpoint 
+        for example.
+        * editing/TextIterator.cpp:
+        (WebCore::shouldEmitSpaceForNode): Added.
+        (WebCore::TextIterator::handleNonTextNode): Emit a space to represent a horizontal rule,
+        since it has VisiblePositions before and after it, but only for TextIterators used for
+        selection preservation, so innerText will be unaffected.
+
 2007-09-11  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5472130> Support NTLM authentication via CFNetwork.

@@ -703,13 +703,13 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             
             startIndex = 0;
             if (startInParagraph) {
-                RefPtr<Range> startRange = new Range(document(), startOfParagraphToMove.deepEquivalent(), visibleStart.deepEquivalent());
+                RefPtr<Range> startRange = new Range(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(visibleStart.deepEquivalent()));
                 startIndex = TextIterator::rangeLength(startRange.get(), true);
             }
 
             endIndex = 0;
             if (endInParagraph) {
-                RefPtr<Range> endRange = new Range(document(), startOfParagraphToMove.deepEquivalent(), visibleEnd.deepEquivalent());
+                RefPtr<Range> endRange = new Range(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(visibleEnd.deepEquivalent()));
                 endIndex = TextIterator::rangeLength(endRange.get(), true);
             }
         }
