@@ -46,7 +46,7 @@ checkFrameworks();
 print "Starting webkit launcher with LD_LIBRARY_PATH set to point to built WebKit in $productDir.\n";
 
 my @args = @ARGV;
-$ENV{LD_LIBRARY_PATH} = $productDir;
+$ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$productDir:$ENV{LD_LIBRARY_PATH}" : $productDir;
 
 if (isGdk()) {
   $launcherPath = "$launcherPath/WebKitTools/GdkLauncher/GdkLauncher";

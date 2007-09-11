@@ -1,3 +1,12 @@
+2007-09-11  Sven Herzberg  <sven@imendio.com>
+
+        Don't overwrite LD_LIBRARY_PATH, prepend to it. Fixes:
+        http://bugs.webkit.org/show_bug.cgi?id=15176
+
+        * Scripts/run-launcher: don't replace LD_LIBRARY_PATH with
+        $projectDir, but prepend $projectDir to LD_LIBRARY_PATH (to preserve
+        other paths eg. from jhbuild)
+
 2007-09-10  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
