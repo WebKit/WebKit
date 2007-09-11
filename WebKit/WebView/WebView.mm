@@ -247,12 +247,6 @@ static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 static BOOL applicationIsTerminating;
 static int pluginDatabaseClientCount = 0;
 
-// 64-bit work-around
-static inline unsigned max(unsigned a, unsigned long b)
-{
-    return a > b ? a : b;
-}
-
 @interface NSSpellChecker (AppKitSecretsIKnow)
 - (void)_preflightChosenSpellServer;
 @end
@@ -3602,8 +3596,8 @@ static WebFrameView *containingFrameView(NSView *view)
 
     unsigned pageCacheCapacity = 0;
 
-    unsigned nsurlCacheMemoryCapacity = 0;
-    unsigned nsurlCacheDiskCapacity = 0;
+    NSUInteger nsurlCacheMemoryCapacity = 0;
+    NSUInteger nsurlCacheDiskCapacity = 0;
 
     switch (cacheModel) {
     case WebCacheModelDocumentViewer: {
@@ -3664,8 +3658,8 @@ static WebFrameView *containingFrameView(NSView *view)
         else if (memSize >= 256)
             cacheTotalCapacity = 16 * 1024 * 1024; 
 
-        cacheMinDeadCapacity = static_cast<unsigned>(cacheTotalCapacity * 0.125f);
-        cacheMaxDeadCapacity = static_cast<unsigned>(cacheTotalCapacity * 0.25f);
+        cacheMinDeadCapacity = cacheTotalCapacity / 8;
+        cacheMaxDeadCapacity = cacheTotalCapacity / 4;
 
         // Foundation memory cache capacity (in bytes)
         if (memSize >= 2048)
@@ -3726,8 +3720,8 @@ static WebFrameView *containingFrameView(NSView *view)
         else if (memSize >= 256)
             cacheTotalCapacity = 32 * 1024 * 1024; 
 
-        cacheMinDeadCapacity = static_cast<unsigned>(cacheTotalCapacity * 0.25f);
-        cacheMaxDeadCapacity = static_cast<unsigned>(cacheTotalCapacity * 0.50f);
+        cacheMinDeadCapacity = cacheTotalCapacity / 4;
+        cacheMaxDeadCapacity = cacheTotalCapacity / 2;
 
         // This code is here to avoid a PLT regression. We can remove it if we
         // can prove that the overall system gain would justify the regression.

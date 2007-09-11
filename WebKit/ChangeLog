@@ -1,5 +1,12 @@
 2007-09-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam, Ollie.
+
+        * WebView/WebView.mm: (+[WebView _setCacheModel:]): A slightly cleaner 64-bit
+        fix for the NSURLCache capacity code in this file.
+
+2007-09-11  Darin Adler  <darin@apple.com>
+
         Rubber-stamped by Mark Rowe.
 
         * Misc/WebNSPasteboardExtras.mm: Fix incorrect strings in my last check-in.
