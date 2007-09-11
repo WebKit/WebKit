@@ -1,5 +1,27 @@
 2007-09-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        - fix <rdar://problem/5472899> REGRESSION (TOT): Crash in FrameLoadDelegate loading stationery
+
+        * Misc/WebNSObjectExtras.h:
+        (class_getMethodImplementation): Added.
+        (method_setImplementation): Added.
+
+        * WebView/WebHTMLView.mm: (+[WebHTMLViewPrivate initialize]):
+        * Carbon/HIViewAdapter.m: (+[HIViewAdapter bindHIViewToNSView:nsView:]):
+        Remove old-ObjC code path, since WebNSObjectExtras.h now implements everything we need.
+
+        * WebView/WebView.mm:
+        (-[WebView _cacheResourceLoadDelegateImplementations]): Don't bother doing a separate
+        respondsToSelector call, since class_getMethodImplementation will return 0 for selectors
+        that we don't respond to. The bug fix is to actually set the cached pointer to 0.
+        Also get rid of the unnecessary use of a macro; instead use the functions from
+        WebNSObjectExtras.h on Tiger and the appropriate function directly on Leopard.
+        (-[WebView _cacheFrameLoadDelegateImplementations]): Ditto.
+
+2007-09-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam, Ollie.
 
         * WebView/WebView.mm: (+[WebView _setCacheModel:]): A slightly cleaner 64-bit

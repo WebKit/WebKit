@@ -108,9 +108,6 @@
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 
-#import <objc/objc.h>
-#import <objc/objc-class.h>
-
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -384,12 +381,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 #endif
         ASSERT(setCursorMethod);
 
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
         oldSetCursorIMP = method_setImplementation(setCursorMethod, (IMP)setCursor);
-#else
-        oldSetCursorIMP = setCursorMethod->method_imp;
-        setCursorMethod->method_imp = (IMP)setCursor;
-#endif
         ASSERT(oldSetCursorIMP);
     }
     
@@ -397,8 +389,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     if (!oldResetCursorRectsIMP) {
         Method resetCursorRectsMethod = class_getInstanceMethod([NSWindow class], @selector(resetCursorRects));
         ASSERT(resetCursorRectsMethod);
-        oldResetCursorRectsIMP = resetCursorRectsMethod->method_imp;
-        resetCursorRectsMethod->method_imp = (IMP)resetCursorRects;
+        oldResetCursorRectsIMP = method_setImplementation(resetCursorRectsMethod, (IMP)resetCursorRects);
         ASSERT(oldResetCursorRectsIMP);
     }
 #endif

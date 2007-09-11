@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,9 +30,7 @@
 
 #import "HIViewAdapter.h"
 
-#import <objc/objc.h>
-#import <objc/objc-class.h>
-
+#import "WebNSObjectExtras.h"
 #import <JavaScriptCore/Assertions.h>
 
 static void SetViewNeedsDisplay(HIViewRef inView, RgnHandle inRegion, Boolean inNeedsDisplay);
@@ -64,34 +62,19 @@ static NSView *_webkit_NSView_nextValidKeyView(id self, SEL _cmd);
         Method setNeedsDisplayMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(setNeedsDisplay:));
         ASSERT(setNeedsDisplayMethod);
         ASSERT(!oldNSViewSetNeedsDisplayIMP);
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
         oldNSViewSetNeedsDisplayIMP = method_setImplementation(setNeedsDisplayMethod, (IMP)_webkit_NSView_setNeedsDisplay);
-#else
-        oldNSViewSetNeedsDisplayIMP = setNeedsDisplayMethod->method_imp;
-        setNeedsDisplayMethod->method_imp = (IMP)_webkit_NSView_setNeedsDisplay;
-#endif
 
         // Override -[NSView setNeedsDisplayInRect:]
         Method setNeedsDisplayInRectMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(setNeedsDisplayInRect:));
         ASSERT(setNeedsDisplayInRectMethod);
         ASSERT(!oldNSViewSetNeedsDisplayInRectIMP);
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
         oldNSViewSetNeedsDisplayInRectIMP = method_setImplementation(setNeedsDisplayInRectMethod, (IMP)_webkit_NSView_setNeedsDisplayInRect);
-#else
-        oldNSViewSetNeedsDisplayInRectIMP = setNeedsDisplayInRectMethod->method_imp;
-        setNeedsDisplayInRectMethod->method_imp = (IMP)_webkit_NSView_setNeedsDisplayInRect;
-#endif
 
         // Override -[NSView nextValidKeyView]
         Method nextValidKeyViewMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(nextValidKeyView));
         ASSERT(nextValidKeyViewMethod);
         ASSERT(!oldNSViewNextValidKeyViewIMP);
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0
         oldNSViewNextValidKeyViewIMP = method_setImplementation(nextValidKeyViewMethod, (IMP)_webkit_NSView_nextValidKeyView);
-#else
-        oldNSViewNextValidKeyViewIMP = nextValidKeyViewMethod->method_imp;
-        nextValidKeyViewMethod->method_imp = (IMP)_webkit_NSView_nextValidKeyView;
-#endif
     }
 
     CFDictionaryAddValue(sViewMap, nsView, hiView);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,13 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <objc/objc-class.h>
+#import <objc/objc.h>
 
 // Use WebCFAutorelease to return an object made by a CoreFoundation
 // "create" or "copy" function as an autoreleased and garbage collected
 // object. CF objects need to be "made collectable" for autorelease to work
 // properly under GC.
-
 static inline id WebCFAutorelease(CFTypeRef obj)
 {
     if (obj)
@@ -40,3 +41,20 @@ static inline id WebCFAutorelease(CFTypeRef obj)
     [(id)obj autorelease];
     return (id)obj;
 }
+
+#if !(defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0)
+
+static inline IMP class_getMethodImplementation(Class c, SEL s)
+{
+    Method m = class_getInstanceMethod(c, s);
+    return m ? m->method_imp : 0;
+}
+
+static inline IMP method_setImplementation(Method m, IMP i)
+{
+    IMP oi = m->method_imp;
+    m->method_imp = i;
+    return oi;
+}
+
+#endif
