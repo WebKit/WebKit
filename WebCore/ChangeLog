@@ -1,3 +1,15 @@
+2007-09-11  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by David Harrison.
+        
+        <rdar://problem/5467203> CrashTracer: [USER] 1 crash in Mail at <unknown binary>: WebCore::Range::startContainer const
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::addRange):
+        (WebCore::SelectionController::setSelectedRange):
+        Added a check to make sure the passed in Range* value is not null
+        before performing operations on it.
+
 2007-09-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Maciej.
