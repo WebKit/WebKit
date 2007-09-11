@@ -1,5 +1,14 @@
 2007-09-11  Darin Adler  <darin@apple.com>
 
+        - redo fix for <rdar://problem/5472899> REGRESSION (TOT): Crash in FrameLoadDelegate loading stationery
+
+        * WebView/WebView.mm:
+        (getMethod): Added.
+        (-[WebView _cacheResourceLoadDelegateImplementations]): Use getMethod.
+        (-[WebView _cacheFrameLoadDelegateImplementations]): Ditto.
+
+2007-09-11  Darin Adler  <darin@apple.com>
+
         Rubber-stamped by Dave Harrison.
 
         * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface):

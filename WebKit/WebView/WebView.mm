@@ -947,23 +947,27 @@ static bool debugWidget = true;
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
 }
 
+static inline IMP getMethod(id o, SEL s)
+{
+    return [o respondsToSelector:s] ? [o methodForSelector:s] : 0;
+}
+
 - (void)_cacheResourceLoadDelegateImplementations
 {
     WebResourceDelegateImplementationCache *cache = &_private->resourceLoadDelegateImplementations;
     id delegate = _private->resourceProgressDelegate;
-    Class delegateClass = [delegate class];
 
-    cache->didCancelAuthenticationChallengeFunc = class_getMethodImplementation(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
-    cache->didFailLoadingWithErrorFromDataSourceFunc = class_getMethodImplementation(delegateClass, @selector(webView:resource:didFailLoadingWithError:fromDataSource:));
-    cache->didFinishLoadingFromDataSourceFunc = class_getMethodImplementation(delegateClass, @selector(webView:resource:didFinishLoadingFromDataSource:));
-    cache->didLoadResourceFromMemoryCacheFunc = class_getMethodImplementation(delegateClass, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:));
-    cache->didReceiveAuthenticationChallengeFunc = class_getMethodImplementation(delegateClass, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
-    cache->didReceiveContentLengthFunc = class_getMethodImplementation(delegateClass, @selector(webView:resource:didReceiveContentLength:fromDataSource:));
-    cache->didReceiveResponseFunc = class_getMethodImplementation(delegateClass, @selector(webView:resource:didReceiveResponse:fromDataSource:));
-    cache->identifierForRequestFunc = class_getMethodImplementation(delegateClass, @selector(webView:identifierForInitialRequest:fromDataSource:));
-    cache->plugInFailedWithErrorFunc = class_getMethodImplementation(delegateClass, @selector(webView:plugInFailedWithError:dataSource:));
-    cache->willCacheResponseFunc = class_getMethodImplementation(delegateClass, @selector(webView:resource:willCacheResponse:fromDataSource:));
-    cache->willSendRequestFunc = class_getMethodImplementation(delegateClass, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:));
+    cache->didCancelAuthenticationChallengeFunc = getMethod(delegate, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
+    cache->didFailLoadingWithErrorFromDataSourceFunc = getMethod(delegate, @selector(webView:resource:didFailLoadingWithError:fromDataSource:));
+    cache->didFinishLoadingFromDataSourceFunc = getMethod(delegate, @selector(webView:resource:didFinishLoadingFromDataSource:));
+    cache->didLoadResourceFromMemoryCacheFunc = getMethod(delegate, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:));
+    cache->didReceiveAuthenticationChallengeFunc = getMethod(delegate, @selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:));
+    cache->didReceiveContentLengthFunc = getMethod(delegate, @selector(webView:resource:didReceiveContentLength:fromDataSource:));
+    cache->didReceiveResponseFunc = getMethod(delegate, @selector(webView:resource:didReceiveResponse:fromDataSource:));
+    cache->identifierForRequestFunc = getMethod(delegate, @selector(webView:identifierForInitialRequest:fromDataSource:));
+    cache->plugInFailedWithErrorFunc = getMethod(delegate, @selector(webView:plugInFailedWithError:dataSource:));
+    cache->willCacheResponseFunc = getMethod(delegate, @selector(webView:resource:willCacheResponse:fromDataSource:));
+    cache->willSendRequestFunc = getMethod(delegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:));
 }
 
 WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementations(WebView *webView)
@@ -975,25 +979,24 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 {
     WebFrameLoadDelegateImplementationCache *cache = &_private->frameLoadDelegateImplementations;
     id delegate = _private->frameLoadDelegate;
-    Class delegateClass = [delegate class];
 
-    cache->didCancelClientRedirectForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didCancelClientRedirectForFrame:));
-    cache->didChangeLocationWithinPageForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didChangeLocationWithinPageForFrame:));
-    cache->didClearWindowObjectForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didClearWindowObject:forFrame:));
-    cache->didCommitLoadForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didCommitLoadForFrame:));
-    cache->didFailLoadWithErrorForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didFailLoadWithError:forFrame:));
-    cache->didFailProvisionalLoadWithErrorForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didFailProvisionalLoadWithError:forFrame:));
-    cache->didFinishDocumentLoadForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didFinishDocumentLoadForFrame:));
-    cache->didFinishLoadForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didFinishLoadForFrame:));
-    cache->didFirstLayoutInFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didFirstLayoutInFrame:));
-    cache->didHandleOnloadEventsForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didHandleOnloadEventsForFrame:));
-    cache->didReceiveIconForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didReceiveIcon:forFrame:));
-    cache->didReceiveServerRedirectForProvisionalLoadForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:));
-    cache->didReceiveTitleForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didReceiveTitle:forFrame:));
-    cache->didStartProvisionalLoadForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:didStartProvisionalLoadForFrame:));
-    cache->willCloseFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:willCloseFrame:));
-    cache->willPerformClientRedirectToURLDelayFireDateForFrameFunc = class_getMethodImplementation(delegateClass, @selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:));
-    cache->windowScriptObjectAvailableFunc = class_getMethodImplementation(delegateClass, @selector(webView:windowScriptObjectAvailable:));
+    cache->didCancelClientRedirectForFrameFunc = getMethod(delegate, @selector(webView:didCancelClientRedirectForFrame:));
+    cache->didChangeLocationWithinPageForFrameFunc = getMethod(delegate, @selector(webView:didChangeLocationWithinPageForFrame:));
+    cache->didClearWindowObjectForFrameFunc = getMethod(delegate, @selector(webView:didClearWindowObject:forFrame:));
+    cache->didCommitLoadForFrameFunc = getMethod(delegate, @selector(webView:didCommitLoadForFrame:));
+    cache->didFailLoadWithErrorForFrameFunc = getMethod(delegate, @selector(webView:didFailLoadWithError:forFrame:));
+    cache->didFailProvisionalLoadWithErrorForFrameFunc = getMethod(delegate, @selector(webView:didFailProvisionalLoadWithError:forFrame:));
+    cache->didFinishDocumentLoadForFrameFunc = getMethod(delegate, @selector(webView:didFinishDocumentLoadForFrame:));
+    cache->didFinishLoadForFrameFunc = getMethod(delegate, @selector(webView:didFinishLoadForFrame:));
+    cache->didFirstLayoutInFrameFunc = getMethod(delegate, @selector(webView:didFirstLayoutInFrame:));
+    cache->didHandleOnloadEventsForFrameFunc = getMethod(delegate, @selector(webView:didHandleOnloadEventsForFrame:));
+    cache->didReceiveIconForFrameFunc = getMethod(delegate, @selector(webView:didReceiveIcon:forFrame:));
+    cache->didReceiveServerRedirectForProvisionalLoadForFrameFunc = getMethod(delegate, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:));
+    cache->didReceiveTitleForFrameFunc = getMethod(delegate, @selector(webView:didReceiveTitle:forFrame:));
+    cache->didStartProvisionalLoadForFrameFunc = getMethod(delegate, @selector(webView:didStartProvisionalLoadForFrame:));
+    cache->willCloseFrameFunc = getMethod(delegate, @selector(webView:willCloseFrame:));
+    cache->willPerformClientRedirectToURLDelayFireDateForFrameFunc = getMethod(delegate, @selector(webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:));
+    cache->windowScriptObjectAvailableFunc = getMethod(delegate, @selector(webView:windowScriptObjectAvailable:));
 }
 
 WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementations(WebView *webView)

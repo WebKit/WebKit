@@ -3908,6 +3908,7 @@ bool WebView::onIMEComposition(LPARAM lparam)
             goto cleanup;
         
         targetFrame->editor()->replaceMarkedText(compositionString);
+        targetFrame->editor()->unmarkText();
         RefPtr<Range> sourceRange = targetFrame->selectionController()->selection().toRange();
         setSelectionToEndOfRange(targetFrame, sourceRange.get());
     } else if (lparam) {
