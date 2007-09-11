@@ -1,0 +1,57 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 11 of #text > A > B > TD > TR > TBODY > TABLE > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 11 of #text > A > B > TD > TR > TBODY > TABLE > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x116
+        RenderTable {TABLE} at (0,0) size 476x116
+          RenderTableSection {TBODY} at (0,0) size 476x116
+            RenderTableRow {TR} at (0,2) size 476x112
+              RenderTableCell {TD} at (2,2) size 472x112 [r=0 c=0 rs=1 cs=1]
+layer at (11,11) size 470x110
+  RenderTable {TABLE} at (1,1) size 470x110
+    RenderTableSection {TBODY} at (0,0) size 470x110
+      RenderTableRow {TR} at (0,2) size 470x106
+        RenderTableCell {TD} at (2,54) size 2x2 [r=0 c=0 rs=1 cs=1]
+          RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
+            RenderText {#text} at (0,0) size 0x0
+            RenderInline {SPAN} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+        RenderTableCell {TD} at (6,2) size 136x106 [r=0 c=1 rs=1 cs=1]
+          RenderInline {A} at (0,0) size 138x36 [color=#0000EE]
+            RenderText {#text} at (0,0) size 0x0
+            RenderImage {IMG} at (1,1) size 82x82 [border: (1px solid #0000EE)]
+            RenderText {#text} at (83,69) size 4x18
+              text run at (83,69) width 4: " "
+            RenderBR {BR} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 134x13
+              RenderText {#text} at (1,91) size 134x13
+                text run at (1,91) width 134: "Canton Repository (subscription)"
+            RenderText {#text} at (135,87) size 4x18
+              text run at (135,87) width 4: "                             "
+          RenderText {#text} at (139,87) size 0x18
+            text run at (139,87) width -4: "                         "
+        RenderTableCell {TD} at (144,2) size 316x20 [r=0 c=2 rs=1 cs=1]
+          RenderInline {B} at (0,0) size 314x18
+            RenderInline {A} at (0,0) size 104x18 [color=#0000EE]
+              RenderText {#text} at (1,1) size 28x18
+                text run at (1,1) width 28: "all 7"
+              RenderText {#text} at (29,1) size 76x18
+                text run at (29,1) width 76: "hello world"
+            RenderInline {SPAN} at (0,0) size 210x18 [color=#0000EE]
+              RenderInline {B} at (0,0) size 98x18
+                RenderText {#text} at (105,1) size 98x18
+                  text run at (105,1) width 98: "9 news articles"
+              RenderText {#text} at (203,1) size 112x18
+                text run at (203,1) width 112: "                            "
+        RenderTableCell {TD} at (462,2) size 2x20 [r=0 c=3 rs=1 cs=1]
+          RenderBR {BR} at (1,1) size 0x18
+        RenderTableCell {TD} at (466,54) size 2x2 [r=0 c=4 rs=1 cs=1]
+caret: position 11 of child 1 {#text} of child 0 {A} of child 2 {B} of child 4 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 0 {DIV} of child 2 {BODY} of child 0 {HTML} of document

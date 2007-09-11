@@ -855,6 +855,8 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
             if (original.node() != enclosingAnchor && original.node()->parentNode() != enclosingAnchor) {
                 pushAnchorElementDown(enclosingAnchor);
                 enclosingAnchor = enclosingAnchorElement(original);
+                if (!enclosingAnchor)
+                    return original;
             }
             // Don't insert outside an anchor if doing so would skip over a line break.  It would
             // probably be safe to move the line break so that we could still avoid the anchor here.

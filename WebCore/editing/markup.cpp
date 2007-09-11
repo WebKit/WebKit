@@ -588,7 +588,7 @@ DeprecatedString createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotat
     Node* specialCommonAncestor = 0;
     Node* commonAncestorBlock = commonAncestor ? enclosingBlock(commonAncestor) : 0;
     if (annotate && commonAncestorBlock) {
-        if (commonAncestorBlock->hasTagName(tbodyTag)) {
+        if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
             Node* table = commonAncestorBlock->parentNode();
             while (table && !table->hasTagName(tableTag))
                 table = table->parentNode();

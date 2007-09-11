@@ -1,3 +1,21 @@
+2007-09-10  David Harrison  <harrison@apple.com>
+
+        Reviewed by Kevin and Tristan.
+
+        <rdar://problem/5456800> Mail crashes at WebCore::nextCandidate() after pasting back into a <table> multiple times
+
+        * editing/pasteboard/paste-into-anchor-text.html: Added.
+        * editing/pasteboard/paste-table-cells.html: Added.
+        * editing/pasteboard/quirks-mode-br-1-expected.checksum:
+        * editing/pasteboard/quirks-mode-br-1-expected.txt:
+        * editing/pasteboard/quirks-mode-br-1.html:
+        * platform/mac/editing/pasteboard/paste-into-anchor-text-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/paste-into-anchor-text-expected.png: Added.
+        * platform/mac/editing/pasteboard/paste-into-anchor-text-expected.txt: Added.
+        * platform/mac/editing/pasteboard/paste-table-cells-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/paste-table-cells-expected.png: Added.
+        * platform/mac/editing/pasteboard/paste-table-cells-expected.txt: Added.
+
 2007-09-10  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver.

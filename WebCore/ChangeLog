@@ -1,3 +1,40 @@
+2007-09-10  David Harrison  <harrison@apple.com>
+
+        Reviewed by Kevin and Tristan.
+
+        Tests added:
+        * editing/pasteboard/paste-into-anchor-text.html: Added.
+        * editing/pasteboard/paste-table-cells.html: Added.
+
+        Source changes:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+        Nil check enclosingAnchor.
+        
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeNodeAndPruneAncestors):
+        New. Keeps m_firstNodeInserted and m_lastLeafInserted updated.
+        
+        (WebCore::ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance):
+        Added a comment.
+        
+        (WebCore::ReplaceSelectionCommand::removeRedundantStyles):
+        Let ReplaceSelectionCommand::removeNodeAndPruneAncestors() update the nodes.
+         
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Pass originalVisPosBeforeEndBR to shouldRemoveEndBR()
+        
+        (WebCore::ReplaceSelectionCommand::shouldRemoveEndBR):
+        Don't remove the br if nothing was inserted.
+        
+        * editing/ReplaceSelectionCommand.h:
+        Add VisiblePosition parameter to shouldRemoveEndBR()
+        
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        Wrap orphan tr element with a table element, just like we were doing
+        for tobody elements.
+
 2007-09-10  David Kilzer  <ddkilzer@apple.com>
 
         Rubberstamped by Kevin Decker.

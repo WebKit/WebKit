@@ -83,7 +83,7 @@ private:
     void insertNodeBeforeAndUpdateNodesInserted(Node* insertChild, Node* refChild);
 
     void updateNodesInserted(Node*);
-    bool shouldRemoveEndBR(Node*);
+    bool shouldRemoveEndBR(Node*, const VisiblePosition&);
     
     bool shouldMergeStart(bool, bool);
     bool shouldMergeEnd(bool);
@@ -95,6 +95,7 @@ private:
     void handlePasteAsQuotationNode();
     
     virtual void removeNodePreservingChildren(Node*);
+    virtual void removeNodeAndPruneAncestors(Node*);
     
     VisiblePosition positionAtStartOfInsertedContent();
     VisiblePosition positionAtEndOfInsertedContent();

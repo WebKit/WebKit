@@ -323,7 +323,7 @@ static bool isMailPasteAsQuotationNode(Node* node)
     return node && node->hasTagName(blockquoteTag) && node->isElementNode() && static_cast<Element*>(node)->getAttribute(classAttr) == ApplePasteAsQuotation;
 }
 
-// Virtual method used so that ReplaceSelectionCommand can update the node's it tracks.
+// Wrap CompositeEditCommand::removeNodePreservingChildren() so we can update the nodes we track
 void ReplaceSelectionCommand::removeNodePreservingChildren(Node* node)
 {
     if (m_firstNodeInserted == node)
@@ -331,6 +331,23 @@ void ReplaceSelectionCommand::removeNodePreservingChildren(Node* node)
     if (m_lastLeafInserted == node)
         m_lastLeafInserted = node->lastChild() ? node->lastChild() : node->traverseNextSibling();
     CompositeEditCommand::removeNodePreservingChildren(node);
+}
+
+// Wrap CompositeEditCommand::removeNodeAndPruneAncestors() so we can update the nodes we track
+void ReplaceSelectionCommand::removeNodeAndPruneAncestors(Node* node)
+{
+    // prepare in case m_firstNodeInserted and/or m_lastLeafInserted get removed
+    // FIXME: shouldn't m_lastLeafInserted be adjusted using traversePreviousNode()?
+    Node* afterFirst = m_firstNodeInserted ? m_firstNodeInserted->traverseNextSibling() : 0;
+    Node* afterLast = m_lastLeafInserted ? m_lastLeafInserted->traverseNextSibling() : 0;
+    
+    CompositeEditCommand::removeNodeAndPruneAncestors(node);
+    
+    // adjust m_firstNodeInserted and m_lastLeafInserted since either or both may have been removed
+    if (m_lastLeafInserted && !m_lastLeafInserted->inDocument())
+        m_lastLeafInserted = afterLast;
+    if (m_firstNodeInserted && !m_firstNodeInserted->inDocument())
+        m_firstNodeInserted = m_lastLeafInserted && m_lastLeafInserted->inDocument() ? afterFirst : 0;
 }
 
 bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& from, const VisiblePosition& to)
@@ -361,6 +378,9 @@ void ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance()
             // There are other styles that style rules can give to style spans,
             // but these are the two important ones because they'll prevent
             // inserted content from appearing in the right paragraph.
+            // FIXME: Hyatt is concerned that selectively using display:inline will give inconsistent
+            // results. We already know one issue because td elements ignore their display property
+            // in quirks mode (which Mail.app is always in). We should look for an alternative.
             if (isBlock(e))
                 e->getInlineStyleDecl()->setProperty(CSS_PROP_DISPLAY, CSS_VAL_INLINE);
             if (e->renderer() && e->renderer()->style()->floating() != FNONE)
@@ -413,12 +433,6 @@ void ReplaceSelectionCommand::removeRedundantStyles(Node* mailBlockquoteEnclosin
 
         // Remove empty style spans.
         if (isStyleSpan(element) && !element->hasChildNodes()) {
-            if (m_firstNodeInserted == m_lastLeafInserted && m_firstNodeInserted == element)
-                m_firstNodeInserted = 0;
-            if (m_firstNodeInserted == element)
-                m_firstNodeInserted = element->traverseNextSibling();
-            if (m_lastLeafInserted == element)
-                m_lastLeafInserted = element->traverseNextSibling();
             removeNodeAndPruneAncestors(element);
             continue;
         }
@@ -547,6 +561,9 @@ void ReplaceSelectionCommand::doApply()
     // p that maps to the same visible position as p (since in the case where a br is at the end of a block and collapsed 
     // away, there are positions after the br which map to the same visible position as [br, 0]).  
     Node* endBR = insertionPos.downstream().node()->hasTagName(brTag) ? insertionPos.downstream().node() : 0;
+    VisiblePosition originalVisPosBeforeEndBR;
+    if (endBR)
+        originalVisPosBeforeEndBR = VisiblePosition(endBR, 0, DOWNSTREAM).previous();
     
     startBlock = enclosingBlock(insertionPos.node());
     
@@ -631,13 +648,14 @@ void ReplaceSelectionCommand::doApply()
     
     bool interchangeNewlineAtEnd = fragment.hasInterchangeNewlineAtEnd();
 
-    if (shouldRemoveEndBR(endBR))
+    if (shouldRemoveEndBR(endBR, originalVisPosBeforeEndBR))
         removeNodeAndPruneAncestors(endBR);
-        
+    
     if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart())) {
         // Bail to avoid infinite recursion.
         if (m_movingParagraph) {
-            ASSERT_NOT_REACHED();
+            // setting display:inline does not work for td elements in quirks mode
+            ASSERT(m_firstNodeInserted->hasTagName(tdTag));
             return;
         }
         VisiblePosition destination = startOfInsertedContent.previous();
@@ -749,19 +767,24 @@ void ReplaceSelectionCommand::doApply()
     completeHTMLReplacement(lastPositionToSelect);
 }
 
-bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR)
+bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR, const VisiblePosition& originalVisPosBeforeEndBR)
 {
     if (!endBR || !endBR->inDocument())
         return false;
         
     VisiblePosition visiblePos(Position(endBR, 0));
     
-    return
-        // The br is collapsed away and so is unnecessary.
-        !document()->inStrictMode() && isEndOfBlock(visiblePos) && !isStartOfParagraph(visiblePos) ||
-        // A br that was originally holding a line open should be displaced by inserted content or turned into a line break.
-        // A br that was originally acting as a line break should still be acting as a line break, not as a placeholder.
-        isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos);
+    // Don't remove the br if nothing was inserted.
+    if (visiblePos.previous() == originalVisPosBeforeEndBR)
+        return false;
+    
+    // Remove the br if it is collapsed away and so is unnecessary.
+    if (!document()->inStrictMode() && isEndOfBlock(visiblePos) && !isStartOfParagraph(visiblePos))
+        return true;
+        
+    // A br that was originally holding a line open should be displaced by inserted content or turned into a line break.
+    // A br that was originally acting as a line break should still be acting as a line break, not as a placeholder.
+    return isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos);
 }
 
 void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositionToSelect)
