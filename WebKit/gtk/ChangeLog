@@ -1,3 +1,12 @@
+2007-09-10  Nigel Tao  <nigeltao@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix a typo where webkit_gtk_page_can_copy was declared twice,
+        rather than webkit_gtk_page_can_paste.
+
+        * Api/webkitgtkpage.h:
+
 2007-09-08  Brady Eidson  <beidson@apple.com>
 
         Better build fix
