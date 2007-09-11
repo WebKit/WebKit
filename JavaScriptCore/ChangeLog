@@ -1,3 +1,20 @@
+2007-09-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5456224> CrashTracer: [USER] 2 crashes in Toast Titanium at com.apple.CoreServices.CarbonCore: CSMemDisposePtr + 37
+
+        Removed the implementation of these malloc zone functions. We do not have the ability to 
+        check if a pointer is valid or not, so we can't correctly implement them. The system free 
+        does not fail if you pass in a bad pointer.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::FastMallocZone::size):
+        (WTF::FastMallocZone::zoneMalloc):
+        (WTF::FastMallocZone::zoneCalloc):
+        (WTF::FastMallocZone::zoneFree):
+        (WTF::FastMallocZone::zoneRealloc):
+
 2007-09-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Steve Falkenburg.
