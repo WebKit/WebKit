@@ -1,3 +1,15 @@
+2007-09-11  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Just doing the moves in a separate patch so the changes are easier to see.
+
+        * Drosera/win/DebuggerClient.cpp: Copied from Drosera/win/DebuggerDocumentWin.cpp.
+        * Drosera/win/DebuggerClient.h: Copied from Drosera/win/DebuggerDocumentWin.h.
+        * Drosera/win/DebuggerDocumentWin.cpp: Removed.
+        * Drosera/win/DebuggerDocumentWin.h: Removed.
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+
 2007-09-11  Sven Herzberg  <sven@imendio.com>
 
         Don't overwrite LD_LIBRARY_PATH, prepend to it. Fixes:
