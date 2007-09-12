@@ -1,3 +1,14 @@
+2007-09-12  Adam Roben  <aroben@apple.com>
+
+        Always specify that slider thumbs are small when painting with SafariTheme
+
+        This is the only size we support.
+
+        Reviewed by Sam.
+
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintSliderThumb):
+
 2007-09-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

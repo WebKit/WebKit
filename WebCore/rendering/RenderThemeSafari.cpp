@@ -914,7 +914,7 @@ bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const RenderObject::Pa
     if (pressed)
         state |= SafariTheme::PressedState;
 
-    paintThemePart(SliderThumbPart, paintInfo.context->platformContext(), r, (NSControlSize)0, state);
+    paintThemePart(SliderThumbPart, paintInfo.context->platformContext(), r, NSSmallControlSize, state);
     return false;
 }
 
