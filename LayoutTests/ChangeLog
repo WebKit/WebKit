@@ -1,3 +1,18 @@
+2007-09-11  Kevin Decker <kdecker@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5472402> crash due to infinite recursion in expandUseElementsInShadowTree on SVG from wikipedia
+        
+        Updated <use> specific SVG tests.
+
+        * svg/custom/struct-use-09-b-expected.txt:
+        * svg/custom/use-infinite-recursion-expected.txt: Added.
+        * svg/custom/use-infinite-recursion.svg: Added.
+        * svg/custom/use-nested-transform-expected.txt:
+        * svg/custom/use-on-g-containing-use-expected.txt:
+        * svg/custom/use-on-use-expected.txt:
+
 2007-09-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Maciej.

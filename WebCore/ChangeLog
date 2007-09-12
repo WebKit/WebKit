@@ -1,3 +1,14 @@
+2007-09-11  Kevin Decker <kdecker@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed: <rdar://problem/5472402> crash due to infinite recursion in expandUseElementsInShadowTree on SVG from wikipedia
+
+        * ksvg2/svg/SVGUseElement.cpp: Added SVG_EXPERIMENTAL #ifdef for expandUseElementsInShadowTree().
+        (WebCore::SVGUseElement::buildPendingResource): Ditto.
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements): Tweaked an ASSERT to not fire on non-experimental builds.
+        * ksvg2/svg/SVGUseElement.h: Added SVG_EXPERIMENTAL #ifdef for expandUseElementsInShadowTree().
+
 2007-09-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
