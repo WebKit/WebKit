@@ -1,3 +1,11 @@
+2007-09-12  Mike Fenton <mike@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Patch from Mike Fenton to allow custom cursors.
+
+        * platform/qt/CursorQt.cpp:
+
 2007-09-11  Kevin Decker <kdecker@apple.com>
 
         Reviewed by Oliver Hunt.

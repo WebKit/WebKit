@@ -30,6 +30,9 @@
 #include "config.h"
 #include "Cursor.h"
 
+#include "Image.h"
+#include "IntPoint.h"
+
 #include "DeprecatedString.h"
 #include "NotImplemented.h"
 
@@ -52,9 +55,9 @@ Cursor::~Cursor()
 {
 }
 
-Cursor::Cursor(Image*, const IntPoint&)
+Cursor::Cursor(Image* image, const IntPoint& hotspot)
+    : m_impl(*(image->getPixmap()), hotspot.x(), hotspot.y())
 {
-    notImplemented();
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
