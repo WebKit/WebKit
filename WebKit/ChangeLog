@@ -1,3 +1,11 @@
+2007-09-12  David Kilzer  <ddkilzer@apple.com>
+
+        Rubber-stamped by Darin and reviewed by Adam.
+
+        Removed import of unused icon database headers.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+
 2007-09-11  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

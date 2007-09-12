@@ -43,8 +43,6 @@
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
-#import "WebIconDatabase.h"
-#import "WebIconDatabasePrivate.h"
 #import "WebJavaPlugIn.h"
 #import "WebJavaScriptTextInputPanel.h"
 #import "WebKitErrorsPrivate.h"
