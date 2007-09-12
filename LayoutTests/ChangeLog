@@ -1,3 +1,19 @@
+2007-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Rubber stamped by Kevin D.
+        
+        Fix layout test results effected by turning off <use> entirely
+
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-05-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-text-05-t-expected.png:
+        * svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+
 2007-09-11  Kevin Decker <kdecker@apple.com>
 
         Reviewed by Oliver Hunt.
