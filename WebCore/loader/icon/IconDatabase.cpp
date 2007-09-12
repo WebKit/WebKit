@@ -1769,9 +1769,8 @@ inline void readySQLStatement(OwnPtr<SQLStatement>& statement, SQLDatabase& db, 
     }
     if (!statement) {
         statement.set(new SQLStatement(db, str));
-        int result;
-        result = statement->prepare();
-        ASSERT(result == SQLResultOk);
+        if (statement->prepare() != SQLResultOk)
+            LOG_ERROR("Preparing statement %s failed", str.utf8().data());
     }
 }
 
