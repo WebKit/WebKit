@@ -1,3 +1,11 @@
+2007-09-12  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geof.
+
+        - Updated the leaks list for leopard to help identify regressions.
+
+        * Scripts/run-webkit-tests:
+
 2007-09-12  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Darin.

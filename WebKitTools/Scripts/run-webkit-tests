@@ -991,6 +991,21 @@ sub countAndPrintLeaks($$$)
             "DRHT" # ditto (endian little hate i)
         );
     }
+     if (isLeopard()) {
+        push @callStacksToExclude, (
+            "performHeaderRead", #rdar://problem/5440146 162 leaks under performHeaderRead
+            "CFHTTPMessageAppendBytes", #rdar://problem/5435912 47 leaks possibly under CFHTTPMessageAppendBytes
+            "sendDidReceiveDataCallback", #<rdar://problem/5441619> 7 possible leaks under sendDidReceiveDataCallback
+            "_CFHTTPReadStreamReadMark", #<rdar://problem/5441468> 2 leaks in _CFHTTPReadStreamReadMark
+            "ftpReadStreamCB", #<rdar://problem/5468910> REGRESSION 3 Leaks under ftpReadStreamCB
+            "aquireColorWorldByAttributes", #<rdar://problem/5468893> REGRESSION 5 leaks under aquireColorWorldByAttributes
+            "httpProtocolStart", #<rdar://problem/5468837> REGRESSION: 18 leaks in httpProtocolStart
+            "sharedURLCache", #<rdar://problem/5468793> REGRESSION: possibly 82 leaks in sharedURLCache
+            "CFWriteStreamCreateWithAllocatedBuffers", #<rdar://problem/5468762> REGRESSION 548 leaks in CFWriteStreamCreateWithAllocatedBuffers
+            "CFURLProtocolUseCredential", #<rdar://problem/5440274> 1 leak under CFURLProtocolUseCredential
+            "_CFURLConnectionSendCallbacks" #<rdar://problem/5441600> 3 leaks under _CFURLConnectionSendCallbacks potentially in 
+        );
+    }
 
     my $leaksTool = sourceDir() . "/WebKitTools/Scripts/run-leaks";
     my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "'";
