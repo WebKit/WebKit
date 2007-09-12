@@ -1,5 +1,35 @@
 2007-09-11  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Maciej.
+
+        - Updated Win side to take advantage of the platform separating changes.
+
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::localScopeVariableNamesForCallFrame):
+        * Drosera/DebuggerDocument.h:
+        * Drosera/win/DebuggerClient.cpp:
+        (DebuggerClient::pause):
+        (DebuggerClient::resume):
+        (DebuggerClient::stepInto):
+        (DebuggerDocument::platformPause):
+        (DebuggerDocument::platformResume):
+        (DebuggerDocument::platformStepInto):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        (DebuggerDocument::platformLog):
+        * Drosera/win/DebuggerClient.h:
+        * Drosera/win/Drosera.cpp:
+        (Drosera::Drosera):
+        (Drosera::windowScriptObjectAvailable):
+        (Drosera::initWithServerName):
+        (Drosera::switchToServerNamed):
+        * Drosera/win/Drosera.h:
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+
+2007-09-11  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Adam.
 
         - Just doing the moves in a separate patch so the changes are easier to see.

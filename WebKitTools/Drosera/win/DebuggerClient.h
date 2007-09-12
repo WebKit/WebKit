@@ -26,14 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DebuggerObjectCallbacks_H
-#define DebuggerObjectCallbacks_H
+#ifndef DebuggerClient_H
+#define DebuggerClient_H
 
-#pragma warning(push)
-#pragma warning(disable: 4510 4512 4610)
-#include <JavaScriptCore/JSObjectRef.h>
-#pragma warning(pop)
+//@interface DebuggerClientMac : NSWindowController <WebScriptDebugListener>
+//{
+//    IBOutlet WebView *webView;
+//    id<WebScriptDebugServer> server;
+//    WebScriptCallFrame *currentFrame;
+//    NSString *currentServerName;
+//    BOOL webViewLoaded;
+//    DebuggerDocument* debuggerDocument;
+//}
 
-JSStaticFunction* staticFunctions();
+class DebuggerClient {
+public:
+    void pause();
+    void resume();
+    void stepInto();
+    //void stepOver();
+    //void stepOut();
+    //void showConsole();
+    //void closeCurrentFile();
+};
 
-#endif //DebuggerObjectCallbacks_H
+#endif //DebuggerClientWin_H

@@ -29,9 +29,11 @@
 #include "config.h"
 #include "Drosera.h"
 
-#include "DebuggerDocumentWin.h"
+#include "DebuggerClient.h"
+#include "DebuggerDocument.h"
 #include "HelperFunctions.h"
 #include "resource.h"
+
 #include <JavaScriptCore/JSStringRef.h>
 #include <WebCore/IntRect.h>
 #include <WebKit/IWebMutableURLRequest.h>
@@ -196,6 +198,7 @@ INT_PTR CALLBACK attachWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 Drosera::Drosera()
     : m_hWnd(0)
     , m_webViewLoaded(false)
+    , m_debuggerDocument(new DebuggerClient())
 {
 }
 
@@ -355,29 +358,16 @@ HRESULT STDMETHODCALLTYPE Drosera::didFinishLoadForFrame(
     return S_OK;
 }
 
-static JSClassRef getDroseraJSClass()
-{
-    static JSClassRef droseraClass = 0;
-
-    if (!droseraClass) {
-        JSClassDefinition classDefinition = {0};
-        classDefinition.staticFunctions = ::staticFunctions();
-
-        droseraClass = JSClassCreate(&classDefinition);
-    }
-
-    return droseraClass;
-}
-
 HRESULT STDMETHODCALLTYPE Drosera::windowScriptObjectAvailable( 
     /* [in] */ IWebView*,
     /* [in] */ JSContextRef context,
     /* [in] */ JSObjectRef windowObject)
 {
-    JSStringRef droseraStr = JSStringCreateWithUTF8CString("DebuggerDocument");
-    JSValueRef droseraObject = JSObjectMake(context, getDroseraJSClass(), 0);  // Do not need to release the JSValueRef it's garbage collected.
-    JSObjectSetProperty(context, windowObject, droseraStr, droseraObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
-    JSStringRelease(droseraStr);
+
+    JSValueRef exception = 0;
+    m_debuggerDocument.windowScriptObjectAvailable(context, windowObject, &exception);
+    if (exception)
+        return S_FALSE;
 
     return S_OK;
 }
@@ -411,3 +401,45 @@ LRESULT Drosera::onSize(WPARAM, LPARAM)
     return 0;
 }
 
+void Drosera::initWithServerName(std::wstring* /*serverName*/)
+{
+//    m_debuggerDocument = new DebuggerDocument(m_debuggerClient);
+
+    //if ((self = [super init]))
+    //    [self switchToServerNamed:serverName];
+    //return self;
+}
+
+void Drosera::switchToServerNamed(std::wstring* /*server*/)
+{
+    //if (server) {
+    //    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:[(NSDistantObject *)server connectionForProxy]];
+    //    if ([[(NSDistantObject *)server connectionForProxy] isValid]) {
+    //        [server removeListener:self];
+    //        [self resume];
+    //    }
+    //}
+
+    //id old = server;
+    //server = ([name length] ? [[NSConnection rootProxyForConnectionWithRegisteredName:name host:nil] retain] : nil);
+    //[old release];
+
+    //old = currentServerName;
+    //currentServerName = [name copy];
+    //[old release];
+
+    //if (server) {
+    //    @try {
+    //        [(NSDistantObject *)server setProtocolForProxy:@protocol(WebScriptDebugServer)];
+    //        [server addListener:self];
+    //    } @catch (NSException *exception) {
+    //        [currentServerName release];
+    //        currentServerName = nil;
+    //        [server release];
+    //        server = nil;
+    //    }
+
+    //    if (server)
+    //        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(serverConnectionDidDie:) name:NSConnectionDidDieNotification object:[(NSDistantObject *)server connectionForProxy]];  
+    //}
+}

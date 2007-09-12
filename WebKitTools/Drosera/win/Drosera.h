@@ -30,7 +30,9 @@
 #define Drosera_H
 
 #include "BaseDelegate.h"
+#include "DebuggerDocument.h"
 
+#include <string>
 #include <WebCore/COMPtr.h>
 #include <WebKit/IWebView.h>
 #include <WebKit/IWebViewPrivate.h>
@@ -73,6 +75,9 @@ public:
 
     static HINSTANCE getInst() { return m_hInst; } const
     static void setInst(HINSTANCE in) { m_hInst = in; }
+
+    void initWithServerName(std::wstring* serverName);
+    void switchToServerNamed(std::wstring* name);
 private:
 
     HWND m_hWnd;
@@ -82,6 +87,8 @@ private:
     bool m_webViewLoaded;
 
     static HINSTANCE m_hInst;
+
+    DebuggerDocument m_debuggerDocument;
 };
 
-#endif //HelperFunctions_H
+#endif //Drosera_H

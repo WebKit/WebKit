@@ -111,6 +111,7 @@ private:
     static void logException(JSContextRef, JSValueRef exception);
 
     DebuggerClient* m_debuggerClient;   //DebuggerClient owns the DebuggerDocument so don't delete it.  It will delete you!
+
     bool m_paused;
 };
 
