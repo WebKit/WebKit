@@ -68,6 +68,7 @@ public:
     void reset();
 
     bool skipMode() const { return !m_skipModeTag.isNull(); }
+    bool isHandlingResidualStyleAcrossBlocks() const { return m_handlingResidualStyleAcrossBlocks; }
 
 private:
     void setCurrent(Node*);
@@ -156,6 +157,7 @@ private:
 
     bool m_isParsingFragment;
     bool m_reportErrors;
+    bool m_handlingResidualStyleAcrossBlocks;
     int inStrayTableContent;
 };
 

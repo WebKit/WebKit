@@ -67,7 +67,6 @@ HTMLFormElement::HTMLFormElement(Document* doc)
     , m_doingsubmit(false)
     , m_inreset(false)
     , m_malformed(false)
-    , m_preserveAcrossRemove(false)
 {
 }
 

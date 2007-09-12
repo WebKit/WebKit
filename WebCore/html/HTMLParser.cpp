@@ -120,6 +120,7 @@ HTMLParser::HTMLParser(HTMLDocument* doc, bool reportErrors)
     , haveFrameSet(false)
     , m_isParsingFragment(false)
     , m_reportErrors(reportErrors)
+    , m_handlingResidualStyleAcrossBlocks(false)
     , inStrayTableContent(0)
 {
 }
@@ -135,6 +136,7 @@ HTMLParser::HTMLParser(DocumentFragment* frag)
     , haveFrameSet(false)
     , m_isParsingFragment(true)
     , m_reportErrors(false)
+    , m_handlingResidualStyleAcrossBlocks(false)
     , inStrayTableContent(0)
 {
     if (frag)
@@ -968,6 +970,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 {
     HTMLStackElem* maxElem = 0;
     bool finished = false;
+    m_handlingResidualStyleAcrossBlocks = true;
     while (!finished) {
         // Find the outermost element that crosses over to a higher level. If there exists another higher-level
         // element, we will do another pass, until we have corrected the innermost one.
@@ -1080,8 +1083,6 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         // The end result will be: <b>...</b><p><b>Foo</b>Goo</p>
         //
         // Step 1: Remove |blockElem| from its parent, doing a batch detach of all the kids.
-        if (m_currentFormElement)
-            m_currentFormElement->setPreserveAcrossRemove(true);
         if (isBlockStillInTree)
             blockElem->parentNode()->removeChild(blockElem, ec);
 
@@ -1168,8 +1169,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     reopenResidualStyleTags(residualStyleStack, 0); // FIXME: Deal with stray table content some day
                                                     // if it becomes necessary to do so.
 
-    if (m_currentFormElement)
-        m_currentFormElement->setPreserveAcrossRemove(false);
+    m_handlingResidualStyleAcrossBlocks = false;
 }
 
 void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTableParent)

@@ -1,3 +1,39 @@
+2007-09-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5464998> REGRESSION (9A543): Using Sort 
+        options takes you back to search screen on zappos.com
+
+        The current mechanism for preserving form elements across removes 
+        did not work in the case where the input was moved by the parser to 
+        be out of scope of the form. This fixes that problem by having the 
+        parser keep track of the preserve boolean rather than the current 
+        form element.
+
+        * dom/Tokenizer.h:
+        (WebCore::Tokenizer::isHTMLTokenizer): New function.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement): Get rid of 
+        m_preserveAcrossRemove.
+        * html/HTMLFormElement.h:
+        (WebCore::HTMLFormElement::isMalformed): Get rid of 
+        m_preserveAcrossRemove.
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::removedFromTree): Ask the parser 
+        if it is currently handling residual style rather than asking the 
+        form if it wants to preserveAcrossRemove.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser): New boolean to initialize.
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks): Set 
+        m_handlingResidualStyleAcrossBlocks to true at the beginning and 
+        false at the end.
+        * html/HTMLParser.h:
+        (WebCore::HTMLParser::isHandlingResidualStyleAcrossBlocks):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::isHTMLTokenizer):
+        (WebCore::HTMLTokenizer::htmlParser):
+
 2007-09-12  George Staikos  <staikos@kde.org>
 
         Fix compilation in some configurations for patch I reviewed and missed

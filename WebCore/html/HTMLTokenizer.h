@@ -108,6 +108,9 @@ public:
     bool processingContentWrittenByScript() const { return src.excludeLineNumbers(); }
     
     virtual void executeScriptsWaitingForStylesheets();
+    
+    virtual bool isHTMLTokenizer() const { return true; }
+    HTMLParser* htmlParser() const { return parser; }
 
 private:
     class State;

@@ -1,3 +1,15 @@
+2007-09-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Test for <rdar://problem/5464998> REGRESSION (9A543): Using Sort 
+        options takes you back to search screen on zappos.com
+
+        * fast/forms/preserveFormDuringResidualStyle.html: Added.
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.checksum: Added.
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.png: Added.
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.txt: Added.
+
 2007-09-12  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Darin.
