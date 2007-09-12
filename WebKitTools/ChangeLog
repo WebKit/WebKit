@@ -1,6 +1,13 @@
+2007-09-12  Sam Weinig  <sam@webkit.org>
+
+        Build fix for Buildbot.
+
+        * DumpRenderTree/DumpRenderTree.mm:
+        (dump):
+
 2007-09-12  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Geof.
+        Reviewed by Geoff.
 
         - Updated the leaks list for leopard to help identify regressions.
 
