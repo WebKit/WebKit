@@ -826,7 +826,7 @@ String IconDatabase::databasePath() const
 
 String IconDatabase::defaultDatabaseFilename()
 {
-    static String defaultDatabaseFilename = "Icons.db";
+    static String defaultDatabaseFilename = "WebpageIcons.db";
     return defaultDatabaseFilename.copy();
 }
 
@@ -1018,7 +1018,7 @@ static bool isValidDatabase(SQLDatabase& db)
     if (!db.tableExists("IconInfo") || !db.tableExists("IconData") || !db.tableExists("PageURL") || !db.tableExists("IconDatabaseInfo"))
         return false;
     
-    if (databaseVersionNumber(db) != currentDatabaseVersion) {
+    if (databaseVersionNumber(db) < currentDatabaseVersion) {
         LOG(IconDatabase, "DB version is not found or below expected valid version");
         return false;
     }
@@ -1082,7 +1082,7 @@ void IconDatabase::performOpenInitialization()
         if (!checkIntegrity()) {
             LOG(IconDatabase, "Integrity check was bad - dumping IconDatabase");
 
-            close();
+            m_syncDB.close();
             
             {
                 MutexLocker locker(m_syncLock);
@@ -1098,7 +1098,16 @@ void IconDatabase::performOpenInitialization()
             }          
         }
     }
-        
+    
+    int version = databaseVersionNumber(m_syncDB);
+    
+    if (version > currentDatabaseVersion) {
+        LOG(IconDatabase, "Database version number %i is greater than our current version number %i - closing the database to prevent overwriting newer versions", version, currentDatabaseVersion);
+        m_syncDB.close();
+        m_threadTerminationRequested = true;
+        return;
+    }
+    
     if (!isValidDatabase(m_syncDB)) {
         LOG(IconDatabase, "%s is missing or in an invalid state - reconstructing", m_syncDB.path().utf8().data());
         m_syncDB.clearAllTables();
@@ -1289,7 +1298,8 @@ void* IconDatabase::syncThreadMainLoop()
     ASSERT_ICON_SYNC_THREAD();
     static bool prunedUnretainedIcons = false;
 
-    while (true) {
+    // It's possible thread termination is requested before the main loop even starts - in that case, just skip straight to cleanup
+    while (!m_threadTerminationRequested) {
         m_syncLock.unlock();
 
 #ifndef NDEBUG
@@ -1694,6 +1704,7 @@ void* IconDatabase::cleanupSyncThread()
     LOG(IconDatabase, "(THREAD) Final closure took %.4f seconds", currentTime() - timeStamp);
 #endif
     
+    m_syncThreadRunning = false;
     return 0;
 }
 

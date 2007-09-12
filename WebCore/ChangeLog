@@ -1,3 +1,27 @@
+2007-09-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/5475639> and http://bugs.webkit.org/show_bug.cgi?id=15185 -
+        Prevent two WebKits from fighting over the database schema in the future in case it ever changes again
+
+        By telling the "older schema" WebKit to simply close itself and not bother to do any icon related stuff
+        if the database schema is newer, we prevent the possibility of an older webkit run side-by-side with a newer
+        WebKit causing icon database issues.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultDatabaseFilename): Rev the icon database filename to be "WebpageIcons.db"  The name is
+          more appropriate for what is actually stored in the file, and since we're already not converting v5 to v6 icons, 
+          making this leap now makes sense and gives us a good "future-proof" baseline
+        (WebCore::isValidDatabase): Change the validity check to be "less then" instead of "not equal to" - the
+          "greater than" case is now handled in performOpenInitialization()
+        (WebCore::IconDatabase::performOpenInitialization): If the schema version is greater than the current, then
+          close the database as to not conflict with the newer version.  Also noted that the integrity check failure 
+          should actually close the sql database, not the icondatabase
+        (WebCore::IconDatabase::syncThreadMainLoop): If termination has already been requested, skip straight to cleanup
+        (WebCore::IconDatabase::cleanupSyncThread): More correctly set the "sync thread running" flag to false here,
+          as the thread can now decide to exit on its own
+
 2007-09-12  Mike Fenton <mike@staikos.net>
 
         Reviewed by George Staikos.
