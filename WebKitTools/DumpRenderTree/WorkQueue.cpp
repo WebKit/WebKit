@@ -20,18 +20,69 @@
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-    * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#include "DumpRenderTree.h"
+#include "WorkQueue.h"
 
-class LayoutTestController; 
+#include "WorkQueueItem.h"
 
-@interface FrameLoadDelegate : NSObject
+#include <JavaScriptCore/Assertions.h>
+
+static const unsigned queueLength = 1024;
+
+static WorkQueueItem* theQueue[queueLength];
+static unsigned startOfQueue;
+static unsigned endOfQueue;
+
+WorkQueue* WorkQueue::shared()
 {
-    LayoutTestController* layoutTestContoller;
+    static WorkQueue* sharedInstance = new WorkQueue;
+    return sharedInstance;
 }
-@end
+
+WorkQueue::WorkQueue()
+    : m_frozen(false)
+{
+}
+
+void WorkQueue::queue(WorkQueueItem* item)
+{
+    ASSERT(endOfQueue < queueLength);
+    ASSERT(endOfQueue >= startOfQueue);
+
+    if (m_frozen)
+        return;
+
+    theQueue[endOfQueue++] = item;
+}
+
+WorkQueueItem* WorkQueue::dequeue()
+{
+    ASSERT(endOfQueue >= startOfQueue);
+
+    if (startOfQueue == endOfQueue)
+        return 0;
+
+    return theQueue[startOfQueue++];
+}
+
+unsigned WorkQueue::count()
+{
+    return endOfQueue - startOfQueue;
+}
+
+void WorkQueue::clear()
+{
+    for (unsigned i = startOfQueue; i < endOfQueue; ++i) {
+        delete theQueue[i];
+        theQueue[i] = 0;
+    }
+
+    startOfQueue = 0;
+    endOfQueue = 0;
+}

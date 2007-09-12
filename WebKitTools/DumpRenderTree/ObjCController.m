@@ -28,8 +28,9 @@
 
 #import "ObjCController.h"
 
-#import <WebKit/WebView.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebScriptObject.h>
+#import <WebKit/WebView.h>
 
 @implementation ObjCController
 
@@ -41,7 +42,10 @@
             || aSelector == @selector(identityIsEqual::)
             || aSelector == @selector(longLongRoundTrip:)
             || aSelector == @selector(unsignedLongLongRoundTrip:)
-            || aSelector == @selector(testWrapperRoundTripping:))
+            || aSelector == @selector(testWrapperRoundTripping:)
+            || aSelector == @selector(accessStoredWebScriptObject)
+            || aSelector == @selector(storeWebScriptObject:)
+        )
         return NO;
     return YES;
 }
@@ -60,6 +64,8 @@
         return @"unsignedLongLongRoundTrip";
     if (aSelector == @selector(testWrapperRoundTripping:))
         return @"testWrapperRoundTripping";
+    if (aSelector == @selector(storeWebScriptObject:))
+        return @"storeWebScriptObject";
 
     return nil;
 }
@@ -143,6 +149,43 @@
         return false;
 
     return true;
+}
+
+- (void)accessStoredWebScriptObject
+{
+    JSObjectRef jsObject = [storedWebScriptObject JSObject];
+    ASSERT(!jsObject);
+
+    [storedWebScriptObject callWebScriptMethod:@"" withArguments:nil];
+    [storedWebScriptObject evaluateWebScript:@""];
+    [storedWebScriptObject setValue:[WebUndefined undefined] forKey:@"key"];
+    [storedWebScriptObject valueForKey:@"key"];
+    [storedWebScriptObject removeWebScriptKey:@"key"];
+    [storedWebScriptObject stringRepresentation];
+    [storedWebScriptObject webScriptValueAtIndex:0];
+    [storedWebScriptObject setWebScriptValueAtIndex:0 value:[WebUndefined undefined]];
+    [storedWebScriptObject setException:@"exception"];
+}
+
+- (void)storeWebScriptObject:(WebScriptObject *)webScriptObject
+{
+    if (webScriptObject == storedWebScriptObject)
+        return;
+
+    [storedWebScriptObject release];
+    storedWebScriptObject = [webScriptObject retain];
+}
+
+- (void)dealloc
+{
+    [storedWebScriptObject release];
+    [super dealloc];
+}
+
+- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args
+{
+    // FIXME: Perhaps we should log that this has been called.
+    return nil;
 }
 
 @end

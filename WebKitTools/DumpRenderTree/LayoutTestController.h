@@ -25,14 +25,64 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#ifndef LayoutTestController_h
+#define LayoutTestController_h
 
-#import <Foundation/Foundation.h>
+#include <JavaScriptCore/JSObjectRef.h>
 
-@class WebScriptObject;
+class LayoutTestController {
+public:
+    LayoutTestController();
+    ~LayoutTestController();
 
-@interface LayoutTestController : NSObject
-{
-    WebScriptObject *storedWebScriptObject;
-}
-- (void)dealloc;
-@end
+    void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
+
+    // Controller Methods - platfrom independant implementations
+    void dumpAsText();
+    void dumpBackForwardList();
+    void dumpChildFramesAsText();
+    void dumpChildFrameScrollPositions();
+    void dumpDOMAsWebArchive();
+    void dumpEditingCallbacks();
+    void dumpFrameLoadCallbacks();
+    void dumpResourceLoadCallbacks();
+    void dumpSelectionRect();
+    void dumpSourceAsWebArchive();
+    void dumpTitleChanges();
+    void repaintSweepHorizontally();
+    void setCallCloseOnWebViews();
+    void setCanOpenWindows();
+    void setCloseRemainingWindowsWhenComplete();
+    void testRepaint();
+    void addFileToPasteboardOnDrag();
+    void addDisallowedURL(JSStringRef url);
+    void clearBackForwardList();
+    JSStringRef decodeHostName(JSStringRef name);
+    JSStringRef encodeHostName(JSStringRef name);
+    void display();
+    void keepWebHistory();
+    void notifyDone();
+    void queueBackNavigation(int howFarBackward);
+    void queueForwardNavigation(int howFarForward);
+    void queueLoad(JSStringRef url, JSStringRef target);
+    void queueReload();
+    void queueScript(JSStringRef url);
+    void setAcceptsEditing(bool acceptsEditing);
+    void setCustomPolicyDelegate(bool setDelegate);
+    void setMainFrameIsFirstResponder(bool flag);
+    void setTabKeyCyclesThroughElements(bool cycles);
+    void setUseDashboardCompatibilityMode(bool flag);
+    void setUserStyleSheetEnabled(bool flag);
+    void setUserStyleSheetLocation(JSStringRef path);
+    void setWindowIsKey(bool flag);
+    void waitUntilDone();
+    int windowCount();
+
+
+private:
+    static JSClassRef getLayoutTestControllerJSClass();
+    static JSStaticFunction* staticFunctions();
+};
+
+#endif // LayoutTestController_h

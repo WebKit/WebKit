@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer. 
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution. 
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission. 
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "WorkQueueItem.h"
+
+#import "DumpRenderTree.h"
+#import <JavaScriptCore/JSStringRef.h>
+#import <JavaScriptCore/JSStringRefCF.h>
+#import <JavaScriptCore/RetainPtr.h>
+#import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebScriptObject.h>
+#import <WebKit/WebView.h>
+
+void LoadItem::invoke() const
+{
+    RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_url.get()));
+    NSString *urlNS = (NSString *)urlCF.get();
+    RetainPtr<CFStringRef> targetCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_target.get()));
+    NSString *targetNS = (NSString *)targetCF.get();
+
+    WebFrame *targetFrame;
+    if (targetNS && [targetNS length])
+        targetFrame = [mainFrame findFrameNamed:targetNS];
+    else
+        targetFrame = mainFrame;
+    [targetFrame loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlNS]]];
+}
+
+void ReloadItem::invoke() const
+{
+    [[mainFrame webView] reload:nil];
+}
+
+void ScriptItem::invoke() const
+{
+    RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_script.get()));
+    NSString *scriptNS = (NSString *)scriptCF.get();
+    [[mainFrame webView] stringByEvaluatingJavaScriptFromString:scriptNS];
+}
+
+void BackForwardItem::invoke() const
+{
+    if (m_howFar == 1)
+        [[mainFrame webView] goForward];
+    else if (m_howFar == -1)
+        [[mainFrame webView] goBack];
+    else {
+        WebBackForwardList *bfList = [[mainFrame webView] backForwardList];
+        [[mainFrame webView] goToBackForwardItem:[bfList itemAtIndex:m_howFar]];
+    }
+}

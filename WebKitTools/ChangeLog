@@ -1,3 +1,150 @@
+2007-09-12  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Darin.
+
+        Convert the LayoutTestController to use the JSCore API instead of WebScriptObject.
+
+        * DumpRenderTree/DumpRenderTree.h: Re-order variables. 
+        * DumpRenderTree/DumpRenderTree.m: Removed.
+        * DumpRenderTree/DumpRenderTree.mm: Copied from DumpRenderTree/DumpRenderTree.m.
+        (stopJavaScriptThreads): Fix initialization.
+        (setDefaultColorProfileToRGB): Add explicit cast from void*.
+        (dumpRenderTree): Ditto.
+        (runTest):
+        Used the WorkQueue from the windows DRT instead of the old NSMutableArray one.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/FrameLoadDelegate.h: Add LayoutTestController instance variable.
+        * DumpRenderTree/FrameLoadDelegate.m: Removed.
+        * DumpRenderTree/FrameLoadDelegate.mm: Copied from DumpRenderTree/FrameLoadDelegate.m.
+        (-[FrameLoadDelegate init]):
+        (-[FrameLoadDelegate dealloc]):
+        (-[FrameLoadDelegate processWork:]):
+        (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]):
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
+        Convert to use the new JSCore based LayoutTestController and the new WorkQueue.
+        
+        * DumpRenderTree/LayoutTestController.cpp: Added.
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::~LayoutTestController):
+        (dumpAsTextCallback):
+        (dumpBackForwardListCallback):
+        (dumpChildFramesAsTextCallback):
+        (dumpChildFrameScrollPositionsCallback):
+        (dumpDOMAsWebArchiveCallback):
+        (dumpEditingCallbacksCallback):
+        (dumpFrameLoadCallbacksCallback):
+        (dumpResourceLoadCallbacksCallback):
+        (dumpSelectionRectCallback):
+        (dumpSourceAsWebArchiveCallback):
+        (dumpTitleChangesCallback):
+        (repaintSweepHorizontallyCallback):
+        (setCallCloseOnWebViewsCallback):
+        (setCanOpenWindowsCallback):
+        (setCloseRemainingWindowsWhenCompleteCallback):
+        (testRepaintCallback):
+        (addFileToPasteboardOnDragCallback):
+        (addDisallowedURLCallback):
+        (clearBackForwardListCallback):
+        (decodeHostNameCallback):
+        (displayCallback):
+        (encodeHostNameCallback):
+        (keepWebHistoryCallback):
+        (notifyDoneCallback):
+        (queueBackNavigationCallback):
+        (queueForwardNavigationCallback):
+        (queueLoadCallback):
+        (queueReloadCallback):
+        (queueScriptCallback):
+        (setAcceptsEditingCallback):
+        (setCustomPolicyDelegateCallback):
+        (setMainFrameIsFirstResponderCallback):
+        (setTabKeyCyclesThroughElementsCallback):
+        (setUseDashboardCompatibilityModeCallback):
+        (setUserStyleSheetEnabledCallback):
+        (setUserStyleSheetLocationCallback):
+        (setWindowIsKeyCallback):
+        (waitUntilDoneCallback):
+        (windowCountCallback):
+        (LayoutTestController::makeWindowObject):
+        (LayoutTestController::getLayoutTestControllerJSClass):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h: Replaced.
+        * DumpRenderTree/LayoutTestController.m: Removed.
+        * DumpRenderTree/LayoutTestControllerMac.mm: Added.
+        (LayoutTestController::dumpAsText):
+        (LayoutTestController::dumpBackForwardList):
+        (LayoutTestController::dumpChildFramesAsText):
+        (LayoutTestController::dumpChildFrameScrollPositions):
+        (LayoutTestController::dumpDOMAsWebArchive):
+        (LayoutTestController::dumpEditingCallbacks):
+        (LayoutTestController::dumpFrameLoadCallbacks):
+        (LayoutTestController::dumpResourceLoadCallbacks):
+        (LayoutTestController::dumpSelectionRect):
+        (LayoutTestController::dumpSourceAsWebArchive):
+        (LayoutTestController::dumpTitleChanges):
+        (LayoutTestController::repaintSweepHorizontally):
+        (LayoutTestController::setCallCloseOnWebViews):
+        (LayoutTestController::setCanOpenWindows):
+        (LayoutTestController::setCloseRemainingWindowsWhenComplete):
+        (LayoutTestController::testRepaint):
+        (LayoutTestController::addFileToPasteboardOnDrag):
+        (LayoutTestController::addDisallowedURL):
+        (LayoutTestController::clearBackForwardList):
+        (LayoutTestController::decodeHostName):
+        (LayoutTestController::encodeHostName):
+        (LayoutTestController::display):
+        (LayoutTestController::keepWebHistory):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::queueBackNavigation):
+        (LayoutTestController::queueForwardNavigation):
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::queueReload):
+        (LayoutTestController::queueScript):
+        (LayoutTestController::setAcceptsEditing):
+        (LayoutTestController::setCustomPolicyDelegate):
+        (LayoutTestController::setMainFrameIsFirstResponder):
+        (LayoutTestController::setTabKeyCyclesThroughElements):
+        (LayoutTestController::setUseDashboardCompatibilityMode):
+        (LayoutTestController::setUserStyleSheetEnabled):
+        (LayoutTestController::setUserStyleSheetLocation):
+        (LayoutTestController::setWindowIsKey):
+        (+[WaitToDumpWatchdog waitUntilDoneWatchdogFired]):
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::windowCount):
+        Use the JSCore API to implement the LayoutTestController.
+
+        * DumpRenderTree/ObjCController.h:
+        * DumpRenderTree/ObjCController.m:
+        (+[ObjCController isSelectorExcludedFromWebScript:]):
+        (+[ObjCController webScriptNameForSelector:]):
+        (-[ObjCController accessStoredWebScriptObject]):
+        (-[ObjCController storeWebScriptObject:]):
+        (-[ObjCController dealloc]):
+        (-[ObjCController invokeUndefinedMethodFromWebScript:withArguments:]):
+        Move WebScriptObject tests to ObjCController.
+
+        * DumpRenderTree/UIDelegate.m: Removed.
+        * DumpRenderTree/UIDelegate.mm: Copied from DumpRenderTree/UIDelegate.m.
+
+        * DumpRenderTree/WorkQueue.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueue.cpp.
+        * DumpRenderTree/WorkQueue.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueue.h.
+        * DumpRenderTree/WorkQueueItem.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueueItem.h.
+        (WorkQueueItem::~WorkQueueItem):
+        (LoadItem::LoadItem):
+        (LoadItem::url):
+        (LoadItem::target):
+        (ScriptItem::ScriptItem):
+        (ScriptItem::script):
+        * DumpRenderTree/WorkQueueItemMac.mm: Added.
+        (LoadItem::invoke):
+        (ReloadItem::invoke):
+        (ScriptItem::invoke):
+        (BackForwardItem::invoke):
+        Copy WorkQueue and WorkQueueItem from windows DRT. Changed the WorkQueueItem to use JSStringRefs instead of wstrings
+        to avoid conversion until the last possible moment.  These changes will be merged with the windows DRT when we start
+        sharing code.
+
 2007-09-11  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Maciej.

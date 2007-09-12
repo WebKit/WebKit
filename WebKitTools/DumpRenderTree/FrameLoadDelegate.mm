@@ -38,12 +38,13 @@
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
 #import "TextInputController.h"
-
+#import "WorkQueue.h"
+#import "WorkQueueItem.h"
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/JavaScriptCore.h>
-#import <WebKit/WebKit.h>
-#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebKit.h>
 #import <WebKit/WebNSURLExtras.h>
 
 @interface NSURLRequest (PrivateThingsWeShouldntReallyUse)
@@ -91,13 +92,26 @@
 
 @implementation FrameLoadDelegate
 
+- (id)init
+{
+    layoutTestContoller = new LayoutTestController();
+    return [super init];
+}
+
+- (void)dealloc
+{
+    delete layoutTestContoller;
+    [super dealloc];
+}
+
 // Exec messages in the work queue until they're all done, or one of them starts a new load
 - (void)processWork:(id)dummy
 {
     // quit doing work once a load is in progress
-    while ([workQueue count] > 0 && !topLoadingFrame) {
-        [[workQueue objectAtIndex:0] invoke];
-        [workQueue removeObjectAtIndex:0];
+    while (WorkQueue::shared()->count() > 0 && !topLoadingFrame) {
+        WorkQueueItem* item = WorkQueue::shared()->dequeue();
+        ASSERT(item);
+        item->invoke();
     }
     
     // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
@@ -109,9 +123,9 @@
 {
     if ([dataSource webFrame] == topLoadingFrame) {
         topLoadingFrame = nil;
-        workQueueFrozen = YES;      // first complete load freezes the queue for the rest of this test
+        WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
         if (!waitToDump) {
-            if ([workQueue count] > 0)
+            if (WorkQueue::shared()->count())
                 [self performSelector:@selector(processWork:) withObject:nil afterDelay:0];
             else
                 dump();
@@ -219,11 +233,15 @@
         
     ASSERT(obj == [frame windowObject]);
     ASSERT([obj JSObject] == JSContextGetGlobalObject([frame globalContext]));
-    
-    LayoutTestController *ltc = [[LayoutTestController alloc] init];
-    [obj setValue:ltc forKey:@"layoutTestController"];
-    [ltc release];
-    
+
+    // Make New-Style LayoutTestController
+    JSContextRef context = [frame globalContext];
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+    JSValueRef exception = 0;
+    layoutTestContoller->makeWindowObject(context, globalObject, &exception);
+    ASSERT(!exception);
+
+    // Make Old-Style controllers
     EventSendingController *esc = [[EventSendingController alloc] init];
     [obj setValue:esc forKey:@"eventSender"];
     [esc release];

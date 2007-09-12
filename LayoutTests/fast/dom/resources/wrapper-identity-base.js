@@ -170,7 +170,7 @@ function isEqualJS(a, b)
 
 function isEqualObjC(a, b)
 {
-    return Boolean(layoutTestController.objCIdentityIsEqual(a, b));
+    return Boolean(objCController.identityIsEqual(a, b));
 }
 
 function testJS(s)

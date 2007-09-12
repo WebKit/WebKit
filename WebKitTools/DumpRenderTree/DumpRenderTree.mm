@@ -38,6 +38,8 @@
 #import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
 #import "UIDelegate.h"
+#import "WorkQueueItem.h"
+#import "WorkQueue.h"
 
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
 #import <CoreFoundation/CoreFoundation.h>
@@ -86,6 +88,8 @@
     int changeCount;
 }
 @end
+
+LayoutTestController* layoutTestController = 0;
 
 BOOL windowIsKey = YES;
 WebFrame *mainFrame = 0;
@@ -154,12 +158,6 @@ static NSMutableDictionary *localPasteboards;
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
 static unsigned char* screenCaptureBuffer;
 static CGColorSpaceRef sharedColorSpace;
-
-// a queue of NSInvocations, queued by callouts from the test, to be exec'ed when the load is done
-NSMutableArray *workQueue = nil;
-// to prevent infinite loops, only the first page of a test can add to a work queue
-// (since we may well come back to that same page)
-BOOL workQueueFrozen = NO;
 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
@@ -245,17 +243,18 @@ static void stopJavaScriptThreads(void)
 {
     pthread_mutex_lock(&javaScriptThreadsMutex);
 
-    javaScriptThreadsShouldTerminate = YES;
+    javaScriptThreadsShouldTerminate = true;
 
-    const pthread_t pthreads[javaScriptThreadsCount];
-    assert(CFDictionaryGetCount(javaScriptThreads()) == javaScriptThreadsCount);
-    CFDictionaryGetKeysAndValues(javaScriptThreads(), (const void**)pthreads, NULL);
+    pthread_t* pthreads[javaScriptThreadsCount] = { 0 };
+    ASSERT(CFDictionaryGetCount(javaScriptThreads()) == javaScriptThreadsCount);
+    CFDictionaryGetKeysAndValues(javaScriptThreads(), (const void**)pthreads, 0);
 
     pthread_mutex_unlock(&javaScriptThreadsMutex);
 
     for (int i = 0; i < javaScriptThreadsCount; i++) {
-        pthread_t pthread = pthreads[i];
-        pthread_join(pthread, NULL);
+        pthread_t* pthread = pthreads[i];
+        pthread_join(*pthread, 0);
+        free(pthread);
     }
 }
 
@@ -314,7 +313,7 @@ static void activateAhemFont(void)
 
 static void setDefaultColorProfileToRGB(void)
 {
-    CMProfileRef genericProfile = [[NSColorSpace genericRGBColorSpace] colorSyncProfile];
+    CMProfileRef genericProfile = (CMProfileRef)[[NSColorSpace genericRGBColorSpace] colorSyncProfile];
     CMProfileRef previousProfile;
     int error = CMGetDefaultProfileByUse(cmDisplayUse, &previousProfile);
     if (error) {
@@ -512,7 +511,7 @@ void dumpRenderTree(int argc, const char *argv[])
 
     if (dumpPixels) {
         setDefaultColorProfileToRGB();
-        screenCaptureBuffer = malloc(maxViewHeight * maxViewWidth * 4);
+        screenCaptureBuffer = (unsigned char *)malloc(maxViewHeight * maxViewWidth * 4);
         sharedColorSpace = CGColorSpaceCreateDeviceRGB();
     }
     
@@ -531,8 +530,6 @@ void dumpRenderTree(int argc, const char *argv[])
     WebView *webView = createWebView();    
     mainFrame = [webView mainFrame];
     NSWindow *window = [webView window];
-    
-    workQueue = [[NSMutableArray alloc] init];
 
     makeLargeMallocFailSilently();
 
@@ -576,8 +573,6 @@ void dumpRenderTree(int argc, const char *argv[])
 
     if (threaded)
         stopJavaScriptThreads();
-    
-    [workQueue release];
 
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts    
     [webView close];
@@ -1030,6 +1025,8 @@ static void runTest(const char *pathOrURL)
         return;
     }
 
+    
+
     [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:YES];
     [[mainFrame webView] makeTextStandardSize:nil];
     [[mainFrame webView] setTabKeyCyclesThroughElements: YES];
@@ -1066,8 +1063,9 @@ static void runTest(const char *pathOrURL)
     currentTest = (NSString *)pathOrURLString;
     [prevTestBFItem release];
     prevTestBFItem = [[[[mainFrame webView] backForwardList] currentItem] retain];
-    [workQueue removeAllObjects];
-    workQueueFrozen = NO;
+
+    WorkQueue::shared()->clear();
+    WorkQueue::shared()->setFrozen(false);
 
     BOOL _shouldIgnoreWebCoreNodeLeaks = shouldIgnoreWebCoreNodeLeaks(CFURLGetString(URL));
     if (_shouldIgnoreWebCoreNodeLeaks)

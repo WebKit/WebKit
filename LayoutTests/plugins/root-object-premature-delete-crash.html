@@ -21,7 +21,7 @@ var count = 0;
 function runTest()
 {
     // Use a possibly stale pointer.
-    layoutTestController.accessStoredWebScriptObject(); 
+    objCController.accessStoredWebScriptObject(); 
 
     // Repeat, just to be sure.
     if (++count < 100) { // >
@@ -36,14 +36,14 @@ function runTest()
 function queueTest()
 {
     iframe.onload = runTest;
-    layoutTestController.storeWebScriptObject(iframe.contentWindow);
+    objCController.storeWebScriptObject(iframe.contentWindow);
     iframe.contentWindow.location.reload();
 }
 
 window.onload = function onload()
 {
-    if (!("layoutTestController" in window)) {
-        var errorMessage = "FAIL: This test can only run inside DumpRenderTree.";
+    if (!("layoutTestController" in window) || !("objCController" in window)) {
+        var errorMessage = "FAIL: This test can only run inside DumpRenderTree on the mac.";
         log(errorMessage);
         throw errorMessage;
     }

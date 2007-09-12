@@ -9,18 +9,21 @@ function print(message) {
 
 function test2()
 {
-    return layoutTestController.doesNotExist;
+    return objCController.doesNotExist;
 }
 
 function test()
 {
+    if (!window.objCController) {
+        print("FAIL: window.objCController does not exist");
+        return;
+    }
+
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
-    else
-        print("FAIL: window.layoutTestController does not exist");
-        
+
     var crasher = test2();
-    delete layoutTestController;
+    delete objCController;
     
     // create lots of objects to force a garbage collection
     var i = 0;
@@ -33,13 +36,12 @@ function test()
     if (crasher) {} // force call to toBoolean
     if (crasher == null) {} // force call to type() through call to equal
     
-    if (window.layoutTestController)   
-        print("FAIL: unable to delete layoutTestController");
+    if (window.objCController)
+        print("FAIL: unable to delete objCController");
     else
         print("PASS: You didn't crash.");
 }
 </script>
-	
 </head>
 <body onload="test()">
 <p>

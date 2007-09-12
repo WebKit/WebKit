@@ -1,3 +1,22 @@
+2007-09-12  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Darin.
+
+        Fix layout tests for new JSCore API based LayoutTestController.
+
+        * fast/dom/resources/wrapper-identity-base.js: Use ObjCController for objective-c tests.
+        * http/tests/local/file-url-sent-as-referer.html: Remove unused illegal call that now causes controller to fail due to not allowing undefined method calls.
+        * http/tests/xmlhttprequest/default-content-type-dashboard.html: Fix typo in function name.
+        * http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html: Fix typo in function name.
+        * plugins/call-as-function-test-expected.txt:
+        * plugins/call-as-function-test.html: Use ObjCController to test WebScriptObject.
+        * plugins/root-object-premature-delete-crash.html: Use ObjCController to test WebScriptObject
+        * plugins/undefined-property-crash.html: Use ObjCController to test WebScriptObject.
+        * svg/custom/embedded-svg-disallowed-in-dashboard.xml: Fix typo in function name.
+        * svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html: Fix typo in function name.
+        * svg/custom/manually-parsed-svg-disallowed-in-dashboard.html: Fix typo in function name.
+        * svg/custom/svg-disallowed-in-dashboard-object.html: Fix typo in function name.
+
 2007-09-12  Oliver Hunt  <oliver@apple.com>
 
         Rubber stamped by Kevin D.

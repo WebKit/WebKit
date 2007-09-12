@@ -7,7 +7,7 @@
                 layoutTestController.dumpAsText();
 
             // Test calling bridged function with global window as "this"
-            var f = ("layoutTestController" in window) ? layoutTestController.dumpAsText : console.log;
+            var f = ("layoutTestController" in window) ? objCController.className : console.log;
             
             var result;
             try {

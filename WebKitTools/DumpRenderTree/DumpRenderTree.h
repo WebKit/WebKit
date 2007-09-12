@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 @class DumpRenderTreeDraggingInfo;
 @class EditingDelegate;
 @class FrameLoadDelegate;
@@ -52,24 +53,24 @@ extern BOOL windowIsKey;
 extern BOOL shouldDumpEditingCallbacks;
 extern BOOL shouldDumpResourceLoadCallbacks;
 extern BOOL shouldDumpFrameLoadCallbacks;
-extern WebFrame *mainFrame;
-extern DumpRenderTreeDraggingInfo *draggingInfo;
-extern volatile BOOL done;
 extern BOOL shouldDumpResourceLoadCallbacks;
 extern BOOL shouldDumpFrameLoadCallbacks;
-extern NSMutableSet *disallowedURLs;
 extern BOOL waitToDump;
 extern BOOL canOpenWindows;
 extern BOOL closeWebViews;
 extern BOOL closeRemainingWindowsWhenComplete;
 extern BOOL addFileToPasteboardOnDrag;
-extern NSMutableArray *workQueue;
+
+extern volatile BOOL done;
+
+extern WebFrame *mainFrame;
+extern DumpRenderTreeDraggingInfo *draggingInfo;
 extern WebFrame *topLoadingFrame;
-extern BOOL workQueueFrozen;
 extern NavigationController *navigationController;
 extern NSTimer *waitToDumpWatchdog;
 extern NSTimeInterval waitToDumpWatchdogInterval;
 extern CFMutableArrayRef allWindowsRef;
+extern NSMutableSet *disallowedURLs;
 
 // Delegates
 extern FrameLoadDelegate *frameLoadDelegate;
@@ -81,4 +82,3 @@ extern PolicyDelegate *policyDelegate;
 WebView *createWebView();
 void displayWebView();
 void dump(void);
-
