@@ -326,7 +326,6 @@
 		510F73620B56C08800A3002A /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = 510F735C0B56C08800A3002A /* Credential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510F73630B56C08800A3002A /* ProtectionSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510F735D0B56C08800A3002A /* ProtectionSpace.cpp */; };
 		510F73640B56C08800A3002A /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 510F735E0B56C08800A3002A /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 5115095B0A9CE04600901013 /* urlIcon.tiff */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513BF1080B4F558900CCFECE /* AuthenticationMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 513BF1070B4F558900CCFECE /* AuthenticationMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3581,7 +3580,6 @@
 		510F735C0B56C08800A3002A /* Credential.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Credential.h; sourceTree = "<group>"; };
 		510F735D0B56C08800A3002A /* ProtectionSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ProtectionSpace.cpp; sourceTree = "<group>"; };
 		510F735E0B56C08800A3002A /* ProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProtectionSpace.h; sourceTree = "<group>"; };
-		5115095B0A9CE04600901013 /* urlIcon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = urlIcon.tiff; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		513BF1070B4F558900CCFECE /* AuthenticationMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationMac.h; sourceTree = "<group>"; };
@@ -6561,7 +6559,6 @@
 				85136C950AED665900F90A3D /* southResizeCursor.png */,
 				85136C960AED665900F90A3D /* southWestResizeCursor.png */,
 				ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */,
-				5115095B0A9CE04600901013 /* urlIcon.tiff */,
 				85136C970AED665900F90A3D /* waitCursor.png */,
 				85136C980AED665900F90A3D /* westResizeCursor.png */,
 			);
@@ -11808,7 +11805,6 @@
 			files = (
 				ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */,
 				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
-				5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */,
 				1C14E76B0AD8C81C00B6158B /* deleteButtonPressed.tiff in Resources */,
 				1C14E76C0AD8C81C00B6158B /* deleteButton.tiff in Resources */,
 				85136C990AED665900F90A3D /* eastResizeCursor.png in Resources */,

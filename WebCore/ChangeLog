@@ -1,3 +1,21 @@
+2007-09-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher and Kevin Decker
+
+        <rdar://problem/5367045> - Launch time regression due to accessing resource from a different bundle
+
+        When the default icon was moved from WebKit to WebCore, we had to access an entirely new bundle on launch which
+        measurably increased time during launch accessing the disk.
+
+        Instead of moving it back to the WebKit bundle, lets make launch time even faster by compiling in the icon.
+
+        * Resources/urlIcon.tiff: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed urlIcon.tiff
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultIcon): Compile in the icon data here.
+
 2007-09-12  Adam Roben  <aroben@apple.com>
 
         Always specify that slider thumbs are small when painting with SafariTheme
