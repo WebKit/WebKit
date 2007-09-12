@@ -30,7 +30,6 @@
 #define REPEAT_COUNT_MASK           0x0000FFFF
 #define NEW_RELEASE_STATE_MASK      0x80000000
 #define PREVIOUS_DOWN_STATE_MASK    0x40000000
-#define ALT_KEY_DOWN_MASK           0x20000000
 
 #define HIGH_BIT_MASK_SHORT         0x8000
 
@@ -146,8 +145,8 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM virtualKeyCode, LPARAM
     , m_isKeypad(false) // FIXME: Need to implement this.
     , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
     , m_ctrlKey(GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
-    , m_altKey(keyData & ALT_KEY_DOWN_MASK)
-    , m_metaKey(keyData & ALT_KEY_DOWN_MASK) // FIXME: This is not right!
+    , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
+    , m_metaKey(m_altKey)
 {
 }
 
