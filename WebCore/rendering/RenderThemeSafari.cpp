@@ -539,7 +539,7 @@ bool RenderThemeSafari::paintButton(RenderObject* o, const RenderObject::PaintIn
 
 bool RenderThemeSafari::paintTextField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    paintThemePart(TextFieldPart, paintInfo.context->platformContext(), r, (NSControlSize)0, determineState(o));
+    paintThemePart(TextFieldPart, paintInfo.context->platformContext(), r, (NSControlSize)0, determineState(o) & ~FocusedState);
     return false;
 }
 
@@ -549,7 +549,7 @@ void RenderThemeSafari::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, El
 
 bool RenderThemeSafari::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    paintThemePart(TextAreaPart, paintInfo.context->platformContext(), r, (NSControlSize)0, determineState(o));  
+    paintThemePart(TextAreaPart, paintInfo.context->platformContext(), r, (NSControlSize)0, determineState(o) & ~FocusedState);
     return false;
 }
 

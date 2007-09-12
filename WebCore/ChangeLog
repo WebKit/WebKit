@@ -1,3 +1,13 @@
+2007-09-12  Adam Roben  <aroben@apple.com>
+
+        Don't ask SafariTheme to draw focus rings around text controls
+
+        We do this ourselves.
+
+        Reviewed by Oliver.
+
+        * rendering/RenderThemeSafari.cpp:
+
 2007-09-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
