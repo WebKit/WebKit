@@ -1,3 +1,26 @@
+2007-09-12  Geoff Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed <rdar://problem/5429064> 141885 Safari JavaScript: Math.random() slightly less randomly distributed than on Safari / Mac
+
+        Math.random was skewed slightly upward because it assumed that RAND_MAX was outside the range of
+        values that rand() might return. This problem was particularly pronounced on Windows because
+        the range of values returned by rand() on Windows is 2^16 smaller than the range of values
+        return by rand() on Mac.
+        
+        Fixed by accounting for RAND_MAX return values. Also, switched Windows over to rand_s, which has
+        a range that's equal to rand()'s range on Mac.
+        
+        * kjs/config.h:
+
+        * kjs/math_object.cpp:
+        (MathFuncImp::callAsFunction): Use the new new thing.
+
+        * wtf/MathExtras.h: Platform abstraction for random numbers, to cover over differences on Windows.
+        (wtf_random_init):
+        (wtf_random):
+
 2007-09-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

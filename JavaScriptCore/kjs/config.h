@@ -45,6 +45,9 @@
 #define max max
 #define min min
 
+// We need to define this before the first #include of stdlib.h or it won't contain rand_s.
+#define _CRT_RAND_S
+
 #define HAVE_FLOAT_H 1
 #define HAVE_FUNC__FINITE 1
 #define HAVE_SYS_TIMEB_H 1

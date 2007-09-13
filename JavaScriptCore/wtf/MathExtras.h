@@ -102,6 +102,37 @@ inline double wtf_fmod(double x, double y) { return (!isinf(x) && isinf(y)) ? x 
 
 #define atan2(x, y) wtf_atan2(x, y)
 
+#if defined(_CRT_RAND_S)
+// Initializes the random number generator.
+inline void wtf_random_init()
+{
+    // No need to initialize for rand_s.
+}
+
+// Returns a pseudo-random number in the range [0, 1).
+inline double wtf_random()
+{
+    unsigned u;
+    rand_s(&u);
+
+    return static_cast<double>(u) / (static_cast<double>(UINT_MAX) + 1.0);
+}
+#endif // _CRT_RAND_S
+
+#else
+
+// Initializes the random number generator.
+inline void wtf_random_init()
+{
+    srand(time(0));
+}
+
+// Returns a pseudo-random number in the range [0, 1).
+inline double wtf_random()
+{
+    return static_cast<double>(rand()) / (static_cast<double>(RAND_MAX) + 1.0);
+}
+
 #endif // #if COMPILER(MSVC)
 
 #endif // #ifndef WTF_MathExtras_h
