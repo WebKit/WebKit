@@ -1,3 +1,16 @@
+2007-09-12  Anders Carlsson   <andersca@apple.com>
+
+        Reviewed by Darin (reluctantly).
+
+        <rdar://problem/5320461>
+        http://bugs.webkit.org/show_bug.cgi?id=14548
+        REGRESSION (r23987-r24061) : Reproducible crash with a local stylesheet file
+        
+        Add a workaround which converts the string passed in to an URL if it's a path.
+        
+        * WebView.cpp:
+        (WebView::updateWebCoreSettingsFromPreferences):
+
 2007-09-10  Steve Falkenburg  <sfalken@apple.com>
 
         Remove site-specific hacks that we don't need anymore.

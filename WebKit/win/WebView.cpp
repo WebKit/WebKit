@@ -1509,7 +1509,25 @@ HRESULT WebView::updateWebCoreSettingsFromPreferences(IWebPreferences* preferenc
         hr = preferences->userStyleSheetLocation(&str);
         if (FAILED(hr))
             return hr;
-        settings->setUserStyleSheetLocation(KURL(DeprecatedString((DeprecatedChar*)str, SysStringLen(str))));
+
+        RetainPtr<CFStringRef> urlString(AdoptCF, String(str, SysStringLen(str)).createCFString());
+        RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(kCFAllocatorDefault, urlString.get(), 0));
+
+        // Check if the passed in string is a path and convert it to a URL.
+        // FIXME: This is a workaround for nightly builds until we can get Safari to pass 
+        // in an URL here. See <rdar://problem/5478378>
+        if (!url) {
+            DWORD len = SysStringLen(str) + 1;
+
+            int result = WideCharToMultiByte(CP_UTF8, 0, str, len, 0, 0, 0, 0);
+            Vector<UInt8> utf8Path(result);
+            if (!WideCharToMultiByte(CP_UTF8, 0, str, len, (LPSTR)utf8Path.data(), result, 0, 0))
+                return E_FAIL;
+
+            url.adoptCF(CFURLCreateFromFileSystemRepresentation(0, utf8Path.data(), result - 1, false));
+        }
+
+        settings->setUserStyleSheetLocation(url.get());
         SysFreeString(str);
     } else {
         settings->setUserStyleSheetLocation(KURL(DeprecatedString("")));
