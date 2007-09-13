@@ -50,9 +50,8 @@ class DebuggerDocument {
 public:
     DebuggerDocument(DebuggerClient*);
 
-    // These are all calls out of the JS
+    // These are all calls from the JS
     static JSValueRef breakpointEditorHTMLCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
-    static JSValueRef isPausedCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
     static JSValueRef pauseCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
     static JSValueRef resumeCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
     static JSValueRef stepIntoCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
@@ -62,7 +61,7 @@ public:
     static JSValueRef valueForScopeVariableNamedCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
     static JSValueRef logCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
 
-    // Cross-platform functions
+    // Non Cross-platform functions
     void platformPause();
     void platformResume();
     void platformStepInto();
@@ -73,6 +72,7 @@ public:
     static void platformLog(JSStringRef msg);
 
     // These are the calls into the JS.
+    bool isPaused(JSContextRef) const;
     static void updateFileSource(JSContextRef, JSStringRef documentSource, JSStringRef url);
     static void didParseScript(JSContextRef, JSStringRef source, JSStringRef documentSource, JSStringRef url, JSValueRef sourceId, JSValueRef baseLine);
     static void willExecuteStatement(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception = 0);
@@ -89,8 +89,6 @@ public:
 
     static JSValueRef callGlobalFunction(JSContextRef, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
 
-    bool getPaused() const { return m_paused; }
-
 private:
     static JSValueRef callFunctionOnObject(JSContextRef, JSObjectRef object, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
     static JSClassRef getDroseraJSClass();
@@ -99,8 +97,6 @@ private:
     static void logException(JSContextRef, JSValueRef exception);
 
     DebuggerClient* m_debuggerClient;   //DebuggerClient owns the DebuggerDocument so don't delete it.  It will delete you!
-
-    bool m_paused;
 };
 
 #endif //DebuggerDocument_H

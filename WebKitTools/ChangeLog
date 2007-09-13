@@ -1,3 +1,21 @@
+2007-09-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        - Moved isPaused into the JS for efficiency and simplicity.
+
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::DebuggerDocument):
+        (DebuggerDocument::pauseCallback):
+        (DebuggerDocument::resumeCallback):
+        (DebuggerDocument::isPaused):
+        (DebuggerDocument::staticFunctions):
+        * Drosera/DebuggerDocument.h:
+        * Drosera/console.js:
+        * Drosera/debugger.js:
+        * Drosera/mac/DebuggerClient.mm:
+        (-[DebuggerClient validateUserInterfaceItem:]):
+
 2007-09-13  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Darin.

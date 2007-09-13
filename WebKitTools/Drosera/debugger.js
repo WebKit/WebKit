@@ -49,6 +49,7 @@ var pausedWhileLeavingFrame = false;
 var consoleWindow = null;
 var breakpointEditorHTML = DebuggerDocument.breakpointEditorHTML();
 var pendingAction = null;
+var isPaused = false;
 
 ScriptCallFrame = function (functionName, index, row)
 {
@@ -286,14 +287,10 @@ function loaded()
     document.getElementById("variableColumnResizer").addEventListener("mousedown", columnResizerDragStart, false);
 }
 
-function isPaused() 
-{
-    return DebuggerDocument.isPaused();
-}
-
 function pause() 
 {
     DebuggerDocument.pause();
+    isPaused = true;
 }
 
 function resume()
@@ -317,6 +314,7 @@ function resume()
     steppingStack = 0;
 
     DebuggerDocument.resume();
+    isPaused = false;
 }
 
 function stepInto()
@@ -1350,7 +1348,7 @@ function willExecuteStatement(sourceId, line, fromLeavingFrame)
         pausedWhileLeavingFrame = fromLeavingFrame || false;
     }
 
-    if (isPaused()) {
+    if (isPaused) {
         updateFunctionStack();
         jumpToLine(sourceId, line);
     }

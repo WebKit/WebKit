@@ -43,7 +43,7 @@ function loaded()
 function inputKeyDown(event)
 {
     if (event.keyCode == 13 && !event.altKey) {
-        if (mainWindow.isPaused() && mainWindow.currentStack) {
+        if (mainWindow.isPaused && mainWindow.currentStack) {
             history[history.length - 1] = inputElement.innerText;
             sendScript(inputElement.innerText);
             inputElement.innerText = "";

@@ -364,13 +364,19 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 {
     SEL action = [interfaceItem action];
     if (action == @selector(pause:)) {
-        return !debuggerDocument->getPaused();
+        if (!webViewLoaded)
+            return NO;
+
+        return !debuggerDocument->isPaused([[webView mainFrame] globalContext]);
     }
     if (action == @selector(resume:) ||
         action == @selector(stepOver:) ||
         action == @selector(stepOut:) ||
         action == @selector(stepInto:)) {
-        return debuggerDocument->getPaused();
+        if (!webViewLoaded)
+            return YES;
+
+        return debuggerDocument->isPaused([[webView mainFrame] globalContext]);
     }
     return YES;
 }
