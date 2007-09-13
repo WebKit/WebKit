@@ -1,3 +1,14 @@
+2007-09-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Change test case to cover
+        http://bugs.webkit.org/show_bug.cgi?id=11399
+        too.
+
+        * fast/js/window-eval-context-expected.txt:
+        * fast/js/window-eval-context.html:
+
 2007-09-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff, Maciej.

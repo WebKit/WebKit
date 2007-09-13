@@ -1,3 +1,16 @@
+2007-09-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Small addition to previous path to cover
+        http://bugs.webkit.org/show_bug.cgi?id=11399
+        window.eval runs in the global scope of the calling window
+        
+        Switch variable scope as well.
+
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction):
+
 2007-09-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff, Maciej.

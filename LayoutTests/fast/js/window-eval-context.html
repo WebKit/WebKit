@@ -26,12 +26,16 @@ print("Test that otherWindow.eval() keeps variables of calling context visible: 
 
 otherWindow.localVar = 2;
 res = otherWindow.eval('localVar == 2');
-print("Test that otherWindow.eval() is executed with otherWindow in scope " + (res ? "PASS" : "FAIL")) ;
+print("Test that otherWindow.eval() is executed with otherWindow in scope: " + (res ? "PASS" : "FAIL")) ;
 
 res = otherWindow.eval('window == otherWindow');
-print("Test that otherWindow.eval() has otherWindow as the window object : " + (res ? "PASS" : "FAIL")) ;
+print("Test that otherWindow.eval() has otherWindow as the window object: " + (res ? "PASS" : "FAIL")) ;
 
 var savedThis = this;
 res = otherWindow.eval('this == savedThis');
 print("Test that otherWindow.eval() does not change 'this': " + (res ? "PASS" : "FAIL")) ;
+
+otherWindow.eval('var myObject = new Object()');
+res = (typeof myObject == "undefined");
+print("Test that otherWindow.eval() changes variable context: " + (res ? "PASS" : "FAIL")) ;
 </script>
