@@ -40,7 +40,6 @@
 #include "DocumentLoader.h"
 #include "EditCommand.h"
 #include "Editor.h"
-#include "FileChooser.h"
 #include "FileSystem.h"
 #include "Font.h"
 #include "FrameLoadRequest.h"
@@ -119,14 +118,8 @@ void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String
 SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client) : PopupMenu(client) { notImplemented(); }
 bool SearchPopupMenu::enabled() { notImplemented(); return true; }
 
-FileChooser::FileChooser(FileChooserClient*, const String&) { notImplemented(); }
-FileChooser::~FileChooser() { notImplemented(); }
-void FileChooser::openFileChooser(Document*) { notImplemented(); }
-String FileChooser::basenameForWidth(const Font&, int width) const { notImplemented(); return String(); }
-
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
-
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest&) { notImplemented(); return false; }
 bool ResourceHandle::loadsBlocked() { notImplemented(); return false; }

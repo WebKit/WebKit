@@ -2,6 +2,23 @@
 
         Reviewed by Mark.
 
+        Implement the FileChooser for the WebKit/Gtk+ port by using
+        the GtkFileChooserDialog and g_path_get_basename to get the
+        basename for the current filename.
+
+
+        * WebCore.pro:
+        * platform/gdk/FileChooserGdk.cpp: Added.
+        (WebCore::FileChooser::FileChooser):
+        (WebCore::FileChooser::~FileChooser):
+        (WebCore::FileChooser::openFileChooser):
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
+2007-09-12  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
         Move the "string" functions from the TemporaryLinkStubs.cpp
         to LocalizedStringsGdk.cpp and implement them using the text
         from the win port and glib-i18n (gettext).

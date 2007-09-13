@@ -863,6 +863,7 @@ gdk-port {
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.h
     SOURCES += \
+        platform/StringTruncator.cpp \
         platform/TextCodecICU.cpp \
         platform/TextBreakIteratorICU.cpp \
         page/gdk/EventHandlerGdk.cpp \
@@ -874,6 +875,7 @@ gdk-port {
         platform/gdk/CursorGdk.cpp \
         platform/gdk/DragDataGdk.cpp \
         platform/gdk/DragImageGdk.cpp \
+        platform/gdk/FileChooserGdk.cpp \
         platform/gdk/FontCacheGdk.cpp \
         platform/gdk/FontDataGdk.cpp \
         platform/gdk/FontGdk.cpp \
