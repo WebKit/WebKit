@@ -1,3 +1,14 @@
+2007-09-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geof, Sam, Adam, Hyatt, Darin.
+
+        - <rdar://problem/5480234> JS setTimeout function requires a second argument
+        - Removed check for number of arguments in setTimeout to behave like other browsers.
+        - Added layoutTest setTimeout-no-arguments.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+
 2007-09-13   Dave Hyatt  <hyatt@apple.com>
 
         Some minor Windows font improvements before I make the larger changes.

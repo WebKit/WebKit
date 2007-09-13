@@ -1359,12 +1359,12 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::SetTimeout:
     if (!window->isSafeScript(exec))
         return jsUndefined();
-    if (args.size() >= 2 && v->isString()) {
+    if (v->isString()) {
       int i = args[1]->toInt32(exec);
       int r = (const_cast<Window*>(window))->installTimeout(s, i, true /*single shot*/);
       return jsNumber(r);
     }
-    else if (args.size() >= 2 && v->isObject() && static_cast<JSObject *>(v)->implementsCall()) {
+    else if (v->isObject() && static_cast<JSObject *>(v)->implementsCall()) {
       JSValue *func = args[0];
       int i = args[1]->toInt32(exec);
 

@@ -1,3 +1,13 @@
+2007-09-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geof, Sam, Adam, Hyatt, Darin.
+
+        - <rdar://problem/5480234> JS setTimeout function requires a second argument
+        - Removed check for number of arguments in setTimeout to behave like other browsers.
+
+        * fast/dom/Window/setTimeout-no-arguments-expected.txt: Added.
+        * fast/dom/Window/setTimeout-no-arguments.html: Added.
+
 2007-09-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
