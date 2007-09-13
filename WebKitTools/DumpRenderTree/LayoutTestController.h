@@ -58,8 +58,8 @@ public:
     void addFileToPasteboardOnDrag();
     void addDisallowedURL(JSStringRef url);
     void clearBackForwardList();
-    JSStringRef decodeHostName(JSStringRef name);
-    JSStringRef encodeHostName(JSStringRef name);
+    JSStringRef copyDecodedHostName(JSStringRef name);
+    JSStringRef copyEncodedHostName(JSStringRef name);
     void display();
     void keepWebHistory();
     void notifyDone();

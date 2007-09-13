@@ -94,8 +94,9 @@
 
 - (id)init
 {
-    layoutTestContoller = new LayoutTestController();
-    return [super init];
+    if ((self = [super init]))
+        layoutTestContoller = new LayoutTestController;
+    return self;
 }
 
 - (void)dealloc
@@ -112,6 +113,7 @@
         WorkQueueItem* item = WorkQueue::shared()->dequeue();
         ASSERT(item);
         item->invoke();
+        delete item;
     }
     
     // if we didn't start a new load, then we finished all the commands, so we're ready to dump state

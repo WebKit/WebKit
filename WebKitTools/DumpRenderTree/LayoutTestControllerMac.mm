@@ -161,14 +161,14 @@ void LayoutTestController::clearBackForwardList()
     [item release];
 }
 
-JSStringRef LayoutTestController::decodeHostName(JSStringRef name)
+JSStringRef LayoutTestController::copyDecodedHostName(JSStringRef name)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (NSString *)nameCF.get();
     return JSStringCreateWithCFString((CFStringRef)[nameNS _web_decodeHostName]);
 }
 
-JSStringRef LayoutTestController::encodeHostName(JSStringRef name)
+JSStringRef LayoutTestController::copyEncodedHostName(JSStringRef name)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (NSString *)nameCF.get();
@@ -214,7 +214,8 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
     NSURL *nsurl = [NSURL URLWithString:urlNS relativeToURL:[[[mainFrame dataSource] response] URL]];
     NSString* nsurlString = [nsurl absoluteString];
 
-    WorkQueue::shared()->queue(new LoadItem(JSStringCreateWithUTF8CString([nsurlString UTF8String]), target));
+    JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString([nsurlString UTF8String]));
+    WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
 }
 
 void LayoutTestController::queueReload()

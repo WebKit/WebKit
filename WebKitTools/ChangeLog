@@ -1,3 +1,21 @@
+2007-09-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Stephanie.
+
+        Fix leaks in mac DumpRenderTree.
+
+        * DumpRenderTree/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate init]): Initalize in the correct order.
+        (-[FrameLoadDelegate processWork:]): Delete WorkQueueItem's after dequeueing them.
+        * DumpRenderTree/LayoutTestController.cpp:
+        (decodeHostNameCallback): Put return value in a temporary JSRetainPtr to ensure it gets released.
+        (encodeHostNameCallback): ditto.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/LayoutTestControllerMac.mm:
+        (LayoutTestController::copyDecodedHostName): Rename function to signal that it follows the Create rule.
+        (LayoutTestController::copyEncodedHostName): ditto
+        (LayoutTestController::queueLoad): Use a JSRetainPtr to ensure the url gets released.
+
 2007-09-12  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

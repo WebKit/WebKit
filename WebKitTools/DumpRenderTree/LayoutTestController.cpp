@@ -163,8 +163,6 @@ static JSValueRef addFileToPasteboardOnDragCallback(JSContextRef context, JSObje
     return JSValueMakeUndefined(context);
 }
 
-#pragma mark Require implementation
-
 static JSValueRef addDisallowedURLCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation
@@ -199,7 +197,8 @@ static JSValueRef decodeHostNameCallback(JSContextRef context, JSObjectRef funct
     ASSERT(!*exception);
 
     LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeString(context, controller->decodeHostName(name.get()));
+    JSRetainPtr<JSStringRef> decodedHostName(Adopt, controller->copyDecodedHostName(name.get()));
+    return JSValueMakeString(context, decodedHostName.get());
 }
 
 static JSValueRef displayCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -221,7 +220,8 @@ static JSValueRef encodeHostNameCallback(JSContextRef context, JSObjectRef funct
     ASSERT(!*exception);
 
     LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeString(context, controller->encodeHostName(name.get()));
+    JSRetainPtr<JSStringRef> encodedHostName(Adopt, controller->copyEncodedHostName(name.get()));
+    return JSValueMakeString(context, encodedHostName.get());
 }
 
 static JSValueRef keepWebHistoryCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
