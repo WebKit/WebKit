@@ -94,14 +94,17 @@
 
 - (id)init
 {
-    if ((self = [super init]))
+    if ((self = [super init])) {
         layoutTestContoller = new LayoutTestController;
+        gcController = new GCController;
+    }
     return self;
 }
 
 - (void)dealloc
 {
     delete layoutTestContoller;
+    delete gcController;
     [super dealloc];
 }
 
@@ -240,7 +243,11 @@
     JSContextRef context = [frame globalContext];
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     JSValueRef exception = 0;
+
     layoutTestContoller->makeWindowObject(context, globalObject, &exception);
+    ASSERT(!exception);
+
+    gcController->makeWindowObject(context, globalObject, &exception);
     ASSERT(!exception);
 
     // Make Old-Style controllers
@@ -255,10 +262,6 @@
     AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:sender];
     [obj setValue:asc forKey:@"appleScriptController"];
     [asc release];
-    
-    GCController *gcc = [[GCController alloc] init];
-    [obj setValue:gcc forKey:@"GCController"];
-    [gcc release];
 
     ObjCController *occ = [[ObjCController alloc] init];
     [obj setValue:occ forKey:@"objCController"];

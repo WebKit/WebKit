@@ -26,13 +26,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebView.h>
+#ifndef GCController_h
+#define GCController_h
 
-@interface GCController : NSObject {
-}
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
-+ (NSString *)webScriptNameForSelector:(SEL)aSelector;
-- (void)collect;
-- (void)collectOnAlternateThread:(BOOL)waitUntilDone;
-- (size_t)getJSObjectCount;
-@end
+#include <JavaScriptCore/JSObjectRef.h>
+
+class GCController {
+public:
+    GCController();
+    ~GCController();
+
+    void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
+
+    // Controller Methods - platfrom independant implementations
+    void collect() const;
+    void collectOnAlternateThread(bool waitUntilDone) const;
+    size_t getJSObjectCount() const;
+
+private:
+    static JSClassRef getJSClass();
+    static JSStaticFunction* staticFunctions();
+};
+
+#endif // GCController_h

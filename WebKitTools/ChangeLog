@@ -1,3 +1,49 @@
+2007-09-13  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Darin.
+
+        Make DumpRenderTree more cross platform ready.
+        - Convert GCController to use the JSCore API instead of the WebScriptObject.
+        - Use CF types instead of NS objects.
+        - General cleanup.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.mm:
+        (dumpRenderTree):
+        (dump):
+        (runTest):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/EditingDelegate.m:
+        * DumpRenderTree/FrameLoadDelegate.h:
+        * DumpRenderTree/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate init]):
+        (-[FrameLoadDelegate dealloc]):
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
+        * DumpRenderTree/GCController.cpp: Added.
+        (GCController::GCController):
+        (GCController::~GCController):
+        (collectCallback):
+        (collectOnAlternateThreadCallback):
+        (getJSObjectCountCallback):
+        (GCController::makeWindowObject):
+        (GCController::getJSClass):
+        (GCController::staticFunctions):
+        * DumpRenderTree/GCController.h:
+        * DumpRenderTree/GCController.mm:
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::makeWindowObject):
+        (LayoutTestController::getJSClass):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/LayoutTestControllerMac.mm:
+        (LayoutTestController::addDisallowedURL):
+        (waitUntilDoneWatchdogFired):
+        (LayoutTestController::waitUntilDone):
+        * DumpRenderTree/ResourceLoadDelegate.m:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+
 2007-09-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Stephanie.

@@ -447,11 +447,11 @@ static JSValueRef windowCountCallback(JSContextRef context, JSObjectRef function
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> layoutTestContollerStr(Adopt, JSStringCreateWithUTF8CString("layoutTestController"));
-    JSValueRef layoutTestContollerObject = JSObjectMake(context, getLayoutTestControllerJSClass(), this);
-    JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), layoutTestContollerObject, kJSPropertyAttributeNone, exception);
+    JSValueRef layoutTestContollerObject = JSObjectMake(context, getJSClass(), this);
+    JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), layoutTestContollerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
-JSClassRef LayoutTestController::getLayoutTestControllerJSClass()
+JSClassRef LayoutTestController::getJSClass()
 {
     static JSClassRef layoutTestControllerClass = 0;
 

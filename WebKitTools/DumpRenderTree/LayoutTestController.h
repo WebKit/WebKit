@@ -81,7 +81,7 @@ public:
 
 
 private:
-    static JSClassRef getLayoutTestControllerJSClass();
+    static JSClassRef getJSClass();
     static JSStaticFunction* staticFunctions();
 };
 

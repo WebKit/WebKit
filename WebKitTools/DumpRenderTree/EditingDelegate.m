@@ -31,7 +31,7 @@
 
 #import <WebKit/WebKit.h>
 
-extern BOOL shouldDumpEditingCallbacks;
+extern bool shouldDumpEditingCallbacks;
 
 @interface DOMNode (dumpPath)
 - (NSString *)dumpPath;

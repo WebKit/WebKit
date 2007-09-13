@@ -137,13 +137,13 @@ void LayoutTestController::addDisallowedURL(JSStringRef url)
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
 
     if (!disallowedURLs)
-        disallowedURLs = [[NSMutableSet alloc] init];
+        disallowedURLs = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
 
     // Canonicalize the URL
     NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
     request = [NSURLProtocol canonicalRequestForRequest:request];
 
-    [disallowedURLs addObject:[request URL]];
+    CFSetAddValue(disallowedURLs, [request URL]);
 }
 
 void LayoutTestController::clearBackForwardList()
@@ -282,25 +282,19 @@ void LayoutTestController::setWindowIsKey(bool flag)
         [(WebHTMLView *)documentView _updateActiveState];
 }
 
-@interface WaitToDumpWatchdog : NSObject
-+ (void)waitUntilDoneWatchdogFired;
-@end
-
-@implementation WaitToDumpWatchdog
-+ (void)waitUntilDoneWatchdogFired
+static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
 {
     const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
     fprintf(stderr, message);
     fprintf(stdout, message);
     dump();
 }
-@end
 
 void LayoutTestController::waitUntilDone()
 {
     waitToDump = true;
     if (!waitToDumpWatchdog)
-        waitToDumpWatchdog = [[NSTimer scheduledTimerWithTimeInterval:waitToDumpWatchdogInterval target:[WaitToDumpWatchdog class] selector:@selector(waitUntilDoneWatchdogFired) userInfo:nil repeats:NO] retain];
+        waitToDumpWatchdog = CFRunLoopTimerCreate(kCFAllocatorDefault, 0, waitToDumpWatchdogInterval, 0, 0, waitUntilDoneWatchdogFired, NULL);
 }
 
 int LayoutTestController::windowCount()

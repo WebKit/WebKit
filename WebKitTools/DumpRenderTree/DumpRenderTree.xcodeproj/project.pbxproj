@@ -76,6 +76,7 @@
 		BCA51F970C960CFC0076A81A /* LayoutTestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA51F960C960CFC0076A81A /* LayoutTestControllerMac.mm */; };
 		BCA876B70C921FA100946E9C /* ObjCController.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA876B50C921FA100946E9C /* ObjCController.h */; };
 		BCA876B80C921FA100946E9C /* ObjCController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA876B60C921FA100946E9C /* ObjCController.m */; };
+		BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF6C64F0C98E9C000AC063E /* GCController.cpp */; };
 		D23AE9660C56BB2100C47236 /* PolicyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AE8EA0C56B2FF00C47236 /* PolicyDelegate.m */; };
 		D23AE9690C56BB2900C47236 /* PolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = D23AE8E00C56B29E00C47236 /* PolicyDelegate.h */; };
 		E1330800099624DA00AC0A91 /* AppleScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = E13307FE099624DA00AC0A91 /* AppleScriptController.h */; };
@@ -131,7 +132,7 @@
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		93442CF408F8BA4900BFE8CA /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
 		93442CF508F8BA4900BFE8CA /* TextInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInputController.m; sourceTree = "<group>"; };
-		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = "AHEM____.TTF"; path = "DumpRenderTree.qtproj/fonts/AHEM____.TTF"; sourceTree = "<group>"; };
+		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = AHEM____.TTF; path = DumpRenderTree.qtproj/fonts/AHEM____.TTF; sourceTree = "<group>"; };
 		A803FCB709CAAAB0009B2A37 /* EventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EventSendingController.h; sourceTree = "<group>"; };
 		A803FCB809CAAAB1009B2A37 /* EventSendingController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = EventSendingController.m; sourceTree = "<group>"; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTree.h; sourceTree = "<group>"; };
@@ -158,6 +159,7 @@
 		BCA51F960C960CFC0076A81A /* LayoutTestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayoutTestControllerMac.mm; sourceTree = "<group>"; };
 		BCA876B50C921FA100946E9C /* ObjCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCController.h; sourceTree = "<group>"; };
 		BCA876B60C921FA100946E9C /* ObjCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCController.m; sourceTree = "<group>"; };
+		BCF6C64F0C98E9C000AC063E /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
 		D23AE8E00C56B29E00C47236 /* PolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyDelegate.h; sourceTree = "<group>"; };
 		D23AE8EA0C56B2FF00C47236 /* PolicyDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PolicyDelegate.m; sourceTree = "<group>"; };
 		E13307FE099624DA00AC0A91 /* AppleScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleScriptController.h; sourceTree = "<group>"; };
@@ -249,17 +251,18 @@
 				E13307FF099624DA00AC0A91 /* AppleScriptController.m */,
 				A803FCB709CAAAB0009B2A37 /* EventSendingController.h */,
 				A803FCB809CAAAB1009B2A37 /* EventSendingController.m */,
+				BCF6C64F0C98E9C000AC063E /* GCController.cpp */,
 				14770FE00A22ADF7009342EE /* GCController.h */,
 				14770FE10A22ADF7009342EE /* GCController.mm */,
-				14A6FB880971CAE5008B014F /* NavigationController.h */,
-				14A6FB890971CAE5008B014F /* NavigationController.m */,
-				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
-				93442CF508F8BA4900BFE8CA /* TextInputController.m */,
-				BCA876B50C921FA100946E9C /* ObjCController.h */,
-				BCA876B60C921FA100946E9C /* ObjCController.m */,
 				BC0131D80C9772010087317D /* LayoutTestController.cpp */,
 				BC0131D90C9772010087317D /* LayoutTestController.h */,
 				BCA51F960C960CFC0076A81A /* LayoutTestControllerMac.mm */,
+				14A6FB880971CAE5008B014F /* NavigationController.h */,
+				14A6FB890971CAE5008B014F /* NavigationController.m */,
+				BCA876B50C921FA100946E9C /* ObjCController.h */,
+				BCA876B60C921FA100946E9C /* ObjCController.m */,
+				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
+				93442CF508F8BA4900BFE8CA /* TextInputController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -419,7 +422,6 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* DumpRenderTree */;
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;
@@ -479,6 +481,7 @@
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
 				BC0131DA0C9772010087317D /* LayoutTestController.cpp in Sources */,
 				BC0131EF0C9774700087317D /* WorkQueueItemMac.mm in Sources */,
+				BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,7 +585,7 @@
 					"-sectcreate",
 					__DATA,
 					Ahem,
-					"DumpRenderTree.qtproj/fonts/AHEM____.TTF",
+					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
@@ -598,7 +601,7 @@
 					"-sectcreate",
 					__DATA,
 					Ahem,
-					"DumpRenderTree.qtproj/fonts/AHEM____.TTF",
+					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";

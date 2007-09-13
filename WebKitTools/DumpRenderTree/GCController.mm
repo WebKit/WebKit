@@ -30,39 +30,18 @@
 #import "GCController.h"
 #import <WebKit/WebCoreStatistics.h>
 
-@implementation GCController
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
-{
-    if (aSelector == @selector(collect))
-        return NO;
-    if (aSelector == @selector(collectOnAlternateThread:))
-        return NO;
-    if (aSelector == @selector(getJSObjectCount))
-        return NO;
-    
-    return YES;
-}
 
-+ (NSString *)webScriptNameForSelector:(SEL)aSelector
-{
-    if (aSelector == @selector(collectOnAlternateThread:))
-        return @"collectOnAlternateThread";
-    
-    return nil;
-}
-
-- (void)collect
+void GCController::collect() const
 {
     [WebCoreStatistics garbageCollectJavaScriptObjects];
 }
 
-- (void)collectOnAlternateThread:(BOOL)waitUntilDone
+void GCController::collectOnAlternateThread(bool waitUntilDone) const
 {
     [WebCoreStatistics garbageCollectJavaScriptObjectsOnAlternateThread:waitUntilDone];
 }
 
-- (size_t)getJSObjectCount
+size_t GCController::getJSObjectCount() const
 {
     return [WebCoreStatistics javaScriptObjectsCount];
 }
-@end

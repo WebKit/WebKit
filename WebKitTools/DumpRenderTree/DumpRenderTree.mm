@@ -89,35 +89,8 @@
 }
 @end
 
-LayoutTestController* layoutTestController = 0;
-
-BOOL windowIsKey = YES;
-WebFrame *mainFrame = 0;
-BOOL shouldDumpEditingCallbacks;
-BOOL shouldDumpResourceLoadCallbacks;
-BOOL shouldDumpFrameLoadCallbacks;
-NSMutableSet *disallowedURLs = 0;
-BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
-BOOL canOpenWindows;
-BOOL closeWebViews;
-BOOL closeRemainingWindowsWhenComplete = YES;
-BOOL addFileToPasteboardOnDrag = NO;
-
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
-
-volatile BOOL done;
-NavigationController *navigationController = nil;
-
-NSTimer *waitToDumpWatchdog;
-NSTimeInterval waitToDumpWatchdogInterval = 10; // seconds
-
-// Delegates
-FrameLoadDelegate *frameLoadDelegate;
-UIDelegate *uiDelegate;
-EditingDelegate *editingDelegate;
-ResourceLoadDelegate *resourceLoadDelegate;
-PolicyDelegate *policyDelegate;
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
@@ -126,22 +99,49 @@ PolicyDelegate *policyDelegate;
 //       and notifyDone was called subsequently.
 // Note that the call to notifyDone and the end of the load can happen in either order.
 
+volatile bool done;
+
+LayoutTestController* layoutTestController = 0;
+NavigationController* navigationController = 0;
+
+WebFrame *mainFrame = 0;
 // This is the topmost frame that is loading, during a given load, or nil when no load is 
 // in progress.  Usually this is the same as the main frame, but not always.  In the case
 // where a frameset is loaded, and then new content is loaded into one of the child frames,
 // that child frame is the "topmost frame that is loading".
 WebFrame *topLoadingFrame = nil;     // !nil iff a load is in progress
 
-BOOL dumpAsText;
-BOOL dumpDOMAsWebArchive;
-BOOL dumpSourceAsWebArchive;
-BOOL dumpSelectionRect;
-BOOL dumpTitleChanges = NO;
-BOOL dumpBackForwardList;
-BOOL dumpChildFrameScrollPositions;
-BOOL dumpChildFramesAsText;
-BOOL testRepaint;
-BOOL repaintSweepHorizontally;
+bool addFileToPasteboardOnDrag = NO;
+bool canOpenWindows;
+bool closeRemainingWindowsWhenComplete = YES;
+bool closeWebViews;
+bool dumpAsText;
+bool dumpBackForwardList;
+bool dumpChildFramesAsText;
+bool dumpChildFrameScrollPositions;
+bool dumpDOMAsWebArchive;
+bool dumpSelectionRect;
+bool dumpSourceAsWebArchive;
+bool dumpTitleChanges = NO;
+bool repaintSweepHorizontally;
+bool shouldDumpEditingCallbacks;
+bool shouldDumpFrameLoadCallbacks;
+bool shouldDumpResourceLoadCallbacks;
+bool testRepaint;
+bool waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
+bool windowIsKey = YES;
+
+CFMutableArrayRef allWindowsRef = 0;
+CFMutableSetRef disallowedURLs = 0;
+CFRunLoopTimerRef waitToDumpWatchdog = 0;
+CFTimeInterval waitToDumpWatchdogInterval = 10.0; // seconds
+
+// Delegates
+FrameLoadDelegate *frameLoadDelegate;
+UIDelegate *uiDelegate;
+EditingDelegate *editingDelegate;
+ResourceLoadDelegate *resourceLoadDelegate;
+PolicyDelegate *policyDelegate;
 
 static int dumpPixels;
 static int paint;
@@ -161,8 +161,6 @@ static CGColorSpaceRef sharedColorSpace;
 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
-
-CFMutableArrayRef allWindowsRef;
 
 static pthread_mutex_t javaScriptThreadsMutex = PTHREAD_MUTEX_INITIALIZER;
 static BOOL javaScriptThreadsShouldTerminate;
@@ -597,10 +595,12 @@ void dumpRenderTree(int argc, const char *argv[])
     
     [navigationController release];
     navigationController = nil;
-    
-    [disallowedURLs release];
-    disallowedURLs = nil;
-    
+
+    if (disallowedURLs) {
+        CFRelease(disallowedURLs);
+        disallowedURLs = 0;
+    }
+
     if (dumpPixels)
         restoreColorSpace(0);
 }
@@ -849,10 +849,12 @@ static void dumpBackForwardListForWebView(WebView *view)
 
 void dump(void)
 {
-    [waitToDumpWatchdog invalidate];
-    [waitToDumpWatchdog release];
-    waitToDumpWatchdog = nil;
-    
+    if (waitToDumpWatchdog) {
+        CFRunLoopTimerInvalidate(waitToDumpWatchdog);
+        CFRelease(waitToDumpWatchdog);
+        waitToDumpWatchdog = 0;
+    }
+
     if (dumpTree) {
         NSString *result = nil;
 
@@ -893,9 +895,9 @@ void dump(void)
         }
 
         if (dumpBackForwardList) {
-            unsigned count = [(NSArray *)allWindowsRef count];
+            unsigned count = CFArrayGetCount(allWindowsRef);
             for (unsigned i = 0; i < count; i++) {
-                NSWindow *window = [(NSArray *)allWindowsRef objectAtIndex:i];
+                NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(allWindowsRef, i);
                 WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
                 dumpBackForwardListForWebView(webView);
             }
@@ -1056,8 +1058,9 @@ static void runTest(const char *pathOrURL)
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
     lastMousePosition = NSMakePoint(0, 0);
-    [disallowedURLs removeAllObjects];
-    
+    if (disallowedURLs)
+        CFSetRemoveAllValues(disallowedURLs);
+
     if (currentTest != nil)
         CFRelease(currentTest);
     currentTest = (NSString *)pathOrURLString;
