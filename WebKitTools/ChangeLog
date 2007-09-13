@@ -18,6 +18,14 @@
 
 2007-09-12  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Geof.
+
+        - Updated Leopard leak list to include a leak which appears to be fixed in 9A549 but not the version the bot is on.  This will allow us to get the bot green, but later we should remove it.
+
+        * Scripts/run-webkit-tests:
+
+2007-09-12  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Darin.
 
         - Simplified code paths and extracted out functions to increase encapsulation.

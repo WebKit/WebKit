@@ -1003,7 +1003,8 @@ sub countAndPrintLeaks($$$)
             "sharedURLCache", #<rdar://problem/5468793> REGRESSION: possibly 82 leaks in sharedURLCache
             "CFWriteStreamCreateWithAllocatedBuffers", #<rdar://problem/5468762> REGRESSION 548 leaks in CFWriteStreamCreateWithAllocatedBuffers
             "CFURLProtocolUseCredential", #<rdar://problem/5440274> 1 leak under CFURLProtocolUseCredential
-            "_CFURLConnectionSendCallbacks" #<rdar://problem/5441600> 3 leaks under _CFURLConnectionSendCallbacks potentially in 
+            "_CFURLConnectionSendCallbacks", #<rdar://problem/5441600> 3 leaks under _CFURLConnectionSendCallbacks potentially in 
+            "_CFURLConnectionProcessServerEvents" #This apears to be fixed in 9A549.  Including here so bot will be green
         );
     }
 
