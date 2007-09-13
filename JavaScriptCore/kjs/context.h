@@ -129,6 +129,7 @@ namespace KJS  {
 
     Interpreter* m_interpreter;
     Context* m_callingContext;
+    Context* m_savedContext;
     FunctionBodyNode* m_currentBody;
     ExecState* m_execState;
 

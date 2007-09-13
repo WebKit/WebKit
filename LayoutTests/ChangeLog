@@ -1,3 +1,13 @@
+2007-09-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff, Maciej.
+        
+        Test for <rdar://problem/5445058>
+        REGRESSION: Unable to upload picture to eBay auction due to domain security check
+
+        * fast/js/window-eval-context-expected.txt: Added.
+        * fast/js/window-eval-context.html: Added.
+
 2007-09-12  John Seif <johneseif@gmail.com>
 
         Reviewed by Darin.

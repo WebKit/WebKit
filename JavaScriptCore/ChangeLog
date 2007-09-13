@@ -1,3 +1,27 @@
+2007-09-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff, Maciej.
+        
+        Fix <rdar://problem/5445058>
+        REGRESSION: Unable to upload picture to eBay auction due to domain security check
+        
+        eBay uses window.eval() between windows. In Firefox window.eval() switches execution
+        and security context to the target window, something WebKit did not do. With WebKit
+        security tightening in r24781, this broke picture uploads.
+        
+        Fix by making WebKit switch context in window.eval().
+        
+        * kjs/Context.cpp:
+        (KJS::Context::Context):
+        (KJS::Context::~Context):
+        * kjs/context.h:
+        Save and restore interpreter context independently from calling context.
+        
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction):
+        If eval is called for global object different than current one, switch execution context
+        to that object and push it to scope.
+
 2007-09-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
