@@ -1,3 +1,16 @@
+2007-09-13  kuchhal  <kuchhal@yahoo.com>
+
+        Reviewed, tweaked and landed by Anders.
+
+        <rdar://problem/5461153> 
+        http://bugs.webkit.org/show_bug.cgi?id=15143
+        Crash seen on Windows
+        
+        Null check frame before calling Frame::settings.
+        
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+
 2007-09-12  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.
