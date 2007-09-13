@@ -2576,7 +2576,8 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
             }
 
             if (footerHeight) {
-                RECT footerRect = {x, pageRect.bottom(), x+pageRect.width(), pageRect.bottom()+(int)footerHeight};
+                y = (int)headerHeight+pageRect.height();
+                RECT footerRect = {x, y, x+pageRect.width(), y+(int)footerHeight};
                 ui2->drawFooterInRect(d->webView, &footerRect, (OLE_HANDLE)(LONG64)pctx, ii+1, pageCount);
             }
         }

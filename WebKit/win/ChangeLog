@@ -1,3 +1,14 @@
+2007-09-12  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5478690> Regression: printing: footer only appears on the first page of print
+
+        Reviewed by Adam.
+
+        * WebFrame.cpp:
+        (WebFrame::spoolPages): the footer rect is relative to the top left of the current page.  So 
+        instead of passing pageRect.bottom() as the top of the footer rect (which is relative to the 
+        document), we should pass in headerHeight plus the height of the pageRect.
+
 2007-09-12  Anders Carlsson   <andersca@apple.com>
 
         Reviewed by Darin (reluctantly).
