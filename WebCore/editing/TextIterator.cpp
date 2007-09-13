@@ -76,13 +76,13 @@ TextIterator::TextIterator() : m_startContainer(0), m_startOffset(0), m_endConta
 {
 }
 
-TextIterator::TextIterator(const Range* r, bool emitForReplacedElements) 
+TextIterator::TextIterator(const Range* r, bool emitForSelectionPreservation) 
     : m_startContainer(0) 
     , m_startOffset(0)
     , m_endContainer(0)
     , m_endOffset(0)
     , m_positionNode(0)
-    , m_emitForReplacedElements(emitForReplacedElements)
+    , m_emitForSelectionPreservation(emitForSelectionPreservation)
 {
     if (!r)
         return;
@@ -353,7 +353,7 @@ bool TextIterator::handleReplacedElement()
 
     m_haveEmitted = true;
     
-    if (m_emitForReplacedElements) {
+    if (m_emitForSelectionPreservation) {
         // We want replaced elements to behave like punctuation for boundary 
         // finding, and to simply take up space for the selection preservation 
         // code in moveParagraphs, so we use a comma.
@@ -395,13 +395,6 @@ static bool shouldEmitTabBeforeNode(Node* node)
     RenderTableCell* rc = static_cast<RenderTableCell*>(r);
     RenderTable* t = rc->table();
     return t && (t->cellBefore(rc) || t->cellAbove(rc));
-}
-
-static bool shouldEmitSpaceBeforeAndAfterNode(Node* node)
-{
-    RenderObject* r = node->renderer();
-    
-    return r && r->isTable() && r->isInline();
 }
 
 static bool shouldEmitNewlineForNode(Node* node)
@@ -508,6 +501,9 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
 
 bool TextIterator::shouldRepresentNodeOffsetZero()
 {
+    if (m_emitForSelectionPreservation && m_node->renderer() && m_node->renderer()->isTable())
+        return true;
+        
     // Leave element positioned flush with start of a paragraph
     // (e.g. do not insert tab before a table cell at the start of a paragraph)
     if (m_lastCharacter == '\n')
@@ -537,6 +533,11 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     return currPos.isNotNull() && !inSameLine(startPos, currPos);
 }
 
+bool TextIterator::shouldEmitSpaceBeforeAndAfterNode(Node* node)
+{
+    return node->renderer() && node->renderer()->isTable() && (node->renderer()->isInline() || m_emitForSelectionPreservation);
+}
+
 void TextIterator::representNodeOffsetZero()
 {
     // emit a character to show the positioning of m_node
@@ -555,7 +556,7 @@ bool TextIterator::handleNonTextNode()
 {
     if (shouldEmitNewlineForNode(m_node))
         emitCharacter('\n', m_node->parentNode(), m_node, 0, 1);
-    else if (m_emitForReplacedElements && m_node->renderer() && m_node->renderer()->isHR())
+    else if (m_emitForSelectionPreservation && m_node->renderer() && m_node->renderer()->isHR())
         emitCharacter(' ', m_node->parentNode(), m_node, 0, 1);
     else
         representNodeOffsetZero();

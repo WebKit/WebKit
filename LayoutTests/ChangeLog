@@ -1,3 +1,25 @@
+2007-09-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tristan.
+
+        Demonstrates bug:
+        * editing/execCommand/5469868-expected.txt: Added.
+        * editing/execCommand/5469868.html: Added.
+        
+        Fixed (and moved expected results to platform/mac):
+        * editing/style/table-selection-expected.checksum: Removed.
+        * editing/style/table-selection-expected.png: Removed.
+        * editing/style/table-selection-expected.txt: Removed.
+        * platform/mac/editing/style: Added.
+        * platform/mac/editing/style/table-selection-expected.checksum: Added.
+        * platform/mac/editing/style/table-selection-expected.png: Added.
+        * platform/mac/editing/style/table-selection-expected.txt: Added.
+        
+        Fixed:
+        * platform/mac/editing/execCommand/5432254-2-expected.checksum:
+        * platform/mac/editing/execCommand/5432254-2-expected.png:
+        * platform/mac/editing/execCommand/5432254-2-expected.txt:
+
 2007-09-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

@@ -1,3 +1,39 @@
+2007-09-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Tristan.
+
+        <rdar://problem/5469868> 
+        GoogleDocs: A hang occurs when applying list styling to a selection in a <table>
+        
+        When list insertion moves selected paragraphs into list items, it relies on 
+        the selection preservation code inside moveParagraphs to iterate over the 
+        selected paragraphs.  If a selection is ever restored incorrectly (before
+        the original, or inside the original) list insertion will go into an infinite loop.
+        
+        In this hang, a table was selected and the selection preservation code incorrectly
+        restored a selection, placing it inside the table.
+        
+        The bug was that a TextIterator, when being used for selection preservation, must
+        emit a character between every VisiblePosition in the Range used to create the
+        iterator.
+        
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator): Renamed the boolean that we use for 
+        selection preservation.  It used to be m_emitForReplacedElements because
+        we believed that replaced elements were the only case where TextIterators
+        should have emitted differently when used for selection preservation.
+        (WebCore::TextIterator::handleReplacedElement): Ditto.
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero): Represent the 
+        position before block tables, but only if we are emitting for selection 
+        preservation.
+        (WebCore::TextIterator::shouldEmitSpaceBeforeAndAfterNode): We should emit 
+        a space before and after block tables if we are emitting for selection 
+        preservation (because we have VisiblePositions before and after them).
+        (WebCore::TextIterator::handleNonTextNode): Use a renamed variable.
+        * editing/TextIterator.h: Made shouldEmitSpaceBeforeAndAfterNode a member
+        function, because whether or not we emit spaces before and after a block
+        table depends we're emitting for selection preservation.
+
 2007-09-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
