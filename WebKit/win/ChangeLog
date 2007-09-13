@@ -1,3 +1,17 @@
+2007-09-12  Adam Roben  <aroben@apple.com>
+
+        Initialize SafariTheme early in WebKit's instantiation
+
+        New versions of SafariTheme will require this initialization. We have
+        to use GetProcAddress for now since the initialize method doesn't
+        exist in any released SafariTheme.
+
+        Reviewed by Ada.
+
+        * WebKit.vcproj/debug_internal.vsprops: Pick up the debug SafariTheme.
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory): Call STInitialize.
+
 2007-09-12  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5478690> Regression: printing: footer only appears on the first page of print

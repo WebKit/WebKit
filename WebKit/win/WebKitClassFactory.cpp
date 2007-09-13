@@ -47,13 +47,24 @@
 #include "WebURLResponse.h"
 #include "WebDebugProgram.h"
 #include "WebView.h"
+#include <SafariTheme/SafariTheme.h>
 
 // WebKitClassFactory ---------------------------------------------------------
+
+typedef void (APIENTRY*STInitializePtr)();
 
 WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
 : m_targetClass(targetClass)
 , m_refCount(0)
 {
+    static bool didInitializeSafariTheme;
+    if (!didInitializeSafariTheme) {
+        if (HMODULE module = LoadLibrary(SAFARITHEMEDLL))
+            if (STInitializePtr stInit = (STInitializePtr)GetProcAddress(module, "STInitialize"))
+                stInit();
+        didInitializeSafariTheme = true;
+    }
+
     gClassCount++;
 }
 
