@@ -750,11 +750,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\verticalTextCursor.png"
+				>
+			</File>
+			<File
 				RelativePath=".\WebKit.rc"
 				>
 			</File>
 			<File
 				RelativePath=".\WebKit.tlb"
+				>
+			</File>
+			<File
+				RelativePath=".\zoomInCursor.png"
+				>
+			</File>
+			<File
+				RelativePath=".\zoomOutCursor.png"
 				>
 			</File>
 		</Filter>

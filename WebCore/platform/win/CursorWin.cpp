@@ -79,7 +79,7 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
         ii.hbmMask = hMask;
         ii.hbmColor = hCursor;
 
-        m_impl = CreateIconIndirect(&ii);
+        m_impl = new SharedCursor(CreateIconIndirect(&ii));
       
         DeleteObject(hMask); 
         DeleteObject(hCursor); 
@@ -119,7 +119,7 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
         icon.yHotspot = hotspot.y();
         icon.hbmMask = andMask;
         icon.hbmColor = xorMask;
-        m_impl = CreateIconIndirect(&icon);
+        m_impl = new SharedCursor(CreateIconIndirect(&icon));
 
         DeleteObject(andMask);
         DeleteObject(xorMask);
@@ -133,7 +133,6 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
 
 Cursor::~Cursor()
 {
-    DestroyIcon(m_impl);
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
@@ -142,143 +141,160 @@ Cursor& Cursor::operator=(const Cursor& other)
     return *this;
 }
 
-Cursor::Cursor(HCURSOR c)
+Cursor::Cursor(PlatformCursor c)
     : m_impl(c)
 {
 }
 
+static Cursor loadCursorByName(char *name, int x, int y) {
+    IntPoint hotSpot(x, y);
+    Cursor c;
+    Image *cursorImage = Image::loadPlatformResource(name);
+    if (cursorImage && !cursorImage->isNull()) {
+        c = Cursor(cursorImage, hotSpot);
+        delete cursorImage;
+    } else
+        c = pointerCursor();
+    return c;
+}
+
+static PassRefPtr<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCTSTR lpCursorName)
+{
+    return new SharedCursor(LoadCursor(hInstance, lpCursorName));
+}
+
 const Cursor& pointerCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_ARROW);
+    static Cursor c = loadSharedCursor(0, IDC_ARROW);
     return c;
 }
 
 const Cursor& crossCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_CROSS);
+    static Cursor c = loadSharedCursor(0, IDC_CROSS);
     return c;
 }
 
 const Cursor& handCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_HAND);
+    static Cursor c = loadSharedCursor(0, IDC_HAND);
     return c;
 }
 
 const Cursor& iBeamCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_IBEAM);
+    static Cursor c = loadSharedCursor(0, IDC_IBEAM);
     return c;
 }
 
 const Cursor& waitCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_WAIT);
+    static Cursor c = loadSharedCursor(0, IDC_WAIT);
     return c;
 }
 
 const Cursor& helpCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_HELP);
+    static Cursor c = loadSharedCursor(0, IDC_HELP);
     return c;
 }
 
 const Cursor& eastResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZEWE);
+    static Cursor c = loadSharedCursor(0, IDC_SIZEWE);
     return c;
 }
 
 const Cursor& northResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENS);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENS);
     return c;
 }
 
 const Cursor& northEastResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENESW);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENESW);
     return c;
 }
 
 const Cursor& northWestResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENWSE);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENWSE);
     return c;
 }
 
 const Cursor& southResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENS);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENS);
     return c;
 }
 
 const Cursor& southEastResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENWSE);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENWSE);
     return c;
 }
 
 const Cursor& southWestResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENESW);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENESW);
     return c;
 }
 
 const Cursor& westResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZEWE);
+    static Cursor c = loadSharedCursor(0, IDC_SIZEWE);
     return c;
 }
 
 const Cursor& northSouthResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENS);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENS);
     return c;
 }
 
 const Cursor& eastWestResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZEWE);
+    static Cursor c = loadSharedCursor(0, IDC_SIZEWE);
     return c;
 }
 
 const Cursor& northEastSouthWestResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENESW);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENESW);
     return c;
 }
 
 const Cursor& northWestSouthEastResizeCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_SIZENWSE);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENWSE);
     return c;
 }
 
 const Cursor& columnResizeCursor()
 {
     // FIXME: Windows does not have a standard column resize cursor <rdar://problem/5018591>
-    static Cursor c = LoadCursor(0, IDC_SIZEWE);
+    static Cursor c = loadSharedCursor(0, IDC_SIZEWE);
     return c;
 }
 
 const Cursor& rowResizeCursor()
 {
     // FIXME: Windows does not have a standard row resize cursor <rdar://problem/5018591>
-    static Cursor c = LoadCursor(0, IDC_SIZENS);
+    static Cursor c = loadSharedCursor(0, IDC_SIZENS);
     return c;
 }
 
 const Cursor& moveCursor() 
 {
-    static Cursor c = LoadCursor(0, IDC_SIZEALL);
+    static Cursor c = loadSharedCursor(0, IDC_SIZEALL);
     return c;
 }
 
 const Cursor& verticalTextCursor()
 {
-    //FIXME: Windows doesn't have a standard vertical text cursor <rdar://problem/5018591>
-    return pointerCursor();
+    static const Cursor c = loadCursorByName("verticalTextCursor", 7, 7);
+    return c;
 }
 
 const Cursor& cellCursor()
@@ -298,13 +314,13 @@ const Cursor& aliasCursor()
 
 const Cursor& progressCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_APPSTARTING);
+    static Cursor c = loadSharedCursor(0, IDC_APPSTARTING);
     return c;
 }
 
 const Cursor& noDropCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_NO);
+    static Cursor c = loadSharedCursor(0, IDC_NO);
     return c;
 }
 
@@ -320,19 +336,20 @@ const Cursor& noneCursor()
 
 const Cursor& notAllowedCursor()
 {
-    static Cursor c = LoadCursor(0, IDC_NO);
+    static Cursor c = loadSharedCursor(0, IDC_NO);
     return c;
 }
 
-// FIXME: <rdar://problem/5224996> Add zoom in and zoom out cursors
 const Cursor& zoomInCursor()
 {
-    return pointerCursor();
+    static const Cursor c = loadCursorByName("zoomInCursor", 7, 7);
+    return c;
 }
 
 const Cursor& zoomOutCursor()
 {
-    return pointerCursor();
+    static const Cursor c = loadCursorByName("zoomOutCursor", 7, 7);
+    return c;
 }
 
 }

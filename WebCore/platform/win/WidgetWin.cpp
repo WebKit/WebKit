@@ -134,7 +134,7 @@ void Widget::setCursor(const Cursor& cursor)
         return;
     }
 
-    if (HCURSOR c = cursor.impl()) {
+    if (HCURSOR c = cursor.impl()->nativeCursor()) {
         lastSetCursor = c;
         SetCursor(c);
     }

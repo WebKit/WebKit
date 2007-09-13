@@ -7,6 +7,9 @@
 #define IDR_MISSING_IMAGE               3
 #define IDR_URL_ICON                    4
 #define IDR_NULL_PLUGIN                 5
+#define IDR_ZOOM_IN_CURSOR              6
+#define IDR_ZOOM_OUT_CURSOR             7
+#define IDR_VERTICAL_TEXT_CURSOR        8
 
 #define BUILD_NUMBER                    1
 

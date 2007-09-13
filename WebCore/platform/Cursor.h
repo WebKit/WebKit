@@ -31,6 +31,8 @@
 #if PLATFORM(WIN)
 typedef struct HICON__* HICON;
 typedef HICON HCURSOR;
+#include <Shared.h>
+#include <RefPtr.h>
 #elif PLATFORM(GDK)
 #include <gdk/gdk.h>
 #elif PLATFORM(QT)
@@ -51,7 +53,17 @@ namespace WebCore {
     class IntPoint;
 
 #if PLATFORM(WIN)
-    typedef HCURSOR PlatformCursor;
+    class SharedCursor : public Shared<SharedCursor> {
+    public:
+        SharedCursor(HCURSOR nativeCursor) : m_nativeCursor(nativeCursor) {}
+        ~SharedCursor() {
+            DestroyIcon(m_nativeCursor);
+        }
+        HCURSOR nativeCursor() { return m_nativeCursor; }
+    private:
+        HCURSOR m_nativeCursor;
+    };
+    typedef RefPtr<SharedCursor> PlatformCursor;
 #elif PLATFORM(MAC)
     typedef NSCursor* PlatformCursor;
 #elif PLATFORM(GDK)

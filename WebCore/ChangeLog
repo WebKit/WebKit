@@ -1,3 +1,51 @@
+2007-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fixing 
+            <rdar://problem/5018591> Windows doesn't have a standard vertical text cursor
+            <rdar://problem/5224996> Add zoom in and zoom out cursors
+
+        Added SharedCursor for CursorWin so we can correctly track lifetime of custom/image
+        based cursors, such as the vertical text and zooming cursors.
+
+        * platform/Cursor.h:
+        (WebCore::SharedCursor::SharedCursor):
+        (WebCore::SharedCursor::~SharedCursor):
+        (WebCore::SharedCursor::nativeCursor):
+        * platform/win/CursorWin.cpp:
+        (WebCore::Cursor::Cursor):
+        (WebCore::loadCursorByName):
+        (WebCore::loadSharedCursor):
+        (WebCore::pointerCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::moveCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::progressCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::setCursor):
+
 2007-09-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Geoff Garen

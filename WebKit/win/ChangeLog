@@ -1,3 +1,22 @@
+2007-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+        
+        Fixing 
+            <rdar://problem/5018591> Windows doesn't have a standard vertical text cursor
+            <rdar://problem/5224996> Add zoom in and zoom out cursors
+            
+        Add images for vertical text and zoom in and out cursors to WebKit resources.
+            
+        * WebKit.vcproj/verticalTextCursor.png: Added.
+        * WebKit.vcproj/WebKit.rc:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/resource.h:
+        * WebKit.vcproj/zoomInCursor.png: Added.
+        * WebKit.vcproj/zoomOutCursor.png: Added.
+        * WebKitDLL.cpp:
+        (loadResourceIntoBuffer):
+
 2007-09-12  Adam Roben  <aroben@apple.com>
 
         Initialize SafariTheme early in WebKit's instantiation
