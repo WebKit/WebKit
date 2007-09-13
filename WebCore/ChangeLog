@@ -2,6 +2,16 @@
 
         Reviewed by Adam.
 
+        Corrections missed in previous revision
+
+        * platform/Cursor.h:
+        * platform/win/CursorWin.cpp:
+        (WebCore::loadCursorByName):
+
+2007-09-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
         Fixing 
             <rdar://problem/5018591> Windows doesn't have a standard vertical text cursor
             <rdar://problem/5224996> Add zoom in and zoom out cursors
