@@ -144,14 +144,32 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
 
 bool FontData::containsCharacters(const UChar* characters, int length) const
 {
-    Vector<CGGlyph> glyphBuffer(length);
-    wkGetGlyphs(m_font.cgFont(), characters, glyphBuffer.data(), length);
+    // FIXME: Microsoft documentation seems to imply that characters can be output using a given font and DC
+    // merely by testing code page intersection.  This seems suspect though.  Can't a font only partially
+    // cover a given code page?
+    IMLangFontLink2* langFontLink = FontCache::getFontLinkInterface();
+    if (!langFontLink)
+        return false;
 
-    for (int i = 0; i < length; i++) {
-        if (glyphBuffer[i] == 0xFFFFFFFF) {
+    HDC dc = GetDC((HWND)0);
+    
+    DWORD acpCodePages;
+    langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages);
+
+    DWORD fontCodePages;
+    langFontLink->GetFontCodePages(dc, m_font.hfont(), &fontCodePages);
+
+    DWORD actualCodePages;
+    long numCharactersProcessed;
+    long offset = 0;
+    while (offset < length) {
+        langFontLink->GetStrCodePages(characters, length, acpCodePages, &actualCodePages, &numCharactersProcessed);
+        if ((actualCodePages & fontCodePages) == 0)
             return false;
-        }
+        offset += numCharactersProcessed;
     }
+
+    ReleaseDC(0, dc);
 
     return true;
 }

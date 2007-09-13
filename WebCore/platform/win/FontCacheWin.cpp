@@ -75,12 +75,12 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
     HFONT primaryFont = font.primaryFont()->m_font.hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
 
-    DWORD fontCodePages;
-    langFontLink->GetFontCodePages(hdc, primaryFont, &fontCodePages);
-   
+    DWORD acpCodePages;
+    langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages);
+
     DWORD actualCodePages;
     long cchActual;
-    langFontLink->GetStrCodePages(characters, length, fontCodePages, &actualCodePages, &cchActual);
+    langFontLink->GetStrCodePages(characters, length, acpCodePages, &actualCodePages, &cchActual);
     if (cchActual) {
         HFONT result;
         if (langFontLink->MapFont(hdc, actualCodePages, characters[0], &result) == S_OK) {

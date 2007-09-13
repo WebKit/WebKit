@@ -150,6 +150,8 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
 
 void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, bool smallCaps, GlyphBuffer* glyphBuffer)
 {
+    // ScriptItemize (in Windows XP versions prior to SP2) can overflow by 1.  This is why there is an extra empty item
+    // hanging out at the end of the array
     m_items.resize(6);
     int numItems = 0;
     while (ScriptItemize(cp, length, m_items.size() - 1, &m_control, &m_state, m_items.data(), &numItems) == E_OUTOFMEMORY) {
@@ -440,14 +442,14 @@ bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, con
     if (FAILED(shapeResult))
         return false;
     
+    // FIXME: We need to do better than this.  Falling back on the entire item is not good enough.
     // We may still have missing glyphs even if we succeeded.  We need to treat missing glyphs as
     // a failure so that we will fall back to another font.
     bool containsMissingGlyphs = false;
     SCRIPT_FONTPROPERTIES* fontProperties = fontData->scriptFontProperties();
     for (int i = 0; i < glyphCount; i++) {
         WORD glyph = glyphs[i];
-        if (glyph == fontProperties->wgDefault ||
-            (glyph == fontProperties->wgInvalid && glyph != fontProperties->wgBlank)) {
+        if (glyph == fontProperties->wgDefault) {
             containsMissingGlyphs = true;
             break;
         }

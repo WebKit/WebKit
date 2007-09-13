@@ -1,3 +1,29 @@
+2007-09-13   Dave Hyatt  <hyatt@apple.com>
+
+        Some minor Windows font improvements before I make the larger changes.
+        
+        Reviewed by aroben, weinig
+
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        Don't use the currently selected font in the HDC when passing priority code pages to MLANG.  Make
+        sure to use ACP code pages instead so that there won't be any confusion regarding traditional vs.
+        simplified chinese, etc.
+
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::containsCharacters):
+        Rewrite containsCharacters so that it isn't glyph-dependent (since CG doesn't shape, this call is
+        rejecting fonts that it shouldn't).  Re-implement this method in terms of MLang and use code page
+        testing.
+        
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::itemizeShapeAndPlace):
+        Add some comments to explain the additional item in the items array.
+       
+        (WebCore::UniscribeController::shape):
+        Fix up the missing glyph check when doing uniscribe shaping.  Only wgDefault matters as far as doing
+        font fallback.
+        
 2007-09-13  kuchhal  <kuchhal@yahoo.com>
 
         Reviewed, tweaked and landed by Anders.
