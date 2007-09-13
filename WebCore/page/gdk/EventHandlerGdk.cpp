@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EventHandler.h"
 
+#include "ClipboardGdk.h"
 #include "EventNames.h"
 #include "FloatPoint.h"
 #include "FocusController.h"
@@ -88,8 +89,7 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
 
 Clipboard* EventHandler::createDraggingClipboard() const 
 {
-    notImplemented();
-    return 0;
+    return new ClipboardGdk(ClipboardWritable, true);
 }
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)

@@ -848,6 +848,7 @@ qt-port {
 
 gdk-port {
     HEADERS += \
+        ../WebCore/platform/gdk/ClipboardGdk.h \
         ../WebKit/gtk/Api/webkitgtkdefines.h \
         ../WebKit/gtk/Api/webkitgtkframe.h \
         ../WebKit/gtk/Api/webkitgtkglobal.h \
@@ -868,6 +869,7 @@ gdk-port {
         page/gdk/FrameGdk.cpp \
         page/gdk/DragControllerGdk.cpp \
         loader/gdk/DocumentLoaderGdk.cpp \
+        platform/gdk/ClipboardGdk.cpp \
         platform/gdk/CookieJarGdk.cpp \
         platform/gdk/CursorGdk.cpp \
         platform/gdk/DragDataGdk.cpp \

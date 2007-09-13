@@ -1,3 +1,35 @@
+2007-09-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        EventHandlerGdk::createDraggingClipboard must succeed otherwise an
+        ASSERT is hit. Add Clipboard stubs for the Gdk/Gtk+ port and
+        instantiate ClipboardGdk from the EventHandlerGdk to make the ASSERT
+        go away. In contrast to the Windows and Mac port this clipboard is not
+        inheriting CachedResourceClient. This was proposed by Oliver.
+
+        * WebCore.pro:
+        * page/gdk/EventHandlerGdk.cpp:
+        * platform/gdk/ClipboardGdk.cpp: Added.
+        (WebCore::ClipboardGdk::ClipboardGdk):
+        (WebCore::ClipboardGdk::~ClipboardGdk):
+        (WebCore::ClipboardGdk::clearData):
+        (WebCore::ClipboardGdk::clearAllData):
+        (WebCore::ClipboardGdk::getData):
+        (WebCore::ClipboardGdk::setData):
+        (WebCore::ClipboardGdk::types):
+        (WebCore::ClipboardGdk::dragLocation):
+        (WebCore::ClipboardGdk::dragImage):
+        (WebCore::ClipboardGdk::setDragImage):
+        (WebCore::ClipboardGdk::dragImageElement):
+        (WebCore::ClipboardGdk::setDragImageElement):
+        (WebCore::ClipboardGdk::createDragImage):
+        (WebCore::ClipboardGdk::declareAndWriteDragImage):
+        (WebCore::ClipboardGdk::writeURL):
+        (WebCore::ClipboardGdk::writeRange):
+        (WebCore::ClipboardGdk::hasData):
+        * platform/gdk/ClipboardGdk.h: Added.
+
 2007-09-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
