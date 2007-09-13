@@ -1,3 +1,20 @@
+2007-09-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoff Garen
+
+        <rdar://problem/5478577> - Further improve cold launch time with Icon Database changes
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open): Store the directory and full path for later usage and access in the API, respectively
+          Move the makeAllDirectories() call to the background thread.
+        (WebCore::IconDatabase::IconDatabase): Don't set up the timer here...
+        (WebCore::IconDatabase::scheduleOrDeferSyncTimer): Create the timer on demand
+        (WebCore::IconDatabase::iconDatabaseSyncThread): makeAllDirectories() here where it's not as expensive
+        (WebCore::IconDatabase::cleanupSyncThread): Cleanup the directory as well as full path
+
+        * loader/icon/IconDatabase.h: m_syncTimer becomes an OwnPtr, and we add the database directory
+          as a member to set it on the main thread and act with it on the background thread
+
 2007-09-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Tristan.
