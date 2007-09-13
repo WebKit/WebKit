@@ -321,12 +321,10 @@ void PluginViewWin::setFrameGeometry(const IntRect& rect)
     if (m_element->document()->printing())
         return;
 
-    if (rect == frameGeometry())
-        return;
-
-    Widget::setFrameGeometry(rect);
-
-    updateWindow();
+    if (rect != frameGeometry()) {
+        Widget::setFrameGeometry(rect);
+        updateWindow();
+    }
 
     setNPWindowRect(rect);
 }
@@ -1363,7 +1361,7 @@ void PluginViewWin::setParameters(const Vector<String>& paramNames, const Vector
     m_paramCount = paramCount;
 }
 
-PluginViewWin::PluginViewWin(Frame* parentFrame, PluginPackageWin* plugin, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
+PluginViewWin::PluginViewWin(Frame* parentFrame, const IntSize& size, PluginPackageWin* plugin, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
     : m_parentFrame(parentFrame)
     , m_plugin(plugin)
     , m_element(element)
@@ -1398,6 +1396,7 @@ PluginViewWin::PluginViewWin(Frame* parentFrame, PluginPackageWin* plugin, Eleme
 
     m_mode = element->document()->isPluginDocument() ? NP_FULL : NP_EMBED;
 
+    resize(size);
 }
 
 void PluginViewWin::init()
@@ -1430,7 +1429,7 @@ void PluginViewWin::init()
             flags |= WS_VISIBLE;
 
         m_window = CreateWindowEx(0, kWebPluginViewWindowClassName, 0, flags,
-                                  0, 0, 0, 0, m_parentFrame->view()->containingWindow(), 0, Page::instanceHandle(), 0);
+                                  0, 0, width(), height(), m_parentFrame->view()->containingWindow(), 0, Page::instanceHandle(), 0);
         
         // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
         // the Shockwave Director plug-in.

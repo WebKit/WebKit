@@ -1,3 +1,25 @@
+2007-09-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam and Geoff.
+
+        <rdar://problem/5304000>
+        Windows Safari doesn't always call NPP_SetWindow() for NPAPI plugins.
+        
+        This does two things:
+        
+        1. Makes sure that the plug-in get the correct initial size.
+        
+        2. Always updates the size of the HWND, even if the widget size didn't change. This is because
+        the widget size can be different before the HWND has been created.
+        
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabaseWin::createPluginView):
+        * plugins/win/PluginDatabaseWin.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::setFrameGeometry):
+        (WebCore::PluginViewWin::PluginViewWin):
+        * plugins/win/PluginViewWin.h:
+
 2007-09-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geof, Sam, Adam, Hyatt, Darin.

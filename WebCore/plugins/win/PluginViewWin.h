@@ -79,7 +79,7 @@ namespace WebCore {
     friend static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
 
     public:
-        PluginViewWin(Frame* parentFrame, PluginPackageWin* plugin, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
+        PluginViewWin(Frame* parentFrame, const IntSize&, PluginPackageWin* plugin, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
         virtual ~PluginViewWin();
 
         PluginPackageWin* plugin() const { return m_plugin.get(); }
