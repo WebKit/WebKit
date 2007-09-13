@@ -1,6 +1,17 @@
+2007-09-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - updated test results changed by change in input manager logic
+
+        * platform/mac/editing/input/firstrectforcharacterrange-styled-expected.txt:
+        * platform/mac/editing/input/text-input-controller-expected.txt:
+        * platform/mac/editing/input/wrapped-line-char-rect-expected.txt:
+        Updated. Small changes in which delegate methods are called.
+
 2007-09-13  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Geof, Sam, Adam, Hyatt, Darin.
+        Reviewed by Geoff, Sam, Adam, Hyatt, Darin.
 
         - <rdar://problem/5480234> JS setTimeout function requires a second argument
         - Removed check for number of arguments in setTimeout to behave like other browsers.

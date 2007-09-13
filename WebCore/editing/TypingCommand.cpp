@@ -93,17 +93,17 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
     typingCommand->apply();
 }
 
-void TypingCommand::insertText(Document* document, const String& text, bool selectInsertedText)
+void TypingCommand::insertText(Document* document, const String& text, bool selectInsertedText, bool insertedTextIsComposition)
 {
     ASSERT(document);
     
     Frame* frame = document->frame();
     ASSERT(frame);
 
-    insertText(document, text, frame->selectionController()->selection(), selectInsertedText);
+    insertText(document, text, frame->selectionController()->selection(), selectInsertedText, insertedTextIsComposition);
 }
 
-void TypingCommand::insertText(Document* document, const String& text, const Selection& selectionForInsertion, bool selectInsertedText)
+void TypingCommand::insertText(Document* document, const String& text, const Selection& selectionForInsertion, bool selectInsertedText, bool insertedTextIsComposition)
 {
     ASSERT(document);
     
@@ -116,7 +116,7 @@ void TypingCommand::insertText(Document* document, const String& text, const Sel
     String newText = text;
     Node* startNode = selectionForInsertion.start().node();
     
-    if (startNode && startNode->rootEditableElement()) {        
+    if (startNode && startNode->rootEditableElement() && !insertedTextIsComposition) {        
         // Send BeforeTextInsertedEvent. The event handler will update text if necessary.
         ExceptionCode ec = 0;
         RefPtr<BeforeTextInsertedEvent> evt = new BeforeTextInsertedEvent(text);

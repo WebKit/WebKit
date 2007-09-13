@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderTextControl.h"
 
+#include "CharacterNames.h"
 #include "Document.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -40,6 +41,7 @@
 #include "SearchPopupMenu.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "TextStyle.h"
 #include "htmlediting.h"
@@ -546,52 +548,127 @@ void RenderTextControl::subtreeHasChanged()
     }
 }
 
+String RenderTextControl::finishText(Vector<UChar>& result) const
+{
+    UChar symbol = backslashAsCurrencySymbol();
+    if (symbol != '\\') {
+        size_t size = result.size();
+        for (size_t i = 0; i < size; ++i)
+            if (result[i] == '\\')
+                result[i] = symbol;
+    }
+
+    return String::adopt(result);
+}
+
 String RenderTextControl::text()
 {
-    if (m_innerText)
-        return m_innerText->textContent().replace('\\', backslashAsCurrencySymbol());
-    return String();
+    if (!m_innerText)
+        return "";
+ 
+    Frame* frame = document()->frame();
+    Text* compositionNode = frame ? frame->editor()->compositionNode() : 0;
+
+    Vector<UChar> result;
+
+    for (Node* n = m_innerText.get(); n; n = n->traverseNextNode(m_innerText.get())) {
+        if (n->isTextNode()) {
+            Text* text = static_cast<Text*>(n);
+            String data = text->data();
+            unsigned length = data.length();
+            if (text != compositionNode)
+                result.append(data.characters(), length);
+            else {
+                unsigned compositionStart = min(frame->editor()->compositionStart(), length);
+                unsigned compositionEnd = min(max(compositionStart, frame->editor()->compositionEnd()), length);
+                result.append(data.characters(), compositionStart);
+                result.append(data.characters() + compositionEnd, length - compositionEnd);
+            }
+        }
+    }
+
+    return finishText(result);
+}
+
+static void getNextSoftBreak(RootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
+{
+    RootInlineBox* next;
+    for (; line; line = next) {
+        next = line->nextRootBox();
+        if (next && !line->endsWithBreak()) {
+            ASSERT(line->lineBreakObj());
+            breakNode = line->lineBreakObj()->node();
+            breakOffset = line->lineBreakPos();
+            line = next;
+            return;
+        }
+    }
+    breakNode = 0;
 }
 
 String RenderTextControl::textWithHardLineBreaks()
 {
-    String s("");
-
-    if (!m_innerText || !m_innerText->firstChild())
-        return s;
+    if (!m_innerText)
+        return "";
+    Node* firstChild = m_innerText->firstChild();
+    if (!firstChild)
+        return "";
 
     document()->updateLayout();
 
-    RenderObject* renderer = m_innerText->firstChild()->renderer();
+    RenderObject* renderer = firstChild->renderer();
     if (!renderer)
-        return s;
+        return "";
 
     InlineBox* box = renderer->inlineBox(0, DOWNSTREAM);
     if (!box)
-        return s;
+        return "";
 
-    ExceptionCode ec = 0;
-    RefPtr<Range> range = new Range(document());
-    range->selectNodeContents(m_innerText.get(), ec);
-    for (RootInlineBox* line = box->root(); line; line = line->nextRootBox()) {
-        // If we're at a soft wrap, then insert the hard line break here
-        if (!line->endsWithBreak() && line->nextRootBox()) {
-            // Update range so it ends before this wrap
-            ASSERT(line->lineBreakObj());
-            range->setEnd(line->lineBreakObj()->node(), line->lineBreakPos(), ec);
+    Frame* frame = document()->frame();
+    Text* compositionNode = frame ? frame->editor()->compositionNode() : 0;
 
-            s.append(range->toString(true, ec));
-            s.append("\n");
+    Node* breakNode;
+    unsigned breakOffset;
+    RootInlineBox* line = box->root();
+    getNextSoftBreak(line, breakNode, breakOffset);
 
-            // Update range so it starts after this wrap
-            range->setEnd(m_innerText.get(), maxDeepOffset(m_innerText.get()), ec);
-            range->setStart(line->lineBreakObj()->node(), line->lineBreakPos(), ec);
+    Vector<UChar> result;
+
+    for (Node* n = firstChild; n; n = n->traverseNextNode(m_innerText.get())) {
+        if (n->hasTagName(brTag))
+            result.append(&newlineCharacter, 1);
+        else if (n->isTextNode()) {
+            Text* text = static_cast<Text*>(n);
+            String data = text->data();
+            unsigned length = data.length();
+            unsigned compositionStart = (text == compositionNode)
+                ? min(frame->editor()->compositionStart(), length) : 0;
+            unsigned compositionEnd = (text == compositionNode)
+                ? min(max(compositionStart, frame->editor()->compositionEnd()), length) : 0;
+            unsigned position = 0;
+            while (breakNode == n && breakOffset < compositionStart) {
+                result.append(data.characters() + position, breakOffset - position);
+                position = breakOffset;
+                result.append(&newlineCharacter, 1);
+                getNextSoftBreak(line, breakNode, breakOffset);
+            }
+            result.append(data.characters() + position, compositionStart - position);
+            position = compositionEnd;
+            while (breakNode == n && breakOffset <= length) {
+                if (breakOffset > position) {
+                    result.append(data.characters() + position, breakOffset - position);
+                    position = breakOffset;
+                    result.append(&newlineCharacter, 1);
+                }
+                getNextSoftBreak(line, breakNode, breakOffset);
+            }
+            result.append(data.characters() + position, length - position);
         }
+        while (breakNode == n)
+            getNextSoftBreak(line, breakNode, breakOffset);
     }
-    s.append(range->toString(true, ec));
-    ASSERT(!ec);
 
-    return s.replace('\\', backslashAsCurrencySymbol());
+    return finishText(result);
 }
 
 void RenderTextControl::calcHeight()

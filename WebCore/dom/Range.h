@@ -79,7 +79,6 @@ public:
     PassRefPtr<DocumentFragment> cloneContents(ExceptionCode&);
     void insertNode(PassRefPtr<Node>, ExceptionCode&);
     String toString(ExceptionCode&) const;
-    String toString(bool convertBRsToNewlines, ExceptionCode&) const;
 
     String toHTML() const;
     String text() const;

@@ -1,3 +1,22 @@
+2007-09-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix <rdar://problem/5470457> REGRESSION: Input method inline hole is mishandled in text
+          <input> elements with maxlength limit
+
+        * WebView.cpp:
+        (WebView::resetIME): Change to use confirmCompositionWithoutDisturbingSelection.
+        (WebView::updateSelectionForIME): Update for name changes, and to use new functions
+        in Editor.
+        (WebView::onIMEStartComposition): Removed unneeded call to unmarkText.
+        (compositionToUnderlines): Removed startOffset parameter, since setComposition now
+        handles this.
+        (WebView::onIMEComposition): Changed to use confirmComposition and setComposition.
+        Logic gets a lot cleaner.
+        (WebView::onIMEEndComposition): Removed unneeded calls to Editor.
+        (WebView::onIMERequestCharPosition): Updated for name changes.
+
 2007-09-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

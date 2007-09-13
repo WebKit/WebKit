@@ -3789,43 +3789,10 @@ void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext)
     IMMDict::dict().setCandidateWindow(hInputContext, &form);
 }
 
-static bool markedTextContainsSelection(Range* markedTextRange, Range* selection)
-{
-    ExceptionCode ec = 0;
-
-    ASSERT(markedTextRange->startContainer(ec) == markedTextRange->endContainer(ec));
-
-    if (selection->startContainer(ec) != markedTextRange->startContainer(ec))
-        return false;
-
-    if (selection->endContainer(ec) != markedTextRange->endContainer(ec))
-        return false;
-
-    if (selection->startOffset(ec) < markedTextRange->startOffset(ec))
-        return false;
-
-    if (selection->endOffset(ec) > markedTextRange->endOffset(ec))
-        return false;
-
-    return true;
-}
-
-static void setSelectionToEndOfRange(Frame* targetFrame, Range* sourceRange)
-{
-    ExceptionCode ec = 0;
-    Node* caretContainer = sourceRange->endContainer(ec);
-    unsigned caretOffset = sourceRange->endOffset(ec);
-    RefPtr<Range> range = targetFrame->document()->createRange();
-    range->setStart(caretContainer, caretOffset, ec);
-    range->setEnd(caretContainer, caretOffset, ec);
-    targetFrame->editor()->unmarkText();
-    targetFrame->selectionController()->setSelectedRange(range.get(), WebCore::DOWNSTREAM, true, ec);
-}
-
 void WebView::resetIME(Frame* targetFrame)
 {
     if (targetFrame)
-        targetFrame->editor()->unmarkText();
+        targetFrame->editor()->confirmCompositionWithoutDisturbingSelection();
 
     if (HIMC hInputContext = getIMMContext()) {
         IMMDict::dict().notifyIME(hInputContext, NI_COMPOSITIONSTR, CPS_CANCEL, 0);
@@ -3836,14 +3803,15 @@ void WebView::resetIME(Frame* targetFrame)
 void WebView::updateSelectionForIME()
 {
     Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
-    if (!targetFrame || !targetFrame->markedTextRange())
+    if (!targetFrame || !targetFrame->editor()->hasComposition())
         return;
     
-    if (targetFrame->editor()->ignoreMarkedTextSelectionChange())
+    if (targetFrame->editor()->ignoreCompositionSelectionChange())
         return;
 
-    RefPtr<Range> selectionRange = targetFrame->selectionController()->selection().toRange();
-    if (!selectionRange || !markedTextContainsSelection(targetFrame->markedTextRange(), selectionRange.get()))
+    unsigned start;
+    unsigned end;
+    if (!targetFrame->editor()->getCompositionSelection(start, end))
         resetIME(targetFrame);
 }
 
@@ -3864,9 +3832,6 @@ bool WebView::onIMEStartComposition()
     if (!targetFrame)
         return true;
 
-    //Tidy up in case the last IME composition was not correctly terminated
-    targetFrame->editor()->unmarkText();
-
     HIMC hInputContext = getIMMContext();
     prepareCandidateWindow(targetFrame, hInputContext);
     releaseIMMContext(hInputContext);
@@ -3886,17 +3851,18 @@ static bool getCompositionString(HIMC hInputContext, DWORD type, String& result)
     return true;
 }
 
-static void compositionToUnderlines(const Vector<DWORD>& clauses, const Vector<BYTE>& attributes, 
-                                    unsigned startOffset, Vector<MarkedTextUnderline>& underlines)
+static void compositionToUnderlines(const Vector<DWORD>& clauses, const Vector<BYTE>& attributes, Vector<CompositionUnderline>& underlines)
 {
-    if (!clauses.size())
+    if (clauses.isEmpty()) {
+        underlines.clear();
         return;
+    }
   
     const size_t numBoundaries = clauses.size() - 1;
     underlines.resize(numBoundaries);
     for (unsigned i = 0; i < numBoundaries; i++) {
-        underlines[i].startOffset = startOffset + clauses[i];
-        underlines[i].endOffset = startOffset + clauses[i + 1];
+        underlines[i].startOffset = clauses[i];
+        underlines[i].endOffset = clauses[i + 1];
         BYTE attribute = attributes[clauses[i]];
         underlines[i].thick = attribute == ATTR_TARGET_CONVERTED || attribute == ATTR_TARGET_NOTCONVERTED;
         underlines[i].color = Color(0,0,0);
@@ -3914,42 +3880,18 @@ bool WebView::onIMEComposition(LPARAM lparam)
         return true;
 
     prepareCandidateWindow(targetFrame, hInputContext);
-    targetFrame->editor()->setIgnoreMarkedTextSelectionChange(true);
-
-    // if we had marked text already, we need to make sure to replace
-    // that, instead of the selection/caret
-    targetFrame->editor()->selectMarkedText();
 
     if (lparam & GCS_RESULTSTR || !lparam) {
         String compositionString;
         if (!getCompositionString(hInputContext, GCS_RESULTSTR, compositionString) && lparam)
-            goto cleanup;
+            return true;
         
-        targetFrame->editor()->replaceMarkedText(compositionString);
-        RefPtr<Range> sourceRange = targetFrame->selectionController()->selection().toRange();
-        setSelectionToEndOfRange(targetFrame, sourceRange.get());
-    } else if (lparam) {
+        targetFrame->editor()->confirmComposition(compositionString);
+    } else {
         String compositionString;
         if (!getCompositionString(hInputContext, GCS_COMPSTR, compositionString))
-            goto cleanup;
+            return true;
         
-        targetFrame->editor()->replaceMarkedText(compositionString);
-
-        ExceptionCode ec = 0;
-        RefPtr<Range> sourceRange = targetFrame->selectionController()->selection().toRange();
-        if (!sourceRange)
-            goto cleanup;
-
-        Node* startContainer = sourceRange->startContainer(ec);
-        const String& str = startContainer->textContent();
-        for (unsigned i = 0; i < str.length(); i++)
-            ASSERT(str[i]);
-
-        unsigned startOffset = sourceRange->startOffset(ec);
-        RefPtr<Range> range = targetFrame->document()->createRange();
-        range->setStart(startContainer, startOffset, ec);
-        range->setEnd(startContainer, startOffset + compositionString.length(), ec);
-
         // Composition string attributes
         int numAttributes = IMMDict::dict().getCompositionString(hInputContext, GCS_COMPATTR, 0, 0);
         Vector<BYTE> attributes(numAttributes);
@@ -3959,14 +3901,15 @@ bool WebView::onIMEComposition(LPARAM lparam)
         int numClauses = IMMDict::dict().getCompositionString(hInputContext, GCS_COMPCLAUSE, 0, 0);
         Vector<DWORD> clauses(numClauses / sizeof(DWORD));
         IMMDict::dict().getCompositionString(hInputContext, GCS_COMPCLAUSE, clauses.data(), numClauses);
-        Vector<MarkedTextUnderline> underlines;
-        compositionToUnderlines(clauses, attributes, startOffset, underlines);
-        targetFrame->setMarkedTextRange(range.get(), underlines);
-        if (targetFrame->markedTextRange())
-            targetFrame->selectRangeInMarkedText(LOWORD(IMMDict::dict().getCompositionString(hInputContext, GCS_CURSORPOS, 0, 0)), 0);
+
+        Vector<CompositionUnderline> underlines;
+        compositionToUnderlines(clauses, attributes, underlines);
+
+        int cursorPosition = LOWORD(IMMDict::dict().getCompositionString(hInputContext, GCS_CURSORPOS, 0, 0));
+
+        targetFrame->editor()->setComposition(compositionString, underlines, cursorPosition, 0);
     }
-cleanup:
-    targetFrame->editor()->setIgnoreMarkedTextSelectionChange(false);
+
     return true;
 }
 
@@ -3974,10 +3917,6 @@ bool WebView::onIMEEndComposition()
 {
     if (m_inIMEComposition) 
         m_inIMEComposition--;
-    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
-    if (!targetFrame)
-        return true;
-    targetFrame->editor()->unmarkText();
     return true;
 }
 
@@ -3994,8 +3933,8 @@ bool WebView::onIMENotify(WPARAM, LPARAM, LRESULT*)
 bool WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* charPos, LRESULT* result)
 {
     IntRect caret;
-    ASSERT(charPos->dwCharPos == 0 || targetFrame->markedTextRange());
-    if (RefPtr<Range> range = targetFrame->markedTextRange() ? targetFrame->markedTextRange() : targetFrame->selectionController()->selection().toRange()) {
+    ASSERT(charPos->dwCharPos == 0 || targetFrame->editor()->hasComposition());
+    if (RefPtr<Range> range = targetFrame->editor()->hasComposition() ? targetFrame->editor()->compositionRange() : targetFrame->selectionController()->selection().toRange()) {
         ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange(ec);
         tempRange->setStart(tempRange->startContainer(ec), tempRange->startOffset(ec) + charPos->dwCharPos, ec);

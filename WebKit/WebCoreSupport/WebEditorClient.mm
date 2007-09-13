@@ -446,12 +446,6 @@ void WebEditorClient::handleInputMethodKeypress(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-void WebEditorClient::markedTextAbandoned(Frame* frame)
-{
-    WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
-    [[NSInputManager currentInputManager] markedTextAbandoned:webHTMLView];
-}
-
 #define FormDelegateLog(ctrl)  LOG(FormDelegate, "control=%@", ctrl)
 
 void WebEditorClient::textFieldDidBeginEditing(Element* element)

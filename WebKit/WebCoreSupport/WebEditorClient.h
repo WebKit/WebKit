@@ -90,8 +90,6 @@ public:
     virtual void handleKeypress(WebCore::KeyboardEvent*);
     virtual void handleInputMethodKeypress(WebCore::KeyboardEvent*);
 
-    virtual void markedTextAbandoned(WebCore::Frame*);
-
     virtual void textFieldDidBeginEditing(WebCore::Element*);
     virtual void textFieldDidEndEditing(WebCore::Element*);
     virtual void textDidChangeInTextField(WebCore::Element*);

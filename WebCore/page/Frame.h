@@ -107,17 +107,6 @@ struct FrameLoadRequest;
 
 template <typename T> class Timer;
 
-struct MarkedTextUnderline {
-    MarkedTextUnderline() 
-        : startOffset(0), endOffset(0), thick(false) { }
-    MarkedTextUnderline(unsigned s, unsigned e, const Color& c, bool t) 
-        : startOffset(s), endOffset(e), color(c), thick(t) { }
-    unsigned startOffset;
-    unsigned endOffset;
-    Color color;
-    bool thick;
-};
-
 class Frame : public Shared<Frame> {
 public:
     static double currentPaintTimeStamp() { return s_currentPaintTimeStamp; } // returns 0 if not painting
@@ -280,7 +269,6 @@ public:
     void applyEditingStyleToElement(Element*) const;
     void removeEditingStyleFromElement(Element*) const;
 
-    Range* markedTextRange() const;
     IntRect firstRectForRange(Range*) const;
     
 #if PLATFORM(MAC)
@@ -292,11 +280,6 @@ public:
 
     RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
 
-    const Vector<MarkedTextUnderline>& markedTextUnderlines() const;  
-    bool markedTextUsesUnderlines() const;
-    void setMarkedTextRange(Range* , Vector<MarkedTextUnderline>&);
-    void selectRangeInMarkedText(unsigned selOffset, unsigned selLength);
-  
     unsigned markAllMatchesForText(const String&, bool caseFlag, unsigned limit);
     bool markedTextMatchesAreHighlighted() const;
     void setMarkedTextMatchesAreHighlighted(bool flag);
@@ -389,8 +372,6 @@ public:
 public:
     NSDictionary* fontAttributesForSelectionStart() const;
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
-
-    void setMarkedTextRange(Range* , NSArray* attributes, NSArray* ranges);
 
 #endif
 

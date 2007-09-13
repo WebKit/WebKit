@@ -168,10 +168,6 @@ enum WebScrollGranularity {
 - (void)setMarkDOMRange:(DOMRange *)range;
 - (DOMRange *)markDOMRange;
 
-// international text input "marked text"
-- (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges;
-- (DOMRange *)markedTextDOMRange;
-
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts;
 - (NSWritingDirection)baseWritingDirectionForSelectionStart;
 

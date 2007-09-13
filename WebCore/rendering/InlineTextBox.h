@@ -36,9 +36,10 @@ const unsigned short cFullTruncation = USHRT_MAX - 1;
 
 class String;
 class StringImpl;
-class MarkedTextUnderline;
 class HitTestResult;
 class Position;
+
+struct CompositionUnderline;
 
 class InlineTextBox : public InlineRunBox {
 public:
@@ -94,11 +95,11 @@ public:
 
     void paintDecoration(GraphicsContext*, int tx, int ty, int decoration);
     void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
-    void paintMarkedTextBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
+    void paintCompositionBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
     void paintDocumentMarkers(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, bool background);
     void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*, bool grammar);
     void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
-    void paintMarkedTextUnderline(GraphicsContext*, int tx, int ty, const MarkedTextUnderline&);
+    void paintCompositionUnderline(GraphicsContext*, int tx, int ty, const CompositionUnderline&);
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type);
 #endif

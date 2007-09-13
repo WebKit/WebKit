@@ -1,3 +1,29 @@
+2007-09-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix <rdar://problem/5470457> REGRESSION: Input method inline hole is mishandled in text
+          <input> elements with maxlength limit
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectionChanged]): Tweaked code a bit.
+        (-[WebHTMLView markedRange]): Simplified logic, since markedTextNSRange works when there's
+        no composition range.
+        (-[WebHTMLView hasMarkedText]): Call directly to Editor instead of bridge.
+        (-[WebHTMLView unmarkText]): Call new confirmComposition to make it clear that this is
+        confirming text, not just unmarking it to discard it.
+        (extractUnderlines): Added. Converts directly from an NSAttributedString to the
+        CompositionUnderline vector that's used by WebCore.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Changed to use the new setComposition.
+        (-[WebHTMLView insertText:]): Changed to use confirmComposition when appropriate, instead
+        of relying on special behavior of Editor::insertText.
+        (-[WebHTMLView _updateSelectionForInputManager]): Rewrote to use getCompositionSelection
+        and confirmCompositionWithoutDisturbingSelection.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        Removed obsolete markedTextAbandoned function.
+ 
 2007-09-12  David Kilzer  <ddkilzer@apple.com>
 
         Rubber-stamped by Darin and reviewed by Adam.

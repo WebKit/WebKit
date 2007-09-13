@@ -526,46 +526,6 @@ void Frame::setUseSecureKeyboardEntry(bool enable)
     }
 }
 
-static void convertAttributesToUnderlines(Vector<MarkedTextUnderline>& result, const Range* markedTextRange, NSArray* attributes, NSArray* ranges)
-{
-    int exception = 0;
-    int baseOffset = markedTextRange->startOffset(exception);
-
-    unsigned length = [attributes count];
-    ASSERT([ranges count] == length);
-
-    for (unsigned i = 0; i < length; i++) {
-        NSNumber* style = [[attributes objectAtIndex:i] objectForKey:NSUnderlineStyleAttributeName];
-        if (!style)
-            continue;
-        NSRange range = [[ranges objectAtIndex:i] rangeValue];
-        NSColor* color = [[attributes objectAtIndex:i] objectForKey:NSUnderlineColorAttributeName];
-        Color qColor = Color::black;
-        if (color)
-            qColor = colorFromNSColor([color colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
-
-        result.append(MarkedTextUnderline(range.location + baseOffset, 
-                                          range.location + baseOffset + range.length, 
-                                          qColor,
-                                          [style intValue] > 1));
-    }
-}
-
-void Frame::setMarkedTextRange(Range* range, NSArray* attributes, NSArray* ranges)
-{
-    int exception;
-    exception = 0;
-
-    ASSERT(!range || range->startContainer(exception) == range->endContainer(exception));
-    ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->isTextNode());
-
-    Vector<MarkedTextUnderline> decorations;
-    if (attributes)
-        convertAttributesToUnderlines(decorations, range, attributes, ranges);
-    
-    setMarkedTextRange(range, decorations);
-}
-
 NSMutableDictionary* Frame::dashboardRegionsDictionary()
 {
     Document* doc = document();

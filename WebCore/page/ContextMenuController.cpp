@@ -53,6 +53,7 @@
 #include "ResourceRequest.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "TextIterator.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -230,7 +231,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
                 selectedRange = document->createRange();
                 selectedRange->selectNode(document->documentElement(), ec);
             }
-            m_client->speak(selectedRange->toString(true, ec));
+            m_client->speak(plainText(selectedRange.get()));
             break;
         }
         case ContextMenuItemTagStopSpeaking:

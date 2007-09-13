@@ -307,12 +307,6 @@ String Frame::selectedText() const
     return plainText(selectionController()->toRange().get());
 }
 
-Range* Frame::markedTextRange() const
-{
-    return d->m_markedTextRange.get();
-}
-
-
 IntRect Frame::firstRectForRange(Range* range) const
 {
     int extraWidthToEndOfLine = 0;
@@ -337,53 +331,6 @@ IntRect Frame::firstRectForRange(Range* range) const
                    startCaretRect.y(),
                    startCaretRect.width() + extraWidthToEndOfLine,
                    startCaretRect.height());
-}
-
-void Frame::setMarkedTextRange(Range* range, Vector<MarkedTextUnderline>& markedRangeDecorations)
-{
-    int exception = 0;
-    
-    ASSERT(!range || range->startContainer(exception) == range->endContainer(exception));
-    ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->isTextNode());
-    
-    d->m_markedTextUnderlines.clear();
-    if (markedRangeDecorations.size()) {
-        d->m_markedTextUsesUnderlines = true;
-        d->m_markedTextUnderlines = markedRangeDecorations;
-    } else 
-        d->m_markedTextUsesUnderlines = false;
-    
-    if (d->m_markedTextRange.get() && document() && d->m_markedTextRange->startContainer(exception)->renderer())
-        d->m_markedTextRange->startContainer(exception)->renderer()->repaint();
-    
-    if (range && range->collapsed(exception))
-        d->m_markedTextRange = 0;
-    else
-        d->m_markedTextRange = range;
-    
-    if (d->m_markedTextRange.get() && document() && d->m_markedTextRange->startContainer(exception)->renderer())
-        d->m_markedTextRange->startContainer(exception)->renderer()->repaint();    
-}
-
-void Frame::selectRangeInMarkedText(unsigned selOffset, unsigned selLength)
-{
-    ExceptionCode ec = 0;
-    
-    RefPtr<Range> selectedRange = document()->createRange();
-    Range* markedTextRange = this->markedTextRange();
-    
-    ASSERT(markedTextRange->startContainer(ec) == markedTextRange->endContainer(ec));
-    ASSERT(!ec);
-    unsigned selectionStart = markedTextRange->startOffset(ec) + selOffset;
-    unsigned selectionEnd = selectionStart + selLength;
-    ASSERT(!ec);
-    
-    selectedRange->setStart(markedTextRange->startContainer(ec), selectionStart, ec);
-    ASSERT(!ec);
-    selectedRange->setEnd(markedTextRange->startContainer(ec), selectionEnd, ec);
-    ASSERT(!ec);
-    
-    selectionController()->setSelectedRange(selectedRange.get(), DOWNSTREAM, false, ec);
 }
 
 SelectionController* Frame::selectionController() const
@@ -1658,16 +1605,6 @@ UChar Frame::backslashAsCurrencySymbol() const
     return decoder->encoding().backslashAsCurrencySymbol();
 }
 
-bool Frame::markedTextUsesUnderlines() const
-{
-    return d->m_markedTextUsesUnderlines;
-}
-
-const Vector<MarkedTextUnderline>& Frame::markedTextUnderlines() const
-{
-    return d->m_markedTextUnderlines;
-}
-
 static bool isInShadowTree(Node* node)
 {
     for (Node* n = node; n; n = n->parentNode())
@@ -2015,7 +1952,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_loader(new FrameLoader(thisFrame, frameLoaderClient))
     , m_userStyleSheetLoader(0)
     , m_paintRestriction(PaintRestrictionNone)
-    , m_markedTextUsesUnderlines(false)
     , m_highlightTextMatches(false)
     , m_windowHasFocus(false)
     , m_inViewSourceMode(false)

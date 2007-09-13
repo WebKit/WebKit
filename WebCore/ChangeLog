@@ -1,3 +1,94 @@
+2007-09-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - fix <rdar://problem/5470457> REGRESSION: Input method inline hole is mishandled in text
+          <input> elements with maxlength limit
+
+        * editing/Editor.h: Moved MarkedTextUnderline here and renamed it CompositionUnderline.
+        Moved the rest of the marked text API here and used the term that will be more familiar
+        to those on platforms other than Macintosh, "composition". This helps prevent confusion
+        with the other kinds of mark -- the emacs "mark" and spelling/grammar marks. Also
+        cleaned up the conditionals a bit for the Macintosh-specific parts of this header.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::Editor): Updated for name change.
+        (WebCore::Editor::clear): Added. To be called by FrameLoader::clear().
+        (WebCore::Editor::insertTextWithoutSendingTextEvent): Removed code to make inserted
+        text replace the marked text range -- we now deal with this explicitly by not
+        calling this function to replace marked text. Also removed unneeded code that was
+        specific to the use of this to replace the marked text.
+        (WebCore::Editor::selectComposition): Renamed from selectMarkedText. Updated since
+        the composition range is not stored as a Range.
+        (WebCore::Editor::confirmComposition): Added. To be called when changing a composition
+        into actual text. Unlike the old code path, deletes the composition first, then inserts
+        the text, triggering the normal insertion code path and events. This is helpful because
+        it means the inserted text will be truncated by the <input> element, for example.
+        (WebCore::Editor::confirmCompositionWithoutDisturbingSelection): Added.
+        (WebCore::Editor::setComposition): Added. To be called when changing the composition.
+        Takes parameters for the underlines and selection. Unlike the old code path, this passes
+        a flag down that indicates the inserted text is part of a composition. This is helpful
+        because we don't send the event that will cause the <input> element to do truncation.
+        It's also a better API for future improvements to our input method handling.
+        (WebCore::Editor::revealSelectionAfterEditingOperation): Updated for name change.
+        (WebCore::Editor::setIgnoreCompositionSelectionChange): Ditto.
+        (WebCore::Editor::compositionRange): Added. Needed now that the composition is not
+        stored as a Range.
+        (WebCore::Editor::getCompositionSelection): Added.
+
+        * editing/TypingCommand.h:
+        * editing/TypingCommand.cpp: (WebCore::TypingCommand::insertText):
+        Added an insertedTextIsComposition parameter, and don't send the BeforeTextInsertedEvent
+        if it's true.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::clear): Replaced the Macintosh-specific
+        call to setMarkedTextRange with a call to the new Editor::clear().
+
+        * page/Frame.h:
+        * page/Frame.cpp:
+        * page/FramePrivate.h:
+        * page/mac/FrameMac.mm:
+        Removed the marked text code. It was streamlined and moved to Editor, except for the
+        Mac-specific code, which was moved into WebKit.
+
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm: Removed some now-unneeded marked text code.
+        (-[WebCoreFrameBridge markedTextNSRange]): Updated for name/API change.
+
+        * rendering/InlineTextBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Updated marked text code for name changes, and also
+        streamlined the code a bit for the case where there is no composition.
+        (WebCore::InlineTextBox::paintCompositionBackground): Name change.
+        (WebCore::InlineTextBox::paintCompositionUnderline): Ditto.
+
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::finishText): Added. Helper function shared by the
+        (WebCore::RenderTextControl::text):
+        (WebCore::getNextSoftBreak):
+        (WebCore::RenderTextControl::textWithHardLineBreaks):
+
+        * platform/CharacterNames.h: Added newlineCharacter.
+
+        * dom/Range.h: Remove the now-unneeded version of toString that converts <br>
+        elements into newlines.
+        * dom/Range.cpp:
+        (WebCore::Range::toString): Changed this to use a Vector<UChar> instead of
+        a String so it will not have pathological reallocation performance, and removed
+        the <br> feature.
+        (WebCore::Range::pastEndNode): Made this return 0 when there is no start node.
+        This bit of extra robustness guarantees you can't do a null dereference if the
+        start node is 0 and the end node is not. Not sure this case really exists.
+
+        * page/ContextMenuController.cpp: (ContextMenuController::contextMenuItemSelected):
+        Removed a semi-bogus use of Range::toString(true). The right function to use here
+        is plainText().
+
+        * bridge/EditorClient.h: Removed obsolete markedTextAbandoned function.
+
+        * WebCore.exp: Updated for above changes. 
+
 2007-09-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam and Geoff.

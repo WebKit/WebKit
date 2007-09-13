@@ -76,6 +76,7 @@
 #import "SmartReplace.h"
 #import "SubresourceLoader.h"
 #import "SystemTime.h"
+#import "Text.h"
 #import "TextEncoding.h"
 #import "TextIterator.h"
 #import "TextResourceDecoder.h"
@@ -935,19 +936,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return [DOMRange _wrapRange:m_frame->mark().toRange().get()];
 }
 
-- (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges
-{
-    m_frame->setMarkedTextRange([range _range], attributes, ranges);
-}
-
-- (DOMRange *)markedTextDOMRange
-{
-    return [DOMRange _wrapRange:m_frame->markedTextRange()];
-}
-
 - (NSRange)markedTextNSRange
 {
-    return [self convertToNSRange:m_frame->markedTextRange()];
+    return [self convertToNSRange:m_frame->editor()->compositionRange().get()];
 }
 
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should

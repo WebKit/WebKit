@@ -119,8 +119,6 @@ public:
     virtual void textDidChangeInTextArea(Element*) = 0;
 
 #if PLATFORM(MAC)
-    virtual void markedTextAbandoned(Frame*) = 0;
-
     // FIXME: This should become SelectionController::toWebArchive()
     virtual NSData* dataForArchivedSelection(Frame*) = 0; 
 

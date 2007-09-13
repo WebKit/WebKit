@@ -75,6 +75,7 @@
 #import <dlfcn.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
@@ -101,6 +102,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/Text.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebKit/DOM.h>
@@ -4946,8 +4948,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     [self _updateSelectionForInputManager];
     [self _updateFontPanel];
-    if (core([self _frame]))
-        core([self _frame])->editor()->setStartNewKillRingSequence(true);
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->setStartNewKillRingSequence(true);
 }
 
 - (void)_updateFontPanel
@@ -5353,7 +5355,7 @@ static BOOL isTextInput(Frame* coreFrame)
     }
     NSAttributedString *result = [self attributedSubstringFromRange:NSMakeRange(0, UINT_MAX)];
     
-    LOG(TextInput, "textStorage -> \"%s\"", result ? [[result string] UTF8String] : "");
+    LOG(TextInput, "textStorage -> \"%@\"", result ? [result string] : @"");
     
     // We have to return an empty string rather than null to prevent TSM from calling -string
     return result ? result : [[[NSAttributedString alloc] initWithString:@""] autorelease];
@@ -5423,12 +5425,7 @@ static BOOL isTextInput(Frame* coreFrame)
 
 - (NSRange)markedRange
 {
-    if (![self hasMarkedText]) {
-        LOG(TextInput, "markedRange -> (NSNotFound, 0)");
-        return NSMakeRange(NSNotFound, 0);
-    }
     NSRange result = [[self _bridge] markedTextNSRange];
-
     LOG(TextInput, "markedRange -> (%u, %u)", result.location, result.length);
     return result;
 }
@@ -5456,7 +5453,7 @@ static BOOL isTextInput(Frame* coreFrame)
         ASSERT([[result string] characterAtIndex:nsRange.length] == '\n' || [[result string] characterAtIndex:nsRange.length] == ' ');
         result = [result attributedSubstringFromRange:NSMakeRange(0, nsRange.length)];
     }
-    LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%s\"", nsRange.location, nsRange.length, [[result string] UTF8String]);
+    LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%@\"", nsRange.location, nsRange.length, [result string]);
     return result;
 }
 
@@ -5475,8 +5472,8 @@ static BOOL isTextInput(Frame* coreFrame)
 
 - (BOOL)hasMarkedText
 {
-    BOOL result = [[self _bridge] markedTextDOMRange] != nil;
-
+    Frame* coreFrame = core([self _frame]);
+    BOOL result = coreFrame && coreFrame->editor()->hasComposition();
     LOG(TextInput, "hasMarkedText -> %u", result);
     return result;
 }
@@ -5495,31 +5492,34 @@ static BOOL isTextInput(Frame* coreFrame)
     }
     
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->unmarkText();
+        coreFrame->editor()->confirmComposition();
 }
 
-- (void)_extractAttributes:(NSArray **)a ranges:(NSArray **)r fromAttributedString:(NSAttributedString *)string
+static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnderline>& result)
 {
     int length = [[string string] length];
+
     int i = 0;
-    NSMutableArray *attributes = [NSMutableArray array];
-    NSMutableArray *ranges = [NSMutableArray array];
     while (i < length) {
-        NSRange effectiveRange;
-        NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&effectiveRange inRange:NSMakeRange(i,length - i)];
-        [attributes addObject:attrs];
-        [ranges addObject:[NSValue valueWithRange:effectiveRange]];
-        i = effectiveRange.location + effectiveRange.length;
+        NSRange range;
+        NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&range inRange:NSMakeRange(i, length - i)];
+
+        if (NSNumber *style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
+            Color color = Color::black;
+            if (NSColor *colorAttr = [attrs objectForKey:NSUnderlineColorAttributeName])
+                color = colorFromNSColor([colorAttr colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
+            result.append(CompositionUnderline(range.location, NSMaxRange(range), color, [style intValue] > 1));
+        }
+
+        i = range.location + range.length;
     }
-    *a = attributes;
-    *r = ranges;
 }
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
 
-    LOG(TextInput, "setMarkedText:\"%s\" selectedRange:(%u, %u)", isAttributedString ? [[string string] UTF8String] : [string UTF8String], newSelRange.location, newSelRange.length);
+    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
 
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
@@ -5534,42 +5534,26 @@ static BOOL isTextInput(Frame* coreFrame)
     if (!coreFrame)
         return;
 
-    WebFrameBridge *bridge = [self _bridge];
-
     if (![self _isEditable])
         return;
+
+    Vector<CompositionUnderline> underlines;
+    NSString *text = string;
 
     if (isAttributedString) {
         unsigned markedTextLength = [(NSString *)string length];
         NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, markedTextLength)];
-        LOG(TextInput, "    ReplacementRange: %s", [rangeString UTF8String]);
-        // The AppKit adds a 'secret' property to the string that contains the replacement
-        // range.  The replacement range is the range of the the text that should be replaced
-        // with the new string.
+        LOG(TextInput, "    ReplacementRange: %@", rangeString);
+        // The AppKit adds a 'secret' property to the string that contains the replacement range.
+        // The replacement range is the range of the the text that should be replaced with the new string.
         if (rangeString)
             [[self _bridge] selectNSRange:NSRangeFromString(rangeString)];
-    }
 
-    coreFrame->editor()->setIgnoreMarkedTextSelectionChange(true);
-
-    // if we had marked text already, we need to make sure to replace
-    // that, instead of the selection/caret
-    coreFrame->editor()->selectMarkedText();
-
-    NSString *text = string;
-    NSArray *attributes = nil;
-    NSArray *ranges = nil;
-    if (isAttributedString) {
         text = [string string];
-        [self _extractAttributes:&attributes ranges:&ranges fromAttributedString:string];
+        extractUnderlines(string, underlines);
     }
 
-    coreFrame->editor()->replaceMarkedText(text);
-    [bridge setMarkedTextDOMRange:[self _selectedRange] customAttributes:attributes ranges:ranges];
-    if ([self hasMarkedText])
-        coreFrame->selectRangeInMarkedText(newSelRange.location, newSelRange.length);
-
-    coreFrame->editor()->setIgnoreMarkedTextSelectionChange(false);
+    coreFrame->editor()->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange));
 }
 
 - (void)doCommandBySelector:(SEL)selector
@@ -5631,7 +5615,7 @@ static BOOL isTextInput(Frame* coreFrame)
 {
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
 
-    LOG(TextInput, "insertText:\"%s\"", isAttributedString ? [[string string] UTF8String] : [string UTF8String]);
+    LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
 
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
@@ -5639,8 +5623,9 @@ static BOOL isTextInput(Frame* coreFrame)
         parameters->consumedByIM = NO;
 
     // We don't support inserting an attributed string but input methods don't appear to require this.
+    Frame* coreFrame = core([self _frame]);
     NSString *text;
-    bool isFromInputMethod = [self hasMarkedText];
+    bool isFromInputMethod = coreFrame->editor()->hasComposition();
     if (isAttributedString) {
         text = [string string];
         // We deal with the NSTextInputReplacementRangeAttributeName attribute from NSAttributedString here
@@ -5648,7 +5633,7 @@ static BOOL isTextInput(Frame* coreFrame)
         // event in TSM.  This behaviour matches that of -[WebHTMLView setMarkedText:selectedRange:] when it receives an
         // NSAttributedString
         NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, [text length])];
-        LOG(TextInput, "    ReplacementRange: %s", [rangeString UTF8String]);
+        LOG(TextInput, "    ReplacementRange: %@", rangeString);
         if (rangeString) {
             [[self _bridge] selectNSRange:NSRangeFromString(rangeString)];
             isFromInputMethod = YES;
@@ -5674,10 +5659,16 @@ static BOOL isTextInput(Frame* coreFrame)
             return;
         }
         
-        Frame* coreFrame = core([self _frame]);
         String eventText = text;
         eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-        eventHandled = coreFrame && coreFrame->editor()->insertText(eventText, event);
+        if (coreFrame) {
+            if (!coreFrame->editor()->hasComposition())
+                eventHandled = coreFrame->editor()->insertText(eventText, event);
+            else {
+                eventHandled = true;
+                coreFrame->editor()->confirmComposition(eventText);
+            }
+        }
     }
     
     if (!parameters)
@@ -5693,52 +5684,24 @@ static BOOL isTextInput(Frame* coreFrame)
     parameters->eventWasHandled = eventHandled;
 }
 
-- (BOOL)_selectionIsInsideMarkedText
-{
-    WebFrameBridge *bridge = [self _bridge];
-    DOMRange *selection = [self _selectedRange];
-    DOMRange *markedTextRange = [bridge markedTextDOMRange];
-
-    ASSERT([markedTextRange startContainer] == [markedTextRange endContainer]);
-
-    if ([selection startContainer] != [markedTextRange startContainer]) 
-        return NO;
-
-    if ([selection endContainer] != [markedTextRange startContainer])
-        return NO;
-
-    if ([selection startOffset] < [markedTextRange startOffset])
-        return NO;
-
-    if ([selection endOffset] > [markedTextRange endOffset])
-        return NO;
-
-    return YES;
-}
-
 - (void)_updateSelectionForInputManager
 {
-    if (![self hasMarkedText])
-        return;
-
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
 
-    if (coreFrame->editor()->ignoreMarkedTextSelectionChange())
+    if (!coreFrame->editor()->hasComposition())
         return;
 
-    if ([self _selectionIsInsideMarkedText]) {
-        DOMRange *selection = [self _selectedRange];
-        DOMRange *markedTextDOMRange = [[self _bridge] markedTextDOMRange];
+    if (coreFrame->editor()->ignoreCompositionSelectionChange())
+        return;
 
-        unsigned markedSelectionStart = [selection startOffset] - [markedTextDOMRange startOffset];
-        unsigned markedSelectionLength = [selection endOffset] - [selection startOffset];
-        NSRange newSelectionRange = NSMakeRange(markedSelectionStart, markedSelectionLength);
-
-        [[NSInputManager currentInputManager] markedTextSelectionChanged:newSelectionRange client:self];
-    } else {
-        [self unmarkText];
+    unsigned start;
+    unsigned end;
+    if (coreFrame->editor()->getCompositionSelection(start, end))
+        [[NSInputManager currentInputManager] markedTextSelectionChanged:NSMakeRange(start, end - start) client:self];
+    else {
+        coreFrame->editor()->confirmCompositionWithoutDisturbingSelection();
         [[NSInputManager currentInputManager] markedTextAbandoned:self];
     }
 }

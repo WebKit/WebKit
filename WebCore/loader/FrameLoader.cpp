@@ -773,9 +773,7 @@ void FrameLoader::clear(bool clearWindowProperties)
     // back causes a measurable performance regression which we will need to fix to restore the correct behavior
     // urlsBridgeKnowsAbout.clear();
 
-#if PLATFORM(MAC)
-    m_frame->setMarkedTextRange(0, nil, nil);
-#endif
+    m_frame->editor()->clear();
 
     if (!m_needsClear)
         return;

@@ -64,6 +64,7 @@
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
 #include "Sound.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
 #include "htmlediting.h"
@@ -73,6 +74,8 @@
 namespace WebCore {
 
 class FontData;
+
+using namespace std;
 using namespace EventNames;
 using namespace HTMLNames;
 
@@ -1354,12 +1357,18 @@ static CommandMap* createCommandMap()
 Editor::Editor(Frame* frame)
     : m_frame(frame)
     , m_deleteButtonController(new DeleteButtonController(frame))
-    , m_ignoreMarkedTextSelectionChange(false)
+    , m_ignoreCompositionSelectionChange(false)
 { 
 }
 
 Editor::~Editor()
 {
+}
+
+void Editor::clear()
+{
+    m_compositionNode = 0;
+    m_customCompositionUnderlines.clear();
 }
 
 bool Editor::execCommand(const AtomicString& command, Event* triggeringEvent)
@@ -1395,28 +1404,18 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     if (text.isEmpty())
         return false;
 
-    RefPtr<Range> range = m_frame->markedTextRange();
-    if (!range) {
-        Selection selection = selectionForEvent(m_frame, triggeringEvent);
-        if (!selection.isContentEditable())
-            return false;
-        range = selection.toRange();
-    }
+    Selection selection = selectionForEvent(m_frame, triggeringEvent);
+    if (!selection.isContentEditable())
+        return false;
+    RefPtr<Range> range = selection.toRange();
 
-    if (!shouldInsertText(text, range.get(), EditorInsertActionTyped)) {
-        discardMarkedText();
+    if (!shouldInsertText(text, range.get(), EditorInsertActionTyped))
         return true;
-    }
-
-    setIgnoreMarkedTextSelectionChange(true);
-
-    // If we had marked text, replace that instead of the selection/caret.
-    selectMarkedText();
 
     // Get the selection to use for the event that triggered this insertText.
     // If the event handler changed the selection, we may want to use a different selection
     // that is contained in the event target.
-    Selection selection = selectionForEvent(m_frame, triggeringEvent);
+    selection = selectionForEvent(m_frame, triggeringEvent);
     if (selection.isContentEditable()) {
         if (Node* selectionStart = selection.start().node()) {
             RefPtr<Document> document = selectionStart->document();
@@ -1430,11 +1429,6 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
                     page->focusController()->focusedOrMainFrame()->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
         }
     }
-
-    setIgnoreMarkedTextSelectionChange(false);
-
-    // Inserting unmarks any marked text.
-    unmarkText();
 
     return true;
 }
@@ -1664,54 +1658,103 @@ void Editor::setBaseWritingDirection(String direction)
     applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
 }
 
-void Editor::selectMarkedText()
+void Editor::selectComposition()
 {
-    Range* range = m_frame->markedTextRange();
+    RefPtr<Range> range = compositionRange();
     if (!range)
         return;
     ExceptionCode ec = 0;
-    m_frame->selectionController()->setSelectedRange(m_frame->markedTextRange(), DOWNSTREAM, false, ec);
+    m_frame->selectionController()->setSelectedRange(range.get(), DOWNSTREAM, false, ec);
 }
 
-void Editor::discardMarkedText()
+void Editor::confirmComposition()
 {
-    if (!m_frame->markedTextRange())
+    if (!m_compositionNode)
         return;
+    confirmComposition(m_compositionNode->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart), false);
+}
 
-    setIgnoreMarkedTextSelectionChange(true);
+void Editor::confirmCompositionWithoutDisturbingSelection()
+{
+    if (!m_compositionNode)
+        return;
+    confirmComposition(m_compositionNode->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart), true);
+}
 
-    selectMarkedText();
-    unmarkText();
-#if PLATFORM(MAC)
-    if (EditorClient* c = client())
-        c->markedTextAbandoned(m_frame);
-#endif
+void Editor::confirmComposition(const String& text)
+{
+    confirmComposition(text, false);
+}
+
+void Editor::confirmComposition(const String& text, bool preserveSelection)
+{
+    setIgnoreCompositionSelectionChange(true);
+
+    Selection oldSelection = m_frame->selectionController()->selection();
+
+    selectComposition();
+
+    if (m_frame->selectionController()->isNone()) {
+        setIgnoreCompositionSelectionChange(false);
+        return;
+    }
+
     deleteSelectionWithSmartDelete(false);
 
-    setIgnoreMarkedTextSelectionChange(false);
+    m_compositionNode = 0;
+    m_customCompositionUnderlines.clear();
+
+    insertText(text, 0);
+
+    if (preserveSelection)
+        m_frame->selectionController()->setSelection(oldSelection, false, false);
+
+    setIgnoreCompositionSelectionChange(false);
 }
 
-void Editor::unmarkText()
+void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, unsigned selectionStart, unsigned selectionEnd)
 {
-    Vector<MarkedTextUnderline> underlines;
-    m_frame->setMarkedTextRange(0, underlines);
-}
+    setIgnoreCompositionSelectionChange(true);
 
-void Editor::replaceMarkedText(const String& text)
-{
-    if (m_frame->selectionController()->isNone())
+    selectComposition();
+
+    if (m_frame->selectionController()->isNone()) {
+        setIgnoreCompositionSelectionChange(false);
         return;
-    
-    int exception = 0;
-    
-    Range *markedTextRange = m_frame->markedTextRange();
-    if (markedTextRange && !markedTextRange->collapsed(exception))
-        TypingCommand::deleteKeyPressed(m_frame->document(), false);
-    
-    if (!text.isEmpty())
-        TypingCommand::insertText(m_frame->document(), text, true);
-    
-    revealSelectionAfterEditingOperation();
+    }
+
+    deleteSelectionWithSmartDelete(false);
+
+    if (!text.isEmpty()) {
+        TypingCommand::insertText(m_frame->document(), text, true, true);
+
+        Node* baseNode = m_frame->selectionController()->baseNode();
+        unsigned baseOffset = m_frame->selectionController()->base().offset();
+        Node* extentNode = m_frame->selectionController()->extentNode();
+        unsigned extentOffset = m_frame->selectionController()->extent().offset();
+
+        if (baseNode && baseNode == extentNode && baseNode->isTextNode() && baseOffset + text.length() == extentOffset) {
+            m_compositionNode = static_cast<Text*>(baseNode);
+            m_compositionStart = baseOffset;
+            m_compositionEnd = extentOffset;
+            m_customCompositionUnderlines = underlines;
+            size_t numUnderlines = m_customCompositionUnderlines.size();
+            for (size_t i = 0; i < numUnderlines; ++i) {
+                m_customCompositionUnderlines[i].startOffset += baseOffset;
+                m_customCompositionUnderlines[i].endOffset += baseOffset;
+            }
+            if (baseNode->renderer())
+                baseNode->renderer()->repaint();
+
+            unsigned start = min(baseOffset + selectionStart, extentOffset);
+            unsigned end = min(max(start, baseOffset + selectionEnd), extentOffset);
+            RefPtr<Range> selectedRange = new Range(baseNode->document(), baseNode, start, baseNode, end);                
+            ExceptionCode ec = 0;
+            m_frame->selectionController()->setSelectedRange(selectedRange.get(), DOWNSTREAM, false, ec);
+        }
+    }
+
+    setIgnoreCompositionSelectionChange(false);
 }
 
 void Editor::ignoreSpelling()
@@ -2269,8 +2312,7 @@ void Editor::markBadGrammar(const Selection& selection)
     markMisspellingsOrBadGrammar(this, selection, false);
 #endif
 }
-    
-    
+
 PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
 {
     Document* document = m_frame->documentAtPoint(windowPoint);
@@ -2289,20 +2331,53 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
 
 void Editor::revealSelectionAfterEditingOperation()
 {
-    if (m_ignoreMarkedTextSelectionChange)
+    if (m_ignoreCompositionSelectionChange)
         return;
 
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
-void Editor::setIgnoreMarkedTextSelectionChange(bool ignore)
+void Editor::setIgnoreCompositionSelectionChange(bool ignore)
 {
-    if (m_ignoreMarkedTextSelectionChange == ignore)
+    if (m_ignoreCompositionSelectionChange == ignore)
         return;
 
-    m_ignoreMarkedTextSelectionChange = ignore;
+    m_ignoreCompositionSelectionChange = ignore;
     if (!ignore)
         revealSelectionAfterEditingOperation();
+}
+
+PassRefPtr<Range> Editor::compositionRange() const
+{
+    if (!m_compositionNode)
+        return 0;
+    unsigned length = m_compositionNode->length();
+    unsigned start = min(m_compositionStart, length);
+    unsigned end = min(max(start, m_compositionEnd), length);
+    if (start >= end)
+        return 0;
+    return new Range(m_compositionNode->document(), m_compositionNode.get(), start, m_compositionNode.get(), end);
+}
+
+bool Editor::getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const
+{
+    if (!m_compositionNode)
+        return false;
+    Position start = m_frame->selectionController()->start();
+    if (start.node() != m_compositionNode)
+        return false;
+    Position end = m_frame->selectionController()->end();
+    if (end.node() != m_compositionNode)
+        return false;
+
+    if (static_cast<unsigned>(start.offset()) < m_compositionStart)
+        return false;
+    if (static_cast<unsigned>(end.offset()) > m_compositionEnd)
+        return false;
+
+    selectionStart = start.offset() - m_compositionStart;
+    selectionEnd = start.offset() - m_compositionEnd;
+    return true;
 }
 
 } // namespace WebCore
