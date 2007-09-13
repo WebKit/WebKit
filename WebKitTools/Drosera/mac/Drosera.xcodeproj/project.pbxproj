@@ -69,6 +69,7 @@
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 		95B2A4500C95EECD00850C41 /* DebuggerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95B2A44F0C95EECD00850C41 /* DebuggerClient.mm */; };
+		95B955250C975C7500AAB83B /* DebuggerDocumentPlatform.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95B955240C975C7500AAB83B /* DebuggerDocumentPlatform.mm */; };
 		D23E47C60C4460C600B7CD07 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23E47C50C4460C600B7CD07 /* JavaScriptCore.framework */; };
 		D2D794FD0C4BED83004784F7 /* DebuggerDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D794ED0C4BED83004784F7 /* DebuggerDocument.cpp */; };
 /* End PBXBuildFile section */
@@ -155,6 +156,7 @@
 		8D15AC370486D014006FF6A4 /* Drosera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drosera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95B2A44E0C95EECD00850C41 /* DebuggerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerClient.h; sourceTree = "<group>"; };
 		95B2A44F0C95EECD00850C41 /* DebuggerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DebuggerClient.mm; sourceTree = "<group>"; };
+		95B955240C975C7500AAB83B /* DebuggerDocumentPlatform.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DebuggerDocumentPlatform.mm; sourceTree = "<group>"; };
 		95C906AF0C8E439200F9BE0F /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = ../ForwardingHeaders/wtf/Platform.h; sourceTree = SOURCE_ROOT; };
 		D23E47C50C4460C600B7CD07 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = /System/Library/Frameworks/JavaScriptCore.framework; sourceTree = "<absolute>"; };
 		D2D794EC0C4BED83004784F7 /* config.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = config.h; path = ../config.h; sourceTree = SOURCE_ROOT; };
@@ -298,6 +300,7 @@
 				95B2A44E0C95EECD00850C41 /* DebuggerClient.h */,
 				D2D794ED0C4BED83004784F7 /* DebuggerDocument.cpp */,
 				D2D794EE0C4BED83004784F7 /* DebuggerDocument.h */,
+				95B955240C975C7500AAB83B /* DebuggerDocumentPlatform.mm */,
 				1C27AC230A413D660016ECF4 /* debugger.js */,
 				1C27AC1F0A413D2D0016ECF4 /* debugger.html */,
 				1C4FF7430A44F5260000D05D /* debugger.css */,
@@ -492,6 +495,7 @@
 				1C74F1850A47DEE600FEC632 /* DebuggerApplication.mm in Sources */,
 				D2D794FD0C4BED83004784F7 /* DebuggerDocument.cpp in Sources */,
 				95B2A4500C95EECD00850C41 /* DebuggerClient.mm in Sources */,
+				95B955250C975C7500AAB83B /* DebuggerDocumentPlatform.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -62,49 +62,37 @@ public:
     static JSValueRef valueForScopeVariableNamedCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
     static JSValueRef logCallback(JSContextRef context, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef /*arguments*/[], JSValueRef* /*exception*/);
 
-    // FIXME I want to restructure this somehow; maybe break out the callbacks into another class.
-    JSValueRef breakpointEditorHTML(JSContextRef);
-    JSValueRef isPaused(JSContextRef);
-    JSValueRef pause(JSContextRef);
-    JSValueRef resume(JSContextRef);
-    JSValueRef stepInto(JSContextRef);
-    JSValueRef evaluateScript(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    JSValueRef currentFunctionStack(JSContextRef, JSValueRef* exception);
-    JSValueRef localScopeVariableNamesForCallFrame(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    JSValueRef valueForScopeVariableNamed(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef log(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-
     // Cross-platform functions
-    void platformPause(JSContextRef);
-    void platformResume(JSContextRef);
-    void platformStepInto(JSContextRef);
+    void platformPause();
+    void platformResume();
+    void platformStepInto();
     JSValueRef platformEvaluateScript(JSContextRef, JSStringRef script, int callFrame);
     void getPlatformCurrentFunctionStack(JSContextRef, Vector<JSValueRef>& currentStack);
     void getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef, int callFrame, Vector<JSValueRef>& variableNames);
     JSValueRef platformValueForScopeVariableNamed(JSContextRef, JSStringRef key, int callFrame);
-    static void platformLog(JSContextRef, JSStringRef msg);
+    static void platformLog(JSStringRef msg);
 
     // These are the calls into the JS.
-    static void toolbarPause(JSContextRef);
-    static void toolbarResume(JSContextRef);
-    static void toolbarStepInto(JSContextRef);
-    static void toolbarStepOver(JSContextRef);
-    static void toolbarStepOut(JSContextRef);
-    static void toolbarShowConsole(JSContextRef);
-    static void toolbarCloseCurrentFile(JSContextRef);
     static void updateFileSource(JSContextRef, JSStringRef documentSource, JSStringRef url);
     static void didParseScript(JSContextRef, JSStringRef source, JSStringRef documentSource, JSStringRef url, JSValueRef sourceId, JSValueRef baseLine);
-    static void willExecuteStatement(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception);
-    static void didEnterCallFrame(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception);
-    static void willLeaveCallFrame(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception);
-    static void exceptionWasRaised(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception);
+    static void willExecuteStatement(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception = 0);
+    static void didEnterCallFrame(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception = 0);
+    static void willLeaveCallFrame(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception = 0);
+    static void exceptionWasRaised(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception = 0);
 
-    void windowScriptObjectAvailable(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
+    void windowScriptObjectAvailable(JSContextRef, JSObjectRef windowObject, JSValueRef* exception = 0);
     static JSValueRef toJSArray(JSContextRef, Vector<JSValueRef>&, JSValueRef* exception);
 
+    // Converting string types
+    static NSString* NSStringCreateWithJSStringRef(JSStringRef);
+    static JSValueRef JSValueRefCreateWithNSString(JSContextRef, NSString*);
+
+    static JSValueRef callGlobalFunction(JSContextRef, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
+
+    bool getPaused() const { return m_paused; }
+
 private:
-    static JSValueRef callGlobalFunction(JSContextRef, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception);   // Implementation for calls into JS
-    static JSValueRef callFunctionOnObject(JSContextRef, JSObjectRef object, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception);   // Implementation for calls into JS
+    static JSValueRef callFunctionOnObject(JSContextRef, JSObjectRef object, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
     static JSClassRef getDroseraJSClass();
     static JSStaticFunction* staticFunctions();
 

@@ -1,3 +1,43 @@
+2007-09-12  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Simplified code paths and extracted out functions to increase encapsulation.
+
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::breakpointEditorHTMLCallback):
+        (DebuggerDocument::isPausedCallback):
+        (DebuggerDocument::pauseCallback):
+        (DebuggerDocument::resumeCallback):
+        (DebuggerDocument::stepIntoCallback):
+        (DebuggerDocument::evaluateScriptCallback):
+        (DebuggerDocument::currentFunctionStackCallback):
+        (DebuggerDocument::localScopeVariableNamesForCallFrameCallback):
+        (DebuggerDocument::valueForScopeVariableNamedCallback):
+        (DebuggerDocument::logCallback):
+        * Drosera/DebuggerDocument.h:
+        (DebuggerDocument::getPaused):
+        * Drosera/mac/DebuggerClient.mm:
+        (-[DebuggerClient pause:]):
+        (-[DebuggerClient resume:]):
+        (-[DebuggerClient stepInto:]):
+        (-[DebuggerClient stepOver:]):
+        (-[DebuggerClient stepOut:]):
+        (-[DebuggerClient showConsole:]):
+        (-[DebuggerClient closeCurrentFile:]):
+        (-[DebuggerClient validateUserInterfaceItem:]):
+        * Drosera/mac/DebuggerDocumentPlatform.mm: Added.
+        (+[NSString stringOrNilFromWebScriptResult:]):
+        (DebuggerDocument::platformPause):
+        (DebuggerDocument::platformResume):
+        (DebuggerDocument::platformStepInto):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        (DebuggerDocument::platformLog):
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+
 2007-09-12  Sam Weinig  <sam@webkit.org>
 
         Build fix for Buildbot.
