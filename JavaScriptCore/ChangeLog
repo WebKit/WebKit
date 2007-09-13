@@ -1,3 +1,14 @@
+2007-09-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        <rdar://problem/5478717> JSStringCreateWithCFString leaks when passed a zero length CFStringRef
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString): Special case the zero length string and remove the
+        UTF16 optimized path since it will always leak due to the fact that we won't be 
+        able to free the backing store that the CFStringRef provides.
+
 2007-09-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.

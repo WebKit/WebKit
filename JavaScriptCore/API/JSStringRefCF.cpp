@@ -39,16 +39,14 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
 {
     JSLock lock;
     CFIndex length = CFStringGetLength(string);
-    
-    // Optimized path for when CFString backing store is a UTF16 buffer
-    if (const UniChar* buffer = CFStringGetCharactersPtr(string)) {
-        UString::Rep* rep = UString(reinterpret_cast<const UChar*>(buffer), length).rep()->ref();
-        return toRef(rep);
+    UString::Rep* rep;
+    if (!length)
+        rep = UString("").rep()->ref();
+    else {
+        UniChar* buffer = static_cast<UniChar*>(fastMalloc(sizeof(UniChar) * length));
+        CFStringGetCharacters(string, CFRangeMake(0, length), buffer);
+        rep = UString(reinterpret_cast<UChar*>(buffer), length, false).rep()->ref();
     }
-
-    UniChar* buffer = static_cast<UniChar*>(fastMalloc(sizeof(UniChar) * length));
-    CFStringGetCharacters(string, CFRangeMake(0, length), buffer);
-    UString::Rep* rep = UString(reinterpret_cast<UChar*>(buffer), length, false).rep()->ref();
     return toRef(rep);
 }
 
