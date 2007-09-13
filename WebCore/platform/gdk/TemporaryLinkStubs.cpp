@@ -56,7 +56,6 @@
 #include "IntPoint.h"
 #include "KURL.h"
 #include "Language.h"
-#include "LocalizedStrings.h"
 #include "MainResourceLoader.h"
 #include "Node.h"
 #include "NotImplemented.h"
@@ -108,54 +107,7 @@ bool AXObjectCache::gAccessibilityEnabled = false;
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
 
-// LocalizedStrings
-String WebCore::submitButtonDefaultLabel() { return "Submit"; }
-String WebCore::inputElementAltText() { return String(); }
-String WebCore::resetButtonDefaultLabel() { return "Reset"; }
 String WebCore::defaultLanguage() { return "en"; }
-String WebCore::searchableIndexIntroduction() { return "Searchable Index"; }
-String WebCore::fileButtonChooseFileLabel() { return "Choose File"; }
-String WebCore::fileButtonNoFileSelectedLabel() { return "No file selected"; }
-String WebCore::contextMenuItemTagOpenLinkInNewWindow() { return String(); }
-String WebCore::contextMenuItemTagDownloadLinkToDisk() { return String(); }
-String WebCore::contextMenuItemTagCopyLinkToClipboard() { return String(); }
-String WebCore::contextMenuItemTagOpenImageInNewWindow() { return String(); }
-String WebCore::contextMenuItemTagDownloadImageToDisk() { return String(); }
-String WebCore::contextMenuItemTagCopyImageToClipboard() { return String(); }
-String WebCore::contextMenuItemTagOpenFrameInNewWindow() { return String(); }
-String WebCore::contextMenuItemTagCopy() { return String(); }
-String WebCore::contextMenuItemTagGoBack() { return String(); }
-String WebCore::contextMenuItemTagGoForward() { return String(); }
-String WebCore::contextMenuItemTagStop() { return String(); }
-String WebCore::contextMenuItemTagReload() { return String(); }
-String WebCore::contextMenuItemTagCut() { return String(); }
-String WebCore::contextMenuItemTagPaste() { return String(); }
-String WebCore::contextMenuItemTagNoGuessesFound() { return String(); }
-String WebCore::contextMenuItemTagIgnoreSpelling() { return String(); }
-String WebCore::contextMenuItemTagLearnSpelling() { return String(); }
-String WebCore::contextMenuItemTagSearchWeb() { return String(); }
-String WebCore::contextMenuItemTagLookUpInDictionary() { return String(); }
-String WebCore::contextMenuItemTagOpenLink() { return String(); }
-String WebCore::contextMenuItemTagIgnoreGrammar() { return String(); }
-String WebCore::contextMenuItemTagSpellingMenu() { return String(); }
-String WebCore::contextMenuItemTagShowSpellingPanel(bool show) { return String(); }
-String WebCore::contextMenuItemTagCheckSpelling() { return String(); }
-String WebCore::contextMenuItemTagCheckSpellingWhileTyping() { return String(); }
-String WebCore::contextMenuItemTagCheckGrammarWithSpelling() { return String(); }
-String WebCore::contextMenuItemTagFontMenu() { return String(); }
-String WebCore::contextMenuItemTagBold() { return String(); }
-String WebCore::contextMenuItemTagItalic() { return String(); }
-String WebCore::contextMenuItemTagUnderline() { return String(); }
-String WebCore::contextMenuItemTagOutline() { return String(); }
-String WebCore::contextMenuItemTagWritingDirectionMenu() { return String(); }
-String WebCore::contextMenuItemTagDefaultDirection() { return String(); }
-String WebCore::contextMenuItemTagLeftToRight() { return String(); }
-String WebCore::contextMenuItemTagRightToLeft() { return String(); }
-String WebCore::contextMenuItemTagInspectElement() { return String(); }
-String WebCore::searchMenuNoRecentSearchesText() { return String("No recent searches"); }
-String WebCore::searchMenuRecentSearchesText() { return String("Recent searches"); }
-String WebCore::searchMenuClearRecentSearchesText() { return String("Clear recent searches"); }
-String WebCore::unknownFileSizeText() { return "Unknown"; }
 
 PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }

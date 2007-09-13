@@ -880,6 +880,7 @@ gdk-port {
         platform/gdk/FontPlatformDataGdk.cpp \
         platform/gdk/GlyphPageTreeNodeGdk.cpp \
         platform/gdk/KeyEventGdk.cpp \
+        platform/gdk/LocalizedStringsGdk.cpp \
         platform/gdk/LoggingGdk.cpp \
         platform/gdk/MIMETypeRegistryGdk.cpp \
         platform/gdk/MouseEventGdk.cpp \

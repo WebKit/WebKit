@@ -1,3 +1,60 @@
+2007-09-12  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        Move the "string" functions from the TemporaryLinkStubs.cpp
+        to LocalizedStringsGdk.cpp and implement them using the text
+        from the win port and glib-i18n (gettext).
+
+        * platform/gdk/LocalizedStringsGdk.cpp: Added.
+        (WebCore::submitButtonDefaultLabel):
+        (WebCore::inputElementAltText):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::searchableIndexIntroduction):
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        (WebCore::contextMenuItemTagOpenLinkInNewWindow):
+        (WebCore::contextMenuItemTagDownloadLinkToDisk):
+        (WebCore::contextMenuItemTagCopyLinkToClipboard):
+        (WebCore::contextMenuItemTagOpenImageInNewWindow):
+        (WebCore::contextMenuItemTagDownloadImageToDisk):
+        (WebCore::contextMenuItemTagCopyImageToClipboard):
+        (WebCore::contextMenuItemTagOpenFrameInNewWindow):
+        (WebCore::contextMenuItemTagCopy):
+        (WebCore::contextMenuItemTagGoBack):
+        (WebCore::contextMenuItemTagGoForward):
+        (WebCore::contextMenuItemTagStop):
+        (WebCore::contextMenuItemTagReload):
+        (WebCore::contextMenuItemTagCut):
+        (WebCore::contextMenuItemTagPaste):
+        (WebCore::contextMenuItemTagNoGuessesFound):
+        (WebCore::contextMenuItemTagIgnoreSpelling):
+        (WebCore::contextMenuItemTagLearnSpelling):
+        (WebCore::contextMenuItemTagSearchWeb):
+        (WebCore::contextMenuItemTagLookUpInDictionary):
+        (WebCore::contextMenuItemTagOpenLink):
+        (WebCore::contextMenuItemTagIgnoreGrammar):
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        (WebCore::contextMenuItemTagCheckSpelling):
+        (WebCore::contextMenuItemTagCheckSpellingWhileTyping):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+        (WebCore::contextMenuItemTagFontMenu):
+        (WebCore::contextMenuItemTagBold):
+        (WebCore::contextMenuItemTagItalic):
+        (WebCore::contextMenuItemTagUnderline):
+        (WebCore::contextMenuItemTagOutline):
+        (WebCore::contextMenuItemTagWritingDirectionMenu):
+        (WebCore::contextMenuItemTagDefaultDirection):
+        (WebCore::contextMenuItemTagLeftToRight):
+        (WebCore::contextMenuItemTagRightToLeft):
+        (WebCore::contextMenuItemTagInspectElement):
+        (WebCore::searchMenuNoRecentSearchesText):
+        (WebCore::searchMenuRecentSearchesText):
+        (WebCore::searchMenuClearRecentSearchesText):
+        (WebCore::unknownFileSizeText):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
 2007-09-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.
