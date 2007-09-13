@@ -27,6 +27,7 @@
 #define WTF_MathExtras_h
 
 #include <math.h>
+#include <time.h>
 
 #if COMPILER(MSVC)
 
@@ -124,7 +125,7 @@ inline double wtf_random()
 // Initializes the random number generator.
 inline void wtf_random_init()
 {
-    srand(time(0));
+    srand(static_cast<unsigned>(time(0)));
 }
 
 // Returns a pseudo-random number in the range [0, 1).
