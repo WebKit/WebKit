@@ -9,20 +9,19 @@ Flash clicks/interactivity not working properly.</p>
 
     if (!window.layoutTestController) {
         document.write("This test does not work in manual mode.");
-        return;
+    } else {
+        layoutTestController.dumpAsText();
+        
+        eventSender.mouseMoveTo(0,0);
+        eventSender.mouseMoveTo(20,20);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.mouseMoveTo(30,30);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(40,30);
+        eventSender.mouseUp();
+        eventSender.mouseMoveTo(0,0);
     }
-
-    layoutTestController.dumpAsText();
-    
-    eventSender.mouseMoveTo(0,0);
-    eventSender.mouseMoveTo(20,20);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseMoveTo(30,30);
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(40,30);
-    eventSender.mouseUp();
-    eventSender.mouseMoveTo(0,0);
 
     plg.eventLoggingEnabled = false; // stop logging so our output doesn't bleed into the next test
 
