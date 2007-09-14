@@ -1,3 +1,20 @@
+2007-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz and Kevin Decker.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15197
+          <rdar://problem/5478271> REGRESSION: Some Yahoo text entry fields
+          render as lines rather than text entry boxes
+
+        Test: fast/forms/textarea-rows-cols.html
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement): Use constants for the default number
+        of rows and columns.
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute): If rows/cols attribute has a value
+        that's missing, non-numeric, or zero, then use the default value. Also check for the
+        case where the effective value of the attribute isn't changing.
+
 2007-09-14  Sven Herzberg  <sven@imendio.com>
 
         Reviewed by Adam Roben.

@@ -1,3 +1,16 @@
+2007-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz and Kevin Decker.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15197
+          <rdar://problem/5478271> REGRESSION: Some Yahoo text entry fields
+          render as lines rather than text entry boxes
+
+        * fast/forms/textarea-rows-cols.html: Added.
+        * platform/mac/fast/forms/textarea-rows-cols-expected.checksum: Added.
+        * platform/mac/fast/forms/textarea-rows-cols-expected.png: Added.
+        * platform/mac/fast/forms/textarea-rows-cols-expected.txt: Added.
+
 2007-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

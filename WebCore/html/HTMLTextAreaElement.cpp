@@ -44,10 +44,13 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLTextAreaElement::HTMLTextAreaElement(Document *doc, HTMLFormElement *f)
+static const int defaultRows = 2;
+static const int defaultCols = 20;
+
+HTMLTextAreaElement::HTMLTextAreaElement(Document* doc, HTMLFormElement* f)
     : HTMLFormControlElementWithState(textareaTag, doc, f)
-    , m_rows(2)
-    , m_cols(20)
+    , m_rows(defaultRows)
+    , m_cols(defaultCols)
     , m_wrap(ta_Virtual)
     , cachedSelStart(-1)
     , cachedSelEnd(-1)
@@ -124,13 +127,23 @@ void HTMLTextAreaElement::childrenChanged()
 void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == rowsAttr) {
-        m_rows = !attr->isNull() ? attr->value().toInt() : 3;
-        if (renderer())
-            renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+        int rows = attr->value().toInt();
+        if (rows <= 0)
+            rows = defaultRows;
+        if (m_rows != rows) {
+            m_rows = rows;
+            if (renderer())
+                renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+        }
     } else if (attr->name() == colsAttr) {
-        m_cols = !attr->isNull() ? attr->value().toInt() : 60;
-        if (renderer())
-            renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+        int cols = attr->value().toInt();
+        if (cols <= 0)
+            cols = defaultCols;
+        if (m_cols != cols) {
+            m_cols = cols;
+            if (renderer())
+                renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+        }
     } else if (attr->name() == wrapAttr) {
         // virtual / physical is Netscape extension of HTML 3.0, now deprecated
         // soft/ hard / off is recommendation for HTML 4 extension by IE and NS 4
