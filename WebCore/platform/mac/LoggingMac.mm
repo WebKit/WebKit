@@ -63,6 +63,7 @@ void InitializeLoggingChannelsIfNecessary()
     initializeWithUserDefault(LogPageCache);
     initializeWithUserDefault(LogNetwork);
     initializeWithUserDefault(LogFTP);
+    initializeWithUserDefault(LogThreading);
 }
 
 }

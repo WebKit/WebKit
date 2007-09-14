@@ -1,5 +1,14 @@
 2007-09-14  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Mark Rowe
+
+        Add the logging channel I just created to the initialize list on Mac
+
+        * platform/mac/LoggingMac.mm:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
+2007-09-14  Brady Eidson  <beidson@apple.com>
+
         Build fix
 
         That method can't go in the header, apparently
