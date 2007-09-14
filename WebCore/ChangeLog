@@ -1,3 +1,13 @@
+2007-09-14  Sven Herzberg  <sven@imendio.com>
+
+        Reviewed by Adam Roben.
+
+        Don't use fontconfig types if necessary, fixes:
+        http://bugs.webkit.org/show_bug.cgi?id=15203
+
+        * platform/gdk/FontPlatformData.cpp: don't use an FcBool to store the
+        initialized state, use a plain c++ bool instead
+
 2007-09-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

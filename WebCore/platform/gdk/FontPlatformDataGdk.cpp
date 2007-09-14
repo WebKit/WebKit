@@ -115,10 +115,10 @@ freePattern:
 
 bool FontPlatformData::init()
 {
-    static FcBool FCInitialized;
-    if (FCInitialized)
+    static bool initialized;
+    if (initialized)
         return true;
-    FCInitialized = FcTrue;
+    initialized = true;
     if (!FcInit()) {
         fprintf(stderr, "Can't init font config library\n");
         return false;
