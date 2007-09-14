@@ -1,5 +1,10 @@
 2007-09-14  Brady Eidson  <beidson@apple.com>
 
+        Roll out my previous build fix and just make the stupid thing inline
+        (I knew there was something easier but oh boy, no coffee yet... weinig?)
+
+2007-09-14  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by Mark Rowe
 
         Add the logging channel I just created to the initialize list on Mac

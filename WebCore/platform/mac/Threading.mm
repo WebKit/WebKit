@@ -54,10 +54,6 @@ void (*_function)();
 
 namespace WebCore {
 
-void initializeThreading()
-{
-}
-
 void callOnMainThread(void (*functionToPerform)())
 {
     if (!functionToPerform)

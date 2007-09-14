@@ -71,8 +71,14 @@ private:
     pthread_cond_t m_condition;
 };
 
-void initializeThreading();
+inline void initializeThreading();
 void callOnMainThread(void (*)());
+
+#if !PLATFORM(WIN)
+void initializeThreading()
+{
+}
+#endif
 
 } // namespace WebCore
 
