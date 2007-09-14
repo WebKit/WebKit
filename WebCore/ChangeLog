@@ -1,5 +1,12 @@
 2007-09-14  Brady Eidson  <beidson@apple.com>
 
+        How about a build fix that works on *all* platforms?
+
+        * platform/Threading.h:
+        (WebCore::initializeThreading):
+
+2007-09-14  Brady Eidson  <beidson@apple.com>
+
         Roll out my previous build fix and just make the stupid thing inline
         (I knew there was something easier but oh boy, no coffee yet... weinig?)
 

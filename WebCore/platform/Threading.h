@@ -71,11 +71,12 @@ private:
     pthread_cond_t m_condition;
 };
 
-inline void initializeThreading();
 void callOnMainThread(void (*)());
 
-#if !PLATFORM(WIN)
-void initializeThreading()
+#if PLATFORM(WIN)
+void initializeThreading();
+#else
+inline void initializeThreading()
 {
 }
 #endif
