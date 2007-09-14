@@ -84,6 +84,8 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &ch
 
 float userIdleTime() { notImplemented(); return 0.0; }
 
+void initializeThreading() { notImplemented(); }
+
 }
 
 // vim: ts=4 sw=4 et

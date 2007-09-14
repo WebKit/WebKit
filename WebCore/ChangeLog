@@ -1,5 +1,19 @@
 2007-09-14  Brady Eidson  <beidson@apple.com>
 
+        Build fix
+
+        That method can't go in the header, apparently
+
+        * platform/Threading.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (WebCore::initializeThreading):
+        * platform/mac/Threading.mm:
+        (WebCore::initializeThreading):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::initializeThreading):
+
+2007-09-14  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         -Add callOnMainThread() implementation to Windows
