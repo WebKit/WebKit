@@ -440,10 +440,15 @@ void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
 
         record = new PageURLRecord(pageURL);
         m_pageURLToRecordMap.set(pageURL, record);
-        m_retainedPageURLs.add(pageURL);
     }
     
-    if (record->retain()) {
+    if (!record->retain()) {
+        if (pageURL.isNull())
+            pageURL = pageURLOriginal.copy();
+
+        // This page just had its retain count bumped from 0 to 1 - Record that fact
+        m_retainedPageURLs.add(pageURL);
+
         // If we read the iconURLs yet, we want to avoid any pageURL->iconURL lookups and the pageURLsPendingDeletion is moot, 
         // so we bail here and skip those steps
         if (!m_iconURLImportComplete)
@@ -452,10 +457,7 @@ void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
         MutexLocker locker(m_pendingSyncLock);
         // If this pageURL waiting to be sync'ed, update the sync record
         // This saves us in the case where a page was ready to be deleted from the database but was just retained - so theres no need to delete it!
-        if (!m_privateBrowsingEnabled && m_pageURLsPendingSync.contains(pageURLOriginal)) {
-            if (pageURL.isNull())
-                pageURL = pageURLOriginal.copy();
-        
+        if (!m_privateBrowsingEnabled && m_pageURLsPendingSync.contains(pageURL)) {
             LOG(IconDatabase, "Bringing %s back from the brink", pageURL.utf8().data());
             m_pageURLsPendingSync.set(pageURL, record->snapshot());
         }

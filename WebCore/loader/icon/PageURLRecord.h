@@ -62,8 +62,10 @@ public:
 
     PageURLSnapshot snapshot(bool forDeletion = false) const;
 
-    inline bool retain() { return ++m_retainCount; }
+    // Returns false if the page wasn't retained beforehand, true if the retain count was already 1 or higher
+    inline bool retain() { return m_retainCount++; }
 
+    // Returns true if the page is still retained after the call.  False if the retain count just dropped to 0
     inline bool release()
     {
         ASSERT(m_retainCount > 0);

@@ -1,5 +1,29 @@
 2007-09-13  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Maciej
+
+        <rdar://problem/5480437> - No site icon at launch and related error messages
+
+        The error message was actually indicative of a larger bug that might've resulted in icons getting
+        improperly pruned because they were never added to the set of retained page URLs.
+
+        To solve the no-icon-at-launch problem, we send the "didReceiveIcon:" delegate call for every page 
+        load that has an icon, whether the icon comes in from network, from disk, or was already in ram
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::startIconLoader): Always send the didReceiveIcon delegate call when an icon's 
+          image data is known
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::retainIconForPageURL): Much more accurately track the set of retained pages by
+          adding them when their retain count moves from 0 to 1
+
+        * loader/icon/PageURLRecord.h:
+        (WebCore::PageURLRecord::retain): Correctly distinguish the "retain count just went from 0 to 1" case
+          in the return value
+
+2007-09-13  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by Geoff and Maciej
 
         Fix MSVC build warning due to out of range data in a char array
