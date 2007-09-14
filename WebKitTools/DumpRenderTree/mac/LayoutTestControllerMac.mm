@@ -44,93 +44,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
-
 #import <Foundation/Foundation.h>
-
-void LayoutTestController::dumpAsText()
-{
-    ::dumpAsText = true;
-}
-
-void LayoutTestController::dumpBackForwardList()
-{
-    ::dumpBackForwardList = true;
-}
-
-void LayoutTestController::dumpChildFramesAsText()
-{
-    ::dumpChildFramesAsText = true;
-}
-
-void LayoutTestController::dumpChildFrameScrollPositions()
-{
-    ::dumpChildFrameScrollPositions = true;
-}
-
-void LayoutTestController::dumpDOMAsWebArchive()
-{
-    ::dumpDOMAsWebArchive = true;
-}
-
-void LayoutTestController::dumpEditingCallbacks()
-{
-    ::shouldDumpEditingCallbacks = true;
-}
-
-void LayoutTestController::dumpFrameLoadCallbacks()
-{
-    ::shouldDumpFrameLoadCallbacks = true;
-}
-
-void LayoutTestController::dumpResourceLoadCallbacks()
-{
-    ::shouldDumpResourceLoadCallbacks = true;
-}
-
-void LayoutTestController::dumpSelectionRect()
-{
-    ::dumpSelectionRect = true;
-}
-
-void LayoutTestController::dumpSourceAsWebArchive()
-{
-    ::dumpSourceAsWebArchive = true;
-}
-
-void LayoutTestController::dumpTitleChanges()
-{
-    ::dumpTitleChanges = true;
-}
-
-void LayoutTestController::repaintSweepHorizontally()
-{
-    ::repaintSweepHorizontally = true;
-}
-
-void LayoutTestController::setCallCloseOnWebViews()
-{
-    ::closeWebViews = true;
-}
-
-void LayoutTestController::setCanOpenWindows()
-{
-    ::canOpenWindows = true;
-}
-
-void LayoutTestController::setCloseRemainingWindowsWhenComplete()
-{
-    ::closeRemainingWindowsWhenComplete = true;
-}
-
-void LayoutTestController::testRepaint()
-{
-    ::testRepaint = true;
-}
-
-void LayoutTestController::addFileToPasteboardOnDrag()
-{
-    ::addFileToPasteboardOnDrag = true;
-}
 
 void LayoutTestController::addDisallowedURL(JSStringRef url)
 {
@@ -191,9 +105,9 @@ void LayoutTestController::keepWebHistory()
 
 void LayoutTestController::notifyDone()
 {
-    if (waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
+    if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
         dump();
-    waitToDump = false;
+    m_waitToDump = false;
 }
 
 void LayoutTestController::queueBackNavigation(int howFarBack)
@@ -274,13 +188,15 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
     [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
 }
 
-void LayoutTestController::setWindowIsKey(bool flag)
+void LayoutTestController::setWindowIsKey(bool windowIsKey)
 {
-    windowIsKey = flag;
+    m_windowIsKey = windowIsKey;
     NSView *documentView = [[mainFrame frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)documentView _updateActiveState];
 }
+
+static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;
 
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
 {
@@ -290,10 +206,10 @@ static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
     dump();
 }
 
-void LayoutTestController::waitUntilDone()
+void LayoutTestController::setWaitToDump(bool waitUntilDone)
 {
-    waitToDump = true;
-    if (!waitToDumpWatchdog)
+    m_waitToDump = waitUntilDone;
+    if (m_waitToDump && !waitToDumpWatchdog)
         waitToDumpWatchdog = CFRunLoopTimerCreate(kCFAllocatorDefault, 0, waitToDumpWatchdogInterval, 0, 0, waitUntilDoneWatchdogFired, NULL);
 }
 

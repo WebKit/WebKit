@@ -32,14 +32,15 @@
 #import "EditingDelegate.h"
 #import "EventSendingController.h"
 #import "FrameLoadDelegate.h"
+#import "LayoutTestController.h"
 #import "NavigationController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
 #import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
 #import "UIDelegate.h"
-#import "WorkQueueItem.h"
 #import "WorkQueue.h"
+#import "WorkQueueItem.h"
 
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
 #import <CoreFoundation/CoreFoundation.h>
@@ -101,8 +102,8 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap);
 
 volatile bool done;
 
-LayoutTestController* layoutTestController = 0;
 NavigationController* navigationController = 0;
+LayoutTestController* layoutTestController = 0;
 
 WebFrame *mainFrame = 0;
 // This is the topmost frame that is loading, during a given load, or nil when no load is 
@@ -111,30 +112,10 @@ WebFrame *mainFrame = 0;
 // that child frame is the "topmost frame that is loading".
 WebFrame *topLoadingFrame = nil;     // !nil iff a load is in progress
 
-bool addFileToPasteboardOnDrag = NO;
-bool canOpenWindows;
-bool closeRemainingWindowsWhenComplete = YES;
-bool closeWebViews;
-bool dumpAsText;
-bool dumpBackForwardList;
-bool dumpChildFramesAsText;
-bool dumpChildFrameScrollPositions;
-bool dumpDOMAsWebArchive;
-bool dumpSelectionRect;
-bool dumpSourceAsWebArchive;
-bool dumpTitleChanges = NO;
-bool repaintSweepHorizontally;
-bool shouldDumpEditingCallbacks;
-bool shouldDumpFrameLoadCallbacks;
-bool shouldDumpResourceLoadCallbacks;
-bool testRepaint;
-bool waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
-bool windowIsKey = YES;
 
 CFMutableArrayRef allWindowsRef = 0;
 CFMutableSetRef disallowedURLs = 0;
 CFRunLoopTimerRef waitToDumpWatchdog = 0;
-CFTimeInterval waitToDumpWatchdogInterval = 10.0; // seconds
 
 // Delegates
 FrameLoadDelegate *frameLoadDelegate;
@@ -223,7 +204,7 @@ void* runJavaScriptThread(void* arg)
     }
 }
 
-static void startJavaScriptThreads(void)
+static void startJavaScriptThreads()
 {
     pthread_mutex_lock(&javaScriptThreadsMutex);
 
@@ -237,7 +218,7 @@ static void startJavaScriptThreads(void)
     pthread_mutex_unlock(&javaScriptThreadsMutex);
 }
 
-static void stopJavaScriptThreads(void)
+static void stopJavaScriptThreads()
 {
     pthread_mutex_lock(&javaScriptThreadsMutex);
 
@@ -291,7 +272,7 @@ static void crashHandler(int sig)
     exit(128 + sig);
 }
 
-static void activateAhemFont(void)
+static void activateAhemFont()
 {    
     unsigned long fontDataLength;
     char* fontData = getsectdata("__DATA", "Ahem", &fontDataLength);
@@ -309,7 +290,7 @@ static void activateAhemFont(void)
     }
 }
 
-static void setDefaultColorProfileToRGB(void)
+static void setDefaultColorProfileToRGB()
 {
     CMProfileRef genericProfile = (CMProfileRef)[[NSColorSpace genericRGBColorSpace] colorSyncProfile];
     CMProfileRef previousProfile;
@@ -363,7 +344,7 @@ static void* checkedRealloc(malloc_zone_t* zone, void* ptr, size_t size)
     return savedRealloc(zone, ptr, size);
 }
 
-static void makeLargeMallocFailSilently(void)
+static void makeLargeMallocFailSilently()
 {
     malloc_zone_t* zone = malloc_default_zone();
     savedMalloc = zone->malloc;
@@ -653,7 +634,7 @@ static void dumpFrameScrollPosition(WebFrame *f)
         printf("scrolled to %.f,%.f\n", scrollPosition.x, scrollPosition.y);
     }
 
-    if (dumpChildFrameScrollPositions) {
+    if (layoutTestController->dumpChildFrameScrollPositions()) {
         NSArray *kids = [f childFrames];
         if (kids)
             for (unsigned i = 0; i < [kids count]; i++)
@@ -682,7 +663,7 @@ static NSString *dumpFramesAsText(WebFrame *frame)
 
     [result appendFormat:@"%@\n", [documentElement innerText]];
 
-    if (dumpChildFramesAsText) {
+    if (layoutTestController->dumpChildFramesAsText()) {
         NSArray *kids = [frame childFrames];
         if (kids) {
             for (unsigned i = 0; i < [kids count]; i++)
@@ -847,7 +828,7 @@ static void dumpBackForwardListForWebView(WebView *view)
     printf("===============================================\n");
 }
 
-void dump(void)
+void dump()
 {
     if (waitToDumpWatchdog) {
         CFRunLoopTimerInvalidate(waitToDumpWatchdog);
@@ -857,14 +838,16 @@ void dump(void)
 
     if (dumpTree) {
         NSString *result = nil;
-
+        
+        bool dumpAsText = layoutTestController->dumpAsText();
         dumpAsText |= [[[[mainFrame dataSource] response] MIMEType] isEqualToString:@"text/plain"];
-        if (dumpAsText) {
+        layoutTestController->setDumpAsText(dumpAsText);
+        if (layoutTestController->dumpAsText()) {
             result = dumpFramesAsText(mainFrame);
-        } else if (dumpDOMAsWebArchive) {
+        } else if (layoutTestController->dumpDOMAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
             result = serializeWebArchiveToXML(webArchive);
-        } else if (dumpSourceAsWebArchive) {
+        } else if (layoutTestController->dumpSourceAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
             result = serializeWebArchiveToXML(webArchive);
         } else {
@@ -878,11 +861,11 @@ void dump(void)
 
         if (!result) {
             const char *errorMessage;
-            if (dumpAsText)
+            if (layoutTestController->dumpAsText())
                 errorMessage = "[documentElement innerText]";
-            else if (dumpDOMAsWebArchive)
+            else if (layoutTestController->dumpDOMAsWebArchive())
                 errorMessage = "[[mainFrame DOMDocument] webArchive]";
-            else if (dumpSourceAsWebArchive)
+            else if (layoutTestController->dumpSourceAsWebArchive())
                 errorMessage = "[[mainFrame dataSource] webArchive]";
             else
                 errorMessage = "[mainFrame renderTreeAsExternalRepresentation]";
@@ -890,11 +873,11 @@ void dump(void)
         } else {
             NSData *data = [result dataUsingEncoding:NSUTF8StringEncoding];
             fwrite([data bytes], 1, [data length], stdout);
-            if (!dumpAsText && !dumpDOMAsWebArchive && !dumpSourceAsWebArchive)
+            if (!layoutTestController->dumpAsText() && !layoutTestController->dumpDOMAsWebArchive() && !layoutTestController->dumpSourceAsWebArchive())
                 dumpFrameScrollPosition(mainFrame);
         }
 
-        if (dumpBackForwardList) {
+        if (layoutTestController->dumpBackForwardList()) {
             unsigned count = CFArrayGetCount(allWindowsRef);
             for (unsigned i = 0; i < count; i++) {
                 NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(allWindowsRef, i);
@@ -908,7 +891,7 @@ void dump(void)
     }
     
     if (dumpPixels) {
-        if (!dumpAsText && !dumpDOMAsWebArchive && !dumpSourceAsWebArchive) {
+        if (!layoutTestController->dumpAsText() && !layoutTestController->dumpDOMAsWebArchive() && !layoutTestController->dumpSourceAsWebArchive()) {
             // grab a bitmap from the view
             WebView* view = [mainFrame webView];
             NSSize webViewSize = [view frame].size;
@@ -927,9 +910,9 @@ void dump(void)
                 [view unlockFocus];
                 [imageRep draw];
                 [imageRep release];
-            } else if (!testRepaint)
+            } else if (!layoutTestController->testRepaint())
                 [view displayRectIgnoringOpacity:NSMakeRect(0, 0, webViewSize.width, webViewSize.height) inContext:nsContext];
-            else if (!repaintSweepHorizontally) {
+            else if (!layoutTestController->testRepaintSweepHorizontally()) {
                 NSRect line = NSMakeRect(0, 0, webViewSize.width, 1);
                 while (line.origin.y < webViewSize.height) {
                     [view displayRectIgnoringOpacity:line inContext:nsContext];
@@ -942,7 +925,7 @@ void dump(void)
                     column.origin.x++;
                 }
             }
-            if (dumpSelectionRect) {
+            if (layoutTestController->dumpSelectionRect()) {
                 NSView *documentView = [[mainFrame frameView] documentView];
                 if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
                     [[NSColor redColor] set];
@@ -1027,39 +1010,28 @@ static void runTest(const char *pathOrURL)
         return;
     }
 
-    
+    layoutTestController = new LayoutTestController(testRepaintDefault, repaintSweepHorizontallyDefault);
 
     [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:YES];
     [[mainFrame webView] makeTextStandardSize:nil];
     [[mainFrame webView] setTabKeyCyclesThroughElements: YES];
     [[mainFrame webView] setPolicyDelegate:nil];
-    [WebView _setUsesTestModeFocusRingColor:YES];
-    done = NO;
-    topLoadingFrame = nil;
-    waitToDump = NO;
-    dumpAsText = NO;
-    dumpDOMAsWebArchive = NO;
-    dumpSourceAsWebArchive = NO;
-    dumpChildFrameScrollPositions = NO;
-    dumpChildFramesAsText = NO;
-    shouldDumpEditingCallbacks = NO;
-    shouldDumpResourceLoadCallbacks = NO;
-    shouldDumpFrameLoadCallbacks = NO;
-    dumpSelectionRect = NO;
-    dumpTitleChanges = NO;
-    dumpBackForwardList = NO;
-    readFromWindow = NO;
-    canOpenWindows = NO;
-    closeWebViews = YES;
-    addFileToPasteboardOnDrag = NO;
     [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
-    testRepaint = testRepaintDefault;
-    repaintSweepHorizontally = repaintSweepHorizontallyDefault;
+    [WebView _setUsesTestModeFocusRingColor:YES];
+
+    topLoadingFrame = nil;
+
+    done = NO;
+    readFromWindow = NO;
+
+    if (disallowedURLs)
+        CFSetRemoveAllValues(disallowedURLs);
+    if (shouldLogFrameLoadDelegates(pathOrURL))
+        layoutTestController->setDumpFrameLoadCallbacks(true);
+
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
     lastMousePosition = NSMakePoint(0, 0);
-    if (disallowedURLs)
-        CFSetRemoveAllValues(disallowedURLs);
 
     if (currentTest != nil)
         CFRelease(currentTest);
@@ -1075,8 +1047,6 @@ static void runTest(const char *pathOrURL)
         [WebCoreStatistics startIgnoringWebCoreNodeLeaks];
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    if (shouldLogFrameLoadDelegates(pathOrURL))
-        shouldDumpFrameLoadCallbacks = YES;
     [mainFrame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
     CFRelease(URL);
     [pool release];
@@ -1088,8 +1058,10 @@ static void runTest(const char *pathOrURL)
     pool = [[NSAutoreleasePool alloc] init];
     [EventSendingController clearSavedEvents];
     [[mainFrame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
-    
-    if (closeRemainingWindowsWhenComplete) {
+
+    WorkQueue::shared()->clear();
+
+    if (layoutTestController->closeRemainingWindowsWhenComplete()) {
         NSArray* array = [(NSArray *)allWindowsRef copy];
         
         unsigned count = [array count];
@@ -1109,11 +1081,14 @@ static void runTest(const char *pathOrURL)
     }
     
     [pool release];
-    
+
     // We should only have our main window left when we're done
     ASSERT(CFArrayGetCount(allWindowsRef) == 1);
     ASSERT(CFArrayGetValueAtIndex(allWindowsRef, 0) == [[mainFrame webView] window]);
-    
+
+    delete layoutTestController;
+    layoutTestController = 0;
+
     if (_shouldIgnoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
 }
@@ -1343,7 +1318,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 - (BOOL)isKeyWindow
 {
-    return windowIsKey;
+    return layoutTestController ? layoutTestController->windowIsKey() : YES;
 }
 
 - (void)keyDown:(id)sender

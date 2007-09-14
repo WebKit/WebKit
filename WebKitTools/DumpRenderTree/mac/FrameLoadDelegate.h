@@ -28,12 +28,10 @@
 
 #import <Foundation/Foundation.h>
 
-class LayoutTestController;
 class GCController;
 
 @interface FrameLoadDelegate : NSObject
 {
-    LayoutTestController* layoutTestContoller;
     GCController* gcController;
 }
 @end

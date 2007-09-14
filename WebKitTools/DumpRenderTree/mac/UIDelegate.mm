@@ -30,10 +30,12 @@
 
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
+#import "LayoutTestController.h"
 #import "EventSendingController.h"
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebView.h>
+#import <JavascriptCore/Assertions.h>
 
 DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
@@ -66,7 +68,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
 {
      assert(!draggingInfo);
-     if (addFileToPasteboardOnDrag) {
+     if (layoutTestController->addFileToPasteboardOnDrag()) {
          [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
          [pboard setPropertyList:[NSArray arrayWithObject:@"DRTFakeFile"] forType:NSFilenamesPboardType];
      }
@@ -76,7 +78,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webViewFocus:(WebView *)webView
 {
-    windowIsKey = YES;
+    layoutTestController->setWindowIsKey(true);
     NSView *documentView = [[mainFrame frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView *)documentView _updateActiveState];
@@ -84,11 +86,11 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
 {
-    if (!canOpenWindows)
+    if (!layoutTestController->canOpenWindows())
         return nil;
     
     // Make sure that waitUntilDone has been called.
-    assert(waitToDump);
+    ASSERT(layoutTestController->waitToDump());
 
     WebView *webView = createWebView();
     
@@ -99,7 +101,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 {
     NSWindow* window = [sender window];
  
-    if (closeWebViews)
+    if (layoutTestController->callCloseOnWebViews())
         [sender close];
     
     [window close];

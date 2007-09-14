@@ -1,3 +1,188 @@
+2007-09-14  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Adam Roben.
+
+        - Move dump state data to LayoutTestContoller and add getter/setters to accommodate.
+        - Move mac specific DumpRenderTree files to DumpRenderTree/mac
+
+        * DumpRenderTree/AppleScriptController.h: Removed.
+        * DumpRenderTree/AppleScriptController.m: Removed.
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.mm:
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+        (activateAhemFont):
+        (setDefaultColorProfileToRGB):
+        (makeLargeMallocFailSilently):
+        (dumpFrameScrollPosition):
+        (dumpFramesAsText):
+        (dump):
+        (runTest):
+        (-[DumpRenderTreeWindow isKeyWindow]):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTreeDraggingInfo.h: Removed.
+        * DumpRenderTree/DumpRenderTreeDraggingInfo.m: Removed.
+        * DumpRenderTree/EditingDelegate.h: Removed.
+        * DumpRenderTree/EditingDelegate.m: Removed.
+        * DumpRenderTree/EventSendingController.h: Removed.
+        * DumpRenderTree/EventSendingController.m: Removed.
+        * DumpRenderTree/FrameLoadDelegate.h: Removed.
+        * DumpRenderTree/FrameLoadDelegate.mm: Removed.
+        * DumpRenderTree/GCController.mm: Removed.
+        * DumpRenderTree/ImageDiff.m: Removed.
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpAsTextCallback):
+        (dumpBackForwardListCallback):
+        (dumpChildFramesAsTextCallback):
+        (dumpChildFrameScrollPositionsCallback):
+        (dumpDOMAsWebArchiveCallback):
+        (dumpEditingCallbacksCallback):
+        (dumpFrameLoadCallbacksCallback):
+        (dumpResourceLoadCallbacksCallback):
+        (dumpSelectionRectCallback):
+        (dumpSourceAsWebArchiveCallback):
+        (dumpTitleChangesCallback):
+        (repaintSweepHorizontallyCallback):
+        (setCallCloseOnWebViewsCallback):
+        (setCanOpenWindowsCallback):
+        (setCloseRemainingWindowsWhenCompleteCallback):
+        (testRepaintCallback):
+        (addFileToPasteboardOnDragCallback):
+        (waitUntilDoneCallback):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpAsText):
+        (LayoutTestController::setDumpAsText):
+        (LayoutTestController::dumpBackForwardList):
+        (LayoutTestController::setDumpBackForwardList):
+        (LayoutTestController::dumpChildFrameScrollPositions):
+        (LayoutTestController::setDumpChildFrameScrollPositions):
+        (LayoutTestController::dumpChildFramesAsText):
+        (LayoutTestController::setDumpChildFramesAsText):
+        (LayoutTestController::dumpDOMAsWebArchive):
+        (LayoutTestController::setDumpDOMAsWebArchive):
+        (LayoutTestController::dumpSelectionRect):
+        (LayoutTestController::setDumpSelectionRect):
+        (LayoutTestController::dumpSourceAsWebArchive):
+        (LayoutTestController::setDumpSourceAsWebArchive):
+        (LayoutTestController::dumpTitleChanges):
+        (LayoutTestController::setDumpTitleChanges):
+        (LayoutTestController::dumpEditingCallbacks):
+        (LayoutTestController::setDumpEditingCallbacks):
+        (LayoutTestController::dumpResourceLoadCallbacks):
+        (LayoutTestController::setDumpResourceLoadCallbacks):
+        (LayoutTestController::dumpFrameLoadCallbacks):
+        (LayoutTestController::setDumpFrameLoadCallbacks):
+        (LayoutTestController::addFileToPasteboardOnDrag):
+        (LayoutTestController::setAddFileToPasteboardOnDrag):
+        (LayoutTestController::callCloseOnWebViews):
+        (LayoutTestController::setCallCloseOnWebViews):
+        (LayoutTestController::canOpenWindows):
+        (LayoutTestController::setCanOpenWindows):
+        (LayoutTestController::closeRemainingWindowsWhenComplete):
+        (LayoutTestController::setCloseRemainingWindowsWhenComplete):
+        (LayoutTestController::testRepaint):
+        (LayoutTestController::setTestRepaint):
+        (LayoutTestController::testRepaintSweepHorizontally):
+        (LayoutTestController::setTestRepaintSweepHorizontally):
+        (LayoutTestController::waitToDump):
+        (LayoutTestController::windowIsKey):
+        * DumpRenderTree/LayoutTestControllerMac.mm: Removed.
+        * DumpRenderTree/NavigationController.h: Removed.
+        * DumpRenderTree/NavigationController.m: Removed.
+        * DumpRenderTree/ObjCController.h: Removed.
+        * DumpRenderTree/ObjCController.m: Removed.
+        * DumpRenderTree/ObjCPlugin.h: Removed.
+        * DumpRenderTree/ObjCPlugin.m: Removed.
+        * DumpRenderTree/ObjCPluginFunction.h: Removed.
+        * DumpRenderTree/ObjCPluginFunction.m: Removed.
+        * DumpRenderTree/PolicyDelegate.h: Removed.
+        * DumpRenderTree/PolicyDelegate.m: Removed.
+        * DumpRenderTree/ResourceLoadDelegate.h: Removed.
+        * DumpRenderTree/ResourceLoadDelegate.m: Removed.
+        * DumpRenderTree/TextInputController.h: Removed.
+        * DumpRenderTree/TextInputController.m: Removed.
+        * DumpRenderTree/UIDelegate.h: Removed.
+        * DumpRenderTree/UIDelegate.mm: Removed.
+        * DumpRenderTree/WorkQueueItemMac.mm: Removed.
+        * DumpRenderTree/mac: Added.
+        * DumpRenderTree/mac/AppleScriptController.h: Copied from DumpRenderTree/AppleScriptController.h.
+        * DumpRenderTree/mac/AppleScriptController.m: Copied from DumpRenderTree/AppleScriptController.m.
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.h: Copied from DumpRenderTree/DumpRenderTreeDraggingInfo.h.
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm: Copied from DumpRenderTree/DumpRenderTreeDraggingInfo.m.
+        * DumpRenderTree/mac/EditingDelegate.h: Copied from DumpRenderTree/EditingDelegate.h.
+        * DumpRenderTree/mac/EditingDelegate.mm: Copied from DumpRenderTree/EditingDelegate.m.
+        (-[EditingDelegate webView:shouldBeginEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldEndEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldInsertNode:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldInsertText:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldDeleteDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[EditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeTypingStyle:toStyle:]):
+        (-[EditingDelegate webViewDidBeginEditing:]):
+        (-[EditingDelegate webViewDidChange:]):
+        (-[EditingDelegate webViewDidEndEditing:]):
+        (-[EditingDelegate webViewDidChangeTypingStyle:]):
+        (-[EditingDelegate webViewDidChangeSelection:]):
+        * DumpRenderTree/mac/EventSendingController.h: Copied from DumpRenderTree/EventSendingController.h.
+        * DumpRenderTree/mac/EventSendingController.mm: Copied from DumpRenderTree/EventSendingController.m.
+        * DumpRenderTree/mac/FrameLoadDelegate.h: Copied from DumpRenderTree/FrameLoadDelegate.h.
+        * DumpRenderTree/mac/FrameLoadDelegate.mm: Copied from DumpRenderTree/FrameLoadDelegate.mm.
+        (-[FrameLoadDelegate init]):
+        (-[FrameLoadDelegate dealloc]):
+        (-[FrameLoadDelegate processWork:]):
+        (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]):
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didCommitLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFailLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:windowScriptObjectAvailable:]):
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveTitle:forFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveServerRedirectForProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveIcon:forFrame:]):
+        (-[FrameLoadDelegate webView:didChangeLocationWithinPageForFrame:]):
+        (-[FrameLoadDelegate webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:]):
+        (-[FrameLoadDelegate webView:didCancelClientRedirectForFrame:]):
+        (-[FrameLoadDelegate webView:willCloseFrame:]):
+        (-[FrameLoadDelegate webView:didFinishDocumentLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didHandleOnloadEventsForFrame:]):
+        * DumpRenderTree/mac/GCControllerMac.mm: Copied from DumpRenderTree/GCController.mm.
+        * DumpRenderTree/mac/ImageDiff.m: Copied from DumpRenderTree/ImageDiff.m.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Copied from DumpRenderTree/LayoutTestControllerMac.mm.
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::setWindowIsKey):
+        (LayoutTestController::setWaitToDump):
+        * DumpRenderTree/mac/NavigationController.h: Copied from DumpRenderTree/NavigationController.h.
+        * DumpRenderTree/mac/NavigationController.m: Copied from DumpRenderTree/NavigationController.m.
+        * DumpRenderTree/mac/ObjCController.h: Copied from DumpRenderTree/ObjCController.h.
+        * DumpRenderTree/mac/ObjCController.m: Copied from DumpRenderTree/ObjCController.m.
+        * DumpRenderTree/mac/ObjCPlugin.h: Copied from DumpRenderTree/ObjCPlugin.h.
+        * DumpRenderTree/mac/ObjCPlugin.m: Copied from DumpRenderTree/ObjCPlugin.m.
+        * DumpRenderTree/mac/ObjCPluginFunction.h: Copied from DumpRenderTree/ObjCPluginFunction.h.
+        * DumpRenderTree/mac/ObjCPluginFunction.m: Copied from DumpRenderTree/ObjCPluginFunction.m.
+        * DumpRenderTree/mac/PolicyDelegate.h: Copied from DumpRenderTree/PolicyDelegate.h.
+        * DumpRenderTree/mac/PolicyDelegate.mm: Copied from DumpRenderTree/PolicyDelegate.m.
+        * DumpRenderTree/mac/ResourceLoadDelegate.h: Copied from DumpRenderTree/ResourceLoadDelegate.h.
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm: Copied from DumpRenderTree/ResourceLoadDelegate.m.
+        (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didReceiveResponse:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didFinishLoadingFromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didFailLoadingWithError:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:willCacheResponse:fromDataSource:]):
+        * DumpRenderTree/mac/TextInputController.h: Copied from DumpRenderTree/TextInputController.h.
+        * DumpRenderTree/mac/TextInputController.m: Copied from DumpRenderTree/TextInputController.m.
+        * DumpRenderTree/mac/UIDelegate.h: Copied from DumpRenderTree/UIDelegate.h.
+        * DumpRenderTree/mac/UIDelegate.mm: Copied from DumpRenderTree/UIDelegate.mm.
+        (-[UIDelegate webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:]):
+        (-[UIDelegate webViewFocus:]):
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+        (-[UIDelegate webViewClose:]):
+        * DumpRenderTree/mac/WorkQueueItemMac.mm: Copied from DumpRenderTree/WorkQueueItemMac.mm.
+
 2007-09-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

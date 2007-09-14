@@ -29,6 +29,11 @@
 #ifndef DumpRenderTree_h
 #define DumpRenderTree_h
 
+#include <JavascriptCore/Platform.h>
+
+class LayoutTestController;
+
+#if PLATFORM(MAC)
 @class DumpRenderTreeDraggingInfo;
 @class EditingDelegate;
 @class FrameLoadDelegate;
@@ -38,35 +43,13 @@
 @class UIDelegate;
 @class WebFrame;
 @class WebView;
+#endif
 
 extern volatile bool done;
-
-extern bool dumpAsText;
-extern bool dumpSelectionRect;
-extern bool dumpTitleChanges;
-extern bool dumpBackForwardList;
-extern bool dumpChildFrameScrollPositions;
-extern bool dumpChildFramesAsText;
-extern bool dumpDOMAsWebArchive;
-extern bool dumpSourceAsWebArchive;
-extern bool shouldDumpEditingCallbacks;
-extern bool shouldDumpResourceLoadCallbacks;
-extern bool shouldDumpFrameLoadCallbacks;
-extern bool shouldDumpResourceLoadCallbacks;
-extern bool shouldDumpFrameLoadCallbacks;
-extern bool addFileToPasteboardOnDrag;
-extern bool canOpenWindows;
-extern bool closeRemainingWindowsWhenComplete;
-extern bool closeWebViews;
-extern bool repaintSweepHorizontally;
-extern bool testRepaint;
-extern bool waitToDump;
-extern bool windowIsKey;
 
 extern CFMutableArrayRef allWindowsRef;
 extern CFMutableSetRef disallowedURLs;
 extern CFRunLoopTimerRef waitToDumpWatchdog;
-extern CFTimeInterval waitToDumpWatchdogInterval;
 
 extern WebFrame* mainFrame;
 extern WebFrame* topLoadingFrame;
@@ -75,6 +58,7 @@ extern DumpRenderTreeDraggingInfo *draggingInfo;
 
 // Global Controllers
 extern NavigationController* navigationController;
+extern LayoutTestController* layoutTestController;
 
 // Delegates
 extern FrameLoadDelegate* frameLoadDelegate;
@@ -85,6 +69,6 @@ extern PolicyDelegate* policyDelegate;
 
 WebView* createWebView();
 void displayWebView();
-void dump(void);
+void dump();
 
-#endif DumpRenderTree_h
+#endif // DumpRenderTree_h

@@ -38,7 +38,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/DOMPrivate.h>
 
-extern void _NSNewKillRingSequence();
+extern "C" void _NSNewKillRingSequence();
 
 NSPoint lastMousePosition;
 NSArray *webkitDomEventNames;
