@@ -1,3 +1,23 @@
+2007-09-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Layout test for http://bugs.webkit.org/show_bug.cgi?id=15209
+        Sometimes removing an iframe from the DOM does not remove its frame 
+        from the page.
+
+        * fast/frames/iframe-remove-after-id-change-expected.txt: Added.
+        * fast/frames/iframe-remove-after-id-change.html: Added.
+
+        Updated results in this test. New results indicate that the frame's
+        contents are preserved between removal and reinsertion, which matches
+        Firefox.
+
+        * fast/frames/iframe-option-crash-expected.checksum:
+        * fast/frames/iframe-option-crash-expected.png:
+        * fast/frames/iframe-option-crash-expected.txt:
+        * fast/frames/iframe-option-crash.xhtml:
+
 2007-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz and Kevin Decker.

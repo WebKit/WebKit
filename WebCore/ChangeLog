@@ -1,3 +1,17 @@
+2007-09-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15209
+        Sometimes removing an iframe from the DOM does not remove its frame 
+        from the page
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFrame): Use the contentFrame pointer
+        directly instead of searching for a frame by the frame element's name, 
+        because the frame element's name may have changed. (Another reason to do
+        this is that it's just plain more straight-forward and efficient.)
+
 2007-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz and Kevin Decker.
