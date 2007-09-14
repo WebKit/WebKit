@@ -227,7 +227,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isLoadingMainResource(false)
     , m_cancellingWithLoadInProgress(false)
     , m_needsClear(false)
-    , m_shouldClearWindowProperties(true)
     , m_receivedData(false)
     , m_encodingWasChosenByUser(false)
     , m_containsPlugIns(false)
@@ -317,8 +316,6 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
     if (request.frameName() != "_blank")
         frame->tree()->setName(request.frameName());
 
-    frame->loader()->setShouldClearWindowProperties(false);
-    
     page->chrome()->setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
     page->chrome()->setStatusbarVisible(features.statusBarVisible);
     page->chrome()->setScrollbarsVisible(features.scrollbarsVisible);
@@ -788,7 +785,7 @@ void FrameLoader::clear(bool clearWindowProperties)
     }
 
     // Do this after detaching the document so that the unload event works.
-    if (clearWindowProperties && m_shouldClearWindowProperties) {
+    if (clearWindowProperties) {
         m_frame->clearScriptProxy();
         m_frame->clearDOMWindow();
     }
@@ -870,7 +867,6 @@ void FrameLoader::begin(const KURL& url, bool dispatch)
         dispatchWindowObjectAvailable();
 
     m_needsClear = true;
-    m_shouldClearWindowProperties = true;
     m_isComplete = false;
     m_didCallImplicitClose = false;
     m_isLoadingMainResource = true;
@@ -2685,7 +2681,6 @@ void FrameLoader::open(CachedPage& cachedPage)
     document->setInPageCache(false);
 
     m_needsClear = true;
-    m_shouldClearWindowProperties = true;
     m_isComplete = false;
     m_didCallImplicitClose = false;
     m_outgoingReferrer = URL.url();

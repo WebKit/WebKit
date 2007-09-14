@@ -1,3 +1,41 @@
+2007-09-14  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5472970> REGRESSION (r24276): TinyMCE popups show an empty window with no content
+
+        Accessing the document of a window before the load finished would cause the window
+        object to hold onto the initial empty document, and never switch over to the real document
+        once the load finished. This regression was caused by r24276 which added a check to prevent
+        clearing the window object when the load finished. The absence of this clear allowed the
+        dialogArguments set with showModalDialog to persist on the window after the load. However,
+        not clearing the window would keep other properties (and the empty document object) around.
+
+        So the fix is to store away the dialog arguments that were passed to showModalDialog and
+        put them back on the window object in the dialogArguments property each time
+        the window is cleared.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::createWindow): No longer put dialogArguments on the window here.
+        (KJS::showModalDialog): Put dialogArguments on the window and call
+        setDialogArgumentsAndReturnValueSlot to remember the arguments.
+        (KJS::Window::clear): Put m_dialogArguments back on the window as dialogArguments.
+        (KJS::WindowFunc::callAsFunction): Call the new setDialogArgumentsAndReturnValue.
+        (KJS::Window::setDialogArgumentsAndReturnValue): Store the arguments in m_dialogArguments.
+        * bindings/js/kjs_window.h: Rename setReturnValueSlot to setDialogArgumentsAndReturnValueSlot.
+        * manual-tests/modal-dialog-arguments.html: Confirmed that this test still passes.
+
+        Reverted r24276 which was all the changes in FrameLoader.cpp and FrameLoader.h.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader): Remove m_shouldClearWindowProperties.
+        (WebCore::FrameLoader::createWindow): Remove the call to setShouldClearWindowProperties.
+        (WebCore::FrameLoader::clear): No longer check m_shouldClearWindowProperties, clear the
+        window whenever clearWindowProperties is set.
+        (WebCore::FrameLoader::begin): Remove m_shouldClearWindowProperties.
+        (WebCore::FrameLoader::open): Ditto.
+        * loader/FrameLoader.h: Remove m_shouldClearWindowProperties.
+
 2007-09-14  Brady Eidson  <beidson@apple.com>
 
         How about a build fix that works on *all* platforms?

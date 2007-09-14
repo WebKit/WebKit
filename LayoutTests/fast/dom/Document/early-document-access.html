@@ -1,0 +1,41 @@
+<html>
+<head>
+    <script>
+    function test() {
+        if (window.layoutTestController) {
+            layoutTestController.setCanOpenWindows();
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        newWindow = window.open('resources/early-document-access-popup.html');
+        if (newWindow) {
+            newWindow.document; // access the document
+            setTimeout(fail, 5000); // fail if we take longer than 5 seconds
+        } else {
+            document.body.innerText = 'FAIL: window.open failed to make a window.';
+            layoutTestController.notifyDone();
+        }
+    }
+
+    function done() {
+        newWindow.close();
+        if (window.layoutTestController)
+            setTimeout("layoutTestController.notifyDone()", 100);
+    }
+
+    function pass() {
+        document.body.innerText = 'PASS';
+        done();
+    }
+
+    function fail() {
+        document.body.innerText = 'FAIL';
+        done();
+    }
+    </script>
+</head>
+<body onload="test()">
+FAIL: TEST DID NOT RUN!
+</body>
+</html>

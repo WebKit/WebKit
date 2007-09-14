@@ -128,7 +128,7 @@ namespace KJS {
     void setCurrentEvent(WebCore::Event*);
 
     // Set a place to put a dialog return value when the window is cleared.
-    void setReturnValueSlot(JSValue **slot);
+    void setDialogArgumentsAndReturnValueSlot(JSValue* arguments, JSValue** returnValueSlot);
 
     typedef HashMap<JSObject*, WebCore::JSEventListener*> ListenersMap;
     typedef HashMap<JSObject*, WebCore::JSUnprotectedEventListener*> UnprotectedListenersMap;
