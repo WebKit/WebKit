@@ -1,3 +1,12 @@
+2007-09-14  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Weinig
+
+        You know, Sam, some of us use case-sensitve filesystems...
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+
 2007-09-14  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Adam Roben.

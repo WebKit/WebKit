@@ -29,7 +29,7 @@
 #ifndef DumpRenderTree_h
 #define DumpRenderTree_h
 
-#include <JavascriptCore/Platform.h>
+#include <JavaScriptCore/Platform.h>
 
 class LayoutTestController;
 

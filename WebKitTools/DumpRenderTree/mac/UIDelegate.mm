@@ -35,7 +35,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebView.h>
-#import <JavascriptCore/Assertions.h>
+#import <JavaScriptCore/Assertions.h>
 
 DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
