@@ -246,7 +246,7 @@ static WebCacheModel cacheModelForMainBundle(void)
             _private->values = [values mutableCopy]; // ensure dictionary is mutable
 
         LOG(Encoding, "Identifier = %@, Values = %@\n", _private->identifier, _private->values);
-    } @catch(...) {
+    } @catch(id) {
         [self release];
         return nil;
     }

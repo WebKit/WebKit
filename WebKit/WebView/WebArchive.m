@@ -30,6 +30,7 @@
 
 #import "WebKitLogging.h"
 #import "WebResourcePrivate.h"
+#import "WebTypesInternal.h"
 
 NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
@@ -167,7 +168,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
         object = [decoder decodeObjectForKey:WebSubframeArchivesKey];
         if (isArrayOfClass(object, [WebArchive class]))
             _private->subframeArchives = [object retain];
-    } @catch(...) {
+    } @catch(id) {
         [self release];
         return nil;
     }

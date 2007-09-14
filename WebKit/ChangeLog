@@ -1,3 +1,15 @@
+2007-09-14  Mark Rowe  <mrowe@apple.com>
+
+        Build fix for Tiger.
+
+        * WebView/WebArchive.m:
+        (-[WebArchive initWithCoder:]): Use @catch(id) rather than @catch(...).
+        * WebView/WebPreferences.m:
+        (-[WebPreferences initWithCoder:]): Ditto.
+        * WebView/WebResource.mm:
+        (-[WebResource initWithCoder:]): Ditto.
+        (-[WebResource _initWithPropertyList:]): Ditto.
+
 2007-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen and Tim Hatcher.

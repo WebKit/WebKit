@@ -110,7 +110,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         object = [decoder decodeObjectForKey:WebResourceResponseKey];
         if ([object isKindOfClass:[NSURLResponse class]])
             _private->response = [object retain];
-    } @catch(...) {
+    } @catch(id) {
         [self release];
         return nil;
     }
@@ -277,7 +277,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
             if ([responseObject isKindOfClass:[NSURLResponse class]])
                 response = responseObject;
             [unarchiver finishDecoding];
-        } @catch(...) {
+        } @catch(id) {
             response = nil;
         }
         [unarchiver release];
