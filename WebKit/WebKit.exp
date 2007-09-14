@@ -72,7 +72,6 @@ _WebKitErrorMIMETypeKey
 _WebKitErrorPlugInNameKey
 _WebKitErrorPlugInPageURLStringKey
 _WebLocalizedString
-_WebMainResourceKey
 _WebPlugInAttributesKey
 _WebPlugInBaseURLKey
 _WebPlugInContainerKey

@@ -1,3 +1,26 @@
+2007-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen and Tim Hatcher.
+
+        - fixed <rdar://problem/5482745> initFromCoder: and initWithPropertyList: functions
+          should guard against incorrect types
+
+        * WebView/WebArchive.m:
+        (isArrayOfClass): Added helper function.
+        (-[WebArchive _initWithPropertyList:]): Tweaked function to remove the need for a
+        type cast.
+        (-[WebArchive initWithCoder:]): Added type checking for the main resource,
+        subresources array, and subframe archives array. Also replaced NS_DURING with @try.
+        * WebView/WebPreferences.m: (-[WebPreferences initWithCoder:]): Added type checking
+        for the identifier and the values dictionary, including ensuring that it's a mutable
+        dictionary.
+        * WebView/WebResource.mm:
+        (-[WebResource initWithCoder:]): Added type checking for all the fields.
+        (-[WebResource _initWithPropertyList:]): Added type checking for the NSURLResponse.
+
+        * WebKit.exp: Removed accidentally exported internal symbol; I checked and it's not
+        used anywhere.
+
 2007-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

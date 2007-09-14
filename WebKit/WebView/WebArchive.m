@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebArchive.h>
+#import "WebArchive.h"
 
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebResourcePrivate.h>
+#import "WebKitLogging.h"
+#import "WebResourcePrivate.h"
 
-NSString *WebArchivePboardType =            @"Apple Web Archive pasteboard type";
-NSString *WebMainResourceKey =              @"WebMainResource";
-NSString *WebSubresourcesKey =              @"WebSubresources";
-NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
+NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
-#define WebArchiveVersion 1
+static NSString * const WebMainResourceKey = @"WebMainResource";
+static NSString * const WebSubresourcesKey = @"WebSubresources";
+static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 
 @interface WebArchivePrivate : NSObject
 {
@@ -58,6 +57,18 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
 }
 
 @end
+
+static BOOL isArrayOfClass(id object, Class elementClass)
+{
+    if (![object isKindOfClass:[NSArray class]])
+        return NO;
+    NSArray *array = (NSArray *)object;
+    NSUInteger count = [array count];
+    for (NSUInteger i = 0; i < count; ++i)
+        if (![[array objectAtIndex:i] isKindOfClass:elementClass])
+            return NO;
+    return YES;
+}
 
 @implementation WebArchive
 
@@ -108,16 +119,17 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
     _private->subresources = [[WebResource _resourcesFromPropertyLists:[propertyList objectForKey:WebSubresourcesKey]] retain];
     
     NSEnumerator *enumerator = [[propertyList objectForKey:WebSubframeArchivesKey] objectEnumerator];
-    _private->subframeArchives = [[NSMutableArray alloc] init];
+    NSMutableArray *subframeArchives = [[NSMutableArray alloc] init];
     NSDictionary *archivePropertyList;
     while ((archivePropertyList = [enumerator nextObject]) != nil) {
         WebArchive *archive = [[WebArchive alloc] _initWithPropertyList:archivePropertyList];
         if (archive) {
-            [(NSMutableArray *)_private->subframeArchives addObject:archive];
+            [subframeArchives addObject:archive];
             [archive release];
         }
     }
-           
+    _private->subframeArchives = subframeArchives;
+
     return self;
 }
 
@@ -144,15 +156,27 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
     self = [self init];
     if (!self)
         return nil;
-        
-    NS_DURING
-        _private->mainResource = [[decoder decodeObjectForKey:WebMainResourceKey] retain];
-        _private->subresources = [[decoder decodeObjectForKey:WebSubresourcesKey] retain];
-        _private->subframeArchives = [[decoder decodeObjectForKey:WebSubframeArchivesKey] retain];
-    NS_HANDLER
+
+    @try {
+        id object = [decoder decodeObjectForKey:WebMainResourceKey];
+        if ([object isKindOfClass:[WebResource class]])
+            _private->mainResource = [object retain];
+        object = [decoder decodeObjectForKey:WebSubresourcesKey];
+        if (isArrayOfClass(object, [WebResource class]))
+            _private->subresources = [object retain];
+        object = [decoder decodeObjectForKey:WebSubframeArchivesKey];
+        if (isArrayOfClass(object, [WebArchive class]))
+            _private->subframeArchives = [object retain];
+    } @catch(...) {
         [self release];
         return nil;
-    NS_ENDHANDLER
+    }
+
+    if (!_private->mainResource) {
+        [self release];
+        return nil;
+    }
+
     return self;
 }
 

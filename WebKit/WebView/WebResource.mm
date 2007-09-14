@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebNSDictionaryExtras.h>
-#import <WebKit/WebNSURLExtras.h>
+#import "WebResourcePrivate.h"
 
-NSString *WebResourceDataKey =              @"WebResourceData";
-NSString *WebResourceFrameNameKey =         @"WebResourceFrameName";
-NSString *WebResourceMIMETypeKey =          @"WebResourceMIMEType";
-NSString *WebResourceURLKey =               @"WebResourceURL";
-NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
-NSString *WebResourceResponseKey =          @"WebResourceResponse";
+#import "WebFrameBridge.h"
+#import "WebNSDictionaryExtras.h"
+#import "WebNSURLExtras.h"
+
+static NSString * const WebResourceDataKey =              @"WebResourceData";
+static NSString * const WebResourceFrameNameKey =         @"WebResourceFrameName";
+static NSString * const WebResourceMIMETypeKey =          @"WebResourceMIMEType";
+static NSString * const WebResourceURLKey =               @"WebResourceURL";
+static NSString * const WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
+static NSString * const WebResourceResponseKey =          @"WebResourceResponse";
 
 #define WebResourceVersion 1
 
@@ -90,17 +91,30 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
     if (!self)
         return nil;
 
-    NS_DURING
-        _private->data = [[decoder decodeObjectForKey:WebResourceDataKey] retain];
-        _private->URL = [[decoder decodeObjectForKey:WebResourceURLKey] retain];
-        _private->MIMEType = [[decoder decodeObjectForKey:WebResourceMIMETypeKey] retain];
-        _private->textEncodingName = [[decoder decodeObjectForKey:WebResourceTextEncodingNameKey] retain];
-        _private->frameName = [[decoder decodeObjectForKey:WebResourceFrameNameKey] retain];
-        _private->response = [[decoder decodeObjectForKey:WebResourceResponseKey] retain];
-    NS_HANDLER
+    @try {
+        id object = [decoder decodeObjectForKey:WebResourceDataKey];
+        if ([object isKindOfClass:[NSData class]])
+            _private->data = [object retain];
+        object = [decoder decodeObjectForKey:WebResourceURLKey];
+        if ([object isKindOfClass:[NSURL class]])
+            _private->URL = [object retain];
+        object = [decoder decodeObjectForKey:WebResourceMIMETypeKey];
+        if ([object isKindOfClass:[NSString class]])
+            _private->MIMEType = [object retain];
+        object = [decoder decodeObjectForKey:WebResourceTextEncodingNameKey];
+        if ([object isKindOfClass:[NSString class]])
+            _private->textEncodingName = [object retain];
+        object = [decoder decodeObjectForKey:WebResourceFrameNameKey];
+        if ([object isKindOfClass:[NSString class]])
+            _private->frameName = [object retain];
+        object = [decoder decodeObjectForKey:WebResourceResponseKey];
+        if ([object isKindOfClass:[NSURLResponse class]])
+            _private->response = [object retain];
+    } @catch(...) {
         [self release];
         return nil;
-    NS_ENDHANDLER
+    }
+
     return self;
 }
 
@@ -258,9 +272,15 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
     NSData *responseData = [propertyList objectForKey:WebResourceResponseKey];
     if ([responseData isKindOfClass:[NSData class]]) {
         NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:responseData];
-        response = [unarchiver decodeObjectForKey:WebResourceResponseKey];
-        [unarchiver finishDecoding];
-        [unarchiver release];    
+        @try {
+            id responseObject = [unarchiver decodeObjectForKey:WebResourceResponseKey];
+            if ([responseObject isKindOfClass:[NSURLResponse class]])
+                response = responseObject;
+            [unarchiver finishDecoding];
+        } @catch(...) {
+            response = nil;
+        }
+        [unarchiver release];
     }
 
     NSData *data = [propertyList objectForKey:WebResourceDataKey];

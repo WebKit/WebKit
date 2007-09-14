@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -217,49 +217,51 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
-    volatile id result = nil;
-
-NS_DURING
-
-    int version;
+    self = [super init];
+    if (!self)
+        return nil;
 
     _private = [[WebPreferencesPrivate alloc] init];
     _private->IBCreatorID = [[WebPreferences _IBCreatorID] retain];
     _private->automaticallyDetectsCacheModel = YES;
-    
-    if ([decoder allowsKeyedCoding]){
-        _private->identifier = [[decoder decodeObjectForKey:@"Identifier"] retain];
-        _private->values = [[decoder decodeObjectForKey:@"Values"] retain];
-        LOG (Encoding, "Identifier = %@, Values = %@\n", _private->identifier, _private->values);
-    }
-    else {
-        [decoder decodeValueOfObjCType:@encode(int) at:&version];
-        if (version == 1){
-            _private->identifier = [[decoder decodeObject] retain];
-            _private->values = [[decoder decodeObject] retain];
+
+    @try {
+        id identifier = nil;
+        id values = nil;
+        if ([decoder allowsKeyedCoding]) {
+            identifier = [decoder decodeObjectForKey:@"Identifier"];
+            values = [decoder decodeObjectForKey:@"Values"];
+        } else {
+            int version;
+            [decoder decodeValueOfObjCType:@encode(int) at:&version];
+            if (version == 1) {
+                identifier = [decoder decodeObject];
+                values = [decoder decodeObject];
+            }
         }
+
+        if ([identifier isKindOfClass:[NSString class]])
+            _private->identifier = [identifier copy];
+        if ([values isKindOfClass:[NSDictionary class]])
+            _private->values = [values mutableCopy]; // ensure dictionary is mutable
+
+        LOG(Encoding, "Identifier = %@, Values = %@\n", _private->identifier, _private->values);
+    } @catch(...) {
+        [self release];
+        return nil;
     }
-    
+
     // If we load a nib multiple times, or have instances in multiple
     // nibs with the same name, the first guy up wins.
     WebPreferences *instance = [[self class] _getInstanceForIdentifier:_private->identifier];
-    if (instance){
+    if (instance) {
         [self release];
-        result = [instance retain];
-    }
-    else {
+        self = [instance retain];
+    } else {
         [[self class] _setInstance:self forIdentifier:_private->identifier];
-        result = self;
     }
-    
-NS_HANDLER
 
-    result = nil;
-    [self release];
-    
-NS_ENDHANDLER
-
-    return result;
+    return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
