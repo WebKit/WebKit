@@ -301,18 +301,6 @@ JSValueRef DebuggerDocument::toJSArray(JSContextRef context, Vector<JSValueRef>&
     return array;
 }
 
-NSString* DebuggerDocument::NSStringCreateWithJSStringRef(JSStringRef jsString)
-{
-    CFStringRef cfString = JSStringCopyCFString(kCFAllocatorDefault, jsString);
-    return (NSString *)cfString;
-}
-
-JSValueRef DebuggerDocument::JSValueRefCreateWithNSString(JSContextRef context, NSString* nsString)
-{
-    JSRetainPtr<JSStringRef> jsString(Adopt, JSStringCreateWithCFString((CFStringRef)nsString));
-    return JSValueMakeString(context, jsString.get());
-}
-
 // Private
 JSValueRef DebuggerDocument::callGlobalFunction(JSContextRef context, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception)
 {

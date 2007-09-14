@@ -83,10 +83,6 @@ public:
     void windowScriptObjectAvailable(JSContextRef, JSObjectRef windowObject, JSValueRef* exception = 0);
     static JSValueRef toJSArray(JSContextRef, Vector<JSValueRef>&, JSValueRef* exception);
 
-    // Converting string types
-    static NSString* NSStringCreateWithJSStringRef(JSStringRef);
-    static JSValueRef JSValueRefCreateWithNSString(JSContextRef, NSString*);
-
     static JSValueRef callGlobalFunction(JSContextRef, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
 
 private:

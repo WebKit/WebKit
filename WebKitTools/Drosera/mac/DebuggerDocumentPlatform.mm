@@ -35,6 +35,18 @@
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/RetainPtr.h>
 
+NSString* NSStringCreateWithJSStringRef(JSStringRef jsString)
+{
+    CFStringRef cfString = JSStringCopyCFString(kCFAllocatorDefault, jsString);
+    return (NSString *)cfString;
+}
+
+JSValueRef JSValueRefCreateWithNSString(JSContextRef context, NSString* nsString)
+{
+    JSRetainPtr<JSStringRef> jsString(Adopt, JSStringCreateWithCFString((CFStringRef)nsString));
+    return JSValueMakeString(context, jsString.get());
+}
+
 @interface NSString (WebScriptStringExtras)
 + (NSString *)stringOrNilFromWebScriptResult:(id)scriptResult;
 @end

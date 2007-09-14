@@ -1,3 +1,18 @@
+2007-09-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Changing Win version of Drosera work with recent changes.
+
+        * Drosera/DebuggerDocument.cpp:
+        * Drosera/DebuggerDocument.h:
+        * Drosera/mac/DebuggerDocumentPlatform.mm:
+        (NSStringCreateWithJSStringRef):
+        (JSValueRefCreateWithNSString):
+        * Drosera/win/DebuggerClient.cpp:
+        (DebuggerClient::stepInto):
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+
 2007-09-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

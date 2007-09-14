@@ -229,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\DebuggerDocumentPlatform.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Drosera.cpp"
 				>
 			</File>
