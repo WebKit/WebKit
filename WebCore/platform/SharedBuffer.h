@@ -47,6 +47,7 @@ class SharedBuffer : public Shared<SharedBuffer> {
 public:
     SharedBuffer();
     SharedBuffer(const char*, int);
+    SharedBuffer(const unsigned char*, int);
 
     static PassRefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
     

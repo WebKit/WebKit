@@ -37,6 +37,11 @@ SharedBuffer::SharedBuffer(const char* data, int size)
     m_buffer.append(data, size);
 }
 
+SharedBuffer::SharedBuffer(const unsigned char* data, int size)
+{
+    m_buffer.append(data, size);
+}
+
 unsigned SharedBuffer::size() const
 {
     if (hasPlatformData())

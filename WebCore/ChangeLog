@@ -1,3 +1,16 @@
+2007-09-13  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Geoff and Maciej
+
+        Fix MSVC build warning due to out of range data in a char array
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultIcon): The buffer is now unsigned data
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer): Add the "unsigned char*" c'tor
+        * platform/SharedBuffer.h:
+
 2007-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.
