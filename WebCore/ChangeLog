@@ -1,3 +1,30 @@
+2007-09-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        -Add callOnMainThread() implementation to Windows
+
+        * WebCore.vcproj/WebCore.vcproj:
+        
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open): Call initializeThreading() from the main thread before kicking off the secondary thread
+        
+        * platform/Logging.cpp: Added Threading logging channel
+        (WebCore::):
+        * platform/Logging.h: Ditto
+        
+        * platform/Threading.h:
+        (WebCore::initializeThreading): Added - only needs Windows impl for now
+        * platform/win/ThreadingWin.cpp: Added.
+        (WebCore::callFunctionsOnMainThread): Calls each function currently in the main-thread queue
+        (WebCore::ThreadingWindowWndProc):
+        (WebCore::initializeThreading): Creates a message-only window to use for callOnMainThread()
+        (WebCore::callOnMainThread): Queues the function to be called and posts a message to the threading
+          window such that the function-call-queue can be addressed
+        
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::signedPublicKeyAndChallengeString):
+        
 2007-09-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

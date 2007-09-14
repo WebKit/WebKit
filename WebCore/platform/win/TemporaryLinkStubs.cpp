@@ -114,5 +114,3 @@ void CachedPage::close() { notImplemented(); }
 
 Vector<String> WebCore::supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String WebCore::signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&) { notImplemented(); return String(); }
-
-void WebCore::callOnMainThread(void (*)()) { notImplemented(); }

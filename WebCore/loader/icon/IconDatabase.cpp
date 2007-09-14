@@ -180,6 +180,8 @@ bool IconDatabase::open(const String& databasePath)
         m_completeDatabasePath = m_databaseDirectory + "/" + defaultDatabaseFilename();
 #endif
     
+    initializeThreading();
+
     // Lock here as well as first thing in the thread so the tread doesn't actually commence until the pthread_create() call 
     // completes and m_syncThreadRunning is properly set
     m_syncLock.lock();

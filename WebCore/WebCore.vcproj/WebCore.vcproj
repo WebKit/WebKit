@@ -3614,6 +3614,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\ThreadingWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\UniscribeController.cpp"
 					>
 				</File>
