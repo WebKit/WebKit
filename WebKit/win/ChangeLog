@@ -1,3 +1,11 @@
+2007-09-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * WebFrame.cpp:
+        (WebFrame::createPlugin):
+        (WebFrame::createJavaAppletWidget):
+
 2007-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

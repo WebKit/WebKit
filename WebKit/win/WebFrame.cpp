@@ -2196,9 +2196,9 @@ Frame* WebFrame::createFrame(const KURL& url, const String& name, HTMLFrameOwner
     return result;
 }
 
-Widget* WebFrame::createPlugin(const IntSize&, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool /*loadManually*/)
+Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool /*loadManually*/)
 {
-    PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->createPluginView(core(this), element, url, paramNames, paramValues, mimeType);
+    PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->createPluginView(core(this), pluginSize, element, url, paramNames, paramValues, mimeType);
 
     if (pluginView->status() == PluginStatusLoadedSuccessfully)
         return pluginView;
@@ -2272,10 +2272,10 @@ void WebFrame::redirectDataToPlugin(Widget* /*pluginWidget*/)
     core(this)->loader()->documentLoader()->cancelMainResourceLoad(error);
 }
     
-Widget* WebFrame::createJavaAppletWidget(const IntSize&, Element* element, const KURL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
+Widget* WebFrame::createJavaAppletWidget(const IntSize& pluginSize, Element* element, const KURL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->
-        createPluginView(core(this), element, KURL(), paramNames, paramValues, "application/x-java-applet");
+        createPluginView(core(this), pluginSize, element, KURL(), paramNames, paramValues, "application/x-java-applet");
 
     // Check if the plugin can be loaded successfully
     if (pluginView->plugin()->load())
