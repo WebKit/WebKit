@@ -47,6 +47,7 @@
 #include <windows.h>
 
 #include "EditingDelegate.h"
+#include "UIDelegate.h"
 #include "WaitUntilDoneDelegate.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
@@ -812,12 +813,14 @@ int main(int argc, char* argv[])
     SetWindowPos(webViewWindow, 0, 0, 0, maxViewWidth, maxViewHeight, 0);
     ShowWindow(hostWindow, SW_SHOW);
 
-    COMPtr<WaitUntilDoneDelegate> waitDelegate;
-    waitDelegate.adoptRef(new WaitUntilDoneDelegate);
-    if (FAILED(webView->setFrameLoadDelegate(waitDelegate.get())))
+    COMPtr<FrameLoadDelegate> frameLoadDelegate;
+    frameLoadDelegate.adoptRef(new FrameLoadDelegate);
+    if (FAILED(webView->setFrameLoadDelegate(frameLoadDelegate.get())))
         return -1;
 
-    if (FAILED(webView->setUIDelegate(waitDelegate.get())))
+    COMPtr<UIDelegate> uiDelegate;
+    uiDelegate.adoptRef(new UIDelegate);
+    if (FAILED(webView->setUIDelegate(uiDelegate.get())))
         return -1;
 
     COMPtr<IWebViewEditing> viewEditing;
@@ -827,7 +830,6 @@ int main(int argc, char* argv[])
 
     COMPtr<EditingDelegate> editingDelegate;
     editingDelegate.adoptRef(new EditingDelegate);
-
     if (FAILED(viewEditing->setEditingDelegate(editingDelegate.get())))
         return -1;
 

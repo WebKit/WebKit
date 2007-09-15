@@ -45,17 +45,13 @@
 
 #include <stdio.h>
 
-static WaitUntilDoneDelegate* g_delegateWaitingOnTimer;
+static FrameLoadDelegate* g_delegateWaitingOnTimer;
 
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
-        *ppvObject = static_cast<IWebUIDelegate*>(this);
-    else if (IsEqualGUID(riid, IID_IWebUIDelegate))
-        *ppvObject = static_cast<IWebUIDelegate*>(this);
-    else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate))
-        *ppvObject = static_cast<IWebUIDelegatePrivate*>(this);
+        *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegate))
         *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
     else
@@ -65,12 +61,12 @@ HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::QueryInterface(REFIID riid, voi
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WaitUntilDoneDelegate::AddRef(void)
+ULONG STDMETHODCALLTYPE FrameLoadDelegate::AddRef(void)
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WaitUntilDoneDelegate::Release(void)
+ULONG STDMETHODCALLTYPE FrameLoadDelegate::Release(void)
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -79,15 +75,8 @@ ULONG STDMETHODCALLTYPE WaitUntilDoneDelegate::Release(void)
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::hasCustomMenuImplementation( 
-        /* [retval][out] */ BOOL *hasCustomMenus)
-{
-    *hasCustomMenus = FALSE;
 
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didStartProvisionalLoadForFrame( 
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didStartProvisionalLoadForFrame( 
         /* [in] */ IWebView* webView,
         /* [in] */ IWebFrame* frame) 
 {
@@ -99,7 +88,7 @@ HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didStartProvisionalLoadForFrame
     return S_OK; 
 }
 
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didCommitLoadForFrame( 
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didCommitLoadForFrame( 
     /* [in] */ IWebView *webView,
     /* [in] */ IWebFrame *frame)
 {
@@ -111,7 +100,7 @@ HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didCommitLoadForFrame(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didReceiveTitle( 
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didReceiveTitle( 
         /* [in] */ IWebView *webView,
         /* [in] */ BSTR title,
         /* [in] */ IWebFrame *frame)
@@ -121,7 +110,7 @@ HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didReceiveTitle(
     return S_OK;
 }
 
-void WaitUntilDoneDelegate::processWork()
+void FrameLoadDelegate::processWork()
 {
     // quit doing work once a load is in progress
     while (!topLoadingFrame && WorkQueue::shared()->count()) {
@@ -138,12 +127,12 @@ void WaitUntilDoneDelegate::processWork()
 static void CALLBACK processWorkTimer(HWND, UINT, UINT_PTR id, DWORD)
 {
     ::KillTimer(0, id);
-    WaitUntilDoneDelegate* d = g_delegateWaitingOnTimer;
+    FrameLoadDelegate* d = g_delegateWaitingOnTimer;
     g_delegateWaitingOnTimer = 0;
     d->processWork();
 }
 
-void WaitUntilDoneDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
+void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
 {
     if (frame != topLoadingFrame)
         return;
@@ -164,7 +153,7 @@ void WaitUntilDoneDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
     dump();
 }
 
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didFinishLoadForFrame( 
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFinishLoadForFrame( 
         /* [in] */ IWebView* webView,
         /* [in] */ IWebFrame* frame)
 {
@@ -172,7 +161,7 @@ HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didFinishLoadForFrame(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didFailLoadWithError( 
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFailLoadWithError( 
     /* [in] */ IWebView* webView,
     /* [in] */ IWebError* error,
     /* [in] */ IWebFrame* forFrame)
@@ -181,34 +170,7 @@ HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::didFailLoadWithError(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::setFrame( 
-        /* [in] */ IWebView* /*sender*/,
-        /* [in] */ RECT* frame)
-{
-    m_frame = frame;
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::webViewFrame( 
-        /* [in] */ IWebView* /*sender*/,
-        /* [retval][out] */ RECT* frame)
-{
-    frame = m_frame;
-    return S_OK;
-}
-
-
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::runJavaScriptAlertPanelWithMessage( 
-        /* [in] */ IWebView* /*sender*/,
-        /* [in] */ BSTR message)
-{
-    wprintf(L"ALERT: %s\n", message ? message : L"");
-
-    return S_OK;
-}
-
-
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::windowScriptObjectAvailable( 
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::windowScriptObjectAvailable( 
         /* [in] */ IWebView *sender,
         /* [in] */ JSContextRef context,
         /* [in] */ JSObjectRef windowObject)
@@ -229,46 +191,4 @@ HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::windowScriptObjectAvailable(
     JSStringRelease(gcControllerStr);
 
     return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::webViewAddMessageToConsole( 
-    /* [in] */ IWebView* sender,
-    /* [in] */ BSTR message,
-    /* [in] */ int lineNumber,
-    /* [in] */ BSTR url,
-    /* [in] */ BOOL isError)
-{
-    wprintf(L"CONSOLE MESSAGE: line %d: %s\n", lineNumber, message ? message : L"");
-
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::doDragDrop( 
-    /* [in] */ IWebView* sender,
-    /* [in] */ IDataObject* object,
-    /* [in] */ IDropSource* source,
-    /* [in] */ DWORD okEffect,
-    /* [retval][out] */ DWORD* performedEffect)
-{
-    if (!performedEffect)
-        return E_POINTER;
-
-    *performedEffect = 0;
-
-    draggingInfo = new DraggingInfo(object, source);
-
-    replaySavedEvents();
-
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WaitUntilDoneDelegate::webViewGetDlgCode( 
-    /* [in] */ IWebView* /*sender*/,
-    /* [in] */ UINT /*keyCode*/,
-    /* [retval][out] */ LONG_PTR *code)
-{
-    if (!code)
-        return E_POINTER;
-    *code = 0;
-    return E_NOTIMPL;
 }

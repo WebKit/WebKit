@@ -1,5 +1,95 @@
 2007-09-14  Sam Weinig  <sam@webkit.org>
 
+        Rubber stamped by Adam Roben.
+
+        Split the WaitUntilDoneDelegate into a UIDelegate and a FrameLoadDelegate.
+          - The UIDelegate was put into a new file while the FrameLoadDelegate was
+            kept in the WaitUntilDoneDelegate file for the time being.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj:
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/UIDelegate.cpp: Added.
+        (UIDelegate::QueryInterface):
+        (UIDelegate::AddRef):
+        (UIDelegate::Release):
+        (UIDelegate::hasCustomMenuImplementation):
+        (UIDelegate::setFrame):
+        (UIDelegate::webViewFrame):
+        (UIDelegate::runJavaScriptAlertPanelWithMessage):
+        (UIDelegate::webViewAddMessageToConsole):
+        (UIDelegate::doDragDrop):
+        (UIDelegate::webViewGetDlgCode):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/UIDelegate.h: Added.
+        (UIDelegate::UIDelegate):
+        (UIDelegate::createWebViewWithRequest):
+        (UIDelegate::webViewShow):
+        (UIDelegate::webViewClose):
+        (UIDelegate::webViewFocus):
+        (UIDelegate::webViewUnfocus):
+        (UIDelegate::webViewFirstResponder):
+        (UIDelegate::makeFirstResponder):
+        (UIDelegate::setStatusText):
+        (UIDelegate::webViewStatusText):
+        (UIDelegate::webViewAreToolbarsVisible):
+        (UIDelegate::setToolbarsVisible):
+        (UIDelegate::webViewIsStatusBarVisible):
+        (UIDelegate::setStatusBarVisible):
+        (UIDelegate::webViewIsResizable):
+        (UIDelegate::setResizable):
+        (UIDelegate::setContentRect):
+        (UIDelegate::webViewContentRect):
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage):
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt):
+        (UIDelegate::runBeforeUnloadConfirmPanelWithMessage):
+        (UIDelegate::runOpenPanelForFileButtonWithResultListener):
+        (UIDelegate::mouseDidMoveOverElement):
+        (UIDelegate::contextMenuItemsForElement):
+        (UIDelegate::validateUserInterfaceItem):
+        (UIDelegate::shouldPerformAction):
+        (UIDelegate::dragDestinationActionMaskForDraggingInfo):
+        (UIDelegate::willPerformDragDestinationAction):
+        (UIDelegate::dragSourceActionMaskForPoint):
+        (UIDelegate::willPerformDragSourceAction):
+        (UIDelegate::contextMenuItemSelected):
+        (UIDelegate::trackCustomPopupMenu):
+        (UIDelegate::measureCustomMenuItem):
+        (UIDelegate::drawCustomMenuItem):
+        (UIDelegate::addCustomMenuDrawingData):
+        (UIDelegate::cleanUpCustomMenuDrawingData):
+        (UIDelegate::canTakeFocus):
+        (UIDelegate::takeFocus):
+        (UIDelegate::registerUndoWithTarget):
+        (UIDelegate::removeAllActionsWithTarget):
+        (UIDelegate::setActionTitle):
+        (UIDelegate::undo):
+        (UIDelegate::redo):
+        (UIDelegate::canUndo):
+        (UIDelegate::canRedo):
+        (UIDelegate::webViewResizerRect):
+        (UIDelegate::webViewDrawResizer):
+        (UIDelegate::webViewScrolled):
+        (UIDelegate::webViewShouldInterruptJavaScript):
+        (UIDelegate::webViewReceivedFocus):
+        (UIDelegate::webViewLostFocus):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WaitUntilDoneDelegate.cpp:
+        (FrameLoadDelegate::QueryInterface):
+        (FrameLoadDelegate::AddRef):
+        (FrameLoadDelegate::Release):
+        (FrameLoadDelegate::didStartProvisionalLoadForFrame):
+        (FrameLoadDelegate::didCommitLoadForFrame):
+        (FrameLoadDelegate::didReceiveTitle):
+        (FrameLoadDelegate::processWork):
+        (processWorkTimer):
+        (FrameLoadDelegate::locationChangeDone):
+        (FrameLoadDelegate::didFinishLoadForFrame):
+        (FrameLoadDelegate::didFailLoadWithError):
+        (FrameLoadDelegate::windowScriptObjectAvailable):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WaitUntilDoneDelegate.h:
+        (FrameLoadDelegate::FrameLoadDelegate):
+
+2007-09-14  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Kevin McCullough.
 
         Move mac specific globals in to mac/DumpRenderTreeMac.h

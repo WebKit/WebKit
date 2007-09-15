@@ -274,6 +274,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\UIDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UIDelegate.h"
+				>
+			</File>
+			<File
 				RelativePath=".\WaitUntilDoneDelegate.cpp"
 				>
 			</File>
