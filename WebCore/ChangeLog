@@ -1,3 +1,10 @@
+2007-09-14  Timothy Hatcher  <timothy@apple.com>
+
+        Initialize m_dialogArguments to 0. Fixes the newly crashing layout tests.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowPrivate::WindowPrivate):
+
 2007-09-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady, John H.
