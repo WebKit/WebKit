@@ -79,6 +79,7 @@ _KJS_JSObject_JSObjectSetMember
 _KJS_JSObject_JSObjectSetSlot
 _KJS_JSObject_JSObjectToString
 _WTFLog
+_WTFLogVerbose
 _WTFReportArgumentAssertionFailure
 _WTFReportAssertionFailure
 _WTFReportAssertionFailureWithMessage

@@ -1,3 +1,9 @@
+2007-09-15  Darin Adler  <darin@apple.com>
+
+        - fix Mac build
+
+        * JavaScriptCore.exp: Export WTFLogVerbose.
+
 2007-09-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
