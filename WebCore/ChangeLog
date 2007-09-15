@@ -1,3 +1,13 @@
+2007-09-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Mac doesn't have any kind of not implemented macro, so we'll actually implement
+        fileSize.
+
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::fileSize):
+
 2007-09-14  Timothy Hatcher  <timothy@apple.com>
 
         Initialize m_dialogArguments to 0. Fixes the newly crashing layout tests.

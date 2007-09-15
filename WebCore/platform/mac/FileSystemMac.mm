@@ -28,7 +28,6 @@
 #import "config.h"
 #import "FileSystem.h"
 
-#import "NotImplemented.h"
 #import "PlatformString.h"
 
 namespace WebCore {
@@ -59,8 +58,18 @@ bool deleteFile(const String& path)
 
 bool fileSize(const String& path, long long& result)
 {
-    notImplemented();
-    return false;
+    const char* fsRep = [(NSString *)path fileSystemRepresentation];
+    
+    if (!fsRep || fsRep[0] == '\0')
+        return false;
+    
+    struct stat fileInfo;
+    
+    if (!stat(fsRep, &fileInfo))
+        return false;
+    
+    result = fileInfo.st_size;
+    return true;
 }
 
 } //namespace WebCore
