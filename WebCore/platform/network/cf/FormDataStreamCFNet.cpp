@@ -32,10 +32,10 @@
 #include "FormDataStreamCFNet.h"
 
 #include "CString.h"
+#include "FileSystem.h"
 #include "FormData.h"
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <CoreFoundation/CFStreamAbstract.h>
-#include <sys/stat.h>
 #include <sys/types.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -340,10 +340,9 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
         if (element.m_type == FormDataElement::data)
             length += element.m_data.size();
         else {
-            struct _stat64i32 sb;
-            int statResult = _stat(element.m_filename.utf8().data(), &sb);
-            if (statResult == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
-                length += sb.st_size;
+            long long size;
+            if (fileSize(element.m_filename, size))
+                length += size;
             else
                 haveLength = false;
         }

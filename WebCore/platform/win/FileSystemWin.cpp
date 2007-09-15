@@ -25,42 +25,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import "config.h"
-#import "FileSystem.h"
 
-#import "NotImplemented.h"
-#import "PlatformString.h"
+#include "config.h"
+
+#include "FileSystem.h"
+#include "PlatformString.h"
+
+#include <sys/stat.h>
 
 namespace WebCore {
 
-bool fileExists(const String& path) 
+bool fileSize(const String& inFilename, long long& result)
 {
-    const char* fsRep = [(NSString *)path fileSystemRepresentation];
-        
-    if (!fsRep || fsRep[0] == '\0')
+    struct _stat64i32 sb;
+    String filename = inFilename;
+    int statResult = _wstat(filename.charactersWithNullTermination(), &sb);
+    if (statResult != 0 || (sb.st_mode & S_IFMT) != S_IFREG)
         return false;
-        
-    struct stat fileInfo;
-
-    // stat(...) returns 0 on successful stat'ing of the file, and non-zero in any case where the file doesn't exist or cannot be accessed
-    return !stat(fsRep, &fileInfo);
+    result = sb.st_size;
+    return true;
 }
 
-bool deleteFile(const String& path) 
-{
-    const char* fsRep = [(NSString *)path fileSystemRepresentation];
-        
-    if (!fsRep || fsRep[0] == '\0')
-        return false;
-        
-    // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
-    return !unlink(fsRep);
 }
-
-bool fileSize(const String& path, long long& result)
-{
-    notImplemented();
-    return false;
-}
-
-} //namespace WebCore

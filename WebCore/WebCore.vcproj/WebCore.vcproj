@@ -3027,6 +3027,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\FileSystem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\FloatConversion.h"
 				>
 			</File>
@@ -3479,6 +3483,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\FileChooserWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\FileSystemWin.cpp"
 					>
 				</File>
 				<File

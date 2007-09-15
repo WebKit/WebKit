@@ -182,6 +182,7 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &ch
 float userIdleTime() { notImplemented(); return 0.0; }
 bool fileExists(const String& path) { notImplemented(); return false; }
 bool deleteFile(const String& path) { notImplemented(); return false; }
+bool fileSize(const String& path, long long& result) { notImplemented(); return false; }
 void callOnMainThread(void (*)()) { notImplemented(); }
 }
 

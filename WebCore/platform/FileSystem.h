@@ -35,6 +35,7 @@ class String;
 
 bool fileExists(const String&);
 bool deleteFile(const String&);
+bool fileSize(const String&, long long& result);
 
 } // namespace WebCore
 

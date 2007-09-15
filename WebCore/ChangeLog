@@ -1,3 +1,27 @@
+2007-09-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam and Geoff.
+
+        <rdar://problem/5333272> Cannot upload files when path contains 
+        non-ascii/multibyte characters
+
+        We can't use _stat to determine file size on Windows as it may not 
+        correctly handle multibyte characters, so we have to use _wstat.
+        
+        In deference to the fact that we may one day use the FormDataStreamCFNet.cpp
+        on Mac i've wrapped the call to _wstat with a generic fileSize
+        method in FileSystem.h
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/FileSystem.h:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        * platform/win/FileSystemWin.cpp: Added.
+        (WebCore::setHTTPBody):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::fileSize):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2007-09-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam.
