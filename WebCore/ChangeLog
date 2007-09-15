@@ -1,5 +1,22 @@
 2007-09-14  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Brady, John H.
+
+        <rdar://problem/5483632> File system operation wrappers are unimplemented on windows
+        
+        Implement Windows versions of fileExists and deleteFile. 
+        Also corrects fileSize to use a 64-bit version of stat.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::fileSize):  
+          Renamed argument to be more consistent with others.
+          And converted to _stat32i64 to allow 64-bit filesizes
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        * platform/win/TemporaryLinkStubs.cpp:
+
+2007-09-14  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Sam and Geoff.
 
         <rdar://problem/5333272> Cannot upload files when path contains 

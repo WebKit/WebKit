@@ -88,9 +88,6 @@ namespace WebCore {
 
 void FrameView::updateBorder() { notImplemented(); }
 
-bool fileExists(const String& path) { notImplemented(); return false; }
-bool deleteFile(const String& path) { notImplemented(); return false; }
-
 }
 
 void Widget::setIsSelected(bool) { notImplemented(); }

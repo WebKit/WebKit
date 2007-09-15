@@ -35,15 +35,28 @@
 
 namespace WebCore {
 
-bool fileSize(const String& inFilename, long long& result)
+bool fileSize(const String& path, long long& result)
 {
-    struct _stat64i32 sb;
-    String filename = inFilename;
-    int statResult = _wstat(filename.charactersWithNullTermination(), &sb);
+    struct _stat32i64 sb;
+    String filename = path;
+    int statResult = _wstat32i64(filename.charactersWithNullTermination(), &sb);
     if (statResult != 0 || (sb.st_mode & S_IFMT) != S_IFREG)
         return false;
     result = sb.st_size;
     return true;
+}
+
+bool fileExists(const String& path) 
+{
+    struct _stat32i64 sb;
+    String filename = path;
+    return !_wstat32i64(filename.charactersWithNullTermination(), &sb);
+}
+
+bool deleteFile(const String& path)
+{
+    String filename = path;
+    return !!DeleteFileW(filename.charactersWithNullTermination());
 }
 
 }
