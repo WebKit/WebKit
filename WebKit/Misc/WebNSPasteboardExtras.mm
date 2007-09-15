@@ -259,19 +259,23 @@ CachedImage* imageFromElement(DOMElement *domElement) {
                                     source:(WebHTMLView *)source
 {
     ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
+
     NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
     [self declareTypes:types owner:source];    
     [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types source:source];
     [types release];
 
-    // FIXME: This has been broken for a while.
-    // There's no way to get the MIME type for the image from a DOM element.
-    // The old code used WKGetPreferredExtensionForMIMEType([image MIMEType]);
     NSString *extension = @"";
-    NSArray *extensions = [NSArray arrayWithObject:extension];
+    if (RenderObject* renderer = core(element)->renderer())
+        if (renderer->isImage())
+            if (CachedImage* image = static_cast<RenderImage*>(renderer)->cachedImage())
+                extension = WKGetPreferredExtensionForMIMEType(image->response().mimeType());
 
+    NSArray *extensions = [[NSArray alloc] initWithObjects:extension, nil];
     [self setPropertyList:extensions forType:NSFilesPromisePboardType];
+    [extensions release];
+
     return source;
 }
 

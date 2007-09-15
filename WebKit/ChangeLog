@@ -1,3 +1,16 @@
+2007-09-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5391540> REGRESSION: Can't drag images from Safari to applications
+          in the dock (Tiger Preview, others in Leopard)
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        Re-implement code here that has been missing for the last couple of years since we
+        did some image refactoring. Was pretty easy now that we can freely call C++ code
+        in WebKit.
+
 2007-09-14  Mark Rowe  <mrowe@apple.com>
 
         Build fix for Tiger.
