@@ -1,3 +1,15 @@
+2007-09-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Move mac specific globals in to mac/DumpRenderTreeMac.h
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.mm: Removed.
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/DumpRenderTree.mm: Copied from DumpRenderTree/DumpRenderTree.mm.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: Added.
+
 2007-09-14  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Weinig

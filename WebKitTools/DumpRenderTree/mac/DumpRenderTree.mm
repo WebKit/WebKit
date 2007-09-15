@@ -118,10 +118,10 @@ CFMutableSetRef disallowedURLs = 0;
 CFRunLoopTimerRef waitToDumpWatchdog = 0;
 
 // Delegates
-FrameLoadDelegate *frameLoadDelegate;
-UIDelegate *uiDelegate;
-EditingDelegate *editingDelegate;
-ResourceLoadDelegate *resourceLoadDelegate;
+static FrameLoadDelegate *frameLoadDelegate;
+static UIDelegate *uiDelegate;
+static EditingDelegate *editingDelegate;
+static ResourceLoadDelegate *resourceLoadDelegate;
 PolicyDelegate *policyDelegate;
 
 static int dumpPixels;

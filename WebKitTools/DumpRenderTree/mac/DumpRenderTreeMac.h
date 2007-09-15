@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +26,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DumpRenderTree_h
-#define DumpRenderTree_h
+#ifndef DumpRenderTreeMac_h
+#define DumpRenderTreeMac_h
 
-#include <JavaScriptCore/Platform.h>
+@class DumpRenderTreeDraggingInfo;
+@class NavigationController;
+@class PolicyDelegate;
+@class WebFrame;
+@class WebView;
 
-#if PLATFORM(MAC)
-#include "DumpRenderTreeMac.h"
-#endif
+extern CFMutableArrayRef allWindowsRef;
+extern CFMutableSetRef disallowedURLs;
+extern WebFrame* mainFrame;
+extern WebFrame* topLoadingFrame;
+extern DumpRenderTreeDraggingInfo *draggingInfo;
+extern NavigationController* navigationController;
+extern PolicyDelegate* policyDelegate;
 
-class LayoutTestController;
+WebView* createWebView();
 
-extern volatile bool done;
-
-extern CFRunLoopTimerRef waitToDumpWatchdog;
-extern LayoutTestController* layoutTestController;
-
-void displayWebView();
-void dump();
-
-#endif // DumpRenderTree_h
+#endif // DumpRenderTreeMac_h 

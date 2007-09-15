@@ -79,7 +79,8 @@
 		BCA18B7F0C9B08F100114369 /* ObjCPluginFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA18B780C9B08F100114369 /* ObjCPluginFunction.h */; };
 		BCA18B800C9B08F100114369 /* ObjCPluginFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B790C9B08F100114369 /* ObjCPluginFunction.m */; };
 		BCA18B9C0C9B09B400114369 /* ImageDiff.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B750C9B08F100114369 /* ImageDiff.m */; };
-		BCA51D090C95DFE80076A81A /* DumpRenderTree.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA51D080C95DFE80076A81A /* DumpRenderTree.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		BCA18C0B0C9B59EF00114369 /* DumpRenderTreeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA18C0A0C9B59EF00114369 /* DumpRenderTreeMac.h */; };
+		BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */; };
 		BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF6C64F0C98E9C000AC063E /* GCController.cpp */; };
 /* End PBXBuildFile section */
 
@@ -118,7 +119,7 @@
 		1A8F024D0BB9B056008CFA34 /* TestObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TestObject.c; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = AHEM____.TTF; path = DumpRenderTree.qtproj/fonts/AHEM____.TTF; sourceTree = "<group>"; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
 		A817090108B1643800CCB9FB /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,7 +163,8 @@
 		BCA18B770C9B08F100114369 /* ObjCPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ObjCPlugin.m; path = mac/ObjCPlugin.m; sourceTree = "<group>"; };
 		BCA18B780C9B08F100114369 /* ObjCPluginFunction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ObjCPluginFunction.h; path = mac/ObjCPluginFunction.h; sourceTree = "<group>"; };
 		BCA18B790C9B08F100114369 /* ObjCPluginFunction.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ObjCPluginFunction.m; path = mac/ObjCPluginFunction.m; sourceTree = "<group>"; };
-		BCA51D080C95DFE80076A81A /* DumpRenderTree.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DumpRenderTree.mm; sourceTree = "<group>"; };
+		BCA18C0A0C9B59EF00114369 /* DumpRenderTreeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeMac.h; path = mac/DumpRenderTreeMac.h; sourceTree = "<group>"; };
+		BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTree.mm; path = mac/DumpRenderTree.mm; sourceTree = "<group>"; };
 		BCF6C64F0C98E9C000AC063E /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -213,7 +215,8 @@
 				9345229B0BD12B2C0086EDA0 /* Resources */,
 				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
 				A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */,
-				BCA51D080C95DFE80076A81A /* DumpRenderTree.mm */,
+				BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */,
+				BCA18C0A0C9B59EF00114369 /* DumpRenderTreeMac.h */,
 				BCA18B730C9B08F100114369 /* DumpRenderTreeDraggingInfo.h */,
 				BCA18B740C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm */,
 				BCA18B750C9B08F100114369 /* ImageDiff.m */,
@@ -349,6 +352,7 @@
 				BCA18B7A0C9B08F100114369 /* DumpRenderTreeDraggingInfo.h in Headers */,
 				BCA18B7D0C9B08F100114369 /* ObjCPlugin.h in Headers */,
 				BCA18B7F0C9B08F100114369 /* ObjCPluginFunction.h in Headers */,
+				BCA18C0B0C9B59EF00114369 /* DumpRenderTreeMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -462,7 +466,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCA51D090C95DFE80076A81A /* DumpRenderTree.mm in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
 				BC0131DA0C9772010087317D /* LayoutTestController.cpp in Sources */,
 				BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */,
@@ -482,6 +485,7 @@
 				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
 				BCA18B7E0C9B08F100114369 /* ObjCPlugin.m in Sources */,
 				BCA18B800C9B08F100114369 /* ObjCPluginFunction.m in Sources */,
+				BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
