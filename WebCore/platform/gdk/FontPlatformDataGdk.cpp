@@ -138,35 +138,6 @@ bool FontPlatformData::isFixedPitch()
     return false;
 }
 
-// length is a out value giving the length of the list
-cairo_font_face_t** FontPlatformData::list(FontDescription& fontDescription, const AtomicString& familyName, int* length)
-{
-    init();
-
-    FcPattern* pattern = FcPatternCreate();
-    if (!pattern)
-        return NULL;
-
-    FcObjectSet* os = FcObjectSetCreate();
-    FcObjectSetAdd(os, FC_FAMILY);
-    FcObjectSetAdd(os, FC_STYLE);
-    FcFontSet* fs = FcFontList(0, pattern, os);
-    if (length)
-        *length = fs->nfont;
-    if (pattern)
-        FcPatternDestroy(pattern);
-    if (os)
-        FcObjectSetDestroy (os);
-    cairo_font_face_t** result = reinterpret_cast<cairo_font_face_t**>(malloc((fs->nfont + 1) * sizeof(cairo_font_face_t*)));
-    for (int i = 0; i < fs->nfont; i++) {
-        FcChar8* font = FcNameUnparse(fs->fonts[i]);
-        printf("%s\n", font);
-        result[i] = cairo_ft_font_face_create_for_pattern(fs->fonts[i]);
-    }
-    result[fs->nfont] = NULL;
-    return result;
-}
-
 void FontPlatformData::setFont(cairo_t* cr) const
 {
     ASSERT(m_scaledFont);

@@ -328,6 +328,16 @@
 
 2007-09-14  Sven Herzberg  <sven@imendio.com>
 
+        Reviewed by George.
+
+        Don't maintain obsolete code, fixes:
+        http://bugs.webkit.org/show_bug.cgi?id=15215
+
+        * platform/gdk/FontPlatformData.cpp: remove static
+        FontPlatformData::list() (isn't used at any place)
+
+2007-09-14  Sven Herzberg  <sven@imendio.com>
+
         Reviewed by Adam Roben.
 
         Don't use fontconfig types if necessary, fixes:
