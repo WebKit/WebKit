@@ -1,3 +1,16 @@
+2007-09-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        Add WebCore::String::fromUTF8 to convert from UTF-8
+        to a WebCore::String. This is meant to be used by
+        the Gtk+ port and the signature and implementation
+        is similiar to the one of DeprecatedString.
+
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::fromUTF8):
+
 2007-09-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Anders.
