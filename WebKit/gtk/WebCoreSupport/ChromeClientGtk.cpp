@@ -32,7 +32,6 @@
 #include "IntRect.h"
 #include "PlatformString.h"
 #include "CString.h"
-#include "TextEncoding.h"
 #include "webkitgtkpage.h"
 #include "webkitgtkprivate.h"
 #include "NotImplemented.h"
@@ -224,7 +223,7 @@ bool ChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, cons
     if (!cresult)
         return false;
     else {
-        result = UTF8Encoding().decode(cresult, strlen(cresult));
+        result = String::fromUTF8(cresult);
         g_free(cresult);
         return true;
     }

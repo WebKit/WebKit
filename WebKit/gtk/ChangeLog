@@ -1,3 +1,13 @@
+2007-09-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        Use the new WebCore::String::fromUTF8 function to convert
+        from the Gtk+ representation of a string to WebCore::String.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::runJavaScriptPrompt):
+
 2007-09-10  Nigel Tao  <nigeltao@gnome.org>
 
         Reviewed by Mark Rowe.
