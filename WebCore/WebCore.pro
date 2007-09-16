@@ -876,6 +876,7 @@ gdk-port {
         platform/gdk/DragDataGdk.cpp \
         platform/gdk/DragImageGdk.cpp \
         platform/gdk/FileChooserGdk.cpp \
+        platform/gdk/FileSystemGdk.cpp \
         platform/gdk/FontCacheGdk.cpp \
         platform/gdk/FontDataGdk.cpp \
         platform/gdk/FontGdk.cpp \

@@ -1,3 +1,15 @@
+2007-09-13  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders.
+
+        Implement the fileExists and deleteFile functions
+        using glib.
+
+        * WebCore.pro:
+        * platform/gdk/FileSystemGdk.cpp: Added.
+        (WebCore::fileExists):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
 2007-09-16  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
