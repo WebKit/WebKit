@@ -1,3 +1,48 @@
+2007-09-16  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5472125> REGRESSION (9A535-9A548): No VO cursor shown when navigating in a mail message body
+
+        The problem was that the visible units code was mishandling non-editable content, generating null
+        VisiblePositions instead of the actual boundary VisiblePositions.
+        
+        Updated tests:
+        * fast/dom/Window/window-xy-properties-expected.txt:
+        * fast/dom/plugin-attributes-enumeration-expected.txt:
+        * fast/events/onerror-bubbling-expected.txt:
+        * fast/events/related-target-expected.txt:
+        * fast/forms/select-namedItem-expected.txt:
+        * fast/table/incomplete-table-in-fragment-2-expected.txt:
+        * fast/table/incomplete-table-in-fragment-hang-expected.txt:
+        * fast/table/large-rowspan-crash-expected.txt:
+        * plugins/embed-attributes-setting-expected.txt:
+       
+        Source Changes:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next):
+        (WebCore::VisiblePosition::previous):
+        (WebCore::VisiblePosition::honorEditableBoundaryAtOrBefore):
+        (WebCore::VisiblePosition::honorEditableBoundaryAtOrAfter):
+        Rename firstEditablePositionAtOrAfter to honorEditableBoundaryAtOrAfter.
+        Rename firstEditablePositionAtOrBefore to honorEditableBoundaryAtOrBefore.
+        Changed these two functions to handle non-editable positions.
+        
+        * editing/VisiblePosition.h:
+        * editing/visible_units.cpp:
+        (WebCore::previousWordPosition):
+        (WebCore::nextWordPosition):
+        (WebCore::positionAvoidingFirstPositionInTable):
+        (WebCore::startPositionForLine):
+        (WebCore::startOfLine):
+        (WebCore::endOfLine):
+        (WebCore::previousSentencePosition):
+        (WebCore::nextSentencePosition):
+        Rename firstEditablePositionAtOrAfter to honorEditableBoundaryAtOrAfter.
+        Rename firstEditablePositionAtOrBefore to honorEditableBoundaryAtOrBefore.
+        Also, startOfLine() now calls positionAvoidingFirstPositionInTable() in the empty block early return case.
+        positionAvoidingFirstPositionInTable() was the logic startOfLine() used in the normal case. Now in a reusable function.
+
 2007-09-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

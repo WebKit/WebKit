@@ -1,3 +1,23 @@
+2007-09-16  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        Updated for
+        <rdar://problem/5472125> REGRESSION (9A535-9A548): No VO cursor shown when navigating in a mail message body
+        
+        Newlines are now emitted when the first content of document is block element without text (like an empty table
+        or an HR), followed by text.
+        
+        * fast/dom/Window/window-xy-properties-expected.txt:
+        * fast/dom/plugin-attributes-enumeration-expected.txt:
+        * fast/events/onerror-bubbling-expected.txt:
+        * fast/events/related-target-expected.txt:
+        * fast/forms/select-namedItem-expected.txt:
+        * fast/table/incomplete-table-in-fragment-2-expected.txt:
+        * fast/table/incomplete-table-in-fragment-hang-expected.txt:
+        * fast/table/large-rowspan-crash-expected.txt:
+        * plugins/embed-attributes-setting-expected.txt:
+
 2007-09-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam.
