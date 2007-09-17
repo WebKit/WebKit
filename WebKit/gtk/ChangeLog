@@ -1,3 +1,20 @@
+2007-09-17  Cyril Brulebois  <cyril.brulebois@enst-bretagne.fr>
+
+        Reviewed by Mark, some Coding Style changes by Holger.
+
+        This is from http://bugs.webkit.org/show_bug.cgi?id=14812.
+
+        Add title and location to WebKitGtkFramePrivate, add
+        webkit_gtk_frame_get_location to the WebKitGtkFrame API as well
+        as a title_changed callback, implement
+        webkit_gtk_frame_get_title and webkit_gtk_frame_get_location.
+
+        Initial patch by Diego Escalante Urrelo.
+
+        * Api/webkitgtkframe.cpp:
+        * Api/webkitgtkframe.h:
+        * Api/webkitgtkprivate.h:
+
 2007-09-15  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.

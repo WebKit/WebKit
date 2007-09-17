@@ -78,6 +78,9 @@ extern "C" {
         WebCore::Frame* frame;
         WebCore::FrameLoaderClient* client;
         WebKitGtkPage* page;
+
+        gchar* title;
+        gchar* location;
     };
 
 

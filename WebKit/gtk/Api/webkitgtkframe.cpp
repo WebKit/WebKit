@@ -57,12 +57,16 @@ enum {
 
 static guint webkit_gtk_frame_signals[LAST_SIGNAL] = { 0, };
 
+static void webkit_gtk_frame_real_title_changed(WebKitGtkFrame* frame, gchar* title, gchar* location);
+
 G_DEFINE_TYPE(WebKitGtkFrame, webkit_gtk_frame, G_TYPE_OBJECT)
 
 static void webkit_gtk_frame_finalize(GObject* object)
 {
     WebKitGtkFramePrivate* privateData = WEBKIT_GTK_FRAME_GET_PRIVATE(WEBKIT_GTK_FRAME(object));
     privateData->frame->loader()->cancelAndClear();
+    g_free(privateData->title);
+    g_free(privateData->location);
     delete privateData->frame;
 
     G_OBJECT_CLASS(webkit_gtk_frame_parent_class)->finalize(object);
@@ -97,7 +101,7 @@ static void webkit_gtk_frame_class_init(WebKitGtkFrameClass* frameClass)
     webkit_gtk_frame_signals[TITLE_CHANGED] = g_signal_new("title_changed",
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            0,
+            G_STRUCT_OFFSET(WebKitGtkFrameClass, title_changed),
             NULL,
             NULL,
             webkit_gtk_marshal_VOID__STRING_STRING,
@@ -114,10 +118,21 @@ static void webkit_gtk_frame_class_init(WebKitGtkFrameClass* frameClass)
             G_TYPE_NONE, 2,
             G_TYPE_STRING, G_TYPE_STRING);
 
+    frameClass->title_changed = webkit_gtk_frame_real_title_changed;
+
     /*
      * implementations of virtual methods
      */
     G_OBJECT_CLASS(frameClass)->finalize = webkit_gtk_frame_finalize;
+}
+
+static void webkit_gtk_frame_real_title_changed(WebKitGtkFrame* frame, gchar* title, gchar* location)
+{
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
+    g_free(frameData->title);
+    g_free(frameData->location);
+    frameData->title = g_strdup(title);
+    frameData->location = g_strdup(location);
 }
 
 static void webkit_gtk_frame_init(WebKitGtkFrame* frame)
@@ -140,6 +155,8 @@ GObject* webkit_gtk_frame_new(WebKitGtkPage* page)
     frameData->frame->setView(frameView);
     frameData->frame->init();
     frameData->page = page;
+    frameData->title = 0;
+    frameData->location = 0;
 
     return G_OBJECT(frame);
 }
@@ -169,4 +186,17 @@ webkit_gtk_frame_get_page(WebKitGtkFrame* frame)
     WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
     return frameData->page;
 }
+
+gchar* webkit_gtk_frame_get_title(WebKitGtkFrame* frame)
+{
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
+    return frameData->title;
+}
+
+gchar* webkit_gtk_frame_get_location(WebKitGtkFrame* frame)
+{
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
+    return frameData->location;
+}
+
 }
