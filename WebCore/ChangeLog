@@ -4,7 +4,7 @@
 
         <rdar://problem/5487048> - ASSERT in stress test in IconDatabase
 
-        If a PageURLRecord went away, it never clears itss URL from the IconRecord it retained.
+        If a PageURLRecord went away, it never clears its URL from the IconRecord it retained.
 
         * loader/icon/PageURLRecord.cpp:
         (WebCore::PageURLRecord::~PageURLRecord): Set the icon record to 0, clearing the page url
