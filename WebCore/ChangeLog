@@ -6,9 +6,9 @@
         and
         <rdar://problem/5474001>
 
-        The stress test proves that this was an overzealous ASSERT.  It is very possible to mark and icon
-        for addition to the on-disk database and then mark it for removal before it is ever added.  This
-        is not an error and was already handled gracefully
+        The stress test proves that this was an overzealous ASSERT.  It is very possible to mark an icon
+        for addition to the on-disk database and then mark it for removal before it is ever written out.  
+        This is not an error and was already handled gracefully
 
         * loader/icon/IconDatabase.cpp:
         (WebCore::IconDatabase::removeIconFromSQLDatabase): Don't ASSERT of log if the icon wasn't on disk
