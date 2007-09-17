@@ -120,14 +120,16 @@ void HTMLDocument::setBody(HTMLElement* newBody, ExceptionCode& ec)
         documentElement()->replaceChild(newBody, b, ec);
 }
 
-int HTMLDocument::width() const
+int HTMLDocument::width()
 {
+    updateLayoutIgnorePendingStylesheets();
     FrameView* frameView = view();
     return frameView ? frameView->contentsWidth() : 0;
 }
 
-int HTMLDocument::height() const
+int HTMLDocument::height()
 {
+    updateLayoutIgnorePendingStylesheets();
     FrameView* frameView = view();
     return frameView ? frameView->contentsHeight() : 0;
 }

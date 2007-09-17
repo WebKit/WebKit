@@ -1,3 +1,17 @@
+2007-09-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=14693
+        document.width/height doesn't force layout
+
+        Test: fast/dom/document-width-height-force-layout.html
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::width): Force layout.
+        (WebCore::HTMLDocument::height): ditto.
+        * html/HTMLDocument.h:
+
 2007-09-15  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.

@@ -1,0 +1,5 @@
+This tests that document.width and document.height cause a layout on use. The test has passed if they have positive values.
+
+document.width = 800
+document.height = 600
+
