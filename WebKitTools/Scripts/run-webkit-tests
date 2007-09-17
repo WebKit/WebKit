@@ -254,8 +254,8 @@ chdirWebKit();
 if(!defined($root)){
     my $buildResult;
     if (isCygwin()) {
-        $buildResult = buildVisualStudioProject("WebKitTools/DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.sln");
-    } else { 
+        $buildResult = buildVisualStudioProject("WebKitTools/DumpRenderTree/DumpRenderTree.sln");
+    } else {
         $buildResult = system "WebKitTools/Scripts/build-dumprendertree", $configurationOption;
     }
 

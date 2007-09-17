@@ -20,7 +20,7 @@
 			OutputDirectory="$(WebKitOutputDir)\bin\TestNetscapePlugin$(WebKitConfigSuffix)"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\DumpRenderTree\debug.vsprops"
+			InheritedPropertySheets="..\debug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -102,7 +102,7 @@
 			OutputDirectory="$(WebKitOutputDir)\bin\TestNetscapePlugin"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\DumpRenderTree\release.vsprops"
+			InheritedPropertySheets="..\release.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

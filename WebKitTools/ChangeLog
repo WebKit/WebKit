@@ -1,3 +1,70 @@
+2007-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        - Move Windows DumpRenderTree and TestNetscapePlugin to WebCoreTools/DumpRenderTree/win
+
+        * DumpRenderTree/DumpRenderTree.sln: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.sln.
+        * DumpRenderTree/DumpRenderTree.vcproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.sln: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DraggingInfo.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EditingDelegate.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EditingDelegate.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EventSender.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EventSender.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/GCController.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/GCController.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/LayoutTestController.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/LayoutTestController.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/UIDelegate.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/UIDelegate.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WaitUntilDoneDelegate.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WaitUntilDoneDelegate.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueue.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueue.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueueItem.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueueItem.h: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/debug.vsprops: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/debug_internal.vsprops: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/release.vsprops: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/TestNetscapePlugin: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/TestNetscapePlugin/TestNetscapePlugin.def: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/TestNetscapePlugin/TestNetscapePlugin.rc: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/TestNetscapePlugin/TestNetscapePlugin.vcproj: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/TestNetscapePlugin/main.c: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/TestNetscapePlugin/resource.h: Removed.
+        * DumpRenderTree/win: Added.
+        * DumpRenderTree/win/DraggingInfo.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DraggingInfo.h.
+        * DumpRenderTree/win/DumpRenderTree.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp.
+        * DumpRenderTree/win/DumpRenderTree.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.h.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj.
+        * DumpRenderTree/win/EditingDelegate.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EditingDelegate.cpp.
+        * DumpRenderTree/win/EditingDelegate.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EditingDelegate.h.
+        * DumpRenderTree/win/EventSender.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EventSender.cpp.
+        * DumpRenderTree/win/EventSender.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/EventSender.h.
+        * DumpRenderTree/win/GCController.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/GCController.cpp.
+        * DumpRenderTree/win/GCController.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/GCController.h.
+        * DumpRenderTree/win/LayoutTestController.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/LayoutTestController.cpp.
+        * DumpRenderTree/win/LayoutTestController.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/LayoutTestController.h.
+        * DumpRenderTree/win/TestNetscapePlugin: Copied from DumpRenderTree/DumpRenderTree.vcproj/TestNetscapePlugin.
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/win/UIDelegate.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/UIDelegate.cpp.
+        * DumpRenderTree/win/UIDelegate.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/UIDelegate.h.
+        * DumpRenderTree/win/WaitUntilDoneDelegate.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WaitUntilDoneDelegate.cpp.
+        * DumpRenderTree/win/WaitUntilDoneDelegate.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WaitUntilDoneDelegate.h.
+        * DumpRenderTree/win/WorkQueue.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueue.cpp.
+        * DumpRenderTree/win/WorkQueue.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueue.h.
+        * DumpRenderTree/win/WorkQueueItem.cpp: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueueItem.cpp.
+        * DumpRenderTree/win/WorkQueueItem.h: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/WorkQueueItem.h.
+        * DumpRenderTree/win/debug.vsprops: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/debug.vsprops.
+        * DumpRenderTree/win/debug_internal.vsprops: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/debug_internal.vsprops.
+        * DumpRenderTree/win/release.vsprops: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/release.vsprops.
+        * Scripts/run-webkit-tests: Update to point to the new location of the sln.
+
 2007-09-15  Mark Rowe  <mrowe@apple.com>
 
         Build fix for DumpRenderTree.
