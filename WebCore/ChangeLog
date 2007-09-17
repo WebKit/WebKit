@@ -16,6 +16,19 @@
 
         Reviewed by Mark.
 
+        Convert the filenames from WebCore::String to the filesystem encoding
+        and vice versa using g_filename_{from,to}_utf8 functions. Also add the needed NULL
+        checks for the return values where glib and gtk+ can return NULL.
+
+        * platform/gdk/FileChooserGdk.cpp:
+        (WebCore::convertToStringByAdoptingTheFilesystemRepresentation):
+        (WebCore::FileChooser::openFileChooser):
+        (WebCore::FileChooser::basenameForWidth):
+
+2007-09-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
         Use the new WebCore::String::fromUTF8 function to create
         the labels.
 

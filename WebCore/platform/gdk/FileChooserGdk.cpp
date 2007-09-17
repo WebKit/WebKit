@@ -33,13 +33,29 @@
 #include "Icon.h"
 #include "LocalizedStrings.h"
 #include "StringTruncator.h"
-#include "TextEncoding.h"
 
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
 namespace WebCore {
+
+static bool convertToStringByAdoptingTheFilesystemRepresentation(gchar* filenameSystem, String& result)
+{
+    if (!filenameSystem)
+        return false;
+
+    gchar* filename = g_filename_to_utf8(filenameSystem, -1, 0, 0, 0);
+    g_free(filenameSystem);
+
+    if (!filename)
+        return false;
+    
+    result = String::fromUTF8(filename);
+    g_free(filename);
+    return true;
+}
+
 FileChooser::FileChooser(FileChooserClient* client, const String& filename)
     : m_client(client)
     , m_filename(filename)
@@ -67,13 +83,11 @@ void FileChooser::openFileChooser(Document* document)
     // We need this protector because otherwise we can be deleted if the file upload control is detached while
     // we're within the gtk_run_dialog call.
     RefPtr<FileChooser> protector(this);
+    String result;
 
-    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-        gchar* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-        chooseFile(UTF8Encoding().decode(filename, strlen(filename)));
-        g_free(filename);
-    }
-
+    const bool acceptedDialog = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT;
+    if (acceptedDialog && convertToStringByAdoptingTheFilesystemRepresentation(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)), result))
+        chooseFile(result);
     gtk_widget_destroy(dialog);
 }
 
@@ -82,13 +96,16 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     if (width <= 0)
         return String();
 
-    String string;
-    if (m_filename.isEmpty())
-        string = fileButtonNoFileSelectedLabel();
-    else {
-        gchar* basename = g_path_get_basename(m_filename.utf8().data());
-        string = UTF8Encoding().decode(basename, strlen(basename));
-        g_free(basename);
+    String string = fileButtonNoFileSelectedLabel();
+
+    if (!m_filename.isEmpty()) {
+        gchar* filenameSystem = g_filename_from_utf8(m_filename.utf8().data(), -1, 0, 0, 0);
+        if (filenameSystem) {
+            gchar* basenameSystem = g_path_get_basename(filenameSystem);
+            g_free(filenameSystem);
+
+            convertToStringByAdoptingTheFilesystemRepresentation(basenameSystem, string);
+        }
     }
 
     return StringTruncator::centerTruncate(string, width, font, false);
