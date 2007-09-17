@@ -1,3 +1,18 @@
+2007-09-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix <rdar://problem/5480050>
+        Leopard9A551 with Dashcode 112: Dashcode crash when dragging image into canvas.
+        
+        If @import stylesheet was modified through CSS DOM style selector would not get updated. This
+        could lead to crashes.
+
+        Test: fast/css/import-style-update.html
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::styleSheetChanged):
+
 2007-09-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

@@ -1,3 +1,16 @@
+2007-09-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Test for <rdar://problem/5480050>
+        Leopard9A551 with Dashcode 112: Dashcode crash when dragging image into canvas.
+        
+        Non-crashing test case, but it demonstrates the same problem that would crash
+        under some circumstances.
+
+        * fast/css/import-style-update-expected.txt: Added.
+        * fast/css/import-style-update.html: Added.
+
 2007-09-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.
