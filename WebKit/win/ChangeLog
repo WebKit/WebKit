@@ -1,3 +1,13 @@
+2007-09-17  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://4979801> overflow divs don't respond to keyboard scrolling (affects RSS pages)
+
+        Reviewed by Hyatt.
+
+        * WebView.cpp:
+        (WebView::keyDown): Attempt to scroll an overflow area before
+        scrolling the whole frame.
+
 2007-09-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam
