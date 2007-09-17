@@ -1,3 +1,15 @@
+2007-09-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        <rdar://problem/5487048> - ASSERT in stress test in IconDatabase
+
+        If a PageURLRecord went away, it never clear it's URL from the IconRecord it retained.
+
+        * loader/icon/PageURLRecord.cpp:
+        (WebCore::PageURLRecord::~PageURLRecord): Set the icon record to 0, clearing the page url
+        * loader/icon/PageURLRecord.h: Add the destructor
+
 2007-09-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
