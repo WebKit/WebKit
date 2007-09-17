@@ -1,3 +1,16 @@
+2007-09-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+        
+        <rdar://problem/5471308> - Get async Icon Database fully hooked up on Windows
+        
+        Add a global "shut down WebKit" procedure to do cleanup at the engine level on quit. 
+        Critical now for the IconDatabase and might be for other things in the future.
+
+        * WebKitDLL.cpp:
+        (shutDownWebKit): For now, just close the IconDatabase
+        (DllMain): On DLL_PROCESS_DETACH, call shutDownWebKit
+
 2007-09-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

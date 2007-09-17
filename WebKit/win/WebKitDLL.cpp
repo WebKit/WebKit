@@ -33,6 +33,7 @@
 #include "resource.h"
 #pragma warning( push, 0 )
 #include <WebCore/COMPtr.h>
+#include <WebCore/IconDatabase.h>
 #include <WebCore/Page.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Widget.h>
@@ -67,6 +68,11 @@ static CLSID gRegCLSIDs[] = {
     CLSID_WebURLResponse
 };
 
+void shutDownWebKit()
+{
+    WebCore::iconDatabase()->close();
+}
+
 STDAPI_(BOOL) DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpReserved*/)
 {
     switch (ul_reason_for_call) {
@@ -76,9 +82,11 @@ STDAPI_(BOOL) DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRe
             WebCore::Page::setInstanceHandle(hModule);
             return TRUE;
 
+        case DLL_PROCESS_DETACH:
+            shutDownWebKit();
+
         case DLL_THREAD_ATTACH:
         case DLL_THREAD_DETACH:
-        case DLL_PROCESS_DETACH:
             break;
     }
     return FALSE;
