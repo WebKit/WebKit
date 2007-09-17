@@ -407,7 +407,15 @@ static HTMLInputElement* inputElementFromDOMElement(IDOMElement* element)
 
 class WebFrame::WebFramePrivate {
 public:
-    WebFramePrivate() :frame(0), webView(0), m_policyFunction(0) { }
+    WebFramePrivate() 
+        : frame(0)
+        , webView(0)
+        , m_policyFunction(0)
+        , m_pluginView(0) 
+        , m_hasSentResponseToPlugin(false) 
+    { 
+    }
+
     ~WebFramePrivate() { }
     FrameView* frameView() { return frame ? frame->view() : 0; }
 
@@ -415,6 +423,10 @@ public:
     WebView* webView;
     FramePolicyFunction m_policyFunction;
     COMPtr<WebFramePolicyListener> m_policyListener;
+    
+    // Points to the plugin view that data should be redirected to.
+    PluginViewWin* m_pluginView;
+    bool m_hasSentResponseToPlugin;
 };
 
 // WebFrame ----------------------------------------------------------------
@@ -1611,7 +1623,13 @@ void WebFrame::finishedLoading(DocumentLoader* loader)
     // Telling the frame we received some data and passing 0 as the data is our
     // way to get work done that is noramlly done when the first bit of data is
     // received, even for the case of a documenbt with no data (like about:blank)
-    committedLoad(loader, 0, 0);
+    if (!d->m_pluginView)
+        committedLoad(loader, 0, 0);
+    else {
+        d->m_pluginView->didFinishLoading();
+        d->m_pluginView = 0;
+        d->m_hasSentResponseToPlugin = false;
+    }
 }
 
 void WebFrame::finalSetupForReplace(DocumentLoader*)
@@ -1803,9 +1821,13 @@ PassRefPtr<DocumentLoader> WebFrame::createDocumentLoader(const ResourceRequest&
     return loader.release();
 }
 
-void WebFrame::setMainDocumentError(DocumentLoader*, const ResourceError&)
+void WebFrame::setMainDocumentError(DocumentLoader*, const ResourceError& error)
 {
-    notImplemented();
+    if (d->m_pluginView) {
+        d->m_pluginView->didFail(error);
+        d->m_pluginView = 0;
+        d->m_hasSentResponseToPlugin = false;
+    }
 }
 
 ResourceError WebFrame::cancelledError(const ResourceRequest& request)
@@ -1901,7 +1923,16 @@ void WebFrame::committedLoad(DocumentLoader* loader, const char* data, int lengt
     // FIXME: This should probably go through the data source.
     const String& textEncoding = loader->response().textEncodingName();
 
-    receivedData(data, length, textEncoding);
+    if (!d->m_pluginView)
+        receivedData(data, length, textEncoding);
+
+    if (d->m_pluginView) {
+        if (!d->m_hasSentResponseToPlugin) {
+            d->m_pluginView->didReceiveResponse(d->frame->loader()->documentLoader()->response());
+            d->m_hasSentResponseToPlugin = true;
+        }
+        d->m_pluginView->didReceiveData(data, length);
+    }
 }
 
 void WebFrame::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& mimeType, const ResourceRequest& request)
@@ -2196,9 +2227,9 @@ Frame* WebFrame::createFrame(const KURL& url, const String& name, HTMLFrameOwner
     return result;
 }
 
-Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool /*loadManually*/)
+Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-    PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->createPluginView(core(this), pluginSize, element, url, paramNames, paramValues, mimeType);
+    PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->createPluginView(core(this), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
 
     if (pluginView->status() == PluginStatusLoadedSuccessfully)
         return pluginView;
@@ -2210,8 +2241,8 @@ Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, cons
 
     RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    unsigned size = (unsigned)paramNames.size();
-    for (unsigned i = 0; i < size; i++) {
+    unsigned count = (unsigned)paramNames.size();
+    for (unsigned i = 0; i < count; i++) {
         if (paramNames[i] == "pluginspage") {
             static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
             RetainPtr<CFStringRef> str(AdoptCF, paramValues[i].createCFString());
@@ -2259,23 +2290,17 @@ Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, cons
     return pluginView;
 }
 
-void WebFrame::redirectDataToPlugin(Widget* /*pluginWidget*/)
+void WebFrame::redirectDataToPlugin(Widget* pluginWidget)
 {
-    // FIXME: Don't hardcode the error domain
-    ResourceError error(String(WebKitErrorDomain), WebKitErrorPlugInWillHandleLoad, String(), String());
-
-    // FIXME: We should really redirect the data coming in to the plugin instead of
-    // cancelling the load and letting the plugin start another one.
     // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
 
-    ASSERT(core(this));
-    core(this)->loader()->documentLoader()->cancelMainResourceLoad(error);
+    d->m_pluginView = static_cast<PluginViewWin*>(pluginWidget);
 }
-    
+
 Widget* WebFrame::createJavaAppletWidget(const IntSize& pluginSize, Element* element, const KURL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     PluginViewWin* pluginView = PluginDatabaseWin::installedPlugins()->
-        createPluginView(core(this), pluginSize, element, KURL(), paramNames, paramValues, "application/x-java-applet");
+        createPluginView(core(this), pluginSize, element, KURL(), paramNames, paramValues, "application/x-java-applet", false);
 
     // Check if the plugin can be loaded successfully
     if (pluginView->plugin()->load())

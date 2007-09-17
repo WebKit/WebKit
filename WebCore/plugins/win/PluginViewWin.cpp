@@ -27,6 +27,7 @@
 #include "PluginViewWin.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "FrameLoader.h"
@@ -321,11 +322,10 @@ void PluginViewWin::setFrameGeometry(const IntRect& rect)
     if (m_element->document()->printing())
         return;
 
-    if (rect != frameGeometry()) {
+    if (rect != frameGeometry())
         Widget::setFrameGeometry(rect);
-        updateWindow();
-    }
 
+    updateWindow();
     setNPWindowRect(rect);
 }
 
@@ -625,7 +625,7 @@ bool PluginViewWin::start()
 
     m_isStarted = true;
 
-    if (m_url.isValid()) {
+    if (m_url.isValid() && !m_loadManually) {
         FrameLoadRequest frameLoadRequest;
         frameLoadRequest.resourceRequest().setHTTPMethod("GET");
         frameLoadRequest.resourceRequest().setURL(m_url);
@@ -1361,7 +1361,7 @@ void PluginViewWin::setParameters(const Vector<String>& paramNames, const Vector
     m_paramCount = paramCount;
 }
 
-PluginViewWin::PluginViewWin(Frame* parentFrame, const IntSize& size, PluginPackageWin* plugin, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
+PluginViewWin::PluginViewWin(Frame* parentFrame, const IntSize& size, PluginPackageWin* plugin, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
     : m_parentFrame(parentFrame)
     , m_plugin(plugin)
     , m_element(element)
@@ -1380,6 +1380,8 @@ PluginViewWin::PluginViewWin(Frame* parentFrame, const IntSize& size, PluginPack
     , m_isTransparent(false)
     , m_isVisible(false)
     , m_haveInitialized(false)
+    , m_loadManually(loadManually)
+    , m_manualStream(0)
 {
     if (!m_plugin) {
         m_status = PluginStatusCanNotFindPlugin;
@@ -1394,7 +1396,7 @@ PluginViewWin::PluginViewWin(Frame* parentFrame, const IntSize& size, PluginPack
 
     setParameters(paramNames, paramValues);
 
-    m_mode = element->document()->isPluginDocument() ? NP_FULL : NP_EMBED;
+    m_mode = m_loadManually ? NP_FULL : NP_EMBED;
 
     resize(size);
 }
@@ -1429,7 +1431,7 @@ void PluginViewWin::init()
             flags |= WS_VISIBLE;
 
         m_window = CreateWindowEx(0, kWebPluginViewWindowClassName, 0, flags,
-                                  0, 0, width(), height(), m_parentFrame->view()->containingWindow(), 0, Page::instanceHandle(), 0);
+                                  0, 0, 0, 0, m_parentFrame->view()->containingWindow(), 0, Page::instanceHandle(), 0);
         
         // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
         // the Shockwave Director plug-in.
@@ -1448,6 +1450,41 @@ void PluginViewWin::init()
         setNPWindowRect(frameGeometry());
 
     m_status = PluginStatusLoadedSuccessfully;
+}
+
+void PluginViewWin::didReceiveResponse(const ResourceResponse& response)
+{
+    ASSERT(m_loadManually);
+    ASSERT(!m_manualStream);
+
+    m_manualStream = new PluginStreamWin(this, m_parentFrame, m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0);
+    m_manualStream->setLoadManually(true);
+
+    m_manualStream->didReceiveResponse(0, response);
+}
+
+void PluginViewWin::didReceiveData(const char* data, int length)
+{
+    ASSERT(m_loadManually);
+    ASSERT(m_manualStream);
+    
+    m_manualStream->didReceiveData(0, data, length);
+}
+
+void PluginViewWin::didFinishLoading()
+{
+    ASSERT(m_loadManually);
+    ASSERT(m_manualStream);
+
+    m_manualStream->didFinishLoading(0);
+}
+
+void PluginViewWin::didFail(const ResourceError& error)
+{
+    ASSERT(m_loadManually);
+    ASSERT(m_manualStream);
+
+    m_manualStream->didFail(0, error);
 }
 
 } // namespace WebCore

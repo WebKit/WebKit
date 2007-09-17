@@ -1,3 +1,25 @@
+2007-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5421997>
+        http://bugs.webkit.org/show_bug.cgi?id=14247
+        Display problem with Flash - image does not stop changing
+
+        Port the manual load code over from the Mac version.
+
+        * WebFrame.cpp:
+        (WebFrame::WebFramePrivate::WebFramePrivate):
+        Initialize the plugin pointer.
+        
+        (WebFrame::finishedLoading):
+        (WebFrame::setMainDocumentError):
+        (WebFrame::committedLoad):
+        Feed the data to the plug-in.
+                
+        (WebFrame::redirectDataToPlugin):
+        Store the plug-in widget.
+
 2007-09-14  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build.

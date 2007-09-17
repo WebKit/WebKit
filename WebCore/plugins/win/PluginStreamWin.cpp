@@ -27,20 +27,14 @@
 #include "PluginStreamWin.h"
 
 #include "CString.h"
+#include "DocumentLoader.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "PluginDebug.h"
 #include "PluginPackageWin.h"
 #include "PluginViewWin.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
-
-#if USE(CFNETWORK)
-#include <CFNetwork/CFNetwork.h>
-#include <CFNetwork/CFURLResponsePriv.h>
-#elif USE(WININET)
-#include "ResourceHandleWin.h"
-#else 
-#error No loader framework defined
-#endif
 
 // We use -2 here because some plugins like to return -1 to indicate error
 // and this way we won't clash with them.
@@ -64,6 +58,7 @@ PluginStreamWin::PluginStreamWin(PluginViewWin* pluginView, Frame* frame, const 
     , m_pluginView(pluginView)
     , m_notifyData(notifyData)
     , m_sendNotification(sendNotification)
+    , m_loadManually(false)
     , m_streamState(StreamBeforeStarted)
     , m_delayDeliveryTimer(this, &PluginStreamWin::delayDeliveryTimerFired)
     , m_deliveryData(0)
@@ -97,6 +92,8 @@ PluginStreamWin::~PluginStreamWin()
 
 void PluginStreamWin::start()
 {
+    ASSERT(!m_loadManually);
+
     m_loader = SubresourceLoader::create(m_frame, this, m_resourceRequest);
     if (m_loader)
         m_loader->setShouldBufferData(false);
@@ -105,6 +102,18 @@ void PluginStreamWin::start()
 void PluginStreamWin::stop()
 {
     m_streamState = StreamStopped;
+
+    if (m_loadManually) {
+        ASSERT(!m_loader);
+
+        DocumentLoader* documentLoader = m_frame->loader()->activeDocumentLoader();
+        ASSERT(documentLoader);
+
+        if (documentLoader->isLoadingMainResource())
+            documentLoader->cancelMainResourceLoad(m_frame->loader()->cancelledError(m_resourceRequest));
+
+        return;
+    }
 
     if (m_loader) {
         m_loader->cancel();
@@ -259,7 +268,8 @@ void PluginStreamWin::destroyStream()
 
     // disconnectStream can cause us to be deleted.
     RefPtr<PluginStreamWin> protect(this);
-    m_pluginView->disconnectStream(this);
+    if (!m_loadManually)
+        m_pluginView->disconnectStream(this);
 
     m_pluginView = 0;
 

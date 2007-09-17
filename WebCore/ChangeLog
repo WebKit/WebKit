@@ -1,3 +1,46 @@
+2007-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5421997>
+        http://bugs.webkit.org/show_bug.cgi?id=14247
+        Display problem with Flash - image does not stop changing
+        
+        Port the manual load code over from the Mac version.
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabaseWin::createPluginView):
+        * plugins/win/PluginDatabaseWin.h:
+        Add load manually parameter.
+        
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::stop):
+        If we're loading manually, cancel the main resource load.
+         
+        (WebCore::PluginStreamWin::destroyStream):
+        Don't disconnect the stream if we're loading manually.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::setFrameGeometry):
+        Always call updateWindow()
+        
+        (WebCore::PluginViewWin::PluginViewWin):
+        Initialize loadManually.
+        
+        (WebCore::PluginViewWin::init):
+        Don't set the width and height of the window here since it will make the plug-in HWND show briefly
+        before it's been positioned.
+        
+        (WebCore::PluginViewWin::didReceiveResponse):
+        Create the manual stream.
+        
+        (WebCore::PluginViewWin::didReceiveData):
+        (WebCore::PluginViewWin::didFinishLoading):
+        (WebCore::PluginViewWin::didFail):
+        Call through to the manual stream.
+        
+        * plugins/win/PluginViewWin.h:
+
 2007-09-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

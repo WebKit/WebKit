@@ -484,7 +484,7 @@ PluginPackageWin* PluginDatabaseWin::findPlugin(const KURL& url, const String& m
     return plugin;
 }
 
-PluginViewWin* PluginDatabaseWin::createPluginView(Frame* parentFrame, const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
+PluginViewWin* PluginDatabaseWin::createPluginView(Frame* parentFrame, const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     PluginPackageWin* plugin = findPlugin(url, mimeType);
     
@@ -492,7 +492,7 @@ PluginViewWin* PluginDatabaseWin::createPluginView(Frame* parentFrame, const Int
     if (!plugin && refresh())
         plugin = findPlugin(url, mimeType);
         
-    return new PluginViewWin(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeType);
+    return new PluginViewWin(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeType, loadManually);
 }
 
 }

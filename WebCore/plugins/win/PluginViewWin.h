@@ -60,6 +60,8 @@ namespace WebCore {
     class PluginPackageWin;
     class PluginRequestWin;
     class PluginStreamWin;
+    class ResourceError;
+    class ResourceResponse;
     
     enum PluginQuirks {
         PluginQuirkWantsMozillaUserAgent = 1 << 0,
@@ -79,7 +81,7 @@ namespace WebCore {
     friend static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
 
     public:
-        PluginViewWin(Frame* parentFrame, const IntSize&, PluginPackageWin* plugin, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
+        PluginViewWin(Frame* parentFrame, const IntSize&, PluginPackageWin* plugin, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
         virtual ~PluginViewWin();
 
         PluginPackageWin* plugin() const { return m_plugin.get(); }
@@ -113,23 +115,22 @@ namespace WebCore {
         // Widget functions
         virtual void setFrameGeometry(const IntRect&);
         virtual void geometryChanged() const;
-
         virtual void setFocus();
-
         virtual void show();
         virtual void hide();
-
         virtual void paint(GraphicsContext*, const IntRect&);
-
         virtual IntRect windowClipRect() const;
-
         virtual void handleEvent(Event*);
-
         virtual void setParent(ScrollView*);
 
         LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
         WNDPROC pluginWndProc() const { return m_pluginWndProc; }
+
+        // Used for manual loading
+        void didReceiveResponse(const ResourceResponse&);
+        void didReceiveData(const char*, int);
+        void didFinishLoading();
+        void didFail(const ResourceError&);
     private:
         void setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues);
         void init();
@@ -188,6 +189,9 @@ namespace WebCore {
         HWND m_window; // for windowed plug-ins
         mutable IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         mutable IntRect m_windowRect; // Our window rect.
+
+        bool m_loadManually;
+        RefPtr<PluginStreamWin> m_manualStream;
 
         static PluginViewWin* s_currentPluginView;
     };
