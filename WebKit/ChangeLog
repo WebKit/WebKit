@@ -1,3 +1,16 @@
+2007-09-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/5490204> In some cases, WebKit can make the 
+        Foundation disk cache way too big or way too small
+        
+        Use the actual location of the foundation disk cache, rather than 
+        the user's home directory, when determining how big to make it.
+
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2007-09-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
