@@ -1,3 +1,10 @@
+2007-09-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix. Ran update-webkitsysteminterface script.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterface.a:
+
 2007-08-28  Anders Carlsson  <andersca@apple.com>
 
         Add WKSetNSURLRequestShouldContentSniff.

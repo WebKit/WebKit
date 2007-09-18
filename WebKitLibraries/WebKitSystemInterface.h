@@ -1,6 +1,6 @@
 /*      
     WebKitSystemInterface.h
-    Copyright (C) 2005, 2006 Apple Computer, Inc. All rights reserved.    
+    Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.    
 
     Public header file.
 */
@@ -19,9 +19,6 @@ typedef enum {
     WKCertificateParseResultFailed     = 1,
     WKCertificateParseResultPKCS7      = 2,
 } WKCertificateParseResult;
-
-NSString *WKCreateURLPasteboardFlavorTypeName(void);
-NSString *WKCreateURLNPasteboardFlavorTypeName(void);
 
 CFStringRef WKCopyCFLocalizationPreferredName(CFStringRef localization);
 CFStringRef WKSignedPublicKeyAndChallengeString(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
@@ -160,6 +157,8 @@ BOOL WKAppVersionCheckLessThan(NSString *, int, double);
 
 int WKQTMovieDataRate(QTMovie* movie);
 float WKQTMovieMaxTimeLoaded(QTMovie* movie);
+
+CFStringRef WKCopyFoundationCacheDirectory(void);
 
 #ifdef __cplusplus
 }
