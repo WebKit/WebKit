@@ -1,5 +1,13 @@
 2007-09-17  Anders Carlsson  <andersca@apple.com>
 
+        Fix Mac build.
+        
+        * loader/NetscapePlugInStreamLoader.cpp:
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/win/NetscapePlugInStreamLoaderWin.cpp: Copied from loader/NetscapePlugInStreamLoader.cpp.
+
+2007-09-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         <rdar://problem/5483346>
