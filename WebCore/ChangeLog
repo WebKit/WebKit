@@ -1,5 +1,12 @@
 2007-09-17  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * loader/NetscapePlugInStreamLoader.h:
+
+2007-09-17  Anders Carlsson  <andersca@apple.com>
+
         Fix Mac build.
         
         * loader/NetscapePlugInStreamLoader.cpp:
