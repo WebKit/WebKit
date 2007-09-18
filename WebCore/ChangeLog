@@ -1,3 +1,22 @@
+2007-09-19  Darin Adler <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - fix <rdar://problem/5415734> <select> dras incorrectly if size of menu options
+          is changed after it pops up once
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::PopupMenu): Removed unnecessary initialization of IntRect.
+        (WebCore::PopupMenu::show): Check that the clientRect is empty instead of checking
+        the entire windowRect -- this fixes a bug where we pop up a tiny 2-pixel high black
+        box when you click on an empty menu.
+        (WebCore::PopupMenu::visibleItems): Base the number of items on the client rect
+        instead of the window rect. Rounding down means this would have worked anyway, but
+        it's more correct to do it this way.
+        (WebCore::PopupMenu::paint): Deallocate the bitmap so it gets reallocated if it
+        has the wrong width or height (or if GetObject returns false, which should not
+        happen in practice).
+
 2007-09-18  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

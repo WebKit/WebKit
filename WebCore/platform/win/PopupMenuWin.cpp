@@ -65,7 +65,6 @@ PopupMenu::PopupMenu(PopupMenuClient* client)
     , m_DC(0)
     , m_bmp(0)
     , m_wasClicked(false)
-    , m_windowRect(IntRect())
     , m_itemHeight(0)
     , m_scrollOffset(0)
     , m_wheelDelta(0)
@@ -87,7 +86,7 @@ PopupMenu::~PopupMenu()
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     calculatePositionAndSize(r, v);
-    if (m_windowRect.isEmpty())
+    if (clientRect().isEmpty())
         return;
 
     if (!m_popup) {
@@ -261,7 +260,7 @@ bool PopupMenu::setFocusedIndex(int i, bool hotTracking)
 
 int PopupMenu::visibleItems() const
 {
-    return m_windowRect.height() / m_itemHeight;
+    return clientRect().height() / m_itemHeight;
 }
 
 int PopupMenu::listIndexAtPoint(const IntPoint& point) const
@@ -429,6 +428,17 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
             return;
     }
 
+    if (m_bmp) {
+        bool keepBitmap = false;
+        BITMAP bitmap;
+        if (GetObject(m_bmp, sizeof(bitmap), &bitmap))
+            keepBitmap = bitmap.bmWidth == clientRect().width()
+                && bitmap.bmHeight == clientRect().height();
+        if (!keepBitmap) {
+            DeleteObject(m_bmp);
+            m_bmp = 0;
+        }
+    }
     if (!m_bmp) {
         BITMAPINFO bitmapInfo;
         bitmapInfo.bmiHeader.biSize          = sizeof(BITMAPINFOHEADER);
