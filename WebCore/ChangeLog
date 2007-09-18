@@ -1,3 +1,20 @@
+2007-09-17  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5423441> Should get focus ring color from SafariTheme
+
+        Reviewed by Hyatt.
+
+        No regression test possible.
+
+        * WebCore.vcproj/WebCore.vcproj: Added ColorSafari.cpp.
+        * platform/graphics/win/ColorSafari.cpp: Added.
+        (WebCore::makeRGBAFromCGColor): Added.
+        (WebCore::focusRingColor): Added. Gets the focus ring color from
+        SafariTheme if SafariTheme has support for it.
+        (WebCore::setFocusRingColorChangeFunction): Added.
+        * platform/win/TemporaryLinkStubs.cpp: Removed focus ring color
+        functions.
+
 2007-09-17  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.

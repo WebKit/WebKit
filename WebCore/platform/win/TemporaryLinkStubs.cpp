@@ -94,9 +94,6 @@ void Widget::setIsSelected(bool) { notImplemented(); }
 
 bool ScrollView::inWindow() const { notImplemented(); return true; }
 
-Color WebCore::focusRingColor() { notImplemented(); return 0xFF7DADD9; }
-void WebCore::setFocusRingColorChangeFunction(void (*)()) { notImplemented(); }
-
 void Frame::setNeedsReapplyStyles() { notImplemented(); }
 
 String FrameLoader::overrideMediaType()const { notImplemented(); return String(); }
