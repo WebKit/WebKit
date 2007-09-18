@@ -1,3 +1,31 @@
+2007-09-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5486974> REGRESSION(r25373): 1/4 second to doubleclick word in GMail when using Kotoeri IM, also slow in other IMs (15163)
+
+        Updated tests:
+        * fast/dom/Window/window-xy-properties-expected.txt:
+        * fast/dom/plugin-attributes-enumeration-expected.txt:
+        * fast/events/onerror-bubbling-expected.txt:
+        * fast/events/related-target-expected.txt:
+        * fast/forms/select-namedItem-expected.txt:
+        * fast/table/incomplete-table-in-fragment-2-expected.txt:
+        * fast/table/incomplete-table-in-fragment-hang-expected.txt:
+        * fast/table/large-rowspan-crash-expected.txt:
+        * plugins/embed-attributes-setting-expected.txt:
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        Avoid VisiblePosition check if the current node is a descendant
+        of the start container and the start offset was 0. In that case
+        we already had enough context to correctly decide whether to emit
+        a newline after a preceding block. We chose not to emit
+        (m_haveEmitted is false), so don't second guess that.
+            
+        (WebCore::TextIterator::exitNode):
+        Changed some comments.
+
 2007-09-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

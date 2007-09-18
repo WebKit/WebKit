@@ -1,3 +1,23 @@
+2007-09-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        Updated for:
+        <rdar://problem/5486974> REGRESSION(r25373): 1/4 second to doubleclick word in GMail when using Kotoeri IM, also slow in other IMs (15163)
+
+        NOTE: This reverts the test result changes I made for rdar://5472125, back to not emitting
+        a newline for collapsed block or hr at start of range.
+                
+        * fast/dom/Window/window-xy-properties-expected.txt:
+        * fast/dom/plugin-attributes-enumeration-expected.txt:
+        * fast/events/onerror-bubbling-expected.txt:
+        * fast/events/related-target-expected.txt:
+        * fast/forms/select-namedItem-expected.txt:
+        * fast/table/incomplete-table-in-fragment-2-expected.txt:
+        * fast/table/incomplete-table-in-fragment-hang-expected.txt:
+        * fast/table/large-rowspan-crash-expected.txt:
+        * plugins/embed-attributes-setting-expected.txt:
+
 2007-09-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

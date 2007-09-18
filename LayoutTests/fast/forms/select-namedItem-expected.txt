@@ -1,4 +1,3 @@
-
 Test for HTMLSelectElement.namedItem()
 
 FOUND ITEM: 2

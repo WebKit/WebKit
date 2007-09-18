@@ -1,4 +1,3 @@
-
 PASS event.clientX is 50
 PASS event.clientY is 50
 PASS event.pageX is 50

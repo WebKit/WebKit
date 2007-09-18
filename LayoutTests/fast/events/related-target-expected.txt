@@ -1,4 +1,3 @@
-
 This test checks that the relatedTarget property is set on mouse out and mouse over events.
 
 To perform the test, move the mouse into the red box, and then drag it out of the red box into the blue box.

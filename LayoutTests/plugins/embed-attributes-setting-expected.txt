@@ -1,4 +1,3 @@
-
 [Embed is element specified in markup]
 PASS: embed.getAttribute('align') should be 1 and is.
 PASS: embed.getAttribute('height') should be 1 and is.

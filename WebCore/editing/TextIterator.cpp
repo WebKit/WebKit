@@ -520,14 +520,27 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     // make quicker checks to possibly avoid that. Another check that we could make is
     // is whether the inline vs block flow changed since the previous visible element.
     // I think we're already in a special enough case that that won't be needed, tho.
-    // The currPos.isNotNull() check is needed because positions in non-html content
-    // (like svg) do not have visible positions, and we don't want to emit for them either.
+
+    // If we are at the start, obviously no newline is needed.
     if (m_node == m_startContainer)
         return false;
     
+    // If we are outside the start container's subtree, assume we need a newline.
+    // FIXME: m_startContainer could be an inline block
     if (!m_node->isDescendantOf(m_startContainer))
         return true;
+
+    // If we started as m_startContainer offset 0 and the current node is a descendant of
+    // the start container, we already had enough context to correctly decide whether to
+    // emit a newline after a preceding block. We chose not to emit (m_haveEmitted is false),
+    // so don't second guess that now.
+    // NOTE: Is this really correct when m_node is not a leftmost descendant? Probably
+    // immaterial since we likely would have already emitted something by now.
+    if (m_startOffset == 0)
+        return false;
     
+    // The currPos.isNotNull() check is needed because positions in non-html content
+    // (like svg) do not have visible positions, and we don't want to emit for them either.
     VisiblePosition startPos = VisiblePosition(m_startContainer, m_startOffset, DOWNSTREAM);
     VisiblePosition currPos = VisiblePosition(m_node, 0, DOWNSTREAM);
     return currPos.isNotNull() && !inSameLine(startPos, currPos);
@@ -567,6 +580,9 @@ bool TextIterator::handleNonTextNode()
 void TextIterator::exitNode()
 {
     // prevent emitting a newline when exiting a collapsed block at beginning of the range
+    // FIXME: !m_haveEmitted does not necessarily mean there was a collapsed block... it could
+    // have been an hr (e.g.). Also, a collapsed block could have height (e.g. a table) and
+    // therefore look like a blank line.
     if (!m_haveEmitted)
         return;
         
@@ -575,7 +591,8 @@ void TextIterator::exitNode()
     // emitted character is positioned visually.
     Node* baseNode = m_node->lastChild() ? m_node->lastChild() : m_node;
     // FIXME: This shouldn't require the m_lastTextNode to be true, but we can't change that without making
-    // the logic in _web_attributedStringFromRange match.  We'll get that for free when we switch to use TextIterator in _web_attributedStringFromRange.
+    // the logic in _web_attributedStringFromRange match.  We'll get that for free when we switch to use
+    // TextIterator in _web_attributedStringFromRange.
     // See <rdar://problem/5428427> for an example of how this mismatch will cause problems.
     if (m_lastTextNode && shouldEmitNewlineAfterNode(m_node)) {
         // use extra newline to represent margin bottom, as needed
