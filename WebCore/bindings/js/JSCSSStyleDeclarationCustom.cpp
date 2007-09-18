@@ -43,6 +43,10 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
     DeprecatedString prop = propertyName;
 
     int i = prop.length();
+
+    if (!i)
+        return prop;
+
     while (--i) {
         ::UChar c = prop[i].unicode();
         if (c >= 'A' && c <= 'Z')

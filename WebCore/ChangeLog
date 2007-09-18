@@ -1,8 +1,23 @@
+2007-09-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15169
+          Freeze on Google maps using the "Dig a hole" tool
+          <rdar://problem/5477414>
+
+        Test: fast/dom/CSSStyleDeclaration-empty-string-property.html
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyName): Added an early return if the property name
+        is the empty string, thus avoiding a loop that is not prepared for that
+        case.
+
 2007-09-19  Darin Adler <darin@apple.com>
 
         Reviewed by Adam.
 
-        - fix <rdar://problem/5415734> <select> dras incorrectly if size of menu options
+        - fix <rdar://problem/5415734> <select> draws incorrectly if size of menu options
           is changed after it pops up once
 
         * platform/win/PopupMenuWin.cpp:
