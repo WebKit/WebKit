@@ -199,9 +199,14 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
     }
 #elif PLATFORM(QT)
     if (m_data) {
+        QPen currentPen = m_painter->pen();
+        qreal currentOpacity = m_painter->opacity();
         if (m_painter->isActive())
             m_painter->end();
         static_cast<QPainter*>(p->platformContext())->drawPixmap(r, *m_data);
+        m_painter->begin(m_data);
+        m_painter->setPen(currentPen);
+        m_painter->setOpacity(currentOpacity);
     }
 #endif
 }

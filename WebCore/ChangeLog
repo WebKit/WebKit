@@ -1,3 +1,13 @@
+2007-09-18  Mike Fenton  <mike@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Make <canvas> work in more cases by restarting the painter after we
+        finish painting, and restoring the pen and opacity.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+
 2007-09-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
