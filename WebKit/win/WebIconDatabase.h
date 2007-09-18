@@ -29,8 +29,10 @@
 #include "IWebIconDatabase.h"
 
 #pragma warning(push, 0)
+#include <WebCore/IconDatabaseClient.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IntSizeHash.h>
+#include <WebCore/Threading.h>
 #pragma warning(pop)
 
 #include <WTF/HashMap.h>
@@ -44,7 +46,7 @@ namespace WebCore
 using namespace WebCore;
 using namespace WTF;
 
-class WebIconDatabase : public IWebIconDatabase
+class WebIconDatabase : public IWebIconDatabase, public WebCore::IconDatabaseClient
 {
 public:
     static WebIconDatabase* createInstance();
@@ -86,6 +88,9 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE allowDatabaseCleanup( void);
 
+    // IconDatabaseClient
+    virtual void dispatchDidRemoveAllIcons();
+    virtual void dispatchDidAddIconForPageURL(const WebCore::String&);
 protected:
     ULONG m_refCount;
     static WebIconDatabase* m_sharedWebIconDatabase;
@@ -96,6 +101,13 @@ protected:
     HBITMAP getOrCreateDefaultIconBitmap(LPSIZE size);
     HashMap<IntSize, HBITMAP> m_defaultIconMap;
     HashMap<IntSize, HBITMAP> m_sharedIconMap;
+
+    Mutex m_notificationMutex;
+    Vector<String> m_notificationQueue;
+    void scheduleNotificationDelivery();
+    bool m_deliveryRequested;
+
+    static void deliverNotifications();
 };
 
 #endif

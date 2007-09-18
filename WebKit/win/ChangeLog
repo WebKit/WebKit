@@ -1,3 +1,24 @@
+2007-09-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Ada and Geoff
+
+        Part of <rdar://problem/5471308> - Get async Icon Database fully hooked up on Windows
+        
+        Hook up main thread delivery of Icon Database notifications from the secondary thread
+        
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::WebIconDatabase): Initialize m_deliveryRequested
+        (WebIconDatabase::init): Set the IconDatabaseClient to the shared WebIconDatabase
+        (WebIconDatabase::dispatchDidRemoveAllIcons): Queue the notification to be delivered on the main thread then
+          ask for the delivery
+        (WebIconDatabase::dispatchDidAddIconForPageURL): Ditto
+        (WebIconDatabase::scheduleNotificationDelivery): If the m_deliveryRequested hasn't been set, then set it
+          and perform the callOnMainThread() for WebIconDatabase::deliverNotifications
+        (postDidRemoveAllIconsNotification):
+        (postDidAddIconNotification):
+        (WebIconDatabase::deliverNotifications): Deliver all notifications in the current queue
+        * WebIconDatabase.h:
+
 2007-09-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

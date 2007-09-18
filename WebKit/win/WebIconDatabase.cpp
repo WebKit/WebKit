@@ -27,8 +27,10 @@
 #include "WebKitDLL.h"
 #include "WebIconDatabase.h"
 
+#include "CFDictionaryPropertyBag.h"
 #include "COMPtr.h"
 #include "WebPreferences.h"
+#include "WebNotificationCenter.h"
 #pragma warning(push, 0)
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Image.h>
@@ -45,6 +47,7 @@ WebIconDatabase* WebIconDatabase::m_sharedWebIconDatabase = 0;
 
 WebIconDatabase::WebIconDatabase()
 : m_refCount(0)
+, m_deliveryRequested(false)
 {
     gClassCount++;
 }
@@ -96,6 +99,8 @@ void WebIconDatabase::init()
         LOG_ERROR("Unable to get icon database enabled preference");
     }
     iconDatabase()->setEnabled(!!enabled);
+
+    iconDatabase()->setClient(this);
 
     BSTR prefDatabasePath = 0;
     if (FAILED(standardPrefs->iconDatabaseLocation(&prefDatabasePath)))
@@ -278,4 +283,80 @@ HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(LPSIZE size)
         return 0;
     }
     return result;
+}
+
+// IconDatabaseClient
+
+void WebIconDatabase::dispatchDidRemoveAllIcons()
+{
+    // Queueing the empty string is a special way of saying "this queued notification is the didRemoveAllIcons notification"
+    MutexLocker locker(m_notificationMutex);
+    m_notificationQueue.append(String());
+    scheduleNotificationDelivery();
+}
+
+void WebIconDatabase::dispatchDidAddIconForPageURL(const String& pageURL)
+{   
+    MutexLocker locker(m_notificationMutex);
+    m_notificationQueue.append(pageURL.copy());
+    scheduleNotificationDelivery();
+}
+
+void WebIconDatabase::scheduleNotificationDelivery()
+{
+    // Caller of this method must hold the m_notificationQueue lock
+    ASSERT(m_notificationMutex.tryLock() == EBUSY);
+
+    if (!m_deliveryRequested) {
+        m_deliveryRequested = true;
+        callOnMainThread(WebIconDatabase::deliverNotifications);
+    }
+}
+
+static void postDidRemoveAllIconsNotification(WebIconDatabase* iconDB)
+{
+    static BSTR didRemoveAllIconsName = SysAllocString(WebIconDatabaseDidRemoveAllIconsNotification);
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+    notifyCenter->postNotificationName(didRemoveAllIconsName, static_cast<IWebIconDatabase*>(iconDB), 0);
+}
+
+static void postDidAddIconNotification(const String& pageURL, WebIconDatabase* iconDB)
+{
+    static BSTR didAddIconName = SysAllocString(WebIconDatabaseDidAddIconNotification);
+    static CFStringRef iconUserInfoKey = String(WebIconNotificationUserInfoURLKey).createCFString();
+
+    RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, 
+    CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    RetainPtr<CFStringRef> url(AdoptCF, pageURL.createCFString());
+    CFDictionaryAddValue(dictionary.get(), iconUserInfoKey, url.get());
+
+    COMPtr<CFDictionaryPropertyBag> userInfo = CFDictionaryPropertyBag::createInstance();
+    userInfo->setDictionary(dictionary.get());
+
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+    notifyCenter->postNotificationName(didAddIconName, static_cast<IWebIconDatabase*>(iconDB), userInfo.get());
+}
+
+void WebIconDatabase::deliverNotifications()
+{
+    ASSERT(m_sharedWebIconDatabase);
+    if (!m_sharedWebIconDatabase)
+        return;
+
+    ASSERT(m_sharedWebIconDatabase->m_deliveryRequested);
+
+    Vector<String> queue;
+    {
+        MutexLocker locker(m_sharedWebIconDatabase->m_notificationMutex);
+        queue.swap(m_sharedWebIconDatabase->m_notificationQueue);
+        m_sharedWebIconDatabase->m_deliveryRequested = false;
+    }
+
+    for (unsigned i = 0; i < queue.size(); ++i) {
+        if (queue[i].isNull())
+            postDidRemoveAllIconsNotification(m_sharedWebIconDatabase);
+        else
+            postDidAddIconNotification(queue[i], m_sharedWebIconDatabase);
+    }
 }
