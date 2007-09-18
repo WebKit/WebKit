@@ -85,7 +85,6 @@ public:
 
 #if PLATFORM(WIN)
     bool isSystemFont() const { return m_isSystemFont; }
-    void setIsMLangFont() { m_isMLangFont = true; }
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
 #endif
@@ -131,7 +130,6 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    bool m_isMLangFont;
     bool m_isSystemFont;
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;

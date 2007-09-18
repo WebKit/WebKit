@@ -58,8 +58,6 @@ void FontData::platformInit()
     Vector<TCHAR> faceName(faceLength);
     GetTextFace(dc, faceLength, faceName.data());
 
-    m_isMLangFont = false;
-
     m_syntheticBoldOffset = m_font.syntheticBold() ? 1.0f : 0.f;
 
     CGFontRef font = m_font.cgFont();
@@ -113,14 +111,7 @@ void FontData::platformInit()
 void FontData::platformDestroy()
 {
     CGFontRelease(m_font.cgFont());
-
-    if (m_isMLangFont) {
-        // We have to release the font instead of just deleting it, since we didn't make it.
-        IMLangFontLink2* langFontLink = FontCache::getFontLinkInterface();
-        if (langFontLink)
-            langFontLink->ReleaseFont(m_font.hfont());
-    } else
-        DeleteObject(m_font.hfont());
+    DeleteObject(m_font.hfont());
 
     // We don't hash this on Win32, so it's effectively owned by us.
     delete m_smallCapsFontData;

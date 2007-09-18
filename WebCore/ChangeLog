@@ -1,3 +1,23 @@
+2007-09-17  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for bug 14743, missing glyphs on many international sites because of MLang's tiny cache.
+        
+        Bypass Mlang's cache entirely.  Get the mapped font from MLang, obtain the font name, and then feed
+        the name back into our own system so that it gets created and cached again without MLang being involved.
+        Then free up the font obtained from MLang immediately so that its cache just remains empty.
+           
+        Reviewed by aroben
+
+        * platform/FontData.h:
+        (WebCore::FontData::isSystemFont):
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::platformDestroy):
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        
 2007-09-17  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5423441> Should get focus ring color from SafariTheme
