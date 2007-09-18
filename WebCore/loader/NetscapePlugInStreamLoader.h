@@ -34,22 +34,33 @@
 #endif
 
 namespace WebCore {
+#ifndef __OBJC__
+    class NetscapePlugInStreamLoader;
 
-    class NetscapePlugInStreamLoader : public ResourceLoader {
+    class NetscapePlugInStreamLoaderClient {
     public:
+        virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) = 0;
+        virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) = 0;
+        virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&) = 0;
+        virtual void didFinishLoading(NetscapePlugInStreamLoader*) { }
+    };
+#endif
+
 #ifdef __OBJC__
         typedef id <WebPlugInStreamLoaderDelegate> PlugInStreamLoaderDelegate;
 #else
-        class PlugInStreamLoaderClient;
-        typedef PlugInStreamLoaderClient* PlugInStreamLoaderDelegate;
+        class NetscapePlugInStreamLoaderClient;
+        typedef NetscapePlugInStreamLoaderClient* PlugInStreamLoaderDelegate;
 #endif
 
+    class NetscapePlugInStreamLoader : public ResourceLoader {
+    public:
         static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, PlugInStreamLoaderDelegate);
         virtual ~NetscapePlugInStreamLoader();
 
         bool isDone() const;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || USE(CFNETWORK)
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char *, int, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
@@ -61,10 +72,14 @@ namespace WebCore {
     private:
         NetscapePlugInStreamLoader(Frame*, PlugInStreamLoaderDelegate);
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || USE(CFNETWORK)
         virtual void didCancel(const ResourceError& error);
+#endif
 
+#if PLATFORM(MAC)
         RetainPtr<PlugInStreamLoaderDelegate > m_stream;
+#elif USE(CFNETWORK)
+        NetscapePlugInStreamLoaderClient* m_client;
 #endif
     };
 

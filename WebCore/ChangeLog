@@ -2,6 +2,47 @@
 
         Reviewed by Adam.
 
+        <rdar://problem/5483346>
+        crash at vw.com WebCore::PluginViewWin::disconnectStream.
+        
+        The following events would lead to this crash:
+        
+        1. a plug-in stream finishes loading and calls NPP_DestroyStream.
+        2. the DestroyStream handler calls NPN_Evaluate, submitting a form through JavaScript.
+        3. A new page is going to be loaded and DocumentLoader::stopLoading is called.
+        4. DocumentLoader::stopLoading will stop all loader, including the one that is done loading!
+        
+        The fix is to port NetscapePluginStreamLoader over from the Mac code and use it instead. This fixes the crash
+        because it disassociates the stream loader with the document loader _before_ calling NPP_DestroyStream, whereas
+        SubresourceLoader does this _after_ calling NPP_DestroyStream. 
+        
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        (WebCore::NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader):
+        (WebCore::NetscapePlugInStreamLoader::create):
+        (WebCore::NetscapePlugInStreamLoader::isDone):
+        (WebCore::NetscapePlugInStreamLoader::releaseResources):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveData):
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        (WebCore::NetscapePlugInStreamLoader::didFail):
+        (WebCore::NetscapePlugInStreamLoader::didCancel):
+        * loader/NetscapePlugInStreamLoader.h:
+        (WebCore::NetscapePlugInStreamLoaderClient::didFinishLoading):
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::start):
+        (WebCore::PluginStreamWin::didReceiveResponse):
+        (WebCore::PluginStreamWin::didReceiveData):
+        (WebCore::PluginStreamWin::didFail):
+        (WebCore::PluginStreamWin::didFinishLoading):
+        * plugins/win/PluginStreamWin.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::load):
+
+2007-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
         <rdar://problem/5483839>
         Crash loading http://www.microsoft.com if Silverlight 1.0 is installed.
         

@@ -790,10 +790,14 @@ NPError PluginViewWin::load(const FrameLoadRequest& frameLoadRequest, bool sendN
     if (!url.isValid())
         return NPERR_INVALID_URL;
 
-    // FIXME: don't let a plugin start any loads if it is no longer part of a document that is being 
-    // displayed
-
     String target = frameLoadRequest.frameName();
+
+    // don't let a plugin start any loads if it is no longer part of a document that is being 
+    // displayed unless the loads are in the same frame as the plugin.
+    if (m_parentFrame->loader()->documentLoader() != m_parentFrame->loader()->activeDocumentLoader() &&
+        (target.isNull() || m_parentFrame->tree()->find(target) != m_parentFrame))
+        return NPERR_GENERIC_ERROR;
+
     String jsString = scriptStringIfJavaScriptURL(url);
     if (!jsString.isNull()) {
         Settings* settings = m_parentFrame->settings();
