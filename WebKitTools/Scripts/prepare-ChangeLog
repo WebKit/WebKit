@@ -71,6 +71,7 @@ sub createPatchCommand($);
 sub diffHeaderFormat();
 sub findOriginalFileFromSvn($);
 sub generateFileList(\@\@\%);
+sub gitConfig($);
 sub isModifiedStatus($);
 sub isAddedStatus($);
 sub isConflictStatus($);
@@ -220,10 +221,12 @@ if (%changed_line_ranges) {
 my $date = changeLogDate($changeLogTimeZone);
 my $name = $ENV{CHANGE_LOG_NAME}
   || $ENV{REAL_NAME}
-  || (getpwuid $<)[6]
+  || gitConfig("user.name")
+  || (split /\s*,\s*/, (getpwuid $<)[6])[0]
   || "set REAL_NAME environment variable";
 my $email_address = $ENV{CHANGE_LOG_EMAIL_ADDRESS}
   || $ENV{EMAIL_ADDRESS}
+  || gitConfig("user.email")
   || "set EMAIL_ADDRESS environment variable";
 
 if ($gitCommit) {
@@ -1085,6 +1088,17 @@ sub generateFileList(\@\@\%)
         $functionLists->{$file} = $description if defined $description;
     }
     close STAT;
+}
+
+sub gitConfig($)
+{
+    return unless $isGit;
+
+    my ($config) = @_;
+
+    my $result = `$GIT config $config`;
+    chomp $result;
+    return $result;
 }
 
 sub isModifiedStatus($)

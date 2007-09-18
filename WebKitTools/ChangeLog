@@ -1,3 +1,11 @@
+2007-09-18  Mike Hommey  <glandium@debian.org>
+
+        Reviewed by Adam.
+
+        * Scripts/prepare-ChangeLog:
+        - Properly parse GECOS field.
+        - Use git configuration for user name and email when appropriate.
+
 2007-09-17  Sam Weinig  <sam@webkit.org>
 
         Build fix.
