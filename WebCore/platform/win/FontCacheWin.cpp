@@ -99,7 +99,7 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
             if (!familyName.isEmpty()) {
                 FontPlatformData* result = getCachedFontPlatformData(font.fontDescription(), familyName);
                 if (result)
-                    return getCachedFontData(result);
+                    fontData = getCachedFontData(result);
             }
         }
     }
