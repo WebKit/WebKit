@@ -193,8 +193,9 @@ extern NSString *WebViewProgressFinishedNotification;
 
 /*!
     @method close
-    @abstract Cancels any pending load operations. Once the receiver is closed it will no longer
-    respond to new requests or fire any more delegate methods.
+    @abstract Closes the receiver, unloading its web page and canceling any pending loads.
+    Once the receiver has closed, it will no longer respond to requests or fire delegate methods.
+    (However, the -close method itself may fire delegate methods.)
     @discussion A garbage collected application is required to call close when the receiver is no longer needed.
     The close method will be called automatically when the window or hostWindow closes and shouldCloseWithWindow returns YES.
     A non-garbage collected application can still call close, providing a convenient way to prevent receiver

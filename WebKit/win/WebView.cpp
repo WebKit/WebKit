@@ -193,6 +193,25 @@ void WebView::close()
 
     m_didClose = true;
 
+    Frame* frame = m_page->mainFrame();
+    if (frame)
+        frame->loader()->detachFromParent();
+
+    m_page->setGroupName(String());
+    setHostWindow(0);
+
+    setDownloadDelegate(0);
+    setEditingDelegate(0);
+    setFrameLoadDelegate(0);
+    setFrameLoadDelegatePrivate(0);
+    setPolicyDelegate(0);
+    setResourceLoadDelegate(0);
+    setUIDelegate(0);
+    setFormDelegate(0);
+
+    delete m_page;
+    m_page = 0;
+
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     COMPtr<IWebPreferences> prefs;
     if (SUCCEEDED(preferences(&prefs)))
@@ -206,21 +225,6 @@ void WebView::close()
             SysFreeString(identifier);
         m_preferences = 0;
     }
-
-    setHostWindow(0);
-    setFrameLoadDelegate(0);
-    setFrameLoadDelegatePrivate(0);
-    setUIDelegate(0);
-    setFormDelegate(0);
-    setPolicyDelegate(0);
-
-    Frame* frame = NULL;
-    frame = m_page->mainFrame();
-    if (frame)
-        frame->loader()->detachFromParent();
-
-    delete m_page;
-    m_page = 0;
 
     deleteBackingStore();
 }

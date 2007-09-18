@@ -1,3 +1,28 @@
+2007-09-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed a hang due to an infinite script running in the window's unload 
+        event handler, which may be the cause of <rdar://problem/5479443> 
+        REGRESSION: Hang due to infinite JS recursion on close @ engadget.com 
+        (onunload-based ad)
+
+        * WebView/WebUIDelegatePrivate.h: Added FIXME.
+        
+        * WebView/WebView.h: Clarified headerdoc ambiguity about when delegate 
+        methods stop firing.
+
+        * WebView/WebView.mm:
+        (-[WebView _close]): The fix: don't nil out our delegates until after
+        detaching the FrameLoader, because the act of detaching the FrameLoader
+        might fire important delegate methods, like webViewShouldInterruptJavaScript:.
+        Don't do other tear-down either, because the unload event handler needs 
+        to run in a fully constructed page.
+        
+        This change is fairly low risk because niling out our delegates is a 
+        very recent, never-shipped feature in WebKit, so it's unlikely that any 
+        apps rely on it in a crazy way.
+
 2007-09-15  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

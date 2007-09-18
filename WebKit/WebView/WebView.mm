@@ -683,10 +683,14 @@ static bool debugWidget = true;
         return;
     _private->closed = YES;
 
-    [self _removeFromAllWebViewsSet];
+    FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
+    if (mainFrameLoader)
+        mainFrameLoader->detachFromParent();
 
+    [self _removeFromAllWebViewsSet];
     [self setGroupName:nil];
     [self setHostWindow:nil];
+
     [self setDownloadDelegate:nil];
     [self setEditingDelegate:nil];
     [self setFrameLoadDelegate:nil];
@@ -698,10 +702,6 @@ static bool debugWidget = true;
     // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
     [self removeDragCaret];
 
-    FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
-    if (mainFrameLoader)
-        mainFrameLoader->detachFromParent();
-    
     // Deleteing the WebCore::Page will clear the page cache so we call destroy on 
     // all the plug-ins in the page cache to break any retain cycles.
     // See comment in HistoryItem::releaseAllPendingPageCaches() for more information.

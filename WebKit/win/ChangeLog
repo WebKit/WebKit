@@ -1,3 +1,19 @@
+2007-09-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed a hang due to an infinite script running in the window's unload 
+        event handler, which may be the cause of <rdar://problem/5479443> 
+        REGRESSION: Hang due to infinite JS recursion on close @ engadget.com 
+        (onunload-based ad)
+        
+        Added a bunch of WebKitMac's close features, and reordered others to
+        match WebKitMac.
+
+        * WebView.cpp:
+        (WebView::close):
+        (WebView::removeDragCaret):
+
 2007-09-17  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://4979801> overflow divs don't respond to keyboard scrolling (affects RSS pages)

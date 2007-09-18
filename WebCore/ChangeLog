@@ -1,3 +1,17 @@
+2007-09-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Speculative fix for <rdar://problem/5479443> REGRESSION: Hang due to 
+        infinite JS recursion on close @ engadget.com (onunload-based ad)
+        
+        If page is NULL, shouldInterruptScript now returns true, so you can't 
+        get stuck in a state in which a script executes forever without putting 
+        up a UI to ask if it should stop.
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::shouldInterruptScript):
+
 2007-09-17  Dave Hyatt  <hyatt@apple.com>
 
         Fix for bug 14743, missing glyphs on many international sites because of MLang's tiny cache.

@@ -283,13 +283,20 @@ Interpreter* ScriptInterpreter::interpreterForGlobalObject(const JSValue* imp)
 
 bool ScriptInterpreter::shouldInterruptScript() const
 {
-    if (Page *page = m_frame->page())
-        return page->chrome()->shouldInterruptJavaScript();
-    
-    return false;
+    Page* page = m_frame->page();
+
+    // See <rdar://problem/5479443>. We don't think that page can ever be NULL
+    // in this case, but if it is, we've gotten into a state where we may have
+    // hung the UI, with no way to ask the client whether to cancel execution. 
+    // For now, our solution is just to cancel execution no matter what, 
+    // ensuring that we never hang. We might want to consider other solutions 
+    // if we discover problems with this one.
+    ASSERT(page);
+    if (!page)
+        return true;
+
+    return page->chrome()->shouldInterruptJavaScript();
 }
-    
-//////
 
 JSValue* jsStringOrNull(const String& s)
 {
