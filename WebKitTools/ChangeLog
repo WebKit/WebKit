@@ -2,6 +2,31 @@
 
         Reviewed by Adam Roben.
 
+        Share more code between mac and windows DRT.
+            - GCController is now shared.
+            - Rename WaitUntilDoneDelegate to FrameLoadDelegate for consistency.
+
+        * DumpRenderTree/GCController.cpp:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/FrameLoaderDelegate.cpp: Copied from DumpRenderTree/win/WaitUntilDoneDelegate.cpp.
+        (FrameLoadDelegate::FrameLoadDelegate):
+        (FrameLoadDelegate::~FrameLoadDelegate):
+        (FrameLoadDelegate::windowScriptObjectAvailable):
+        * DumpRenderTree/win/FrameLoaderDelegate.h: Copied from DumpRenderTree/win/WaitUntilDoneDelegate.h.
+        * DumpRenderTree/win/GCController.cpp: Removed.
+        * DumpRenderTree/win/GCController.h: Removed.
+        * DumpRenderTree/win/GCControllerWin.cpp: Copied from DumpRenderTree/win/GCController.cpp.
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/win/WaitUntilDoneDelegate.cpp: Removed.
+        * DumpRenderTree/win/WaitUntilDoneDelegate.h: Removed.
+
+2007-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
         Begin sharing code between mac and windows DRT.
             - both now share LayoutTestController.h/cpp and implement platform dependant 
               operations in LayoutTestControllerMac/Win.

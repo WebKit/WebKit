@@ -26,14 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WaitUntilDoneDelegate_h
-#define WaitUntilDoneDelegate_h
+#ifndef FrameLoaderDelegate_h
+#define FrameLoaderDelegate_h
 
 #include <WebKit/IWebFrameLoadDelegate.h>
+#include <wtf/OwnPtr.h>
+
+class GCController;
 
 class FrameLoadDelegate : public IWebFrameLoadDelegate {
 public:
-    FrameLoadDelegate() : m_refCount(1) { }
+    FrameLoadDelegate();
+    virtual ~FrameLoadDelegate();
 
     void processWork();
 
@@ -107,6 +111,7 @@ protected:
     void locationChangeDone(IWebError*, IWebFrame*);
 
     ULONG m_refCount;
+    OwnPtr<GCController> m_gcController;
 };
 
-#endif
+#endif // FrameLoaderDelegate_h

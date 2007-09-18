@@ -26,12 +26,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCController_h
-#define GCController_h
+#include "DumpRenderTree.h"
+#include "GCController.h"
 
-typedef const struct OpaqueJSContext* JSContextRef;
-typedef struct OpaqueJSValue* JSObjectRef;
+#include <WebCore/COMPtr.h>
+#include <WebKit/IWebJavaScriptCollector.h>
+#include <WebKit/WebKit.h>
 
-JSObjectRef makeGCController(JSContextRef);
+void GCController::collect() const
+{
+    COMPtr<IWebJavaScriptCollector> collector;
+    if (FAILED(::CoCreateInstance(CLSID_WebJavaScriptCollector, 0, CLSCTX_ALL, IID_IWebJavaScriptCollector, (void**)&collector)))
+        return;
+    collector->collect();
+}
 
-#endif // !defined(GCController_h)
+void GCController::collectOnAlternateThread(bool waitUntilDone) const
+{
+    COMPtr<IWebJavaScriptCollector> collector;
+    if (FAILED(::CoCreateInstance(CLSID_WebJavaScriptCollector, 0, CLSCTX_ALL, IID_IWebJavaScriptCollector, (void**)&collector)))
+        return;
+    collector->collectOnAlternateThread(waitUntilDone ? TRUE : FALSE);
+}
+
+size_t GCController::getJSObjectCount() const
+{
+    COMPtr<IWebJavaScriptCollector> collector;
+    if (FAILED(::CoCreateInstance(CLSID_WebJavaScriptCollector, 0, CLSCTX_ALL, IID_IWebJavaScriptCollector, (void**)&collector)))
+        return 0;
+    UINT objects = 0;
+    collector->objectCount(&objects);
+    return objects;
+}

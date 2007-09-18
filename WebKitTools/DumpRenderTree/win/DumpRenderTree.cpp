@@ -29,9 +29,9 @@
 #include "DumpRenderTree.h"
 
 #include "EditingDelegate.h"
+#include "FrameLoaderDelegate.h"
 #include "LayoutTestController.h"
 #include "UIDelegate.h"
-#include "WaitUntilDoneDelegate.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
 #include <wtf/Vector.h>
@@ -49,7 +49,6 @@
 #include <WebKit/IWebURLResponse.h>
 #include <WebKit/IWebViewPrivate.h>
 #include <WebKit/WebKit.h>
-#include <wingdi.h>
 #include <windows.h>
 #include <stdio.h>
 

@@ -27,16 +27,14 @@
  */
 
 #include "DumpRenderTree.h"
-#include "WaitUntilDoneDelegate.h"
+#include "FrameLoaderDelegate.h"
 
-#include "DraggingInfo.h"
 #include "EventSender.h"
 #include "GCController.h"
 #include "LayoutTestController.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
 #include <WebCore/COMPtr.h>
-#include <wtf/Platform.h>
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/IWebFramePrivate.h>
@@ -44,6 +42,16 @@
 #include <stdio.h>
 
 static FrameLoadDelegate* g_delegateWaitingOnTimer;
+
+FrameLoadDelegate::FrameLoadDelegate()
+    : m_refCount(0)
+    , m_gcController(new GCController)
+{
+}
+
+FrameLoadDelegate::~FrameLoadDelegate()
+{
+}
 
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
 {
@@ -174,18 +182,17 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::windowScriptObjectAvailable(
         /* [in] */ JSObjectRef windowObject)
 {
     JSValueRef exception = 0;
-    layoutTestController->makeWindowObject(context, windowObject, &exception);
+
+    ::layoutTestController->makeWindowObject(context, windowObject, &exception);
+    ASSERT(!exception);
+
+    m_gcController->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
 
     JSStringRef eventSenderStr = JSStringCreateWithUTF8CString("eventSender");
     JSValueRef eventSender = makeEventSender(context);
     JSObjectSetProperty(context, windowObject, eventSenderStr, eventSender, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
     JSStringRelease(eventSenderStr);
-
-    JSStringRef gcControllerStr = JSStringCreateWithUTF8CString("GCController");
-    JSValueRef gcController = makeGCController(context);
-    JSObjectSetProperty(context, windowObject, gcControllerStr, gcController, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
-    JSStringRelease(gcControllerStr);
 
     return S_OK;
 }
