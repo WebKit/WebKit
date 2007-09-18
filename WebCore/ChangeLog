@@ -2,6 +2,15 @@
 
         Reviewed by George Staikos.
 
+        Retain the pen properties when changing one aspect of the pen.
+
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+
+2007-09-18  Mike Fenton  <mike@staikos.net>
+
+        Reviewed by George Staikos.
+
         Make <canvas> work in more cases by restarting the painter after we
         finish painting, and restoring the pen and opacity.
 
