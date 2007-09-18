@@ -68,7 +68,8 @@ namespace WebCore {
         PluginQuirkDeferFirstSetWindowCall = 1 << 1,
         PluginQuirkThrottleInvalidate = 1 << 2, 
         PluginQuirkRemoveWindowlessVideoParam = 1 << 3,
-        PluginQuirkThrottleWMUserPlusOneMessages = 1 << 4
+        PluginQuirkThrottleWMUserPlusOneMessages = 1 << 4,
+        PluginQuirkDontUnloadPlugin = 1 << 5,
     };
 
     enum PluginStatus {

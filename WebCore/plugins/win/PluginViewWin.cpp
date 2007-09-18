@@ -1302,7 +1302,7 @@ PluginViewWin::~PluginViewWin()
 
     m_parentFrame->cleanupScriptObjectsForPlugin(this);
 
-    if (m_plugin)
+    if (m_plugin && !(m_quirks & PluginQuirkDontUnloadPlugin))
         m_plugin->unload();
 }
 
@@ -1336,6 +1336,13 @@ void PluginViewWin::determineQuirks(const String& mimeType)
     // call SetWindow when the plugin view has a correct size
     if (mimeType == "video/divx")
         m_quirks |= PluginQuirkDeferFirstSetWindowCall;
+
+    // FIXME: This is a workaround for a problem in our NPRuntime bindings; if a plug-in creates an
+    // NPObject and passes it to a function it's not possible to see what root object that NPObject belongs to.
+    // Thus, we don't know that the object should be invalidated when the plug-in instance goes away.
+    // See <rdar://problem/5487742>.
+    if (mimeType == "application/x-silverlight")
+        m_quirks |= PluginQuirkDontUnloadPlugin;
 }
 
 void PluginViewWin::setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues)
