@@ -34,16 +34,33 @@
 #include <WebKit/IWebURLRequest.h>
 #include <WebKit/IWebView.h>
 #include <WebKit/WebKit.h>
+#include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSStringRefCF.h>
+#include <JavaScriptCore/RetainPtr.h>
+#include <wtf/Vector.h>
+#include <string>
 
 using std::wstring;
 
+static wstring jsStringRefToWString(JSStringRef jsStr)
+{
+    size_t length = JSStringGetLength(jsStr);
+    Vector<WCHAR> buffer(length + 1);
+    memcpy(buffer.data(), JSStringGetCharactersPtr(jsStr), length * sizeof(WCHAR));
+    buffer[length] = '\0';
+
+    return buffer.data();
+}
+
 void LoadItem::invoke() const
 {
+    wstring targetString = jsStringRefToWString(target());
+
     COMPtr<IWebFrame> targetFrame;
-    if (m_target.empty())
+    if (targetString.empty())
         targetFrame = frame;
     else {
-        BSTR targetBSTR = SysAllocString(m_target.c_str());
+        BSTR targetBSTR = SysAllocString(targetString.c_str());
         bool failed = FAILED(frame->findFrameNamed(targetBSTR, &targetFrame));
         SysFreeString(targetBSTR);
         if (failed)
@@ -54,7 +71,8 @@ void LoadItem::invoke() const
     if (FAILED(CoCreateInstance(CLSID_WebURLRequest, 0, CLSCTX_ALL, IID_IWebURLRequest, (void**)&request)))
         return;
 
-    BSTR urlBSTR = SysAllocString(m_url.c_str());
+    wstring urlString = jsStringRefToWString(url());
+    BSTR urlBSTR = SysAllocString(urlString.c_str());
     bool failed = FAILED(request->initWithURL(urlBSTR, WebURLRequestUseProtocolCachePolicy, 60));
     SysFreeString(urlBSTR);
     if (failed)
@@ -80,8 +98,10 @@ void ScriptItem::invoke() const
     if (FAILED(frame->webView(&webView)))
         return;
 
+    wstring scriptString = jsStringRefToWString(script());
+
     BSTR result;
-    BSTR scriptBSTR = SysAllocString(m_script.c_str());
+    BSTR scriptBSTR = SysAllocString(scriptString.c_str());
     webView->stringByEvaluatingJavaScriptFromString(scriptBSTR, &result);
     SysFreeString(result);
     SysFreeString(scriptBSTR);

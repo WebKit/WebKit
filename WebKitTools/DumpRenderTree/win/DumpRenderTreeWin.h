@@ -26,12 +26,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayoutTestController_h
-#define LayoutTestController_h
+#ifndef DumpRenderTreeWin_h
+#define DumpRenderTreeWin_h
 
-typedef const struct OpaqueJSContext* JSContextRef;
-typedef struct OpaqueJSValue* JSObjectRef;
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
 
-JSObjectRef makeLayoutTestController(JSContextRef context);
+#undef WINVER
+#define WINVER 0x0500
 
-#endif
+// If we don't define these, they get defined in windef.h. 
+// We want to use std::min and std::max
+#undef max
+#define max max
+#undef min
+#define min min
+
+#undef _WINSOCKAPI_
+#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+
+struct IWebFrame;
+typedef struct HWND__* HWND;
+
+extern IWebFrame* topLoadingFrame;
+extern IWebFrame* frame;
+
+extern HWND webViewWindow;
+
+#endif // DumpRenderTreeWin_h

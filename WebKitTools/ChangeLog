@@ -2,6 +2,83 @@
 
         Reviewed by Adam Roben.
 
+        Begin sharing code between mac and windows DRT.
+            - both now share LayoutTestController.h/cpp and implement platform dependant 
+              operations in LayoutTestControllerMac/Win.
+            - DumpRenderTree.h is now shared.
+            - WorkQueue and WorkQueueItem are also shared.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/LayoutTestController.cpp:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (displayWebView):
+        (dumpFrameScrollPosition):
+        (dumpFramesAsText):
+        (dump):
+        (runTest):
+        * DumpRenderTree/win/DumpRenderTree.h: Removed.
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Copied from DumpRenderTree/win/DumpRenderTree.h.
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        (EditingDelegate::shouldBeginEditingInDOMRange):
+        (EditingDelegate::shouldEndEditingInDOMRange):
+        (EditingDelegate::shouldInsertNode):
+        (EditingDelegate::shouldInsertText):
+        (EditingDelegate::shouldDeleteDOMRange):
+        (EditingDelegate::shouldChangeSelectedDOMRange):
+        (EditingDelegate::shouldApplyStyle):
+        (EditingDelegate::shouldChangeTypingStyle):
+        (EditingDelegate::doPlatformCommand):
+        (EditingDelegate::webViewDidBeginEditing):
+        (EditingDelegate::webViewDidChange):
+        (EditingDelegate::webViewDidEndEditing):
+        (EditingDelegate::webViewDidChangeTypingStyle):
+        (EditingDelegate::webViewDidChangeSelection):
+        * DumpRenderTree/win/LayoutTestController.cpp: Removed.
+        * DumpRenderTree/win/LayoutTestController.h: Removed.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Copied from DumpRenderTree/win/LayoutTestController.cpp.
+        (LayoutTestController::addDisallowedURL):
+        (LayoutTestController::clearBackForwardList):
+        (LayoutTestController::copyDecodedHostName):
+        (LayoutTestController::copyEncodedHostName):
+        (LayoutTestController::display):
+        (LayoutTestController::keepWebHistory):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::queueBackNavigation):
+        (LayoutTestController::queueForwardNavigation):
+        (jsStringRefToWString):
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::queueReload):
+        (LayoutTestController::queueScript):
+        (LayoutTestController::setAcceptsEditing):
+        (LayoutTestController::setCustomPolicyDelegate):
+        (LayoutTestController::setMainFrameIsFirstResponder):
+        (LayoutTestController::setTabKeyCyclesThroughElements):
+        (LayoutTestController::setUseDashboardCompatibilityMode):
+        (LayoutTestController::setUserStyleSheetEnabled):
+        (LayoutTestController::setUserStyleSheetLocation):
+        (LayoutTestController::setWindowIsKey):
+        (waitUntilDoneWatchdogFired):
+        (LayoutTestController::setWaitToDump):
+        (LayoutTestController::windowCount):
+        * DumpRenderTree/win/WaitUntilDoneDelegate.cpp:
+        (FrameLoadDelegate::didReceiveTitle):
+        (FrameLoadDelegate::processWork):
+        (FrameLoadDelegate::locationChangeDone):
+        (FrameLoadDelegate::windowScriptObjectAvailable):
+        * DumpRenderTree/win/WorkQueue.cpp: Removed.
+        * DumpRenderTree/win/WorkQueue.h: Removed.
+        * DumpRenderTree/win/WorkQueueItem.cpp: Removed.
+        * DumpRenderTree/win/WorkQueueItem.h: Removed.
+        * DumpRenderTree/win/WorkQueueItemWin.cpp: Copied from DumpRenderTree/win/WorkQueueItem.cpp.
+        (jsStringRefToWString):
+        (LoadItem::invoke):
+        (ScriptItem::invoke):
+
+2007-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
         - Move Windows DumpRenderTree and TestNetscapePlugin to WebCoreTools/DumpRenderTree/win
 
         * DumpRenderTree/DumpRenderTree.sln: Copied from DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.sln.

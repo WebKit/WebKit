@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -122,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -203,7 +203,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -263,6 +263,38 @@
 	</References>
 	<Files>
 		<Filter
+			Name="Controllers"
+			>
+			<File
+				RelativePath=".\EventSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EventSender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GCController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GCController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\LayoutTestController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\LayoutTestController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LayoutTestControllerWin.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="Delegates"
 			>
 			<File
@@ -290,34 +322,6 @@
 				>
 			</File>
 		</Filter>
-		<Filter
-			Name="Controllers"
-			>
-			<File
-				RelativePath=".\EventSender.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EventSender.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GCController.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\GCController.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LayoutTestController.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LayoutTestController.h"
-				>
-			</File>
-		</Filter>
 		<File
 			RelativePath=".\DraggingInfo.h"
 			>
@@ -327,23 +331,27 @@
 			>
 		</File>
 		<File
-			RelativePath=".\DumpRenderTree.h"
+			RelativePath="..\DumpRenderTree.h"
 			>
 		</File>
 		<File
-			RelativePath=".\WorkQueue.cpp"
+			RelativePath=".\DumpRenderTreeWin.h"
 			>
 		</File>
 		<File
-			RelativePath=".\WorkQueue.h"
+			RelativePath="..\WorkQueue.cpp"
 			>
 		</File>
 		<File
-			RelativePath=".\WorkQueueItem.cpp"
+			RelativePath="..\WorkQueue.h"
 			>
 		</File>
 		<File
-			RelativePath=".\WorkQueueItem.h"
+			RelativePath="..\WorkQueueItem.h"
+			>
+		</File>
+		<File
+			RelativePath=".\WorkQueueItemWin.cpp"
 			>
 		</File>
 	</Files>

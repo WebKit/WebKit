@@ -33,7 +33,11 @@
 
 #if PLATFORM(MAC)
 #include "DumpRenderTreeMac.h"
+#else if PLATFORM(WIN)
+#include "DumpRenderTreeWin.h"
 #endif
+
+#include <CoreFoundation/CoreFoundation.h>
 
 class LayoutTestController;
 
@@ -42,7 +46,7 @@ extern volatile bool done;
 extern CFRunLoopTimerRef waitToDumpWatchdog;
 extern LayoutTestController* layoutTestController;
 
-void displayWebView();
 void dump();
+void displayWebView();
 
 #endif // DumpRenderTree_h

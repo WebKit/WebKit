@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "DumpRenderTree.h"
 #include "LayoutTestController.h"
 
-#include "DumpRenderTree.h"
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
@@ -60,8 +60,7 @@ LayoutTestController::~LayoutTestController()
 {
 }
 
-#pragma mark -
-#pragma mark Static Functions
+// Static Functions
 
 static JSValueRef dumpAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -466,8 +465,7 @@ static JSValueRef windowCountCallback(JSContextRef context, JSObjectRef function
     return JSValueMakeNumber(context, windows);
 }
 
-#pragma mark -
-#pragma mark Object Creation
+// Object Creation
 
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
