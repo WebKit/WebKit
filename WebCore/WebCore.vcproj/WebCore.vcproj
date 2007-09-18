@@ -3423,6 +3423,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\UnicodeRange.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\UnicodeRange.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Widget.cpp"
 				>
 			</File>

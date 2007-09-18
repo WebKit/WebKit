@@ -1,5 +1,19 @@
 2007-09-18  Dave Hyatt  <hyatt@apple.com>
 
+        Land a UnicodeRange helper class (ported from Mozilla) that we are going to use to prepare for making
+        language-sensitive fallback choices for fonts.
+
+        Reviewed by olliej
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/UnicodeRange.cpp: Added.
+        (WebCore::):
+        (WebCore::findCharUnicodeRange):
+        (WebCore::langGroupFromUnicodeRange):
+        * platform/UnicodeRange.h: Added.
+
+2007-09-18  Dave Hyatt  <hyatt@apple.com>
+
         Fix a bug in my previous patch.  Make sure to select the old font back into the HDC and to also release the HDC.
        
         Reviewed by aroben
