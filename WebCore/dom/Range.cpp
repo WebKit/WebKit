@@ -950,6 +950,11 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
         return;
     }
 
+    if (!newNode) {
+        ec = NOT_FOUND_ERR;
+        return;
+    }
+
     // NO_MODIFICATION_ALLOWED_ERR: Raised if an ancestor container of either boundary-point of
     // the Range is read-only.
     if (containedByReadOnly()) {

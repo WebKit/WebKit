@@ -1,3 +1,14 @@
+2007-09-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for <rdar://problem/5488478> Safari crashes when passing null to Range.insertNode()
+
+        Test: fast/dom/Range-insertNode-crash.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode): Null check the passed in node to insert.
+
 2007-09-18  Mike Fenton  <mike@staikos.net>
 
         Reviewed by George Staikos.
