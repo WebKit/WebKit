@@ -38,6 +38,7 @@
 #include <wtf/Vector.h>
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/IWebViewPrivate.h>
 #include <string>
 #include <CoreFoundation/CoreFoundation.h>

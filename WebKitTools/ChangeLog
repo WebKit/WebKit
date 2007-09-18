@@ -1,3 +1,9 @@
+2007-09-18  Sam Weinig  <sam@webkit.org>
+
+        Add JSRetainPtr.h #include to fix some builds.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+
 2007-09-18  Mike Hommey  <glandium@debian.org>
 
         Reviewed by Adam.
