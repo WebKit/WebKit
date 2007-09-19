@@ -120,10 +120,6 @@ bool SearchPopupMenu::enabled() { notImplemented(); return true; }
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest&) { notImplemented(); return false; }
-bool ResourceHandle::loadsBlocked() { notImplemented(); return false; }
-void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data) { notImplemented(); }
-
 Icon::Icon() { notImplemented(); }
 Icon::~Icon() { notImplemented(); }
 PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return PassRefPtr<Icon>(new Icon()); }

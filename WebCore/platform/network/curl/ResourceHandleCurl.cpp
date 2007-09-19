@@ -77,4 +77,21 @@ void ResourceHandle::setDefersLoading(bool defers)
     notImplemented();
 }
 
+bool ResourceHandle::willLoadFromCache(ResourceRequest&)
+{
+    notImplemented();
+    return false;
+}
+
+bool ResourceHandle::loadsBlocked()
+{
+    notImplemented();
+    return false;
+}
+
+void ResourceHandle::loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>&)
+{
+    notImplemented();
+}
+
 } // namespace WebCore
