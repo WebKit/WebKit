@@ -2,6 +2,14 @@
 
         Reviewed by Adam.
 
+        Remove includes that are not needed.
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
+2007-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Move the Pasteboard stubs to PasteboardGdk.cpp.
 
         * WebCore.pro:
