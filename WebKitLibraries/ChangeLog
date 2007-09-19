@@ -1,5 +1,13 @@
 2007-09-18  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix. Ran update-webkitsysteminterface script on Tiger, because
+        the resulting binary differs when built on Tiger. See 
+        <rdar://problem/5490613>.
+
+        * libWebKitSystemInterface.a:
+
+2007-09-18  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix. Ran update-webkitsysteminterface script.
 
         * WebKitSystemInterface.h:
