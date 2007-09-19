@@ -1,29 +1,73 @@
-2007-09-19  George Staikos  <staikos@kde.org>
-
-        As discussed with Brady and Maciej, on platforms without pthreads, use
-        IconDatabaseNone for now and don't use pthreads.  Fixes Qt Win32 build
-        for now.
-
-        * loader/icon/IconDatabase.h:
-
-2007-09-19  Antti Koivisto  <antti@apple.com>
+2007-09-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
 
-        Fix <rdar://problem/5488539>
-        (9A550) iPhone Banner on O2.UK site not clickable with Safari due to styled noscript element
-        
-        Don't create renderer for noscript if scripts are enabled.
-        
-        Test: fast/dom/noscript-style.html
+        Fix for <rdar://problem/5472062> -webkit-user-select: none makes selection difficult
+        and for <rdar://problem/5472056> REGRESSION: Cannot type into edit fields on a form (sccsheriff.org)
 
-        * html/HTMLElement.cpp:
-        (WebCore::HTMLElement::mapToEntry):
-        (WebCore::HTMLElement::parseMappedAttribute):
-        (WebCore::HTMLElement::checkDTD):
-        (WebCore::HTMLElement::rendererIsNeeded):
-        (WebCore::HTMLElement::createRenderer):
-        * html/HTMLElement.h:
+        Tests:
+
+        This fix has a few steps:
+        1) Removes the ignore value for the -webkit-user-select property.  We now decide when to prevent selection from starting by calling canStartSelection on the node.
+        2) Implements canStartSelection which returns false for all elements that used to have -webkit-user-select:ignore set, true for content editable nodes, 
+           and walks up the tree to ask the parent before allowing selection to be started on any other nodes.
+        3) We used to disallow selection from starting within -webkit-user-select:none blocks, but now we only use canStartSelection for that.  This will allow easy selections
+           in cases like iChat where there's a mix of selectable and non-selectable content.
+        4) Makes -webkit-user-select inherited.  After removing the "ignore" value, -webkit-user-select would behave like it was inherited anyways since we already allowed the text value to override the none value.
+
+
+        * css/html4.css: Removed all usage of -webkit-user-select: ignore.  This is now handled internally with canStartSelection().
+          Now -webkit-user-select won't be unintentionally overridden by nodes that don't want to allow selection to be started, but do want to honor the -webkit-user-select to
+          determine whether or not selection is allowed at all.
+
+        * editing/SelectionController.cpp: (WebCore::SelectionController::selectAll):
+          Don't try to determine whether selection is allowed inside the root node here.  VisiblePosition and Selection creation will keep Selection endpoints out of -webkit-user-select:none regions.
+        
+        * dom/Node.h:
+        * dom/Node.cpp: (WebCore::Node::canStartSelection): Added. Always allows selection to be started in a content editable node.  If there's a parent, ask the parent if starting a selection is allowed.
+          If there's no parent, default to allowing selection.
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::canStartSelection): Added. If its not a link, then calls the base class. Disallows selection for non-editable links.
+          Allows selection for editable links.
+          This logic used to be done in CSSStyleSelector by changing the user-select property.
+        * html/HTMLButtonElement.h: (WebCore::HTMLButtonElement::canStartSelection): Added. Disallows selection from starting in buttons.
+        * html/HTMLImageElement.h: (WebCore::HTMLImageElement::canStartSelection): Added. Disallows selection from starting in images.
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::canStartSelection): Added. Disallows selection from anything that's not a text field.  Text fields call up to the base class.
+          When they're editable, text controls will always be selectable because of the case for content editable content. Otherwise, they'll respect their parent element's decision about starting a selection. 
+        * html/HTMLSelectElement.h: (WebCore::HTMLSelectElement::canStartSelection): Added. Disallows selection from starting in popup buttons.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent): Use canMouseDownStartSelect instead of the ambiguously named shouldSelect().
+        (WebCore::EventHandler::handleMousePressEventTripleClick): ditto.
+        (WebCore::EventHandler::handleMousePressEventSingleClick): ditto.
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Use canMouseDragExtendSelect.
+        (WebCore::EventHandler::selectCursor): Paint an ibeam in any region that allows you to click to create a selection.
+        (WebCore::EventHandler::canMouseDownStartSelect): Now fires the selectStart event, and calls canStartSelection instead of checking the user-select property.
+        (WebCore::EventHandler::canMouseDragExtendSelect): This is identical to canMouseDownStartSelect because of 12823, even though it seems strange that we would fire the selectStart event here.
+        * page/EventHandler.h:
+        * page/FocusController.cpp: (WebCore::clearSelectionIfNeeded): Calls canStartSelection instead of checking the user-select property to decide when to prevent selection creation. 
+        * rendering/RenderObject.cpp: (WebCore::RenderObject::draggableNode): ditto.
+        * rendering/RenderObject.h: Removed helper methods that are no longer needed.
+
+        * rendering/RenderStyle.h: Made userSelect inherited.  After removing the "ignore" value, -webkit-user-select would behave like it was inherited 
+          anyways since we already allowed the text value to override the none value.
+          Removed the SELECT_AUTO and SELECT_IGNORE values since they're no longer used.
+        (WebCore::):
+        (WebCore::RenderStyle::userSelect):
+        (WebCore::RenderStyle::setUserSelect):
+        (WebCore::RenderStyle::initialUserSelect):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+
+        * css/CSSComputedStyleDeclaration.cpp: (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Remove case for SELECT_AUTO and SELECT_IGNORE
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):  Remove adjustment for links.  This is now handled in HTMLAnchorElement::canStartSelection.
+        (WebCore::CSSStyleSelector::applyProperty): Map CSS_VAL_AUTO to SELECT_TEXT.  Remove CSS_VAL_IGNORE.
 
 2007-09-18  Timothy Hatcher  <timothy@apple.com>
 

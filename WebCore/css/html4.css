@@ -384,7 +384,6 @@ input:-webkit-autofill {
 
 input[type="radio"], input[type="checkbox"] {
     margin: 3px 0.5ex;
-    -webkit-user-select: ignore;
     padding: initial;
     background-color: initial;
     border: initial;
@@ -410,13 +409,11 @@ input[type="range"] {
     -webkit-appearance: slider-horizontal;
     padding: initial;
     border: initial;
-    -webkit-user-select: ignore;
     margin: 2px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: sliderthumb-horizontal;
-    -webkit-user-select: ignore
 }
 
 input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, button:disabled, select:disabled, keygen:disabled, optgroup:disabled, option:disabled {
@@ -429,10 +426,6 @@ input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:ac
 
 input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled {
     border-style: outset
-}
-
-select, keygen, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"], input[type="file"]::-webkit-file-upload-button, img {
-    -webkit-user-select: ignore
 }
 
 area, param {
@@ -573,7 +566,6 @@ input[type="file"]:focus::-webkit-file-upload-button {
 a:-webkit-any-link {
     color: -webkit-link;
     text-decoration: underline;
-    -webkit-user-select: ignore
 }
 
 a:-webkit-any-link:active {

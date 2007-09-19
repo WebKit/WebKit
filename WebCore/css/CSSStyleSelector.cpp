@@ -1131,10 +1131,6 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
             style->setOverflowY(OVISIBLE);
     }
 
-    // Links should be user selectable when content editable
-    if (e && e->isLink() && ((e->document()->frame() && e->document()->frame()->isContentEditable()) || style->userModify() == READ_WRITE || style->userModify() == READ_WRITE_PLAINTEXT_ONLY))
-        style->setUserSelect(SELECT_AUTO);
-
     // Cull out any useless layers and also repeat patterns into additional layers.
     style->adjustBackgroundLayers();
 
@@ -4177,16 +4173,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         switch (primitiveValue->getIdent()) {
             case CSS_VAL_AUTO:
-                style->setUserSelect(SELECT_AUTO);
+                style->setUserSelect(SELECT_TEXT);
                 break;
             case CSS_VAL_NONE:
                 style->setUserSelect(SELECT_NONE);
                 break;
             case CSS_VAL_TEXT:
                 style->setUserSelect(SELECT_TEXT);
-                break;
-            case CSS_VAL_IGNORE:
-                style->setUserSelect(SELECT_IGNORE);
             default:
                 return;
         }

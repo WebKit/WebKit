@@ -456,6 +456,13 @@ void HTMLInputElement::restoreState(const String& state)
     }
 }
 
+bool HTMLInputElement::canStartSelection() const
+{
+    if (!isTextField())
+        return false;
+    return HTMLFormControlElementWithState::canStartSelection();
+}
+
 bool HTMLInputElement::canHaveSelection() const
 {
     return isTextField();

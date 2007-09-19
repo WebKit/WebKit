@@ -54,6 +54,8 @@ public:
 
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
+    
+    virtual bool canStartSelection() const { return false; }
 
     int selectedIndex() const;
     void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false);

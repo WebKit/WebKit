@@ -49,6 +49,8 @@ public:
 
     virtual void accessKeyAction(bool sendToAnyElement);
 
+    virtual bool canStartSelection() const { return false; }
+
     String accessKey() const;
     void setAccessKey(const String&);
 

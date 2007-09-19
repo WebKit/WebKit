@@ -1,3 +1,21 @@
+2007-09-18  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Tests for <rdar://problem/5472062> -webkit-user-select: none makes selection difficult
+        and for <rdar://problem/5472056> REGRESSION: Cannot type into edit fields on a form (sccsheriff.org)
+
+        * fast/css/computed-style-expected.txt: Updated for default -webkit-user-select value.
+        * fast/css/computed-style-without-renderer-expected.txt: ditto.
+
+        * editing/selection/5333725.html: Re-enabled.
+        * editing/selection/5333725.html-disabled: Removed.
+
+        * editing/selection/user-select-text-inside-user-select-ignore.html-disabled: Removed. Adjusted this test to be more specific and renamed it to textfield-inside-anchor. 
+        * editing/selection/user-select-text-inside-user-select-ignore-expected.txt: Removed. 
+        * fast/forms/textfield-inside-anchor-expected.txt: Added.
+        * fast/forms/textfield-inside-anchor.html: Added.
+
 2007-09-19  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

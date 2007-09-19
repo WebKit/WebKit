@@ -1581,14 +1581,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             break;
         case CSS_PROP__WEBKIT_USER_SELECT:
             switch (style->userSelect()) {
-                case SELECT_AUTO:
-                    return new CSSPrimitiveValue(CSS_VAL_AUTO);
                 case SELECT_NONE:
                     return new CSSPrimitiveValue(CSS_VAL_NONE);
                 case SELECT_TEXT:
                     return new CSSPrimitiveValue(CSS_VAL_TEXT);
-                case SELECT_IGNORE:
-                    return new CSSPrimitiveValue(CSS_VAL_IGNORE);
             }
             break;
         case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:

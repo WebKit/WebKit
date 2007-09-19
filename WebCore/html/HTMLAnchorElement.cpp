@@ -290,6 +290,14 @@ bool HTMLAnchorElement::isURLAttribute(Attribute *attr) const
     return attr->name() == hrefAttr;
 }
 
+bool HTMLAnchorElement::canStartSelection() const
+{
+    // FIXME: We probably want this same behavior in SVGAElement too
+    if (!isLink())
+        return HTMLElement::canStartSelection();
+    return isContentEditable();
+}
+
 String HTMLAnchorElement::accessKey() const
 {
     return getAttribute(accesskeyAttr);
