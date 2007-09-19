@@ -31,7 +31,9 @@
 #endif
 
 #include "StringHash.h"
+#if ENABLE(ICONDATABASE)
 #include "Threading.h"
+#endif
 #include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
