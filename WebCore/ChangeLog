@@ -2,6 +2,19 @@
 
         Reviewed by Adam.
 
+        Move the Icon stubs to IconGdk.cpp
+
+        * WebCore.pro:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/graphics/gdk/IconGdk.cpp: Added.
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::newIconForFile):
+
+2007-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Move the Font stubs to FontGdk.cpp
 
         * platform/gdk/FontGdk.cpp:

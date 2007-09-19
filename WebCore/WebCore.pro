@@ -901,6 +901,7 @@ gdk-port {
         platform/gdk/TemporaryLinkStubs.cpp \
         platform/gdk/WheelEventGdk.cpp \
         platform/gdk/WidgetGdk.cpp \
+        platform/graphics/gdk/IconGdk.cpp \
         platform/graphics/gdk/ImageGdk.cpp \
         platform/network/curl/ResourceHandleCurl.cpp \
         platform/network/curl/ResourceHandleManager.cpp \
