@@ -32,8 +32,6 @@
 #include "CachedPage.h"
 #include "CachedResource.h"
 #include "Clipboard.h"
-#include "ContextMenu.h"
-#include "ContextMenuItem.h"
 #include "CookieJar.h"
 #include "Cursor.h"
 #include "DocumentFragment.h"
@@ -145,28 +143,6 @@ String Pasteboard::plainText(Frame* frame) { notImplemented(); return String(); 
 Pasteboard::Pasteboard() { notImplemented(); }
 Pasteboard::~Pasteboard() { notImplemented(); }
 
-ContextMenu::ContextMenu(const HitTestResult& result) : m_hitTestResult(result) { notImplemented(); }
-ContextMenu::~ContextMenu() { notImplemented(); }
-void ContextMenu::appendItem(ContextMenuItem&) { notImplemented(); }
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu) { m_platformDescription = menu; }
-PlatformMenuDescription ContextMenu::platformDescription() const  { return m_platformDescription; }
-PlatformMenuDescription ContextMenu::releasePlatformDescription() { notImplemented(); return 0; }
-
-ContextMenuItem::ContextMenuItem(PlatformMenuItemDescription) { notImplemented(); }
-ContextMenuItem::ContextMenuItem(ContextMenu*) { notImplemented(); }
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu) { notImplemented(); }
-ContextMenuItem::~ContextMenuItem() { notImplemented(); }
-PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription() { notImplemented(); return m_platformDescription; }
-ContextMenuItemType ContextMenuItem::type() const { notImplemented(); return ActionType; }
-void ContextMenuItem::setType(ContextMenuItemType) { notImplemented(); }
-ContextMenuAction ContextMenuItem::action() const { notImplemented(); return ContextMenuItemTagNoAction; }
-void ContextMenuItem::setAction(ContextMenuAction) { notImplemented(); }
-String ContextMenuItem::title() const { notImplemented(); return String(); }
-void ContextMenuItem::setTitle(const String&) { notImplemented(); }
-PlatformMenuDescription ContextMenuItem::platformSubMenu() const { notImplemented(); return 0; }
-void ContextMenuItem::setSubMenu(ContextMenu*) { notImplemented(); }
-void ContextMenuItem::setChecked(bool) { notImplemented(); }
-void ContextMenuItem::setEnabled(bool) { notImplemented(); }
 
 FTPDirectoryDocument::FTPDirectoryDocument(WebCore::DOMImplementation* i, WebCore::Frame* f) : HTMLDocument(i, f) { notImplemented(); }
 Tokenizer* FTPDirectoryDocument::createTokenizer() { notImplemented(); return 0; }

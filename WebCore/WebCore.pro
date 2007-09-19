@@ -873,6 +873,8 @@ gdk-port {
         platform/gdk/ClipboardGdk.cpp \
         platform/gdk/CookieJarGdk.cpp \
         platform/gdk/CursorGdk.cpp \
+        platform/gdk/ContextMenuGdk.cpp \
+        platform/gdk/ContextMenuItemGdk.cpp \
         platform/gdk/DragDataGdk.cpp \
         platform/gdk/DragImageGdk.cpp \
         platform/gdk/FileChooserGdk.cpp \
