@@ -1,3 +1,22 @@
+2007-09-19  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix <rdar://problem/5488539>
+        (9A550) iPhone Banner on O2.UK site not clickable with Safari due to styled noscript element
+        
+        Don't create renderer for noscript if scripts are enabled.
+        
+        Test: fast/dom/noscript-style.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::mapToEntry):
+        (WebCore::HTMLElement::parseMappedAttribute):
+        (WebCore::HTMLElement::checkDTD):
+        (WebCore::HTMLElement::rendererIsNeeded):
+        (WebCore::HTMLElement::createRenderer):
+        * html/HTMLElement.h:
+
 2007-09-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

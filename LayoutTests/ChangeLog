@@ -1,3 +1,13 @@
+2007-09-19  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Test for <rdar://problem/5488539>
+        (9A550) iPhone Banner on O2.UK site not clickable with Safari due to styled noscript element
+
+        * fast/dom/noscript-style-expected.txt: Added.
+        * fast/dom/noscript-style.html: Added.
+
 2007-09-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
