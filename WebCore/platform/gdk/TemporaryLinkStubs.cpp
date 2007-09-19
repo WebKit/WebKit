@@ -38,7 +38,6 @@
 #include "DocumentLoader.h"
 #include "EditCommand.h"
 #include "Editor.h"
-#include "Font.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -118,10 +117,6 @@ Icon::~Icon() { notImplemented(); }
 PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return PassRefPtr<Icon>(new Icon()); }
 void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
 
-FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int, int, int) const { return FloatRect(); notImplemented(); }
-void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&, int from, int to) const { notImplemented(); }
-float Font::floatWidthForComplexText(const TextRun&, const TextStyle&) const { notImplemented(); return 0; }
-int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }
 
 void CachedPage::close() { notImplemented(); }
 

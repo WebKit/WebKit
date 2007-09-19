@@ -2,6 +2,19 @@
 
         Reviewed by Adam.
 
+        Move the Font stubs to FontGdk.cpp
+
+        * platform/gdk/FontGdk.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
+2007-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Move the SearchPopupMenu stubs to SearchPopupMenuGdk.cpp
 
         * WebCore.pro:
