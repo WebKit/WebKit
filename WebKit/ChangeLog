@@ -1,3 +1,14 @@
+2007-09-19  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5491066> soft link Accelerate.framework
+        
+        * Misc/WebGraphicsExtras.c:
+        (WebConvertBGRAToARGB): Improve launch time performance and reduce vsize
+        footprint by soft linking the Accelerate.framework.
+        * WebKit.xcodeproj/project.pbxproj: Remove no longer needed frameworks.
+
 2007-09-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

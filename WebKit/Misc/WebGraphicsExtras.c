@@ -30,16 +30,28 @@
 
 #import <Accelerate/Accelerate.h>
 #import <JavaScriptCore/Assertions.h>
+#import <dlfcn.h>
 
 unsigned WebConvertBGRAToARGB(unsigned char *offscreenBuffer, int rowBytes, int x, int y, int width, int height)
 {
+    
+    static vImage_Error (*softLink_vImagePermuteChannels_ARGB8888)(const vImage_Buffer *src, const vImage_Buffer *dest, const uint8_t permuteMap[4], vImage_Flags flags) = NULL;
+
+    if (!softLink_vImagePermuteChannels_ARGB8888) {
+        void *framework = dlopen("/System/Library/Frameworks/Accelerate.framework/Accelerate", RTLD_NOW);
+        ASSERT(framework);
+        softLink_vImagePermuteChannels_ARGB8888 = dlsym(framework, "vImagePermuteChannels_ARGB8888");
+        ASSERT(softLink_vImagePermuteChannels_ARGB8888);
+    }
+        
     void *swizzleImageBase = offscreenBuffer + y * rowBytes + x * 4;
     vImage_Buffer vImage = { swizzleImageBase, height, width, rowBytes };
     uint8_t vImagePermuteMap[4] = { 3, 2, 1, 0 }; // Where { 0, 1, 2, 3 } would leave the channels unchanged; this map converts BGRA to ARGB
-    vImage_Error vImageError = vImagePermuteChannels_ARGB8888(&vImage, &vImage, vImagePermuteMap, 0);
+    vImage_Error vImageError = softLink_vImagePermuteChannels_ARGB8888(&vImage, &vImage, vImagePermuteMap, 0);
     if (vImageError) {
         LOG_ERROR("Could not convert BGRA image to ARGB: %d", vImageError);
         return FALSE;
     }
+    
     return TRUE;
 }
