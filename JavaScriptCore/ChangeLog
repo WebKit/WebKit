@@ -1,3 +1,12 @@
+2007-09-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Adam.
+
+        Make the guard/#if use the same name (ENABLE_FTPDIR) as the #define. This follows
+        the ENABLE_ICONDATABASE example from a couple of lines above.
+
+        * wtf/Platform.h:
+
 2007-09-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.
