@@ -2,6 +2,18 @@
 
         Reviewed by Adam.
 
+        There is no need to have FTPDirectoryDocument stubs. We can
+        compile FTPDirectoryDocument.cpp and FTPDirectoryTokenizer.cpp
+        instead.
+
+        * WebCore.pro:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+
+2007-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Remove includes that are not needed.
 
         * platform/gdk/TemporaryLinkStubs.cpp:

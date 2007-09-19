@@ -88,9 +88,6 @@ void CachedPage::close() { notImplemented(); }
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy) { notImplemented(); return 0; }
 
-FTPDirectoryDocument::FTPDirectoryDocument(WebCore::DOMImplementation* i, WebCore::Frame* f) : HTMLDocument(i, f) { notImplemented(); }
-Tokenizer* FTPDirectoryDocument::createTokenizer() { notImplemented(); return 0; }
-
 namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }

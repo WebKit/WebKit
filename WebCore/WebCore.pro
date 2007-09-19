@@ -575,6 +575,8 @@ SOURCES += \
     loader/DocumentLoader.cpp \
     loader/FormState.cpp \
     loader/FrameLoader.cpp \
+    loader/FTPDirectoryDocument.cpp \
+    loader/FTPDirectoryParser.cpp \
     loader/icon/IconLoader.cpp \
     loader/ImageDocument.cpp \
     loader/loader.cpp \

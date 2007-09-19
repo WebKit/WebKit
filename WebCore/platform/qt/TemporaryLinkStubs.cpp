@@ -74,9 +74,6 @@ void FrameView::updateBorder() { notImplemented(); }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 
-FTPDirectoryDocument::FTPDirectoryDocument(WebCore::DOMImplementation* i, WebCore::Frame* f) : HTMLDocument(i, f) { notImplemented(); }
-Tokenizer* FTPDirectoryDocument::createTokenizer() { notImplemented(); return 0; }
-
 namespace WebCore {
 
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
