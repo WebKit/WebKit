@@ -61,4 +61,20 @@ bool deleteFile(const String& path)
     return result;
 }
 
+bool fileSize(const String& path, long long& resultSize)
+{
+    gchar* filename = g_filename_from_utf8(path.utf8().data(), -1, 0, 0, 0);
+    if (!filename)
+        return false;
+
+    struct stat statResult;
+    gint result = g_stat(filename, &statResult);
+    g_free(filename);
+    if (result != 0)
+        return false;
+
+    resultSize = statResult.st_size;
+    return true;
+}
+
 }

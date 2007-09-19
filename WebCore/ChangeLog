@@ -2,6 +2,16 @@
 
         Reviewed by Adam.
 
+        Implement the WebCore::fileSize function using g_stat.
+
+        * platform/gdk/FileSystemGdk.cpp:
+        (WebCore::fileSize):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
+2007-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Move the ResourceHandle stubs from TemporaryLinkStubs
         to the ResourceHandleCurl.cpp file. This affects the
         Gtk+ and wx port as they share the curl implementation.
