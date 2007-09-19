@@ -16,7 +16,7 @@
             layoutTestController.dumpAsText();
             layoutTestController.waitUntilDone();
             layoutTestController.setCanOpenWindows();
-            layoutTestController.setCloseRemainingWindowsWhenComplete();
+//            layoutTestController.setCloseRemainingWindowsWhenComplete();
         }
 
     
@@ -91,8 +91,16 @@
 
         newWin.close();
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        setTimeout(doneHandler, 1);
+        function doneHandler() {
+            if (newWin.closed) {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+                return;
+            }
+
+            setTimeout(doneHandler, 1);
+        }
 
         successfullyParsed = true;
 
