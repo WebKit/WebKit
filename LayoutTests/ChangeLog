@@ -1,3 +1,12 @@
+2007-09-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff and Sam.
+
+        - Added test cases for the different features of a new opened window.
+
+        * fast/dom/Window/new-window-opener-expected.txt: Added.
+        * fast/dom/Window/new-window-opener.html: Added.
+
 2007-09-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.

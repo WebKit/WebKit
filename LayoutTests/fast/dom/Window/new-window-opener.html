@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <title>New Window Opener Test</title>
+
+    <link rel="stylesheet" href="../../js/resources/js-test-style.css">
+    <script src="../../js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+    <p id="description"></p>
+    <div id="console"></div>
+
+    <script type="text/javascript">
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            layoutTestController.setCanOpenWindows();
+            layoutTestController.setCloseRemainingWindowsWhenComplete();
+        }
+
+    
+        description(
+            'This tests that the different arguments given to a new window are honored.'
+        );
+
+        var newWin;
+        debug("Scrollbars");
+
+        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=no,width=75,height=100" );
+        shouldBeFalse("newWin.scrollbars.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=yes,width=75,height=100" );
+        shouldBeTrue("newWin.scrollbars.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=0,width=75,height=100" );
+        shouldBeFalse("newWin.scrollbars.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=1,width=75,height=100" );
+        shouldBeTrue("newWin.scrollbars.visible");
+
+        debug("");
+        debug("Toolbars");
+        newWin = window.open("../resources/abe.png", "testWindow", "toolbar=no,width=75,height=100" );
+        shouldBeFalse("newWin.toolbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "toolbar=yes,width=75,height=100" );
+        shouldBeTrue("newWin.toolbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "toolbar=0,width=75,height=100" );
+        shouldBeFalse("newWin.toolbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "toolbar=1,width=75,height=100" );
+        shouldBeTrue("newWin.toolbar.visible");
+
+        debug("");
+        debug("Statusbar");
+        newWin = window.open("../resources/abe.png", "testWindow", "statusbar=no,width=75,height=100" );
+        shouldBeFalse("newWin.statusbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "statusbar=yes,width=75,height=100" );
+        shouldBeTrue("newWin.statusbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "statusbar=0,width=75,height=100" );
+        shouldBeFalse("newWin.statusbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "statusbar=1,width=75,height=100" );
+        shouldBeTrue("newWin.statusbar.visible");
+
+        debug("");
+        debug("Menubar");
+        newWin = window.open("../resources/abe.png", "testWindow", "menubar=no,width=75,height=100" );
+        shouldBeFalse("newWin.menubar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "menubar=yes,width=75,height=100" );
+        shouldBeTrue("newWin.menubar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "menubar=0,width=75,height=100" );
+        shouldBeFalse("newWin.menubar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "menubar=1,width=75,height=100" );
+        shouldBeTrue("newWin.menubar.visible");
+
+        debug("");
+        debug("Locationbar");
+        newWin = window.open("../resources/abe.png", "testWindow", "locationbar=no,width=75,height=100" );
+        shouldBeFalse("newWin.locationbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "locationbar=yes,width=75,height=100" );
+        shouldBeTrue("newWin.locationbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "locationbar=0,width=75,height=100" );
+        shouldBeFalse("newWin.locationbar.visible");
+        newWin = window.open("../resources/abe.png", "testWindow", "locationbar=1,width=75,height=100" );
+        shouldBeTrue("newWin.locationbar.visible");
+
+        debug("");
+        debug("All together now!");
+        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=yes, toolbar=yes, statusbar=yes, menubar=yes, locationbar=yes, width=75,height=100" );
+        shouldBeTrue("newWin.scrollbars.visible");
+        shouldBeTrue("newWin.toolbar.visible");
+        shouldBeTrue("newWin.statusbar.visible");
+        shouldBeTrue("newWin.menubar.visible");
+        shouldBeTrue("newWin.locationbar.visible");
+
+        newWin.close();
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+
+        successfullyParsed = true;
+
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

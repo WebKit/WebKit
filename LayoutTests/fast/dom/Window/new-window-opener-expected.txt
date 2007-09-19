@@ -1,0 +1,45 @@
+This tests that the different arguments given to a new window are honored.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Scrollbars
+PASS newWin.scrollbars.visible is false
+PASS newWin.scrollbars.visible is true
+PASS newWin.scrollbars.visible is false
+PASS newWin.scrollbars.visible is true
+
+Toolbars
+PASS newWin.toolbar.visible is false
+PASS newWin.toolbar.visible is true
+PASS newWin.toolbar.visible is false
+PASS newWin.toolbar.visible is true
+
+Statusbar
+PASS newWin.statusbar.visible is false
+PASS newWin.statusbar.visible is true
+PASS newWin.statusbar.visible is false
+PASS newWin.statusbar.visible is true
+
+Menubar
+PASS newWin.menubar.visible is false
+PASS newWin.menubar.visible is true
+PASS newWin.menubar.visible is false
+PASS newWin.menubar.visible is true
+
+Locationbar
+PASS newWin.locationbar.visible is false
+PASS newWin.locationbar.visible is true
+PASS newWin.locationbar.visible is false
+PASS newWin.locationbar.visible is true
+
+All together now!
+PASS newWin.scrollbars.visible is true
+PASS newWin.toolbar.visible is true
+PASS newWin.statusbar.visible is true
+PASS newWin.menubar.visible is true
+PASS newWin.locationbar.visible is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
