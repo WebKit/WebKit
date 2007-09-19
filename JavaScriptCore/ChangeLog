@@ -1,3 +1,17 @@
+2007-09-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5487107> NULL dereference crash in FastMallocZone::enumerate when running leaks against Safari
+
+        Storing remote pointers to their local equivalents in mapped memory was leading to the local pointer being
+        interpreted as a remote pointer.  This caused a crash when using the result of mapping this invalid remote pointer.
+        The fix is to follow the pattern used elsewhere in FastMallocZone by always doing the mapping after reading and
+        never storing the mapped pointer.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::FastMallocZone::enumerate):
+
 2007-09-15  Darin Adler  <darin@apple.com>
 
         - fix Mac build

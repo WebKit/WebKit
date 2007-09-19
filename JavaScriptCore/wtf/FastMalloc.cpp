@@ -2475,7 +2475,7 @@ public:
 
     void findFreeObjects(TCMalloc_ThreadCache* threadCache)
     {
-        for (; threadCache; threadCache = threadCache->next_)
+        for (; threadCache; threadCache = (threadCache->next_ ? m_reader(threadCache->next_) : 0))
             threadCache->enumerateFreeObjects(*this, m_reader);
     }
 
@@ -2593,12 +2593,6 @@ kern_return_t FastMallocZone::enumerate(task_t task, void* context, unsigned typ
     TCMalloc_ThreadCache* threadHeaps = memoryReader(*threadHeapsPointer);
 
     TCMalloc_Central_FreeListPadded* centralCaches = memoryReader(mzone->m_centralCaches, sizeof(TCMalloc_Central_FreeListPadded) * kNumClasses);
-
-    // Rebuild the linked list in our address space, mapping over the remote pointers as needed
-    for (TCMalloc_ThreadCache* threadHeap = threadHeaps; threadHeap->next_; threadHeap = threadHeap->next_) {
-        threadHeap->next_ = memoryReader(threadHeap->next_);
-        threadHeap->next_->prev_ = threadHeap;
-    }
 
     FreeObjectFinder finder(memoryReader);
     finder.findFreeObjects(threadHeaps);
