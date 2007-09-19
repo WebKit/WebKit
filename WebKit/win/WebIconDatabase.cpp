@@ -313,29 +313,43 @@ void WebIconDatabase::scheduleNotificationDelivery()
     }
 }
 
-static void postDidRemoveAllIconsNotification(WebIconDatabase* iconDB)
+BSTR WebIconDatabase::iconDatabaseDidAddIconNotification()
+{
+    static BSTR didAddIconName = SysAllocString(WebIconDatabaseDidAddIconNotification);
+    return didAddIconName;
+}
+
+CFStringRef WebIconDatabase::iconDatabaseNotificationUserInfoURLKey()
+{
+    static CFStringRef iconUserInfoURLKey = String(WebIconNotificationUserInfoURLKey).createCFString();
+    return iconUserInfoURLKey;
+}
+
+BSTR WebIconDatabase::iconDatabaseDidRemoveAllIconsNotification()
 {
     static BSTR didRemoveAllIconsName = SysAllocString(WebIconDatabaseDidRemoveAllIconsNotification);
+    return didRemoveAllIconsName;
+}
+
+static void postDidRemoveAllIconsNotification(WebIconDatabase* iconDB)
+{
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
-    notifyCenter->postNotificationName(didRemoveAllIconsName, static_cast<IWebIconDatabase*>(iconDB), 0);
+    notifyCenter->postNotificationName(WebIconDatabase::iconDatabaseDidRemoveAllIconsNotification(), static_cast<IWebIconDatabase*>(iconDB), 0);
 }
 
 static void postDidAddIconNotification(const String& pageURL, WebIconDatabase* iconDB)
 {
-    static BSTR didAddIconName = SysAllocString(WebIconDatabaseDidAddIconNotification);
-    static CFStringRef iconUserInfoKey = String(WebIconNotificationUserInfoURLKey).createCFString();
-
     RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, 
     CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     RetainPtr<CFStringRef> url(AdoptCF, pageURL.createCFString());
-    CFDictionaryAddValue(dictionary.get(), iconUserInfoKey, url.get());
+    CFDictionaryAddValue(dictionary.get(), WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), url.get());
 
     COMPtr<CFDictionaryPropertyBag> userInfo = CFDictionaryPropertyBag::createInstance();
     userInfo->setDictionary(dictionary.get());
 
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
-    notifyCenter->postNotificationName(didAddIconName, static_cast<IWebIconDatabase*>(iconDB), userInfo.get());
+    notifyCenter->postNotificationName(WebIconDatabase::iconDatabaseDidAddIconNotification(), static_cast<IWebIconDatabase*>(iconDB), userInfo.get());
 }
 
 void WebIconDatabase::deliverNotifications()

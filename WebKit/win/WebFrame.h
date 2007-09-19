@@ -342,6 +342,7 @@ public:
     COMPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction function);
     void receivedPolicyDecision(WebCore::PolicyAction);
 
+    WebCore::KURL url() const;
 protected:
     void loadHTMLString(BSTR string, BSTR baseURL, BSTR unreachableURL);
     void loadData(PassRefPtr<WebCore::SharedBuffer>, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL);

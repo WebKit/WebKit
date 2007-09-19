@@ -674,6 +674,10 @@ public:
 
     void setToolTip(const WebCore::String&);
 
+    void registerForIconNotification(bool listen);
+    HRESULT notifyDidAddIcon(IWebNotification*);
+    void dispatchDidReceiveIconFromWebFrame(WebFrame*);
+
 protected:
     HIMC getIMMContext();
     void releaseIMMContext(HIMC);

@@ -29,16 +29,15 @@
 
 #include "MarshallingHelpers.h"
 
+#include <initguid.h>
+// {675E712B-8253-4121-A1F0-6A804D095668}
+DEFINE_GUID(IID_CFDictionaryPropertyBag, 0x675e712b, 0x8253, 0x4121, 0xa1, 0xf0, 0x6a, 0x80, 0x4d, 0x9, 0x56, 0x68);
+
 // CFDictionaryPropertyBag -----------------------------------------------
 
 CFDictionaryPropertyBag::CFDictionaryPropertyBag()
-: m_refCount(1), m_dictionary(0)
+: m_refCount(1)
 {
-}
-
-CFDictionaryPropertyBag::~CFDictionaryPropertyBag()
-{
-    setDictionary(0);
 }
 
 CFDictionaryPropertyBag* CFDictionaryPropertyBag::createInstance()
@@ -49,11 +48,12 @@ CFDictionaryPropertyBag* CFDictionaryPropertyBag::createInstance()
 
 void CFDictionaryPropertyBag::setDictionary(CFMutableDictionaryRef dictionary)
 {
-    if (m_dictionary)
-        CFRelease(m_dictionary);
     m_dictionary = dictionary;
-    if (m_dictionary)
-        CFRetain(m_dictionary);
+}
+
+CFMutableDictionaryRef CFDictionaryPropertyBag::dictionary() const
+{
+    return m_dictionary.get();
 }
 
 // IUnknown -------------------------------------------------------------------
@@ -65,6 +65,8 @@ HRESULT STDMETHODCALLTYPE CFDictionaryPropertyBag::QueryInterface(REFIID riid, v
         *ppvObject = static_cast<IPropertyBag*>(this);
     else if (IsEqualGUID(riid, IID_IPropertyBag))
         *ppvObject = static_cast<IPropertyBag*>(this);
+    else if (IsEqualGUID(riid, IID_CFDictionaryPropertyBag))
+        *ppvObject = this;
     else
         return E_NOINTERFACE;
 
@@ -156,7 +158,7 @@ HRESULT STDMETHODCALLTYPE CFDictionaryPropertyBag::Read(LPCOLESTR pszPropName, V
         void* value;
         CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(pszPropName);
         HRESULT hr = E_FAIL;
-        if (CFDictionaryGetValueIfPresent(m_dictionary, key, (const void**) &value)) {
+        if (CFDictionaryGetValueIfPresent(m_dictionary.get(), key, (const void**) &value)) {
             if (ConvertCFTypeToVariant(pVar, value))
                 hr = S_OK;
         } else
@@ -177,7 +179,7 @@ HRESULT STDMETHODCALLTYPE CFDictionaryPropertyBag::Write(LPCOLESTR pszPropName, 
     void* cfObj;
     if (ConvertVariantToCFType(pVar, &cfObj)) {
         CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(pszPropName);
-        CFDictionaryAddValue(m_dictionary, key, cfObj);
+        CFDictionaryAddValue(m_dictionary.get(), key, cfObj);
         // CFDictionaryAddValue should automatically retain the CF objects passed in, so release them here
         CFRelease(key);
         CFRelease(cfObj);

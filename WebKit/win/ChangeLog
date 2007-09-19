@@ -1,5 +1,46 @@
 2007-09-18  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Adam
+
+        Final part of <rdar://problem/5471308> - Hook up async icon database on Windows        
+
+        * CFDictionaryPropertyBag.cpp:
+        (CFDictionaryPropertyBag::CFDictionaryPropertyBag): Took the opportunity to rewrite with a RetainPtr
+          since it became available after the initial implementation
+        (CFDictionaryPropertyBag::setDictionary):
+        (CFDictionaryPropertyBag::dictionary): Added accessor to the CFDictionaryRef to ease use within WebKit
+        (CFDictionaryPropertyBag::QueryInterface): Added IID_CFDictionaryPropertyBag accessor
+        (CFDictionaryPropertyBag::Read):
+        (CFDictionaryPropertyBag::Write):
+        * CFDictionaryPropertyBag.h: Added IID_CFDictionaryPropertyBag
+       
+        * WebFrame.cpp:
+        (WebFrame::url): Added accessor, gets the current URL from WebCore
+        (WebFrame::dispatchDidReceiveIcon): Calls through to the WebView
+        (WebFrame::registerForIconNotification): Ditto
+        * WebFrame.h:        
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::iconDatabaseDidAddIconNotification):
+        (WebIconDatabase::iconDatabaseNotificationUserInfoURLKey):
+        (WebIconDatabase::iconDatabaseDidRemoveAllIconsNotification):
+        (postDidRemoveAllIconsNotification):
+        (postDidAddIconNotification):
+        * WebIconDatabase.h:        
+
+        * WebView.cpp:
+        (WebView::close): Unregister for the notification, just in case
+        (WebView::notifyDidAddIcon): Called when the webview gets the didAddIcon notification, compares the url
+          in the notification to the current main frame URL.  If they match, calls to dispatchDidReceiveIconFromWebFrame
+        (WebView::registerForIconNotification): 
+        (WebView::dispatchDidReceiveIconFromWebFrame): Dispatches the FrameLoadDelegate call.  Once the delegate call is dispatched,
+          either via the FrameLoaderClient interface of by listening for a notification, we know that our info is up to date in the 
+          IconDatabase and we don't need to listen for the generic notification any long, so we unregister for it here, as well.
+        (WebView::onNotify): The WebView listens for two notifications now, so make the decision which was received
+        * WebView.h:
+
+2007-09-18  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Ada and Geoff
 
         Part of <rdar://problem/5471308> - Get async Icon Database fully hooked up on Windows

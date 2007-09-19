@@ -27,6 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebView.h"
 
+#include "CFDictionaryPropertyBag.h"
 #include "DOMCoreClasses.h"
 #include "IWebNotification.h"
 #include "WebDebugProgram.h"
@@ -38,6 +39,7 @@
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
 #include "WebDragClient.h"
+#include "WebIconDatabase.h"
 #include "WebInspectorClient.h"
 #include "WebKit.h"
 #include "WebKitStatisticsPrivate.h"
@@ -212,6 +214,7 @@ void WebView::close()
     delete m_page;
     m_page = 0;
 
+    registerForIconNotification(false);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     COMPtr<IWebPreferences> prefs;
     if (SUCCEEDED(preferences(&prefs)))
@@ -1924,6 +1927,58 @@ void WebView::setToolTip(const String& toolTip)
     ::SendMessage(m_toolTipHwnd, TTM_ACTIVATE, !m_toolTip.isEmpty(), 0);
 }
 
+HRESULT WebView::notifyDidAddIcon(IWebNotification* notification)
+{
+    COMPtr<IPropertyBag> propertyBag;
+    HRESULT hr = notification->userInfo(&propertyBag);
+    if (FAILED(hr))
+        return hr;
+    if (!propertyBag)
+        return E_FAIL;
+
+    COMPtr<CFDictionaryPropertyBag> dictionaryPropertyBag;
+    hr = propertyBag->QueryInterface(IID_CFDictionaryPropertyBag, (void**)&dictionaryPropertyBag);
+    if (FAILED(hr))
+        return hr;
+
+    CFDictionaryRef dictionary = dictionaryPropertyBag->dictionary();
+    if (!dictionary)
+        return E_FAIL;
+
+    CFTypeRef value = CFDictionaryGetValue(dictionary, WebIconDatabase::iconDatabaseNotificationUserInfoURLKey());
+    if (!value)
+        return E_FAIL;
+    if (CFGetTypeID(value) != CFStringGetTypeID())
+        return E_FAIL;
+
+    String mainFrameURL;
+    if (m_mainFrame)
+        mainFrameURL = m_mainFrame->url().url();
+
+    if (!mainFrameURL.isEmpty() && mainFrameURL == String((CFStringRef)value))
+        dispatchDidReceiveIconFromWebFrame(m_mainFrame);
+
+    return hr;
+}
+
+void WebView::registerForIconNotification(bool listen)
+{
+    IWebNotificationCenter* nc = WebNotificationCenter::defaultCenterInternal();
+    if (listen)
+        nc->addObserver(this, WebIconDatabase::iconDatabaseDidAddIconNotification(), 0);
+    else
+        nc->removeObserver(this, WebIconDatabase::iconDatabaseDidAddIconNotification(), 0);
+}
+
+void WebView::dispatchDidReceiveIconFromWebFrame(WebFrame* frame)
+{
+    registerForIconNotification(false);
+
+    if (m_frameLoadDelegate)
+        // FIXME: <rdar://problem/5491010> - Pass in the right HBITMAP. 
+        m_frameLoadDelegate->didReceiveIcon(this, 0, frame);
+}
+
 HRESULT STDMETHODCALLTYPE WebView::setUIDelegate( 
     /* [in] */ IWebUIDelegate* d)
 {
@@ -3384,8 +3439,19 @@ HRESULT STDMETHODCALLTYPE WebView::stopSpeaking(
 HRESULT STDMETHODCALLTYPE WebView::onNotify( 
     /* [in] */ IWebNotification* notification)
 {
+    BSTR nameBSTR;
+    HRESULT hr = notification->name(&nameBSTR);
+    if (FAILED(hr))
+        return hr;
+
+    BString name;
+    name.adoptBSTR(nameBSTR);
+
+    if (!_tcscmp(name, WebIconDatabase::iconDatabaseDidAddIconNotification()))
+        return notifyDidAddIcon(notification);
+
     COMPtr<IUnknown> unkPrefs;
-    HRESULT hr = notification->getObject(&unkPrefs);
+    hr = notification->getObject(&unkPrefs);
     if (FAILED(hr))
         return hr;
 
