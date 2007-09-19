@@ -1,3 +1,28 @@
+2007-09-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5478250> REGRESSION: After pasting text copied from Mail subject and typing return, the cursor disappears because of negative left margin
+
+        When pasting text from the Mail subject line, the RTF pasteboard contains text that has a first line negative indent along with a
+        paragraph indent that has a counteracting positive indent. This results in the first line being flush left justified, and the remaining
+        wrapped lines being indented. When this is converted to a DOM fragment, AppKit makes a block element with a margin-left and a negative
+        text-indent that matches the RTF. So far this is all correct behavior.
+
+        When this content is pasted on the line of an existing paragraph that has content, ReplaceSelectionCommand will decided to merge the paragraphs.
+        This will convert the block element to a style span that has all inherited style properties. These inherited properties will still contain block
+        properties that have no affect on inline elements. These block properties will hang around on the style span and will get cloned to new block
+        elements if the user hit return on that line. The new block elements would then have the text-indent but not the margin-left, so the text would be
+        hidden off the left edge of the page.
+
+        In the end, we should never hang on to block-only properties in our style spans. This cuts out meaningless properties and prevents properties
+        from magically affecting blocks later if the style is cloned for a new block element during a future editing operation.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStyles): Remove any inherited block properties that are now in the span's style.
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Ditto.
+
 2007-09-18  Dave Hyatt  <hyatt@apple.com>
 
         Land a UnicodeRange helper class (ported from Mozilla) that we are going to use to prepare for making

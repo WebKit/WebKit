@@ -1,3 +1,19 @@
+2007-09-18  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/5478250> REGRESSION: After pasting text copied from Mail subject and typing return, the cursor disappears because of negative left margin
+
+        * editing/pasteboard/5478250.html: Added.
+        * platform/mac/editing/pasteboard/5478250-expected.txt: Added.
+
+        Updated results that are affected by the style span being removed or added with different style properties.
+
+        * editing/execCommand/5144139-1-expected.txt:
+        * editing/execCommand/create-list-with-hr-expected.txt:
+        * editing/pasteboard/merge-end-blockquote-expected.txt:
+        * editing/pasteboard/styled-element-markup-expected.txt:
+
 2007-09-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
