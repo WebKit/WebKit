@@ -893,6 +893,7 @@ gdk-port {
         platform/gdk/PlatformScrollBarGdk.cpp \
         platform/gdk/PopupMenuGdk.cpp \
         platform/gdk/RenderThemeGdk.cpp \
+        platform/gdk/SearchPopupMenuGdk.cpp \
         platform/gdk/ScrollViewGdk.cpp \
         platform/gdk/SharedTimerLinux.cpp \
         platform/gdk/SoundGdk.cpp \

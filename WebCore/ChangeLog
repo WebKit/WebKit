@@ -2,6 +2,20 @@
 
         Reviewed by Adam.
 
+        Move the SearchPopupMenu stubs to SearchPopupMenuGdk.cpp
+
+        * WebCore.pro:
+        * platform/gdk/SearchPopupMenuGdk.cpp: Added.
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::enabled):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
+2007-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Move the ContextMenu and ContextMenuItem stubs to
         ContextMenuGdk.cpp and ContextMenuItemGdk.cpp.
 
