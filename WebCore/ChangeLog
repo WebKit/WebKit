@@ -1,3 +1,15 @@
+2007-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Fix <rdar://problem/5492141> Assertion in isdigit() on windows Safari
+
+        Test: fast/css/hexColor-isDigit-assert.html
+
+        * platform/DeprecatedString.cpp:
+        (WebCore::isCharacterAllowedInBase): Check that the character is ascii 
+        to avoid an assertions on Windows.
+
 2007-09-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

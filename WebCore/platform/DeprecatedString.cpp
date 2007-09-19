@@ -195,6 +195,8 @@ static inline bool equalCaseInsensitive(DeprecatedChar c1, char c2)
 static bool isCharacterAllowedInBase(DeprecatedChar c, int base)
 {
     int uc = c.unicode();
+    if (uc > 0x7F)
+        return false;
     if (isdigit(uc))
         return uc - '0' < base;
     if (isalpha(uc)) {
