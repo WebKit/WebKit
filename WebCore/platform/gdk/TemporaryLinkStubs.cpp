@@ -54,7 +54,6 @@
 #include "MainResourceLoader.h"
 #include "Node.h"
 #include "NotImplemented.h"
-#include "Pasteboard.h"
 #include "PlatformMouseEvent.h"
 #include "PlugInInfoStore.h"
 #include "ResourceError.h"
@@ -115,18 +114,6 @@ void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 void CachedPage::close() { notImplemented(); }
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy) { notImplemented(); return 0; }
-
-Pasteboard* Pasteboard::generalPasteboard() { notImplemented(); return 0; }
-void Pasteboard::writeSelection(Range*, bool, Frame*) { notImplemented(); }
-void Pasteboard::writeURL(const KURL&, const String&, Frame*) { notImplemented(); }
-void Pasteboard::writeImage(Node*, const KURL&, const String&) { notImplemented(); }
-void Pasteboard::clear() { notImplemented(); }
-bool Pasteboard::canSmartReplace() { notImplemented(); return false; }
-PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText) { notImplemented(); return 0; }
-String Pasteboard::plainText(Frame* frame) { notImplemented(); return String(); }
-Pasteboard::Pasteboard() { notImplemented(); }
-Pasteboard::~Pasteboard() { notImplemented(); }
-
 
 FTPDirectoryDocument::FTPDirectoryDocument(WebCore::DOMImplementation* i, WebCore::Frame* f) : HTMLDocument(i, f) { notImplemented(); }
 Tokenizer* FTPDirectoryDocument::createTokenizer() { notImplemented(); return 0; }

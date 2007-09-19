@@ -889,6 +889,7 @@ gdk-port {
         platform/gdk/LoggingGdk.cpp \
         platform/gdk/MIMETypeRegistryGdk.cpp \
         platform/gdk/MouseEventGdk.cpp \
+        platform/gdk/PasteboardGdk.cpp \
         platform/gdk/PlatformScreenGdk.cpp \
         platform/gdk/PlatformScrollBarGdk.cpp \
         platform/gdk/PopupMenuGdk.cpp \

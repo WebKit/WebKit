@@ -2,6 +2,25 @@
 
         Reviewed by Adam.
 
+        Move the Pasteboard stubs to PasteboardGdk.cpp.
+
+        * WebCore.pro:
+        * platform/gdk/PasteboardGdk.cpp: Added.
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::documentFragment):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::Pasteboard):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
+2007-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
         Move the Icon stubs to IconGdk.cpp
 
         * WebCore.pro:
