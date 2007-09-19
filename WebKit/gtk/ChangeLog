@@ -1,3 +1,17 @@
+2007-09-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam.
+
+        WebKitGtkPage and WebKitGtkFrame have a dependency on each other. To
+        allow client code to include both headers the typedef's for
+        WebKitGtkFrame, WebKitGtkPage, WebKitGtkFrameData and WebKitGtkNetworkRequest
+        are moved into webkitgtkdefines.h and included by both webkitgtkpage.h and
+        webkitgtkframe.h
+
+        * Api/webkitgtkdefines.h:
+        * Api/webkitgtkframe.h:
+        * Api/webkitgtkpage.h:
+
 2007-09-17  Cyril Brulebois  <cyril.brulebois@enst-bretagne.fr>
 
         Reviewed by Mark, some Coding Style changes by Holger.

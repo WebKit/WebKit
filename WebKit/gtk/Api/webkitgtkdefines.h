@@ -31,6 +31,15 @@
 
 #include <glib.h>
 
+typedef struct _WebKitGtkFrame WebKitGtkFrame;
+typedef struct _WebKitGtkFrameClass WebKitGtkFrameClass;
+
+typedef struct _WebKitGtkFrameData WebKitGtkFrameData;
+typedef struct _WebKitGtkNetworkRequest WebKitGtkNetworkRequest;
+
+typedef struct _WebKitGtkPage WebKitGtkPage;
+typedef struct _WebKitGtkPageClass WebKitGtkPageClass;
+
 #ifdef G_OS_WIN32
     #ifdef BUILDING_WEBKIT
         #define WEBKIT_GTK_API __declspec(dllexport)

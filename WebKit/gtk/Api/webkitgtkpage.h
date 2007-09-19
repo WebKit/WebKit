@@ -30,6 +30,8 @@
 #define WEBKIT_GTK_PAGE_H
 
 #include <gtk/gtk.h>
+
+#include "webkitgtkdefines.h"
 #include "webkitgtksettings.h"
 
 G_BEGIN_DECLS
@@ -49,17 +51,7 @@ typedef enum {
 } WEBKIT_GTK_NAVIGATION_REQUEST_RESPONSE;
 
 
-typedef struct _WebKitGtkFrame WebKitGtkFrame;
-typedef struct _WebKitGtkFrameData WebKitGtkFrameData;
-typedef struct _WebKitGtkNetworkRequest WebKitGtkNetworkRequest;
-typedef struct _WebKitGtkPage WebKitGtkPage;
-typedef struct _WebKitGtkPageClass WebKitGtkPageClass;
 
-/*
- * FIXME: Will be different with multiple frames. Once we support multiple Frames
- * this widget will not be a GtkLayout but we will just allocate a GdkWindow of
- * the  size of the viewport and we won't be able to use gdk_window_move.
- */
 struct _WebKitGtkPage {
     GtkContainer parent;
 };
