@@ -1,3 +1,9 @@
+2007-09-19  Tuukka Hastrup  <Tuukka.Hastrup@iki.fi>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitdirs.pm: On Gdk and Qt, check that flex, bison, gperf are available.
+
 2007-09-18  Sam Weinig  <sam@webkit.org>
 
         Add JSRetainPtr.h #include to fix some builds.

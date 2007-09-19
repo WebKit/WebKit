@@ -490,6 +490,18 @@ sub checkRequiredSystemConfig
             print "http://developer.apple.com/tools/xcode\n";
             print "*************************************************************\n";
         }
+    } elsif (isGdk() or isQt()) {
+        my @cmds = qw(flex bison gperf);
+        my @missing = ();
+        foreach my $cmd (@cmds) {
+            if (not `$cmd --version`) {
+                push @missing, $cmd;
+            }
+        }
+        if (@missing) {
+            my $list = join ", ", @missing;
+            die "ERROR: $list missing but required to build WebKit.\n";
+        }
     }
     # Win32 and other platforms may want to check for minimum config
 }
