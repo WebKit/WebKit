@@ -1,3 +1,20 @@
+2007-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5489879>
+        Combination of real player with high connection quality in selecting player makes Safari quit.
+        
+        Prevent the Real Player plug-in from calling the window proc recursively.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::wndProc):
+        (WebCore::PluginViewWin::setNPWindowRect):
+        (WebCore::PluginViewWin::determineQuirks):
+        (WebCore::PluginViewWin::PluginViewWin):
+        * plugins/win/PluginViewWin.h:
+        (WebCore::):
+
 2007-09-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

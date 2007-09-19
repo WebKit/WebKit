@@ -70,6 +70,7 @@ namespace WebCore {
         PluginQuirkRemoveWindowlessVideoParam = 1 << 3,
         PluginQuirkThrottleWMUserPlusOneMessages = 1 << 4,
         PluginQuirkDontUnloadPlugin = 1 << 5,
+        PluginQuirkDontCallWndProcForSameMessageRecursively = 1 << 6
     };
 
     enum PluginStatus {
@@ -190,6 +191,9 @@ namespace WebCore {
         HWND m_window; // for windowed plug-ins
         mutable IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         mutable IntRect m_windowRect; // Our window rect.
+
+        unsigned m_lastMessage;
+        bool m_isCallingPluginWndProc;
 
         bool m_loadManually;
         RefPtr<PluginStreamWin> m_manualStream;
