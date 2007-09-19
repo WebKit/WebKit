@@ -40,13 +40,13 @@
 
 namespace WebCore {
 
-static bool convertToStringByAdoptingTheFilesystemRepresentation(gchar* filenameSystem, String& result)
+static bool stringByAdoptingFileSystemRepresentation(gchar* systemFilename, String& result)
 {
-    if (!filenameSystem)
+    if (!systemFilename)
         return false;
 
-    gchar* filename = g_filename_to_utf8(filenameSystem, -1, 0, 0, 0);
-    g_free(filenameSystem);
+    gchar* filename = g_filename_to_utf8(systemFilename, -1, 0, 0, 0);
+    g_free(systemFilename);
 
     if (!filename)
         return false;
@@ -86,7 +86,7 @@ void FileChooser::openFileChooser(Document* document)
     String result;
 
     const bool acceptedDialog = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT;
-    if (acceptedDialog && convertToStringByAdoptingTheFilesystemRepresentation(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)), result))
+    if (acceptedDialog && stringByAdoptingFileSystemRepresentation(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)), result))
         chooseFile(result);
     gtk_widget_destroy(dialog);
 }
@@ -99,12 +99,12 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     String string = fileButtonNoFileSelectedLabel();
 
     if (!m_filename.isEmpty()) {
-        gchar* filenameSystem = g_filename_from_utf8(m_filename.utf8().data(), -1, 0, 0, 0);
-        if (filenameSystem) {
-            gchar* basenameSystem = g_path_get_basename(filenameSystem);
-            g_free(filenameSystem);
+        gchar* systemFilename = g_filename_from_utf8(m_filename.utf8().data(), -1, 0, 0, 0);
+        if (systemFilename) {
+            gchar* systemBasename = g_path_get_basename(systemFilename);
+            g_free(systemFilename);
 
-            convertToStringByAdoptingTheFilesystemRepresentation(basenameSystem, string);
+            stringByAdoptingFileSystemRepresentation(systemBasename, string);
         }
     }
 
