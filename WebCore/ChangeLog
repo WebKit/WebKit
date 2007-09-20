@@ -1,3 +1,34 @@
+2007-09-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Brady.
+
+        Call ascii() instead of utf8() from debug logging code to avoid threading
+        issues associated w/ converting to UTF8.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::makeAllDirectories):
+        (WebCore::IconDatabase::retainIconForPageURL):
+        (WebCore::IconDatabase::releaseIconForPageURL):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::loadDecisionForIconURL):
+        (WebCore::IconDatabase::getOrCreatePageURLRecord):
+        (WebCore::IconDatabase::iconDatabaseSyncThread):
+        (WebCore::IconDatabase::performOpenInitialization):
+        (WebCore::IconDatabase::checkIntegrity):
+        (WebCore::IconDatabase::performURLImport):
+        (WebCore::IconDatabase::readFromDatabase):
+        (WebCore::IconDatabase::writeToDatabase):
+        (WebCore::readySQLStatement):
+        (WebCore::IconDatabase::setIconURLForPageURLInSQLDatabase):
+        (WebCore::IconDatabase::setIconIDForPageURLInSQLDatabase):
+        (WebCore::IconDatabase::removePageURLFromSQLDatabase):
+        (WebCore::IconDatabase::getIconIDForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::addIconURLToSQLDatabase):
+        (WebCore::IconDatabase::getImageDataForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::removeIconFromSQLDatabase):
+        (WebCore::IconDatabase::writeIconSnapshotToSQLDatabase):
+
 2007-09-20  Mike Fenton  <mike@staikos.net>
 
         Reviewed by George Staikos.

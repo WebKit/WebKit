@@ -124,7 +124,7 @@ bool makeAllDirectories(const String& path)
     if (!SHCreateDirectoryEx(0, fullPath.charactersWithNullTermination(), 0)) {
         DWORD error = GetLastError();
         if (error != ERROR_FILE_EXISTS && error != ERROR_ALREADY_EXISTS) {
-            LOG_ERROR("Failed to create path %s", path.utf8().data());
+            LOG_ERROR("Failed to create path %s", path.ascii().data());
             return false;
         }
     }
@@ -460,7 +460,7 @@ void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
         // If this pageURL waiting to be sync'ed, update the sync record
         // This saves us in the case where a page was ready to be deleted from the database but was just retained - so theres no need to delete it!
         if (!m_privateBrowsingEnabled && m_pageURLsPendingSync.contains(pageURL)) {
-            LOG(IconDatabase, "Bringing %s back from the brink", pageURL.utf8().data());
+            LOG(IconDatabase, "Bringing %s back from the brink", pageURL.ascii().data());
             m_pageURLsPendingSync.set(pageURL, record->snapshot());
         }
     }
@@ -479,14 +479,14 @@ void IconDatabase::releaseIconForPageURL(const String& pageURLOriginal)
 
     // Check if this pageURL is actually retained
     if (!m_retainedPageURLs.contains(pageURLOriginal)) {
-        LOG_ERROR("Attempting to release icon for URL %s which is not retained", urlForLogging(pageURLOriginal).utf8().data());
+        LOG_ERROR("Attempting to release icon for URL %s which is not retained", urlForLogging(pageURLOriginal).ascii().data());
         return;
     }
     
     // Get its retain count - if it's retained, we'd better have a PageURLRecord for it
     PageURLRecord* pageRecord = m_pageURLToRecordMap.get(pageURLOriginal);
     ASSERT(pageRecord);
-    LOG(IconDatabase, "Releasing pageURL %s to a retain count of %i", urlForLogging(pageURLOriginal).utf8().data(), pageRecord->retainCount() - 1);
+    LOG(IconDatabase, "Releasing pageURL %s to a retain count of %i", urlForLogging(pageURLOriginal).ascii().data(), pageRecord->retainCount() - 1);
     ASSERT(pageRecord->retainCount() > 0);
         
     // If it still has a positive retain count, store the new count and bail
@@ -494,7 +494,7 @@ void IconDatabase::releaseIconForPageURL(const String& pageURLOriginal)
         return;
         
     // This pageRecord has now been fully released.  Do the appropriate cleanup
-    LOG(IconDatabase, "No more retainers for PageURL %s", urlForLogging(pageURLOriginal).utf8().data());
+    LOG(IconDatabase, "No more retainers for PageURL %s", urlForLogging(pageURLOriginal).ascii().data());
     m_pageURLToRecordMap.remove(pageURLOriginal);
     m_retainedPageURLs.remove(pageURLOriginal);       
     
@@ -584,7 +584,7 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
         AutodrainedPool pool(25);
 
         for (unsigned i = 0; i < pageURLs.size(); ++i) {
-            LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURLs[i]).utf8().data());
+            LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURLs[i]).ascii().data());
             m_client->dispatchDidAddIconForPageURL(pageURLs[i]);
 
             pool.cycle();
@@ -633,7 +633,7 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
         // Remove it from the in-memory records and don't bother reading it in from disk anymore
         if (iconRecord && iconRecord->hasOneRef()) {
             ASSERT(iconRecord->retainingPageURLs().size() == 0);
-            LOG(IconDatabase, "Icon for icon url %s is about to be destroyed - removing mapping for it", urlForLogging(iconRecord->iconURL()).utf8().data());
+            LOG(IconDatabase, "Icon for icon url %s is about to be destroyed - removing mapping for it", urlForLogging(iconRecord->iconURL()).ascii().data());
             m_iconURLToRecordMap.remove(iconRecord->iconURL());
             MutexLocker locker(m_pendingReadingLock);
             m_iconsPendingReading.remove(iconRecord.get());
@@ -656,7 +656,7 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
         // Start the timer to commit this change - or further delay the timer if it was already started
         scheduleOrDeferSyncTimer();
         
-        LOG(IconDatabase, "Dispatching notification that we changed an icon mapping for url %s", urlForLogging(pageURL).utf8().data());
+        LOG(IconDatabase, "Dispatching notification that we changed an icon mapping for url %s", urlForLogging(pageURL).ascii().data());
         AutodrainedPool pool;
         m_client->dispatchDidAddIconForPageURL(pageURL);
     }
@@ -687,7 +687,7 @@ IconLoadDecision IconDatabase::loadDecisionForIconURL(const String& iconURL, Doc
         
     // Otherwise - since we refuse to perform I/O on the main thread to find out for sure - we return the answer that says
     // "You might be asked to load this later, so flag that"
-    LOG(IconDatabase, "Don't know if we should load %s or not - adding %p to the set of document loaders waiting on a decision", iconURL.utf8().data(), notificationDocumentLoader);
+    LOG(IconDatabase, "Don't know if we should load %s or not - adding %p to the set of document loaders waiting on a decision", iconURL.ascii().data(), notificationDocumentLoader);
     m_loadersPendingDecision.add(notificationDocumentLoader);    
 
     return IconLoadUnknown;
@@ -898,7 +898,7 @@ PageURLRecord* IconDatabase::getOrCreatePageURLRecord(const String& pageURL)
     if (!m_iconURLImportComplete) {
         // If the initial import of all URLs hasn't completed and we have no page record, we assume we *might* know about this later and create a record for it
         if (!pageRecord) {
-            LOG(IconDatabase, "Creating new PageURLRecord for pageURL %s", urlForLogging(pageURL).utf8().data());
+            LOG(IconDatabase, "Creating new PageURLRecord for pageURL %s", urlForLogging(pageURL).ascii().data());
             pageRecord = new PageURLRecord(pageURL);
             m_pageURLToRecordMap.set(pageURL, pageRecord);
         }
@@ -984,7 +984,7 @@ void* IconDatabase::iconDatabaseSyncThread()
     {
         MutexLocker locker(m_syncLock);
         if (!m_syncDB.open(m_completeDatabasePath)) {
-            LOG_ERROR("Unable to open icon database at path %s - %s", m_completeDatabasePath.utf8().data(), m_syncDB.lastErrorMsg());
+            LOG_ERROR("Unable to open icon database at path %s - %s", m_completeDatabasePath.ascii().data(), m_syncDB.lastErrorMsg());
             return 0;
         }
     }
@@ -1137,7 +1137,7 @@ void IconDatabase::performOpenInitialization()
             
             // Reopen the write database, creating it from scratch
             if (!m_syncDB.open(m_completeDatabasePath)) {
-                LOG_ERROR("Unable to open icon database at path %s - %s", m_completeDatabasePath.utf8().data(), m_syncDB.lastErrorMsg());
+                LOG_ERROR("Unable to open icon database at path %s - %s", m_completeDatabasePath.ascii().data(), m_syncDB.lastErrorMsg());
                 return;
             }          
         }
@@ -1153,7 +1153,7 @@ void IconDatabase::performOpenInitialization()
     }
     
     if (!isValidDatabase(m_syncDB)) {
-        LOG(IconDatabase, "%s is missing or in an invalid state - reconstructing", m_syncDB.path().utf8().data());
+        LOG(IconDatabase, "%s is missing or in an invalid state - reconstructing", m_syncDB.path().ascii().data());
         m_syncDB.clearAllTables();
         createDatabaseTables(m_syncDB);
     }
@@ -1192,7 +1192,7 @@ bool IconDatabase::checkIntegrity()
     if (resultText == "ok")
         return true;
     
-    LOG_ERROR("Icon database integrity check failed - \n%s", resultText.utf8().data());
+    LOG_ERROR("Icon database integrity check failed - \n%s", resultText.ascii().data());
     return false;
 }
 
@@ -1325,7 +1325,7 @@ void IconDatabase::performURLImport()
     LOG(IconDatabase, "Notifying %i interested page URLs that their icon URL is known due to the import", urlsToNotify.size());
     // Now that we don't hold any locks, perform the actual notifications
     for (unsigned i = 0; i < urlsToNotify.size(); ++i) {
-        LOG(IconDatabase, "Notifying icon info known for pageURL %s", urlsToNotify[i].utf8().data());
+        LOG(IconDatabase, "Notifying icon info known for pageURL %s", urlsToNotify[i].ascii().data());
         m_client->dispatchDidAddIconForPageURL(urlsToNotify[i]);
         if (shouldStopThreadActivity())
             return;
@@ -1474,7 +1474,7 @@ bool IconDatabase::readFromDatabase()
                     HashSet<String>::const_iterator end = outerHash->end();
                     for (; iter != end; ++iter) {
                         if (innerHash->contains(*iter)) {
-                            LOG(IconDatabase, "%s is interesting in the icon we just read.  Adding it to the list and removing it from the interested set", urlForLogging(*iter).utf8().data());
+                            LOG(IconDatabase, "%s is interesting in the icon we just read.  Adding it to the list and removing it from the interested set", urlForLogging(*iter).ascii().data());
                             urlsToNotify.add(*iter);
                         }
                         
@@ -1507,7 +1507,7 @@ bool IconDatabase::readFromDatabase()
         HashSet<String>::iterator iter = urlsToNotify.begin();
         HashSet<String>::iterator end = urlsToNotify.end();
         for (unsigned iteration = 0; iter != end; ++iter, ++iteration) {
-            LOG(IconDatabase, "Notifying icon received for pageURL %s", urlForLogging(*iter).utf8().data());
+            LOG(IconDatabase, "Notifying icon received for pageURL %s", urlForLogging(*iter).ascii().data());
             m_client->dispatchDidAddIconForPageURL(*iter);
             if (shouldStopThreadActivity())
                 return didAnyWork;
@@ -1560,7 +1560,7 @@ bool IconDatabase::writeToDatabase()
     
     for (unsigned i = 0; i < iconSnapshots.size(); ++i) {
         writeIconSnapshotToSQLDatabase(iconSnapshots[i]);
-        LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %li to the DB", urlForLogging(iconSnapshots[i].iconURL).utf8().data(), iconSnapshots[i].timestamp);
+        LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %li to the DB", urlForLogging(iconSnapshots[i].iconURL).ascii().data(), iconSnapshots[i].timestamp);
     }
     
     for (unsigned i = 0; i < pageSnapshots.size(); ++i) {
@@ -1573,7 +1573,7 @@ bool IconDatabase::writeToDatabase()
         else {
             setIconURLForPageURLInSQLDatabase(pageSnapshots[i].iconURL, pageSnapshots[i].pageURL);
         }
-        LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(pageSnapshots[i].pageURL).utf8().data());
+        LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(pageSnapshots[i].pageURL).ascii().data());
     }
 
     syncTransaction.commit();
@@ -1809,13 +1809,13 @@ inline void readySQLStatement(OwnPtr<SQLStatement>& statement, SQLDatabase& db, 
 {
     if (statement && (statement->database() != &db || statement->isExpired())) {
         if (statement->isExpired())
-            LOG(IconDatabase, "SQLStatement associated with %s is expired", str.utf8().data());
+            LOG(IconDatabase, "SQLStatement associated with %s is expired", str.ascii().data());
         statement.set(0);
     }
     if (!statement) {
         statement.set(new SQLStatement(db, str));
         if (statement->prepare() != SQLResultOk)
-            LOG_ERROR("Preparing statement %s failed", str.utf8().data());
+            LOG_ERROR("Preparing statement %s failed", str.ascii().data());
     }
 }
 
@@ -1829,7 +1829,7 @@ void IconDatabase::setIconURLForPageURLInSQLDatabase(const String& iconURL, cons
         iconID = addIconURLToSQLDatabase(iconURL);
     
     if (!iconID) {
-        LOG_ERROR("Failed to establish an ID for iconURL %s", urlForLogging(iconURL).utf8().data());
+        LOG_ERROR("Failed to establish an ID for iconURL %s", urlForLogging(iconURL).ascii().data());
         ASSERT(false);
         return;
     }
@@ -1848,7 +1848,7 @@ void IconDatabase::setIconIDForPageURLInSQLDatabase(int64_t iconID, const String
     int result = m_setIconIDForPageURLStatement->step();
     if (result != SQLResultDone) {
         ASSERT(false);
-        LOG_ERROR("setIconIDForPageURLQuery failed for url %s", urlForLogging(pageURL).utf8().data());
+        LOG_ERROR("setIconIDForPageURLQuery failed for url %s", urlForLogging(pageURL).ascii().data());
     }
 
     m_setIconIDForPageURLStatement->reset();
@@ -1862,7 +1862,7 @@ void IconDatabase::removePageURLFromSQLDatabase(const String& pageURL)
     m_removePageURLStatement->bindText16(1, pageURL, false);
 
     if (m_removePageURLStatement->step() != SQLResultDone)
-        LOG_ERROR("removePageURLFromSQLDatabase failed for url %s", urlForLogging(pageURL).utf8().data());
+        LOG_ERROR("removePageURLFromSQLDatabase failed for url %s", urlForLogging(pageURL).ascii().data());
     
     m_removePageURLStatement->reset();
 }
@@ -1880,7 +1880,7 @@ int64_t IconDatabase::getIconIDForIconURLFromSQLDatabase(const String& iconURL)
         result = m_getIconIDForIconURLStatement->getColumnInt64(0);
     else {
         if (result != SQLResultDone)
-            LOG_ERROR("getIconIDForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).utf8().data());
+            LOG_ERROR("getIconIDForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).ascii().data());
         result = 0;
     }
 
@@ -1902,7 +1902,7 @@ int64_t IconDatabase::addIconURLToSQLDatabase(const String& iconURL)
     int result = m_addIconToIconInfoStatement->step();
     m_addIconToIconInfoStatement->reset();
     if (result != SQLResultDone) {
-        LOG_ERROR("addIconURLToSQLDatabase failed to insert %s into IconInfo", urlForLogging(iconURL).utf8().data());
+        LOG_ERROR("addIconURLToSQLDatabase failed to insert %s into IconInfo", urlForLogging(iconURL).ascii().data());
         return 0;
     }
     int64_t iconID = m_syncDB.lastInsertRowID();
@@ -1913,7 +1913,7 @@ int64_t IconDatabase::addIconURLToSQLDatabase(const String& iconURL)
     result = m_addIconToIconDataStatement->step();
     m_addIconToIconDataStatement->reset();
     if (result != SQLResultDone) {
-        LOG_ERROR("addIconURLToSQLDatabase failed to insert %s into IconData", urlForLogging(iconURL).utf8().data());
+        LOG_ERROR("addIconURLToSQLDatabase failed to insert %s into IconData", urlForLogging(iconURL).ascii().data());
         return 0;
     }
     
@@ -1936,7 +1936,7 @@ PassRefPtr<SharedBuffer> IconDatabase::getImageDataForIconURLFromSQLDatabase(con
         imageData = new SharedBuffer;
         imageData->append(data.data(), data.size());
     } else if (result != SQLResultDone)
-        LOG_ERROR("getImageDataForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).utf8().data());
+        LOG_ERROR("getImageDataForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).ascii().data());
 
     m_getImageDataForIconURLStatement->reset();
     
@@ -1963,19 +1963,19 @@ void IconDatabase::removeIconFromSQLDatabase(const String& iconURL)
     m_deletePageURLsForIconURLStatement->bindInt64(1, iconID);
     
     if (m_deletePageURLsForIconURLStatement->step() != SQLResultDone)
-        LOG_ERROR("m_deletePageURLsForIconURLStatement failed for url %s", urlForLogging(iconURL).utf8().data());
+        LOG_ERROR("m_deletePageURLsForIconURLStatement failed for url %s", urlForLogging(iconURL).ascii().data());
     
     readySQLStatement(m_deleteIconFromIconInfoStatement, m_syncDB, "DELETE FROM IconInfo WHERE IconInfo.iconID = (?);");
     m_deleteIconFromIconInfoStatement->bindInt64(1, iconID);
     
     if (m_deleteIconFromIconInfoStatement->step() != SQLResultDone)
-        LOG_ERROR("m_deleteIconFromIconInfoStatement failed for url %s", urlForLogging(iconURL).utf8().data());
+        LOG_ERROR("m_deleteIconFromIconInfoStatement failed for url %s", urlForLogging(iconURL).ascii().data());
         
     readySQLStatement(m_deleteIconFromIconDataStatement, m_syncDB, "DELETE FROM IconData WHERE IconData.iconID = (?);");
     m_deleteIconFromIconDataStatement->bindInt64(1, iconID);
     
     if (m_deleteIconFromIconDataStatement->step() != SQLResultDone)
-        LOG_ERROR("m_deleteIconFromIconDataStatement failed for url %s", urlForLogging(iconURL).utf8().data());
+        LOG_ERROR("m_deleteIconFromIconDataStatement failed for url %s", urlForLogging(iconURL).ascii().data());
         
     m_deletePageURLsForIconURLStatement->reset();
     m_deleteIconFromIconInfoStatement->reset();
@@ -1991,7 +1991,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         
     // A nulled out timestamp and data means this icon is destined to be deleted - do that instead of writing it out
     if (!snapshot.timestamp && !snapshot.data) {
-        LOG(IconDatabase, "Removing %s from on-disk database", urlForLogging(snapshot.iconURL).utf8().data());
+        LOG(IconDatabase, "Removing %s from on-disk database", urlForLogging(snapshot.iconURL).ascii().data());
         removeIconFromSQLDatabase(snapshot.iconURL);
         return;
     }
@@ -2011,7 +2011,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         m_updateIconInfoStatement->bindInt64(3, iconID);
 
         if (m_updateIconInfoStatement->step() != SQLResultDone)
-            LOG_ERROR("Failed to update icon info for url %s", urlForLogging(snapshot.iconURL).utf8().data());
+            LOG_ERROR("Failed to update icon info for url %s", urlForLogging(snapshot.iconURL).ascii().data());
         
         m_updateIconInfoStatement->reset();
         
@@ -2026,7 +2026,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
             m_updateIconDataStatement->bindNull(1);
         
         if (m_updateIconDataStatement->step() != SQLResultDone)
-            LOG_ERROR("Failed to update icon data for url %s", urlForLogging(snapshot.iconURL).utf8().data());
+            LOG_ERROR("Failed to update icon data for url %s", urlForLogging(snapshot.iconURL).ascii().data());
 
         m_updateIconDataStatement->reset();
     } else {    
@@ -2035,7 +2035,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
         m_setIconInfoStatement->bindInt64(2, snapshot.timestamp);
 
         if (m_setIconInfoStatement->step() != SQLResultDone)
-            LOG_ERROR("Failed to set icon info for url %s", urlForLogging(snapshot.iconURL).utf8().data());
+            LOG_ERROR("Failed to set icon info for url %s", urlForLogging(snapshot.iconURL).ascii().data());
         
         m_setIconInfoStatement->reset();
         
@@ -2052,7 +2052,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
             m_setIconDataStatement->bindNull(2);
         
         if (m_setIconDataStatement->step() != SQLResultDone)
-            LOG_ERROR("Failed to set icon data for url %s", urlForLogging(snapshot.iconURL).utf8().data());
+            LOG_ERROR("Failed to set icon data for url %s", urlForLogging(snapshot.iconURL).ascii().data());
 
         m_setIconDataStatement->reset();
     }
