@@ -232,4 +232,20 @@ interface IWebFrame : IUnknown
 
   /* This is a DOMElement on mac, but maybe should be a DOMHTMLFrameElement? */
     HRESULT currentForm([out, retval] IDOMElement** frameElement);
+
+    /*!
+        @method setAllowsScrolling:
+        @abstract Sets whether the WebFrameView allows its document to be scrolled
+        @param flag YES to allow the document to be scrolled, NO to disallow scrolling
+        - (void)setAllowsScrolling:(BOOL)flag;
+    */
+   HRESULT setAllowsScrolling([in] BOOL flag);
+
+    /*!
+        @method allowsScrolling
+        @abstract Returns whether the WebFrameView allows its document to be scrolled
+        @result YES if the document is allowed to scroll, otherwise NO
+        - (BOOL)allowsScrolling;
+    */
+   HRESULT allowsScrolling([out, retval] BOOL* flag);
 }

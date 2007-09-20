@@ -35,6 +35,7 @@
 #include <WebCore/ContextMenu.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoadRequest.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/NotImplemented.h>
 #pragma warning(pop)
 
@@ -230,9 +231,16 @@ bool WebChromeClient::statusbarVisible()
     return result != false;
 }
 
-void WebChromeClient::setScrollbarsVisible(bool)
+void WebChromeClient::setScrollbarsVisible(bool b)
 {
-    notImplemented();
+    WebFrame* webFrame = m_webView->topLevelFrame();
+    if (webFrame) {
+        webFrame->setAllowsScrolling(b);
+        FrameView* frameView = core(webFrame)->view();
+        frameView->setHScrollbarMode(frameView->hScrollbarMode());  // I know this looks weird but the call to v/hScrollbarMode goes to ScrollView
+        frameView->setVScrollbarMode(frameView->vScrollbarMode());  // and the call to setV/hScrollbarMode goes to FrameView.
+                                                                    // This oddity is a result of matching a design in the mac code.
+    }
 }
 
 bool WebChromeClient::scrollbarsVisible()

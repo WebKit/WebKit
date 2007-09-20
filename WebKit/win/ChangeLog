@@ -1,3 +1,20 @@
+2007-09-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Hyatt.
+
+        - <rdar://problem/5101991> Avril Lavigne music player comes up in a window with scrollbars
+        - Implementing missing scrollbar functionality to allow turning off scrollbars correctly.
+
+        * Interfaces/IWebFrame.idl:
+        * Interfaces/IWebFrameView.idl:
+        * WebChromeClient.cpp:
+        (WebChromeClient::setScrollbarsVisible):
+        * WebFrame.cpp:
+        (WebFrame::setAllowsScrolling):
+        (WebFrame::allowsScrolling):
+        (WebFrame::frameView):
+        * WebFrame.h:
+
 2007-09-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dave Hyatt

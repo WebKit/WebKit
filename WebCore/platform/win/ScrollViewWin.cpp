@@ -79,6 +79,9 @@ public:
 
     void scrollBackingStore(const IntSize& scrollDelta);
 
+    void setAllowsScrolling(bool);
+    bool allowsScrolling() const;
+
     ScrollView* m_view;
     IntSize m_scrollOffset;
     IntSize m_contentsSize;
@@ -170,6 +173,27 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     // Now update the window (which should do nothing but a blit of the backing store's updateRect and so should
     // be very fast).
     ::UpdateWindow(containingWindowHandle);
+}
+
+void ScrollView::ScrollViewPrivate::setAllowsScrolling(bool flag)
+{
+    if (flag && m_vScrollbarMode == ScrollbarAlwaysOff)
+        m_vScrollbarMode = ScrollbarAuto;
+    else if (!flag)
+        m_vScrollbarMode = ScrollbarAlwaysOff;
+
+    if (flag && m_hScrollbarMode == ScrollbarAlwaysOff)
+        m_hScrollbarMode = ScrollbarAuto;
+    else if (!flag)
+        m_hScrollbarMode = ScrollbarAlwaysOff;
+
+    m_view->updateScrollbars(m_scrollOffset);
+}
+
+bool ScrollView::ScrollViewPrivate::allowsScrolling() const
+{
+    // Return YES if either horizontal or vertical scrolling is allowed.
+    return m_hScrollbarMode != ScrollbarAlwaysOff || m_vScrollbarMode != ScrollbarAlwaysOff;
 }
 
 IntRect ScrollView::ScrollViewPrivate::windowClipRect() const
@@ -429,7 +453,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     // In the end, FrameView should just merge with ScrollView.
     if (static_cast<const FrameView*>(this)->frame()->prohibitsScrolling())
         return;
-    
+
     m_data->m_inUpdateScrollbars = true;
 
     bool hasVerticalScrollbar = m_data->m_vBar;
@@ -450,7 +474,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             // Do a layout if pending before checking if scrollbars are needed.
             if (hasVerticalScrollbar != oldHasVertical || hasHorizontalScrollbar != oldHasHorizontal)
                 static_cast<FrameView*>(this)->layout();
-             
+
             scrollsVertically = (vScroll == ScrollbarAlwaysOn) || (vScroll == ScrollbarAuto && contentsHeight() > height());
             if (scrollsVertically)
                 scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) || (hScroll == ScrollbarAuto && contentsWidth() + cVerticalWidth > width());
@@ -734,6 +758,16 @@ void ScrollView::updateBackingStore()
     if (!page)
         return;
     page->chrome()->updateBackingStore();
+}
+
+void ScrollView::setAllowsScrolling(bool flag)
+{
+    m_data->setAllowsScrolling(flag);
+}
+
+bool ScrollView::allowsScrolling() const
+{
+    return m_data->allowsScrolling();
 }
 
 } // namespace WebCore

@@ -139,6 +139,9 @@ namespace WebCore {
         void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
         void updateBackingStore();
 
+        void setAllowsScrolling(bool);
+        bool allowsScrolling() const;
+
         HashSet<Widget*>* children();
 
     private:

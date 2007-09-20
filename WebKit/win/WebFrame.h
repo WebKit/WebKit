@@ -91,10 +91,10 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE webView( 
         /* [retval][out] */ IWebView **view);
-    
-    virtual HRESULT STDMETHODCALLTYPE frameView( 
+
+    virtual HRESULT STDMETHODCALLTYPE frameView(
         /* [retval][out] */ IWebFrameView **view);
-    
+
     virtual HRESULT STDMETHODCALLTYPE DOMDocument( 
         /* [retval][out] */ IDOMDocument** document);
     
@@ -195,6 +195,13 @@ public:
     virtual HRESULT STDMETHODCALLTYPE isDescendantOfFrame( 
         /* [in] */ IWebFrame *ancestor,
         /* [retval][out] */ BOOL *result);
+
+    virtual HRESULT STDMETHODCALLTYPE setAllowsScrolling(
+        /* [in] */ BOOL flag);
+
+    virtual HRESULT STDMETHODCALLTYPE allowsScrolling(
+        /* [retval][out] */ BOOL *flag);
+
 
     // FrameWinClient
     virtual void ref();
