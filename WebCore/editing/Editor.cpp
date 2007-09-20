@@ -1795,17 +1795,26 @@ static String findFirstMisspellingInRange(EditorClient* client, Range* searchRan
         // Skip some work for one-space-char hunks
         if (!(len == 1 && chars[0] == ' ')) {
             
-            int misspellingLocation;
-            int misspellingLength;
+            int misspellingLocation = -1;
+            int misspellingLength = 0;
             client->checkSpellingOfString(chars, len, &misspellingLocation, &misspellingLength);
-            String misspelledWord = String(chars + misspellingLocation, misspellingLength);
+
+            // 5490627 shows that there was some code path here where the String constructor below crashes.
+            // We don't know exactly what combination of bad input caused this, so we're making this much
+            // more robust against bad input on release builds.
+            ASSERT(misspellingLength >= 0);
+            ASSERT(misspellingLocation >= -1);
+            ASSERT(misspellingLength == 0 || misspellingLocation >= 0);
+            ASSERT(misspellingLocation < len);
+            ASSERT(misspellingLength <= len);
+            ASSERT(misspellingLocation + misspellingLength <= len);
             
-            if (!misspelledWord.isEmpty()) {
+            if (misspellingLocation >= 0 && misspellingLength > 0 && misspellingLocation < len && misspellingLength <= len && misspellingLocation + misspellingLength <= len) {
                 
                 // Remember first-encountered misspelling and its offset
                 if (!firstMisspelling) {
                     firstMisspellingOffset = currentChunkOffset + misspellingLocation;
-                    firstMisspelling = misspelledWord;
+                    firstMisspelling = String(chars + misspellingLocation, misspellingLength);
                 }
                 
                 // Mark this instance if we're marking all instances. Otherwise bail out because we found the first one.
@@ -1813,7 +1822,7 @@ static String findFirstMisspellingInRange(EditorClient* client, Range* searchRan
                     break;
                 
                 // Compute range of misspelled word
-                RefPtr<Range> misspellingRange = TextIterator::subrange(searchRange, currentChunkOffset + misspellingLocation, misspelledWord.length());
+                RefPtr<Range> misspellingRange = TextIterator::subrange(searchRange, currentChunkOffset + misspellingLocation, misspellingLength);
                 
                 // Store marker for misspelled word
                 ExceptionCode ec = 0;

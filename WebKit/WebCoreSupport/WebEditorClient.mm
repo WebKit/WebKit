@@ -532,7 +532,8 @@ void WebEditorClient::checkSpellingOfString(const UChar* text, int length, int* 
     NSRange range = [[NSSpellChecker sharedSpellChecker] checkSpellingOfString:textString startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:spellCheckerDocumentTag() wordCount:NULL];
     [textString release];
     if (misspellingLocation)
-        *misspellingLocation = range.location;
+        // WebCore expects -1 to represent "not found"
+        *misspellingLocation = (range.location == NSNotFound) ? -1 : range.location;
     if (misspellingLength)
         *misspellingLength = range.length;
 }

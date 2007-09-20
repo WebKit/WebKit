@@ -1,3 +1,15 @@
+2007-09-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebKit part of speculative fix for <rdar://problem/5490627>, about crashes constructing a
+          String using the values filled in by checkSpellingOfString()
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkSpellingOfString):
+        convert NSNotFound to -1, since WebCore code expects -1 for this purpose. We already do this
+        in checkGrammarOfString.
+
 2007-09-19  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin Adler.

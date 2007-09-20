@@ -1,3 +1,17 @@
+2007-09-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - WebCore part of speculative fix for <rdar://problem/5490627>, about crashes constructing a
+          String using the values filled in by checkSpellingOfString()
+
+        * editing/Editor.cpp:
+        (WebCore::findFirstMisspellingInRange):
+        initialize out parameters the way we do elsewhere; add many assertions for improper results
+        from checkSpellingOfString(); don't create a String at all until we've checked all the ways
+        that checkSpellingOfString() results could indicate invalid string, even the unexpected ones;
+        as an optimization, don't construct a String at all when looping through to mark all instances.
+
 2007-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.
