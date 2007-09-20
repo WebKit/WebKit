@@ -4,6 +4,7 @@
 
         http://bugs.webkit.org/show_bug.cgi?id=15235
         Options can not be removed from a Select element with OptGroup's using JavaScript
+        <rdar://problem/5494123>
 
         Remove HTMLOptionElement children against the proper parent node.
 
