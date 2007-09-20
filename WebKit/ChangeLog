@@ -1,3 +1,11 @@
+2007-09-20  John Sullivan  <sullivan@apple.com>
+
+        Build fix for stoooopid old PPC gcc compiler
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkSpellingOfString):
+        replace perfectly valid ?: syntax with if/else
+
 2007-09-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
