@@ -1,3 +1,14 @@
+2007-09-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=15235
+        Options can not be removed from a Select element with OptGroup's using JavaScript
+
+        * fast/forms/option-in-optgroup-removal-expected.txt: Added.
+        * fast/forms/option-in-optgroup-removal.html: Added.
+
 2007-09-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by.

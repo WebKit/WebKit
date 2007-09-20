@@ -236,7 +236,9 @@ void HTMLSelectElement::remove(int index)
     if (listIndex < 0 || index >= int(items.size()))
         return; // ### what should we do ? remove the last item?
 
-    removeChild(items[listIndex], ec);
+    Element *item = items[listIndex];
+    ASSERT(item->parentNode());
+    item->parentNode()->removeChild(item, ec);
     if (!ec)
         setRecalcListItems();
 }

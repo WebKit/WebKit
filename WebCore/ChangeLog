@@ -1,3 +1,15 @@
+2007-09-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15235
+        Options can not be removed from a Select element with OptGroup's using JavaScript
+
+        Remove HTMLOptionElement children against the proper parent node.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::remove):
+
 2007-09-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
