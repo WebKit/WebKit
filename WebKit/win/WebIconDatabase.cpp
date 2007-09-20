@@ -186,7 +186,7 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconForURL(
     // Make sure we check for the case of an "empty image"
     if (icon && icon->width()) {
         *bitmap = (OLE_HANDLE)(ULONG64)getOrCreateSharedBitmap(size);
-        if (!icon->getHBITMAP((HBITMAP)(ULONG64)*bitmap)) {
+        if (!icon->getHBITMAPOfSize((HBITMAP)(ULONG64)*bitmap, size)) {
             LOG_ERROR("Failed to draw Image to HBITMAP");
             *bitmap = 0;
             return E_FAIL;
@@ -278,7 +278,7 @@ HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(LPSIZE size)
         defaultIconImage = Image::loadPlatformResource("urlIcon");
     }
     m_defaultIconMap.set(*size, result);
-    if (!defaultIconImage->getHBITMAP(result)) {
+    if (!defaultIconImage->getHBITMAPOfSize(result, size)) {
         LOG_ERROR("Failed to draw Image to HBITMAP");
         return 0;
     }

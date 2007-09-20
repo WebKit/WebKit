@@ -1,3 +1,13 @@
+2007-09-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        <rdar://problem/5245981> - No favicon shows up for cnet.com
+        
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::iconForURL): Call getHBITMAPOfSize
+        (WebIconDatabase::getOrCreateDefaultIconBitmap): Ditto
+
 2007-09-19  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Adam Roben.

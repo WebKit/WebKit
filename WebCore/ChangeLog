@@ -1,3 +1,24 @@
+2007-09-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        <rdar://problem/5245981> - No favicon shows up for cnet.com
+        
+        CNet's favicon has two images in it - a 32x32 white square, and a 16x16 image that is their actual icon
+        Till now on Windows we've always gone straight for the first image in an icon for the favicon, now we
+        actually do proper size matching
+
+        * platform/graphics/BitmapImage.h:
+
+        * platform/graphics/Image.h:
+        (WebCore::Image::getHBITMAPOfSize): 
+        (WebCore::Image::drawFrameMatchingSourceSize): Search through the frames of the image for the correct size
+
+        * platform/graphics/win/ImageWin.cpp:
+        (WebCore::BitmapImage::getHBITMAP):
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+
 2007-09-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Brady.

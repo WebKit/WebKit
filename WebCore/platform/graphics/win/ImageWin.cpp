@@ -58,6 +58,11 @@ Image* Image::loadPlatformResource(const char *name)
 
 bool BitmapImage::getHBITMAP(HBITMAP bmp)
 {
+    return getHBITMAPOfSize(bmp, 0);
+}
+
+bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
+{
     ASSERT(bmp);
 
     BITMAP bmpInfo;
@@ -72,12 +77,34 @@ bool BitmapImage::getHBITMAP(HBITMAP bmp)
   
     GraphicsContext gc(cgContext);
     IntSize imageSize = BitmapImage::size();
-    draw(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0, 0, imageSize.width(), imageSize.height()), CompositeCopy);
+    if (size)
+        drawFrameMatchingSourceSize(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), IntSize(*size), CompositeCopy);
+    else
+        draw(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0, 0, imageSize.width(), imageSize.height()), CompositeCopy);
 
     // Do cleanup
     CGContextRelease(cgContext);
     CGColorSpaceRelease(deviceRGB);
     return true;
+}
+
+void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator compositeOp)
+{
+    int frames = frameCount();
+    for (int i = 0; i < frames; ++i) {
+        CGImageRef image = frameAtIndex(i);
+        if (CGImageGetHeight(image) == (size_t)srcSize.height() && CGImageGetWidth(image) == (size_t)srcSize.width()) {
+            size_t currentFrame = m_currentFrame;
+            m_currentFrame = i;
+            draw(ctxt, dstRect, FloatRect(0, 0, srcSize.width(), srcSize.height()), compositeOp);
+            m_currentFrame = currentFrame;
+            return;
+        }
+    }
+
+    // No image of the correct size was found, fallback to drawing the current frame
+    IntSize imageSize = BitmapImage::size();
+    draw(ctxt, dstRect, FloatRect(0, 0, imageSize.width(), imageSize.height()), compositeOp);
 }
 
 } // namespace WebCore

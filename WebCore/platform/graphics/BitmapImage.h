@@ -124,11 +124,15 @@ public:
     
 #if PLATFORM(WIN)
     virtual bool getHBITMAP(HBITMAP);
+    virtual bool getHBITMAPOfSize(HBITMAP, LPSIZE);
 #endif
 
     virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
 
 private:
+#if PLATFORM(WIN)
+    virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator);
+#endif
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
 #if PLATFORM(QT)
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
