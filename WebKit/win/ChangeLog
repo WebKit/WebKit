@@ -1,3 +1,10 @@
+2007-09-19  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Adam Roben.
+
+        * WebKit.vcproj/WebKit.sln: Update location of DumpRenderTree and TestNetscapePlugin
+        to point to their new locations.
+
 2007-09-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam
