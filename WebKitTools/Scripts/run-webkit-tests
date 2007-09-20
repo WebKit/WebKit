@@ -131,6 +131,8 @@ if (isTiger()) {
     $platform = "mac";
 } elsif (isQt()) {
     $platform = "qt";
+} elsif (isGdk()) {
+    $platform = "gdk";
 } elsif (isCygwin()) {
     # FIXME: The two lines below are a hack to represent that on Windows we
     # currently want to
@@ -256,7 +258,17 @@ if(!defined($root)){
     if (isCygwin()) {
         $buildResult = buildVisualStudioProject("WebKitTools/DumpRenderTree/DumpRenderTree.sln");
     } else {
-        $buildResult = system "WebKitTools/Scripts/build-dumprendertree", $configurationOption;
+        # Push the parameters to build-dumprendertree as an array
+        my @args;
+        push(@args, $configuration);
+
+        if (isQt()) {
+            push(@args, "--qt");
+        } elsif (isGdk()) {
+            push(@args, "--gdk");
+        }
+
+        $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @args;
     }
 
     if ($buildResult) {
@@ -1120,9 +1132,8 @@ sub openDumpTool()
     my $homeDrive = $ENV{'HOMEDRIVE'};
     my $homePath = $ENV{'HOMEPATH'};
         
-    my $isQt = isQt();
     local %ENV;
-    if ($isQt) {
+    if (isQt()) {
         if (defined $display) {
             $ENV{DISPLAY} = $display;
         } else {

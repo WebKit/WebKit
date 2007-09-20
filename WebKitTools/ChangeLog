@@ -1,3 +1,20 @@
+2007-09-20  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Adam.
+
+        Fix: http://bugs.webkit.org/show_bug.cgi?id=15223
+        webkitdir.pm::isQt() is not working properly in run-webkit-tests under Linux/Qt
+
+        Added determineIsQt() and determineIsGdk() to webkitdirs.pm.
+        Now isQt() and isGdk() use global variables that are only set once.
+
+        An array of all the parameters is now given to build-dumprender which includes
+        the platform on linux.
+
+        * Scripts/build-dumprendertree:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2007-09-19  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Hyatt.

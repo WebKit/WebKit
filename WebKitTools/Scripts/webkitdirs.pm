@@ -49,6 +49,8 @@ my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
 my $osXVersion;
+my $isQt;
+my $isGdk;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -384,25 +386,43 @@ sub checkWebCoreSVGSupport
 
 sub isQt()
 {
+    determineIsQt();
+    return $isQt;
+}
+
+sub determineIsQt()
+{
+    return if defined($isQt);
+
     # Allow override in case QTDIR is not set.
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
         if ($opt =~ /^--qt/i ) {
-            return 1;
+            $isQt = 1;
+            return;
         }
     }
-    return defined($ENV{'QTDIR'})
+    $isQt = defined($ENV{'QTDIR'});
 }
 
 sub isGdk()
 {
+    determineIsGdk();
+    return $isGdk;
+}
+
+sub determineIsGdk()
+{
+    return if defined($isGdk);
+
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
         if ($opt =~ /^--gdk$/i ) {
-            return 1;
+            $isGdk = 1;
+            return;
         }
     }
-    return 0;
+    $isGdk = 0;
 }
 
 sub isCygwin()
