@@ -32,6 +32,8 @@
 
 #if PLATFORM(CG)
 typedef struct CGShading* CGShadingRef;
+#elif PLATFORM(QT)
+class QGradient;
 #endif
 
 namespace WebCore {
@@ -50,6 +52,8 @@ namespace WebCore {
 
 #if PLATFORM(CG)
         CGShadingRef platformShading();
+#elif PLATFORM(QT)
+        QGradient *platformShading();
 #endif
 
         struct ColorStop {
@@ -75,6 +79,8 @@ namespace WebCore {
 
 #if PLATFORM(CG)
         CGShadingRef m_shading;
+#elif PLATFORM(QT)
+        QGradient *m_shading;
 #endif
     };
 

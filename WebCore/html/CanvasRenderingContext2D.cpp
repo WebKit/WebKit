@@ -467,7 +467,7 @@ void CanvasRenderingContext2D::fill()
     QPainter* p = static_cast<QPainter*>(c->platformContext());
     willDraw(path->controlPointRect());
     if (state().m_fillStyle->gradient()) {
-        fprintf(stderr, "FIXME: CanvasRenderingContext2D::fill\n");
+        p->fillPath(*path, QBrush(*(state().m_fillStyle->gradient()->platformShading())));
     } else {
         if (state().m_fillStyle->pattern())
             applyFillPattern();
@@ -512,7 +512,10 @@ void CanvasRenderingContext2D::stroke()
     QPainter* p = static_cast<QPainter*>(c->platformContext());
     willDraw(path->controlPointRect());
     if (state().m_strokeStyle->gradient()) {
-        fprintf(stderr, "FIXME: CanvasRenderingContext2D::stroke\n");
+        p->save();
+        p->setBrush(*(state().m_strokeStyle->gradient()->platformShading()));
+        p->strokePath(*path, p->pen());
+        p->restore();
     } else {
         if (state().m_strokeStyle->pattern())
             applyStrokePattern();
@@ -581,7 +584,7 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     willDraw(rect);
     QPainter* p = static_cast<QPainter*>(c->platformContext());
     if (state().m_fillStyle->gradient()) {
-        fprintf(stderr, "FIXME: Canvas gradients\n");
+        p->fillRect(rect, QBrush(*(state().m_fillStyle->gradient()->platformShading())));
     } else {
         if (state().m_fillStyle->pattern())
             applyFillPattern();
@@ -1073,7 +1076,7 @@ void CanvasRenderingContext2D::applyFillPattern()
 
     state().m_fillStylePatternTransform = m;
 #elif PLATFORM(QT)
-    fprintf(stderr, "FIXME: CanvasRenderingContext2D::applyStrokePattern\n");
+    fprintf(stderr, "FIXME: CanvasRenderingContext2D::applyFillPattern\n");
 #endif
     state().m_appliedFillPattern = true;
 }

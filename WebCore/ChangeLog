@@ -1,3 +1,22 @@
+2007-09-20  Mike Fenton  <mike@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Implement gradients and more of canvas for Qt.  Style changes and some
+        of the stroking fixes by George.
+
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        (WebCore::CanvasGradient::~CanvasGradient):
+        (WebCore::CanvasGradient::addColorStop):
+        (WebCore::CanvasGradient::platformShading):
+        * html/CanvasGradient.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::applyFillPattern):
+
 2007-09-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
