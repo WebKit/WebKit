@@ -1994,8 +1994,12 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 
     Position position = spellingSearchRange->startPosition();
     if (!isEditablePosition(position)) {
-        // This shouldn't happen in practice because the Spelling menu items aren't enabled unless the
+        // This shouldn't happen in very often because the Spelling menu items aren't enabled unless the
         // selection is editable.
+        // This can happen in Mail for a mix of non-editable and editable content (like Stationary), 
+        // when spell checking the whole document before sending the message.
+        // In that case the document might not be editable, but there are editable pockets that need to be spell checked.
+
         position = firstEditablePositionAfterPositionInRoot(position, frame()->document()->documentElement()).deepEquivalent();
         if (position.isNull())
             return;

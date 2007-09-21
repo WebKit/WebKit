@@ -1,3 +1,16 @@
+2007-09-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tristan.
+
+        Fix for <rdar://problem/5497346> "Check spelling when I click Send" crashes on stationery messages every time
+
+        No test. I wasn't able to find a way to get this to occur with Safari or DumpRenderTree.
+
+        * editing/Editor.cpp: (WebCore::Editor::advanceToNextMisspelling): Updated comment.
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot): Only return the root position if its editable.
+        (WebCore::maxDeepOffset): Added nil check & assert.
+
 2007-09-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Steve.

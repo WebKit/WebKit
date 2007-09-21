@@ -243,7 +243,7 @@ Position previousVisuallyDistinctCandidate(const Position& position)
 
 VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& position, Node* highestRoot)
 {
-    if (comparePositions(position, Position(highestRoot, 0)) == -1)
+    if (comparePositions(position, Position(highestRoot, 0)) == -1 && highestRoot->isContentEditable())
         return VisiblePosition(Position(highestRoot, 0));
     
     Position p = nextVisuallyDistinctCandidate(position);
@@ -352,6 +352,9 @@ Position rangeCompliantEquivalent(const VisiblePosition& vpos)
 // on a Position before using it to create a DOM Range, or an exception will be thrown.
 int maxDeepOffset(const Node *node)
 {
+    ASSERT(node);
+    if (!node)
+        return 0;
     if (node->offsetInCharacters())
         return node->maxOffset();
         
