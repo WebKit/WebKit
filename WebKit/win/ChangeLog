@@ -1,3 +1,16 @@
+2007-09-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Steve.
+
+        <rdar://problem/5487153> Korean characters are displayed as garbage with default encoding in some Korean web sites
+
+        Adding support for per-localisation default character encodings on
+        windows.
+        
+        * English.lproj/Localizable.strings:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2007-09-20  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver.

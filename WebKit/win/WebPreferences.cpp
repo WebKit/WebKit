@@ -34,6 +34,7 @@
 #include <WebCore/Font.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringHash.h>
+#include "WebLocalizableStrings.h"
 #pragma warning( pop )
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -183,7 +184,8 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitMinimumLogicalFontSizePreferenceKey), CFSTR("9"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultFontSizePreferenceKey), CFSTR("16"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultFixedFontSizePreferenceKey), CFSTR("13"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultTextEncodingNamePreferenceKey), CFSTR("ISO-8859-1"));
+    WebCore::String defaultDefaultEncoding(LPCTSTR_UI_STRING("ISO-8859-1", "The default, default character encoding"));
+    CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultTextEncodingNamePreferenceKey), defaultDefaultEncoding.createCFString());
 
     RetainPtr<CFStringRef> pageCacheSizeString(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%d"), pageCacheSize));
     CFDictionaryAddValue(defaults, CFSTR(WebKitPageCacheSizePreferenceKey), pageCacheSizeString.get());
