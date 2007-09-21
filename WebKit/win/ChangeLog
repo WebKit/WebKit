@@ -1,3 +1,13 @@
+2007-09-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        - Added the ability to ask if scrollbars are visible
+        - <rdar://problem/5496211> scrollbarsVisible in WebChromeClient is not implemented
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::scrollbarsVisible):
+
 2007-09-20  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5477240> Regression: Footer is too high in print preview

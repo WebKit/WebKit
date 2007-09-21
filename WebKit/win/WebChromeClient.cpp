@@ -245,8 +245,12 @@ void WebChromeClient::setScrollbarsVisible(bool b)
 
 bool WebChromeClient::scrollbarsVisible()
 {
-    notImplemented();
-    return false;
+    WebFrame* webFrame = m_webView->topLevelFrame();
+    BOOL b = false;
+    if(webFrame)
+        webFrame->allowsScrolling(&b);
+
+    return !!b;
 }
 
 void WebChromeClient::setMenubarVisible(bool)
