@@ -84,11 +84,12 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(Widget* widget)
 }
 
 
-void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor,Vector<IntRect>& pages)
+void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor,Vector<IntRect>& pages, int& outPageHeight)
 {
     ASSERT(frame);
 
     pages.clear();
+    outPageHeight = 0;
 
     if (!frame->document() || !frame->view() || !frame->document()->renderer())
         return;
@@ -109,6 +110,7 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
  
     float pageWidth  = (float) root->docWidth();
     float pageHeight = pageWidth * ratio;
+    outPageHeight = (int) pageHeight;   // this is the height of the page adjusted by margins
     pageHeight -= (headerHeight + footerHeight);
 
     if (pageHeight <= 0) {

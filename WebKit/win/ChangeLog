@@ -1,3 +1,17 @@
+2007-09-20  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5477240> Regression: Footer is too high in print preview
+
+        Reviewed by Steve.
+
+        * WebFrame.cpp:
+        (WebFrame::WebFrame): initialize new data member m_pageHeight, which is the height of the page adjusted for margins.
+        (WebFrame::computePageRects): get the height of the page adjusted for margins by passing m_pageHeight to
+        computePageRectsForFrame().
+        (WebFrame::spoolPages): footer rect's top is the max of the bottom of the page content and the bottom of the page
+        minus footer height.
+        * WebFrame.h:
+
 2007-09-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Hyatt.

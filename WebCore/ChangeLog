@@ -1,3 +1,14 @@
+2007-09-20  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5477240> Regression: Footer is too high in print preview
+        Make computePageRectsForFrame() return the height of the page adjusted for margins.
+
+        Reviewed by Steve.
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::computePageRectsForFrame):
+        * bridge/win/FrameWin.h:
+
 2007-09-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Hyatt.
