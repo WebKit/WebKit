@@ -1,5 +1,17 @@
 2007-09-21  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam.
+
+        <rdar://problem/5494790>
+        clicking any link in the Flash regions at bananarepublic.com results in bad page
+
+        Don't replace the frame contents, the Mac version doesn't do this.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::performRequest):
+
+2007-09-21  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/5496700>
