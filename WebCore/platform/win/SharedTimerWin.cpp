@@ -105,7 +105,10 @@ void setSharedTimerFireTime(double fireTime)
     // We don't allow nested PostMessages, since the custom messages will effectively starve
     // painting and user input. (Win32 has a tri-level queue with application messages > 
     // user input > WM_PAINT/WM_TIMER.)
-    if (intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage) {
+    // In addition, if the queue contains input events that have been there since the last call to
+    // GetQueueStatus, PeekMessage or GetMessage we favor timers.
+    if (intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage && 
+        !LOWORD(::GetQueueStatus(QS_ALLINPUT))) {
         // Windows SetTimer does not allow timeouts smaller than 10ms (USER_TIMER_MINIMUM)
         initializeOffScreenTimerWindow();
         PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);

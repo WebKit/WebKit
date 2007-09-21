@@ -1,3 +1,16 @@
+2007-09-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Steve.
+
+        <rdar://problem/5404339>
+        Site redirects continuosly, starving UI thread, causing app to hang.
+        
+        Use GetQueueStatus to see if there are input messages in the queue that aren't being processed.
+        If so, use a low-priority timer instead of PostMessage.
+        
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::setSharedTimerFireTime):
+
 2007-09-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
