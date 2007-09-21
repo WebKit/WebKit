@@ -1,3 +1,26 @@
+2007-09-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - add QueryInterface capabilities to COMPtr
+
+        * platform/win/COMPtr.h:
+        (COMPtr::COMPtr): Added constructor that takes a Query tag and
+        does an appropriate QueryInterface.
+        (COMPtr::query): Added function to do a queryInterface.
+        (COMPtr::copyQueryInterfaceRef): Added private helper used by
+        both of the above. Note that when the query fails you get a 0,
+        which is the same thing you get if a 0 pointer is passed in.
+
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontLinkInterface): Convert to using
+        the new query as a test case. Also eliminate the unnecessary
+        second global variable and use COMPtr objects rather than just
+        leaking references.
+
+        * platform/win/WCDataObject.h: Removed unneeded include and
+        using statements.
+
 2007-09-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

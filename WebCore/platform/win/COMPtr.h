@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,19 @@
 #ifndef COMPtr_h
 #define COMPtr_h
 
+#define NOMINMAX
+
+#include <guiddef.h>
+#include <unknwn.h>
 #include <WTF/Assertions.h>
 
 typedef long HRESULT;
 
+// FIXME: Should we put this into the WebCore namespace and use "using" on it
+// as we do with things in WTF? 
+
 enum AdoptCOMTag { AdoptCOM };
+enum QueryTag { Query };
 
 template <typename T> class COMPtr {
 public:
@@ -39,37 +47,54 @@ public:
     COMPtr(AdoptCOMTag, T* ptr) : m_ptr(ptr) { }
     COMPtr(const COMPtr& o) : m_ptr(o.m_ptr) { if (T* ptr = m_ptr) ptr->AddRef(); }
 
+    inline COMPtr(QueryTag, IUnknown* ptr) : m_ptr(copyQueryInterfaceRef(ptr)) { }
+    template <typename U> inline COMPtr(QueryTag, const COMPtr<U>& ptr) : m_ptr(copyQueryInterfaceRef(ptr)) { }
+
     ~COMPtr() { if (m_ptr) m_ptr->Release(); }
 
-    T *get() const { return m_ptr; }
+    T* get() const { return m_ptr; }
 
     T& operator*() const { return *m_ptr; }
     T* operator->() const { return m_ptr; }
-        
+
     T** operator&() { ASSERT(!m_ptr); return &m_ptr; }
 
     bool operator!() const { return !m_ptr; }
     
     // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef T * (COMPtr::*UnspecifiedBoolType)() const;
+    typedef T* (COMPtr::*UnspecifiedBoolType)() const;
     operator UnspecifiedBoolType() const { return m_ptr ? &COMPtr::get : 0; }
 
     COMPtr& operator=(const COMPtr&);
     COMPtr& operator=(T*);
     template <typename U> COMPtr& operator=(const COMPtr<U>&);
-    
+  
+    void query(IUnknown* ptr) { adoptRef(copyQueryInterfaceRef(ptr)); }
+    template <typename U> inline void query(const COMPtr<U>& ptr) { query(ptr.get()); }
+
     HRESULT copyRefTo(T**);
     void adoptRef(T*);
 
 private:
+    static T* copyQueryInterfaceRef(IUnknown*);
+
     T* m_ptr;
 };
+
+template <typename T> inline T* COMPtr<T>::copyQueryInterfaceRef(IUnknown* ptr)
+{
+    if (!ptr)
+        return 0;
+    T* result;
+    if (FAILED(ptr->QueryInterface(&result)))
+        return 0;
+    return result;
+}
 
 template <typename T> inline HRESULT COMPtr<T>::copyRefTo(T** ptr)
 {
     if (!ptr)
         return E_POINTER;
-    
     *ptr = m_ptr;
     if (m_ptr)
         m_ptr->AddRef();

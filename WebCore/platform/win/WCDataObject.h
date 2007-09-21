@@ -26,11 +26,7 @@
 #ifndef WCDataObject_h
 #define WCDataObject_h
 
-#include "COMPtr.h"
 #include <wtf/Vector.h>
-
-using namespace std;
-
 #include <ShlObj.h>
 #include <objidl.h>
 
