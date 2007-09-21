@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <JavaScriptCore/Assertions.h>
+#import <dlfcn.h>
+
 #define SOFT_LINK_FRAMEWORK(framework) \
     static void* framework##Framework() \
     { \
