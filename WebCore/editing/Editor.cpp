@@ -1725,6 +1725,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 
     deleteSelectionWithSmartDelete(false);
 
+    m_compositionNode = 0;
+    m_customCompositionUnderlines.clear();
+
     if (!text.isEmpty()) {
         TypingCommand::insertText(m_frame->document(), text, true, true);
 
