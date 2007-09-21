@@ -84,7 +84,11 @@ SOFT_LINK(OpenGL, glViewport, void, (GLint x, GLint y, GLsizei width, GLsizei he
 SOFT_LINK(AGL, aglCreateContext, AGLContext, (AGLPixelFormat pix, AGLContext share), (pix, share))
 SOFT_LINK(AGL, aglSetWindowRef, GLboolean, (AGLContext ctx, WindowRef window), (ctx, window))
 SOFT_LINK(AGL, aglSetDrawable, GLboolean, (AGLContext ctx, AGLDrawable draw), (ctx, draw))
+#ifndef BUILDING_ON_TIGER
 SOFT_LINK(AGL, aglChoosePixelFormat, AGLPixelFormat, (const void *gdevs, GLint ndev, const GLint *attribs), (gdevs, ndev, attribs))
+#else
+SOFT_LINK(AGL, aglChoosePixelFormat, AGLPixelFormat, (const AGLDevice *gdevs, GLint ndev, const GLint *attribs), (gdevs, ndev, attribs))
+#endif
 SOFT_LINK(AGL, aglDestroyPixelFormat, void, (AGLPixelFormat pix), (pix))
 SOFT_LINK(AGL, aglDestroyContext, GLboolean, (AGLContext ctx), (ctx))
 SOFT_LINK(AGL, aglGetCGLContext, GLboolean, (AGLContext ctx, void **cgl_ctx), (ctx, cgl_ctx))
