@@ -44,7 +44,7 @@
 static FrameLoadDelegate* g_delegateWaitingOnTimer;
 
 FrameLoadDelegate::FrameLoadDelegate()
-    : m_refCount(0)
+    : m_refCount(1)
     , m_gcController(new GCController)
 {
 }

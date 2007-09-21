@@ -1,3 +1,12 @@
+2007-09-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        - We need to initialize the ref count to 1 at initialization so that objects are not garbage collected. (actual patch written by Oliver)
+
+        * DumpRenderTree/win/FrameLoaderDelegate.cpp:
+        (FrameLoadDelegate::FrameLoadDelegate):
+
 2007-09-20  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Adam.
