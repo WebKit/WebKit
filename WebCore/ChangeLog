@@ -1,3 +1,15 @@
+2007-09-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5496700>
+        Repro crash loading http://www.tivo.com/whatistivo/tivohd/index.html
+
+        Don't continue if the plug-in cancelled the stream.
+                
+        * loader/win/NetscapePlugInStreamLoaderWin.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+
 2007-09-21  Kevin Decker  <kdecker@apple.com>
 
         * platform/mac/SoftLinking.h: Build fix; added necessary #imports. 
