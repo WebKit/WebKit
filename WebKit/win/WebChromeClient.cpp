@@ -247,7 +247,7 @@ bool WebChromeClient::scrollbarsVisible()
 {
     WebFrame* webFrame = m_webView->topLevelFrame();
     BOOL b = false;
-    if(webFrame)
+    if (webFrame)
         webFrame->allowsScrolling(&b);
 
     return !!b;
