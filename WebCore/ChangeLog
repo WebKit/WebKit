@@ -1,3 +1,10 @@
+2007-09-21  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj: Added SoftLinking.h to the project.
+        * platform/mac/SoftLinking.h: Contains a new macro; useful in helping to lazily load frameworks.
+
 2007-09-20  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5477240> Regression: Footer is too high in print preview
