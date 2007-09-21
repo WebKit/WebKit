@@ -1,3 +1,16 @@
+2007-09-20  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5493093>
+
+        Reduced launch time by lazily linking both the AGL and OpenGL frameworks until they are really needed.
+
+        * Plugins/WebBaseNetscapePluginView.mm: Soft link all AGL and OpenGL functions used by
+        WebBaseNetscapePluginView.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed AGL and OpenGL from the project.
+
 2007-09-20  John Sullivan  <sullivan@apple.com>
 
         Build fix for stoooopid old PPC gcc compiler

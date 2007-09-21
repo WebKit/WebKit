@@ -60,6 +60,7 @@
 #import <WebCore/FrameLoader.h> 
 #import <WebCore/FrameTree.h> 
 #import <WebCore/Page.h> 
+#import <WebCore/SoftLinking.h> 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
@@ -73,6 +74,25 @@ using namespace WebCore;
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
+
+SOFT_LINK_FRAMEWORK(OpenGL)
+SOFT_LINK_FRAMEWORK(AGL)
+
+SOFT_LINK(OpenGL, CGLGetOffScreen, CGLError, (CGLContextObj ctx, GLsizei *width, GLsizei *height, GLint *rowbytes, void **baseaddr), (ctx, width, height, rowbytes, baseaddr))
+SOFT_LINK(OpenGL, CGLSetOffScreen, CGLError, (CGLContextObj ctx, GLsizei width, GLsizei height, GLint rowbytes, void *baseaddr), (ctx, width, height, rowbytes, baseaddr))
+SOFT_LINK(OpenGL, glViewport, void, (GLint x, GLint y, GLsizei width, GLsizei height), (x, y, width, height))
+SOFT_LINK(AGL, aglCreateContext, AGLContext, (AGLPixelFormat pix, AGLContext share), (pix, share))
+SOFT_LINK(AGL, aglSetWindowRef, GLboolean, (AGLContext ctx, WindowRef window), (ctx, window))
+SOFT_LINK(AGL, aglSetDrawable, GLboolean, (AGLContext ctx, AGLDrawable draw), (ctx, draw))
+SOFT_LINK(AGL, aglChoosePixelFormat, AGLPixelFormat, (const void *gdevs, GLint ndev, const GLint *attribs), (gdevs, ndev, attribs))
+SOFT_LINK(AGL, aglDestroyPixelFormat, void, (AGLPixelFormat pix), (pix))
+SOFT_LINK(AGL, aglDestroyContext, GLboolean, (AGLContext ctx), (ctx))
+SOFT_LINK(AGL, aglGetCGLContext, GLboolean, (AGLContext ctx, void **cgl_ctx), (ctx, cgl_ctx))
+SOFT_LINK(AGL, aglGetCurrentContext, AGLContext, (void), ())
+SOFT_LINK(AGL, aglSetCurrentContext, GLboolean, (AGLContext ctx), (ctx))
+SOFT_LINK(AGL, aglGetError, GLenum, (void), ())
+SOFT_LINK(AGL, aglUpdateContext, GLboolean, (AGLContext ctx), (ctx))
+SOFT_LINK(AGL, aglErrorString, const GLubyte *, (GLenum code), (code))
 
 @interface WebBaseNetscapePluginView (Internal)
 - (void)_viewHasMoved;
