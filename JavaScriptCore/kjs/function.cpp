@@ -817,7 +817,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         if (!progNode)
           return throwError(exec, SyntaxError, errMsg, errLine, sid, NULL);
 
-        bool switchGlobal = exec->dynamicInterpreter()->isGlobalObject(thisObj) && thisObj != exec->dynamicInterpreter()->globalObject();
+        bool switchGlobal = thisObj && exec->dynamicInterpreter()->isGlobalObject(thisObj) && thisObj != exec->dynamicInterpreter()->globalObject();
           
         // enter a new execution context
         Interpreter* interpreter = switchGlobal ? exec->dynamicInterpreter()->interpreterForGlobalObject(thisObj) : exec->dynamicInterpreter();
