@@ -1,11 +1,11 @@
 2007-09-21  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by Tristan.
+        Reviewed by Tristan and Darin
 
         http://bugs.webkit.org/show_bug.cgi?id=15239
         <rdar://problem/5491955> REGRESSION (r25547): With Hanin IME, one cannot input characters into forms (15239)
         
-        This problem was caused by the setComposition method failing to clearing
+        This problem was caused by the setComposition method failing to clear
         the composition markers in the presence of an empty string.  This would 
         result in the caret being locked within the 0 length bounds of the "composition"
         and so preventing basic keyboard interaction.
