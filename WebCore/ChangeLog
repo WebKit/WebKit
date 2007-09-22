@@ -1,3 +1,13 @@
+2007-09-21  Mike Fenton  <mike@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Fix styled pen support by not clobbering QPen properties.
+
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+
 2007-09-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Tristan and Darin
