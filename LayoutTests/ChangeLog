@@ -1,3 +1,12 @@
+2007-09-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam.
+
+        Test for <rdar://problem/5497357> REGRESSION: Safari doesn't show the month days on AirFrance reservation page
+
+        * fast/dom/HTMLSelectElement/options-collection-set-string-length-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/options-collection-set-string-length.html: Added.
+
 2007-09-21  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

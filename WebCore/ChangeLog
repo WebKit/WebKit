@@ -1,3 +1,15 @@
+2007-09-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam.
+
+        Fix for <rdar://problem/5497357> REGRESSION: Safari doesn't show the month days on AirFrance reservation page
+
+        Test: fast/dom/HTMLSelectElement/options-collection-set-string-length.html
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp: (WebCore::JSHTMLOptionsCollection::setLength):
+          Convert the value to a number.  We already have code here to check if the value is not a number.
+          This matches other browsers, which allow a string value to be used to set the length.
+
 2007-09-21  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
