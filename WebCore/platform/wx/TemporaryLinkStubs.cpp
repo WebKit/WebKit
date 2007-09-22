@@ -107,7 +107,7 @@ void WebCore::findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemen
 int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
 
 void Frame::print() { notImplemented(); }
-void Frame::cleanupPlatformScriptObjects() { notImplemented(); }
+void Frame::clearPlatformScriptObjects() { notImplemented(); }
 bool Frame::isCharacterSmartReplaceExempt(UChar, bool) { notImplemented(); return true; }
 //void Frame::respondToChangedSelection(WebCore::Selection const&,bool) { }
 void Frame::issueTransposeCommand() { notImplemented(); }

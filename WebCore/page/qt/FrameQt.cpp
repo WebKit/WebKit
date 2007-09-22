@@ -109,7 +109,7 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* w
                                                                      bindingRootObject());
 }
 
-void Frame::cleanupPlatformScriptObjects()
+void Frame::clearPlatformScriptObjects()
 {
 }
 

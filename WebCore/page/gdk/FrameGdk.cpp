@@ -38,7 +38,7 @@ void Frame::issueTransposeCommand()
     notImplemented();
 }
 
-void Frame::cleanupPlatformScriptObjects()
+void Frame::clearPlatformScriptObjects()
 {
     notImplemented();
 }

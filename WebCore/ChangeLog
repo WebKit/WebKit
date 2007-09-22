@@ -1,3 +1,14 @@
+2007-09-21  Mark Rowe  <mrowe@apple.com>
+
+        Build fix for non-Mac platforms after r25697.
+        
+        Rename Frame::cleanupPlatformScriptObjects to Frame::clearPlatformScriptObjects.
+
+        * bridge/win/FrameWin.cpp:
+        * page/gdk/FrameGdk.cpp:
+        * page/qt/FrameQt.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+
 2007-09-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam.

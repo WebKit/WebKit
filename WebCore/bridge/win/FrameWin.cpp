@@ -70,7 +70,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void Frame::cleanupPlatformScriptObjects()
+void Frame::clearPlatformScriptObjects()
 {
 }
 
