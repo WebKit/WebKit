@@ -31,6 +31,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebScriptObject.h>
 #import <WebKit/WebView.h>
+#import <WebKit/DOMAbstractView.h>
 
 @implementation ObjCController
 
@@ -153,8 +154,11 @@
 
 - (void)accessStoredWebScriptObject
 {
+#if !ASSERT_DISABLED
+    BOOL isWindowObject = [storedWebScriptObject isKindOfClass:[DOMAbstractView class]];
+#endif
     JSObjectRef jsObject = [storedWebScriptObject JSObject];
-    ASSERT(!jsObject);
+    ASSERT((jsObject && isWindowObject) || (!jsObject && !isWindowObject));
 
     [storedWebScriptObject callWebScriptMethod:@"" withArguments:nil];
     [storedWebScriptObject evaluateWebScript:@""];

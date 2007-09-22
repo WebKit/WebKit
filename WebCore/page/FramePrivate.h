@@ -124,7 +124,7 @@ namespace WebCore {
         RootObjectMap m_rootObjects;
         NPObject* m_windowScriptNPObject;
 #if PLATFORM(MAC)
-        WebScriptObject* m_windowScriptObject;
+        RetainPtr<WebScriptObject> m_windowScriptObject;
         WebCoreFrameBridge* m_bridge;
 #endif
     };

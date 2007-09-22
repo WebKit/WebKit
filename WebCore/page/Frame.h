@@ -233,11 +233,11 @@ public:
     void clearScriptProxy();
     void clearDOMWindow();
 
-    void cleanupScriptObjects();
+    void clearScriptObjects();
     void cleanupScriptObjectsForPlugin(void*);
 
 private:
-    void cleanupPlatformScriptObjects();
+    void clearPlatformScriptObjects();
 
     void lifeSupportTimerFired(Timer<Frame>*);
     

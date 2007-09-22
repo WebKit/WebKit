@@ -28,7 +28,7 @@ function runTest()
         queueTest();
         return;
     }
-    
+
     log("PASS: You didn't crash.\n");
     layoutTestController.notifyDone();
 }
@@ -36,8 +36,14 @@ function runTest()
 function queueTest()
 {
     iframe.onload = runTest;
-    objCController.storeWebScriptObject(iframe.contentWindow);
+    objCController.storeWebScriptObject(count % 2 == 0 ? iframe.contentWindow : iframe.contentDocument.documentElement);
     iframe.contentWindow.location.reload();
+}
+
+function timeoutTest()
+{
+    log("FAIL: Test timed-out after " + count + " runs.\n");
+    layoutTestController.notifyDone();
 }
 
 window.onload = function onload()
@@ -47,6 +53,8 @@ window.onload = function onload()
         log(errorMessage);
         throw errorMessage;
     }
+
+    timeoutIdentifier = setTimeout(timeoutTest, 30000); // timeout after 30 seconds
 
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();

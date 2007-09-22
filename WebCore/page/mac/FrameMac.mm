@@ -648,30 +648,25 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* w
 WebScriptObject* Frame::windowScriptObject()
 {
     Settings* settings = this->settings();
-    if (!settings || !settings->isJavaScriptEnabled() || !scriptProxy()->haveInterpreter())
+    if (!settings || !settings->isJavaScriptEnabled())
         return 0;
 
     if (!d->m_windowScriptObject) {
         KJS::JSLock lock;
         KJS::JSObject* win = KJS::Window::retrieveWindow(this);
         KJS::Bindings::RootObject *root = bindingRootObject();
-        d->m_windowScriptObject = HardRetain([WebScriptObject scriptObjectForJSObject:toRef(win) originRootObject:root rootObject:root]);
+        d->m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(win) originRootObject:root rootObject:root];
     }
 
-    return d->m_windowScriptObject;
+    return d->m_windowScriptObject.get();
 }
 
-void Frame::cleanupPlatformScriptObjects()
+void Frame::clearPlatformScriptObjects()
 {
-    HardRelease(d->m_windowScriptObject);
-    // Explicitly remove m_windowScriptObject from the wrapper caches, otherwise
-    // the next load might end up with a stale, cached m_windowScriptObject.
-    // (This problem is unique to m_windowScriptObject because its JS/DOM counterparts
-    // persist across page loads.)
-    removeDOMWrapper(reinterpret_cast<DOMObjectInternal*>(d->m_domWindow.get()));
-    if (d->m_jscript && d->m_jscript->haveInterpreter())
-        removeJSWrapper(KJS::Window::retrieveWindow(this));
-    d->m_windowScriptObject = 0;
+    if (d->m_windowScriptObject) {
+        KJS::Bindings::RootObject* root = bindingRootObject();
+        [d->m_windowScriptObject.get() _setOriginRootObject:root andRootObject:root];
+    }
 }
 
 } // namespace WebCore

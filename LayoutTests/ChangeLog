@@ -1,3 +1,17 @@
+2007-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5491013> REGRESSION: -[WebView windowScriptObject] returns a dummy object or nil if a page hasn't loaded (breaks EA Sports Online)
+
+        Updated results to show the didClearWindowScriptObject delegate call. Tweaked plugins/root-object-premature-delete-crash.html
+        to test a non-window script object half the time. This change works with a change to DumpRenderTree.
+
+        * http/tests/loading/empty-subframe-expected.txt:
+        * http/tests/loading/simple-subframe-expected.txt:
+        * plugins/root-object-premature-delete-crash.html:
+        * webarchive/loading/test-loading-archive-expected.txt:
+
 2007-09-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

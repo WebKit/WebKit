@@ -801,7 +801,7 @@ void FrameLoader::clear(bool clearWindowProperties)
     m_decoder = 0;
 
     m_containsPlugIns = false;
-    m_frame->cleanupScriptObjects();
+    m_frame->clearScriptObjects();
   
     m_redirectionTimer.stop();
     m_scheduledRedirection.clear();
@@ -4477,13 +4477,14 @@ String FrameLoader::referrer() const
 
 void FrameLoader::dispatchWindowObjectAvailable()
 {
-    if (Settings* settings = m_frame->settings())
-        if (settings->isJavaScriptEnabled() && m_frame->scriptProxy()->haveInterpreter()) {
-            m_client->windowObjectCleared();
-            if (Page* page = m_frame->page())
-                if (InspectorController* inspector = page->parentInspectorController())
-                    inspector->windowScriptObjectAvailable();
-        }
+    Settings* settings = m_frame->settings();
+    if (!settings || !settings->isJavaScriptEnabled() || !m_frame->scriptProxy()->haveInterpreter())
+        return;
+
+    m_client->windowObjectCleared();
+    if (Page* page = m_frame->page())
+        if (InspectorController* inspector = page->parentInspectorController())
+            inspector->windowScriptObjectAvailable();
 }
 
 Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, Element* element, const HashMap<String, String>& args)

@@ -1,3 +1,15 @@
+2007-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5491013> REGRESSION: -[WebView windowScriptObject] returns a dummy object or nil if a page hasn't loaded (breaks EA Sports Online)
+
+        Assert that the -[WebScriptObject JSObject] return value is only NULL for non-window objects.
+        This is tested by plugins/root-object-premature-delete-crash.html.
+
+        * DumpRenderTree/mac/ObjCController.m:
+        (-[ObjCController accessStoredWebScriptObject]):
+
 2007-09-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver.

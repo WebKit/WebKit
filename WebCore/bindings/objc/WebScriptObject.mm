@@ -132,8 +132,28 @@ static void _didExecute(WebScriptObject *obj)
 
     WebCore::addJSWrapper(self, imp);
 
-    if(_private->rootObject)
+    if (_private->rootObject)
         _private->rootObject->gcProtect(imp);
+}
+
+- (void)_setOriginRootObject:(PassRefPtr<RootObject>)originRootObject andRootObject:(PassRefPtr<RootObject>)rootObject
+{
+    ASSERT(_private->imp);
+
+    if (rootObject)
+        rootObject->gcProtect(_private->imp);
+
+    if (_private->rootObject && _private->rootObject->isValid())
+        _private->rootObject->gcUnprotect(_private->imp);
+
+    if (_private->rootObject)
+        _private->rootObject->deref();
+
+    if (_private->originRootObject)
+        _private->originRootObject->deref();
+
+    _private->rootObject = rootObject.releaseRef();
+    _private->originRootObject = originRootObject.releaseRef();
 }
 
 - (id)_initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject
@@ -153,7 +173,7 @@ static void _didExecute(WebScriptObject *obj)
     // This is done on lazily, on demand.
     if (!_private->imp && _private->isCreatedByDOMWrapper)
         [self _initializeScriptDOMNodeImp];
-    return _private->rootObject && _private->rootObject->isValid() ? _private->imp : 0;
+    return [self _rootObject] ? _private->imp : 0;
 }
 
 - (BOOL)_hasImp
@@ -161,6 +181,8 @@ static void _didExecute(WebScriptObject *obj)
     return _private->imp != nil;
 }
 
+// Node that DOMNode overrides this method. So you should almost always
+// use this method call instead of _private->rootObject directly.
 - (RootObject*)_rootObject
 {
     return _private->rootObject && _private->rootObject->isValid() ? _private->rootObject : 0;
@@ -173,13 +195,17 @@ static void _didExecute(WebScriptObject *obj)
 
 - (BOOL)_isSafeScript
 {
+    RootObject *root = [self _rootObject];
+    if (!root)
+        return false;
+
     if (!_private->originRootObject)
         return true;
 
-    if (!_private->originRootObject->isValid() || !_private->rootObject || !_private->rootObject->isValid())
+    if (!_private->originRootObject->isValid())
         return false;
 
-    return _private->originRootObject->interpreter()->isSafeScript(_private->rootObject->interpreter());
+    return _private->originRootObject->interpreter()->isSafeScript(root->interpreter());
 }
 
 - (void)dealloc

@@ -1,3 +1,48 @@
+2007-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5491013> REGRESSION: -[WebView windowScriptObject] returns a dummy object or nil if a page hasn't loaded
+
+        Calling -[WebView windowScriptObject] before the page loads would give you nil. This behavior didn't match Tiger.
+        The API behavior in Tiger let you get the window script object once and keep ahold of it as long as you needed it.
+        The window object would remain valid even after page loads. This change restores the Tiger behavior.
+
+        <rdar://problem/5495790> NULL dereference crash beneath Bindings::RootObject::interpreter when saving Dashcode document
+
+        The changes to WebScriptObject's _isSafeScript call also fixed the crash in Dashcode.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _setOriginRootObject:andRootObject:]): New method used to update the the root objects,
+        so the WebScriptObject can still be used after a page load.
+        (-[WebScriptObject _isSafeScript]): Call [self _rootObject] instead of accessing the data member directly.
+        DOMNode has an override for the _rootObject method, and it can return 0 when _private->_rootObject
+        is non-zero. We would return YES here when it wasn't safe and later crash with my modified layout tests.
+        Checking _rootObject first prevents other calls sites from needing to check for a valid root object,
+        this fixed the Dashcode crash.
+        (-[WebScriptObject _imp]): Ditto.
+
+        * bindings/objc/WebScriptObjectPrivate.h: Add _setOriginRootObject:andRootObject:.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear): Call the renamed clearScriptObjects function.
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable): Some gratuitous code cleanup.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::clearScriptObjects): Renamed cleanupScriptObject to clearScriptObjects.
+        Call clearPlatformScriptObjects last so m_bindingRootObject is already NULL.
+        (WebCore::Frame::windowScriptNPObject): Hold a JSLock before accessing the window. This
+        change is unrelated to the bug, but should be fixed.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject): Return a script object even if the interpreter is NULL.
+        This resotres the Tiger behavior of always being able to access the window object.
+        (WebCore::Frame::clearPlatformScriptObjects): Keep the window script object around, and update
+        the root objects for the window script object.
+
+        * page/Frame.h: Rename cleanupScriptObject to clearScriptObjects.
+        * page/FramePrivate.h: Use a RetainPtr for m_windowScriptObject.
+
 2007-09-21  Mike Fenton  <mike@staikos.net>
 
         Reviewed by George Staikos.
