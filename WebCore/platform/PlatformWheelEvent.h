@@ -42,7 +42,7 @@ typedef unsigned WPARAM;
 typedef long LPARAM;
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
 typedef struct _GdkEventScroll GdkEventScroll;
 #endif
 
@@ -84,7 +84,7 @@ namespace WebCore {
 #if PLATFORM(WIN)
         PlatformWheelEvent(HWND, WPARAM, LPARAM, bool isHorizontal);
 #endif
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
         PlatformWheelEvent(GdkEventScroll*);
 #endif
 #if PLATFORM(QT)

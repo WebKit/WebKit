@@ -131,8 +131,8 @@ if (isTiger()) {
     $platform = "mac";
 } elsif (isQt()) {
     $platform = "qt";
-} elsif (isGdk()) {
-    $platform = "gdk";
+} elsif (isGtk()) {
+    $platform = "gtk";
 } elsif (isCygwin()) {
     # FIXME: The two lines below are a hack to represent that on Windows we
     # currently want to
@@ -264,8 +264,8 @@ if(!defined($root)){
 
         if (isQt()) {
             push(@args, "--qt");
-        } elsif (isGdk()) {
-            push(@args, "--gdk");
+        } elsif (isGtk()) {
+            push(@args, "--gtk");
         }
 
         $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @args;

@@ -59,12 +59,12 @@ my $root;
 # pre-evaluate arguments.  jsDriver args have - preceding, xcode args do not.
 # special arguments
 #     --root=<path to webkit root> use pre-built root
-#     --gdk build gdk 
+#     --gtk build gtk 
 foreach my $arg(@ARGV) {
     print $arg."\n";
     if( $arg =~ /root=(.*)/ ){
         $root = $1;
-    } elsif( $arg =~ /^--gdk$/i ){
+    } elsif( $arg =~ /^--gtk$/i ){
     } elsif( $arg =~ /^-/ or !($arg =~/=/)){
         push( @jsArgs, $arg );
     } else {
@@ -93,7 +93,7 @@ if (!defined($root)){
 my $productDir = productDir();
 chdir "tests/mozilla" or die;
 
-$productDir .= "/JavaScriptCore" if (isQt() or isGdk());
+$productDir .= "/JavaScriptCore" if (isQt() or isGtk());
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 
 my $testkjsName;

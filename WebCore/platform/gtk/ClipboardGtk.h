@@ -33,11 +33,11 @@ namespace WebCore {
     class CachedImage;
 
     // State available during IE's events for drag and drop and copy/paste
-    // Created from the EventHandlerGdk to be used by the dom
-    class ClipboardGdk : public Clipboard {
+    // Created from the EventHandlerGtk to be used by the dom
+    class ClipboardGtk : public Clipboard {
     public:
-        ClipboardGdk(ClipboardAccessPolicy, bool);
-        ~ClipboardGdk();
+        ClipboardGtk(ClipboardAccessPolicy, bool);
+        ~ClipboardGtk();
 
 
         void clearData(const String&);

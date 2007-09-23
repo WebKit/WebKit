@@ -40,7 +40,7 @@ class NSView;
 typedef struct HWND__* HWND;
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
 typedef struct _GdkDrawable GdkDrawable;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkContainer GtkContainer;
@@ -136,7 +136,7 @@ namespace WebCore {
 
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
         virtual void setParent(ScrollView*);
         ScrollView* parent() const;
 

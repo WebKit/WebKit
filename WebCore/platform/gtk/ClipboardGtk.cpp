@@ -25,102 +25,102 @@
  */
 
 #include "config.h"
-#include "ClipboardGdk.h"
+#include "ClipboardGtk.h"
 
 #include "NotImplemented.h"
 #include "StringHash.h"
 
 namespace WebCore {
-ClipboardGdk::ClipboardGdk(ClipboardAccessPolicy policy, bool forDragging)
+ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, bool forDragging)
     : Clipboard(policy, forDragging)
 {
     notImplemented();
 }
 
-ClipboardGdk::~ClipboardGdk()
+ClipboardGtk::~ClipboardGtk()
 {
     notImplemented();
 }
 
-void ClipboardGdk::clearData(const String&)
+void ClipboardGtk::clearData(const String&)
 {
     notImplemented();
 }
 
-void ClipboardGdk::clearAllData()
+void ClipboardGtk::clearAllData()
 {
     notImplemented();
 }
 
-String ClipboardGdk::getData(const String&, bool &success) const
+String ClipboardGtk::getData(const String&, bool &success) const
 {
     notImplemented();
     success = false;
     return String();
 }
 
-bool ClipboardGdk::setData(const String&, const String&)
+bool ClipboardGtk::setData(const String&, const String&)
 {
     notImplemented();
     return false;
 }
 
-HashSet<String> ClipboardGdk::types() const
+HashSet<String> ClipboardGtk::types() const
 {
     notImplemented();
     return HashSet<String>();
 }
 
-IntPoint ClipboardGdk::dragLocation() const
+IntPoint ClipboardGtk::dragLocation() const
 {
     notImplemented();
     return IntPoint(0, 0);
 }
 
-CachedImage* ClipboardGdk::dragImage() const
+CachedImage* ClipboardGtk::dragImage() const
 {
     notImplemented();
     return 0;
 }
 
-void ClipboardGdk::setDragImage(CachedImage*, const IntPoint&)
+void ClipboardGtk::setDragImage(CachedImage*, const IntPoint&)
 {
     notImplemented();
 }
 
-Node* ClipboardGdk::dragImageElement()
-{
-    notImplemented();
-    return 0;
-}
-
-void ClipboardGdk::setDragImageElement(Node*, const IntPoint&)
-{
-    notImplemented();
-}
-
-DragImageRef ClipboardGdk::createDragImage(IntPoint&) const
+Node* ClipboardGtk::dragImageElement()
 {
     notImplemented();
     return 0;
 }
 
-void ClipboardGdk::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame*)
+void ClipboardGtk::setDragImageElement(Node*, const IntPoint&)
 {
     notImplemented();
 }
 
-void ClipboardGdk::writeURL(const KURL&, const String&, Frame*)
+DragImageRef ClipboardGtk::createDragImage(IntPoint&) const
+{
+    notImplemented();
+    return 0;
+}
+
+void ClipboardGtk::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame*)
 {
     notImplemented();
 }
 
-void ClipboardGdk::writeRange(Range*, Frame*)
+void ClipboardGtk::writeURL(const KURL&, const String&, Frame*)
 {
     notImplemented();
 }
 
-bool ClipboardGdk::hasData()
+void ClipboardGtk::writeRange(Range*, Frame*)
+{
+    notImplemented();
+}
+
+bool ClipboardGtk::hasData()
 {
     notImplemented();
     return false;

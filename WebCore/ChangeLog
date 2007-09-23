@@ -1,3 +1,200 @@
+2007-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Adam.
+
+        Renamed files from *Gdk to *Gtk (see #14732) using the
+        work of Juan A. Suarez Romero as a base.
+
+        GDK -> GTK
+
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCore.pro:
+        * WebCoreSources.bkl:
+        * loader/gdk: Removed.
+        * loader/gdk/DocumentLoaderGdk.cpp: Removed.
+        * loader/gtk: Added.
+        * loader/gtk/DocumentLoaderGdk.cpp: Removed.
+        * loader/gtk/DocumentLoaderGtk.cpp: Added.
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * page/gdk: Removed.
+        * page/gdk/DragControllerGdk.cpp: Removed.
+        * page/gdk/EventHandlerGdk.cpp: Removed.
+        * page/gdk/FrameGdk.cpp: Removed.
+        * page/gtk: Added.
+        * page/gtk/DragControllerGdk.cpp: Removed.
+        * page/gtk/DragControllerGtk.cpp: Added.
+        * page/gtk/EventHandlerGdk.cpp: Removed.
+        * page/gtk/EventHandlerGtk.cpp: Added.
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/gtk/FrameGdk.cpp: Removed.
+        * page/gtk/FrameGtk.cpp: Added.
+        * platform/ContextMenuItem.h:
+        * platform/Cursor.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/FontData.h:
+        * platform/NotImplemented.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMenuDescription.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        * platform/gdk: Removed.
+        * platform/gdk/ClipboardGdk.cpp: Removed.
+        * platform/gdk/ClipboardGdk.h: Removed.
+        * platform/gdk/ContextMenuGdk.cpp: Removed.
+        * platform/gdk/ContextMenuItemGdk.cpp: Removed.
+        * platform/gdk/CookieJarGdk.cpp: Removed.
+        * platform/gdk/CursorGdk.cpp: Removed.
+        * platform/gdk/DragDataGdk.cpp: Removed.
+        * platform/gdk/DragImageGdk.cpp: Removed.
+        * platform/gdk/FileChooserGdk.cpp: Removed.
+        * platform/gdk/FileSystemGdk.cpp: Removed.
+        * platform/gdk/FontCacheGdk.cpp: Removed.
+        * platform/gdk/FontDataGdk.cpp: Removed.
+        * platform/gdk/FontGdk.cpp: Removed.
+        * platform/gdk/FontPlatformData.h: Removed.
+        * platform/gdk/FontPlatformDataGdk.cpp: Removed.
+        * platform/gdk/GlyphPageTreeNodeGdk.cpp: Removed.
+        * platform/gdk/KeyEventGdk.cpp: Removed.
+        * platform/gdk/KeyboardCodes.h: Removed.
+        * platform/gdk/LocalizedStringsGdk.cpp: Removed.
+        * platform/gdk/LoggingGdk.cpp: Removed.
+        * platform/gdk/MIMETypeRegistryGdk.cpp: Removed.
+        * platform/gdk/MouseEventGdk.cpp: Removed.
+        * platform/gdk/PasteboardGdk.cpp: Removed.
+        * platform/gdk/PlatformScreenGdk.cpp: Removed.
+        * platform/gdk/PlatformScrollBar.h: Removed.
+        * platform/gdk/PlatformScrollBarGdk.cpp: Removed.
+        * platform/gdk/PopupMenuGdk.cpp: Removed.
+        * platform/gdk/RenderThemeGdk.cpp: Removed.
+        * platform/gdk/RenderThemeGdk.h: Removed.
+        * platform/gdk/ScrollViewGdk.cpp: Removed.
+        * platform/gdk/SearchPopupMenuGdk.cpp: Removed.
+        * platform/gdk/SharedTimerLinux.cpp: Removed.
+        * platform/gdk/SoundGdk.cpp: Removed.
+        * platform/gdk/SystemTimeLinux.cpp: Removed.
+        * platform/gdk/TemporaryLinkStubs.cpp: Removed.
+        * platform/gdk/WheelEventGdk.cpp: Removed.
+        * platform/gdk/WidgetGdk.cpp: Removed.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::setPlatformFont):
+        * platform/graphics/gdk: Removed.
+        * platform/graphics/gdk/IconGdk.cpp: Removed.
+        * platform/graphics/gdk/ImageGdk.cpp: Removed.
+        * platform/graphics/gtk: Added.
+        * platform/graphics/gtk/IconGdk.cpp: Removed.
+        * platform/graphics/gtk/IconGtk.cpp: Added.
+        * platform/graphics/gtk/ImageGdk.cpp: Removed.
+        * platform/graphics/gtk/ImageGtk.cpp: Added.
+        * platform/gtk: Added.
+        * platform/gtk/ClipboardGdk.cpp: Removed.
+        * platform/gtk/ClipboardGdk.h: Removed.
+        * platform/gtk/ClipboardGtk.cpp: Added.
+        (WebCore::ClipboardGtk::ClipboardGtk):
+        (WebCore::ClipboardGtk::~ClipboardGtk):
+        (WebCore::ClipboardGtk::clearData):
+        (WebCore::ClipboardGtk::clearAllData):
+        (WebCore::ClipboardGtk::getData):
+        (WebCore::ClipboardGtk::setData):
+        (WebCore::ClipboardGtk::types):
+        (WebCore::ClipboardGtk::dragLocation):
+        (WebCore::ClipboardGtk::dragImage):
+        (WebCore::ClipboardGtk::setDragImage):
+        (WebCore::ClipboardGtk::dragImageElement):
+        (WebCore::ClipboardGtk::setDragImageElement):
+        (WebCore::ClipboardGtk::createDragImage):
+        (WebCore::ClipboardGtk::declareAndWriteDragImage):
+        (WebCore::ClipboardGtk::writeURL):
+        (WebCore::ClipboardGtk::writeRange):
+        (WebCore::ClipboardGtk::hasData):
+        * platform/gtk/ClipboardGtk.h: Added.
+        * platform/gtk/ContextMenuGdk.cpp: Removed.
+        * platform/gtk/ContextMenuGtk.cpp: Added.
+        * platform/gtk/ContextMenuItemGdk.cpp: Removed.
+        * platform/gtk/ContextMenuItemGtk.cpp: Added.
+        * platform/gtk/CookieJarGdk.cpp: Removed.
+        * platform/gtk/CookieJarGtk.cpp: Added.
+        * platform/gtk/CursorGdk.cpp: Removed.
+        * platform/gtk/CursorGtk.cpp: Added.
+        * platform/gtk/DragDataGdk.cpp: Removed.
+        * platform/gtk/DragDataGtk.cpp: Added.
+        * platform/gtk/DragImageGdk.cpp: Removed.
+        * platform/gtk/DragImageGtk.cpp: Added.
+        * platform/gtk/FileChooserGdk.cpp: Removed.
+        * platform/gtk/FileChooserGtk.cpp: Added.
+        * platform/gtk/FileSystemGdk.cpp: Removed.
+        * platform/gtk/FileSystemGtk.cpp: Added.
+        * platform/gtk/FontCacheGdk.cpp: Removed.
+        * platform/gtk/FontCacheGtk.cpp: Added.
+        * platform/gtk/FontDataGdk.cpp: Removed.
+        * platform/gtk/FontDataGtk.cpp: Added.
+        * platform/gtk/FontGdk.cpp: Removed.
+        * platform/gtk/FontGtk.cpp: Added.
+        * platform/gtk/FontPlatformDataGdk.cpp: Removed.
+        * platform/gtk/FontPlatformDataGtk.cpp: Added.
+        * platform/gtk/GlyphPageTreeNodeGdk.cpp: Removed.
+        * platform/gtk/GlyphPageTreeNodeGtk.cpp: Added.
+        * platform/gtk/KeyEventGdk.cpp: Removed.
+        * platform/gtk/KeyEventGtk.cpp: Added.
+        * platform/gtk/LocalizedStringsGdk.cpp: Removed.
+        * platform/gtk/LocalizedStringsGtk.cpp: Added.
+        * platform/gtk/LoggingGdk.cpp: Removed.
+        * platform/gtk/LoggingGtk.cpp: Added.
+        * platform/gtk/MIMETypeRegistryGdk.cpp: Removed.
+        * platform/gtk/MIMETypeRegistryGtk.cpp: Added.
+        * platform/gtk/MouseEventGdk.cpp: Removed.
+        * platform/gtk/MouseEventGtk.cpp: Added.
+        * platform/gtk/PasteboardGdk.cpp: Removed.
+        * platform/gtk/PasteboardGtk.cpp: Added.
+        * platform/gtk/PlatformScreenGdk.cpp: Removed.
+        * platform/gtk/PlatformScreenGtk.cpp: Added.
+        * platform/gtk/PlatformScrollBarGdk.cpp: Removed.
+        * platform/gtk/PlatformScrollBarGtk.cpp: Added.
+        * platform/gtk/PopupMenuGdk.cpp: Removed.
+        * platform/gtk/PopupMenuGtk.cpp: Added.
+        * platform/gtk/RenderThemeGdk.cpp: Removed.
+        * platform/gtk/RenderThemeGdk.h: Removed.
+        * platform/gtk/RenderThemeGtk.cpp: Added.
+        (WebCore::theme):
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::RenderThemeGtk::close):
+        (WebCore::RenderThemeGtk::addIntrinsicMargins):
+        (WebCore::RenderThemeGtk::supportsFocus):
+        (WebCore::RenderThemeGtk::determineState):
+        (WebCore::RenderThemeGtk::determineShadow):
+        (WebCore::RenderThemeGtk::getThemeData):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::paintCheckbox):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::RenderThemeGtk::paintRadio):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::paintTextArea):
+        (WebCore::RenderThemeGtk::adjustButtonStyle):
+        (WebCore::RenderThemeGtk::systemFont):
+        (WebCore::RenderThemeGtk::gtkButton):
+        (WebCore::RenderThemeGtk::gtkCheckbox):
+        (WebCore::RenderThemeGtk::gtkRadioButton):
+        (WebCore::RenderThemeGtk::gtkWindowContainer):
+        * platform/gtk/RenderThemeGtk.h: Added.
+        * platform/gtk/ScrollViewGdk.cpp: Removed.
+        * platform/gtk/ScrollViewGtk.cpp: Added.
+        * platform/gtk/SearchPopupMenuGdk.cpp: Removed.
+        * platform/gtk/SearchPopupMenuGtk.cpp: Added.
+        * platform/gtk/SoundGdk.cpp: Removed.
+        * platform/gtk/SoundGtk.cpp: Added.
+        * platform/gtk/WheelEventGdk.cpp: Removed.
+        * platform/gtk/WheelEventGtk.cpp: Added.
+        * platform/gtk/WidgetGdk.cpp: Removed.
+        * platform/gtk/WidgetGtk.cpp: Added.
+        * platform/network/ResourceHandle.h:
+
 2007-09-23  Rob Buis  <buis@kde.org>
 
         Reviewed by Hyatt.

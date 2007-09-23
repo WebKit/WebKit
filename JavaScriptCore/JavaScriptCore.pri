@@ -6,7 +6,7 @@ INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/wtf
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 qt-port:INCLUDEPATH += $$PWD/bindings/qt
 qt-port:DEFINES += BUILDING_QT__
-gdk-port:DEFINES += BUILDING_GDK__
+gtk-port:DEFINES += BUILDING_GTK__
 
 win32-msvc*: INCLUDEPATH += $$PWD/os-win32
 
@@ -26,7 +26,7 @@ KEYWORDLUT_FILES += \
 KJSBISON += \
     kjs/grammar.y
 
-gdk-port: SOURCES += wtf/TCSystemAlloc.cpp
+gtk-port: SOURCES += wtf/TCSystemAlloc.cpp
 
 SOURCES += \
     wtf/Assertions.cpp \

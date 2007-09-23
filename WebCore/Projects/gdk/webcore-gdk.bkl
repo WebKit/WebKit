@@ -44,30 +44,30 @@
         <define>ENABLE_XPATH</define>
  
         <sources>
-            platform/gdk/CookieJarGdk.cpp
-            platform/gdk/CursorGdk.cpp
-            platform/gdk/DragDataGdk.cpp
-            platform/gdk/DragImageGdk.cpp
+            platform/gdk/CookieJarGtk.cpp
+            platform/gdk/CursorGtk.cpp
+            platform/gdk/DragDataGtk.cpp
+            platform/gdk/DragImageGtk.cpp
             platform/gdk/EditorClientGdk.cpp
-            platform/gdk/FontCacheGdk.cpp
-            platform/gdk/FontDataGdk.cpp
-            platform/gdk/FontGdk.cpp
-            platform/gdk/FontPlatformDataGdk.cpp
-            platform/gdk/FrameGdk.cpp
-            platform/gdk/GlyphPageTreeNodeGdk.cpp
-            platform/gdk/KeyEventGdk.cpp
+            platform/gdk/FontCacheGtk.cpp
+            platform/gdk/FontDataGtk.cpp
+            platform/gdk/FontGtk.cpp
+            platform/gdk/FontPlatformDataGtk.cpp
+            platform/gdk/FrameGtk.cpp
+            platform/gdk/GlyphPageTreeNodeGtk.cpp
+            platform/gdk/KeyEventGtk.cpp
             platform/gdk/MimeTypeRegistryGdk.cpp
-            platform/gdk/MouseEventGdk.cpp
-            platform/gdk/PopupMenuGdk.cpp
-            platform/gdk/RenderThemeGdk.cpp
-            platform/gdk/ScrollViewGdk.cpp
+            platform/gdk/MouseEventGtk.cpp
+            platform/gdk/PopupMenuGtk.cpp
+            platform/gdk/RenderThemeGtk.cpp
+            platform/gdk/ScrollViewGtk.cpp
             platform/gdk/ScreenGdk.cpp
             platform/gdk/SharedTimerLinux.cpp
             platform/gdk/SystemTimeLinux.cpp
             platform/gdk/TemporaryLinkStubs.cpp
-            platform/gdk/WheelEventGdk.cpp
-            platform/gdk/WidgetGdk.cpp
-            platform/graphics/gdk/ImageGdk.cpp
+            platform/gdk/WheelEventGtk.cpp
+            platform/gdk/WidgetGtk.cpp
+            platform/graphics/gdk/ImageGtk.cpp
             platform/network/gdk/ResourceHandleCurl.cpp
             platform/network/gdk/ResourceHandleManager.cpp
 

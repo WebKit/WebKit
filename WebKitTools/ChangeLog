@@ -1,3 +1,29 @@
+2007-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Adam.
+
+        * GdkLauncher: Removed.
+        * GdkLauncher/Bakefiles.bkgen: Removed.
+        * GdkLauncher/ENV: Removed.
+        * GdkLauncher/GdkLauncher.pro: Removed.
+        * GdkLauncher/gdklauncher.bkl: Removed.
+        * GdkLauncher/main.cpp: Removed.
+        * GdkLauncher/mk: Removed.
+        * GdkLauncher/simple.svg: Removed.
+        * GdkLauncher/text.html: Removed.
+        * GtkLauncher: Added.
+        * GtkLauncher/GdkLauncher.pro: Removed.
+        * GtkLauncher/GtkLauncher.pro: Added.
+        * GtkLauncher/main.cpp:
+        (updateWindowTitle):
+        (main):
+        * Scripts/build-webkit:
+        * Scripts/regenerate-makefiles:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-launcher:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2007-09-21  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

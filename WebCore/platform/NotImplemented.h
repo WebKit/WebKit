@@ -29,7 +29,7 @@
 #include "Logging.h"
 #include <wtf/Assertions.h>
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
     #define supressNotImplementedWarning() getenv("DISABLE_NI_WARNING")
 #else
     #define supressNotImplementedWarning() false

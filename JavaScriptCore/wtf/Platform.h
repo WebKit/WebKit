@@ -66,7 +66,7 @@
 /* Operating environments */
 
 /* PLATFORM(QT) */
-/* PLATFORM(GDK) */
+/* PLATFORM(GTK) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
 #if defined(BUILDING_QT__)
@@ -77,8 +77,8 @@
 #define WTF_PLATFORM_KDE 1
 #endif
 
-#elif defined(BUILDING_GDK__)
-#define WTF_PLATFORM_GDK 1
+#elif defined(BUILDING_GTK__)
+#define WTF_PLATFORM_GTK 1
 #elif PLATFORM(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif PLATFORM(WIN_OS)
@@ -201,7 +201,7 @@
 #define WTF_USE_WININET 1
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
 #define WTF_USE_CURL 1
 #endif
 

@@ -31,7 +31,7 @@
 #include "Widget.h"
 #include <wtf/HashSet.h>
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
 typedef struct _GtkAdjustment GtkAdjustment;
 #endif
 
@@ -151,7 +151,7 @@ namespace WebCore {
         ScrollViewPrivate* m_data;
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
         ScrollView();
         ~ScrollView();
 

@@ -44,7 +44,7 @@ typedef unsigned WPARAM;
 typedef long LPARAM;
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
 typedef struct _GdkEventKey GdkEventKey;
 #endif
 
@@ -79,7 +79,7 @@ namespace WebCore {
         PlatformKeyboardEvent(HWND, WPARAM, LPARAM, UChar);
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
         PlatformKeyboardEvent(GdkEventKey*);
 #endif
 

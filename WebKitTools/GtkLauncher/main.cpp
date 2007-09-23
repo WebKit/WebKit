@@ -51,7 +51,7 @@ static void urlBarEnterCallback(GtkWidget*, GtkWidget* entry)
 static void updateWindowTitle()
 {
     GString* string = g_string_new(NULL);
-    g_string_printf(string, "GdkLauncher %s  (%d/100)", gTitle, gProgress);
+    g_string_printf(string, "GtkLauncher %s  (%d/100)", gTitle, gProgress);
     gchar* title = g_string_free(string, FALSE);
     gtk_window_set_title(GTK_WINDOW(gTopLevelWindow), title);
     g_free(title);
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 
     gTopLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(gTopLevelWindow), 800, 600);
-    gtk_widget_set_name(gTopLevelWindow, "GdkLauncher");
+    gtk_widget_set_name(gTopLevelWindow, "GtkLauncher");
     GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(gTopLevelWindow), vbox);
     g_signal_connect(G_OBJECT(gTopLevelWindow), "destroy", G_CALLBACK(frameDestroyCallback), NULL);

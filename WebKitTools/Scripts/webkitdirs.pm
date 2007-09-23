@@ -50,7 +50,7 @@ my $sourceDir;
 my $currentSVNRevision;
 my $osXVersion;
 my $isQt;
-my $isGdk;
+my $isGtk;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -308,7 +308,7 @@ sub builtDylibPathForName
 {
     my $framework = shift;
     determineConfigurationProductDir();
-    if (isQt() or isGdk()) {
+    if (isQt() or isGtk()) {
         return "$configurationProductDir/$framework";
     }
     if (isOSX()) {
@@ -330,7 +330,7 @@ sub checkFrameworks
 {
     return if isCygwin();
     my @frameworks = ("JavaScriptCore", "WebCore");
-    push(@frameworks, "WebKit") if isOSX() and not isGdk() and not isQt();
+    push(@frameworks, "WebKit") if isOSX() and not isGtk() and not isQt();
     for my $framework (@frameworks) {
         my $path = builtDylibPathForName($framework);
         die "Can't find built framework at \"$path\".\n" unless -x $path;
@@ -347,8 +347,8 @@ sub hasSVGSupport
         return 1;
     }
 
-    if (isGdk() and $path =~ /WebCore/) {
-        $path .= "/../lib/libWebKitGdk.so";
+    if (isGtk() and $path =~ /WebCore/) {
+        $path .= "/../lib/libWebKitGtk.so";
     }
 
     open NM, "-|", "nm", $path or die;
@@ -405,24 +405,24 @@ sub determineIsQt()
     $isQt = defined($ENV{'QTDIR'});
 }
 
-sub isGdk()
+sub isGtk()
 {
-    determineIsGdk();
-    return $isGdk;
+    determineIsGtk();
+    return $isGtk;
 }
 
-sub determineIsGdk()
+sub determineIsGtk()
 {
-    return if defined($isGdk);
+    return if defined($isGtk);
 
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
-        if ($opt =~ /^--gdk$/i ) {
-            $isGdk = 1;
+        if ($opt =~ /^--gtk$/i ) {
+            $isGtk = 1;
             return;
         }
     }
-    $isGdk = 0;
+    $isGtk = 0;
 }
 
 sub isCygwin()
@@ -473,7 +473,7 @@ sub isLeopard()
 sub launcherPath()
 {
     my $relativeScriptsPath = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), getcwd()), "");
-    if (isGdk() || isQt()) {
+    if (isGtk() || isQt()) {
         return "$relativeScriptsPath/run-launcher";
     } elsif (isOSX() || isCygwin()) {
         return "$relativeScriptsPath/run-safari";
@@ -482,8 +482,8 @@ sub launcherPath()
 
 sub launcherName()
 {
-    if (isGdk()) {
-        return "GdkLauncher";
+    if (isGtk()) {
+        return "GtkLauncher";
     } elsif (isQt()) {
         return "QtLauncher";
     } elsif (isOSX() || isCygwin()) {
@@ -510,7 +510,7 @@ sub checkRequiredSystemConfig
             print "http://developer.apple.com/tools/xcode\n";
             print "*************************************************************\n";
         }
-    } elsif (isGdk() or isQt()) {
+    } elsif (isGtk() or isQt()) {
         my @cmds = qw(flex bison gperf);
         my @missing = ();
         foreach my $cmd (@cmds) {
@@ -669,12 +669,12 @@ sub buildQMakeProject($$)
     return $result;
 }
 
-sub buildQMakeGdkProject($$)
+sub buildQMakeGtkProject($$)
 {
     my ($project, $colorize) = @_;
 
     if ($project ne "WebKit") {
-        die "The Gdk portbuilds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
+        die "The Gtk portbuilds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
     }
 
     my $config = configuration();
@@ -690,7 +690,7 @@ sub buildQMakeGdkProject($$)
 
     push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
     push @buildArgs, "CONFIG-=qt";
-    push @buildArgs, "CONFIG+=gdk-port";
+    push @buildArgs, "CONFIG+=gtk-port";
     push @buildArgs, sourceDir() . "/WebKit.pro";
     if ($config =~ m/debug/i) {
         push @buildArgs, "CONFIG-=release";

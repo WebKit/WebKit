@@ -89,7 +89,7 @@ public:
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
     void setFont(cairo_t*) const;
 #endif
 

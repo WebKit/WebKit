@@ -7,7 +7,7 @@ DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS
 INCLUDEPATH += $$PWD/.. $$PWD $$PWD/../bindings $$PWD/../bindings/c $$PWD/../wtf
 qt-port:DEFINES += BUILDING_QT__
 #qt-port:LIBS += -L$$OUTPUT_DIR/lib -lQtWebKit
-gdk-port {
+gtk-port {
     QMAKE_CXXFLAGS += $$system(icu-config --cppflags)
     LIBS += $$system(icu-config --ldflags)
 }

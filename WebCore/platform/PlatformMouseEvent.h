@@ -48,7 +48,7 @@ typedef unsigned WPARAM;
 typedef long LPARAM;
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GTK)
 typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventMotion GdkEventMotion;
 #endif
@@ -118,7 +118,7 @@ namespace WebCore {
         void setClickCount(int count) { m_clickCount = count; }
         bool activatedWebView() const { return m_activatedWebView; }
 #endif
-#if PLATFORM(GDK) 
+#if PLATFORM(GTK) 
         PlatformMouseEvent(GdkEventButton*);
         PlatformMouseEvent(GdkEventMotion*);
 #endif

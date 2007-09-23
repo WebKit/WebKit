@@ -123,9 +123,9 @@
         page/MouseEventWithHitTestResults.cpp
         page/Page.cpp
         page/Settings.cpp
-        page/gdk/EventHandlerGdk.cpp
+        page/gdk/EventHandlerGtk.cpp
         page/gdk/ContextMenuClientGdk.cpp
-        page/gdk/DragControllerGdk.cpp
+        page/gdk/DragControllerGtk.cpp
         page/gdk/InspectorClientGdk.cpp
     </set>
 
@@ -153,7 +153,7 @@
         loader/TextDocument.cpp
         loader/TextResourceDecoder.cpp
         loader/loader.cpp
-        loader/gdk/DocumentLoaderGdk.cpp
+        loader/gdk/DocumentLoaderGtk.cpp
         loader/gdk/FrameLoaderClientGdk.cpp
     </set>
 

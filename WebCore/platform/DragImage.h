@@ -60,7 +60,7 @@ namespace WebCore {
     typedef QImage* DragImageRef;
 #elif PLATFORM(WIN)
     typedef HBITMAP DragImageRef;
-#elif PLATFORM(GDK)
+#elif PLATFORM(GTK)
     typedef void* DragImageRef;
 #endif
     

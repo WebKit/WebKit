@@ -7,8 +7,8 @@ DESTDIR = tmp
 
 INCLUDEPATH += $$PWD/../wtf
 
-gdk-port {
-  DEFINES += BUILDING_GDK__ BUILDING_CAIRO__
+gtk-port {
+  DEFINES += BUILDING_GTK__ BUILDING_CAIRO__
 } else {
   DEFINES += BUILDING_QT__
 }

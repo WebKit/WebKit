@@ -5,11 +5,11 @@ CONFIG += building-libs
 # of API/Node.c and dom/Node.cpp
 CONFIG += no_batch
 include($$PWD/../WebKit.pri)
-gdk-port:LIBS -= -lWebKitGdk
+gtk-port:LIBS -= -lWebKitGtk
 
 TEMPLATE = lib
 qt-port:TARGET = QtWebKit
-gdk-port:TARGET = WebKitGdk
+gtk-port:TARGET = WebKitGtk
 OBJECTS_DIR = tmp
 OBJECTS_DIR_WTR = $$OBJECTS_DIR/
 win32-*: OBJECTS_DIR_WTR ~= s|/|\|
@@ -53,10 +53,10 @@ win32-g++ {
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
-gdk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
+gtk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 qt-port: !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
-gdk-port:DEFINES += ENABLE_SVG=1
+gtk-port:DEFINES += ENABLE_SVG=1
 
 DEFINES += WTF_CHANGES=1
 
@@ -87,7 +87,7 @@ DEPENDPATH += editing/qt history/qt loader/qt page/qt \
     DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
 }
 
-gdk-port {
+gtk-port {
     INCLUDEPATH += \
     $$PWD/platform/graphics/svg/cairo \
     $$PWD/platform/image-decoders/bmp \
@@ -745,7 +745,7 @@ SOURCES += \
     xml/XSLTExtensions.cpp \
     xml/XSLTProcessor.cpp
 
-gdk-port {
+gtk-port {
   SOURCES += \
     platform/GlyphPageTreeNode.cpp \
     platform/GlyphWidthMap.cpp \
@@ -848,9 +848,9 @@ qt-port {
     else: SOURCES += platform/win/SystemTimeWin.cpp
 }
 
-gdk-port {
+gtk-port {
     HEADERS += \
-        ../WebCore/platform/gdk/ClipboardGdk.h \
+        ../WebCore/platform/gtk/ClipboardGtk.h \
         ../WebKit/gtk/Api/webkitgtkdefines.h \
         ../WebKit/gtk/Api/webkitgtkframe.h \
         ../WebKit/gtk/Api/webkitgtkglobal.h \
@@ -868,44 +868,44 @@ gdk-port {
         platform/StringTruncator.cpp \
         platform/TextCodecICU.cpp \
         platform/TextBreakIteratorICU.cpp \
-        page/gdk/EventHandlerGdk.cpp \
-        page/gdk/FrameGdk.cpp \
-        page/gdk/DragControllerGdk.cpp \
-        loader/gdk/DocumentLoaderGdk.cpp \
-        platform/gdk/ClipboardGdk.cpp \
-        platform/gdk/CookieJarGdk.cpp \
-        platform/gdk/CursorGdk.cpp \
-        platform/gdk/ContextMenuGdk.cpp \
-        platform/gdk/ContextMenuItemGdk.cpp \
-        platform/gdk/DragDataGdk.cpp \
-        platform/gdk/DragImageGdk.cpp \
-        platform/gdk/FileChooserGdk.cpp \
-        platform/gdk/FileSystemGdk.cpp \
-        platform/gdk/FontCacheGdk.cpp \
-        platform/gdk/FontDataGdk.cpp \
-        platform/gdk/FontGdk.cpp \
-        platform/gdk/FontPlatformDataGdk.cpp \
-        platform/gdk/GlyphPageTreeNodeGdk.cpp \
-        platform/gdk/KeyEventGdk.cpp \
-        platform/gdk/LocalizedStringsGdk.cpp \
-        platform/gdk/LoggingGdk.cpp \
-        platform/gdk/MIMETypeRegistryGdk.cpp \
-        platform/gdk/MouseEventGdk.cpp \
-        platform/gdk/PasteboardGdk.cpp \
-        platform/gdk/PlatformScreenGdk.cpp \
-        platform/gdk/PlatformScrollBarGdk.cpp \
-        platform/gdk/PopupMenuGdk.cpp \
-        platform/gdk/RenderThemeGdk.cpp \
-        platform/gdk/SearchPopupMenuGdk.cpp \
-        platform/gdk/ScrollViewGdk.cpp \
-        platform/gdk/SharedTimerLinux.cpp \
-        platform/gdk/SoundGdk.cpp \
-        platform/gdk/SystemTimeLinux.cpp \
-        platform/gdk/TemporaryLinkStubs.cpp \
-        platform/gdk/WheelEventGdk.cpp \
-        platform/gdk/WidgetGdk.cpp \
-        platform/graphics/gdk/IconGdk.cpp \
-        platform/graphics/gdk/ImageGdk.cpp \
+        page/gtk/EventHandlerGtk.cpp \
+        page/gtk/FrameGtk.cpp \
+        page/gtk/DragControllerGtk.cpp \
+        loader/gtk/DocumentLoaderGtk.cpp \
+        platform/gtk/ClipboardGtk.cpp \
+        platform/gtk/CookieJarGtk.cpp \
+        platform/gtk/CursorGtk.cpp \
+        platform/gtk/ContextMenuGtk.cpp \
+        platform/gtk/ContextMenuItemGtk.cpp \
+        platform/gtk/DragDataGtk.cpp \
+        platform/gtk/DragImageGtk.cpp \
+        platform/gtk/FileChooserGtk.cpp \
+        platform/gtk/FileSystemGtk.cpp \
+        platform/gtk/FontCacheGtk.cpp \
+        platform/gtk/FontDataGtk.cpp \
+        platform/gtk/FontGtk.cpp \
+        platform/gtk/FontPlatformDataGtk.cpp \
+        platform/gtk/GlyphPageTreeNodeGtk.cpp \
+        platform/gtk/KeyEventGtk.cpp \
+        platform/gtk/LocalizedStringsGtk.cpp \
+        platform/gtk/LoggingGtk.cpp \
+        platform/gtk/MIMETypeRegistryGtk.cpp \
+        platform/gtk/MouseEventGtk.cpp \
+        platform/gtk/PasteboardGtk.cpp \
+        platform/gtk/PlatformScreenGtk.cpp \
+        platform/gtk/PlatformScrollBarGtk.cpp \
+        platform/gtk/PopupMenuGtk.cpp \
+        platform/gtk/RenderThemeGtk.cpp \
+        platform/gtk/SearchPopupMenuGtk.cpp \
+        platform/gtk/ScrollViewGtk.cpp \
+        platform/gtk/SharedTimerLinux.cpp \
+        platform/gtk/SoundGtk.cpp \
+        platform/gtk/SystemTimeLinux.cpp \
+        platform/gtk/TemporaryLinkStubs.cpp \
+        platform/gtk/WheelEventGtk.cpp \
+        platform/gtk/WidgetGtk.cpp \
+        platform/graphics/gtk/IconGtk.cpp \
+        platform/graphics/gtk/ImageGtk.cpp \
         platform/network/curl/ResourceHandleCurl.cpp \
         platform/network/curl/ResourceHandleManager.cpp \
         platform/graphics/cairo/AffineTransformCairo.cpp \
@@ -990,7 +990,7 @@ contains(DEFINES, ENABLE_SVG=1) {
 	DEPENDPATH += platform/graphics/svg/qt
     }
 
-    gdk-port {
+    gtk-port {
 	DEPENDPATH += platform/graphics/svg/cairo
     }
 
@@ -1307,7 +1307,7 @@ qt-port:SOURCES += \
         platform/graphics/svg/qt/SVGResourceFilterQt.cpp \
         platform/graphics/svg/qt/SVGResourceMaskerQt.cpp
 
-gdk-port:SOURCES += \
+gtk-port:SOURCES += \
         platform/graphics/svg/cairo/RenderPathCairo.cpp \
         platform/graphics/svg/cairo/SVGPaintServerCairo.cpp \
         platform/graphics/svg/cairo/SVGPaintServerGradientCairo.cpp \
@@ -1523,7 +1523,7 @@ qt-port {
     }
 }
 
-gdk-port {
+gtk-port {
     isEmpty(WEBKIT_LIB_DIR):WEBKIT_LIB_DIR=$$[QT_INSTALL_LIBS]
     isEmpty(WEBKIT_INC_DIR):WEBKIT_INC_DIR=$$[QT_INSTALL_HEADERS]/WebKitGtk
 

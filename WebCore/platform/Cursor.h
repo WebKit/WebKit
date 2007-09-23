@@ -33,7 +33,7 @@ typedef struct HICON__* HICON;
 typedef HICON HCURSOR;
 #include <Shared.h>
 #include <wtf/RefPtr.h>
-#elif PLATFORM(GDK)
+#elif PLATFORM(GTK)
 #include <gdk/gdk.h>
 #elif PLATFORM(QT)
 #include <QCursor>
@@ -66,7 +66,7 @@ namespace WebCore {
     typedef RefPtr<SharedCursor> PlatformCursor;
 #elif PLATFORM(MAC)
     typedef NSCursor* PlatformCursor;
-#elif PLATFORM(GDK)
+#elif PLATFORM(GTK)
     typedef GdkCursor* PlatformCursor;
 #elif PLATFORM(QT) && !defined(QT_NO_CURSOR)
     typedef QCursor PlatformCursor;

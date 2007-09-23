@@ -139,7 +139,7 @@ public:
     friend LRESULT __stdcall ResourceHandleWndProc(HWND, unsigned message, WPARAM, LPARAM);
 #endif
 
-#if PLATFORM(GDK) || PLATFORM(QT)
+#if PLATFORM(GTK) || PLATFORM(QT)
     ResourceHandleInternal* getInternal() { return d.get(); }
 #endif
 

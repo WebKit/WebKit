@@ -48,11 +48,11 @@ print "Starting webkit launcher with LD_LIBRARY_PATH set to point to built WebKi
 my @args = @ARGV;
 $ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$productDir:$ENV{LD_LIBRARY_PATH}" : $productDir;
 
-if (isGdk()) {
-  $launcherPath = "$launcherPath/WebKitTools/GdkLauncher/GdkLauncher";
-  # Strip --gdk from the arg-list, since otherwise GdkLauncher will try to
+if (isGtk()) {
+  $launcherPath = "$launcherPath/WebKitTools/GtkLauncher/GtkLauncher";
+  # Strip --gtk from the arg-list, since otherwise GtkLauncher will try to
   # interpret it as a URL.
-  @args = grep(!/^(--gdk)$/, @args);
+  @args = grep(!/^(--gtk)$/, @args);
 } elsif (isQt()) {
   $launcherPath = "$launcherPath/bin/QtLauncher";
 } else {

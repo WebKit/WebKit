@@ -6,17 +6,17 @@ isEmpty(OUTPUT_DIR) {
     CONFIG(debug):OUTPUT_DIR=$$PWD/WebKitBuild/Debug
 }
 
-!gdk-port:CONFIG += qt-port
+!gtk-port:CONFIG += qt-port
 qt-port:DEFINES += BUILDING_QT__=1
 qt-port:!building-libs {
     QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
     LIBS += -lQtWebKit
 }
-gdk-port:CONFIG += link_pkgconfig
-gdk-port:PKGCONFIG += cairo cairo-ft gdk-2.0 gtk+-2.0 libcurl
-gdk-port:DEFINES += BUILDING_GDK__=1 BUILDING_CAIRO__
-gdk-port:LIBS += -L$$OUTPUT_DIR/lib -lWebKitGdk $$system(icu-config --ldflags) -ljpeg -lpng
-gdk-port:QMAKE_CXXFLAGS += $$system(icu-config --cppflags)
+gtk-port:CONFIG += link_pkgconfig
+gtk-port:PKGCONFIG += cairo cairo-ft gdk-2.0 gtk+-2.0 libcurl
+gtk-port:DEFINES += BUILDING_GTK__=1 BUILDING_CAIRO__
+gtk-port:LIBS += -L$$OUTPUT_DIR/lib -lWebKitGtk $$system(icu-config --ldflags) -ljpeg -lpng
+gtk-port:QMAKE_CXXFLAGS += $$system(icu-config --cppflags)
 
 DEFINES += USE_SYSTEM_MALLOC
 CONFIG(release) {
@@ -26,12 +26,12 @@ CONFIG(release) {
 BASE_DIR = $$PWD
 qt-port:INCLUDEPATH += \
     $$PWD/WebKitQt/Api
-gdk-port:INCLUDEPATH += \
-    $$BASE_DIR/WebCore/platform/gdk \
+gtk-port:INCLUDEPATH += \
+    $$BASE_DIR/WebCore/platform/gtk \
     $$BASE_DIR/WebCore/platform/network/curl \
     $$BASE_DIR/WebCore/platform/graphics/cairo \
-    $$BASE_DIR/WebCore/loader/gdk \
-    $$BASE_DIR/WebCore/page/gdk \
+    $$BASE_DIR/WebCore/loader/gtk \
+    $$BASE_DIR/WebCore/page/gtk \
     $$BASE_DIR/WebKit/gtk/Api \
     $$BASE_DIR/WebKit/gtk/WebCoreSupport
 INCLUDEPATH += \

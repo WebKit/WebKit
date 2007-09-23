@@ -40,9 +40,9 @@ struct ThemeData {
     unsigned m_state;
 };
 
-class RenderThemeGdk : public RenderTheme {
+class RenderThemeGtk : public RenderTheme {
 public:
-    RenderThemeGdk();
+    RenderThemeGtk();
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return true; }
