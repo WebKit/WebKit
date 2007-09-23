@@ -1,3 +1,12 @@
+2007-09-22  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Adam.
+
+        * coding/coding-style.html:
+          - in section Other Punctuation
+            - syntax instead of synatax
+            - fix sample code alignment
+
 2007-09-06  Maciej Stachowiak  <mjs@apple.com>
 
         Forgot the JS file.

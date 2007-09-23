@@ -484,7 +484,7 @@ Note that usually it is preferable to use an inline function in such cases inste
 <ol>
 
 <li>Constructors for C++ classes should initialize all of their members using C++ 
-initializer synatax.  Each member (and superclass) should be indented on a separate 
+initializer syntax.  Each member (and superclass) should be indented on a separate 
 line, with the colon or comma preceding the member on that line.
 
 <h4 class="right">Right:</h4>
@@ -519,8 +519,6 @@ type and the * (so the * is adjacent to the following identifier if any).
 <li>Pointer and reference types in C++ code &mdash; Both pointer types and reference types
 should be written with no space between the type name and the * or &amp;.
 
-</ol>
-
 <h4 class="right">Right:</h4>
 <pre class="code">
 Image* SVGStyledElement::doSomething(PaintInfo&amp; paintInfo)
@@ -536,6 +534,8 @@ Image *SVGStyledElement::doSomething(PaintInfo &amp;paintInfo)
     SVGStyledElement *element = static_cast&lt;SVGStyledElement *>(node());
     const KCDashArray &amp;dashes = dashArray();
 </pre>
+
+</ol>
 
 <h3>#include Statements</h3>
 
