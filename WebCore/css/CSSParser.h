@@ -136,7 +136,7 @@ namespace WebCore {
         bool parseContent(int propId, bool important);
 
         CSSValue* parseBackgroundColor();
-        CSSValue* parseBackgroundImage();
+        bool parseBackgroundImage(CSSValue*&);
         CSSValue* parseBackgroundPositionXY(bool& xFound, bool& yFound);
         void parseBackgroundPosition(CSSValue*&, CSSValue*&);
         CSSValue* parseBackgroundSize();

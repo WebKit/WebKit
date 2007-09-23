@@ -1780,17 +1780,20 @@ CSSValue* CSSParser::parseBackgroundColor()
     return parseColor();
 }
 
-CSSValue* CSSParser::parseBackgroundImage()
+bool CSSParser::parseBackgroundImage(CSSValue*& value)
 {
-    if (valueList->current()->id == CSS_VAL_NONE)
-        return new CSSImageValue();
+    if (valueList->current()->id == CSS_VAL_NONE) {
+        value = new CSSImageValue();
+        return true;
+    }
     if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
         String uri = parseURL(domString(valueList->current()->string));
         if (!uri.isEmpty())
-            return new CSSImageValue(String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()), 
+            value = new CSSImageValue(String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()), 
                                          styleElement);
+        return true;
     }
-    return 0;
+    return false;
 }
 
 CSSValue* CSSParser::parseBackgroundPositionXY(bool& xFound, bool& yFound)
@@ -1926,8 +1929,7 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
                 goto failed;
             valueList->next();
             allowComma = false;
-        }
-        else {
+        } else {
             switch (propId) {
                 case CSS_PROP_BACKGROUND_ATTACHMENT:
                     if (val->id == CSS_VAL_SCROLL || val->id == CSS_VAL_FIXED) {
@@ -1941,8 +1943,7 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
                         valueList->next();
                     break;
                 case CSS_PROP_BACKGROUND_IMAGE:
-                    currValue = parseBackgroundImage();
-                    if (currValue)
+                    if (parseBackgroundImage(currValue))
                         valueList->next();
                     break;
                 case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
@@ -1988,7 +1989,6 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
                         valueList->next();
                     break;
             }
-            
             if (!currValue)
                 goto failed;
             
@@ -2022,7 +2022,7 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
         if (inShorthand())
             break;
     }
-    
+
     if (values && values->length()) {
         retValue1 = values;
         if (values2 && values2->length())

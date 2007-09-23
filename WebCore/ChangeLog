@@ -1,3 +1,18 @@
+2007-09-23  Rob Buis  <buis@kde.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15025
+        Background repeat css property is not inherited from parent if unspecified
+
+        Don't let invalid url specification in background shorthand make
+        the entire shorthand invalid.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBackgroundImage):
+        (WebCore::CSSParser::parseBackgroundProperty):
+        * css/CSSParser.h:
+
 2007-09-22  Adam Roben  <aroben@apple.com>
 
         Fix Bug 15251: REGRESSION: <input type=range> doesn't respond to form.reset() or setting input.value
