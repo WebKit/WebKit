@@ -1,0 +1,14 @@
+Bug 15251: REGRESSION: <input type=range> doesn't respond to form.reset() or setting input.value
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Current value is: "30"
+PASS slider.value is "80"
+Resetting form
+PASS slider.value is "30"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,19 @@
+2007-09-22  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 15251: REGRESSION: <input type=range> doesn't respond to form.reset() or setting input.value
+
+        http://bugs.webkit.org/show_bug.cgi?id=15251
+        <rdar://5498169>
+
+        Reviewed by Maciej.
+
+        Test: fast/forms/range-reset.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::storesValueSeparateFromAttribute): <input
+        type=range> should be storing its value separately from the value
+        attribute, as do all of our variable-input input types.
+
 2007-09-21  Mark Rowe  <mrowe@apple.com>
 
         Build fix for non-Mac platforms after r25697.

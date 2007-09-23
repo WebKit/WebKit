@@ -1007,13 +1007,13 @@ bool HTMLInputElement::storesValueSeparateFromAttribute() const
         case HIDDEN:
         case IMAGE:
         case RADIO:
-        case RANGE:
         case RESET:
         case SUBMIT:
             return false;
         case FILE:
         case ISINDEX:
         case PASSWORD:
+        case RANGE:
         case SEARCH:
         case TEXT:
             return true;

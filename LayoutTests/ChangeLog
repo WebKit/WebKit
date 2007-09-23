@@ -1,3 +1,15 @@
+2007-09-22  Adam Roben  <aroben@apple.com>
+
+        Test for Bug 15251: REGRESSION: <input type=range> doesn't respond to form.reset() or setting input.value
+
+        http://bugs.webkit.org/show_bug.cgi?id=15251
+        <rdar://5498169>
+
+        Reviewed by Maciej.
+
+        * fast/forms/range-reset-expected.txt: Added.
+        * fast/forms/range-reset.html: Added.
+
 2007-09-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam.
