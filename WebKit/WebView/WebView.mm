@@ -303,8 +303,6 @@ static int pluginDatabaseClientCount = 0;
     
     WebPreferences *preferences;
     BOOL useSiteSpecificSpoofing;
-        
-    BOOL lastElementWasNil;
 
     NSWindow *hostWindow;
 
@@ -813,14 +811,11 @@ static bool debugWidget = true;
 
 - (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(NSUInteger)modifierFlags
 {
-    // When the mouse isn't over this view at all, we'll get called with a dictionary of nil over
-    // and over again. So it's a good idea to catch that here and not send multiple calls to the delegate
-    // for that case.
-    if (!dictionary && _private->lastElementWasNil)
+    // We originally intended to call this delegate method sometimes with a nil dictionary, but due to
+    // a bug dating back to WebKit 1.0 this delegate was never called with nil! Unfortunately we can't
+    // start calling this with nil since it will break Adobe Help Viewer, and possibly other clients.
+    if (!dictionary)
         return;
-
-    _private->lastElementWasNil = !dictionary;
-
     CallUIDelegate(self, @selector(webView:mouseDidMoveOverElement:modifierFlags:), dictionary, modifierFlags);
 }
 

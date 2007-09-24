@@ -1,3 +1,17 @@
+2007-09-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5498016> Photoshop CS3: Adobe Help Viewer 1.1 crashes in 9A553
+
+        WebKit started calling the mouseDidMoveOverElement delegate method with a nil dictionary in r14982.
+        We originally intended to call this delegate method sometimes with a nil dictionary, but due to
+        a bug dating back to WebKit 1.0 this delegate was never called with nil! Unfortunately we can't
+        start calling this with nil since it will break Adobe Help Viewer, and possibly other clients.
+
+        * WebView/WebView.mm:
+        (-[WebView _mouseDidMoveOverElement:modifierFlags:]):
+
 2007-09-21  Kevin Decker  <kdecker@apple.com>
 
         * Plugins/WebBaseNetscapePluginView.mm: Build fix. 
