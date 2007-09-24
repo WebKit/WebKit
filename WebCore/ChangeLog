@@ -1,3 +1,11 @@
+2007-09-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - Updated project files to not use Edit and Continue for Debug Information since it doesn't work and breaks some functionality.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-09-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan

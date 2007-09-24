@@ -1,3 +1,12 @@
+2007-09-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - Updated project files to not use Edit and Continue for Debug Information since it doesn't work and breaks some functionality.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+
 2007-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Adam.
