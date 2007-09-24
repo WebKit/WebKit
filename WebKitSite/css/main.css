@@ -107,7 +107,7 @@ h1 + p, h2 + p, h3 + p, h4 + p, b + p {
     margin: 4px 0px 4px 0px;
 }
 
-#content li {
+#content ul > li {
     margin: 4px 0px;
 }
 

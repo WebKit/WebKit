@@ -2,7 +2,7 @@ body {
     background-image: url( /images/pink-background.png ) !important;
 }
 
-#content li {
+#content ul > li {
     list-style-image: url( /images/pink-bullet.png ) !important;
 }
 

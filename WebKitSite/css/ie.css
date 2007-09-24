@@ -23,7 +23,7 @@
     margin-left: 2em !important;
 }
 
-#content li {
+#content ul > li {
     list-style-type: square !important;
     list-style-image: none !important;
 }

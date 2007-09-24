@@ -1,3 +1,18 @@
+2007-09-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        - Limit custom list bullets to ordered lists only
+
+        * css/blue.css:
+        * css/gray.css:
+        * css/green.css:
+        * css/ie.css:
+        * css/main.css:
+        * css/pink.css:
+        * css/purple.css:
+        * css/yellow.css:
+
 2007-09-22  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Adam.
