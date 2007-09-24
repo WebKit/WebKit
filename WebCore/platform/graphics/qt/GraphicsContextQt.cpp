@@ -664,7 +664,10 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
+    QPainter::CompositionMode currentCompositionMode = m_data->p().compositionMode();
+    m_data->p().setCompositionMode(QPainter::CompositionMode_Source);
     m_data->p().eraseRect(rect);
+    m_data->p().setCompositionMode(currentCompositionMode);
 }
 
 void GraphicsContext::strokeRect(const FloatRect& rect, float width)

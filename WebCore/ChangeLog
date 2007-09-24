@@ -1,3 +1,17 @@
+2007-09-24  Mike Fenton  <mike@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Switch to using a QImage instead of a QPixmap to make transparency work.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::createDrawingContext):
+        (WebCore::HTMLCanvasElement::createPlatformImage):
+        * html/HTMLCanvasElement.h:
+
 2007-09-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.

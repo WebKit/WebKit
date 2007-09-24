@@ -34,7 +34,7 @@
 typedef struct CGContext* CGContextRef;
 typedef struct CGImage* CGImageRef;
 #elif PLATFORM(QT)
-class QPixmap;
+class QImage;
 class QPainter;
 #endif
 
@@ -74,7 +74,7 @@ public:
 #if PLATFORM(CG)
     CGImageRef createPlatformImage() const;
 #elif PLATFORM(QT)
-    QPixmap createPlatformImage() const;
+    QImage createPlatformImage() const;
 #endif
 
 private:
@@ -93,7 +93,7 @@ private:
 #if PLATFORM(CG)
     mutable void* m_data;
 #elif PLATFORM(QT)
-    mutable QPixmap* m_data;
+    mutable QImage* m_data;
     mutable QPainter* m_painter;
 #else
     mutable void* m_data;

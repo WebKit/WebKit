@@ -201,12 +201,16 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
     if (m_data) {
         QPen currentPen = m_painter->pen();
         qreal currentOpacity = m_painter->opacity();
+        QBrush currentBrush = m_painter->brush();
+        QBrush currentBackground = m_painter->background();
         if (m_painter->isActive())
             m_painter->end();
-        static_cast<QPainter*>(p->platformContext())->drawPixmap(r, *m_data);
+        static_cast<QPainter*>(p->platformContext())->drawImage(r, *m_data);
         m_painter->begin(m_data);
         m_painter->setPen(currentPen);
+        m_painter->setBrush(currentBrush);
         m_painter->setOpacity(currentOpacity);
+        m_painter->setBackground(currentBackground);
     }
 #endif
 }
@@ -244,11 +248,12 @@ void HTMLCanvasElement::createDrawingContext() const
     m_drawingContext = new GraphicsContext(bitmapContext);
     CGContextRelease(bitmapContext);
 #elif PLATFORM(QT)
-    m_data = new QPixmap(w, h);
+    m_data = new QImage(w, h, QImage::Format_ARGB32_Premultiplied);
     if (!m_data)
         return;
-    m_data->fill(Qt::white);
     m_painter = new QPainter(m_data);
+    m_painter->setBackground(QBrush(Qt::transparent));
+    m_painter->fillRect(0, 0, w, h, QColor(Qt::transparent));
     m_drawingContext = new GraphicsContext(m_painter);
 #endif
 }
@@ -279,11 +284,11 @@ CGImageRef HTMLCanvasElement::createPlatformImage() const
 
 #elif PLATFORM(QT)
 
-QPixmap HTMLCanvasElement::createPlatformImage() const
+QImage HTMLCanvasElement::createPlatformImage() const
 {
     if (m_data)
         return *m_data;
-    return QPixmap();
+    return QImage();
 }
 
 #endif
