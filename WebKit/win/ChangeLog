@@ -1,3 +1,13 @@
+2007-09-24  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5499507> FrameView will always have size (0,0) if its parent WebView is never resized
+
+        Reviewed by Darin.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Set the main FrameView's size to the size of
+        the WebView.
+
 2007-09-21  Kevin McCullough  <kmccullough@apple.com>
 
         - Fixed a syntax guideline mistake.
