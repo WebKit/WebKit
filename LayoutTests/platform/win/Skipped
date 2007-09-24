@@ -440,6 +440,10 @@ editing/selection/5195166-2.html
 editing/selection/select-line.html
 editing/selection/selection-actions.html
 
+# We can't make platform specifc results so keep this here for now
+# This test is dependant on DRT being able to open windows.
+fast/dom/Window/new-window-opener.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

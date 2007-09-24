@@ -1,3 +1,11 @@
+2007-09-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - Added a new test that will not pass until DRT supports new windows.
+
+        * platform/win/Skipped:
+
 2007-09-23  Rob Buis  <buis@kde.org>
 
         Reviewed by Hyatt.
