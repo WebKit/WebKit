@@ -181,7 +181,9 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconForURL(
 {
     IntSize intSize(*size);
 
-    Image* icon = iconDatabase()->iconForPageURL(String(url, SysStringLen(url)), intSize);
+    Image* icon = 0;
+    if (url)
+        icon = iconDatabase()->iconForPageURL(String(url, SysStringLen(url)), intSize);
 
     // Make sure we check for the case of an "empty image"
     if (icon && icon->width()) {
