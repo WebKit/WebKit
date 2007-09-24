@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include "config.h"
 #include "WebKitDLL.h"
 #include "WebDownload.h"
@@ -32,6 +33,8 @@
 #include "WebKit.h"
 #include "WebKitLogging.h"
 #include "WebMutableURLRequest.h"
+#include "WebURLAuthenticationChallenge.h"
+#include "WebURLCredential.h"
 #include "WebURLResponse.h"
 
 #include <io.h>
@@ -39,6 +42,7 @@
 #include <sys/types.h>
 
 #pragma warning(push, 0)
+#include <WebCore/AuthenticationCF.h>
 #include <WebCore/BString.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
@@ -403,9 +407,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::setDestination(
     CFURLDownloadSetDestination(m_download.get(), pathURL, !!allowOverwrite);
     CFRelease(pathURL);
 
-#ifndef NDEBUG
     LOG(Download, "WebDownload - Set destination to %s", m_bundlePath.ascii().data());
-#endif
 
     return S_OK;
 }
@@ -415,23 +417,48 @@ HRESULT STDMETHODCALLTYPE WebDownload::setDestination(
 HRESULT STDMETHODCALLTYPE WebDownload::cancelAuthenticationChallenge(
         /* [in] */ IWebURLAuthenticationChallenge*)
 {
-    notImplemented();
-    return E_FAIL;
+    if (m_download) {
+        CFURLDownloadCancel(m_download.get());
+        m_download = 0;
+    }
+
+    // FIXME: Do we need a URL or description for this error code?
+    ResourceError error(String(WebURLErrorDomain), WebURLErrorUserCancelledAuthentication, "", "");
+    COMPtr<WebError> webError(AdoptCOM, WebError::createInstance(error));
+    m_delegate->didFailWithError(this, webError.get());
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebDownload::continueWithoutCredentialForAuthenticationChallenge(
-        /* [in] */ IWebURLAuthenticationChallenge*)
+        /* [in] */ IWebURLAuthenticationChallenge* challenge)
 {
-    notImplemented();
-    return E_FAIL;
+    COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+    if (!webChallenge)
+        return E_NOINTERFACE;
+
+    if (m_download)
+        CFURLDownloadUseCredential(m_download.get(), 0, webChallenge->authenticationChallenge().cfURLAuthChallengeRef());
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebDownload::useCredential(
-        /* [in] */ IWebURLCredential*, 
-        /* [in] */ IWebURLAuthenticationChallenge*)
+        /* [in] */ IWebURLCredential* credential, 
+        /* [in] */ IWebURLAuthenticationChallenge* challenge)
 {
-    notImplemented();
-    return E_FAIL;
+    COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+    if (!webChallenge)
+        return E_NOINTERFACE;
+
+    COMPtr<WebURLCredential> webCredential(Query, credential);
+    if (!webCredential)
+        return E_NOINTERFACE;
+
+    RetainPtr<CFURLCredentialRef> cfCredential(AdoptCF, createCF(webCredential->credential()));
+
+    if (m_download)
+        CFURLDownloadUseCredential(m_download.get(), cfCredential.get(), webChallenge->authenticationChallenge().cfURLAuthChallengeRef());
+    return S_OK;
 }
 
 // CFURLDownload Callbacks -------------------------------------------------------------------
@@ -448,8 +475,8 @@ void WebDownload::didStart()
 
 CFURLRequestRef WebDownload::willSendRequest(CFURLRequestRef request, CFURLResponseRef response)
 {
-    COMPtr<WebMutableURLRequest> webRequest = WebMutableURLRequest::createInstance(ResourceRequest(request));
-    COMPtr<WebURLResponse> webResponse = WebURLResponse::createInstance(ResourceResponse(response));
+    COMPtr<WebMutableURLRequest> webRequest(AdoptCOM, WebMutableURLRequest::createInstance(ResourceRequest(request)));
+    COMPtr<WebURLResponse> webResponse(AdoptCOM, WebURLResponse::createInstance(ResourceResponse(response)));
     COMPtr<IWebMutableURLRequest> finalRequest;
 
     if (FAILED(m_delegate->willSendRequest(this, webRequest.get(), webResponse.get(), &finalRequest)))
@@ -458,26 +485,34 @@ CFURLRequestRef WebDownload::willSendRequest(CFURLRequestRef request, CFURLRespo
     if (!finalRequest)
         return 0;
 
-    COMPtr<WebMutableURLRequest> finalWebRequest = WebMutableURLRequest::createInstance(finalRequest.get());
+    COMPtr<WebMutableURLRequest> finalWebRequest(AdoptCOM, WebMutableURLRequest::createInstance(finalRequest.get()));
     m_request = finalWebRequest.get();
-    return finalWebRequest->resourceRequest().cfURLRequest();
+    CFURLRequestRef result = finalWebRequest->resourceRequest().cfURLRequest();
+    CFRetain(result);
+    return result;
 }
 
-void WebDownload::didReceiveAuthenticationChallenge(CFURLAuthChallengeRef )
+void WebDownload::didReceiveAuthenticationChallenge(CFURLAuthChallengeRef challenge)
 {
-    notImplemented();
+    COMPtr<IWebURLAuthenticationChallenge> webChallenge(AdoptCOM,
+        WebURLAuthenticationChallenge::createInstance(AuthenticationChallenge(challenge, 0), this));
+
+    if (SUCCEEDED(m_delegate->didReceiveAuthenticationChallenge(this, webChallenge.get())))
+        return;
+
+    cancelAuthenticationChallenge(webChallenge.get());
 }
 
 void WebDownload::didReceiveResponse(CFURLResponseRef response)
 {
-    COMPtr<WebURLResponse> webResponse = WebURLResponse::createInstance(ResourceResponse(response));
+    COMPtr<WebURLResponse> webResponse(AdoptCOM, WebURLResponse::createInstance(ResourceResponse(response)));
     if (FAILED(m_delegate->didReceiveResponse(this, webResponse.get())))
         LOG_ERROR("DownloadDelegate->didReceiveResponse failed");
 }
 
 void WebDownload::willResumeWithResponse(CFURLResponseRef response, UInt64 fromByte)
 {
-    COMPtr<WebURLResponse> webResponse = WebURLResponse::createInstance(ResourceResponse(response));
+    COMPtr<WebURLResponse> webResponse(AdoptCOM, WebURLResponse::createInstance(ResourceResponse(response)));
     if (FAILED(m_delegate->willResumeWithResponse(this, webResponse.get(), fromByte)))
         LOG_ERROR("DownloadDelegate->willResumeWithResponse failed");
 }
@@ -576,7 +611,7 @@ void WebDownload::didFinish()
 
 void WebDownload::didFail(CFErrorRef error)
 {
-    COMPtr<WebError> webError = WebError::createInstance(ResourceError(error));
+    COMPtr<WebError> webError(AdoptCOM, WebError::createInstance(ResourceError(error)));
     if (FAILED(m_delegate->didFailWithError(this, webError.get())))
         LOG_ERROR("DownloadDelegate->didFailWithError failed");
 }

@@ -69,7 +69,7 @@ HRESULT STDMETHODCALLTYPE WebURLCredential::QueryInterface(REFIID riid, void** p
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
-    else if (IsEqualGUID(riid, CLSID_WebURLCredential))
+    else if (IsEqualGUID(riid, __uuidof(WebURLCredential)))
         *ppvObject = static_cast<WebURLCredential*>(this);
     else if (IsEqualGUID(riid, IID_IWebURLCredential))
         *ppvObject = static_cast<IWebURLCredential*>(this);

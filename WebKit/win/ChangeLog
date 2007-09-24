@@ -1,3 +1,73 @@
+2007-09-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve.
+
+        - fix <rdar://problem/5095701> Download requring HTTP auth fails
+          (progress bar forever)
+
+        The functions in WebDownload relating to authentication challenges needed
+        to be implemented.
+
+        * WebDownload.cpp:
+        (WebDownload::cancelAuthenticationChallenge): Implement.
+        (WebDownload::continueWithoutCredentialForAuthenticationChallenge): Ditto.
+        (WebDownload::useCredential): Ditto.
+        (WebDownload::willSendRequest): Fix storage leak by adopting request
+        and response after creating them. Also retain the result before returning
+        it, since that's the API contract with CFNetwork.
+        (WebDownload::didReceiveAuthenticationChallenge): Implement.
+        (WebDownload::didReceiveResponse): Fix storage leak by adopting response.
+        (WebDownload::willResumeWithResponse): Ditto.
+        (WebDownload::didFail): Ditto.
+
+        * WebURLAuthenticationChallenge.h: Get rid of the IID #define,
+        instead using __declspec(uuid). Added a sender parameter to the
+        create function and an m_sender data member.
+        * WebURLAuthenticationChallenge.cpp:
+        (WebURLAuthenticationChallenge::WebURLAuthenticationChallenge): Added an
+        explicit sender parameter so this can be used with a WebDownload, which
+        does not involve a ResourceHandle. Later we should clean this up and not
+        involve WebCore or ResourceHandle directly even for the non-download case.
+        (WebURLAuthenticationChallenge::createInstance): Added an overload for the
+        case with an explicit sender parameter.
+        (WebURLAuthenticationChallenge::QueryInterface): Use __uuidof for the ID
+        of this class. In general, we should move to __uuidof as much as possible
+        and keep the separate macros to a minimum -- but we should do this for all
+        uses of each class at one time to make sure we don't run into problems
+        with two different UUIDs for the same class. This patch does it for three
+        classes.
+        (WebURLAuthenticationChallenge::initWithProtectionSpace): Use the query
+        constructor instead of an explicit QueryInterface for WebURLCredential.
+        This is another class where I'm switching from CLSID/IID macros to the
+        use of __uuidof, but in this case the use of __uuidof is implicit.
+        (WebURLAuthenticationChallenge::initWithAuthenticationChallenge): Ditto,
+        but for WebURLAuthenticationChallenge and WebURLAuthenticationChallengeSender.
+        (WebURLAuthenticationChallenge::sender): Use the new m_sender member to
+        cache the sender object and also use the one that was passed into the
+        constructor, if any.
+
+        * WebURLAuthenticationChallengeSender.h: Get rid of the IID #define,
+        instead using __declspec(uuid). Also minimize includes and make data
+        members private instead of protected.
+        * WebURLAuthenticationChallengeSender.cpp:
+        (WebURLAuthenticationChallengeSender::QueryInterface): Use __uuidof instead
+        of IID macro.
+        (WebURLAuthenticationChallengeSender::cancelAuthenticationChallenge):
+        Use query constructor instead of QueryInterface.
+        (WebURLAuthenticationChallengeSender::continueWithoutCredentialForAuthenticationChallenge):
+        Ditto.
+        (WebURLAuthenticationChallengeSender::useCredential): Ditto.
+
+        * WebURLCredential.cpp: (WebURLCredential::QueryInterface): Use __uuidof
+        instead of CLSID_WebURLCredential.
+
+        - tangentially-related cleanup
+
+        * WebFrame.cpp:
+        (WebFrame::dispatchDidReceiveAuthenticationChallenge): Use the adopt
+        constructor instead of a separate adoptRef call.
+        (WebFrame::dispatchDidCancelAuthenticationChallenge): Ditto.
+
 2007-09-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan

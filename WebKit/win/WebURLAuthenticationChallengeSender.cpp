@@ -68,7 +68,7 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::QueryInterface(RE
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
-    else if (IsEqualGUID(riid, IID_WebURLAuthenticationChallengeSender))
+    else if (IsEqualGUID(riid, __uuidof(WebURLAuthenticationChallengeSender)))
         *ppvObject = static_cast<WebURLAuthenticationChallengeSender*>(this);
     else if (IsEqualGUID(riid, IID_IWebURLAuthenticationChallengeSender))
         *ppvObject = static_cast<IWebURLAuthenticationChallengeSender*>(this);
@@ -98,8 +98,8 @@ ULONG STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::Release(void)
 HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::cancelAuthenticationChallenge(
         /* [in] */ IWebURLAuthenticationChallenge* challenge)
 {
-    COMPtr<WebURLAuthenticationChallenge> webChallenge;
-    if (!challenge || FAILED(challenge->QueryInterface(IID_WebURLAuthenticationChallenge, (void**)&webChallenge)))
+    COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+    if (!webChallenge)
         return E_FAIL;
 
     m_handle->receivedCancellation(webChallenge->authenticationChallenge());
@@ -109,8 +109,8 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::cancelAuthenticat
 HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::continueWithoutCredentialForAuthenticationChallenge(
         /* [in] */ IWebURLAuthenticationChallenge* challenge)
 {
-    COMPtr<WebURLAuthenticationChallenge> webChallenge;
-    if (!challenge || FAILED(challenge->QueryInterface(IID_WebURLAuthenticationChallenge, (void**)&webChallenge)))
+    COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+    if (!webChallenge)
         return E_FAIL;
 
     m_handle->receivedRequestToContinueWithoutCredential(webChallenge->authenticationChallenge());
@@ -121,12 +121,12 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::useCredential(
         /* [in] */ IWebURLCredential* credential, 
         /* [in] */ IWebURLAuthenticationChallenge* challenge)
 {
-    COMPtr<WebURLAuthenticationChallenge> webChallenge;
-    if (!challenge || FAILED(challenge->QueryInterface(IID_WebURLAuthenticationChallenge, (void**)&webChallenge)))
+    COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+    if (!webChallenge)
         return E_FAIL;
     
     COMPtr<WebURLCredential> webCredential;
-    if (!credential || FAILED(credential->QueryInterface(CLSID_WebURLCredential, (void**)&webCredential)))
+    if (!credential || FAILED(credential->QueryInterface(__uuidof(WebURLCredential), (void**)&webCredential)))
         return E_FAIL;
 
     m_handle->receivedCredential(webChallenge->authenticationChallenge(), webCredential->credential());

@@ -30,18 +30,15 @@
 
 #pragma warning(push, 0)
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/COMPtr.h>
 #pragma warning(pop)
 
-// {FD3B2381-0BB6-4b59-AF09-0E599C8901CF}
-DEFINE_GUID(IID_WebURLAuthenticationChallenge, 0xfd3b2381, 0xbb6, 0x4b59, 0xaf, 0x9, 0xe, 0x59, 0x9c, 0x89, 0x1, 0xcf);
-
-class WebURLAuthenticationChallenge : public IWebURLAuthenticationChallenge
-{
+class __declspec(uuid("FD3B2381-0BB6-4B59-AF09-0E599C8901CF")) WebURLAuthenticationChallenge : public IWebURLAuthenticationChallenge {
 public:
-    static WebURLAuthenticationChallenge* createInstance();
     static WebURLAuthenticationChallenge* createInstance(const WebCore::AuthenticationChallenge&);
+    static WebURLAuthenticationChallenge* createInstance(const WebCore::AuthenticationChallenge&, IWebURLAuthenticationChallengeSender*);
 private:
-    WebURLAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
+    WebURLAuthenticationChallenge(const WebCore::AuthenticationChallenge&, IWebURLAuthenticationChallengeSender*);
     ~WebURLAuthenticationChallenge();
 public:
     // IUnknown
@@ -87,6 +84,7 @@ protected:
     ULONG m_refCount;
 
     WebCore::AuthenticationChallenge m_authenticationChallenge;
+    COMPtr<IWebURLAuthenticationChallengeSender> m_sender;
 };
 
 
