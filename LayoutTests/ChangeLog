@@ -1,3 +1,9 @@
+2007-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        * platform/win/Skipped: Comment out currently disabled tests.
+
 2007-09-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
