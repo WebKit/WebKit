@@ -90,7 +90,7 @@ sub buildPlatformHierarchy();
 
 # Argument handling
 my $shouldCheckLeaks = '';
-my $configuration = '';
+my $configuration = configuration();
 my $guardMalloc = '';
 my $httpdPort = 8000;
 my $httpdSSLPort = 8443;
