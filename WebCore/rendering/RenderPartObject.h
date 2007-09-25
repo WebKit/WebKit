@@ -32,6 +32,7 @@ namespace WebCore {
 class RenderPartObject : public RenderPart {
 public:
     RenderPartObject(HTMLFrameOwnerElement*);
+    virtual ~RenderPartObject();
 
     virtual const char* renderName() const { return "RenderPartObject"; }
 

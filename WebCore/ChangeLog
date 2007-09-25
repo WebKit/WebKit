@@ -1,3 +1,39 @@
+2007-09-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5466459> CrashTracer: [USER] 1 crash in 
+        NetNewsWire at com.apple.WebCore: WebCore::bidiNext + 485 (15241)
+
+        Mitz discovered that this crash appeared because r25128 made it 
+        possible for RenderPartObject::updateWidget() to be called during 
+        layout. updateWidget() can, through a series of calls, cause an 
+        attach/detach to happen, which is very bad in the middle of a 
+        layout and is what led to this crash. This patch fixes that by 
+        having the FrameView keep track of a queue of RenderPartObjects 
+        that need to call updateWidget(), and it goes through the queue 
+        calling updateWidget() as soon as layout is done.
+
+        * page/FrameView.cpp: We only want to call updateWidget() if we are 
+        not in a nested layout. Unfortunately, the existing variables on 
+        FrameViewPrivate do not have exactly the information that we need, 
+        so I added nestedLayoutCount.
+        (WebCore::FrameViewPrivate::reset): Reset nestedLayoutCount.
+        (WebCore::FrameView::layout): Increment nestedLayoutCount once we 
+        have gotten through all of the early returns. Call updateWidget() 
+        after layout is nestedLayoutCount is 1 and there are widgets to 
+        update. Decrement nestedLayoutCount at the end.
+        (WebCore::FrameView::addWidgetToUpdate):
+        (WebCore::FrameView::removeWidgetToUpdate):
+        * page/FrameView.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::~RenderPartObject): Remove this from 
+        the FrameView's update set.
+        (WebCore::RenderPartObject::layout): Instead of calling 
+        updateWidget() immediately, add this to the update widget set on 
+        FrameView.
+        * rendering/RenderPartObject.h:
+
 2007-09-25  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Mark Rowe.

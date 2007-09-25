@@ -38,6 +38,7 @@
 #include "HTMLNames.h"
 #include "OverflowEvent.h"
 #include "RenderPart.h"
+#include "RenderPartObject.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 
@@ -81,6 +82,7 @@ public:
         layoutSchedulingEnabled = true;
         midLayout = false;
         layoutCount = 0;
+        nestedLayoutCount = 0;
         firstLayout = true;
         repaintRects.clear();
         m_wasScrolledByUser = false;
@@ -102,6 +104,7 @@ public:
     bool layoutSchedulingEnabled;
     bool midLayout;
     int layoutCount;
+    unsigned nestedLayoutCount;
 
     bool firstLayout;
     bool needToInitScrollbars;
@@ -346,6 +349,8 @@ void FrameView::layout(bool allowSubtree)
         return;
     }
 
+    d->nestedLayoutCount++;
+
     ScrollbarMode hMode = d->hmode;
     ScrollbarMode vMode = d->vmode;
     
@@ -472,8 +477,35 @@ void FrameView::layout(bool allowSubtree)
         updateOverflowStatus(visibleWidth() < contentsWidth(),
                              visibleHeight() < contentsHeight());
 
+    if (m_widgetUpdateSet && d->nestedLayoutCount == 1) {
+        HashSet<RenderPartObject*> set;
+        m_widgetUpdateSet->swap(set);
+        
+        HashSet<RenderPartObject*>::iterator end = set.end();
+        for (HashSet<RenderPartObject*>::iterator it = set.begin(); it != end; ++it)
+            (*it)->updateWidget(false);
+    }
+
     // Allow events scheduled during layout to fire
     resumeScheduledEvents();
+
+    d->nestedLayoutCount--;
+}
+
+void FrameView::addWidgetToUpdate(RenderPartObject* object)
+{
+    if (!m_widgetUpdateSet)
+        m_widgetUpdateSet.set(new HashSet<RenderPartObject*>);
+
+    m_widgetUpdateSet->add(object);
+}
+
+void FrameView::removeWidgetToUpdate(RenderPartObject* object)
+{
+    if (!m_widgetUpdateSet)
+        return;
+
+    m_widgetUpdateSet->remove(object);
 }
 
 //
