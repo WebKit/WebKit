@@ -1,3 +1,20 @@
+2007-09-25  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon and Lars.
+
+        Modifies the addToJSWindowObject to bind js objects using the built-in
+        kst_window class.  Make sure to protect the created runtime object from
+        garbage collection.
+
+        Adds a signal to QWebFrame to notify clients of the beginning of a
+        provisional load.  DRT needs this.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJSWindowObject):
+        * Api/qwebframe.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+
 2007-09-10  Qing Zhao  <qing@staikos.net>
 
         Reviewed by George Staikos.

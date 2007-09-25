@@ -51,6 +51,7 @@
 #include "bindings/runtime.h"
 #include "bindings/runtime_root.h"
 #include "kjs_proxy.h"
+#include "kjs_window.h"
 #include "kjs_binding.h"
 #include "ExecState.h"
 #include "object.h"
@@ -133,20 +134,19 @@ QWebFrame::~QWebFrame()
 
 void QWebFrame::addToJSWindowObject(const QByteArray &name, QObject *object)
 {
-    KJS::Bindings::RootObject *root = d->frame->bindingRootObject();
-    KJS::ExecState *exec = root->interpreter()->globalExec();
-    KJS::JSObject *rootObject = root->interpreter()->globalObject();
-    KJS::JSObject *window = rootObject->get(exec, KJS::Identifier("window"))->getObject();
-    if (!window) {
-        qDebug() << "Warning: couldn't get window object";
-        return;
-    }
+      KJS::JSLock lock;
+      KJS::Window *window = KJS::Window::retrieveWindow(d->frame.get());
+      KJS::Bindings::RootObject *root = d->frame->bindingRootObject();
+      if (!window) {
+          qDebug() << "Warning: couldn't get window object";
+          return;
+      }
 
-    KJS::JSObject *testController =
+      KJS::JSObject *runtimeObject =
         KJS::Bindings::Instance::createRuntimeObject(KJS::Bindings::Instance::QtLanguage,
                                                      object, root);
 
-    window->put(exec, KJS::Identifier(name.constData()), testController);
+      window->put(window->interpreter()->globalExec(), KJS::Identifier(name.constData()), runtimeObject);
 }
 
 

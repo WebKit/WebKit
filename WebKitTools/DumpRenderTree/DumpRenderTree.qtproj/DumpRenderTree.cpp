@@ -50,13 +50,51 @@ namespace WebCore {
 const unsigned int maxViewWidth = 800;
 const unsigned int maxViewHeight = 600;
 
+class WebFrame : public QWebFrame {
+public:
+    WebFrame(QWebPage *parent, QWebFrameData *frameData)
+        : QWebFrame(parent, frameData) {}
+    WebFrame(QWebFrame *parent, QWebFrameData *frameData)
+        : QWebFrame(parent, frameData) {}
+};
+
 class WebPage : public QWebPage {
 public:
-    WebPage(QWidget *parent) : QWebPage(parent) {}
+    WebPage(QWidget *parent, DumpRenderTree *drt)
+        : QWebPage(parent), m_drt(drt) {}
+
+    QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
 
     void javaScriptAlert(QWebFrame *frame, const QString& message);
     void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
+
+private:
+    DumpRenderTree *m_drt;
 };
+
+QWebFrame *WebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameData)
+{
+    if (parentFrame) {
+        WebFrame *f = new WebFrame(parentFrame, frameData);
+        connect(f, SIGNAL(cleared()), m_drt, SLOT(initJSObjects()));
+        connect(f, SIGNAL(provisionalLoad()),
+                m_drt->layoutTestController(), SLOT(provisionalLoad()));
+        return f;
+    }
+    WebFrame *f = new WebFrame(this, frameData);
+    connect(f, SIGNAL(titleChanged(const QString&)),
+            SIGNAL(titleChanged(const QString&)));
+    connect(f, SIGNAL(hoveringOverLink(const QString&, const QString&)),
+            SIGNAL(hoveringOverLink(const QString&, const QString&)));
+
+    connect(f, SIGNAL(cleared()), m_drt, SLOT(initJSObjects()));
+    connect(f, SIGNAL(provisionalLoad()),
+            m_drt->layoutTestController(), SLOT(provisionalLoad()));
+    connect(f, SIGNAL(loadDone(bool)),
+            m_drt->layoutTestController(), SLOT(maybeDump(bool)));
+
+    return f;
+}
 
 void WebPage::javaScriptAlert(QWebFrame *frame, const QString& message)
 {
@@ -70,29 +108,24 @@ void WebPage::javaScriptConsoleMessage(const QString& message, unsigned int line
 
 DumpRenderTree::DumpRenderTree()
     : m_stdin(0)
-    , m_notifier()
-    , m_loading(false)
+    , m_notifier(0)
 {
-    page = new WebPage(0);
-    page->resize(maxViewWidth, maxViewHeight);
-    frame = page->mainFrame();
-    frame->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    frame->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
     m_controller = new LayoutTestController();
-    QObject::connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
-    QObject::connect(frame, SIGNAL(cleared()), this, SLOT(initJSObjects()));
-    QObject::connect(frame, SIGNAL(loadDone(bool)), this, SLOT(maybeDump(bool)));
+    connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
 
-    m_eventSender = new EventSender(page);
-    
-//     page->resize(800, 800);
+    m_page = new WebPage(0, this);
+    m_page->resize(maxViewWidth, maxViewHeight);
+    m_page->mainFrame()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_page->mainFrame()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    m_eventSender = new EventSender(m_page);
+
+    QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
 }
 
 DumpRenderTree::~DumpRenderTree()
 {
-    delete page;
+    delete m_page;
 
     delete m_stdin;
     delete m_notifier;
@@ -104,7 +137,7 @@ void DumpRenderTree::open()
         m_stdin = new QFile;
         m_stdin->open(stdin, QFile::ReadOnly);
     }
-    
+
     if (!m_notifier) {
         m_notifier = new QSocketNotifier(STDIN_FILENO, QSocketNotifier::Read);
         connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readStdin(int)));
@@ -114,14 +147,11 @@ void DumpRenderTree::open()
 void DumpRenderTree::open(const QUrl& url)
 {
     resetJSObjects();
-    page->open(url);
+    m_page->open(url);
 }
 
 void DumpRenderTree::readStdin(int /* socket */)
 {
-    if (m_loading)
-        fprintf(stderr, "=========================== still loading\n");
-    
     // Read incoming data from stdin...
     QByteArray line = m_stdin->readLine();
     if (line.endsWith('\n'))
@@ -130,6 +160,7 @@ void DumpRenderTree::readStdin(int /* socket */)
     if (line.isEmpty())
         quit();
     open(QUrl(QString(line)));
+    fflush(stdout);
 }
 
 void DumpRenderTree::resetJSObjects()
@@ -139,19 +170,23 @@ void DumpRenderTree::resetJSObjects()
 
 void DumpRenderTree::initJSObjects()
 {
-    frame->addToJSWindowObject("layoutTestController", m_controller);    
-    frame->addToJSWindowObject("eventSender", m_eventSender);    
+    QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
+    Q_ASSERT(frame);
+    frame->addToJSWindowObject("layoutTestController", m_controller);
+    frame->addToJSWindowObject("eventSender", m_eventSender);
 }
 
 void DumpRenderTree::dump()
 {
+    QWebFrame *frame = m_page->mainFrame();
+
     //fprintf(stderr, "    Dumping\n");
     if (!m_notifier) {
         // Dump markup in single file mode...
         QString markup = frame->markup();
         fprintf(stdout, "Source:\n\n%s\n", markup.toUtf8().constData());
     }
-    
+
     // Dump render text...
     QString renderDump;
     if (m_controller->shouldDumpAsText()) {
@@ -161,24 +196,19 @@ void DumpRenderTree::dump()
         renderDump = frame->renderTreeDump();
     }
     if (renderDump.isEmpty()) {
-        printf("ERROR: nil result from %s", m_controller->shouldDumpAsText() ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]\n#EOF\n");
+        printf("ERROR: nil result from %s", m_controller->shouldDumpAsText() ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
     } else {
-        fprintf(stdout, "%s#EOF\n", renderDump.toUtf8().constData());
+        fprintf(stdout, "%s", renderDump.toUtf8().constData());
     }
+
+    fprintf(stdout, "#EOF\n");
+
     fflush(stdout);
 
-    m_loading = false;
-    
     if (!m_notifier) {
         // Exit now in single file mode...
         quit();
     }
-}
-    
-void DumpRenderTree::maybeDump(bool ok)
-{
-    if (!ok || !m_controller->shouldWaitUntilDone()) 
-        dump();
 }
 
 }

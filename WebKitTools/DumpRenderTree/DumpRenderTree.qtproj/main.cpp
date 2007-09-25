@@ -120,9 +120,9 @@ int main(int argc, char* argv[])
 
     WebCore::DumpRenderTree dumper;
     
-    if (args.last() == QLatin1String("-"))
+    if (args.last() == QLatin1String("-")) {
         dumper.open();
-    else {
+    } else {
         if (!args.last().startsWith("/")
             && !args.last().startsWith("file:")) {
             QString path = QDir::currentPath();

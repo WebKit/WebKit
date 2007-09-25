@@ -80,6 +80,7 @@ public Q_SLOTS:
 signals:
     void cleared();
     void loadDone(bool ok);
+    void provisionalLoad();
     void titleChanged(const QString &title);
     void hoveringOverLink(const QString &link, const QString &title);
 

@@ -1,3 +1,54 @@
+2007-09-25  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon and Lars.
+
+        Refactors and cleans up Qt DRT member variable names, member variable
+        initialization, style fixes and general code cleanup.
+
+        Adds queueReload slot to LayoutTestController that some tests require.
+
+        Subclasses QWebFrame to make sure that all frames have an associated
+        LayoutTestController JS window object.
+
+        Takes advantage of new QWebFrame provisionalLoad signal to ensure frames
+        aren't dumped twice.
+
+        EOF fixes.
+
+        Together, this patch fixes some 20+ layout tests in QtWebKit.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::WebFrame::WebFrame):
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::createFrame):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::readStdin):
+        (WebCore::DumpRenderTree::initJSObjects):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        (WebCore::DumpRenderTree::layoutTestController):
+        (WebCore::DumpRenderTree::eventSender):
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        (LayoutTestController::maybeDump):
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::queueReload):
+        (LayoutTestController::provisionalLoad):
+        (EventSender::EventSender):
+        (EventSender::mouseDown):
+        (EventSender::mouseUp):
+        (EventSender::mouseMoveTo):
+        (EventSender::frameUnderMouse):
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.h:
+        (LayoutTestController::isLoading):
+        (LayoutTestController::setLoading):
+        (LayoutTestController::dumpAsText):
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (main):
+
 2007-09-24  Kevin McCullough  <kmccullough@apple.com>
 
 

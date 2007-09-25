@@ -294,7 +294,8 @@ void FrameLoaderClientQt::dispatchWillClose()
 
 void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 {
-    // we're not interested in this neither I think
+    if (m_webFrame)
+        emit m_webFrame->provisionalLoad();
 }
 
 
