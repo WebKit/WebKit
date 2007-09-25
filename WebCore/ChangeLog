@@ -1,3 +1,14 @@
+2007-09-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin.
+
+        - fix <rdar://problem/5502513>
+
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontLinkInterface):
+        Roll back this file; the old code leaked a global COM object, but that's
+        no big deal and the new code caused a crash on quit.
+
 2007-09-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
