@@ -1,3 +1,16 @@
+2007-09-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5283916>
+        JavaScript timers may be firing while JavaScript alerts are displayed.
+        
+        Pause JavaScript timeouts while calling UI delegate methods that might show dialogs.
+        
+        * page/Chrome.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+
 2007-09-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

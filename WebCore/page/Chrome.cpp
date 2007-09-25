@@ -25,6 +25,7 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameTree.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -33,6 +34,7 @@
 #include "Page.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
+#include "kjs_window.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -40,6 +42,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+using namespace KJS;
+using namespace std;
 
 class PageGroupLoadDeferrer : Noncopyable {
 public:
@@ -47,6 +51,9 @@ public:
     ~PageGroupLoadDeferrer();
 private:
     Vector<RefPtr<Frame>, 16> m_deferredFrames;
+#if !PLATFORM(MAC)
+    Vector<pair<RefPtr<Frame>, PausedTimeouts*>, 16> m_pausedTimeouts;
+#endif
 };
 
 Chrome::Chrome(Page* page, ChromeClient* client)
@@ -342,14 +349,30 @@ void Chrome::print(Frame* frame)
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 {
-    if (const HashSet<Page*>* group = page->frameNamespace()) {
-        HashSet<Page*>::const_iterator end = group->end();
-        for (HashSet<Page*>::const_iterator it = group->begin(); it != end; ++it) {
-            Page* otherPage = *it;
-            if ((deferSelf || otherPage != page) && !otherPage->defersLoading())
+    const HashSet<Page*>* group = page->frameNamespace();
+
+    if (!group)
+        return;
+
+    HashSet<Page*>::const_iterator end = group->end();
+    for (HashSet<Page*>::const_iterator it = group->begin(); it != end; ++it) {
+        Page* otherPage = *it;
+        if ((deferSelf || otherPage != page)) {
+            if (!otherPage->defersLoading())
                 m_deferredFrames.append(otherPage->mainFrame());
+
+#if !PLATFORM(MAC)
+            for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+                if (Window* window = Window::retrieveWindow(frame)) {
+                    PausedTimeouts* timeouts = window->pauseTimeouts();
+
+                    m_pausedTimeouts.append(make_pair(frame, timeouts));
+                }
+            }
         }
     }
+#endif
+
     size_t count = m_deferredFrames.size();
     for (size_t i = 0; i < count; ++i)
         if (Page* page = m_deferredFrames[i]->page())
@@ -362,6 +385,18 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
     for (size_t i = 0; i < count; ++i)
         if (Page* page = m_deferredFrames[i]->page())
             page->setDefersLoading(false);
+
+#if !PLATFORM(MAC)
+    count = m_pausedTimeouts.size();
+
+    for (size_t i = 0; i < count; i++) {
+        Window* window = Window::retrieveWindow(m_pausedTimeouts[i].first.get());
+        if (window)
+            window->resumeTimeouts(m_pausedTimeouts[i].second);
+        delete m_pausedTimeouts[i].second;
+    }
+#endif
 }
+
 
 } // namespace WebCore
