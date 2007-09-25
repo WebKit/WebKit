@@ -1,0 +1,94 @@
+This file has advice to help you merge newer versions of PCRE.
+
+JavaScriptCore's PCRE is currently based on:
+
+    PCRE 6.4
+
+With the following differences.
+
+     1) We added a PCRE_UTF16 define that makes a library that works on UTF-16 strings
+        rather than on ASCII or UTF-8.
+
+        We introduced the public typedef pcre_char and the internal typedef pcre_uchar.
+
+        We changed access to the digitab and ctypes arrays to range check and work only
+        on values in the 0-255 range.
+
+        We changed GETCHAR, GETCHRATEST, GETCHARINC, GETCHARINCTEST, GETCHARLEN, and
+        GETCHARLENEND so they work on UTF-16.
+
+        We added ISMIDCHAR to abstract the notion of characters to skip over, and
+        handle it right regardless of UTF-16 or UTF-8, and changed code to call it
+        when appropriate.
+
+        We added GETUTF8CHARLEN and GETUTF8CHARINC, to be used in cases where we always
+        process UTF-8, even if the subject string is UTF-16, and changed code to call
+        them when appropriate.
+
+     2) We added a JAVASCRIPT define that turns off and alters various features to match
+        the requirements of the JavaScript language specification.
+
+        We removed these:
+
+            \C \E \G \L \N \P \Q \U \X \Z
+            \e \l \p \u \z
+            [::] [..] [==]
+            (?#) (?<=) (?<!) (?>)
+            (?C) (?P) (?R)
+            (?0) (and 1-9)
+            (?imsxUX)
+
+        And we added these:
+
+            \u \v
+
+        And we changed the semantics for \1-style backreferences to parentheses that
+        are not included in a match to match the empty string instead of not matching
+        anything: This is a difference between the JavaScript language specification and
+        the perl script.
+
+        And we include ASCII 0x0B as a space.
+
+     3) We made a more-efficient version of the NO_RECURSE mode that uses goto or computed
+        goto statements instead of setjmp/longjmp, since it's so much faster that way.
+        We also allocated the first 16 stack frames on the stack instead of using malloc
+        every time; we use malloc for deeper nesting.
+
+        This included adding a numeric parameter to the RMATCH macro.
+
+     4) The original PCRE relied on having the input be a null-terminated string,
+        even though pcre_exec takes a length parameter. We removed that restriction,
+        passing additional parameters internally to make sure the code does not read
+        off the end of the input buffer.
+
+        We added the macro GETCHARLENEND.
+
+     5) We added code to forbid values that are not Unicode characters from being used in
+        \x and \u escape sequences in regular expressions.
+
+     6) We changed the names of the public entry points to have a kjs prefix so they don't
+        collide with a "real" copy of PCRE at link or load time.
+
+     7) We added a hand-edited pcre-config.h, which is used instead of a configure-generated
+        config.h file. Note, this is made from the config.h.in from the PCRE distribution.
+
+     8) We eliminated non-ASCII characters from the source files (they were used only
+        in one or two places).
+
+     9) We removed many unused source files.
+
+    10) We marked some additional global data tables const.
+
+    11) And we fixed some compiler warnings.
+
+For easy merging:
+
+     1) We look for approaches that minimize changes to the base PCRE code.
+
+     2) When making global changes we leave code alone that we're not compiling.
+        So code that's inside #if !JAVASCRIPT need not have the other changes above.
+
+     3) We are willing to format code strangely to minimize the differences from
+        the base PCRE code.
+
+Any differences from the base PCRE code should be viewed with these comments in mind.
