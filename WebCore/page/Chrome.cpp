@@ -369,9 +369,9 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
                     m_pausedTimeouts.append(make_pair(frame, timeouts));
                 }
             }
+#endif
         }
     }
-#endif
 
     size_t count = m_deferredFrames.size();
     for (size_t i = 0; i < count; ++i)

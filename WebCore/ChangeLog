@@ -1,5 +1,12 @@
 2007-09-25  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * page/Chrome.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+
+2007-09-25  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
 
         <rdar://problem/5283916>
