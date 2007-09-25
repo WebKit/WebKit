@@ -41,13 +41,13 @@ use webkitdirs;
 my $sourceDir = sourceDir();
 my $file = "WebKitAuxiliaryLibrary";
 my $zipFile = "$file.zip"; 
-my $supportLibsURL = "http://developer.apple.com/opensource/internet/$zipFile"; # UPDATE ME!!
-my $webkitLibrariesDir = File::Spec->rel2abs($ENV{'WEBKITLIBRARIESDIR'} || "$sourceDir/WebKitLibraries/win");
+my $auxiliaryLibsURL = "http://developer.apple.com/opensource/internet/$zipFile";
+my $webkitLibrariesDir = toUnixPath($ENV{'WEBKITLIBRARIESDIR'}) || "$sourceDir/WebKitLibraries/win";
 my $tmpDir = File::Spec->rel2abs(File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1));
 
 print "Checking Last-Modified date of $zipFile...\n";
 
-my $result = system "curl -s -I $supportLibsURL | grep Last-Modified > \"$tmpDir/$file.headers\"";
+my $result = system "curl -s -I $auxiliaryLibsURL | grep Last-Modified > \"$tmpDir/$file.headers\"";
 print STDERR "Couldn't check Last-Modified date of new $zipFile.\n" if $result;
 
 if (!$result && open NEW, "$tmpDir/$file.headers") {
@@ -65,7 +65,7 @@ if (!$result && open NEW, "$tmpDir/$file.headers") {
 }
 
 print "Downloading $zipFile...\n\n";
-$result = system "curl -o \"$tmpDir/$zipFile\" $supportLibsURL";
+$result = system "curl -o \"$tmpDir/$zipFile\" $auxiliaryLibsURL";
 die "Couldn't download $zipFile!" if $result;
 
 $result = system "unzip", "-q", "-d", $tmpDir, "$tmpDir/$zipFile";
@@ -92,3 +92,12 @@ $result = system "mv", "$tmpDir/$file.headers", $webkitLibrariesDir;
 print STDERR "Couldn't move $file.headers to $webkitLibrariesDir" . ".\n" if $result;
 
 print "The $file has been sucessfully installed in\n $webkitLibrariesDir\n";
+exit;
+
+sub toUnixPath
+{
+    my $path = shift;
+    return unless $path;
+    chomp($path = `cygpath -u '$path'`);
+    return $path;
+}

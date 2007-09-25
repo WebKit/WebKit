@@ -1,3 +1,20 @@
+2007-09-25  Adam Roben  <aroben@apple.com>
+
+        A couple of fixes/enhancements to update-webkit-*-libs
+
+        You can now specify WEBKITSUPPORTLIBRARIESZIPDIR=C:\my\special\place
+        to tell update-webkit-support-libraries where it should find the
+        WebKitSupportLibrary.zip file you downloaded.
+
+        These scripts also now correctly interpret WEBKITLIBRARIESDIR as a
+        Windows-style path.
+
+        Reviewed by Sam.
+
+        * Scripts/update-webkit-auxiliary-libs: Also renamed $supportLibsURL
+        to $auxiliaryLibsURL and removed an irrelevant comment.
+        * Scripts/update-webkit-support-libs:
+
 2007-09-25  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon and Lars.

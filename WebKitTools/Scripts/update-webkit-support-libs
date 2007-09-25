@@ -41,8 +41,9 @@ use webkitdirs;
 my $sourceDir = sourceDir();
 my $file = "WebKitSupportLibrary";
 my $zipFile = "$file.zip"; 
-my $pathToZip = "$sourceDir/$zipFile";
-my $webkitLibrariesDir = File::Spec->rel2abs($ENV{'WEBKITLIBRARIESDIR'} || "$sourceDir/WebKitLibraries/win");
+my $zipDirectory = toUnixPath($ENV{'WEBKITSUPPORTLIBRARIESZIPDIR'}) || $sourceDir;
+my $pathToZip = File::Spec->catfile($zipDirectory, $zipFile);
+my $webkitLibrariesDir = toUnixPath($ENV{'WEBKITLIBRARIESDIR'}) || "$sourceDir/WebKitLibraries/win";
 my $tmpDir = File::Spec->rel2abs(File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1));
 
 # Make sure the file zipfile exists before doing anything.
@@ -93,3 +94,12 @@ $result = system "mv", "$tmpDir/$file.modified", $webkitLibrariesDir;
 print STDERR "Couldn't move $file.modified to $webkitLibrariesDir" . ".\n" if $result;
 
 print "The $file has been sucessfully installed in\n $webkitLibrariesDir\n";
+exit;
+
+sub toUnixPath
+{
+    my $path = shift;
+    return unless $path;
+    chomp($path = `cygpath -u '$path'`);
+    return $path;
+}
