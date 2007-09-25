@@ -1,3 +1,21 @@
+2007-09-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5483567> 
+        REGRESSION (Tiger only, workaround in AppKit on Leopard): Pasting words copied from TextEdit in Mail adds extra newline
+        
+        Demonstrate fix:
+        * editing/pasteboard/5483567.html: Added.
+        * platform/mac/editing/pasteboard/5483567-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/5483567-expected.png: Added.
+        * platform/mac/editing/pasteboard/5483567-expected.txt: Added.
+        
+        Unrendered nodes removed:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt:
+        * editing/pasteboard/paste-RTFD-expected.txt:
+
 2007-09-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

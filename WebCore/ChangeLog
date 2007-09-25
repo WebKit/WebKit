@@ -1,3 +1,16 @@
+2007-09-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5483567> 
+        REGRESSION (Tiger only, workaround in AppKit on Leopard): Pasting words copied from TextEdit in Mail adds extra newline
+        
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedNodes): Added.
+        (WebCore::ReplaceSelectionCommand::doApply): Call removeUnrenderedNodes
+        to prevent unrendered spaces from interfering with paragraph merging.
+        * editing/ReplaceSelectionCommand.h:
+
 2007-09-24  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin.
