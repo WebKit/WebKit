@@ -48,7 +48,6 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "SVGStyleElement.h"
 #ifndef USE_QXMLSTREAM
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -64,6 +63,7 @@
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
+#include "SVGStyleElement.h"
 #include "XLinkNames.h"
 #endif
 

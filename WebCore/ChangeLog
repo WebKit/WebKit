@@ -1,3 +1,12 @@
+2007-09-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15275
+          SVG dependency on WebCore/dom/XMLTokenizer.cpp
+
+        * dom/XMLTokenizer.cpp: Moved #include "SVGStyleElement.h" into #if ENABLE(SVG).
+
 2007-09-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
