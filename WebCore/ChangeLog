@@ -1,3 +1,14 @@
+2007-09-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=15282 r25726 caused 
+        plugins/mouse-events.html to fail
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): We need to call 
+        updateWidgetPosition() after updating each widget.
+
 2007-09-25  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

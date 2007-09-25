@@ -482,8 +482,10 @@ void FrameView::layout(bool allowSubtree)
         m_widgetUpdateSet->swap(set);
         
         HashSet<RenderPartObject*>::iterator end = set.end();
-        for (HashSet<RenderPartObject*>::iterator it = set.begin(); it != end; ++it)
+        for (HashSet<RenderPartObject*>::iterator it = set.begin(); it != end; ++it) {
             (*it)->updateWidget(false);
+            (*it)->updateWidgetPosition();
+        }
     }
 
     // Allow events scheduled during layout to fire
