@@ -1,3 +1,15 @@
+2007-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5494608>
+        Seed: Safari will follow links in Flash movies without clicking.
+
+        Make sure to handle mouseover and mouseout so the plug-in can track when the mouse is over it.
+                
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::handleMouseEvent):
+
 2007-09-24  Mike Fenton  <mike@staikos.net>
 
         Reviewed by George Staikos.
