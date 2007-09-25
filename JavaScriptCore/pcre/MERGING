@@ -98,4 +98,4 @@ For easy merging:
      3) We are willing to format code strangely to minimize the differences from
         the base PCRE code.
 
-Any differences from the base PCRE code should be viewed with these comments in mind.
+Differences from the base PCRE code should be viewed with these comments in mind.
