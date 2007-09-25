@@ -3,7 +3,7 @@
         Reviewed by Simon and Lars.
 
         Modifies the addToJSWindowObject to bind js objects using the built-in
-        kst_window class.  Make sure to protect the created runtime object from
+        kjs_window class.  Make sure to protect the created runtime object from
         garbage collection.
 
         Adds a signal to QWebFrame to notify clients of the beginning of a
