@@ -14,8 +14,8 @@ With the following differences.
         We changed access to the digitab and ctypes arrays to range check and work only
         on values in the 0-255 range.
 
-        We changed GETCHAR, GETCHRATEST, GETCHARINC, GETCHARINCTEST, GETCHARLEN, and
-        GETCHARLENEND so they work on UTF-16.
+        We changed GETCHAR, GETCHRATEST, GETCHARINC, GETCHARINCTEST, and GETCHARLEN
+        so they work on UTF-16.
 
         We added ISMIDCHAR to abstract the notion of characters to skip over, and
         handle it right regardless of UTF-16 or UTF-8, and changed code to call it
@@ -61,7 +61,8 @@ With the following differences.
         passing additional parameters internally to make sure the code does not read
         off the end of the input buffer.
 
-        We added the macro GETCHARLENEND.
+        We added the macro GETCHARLENEND to be used in some places where GETCHARLEN
+        might otherwise walk off the end of the buffer.
 
      5) We added code to forbid values that are not Unicode characters from being used in
         \x and \u escape sequences in regular expressions.
@@ -87,6 +88,12 @@ For easy merging:
 
      2) When making global changes we leave code alone that we're not compiling.
         So code that's inside #if !JAVASCRIPT need not have the other changes above.
+
+        This can be a bit strange. For example, there's a choice about what to do with
+        the code to handle an end of pattern pointer or length rather than a trailing
+        zero. Our strategy is to not make enhancements to the code that we're not
+        compiling, so if you turned off the JAVASCRIPT flag, you'd find that the
+        range checking changes are incomplete. This is solely to aid merging.
 
      3) We are willing to format code strangely to minimize the differences from
         the base PCRE code.
