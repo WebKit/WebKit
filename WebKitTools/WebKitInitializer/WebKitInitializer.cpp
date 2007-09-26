@@ -35,6 +35,14 @@
 #include <tchar.h>
 #include <windows.h>
 
+#define LOG(header, ...) \
+    do { \
+        _ftprintf(stderr, header); \
+        _ftprintf(stderr, __VA_ARGS__); \
+    } while (0)
+#define LOG_WARNING(...) LOG(TEXT("WARNING: "), __VA_ARGS__)
+#define LOG_ERROR(...) LOG(TEXT("ERROR: "), __VA_ARGS__)
+
 #define DEBUGDLLSUFFIX TEXT("_debug")
 #define RELEASEDLLSUFFIX
 
@@ -73,13 +81,13 @@ static LPOLESTR getWebViewCLSID()
     CLSID clsid = CLSID_NULL;
     HRESULT hr = CLSIDFromProgID(webViewProgID, &clsid);
     if (FAILED(hr)) {
-        _ftprintf(stderr, TEXT("Failed to get CLSID for %s\n"), webViewProgID);
+        LOG_WARNING(TEXT("Failed to get CLSID for %s\n"), webViewProgID);
         return 0;
     }
 
     LPOLESTR clsidString = 0;
     if (FAILED(StringFromCLSID(clsid, &clsidString))) {
-        _ftprintf(stderr, TEXT("Failed to get string representation of CLSID for WebView\n"));
+        LOG_WARNING(TEXT("Failed to get string representation of CLSID for WebView\n"));
         return 0;
     }
 
@@ -101,7 +109,7 @@ static TCHAR* getInstalledWebKitDirectory()
     int ret = _sntprintf_s(keyString, keyBufferLength, keyBufferLength - 1, TEXT("%s%s%s"), keyPrefix, clsid, keySuffix);
     CoTaskMemFree(clsid);
     if (ret == -1) {
-        _ftprintf(stderr, TEXT("Failed to construct InprocServer32 key\n"));
+        LOG_WARNING(TEXT("Failed to construct InprocServer32 key\n"));
         return 0;
     }
 
@@ -109,20 +117,20 @@ static TCHAR* getInstalledWebKitDirectory()
     LONG error = RegOpenKeyEx(HKEY_LOCAL_MACHINE, keyString, 0, KEY_READ, &serverKey);
     free(keyString);
     if (error != ERROR_SUCCESS) {
-        _ftprintf(stderr, TEXT("Failed to open registry key %s\n"), keyString);
+        LOG_WARNING(TEXT("Failed to open registry key %s\n"), keyString);
         return 0;
     }
 
     TCHAR* webKitPath = getStringValue(serverKey, 0);
     RegCloseKey(serverKey);
     if (!webKitPath) {
-        _ftprintf(stderr, TEXT("Couldn't retrieve value for registry key %s\n"), keyString);
+        LOG_WARNING(TEXT("Couldn't retrieve value for registry key %s\n"), keyString);
         return 0;
     }
 
     TCHAR* startOfFileName = PathFindFileName(webKitPath);
     if (startOfFileName == webKitPath) {
-        _ftprintf(stderr, TEXT("Couldn't find filename from path %s\n"), webKitPath);
+        LOG_WARNING(TEXT("Couldn't find filename from path %s\n"), webKitPath);
         free(webKitPath);
         return 0;
     }
@@ -140,14 +148,11 @@ bool initializeWebKit()
 
     haveInitialized = true;
 
-    TCHAR* directory = getInstalledWebKitDirectory();
-    if (!directory) {
-        _ftprintf(stderr, TEXT("Couldn't determine installed WebKit directory\n"));
-        return false;
-    }
-
-    SetDllDirectory(directory);
-    free(directory);
+    if (TCHAR* directory = getInstalledWebKitDirectory()) {
+        SetDllDirectory(directory);
+        free(directory);
+    } else
+        LOG_WARNING(TEXT("Couldn't determine installed WebKit directory\n"));
 
     LPCTSTR webKitDependencies[] = {
         DLL(CFNetwork),
@@ -166,19 +171,19 @@ bool initializeWebKit()
 
     for (int i = 0; i < ARRAYSIZE(webKitDependencies); ++i)
         if (!LoadLibrary(webKitDependencies[i])) {
-            _ftprintf(stderr, TEXT("LoadLibrary(%s) failed\n"), webKitDependencies[i]);
+            LOG_ERROR(TEXT("LoadLibrary(%s) failed\n"), webKitDependencies[i]);
             return false;
         }
 
     HMODULE webKitModule = LoadLibrary(DLL(WebKit));
     if (!webKitModule) {
-        _ftprintf(stderr, TEXT("LoadLibrary(%s) failed\n"), DLL(WebKit));
+        LOG_ERROR(TEXT("LoadLibrary(%s) failed\n"), DLL(WebKit));
         return false;
     }
 
     FARPROC dllRegisterServer = GetProcAddress(webKitModule, "DllRegisterServer");
     if (!dllRegisterServer) {
-        _ftprintf(stderr, TEXT("GetProcAddress(webKitModule, \"DllRegisterServer\") failed\n"));
+        LOG_ERROR(TEXT("GetProcAddress(webKitModule, \"DllRegisterServer\") failed\n"));
         return false;
     }
 

@@ -1,5 +1,21 @@
 2007-09-26  Adam Roben  <aroben@apple.com>
 
+        Make not finding an installed WebKit non-fatal
+
+        What really matters is that we are able to load WebKit and its
+        dependencies, not whether we think we've found an installed WebKit.
+
+        Reviewed by Sam.
+
+        * WebKitInitializer/WebKitInitializer.cpp:
+        (getWebViewCLSID): Use new LOG_WARNING macro.
+        (getInstalledWebKitDirectory): Ditto.
+        (initializeWebKit): Don't die if we didn't find an installed WebKit,
+        and use new macros.
+        * WebKitInitializer/WebKitInitializer.vcproj: Disabled a warning.
+
+2007-09-26  Adam Roben  <aroben@apple.com>
+
         Committed this file before saving it
 
         * WebKitInitializer/debug_internal.vsprops:
