@@ -1,5 +1,17 @@
 2007-09-25  Adam Roben  <aroben@apple.com>
 
+        Add python and rsync to cygwin-downloader
+
+        Our build slaves need this, and it can't hurt for everyone else to
+        have it, too.
+
+        Reviewed by Sam.
+
+        * CygwinDownloader/cygwin-downloader.py: Added python and rsync.
+        * CygwinDownloader/cygwin-downloader.zip: Regenerated.
+
+2007-09-25  Adam Roben  <aroben@apple.com>
+
         Add WebKitInitializer and use it in DumpRenderTree
 
         WebKitInitializer is a static library that has one function,
