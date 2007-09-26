@@ -1,3 +1,11 @@
+2007-09-25  Sam Weinig  <sam@webkit.org>
+
+        Fix location for build products for Debug_Internal.
+
+        Reviewed by Adam Roben.
+
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
 2007-09-25  Adam Roben  <aroben@apple.com>
 
         Make testkjs use WebKitInitializer
