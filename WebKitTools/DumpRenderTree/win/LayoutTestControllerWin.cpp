@@ -243,7 +243,7 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
     // Same as on mac.  This can be shared.
     m_waitToDump = waitUntilDone;
     if (m_waitToDump && !waitToDumpWatchdog)
-        ::waitToDumpWatchdog = CFRunLoopTimerCreate(kCFAllocatorDefault, 0, waitToDumpWatchdogInterval, 0, 0, waitUntilDoneWatchdogFired, NULL);
+        ::waitToDumpWatchdog = CFRunLoopTimerCreate(0, 0, waitToDumpWatchdogInterval, 0, 0, waitUntilDoneWatchdogFired, NULL);
 }
 
 int LayoutTestController::windowCount()

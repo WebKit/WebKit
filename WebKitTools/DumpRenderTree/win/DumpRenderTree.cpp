@@ -540,11 +540,11 @@ static void runTest(const char* pathOrURL)
 
     BSTR urlBStr;
  
-    CFStringRef str = CFStringCreateWithCString(kCFAllocatorDefault, pathOrURL, kCFStringEncodingWindowsLatin1);
-    CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, str, 0);
+    CFStringRef str = CFStringCreateWithCString(0, pathOrURL, kCFStringEncodingWindowsLatin1);
+    CFURLRef url = CFURLCreateWithString(0, str, 0);
 
     if (!url)
-        url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, str, kCFURLWindowsPathStyle, false);
+        url = CFURLCreateWithFileSystemPath(0, str, kCFURLWindowsPathStyle, false);
 
     CFRelease(str);
 
@@ -665,7 +665,7 @@ static CFMutableDictionaryRef javaScriptThreads()
     assert(pthread_mutex_trylock(&javaScriptThreadsMutex) == EBUSY);
     static CFMutableDictionaryRef staticJavaScriptThreads;
     if (!staticJavaScriptThreads)
-        staticJavaScriptThreads = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &pthreadKeyCallbacks, 0);
+        staticJavaScriptThreads = CFDictionaryCreateMutable(0, 0, &pthreadKeyCallbacks, 0);
     return staticJavaScriptThreads;
 }
 

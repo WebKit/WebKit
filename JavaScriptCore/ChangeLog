@@ -1,3 +1,14 @@
+2007-09-25  Adam Roben  <aroben@apple.com>
+
+        Make testkjs delay-load its dependencies
+
+        This lets WebKitInitializer re-route the dependencies to be loaded out
+        of the Safari installation directory.
+
+        Rubberstamped by Sam.
+
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
 2007-09-25  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam.

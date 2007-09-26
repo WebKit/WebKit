@@ -1,5 +1,25 @@
 2007-09-25  Adam Roben  <aroben@apple.com>
 
+        Make DumpRenderTree delay-load its dependencies
+
+        This lets WebKitInitializer re-route the dependencies to be loaded out
+        of the Safari installation directory.
+
+        Also replaced all uses of kCFAllocatorDefault with 0 (which means the
+        same thing), since we can't import the kCFAllocatorDefault symbol when
+        delay-loading CoreFoundation.dll.
+
+        Rubberstamped by Sam.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        (javaScriptThreads):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setWaitToDump):
+
+2007-09-25  Adam Roben  <aroben@apple.com>
+
         Pull ole32.lib into WebKitInitializer
 
         Rubberstamped by Sam.
