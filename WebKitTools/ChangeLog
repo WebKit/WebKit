@@ -1,5 +1,13 @@
 2007-09-25  Adam Roben  <aroben@apple.com>
 
+        Actually define DEBUG/NDEBUG so that we load WebKit correctly
+
+        Rubberstamped by Sam.
+
+        * WebKitInitializer/WebKitInitializer.vcproj:
+
+2007-09-25  Adam Roben  <aroben@apple.com>
+
         Make DumpRenderTree delay-load its dependencies
 
         This lets WebKitInitializer re-route the dependencies to be loaded out
