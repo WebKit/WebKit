@@ -35,6 +35,19 @@
 #include <tchar.h>
 #include <windows.h>
 
+#define DEBUGDLLSUFFIX TEXT("_debug")
+#define RELEASEDLLSUFFIX
+
+#define EITHERDLL(name, suffix) (TEXT( #name ) suffix TEXT(".dll"))
+#define RELEASEDLL(name) EITHERDLL(name, RELEASEDLLSUFFIX)
+#define DEBUGDLL(name) EITHERDLL(name, DEBUGDLLSUFFIX)
+
+#ifdef USE_DEBUG_SUPPORT_LIBS
+#define DLL(name) DEBUGDLL(name)
+#else
+#define DLL(name) RELEASEDLL(name)
+#endif
+
 static TCHAR* getStringValue(HKEY key, LPCTSTR valueName)
 {
     DWORD type = 0;
@@ -42,9 +55,9 @@ static TCHAR* getStringValue(HKEY key, LPCTSTR valueName)
     if (RegQueryValueEx(key, valueName, 0, &type, 0, &bufferSize) != ERROR_SUCCESS || type != REG_SZ)
         return 0;
 
-    TCHAR* buffer = new TCHAR[bufferSize / sizeof(TCHAR)];
+    TCHAR* buffer = (TCHAR*)malloc(bufferSize);
     if (RegQueryValueEx(key, 0, 0, &type, reinterpret_cast<LPBYTE>(buffer), &bufferSize) != ERROR_SUCCESS) {
-        delete [] buffer;
+        free(buffer);
         return 0;
     }
 
@@ -83,7 +96,7 @@ static TCHAR* getInstalledWebKitDirectory()
         return 0;
 
     size_t keyBufferLength = _tcslen(keyPrefix) + _tcslen(clsid) + _tcslen(keySuffix) + 1;
-    TCHAR* keyString = new TCHAR[keyBufferLength];
+    TCHAR* keyString = (TCHAR*)malloc(keyBufferLength * sizeof(TCHAR));
 
     int ret = _sntprintf_s(keyString, keyBufferLength, keyBufferLength - 1, TEXT("%s%s%s"), keyPrefix, clsid, keySuffix);
     CoTaskMemFree(clsid);
@@ -94,7 +107,7 @@ static TCHAR* getInstalledWebKitDirectory()
 
     HKEY serverKey = 0;
     LONG error = RegOpenKeyEx(HKEY_LOCAL_MACHINE, keyString, 0, KEY_READ, &serverKey);
-    delete [] keyString;
+    free(keyString);
     if (error != ERROR_SUCCESS) {
         _ftprintf(stderr, TEXT("Failed to open registry key %s\n"), keyString);
         return 0;
@@ -110,7 +123,7 @@ static TCHAR* getInstalledWebKitDirectory()
     TCHAR* startOfFileName = PathFindFileName(webKitPath);
     if (startOfFileName == webKitPath) {
         _ftprintf(stderr, TEXT("Couldn't find filename from path %s\n"), webKitPath);
-        delete [] webKitPath;
+        free(webKitPath);
         return 0;
     }
 
@@ -127,15 +140,39 @@ bool initializeWebKit()
 
     haveInitialized = true;
 
-#ifdef NDEBUG
-    LPCTSTR webKitDLL = TEXT("WebKit.dll");
-#else
-    LPCTSTR webKitDLL = TEXT("WebKit_debug.dll");
-#endif
+    TCHAR* directory = getInstalledWebKitDirectory();
+    if (!directory) {
+        _ftprintf(stderr, TEXT("Couldn't determine installed WebKit directory\n"));
+        return false;
+    }
 
-    HMODULE webKitModule = LoadLibrary(webKitDLL);
+    SetDllDirectory(directory);
+    free(directory);
+
+    LPCTSTR webKitDependencies[] = {
+        DLL(CFNetwork),
+        DLL(CoreFoundation),
+        DLL(CoreGraphics),
+        DLL(SQLite3),
+        DLL(SafariTheme),
+        RELEASEDLL(icudt36),
+        DLL(icuin36),
+        DLL(icuuc36),
+        DLL(libxml2),
+        DLL(libxslt),
+        DLL(pthreadVC2),
+        DLL(zlib1),
+    };
+
+    for (int i = 0; i < ARRAYSIZE(webKitDependencies); ++i)
+        if (!LoadLibrary(webKitDependencies[i])) {
+            _ftprintf(stderr, TEXT("LoadLibrary(%s) failed\n"), webKitDependencies[i]);
+            return false;
+        }
+
+    HMODULE webKitModule = LoadLibrary(DLL(WebKit));
     if (!webKitModule) {
-        _ftprintf(stderr, TEXT("LoadLibrary(%s) failed\n"), webKitDLL);
+        _ftprintf(stderr, TEXT("LoadLibrary(%s) failed\n"), DLL(WebKit));
         return false;
     }
 
@@ -146,15 +183,6 @@ bool initializeWebKit()
     }
 
     dllRegisterServer();
-
-    TCHAR* directory = getInstalledWebKitDirectory();
-    if (!directory) {
-        _ftprintf(stderr, TEXT("Couldn't determine installed WebKit directory\n"));
-        return false;
-    }
-
-    SetDllDirectory(directory);
-    delete [] directory;
 
     success = true;
     return success;

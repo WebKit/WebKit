@@ -144,6 +144,72 @@
 				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(InputDir)*.h&quot; &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Debug_Internal|Win32"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="4"
+			InheritedPropertySheets=".\debug_internal.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				PreprocessorDefinitions="DEBUG"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				WarningLevel="4"
+				WarnAsError="true"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalDependencies="shlwapi.lib advapi32.lib ole32.lib"
+				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(InputDir)*.h&quot; &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>

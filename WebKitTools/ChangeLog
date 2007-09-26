@@ -1,3 +1,22 @@
+2007-09-26  Adam Roben  <aroben@apple.com>
+
+        Load WebKit and its dependencies manually so they come from DllDirectory
+
+        I had to change WebKitInitializer to use malloc/free instead of
+        new/delete to avoid pulling in WebKit (and its dependencies) early
+        through use of fastMalloc.
+
+        Reviewed by Oliver.
+
+        * WebKitInitializer/WebKitInitializer.cpp:
+        (getStringValue): Changed to use malloc/free.
+        (getInstalledWebKitDirectory): Ditto.
+        (initializeWebKit): Call SetDllDirectory first, then load all of
+        WebKit's dependencies manually, finally followed by WebKit itself.
+        * WebKitInitializer/WebKitInitializer.vcproj: Added a new
+        configuration to match our other projects.
+        * WebKitInitializer/debug_internal.vsprops: Added.
+
 2007-09-25  Adam Roben  <aroben@apple.com>
 
         Actually define DEBUG/NDEBUG so that we load WebKit correctly
