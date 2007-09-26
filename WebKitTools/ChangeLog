@@ -1,5 +1,11 @@
 2007-09-26  Adam Roben  <aroben@apple.com>
 
+        Committed this file before saving it
+
+        * WebKitInitializer/debug_internal.vsprops:
+
+2007-09-26  Adam Roben  <aroben@apple.com>
+
         Load WebKit and its dependencies manually so they come from DllDirectory
 
         I had to change WebKitInitializer to use malloc/free instead of
