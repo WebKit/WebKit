@@ -28,7 +28,7 @@
 
 #include "WebKitInitializer.h"
 
-// Needed to get SetDllDirectory
+// Needed to get SetDllDirectory.
 #define _WIN32_WINNT 0x0502
 
 #include <shlwapi.h>

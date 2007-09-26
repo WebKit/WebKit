@@ -42,8 +42,8 @@
 
 #if PLATFORM(WIN_OS)
 #include <WebKitInitializer/WebKitInitializer.h>
-#include <windows.h>
 #include <crtdbg.h>
+#include <windows.h>
 #endif
 
 #if PLATFORM(QT)
