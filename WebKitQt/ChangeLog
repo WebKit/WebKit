@@ -1,3 +1,35 @@
+2007-09-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=14885
+          LGPL'ed files contain incorrect FSF address
+
+        * Api/qcookiejar.cpp:
+        * Api/qcookiejar.h:
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebhistoryinterface.cpp:
+        * Api/qwebhistoryinterface.h:
+        * Api/qwebkitglobal.h:
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        * Api/qwebobjectplugin.cpp:
+        * Api/qwebobjectplugin.h:
+        * Api/qwebobjectpluginconnector.cpp:
+        * Api/qwebobjectpluginconnector.h:
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebpagehistory.cpp:
+        * Api/qwebpagehistory.h:
+        * Api/qwebsettings.cpp:
+        * Api/qwebsettings.h:
+        * WebCoreSupport/EditCommandQt.cpp:
+        * WebCoreSupport/EditCommandQt.h:
+
 2007-09-25  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon and Lars.

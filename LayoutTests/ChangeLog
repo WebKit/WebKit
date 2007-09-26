@@ -1,3 +1,22 @@
+2007-09-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=14885
+          LGPL'ed files contain incorrect FSF address
+
+        * svg/carto.net/resources/button.js:
+        * svg/carto.net/resources/colourPicker.js:
+        * svg/carto.net/resources/comboBox.js:
+        * svg/carto.net/resources/helper_functions.js:
+        * svg/carto.net/resources/mapApp.js:
+        * svg/carto.net/resources/scrollbar.js:
+        * svg/carto.net/resources/selectionList.js:
+        * svg/carto.net/resources/slider.js:
+        * svg/carto.net/resources/tabgroup.js:
+        * svg/carto.net/resources/textbox.js:
+        * svg/carto.net/resources/window.js:
+
 2007-09-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

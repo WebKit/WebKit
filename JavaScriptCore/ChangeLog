@@ -1,3 +1,18 @@
+2007-09-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=14885
+          LGPL'ed files contain incorrect FSF address
+
+        * COPYING.LIB:
+        * bindings/testbindings.cpp:
+        * kjs/AllInOneFile.cpp:
+        * kjs/DateMath.cpp:
+        * kjs/PropertyNameArray.cpp:
+        * kjs/PropertyNameArray.h:
+        * kjs/config.h:
+
 2007-09-25  Sam Weinig  <sam@webkit.org>
 
         Fix location for build products for Debug_Internal.

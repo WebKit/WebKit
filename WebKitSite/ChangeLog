@@ -1,3 +1,16 @@
+2007-09-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=14885
+          LGPL'ed files contain incorrect FSF address
+
+        * blog/wp-content/plugins/wp-cache/wp-cache.php:
+        * blog/wp-includes/class-snoopy.php:
+        * blog/wp-includes/gettext.php:
+        * blog/wp-includes/js/tinymce/license.html:
+        * blog/wp-includes/streams.php:
+
 2007-09-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.

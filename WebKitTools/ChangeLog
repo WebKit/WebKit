@@ -2,6 +2,15 @@
 
         Reviewed by Adam.
 
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=14885
+          LGPL'ed files contain incorrect FSF address
+
+        * Drosera/config.h:
+
+2007-09-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
         Make svn-apply and svn-unapply work with git-diff formatted patches.
 
         * Scripts/svn-apply: Apply a filter to the input if we find a git-diff marker before a patch.
