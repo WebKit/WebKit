@@ -124,6 +124,7 @@ bool initializeWebKit()
     static bool success;
     if (haveInitialized)
         return success;
+
     haveInitialized = true;
 
 #ifdef NDEBUG
