@@ -1,5 +1,15 @@
 2007-09-25  Adam Roben  <aroben@apple.com>
 
+        Pull advapi32.lib into WebKitInitializer
+
+        This is needed to get the registry functions we use.
+
+        Rubberstamped by Sam.
+
+        * WebKitInitializer/WebKitInitializer.vcproj:
+
+2007-09-25  Adam Roben  <aroben@apple.com>
+
         Add python and rsync to cygwin-downloader
 
         Our build slaves need this, and it can't hurt for everyone else to

@@ -59,7 +59,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
 			/>
 			<Tool
@@ -76,7 +76,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(InputDir)*.h&quot; &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(InputDir)*.h&quot; &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -122,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="shlwapi.lib"
+				AdditionalDependencies="shlwapi.lib advapi32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
 			/>
 			<Tool
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(InputDir)*.h&quot; &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(InputDir)*.h&quot; &quot;$(WebKitOutputDir)\include\WebKitInitializer&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
