@@ -1,3 +1,14 @@
+2007-09-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        Make svn-apply and svn-unapply work with git-diff formatted patches.
+
+        * Scripts/svn-apply: Apply a filter to the input if we find a git-diff marker before a patch.
+        (gitdiff2svndiff): Added.
+        * Scripts/svn-unapply: Ditto.
+        (gitdiff2svndiff): Added.
+
 2007-09-25  Adam Roben  <aroben@apple.com>
 
         Pull advapi32.lib into WebKitInitializer

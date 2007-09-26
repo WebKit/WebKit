@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #       the patch before it is applied (svn-apply sets it when applying a patch).
 #   Handles binary files (requires patches made by svn-create-patch).
 #   Handles copied and moved files (requires patches made by svn-create-patch).
+#   Handles git-diff patches (without binary changes) created at the top-level directory
 #
 # Missing features:
 #
@@ -51,6 +52,7 @@
 #   Notice a patch that's being unapplied at the "wrong level" and make it work anyway.
 #   Do a dry run on the whole patch and don't do anything if part of the patch is
 #       going to fail (probably too strict unless we exclude ChangeLog).
+#   Handle git-diff patches with binary changes
 
 use strict;
 use warnings;
@@ -65,6 +67,7 @@ use Getopt::Long;
 
 sub checksum($);
 sub fixChangeLogPatch($);
+sub gitdiff2svndiff($);
 sub patch($);
 sub revertDirectories();
 sub svnStatus($);
@@ -81,11 +84,16 @@ my @copiedFiles;
 my %directoriesToCheck;
 
 my $copiedFromPath;
+my $filter;
 my $indexPath;
 my $patch;
 while (<>) {
     s/\r//g;
     chomp;
+    if (!defined($indexPath) && m#^diff --git a/#) {
+        $filter = \&gitdiff2svndiff;
+    }
+    $_ = &$filter($_) if $filter;
     if (/^Index: (.*)/) {
         $indexPath = $1;
         if ($patch) {
@@ -188,6 +196,21 @@ sub fixChangeLogPatch($)
     }
 
     return $newPatch;
+}
+
+sub gitdiff2svndiff($)
+{
+    $_ = shift @_;
+    if (m#^diff --git a/(.+) b/(.+)#) {
+        return "Index: $1";
+    } elsif (m#^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}#) {
+        return "===================================================================";
+    } elsif (m#^--- a/(.+)#) {
+        return "--- $1";
+    } elsif (m#^\+\+\+ b/(.+)#) {
+        return "+++ $1";
+    }
+    return $_;
 }
 
 sub patch($)
