@@ -1,3 +1,11 @@
+2007-09-26  Adam Roben  <aroben@apple.com>
+
+        Make testkjs delay-load WebKit.dll so WebKitInitializer can work its magic
+
+        Rubberstamped by Anders.
+
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
 2007-09-25  Adam Roben  <aroben@apple.com>
 
         Make testkjs delay-load its dependencies
