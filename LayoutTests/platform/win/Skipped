@@ -50,6 +50,8 @@ http/tests/ssl
 css1/basic/contextual_selectors.html
 css1/font_properties/font.html
 css1/pseudo/multiple_pseudo_elements.html
+css2.1/t1202-counter-09-b.html
+css2.1/t1202-counters-09-b.html
 css2.1/t1508-c527-font-00-b.html
 css2.1/t1508-c527-font-04-b.html
 css2.1/t1508-c527-font-05-b.html
@@ -229,6 +231,7 @@ editing/pasteboard/drag-drop-modifies-page.html
 
 # DumpRenderTree doesn't support multiple windows <rdar://problem/5132009>
 fast/dom/open-and-close-by-DOM.html
+fast/dom/Document/early-document-access.html
 fast/history/history_reload.html
 http/tests/navigation/new-window-redirect-history.html
 http/tests/navigation/target-frame-from-window.html
@@ -439,6 +442,30 @@ editing/selection/5195166-1.html
 editing/selection/5195166-2.html
 editing/selection/select-line.html
 editing/selection/selection-actions.html
+
+# <rdar://5507209> Triple-clicks from eventSender aren't working
+editing/selection/5057506-2.html
+
+# <rdar://5507233> Cookie isn't getting set
+fast/cookies/local-file-can-set-cookies.html
+
+# <rdar://5507244>
+fast/dom/object-embed-plugin-scripting.html
+
+# <rdar://5507262> statusText is empty
+fast/loader/xmlhttprequest-missing-file-exception.html
+
+# <rdar://5507278> Crash
+http/tests/incremental/frame-focus-before-load.html
+
+# <rdar://5507285> Back/forward list is missing entries
+http/tests/navigation/javascriptlink-frames.html
+
+# <rdar://5507350> embed.Play is undefined
+plugins/embed-attributes-setting.html
+
+# <rdar://5507360> Crash
+plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html 
 
 # We can't make platform specifc results so keep this here for now
 # This test is dependant on DRT being able to open windows.
