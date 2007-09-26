@@ -1,5 +1,32 @@
 2007-09-25  Adam Roben  <aroben@apple.com>
 
+        Add WebKitInitializer and use it in DumpRenderTree
+
+        WebKitInitializer is a static library that has one function,
+        initializeWebKit(). This registers WebKit and sets up the DLL search
+        path so that WebKit's dependencies that are installed with Safari can
+        be found.
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/DumpRenderTree.sln: Added WebKitInitializer and made
+        DumpRenderTree depend on it.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize): Call initializeWebKit.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Link against
+        WebKitInitializer.lib.
+        * WebKitInitializer/WebKitInitializer.cpp: Added.
+        (getStringValue):
+        (getWebViewCLSID):
+        (getInstalledWebKitDirectory):
+        (initializeWebKit):
+        * WebKitInitializer/WebKitInitializer.h: Added.
+        * WebKitInitializer/WebKitInitializer.vcproj: Added.
+        * WebKitInitializer/debug.vsprops: Added.
+        * WebKitInitializer/release.vsprops: Added.
+
+2007-09-25  Adam Roben  <aroben@apple.com>
+
         Make run-webkit-tests respect set-webkit-configuration
 
         Reviewed by Sam.

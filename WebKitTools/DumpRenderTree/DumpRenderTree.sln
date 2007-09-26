@@ -2,16 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DumpRenderTree", "win\DumpRenderTree.vcproj", "{6567DFD4-D6DE-4CD5-825D-17E353D160E1}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
+	ProjectSection(ProjectDependencies) = postProject
+		{9E96B9B5-0CCB-47F8-A95E-C25ABE049E02} = {9E96B9B5-0CCB-47F8-A95E-C25ABE049E02}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNetscapePlugin", "win\TestNetscapePlugin\TestNetscapePlugin.vcproj", "{C0737398-3565-439E-A2B8-AB2BE4D5430C}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitInitializer", "..\WebKitInitializer\WebKitInitializer.vcproj", "{9E96B9B5-0CCB-47F8-A95E-C25ABE049E02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +29,12 @@ Global
 		{C0737398-3565-439E-A2B8-AB2BE4D5430C}.Debug|Win32.Build.0 = Debug|Win32
 		{C0737398-3565-439E-A2B8-AB2BE4D5430C}.Release|Win32.ActiveCfg = Release|Win32
 		{C0737398-3565-439E-A2B8-AB2BE4D5430C}.Release|Win32.Build.0 = Release|Win32
+		{9E96B9B5-0CCB-47F8-A95E-C25ABE049E02}.Debug_Internal|Win32.ActiveCfg = Debug|Win32
+		{9E96B9B5-0CCB-47F8-A95E-C25ABE049E02}.Debug_Internal|Win32.Build.0 = Debug|Win32
+		{9E96B9B5-0CCB-47F8-A95E-C25ABE049E02}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E96B9B5-0CCB-47F8-A95E-C25ABE049E02}.Debug|Win32.Build.0 = Debug|Win32
+		{9E96B9B5-0CCB-47F8-A95E-C25ABE049E02}.Release|Win32.ActiveCfg = Release|Win32
+		{9E96B9B5-0CCB-47F8-A95E-C25ABE049E02}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

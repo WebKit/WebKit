@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -67,7 +67,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"
@@ -128,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -151,7 +151,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"
@@ -214,7 +214,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -239,7 +239,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
+				AdditionalDependencies="JavaScriptCore$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib icuuc$(LibraryConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;..\..\..\icu\lib"

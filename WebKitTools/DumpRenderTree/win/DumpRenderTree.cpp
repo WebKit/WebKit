@@ -42,6 +42,7 @@
 #include <pthread.h>
 #include <string>
 #include <tchar.h>
+#include <WebKitInitializer/WebKitInitializer.h>
 #include <WebKit/DOMPrivate.h>
 #include <WebKit/IWebFramePrivate.h>
 #include <WebKit/IWebHistoryItem.h>
@@ -111,13 +112,10 @@ extern "C" BOOL InitializeCoreGraphics();
 
 static wstring initialize(HMODULE hModule)
 {
-#ifdef NDEBUG
-    HMODULE webKitModule = LoadLibraryW(L"WebKit.dll");
-#else
-    HMODULE webKitModule = LoadLibraryW(L"WebKit_debug.dll");
-#endif
-    FARPROC dllRegisterServer = ::GetProcAddress(webKitModule, "DllRegisterServer");
-    dllRegisterServer();
+    if (!initializeWebKit()) {
+        fprintf(stderr, "WebKit failed to initialize\n");
+        abort();
+    }
 
     static LPCTSTR fontsToInstall[] = {
         TEXT("AHEM____.ttf"),

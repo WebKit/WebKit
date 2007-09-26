@@ -1,3 +1,16 @@
+2007-09-25  Adam Roben  <aroben@apple.com>
+
+        Make testkjs use WebKitInitializer
+
+        Reviewed by Sam.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Add WebKitInitializer and
+        make testkjs depend on it.
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj: Link against
+        WebKitInitializer.lib.
+        * kjs/testkjs.cpp:
+        (main): Call initializeWebKit.
+
 2007-09-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
