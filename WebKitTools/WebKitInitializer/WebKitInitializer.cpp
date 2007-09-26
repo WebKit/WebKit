@@ -140,7 +140,7 @@ bool initializeWebKit()
 
     FARPROC dllRegisterServer = GetProcAddress(webKitModule, "DllRegisterServer");
     if (!dllRegisterServer) {
-        _ftprintf(stderr, TEXT("GetProcAddress(\"DllRegisterServer\") failed\n"));
+        _ftprintf(stderr, TEXT("GetProcAddress(webKitModule, \"DllRegisterServer\") failed\n"));
         return false;
     }
 
