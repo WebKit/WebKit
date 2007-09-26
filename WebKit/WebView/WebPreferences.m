@@ -691,6 +691,17 @@ static WebCacheModel cacheModelForMainBundle(void)
     return [self _boolValueForKey:WebKitUsesPageCachePreferenceKey];
 }
 
+- (void)setCacheModel:(WebCacheModel)cacheModel
+{
+    [self _setIntegerValue:cacheModel forKey:WebKitCacheModelPreferenceKey];
+    [self setAutomaticallyDetectsCacheModel:NO];
+}
+
+- (WebCacheModel)cacheModel
+{
+    return [self _integerValueForKey:WebKitCacheModelPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebPrivate)
@@ -733,17 +744,6 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setShrinksStandaloneImagesToFit:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitShrinksStandaloneImagesToFit];
-}
-
-- (void)setCacheModel:(WebCacheModel)cacheModel
-{
-    [self _setIntegerValue:cacheModel forKey:WebKitCacheModelPreferenceKey];
-    [self setAutomaticallyDetectsCacheModel:NO];
-}
-
-- (WebCacheModel)cacheModel
-{
-    return [self _integerValueForKey:WebKitCacheModelPreferenceKey];
 }
 
 - (BOOL)automaticallyDetectsCacheModel

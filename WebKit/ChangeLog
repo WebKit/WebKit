@@ -1,3 +1,19 @@
+2007-09-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        Fixed <rdar://problem/5507476> Promote cache model SPI to API
+        
+        Promoted cache model SPI to API. This was just a move, with some small 
+        edits to the documentation (changing 'application' to 'WebView' in 
+        some cases, since the interface is now per-WebView).
+
+        * WebView/WebPreferences.h:
+        * WebView/WebPreferences.m:
+        (-[WebPreferences setCacheModel:]):
+        (-[WebPreferences cacheModel]):
+        * WebView/WebPreferencesPrivate.h:
+
 2007-09-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
