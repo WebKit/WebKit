@@ -59,7 +59,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="shlwapi.lib advapi32.lib"
+				AdditionalDependencies="shlwapi.lib advapi32.lib ole32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
 			/>
 			<Tool
@@ -122,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="shlwapi.lib advapi32.lib"
+				AdditionalDependencies="shlwapi.lib advapi32.lib ole32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib"
 			/>
 			<Tool

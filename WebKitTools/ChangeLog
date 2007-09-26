@@ -1,3 +1,11 @@
+2007-09-25  Adam Roben  <aroben@apple.com>
+
+        Pull ole32.lib into WebKitInitializer
+
+        Rubberstamped by Sam.
+
+        * WebKitInitializer/WebKitInitializer.vcproj:
+
 2007-09-25  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam.
