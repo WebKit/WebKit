@@ -662,7 +662,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, Do
         pt->save();
         updateGraphicsContext(pt, yellow, yellow, 0);  // Don't draw text at all!
         pt->clip(IntRect(tx + m_x, ty + y, m_width, h));
-        pt->drawHighlightForText(run, startPoint, h, renderStyle, yellow);
+        pt->drawHighlightForText(run, startPoint, h, renderStyle, yellow, sPos, ePos);
         pt->restore();
     }
 }
