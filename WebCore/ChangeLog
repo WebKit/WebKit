@@ -1,3 +1,13 @@
+2007-09-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
+        - fix <rdar://problem/5503225> CrashTracer: [USER] 2 crashes in Dashcode
+          at com.apple.WebCore: WebCore::Frame::document const + 0
+
+        * page/FrameView.cpp: (WebCore::FrameView::updateControlTints):
+        Added null check.
+
 2007-09-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
