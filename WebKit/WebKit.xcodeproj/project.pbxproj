@@ -1654,7 +1654,7 @@
 					"-sectorder",
 					__TEXT,
 					__text,
-					/AppleInternal/OrderFiles/WebKit.order,
+					WebKit.order,
 				);
 			};
 			name = Production;

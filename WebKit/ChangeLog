@@ -1,3 +1,12 @@
+2007-09-27  Kevin Decker  <kdecker@apple.com>
+
+        Rubber stamped by Darin.
+
+        <rdar://problem/5493093>
+
+        * WebKit.order: Added.
+        * WebKit.xcodeproj/project.pbxproj: Altered build settings to use the new order file project instead of AppleInternal.
+
 2007-09-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adele Peterson.
