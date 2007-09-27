@@ -1,3 +1,16 @@
+2007-09-27  David Hyatt  <hyatt@apple.com>
+
+        Update to reflect the minimal WebKitSystemInterface changes required
+        to support @font-face.
+
+        Reviewed by john
+
+        * platform/mac/FontDataMac.mm:
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::platformWidthForGlyph):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2007-09-26  Darin Adler  <darin@apple.com>
 
         - fix Windows build

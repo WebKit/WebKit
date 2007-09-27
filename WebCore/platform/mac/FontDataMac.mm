@@ -161,7 +161,7 @@ void FontData::platformInit()
     int iDescent;
     int iLineGap;
     unsigned unitsPerEm;
-    wkGetFontMetrics(m_font.font(), &iAscent, &iDescent, &iLineGap, &unitsPerEm); 
+    wkGetFontMetrics(wkGetCGFontFromNSFont(m_font.font()), &iAscent, &iDescent, &iLineGap, &unitsPerEm); 
     float pointSize = [m_font.font() pointSize];
     float fAscent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
     float fDescent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
@@ -282,7 +282,7 @@ float FontData::platformWidthForGlyph(Glyph glyph) const
     float pointSize = [font pointSize];
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
-    if (!wkGetGlyphTransformedAdvances(font, &m, &glyph, &advance)) {
+    if (!wkGetGlyphTransformedAdvances(wkGetCGFontFromNSFont(font), font, &m, &glyph, &advance)) {
         LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
         advance.width = 0;
     }
