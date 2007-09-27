@@ -228,7 +228,7 @@ Widget* FrameLoaderClient::createJavaAppletWidget(const IntSize&, Element*, cons
 
 ObjectContentType FrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
 {
-    if (!url.isValid())
+    if (url.isEmpty())
         return ObjectContentType();
 
     // TODO: use more than just the extension to determine the content type?

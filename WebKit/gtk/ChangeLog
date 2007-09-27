@@ -1,3 +1,9 @@
+2007-09-26  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:  Check for empty URL instead of invalid URL.
+
 2007-09-17  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Adam.
