@@ -1,3 +1,10 @@
+2007-09-27  Sam Weinig  <sam@webkit.org>
+
+        Build fix. Ran update-webkitsysteminterface script on Tiger, because
+        the resulting binary differs when built on Tiger.
+
+        * libWebKitSystemInterface.a:
+
 2007-09-27  David Hyatt  <hyatt@apple.com>
 
         Update WebKitSYstemInterface for @font-face changes.
