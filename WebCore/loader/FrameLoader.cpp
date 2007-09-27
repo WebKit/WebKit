@@ -3160,8 +3160,10 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, bool mainRes
 {
     applyUserAgent(request);
     
-    if (m_loadType == FrameLoadTypeReload)
+    if (m_loadType == FrameLoadTypeReload) {
+        request.setCachePolicy(ReloadIgnoringCacheData);
         request.setHTTPHeaderField("Cache-Control", "max-age=0");
+    }
     
     // Don't set the cookie policy URL if it's already been set.
     if (request.mainDocumentURL().isEmpty()) {

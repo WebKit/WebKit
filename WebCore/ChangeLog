@@ -1,3 +1,13 @@
+2007-09-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Fix for <rdar://problem/5453350> REGRESSION (r18541, Tiger only): Refreshing a cached https page does not reload CSS and JavaScript resources
+        http://bugs.webkit.org/show_bug.cgi?id=15121
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::addExtraFieldsToRequest): Now sets the cache policy to ReloadIgnoringCacheData.  Without setting the cache policy,
+        the default policy in this case was ReturnCacheDataElseLoad.  If we're in a situation where the resource is in the cache, we want to make sure to avoid loading from the cache in this case.
+
 2007-09-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
