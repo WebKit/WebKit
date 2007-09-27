@@ -531,7 +531,7 @@ namespace WebCore {
         void opened();
         void updateHistoryAfterClientRedirect();
 
-        void clear(bool clearWindowProperties = true);
+        void clear(bool clearWindowProperties = true, bool clearScriptObjects = true);
 
         bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
         void handleUnimplementablePolicy(const ResourceError&);
@@ -545,6 +545,8 @@ namespace WebCore {
         void stopRedirectionTimer();
 
         void startIconLoader();
+        
+        bool isSecureTransition(const KURL& fromURL, const KURL& toURL);
 
 #if USE(LOW_BANDWIDTH_DISPLAY)
         // implementation of CachedResourceClient        
@@ -636,6 +638,7 @@ namespace WebCore {
         bool m_openedByDOM;
 
         bool m_creatingInitialEmptyDocument;
+        bool m_isDisplayingInitialEmptyDocument;
         bool m_committedFirstRealDocumentLoad;
 
         RefPtr<HistoryItem> m_currentHistoryItem;

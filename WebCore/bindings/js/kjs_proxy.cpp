@@ -26,6 +26,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "GCController.h"
+#include "JSDocument.h"
 #include "JSDOMWindow.h"
 #include "Page.h"
 #include "kjs_events.h"
@@ -163,6 +164,15 @@ void KJSProxy::initScriptIfNeeded()
       m_script->setCompatMode(Interpreter::NetscapeCompat);
 
   m_frame->loader()->dispatchWindowObjectAvailable();
+}
+    
+void KJSProxy::updateDocumentWrapper() 
+{
+    if (!m_script || !m_frame->document())
+        return;
+    JSLock lock;
+    // this will update 'document' property to point to the current document
+    toJS(m_script->globalExec(), m_frame->document());
 }
 
 }

@@ -1,3 +1,40 @@
+2007-09-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff.
+        
+        Fix for <rdar://problem/5499125>
+        REGRESSION (r21367): After launching Kidzui beta, a webview frame fails to appear in its main window
+        
+        If window object properties were modified when it had initial empty document (synchronously after 
+        window.open() for example) those modifications were lost when the real document was switched in.
+        
+        Match Firefox behavior where window properties are not cleared if the inital document and the loaded one
+        have matching security domains.
+
+        Tests: fast/dom/Window/window-early-properties.html
+               http/tests/security/window-properties-clear-domain.html
+               http/tests/security/window-properties-clear-port.html
+               http/tests/security/window-properties-pass.html
+
+        * WebCore.exp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::isSecureTransition):
+        (WebCore::FrameLoader::begin):
+        * loader/FrameLoader.h:
+        If we are transitioning from initial empty document to the final one, do a domain security check
+        between old security policy URL and new URL. If that passes don't clear script proxy and script objects.
+        
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::updateDocumentWrapper):
+        * bindings/js/kjs_proxy.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+        Since we don't always clear window properties anymore, we need to update the document property to point to
+        the newly created one. 
+        
 2007-09-27  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.

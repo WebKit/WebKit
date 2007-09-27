@@ -1,0 +1,31 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.waitUntilDone();
+}
+var w;
+function test()
+{
+    w = window.open("data:text/html,HelloWorld!");
+    w.myProp = "1";
+    w.document.myProp = "2";
+    setTimeout(test2, 10);
+}
+
+function test2()
+{
+    var c = document.getElementById('console');
+    c.innerHTML = "window retains early properties: " + ((w.myProp && w.myProp=='1') ? "PASS" : "FAIL") + "<br>";  
+    c.innerHTML +="document does not retain early properties: " + ((w.document.myProp) ? "FAIL" : "PASS") + "<br>";
+    w.close();
+    if (window.layoutTestController) 
+        layoutTestController.notifyDone();
+}
+</script>
+<body onload='test()'>
+Test setting window properties right after window.open()
+<div id=console>FAIL, test did not run</div>
+

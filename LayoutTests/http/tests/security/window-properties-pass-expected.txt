@@ -1,0 +1,2 @@
+ALERT: PASS
+Test that window properties set for initial document are kept if security check passes

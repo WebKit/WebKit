@@ -236,6 +236,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_opener(0)
     , m_openedByDOM(false)
     , m_creatingInitialEmptyDocument(false)
+    , m_isDisplayingInitialEmptyDocument(false)
     , m_committedFirstRealDocumentLoad(false)
     , m_didPerformFirstNavigation(false)
 #if USE(LOW_BANDWIDTH_DISPLAY)
@@ -260,6 +261,7 @@ FrameLoader::~FrameLoader()
 void FrameLoader::init()
 {
     // this somewhat odd set of steps is needed to give the frame an initial empty document
+    m_isDisplayingInitialEmptyDocument = false;
     m_creatingInitialEmptyDocument = true;
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(String("")), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
@@ -763,7 +765,7 @@ void FrameLoader::cancelAndClear()
     clear(false);
 }
 
-void FrameLoader::clear(bool clearWindowProperties)
+void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects)
 {
     // FIXME: Commenting out the below line causes <http://bugs.webkit.org/show_bug.cgi?id=11212>, but putting it
     // back causes a measurable performance regression which we will need to fix to restore the correct behavior
@@ -800,7 +802,9 @@ void FrameLoader::clear(bool clearWindowProperties)
     m_decoder = 0;
 
     m_containsPlugIns = false;
-    m_frame->clearScriptObjects();
+    
+    if (clearScriptObjects)
+        m_frame->clearScriptObjects();
   
     m_redirectionTimer.stop();
     m_scheduledRedirection.clear();
@@ -809,6 +813,7 @@ void FrameLoader::clear(bool clearWindowProperties)
     m_checkLoadCompleteTimer.stop();
 
     m_receivedData = false;
+    m_isDisplayingInitialEmptyDocument = false;
 
     if (!m_encodingWasChosenByUser)
         m_encoding = String();
@@ -853,6 +858,21 @@ void FrameLoader::setResponseMIMEType(const String& type)
 {
     m_responseMIMEType = type;
 }
+    
+bool FrameLoader::isSecureTransition(const KURL& fromURL, const KURL& toURL)
+{ 
+    // new window created by the application
+    if (fromURL.isEmpty())
+        return true;
+    
+    if (fromURL.isLocalFile())
+        return true;
+    
+    if (equalIgnoringCase(fromURL.host(), toURL.host()) && equalIgnoringCase(fromURL.protocol(), toURL.protocol()) && fromURL.port() == toURL.port())
+        return true;
+    
+    return false;
+}
 
 void FrameLoader::begin()
 {
@@ -861,7 +881,9 @@ void FrameLoader::begin()
 
 void FrameLoader::begin(const KURL& url, bool dispatch)
 {
-    clear();
+    bool resetScripting = !(m_isDisplayingInitialEmptyDocument && m_frame->document() 
+                            && isSecureTransition(m_frame->document()->securityPolicyURL(), url));
+    clear(resetScripting, resetScripting);
     if (dispatch)
         dispatchWindowObjectAvailable();
 
@@ -869,6 +891,7 @@ void FrameLoader::begin(const KURL& url, bool dispatch)
     m_isComplete = false;
     m_didCallImplicitClose = false;
     m_isLoadingMainResource = true;
+    m_isDisplayingInitialEmptyDocument = m_creatingInitialEmptyDocument;
 
     KURL ref(url);
     ref.setUser(DeprecatedString());

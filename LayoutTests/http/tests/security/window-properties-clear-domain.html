@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.waitUntilDone();
+}
+function test()
+{
+    var w = window.open("http://localhost:8000/security/resources/no-custom-property.html");
+    w.myProp = 1;
+}
+
+</script>
+<body onload='test()'>
+Test that window properties set for initial document are reset if domain security check fails 
+
+

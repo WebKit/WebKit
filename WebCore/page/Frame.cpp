@@ -279,6 +279,9 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
         
     if (d->m_doc && !d->m_doc->attached())
         d->m_doc->attach();
+    
+    if (d->m_jscript && d->m_doc)
+        d->m_jscript->updateDocumentWrapper();
 }
 
 Settings* Frame::settings() const
