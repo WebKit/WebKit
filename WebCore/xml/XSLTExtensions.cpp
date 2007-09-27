@@ -34,6 +34,16 @@
 #include <libxslt/extensions.h>
 #include <libxslt/extra.h>
 
+#if PLATFORM(DARWIN)
+#include "SoftLinking.h"
+#endif
+
+#if PLATFORM(DARWIN)
+SOFT_LINK_LIBRARY(libxslt)
+SOFT_LINK(libxslt, xsltRegisterExtFunction, int, (xsltTransformContextPtr ctxt, const xmlChar *name, const xmlChar *URI, xmlXPathFunction function), (ctxt, name, URI, function))
+SOFT_LINK(libxslt, xsltFunctionNodeSet, void, (xmlXPathParserContextPtr ctxt, int nargs), (ctxt, nargs))
+#endif
+
 namespace WebCore {
 
 // FIXME: This code is taken from libexslt 1.1.11; should sync with newer versions.
@@ -56,12 +66,11 @@ static void exsltNodeSetFunction(xmlXPathParserContextPtr ctxt, int nargs)
     strval = xmlXPathPopString(ctxt);
     retNode = xmlNewDocText(NULL, strval);
     ret = xmlXPathNewValueTree(retNode);
-    if (ret == NULL) {
-        xsltGenericError(xsltGenericErrorContext,
-                         "exsltNodeSetFunction: ret == NULL\n");
-    } else {
+    
+    // FIXME: It might be helpful to push any errors from xmlXPathNewValueTree
+    // up to the Javascript Console.
+    if (ret != NULL) 
         ret->type = XPATH_NODESET;
-    }
 
     if (strval != NULL)
         xmlFree(strval);

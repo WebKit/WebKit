@@ -1,3 +1,17 @@
+2007-09-27  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5493093>
+        
+        * WebCore.xcodeproj/project.pbxproj: Removed libxslt from statically linked frameworks.
+        * platform/mac/SoftLinking.h: Formatting tweakes, added SOFT_LINK_LIBRARY, and if'def for 
+        PLATFORM(DARWIN)
+        * xml/XSLStyleSheet.cpp: Soft-linked libxslt.
+        * xml/XSLTExtensions.cpp: Removed the call to xsltGenericError, and added a FIXME comment stating
+        that it might be helpful to push any errors from xmlXPathNewValueTree up to the Javascript Console. 
+        * xml/XSLTProcessor.cpp: Soft-linked libxslt.
+        
 2007-09-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

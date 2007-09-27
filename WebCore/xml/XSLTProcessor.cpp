@@ -51,6 +51,21 @@
 #include <wtf/Assertions.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
+#if PLATFORM(DARWIN)
+#include "SoftLinking.h"
+#endif
+
+#if PLATFORM(DARWIN)
+SOFT_LINK_LIBRARY(libxslt);
+SOFT_LINK(libxslt, xsltFreeStylesheet, void, (xsltStylesheetPtr sheet), (sheet))
+SOFT_LINK(libxslt, xsltFreeTransformContext, void, (xsltTransformContextPtr ctxt), (ctxt))
+SOFT_LINK(libxslt, xsltNewTransformContext, xsltTransformContextPtr, (xsltStylesheetPtr style, xmlDocPtr doc), (style, doc))
+SOFT_LINK(libxslt, xsltApplyStylesheetUser, xmlDocPtr, (xsltStylesheetPtr style, xmlDocPtr doc, const char **params, const char *output, FILE * profile, xsltTransformContextPtr userCtxt), (style, doc, params, output, profile, userCtxt))
+SOFT_LINK(libxslt, xsltQuoteUserParams, int, (xsltTransformContextPtr ctxt, const char **params), (ctxt, params))
+SOFT_LINK(libxslt, xsltSetLoaderFunc, void, (xsltDocLoaderFunc f), (f))
+SOFT_LINK(libxslt, xsltSaveResultTo, int, (xmlOutputBufferPtr buf, xmlDocPtr result, xsltStylesheetPtr style), (buf, result, style))
+SOFT_LINK(libxslt, xsltNextImport, xsltStylesheetPtr, (xsltStylesheetPtr style), (style))
+#endif
 
 namespace WebCore {
 
