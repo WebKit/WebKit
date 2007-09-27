@@ -1,3 +1,10 @@
+2007-09-27  David Hyatt  <hyatt@apple.com>
+
+        Update WebKitSYstemInterface for @font-face changes.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterface.a:
+
 2007-09-18  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix. Ran update-webkitsysteminterface script on Tiger, because
