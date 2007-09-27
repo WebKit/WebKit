@@ -4,7 +4,7 @@
 
         <rdar://problem/5199546> CrashTracer: [REGRESSION] 8216 crashes in Safari at com.apple.WebCore: WebCore::ResourceHandle::client const + 6
 
-        On Tiger CFURLConnection can sometimes call the connection:willCacheResponse: delegate method on
+        On Tiger NSURLConnection can sometimes call the connection:willCacheResponse: delegate method on
         a secondary thread instead of the main thread. This was never an issue before, since the implementation 
         of this method was very simple and thread safe.
 
