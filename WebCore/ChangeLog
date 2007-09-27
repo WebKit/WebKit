@@ -1,3 +1,27 @@
+2007-09-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5199546> CrashTracer: [REGRESSION] 8216 crashes in Safari at com.apple.WebCore: WebCore::ResourceHandle::client const + 6
+
+        On Tiger CFURLConnection can sometimes call the connection:willCacheResponse: delegate method on
+        a secondary thread instead of the main thread. This was never an issue before, since the implementation 
+        of this method was very simple and thread safe.
+
+        The fix is to block during connection:willCacheResponse: and perform the work on the main thread.
+        We need to block since this delegate method needs to return a result. If we are already on the
+        main thread (which sometimes we are), the method does nothing different. If we are on a secondary
+        thread, we make a mutable dictionary to hold all the arguments and later the result object.
+        Then performSelectorOnMainThread:withObject: using the _callConnectionWillCacheResponseWithInfo:
+        selector. This new method just pulls the arguments out for the dictionary and calls the real
+        connection:willCacheResponse: delegate method (this time on the main thread). The result is stored
+        in the dictionary, and when performSelectorOnMainThread:withObject: finishes the result is pulled
+        out and returned.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate _callConnectionWillCacheResponseWithInfo:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+
 2007-09-27  David Hyatt  <hyatt@apple.com>
 
         Update to reflect the minimal WebKitSystemInterface changes required

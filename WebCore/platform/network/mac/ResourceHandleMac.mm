@@ -465,8 +465,38 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     --inNSURLConnectionCallback;
 }
 
+#ifdef BUILDING_ON_TIGER
+- (void)_callConnectionWillCacheResponseWithInfo:(NSMutableDictionary *)info
+{
+    NSURLConnection *connection = [info objectForKey:@"connection"];
+    NSCachedURLResponse *cachedResponse = [info objectForKey:@"cachedResponse"];
+    NSCachedURLResponse *result = [self connection:connection willCacheResponse:cachedResponse];
+    if (result)
+        [info setObject:result forKey:@"result"];
+}
+#endif
+
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
+#ifdef BUILDING_ON_TIGER
+    // On Tiger CFURLConnection can sometimes call the connection:willCacheResponse: delegate method on
+    // a secondary thread instead of the main thread. If this happens perform the work on the main thread.
+    if (!pthread_main_np()) {
+        NSMutableDictionary *info = [[NSMutableDictionary alloc] init];
+        if (connection)
+            [info setObject:connection forKey:@"connection"];
+        if (cachedResponse)
+            [info setObject:cachedResponse forKey:@"cachedResponse"];
+
+        [self performSelectorOnMainThread:@selector(_callConnectionWillCacheResponseWithInfo:) withObject:info waitUntilDone:YES];
+
+        NSCachedURLResponse *result = [[info valueForKey:@"result"] retain];
+        [info release];
+
+        return [result autorelease];
+    }
+#endif
+
 #ifndef NDEBUG
     if (isInitializingConnection)
         LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (4067625)");
