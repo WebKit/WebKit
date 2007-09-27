@@ -862,7 +862,7 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     if (_mimeType == "application/x-qt-plugin" || _mimeType == "application/x-qt-styled-widget")
         return ObjectContentOtherPlugin;
 
-    if (!url.isValid())
+    if (url.isEmpty())
         return ObjectContentNone;
 
     String mimeType = _mimeType;
