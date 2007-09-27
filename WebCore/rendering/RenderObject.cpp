@@ -1655,8 +1655,7 @@ void RenderObject::addPDFURLRect(GraphicsContext* graphicsContext, IntRect rect)
 
                 if (!href.isNull()) {
                     KURL link = element->document()->completeURL(href.deprecatedString());
-                    if (link.isValid())
-                        graphicsContext->setURLForRect(link, rect);
+                    graphicsContext->setURLForRect(link, rect);
                 }
             }
         }

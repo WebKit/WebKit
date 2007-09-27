@@ -387,9 +387,6 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& _tar
         return;
     }
 
-    if (!url.isValid() && !url.isEmpty())
-        return;
-
     FrameLoadRequest frameRequest(request, target);
 
     if (frameRequest.resourceRequest().httpReferrer().isEmpty())
@@ -495,7 +492,9 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     ASSERT(formData.get());
     
     KURL u = completeURL(url.isNull() ? "" : url);
-    if (!u.isValid())
+    // FIXME: Do we really need to special-case an empty URL?
+    // Would it be better to just go on with the form submisson and let the I/O fail?
+    if (u.isEmpty())
         return;
 
     DeprecatedString urlString = u.url();

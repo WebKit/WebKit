@@ -113,9 +113,6 @@ struct InspectorResource : public Shared<InspectorResource> {
 
     Type type() const
     {
-        if (!requestURL.isValid())
-            return Other;
-
         if (requestURL == loader->requestURL())
             return Doc;
 

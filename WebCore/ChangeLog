@@ -1,3 +1,36 @@
+2007-09-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5491054> REGRESSION (Mail, plain-text only): Nothing happens
+          when you click on rdar://<num>&<num> links (or AOL links in Safari)
+
+        Remove the non-useful concept of a "malformed"/"invalid" URL.
+
+        There are URLs we can parse, and others we can't, but that's not sufficient to
+        determine if we should try to work with the URL. It's entirely possible that
+        a so-called "malformed" URL will work just fine if it's passed to the right
+        software.
+
+        * platform/KURL.h: Removed isMalformed() and isValid().
+
+        * loader/Cache.cpp: (WebCore::Cache::requestResource): Removed unneeded check
+        if the URL is valid. But do check for an empty URL just to guarantee we don't
+        trip up with a null string. It's possible we can remove this empty URL check
+        later, but it's less risky to leave the empty string behavior alone for now.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected): Removed unneeded check if the URL is valid.
+        Back on 2007-07-08, we realized that we needed to allow empty URLs. But we also
+        need to allow other URLs here. This is the code path from the Mail case.
+        (WebCore::FrameLoader::submitForm): Replaced URL validity check with a check
+        for an empty URL (same reasoning as for requestResource above).
+
+        * page/InspectorController.cpp: (WebCore::InspectorResource::type):
+        * rendering/RenderObject.cpp: (WebCore::RenderObject::addPDFURLRect):
+        Removed unneeded check for an invalid URL. In both of these cases it's definitely
+        safe to allow event an empty URL.
+
 2007-09-26  George Staikos  <staikos@kde.org>
 
         Reviewed by John Sullivan.
