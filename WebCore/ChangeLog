@@ -1,5 +1,16 @@
 2007-09-26  Darin Adler  <darin@apple.com>
 
+        - fix Windows build
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::writeURL): Add a check for empty URL. Remove the check for invalid URL.
+        (WebCore::ClipboardWin::setData): Remove the check for invalid URL.
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::start): Check for empty URL instead of invalid URL.
+        (WebCore::PluginViewWin::load): Same here.
+
+2007-09-26  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - fix <rdar://problem/5491054> REGRESSION (Mail, plain-text only): Nothing happens

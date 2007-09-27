@@ -340,11 +340,10 @@ ClipboardWin::~ClipboardWin()
 static bool writeURL(WCDataObject *data, const KURL& url, String title, bool withPlainText, bool withHTML)
 {
     ASSERT(data);
-    ASSERT(!url.isEmpty());
-    
-    if (!url.isValid())
-        return false;
 
+    if (url.isEmpty())
+        return false;
+    
     if (title.isEmpty()) {
         title = url.lastPathComponent();
         if (title.isEmpty())
@@ -431,19 +430,17 @@ String ClipboardWin::getData(const String& type, bool& success) const
 
 bool ClipboardWin::setData(const String &type, const String &data)
 {
-    //FIXME: Need to be able to write to the system clipboard <rdar://problem/5015941>
+    // FIXME: Need to be able to write to the system clipboard <rdar://problem/5015941>
     ASSERT(isForDragging());
     if (policy() != ClipboardWritable || !m_writableDataObject)
         return false;
 
     ClipboardDataType winType = clipboardTypeFromMIMEType(type);
 
-    if (winType == ClipboardDataTypeURL) {
-        KURL url = data.deprecatedString();
-        if (!url.isValid())
-            return false;
-        return WebCore::writeURL(m_writableDataObject.get(), url, String(), false, true);
-    } else if ( winType == ClipboardDataTypeText) {
+    if (winType == ClipboardDataTypeURL)
+        return WebCore::writeURL(m_writableDataObject.get(), data.deprecatedString(), String(), false, true);
+
+    if (winType == ClipboardDataTypeText) {
         STGMEDIUM medium = {0};
         medium.tymed = TYMED_HGLOBAL;
         medium.hGlobal = createGlobalData(data);
@@ -456,6 +453,7 @@ bool ClipboardWin::setData(const String &type, const String &data)
         }
         return true;
     }
+
     return false;
 }
 
