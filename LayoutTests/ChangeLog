@@ -1,5 +1,13 @@
 2007-09-26  Adam Roben  <aroben@apple.com>
 
+        Remove a test that was probably only intermittently failing
+
+        Reviewed by NOBODY.
+
+        * platform/win/Skipped:
+
+2007-09-26  Adam Roben  <aroben@apple.com>
+
         Add more failing tests to the Windows Skipped file
 
         Reviewed by NOBODY.

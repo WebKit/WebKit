@@ -443,9 +443,6 @@ editing/selection/5195166-2.html
 editing/selection/select-line.html
 editing/selection/selection-actions.html
 
-# <rdar://5507209> Triple-clicks from eventSender aren't working
-editing/selection/5057506-2.html
-
 # <rdar://5507233> Cookie isn't getting set
 fast/cookies/local-file-can-set-cookies.html
 
