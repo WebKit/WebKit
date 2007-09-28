@@ -72,3 +72,14 @@ interface IWebUIDelegatePrivate : IUnknown
     HRESULT doDragDrop([in] IWebView* sender, [in] IDataObject* dataObject, [in] IDropSource* dropSource, [in] DWORD okEffect, [out, retval] DWORD* performedEffect);
     HRESULT webViewGetDlgCode([in] IWebView* sender, [in] UINT keyCode, [out, retval] LONG_PTR* code);
 }
+
+[
+    object,
+    oleautomation,
+    uuid(7518FCCE-EC47-43b9-8C49-51E91C05C944),
+    pointer_default(unique)
+]
+interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
+{
+    HRESULT webViewPainted([in] IWebView* sender);
+}

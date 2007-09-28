@@ -399,6 +399,12 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         if (useRegionBox)
             paintIntoBackingStore(frameView, bitmapDC, &regionBox);
 
+        if (m_uiDelegatePrivate) {
+            COMPtr<IWebUIDelegatePrivate2> uiDelegatePrivate2(Query, m_uiDelegatePrivate.get());
+            if (uiDelegatePrivate2)
+                uiDelegatePrivate2->webViewPainted(this);
+        }
+
         if (m_backingStoreDirtyRegion) {
             ::DeleteObject(m_backingStoreDirtyRegion);
             m_backingStoreDirtyRegion = 0;
