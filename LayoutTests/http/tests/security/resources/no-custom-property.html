@@ -1,9 +1,12 @@
+<script src='cross-frame-access.js'></script>
 <script>
 if (window.myProp)
     alert("FAIL, myProp found");
 else 
     alert("PASS");
-window.close();
-if (window.layoutTestController)
+
+if (window.layoutTestController) {
+    layoutTestController.setCloseRemainingWindowsWhenComplete();
     layoutTestController.notifyDone();
+}
 </script>

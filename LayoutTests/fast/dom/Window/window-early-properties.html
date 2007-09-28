@@ -20,9 +20,19 @@ function test2()
     var c = document.getElementById('console');
     c.innerHTML = "window retains early properties: " + ((w.myProp && w.myProp=='1') ? "PASS" : "FAIL") + "<br>";  
     c.innerHTML +="document does not retain early properties: " + ((w.document.myProp) ? "FAIL" : "PASS") + "<br>";
+    
     w.close();
-    if (window.layoutTestController) 
-        layoutTestController.notifyDone();
+    setTimeout(doneHandler, 1);
+    function doneHandler() {
+        if (w.closed) {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+            return;
+        }
+
+        setTimeout(doneHandler, 1);
+    }
+
 }
 </script>
 <body onload='test()'>

@@ -1,3 +1,13 @@
+2007-09-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by NOBODY.
+        
+        Update tests to hopefully fix occasional failures
+
+        * fast/dom/Window/window-early-properties.html:
+        * http/tests/security/resources/has-custom-property.html:
+        * http/tests/security/resources/no-custom-property.html:
+
 2007-09-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
