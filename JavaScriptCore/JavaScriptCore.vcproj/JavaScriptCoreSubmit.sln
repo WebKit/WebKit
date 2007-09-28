@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "JavaScriptCore\JavaScriptCore.vcproj", "{011D10F1-B656-4A1B-A0C3-3842F02122C5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BC2981C0-67A5-4A3C-879B-784BCBDE2541} = {BC2981C0-67A5-4A3C-879B-784BCBDE2541}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dftables", "dftables\dftables.vcproj", "{BC2981C0-67A5-4A3C-879B-784BCBDE2541}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "WTF\WTF.vcproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Internal|Win32 = Debug_Internal|Win32
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5}.Debug_Internal|Win32.ActiveCfg = Debug|Win32
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5}.Debug_Internal|Win32.Build.0 = Debug|Win32
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5}.Debug|Win32.Build.0 = Debug|Win32
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5}.Release|Win32.ActiveCfg = Release|Win32
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5}.Release|Win32.Build.0 = Release|Win32
+		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Debug_Internal|Win32.ActiveCfg = Debug|Win32
+		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Debug_Internal|Win32.Build.0 = Debug|Win32
+		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Debug|Win32.Build.0 = Debug|Win32
+		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Release|Win32.ActiveCfg = Release|Win32
+		{BC2981C0-67A5-4A3C-879B-784BCBDE2541}.Release|Win32.Build.0 = Release|Win32
+		{AA8A5A85-592B-4357-BC60-E0E91E026AF6}.Debug_Internal|Win32.ActiveCfg = Debug|Win32
+		{AA8A5A85-592B-4357-BC60-E0E91E026AF6}.Debug_Internal|Win32.Build.0 = Debug|Win32
+		{AA8A5A85-592B-4357-BC60-E0E91E026AF6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AA8A5A85-592B-4357-BC60-E0E91E026AF6}.Debug|Win32.Build.0 = Debug|Win32
+		{AA8A5A85-592B-4357-BC60-E0E91E026AF6}.Release|Win32.ActiveCfg = Release|Win32
+		{AA8A5A85-592B-4357-BC60-E0E91E026AF6}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
