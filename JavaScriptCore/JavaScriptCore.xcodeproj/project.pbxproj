@@ -1687,7 +1687,7 @@
 					"-sectorder",
 					__TEXT,
 					__text,
-					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptCore.order",
+					JavaScriptCore.order,
 				);
 			};
 			name = Production;

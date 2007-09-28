@@ -1,3 +1,14 @@
+2007-09-27  Kevin Decker  <kdecker@apple.com>
+
+        Rubber stamped by John Sullivan.
+
+        <rdar://problem/5493093>
+        
+        * JavaScriptCore.order: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj: We're changing from using an order file built by
+         another team to using one we actually check into our project repository. Linker settings for
+         Symbol Ordering Flags have been updated accordingly.
+
 2007-09-26  Adam Roben  <aroben@apple.com>
 
         Make testkjs delay-load WebKit.dll so WebKitInitializer can work its magic
