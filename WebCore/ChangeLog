@@ -1335,6 +1335,25 @@
         (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
         (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
 
+2007-09-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders.
+
+        Implement PopupMenu using GtkMenu.
+
+        * platform/PopupMenu.h:
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        (WebCore::PopupMenu::menuItemActivated):
+        (WebCore::PopupMenu::menuUnmapped):
+        (WebCore::PopupMenu::menuPositionFunction):
+        (WebCore::PopupMenu::menuRemoveItem):
+
 2007-09-23  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Mark.

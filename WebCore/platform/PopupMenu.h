@@ -44,6 +44,12 @@ typedef struct HBITMAP__* HBITMAP;
 namespace WebCore {
     class QWebPopup;
 }
+#elif PLATFORM(GTK)
+typedef struct _GtkMenu GtkMenu;
+typedef struct _GtkMenuItem GtkMenuItem;
+typedef struct _GtkWidget GtkWidget;
+#include <wtf/HashMap.h>
+#include <glib.h>
 #endif
 
 namespace WebCore {
@@ -146,6 +152,14 @@ private:
     int m_wheelDelta;
     int m_focusedIndex;
     bool m_scrollbarCapturingMouse;
+#elif PLATFORM(GTK)
+    IntPoint m_menuPosition;
+    GtkMenu* m_popup;
+    HashMap<GtkWidget*, int> m_indexMap;
+    static void menuItemActivated(GtkMenuItem* item, PopupMenu*);
+    static void menuUnmapped(GtkWidget*, PopupMenu*);
+    static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, PopupMenu*);
+    static void menuRemoveItem(GtkWidget*, PopupMenu*);
 #endif
 
 };
