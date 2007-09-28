@@ -885,7 +885,7 @@ static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
     ASSERT(!eventDispatchForbidden());
 
     RefPtr<Node> c = child;
-    RefPtr<Document> doc = child->document();
+    DocPtr<Document> doc = child->document();
 
     if (c->parentNode() && c->parentNode()->inDocument())
         c->insertedIntoDocument();
@@ -919,7 +919,7 @@ static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
 static void dispatchChildRemovalEvents(Node* child, ExceptionCode& ec)
 {
     RefPtr<Node> c = child;
-    RefPtr<Document> doc = child->document();
+    DocPtr<Document> doc = child->document();
 
     // update auxiliary doc info (e.g. iterators) to note that node is being removed
     doc->notifyBeforeNodeRemoval(child); // ### use events instead

@@ -137,7 +137,7 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
 class Document : public ContainerNode {
 public:
     Document(DOMImplementation*, Frame*, bool isXHTML = false);
-    ~Document();
+    virtual ~Document();
 
     virtual void removedLastRef();
 
@@ -147,11 +147,21 @@ public:
     // node that outlives its document to still have a valid document
     // pointer without introducing reference cycles
 
-    void selfOnlyRef() { ++m_selfOnlyRefCount; }
-    void selfOnlyDeref() {
+    void selfOnlyRef()
+    {
+        ASSERT(!m_hasDeleted);
+        ++m_selfOnlyRefCount;
+    }
+    void selfOnlyDeref()
+    {
+        ASSERT(!m_hasDeleted);
         --m_selfOnlyRefCount;
-        if (!m_selfOnlyRefCount && !refCount())
+        if (!m_selfOnlyRefCount && !refCount()) {
+#ifndef NDEBUG
+            m_hasDeleted = true;
+#endif
             delete this;
+        }
     }
 
     // DOM methods & attributes for Document
@@ -872,6 +882,9 @@ private:
     InheritedBool m_designMode;
     
     int m_selfOnlyRefCount;
+#ifndef NDEBUG
+    bool m_hasDeleted;
+#endif
 
     HTMLFormElement::CheckedRadioButtons m_checkedRadioButtons;
     

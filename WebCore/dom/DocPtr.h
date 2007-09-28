@@ -29,7 +29,7 @@ template <class T> class DocPtr {
 public:
     DocPtr() : m_ptr(0) {}
     DocPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->selfOnlyRef(); }
-    DocPtr(const DocPtr &o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->selfOnlyRefRef(); }
+    DocPtr(const DocPtr &o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->selfOnlyRef(); }
     ~DocPtr() { if (T *ptr = m_ptr) ptr->selfOnlyDeref(); }
     
     template <class U> DocPtr(const DocPtr<U> &o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->selfOnlyRef(); }

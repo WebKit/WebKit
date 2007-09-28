@@ -267,6 +267,9 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     , m_secureForms(0)
     , m_designMode(inherit)
     , m_selfOnlyRefCount(0)
+#ifndef NDEBUG
+    , m_hasDeleted(false)
+#endif
 #if ENABLE(SVG)
     , m_svgExtensions(0)
 #endif
@@ -341,6 +344,7 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
 
 void Document::removedLastRef()
 {
+    ASSERT(!m_hasDeleted);
     if (m_selfOnlyRefCount) {
         // if removing a child removes the last self-only ref, we don't
         // want the document to be destructed until after
@@ -365,8 +369,12 @@ void Document::removedLastRef()
 
         delete m_tokenizer;
         m_tokenizer = 0;
-    } else
+    } else {
+#ifndef NDEBUG
+        m_hasDeleted = true;
+#endif
         delete this;
+    }
 }
 
 Document::~Document()

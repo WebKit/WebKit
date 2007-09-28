@@ -1,3 +1,37 @@
+2007-09-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5511128> Crash closing or reloading this SVG
+
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        Use DocPtr instead of RefPtr, since these events are dispatched
+        when the Document is being being torn down by removedLastRef().
+
+        * dom/DocPtr.h:
+        (WebCore::DocPtr::DocPtr):
+        Fix longstanding typo in template so that the DocPtr(DocPtr) constructor can be used.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::removedLastRef):
+        * dom/Document.h:
+        (WebCore::Document::selfOnlyRef):
+        (WebCore::Document::selfOnlyDeref):
+        * platform/Shared.h:
+        (WebCore::Shared::Shared):
+        (WebCore::Shared::ref):
+        (WebCore::Shared::deref):
+        (WebCore::Shared::hasOneRef):
+        (WebCore::TreeShared::TreeShared):
+        (WebCore::TreeShared::ref):
+        (WebCore::TreeShared::deref):
+        (WebCore::TreeShared::hasOneRef):
+        (WebCore::TreeShared::refCount):
+        Add debug-only checks for a document being ref-counted while being deleted.
+
 2007-09-27  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
