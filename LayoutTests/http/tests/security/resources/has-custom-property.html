@@ -1,12 +1,6 @@
 <script>
-if (window.myProp)
-    alert("PASS");
-else 
-    alert("FAIL, no myProp found");
-
-if (window.layoutTestController) {
-    layoutTestController.setCloseRemainingWindowsWhenComplete();
+document.write(window.myProp ? "PASS" : "FAIL, no myProp found")
+if (window.layoutTestController)
     layoutTestController.notifyDone();
-}
 
 </script>

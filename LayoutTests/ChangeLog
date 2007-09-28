@@ -1,3 +1,18 @@
+2007-09-28  Antti Koivisto  <antti@apple.com>
+
+        Rubber stamped by bdash.
+        
+        Use frames instead windows for these tests. Closing windows reliably is difficult in DRT.
+
+        * http/tests/security/resources/has-custom-property.html:
+        * http/tests/security/resources/no-custom-property.html:
+        * http/tests/security/window-properties-clear-domain-expected.txt:
+        * http/tests/security/window-properties-clear-domain.html:
+        * http/tests/security/window-properties-clear-port-expected.txt:
+        * http/tests/security/window-properties-clear-port.html:
+        * http/tests/security/window-properties-pass-expected.txt:
+        * http/tests/security/window-properties-pass.html:
+
 2007-09-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by NOBODY.
