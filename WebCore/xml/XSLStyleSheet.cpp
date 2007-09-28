@@ -33,11 +33,11 @@
 #include "XMLTokenizer.h"
 #include <libxml/uri.h>
 #include <libxslt/xsltutils.h>
-#if PLATFORM(DARWIN)
+#if PLATFORM(MAC)
 #include "SoftLinking.h"
 #endif
 
-#if PLATFORM(DARWIN)
+#if PLATFORM(MAC)
 SOFT_LINK_LIBRARY(libxslt)
 SOFT_LINK(libxslt, xsltIsBlank, int, (xmlChar *str), (str))
 SOFT_LINK(libxslt, xsltGetNsProp, xmlChar *, (xmlNodePtr node, const xmlChar *name, const xmlChar *nameSpace), (node, name, nameSpace))
