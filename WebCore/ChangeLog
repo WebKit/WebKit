@@ -1335,6 +1335,15 @@
         (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
         (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
 
+2007-09-23  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Mark.
+
+        Obey the Coding-Style and move the asterisk to the
+        left to be part of the type.
+
+        * platform/gtk/RenderThemeGtk.h:
+
 2007-09-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

@@ -92,14 +92,14 @@ private:
     GtkWidget* gtkWindowContainer() const;
 
 private:
-    mutable GtkWidget *m_gtkButton;
-    mutable GtkWidget *m_gtkCheckbox;
-    mutable GtkWidget *m_gtkRadioButton;
-    mutable GtkWidget *m_gtkEntry;
-    mutable GtkWidget *m_gtkEditable;
+    mutable GtkWidget* m_gtkButton;
+    mutable GtkWidget* m_gtkCheckbox;
+    mutable GtkWidget* m_gtkRadioButton;
+    mutable GtkWidget* m_gtkEntry;
+    mutable GtkWidget* m_gtkEditable;
 
-    mutable GtkWidget *m_unmappedWindow;
-    mutable GtkWidget *m_container;
+    mutable GtkWidget* m_unmappedWindow;
+    mutable GtkWidget* m_container;
 };
 
 }
