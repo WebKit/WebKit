@@ -1,3 +1,20 @@
+2007-09-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - updated tests and results for http://bugs.webkit.org/show_bug.cgi?id=15262
+          REGRESSION: Margin-top:18px is pushing down the multiple select list box outside the div.
+
+        * fast/forms/listbox-clip-expected.checksum:
+        * fast/forms/listbox-clip-expected.png:
+        * fast/forms/listbox-clip-expected.txt:
+        * fast/forms/listbox-selection-2.html:
+        * fast/forms/select-item-background-clip.html:
+        * fast/forms/select-list-box-with-height-expected.checksum:
+        * fast/forms/select-list-box-with-height-expected.png:
+        * fast/forms/select-list-box-with-height-expected.txt:
+        * fast/text/drawBidiText.html:
+
 2007-09-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff.

@@ -1,3 +1,15 @@
+2007-09-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15262
+          REGRESSION: Margin-top:18px is pushing down the multiple select list box outside the div.
+
+        Reflected in existing tests.
+
+        * css/html4.css: Changed listboxes to use border-box sizing, to match Firefox,
+        WinIE and apparently also Safari 2.
+
 2007-09-27  Kevin Decker  <kdecker@apple.com>
 
         <rdar://problem/5493093>

@@ -459,7 +459,6 @@ select[size],
 select[multiple],
 select[size][multiple] {
     -webkit-appearance: listbox;
-    -webkit-box-sizing: initial;
     -webkit-box-align: start;
     border: 1px inset gray;
     -webkit-border-radius: initial;
@@ -469,7 +468,6 @@ select[size][multiple] {
 select[size="0"],
 select[size="1"] {
     -webkit-appearance: menulist;
-    -webkit-box-sizing: border-box;
     -webkit-box-align: center;
     border: 1px solid;
     -webkit-border-radius: 5px;
