@@ -1,3 +1,31 @@
+2007-09-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - <rdar://5261371> Nothing downloaded when exporting bookmarks from iGoogle web history
+        - Implemented IWebHTTPURLResponse::allHeaderFields so that if the content disposition is "attachment" we will download the file instead of display it.  Also implemented some missing functionality.
+
+        * HTTPHeaderPropertyBag.cpp: Added.
+        (HTTPHeaderPropertyBag::HTTPHeaderPropertyBag):
+        (HTTPHeaderPropertyBag::createInstance):
+        (HTTPHeaderPropertyBag::setResponse):
+        (HTTPHeaderPropertyBag::response):
+        (HTTPHeaderPropertyBag::QueryInterface):
+        (HTTPHeaderPropertyBag::AddRef):
+        (HTTPHeaderPropertyBag::Release):
+        (ConvertFromLPCOLESTR):
+        (ConvertToVariant):
+        (ConvertFromVariant):
+        (HTTPHeaderPropertyBag::Read):
+        (HTTPHeaderPropertyBag::Write):
+        * HTTPHeaderPropertyBag.h: Added.
+        * Interfaces/IWebHTTPURLResponse.idl:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebURLResponse.cpp:
+        (WebURLResponse::allHeaderFields):
+        (WebURLResponse::isAttachment):
+        * WebURLResponse.h:
+
 2007-09-27  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5507481> Added a delegate method to inform the client

@@ -63,4 +63,5 @@ interface IWebHTTPURLResponse : IWebURLResponse
     HRESULT allHeaderFields([out, retval] IPropertyBag** headerFields);
     HRESULT localizedStringForStatusCode([in] int statusCode, [out, retval] BSTR* statusString);
     HRESULT statusCode([out, retval] int* statusCode);
+    HRESULT isAttachment([out, retval] BOOL* attachment);
 }

@@ -163,6 +163,18 @@ const HTTPHeaderMap& ResourceResponse::httpHeaderFields() const
     return m_httpHeaderFields; 
 }
 
+bool ResourceResponse::isAttachment() const
+{
+    updateResourceResponse();
+
+    String value = m_httpHeaderFields.get("Content-Disposition");
+    int loc = value.find(';');
+    if (loc != -1)
+        value = value.left(loc);
+    value = value.stripWhiteSpace();
+    return equalIgnoringCase(value, "attachment");
+}
+
 void ResourceResponse::setExpirationDate(time_t expirationDate)
 {
     updateResourceResponse();

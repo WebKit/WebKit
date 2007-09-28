@@ -1,3 +1,14 @@
+2007-09-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - <rdar://5261371> Nothing downloaded when exporting bookmarks from iGoogle web history
+        - Implemented IWebHTTPURLResponse::allHeaderFields so that if the content disposition is "attachment" we will download the file instead of display it. Also implemented some missing functionality.
+
+        * platform/network/ResourceResponse.cpp:
+        (WebCore::ResourceResponse::isAttachment):
+        * platform/network/ResourceResponse.h:
+
 2007-09-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

@@ -100,6 +100,8 @@ public:
 
     bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
 
+    bool isAttachment() const;
+
     void setExpirationDate(time_t);
     time_t expirationDate() const;
 
