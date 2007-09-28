@@ -13259,7 +13259,7 @@
 					"-sectorder",
 					__TEXT,
 					__text,
-					/AppleInternal/OrderFiles/WebCore.order,
+					WebCore.order,
 				);
 			};
 			name = Production;

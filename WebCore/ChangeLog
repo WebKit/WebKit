@@ -1,3 +1,14 @@
+2007-09-27  Kevin Decker  <kdecker@apple.com>
+
+        <rdar://problem/5493093>
+    
+        Rubber stamped by John Sullivan.
+        
+        * WebCore.order: Added.
+        * WebCore.xcodeproj/project.pbxproj:  We're changing from using an order file built by another team to using one
+         we actually check into our project repository. Linker settings for Symbol Ordering Flags have been updated
+         accordingly.
+         
 2007-09-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff.
