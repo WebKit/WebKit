@@ -679,7 +679,6 @@ static bool debugWidget = true;
 {
     if (!_private || _private->closed)
         return;
-    _private->closed = YES;
 
     FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
     if (mainFrameLoader)
@@ -696,6 +695,9 @@ static bool debugWidget = true;
     [self setResourceLoadDelegate:nil];
     [self setScriptDebugDelegate:nil];
     [self setUIDelegate:nil];
+    
+    // setHostWindow:nil must be called before this value is set (see 5408186)
+    _private->closed = YES;
 
     // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
     [self removeDragCaret];

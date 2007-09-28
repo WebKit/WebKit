@@ -1,3 +1,24 @@
+2007-09-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ollie
+        
+        - fixed <rdar://problem/5408186> REGRESSION (5522-5523.9): Safari leaks every browser window
+        
+        The leak started occurring when we removed the code to clear the delegates and the host window
+        from Safari as part of the fix for 5479443. But it turns out that Safari code was masking a
+        bug here in WebView: setHostWindow:nil needs to be called before setting _private->closed to
+        YES, or it will do nothing at all, causing a world leak due to a circular reference between
+        the window and the WebView.
+        
+        I toyed with a more complex fix, but this is the simplest one that retains the fix for 5479443
+        while otherwise restoring the code order to be as close as possible to what it was before
+        5479443 was fixed.
+
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        Moved the call that sets _private->closed to YES to be after the code that clears the delegates
+        and the host window. Added a comment about this order.
+
 2007-09-27  Kevin Decker  <kdecker@apple.com>
 
         Rubber stamped by Darin.
