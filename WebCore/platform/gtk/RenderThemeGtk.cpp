@@ -127,14 +127,16 @@ bool RenderThemeGtk::supportsFocus(EAppearance appearance)
 
 GtkStateType RenderThemeGtk::determineState(RenderObject* o)
 {
-    GtkStateType result = GTK_STATE_NORMAL;
-    if (!isEnabled(o))
-        result = GTK_STATE_INSENSITIVE;
-    else if (isPressed(o))
-        result = GTK_STATE_ACTIVE;
-    else if (isHovered(o))
-        result = GTK_STATE_PRELIGHT;
-    return result;
+    if (!isEnabled(o) || isReadOnlyControl(o))
+        return GTK_STATE_INSENSITIVE;
+    if (isPressed(o) || isFocused(o))
+        return GTK_STATE_ACTIVE;
+    if (isHovered(o))
+        return GTK_STATE_PRELIGHT;
+    if (isChecked(o))
+        return GTK_STATE_SELECTED;
+
+    return GTK_STATE_NORMAL;
 }
 
 GtkShadowType RenderThemeGtk::determineShadow(RenderObject* o)
@@ -239,10 +241,17 @@ void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Eleme
     notImplemented(); 
 }
 
-bool RenderThemeGtk::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeGtk::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     // FIXME: should use theme-aware drawing
-    return true;
+    GtkWidget* entry = gtkEntry();
+    IntPoint pos = i.context->translatePoint(rect.location());
+
+    gtk_paint_shadow(entry->style, i.context->gdkDrawable(),
+                     determineState(o), determineShadow(o),
+                     0, entry, "entry",
+                     pos.x(), pos.y(), rect.width(), rect.height());
+    return false;
 }
 
 bool RenderThemeGtk::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
@@ -290,6 +299,17 @@ GtkWidget* RenderThemeGtk::gtkRadioButton() const
     }
 
     return m_gtkRadioButton;
+}
+
+GtkWidget* RenderThemeGtk::gtkEntry() const
+{
+    if (!m_gtkEntry) {
+        m_gtkEntry = gtk_entry_new();
+        gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkEntry);
+        gtk_widget_realize(m_gtkEntry);
+    }
+
+    return m_gtkEntry;
 }
 
 GtkWidget* RenderThemeGtk::gtkWindowContainer() const

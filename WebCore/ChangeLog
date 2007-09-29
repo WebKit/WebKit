@@ -1,3 +1,18 @@
+2007-09-28  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Mark.
+
+        -Fix http://bugs.webkit.org/show_bug.cgi?id=15254.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::determineState):
+            - Apply state if control is readonly
+            - Added state GTK_STATE_SELECTED of object is checked
+            - Apply GTK_STATE_ACTIVE if RenderObject isFocused()
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::gtkEntry):
+            - Implemented theme-aware text field based on gtk/gtkentry.c implementation
+
 2007-09-29  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Eric.
