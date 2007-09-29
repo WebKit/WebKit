@@ -1,3 +1,12 @@
+2007-09-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Eric.
+
+        Build fix for Mac Gtk+ and Qt builds. In revision 25798 changing
+        XSLTProcessor.cpp was forgotten.
+
+        * xml/XSLTProcessor.cpp: Use PLATFORM(MAC) instead of PLATFORM(DARWIN)
+
 2007-09-29  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://4965715> Horizontal scrollwheel scrolling moves in opposite direction on Vista

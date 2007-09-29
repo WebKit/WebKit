@@ -51,11 +51,11 @@
 #include <wtf/Assertions.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
-#if PLATFORM(DARWIN)
+#if PLATFORM(MAC)
 #include "SoftLinking.h"
 #endif
 
-#if PLATFORM(DARWIN)
+#if PLATFORM(MAC)
 SOFT_LINK_LIBRARY(libxslt);
 SOFT_LINK(libxslt, xsltFreeStylesheet, void, (xsltStylesheetPtr sheet), (sheet))
 SOFT_LINK(libxslt, xsltFreeTransformContext, void, (xsltTransformContextPtr ctxt), (ctxt))
