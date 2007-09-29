@@ -1,3 +1,16 @@
+2007-09-29  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://4965715> Horizontal scrollwheel scrolling moves in opposite direction on Vista
+
+        Reviewed by Sam.
+
+        No regression test possible.
+
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Use a negative
+        delta when scrolling right to match EventHandler's expectations (which
+        are based on AppKit).
+
 2007-09-28  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Mark Rowe

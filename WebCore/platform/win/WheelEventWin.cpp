@@ -57,7 +57,10 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
 {
     float delta = short(HIWORD(wParam)) / (float)WHEEL_DELTA;
     if (isHorizontal) {
-        m_deltaX = delta;
+        // Windows sends a positive delta for scrolling right, while AppKit
+        // sends a negative delta. EventHandler expects the AppKit values,
+        // so we have to negate our horizontal delta to match.
+        m_deltaX = -delta;
         m_deltaY = 0;
     } else {
         m_deltaX = 0;
