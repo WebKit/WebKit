@@ -1,3 +1,16 @@
+2007-09-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        -Fix http://bugs.webkit.org/show_bug.cgi?id=13226.
+        Remove Bakefiles from svn.
+
+        * Bakefiles/Bakefiles.bkgen: Removed.
+        * Bakefiles/ChangeLog: Removed.
+        * Bakefiles/Readme.txt: Removed.
+        * Bakefiles/presets.bkl: Removed.
+        * Bakefiles/update-file-lists.py: Removed.
+
 2007-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Adam.

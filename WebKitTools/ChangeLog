@@ -1,3 +1,16 @@
+2007-09-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        -Fix http://bugs.webkit.org/show_bug.cgi?id=13226.
+        Remove Bakefiles from svn.
+
+        * GtkLauncher/Bakefiles.bkgen: Removed.
+        * GtkLauncher/ENV: Removed.
+        * GtkLauncher/gdklauncher.bkl: Removed.
+        * GtkLauncher/mk: Removed.
+        * Scripts/regenerate-makefiles: Removed.
+
 2007-09-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by John.

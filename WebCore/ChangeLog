@@ -1,3 +1,15 @@
+2007-09-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        -Fix http://bugs.webkit.org/show_bug.cgi?id=13226.
+        Remove Bakefiles from svn.
+
+        * Projects/gdk/webcore-gdk.bkl: Removed.
+        * Projects/wx/webcore-wx.bkl: Removed.
+        * WebCoreSources.bkl: Removed.
+        * webcore-base.bkl: Removed.
+
 2007-09-28  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Mark.

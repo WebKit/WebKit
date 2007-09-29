@@ -1,3 +1,13 @@
+2007-09-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        -Fix http://bugs.webkit.org/show_bug.cgi?id=13226.
+        Remove Bakefiles from svn.
+
+        * JavaScriptCoreSources.bkl: Removed.
+        * jscore.bkl: Removed.
+
 2007-09-27  Kevin Decker  <kdecker@apple.com>
 
         Rubber stamped by John Sullivan.
