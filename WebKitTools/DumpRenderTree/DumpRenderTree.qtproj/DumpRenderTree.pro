@@ -6,6 +6,7 @@ INCLUDEPATH += ../../../JavaScriptCore/kjs
 
 
 QT = core gui
+macx: QT += xml network
 
 HEADERS = DumpRenderTree.h jsobjects.h
 SOURCES = DumpRenderTree.cpp main.cpp jsobjects.cpp
