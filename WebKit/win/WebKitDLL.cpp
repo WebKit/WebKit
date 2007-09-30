@@ -46,26 +46,31 @@ ULONG gLockCount;
 ULONG gClassCount;
 HINSTANCE gInstance;
 
+#define FOR_EACH_CLASS(macro) \
+    macro(CFDictionaryPropertyBag) \
+    macro(WebCache) \
+    macro(WebDebugProgram) \
+    macro(WebDownload) \
+    macro(WebError) \
+    macro(WebHistory) \
+    macro(WebHistoryItem) \
+    macro(WebIconDatabase) \
+    macro(WebJavaScriptCollector) \
+    macro(WebKitStatistics) \
+    macro(WebMutableURLRequest) \
+    macro(WebNotificationCenter) \
+    macro(WebPreferences) \
+    macro(WebScrollBar) \
+    macro(WebURLCredential) \
+    macro(WebURLProtectionSpace) \
+    macro(WebURLRequest) \
+    macro(WebURLResponse) \
+    macro(WebView)
+
+#define CLSID_FOR_CLASS(cls) CLSID_##cls,
+
 static CLSID gRegCLSIDs[] = {
-    CLSID_WebView,
-    CLSID_WebIconDatabase,
-    CLSID_WebMutableURLRequest,
-    CLSID_WebURLRequest,
-    CLSID_WebNotificationCenter,
-    CLSID_WebHistory,
-    CLSID_CFDictionaryPropertyBag,
-    CLSID_WebHistoryItem,
-    CLSID_WebCache,
-    CLSID_WebJavaScriptCollector,
-    CLSID_WebPreferences,
-    CLSID_WebScrollBar,
-    CLSID_WebKitStatistics,
-    CLSID_WebError,
-    CLSID_WebURLCredential,
-    CLSID_WebDownload,
-    CLSID_WebURLProtectionSpace,
-    CLSID_WebDebugProgram,
-    CLSID_WebURLResponse
+    FOR_EACH_CLASS(CLSID_FOR_CLASS)
 };
 
 void shutDownWebKit()
@@ -133,35 +138,17 @@ STDAPI DllCanUnloadNow(void)
 
 //key                                                                                       value name              value }
 #define KEYS_FOR_CLASS(cls) \
-{ TEXT("CLSID\\{########-####-####-####-############}"),                                    0,                      TEXT(cls) }, \
+{ TEXT("CLSID\\{########-####-####-####-############}"),                                    0,                      TEXT(#cls) }, \
 { TEXT("CLSID\\{########-####-####-####-############}\\InprocServer32"),                    0,                      (LPCTSTR)-1 }, \
 { TEXT("CLSID\\{########-####-####-####-############}\\InprocServer32"),                    TEXT("ThreadingModel"), TEXT("Apartment") }, \
 { TEXT("CLSID\\{########-####-####-####-############}\\ProgID"),                            0,                      PROGID(cls) }, \
 { TEXT("CLSID\\{########-####-####-####-############}\\VersionIndependentProgID"),          0,                      PROGID(cls) }, \
-{ PROGID(cls),                                                                              0,                      TEXT(cls) }, \
-{ PROGID(cls)TEXT("\\CLSID"),                                                               0,                      TEXT("{########-####-####-####-############}") }
+{ PROGID(cls),                                                                              0,                      TEXT(#cls) }, \
+{ PROGID(cls) TEXT("\\CLSID"),                                                              0,                      TEXT("{########-####-####-####-############}") },
 
 static const int gSlotsPerEntry = 7;
 static LPCTSTR gRegTable[][3] = {
-    KEYS_FOR_CLASS("WebView"),
-    KEYS_FOR_CLASS("WebIconDatabase"),
-    KEYS_FOR_CLASS("WebMutableURLRequest"),
-    KEYS_FOR_CLASS("WebURLRequest"),
-    KEYS_FOR_CLASS("WebNotificationCenter"),
-    KEYS_FOR_CLASS("WebHistory"),
-    KEYS_FOR_CLASS("CFDictionaryPropertyBag"),
-    KEYS_FOR_CLASS("WebHistoryItem"),
-    KEYS_FOR_CLASS("WebCache"),
-    KEYS_FOR_CLASS("WebJavaScriptCollector"),
-    KEYS_FOR_CLASS("WebPreferences"),
-    KEYS_FOR_CLASS("WebScrollBar"),
-    KEYS_FOR_CLASS("WebKitStatistics"),
-    KEYS_FOR_CLASS("WebError"),
-    KEYS_FOR_CLASS("WebURLCredential"),
-    KEYS_FOR_CLASS("WebDownload"),
-    KEYS_FOR_CLASS("WebURLProtectionSpace"),
-    KEYS_FOR_CLASS("WebDebugProgram"),
-    KEYS_FOR_CLASS("WebURLResponse")
+    FOR_EACH_CLASS(KEYS_FOR_CLASS)
 };
 
 static void substituteGUID(LPTSTR str, const UUID* guid)

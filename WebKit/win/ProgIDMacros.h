@@ -26,7 +26,7 @@
 #ifndef ProgIDMacros_h
 #define ProgIDMacros_h
 
-#define PRODUCTION_PROGID(className) TEXT("WebKit.") TEXT(className) TEXT(".3")
+#define PRODUCTION_PROGID(className) TEXT("WebKit.") TEXT(#className) TEXT(".3")
 #define OPENSOURCE_PROGID(className) TEXT("OpenSource") PRODUCTION_PROGID(className)
 
 #endif // !defined(ProgIDMacros_h)

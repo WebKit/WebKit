@@ -1,3 +1,14 @@
+2007-09-29  Adam Roben  <aroben@apple.com>
+
+        Clean-up in preparation for <rdar://5505062> WebKit's version-independent ProgIDs contain version numbers
+
+        Reviewed by Steve.
+
+        * ProgIDMacros.h: Stringify the passed in class name.
+        * WebKitDLL.cpp: Added a FOR_EACH_CLASS macro to ensure that our class
+        lists stay in the right order, and updated uses of the *_PROGID macros
+        for to take the stringification into account.
+
 2007-09-27  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
