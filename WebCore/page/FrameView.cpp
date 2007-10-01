@@ -485,7 +485,7 @@ void FrameView::layout(bool allowSubtree)
             RenderPartObject* object = objectVector[i];
             object->updateWidget(false);
 
-            // updateWidget() can destory the RenderPartObject, so we need to make sure it's
+            // updateWidget() can destroy the RenderPartObject, so we need to make sure it's
             // alive by checking if it's still in m_widgetUpdateSet.
             if (m_widgetUpdateSet->contains(object))
                 object->updateWidgetPosition();
