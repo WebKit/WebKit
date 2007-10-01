@@ -206,7 +206,8 @@ void Widget::invalidateRect(const IntRect& r)
     if (!canvas && parent())
         canvas = parent()->qwidget(); //scrollbars
 
-    Q_ASSERT(canvas);
+    if (!canvas)  // not visible anymore
+        return;
 
     bool painting = canvas->testAttribute(Qt::WA_WState_InPaintEvent);
     if (painting) {

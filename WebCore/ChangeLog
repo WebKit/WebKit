@@ -1,3 +1,13 @@
+2007-10-01  Eli Fidler  <eli@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Switch bogus assert to a conditional and return.  This case happens
+        when a widget is hidden.
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::invalidateRect):
+
 2007-09-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
