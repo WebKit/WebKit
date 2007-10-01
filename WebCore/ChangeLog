@@ -1,3 +1,24 @@
+2007-10-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5515426> NetNewsWire 3 crashes at launch in 
+        WebCore::FrameView::layout (other repro scenarios too)
+
+        The new call to updateWidget() that we added to FrameView::layout() 
+        can destroy the RenderPartObject. And so we were crashing on the 
+        subsequent call to updateWidgetPosition(). This patch fixes that by 
+        checking to make sure the RenderPartObject is still in the HashSet 
+        after updateWidget(). Because m_widgetUpdateSet can be modified 
+        during the call to updateWidget(), we need it to be intact while we 
+        are iterating through the copy, so we cannot use the HashSet::swap 
+        call we were using before. This patch instead uses a Vector to 
+        iterate through the HashSet data and calls clear() on the HashSet 
+        at the end.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2007-05-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

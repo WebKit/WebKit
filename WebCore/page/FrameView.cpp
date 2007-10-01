@@ -478,14 +478,19 @@ void FrameView::layout(bool allowSubtree)
                              visibleHeight() < contentsHeight());
 
     if (m_widgetUpdateSet && d->nestedLayoutCount == 1) {
-        HashSet<RenderPartObject*> set;
-        m_widgetUpdateSet->swap(set);
-        
-        HashSet<RenderPartObject*>::iterator end = set.end();
-        for (HashSet<RenderPartObject*>::iterator it = set.begin(); it != end; ++it) {
-            (*it)->updateWidget(false);
-            (*it)->updateWidgetPosition();
+        Vector<RenderPartObject*> objectVector;
+        copyToVector(*m_widgetUpdateSet, objectVector);
+        size_t size = objectVector.size();
+        for (size_t i = 0; i < size; ++i) {
+            RenderPartObject* object = objectVector[i];
+            object->updateWidget(false);
+
+            // updateWidget() can destory the RenderPartObject, so we need to make sure its
+            // alive by checking if it's still in m_widgetUpdateSet.
+            if (m_widgetUpdateSet->contains(object))
+                object->updateWidgetPosition();
         }
+        m_widgetUpdateSet->clear();
     }
 
     // Allow events scheduled during layout to fire
