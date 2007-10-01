@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,23 +31,23 @@ public:
     Shared()
         : m_refCount(0)
 #ifndef NDEBUG
-        , m_hasDeleted(false)
+        , m_deletionHasBegun(false)
 #endif
     {
     }
 
     void ref()
     {
-        ASSERT(!m_hasDeleted);
+        ASSERT(!m_deletionHasBegun);
         ++m_refCount;
     }
 
     void deref()
     {
-        ASSERT(!m_hasDeleted);
+        ASSERT(!m_deletionHasBegun);
         if (--m_refCount <= 0) {
 #ifndef NDEBUG
-            m_hasDeleted = true;
+            m_deletionHasBegun = true;
 #endif
             delete static_cast<T*>(this);
         }
@@ -55,7 +55,7 @@ public:
 
     bool hasOneRef()
     {
-        ASSERT(!m_hasDeleted);
+        ASSERT(!m_deletionHasBegun);
         return m_refCount == 1;
     }
 
@@ -67,7 +67,7 @@ public:
 private:
     int m_refCount;
 #ifndef NDEBUG
-    bool m_hasDeleted;
+    bool m_deletionHasBegun;
 #endif
 };
 
@@ -76,35 +76,40 @@ public:
     TreeShared()
         : m_refCount(0)
         , m_parent(0)
-#ifndef NDEBUG
-        , m_hasRemovedLastRef(false)
-#endif
     {
+#ifndef NDEBUG
+        m_deletionHasBegun = false;
+        m_inRemovedLastRefFunction = false;
+#endif
     }
     TreeShared(T* parent)
         : m_refCount(0)
-        , m_parent(parent)
-#ifndef NDEBUG
-        , m_hasRemovedLastRef(false)
-#endif
+        , m_parent(0)
     {
+#ifndef NDEBUG
+        m_deletionHasBegun = false;
+        m_inRemovedLastRefFunction = false;
+#endif
     }
-    virtual ~TreeShared() { }
-
-    virtual void removedLastRef() { delete static_cast<T*>(this); }
+    virtual ~TreeShared()
+    {
+        ASSERT(m_deletionHasBegun);
+    }
 
     void ref()
     {
-        ASSERT(!m_hasRemovedLastRef);
+        ASSERT(!m_deletionHasBegun);
+        ASSERT(!m_inRemovedLastRefFunction);
         ++m_refCount;
     }
 
     void deref()
     {
-        ASSERT(!m_hasRemovedLastRef);
+        ASSERT(!m_deletionHasBegun);
+        ASSERT(!m_inRemovedLastRefFunction);
         if (--m_refCount <= 0 && !m_parent) {
 #ifndef NDEBUG
-            m_hasRemovedLastRef = true;
+            m_inRemovedLastRefFunction = true;
 #endif
             removedLastRef();
         }
@@ -112,7 +117,8 @@ public:
 
     bool hasOneRef() const
     {
-        ASSERT(!m_hasRemovedLastRef);
+        ASSERT(!m_deletionHasBegun);
+        ASSERT(!m_inRemovedLastRefFunction);
         return m_refCount == 1;
     }
 
@@ -124,12 +130,22 @@ public:
     void setParent(T* parent) { m_parent = parent; }
     T* parent() const { return m_parent; }
 
+#ifndef NDEBUG
+    bool m_deletionHasBegun;
+    bool m_inRemovedLastRefFunction;
+#endif
+
 private:
+    virtual void removedLastRef()
+    {
+#ifndef NDEBUG
+        m_deletionHasBegun = true;
+#endif
+        delete this;
+    }
+
     int m_refCount;
     T* m_parent;
-#ifndef NDEBUG
-    bool m_hasRemovedLastRef;
-#endif
 };
 
 }

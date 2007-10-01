@@ -62,22 +62,26 @@ void ContainerNode::removeAllChildren()
     bool topLevel = !alreadyInsideDestructor;
     if (topLevel)
         alreadyInsideDestructor = true;
-    
-    // List of nodes to be deleted.
-    static Node *head;
-    static Node *tail;
-    
-    // We have to tell all children that their parent has died.
-    Node *n;
-    Node *next;
 
-    for (n = m_firstChild; n != 0; n = next ) {
+    // List of nodes to be deleted.
+    static Node* head;
+    static Node* tail;
+
+    // We have to tell all children that their parent has died.
+    Node* n;
+    Node* next;
+    for (n = m_firstChild; n != 0; n = next) {
+        ASSERT(!n->m_deletionHasBegun);
+
         next = n->nextSibling();
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
         
-        if ( !n->refCount() ) {
+        if (!n->refCount()) {
+#ifndef NDEBUG
+            n->m_deletionHasBegun = true;
+#endif
             // Add the node to the list of nodes to be deleted.
             // Reuse the nextSibling pointer for this purpose.
             if (tail)
@@ -88,20 +92,22 @@ void ContainerNode::removeAllChildren()
         } else if (n->inDocument())
             n->removedFromDocument();
     }
-    
+
     // Only for the top level call, do the actual deleting.
     if (topLevel) {
         while ((n = head) != 0) {
+            ASSERT(n->m_deletionHasBegun);
+
             next = n->nextSibling();
             n->setNextSibling(0);
 
             head = next;
             if (next == 0)
                 tail = 0;
-            
+
             delete n;
         }
-        
+
         alreadyInsideDestructor = false;
         m_firstChild = 0;
         m_lastChild = 0;

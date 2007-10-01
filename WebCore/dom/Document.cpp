@@ -267,9 +267,6 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     , m_secureForms(0)
     , m_designMode(inherit)
     , m_selfOnlyRefCount(0)
-#ifndef NDEBUG
-    , m_hasDeleted(false)
-#endif
 #if ENABLE(SVG)
     , m_svgExtensions(0)
 #endif
@@ -344,17 +341,17 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
 
 void Document::removedLastRef()
 {
-    ASSERT(!m_hasDeleted);
+    ASSERT(!m_deletionHasBegun);
     if (m_selfOnlyRefCount) {
-        // if removing a child removes the last self-only ref, we don't
+        // If removing a child removes the last self-only ref, we don't
         // want the document to be destructed until after
         // removeAllChildren returns, so we guard ourselves with an
-        // extra self-only ref
+        // extra self-only ref.
 
         DocPtr<Document> guard(this);
 
-        // we must make sure not to be retaining any of our children through
-        // these extra pointers or we will create a reference cycle
+        // We must make sure not to be retaining any of our children through
+        // these extra pointers or we will create a reference cycle.
         m_docType = 0;
         m_focusedNode = 0;
         m_hoverNode = 0;
@@ -369,9 +366,13 @@ void Document::removedLastRef()
 
         delete m_tokenizer;
         m_tokenizer = 0;
+
+#ifndef NDEBUG
+        m_inRemovedLastRefFunction = false;
+#endif
     } else {
 #ifndef NDEBUG
-        m_hasDeleted = true;
+        m_deletionHasBegun = true;
 #endif
         delete this;
     }

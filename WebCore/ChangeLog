@@ -1,3 +1,38 @@
+2007-09-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - tone down the assertion I asked Harrison to include in his fix for
+          <rdar://problem/5511128>; it's OK to re-ref and deref the document
+          as long as you do so after the children are done being destroyed
+
+        No effect on release builds. Assertion change only.
+
+        Besides the changes listed below, renamed m_hasDeleted flag to
+        m_deletionHasBegun.
+
+        * dom/ContainerNode.cpp: (WebCore::ContainerNode::removeAllChildren):
+        Added code to set the m_deletionHasBegun flag and some assertions
+        that test its state.
+
+        * dom/Document.h: Removed m_hasDeleted -- we now use m_deletionHasBegun
+        in the base class TreeShared.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Removed initialization of m_hasDeleted.
+        (WebCore::Document::removedLastRef): Added code to clear
+        m_inRemovedLastRefFunction if we end up deciding not to delete this.
+
+        * platform/Shared.h:
+        (WebCore::TreeShared::TreeShared): Added m_deletionHasBegun in addition to
+        m_inRemovedLastRefFunction (formerly named m_hasRemovedLastRef).
+        (WebCore::TreeShared::~TreeShared): Assert that m_deletionHasBegun is true.
+        (WebCore::TreeShared::ref): Assert neither flag is true.
+        (WebCore::TreeShared::deref): Ditto.
+        (WebCore::TreeShared::hasOneRef): Ditto.
+        (WebCore::TreeShared::removedLastRef): Made private. Added code to
+        set m_hasDeleted to true. Also removed cast; since this class template
+        has a virtual destructor, we don't need to cast before calling delete.
+
 2007-09-29  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.
@@ -95,7 +130,8 @@
         Reviewed by Darin.
 
         - <rdar://5261371> Nothing downloaded when exporting bookmarks from iGoogle web history
-        - Implemented IWebHTTPURLResponse::allHeaderFields so that if the content disposition is "attachment" we will download the file instead of display it. Also implemented some missing functionality.
+
+        Function for use by WebKit. Currently used only on Windows.
 
         * platform/network/ResourceResponse.cpp:
         (WebCore::ResourceResponse::isAttachment):

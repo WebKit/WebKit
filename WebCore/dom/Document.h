@@ -149,16 +149,16 @@ public:
 
     void selfOnlyRef()
     {
-        ASSERT(!m_hasDeleted);
+        ASSERT(!m_deletionHasBegun);
         ++m_selfOnlyRefCount;
     }
     void selfOnlyDeref()
     {
-        ASSERT(!m_hasDeleted);
+        ASSERT(!m_deletionHasBegun);
         --m_selfOnlyRefCount;
         if (!m_selfOnlyRefCount && !refCount()) {
 #ifndef NDEBUG
-            m_hasDeleted = true;
+            m_deletionHasBegun = true;
 #endif
             delete this;
         }
@@ -882,9 +882,6 @@ private:
     InheritedBool m_designMode;
     
     int m_selfOnlyRefCount;
-#ifndef NDEBUG
-    bool m_hasDeleted;
-#endif
 
     HTMLFormElement::CheckedRadioButtons m_checkedRadioButtons;
     
