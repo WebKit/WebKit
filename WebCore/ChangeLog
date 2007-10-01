@@ -1,3 +1,19 @@
+2007-05-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11931
+        PathCG fails to hit on unclosed sub-paths
+
+        Test: svg/custom/hit-test-unclosed-subpaths.svg
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::copyClosingSubpathsApplierFunction):
+        (WebCore::copyCGPathClosingSubpaths):
+        (WebCore::Path::contains): use new copy & close function
+
+=== Merged the following changes from branches/feature-branch ===
+
 2007-10-01  Eli Fidler  <eli@staikos.net>
 
         Reviewed by George Staikos.

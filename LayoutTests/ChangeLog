@@ -1,3 +1,16 @@
+2007-05-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+        
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11931
+
+        * svg/custom/hit-test-unclosed-subpaths-expected.checksum: Added.
+        * svg/custom/hit-test-unclosed-subpaths-expected.png: Added.
+        * svg/custom/hit-test-unclosed-subpaths-expected.txt: Added.
+        * svg/custom/hit-test-unclosed-subpaths.svg: Added.
+
+=== Merged the following changes from branches/feature-branch ===
+
 2007-10-01  Lars Knoll  <lars@trolltech.com>
 
         Remove the separate ChangeLog in Layouttests/platform/qt.
