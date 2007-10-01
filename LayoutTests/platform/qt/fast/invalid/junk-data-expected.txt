@@ -10,9 +10,8 @@ layer at (0,0) size 800x126
           RenderText {#text} at (0,0) size 301x22
             text run at (0,0) width 301: "This page contains the following errors:"
         RenderBlock {div} at (0,39) size 784x16
-          RenderText {#text} at (0,0) size 483x15
-            text run at (0,0) width 483: "error on line 1 at column 1: Extra content at the end of the document"
-            text run at (483,0) width 0: " "
+          RenderText {#text} at (0,0) size 385x15
+            text run at (0,0) width 385: "error on line 1 at column 0: Premature end of document."
         RenderBlock {h3} at (0,71) size 784x23
           RenderText {#text} at (0,0) size 393x22
             text run at (0,0) width 393: "Below is a rendering of the page up to the first error."

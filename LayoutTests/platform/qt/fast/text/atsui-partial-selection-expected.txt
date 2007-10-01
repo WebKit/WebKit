@@ -24,9 +24,9 @@ layer at (0,0) size 800x600
             text run at (137,0) width 83: "Lore\x{300}m ipsum"
         RenderText {#text} at (220,0) size 13x19
           text run at (220,0) width 13: "\x{201D}: "
-        RenderInline {SPAN} at (0,0) size 97x19
-          RenderText {#text} at (233,0) size 97x19
-            text run at (233,0) width 97: " Lore\x{300}m ipsum"
+        RenderInline {SPAN} at (0,0) size 87x19
+          RenderText {#text} at (233,0) size 87x19
+            text run at (233,0) width 87: " Lore\x{300}m ipsum"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 1 of child 0 {#text} of child 3 {SPAN} of child 2 {P} of child 1 {BODY} of child 0 {HTML} of document
 selection end:   position 13 of child 0 {#text} of child 3 {SPAN} of child 2 {P} of child 1 {BODY} of child 0 {HTML} of document

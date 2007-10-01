@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x578
       RenderBlock {DIV} at (0,0) size 396x193 [border: (2px solid #FF0000)]
         RenderBlock {P} at (2,16) size 392x38
-          RenderText {#text} at (0,0) size 392x38
-            text run at (0,0) width 392: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
+          RenderText {#text} at (0,0) size 378x38
+            text run at (0,0) width 378: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
             text run at (0,19) width 18: "dis"
             text run at (18,19) width 19: "est"
             text run at (37,19) width 16: "ab"
@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
             text run at (106,19) width 32: "arian"
             text run at (138,19) width 26: "ism."
         RenderBlock {P} at (2,68) size 392x38
-          RenderText {#text} at (0,0) size 392x38
-            text run at (0,0) width 392: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
+          RenderText {#text} at (0,0) size 378x38
+            text run at (0,0) width 378: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
             text run at (0,19) width 18: "dis"
             text run at (18,19) width 19: "est"
             text run at (37,19) width 16: "ab"
@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
             text run at (106,19) width 32: "arian"
             text run at (138,19) width 26: "ism."
         RenderBlock {P} at (2,120) size 392x57
-          RenderText {#text} at (0,0) size 392x38
-            text run at (0,0) width 392: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
+          RenderText {#text} at (0,0) size 378x38
+            text run at (0,0) width 378: "I\x{2019}m told this is the longest word in the English language: anti\x{AD}"
             text run at (0,19) width 18: "dis"
             text run at (18,19) width 19: "est"
             text run at (37,19) width 16: "ab"

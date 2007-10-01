@@ -14,14 +14,14 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 65: "30% width"
       RenderBlock (anonymous) at (0,29) size 784x19
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,48) size 217x48 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 215x46
-          RenderTableRow {TR} at (0,2) size 215x42
-            RenderTableCell {TD} at (2,2) size 105x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,48) size 216x48 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 214x46
+          RenderTableRow {TR} at (0,2) size 214x42
+            RenderTableCell {TD} at (2,2) size 104x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 80x38
                 text run at (2,2) width 80: "100 100 100"
                 text run at (2,21) width 80: "100 100 100"
-            RenderTableCell {TD} at (109,11) size 104x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (108,11) size 104x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 65x19
                 text run at (2,2) width 65: "50% width"
       RenderBlock (anonymous) at (0,96) size 784x19

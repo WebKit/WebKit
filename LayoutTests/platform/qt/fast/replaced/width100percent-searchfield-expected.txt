@@ -1,0 +1,77 @@
+layer at (0,0) size 875x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 875x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 225x19
+          text run at (0,0) width 225: "These textfields should not overlap."
+      RenderTable {TABLE} at (0,19) size 784x38
+        RenderTableSection {TBODY} at (0,0) size 784x38
+          RenderTableRow {TR} at (0,1) size 784x36
+            RenderTableCell {TD} at (1,1) size 180x36 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 178x30 [bgcolor=#C0C0C0]
+                RenderBlock {DIV} at (8,0) size 162x30
+                  RenderBlock {DIV} at (0,14) size 0x0
+                  RenderBlock {DIV} at (162,14) size 0x0
+            RenderTableCell {TD} at (182,1) size 18x36 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 16x30 [bgcolor=#C0C0C0]
+                RenderBlock {DIV} at (8,0) size 0x30
+                  RenderBlock {DIV} at (0,14) size 0x0
+                  RenderBlock {DIV} at (0,30) size 0x0
+            RenderTableCell {TD} at (201,1) size 18x36 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 16x30 [bgcolor=#C0C0C0]
+                RenderBlock {DIV} at (8,0) size 0x30
+                  RenderBlock {DIV} at (0,14) size 0x0
+                  RenderBlock {DIV} at (0,30) size 0x0
+            RenderTableCell {TD} at (220,8) size 563x21 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x19
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,57) size 784x38
+        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,19) size 0x19
+      RenderTable {TABLE} at (0,95) size 867x38
+        RenderTableSection {TBODY} at (0,0) size 867x38
+          RenderTableRow {TR} at (0,1) size 867x36
+            RenderTableCell {TD} at (1,1) size 820x36 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 818x30 [bgcolor=#C0C0C0]
+                RenderBlock {DIV} at (8,0) size 802x30
+                  RenderBlock {DIV} at (0,14) size 0x0
+                  RenderBlock {DIV} at (802,14) size 0x0
+            RenderTableCell {TD} at (822,1) size 18x36 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 16x30 [bgcolor=#C0C0C0]
+                RenderBlock {DIV} at (8,0) size 0x30
+                  RenderBlock {DIV} at (0,14) size 0x0
+                  RenderBlock {DIV} at (0,30) size 0x0
+            RenderTableCell {TD} at (841,1) size 18x36 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 16x30 [bgcolor=#C0C0C0]
+                RenderBlock {DIV} at (8,0) size 0x30
+                  RenderBlock {DIV} at (0,14) size 0x0
+                  RenderBlock {DIV} at (0,30) size 0x0
+            RenderTableCell {TD} at (860,8) size 6x21 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x19
+                text run at (1,1) width 4: " "
+layer at (18,31) size 162x30
+  RenderBlock {DIV} at (0,0) size 162x30
+    RenderText {#text} at (52,0) size 58x19
+      text run at (52,0) width 58: "New Mail"
+layer at (199,31) size 2x30 scrollWidth 38
+  RenderBlock {DIV} at (0,0) size 2x30
+    RenderText {#text} at (1,0) size 36x19
+      text run at (1,0) width 36: "Reply"
+layer at (218,31) size 2x30 scrollWidth 57
+  RenderBlock {DIV} at (0,0) size 2x30
+    RenderText {#text} at (1,0) size 55x19
+      text run at (1,0) width 55: "Reply All"
+layer at (18,107) size 802x30
+  RenderBlock {DIV} at (0,0) size 802x30
+    RenderText {#text} at (372,0) size 58x19
+      text run at (372,0) width 58: "New Mail"
+layer at (839,107) size 2x30 scrollWidth 38
+  RenderBlock {DIV} at (0,0) size 2x30
+    RenderText {#text} at (1,0) size 36x19
+      text run at (1,0) width 36: "Reply"
+layer at (858,107) size 2x30 scrollWidth 57
+  RenderBlock {DIV} at (0,0) size 2x30
+    RenderText {#text} at (1,0) size 55x19
+      text run at (1,0) width 55: "Reply All"

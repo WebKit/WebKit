@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600
+      RenderFrame {FRAME} at (0,0) size 800x196
+        layer at (0,0) size 800x196
+          RenderView at (0,0) size 800x196
+        layer at (0,0) size 800x196
+          RenderBlock {HTML} at (0,0) size 800x196
+            RenderBody {BODY} at (8,8) size 784x180
+              RenderBlock {DIV} at (0,0) size 784x57
+                RenderInline {SPAN} at (0,0) size 223x19
+                  RenderText {#text} at (0,0) size 223x19
+                    text run at (0,0) width 223: "This page was successfully loaded."
+                  RenderBR {BR} at (223,14) size 0x0
+                RenderInline {SPAN} at (0,0) size 114x19
+                  RenderText {#text} at (0,19) size 114x19
+                    text run at (0,19) width 114: "My protocol is file:"
+                  RenderBR {BR} at (114,33) size 0x0
+                RenderInline {SPAN} at (0,0) size 123x19
+                  RenderText {#text} at (0,38) size 123x19
+                    text run at (0,38) width 123: "My referrer is blank"
+                  RenderBR {BR} at (123,52) size 0x0
+      RenderFrame {FRAME} at (0,202) size 800x196
+        layer at (0,0) size 800x196
+          RenderView at (0,0) size 800x196
+        layer at (0,0) size 800x149
+          RenderBlock {HTML} at (0,0) size 800x149
+            RenderBody {BODY} at (8,8) size 784x133
+              RenderTable {TABLE} at (0,0) size 97x133
+                RenderTableSection {TBODY} at (0,0) size 97x133
+                  RenderTableRow {TR} at (0,2) size 97x129
+                    RenderTableCell {TD} at (2,2) size 93x129 [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (1,1) size 91x19
+                        RenderText {#text} at (0,0) size 91x19
+                          text run at (0,0) width 91: "Image loaded."
+                      RenderBlock (anonymous) at (1,20) size 91x108
+                        RenderImage {IMG} at (0,0) size 76x103
+      RenderFrame {FRAME} at (0,404) size 800x196
+        layer at (0,0) size 800x196
+          RenderView at (0,0) size 800x196
+        layer at (0,0) size 800x149
+          RenderBlock {HTML} at (0,0) size 800x149
+            RenderBody {BODY} at (8,8) size 784x133
+              RenderTable {TABLE} at (0,0) size 97x133
+                RenderTableSection {TBODY} at (0,0) size 97x133
+                  RenderTableRow {TR} at (0,2) size 97x129
+                    RenderTableCell {TD} at (2,2) size 93x129 [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (1,1) size 91x19
+                        RenderText {#text} at (0,0) size 91x19
+                          text run at (0,0) width 91: "Image loaded."
+                      RenderBlock (anonymous) at (1,20) size 91x108
+                        RenderImage {IMG} at (0,0) size 76x103

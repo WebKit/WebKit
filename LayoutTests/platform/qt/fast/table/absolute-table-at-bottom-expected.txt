@@ -12,8 +12,8 @@ layer at (0,0) size 800x185
         RenderText {#text} at (143,0) size 412x19
           text run at (143,0) width 412: " - Table with absolute bottom positioning is positioned incorrectly."
       RenderBlock {H1} at (0,37) size 784x38
-        RenderText {#text} at (0,0) size 176x38
-          text run at (0,0) width 176: "Look Down \x{2193}"
+        RenderText {#text} at (0,0) size 160x38
+          text run at (0,0) width 160: "Look Down!"
       RenderBlock {P} at (0,93) size 784x76
         RenderText {#text} at (0,0) size 773x76
           text run at (0,0) width 495: "At the bottom of the window you should see the word \"Paragraph\" followed by "

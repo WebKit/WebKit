@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 388x19
+          text run at (0,0) width 388: "Only the second search field should have a cancel button (\x{D7})."
+      RenderBlock (anonymous) at (0,33) size 784x34
+        RenderTextControl {INPUT} at (2,2) size 178x30 [bgcolor=#C0C0C0]
+          RenderBlock {DIV} at (8,0) size 162x30
+            RenderBlock {DIV} at (0,14) size 0x0
+            RenderBlock {DIV} at (162,14) size 0x0
+        RenderText {#text} at (182,2) size 4x19
+          text run at (182,2) width 4: " "
+        RenderTextControl {INPUT} at (188,2) size 178x30 [bgcolor=#C0C0C0]
+          RenderBlock {DIV} at (8,0) size 162x30
+            RenderBlock {DIV} at (0,14) size 0x0
+            RenderBlock {DIV} at (162,14) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (18,43) size 162x30
+  RenderBlock {DIV} at (0,0) size 162x30
+layer at (204,43) size 162x30
+  RenderBlock {DIV} at (0,0) size 162x30
+    RenderText {#text} at (56,0) size 50x19
+      text run at (56,0) width 50: "this one"

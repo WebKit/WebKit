@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 53x19
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 699x19
+          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
+            RenderText {#text} at (53,0) size 294x19
+              text run at (53,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=14758"
+          RenderText {#text} at (347,0) size 405x19
+            text run at (347,0) width 4: " "
+            text run at (351,0) width 401: "REGRESSION: Repeated text after line break on facebook.com"
+        RenderText {#text} at (752,0) size 4x19
+          text run at (752,0) width 4: "."
+      RenderBlock {P} at (0,34) size 784x19
+        RenderText {#text} at (0,0) size 234x19
+          text run at (0,0) width 234: "These two boxes should be identical:"
+      RenderBlock {DIV} at (0,67) size 76x63 [border: (3px solid #000000)]
+        RenderBlock (anonymous) at (3,3) size 70x38
+          RenderText {#text} at (0,0) size 41x19
+            text run at (0,0) width 41: "Lorem"
+          RenderInline {SPAN} at (0,0) size 38x19
+            RenderText {#text} at (0,19) size 38x19
+              text run at (0,19) width 38: "ipsum"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (3,41) size 70x19
+          RenderText {#text} at (0,0) size 32x19
+            text run at (0,0) width 32: "dolor"
+      RenderBlock (anonymous) at (0,130) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,149) size 76x63 [border: (3px solid #000000)]
+        RenderBlock (anonymous) at (3,3) size 70x38
+          RenderText {#text} at (0,0) size 41x38
+            text run at (0,0) width 41: "Lorem"
+            text run at (0,19) width 38: "ipsum"
+        RenderBlock {DIV} at (3,41) size 70x19
+          RenderText {#text} at (0,0) size 32x19
+            text run at (0,0) width 32: "dolor"

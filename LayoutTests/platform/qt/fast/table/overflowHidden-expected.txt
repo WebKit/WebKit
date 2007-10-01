@@ -1,8 +1,8 @@
-layer at (0,0) size 800x3673
+layer at (0,0) size 800x2454
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x3673
-  RenderBlock {HTML} at (0,0) size 800x3673
-    RenderBody {BODY} at (8,8) size 784x3657
+layer at (0,0) size 800x2454
+  RenderBlock {HTML} at (0,0) size 800x2454
+    RenderBody {BODY} at (8,8) size 784x2438
       RenderTable {TABLE} at (0,0) size 418x112 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 414x108
           RenderTableRow {TR} at (0,2) size 414x104
@@ -110,26 +110,26 @@ layer at (0,0) size 800x3673
       RenderBlock (anonymous) at (0,1994) size 784x38
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,19) size 0x19
-      RenderTable {TABLE} at (0,2032) size 418x492 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 414x488
-          RenderTableRow {TR} at (0,2) size 414x484
-            RenderTableCell {TD} at (308,192) size 104x104 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,2032) size 418x112 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 414x108
+          RenderTableRow {TR} at (0,2) size 414x104
+            RenderTableCell {TD} at (308,2) size 104x104 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
-      RenderBlock (anonymous) at (0,2524) size 784x38
+      RenderBlock (anonymous) at (0,2144) size 784x38
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,19) size 0x19
-      RenderTable {TABLE} at (0,2562) size 418x492 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 414x488
-          RenderTableRow {TR} at (0,2) size 414x484
-            RenderTableCell {TD} at (308,192) size 104x104 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,2182) size 418x112 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 414x108
+          RenderTableRow {TR} at (0,2) size 414x104
+            RenderTableCell {TD} at (308,2) size 104x104 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
-      RenderBlock (anonymous) at (0,3054) size 784x38
+      RenderBlock (anonymous) at (0,2294) size 784x38
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,19) size 0x19
-      RenderTable {TABLE} at (0,3092) size 470x565
-        RenderTableSection {TBODY} at (0,0) size 470x565
-          RenderTableRow {TR} at (0,2) size 470x561
-            RenderTableCell {TD} at (366,231) size 102x102 [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,2332) size 470x106
+        RenderTableSection {TBODY} at (0,0) size 470x106
+          RenderTableRow {TR} at (0,2) size 470x102
+            RenderTableCell {TD} at (366,2) size 102x102 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 100x100 [bgcolor=#800080]
 layer at (12,12) size 304x104 clip at (13,13) size 302x102
   RenderTableCell {TD} at (2,52) size 304x4 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -193,20 +193,20 @@ layer at (10,1892) size 605x107 clip at (13,1895) size 602x102
     RenderBlock {DIV} at (4,4) size 600x19 [bgcolor=#FFFF00]
       RenderText {#text} at (0,0) size 271x19
         text run at (0,0) width 271: "Test with border-collapse:collapse no color"
-layer at (12,2044) size 304x484 clip at (13,2045) size 302x2 scrollWidth 601
-  RenderTableCell {TD} at (2,2) size 304x484 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (12,2044) size 304x104 clip at (13,2045) size 302x86 scrollWidth 601
+  RenderTableCell {TD} at (2,44) size 304x20 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,-18) size 300x19 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x19 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 146x19
           text run at (0,0) width 146: "Test with overflow:auto"
-layer at (12,2574) size 304x484 clip at (0,0) size 0x0 scrollWidth 601
-  RenderTableCell {TD} at (2,2) size 304x484 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (12,2194) size 304x104 clip at (13,2195) size 286x86 scrollWidth 601
+  RenderTableCell {TD} at (2,44) size 304x20 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,-18) size 300x19 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x19 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 151x19
           text run at (0,0) width 151: "Test with overflow:scroll"
-layer at (10,3102) size 362x561 clip at (40,3132) size 302x21 scrollWidth 601
-  RenderTableCell {TD} at (2,2) size 362x561 [bgcolor=#808080] [border: (30px solid #000000)] [r=0 c=0 rs=1 cs=1]
+layer at (10,2342) size 362x102 clip at (40,2372) size 302x26 scrollWidth 601
+  RenderTableCell {TD} at (2,4) size 362x97 [bgcolor=#808080] [border: (30px solid #000000)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (31,31) size 300x19 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x19 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 146x19

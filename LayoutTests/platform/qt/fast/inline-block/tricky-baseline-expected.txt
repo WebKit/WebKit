@@ -11,86 +11,60 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (8,67) size 104x204 clip at (0,0) size 0x0 scrollWidth 35 scrollHeight 988
+layer at (8,67) size 104x204 clip at (10,69) size 84x200 scrollHeight 494
   RenderBlock {DIV} at (0,59) size 104x204 [border: (2px solid #800080)]
-    RenderText {#text} at (2,2) size 35x76
-      text run at (2,2) width 27: "This"
-      text run at (2,21) width 10: "is"
-      text run at (2,40) width 35: "some"
+    RenderText {#text} at (2,2) size 80x38
+      text run at (2,2) width 80: "This is some"
+      text run at (2,21) width 27: "text."
+    RenderBR {BR} at (29,35) size 0x0
+    RenderText {#text} at (2,40) size 80x38
+      text run at (2,40) width 80: "This is some"
       text run at (2,59) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,78) size 35x76
-      text run at (2,78) width 27: "This"
-      text run at (2,97) width 10: "is"
-      text run at (2,116) width 35: "some"
+    RenderBR {BR} at (29,73) size 0x0
+    RenderText {#text} at (2,78) size 80x38
+      text run at (2,78) width 80: "This is some"
+      text run at (2,97) width 27: "text."
+    RenderBR {BR} at (29,111) size 0x0
+    RenderText {#text} at (2,116) size 80x38
+      text run at (2,116) width 80: "This is some"
       text run at (2,135) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,154) size 35x76
-      text run at (2,154) width 27: "This"
-      text run at (2,173) width 10: "is"
-      text run at (2,192) width 35: "some"
+    RenderBR {BR} at (29,149) size 0x0
+    RenderText {#text} at (2,154) size 80x38
+      text run at (2,154) width 80: "This is some"
+      text run at (2,173) width 27: "text."
+    RenderBR {BR} at (29,187) size 0x0
+    RenderText {#text} at (2,192) size 80x38
+      text run at (2,192) width 80: "This is some"
       text run at (2,211) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,230) size 35x76
-      text run at (2,230) width 27: "This"
-      text run at (2,249) width 10: "is"
-      text run at (2,268) width 35: "some"
+    RenderBR {BR} at (29,225) size 0x0
+    RenderText {#text} at (2,230) size 80x38
+      text run at (2,230) width 80: "This is some"
+      text run at (2,249) width 27: "text."
+    RenderBR {BR} at (29,263) size 0x0
+    RenderText {#text} at (2,268) size 80x38
+      text run at (2,268) width 80: "This is some"
       text run at (2,287) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,306) size 35x76
-      text run at (2,306) width 27: "This"
-      text run at (2,325) width 10: "is"
-      text run at (2,344) width 35: "some"
+    RenderBR {BR} at (29,301) size 0x0
+    RenderText {#text} at (2,306) size 80x38
+      text run at (2,306) width 80: "This is some"
+      text run at (2,325) width 27: "text."
+    RenderBR {BR} at (29,339) size 0x0
+    RenderText {#text} at (2,344) size 80x38
+      text run at (2,344) width 80: "This is some"
       text run at (2,363) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,382) size 35x76
-      text run at (2,382) width 27: "This"
-      text run at (2,401) width 10: "is"
-      text run at (2,420) width 35: "some"
+    RenderBR {BR} at (29,377) size 0x0
+    RenderText {#text} at (2,382) size 80x38
+      text run at (2,382) width 80: "This is some"
+      text run at (2,401) width 27: "text."
+    RenderBR {BR} at (29,415) size 0x0
+    RenderText {#text} at (2,420) size 80x38
+      text run at (2,420) width 80: "This is some"
       text run at (2,439) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,458) size 35x76
-      text run at (2,458) width 27: "This"
-      text run at (2,477) width 10: "is"
-      text run at (2,496) width 35: "some"
-      text run at (2,515) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,534) size 35x76
-      text run at (2,534) width 27: "This"
-      text run at (2,553) width 10: "is"
-      text run at (2,572) width 35: "some"
-      text run at (2,591) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,610) size 35x76
-      text run at (2,610) width 27: "This"
-      text run at (2,629) width 10: "is"
-      text run at (2,648) width 35: "some"
-      text run at (2,667) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,686) size 35x76
-      text run at (2,686) width 27: "This"
-      text run at (2,705) width 10: "is"
-      text run at (2,724) width 35: "some"
-      text run at (2,743) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,762) size 35x76
-      text run at (2,762) width 27: "This"
-      text run at (2,781) width 10: "is"
-      text run at (2,800) width 35: "some"
-      text run at (2,819) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,838) size 35x76
-      text run at (2,838) width 27: "This"
-      text run at (2,857) width 10: "is"
-      text run at (2,876) width 35: "some"
-      text run at (2,895) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
-    RenderText {#text} at (2,914) size 35x76
-      text run at (2,914) width 27: "This"
-      text run at (2,933) width 10: "is"
-      text run at (2,952) width 35: "some"
-      text run at (2,971) width 27: "text."
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (29,453) size 0x0
+    RenderText {#text} at (2,458) size 80x38
+      text run at (2,458) width 80: "This is some"
+      text run at (2,477) width 27: "text."
+    RenderBR {BR} at (29,491) size 0x0
 layer at (116,27) size 204x404 clip at (118,29) size 200x400
   RenderBlock {DIV} at (108,19) size 204x404 [border: (2px solid #000000)]
     RenderText {#text} at (2,2) size 111x19

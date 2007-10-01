@@ -38,22 +38,9 @@ layer at (0,0) size 800x600
           text run at (0,32) width 3 RTL: " "
           text run at (3,32) width 188 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
           text run at (112,64) width 79 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
-layer at (9,222) size 197x64 clip at (0,0) size 0x0 scrollHeight 511
+layer at (9,222) size 197x64 clip at (9,222) size 181x64 scrollHeight 95
   RenderBlock {DIV} at (1,1) size 197x64
-    RenderText {#text} at (3,0) size 0x511
-      text run at (3,0) width 0 RTL: "\x{5D0}"
-      text run at (3,32) width 0 RTL: "\x{5DB}"
-      text run at (3,64) width 0 RTL: "\x{5DC}"
-      text run at (3,96) width 0 RTL: "\x{5EA}"
-      text run at (3,128) width 0 RTL: "\x{5E4}"
-      text run at (3,160) width 0 RTL: "\x{5DC}"
-      text run at (3,192) width 0 RTL: "\x{5E4}"
-      text run at (3,224) width 0 RTL: "\x{5DC}"
-      text run at (3,256) width 0 RTL: "?"
-      text run at (3,288) width 0 RTL: "\x{5E9}"
-      text run at (3,320) width 0 RTL: "\x{5EA}"
-      text run at (3,352) width 0 RTL: "\x{5D4}"
-      text run at (3,384) width 0 RTL: "\x{5DE}"
-      text run at (3,416) width 0 RTL: "\x{5D9}"
-      text run at (3,448) width 0 RTL: "\x{5E5}"
-      text run at (3,480) width 0 RTL: "!"
+    RenderText {#text} at (75,0) size 158x95
+      text run at (75,0) width 103 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} "
+      text run at (62,32) width 116 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}? "
+      text run at (20,64) width 158 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"

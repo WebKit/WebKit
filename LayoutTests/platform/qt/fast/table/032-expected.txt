@@ -14,10 +14,10 @@ layer at (8,50) size 100x50
       RenderTable {TABLE} at (0,0) size 100x6
         RenderTableSection {TBODY} at (0,0) size 100x6
           RenderTableRow {TR} at (0,2) size 100x2
-            RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 96x2 [r=0 c=0 rs=1 cs=1]
 layer at (8,100) size 100x50
   RenderBlock (positioned) {DIV} at (0,50) size 100x50 [bgcolor=#008000]
     RenderTable {TABLE} at (0,0) size 100x6
       RenderTableSection {TBODY} at (0,0) size 100x6
         RenderTableRow {TR} at (0,2) size 100x2
-          RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {TD} at (2,2) size 96x2 [r=0 c=0 rs=1 cs=1]

@@ -1,0 +1,60 @@
+layer at (0,0) size 800x641
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x641
+  RenderBlock {HTML} at (0,0) size 800x641
+    RenderBody {BODY} at (8,8) size 784x613
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 53x19
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 707x19
+          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
+            RenderText {#text} at (53,0) size 294x19
+              text run at (53,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=14875"
+          RenderText {#text} at (347,0) size 413x19
+            text run at (347,0) width 4: " "
+            text run at (351,0) width 409: "Textarea with nowrap - left/right nav, Up/down nav both hide text"
+        RenderText {#text} at (760,0) size 4x19
+          text run at (760,0) width 4: "."
+      RenderBlock {P} at (0,34) size 784x19
+        RenderText {#text} at (0,0) size 452x19
+          text run at (0,0) width 452: "The letter A should be fully visible in each one of the eight boxes below."
+layer at (28,81) size 150x50 clip at (28,81) size 150x34 scrollX 50 scrollWidth 200
+  RenderBlock {DIV} at (20,73) size 150x50
+    RenderBlock {DIV} at (0,0) size 200x19
+      RenderText {#text} at (191,0) size 9x19
+        text run at (191,0) width 9: "A"
+layer at (28,151) size 160x50 clip at (38,151) size 150x34 scrollX 50 scrollWidth 200
+  RenderBlock {DIV} at (20,143) size 160x50 [border: (10px solid #000000)]
+    RenderBlock {DIV} at (10,0) size 200x19
+      RenderText {#text} at (191,0) size 9x19
+        text run at (191,0) width 9: "A"
+layer at (28,221) size 160x50 clip at (28,221) size 150x34 scrollX 50 scrollWidth 200
+  RenderBlock {DIV} at (20,213) size 160x50 [border: (10px solid #000000) none]
+    RenderBlock {DIV} at (0,0) size 200x19
+      RenderText {#text} at (191,0) size 9x19
+        text run at (191,0) width 9: "A"
+layer at (28,291) size 150x50 clip at (28,291) size 134x34 scrollX 66 scrollWidth 200
+  RenderBlock {DIV} at (20,283) size 150x50
+    RenderBlock {DIV} at (0,0) size 200x19
+      RenderText {#text} at (191,0) size 9x19
+        text run at (191,0) width 9: "A"
+layer at (28,361) size 150x50 clip at (28,361) size 150x34 scrollWidth 200
+  RenderBlock {DIV} at (20,353) size 150x50
+    RenderBlock {DIV} at (0,0) size 200x19
+      RenderText {#text} at (0,0) size 9x19
+        text run at (0,0) width 9: "A"
+layer at (28,431) size 160x50 clip at (38,431) size 150x34 scrollWidth 200
+  RenderBlock {DIV} at (20,423) size 160x50 [border: (10px solid #000000)]
+    RenderBlock {DIV} at (10,0) size 200x19
+      RenderText {#text} at (0,0) size 9x19
+        text run at (0,0) width 9: "A"
+layer at (28,501) size 160x50 clip at (28,501) size 150x34 scrollWidth 200
+  RenderBlock {DIV} at (20,493) size 160x50 [border: (10px solid #000000) none]
+    RenderBlock {DIV} at (0,0) size 200x19
+      RenderText {#text} at (0,0) size 9x19
+        text run at (0,0) width 9: "A"
+layer at (28,571) size 150x50 clip at (28,571) size 134x34 scrollWidth 200
+  RenderBlock {DIV} at (20,563) size 150x50
+    RenderBlock {DIV} at (0,0) size 200x19
+      RenderText {#text} at (0,0) size 9x19
+        text run at (0,0) width 9: "A"

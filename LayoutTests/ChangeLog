@@ -1,3 +1,219 @@
+2007-10-01  Lars Knoll  <lars@trolltech.com>
+
+        Remove the separate ChangeLog in Layouttests/platform/qt.
+        Update layout test results. We still have a few failures,
+        but these ones are real issues.
+
+        * ChangeLog:
+        * platform/qt/ChangeLog: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/css1_forward_compatible_parsing-expected.txt: Added.
+        * platform/qt/css2.1/t040103-ident-08-c-expected.txt:
+        * platform/qt/css2.1/t0509-id-sel-syntax-01-f-expected.txt:
+        * platform/qt/css2.1/t1202-counter-09-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-09-b-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/canonicalform10-expected.txt: Copied from LayoutTests/platform/qt/fast/invalid/junk-data-expected.txt.
+        * platform/qt/dom/xhtml/level3/core/canonicalform11-expected.txt: Copied from LayoutTests/platform/qt/fast/invalid/junk-data-expected.txt.
+        * platform/qt/fast/block/float/nestedAnonymousBlocks2-expected.txt: Added.
+        * platform/qt/fast/block/margin-collapse/103-expected.txt:
+        * platform/qt/fast/block/positioning/complex-percentage-height-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-01-expected.txt: Copied from LayoutTests/fast/borders/border-image-01-expected.txt.
+        * platform/qt/fast/canvas/canvas-resize-reset-expected.txt: Added.
+        * platform/qt/fast/canvas/fill-stroke-clip-reset-path-expected.txt: Copied from LayoutTests/fast/canvas/fill-stroke-clip-reset-path-expected.txt.
+        * platform/qt/fast/canvas/fillrect-gradient-zero-stops-expected.txt: Copied from LayoutTests/fast/canvas/fillrect-gradient-zero-stops-expected.txt.
+        * platform/qt/fast/canvas/gradient-empty-path-expected.txt: Copied from LayoutTests/fast/canvas/gradient-empty-path-expected.txt.
+        * platform/qt/fast/css-generated-content/before-with-first-letter-expected.txt: Added.
+        * platform/qt/fast/css-generated-content/wbr-with-before-content-expected.txt:
+        * platform/qt/fast/css/background-shorthand-invalid-url-expected.txt: Added.
+        * platform/qt/fast/css/create_element_align-expected.txt: Added.
+        * platform/qt/fast/css/first-letter-capitalized-expected.txt: Added.
+        * platform/qt/fast/css/first-letter-detach-expected.txt:
+        * platform/qt/fast/css/first-letter-hover-expected.txt: Added.
+        * platform/qt/fast/css/first-letter-recalculation-expected.txt: Added.
+        * platform/qt/fast/css/first-letter-visibility-expected.txt: Added.
+        * platform/qt/fast/css/getFloatValueForUnit-expected.txt:
+        * platform/qt/fast/css/hsl-color-expected.txt:
+        * platform/qt/fast/css/hsla-color-expected.txt:
+        * platform/qt/fast/css/line-height-font-order-expected.txt: Added.
+        * platform/qt/fast/css/word-space-extra-expected.txt:
+        * platform/qt/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/qt/fast/dom/delete-contents-expected.txt:
+        * platform/qt/fast/dom/frame-loading-via-document-write-expected.txt: Added.
+        * platform/qt/fast/dynamic/008-expected.txt:
+        * platform/qt/fast/forms/003-expected.txt:
+        * platform/qt/fast/forms/004-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label01-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label02-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label03-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label04-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label05-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/qt/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/qt/fast/forms/hidden-input-file-expected.txt: Added.
+        * platform/qt/fast/forms/input-double-click-selection-gap-bug-expected.txt:
+        * platform/qt/fast/forms/input-table-expected.txt:
+        * platform/qt/fast/forms/listbox-deselect-scroll-expected.txt:
+        * platform/qt/fast/forms/listbox-scrollbar-incremental-load-expected.txt:
+        * platform/qt/fast/forms/listbox-width-change-expected.txt:
+        * platform/qt/fast/forms/menulist-clip-expected.txt: Added.
+        * platform/qt/fast/forms/menulist-deselect-update-expected.txt: Added.
+        * platform/qt/fast/forms/menulist-narrow-width-expected.txt: Added.
+        * platform/qt/fast/forms/menulist-restrict-line-height-expected.txt: Added.
+        * platform/qt/fast/forms/menulist-separator-painting-expected.txt: Copied from LayoutTests/fast/forms/menulist-separator-painting-expected.txt.
+        * platform/qt/fast/forms/menulist-width-change-expected.txt:
+        * platform/qt/fast/forms/option-script-expected.txt:
+        * platform/qt/fast/forms/option-strip-whitespace-expected.txt:
+        * platform/qt/fast/forms/option-text-clip-expected.txt:
+        * platform/qt/fast/forms/preserveFormDuringResidualStyle-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.txt.
+        * platform/qt/fast/forms/radio-nested-labels-expected.txt: Added.
+        * platform/qt/fast/forms/search-cancel-button-style-sharing-expected.txt: Added.
+        * platform/qt/fast/forms/select-align-expected.txt:
+        * platform/qt/fast/forms/select-baseline-expected.txt:
+        * platform/qt/fast/forms/select-block-background-expected.txt:
+        * platform/qt/fast/forms/select-change-listbox-size-expected.txt:
+        * platform/qt/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/qt/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/qt/fast/forms/select-disabled-appearance-expected.txt:
+        * platform/qt/fast/forms/select-display-none-style-resolve-expected.txt: Added.
+        * platform/qt/fast/forms/select-initial-position-expected.txt:
+        * platform/qt/fast/forms/select-item-background-clip-expected.txt:
+        * platform/qt/fast/forms/select-list-box-with-height-expected.txt:
+        * platform/qt/fast/forms/select-selected-expected.txt:
+        * platform/qt/fast/forms/select-size-expected.txt:
+        * platform/qt/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/qt/fast/forms/slider-thumb-shared-style-expected.txt: Added.
+        * platform/qt/fast/forms/slider-thumb-stylability-expected.txt: Copied from LayoutTests/fast/forms/slider-thumb-stylability-expected.txt.
+        * platform/qt/fast/forms/stuff-on-my-optgroup-expected.txt: Added.
+        * platform/qt/fast/forms/textarea-align-expected.txt:
+        * platform/qt/fast/forms/textarea-rows-cols-expected.txt: Added.
+        * platform/qt/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/qt/fast/forms/textfield-overflow-expected.txt:
+        * platform/qt/fast/forms/thumbslider-crash-expected.txt: Copied from LayoutTests/fast/forms/thumbslider-crash-expected.txt.
+        * platform/qt/fast/forms/thumbslider-no-parent-slider-expected.txt: Added.
+        * platform/qt/fast/frames/calculate-fixed-expected.txt:
+        * platform/qt/fast/frames/calculate-order-expected.txt:
+        * platform/qt/fast/frames/calculate-percentage-expected.txt:
+        * platform/qt/fast/frames/calculate-relative-expected.txt:
+        * platform/qt/fast/frames/iframe-option-crash-expected.txt:
+        * platform/qt/fast/frames/invalid-expected.txt:
+        * platform/qt/fast/frames/onlyCommentInIFrame-expected.txt:
+        * platform/qt/fast/frames/valid-expected.txt:
+        * platform/qt/fast/inline-block/14498-positionForCoordinates-expected.txt: Added.
+        * platform/qt/fast/inline-block/tricky-baseline-expected.txt:
+        * platform/qt/fast/inline/br-text-decoration-expected.txt: Added.
+        * platform/qt/fast/inline/outline-continuations-expected.txt: Added.
+        * platform/qt/fast/inspector/style-expected.txt:
+        * platform/qt/fast/invalid/014-expected.txt:
+        * platform/qt/fast/invalid/junk-data-expected.txt:
+        * platform/qt/fast/invalid/nestedh3s-expected.txt:
+        * platform/qt/fast/invalid/td-inside-object-expected.txt: Added.
+        * platform/qt/fast/layers/layer-visibility-expected.txt:
+        * platform/qt/fast/layers/overflow-scroll-auto-switch-expected.txt:
+        * platform/qt/fast/layers/scroll-rect-to-visible-expected.txt: Added.
+        * platform/qt/fast/lists/marker-before-empty-inline-expected.txt: Added.
+        * platform/qt/fast/multicol/negativeColumnWidth-expected.txt: Copied from LayoutTests/fast/multicol/negativeColumnWidth-expected.txt.
+        * platform/qt/fast/multicol/zeroColumnCount-expected.txt: Added.
+        * platform/qt/fast/overflow/002-expected.txt:
+        * platform/qt/fast/overflow/005-expected.txt:
+        * platform/qt/fast/overflow/006-expected.txt:
+        * platform/qt/fast/overflow/008-expected.txt:
+        * platform/qt/fast/overflow/childFocusRingClip-expected.txt:
+        * platform/qt/fast/overflow/hit-test-overflow-controls-expected.txt:
+        * platform/qt/fast/overflow/image-selection-highlight-expected.txt:
+        * platform/qt/fast/overflow/infiniteRecursionGuard-expected.txt:
+        * platform/qt/fast/overflow/overflow-text-hit-testing-expected.txt:
+        * platform/qt/fast/overflow/table-overflow-float-expected.txt:
+        * platform/qt/fast/overflow/unreachable-overflow-rtl-bug-expected.txt:
+        * platform/qt/fast/parser/document-write-option-expected.txt:
+        * platform/qt/fast/replaced/absolute-position-percentage-height-expected.txt: Added.
+        * platform/qt/fast/replaced/applet-disabled-positioned-expected.txt: Added.
+        * platform/qt/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/qt/fast/replaced/selection-rect-in-table-cell-expected.txt:
+        * platform/qt/fast/replaced/three-selects-break-expected.txt:
+        * platform/qt/fast/replaced/width100percent-checkbox-expected.txt: Copied from LayoutTests/fast/replaced/width100percent-radio-expected.txt.
+        * platform/qt/fast/replaced/width100percent-image-expected.txt: Added.
+        * platform/qt/fast/replaced/width100percent-menulist-expected.txt: Added.
+        * platform/qt/fast/replaced/width100percent-radio-expected.txt: Added.
+        * platform/qt/fast/replaced/width100percent-searchfield-expected.txt: Added.
+        * platform/qt/fast/replaced/width100percent-textfield-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/input-appearance-minWidth-expected.txt.
+        * platform/qt/fast/table/003-expected.txt:
+        * platform/qt/fast/table/032-expected.txt:
+        * platform/qt/fast/table/100-percent-cell-width-expected.txt: Added.
+        * platform/qt/fast/table/absolute-table-at-bottom-expected.txt:
+        * platform/qt/fast/table/cell-pref-width-invalidation-expected.txt: Added.
+        * platform/qt/fast/table/click-near-anonymous-table-expected.txt:
+        * platform/qt/fast/table/colgroup-spanning-groups-rules-expected.txt:
+        * platform/qt/fast/table/empty-cells-expected.txt:
+        * platform/qt/fast/table/giantRowspan-expected.txt:
+        * platform/qt/fast/table/giantRowspan2-expected.txt: Added.
+        * platform/qt/fast/table/max-width-integer-overflow-expected.txt: Copied from LayoutTests/platform/mac/fast/table/max-width-integer-overflow-expected.txt.
+        * platform/qt/fast/table/overflowHidden-expected.txt:
+        * platform/qt/fast/table/rules-attr-dynchange1-expected.txt: Added.
+        * platform/qt/fast/table/rules-attr-dynchange2-expected.txt: Added.
+        * platform/qt/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/qt/fast/text/atsui-partial-selection-expected.txt:
+        * platform/qt/fast/text/atsui-small-caps-punctuation-size-expected.txt:
+        * platform/qt/fast/text/atsui-spacing-features-expected.txt:
+        * platform/qt/fast/text/basic/003-expected.txt:
+        * platform/qt/fast/text/basic/013-expected.txt:
+        * platform/qt/fast/text/basic/014-expected.txt:
+        * platform/qt/fast/text/drawBidiText-expected.txt: Added.
+        * platform/qt/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/qt/fast/text/international/bidi-listbox-atsui-expected.txt:
+        * platform/qt/fast/text/international/bidi-listbox-expected.txt:
+        * platform/qt/fast/text/international/bidi-neutral-run-expected.txt: Added.
+        * platform/qt/fast/text/international/bidi-override-expected.txt:
+        * platform/qt/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/qt/fast/text/large-text-composed-char-expected.txt:
+        * platform/qt/fast/text/letter-spacing-negative-opacity-expected.txt:
+        * platform/qt/fast/text/reset-emptyRun-expected.txt: Added.
+        * platform/qt/fast/text/updateNewFont-expected.txt:
+        * platform/qt/fast/text/whitespace/026-expected.txt:
+        * platform/qt/fast/text/whitespace/tab-character-basics-expected.txt:
+        * platform/qt/fast/text/wide-zero-width-space-expected.txt:
+        * platform/qt/fast/text/word-break-run-rounding-expected.txt: Added.
+        * platform/qt/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug149275-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug149275-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug222467-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2886-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug29326-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug3718-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug50695-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug53690-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug55789-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug5799-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug72359-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug78162-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/qt/tables/mozilla/core/col_span-expected.txt:
+        * platform/qt/tables/mozilla/core/margins-expected.txt:
+        * platform/qt/tables/mozilla/images/adforce_imgis_com-expected.txt:
+        * platform/qt/tables/mozilla/marvin/colgroup_align_center-expected.txt:
+        * platform/qt/tables/mozilla/marvin/colgroup_align_justify-expected.txt:
+        * platform/qt/tables/mozilla/marvin/colgroup_align_left-expected.txt:
+        * platform/qt/tables/mozilla/marvin/colgroup_align_right-expected.txt:
+        * platform/qt/tables/mozilla/marvin/colgroup_width_pct-expected.txt:
+        * platform/qt/tables/mozilla/marvin/colgroup_width_px-expected.txt:
+        * platform/qt/tables/mozilla/marvin/x_colgroup_width_pct-expected.txt:
+        * platform/qt/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug137388-1-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug137388-2-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug22122-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug65372-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug8411-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.txt:
+
 2007-09-28  Antti Koivisto  <antti@apple.com>
 
         Rubber stamped by bdash.

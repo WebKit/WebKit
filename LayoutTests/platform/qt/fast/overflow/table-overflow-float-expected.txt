@@ -24,107 +24,107 @@ layer at (0,0) size 800x600
           text run at (0,96) width 71: "not floated."
         RenderBR {BR} at (71,110) size 0x0
         RenderBR {BR} at (0,115) size 0x19
-layer at (11,11) size 100x100 clip at (0,0) size 0x0 scrollWidth 27 scrollHeight 646
+layer at (11,11) size 100x100 clip at (11,11) size 84x100 scrollHeight 228
   RenderBlock {DIV} at (1,1) size 100x100
     RenderBlock (floating) {SPAN} at (0,0) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,0) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,0) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,19) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,19) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,19) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,38) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,38) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,38) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,57) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,57) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,57) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,76) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,76) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,76) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,95) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,95) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,95) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,114) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,114) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,114) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,133) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,133) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,133) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,152) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,152) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,152) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,171) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,171) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,171) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,190) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (27,190) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
+    RenderBlock (floating) {SPAN} at (54,190) size 27x19
+      RenderText {#text} at (0,0) size 27x19
+        text run at (0,0) width 27: "stuff"
     RenderBlock (floating) {SPAN} at (0,209) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,228) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,247) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,266) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,285) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,304) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,323) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,342) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,361) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,380) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,399) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,418) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,437) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,456) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,475) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,494) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,513) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,532) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,551) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,570) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,589) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,608) size 27x19
-      RenderText {#text} at (0,0) size 27x19
-        text run at (0,0) width 27: "stuff"
-    RenderBlock (floating) {SPAN} at (0,627) size 27x19
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "stuff"

@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x578
       RenderBlock {FORM} at (0,0) size 784x57
-        RenderTextControl {TEXTAREA} at (2,2) size 183x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderText {#text} at (187,30) size 4x19
-          text run at (187,30) width 4: " "
-        RenderTextControl {TEXTAREA} at (193,2) size 183x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderText {#text} at (378,30) size 4x19
-          text run at (378,30) width 4: " "
-        RenderButton {INPUT} at (384,25) size 53x30 [bgcolor=#C0C0C0]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderText {#text} at (188,30) size 4x19
+          text run at (188,30) width 4: " "
+        RenderTextControl {TEXTAREA} at (194,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderText {#text} at (380,30) size 4x19
+          text run at (380,30) width 4: " "
+        RenderButton {INPUT} at (386,25) size 53x30 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (8,5) size 37x19
             RenderText at (0,0) size 37x19
               text run at (0,0) width 37: "Reset"
@@ -29,9 +29,9 @@ layer at (0,0) size 800x600
           text run at (0,57) width 170: "hasDefaultText: SUCCESS"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (11,11) size 181x38
-  RenderBlock {DIV} at (1,1) size 181x38
-layer at (202,11) size 181x38
-  RenderBlock {DIV} at (1,1) size 181x38
+layer at (11,11) size 182x38
+  RenderBlock {DIV} at (1,1) size 182x38
+layer at (203,11) size 182x38
+  RenderBlock {DIV} at (1,1) size 182x38
     RenderText {#text} at (3,0) size 77x19
       text run at (3,0) width 77: "Default Text"
