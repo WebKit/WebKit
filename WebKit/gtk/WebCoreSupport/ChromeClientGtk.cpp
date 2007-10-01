@@ -32,6 +32,8 @@
 #include "IntRect.h"
 #include "PlatformString.h"
 #include "CString.h"
+#include "HitTestResult.h"
+#include "KURL.h"
 #include "webkitgtkpage.h"
 #include "webkitgtkprivate.h"
 #include "NotImplemented.h"
@@ -268,9 +270,16 @@ void ChromeClient::updateBackingStore()
     notImplemented();
 }
 
-void ChromeClient::mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags)
+void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
-    notImplemented();
+    // check if the element is a link...
+    KURL url = hit.absoluteLinkURL();
+    if(!url.isEmpty()) {
+        CString titleString = hit.title().utf8();
+        DeprecatedCString urlString = url.prettyURL().utf8();
+        g_signal_emit_by_name(m_webPage, "hovering_over_link", titleString.data(), urlString.data());
+    } else
+        g_signal_emit_by_name(m_webPage, "hovering_over_link", 0, 0);
 }
 
 void ChromeClient::setToolTip(const String&)
