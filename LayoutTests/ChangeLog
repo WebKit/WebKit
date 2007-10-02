@@ -1,3 +1,15 @@
+2007-10-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Added a mention of a bug that this test demonstrates:
+
+        * editing/execCommand/5144139-1-expected.checksum: Removed.
+        * editing/execCommand/5144139-1-expected.png: Removed.
+        * editing/execCommand/5144139-1-expected.txt: Removed.
+        * editing/execCommand/5144139-1.html:
+        * platform/mac/editing/execCommand/5144139-1-expected.checksum: Added.
+        * platform/mac/editing/execCommand/5144139-1-expected.png: Added.
+        * platform/mac/editing/execCommand/5144139-1-expected.txt: Added.
+
 2007-10-02  Lars Knoll  <lars@trolltech.com>
 
         Added some more test results.

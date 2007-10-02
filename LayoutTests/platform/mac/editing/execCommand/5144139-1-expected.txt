@@ -3,11 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 577x18
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 581x18
           text run at (0,0) width 333: "This tests for a bug when creating a list from a table. "
-          text run at (333,0) width 244: "The table should be inside a a list item."
-      RenderBlock {DIV} at (0,34) size 784x46
+          text run at (333,0) width 248: "The table should be inside a a list item. "
+        RenderInline {B} at (0,0) size 777x36
+          RenderText {#text} at (581,0) size 777x36
+            text run at (581,0) width 196: "This demonstrates a bug: the"
+            text run at (0,18) width 340: "table should be below the list marker, not above it."
+      RenderBlock {DIV} at (0,52) size 784x46
         RenderBlock {UL} at (0,0) size 784x46
           RenderListItem {LI} at (40,0) size 744x46
             RenderTable {TABLE} at (0,0) size 31x28 [border: (1px outset #808080)]
