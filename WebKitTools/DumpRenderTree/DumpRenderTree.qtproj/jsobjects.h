@@ -44,6 +44,7 @@ public:
     void setLoading(bool loading) { m_isLoading = loading; }
 
     bool shouldDumpAsText() const { return m_textDump; }
+    bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
     bool shouldWaitUntilDone() const { return m_waitForDone; }
 
     void reset();
@@ -57,6 +58,7 @@ signals:
 public slots:
     void maybeDump(bool ok);
     void dumpAsText() { m_textDump = true; }
+    void dumpChildFramesAsText() { m_dumpChildrenAsText = true; }
     void waitUntilDone();
     void notifyDone();
     void dumpEditingCallbacks();
@@ -66,6 +68,7 @@ public slots:
 private:
     bool m_isLoading;
     bool m_textDump;
+    bool m_dumpChildrenAsText;
     bool m_waitForDone;
     int m_timeoutTimer;
     QWebFrame *m_topLoadingFrame;

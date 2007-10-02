@@ -181,6 +181,11 @@ QString QWebFrame::title() const
     else return QString();
 }
 
+QString QWebFrame::name() const
+{
+    return d->frame->tree()->name();
+}
+
 QWebPage * QWebFrame::page() const
 {
     return d->page;

@@ -2,6 +2,22 @@
 
         Reviewed by bdash.
 
+        Add API to retrieve the frame name from QWebFrame.
+        Implement support for DRT::dumpChildrenAsText.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::dumpFramesAsText):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.h:
+
+2007-10-02  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by bdash.
+
         Fix the handling of the response header for data urls. Make sure we always pass absolute URLs to WebKit from both DRT and QtLauncher.
 
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:

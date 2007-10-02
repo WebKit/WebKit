@@ -2,6 +2,17 @@
 
         Reviewed by bdash.
 
+        Add API to retrieve the frame name from QWebFrame.
+        Implement support for DRT::dumpChildrenAsText.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::name):
+        * Api/qwebframe.h:
+
+2007-10-02  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by bdash.
+
         Fix the handling of the response header for data urls. Make sure we always pass absolute URLs to WebKit from both DRT and QtLauncher.
 
         * Api/qwebnetworkinterface.cpp:

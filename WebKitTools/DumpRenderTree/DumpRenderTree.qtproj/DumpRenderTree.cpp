@@ -177,6 +177,32 @@ void DumpRenderTree::initJSObjects()
     frame->addToJSWindowObject("eventSender", m_eventSender);
 }
 
+
+QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
+{
+    if (!frame)
+        return QString();
+
+    QString result;
+    QWebFrame *parent = qobject_cast<QWebFrame *>(frame->parent());
+    if (parent) {
+        result.append(QLatin1String("\n--------\nFrame: '"));
+        result.append(frame->name());
+        result.append(QLatin1String("'\n--------\n"));
+    }
+
+    result.append(frame->innerText());
+    result.append(QLatin1String("\n"));
+
+    if (m_controller->shouldDumpChildrenAsText()) {
+        QList<QWebFrame *> children = frame->childFrames();
+        for (int i = 0; i < children.size(); ++i)
+            result += dumpFramesAsText(children.at(i));
+    }
+
+    return result;
+}
+
 void DumpRenderTree::dump()
 {
     QWebFrame *frame = m_page->mainFrame();
@@ -191,8 +217,7 @@ void DumpRenderTree::dump()
     // Dump render text...
     QString renderDump;
     if (m_controller->shouldDumpAsText()) {
-        renderDump = frame->innerText();
-        renderDump.append("\n");
+        renderDump = dumpFramesAsText(frame);
     } else {
         renderDump = frame->renderTreeDump();
     }
