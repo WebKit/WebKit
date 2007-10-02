@@ -136,14 +136,14 @@ interface IWebURLAuthenticationChallengeSender : IUnknown
     HRESULT useCredential([in] IWebURLCredential* credential, [in] IWebURLAuthenticationChallenge* challenge);
 }
 
-cpp_quote("#define WebURLProtectionSpaceServerHTTP TEXT(\"WebURLProtectionSpaceServerHTTP\")")
-cpp_quote("#define WebURLProtectionSpaceServerHTTPS TEXT(\"WebURLProtectionSpaceServerHTTPS\")")
-cpp_quote("#define WebURLProtectionSpaceServerFTP TEXT(\"WebURLProtectionSpaceServerFTP\")")
-cpp_quote("#define WebURLProtectionSpaceServerFTPS TEXT(\"WebURLProtectionSpaceServerFTPS\")")
-cpp_quote("#define WebURLProtectionSpaceProxyHTTP TEXT(\"WebURLProtectionSpaceProxyHTTP\")")
-cpp_quote("#define WebURLProtectionSpaceProxyHTTPS TEXT(\"WebURLProtectionSpaceProxyHTTPS\")")
-cpp_quote("#define WebURLProtectionSpaceProxyFTP TEXT(\"WebURLProtectionSpaceProxyFTP\")")
-cpp_quote("#define WebURLProtectionSpaceProxySOCKS TEXT(\"WebURLProtectionSpaceProxySOCKS\")")
+cpp_quote("#define WebURLProtectionSpaceHTTP TEXT(\"http\")")
+cpp_quote("#define WebURLProtectionSpaceHTTPS TEXT(\"https\")")
+cpp_quote("#define WebURLProtectionSpaceFTP TEXT(\"ftp\")")
+cpp_quote("#define WebURLProtectionSpaceFTPS TEXT(\"ftps\")")
+cpp_quote("#define WebURLProtectionSpaceHTTPProxy TEXT(\"http\")")
+cpp_quote("#define WebURLProtectionSpaceHTTPSProxy TEXT(\"https\")")
+cpp_quote("#define WebURLProtectionSpaceFTPProxy TEXT(\"ftp\")")
+cpp_quote("#define WebURLProtectionSpaceSOCKSProxy TEXT(\"SOCKS\")")
 cpp_quote("#define WebURLAuthenticationMethodDefault TEXT(\"WebURLAuthenticationMethodDefault\")")
 cpp_quote("#define WebURLAuthenticationMethodHTTPBasic TEXT(\"WebURLAuthenticationMethodHTTPBasic\")")
 cpp_quote("#define WebURLAuthenticationMethodHTTPDigest TEXT(\"WebURLAuthenticationMethodHTTPDigest\")")

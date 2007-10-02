@@ -150,14 +150,14 @@ HRESULT STDMETHODCALLTYPE WebURLProtectionSpace::initWithHost(
     /* [in] */ BSTR realm, 
     /* [in] */ BSTR authenticationMethod)
 {
-    ProtectionSpaceServerType serverType = ProtectionSpaceProxyHTTP;
-    if (BString(protocol) == BString(WebURLProtectionSpaceServerHTTP))
+    ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
+    if (BString(protocol) == WebURLProtectionSpaceHTTP)
         serverType = ProtectionSpaceServerHTTP;
-    else if (BString(protocol) == BString(WebURLProtectionSpaceServerHTTPS))
+    else if (BString(protocol) == WebURLProtectionSpaceHTTPS)
         serverType = ProtectionSpaceServerHTTPS;
-    else if (BString(protocol) == BString(WebURLProtectionSpaceServerFTP))
+    else if (BString(protocol) == WebURLProtectionSpaceFTP)
         serverType = ProtectionSpaceServerFTP;
-    else if (BString(protocol) == BString(WebURLProtectionSpaceServerFTPS))
+    else if (BString(protocol) == WebURLProtectionSpaceFTPS)
         serverType = ProtectionSpaceServerFTPS;
     else
         ASSERT_NOT_REACHED();
@@ -176,13 +176,13 @@ HRESULT STDMETHODCALLTYPE WebURLProtectionSpace::initWithProxyHost(
     /* [in] */ BSTR authenticationMethod)
 {
     ProtectionSpaceServerType serverType = ProtectionSpaceProxyHTTP;
-    if (BString(proxyType) == WebURLProtectionSpaceProxyHTTP)
+    if (BString(proxyType) == WebURLProtectionSpaceHTTPProxy)
         serverType = ProtectionSpaceProxyHTTP;
-    else if (BString(proxyType) == WebURLProtectionSpaceProxyHTTPS)
+    else if (BString(proxyType) == WebURLProtectionSpaceHTTPSProxy)
         serverType = ProtectionSpaceProxyHTTPS;
-    else if (BString(proxyType) == WebURLProtectionSpaceProxyFTP)
+    else if (BString(proxyType) == WebURLProtectionSpaceFTPProxy)
         serverType = ProtectionSpaceProxyFTP;
-    else if (BString(proxyType) == WebURLProtectionSpaceProxySOCKS)
+    else if (BString(proxyType) == WebURLProtectionSpaceSOCKSProxy)
         serverType = ProtectionSpaceProxySOCKS;
     else
         ASSERT_NOT_REACHED();
@@ -212,16 +212,16 @@ HRESULT STDMETHODCALLTYPE WebURLProtectionSpace::protocol(
 {
     switch (m_protectionSpace.serverType()) {
     case ProtectionSpaceServerHTTP:
-        *result = SysAllocString(WebURLProtectionSpaceServerHTTP);
+        *result = SysAllocString(WebURLProtectionSpaceHTTP);
         break;
     case ProtectionSpaceServerHTTPS:
-        *result = SysAllocString(WebURLProtectionSpaceServerHTTPS);
+        *result = SysAllocString(WebURLProtectionSpaceHTTPS);
         break;
     case ProtectionSpaceServerFTP:
-        *result = SysAllocString(WebURLProtectionSpaceServerFTP);
+        *result = SysAllocString(WebURLProtectionSpaceFTP);
         break;
     case ProtectionSpaceServerFTPS:
-        *result = SysAllocString(WebURLProtectionSpaceServerFTPS);
+        *result = SysAllocString(WebURLProtectionSpaceFTPS);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -235,16 +235,16 @@ HRESULT STDMETHODCALLTYPE WebURLProtectionSpace::proxyType(
 {
     switch (m_protectionSpace.serverType()) {
     case ProtectionSpaceProxyHTTP:
-        *result = WebURLProtectionSpaceProxyHTTP;
+        *result = SysAllocString(WebURLProtectionSpaceHTTPProxy);
         break;
     case ProtectionSpaceProxyHTTPS:
-        *result = WebURLProtectionSpaceProxyHTTPS;
+        *result = SysAllocString(WebURLProtectionSpaceHTTPSProxy);
         break;
     case ProtectionSpaceProxyFTP:
-        *result = WebURLProtectionSpaceProxyFTP;
+        *result = SysAllocString(WebURLProtectionSpaceFTPProxy);
         break;
     case ProtectionSpaceProxySOCKS:
-        *result = WebURLProtectionSpaceProxySOCKS;
+        *result = SysAllocString(WebURLProtectionSpaceSOCKSProxy);
         break;
     default:
         ASSERT_NOT_REACHED();

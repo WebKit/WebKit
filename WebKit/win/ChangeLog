@@ -1,3 +1,18 @@
+2007-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Fix a bug discovered by app verifier where we would treat an LPCTSTR as a BSTR causing a crash.
+        
+        Also rename some protection space constants and change their values to match the mac version.
+        
+        * Interfaces/IWebURLAuthenticationChallenge.idl:
+        * WebURLProtectionSpace.cpp:
+        (WebURLProtectionSpace::initWithHost):
+        (WebURLProtectionSpace::initWithProxyHost):
+        (WebURLProtectionSpace::protocol):
+        (WebURLProtectionSpace::proxyType):
+
 2007-09-29  Adam Roben  <aroben@apple.com>
 
         Clean-up in preparation for <rdar://5505062> WebKit's version-independent ProgIDs contain version numbers
