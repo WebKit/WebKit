@@ -358,7 +358,10 @@ int main(int argc, char **argv)
     if (args.count() > 1)
         url = args.at(1);
 
-    MainWindow window(url);
+    QUrl qurl(url);
+    if (qurl.scheme().isEmpty())
+        qurl = QUrl::fromLocalFile(QFileInfo(url).absoluteFilePath());
+    MainWindow window(qurl);
     window.show();
 
     return app.exec();

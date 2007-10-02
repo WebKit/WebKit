@@ -1,3 +1,12 @@
+2007-10-02  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by bdash.
+
+        Fix the handling of the response header for data urls. Make sure we always pass absolute URLs to WebKit from both DRT and QtLauncher.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::readStdin):
+
 2007-10-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver.

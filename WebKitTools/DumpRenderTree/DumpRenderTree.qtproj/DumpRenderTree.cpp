@@ -159,7 +159,8 @@ void DumpRenderTree::readStdin(int /* socket */)
     //fprintf(stderr, "\n    opening %s\n", line.constData());
     if (line.isEmpty())
         quit();
-    open(QUrl(QString(line)));
+    QFileInfo fi(line);
+    open(QUrl::fromLocalFile(fi.absoluteFilePath()));
     fflush(stdout);
 }
 

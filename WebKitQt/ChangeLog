@@ -1,3 +1,20 @@
+2007-10-02  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by bdash.
+
+        Fix the handling of the response header for data urls. Make sure we always pass absolute URLs to WebKit from both DRT and QtLauncher.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (QWebNetworkManager::finished):
+        (QWebNetworkInterfacePrivate::sendFileData):
+        (QWebNetworkInterfacePrivate::parseDataUrl):
+        (WebCoreHttp::scheduleNextRequest):
+        (WebCoreHttp::onSslErrors):
+        * QtLauncher/main.cpp:
+        (main):
+
 2007-10-01  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Eric.

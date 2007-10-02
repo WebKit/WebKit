@@ -2,22 +2,22 @@
   Copyright (C) 2006 Enrico Ros <enrico.ros@m31engineering.it>
   Copyright (C) 2007 Trolltech ASA
   Copyright (C) 2007 Staikos Computing Services Inc.  <info@staikos.net>
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Library General Public
   License as published by the Free Software Foundation; either
   version 2 of the License, or (at your option) any later version.
-  
+
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Library General Public License for more details.
-  
+
   You should have received a copy of the GNU Library General Public License
   along with this library; see the file COPYING.LIB.  If not, write to
   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   Boston, MA 02110-1301, USA.
-  
+
   This class provides all functionality needed for loading images, style sheets and html
   pages from the web. It has a memory cache for these objects.
 */
@@ -482,7 +482,7 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
                 if (client)
                     client->willSendRequest(job->d->resourceHandle, newRequest, response);
             }
-            
+
             job->d->request.httpHeader.setRequest(job->d->request.httpHeader.method(),
                                                   newUrl.toString(QUrl::RemoveScheme|QUrl::RemoveAuthority));
             job->d->request.setURL(newUrl);
@@ -495,7 +495,7 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
         client->didReceiveResponse(job->d->resourceHandle, response);
     if (job->d->connector)
         emit job->d->connector->started(job);
-    
+
 }
 
 void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
@@ -517,7 +517,7 @@ void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
         client->didReceiveData(job->d->resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
     if (job->d->connector)
         emit job->d->connector->data(job, data);
-    
+
 }
 
 void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
@@ -539,7 +539,7 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
         job->d->interface->addJob(job);
         return;
     }
-    
+
     if (job->d->resourceHandle)
         job->d->resourceHandle->getInternal()->m_job = 0;
 
@@ -556,7 +556,7 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
 
     if (job->d->connector)
         emit job->d->connector->finished(job, errorCode);
-    
+
     DEBUG() << "receivedFinished done" << job->d->request.url;
 
     job->deref();
@@ -597,6 +597,7 @@ void QWebNetworkInterfacePrivate::sendFileData(QWebNetworkJob* job, int statusCo
     if (!job->cancelled()) {
         QHttpResponseHeader response;
         response.setStatusLine(statusCode);
+        response.setContentLength(data.length());
         job->setResponse(response);
         emit q->started(job);
         if (!data.isEmpty())
@@ -608,7 +609,7 @@ void QWebNetworkInterfacePrivate::sendFileData(QWebNetworkJob* job, int statusCo
 void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
 {
     QByteArray data = job->url().toString().toLatin1();
-    //qDebug() << "handling data url:" << data; 
+    //qDebug() << "handling data url:" << data;
 
     ASSERT(data.startsWith("data:"));
 
@@ -641,7 +642,7 @@ void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
         data = QByteArray::fromBase64(data);
     }
 
-    if (header.isEmpty()) 
+    if (header.isEmpty())
         header = "text/plain;charset=US-ASCII";
     int statusCode = data.isEmpty() ? 404 : 200;
     QHttpResponseHeader response;
@@ -649,7 +650,11 @@ void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
     response.setContentLength(data.size());
     job->setResponse(response);
 
-    sendFileData(job, statusCode, data);
+    int error = statusCode >= 400 ? 1 : 0;
+    emit q->started(job);
+    if (!data.isEmpty())
+        emit q->data(job, data);
+    emit q->finished(job, error);
 }
 
 /*!
@@ -665,7 +670,7 @@ void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
 
   QWebNetworkInterface can by default handle the http, https, file and
   data URI protocols.
-  
+
 */
 
 static bool gRoutineAdded = false;
@@ -872,7 +877,7 @@ void WebCoreHttp::scheduleNextRequest()
     }
     if (!job)
         return;
-    
+
     QHttp *http = connection[c].http;
 
     connection[c].current = job;
@@ -1016,7 +1021,7 @@ void WebCoreHttp::onSslErrors(const QList<QSslError>& errors)
         bool continueAnyway = false;
         emit req->networkInterface()->sslErrors(req->frame(), req->url(), errors, &continueAnyway);
 #ifndef QT_NO_OPENSSL
-        if (continueAnyway) 
+        if (continueAnyway)
             connection[c].http->ignoreSslErrors();
 #endif
     }
