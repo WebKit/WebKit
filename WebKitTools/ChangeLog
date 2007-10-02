@@ -1,3 +1,13 @@
+2007-10-02  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        Make "--git-commit trunk..HEAD" work with prepare-ChangeLog.
+        Also makes WebCore regression test case logic work when using git.
+
+        * Scripts/prepare-ChangeLog:
+        (reviewerAndDescriptionForGitCommit): Added.
+
 2007-10-02  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by bdash.

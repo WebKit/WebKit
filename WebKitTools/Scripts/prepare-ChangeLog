@@ -84,6 +84,7 @@ sub get_function_line_ranges_for_c($$);
 sub get_function_line_ranges_for_java($$);
 sub method_decl_to_selector($);
 sub processPaths(\@);
+sub reviewerAndDescriptionForGitCommit($);
 
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
@@ -283,53 +284,17 @@ foreach my $prefix (sort keys %files) {
     open CHANGE_LOG, "> ${prefix}ChangeLog" or die "Could not write ${prefix}ChangeLog\n.";
     print CHANGE_LOG "$date  $name  <$email_address>\n\n";
 
-    if ($gitCommit) {
-        my $gitLog = `$GIT cat-file commit \"$gitCommit\"`;
-        my @lines = split(/\n/, $gitLog);
+    my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
+    $reviewer = "NOBODY (OO" . "PS!)" if !$reviewer;
 
-        my $reviewer = "";
+    print CHANGE_LOG "        Reviewed by $reviewer.\n\n";
+    print CHANGE_LOG $description . "\n" if $description;
 
-        $gitLog = "";
-        my $inHeader = 1;
-        foreach my $line (@lines) {
-            if ($inHeader) {
-                if (!$line) {
-                    $inHeader = 0;
-                }
-                next;
-            }
-            if ($line =~ /[Ss]igned-[Oo]ff-[Bb]y: (.+)/) {
-                if (!$reviewer) {
-                    $reviewer = $1;
-                } else {
-                    $reviewer .= ", " . $1;
-                }
-            } elsif (length $line == 0) {
-                $gitLog = $gitLog . "\n";
-            } else {
-                $gitLog = $gitLog . "        " . $line . "\n";
-            }
-        }
-
-        if (!$reviewer) {
-            $reviewer = $gitReviewer;
-        }
-
-        if (!$reviewer) {
-            print STDERR "WARNING!!! Change was not reviewed!\n";
-            $reviewer = "NOBODY (OO" . "PS!)";
-        }
-
-        print CHANGE_LOG "        Reviewed by $reviewer.\n\n";
-        print CHANGE_LOG $gitLog . "\n";
-    } else {
-        print CHANGE_LOG "        Reviewed by NOBODY (OO" . "PS!).\n\n";
-        if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
-            if ($didChangeRegressionTests) {
-                print CHANGE_LOG testListForChangeLog(sort @addedRegressionTests);
-            } else {
-                print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n";
-            }
+    if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
+        if ($didChangeRegressionTests) {
+            print CHANGE_LOG testListForChangeLog(sort @addedRegressionTests);
+        } else {
+            print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n";
         }
     }
 
@@ -952,6 +917,7 @@ sub processPaths(\@)
 sub diffFromToString()
 {
     return "" if $isSVN;
+    return $gitCommit if $gitCommit =~ m/.+\.\..+/;
     return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
     return "HEAD" if $isGit;
 }
@@ -1216,4 +1182,54 @@ sub testListForChangeLog(@)
     $list .= "\n";
 
     return $list;
+}
+
+sub reviewerAndDescriptionForGitCommit($)
+{
+    my ($commit) = @_;
+
+    my $description = '';
+    my $reviewer;
+
+    my @args = qw(rev-list --pretty);
+    push @args, '-1' if $commit !~ m/.+\.\..+/;
+    my $gitLog;
+    {
+        local $/ = undef;
+        open(GIT, "-|", $GIT, @args, $commit) || die;
+        $gitLog = <GIT>;
+        close(GIT);
+    }
+
+    my @commitLogs = split(/^[Cc]ommit [a-f0-9]{40}/m, $gitLog);
+    shift @commitLogs; # Remove initial blank commit log
+    my $commitLogCount = 0;
+    foreach my $commitLog (@commitLogs) {
+        $description .= "\n" if $commitLogCount;
+        $commitLogCount++;
+        my $inHeader = 1;
+        my @lines = split(/\n/, $commitLog);
+        shift @lines; # Remove initial blank line
+        foreach my $line (@lines) {
+            if ($inHeader) {
+                if (!$line) {
+                    $inHeader = 0;
+                } elsif ($line =~ /[Ss]igned-[Oo]ff-[Bb]y: (.+)/) {
+                    if (!$reviewer) {
+                        $reviewer = $1;
+                    } else {
+                        $reviewer .= ", " . $1;
+                    }
+                }
+                next;
+            } elsif (length $line == 0) {
+                $description = $description . "\n";
+            } else {
+                $line =~ s/^\s*//;
+                $description = $description . "        " . $line . "\n";
+            }
+        }
+    }
+
+    return ($reviewer, $description);
 }
