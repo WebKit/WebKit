@@ -1,5 +1,14 @@
 2007-10-02  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver.
+
+        Update WebKitLauncher to notify you of new builds from the correct branch, rather than always checking trunk.
+
+        * BuildSlaveSupport/build-launcher-app: Generate a file named BRANCH into WebKit.app so that it knows which branch it was built from.
+        * WebKitLauncher/start.html: Use the new URL format that includes the branch we were built from.
+
+2007-10-02  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Maciej.
 
         Configuration changes from build.webkit.org.  The major change is refactoring to work

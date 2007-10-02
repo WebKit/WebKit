@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Loading WebKit...</title>
-        <meta http-equiv="refresh" content="1;URL=http://nightly.webkit.org/start/?current-revision=unknown" />
+        <meta http-equiv="refresh" content="1;URL=http://nightly.webkit.org/start/" />
         <script type="text/javascript">
             function getWebKitRevision()
             {
@@ -10,13 +10,22 @@
                 request.send();
                 var revision = parseInt(request.responseText);
                 if (isNaN(revision))
-                    return "unknown";
+                    return "";
 
                 return revision;
             }
 
+            function getWebKitBranch()
+            {
+                var request = new XMLHttpRequest();
+                request.open("GET", "BRANCH", false);
+                request.send();
+                return (request.responseText || "trunk").replace(/\s/g, '')
+            }
+
             var revision = getWebKitRevision();
-            document.location = "http://nightly.webkit.org/start/?current-revision=" + revision;
+            var branch = getWebKitBranch();
+            document.location = "http://nightly.webkit.org/start/" + branch + "/" + revision;
         </script>
     </head>
     <body>

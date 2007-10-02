@@ -49,11 +49,24 @@ sub buildNightlyLauncher
     chdirWebKit();
 }
 
+sub currentSVNBranch
+{
+    my $sourceDir = sourceDir();
+    my $svnInfo = `LC_ALL=C svn info $sourceDir | grep URL:`;
+    (my $url) = ($svnInfo =~ m/URL: (.+)/g);
+    (my $branch) = ($url =~ m/\/svn\/webkit\/(trunk|branches\/[^\/]+)/);
+    die "Unable to determine current SVN branch in $sourceDir" unless (defined $branch);
+    $branch =~ s/^branches\///;
+    return $branch
+}
+
 sub copyNightlyLauncher
 {
     my $revision = currentSVNRevision();
+    my $branch = currentSVNBranch();
     my $infoPlist = "$nightlyLauncherStagingPath/Contents/Info.plist";
     my $versionFile = "$nightlyLauncherStagingPath/Contents/Resources/VERSION";
+    my $branchFile = "$nightlyLauncherStagingPath/Contents/Resources/BRANCH";
     my $data;
     open(IN, $infoPlist) or die "Couldn't open Info.plist in built application for reading";
     {
@@ -68,6 +81,10 @@ sub copyNightlyLauncher
 
     open(OUT, ">$versionFile") or die "Couldn't open VERSION in built application for writing";
     print OUT "$revision\n";
+    close(OUT);
+
+    open(OUT, ">$branchFile") or die "Couldn't open BRANCH in built application for writing";
+    print OUT "$branch\n";
     close(OUT);
 
     my @frameworks = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
