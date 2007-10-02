@@ -1,3 +1,18 @@
+2007-10-02  Adam Treat  <treat@kde.org>
+
+        Reviewed by Eric Seidel.
+
+        Open the requested url on the newly created window.
+        Implement createModalDialog and provide new API for this.
+        Patch by M. Mehdi Salem Naraghi (momesana) with additions by me.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::createModalDialog):
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createWindow):
+        (WebCore::ChromeClientQt::createModalDialog):
+
 2007-10-02  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by bdash.
