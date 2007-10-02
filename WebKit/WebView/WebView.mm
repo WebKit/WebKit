@@ -1400,12 +1400,6 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
     return usesTestModeFocusRingColor();
 }
 
-
-+ (NSString *)_minimumRequiredSafariBuildNumber
-{
-    return @"420+";
-}
-
 - (void)setAlwaysShowVerticalScroller:(BOOL)flag
 {
     WebDynamicScrollBarsView *scrollview = [[[self mainFrame] frameView] _scrollView];

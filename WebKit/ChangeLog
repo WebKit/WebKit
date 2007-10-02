@@ -1,3 +1,15 @@
+2007-10-02  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5517710> 
+
+        * WebView/WebView.mm: Removed -[WebView _minimumRequiredSafariBuildNumber] because newer
+         versions of Safari no longer use this method. This won't break existing Safaris because
+         they always use a respondsToSelector check before calling this.
+         
+        * WebView/WebViewPrivate.h: Ditto. 
+
 2007-09-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ollie
