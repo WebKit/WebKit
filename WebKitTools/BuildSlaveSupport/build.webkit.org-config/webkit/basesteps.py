@@ -1,8 +1,8 @@
-from buildbot.process import step
+from buildbot.steps import shell, source
 import os
 
 
-def buildStepWithDefaultTimeout(klass, default_timeout=45*60):
+def buildStepWithDefaultTimeout(klass, default_timeout=75*60):
     class Step(klass):
         timeout = default_timeout
         def __init__(self, *args, **kwargs):
@@ -12,15 +12,14 @@ def buildStepWithDefaultTimeout(klass, default_timeout=45*60):
     return Step
 
 
-Test = buildStepWithDefaultTimeout(step.Test)
-Compile = buildStepWithDefaultTimeout(step.Compile)
-ShellCommand = buildStepWithDefaultTimeout(step.ShellCommand)
-SVN = buildStepWithDefaultTimeout(step.SVN)
+Test = buildStepWithDefaultTimeout(shell.Test)
+Compile = buildStepWithDefaultTimeout(shell.Compile)
+ShellCommand = buildStepWithDefaultTimeout(shell.ShellCommand)
+SVN = buildStepWithDefaultTimeout(source.SVN)
 
 
 class UploadCommand:
-    def __init__(self, *args, **kwargs):
-        self.__build = kwargs['build'].getStatus()
+    def initializeForUpload(self):
         try:
             try:
                 umask = os.umask(0)
@@ -32,16 +31,16 @@ class UploadCommand:
             os.umask(umask)
 
     def getDestinationPath(self):
-        return "/home/buildresults/results/%s/%s/" % (self.getBuild().getBuilder().getName(), self.getBuild().getNumber())
+        return "/home/buildresults%s" % (self.getURLPath(), )
 
     def getRemotePath(self):
         return "buildresults@build.webkit.org:%s" % (self.getDestinationPath(), )
 
     def getURLPath(self):
-        return '/results/%s/%s/' % (self.getBuild().getBuilder().getName(), self.getBuild().getNumber(), )
+        return '/results/%s/%s/' % (self.getBuild().builder.name, self.getBuild().getProperty("buildnumber"), )
 
     def getBuild(self):
-        return self.__build
+        return self.build
 
 
     def getText(self, cmd, results):

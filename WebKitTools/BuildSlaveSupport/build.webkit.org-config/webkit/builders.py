@@ -8,25 +8,28 @@ from buildbot import locks
 # Slaves 4 and 5 are newer G5 PowerMacs with ATI graphics cards that lead to kernel panics during pixel tests
 
 nonATIPowerPCBuilders = ['apple-slave-%d' % i for i in (3, 4)]
-ATIPowerPCBuilders = ['apple-slave-%d' % i for i in (5, 6)]
+ATIPowerPCBuilders = ['apple-slave-%d' % i for i in (1, 5, 6)]
 allPowerPCBuilders = nonATIPowerPCBuilders + ATIPowerPCBuilders
+allIntelBuilders = ['bdash-slave-1', 'bdash-slave-2']
 
 _builders = [('post-commit-powerpc-mac-os-x', StandardBuildFactory, allPowerPCBuilders),
-             ('post-commit-leaks-powerpc-mac-os-x', LeakBuildFactory, ATIPowerPCBuilders),
-             ('page-layout-test-mac-os-x', PageLoadTestBuildFactory, ['apple-slave-1']),
-             ('post-commit-pixel-powerpc-mac-os-x', PixelTestBuildFactory, nonATIPowerPCBuilders),
+             ('post-commit-intel-mac-os-x', StandardBuildFactory, allIntelBuilders),
+             ('post-commit-leaks-powerpc-mac-os-x', LeakBuildFactory, allPowerPCBuilders),
+             ('post-commit-leaks-intel-mac-os-x', LeakBuildFactory, allIntelBuilders),
+#             ('page-layout-test-mac-os-x', PageLoadTestBuildFactory, ['apple-slave-1']),
+#             ('post-commit-pixel-powerpc-mac-os-x', PixelTestBuildFactory, nonATIPowerPCBuilders),
              ('post-commit-win32', Win32BuildFactory, ['apple-slave-2']),
+             ('post-commit-linux-qt', StandardBuildFactory, ['webtroll-slave-1']),
+             ('post-commit-linux-gtk', GtkBuildFactory, ['zecke-slave-1']),
              ('periodic-powerpc-mac-os-x-no-svg', NoSVGBuildFactory, allPowerPCBuilders),
-             ('post-commit-linux-qt', StandardBuildFactory, ['wildfox-slave-1']),
+             ('periodic-intel-mac-os-x-coverage', CoverageDataBuildFactory, allIntelBuilders),
              ]
 
 def getBuilders():
     result = []
-    oneBuildPerSlave = locks.SlaveLock('one-build-per-slave')
     for name, factory, slaves in _builders:
         result.append({'name': name,
                        'slavenames': slaves,
                        'builddir': name,
-                       'locks': [oneBuildPerSlave],
                        'factory': factory()})
     return result

@@ -1,3 +1,20 @@
+2007-10-02  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Maciej.
+
+        Configuration changes from build.webkit.org.  The major change is refactoring to work
+        with Buildbot 0.7.6, but it does include other smaller changes that have been made in the
+        last few weeks.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * BuildSlaveSupport/build.webkit.org-config/webkit/auth.py:
+        * BuildSlaveSupport/build.webkit.org-config/webkit/basesteps.py:
+        * BuildSlaveSupport/build.webkit.org-config/webkit/builders.py:
+        * BuildSlaveSupport/build.webkit.org-config/webkit/factories.py:
+        * BuildSlaveSupport/build.webkit.org-config/webkit/schedulers.py:
+        * BuildSlaveSupport/build.webkit.org-config/webkit/status.py:
+        * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py:
+
 2007-10-02  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Maciej.

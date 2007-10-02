@@ -13,13 +13,16 @@ class StandardBuildFactory(BuildFactory):
         BuildFactory.__init__(self)
         self.steps.append(s(SetConfiguration, configuration="release"))
         self.steps.append(s(self.getCompileStep(), configuration="release"))
-        self.steps.append(s(JavaScriptCoreTest))
+        self.steps.append(s(self.getJavaScriptCoreTestStep()))
         self.steps.append(s(LayoutTest))
         self.steps.append(s(UploadLayoutResults))
 #        self.steps.append(s(UploadDiskImage))
 
     def getCompileStep(self):
         return CompileWebKit
+
+    def getJavaScriptCoreTestStep(self):
+        return JavaScriptCoreTest
 
 
 class NoSVGBuildFactory(StandardBuildFactory):
@@ -51,10 +54,17 @@ class PageLoadTestBuildFactory(BuildFactory):
         self.steps.append(s(CompileWebKit, configuration="release"))
         self.steps.append(s(PageLoadTest))
 
-class Win32BuildFactory(BuildFactory):
+Win32BuildFactory = StandardBuildFactory
+
+class GtkBuildFactory(StandardBuildFactory):
+    def getCompileStep(self):
+        return CompileWebKitGtk
+
+    def getJavaScriptCoreTestStep(self):
+        return JavaScriptCoreTestGtk
+
+class CoverageDataBuildFactory(BuildFactory):
     def __init__(self):
         BuildFactory.__init__(self)
-        self.steps.append(s(InstallWin32Dependencies))
-        self.steps.append(s(CompileWebKit, configuration="release"))
-        self.steps.append(s(JavaScriptCoreTest))
-        self.steps.append(s(LayoutTest))
+        self.steps.append(s(GenerateCoverageData))
+        self.steps.append(s(UploadCoverageData))
