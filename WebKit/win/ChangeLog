@@ -1,3 +1,16 @@
+2007-10-02  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5505062> WebKit's version-independent ProgIDs contain version numbers
+
+        I also added a few registry keys for our version-independent ProgIDs
+        that we were missing.
+
+        Reviewed by Steve.
+
+        * ProgIDMacros.h: Added new macros to get version-independent ProgIDs.
+        * WebKitDLL.cpp: Use the version-independent ProgIDs in the right
+        places, and added some new keys for version-independent ProgIDs.
+
 2007-10-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

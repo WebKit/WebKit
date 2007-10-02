@@ -131,22 +131,32 @@ STDAPI DllCanUnloadNow(void)
 }
 
 #if __BUILDBOT__
-#define PROGID(className) PRODUCTION_PROGID(className)
+#define VERSION_INDEPENDENT_PROGID(className) VERSION_INDEPENDENT_PRODUCTION_PROGID(className)
 #else
-#define PROGID(className) OPENSOURCE_PROGID(className)
+#define VERSION_INDEPENDENT_PROGID(className) VERSION_INDEPENDENT_OPENSOURCE_PROGID(className)
 #endif
+#define CURRENT_VERSIONED_PROGID(className) VERSIONED_PROGID(VERSION_INDEPENDENT_PROGID(className), CURRENT_PROGID_VERSION)
+#define VERSIONED_303_PROGID(className) VERSIONED_PROGID(VERSION_INDEPENDENT_PROGID(className), 3)
 
+// FIXME: The last line of this macro only here for the benefit of Safari 3.0.3. Once a newer version
+// is released, the last line should be removed and gSlotsPerEntry should be decremented by 1.
 //key                                                                                       value name              value }
 #define KEYS_FOR_CLASS(cls) \
 { TEXT("CLSID\\{########-####-####-####-############}"),                                    0,                      TEXT(#cls) }, \
 { TEXT("CLSID\\{########-####-####-####-############}\\InprocServer32"),                    0,                      (LPCTSTR)-1 }, \
 { TEXT("CLSID\\{########-####-####-####-############}\\InprocServer32"),                    TEXT("ThreadingModel"), TEXT("Apartment") }, \
-{ TEXT("CLSID\\{########-####-####-####-############}\\ProgID"),                            0,                      PROGID(cls) }, \
-{ TEXT("CLSID\\{########-####-####-####-############}\\VersionIndependentProgID"),          0,                      PROGID(cls) }, \
-{ PROGID(cls),                                                                              0,                      TEXT(#cls) }, \
-{ PROGID(cls) TEXT("\\CLSID"),                                                              0,                      TEXT("{########-####-####-####-############}") },
+{ TEXT("CLSID\\{########-####-####-####-############}\\ProgID"),                            0,                      CURRENT_VERSIONED_PROGID(cls) }, \
+{ CURRENT_VERSIONED_PROGID(cls),                                                            0,                      TEXT(#cls) }, \
+{ CURRENT_VERSIONED_PROGID(cls) TEXT("\\CLSID"),                                            0,                      TEXT("{########-####-####-####-############}") }, \
+{ TEXT("CLSID\\{########-####-####-####-############}\\VersionIndependentProgID"),          0,                      VERSION_INDEPENDENT_PROGID(cls) }, \
+{ VERSION_INDEPENDENT_PROGID(cls),                                                          0,                      TEXT(#cls) }, \
+{ VERSION_INDEPENDENT_PROGID(cls) TEXT("\\CLSID"),                                          0,                      TEXT("{########-####-####-####-############}") }, \
+{ VERSION_INDEPENDENT_PROGID(cls) TEXT("\\CurVer"),                                         0,                      STRINGIFIED_VERSION(CURRENT_PROGID_VERSION) }, \
+{ VERSIONED_303_PROGID(cls),                                                                0,                      TEXT(#cls) }, \
+{ VERSIONED_303_PROGID(cls) TEXT("\\CLSID"),                                                0,                      TEXT("{########-####-####-####-############}") }, \
+// end of macro
 
-static const int gSlotsPerEntry = 7;
+static const int gSlotsPerEntry = 12;
 static LPCTSTR gRegTable[][3] = {
     FOR_EACH_CLASS(KEYS_FOR_CLASS)
 };
