@@ -1,3 +1,15 @@
+2007-10-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5516183> REGRESSION: Creating a ToDo on an incoming message fails
+        
+        Rolling out r25721.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+
 2007-10-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

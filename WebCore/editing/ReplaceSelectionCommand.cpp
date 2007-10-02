@@ -464,36 +464,6 @@ void ReplaceSelectionCommand::removeRedundantStyles(Node* mailBlockquoteEnclosin
     }
 }
 
-// Removes unrendered nodes after insertion but before paragraph merging.  Fixed <rdar://problem/5483567>,
-// where unrendered whitespace before and after the incoming fragment would prevent paragraph merging.
-void ReplaceSelectionCommand::removeUnrenderedNodes()
-{
-    RefPtr<Node> next;
-    for (RefPtr<Node> node = m_firstNodeInserted; node; node = next) {
-        
-        next = node->traverseNextNode();
-        
-        if (node == m_lastLeafInserted)
-            next = 0;
-        
-        if (node->hasTagName(selectTag))
-            next = node->traverseNextSibling();
-        
-        if (node->renderer())
-            continue;
-            
-        RefPtr<Node> afterFirst = m_firstNodeInserted ? m_firstNodeInserted->traverseNextSibling() : 0;
-        RefPtr<Node> beforeLast = m_lastLeafInserted ? m_lastLeafInserted->traversePreviousNode() : 0;
-        
-        removeNode(node.get());
-        
-        if (m_lastLeafInserted && !m_lastLeafInserted->inDocument())
-            m_lastLeafInserted = beforeLast;
-        if (m_firstNodeInserted && !m_firstNodeInserted->inDocument())
-            m_firstNodeInserted = m_lastLeafInserted && m_lastLeafInserted->inDocument() ? afterFirst : 0;
-    }
-}
-
 void ReplaceSelectionCommand::handlePasteAsQuotationNode()
 {
     Node* node = m_firstNodeInserted.get();
@@ -667,8 +637,6 @@ void ReplaceSelectionCommand::doApply()
     negateStyleRulesThatAffectAppearance();
     
     removeRedundantStyles(mailBlockquoteEnclosingSelectionStart);
-    
-    removeUnrenderedNodes();
     
     if (!m_firstNodeInserted)
         return;

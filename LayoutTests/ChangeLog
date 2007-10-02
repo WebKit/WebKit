@@ -1,3 +1,15 @@
+2007-10-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5516183> REGRESSION: Creating a ToDo on an incoming message fails
+        
+        * editing/pasteboard/5483567.html: Removed.
+        * editing/pasteboard/5483567.html-disabled: Added.
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt:
+        * editing/pasteboard/paste-RTFD-expected.txt:
+        
 2007-10-01  Lars Knoll  <lars@trolltech.com>
 
         Remove the separate ChangeLog in Layouttests/platform/qt.
