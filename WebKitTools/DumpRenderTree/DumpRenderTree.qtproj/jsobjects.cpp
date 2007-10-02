@@ -40,6 +40,9 @@ public:
     void mouseReleaseEvent(QMouseEvent *e) {
         QWebFrame::mouseReleaseEvent(e);
     }
+    void mouseMoveEvent(QMouseEvent *e) {
+        QWebFrame::mouseMoveEvent(e);
+    }
 
 protected:
     HackWebFrame(QWebPage *parent, QWebFrameData *frameData) : QWebFrame(parent, frameData) {}
@@ -152,8 +155,11 @@ void EventSender::mouseUp()
 
 void EventSender::mouseMoveTo(int x, int y)
 {
+    QWebFrame *frame = frameUnderMouse();
 //     qDebug() << "EventSender::mouseMoveTo" << x << y;
     m_mousePos = QPoint(x, y);
+    QMouseEvent event(QEvent::MouseMove, m_mousePos - frame->pos(), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    static_cast<HackWebFrame *>(frame)->mouseMoveEvent(&event);
 }
 
 void EventSender::leapForward(int ms)
