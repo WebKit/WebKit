@@ -251,6 +251,8 @@ Could be worth adding to the API.
 + (void)_setUsesTestModeFocusRingColor:(BOOL)f;
 + (BOOL)_usesTestModeFocusRingColor;
 
++ (NSString *)_minimumRequiredSafariBuildNumber;
+
 /*!
     @method setAlwaysShowVerticalScroller:
     @result Forces the vertical scroller to be visible if flag is YES, otherwise

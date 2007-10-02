@@ -1,5 +1,17 @@
 2007-10-02  Kevin Decker  <kdecker@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Re-added _minimumRequiredSafariBuildNumber. It turns out older version of Safari still rely
+        on this method, so we need to keep it around at least until the next major Safari release.
+
+        * StringsNotToBeLocalized.txt:
+        * WebView/WebView.mm:
+        (+[WebView _minimumRequiredSafariBuildNumber]):
+        * WebView/WebViewPrivate.h:
+
+2007-10-02  Kevin Decker  <kdecker@apple.com>
+
         Reviewed by John Sullivan.
 
         <rdar://problem/5517710> 
