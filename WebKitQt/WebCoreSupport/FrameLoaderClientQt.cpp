@@ -171,8 +171,8 @@ bool FrameLoaderClientQt::privateBrowsingEnabled() const
 void FrameLoaderClientQt::makeDocumentView()
 {
     qDebug() << "FrameLoaderClientQt::makeDocumentView" << m_frame->document();
-    
-//     if (!m_frame->document()) 
+
+//     if (!m_frame->document())
 //         m_frame->loader()->createEmptyDocument();
 }
 
@@ -198,7 +198,7 @@ void FrameLoaderClientQt::forceLayoutForNonHTML()
 
 void FrameLoaderClientQt::setCopiesOnScroll()
 {
-    // apparently mac specific 
+    // apparently mac specific
 }
 
 
@@ -320,7 +320,7 @@ void FrameLoaderClientQt::dispatchDidFinishDocumentLoad()
 void FrameLoaderClientQt::dispatchDidFinishLoad()
 {
     if (m_webFrame)
-        emit m_webFrame->loadDone(true);    
+        emit m_webFrame->loadDone(true);
 }
 
 
@@ -705,7 +705,7 @@ void FrameLoaderClientQt::download(WebCore::ResourceHandle*, const WebCore::Reso
 
 void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&)
 {
-    notImplemented();   
+    notImplemented();
 }
 
 void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
@@ -758,13 +758,13 @@ bool FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache(WebCore::Docume
 void FrameLoaderClientQt::dispatchDidFailProvisionalLoad(const WebCore::ResourceError&)
 {
     if (m_webFrame)
-        emit m_webFrame->loadDone(false);    
+        emit m_webFrame->loadDone(false);
 }
 
 void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError&)
 {
     if (m_webFrame)
-        emit m_webFrame->loadDone(false);    
+        emit m_webFrame->loadDone(false);
 }
 
 WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
@@ -882,7 +882,10 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;
-    
+
+    if (url.protocol() == "about")
+        return ObjectContentFrame;
+
     return ObjectContentNone;
 }
 
@@ -899,13 +902,13 @@ const unsigned numqStyleSheetProperties = sizeof(qstyleSheetProperties) / sizeof
 Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, const KURL& url, const Vector<String>& paramNames,
                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-//     qDebug()<<"------ Creating plugin in FrameLoaderClientQt::createPlugin for "<<mimeType;
+//     qDebug()<<"------ Creating plugin in FrameLoaderClientQt::createPlugin for "<<url.prettyURL() << mimeType;
 //     qDebug()<<"------\t url = "<<url.prettyURL();
     QStringList params;
     QStringList values;
     for (int i = 0; i < paramNames.size(); ++i)
         params.append(paramNames[i]);
-    for (int i = 0; i < paramValues.size(); ++i) 
+    for (int i = 0; i < paramValues.size(); ++i)
         values.append(paramValues[i]);
 
     QString urlStr(url.url());
@@ -935,7 +938,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
             widget->setStyleSheet(styleSheet);
         }
     }
-    
+
     if (!object)
         object = QWebFactoryLoader::self()->create(m_webFrame, qurl, mimeType, params, values);
 

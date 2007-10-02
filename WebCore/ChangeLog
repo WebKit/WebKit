@@ -1,3 +1,12 @@
+2007-10-01  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Eric.
+
+        Fix a wrong extension mapping in the MIMETypeRegistry and identify about: url's as frames in the FrameLoaderClient.
+
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::):
+
 2007-10-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

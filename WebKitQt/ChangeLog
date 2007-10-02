@@ -1,3 +1,17 @@
+2007-10-01  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Eric.
+
+        Fix a wrong extension mapping in the MIMETypeRegistry and identify about: url's as frames in the FrameLoaderClient.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::makeDocumentView):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoad):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2007-09-30  George Staikos  <staikos@kde.org>
 
         Qt build fix (OS X specific).
