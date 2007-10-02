@@ -1,3 +1,9 @@
+2007-10-02  Lars Knoll  <lars@trolltech.com>
+
+        Update test result.
+
+        * platform/qt/fast/canvas/fillrect_gradient-expected.txt:
+
 2007-10-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.
