@@ -86,10 +86,10 @@ sub buildDiskImage
 sub uploadNightlyDiskImage
 {
     my $buildTag = shift(@_);
-    my $nightlyRemoteDiskImagePath = "$nightlyRemotePath/builds/$buildTag/" . basename($nightlyLauncherDiskImagePath);
+    my $nightlyRemoteDiskImagePath = "$nightlyRemotePath/builds/$buildTag/mac/" . basename($nightlyLauncherDiskImagePath);
     my $revision = currentSVNRevision();
     system("rsync", "-vP", $nightlyLauncherDiskImagePath, "$nightlyRemoteHost:$nightlyRemoteDiskImagePath") == 0 or die "Failed uploading disk image";
-    system("ssh", $nightlyRemoteHost, $nightlyRemoteLatestPath, $buildTag, $nightlyRemoteDiskImagePath, $revision) == 0 or die "Failed linking disk image to latest";
+    system("ssh", $nightlyRemoteHost, $nightlyRemoteLatestPath, $buildTag, "mac", $nightlyRemoteDiskImagePath, $revision) == 0 or die "Failed linking disk image to latest";
 }
 
 sub uploadBuildSlaveDiskImage
@@ -101,14 +101,10 @@ sub uploadBuildSlaveDiskImage
 
 my $uploadTo;
 my $nightlyBuild = 0;
-my $buildTag = 'mac';
+my $buildTag = 'trunk';
 GetOptions('upload-to-host=s' => \$uploadTo,
            'upload-as-nightly!' => \$nightlyBuild,
            'tag=s' => \$buildTag);
-
-if ($buildTag ne 'mac') {
-    $buildTag = "mac-" . $buildTag;
-}
 
 chdirWebKit();
 buildDiskImage($buildTag);
