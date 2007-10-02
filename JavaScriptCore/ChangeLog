@@ -1,3 +1,27 @@
+2007-10-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - add support for GDI objects to OwnPtr; I plan to use this
+          to fix some GDI handle leaks
+
+        * kjs/grammar.y: Change parser to avoid macros that conflict
+        with macros defined in Windows system headers: THIS, DELETE,
+        VOID, IN, and CONST. This is needed because OwnPtr.h will now
+        include <windows.h>.
+        * kjs/keywords.table: Ditto.
+
+        * wtf/OwnPtr.h: For PLATFORM(WIN), add support so that OwnPtr can be
+        a GDI handle, and it will call DeleteObject. Also change to use the
+        RemovePointer technique used by RetainPtr, so you can say OwnPtr<HBITMAP>
+        rather than having to pass in the type pointed to by HBITMAP.
+
+        * wtf/OwnPtrWin.cpp: Added.
+        (WebCore::deleteOwnedPtr): Put this in a separate file so that we
+        don't have to include <windows.h> in OwnPtr.h.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Added OwnPtrWin.cpp.
+
 2007-09-29  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.

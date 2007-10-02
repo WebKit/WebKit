@@ -248,6 +248,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\OwnPtrWin.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\PassRefPtr.h"
 			>
 		</File>

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "WebNodeHighlight.h"
 
+#include <wtf/OwnPtr.h>
+
 #pragma warning(push, 0)
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
@@ -121,14 +123,14 @@ void WebNodeHighlight::updateWindow()
     bitmapInfo.bmiHeader.biClrImportant  = 0;
 
     void* pixels = 0;
-    HBITMAP hbmp = ::CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
+    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
     if (!hbmp) {
         DWORD error = ::GetLastError();
         error++;
         return;
     }
 
-    ::SelectObject(hdc, hbmp);
+    ::SelectObject(hdc, hbmp.get());
 
     GraphicsContext context(hdc);
 
@@ -158,7 +160,6 @@ void WebNodeHighlight::updateWindow()
 
     ::UpdateLayeredWindow(m_overlay, ::GetDC(0), &dstPoint, &size, hdc, &srcPoint, 0, &bf, ULW_ALPHA);
 
-    ::DeleteObject(hbmp);
     ::DeleteDC(hdc);
 }
 

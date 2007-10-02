@@ -126,9 +126,7 @@ WebView::WebView()
 , m_viewWindow(0)
 , m_mainFrame(0)
 , m_page(0)
-, m_backingStoreBitmap(0)
 , m_hasCustomDropTarget(false)
-, m_backingStoreDirtyRegion(0)
 , m_useBackForwardList(true)
 , m_userAgentOverridden(false)
 , m_textSizeMultiplier(1)
@@ -234,15 +232,8 @@ void WebView::close()
 
 void WebView::deleteBackingStore()
 {
-    if (m_backingStoreBitmap) {
-        ::DeleteObject(m_backingStoreBitmap);
-        m_backingStoreBitmap = 0;
-    }
-
-    if (m_backingStoreDirtyRegion) {
-        ::DeleteObject(m_backingStoreDirtyRegion);
-        m_backingStoreDirtyRegion = 0;
-    }
+    m_backingStoreBitmap.clear();
+    m_backingStoreDirtyRegion.clear();
 
     m_backingStoreSize.cx = m_backingStoreSize.cy = 0;
 }
@@ -272,7 +263,7 @@ bool WebView::ensureBackingStore()
         bitmapInfo.bmiHeader.biClrImportant  = 0;
 
         void* pixels = NULL;
-        m_backingStoreBitmap = ::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, NULL, 0);
+        m_backingStoreBitmap.set(::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, NULL, 0));
         return true;
     }
 
@@ -292,12 +283,11 @@ void WebView::addToDirtyRegion(HRGN newRegion)
 
     if (m_backingStoreDirtyRegion) {
         HRGN combinedRegion = ::CreateRectRgn(0,0,0,0);
-        ::CombineRgn(combinedRegion, m_backingStoreDirtyRegion, newRegion, RGN_OR);
-        ::DeleteObject(m_backingStoreDirtyRegion);
+        ::CombineRgn(combinedRegion, m_backingStoreDirtyRegion.get(), newRegion, RGN_OR);
         ::DeleteObject(newRegion);
-        m_backingStoreDirtyRegion = combinedRegion;
+        m_backingStoreDirtyRegion.set(combinedRegion);
     } else
-        m_backingStoreDirtyRegion = newRegion;
+        m_backingStoreDirtyRegion.set(newRegion);
 }
 
 void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
@@ -318,7 +308,7 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
     // Collect our device context info and select the bitmap to scroll.
     HDC windowDC = ::GetDC(m_viewWindow);
     HDC bitmapDC = ::CreateCompatibleDC(windowDC);
-    ::SelectObject(bitmapDC, m_backingStoreBitmap);
+    ::SelectObject(bitmapDC, m_backingStoreBitmap.get());
     
     // Scroll the bitmap.
     RECT scrollRectWin(scrollViewRect);
@@ -354,7 +344,7 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
     if (!dc) {
         windowDC = ::GetDC(m_viewWindow);
         bitmapDC = ::CreateCompatibleDC(windowDC);
-        ::SelectObject(bitmapDC, m_backingStoreBitmap);
+        ::SelectObject(bitmapDC, m_backingStoreBitmap.get());
     }
 
     if (m_backingStoreBitmap && (m_backingStoreDirtyRegion || backingStoreCompletelyDirty)) {
@@ -370,11 +360,11 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         const float cWastedSpaceThreshold = 0.75f;
         RECT regionBox;
         if (!backingStoreCompletelyDirty) {
-            ::GetRgnBox(m_backingStoreDirtyRegion, &regionBox);
-            DWORD regionDataSize = GetRegionData(m_backingStoreDirtyRegion, sizeof(RGNDATA), NULL);
+            ::GetRgnBox(m_backingStoreDirtyRegion.get(), &regionBox);
+            DWORD regionDataSize = GetRegionData(m_backingStoreDirtyRegion.get(), sizeof(RGNDATA), NULL);
             if (regionDataSize) {
                 RGNDATA* regionData = (RGNDATA*)malloc(regionDataSize);
-                GetRegionData(m_backingStoreDirtyRegion, regionDataSize, regionData);
+                GetRegionData(m_backingStoreDirtyRegion.get(), regionDataSize, regionData);
                 if (regionData->rdh.nCount <= cRectThreshold) {
                     double unionPixels = (regionBox.right - regionBox.left) * (regionBox.bottom - regionBox.top);
                     double singlePixels = 0;
@@ -400,15 +390,12 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
             paintIntoBackingStore(frameView, bitmapDC, &regionBox);
 
         if (m_uiDelegatePrivate) {
-            COMPtr<IWebUIDelegatePrivate2> uiDelegatePrivate2(Query, m_uiDelegatePrivate.get());
+            COMPtr<IWebUIDelegatePrivate2> uiDelegatePrivate2(Query, m_uiDelegatePrivate);
             if (uiDelegatePrivate2)
                 uiDelegatePrivate2->webViewPainted(this);
         }
 
-        if (m_backingStoreDirtyRegion) {
-            ::DeleteObject(m_backingStoreDirtyRegion);
-            m_backingStoreDirtyRegion = 0;
-        }
+        m_backingStoreDirtyRegion.clear();
     }
 
     if (!dc) {
@@ -432,12 +419,12 @@ void WebView::paint(HDC dc, LPARAM options)
 
     RECT rcPaint;
     HDC hdc;
-    HRGN region = 0;
+    OwnPtr<HRGN> region;
     int regionType = NULLREGION;
     PAINTSTRUCT ps;
     if (!dc) {
-        region = CreateRectRgn(0,0,0,0);
-        regionType = GetUpdateRgn(m_viewWindow, region, false);
+        region.set(CreateRectRgn(0,0,0,0));
+        regionType = GetUpdateRgn(m_viewWindow, region.get(), false);
         hdc = BeginPaint(m_viewWindow, &ps);
         rcPaint = ps.rcPaint;
     } else {
@@ -449,7 +436,7 @@ void WebView::paint(HDC dc, LPARAM options)
 
     HDC bitmapDC = ::CreateCompatibleDC(hdc);
     bool backingStoreCompletelyDirty = ensureBackingStore();
-    ::SelectObject(bitmapDC, m_backingStoreBitmap);
+    ::SelectObject(bitmapDC, m_backingStoreBitmap.get());
 
     // Update our backing store if needed.
     updateBackingStore(frameView, bitmapDC, backingStoreCompletelyDirty);
@@ -464,10 +451,10 @@ void WebView::paint(HDC dc, LPARAM options)
 
         const int cRectThreshold = 10;
         const float cWastedSpaceThreshold = 0.75f;
-        DWORD regionDataSize = GetRegionData(region, sizeof(RGNDATA), NULL);
+        DWORD regionDataSize = GetRegionData(region.get(), sizeof(RGNDATA), NULL);
         if (regionDataSize) {
             RGNDATA* regionData = (RGNDATA*)malloc(regionDataSize);
-            GetRegionData(region, regionDataSize, regionData);
+            GetRegionData(region.get(), regionDataSize, regionData);
             if (regionData->rdh.nCount <= cRectThreshold) {
                 double unionPixels = windowDirtyRect.width() * windowDirtyRect.height();
                 double singlePixels = 0;
@@ -487,8 +474,6 @@ void WebView::paint(HDC dc, LPARAM options)
             free(regionData);
         }
     }
-    
-    ::DeleteObject(region);
 
     if (useWindowDirtyRect)
         paintIntoWindow(bitmapDC, hdc, &rcPaint);
@@ -520,9 +505,8 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, LPRECT d
 
 #if FLASH_BACKING_STORE_REDRAW
     HDC dc = ::GetDC(m_viewWindow);
-    HBRUSH yellowBrush = CreateSolidBrush(RGB(255, 255, 0));
-    FillRect(dc, dirtyRect, yellowBrush);
-    DeleteObject(yellowBrush);
+    OwnPtr<HBRUSH> yellowBrush = CreateSolidBrush(RGB(255, 255, 0));
+    FillRect(dc, dirtyRect, yellowBrush.get());
     GdiFlush();
     Sleep(50);
     paintIntoWindow(bitmapDC, dc, dirtyRect);
@@ -543,9 +527,8 @@ void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, LPRECT dirtyRect)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 #if FLASH_WINDOW_REDRAW
-    HBRUSH greenBrush = CreateSolidBrush(RGB(0, 255, 0));
-    FillRect(windowDC, dirtyRect, greenBrush);
-    DeleteObject(greenBrush);
+    OwnPtr<HBRUSH> greenBrush = CreateSolidBrush(RGB(0, 255, 0));
+    FillRect(windowDC, dirtyRect, greenBrush.get());
     GdiFlush();
     Sleep(50);
 #endif

@@ -114,9 +114,9 @@ static Node *makeDeleteNode(Node *expr);
 %token NULLTOKEN TRUETOKEN FALSETOKEN
 
 /* keywords */
-%token BREAK CASE DEFAULT FOR NEW VAR CONST CONTINUE
-%token FUNCTION RETURN VOID DELETE
-%token IF THIS DO WHILE IN INSTANCEOF TYPEOF
+%token BREAK CASE DEFAULT FOR NEW VAR CONSTTOKEN CONTINUE
+%token FUNCTION RETURN VOIDTOKEN DELETETOKEN
+%token IF THISTOKEN DO WHILE INTOKEN INSTANCEOF TYPEOF
 %token SWITCH WITH RESERVED
 %token THROW TRY CATCH FINALLY
 %token DEBUGGER
@@ -249,7 +249,7 @@ PrimaryExpr:
 ;
 
 PrimaryExprNoBrace:
-    THIS                                { $$ = new ThisNode(); }
+    THISTOKEN                           { $$ = new ThisNode(); }
   | Literal
   | ArrayLiteral
   | IDENT                               { $$ = new ResolveNode(*$1); }
@@ -351,8 +351,8 @@ PostfixExprNoBF:
 ;
 
 UnaryExprCommon:
-    DELETE UnaryExpr                    { $$ = makeDeleteNode($2); }
-  | VOID UnaryExpr                      { $$ = new VoidNode($2); }
+    DELETETOKEN UnaryExpr               { $$ = makeDeleteNode($2); }
+  | VOIDTOKEN UnaryExpr                 { $$ = new VoidNode($2); }
   | TYPEOF UnaryExpr                    { $$ = makeTypeOfNode($2); }
   | PLUSPLUS UnaryExpr                  { $$ = makePrefixNode($2, OpPlusPlus); }
   | AUTOPLUSPLUS UnaryExpr              { $$ = makePrefixNode($2, OpPlusPlus); }
@@ -425,7 +425,7 @@ RelationalExpr:
   | RelationalExpr LE ShiftExpr         { $$ = new RelationalNode($1, OpLessEq, $3); }
   | RelationalExpr GE ShiftExpr         { $$ = new RelationalNode($1, OpGreaterEq, $3); }
   | RelationalExpr INSTANCEOF ShiftExpr { $$ = new RelationalNode($1, OpInstanceOf, $3); }
-  | RelationalExpr IN ShiftExpr         { $$ = new RelationalNode($1, OpIn, $3); }
+  | RelationalExpr INTOKEN ShiftExpr    { $$ = new RelationalNode($1, OpIn, $3); }
 ;
 
 RelationalExprNoIn:
@@ -446,7 +446,7 @@ RelationalExprNoBF:
   | RelationalExprNoBF GE ShiftExpr     { $$ = new RelationalNode($1, OpGreaterEq, $3); }
   | RelationalExprNoBF INSTANCEOF ShiftExpr
                                         { $$ = new RelationalNode($1, OpInstanceOf, $3); }
-  | RelationalExprNoBF IN ShiftExpr     { $$ = new RelationalNode($1, OpIn, $3); }
+  | RelationalExprNoBF INTOKEN ShiftExpr     { $$ = new RelationalNode($1, OpIn, $3); }
 ;
 
 EqualityExpr:
@@ -681,8 +681,9 @@ VariableDeclarationNoIn:
 ;
 
 ConstStatement:
-    CONST ConstDeclarationList ';'      { $$ = new VarStatementNode($2); DBG($$, @1, @3); }
-  | CONST ConstDeclarationList error    { $$ = new VarStatementNode($2); DBG($$, @1, @2); AUTO_SEMICOLON; }
+    CONSTTOKEN ConstDeclarationList ';' { $$ = new VarStatementNode($2); DBG($$, @1, @3); }
+  | CONSTTOKEN ConstDeclarationList error
+                                        { $$ = new VarStatementNode($2); DBG($$, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ConstDeclarationList:
@@ -728,7 +729,7 @@ IterationStatement:
                                         { $$ = new ForNode($3, $5, $7, $9); DBG($$, @1, @8); }
   | FOR '(' VAR VariableDeclarationListNoIn ';' ExprOpt ';' ExprOpt ')' Statement
                                         { $$ = new ForNode($4, $6, $8, $10); DBG($$, @1, @9); }
-  | FOR '(' LeftHandSideExpr IN Expr ')' Statement
+  | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
                                         {
                                             Node *n = $3->nodeInsideAllParens();
                                             if (!n->isLocation())
@@ -736,9 +737,9 @@ IterationStatement:
                                             $$ = new ForInNode(n, $5, $7);
                                             DBG($$, @1, @6);
                                         }
-  | FOR '(' VAR IDENT IN Expr ')' Statement
+  | FOR '(' VAR IDENT INTOKEN Expr ')' Statement
                                         { $$ = new ForInNode(*$4, 0, $6, $8); DBG($$, @1, @7); }
-  | FOR '(' VAR IDENT InitializerNoIn IN Expr ')' Statement
+  | FOR '(' VAR IDENT InitializerNoIn INTOKEN Expr ')' Statement
                                         { $$ = new ForInNode(*$4, $5, $7, $9); DBG($$, @1, @8); }
 ;
 

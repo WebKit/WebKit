@@ -80,7 +80,7 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 {num}{ident}            {yyTok = DIMEN; return yyTok;}
 {num}%+                 {yyTok = PERCENTAGE; return yyTok;}
 {intnum}                {yyTok = INTEGER; return yyTok;}
-{num}                   {yyTok = FLOAT; return yyTok;}
+{num}                   {yyTok = FLOATTOKEN; return yyTok;}
 
 "not("                  {yyTok = NOTFUNCTION; return yyTok;}
 "url("{w}{string}{w}")" {yyTok = URI; return yyTok;}

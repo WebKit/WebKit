@@ -1,3 +1,23 @@
+2007-10-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - add support for GDI objects to OwnPtr; I plan to use this
+          to fix some GDI handle leaks
+
+        * css/CSSGrammar.y: Change parser to avoid macro that conflicts
+        with macro defined in Windows system headers: FLOAT. This is needed
+        because OwnPtr.h will now include <windows.h>.
+        * css/CSSParser.cpp: (WebCore::CSSParser::lex): Ditto.
+        * css/tokenizer.flex: Ditto.
+
+        * platform/win/CursorWin.cpp: (WebCore::Cursor::Cursor):
+        Use OwnPtr for a few HBITMAP objects as a test case.
+
+        * platform/win/COMPtr.h: (COMPtr::COMPtr): Fix so that we can use
+        Query with other COMPtr. Before this would not compile if it was
+        ever instantiated.
+
 2007-10-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam, Ada.

@@ -54,7 +54,6 @@ static inline bool supportsAlphaCursors()
 Cursor::Cursor(Image* img, const IntPoint& hotspot) 
 { 
     static bool doAlpha = supportsAlphaCursors();
-    HBITMAP hCursor;
     BITMAPINFO cursorImage = {0};
     cursorImage.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     cursorImage.bmiHeader.biWidth = img->width();
@@ -65,43 +64,39 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
     HDC dc = GetDC(0);
     HDC workingDC = CreateCompatibleDC(dc);
     if (doAlpha) {
-        hCursor = CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0);
+        OwnPtr<HBITMAP> hCursor(CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0));
         ASSERT(hCursor);
 
-        img->getHBITMAP(hCursor); 
-        HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC, hCursor);
-        SetBkMode(workingDC,TRANSPARENT);
+        img->getHBITMAP(hCursor.get()); 
+        HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC, hCursor.get());
+        SetBkMode(workingDC, TRANSPARENT);
         SelectObject(workingDC, hOldBitmap);
 
-        HBITMAP hMask = CreateBitmap(img->width(),img->height(),1,1,NULL);
+        OwnPtr<HBITMAP> hMask(CreateBitmap(img->width(), img->height(), 1, 1, NULL));
 
         ICONINFO ii;
         ii.fIcon = FALSE;
         ii.xHotspot = hotspot.x();
         ii.yHotspot = hotspot.y();
-        ii.hbmMask = hMask;
-        ii.hbmColor = hCursor;
+        ii.hbmMask = hMask.get();
+        ii.hbmColor = hCursor.get();
 
         m_impl = new SharedCursor(CreateIconIndirect(&ii));
-      
-        DeleteObject(hMask); 
-        DeleteObject(hCursor); 
-        DeleteObject(hOldBitmap);    
     } else {
-        //Platform doesn't support alpha blended cursors, so we need
-        //to create the mask manually
+        // Platform doesn't support alpha blended cursors, so we need
+        // to create the mask manually
         HDC andMaskDC = CreateCompatibleDC(dc);
         HDC xorMaskDC = CreateCompatibleDC(dc);
-        hCursor = CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, 0, 0, 0);
+        OwnPtr<HBITMAP> hCursor(CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, 0, 0, 0));
         ASSERT(hCursor);
-        img->getHBITMAP(hCursor); 
+        img->getHBITMAP(hCursor.get()); 
         BITMAP cursor;
-        GetObject(hCursor, sizeof(BITMAP), &cursor);
-        HBITMAP andMask = CreateBitmap(cursor.bmWidth, cursor.bmHeight, 1, 1, NULL);
-        HBITMAP xorMask = CreateCompatibleBitmap(dc, cursor.bmWidth, cursor.bmHeight);
-        HBITMAP oldCursor = (HBITMAP)SelectObject(workingDC, hCursor);
-        HBITMAP oldAndMask = (HBITMAP)SelectObject(andMaskDC, andMask);
-        HBITMAP oldXorMask = (HBITMAP)SelectObject(xorMaskDC, xorMask);
+        GetObject(hCursor.get(), sizeof(BITMAP), &cursor);
+        OwnPtr<HBITMAP> andMask(CreateBitmap(cursor.bmWidth, cursor.bmHeight, 1, 1, NULL));
+        OwnPtr<HBITMAP> xorMask(CreateCompatibleBitmap(dc, cursor.bmWidth, cursor.bmHeight));
+        HBITMAP oldCursor = (HBITMAP)SelectObject(workingDC, hCursor.get());
+        HBITMAP oldAndMask = (HBITMAP)SelectObject(andMaskDC, andMask.get());
+        HBITMAP oldXorMask = (HBITMAP)SelectObject(xorMaskDC, xorMask.get());
 
         SetBkColor(workingDC, RGB(0,0,0));  
         BitBlt(andMaskDC, 0, 0, cursor.bmWidth, cursor.bmHeight, workingDC, 0, 0, SRCCOPY);
@@ -115,18 +110,14 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
         SelectObject(andMaskDC, oldAndMask);
         SelectObject(xorMaskDC, oldXorMask);
 
-
         ICONINFO icon = {0};
         icon.fIcon = FALSE;
         icon.xHotspot = hotspot.x();
         icon.yHotspot = hotspot.y();
-        icon.hbmMask = andMask;
-        icon.hbmColor = xorMask;
+        icon.hbmMask = andMask.get();
+        icon.hbmColor = xorMask.get();
         m_impl = new SharedCursor(CreateIconIndirect(&icon));
 
-        DeleteObject(andMask);
-        DeleteObject(xorMask);
-        DeleteObject(hCursor);
         DeleteDC(xorMaskDC);
         DeleteDC(andMaskDC);
     }

@@ -700,9 +700,9 @@ protected:
     WebFrame* m_mainFrame;
     WebCore::Page* m_page;
     
-    HBITMAP m_backingStoreBitmap;
+    OwnPtr<HBITMAP> m_backingStoreBitmap;
     SIZE m_backingStoreSize;
-    HRGN m_backingStoreDirtyRegion;
+    OwnPtr<HRGN> m_backingStoreDirtyRegion;
 
     COMPtr<IWebEditingDelegate> m_editingDelegate;
     COMPtr<IWebFrameLoadDelegate> m_frameLoadDelegate;
