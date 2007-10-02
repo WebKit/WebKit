@@ -1,3 +1,13 @@
+2007-10-02  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Olliej.
+
+        The cookies() method should only return the value of the
+        cookie, not additional info such as the expiration date.
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::cookies):
+
 2007-10-01  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Eric.

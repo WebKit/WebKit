@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -46,7 +46,11 @@ void setCookies(const KURL& url, const KURL& policyURL, const String& value)
 String cookies(const KURL& url)
 {
     QUrl u((QString)url.url());
-    return (String)QCookieJar::cookieJar()->cookies(u);
+    QString cookies = QCookieJar::cookieJar()->cookies(u);
+    int idx = cookies.indexOf(QLatin1Char(';'));
+    if (idx > 0)
+        cookies = cookies.left(idx);
+    return cookies;
 }
 
 bool cookiesEnabled()
