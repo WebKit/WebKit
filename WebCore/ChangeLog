@@ -1,3 +1,16 @@
+2007-10-02  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5511842> REGRESSION: Webkit stops responding while loading Apple Store Canada page (15304)
+        
+        Included the NSSynchronousURLConnection_PrivateMode mode, in addition to the default run loop modes
+        as an acceptable mode when using performSelectorOnMainThread with our syncronous url callbacks.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+        Added NSSynchronousURLConnection_PrivateMode to the list of accepted modes.
+
 2007-10-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
