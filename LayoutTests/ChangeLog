@@ -1,5 +1,14 @@
 2007-10-02  Lars Knoll  <lars@trolltech.com>
 
+        Added some more test results.
+
+        * platform/qt/tables/mozilla/core/table_rules-expected.txt: Copied from LayoutTests/platform/qt/tables/mozilla_expected_failures/core/table_rules-expected.txt.
+        * platform/qt/tables/mozilla/marvin/table_rules_none-expected.txt: Added.
+        * platform/qt/tables/mozilla/marvin/x_table_rules_groups-expected.txt: Copied from LayoutTests/platform/qt/tables/mozilla_expected_failures/marvin/x_table_rules_groups-expected.txt.
+        * platform/qt/tables/mozilla/marvin/x_table_rules_none-expected.txt: Added.
+
+2007-10-02  Lars Knoll  <lars@trolltech.com>
+
         Update test result.
 
         * platform/qt/fast/canvas/fillrect_gradient-expected.txt:
