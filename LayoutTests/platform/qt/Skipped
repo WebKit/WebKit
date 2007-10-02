@@ -12,10 +12,13 @@ http
 plugins
 svg
 
-# tests that fail against Qt 4.3 due to a bug in QXmlStream
+# tests that fail against Qt 4.3 due to bugs and missing features in QXmlStream
 fast/dom/set-innerHTML.xhtml
 dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml
 dom/xhtml/level3/core/nodelookupprefix19.xhtml
+fast/parser/entities-in-attributes.xhtml
+fast/xpath/string-value.html
+
 
 # crashes
 fast/encoding
@@ -25,6 +28,8 @@ dom/xhtml/level2/html/HTMLIFrameElement11.xhtml
 fast/dom/Window/Plug-ins.html
 fast/html/tab-order.html
 fast/forms/access-key.html
+fast/forms/button-state-restore.html
+fast/forms/document-write.html
 fast/forms/input-paste-undo.html
 fast/forms/input-text-enter.html
 fast/forms/input-truncate-newline.html
