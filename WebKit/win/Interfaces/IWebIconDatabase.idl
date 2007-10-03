@@ -163,4 +163,12 @@ interface IWebIconDatabase : IUnknown
         - (void)allowDatabaseCleanup;
     */
     HRESULT allowDatabaseCleanup();
+
+    /*!
+        @method iconURLForURL:withSize:cache:
+        @discussion Returns an icon URL for a web site URL from memory or disk. nil if none is found.
+        @param URL
+        - (NSString *)iconURLForURL:(NSString *)URL;
+    */
+    HRESULT iconURLForURL([in] BSTR url, [out, retval] BSTR* iconURL);
 }

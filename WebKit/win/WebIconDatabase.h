@@ -90,6 +90,10 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE allowDatabaseCleanup( void);
 
+    virtual HRESULT STDMETHODCALLTYPE iconURLForURL( 
+        /* [in] */ BSTR url,
+        /* [retval][out] */ BSTR *iconURL);
+
     // IconDatabaseClient
     virtual void dispatchDidRemoveAllIcons();
     virtual void dispatchDidAddIconForPageURL(const WebCore::String&);
