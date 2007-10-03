@@ -87,12 +87,12 @@ import "IWebDebugProgram.idl";
 [
 #if __BUILDBOT__
     uuid(2a748656-625d-4207-b29f-40c95bfeb3a9),
-    helpstring("WebKit 3.0 Type Library"),
+    helpstring("WebKit 523.11 Type Library"),
 #else
     uuid(76E5F7F0-18FD-48a2-B549-1159435B513B),
-    helpstring("OpenSourceWebKit 3.0 Type Library"),
+    helpstring("OpenSourceWebKit 523.11 Type Library"),
 #endif
-    version(3.0)
+    version(523.11)
 ]
 #if __BUILDBOT__
 library WebKit
