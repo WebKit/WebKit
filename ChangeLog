@@ -1,5 +1,14 @@
 2007-10-03  Lars Knoll  <lars@trolltech.com>
 
+        Signed off by olliej.
+
+        move WebKitQt to WebKit/qt for consistency with the other ports.
+
+        * WebKit.pri:
+        * WebKit.pro:
+
+2007-10-03  Lars Knoll  <lars@trolltech.com>
+
         Reviewed by olliej.
 
         Move the Qt version of DRT into the correct place and put the binary into BUILDDIR/bin.

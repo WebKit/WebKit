@@ -25,7 +25,7 @@ CONFIG(release) {
 
 BASE_DIR = $$PWD
 qt-port:INCLUDEPATH += \
-    $$PWD/WebKitQt/Api
+    $$PWD/WebKit/qt/Api
 gtk-port:INCLUDEPATH += \
     $$BASE_DIR/WebCore/platform/gtk \
     $$BASE_DIR/WebCore/platform/network/curl \

@@ -1,3 +1,13 @@
+2007-10-03  Lars Knoll  <lars@trolltech.com>
+
+        Signed off by olliej.
+
+        move WebKitQt to WebKit/qt for consistency with the other ports.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * WebCore.pro:
+
 2007-10-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver and Adam.

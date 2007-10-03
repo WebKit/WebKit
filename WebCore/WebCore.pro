@@ -67,7 +67,7 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 qt-port {
 !win32-* {
-    LIBS += -L$$OUTPUT_DIR/WebKitQt/Plugins
+    LIBS += -L$$OUTPUT_DIR/WebKit/qt/Plugins
     LIBS += -lqtwebico
 }
 
@@ -78,11 +78,11 @@ INCLUDEPATH += \
                 $$PWD/platform/graphics/svg/qt \
                 $$PWD/loader/qt \
                 $$PWD/page/qt \
-                $$PWD/../WebKitQt/WebCoreSupport \
-                $$PWD/../WebKitQt/Api
+                $$PWD/../WebKit/qt/WebCoreSupport \
+                $$PWD/../WebKit/qt/Api
 
 DEPENDPATH += editing/qt history/qt loader/qt page/qt \
-	platform/graphics/qt ../WeKitQt/Api ../WebKitQt/WebCoreSupport
+	platform/graphics/qt ../WeKitQt/Api ../WebKit/qt/WebCoreSupport
 
     DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
 }
@@ -761,16 +761,16 @@ qt-port {
     $$PWD/platform/qt/QWebPopup.h \
     $$PWD/platform/qt/MenuEventProxy.h \
     $$PWD/platform/qt/SharedTimerQt.h \
-    $$PWD/../WebKitQt/Api/qwebframe.h \
-    $$PWD/../WebKitQt/Api/qwebpage.h \
-    $$PWD/../WebKitQt/Api/qwebnetworkinterface.h \
-    $$PWD/../WebKitQt/Api/qwebnetworkinterface_p.h \
-    $$PWD/../WebKitQt/Api/qwebobjectplugin.h \
-    $$PWD/../WebKitQt/Api/qwebobjectplugin_p.h \
-    $$PWD/../WebKitQt/Api/qwebobjectpluginconnector.h \
-    $$PWD/../WebKitQt/Api/qwebhistoryinterface.h \
-    $$PWD/../WebKitQt/Api/qcookiejar.h \
-    $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
+    $$PWD/../WebKit/qt/Api/qwebframe.h \
+    $$PWD/../WebKit/qt/Api/qwebpage.h \
+    $$PWD/../WebKit/qt/Api/qwebnetworkinterface.h \
+    $$PWD/../WebKit/qt/Api/qwebnetworkinterface_p.h \
+    $$PWD/../WebKit/qt/Api/qwebobjectplugin.h \
+    $$PWD/../WebKit/qt/Api/qwebobjectplugin_p.h \
+    $$PWD/../WebKit/qt/Api/qwebobjectpluginconnector.h \
+    $$PWD/../WebKit/qt/Api/qwebhistoryinterface.h \
+    $$PWD/../WebKit/qt/Api/qcookiejar.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h
 
     SOURCES += \
     page/qt/DragControllerQt.cpp \
@@ -827,22 +827,22 @@ qt-port {
     platform/qt/ThreadingQt.cpp \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
-    ../WebKitQt/WebCoreSupport/ChromeClientQt.cpp \
-    ../WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp \
-    ../WebKitQt/WebCoreSupport/DragClientQt.cpp \
-    ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
-    ../WebKitQt/WebCoreSupport/EditCommandQt.cpp \
-    ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
-    ../WebKitQt/WebCoreSupport/InspectorClientQt.cpp \
-    ../WebKitQt/Api/qwebframe.cpp \
-    ../WebKitQt/Api/qwebnetworkinterface.cpp \
-    ../WebKitQt/Api/qcookiejar.cpp \
-    ../WebKitQt/Api/qwebpage.cpp \
-    ../WebKitQt/Api/qwebpagehistory.cpp \
-    ../WebKitQt/Api/qwebsettings.cpp \
-    ../WebKitQt/Api/qwebobjectplugin.cpp \
-    ../WebKitQt/Api/qwebobjectpluginconnector.cpp \
-    ../WebKitQt/Api/qwebhistoryinterface.cpp
+    ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/ContextMenuClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/DragClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/EditorClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/EditCommandQt.cpp \
+    ../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/InspectorClientQt.cpp \
+    ../WebKit/qt/Api/qwebframe.cpp \
+    ../WebKit/qt/Api/qwebnetworkinterface.cpp \
+    ../WebKit/qt/Api/qcookiejar.cpp \
+    ../WebKit/qt/Api/qwebpage.cpp \
+    ../WebKit/qt/Api/qwebpagehistory.cpp \
+    ../WebKit/qt/Api/qwebsettings.cpp \
+    ../WebKit/qt/Api/qwebobjectplugin.cpp \
+    ../WebKit/qt/Api/qwebobjectpluginconnector.cpp \
+    ../WebKit/qt/Api/qwebhistoryinterface.cpp
 
     unix: SOURCES += platform/qt/SystemTimeQt.cpp
     else: SOURCES += platform/win/SystemTimeWin.cpp
@@ -858,7 +858,7 @@ gtk-port {
         ../WebKit/gtk/Api/webkitgtkpage.h \
         ../WebKit/gtk/Api/webkitgtkprivate.h \
         ../WebKit/gtk/Api/webkitgtksettings.h \
-        ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \ 
+        ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/DragClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
@@ -927,9 +927,9 @@ gtk-port {
         ../WebKit/gtk/Api/webkitgtkpage.cpp \
         ../WebKit/gtk/Api/webkitgtkprivate.cpp \
         ../WebKit/gtk/Api/webkitgtksettings.cpp \
-        ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \ 
+        ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
-        ../WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \ 
+        ../WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp
@@ -1494,10 +1494,10 @@ QMAKE_EXTRA_COMPILERS += xpathbison
 
 qt-port {
     target.path = $$[QT_INSTALL_LIBS]
-    include($$PWD/../WebKitQt/Api/headers.pri)
+    include($$PWD/../WebKit/qt/Api/headers.pri)
     headers.files = $$WEBKIT_API_HEADERS
     headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
-    prf.files = $$PWD/../WebKitQt/Api/qtwebkit.prf
+    prf.files = $$PWD/../WebKit/qt/Api/qtwebkit.prf
     prf.path = $$[QT_INSTALL_PREFIX]/mkspecs/features
 
 

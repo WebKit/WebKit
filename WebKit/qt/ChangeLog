@@ -1,3 +1,624 @@
+2007-10-03  Lars Knoll  <lars@trolltech.com>
+
+        Signed off by Olliej.
+
+        move WebKitQt to WebKit/qt for consistency with the other ports.
+
+        * Api/headers.pri: Renamed from WebKitQt/Api/headers.pri.
+        * Api/qcookiejar.cpp: Renamed from WebKitQt/Api/qcookiejar.cpp.
+        (QCookieJarPrivate::QCookieJarPrivate):
+        (qHash):
+        (QCookieJar::QCookieJar):
+        (QCookieJar::~QCookieJar):
+        (QCookieJar::setCookies):
+        (QCookieJar::cookies):
+        (QCookieJar::isEnabled):
+        (QCookieJar::setEnabled):
+        (gCleanupJar):
+        (QCookieJar::setCookieJar):
+        (QCookieJar::cookieJar):
+        * Api/qcookiejar.h: Renamed from WebKitQt/Api/qcookiejar.h.
+        * Api/qtwebkit.prf: Renamed from WebKitQt/Api/qtwebkit.prf.
+        * Api/qwebframe.cpp: Renamed from WebKitQt/Api/qwebframe.cpp.
+        (QWebFramePrivate::init):
+        (QWebFramePrivate::parentFrame):
+        (QWebFramePrivate::horizontalScrollBar):
+        (QWebFramePrivate::verticalScrollBar):
+        (QWebFrame::QWebFrame):
+        (QWebFrame::~QWebFrame):
+        (QWebFrame::addToJSWindowObject):
+        (QWebFrame::markup):
+        (QWebFrame::innerText):
+        (QWebFrame::renderTreeDump):
+        (QWebFrame::title):
+        (QWebFrame::name):
+        (QWebFrame::page):
+        (QWebFrame::selectedText):
+        (QWebFrame::childFrames):
+        (QWebFrame::verticalScrollBarPolicy):
+        (QWebFrame::setVerticalScrollBarPolicy):
+        (QWebFrame::horizontalScrollBarPolicy):
+        (QWebFrame::setHorizontalScrollBarPolicy):
+        (QWebFrame::render):
+        (QWebFrame::layout):
+        (QWebFrame::pos):
+        (QWebFrame::geometry):
+        (QWebFrame::evaluateJavaScript):
+        (QWebFrame::mouseMoveEvent):
+        (QWebFrame::mousePressEvent):
+        (QWebFrame::mouseDoubleClickEvent):
+        (QWebFrame::mouseReleaseEvent):
+        (QWebFrame::wheelEvent):
+        * Api/qwebframe.h: Renamed from WebKitQt/Api/qwebframe.h.
+        * Api/qwebframe_p.h: Renamed from WebKitQt/Api/qwebframe_p.h.
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebhistoryinterface.cpp: Renamed from WebKitQt/Api/qwebhistoryinterface.cpp.
+        (WebCore::historyContains):
+        (gCleanupInterface):
+        (QWebHistoryInterface::setDefaultInterface):
+        (QWebHistoryInterface::defaultInterface):
+        (QWebHistoryInterface::QWebHistoryInterface):
+        * Api/qwebhistoryinterface.h: Renamed from WebKitQt/Api/qwebhistoryinterface.h.
+        * Api/qwebkitglobal.h: Renamed from WebKitQt/Api/qwebkitglobal.h.
+        * Api/qwebnetworkinterface.cpp: Renamed from WebKitQt/Api/qwebnetworkinterface.cpp.
+        (qHash):
+        (operator==):
+        (QWebNetworkRequestPrivate::init):
+        (QWebNetworkRequestPrivate::setURL):
+        (QWebNetworkRequest::QWebNetworkRequest):
+        (QWebNetworkRequest::operator=):
+        (QWebNetworkRequest::~QWebNetworkRequest):
+        (QWebNetworkRequest::url):
+        (QWebNetworkRequest::setUrl):
+        (QWebNetworkRequest::httpHeader):
+        (QWebNetworkRequest::setHttpHeader):
+        (QWebNetworkRequest::httpHeaderField):
+        (QWebNetworkRequest::setHttpHeaderField):
+        (QWebNetworkRequest::postData):
+        (QWebNetworkRequest::setPostData):
+        (QWebNetworkJob::QWebNetworkJob):
+        (QWebNetworkJob::~QWebNetworkJob):
+        (QWebNetworkJob::url):
+        (QWebNetworkJob::postData):
+        (QWebNetworkJob::httpHeader):
+        (QWebNetworkJob::request):
+        (QWebNetworkJob::response):
+        (QWebNetworkJob::setResponse):
+        (QWebNetworkJob::cancelled):
+        (QWebNetworkJob::ref):
+        (QWebNetworkJob::deref):
+        (QWebNetworkJob::networkInterface):
+        (QWebNetworkJob::frame):
+        (QWebNetworkManager::QWebNetworkManager):
+        (QWebNetworkManager::self):
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::cancel):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (QWebNetworkManager::finished):
+        (QWebNetworkManager::addHttpJob):
+        (QWebNetworkManager::cancelHttpJob):
+        (QWebNetworkManager::httpConnectionClosed):
+        (QWebNetworkInterfacePrivate::sendFileData):
+        (QWebNetworkInterfacePrivate::parseDataUrl):
+        (gCleanupInterface):
+        (QWebNetworkInterface::setDefaultInterface):
+        (QWebNetworkInterface::defaultInterface):
+        (QWebNetworkInterface::QWebNetworkInterface):
+        (QWebNetworkInterface::~QWebNetworkInterface):
+        (QWebNetworkInterface::addJob):
+        (QWebNetworkInterface::cancelJob):
+        (WebCoreHttp::WebCoreHttp):
+        (WebCoreHttp::~WebCoreHttp):
+        (WebCoreHttp::request):
+        (WebCoreHttp::scheduleNextRequest):
+        (WebCoreHttp::getConnection):
+        (WebCoreHttp::onResponseHeaderReceived):
+        (WebCoreHttp::onReadyRead):
+        (WebCoreHttp::onRequestFinished):
+        (WebCoreHttp::onDone):
+        (WebCoreHttp::onStateChanged):
+        (WebCoreHttp::cancel):
+        (WebCoreHttp::onSslErrors):
+        (WebCoreHttp::onAuthenticationRequired):
+        (WebCoreHttp::onProxyAuthenticationRequired):
+        (HostInfo::HostInfo):
+        * Api/qwebnetworkinterface.h: Renamed from WebKitQt/Api/qwebnetworkinterface.h.
+        * Api/qwebnetworkinterface_p.h: Renamed from WebKitQt/Api/qwebnetworkinterface_p.h.
+        (QWebNetworkJobPrivate::QWebNetworkJobPrivate):
+        (WebCore::HostInfo::HostInfo):
+        (WebCore::WebCoreHttp::HttpConnection::HttpConnection):
+        * Api/qwebobjectplugin.cpp: Renamed from WebKitQt/Api/qwebobjectplugin.cpp.
+        (QWebFactoryLoader::QWebFactoryLoader):
+        (QWebFactoryLoader::self):
+        (QWebFactoryLoader::descriptionForName):
+        (QWebFactoryLoader::mimetypesForName):
+        (QWebFactoryLoader::mimeTypeForExtension):
+        (QWebFactoryLoader::extensions):
+        (QWebFactoryLoader::nameForMimetype):
+        (QWebFactoryLoader::create):
+        (QWebObjectPlugin::QWebObjectPlugin):
+        (QWebObjectPlugin::~QWebObjectPlugin):
+        (QWebObjectPlugin::descriptionForKey):
+        (QWebObjectPlugin::mimetypesForKey):
+        (QWebObjectPlugin::extensionsForMimetype):
+        * Api/qwebobjectplugin.h: Renamed from WebKitQt/Api/qwebobjectplugin.h.
+        * Api/qwebobjectplugin_p.h: Renamed from WebKitQt/Api/qwebobjectplugin_p.h.
+        (QWebFactoryLoader::names):
+        (QWebFactoryLoader::supportsMimeType):
+        * Api/qwebobjectpluginconnector.cpp: Renamed from WebKitQt/Api/qwebobjectpluginconnector.cpp.
+        (QWebObjectPluginConnector::QWebObjectPluginConnector):
+        (QWebObjectPluginConnector::frame):
+        (QWebObjectPluginConnector::pluginParentWidget):
+        (QWebObjectPluginConnector::requestUrl):
+        * Api/qwebobjectpluginconnector.h: Renamed from WebKitQt/Api/qwebobjectpluginconnector.h.
+        * Api/qwebpage.cpp: Renamed from WebKitQt/Api/qwebpage.cpp.
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPagePrivate::navigationRequested):
+        (QWebPagePrivate::createMainFrame):
+        (QWebPage::QWebPage):
+        (QWebPage::~QWebPage):
+        (QWebPage::createFrame):
+        (QWebPage::open):
+        (QWebPage::url):
+        (QWebPage::title):
+        (QWebPage::mainFrame):
+        (QWebPage::sizeHint):
+        (QWebPage::stop):
+        (QWebPage::history):
+        (QWebPage::goBack):
+        (QWebPage::goForward):
+        (QWebPage::goToHistoryItem):
+        (QWebPage::javaScriptConsoleMessage):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::createWindow):
+        (QWebPage::createModalDialog):
+        (QWebPage::createPlugin):
+        (QWebPage::navigationRequested):
+        (QWebPage::setWindowGeometry):
+        (QWebPage::canCut):
+        (QWebPage::canCopy):
+        (QWebPage::canPaste):
+        (QWebPage::cut):
+        (QWebPage::copy):
+        (QWebPage::paste):
+        (QWebPage::isModified):
+        (QWebPage::undoStack):
+        (dropActionToDragOp):
+        (dragOpToDropAction):
+        (QWebPage::resizeEvent):
+        (QWebPage::paintEvent):
+        (QWebPage::mouseMoveEvent):
+        (QWebPage::mousePressEvent):
+        (QWebPage::mouseDoubleClickEvent):
+        (QWebPage::mouseReleaseEvent):
+        (QWebPage::wheelEvent):
+        (QWebPage::keyPressEvent):
+        (QWebPage::keyReleaseEvent):
+        (QWebPage::focusInEvent):
+        (QWebPage::focusOutEvent):
+        (QWebPage::focusNextPrevChild):
+        (QWebPage::dragEnterEvent):
+        (QWebPage::dragLeaveEvent):
+        (QWebPage::dragMoveEvent):
+        (QWebPage::dropEvent):
+        (QWebPage::setNetworkInterface):
+        (QWebPage::networkInterface):
+        (QWebPage::icon):
+        (QWebPage::setSettings):
+        (QWebPage::settings):
+        (QWebPage::chooseFile):
+        (QWebPage::setNetworkProxy):
+        (QWebPage::networkProxy):
+        (QWebPage::userAgentStringForUrl):
+        (QWebPage::onLoadProgressChanged):
+        (QWebPage::totalBytes):
+        * Api/qwebpage.h: Renamed from WebKitQt/Api/qwebpage.h.
+        * Api/qwebpage_p.h: Renamed from WebKitQt/Api/qwebpage_p.h.
+        * Api/qwebpagehistory.cpp: Renamed from WebKitQt/Api/qwebpagehistory.cpp.
+        (QWebHistoryItem::QWebHistoryItem):
+        (QWebHistoryItem::operator=):
+        (QWebHistoryItem::~QWebHistoryItem):
+        (QWebHistoryItem::originalUrl):
+        (QWebHistoryItem::currentUrl):
+        (QWebHistoryItem::title):
+        (QWebHistoryItem::lastVisited):
+        (QWebHistoryItem::icon):
+        (QWebPageHistory::QWebPageHistory):
+        (QWebPageHistory::itemAtIndex):
+        (QWebPageHistory::operator=):
+        (QWebPageHistory::~QWebPageHistory):
+        (QWebPageHistory::items):
+        (QWebPageHistory::backItems):
+        (QWebPageHistory::forwardItems):
+        (QWebPageHistory::canGoBack):
+        (QWebPageHistory::canGoForward):
+        (QWebPageHistory::goBack):
+        (QWebPageHistory::goForward):
+        (QWebPageHistory::goToItem):
+        (QWebPageHistory::backItem):
+        (QWebPageHistory::currentItem):
+        (QWebPageHistory::forwardItem):
+        * Api/qwebpagehistory.h: Renamed from WebKitQt/Api/qwebpagehistory.h.
+        (QExplicitlySharedDataPointer::operator*):
+        (QExplicitlySharedDataPointer::operator->):
+        (QExplicitlySharedDataPointer::operator T *):
+        (QExplicitlySharedDataPointer::operator const T *):
+        (QExplicitlySharedDataPointer::data):
+        (QExplicitlySharedDataPointer::constData):
+        (QExplicitlySharedDataPointer::operator==):
+        (QExplicitlySharedDataPointer::operator!=):
+        (QExplicitlySharedDataPointer::QExplicitlySharedDataPointer):
+        (QExplicitlySharedDataPointer::~QExplicitlySharedDataPointer):
+        (QExplicitlySharedDataPointer::operator=):
+        (QExplicitlySharedDataPointer::operator!):
+        (::QExplicitlySharedDataPointer):
+        * Api/qwebpagehistory_p.h: Renamed from WebKitQt/Api/qwebpagehistory_p.h.
+        (QWebHistoryItemPrivate::QWebHistoryItemPrivate):
+        (QWebHistoryItemPrivate::~QWebHistoryItemPrivate):
+        (QWebPageHistoryPrivate::QWebPageHistoryPrivate):
+        (QWebPageHistoryPrivate::~QWebPageHistoryPrivate):
+        * Api/qwebsettings.cpp: Renamed from WebKitQt/Api/qwebsettings.cpp.
+        (QWebSettingsPrivate::QWebSettingsPrivate):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::~QWebSettings):
+        (QWebSettings::setMinimumFontSize):
+        (QWebSettings::minimumFontSize):
+        (QWebSettings::setMinimumLogicalFontSize):
+        (QWebSettings::minimumLogicalFontSize):
+        (QWebSettings::setDefaultFontSize):
+        (QWebSettings::defaultFontSize):
+        (QWebSettings::setDefaultFixedFontSize):
+        (QWebSettings::defaultFixedFontSize):
+        (QWebSettings::setUserStyleSheetLocation):
+        (QWebSettings::userStyleSheetLocation):
+        (QWebSettings::setIconDatabaseEnabled):
+        (QWebSettings::iconDatabaseEnabled):
+        (QWebSettings::setWebGraphic):
+        (QWebSettings::webGraphic):
+        (QWebSettings::operator=):
+        (QWebSettings::setGlobal):
+        (QWebSettings::global):
+        (QWebSettings::setFontFamily):
+        (QWebSettings::fontFamily):
+        (QWebSettings::setAttribute):
+        (QWebSettings::testAttribute):
+        (loadResourcePixmap):
+        * Api/qwebsettings.h: Renamed from WebKitQt/Api/qwebsettings.h.
+        * ChangeLog: Renamed from WebKitQt/ChangeLog.
+        * Plugins/ICOHandler.cpp: Renamed from WebKitQt/Plugins/ICOHandler.cpp.
+        (IcoHeader::operator >>):
+        (IcoHeader::BMP_INFOHDR::):
+        (IcoHeader::operator<<):
+        (IcoHeader::LessDifference::LessDifference):
+        (IcoHeader::LessDifference::operator ()):
+        (IcoHeader::loadFromDIB):
+        (ICOHandler::ICOHandler):
+        (ICOHandler::canRead):
+        (ICOHandler::read):
+        (ICOHandler::write):
+        (ICOHandler::name):
+        (ICOPlugin::keys):
+        (ICOPlugin::capabilities):
+        (ICOPlugin::create):
+        * Plugins/ICOHandler.h: Renamed from WebKitQt/Plugins/ICOHandler.h.
+        * Plugins/Plugins.pro: Renamed from WebKitQt/Plugins/Plugins.pro.
+        * QtLauncher/QtLauncher.pro: Renamed from WebKitQt/QtLauncher/QtLauncher.pro.
+        * QtLauncher/main.cpp: Renamed from WebKitQt/QtLauncher/main.cpp.
+        (HoverLabel::HoverLabel):
+        (HoverLabel::setHoverLink):
+        (HoverLabel::sizeForFont):
+        (HoverLabel::sizeHint):
+        (HoverLabel::updateSize):
+        (HoverLabel::resetAnimation):
+        (HoverLabel::paintEvent):
+        (HoverLabel::interpolate):
+        (ClearButton::ClearButton):
+        (ClearButton::paintEvent):
+        (SearchEdit::SearchEdit):
+        (SearchEdit::~SearchEdit):
+        (SearchEdit::paintEvent):
+        (SearchEdit::resizeEvent):
+        (SearchEdit::moveEvent):
+        (MainWindow::MainWindow):
+        (MainWindow::changeLocation):
+        (MainWindow::loadFinished):
+        (MainWindow::showLinkHover):
+        (MainWindow::resizeEvent):
+        (main):
+        * WebCoreSupport/ChromeClientQt.cpp: Renamed from WebKitQt/WebCoreSupport/ChromeClientQt.cpp.
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        (WebCore::ChromeClientQt::setWindowRect):
+        (WebCore::ChromeClientQt::windowRect):
+        (WebCore::ChromeClientQt::pageRect):
+        (WebCore::ChromeClientQt::scaleFactor):
+        (WebCore::ChromeClientQt::focus):
+        (WebCore::ChromeClientQt::unfocus):
+        (WebCore::ChromeClientQt::canTakeFocus):
+        (WebCore::ChromeClientQt::takeFocus):
+        (WebCore::ChromeClientQt::createWindow):
+        (WebCore::ChromeClientQt::createModalDialog):
+        (WebCore::ChromeClientQt::show):
+        (WebCore::ChromeClientQt::canRunModal):
+        (WebCore::ChromeClientQt::runModal):
+        (WebCore::ChromeClientQt::setToolbarsVisible):
+        (WebCore::ChromeClientQt::toolbarsVisible):
+        (WebCore::ChromeClientQt::setStatusbarVisible):
+        (WebCore::ChromeClientQt::statusbarVisible):
+        (WebCore::ChromeClientQt::setScrollbarsVisible):
+        (WebCore::ChromeClientQt::scrollbarsVisible):
+        (WebCore::ChromeClientQt::setMenubarVisible):
+        (WebCore::ChromeClientQt::menubarVisible):
+        (WebCore::ChromeClientQt::setResizable):
+        (WebCore::ChromeClientQt::addMessageToConsole):
+        (WebCore::ChromeClientQt::chromeDestroyed):
+        (WebCore::ChromeClientQt::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::closeWindowSoon):
+        (WebCore::ChromeClientQt::runJavaScriptAlert):
+        (WebCore::ChromeClientQt::runJavaScriptConfirm):
+        (WebCore::ChromeClientQt::runJavaScriptPrompt):
+        (WebCore::ChromeClientQt::setStatusbarText):
+        (WebCore::ChromeClientQt::shouldInterruptJavaScript):
+        (WebCore::ChromeClientQt::tabsToLinks):
+        (WebCore::ChromeClientQt::windowResizerRect):
+        (WebCore::ChromeClientQt::addToDirtyRegion):
+        (WebCore::ChromeClientQt::scrollBackingStore):
+        (WebCore::ChromeClientQt::updateBackingStore):
+        (WebCore::ChromeClientQt::mouseDidMoveOverElement):
+        (WebCore::ChromeClientQt::setToolTip):
+        (WebCore::ChromeClientQt::print):
+        * WebCoreSupport/ChromeClientQt.h: Renamed from WebKitQt/WebCoreSupport/ChromeClientQt.h.
+        * WebCoreSupport/ContextMenuClientQt.cpp: Renamed from WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp.
+        (WebCore::ContextMenuClientQt::contextMenuDestroyed):
+        (WebCore::ContextMenuClientQt::getCustomMenuFromDefaultItems):
+        (WebCore::ContextMenuClientQt::contextMenuItemSelected):
+        (WebCore::ContextMenuClientQt::downloadURL):
+        (WebCore::ContextMenuClientQt::lookUpInDictionary):
+        (WebCore::ContextMenuClientQt::speak):
+        (WebCore::ContextMenuClientQt::stopSpeaking):
+        (WebCore::ContextMenuClientQt::searchWithGoogle):
+        * WebCoreSupport/ContextMenuClientQt.h: Renamed from WebKitQt/WebCoreSupport/ContextMenuClientQt.h.
+        * WebCoreSupport/DragClientQt.cpp: Renamed from WebKitQt/WebCoreSupport/DragClientQt.cpp.
+        (WebCore::DragClientQt::actionMaskForDrag):
+        (WebCore::DragClientQt::willPerformDragDestinationAction):
+        (WebCore::DragClientQt::dragControllerDestroyed):
+        (WebCore::DragClientQt::dragSourceActionMaskForPoint):
+        (WebCore::DragClientQt::willPerformDragSourceAction):
+        (WebCore::DragClientQt::startDrag):
+        * WebCoreSupport/DragClientQt.h: Renamed from WebKitQt/WebCoreSupport/DragClientQt.h.
+        (WebCore::DragClientQt::DragClientQt):
+        * WebCoreSupport/EditCommandQt.cpp: Renamed from WebKitQt/WebCoreSupport/EditCommandQt.cpp.
+        (EditCommandQt::EditCommandQt):
+        (EditCommandQt::~EditCommandQt):
+        (EditCommandQt::redo):
+        (EditCommandQt::undo):
+        * WebCoreSupport/EditCommandQt.h: Renamed from WebKitQt/WebCoreSupport/EditCommandQt.h.
+        * WebCoreSupport/EditorClientQt.cpp: Renamed from WebKitQt/WebCoreSupport/EditorClientQt.cpp.
+        (WebCore::EditorClientQt::shouldDeleteRange):
+        (WebCore::EditorClientQt::shouldShowDeleteInterface):
+        (WebCore::EditorClientQt::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientQt::isGrammarCheckingEnabled):
+        (WebCore::EditorClientQt::spellCheckerDocumentTag):
+        (WebCore::EditorClientQt::shouldBeginEditing):
+        (WebCore::EditorClientQt::shouldEndEditing):
+        (WebCore::EditorClientQt::shouldInsertText):
+        (WebCore::EditorClientQt::shouldChangeSelectedRange):
+        (WebCore::EditorClientQt::shouldApplyStyle):
+        (WebCore::EditorClientQt::shouldMoveRangeAfterDelete):
+        (WebCore::EditorClientQt::didBeginEditing):
+        (WebCore::EditorClientQt::respondToChangedContents):
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        (WebCore::EditorClientQt::didEndEditing):
+        (WebCore::EditorClientQt::didWriteSelectionToPasteboard):
+        (WebCore::EditorClientQt::didSetSelectionTypesForPasteboard):
+        (WebCore::EditorClientQt::selectWordBeforeMenuEvent):
+        (WebCore::EditorClientQt::isEditable):
+        (WebCore::EditorClientQt::registerCommandForUndo):
+        (WebCore::EditorClientQt::registerCommandForRedo):
+        (WebCore::EditorClientQt::clearUndoRedoOperations):
+        (WebCore::EditorClientQt::canUndo):
+        (WebCore::EditorClientQt::canRedo):
+        (WebCore::EditorClientQt::undo):
+        (WebCore::EditorClientQt::redo):
+        (WebCore::EditorClientQt::shouldInsertNode):
+        (WebCore::EditorClientQt::pageDestroyed):
+        (WebCore::EditorClientQt::smartInsertDeleteEnabled):
+        (WebCore::EditorClientQt::toggleContinuousSpellChecking):
+        (WebCore::EditorClientQt::toggleGrammarChecking):
+        (WebCore::EditorClientQt::handleKeypress):
+        (WebCore::EditorClientQt::handleInputMethodKeypress):
+        (WebCore::EditorClientQt::EditorClientQt):
+        (WebCore::EditorClientQt::textFieldDidBeginEditing):
+        (WebCore::EditorClientQt::textFieldDidEndEditing):
+        (WebCore::EditorClientQt::textDidChangeInTextField):
+        (WebCore::EditorClientQt::doTextFieldCommandFromEvent):
+        (WebCore::EditorClientQt::textWillBeDeletedInTextField):
+        (WebCore::EditorClientQt::textDidChangeInTextArea):
+        (WebCore::EditorClientQt::ignoreWordInSpellDocument):
+        (WebCore::EditorClientQt::learnWord):
+        (WebCore::EditorClientQt::checkSpellingOfString):
+        (WebCore::EditorClientQt::checkGrammarOfString):
+        (WebCore::EditorClientQt::updateSpellingUIWithGrammarString):
+        (WebCore::EditorClientQt::updateSpellingUIWithMisspelledWord):
+        (WebCore::EditorClientQt::showSpellingUI):
+        (WebCore::EditorClientQt::spellingUIIsShowing):
+        (WebCore::EditorClientQt::getGuessesForWord):
+        (WebCore::EditorClientQt::isEditing):
+        (WebCore::EditorClientQt::setInputMethodState):
+        * WebCoreSupport/EditorClientQt.h: Renamed from WebKitQt/WebCoreSupport/EditorClientQt.h.
+        * WebCoreSupport/FrameLoaderClientQt.cpp: Renamed from WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp.
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::~FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::webFrame):
+        (WebCore::FrameLoaderClientQt::callPolicyFunction):
+        (WebCore::FrameLoaderClientQt::slotCallPolicyFunction):
+        (WebCore::FrameLoaderClientQt::hasWebView):
+        (WebCore::FrameLoaderClientQt::hasFrameView):
+        (WebCore::FrameLoaderClientQt::hasBackForwardList):
+        (WebCore::FrameLoaderClientQt::resetBackForwardList):
+        (WebCore::FrameLoaderClientQt::provisionalItemIsTarget):
+        (WebCore::FrameLoaderClientQt::loadProvisionalItemFromPageCache):
+        (WebCore::FrameLoaderClientQt::invalidateCurrentItemPageCache):
+        (WebCore::FrameLoaderClientQt::privateBrowsingEnabled):
+        (WebCore::FrameLoaderClientQt::makeDocumentView):
+        (WebCore::FrameLoaderClientQt::makeRepresentation):
+        (WebCore::FrameLoaderClientQt::forceLayout):
+        (WebCore::FrameLoaderClientQt::forceLayoutForNonHTML):
+        (WebCore::FrameLoaderClientQt::setCopiesOnScroll):
+        (WebCore::FrameLoaderClientQt::tokenForLoadErrorReset):
+        (WebCore::FrameLoaderClientQt::resetAfterLoadError):
+        (WebCore::FrameLoaderClientQt::doNotResetAfterLoadError):
+        (WebCore::FrameLoaderClientQt::willCloseDocument):
+        (WebCore::FrameLoaderClientQt::detachedFromParent2):
+        (WebCore::FrameLoaderClientQt::detachedFromParent3):
+        (WebCore::FrameLoaderClientQt::detachedFromParent4):
+        (WebCore::FrameLoaderClientQt::loadedFromCachedPage):
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidCancelClientRedirect):
+        (WebCore::FrameLoaderClientQt::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientQt::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientQt::dispatchWillClose):
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientQt::dispatchShow):
+        (WebCore::FrameLoaderClientQt::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientQt::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientQt::dispatchDidLoadMainResource):
+        (WebCore::FrameLoaderClientQt::clearLoadingFromPageCache):
+        (WebCore::FrameLoaderClientQt::isLoadingFromPageCache):
+        (WebCore::FrameLoaderClientQt::revertToProvisionalState):
+        (WebCore::FrameLoaderClientQt::clearUnarchivingState):
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressEstimateChangedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientQt::setMainFrameDocumentReady):
+        (WebCore::FrameLoaderClientQt::willChangeTitle):
+        (WebCore::FrameLoaderClientQt::didChangeTitle):
+        (WebCore::FrameLoaderClientQt::finishedLoading):
+        (WebCore::FrameLoaderClientQt::finalSetupForReplace):
+        (WebCore::FrameLoaderClientQt::setDefersLoading):
+        (WebCore::FrameLoaderClientQt::isArchiveLoadPending):
+        (WebCore::FrameLoaderClientQt::cancelPendingArchiveLoad):
+        (WebCore::FrameLoaderClientQt::clearArchivedResources):
+        (WebCore::FrameLoaderClientQt::canShowMIMEType):
+        (WebCore::FrameLoaderClientQt::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientQt::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientQt::frameLoadCompleted):
+        (WebCore::FrameLoaderClientQt::restoreViewState):
+        (WebCore::FrameLoaderClientQt::provisionalLoadStarted):
+        (WebCore::FrameLoaderClientQt::shouldTreatURLAsSameAsCurrent):
+        (WebCore::FrameLoaderClientQt::addHistoryItemForFragmentScroll):
+        (WebCore::FrameLoaderClientQt::didFinishLoad):
+        (WebCore::FrameLoaderClientQt::prepareForDataSourceReplacement):
+        (WebCore::FrameLoaderClientQt::setTitle):
+        (WebCore::FrameLoaderClientQt::userAgent):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientQt::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientQt::canHandleRequest):
+        (WebCore::FrameLoaderClientQt::windowObjectCleared):
+        (WebCore::FrameLoaderClientQt::didPerformFirstNavigation):
+        (WebCore::FrameLoaderClientQt::registerForIconNotification):
+        (WebCore::FrameLoaderClientQt::setDocumentViewFromCachedPage):
+        (WebCore::FrameLoaderClientQt::updateGlobalHistoryForStandardLoad):
+        (WebCore::FrameLoaderClientQt::updateGlobalHistoryForReload):
+        (WebCore::FrameLoaderClientQt::shouldGoToHistoryItem):
+        (WebCore::FrameLoaderClientQt::saveViewStateToItem):
+        (WebCore::FrameLoaderClientQt::saveDocumentViewToCachedPage):
+        (WebCore::FrameLoaderClientQt::canCachePage):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::committedLoad):
+        (WebCore::FrameLoaderClientQt::cancelledError):
+        (WebCore::FrameLoaderClientQt::blockedError):
+        (WebCore::FrameLoaderClientQt::cannotShowURLError):
+        (WebCore::FrameLoaderClientQt::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientQt::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientQt::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientQt::shouldFallBack):
+        (WebCore::FrameLoaderClientQt::createDocumentLoader):
+        (WebCore::FrameLoaderClientQt::download):
+        (WebCore::FrameLoaderClientQt::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::FrameLoaderClientQt::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoad):
+        (WebCore::FrameLoaderClientQt::dispatchCreatePage):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::dispatchUnableToImplementPolicy):
+        (WebCore::FrameLoaderClientQt::startDownload):
+        (WebCore::FrameLoaderClientQt::willUseArchive):
+        (WebCore::FrameLoaderClientQt::createFrame):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        (WebCore::FrameLoaderClientQt::redirectDataToPlugin):
+        (WebCore::FrameLoaderClientQt::createJavaAppletWidget):
+        (WebCore::FrameLoaderClientQt::overrideMediaType):
+        * WebCoreSupport/FrameLoaderClientQt.h: Renamed from WebKitQt/WebCoreSupport/FrameLoaderClientQt.h.
+        * WebCoreSupport/InspectorClientQt.cpp: Renamed from WebKitQt/WebCoreSupport/InspectorClientQt.cpp.
+        (WebCore::InspectorClientQt::inspectorDestroyed):
+        (WebCore::InspectorClientQt::createPage):
+        (WebCore::InspectorClientQt::showWindow):
+        (WebCore::InspectorClientQt::closeWindow):
+        (WebCore::InspectorClientQt::attachWindow):
+        (WebCore::InspectorClientQt::detachWindow):
+        (WebCore::InspectorClientQt::highlight):
+        (WebCore::InspectorClientQt::hideHighlight):
+        * WebCoreSupport/InspectorClientQt.h: Renamed from WebKitQt/WebCoreSupport/InspectorClientQt.h.
+        * WebKitPart/WebKitFactory.cpp: Renamed from WebKitQt/WebKitPart/WebKitFactory.cpp.
+        (WebKitFactory::WebKitFactory):
+        (WebKitFactory::~WebKitFactory):
+        (WebKitFactory::createPartObject):
+        (WebKitFactory::instance):
+        (WebKitFactory::ref):
+        (WebKitFactory::deref):
+        * WebKitPart/WebKitFactory.h: Renamed from WebKitQt/WebKitPart/WebKitFactory.h.
+        * WebKitPart/WebKitPart.cpp: Renamed from WebKitQt/WebKitPart/WebKitPart.cpp.
+        (WebKitPart::WebKitPart):
+        (WebKitPart::~WebKitPart):
+        (WebKitPart::openFile):
+        (WebKitPart::openUrl):
+        (WebKitPart::closeUrl):
+        (WebKitPart::parentPart):
+        (WebKitPart::frame):
+        (WebKitPart::initView):
+        * WebKitPart/WebKitPart.desktop: Renamed from WebKitQt/WebKitPart/WebKitPart.desktop.
+        * WebKitPart/WebKitPart.h: Renamed from WebKitQt/WebKitPart/WebKitPart.h.
+        (WebKitPart::):
+        * WebKitPart/WebKitPart.rc: Renamed from WebKitQt/WebKitPart/WebKitPart.rc.
+        * WebKitPart/WebKitPartBrowser.rc: Renamed from WebKitQt/WebKitPart/WebKitPartBrowser.rc.
+        * WebKitPart/WebKitPartBrowserExtension.cpp: Renamed from WebKitQt/WebKitPart/WebKitPartBrowserExtension.cpp.
+        (WebKitPartBrowserExtension::WebKitPartBrowserExtension):
+        * WebKitPart/WebKitPartBrowserExtension.h: Renamed from WebKitQt/WebKitPart/WebKitPartBrowserExtension.h.
+        * WebKitPart/WebKitPartClient.cpp: Renamed from WebKitQt/WebKitPart/WebKitPartClient.cpp.
+        (WebKitPartClient::WebKitPartClient):
+        (WebKitPartClient::~WebKitPartClient):
+        * WebKitPart/WebKitPartClient.h: Renamed from WebKitQt/WebKitPart/WebKitPartClient.h.
+        * WebKitPart/WebKitPartInterface.cpp: Renamed from WebKitQt/WebKitPart/WebKitPartInterface.cpp.
+        (WebKitPartInterface::WebKitPartInterface):
+        (WebKitPartInterface::~WebKitPartInterface):
+        (WebKitPartInterface::url):
+        * WebKitPart/WebKitPartInterface.h: Renamed from WebKitQt/WebKitPart/WebKitPartInterface.h.
+        * WebKitPart/org.kde.WebKitPart.xml: Renamed from WebKitQt/WebKitPart/org.kde.WebKitPart.xml.
+
 2007-10-02  Adam Treat  <treat@kde.org>
 
         Reviewed by Eric Seidel.
