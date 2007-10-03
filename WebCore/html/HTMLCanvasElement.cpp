@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +44,8 @@
 #if PLATFORM(QT)
 #include <QPainter>
 #include <QPixmap>
+#elif PLATFORM(CAIRO)
+#include <cairo.h>
 #endif
 
 namespace WebCore {
@@ -79,6 +82,9 @@ HTMLCanvasElement::~HTMLCanvasElement()
 #elif PLATFORM(QT)
     delete m_painter;
     delete m_data;
+#elif PLATFORM(CAIRO)
+    cairo_surface_destroy(m_surface);
+    fastFree(m_data);
 #endif
     delete m_drawingContext;
 }
@@ -172,6 +178,8 @@ void HTMLCanvasElement::reset()
     delete m_painter;
     m_painter = 0;
     delete m_data;
+#elif PLATFORM(CAIRO)
+    fastFree(m_data);
 #endif
     m_data = 0;
     delete m_drawingContext;
@@ -211,6 +219,16 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
         m_painter->setBrush(currentBrush);
         m_painter->setOpacity(currentOpacity);
         m_painter->setBackground(currentBackground);
+    }
+#elif PLATFORM(CAIRO)
+    if (m_data) {
+        cairo_t* cr = p->platformContext();
+        cairo_save(cr);
+        cairo_translate(cr, r.x(), r.y());
+        cairo_set_source_surface(cr, m_surface, 0, 0);
+        cairo_rectangle(cr, 0, 0, r.width(), r.height());
+        cairo_fill(cr);
+        cairo_restore(cr);
     }
 #endif
 }
@@ -255,6 +273,20 @@ void HTMLCanvasElement::createDrawingContext() const
     m_painter->setBackground(QBrush(Qt::transparent));
     m_painter->fillRect(0, 0, w, h, QColor(Qt::transparent));
     m_drawingContext = new GraphicsContext(m_painter);
+#elif PLATFORM(CAIRO)
+    // FIXME: this bit is not complete
+    size_t bytesPerRow = w * 4;
+    if (bytesPerRow / 4 != w) // check for overflow
+        return;
+    m_data = fastCalloc(h, bytesPerRow);
+    if (!m_data)
+        return;
+
+    m_surface = cairo_image_surface_create_for_data((unsigned char*)m_data, CAIRO_FORMAT_ARGB32, w, h, bytesPerRow);
+    cairo_t* cr = cairo_create(m_surface);
+    cairo_scale(cr, w / unscaledWidth, h / unscaledHeight);
+    m_drawingContext = new GraphicsContext(cr);
+    cairo_destroy(cr);
 #endif
 }
 
@@ -289,6 +321,13 @@ QImage HTMLCanvasElement::createPlatformImage() const
     if (m_data)
         return *m_data;
     return QImage();
+}
+
+#elif PLATFORM(CAIRO)
+cairo_surface_t* HTMLCanvasElement::createPlatformImage() const
+{
+    // FIXME: we should ensure that the surface has been created
+    return m_surface;
 }
 
 #endif

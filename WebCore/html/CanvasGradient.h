@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +35,8 @@
 typedef struct CGShading* CGShadingRef;
 #elif PLATFORM(QT)
 class QGradient;
+#elif PLATFORM(CAIRO)
+typedef struct _cairo_pattern cairo_pattern_t;
 #endif
 
 namespace WebCore {
@@ -54,6 +57,8 @@ namespace WebCore {
         CGShadingRef platformShading();
 #elif PLATFORM(QT)
         QGradient *platformShading();
+#elif PLATFORM(CAIRO)
+        cairo_pattern_t* platformShading();
 #endif
 
         struct ColorStop {
@@ -81,6 +86,8 @@ namespace WebCore {
         CGShadingRef m_shading;
 #elif PLATFORM(QT)
         QGradient *m_shading;
+#elif PLATFORM(CAIRO)
+        cairo_pattern_t* m_shading;
 #endif
     };
 

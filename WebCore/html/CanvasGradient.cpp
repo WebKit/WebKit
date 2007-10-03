@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,8 @@
 #include <ApplicationServices/ApplicationServices.h>
 #elif PLATFORM(QT)
 #include <QGradient>
+#elif PLATFORM(CAIRO)
+#include <cairo.h>
 #endif
 
 namespace WebCore {
@@ -41,6 +44,8 @@ CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1)
 #if PLATFORM(CG)
     , m_shading(0)
 #elif PLATFORM(QT)
+    , m_shading(0)
+#elif PLATFORM(CAIRO)
     , m_shading(0)
 #endif
 {
@@ -52,6 +57,8 @@ CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint&
     , m_shading(0)
 #elif PLATFORM(QT)
     , m_shading(0)
+#elif PLATFORM(CAIRO)
+    , m_shading(0)
 #endif
 {
 }
@@ -62,6 +69,8 @@ CanvasGradient::~CanvasGradient()
     CGShadingRelease(m_shading);
 #elif PLATFORM(QT)
     delete m_shading;
+#elif PLATFORM(CAIRO)
+    cairo_pattern_destroy(m_shading);
 #endif
 }
 
@@ -81,6 +90,9 @@ void CanvasGradient::addColorStop(float value, const String& color)
     m_shading = 0;
 #elif PLATFORM(QT)
     delete m_shading;
+    m_shading = 0;
+#elif PLATFORM(CAIRO)
+    cairo_pattern_destroy(m_shading);
     m_shading = 0;
 #endif
 }
@@ -136,6 +148,27 @@ QGradient* CanvasGradient::platformShading()
     while (stopIterator != m_stops.end()) {
         stopColor.setRgbF(stopIterator->red, stopIterator->green, stopIterator->blue, stopIterator->alpha);
         m_shading->setColorAt(stopIterator->stop, stopColor);
+        ++stopIterator;
+    }
+
+    return m_shading;
+}
+
+#elif PLATFORM(CAIRO)
+
+cairo_pattern_t* CanvasGradient::platformShading()
+{
+    if (m_shading)
+        return m_shading;
+
+    if (m_radial)
+        m_shading = cairo_pattern_create_radial(m_p0.x(), m_p0.y(), m_r0, m_p1.x(), m_p1.y(), m_r1);
+    else
+        m_shading = cairo_pattern_create_linear(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y());
+
+    Vector<ColorStop>::iterator stopIterator = m_stops.begin();
+    while (stopIterator != m_stops.end()) {
+        cairo_pattern_add_color_stop_rgba(m_shading, stopIterator->stop, stopIterator->red, stopIterator->green, stopIterator->blue, stopIterator->alpha);
         ++stopIterator;
     }
 
