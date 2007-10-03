@@ -1,3 +1,16 @@
+2007-10-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver and Adam.
+
+        Patch for <rdar://problem/5506968> Fail to DnD local file with non-ascii character in path from desktop to Safari (can open it with file menu)
+
+        Use CoreFoundation to do the conversion from path to URL, as the Windows API was not
+        correctly converting to UTF-8 and we know CFURL will.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::urlFromPath):
+        (WebCore::getURL):
+
 2007-10-02  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Darin Adler.

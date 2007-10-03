@@ -32,6 +32,8 @@
 #include "markup.h"
 #include "PlatformString.h"
 #include "TextEncoding.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
 #include <shlwapi.h>
 #include <wininet.h>    // for INTERNET_MAX_URL_LENGTH
 
@@ -263,6 +265,19 @@ FORMATETC* htmlFormat()
     return &htmlFormat;
 }
 
+static bool urlFromPath(CFStringRef path, String& url)
+{
+    if (!path)
+        return false;
+
+    RetainPtr<CFURLRef> cfURL(AdoptCF, CFURLCreateWithFileSystemPath(0, path, kCFURLWindowsPathStyle, false));
+    if (!cfURL)
+        return false;
+
+    url = String(CFURLGetString(cfURL.get()));
+    return true;
+}
+
 String getURL(IDataObject* dataObject, bool& success, String* title)
 {
     STGMEDIUM store;
@@ -287,34 +302,30 @@ String getURL(IDataObject* dataObject, bool& success, String* title)
         success = true;
     } else if (SUCCEEDED(dataObject->GetData(filenameWFormat(), &store))) {
         //file using unicode
-        wchar_t* data = (wchar_t*)GlobalLock(store.hGlobal);        
+        wchar_t* data = (wchar_t*)GlobalLock(store.hGlobal);
         if (data && data[0] && (PathFileExists(data) || PathIsUNC(data))) {
-            wchar_t fileURL[INTERNET_MAX_URL_LENGTH];
-            DWORD fileURLLength = sizeof(fileURL) / sizeof(fileURL[0]);
-            if (SUCCEEDED(::UrlCreateFromPathW(data, fileURL, &fileURLLength, 0))) {
-                url = String((UChar*)fileURL);
+            RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar*)data, wcslen(data)));
+            if (urlFromPath(pathAsCFString.get(), url)) {
                 if (title)
                     *title = url;
+                success = true;
             }
         }
         GlobalUnlock(store.hGlobal);      
         ReleaseStgMedium(&store);
-        success = true;
     } else if (SUCCEEDED(dataObject->GetData(filenameFormat(), &store))) {
         //filename using ascii
         char* data = (char*)GlobalLock(store.hGlobal);       
         if (data && data[0] && (PathFileExistsA(data) || PathIsUNCA(data))) {
-            char fileURL[INTERNET_MAX_URL_LENGTH];
-            DWORD fileURLLength = sizeof(fileURL) / sizeof(fileURL[0]);
-            if (SUCCEEDED(::UrlCreateFromPathA(data, fileURL, &fileURLLength, 0))) {
-                url = fileURL;
+            RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, data, kCFStringEncodingASCII));
+            if (urlFromPath(pathAsCFString.get(), url)) {
                 if (title)
                     *title = url;
+                success = true;
             }
         }
         GlobalUnlock(store.hGlobal);      
         ReleaseStgMedium(&store);
-        success = true;
     }
     return url;
 }
