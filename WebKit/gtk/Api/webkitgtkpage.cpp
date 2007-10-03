@@ -533,4 +533,13 @@ WebKitGtkFrame* webkit_gtk_page_get_main_frame(WebKitGtkPage* page)
     WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
     return pageData->mainFrame;
 }
+
+void webkit_gtk_page_execute_script(WebKitGtkPage* page, const gchar* script)
+{
+    WebKitGtkPagePrivate* pageData = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
+    WebKitGtkFramePrivate* frameData = WEBKIT_GTK_FRAME_GET_PRIVATE(pageData->mainFrame);
+
+    if (FrameLoader* loader = frameData->frame->loader())
+        loader->executeScript(String::fromUTF8(script), true);
+}
 }

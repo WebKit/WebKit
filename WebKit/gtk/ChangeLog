@@ -1,3 +1,13 @@
+2007-09-21  Sean Egan  <seanegan@gmail.com>
+
+        Reviewed by Alp.
+
+        Add an "execute_script" method to programmatically call Javascript
+        http://bugs.webkit.org/show_bug.cgi?id=15255
+
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+
 2007-09-29  Lars Lindner  <lars.lindner@gmail.com>
 
         Reviewed by Adam.
