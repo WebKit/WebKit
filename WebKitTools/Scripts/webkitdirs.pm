@@ -402,6 +402,13 @@ sub determineIsQt()
             return;
         }
     }
+
+    # The presence of QTDIR only means Qt if --gtk is not on the command-line
+    if (isGtk()) {
+        $isQt = 0;
+        return;
+    }
+    
     $isQt = defined($ENV{'QTDIR'});
 }
 

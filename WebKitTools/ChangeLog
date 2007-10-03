@@ -1,3 +1,12 @@
+2007-10-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Fix build-webkit when both QTDIR and --gtk are set.  The presence of --gtk
+        should take precedence over QTDIR when determining which port we are working with.
+
+        * Scripts/webkitdirs.pm: 
+
 2007-10-02  Adam Roben  <aroben@apple.com>
 
         Add keychain to the list of default packages to install
