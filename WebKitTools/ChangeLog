@@ -1,5 +1,14 @@
 2007-10-03  Lars Knoll  <lars@trolltech.com>
 
+        Reviewed by Rob.
+
+        This fixes --strict mode in run-webkit-tests again after
+        the platform dependent test results have been moved.
+
+        * Scripts/run-webkit-tests:
+
+2007-10-03  Lars Knoll  <lars@trolltech.com>
+
         Reviewed by bdash.
 
         remove the hack in run-webkit-tests that forced text only test

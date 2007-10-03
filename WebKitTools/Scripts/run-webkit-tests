@@ -542,7 +542,7 @@ for my $test (@tests) {
     }
     my $expectedMac;
     if (!isOSX() && $strictTesting && !$isText) {
-      if (!$resetResults && open EXPECTED, "<", "$expectedDirectory/$base-$expectedTag.txt") {
+      if (!$resetResults && open EXPECTED, "<", "$testDirectory/platform/mac/$base-$expectedTag.txt") {
         $expectedMac = "";
         while (<EXPECTED>) {
           $expectedMac .= $_;
