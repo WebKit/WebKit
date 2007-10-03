@@ -1,5 +1,11 @@
 2007-10-03  Adam Roben  <aroben@apple.com>
 
+        Move pixel test results that were mistakenly left in place after r25970
+
+        Rubberstamped by Sam.
+
+2007-10-03  Adam Roben  <aroben@apple.com>
+
         Add some sometimes-timing-out tests to the Skipped file
 
         Rubberstamped by Sam.
