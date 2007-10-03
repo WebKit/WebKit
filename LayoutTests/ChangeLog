@@ -1,3 +1,11 @@
+2007-10-03  Adam Roben  <aroben@apple.com>
+
+        Add some sometimes-timing-out tests to the Skipped file
+
+        Rubberstamped by Sam.
+
+        * platform/win/Skipped:
+
 2007-10-03  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by bdash.

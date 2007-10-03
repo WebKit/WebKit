@@ -464,6 +464,14 @@ plugins/embed-attributes-setting.html
 # <rdar://5507360> Crash
 plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html 
 
+# <rdar://5508270> Intermittently time out
+editing/selection/5057506-2.html
+editing/selection/5057506.html
+editing/selection/drag-select-1.html
+fast/dom/Window/window-early-properties.html
+fast/frames/frame-js-url-clientWidth.html
+fast/loader/local-svg-parsed-as-svg.svg
+
 # We can't make platform specifc results so keep this here for now
 # This test is dependant on DRT being able to open windows.
 fast/dom/Window/new-window-opener.html
