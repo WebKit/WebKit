@@ -1,5 +1,23 @@
 2007-10-03  Lars Knoll  <lars@trolltech.com>
 
+        Reviewed by bdash.
+
+        remove the hack in run-webkit-tests that forced text only test
+        to be taken from the platform independent dir. It was only left
+        there from early days.
+        
+        Remove platform dependent results for tests that are text only nowadays,
+        and add one platform dependent result for a text only test that requires it.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/css/computed-style-without-renderer-expected.txt: Copied from LayoutTests/fast/css/computed-style-without-renderer-expected.txt.
+        * platform/qt/fast/encoding/mispositioned-meta-expected.txt: Removed.
+        * platform/qt/fast/encoding/tag-in-title-expected.txt: Removed.
+        * platform/qt/fast/frames/frame-set-same-location-expected.txt: Removed.
+        * platform/qt/fast/frames/frame-set-same-src-expected.txt: Removed.
+
+2007-10-03  Lars Knoll  <lars@trolltech.com>
+
         Move all test results that are platform dependent but
         stored in the platform independent part to their
         correct locations (inside platform/mac).

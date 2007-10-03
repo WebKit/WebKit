@@ -531,9 +531,6 @@ for my $test (@tests) {
 
     my $expected;
     my $expectedDir = expectedDirectoryForTest($base, $isText);
-    if (isQt() && $isText) {
-        $expectedDir = $testDirectory;
-    }
 
     if (!$resetResults && open EXPECTED, "<", "$expectedDir/$base-$expectedTag.txt") {
         $expected = "";

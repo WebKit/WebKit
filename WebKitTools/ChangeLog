@@ -1,5 +1,18 @@
 2007-10-03  Lars Knoll  <lars@trolltech.com>
 
+        Reviewed by bdash.
+
+        remove the hack in run-webkit-tests that forced text only test
+        to be taken from the platform independent dir. It was only left
+        there from early days.
+        
+        Remove platform dependent results for tests that are text only nowadays,
+        and add one platform dependent result for a text only test that requires it.
+
+        * Scripts/run-webkit-tests:
+
+2007-10-03  Lars Knoll  <lars@trolltech.com>
+
         Reviewed by olliej.
 
         Move the Qt version of DRT into the correct place and put the binary into BUILDDIR/bin.

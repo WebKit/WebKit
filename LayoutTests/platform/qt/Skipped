@@ -11,10 +11,6 @@ fast/xpath/string-value.html
 # ------- infinite hangs
 editing/selection/extend-by-word-002.html
 
-# ------- platform dependent stuff in text only tests
-fast/css/computed-style-without-renderer.html
-
-
 # ------- failures for tests with results
 fast/dom/open-and-close-by-DOM.html
 fast/dom/xmlhttprequest-html-response-encoding.html
