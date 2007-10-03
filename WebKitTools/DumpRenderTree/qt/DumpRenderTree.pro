@@ -3,6 +3,7 @@ TARGET = DumpRenderTree
 include(../../../WebKit.pri)
 INCLUDEPATH += /usr/include/freetype2
 INCLUDEPATH += ../../../JavaScriptCore/kjs
+DESTDIR = ../../../bin
 
 
 QT = core gui

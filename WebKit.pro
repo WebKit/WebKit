@@ -10,7 +10,7 @@ SUBDIRS += \
 qt-port {
     SUBDIRS += WebKitQt/QtLauncher
 
-    !win32-*: SUBDIRS += WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro
+    !win32-*: SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
 }
 
 gtk-port:SUBDIRS += \

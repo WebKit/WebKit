@@ -1,3 +1,65 @@
+2007-10-03  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by olliej.
+
+        Move the Qt version of DRT into the correct place and put the binary into BUILDDIR/bin.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp: Renamed from WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp.
+        (WebCore::WebFrame::WebFrame):
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::createFrame):
+        (WebCore::WebPage::javaScriptAlert):
+        (WebCore::WebPage::javaScriptConsoleMessage):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::~DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::readStdin):
+        (WebCore::DumpRenderTree::resetJSObjects):
+        (WebCore::DumpRenderTree::initJSObjects):
+        (WebCore::DumpRenderTree::dumpFramesAsText):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/qt/DumpRenderTree.h: Renamed from WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h.
+        (WebCore::DumpRenderTree::layoutTestController):
+        (WebCore::DumpRenderTree::eventSender):
+        * DumpRenderTree/qt/DumpRenderTree.pro: Renamed from WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro.
+        * DumpRenderTree/qt/fonts.conf: Renamed from WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/fonts.conf.
+        * DumpRenderTree/qt/fonts/AHEM____.TTF: Renamed from WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/fonts/AHEM____.TTF.
+        * DumpRenderTree/qt/jsobjects.cpp: Renamed from WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp.
+        (HackWebFrame::mousePressEvent):
+        (HackWebFrame::mouseReleaseEvent):
+        (HackWebFrame::mouseMoveEvent):
+        (HackWebFrame::HackWebFrame):
+        (HackWebFrame::~HackWebFrame):
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        (LayoutTestController::maybeDump):
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::dumpEditingCallbacks):
+        (LayoutTestController::queueReload):
+        (LayoutTestController::provisionalLoad):
+        (LayoutTestController::timerEvent):
+        (EventSender::EventSender):
+        (EventSender::mouseDown):
+        (EventSender::mouseUp):
+        (EventSender::mouseMoveTo):
+        (EventSender::leapForward):
+        (EventSender::keyDown):
+        (EventSender::frameUnderMouse):
+        * DumpRenderTree/qt/jsobjects.h: Renamed from WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/jsobjects.h.
+        (LayoutTestController::isLoading):
+        (LayoutTestController::setLoading):
+        (LayoutTestController::shouldDumpAsText):
+        (LayoutTestController::shouldDumpChildrenAsText):
+        (LayoutTestController::shouldWaitUntilDone):
+        (LayoutTestController::dumpAsText):
+        (LayoutTestController::dumpChildFramesAsText):
+        * DumpRenderTree/qt/main.cpp: Renamed from WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/main.cpp.
+        (messageHandler):
+        (crashHandler):
+        (main):
+        * Scripts/run-webkit-tests:
+
 2007-10-03  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp Toker.

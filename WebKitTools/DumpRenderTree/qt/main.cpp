@@ -77,8 +77,8 @@ int main(int argc, char* argv[])
     char currentPath[PATH_MAX+1];
     getcwd(currentPath, PATH_MAX);
     QByteArray configFile = currentPath;
-    configFile += "/WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/fonts.conf";
-    if (!FcConfigParseAndLoad (config, (FcChar8*) configFile.data(), true)) 
+    configFile += "/WebKitTools/DumpRenderTree/qt/fonts.conf";
+    if (!FcConfigParseAndLoad (config, (FcChar8*) configFile.data(), true))
         qFatal("Couldn't load font configuration file");
     if (!FcConfigAppFontAddDir (config, (FcChar8*) fontDir.data()))
         qFatal("Couldn't add font dir!");
@@ -107,19 +107,19 @@ int main(int argc, char* argv[])
     signal(SIGPIPE, crashHandler);   /* 13:  write on a pipe with no reader */
     signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
     signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
-    
+
     QStringList args = app.arguments();
     if (args.count() < 2) {
         qDebug() << "Usage: DumpRenderTree [-v] filename";
         exit(0);
     }
-        
+
     // supress debug output from Qt if not started with -v
-    if (!args.contains(QLatin1String("-v"))) 
+    if (!args.contains(QLatin1String("-v")))
         qInstallMsgHandler(messageHandler);
 
     WebCore::DumpRenderTree dumper;
-    
+
     if (args.last() == QLatin1String("-")) {
         dumper.open();
     } else {

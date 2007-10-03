@@ -249,7 +249,7 @@ $testHTTP = 0 if isQt();
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
-$productDir .= "/WebKitTools/DumpRenderTree/DumpRenderTree.qtproj" if (isQt());
+$productDir .= "/bin" if (isQt());
 
 chdirWebKit();
 
