@@ -1,3 +1,15 @@
+2007-10-03  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Rob.
+
+        Fix a stupid bug in Unicode::toUpper/toLower.
+        Fixes all three test failures in the JavaScriptCore test
+        suite.
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+
 2007-10-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

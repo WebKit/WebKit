@@ -174,7 +174,7 @@ namespace WTF {
 
 #if QT_VERSION >= 0x040300
     // FIXME: handle surrogates correctly in all methods
-    
+
     inline UChar32 toLower(UChar32 ch)
     {
       return QChar::toLower(ch);
@@ -186,9 +186,9 @@ namespace WTF {
         const UChar *s = src;
         UChar *r = result;
         UChar *re = result + resultLength;
-        
+
         // this avoids one out of bounds check in the loop
-        if (QChar(*s).isLowSurrogate()) 
+        if (QChar(*s).isLowSurrogate())
             *r++ = *s++;
 
         int needed = 0;
@@ -199,7 +199,7 @@ namespace WTF {
             const QUnicodeTables::Properties *prop = QUnicodeTables::properties(c);
             if (prop->lowerCaseSpecial) {
                 QString qstring;
-                if (c > 0x10000) {
+                if (c < 0x10000) {
                     qstring += QChar(c);
                 } else {
                     qstring += QChar(*(s-1));
@@ -239,9 +239,9 @@ namespace WTF {
         const UChar *s = src;
         UChar *r = result;
         UChar *re = result + resultLength;
-        
+
         // this avoids one out of bounds check in the loop
-        if (QChar(*s).isLowSurrogate()) 
+        if (QChar(*s).isLowSurrogate())
             *r++ = *s++;
 
         int needed = 0;
@@ -252,7 +252,7 @@ namespace WTF {
             const QUnicodeTables::Properties *prop = QUnicodeTables::properties(c);
             if (prop->upperCaseSpecial) {
                 QString qstring;
-                if (c > 0x10000) {
+                if (c < 0x10000) {
                     qstring += QChar(c);
                 } else {
                     qstring += QChar(*(s-1));
@@ -389,7 +389,7 @@ namespace WTF {
     {
       return (CharCategory) U_MASK(QChar::category(c));
     }
-    
+
 #else
 
     inline UChar32 toLower(UChar32 ch)
@@ -538,7 +538,7 @@ namespace WTF {
     }
 
 #endif
-    
+
   }
 }
 
