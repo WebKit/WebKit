@@ -43,6 +43,7 @@ using namespace WebCore;
 namespace WebKit {
 ChromeClient::ChromeClient(WebKitGtkPage* page)
     : m_webPage(page)
+    , m_didSendLinkSignal(false)
 {
 }
 
@@ -273,13 +274,19 @@ void ChromeClient::updateBackingStore()
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
     // check if the element is a link...
-    KURL url = hit.absoluteLinkURL();
-    if(!url.isEmpty()) {
-        CString titleString = hit.title().utf8();
-        DeprecatedCString urlString = url.prettyURL().utf8();
-        g_signal_emit_by_name(m_webPage, "hovering_over_link", titleString.data(), urlString.data());
-    } else
+    bool isLink = hit.isLiveLink();
+    if (isLink && !m_didSendLinkSignal) {
+        KURL url = hit.absoluteLinkURL();
+        if (!url.isEmpty()) {
+            CString titleString = hit.title().utf8();
+            DeprecatedCString urlString = url.prettyURL().utf8();
+            g_signal_emit_by_name(m_webPage, "hovering_over_link", titleString.data(), urlString.data());
+            m_didSendLinkSignal = true;
+        }
+    } else if (!isLink && m_didSendLinkSignal) {
         g_signal_emit_by_name(m_webPage, "hovering_over_link", 0, 0);
+        m_didSendLinkSignal = false;
+    }
 }
 
 void ChromeClient::setToolTip(const String&)

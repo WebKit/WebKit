@@ -1,3 +1,15 @@
+2007-10-02  Cosimo Cecchi  <cosimoc@svn.gnome.org>
+
+        Reviewed by Mark.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15299
+        Fix "hovering_over_link" signal being fired every time mouse moves.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient):
+        (WebKit::ChromeClient::mouseDidMoveOverElement):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2007-09-21  Sean Egan  <seanegan@gmail.com>
 
         Reviewed by Alp.
