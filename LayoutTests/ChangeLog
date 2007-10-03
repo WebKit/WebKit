@@ -1,3 +1,20 @@
+2007-10-03  Lars Knoll <lars@trolltech.com>
+
+        Remove pixel test results for text only tests
+
+        Reviewed by mitz.
+
+        * dom/html/level2/html/HTMLBaseElement02-expected.checksum: Removed.
+        * dom/html/level2/html/HTMLBaseElement02-expected.png: Removed.
+        * dom/html/level2/html/HTMLBaseElement01-expected.checksum: Removed.
+        * dom/html/level2/html/HTMLBaseElement01-expected.png: Removed.
+        * http/tests/incremental/slow-utf8-text-expected.checksum: Removed.
+        * http/tests/incremental/slow-utf8-text-expected.png: Removed.
+        * fast/dom/Window/Plug-ins-expected.png: Removed.
+        * fast/dom/Window/Plug-ins-expected.checksum: Removed.
+        * fast/parser/external-entities-expected.png: Removed.
+        * fast/parser/external-entities-expected.checksum: Removed.
+
 2007-10-02  Justin Garcia  <justin.garcia@apple.com>
 
         Added a mention of a bug that this test demonstrates:
