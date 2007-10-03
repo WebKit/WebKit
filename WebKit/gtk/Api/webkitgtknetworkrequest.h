@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_GTK_NETWORK_REQUEST_H
-#define WEBKIT_GTK_NETWORK_REQUEST_H
+#ifndef WEBKIT_NETWORK_REQUEST_H
+#define WEBKIT_NETWORK_REQUEST_H
 
 #include <glib-object.h>
 
@@ -35,30 +35,30 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_GTK_TYPE_NETWORK_REQUEST            (webkit_gtk_network_request_get_type())
-#define WEBKIT_GTK_NETWORK_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_GTK_TYPE_NETWORK_REQUEST, WebKitGtkNetworkRequest))
-#define WEBKIT_GTK_NETWORK_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_GTK_TYPE_NETWORK_REQUEST, WebKitGtkNetworkRequestClass))
-#define WEBKIT_GTK_IS_NETWORK_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_GTK_TYPE_NETWORK_REQUEST))
-#define WEBKIT_GTK_IS_NETWORK_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_GTK_TYPE_NETWORK_REQUEST))
-#define WEBKIT_GTK_NETWORK_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_GTK_TYPE_NETWORK_REQUEST, WebKitGtkNetworkRequestClass))
+#define WEBKIT_TYPE_NETWORK_REQUEST            (webkit_network_request_get_type())
+#define WEBKIT_NETWORK_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequest))
+#define WEBKIT_NETWORK_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequestClass))
+#define WEBKIT_IS_NETWORK_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_NETWORK_REQUEST))
+#define WEBKIT_IS_NETWORK_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_NETWORK_REQUEST))
+#define WEBKIT_NETWORK_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequestClass))
 
 
-typedef struct _WebKitGtkNetworkRequest WebKitGtkNetworkRequest;
-typedef struct _WebKitGtkNetworkRequestClass WebKitGtkNetworkRequestClass;
+typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
+typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
 
-struct _WebKitGtkNetworkRequest {
+struct _WebKitNetworkRequest {
     GObject parent;
 };
 
-struct _WebKitGtkNetworkRequestClass {
+struct _WebKitNetworkRequestClass {
     GObject parent;
 };
 
-WEBKIT_GTK_API GType
-webkit_gtk_network_request_get_type (void);
+WEBKIT_API GType
+webkit_network_request_get_type (void);
 
-WEBKIT_GTK_API GObject*
-webkit_gtk_network_request_new (void);
+WEBKIT_API GObject*
+webkit_network_request_new (void);
 
 G_END_DECLS
 

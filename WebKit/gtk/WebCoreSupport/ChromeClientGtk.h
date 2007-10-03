@@ -31,14 +31,14 @@
 
 #include "ChromeClient.h"
 
-typedef struct _WebKitGtkPage WebKitGtkPage;
+typedef struct _WebKitPage WebKitPage;
 
 namespace WebKit {
 
     class ChromeClient : public WebCore::ChromeClient {
     public:
-        ChromeClient(WebKitGtkPage*);
-        WebKitGtkPage* webPage() const { return m_webPage; }
+        ChromeClient(WebKitPage*);
+        WebKitPage* webPage() const { return m_webPage; }
 
         virtual void chromeDestroyed();
 
@@ -102,7 +102,7 @@ namespace WebKit {
 
         virtual void print(WebCore::Frame*);
     private:
-        WebKitGtkPage* m_webPage;
+        WebKitPage* m_webPage;
         bool m_didSendLinkSignal;
     };
 }

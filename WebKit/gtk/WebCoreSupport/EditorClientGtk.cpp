@@ -257,7 +257,7 @@ void EditorClient::handleInputMethodKeypress(KeyboardEvent*)
     notImplemented();
 }
 
-EditorClient::EditorClient(WebKitGtkPage* page)
+EditorClient::EditorClient(WebKitPage* page)
     : m_page(page)
 {
 }

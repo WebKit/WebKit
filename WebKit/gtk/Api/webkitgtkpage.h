@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_GTK_PAGE_H
-#define WEBKIT_GTK_PAGE_H
+#ifndef WEBKIT_PAGE_H
+#define WEBKIT_PAGE_H
 
 #include <gtk/gtk.h>
 
@@ -36,27 +36,27 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_GTK_TYPE_PAGE            (webkit_gtk_page_get_type())
-#define WEBKIT_GTK_PAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_GTK_TYPE_PAGE, WebKitGtkPage))
-#define WEBKIT_GTK_PAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_GTK_TYPE_PAGE, WebKitGtkPageClass))
-#define WEBKIT_GTK_IS_PAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_GTK_TYPE_PAGE))
-#define WEBKIT_GTK_IS_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_GTK_TYPE_PAGE))
-#define WEBKIT_GTK_PAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_GTK_TYPE_PAGE, WebKitGtkPageClass))
+#define WEBKIT_TYPE_PAGE            (webkit_page_get_type())
+#define WEBKIT_PAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_PAGE, WebKitPage))
+#define WEBKIT_PAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_PAGE, WebKitPageClass))
+#define WEBKIT_IS_PAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_PAGE))
+#define WEBKIT_IS_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_PAGE))
+#define WEBKIT_PAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_PAGE, WebKitPageClass))
 
 
 typedef enum {
-    WEBKIT_GTK_ACCEPT_NAVIGATION_REQUEST,
-    WEBKIT_GTK_IGNORE_NAVIGATION_REQUEST,
-    WEBKIT_GTK_DOWNLOAD_NAVIGATION_REQUEST
-} WEBKIT_GTK_NAVIGATION_REQUEST_RESPONSE;
+    WEBKIT_ACCEPT_NAVIGATION_REQUEST,
+    WEBKIT_IGNORE_NAVIGATION_REQUEST,
+    WEBKIT_DOWNLOAD_NAVIGATION_REQUEST
+} WEBKIT_NAVIGATION_REQUEST_RESPONSE;
 
 
 
-struct _WebKitGtkPage {
+struct _WebKitPage {
     GtkContainer parent;
 };
 
-struct _WebKitGtkPageClass {
+struct _WebKitPageClass {
     GtkContainerClass parent;
 
     /*
@@ -65,90 +65,90 @@ struct _WebKitGtkPageClass {
      * require someone doing a g_signal_stop_emission_by_name
      * WebUIDelegate has nothing for create_frame, WebPolicyDelegate as well...
      */
-    WebKitGtkPage*  (*create_page)  (WebKitGtkPage* page);
+    WebKitPage*  (*create_page)  (WebKitPage* page);
 
     /*
      * TODO: FIXME: Create something like WebPolicyDecisionListener_Protocol instead
      */
-    WEBKIT_GTK_NAVIGATION_REQUEST_RESPONSE (*navigation_requested) (WebKitGtkPage* page, WebKitGtkFrame* frame, WebKitGtkNetworkRequest* request);
+    WEBKIT_NAVIGATION_REQUEST_RESPONSE (*navigation_requested) (WebKitPage* page, WebKitFrame* frame, WebKitNetworkRequest* request);
 
     /*
      * TODO: DISCUSS: Should these be signals as well?
      */
-    gchar* (*choose_file) (WebKitGtkPage* page, WebKitGtkFrame* frame, const gchar* old_file);
-    void   (*java_script_alert) (WebKitGtkPage* page, WebKitGtkFrame* frame, const gchar* alert_message);
-    gboolean   (*java_script_confirm) (WebKitGtkPage* page, WebKitGtkFrame* frame, const gchar* confirm_message);
-    gchar* (*java_script_prompt) (WebKitGtkPage* page, WebKitGtkFrame* frame, const gchar* message, const gchar* default_value);
-    void   (*java_script_console_message) (WebKitGtkPage*, const gchar* message, unsigned int line_number, const gchar* source_id);
+    gchar* (*choose_file) (WebKitPage* page, WebKitFrame* frame, const gchar* old_file);
+    void   (*java_script_alert) (WebKitPage* page, WebKitFrame* frame, const gchar* alert_message);
+    gboolean   (*java_script_confirm) (WebKitPage* page, WebKitFrame* frame, const gchar* confirm_message);
+    gchar* (*java_script_prompt) (WebKitPage* page, WebKitFrame* frame, const gchar* message, const gchar* default_value);
+    void   (*java_script_console_message) (WebKitPage*, const gchar* message, unsigned int line_number, const gchar* source_id);
 
     /*
      * internal
      */
-    void   (*set_scroll_adjustments) (WebKitGtkPage*, GtkAdjustment*, GtkAdjustment*);
+    void   (*set_scroll_adjustments) (WebKitPage*, GtkAdjustment*, GtkAdjustment*);
 };
 
-WEBKIT_GTK_API GType
-webkit_gtk_page_get_type (void);
+WEBKIT_API GType
+webkit_page_get_type (void);
 
-WEBKIT_GTK_API GtkWidget*
-webkit_gtk_page_new (void);
+WEBKIT_API GtkWidget*
+webkit_page_new (void);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_set_settings (WebKitGtkPage* page, WebKitGtkSettings* settings);
+WEBKIT_API void
+webkit_page_set_settings (WebKitPage* page, WebKitSettings* settings);
 
-WEBKIT_GTK_API WebKitGtkSettings*
-webkit_gtk_page_get_settings (WebKitGtkPage* page);
+WEBKIT_API WebKitSettings*
+webkit_page_get_settings (WebKitPage* page);
 
-WEBKIT_GTK_API gboolean
-webkit_gtk_page_can_cut (WebKitGtkPage* page);
+WEBKIT_API gboolean
+webkit_page_can_cut (WebKitPage* page);
 
-WEBKIT_GTK_API gboolean
-webkit_gtk_page_can_copy (WebKitGtkPage* page);
+WEBKIT_API gboolean
+webkit_page_can_copy (WebKitPage* page);
 
-WEBKIT_GTK_API gboolean
-webkit_gtk_page_can_paste (WebKitGtkPage* page);
+WEBKIT_API gboolean
+webkit_page_can_paste (WebKitPage* page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_cut (WebKitGtkPage* page);
+WEBKIT_API void
+webkit_page_cut (WebKitPage* page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_copy (WebKitGtkPage* page);
+WEBKIT_API void
+webkit_page_copy (WebKitPage* page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_paste (WebKitGtkPage* page);
+WEBKIT_API void
+webkit_page_paste (WebKitPage* page);
 
-WEBKIT_GTK_API gboolean
-webkit_gtk_page_can_go_backward (WebKitGtkPage* page);
+WEBKIT_API gboolean
+webkit_page_can_go_backward (WebKitPage* page);
 
-WEBKIT_GTK_API gboolean
-webkit_gtk_page_can_go_forward (WebKitGtkPage* page);
+WEBKIT_API gboolean
+webkit_page_can_go_forward (WebKitPage* page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_go_backward (WebKitGtkPage* page);
+WEBKIT_API void
+webkit_page_go_backward (WebKitPage* page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_go_forward (WebKitGtkPage* page);
+WEBKIT_API void
+webkit_page_go_forward (WebKitPage* page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_stop_loading (WebKitGtkPage* page);
+WEBKIT_API void
+webkit_page_stop_loading (WebKitPage* page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_open (WebKitGtkPage* page, const gchar* url);
+WEBKIT_API void
+webkit_page_open (WebKitPage* page, const gchar* url);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_reload (WebKitGtkPage *page);
+WEBKIT_API void
+webkit_page_reload (WebKitPage *page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_load_string (WebKitGtkPage* page, const gchar* content, const gchar* content_mime_type, const gchar* content_encoding, const gchar* base_url);
+WEBKIT_API void
+webkit_page_load_string (WebKitPage* page, const gchar* content, const gchar* content_mime_type, const gchar* content_encoding, const gchar* base_url);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_load_html_string (WebKitGtkPage* page, const gchar* content, const gchar* base_url);
+WEBKIT_API void
+webkit_page_load_html_string (WebKitPage* page, const gchar* content, const gchar* base_url);
 
-WEBKIT_GTK_API WebKitGtkFrame*
-webkit_gtk_page_get_main_frame (WebKitGtkPage* page);
+WEBKIT_API WebKitFrame*
+webkit_page_get_main_frame (WebKitPage* page);
 
-WEBKIT_GTK_API void
-webkit_gtk_page_execute_script(WebKitGtkPage* page, const gchar* script);
+WEBKIT_API void
+webkit_page_execute_script(WebKitPage* page, const gchar* script);
 G_END_DECLS
 
 #endif

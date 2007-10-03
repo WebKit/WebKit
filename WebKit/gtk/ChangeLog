@@ -1,3 +1,53 @@
+2007-10-03  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14726
+        [gtk] API design. Mapping the WebView delegates to signals.
+
+        Change the API namespace of the Gtk+ port from 'WebKitGtk' to 'WebKit'.
+
+        * Api/webkitgtkdefines.h:
+        * Api/webkitgtkframe.cpp:
+        * Api/webkitgtkframe.h:
+        * Api/webkitgtkglobal.cpp:
+        * Api/webkitgtkglobal.h:
+        * Api/webkitgtknetworkrequest.h:
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+        * Api/webkitgtkprivate.cpp:
+        (WebKit::apply):
+        (WebKit::create):
+        (WebKit::getFrameFromPage):
+        (WebKit::getPageFromFrame):
+        (WebKit::core):
+        (WebKit::kit):
+        * Api/webkitgtkprivate.h:
+        * Api/webkitgtksettings.cpp:
+        * Api/webkitgtksettings.h:
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient):
+        (WebKit::ChromeClient::createWindow):
+        (WebKit::ChromeClient::addMessageToConsole):
+        (WebKit::ChromeClient::runJavaScriptAlert):
+        (WebKit::ChromeClient::runJavaScriptConfirm):
+        (WebKit::ChromeClient::runJavaScriptPrompt):
+        * WebCoreSupport/ChromeClientGtk.h:
+        (WebKit::ChromeClient::webPage):
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::EditorClient):
+        * WebCoreSupport/EditorClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::FrameLoaderClient):
+        (WebKit::FrameLoaderClient::postProgressStartedNotification):
+        (WebKit::FrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebKit::FrameLoaderClient::postProgressFinishedNotification):
+        (WebKit::FrameLoaderClient::createFrame):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveIcon):
+        (WebKit::FrameLoaderClient::setTitle):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        (WebKit::FrameLoaderClient::webFrame):
+
 2007-10-02  Cosimo Cecchi  <cosimoc@svn.gnome.org>
 
         Reviewed by Mark.

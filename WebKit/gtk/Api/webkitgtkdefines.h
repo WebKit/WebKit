@@ -26,32 +26,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_GTK_DEFINES_H
-#define WEBKIT_GTK_DEFINES_H
+#ifndef WEBKIT_DEFINES_H
+#define WEBKIT_DEFINES_H
 
 #include <glib.h>
 
-typedef struct _WebKitGtkFrame WebKitGtkFrame;
-typedef struct _WebKitGtkFrameClass WebKitGtkFrameClass;
+typedef struct _WebKitFrame WebKitFrame;
+typedef struct _WebKitFrameClass WebKitFrameClass;
 
-typedef struct _WebKitGtkFrameData WebKitGtkFrameData;
-typedef struct _WebKitGtkNetworkRequest WebKitGtkNetworkRequest;
+typedef struct _WebKitFrameData WebKitFrameData;
+typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
 
-typedef struct _WebKitGtkPage WebKitGtkPage;
-typedef struct _WebKitGtkPageClass WebKitGtkPageClass;
+typedef struct _WebKitPage WebKitPage;
+typedef struct _WebKitPageClass WebKitPageClass;
 
 #ifdef G_OS_WIN32
     #ifdef BUILDING_WEBKIT
-        #define WEBKIT_GTK_API __declspec(dllexport)
+        #define WEBKIT_API __declspec(dllexport)
     #else
-        #define WEBKIT_GTK_API __declspec(dllimport)
+        #define WEBKIT_API __declspec(dllimport)
     #endif
 #else
-    #define WEBKIT_GTK_API __attribute__((visibility("default")))
+    #define WEBKIT_API __attribute__((visibility("default")))
 #endif
 
-#ifndef WEBKIT_GTK_API
-#define WEBKIT_GTK_API
+#ifndef WEBKIT_API
+#define WEBKIT_API
 #endif
 
 #endif

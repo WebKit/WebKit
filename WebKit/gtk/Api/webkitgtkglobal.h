@@ -26,15 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_GTK_GLOBAL_H
-#define WEBKIT_GTK_GLOBAL_H
+#ifndef WEBKIT_GLOBAL_H
+#define WEBKIT_GLOBAL_H
 
 #include "webkitgtkdefines.h"
 
 G_BEGIN_DECLS
 
-WEBKIT_GTK_API void
-webkit_gtk_init (void);
+WEBKIT_API void
+webkit_init (void);
 
 G_END_DECLS
 

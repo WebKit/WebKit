@@ -32,7 +32,7 @@
 #include "Logging.h"
 
 extern "C" {
-void webkit_gtk_init(void)
+void webkit_init(void)
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
 }

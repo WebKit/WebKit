@@ -26,12 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_GTK_PRIVATE_H
-#define WEBKIT_GTK_PRIVATE_H
+#ifndef WEBKIT_PRIVATE_H
+#define WEBKIT_PRIVATE_H
 
 /*
- * Internal class. This class knows the shared secret of WebKitGtkFrame,
- * WebKitGtkNetworkRequest and WebKitGtkPage.
+ * Internal class. This class knows the shared secret of WebKitFrame,
+ * WebKitNetworkRequest and WebKitPage.
  * They are using WebCore which musn't be exposed to the outer world.
  */
 
@@ -47,44 +47,44 @@
 #include "FrameLoaderClient.h"
 
 namespace WebKit {
-    void apply(WebKitGtkSettings*,WebCore::Settings*);
-    WebKitGtkSettings* create(WebCore::Settings*);
-    WebKitGtkFrame*  getFrameFromPage(WebKitGtkPage*);
-    WebKitGtkPage* getPageFromFrame(WebKitGtkFrame*);
+    void apply(WebKitSettings*,WebCore::Settings*);
+    WebKitSettings* create(WebCore::Settings*);
+    WebKitFrame*  getFrameFromPage(WebKitPage*);
+    WebKitPage* getPageFromFrame(WebKitFrame*);
 
-    WebCore::Frame* core(WebKitGtkFrame*);
-    WebKitGtkFrame* kit(WebCore::Frame*);
-    WebCore::Page* core(WebKitGtkPage*);
-    WebKitGtkPage* kit(WebCore::Page*);
+    WebCore::Frame* core(WebKitFrame*);
+    WebKitFrame* kit(WebCore::Frame*);
+    WebCore::Page* core(WebKitPage*);
+    WebKitPage* kit(WebCore::Page*);
 }
 
 extern "C" {
-    #define WEBKIT_GTK_PAGE_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_GTK_TYPE_PAGE, WebKitGtkPagePrivate))
-    typedef struct _WebKitGtkPagePrivate WebKitGtkPagePrivate;
-    struct _WebKitGtkPagePrivate {
+    #define WEBKIT_PAGE_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_PAGE, WebKitPagePrivate))
+    typedef struct _WebKitPagePrivate WebKitPagePrivate;
+    struct _WebKitPagePrivate {
         WebCore::Page* page;
         WebCore::Settings* settings;
 
-        WebKitGtkFrame* mainFrame;
+        WebKitFrame* mainFrame;
         WebCore::String applicationNameForUserAgent;
         WebCore::String* userAgent;
 
         HashSet<GtkWidget*> children;
     };
     
-    #define WEBKIT_GTK_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_GTK_TYPE_FRAME, WebKitGtkFramePrivate))
-    typedef struct _WebKitGtkFramePrivate WebKitGtkFramePrivate;
-    struct _WebKitGtkFramePrivate {
+    #define WEBKIT_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_FRAME, WebKitFramePrivate))
+    typedef struct _WebKitFramePrivate WebKitFramePrivate;
+    struct _WebKitFramePrivate {
         WebCore::Frame* frame;
         WebCore::FrameLoaderClient* client;
-        WebKitGtkPage* page;
+        WebKitPage* page;
 
         gchar* title;
         gchar* location;
     };
 
 
-    GObject* webkit_gtk_frame_init_with_page(WebKitGtkPage*, WebCore::HTMLFrameOwnerElement*);
+    GObject* webkit_frame_init_with_page(WebKitPage*, WebCore::HTMLFrameOwnerElement*);
 }
 
 #endif

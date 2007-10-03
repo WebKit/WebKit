@@ -1544,7 +1544,7 @@ gtk-port {
     }
 
     GENMARSHALS = ../WebKit/gtk/Api/webkitgtk-marshal.list
-    GENMARSHALS_PREFIX = webkit_gtk_marshal
+    GENMARSHALS_PREFIX = webkit_marshal
 
     #
     # integrate glib-genmarshal as additional compiler

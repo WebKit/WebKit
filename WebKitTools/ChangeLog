@@ -1,3 +1,20 @@
+2007-10-03  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14726
+        [gtk] API design. Mapping the WebView delegates to signals.
+
+        Change the API namespace of the Gtk+ port from 'WebKitGtk' to 'WebKit'.
+
+        * GtkLauncher/main.cpp:
+        (goToURLBarText):
+        (titleChanged):
+        (progressChanged):
+        (menuMainBackCallback):
+        (menuMainForwardCallback):
+        (main):
+
 2007-10-03  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Rob.

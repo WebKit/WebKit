@@ -1,5 +1,16 @@
 2007-10-03  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14726
+        [gtk] API design. Mapping the WebView delegates to signals.
+
+        Change the API namespace of the Gtk+ port from 'WebKitGtk' to 'WebKit'.
+
+        * WebCore.pro:
+
+2007-10-03  Alp Toker  <alp@atoker.com>
+
         Reviewed by Eric.
 
         http://bugs.webkit.org/show_bug.cgi?id=14129

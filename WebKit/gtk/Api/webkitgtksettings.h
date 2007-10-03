@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBKIT_GTK_SETTINGS_H
-#define WEBKIT_GTK_SETTINGS_H
+#ifndef WEBKIT_SETTINGS_H
+#define WEBKIT_SETTINGS_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -37,28 +37,28 @@
 G_BEGIN_DECLS
 
 typedef enum {
-    WEBKIT_GTK_FONT_FAMILY_STANDARD,
-    WEBKIT_GTK_FONT_FAMILY_FIXED,
-    WEBKIT_GTK_FONT_FAMILY_SERIF,
-    WEBKIT_GTK_FONT_FAMILY_SANS_SERIF,
-    WEBKIT_GTK_FONT_FAMILY_CURSIVE,
-    WEBKIT_GTK_FONT_FAMILY_FANTASY,
-    WEBKIT_GTK_FONT_FAMILY_LAST_ENTRY
-} WebKitGtkFontFamily;
+    WEBKIT_FONT_FAMILY_STANDARD,
+    WEBKIT_FONT_FAMILY_FIXED,
+    WEBKIT_FONT_FAMILY_SERIF,
+    WEBKIT_FONT_FAMILY_SANS_SERIF,
+    WEBKIT_FONT_FAMILY_CURSIVE,
+    WEBKIT_FONT_FAMILY_FANTASY,
+    WEBKIT_FONT_FAMILY_LAST_ENTRY
+} WebKitFontFamily;
 
 typedef enum {
-    WEBKIT_GTK_EDITABLE_LINK_DEFAULT_BEHAVIOUR,
-    WEBKIT_GTK_EDITABLE_LINK_ALWAYS_LIVE,
-    WEBKIT_GTK_EDITABLE_LINK_ONLY_WITH_SHIFT_KEY,
-    WEBKIT_GTK_EDITABLE_LINK_LIVE_WHEN_NOT_FOCUSED,
-    WEBKIT_GTK_EDITABLE_LINK_NEVER_LIVE
-} WebKitGtkEditableLinkBehaviour;
+    WEBKIT_EDITABLE_LINK_DEFAULT_BEHAVIOUR,
+    WEBKIT_EDITABLE_LINK_ALWAYS_LIVE,
+    WEBKIT_EDITABLE_LINK_ONLY_WITH_SHIFT_KEY,
+    WEBKIT_EDITABLE_LINK_LIVE_WHEN_NOT_FOCUSED,
+    WEBKIT_EDITABLE_LINK_NEVER_LIVE
+} WebKitEditableLinkBehaviour;
 
-typedef struct _WebKitGtkSettings WebKitGtkSettings;
-typedef struct _WebKitGtkSettingsPrivate WebKitGtkSettingsPrivate;
+typedef struct _WebKitSettings WebKitSettings;
+typedef struct _WebKitSettingsPrivate WebKitSettingsPrivate;
 
-struct _WebKitGtkSettings {
-    gchar* font_name[WEBKIT_GTK_FONT_FAMILY_LAST_ENTRY];
+struct _WebKitSettings {
+    gchar* font_name[WEBKIT_FONT_FAMILY_LAST_ENTRY];
     gint   minimum_font_size;
     gint   minimum_logical_font_size;
     gint   default_font_size;
@@ -71,7 +71,7 @@ struct _WebKitGtkSettings {
     gchar* user_style_sheet_location;
     gboolean should_print_backgrounds;
     gboolean text_areas_are_resizable;
-    WebKitGtkEditableLinkBehaviour editable_link_behaviour;
+    WebKitEditableLinkBehaviour editable_link_behaviour;
     gboolean uses_page_cache;
     gboolean shrink_standalone_images_to_fit;
     gboolean show_urls_in_tool_tips;
@@ -80,35 +80,35 @@ struct _WebKitGtkSettings {
     gboolean developer_extras_enabled;
 
 
-    WebKitGtkSettingsPrivate *private_data;
+    WebKitSettingsPrivate *private_data;
 };
 
 GType
-webkit_gtk_web_settings_get_type (void);
+webkit_web_settings_get_type (void);
 
-WebKitGtkSettings*
-webkit_gtk_web_settings_copy (WebKitGtkSettings* setting);
-
-void
-webkit_gtk_web_settings_free (WebKitGtkSettings* setting);
-
-WebKitGtkSettings*
-webkit_gtk_web_settings_get_global (void);
+WebKitSettings*
+webkit_web_settings_copy (WebKitSettings* setting);
 
 void
-webkit_gtk_web_settings_set_global (WebKitGtkSettings* setting);
+webkit_web_settings_free (WebKitSettings* setting);
+
+WebKitSettings*
+webkit_web_settings_get_global (void);
 
 void
-webkit_gtk_web_settings_set_font_family(WebKitGtkSettings*, WebKitGtkFontFamily family, gchar *family_name);
+webkit_web_settings_set_global (WebKitSettings* setting);
+
+void
+webkit_web_settings_set_font_family(WebKitSettings*, WebKitFontFamily family, gchar *family_name);
 
 gchar*
-webkit_gtk_web_settings_get_font_family(WebKitGtkSettings*, WebKitGtkFontFamily family);
+webkit_web_settings_get_font_family(WebKitSettings*, WebKitFontFamily family);
 
 void
-webkit_gtk_web_settings_set_user_style_sheet_location(WebKitGtkSettings*, gchar*);
+webkit_web_settings_set_user_style_sheet_location(WebKitSettings*, gchar*);
 
 void
-webkit_gtk_set_ftp_directory_template_path(WebKitGtkSettings*, gchar*);
+webkit_set_ftp_directory_template_path(WebKitSettings*, gchar*);
 
 
 G_END_DECLS

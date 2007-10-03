@@ -31,39 +31,39 @@
 #include "webkitgtksettings.h"
 
 extern "C" {
-GType webkit_gtk_web_settings_get_type(void)
+GType webkit_web_settings_get_type(void)
 {
 }
 
-WebKitGtkSettings* webkit_gtk_web_settings_copy(WebKitGtkSettings* setting)
+WebKitSettings* webkit_web_settings_copy(WebKitSettings* setting)
 {
 }
 
-void webkit_gtk_web_settings_free(WebKitGtkSettings* setting)
+void webkit_web_settings_free(WebKitSettings* setting)
 {
 }
 
-WebKitGtkSettings* webkit_gtk_web_settings_get_global(void)
+WebKitSettings* webkit_web_settings_get_global(void)
 {
 }
 
-void webkit_gtk_web_settings_set_global (WebKitGtkSettings* setting)
+void webkit_web_settings_set_global (WebKitSettings* setting)
 {
 }
 
-void webkit_gtk_web_settings_set_font_family(WebKitGtkSettings*, WebKitGtkFontFamily family, gchar* family_name)
+void webkit_web_settings_set_font_family(WebKitSettings*, WebKitFontFamily family, gchar* family_name)
 {
 }
 
-gchar* webkit_gtk_web_settings_get_font_family(WebKitGtkSettings*, WebKitGtkFontFamily family)
+gchar* webkit_web_settings_get_font_family(WebKitSettings*, WebKitFontFamily family)
 {
 }
 
-void webkit_gtk_web_settings_set_user_style_sheet_location(WebKitGtkSettings*, gchar*)
+void webkit_web_settings_set_user_style_sheet_location(WebKitSettings*, gchar*)
 {
 }
 
-void webkit_gtk_set_ftp_directory_template_path(WebKitGtkSettings*, gchar*)
+void webkit_set_ftp_directory_template_path(WebKitSettings*, gchar*)
 {
 }
 }

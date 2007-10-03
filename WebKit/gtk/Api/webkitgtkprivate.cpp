@@ -37,46 +37,46 @@
 using namespace WebCore;
 
 namespace WebKit {
-void apply(WebKitGtkSettings*, WebCore::Settings*)
+void apply(WebKitSettings*, WebCore::Settings*)
 {
     notImplemented();
 }
 
-WebKitGtkSettings* create(WebCore::Settings*)
+WebKitSettings* create(WebCore::Settings*)
 {
     notImplemented();
     return 0;
 }
 
-WebKitGtkFrame* getFrameFromPage(WebKitGtkPage* page)
+WebKitFrame* getFrameFromPage(WebKitPage* page)
 {
-    return webkit_gtk_page_get_main_frame(page);
+    return webkit_page_get_main_frame(page);
 }
 
-WebKitGtkPage* getPageFromFrame(WebKitGtkFrame* frame)
+WebKitPage* getPageFromFrame(WebKitFrame* frame)
 {
-    return webkit_gtk_frame_get_page(frame);
+    return webkit_frame_get_page(frame);
 }
 
-WebCore::Frame* core(WebKitGtkFrame* frame)
+WebCore::Frame* core(WebKitFrame* frame)
 {
-    WebKitGtkFramePrivate* frame_data = WEBKIT_GTK_FRAME_GET_PRIVATE(frame);
+    WebKitFramePrivate* frame_data = WEBKIT_FRAME_GET_PRIVATE(frame);
     return frame_data->frame;
 }
 
-WebKitGtkFrame* kit(WebCore::Frame* coreFrame)
+WebKitFrame* kit(WebCore::Frame* coreFrame)
 {
     WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(coreFrame->loader()->client());
     return client->webFrame();
 }
 
-WebCore::Page* core(WebKitGtkPage* page)
+WebCore::Page* core(WebKitPage* page)
 {
-    WebKitGtkPagePrivate* page_data = WEBKIT_GTK_PAGE_GET_PRIVATE(page);
+    WebKitPagePrivate* page_data = WEBKIT_PAGE_GET_PRIVATE(page);
     return page_data->page;
 }
 
-WebKitGtkPage* kit(WebCore::Page* page)
+WebKitPage* kit(WebCore::Page* page)
 {
     WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
     return client->webPage();
