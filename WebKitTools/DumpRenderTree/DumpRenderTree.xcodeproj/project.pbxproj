@@ -120,7 +120,7 @@
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
-		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = AHEM____.TTF; path = DumpRenderTree.qtproj/fonts/AHEM____.TTF; sourceTree = "<group>"; };
+		9345229C0BD12B710086EDA0 /* AHEM____.TTF */ = {isa = PBXFileReference; explicitFileType = file; name = "AHEM____.TTF"; path = "qt/fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
 		A817090108B1643800CCB9FB /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -426,6 +426,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* DumpRenderTree */;
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;
@@ -589,7 +590,7 @@
 					"-sectcreate",
 					__DATA,
 					Ahem,
-					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
+					"qt/fonts/AHEM____.TTF",
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
@@ -605,7 +606,7 @@
 					"-sectcreate",
 					__DATA,
 					Ahem,
-					DumpRenderTree.qtproj/fonts/AHEM____.TTF,
+					"qt/fonts/AHEM____.TTF",
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";

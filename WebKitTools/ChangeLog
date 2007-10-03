@@ -1,3 +1,11 @@
+2007-10-03  Adam Roben  <aroben@apple.com>
+
+        Update the location of AHEM___.TTF after r25968
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-10-03  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam.
