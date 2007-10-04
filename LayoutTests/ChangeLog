@@ -5,6 +5,7 @@
 
         Rubberstamped by aroben.
 
+        * dom/xhtml/level2/html/right.png: Renamed from platform/mac/dom/xhtml/level2/html/right.png
         * dom/xhtml/level2/html/w3c_main.png: Renamed from LayoutTests/platform/mac/dom/xhtml/level2/html/w3c_main.png.
         * fast/css/button_center.png: Renamed from LayoutTests/platform/mac/fast/css/button_center.png.
         * svg/W3C-SVG-1.1/animate-elem-02-t-w3c.png: Renamed from LayoutTests/platform/mac/svg/W3C-SVG-1.1/animate-elem-02-t-w3c.png.
