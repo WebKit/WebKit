@@ -1,3 +1,81 @@
+2007-10-04  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Darin.
+
+        Make traversal tests dumpAsText.
+
+        * platform/mac/traversal: Removed.
+        * platform/mac/traversal/node-iterator-001-expected.checksum: Removed.
+        * platform/mac/traversal/node-iterator-001-expected.png: Removed.
+        * platform/mac/traversal/node-iterator-001-expected.txt: Removed.
+        * platform/mac/traversal/node-iterator-002-expected.checksum: Removed.
+        * platform/mac/traversal/node-iterator-002-expected.png: Removed.
+        * platform/mac/traversal/node-iterator-002-expected.txt: Removed.
+        * platform/mac/traversal/node-iterator-003-expected.checksum: Removed.
+        * platform/mac/traversal/node-iterator-003-expected.png: Removed.
+        * platform/mac/traversal/node-iterator-003-expected.txt: Removed.
+        * platform/mac/traversal/node-iterator-004-expected.checksum: Removed.
+        * platform/mac/traversal/node-iterator-004-expected.png: Removed.
+        * platform/mac/traversal/node-iterator-004-expected.txt: Removed.
+        * platform/mac/traversal/node-iterator-005-expected.checksum: Removed.
+        * platform/mac/traversal/node-iterator-005-expected.png: Removed.
+        * platform/mac/traversal/node-iterator-005-expected.txt: Removed.
+        * platform/mac/traversal/node-iterator-006-expected.checksum: Removed.
+        * platform/mac/traversal/node-iterator-006-expected.png: Removed.
+        * platform/mac/traversal/node-iterator-006-expected.txt: Removed.
+        * platform/mac/traversal/node-iterator-007-expected.checksum: Removed.
+        * platform/mac/traversal/node-iterator-007-expected.png: Removed.
+        * platform/mac/traversal/node-iterator-007-expected.txt: Removed.
+        * platform/mac/traversal/node-iterator-008-expected.checksum: Removed.
+        * platform/mac/traversal/node-iterator-008-expected.png: Removed.
+        * platform/mac/traversal/node-iterator-008-expected.txt: Removed.
+        * platform/mac/traversal/stay-within-root-expected.checksum: Removed.
+        * platform/mac/traversal/stay-within-root-expected.png: Removed.
+        * platform/mac/traversal/stay-within-root-expected.txt: Removed.
+        * platform/mac/traversal/tree-walker-001-expected.checksum: Removed.
+        * platform/mac/traversal/tree-walker-001-expected.png: Removed.
+        * platform/mac/traversal/tree-walker-001-expected.txt: Removed.
+        * platform/mac/traversal/tree-walker-002-expected.checksum: Removed.
+        * platform/mac/traversal/tree-walker-002-expected.png: Removed.
+        * platform/mac/traversal/tree-walker-002-expected.txt: Removed.
+        * platform/mac/traversal/tree-walker-003-expected.checksum: Removed.
+        * platform/mac/traversal/tree-walker-003-expected.png: Removed.
+        * platform/mac/traversal/tree-walker-003-expected.txt: Removed.
+        * platform/mac/traversal/tree-walker-004-expected.checksum: Removed.
+        * platform/mac/traversal/tree-walker-004-expected.png: Removed.
+        * platform/mac/traversal/tree-walker-004-expected.txt: Removed.
+        * platform/mac/traversal/tree-walker-005-expected.checksum: Removed.
+        * platform/mac/traversal/tree-walker-005-expected.png: Removed.
+        * platform/mac/traversal/tree-walker-005-expected.txt: Removed.
+        * traversal/node-iterator-001-expected.txt: Added.
+        * traversal/node-iterator-001.html:
+        * traversal/node-iterator-002-expected.txt: Added.
+        * traversal/node-iterator-002.html:
+        * traversal/node-iterator-003-expected.txt: Added.
+        * traversal/node-iterator-003.html:
+        * traversal/node-iterator-004-expected.txt: Added.
+        * traversal/node-iterator-004.html:
+        * traversal/node-iterator-005-expected.txt: Added.
+        * traversal/node-iterator-005.html:
+        * traversal/node-iterator-006-expected.txt: Added.
+        * traversal/node-iterator-006.html:
+        * traversal/node-iterator-007-expected.txt: Added.
+        * traversal/node-iterator-007.html:
+        * traversal/node-iterator-008-expected.txt: Added.
+        * traversal/node-iterator-008.html:
+        * traversal/stay-within-root-expected.txt: Added.
+        * traversal/stay-within-root.html:
+        * traversal/tree-walker-001-expected.txt: Added.
+        * traversal/tree-walker-001.html:
+        * traversal/tree-walker-002-expected.txt: Added.
+        * traversal/tree-walker-002.html:
+        * traversal/tree-walker-003-expected.txt: Added.
+        * traversal/tree-walker-003.html:
+        * traversal/tree-walker-004-expected.txt: Added.
+        * traversal/tree-walker-004.html:
+        * traversal/tree-walker-005-expected.txt: Added.
+        * traversal/tree-walker-005.html:
+
 2007-10-04  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by maciej.

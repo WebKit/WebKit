@@ -1,6 +1,9 @@
 <html>
 <head>
 <script language="JavaScript">
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 function log(message) {
     var console = document.getElementById("console");
     var li = document.createElement("li");
