@@ -1,4 +1,4 @@
-# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@ our @EXPORT_OK;
 my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
+my $configurationForVisualStudio;
 my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
@@ -152,6 +153,17 @@ sub determineConfiguration
     }
 }
 
+sub determineConfigurationForVisualStudio
+{
+    return if defined $configurationForVisualStudio;
+    determineConfiguration();
+    $configurationForVisualStudio = $configuration;
+    return unless $configuration eq "Debug";
+    setupCygwinEnv();
+    chomp(my $dir = `cygpath -ua '$ENV{WEBKITLIBRARIESDIR}'`);
+    $configurationForVisualStudio = "Debug_Internal" if -f "$dir/bin/CoreFoundation_debug.dll";
+}
+
 sub determineConfigurationProductDir
 {
     return if defined $configurationProductDir;
@@ -208,6 +220,12 @@ sub configuration()
 {
     determineConfiguration();
     return $configuration;
+}
+
+sub configurationForVisualStudio()
+{
+    determineConfigurationForVisualStudio();
+    return $configurationForVisualStudio;
 }
 
 sub currentSVNRevision
@@ -578,13 +596,12 @@ sub buildVisualStudioProject($)
     my ($project) = @_;
     setupCygwinEnv();
 
-    my $config = configuration();
+    my $config = configurationForVisualStudio();
 
     chomp(my $winProjectPath = `cygpath -w "$project"`);
 
-    print "$vcBuildPath $winProjectPath /build $config";
-    my $result = system $vcBuildPath, $winProjectPath, "/build", $config;
-    return $result;
+    print "$vcBuildPath $winProjectPath /build $config\n";
+    return system $vcBuildPath, $winProjectPath, "/build", $config;
 }
 
 sub qtMakeCommand()

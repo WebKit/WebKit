@@ -1,3 +1,11 @@
+2007-10-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * Scripts/webkitdirs.pm: Automatically use "Debug_Internal" if
+        we find the internal libraries in the libraries directory. This
+        is helpful for Safari team engineers at Apple.
+
 2007-10-03  Adam Roben  <aroben@apple.com>
 
         Update the location of AHEM___.TTF after r25968
