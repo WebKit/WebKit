@@ -104,7 +104,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT canHandleRequest([in] IWebURLRequest* request, [out, retval] BOOL* result);
 
     HRESULT clearFocusNode();
-    HRESULT setInitialFocus([in] BOOL forward);
 
     HRESULT setTabKeyCyclesThroughElements([in] BOOL cycles);
     HRESULT tabKeyCyclesThroughElements([out, retval] BOOL* result);
@@ -116,4 +115,6 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setCustomDropTarget([in] IDropTarget* dt);
     HRESULT removeCustomDropTarget();
+
+    HRESULT setInitialFocus([in] BOOL forward);
 }

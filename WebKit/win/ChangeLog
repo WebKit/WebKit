@@ -1,5 +1,9 @@
 2007-10-04  Adele Peterson  <adele@apple.com>
 
+        * Interfaces/IWebViewPrivate.idl: Moving setInitialFocus down to the end to avoid breaking the OpenSource build.
+
+2007-10-04  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin.
 
         WebKit/win part of fix for <rdar://problem/5369017> REGRESSION: Can't tab to webview that doesn't have editable content
