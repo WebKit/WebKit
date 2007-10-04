@@ -1,3 +1,9 @@
+2007-10-04  Darin Adler  <darin@apple.com>
+
+        * page/Frame.h: Put functions into categories to indicate other classes
+        we'd like to move them into in the future. Just organizational -- no code
+        change.
+
 2007-10-04  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by maciej.
