@@ -1,3 +1,8 @@
+2007-10-04  Darin Adler  <darin@apple.com>
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView _updateActiveState]):
+        Removed a bogus comment.
+
 2007-10-02  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Mark Rowe.
