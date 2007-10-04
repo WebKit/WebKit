@@ -1,3 +1,15 @@
+2007-10-04  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problems/5516309>
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateControlTints): Avoid the expense of updating tints on controls for the
+        empty-window case since this can take a significant amount of time even on windows that have no
+        content at all. Note this fix specifically optimizes the empty window/tab case; for a more broad
+        fix John wrote up rdar://problem/5521050.
+
 2007-10-04  Darin Adler  <darin@apple.com>
 
         * page/Frame.h: Put functions into categories to indicate other classes
