@@ -3265,7 +3265,8 @@ noPromisedData:
     page->focusController()->setFocusedFrame(frame);
     if (Document* document = frame->document())
         document->setFocusedNode(0);
-    page->focusController()->setInitialFocus(frame->eventHandler()->currentKeyboardEvent().get());
+    page->focusController()->setInitialFocus(direction == NSSelectingNext ? FocusDirectionForward : FocusDirectionBackward,
+                                             frame->eventHandler()->currentKeyboardEvent().get());
     return YES;
 }
 

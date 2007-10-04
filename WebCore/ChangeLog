@@ -1,3 +1,14 @@
+2007-10-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebCore part of fix for <rdar://problem/5369017> REGRESSION: Can't tab to webview that doesn't have editable content
+
+        * page/FocusController.h: Added FocusDirection argument.
+        * page/FocusController.cpp: (WebCore::FocusController::setInitialFocus):
+          Use FocusDirection argument instead of key modifiers to send direction to advanceFocus.
+        * WebCore.exp: Updated symbol.
+
 2007-10-04  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John.

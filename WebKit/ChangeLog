@@ -1,3 +1,11 @@
+2007-10-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKit part of fix for <rdar://problem/5369017> REGRESSION: Can't tab to webview that doesn't have editable content
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView becomeFirstResponder]): Pass in the FocusDirection.
+
 2007-10-04  Darin Adler  <darin@apple.com>
 
         * WebView/WebHTMLView.mm: (-[WebHTMLView _updateActiveState]):

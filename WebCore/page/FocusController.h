@@ -45,7 +45,7 @@ namespace WebCore {
         Frame* focusedFrame() const { return m_focusedFrame.get(); }
         Frame* focusedOrMainFrame();
 
-        bool setInitialFocus(KeyboardEvent*);
+        bool setInitialFocus(FocusDirection, KeyboardEvent*);
         bool advanceFocus(KeyboardEvent*);
         bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
         

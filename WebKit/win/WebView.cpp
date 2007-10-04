@@ -3674,6 +3674,17 @@ HRESULT STDMETHODCALLTYPE WebView::clearFocusNode()
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::setInitialFocus(
+    /* [in] */ BOOL forward)
+{
+    if (m_page && m_page->focusController()) {
+        Frame* frame = m_page->focusController()->focusedOrMainFrame();
+        frame->document()->setFocusedNode(0);
+        m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
+    }
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebView::setTabKeyCyclesThroughElements( 
     /* [in] */ BOOL cycles)
 {

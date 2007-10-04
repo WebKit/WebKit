@@ -595,6 +595,9 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE clearFocusNode();
 
+    virtual HRESULT STDMETHODCALLTYPE setInitialFocus(
+        /* [in] */ BOOL forward);
+    
     virtual HRESULT STDMETHODCALLTYPE setTabKeyCyclesThroughElements( 
         /* [in] */ BOOL cycles);
     
