@@ -1,5 +1,15 @@
 2007-10-04  Lars Knoll  <lars@trolltech.com>
 
+        Reviewed by maciej.
+
+        fix a crash in the FrameLoader that can happen under certain
+        conditions in the Qt port.
+
+        * fast/loader/iframe-crash-on-missing-image-expected.txt: Copied from LayoutTests/dom/xhtml/level2/html/HTMLIFrameElement01-expected.txt.
+        * fast/loader/iframe-crash-on-missing-image.xhtml: Copied from LayoutTests/dom/xhtml/level2/html/HTMLIFrameElement01.xhtml.
+
+2007-10-04  Lars Knoll  <lars@trolltech.com>
+
         Move png files that are not test results and where mistakenly moved in r26026
         back to where they belong.
 
