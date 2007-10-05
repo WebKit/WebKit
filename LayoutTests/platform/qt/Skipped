@@ -8,13 +8,16 @@ dom/xhtml/level3/core/nodelookupprefix19.xhtml
 fast/parser/entities-in-attributes.xhtml
 fast/xpath/string-value.html
 
+# ------- failures due to missing XSLT support
+fast/dom/Window/get-set-properties.html
+fast/dom/Window/window-properties.html
+
 # ------- infinite hangs
 editing/selection/extend-by-word-002.html
 
 # ------- failures for tests with results
 fast/dom/open-and-close-by-DOM.html
 fast/dom/xmlhttprequest-html-response-encoding.html
-fast/dom/Window/new-window-opener.html
 fast/dom/Window/window-early-properties.html
 fast/forms/drag-out-of-textarea.html
 fast/forms/select-double-onchange.html
@@ -95,11 +98,7 @@ fast/dom/Document/early-document-access.html
 fast/dom/Element/onclick-case.html
 fast/dom/HTMLButtonElement/value/getset.html
 fast/dom/HTMLHeadElement/head-check.html
-fast/dom/Window/Plug-ins.html
-fast/dom/Window/get-set-properties.html
-fast/dom/Window/setting-properties-on-closed-window.html
 fast/dom/Window/window-onFocus.html
-fast/dom/Window/window-properties.html
 fast/dynamic/containing-block-change.html
 fast/dynamic/layer-hit-test-crash.html
 fast/encoding/char-decoding.html

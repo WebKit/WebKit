@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
  */
 
 #include "DumpRenderTree.h"
+#include "testplugin.h"
 
 #include <qstringlist.h>
 #include <qapplication.h>
@@ -41,6 +43,8 @@
 #endif
 
 #include <signal.h>
+
+Q_IMPORT_PLUGIN(testplugin)
 
 void messageHandler(QtMsgType type, const char *message)
 {

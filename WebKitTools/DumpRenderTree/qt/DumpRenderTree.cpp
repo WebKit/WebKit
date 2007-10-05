@@ -40,6 +40,7 @@
 
 #include <qwebpage.h>
 #include <qwebframe.h>
+#include <qwebsettings.h>
 
 #include <unistd.h>
 #include <qdebug.h>
@@ -60,10 +61,10 @@ public:
 
 class WebPage : public QWebPage {
 public:
-    WebPage(QWidget *parent, DumpRenderTree *drt)
-        : QWebPage(parent), m_drt(drt) {}
+    WebPage(QWidget *parent, DumpRenderTree *drt);
 
     QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
+    QWebPage *createWindow();
 
     void javaScriptAlert(QWebFrame *frame, const QString& message);
     void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
@@ -71,6 +72,14 @@ public:
 private:
     DumpRenderTree *m_drt;
 };
+
+WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
+    : QWebPage(parent), m_drt(drt)
+{
+    QWebSettings s = settings();
+    s.setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
+    setSettings(s);
+}
 
 QWebFrame *WebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameData)
 {
@@ -94,6 +103,11 @@ QWebFrame *WebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameData
             m_drt->layoutTestController(), SLOT(maybeDump(bool)));
 
     return f;
+}
+
+QWebPage *WebPage::createWindow()
+{
+    return m_drt->createWindow();
 }
 
 void WebPage::javaScriptAlert(QWebFrame *frame, const QString& message)
@@ -167,6 +181,9 @@ void DumpRenderTree::readStdin(int /* socket */)
 void DumpRenderTree::resetJSObjects()
 {
     m_controller->reset();
+    foreach(QWidget *widget, windows)
+        delete widget;
+    windows.clear();
 }
 
 void DumpRenderTree::initJSObjects()
@@ -237,5 +254,19 @@ void DumpRenderTree::dump()
     }
 }
 
+
+QWebPage *DumpRenderTree::createWindow()
+{
+    if (!m_controller->canOpenWindows())
+        return 0;
+    QWidget *container = new QWidget(0);
+    container->resize(0, 0);
+    container->move(-1, -1);
+    container->hide();
+    QWebPage *page = new QWebPage(container);
+    windows.append(container);
+    return page;
+}
+    
 }
 

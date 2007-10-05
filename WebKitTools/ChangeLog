@@ -1,3 +1,24 @@
+2007-10-05  Lars Knoll  <lars@trolltech.com>
+
+        Add a dummy plugin to DRT  to fix fast/dom/Window/Plug-Ins.html.
+        Add support for layoutTextController.setCanOpenWindows() to DRT
+        fixing another 2 test cases in fast/dom/Window.
+
+        Reviewed by Maciej.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::createWindow):
+        (WebCore::DumpRenderTree::resetJSObjects):
+        (WebCore::DumpRenderTree::createWindow):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        * DumpRenderTree/qt/jsobjects.h:
+        * DumpRenderTree/qt/main.cpp:
+
 2007-10-04  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Adam.
