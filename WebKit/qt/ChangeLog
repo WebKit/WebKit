@@ -1,3 +1,27 @@
+2007-10-05  Lars Knoll  <lars@trolltech.com>
+
+        add proper error messages to the FrameLoaderClient.
+        Implement ChromeClientQt::closeWindowSoon and
+        FrameLoaderClientQt::dispatchCreatePage (which should go away IMO).
+        Some fixes in DRT to make it work correctly with multiple windows.
+
+        Reviewed by Maciej.
+
+        * Api/qwebframe.h:
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::cancel):
+        (QWebNetworkInterface::addJob):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::closeWindowSoon):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::cancelledError):
+        (WebCore::):
+        (WebCore::FrameLoaderClientQt::blockedError):
+        (WebCore::FrameLoaderClientQt::cannotShowURLError):
+        (WebCore::FrameLoaderClientQt::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientQt::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientQt::dispatchCreatePage):
+
 2007-10-03  Lars Knoll  <lars@trolltech.com>
 
         Signed off by Olliej.

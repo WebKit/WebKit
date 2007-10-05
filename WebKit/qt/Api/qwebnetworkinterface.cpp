@@ -409,6 +409,7 @@ void QWebNetworkManager::cancel(ResourceHandle *handle)
     QWebNetworkJob *job = handle->getInternal()->m_job;
     if (!job)
         return;
+    //DEBUG() << "QWebNetworkManager::cancel:" <<  job->d->request.httpHeader.toString();
     job->d->resourceHandle = 0;
     job->d->connector = 0;
     job->d->interface->cancelJob(job);
@@ -785,7 +786,8 @@ void QWebNetworkInterface::addJob(QWebNetworkJob *job)
 
     if (!(protocol.isEmpty() || protocol == QLatin1String("file"))) {
         statusCode = 404;
-    } else if (job->postData().isEmpty()) {
+    } else {
+        // we simply ignore post data here.
         QFile f(path);
         DEBUG() << "opening" << QString(url.path());
 
@@ -797,8 +799,6 @@ void QWebNetworkInterface::addJob(QWebNetworkJob *job)
         } else {
             statusCode = 404;
         }
-    } else {
-        statusCode = 404;
     }
     d->sendFileData(job, statusCode, data);
 }

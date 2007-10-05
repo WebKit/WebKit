@@ -1,5 +1,24 @@
 2007-10-05  Lars Knoll  <lars@trolltech.com>
 
+        add proper error messages to the FrameLoaderClient.
+        Implement ChromeClientQt::closeWindowSoon and
+        FrameLoaderClientQt::dispatchCreatePage (which should go away IMO).
+        Some fixes in DRT to make it work correctly with multiple windows.
+
+        Reviewed by Maciej.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::createWindow):
+        (WebCore::DumpRenderTree::windowCount):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::maybeDump):
+        (LayoutTestController::windowCount):
+        * DumpRenderTree/qt/jsobjects.h:
+
+2007-10-05  Lars Knoll  <lars@trolltech.com>
+
         Add a dummy plugin to DRT  to fix fast/dom/Window/Plug-Ins.html.
         Add support for layoutTextController.setCanOpenWindows() to DRT
         fixing another 2 test cases in fast/dom/Window.

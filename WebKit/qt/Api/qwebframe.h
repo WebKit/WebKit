@@ -40,6 +40,7 @@ class QWebPage;
 namespace WebCore {
     class WidgetPrivate;
     class FrameLoaderClientQt;
+    class ChromeClientQt;
 }
 class QWebFrameData;
 
@@ -98,6 +99,7 @@ private:
     friend class QWebPagePrivate;
     friend class WebCore::WidgetPrivate;
     friend class WebCore::FrameLoaderClientQt;
+    friend class WebCore::ChromeClientQt;
     QWebFramePrivate *d;
 };
 

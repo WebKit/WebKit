@@ -33,7 +33,6 @@
 #include <QObject>
 #include <QTextStream>
 #include <QSocketNotifier>
-
 class QUrl;
 class QFile;
 class QWebPage;
@@ -63,6 +62,8 @@ public:
     EventSender *eventSender() const { return m_eventSender; }
 
     QWebPage *createWindow();
+    int windowCount() const;
+
 public Q_SLOTS:
     void initJSObjects();
     void readStdin(int);

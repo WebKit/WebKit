@@ -124,7 +124,7 @@ DumpRenderTree::DumpRenderTree()
     : m_stdin(0)
     , m_notifier(0)
 {
-    m_controller = new LayoutTestController();
+    m_controller = new LayoutTestController(this);
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
 
     m_page = new WebPage(0, this);
@@ -263,10 +263,19 @@ QWebPage *DumpRenderTree::createWindow()
     container->resize(0, 0);
     container->move(-1, -1);
     container->hide();
-    QWebPage *page = new QWebPage(container);
+    QWebPage *page = new WebPage(container, this);
     windows.append(container);
     return page;
 }
-    
+
+int DumpRenderTree::windowCount() const
+{
+    int count = 0;
+    foreach(QWidget *w, windows) {
+        if (w->children().count())
+            ++count;
+    }
+    return count + 1;
 }
 
+}
