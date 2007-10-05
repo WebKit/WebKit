@@ -58,10 +58,6 @@ dom/svg/level3/xpath/XPathResult_snapshotItem_UNORDERED_NODE_SNAPSHOT_TYPE_count
 dom/svg/level3/xpath/XPathResult_snapshotLength_ORDERED_NODE_SNAPSHOT_TYPE.svg
 dom/svg/level3/xpath/XPathResult_snapshotLength_UNORDERED_NODE_SNAPSHOT_TYPE.svg
 dom/svg/level3/xpath/XPathResult_stringValue.svg
-dom/xhtml/level2/html/HTMLBaseElement01.xhtml
-dom/xhtml/level2/html/HTMLBaseElement02.xhtml
-dom/xhtml/level3/core/canonicalform08.xhtml
-dom/xhtml/level3/core/canonicalform09.xhtml
 fast/block/float/float-avoidance.html
 fast/box-sizing/percentage-height.html
 fast/clip/014.html
