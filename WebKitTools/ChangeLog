@@ -37,6 +37,8 @@
         (LayoutTestController::reset):
         * DumpRenderTree/qt/jsobjects.h:
         * DumpRenderTree/qt/main.cpp:
+        * DumpRenderTree/qt/testplugin.cpp: Added.
+        * DumpRenderTree/qt/testplugin.h: Added.
 
 2007-10-04  Sam Weinig  <sam@webkit.org>
 
