@@ -430,7 +430,7 @@ void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
     
     // Cannot do anything with pageURLOriginal that would end up storing it without deep copying first
     
-    if (!isOpen() || pageURLOriginal.isEmpty())
+    if (!isEnabled() || pageURLOriginal.isEmpty())
         return;
        
     MutexLocker locker(m_urlAndIconLock);
@@ -474,7 +474,7 @@ void IconDatabase::releaseIconForPageURL(const String& pageURLOriginal)
         
     // Cannot do anything with pageURLOriginal that would end up storing it without deep copying first
     
-    if (!isOpen() || pageURLOriginal.isEmpty())
+    if (!isEnabled() || pageURLOriginal.isEmpty())
         return;
     
     MutexLocker locker(m_urlAndIconLock);
@@ -533,7 +533,8 @@ void IconDatabase::releaseIconForPageURL(const String& pageURLOriginal)
     
     delete pageRecord;
 
-    scheduleOrDeferSyncTimer();
+    if (isOpen())
+        scheduleOrDeferSyncTimer();
 }
 
 void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, const String& iconURLOriginal)

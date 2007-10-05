@@ -1,3 +1,19 @@
+2007-10-05  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5436617> Favicons sometimes don't show up even when they are
+        in the database
+        - A client can try to retain an icon for a page before the database is actually
+        opened.  Since isOpened() is not a requirement to retain an icon, remove the check
+        for that.  Instead, we'll check to make sure whether this database is enabled
+        before proceeding.
+
+        Reviewed by Brady.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::retainIconForPageURL):
+        (WebCore::IconDatabase::releaseIconForPageURL): only check isOpen() before we
+        schedule for a sync.
+
 2007-10-05  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by olliej.
