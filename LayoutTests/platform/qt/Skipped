@@ -1,6 +1,9 @@
 # ------- many missing features in DRT
 editing
 
+# ------- infinite hangs
+editing/selection/extend-by-word-002.html
+
 # ------- tests that fail against Qt 4.3 due to bugs and missing features in QXmlStream
 fast/dom/set-innerHTML.xhtml
 dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml
@@ -12,11 +15,7 @@ fast/xpath/string-value.html
 fast/dom/Window/get-set-properties.html
 fast/dom/Window/window-properties.html
 
-# ------- infinite hangs
-editing/selection/extend-by-word-002.html
-
 # ------- failures for tests with results
-fast/dom/open-and-close-by-DOM.html
 fast/dom/xmlhttprequest-html-response-encoding.html
 fast/dom/Window/window-early-properties.html
 fast/forms/drag-out-of-textarea.html
@@ -64,7 +63,6 @@ dom/svg/level3/xpath/XPathResult_snapshotLength_UNORDERED_NODE_SNAPSHOT_TYPE.svg
 dom/svg/level3/xpath/XPathResult_stringValue.svg
 dom/xhtml/level2/html/HTMLBaseElement01.xhtml
 dom/xhtml/level2/html/HTMLBaseElement02.xhtml
-dom/xhtml/level2/html/HTMLIFrameElement11.xhtml
 dom/xhtml/level3/core/canonicalform08.xhtml
 dom/xhtml/level3/core/canonicalform09.xhtml
 fast/block/float/float-avoidance.html
@@ -94,7 +92,6 @@ fast/dom/title-text-property.html
 fast/dom/wrapper-classes.html
 fast/dom/xmlhttprequest-get.xhtml
 fast/dom/Document/document-charset.html
-fast/dom/Document/early-document-access.html
 fast/dom/Element/onclick-case.html
 fast/dom/HTMLButtonElement/value/getset.html
 fast/dom/HTMLHeadElement/head-check.html
@@ -174,7 +171,6 @@ fast/events/onchange-select-popup.html
 fast/events/onchange-textfield.html
 fast/events/ondragenter.html
 fast/events/onsearch-enter.html
-fast/events/onsubmit-bubbling.html
 fast/events/option-tab.html
 fast/events/overflow-events.html
 fast/events/reveal-link-when-focused.html
