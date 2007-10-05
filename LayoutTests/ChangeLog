@@ -1,5 +1,13 @@
 2007-10-05  Lars Knoll  <lars@trolltech.com>
 
+        Reviewed by olliej.
+
+        fix a hang in editing/selection/extend-by-word-002.html
+
+        * platform/qt/Skipped:
+
+2007-10-05  Lars Knoll  <lars@trolltech.com>
+
         Add a dummy plugin to DRT  to fix fast/dom/Window/Plug-Ins.html.
         Add support for layoutTextController.setCanOpenWindows() to DRT
         fixing another 2 test cases in fast/dom/Window.

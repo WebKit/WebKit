@@ -67,7 +67,7 @@ namespace WebCore {
     }
 
     int WordBreakIteratorQt::next() {
-        if (currentPos == length) {
+        if (currentPos >= length) {
             currentPos = -1;
             return currentPos;
         }
@@ -82,7 +82,7 @@ namespace WebCore {
         return currentPos;
     }
     int WordBreakIteratorQt::previous() {
-        if (currentPos == 0) {
+        if (currentPos <= 0) {
             currentPos = -1;
             return currentPos;
         }
@@ -103,13 +103,13 @@ namespace WebCore {
     }
 
     int CharBreakIteratorQt::next() {
-        if (currentPos == length)
+        if (currentPos >= length)
             return -1;
         currentPos = layout.nextCursorPosition(currentPos);
         return currentPos;
     }
     int CharBreakIteratorQt::previous() {
-        if (currentPos == 0)
+        if (currentPos <= 0)
             return -1;
         currentPos = layout.previousCursorPosition(currentPos);
         return currentPos;
@@ -139,7 +139,7 @@ TextBreakIterator* characterBreakIterator(const UChar* string, int length)
     iterator->length = length;
     iterator->currentPos = 0;
     iterator->layout.setText(QString(reinterpret_cast<const QChar*>(string), length));
-
+    
     return iterator;
 }
 

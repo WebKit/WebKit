@@ -1,9 +1,6 @@
 # ------- many missing features in DRT
 editing
 
-# ------- infinite hangs
-editing/selection/extend-by-word-002.html
-
 # ------- tests that fail against Qt 4.3 due to bugs and missing features in QXmlStream
 fast/dom/set-innerHTML.xhtml
 dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml
