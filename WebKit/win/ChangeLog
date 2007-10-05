@@ -1,3 +1,14 @@
+2007-10-05  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5436617>
+        Implement WebIconDatabase::delayDatabaseCleanup() and WebIconDatabase::allowDatabaseCleanup().
+
+        Reviewed by Brady.
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::delayDatabaseCleanup):
+        (WebIconDatabase::allowDatabaseCleanup):
+
 2007-10-04  Adele Peterson  <adele@apple.com>
 
         * Interfaces/IWebViewPrivate.idl: Moving setInitialFocus down to the end to avoid breaking the OpenSource build.

@@ -230,14 +230,14 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::removeAllIcons(void)
 
 HRESULT STDMETHODCALLTYPE WebIconDatabase::delayDatabaseCleanup(void)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    IconDatabase::delayDatabaseCleanup();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebIconDatabase::allowDatabaseCleanup(void)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    IconDatabase::allowDatabaseCleanup();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebIconDatabase::iconURLForURL( 
