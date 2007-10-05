@@ -1,3 +1,18 @@
+2007-10-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fix for <rdar://problem/5441823> REGRESSION (r25142, Tiger only): 
+        Vertical scroll bar not redrawn properly when going back in history 
+        (15033)
+
+        This fix if-defs r25142 to be Leopard-only since it causes 
+        correctness issues on Tiger and does not seem to have any 
+        performance impact on Tiger either.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+
 2007-10-05  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5436617> Favicons sometimes don't show up even when they are

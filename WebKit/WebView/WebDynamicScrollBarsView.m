@@ -41,6 +41,10 @@
 - (void)setScrollBarsSuppressed:(BOOL)suppressed repaintOnUnsuppress:(BOOL)repaint
 {
     suppressScrollers = suppressed;
+
+    // This code was originally changes for a Leopard performance imporvement. We decided to 
+    // ifdef it to fix correctness issues on Tiger documented in <rdar://problem/5441823>.
+#ifndef BUILDING_ON_TIGER
     if (suppressed) {
         [[self verticalScroller] setNeedsDisplay:NO];
         [[self horizontalScroller] setNeedsDisplay:NO];
@@ -48,6 +52,12 @@
         
     if (!suppressed && repaint)
         [super reflectScrolledClipView:[self contentView]];
+#else
+    if (suppressed || repaint) { 
+        [[self verticalScroller] setNeedsDisplay: !suppressed]; 
+        [[self horizontalScroller] setNeedsDisplay: !suppressed]; 
+    }
+#endif
 }
 
 - (void)updateScrollers
@@ -135,9 +145,21 @@
             [self updateScrollers];
     }
 
+    // This code was originally changed for a Leopard performance imporvement. We decided to 
+    // ifdef it to fix correctness issues on Tiger documented in <rdar://problem/5441823>.
+#ifndef BUILDING_ON_TIGER
     // Update the scrollers if they're not being suppressed.
     if (!suppressScrollers)
         [super reflectScrolledClipView:clipView];
+#else
+    [super reflectScrolledClipView:clipView]; 
+  
+    // Validate the scrollers if they're being suppressed. 
+    if (suppressScrollers) { 
+        [[self verticalScroller] setNeedsDisplay: NO]; 
+        [[self horizontalScroller] setNeedsDisplay: NO]; 
+    }
+#endif
 }
 
 - (void)setAllowsScrolling:(BOOL)flag

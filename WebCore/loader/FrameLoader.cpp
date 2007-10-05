@@ -2572,8 +2572,12 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
         case FrameLoadTypeStandard:
             updateHistoryForStandardLoad();
+#ifndef BUILDING_ON_TIGER
+            // This code was originally added for a Leopard performance imporvement. We decided to 
+            // ifdef it to fix correctness issues on Tiger documented in <rdar://problem/5441823>.
             if (m_frame->view())
                 m_frame->view()->suppressScrollbars(true);
+#endif
             m_client->makeDocumentView();
             break;
 
