@@ -1,3 +1,20 @@
+2007-10-05  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://5520913> Ticketmaster.com doesn't display correctly (Flash
+        related?)
+
+        The plugin is requesting files that don't exist on the server, and
+        we are passing the 404 error page to the plugin. This change cancels the
+        stream if the response code indicates a failure.
+
+        This is a port of the safari / mac code.
+
+        * loader/win/NetscapePlugInStreamLoaderWin.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse): If the
+        response code indicates a failure, cancel the stream
+
 2007-10-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
