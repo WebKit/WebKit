@@ -29,6 +29,7 @@
 #include "JSDocument.h"
 #include "JSDOMWindow.h"
 #include "Page.h"
+#include "Settings.h"
 #include "kjs_events.h"
 #include "kjs_window.h"
 
@@ -168,8 +169,13 @@ void KJSProxy::initScriptIfNeeded()
     
 void KJSProxy::updateDocumentWrapper() 
 {
+    Settings* settings = m_frame->settings();
+    if (!settings || !settings->isJavaScriptEnabled())
+        return;
+
     if (!m_script || !m_frame->document())
         return;
+
     JSLock lock;
     // this will update 'document' property to point to the current document
     toJS(m_script->globalExec(), m_frame->document());
