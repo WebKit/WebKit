@@ -167,18 +167,13 @@ void KJSProxy::initScriptIfNeeded()
   m_frame->loader()->dispatchWindowObjectAvailable();
 }
     
-void KJSProxy::updateDocumentWrapper() 
+void KJSProxy::clearDocumentWrapper() 
 {
-    Settings* settings = m_frame->settings();
-    if (!settings || !settings->isJavaScriptEnabled())
-        return;
-
-    if (!m_script || !m_frame->document())
+    if (!m_script)
         return;
 
     JSLock lock;
-    // this will update 'document' property to point to the current document
-    toJS(m_script->globalExec(), m_frame->document());
+    m_script->globalObject()->removeDirect("document");
 }
 
 }

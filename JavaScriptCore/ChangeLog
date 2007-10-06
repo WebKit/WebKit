@@ -1,3 +1,15 @@
+2007-10-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added JSObject::removeDirect, to support the fix for 
+        <rdar://problem/5522487> REGRESSION: With JavaScript disabled, any 
+        page load causes a crash in PropertyMap::put
+
+        * kjs/object.cpp:
+        (KJS::JSObject::removeDirect):
+        * kjs/object.h:
+
 2007-10-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver.

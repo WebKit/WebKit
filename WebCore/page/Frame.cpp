@@ -280,8 +280,9 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     if (d->m_doc && !d->m_doc->attached())
         d->m_doc->attach();
     
-    if (d->m_jscript && d->m_doc)
-        d->m_jscript->updateDocumentWrapper();
+    // Remove the cached 'document' property, which is now stale.
+    if (d->m_jscript)
+        d->m_jscript->clearDocumentWrapper();
 }
 
 Settings* Frame::settings() const

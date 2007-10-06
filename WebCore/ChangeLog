@@ -1,3 +1,26 @@
+2007-10-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        New fix for <rdar://problem/5522487> REGRESSION: With JavaScript 
+        disabled, any page load causes a crash in PropertyMap::put
+        
+        Explicitly remove the "document" property from the window. The old 
+        solution would leave a stale "document" property around after JavaScript
+        was re-enabled.
+
+        The architecture for disabling JavaScript could use some consolidation. 
+        It seems wrong that a script proxy even exists when JavaScript is 
+        disabled. It also seems wrong that so many individual call sites are 
+        responsible for checking whether JavaScript is enabled. I've filed a 
+        bug about this: http://bugs.webkit.org/show_bug.cgi?id=15385.
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::clearDocumentWrapper):
+        * bindings/js/kjs_proxy.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+
 2007-10-05  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.
