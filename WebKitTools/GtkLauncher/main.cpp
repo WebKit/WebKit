@@ -7,9 +7,11 @@
 
 static GtkWidget* gURLBarEntry;
 static GtkWidget* gTopLevelWindow;
+static GtkStatusbar* gStatusbar;
 static WebKitPage* gPage;
 static gchar* gTitle;
 static gint gProgress;
+static guint gStatusbarContextId;
 
 static bool stringIsEqual(const char* str1, const char* str2)
 {
@@ -55,6 +57,14 @@ static void updateWindowTitle()
     gchar* title = g_string_free(string, FALSE);
     gtk_window_set_title(GTK_WINDOW(gTopLevelWindow), title);
     g_free(title);
+}
+
+static void hoveringOverLink(WebKitPage*, const gchar*, const gchar* link, void*)
+{
+    // underflow is allowed
+    gtk_statusbar_pop(gStatusbar, gStatusbarContextId);
+    if (link)
+        gtk_statusbar_push(gStatusbar, gStatusbarContextId, link);
 }
 
 static void titleChanged(WebKitPage*, const gchar* title, const gchar* url, WebKitPage*)
@@ -172,9 +182,14 @@ int main(int argc, char* argv[])
     gPage = WEBKIT_PAGE(webkit_page_new());
     gtk_container_add(GTK_CONTAINER(scrolledWindow), GTK_WIDGET(gPage));
     gtk_box_pack_start(GTK_BOX(vbox), scrolledWindow, TRUE, TRUE, 0);
+
+    gStatusbar = GTK_STATUSBAR(gtk_statusbar_new());
+    gStatusbarContextId = gtk_statusbar_get_context_id(gStatusbar, "Link Hover");
+    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(gStatusbar), FALSE, FALSE, 0); 
     
     g_signal_connect(gPage, "title-changed", G_CALLBACK(titleChanged), gPage);
     g_signal_connect(gPage, "load-progress-changed", G_CALLBACK(progressChanged), gPage);
+    g_signal_connect(gPage, "hovering-over-link", G_CALLBACK(hoveringOverLink), gPage);
     webkit_page_open(gPage, url);
 
     gtk_widget_show_all(gTopLevelWindow);

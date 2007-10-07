@@ -1,3 +1,16 @@
+2007-10-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Eric.
+
+        Connect to the "hovering-over-link" signal emitted by WebKitPage and
+        show the current link inside the statusbar.
+        This shows how to make use of this signal and allows to easily test
+        http://bugs.webkit.org/show_bug.cgi?id=15299.
+
+        * GtkLauncher/main.cpp:
+        (hoveringOverLink):
+        (main):
+
 2007-10-05  Lars Knoll  <lars@trolltech.com>
 
         add proper error messages to the FrameLoaderClient.
