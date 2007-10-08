@@ -253,6 +253,9 @@ static HGLOBAL createGlobalUrlFileDescriptor(const String& url, const String& ti
 
 static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& title, CachedImage* image)
 {
+    ASSERT_ARG(image, image);
+    ASSERT(image->image()->data());
+
     HRESULT hr = S_OK;
     HGLOBAL memObj = 0;
     String fsPath;
@@ -565,7 +568,7 @@ static void writeImageToDataObject(IDataObject* dataObject, Element* element, co
         return;
 
     SharedBuffer* imageBuffer = cachedImage->image()->data();
-    if (!imageBuffer->size())
+    if (!imageBuffer || !imageBuffer->size())
         return;
 
     HGLOBAL imageFileDescriptor = createGlobalImageFileDescriptor(url.url(), element->getAttribute(altAttr), cachedImage);

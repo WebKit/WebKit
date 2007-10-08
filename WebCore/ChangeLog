@@ -1,3 +1,21 @@
+2007-10-08  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 15305: Crash when dragging an image when "load images automatically" preference is off
+
+        http://bugs.webkit.org/show_bug.cgi?id=15305
+        <rdar://problem/5524774>
+
+        Reviewed by Eric Seidel.
+
+        No test possible: to reproduce this you have to change a WebKit
+        preference and reload the page. See
+        http://bugs.webkit.org/show_bug.cgi?id=15414
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::createGlobalImageFileDescriptor): ASSERT that we have an
+        image and that it has a SharedBuffer.
+        (WebCore::writeImageToDataObject): The fix: null-check imageBuffer.
+
 2007-10-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
