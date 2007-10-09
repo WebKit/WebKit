@@ -619,6 +619,9 @@ void QWebPage::setSettings(const QWebSettings &settings)
         settings.testAttribute(QWebSettings::PrivateBrowsingEnabled));
 
     wSettings->setUserStyleSheetLocation(KURL(settings.userStyleSheetLocation()));
+
+    // ### should be configurable
+    wSettings->setDefaultTextEncodingName("iso-8859-1");
 }
 
 QWebSettings QWebPage::settings() const

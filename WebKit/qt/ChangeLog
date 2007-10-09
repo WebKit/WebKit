@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        set a default encoding for documents. Makes fast/dom/Document/document-charset.html pass.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setSettings):
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Don't return a 404 status code for empty data: urls. Fixes fast/dom/HTMLHeadElement/head-check.html
 
         * Api/qwebnetworkinterface.cpp:
