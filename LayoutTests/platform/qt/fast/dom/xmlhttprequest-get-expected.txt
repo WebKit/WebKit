@@ -16,8 +16,9 @@ responseXML serialized
 </doc>
 getAllResponseHeaders()
 status
-0
+200
 statusText
+OK
 readyState
 4
 Event information

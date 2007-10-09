@@ -3,14 +3,17 @@ editing
 
 # ------- tests that fail against Qt 4.3 due to bugs and missing features in QXmlStream
 fast/dom/set-innerHTML.xhtml
-dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml
-dom/xhtml/level3/core/nodelookupprefix19.xhtml
-fast/parser/entities-in-attributes.xhtml
-fast/xpath/string-value.html
+fast/encoding/css-charset-default.xhtml
+fast/encoding/default-xhtml-encoding.xhtml
+fast/encoding/meta-in-xhtml.xhtml
 
 # ------- failures due to missing XSLT support
 fast/dom/Window/get-set-properties.html
 fast/dom/Window/window-properties.html
+
+# ------- tests that require synchrounous XmlHttpRequest
+fast/encoding/char-decoding.html
+
 
 # ------- failures for tests with results
 fast/dom/xmlhttprequest-html-response-encoding.html
@@ -26,6 +29,7 @@ fast/overflow/003.xml
 fast/text/zero-width-characters.html
 fast/text/international/bidi-menulist.html
 fast/text/international/wrap-CJK-001.html
+fast/xpath/string-value.html
 
 # ------- all other failures (not looked at)
 dom/svg/level3/xpath/Conformance_Expressions.svg
@@ -81,48 +85,24 @@ fast/dom/wrapper-classes.html
 fast/dom/Element/onclick-case.html
 fast/dom/HTMLButtonElement/value/getset.html
 fast/dom/Window/window-onFocus.html
-fast/dynamic/containing-block-change.html
 fast/dynamic/layer-hit-test-crash.html
-fast/encoding/char-decoding.html
-fast/encoding/char-decoding.html
+# seems to trigger some bugs/missing features in QTextCodec
 fast/encoding/char-encoding.html
-fast/encoding/char-encoding.html
-fast/encoding/css-charset-default.xhtml
-fast/encoding/default-xhtml-encoding.xhtml
-fast/encoding/frame-default-enc.html
+# QUrl::from/toACE seems to be stricter than what ICU does.
 fast/encoding/idn-security.html
 fast/encoding/invalid-UTF-8.html
-fast/encoding/invalid-UTF-8.html
-fast/encoding/meta-in-xhtml.xhtml
 fast/encoding/percent-escaping.html
-fast/encoding/percent-escaping.html
-fast/encoding/utf-32-big-endian-bom.html
-fast/encoding/utf-32-big-endian-nobom.xml
-fast/encoding/utf-32-little-endian-bom.html
-fast/encoding/utf-32-little-endian-nobom.xml
-fast/encoding/xmacroman-encoding-test.html
 fast/encoding/xmacroman-encoding-test.html
 fast/encoding/GBK/EUC-CN.html
-fast/encoding/GBK/EUC-CN.html
-fast/encoding/GBK/chinese.html
 fast/encoding/GBK/chinese.html
 fast/encoding/GBK/cn-gb.html
-fast/encoding/GBK/cn-gb.html
-fast/encoding/GBK/csgb2312.html
 fast/encoding/GBK/csgb2312.html
 fast/encoding/GBK/csgb231280.html
-fast/encoding/GBK/csgb231280.html
-fast/encoding/GBK/gb2312.html
 fast/encoding/GBK/gb2312.html
 fast/encoding/GBK/gb_2312-80.html
-fast/encoding/GBK/gb_2312-80.html
-fast/encoding/GBK/gbk.html
 fast/encoding/GBK/gbk.html
 fast/encoding/GBK/iso-ir-58.html
-fast/encoding/GBK/iso-ir-58.html
 fast/encoding/GBK/x-euc-cn.html
-fast/encoding/GBK/x-euc-cn.html
-fast/encoding/GBK/x-gbk.html
 fast/encoding/GBK/x-gbk.html
 fast/events/5056619.html
 fast/events/arrow-navigation.html

@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        remove some passing tests from teh Skipped list, and adapt some results.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/backgrounds/solid-color-context-restore-expected.txt:
+        * platform/qt/fast/dom/xmlhttprequest-get-expected.txt:
+        * platform/qt/fast/encoding/frame-default-enc-expected.txt:
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         remove some tests that are now passing.
 
         * platform/qt/Skipped:
