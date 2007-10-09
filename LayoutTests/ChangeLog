@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        don't try to test objc wrappers on platforms that don't support objc. Add a platform dependent result for Qt.
+
+        * fast/dom/wrapper-classes.html:
+        * platform/qt/fast/dom/wrapper-classes-expected.txt: Added.
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         expected result for this test. This differs from the Mac result, as I suspect their XMLHttpRequest implementation to have a bug here for local files. If a request is ok, the returned status code should be 200, not 0.
 
         * platform/qt/fast/dom/xmlhttprequest-get-expected.txt: Copied from LayoutTests/fast/dom/xmlhttprequest-get-expected.txt.
