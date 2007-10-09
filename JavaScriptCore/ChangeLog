@@ -1,3 +1,15 @@
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        fix the invokation of slots with return types. Add a JSLock around the conversion from QVariant to JSValue.
+
+        * bindings/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::invokeMethod):
+        * bindings/qt/qt_runtime.cpp:
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+
 2007-10-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

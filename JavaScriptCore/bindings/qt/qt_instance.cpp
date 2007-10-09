@@ -104,7 +104,7 @@ JSValue* QtInstance::invokeMethod(ExecState* exec, const MethodList& methodList,
     QVariant vargs[11];
     void *qargs[11];
 
-    int returnType = QMetaType::type(metaMethod.typeName());
+    QVariant::Type returnType = (QVariant::Type)QMetaType::type(metaMethod.typeName());
     if (!returnType && qstrlen(metaMethod.typeName())) {
         qCritical("QtInstance::invokeMethod: Return type %s of method %s is not registered with QMetaType!", metaMethod.typeName(), metaMethod.signature());
         return jsUndefined();
