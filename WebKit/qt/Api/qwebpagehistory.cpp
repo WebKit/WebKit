@@ -84,14 +84,6 @@ QWebPageHistory::QWebPageHistory(QWebPageHistoryPrivate *priv)
     d = priv;
 }
 
-QWebHistoryItem QWebPageHistory::itemAtIndex(int i) const
-{
-    WebCore::HistoryItem *item = d->lst->itemAtIndex(i);
-
-    QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(item);
-    return QWebHistoryItem(priv);
-}
-
 QWebPageHistory::QWebPageHistory(const QWebPageHistory &other)
 {
     d = other.d;
@@ -105,6 +97,16 @@ QWebPageHistory &QWebPageHistory::operator=(const QWebPageHistory &other)
 
 QWebPageHistory::~QWebPageHistory()
 {
+}
+
+void QWebPageHistory::clear()
+{
+    RefPtr<WebCore::HistoryItem> current = d->lst->currentItem();
+    int capacity = d->lst->capacity();
+    d->lst->setCapacity(0);    
+    d->lst->setCapacity(capacity);
+    d->lst->addItem(current.get());
+    d->lst->goToItem(current.get());
 }
 
 QList<QWebHistoryItem> QWebPageHistory::items() const
@@ -188,6 +190,14 @@ QWebHistoryItem QWebPageHistory::forwardItem() const
 {
     WebCore::HistoryItem *i = d->lst->forwardItem();
     QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(i);
+    return QWebHistoryItem(priv);
+}
+
+QWebHistoryItem QWebPageHistory::itemAtIndex(int i) const
+{
+    WebCore::HistoryItem *item = d->lst->itemAtIndex(i);
+
+    QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(item);
     return QWebHistoryItem(priv);
 }
 

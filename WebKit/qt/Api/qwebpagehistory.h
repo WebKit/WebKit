@@ -124,6 +124,8 @@ public:
     QWebPageHistory(const QWebPageHistory &other);
     QWebPageHistory &operator=(const QWebPageHistory &other);
     ~QWebPageHistory();
+
+    void clear();
     
     QList<QWebHistoryItem> items() const;
     QList<QWebHistoryItem> backItems(int maxItems) const;

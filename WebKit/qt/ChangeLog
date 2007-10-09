@@ -1,3 +1,14 @@
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        add a clear() method to QWebPageHistory.
+
+        * Api/qwebpagehistory.cpp:
+        (QWebPageHistory::clear):
+        (QWebPageHistory::itemAtIndex):
+        * Api/qwebpagehistory.h:
+
 2007-10-05  Lars Knoll  <lars@trolltech.com>
 
         add proper error messages to the FrameLoaderClient.
