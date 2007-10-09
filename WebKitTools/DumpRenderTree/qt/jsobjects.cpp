@@ -111,6 +111,12 @@ int LayoutTestController::windowCount()
     return m_drt->windowCount();
 }
 
+void LayoutTestController::clearBackForwardList()
+{
+    m_drt->webPage()->history().clear();
+}
+
+
 void LayoutTestController::dumpEditingCallbacks()
 {
     //qDebug() << ">>>dumpEditingCallbacks";

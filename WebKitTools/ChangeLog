@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        add a dummy implementation for layoutTestController.display() and implement layoutTestController.clearBackForwardList().
+
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::clearBackForwardList):
+        * DumpRenderTree/qt/jsobjects.h:
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         make --git-reviewer work again.
 
         * Scripts/prepare-ChangeLog:
