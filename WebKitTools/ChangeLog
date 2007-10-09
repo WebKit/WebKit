@@ -1,3 +1,11 @@
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        make --git-reviewer work again.
+
+        * Scripts/prepare-ChangeLog:
+
 2007-10-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Eric.

@@ -1230,6 +1230,9 @@ sub reviewerAndDescriptionForGitCommit($)
             }
         }
     }
+    if (!$reviewer) {
+      $reviewer = $gitReviewer;
+    }
 
     return ($reviewer, $description);
 }
