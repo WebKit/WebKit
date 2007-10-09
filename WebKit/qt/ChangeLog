@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        Don't return a 404 status code for empty data: urls. Fixes fast/dom/HTMLHeadElement/head-check.html
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::cancel):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (QWebNetworkInterfacePrivate::parseDataUrl):
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Don't set up connections inside QWebPage::createFrame, as users might be reimplementing that method. Make sure we get only one titleChanged() signal per title change, and implement the support for testing this in DRT.
 
         * Api/qwebpage.cpp:

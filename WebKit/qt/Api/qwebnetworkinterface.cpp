@@ -397,7 +397,7 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
         qWarning("REQUEST: [%s]\n", qPrintable(job->d->request.httpHeader.toString()));
     }
 
-    //DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.httpHeader.toString();
+    DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.httpHeader.toString();
 
     interface->addJob(job);
 
@@ -409,7 +409,7 @@ void QWebNetworkManager::cancel(ResourceHandle *handle)
     QWebNetworkJob *job = handle->getInternal()->m_job;
     if (!job)
         return;
-    //DEBUG() << "QWebNetworkManager::cancel:" <<  job->d->request.httpHeader.toString();
+    DEBUG() << "QWebNetworkManager::cancel:" <<  job->d->request.httpHeader.toString();
     job->d->resourceHandle = 0;
     job->d->connector = 0;
     job->d->interface->cancelJob(job);
@@ -427,8 +427,8 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
         return;
     }
 
-    //DEBUG() << "ResourceHandleManager::receivedResponse:";
-    //DEBUG() << job->d->response.toString();
+    DEBUG() << "ResourceHandleManager::receivedResponse:";
+    DEBUG() << job->d->response.toString();
 
     QStringList cookies = job->d->response.allValues("Set-Cookie");
     KURL url(job->url().toString());
@@ -513,7 +513,7 @@ void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
     if (job->d->redirected)
         return; // don't emit the "Document has moved here" type of HTML
 
-    //DEBUG() << "receivedData" << job->d->request.url.path();
+    DEBUG() << "receivedData" << job->d->request.url.path();
     if (client)
         client->didReceiveData(job->d->resourceHandle, data.constData(), data.length(), data.length() /*FixMe*/);
     if (job->d->connector)
@@ -645,7 +645,7 @@ void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
 
     if (header.isEmpty())
         header = "text/plain;charset=US-ASCII";
-    int statusCode = data.isEmpty() ? 404 : 200;
+    int statusCode = 200;
     QHttpResponseHeader response;
     response.setContentType(header);
     response.setContentLength(data.size());
