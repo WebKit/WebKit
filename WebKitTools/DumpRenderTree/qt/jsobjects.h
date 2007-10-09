@@ -49,6 +49,7 @@ public:
     bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
     bool shouldWaitUntilDone() const { return m_waitForDone; }
     bool canOpenWindows() const { return m_canOpenWindows; }
+    bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
 
     void reset();
 
@@ -72,6 +73,7 @@ public slots:
     int windowCount();
     void display() {}
     void clearBackForwardList();
+    void dumpTitleChanges() { m_dumpTitleChanges = true; }
 
 private:
     bool m_isLoading;
@@ -79,6 +81,7 @@ private:
     bool m_dumpChildrenAsText;
     bool m_canOpenWindows;
     bool m_waitForDone;
+    bool m_dumpTitleChanges;
     int m_timeoutTimer;
     QWebFrame *m_topLoadingFrame;
     WebCore::DumpRenderTree *m_drt;

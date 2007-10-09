@@ -91,10 +91,6 @@ QWebFrame *WebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameData
         return f;
     }
     WebFrame *f = new WebFrame(this, frameData);
-    connect(f, SIGNAL(titleChanged(const QString&)),
-            SIGNAL(titleChanged(const QString&)));
-    connect(f, SIGNAL(hoveringOverLink(const QString&, const QString&)),
-            SIGNAL(hoveringOverLink(const QString&, const QString&)));
 
     connect(f, SIGNAL(cleared()), m_drt, SLOT(initJSObjects()));
     connect(f, SIGNAL(provisionalLoad()),
@@ -131,6 +127,8 @@ DumpRenderTree::DumpRenderTree()
     m_page->resize(maxViewWidth, maxViewHeight);
     m_page->mainFrame()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_page->mainFrame()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    connect(m_page, SIGNAL(titleChanged(const QString&)),
+            SLOT(titleChanged(const QString&)));
 
     m_eventSender = new EventSender(m_page);
 
@@ -252,6 +250,12 @@ void DumpRenderTree::dump()
         // Exit now in single file mode...
         quit();
     }
+}
+
+void DumpRenderTree::titleChanged(const QString &s)
+{
+    if (m_controller->shouldDumpTitleChanges())
+        printf("TITLE CHANGED: %s\n", s.toUtf8().data());
 }
 
 

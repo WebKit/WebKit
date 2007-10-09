@@ -2,6 +2,21 @@
 
         Reviewed by Simon.
 
+        Don't set up connections inside QWebPage::createFrame, as users might be reimplementing that method. Make sure we get only one titleChanged() signal per title change, and implement the support for testing this in DRT.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::createFrame):
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::titleChanged):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::reset):
+        * DumpRenderTree/qt/jsobjects.h:
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         add a dummy implementation for layoutTestController.display() and implement layoutTestController.clearBackForwardList().
 
         * DumpRenderTree/qt/DumpRenderTree.h:

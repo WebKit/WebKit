@@ -107,6 +107,11 @@ void QWebPagePrivate::createMainFrame()
         frameData.marginWidth = 0;
         frameData.marginHeight = 0;
         mainFrame = q->createFrame(0, &frameData);
+        QObject::connect(mainFrame, SIGNAL(titleChanged(const QString&)),
+                q, SIGNAL(titleChanged(const QString&)));
+        QObject::connect(mainFrame, SIGNAL(hoveringOverLink(const QString&, const QString&)),
+                q, SIGNAL(hoveringOverLink(const QString&, const QString&)));
+        
         mainFrame->d->frameView->setFrameGeometry(q->geometry());
     }
 }
@@ -140,10 +145,6 @@ QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameDat
     if (parentFrame)
         return new QWebFrame(parentFrame, frameData);
     QWebFrame *f = new QWebFrame(this, frameData);
-    connect(f, SIGNAL(titleChanged(const QString&)),
-            SIGNAL(titleChanged(const QString&)));
-    connect(f, SIGNAL(hoveringOverLink(const QString&, const QString&)),
-            SIGNAL(hoveringOverLink(const QString&, const QString&)));
     return f;
 }
 

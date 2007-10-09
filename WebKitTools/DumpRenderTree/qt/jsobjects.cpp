@@ -67,6 +67,7 @@ void LayoutTestController::reset()
     m_dumpChildrenAsText = false;
     m_canOpenWindows = false;
     m_waitForDone = false;
+    m_dumpTitleChanges = false;
     if (m_timeoutTimer) {
         killTimer(m_timeoutTimer);
         m_timeoutTimer = 0;

@@ -151,7 +151,6 @@ namespace WebCore {
         virtual void addHistoryItemForFragmentScroll();
         virtual void didFinishLoad();
         virtual void prepareForDataSourceReplacement();
-        virtual void setTitle(const String& title);
         virtual void setTitle(const String& title, const KURL&);
 
         virtual String userAgent(const WebCore::KURL&);

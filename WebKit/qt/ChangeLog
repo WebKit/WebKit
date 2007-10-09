@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        Don't set up connections inside QWebPage::createFrame, as users might be reimplementing that method. Make sure we get only one titleChanged() signal per title change, and implement the support for testing this in DRT.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createMainFrame):
+        (QWebPage::createFrame):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveTitle):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         add a clear() method to QWebPageHistory.
 
         * Api/qwebpagehistory.cpp:

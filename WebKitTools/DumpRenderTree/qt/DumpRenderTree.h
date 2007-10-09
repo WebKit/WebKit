@@ -70,6 +70,7 @@ public Q_SLOTS:
     void initJSObjects();
     void readStdin(int);
     void dump();
+    void titleChanged(const QString &s);
 
 Q_SIGNALS:
     void quit();
