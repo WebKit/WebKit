@@ -141,6 +141,20 @@ void LayoutTestController::timerEvent(QTimerEvent *)
     notifyDone();
 }
 
+QString LayoutTestController::encodeHostName(const QString &host)
+{
+    QString encoded = QString::fromLatin1(QUrl::toAce(host + QLatin1String(".no")));
+    encoded.truncate(encoded.length() - 3); // strip .no
+    return encoded;
+}
+
+QString LayoutTestController::decodeHostName(const QString &host)
+{
+    QString decoded = QUrl::fromAce(host.toLatin1() + QByteArray(".no"));
+    decoded.truncate(decoded.length() - 3);
+    return decoded;
+}
+
 
 EventSender::EventSender(QWebPage *parent)
     : QObject(parent)

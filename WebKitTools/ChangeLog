@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        implement layoutTestController.encode/decodeHostName. We still don't pass fast/encoding/idn-security.html, since our QUrl::from/toACE is somewhat stricter than ICU.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::encodeHostName):
+        (LayoutTestController::decodeHostName):
+        * DumpRenderTree/qt/jsobjects.h:
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Don't set up connections inside QWebPage::createFrame, as users might be reimplementing that method. Make sure we get only one titleChanged() signal per title change, and implement the support for testing this in DRT.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
