@@ -1,3 +1,11 @@
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        even though this is a text only test the result is platform dependent.
+
+        * platform/qt/fast/css/computed-style-expected.txt: Copied from LayoutTests/fast/css/computed-style-expected.txt.
+
 2007-10-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Steve Falkenburg.
