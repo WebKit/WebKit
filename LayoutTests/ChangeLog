@@ -2,6 +2,14 @@
 
         Reviewed by Simon.
 
+        remove some tests that are now passing.
+
+        * platform/qt/Skipped:
+
+2007-10-09  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         don't try to test objc wrappers on platforms that don't support objc. Add a platform dependent result for Qt.
 
         * fast/dom/wrapper-classes.html:
