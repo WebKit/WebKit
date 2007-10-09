@@ -60,11 +60,9 @@ dom/svg/level3/xpath/XPathResult_snapshotLength_UNORDERED_NODE_SNAPSHOT_TYPE.svg
 dom/svg/level3/xpath/XPathResult_stringValue.svg
 fast/block/float/float-avoidance.html
 fast/box-sizing/percentage-height.html
-fast/clip/014.html
 fast/css/acid2-pixel.html
 fast/css/acid2.html
 fast/css/case-transform.html
-fast/css/computed-style.html
 fast/css/continuationCrash.html
 fast/css/ignore-text-zoom.html
 fast/css/ignore-text-zoom.html
@@ -77,7 +75,6 @@ fast/dom/gc-8.html
 fast/dom/gc-10.html
 fast/dom/global-constructors.html
 fast/dom/isindex-002.html
-fast/dom/location-hash.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/replaceChild.html
 fast/dom/title-text-property-2.html
