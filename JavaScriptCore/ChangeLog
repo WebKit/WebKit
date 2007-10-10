@@ -1,3 +1,12 @@
+2007-10-08  George Staikos  <staikos@kde.org>
+
+        Reviewed by Adam Roben.
+
+        Fix Qt build on Win32.
+
+        * kjs/testkjs.cpp:
+        (main):
+
 2007-10-10  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

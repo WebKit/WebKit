@@ -230,6 +230,9 @@ static String processFileDateString(const FTPTime& fileTime)
     // If it was today or yesterday, lets just do that - but we have to compare to the current time
     struct tm now;
     time_t now_t = time(NULL);
+#if PLATFORM(QT) && defined(Q_WS_WIN32)
+#define localtime_r(x, y) localtime_s(y, x)
+#endif
     localtime_r(&now_t, &now);
     
     // localtime does "year = current year - 1900", compensate for that for readability and comparison purposes

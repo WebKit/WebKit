@@ -1,3 +1,14 @@
+2007-10-10  George Staikos  <staikos@kde.org>
+
+        Reviewed by Adam Roben.
+
+        Fix Qt build on Win32 with VS2005.
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::processFileDateString):
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::parseOneFTPLine):
+
 2007-10-10  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff Garen.
