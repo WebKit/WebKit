@@ -821,7 +821,7 @@ bool FrameLoaderClientQt::willUseArchive(WebCore::ResourceLoader*, const WebCore
     return false;
 }
 
-Frame* FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                         const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
     QWebFrameData frameData;
@@ -852,7 +852,7 @@ Frame* FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTM
     if (!childFrame->tree()->parent())
         return 0;
 
-    return childFrame.get();
+    return childFrame.release();
 }
 
 ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& _mimeType)

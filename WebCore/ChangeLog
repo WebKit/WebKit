@@ -1,3 +1,17 @@
+2007-10-10  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fixed <rdar://5464402> Crash when running fast/frames/onload-remove-iframe-crash.html in DRT
+        createFrame() now returns a RefPtr instead of a raw Frame pointer. 
+        Making this change improves the way we handle frames on Windows webkit. 
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSubframe):
+        * loader/FrameLoaderClient.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::createFrame):
+
 2007-10-10  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

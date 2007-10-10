@@ -176,19 +176,17 @@ Widget* FrameLoaderClient::createPlugin(const IntSize&, Element*, const KURL&, c
     return 0;
 }
 
-Frame* FrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                         const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
     Frame* coreFrame = core(webFrame());
 
     ASSERT(core(getPageFromFrame(webFrame())) == coreFrame->page());
     WebKitFrame* gtkFrame = WEBKIT_FRAME(webkit_frame_init_with_page(getPageFromFrame(webFrame()), ownerElement));
-    Frame* childFrame = core(gtkFrame);
+    RefPtr<Frame> childFrame(adoptRef(core(gtkFrame)));
 
     coreFrame->tree()->appendChild(childFrame);
 
-    // Frames are created with a refcount of 1. Release this ref, since we've assigned it to d->frame.
-    childFrame->deref();
     childFrame->tree()->setName(name);
     childFrame->init();
     childFrame->loader()->load(url, referrer, FrameLoadTypeRedirectWithLockedHistory, String(), 0, 0);
@@ -210,7 +208,7 @@ Frame* FrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLF
             childFrame->view()->setMarginHeight(marginHeight);
     }
 
-    return childFrame;
+    return childFrame.release();
 }
 
 void FrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)

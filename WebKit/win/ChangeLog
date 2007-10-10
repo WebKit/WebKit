@@ -1,3 +1,24 @@
+2007-10-10  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fixed <rdar://5464402> Crash when running fast/frames/onload-remove-iframe-crash.html in DRT
+
+        * WebFrame.cpp:
+        (WebFrame::createFrame):
+        The crash was caused by the early destruction of the subframe.  To resolve this issue, 
+        the manual deref of the child frame that occurs in between being appended to the 
+        frametree and being used in loadURLIntoChild wasn't exactly incorrect, but just needed 
+        to be moved until after loadURLIntoChild. This hasn't been a problem for other uses of 
+        child frames because this test case involves removing a child frame immediately after 
+        loading it, all in an onload handler.  Even better than just moving the deref would be 
+        to change the signature of createFrame to use a RefPtr<Frame> so that a manual deref isn't 
+        necessary. This is what was done in this patch. 
+        * WebFrame.h:
+        createFrame() now returns a RefPtr instead of a raw Frame pointer. 
+        Making this change improves the way we handle frames on Windows WebKit. 
+
+
 2007-10-05  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5436617>

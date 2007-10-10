@@ -449,7 +449,7 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
     }
 
     bool hideReferrer = shouldHideReferrer(url, referrer);
-    Frame* frame = m_client->createFrame(url, name, ownerElement, hideReferrer ? String() : referrer,
+    RefPtr<Frame> frame = m_client->createFrame(url, name, ownerElement, hideReferrer ? String() : referrer,
                                          allowsScrolling, marginWidth, marginHeight);
 
     if (!frame)  {
@@ -475,7 +475,7 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
         frame->loader()->checkCompleted();
     }
 
-    return frame;
+    return frame.get();
 }
 
 void FrameLoader::submitFormAgain()

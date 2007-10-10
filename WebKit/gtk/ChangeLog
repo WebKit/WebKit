@@ -1,3 +1,13 @@
+2007-10-10  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        changes to keep the build from breaking
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2007-10-03  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam.

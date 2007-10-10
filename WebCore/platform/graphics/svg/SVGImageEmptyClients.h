@@ -262,7 +262,7 @@ public:
     virtual void saveDocumentViewToCachedPage(CachedPage*) { }
     virtual bool canCachePage() const { return false; }
 
-    virtual Frame* createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+    virtual PassRefPtr<Frame> createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) { return 0; }
     virtual Widget* createPlugin(const IntSize&,Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool) { return 0; }
     virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const KURL&, const Vector<String>&, const Vector<String>&) { return 0; }

@@ -1,3 +1,13 @@
+2007-10-10  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        changes to keep the build from breaking
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-10-09  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

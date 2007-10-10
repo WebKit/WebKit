@@ -201,7 +201,7 @@ namespace WebCore {
         virtual void postProgressEstimateChangedNotification();
         virtual void postProgressFinishedNotification();
 
-        virtual Frame* createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+        virtual PassRefPtr<Frame> createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                    const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) ;
         virtual Widget* createPlugin(const IntSize&, Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);
         virtual void redirectDataToPlugin(Widget* pluginWidget);

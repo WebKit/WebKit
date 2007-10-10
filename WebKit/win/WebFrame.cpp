@@ -1263,7 +1263,7 @@ void WebFrame::frameLoaderDestroyed()
     this->Release();
 }
 
-Frame* WebFrame::createFrame(const KURL& URL, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)
+PassRefPtr<Frame> WebFrame::createFrame(const KURL& URL, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)
 {
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
@@ -1273,11 +1273,10 @@ Frame* WebFrame::createFrame(const KURL& URL, const String& name, HTMLFrameOwner
 
     webFrame->initWithWebFrameView(0, d->webView, coreFrame->page(), ownerElement);
 
-    Frame* childFrame = core(webFrame.get());
+    RefPtr<Frame> childFrame(adoptRef(core(webFrame.get()))); // We have to adopt, because Frames start out with a refcount of 1.
     ASSERT(childFrame);
 
     coreFrame->tree()->appendChild(childFrame);
-    childFrame->deref(); // Frames are created with a refcount of 1. Release this ref, since we've assigned it to d->frame.
     childFrame->tree()->setName(name);
     childFrame->init();
 
@@ -1287,7 +1286,7 @@ Frame* WebFrame::createFrame(const KURL& URL, const String& name, HTMLFrameOwner
     if (!childFrame->tree()->parent())
         return 0;
 
-    return childFrame;
+    return childFrame.release();
 }
 
 void WebFrame::loadURLIntoChild(const KURL& originalURL, const String& referrer, WebFrame* childFrame)
@@ -2231,10 +2230,10 @@ void WebFrame::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, 
     }
 }
 
-Frame* WebFrame::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+PassRefPtr<Frame> WebFrame::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                             const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
 {
-    Frame* result = createFrame(url, name, ownerElement, referrer);
+    RefPtr<Frame> result = createFrame(url, name, ownerElement, referrer);
     if (!result)
         return 0;
 
@@ -2251,7 +2250,7 @@ Frame* WebFrame::createFrame(const KURL& url, const String& name, HTMLFrameOwner
             result->view()->setMarginHeight(marginHeight);
     }
 
-    return result;
+    return result.release();
 }
 
 Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)

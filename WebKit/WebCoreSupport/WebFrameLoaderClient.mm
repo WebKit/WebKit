@@ -1140,7 +1140,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return [[[m_webFrame.get() _dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]];
 }
 
-Frame* WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                          const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
     WebFrameBridge* bridge = m_webFrame->_private->bridge;
