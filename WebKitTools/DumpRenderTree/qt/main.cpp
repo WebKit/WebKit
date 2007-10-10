@@ -42,6 +42,7 @@
 #include <fontconfig/fontconfig.h>
 #endif
 
+#include <limits.h>
 #include <signal.h>
 
 Q_IMPORT_PLUGIN(testplugin)

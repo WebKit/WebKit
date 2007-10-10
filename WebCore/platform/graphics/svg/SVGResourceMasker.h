@@ -31,6 +31,8 @@
 #include "GraphicsContext.h"
 #include "SVGResource.h"
 
+#include <memory>
+
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {

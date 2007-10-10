@@ -1,3 +1,18 @@
+2007-10-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Fix compilation using gcc 4.3. Header files have been reorganized and as a result some extra
+        includes are needed for INT_MAX, std::auto_ptr and the like.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * bridge/AXObjectCache.h:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * platform/Base64.cpp:
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+        * platform/graphics/svg/SVGResourceMasker.h:
+
 2007-10-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Steve Falkenburg.

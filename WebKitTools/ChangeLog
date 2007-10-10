@@ -1,3 +1,12 @@
+2007-10-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Fix compilation using gcc 4.3. Header files have been reorganized and as a result some extra
+        includes are needed for INT_MAX, std::auto_ptr and the like.
+
+        * DumpRenderTree/qt/main.cpp:
+
 2007-10-09  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
