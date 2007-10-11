@@ -411,7 +411,7 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
     position = upstreamPos.downstream();
 
     VisiblePosition visiblePos(position);
-    VisiblePosition previousVisiblePos(visiblePos.next());
+    VisiblePosition previousVisiblePos(visiblePos.previous());
     Position previous(previousVisiblePos.deepEquivalent());
     
     if (isCollapsibleWhitespace(previousVisiblePos.characterAfter()) && previous.node()->isTextNode() && !previous.node()->hasTagName(brTag))

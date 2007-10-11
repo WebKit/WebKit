@@ -1,3 +1,12 @@
+2007-10-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/5521237> Pasting a word copied from TextEdit after a regular, breaking space, adds a leading newline
+
+        * editing/pasteboard/5521237-expected.txt: Added.
+        * editing/pasteboard/5521237.html: Added.
+
 2007-10-11  Alice Liu  <alice.liu@apple.com>
 
         fast/forms/focus-selection-input.html also fails due to unsupported accesskey.  

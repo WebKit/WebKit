@@ -1,3 +1,13 @@
+2007-10-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/5521237> Pasting a word copied from TextEdit after a regular, breaking space, adds a leading newline
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::prepareWhitespaceAtPositionForSplit):
+        Fixed a typo.
+
 2007-10-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.
