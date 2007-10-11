@@ -1,3 +1,26 @@
+2007-10-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://5530519> REGRESSION (303-310A18): Crash when closing tab with
+        pdf file (Reader 7 only)
+
+        Reader 7 subclasses its parent window, so posting a WM_DESTROY to this
+        window puts us in plugin code. When the plugin forwards the message
+        back to the original window proc, and we free the plugin library from
+        there, we will jump back to code we just freed when we return, so delay 
+        calling FreeLibrary at least until the next message loop
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackageWin::freeLibrarySoon): Start a timer to free the
+        plugin library
+        (WebCore::PluginPackageWin::freeLibraryTimerFired): Free the library
+        (WebCore::PluginPackageWin::PluginPackageWin): Initialize the timer that
+        will free this library
+        (WebCore::PluginPackageWin::unloadWithoutShutdown): Call
+        freeLibrarySoon()
+        * plugins/win/PluginPackageWin.h: Added m_freeLibraryTimer
+
 2007-10-11  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5534421> 

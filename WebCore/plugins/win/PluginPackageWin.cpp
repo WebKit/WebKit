@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PluginPackageWin.h"
 
+#include "Timer.h"
 #include "DeprecatedString.h"
 #include "npruntime_impl.h"
 #include "PluginDebug.h"
@@ -80,17 +81,30 @@ static Vector<String> splitString(const String& str, char delimiter, int padTo)
     return result;
 }
 
+void PluginPackageWin::freeLibrarySoon()
+{
+    m_freeLibraryTimer.startOneShot(0);
+}
+
+void PluginPackageWin::freeLibraryTimerFired(Timer<PluginPackageWin>* /*timer*/)
+{
+    ASSERT(m_module);
+
+    FreeLibrary(m_module);
+    m_module = 0;
+}
+
 PluginPackageWin::PluginPackageWin(const String& path, const FILETIME& lastModified)
     : m_path(path)
     , m_module(0)
     , m_lastModified(lastModified)
     , m_isLoaded(false)
     , m_loadCount(0)
+    , m_freeLibraryTimer(this, &PluginPackageWin::freeLibraryTimerFired)
 {
     int pos = m_path.deprecatedString().findRev('\\');
 
     m_fileName = m_path.right(m_path.length() - pos - 1);
-
 }
 
 bool PluginPackageWin::fetchInfo()
@@ -271,7 +285,13 @@ void PluginPackageWin::unloadWithoutShutdown()
     ASSERT(m_loadCount == 0);
     ASSERT(m_module);
 
-    FreeLibrary(m_module);
+    // <rdar://5530519>: Crash when closing tab with pdf file (Reader 7 only)
+    // If the plugin has subclassed its parent window, as with Reader 7, we may have
+    // gotten here by way of the plugin's internal window proc forwarding a message to our
+    // original window proc. If we free the plugin library from here, we will jump back
+    // to code we just freed when we return, so delay calling FreeLibrary at least until
+    // the next message loop
+    freeLibrarySoon();
 
     m_isLoaded = false;
 }
