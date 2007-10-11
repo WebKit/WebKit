@@ -1,3 +1,12 @@
+2007-10-11  Adam Roben  <aroben@apple.com>
+
+        Roll out r26186
+
+        Apparently some of these tests still fail on the bot even though they
+        don't fail for me locally.
+
+        * platform/win/Skipped:
+
 2007-10-11  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon, testcase written by Erik.
