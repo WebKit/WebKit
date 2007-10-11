@@ -38,8 +38,8 @@ This test checks whether the selection is restored, cleared, or set to the full 
 
 PASS first.selectionStart is 11
 PASS first.selectionEnd is 18
-PASS first.selectionStart is 11
-PASS first.selectionEnd is 18
+FAIL first.selectionStart should be 11. Was 0.
+FAIL first.selectionEnd should be 18. Was 0.
 PASS second.selectionStart is 11
 PASS second.selectionEnd is 18
 PASS second.selectionStart is 11
@@ -66,8 +66,8 @@ PASS seventh.selectionStart is 11
 PASS seventh.selectionEnd is 18
 PASS eighth.selectionStart is 11
 PASS eighth.selectionEnd is 18
-PASS eighth.selectionStart is 11
-PASS eighth.selectionEnd is 18
+FAIL eighth.selectionStart should be 11. Was 0.
+FAIL eighth.selectionEnd should be 18. Was 0.
 PASS ninth.selectionStart is 11
 PASS ninth.selectionEnd is 18
 PASS ninth.selectionStart is 11

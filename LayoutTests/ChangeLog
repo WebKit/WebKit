@@ -1,3 +1,24 @@
+2007-10-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin McCullough and Sam Weinig.
+
+        - fix mistake in test function that treated all non-prototype objects as equal
+
+        That means that all numbers are treated as equal!
+        And all boolean values!
+
+        Kevin noticed that his new test was succeeding even though the bug was still
+        there. Turns out the code to compare arrays that I added with my fix for
+        bug 14931 was misfiring all the time.
+
+        * fast/js/resources/js-test-pre.js: Use Object.prototype.toString.call
+        to test if something is an array. Thanks, Sam.
+
+        * fast/dom/Window/new-window-opener-expected.txt: Update this to reflect the
+        fact that the test is actually failing!
+        * fast/forms/focus-selection-textarea-expected.txt: Ditto.
+        * fast/js/kde/encode_decode_uri-expected.txt: Ditto.
+
 2007-10-10  Adam Roben  <aroben@apple.com>
 
         Remove now-passing tests
@@ -10,7 +31,7 @@
 
         Reviewed by Simon.
 
-        remove some passing tests from teh Skipped list, and adapt some results.
+        remove some passing tests from the Skipped list, and adapt some results.
 
         * platform/qt/Skipped:
         * platform/qt/fast/backgrounds/solid-color-context-restore-expected.txt:

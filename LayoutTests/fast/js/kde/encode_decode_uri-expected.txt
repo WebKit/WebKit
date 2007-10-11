@@ -3,8 +3,8 @@ KDE JS Test
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS checkWithFunctions(encodeURI,decodeURI) is true
-PASS checkWithFunctions(encodeURIComponent,decodeURIComponent) is true
+FAIL checkWithFunctions(encodeURI,decodeURI) should be true. Was false.
+FAIL checkWithFunctions(encodeURIComponent,decodeURIComponent) should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE
