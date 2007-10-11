@@ -1,3 +1,18 @@
+2007-10-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5483567> REGRESSION (Tiger only): Pasting words copied from TextEdit in Mail adds extra newline
+        
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds): Added.
+        We would like to insert the fragment as-is if possible, but AppKit on Tiger
+        creates fragments from RTF data that have carriage returns and spaces at the
+        beginning and end, and those need to be removed since they'll interfere with 
+        paragraph merging.
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+
 2007-10-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Maciej.

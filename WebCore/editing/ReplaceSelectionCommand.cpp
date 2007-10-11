@@ -391,6 +391,28 @@ void ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance()
     }
 }
 
+void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (!m_lastLeafInserted->renderer() && 
+        m_lastLeafInserted->isTextNode() && 
+        !enclosingNodeWithTag(m_lastLeafInserted.get(), selectTag) && 
+        !enclosingNodeWithTag(m_lastLeafInserted.get(), scriptTag)) {
+        RefPtr<Node> previous = m_firstNodeInserted == m_lastLeafInserted ? 0 : m_lastLeafInserted->traversePreviousNode();
+        removeNode(m_lastLeafInserted.get());
+        m_lastLeafInserted = previous;
+    }
+    
+    // We don't have to make sure that m_firstNodeInserted isn't inside a select or script element, because
+    // it is a top level node in the fragment and the user can't insert into those elements.
+    if (!m_firstNodeInserted->renderer() && 
+        m_firstNodeInserted->isTextNode()) {
+        RefPtr<Node> next = m_firstNodeInserted == m_lastLeafInserted ? 0 : m_firstNodeInserted->traverseNextSibling();
+        removeNode(m_firstNodeInserted.get());
+        m_firstNodeInserted = next;
+    }
+}
+
 void ReplaceSelectionCommand::removeRedundantStyles(Node* mailBlockquoteEnclosingSelectionStart)
 {
     // There's usually a top level style span that holds the document's default style, push it down.
@@ -633,6 +655,8 @@ void ReplaceSelectionCommand::doApply()
         refNode = node;
         node = next;
     }
+    
+    removeUnrenderedTextNodesAtEnds();
     
     negateStyleRulesThatAffectAppearance();
     

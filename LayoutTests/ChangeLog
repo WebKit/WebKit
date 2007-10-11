@@ -1,5 +1,19 @@
 2007-10-11  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by Harrison.
+        
+        <rdar://problem/5483567> REGRESSION (Tiger only): Pasting words copied from TextEdit in Mail adds extra newline
+
+        Re-enabling this test:
+        * editing/pasteboard/5483567.html: Added.
+        * editing/pasteboard/5483567.html-disabled: Removed.
+        Also demonstrates fix:
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.checksum:
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.png:
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.txt:
+
+2007-10-11  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Maciej.
         
         <rdar://problem/5521237> Pasting a word copied from TextEdit after a regular, breaking space, adds a leading newline
