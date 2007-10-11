@@ -1,5 +1,13 @@
 2007-10-11  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Darin.
+
+        - Updated rational for the leaks list to be more clear.
+
+        * Scripts/run-webkit-tests:
+
+2007-10-11  Kevin McCullough  <kmccullough@apple.com>
+
         Rubber Stamp by Sam.
 
         Adding a known Leopard leak that is already fixed but the bot is on an old version of Leopard.

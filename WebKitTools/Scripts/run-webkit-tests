@@ -975,10 +975,15 @@ sub countAndPrintLeaks($$$)
     my @typesToExclude = (
     );
 
+    # callStacksToExclude is a list of strings that if are ever seen in a leaks call stack are ignored by this
+    # script and not reported as leaks.  This allows us ignore known leaks and only be alerted when new leaks occur.
+    # Some leaks are in the old versions of the system frameworks that are being used by the leaks bots.  Even though
+    # the leak has been fixed, they will be listed here until the bot has been updated with the newer frameworks.
     my @callStacksToExclude = (
         "Flash_EnforceLocalSecurity" # leaks in Flash plug-in code, Radar 4449747
     );
 
+    # Leak list for the version of Tiger used on the build bot.
     if (isTiger()) {
         push @callStacksToExclude, (
             "CFRunLoopRunSpecific \\| malloc_zone_malloc", "CFRunLoopRunSpecific \\| CFAllocatorAllocate ", # leak in CFRunLoopRunSpecific, Radar 4670839
@@ -1000,6 +1005,8 @@ sub countAndPrintLeaks($$$)
             "DRHT" # ditto (endian little hate i)
         );
     }
+
+     # Leak list for the version of Leopard used on the build bot.
      if (isLeopard()) {
         push @callStacksToExclude, (
             "CFHTTPMessageAppendBytes", #rdar://problem/5435912 47 leaks possibly under CFHTTPMessageAppendBytes
