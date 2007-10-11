@@ -9,7 +9,6 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 GCC_ENABLE_OBJC_GC = supported;
 GCC_ENABLE_SYMBOL_SEPARATION = NO;
 GCC_FAST_OBJC_DISPATCH = YES;
-GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 GCC_MODEL_TUNING = G5;
 GCC_OPTIMIZATION_LEVEL = 2;
 GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -23,3 +22,16 @@ PREBINDING = NO;
 VALID_ARCHS = i386 ppc x86_64 ppc64;
 // FIXME: <rdar://problem/5070292> WebKit should build with -Wshorten-64-to-32
 WARNING_CFLAGS = -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wno-long-double -Wundef;
+
+
+// <rdar://problem/5488678>: Production builds on 10.4 PowerPC need to have debugging symbols disabled to prevent a huge STABS section being generated.
+//                           Xcode on 10.4 does not define MAC_OS_X_VERSION_MAJOR, so the default Mac OS X version is treated as 10.4.
+GCC_GENERATE_DEBUGGING_SYMBOLS = $(GCC_GENERATE_DEBUGGING_SYMBOLS_$(CURRENT_ARCH));
+GCC_GENERATE_DEBUGGING_SYMBOLS_i386 = YES;
+GCC_GENERATE_DEBUGGING_SYMBOLS_ppc = $(GCC_GENERATE_DEBUGGING_SYMBOLS_$(CURRENT_ARCH)_$(CONFIGURATION));
+GCC_GENERATE_DEBUGGING_SYMBOLS_ppc_Debug = YES;
+GCC_GENERATE_DEBUGGING_SYMBOLS_ppc_Release = YES;
+GCC_GENERATE_DEBUGGING_SYMBOLS_ppc_Production = $(GCC_GENERATE_DEBUGGING_SYMBOLS_$(CURRENT_ARCH)_$(CONFIGURATION)_$(MAC_OS_X_VERSION_MAJOR));
+GCC_GENERATE_DEBUGGING_SYMBOLS_ppc_Production_ = NO;
+GCC_GENERATE_DEBUGGING_SYMBOLS_ppc_Production_1040 = NO;
+GCC_GENERATE_DEBUGGING_SYMBOLS_ppc_Production_1050 = YES;
