@@ -1,3 +1,14 @@
+2007-10-11  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon, testcase written by Erik.
+
+        Ensure that setting innerHTML on an element doesn't do
+        weird things with the document.
+        Fixes most issues with http://bugs.webkit.org/show_bug.cgi?id=15456
+
+        * fast/innerHTML/innerHTML-changing-document-properties-expected.txt: Added.
+        * fast/innerHTML/innerHTML-changing-document-properties.xhtml: Added.
+
 2007-10-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin McCullough and Sam Weinig.

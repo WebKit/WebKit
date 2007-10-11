@@ -1,0 +1,10 @@
+document.xmlEncoding : UTF-8
+document.xmlVersion : 1.0
+document.xmlStandalone : true
+document.readyState : loading
+div.innerHTML = threw exception: Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7
+document.xmlEncoding : UTF-8
+document.xmlVersion : 1.0
+document.xmlStandalone : true
+document.readyState : loading
+
