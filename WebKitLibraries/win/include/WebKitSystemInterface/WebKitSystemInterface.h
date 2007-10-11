@@ -36,6 +36,7 @@ typedef struct CGFont* CGFontRef;
 typedef CGFontIndex CGGlyph;
 typedef wchar_t UChar;
 typedef struct _CFURLResponse* CFURLResponseRef;
+typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
@@ -49,5 +50,6 @@ void wkDrawFocusRing(CGContextRef, CGColorRef, float radius);
 
 CFDictionaryRef wkGetSSLCertificateInfo(CFURLResponseRef);
 void* wkGetSSLPeerCertificateData(CFDictionaryRef);
+CFHTTPCookieStorageRef wkGetDefaultHTTPCookieStorage();
 
 #endif
