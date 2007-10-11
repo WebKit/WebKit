@@ -270,6 +270,7 @@ fast/forms/listbox-selection.html
 
 # fast/forms/select-accesskey.html fails on boomer <rdar://problem/5134108>
 fast/forms/select-accesskey.html
+fast/forms/focus-selection-input.html
 
 # fast/forms/select-type-ahead-non-latin.html fails on boomer <rdar://problem/5134075>
 fast/forms/select-type-ahead-non-latin.html

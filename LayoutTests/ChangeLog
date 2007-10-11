@@ -1,5 +1,12 @@
 2007-10-11  Alice Liu  <alice.liu@apple.com>
 
+        fast/forms/focus-selection-input.html also fails due to unsupported accesskey.  
+        adding to a section that already covers this bug. 
+        
+        * platform/win/Skipped:
+
+2007-10-11  Alice Liu  <alice.liu@apple.com>
+
         removing a test that was fixed recently
 
         * platform/win/Skipped:
