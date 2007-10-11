@@ -1,3 +1,12 @@
+2007-10-11  Kevin McCullough  <kmccullough@apple.com>
+
+        Rubber Stamp by Sam.
+
+        Adding a known Leopard leak that is already fixed but the bot is on an old version of Leopard.
+        I believe there was a radar on this leak, it looks familiar to me, but I could not find it.
+
+        * Scripts/run-webkit-tests:
+
 2007-10-10  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.
