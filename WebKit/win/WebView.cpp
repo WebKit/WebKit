@@ -48,7 +48,6 @@
 #include "WebPreferences.h"
 #pragma warning( push, 0 )
 #include <CoreGraphics/CGContext.h>
-#include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebCore/BString.h>
 #include <WebCore/Cache.h>
 #include <WebCore/CommandByName.h>
@@ -92,6 +91,7 @@
 #include <JavaScriptCore/collector.h>
 #include <JavaScriptCore/value.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <tchar.h>
 #include <dimm.h>
 #include <windowsx.h>
@@ -1561,7 +1561,9 @@ HRESULT WebView::updateWebCoreSettingsFromPreferences(IWebPreferences* preferenc
         return hr;
     settings->setDOMPasteAllowed(!!enabled);
 
-    ResourceHandle::setCookieStorageAcceptPolicy(acceptPolicy);
+    // set cookie storage accept policy
+    if (CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage())
+        CFHTTPCookieStorageSetCookieAcceptPolicy(defaultCookieStorage, acceptPolicy);
 
     settings->setShowsURLsInToolTips(false);
 
@@ -1842,10 +1844,6 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     hr = updateWebCoreSettingsFromPreferences(prefs.get());
     if (FAILED(hr))
         return hr;
-
-    // Use default cookie storage
-    RetainPtr<CFHTTPCookieStorageRef> cookies(AdoptCF, CFHTTPCookieStorageCreateFromFile(kCFAllocatorDefault, 0, 0));
-    ResourceHandle::setCookieStorage(cookies.get());
 
     // Register to receive notifications whenever preference values change.
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)

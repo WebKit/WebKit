@@ -1,3 +1,15 @@
+2007-10-11  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5534421>
+        Switched to using wkGetDefaultHTTPCookieStorage() to avoid recreating CFHTTPCookieStorageRef.
+        Removed usage of ResourceHandle::cookieStorage().
+
+        Reviewed by Oliver.
+
+        * WebView.cpp:
+        (WebView::updateWebCoreSettingsFromPreferences):
+        (WebView::initWithFrame):
+
 2007-10-10  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff Garen.

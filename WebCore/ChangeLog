@@ -1,3 +1,24 @@
+2007-10-11  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5534421> 
+        Switched to using wkGetDefaultHTTPCookieStorage() and removed some cookie-related
+        methods we no longer need in ResourceHandle.
+        
+        <rdar://problem/5244261> "Never" cookie policy was ignored on windows
+        Need to set the cookie accept policy on each CFURLRequest.
+        
+        Reviewed by Oliver.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::makeFinalRequest):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+
 2007-10-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
