@@ -1,5 +1,19 @@
 2007-06-01  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by olliej.
+
+        SVG is not correctly respecting scroll during hit testing
+        http://bugs.webkit.org/show_bug.cgi?id=13083
+
+        Test: svg/custom/scroll-hit-test.svg
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtPoint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtPoint):
+
+2007-06-01  Eric Seidel  <eric@webkit.org>
+
         Reviewed by hyatt.
 
         Fix for: http://bugs.webkit.org/show_bug.cgi?id=12187

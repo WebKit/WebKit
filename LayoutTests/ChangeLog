@@ -1,5 +1,14 @@
 2007-06-01  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by olliej.
+
+        * svg/custom/scroll-hit-test-expected.checksum: Added.
+        * svg/custom/scroll-hit-test-expected.png: Added.
+        * svg/custom/scroll-hit-test-expected.txt: Added.
+        * svg/custom/scroll-hit-test.xhtml: Added.
+
+2007-06-01  Eric Seidel  <eric@webkit.org>
+
         Reviewed by hyatt.
         
         Add tests to document attribute case sensitivity prior to fixing:

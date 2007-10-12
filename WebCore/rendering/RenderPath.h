@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
+                  2005 Eric Seidel <eric@webkit.org>
                   2006 Apple Computer, Inc
 
     This file is part of the KDE project

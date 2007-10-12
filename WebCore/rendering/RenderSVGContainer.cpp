@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
+                  2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
 
@@ -458,8 +459,8 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
     if (!viewport().isEmpty()
         && style()->overflowX() == OHIDDEN
         && style()->overflowY() == OHIDDEN) {
-        int tx = _tx + m_x;
-        int ty = _ty + m_y;
+        int tx = m_x - _tx;
+        int ty = m_y - _ty;
 
         // Check if we need to do anything at all.
         IntRect overflowBox = overflowRect(false);
@@ -467,7 +468,7 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
         AffineTransform ctm = RenderContainer::absoluteTransform();
         ctm.translate(viewport().x(), viewport().y());
         double localX, localY;
-        ctm.inverse().map(_x + _tx, _y + _ty, &localX, &localY);
+        ctm.inverse().map(_x - _tx, _y - _ty, &localX, &localY);
         if (!overflowBox.contains((int)localX, (int)localY))
             return false;
     }

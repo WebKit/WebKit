@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
+                  2005, 2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
 
@@ -256,15 +256,17 @@ bool RenderPath::nodeAtPoint(const HitTestRequest& request, HitTestResult& resul
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)
         return false;
+    
+    IntPoint absolutePoint(_x - _tx, _y - _ty);
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, style()->svgStyle()->pointerEvents());
 
     bool isVisible = (style()->visibility() == VISIBLE);
     if (isVisible || !hitRules.requireVisible) {
-        FloatPoint hitPoint = mapAbsolutePointToLocal(FloatPoint(_x, _y));
+        FloatPoint hitPoint = mapAbsolutePointToLocal(absolutePoint);
         if ((hitRules.canHitStroke && (style()->svgStyle()->hasStroke() || !hitRules.requireStroke) && strokeContains(hitPoint, hitRules.requireStroke))
             || (hitRules.canHitFill && (style()->svgStyle()->hasFill() || !hitRules.requireFill) && fillContains(hitPoint, hitRules.requireFill))) {
-            updateHitTestResult(result, IntPoint(_x, _y));
+            updateHitTestResult(result, absolutePoint);
             return true;
         }
     }
