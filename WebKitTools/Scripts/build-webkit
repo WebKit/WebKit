@@ -55,6 +55,8 @@ GetOptions('svg!' => \$svgSupport,
            'coverage!' => \$coverageSupport,    
            'color!' => \$colorSupport);
 
+$svgExperimentalSupport = 0  unless $svgSupport;
+
 checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();

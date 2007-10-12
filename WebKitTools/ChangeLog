@@ -1,3 +1,13 @@
+2007-09-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+        
+        DerivedSources.make was finding "ENABLE_SVG" in the string
+        "ENABLE_SVG_EXPERIMENTAL_FEATURES" thus --no-svg wasn't functioning
+        quite correctly.
+
+        * Scripts/build-webkit: make --no-svg imply --no-svg-experimental
+
 2007-09-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Eric.
