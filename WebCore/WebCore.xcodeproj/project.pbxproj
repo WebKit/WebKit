@@ -11780,7 +11780,6 @@
 				51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */,
 				51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */,
 				0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */,
-				14C9A29A0BF04DB600D734A8 /* WebScriptObjectPendingPublic.h in Headers */,
 				A8F4FB940C169E7B002AFED5 /* SVGRenderSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

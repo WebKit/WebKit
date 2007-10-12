@@ -46,6 +46,7 @@ namespace WebCore {
         virtual IntRect absoluteClippedOverflowRect();
         
         virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
+        virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
         virtual void imageChanged(CachedImage*);
         void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio*);

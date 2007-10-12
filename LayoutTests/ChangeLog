@@ -1,3 +1,15 @@
+2007-06-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+        
+        Test for SVG focus ring support.
+        http://bugs.webkit.org/show_bug.cgi?id=10849
+
+        * svg/custom/focus-ring.svg: Added.
+        * svg/custom/focus-ring-expected.checksum: Added.
+        * svg/custom/focus-ring-expected.png: Added.
+        * svg/custom/focus-ring-expected.txt: Added.
+
 2007-06-06  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

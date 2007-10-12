@@ -181,18 +181,12 @@ void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo, int& paren
 
 void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context->paintingDisabled() || !drawsContents())
         return;
 
     // This should only exist for <svg> renderers
     if (isOutermostSVG() && hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, m_x + parentX, m_y + parentY);
-
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.context, parentX, parentY, width(), height(), style());
-    
-    if (paintInfo.phase != PaintPhaseForeground || !drawsContents())
-        return;
 
     if (!firstChild()) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
@@ -215,12 +209,14 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     void* filter = 0;
 #endif
     FloatRect boundingBox = relativeBBox(true);
-    prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
-
     float opacity = style()->opacity();
-    if (opacity < 1.0f) {
-        paintInfo.context->clip(enclosingIntRect(boundingBox));
-        paintInfo.context->beginTransparencyLayer(opacity);
+    if (paintInfo.phase == PaintPhaseForeground) {
+        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
+        
+        if (opacity < 1.0f) {
+            paintInfo.context->clip(enclosingIntRect(boundingBox));
+            paintInfo.context->beginTransparencyLayer(opacity);
+        }
     }
 
     if (!viewBox().isEmpty())
@@ -228,15 +224,20 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     RenderContainer::paint(paintInfo, 0, 0);
 
+    if (paintInfo.phase == PaintPhaseForeground) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    if (filter)
-        filter->applyFilter(paintInfo.context, boundingBox);
+        if (filter)
+            filter->applyFilter(paintInfo.context, boundingBox);
 #endif
 
-    if (opacity < 1.0f)
-        paintInfo.context->endTransparencyLayer();
+        if (opacity < 1.0f)
+            paintInfo.context->endTransparencyLayer();
+    }
 
     paintInfo.context->restore();
+    
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
+        paintOutline(paintInfo.context, m_absoluteBounds.x(), m_absoluteBounds.y(), m_absoluteBounds.width(), m_absoluteBounds.height(), style());
 }
 
 FloatRect RenderSVGContainer::viewport() const
@@ -329,6 +330,11 @@ IntRect RenderSVGContainer::absoluteClippedOverflowRect()
 #endif
 
     return repaintRect;
+}
+
+void RenderSVGContainer::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+{
+    graphicsContext->addFocusRingRect(m_absoluteBounds);
 }
 
 void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int, bool)

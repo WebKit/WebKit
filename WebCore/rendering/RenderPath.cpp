@@ -192,11 +192,11 @@ static inline void fillAndStrokePath(const Path& path, GraphicsContext* context,
     }
 }
 
-void RenderPath::paint(PaintInfo& paintInfo, int, int)
+void RenderPath::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.context->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN || m_path.isEmpty())
+    if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN || m_path.isEmpty())
         return;
-    
+            
     paintInfo.context->save();
     paintInfo.context->concatCTM(localTransform());
 
@@ -206,19 +206,30 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     void* filter = 0;
 #endif
     FloatRect boundingBox = relativeBBox(true);
-    prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
-    
-    fillAndStrokePath(m_path, paintInfo.context, style(), this);
+    if (paintInfo.phase == PaintPhaseForeground) {
+        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
+        
+        fillAndStrokePath(m_path, paintInfo.context, style(), this);
 
-    if (static_cast<SVGStyledElement*>(element())->supportsMarkers())
-        m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
+        if (static_cast<SVGStyledElement*>(element())->supportsMarkers())
+            m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    if (filter)
-        filter->applyFilter(paintInfo.context, boundingBox);
+        if (filter)
+            filter->applyFilter(paintInfo.context, boundingBox);
 #endif
+    }
+    
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
+        paintOutline(paintInfo.context, boundingBox.x(), boundingBox.y(), boundingBox.width(), boundingBox.height(), style());
 
     paintInfo.context->restore();
+}
+
+void RenderPath::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+{
+    FloatRect boundingBox = relativeBBox(true);
+    graphicsContext->addFocusRingRect(IntRect(boundingBox.x(), boundingBox.y(), boundingBox.width(), boundingBox.height()));
 }
 
 void RenderPath::absoluteRects(Vector<IntRect>& rects, int _tx, int _ty, bool)

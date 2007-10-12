@@ -1,5 +1,27 @@
 2007-06-06  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by olliej.
+
+        Make SVG (mostly) support CSS outline property (and thus focus rings)
+        http://bugs.webkit.org/show_bug.cgi?id=10849
+
+        Test: svg/custom/focus-ring.svg
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::addFocusRingRects):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::addFocusRingRects):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::addFocusRingRects):
+        * rendering/RenderSVGImage.h:
+
+2007-06-06  Eric Seidel  <eric@webkit.org>
+
         Reviewed by weinig.
         
         Break out common SVG rendering logic into prepareToRenderSVGContent in SVGRenderSupport

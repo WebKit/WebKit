@@ -126,7 +126,7 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.context->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN)
+    if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN)
         return;
     
     paintInfo.context->save();
@@ -134,40 +134,45 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.context->concatCTM(localTransform());
     paintInfo.context->concatCTM(translationForAttributes());
     
+    if (paintInfo.phase != PaintPhaseForeground) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    SVGResourceFilter* filter = 0;
+        SVGResourceFilter* filter = 0;
 #else
-    void* filter = 0;
+        void* filter = 0;
 #endif
-    FloatRect boundingBox = FloatRect(0, 0, width(), height());
-    prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
+        FloatRect boundingBox = FloatRect(0, 0, width(), height());
+        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
 
-    float opacity = style()->opacity();
-    if (opacity < 1.0f) {
-        paintInfo.context->clip(enclosingIntRect(boundingBox));
-        paintInfo.context->beginTransparencyLayer(opacity);
-    }
+        float opacity = style()->opacity();
+        if (opacity < 1.0f) {
+            paintInfo.context->clip(enclosingIntRect(boundingBox));
+            paintInfo.context->beginTransparencyLayer(opacity);
+        }
 
-    PaintInfo pi(paintInfo);
-    pi.rect = absoluteTransform().inverse().mapRect(pi.rect);
+        PaintInfo pi(paintInfo);
+        pi.rect = absoluteTransform().inverse().mapRect(pi.rect);
 
-    SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
+        SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
 
-    FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
-    FloatRect srcRect(0, 0, image()->width(), image()->height());
+        FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
+        FloatRect srcRect(0, 0, image()->width(), image()->height());
 
-    if (imageElt->preserveAspectRatio()->align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
-        adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
+        if (imageElt->preserveAspectRatio()->align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
+            adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
 
-    paintInfo.context->drawImage(image(), destRect, srcRect);
+        paintInfo.context->drawImage(image(), destRect, srcRect);
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    if (filter)
-        filter->applyFilter(paintInfo.context, boundingBox);
+        if (filter)
+            filter->applyFilter(paintInfo.context, boundingBox);
 #endif
 
-    if (opacity < 1.0f)
-        paintInfo.context->endTransparencyLayer();
+        if (opacity < 1.0f)
+            paintInfo.context->endTransparencyLayer();
+    }
+    
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
+        paintOutline(paintInfo.context, parentX, parentY, width(), height(), style());
 
     paintInfo.context->restore();
 }
@@ -232,6 +237,11 @@ IntRect RenderSVGImage::absoluteClippedOverflowRect()
         repaintRect.inflate(1); // inflate 1 pixel for antialiasing
 
     return enclosingIntRect(repaintRect);
+}
+
+void RenderSVGImage::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+{
+    graphicsContext->addFocusRingRect(m_absoluteBounds);
 }
 
 void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int, int, bool)
