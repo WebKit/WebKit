@@ -68,6 +68,10 @@
 
 #endif
 
+#if PLATFORM(FREEBSD)
+#define HAVE_PTHREAD_NP_H 1
+#endif
+
 #define HAVE_PCREPOSIX 1
 
 /* FIXME: if all platforms have these, do they really need #defines? */

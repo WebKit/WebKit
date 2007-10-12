@@ -1,3 +1,17 @@
+2007-10-07  Ed Schouten  <ed@fxq.nl>
+
+        Reviewed and landed by Alexey Proskuryakov.
+
+        Add PLATFORM(FREEBSD), so we can fix the build on FreeBSD-like
+        systems by including <pthread_np.h>. Also fix some (disabled)
+        regcomp()/regexec() code; it seems some variable names have
+        changed.
+
+        * kjs/config.h:
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        * wtf/Platform.h:
+
 2007-10-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

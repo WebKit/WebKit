@@ -66,7 +66,7 @@ RegExp::RegExp(const UString &p, int flags)
   regflags |= REG_EXTENDED;
 #endif
 #ifdef REG_ICASE
-  if ( f & IgnoreCase )
+  if (flags & IgnoreCase)
     regflags |= REG_ICASE;
 #endif
 
@@ -77,7 +77,7 @@ RegExp::RegExp(const UString &p, int flags)
 
   // FIXME: support \u Unicode escapes.
 
-  int errorCode = regcomp(&m_regex, intern.ascii(), regflags);
+  int errorCode = regcomp(&m_regex, p.ascii(), regflags);
   if (errorCode != 0) {
     char errorMessage[80];
     regerror(errorCode, &m_regex, errorMessage, sizeof errorMessage);

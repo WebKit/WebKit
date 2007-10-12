@@ -50,11 +50,18 @@
 #define WTF_PLATFORM_WIN_OS 1
 #endif
 
+/* PLATFORM(FREEBSD) */
+/* Operating system level dependencies for FreeBSD-like systems that */
+/* should be used regardless of operating environment */
+#ifdef __FreeBSD__
+#define WTF_PLATFORM_FREEBSD 1
+#endif
+
 /* PLATFORM(UNIX) */
 /* Operating system level dependencies for Unix-like systems that */
 /* should be used regardless of operating environment */
-/* (includes PLATFORM(DARWIN)) */
-#if   defined(__APPLE__)   \
+#if   PLATFORM(DARWIN)     \
+   || PLATFORM(FREEBSD)    \
    || defined(unix)        \
    || defined(__unix)      \
    || defined(__unix__)    \
