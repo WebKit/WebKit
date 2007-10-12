@@ -4,6 +4,7 @@
         
         - fixed "innerHTML updates layout every time (very bad if adding to it in a loop)"
         http://bugs.webkit.org/show_bug.cgi?id=15326
+        (65% speedup on Celtic Kane JS 2007 DOM test)
 
         * editing/markup.cpp:
         (WebCore::createMarkup): The Node version of this function currently never uses
