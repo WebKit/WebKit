@@ -1,3 +1,10 @@
+2007-10-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        * fast/css/computed-style-expected.txt: Added SVG CSS properties.
+        * fast/css/computed-style-without-renderer-expected.txt: Ditto.
+
 2007-10-12  Oliver Hunt  <oliver@apple.com>
 
         RS=Alexey
