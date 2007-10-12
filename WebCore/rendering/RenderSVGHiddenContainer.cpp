@@ -60,14 +60,12 @@ void RenderSVGHiddenContainer::layout()
  
     // Layout our kids to prevent a kid from being marked as needing layout
     // then never being asked to layout.
-    RenderObject* child = firstChild();
-    while (child) {
-        if (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues())
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (selfNeedsLayout())
             child->setNeedsLayout(true);
         
         child->layoutIfNeeded();
         ASSERT(!child->needsLayout());
-        child = child->nextSibling();
     }
     
     setNeedsLayout(false);    

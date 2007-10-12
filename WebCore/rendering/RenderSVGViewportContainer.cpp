@@ -55,26 +55,23 @@ void RenderSVGViewportContainer::layout()
     
     IntRect oldBounds = m_absoluteBounds;
     IntRect oldOutlineBox;
-    bool checkForRepaint = checkForRepaintDuringLayout();
-    if (selfNeedsLayout() && checkForRepaint)
+    bool checkForRepaint = checkForRepaintDuringLayout() && selfNeedsLayout();
+    if (checkForRepaint)
         oldOutlineBox = absoluteOutlineBox();
     
     calcWidth();
     
     m_absoluteBounds = absoluteClippedOverflowRect();
-    bool boundsChanged = m_absoluteBounds != oldBounds;
     
-    if (boundsChanged || normalChildNeedsLayout() || posChildNeedsLayout()) {
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (boundsChanged && (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues()))
-                child->setNeedsLayout(true);
-            
-            child->layoutIfNeeded();
-            ASSERT(!child->needsLayout());
-        }
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (selfNeedsLayout())
+            child->setNeedsLayout(true);
+        
+        child->layoutIfNeeded();
+        ASSERT(!child->needsLayout());
     }
     
-    if (selfNeedsLayout() && checkForRepaint)
+    if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
     
     view()->enableLayoutState();
@@ -122,18 +119,18 @@ void RenderSVGViewportContainer::calcViewport()
         if (!selfNeedsLayout() && !svg->hasRelativeValues())
             return;
 
-        double x = svg->x().value();
-        double y = svg->y().value();
-        double w = svg->width().value();
-        double h = svg->height().value();
+        float x = svg->x().value();
+        float y = svg->y().value();
+        float w = svg->width().value();
+        float h = svg->height().value();
         m_viewport = FloatRect(x, y, w, h);
     } else if (svgelem->hasTagName(SVGNames::markerTag)) {
         if (!selfNeedsLayout())
             return;
 
         SVGMarkerElement* svg = static_cast<SVGMarkerElement*>(element());
-        double w = svg->markerWidth().value();
-        double h = svg->markerHeight().value();
+        float w = svg->markerWidth().value();
+        float h = svg->markerHeight().value();
         m_viewport = FloatRect(0, 0, w, h);
     }
 }

@@ -102,6 +102,8 @@ private:
 
     int m_width;
     int m_height;
+    
+    bool selfWillPaint() const;
 
     bool m_drawsContents : 1;
 

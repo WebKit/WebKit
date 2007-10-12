@@ -27,6 +27,7 @@
 
 #include "Document.h"
 #include "FloatPoint.h"
+#include "RenderPath.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPointList.h"
@@ -88,8 +89,9 @@ void SVGPolyElement::notifyAttributeChange() const
         return;
 
     m_ignoreAttributeChanges = true;
-    rebuildRenderer();
-
+    if (renderer())
+        renderer()->setNeedsLayout(true);
+    
     ExceptionCode ec = 0;
 
     // Spec: Additionally, the 'points' attribute on the original element

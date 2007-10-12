@@ -72,8 +72,8 @@ void RenderSVGRoot::layout()
 
     IntRect oldBounds = m_absoluteBounds;
     IntRect oldOutlineBox;
-    bool checkForRepaint = checkForRepaintDuringLayout();
-    if (selfNeedsLayout() && checkForRepaint)
+    bool checkForRepaint = checkForRepaintDuringLayout() && selfNeedsLayout();
+    if (checkForRepaint)
         oldOutlineBox = absoluteOutlineBox();
 
     calcWidth();
@@ -84,19 +84,15 @@ void RenderSVGRoot::layout()
     m_width = m_width * svg->currentScale();
     m_height = m_height * svg->currentScale();
     
-    bool boundsChanged = m_absoluteBounds != oldBounds;
-    
-    if (boundsChanged || normalChildNeedsLayout() || posChildNeedsLayout()) {
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (boundsChanged && (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues()))
-                child->setNeedsLayout(true);
-            
-            child->layoutIfNeeded();
-            ASSERT(!child->needsLayout());
-        }
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (selfNeedsLayout()) // either bounds or transform changed, force kids to relayout
+            child->setNeedsLayout(true);
+        
+        child->layoutIfNeeded();
+        ASSERT(!child->needsLayout());
     }
 
-    if (selfNeedsLayout() && checkForRepaint)
+    if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
 
     view()->enableLayoutState();

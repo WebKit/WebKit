@@ -24,6 +24,7 @@
 #if ENABLE(SVG)
 #include "SVGRectElement.h"
 
+#include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 
@@ -89,9 +90,9 @@ void SVGRectElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGRectElement::notifyAttributeChange() const
 {
-    if (!document()->parsing())
-        rebuildRenderer();
-
+    if (!document()->parsing() && renderer())
+        renderer()->setNeedsLayout(true);
+    
     SVGStyledTransformableElement::notifyAttributeChange();
 }
 

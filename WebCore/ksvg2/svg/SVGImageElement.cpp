@@ -101,10 +101,16 @@ void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
 
 void SVGImageElement::notifyAttributeChange() const
 {
-    if (!document()->parsing())
-        rebuildRenderer();
+    if (!document()->parsing() && renderer())
+        renderer()->setNeedsLayout(true);
 
     SVGStyledTransformableElement::notifyAttributeChange();
+}
+
+bool SVGImageElement::hasRelativeValues() const
+{
+    return (x().isRelative() || width().isRelative() ||
+            y().isRelative() || height().isRelative());
 }
 
 RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle* style)

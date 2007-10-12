@@ -233,21 +233,22 @@ void RenderSVGContainer::layout()
 
     IntRect oldBounds;
     IntRect oldOutlineBox;
-    bool checkForRepaint = checkForRepaintDuringLayout();
+    bool checkForRepaint = checkForRepaintDuringLayout() && selfWillPaint();
     if (checkForRepaint) {
         oldBounds = m_absoluteBounds;
         oldOutlineBox = absoluteOutlineBox();
     }
 
-    RenderObject* child = firstChild();
-    while (child) {
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         // Only force our kids to layout if we're being asked to relayout as a result of a parent changing
-        if (selfNeedsLayout() && (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues()))
+        // FIXME: We should be able to skip relayout of non-relative kids when only bounds have changed
+        // however, we can't tell the difference between bounds changing and transform changing.
+        // http://bugs.webkit.org/show_bug.cgi?id=15391
+        if (selfNeedsLayout())
             child->setNeedsLayout(true);
 
         child->layoutIfNeeded();
         ASSERT(!child->needsLayout());
-        child = child->nextSibling();
     }
 
     // Calculate width & height
@@ -303,21 +304,26 @@ void RenderSVGContainer::applyAdditionalTransforms(PaintInfo& paintInfo)
     // no-op
 }
 
+bool RenderSVGContainer::selfWillPaint() const
+{
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
+    AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
+    SVGResourceFilter* filter = getFilterById(document(), filterId);
+    if (filter)
+        return true;
+#endif
+    return false;
+}
+
 void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
     if (paintInfo.context->paintingDisabled() || !drawsContents())
         return;
 
-    if (!firstChild()) {
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-        // Spec: groups w/o children still may render filter content.
-        const SVGRenderStyle* svgStyle = style()->svgStyle();
-        AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
-        SVGResourceFilter* filter = getFilterById(document(), filterId);
-        if (!filter)
-#endif
-            return;
-    }
+     // Spec: groups w/o children still may render filter content.
+    if (!firstChild() && !selfWillPaint())
+        return;
     
     paintInfo.context->save();
     applyContentTransforms(paintInfo);

@@ -1,3 +1,52 @@
+2007-10-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        RenderSVGContainer (<g>) should not repaint when its bounds change (unless it has a filter)
+        http://bugs.webkit.org/show_bug.cgi?id=15388
+        This makes the Sun Lively Kernel invalidate only what it should!
+        
+        No tests possible in DRT.
+
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::notifyAttributeChange): replace call to rebuildRenderer
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::notifyAttributeChange): replace call to rebuildRenderer
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::notifyAttributeChange): replace call to rebuildRenderer
+        (WebCore::SVGImageElement::hasRelativeValues): implemented
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::notifyAttributeChange): replace call to rebuildRenderer
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::notifyAttributeChange): replace call to rebuildRenderer
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::notifyAttributeChange): replace call to rebuildRenderer
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::notifyAttributeChange): replace call to rebuildRenderer
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::hasRelativeValues): default to true instead
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::updateLocalTransform): don't layout if no change
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        * ksvg2/svg/SVGTransform.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::selfWillPaint): return true if have a filter
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::layout):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::layout):
+        (WebCore::RenderSVGViewportContainer::calcViewport): use floats
+
 2007-10-06  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

@@ -120,8 +120,8 @@ void RenderPath::layout()
 {
     IntRect oldBounds;
     IntRect oldOutlineBox;
-    bool checkForRepaint = checkForRepaintDuringLayout();
-    if (selfNeedsLayout() && checkForRepaint) {
+    bool checkForRepaint = checkForRepaintDuringLayout() && selfNeedsLayout();
+    if (checkForRepaint) {
         oldBounds = m_absoluteBounds;
         oldOutlineBox = absoluteOutlineBox();
     }
@@ -133,7 +133,7 @@ void RenderPath::layout()
     setWidth(m_absoluteBounds.width());
     setHeight(m_absoluteBounds.height());
 
-    if (selfNeedsLayout() && checkForRepaint)
+    if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
 
     setNeedsLayout(false);
@@ -435,11 +435,6 @@ FloatRect RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatR
         bounds.unite(endMarker->cachedBounds());
 
     return bounds;
-}
-
-bool RenderPath::hasRelativeValues() const
-{
-    return static_cast<SVGStyledElement*>(element())->hasRelativeValues();
 }
 
 }

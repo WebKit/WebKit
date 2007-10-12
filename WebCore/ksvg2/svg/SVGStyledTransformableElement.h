@@ -53,9 +53,9 @@ namespace WebCore {
 
         virtual FloatRect getBBox() const;
 
-        virtual void parseMappedAttribute(MappedAttribute* attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
-        void updateLocalTransform(SVGTransformList* localTransforms);
+        void updateLocalTransform(SVGTransformList*);
         
         virtual void attach();
         virtual void notifyAttributeChange() const;

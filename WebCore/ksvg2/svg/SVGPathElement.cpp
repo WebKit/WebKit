@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGPathElement.h"
 
+#include "RenderPath.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathSegArc.h"
@@ -194,8 +195,8 @@ void SVGPathElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGPathElement::notifyAttributeChange() const
 {
-    if (!document()->parsing())
-        rebuildRenderer();
+    if (!document()->parsing() && renderer())
+        renderer()->setNeedsLayout(true);
 
     SVGStyledTransformableElement::notifyAttributeChange();
 }

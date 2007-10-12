@@ -26,6 +26,7 @@
 #include "SVGEllipseElement.h"
 
 #include "FloatPoint.h"
+#include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 
@@ -79,8 +80,8 @@ void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGEllipseElement::notifyAttributeChange() const
 {
-    if (!document()->parsing())
-        rebuildRenderer();
+    if (!document()->parsing() && renderer())
+        renderer()->setNeedsLayout(true);
 
     SVGStyledTransformableElement::notifyAttributeChange();
 }

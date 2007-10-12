@@ -60,6 +60,8 @@ namespace WebCore
         
     protected:
         virtual bool haveLoadedRequiredResources();
+        
+        virtual bool hasRelativeValues() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

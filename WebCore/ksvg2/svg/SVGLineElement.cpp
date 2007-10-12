@@ -26,6 +26,7 @@
 #include "SVGLineElement.h"
 
 #include "FloatPoint.h"
+#include "RenderPath.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 
@@ -76,8 +77,8 @@ void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGLineElement::notifyAttributeChange() const
 {
-    if (!document()->parsing())
-        rebuildRenderer();
+    if (!document()->parsing() && renderer())
+        renderer()->setNeedsLayout(true);
 
     SVGStyledTransformableElement::notifyAttributeChange();
 }

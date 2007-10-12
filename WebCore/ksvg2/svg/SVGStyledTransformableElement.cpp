@@ -66,12 +66,11 @@ AffineTransform SVGStyledTransformableElement::getScreenCTM() const
 
 void SVGStyledTransformableElement::updateLocalTransform(SVGTransformList* localTransforms)
 {
-    // Update cached local matrix
     SVGTransform localTransform = localTransforms->concatenate();
-    if (localTransform.isValid())
-        m_localMatrix = localTransform.matrix();
-    else 
-        m_localMatrix = AffineTransform();
+    if (localTransform.matrix() == m_localMatrix)
+        return;
+    
+    m_localMatrix = localTransform.matrix();
     if (renderer()) {
         renderer()->setLocalTransform(m_localMatrix);
         renderer()->setNeedsLayout(true);
