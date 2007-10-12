@@ -38,7 +38,6 @@
         * html/HTMLDocument.h:
         * html/HTMLDocument.idl:
 
-=======
 2007-10-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
