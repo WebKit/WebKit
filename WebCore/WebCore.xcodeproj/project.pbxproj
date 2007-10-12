@@ -5867,8 +5867,8 @@
 		A89943270B42338700D7C802 /* BitmapImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImage.cpp; sourceTree = "<group>"; };
 		A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeScheduler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F0089701F100BA5114 /* TimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TimeScheduler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6F4089701F100BA5114 /* CSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = CSSPropertyNames.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6F5089701F100BA5114 /* CSSValueKeywords.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = CSSValueKeywords.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8C0F6F4089701F100BA5114 /* SVGCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = SVGCSSPropertyNames.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8C0F6F5089701F100BA5114 /* SVGCSSValueKeywords.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = SVGCSSValueKeywords.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F6089701F100BA5114 /* SVGCSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSStyleSelector.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6FF089701F100BA5114 /* SVGRenderStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderStyle.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -9895,8 +9895,8 @@
 		A8C0F6F2089701F100BA5114 /* css */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0F6F4089701F100BA5114 /* CSSPropertyNames.in */,
-				A8C0F6F5089701F100BA5114 /* CSSValueKeywords.in */,
+				A8C0F6F4089701F100BA5114 /* SVGCSSPropertyNames.in */,
+				A8C0F6F5089701F100BA5114 /* SVGCSSValueKeywords.in */,
 				A8C0F6F6089701F100BA5114 /* SVGCSSParser.cpp */,
 				A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */,
 				A8C0F6FF089701F100BA5114 /* SVGRenderStyle.cpp */,

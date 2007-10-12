@@ -570,31 +570,30 @@ all : \
 
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
-CSSPropertyNames.in : css/CSSPropertyNames.in ksvg2/css/CSSPropertyNames.in
-	if sort $< $(WebCore)/ksvg/css/CSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
-	cat $< $(WebCore)/ksvg2/css/CSSPropertyNames.in > CSSPropertyNames.in
+CSSPropertyNames.h : css/CSSPropertyNames.in ksvg2/css/SVGCSSPropertyNames.in
+	if sort $< $(WebCore)/ksvg2/css/SVGCSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
+	cat $< $(WebCore)/ksvg2/css/SVGCSSPropertyNames.in > CSSPropertyNames.in
+	perl "$(WebCore)/css/makeprop.pl"
 
-CSSValueKeywords.in : css/CSSValueKeywords.in ksvg2/css/CSSValueKeywords.in
+CSSValueKeywords.h : css/CSSValueKeywords.in ksvg2/css/SVGCSSValueKeywords.in
 	# Lower case all the values, as CSS values are case-insensitive
-	perl -ne 'print lc' $(WebCore)/ksvg2/css/CSSValueKeywords.in > SVGCSSValueKeywords.in
+	perl -ne 'print lc' $(WebCore)/ksvg2/css/SVGCSSValueKeywords.in > SVGCSSValueKeywords.in
 	if sort $< SVGCSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $< SVGCSSValueKeywords.in > CSSValueKeywords.in
+	perl "$(WebCore)/css/makevalues.pl"
 
 else
 
-CSSPropertyNames.in : css/CSSValueKeywords.in
+CSSPropertyNames.h : css/CSSValueKeywords.in css/makeprop.pl
 	cp $< CSSPropertyNames.in
+	perl "$(WebCore)/css/makeprop.pl"
 
-CSSValueKeywords.in : css/CSSValueKeywords.in
+CSSValueKeywords.h : css/CSSValueKeywords.in css/makevalues.pl
 	cp $< CSSValueKeywords.in
+	perl "$(WebCore)/css/makevalues.pl"
 
 endif 
 
-CSSPropertyNames.h : CSSPropertyNames.in css/makeprop.pl
-	perl "$(WebCore)/css/makeprop.pl"
-
-CSSValueKeywords.h : CSSValueKeywords.in css/makevalues.pl
-	perl "$(WebCore)/css/makevalues.pl"
 
 # DOCTYPE strings
 

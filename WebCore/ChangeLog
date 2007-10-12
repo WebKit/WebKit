@@ -1,5 +1,18 @@
 2007-10-08  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Oliver.
+
+        Build fix.  Fix circular build rule for CSS*.in files evident on clean build.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/css/CSSPropertyNames.in: Removed.
+        * ksvg2/css/CSSValueKeywords.in: Removed.
+        * ksvg2/css/SVGCSSPropertyNames.in: Copied from ksvg2/css/CSSPropertyNames.in.
+        * ksvg2/css/SVGCSSValueKeywords.in: Copied from ksvg2/css/CSSValueKeywords.in.
+
+2007-10-08  Eric Seidel  <eric@webkit.org>
+
         Reviewed by hyatt.
 
         Implement getComputedStyle support for SVG CSS values
