@@ -1,3 +1,27 @@
+2007-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Land new layout tests related to new <use> behaviour on disallowed elements & symbols.
+        Add new layout tests checking new <use> on <foreignObject> behaviour
+    
+        * svg/custom/use-scripting-changes-to-nonexistant-href-expected.checksum: Added.
+        * svg/custom/use-scripting-changes-to-nonexistant-href-expected.png: Added.
+        * svg/custom/use-scripting-changes-to-nonexistant-href-expected.txt: Added.
+        * svg/custom/use-scripting-changes-to-nonexistant-href.svg: Added.
+        * svg/custom/use-on-g-containing-foreignObject-and-image-expected.checksum: Added.
+        * svg/custom/use-on-g-containing-foreignObject-and-image-expected.png: Added.
+        * svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt: Added.
+        * svg/custom/use-on-g-containing-foreignObject-and-image.svg: Added.
+        * svg/custom/use-on-disallowed-foreign-object-5-expected.checksum: Added.
+        * svg/custom/use-on-disallowed-foreign-object-5-expected.png: Added.
+        * svg/custom/use-on-disallowed-foreign-object-5-expected.txt: Added.
+        * svg/custom/use-on-disallowed-foreign-object-5.svg: Added.
+        * svg/custom/use-on-disallowed-foreign-object-6-expected.checksum: Added.
+        * svg/custom/use-on-disallowed-foreign-object-6-expected.png: Added.
+        * svg/custom/use-on-disallowed-foreign-object-6-expected.txt: Added.
+        * svg/custom/use-on-disallowed-foreign-object-6.svg: Added.
+
 2007-07-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.

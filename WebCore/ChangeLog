@@ -1,3 +1,34 @@
+2007-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=13611 (Crash in setAttributeNS setting href of SVG <use> to nonexistent symbol)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14631 (<use> doesn't deep-expand <symbol> elements.)
+
+        Rework <use> on <foreignObject> cases, to not just ignore these cases, but actually proceed and skip <fO> objects
+        from the resulting cloned tree. This fixes parts of "treasure_map.svg" (no bug report availabe on that one, private "testcase").
+
+        Fix assertion happening with <use> on <g> containing <symbol>. Introduce expandSymbolElementsInShadowTree()
+        concept, just like it's done for <use> on <use>, to deep-replace all <symbol> elements by <svg>, as demanded
+        by the spec. This only worked on <use> on <symbol> direct cases so far.
+
+        Added testcase: svg/custom/use-on-g-containing-foreignObject-and-image.svg (testcase for treasure_map.svg)
+                        svg/custom/use-on-disallowed-foreign-object-5.svg (<use> on <symbol> containg <foreignObject>)
+                        svg/custom/use-on-disallowed-foreign-object-6.svg (<use> on <g> containing <svg> containing <foreignObject>)
+                        svg/custom/use-on-disallowed-foreign-object-7.svg (<use> on <g> containing <symbol> containing <foreignObject>)
+                        svg/custom/use-scripting-changes-to-nonexistant-href.svg
+
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::isDisallowedElement):
+        (WebCore::subtreeContainsDisallowedElement):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        (WebCore::SVGUseElement::removeDisallowedElementsFromSubtree):
+        (WebCore::SVGUseElement::buildShadowTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree):
+        * ksvg2/svg/SVGUseElement.h:
+
 2007-07-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.
