@@ -1,3 +1,16 @@
+2007-06-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+        
+        Add tests to document attribute case sensitivity prior to fixing:
+        http://bugs.webkit.org/show_bug.cgi?id=12187
+
+        * fast/dom/attribute-case-sensitivity-expected.txt: Added.
+        * fast/dom/attribute-case-sensitivity.html: Added.
+        * fast/dom/attribute-case-sensitivity2-expected.txt: Added.
+        * fast/dom/attribute-case-sensitivity2.xhtml: Added.
+        * fast/dom/resources/attr-case-sensitivity.js: Added.
+
 2007-05-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Niko.
