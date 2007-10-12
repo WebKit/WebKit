@@ -1,3 +1,34 @@
+2007-07-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Recognize <textPath> in SVG JS bindings.
+        Add JSSVGTextPathElement to JSSVGElementWrapperFactory.
+
+        Add SVGException.idl just for the JS generation.
+        Turn on all SVG JS constructors and add them to DOMWindow.idl.
+
+        Testcase added: LayoutTests/svg/custom/js-svg-constructors.svg
+    
+        * DerivedSources.make: Add JSSVGException.h
+        * WebCore.xcodeproj/project.pbxproj: Correct paths for DOM/JS*SVGTextPathElement
+        * bindings/scripts/CodeGeneratorJS.pm: Forward port hash fix from trunk.
+        * bindings/js/JSSVGElementWrapperFactory.cpp: Add JSSVGTextPathElement support
+        * ksvg2/svg/SVGComponentTransferFunctionElement.idl:
+        * ksvg2/svg/SVGTextPathElement.h:
+        * ksvg2/svg/SVGException.h:
+        * ksvg2/svg/SVGException.idl: Added.
+        * ksvg2/svg/SVGFEBlendElement.idl:
+        * ksvg2/svg/SVGFEColorMatrixElement.idl:
+        * ksvg2/svg/SVGFECompositeElement.idl:
+        * ksvg2/svg/SVGFEDisplacementMapElement.idl:
+        * ksvg2/svg/SVGFETurbulenceElement.idl:
+        * ksvg2/svg/SVGGradientElement.idl:
+        * ksvg2/svg/SVGMarkerElement.idl:
+        * ksvg2/svg/SVGTextContentElement.idl:
+        * ksvg2/svg/SVGTextPathElement.idl:
+        * page/DOMWindow.idl: Recognize new js svg constructors.
+
 2007-06-28  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

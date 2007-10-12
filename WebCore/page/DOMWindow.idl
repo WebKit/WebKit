@@ -241,6 +241,37 @@ module window {
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
 #endif
+
+#if ENABLE_SVG
+        attribute SVGAngleConstructor SVGAngle;
+        attribute SVGColorConstructor SVGColor;
+//      attribute SVGCSSRuleConstructor SVGCSSRule;
+        attribute SVGExceptionConstructor SVGException;
+        attribute SVGGradientElementConstructor SVGGradientElement;
+        attribute SVGLengthConstructor SVGLength;
+        attribute SVGMarkerElementConstructor SVGMarkerElement;
+        attribute SVGPaintConstructor SVGPaint;
+        attribute SVGPathSegConstructor SVGPathSeg;
+        attribute SVGPreserveAspectRatioConstructor SVGPreserveAspectRatio;
+        attribute SVGRenderingIntentConstructor SVGRenderingIntent;
+        attribute SVGTextContentElementConstructor SVGTextContentElement;
+        attribute SVGTextPathElementConstructor SVGTextPathElement;
+        attribute SVGTransformConstructor SVGTransform;
+        attribute SVGUnitTypesConstructor SVGUnitTypes;
+//      attribute SVGZoomAndPanConstructor SVGZoomAndPan;
+#endif
+
+#if ENABLE_SVG_EXPERIMENTAL_FEATURES
+        attribute SVGComponentTransferFunctionElementConstructor SVGComponentTransferFunctionElement;
+        attribute SVGFEBlendElementConstructor SVGFEBlendElement;
+        attribute SVGFEColorMatrixElementConstructor SVGFEColorMatrixElement;
+        attribute SVGFECompositeElementConstructor SVGFECompositeElement;
+//      attribute SVGFEConvolveMatrixElementConstructor SVGFEConvolveMatrixElement;
+        attribute SVGFEDisplacementMapElementConstructor SVGFEDisplacementMapElement;
+//      attribute SVGFEMorphologyElementConstructor SVGFEMorphologyElement;
+        attribute SVGFETurbulenceElementConstructor SVGFETurbulenceElement;
+#endif
+
 #endif // defined(LANGUAGE_JAVASCRIPT)
     };
 

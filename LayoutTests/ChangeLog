@@ -1,3 +1,18 @@
+2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Add testcase checking the value of all SVG JS constructors.
+        Those who are not yet available are marked as "expected failures".
+
+        Update window-properties.html test results.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * svg/custom/js-svg-constructors-expected.checksum: Added.
+        * svg/custom/js-svg-constructors-expected.png: Added.
+        * svg/custom/js-svg-constructors-expected.txt: Added.
+        * svg/custom/js-svg-constructors.svg: Added.
+
 2007-07-03  Rob Buis  <buis@kde.org>
 
         Correcting the pixel test result that was supposed to go in during r23849.

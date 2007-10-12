@@ -2307,6 +2307,10 @@
 		B222F6990AB771950022EFAD /* JSSVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B222F6970AB771950022EFAD /* JSSVGAngle.h */; };
 		B222F69C0AB771B80022EFAD /* JSSVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222F69A0AB771B80022EFAD /* JSSVGElement.cpp */; };
 		B222F69D0AB771B80022EFAD /* JSSVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222F69B0AB771B80022EFAD /* JSSVGElement.h */; };
+		B22362280C3AF04A0008CA9B /* JSSVGTextPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22362260C3AF04A0008CA9B /* JSSVGTextPathElement.cpp */; };
+		B22362290C3AF04A0008CA9B /* JSSVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22362270C3AF04A0008CA9B /* JSSVGTextPathElement.h */; };
+		B223622E0C3AF0710008CA9B /* DOMSVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B223622B0C3AF0710008CA9B /* DOMSVGTextPathElement.h */; };
+		B223622F0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B223622C0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h */; };
 		B2310B760B1F46A200D55D87 /* CgSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2310B730B1F46A200D55D87 /* CgSupport.cpp */; };
 		B2310B770B1F46A200D55D87 /* CgSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B2310B740B1F46A200D55D87 /* CgSupport.h */; };
 		B2310B780B1F46A300D55D87 /* RenderPathCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2310B750B1F46A200D55D87 /* RenderPathCg.cpp */; };
@@ -2319,11 +2323,10 @@
 		B26554C00B80AD6000A50EC3 /* SVGTextPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554BD0B80AD6000A50EC3 /* SVGTextPathElement.cpp */; };
 		B26554C10B80AD6000A50EC3 /* SVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554BE0B80AD6000A50EC3 /* SVGTextPathElement.h */; };
 		B26554C20B80AD6000A50EC3 /* SVGTextPathElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B26554BF0B80AD6000A50EC3 /* SVGTextPathElement.idl */; };
-		B26554CE0B80ADEA00A50EC3 /* DOMSVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554CB0B80ADEA00A50EC3 /* DOMSVGTextPathElement.h */; };
-		B26554CF0B80ADEA00A50EC3 /* DOMSVGTextPathElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554CC0B80ADEA00A50EC3 /* DOMSVGTextPathElementInternal.h */; };
-		B26554D00B80ADEA00A50EC3 /* JSSVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554CD0B80ADEA00A50EC3 /* JSSVGTextPathElement.h */; };
 		B26554EA0B80D74900A50EC3 /* RenderSVGTextPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */; };
 		B26554EB0B80D74900A50EC3 /* RenderSVGTextPath.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */; };
+		B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */; };
+		B266CD4E0C3AEC6500EB08D2 /* JSSVGException.h in Headers */ = {isa = PBXBuildFile; fileRef = B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */; };
 		B27535560B053814002CE64F /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535270B053814002CE64F /* AffineTransform.cpp */; };
 		B27535570B053814002CE64F /* AffineTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535280B053814002CE64F /* AffineTransform.h */; };
 		B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352A0B053814002CE64F /* AffineTransformCG.cpp */; };
@@ -2387,6 +2390,7 @@
 		B2A015BA0AF6CD53006BCE0E /* SVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015A70AF6CD53006BCE0E /* SVGResourceMasker.h */; };
 		B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A10B910B3818BD00099AA4 /* ImageBuffer.h */; };
 		B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */; };
+		B2AE9B9D0C3AF27400F23F7F /* DOMSVGTextPathElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AE9B9C0C3AF27400F23F7F /* DOMSVGTextPathElement.mm */; };
 		B2B33A5F0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B33A5D0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp */; };
 		B2B33A600B887CEF00C15984 /* SVGCharacterLayoutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = B2B33A5E0B887CEF00C15984 /* SVGCharacterLayoutInfo.h */; };
 		B2C96D8D0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */; };
@@ -5540,6 +5544,10 @@
 		B222F6970AB771950022EFAD /* JSSVGAngle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAngle.h; sourceTree = "<group>"; };
 		B222F69A0AB771B80022EFAD /* JSSVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElement.cpp; sourceTree = "<group>"; };
 		B222F69B0AB771B80022EFAD /* JSSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGElement.h; sourceTree = "<group>"; };
+		B22362260C3AF04A0008CA9B /* JSSVGTextPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGTextPathElement.cpp; sourceTree = "<group>"; };
+		B22362270C3AF04A0008CA9B /* JSSVGTextPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGTextPathElement.h; sourceTree = "<group>"; };
+		B223622B0C3AF0710008CA9B /* DOMSVGTextPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGTextPathElement.h; sourceTree = "<group>"; };
+		B223622C0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGTextPathElementInternal.h; sourceTree = "<group>"; };
 		B2310B730B1F46A200D55D87 /* CgSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CgSupport.cpp; sourceTree = "<group>"; };
 		B2310B740B1F46A200D55D87 /* CgSupport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CgSupport.h; sourceTree = "<group>"; };
 		B2310B750B1F46A200D55D87 /* RenderPathCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPathCg.cpp; sourceTree = "<group>"; };
@@ -5552,11 +5560,10 @@
 		B26554BD0B80AD6000A50EC3 /* SVGTextPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextPathElement.cpp; sourceTree = "<group>"; };
 		B26554BE0B80AD6000A50EC3 /* SVGTextPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGTextPathElement.h; sourceTree = "<group>"; };
 		B26554BF0B80AD6000A50EC3 /* SVGTextPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGTextPathElement.idl; sourceTree = "<group>"; };
-		B26554CB0B80ADEA00A50EC3 /* DOMSVGTextPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = file; name = DOMSVGTextPathElement.h; path = "/Volumes/GIT-Repo/WebKit/OpenSource/WebCore/DOMSVGTextPathElement.h"; sourceTree = "<absolute>"; };
-		B26554CC0B80ADEA00A50EC3 /* DOMSVGTextPathElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = file; name = DOMSVGTextPathElementInternal.h; path = "/Volumes/GIT-Repo/WebKit/OpenSource/WebCore/DOMSVGTextPathElementInternal.h"; sourceTree = "<absolute>"; };
-		B26554CD0B80ADEA00A50EC3 /* JSSVGTextPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = file; name = JSSVGTextPathElement.h; path = "/Volumes/GIT-Repo/WebKit/OpenSource/WebCore/JSSVGTextPathElement.h"; sourceTree = "<absolute>"; };
 		B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTextPath.cpp; sourceTree = "<group>"; };
 		B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGTextPath.h; sourceTree = "<group>"; };
+		B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGException.cpp; sourceTree = "<group>"; };
+		B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGException.h; sourceTree = "<group>"; };
 		B27535270B053814002CE64F /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransform.cpp; sourceTree = "<group>"; };
 		B27535280B053814002CE64F /* AffineTransform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AffineTransform.h; sourceTree = "<group>"; };
 		B275352A0B053814002CE64F /* AffineTransformCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransformCG.cpp; sourceTree = "<group>"; };
@@ -5620,6 +5627,7 @@
 		B2A015A70AF6CD53006BCE0E /* SVGResourceMasker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceMasker.h; sourceTree = "<group>"; };
 		B2A10B910B3818BD00099AA4 /* ImageBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageBuffer.h; sourceTree = "<group>"; };
 		B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferCG.cpp; sourceTree = "<group>"; };
+		B2AE9B9C0C3AF27400F23F7F /* DOMSVGTextPathElement.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGTextPathElement.mm; sourceTree = "<group>"; };
 		B2B33A5D0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCharacterLayoutInfo.cpp; sourceTree = "<group>"; };
 		B2B33A5E0B887CEF00C15984 /* SVGCharacterLayoutInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGCharacterLayoutInfo.h; sourceTree = "<group>"; };
 		B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCustom.cpp; sourceTree = "<group>"; };
@@ -6594,6 +6602,8 @@
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				B22362260C3AF04A0008CA9B /* JSSVGTextPathElement.cpp */,
+				B22362270C3AF04A0008CA9B /* JSSVGTextPathElement.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */,
@@ -6604,6 +6614,8 @@
 				65DF323609D1DE65000BE325 /* JSCanvasPattern.h */,
 				65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */,
 				65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */,
+				B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */,
+				B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */,
 				93F9B79E0BA6032600854064 /* JSCDATASection.cpp */,
 				93F9B79F0BA6032600854064 /* JSCDATASection.h */,
 				65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */,
@@ -7036,7 +7048,6 @@
 				B2FA3D1B0AB75A6F000E5AC4 /* JSSVGTextContentElement.h */,
 				B2FA3D1C0AB75A6F000E5AC4 /* JSSVGTextElement.cpp */,
 				B2FA3D1D0AB75A6F000E5AC4 /* JSSVGTextElement.h */,
-				B26554CD0B80ADEA00A50EC3 /* JSSVGTextPathElement.h */,
 				B2FA3D1E0AB75A6F000E5AC4 /* JSSVGTextPositioningElement.cpp */,
 				B2FA3D1F0AB75A6F000E5AC4 /* JSSVGTextPositioningElement.h */,
 				B2FA3D200AB75A6F000E5AC4 /* JSSVGTitleElement.cpp */,
@@ -7825,8 +7836,6 @@
 				859D62880AD888EE00012995 /* DOMSVGTextContentElement.mm */,
 				859D62890AD888EE00012995 /* DOMSVGTextElement.h */,
 				859D628A0AD888EE00012995 /* DOMSVGTextElement.mm */,
-				B26554CB0B80ADEA00A50EC3 /* DOMSVGTextPathElement.h */,
-				B26554CC0B80ADEA00A50EC3 /* DOMSVGTextPathElementInternal.h */,
 				859D628B0AD888EE00012995 /* DOMSVGTextPositioningElement.h */,
 				859D628C0AD888EE00012995 /* DOMSVGTextPositioningElement.mm */,
 				859D628D0AD888EF00012995 /* DOMSVGTitleElement.h */,
@@ -7886,6 +7895,9 @@
 		85B232260A8BF3A100FDF47B /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				B2AE9B9C0C3AF27400F23F7F /* DOMSVGTextPathElement.mm */,
+				B223622B0C3AF0710008CA9B /* DOMSVGTextPathElement.h */,
+				B223622C0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h */,
 				85967D9F0AA8BB59005FEDEE /* Core */,
 				85967DCA0AA8BF0F005FEDEE /* CSS */,
 				85AFA7AB0AAF3BB000E84305 /* Events */,
@@ -11685,9 +11697,6 @@
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */,
 				B26554C10B80AD6000A50EC3 /* SVGTextPathElement.h in Headers */,
-				B26554CE0B80ADEA00A50EC3 /* DOMSVGTextPathElement.h in Headers */,
-				B26554CF0B80ADEA00A50EC3 /* DOMSVGTextPathElementInternal.h in Headers */,
-				B26554D00B80ADEA00A50EC3 /* JSSVGTextPathElement.h in Headers */,
 				B26554EB0B80D74900A50EC3 /* RenderSVGTextPath.h in Headers */,
 				933A14300B7D188600A53FFD /* TextEvent.h in Headers */,
 				933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */,
@@ -11786,6 +11795,10 @@
 				0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */,
 				A8F4FB940C169E7B002AFED5 /* SVGRenderSupport.h in Headers */,
 				AA31B5B50C1DFD1000AE7083 /* RenderSVGRoot.h in Headers */,
+				B266CD4E0C3AEC6500EB08D2 /* JSSVGException.h in Headers */,
+				B22362290C3AF04A0008CA9B /* JSSVGTextPathElement.h in Headers */,
+				B223622E0C3AF0710008CA9B /* DOMSVGTextPathElement.h in Headers */,
+				B223622F0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13255,6 +13268,9 @@
 				A8F4FB960C169E85002AFED5 /* SVGRenderSupport.cpp in Sources */,
 				AA31B5B40C1DFD1000AE7083 /* RenderSVGRoot.cpp in Sources */,
 				B2D3FC8A0C2212CB00CF3618 /* JSSVGTransformListCustom.cpp in Sources */,
+				B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */,
+				B22362280C3AF04A0008CA9B /* JSSVGTextPathElement.cpp in Sources */,
+				B2AE9B9D0C3AF27400F23F7F /* DOMSVGTextPathElement.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

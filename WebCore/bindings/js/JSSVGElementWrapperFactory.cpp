@@ -77,6 +77,7 @@
 #include "JSSVGSwitchElement.h"
 #include "JSSVGSymbolElement.h"
 #include "JSSVGTextElement.h"
+#include "JSSVGTextPathElement.h"
 #include "JSSVGTitleElement.h"
 #include "JSSVGTRefElement.h"
 #include "JSSVGTSpanElement.h"
@@ -140,6 +141,7 @@
 #include "SVGSwitchElement.h"
 #include "SVGSymbolElement.h"
 #include "SVGTextElement.h"
+#include "SVGTextPathElement.h"
 #include "SVGTitleElement.h"
 #include "SVGTRefElement.h"
 #include "SVGTSpanElement.h"
@@ -213,6 +215,7 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(switch, Switch) \
     macro(symbol, Symbol) \
     macro(text, Text) \
+    macro(textPath, TextPath) \
     macro(title, Title) \
     macro(tref, TRef) \
     macro(tspan, TSpan) \
@@ -252,6 +255,7 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(switch, Switch) \
     macro(symbol, Symbol) \
     macro(text, Text) \
+    macro(textPath, TextPath) \
     macro(title, Title) \
     macro(tref, TRef) \
     macro(tspan, TSpan) \
