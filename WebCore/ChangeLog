@@ -1,3 +1,11 @@
+2007-10-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alp.
+
+        Track changes in r26109 to fix the Gtk+ build.
+
+        * WebCore.pro:
+
 2007-10-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders.

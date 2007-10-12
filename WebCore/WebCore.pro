@@ -154,9 +154,9 @@ WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
 
 WALDOCSSVALUES = $$PWD/css/CSSValueKeywords.in
 
-SVGCSSPROPERTIES = $$PWD/ksvg2/css/CSSPropertyNames.in
+SVGCSSPROPERTIES = $$PWD/ksvg2/css/SVGCSSPropertyNames.in
 
-SVGCSSVALUES = $$PWD/ksvg2/css/CSSValueKeywords.in
+SVGCSSVALUES = $$PWD/ksvg2/css/SVGCSSValueKeywords.in
 
 STYLESHEETS_EMBED = $$PWD/css/html4.css
 
@@ -1136,6 +1136,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         bindings/js/JSSVGPathSegListCustom.cpp \
         bindings/js/JSSVGPointListCustom.cpp \
         bindings/js/JSSVGTransformListCustom.cpp \
+        ksvg2/css/SVGCSSComputedStyleDeclaration.cpp \
         ksvg2/css/SVGCSSParser.cpp \
         ksvg2/css/SVGCSSStyleSelector.cpp \
         ksvg2/css/SVGRenderStyle.cpp \
@@ -1359,6 +1360,40 @@ gtk-port:SOURCES += \
         xlinknames.variable_out = GENERATED_SOURCES
         xlinknames.clean = ${QMAKE_FILE_OUT} tmp/XLinkNames.h
         QMAKE_EXTRA_COMPILERS += xlinknames
+
+    # GENERATOR 6-A:
+    cssprops.output = tmp/${QMAKE_FILE_BASE}.c
+    cssprops.input = WALDOCSSPROPS
+    cssprops.commands = cat ${QMAKE_FILE_NAME} $$SVGCSSPROPERTIES > tmp/${QMAKE_FILE_BASE}.in && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+    cssprops.CONFIG = target_predeps no_link
+    cssprops.depend = ${QMAKE_FILE_NAME} SVGCSSPROPERTIES
+    cssprops.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+    QMAKE_EXTRA_COMPILERS += cssprops
+
+    # GENERATOR 6-B:
+    cssvalues.output = tmp/${QMAKE_FILE_BASE}.c
+    cssvalues.input = WALDOCSSVALUES
+    cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSVALUES > tmp/${QMAKE_FILE_BASE}.in && cd tmp && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
+    cssvalues.CONFIG = target_predeps no_link
+    cssvalues.depend = ${QMAKE_FILE_NAME} SVGCSSVALUES
+    cssvalues.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+    QMAKE_EXTRA_COMPILERS += cssvalues
+} else {
+    # GENERATOR 6-A:
+    cssprops.output = tmp/${QMAKE_FILE_BASE}.c
+    cssprops.input = WALDOCSSPROPS
+    cssprops.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+    cssprops.CONFIG = target_predeps no_link
+    cssprops.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+    QMAKE_EXTRA_COMPILERS += cssprops
+
+    # GENERATOR 6-B:
+    cssvalues.output = tmp/${QMAKE_FILE_BASE}.c
+    cssvalues.input = WALDOCSSVALUES
+    cssvalues.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
+    cssvalues.CONFIG = target_predeps no_link
+    cssvalues.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+    QMAKE_EXTRA_COMPILERS += cssvalues
 }
 
 
@@ -1431,37 +1466,6 @@ xmlnames.variable_out = GENERATED_SOURCES
 xmlnames.clean = ${QMAKE_FILE_OUT} tmp/XMLNames.h
 QMAKE_EXTRA_COMPILERS += xmlnames
 
-# GENERATOR 6-A:
-cssprops.output = tmp/CSSPropertyNames.c
-cssprops.input = WALDOCSSPROPS
-cssprops.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
-cssprops.CONFIG = target_predeps no_link
-cssprops.clean = ${QMAKE_FILE_OUT} tmp/CSSPropertyNames.h
-QMAKE_EXTRA_COMPILERS += cssprops
-
-# GENERATOR 6-B:
-cssvalues.output = tmp/CSSValueKeywords.c
-cssvalues.input = WALDOCSSVALUES
-cssvalues.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makevalues.pl && $(DEL_FILE) CSSValueKeywords.in CSSValueKeywords.strip CSSValueKeywords.gperf
-cssvalues.CONFIG = target_predeps no_link
-cssvalues.clean = ${QMAKE_FILE_OUT} tmp/CSSValueKeywords.h
-QMAKE_EXTRA_COMPILERS += cssvalues
-
-# GENERATOR 7-A:
-svgcssproperties.output = tmp/ksvgcssproperties.h
-svgcssproperties.input = SVGCSSPROPERTIES
-svgcssproperties.commands = $(COPY_FILE) ${QMAKE_FILE_IN} ${QMAKE_VAR_OBJECTS_DIR_WTR}ksvgcssproperties.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakeprops -n SVG -f ksvgcssproperties.in && $(DEL_FILE) ksvgcssproperties.in ksvgcssproperties.gperf
-svgcssproperties.CONFIG = target_predeps no_link
-svgcssproperties.clean = ${QMAKE_FILE_OUT} tmp/ksvgcssproperties.c
-QMAKE_EXTRA_COMPILERS += svgcssproperties
-
-# GENERATOR 7-B:
-svgcssvalues.output = tmp/ksvgcssvalues.h
-svgcssvalues.input = SVGCSSVALUES
-svgcssvalues.commands = perl -ne \"print lc\" $$PWD/ksvg2/css/CSSValueKeywords.in > tmp/ksvgcssvalues.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in && $(DEL_FILE) ksvgcssvalues.in ksvgcssvalues.gperf
-svgcssvalues.CONFIG = target_predeps no_link
-svgcssvalues.clean = ${QMAKE_FILE_OUT} tmp/ksvgcssvalues.c tmp/CSSValueKeywords.h
-QMAKE_EXTRA_COMPILERS += svgcssvalues
 
 # GENERATOR 8-A:
 entities.output = tmp/HTMLEntityNames.c
