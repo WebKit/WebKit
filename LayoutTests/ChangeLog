@@ -1,3 +1,22 @@
+2007-10-08  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Not reviewed.
+
+        Forgot to land some result test changes in my last commit.
+
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * svg/text/text-align-04-b-expected.checksum:
+        * svg/text/text-align-04-b-expected.png:
+        * svg/text/text-align-04-b-expected.txt:
+        * svg/text/text-path-01-b-expected.checksum:
+        * svg/text/text-path-01-b-expected.png:
+        * svg/text/text-path-01-b-expected.txt:
+
 2007-10-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
