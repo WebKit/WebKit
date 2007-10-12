@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,8 +31,8 @@
 namespace WebCore
 {
     class SVGScriptElement : public SVGElement,
-                                 public SVGURIReference,
-                                 public SVGExternalResourcesRequired
+                             public SVGURIReference,
+                             public SVGExternalResourcesRequired
     {
     public:
         SVGScriptElement(const QualifiedName&, Document*);
@@ -44,8 +44,6 @@ namespace WebCore
 
         // Internal
         virtual void parseMappedAttribute(MappedAttribute *attr);
-
-        static void executeScript(Document *document, StringImpl *jsCode);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

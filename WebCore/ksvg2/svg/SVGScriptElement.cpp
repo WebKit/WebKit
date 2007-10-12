@@ -22,12 +22,9 @@
 
 #include "config.h"
 #if ENABLE(SVG)
-#include "PlatformString.h"
-#include "Attr.h"
-#include "StringImpl.h"
+#include "SVGScriptElement.h"
 
 #include "SVGNames.h"
-#include "SVGScriptElement.h"
 
 namespace WebCore {
 
@@ -52,65 +49,18 @@ void SVGScriptElement::setType(const String& type)
     m_type = type;
 }
 
-void SVGScriptElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGScriptElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::typeAttr)
         setType(attr->value());
     else {
-        if(SVGURIReference::parseMappedAttribute(attr))
+        if (SVGURIReference::parseMappedAttribute(attr))
             return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
 
         SVGElement::parseMappedAttribute(attr);
     }
-}
-
-void SVGScriptElement::executeScript(Document *document, StringImpl *jsCode)
-{
-    if(!document || !jsCode)
-        return;
-#if 0
-    Ecma *ecmaEngine = document->ecmaEngine();
-    if(!ecmaEngine)
-        return;
-                
-    KJS::Interpreter::lock();
-
-    // Run script
-    KJS::Completion comp = ecmaEngine->evaluate(jsCode.deprecatedString(), ecmaEngine->globalObject());
-    if (comp.complType() == KJS::Throw) {
-        KJS::ExecState *exec = ecmaEngine->globalExec();
-        KJS::JSValue *exVal = comp.value();
-
-        int lineno = -1;
-        if (exVal->isObject()) {
-            KJS::JSValue *lineVal = static_cast<KJS::JSObject *>(exVal)->get(exec, "line");
-            if(lineVal->type() == KJS::NumberType)
-                lineno = lineVal->toInt32(exec);
-        }
-
-        // Fire ERROR_EVENT upon errors...
-        SVGDocument *svgDocument = static_cast<SVGDocument *>(document);
-        if (svgDocument && document->hasListenerType(ERROR_EVENT)) {
-            RefPtr<Event> event = svgDocument->createEvent("SVGEvents");
-            event->initEvent(EventNames::errorEvent, false, false);
-            svgDocument->dispatchRecursiveEvent(event.get(), svgDocument->lastChild());
-        }
-
-        kdDebug() << "[SVGScriptElement] Evaluation error, line " << (lineno != -1 ? DeprecatedString::number(lineno) : DeprecatedString::fromLatin1("N/A"))  << " " << exVal->toString(exec).deprecatedString() << endl;
-    }
-    else if(comp.complType() == KJS::ReturnValue)
-        kdDebug() << "[SVGScriptElement] Return value: " << comp.value()->toString(ecmaEngine->globalExec()).deprecatedString() << endl;
-    else if(comp.complType() == KJS::Normal)
-        kdDebug() << "[SVGScriptElement] Evaluated ecma script!" << endl;
-    
-    KJS::Interpreter::unlock();
-#else
-    if (jsCode)
-        // Hack to close memory leak due to #if 0
-        String(jsCode);
-#endif
 }
 
 }

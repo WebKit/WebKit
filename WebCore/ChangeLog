@@ -1,5 +1,15 @@
 2007-10-03  Rob Buis  <buis@kde.org>
 
+        Reviewed by Eric.
+
+        Remove unneeded code and other cleanups.
+
+        * ksvg2/svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::parseMappedAttribute):
+        * ksvg2/svg/SVGScriptElement.h:
+
+2007-10-03  Rob Buis  <buis@kde.org>
+
         Reviewed by Maciej.
 
         http://bugs.webkit.org/show_bug.cgi?id=15260
