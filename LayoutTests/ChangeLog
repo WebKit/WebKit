@@ -2,6 +2,14 @@
 
         Reviewed by Sam.
 
+        Check in correct results, now that the hashing bug is fixed here as well.
+
+        * svg/custom/js-svg-constructors-expected.txt:
+
+2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
         Add testcase checking the value of all SVG JS constructors.
         Those who are not yet available are marked as "expected failures".
 

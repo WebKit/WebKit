@@ -35,13 +35,8 @@ namespace WebCore
     class SVGPointList : public SVGPODList<FloatPoint>
     {
     public:
-        SVGPointList(const SVGElement* context);
+        SVGPointList();
         virtual ~SVGPointList();
-
-        const SVGElement* context() const;
-
-    private:
-        const SVGElement* m_context;
     };
 
 } // namespace WebCore

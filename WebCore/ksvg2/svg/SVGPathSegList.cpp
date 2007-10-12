@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  
@@ -35,9 +35,8 @@
 
 namespace WebCore {
 
-SVGPathSegList::SVGPathSegList(const SVGElement* context)
+SVGPathSegList::SVGPathSegList()
     : SVGList<RefPtr<SVGPathSeg> >()
-    , m_context(context)
 {
 }
 
@@ -45,12 +44,7 @@ SVGPathSegList::~SVGPathSegList()
 {
 }
 
-const SVGElement* SVGPathSegList::context() const
-{
-    return m_context;
-}
-
-unsigned SVGPathSegList::getPathSegAtLength(float)
+unsigned SVGPathSegList::getPathSegAtLength(double)
 {
     // FIXME : to be useful this will need to support non-normalized SVGPathSegLists
     ExceptionCode ec = 0;

@@ -34,16 +34,11 @@ namespace WebCore {
  
     class SVGPathSegList : public SVGList<RefPtr<SVGPathSeg> > {
     public:
-        SVGPathSegList(const SVGElement* context);
+        SVGPathSegList();
         virtual ~SVGPathSegList();
 
-        const SVGElement* context() const;
-
-        unsigned getPathSegAtLength(float);
+        unsigned getPathSegAtLength(double);
         Path toPathData();
-
-    private:
-        const SVGElement* m_context;
     };
 
 } // namespace WebCore

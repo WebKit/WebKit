@@ -41,7 +41,7 @@ SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* doc
     , SVGURIReference()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_preserveAspectRatio(new SVGPreserveAspectRatio(this))
+    , m_preserveAspectRatio(new SVGPreserveAspectRatio())
     , m_cachedImage(0)
     , m_filterEffect(0)
 {

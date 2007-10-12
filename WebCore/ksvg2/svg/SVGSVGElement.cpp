@@ -312,7 +312,7 @@ SVGLength SVGSVGElement::createSVGLength()
 
 SVGAngle* SVGSVGElement::createSVGAngle()
 {
-    return new SVGAngle(0);
+    return new SVGAngle();
 }
 
 FloatPoint SVGSVGElement::createSVGPoint()

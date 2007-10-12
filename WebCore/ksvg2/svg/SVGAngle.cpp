@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGAngle.h"
 
@@ -33,12 +34,11 @@ const float deg2grad = 400.0f / 360.0f;
 
 #define rad2grad deg2grad / deg2rad
 
-SVGAngle::SVGAngle(const SVGStyledElement* context)
+SVGAngle::SVGAngle()
     : Shared<SVGAngle>()
     , m_unitType(SVG_ANGLETYPE_UNKNOWN)
     , m_value(0)
     , m_valueInSpecifiedUnits(0)
-    , m_context(context)
 {
 }
 
@@ -174,18 +174,8 @@ double SVGAngle::shortestArcBisector(double angle1, double angle2)
     return bisector;
 }
 
-const SVGStyledElement* SVGAngle::context() const
-{
-    return m_context;
 }
 
-void SVGAngle::setContext(const SVGStyledElement* context)
-{
-    m_context = context;
-}
-
-}
-
-// vim:ts=4:noet
 #endif // ENABLE(SVG)
 
+// vim:ts=4:noet

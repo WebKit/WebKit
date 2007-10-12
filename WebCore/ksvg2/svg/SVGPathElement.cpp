@@ -203,7 +203,7 @@ void SVGPathElement::notifyAttributeChange() const
 SVGPathSegList* SVGPathElement::pathSegList() const
 {
     if (!m_pathSegList)
-        m_pathSegList = new SVGPathSegList(this);
+        m_pathSegList = new SVGPathSegList();
 
     return m_pathSegList.get();
 }

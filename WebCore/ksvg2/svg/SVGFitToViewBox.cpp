@@ -36,7 +36,7 @@ namespace WebCore {
 
 SVGFitToViewBox::SVGFitToViewBox()
     : m_viewBox()
-    , m_preserveAspectRatio(new SVGPreserveAspectRatio(0))
+    , m_preserveAspectRatio(new SVGPreserveAspectRatio())
 {
 }
 
@@ -101,6 +101,6 @@ bool SVGFitToViewBox::parseMappedAttribute(MappedAttribute* attr)
 
 }
 
-// vim:ts=4:noet
 #endif // ENABLE(SVG)
 
+// vim:ts=4:noet

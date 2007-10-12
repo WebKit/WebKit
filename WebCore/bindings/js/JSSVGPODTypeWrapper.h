@@ -79,19 +79,6 @@ public:
             return;
 
         (m_creator.get()->*m_setter)(type);
-
-        ASSERT(exec && exec->dynamicInterpreter());
-        Frame* activeFrame = static_cast<KJS::ScriptInterpreter*>(exec->dynamicInterpreter())->frame();
-        if (!activeFrame)
-            return;
-
-        SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);
-        if (extensions && extensions->hasGenericContext<PODTypeCreator>(m_creator.get())) {
-            const SVGElement* context = extensions->genericContext<PODTypeCreator>(m_creator.get());
-            ASSERT(context);
-
-            context->notifyAttributeChange();
-        }
     }
 
 private:
@@ -127,33 +114,17 @@ private:
 template<typename PODType>
 class SVGPODListItem;
 
-template<typename PODType, typename ListType>
+template<typename PODType>
 class JSSVGPODTypeWrapperCreatorForList : public JSSVGPODTypeWrapperCreatorReadWrite<PODType, SVGPODListItem<PODType> >
 {
 public:
-    JSSVGPODTypeWrapperCreatorForList(SVGPODListItem<PODType>* creator, const ListType* list)
+    JSSVGPODTypeWrapperCreatorForList(SVGPODListItem<PODType>* creator)
         : JSSVGPODTypeWrapperCreatorReadWrite<PODType, SVGPODListItem<PODType> >(creator,
-                                                                        &SVGPODListItem<PODType>::value,
-                                                                        &SVGPODListItem<PODType>::setValue)
-        , m_list(list)
+                                                                                 &SVGPODListItem<PODType>::value,
+                                                                                 &SVGPODListItem<PODType>::setValue)
     { }
 
     virtual ~JSSVGPODTypeWrapperCreatorForList() { }
-
-    virtual void commitChange(KJS::ExecState* exec, PODType type)
-    {
-        // Update POD item within SVGList
-        JSSVGPODTypeWrapperCreatorReadWrite<PODType, SVGPODListItem<PODType> >::commitChange(exec, type);
-
-        // Notify owner of the list, that it's content changed
-        const SVGElement* context = m_list->context();
-        ASSERT(context);
-
-        context->notifyAttributeChange();
-    }
-
-private:
-    const ListType* m_list;
 };
 
 // Caching facilities

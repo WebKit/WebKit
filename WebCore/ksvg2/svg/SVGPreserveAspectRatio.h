@@ -55,7 +55,7 @@ namespace WebCore {
             SVG_MEETORSLICE_SLICE      = 2
         };
 
-        SVGPreserveAspectRatio(const SVGStyledElement* context);
+        SVGPreserveAspectRatio();
         virtual ~SVGPreserveAspectRatio();
 
         void setAlign(unsigned short);
@@ -75,8 +75,6 @@ namespace WebCore {
     protected:
         unsigned short m_align;
         unsigned short m_meetOrSlice;
-
-        const SVGStyledElement* m_context;
     };
 
 } // namespace WebCore

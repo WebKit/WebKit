@@ -1,6 +1,108 @@
+2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Remove all "SVGElement* m_context" parameters spread over SVG primitives
+        (like SVGAngle, SVGPreserveAspectRatio, SVGTransformList, ...)
+
+        This is all handled by the JS generation in the bindings now, leading
+        to a faster static rendering codepaths, and easier handling of the dynamic
+        parts like JS scripting. Remove the mystified genericContext() concept alltogether.
+
+        * bindings/js/JSSVGMatrixCustom.cpp: Adapt to the context() change.
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::translate):
+        (WebCore::JSSVGMatrix::scale):
+        (WebCore::JSSVGMatrix::scaleNonUniform):
+        (WebCore::JSSVGMatrix::rotate):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        (WebCore::JSSVGMatrix::flipX):
+        (WebCore::JSSVGMatrix::flipY):
+        (WebCore::JSSVGMatrix::skewX):
+        (WebCore::JSSVGMatrix::skewY):
+        * bindings/js/JSSVGPODTypeWrapper.h: Remove all nAC() calls here!
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::JSSVGPODTypeWrapperCreatorForList):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::~JSSVGPODTypeWrapperCreatorForList):
+        * bindings/js/JSSVGPathSegCustom.cpp: Adapt to the context() change.
+        (WebCore::toJS):
+        * bindings/js/JSSVGPathSegListCustom.cpp: Ditto.
+        (WebCore::JSSVGPathSegList::clear):
+        (WebCore::JSSVGPathSegList::initialize):
+        (WebCore::JSSVGPathSegList::getItem):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+        (WebCore::JSSVGPathSegList::appendItem):
+        * bindings/js/JSSVGPointListCustom.cpp: Ditto.
+        (WebCore::JSSVGPointList::clear):
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::getItem):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::removeItem):
+        (WebCore::JSSVGPointList::appendItem): 
+        * bindings/js/JSSVGTransformListCustom.cpp: Ditto.
+        (WebCore::JSSVGTransformList::clear):
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::getItem):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::removeItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * bindings/js/kjs_binding.h: Add new cacheSVGDOMObject, taking third parameter: context.
+        (KJS::cacheSVGDOMObject):
+        * bindings/scripts/CodeGeneratorJS.pm: Change generation to step aways from genericContext().
+        * ksvg2/misc/SVGDocumentExtensions.h: Kill all genericContext() stuff.
+        (WebCore::SVGDocumentExtensions::hasBaseValue):
+        * ksvg2/svg/SVGAngle.cpp: Kill context parameter.
+        (WebCore::SVGAngle::SVGAngle):
+        * ksvg2/svg/SVGAngle.h: ditto.
+        * ksvg2/svg/SVGFEImageElement.cpp: SVG classes don't get context params passed anymore.
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        * ksvg2/svg/SVGFitToViewBox.cpp: Ditto.
+        (WebCore::SVGFitToViewBox::SVGFitToViewBox):
+        * ksvg2/svg/SVGGradientElement.cpp: Ditto.
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        * ksvg2/svg/SVGImageElement.cpp: Ditto.
+        (WebCore::SVGImageElement::SVGImageElement):
+        * ksvg2/svg/SVGMarkerElement.cpp: Ditto.
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPathElement.cpp: Ditto.
+        (WebCore::SVGPathElement::pathSegList):
+        * ksvg2/svg/SVGPathSegList.cpp: Kill context parameter.
+        (WebCore::SVGPathSegList::SVGPathSegList):
+        * ksvg2/svg/SVGPathSegList.h:
+        * ksvg2/svg/SVGPatternElement.cpp: SVG classes don't get context params passed anymore.
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * ksvg2/svg/SVGPointList.cpp: Kill context parameter.
+        (SVGPointList::SVGPointList):
+        * ksvg2/svg/SVGPointList.h:
+        * ksvg2/svg/SVGPolyElement.cpp: SVG classes don't get context params passed anymore.
+        (WebCore::SVGPolyElement::points):
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp: Kill context parameter.
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio):
+        (WebCore::SVGPreserveAspectRatio::setAlign):
+        (WebCore::SVGPreserveAspectRatio::setMeetOrSlice):
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        * ksvg2/svg/SVGPreserveAspectRatio.h:
+        * ksvg2/svg/SVGSVGElement.cpp: SVG classes don't get cntext params passed anymore.
+        (WebCore::SVGSVGElement::createSVGAngle):
+        * ksvg2/svg/SVGStyledTransformableElement.cpp: Ditto.
+        (WebCore::SVGStyledTransformableElement::SVGStyledTransformableElement):
+        * ksvg2/svg/SVGTextElement.cpp: Ditto.
+        (WebCore::SVGTextElement::SVGTextElement):
+        * ksvg2/svg/SVGTransformList.cpp: Kill context parameter.
+        (SVGTransformList::SVGTransformList):
+        * ksvg2/svg/SVGTransformList.h:
+
 2007-07-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11167.
 
         Recognize <textPath> in SVG JS bindings.
         Add JSSVGTextPathElement to JSSVGElementWrapperFactory.

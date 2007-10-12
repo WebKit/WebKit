@@ -50,7 +50,7 @@ SVGPolyElement::~SVGPolyElement()
 SVGPointList* SVGPolyElement::points() const
 {
     if (!m_points)
-        m_points = new SVGPointList(this);
+        m_points = new SVGPointList();
 
     return m_points.get();
 }
