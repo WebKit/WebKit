@@ -1,3 +1,12 @@
+2007-10-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark.
+
+        Cast zoom factor to int as the original patch did.  This is necessary to appease some versions of gcc.
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentScale):
+
 2007-10-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
