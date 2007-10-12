@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -67,16 +67,18 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEGaussianBlur* SVGFEGaussianBlurElement::filterEffect() const
+SVGFEGaussianBlur* SVGFEGaussianBlurElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEGaussianBlur*>(SVGResourceFilter::createFilterEffect(FE_GAUSSIAN_BLUR));
+        m_filterEffect = static_cast<SVGFEGaussianBlur*>(SVGResourceFilter::createFilterEffect(FE_GAUSSIAN_BLUR, filter));
     if (!m_filterEffect)
         return 0;
+
     m_filterEffect->setIn(in1());
-    setStandardAttributes(m_filterEffect);
     m_filterEffect->setStdDeviationX(stdDeviationX());
     m_filterEffect->setStdDeviationY(stdDeviationY());
+
+    setStandardAttributes(m_filterEffect); 
     return m_filterEffect;
 }
 

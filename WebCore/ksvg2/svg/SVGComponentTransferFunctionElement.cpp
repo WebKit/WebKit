@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGComponentTransferFunctionElement.h"
 
@@ -32,12 +33,12 @@ namespace WebCore {
 
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_type(0)
+    , m_type(SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN)
     , m_tableValues(new SVGNumberList)
-    , m_slope(0.0)
+    , m_slope(1.0)
     , m_intercept(0.0)
-    , m_amplitude(0.0)
-    , m_exponent(0.0)
+    , m_amplitude(1.0)
+    , m_exponent(1.0)
     , m_offset(0.0)
 {
 }

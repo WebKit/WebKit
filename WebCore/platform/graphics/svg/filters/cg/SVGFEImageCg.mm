@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -30,36 +30,46 @@
 
 namespace WebCore {
 
-CIFilter* SVGFEImage::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEImage::getCIFilter(const FloatRect& bbox) const
 {
     if (!cachedImage())
         return nil;
 
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     CIImage* ciImage = [CIImage imageWithCGImage:cachedImage()->image()->getCGImageRef()];
 
-    // FIXME: There is probably a nicer way to perform both of these transforms.
     filter = [CIFilter filterWithName:@"CIAffineTransform"];
     [filter setDefaults];
     [filter setValue:ciImage forKey:@"inputImage"];
 
-    CGAffineTransform cgTransform = CGAffineTransformMake(1,0,0,-1,0,cachedImage()->image()->rect().bottom());
+    FloatRect imageRect = cachedImage()->image()->rect();
+
+    // Flip image into right origin
+    CGAffineTransform cgTransform = CGAffineTransformMake(1.0, 0.0, 0.0, -1.0, 0.0, imageRect.bottom());
     NSAffineTransform* nsTransform = [NSAffineTransform transform];
     [nsTransform setTransformStruct:*((NSAffineTransformStruct *)&cgTransform)];
     [filter setValue:nsTransform forKey:@"inputTransform"];
 
-    if (!subRegion().isEmpty()) {
+    // Calculate crop rect
+    FE_QUARTZ_MAP_TO_SUBREGION_PREPARE(bbox);
+
+    // Map between the image rectangle and the crop rect
+    if (!cropRect.isEmpty()) {
         CIFilter* scaleImage = [CIFilter filterWithName:@"CIAffineTransform"];
         [scaleImage setDefaults];
         [scaleImage setValue:[filter valueForKey:@"outputImage"] forKey:@"inputImage"];
 
-        cgTransform = CGAffineTransformMakeMapBetweenRects(CGRect(cachedImage()->image()->rect()), subRegion());
+        cgTransform = CGAffineTransformMakeMapBetweenRects(CGRect(imageRect), CGRect(cropRect));
         [nsTransform setTransformStruct:*((NSAffineTransformStruct *)&cgTransform)];
         [scaleImage setValue:nsTransform forKey:@"inputTransform"];
+
         filter = scaleImage;
     }
 
+    // Actually apply cropping
+    FE_QUARTZ_MAP_TO_SUBREGION_APPLY(cropRect);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

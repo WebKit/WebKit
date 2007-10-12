@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -23,28 +23,28 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEFlood.h"
+
+#include "AffineTransform.h"
 #include "SVGFEHelpersCg.h"
+#include "CgSupport.h"
 
 namespace WebCore {
 
-CIFilter* SVGFEFlood::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEFlood::getCIFilter(const FloatRect& bbox) const
 {
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"CIConstantColorGenerator"];
     [filter setDefaults];
     CGColorRef color = cgColor(floodColor());
-    CGColorRef withAlpha = CGColorCreateCopyWithAlpha(color,CGColorGetAlpha(color) * floodOpacity());
+    CGColorRef withAlpha = CGColorCreateCopyWithAlpha(color, CGColorGetAlpha(color) * floodOpacity());
     CIColor* inputColor = [CIColor colorWithCGColor:withAlpha];
     CGColorRelease(color);
     CGColorRelease(withAlpha);
     [filter setValue:inputColor forKey:@"inputColor"];
 
-    CGRect cropRect = CGRectMake(-100,-100,1000,1000); // HACK
-    if (!subRegion().isEmpty())
-        cropRect = subRegion();
-    FE_QUARTZ_CROP_TO_RECT(cropRect);
-
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

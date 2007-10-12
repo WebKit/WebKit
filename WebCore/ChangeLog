@@ -1,3 +1,253 @@
+2007-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Large SVG filter rework. Bring it back in a useable state.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=5527 (Filters need subregion support)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=5579 (WebKit+SVG renders full-filters-example incorrectly)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=5976 (filterUnits="userSpaceOnUse" is broken (breaking feTile test case))
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12064 (Need function for manual style-resolution for things like gradient stops)
+
+        filters-blend-01-b.svg & filters-example-01-b.svg & filters-displace-01-b.svg & filters-diffuse-01-f.svg are fixed now.
+
+        In detail:
+        - flood-color & flood-opacity have been incorrectly resolved on the <feBlend> parent element!
+        - sizing of filter region was truncated in some cases, as the bbox was used to resolve the needed filter region instead of the filter rect
+        - add subregion support to all filter primitives (primitiveUnits & filterUnits handled in all cases)
+        - WKDisplacmentMap.cikernel incorrectly flipped the y-axis.
+        - Correctly specify default values for all filter primitives in ksvg2/svg!
+        - Initialize all variables of the SVGFE* classes in platform/graphics/svg/filters.
+        - Fix 'flood-color' initial value (was set to the _stop_ color initial value)
+          -> both initial values were pointing to 'black' though, so it was no visible problem.
+        - Parse 'lighting-color' css property, no more hacking in SVGFEDiffuseLighting.
+          -> Correct it's initial from black to white value fixes SVG lighting filters!
+        - Add diffuseConstant support to feDiffuseLighting filter.
+        - Centralize manual style resolution (needed for stop-color, flood-color & flood-opacity, lighting-color)
+
+        * ksvg2/css/SVGCSSParser.cpp:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        (StyleMiscData::StyleMiscData):
+        (StyleMiscData::operator==):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::filterEffect):
+        * ksvg2/svg/SVGFEBlendElement.h:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElement.h:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElement.h:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::parseMappedAttribute):
+        (WebCore::SVGFECompositeElement::filterEffect):
+        * ksvg2/svg/SVGFECompositeElement.h:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::parseMappedAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.h:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElement.h:
+        * ksvg2/svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::SVGFEDistantLightElement):
+        * ksvg2/svg/SVGFEDistantLightElement.h:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFEFloodElement.h:
+        * ksvg2/svg/SVGFEFuncAElement.cpp:
+        * ksvg2/svg/SVGFEFuncAElement.h:
+        * ksvg2/svg/SVGFEFuncBElement.cpp:
+        * ksvg2/svg/SVGFEFuncBElement.h:
+        * ksvg2/svg/SVGFEFuncGElement.cpp:
+        (WebCore::SVGFEFuncGElement::SVGFEFuncGElement):
+        * ksvg2/svg/SVGFEFuncGElement.h:
+        * ksvg2/svg/SVGFEFuncRElement.cpp:
+        * ksvg2/svg/SVGFEFuncRElement.h:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElement.h:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::notifyFinished):
+        (WebCore::SVGFEImageElement::filterEffect):
+        * ksvg2/svg/SVGFEImageElement.h:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::SVGFELightElement):
+        * ksvg2/svg/SVGFELightElement.h:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::filterEffect):
+        * ksvg2/svg/SVGFEMergeElement.h:
+        * ksvg2/svg/SVGFEMergeNodeElement.cpp:
+        * ksvg2/svg/SVGFEMergeNodeElement.h:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::filterEffect):
+        * ksvg2/svg/SVGFEOffsetElement.h:
+        * ksvg2/svg/SVGFEPointLightElement.h:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (WebCore::SVGFESpecularLightingElement::parseMappedAttribute):
+        (WebCore::SVGFESpecularLightingElement::filterEffect):
+        (WebCore::SVGFESpecularLightingElement::updateLights):
+        * ksvg2/svg/SVGFESpecularLightingElement.h:
+        * ksvg2/svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * ksvg2/svg/SVGFESpotLightElement.h:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::filterEffect):
+        * ksvg2/svg/SVGFETileElement.h:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElement.h:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::canvasResource):
+        * ksvg2/svg/SVGFilterElement.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.h:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::resolveStyle):
+        * ksvg2/svg/SVGStyledElement.h:
+        * platform/graphics/svg/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::addFilterEffect):
+        (WebCore::SVGResourceFilter::filterBBoxForItemBBox):
+        * platform/graphics/svg/SVGResourceFilter.h:
+        (WebCore::SVGResourceFilter::xBoundingBoxMode):
+        (WebCore::SVGResourceFilter::setXBoundingBoxMode):
+        (WebCore::SVGResourceFilter::yBoundingBoxMode):
+        (WebCore::SVGResourceFilter::setYBoundingBoxMode):
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::SVGResourceFilter::createFilterEffect):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::dumpOutputImage):
+        (WebCore::SVGResourceFilter::applyFilter):
+        (WebCore::SVGResourceFilter::getCIFilterStack):
+        (WebCore::SVGResourceFilter::imageForName):
+        (WebCore::SVGResourceFilter::setImageForName):
+        (WebCore::SVGResourceFilter::setOutputImage):
+        (WebCore::alphaImageForImage):
+        (WebCore::SVGResourceFilter::inputImage):
+        * platform/graphics/svg/filters/SVGDistantLightSource.h:
+        * platform/graphics/svg/filters/SVGFEBlend.cpp:
+        (WebCore::SVGFEBlend::SVGFEBlend):
+        * platform/graphics/svg/filters/SVGFEBlend.h:
+        * platform/graphics/svg/filters/SVGFEColorMatrix.cpp:
+        (WebCore::SVGFEColorMatrix::SVGFEColorMatrix):
+        * platform/graphics/svg/filters/SVGFEColorMatrix.h:
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.cpp:
+        (WebCore::SVGFEComponentTransfer::SVGFEComponentTransfer):
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.h:
+        (WebCore::SVGComponentTransferFunction::SVGComponentTransferFunction):
+        * platform/graphics/svg/filters/SVGFEComposite.cpp:
+        (WebCore::SVGFEComposite::SVGFEComposite):
+        * platform/graphics/svg/filters/SVGFEComposite.h:
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::SVGFEConvolveMatrix::SVGFEConvolveMatrix):
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.h:
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::SVGFEDiffuseLighting::SVGFEDiffuseLighting):
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.h:
+        * platform/graphics/svg/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::SVGFEDisplacementMap::SVGFEDisplacementMap):
+        * platform/graphics/svg/filters/SVGFEDisplacementMap.h:
+        * platform/graphics/svg/filters/SVGFEFlood.cpp:
+        (WebCore::SVGFEFlood::SVGFEFlood):
+        * platform/graphics/svg/filters/SVGFEFlood.h:
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.cpp:
+        (WebCore::SVGFEGaussianBlur::SVGFEGaussianBlur):
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.h:
+        * platform/graphics/svg/filters/SVGFEImage.cpp:
+        (WebCore::SVGFEImage::SVGFEImage):
+        * platform/graphics/svg/filters/SVGFEImage.h:
+        * platform/graphics/svg/filters/SVGFEMerge.cpp:
+        * platform/graphics/svg/filters/SVGFEMerge.h:
+        (WebCore::SVGFEMerge::SVGFEMerge):
+        * platform/graphics/svg/filters/SVGFEMorphology.cpp:
+        (WebCore::SVGFEMorphology::SVGFEMorphology):
+        * platform/graphics/svg/filters/SVGFEMorphology.h:
+        * platform/graphics/svg/filters/SVGFEOffset.cpp:
+        (WebCore::SVGFEOffset::SVGFEOffset):
+        * platform/graphics/svg/filters/SVGFEOffset.h:
+        * platform/graphics/svg/filters/SVGFESpecularLighting.cpp:
+        (WebCore::SVGFESpecularLighting::SVGFESpecularLighting):
+        * platform/graphics/svg/filters/SVGFESpecularLighting.h:
+        * platform/graphics/svg/filters/SVGFETile.h:
+        (WebCore::SVGFETile::SVGFETile):
+        * platform/graphics/svg/filters/SVGFETurbulence.cpp:
+        (WebCore::SVGFETurbulence::SVGFETurbulence):
+        * platform/graphics/svg/filters/SVGFETurbulence.h:
+        * platform/graphics/svg/filters/SVGFilterEffect.cpp:
+        (WebCore::SVGFilterEffect::SVGFilterEffect):
+        (WebCore::SVGFilterEffect::primitiveBBoxForFilterBBox):
+        (WebCore::SVGFilterEffect::filter):
+        (WebCore::SVGFilterEffect::setFilter):
+        * platform/graphics/svg/filters/SVGFilterEffect.h:
+        (WebCore::SVGFilterEffect::xBoundingBoxMode):
+        (WebCore::SVGFilterEffect::setXBoundingBoxMode):
+        (WebCore::SVGFilterEffect::yBoundingBoxMode):
+        (WebCore::SVGFilterEffect::setYBoundingBoxMode):
+        (WebCore::SVGFilterEffect::widthBoundingBoxMode):
+        (WebCore::SVGFilterEffect::setWidthBoundingBoxMode):
+        (WebCore::SVGFilterEffect::heightBoundingBoxMode):
+        (WebCore::SVGFilterEffect::setHeightBoundingBoxMode):
+        * platform/graphics/svg/filters/SVGLightSource.cpp:
+        * platform/graphics/svg/filters/SVGLightSource.h:
+        * platform/graphics/svg/filters/SVGPointLightSource.h:
+        (WebCore::SVGPointLightSource::SVGPointLightSource):
+        * platform/graphics/svg/filters/SVGSpotLightSource.h:
+        (WebCore::SVGSpotLightSource::SVGSpotLightSource):
+        * platform/graphics/svg/filters/cg/SVGFEBlendCg.mm:
+        (WebCore::SVGFEBlend::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEColorMatrixCg.mm:
+        (WebCore::SVGFEColorMatrix::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEComponentTransferCg.mm:
+        (WebCore::filterForComponentFunc):
+        (WebCore::SVGFEComponentTransfer::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFECompositeCg.mm:
+        (WebCore::SVGFEComposite::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEDiffuseLightingCg.mm:
+        (WebCore::SVGFEDiffuseLighting::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEDisplacementMapCg.mm:
+        (WebCore::SVGFEDisplacementMap::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEFloodCg.mm:
+        (WebCore::SVGFEFlood::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEGaussianBlurCg.mm:
+        (WebCore::SVGFEGaussianBlur::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.h:
+        * platform/graphics/svg/filters/cg/SVGFEImageCg.mm:
+        (WebCore::SVGFEImage::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEMergeCg.mm:
+        (WebCore::SVGFEMerge::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEOffsetCg.mm:
+        (WebCore::SVGFEOffset::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFESpecularLightingCg.mm:
+        (WebCore::SVGFESpecularLighting::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFETileCg.mm:
+        (WebCore::SVGFETile::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFilterEffectCg.mm:
+        (WebCore::SVGFilterEffect::getCIFilter):
+        * platform/graphics/svg/filters/cg/WKDiffuseLightingFilter.cikernel:
+        * platform/graphics/svg/filters/cg/WKDisplacementMapFilter.cikernel:
+        * platform/graphics/svg/filters/cg/WKSpotLightFilter.m:
+        (-[WKSpotLightFilter outputImage]):
+        * platform/graphics/svg/qt/SVGResourceFilterQt.cpp:
+        (WebCore::SVGResourceFilter::createFilterEffect):
+
 2007-08-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

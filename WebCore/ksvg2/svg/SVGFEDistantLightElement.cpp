@@ -25,8 +25,8 @@
 
 namespace WebCore {
 
-SVGFEDistantLightElement::SVGFEDistantLightElement(const QualifiedName& tagName, Document* doc) : 
-    SVGFELightElement(tagName, doc)
+SVGFEDistantLightElement::SVGFEDistantLightElement(const QualifiedName& tagName, Document* doc)
+    : SVGFELightElement(tagName, doc)
 {
 }
 
@@ -40,5 +40,5 @@ SVGLightSource* SVGFEDistantLightElement::lightSource() const
 }
 
 }
-#endif // ENABLE(SVG)
 
+#endif // ENABLE(SVG)

@@ -1,7 +1,7 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
-                  2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+                  2005 Oliver Hunt <oliver@nerget.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -21,8 +21,8 @@
 
 #ifndef SVGFELightElement_h
 #define SVGFELightElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGElement.h"
 #include "SVGLightSource.h"
 
@@ -36,11 +36,9 @@ namespace WebCore
         SVGFELightElement(const QualifiedName&, Document*);
         virtual ~SVGFELightElement();
         
-        // 'SVGComponentTransferFunctionElement' functions
         virtual SVGLightSource* lightSource() const = 0;
-        
-        // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute* attr);        
+        virtual void parseMappedAttribute(MappedAttribute*);
+
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, Azimuth, azimuth)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFELightElement, double, double, Elevation, elevation)

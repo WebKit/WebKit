@@ -27,12 +27,15 @@
 
 namespace WebCore {
 
-CIFilter* SVGFEOffset::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEOffset::getCIFilter(const FloatRect& bbox) const
 {
+    SVGResourceFilter* svgFilter = filter();
     FE_QUARTZ_SETUP_INPUT(@"CIAffineTransform");
     NSAffineTransform* offsetTransform = [NSAffineTransform transform];
     [offsetTransform translateXBy:dx() yBy:dy()];
     [filter setValue:offsetTransform  forKey:@"inputTransform"];
+
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

@@ -1,7 +1,7 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
-                  2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+                  2005 Oliver Hunt <oliver@nerget.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -38,7 +38,7 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* doc
     , m_pointsAtX(0.0)
     , m_pointsAtY(0.0)
     , m_pointsAtZ(0.0)
-    , m_specularExponent(0.0)
+    , m_specularExponent(1.0)
     , m_limitingConeAngle(0.0)
 {
 }

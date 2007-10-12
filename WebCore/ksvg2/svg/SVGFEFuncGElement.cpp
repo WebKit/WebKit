@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -27,8 +27,8 @@
 
 namespace WebCore {
 
-SVGFEFuncGElement::SVGFEFuncGElement(const QualifiedName& tagName, Document* doc) : 
-    SVGComponentTransferFunctionElement(tagName, doc)
+SVGFEFuncGElement::SVGFEFuncGElement(const QualifiedName& tagName, Document* doc)
+    : SVGComponentTransferFunctionElement(tagName, doc)
 {
 }
 

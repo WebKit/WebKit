@@ -90,7 +90,7 @@ namespace WebCore {
 
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0f)
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, stops, color, StopColor, stopColor, Color(0, 0, 0))    
-        
+
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, clip, clipPath, ClipPath, clipPath, String())
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, mask, maskElement, MaskElement, maskElement, String())
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, markers, startMarker, StartMarker, startMarker, String())
@@ -100,6 +100,7 @@ namespace WebCore {
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, misc, filter, Filter, filter, String())
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, misc, floodOpacity, FloodOpacity, floodOpacity, 1.0f)
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, misc, floodColor, FloodColor, floodColor, Color(0, 0, 0))
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, misc, lightingColor, LightingColor, lightingColor, Color(255, 255, 255))
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, misc, baselineShiftValue, BaselineShiftValue, baselineShiftValue, 0)
 
         // convenience

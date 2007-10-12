@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -34,10 +34,10 @@ SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Doc
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_baseFrequencyX(0.0)
     , m_baseFrequencyY(0.0)
-    , m_numOctaves(0)
+    , m_numOctaves(1)
     , m_seed(0.0)
-    , m_stitchTiles(0)
-    , m_type(0)
+    , m_stitchTiles(SVG_STITCHTYPE_NOSTITCH)
+    , m_type(SVG_TURBULENCE_TYPE_TURBULENCE)
     , m_filterEffect(0)
 {
 }
@@ -81,20 +81,21 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFETurbulence* SVGFETurbulenceElement::filterEffect() const
+SVGFETurbulence* SVGFETurbulenceElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFETurbulence*>(SVGResourceFilter::createFilterEffect(FE_TURBULENCE));
+        m_filterEffect = static_cast<SVGFETurbulence*>(SVGResourceFilter::createFilterEffect(FE_TURBULENCE, filter));
     if (!m_filterEffect)
         return 0;
     
     m_filterEffect->setType((SVGTurbulanceType) type());
-    setStandardAttributes(m_filterEffect);
     m_filterEffect->setBaseFrequencyX(baseFrequencyX());
     m_filterEffect->setBaseFrequencyY(baseFrequencyY());
     m_filterEffect->setNumOctaves(numOctaves());
     m_filterEffect->setSeed(seed());
     m_filterEffect->setStitchTiles(stitchTiles() == SVG_STITCHTYPE_STITCH);
+
+    setStandardAttributes(m_filterEffect); 
     return m_filterEffect;
 }
 

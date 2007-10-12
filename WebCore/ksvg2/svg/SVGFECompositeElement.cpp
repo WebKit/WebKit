@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -32,7 +32,7 @@ namespace WebCore {
 
 SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m__operator(0)
+    , m__operator(SVG_FECOMPOSITE_OPERATOR_OVER)
     , m_k1(0.0)
     , m_k2(0.0)
     , m_k3(0.0)
@@ -57,8 +57,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, double, Number, number, K4,
 void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::operatorAttr)
-    {
+    if (attr->name() == SVGNames::operatorAttr) {
         if (value == "over")
             set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_OVER);
         else if (value == "in")
@@ -88,20 +87,22 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEComposite* SVGFECompositeElement::filterEffect() const
+SVGFEComposite* SVGFECompositeElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEComposite*>(SVGResourceFilter::createFilterEffect(FE_COMPOSITE));
+        m_filterEffect = static_cast<SVGFEComposite*>(SVGResourceFilter::createFilterEffect(FE_COMPOSITE, filter));
     if (!m_filterEffect)
         return 0;
+
     m_filterEffect->setOperation((SVGCompositeOperationType) _operator());
     m_filterEffect->setIn(in1());
     m_filterEffect->setIn2(in2());
-    setStandardAttributes(m_filterEffect);
     m_filterEffect->setK1(k1());
     m_filterEffect->setK2(k2());
     m_filterEffect->setK3(k3());
     m_filterEffect->setK4(k4());
+
+    setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -28,6 +28,13 @@
 #include "SVGFEFlood.h"
 
 namespace WebCore {
+
+SVGFEFlood::SVGFEFlood(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_floodColor()
+    , m_floodOpacity(0.0)
+{
+}
 
 Color SVGFEFlood::floodColor() const
 {

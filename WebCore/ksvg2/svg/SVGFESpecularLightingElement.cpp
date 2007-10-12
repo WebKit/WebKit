@@ -1,7 +1,7 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
-                  2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+                  2005 Oliver Hunt <oliver@nerget.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFESpecularLightingElement.h"
 
+#include "RenderObject.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
 #include "SVGFELightElement.h"
@@ -34,10 +35,9 @@ namespace WebCore {
 
 SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_specularConstant(0.0)
-    , m_specularExponent(0.0)
-    , m_surfaceScale(0.0)
-    , m_lightingColor(new SVGColor)
+    , m_specularConstant(1.0)
+    , m_specularExponent(1.0)
+    , m_surfaceScale(1.0)
     , m_kernelUnitLengthX(0.0)
     , m_kernelUnitLengthY(0.0)
     , m_filterEffect(0)
@@ -55,7 +55,6 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, numb
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr.localName(), m_surfaceScale)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, KernelUnitLengthX, kernelUnitLengthX, "kernelUnitLengthX", m_kernelUnitLengthX)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, KernelUnitLengthY, kernelUnitLengthY, "kernelUnitLengthY", m_kernelUnitLengthY)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, SVGColor*, Color, color, LightingColor, lightingColor, SVGNames::lighting_colorAttr.localName(), m_lightingColor.get())
 
 void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
 {    
@@ -74,26 +73,35 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
             setKernelUnitLengthXBaseValue(x);
             setKernelUnitLengthYBaseValue(y);
         }
-    } else if (attr->name() == SVGNames::lighting_colorAttr)
-        setLightingColorBaseValue(new SVGColor(value));
-    else
+    } else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFESpecularLighting* SVGFESpecularLightingElement::filterEffect() const
+SVGFESpecularLighting* SVGFESpecularLightingElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect) 
-        m_filterEffect = static_cast<SVGFESpecularLighting*>(SVGResourceFilter::createFilterEffect(FE_SPECULAR_LIGHTING));
+        m_filterEffect = static_cast<SVGFESpecularLighting*>(SVGResourceFilter::createFilterEffect(FE_SPECULAR_LIGHTING, filter));
     if (!m_filterEffect)
         return 0;
+
     m_filterEffect->setIn(in1());
-    setStandardAttributes(m_filterEffect);
     m_filterEffect->setSpecularConstant((specularConstant()));
     m_filterEffect->setSpecularExponent((specularExponent()));
     m_filterEffect->setSurfaceScale((surfaceScale()));
     m_filterEffect->setKernelUnitLengthX((kernelUnitLengthX()));
     m_filterEffect->setKernelUnitLengthY((kernelUnitLengthY()));
-    m_filterEffect->setLightingColor(lightingColor()->color());
+
+    SVGFESpecularLightingElement* nonConstThis = const_cast<SVGFESpecularLightingElement*>(this);
+
+    RenderStyle* parentStyle = 0;
+    if (!renderer())
+        parentStyle = nonConstThis->styleForRenderer(parent()->renderer());
+
+    RenderStyle* filterStyle = nonConstThis->resolveStyle(parentStyle);
+    m_filterEffect->setLightingColor(filterStyle->svgStyle()->lightingColor());
+
+    setStandardAttributes(m_filterEffect);
+
     updateLights();
     return m_filterEffect;
 }
@@ -113,6 +121,7 @@ void SVGFESpecularLightingElement::updateLights() const
             break;
         }
     }
+
     m_filterEffect->setLightSource(light);
 }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -32,8 +32,10 @@ namespace WebCore {
 class SVGFETile : public SVGFilterEffect
 {
 public:
+    SVGFETile(SVGResourceFilter* filter) : SVGFilterEffect(filter) { }
+
 #if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(SVGResourceFilter*) const;
+    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
 #endif
 };
 

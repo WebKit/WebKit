@@ -82,6 +82,7 @@ static CIFilter* filterForComponentFunc(const SVGComponentTransferFunction& func
 {
     CIFilter *filter;
     switch (func.type) {
+    case SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN:
     case SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY:
         filter = [CIFilter filterWithName:@"WKIdentityTransfer"];
         break;
@@ -132,7 +133,7 @@ CIFilter* SVGFEComponentTransfer::getFunctionFilter(SVGChannelSelectorType chann
     }
 }
 
-CIFilter* SVGFEComponentTransfer::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEComponentTransfer::getCIFilter(const FloatRect& bbox) const
 {
     [WKComponentMergeFilter class];
     [WKIdentityTransferFilter class];
@@ -141,6 +142,7 @@ CIFilter* SVGFEComponentTransfer::getCIFilter(SVGResourceFilter* svgFilter) cons
     [WKLinearTransferFilter class];
     [WKGammaTransferFilter class];
 
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"WKComponentMerge"];
@@ -155,6 +157,7 @@ CIFilter* SVGFEComponentTransfer::getCIFilter(SVGResourceFilter* svgFilter) cons
     [filter setValue:getFunctionFilter(SVG_CHANNEL_B, inputImage) forKey:@"inputFuncB"];
     [filter setValue:getFunctionFilter(SVG_CHANNEL_A, inputImage) forKey:@"inputFuncA"];
 
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
     return nil;
 }

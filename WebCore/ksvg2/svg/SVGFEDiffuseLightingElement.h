@@ -1,7 +1,7 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+                  2005 Oliver Hunt <oliver@nerget.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -21,25 +21,22 @@
 
 #ifndef SVGFEDiffuseLightingElement_h
 #define SVGFEDiffuseLightingElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
     class SVGFEDiffuseLighting;
     class SVGColor;
-    
+
     class SVGFEDiffuseLightingElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
         SVGFEDiffuseLightingElement(const QualifiedName&, Document*);
         virtual ~SVGFEDiffuseLightingElement();
 
-        // 'SVGFEDiffuseLightingElement' functions
-        // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-
-        virtual SVGFilterEffect *filterEffect() const;
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -48,13 +45,11 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, DiffuseConstant, diffuseConstant)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, SurfaceScale, surfaceScale)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, SVGColor*, RefPtr<SVGColor>, LightingColor, lightingColor)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, KernelUnitLengthX, kernelUnitLengthX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, double, double, KernelUnitLengthY, kernelUnitLengthY)
-        //need other properties here...
-        mutable SVGFEDiffuseLighting *m_filterEffect;
+
+        mutable SVGFEDiffuseLighting* m_filterEffect;
         
-        //light management
         void updateLights() const;
     };
 

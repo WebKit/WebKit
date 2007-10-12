@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,8 +22,8 @@
 
 #ifndef SVGFEOffsetElement_h
 #define SVGFEOffsetElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFEOffset.h"
 
@@ -36,11 +36,8 @@ namespace WebCore
         SVGFEOffsetElement(const QualifiedName&, Document*);
         virtual ~SVGFEOffsetElement();
 
-        // 'SVGFEOffsetElement' functions
-        // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-
-        virtual SVGFEOffset *filterEffect() const;
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual SVGFEOffset* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -49,7 +46,8 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, double, double, Dx, dx)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, double, double, Dy, dy)
-        mutable SVGFEOffset *m_filterEffect;
+
+        mutable SVGFEOffset* m_filterEffect;
     };
 
 } // namespace WebCore

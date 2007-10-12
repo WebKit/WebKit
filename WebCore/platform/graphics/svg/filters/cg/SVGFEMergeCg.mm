@@ -27,8 +27,9 @@
 
 namespace WebCore {
 
-CIFilter* SVGFEMerge::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEMerge::getCIFilter(const FloatRect& bbox) const
 {
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     const Vector<String>& inputs = mergeInputs();
@@ -44,6 +45,8 @@ CIFilter* SVGFEMerge::getCIFilter(SVGResourceFilter* svgFilter) const
         [filter setValue:previousOutput forKey:@"inputBackgroundImage"];
         previousOutput = [filter valueForKey:@"outputImage"];
     }
+
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

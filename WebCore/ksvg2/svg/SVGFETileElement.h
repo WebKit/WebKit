@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,8 +22,8 @@
 
 #ifndef SVGFETileElement_h
 #define SVGFETileElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFETile.h"
 
@@ -36,18 +36,16 @@ namespace WebCore
         SVGFETileElement(const QualifiedName&, Document*);
         virtual ~SVGFETileElement();
 
-        // 'SVGFETileElement' functions
-        // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-
-        virtual SVGFETile *filterEffect() const;
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual SVGFETile* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETileElement, String, String, In1, in1)
-        mutable SVGFETile *m_filterEffect;
+
+        mutable SVGFETile* m_filterEffect;
     };
 
 } // namespace WebCore

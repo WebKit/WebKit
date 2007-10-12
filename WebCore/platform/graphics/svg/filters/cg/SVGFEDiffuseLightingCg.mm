@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-CIFilter* SVGFEDiffuseLighting::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEDiffuseLighting::getCIFilter(const FloatRect& bbox) const
 {
     const SVGLightSource* light = lightSource();
     if (!light)
@@ -37,6 +37,7 @@ CIFilter* SVGFEDiffuseLighting::getCIFilter(SVGResourceFilter* svgFilter) const
 
     [WKDiffuseLightingFilter class];
 
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"WKDiffuseLighting"];
@@ -62,6 +63,7 @@ CIFilter* SVGFEDiffuseLighting::getCIFilter(SVGResourceFilter* svgFilter) const
     [filter setValue:[NSNumber numberWithFloat:kernelUnitLengthX()] forKey:@"inputKernelUnitLengthX"];
     [filter setValue:[NSNumber numberWithFloat:kernelUnitLengthY()] forKey:@"inputKernelUnitLengthY"];
 
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

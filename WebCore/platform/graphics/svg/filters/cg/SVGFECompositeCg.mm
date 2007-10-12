@@ -29,8 +29,9 @@
 
 namespace WebCore {
 
-CIFilter* SVGFEComposite::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEComposite::getCIFilter(const FloatRect& bbox) const
 {
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -73,6 +74,8 @@ CIFilter* SVGFEComposite::getCIFilter(SVGResourceFilter* svgFilter) const
         [filter setValue:[NSNumber numberWithFloat:k3()] forKey:@"inputK3"];
         [filter setValue:[NSNumber numberWithFloat:k4()] forKey:@"inputK4"];
     }
+
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

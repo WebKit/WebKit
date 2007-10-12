@@ -24,8 +24,7 @@
  */
 
 kernel vec4 diffuseLighting(sampler normalVectors, sampler lightVectors, __color lightingColor, 
-    float surfaceScale, float diffuseConstant, float kernelLengthX,
-    float kernelLengthY)
+    float surfaceScale, float diffuseConstant, float kernelLengthX, float kernelLengthY)
 {
     vec2 pos = samplerCoord(lightVectors);
     vec2 posn = samplerCoord(normalVectors);
@@ -33,7 +32,7 @@ kernel vec4 diffuseLighting(sampler normalVectors, sampler lightVectors, __color
     vec3 l = l4.xyz;
     l = normalize(l);
     vec3 n = sample(normalVectors, posn).xyz;
-    float nl = dot(l, n);
+    float nl = dot(l, n) * diffuseConstant;
     vec4 res = vec4(lightingColor.r * nl, lightingColor.g * nl, lightingColor.b * nl, 1.0);
     res.xyz *= l4.w;
     return res;

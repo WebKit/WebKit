@@ -40,7 +40,6 @@ kernel vec4 displacementMap(sampler image, sampler map, vec4 xchannel, vec4 ycha
     float xc = dot(XCYC, xchannel);
     float yc = dot(XCYC, ychannel);
     samplePos.x += scale*(xc-0.5);
-    //flip the y-axis
-    samplePos.y -= scale*(yc-0.5);
+    samplePos.y += scale*(yc-0.5);
     return sample(image, samplePos);
 }

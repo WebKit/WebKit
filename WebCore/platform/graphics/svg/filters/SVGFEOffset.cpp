@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -28,6 +28,13 @@
 #include "TextStream.h"
 
 namespace WebCore {
+
+SVGFEOffset::SVGFEOffset(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_dx(0.0)
+    , m_dy(0.0)
+{
+}
 
 float SVGFEOffset::dx() const
 {

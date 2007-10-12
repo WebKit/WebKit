@@ -1,7 +1,9 @@
+KCanvasResource {id="blur" [type=FILTER]  [bounding box=at (0,-80) size 200x100] [bounding box mode=0] [effects=[[type=GAUSSIAN-BLUR]  [subregion="at (0,-80) size 200x100"] [std dev. x=2.00 y=2.00]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (45,36) size 349x449.20
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (45,36) size 349x449.20
       RenderSVGText {text} at (151,50) size 148x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 148x17

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -38,6 +38,8 @@ enum SVGEdgeModeType {
 
 class SVGFEConvolveMatrix : public SVGFilterEffect {
 public:
+    SVGFEConvolveMatrix(SVGResourceFilter*);
+
     FloatSize kernelSize() const;
     void setKernelSize(FloatSize);
 
@@ -66,13 +68,13 @@ public:
 
 private:
     FloatSize m_kernelSize;
-    Vector<float> m_kernelMatrix; // maybe should be a real matrix?
     float m_divisor;
     float m_bias;
     FloatSize m_targetOffset;
     SVGEdgeModeType m_edgeMode;
     FloatPoint m_kernelUnitLength;
     bool m_preserveAlpha;
+    Vector<float> m_kernelMatrix; // maybe should be a real matrix?
 };
 
 } // namespace WebCore

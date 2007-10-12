@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,8 +22,8 @@
 
 #ifndef SVGFEGaussianBlurElement_h
 #define SVGFEGaussianBlurElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEGaussianBlur.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -36,13 +36,10 @@ namespace WebCore
         SVGFEGaussianBlurElement(const QualifiedName&, Document*);
         virtual ~SVGFEGaussianBlurElement();
 
-        // 'SVGFEGaussianBlurElement' functions
         void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
-        // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute* attr);
-
-        virtual SVGFEGaussianBlur* filterEffect() const;
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual SVGFEGaussianBlur* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -51,6 +48,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, double, double, StdDeviationX, stdDeviationX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, double, double, StdDeviationY, stdDeviationY)
+
         mutable SVGFEGaussianBlur* m_filterEffect;
     };
 

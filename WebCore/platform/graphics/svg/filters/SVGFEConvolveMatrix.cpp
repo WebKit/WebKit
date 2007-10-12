@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -28,6 +28,18 @@
 #include "SVGFEConvolveMatrix.h"
 
 namespace WebCore {
+
+SVGFEConvolveMatrix::SVGFEConvolveMatrix(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_kernelSize()
+    , m_divisor(0.0)
+    , m_bias(0.0)
+    , m_targetOffset()
+    , m_edgeMode(SVG_EDGEMODE_UNKNOWN)
+    , m_kernelUnitLength()
+    , m_preserveAlpha(false)
+{
+}
 
 FloatSize SVGFEConvolveMatrix::kernelSize() const
 {

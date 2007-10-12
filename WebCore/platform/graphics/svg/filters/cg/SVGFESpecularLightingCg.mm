@@ -29,14 +29,15 @@
 
 namespace WebCore {
 
-CIFilter* SVGFESpecularLighting::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFESpecularLighting::getCIFilter(const FloatRect& bbox) const
 {
     const SVGLightSource* light = lightSource();
-    if(!light)
+    if (!light)
         return nil;
 
     [WKSpecularLightingFilter class];
 
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"WKSpecularLighting"];
@@ -58,6 +59,7 @@ CIFilter* SVGFESpecularLighting::getCIFilter(SVGResourceFilter* svgFilter) const
     [filter setValue:[NSNumber numberWithFloat:kernelUnitLengthX()] forKey:@"inputKernelUnitLengthX"];
     [filter setValue:[NSNumber numberWithFloat:kernelUnitLengthY()] forKey:@"inputKernelUnitLengthY"];
 
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

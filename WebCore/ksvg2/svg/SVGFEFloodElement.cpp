@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -55,19 +55,25 @@ void SVGFEFloodElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEFlood* SVGFEFloodElement::filterEffect() const
+SVGFEFlood* SVGFEFloodElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEFlood*>(SVGResourceFilter::createFilterEffect(FE_FLOOD));
+        m_filterEffect = static_cast<SVGFEFlood*>(SVGResourceFilter::createFilterEffect(FE_FLOOD, filter));
     if (!m_filterEffect)
         return 0;
+
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
-    RenderStyle* filterStyle = const_cast<SVGFEFloodElement *>(this)->styleForRenderer(parentNode()->renderer());
-    const SVGRenderStyle* svgStyle = filterStyle->svgStyle();
-    m_filterEffect->setFloodColor(svgStyle->floodColor());
-    m_filterEffect->setFloodOpacity(svgStyle->floodOpacity());
-    filterStyle->deref(document()->renderArena());
+
+    SVGFEFloodElement* nonConstThis = const_cast<SVGFEFloodElement*>(this);
+
+    RenderStyle* parentStyle = 0;
+    if (!renderer())
+        parentStyle = nonConstThis->styleForRenderer(parent()->renderer());
+
+    RenderStyle* filterStyle = nonConstThis->resolveStyle(parentStyle);
+    m_filterEffect->setFloodColor(filterStyle->svgStyle()->floodColor());
+    m_filterEffect->setFloodOpacity(filterStyle->svgStyle()->floodOpacity());
 
     return m_filterEffect;
 }

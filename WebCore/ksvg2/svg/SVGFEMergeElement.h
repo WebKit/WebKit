@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,8 +22,8 @@
 
 #ifndef SVGFEMergeElement_h
 #define SVGFEMergeElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEMerge.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -35,7 +35,7 @@ namespace WebCore
         SVGFEMergeElement(const QualifiedName&, Document*);
         virtual ~SVGFEMergeElement();
 
-        virtual SVGFEMerge* filterEffect() const;
+        virtual SVGFEMerge* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -48,4 +48,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-

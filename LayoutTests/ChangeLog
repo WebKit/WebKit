@@ -1,3 +1,80 @@
+2007-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Updated layout tests results after the SVG filter rework.
+
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * svg/batik/text/textEffect-expected.checksum:
+        * svg/batik/text/textEffect-expected.png:
+        * svg/batik/text/textEffect-expected.txt:
+        * svg/batik/text/textEffect3-expected.checksum:
+        * svg/batik/text/textEffect3-expected.png:
+        * svg/batik/text/textEffect3-expected.txt:
+        * svg/batik/text/textFeatures-expected.checksum:
+        * svg/batik/text/textFeatures-expected.png:
+        * svg/batik/text/textFeatures-expected.txt:
+        * svg/batik/text/textProperties-expected.checksum:
+        * svg/batik/text/textProperties-expected.png:
+        * svg/custom/empty-merge-expected.txt:
+        * svg/custom/feComponentTransfer-Discrete-expected.checksum:
+        * svg/custom/feComponentTransfer-Discrete-expected.png:
+        * svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * svg/custom/feComponentTransfer-Gamma-expected.checksum:
+        * svg/custom/feComponentTransfer-Gamma-expected.png:
+        * svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * svg/custom/feComponentTransfer-Linear-expected.checksum:
+        * svg/custom/feComponentTransfer-Linear-expected.png:
+        * svg/custom/feComponentTransfer-Linear-expected.txt:
+        * svg/custom/feComponentTransfer-Table-expected.checksum:
+        * svg/custom/feComponentTransfer-Table-expected.png:
+        * svg/custom/feComponentTransfer-Table-expected.txt:
+        * svg/custom/filter-source-alpha-expected.txt:
+        * svg/custom/image-with-transform-clip-filter-expected.checksum:
+        * svg/custom/image-with-transform-clip-filter-expected.png:
+        * svg/custom/image-with-transform-clip-filter-expected.txt:
+        * svg/custom/invalid-css-expected.txt:
+        * svg/custom/non-opaque-filters-expected.checksum:
+        * svg/custom/non-opaque-filters-expected.png:
+        * svg/custom/non-opaque-filters-expected.txt:
+        * svg/custom/text-filter-expected.checksum:
+        * svg/custom/text-filter-expected.png:
+        * svg/custom/text-filter-expected.txt:
+        * svg/custom/visibility-override-filter-expected.txt:
+
 2007-08-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

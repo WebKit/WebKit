@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -58,17 +58,17 @@ void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEComponentTransfer* SVGFEComponentTransferElement::filterEffect() const
+SVGFEComponentTransfer* SVGFEComponentTransferElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEComponentTransfer*>(SVGResourceFilter::createFilterEffect(FE_COMPONENT_TRANSFER));
+        m_filterEffect = static_cast<SVGFEComponentTransfer*>(SVGResourceFilter::createFilterEffect(FE_COMPONENT_TRANSFER, filter));
     if (!m_filterEffect)
         return 0;
     
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
     
-    for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {
+    for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feFuncRTag))
             m_filterEffect->setRedFunction(static_cast<SVGFEFuncRElement*>(n)->transferFunction());
         else if (n->hasTagName(SVGNames::feFuncGTag))

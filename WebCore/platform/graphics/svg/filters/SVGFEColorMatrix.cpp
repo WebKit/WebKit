@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -27,6 +27,12 @@
 #include "SVGFEColorMatrix.h"
 
 namespace WebCore {
+
+SVGFEColorMatrix::SVGFEColorMatrix(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_type(SVG_FECOLORMATRIX_TYPE_UNKNOWN)
+{
+}
 
 SVGColorMatrixType SVGFEColorMatrix::type() const
 {

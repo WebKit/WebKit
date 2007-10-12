@@ -40,8 +40,9 @@ SVGLightSource* SVGFESpotLightElement::lightSource() const
 
     // convert lookAt to a direction
     FloatPoint3D direction(pointsAtX() - pos.x(), 
-                             pointsAtY() - pos.y(), 
-                             pointsAtZ() - pos.z());
+                           pointsAtY() - pos.y(), 
+                           pointsAtZ() - pos.z());
+
     direction.normalize();
     return new SVGSpotLightSource(pos, direction, specularExponent(), limitingConeAngle());
 }

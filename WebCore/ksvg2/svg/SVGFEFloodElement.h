@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,31 +22,28 @@
 
 #ifndef SVGFEFloodElement_h
 #define SVGFEFloodElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFEFlood.h"
 
 namespace WebCore
 {
-
     class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
         SVGFEFloodElement(const QualifiedName&, Document*);
         virtual ~SVGFEFloodElement();
 
-        // 'SVGFEFloodElement' functions
-        // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-
-        virtual SVGFEFlood *filterEffect() const;
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual SVGFEFlood* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEFloodElement, String, String, In1, in1)
+
         mutable SVGFEFlood *m_filterEffect;
     };
 

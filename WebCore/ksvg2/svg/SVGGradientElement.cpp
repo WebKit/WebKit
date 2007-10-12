@@ -115,7 +115,7 @@ SVGResource* SVGGradientElement::canvasResource()
 Vector<SVGGradientStop> SVGGradientElement::buildStops() const
 {
     Vector<SVGGradientStop> stops;
-    
+
     // FIXME: Manual style resolution is a hack
     RenderStyle* gradientStyle = 0;
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
@@ -123,19 +123,11 @@ Vector<SVGGradientStop> SVGGradientElement::buildStops() const
         if (element && element->isGradientStop()) {
             SVGStopElement* stop = static_cast<SVGStopElement*>(element);
             float stopOffset = stop->offset();
-            
-            RenderStyle* stopStyle;
-            if (stop->renderer())
-                stopStyle = stop->renderer()->style();
-            else {
-                if (!gradientStyle)
-                    gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer(parent()->renderer());
-                // FIXME: The renderer tree has no way for us to force stops to always have a renderer
-                // (display: none) on a parent will cause them to not.  Until we have a way to force renderers
-                // we have a manual style resolution hack.
-                stopStyle = document()->styleSelector()->styleForElement(stop, gradientStyle);
-            }
-            
+
+            if (!stop->renderer() && !gradientStyle)
+                gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer(parent()->renderer());
+
+            RenderStyle* stopStyle = stop->resolveStyle(gradientStyle);
             Color c = stopStyle->svgStyle()->stopColor();
             float opacity = stopStyle->svgStyle()->stopOpacity();
             

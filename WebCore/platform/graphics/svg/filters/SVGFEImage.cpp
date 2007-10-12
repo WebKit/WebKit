@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -29,8 +29,9 @@
 
 namespace WebCore {
 
-SVGFEImage::SVGFEImage()
-    : m_cachedImage(0)
+SVGFEImage::SVGFEImage(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_cachedImage(0)
 {
 }
 

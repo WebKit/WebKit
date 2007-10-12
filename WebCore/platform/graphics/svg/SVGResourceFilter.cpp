@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -41,19 +41,36 @@ void SVGResourceFilter::addFilterEffect(SVGFilterEffect* effect)
 {
     ASSERT(effect);
 
-    if (effect)
+    if (effect) {
+        ASSERT(effect->filter() == this);
         m_effects.append(effect);
+    }
 }
 
-FloatRect SVGResourceFilter::filterBBoxForItemBBox(FloatRect itemBBox) const
+FloatRect SVGResourceFilter::filterBBoxForItemBBox(const FloatRect& itemBBox) const
 {
     FloatRect filterBBox = filterRect();
 
-    if (filterBoundingBoxMode())
-        filterBBox = FloatRect(filterBBox.x() * itemBBox.width(),
-                               filterBBox.y() * itemBBox.height(),
+    float xOffset = 0.0;
+    float yOffset = 0.0;
+
+    if (!effectBoundingBoxMode()) {
+        xOffset = itemBBox.x();
+        yOffset = itemBBox.y();
+    }
+
+    if (filterBoundingBoxMode()) {
+        filterBBox = FloatRect(xOffset + filterBBox.x() * itemBBox.width(),
+                               yOffset + filterBBox.y() * itemBBox.height(),
                                filterBBox.width() * itemBBox.width(),
                                filterBBox.height() * itemBBox.height());
+    } else {
+        if (xBoundingBoxMode())
+            filterBBox.setX(xOffset + filterBBox.x());
+
+        if (yBoundingBoxMode())
+            filterBBox.setY(yOffset + filterBBox.y());
+    }
 
     return filterBBox;
 }

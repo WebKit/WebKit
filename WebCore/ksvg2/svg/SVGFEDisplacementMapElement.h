@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+ Copyright (C) 2006 Oliver Hunt <oliver@nerget.com>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -19,8 +19,8 @@
 
 #ifndef SVGFEDisplacementMapElement_h
 #define SVGFEDisplacementMapElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEDisplacementMap.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -31,13 +31,10 @@ namespace WebCore {
         SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
         virtual ~SVGFEDisplacementMapElement();
         
-        // 'SVGFEDisplacementMapElement' functions
         static SVGChannelSelectorType stringToChannel(const String&);
         
-        // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute*);
-        
-        virtual SVGFEDisplacementMap* filterEffect() const;
+        virtual SVGFEDisplacementMap* filterEffect(SVGResourceFilter*) const;
         
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -48,6 +45,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, int, int, XChannelSelector, xChannelSelector)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, int, int, YChannelSelector, yChannelSelector)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, double, double, Scale, scale)
+
         mutable SVGFEDisplacementMap* m_filterEffect;
     };
 

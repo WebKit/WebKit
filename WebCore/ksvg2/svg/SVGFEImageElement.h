@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,8 +22,8 @@
 
 #ifndef SVGFEImageElement_h
 #define SVGFEImageElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGURIReference.h"
 #include "SVGLangSpace.h"
@@ -34,21 +34,20 @@ namespace WebCore {
     class SVGPreserveAspectRatio;
 
     class SVGFEImageElement : public SVGFilterPrimitiveStandardAttributes,
-                                  public SVGURIReference,
-                                  public SVGLangSpace,
-                                  public SVGExternalResourcesRequired,
-                                  public CachedResourceClient
+                              public SVGURIReference,
+                              public SVGLangSpace,
+                              public SVGExternalResourcesRequired,
+                              public CachedResourceClient
     {
     public:
         SVGFEImageElement(const QualifiedName&, Document*);
         virtual ~SVGFEImageElement();
 
-        // 'SVGFEImageElement' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-        virtual void notifyFinished(CachedResource *finishedObj);
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void notifyFinished(CachedResource*);
 
     protected:
-        virtual SVGFEImage *filterEffect() const;
+        virtual SVGFEImage* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -59,8 +58,8 @@ namespace WebCore {
  
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGPreserveAspectRatio*, RefPtr<SVGPreserveAspectRatio>, PreserveAspectRatio, preserveAspectRatio)
 
-        CachedImage *m_cachedImage;
-        mutable SVGFEImage *m_filterEffect;
+        CachedImage* m_cachedImage;
+        mutable SVGFEImage* m_filterEffect;
     };
 
 } // namespace WebCore

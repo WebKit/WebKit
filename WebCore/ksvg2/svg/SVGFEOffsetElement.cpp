@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -26,7 +26,6 @@
 #include "SVGFEOffsetElement.h"
 
 #include "Attr.h"
-#include "SVGRenderStyle.h"
 #include "SVGResourceFilter.h"
 
 namespace WebCore {
@@ -61,16 +60,18 @@ void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEOffset* SVGFEOffsetElement::filterEffect() const
+SVGFEOffset* SVGFEOffsetElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEOffset*>(SVGResourceFilter::createFilterEffect(FE_OFFSET));
+        m_filterEffect = static_cast<SVGFEOffset*>(SVGResourceFilter::createFilterEffect(FE_OFFSET, filter));
     if (!m_filterEffect)
         return 0;
+
     m_filterEffect->setIn(in1());
-    setStandardAttributes(m_filterEffect);
     m_filterEffect->setDx(dx());
     m_filterEffect->setDy(dy());
+
+    setStandardAttributes(m_filterEffect); 
     return m_filterEffect;
 }
 

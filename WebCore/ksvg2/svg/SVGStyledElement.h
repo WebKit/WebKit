@@ -61,6 +61,9 @@ namespace WebCore {
 
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
+        // Centralized place to force a manual style resolution. Hacky but needed for now.
+        RenderStyle* resolveStyle(RenderStyle* parentStyle);
+
     protected:
         friend class RenderPath;
         void rebuildRenderer() const;

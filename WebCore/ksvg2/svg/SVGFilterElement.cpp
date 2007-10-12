@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
     Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 
@@ -116,44 +116,42 @@ SVGResource* SVGFilterElement::canvasResource()
     bool filterBBoxMode = filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setFilterBoundingBoxMode(filterBBoxMode);
 
-    float _x, _y, w, h;
+    float _x, _y, _width, _height;
 
-    if (filterBBoxMode && x().unitType() == LengthTypePercentage)
-        _x = x().valueInSpecifiedUnits() / 100.0;
-    else
+    if (filterBBoxMode) {
+        _x = x().valueAsPercentage();
+        _y = y().valueAsPercentage();
+        _width = width().valueAsPercentage();
+        _height = height().valueAsPercentage();
+    } else {
+        m_filter->setXBoundingBoxMode(x().unitType() == LengthTypePercentage);
+        m_filter->setYBoundingBoxMode(y().unitType() == LengthTypePercentage);
+
         _x = x().value();
-
-    if (filterBBoxMode && y().unitType() == LengthTypePercentage)
-        _y = y().valueInSpecifiedUnits() / 100.0;
-    else
         _y = y().value();
+        _width = width().value();
+        _height = height().value();
+    } 
 
-    if (filterBBoxMode && width().unitType() == LengthTypePercentage)
-        w = width().valueInSpecifiedUnits() / 100.0;
-    else
-        w = width().value();
-
-    if (filterBBoxMode && height().unitType() == LengthTypePercentage)
-        h = height().valueInSpecifiedUnits() / 100.0;
-    else
-        h = height().value();
-
-    m_filter->setFilterRect(FloatRect(_x, _y, w, h));
+    m_filter->setFilterRect(FloatRect(_x, _y, _width, _height));
 
     bool primitiveBBoxMode = primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setEffectBoundingBoxMode(primitiveBBoxMode);
-    // FIXME: When does this info get passed to the filters elements?
 
     // TODO : use switch/case instead?
     m_filter->clearEffects();
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         SVGElement* element = svg_dynamic_cast(n);
         if (element && element->isFilterEffect()) {
-            SVGFilterPrimitiveStandardAttributes* fe = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
-            if (fe->filterEffect())
-                m_filter->addFilterEffect(fe->filterEffect());
+            SVGFilterPrimitiveStandardAttributes* filterAttributes = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
+            SVGFilterEffect* filterEffect = filterAttributes->filterEffect(m_filter.get());
+            if (!filterEffect)
+                continue;
+
+            m_filter->addFilterEffect(filterEffect);
         }
     }
+
     return m_filter.get();
 }
 

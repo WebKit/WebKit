@@ -183,6 +183,7 @@ StyleMiscData::StyleMiscData() : Shared<StyleMiscData>()
 {
     floodColor = SVGRenderStyle::initialFloodColor();
     floodOpacity = SVGRenderStyle::initialFloodOpacity();
+    lightingColor = SVGRenderStyle::initialLightingColor();
     baselineShiftValue = SVGRenderStyle::initialBaselineShiftValue();
 }
 
@@ -191,6 +192,7 @@ StyleMiscData::StyleMiscData(const StyleMiscData &other) : Shared<StyleMiscData>
     filter = other.filter;
     floodColor = other.floodColor;
     floodOpacity = other.floodOpacity;
+    lightingColor = other.lightingColor;
     baselineShiftValue = other.baselineShiftValue;
 }
 
@@ -199,6 +201,7 @@ bool StyleMiscData::operator==(const StyleMiscData &other) const
     return filter == other.filter
            && floodOpacity == other.floodOpacity
            && floodColor == other.floodColor
+           && lightingColor == other.lightingColor
            && baselineShiftValue == other.baselineShiftValue;
 }
 

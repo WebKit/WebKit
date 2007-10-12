@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -86,16 +86,21 @@ void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGFEImageElement::notifyFinished(CachedResource* finishedObj)
 {
-    if (finishedObj == m_cachedImage && filterEffect())
-        filterEffect()->setCachedImage(m_cachedImage);
+    if (finishedObj == m_cachedImage && m_filterEffect)
+        m_filterEffect->setCachedImage(m_cachedImage);
 }
 
-SVGFEImage* SVGFEImageElement::filterEffect() const
+SVGFEImage* SVGFEImageElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEImage*>(SVGResourceFilter::createFilterEffect(FE_IMAGE));
+        m_filterEffect = static_cast<SVGFEImage*>(SVGResourceFilter::createFilterEffect(FE_IMAGE, filter));
     if (!m_filterEffect)
         return 0;
+
+    // The resource may already be loaded!
+    if (m_cachedImage)
+        m_filterEffect->setCachedImage(m_cachedImage);
+
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }

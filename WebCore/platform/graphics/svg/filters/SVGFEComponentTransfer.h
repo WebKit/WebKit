@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -53,21 +53,30 @@ enum SVGComponentTransferType {
 
 struct SVGComponentTransferFunction {
     SVGComponentTransferFunction()
-        : type(SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY)
+        : type(SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN)
+        , slope(0.0)
+        , intercept(0.0)
+        , amplitude(0.0)
+        , exponent(0.0)
+        , offset(0.0)
     {
     }
 
     SVGComponentTransferType type;
-    Vector<float> tableValues;
+
     float slope;
     float intercept;
     float amplitude;
     float exponent;
     float offset;
+
+    Vector<float> tableValues;
 };
 
 class SVGFEComponentTransfer : public SVGFilterEffect {
 public:
+    SVGFEComponentTransfer(SVGResourceFilter*);
+
     SVGComponentTransferFunction redFunction() const;
     void setRedFunction(const SVGComponentTransferFunction&);
 
@@ -83,7 +92,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&) const;
 
 #if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(SVGResourceFilter*) const;
+    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
 
 private:
     CIFilter* getFunctionFilter(SVGChannelSelectorType, CIImage* inputImage) const;

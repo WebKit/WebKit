@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -27,9 +27,53 @@
 #include "SVGFilterEffect.h"
 
 #include "SVGRenderTreeAsText.h"
+#include "SVGResourceFilter.h"
 #include "TextStream.h"
 
 namespace WebCore {
+
+SVGFilterEffect::SVGFilterEffect(SVGResourceFilter* filter)
+    : m_filter(filter)
+    , m_xBBoxMode(false)
+    , m_yBBoxMode(false)
+    , m_widthBBoxMode(false)
+    , m_heightBBoxMode(false)
+{
+}
+
+FloatRect SVGFilterEffect::primitiveBBoxForFilterBBox(const FloatRect& filterBBox, const FloatRect& itemBBox) const
+{
+    FloatRect subRegionBBox = subRegion();
+    FloatRect useBBox = filterBBox;
+
+    ASSERT(m_filter);
+    if (!m_filter)
+        return FloatRect();
+
+    if (m_filter->effectBoundingBoxMode()) {
+        if (!m_filter->filterBoundingBoxMode())
+            useBBox = itemBBox;
+
+        subRegionBBox = FloatRect(useBBox.x() + subRegionBBox.x() * useBBox.width(),
+                                  useBBox.y() + subRegionBBox.y() * useBBox.height(),
+                                  subRegionBBox.width() * useBBox.width(),
+                                  subRegionBBox.height() * useBBox.height());
+    } else {
+        if (xBoundingBoxMode())
+            subRegionBBox.setX(useBBox.x() + subRegionBBox.x() * useBBox.width());
+
+        if (yBoundingBoxMode())
+            subRegionBBox.setY(useBBox.y() + subRegionBBox.y() * useBBox.height());
+
+        if (widthBoundingBoxMode())
+            subRegionBBox.setWidth(subRegionBBox.width() * useBBox.width());
+
+        if (heightBoundingBoxMode())
+            subRegionBBox.setHeight(subRegionBBox.height() * useBBox.height());
+    }
+
+    return subRegionBBox;
+}
 
 FloatRect SVGFilterEffect::subRegion() const
 {
@@ -59,6 +103,16 @@ String SVGFilterEffect::result() const
 void SVGFilterEffect::setResult(const String& result)
 {
     m_result = result;
+}
+
+SVGResourceFilter* SVGFilterEffect::filter() const
+{
+    return m_filter;
+}
+
+void SVGFilterEffect::setFilter(SVGResourceFilter* filter)
+{
+    m_filter = filter;
 }
 
 TextStream& SVGFilterEffect::externalRepresentation(TextStream& ts) const

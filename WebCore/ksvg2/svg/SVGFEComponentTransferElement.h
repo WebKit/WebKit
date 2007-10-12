@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,8 +22,8 @@
 
 #ifndef SVGFEComponentTransferElement_h
 #define SVGFEComponentTransferElement_h
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFEComponentTransfer.h"
 
@@ -36,17 +36,15 @@ namespace WebCore
         SVGFEComponentTransferElement(const QualifiedName&, Document*);
         virtual ~SVGFEComponentTransferElement();
 
-        // 'SVGFEComponentTransferElement' functions
-        // Derived from: 'Element'
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-
-        virtual SVGFEComponentTransfer *filterEffect() const;
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual SVGFEComponentTransfer* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEComponentTransferElement, String, String, In1, in1)
+
         mutable SVGFEComponentTransfer *m_filterEffect;
     };
 

@@ -27,8 +27,9 @@
 
 namespace WebCore {
 
-CIFilter* SVGFEGaussianBlur::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEGaussianBlur::getCIFilter(const FloatRect& bbox) const
 {
+    SVGResourceFilter* svgFilter = filter();
     FE_QUARTZ_SETUP_INPUT(@"CIGaussianPyramid");
 
     float inputRadius = stdDeviationX();
@@ -39,6 +40,7 @@ CIFilter* SVGFEGaussianBlur::getCIFilter(SVGResourceFilter* svgFilter) const
     }
     [filter setValue:[NSNumber numberWithFloat:inputRadius] forKey:@"inputRadius"];
 
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

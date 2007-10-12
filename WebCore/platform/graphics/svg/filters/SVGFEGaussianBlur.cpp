@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -28,6 +28,13 @@
 #include "TextStream.h"
 
 namespace WebCore {
+
+SVGFEGaussianBlur::SVGFEGaussianBlur(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_x(0.0)
+    , m_y(0.0)
+{
+}
 
 float SVGFEGaussianBlur::stdDeviationX() const
 {

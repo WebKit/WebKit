@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-CIFilter* SVGFilterEffect::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFilterEffect::getCIFilter(const FloatRect& bbox) const
 {
     return nil;
 }

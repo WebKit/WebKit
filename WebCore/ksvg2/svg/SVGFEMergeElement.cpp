@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -41,12 +41,13 @@ SVGFEMergeElement::~SVGFEMergeElement()
     delete m_filterEffect;
 }
 
-SVGFEMerge* SVGFEMergeElement::filterEffect() const
+SVGFEMerge* SVGFEMergeElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEMerge*>(SVGResourceFilter::createFilterEffect(FE_MERGE));
+        m_filterEffect = static_cast<SVGFEMerge*>(SVGResourceFilter::createFilterEffect(FE_MERGE, filter));
     if (!m_filterEffect)
         return 0;
+
     setStandardAttributes(m_filterEffect);
 
     Vector<String> mergeInputs;
@@ -60,7 +61,6 @@ SVGFEMerge* SVGFEMergeElement::filterEffect() const
 }
 
 }
-
 
 #endif // ENABLE(SVG)
 

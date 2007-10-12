@@ -29,8 +29,9 @@
 
 namespace WebCore {
 
-CIFilter* SVGFEDisplacementMap::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEDisplacementMap::getCIFilter(const FloatRect& bbox) const
 {
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [WKDisplacementMapFilter class];
@@ -45,6 +46,8 @@ CIFilter* SVGFEDisplacementMap::getCIFilter(SVGResourceFilter* svgFilter) const
     [filter setValue:getVectorForChannel(xChannelSelector()) forKey:@"inputXChannelSelector"];
     [filter setValue:getVectorForChannel(yChannelSelector()) forKey:@"inputYChannelSelector"];
     [filter setValue:[NSNumber numberWithFloat:scale()] forKey:@"inputScale"];
+
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

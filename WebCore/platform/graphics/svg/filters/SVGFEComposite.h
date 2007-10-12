@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -41,6 +41,8 @@ enum SVGCompositeOperationType {
 
 class SVGFEComposite : public SVGFilterEffect {
 public:
+    SVGFEComposite(SVGResourceFilter*);
+
     String in2() const;
     void setIn2(const String&);
 
@@ -62,16 +64,16 @@ public:
     virtual TextStream& externalRepresentation(TextStream&) const;
 
 #if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(SVGResourceFilter*) const;
+    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
 #endif
 
 private:
-    String m_in2;
     SVGCompositeOperationType m_operation;
     float m_k1;
     float m_k2;
     float m_k3;
     float m_k4;
+    String m_in2;
 };
 
 } // namespace WebCore

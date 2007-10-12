@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -53,13 +53,15 @@ void SVGFETileElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFETile* SVGFETileElement::filterEffect() const
+SVGFETile* SVGFETileElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFETile*>(SVGResourceFilter::createFilterEffect(FE_TILE));
+        m_filterEffect = static_cast<SVGFETile*>(SVGResourceFilter::createFilterEffect(FE_TILE, filter));
     if (!m_filterEffect)
         return 0;
+
     m_filterEffect->setIn(in1());
+
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }

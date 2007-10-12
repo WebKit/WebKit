@@ -35,8 +35,9 @@ namespace WebCore {
         return nil; \
     }
 
-CIFilter* SVGFEColorMatrix::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEColorMatrix::getCIFilter(const FloatRect& bbox) const
 {
+    SVGResourceFilter* svgFilter = filter();
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     switch (type()) {
@@ -98,6 +99,7 @@ CIFilter* SVGFEColorMatrix::getCIFilter(SVGResourceFilter* svgFilter) const
     FE_QUARTZ_CHECK_INPUT(inputImage);
     [filter setValue:inputImage forKey:@"inputImage"];
 
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

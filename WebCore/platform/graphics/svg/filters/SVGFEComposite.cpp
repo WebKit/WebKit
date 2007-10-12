@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -28,6 +28,16 @@
 #include "TextStream.h"
 
 namespace WebCore {
+
+SVGFEComposite::SVGFEComposite(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_operation(SVG_FECOMPOSITE_OPERATOR_UNKNOWN)
+    , m_k1(0.0)
+    , m_k2(0.0)
+    , m_k3(0.0)
+    , m_k4(0.0)
+{
+}
 
 String SVGFEComposite::in2() const
 {

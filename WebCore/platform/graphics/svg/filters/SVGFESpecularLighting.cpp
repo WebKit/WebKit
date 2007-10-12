@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -29,8 +29,15 @@
 
 namespace WebCore {
 
-SVGFESpecularLighting::SVGFESpecularLighting()
-    : m_lightSource(0)
+SVGFESpecularLighting::SVGFESpecularLighting(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_lightingColor()
+    , m_surfaceScale(0.0)
+    , m_specularConstant(0.0)
+    , m_specularExponent(0.0)
+    , m_kernelUnitLengthX(0.0)
+    , m_kernelUnitLengthY(0.0)
+    , m_lightSource(0)
 {
 }
 

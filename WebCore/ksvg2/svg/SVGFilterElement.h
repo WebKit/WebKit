@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
     Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 
@@ -25,7 +25,6 @@
 #define SVGFilterElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
-
 #include "SVGResourceFilter.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
@@ -46,11 +45,9 @@ namespace WebCore {
 
         virtual SVGResource* canvasResource();
 
-        // 'SVGFilterElement' functions
         void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
 
-        virtual void parseMappedAttribute(MappedAttribute* attr);
-
+        virtual void parseMappedAttribute(MappedAttribute*);
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
     protected:

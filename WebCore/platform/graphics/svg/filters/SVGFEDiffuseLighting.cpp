@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -30,8 +30,14 @@
 
 namespace WebCore {
 
-SVGFEDiffuseLighting::SVGFEDiffuseLighting()
-    : m_lightSource(0)
+SVGFEDiffuseLighting::SVGFEDiffuseLighting(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_lightingColor()
+    , m_surfaceScale(0.0)
+    , m_diffuseConstant(0.0)
+    , m_kernelUnitLengthX(0.0)
+    , m_kernelUnitLengthY(0.0)
+    , m_lightSource(0)
 {
 }
 

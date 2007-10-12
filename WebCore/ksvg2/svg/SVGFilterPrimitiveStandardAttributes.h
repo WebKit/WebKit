@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -24,11 +24,11 @@
 #define SVGFilterPrimitiveStandardAttributes_h
 
 #if ENABLE(SVG)
-
 #include "SVGStyledElement.h"
 
 namespace WebCore {
     class SVGFilterEffect;
+    class SVGResourceFilter;
 
     class SVGFilterPrimitiveStandardAttributes : public SVGStyledElement
     {
@@ -38,15 +38,13 @@ namespace WebCore {
         
         virtual bool isFilterEffect() const { return true; }
 
-        // 'SVGFilterPrimitiveStandardAttributes' functions
-        virtual void parseMappedAttribute(MappedAttribute *attr);
-
-        virtual SVGFilterEffect* filterEffect() const = 0;
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const = 0;
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
     protected:
-        void setStandardAttributes(SVGFilterEffect* filterEffect) const;
+        void setStandardAttributes(SVGFilterEffect*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

@@ -27,9 +27,10 @@
 
 namespace WebCore {
 
-CIFilter* SVGFEBlend::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFEBlend::getCIFilter(const FloatRect& bbox) const
 {
-    CIFilter *filter = nil;
+    SVGResourceFilter* svgFilter = filter();
+    CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     switch (blendMode()) {
@@ -57,13 +58,16 @@ CIFilter* SVGFEBlend::getCIFilter(SVGResourceFilter* svgFilter) const
     }
 
     [filter setDefaults];
-    CIImage *inputImage = svgFilter->inputImage(this);
+
+    CIImage* inputImage = svgFilter->inputImage(this);
     FE_QUARTZ_CHECK_INPUT(inputImage);
     [filter setValue:inputImage forKey:@"inputImage"];
-    CIImage *backgroundImage = svgFilter->imageForName(in2());
+
+    CIImage* backgroundImage = svgFilter->imageForName(in2());
     FE_QUARTZ_CHECK_INPUT(backgroundImage);
     [filter setValue:backgroundImage forKey:@"inputBackgroundImage"];
 
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

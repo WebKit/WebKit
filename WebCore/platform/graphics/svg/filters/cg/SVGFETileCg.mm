@@ -27,9 +27,12 @@
 
 namespace WebCore {
 
-CIFilter* SVGFETile::getCIFilter(SVGResourceFilter* svgFilter) const
+CIFilter* SVGFETile::getCIFilter(const FloatRect& bbox) const
 {
+    SVGResourceFilter* svgFilter = filter();
     FE_QUARTZ_SETUP_INPUT(@"CIAffineTile");
+
+    FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

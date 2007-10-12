@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -28,6 +28,17 @@
 #include "TextStream.h"
 
 namespace WebCore {
+
+SVGFETurbulence::SVGFETurbulence(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+    , m_baseFrequencyX(0.0)
+    , m_baseFrequencyY(0.0)
+    , m_numOctaves(0)
+    , m_seed(0)
+    , m_stitchTiles(false)
+    , m_type(SVG_TURBULENCE_TYPE_UNKNOWN)
+{
+}
 
 SVGTurbulanceType SVGFETurbulence::type() const
 {
@@ -102,7 +113,6 @@ static TextStream& operator<<(TextStream& ts, SVGTurbulanceType t)
     }
     return ts;
 }
-
 
 TextStream& SVGFETurbulence::externalRepresentation(TextStream& ts) const
 {

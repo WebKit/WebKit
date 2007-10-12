@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +48,9 @@
 
 #include <QuartzCore/CoreImage.h>
 
+// Setting to a value > 0 allows to dump the output image as JPEG.
+#define DEBUG_OUTPUT_IMAGE 0
+
 namespace WebCore {
 
 static const char* const SVGPreviousFilterOutputName = "__previousOutput__";
@@ -54,41 +58,44 @@ static const char* const SVGPreviousFilterOutputName = "__previousOutput__";
 SVGResourceFilter::SVGResourceFilter()
     : m_filterCIContext(0)
     , m_filterCGLayer(0)
+    , m_imagesByName(AdoptNS, [[NSMutableDictionary alloc] init])
+    , m_filterBBoxMode(false)
+    , m_effectBBoxMode(false)
+    , m_xBBoxMode(false)
+    , m_yBBoxMode(false)
 {
-    m_imagesByName = HardRetainWithNSRelease([[NSMutableDictionary alloc] init]);
 }
 
 SVGResourceFilter::~SVGResourceFilter()
 {
     ASSERT(!m_filterCGLayer);
     ASSERT(!m_filterCIContext);
-    HardRelease(m_imagesByName);
 }
 
-SVGFilterEffect* SVGResourceFilter::createFilterEffect(const SVGFilterEffectType& type)
+SVGFilterEffect* SVGResourceFilter::createFilterEffect(const SVGFilterEffectType& type, SVGResourceFilter* filter)
 {
-    switch(type)
+    switch (type)
     {
     /* Light sources are contained by the diffuse/specular light blocks 
     case FE_DISTANT_LIGHT: 
     case FE_POINT_LIGHT: 
     case FE_SPOT_LIGHT: 
     */
-    case FE_BLEND: return new SVGFEBlend();
-    case FE_COLOR_MATRIX: return new SVGFEColorMatrix();
-    case FE_COMPONENT_TRANSFER: return new SVGFEComponentTransfer();
-    case FE_COMPOSITE: return new SVGFEComposite();
+    case FE_BLEND: return new SVGFEBlend(filter);
+    case FE_COLOR_MATRIX: return new SVGFEColorMatrix(filter);
+    case FE_COMPONENT_TRANSFER: return new SVGFEComponentTransfer(filter);
+    case FE_COMPOSITE: return new SVGFEComposite(filter);
 //  case FE_CONVOLVE_MATRIX:
-    case FE_DIFFUSE_LIGHTING: return new SVGFEDiffuseLighting();
-    case FE_DISPLACEMENT_MAP: return new SVGFEDisplacementMap();
-    case FE_FLOOD: return new SVGFEFlood();
-    case FE_GAUSSIAN_BLUR: return new SVGFEGaussianBlur();
-    case FE_IMAGE: return new SVGFEImage();
-    case FE_MERGE: return new SVGFEMerge();
+    case FE_DIFFUSE_LIGHTING: return new SVGFEDiffuseLighting(filter);
+    case FE_DISPLACEMENT_MAP: return new SVGFEDisplacementMap(filter);
+    case FE_FLOOD: return new SVGFEFlood(filter);
+    case FE_GAUSSIAN_BLUR: return new SVGFEGaussianBlur(filter);
+    case FE_IMAGE: return new SVGFEImage(filter);
+    case FE_MERGE: return new SVGFEMerge(filter);
 //  case FE_MORPHOLOGY:
-    case FE_OFFSET: return new SVGFEOffset();
-    case FE_SPECULAR_LIGHTING: return new SVGFESpecularLighting();
-    case FE_TILE: return new SVGFETile();
+    case FE_OFFSET: return new SVGFEOffset(filter);
+    case FE_SPECULAR_LIGHTING: return new SVGFESpecularLighting(filter);
+    case FE_TILE: return new SVGFETile(filter);
 //  case FE_TURBULENCE:
     default:
         return 0;
@@ -112,13 +119,38 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect
     m_filterCIContext = HardRetain([CIContext contextWithCGContext:cgContext options:nil]);
     [filterContextPool drain];
 
-    m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
+    FloatRect filterRect = filterBBoxForItemBBox(bbox);
+
+    // TODO: Ensure the size is not greater than the nearest <svg> size and/or the window size.
+    // This is also needed for masking & gradients-on-stroke-of-text. File a bug on this.
+    float width = filterRect.width();
+    float height = filterRect.height();
+
+    m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGSizeMake(width, height) info:NULL];
 
     context = new GraphicsContext(CGLayerGetContext(m_filterCGLayer));
     context->save();
 
-    context->translate(-bbox.x(), -bbox.y());
+    context->translate(-filterRect.x(), -filterRect.y());
 }
+
+#if DEBUG_OUTPUT_IMAGE > 0
+void dumpOutputImage(CIImage* outputImage)
+{
+    CGSize extentSize = [outputImage extent].size;
+    NSImage* image = [[[NSImage alloc] initWithSize:NSMakeSize(extentSize.width, extentSize.height)] autorelease];
+    [image addRepresentation:[NSCIImageRep imageRepWithCIImage:outputImage]];
+
+    NSData* imageData = [image TIFFRepresentation];
+    NSBitmapImageRep* imageRep = [NSBitmapImageRep imageRepWithData:imageData];
+    imageData = [imageRep representationUsingType:NSJPEGFileType properties:nil];
+
+    static unsigned int s_counter = 0;
+    s_counter++;
+
+    [imageData writeToFile:[NSString stringWithFormat:@"/Users/nikoz/outputImages/%d.jpeg", s_counter] atomically:YES];
+}
+#endif
 
 void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& bbox)
 {
@@ -127,20 +159,20 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
 
     // actually apply the filter effects
     CIImage* inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];
-    NSArray* filterStack = getCIFilterStack(inputImage);
+    NSArray* filterStack = getCIFilterStack(inputImage, bbox);
     if ([filterStack count]) {
         CIImage* outputImage = [[filterStack lastObject] valueForKey:@"outputImage"];
+
         if (outputImage) {
-            CGRect filterRect = CGRect(filterBBoxForItemBBox(bbox));
-            CGRect sourceRect = CGRectIntersection(filterRect, [outputImage extent]);
+#if DEBUG_OUTPUT_IMAGE > 0
+            dumpOutputImage(outputImage);
+#endif
 
-            CGPoint bboxOrigin = CGRect(bbox).origin;
-            CGPoint destOrigin = sourceRect.origin;
+            FloatRect filterRect = filterBBoxForItemBBox(bbox);
+            FloatPoint destOrigin = filterRect.location();
+            filterRect.setLocation(FloatPoint(0.0, 0.0));
 
-            destOrigin.x += bboxOrigin.x;
-            destOrigin.y += bboxOrigin.y;
-
-            [m_filterCIContext drawImage:outputImage atPoint:destOrigin fromRect:sourceRect];
+            [m_filterCIContext drawImage:outputImage atPoint:CGPoint(destOrigin) fromRect:filterRect];
         }
     }
 
@@ -154,43 +186,44 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
     context = 0;
 }
 
-NSArray* SVGResourceFilter::getCIFilterStack(CIImage* inputImage)
+NSArray* SVGResourceFilter::getCIFilterStack(CIImage* inputImage, const FloatRect& bbox)
 {
     NSMutableArray* filterEffects = [NSMutableArray array];
 
     setImageForName(inputImage, "SourceGraphic"); // input
 
     for (unsigned int i = 0; i < m_effects.size(); i++) {
-        CIFilter* filter = m_effects[i]->getCIFilter(this);
+        CIFilter* filter = m_effects[i]->getCIFilter(bbox);
         if (filter)
             [filterEffects addObject:filter];
     }
 
-    [m_imagesByName removeAllObjects]; // clean up before next time.
+    [m_imagesByName.get() removeAllObjects]; // clean up before next time.
 
     return filterEffects;
 }
 
-CIImage *SVGResourceFilter::imageForName(const String& name) const
+CIImage* SVGResourceFilter::imageForName(const String& name) const
 {
-    return [m_imagesByName objectForKey:name];
+    return [m_imagesByName.get() objectForKey:name];
 }
 
-void SVGResourceFilter::setImageForName(CIImage *image, const String &name)
+void SVGResourceFilter::setImageForName(CIImage* image, const String& name)
 {
-    [m_imagesByName setValue:image forKey:name];
+    [m_imagesByName.get() setValue:image forKey:name];
 }
 
-void SVGResourceFilter::setOutputImage(const SVGFilterEffect *filterEffect, CIImage *output)
+void SVGResourceFilter::setOutputImage(const SVGFilterEffect* filterEffect, CIImage* output)
 {
     if (!filterEffect->result().isEmpty())
         setImageForName(output, filterEffect->result());
+
     setImageForName(output, SVGPreviousFilterOutputName);
 }
 
-static inline CIImage *alphaImageForImage(CIImage *image)
+static inline CIImage* alphaImageForImage(CIImage* image)
 {
-    CIFilter *onlyAlpha = [CIFilter filterWithName:@"CIColorMatrix"];
+    CIFilter* onlyAlpha = [CIFilter filterWithName:@"CIColorMatrix"];
     CGFloat zero[4] = {0, 0, 0, 0};
     [onlyAlpha setDefaults];
     [onlyAlpha setValue:image forKey:@"inputImage"];
@@ -200,22 +233,28 @@ static inline CIImage *alphaImageForImage(CIImage *image)
     return [onlyAlpha valueForKey:@"outputImage"];
 }
 
-CIImage *SVGResourceFilter::inputImage(const SVGFilterEffect *filterEffect)
+CIImage* SVGResourceFilter::inputImage(const SVGFilterEffect* filterEffect)
 {
     if (filterEffect->in().isEmpty()) {
-        CIImage *inImage = imageForName(SVGPreviousFilterOutputName);
+        CIImage* inImage = imageForName(SVGPreviousFilterOutputName);
+
         if (!inImage)
             inImage = imageForName("SourceGraphic");
+
         return inImage;
     } else if (filterEffect->in() == "SourceAlpha") {
-        CIImage *sourceAlpha = imageForName(filterEffect->in());
+        CIImage* sourceAlpha = imageForName(filterEffect->in());
+
         if (!sourceAlpha) {
-            CIImage *sourceGraphic = imageForName("SourceGraphic");
+            CIImage* sourceGraphic = imageForName("SourceGraphic");
+
             if (!sourceGraphic)
                 return nil;
+
             sourceAlpha = alphaImageForImage(sourceGraphic);
             setImageForName(sourceAlpha, "SourceAlpha");
         }
+
         return sourceAlpha;
     }
 

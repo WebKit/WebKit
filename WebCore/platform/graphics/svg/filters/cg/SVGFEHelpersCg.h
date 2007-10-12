@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -62,15 +62,25 @@ CIFilter* getNormalMap(CIImage* bumpMap, float scale);
     END_BLOCK_OBJC_EXCEPTIONS; \
     return nil;
 
-#define FE_QUARTZ_CROP_TO_RECT(rect) \
+#define FE_QUARTZ_MAP_TO_SUBREGION_PREPARE(bbox) \
+    FloatRect filterRect = svgFilter->filterBBoxForItemBBox(bbox); \
+    FloatRect cropRect = primitiveBBoxForFilterBBox(filterRect, bbox); \
+    cropRect.intersect(filterRect); \
+    cropRect.move(-filterRect.x(), -filterRect.y());
+
+#define FE_QUARTZ_MAP_TO_SUBREGION_APPLY(cropRect) \
     { \
         CIFilter* crop = [CIFilter filterWithName:@"CICrop"]; \
         [crop setDefaults]; \
         [crop setValue:[filter valueForKey:@"outputImage"] forKey:@"inputImage"]; \
-        [crop setValue:[CIVector vectorWithX:rect.origin.x Y:rect.origin.y Z:rect.size.width W:rect.size.height] forKey:@"inputRectangle"]; \
+        [crop setValue:[CIVector vectorWithX:cropRect.x() Y:cropRect.y() Z:cropRect.width() W:cropRect.height()] forKey:@"inputRectangle"]; \
         filter = crop; \
     }
 
-#define deg2rad(d) ((d * (2.0 * piDouble)) / 360.0)
+#define FE_QUARTZ_MAP_TO_SUBREGION(bbox) \
+    FE_QUARTZ_MAP_TO_SUBREGION_PREPARE(bbox); \
+    FE_QUARTZ_MAP_TO_SUBREGION_APPLY(cropRect);
+
+#define deg2rad(d) ((d * (2.0 * M_PI)) / 360.0)
 
 #endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

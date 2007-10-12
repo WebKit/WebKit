@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -41,6 +41,10 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
     , m_width(this, LengthModeWidth)
     , m_height(this, LengthModeHeight)
 {
+    // Spec: If the attribute is not specified, the effect is as if a value of "0%" were specified.
+    setXBaseValue(SVGLength(this, LengthModeWidth, "0%"));
+    setYBaseValue(SVGLength(this, LengthModeHeight, "0%"));
+
     // Spec: If the attribute is not specified, the effect is as if a value of "100%" were specified.
     setWidthBaseValue(SVGLength(this, LengthModeWidth, "100%"));
     setHeightBaseValue(SVGLength(this, LengthModeHeight, "100%"));
@@ -79,24 +83,50 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGFilterEffect
     if (!filterEffect)
         return;
 
-    bool bbox = false;
-    if (parentNode() && parentNode()->hasTagName(SVGNames::filterTag))
-        bbox = static_cast<SVGFilterElement*>(parentNode())->primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    ASSERT(filterEffect->filter());
 
     float _x, _y, _width, _height;
-  
-    if (bbox) {
-        _x = x().valueInSpecifiedUnits();
-        _y = y().valueInSpecifiedUnits();
-        _width = width().valueInSpecifiedUnits();
-        _height = height().valueInSpecifiedUnits();
+
+    if (filterEffect->filter()->effectBoundingBoxMode()) {
+        _x = x().valueAsPercentage();
+        _y = y().valueAsPercentage();
+        _width = width().valueAsPercentage();
+        _height = height().valueAsPercentage();
     } else {
-        _x = x().value();
-        _y = y().value();
-        _width = width().value();
-        _height = height().value();
-    } 
-    
+        // We need to resolve any percentages in filter rect space.
+        if (x().unitType() == LengthTypePercentage) {
+            filterEffect->setXBoundingBoxMode(true);
+            _x = x().valueAsPercentage();
+        } else {
+            filterEffect->setXBoundingBoxMode(false);
+            _x = x().value();
+        }
+
+        if (y().unitType() == LengthTypePercentage) {
+            filterEffect->setYBoundingBoxMode(true);
+            _y = y().valueAsPercentage();
+        } else {
+            filterEffect->setYBoundingBoxMode(false);
+            _y = y().value();
+        }
+
+        if (width().unitType() == LengthTypePercentage) {
+            filterEffect->setWidthBoundingBoxMode(true);
+            _width = width().valueAsPercentage();
+        } else {
+            filterEffect->setWidthBoundingBoxMode(false);
+            _width = width().value();
+        }
+
+        if (height().unitType() == LengthTypePercentage) {
+            filterEffect->setHeightBoundingBoxMode(true);
+            _height = height().valueAsPercentage();
+        } else {
+            filterEffect->setHeightBoundingBoxMode(false);
+            _height = height().value();
+        }
+    }
+
     filterEffect->setSubRegion(FloatRect(_x, _y, _width, _height));
     filterEffect->setResult(result());
 }

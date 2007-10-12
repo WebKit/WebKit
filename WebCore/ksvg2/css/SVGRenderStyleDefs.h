@@ -268,6 +268,8 @@ namespace WebCore {
         Color floodColor;
         float floodOpacity;
 
+        Color lightingColor;
+
         // non-inherited text stuff lives here not in StyleTextData.
         RefPtr<CSSValue> baselineShiftValue;
 
