@@ -1,3 +1,15 @@
+2007-07-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Unify absoluteRects() of RenderSVGTSpan & RenderSVGTextPath.
+        The RenderSVGTextPath one was still using the old, wrong concept.
+
+        * rendering/RenderSVGTSpan.cpp: Remove unused params tx, ty, while I'm at it.
+        (WebCore::RenderSVGTSpan::absoluteRects):
+        * rendering/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::absoluteRects):
+
 2007-07-25  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.

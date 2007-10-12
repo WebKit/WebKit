@@ -42,7 +42,7 @@ RenderSVGTSpan::RenderSVGTSpan(Node* n)
 {
 }
 
-void RenderSVGTSpan::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
+void RenderSVGTSpan::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 {
     InlineRunBox* firstBox = firstLineBox();
 
