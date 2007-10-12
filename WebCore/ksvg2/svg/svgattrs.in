@@ -125,8 +125,11 @@ mode
 name
 numOctaves
 offset
+onactivate
 onbegin
 onend
+onfocusin
+onfocusout
 onrepeat
 onzoom
 opacity

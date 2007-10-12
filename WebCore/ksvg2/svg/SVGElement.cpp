@@ -135,10 +135,12 @@ void SVGElement::parseMappedAttribute(MappedAttribute* attr)
         addSVGEventListener(mouseoverEvent, attr);
     else if (attr->name() == onmouseupAttr)
         addSVGEventListener(mouseupEvent, attr);
-    else if (attr->name() == onfocusAttr)
+    else if (attr->name() == SVGNames::onfocusinAttr)
         addSVGEventListener(DOMFocusInEvent, attr);
-    else if (attr->name() == onblurAttr)
+    else if (attr->name() == SVGNames::onfocusoutAttr)
         addSVGEventListener(DOMFocusOutEvent, attr);
+    else if (attr->name() == SVGNames::onactivateAttr)
+        addSVGEventListener(DOMActivateEvent, attr);
     else
         StyledElement::parseMappedAttribute(attr);
 }
