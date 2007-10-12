@@ -1,5 +1,18 @@
 2007-10-09  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15436
+        Wrong node order for XPath reverse axes
+
+        Test: fast/xpath/reverse-axes.html
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Do not prematurely sort reverse
+        axes. Generate preceding axis nodes in reversed document order.
+
+2007-10-09  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Mitz.
 
         http://bugs.webkit.org/show_bug.cgi?id=15437

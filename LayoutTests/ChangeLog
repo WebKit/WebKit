@@ -1,5 +1,15 @@
 2007-10-09  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15436
+        Wrong node order for XPath reverse axes
+
+        * fast/xpath/reverse-axes-expected.txt: Added.
+        * fast/xpath/reverse-axes.html: Added.
+
+2007-10-09  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Mitz.
 
         http://bugs.webkit.org/show_bug.cgi?id=15437

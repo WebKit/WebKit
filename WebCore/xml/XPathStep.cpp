@@ -124,7 +124,7 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
             for (n = n->parentNode(); n; n = n->parentNode())
                 if (nodeMatches(n))
                     nodes.append(n);
-            nodes.reverse();
+            nodes.markSorted(false);
             return;
         }
         case FollowingSiblingAxis:
@@ -145,7 +145,7 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
                 if (nodeMatches(n))
                     nodes.append(n);
 
-            nodes.reverse();
+            nodes.markSorted(false);
             return;
         case FollowingAxis:
             if (context->isAttributeNode()) {
@@ -171,11 +171,11 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
 
             for (Node* p = context; !isRootDomNode(p); p = p->parentNode()) {
                 for (Node* n = p->previousSibling(); n ; n = n->previousSibling()) {
-                    if (nodeMatches(n))
-                        nodes.append(n);
-                    for (Node* c = n->firstChild(); c; c = c->traverseNextNode(n))
+                    for (Node* c = n->lastChild(); c && c != n; c = c->traversePreviousNode(n))
                         if (nodeMatches(c))
                             nodes.append(c);
+                    if (nodeMatches(n))
+                        nodes.append(n);
                 }
             }
             nodes.markSorted(false);
@@ -233,7 +233,7 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
                 if (nodeMatches(n))
                     nodes.append(n);
 
-            nodes.reverse();
+            nodes.markSorted(false);
             return;
         }
     }
