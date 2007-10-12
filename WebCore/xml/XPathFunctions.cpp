@@ -441,14 +441,11 @@ Value FunSubstringAfter::evaluate() const
     String s1 = arg(0)->evaluate().toString();
     String s2 = arg(1)->evaluate().toString();
 
-    if (s2.isEmpty())
-        return s2;
-
     int i = s1.find(s2);
     if (i == -1)
         return "";
 
-    return s1.substring(s2.length());
+    return s1.substring(i + s2.length());
 }
 
 Value FunSubstring::evaluate() const

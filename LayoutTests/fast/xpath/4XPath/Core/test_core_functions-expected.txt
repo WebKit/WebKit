@@ -23,7 +23,7 @@ PASS DOM.evaluate("contains(//CHILD1, '')", CHILD1, null, XPathResult.ANY_TYPE, 
 PASS DOM.evaluate("substring-before('3.14Hi', 'Hi')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "3.14"
 PASS DOM.evaluate("substring-before('3.14Hi', '')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is ""
 PASS DOM.evaluate("substring-after('3.14Hi', '3.14')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "Hi"
-PASS DOM.evaluate("substring-after('3.14Hi', '')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is ""
+PASS DOM.evaluate("substring-after('3.14Hi', '')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "3.14Hi"
 PASS DOM.evaluate("substring('3.14Hi', '3.14')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "14Hi"
 PASS DOM.evaluate("substring('3.14Hi', '3.14', 1)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "1"
 PASS DOM.evaluate("substring('12345', 2, 3)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "234"

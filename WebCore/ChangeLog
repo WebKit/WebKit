@@ -1,3 +1,15 @@
+2007-10-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15437
+        XPath substring-after function is broken
+
+        Test: fast/xpath/substring-after.html
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunSubstringAfter::evaluate): Fix it for real this time, hopefully.
+
 2007-10-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

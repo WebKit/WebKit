@@ -57,7 +57,7 @@
     shouldBe('DOM.evaluate("substring-before(\'3.14Hi\', \'Hi\')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue', '"3.14"');
     shouldBe('DOM.evaluate("substring-before(\'3.14Hi\', \'\')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue', '""');
     shouldBe('DOM.evaluate("substring-after(\'3.14Hi\', \'3.14\')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue', '"Hi"');
-    shouldBe('DOM.evaluate("substring-after(\'3.14Hi\', \'\')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue', '""');
+    shouldBe('DOM.evaluate("substring-after(\'3.14Hi\', \'\')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue', '"3.14Hi"');
     shouldBe('DOM.evaluate("substring(\'3.14Hi\', \'3.14\')", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue', '"14Hi"');
     shouldBe('DOM.evaluate("substring(\'3.14Hi\', \'3.14\', 1)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue', '"1"');
     shouldBe('DOM.evaluate("substring(\'12345\', 2, 3)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue', '"234"');

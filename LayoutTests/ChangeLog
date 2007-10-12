@@ -1,3 +1,17 @@
+2007-10-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15437
+        XPath substring-after function is broken
+
+        * fast/xpath/substring-after-expected.txt: Added.
+        * fast/xpath/substring-after.html: Added.
+
+        * fast/xpath/4XPath/Core/test_core_functions-expected.txt:
+        * fast/xpath/4XPath/Core/test_core_functions.html:
+        Fixed an incorrect test (not sure what made me think that it was right).
+
 2007-10-09  Nikolas Zimmermann  <zimmermann@kde.org>
 
     	Not reviewed.
