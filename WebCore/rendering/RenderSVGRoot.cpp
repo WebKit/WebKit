@@ -202,11 +202,9 @@ void RenderSVGRoot::calcViewport()
         if (!selfNeedsLayout() && !svg->hasRelativeValues())
             return;
 
-        double x = svg->x().value();
-        double y = svg->y().value();
         double w = svg->width().value();
         double h = svg->height().value();
-        m_viewport = FloatRect(x, y, w, h);
+        m_viewport = FloatRect(0, 0, w, h);
     }
 }
 

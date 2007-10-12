@@ -979,7 +979,7 @@
 		859D62EE0AD8892700012995 /* DOMSVGUseElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 859D62D90AD8892700012995 /* DOMSVGUseElementInternal.h */; };
 		859D62EF0AD8892700012995 /* DOMSVGViewElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 859D62DA0AD8892700012995 /* DOMSVGViewElementInternal.h */; };
 		859D62F00AD8892700012995 /* DOMSVGZoomEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 859D62DB0AD8892700012995 /* DOMSVGZoomEventInternal.h */; };
-		85A0F97E0AC7163D00161FDC /* DOMSVG.h in Headers */ = {isa = PBXBuildFile; fileRef = 85A0F97D0AC7163D00161FDC /* DOMSVG.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85A0F97E0AC7163D00161FDC /* DOMSVG.h in Headers */ = {isa = PBXBuildFile; fileRef = 85A0F97D0AC7163D00161FDC /* DOMSVG.h */; settings = {ATTRIBUTES = (); }; };
 		85A795BA0AD754A30006B9D8 /* DOMRangePrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85C320780AD7401500BC15C4 /* DOMRangePrivate.h */; };
 		85ACA9860A9B520300671E90 /* DOMCharacterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 85ACA9840A9B520300671E90 /* DOMCharacterData.h */; settings = {ATTRIBUTES = (); }; };
 		85ACA9870A9B520300671E90 /* DOMCharacterData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85ACA9850A9B520300671E90 /* DOMCharacterData.mm */; };

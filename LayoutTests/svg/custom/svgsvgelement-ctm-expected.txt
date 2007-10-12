@@ -1,0 +1,5 @@
+outer CTM: [object SVGMatrix] [(0, 0)(0, 0)(NaN, NaN)]
+outer ScreenCTM: [object SVGMatrix] [(20, 0)(0, 20)(-90, 10)]
+inner CTM: [object SVGMatrix] [(1, 0)(0, 1)(-5, -5)]
+inner ScreenCTM: [object SVGMatrix] [(20, 0)(0, 20)(10, 110)]
+

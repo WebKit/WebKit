@@ -135,6 +135,8 @@ namespace WebCore
         friend class RenderSVGViewportContainer;
 
         virtual bool hasRelativeValues() const;
+        
+        bool isOutermostSVG() const;
 
     private:
         void addSVGWindowEventListener(const AtomicString& eventType, const Attribute* attr);   

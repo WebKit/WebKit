@@ -1,3 +1,10 @@
+2007-10-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        * svg/custom/svgsvgelement-ctm-expected.txt: Added.
+        * svg/custom/svgsvgelement-ctm.xhtml: Added.
+
 2007-10-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

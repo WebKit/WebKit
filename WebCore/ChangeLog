@@ -1,3 +1,21 @@
+2007-10-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13828
+        Fixes svg/custom/rootmost-svg-xy-attrs.xhtml
+
+        * WebCore.xcodeproj/project.pbxproj: fix warning about SVGDOM.h
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::viewport): use new isOutermostSVG()
+        (WebCore::SVGSVGElement::getCTM): use isOutermostSVG()
+        (WebCore::SVGSVGElement::getScreenCTM): use isOutermostSVG()
+        (WebCore::SVGSVGElement::createRenderer): use isOutermostSVG()
+        (WebCore::SVGSVGElement::isOutermostSVG):
+        * ksvg2/svg/SVGSVGElement.h: add isOutermostSVG
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::calcViewport): ignore x/y
+
 2007-10-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mitz.
