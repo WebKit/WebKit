@@ -1,3 +1,12 @@
+2007-10-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Steve Falkenburg.
+
+        Test for <rdar://problem/5519698> CrashTracer: [USER] 47 crashes in Safari at com.apple.WebCore: WebCore::XMLTokenizer::lineNumber const + 9
+
+        * fast/innerHTML/innerHTML-script-tag-crash-expected.txt: Added.
+        * fast/innerHTML/innerHTML-script-tag-crash.xhtml: Added.
+
 2007-10-08  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed.

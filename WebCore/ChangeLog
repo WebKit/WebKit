@@ -1,3 +1,15 @@
+2007-10-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Steve Falkenburg;
+
+        Fix for <rdar://problem/5519698> CrashTracer: [USER] 47 crashes in Safari at com.apple.WebCore: WebCore::XMLTokenizer::lineNumber const + 9
+
+        Test: fast/innerHTML/innerHTML-script-tag-crash.xhtml
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::lineNumber): Return 1 when there is no context.
+        (WebCore::XMLTokenizer::columnNumber): ditto.
+
 2007-10-08  Alexey Proskuryakov  <ap@webkit.org>
 
         * platform/mac/FontPlatformDataMac.mm:
