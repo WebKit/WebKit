@@ -1,3 +1,11 @@
+2007-10-10  Oliver Hunt  <oliver@apple.com>
+
+        RS = Eric
+
+        Correcting expected output of svg/batik/text/textOnPathSpaces
+
+        * svg/batik/text/textOnPathSpaces-expected.txt:
+
 2007-10-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
