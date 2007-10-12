@@ -1,3 +1,12 @@
+2007-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        - Cache global prorotypes more efficiently for 10% speedup on CK AJAX benchmark
+        http://bugs.webkit.org/show_bug.cgi?id=15335
+
+        * kjs/lookup.h:
+
 2007-10-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark.

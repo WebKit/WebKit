@@ -26,6 +26,7 @@
 #include "interpreter.h"
 #include "identifier.h"
 #include "object.h"
+#include "context.h"
 #include <stdio.h>
 
 namespace KJS {
@@ -336,7 +337,8 @@ namespace KJS {
     const ClassInfo ClassPrototype::info = { ClassName"Prototype", 0, &ClassPrototype##Table, 0 }; \
     JSObject* ClassPrototype::self(ExecState* exec) \
     { \
-        return KJS::cacheGlobalObject<ClassPrototype>(exec, "[[" ClassName ".prototype]]"); \
+        static Identifier prototypeIdentifier("[[" ClassName ".prototype]]"); \
+        return KJS::cacheGlobalObject<ClassPrototype>(exec, prototypeIdentifier); \
     } \
     bool ClassPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
