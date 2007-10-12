@@ -111,6 +111,8 @@ void compareImages(CGImageRef actualBitmap, CGImageRef baselineBitmap)
             
     float percentage = computePercentageDifferent(diffBitmap);
     
+    percentage = (float)((int)(percentage * 100.0f)) / 100.0f; // round to 2 decimal places
+    
     // send message to let them know if an image was wrong
     if (percentage > 0.0) {
         // since the diff might actually show something, send it to stdout
@@ -160,7 +162,7 @@ float computePercentageDifferent(NSBitmapImageRep *diffBitmap)
 {
     // if diffBiatmap is nil, then there was an error, and it didn't match.
     if (diffBitmap == nil)
-        return 100.0;
+        return 100.0f;
     
     unsigned bitmapFormat = [diffBitmap bitmapFormat];
     assert(!(bitmapFormat & NSAlphaFirstBitmapFormat));
@@ -175,8 +177,16 @@ float computePercentageDifferent(NSBitmapImageRep *diffBitmap)
     // NOTE: This may not be safe when switching between ENDIAN types
     for (unsigned row = 0; row < pixelsHigh; row++) {
         for (unsigned col = 0; col < (pixelsWide * 4); col += 4) {
-            if (*(pixelRowData + col) != 0 || *(pixelRowData + col + 1) != 0 || *(pixelRowData + col + 2) != 0)
+            unsigned char* red = pixelRowData + col;
+            unsigned char* green = red + 1;
+            unsigned char* blue = red + 2;
+            if (*red != 0 || *green != 0 || *blue != 0) {
                 differences++;
+                // shift the pixels towards white to make them more visible
+                *red = MIN(UCHAR_MAX, *red + 100);
+                *green = MIN(UCHAR_MAX, *green + 100);
+                *blue = MIN(UCHAR_MAX, *blue + 100);
+            }
         }
         pixelRowData += bytesPerRow;
     }

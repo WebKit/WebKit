@@ -1,5 +1,19 @@
 2007-10-02  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Roben.
+        
+        Make pixel tests more useful!
+        Finally fix the image diff 0.00% mystery problem
+        Highlight any image differences in the image diff.
+        Add a link from image diffs back to original test file.
+
+        * DumpRenderTree/mac/ImageDiff.m:
+        (compareImages): highlight any differences
+        (computePercentageDifferent): round to two decimal places
+        * Scripts/run-webkit-tests: add a few more toURL calls for the windows folks
+
+2007-10-02  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         * Scripts/run-webkit-tests: print the % image difference on main results page

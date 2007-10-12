@@ -783,6 +783,9 @@ for my $test (@tests) {
                 print DIFFHTML "</tr>\n";
             }
             print DIFFHTML "<tr>\n";
+            print DIFFHTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">test file</a></td>\n";
+            print DIFFHTML "</tr>\n";
+            print DIFFHTML "<tr>\n";
             print DIFFHTML "<td id=\"imageText\" style=\"text-weight: bold;\">Actual Image</td>\n";
             print DIFFHTML "</tr>\n";
             print DIFFHTML "<tr>\n";
@@ -906,9 +909,9 @@ if ($counts{mismatch}) {
         print HTML htmlForExpectedAndActualResults($base);
         if ($pixelTests) {
             if ($imagesPresent{$base}) {
-                print HTML "<td><a href=\"$base-$expectedTag.png\">expected image</a></td>\n";
-                print HTML "<td><a href=\"$base-$diffsTag.html\">image diffs</a>\n";
-                print HTML "<a href=\"$base-$diffsTag.png\">$imageDifferences{$base}%</a></td>\n";
+                print HTML "<td><a href=\"" . toURL("$base-$expectedTag.png") . "\">expected image</a></td>\n";
+                print HTML "<td><a href=\"" . toURL("$base-$diffsTag.html") . "\">image diffs</a>\n";
+                print HTML "<a href=\"" . toURL("$base-$diffsTag.png") . "\">$imageDifferences{$base}%</a></td>\n";
             } else {
                 print HTML "<td></td><td></td>\n";
             }            
