@@ -1,3 +1,13 @@
+2007-10-12  Oliver Hunt  <oliver@apple.com>
+
+        RS=Eric.
+
+        Correct expected output of a few test cases
+
+        * platform/mac/dom/xhtml/level2/html/HTMLBaseElement01-expected.txt:
+        * platform/mac/dom/xhtml/level2/html/HTMLBaseElement02-expected.txt:
+        * platform/mac/fast/dom/dom-parse-serialize-expected.txt:
+
 === Start merge of feature-branch 11-11-2007 ===
 
 2007-10-11  Oliver Hunt  <oliver@apple.com>
