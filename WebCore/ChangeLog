@@ -1,5 +1,18 @@
 2007-10-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Mitz.
+        
+        - Avoid uselessly serializing CSS property values on replacement for 10% CK DOM speedup
+        http://bugs.webkit.org/show_bug.cgi?id=15340
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::removeProperty): Don't generate return value unless needed.
+        (WebCore::CSSMutableStyleDeclaration::setProperty): Use the no-return version appropriately.
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::removeProperty): New version with no return value.
+
+2007-10-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver.
 
         - Use Vector<UChar> instead of DeprecatedString for innerHTML, for 35% speedup on CK DOM test

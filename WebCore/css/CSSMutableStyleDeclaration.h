@@ -73,11 +73,11 @@ public:
         return setProperty(propertyId, value, important, notifyChanged, ec);
     }
 
-    String removeProperty(int propertyID, bool notifyChanged, ExceptionCode&);
-    String removeProperty(int propertyID, bool notifyChanged = true)
+    String removeProperty(int propertyID, bool notifyChanged, bool returnText, ExceptionCode&);
+    void removeProperty(int propertyID, bool notifyChanged = true)
     {
         ExceptionCode ec;
-        return removeProperty(propertyID, notifyChanged, ec);
+        removeProperty(propertyID, notifyChanged, false, ec);
     }
 
     void clear();
