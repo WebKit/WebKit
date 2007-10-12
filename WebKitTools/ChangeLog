@@ -1,3 +1,10 @@
+2007-09-25  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Eric.
+
+        * BuildSlaveSupport/build-launcher-dmg: Allow the platform tag to be specified on the command line.
+        This makes it possible to automate nightly builds for the feature-branch.
+
 2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Mark.
