@@ -48,6 +48,7 @@ module html {
         readonly attribute long height;
                  attribute [ConvertNullToNullString] DOMString dir;
                  attribute [ConvertNullToNullString] DOMString designMode;
+        readonly attribute DOMString compatMode;
 
         // Deprecated attributes
                  attribute [ConvertNullToNullString] DOMString bgColor;

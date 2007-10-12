@@ -1,3 +1,17 @@
+2007-10-07  Vincent Ricard  <magic@magicninja.org>
+
+        Reviewed by Maciej.  Landed by eseidel.
+
+        add tests for http://bugs.webkit.org/show_bug.cgi?id=15062
+        Implement document.compatMode
+
+        * fast/dom/compatMode-AlmostStrict-expected.txt: Added.
+        * fast/dom/compatMode-AlmostStrict.html: Added.
+        * fast/dom/compatMode-Compat-expected.txt: Added.
+        * fast/dom/compatMode-Compat.html: Added.
+        * fast/dom/compatMode-Strict-expected.txt: Added.
+        * fast/dom/compatMode-Strict.html: Added.
+
 2007-10-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin and Nikolas.  Landed by eseidel.

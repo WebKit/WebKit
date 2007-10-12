@@ -1,3 +1,19 @@
+2007-10-07  Vincent Ricard  <magic@magicninja.org>
+
+        Reviewed by Maciej.  Landed by eseidel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15062
+        Implement document.compatMode
+
+        Tests: fast/dom/compatMode-AlmostStrict.html
+               fast/dom/compatMode-Compat.html
+               fast/dom/compatMode-Strict.html
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::compatMode):
+        * html/HTMLDocument.h:
+        * html/HTMLDocument.idl:
+
 2007-10-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin & Nikolas.  Landed by eseidel.

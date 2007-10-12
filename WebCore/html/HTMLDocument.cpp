@@ -134,6 +134,11 @@ void HTMLDocument::setDesignMode(const String& value)
     Document::setDesignMode(mode);
 }
 
+String HTMLDocument::compatMode() const
+{
+    return inCompatMode() ? "BackCompat" : "CSS1Compat";
+}
+
 String HTMLDocument::bgColor()
 {
     HTMLElement* b = body();

@@ -47,6 +47,8 @@ public:
     String designMode() const;
     void setDesignMode(const String&);
 
+    String compatMode() const;
+
     String bgColor();
     void setBgColor(const String&);
     String fgColor();
