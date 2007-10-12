@@ -1,3 +1,18 @@
+2007-05-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fix "jumpy" selection by correcting the way svgCharacterHitsPosition works.
+        I basically mixed up the "closest character to position" logic.
+
+        * rendering/RenderSVGInlineText.cpp: Only call svgCharacterHitsPosition for the firstTextBox -> it handles all children anyway.
+        (WebCore::RenderSVGInlineText::positionForCoordinates):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition): Fix logic - was really broken!
+        (WebCore::SVGInlineTextBox::svgCharacterHitsPosition):
+        (WebCore::SVGInlineTextBox::nodeAtPoint): Do not use svgCharacterHitsPosition here - too accurate!
+                                                  We don't want to loose the 'text' cursor if one is just between two characters.
+
 2007-05-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

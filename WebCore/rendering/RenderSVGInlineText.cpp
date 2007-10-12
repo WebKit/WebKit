@@ -67,25 +67,22 @@ IntRect RenderSVGInlineText::caretRect(int offset, EAffinity affinity, int* extr
 
 VisiblePosition RenderSVGInlineText::positionForCoordinates(int x, int y)
 {
-    if (!firstTextBox() || textLength() == 0)
+    SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(firstTextBox());
+
+    if (!textBox || textLength() == 0)
         return VisiblePosition(element(), 0, DOWNSTREAM);
 
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(box);
+    SVGRootInlineBox* rootBox = textBox->svgRootInlineBox();
+    RenderObject* object = rootBox ? rootBox->object() : 0;
 
-        SVGRootInlineBox* rootBox = textBox->svgRootInlineBox();
-        ASSERT(rootBox->object());
+    if (!object)
+        return VisiblePosition(element(), 0, DOWNSTREAM);
 
-        int xStart = x + rootBox->object()->xPos();
-        int yStart = y + rootBox->object()->yPos();
-
-        int offset = 0;
-        if (textBox->svgCharacterHitsPosition(xStart, yStart, offset))
-            return VisiblePosition(element(), offset + textBox->start(), DOWNSTREAM);
-    }
-
-    return VisiblePosition(element(), 0, DOWNSTREAM);
+    int offset = 0;
+    textBox->svgCharacterHitsPosition(x + object->xPos(), y + object->yPos(), offset);
+    return VisiblePosition(element(), offset, DOWNSTREAM);
 }
 
 }
+
 #endif // ENABLE(SVG)
