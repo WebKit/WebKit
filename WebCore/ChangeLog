@@ -1,5 +1,17 @@
 2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15380
+        XPath: id('foo') doesn't resolve correctly
+
+        Test: fast/xpath/id-simple.html
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate): Fixed a logic error in id() parameter parsing.
+
+2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=13707

@@ -1,5 +1,15 @@
 2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15380
+        XPath: id('foo') doesn't resolve correctly
+
+        * fast/xpath/id-simple-expected.txt: Added.
+        * fast/xpath/id-simple.html: Added.
+
+2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
+
         * fast/dom/xmlhttprequest-get-expected.txt: Updated event properties
         for changes made in bug 15102.
 
