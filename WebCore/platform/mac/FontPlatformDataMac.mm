@@ -32,7 +32,7 @@ FontPlatformData::FontPlatformData(NSFont* f, bool b , bool o)
 {
     if (f)
         CFRetain(f);
-    m_size = [f pointSize];
+    m_size = f ? [f pointSize] : 0.0f;
     m_cgFont = wkGetCGFontFromNSFont(f);
     m_atsuFontID = wkGetNSFontATSUFontId(f);
 }
@@ -56,12 +56,12 @@ FontPlatformData:: ~FontPlatformData()
 void FontPlatformData::setFont(NSFont* font) {
     if (m_font == font)
         return;
-    if (font && font != (NSFont*)-1)
+    if (font)
         CFRetain(font);
-    if (m_font && m_font != (NSFont*)-1)
+    if (m_font)
         CFRelease(m_font);
     m_font = font;
-    m_size = [font pointSize];
+    m_size = font ? [font pointSize] : 0.0f;
     m_cgFont = wkGetCGFontFromNSFont(font);
     m_atsuFontID = wkGetNSFontATSUFontId(font);
 }

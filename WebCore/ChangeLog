@@ -1,3 +1,18 @@
+2007-10-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15397
+        Layout tests freeze in HashTable::lookup
+
+        Fixes a DRT freeze on PowerPC.
+
+        * platform/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::FontPlatformData): Don't ask for a size of a nil font,
+        the result is undefined.
+        (WebCore::FontPlatformData::setFont): Ditto. Also removed some checks for -1 that
+        were not sufficient, and thus likely unnecessary,
+
 2007-10-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
