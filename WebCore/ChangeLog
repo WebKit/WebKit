@@ -1,3 +1,19 @@
+2007-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Niko.
+
+        Fix for Bug 15468: Parsing of numbers and lists is too lenient in SVG
+
+        Correct parsing of numbers, number lists, and length lists in SVG.
+
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValueAsString):
+        * ksvg2/svg/SVGLength.h:
+        * ksvg2/svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse):
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::parseNumber):
+
 2007-10-11  Allan Sandfeld Jensen  <sandfeld@kde.org>
  
          Reviewed by Maciej and Eric.

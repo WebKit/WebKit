@@ -235,18 +235,21 @@ float SVGLength::valueAsPercentage() const
     return valueInSpecifiedUnits();
 }
 
-void SVGLength::setValueAsString(const String& s)
+bool SVGLength::setValueAsString(const String& s)
 {
     if (s.isEmpty())
-        return;
+        return false;
 
     double convertedNumber = 0;
     const UChar* ptr = s.characters();
     const UChar* end = ptr + s.length();
-    parseNumber(ptr, end, convertedNumber, false);
+    
+    if (!parseNumber(ptr, end, convertedNumber, false))
+        return false;
 
     m_unit = storeUnit(extractMode(m_unit), stringToLengthType(s));
     m_valueInSpecifiedUnits = narrowPrecisionToFloat(convertedNumber);
+    return true;
 }
 
 String SVGLength::valueAsString() const

@@ -51,7 +51,10 @@ void SVGLengthList::parse(const String& value, const SVGStyledElement* context, 
             ptr++;
         if (ptr == start)
             break;
-        appendItem(SVGLength(context, mode, String(start, ptr - start)), ec);
+        SVGLength length(context, mode);
+        if (!length.setValueAsString(String(start, ptr - start)))
+            return;
+        appendItem(length, ec);
         skipOptionalSpacesOrDelimiter(ptr, end);
     }
 }

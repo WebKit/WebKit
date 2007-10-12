@@ -2,6 +2,7 @@
    Copyright (C) 2002, 2003 The Karbon Developers
                  2006       Alexander Kellett <lypanov@kde.org>
                  2006, 2007 Rob Buis <buis@kde.org>
+                 2007       Apple, Inc.  All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -67,27 +68,43 @@ bool parseNumber(const UChar*& ptr, const UChar* end, double& number, bool skip)
     else if (ptr < end && *ptr == '-') {
         ptr++;
         sign = -1;
-    }
+    } 
+    
+    if (ptr == end || ((*ptr < '0' || *ptr > '9') && *ptr != '.'))
+        // The first character of a number must be one of [0-9+-.]
+        return false;
+
     // read the integer part
     while (ptr < end && *ptr >= '0' && *ptr <= '9')
         integer = (integer * 10) + *(ptr++) - '0';
 
     if (ptr < end && *ptr == '.') { // read the decimals
         ptr++;
-        while(ptr < end && *ptr >= '0' && *ptr <= '9')
+        
+        // There must be a least one digit following the .
+        if (ptr >= end || *ptr < '0' || *ptr > '9')
+            return false;
+        
+        while (ptr < end && *ptr >= '0' && *ptr <= '9')
             decimal += (*(ptr++) - '0') * (frac *= 0.1);
     }
 
-    if (ptr < end && (*ptr == 'e' || *ptr == 'E')) { // read the exponent part
+    // read the exponent part
+    if (ptr != start && ptr + 1 < end && (*ptr == 'e' || *ptr == 'E') 
+        && (ptr[1] != 'x' && ptr[1] != 'm')) { 
         ptr++;
 
         // read the sign of the exponent
-        if (ptr < end && *ptr == '+')
+        if (*ptr == '+')
             ptr++;
-        else if (ptr < end && *ptr == '-') {
+        else if (*ptr == '-') {
             ptr++;
             expsign = -1;
         }
+        
+        // There must be an exponent
+        if (ptr >= end || *ptr < '0' || *ptr > '9')
+            return false;
 
         while (ptr < end && *ptr >= '0' && *ptr <= '9') {
             exponent *= 10;

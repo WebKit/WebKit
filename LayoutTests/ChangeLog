@@ -1,3 +1,15 @@
+2007-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Niko.
+
+        Fix for Bug 15468: Parsing of numbers and lists is too lenient in SVG
+
+        Updating layout test results for more strict parsing of SVGNumber and
+        SVGLengthList
+
+        * platform/mac/svg/custom/path-bad-data-expected.txt:
+        * svg/dom/length-list-parser-expected.txt:
+
 2007-10-11  Allan Sandfeld Jensen  <sandfeld@kde.org>
  
          Reviewed by Maciej and Eric.
