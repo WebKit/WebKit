@@ -337,8 +337,8 @@ namespace KJS {
     const ClassInfo ClassPrototype::info = { ClassName"Prototype", 0, &ClassPrototype##Table, 0 }; \
     JSObject* ClassPrototype::self(ExecState* exec) \
     { \
-        static Identifier prototypeIdentifier("[[" ClassName ".prototype]]"); \
-        return KJS::cacheGlobalObject<ClassPrototype>(exec, prototypeIdentifier); \
+        static Identifier* prototypeIdentifier = new Identifier("[[" ClassName ".prototype]]"); \
+        return KJS::cacheGlobalObject<ClassPrototype>(exec, *prototypeIdentifier); \
     } \
     bool ClassPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) \
     { \

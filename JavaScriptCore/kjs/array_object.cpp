@@ -535,13 +535,13 @@ JSValue* ArrayProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, cons
     // fall through
   case Join: {
     static HashSet<JSObject*> visitedElems;
-    static const UString empty("");
-    static const UString comma(",");
+    static const UString* empty = new UString("");
+    static const UString* comma = new UString(",");
     bool alreadyVisited = !visitedElems.add(thisObj).second;
     if (alreadyVisited)
-        return jsString(empty);
-    UString separator = comma;
-    UString str = empty;
+        return jsString(*empty);
+    UString separator = *comma;
+    UString str = *empty;
 
     if (id == Join && !args[0]->isUndefined())
         separator = args[0]->toString(exec);

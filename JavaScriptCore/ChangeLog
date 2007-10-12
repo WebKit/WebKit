@@ -1,3 +1,15 @@
+2007-10-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - fix assertion failures on quit.
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::callAsFunction): Dynamically alocate function-scope static
+        UStrings to avoid the static destructor getting called later.
+        * kjs/lookup.h: Dynamically alocate function-scope static
+        Identifiers to avoid the static destructor getting called later.
+
 2007-10-07  Ed Schouten  <ed@fxq.nl>
 
         Reviewed and landed by Alexey Proskuryakov.
