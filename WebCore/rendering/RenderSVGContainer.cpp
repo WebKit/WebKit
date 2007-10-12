@@ -29,12 +29,8 @@
 #include "AXObjectCache.h"
 #include "GraphicsContext.h"
 #include "RenderView.h"
-#include "SVGFitToViewBox.h"
-#include "SVGLength.h"
-#include "SVGMarkerElement.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourceFilter.h"
-#include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 
@@ -232,8 +228,6 @@ void RenderSVGContainer::layout()
 {
     ASSERT(needsLayout());
 
-    calcViewport();
-
     // Arbitrary affine transforms are incompatible with LayoutState.
     view()->disableLayoutState();
 
@@ -300,28 +294,18 @@ int RenderSVGContainer::calcReplacedHeight() const
 
 void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo)
 {
-    // Only the root <svg> element should need any translations using the HTML/CSS system
-    // parentX, parentY are also non-zero for first-level kids of these
-    // CSS-transformed <svg> root-elements (due to RenderBox::paint) for any other element
-    // they should be 0.   m_x, m_y should always be 0 for non-root svg containers
-    if (!viewport().isEmpty()) {
-        if (style()->overflowX() != OVISIBLE)
-            paintInfo.context->clip(enclosingIntRect(viewport())); // FIXME: Eventually we'll want float-precision clipping
-        
-        paintInfo.context->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
-    }
-
     if (!localTransform().isIdentity())
         paintInfo.context->concatCTM(localTransform());
+}
+
+void RenderSVGContainer::applyAdditionalTransforms(PaintInfo& paintInfo)
+{
+    // no-op
 }
 
 void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
     if (paintInfo.context->paintingDisabled() || !drawsContents())
-        return;
-
-    // A value of zero disables rendering of the element. 
-    if (!viewport().isEmpty() && (viewport().width() <= 0. || viewport().height() <= 0.))
         return;
 
     if (!firstChild()) {
@@ -339,14 +323,13 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     applyContentTransforms(paintInfo);
 
     SVGResourceFilter* filter = 0;
-
     PaintInfo savedInfo(paintInfo);
 
     FloatRect boundingBox = relativeBBox(true);
     if (paintInfo.phase == PaintPhaseForeground)
         prepareToRenderSVGContent(this, paintInfo, boundingBox, filter); 
 
-    paintInfo.context->concatCTM(viewportTransform());
+    applyAdditionalTransforms(paintInfo);
 
     // default implementation. Just pass paint through to the children
     PaintInfo childInfo(paintInfo);
@@ -363,50 +346,8 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintOutline(paintInfo.context, m_absoluteBounds.x(), m_absoluteBounds.y(), m_absoluteBounds.width(), m_absoluteBounds.height(), style());
 }
 
-FloatRect RenderSVGContainer::viewport() const
-{
-    return m_viewport;
-}
-
-void RenderSVGContainer::calcViewport()
-{
-    SVGElement* svgelem = static_cast<SVGElement*>(element());
-    if (svgelem->hasTagName(SVGNames::svgTag)) {
-        SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
-
-        if (!selfNeedsLayout() && !svg->hasRelativeValues())
-            return;
-
-        float x = 0.0f;
-        float y = 0.0f;
-        if (parent()->isSVGContainer()) {
-            x = svg->x().value();
-            y = svg->y().value();
-        }
-        float w = svg->width().value();
-        float h = svg->height().value();
-        m_viewport = FloatRect(x, y, w, h);
-    } else if (svgelem->hasTagName(SVGNames::markerTag)) {
-        if (!selfNeedsLayout())
-            return;
-
-        SVGMarkerElement* svg = static_cast<SVGMarkerElement*>(element());
-        float w = svg->markerWidth().value();
-        float h = svg->markerHeight().value();
-        m_viewport = FloatRect(0.0f, 0.0f, w, h);
-    }
-}
-
 AffineTransform RenderSVGContainer::viewportTransform() const
 {
-    if (element()->hasTagName(SVGNames::svgTag)) {
-        SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
-        return svg->viewBoxToViewTransform(viewport().width(), viewport().height());
-    } else if (element()->hasTagName(SVGNames::markerTag)) {
-        SVGMarkerElement* marker = static_cast<SVGMarkerElement*>(element());
-        return marker->viewBoxToViewTransform(viewport().width(), viewport().height());
-    }
- 
      return AffineTransform();
 }
 
@@ -440,39 +381,6 @@ void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     rects.append(absoluteClippedOverflowRect());
 }
 
-AffineTransform RenderSVGContainer::absoluteTransform() const
-{
-    AffineTransform ctm = RenderObject::absoluteTransform();
-    ctm.translate(viewport().x(), viewport().y());
-    return viewportTransform() * ctm;
-}
-
-bool RenderSVGContainer::fillContains(const FloatPoint& p) const
-{
-    RenderObject* current = firstChild();
-    while (current != 0) {
-        if (current->isRenderPath() && static_cast<RenderPath*>(current)->fillContains(p))
-            return true;
-
-        current = current->nextSibling();
-    }
-
-    return false;
-}
-
-bool RenderSVGContainer::strokeContains(const FloatPoint& p) const
-{
-    RenderObject* current = firstChild();
-    while (current != 0) {
-        if (current->isRenderPath() && static_cast<RenderPath*>(current)->strokeContains(p))
-            return true;
-
-        current = current->nextSibling();
-    }
-
-    return false;
-}
-
 FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
 {
     FloatRect rect;
@@ -481,9 +389,11 @@ FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
     for (; current != 0; current = current->nextSibling()) {
         FloatRect childBBox = current->relativeBBox(includeStroke);
         FloatRect mappedBBox = current->localTransform().mapRect(childBBox);
+
         // <svg> can have a viewBox contributing to the bbox
         if (current->isSVGContainer())
             mappedBBox = static_cast<RenderSVGContainer*>(current)->viewportTransform().mapRect(mappedBBox);
+
         rect.unite(mappedBBox);
     }
 
@@ -492,32 +402,8 @@ FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
 
 bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    if (!viewport().isEmpty()
-        && style()->overflowX() == OHIDDEN
-        && style()->overflowY() == OHIDDEN) {
-        // Check if we need to do anything at all.
-        IntRect overflowBox = overflowRect(false);
-        overflowBox.move(_tx, _ty);
-        AffineTransform ctm = RenderObject::absoluteTransform();
-        ctm.translate(viewport().x(), viewport().y());
-        double localX, localY;
-        ctm.inverse().map(_x - _tx, _y - _ty, &localX, &localY);
-        if (!overflowBox.contains((int)localX, (int)localY))
-            return false;
-    }
-
-    int sx = 0;
-    int sy = 0;
-
-    // Respect parent translation offset for non-outermost <svg> elements.
-    // Outermost <svg> element is handled by RenderSVGRoot.
-    if (element()->hasTagName(SVGNames::svgTag)) {
-        sx = _tx;
-        sy = _ty;
-    }
-
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->nodeAtPoint(request, result, _x - sx, _y - sy, _tx, _ty, hitTestAction)) {
+        if (child->nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction)) {
             updateHitTestResult(result, IntPoint(_x - _tx, _y - _ty));
             return true;
         }

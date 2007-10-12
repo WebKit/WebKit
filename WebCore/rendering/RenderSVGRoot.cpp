@@ -249,32 +249,6 @@ AffineTransform RenderSVGRoot::absoluteTransform() const
     return svg->viewBoxToViewTransform(width(), height()) * ctm;
 }
 
-bool RenderSVGRoot::fillContains(const FloatPoint& p) const
-{
-    RenderObject* current = firstChild();
-    while (current != 0) {
-        if (current->isRenderPath() && static_cast<RenderPath*>(current)->fillContains(p))
-            return true;
-
-        current = current->nextSibling();
-    }
-
-    return false;
-}
-
-bool RenderSVGRoot::strokeContains(const FloatPoint& p) const
-{
-    RenderObject* current = firstChild();
-    while (current != 0) {
-        if (current->isRenderPath() && static_cast<RenderPath*>(current)->strokeContains(p))
-            return true;
-
-        current = current->nextSibling();
-    }
-
-    return false;
-}
-
 FloatRect RenderSVGRoot::relativeBBox(bool includeStroke) const
 {
     FloatRect rect;

@@ -68,39 +68,34 @@ public:
 
     virtual bool isSVGContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGContainer"; }
-        
+
     virtual bool requiresLayer();
     virtual short lineHeight(bool b, bool isRootLineBox = false) const;
     virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
-    
+
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
-    
+
     virtual IntRect absoluteClippedOverflowRect();
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
-    virtual AffineTransform absoluteTransform() const;
-
-    bool fillContains(const FloatPoint&) const;
-    bool strokeContains(const FloatPoint&) const;
     FloatRect relativeBBox(bool includeStroke = true) const;
-    
+
     virtual AffineTransform localTransform() const;
     void setLocalTransform(const AffineTransform&);
-   
-    FloatRect viewport() const;
 
-    AffineTransform viewportTransform() const;
-    
+    virtual AffineTransform viewportTransform() const;
+
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    
+
+protected:
+    virtual void applyContentTransforms(PaintInfo&);
+    virtual void applyAdditionalTransforms(PaintInfo&);
+
 private:
-    void calcViewport(); 
     int calcReplacedWidth() const;
     int calcReplacedHeight() const;
-
-    void applyContentTransforms(PaintInfo&);
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
@@ -110,10 +105,9 @@ private:
 
     bool m_drawsContents : 1;
 
-    AffineTransform m_matrix;
-    
-    FloatRect m_viewport;
     IntRect m_absoluteBounds;
+
+    AffineTransform m_matrix;
 };
   
 } // namespace WebCore

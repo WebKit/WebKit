@@ -2406,6 +2406,8 @@
 		B2CB92620B5BDA02009BAA78 /* DOMSVGElementInstance.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2CB925E0B5BDA02009BAA78 /* DOMSVGElementInstance.mm */; };
 		B2CB92630B5BDA02009BAA78 /* DOMSVGElementInstanceList.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB925F0B5BDA02009BAA78 /* DOMSVGElementInstanceList.h */; };
 		B2CB92640B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2CB92600B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm */; };
+		B2CCEC470C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CCEC450C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp */; };
+		B2CCEC480C6CA9F1006A5424 /* RenderSVGViewportContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */; };
 		B2D3FC8A0C2212CB00CF3618 /* JSSVGTransformListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */; };
 		B2D87C770B124E7300B0DE1E /* SVGPaintServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D87C6B0B124E7300B0DE1E /* SVGPaintServer.cpp */; };
 		B2D87C780B124E7300B0DE1E /* SVGPaintServer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D87C6C0B124E7300B0DE1E /* SVGPaintServer.h */; };
@@ -5728,6 +5730,8 @@
 		B2CB925E0B5BDA02009BAA78 /* DOMSVGElementInstance.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGElementInstance.mm; sourceTree = "<group>"; };
 		B2CB925F0B5BDA02009BAA78 /* DOMSVGElementInstanceList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceList.h; sourceTree = "<group>"; };
 		B2CB92600B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGElementInstanceList.mm; sourceTree = "<group>"; };
+		B2CCEC450C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGViewportContainer.cpp; sourceTree = "<group>"; };
+		B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGViewportContainer.h; sourceTree = "<group>"; };
 		B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGTransformListCustom.cpp; sourceTree = "<group>"; };
 		B2D87C6B0B124E7300B0DE1E /* SVGPaintServer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPaintServer.cpp; sourceTree = "<group>"; };
 		B2D87C6C0B124E7300B0DE1E /* SVGPaintServer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGPaintServer.h; sourceTree = "<group>"; };
@@ -10039,6 +10043,8 @@
 				B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */,
 				853CA9D40AEEC5E9002372DC /* RenderSVGTSpan.cpp */,
 				853CA9D50AEEC5E9002372DC /* RenderSVGTSpan.h */,
+				B2CCEC450C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp */,
+				B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */,
 				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
 				A8DF4AE10980C42C0052981B /* RenderTable.h */,
 				A8DF4AE00980C42C0052981B /* RenderTableCell.cpp */,
@@ -11806,6 +11812,7 @@
 				B223622E0C3AF0710008CA9B /* DOMSVGTextPathElement.h in Headers */,
 				B223622F0C3AF0710008CA9B /* DOMSVGTextPathElementInternal.h in Headers */,
 				AA4038910C4C0D8B00DB56DC /* SVGViewSpec.h in Headers */,
+				B2CCEC480C6CA9F1006A5424 /* RenderSVGViewportContainer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13279,6 +13286,7 @@
 				B22362280C3AF04A0008CA9B /* JSSVGTextPathElement.cpp in Sources */,
 				B2AE9B9D0C3AF27400F23F7F /* DOMSVGTextPathElement.mm in Sources */,
 				AA4038900C4C0D8B00DB56DC /* SVGViewSpec.cpp in Sources */,
+				B2CCEC470C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

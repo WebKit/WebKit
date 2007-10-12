@@ -1,5 +1,47 @@
 2007-08-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Rob.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14153
+
+        Final, long-awaited RenderSVGContainer split. Make RenderSVGContainer really a simple
+        container without special cases for inner <svg> elements or <marker>. Create a new
+        RenderSVGViewportContainer class handling these cases now.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::createRenderer):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createRenderer):
+        * ksvg2/svg/SVGSVGElement.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::applyContentTransforms):
+        (WebCore::RenderSVGContainer::applyAdditionalTransforms):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::viewportTransform):
+        (WebCore::RenderSVGContainer::relativeBBox):
+        (WebCore::RenderSVGContainer::nodeAtPoint):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGRoot.cpp:
+        * rendering/RenderSVGViewportContainer.cpp: Added.
+        (WebCore::RenderSVGViewportContainer::RenderSVGViewportContainer):
+        (WebCore::RenderSVGViewportContainer::~RenderSVGViewportContainer):
+        (WebCore::RenderSVGViewportContainer::layout):
+        (WebCore::RenderSVGViewportContainer::paint):
+        (WebCore::RenderSVGViewportContainer::applyContentTransforms):
+        (WebCore::RenderSVGViewportContainer::applyAdditionalTransforms):
+        (WebCore::RenderSVGViewportContainer::viewport):
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        (WebCore::RenderSVGViewportContainer::viewportTransform):
+        (WebCore::RenderSVGViewportContainer::absoluteTransform):
+        (WebCore::RenderSVGViewportContainer::nodeAtPoint):
+        * rendering/RenderSVGViewportContainer.h: Added.
+        (WebCore::RenderSVGViewportContainer::isSVGContainer):
+        (WebCore::RenderSVGViewportContainer::renderName):
+
+2007-08-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver & Rob.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=12501 (SVG Text fails to respect opacity, fill-opacity and stroke-opacity)

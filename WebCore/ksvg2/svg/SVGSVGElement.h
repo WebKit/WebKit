@@ -132,6 +132,8 @@ namespace WebCore
 
         friend class RenderSVGContainer;
         friend class RenderSVGRoot;
+        friend class RenderSVGViewportContainer;
+
         virtual bool hasRelativeValues() const;
 
     private:

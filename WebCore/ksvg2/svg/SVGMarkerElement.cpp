@@ -26,7 +26,7 @@
 #include "SVGMarkerElement.h"
 
 #include "PlatformString.h"
-#include "RenderSVGContainer.h"
+#include "RenderSVGViewportContainer.h"
 #include "SVGAngle.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLength.h"
@@ -135,7 +135,7 @@ SVGResource* SVGMarkerElement::canvasResource()
 
 RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    RenderSVGContainer* markerContainer = new (arena) RenderSVGContainer(this);
+    RenderSVGViewportContainer* markerContainer = new (arena) RenderSVGViewportContainer(this);
     markerContainer->setDrawsContents(false); // Marker contents will be explicitly drawn.
     return markerContainer;
 }
