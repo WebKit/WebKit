@@ -1,3 +1,17 @@
+2007-10-11  Allan Sandfeld Jensen  <sandfeld@kde.org>
+ 
+         Reviewed by Maciej and Eric.
+ 
+         Implement CSS selector combinators nondeterministic matching. 
+         Fixes http://bugs.webkit.org/show_bug.cgi?id=3428
+ 
+         * css/CSSStyleSelector.cpp:
+         (WebCore::CSSStyleSelector::matchRulesForList):
+         (WebCore::CSSStyleSelector::checkSelector): Split the function and make the second part recursive
+         (WebCore::CSSStyleSelector::checkOneSelector): Handle pseodo-elements rules and hoveractive quirks 
+         here instead of in checkSelector.
+         * css/CSSStyleSelector.h:
+ 
 2007-10-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

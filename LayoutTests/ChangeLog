@@ -1,3 +1,14 @@
+2007-10-11  Allan Sandfeld Jensen  <sandfeld@kde.org>
+ 
+         Reviewed by Maciej and Eric.
+ 
+         Test for nondeterministic matching of CSS selectors, see http://bugs.webkit.org/show_bug.cgi?id=3428
+ 
+         * fast/selectors/nondeterministic-combinators.html: Added.
+         * platform/mac/fast/selectors/nondeterministic-combinators-expected.checksum
+         * platform/mac/fast/selectors/nondeterministic-combinators-expected.png
+         * platform/mac/fast/selectors/nondeterministic-combinators-expected.txt
+ 
 2007-10-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

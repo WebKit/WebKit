@@ -134,10 +134,12 @@ class StyledElement;
 
         /* checks if a compound selector (which can consist of multiple simple selectors)
            matches the given Element */
-        bool checkSelector(CSSSelector* selector, Element *e);
-        
+        bool checkSelector(CSSSelector* selector);
+        enum SelectorMatch { SelectorMatches=0, SelectorFailsLocally, SelectorFailsCompletely};
+        SelectorMatch checkSelector(CSSSelector* selector, Element *e, bool isAncestor, bool isSubSelector);
+
         /* checks if the selector matches the given Element */
-        bool checkOneSelector(CSSSelector*, Element*, bool isSubSelector = false);
+        bool checkOneSelector(CSSSelector*, Element*, bool isAncestor, bool isSubSelector = false);
 
         /* This function fixes up the default font size if it detects that the
            current generic font family has changed. -dwh */

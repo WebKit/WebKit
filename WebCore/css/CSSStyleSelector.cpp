@@ -408,7 +408,7 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
         CSSStyleRule* rule = d->rule();
         const AtomicString& localName = element->localName();
         const AtomicString& selectorLocalName = d->selector()->m_tag.localName();
-        if ((localName == selectorLocalName || selectorLocalName == starAtom) && checkSelector(d->selector(), element)) {
+        if ((localName == selectorLocalName || selectorLocalName == starAtom) && checkSelector(d->selector())) {
             // If the rule has no properties to apply, then ignore it.
             CSSMutableStyleDeclaration* decl = rule->declaration();
             if (!decl || !decl->length())
@@ -1199,123 +1199,99 @@ RefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, Str
     return 0;
 }
 
-static bool subject;
-
-bool CSSStyleSelector::checkSelector(CSSSelector* sel, Element *e)
+bool CSSStyleSelector::checkSelector(CSSSelector* sel)
 {
     dynamicPseudo = RenderStyle::NOPSEUDO;
-    
-    Node *n = e;
 
-    // we have the subject part of the selector
-    subject = true;
+    // Check the selector
+    SelectorMatch match = checkSelector(sel, element, true, false);
+    if(match != SelectorMatches) return false;
 
-    // We track whether or not the rule contains only :hover and :active in a simple selector. If
-    // so, we can't allow that to apply to every element on the page.  We assume the author intended
-    // to apply the rules only to links.
-    bool onlyHoverActive = (!sel->hasTag() &&
-                            (sel->m_match == CSSSelector::PseudoClass &&
-                              (sel->pseudoType() == CSSSelector::PseudoHover ||
-                               sel->pseudoType() == CSSSelector::PseudoActive)));
-    bool affectedByHover = style ? style->affectedByHoverRules() : false;
-    bool affectedByActive = style ? style->affectedByActiveRules() : false;
-    bool havePseudo = pseudoStyle != RenderStyle::NOPSEUDO;
-    
-    // first selector has to match
-    if (!checkOneSelector(sel, e))
+    if (pseudoStyle != RenderStyle::NOPSEUDO && pseudoStyle != dynamicPseudo)
         return false;
-
-    // check the subselectors
-    CSSSelector::Relation relation = sel->relation();
-    while((sel = sel->m_tagHistory)) {
-        if (!n->isElementNode())
-            return false;
-        if (relation != CSSSelector::SubSelector) {
-            subject = false;
-            if (havePseudo && dynamicPseudo != pseudoStyle)
-                return false;
-        }
-        
-        switch(relation)
-        {
-        case CSSSelector::Descendant:
-            // FIXME: This match needs to know how to backtrack and be non-deterministic.
-            do {
-                n = n->parentNode();
-                if (!n || !n->isElementNode())
-                    return false;
-            } while (!checkOneSelector(sel, static_cast<Element*>(n)));
-            break;
-        case CSSSelector::Child:
-        {
-            n = n->parentNode();
-            if (!n || !n->isElementNode())
-                return false;
-            if (!checkOneSelector(sel, static_cast<Element*>(n)))
-                return false;
-            break;
-        }
-        case CSSSelector::DirectAdjacent:
-        {
-            n = n->previousSibling();
-            while (n && !n->isElementNode())
-                n = n->previousSibling();
-            if (!n)
-                return false;
-            if (!checkOneSelector(sel, static_cast<Element*>(n)))
-                return false;
-            break;
-        }
-        case CSSSelector::IndirectAdjacent:
-            // FIXME: This match needs to know how to backtrack and be non-deterministic.
-            do {
-                n = n->previousSibling();
-                while (n && !n->isElementNode())
-                    n = n->previousSibling();
-                if (!n)
-                    return false;
-            } while (!checkOneSelector(sel, static_cast<Element*>(n)));
-            break;
-       case CSSSelector::SubSelector:
-       {
-            if (onlyHoverActive)
-                onlyHoverActive = (sel->m_match == CSSSelector::PseudoClass &&
-                                   (sel->pseudoType() == CSSSelector::PseudoHover ||
-                                    sel->pseudoType() == CSSSelector::PseudoActive));
-            
-            Element *elem = static_cast<Element*>(n);
-            // a selector is invalid if something follows :first-xxx
-            if (elem == element && dynamicPseudo != RenderStyle::NOPSEUDO)
-                return false;
-            if (!checkOneSelector(sel, elem, true))
-                return false;
-            break;
-        }
-        }
-        relation = sel->relation();
-    }
-
-    if (subject && havePseudo && dynamicPseudo != pseudoStyle)
-        return false;
-    
-    // disallow *:hover, *:active, and *:hover:active except for links
-    if (!strictParsing && onlyHoverActive && subject) {
-        if (pseudoState == PseudoUnknown)
-            checkPseudoState(e);
-
-        if (pseudoState == PseudoNone) {
-            if (!affectedByHover && style->affectedByHoverRules())
-                style->setAffectedByHoverRules(false);
-            if (!affectedByActive && style->affectedByActiveRules())
-                style->setAffectedByActiveRules(false);
-            return false;
-        }
-    }
 
     return true;
 }
 
-bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSubSelector)
+// Recursive check of selectors and combinators
+// It can return 3 different values:
+// * SelectorMatches         - the selector matches the element e
+// * SelectorFailsLocally    - the selector fails for the element e
+// * SelectorFailsCompletely - the selector fails for e and any sibling or ancestor of e
+CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel, Element *e, bool isAncestor, bool isSubSelector)
+{
+    // first selector has to match
+    if (!checkOneSelector(sel, e, isAncestor, isSubSelector))
+        return SelectorFailsLocally;
+
+    // The rest of the selectors has to match
+    CSSSelector::Relation relation = sel->relation();
+
+    // Prepare next sel
+    sel = sel->m_tagHistory;
+    if (!sel) return SelectorMatches;
+
+    if (relation != CSSSelector::SubSelector)
+        // Bail-out if this selector is irrelevant for the pseudoStyle
+        if (pseudoStyle != RenderStyle::NOPSEUDO && pseudoStyle != dynamicPseudo)
+            return SelectorFailsCompletely;
+
+    switch(relation) {
+        case CSSSelector::Descendant:
+            while(true)
+            {
+                Node* n = e->parentNode();
+                if (!n || !n->isElementNode())
+                    return SelectorFailsCompletely;
+                e = static_cast<Element*>(n);
+                SelectorMatch match = checkSelector(sel, e, true, false);
+                if (match != SelectorFailsLocally)
+                    return match;
+            }
+            break;
+        case CSSSelector::Child:
+        {
+            Node* n = e->parentNode();
+            if (!n || !n->isElementNode())
+                return SelectorFailsCompletely;
+            e = static_cast<Element*>(n);
+            return checkSelector(sel, e, true, false);
+        }
+        case CSSSelector::DirectAdjacent:
+        {
+            Node* n = e->previousSibling();
+            while (n && !n->isElementNode())
+                n = n->previousSibling();
+            if (!n)
+                return SelectorFailsLocally;
+            e = static_cast<Element*>(n);
+            return checkSelector(sel, e, false, false); 
+        }
+        case CSSSelector::IndirectAdjacent:
+            while(true)
+            {
+                Node* n = e->previousSibling();
+                while(n && !n->isElementNode())
+                    n = n->previousSibling();
+                if (!n)
+                    return SelectorFailsLocally;
+                e = static_cast<Element*>(n);
+                SelectorMatch match = checkSelector(sel, e, false, false);
+                if (match != SelectorFailsLocally)
+                    return match;
+            };
+            break;
+        case CSSSelector::SubSelector:
+            // a selector is invalid if something follows a pseudo-element
+            if (e == element && dynamicPseudo != RenderStyle::NOPSEUDO)
+                return SelectorFailsCompletely;
+            return checkSelector(sel, e, isAncestor, true);
+    }
+
+    return SelectorFailsCompletely;
+}
+
+bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAncestor, bool isSubSelector)
 {
     if(!e)
         return false;
@@ -1405,12 +1381,10 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
             break;
         }
     }
-    if(sel->m_match == CSSSelector::PseudoClass || sel->m_match == CSSSelector::PseudoElement)
+    if(sel->m_match == CSSSelector::PseudoClass) 
     {
-        // Pseudo elements. We need to check first child here. No dynamic pseudo
-        // elements for the moment
-            switch (sel->pseudoType()) {
-                // Pseudo classes:
+        switch (sel->pseudoType()) {
+            // Pseudo classes:
             case CSSSelector::PseudoEmpty:
                 if (!e->firstChild())
                     return true;
@@ -1467,19 +1441,6 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 if (pseudoState == PseudoVisited)
                     return true;
                 break;
-            case CSSSelector::PseudoHover: {
-                // If we're in quirks mode, then hover should never match anchors with no
-                // href and *:hover should not match anything.  This is important for sites like wsj.com.
-                if (strictParsing || isSubSelector || sel->relation() == CSSSelector::SubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
-                    if (element == e && style)
-                        style->setAffectedByHoverRules(true);
-                    if (element != e && e->renderStyle())
-                        e->renderStyle()->setAffectedByHoverRules(true);
-                    if (e->hovered())
-                        return true;
-                }
-                break;
-            }
             case CSSSelector::PseudoDrag: {
                 if (element == e && style)
                     style->setAffectedByDragRules(true);
@@ -1493,10 +1454,23 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 if (e && e->focused() && e->document()->frame()->isActive())
                     return true;
                 break;
+            case CSSSelector::PseudoHover: {
+                // If we're in quirks mode, then hover should never match anchors with no
+                // href and *:hover should not match anything.  This is important for sites like wsj.com.
+                if (strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
+                    if (element == e && style)
+                        style->setAffectedByHoverRules(true);
+                    if (element != e && e->renderStyle())
+                        e->renderStyle()->setAffectedByHoverRules(true);
+                    if (e->hovered())
+                        return true;
+                }
+                break;
+            }
             case CSSSelector::PseudoActive:
                 // If we're in quirks mode, then :active should never match anchors with no
                 // href and *:active should not match anything. 
-                if (strictParsing || isSubSelector || sel->relation() == CSSSelector::SubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
+                if (strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
                     if (element == e && style)
                         style->setAffectedByActiveRules(true);
                     else if (e->renderStyle())
@@ -1549,30 +1523,32 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                     // restriction in CSS3, but it is, so let's honour it.
                     if (subSel->m_simpleSelector)
                         break;
-                    if (!checkOneSelector(subSel, e))
+                    if (!checkOneSelector(subSel, e, isAncestor, true))
                         return true;
                 }
                 break;
             }
             case CSSSelector::PseudoUnknown:
+            case CSSSelector::PseudoNotParsed:
+            default:
                 ASSERT_NOT_REACHED();
                 break;
-            
+        }
+        return false;
+    }
+    if (sel->m_match == CSSSelector::PseudoElement) {
+        if (e != element) return false;
+
+        switch (sel->pseudoType()) {
             // Pseudo-elements:
             case CSSSelector::PseudoFirstLine:
-                if (subject) {
-                    dynamicPseudo = RenderStyle::FIRST_LINE;
-                    return true;
-                }
-                break;
+                dynamicPseudo = RenderStyle::FIRST_LINE;
+                return true;
             case CSSSelector::PseudoFirstLetter:
-                if (subject) {
-                    dynamicPseudo = RenderStyle::FIRST_LETTER;
-                    if (Document* doc = e->document())
-                        doc->setUsesFirstLetterRules(true);
-                    return true;
-                }
-                break;
+                dynamicPseudo = RenderStyle::FIRST_LETTER;
+                if (Document* doc = e->document())
+                    doc->setUsesFirstLetterRules(true);
+                return true;
             case CSSSelector::PseudoSelection:
                 dynamicPseudo = RenderStyle::SELECTION;
                 return true;
@@ -1600,8 +1576,10 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
             case CSSSelector::PseudoSearchResultsButton:
                 dynamicPseudo = RenderStyle::SEARCH_RESULTS_BUTTON;
                 return true;
+            case CSSSelector::PseudoUnknown:
             case CSSSelector::PseudoNotParsed:
-                ASSERT(false);
+            default:
+                ASSERT_NOT_REACHED();
                 break;
         }
         return false;
