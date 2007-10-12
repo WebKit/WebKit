@@ -1,3 +1,25 @@
+2007-10-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+        
+        Fix the SVG dom so that rect.x.baseVal = rect.x.baseVal like it should.
+        http://bugs.webkit.org/show_bug.cgi?id=14150
+
+        Test: svg/dom/animated-tearoff-equlity.xhtml
+
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        (WebCore::SVGAnimatedTypeWrapperKey::SVGAnimatedTypeWrapperKey):
+        (WebCore::SVGAnimatedTypeWrapperKey::operator==):
+        (WebCore::SVGAnimatedTypeWrapperKeyHash::hash):
+        (WebCore::SVGAnimatedTypeWrapperKeyHash::equal):
+        (WebCore::SVGAnimatedTypeWrapperKeyHashTraits::deletedValue):
+        (WebCore::SVGAnimatedTypeWrapperKeyHashTraits::emptyValue):
+        (WebCore::SVGAnimatedTemplate::~SVGAnimatedTemplate):
+        (WebCore::SVGAnimatedTemplate::wrapperCache):
+        (WebCore::SVGAnimatedTemplate::forgetWrapper):
+        (WebCore::lookupOrCreateWrapper):
+        * ksvg2/svg/SVGElement.h:
+
 2007-10-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
@@ -7,8 +29,6 @@
         Remove those API definitions SVGDocument now inherits from Document
 
         * ksvg2/svg/SVGDocument.idl:
-
-
 
 2007-10-10  Eric Seidel  <eric@webkit.org>
 

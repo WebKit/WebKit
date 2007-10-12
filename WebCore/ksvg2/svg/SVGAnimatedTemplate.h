@@ -26,9 +26,11 @@
 #if ENABLE(SVG)
 
 #include "Shared.h"
+#include "AtomicString.h"
 
 namespace WebCore {
     class SVGAngle;
+    class SVGElement;
     class SVGLength;
     class SVGLengthList;
     class SVGNumberList;
@@ -37,18 +39,109 @@ namespace WebCore {
     class String;
     class FloatRect;
 
+    struct SVGAnimatedTypeWrapperKey {            
+        // Empty value
+        SVGAnimatedTypeWrapperKey()
+            : element(0)
+            , attributeName(0)
+        { }
+        
+        // Deleted value
+        explicit SVGAnimatedTypeWrapperKey(bool)
+            : element(reinterpret_cast<SVGElement*>(-1))
+            , attributeName(0)
+        { }
+        
+        SVGAnimatedTypeWrapperKey(const SVGElement* _element, const AtomicString& _attributeName)
+            : element(_element)
+            , attributeName(_attributeName.impl())
+        {
+            ASSERT(element);
+            ASSERT(attributeName);
+        }
+        
+        bool operator==(const SVGAnimatedTypeWrapperKey& other) const
+        {
+            return element == other.element && attributeName == other.attributeName;
+        }
+        
+        const SVGElement* element;
+        AtomicStringImpl* attributeName;
+    };
+    
+    struct SVGAnimatedTypeWrapperKeyHash {
+        static unsigned hash(const SVGAnimatedTypeWrapperKey& key)
+        {
+            return StringImpl::computeHash((::UChar*) &key, sizeof(SVGAnimatedTypeWrapperKey) / sizeof(::UChar));
+        }
+            
+        static bool equal(const SVGAnimatedTypeWrapperKey& a, const SVGAnimatedTypeWrapperKey& b)
+        {
+            return a == b;
+        }
+    };
+    
+    struct SVGAnimatedTypeWrapperKeyHashTraits : WTF::GenericHashTraits<SVGAnimatedTypeWrapperKey> {
+        static const bool emptyValueIsZero = true;
+        static const bool needsDestruction = false;
+        
+        static const SVGAnimatedTypeWrapperKey& deletedValue()
+        {
+            static SVGAnimatedTypeWrapperKey deletedKey(true);
+            return deletedKey;
+        }
+        
+        static const SVGAnimatedTypeWrapperKey& emptyValue()
+        {
+            static SVGAnimatedTypeWrapperKey emptyKey;
+            return emptyKey;
+        }
+    };
+    
     template<typename BareType>
     class SVGAnimatedTemplate : public Shared<SVGAnimatedTemplate<BareType> >
     {
-    public:
-        virtual ~SVGAnimatedTemplate() { }
+    public:        
+        virtual ~SVGAnimatedTemplate() { forgetWrapper(this); }
 
         virtual BareType baseVal() const = 0;
         virtual void setBaseVal(BareType newBaseVal) = 0;
 
         virtual BareType animVal() const = 0;
         virtual void setAnimVal(BareType newAnimVal) = 0;
+        
+        typedef HashMap<SVGAnimatedTypeWrapperKey, SVGAnimatedTemplate<BareType>*, SVGAnimatedTypeWrapperKeyHash, SVGAnimatedTypeWrapperKeyHashTraits > ElementToWrapperMap;
+        typedef typename ElementToWrapperMap::const_iterator ElementToWrapperMapIterator;
+        
+        static ElementToWrapperMap* wrapperCache() {
+            static ElementToWrapperMap* sWrapperCache = new ElementToWrapperMap;                
+            return sWrapperCache;
+        }
+        
+        static void forgetWrapper(SVGAnimatedTemplate<BareType>* wrapper)
+        {
+            ElementToWrapperMap* cache = wrapperCache();
+            ElementToWrapperMapIterator itr = cache->begin();
+            ElementToWrapperMapIterator end = cache->end();
+            for (; itr != end; ++itr) {
+                if (itr->second == wrapper) {
+                    cache->remove(itr->first);
+                    break;
+                }
+            }
+        }
     };
+    
+    template <class Type, class SVGElementSubClass>
+    Type* lookupOrCreateWrapper(const SVGElementSubClass* element, const AtomicString& attrName) {
+        SVGAnimatedTypeWrapperKey key(element, attrName);
+        Type* wrapper = static_cast<Type*>(Type::wrapperCache()->get(key));
+        if (!wrapper) {
+            wrapper = new Type(element);
+            Type::wrapperCache()->set(key, wrapper);
+        }
+        return wrapper;
+    }
 
     // Common type definitions, to ease IDL generation...
     typedef SVGAnimatedTemplate<SVGAngle*> SVGAnimatedAngle;
@@ -62,7 +155,7 @@ namespace WebCore {
     typedef SVGAnimatedTemplate<SVGPreserveAspectRatio*> SVGAnimatedPreserveAspectRatio;
     typedef SVGAnimatedTemplate<FloatRect> SVGAnimatedRect;
     typedef SVGAnimatedTemplate<String> SVGAnimatedString;
-    typedef SVGAnimatedTemplate<SVGTransformList*> SVGAnimatedTransformList; 
+    typedef SVGAnimatedTemplate<SVGTransformList*> SVGAnimatedTransformList;
 }
 
 #endif // ENABLE(SVG)
