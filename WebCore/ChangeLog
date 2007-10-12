@@ -1,3 +1,12 @@
+2007-08-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Initialise iterators to appease gcc
+
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition):
+
 2007-08-22  Rob Buis  <buis@kde.org>
 
         Reviewed by Sam.
