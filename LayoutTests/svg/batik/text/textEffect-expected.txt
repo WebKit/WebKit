@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (70,16) size 379x387
       RenderSVGContainer {g} at (70,16) size 379x387
-        RenderSVGText {text} at (136,30) size 800x0
+        RenderSVGText {text} at (136,30) size 177x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 177x17
-            text run at (0,-14) width 177: "Gradient and filter on text"
-        RenderSVGText {text} at (106,50) size 800x0
+            chunk 1 (middle anchor) text run 1 at (136.50,30.00) startOffset 0 endOffset 27 width 177.00: "Gradient and filter on text"
+        RenderSVGText {text} at (106,50) size 238x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 238x17
-            text run at (0,-14) width 238: "(Using System font and SVG font)"
+            chunk 1 (middle anchor) text run 1 at (106.00,50.00) startOffset 0 endOffset 32 width 238.00: "(Using System font and SVG font)"
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
             RenderSVGGradientStop {stop} at (0,0) size 0x0
@@ -19,28 +19,28 @@ layer at (0,0) size 800x600
             RenderSVGGradientStop {stop} at (0,0) size 0x0
             RenderSVGGradientStop {stop} at (0,0) size 0x0
             RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGText {text} at (72,160) size 800x0
+        RenderSVGText {text} at (72,160) size 152x59 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-48) size 152x59
-            text run at (0,-48) width 152: "BATIK"
-        RenderSVGText {text} at (286,160) size 800x0
+            chunk 1 (middle anchor) text run 1 at (72.50,160.00) startOffset 0 endOffset 5 width 95.00: "    B"
+        RenderSVGText {text} at (286,160) size 161x61 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-48) size 161x61
-            text run at (0,-48) width 161: "BATIK"
-        RenderSVGText {text} at (72,260) size 800x0 [color=#FFFFFF]
+            chunk 1 (middle anchor) text run 1 at (286.50,160.00) startOffset 0 endOffset 5 width 87.00: "    B"
+        RenderSVGText {text} at (72,260) size 152x59 contains 1 chunk(s) [color=#FFFFFF]
           RenderSVGInlineText {#text} at (0,-48) size 152x59
-            text run at (0,-48) width 152: "BATIK"
-        RenderSVGText {text} at (286,260) size 800x0 [color=#FFFFFF]
+            chunk 1 (middle anchor) text run 1 at (72.50,260.00) startOffset 0 endOffset 5 width 95.00: "    B"
+        RenderSVGText {text} at (286,260) size 161x61 contains 1 chunk(s) [color=#FFFFFF]
           RenderSVGInlineText {#text} at (0,-48) size 161x61
-            text run at (0,-48) width 161: "BATIK"
-        RenderSVGText {text} at (72,360) size 800x0 [color=#FF0000]
+            chunk 1 (middle anchor) text run 1 at (286.50,260.00) startOffset 0 endOffset 5 width 87.00: "    B"
+        RenderSVGText {text} at (72,360) size 152x59 contains 1 chunk(s) [color=#FF0000]
           RenderSVGInlineText {#text} at (0,-48) size 152x59
-            text run at (0,-48) width 152: "BATIK"
-        RenderSVGText {text} at (286,360) size 800x0 [color=#FF0000]
+            chunk 1 (middle anchor) text run 1 at (72.50,360.00) startOffset 0 endOffset 5 width 95.00: "    B"
+        RenderSVGText {text} at (286,360) size 161x61 contains 1 chunk(s) [color=#FF0000]
           RenderSVGInlineText {#text} at (0,-48) size 161x61
-            text run at (0,-48) width 161: "BATIK"
-        RenderSVGText {text} at (87,400) size 800x0
+            chunk 1 (middle anchor) text run 1 at (286.50,360.00) startOffset 0 endOffset 5 width 87.00: "    B"
+        RenderSVGText {text} at (87,400) size 65x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 65x14
-            text run at (0,-11) width 65: "(System font)"
-        RenderSVGText {text} at (302,400) size 800x0
+            chunk 1 (middle anchor) text run 1 at (87.50,400.00) startOffset 0 endOffset 13 width 65.00: "(System font)"
+        RenderSVGText {text} at (302,400) size 55x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 55x14
-            text run at (0,-11) width 55: "(SVG font)"
+            chunk 1 (middle anchor) text run 1 at (302.50,400.00) startOffset 0 endOffset 10 width 55.00: "(SVG font)"
       RenderSVGContainer {use} at (0,0) size 0x0

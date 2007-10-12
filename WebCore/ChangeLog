@@ -1,3 +1,29 @@
+2007-05-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add new code path dumping SVG text engine specific layout test results.
+        Finally the dumped results are actually accurate and respond to the
+        rendered glyphs. This has never been correct so far.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::quoteAndEscapeNonPrintables):
+        (WebCore::write):
+        * rendering/RenderTreeAsText.h:
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::containsInlineTextBox):
+        (WebCore::writeSVGInlineText):
+        (WebCore::write):
+        * rendering/SVGRenderTreeAsText.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::topLeftPositionOfCharacterRange):
+        (WebCore::cummulatedWidthOfInlineBoxCharacterRange):
+        (WebCore::cummulatedHeightOfInlineBoxCharacterRange):
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        * rendering/SVGRootInlineBox.h:
+
 2007-05-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

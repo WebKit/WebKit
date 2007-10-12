@@ -2,61 +2,51 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (45,36) size 356x368
       RenderSVGContainer {g} at (45,36) size 356x368
-        RenderSVGText {text} at (146,50) size 800x0
+        RenderSVGText {text} at (146,50) size 184x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 184x17
-            text run at (0,-14) width 184: "BiDi Text / International Text"
-        RenderSVGText {text} at (67,125) size 800x0
+            chunk 1 (middle anchor) text run 1 at (146.50,50.00) startOffset 0 endOffset 30 width 157.00: "            BiDi Text / Intern"
+        RenderSVGText {text} at (67,125) size 315x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-12) size 85x15
-            text run at (0,-12) width 85: "Some text goes "
+            chunk 1 (middle anchor) text run 1 at (67.50,125.00) startOffset 0 endOffset 15 width 85.00: "Some text goes "
           RenderSVGTSpan {tspan} at (0,0) size 69x15 [color=#0000FF]
             RenderSVGInlineText {#text} at (85,-12) size 69x15
-              text run at (85,-12) width 69 RTL override: "(right to left)"
+              chunk 1 (middle anchor) text run 2 at (152.50,125.00) startOffset 0 endOffset 15 width 69.00 RTL override: "(right to left)"
           RenderSVGInlineText {#text} at (154,-12) size 161x15
-            text run at (154,-12) width 161: ", other text goes (left to right)."
-        RenderSVGText {text} at (150,150) size 800x0
+            chunk 1 (middle anchor) text run 3 at (221.50,125.00) startOffset 0 endOffset 34 width 161.00: ", other text goes (left to right)."
+        RenderSVGText {text} at (150,150) size 149x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-12) size 33x15
-            text run at (0,-12) width 33: "Some "
+            chunk 1 (middle anchor) text run 1 at (150.50,150.00) startOffset 0 endOffset 5 width 33.00: "Some "
           RenderSVGTSpan {tspan} at (0,0) size 89x15 [color=#8B0000]
             RenderSVGInlineText {#text} at (33,-12) size 89x15
-              text run at (33,-12) width 4 RTL: ")"
-              text run at (37,-12) width 81: "embedded bidi"
-              text run at (118,-12) width 4 RTL: "("
+              chunk 1 (middle anchor) text run 2 at (183.50,150.00) startOffset 0 endOffset 1 width 4.00 RTL: "("
           RenderSVGInlineText {#text} at (122,-12) size 27x15
-            text run at (122,-12) width 27: " text."
-        RenderSVGText {text} at (74,175) size 800x0
+            chunk 1 (middle anchor) text run 5 at (272.50,150.00) startOffset 0 endOffset 6 width 27.00: " text."
+        RenderSVGText {text} at (74,175) size 327x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 327x13
-            text run at (0,-10) width 181: "Text selection allows visually discontiguous "
-            text run at (181,-10) width 146: "selections across bi-directional text."
+            chunk 1 (middle anchor) text run 1 at (74.50,175.00) startOffset 0 endOffset 45 width 164.00: "               Text selection allows visually"
         RenderSVGContainer {g} at (45,212) size 311x192
-          RenderSVGText {text} at (45,225) size 800x0 [color=#191970]
+          RenderSVGText {text} at (45,225) size 296x17 contains 1 chunk(s) [color=#191970]
             RenderSVGInlineText {#text} at (0,-13) size 296x17
-              text run at (0,-13) width 35: "latin: "
-              text run at (35,-13) width 74: "ABCDEFG "
-              text run at (109,-13) width 187: "abcdefghijklmnopqrstuvwxyz"
-          RenderSVGText {text} at (45,250) size 800x0 [color=#A0522D]
+              chunk 1 text run 1 at (45.00,225.00) startOffset 0 endOffset 7 width 35.00: "latin: "
+          RenderSVGText {text} at (45,250) size 198x17 contains 1 chunk(s) [color=#A0522D]
             RenderSVGInlineText {#text} at (0,-13) size 198x17
-              text run at (0,-13) width 97: "latin-extended: "
-              text run at (97,-13) width 101: "\x{E6}\x{E7}\x{E8}\x{E9}\x{EA}\x{EB}\x{EC}\x{ED}\x{EE}\x{EF}\x{F0}\x{F1}\x{F2}\x{F3}\x{F4}"
-          RenderSVGText {text} at (45,275) size 800x0 [color=#4B0082]
+              chunk 1 text run 1 at (45.00,250.00) startOffset 0 endOffset 16 width 97.00: "latin-extended: "
+          RenderSVGText {text} at (45,275) size 291x17 contains 1 chunk(s) [color=#4B0082]
             RenderSVGInlineText {#text} at (0,-13) size 291x17
-              text run at (0,-13) width 51: "cyrillic: "
-              text run at (51,-13) width 240: "\x{411}\x{412}\x{413}\x{414}\x{415}\x{416}\x{417}\x{418}\x{419}\x{41A}\x{41B}\x{41C}\x{41D}\x{41E}\x{41F}\x{420}\x{421}\x{422}\x{423}\x{424}\x{425}\x{426}\x{427}"
-          RenderSVGText {text} at (45,300) size 800x0 [color=#800000]
+              chunk 1 text run 1 at (45.00,275.00) startOffset 0 endOffset 10 width 51.00: "cyrillic: "
+          RenderSVGText {text} at (45,300) size 293x17 contains 1 chunk(s) [color=#800000]
             RenderSVGInlineText {#text} at (0,-13) size 293x17
-              text run at (0,-13) width 43: "greek: "
-              text run at (43,-13) width 250: "\x{391}\x{392}\x{393}\x{394} \x{3B1}\x{3B2}\x{3B3}\x{3B4}\x{3B5}\x{3B6}\x{3B7}\x{3B8}\x{3B9}\x{3BA}\x{3BB}\x{3BC}\x{3BD}\x{3BE}\x{3BF}\x{3C0}\x{3C1}\x{3C2}\x{3C3}\x{3C4}\x{3C5}\x{3C6}\x{3C7}\x{3C8}\x{3C9}"
-          RenderSVGText {text} at (45,325) size 800x0 [color=#556B2F]
+              chunk 1 text run 1 at (45.00,300.00) startOffset 0 endOffset 7 width 43.00: "greek: "
+          RenderSVGText {text} at (45,325) size 289x17 contains 1 chunk(s) [color=#556B2F]
             RenderSVGInlineText {#text} at (0,-13) size 289x17
-              text run at (0,-13) width 54: "hebrew: "
-              text run at (54,-13) width 235 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}\x{5D5}\x{5D6}\x{5D7}\x{5D8}\x{5D9}\x{5DA}\x{5DB}\x{5DC}\x{5DD}\x{5DE}\x{5DF}\x{5E0}\x{5E1}\x{5E2}\x{5E3}\x{5E4}\x{5E5}\x{5E6}\x{5E7}\x{5E8}\x{5E9}\x{5EA}"
-          RenderSVGText {text} at (45,350) size 800x0 [color=#556B2F]
+              chunk 1 text run 1 at (45.00,325.00) startOffset 0 endOffset 8 width 54.00: "hebrew: "
+          RenderSVGText {text} at (45,350) size 235x17 contains 1 chunk(s) [color=#556B2F]
             RenderSVGInlineText {#text} at (0,-13) size 235x17
-              text run at (0,-13) width 235 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}\x{5D5}\x{5D6}\x{5D7}\x{5D8}\x{5D9}\x{5DA}\x{5DB}\x{5DC}\x{5DD}\x{5DE}\x{5DF}\x{5E0}\x{5E1}\x{5E2}\x{5E3}\x{5E4}\x{5E5}\x{5E6}\x{5E7}\x{5E8}\x{5E9}\x{5EA}"
-          RenderSVGText {text} at (45,375) size 800x0 [color=#8B0000]
+              chunk 1 text run 1 at (45.00,350.00) startOffset 0 endOffset 27 width 225.00 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}\x{5D5}\x{5D6}\x{5D7}\x{5D8}\x{5D9}\x{5DA}\x{5DB}\x{5DC}\x{5DD}\x{5DE}\x{5DF}\x{5E0}\x{5E1}\x{5E2}\x{5E3}\x{5E4}\x{5E5}\x{5E6}\x{5E7}\x{5E8}\x{5E9}\x{5EA}"
+          RenderSVGText {text} at (45,375) size 311x17 contains 1 chunk(s) [color=#8B0000]
             RenderSVGInlineText {#text} at (0,-13) size 311x17
-              text run at (0,-13) width 46: "arabic: "
-              text run at (46,-13) width 265 RTL: "\x{621}\x{623}\x{624}\x{625}\x{626}\x{627}\x{628}\x{629}\x{62A}\x{62B}\x{62C}\x{62D}\x{62E}\x{62F}\x{630}\x{631}\x{632}\x{633}\x{634}\x{635}\x{636}\x{637}\x{638}\x{639}\x{640}\x{641}\x{642}\x{643}\x{644}\x{645}\x{646}\x{647}\x{648}\x{649}\x{650}\x{676}"
-          RenderSVGText {text} at (45,400) size 800x0 [color=#8B0000]
+              chunk 1 text run 1 at (45.00,375.00) startOffset 0 endOffset 8 width 46.00: "arabic: "
+          RenderSVGText {text} at (45,400) size 265x17 contains 1 chunk(s) [color=#8B0000]
             RenderSVGInlineText {#text} at (0,-13) size 265x17
-              text run at (0,-13) width 265 RTL: "\x{621}\x{623}\x{624}\x{625}\x{626}\x{627}\x{628}\x{629}\x{62A}\x{62B}\x{62C}\x{62D}\x{62E}\x{62F}\x{630}\x{631}\x{632}\x{633}\x{634}\x{635}\x{636}\x{637}\x{638}\x{639}\x{640}\x{641}\x{642}\x{643}\x{644}\x{645}\x{646}\x{647}\x{648}\x{649}\x{650}\x{676}"
+              chunk 1 text run 1 at (45.00,400.00) startOffset 0 endOffset 36 width 216.00 RTL: "\x{621}\x{623}\x{624}\x{625}\x{626}\x{627}\x{628}\x{629}\x{62A}\x{62B}\x{62C}\x{62D}\x{62E}\x{62F}\x{630}\x{631}\x{632}\x{633}\x{634}\x{635}\x{636}\x{637}\x{638}\x{639}\x{640}\x{641}\x{642}\x{643}\x{644}\x{645}\x{646}\x{647}\x{648}\x{649}\x{650}\x{676}"
       RenderSVGContainer {use} at (0,0) size 0x0

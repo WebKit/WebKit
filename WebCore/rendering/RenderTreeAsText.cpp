@@ -44,6 +44,8 @@
 
 #if ENABLE(SVG)
 #include "RenderSVGContainer.h"
+#include "RenderSVGInlineText.h"
+#include "RenderSVGText.h"
 #include "SVGRenderTreeAsText.h"
 #endif
 
@@ -129,7 +131,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     return (!inlineStyleDecl || inlineStyleDecl->length() == 0);
 }
 
-static String quoteAndEscapeNonPrintables(const String& s)
+String quoteAndEscapeNonPrintables(const String& s)
 {
     Vector<UChar> result;
     result.append('"');
@@ -321,6 +323,13 @@ void write(TextStream& ts, const RenderObject& o, int indent)
     }
     if (o.isSVGContainer()) {
         write(ts, static_cast<const RenderSVGContainer&>(o), indent);
+        return;
+    }
+    if (o.isSVGText()) {
+        if (!o.isText())
+            write(ts, static_cast<const RenderSVGText&>(o), indent);
+        else
+            write(ts, static_cast<const RenderSVGInlineText&>(o), indent);
         return;
     }
 #endif
