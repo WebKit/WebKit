@@ -67,14 +67,15 @@ SVGFEFlood* SVGFEFloodElement::filterEffect(SVGResourceFilter* filter) const
 
     SVGFEFloodElement* nonConstThis = const_cast<SVGFEFloodElement*>(this);
 
-    RenderStyle* parentStyle = 0;
-    if (!renderer())
-        parentStyle = nonConstThis->styleForRenderer(parent()->renderer());
-
+    RenderStyle* parentStyle = nonConstThis->styleForRenderer(parent()->renderer());
     RenderStyle* filterStyle = nonConstThis->resolveStyle(parentStyle);
+    
     m_filterEffect->setFloodColor(filterStyle->svgStyle()->floodColor());
     m_filterEffect->setFloodOpacity(filterStyle->svgStyle()->floodOpacity());
-
+    
+    parentStyle->deref(document()->renderArena());
+    filterStyle->deref(document()->renderArena());
+    
     return m_filterEffect;
 }
 

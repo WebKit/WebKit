@@ -1,3 +1,22 @@
+2007-10-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix leaks in SVG code from feature-branch.
+
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::filterEffect):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::resolveStyle): always refs style
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::create): fastFree buffer if CG Context creation fails
+
 2007-10-12  Mark Rowe  <mrowe@apple.com>
 
         Windows, Gtk and Qt build fixes.  Add new files to projects.

@@ -49,8 +49,10 @@ auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool grayScale)
     CGContextRef cgContext = CGBitmapContextCreate(imageBuffer, size.width(), size.height(), 8, bytesPerRow,
         colorSpace, grayScale ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
-    if (!cgContext)
+    if (!cgContext) {
+        fastFree(imageBuffer);
         return auto_ptr<ImageBuffer>();
+    }
 
     auto_ptr<GraphicsContext> context(new GraphicsContext(cgContext));
     CGContextRelease(cgContext);

@@ -263,8 +263,11 @@ void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
 RenderStyle* SVGStyledElement::resolveStyle(RenderStyle* parentStyle)
 {
-    if (renderer())
-        return renderer()->style();
+    if (renderer()) {
+        RenderStyle* renderStyle = renderer()->style();
+        renderStyle->ref();
+        return renderStyle;
+    }
 
     return document()->styleSelector()->styleForElement(this, parentStyle);
 }

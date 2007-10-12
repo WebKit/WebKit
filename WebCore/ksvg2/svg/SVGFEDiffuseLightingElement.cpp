@@ -89,15 +89,15 @@ SVGFilterEffect* SVGFEDiffuseLightingElement::filterEffect(SVGResourceFilter* fi
 
     SVGFEDiffuseLightingElement* nonConstThis = const_cast<SVGFEDiffuseLightingElement*>(this);
 
-    RenderStyle* parentStyle = 0;
-    if (!renderer())
-        parentStyle = nonConstThis->styleForRenderer(parent()->renderer());
-
+    RenderStyle* parentStyle = nonConstThis->styleForRenderer(parent()->renderer());
     RenderStyle* filterStyle = nonConstThis->resolveStyle(parentStyle);
+    
     m_filterEffect->setLightingColor(filterStyle->svgStyle()->lightingColor());
-
     setStandardAttributes(m_filterEffect);
  
+    parentStyle->deref(document()->renderArena());
+    filterStyle->deref(document()->renderArena());
+    
     updateLights();
     return m_filterEffect;
 }
