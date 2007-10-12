@@ -27,8 +27,6 @@
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"
 
-#include "AffineTransform.h"
-#include "GraphicsContext.h"
 #include "RenderBlock.h"
 #include "RenderSVGRoot.h"
 #include "SVGInlineTextBox.h"

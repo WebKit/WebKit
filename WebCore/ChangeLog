@@ -1,3 +1,83 @@
+2007-09-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Rewrite text painting code path, to be based on "text chunks" instead of using the InlineBox* hierarchy.
+        This allows us to reuse paint servers as long as possible - and to actually paint in the way didacted by the spec.
+
+        This also implements advanced SVG text decorations (ie. stroked/filled decos with gradient/pattern).
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=7200 (Gradient appears and disappears in SVG when text is off screen)
+
+        Fixes paint server usage on text paths. (ie. styled text paths, with gradients/filters).
+
+        * platform/graphics/svg/SVGPaintServer.h:
+        * platform/graphics/svg/SVGPaintServerGradient.h:
+        * platform/graphics/svg/cg/SVGPaintServerCg.cpp:
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::renderPath):
+        (WebCore::SVGPaintServer::strokePath):
+        (WebCore::SVGPaintServer::clipToStrokePath):
+        (WebCore::SVGPaintServer::fillPath):
+        (WebCore::SVGPaintServer::clipToFillPath):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::findTextRootObject):
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::renderPath):
+        (WebCore::SVGPaintServerGradient::handleBoundingBoxModeAndGradientTransformation):
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGPaintServerSolidCg.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/graphics/svg/qt/SVGPaintServerQt.cpp:
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::renderPath):
+        * rendering/RenderSVGInlineText.cpp:
+        * rendering/RenderSVGTSpan.cpp:
+        * rendering/RenderSVGText.cpp:
+        * rendering/RenderSVGTextPath.cpp:
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGTextChunkWalkerBase::~SVGTextChunkWalkerBase):
+        (WebCore::SVGTextChunkWalker::SVGTextChunkWalker):
+        (WebCore::SVGTextChunkWalker::operator()):
+        (WebCore::SVGTextChunkWalker::start):
+        (WebCore::SVGTextChunkWalker::end):
+        (WebCore::SVGTextChunkWalker::setupFill):
+        (WebCore::SVGTextChunkWalker::setupStroke):
+        * rendering/SVGInlineFlowBox.h:
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::SVGInlineTextBoxClosestCharacterToPositionWalker):
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::character):
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::offset):
+        (WebCore::SVGInlineTextBoxSelectionRectWalker::SVGInlineTextBoxSelectionRectWalker):
+        (WebCore::SVGInlineTextBoxSelectionRectWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBoxSelectionRectWalker::selectionRect):
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition):
+        (WebCore::SVGInlineTextBox::selectionRect):
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        (WebCore::SVGInlineTextBox::paintSelection):
+        (WebCore::pathForDecoration):
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::SVGRootInlineBoxPaintWalker):
+        (WebCore::SVGRootInlineBoxPaintWalker::~SVGRootInlineBoxPaintWalker):
+        (WebCore::SVGRootInlineBoxPaintWalker::teardownFillPaintServer):
+        (WebCore::SVGRootInlineBoxPaintWalker::teardownStrokePaintServer):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkStartCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkEndCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkSetupFillCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkSetupStrokeCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        (WebCore::addPaintServerToTextDecorationInfo):
+        (WebCore::SVGRootInlineBox::retrievePaintServersForTextDecoration):
+        (WebCore::SVGRootInlineBox::walkTextChunks):
+        * rendering/SVGRootInlineBox.h:
+
 2007-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Mitz.

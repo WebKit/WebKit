@@ -38,12 +38,12 @@
 
 namespace WebCore {
 
-void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter)
+void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter, SVGResourceFilter* rootFilter)
 {    
     SVGElement* svgElement = static_cast<SVGElement*>(object->element());
     ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
     ASSERT(object);
-    
+
     SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
     const RenderStyle* style = object->style();
     ASSERT(style);
@@ -52,7 +52,7 @@ void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& pa
     ASSERT(svgStyle);
 
     // Setup transparency layers before setting up filters!
-    float opacity = style->opacity();    
+    float opacity = style->opacity(); 
     if (opacity < 1.0f) {
         paintInfo.context->clip(enclosingIntRect(boundingBox));
         paintInfo.context->beginTransparencyLayer(opacity);
@@ -66,8 +66,16 @@ void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& pa
     AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
 
     Document* document = object->document();
+
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    filter = getFilterById(document, filterId);
+    SVGResourceFilter* newFilter = getFilterById(document, filterId);
+    if (newFilter == rootFilter) {
+        // Catch <text filter="url(#foo)">Test<tspan filter="url(#foo)">123</tspan></text>.
+        // The filter is NOT meant to be applied twice in that case!
+        filter = 0;
+        filterId = String();
+    } else
+        filter = newFilter;
 #endif
 
     SVGResourceClipper* clipper = getClipperById(document, clipperId);
@@ -85,7 +93,7 @@ void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& pa
         clipper->applyClip(paintInfo.context, boundingBox);
     } else if (!clipperId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
-    
+
     if (masker) {
         masker->addClient(styledElement);
         masker->applyMask(paintInfo.context, boundingBox);

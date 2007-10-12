@@ -26,14 +26,9 @@
 #if ENABLE(SVG)
 #include "RenderSVGTSpan.h"
 
-
-#include "AffineTransform.h"
-#include "GraphicsContext.h"
+#include "FloatRect.h"
 #include "SVGInlineTextBox.h"
-#include "SVGInlineFlowBox.h""
-#include "SVGLengthList.h"
 #include "SVGRootInlineBox.h"
-#include "SVGTextPositioningElement.h"
 
 namespace WebCore {
 

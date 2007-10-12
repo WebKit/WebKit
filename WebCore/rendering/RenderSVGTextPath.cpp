@@ -25,9 +25,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGTextPath.h"
 
-#include "AffineTransform.h"
 #include "FloatRect.h"
-#include "InlineFlowBox.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRootInlineBox.h"
 

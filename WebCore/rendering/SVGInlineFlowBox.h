@@ -25,7 +25,6 @@
 #define SVGInlineFlowBox_h
 
 #if ENABLE(SVG)
-
 #include "InlineFlowBox.h"
 
 namespace WebCore {

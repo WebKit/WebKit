@@ -22,16 +22,23 @@
  */
 
 #include "config.h"
-#include "SVGInlineTextBox.h"
 
 #if ENABLE(SVG)
-#include "FloatRect.h"
-#include "TextStyle.h"
+#include "SVGInlineTextBox.h"
+
+#include "Document.h"
+#include "Editor.h"
+#include "Frame.h"
+#include "GraphicsContext.h"
 #include "InlineFlowBox.h"
-#include "RenderSVGRoot.h"
-#include "SVGCharacterLayoutInfo.h"
+#include "Range.h"
+#include "SVGPaintServer.h"
 #include "SVGRootInlineBox.h"
+#include "Text.h"
+#include "TextStyle.h"
 #endif
+
+using std::max;
 
 namespace WebCore {
 
@@ -105,89 +112,116 @@ FloatRect SVGInlineTextBox::calculateGlyphBoundaries(RenderStyle* style, int off
     return glyphRect;
 }
 
-SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset) const
-{
-    // Find corresponding text chunk for our inline box & reference x position
-    SVGRootInlineBox* rootBox = svgRootInlineBox();
-    Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(rootBox->svgTextChunks());
+// Helper class for closestCharacterToPosition()
+struct SVGInlineTextBoxClosestCharacterToPositionWalker {
+    SVGInlineTextBoxClosestCharacterToPositionWalker(int x, int y)
+        : m_character(0)
+        , m_distance(FLT_MAX)
+        , m_x(x)
+        , m_y(y)
+        , m_offset(0)
+    {
+    }
 
-    // Iterate through the characters, respecting their individual placement
-    // Find the character within the chunk with the smallest diagonal distance
-    // to the current position. Check whether the passed x value hits that character.
-    Vector<SVGChar>::iterator character = 0;
-    float distance = FLT_MAX;
+    void chunkPortionCallback(SVGInlineTextBox* textBox, int startOffset, const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
+    {
+        RenderStyle* style = textBox->textObject()->style();
 
-    RenderStyle* style = textObject()->style();
+        Vector<SVGChar>::iterator closestCharacter = 0;
+        unsigned int closestOffset = UINT_MAX;
 
-    Vector<SVGTextChunk>::iterator it = chunks.begin();
-    Vector<SVGTextChunk>::iterator itEnd = chunks.end();
+        for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
+            unsigned int newOffset = textBox->start() + (it - start) + startOffset;
 
-    for (; it != itEnd; ++it) {
-        SVGTextChunk& curChunk = *it;
+            // Take RTL text into account and pick right glyph width/height.
+            if (textBox->m_reversed)
+                newOffset = textBox->start() + textBox->end() - newOffset;
 
-        Vector<SVGInlineBoxCharacterRange>::iterator boxIt = curChunk.boxes.begin();
-        Vector<SVGInlineBoxCharacterRange>::iterator boxEnd = curChunk.boxes.end();
+            float glyphWidth = textBox->calculateGlyphWidth(style, newOffset);
+            float glyphHeight = textBox->calculateGlyphHeight(style, newOffset);
 
-        unsigned int chunkOffset = 0;        
-        unsigned int firstRangeInFirstChunkStartOffset = 0;
-    
-        for (; boxIt != boxEnd; ++boxIt) {
-            SVGInlineBoxCharacterRange& range = *boxIt;
+            // Calculate distances relative to the glyph mid-point. I hope this is accurate enough.
+            float xDistance = (*it).x + glyphWidth / 2.0 - m_x;
+            float yDistance = (*it).y - glyphHeight / 2.0 - m_y;
 
-            if (boxIt == curChunk.boxes.begin())
-                firstRangeInFirstChunkStartOffset = range.startOffset;
-
-            if (range.box != this) {
-                chunkOffset += range.endOffset - range.startOffset;
-                continue;
+            float newDistance = sqrt(xDistance * xDistance + yDistance * yDistance);
+            if (newDistance <= m_distance) {
+                m_distance = newDistance;
+                closestOffset = newOffset;
+                closestCharacter = it;
             }
+        }
 
-            Vector<SVGChar>::iterator closestCharacter = 0;
-            unsigned int closestOffset = UINT_MAX;
-
-            // Walk chunk finding closest character
-            Vector<SVGChar>::iterator itCharBegin = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.startOffset;
-            Vector<SVGChar>::iterator itCharEnd = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.endOffset;
-            ASSERT(itCharEnd <= curChunk.end);
-
-            for (Vector<SVGChar>::iterator itChar = itCharBegin; itChar != itCharEnd; ++itChar) {
-                unsigned int newOffset = start() + (itChar - itCharBegin) + firstRangeInFirstChunkStartOffset;
-
-                // Take RTL text into account and pick right glyph width/height.
-                if (m_reversed)
-                    newOffset = start() + end() - newOffset;
-
-                float glyphWidth = calculateGlyphWidth(style, newOffset);
-                float glyphHeight = calculateGlyphHeight(style, newOffset);
-
-                // Calculate distances relative to the glyph mid-point. I hope this is accurate enough.
-                float xDistance = (*itChar).x + glyphWidth / 2.0 - x;
-                float yDistance = (*itChar).y - glyphHeight / 2.0 - y;
-
-                float newDistance = sqrt(xDistance * xDistance + yDistance * yDistance);
-                if (newDistance <= distance) {
-                    distance = newDistance;
-                    closestOffset = newOffset;
-                    closestCharacter = itChar;
-                }
-            }
-
-            chunkOffset += range.endOffset - range.startOffset;
-            if (closestOffset == UINT_MAX)
-                continue;
-
+        if (closestOffset != UINT_MAX) {
             // Record current chunk, if it contains the current closest character next to the mouse.
-            character = closestCharacter;
-            offset = closestOffset;
+            m_character = closestCharacter;
+            m_offset = closestOffset;
         }
     }
 
-    if (!character) {
-        offset = 0;
-        return 0;
+    SVGChar* character() const
+    {
+        return m_character;
     }
 
-    return character;
+    int offset() const
+    {
+        if (!m_character)
+            return 0;
+
+        return m_offset;
+    }
+
+private:
+    Vector<SVGChar>::iterator m_character;
+    float m_distance;
+
+    int m_x;
+    int m_y;
+    int m_offset;
+};
+
+// Helper class for selectionRect()
+struct SVGInlineTextBoxSelectionRectWalker {
+    SVGInlineTextBoxSelectionRectWalker()
+    {
+    }
+
+    void chunkPortionCallback(SVGInlineTextBox* textBox, int startOffset, const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
+    {
+        RenderStyle* style = textBox->textObject()->style();
+
+        for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
+            unsigned int newOffset = textBox->start() + (it - start) + startOffset;
+
+            // Take RTL text into account and pick right glyph width/height.
+            if (textBox->m_reversed)
+                newOffset = textBox->start() + textBox->end() - newOffset;
+
+            m_selectionRect.unite(textBox->calculateGlyphBoundaries(style, newOffset, *it));
+        }
+    }
+
+    FloatRect selectionRect() const
+    {
+        return m_selectionRect;
+    }
+
+private:
+    FloatRect m_selectionRect;
+};
+
+SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset) const
+{
+    SVGRootInlineBox* rootBox = svgRootInlineBox();
+
+    SVGInlineTextBoxClosestCharacterToPositionWalker walkerCallback(x, y);
+    SVGTextChunkWalker<SVGInlineTextBoxClosestCharacterToPositionWalker> walker(&walkerCallback, &SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback);
+
+    rootBox->walkTextChunks(&walker, this);
+
+    offset = walkerCallback.offset();
+    return walkerCallback.character();
 }
 
 bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
@@ -267,54 +301,225 @@ IntRect SVGInlineTextBox::selectionRect(int, int, int startPos, int endPos)
 
     // TODO: Actually respect startPos/endPos - we're returning the _full_ selectionRect
     // here. This won't lead to visible bugs, but to extra work being done. Investigate.
-
-    // Find corresponding text chunk for our inline box & reference x position
     SVGRootInlineBox* rootBox = svgRootInlineBox();
-    Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(rootBox->svgTextChunks());
 
-    RenderStyle* style = textObject()->style();
-    FloatRect selectionRect;
-    
-    Vector<SVGTextChunk>::iterator it = chunks.begin();
-    Vector<SVGTextChunk>::iterator itEnd = chunks.end();
+    SVGInlineTextBoxSelectionRectWalker walkerCallback;
+    SVGTextChunkWalker<SVGInlineTextBoxSelectionRectWalker> walker(&walkerCallback, &SVGInlineTextBoxSelectionRectWalker::chunkPortionCallback);
 
-    for (; it != itEnd; ++it) {
-        SVGTextChunk& curChunk = *it;
+    rootBox->walkTextChunks(&walker, this);
+    return enclosingIntRect(walkerCallback.selectionRect());
+}
 
-        Vector<SVGInlineBoxCharacterRange>::iterator boxIt = curChunk.boxes.begin();
-        Vector<SVGInlineBoxCharacterRange>::iterator boxEnd = curChunk.boxes.end();
+void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int tx, int ty, const SVGChar& svgChar, const UChar* chars, int length)
+{
+    if (object()->style()->visibility() != VISIBLE || paintInfo.phase == PaintPhaseOutline)
+        return;
 
-        unsigned int chunkOffset = 0;        
-        unsigned int firstRangeInFirstChunkStartOffset = 0;
-    
-        for (; boxIt != boxEnd; ++boxIt) {
-            SVGInlineBoxCharacterRange& range = *boxIt;
+    ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);
 
-            if (boxIt == curChunk.boxes.begin())
-                firstRangeInFirstChunkStartOffset = range.startOffset;
+    RenderText* text = textObject();
+    ASSERT(text);
 
-            if (range.box != this) {
-                chunkOffset += range.endOffset - range.startOffset;
-                continue;
-            }
+    bool isPrinting = text->document()->printing();
 
-            // Walk chunk finding closest character
-            Vector<SVGChar>::iterator itCharBegin = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.startOffset;
-            Vector<SVGChar>::iterator itCharEnd = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.endOffset;
-            ASSERT(itCharEnd <= curChunk.end);
+    // Determine whether or not we're selected.
+    bool haveSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;
+    if (!haveSelection && paintInfo.phase == PaintPhaseSelection)
+        // When only painting the selection, don't bother to paint if there is none.
+        return;
 
-            for (Vector<SVGChar>::iterator itChar = itCharBegin; itChar != itCharEnd; ++itChar) {
-                unsigned int newOffset = start() + (itChar - itCharBegin) + firstRangeInFirstChunkStartOffset;
+    // Determine whether or not we have a composition.
+    bool containsComposition = text->document()->frame()->editor()->compositionNode() == text->node();
+    bool useCustomUnderlines = containsComposition && text->document()->frame()->editor()->compositionUsesCustomUnderlines();
 
-                int offset = m_reversed ? start() + end() - newOffset : newOffset;
-                selectionRect.unite(calculateGlyphBoundaries(style, offset, *itChar));
-            }
+    // Set our font
+    RenderStyle* styleToUse = text->style(isFirstLineStyle());
+    const Font* font = &styleToUse->font();
+    if (*font != paintInfo.context->font())
+        paintInfo.context->setFont(*font);
 
-            chunkOffset += range.endOffset - range.startOffset;
+    if (!svgChar.transform.isIdentity())
+        paintInfo.context->concatCTM(svgChar.transform);
+
+    // 1. Paint backgrounds behind text if needed.  Examples of such backgrounds include selection
+    // and marked text.
+    if (paintInfo.phase != PaintPhaseSelection && !isPrinting) {
+#if PLATFORM(MAC)
+        // Custom highlighters go behind everything else.
+        if (styleToUse->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
+            paintCustomHighlight(tx, ty, styleToUse->highlight());
+#endif
+
+        if (containsComposition && !useCustomUnderlines)
+            paintCompositionBackground(paintInfo.context, tx, ty, styleToUse, font, 
+                                                text->document()->frame()->editor()->compositionStart(),
+                                                text->document()->frame()->editor()->compositionEnd());
+        
+        paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, true);
+
+        if (haveSelection && !useCustomUnderlines) {
+            int boxStartOffset = chars - text->characters() - start();
+            paintSelection(boxStartOffset, svgChar, chars, length, paintInfo.context, styleToUse, font);
         }
     }
 
-    return enclosingIntRect(selectionRect);
+    // Set a text shadow if we have one.
+    // FIXME: Support multiple shadow effects.  Need more from the CG API before
+    // we can do this.
+    bool setShadow = false;
+    if (styleToUse->textShadow()) {
+        paintInfo.context->setShadow(IntSize(styleToUse->textShadow()->x, styleToUse->textShadow()->y),
+                                     styleToUse->textShadow()->blur, styleToUse->textShadow()->color);
+        setShadow = true;
+    }
+
+    IntPoint origin((int) svgChar.x, (int) svgChar.y);
+    TextRun run(chars, length);
+    TextStyle style = svgTextStyleForInlineTextBox(styleToUse, this, svgChar.x);
+
+    paintInfo.context->drawText(run, origin, style);
+
+    if (paintInfo.phase != PaintPhaseSelection) {
+        paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, false);
+
+        if (useCustomUnderlines) {
+            const Vector<CompositionUnderline>& underlines = text->document()->frame()->editor()->customCompositionUnderlines();
+            size_t numUnderlines = underlines.size();
+            
+            for (size_t index = 0; index < numUnderlines; ++index) {
+                const CompositionUnderline& underline = underlines[index];
+                
+                if (underline.endOffset <= start())
+                    // underline is completely before this run.  This might be an underline that sits
+                    // before the first run we draw, or underlines that were within runs we skipped 
+                    // due to truncation.
+                    continue;
+                
+                if (underline.startOffset <= end()) {
+                    // underline intersects this run.  Paint it.
+                    paintCompositionUnderline(paintInfo.context, tx, ty, underline);
+                    if (underline.endOffset > end() + 1)
+                        // underline also runs into the next run. Bail now, no more marker advancement.
+                        break;
+                } else
+                    // underline is completely after this run, bail.  A later run will paint it.
+                    break;
+            }
+        }
+        
+    }
+
+    if (setShadow)
+        paintInfo.context->clearShadow();
+
+    if (!svgChar.transform.isIdentity())
+        paintInfo.context->concatCTM(svgChar.transform.inverse());
+}
+
+void SVGInlineTextBox::paintSelection(int boxStartOffset, const SVGChar& svgChar, const UChar* chars, int length, GraphicsContext* p, RenderStyle* style, const Font* f)
+{
+    if (selectionState() == RenderObject::SelectionNone)
+        return;
+
+    int startPos, endPos;
+    selectionStartEnd(startPos, endPos);
+
+    if (startPos >= endPos)
+        return;
+
+    Color textColor = style->color();
+    Color color = object()->selectionBackgroundColor();
+    if (!color.isValid() || color.alpha() == 0)
+        return;
+
+    // If the text color ends up being the same as the selection background, invert the selection
+    // background.  This should basically never happen, since the selection has transparency.
+    if (textColor == color)
+        color = Color(0xff - color.red(), 0xff - color.green(), 0xff - color.blue());
+
+    // Map from text box positions and a given start offset to chunk positions
+    // 'boxStartOffset' represents the beginning of the text chunk.
+    if ((startPos > boxStartOffset && endPos > boxStartOffset + length) || boxStartOffset >= endPos)
+        return;
+
+    if (endPos > boxStartOffset + length)
+        endPos = boxStartOffset + length;
+
+    if (startPos < boxStartOffset)
+        startPos = boxStartOffset;
+
+    ASSERT(startPos >= boxStartOffset);
+    ASSERT(endPos <= boxStartOffset + length);
+    ASSERT(startPos < endPos);
+
+    p->save();
+
+    int adjust = startPos >= boxStartOffset ? boxStartOffset : 0;
+    p->drawHighlightForText(TextRun(textObject()->text()->characters() + start() + boxStartOffset, length),
+                            IntPoint((int) svgChar.x, (int) svgChar.y - f->ascent()), f->ascent() + f->descent(),
+                            svgTextStyleForInlineTextBox(style, this, svgChar.x), color,
+                            startPos - adjust, endPos - adjust);
+
+    p->restore();
+}
+
+static inline Path pathForDecoration(ETextDecoration decoration, RenderObject* object, float x, float y, float width)
+{
+    float thickness = SVGRenderStyle::cssPrimitiveToLength(object, object->style()->svgStyle()->strokeWidth(), 1.0);
+
+    const Font& font = object->style()->font();
+    thickness = max(thickness * powf(font.size(), 2.0) / font.unitsPerEm(), 1.0f);
+
+    if (decoration == UNDERLINE)
+        y += thickness * 1.5; // For compatibility with Batik/Opera
+    else if (decoration == OVERLINE)
+        y += thickness;
+
+    float halfThickness = thickness / 2.0;
+    return Path::createRectangle(FloatRect(x + halfThickness, y, width - 2.0 * halfThickness, thickness));
+}
+
+void SVGInlineTextBox::paintDecoration(ETextDecoration decoration, GraphicsContext* context, int tx, int ty, int width, const SVGChar& svgChar, const SVGTextDecorationInfo& info)
+{
+    // This function does NOT accept combinated text decorations. It's meant to be invoked for just one.
+    ASSERT(decoration == TDNONE || decoration == UNDERLINE || decoration == OVERLINE || decoration == LINE_THROUGH || decoration == BLINK);
+
+    bool isFilled = info.fillServerMap.contains(decoration);
+    bool isStroked = info.strokeServerMap.contains(decoration);
+
+    if (!isFilled && !isStroked)
+        return;
+
+    if (decoration == UNDERLINE)
+        ty += m_baseline;
+    else if (decoration == LINE_THROUGH)
+        ty += 2 * m_baseline / 3;
+
+    context->save();
+    context->beginPath();
+
+    if (!svgChar.transform.isIdentity())
+        context->concatCTM(svgChar.transform);
+
+    if (isFilled) {
+        if (RenderObject* fillObject = info.fillServerMap.get(decoration)) {
+            if (SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(fillObject->style(), fillObject)) {
+                context->addPath(pathForDecoration(decoration, fillObject, tx, ty, width));
+                fillPaintServer->draw(context, fillObject, ApplyToFillTargetType);
+            }
+        }
+    }
+
+    if (isStroked) {
+        if (RenderObject* strokeObject = info.strokeServerMap.get(decoration)) {
+            if (SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(strokeObject->style(), strokeObject)) {
+                context->addPath(pathForDecoration(decoration, strokeObject, tx, ty, width));
+                strokePaintServer->draw(context, strokeObject, ApplyToStrokeTargetType);
+            }
+        }
+    }
+
+    context->restore();
 }
 
 } // namespace WebCore

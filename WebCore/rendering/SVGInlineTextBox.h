@@ -24,14 +24,14 @@
 #ifndef SVGInlineTextBox_h
 #define SVGInlineTextBox_h
 
-#include "InlineTextBox.h"
-
 #if ENABLE(SVG)
+#include "InlineTextBox.h"
 
 namespace WebCore {
 
     class SVGChar;
     class SVGRootInlineBox;
+    class SVGTextDecorationInfo;
 
     class SVGInlineTextBox : public InlineTextBox {
     public:
@@ -46,6 +46,15 @@ namespace WebCore {
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
         virtual IntRect selectionRect(int absx, int absy, int startPos, int endPos);
 
+        // SVGs custom paint text method
+        void paintCharacters(RenderObject::PaintInfo&, int tx, int ty, const SVGChar&, const UChar* chars, int length);
+
+        // SVGs custom paint selection method
+        void paintSelection(int boxStartOffset, const SVGChar&, const UChar*, int length, GraphicsContext*, RenderStyle*, const Font*);
+
+        // SVGs custom paint decoration method
+        void paintDecoration(ETextDecoration, GraphicsContext*, int tx, int ty, int width, const SVGChar&, const SVGTextDecorationInfo&);
+ 
         SVGRootInlineBox* svgRootInlineBox() const;
 
         // Helper functions shared with SVGRootInlineBox     

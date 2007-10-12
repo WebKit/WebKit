@@ -33,6 +33,7 @@ namespace WebCore {
 
 class InlineTextBox;
 class RenderSVGRoot;
+class SVGInlineTextBox;
 
 class SVGRootInlineBox : public RootInlineBox {
 public:
@@ -51,7 +52,11 @@ public:
     // Used by SVGInlineTextBox
     const Vector<SVGTextChunk>& svgTextChunks() const;
 
+    void walkTextChunks(SVGTextChunkWalkerBase*, const SVGInlineTextBox* textBox = 0);
+
 private:
+    friend struct SVGRootInlineBoxPaintWalker;
+
     void layoutInlineBoxes();
     void layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::iterator& it, int& minX, int& maxX, int& minY, int& maxY);
 
@@ -62,12 +67,7 @@ private:
     void buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutInfo&);
     void layoutTextChunks();
 
-    void paintSelectionForTextBox(InlineTextBox*, int boxStartOffset, const SVGChar&, const UChar*, int length, GraphicsContext*, RenderStyle*, const Font*);
-
-    void paintInlineBoxes(RenderObject::PaintInfo&, int tx, int ty, InlineFlowBox* start, Vector<SVGChar>::iterator&);
-    void paintChildInlineTextBox(RenderObject::PaintInfo&, int tx, int ty, InlineTextBox*, Vector<SVGChar>::iterator&);
-    void paintChildInlineFlowBox(RenderObject::PaintInfo&, int tx, int ty, InlineFlowBox*, Vector<SVGChar>::iterator&);
-    void paintCharacterRangeForTextBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineTextBox*, const SVGChar&, const UChar* chars, int length);
+    SVGTextDecorationInfo retrievePaintServersForTextDecoration(RenderObject* start);
 
 private:
     Vector<SVGChar> m_svgChars;

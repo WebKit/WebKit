@@ -25,9 +25,10 @@
 
 #if ENABLE(SVG)
 
+#include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
-#include <wtf/Assertions.h>
 
 #include "AffineTransform.h"
 #include "SVGRenderStyle.h"
@@ -36,6 +37,7 @@ namespace WebCore {
 
 class InlineBox;
 class InlineFlowBox;
+class SVGInlineTextBox;
 class SVGLengthList;
 class SVGNumberList;
 class SVGTextPositioningElement;
@@ -211,6 +213,100 @@ struct SVGTextChunk {
     Vector<SVGInlineBoxCharacterRange> boxes;
 };
 
+struct SVGTextChunkWalkerBase {
+    virtual ~SVGTextChunkWalkerBase() { }
+
+    virtual void operator()(SVGInlineTextBox* textBox, int startOffset, const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end) = 0;
+    
+    // Followings methods are only used for painting text chunks
+    virtual void start(InlineBox*) = 0;
+    virtual void end(InlineBox*) = 0;
+    
+    virtual bool setupFill(InlineBox*) = 0;
+    virtual bool setupStroke(InlineBox*) = 0;
+};
+
+template<typename CallbackClass>
+struct SVGTextChunkWalker : public SVGTextChunkWalkerBase {
+public:
+    typedef void (CallbackClass::*SVGTextChunkWalkerCallback)(SVGInlineTextBox* textBox,
+                                                              int startOffset,
+                                                              const Vector<SVGChar>::iterator& start,
+                                                              const Vector<SVGChar>::iterator& end);
+
+    // These callbacks are only used for painting!
+    typedef void (CallbackClass::*SVGTextChunkStartCallback)(InlineBox* box);
+    typedef void (CallbackClass::*SVGTextChunkEndCallback)(InlineBox* box);
+
+    typedef bool (CallbackClass::*SVGTextChunkSetupFillCallback)(InlineBox* box);
+    typedef bool (CallbackClass::*SVGTextChunkSetupStrokeCallback)(InlineBox* box);
+
+    SVGTextChunkWalker(CallbackClass* object,
+                       SVGTextChunkWalkerCallback walker,
+                       SVGTextChunkStartCallback start = 0,
+                       SVGTextChunkEndCallback end = 0,
+                       SVGTextChunkSetupFillCallback fill = 0,
+                       SVGTextChunkSetupStrokeCallback stroke = 0)
+        : m_object(object)
+        , m_walkerCallback(walker)
+        , m_startCallback(start)
+        , m_endCallback(end)
+        , m_setupFillCallback(fill)
+        , m_setupStrokeCallback(stroke)
+    {
+        ASSERT(object);
+        ASSERT(walker);
+    }
+
+    virtual void operator()(SVGInlineTextBox* textBox, int startOffset, const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
+    {
+        (*m_object.*m_walkerCallback)(textBox, startOffset, start, end);
+    }
+
+    // Followings methods are only used for painting text chunks
+    virtual void start(InlineBox* box)
+    {
+        if (m_startCallback)
+            (*m_object.*m_startCallback)(box);
+        else
+            ASSERT_NOT_REACHED();
+    }
+
+    virtual void end(InlineBox* box)
+    {
+        if (m_endCallback)
+            (*m_object.*m_endCallback)(box);
+        else
+            ASSERT_NOT_REACHED();
+    }
+
+    virtual bool setupFill(InlineBox* box)
+    {
+        if (m_setupFillCallback)
+            return (*m_object.*m_setupFillCallback)(box);
+
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    virtual bool setupStroke(InlineBox* box)
+    {
+        if (m_setupStrokeCallback)
+            return (*m_object.*m_setupStrokeCallback)(box);
+
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+private:
+    CallbackClass* m_object;
+    SVGTextChunkWalkerCallback m_walkerCallback;
+    SVGTextChunkStartCallback m_startCallback;
+    SVGTextChunkEndCallback m_endCallback;
+    SVGTextChunkSetupFillCallback m_setupFillCallback;
+    SVGTextChunkSetupStrokeCallback m_setupStrokeCallback;
+};
+
 struct SVGTextChunkLayoutInfo {
     SVGTextChunkLayoutInfo()
         : assignChunkProperties(true)
@@ -223,6 +319,12 @@ struct SVGTextChunkLayoutInfo {
 
     SVGTextChunk chunk;
     Vector<SVGChar>::iterator it;
+};
+
+struct SVGTextDecorationInfo {
+    // ETextDecoration is meant to be used here
+    HashMap<int, RenderObject*> fillServerMap;
+    HashMap<int, RenderObject*> strokeServerMap;
 };
 
 } // namespace WebCore

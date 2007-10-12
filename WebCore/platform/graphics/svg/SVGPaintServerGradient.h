@@ -80,7 +80,7 @@ namespace WebCore {
         virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
 #if PLATFORM(CG)
         virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-        virtual void renderPath(GraphicsContext*&, const RenderPath*, SVGPaintTargetType) const;
+        virtual void renderPath(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
 
         virtual void invalidate();
 

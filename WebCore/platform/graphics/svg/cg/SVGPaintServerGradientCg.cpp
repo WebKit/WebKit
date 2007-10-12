@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -28,7 +28,7 @@
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include "RenderPath.h"
+#include "RenderObject.h"
 #include "SVGGradientElement.h"
 #include "SVGPaintServerLinearGradient.h"
 #include "SVGPaintServerRadialGradient.h"
@@ -160,58 +160,63 @@ void SVGPaintServerGradient::updateQuartzGradientCache(const SVGPaintServerGradi
     }
 }
 
+// Helper function for text painting
+static inline const RenderObject* findTextRootObject(const RenderObject* start)
+{
+    while (start && !start->isSVGText())
+        start = start->parent();
+
+    ASSERT(start);
+    ASSERT(start->isSVGText());
+
+    return start;
+}
+
 void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     CGShadingRef shading = m_shadingCache;
     CGContextRef contextRef = context->platformContext();
     ASSERT(contextRef);
-    RenderStyle* style = object->style();
 
     // As renderPath() is not used when painting text, special logic needed here.
     if (isPaintingText) {
-        IntRect textBoundary = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
-        FloatRect targetRect = object->absoluteTransform().inverse().mapRect(textBoundary);
-        handleBoundingBoxModeAndGradientTransformation(context, targetRect);
-    }
+        if (m_savedContext) {
+            FloatRect maskBBox = const_cast<RenderObject*>(findTextRootObject(object))->relativeBBox(false);
 
-    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
-        CGContextDrawShading(contextRef, shading);
-        context->restore();
-    }
-
-    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
-        if (isPaintingText && m_savedContext) {
-            IntRect maskRect = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
-            maskRect = object->absoluteTransform().inverse().mapRect(maskRect);
-
-            // Translate from 0x0 image origin to actual rendering position
-            m_savedContext->translate(maskRect.x(), maskRect.y());
+            // Fixup transformations to be able to clip to mask
+            AffineTransform transform = object->absoluteTransform();
+            FloatRect textBoundary = transform.mapRect(maskBBox);
 
             // Clip current context to mask image (gradient)
-            CGContextClipToMask(m_savedContext->platformContext(), CGRectMake(0, 0, maskRect.width(), maskRect.height()), m_imageBuffer->cgImage());
-            m_savedContext->translate(-maskRect.x(), -maskRect.y());
+            m_savedContext->concatCTM(transform.inverse());
+            CGContextClipToMask(m_savedContext->platformContext(), CGRect(textBoundary), m_imageBuffer->cgImage());
+            m_savedContext->concatCTM(transform);
+
+            handleBoundingBoxModeAndGradientTransformation(m_savedContext, maskBBox);
 
             // Restore on-screen drawing context, after we got the image of the gradient
             delete m_imageBuffer;
+
             context = m_savedContext;
             contextRef = context->platformContext();
+
             m_savedContext = 0;
             m_imageBuffer = 0;
         }
-
-        CGContextDrawShading(contextRef, shading);
-        context->restore();
     }
 
+    CGContextDrawShading(contextRef, shading);
     context->restore();
 }
 
-void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderPath* path, SVGPaintTargetType type) const
+void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
 {
-    RenderStyle* style = path->style(); 
+    RenderStyle* style = path->style();
     CGContextRef contextRef = context->platformContext();
     ASSERT(contextRef);
-
+    
+    bool isFilled = (type & ApplyToFillTargetType) && style->svgStyle()->hasFill();
+    
     // Compute destination object bounding box
     FloatRect objectBBox;
     if (boundingBoxMode()) {
@@ -220,10 +225,9 @@ void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderP
             objectBBox = bbox;
     }
 
-    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill())
+    if (isFilled)
         clipToFillPath(contextRef, path);
-
-    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke())
+    else
         clipToStrokePath(contextRef, path);
 
     handleBoundingBoxModeAndGradientTransformation(context, objectBBox);
@@ -231,7 +235,7 @@ void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderP
 
 void SVGPaintServerGradient::handleBoundingBoxModeAndGradientTransformation(GraphicsContext* context, const FloatRect& targetRect) const
 {
-    CGContextRef contextRef = context->platformContext(); 
+    CGContextRef contextRef = context->platformContext();
 
     if (boundingBoxMode()) {
         // Choose default gradient bounding box
@@ -255,45 +259,42 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     if (!m_shadingCache)
         const_cast<SVGPaintServerGradient*>(this)->updateQuartzGradientCache(this);
 
-    CGContextRef contextRef = context->platformContext(); 
-    RenderStyle* style = object->style();
+    CGContextRef contextRef = context->platformContext();
     ASSERT(contextRef);
 
+    RenderStyle* style = object->style();
+
+    bool isFilled = (type & ApplyToFillTargetType) && style->svgStyle()->hasFill();
+    bool isStroked = (type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke();
+
+    ASSERT(isFilled && !isStroked || !isFilled && isStroked);
+
     context->save();
+    CGContextSetAlpha(contextRef, isFilled ? style->svgStyle()->fillOpacity() : style->svgStyle()->strokeOpacity());
 
-    if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
-        CGContextSetAlpha(contextRef, style->svgStyle()->fillOpacity());
-        context->save();      
+    if (isPaintingText) {
+        FloatRect maskBBox = const_cast<RenderObject*>(findTextRootObject(object))->relativeBBox(false);
+        IntRect maskRect = enclosingIntRect(object->absoluteTransform().mapRect(maskBBox));
 
-        if (isPaintingText)
-            context->setTextDrawingMode(cTextClip);
+        auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(IntSize(maskRect.width(), maskRect.height()), false);
+        // FIXME: maskImage could be NULL
+
+        GraphicsContext* maskImageContext = maskImage->context();
+        maskImageContext->save();
+
+        maskImageContext->setTextDrawingMode(isFilled ? cTextFill : cTextStroke);
+        maskImageContext->translate(-maskRect.x(), -maskRect.y());
+        maskImageContext->concatCTM(object->absoluteTransform());
+
+        m_imageBuffer = maskImage.release();
+        m_savedContext = context;
+
+        context = maskImageContext;
+        contextRef = context->platformContext();
     }
 
-    if ((type & ApplyToStrokeTargetType) && style->svgStyle()->hasStroke()) {
-        CGContextSetAlpha(contextRef, style->svgStyle()->strokeOpacity());
-        context->save();
+    if (isStroked)
         applyStrokeStyleToContext(contextRef, style, object);
-
-        if (isPaintingText) {
-            IntRect maskRect = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
-            maskRect = object->absoluteTransform().inverse().mapRect(maskRect);
-
-            auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(IntSize(maskRect.width(), maskRect.height()), false);
-            // FIXME: maskImage could be NULL
-
-            GraphicsContext* maskImageContext = maskImage->context();
-
-            maskImageContext->save();
-            maskImageContext->translate(-maskRect.x(), -maskRect.y());
-
-            const_cast<RenderObject*>(object)->style()->setColor(Color(255, 255, 255));
-            maskImageContext->setTextDrawingMode(cTextStroke);
-
-            m_imageBuffer = maskImage.release();
-            m_savedContext = context;
-            context = maskImageContext;
-        }
-    }
 
     return true;
 }

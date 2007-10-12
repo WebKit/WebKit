@@ -23,7 +23,6 @@
  */
 
 #include "config.h"
-#include "RenderSVGInlineText.h"
 
 #if ENABLE(SVG)
 #include "SVGRootInlineBox.h"
@@ -31,16 +30,12 @@
 #include "Editor.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
-#include "InlineTextBox.h"
-#include "Range.h"
 #include "RenderSVGRoot.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGInlineTextBox.h"
 #include "SVGPaintServer.h"
 #include "SVGRenderSupport.h"
-#include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
-#include "SVGResourceMasker.h"
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
 #include "Text.h"
@@ -51,21 +46,6 @@
 #define DEBUG_CHUNK_BUILDING 0
 
 namespace WebCore {
-
-static void prepareTextRendering(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* flowBox, FloatRect& boundingBox, SVGResourceFilter*& filter)
-{
-    ASSERT(paintInfo.phase == PaintPhaseForeground);
-    ASSERT(flowBox);
-
-    RenderObject* object = flowBox->object();
-    ASSERT(object);
-
-    paintInfo.context->save();
-    paintInfo.context->concatCTM(object->localTransform());
-
-    boundingBox = FloatRect(tx + flowBox->xPos(), ty + flowBox->yPos(), flowBox->width(), flowBox->height());
-    prepareToRenderSVGContent(object, paintInfo, boundingBox, filter);
-}
 
 static inline bool isVerticalWritingMode(const SVGRenderStyle* style)
 {
@@ -126,40 +106,258 @@ FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator it, Vector<
     return FloatPoint(lowX, lowY);
 }
 
+// Helper class for paint()
+struct SVGRootInlineBoxPaintWalker {
+    SVGRootInlineBoxPaintWalker(SVGRootInlineBox* rootBox, SVGResourceFilter* rootFilter, RenderObject::PaintInfo paintInfo, int tx, int ty)
+        : m_rootBox(rootBox)
+        , m_chunkStarted(false)
+        , m_paintInfo(paintInfo)
+        , m_savedInfo(paintInfo)
+        , m_boundingBox(tx + rootBox->xPos(), ty + rootBox->yPos(), rootBox->width(), rootBox->height())
+        , m_filter(0)
+        , m_rootFilter(rootFilter)
+        , m_fillPaintServer(0)
+        , m_strokePaintServer(0)
+        , m_fillPaintServerObject(0)
+        , m_strokePaintServerObject(0)
+        , m_tx(tx)
+        , m_ty(ty)
+    {
+    }
+
+    ~SVGRootInlineBoxPaintWalker()
+    {
+        ASSERT(!m_filter);
+        ASSERT(!m_fillPaintServer);
+        ASSERT(!m_fillPaintServerObject);
+        ASSERT(!m_strokePaintServer);
+        ASSERT(!m_strokePaintServerObject);
+        ASSERT(!m_chunkStarted);
+    }
+
+    void teardownFillPaintServer()
+    {
+        if (!m_fillPaintServer)
+            return;
+
+        m_fillPaintServer->teardown(m_paintInfo.context, m_fillPaintServerObject, ApplyToFillTargetType, true);
+
+        m_fillPaintServer = 0;
+        m_fillPaintServerObject = 0;
+    }
+
+    void teardownStrokePaintServer()
+    {
+        if (!m_strokePaintServer)
+            return;
+
+        m_strokePaintServer->teardown(m_paintInfo.context, m_strokePaintServerObject, ApplyToStrokeTargetType, true);
+
+        m_strokePaintServer = 0;
+        m_strokePaintServerObject = 0;
+    }
+
+    void chunkStartCallback(InlineBox* box)
+    {
+        ASSERT(!m_chunkStarted);
+        m_chunkStarted = true;
+
+        InlineFlowBox* flowBox = box->parent();
+
+        // Initialize text rendering
+        RenderObject* object = flowBox->object();
+        ASSERT(object);
+
+        m_savedInfo = m_paintInfo;
+        m_paintInfo.context->save();
+
+        if (!flowBox->isRootInlineBox())
+            m_paintInfo.context->concatCTM(m_rootBox->object()->localTransform());
+
+        m_paintInfo.context->concatCTM(object->localTransform());
+
+        if (!flowBox->isRootInlineBox()) {
+            prepareToRenderSVGContent(object, m_paintInfo, m_boundingBox, m_filter, m_rootFilter);
+            m_paintInfo.rect = object->localTransform().inverse().mapRect(m_paintInfo.rect);
+        }
+    }
+
+    void chunkEndCallback(InlineBox* box)
+    {
+        ASSERT(m_chunkStarted);
+        m_chunkStarted = false;
+
+        InlineFlowBox* flowBox = box->parent();
+
+        RenderObject* object = flowBox->object();
+        ASSERT(object);
+
+        // Clean up last used paint server
+        teardownFillPaintServer();
+        teardownStrokePaintServer();
+
+        // Finalize text rendering 
+        if (!flowBox->isRootInlineBox()) {
+            finishRenderSVGContent(object, m_paintInfo, m_boundingBox, m_filter, m_savedInfo.context);
+            m_filter = 0;
+        }
+
+        // Restore context & repaint rect
+        m_paintInfo.context->restore();
+        m_paintInfo.rect = m_savedInfo.rect;
+    }
+
+    bool chunkSetupFillCallback(InlineBox* box)
+    {
+        InlineFlowBox* flowBox = box->parent();
+
+        // Setup fill paint server
+        RenderObject* object = flowBox->object();
+        ASSERT(object);
+
+        ASSERT(!m_strokePaintServer);
+        teardownFillPaintServer();
+
+        m_fillPaintServer = SVGPaintServer::fillPaintServer(object->style(), object);
+        if (m_fillPaintServer) {
+            m_fillPaintServer->setup(m_paintInfo.context, object, ApplyToFillTargetType, true);
+            m_fillPaintServerObject = object;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool chunkSetupStrokeCallback(InlineBox* box)
+    {
+        InlineFlowBox* flowBox = box->parent();
+
+        // Setup stroke paint server
+        RenderObject* object = flowBox->object();
+        ASSERT(object);
+
+        // If we're both stroked & filled, teardown fill paint server before stroking.
+        teardownFillPaintServer();
+        teardownStrokePaintServer();
+
+        m_strokePaintServer = SVGPaintServer::strokePaintServer(object->style(), object);
+
+        if (m_strokePaintServer) {
+            m_strokePaintServer->setup(m_paintInfo.context, object, ApplyToStrokeTargetType, true);
+            m_strokePaintServerObject = object;
+            return true;
+        }
+
+        return false;
+    }
+
+    void chunkPortionCallback(SVGInlineTextBox* textBox, int startOffset, const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
+    {
+        RenderText* text = textBox->textObject();
+        ASSERT(text);
+
+        RenderStyle* styleToUse = text->style(textBox->isFirstLineStyle());
+        ASSERT(styleToUse);
+        ASSERT(textBox->parent()->object());
+
+        startOffset += textBox->start();
+
+        int textDecorations = styleToUse->textDecorationsInEffect(); 
+
+        int textWidth = 0.0;
+        IntPoint decorationOrigin;
+        SVGTextDecorationInfo info;
+
+        for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
+            if (!(*it).visible)
+                continue;
+
+            // Determine how many characters - starting from the current - can be drawn at once.
+            Vector<SVGChar>::iterator itSearch = it + 1;
+            while (itSearch != end) {
+                if ((*itSearch).drawnSeperated)
+                    break;
+
+                itSearch++;
+            }
+
+            const UChar* stringStart = text->characters() + startOffset + (it - start);
+            unsigned int stringLength = itSearch - it;
+
+            // Paint decorations, that have to be drawn before the text gets drawn
+            if (textDecorations != TDNONE && m_paintInfo.phase != PaintPhaseSelection) {
+                textWidth = styleToUse->font().width(TextRun(stringStart, stringLength), styleToUse);
+                decorationOrigin = IntPoint((int) (*it).x, (int) (*it).y - styleToUse->font().ascent());
+                info = m_rootBox->retrievePaintServersForTextDecoration(text);
+            }
+
+            if (textDecorations & UNDERLINE && textWidth != 0.0)
+                textBox->paintDecoration(UNDERLINE, m_paintInfo.context, decorationOrigin.x(), decorationOrigin.y(), textWidth, *it, info);
+
+            if (textDecorations & OVERLINE && textWidth != 0.0)
+                textBox->paintDecoration(OVERLINE, m_paintInfo.context, decorationOrigin.x(), decorationOrigin.y(), textWidth, *it, info);
+
+            // Paint text
+            textBox->paintCharacters(m_paintInfo, m_tx, m_ty, *it, stringStart, stringLength);
+
+            // Paint decorations, that have to be drawn afterwards
+            if (textDecorations & LINE_THROUGH && textWidth != 0.0)
+                textBox->paintDecoration(LINE_THROUGH, m_paintInfo.context, decorationOrigin.x(), decorationOrigin.y(), textWidth, *it, info);
+
+            // Skip processed characters
+            it = itSearch - 1;
+        }
+    }
+
+private:
+    SVGRootInlineBox* m_rootBox;
+    bool m_chunkStarted : 1;
+
+    RenderObject::PaintInfo m_paintInfo;
+    RenderObject::PaintInfo m_savedInfo;
+
+    FloatRect m_boundingBox;
+    SVGResourceFilter* m_filter;
+    SVGResourceFilter* m_rootFilter;
+
+    SVGPaintServer* m_fillPaintServer;
+    SVGPaintServer* m_strokePaintServer;
+
+    RenderObject* m_fillPaintServerObject;
+    RenderObject* m_strokePaintServerObject;
+
+    int m_tx;
+    int m_ty;
+};
+
 void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
     if (paintInfo.context->paintingDisabled() || paintInfo.phase != PaintPhaseForeground)
         return;
 
-    FloatRect boundingBox;
-    SVGResourceFilter* filter = 0;
-
     RenderObject::PaintInfo savedInfo(paintInfo);
-    prepareTextRendering(paintInfo, tx, ty, this, boundingBox, filter);
+    paintInfo.context->save();
 
-    RenderObject::PaintInfo pi(paintInfo);
-    SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(object()->style(), object());
-    if (fillPaintServer) {
-        if (fillPaintServer->setup(pi.context, object(), ApplyToFillTargetType, true)) {
-            Vector<SVGChar>::iterator it = m_svgChars.begin();
-            paintInlineBoxes(pi, tx, ty, this, it);
-            ASSERT(it == m_svgChars.end());
+    SVGResourceFilter* filter = 0;
+    FloatRect boundingBox(tx + xPos(), ty + yPos(), width(), height());
 
-            fillPaintServer->teardown(pi.context, object(), ApplyToFillTargetType, true);
-        }
-    }
+    // Initialize text rendering
+    paintInfo.context->concatCTM(object()->localTransform());
+    prepareToRenderSVGContent(object(), paintInfo, boundingBox, filter);
+    paintInfo.context->concatCTM(object()->localTransform().inverse());
+ 
+    // Render text, chunk-by-chunk
+    SVGRootInlineBoxPaintWalker walkerCallback(this, filter, paintInfo, tx, ty);
+    SVGTextChunkWalker<SVGRootInlineBoxPaintWalker> walker(&walkerCallback,
+                                                           &SVGRootInlineBoxPaintWalker::chunkPortionCallback,
+                                                           &SVGRootInlineBoxPaintWalker::chunkStartCallback,
+                                                           &SVGRootInlineBoxPaintWalker::chunkEndCallback,
+                                                           &SVGRootInlineBoxPaintWalker::chunkSetupFillCallback,
+                                                           &SVGRootInlineBoxPaintWalker::chunkSetupStrokeCallback);
 
-    SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(object()->style(), object());
-    if (strokePaintServer) {
-        if (strokePaintServer->setup(pi.context, object(), ApplyToStrokeTargetType, true)) {
-            Vector<SVGChar>::iterator it = m_svgChars.begin();
-            paintInlineBoxes(pi, tx, ty, this, it);
-            ASSERT(it == m_svgChars.end());
+    walkTextChunks(&walker);
 
-            strokePaintServer->teardown(pi.context, object(), ApplyToStrokeTargetType, true);
-        }
-    }
-
+    // Finalize text rendering 
     finishRenderSVGContent(object(), paintInfo, boundingBox, filter, savedInfo.context);
     paintInfo.context->restore();
 }
@@ -593,9 +791,9 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         }
 
         // Calculate absolute x/y values, if needed
-        if (!info.inPathLayout()) {
+        if (!info.inPathLayout())
             svgChar.visible = true;
-        } else {
+        else {
             float glyphAdvance = isVerticalText ? glyphHeight : glyphWidth;
             float newOffset = FLT_MIN;
 
@@ -616,7 +814,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             svgChar.drawnSeperated = true;
 
             info.dx += dx;
-    
+
             if (!info.inPathLayout())
                 info.curx += dx;
         }
@@ -901,335 +1099,128 @@ void SVGRootInlineBox::layoutTextChunks()
         applyTextAnchorToTextChunk(*it);
 }
 
-void SVGRootInlineBox::paintSelectionForTextBox(InlineTextBox* textBox, int boxStartOffset, const SVGChar& svgChar, const UChar* chars, int length, GraphicsContext* p, RenderStyle* style, const Font* f)
+static inline void addPaintServerToTextDecorationInfo(ETextDecoration decoration, SVGTextDecorationInfo& info, RenderObject* object)
 {
-    if (textBox->selectionState() == RenderObject::SelectionNone)
-        return;
+    if (object->style()->svgStyle()->hasFill())
+        info.fillServerMap.set(decoration, object);
 
-    int startPos, endPos;
-    textBox->selectionStartEnd(startPos, endPos);
-
-    if (startPos >= endPos)
-        return;
-
-    Color textColor = style->color();
-    Color color = textBox->object()->selectionBackgroundColor();
-    if (!color.isValid() || color.alpha() == 0)
-        return;
-
-    // If the text color ends up being the same as the selection background, invert the selection
-    // background.  This should basically never happen, since the selection has transparency.
-    if (textColor == color)
-        color = Color(0xff - color.red(), 0xff - color.green(), 0xff - color.blue());
-
-    // Map from text box positions and a given start offset to chunk positions
-    // 'boxStartOffset' represents the beginning of the text chunk.
-    if ((startPos > boxStartOffset && endPos > boxStartOffset + length) || boxStartOffset >= endPos)
-        return;
-
-    if (endPos > boxStartOffset + length)
-        endPos = boxStartOffset + length;
-
-    if (startPos < boxStartOffset)
-        startPos = boxStartOffset;
-
-    ASSERT(startPos >= boxStartOffset);
-    ASSERT(endPos <= boxStartOffset + length);
-    ASSERT(startPos < endPos);
-
-    p->save();
-
-    if (!svgChar.transform.isIdentity())
-        p->concatCTM(svgChar.transform);
-
-    int adjust = startPos >= boxStartOffset ? boxStartOffset : 0;
-    p->drawHighlightForText(TextRun(textBox->textObject()->text()->characters() + textBox->start() + boxStartOffset, length),
-                            IntPoint((int) svgChar.x, (int) svgChar.y - f->ascent()), f->ascent() + f->descent(),
-                            svgTextStyleForInlineTextBox(style, textBox, svgChar.x), color,
-                            startPos - adjust, endPos - adjust);
-
-    p->restore();
+    if (object->style()->svgStyle()->hasStroke())
+        info.strokeServerMap.set(decoration, object);
 }
 
-void SVGRootInlineBox::paintInlineBoxes(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* start, Vector<SVGChar>::iterator& it)
+SVGTextDecorationInfo SVGRootInlineBox::retrievePaintServersForTextDecoration(RenderObject* start)
 {
-    for (InlineBox* curr = start->firstChild(); curr; curr = curr->nextOnLine()) {
-        if (curr->object()->isText())
-            paintChildInlineTextBox(paintInfo, tx, ty, static_cast<InlineTextBox*>(curr), it);
-        else {
-            ASSERT(curr->isInlineFlowBox());
-            paintChildInlineFlowBox(paintInfo, tx, ty, static_cast<InlineFlowBox*>(curr), it);
+    ASSERT(start);
+
+    Vector<RenderObject*> parentChain;
+    while ((start = start->parent())) {
+        parentChain.prepend(start);
+
+        // Stop at our direct <text> parent.
+        if (start->isSVGText())
+            break;
+    }
+
+    Vector<RenderObject*>::iterator it = parentChain.begin();
+    Vector<RenderObject*>::iterator end = parentChain.end();
+
+    SVGTextDecorationInfo info;
+
+    for (; it != end; ++it) {
+        RenderObject* object = *it;
+        ASSERT(object);
+
+        RenderStyle* style = object->style();
+        ASSERT(style);
+
+        int decorations = style->textDecoration();
+        if (decorations != NONE) {
+            if (decorations & OVERLINE)
+                addPaintServerToTextDecorationInfo(OVERLINE, info, object);
+
+            if (decorations & UNDERLINE)
+                addPaintServerToTextDecorationInfo(UNDERLINE, info, object);
+
+            if (decorations & LINE_THROUGH)
+                addPaintServerToTextDecorationInfo(LINE_THROUGH, info, object);
         }
     }
+
+    return info;
 }
 
-void SVGRootInlineBox::paintChildInlineTextBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineTextBox* textBox, Vector<SVGChar>::iterator& it)
+void SVGRootInlineBox::walkTextChunks(SVGTextChunkWalkerBase* walker, const SVGInlineTextBox* textBox)
 {
-    unsigned length = textBox->len();
-    if (!length)
-        return;
-    
-    RenderText* text = textBox->textObject();
-    ASSERT(text);
-    
-    // Paint all contained characters, one-by-one as worst case.
-    for (unsigned i = 0; i < length; ++i) {
-        ASSERT(it != m_svgChars.end());
-        
-        if (!(*it).visible) {
-            it++;
-            continue;
-        }
-        
-        // Determine how many characters - starting from the current - can be drawn at once.
-        unsigned startOffset = i + 1, run = 1;
-        while (startOffset < length) {
-            SVGChar chunk = *(it + startOffset - i);
-            if (chunk.drawnSeperated)
-                break;
-            
-            run++;
-            startOffset++;
-        }
+    ASSERT(walker);
 
-        paintCharacterRangeForTextBox(paintInfo, tx, ty, textBox, *it, text->characters() + textBox->start() + i, run);
+    Vector<SVGTextChunk>::iterator it = m_svgTextChunks.begin();
+    Vector<SVGTextChunk>::iterator itEnd = m_svgTextChunks.end();
 
-        i += run - 1;
-        it += run;
-    }
-}
+    for (; it != itEnd; ++it) {
+        SVGTextChunk& curChunk = *it;
 
-void SVGRootInlineBox::paintChildInlineFlowBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* flowBox, Vector<SVGChar>::iterator& it)
-{
-    FloatRect boundingBox;
-    SVGResourceFilter* filter = 0;
+        Vector<SVGInlineBoxCharacterRange>::iterator boxIt = curChunk.boxes.begin();
+        Vector<SVGInlineBoxCharacterRange>::iterator boxEnd = curChunk.boxes.end();
 
-    RenderObject::PaintInfo savedInfo(paintInfo);
-    prepareTextRendering(paintInfo, tx, ty, flowBox, boundingBox, filter);
+        InlineBox* lastNotifiedBox = 0;
+        InlineBox* prevBox = 0;
 
-    RenderObject* object = flowBox->object();
-    RenderObject::PaintInfo pi(paintInfo);
+        unsigned int chunkOffset = 0;
+        bool startedFirstChunk = false;
 
-    if (!flowBox->isRootInlineBox())
-        pi.rect = (object->localTransform()).inverse().mapRect(pi.rect);
+        for (; boxIt != boxEnd; ++boxIt) {
+            SVGInlineBoxCharacterRange& range = *boxIt;
 
-    bool painted = false;
-    Vector<SVGChar>::iterator savedIt = it;
+            ASSERT(range.box->isInlineTextBox());
+            SVGInlineTextBox* rangeTextBox = static_cast<SVGInlineTextBox*>(range.box);
 
-    SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(object->style(), object);
-    if (fillPaintServer) {
-        if (fillPaintServer->setup(pi.context, object, ApplyToFillTargetType, true)) {
-            painted = true;
-
-            paintInlineBoxes(pi, tx, ty, flowBox, it);
-            fillPaintServer->teardown(pi.context, object, ApplyToFillTargetType, true);
-        }
-    }
-
-    SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(object->style(), object);
-    if (strokePaintServer) {
-        if (strokePaintServer->setup(pi.context, object, ApplyToStrokeTargetType, true)) {
-            if (painted)
-                it = savedIt;
-
-            paintInlineBoxes(pi, tx, ty, flowBox, it);
-            strokePaintServer->teardown(pi.context, object, ApplyToStrokeTargetType, true);
-        }
-    }
-
-    finishRenderSVGContent(object, paintInfo, boundingBox, filter, savedInfo.context);
-    paintInfo.context->restore();
-}
-
-void SVGRootInlineBox::paintCharacterRangeForTextBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineTextBox* textBox, const SVGChar& svgChar, const UChar* chars, int length)
-{
-    if (object()->style()->visibility() != VISIBLE || paintInfo.phase == PaintPhaseOutline)
-        return;
-
-    ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);
-
-    RenderText* text = textBox->textObject();
-    ASSERT(text);
-
-    bool isPrinting = text->document()->printing();
-
-    // Determine whether or not we're selected.
-    bool haveSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;
-    if (!haveSelection && paintInfo.phase == PaintPhaseSelection)
-        // When only painting the selection, don't bother to paint if there is none.
-        return;
-
-    // Determine whether or not we have a composition.
-    bool containsComposition = text->document()->frame()->editor()->compositionNode() == text->node();
-    bool useCustomUnderlines = containsComposition && text->document()->frame()->editor()->compositionUsesCustomUnderlines();
-
-    // Set our font
-    RenderStyle* styleToUse = text->style(textBox->isFirstLineStyle());
-    int d = styleToUse->textDecorationsInEffect();
-    const Font* font = &styleToUse->font();
-    if (*font != paintInfo.context->font())
-        paintInfo.context->setFont(*font);
-
-    // 1. Paint backgrounds behind text if needed.  Examples of such backgrounds include selection
-    // and composition decorations.
-    if (paintInfo.phase != PaintPhaseSelection && !isPrinting) {
-#if PLATFORM(MAC)
-        // Custom highlighters go behind everything else.
-        if (styleToUse->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-            textBox->paintCustomHighlight(tx, ty, styleToUse->highlight());
-#endif
-
-        if (containsComposition && !useCustomUnderlines)
-            textBox->paintCompositionBackground(paintInfo.context, tx, ty, styleToUse, font, 
-                                                text->document()->frame()->editor()->compositionStart(),
-                                                text->document()->frame()->editor()->compositionEnd());
-        
-        textBox->paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, true);
-        
-        if (haveSelection && !useCustomUnderlines) {
-            int boxStartOffset = chars - text->characters() - textBox->start();
-            paintSelectionForTextBox(textBox, boxStartOffset, svgChar, chars, length, paintInfo.context, styleToUse, font);
-        }
-    }
-
-    Color textFillColor;
-    Color textStrokeColor;
-    float textStrokeWidth = styleToUse->textStrokeWidth();
-
-    if (paintInfo.forceBlackText) {
-        textFillColor = Color::black;
-        textStrokeColor = Color::black;
-    } else {
-        textFillColor = styleToUse->textFillColor();
-        if (!textFillColor.isValid())
-            textFillColor = styleToUse->color();
-
-        // Make the text fill color legible against a white background
-        if (styleToUse->forceBackgroundsToWhite())
-            textFillColor = correctedTextColor(textFillColor, Color::white);
-
-        textStrokeColor = styleToUse->textStrokeColor();
-        if (!textStrokeColor.isValid())
-            textStrokeColor = styleToUse->color();
-
-        // Make the text stroke color legible against a white background
-        if (styleToUse->forceBackgroundsToWhite())
-            textStrokeColor = correctedTextColor(textStrokeColor, Color::white);
-    }
-
-    // For stroked painting, we have to change the text drawing mode.  It's probably dangerous to leave that mutated as a side
-    // effect, so only when we know we're stroking, do a save/restore.
-    if (textStrokeWidth > 0)
-        paintInfo.context->save();
-
-    if (!svgChar.transform.isIdentity())
-        paintInfo.context->concatCTM(svgChar.transform);
-
-    updateGraphicsContext(paintInfo.context, textFillColor, textStrokeColor, textStrokeWidth);
-    
-    // Set a text shadow if we have one.
-    // FIXME: Support multiple shadow effects.  Need more from the CG API before
-    // we can do this.
-    bool setShadow = false;
-    if (styleToUse->textShadow()) {
-        paintInfo.context->setShadow(IntSize(styleToUse->textShadow()->x, styleToUse->textShadow()->y),
-                                     styleToUse->textShadow()->blur, styleToUse->textShadow()->color);
-        setShadow = true;
-    }
-
-    bool paintSelectedTextOnly = (paintInfo.phase == PaintPhaseSelection);
-    bool paintSelectedTextSeparately = false; // Whether or not we have to do multiple paints.  Only
-                                              // necessary when a custom ::selection foreground color is applied.
-    Color selectionFillColor = textFillColor;
-    Color selectionStrokeColor = textStrokeColor;
-    float selectionStrokeWidth = textStrokeWidth;
-    ShadowData* selectionTextShadow = 0;
-
-    if (haveSelection) {
-        // Check foreground color first.
-        Color foreground = object()->selectionForegroundColor();
-        if (foreground.isValid() && foreground != selectionFillColor) {
-            if (!paintSelectedTextOnly)
-                paintSelectedTextSeparately = true;
-            selectionFillColor = foreground;
-        }
-        RenderStyle* pseudoStyle = object()->getPseudoStyle(RenderStyle::SELECTION);
-        if (pseudoStyle) {
-            if (pseudoStyle->textShadow()) {
-                if (!paintSelectedTextOnly)
-                    paintSelectedTextSeparately = true;
-                if (pseudoStyle->textShadow())
-                    selectionTextShadow = pseudoStyle->textShadow();
+            if (textBox && rangeTextBox != textBox) {
+                chunkOffset += range.endOffset - range.startOffset;
+                continue;
             }
 
-            float strokeWidth = pseudoStyle->textStrokeWidth();
-            if (strokeWidth != selectionStrokeWidth) {
-                if (!paintSelectedTextOnly)
-                    paintSelectedTextSeparately = true;
-                selectionStrokeWidth = strokeWidth;
+            // Eventually notify that we started a new chunk
+            if (!textBox && !startedFirstChunk) {
+                startedFirstChunk = true;
+
+                lastNotifiedBox = range.box;
+                walker->start(range.box);
+            } else {
+                // Eventually apply new style, as this chunk spans multiple boxes (with possible different styling)
+                if (prevBox && prevBox != range.box) {
+                    lastNotifiedBox = range.box;
+
+                    walker->end(prevBox);
+                    walker->start(lastNotifiedBox);
+                }
             }
 
-            Color stroke = pseudoStyle->textStrokeColor();
-            if (!stroke.isValid())
-                stroke = pseudoStyle->color();
-            if (stroke != selectionStrokeColor) {
-                if (!paintSelectedTextOnly)
-                    paintSelectedTextSeparately = true;
-                selectionStrokeColor = stroke;
+            unsigned int length = range.endOffset - range.startOffset;
+
+            Vector<SVGChar>::iterator itCharBegin = curChunk.start + chunkOffset;
+            Vector<SVGChar>::iterator itCharEnd = curChunk.start + chunkOffset + length;
+            ASSERT(itCharEnd <= curChunk.end);
+
+            // Process this chunk portion
+            if (textBox)
+                (*walker)(rangeTextBox, range.startOffset, itCharBegin, itCharEnd);
+            else {
+                if (walker->setupFill(range.box))
+                    (*walker)(rangeTextBox, range.startOffset, itCharBegin, itCharEnd);
+
+                if (walker->setupStroke(range.box))
+                    (*walker)(rangeTextBox, range.startOffset, itCharBegin, itCharEnd);
             }
+
+            chunkOffset += length;
+
+            if (!textBox)
+                prevBox = range.box;
         }
+
+        if (!textBox && startedFirstChunk)
+            walker->end(lastNotifiedBox);
     }
-
-    ASSERT(!paintSelectedTextOnly && !paintSelectedTextSeparately);
-    paintInfo.context->drawText(TextRun(chars, length), IntPoint((int) svgChar.x, (int) svgChar.y), svgTextStyleForInlineTextBox(styleToUse, textBox, svgChar.x));
-
-    // Paint decorations
-    if (d != TDNONE && paintInfo.phase != PaintPhaseSelection) {
-        // InlineTextBox::paint, checks for htmlHacks() being enabled - obey that.
-        // InlineTextBox::paint, doesn't save/restore context here, needed for us!
-        paintInfo.context->save();
-        paintInfo.context->setStrokeColor(styleToUse->color());
-        textBox->paintDecoration(paintInfo.context, tx, ty, d);
-        paintInfo.context->restore();
-    }
-
-    if (paintInfo.phase != PaintPhaseSelection) {
-        textBox->paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, false);
-
-        if (useCustomUnderlines) {
-            const Vector<CompositionUnderline>& underlines = text->document()->frame()->editor()->customCompositionUnderlines();
-            size_t numUnderlines = underlines.size();
-
-            for (size_t index = 0; index < numUnderlines; ++index) {
-                const CompositionUnderline& underline = underlines[index];
-                
-                if (underline.endOffset <= textBox->start())
-                    // underline is completely before this run.  This might be an underline that sits
-                    // before the first run we draw, or underlines that were within runs we skipped 
-                    // due to truncation.
-                    continue;
-                
-                if (underline.startOffset <= textBox->end()) {
-                    // underline intersects this run.  Paint it.
-                    textBox->paintCompositionUnderline(paintInfo.context, tx, ty, underline);
-                    if (underline.endOffset > textBox->end() + 1)
-                        // underline also runs into the next run. Bail now, no more marker advancement.
-                        break;
-                } else
-                    // underline is completely after this run, bail.  A later run will paint it.
-                    break;
-            }
-        }
-    }
-
-    if (setShadow)
-        paintInfo.context->clearShadow();
-
-    if (!svgChar.transform.isIdentity())
-        paintInfo.context->concatCTM(svgChar.transform.inverse());
-
-    if (textStrokeWidth > 0)
-        paintInfo.context->restore();
 }
 
 } // namespace WebCore
