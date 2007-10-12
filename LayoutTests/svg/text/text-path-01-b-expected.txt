@@ -1,34 +1,34 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0.83,-10) size 798.33x609.17
-    RenderSVGContainer {g} at (27.50,-10) size 669.67x495.83
+  RenderSVGRoot {svg} at (-13.33,-10) size 812.50x609.17
+    RenderSVGContainer {g} at (-13.33,-10) size 710.50x495.83
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderPath {path} at (198.53,22.02) size 219.77x84.55 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30C206.60,66.60,235.80,13.20,270.00,30.30C286.60,38.60,298.90,59.40,310.00,73.30C321.70,87.90,338.60,99.00,356.00,103.30C387.30,111.10,396.60,90.40,418.00,74.30"]
         RenderPath {path} at (33.03,78.52) size 219.77x84.55 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80C41.00,123.00,70.30,69.70,104.50,86.80C121.00,95.00,133.00,116.00,144.50,129.80C156.20,144.40,173.00,155.50,190.50,159.80C221.80,167.60,231.00,146.90,252.50,130.80"]
         RenderPath {path} at (113,231) size 300x4 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [data="M113.00,233.00L413.00,233.00"]
-      RenderSVGContainer {g} at (320,-10) size 377.17x193.33
+      RenderSVGContainer {g} at (280,-10) size 417.17x198.33
         RenderSVGContainer {use} at (330.88,36.70) size 366.29x140.92
           RenderSVGContainer {g} at (330.88,36.70) size 366.29x140.92
             RenderPath {path} at (330.88,36.70) size 366.29x140.92 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30C206.60,66.60,235.80,13.20,270.00,30.30C286.60,38.60,298.90,59.40,310.00,73.30C321.70,87.90,338.60,99.00,356.00,103.30C387.30,111.10,396.60,90.40,418.00,74.30"]
-        RenderSVGText {text} at (192,27) size 171x116 contains 1 chunk(s)
-          RenderSVGTextPath {textPath} at (0,0) size 171x116
-            RenderSVGInlineText {#text} at (0,-32) size 171x116
+        RenderSVGText {text} at (192,27) size 204x119 contains 1 chunk(s)
+          RenderSVGTextPath {textPath} at (0,0) size 204x119
+            RenderSVGInlineText {#text} at (-24,-33) size 204x119
               chunk 1 text run 1 at (192.04,27.04) startOffset 0 endOffset 14 width 226.00: "Text on a path"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGContainer {g} at (27.50,83.33) size 458.33x268.33
+      RenderSVGContainer {g} at (-13.33,81.67) size 499.17x270
         RenderSVGContainer {use} at (55.04,130.86) size 366.29x140.91
           RenderSVGContainer {g} at (55.04,130.86) size 366.29x140.91
             RenderPath {path} at (55.04,130.86) size 366.29x140.91 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80C41.00,123.00,70.30,69.70,104.50,86.80C121.00,95.00,133.00,116.00,144.50,129.80C156.20,144.40,173.00,155.50,190.50,159.80C221.80,167.60,231.00,146.90,252.50,130.80"]
-        RenderSVGText {text} at (26,83) size 172x117 contains 1 chunk(s)
-          RenderSVGTextPath {textPath} at (0,0) size 172x117
-            RenderSVGTSpan {tspan} at (0,0) size 29x58 [color=#FF0000]
-              RenderSVGInlineText {#text} at (0,-9) size 28x58
+        RenderSVGText {text} at (26,83) size 215x121 contains 1 chunk(s)
+          RenderSVGTextPath {textPath} at (0,0) size 215x121
+            RenderSVGTSpan {tspan} at (0,0) size 56x57 [color=#FF0000]
+              RenderSVGInlineText {#text} at (-34,4) size 56x57
                 chunk 1 text run 1 at (26.50,106.31) startOffset 0 endOffset 2 width 39.00: "Te"
-            RenderSVGTSpan {tspan} at (0,0) size 18x41
-              RenderSVGInlineText {#text} at (21,-11) size 18x41
+            RenderSVGTSpan {tspan} at (0,0) size 44x40
+              RenderSVGInlineText {#text} at (-1,-7) size 44x40
                 chunk 1 text run 2 at (47.67,104.04) startOffset 0 endOffset 1 width 18.00: "x"
-            RenderSVGInlineText {#text} at (35,-32) size 136x116
+            RenderSVGInlineText {#text} at (15,-34) size 166x121
               chunk 1 text run 3 at (61.18,83.54) startOffset 0 endOffset 11 width 169.00: "t on a path"
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderPath {rect} at (27.50,280.83) size 458.33x70 [stroke={[type=SOLID] [color=#000000]}] [data="M17.00,169.00L291.00,169.00L291.00,210.00L17.00,210.00"]

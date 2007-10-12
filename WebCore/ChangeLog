@@ -2,6 +2,25 @@
 
         Reviewed by Oliver.
 
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14896 (SVG InlineText/Flow box sizes don't take rotated glyphs into account)
+
+        Introduce new helper function calculateGlyphBoundaries, which takes into account any per-character transformation.
+        This fixes box size calculations in svg/W3C-SVG-1.1/text-text-07-t.svg, svg/batik/text/textEffect3.svg (rotated glyphs)
+        -> These strings can be properly selected now, just as well as text path elements.
+
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphBoundaries):
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition):
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        (WebCore::SVGInlineTextBox::selectionRect):
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes):
+
+2007-08-08  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=13909 (SVG text selection doesn't work with RTL text)
 
         Use drawHighlightForText() to draw the selection, instead of my home-brewn solution.

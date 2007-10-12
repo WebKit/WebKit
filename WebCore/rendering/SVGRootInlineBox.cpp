@@ -469,51 +469,38 @@ void SVGRootInlineBox::layoutInlineBoxes()
 void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::iterator& it, int& lowX, int& highX, int& lowY, int& highY)
 {
     for (InlineBox* curr = start->firstChild(); curr; curr = curr->nextOnLine()) {
-        const Font& font = curr->object()->style()->font();
-   
+        RenderStyle* style = curr->object()->style();    
+        const Font& font = style->font();
+
         if (curr->object()->isText()) {
-            InlineTextBox* textBox = static_cast<InlineTextBox*>(curr);
+            SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(curr);
             unsigned length = textBox->len();
 
-            SVGChar curChar = *it;
-            ASSERT(it != m_svgChars.end());
- 
-            float minX = curChar.x, minY = curChar.y;
-            float maxX = minX, maxY = minY;
+            SVGChar curChar = *it; 
+            ASSERT(it != m_svgChars.end());  
 
-            it++;
-
-            for (unsigned i = 1; i < length; ++i) {
+            FloatRect stringRect;
+            for (unsigned i = 0; i < length; ++i) {
                 ASSERT(it != m_svgChars.end());
-                SVGChar curChar = *it;
 
-                if (curChar.x < minX)
-                    minX = curChar.x;
-
-                if (curChar.x > maxX)
-                    maxX = curChar.x;
-
-                if (curChar.y < minY)
-                    minY = curChar.y;
-
-                if (curChar.y > maxY)
-                    maxY = curChar.y;
-
+                stringRect.unite(textBox->calculateGlyphBoundaries(style, textBox->start() + i, *it));
                 it++;
             }
 
-            RenderText* text = textBox->textObject();
-            ASSERT(text);
+            IntRect enclosedStringRect = enclosingIntRect(stringRect);
 
-            maxX += text->width(textBox->end(), 1, font, 0);
-            maxY += font.ascent() + font.descent();
+            int minX = enclosedStringRect.x();
+            int maxX = minX + enclosedStringRect.width();
+
+            int minY = enclosedStringRect.y();
+            int maxY = minY + enclosedStringRect.height();
 
             curr->setXPos(minX - object()->xPos());
-            curr->setWidth(maxX - minX);
+            curr->setWidth(enclosedStringRect.width());
 
-            curr->setYPos(minY - object()->yPos() - font.ascent());
+            curr->setYPos(minY - object()->yPos());
             curr->setBaseline(font.ascent());
-            curr->setHeight(maxY - minY);
+            curr->setHeight(enclosedStringRect.height());
 
             if (minX < lowX)
                 lowX = minX;
@@ -540,7 +527,7 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
             curr->setXPos(minX - object()->xPos());
             curr->setWidth(maxX - minX);
 
-            curr->setYPos(minY - object()->yPos() - font.ascent());
+            curr->setYPos(minY - object()->yPos());
             curr->setBaseline(font.ascent());
             curr->setHeight(maxY - minY);
 
@@ -559,9 +546,7 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
     }
 
     if (start->isRootInlineBox()) {
-        const Font& font = start->object()->style()->font();
- 
-        int top = lowY - object()->yPos() - font.ascent();
+        int top = lowY - object()->yPos();
         int bottom = highY - object()->yPos();
 
         start->setXPos(lowX - object()->xPos());
