@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
     
     This file is part of the KDE project
@@ -52,10 +52,9 @@ namespace WebCore {
         virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex);
 
     private:
-        // Helpers
         SVGTransform parseTransformValue(const String&) const;
         void calculateRotationFromMatrix(const AffineTransform&, double& angle, double& cx, double& cy) const;
-            
+        
         SVGTransform::SVGTransformType m_type;
 
         SVGTransform m_toTransform;

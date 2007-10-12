@@ -1,3 +1,21 @@
+2007-06-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by olliej and eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12430
+        SVG has two transform parsers when it should have one.
+
+        Refactor SVGTransformable parser so SVGAnimateTransformElement can reuse it better.
+
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::calculateFromAndToValues):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::):
+        (WebCore::SVGTransformable::parseTransformValue):
+        (WebCore::SVGTransformable::parseTransformAttribute):
+        * ksvg2/svg/SVGTransformable.h:
+
 2007-06-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

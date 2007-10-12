@@ -55,7 +55,7 @@ namespace WebCore
         return ptr < end;
     }
 
-    static inline bool skipString(const UChar*& ptr, const UChar*& end, const UChar* name, int length)
+    static inline bool skipString(const UChar*& ptr, const UChar* end, const UChar* name, int length)
     {
         if (end - ptr < length)
             return false;
@@ -65,7 +65,7 @@ namespace WebCore
         return true;
     }
 
-    static inline bool skipString(const UChar*& ptr, const UChar*& end, const char* str)
+    static inline bool skipString(const UChar*& ptr, const UChar* end, const char* str)
     {
         int length = strlen(str);
         if (end - ptr < length)
