@@ -33,7 +33,7 @@
         * WebCore.pro:
         * WebCore.vcproj/WebCore.vcproj:
 
-=== Start merge of feature-branch 11-11-2007 ===
+=== Start merge of feature-branch 2007-10-12 ===
 
 2007-10-11  Oliver Hunt  <oliver@apple.com>
 
@@ -3513,7 +3513,7 @@
         (WebCore::copyCGPathClosingSubpaths):
         (WebCore::Path::contains): use new copy & close function
 
-=== End merge of feature-branch 11-11-2007 ===
+=== End merge of feature-branch 2007-10-12 ===
 
 2007-10-11  Jon Honeycutt  <jhoneycutt@apple.com>
 

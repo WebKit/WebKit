@@ -1,4 +1,4 @@
-=== Start merge of feature-branch 11-11-2007 ===
+=== Start merge of feature-branch 2007-10-12 ===
 
 2007-10-11  Andrew Wellington  <proton@wiretapped.net>
 
@@ -144,7 +144,7 @@
         (WTF::FloatHashTraits::deletedValue):
         (WTF::):
 
-=== End merge of feature-branch 11-11-2007 ===
+=== End merge of feature-branch 2007-10-12 ===
 
 2007-10-11  Mark Rowe  <mrowe@apple.com>
 

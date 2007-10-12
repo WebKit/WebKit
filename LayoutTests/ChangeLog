@@ -24,7 +24,7 @@
         * platform/mac/dom/xhtml/level2/html/HTMLBaseElement02-expected.txt:
         * platform/mac/fast/dom/dom-parse-serialize-expected.txt:
 
-=== Start merge of feature-branch 11-11-2007 ===
+=== Start merge of feature-branch 2007-10-12 ===
 
 2007-10-11  Oliver Hunt  <oliver@apple.com>
 
@@ -4719,7 +4719,7 @@
         * svg/custom/hit-test-unclosed-subpaths-expected.txt: Added.
         * svg/custom/hit-test-unclosed-subpaths.svg: Added.
 
-=== End merge of feature-branch 11-11-2007 ===
+=== End merge of feature-branch 2007-10-12 ===
 
 2007-10-11  Justin Garcia  <justin.garcia@apple.com>
 
