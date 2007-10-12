@@ -1,3 +1,15 @@
+2007-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Leopard build fix -- SVGDocument should not trty to make read/write properties read-only
+
+        Remove those API definitions SVGDocument now inherits from Document
+
+        * ksvg2/svg/SVGDocument.idl:
+
+
+
 2007-10-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
