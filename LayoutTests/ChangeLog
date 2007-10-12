@@ -1,3 +1,16 @@
+2007-09-29  Rob Buis  <buis@kde.org>
+
+        Reviewed by Adam.
+
+        Add testcase entries for:
+        http://bugs.webkit.org/show_bug.cgi?id=13472
+        Misparsing date in javascript leads to year value of -1
+        http://bugs.webkit.org/show_bug.cgi?id=14176
+        Some date values not handled consistently with IE/Firefox
+
+        * fast/js/date-parse-test-expected.txt:
+        * fast/js/resources/date-parse-test.js:
+
 2007-09-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Wenig.

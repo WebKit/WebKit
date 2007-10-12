@@ -88,5 +88,14 @@ testDateParse("Wed Dec 25 1995 1:30 GMT", "819855000000");
 testDateParseExpr('"Dec 25" + String.fromCharCode(9) + "1995 13:30 GMT"', "819898200000");
 testDateParseExpr('"Dec 25" + String.fromCharCode(10) + "1995 13:30 GMT"', "819898200000");
 
+// Firefox compatibility
+testDateParse("Dec 25, 1995 13:30", "819898200000 + timeZoneOffset");
+testDateParse("Dec 25,1995 13:30", "819898200000 + timeZoneOffset");
+
+testDateParse("Dec 25 1995, 13:30", "819898200000 + timeZoneOffset");
+testDateParse("Dec 25 1995,13:30", "819898200000 + timeZoneOffset");
+
+testDateParse("Dec 25, 1995, 13:30", "819898200000 + timeZoneOffset");
+testDateParse("Dec 25,1995,13:30", "819898200000 + timeZoneOffset");
 
 var successfullyParsed = true;
