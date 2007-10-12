@@ -1,3 +1,12 @@
+2007-09-30  Julien  <julien.chaffraix@gmail.com>
+
+        Reviewed by aroben & eseidel.
+
+        test http://bugs.webkit.org/show_bug.cgi?id=14898
+        XMLHttpRequest.getAllResponseHeaders should separate headers with CRLF
+
+        * http/tests/xmlhttprequest/xmlhttprequest-crlf-getAllResponseHeader.html: Added.
+
 2007-09-29  Rob Buis  <buis@kde.org>
 
         Reviewed by Adam.

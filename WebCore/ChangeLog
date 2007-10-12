@@ -1,3 +1,16 @@
+2007-09-30  Julien  <julien.chaffraix@gmail.com>
+
+        Reviewed by aroben & eseidel.
+
+        fix http://bugs.webkit.org/show_bug.cgi?id=14898
+
+        getAllResponseHeaders() separates each header with a CR LF according to the specification
+
+        Test: http/tests/xmlhttprequest/xmlhttprequest-crlf-getAllResponseHeader.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+
 2007-09-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Wenig.

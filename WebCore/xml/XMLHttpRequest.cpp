@@ -550,6 +550,7 @@ String XMLHttpRequest::getAllResponseHeaders() const
         stringBuilder.append(it->first.characters(), it->first.length());
         stringBuilder.append(separator.characters(), separator.length());
         stringBuilder.append(it->second.characters(), it->second.length());
+        stringBuilder.append((UChar)'\r');
         stringBuilder.append((UChar)'\n');
     }
 
