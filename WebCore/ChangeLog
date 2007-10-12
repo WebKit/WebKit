@@ -1,3 +1,28 @@
+2007-08-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Sam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12059
+        SVG colors have two separate parsing paths (one CSS and one SVGColor::setRGBColor)
+
+        Reuse the css parser as much as possible in setRGBColor.
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseColor):
+        * css/cssparser.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::checkForLegacyHTMLStyleChange):
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::addColorStop):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::colorFromRGBColorString):
+
 2007-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

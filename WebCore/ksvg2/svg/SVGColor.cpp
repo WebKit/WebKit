@@ -24,8 +24,8 @@
 #if ENABLE(SVG)
 #include "SVGColor.h"
 
+#include "CSSParser.h"
 #include "SVGException.h"
-#include "SVGParserUtilities.h"
 
 namespace WebCore {
 
@@ -79,39 +79,17 @@ void SVGColor::setRGBColor(const String& rgbColor, ExceptionCode& ec)
         ec = SVG_INVALID_VALUE_ERR;
 }
 
-static inline bool parseNumberOrPercent(const UChar*& ptr, const UChar* end, double& value)
-{
-    if (!parseNumber(ptr, end, value))
-        return false;
-    if (ptr < end && *ptr == '%') {
-        value = int((255.0 * value) / 100.0);
-        ptr++;
-    }
-    return true;
-}
-
 Color SVGColor::colorFromRGBColorString(const String& colorString)
 {
-    if (colorString.isNull())
+    RGBA32 color;
+    String s = colorString.stripWhiteSpace();
+    // hsl, hsla and rgba are not in the SVG spec.
+    // FIXME: rework css parser so it is more svg aware
+    if (s.startsWith("hsl") || s.startsWith("rgba") ||
+        !CSSParser::parseColor(color, s))
         return Color();
 
-    String parse = colorString.stripWhiteSpace();
-    if (parse.startsWith("rgb(")) {
-        double r = -1, g = -1, b = -1;
-        const UChar* ptr = parse.characters() + 4;
-        const UChar* end = parse.characters() + parse.length();
-        skipOptionalSpaces(ptr, end);
-        if (!parseNumberOrPercent(ptr, end, r)
-         || !parseNumberOrPercent(ptr, end, g)
-         || !parseNumberOrPercent(ptr, end, b))
-            return Color();
-
-        if (ptr >= end || *ptr != ')')
-            return Color();
-
-         return Color(int(r), int(g), int(b));
-    }
-    return Color(parse.lower());
+    return color;
 }
 
 void SVGColor::setRGBColorICCColor(const String& /* rgbColor */, const String& /* iccColor */, ExceptionCode& ec)

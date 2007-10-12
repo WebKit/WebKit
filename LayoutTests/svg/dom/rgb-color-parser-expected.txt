@@ -19,7 +19,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(%72+e%e,4
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(	55,.
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(263,%	1-74)e
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( 64110, (1 
-Parsed as rgb(150,3,255): rgb( 59%3   725)
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( 59%3   725)
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(6e)-2- 180
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(,	.579e(( 
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb()(
@@ -43,7 +43,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(1		5.56,+
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(	)ee.%)
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(-%0%-
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(231293 16%
-Parsed as rgb(0,0,37): rgb(+-2+37)888580+9	(
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(+-2+37)888580+9	(
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(18	805
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(0
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(63-.693+
@@ -78,7 +78,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(	97,	33)-
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( .3.6 	,-57%7 e+6
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(1)7 +%+8 	)-	 -.63e
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(6786).(8912%
-Parsed as rgb(0,8,0): rgb(-	%8-,)886+- 9e))e
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(-	%8-,)886+- 9e))e
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( ,	5732 
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(18)(
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(3,+13%(711%9%	%0 -
@@ -109,7 +109,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(e9
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(0.795e0,).	%%,
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(+7).
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb((%+	8 -74).9 +(.
-Parsed as rgb(0,255,0): rgb( 0	635+)9,- 8	
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( 0	635+)9,- 8	
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(%4%9%%.
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(49),,4-30378 052
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(%7863	
@@ -118,7 +118,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(%72+e%e,4
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(	55,.
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(263,%	1-74)e
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( 64110, (1 
-Parsed as rgb(150,3,255): rgb( 59%3   725)
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( 59%3   725)
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(6e)-2- 180
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(,	.579e(( 
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb()(
@@ -142,7 +142,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(1		5.56,+
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(	)ee.%)
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(-%0%-
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(231293 16%
-Parsed as rgb(0,0,37): rgb(+-2+37)888580+9	(
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(+-2+37)888580+9	(
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(18	805
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(0
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(63-.693+
@@ -177,7 +177,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(	97,	33)-
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( .3.6 	,-57%7 e+6
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(1)7 +%+8 	)-	 -.63e
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(6786).(8912%
-Parsed as rgb(0,8,0): rgb(-	%8-,)886+- 9e))e
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(-	%8-,)886+- 9e))e
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( ,	5732 
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(18)(
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(3,+13%(711%9%	%0 -
@@ -208,7 +208,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(e9
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(0.795e0,).	%%,
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(+7).
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb((%+	8 -74).9 +(.
-Parsed as rgb(0,255,0): rgb( 0	635+)9,- 8	
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( 0	635+)9,- 8	
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(%4%9%%.
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(49),,4-30378 052
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(%7863	
@@ -217,7 +217,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(%72+e%e,4
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(	55,.
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(263,%	1-74)e
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( 64110, (1 
-Parsed as rgb(150,3,255): rgb( 59%3   725)
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb( 59%3   725)
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(6e)-2- 180
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(,	.579e(( 
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb()(
@@ -241,7 +241,7 @@ Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(1		5.56,+
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(	)ee.%)
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(-%0%-
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(231293 16%
-Parsed as rgb(0,0,37): rgb(+-2+37)888580+9	(
+Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(+-2+37)888580+9	(
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(18	805
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(0
 Threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1: rgb(63-.693+

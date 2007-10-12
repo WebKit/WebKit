@@ -117,7 +117,7 @@ namespace WebCore {
         void parseSheet(CSSStyleSheet*, const String&);
         PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
         bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
-        static RGBA32 parseColor(const String&, bool strict = false);
+        static bool parseColor(RGBA32& color, const String&, bool strict = false);
         bool parseColor(CSSMutableStyleDeclaration*, const String&);
         bool parseDeclaration(CSSMutableStyleDeclaration*, const String&);
         bool parseMediaQuery(MediaList*, const String&);

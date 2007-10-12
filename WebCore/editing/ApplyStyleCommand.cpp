@@ -159,7 +159,9 @@ bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
             }
             break;
         case CSS_PROP_COLOR: {
-            Color color(CSSParser::parseColor(valueText));
+            RGBA32 rgba = 0;
+            CSSParser::parseColor(rgba, valueText);
+            Color color(rgba);
             m_applyFontColor = color.name();
             return true;
         }

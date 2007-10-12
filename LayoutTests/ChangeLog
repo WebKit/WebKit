@@ -1,3 +1,25 @@
+2007-08-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubberstamped by Mark.
+
+        Add missing SVG filter testcase (forgot to include in last commit).
+
+        * svg/batik/filters/filterRegions-expected.checksum: Added.
+        * svg/batik/filters/filterRegions-expected.png: Added.
+        * svg/batik/filters/filterRegions-expected.txt: Added.
+        * svg/batik/filters/filterRegions.svg: Added.
+
+2007-08-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Sam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12059
+        SVG colors have two separate parsing paths (one CSS and one SVGColor::setRGBColor)
+
+        Improved test result.
+
+        * svg/dom/rgb-color-parser-expected.txt:
+
 2007-08-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

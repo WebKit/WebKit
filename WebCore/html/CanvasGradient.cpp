@@ -76,7 +76,8 @@ CanvasGradient::~CanvasGradient()
 
 void CanvasGradient::addColorStop(float value, const String& color)
 {
-    RGBA32 rgba = CSSParser::parseColor(color);
+    RGBA32 rgba = 0; // default is transparant black
+    CSSParser::parseColor(rgba, color);
     m_stops.append(ColorStop(value,
         ((rgba >> 16) & 0xFF) / 255.0f,
         ((rgba >> 8) & 0xFF) / 255.0f,
