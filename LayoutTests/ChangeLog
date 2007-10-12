@@ -1,5 +1,18 @@
 2007-10-09  Rob Buis  <buis@kde.org>
 
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=15080
+        <use> element not refresh after adding objects by script in referrer
+
+        * svg/custom/use-dynamic-append-expected.checksum: Added.
+        * svg/custom/use-dynamic-append-expected.png: Added.
+        * svg/custom/use-dynamic-append-expected.txt: Added.
+        * svg/custom/use-dynamic-append.svg: Added.
+
+2007-10-09  Rob Buis  <buis@kde.org>
+
         Reviewed by Maciej.
 
         Testcase for:

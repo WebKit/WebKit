@@ -195,6 +195,22 @@ void SVGStyledElement::notifyAttributeChange() const
     notifyResourceParentIfExistant();
 }
 
+void SVGStyledElement::childrenChanged()
+{
+    SVGElement::childrenChanged();
+    if (document()->parsing())
+        return;
+
+    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
+    if (!extensions)
+        return;
+
+    // In case we're referenced by a <use> element, we have element instances registered
+    // to us in the SVGDocumentExtensions. If childrenChanged() is called, we need
+    // to recursively update all children including ourselves.
+    updateElementInstance(extensions);
+}
+
 void SVGStyledElement::notifyResourceParentIfExistant() const
 {
     Node* node = parentNode();

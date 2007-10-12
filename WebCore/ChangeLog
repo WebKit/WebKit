@@ -1,5 +1,19 @@
 2007-10-09  Rob Buis  <buis@kde.org>
 
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15080
+        <use> element not refresh after adding objects by script in referrer
+
+        Update shadow tree when elements are added/removed from a tree
+        that is referenced by a <use>.
+
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::childrenChanged):
+        * ksvg2/svg/SVGStyledElement.h:
+
+2007-10-09  Rob Buis  <buis@kde.org>
+
         Reviewed by Maciej.
 
         http://bugs.webkit.org/show_bug.cgi?id=15088

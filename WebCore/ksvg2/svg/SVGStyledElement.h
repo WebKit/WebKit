@@ -57,6 +57,7 @@ namespace WebCore {
         virtual void parseMappedAttribute(MappedAttribute*);
 
         virtual void notifyAttributeChange() const;
+        virtual void childrenChanged();
         void notifyResourceParentIfExistant() const;
 
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
