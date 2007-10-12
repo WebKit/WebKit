@@ -1,3 +1,16 @@
+2007-05-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Land new tests results as gradient-on-fill of text works again.
+
+        * svg/batik/text/textEffect-expected.checksum:
+        * svg/batik/text/textEffect-expected.png:
+        * svg/custom/js-late-gradient-and-object-creation-expected.checksum:
+        * svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * svg/custom/js-late-gradient-creation-expected.checksum:
+        * svg/custom/js-late-gradient-creation-expected.png:
+
 2007-05-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Oliver.

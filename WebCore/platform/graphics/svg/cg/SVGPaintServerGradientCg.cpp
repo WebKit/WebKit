@@ -175,10 +175,7 @@ void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObj
     }
 
     if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
-        // workaround for filling the entire screen with the shading in the case that no text was intersected with the clip
-        if (!isPaintingText || (object->width() > 0 && object->height() > 0))
-            CGContextDrawShading(contextRef, shading);
-
+        CGContextDrawShading(contextRef, shading);
         context->restore();
     }
 

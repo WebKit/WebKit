@@ -1,3 +1,12 @@
+2007-05-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fix regression: gradient on fill of text works again!
+
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+
 2007-05-29  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
