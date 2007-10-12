@@ -1,3 +1,10 @@
+2007-10-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        * Drosera/mac/DebuggerDocumentPlatform.mm:
+        (DebuggerDocument::platformEvaluateScript): null check before trying to make a JSString
+
 2007-10-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Olliej.

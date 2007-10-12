@@ -104,8 +104,11 @@ JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStri
     
     RetainPtr<NSString *> scriptNS(AdoptNS, NSStringCreateWithJSStringRef(script));
     id value = [cframe evaluateWebScript:scriptNS.get()];
+    NSString *result = [NSString stringOrNilFromWebScriptResult:value];
+    if (!result)
+        return JSValueMakeNull(context);
 
-    return JSValueRefCreateWithNSString(context, [NSString stringOrNilFromWebScriptResult:value]);
+    return JSValueRefCreateWithNSString(context, result);
 }
 
 void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vector<JSValueRef>& currentStack)
