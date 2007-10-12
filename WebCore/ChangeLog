@@ -1,3 +1,15 @@
+2007-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - fixed "innerHTML updates layout every time (very bad if adding to it in a loop)"
+        http://bugs.webkit.org/show_bug.cgi?id=15326
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): The Node version of this function currently never uses
+        the render tree, so don't bother to update layout. This is the version used for
+        innerHTML.
+
 2007-10-02  Nicholas Shanks  <webkit@nickshanks.com>
 
         Reviewed by eseidel & hyatt.

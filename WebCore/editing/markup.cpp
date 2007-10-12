@@ -729,7 +729,6 @@ DeprecatedString createMarkup(const Node* node, EChildrenOnly includeChildren,
         deleteButton->disable();
     }
 
-    document->updateLayoutIgnorePendingStylesheets();
     DeprecatedString result(markup(const_cast<Node*>(node), includeChildren, nodes));
 
     if (deleteButton)
