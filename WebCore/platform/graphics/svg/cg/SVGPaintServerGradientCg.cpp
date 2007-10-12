@@ -164,8 +164,8 @@ void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObj
 {
     CGShadingRef shading = m_shadingCache;
     CGContextRef contextRef = context->platformContext();
-    RenderStyle* style = object->style();
     ASSERT(contextRef);
+    RenderStyle* style = object->style();
 
     // As renderPath() is not used when painting text, special logic needed here.
     if (isPaintingText) {
@@ -214,8 +214,11 @@ void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderP
 
     // Compute destination object bounding box
     FloatRect objectBBox;
-    if (boundingBoxMode())
-        objectBBox = CGContextGetPathBoundingBox(contextRef);
+    if (boundingBoxMode()) {
+        FloatRect bbox = path->relativeBBox(false);
+        if (bbox.width() > 0 && bbox.height() > 0)
+            objectBBox = bbox;
+    }
 
     if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill())
         clipToFillPath(contextRef, path);

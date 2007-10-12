@@ -1,3 +1,21 @@
+2007-06-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14157
+        Rotated shape has wrong gradient rendering
+
+        pservers-grad-17-b.svg is an improvement and now matches the
+        w3c image.
+
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png:
+        * svg/custom/gradient-rotated-bbox-expected.checksum: Added.
+        * svg/custom/gradient-rotated-bbox-expected.png: Added.
+        * svg/custom/gradient-rotated-bbox-expected.txt: Added.
+        * svg/custom/gradient-rotated-bbox.svg: Added.
+
 2007-06-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed.

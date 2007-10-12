@@ -1,3 +1,18 @@
+2007-06-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14157
+        Rotated shape has wrong gradient rendering
+
+        Use the untransformed bbox in objectBoundingBoxMode. Also
+        don't do objectBoundingBoxMode should the bbox width ort height
+        be zero.
+
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::renderPath):
+
 2007-06-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric & Oliver.
