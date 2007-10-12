@@ -1,74 +1,75 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (49,16) size 351x375.52
-      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderPath {path} at (19.65,8.96) size 160.35x42.08 [stroke={[type=SOLID] [color=#0000FF]}] [data="M20.00,40.00C40.00,20.00,60.00,0.00,80.00,20.00C100.00,40.00,120.00,60.00,140.00,40.00C160.00,20.00,180.00,20.00,180.00,20.00"]
-        RenderPath {path} at (19.78,8.99) size 320.22x42.02 [stroke={[type=SOLID] [color=#0000FF]}] [data="M20.00,40.00C60.00,20.00,100.00,0.00,140.00,20.00C180.00,40.00,220.00,60.00,260.00,40.00C300.00,20.00,340.00,20.00,340.00,20.00"]
-      RenderSVGText {text} at (130,30) size 190x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-14) size 190x17
-          chunk 1 (middle anchor) text run 1 at (130.00,30.00) startOffset 0 endOffset 27 width 190.00: "Text Orientation Horizontal"
-      RenderSVGContainer {g} at (49,42) size 351x349.52
-        RenderPath {line} at (50,79) size 150x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,80.00L200.00,80.00"]
-        RenderSVGText {text} at (50,80) size 142x27 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 142x27
-            chunk 1 text run 1 at (50.00,80.00) startOffset 0 endOffset 13 width 142.00: "Batik is Good"
-        RenderSVGContainer {g} at (237,42) size 163x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,60.00)}]
-          RenderSVGContainer {use} at (239.29,68.42) size 160.71x43.16
-            RenderSVGContainer {g} at (239.29,68.42) size 160.71x43.16
-              RenderPath {path} at (239.29,68.42) size 160.71x43.16 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M20.00,40.00C40.00,20.00,60.00,0.00,80.00,20.00C100.00,40.00,120.00,60.00,140.00,40.00C160.00,20.00,180.00,20.00,180.00,20.00"]
-          RenderSVGText {text} at (17,4) size 122x71 contains 0 chunk(s)
-            RenderSVGTextPath {textPath} at (0,0) size 122x71
-              RenderSVGInlineText {#text} at (0,-13) size 52x49
-              RenderSVGTSpan {tspan} at (0,0) size 16x32 [color=#FF0000]
-                RenderSVGInlineText {#text} at (52,-21) size 15x31
-              RenderSVGTSpan {tspan} at (0,0) size 57x50
-                RenderSVGInlineText {#text} at (65,0) size 57x49
-            RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderPath {line} at (50,129) size 350x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,130.00L400.00,130.00"]
-        RenderSVGText {text} at (50,130) size 142x27 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 142x27
-            chunk 1 text run 1 at (50.00,130.00) startOffset 0 endOffset 13 width 142.00: "Batik is Good"
-        RenderSVGContainer {g} at (49,131) size 321x70.52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,150.00)}]
-          RenderSVGContainer {use} at (49.55,158.48) size 320.45x43.05
-            RenderSVGContainer {g} at (49.55,158.48) size 320.45x43.05
-              RenderPath {path} at (49.55,158.48) size 320.45x43.05 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M20.00,40.00C60.00,20.00,100.00,0.00,140.00,20.00C180.00,40.00,220.00,60.00,260.00,40.00C300.00,20.00,340.00,20.00,340.00,20.00"]
-          RenderSVGText {text} at (19,3) size 135x60 contains 0 chunk(s)
-            RenderSVGTextPath {textPath} at (0,0) size 135x60
-              RenderSVGInlineText {#text} at (0,-7) size 56x46
-              RenderSVGTSpan {tspan} at (0,0) size 17x29 [color=#FF0000]
-                RenderSVGInlineText {#text} at (55,-21) size 16x28
-              RenderSVGTSpan {tspan} at (0,0) size 63x39
-                RenderSVGInlineText {#text} at (72,-13) size 62x39
-            RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderPath {line} at (50,239) size 150x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,240.00L200.00,240.00"]
-        RenderSVGText {text} at (50,240) size 142x27 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 142x27
-            chunk 1 text run 1 at (50.00,240.00) startOffset 0 endOffset 13 width 142.00: "Batik is Good"
-        RenderSVGContainer {g} at (237,202) size 163x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,220.00)}]
-          RenderSVGContainer {use} at (239.29,228.42) size 160.71x43.16
-            RenderSVGContainer {g} at (239.29,228.42) size 160.71x43.16
-              RenderPath {path} at (239.29,228.42) size 160.71x43.16 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M20.00,40.00C40.00,20.00,60.00,0.00,80.00,20.00C100.00,40.00,120.00,60.00,140.00,40.00C160.00,20.00,180.00,20.00,180.00,20.00"]
-          RenderSVGText {text} at (17,4) size 122x71 contains 0 chunk(s)
-            RenderSVGTextPath {textPath} at (0,0) size 122x71
-              RenderSVGInlineText {#text} at (0,-13) size 52x49
-              RenderSVGTSpan {tspan} at (0,0) size 16x32 [color=#FF0000]
-                RenderSVGInlineText {#text} at (52,-21) size 15x31
-              RenderSVGTSpan {tspan} at (0,0) size 57x50
-                RenderSVGInlineText {#text} at (65,0) size 57x49
-            RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderPath {line} at (50,319) size 350x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,320.00L400.00,320.00"]
-        RenderSVGText {text} at (50,320) size 142x27 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 142x27
-            chunk 1 text run 1 at (50.00,320.00) startOffset 0 endOffset 13 width 142.00: "Batik is Good"
-        RenderSVGContainer {g} at (49,321) size 321x70.52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,340.00)}]
-          RenderSVGContainer {use} at (49.55,348.48) size 320.45x43.05
-            RenderSVGContainer {g} at (49.55,348.48) size 320.45x43.05
-              RenderPath {path} at (49.55,348.48) size 320.45x43.05 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M20.00,40.00C60.00,20.00,100.00,0.00,140.00,20.00C180.00,40.00,220.00,60.00,260.00,40.00C300.00,20.00,340.00,20.00,340.00,20.00"]
-          RenderSVGText {text} at (19,3) size 135x60 contains 0 chunk(s)
-            RenderSVGTextPath {textPath} at (0,0) size 135x60
-              RenderSVGInlineText {#text} at (0,-7) size 56x46
-              RenderSVGTSpan {tspan} at (0,0) size 17x29 [color=#FF0000]
-                RenderSVGInlineText {#text} at (55,-21) size 16x28
-              RenderSVGTSpan {tspan} at (0,0) size 63x39
-                RenderSVGInlineText {#text} at (72,-13) size 62x39
-            RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (49,16) size 351x375.52
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderPath {path} at (19.65,8.96) size 160.35x42.08 [stroke={[type=SOLID] [color=#0000FF]}] [data="M20.00,40.00C40.00,20.00,60.00,0.00,80.00,20.00C100.00,40.00,120.00,60.00,140.00,40.00C160.00,20.00,180.00,20.00,180.00,20.00"]
+      RenderPath {path} at (19.78,8.99) size 320.22x42.02 [stroke={[type=SOLID] [color=#0000FF]}] [data="M20.00,40.00C60.00,20.00,100.00,0.00,140.00,20.00C180.00,40.00,220.00,60.00,260.00,40.00C300.00,20.00,340.00,20.00,340.00,20.00"]
+    RenderSVGText {text} at (130,30) size 190x17 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 190x17
+        chunk 1 (middle anchor) text run 1 at (130.00,30.00) startOffset 0 endOffset 27 width 190.00: "Text Orientation Horizontal"
+    RenderSVGContainer {g} at (49,42) size 351x349.52
+      RenderPath {line} at (50,79) size 150x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,80.00L200.00,80.00"]
+      RenderSVGText {text} at (50,80) size 142x27 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-22) size 142x27
+          chunk 1 text run 1 at (50.00,80.00) startOffset 0 endOffset 13 width 142.00: "Batik is Good"
+      RenderSVGContainer {g} at (237,42) size 163x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,60.00)}]
+        RenderSVGContainer {use} at (239.29,68.42) size 160.71x43.16
+          RenderSVGContainer {g} at (239.29,68.42) size 160.71x43.16
+            RenderPath {path} at (239.29,68.42) size 160.71x43.16 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M20.00,40.00C40.00,20.00,60.00,0.00,80.00,20.00C100.00,40.00,120.00,60.00,140.00,40.00C160.00,20.00,180.00,20.00,180.00,20.00"]
+        RenderSVGText {text} at (17,4) size 122x71 contains 0 chunk(s)
+          RenderSVGTextPath {textPath} at (0,0) size 122x71
+            RenderSVGInlineText {#text} at (0,-13) size 52x49
+            RenderSVGTSpan {tspan} at (0,0) size 16x32 [color=#FF0000]
+              RenderSVGInlineText {#text} at (52,-21) size 15x31
+            RenderSVGTSpan {tspan} at (0,0) size 57x50
+              RenderSVGInlineText {#text} at (65,0) size 57x49
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderPath {line} at (50,129) size 350x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,130.00L400.00,130.00"]
+      RenderSVGText {text} at (50,130) size 142x27 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-22) size 142x27
+          chunk 1 text run 1 at (50.00,130.00) startOffset 0 endOffset 13 width 142.00: "Batik is Good"
+      RenderSVGContainer {g} at (49,131) size 321x70.52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,150.00)}]
+        RenderSVGContainer {use} at (49.55,158.48) size 320.45x43.05
+          RenderSVGContainer {g} at (49.55,158.48) size 320.45x43.05
+            RenderPath {path} at (49.55,158.48) size 320.45x43.05 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M20.00,40.00C60.00,20.00,100.00,0.00,140.00,20.00C180.00,40.00,220.00,60.00,260.00,40.00C300.00,20.00,340.00,20.00,340.00,20.00"]
+        RenderSVGText {text} at (19,3) size 135x60 contains 0 chunk(s)
+          RenderSVGTextPath {textPath} at (0,0) size 135x60
+            RenderSVGInlineText {#text} at (0,-7) size 56x46
+            RenderSVGTSpan {tspan} at (0,0) size 17x29 [color=#FF0000]
+              RenderSVGInlineText {#text} at (55,-21) size 16x28
+            RenderSVGTSpan {tspan} at (0,0) size 63x39
+              RenderSVGInlineText {#text} at (72,-13) size 62x39
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderPath {line} at (50,239) size 150x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,240.00L200.00,240.00"]
+      RenderSVGText {text} at (50,240) size 142x27 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-22) size 142x27
+          chunk 1 text run 1 at (50.00,240.00) startOffset 0 endOffset 13 width 142.00: "Batik is Good"
+      RenderSVGContainer {g} at (237,202) size 163x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,220.00)}]
+        RenderSVGContainer {use} at (239.29,228.42) size 160.71x43.16
+          RenderSVGContainer {g} at (239.29,228.42) size 160.71x43.16
+            RenderPath {path} at (239.29,228.42) size 160.71x43.16 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M20.00,40.00C40.00,20.00,60.00,0.00,80.00,20.00C100.00,40.00,120.00,60.00,140.00,40.00C160.00,20.00,180.00,20.00,180.00,20.00"]
+        RenderSVGText {text} at (17,4) size 122x71 contains 0 chunk(s)
+          RenderSVGTextPath {textPath} at (0,0) size 122x71
+            RenderSVGInlineText {#text} at (0,-13) size 52x49
+            RenderSVGTSpan {tspan} at (0,0) size 16x32 [color=#FF0000]
+              RenderSVGInlineText {#text} at (52,-21) size 15x31
+            RenderSVGTSpan {tspan} at (0,0) size 57x50
+              RenderSVGInlineText {#text} at (65,0) size 57x49
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderPath {line} at (50,319) size 350x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,320.00L400.00,320.00"]
+      RenderSVGText {text} at (50,320) size 142x27 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-22) size 142x27
+          chunk 1 text run 1 at (50.00,320.00) startOffset 0 endOffset 13 width 142.00: "Batik is Good"
+      RenderSVGContainer {g} at (49,321) size 321x70.52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,340.00)}]
+        RenderSVGContainer {use} at (49.55,348.48) size 320.45x43.05
+          RenderSVGContainer {g} at (49.55,348.48) size 320.45x43.05
+            RenderPath {path} at (49.55,348.48) size 320.45x43.05 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M20.00,40.00C60.00,20.00,100.00,0.00,140.00,20.00C180.00,40.00,220.00,60.00,260.00,40.00C300.00,20.00,340.00,20.00,340.00,20.00"]
+        RenderSVGText {text} at (19,3) size 135x60 contains 0 chunk(s)
+          RenderSVGTextPath {textPath} at (0,0) size 135x60
+            RenderSVGInlineText {#text} at (0,-7) size 56x46
+            RenderSVGTSpan {tspan} at (0,0) size 17x29 [color=#FF0000]
+              RenderSVGInlineText {#text} at (55,-21) size 16x28
+            RenderSVGTSpan {tspan} at (0,0) size 63x39
+              RenderSVGInlineText {#text} at (72,-13) size 62x39
+          RenderSVGInlineText {#text} at (0,0) size 0x0

@@ -235,7 +235,10 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
         if (SVGFitToViewBox::parseMappedAttribute(attr) && renderer()) {
-            static_cast<RenderSVGContainer*>(renderer())->setViewBox(viewBox());
+            if (renderer()->isSVGContainer())
+                static_cast<RenderSVGContainer*>(renderer())->setViewBox(viewBox());
+            else
+                static_cast<RenderSVGRoot*>(renderer())->setViewBox(viewBox());
             return;
         }
         if (SVGZoomAndPan::parseMappedAttribute(attr))

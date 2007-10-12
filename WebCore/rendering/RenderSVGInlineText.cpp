@@ -34,16 +34,29 @@
 #include "SVGRootInlineBox.h"
 
 namespace WebCore {
-    
+
 RenderSVGInlineText::RenderSVGInlineText(Node* n, StringImpl* str) 
     : RenderText(n, str)
 {
 }
 
-void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
+void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 {
-    FloatRect absoluteRect = absoluteTransform().mapRect(FloatRect(tx, ty, width(), height()));
-    rects.append(enclosingIntRect(absoluteRect));
+    InlineTextBox* firstBox = firstTextBox();
+
+    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
+    RenderObject* object = rootBox ? rootBox->object() : 0;
+
+    if (!object)
+        return;
+
+    int xRef = xPos() + object->xPos();
+    int yRef = yPos() + object->yPos();
+
+    for (InlineTextBox* curr = firstBox; curr; curr = curr->nextTextBox()) {
+        FloatRect rect(xRef - curr->xPos(), yRef - curr->yPos(), curr->width(), curr->height());
+        rects.append(enclosingIntRect(absoluteTransform().mapRect(rect)));
+    }
 }
 
 IntRect RenderSVGInlineText::selectionRect(bool clipToVisibleContent)

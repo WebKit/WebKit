@@ -126,6 +126,7 @@ typedef HashSet<RenderFlow*> RenderFlowSequencedSet;
 // Base class for all rendering tree objects.
 class RenderObject : public CachedResourceClient {
     friend class RenderContainer;
+    friend class RenderSVGContainer;
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.
@@ -285,6 +286,7 @@ public:
     virtual RenderFlow* continuation() const;
 
 #if ENABLE(SVG)
+    virtual bool isSVGRoot() const { return false; }
     virtual bool isSVGContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
     virtual bool isSVGText() const { return false; }

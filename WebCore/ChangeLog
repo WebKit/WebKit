@@ -1,3 +1,93 @@
+2007-07-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=5940 (<svg> inside <body> incorrectly extends over top/bottom borders)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14145 (RenderSVGContainer should not inherit from RenderContainer)
+
+        Make RenderSVGContainer inherit from RenderObject directly, instead of RenderContainer.
+        Itdoes a lot of things that we don't need for SVG, and by removing this inheritance
+        we can finally fix the differences about SVG object positioning, as we don't need
+        parent translation (tx/ty). Fixes SVG text rendering within XHTML.
+
+        Fix requireLayer() function on RenderSVGRoot, as it can actually be a layer now.
+        This change is based on Rob's patch at 5940 - fixing z-order indexing.
+
+        Change RenderSVGRoot renderName() and update all layout tests, because of this change.
+        
+        Fix absoluteRects() function for RenderSVGInlineText & RenderSVGTSpan.
+        Checked extensively using WebInspector, to assure all rects are correctly displayed.
+
+        Testcases fixed: junk-data.svg, missing-xlink.svg hixie/013.xml (all regressions!)
+        (junk-data.svg & missing-xlink.svg previously relied on SVG text painting out of <svg> overflow rect.
+         Fix these testcases, as within this new RenderSVGContainer concept, that bug is now fixed, and breaks them)
+
+        Testcases added: custom/absolute-sized-svg-in-xhtml.xhtml, custom/inline-svg-in-xhtml.xml (Mozilla XTech demo)
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGRoot):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::addFocusRingRects):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::canHaveChildren):
+        (WebCore::RenderSVGContainer::addChild):
+        (WebCore::RenderSVGContainer::removeChild):
+        (WebCore::RenderSVGContainer::destroy):
+        (WebCore::RenderSVGContainer::destroyLeftoverChildren):
+        (WebCore::RenderSVGContainer::removeChildNode):
+        (WebCore::RenderSVGContainer::appendChildNode):
+        (WebCore::RenderSVGContainer::insertChildNode):
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::calcReplacedWidth):
+        (WebCore::RenderSVGContainer::calcReplacedHeight):
+        (WebCore::RenderSVGContainer::applyContentTransforms):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::absoluteTransform):
+        (WebCore::RenderSVGContainer::nodeAtPoint):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::firstChild):
+        (WebCore::RenderSVGContainer::lastChild):
+        (WebCore::RenderSVGContainer::width):
+        (WebCore::RenderSVGContainer::height):
+        (WebCore::RenderSVGContainer::moveChildNode):
+        (WebCore::RenderSVGContainer::calcPrefWidths):
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::RenderSVGHiddenContainer):
+        (WebCore::RenderSVGHiddenContainer::paint):
+        (WebCore::RenderSVGHiddenContainer::absoluteRects):
+        (WebCore::RenderSVGHiddenContainer::relativeBBox):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::RenderSVGInline):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::absoluteRects):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::applyContentTransforms):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::addFocusRingRects):
+        * rendering/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::isSVGRoot):
+        (WebCore::RenderSVGRoot::renderName):
+        * rendering/RenderSVGTSpan.cpp:
+        (WebCore::RenderSVGTSpan::RenderSVGTSpan):
+        (WebCore::RenderSVGTSpan::absoluteRects):
+        * rendering/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::absoluteRects):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::write):
+        * rendering/SVGRenderTreeAsText.h:
+
 2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.

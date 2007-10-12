@@ -36,6 +36,7 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
+#include "RenderSVGRoot.h"
 #include "RenderTreeAsText.h"
 #include "SVGCharacterLayoutInfo.h"
 #include "SVGInlineTextBox.h"
@@ -311,6 +312,15 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGContainer& containe
     return ts;
 }
 
+static TextStream& operator<<(TextStream& ts, const RenderSVGRoot& root)
+{
+    ts << " " << root.absoluteTransform().mapRect(root.relativeBBox());
+
+    writeStyle(ts, root);
+
+    return ts;
+}
+
 static TextStream& operator<<(TextStream& ts, const RenderSVGText& text)
 {
     SVGRootInlineBox* box = static_cast<SVGRootInlineBox*>(text.firstRootBox());
@@ -457,6 +467,23 @@ void write(TextStream& ts, const RenderSVGContainer& container, int indent)
     ts << container << endl;
 
     for (RenderObject* child = container.firstChild(); child; child = child->nextSibling())
+        write(ts, *child, indent + 1);
+}
+
+void write(TextStream& ts, const RenderSVGRoot& root, int indent)
+{
+    writeIndent(ts, indent);
+    ts << root.renderName();
+
+    if (root.element()) {
+        String tagName = getTagName(static_cast<SVGStyledElement*>(root.element()));
+        if (!tagName.isEmpty())
+            ts << " {" << tagName << "}";
+    }
+
+    ts << root << endl;
+
+    for (RenderObject* child = root.firstChild(); child; child = child->nextSibling())
         write(ts, *child, indent + 1);
 }
 

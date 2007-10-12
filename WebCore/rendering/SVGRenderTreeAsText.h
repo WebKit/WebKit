@@ -43,14 +43,17 @@ namespace WebCore {
     class Node;
     class RenderPath;
     class RenderSVGContainer;
-    class RenderSVGText;
     class RenderSVGInlineText;
+    class RenderSVGRoot;
+    class RenderSVGText; 
 
 // functions used by the main RenderTreeAsText code
 void write(TextStream&, const RenderPath&, int indent = 0);
 void write(TextStream&, const RenderSVGContainer&, int indent = 0);
-void write(TextStream&, const RenderSVGText&, int ident = 0);
 void write(TextStream&, const RenderSVGInlineText&, int ident = 0);
+void write(TextStream&, const RenderSVGRoot&, int indent = 0);
+void write(TextStream&, const RenderSVGText&, int ident = 0);
+
 void writeRenderResources(TextStream&, Node* parent);
 
 // helper operators defined used in various classes to dump the render tree.

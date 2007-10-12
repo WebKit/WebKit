@@ -191,7 +191,7 @@ static inline void fillAndStrokePath(const Path& path, GraphicsContext* context,
     }
 }
 
-void RenderPath::paint(PaintInfo& paintInfo, int parentX, int parentY)
+void RenderPath::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN || m_path.isEmpty())
         return;
@@ -225,7 +225,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.context->restore();
 }
 
-void RenderPath::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+void RenderPath::addFocusRingRects(GraphicsContext* graphicsContext, int, int) 
 {
     FloatRect boundingBox = relativeBBox(true);
     graphicsContext->addFocusRingRect(IntRect(boundingBox.x(), boundingBox.y(), boundingBox.width(), boundingBox.height()));

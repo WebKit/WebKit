@@ -25,26 +25,41 @@
 
 #if ENABLE(SVG)
 #include "RenderSVGTSpan.h"
-#include "GraphicsContext.h"
-#include "SVGRootInlineBox.h"
-#include "SVGInlineFlowBox.h"
+
+
 #include "AffineTransform.h"
-#include "SVGTextPositioningElement.h"
+#include "GraphicsContext.h"
+#include "SVGInlineTextBox.h"
+#include "SVGInlineFlowBox.h""
 #include "SVGLengthList.h"
+#include "SVGRootInlineBox.h"
+#include "SVGTextPositioningElement.h"
 
 namespace WebCore {
 
-RenderSVGTSpan::RenderSVGTSpan(Node* n) : RenderSVGInline(n)
+RenderSVGTSpan::RenderSVGTSpan(Node* n)
+    : RenderSVGInline(n)
 {
 }
 
 void RenderSVGTSpan::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
 {
-    InlineFlowBox* initFlow = firstLineBox();
-    FloatRect bounds(tx + initFlow->xPos(), ty + initFlow->yPos(), width(), height());
-    rects.append(enclosingIntRect(absoluteTransform().mapRect(bounds)));
-}
+    InlineRunBox* firstBox = firstLineBox();
 
+    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
+    RenderObject* object = rootBox ? rootBox->object() : 0;
+
+    if (!object)
+        return;
+
+    int xRef = object->xPos() + xPos();
+    int yRef = object->yPos() + yPos();
+ 
+    for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
+        FloatRect rect(xRef + curr->xPos(), yRef + curr->yPos(), curr->width(), curr->height());
+        rects.append(enclosingIntRect(absoluteTransform().mapRect(rect)));
+    }
+}
 
 }
 

@@ -9,6 +9,6 @@
         <feGaussianBlur stdDeviation="10"/>
     </filter>
 </defs>
-<image xlink:href="resources/green-checker.png" y="100" transform="translate(0,-100)" filter="url(#myfilter)" clip-path="url(#myclip)"/>
+<image width="503" height="410" xlink:href="resources/green-checker.png" y="50" transform="translate(0,-25)" filter="url(#myfilter)" clip-path="url(#myclip)"/>
 <text y="125">You should see a solid green block above (a blurred and clipped green checkerboard).</text>
 </svg>

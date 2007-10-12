@@ -81,9 +81,10 @@ void RenderSVGTextPath::setStretchMethod(bool value)
 
 void RenderSVGTextPath::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
-    InlineFlowBox* initFlow = firstLineBox();
-    FloatRect bounds(tx + initFlow->xPos(), ty + initFlow->yPos(), width(), height());
-    rects.append(enclosingIntRect(absoluteTransform().mapRect(bounds)));
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        FloatRect rect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height());
+        rects.append(enclosingIntRect(absoluteTransform().mapRect(rect)));
+    }
 }
 
 }

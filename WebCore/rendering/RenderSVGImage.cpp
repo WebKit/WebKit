@@ -129,20 +129,21 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN)
         return;
-    
+
     paintInfo.context->save();
     paintInfo.context->concatCTM(localTransform());
-    paintInfo.context->concatCTM(translationForAttributes());
-    
+
     if (paintInfo.phase == PaintPhaseForeground) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
         SVGResourceFilter* filter = 0;
 #else
         void* filter = 0;
 #endif
-        FloatRect boundingBox = FloatRect(0, 0, m_imageWidth, m_imageHeight);
-        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
+        AffineTransform imageCtm(translationForAttributes());
 
+        FloatRect boundingBox = FloatRect(imageCtm.e(), imageCtm.f(), m_imageWidth, m_imageHeight);
+        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
+ 
         float opacity = style()->opacity();
         if (opacity < 1.0f) {
             paintInfo.context->clip(enclosingIntRect(boundingBox));
@@ -160,6 +161,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         if (imageElt->preserveAspectRatio()->align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
             adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
 
+        paintInfo.context->concatCTM(imageCtm);
         paintInfo.context->drawImage(image(), destRect, srcRect);
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)

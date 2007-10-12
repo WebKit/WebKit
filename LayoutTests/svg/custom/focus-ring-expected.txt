@@ -1,27 +1,28 @@
 KCanvasResource {id="clip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00]]]}
-layer at (0,0) size 800x600
+layer at (0,0) size 800x1000
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (-5,10) size 800.61x996.57
-      RenderPath {circle} at (15,10) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M115.00,60.00L114.90,63.14L114.61,66.27L114.11,69.37L113.43,72.43L112.55,75.45L111.49,78.41L110.24,81.29L108.82,84.09L107.22,86.79L105.45,89.39L103.53,91.87L101.45,94.23L99.23,96.45L96.87,98.53L94.39,100.45L91.79,102.22L89.09,103.82L86.29,105.24L83.41,106.49L80.45,107.55L77.43,108.43L74.37,109.11L71.27,109.61L68.14,109.90L65.00,110.00L61.86,109.90L58.73,109.61L55.63,109.11L52.57,108.43L49.55,107.55L46.59,106.49L43.71,105.24L40.91,103.82L38.21,102.22L35.61,100.45L33.13,98.53L30.77,96.45L28.55,94.23L26.47,91.87L24.55,89.39L22.78,86.79L21.18,84.09L19.76,81.29L18.51,78.41L17.45,75.45L16.57,72.43L15.89,69.37L15.39,66.27L15.10,63.14L15.00,60.00L15.10,56.86L15.39,53.73L15.89,50.63L16.57,47.57L17.45,44.55L18.51,41.59L19.76,38.71L21.18,35.91L22.78,33.21L24.55,30.61L26.47,28.13L28.55,25.77L30.77,23.55L33.13,21.47L35.61,19.55L38.21,17.78L40.91,16.18L43.71,14.76L46.59,13.51L49.55,12.45L52.57,11.57L55.63,10.89L58.73,10.39L61.86,10.10L65.00,10.00L68.14,10.10L71.27,10.39L74.37,10.89L77.43,11.57L80.45,12.45L83.41,13.51L86.29,14.76L89.09,16.18L91.79,17.78L94.39,19.55L96.87,21.47L99.23,23.55L101.45,25.77L103.53,28.13L105.45,30.61L107.22,33.21L108.82,35.91L110.24,38.71L111.49,41.59L112.55,44.55L113.43,47.57L114.11,50.63L114.61,53.73L114.90,56.86"]
-      RenderPath {path} at (140,10) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M140.00,10.00L190.00,110.00L240.00,60.00L220.00,60.00L200.00,30.00"]
-      RenderSVGContainer {g} at (270,10) size 100x100
-        RenderPath {rect} at (270,10) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M270.00,10.00L370.00,10.00L370.00,110.00L270.00,110.00"]
-      RenderSVGContainer {g} at (10,140) size 136.60x136.60 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(60.00,140.00)}]
-        RenderPath {rect} at (10,140) size 136.60x136.60 [fill={[type=SOLID] [color=#FFA500]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
-      RenderPath {rect} at (150,140) size 136.60x136.60 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(200.00,140.00)}] [fill={[type=SOLID] [color=#FFA500]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
-      RenderSVGContainer {g} at (310,140) size 136.60x136.60
-        RenderPath {rect} at (310,140) size 136.60x136.60 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(360.00,140.00)}] [fill={[type=SOLID] [color=#FFA500]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
-      RenderSVGText {text} at (10,320) size 76x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-14) size 76x18
-          chunk 1 text run 1 at (10.00,320.00) startOffset 0 endOffset 12 width 76.00: "focused text"
+layer at (0,0) size 800x1000
+  RenderSVGRoot {svg} at (-5,10) size 823.99x1010.07
+    RenderPath {circle} at (15,10) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M115.00,60.00L114.90,63.14L114.61,66.27L114.11,69.37L113.43,72.43L112.55,75.45L111.49,78.41L110.24,81.29L108.82,84.09L107.22,86.79L105.45,89.39L103.53,91.87L101.45,94.23L99.23,96.45L96.87,98.53L94.39,100.45L91.79,102.22L89.09,103.82L86.29,105.24L83.41,106.49L80.45,107.55L77.43,108.43L74.37,109.11L71.27,109.61L68.14,109.90L65.00,110.00L61.86,109.90L58.73,109.61L55.63,109.11L52.57,108.43L49.55,107.55L46.59,106.49L43.71,105.24L40.91,103.82L38.21,102.22L35.61,100.45L33.13,98.53L30.77,96.45L28.55,94.23L26.47,91.87L24.55,89.39L22.78,86.79L21.18,84.09L19.76,81.29L18.51,78.41L17.45,75.45L16.57,72.43L15.89,69.37L15.39,66.27L15.10,63.14L15.00,60.00L15.10,56.86L15.39,53.73L15.89,50.63L16.57,47.57L17.45,44.55L18.51,41.59L19.76,38.71L21.18,35.91L22.78,33.21L24.55,30.61L26.47,28.13L28.55,25.77L30.77,23.55L33.13,21.47L35.61,19.55L38.21,17.78L40.91,16.18L43.71,14.76L46.59,13.51L49.55,12.45L52.57,11.57L55.63,10.89L58.73,10.39L61.86,10.10L65.00,10.00L68.14,10.10L71.27,10.39L74.37,10.89L77.43,11.57L80.45,12.45L83.41,13.51L86.29,14.76L89.09,16.18L91.79,17.78L94.39,19.55L96.87,21.47L99.23,23.55L101.45,25.77L103.53,28.13L105.45,30.61L107.22,33.21L108.82,35.91L110.24,38.71L111.49,41.59L112.55,44.55L113.43,47.57L114.11,50.63L114.61,53.73L114.90,56.86"]
+    RenderPath {path} at (140,10) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M140.00,10.00L190.00,110.00L240.00,60.00L220.00,60.00L200.00,30.00"]
+    RenderSVGContainer {g} at (270,10) size 100x100
+      RenderPath {rect} at (270,10) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M270.00,10.00L370.00,10.00L370.00,110.00L270.00,110.00"]
+    RenderSVGContainer {g} at (10,140) size 136.60x136.60 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(60.00,140.00)}]
+      RenderPath {rect} at (10,140) size 136.60x136.60 [fill={[type=SOLID] [color=#FFA500]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+    RenderPath {rect} at (150,140) size 136.60x136.60 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(200.00,140.00)}] [fill={[type=SOLID] [color=#FFA500]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+    RenderSVGContainer {g} at (310,140) size 136.60x136.60
+      RenderPath {rect} at (310,140) size 136.60x136.60 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(360.00,140.00)}] [fill={[type=SOLID] [color=#FFA500]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+    RenderSVGText {text} at (10,320) size 76x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 76x18
+        chunk 1 text run 1 at (10.00,320.00) startOffset 0 endOffset 12 width 76.00: "focused text"
+    RenderSVGText {text} at (0,0) size 76x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 76x18
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 76.00: "focused text"
+    RenderSVGContainer {g} at (198,307.88) size 74.82x53.59
       RenderSVGText {text} at (0,0) size 76x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 76x18
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 76.00: "focused text"
-      RenderSVGContainer {g} at (198,307.88) size 74.82x53.59
-        RenderSVGText {text} at (0,0) size 76x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-14) size 76x18
-            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 76.00: "focused text"
-      RenderImage {image} at (0,0) size 503x410
-      RenderImage {image} at (0,0) size 503x410
-      RenderSVGContainer {g} at (155,400) size 640.61x606.57 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(360.00,400.00)}]
-        RenderImage {image} at (0,0) size 503x410
+    RenderImage {image} at (0,0) size 530x410
+    RenderImage {image} at (0,0) size 530x410
+    RenderSVGContainer {g} at (155,400) size 663.99x620.07 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(360.00,400.00)}]
+      RenderImage {image} at (0,0) size 530x410

@@ -60,12 +60,6 @@ void RenderSVGRoot::setLocalTransform(const AffineTransform& matrix)
     m_matrix = matrix;
 }
 
-bool RenderSVGRoot::requiresLayer()
-{
-    // Only allow an <svg> element to generate a layer when it's positioned in a non-SVG context
-    return false;
-}
-
 short RenderSVGRoot::lineHeight(bool b, bool isRootLineBox) const
 {
     return height() + marginTop() + marginBottom();
@@ -119,7 +113,7 @@ void RenderSVGRoot::layout()
     setNeedsLayout(false);
 }
 
-void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int& parentX, int& parentY)
+void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int parentX, int parentY)
 {
     // Translate from parent offsets (html renderers) to a relative transform (svg renderers)
     IntPoint origin;
@@ -127,22 +121,25 @@ void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int& parentX, i
     origin.move(m_x, m_y);
     origin.move(borderLeft(), borderTop());
     origin.move(paddingLeft(), paddingTop());
+
     if (origin.x() || origin.y()) {
         paintInfo.context->concatCTM(AffineTransform().translate(origin.x(), origin.y()));
         paintInfo.rect.move(-origin.x(), -origin.y());
     }
-    parentX = parentY = 0;
+
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     paintInfo.context->concatCTM(AffineTransform().scale(svg->currentScale()));
-    
+
     if (!viewport().isEmpty()) {
         if (style()->overflowX() != OVISIBLE)
             paintInfo.context->clip(enclosingIntRect(viewport())); // FIXME: Eventually we'll want float-precision clipping
         
         paintInfo.context->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
     }
+
     if (!localTransform().isIdentity())
         paintInfo.context->concatCTM(localTransform());
+
     paintInfo.context->concatCTM(AffineTransform().translate(svg->currentTranslate().x(), svg->currentTranslate().y()));
 }
 
@@ -150,6 +147,11 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
     if (paintInfo.context->paintingDisabled())
         return;
+
+    // Be sure that our viewport size, didn't depend on ourselves!
+    // If that is true, we have a null viewport() here, and need to recalculate.
+    if (viewport().isEmpty())
+        calcViewport();
 
     // A value of zero disables rendering of the element. 
     if (viewport().width() <= 0. || viewport().height() <= 0.)
@@ -169,10 +171,11 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 #endif
             return;
     }
-    
-    paintInfo.context->save();
-    
-    applyContentTransforms(paintInfo, parentX, parentY);
+
+    RenderObject::PaintInfo childPaintInfo(paintInfo);
+    childPaintInfo.context->save();
+ 
+    applyContentTransforms(childPaintInfo, parentX, parentY);
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGResourceFilter* filter = 0;
@@ -181,34 +184,34 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 #endif
     FloatRect boundingBox = relativeBBox(true);
     float opacity = style()->opacity();
-    if (paintInfo.phase == PaintPhaseForeground) {
-        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
+    if (childPaintInfo.phase == PaintPhaseForeground) {
+        prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter);
         
         if (opacity < 1.0f) {
-            paintInfo.context->clip(enclosingIntRect(boundingBox));
-            paintInfo.context->beginTransparencyLayer(opacity);
+            childPaintInfo.context->clip(enclosingIntRect(boundingBox));
+            childPaintInfo.context->beginTransparencyLayer(opacity);
         }
     }
 
     if (!viewBox().isEmpty())
-        paintInfo.context->concatCTM(viewportTransform());
+        childPaintInfo.context->concatCTM(viewportTransform());
 
-    RenderContainer::paint(paintInfo, 0, 0);
+    RenderContainer::paint(childPaintInfo, 0, 0);
 
-    if (paintInfo.phase == PaintPhaseForeground) {
+    if (childPaintInfo.phase == PaintPhaseForeground) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
         if (filter)
-            filter->applyFilter(paintInfo.context, boundingBox);
+            filter->applyFilter(childPaintInfo.context, boundingBox);
 #endif
 
         if (opacity < 1.0f)
-            paintInfo.context->endTransparencyLayer();
+            childPaintInfo.context->endTransparencyLayer();
     }
 
-    paintInfo.context->restore();
+    childPaintInfo.context->restore();
     
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.context, m_absoluteBounds.x(), m_absoluteBounds.y(), m_absoluteBounds.width(), m_absoluteBounds.height(), style());
+    if ((childPaintInfo.phase == PaintPhaseOutline || childPaintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
+        paintOutline(childPaintInfo.context, m_absoluteBounds.x(), m_absoluteBounds.y(), m_absoluteBounds.width(), m_absoluteBounds.height(), style());
 }
 
 FloatRect RenderSVGRoot::viewport() const
@@ -290,7 +293,7 @@ IntRect RenderSVGRoot::absoluteClippedOverflowRect()
     return repaintRect;
 }
 
-void RenderSVGRoot::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+void RenderSVGRoot::addFocusRingRects(GraphicsContext* graphicsContext, int, int)
 {
     graphicsContext->addFocusRingRect(m_absoluteBounds);
 }

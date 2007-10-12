@@ -19,10 +19,10 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 
 #if ENABLE(SVG)
-
 #include "RenderSVGHiddenContainer.h"
 
 #include "RenderPath.h"
@@ -31,7 +31,7 @@
 namespace WebCore {
 
 RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGStyledElement* element)
-    : RenderContainer(element)
+    : RenderSVGContainer(element)
 {
 }
 
@@ -73,7 +73,7 @@ void RenderSVGHiddenContainer::layout()
     setNeedsLayout(false);    
 }
 
-void RenderSVGHiddenContainer::paint(PaintInfo&, int parentX, int parentY)
+void RenderSVGHiddenContainer::paint(PaintInfo&, int, int)
 {
     // This subtree does not paint.
 }
@@ -83,7 +83,7 @@ IntRect RenderSVGHiddenContainer::absoluteClippedOverflowRect()
     return IntRect();
 }
 
-void RenderSVGHiddenContainer::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
+void RenderSVGHiddenContainer::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 {
     // This subtree does not take up space or paint
 }
@@ -101,6 +101,11 @@ AffineTransform RenderSVGHiddenContainer::localTransform() const
 bool RenderSVGHiddenContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     return false;
+}
+
+FloatRect RenderSVGHiddenContainer::relativeBBox(bool includeStroke) const
+{
+    return FloatRect();
 }
 
 }

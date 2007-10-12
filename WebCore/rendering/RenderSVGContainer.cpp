@@ -26,6 +26,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGContainer.h"
 
+#include "AXObjectCache.h"
 #include "GraphicsContext.h"
 #include "RenderView.h"
 #include "SVGLength.h"
@@ -41,7 +42,11 @@
 namespace WebCore {
 
 RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
-    : RenderContainer(node)
+    : RenderObject(node)
+    , m_firstChild(0)
+    , m_lastChild(0)
+    , m_width(0)
+    , m_height(0)
     , m_drawsContents(true)
     , m_slice(false)
 {
@@ -50,6 +55,143 @@ RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
 
 RenderSVGContainer::~RenderSVGContainer()
 {
+}
+
+bool RenderSVGContainer::canHaveChildren() const
+{
+    return true;
+}
+
+void RenderSVGContainer::addChild(RenderObject* newChild, RenderObject* beforeChild)
+{
+    insertChildNode(newChild, beforeChild);
+}
+
+void RenderSVGContainer::removeChild(RenderObject* oldChild)
+{
+    // We do this here instead of in removeChildNode, since the only extremely low-level uses of remove/appendChildNode
+    // cannot affect the positioned object list, and the floating object list is irrelevant (since the list gets cleared on
+    // layout anyway).
+    oldChild->removeFromObjectLists();
+
+    removeChildNode(oldChild);
+}
+
+void RenderSVGContainer::destroy()
+{
+    destroyLeftoverChildren();
+    RenderObject::destroy();
+}
+
+void RenderSVGContainer::destroyLeftoverChildren()
+{
+    while (m_firstChild) {
+        // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
+        if (m_firstChild->element())
+            m_firstChild->element()->setRenderer(0);
+
+        m_firstChild->destroy();
+    }
+}
+
+RenderObject* RenderSVGContainer::removeChildNode(RenderObject* oldChild, bool fullRemove)
+{
+    ASSERT(oldChild->parent() == this);
+
+    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
+    // that a positioned child got yanked).  We also repaint, so that the area exposed when the child
+    // disappears gets repainted properly.
+    if (!documentBeingDestroyed() && fullRemove) {
+        oldChild->setNeedsLayoutAndPrefWidthsRecalc();
+        oldChild->repaint();
+    }
+
+    // If we have a line box wrapper, delete it.
+    oldChild->deleteLineBoxWrapper();
+
+    if (!documentBeingDestroyed() && fullRemove) {
+        // If oldChild is the start or end of the selection, then clear the selection to
+        // avoid problems of invalid pointers.
+        // FIXME: The SelectionController should be responsible for this when it
+        // is notified of DOM mutations.
+        if (oldChild->isSelectionBorder())
+            view()->clearSelection();
+    }
+
+    // remove the child
+    if (oldChild->previousSibling())
+        oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
+    if (oldChild->nextSibling())
+        oldChild->nextSibling()->setPreviousSibling(oldChild->previousSibling());
+
+    if (m_firstChild == oldChild)
+        m_firstChild = oldChild->nextSibling();
+    if (m_lastChild == oldChild)
+        m_lastChild = oldChild->previousSibling();
+
+    oldChild->setPreviousSibling(0);
+    oldChild->setNextSibling(0);
+    oldChild->setParent(0);
+
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->childrenChanged(this);
+
+    return oldChild;
+}
+
+void RenderSVGContainer::appendChildNode(RenderObject* newChild, bool)
+{
+    ASSERT(!newChild->parent());
+    ASSERT(newChild->element()->isSVGElement());
+
+    newChild->setParent(this);
+    RenderObject* lChild = m_lastChild;
+
+    if (lChild) {
+        newChild->setPreviousSibling(lChild);
+        lChild->setNextSibling(newChild);
+    } else
+        m_firstChild = newChild;
+
+    m_lastChild = newChild;
+
+    newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
+    if (!normalChildNeedsLayout())
+        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
+
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->childrenChanged(this);
+}
+
+void RenderSVGContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild, bool)
+{
+    if (!beforeChild) {
+        appendChildNode(child);
+        return;
+    }
+
+    ASSERT(!child->parent());
+    ASSERT(beforeChild->parent() == this);
+    ASSERT(child->element()->isSVGElement());
+
+    if (beforeChild == m_firstChild)
+        m_firstChild = child;
+
+    RenderObject* prev = beforeChild->previousSibling();
+    child->setNextSibling(beforeChild);
+    beforeChild->setPreviousSibling(child);
+    if (prev)
+        prev->setNextSibling(child);
+    child->setPreviousSibling(prev);
+
+    child->setParent(this);
+
+    child->setNeedsLayoutAndPrefWidthsRecalc();
+    if (!normalChildNeedsLayout())
+        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
+
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->childrenChanged(this);
 }
 
 bool RenderSVGContainer::drawsContents() const
@@ -116,9 +258,9 @@ void RenderSVGContainer::layout()
         child = child->nextSibling();
     }
 
-    calcWidth();
-    calcHeight();
-
+    // Calculate width & height
+    m_width = calcReplacedWidth();
+    m_height = calcReplacedHeight();
     m_absoluteBounds = absoluteClippedOverflowRect();
 
     if (selfNeedsLayout() && checkForRepaint)
@@ -128,21 +270,49 @@ void RenderSVGContainer::layout()
     setNeedsLayout(false);
 }
 
-void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo, int& parentX, int& parentY)
+int RenderSVGContainer::calcReplacedWidth() const
+{
+    switch (style()->width().type()) {
+    case Fixed:
+        return max(0, style()->width().value());
+    case Percent:
+    {
+        const int cw = containingBlockWidth();
+        return cw > 0 ? max(0, style()->width().calcMinValue(cw)) : 0;
+    }
+    default:
+        return 0;
+    }
+}
+
+int RenderSVGContainer::calcReplacedHeight() const
+{
+    switch (style()->height().type()) {
+    case Fixed:
+        return max(0, style()->height().value());
+    case Percent:
+    {
+        RenderBlock* cb = containingBlock();
+        return style()->height().calcValue(cb->availableHeight());
+    }
+    default:
+        return 0;
+    }
+}
+
+void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo)
 {
     // Only the root <svg> element should need any translations using the HTML/CSS system
     // parentX, parentY are also non-zero for first-level kids of these
     // CSS-transformed <svg> root-elements (due to RenderBox::paint) for any other element
     // they should be 0.   m_x, m_y should always be 0 for non-root svg containers
-    ASSERT(m_x == 0);
-    ASSERT(m_y == 0);
-    
     if (!viewport().isEmpty()) {
         if (style()->overflowX() != OVISIBLE)
             paintInfo.context->clip(enclosingIntRect(viewport())); // FIXME: Eventually we'll want float-precision clipping
         
         paintInfo.context->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
     }
+
     if (!localTransform().isIdentity())
         paintInfo.context->concatCTM(localTransform());
 }
@@ -168,8 +338,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     }
     
     paintInfo.context->save();
-    
-    applyContentTransforms(paintInfo, parentX, parentY);
+    applyContentTransforms(paintInfo);
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGResourceFilter* filter = 0;
@@ -190,7 +359,11 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (!viewBox().isEmpty())
         paintInfo.context->concatCTM(viewportTransform());
 
-    RenderContainer::paint(paintInfo, 0, 0);
+    // default implementation. Just pass paint through to the children
+    PaintInfo childInfo(paintInfo);
+    childInfo.paintingRoot = paintingRootForChildren(paintInfo);
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
+        child->paint(childInfo, 0, 0);
 
     if (paintInfo.phase == PaintPhaseForeground) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
@@ -307,7 +480,7 @@ void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 
 AffineTransform RenderSVGContainer::absoluteTransform() const
 {
-    AffineTransform ctm = RenderContainer::absoluteTransform();
+    AffineTransform ctm = RenderObject::absoluteTransform();
     ctm.translate(viewport().x(), viewport().y());
     return viewportTransform() * ctm;
 }
@@ -410,13 +583,10 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
     if (!viewport().isEmpty()
         && style()->overflowX() == OHIDDEN
         && style()->overflowY() == OHIDDEN) {
-        int tx = m_x - _tx;
-        int ty = m_y - _ty;
-
         // Check if we need to do anything at all.
         IntRect overflowBox = overflowRect(false);
-        overflowBox.move(tx, ty);
-        AffineTransform ctm = RenderContainer::absoluteTransform();
+        overflowBox.move(_tx, _ty);
+        AffineTransform ctm = RenderObject::absoluteTransform();
         ctm.translate(viewport().x(), viewport().y());
         double localX, localY;
         ctm.inverse().map(_x - _tx, _y - _ty, &localX, &localY);
@@ -424,13 +594,23 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
             return false;
     }
 
+    int sx = 0;
+    int sy = 0;
+
+    // Respect parent translation offset for non-outermost <svg> elements.
+    // Outermost <svg> element is handled by RenderSVGRoot.
+    if (element()->hasTagName(SVGNames::svgTag)) {
+        sx = _tx;
+        sy = _ty;
+    }
+
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction)) {
+        if (child->nodeAtPoint(request, result, _x - sx, _y - sy, _tx, _ty, hitTestAction)) {
             updateHitTestResult(result, IntPoint(_x - _tx, _y - _ty));
             return true;
         }
     }
-    
+
     // Spec: Only graphical elements can be targeted by the mouse, period.
     // 16.4: "If there are no graphics elements whose relevant graphics content is under the pointer (i.e., there is no target element), the event is not dispatched."
     return false;

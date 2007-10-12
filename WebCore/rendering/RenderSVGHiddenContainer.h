@@ -25,7 +25,7 @@
 
 #if ENABLE(SVG)
 
-#include "RenderContainer.h"
+#include "RenderSVGContainer.h"
 
 namespace WebCore {
     
@@ -33,7 +33,7 @@ namespace WebCore {
     
     // This class is for containers which are never drawn, but do need to support style
     // <defs>, <linearGradient>, <radialGradient> are all good examples
-    class RenderSVGHiddenContainer : public RenderContainer {
+    class RenderSVGHiddenContainer : public RenderSVGContainer {
     public:
         RenderSVGHiddenContainer(SVGStyledElement*);
         virtual ~RenderSVGHiddenContainer();
@@ -54,12 +54,11 @@ namespace WebCore {
         
         virtual AffineTransform absoluteTransform() const;
         virtual AffineTransform localTransform() const;
-        
+
+        virtual FloatRect relativeBBox(bool includeStroke = true) const;
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-        
     };
 }
-
 
 #endif // ENABLE(SVG)
 #endif // RenderSVGHiddenContainer_h
