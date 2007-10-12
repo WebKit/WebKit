@@ -62,7 +62,7 @@ static Font makeFont(const WebFontDescription& description)
     f.setIsAbsoluteSize(true);
 
     Font font(f, 0, 0);
-    font.update();
+    font.update(0);
 
     return font;
 }

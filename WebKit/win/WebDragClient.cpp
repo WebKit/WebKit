@@ -166,7 +166,7 @@ static Font dragLabelFont(int size, bool bold)
     desc.setSpecifiedSize((float)size);
     desc.setComputedSize((float)size);
     Font result = Font(desc, 0, 0); 
-    result.update();
+    result.update(0);
     return result;
 }
 
