@@ -1,0 +1,62 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-20,12) size 182x316
+      RenderSVGText {text} at (10,20) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 12x18
+          text run at (0,-14) width 12: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 41x18
+          RenderSVGInlineText {#text} at (30,-14) size 11x18
+            text run at (30,-14) width 11: "B"
+        RenderSVGInlineText {#text} at (60,-14) size 11x18
+          text run at (60,-14) width 11: "C"
+      RenderSVGText {text} at (0,40) size 800x18
+        RenderSVGTSpan {tspan} at (0,0) size 41x18
+          RenderSVGInlineText {#text} at (10,-14) size 41x18
+            text run at (10,-14) width 41: "AB"
+        RenderSVGInlineText {#text} at (70,-14) size 11x18
+          text run at (70,-14) width 11: "C"
+      RenderSVGContainer {g} at (20,92) size 142x76 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-10.00,0.00)}]
+        RenderSVGText {text} at (10,60) size 800x18
+          RenderSVGInlineText {#text} at (10,-14) size 12x18
+            text run at (10,-14) width 12: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 41x18
+            RenderSVGInlineText {#text} at (40,-14) size 11x18
+              text run at (40,-14) width 11: "B"
+          RenderSVGInlineText {#text} at (70,-14) size 11x18
+            text run at (70,-14) width 11: "C"
+        RenderSVGText {text} at (0,80) size 800x18
+          RenderSVGTSpan {tspan} at (0,0) size 41x18
+            RenderSVGInlineText {#text} at (20,-14) size 41x18
+              text run at (20,-14) width 41: "AB"
+          RenderSVGInlineText {#text} at (80,-14) size 11x18
+            text run at (80,-14) width 11: "C"
+      RenderSVGContainer {g} at (20,172) size 142x76 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-10.00,0.00)}]
+        RenderSVGText {text} at (10,100) size 800x18
+          RenderSVGInlineText {#text} at (10,-14) size 12x18
+            text run at (10,-14) width 12: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 41x18
+            RenderSVGInlineText {#text} at (40,-14) size 11x18
+              text run at (40,-14) width 11: "B"
+          RenderSVGInlineText {#text} at (70,-14) size 11x18
+            text run at (70,-14) width 11: "C"
+        RenderSVGText {text} at (0,120) size 800x18
+          RenderSVGTSpan {tspan} at (0,0) size 41x18
+            RenderSVGInlineText {#text} at (20,-14) size 41x18
+              text run at (20,-14) width 41: "AB"
+          RenderSVGInlineText {#text} at (80,-14) size 11x18
+            text run at (80,-14) width 11: "C"
+      RenderSVGContainer {g} at (-20,252) size 182x76 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-10.00,0.00)}]
+        RenderSVGText {text} at (10,140) size 800x18
+          RenderSVGInlineText {#text} at (10,-14) size 12x18
+            text run at (10,-14) width 12: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 41x18
+            RenderSVGInlineText {#text} at (40,-14) size 11x18
+              text run at (40,-14) width 11: "B"
+          RenderSVGInlineText {#text} at (70,-14) size 11x18
+            text run at (70,-14) width 11: "C"
+        RenderSVGText {text} at (0,160) size 800x18
+          RenderSVGTSpan {tspan} at (0,0) size 31x18
+            RenderSVGInlineText {#text} at (20,-14) size 31x18
+              text run at (20,-14) width 31: "AB"
+          RenderSVGInlineText {#text} at (0,-14) size 11x18
+            text run at (0,-14) width 11: "C"

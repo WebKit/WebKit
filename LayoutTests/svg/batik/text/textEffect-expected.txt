@@ -1,0 +1,46 @@
+KRenderingPaintServer {id="linearGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFD700), (0.50,#FFA500), (1.00,#DC143C)]] [start=(0,0)] [end=(1,0)]}
+KRenderingPaintServer {id="radialGradient" [type=RADIAL-GRADIENT] [stops=[(0.00,#FFD700), (0.50,#FFA500), (1.00,#DC143C)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (70,16) size 379x387
+      RenderSVGContainer {g} at (70,16) size 379x387
+        RenderSVGText {text} at (136,30) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 177x17
+            text run at (0,-14) width 177: "Gradient and filter on text"
+        RenderSVGText {text} at (106,50) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 238x17
+            text run at (0,-14) width 238: "(Using System font and SVG font)"
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+            RenderSVGGradientStop {stop} at (0,0) size 0x0
+            RenderSVGGradientStop {stop} at (0,0) size 0x0
+            RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+            RenderSVGGradientStop {stop} at (0,0) size 0x0
+            RenderSVGGradientStop {stop} at (0,0) size 0x0
+            RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGText {text} at (72,160) size 800x0
+          RenderSVGInlineText {#text} at (0,-48) size 152x59
+            text run at (0,-48) width 152: "BATIK"
+        RenderSVGText {text} at (286,160) size 800x0
+          RenderSVGInlineText {#text} at (0,-48) size 161x61
+            text run at (0,-48) width 161: "BATIK"
+        RenderSVGText {text} at (72,260) size 800x0 [color=#FFFFFF]
+          RenderSVGInlineText {#text} at (0,-48) size 152x59
+            text run at (0,-48) width 152: "BATIK"
+        RenderSVGText {text} at (286,260) size 800x0 [color=#FFFFFF]
+          RenderSVGInlineText {#text} at (0,-48) size 161x61
+            text run at (0,-48) width 161: "BATIK"
+        RenderSVGText {text} at (72,360) size 800x0 [color=#FF0000]
+          RenderSVGInlineText {#text} at (0,-48) size 152x59
+            text run at (0,-48) width 152: "BATIK"
+        RenderSVGText {text} at (286,360) size 800x0 [color=#FF0000]
+          RenderSVGInlineText {#text} at (0,-48) size 161x61
+            text run at (0,-48) width 161: "BATIK"
+        RenderSVGText {text} at (87,400) size 800x0
+          RenderSVGInlineText {#text} at (0,-11) size 65x14
+            text run at (0,-11) width 65: "(System font)"
+        RenderSVGText {text} at (302,400) size 800x0
+          RenderSVGInlineText {#text} at (0,-11) size 55x14
+            text run at (0,-11) width 55: "(SVG font)"
+      RenderSVGContainer {use} at (0,0) size 0x0

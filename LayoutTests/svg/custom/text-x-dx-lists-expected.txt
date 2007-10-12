@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (20,12) size 142x356
+      RenderSVGText {text} at (10,20) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 71x18
+          text run at (0,-14) width 71: "ABC"
+      RenderSVGText {text} at (10,40) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 71x18
+          text run at (0,-14) width 71: "ABC"
+      RenderSVGText {text} at (10,60) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 12x18
+          text run at (0,-14) width 12: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 51x18
+          RenderSVGInlineText {#text} at (40,-14) size 11x18
+            text run at (40,-14) width 11: "B"
+        RenderSVGInlineText {#text} at (60,-14) size 11x18
+          text run at (60,-14) width 11: "C"
+      RenderSVGText {text} at (10,80) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 12x18
+          text run at (0,-14) width 12: "A"
+        RenderSVGTSpan {tspan} at (0,0) size 51x18
+          RenderSVGInlineText {#text} at (40,-14) size 11x18
+            text run at (40,-14) width 11: "B"
+        RenderSVGInlineText {#text} at (60,-14) size 11x18
+          text run at (60,-14) width 11: "C"
+      RenderSVGContainer {g} at (20,212) size 142x156 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-5.00,0.00)}]
+        RenderSVGText {text} at (10,120) size 800x18
+          RenderSVGInlineText {#text} at (5,-14) size 71x18
+            text run at (5,-14) width 71: "ABC"
+        RenderSVGText {text} at (10,140) size 800x18
+          RenderSVGInlineText {#text} at (5,-14) size 12x18
+            text run at (5,-14) width 12: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 51x18
+            RenderSVGInlineText {#text} at (45,-14) size 11x18
+              text run at (45,-14) width 11: "B"
+          RenderSVGInlineText {#text} at (65,-14) size 11x18
+            text run at (65,-14) width 11: "C"
+        RenderSVGText {text} at (10,160) size 800x18
+          RenderSVGInlineText {#text} at (5,-14) size 71x18
+            text run at (5,-14) width 71: "ABC"
+        RenderSVGText {text} at (10,180) size 800x18
+          RenderSVGInlineText {#text} at (5,-14) size 12x18
+            text run at (5,-14) width 12: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 51x18
+            RenderSVGInlineText {#text} at (45,-14) size 11x18
+              text run at (45,-14) width 11: "B"
+          RenderSVGInlineText {#text} at (65,-14) size 11x18
+            text run at (65,-14) width 11: "C"

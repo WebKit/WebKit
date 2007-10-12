@@ -1,0 +1,149 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (45,36) size 349x449.20
+      RenderSVGContainer {g} at (45,36) size 349x449.20
+        RenderSVGText {text} at (168,50) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 148x17
+            text run at (0,-14) width 148: "Text Element Features"
+        RenderSVGContainer {g} at (45,72) size 349x413.20
+          RenderSVGText {text} at (45,100) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 107x17
+              text run at (0,-13) width 107: "Text can change "
+            RenderSVGTSpan {tspan} at (0,0) size 54x36
+              RenderSVGInlineText {#text} at (107,-28) size 54x36
+                text run at (107,-28) width 54: "size,"
+            RenderSVGInlineText {#text} at (161,-13) size 4x17
+              text run at (161,-13) width 4: " "
+            RenderSVGTSpan {tspan} at (0,0) size 74x23
+              RenderSVGInlineText {#text} at (165,-18) size 74x23
+                text run at (165,-18) width 74: "typeface,"
+            RenderSVGInlineText {#text} at (239,-13) size 4x17
+              text run at (239,-13) width 4: " "
+            RenderSVGTSpan {tspan} at (0,0) size 36x17 [color=#008000]
+              RenderSVGInlineText {#text} at (243,-13) size 36x17
+                text run at (243,-13) width 36: "color,"
+            RenderSVGInlineText {#text} at (279,-13) size 21x17
+              text run at (279,-13) width 4: " "
+              text run at (283,-13) width 17: "or "
+            RenderSVGTSpan {tspan} at (0,0) size 28x17 [color=#FF0000]
+              RenderSVGInlineText {#text} at (300,-13) size 28x17
+                text run at (300,-13) width 28: "style"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+          RenderSVGText {text} at (45,125) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 175x17
+              text run at (0,-13) width 175: "within a single text element."
+          RenderSVGText {text} at (45,175) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 151x17
+              text run at (0,-13) width 151: "Styling features include "
+            RenderSVGTSpan {tspan} at (0,0) size 47x17
+              RenderSVGInlineText {#text} at (151,-13) size 47x17
+                text run at (151,-13) width 47: "weight,"
+            RenderSVGInlineText {#text} at (198,-13) size 4x17
+              text run at (198,-13) width 4: " "
+            RenderSVGTSpan {tspan} at (0,0) size 51x17
+              RenderSVGInlineText {#text} at (202,-13) size 51x17
+                text run at (202,-13) width 51: "posture,"
+            RenderSVGInlineText {#text} at (253,-13) size 31x17
+              text run at (253,-13) width 31: " and "
+            RenderSVGTSpan {tspan} at (0,0) size 57x17
+              RenderSVGInlineText {#text} at (284,-13) size 57x17
+                text run at (284,-13) width 57: "typeface."
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+          RenderPath {rect} at (45,200) size 202.50x50 [fill={[type=SOLID] [color=#1E90FF]}] [data="M45.00,200.00L247.50,200.00L247.50,250.00L45.00,250.00"]
+          RenderSVGText {text} at (45,225) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 171x17
+              text run at (0,-13) width 171: "Graphics attributes such as "
+            RenderSVGTSpan {tspan} at (0,0) size 46x17 [color=#FF0000]
+              RenderSVGInlineText {#text} at (171,-13) size 46x17
+                text run at (171,-13) width 46: "opacity"
+            RenderSVGInlineText {#text} at (217,-13) size 99x17
+              text run at (217,-13) width 99: " can be applied."
+          RenderSVGText {text} at (45,275) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 185x17
+              text run at (0,-13) width 185: "\"text decoration\" can include "
+            RenderSVGTSpan {tspan} at (0,0) size 63x17
+              RenderSVGInlineText {#text} at (185,-13) size 63x17
+                text run at (185,-13) width 63: "underline,"
+            RenderSVGInlineText {#text} at (248,-13) size 4x17
+              text run at (248,-13) width 4: " "
+            RenderSVGTSpan {tspan} at (0,0) size 55x17
+              RenderSVGInlineText {#text} at (252,-13) size 55x17
+                text run at (252,-13) width 55: "overline,"
+            RenderSVGInlineText {#text} at (307,-13) size 27x17
+              text run at (307,-13) width 27: " and"
+          RenderSVGText {text} at (45,293) size 800x0 [color=#191970]
+            RenderSVGTSpan {tspan} at (0,0) size 87x17
+              RenderSVGInlineText {#text} at (0,-6) size 87x17
+                text run at (0,-6) width 87: "strikethrough."
+            RenderSVGInlineText {#text} at (87,-6) size 4x17
+              text run at (87,-6) width 4: " "
+            RenderSVGTSpan {tspan} at (0,0) size 25x13
+              RenderSVGInlineText {#text} at (91,-9) size 25x13
+                text run at (91,-9) width 25: "super"
+            RenderSVGInlineText {#text} at (116,-6) size 37x17
+              text run at (116,-6) width 37: "-and- "
+            RenderSVGTSpan {tspan} at (0,0) size 16x13
+              RenderSVGInlineText {#text} at (153,3) size 16x13
+                text run at (153,3) width 16: "sub"
+            RenderSVGInlineText {#text} at (169,-6) size 132x17
+              text run at (169,-6) width 49: "-scripts "
+              text run at (218,-6) width 83: "are available."
+          RenderSVGText {text} at (45,319) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-7) size 177x17
+              text run at (0,-7) width 177: "Baseline can also be shifted "
+            RenderSVGTSpan {tspan} at (0,0) size 12x13
+              RenderSVGInlineText {#text} at (177,-9) size 12x13
+                text run at (177,-9) width 12: "up"
+            RenderSVGInlineText {#text} at (189,-7) size 31x17
+              text run at (189,-7) width 31: " and "
+            RenderSVGTSpan {tspan} at (0,0) size 26x13
+              RenderSVGInlineText {#text} at (220,1) size 26x13
+                text run at (220,1) width 26: "down"
+            RenderSVGInlineText {#text} at (246,-7) size 96x17
+              text run at (246,-7) width 4: " "
+              text run at (250,-7) width 92: "by percentage."
+          RenderSVGText {text} at (45,375) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 53x17
+              text run at (0,-13) width 53: "Various "
+            RenderSVGTSpan {tspan} at (0,0) size 47x17 [color=#FF0000]
+              RenderSVGInlineText {#text} at (53,-13) size 47x17
+                text run at (53,-13) width 47: "outline "
+            RenderSVGInlineText {#text} at (100,-13) size 43x17
+              text run at (100,-13) width 43: "styles, "
+            RenderSVGTSpan {tspan} at (0,0) size 63x17 [color=#FF0000]
+              RenderSVGInlineText {#text} at (143,-13) size 63x17
+                text run at (143,-13) width 63: "fill colors "
+            RenderSVGInlineText {#text} at (206,-13) size 27x17
+              text run at (206,-13) width 27: "and "
+            RenderSVGTSpan {tspan} at (0,0) size 75x17 [color=#FF0000]
+              RenderSVGInlineText {#text} at (233,-13) size 75x17
+                text run at (233,-13) width 75: "thicknesses "
+            RenderSVGInlineText {#text} at (308,-13) size 41x17
+              text run at (308,-13) width 41: "can be"
+          RenderSVGText {text} at (45,400) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 221x17
+              text run at (0,-13) width 221: "used, and the outline stroke can be "
+            RenderSVGTSpan {tspan} at (0,0) size 52x17 [color=#000000]
+              RenderSVGInlineText {#text} at (221,-13) size 52x17
+                text run at (221,-13) width 52: "rounded"
+            RenderSVGInlineText {#text} at (273,-13) size 21x17
+              text run at (273,-13) width 4: " "
+              text run at (277,-13) width 17: "or "
+            RenderSVGTSpan {tspan} at (0,0) size 51x17 [color=#000000]
+              RenderSVGInlineText {#text} at (294,-13) size 51x17
+                text run at (294,-13) width 51: "mitered."
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+          RenderSVGText {text} at (45,450) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 161x17
+              text run at (0,-13) width 161: "Text elements also can be"
+          RenderSVGText {text} at (45,475) size 800x0 [color=#191970]
+            RenderSVGInlineText {#text} at (0,-13) size 154x17
+              text run at (0,-13) width 154: "filtered and transformed."
+          RenderSVGContainer {g} at (208.76,433) size 170.44x52.20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,475.00)}]
+            RenderSVGText {text} at (0,0) size 800x0
+              RenderSVGInlineText {#text} at (0,-36) size 129x46
+                text run at (0,-36) width 129: "Shadow"
+            RenderSVGText {text} at (0,0) size 800x0
+              RenderSVGInlineText {#text} at (0,-36) size 129x46
+                text run at (0,-36) width 129: "Shadow"
+      RenderSVGContainer {use} at (0,0) size 0x0

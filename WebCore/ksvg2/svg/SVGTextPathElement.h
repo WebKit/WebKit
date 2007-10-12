@@ -1,0 +1,78 @@
+/*
+    Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+
+    This file is part of the KDE project
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.
+*/
+
+#ifndef SVGTextPathElement_h
+#define SVGTextPathElement_h
+
+#if ENABLE(SVG)
+#include "SVGTextContentElement.h"
+
+#include "SVGURIReference.h"
+
+namespace WebCore
+{
+    enum SVGTextPathMethodType {
+        SVG_TEXTPATH_METHODTYPE_UNKNOWN = 0,
+        SVG_TEXTPATH_METHODTYPE_ALIGN = 1,
+        SVG_TEXTPATH_METHODTYPE_STRETCH = 2
+    };
+
+    enum SVGTextPathSpacingType {
+        SVG_TEXTPATH_SPACINGTYPE_UNKNOWN = 0,
+        SVG_TEXTPATH_SPACINGTYPE_AUTO = 1,
+        SVG_TEXTPATH_SPACINGTYPE_EXACT = 2
+    };
+
+    class SVGTextPathElement : public SVGTextContentElement,
+                               public SVGURIReference
+    {
+    public:
+        SVGTextPathElement(const QualifiedName&, Document*);
+        virtual ~SVGTextPathElement();
+ 
+        virtual void insertedIntoDocument();
+        virtual void buildPendingResource();
+
+        virtual void attach();
+
+        virtual void parseMappedAttribute(MappedAttribute* attr);
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+        bool childShouldCreateRenderer(Node*) const;
+    
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+
+    private:
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
+
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGLength, SVGLength, StartOffset, startOffset)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, int, int, Method, method)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, int, int, Spacing, spacing)
+    };
+
+} // namespace WebCore
+
+#endif // ENABLE(SVG)
+#endif
+
+// vim:ts=4:noet

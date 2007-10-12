@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (20,12) size 390x156
+      RenderSVGContainer {g} at (20,12) size 390x156
+        RenderSVGText {text} at (10,20) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 195x18
+            text run at (0,-14) width 195: "ABC DEF"
+        RenderSVGText {text} at (10,40) size 800x18
+          RenderSVGTSpan {tspan} at (0,0) size 88x18
+            RenderSVGInlineText {#text} at (0,-14) size 88x18
+              text run at (0,-14) width 88: "ABC"
+          RenderSVGInlineText {#text} at (88,-14) size 22x18
+            text run at (88,-14) width 22: " "
+          RenderSVGTSpan {tspan} at (0,0) size 195x18
+            RenderSVGInlineText {#text} at (110,-14) size 85x18
+              text run at (110,-14) width 85: "DEF"
+        RenderSVGText {text} at (10,60) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 147x18
+            text run at (0,-14) width 147: "ABC DEF"
+        RenderSVGText {text} at (10,80) size 800x18
+          RenderSVGTSpan {tspan} at (0,0) size 69x18
+            RenderSVGInlineText {#text} at (0,-14) size 69x18
+              text run at (0,-14) width 69: "ABC"
+          RenderSVGInlineText {#text} at (60,-14) size 22x18
+            text run at (60,-14) width 22: " "
+          RenderSVGTSpan {tspan} at (0,0) size 147x18
+            RenderSVGInlineText {#text} at (80,-14) size 67x18
+              text run at (80,-14) width 67: "DEF"

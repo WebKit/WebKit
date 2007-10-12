@@ -1,0 +1,150 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (12,26) size 469x306.50
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (12,26) size 469x306.50
+        RenderSVGText {text} at (147,40) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 166x17
+            text run at (0,-14) width 166: "Text display and visibility."
+        RenderSVGText {text} at (143,74) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 164x18
+            text run at (0,-14) width 164: "Visibility on text & tspans"
+        RenderSVGText {text} at (147,200) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 155x18
+            text run at (0,-14) width 155: "Display on text & tspans"
+        RenderSVGContainer {g} at (12,81.50) size 426x251
+          RenderPath {rect} at (12,81.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,82.00L437.50,82.00L437.50,107.00L12.50,107.00"]
+          RenderPath {rect} at (12,106.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M12.50,107.00L437.50,107.00L437.50,132.00L12.50,132.00"]
+          RenderPath {rect} at (12,131.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,132.00L437.50,132.00L437.50,157.00L12.50,157.00"]
+          RenderPath {rect} at (12,156.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M12.50,157.00L437.50,157.00L437.50,182.00L12.50,182.00"]
+          RenderPath {line} at (339.50,82) size 1x100 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M340.00,82.00L340.00,182.00"]
+          RenderPath {rect} at (12,206.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,207.00L437.50,207.00L437.50,232.00L12.50,232.00"]
+          RenderPath {rect} at (12,231.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M12.50,232.00L437.50,232.00L437.50,257.00L12.50,257.00"]
+          RenderPath {rect} at (12,256.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,257.00L437.50,257.00L437.50,282.00L12.50,282.00"]
+          RenderPath {rect} at (12,281.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M12.50,282.00L437.50,282.00L437.50,307.00L12.50,307.00"]
+          RenderPath {rect} at (12,306.50) size 426x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,307.00L437.50,307.00L437.50,332.00L12.50,332.00"]
+          RenderPath {line} at (339.50,207) size 1x125 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M340.00,207.00L340.00,332.00"]
+        RenderSVGText {text} at (360,97) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 70x18
+            text run at (0,-14) width 70: "vis, vis, vis"
+        RenderSVGText {text} at (360,122) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 72x18
+            text run at (0,-14) width 72: "vis, hid, vis"
+        RenderSVGText {text} at (360,147) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 74x18
+            text run at (0,-14) width 74: "vis, hid, hid"
+        RenderSVGText {text} at (360,172) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 74x18
+            text run at (0,-14) width 74: "hid, vis, hid"
+        RenderSVGText {text} at (360,223) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 121x18
+            text run at (0,-14) width 121: "inline, inline, inline"
+        RenderSVGText {text} at (360,248) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 117x18
+            text run at (0,-14) width 117: "inline, inline, none"
+        RenderSVGText {text} at (360,273) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 117x18
+            text run at (0,-14) width 117: "inline, none, inline"
+        RenderSVGText {text} at (360,298) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 113x18
+            text run at (0,-14) width 113: "inline, none, none"
+        RenderSVGText {text} at (360,323) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 113x18
+            text run at (0,-14) width 113: "none, inline, none"
+        RenderSVGContainer {g} at (25,82.50) size 342.50x247.50 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,12.50)}]
+          RenderSVGText {text} at (20,70) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 175x18 [color=#0000FF]
+              RenderSVGInlineText {#text} at (33,-14) size 49x18
+                text run at (33,-14) width 49: "tspan 1 "
+              RenderSVGTSpan {tspan} at (0,0) size 45x18 [color=#800080]
+                RenderSVGInlineText {#text} at (82,-14) size 45x18
+                  text run at (82,-14) width 45: "tspan 2"
+              RenderSVGInlineText {#text} at (127,-14) size 81x18
+                text run at (127,-14) width 81: " more span 1"
+            RenderSVGInlineText {#text} at (208,-14) size 66x18
+              text run at (208,-14) width 66: " finish text"
+          RenderSVGText {text} at (20,90) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 175x18 [color=#0000FF]
+              RenderSVGInlineText {#text} at (33,-14) size 49x18
+                text run at (33,-14) width 49: "tspan 1 "
+              RenderSVGTSpan {tspan} at (0,0) size 45x18 [color=#800080]
+                RenderSVGInlineText {#text} at (82,-14) size 45x18
+                  text run at (82,-14) width 45: "tspan 2"
+              RenderSVGInlineText {#text} at (127,-14) size 81x18
+                text run at (127,-14) width 81: " more span 1"
+            RenderSVGInlineText {#text} at (208,-14) size 66x18
+              text run at (208,-14) width 66: " finish text"
+          RenderSVGText {text} at (20,110) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 175x18 [color=#0000FF]
+              RenderSVGInlineText {#text} at (33,-14) size 49x18
+                text run at (33,-14) width 49: "tspan 1 "
+              RenderSVGTSpan {tspan} at (0,0) size 45x18 [color=#800080]
+                RenderSVGInlineText {#text} at (82,-14) size 45x18
+                  text run at (82,-14) width 45: "tspan 2"
+              RenderSVGInlineText {#text} at (127,-14) size 81x18
+                text run at (127,-14) width 81: " more span 1"
+            RenderSVGInlineText {#text} at (208,-14) size 66x18
+              text run at (208,-14) width 66: " finish text"
+          RenderSVGText {text} at (20,130) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 175x18 [color=#0000FF]
+              RenderSVGInlineText {#text} at (33,-14) size 49x18
+                text run at (33,-14) width 49: "tspan 1 "
+              RenderSVGTSpan {tspan} at (0,0) size 45x18 [color=#800080]
+                RenderSVGInlineText {#text} at (82,-14) size 45x18
+                  text run at (82,-14) width 45: "tspan 2"
+              RenderSVGInlineText {#text} at (127,-14) size 81x18
+                text run at (127,-14) width 81: " more span 1"
+            RenderSVGInlineText {#text} at (208,-14) size 66x18
+              text run at (208,-14) width 66: " finish text"
+          RenderSVGText {text} at (20,170) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 175x18 [color=#0000FF]
+              RenderSVGInlineText {#text} at (33,-14) size 49x18
+                text run at (33,-14) width 49: "tspan 1 "
+              RenderSVGTSpan {tspan} at (0,0) size 49x18 [color=#800080]
+                RenderSVGInlineText {#text} at (82,-14) size 49x18
+                  text run at (82,-14) width 49: "tspan 2 "
+              RenderSVGInlineText {#text} at (131,-14) size 77x18
+                text run at (131,-14) width 77: "more span 1"
+            RenderSVGInlineText {#text} at (208,-14) size 66x18
+              text run at (208,-14) width 66: " finish text"
+          RenderSVGText {text} at (20,190) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 126x18 [color=#0000FF]
+              RenderSVGInlineText {#text} at (33,-14) size 49x18
+                text run at (33,-14) width 49: "tspan 1 "
+              RenderSVGInlineText {#text} at (82,-14) size 77x18
+                text run at (82,-14) width 77: "more span 1"
+            RenderSVGInlineText {#text} at (159,-14) size 66x18
+              text run at (159,-14) width 66: " finish text"
+          RenderSVGText {text} at (20,210) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGInlineText {#text} at (33,-14) size 62x18
+              text run at (33,-14) width 62: "finish text"
+          RenderSVGText {text} at (20,230) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGInlineText {#text} at (33,-14) size 62x18
+              text run at (33,-14) width 62: "finish text"
+          RenderSVGText {text} at (20,250) size 800x0
+            RenderSVGInlineText {#text} at (0,-14) size 33x18
+              text run at (0,-14) width 33: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 126x18 [color=#0000FF]
+              RenderSVGInlineText {#text} at (33,-14) size 49x18
+                text run at (33,-14) width 49: "tspan 1 "
+              RenderSVGInlineText {#text} at (82,-14) size 77x18
+                text run at (82,-14) width 77: "more span 1"
+            RenderSVGInlineText {#text} at (159,-14) size 66x18
+              text run at (159,-14) width 66: " finish text"
+      RenderSVGContainer {use} at (0,0) size 0x0

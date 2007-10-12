@@ -1,0 +1,81 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (74.50,16) size 301x474.50
+      RenderSVGText {text} at (114,30) size 800x0
+        RenderSVGInlineText {#text} at (0,-14) size 222x17
+          text run at (0,-14) width 222: "text-anchor on a single <tspan>"
+      RenderSVGContainer {g} at (74.50,49.50) size 301x441
+        RenderSVGContainer {g} at (74.50,49.50) size 301x141
+          RenderPath {rect} at (74.50,49.50) size 301x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M75.00,50.00L375.00,50.00L375.00,70.00L75.00,70.00"]
+          RenderPath {rect} at (74.50,69.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,70.00L375.00,70.00L375.00,110.00L75.00,110.00"]
+          RenderPath {rect} at (74.50,109.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M75.00,110.00L375.00,110.00L375.00,150.00L75.00,150.00"]
+          RenderPath {rect} at (74.50,149.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,150.00L375.00,150.00L375.00,190.00L75.00,190.00"]
+          RenderSVGText {text} at (90,64) size 800x0 [color=#FFFFFF]
+            RenderSVGInlineText {#text} at (0,-13) size 192x17
+              text run at (0,-13) width 192: "x attribute define new text chunks"
+          RenderSVGContainer {g} at (144.50,70) size 161x120
+            RenderPath {line} at (144.50,70) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M145.00,70.00L145.00,190.00"]
+            RenderPath {line} at (184.50,70) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M185.00,70.00L185.00,190.00"]
+            RenderPath {line} at (224.50,70) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M225.00,70.00L225.00,190.00"]
+            RenderPath {line} at (264.50,70) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M265.00,70.00L265.00,190.00"]
+            RenderPath {line} at (304.50,70) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M305.00,70.00L305.00,190.00"]
+        RenderSVGContainer {g} at (74.50,199.50) size 301x141 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
+          RenderPath {rect} at (74.50,199.50) size 301x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M75.00,50.00L375.00,50.00L375.00,70.00L75.00,70.00"]
+          RenderPath {rect} at (74.50,219.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,70.00L375.00,70.00L375.00,110.00L75.00,110.00"]
+          RenderPath {rect} at (74.50,259.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M75.00,110.00L375.00,110.00L375.00,150.00L75.00,150.00"]
+          RenderPath {rect} at (74.50,299.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,150.00L375.00,150.00L375.00,190.00L75.00,190.00"]
+          RenderSVGText {text} at (90,64) size 800x0 [color=#FFFFFF]
+            RenderSVGInlineText {#text} at (0,-13) size 238x17
+              text run at (0,-13) width 238: "y attribute does not define new text chunk"
+          RenderSVGContainer {g} at (224.50,220) size 1x120
+            RenderPath {line} at (224.50,220) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M225.00,70.00L225.00,190.00"]
+        RenderSVGContainer {g} at (74.50,349.50) size 301x141 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
+          RenderPath {rect} at (74.50,349.50) size 301x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M75.00,50.00L375.00,50.00L375.00,70.00L75.00,70.00"]
+          RenderPath {rect} at (74.50,369.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,70.00L375.00,70.00L375.00,110.00L75.00,110.00"]
+          RenderPath {rect} at (74.50,409.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M75.00,110.00L375.00,110.00L375.00,150.00L75.00,150.00"]
+          RenderPath {rect} at (74.50,449.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,150.00L375.00,150.00L375.00,190.00L75.00,190.00"]
+          RenderSVGText {text} at (90,64) size 800x0 [color=#FFFFFF]
+            RenderSVGInlineText {#text} at (0,-13) size 223x17
+              text run at (0,-13) width 223: "x & y attributes define new text chunks"
+          RenderSVGContainer {g} at (144.50,370) size 161x120
+            RenderPath {line} at (144.50,370) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M145.00,70.00L145.00,190.00"]
+            RenderPath {line} at (184.50,370) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M185.00,70.00L185.00,190.00"]
+            RenderPath {line} at (224.50,370) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M225.00,70.00L225.00,190.00"]
+            RenderPath {line} at (264.50,370) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M265.00,70.00L265.00,190.00"]
+            RenderPath {line} at (304.50,370) size 1x120 [stroke={[type=SOLID] [color=#DC143C]}] [data="M305.00,70.00L305.00,190.00"]
+        RenderSVGText {text} at (0,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 168x18
+            RenderSVGInlineText {#text} at (0,-14) size 168x18
+              text run at (0,-14) width 168: "Batik"
+        RenderSVGText {text} at (-6,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 169x18
+            RenderSVGInlineText {#text} at (0,-14) size 169x18
+              text run at (0,-14) width 169: "Batik"
+        RenderSVGText {text} at (-11,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 171x18
+            RenderSVGInlineText {#text} at (0,-14) size 171x18
+              text run at (0,-14) width 171: "Batik"
+        RenderSVGText {text} at (0,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 34x28
+            RenderSVGInlineText {#text} at (0,-14) size 34x28
+              text run at (0,-14) width 34: "Batik"
+        RenderSVGText {text} at (-17,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 34x28
+            RenderSVGInlineText {#text} at (0,-14) size 34x28
+              text run at (0,-14) width 34: "Batik"
+        RenderSVGText {text} at (-34,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 34x28
+            RenderSVGInlineText {#text} at (0,-14) size 34x28
+              text run at (0,-14) width 34: "Batik"
+        RenderSVGText {text} at (0,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 168x28
+            RenderSVGInlineText {#text} at (0,-14) size 168x28
+              text run at (0,-14) width 168: "Batik"
+        RenderSVGText {text} at (-6,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 169x28
+            RenderSVGInlineText {#text} at (0,-14) size 169x28
+              text run at (0,-14) width 169: "Batik"
+        RenderSVGText {text} at (-11,0) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 171x28
+            RenderSVGInlineText {#text} at (0,-14) size 171x28
+              text run at (0,-14) width 171: "Batik"

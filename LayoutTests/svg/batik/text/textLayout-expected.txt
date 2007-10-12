@@ -1,0 +1,134 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (40,36) size 379x421
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGText {text} at (0,0) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 44x18
+            text run at (0,-14) width 44: "sample"
+      RenderSVGContainer {g} at (40,36) size 379x421
+        RenderSVGText {text} at (164,50) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 148x17
+            text run at (0,-14) width 148: "Text Layout Properties"
+        RenderSVGText {text} at (170,75) size 800x0
+          RenderSVGInlineText {#text} at (0,-10) size 110x13
+            text run at (0,-10) width 110: "Explicit Glyph Positioning"
+        RenderSVGContainer {g} at (40,88) size 111x39
+          RenderSVGText {text} at (40,110) size 800x0
+            RenderSVGTSpan {tspan} at (0,0) size 111x28
+              RenderSVGInlineText {#text} at (0,-22) size 111x28
+                text run at (0,-22) width 111: "sample"
+          RenderSVGText {text} at (40,125) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 104x9
+              text run at (0,-7) width 104: "tspan x=\"40,60,80,105,125,140\""
+        RenderSVGContainer {g} at (185,88) size 70x39
+          RenderSVGText {text} at (185,110) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 69x28
+              text run at (0,-22) width 69: "sample"
+          RenderSVGText {text} at (185,125) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 70x9
+              text run at (0,-7) width 70: "Serif, default spacing"
+        RenderSVGContainer {g} at (290,88) size 119x39
+          RenderSVGText {text} at (290,110) size 800x0
+            RenderSVGTSpan {tspan} at (0,0) size 119x28
+              RenderSVGInlineText {#text} at (0,-22) size 119x28
+                text run at (0,-22) width 119: "sample"
+          RenderSVGText {text} at (290,125) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 102x9
+              text run at (0,-7) width 102: "x=\"175\" dx=\"0,10,10,10,10,10\""
+        RenderSVGText {text} at (102,150) size 800x0
+          RenderSVGInlineText {#text} at (0,-10) size 246x13
+            text run at (0,-10) width 246: "Letter Spacing Adjustment and Explicit Length Specification"
+        RenderSVGContainer {g} at (40,158) size 69x39
+          RenderSVGText {text} at (40,180) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 69x28
+              text run at (0,-22) width 69: "sample"
+          RenderSVGText {text} at (40,195) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 58x9
+              text run at (0,-7) width 58: "textLength=\"120\""
+        RenderSVGContainer {g} at (185,158) size 69x39
+          RenderSVGText {text} at (185,180) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 69x28
+              text run at (0,-22) width 69: "sample"
+          RenderSVGText {text} at (185,195) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 54x9
+              text run at (0,-7) width 54: "textLength=\"70\""
+        RenderSVGContainer {g} at (290,158) size 69x39
+          RenderSVGText {text} at (290,180) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 69x28
+              text run at (0,-22) width 69: "sample"
+          RenderSVGText {text} at (290,195) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 44x9
+              text run at (0,-7) width 44: "kerning=\"10\""
+        RenderSVGContainer {g} at (40,203) size 114x49
+          RenderSVGText {text} at (40,225) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 69x28
+              text run at (0,-22) width 69: "sample"
+          RenderSVGText {text} at (40,240) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 62x9
+              text run at (0,-7) width 62: "textLength=\"120\", "
+            RenderSVGTSpan {tspan} at (0,0) size 114x9
+              RenderSVGInlineText {#text} at (0,3) size 114x9
+                text run at (0,3) width 114: "lengthAdjust=\"spacingAndGlyphs\""
+        RenderSVGContainer {g} at (185,203) size 114x49
+          RenderSVGText {text} at (185,225) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 69x28
+              text run at (0,-22) width 69: "sample"
+          RenderSVGText {text} at (185,240) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 56x9
+              text run at (0,-7) width 56: "textLength=\"70\" "
+            RenderSVGTSpan {tspan} at (0,0) size 114x9
+              RenderSVGInlineText {#text} at (0,3) size 114x9
+                text run at (0,3) width 114: "lengthAdjust=\"spacingAndGlyphs\""
+        RenderSVGContainer {g} at (290,203) size 104x39
+          RenderSVGText {text} at (290,225) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 69x28
+              text run at (0,-22) width 69: "sample"
+          RenderSVGText {text} at (290,240) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 104x9
+              text run at (0,-7) width 104: "textLength=\"120\",kerning=\"10\""
+        RenderSVGContainer {g} at (40,253) size 111x39
+          RenderSVGText {text} at (40,275) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 111x28
+              text run at (0,-22) width 111: "sample"
+          RenderSVGText {text} at (40,290) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 76x9
+              text run at (0,-7) width 76: "letter-spacing=\"0.3em\""
+        RenderSVGContainer {g} at (185,253) size 63x39
+          RenderSVGText {text} at (185,275) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 51x28
+              text run at (0,-22) width 51: "sample"
+          RenderSVGText {text} at (185,290) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 63x9
+              text run at (0,-7) width 63: "letter-spacing=\"-3\""
+        RenderSVGContainer {g} at (290,253) size 129x39
+          RenderSVGText {text} at (290,275) size 800x0
+            RenderSVGInlineText {#text} at (0,-22) size 129x28
+              text run at (0,-22) width 129: "sample"
+          RenderSVGText {text} at (290,290) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 64x9
+              text run at (0,-7) width 64: "letter-spacing=\"10\""
+        RenderSVGText {text} at (171,320) size 800x0
+          RenderSVGInlineText {#text} at (0,-10) size 107x13
+            text run at (0,-10) width 107: "Word Spacing Adjustment"
+        RenderSVGContainer {g} at (40,337) size 199x30
+          RenderSVGText {text} at (40,350) size 800x0
+            RenderSVGInlineText {#text} at (0,-13) size 199x17
+              text run at (0,-13) width 199: "Wide separation between words"
+          RenderSVGText {text} at (40,365) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 130x9
+              text run at (0,-7) width 130: "textLength=\"350\" word-spacing=\"3em\""
+        RenderSVGContainer {g} at (40,382) size 213x30
+          RenderSVGText {text} at (40,395) size 800x0
+            RenderSVGInlineText {#text} at (0,-13) size 213x17
+              text run at (0,-13) width 213: "Narrow separation between words"
+          RenderSVGText {text} at (40,410) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 123x9
+              text run at (0,-7) width 123: "textLength=\"350\" word-spacing=\"-5\""
+        RenderSVGContainer {g} at (40,427) size 239x30
+          RenderSVGText {text} at (40,440) size 800x0
+            RenderSVGInlineText {#text} at (0,-13) size 213x17
+              text run at (0,-13) width 213: "Narrow separation between words"
+          RenderSVGText {text} at (40,455) size 800x0
+            RenderSVGInlineText {#text} at (0,-7) size 239x9
+              text run at (0,-7) width 239: "textLength=\"350\" lengthAdjust=\"spacingAndGlyphs\" word-spacing=\"-5\""
+      RenderSVGContainer {use} at (0,0) size 0x0

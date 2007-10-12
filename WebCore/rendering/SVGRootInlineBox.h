@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  *           (C) 2006 Apple Computer Inc.
+ *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,10 +26,12 @@
 #define SVGRootInlineBox_h
 
 #if ENABLE(SVG)
-
 #include "RootInlineBox.h"
+#include "SVGCharacterLayoutInfo.h"
 
 namespace WebCore {
+
+class InlineTextBox;
 
 class SVGRootInlineBox : public RootInlineBox {
 public:
@@ -38,8 +41,35 @@ public:
     }
 
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
+
     virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
     virtual void verticallyAlignBoxes(int& heightOfBlock);
+
+    virtual void computePerCharacterLayoutInformation();
+
+    // Used by SVGInlineTextBox
+    const Vector<SVGTextChunk>& svgTextChunks() const;
+    float cummulatedWidthOfSelectionRange(InlineTextBox*, int startPos, int endPos, int length, int boxStartOffset = 0);
+
+private:
+    void layoutInlineBoxes();
+    void layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::iterator& it, int& minX, int& maxX, int& minY, int& maxY);
+
+    void buildLayoutInformation(InlineFlowBox* start, SVGCharacterLayoutInfo&);
+    void buildLayoutInformationForTextBox(SVGCharacterLayoutInfo&, InlineTextBox*);
+
+    void buildTextChunks();
+    void buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutInfo&);
+    void layoutTextChunks();
+
+    void paintSelectionForTextBox(InlineTextBox*, int boxStartOffset, SVGChar*, const UChar*, int length, GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
+
+    void paintInlineBoxes(RenderObject::PaintInfo&, int tx, int ty, InlineFlowBox* start, Vector<SVGChar>::iterator& it);
+    void paintCharacterRangeForTextBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineTextBox*, const SVGChar&, const UChar* chars, int length);
+
+private:
+    Vector<SVGChar> m_svgChars;
+    Vector<SVGTextChunk> m_svgTextChunks;
 };
 
 } // namespace WebCore

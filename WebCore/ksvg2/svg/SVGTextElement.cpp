@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGTextElement.h"
 
@@ -121,15 +122,14 @@ RenderObject* SVGTextElement::createRenderer(RenderArena* arena, RenderStyle* st
 
 bool SVGTextElement::childShouldCreateRenderer(Node* child) const
 {
-    if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag)
-        || child->hasTagName(SVGNames::aTag)
-        || child->hasTagName(SVGNames::trefTag))
+    if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag) ||
+        child->hasTagName(SVGNames::trefTag) || child->hasTagName(SVGNames::aTag) || child->hasTagName(SVGNames::textPathTag))
         return true;
     return false;
 }
 
 }
 
-// vim:ts=4:noet
 #endif // ENABLE(SVG)
 
+// vim:ts=4:noet

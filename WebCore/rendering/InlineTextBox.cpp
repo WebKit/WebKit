@@ -170,7 +170,7 @@ int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
     return -1;
 }
 
-static Color correctedTextColor(Color textColor, Color backgroundColor) 
+Color correctedTextColor(Color textColor, Color backgroundColor) 
 {
     // Adjust the text color if it is too close to the background color,
     // by darkening or lightening it to move it further away.
@@ -191,7 +191,7 @@ static Color correctedTextColor(Color textColor, Color backgroundColor)
     return textColor.light();
 }
 
-static void updateGraphicsContext(GraphicsContext* context, const Color& fillColor, const Color& strokeColor, float strokeThickness)
+void updateGraphicsContext(GraphicsContext* context, const Color& fillColor, const Color& strokeColor, float strokeThickness)
 {
     int mode = context->textDrawingMode();
     if (strokeThickness > 0) {

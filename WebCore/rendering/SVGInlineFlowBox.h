@@ -30,10 +30,6 @@
 
 namespace WebCore {
 
-void paintSVGInlineFlow(InlineFlowBox*, RenderObject*, RenderObject::PaintInfo&, int tx, int ty);
-int placeSVGFlowHorizontally(InlineFlowBox*, int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
-void placeSVGFlowVertically(InlineFlowBox*, int& heightOfBlock);
-
 class SVGInlineFlowBox : public InlineFlowBox {
 public:
     SVGInlineFlowBox(RenderObject* obj)

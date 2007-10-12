@@ -2,6 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
+ *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,15 +26,37 @@
 
 #include "InlineTextBox.h"
 
+#if ENABLE(SVG)
+
 namespace WebCore {
+
+    class SVGChar;
+    class SVGRootInlineBox;
 
     class SVGInlineTextBox : public InlineTextBox {
     public:
-        SVGInlineTextBox(RenderObject* obj) : InlineTextBox(obj) {}
+        SVGInlineTextBox(RenderObject* obj);
+
         virtual int selectionTop();
         virtual int selectionHeight();
+
+        virtual int offsetForPosition(int x, bool includePartialGlyphs = true) const;
+        virtual int positionForOffset(int offset) const;
+
+        virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
+        virtual IntRect selectionRect(int absx, int absy, int startPos, int endPos);
+
+    protected:
+        friend class RenderSVGInlineText;
+
+        SVGRootInlineBox* svgRootInlineBox() const;
+        bool svgCharacterHitsPosition(int x, int y, int& offset) const;
+
+    private:
+        SVGChar* closestCharacterToPosition(int x, int y, int& offset) const;
     };
 
 } // namespace WebCore
 
+#endif
 #endif // SVGInlineTextBox_h

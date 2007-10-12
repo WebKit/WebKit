@@ -873,11 +873,10 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
             // Then, it will strip off all leading and trailing space characters.
             // Then, all contiguous space characters will be consolidated.    
 
-            static StringImpl empty("", 0);
-            m_text = m_text->replace('\n', &empty);
+           m_text = m_text->replace('\n', StringImpl::empty());
 
-            // If xml:space="default" is set, white-space is set to "nowrap", which handles
-            // leading, trailing & contiguous space character removal for us.
+           // If xml:space="default" is set, white-space is set to "nowrap", which handles
+           // leading, trailing & contiguous space character removal for us.
         }
 
         m_text = m_text->replace('\t', ' ');

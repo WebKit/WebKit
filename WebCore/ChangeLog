@@ -1,3 +1,190 @@
+2007-05-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12698 (SVG text needs a special per-character layout mode.)
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=6420 (<text> does not respect x,y offset lists)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=6425 (<textPath> element not implemented)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=6481 (text-anchor (vertical) does not work in SVG text elements)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11941 (REGRESSION: Missing text stroke in svg/W3C-SVG-1.1/text-deco-01-b.svg)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12376 (glyph rotation in text/tspan not implemented)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12377 (multiple dx and dy attributes not respected in text and tspan elements)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12574 (<text> does not handle baseline-shift correctly)
+
+        Introduce new experimental SVG text engine - after 5+ months of hacking.
+
+        Add textPath support, absolute positioned SVG characters, vertical text,
+        text rotation, baseline-shift, text chunks spanning <tspan>'s etc.
+
+        Check my Flickr page for screenshots: http://www.flickr.com/photos/43532360@N00 (a bit outdated)
+
+        Fixes/Improvments:
+        - animate-elem-40-t.svg (x/y lists respected on <text> now)
+        - interact-cursor-01-f.svg (text-anchor correctly handled in <text><a> situations)
+        - struct-frag-05-t.svg (ditto)
+        - text-align-02-b.svg (baseline-shift recognized)
+        - text-align-04-b.svg (textPath displayed)
+        - text-align-05-b.svg (text-anchor & vertical text handled correctly)
+        - text-align-06-b.svg (baseline-shift & vertical text handled correctly)
+        - text-deco-01-b.svg (longstanding regression fixed for text-decoration)
+        - text-path-01-b.svg (all textPaths are displayed correctly)
+        - text-text-04-t.svg (all x/y/dx/dy list situations work fine now)
+        - text-text-05-t.svg (ditto)
+        - text-text-06-t.svg (ditto)
+        - text-text-07-t.svg (rotation works fine now)
+        - text-tspan-01-b.svg (per character placment works great in all situations)
+
+        Most files using text-anchor show 0.5-1% differences because the shift offset calculation is more correct now.
+
+        Regressions:    
+        - Gradient on fill is broken (on stroke works) -> this is a regression (easy to fix soon)
+          js-late-gradient-and-object-creation.svg & js-late-gradient-creation.svg & pservers-grad-08-b.svg & pservers-grad-11-b.svg are broken
+
+        Complete list of missing things:
+        - 'textLength' / 'lengthAdjust' properties on <text>/<tspan> not yet handled.
+        - 'dominant-baseline / alignment-baseline missing (neither FF/Opera/Batik support this)
+        - 'kerning' property ignored
+        - 'glyph-orientation-vertical' / 'glyph-orientation-horizontal' not yet handled.
+        - Hebrew text selection broken (discontinous selection doesn't work)
+        - <textPath> doesn't yet participate in text selection
+        - <textPath> 'text-anchor' handling is flawed
+        - <textPath> doesn't yet handle 'method' / 'spacing' properties
+        - 'letter-spacing' / 'word-spacing' is still handled in the "legacy" mode. That means it only works
+          for simple cases -> won't work for textPath's for instance
+        - SVG fonts (<altGlyph>, <font> ..... tons more)
+
+        * DerivedSources.make: Add DOM/JSSVGTextPathElement.h to build
+        * WebCore.xcodeproj/project.pbxproj: Add textPath related files to build
+        * css/svg.css: Correct white-space default setting for textPath element
+        * ksvg2/svg/SVGFEFloodElement.cpp: Missing include (experimental build was broken)
+        * ksvg2/svg/SVGTSpanElement.cpp: Recognize textPath children.
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGTextElement.cpp: Ditto.
+        (WebCore::SVGTextElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGTextPathElement.cpp: Added.
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        (WebCore::SVGTextPathElement::~SVGTextPathElement):
+        (WebCore::SVGTextPathElement::parseMappedAttribute):
+        (WebCore::SVGTextPathElement::createRenderer):
+        (WebCore::SVGTextPathElement::childShouldCreateRenderer):
+        (WebCore::SVGTextPathElement::insertedIntoDocument):
+        (WebCore::SVGTextPathElement::buildPendingResource):
+        (WebCore::SVGTextPathElement::attach):
+        * ksvg2/svg/SVGTextPathElement.h: Added.
+        (WebCore::):
+        (WebCore::SVGTextPathElement::rendererIsNeeded):
+        (WebCore::SVGTextPathElement::contextElement):
+        * ksvg2/svg/SVGTextPathElement.idl: Added.
+        * ksvg2/svg/svgtags.in: Add textPath tag.
+        * rendering/InlineTextBox.cpp: Make two methods non static to share with SVG.
+        (WebCore::correctedTextColor):
+        (WebCore::updateGraphicsContext):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderSVGInlineText.cpp: Special positionForCoordinates() implementation. Stub caretRect() for SVG.
+        (WebCore::RenderSVGInlineText::selectionRect):
+        (WebCore::RenderSVGInlineText::caretRect):
+        (WebCore::RenderSVGInlineText::positionForCoordinates):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGTextPath.cpp: Added.
+        (WebCore::RenderSVGTextPath::RenderSVGTextPath):
+        (WebCore::RenderSVGTextPath::layoutPath):
+        (WebCore::RenderSVGTextPath::setLayoutPath):
+        (WebCore::RenderSVGTextPath::startOffset):
+        (WebCore::RenderSVGTextPath::setStartOffset):
+        (WebCore::RenderSVGTextPath::exactAlignment):
+        (WebCore::RenderSVGTextPath::setExactAlignment):
+        (WebCore::RenderSVGTextPath::stretchMethod):
+        (WebCore::RenderSVGTextPath::setStretchMethod):
+        (WebCore::RenderSVGTextPath::absoluteRects):
+        * rendering/RenderSVGTextPath.h: Added.
+        (WebCore::RenderSVGTextPath::renderName):
+        * rendering/RenderText.cpp: Fix indention and use StringImpl::empty() instead of creating an empty string manually.
+        (WebCore::RenderText::setTextInternal):
+        * rendering/RootInlineBox.h: Add virtual no-op computePerCharacterLayoutInformation().
+        (WebCore::RootInlineBox::computePerCharacterLayoutInformation):
+        * rendering/SVGCharacterLayoutInfo.cpp: Added.
+        (WebCore::calculateBaselineShift):
+        (WebCore::SVGCharacterLayoutInfo::SVGCharacterLayoutInfo):
+        (WebCore::SVGCharacterLayoutInfo::xValueAvailable):
+        (WebCore::SVGCharacterLayoutInfo::yValueAvailable):
+        (WebCore::SVGCharacterLayoutInfo::dxValueAvailable):
+        (WebCore::SVGCharacterLayoutInfo::dyValueAvailable):
+        (WebCore::SVGCharacterLayoutInfo::angleValueAvailable):
+        (WebCore::SVGCharacterLayoutInfo::baselineShiftValueAvailable):
+        (WebCore::SVGCharacterLayoutInfo::xValueNext):
+        (WebCore::SVGCharacterLayoutInfo::yValueNext):
+        (WebCore::SVGCharacterLayoutInfo::dxValueNext):
+        (WebCore::SVGCharacterLayoutInfo::dyValueNext):
+        (WebCore::SVGCharacterLayoutInfo::angleValueNext):
+        (WebCore::SVGCharacterLayoutInfo::baselineShiftValueNext):
+        (WebCore::SVGCharacterLayoutInfo::processedSingleCharacter):
+        (WebCore::SVGCharacterLayoutInfo::processedChunk):
+        (WebCore::SVGCharacterLayoutInfo::nextPathLayoutPointAndAngle):
+        (WebCore::SVGCharacterLayoutInfo::inPathLayout):
+        (WebCore::SVGCharacterLayoutInfo::setInPathLayout):
+        (WebCore::SVGCharacterLayoutInfo::addLayoutInformation):
+        (WebCore::SVGCharacterLayoutInfo::addStackContent):
+        (WebCore::SVGCharacterLayoutInfo::xStackWalk):
+        (WebCore::SVGCharacterLayoutInfo::yStackWalk):
+        (WebCore::SVGCharacterLayoutInfo::dxStackWalk):
+        (WebCore::SVGCharacterLayoutInfo::dyStackWalk):
+        (WebCore::SVGCharacterLayoutInfo::angleStackWalk):
+        (WebCore::SVGCharacterLayoutInfo::baselineShiftStackWalk):
+        * rendering/SVGCharacterLayoutInfo.h: Added.
+        (WebCore::PositionedVector::Type):
+        (WebCore::PositionedVector::position):
+        (WebCore::PositionedVector::advance):
+        (WebCore::PositionedVector::valueAtCurrentPosition):
+        (WebCore::SVGCharacterLayoutInfo::):
+        (WebCore::SVGInlineBoxCharacterRange::SVGInlineBoxCharacterRange):
+        (WebCore::SVGInlineBoxCharacterRange::isOpen):
+        (WebCore::SVGInlineBoxCharacterRange::isClosed):
+        (WebCore::SVGTextChunk::SVGTextChunk):
+        (WebCore::SVGTextChunkLayoutInfo::SVGTextChunkLayoutInfo):
+        * rendering/SVGInlineFlowBox.cpp: Make all methods no-ops when using the new text engine.
+        (WebCore::SVGInlineFlowBox::paint):
+        (WebCore::SVGInlineFlowBox::placeBoxesHorizontally):
+        (WebCore::SVGInlineFlowBox::verticallyAlignBoxes):
+        * rendering/SVGInlineFlowBox.h:
+        * rendering/SVGInlineTextBox.cpp: Add new text selection / character hit detection related code.
+        (WebCore::SVGInlineTextBox::SVGInlineTextBox):
+        (WebCore::SVGInlineTextBox::selectionTop):
+        (WebCore::SVGInlineTextBox::svgRootInlineBox):
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition):
+        (WebCore::SVGInlineTextBox::svgCharacterHitsPosition):
+        (WebCore::SVGInlineTextBox::offsetForPosition):
+        (WebCore::SVGInlineTextBox::positionForOffset):
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        (WebCore::SVGInlineTextBox::selectionRect):
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRootInlineBox.cpp: The heart of the new text engine lives here.
+        (WebCore::prepareTextRendering):
+        (WebCore::isVerticalWritingMode):
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::placeBoxesHorizontally):
+        (WebCore::SVGRootInlineBox::verticallyAlignBoxes):
+        (WebCore::SVGRootInlineBox::cummulatedWidthOfSelectionRange):
+        (WebCore::cummulatedWidthOfInlineBoxCharacterRange):
+        (WebCore::cummulatedWidthOfTextChunk):
+        (WebCore::cummulatedHeightOfTextChunk):
+        (WebCore::applyTextAnchorToTextChunk):
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::totalAdvanceOfInlineTextBox):
+        (WebCore::totalAdvanceOfInlineBox):
+        (WebCore::SVGRootInlineBox::buildLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+        (WebCore::SVGRootInlineBox::svgTextChunks):
+        (WebCore::SVGRootInlineBox::layoutTextChunks):
+        (WebCore::SVGRootInlineBox::paintSelectionForTextBox):
+        (WebCore::SVGRootInlineBox::paintInlineBoxes):
+        (WebCore::SVGRootInlineBox::paintCharacterRangeForTextBox):
+        * rendering/SVGRootInlineBox.h:
+        * rendering/bidi.cpp: Call the new computePerCharacterLayoutInformation() method.
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2007-05-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

@@ -1,0 +1,97 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (50,16) size 2147483648.00x2147483648.00
+      RenderSVGText {text} at (178,30) size 800x0
+        RenderSVGInlineText {#text} at (0,-14) size 93x17
+          text run at (0,-14) width 93: "Text Position"
+      RenderSVGContainer {g} at (50,58) size 2147483648.00x2147483648.00
+        RenderSVGText {text} at (50,80) size 800x0
+          RenderSVGInlineText {#text} at (0,-22) size 53x27
+            text run at (0,-22) width 53: "Batik"
+        RenderSVGText {text} at (50,100) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 103x11
+            text run at (0,-9) width 103: "<text x=\"100\" y=\"80\">"
+        RenderSVGText {text} at (240,80) size 800x0
+          RenderSVGInlineText {#text} at (0,-22) size 53x27
+            text run at (0,-22) width 53: "Batik"
+        RenderSVGText {text} at (240,100) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 194x11
+            text run at (0,-9) width 194: "<text x=\"240\" y=\"80\" letter-spacing=\"20\">"
+        RenderSVGText {text} at (50,140) size 800x0
+          RenderSVGInlineText {#text} at (0,-22) size 92x27
+            text run at (0,-22) width 92: "Batik"
+        RenderSVGText {text} at (50,160) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 175x11
+            text run at (0,-9) width 175: "<text x=\"50 70 90 110 130\" y=\"140\">"
+        RenderSVGText {text} at (240,140) size 800x0
+          RenderSVGInlineText {#text} at (0,-22) size 133x27
+            text run at (0,-22) width 133: "Batik"
+        RenderSVGText {text} at (240,160) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 175x11
+            text run at (0,-9) width 175: "<text dx=\"240 20 20 20 20\" y=\"140\">"
+        RenderSVGText {text} at (50,200) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 53x27
+            RenderSVGInlineText {#text} at (0,-22) size 53x27
+              text run at (0,-22) width 53: "Batik"
+        RenderSVGText {text} at (50,220) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 112x11
+            text run at (0,-9) width 112: "<tspan x=\"50\" y=\"200\">"
+        RenderSVGText {text} at (240,200) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 53x27
+            RenderSVGInlineText {#text} at (0,-22) size 53x27
+              text run at (0,-22) width 53: "Batik"
+        RenderSVGText {text} at (240,220) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 209x11
+            RenderSVGInlineText {#text} at (0,-9) size 209x11
+              text run at (0,-9) width 209: "<tspan x=\"240\" y=\"200\" letter-spacing=\"20\">"
+        RenderSVGText {text} at (50,260) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 92x27
+            RenderSVGInlineText {#text} at (0,-22) size 92x27
+              text run at (0,-22) width 92: "Batik"
+        RenderSVGText {text} at (50,280) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 184x11
+            text run at (0,-9) width 184: "<tspan x=\"50 70 90 110 130\" y=\"260\">"
+        RenderSVGText {text} at (240,260) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 133x27
+            RenderSVGInlineText {#text} at (0,-22) size 133x27
+              text run at (0,-22) width 133: "Batik"
+        RenderSVGText {text} at (240,280) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 184x11
+            text run at (0,-9) width 184: "<tspan dx=\"240 20 20 20 20\" y=\"260\">"
+        RenderSVGText {text} at (50,320) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 92x27
+            RenderSVGInlineText {#text} at (0,-22) size 92x27
+              text run at (0,-22) width 92: "Batik"
+        RenderSVGText {text} at (50,340) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 129x11
+            text run at (0,-9) width 129: "<tspan x=\"50 60 70 80 90\" "
+          RenderSVGTSpan {tspan} at (0,0) size 137x11
+            RenderSVGInlineText {#text} at (33,2) size 137x11
+              text run at (33,2) width 137: "dx=\"0 10 20 30 40\" y=\"320\">"
+        RenderSVGText {text} at (240,320) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 93x27
+            RenderSVGInlineText {#text} at (0,-22) size 93x27
+              text run at (0,-22) width 93: "Batik"
+        RenderSVGText {text} at (240,340) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 169x11
+            text run at (0,-9) width 169: "<tspan x=\"240\" dx=\"0 10 10 10 10\" "
+          RenderSVGTSpan {tspan} at (0,0) size 158x11
+            RenderSVGInlineText {#text} at (33,2) size 158x11
+              text run at (33,2) width 158: "y=\"320\" style=\"letter-spacing:10\">"
+        RenderSVGText {text} at (50,380) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 103x27
+            RenderSVGInlineText {#text} at (0,-22) size 103x27
+              text run at (0,-22) width 103: "Batik"
+          RenderSVGTSpan {tspan} at (0,0) size 1x1
+        RenderSVGText {text} at (50,400) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 94x11
+            text run at (0,-9) width 94: "Empty Trailing tspan"
+        RenderSVGText {text} at (240,380) size 800x0
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+          RenderSVGTSpan {tspan} at (0,0) size 153x27
+            RenderSVGInlineText {#text} at (0,-22) size 153x27
+              text run at (0,-22) width 153: "Batik"
+        RenderSVGText {text} at (240,400) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 114x11
+            text run at (0,-9) width 114: "Empty Preceeding tspan"
+      RenderSVGContainer {use} at (0,0) size 0x0

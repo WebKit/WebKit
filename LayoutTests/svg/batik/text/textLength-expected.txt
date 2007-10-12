@@ -1,0 +1,232 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x318
+  RenderBlock {svg} at (0,0) size 800x318
+    RenderBlock (anonymous) at (0,0) size 800x0
+      RenderInline {parsererror} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+    RenderBlock (anonymous) at (0,18) size 800x192
+      RenderBlock {h3} at (0,0) size 800x22
+        RenderText {#text} at (0,0) size 324x22
+          text run at (0,0) width 324: "This page contains the following errors:"
+      RenderBlock {div} at (0,40) size 800x112
+        RenderText {#text} at (0,0) size 602x112
+          text run at (0,0) width 588: "error on line 45 at column 30: Namespace prefix xlink for href on use is not defined"
+          text run at (588,0) width 0: " "
+          text run at (0,14) width 595: "error on line 58 at column 103: Namespace prefix xlink for href on use is not defined"
+          text run at (595,14) width 0: " "
+          text run at (0,28) width 595: "error on line 65 at column 229: Namespace prefix xlink for href on use is not defined"
+          text run at (595,28) width 0: " "
+          text run at (0,42) width 595: "error on line 73 at column 108: Namespace prefix xlink for href on use is not defined"
+          text run at (595,42) width 0: " "
+          text run at (0,56) width 588: "error on line 97 at column 95: Namespace prefix xlink for href on use is not defined"
+          text run at (588,56) width 0: " "
+          text run at (0,70) width 602: "error on line 105 at column 106: Namespace prefix xlink for href on use is not defined"
+          text run at (602,70) width 0: " "
+          text run at (0,84) width 602: "error on line 113 at column 102: Namespace prefix xlink for href on use is not defined"
+          text run at (602,84) width 0: " "
+          text run at (0,98) width 602: "error on line 138 at column 289: Namespace prefix xlink for href on use is not defined"
+          text run at (602,98) width 0: " "
+      RenderBlock {h3} at (0,170) size 800x22
+        RenderText {#text} at (0,0) size 429x22
+          text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+    RenderBlock (anonymous) at (0,228) size 800x90
+      RenderInline {parsererror} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderInline {text} at (0,0) size 152x18
+        RenderText {#text} at (0,0) size 152x18
+          text run at (0,0) width 152: "textLength with Anchor"
+      RenderText {#text} at (152,0) size 4x18
+        text run at (152,0) width 4: " "
+      RenderInline {defs} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {rect} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {line} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {rect} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {rect} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {g} at (0,0) size 794x90
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 160x18
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 60x18
+            RenderText {#text} at (156,0) size 60x18
+              text run at (156,0) width 60: "xml-batik"
+          RenderText {#text} at (216,0) size 4x18
+            text run at (216,0) width 4: " "
+          RenderInline {text} at (0,0) size 92x18
+            RenderText {#text} at (220,0) size 92x18
+              text run at (220,0) width 92: "No textLength"
+          RenderText {#text} at (312,0) size 4x18
+            text run at (312,0) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 356x18
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 11x18
+            RenderText {#text} at (316,0) size 11x18
+              text run at (316,0) width 11: "B"
+          RenderText {#text} at (327,0) size 4x18
+            text run at (327,0) width 4: " "
+          RenderInline {text} at (0,0) size 337x18
+            RenderText {#text} at (331,0) size 337x18
+              text run at (331,0) width 337: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\""
+          RenderText {#text} at (668,0) size 4x18
+            text run at (668,0) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 794x36
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 11x18
+            RenderText {#text} at (672,0) size 11x18
+              text run at (672,0) width 11: "B"
+          RenderText {#text} at (683,0) size 4x18
+            text run at (683,0) width 4: " "
+          RenderInline {text} at (0,0) size 794x36
+            RenderText {#text} at (687,0) size 794x36
+              text run at (687,0) width 107: "textLength=\"50\""
+              text run at (0,18) width 152: "lengthAdjust=\"spacing\""
+          RenderText {#text} at (152,18) size 4x18
+            text run at (152,18) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 379x18
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 34x18
+            RenderText {#text} at (156,18) size 34x18
+              text run at (156,18) width 34: "Batik"
+          RenderText {#text} at (190,18) size 4x18
+            text run at (190,18) width 4: " "
+          RenderInline {text} at (0,0) size 337x18
+            RenderText {#text} at (194,18) size 337x18
+              text run at (194,18) width 337: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\""
+          RenderText {#text} at (531,18) size 4x18
+            text run at (531,18) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 680x36
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 34x18
+            RenderText {#text} at (535,18) size 34x18
+              text run at (535,18) width 34: "Batik"
+          RenderText {#text} at (569,18) size 4x18
+            text run at (569,18) width 4: " "
+          RenderInline {text} at (0,0) size 680x36
+            RenderText {#text} at (573,18) size 680x36
+              text run at (573,18) width 107: "textLength=\"50\""
+              text run at (0,36) width 152: "lengthAdjust=\"spacing\""
+          RenderText {#text} at (152,36) size 4x18
+            text run at (152,36) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 505x18
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 87x18
+            RenderText {#text} at (156,36) size 87x18
+              text run at (156,36) width 87: "Apache Batik"
+          RenderText {#text} at (243,36) size 4x18
+            text run at (243,36) width 4: " "
+          RenderInline {text} at (0,0) size 410x18
+            RenderText {#text} at (247,36) size 410x18
+              text run at (247,36) width 410: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\" (shrinking)"
+          RenderText {#text} at (657,36) size 4x18
+            text run at (657,36) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 748x36
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 87x18
+            RenderText {#text} at (661,36) size 87x18
+              text run at (661,36) width 87: "Apache Batik"
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 414x18
+            RenderText {#text} at (0,54) size 414x18
+              text run at (0,54) width 414: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\" (no anchor)"
+          RenderText {#text} at (414,54) size 4x18
+            text run at (414,54) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 626x36
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {use} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 97x18
+            RenderText {#text} at (418,54) size 53x18
+              text run at (418,54) width 53: "Apache "
+            RenderInline {tspan} at (0,0) size 34x18
+              RenderText {#text} at (471,54) size 34x18
+                text run at (471,54) width 34: "Batik"
+            RenderText {#text} at (505,54) size 10x18
+              text run at (505,54) width 10: "!!"
+          RenderText {#text} at (515,54) size 4x18
+            text run at (515,54) width 4: " "
+          RenderInline {text} at (0,0) size 626x36
+            RenderText {#text} at (519,54) size 626x36
+              text run at (519,54) width 107: "textLength=\"50\""
+              text run at (0,72) width 273: "lengthAdjust=\"spacingAndGlyphs\" (tspan)"
+          RenderText {#text} at (273,72) size 4x18
+            text run at (273,72) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {g} at (0,0) size 496x18
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {rect} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {rect} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {line} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 50x18
+            RenderText {#text} at (277,72) size 50x18
+              text run at (277,72) width 50: "B a t i k"
+          RenderText {#text} at (327,72) size 4x18
+            text run at (327,72) width 4: " "
+          RenderInline {text} at (0,0) size 442x18
+            RenderText {#text} at (331,72) size 230x18
+              text run at (331,72) width 230: "lengthAdjust=\"spacingAndGlyphs\" "
+            RenderInline {tspan} at (0,0) size 107x18
+              RenderText {#text} at (561,72) size 107x18
+                text run at (561,72) width 107: "textLength=\"25\""
+            RenderText {#text} at (668,72) size 4x18
+              text run at (668,72) width 4: " "
+            RenderInline {tspan} at (0,0) size 101x18
+              RenderText {#text} at (672,72) size 101x18
+                text run at (672,72) width 101: "font-size=\"100\""
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {use} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

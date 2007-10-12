@@ -1,0 +1,220 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (31,26) size 380x402
+      RenderSVGText {text} at (110,40) size 800x0
+        RenderSVGInlineText {#text} at (0,-14) size 229x17
+          text run at (0,-14) width 229: "Text Decoration with dx, dy tests"
+      RenderSVGContainer {g} at (31,60) size 380x368 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+        RenderSVGText {text} at (31,24) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 126x17
+            text run at (0,-14) width 126: "This is a text"
+          RenderSVGTSpan {tspan} at (0,0) size 180x17
+            RenderSVGInlineText {#text} at (0,4) size 180x17
+              text run at (0,4) width 180: "that covers multiple"
+          RenderSVGTSpan {tspan} at (0,0) size 45x17
+            RenderSVGInlineText {#text} at (0,22) size 45x17
+              text run at (0,22) width 45: "lines"
+        RenderSVGText {text} at (231,24) size 800x0
+          RenderSVGInlineText {#text} at (0,-14) size 126x17
+            text run at (0,-14) width 126: "This is a text"
+          RenderSVGTSpan {tspan} at (0,0) size 180x17
+            RenderSVGInlineText {#text} at (0,3) size 180x17
+              text run at (0,3) width 180: "that covers multiple"
+          RenderSVGTSpan {tspan} at (0,0) size 45x17
+            RenderSVGInlineText {#text} at (0,22) size 45x17
+              text run at (0,22) width 45: "lines"
+        RenderSVGText {text} at (31,95) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (31,125) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (31,155) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (31,190) size 800x0
+          RenderSVGInlineText {#text} at (0,-4) size 45x17
+            text run at (0,-4) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-9) size 36x17
+              text run at (45,-9) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-9) size 9x17
+            text run at (81,-9) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-14) size 54x17
+              text run at (90,-14) width 54: "shifts"
+        RenderSVGText {text} at (231,95) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (231,125) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (231,155) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (231,190) size 800x0
+          RenderSVGInlineText {#text} at (0,-4) size 45x17
+            text run at (0,-4) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-9) size 36x17
+              text run at (45,-9) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-9) size 9x17
+            text run at (81,-9) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-14) size 54x17
+              text run at (90,-14) width 54: "shifts"
+        RenderSVGText {text} at (31,235) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (31,265) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (31,295) size 800x0
+          RenderSVGInlineText {#text} at (0,-9) size 45x17
+            text run at (0,-9) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-14) size 36x17
+              text run at (45,-14) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-14) size 9x17
+            text run at (81,-14) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-4) size 54x17
+              text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (31,320) size 800x0
+          RenderSVGInlineText {#text} at (0,-4) size 45x17
+            text run at (0,-4) width 45: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (45,-9) size 36x17
+              text run at (45,-9) width 36: "that"
+          RenderSVGInlineText {#text} at (81,-9) size 9x17
+            text run at (81,-9) width 9: " "
+          RenderSVGTSpan {tspan} at (0,0) size 54x17
+            RenderSVGInlineText {#text} at (90,-14) size 54x17
+              text run at (90,-14) width 54: "shifts"
+        RenderSVGText {text} at (231,235) size 800x0 [color=#0000FF]
+          RenderSVGTSpan {tspan} at (0,0) size 144x27 [color=#000000]
+            RenderSVGInlineText {#text} at (0,-9) size 45x17
+              text run at (0,-9) width 45: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 36x17
+              RenderSVGInlineText {#text} at (45,-14) size 36x17
+                text run at (45,-14) width 36: "that"
+            RenderSVGInlineText {#text} at (81,-14) size 9x17
+              text run at (81,-14) width 9: " "
+            RenderSVGTSpan {tspan} at (0,0) size 54x17
+              RenderSVGInlineText {#text} at (90,-4) size 54x17
+                text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (231,265) size 800x0 [color=#0000FF]
+          RenderSVGTSpan {tspan} at (0,0) size 144x27 [color=#000000]
+            RenderSVGInlineText {#text} at (0,-9) size 45x17
+              text run at (0,-9) width 45: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 36x17 [color=#FF0000]
+              RenderSVGTSpan {tspan} at (0,0) size 36x17 [color=#000000]
+                RenderSVGInlineText {#text} at (45,-14) size 36x17
+                  text run at (45,-14) width 36: "that"
+            RenderSVGInlineText {#text} at (81,-14) size 9x17
+              text run at (81,-14) width 9: " "
+            RenderSVGTSpan {tspan} at (0,0) size 54x17
+              RenderSVGInlineText {#text} at (90,-4) size 54x17
+                text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (231,295) size 800x0 [color=#0000FF]
+          RenderSVGTSpan {tspan} at (0,0) size 144x27 [color=#000000]
+            RenderSVGInlineText {#text} at (0,-9) size 45x17
+              text run at (0,-9) width 45: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 36x17
+              RenderSVGInlineText {#text} at (45,-14) size 36x17
+                text run at (45,-14) width 36: "that"
+            RenderSVGInlineText {#text} at (81,-14) size 9x17
+              text run at (81,-14) width 9: " "
+            RenderSVGTSpan {tspan} at (0,0) size 54x17 [color=#FF0000]
+              RenderSVGInlineText {#text} at (0,0) size 0x0
+              RenderSVGTSpan {tspan} at (0,0) size 54x17 [color=#000000]
+                RenderSVGInlineText {#text} at (90,-4) size 54x17
+                  text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (231,325) size 800x0 [color=#0000FF]
+          RenderSVGTSpan {tspan} at (0,0) size 144x27 [color=#000000]
+            RenderSVGInlineText {#text} at (0,-9) size 45x17
+              text run at (0,-9) width 45: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 99x27 [color=#FF0000]
+              RenderSVGTSpan {tspan} at (0,0) size 99x27 [color=#000000]
+                RenderSVGInlineText {#text} at (45,-14) size 45x17
+                  text run at (45,-14) width 45: "that "
+                RenderSVGTSpan {tspan} at (0,0) size 54x17 [color=#008000]
+                  RenderSVGTSpan {tspan} at (0,0) size 54x17 [color=#000000]
+                    RenderSVGInlineText {#text} at (90,-4) size 54x17
+                      text run at (90,-4) width 54: "shifts"
+        RenderSVGText {text} at (131,360) size 800x0 [color=#0000FF]
+          RenderSVGTSpan {tspan} at (0,0) size 144x32 [color=#000000]
+            RenderSVGInlineText {#text} at (0,-4) size 45x17
+              text run at (0,-4) width 45: "Text "
+            RenderSVGTSpan {tspan} at (0,0) size 36x17
+              RenderSVGInlineText {#text} at (45,-14) size 36x17
+                text run at (45,-14) width 36: "that"
+            RenderSVGInlineText {#text} at (81,-14) size 9x17
+              text run at (81,-14) width 9: " "
+            RenderSVGTSpan {tspan} at (0,0) size 54x17
+              RenderSVGInlineText {#text} at (90,1) size 54x17
+                text run at (90,1) width 54: "shifts"

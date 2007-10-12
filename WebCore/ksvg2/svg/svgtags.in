@@ -94,9 +94,7 @@ svg
 switch
 symbol
 text
-#if 0
 textPath
-#endif
 title
 tref
 tspan
