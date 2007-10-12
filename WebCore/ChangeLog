@@ -1,3 +1,48 @@
+2007-09-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::renderPath):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+
+2007-09-09  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Rework <pattern> support to take overflow & viewBox into account.
+        Also fix all possible combinations of patternUnits/patternContentUnits, tested by several batik testcases.
+        (Status: <mask>, <pattern>, <linearGradient>, <radialGradient>, <filter> regions work perfectly. <clipPath> is sill todo)
+
+        While I'm at it, add a very helpful debugging tool "dumpCGOutputImage" and rename "dumpOutputImage" to "dumpCIOutputImage".
+        Also fix possible null image buffer problems. (ie. large alloc)
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12221 (Webkit ToT fails to render this pattern example)
+
+        * ksvg2/svg/PatternAttributes.h:
+        (WebCore::PatternAttributes::PatternAttributes):
+        (WebCore::PatternAttributes::x):
+        (WebCore::PatternAttributes::y):
+        (WebCore::PatternAttributes::width):
+        (WebCore::PatternAttributes::height):
+        (WebCore::PatternAttributes::setX):
+        (WebCore::PatternAttributes::setY):
+        (WebCore::PatternAttributes::setWidth):
+        (WebCore::PatternAttributes::setHeight):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        (WebCore::SVGPatternElement::collectPatternProperties):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::patternCallback):
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        (WebCore::dumpCIOutputImage):
+        (WebCore::dumpCGOutputImage):
+
 2007-09-05  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

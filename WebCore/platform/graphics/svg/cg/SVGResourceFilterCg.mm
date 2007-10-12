@@ -134,8 +134,10 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect
     context->translate(-filterRect.x(), -filterRect.y());
 }
 
-#if DEBUG_OUTPUT_IMAGE > 0
-void dumpOutputImage(CIImage* outputImage)
+#ifndef NDEBUG
+// Extremly helpful debugging utilities for any paint server / resource that creates
+// internal image buffers (ie. gradients on text, masks, filters...)
+void dumpCIOutputImage(CIImage* outputImage, NSString* fileName)
 {
     CGSize extentSize = [outputImage extent].size;
     NSImage* image = [[[NSImage alloc] initWithSize:NSMakeSize(extentSize.width, extentSize.height)] autorelease];
@@ -145,10 +147,13 @@ void dumpOutputImage(CIImage* outputImage)
     NSBitmapImageRep* imageRep = [NSBitmapImageRep imageRepWithData:imageData];
     imageData = [imageRep representationUsingType:NSJPEGFileType properties:nil];
 
-    static unsigned int s_counter = 0;
-    s_counter++;
+    [imageData writeToFile:fileName atomically:YES];
+}
 
-    [imageData writeToFile:[NSString stringWithFormat:@"/Users/nikoz/outputImages/%d.jpeg", s_counter] atomically:YES];
+void dumpCGOutputImage(CGImage* outputImage, NSString* fileName)
+{
+    if (CIImage* ciOutputImage = [CIImage imageWithCGImage:outputImage])
+        dumpCIOutputImage(ciOutputImage, fileName);
 }
 #endif
 

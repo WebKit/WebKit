@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -35,9 +35,7 @@ namespace WebCore {
 static void patternCallback(void* info, CGContextRef context)
 {
     ImageBuffer* patternImage = reinterpret_cast<ImageBuffer*>(info);
-
-    IntSize patternContentSize = patternImage->size();
-    CGContextDrawImage(context, CGRectMake(0, 0, patternContentSize.width(), patternContentSize.height()), patternImage->cgImage());
+    CGContextDrawImage(context, CGRect(FloatRect(FloatPoint(), patternImage->size())), patternImage->cgImage());
 }
 
 bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
@@ -57,28 +55,34 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     if (!tile())
         return false;
 
-    CGSize cellSize = CGSize(tile()->size());
-
     context->save();
 
     // Respect local pattern transformation
-    CGContextConcatCTM(contextRef, patternTransform());
+    context->concatCTM(patternTransform());
 
-    // Pattern space seems to start in the lower-left, so we flip the Y here. 
-    CGSize phase = CGSizeMake(patternBoundaries().x(), -patternBoundaries().y());
-    CGContextSetPatternPhase(contextRef, phase);
+    // Apply pattern space transformation
+    context->translate(patternBoundaries().x(), patternBoundaries().y());
+
+    // Crude hack to support overflow="visible".
+    // When the patternBoundaries() size is smaller than the actual tile() size, we run into a problem:
+    // Our tile contains content which is larger than the pattern cell size. We just draw the pattern
+    // "out of" cell boundaries, to draw the overflown content, instead of clipping it away. The uppermost
+    // cell doesn't include the overflown content of the cell right above it though -> that's why we're moving
+    // down the phase by a very small amount, so we're sure the "cell right above"'s overflown content gets drawn.
+    CGContextSetPatternPhase(contextRef, CGSizeMake(0.0, -0.01));
 
     RenderStyle* style = object->style();
     CGContextSetAlpha(contextRef, style->opacity());
 
+    CGPatternCallbacks callbacks = {0, patternCallback, 0};
+
     ASSERT(!m_pattern);
-    CGPatternCallbacks callbacks = {0, patternCallback, NULL};
     m_pattern = CGPatternCreate(tile(),
-                                CGRectMake(0, 0, cellSize.width, cellSize.height),
+                                CGRect(FloatRect(FloatPoint(), tile()->size())),
                                 CGContextGetCTM(contextRef),
                                 patternBoundaries().width(),
                                 patternBoundaries().height(),
-                                kCGPatternTilingConstantSpacing, // FIXME: should ask CG guys.
+                                kCGPatternTilingConstantSpacing,
                                 true, // has color
                                 &callbacks);
 

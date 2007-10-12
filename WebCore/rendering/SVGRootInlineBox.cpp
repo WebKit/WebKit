@@ -258,7 +258,6 @@ struct SVGRootInlineBoxPaintWalker {
 
         RenderStyle* styleToUse = text->style(textBox->isFirstLineStyle());
         ASSERT(styleToUse);
-        ASSERT(textBox->parent()->object());
 
         startOffset += textBox->start();
 

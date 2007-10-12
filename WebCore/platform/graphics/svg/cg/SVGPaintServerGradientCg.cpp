@@ -216,7 +216,7 @@ void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderO
     ASSERT(contextRef);
     
     bool isFilled = (type & ApplyToFillTargetType) && style->svgStyle()->hasFill();
-    
+
     // Compute destination object bounding box
     FloatRect objectBBox;
     if (boundingBoxMode()) {
@@ -277,7 +277,11 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
         IntRect maskRect = enclosingIntRect(object->absoluteTransform().mapRect(maskBBox));
 
         auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(IntSize(maskRect.width(), maskRect.height()), false);
-        // FIXME: maskImage could be NULL
+
+        if (!maskImage.get()) {
+            context->restore();
+            return false;
+        }
 
         GraphicsContext* maskImageContext = maskImage->context();
         maskImageContext->save();

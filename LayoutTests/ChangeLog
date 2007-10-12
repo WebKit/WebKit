@@ -1,3 +1,39 @@
+2007-09-09  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Update layout tests results after the <pattern> rework.
+
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * svg/batik/paints/gradientLimit-expected.checksum: Added.
+        * svg/batik/paints/gradientLimit-expected.png: Added.
+        * svg/batik/paints/gradientLimit-expected.txt: Added.
+        * svg/batik/paints/gradientLimit.svg: Added.
+        * svg/batik/paints/patternPreserveAspectRatioA-expected.checksum: Added.
+        * svg/batik/paints/patternPreserveAspectRatioA-expected.png: Added.
+        * svg/batik/paints/patternPreserveAspectRatioA-expected.txt: Added.
+        * svg/batik/paints/patternPreserveAspectRatioA.svg: Added.
+        * svg/batik/paints/patternRegionA-expected.checksum: Added.
+        * svg/batik/paints/patternRegionA-expected.png: Added.
+        * svg/batik/paints/patternRegionA-expected.txt: Added.
+        * svg/batik/paints/patternRegionA.svg: Added.
+        * svg/batik/paints/patternRegionB-expected.checksum: Added.
+        * svg/batik/paints/patternRegionB-expected.png: Added.
+        * svg/batik/paints/patternRegionB-expected.txt: Added.
+        * svg/batik/paints/patternRegions-expected.checksum: Added.
+        * svg/batik/paints/patternRegions-expected.png: Added.
+        * svg/batik/paints/patternRegions-expected.txt: Added.
+        * svg/batik/paints/patternRegions.svg: Added.
+        * svg/custom/pattern-rotate-expected.checksum:
+        * svg/custom/pattern-rotate-expected.png:
+        * svg/custom/stroked-pattern-expected.checksum: Added.
+        * svg/custom/stroked-pattern-expected.png: Added.
+        * svg/custom/stroked-pattern-expected.txt: Added.
+        * svg/custom/stroked-pattern.svg: Added.
+
 2007-09-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Anders.

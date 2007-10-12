@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -35,6 +35,7 @@
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPaintServerPattern.h"
+#include "SVGStyledTransformableElement.h"
 #include "SVGSVGElement.h"
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
@@ -128,38 +129,88 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
     PatternAttributes attributes = collectPatternProperties();
 
     // If we didn't find any pattern content, ignore the request.
-    if (!attributes.patternContentElement())
+    if (!attributes.patternContentElement() || !renderer() || !renderer()->style())
         return;
 
-    // Determine specified pattern size
-    float xValue = narrowPrecisionToFloat(attributes.x());
-    float yValue = narrowPrecisionToFloat(attributes.y());
-    float widthValue = narrowPrecisionToFloat(attributes.width());
-    float heightValue = narrowPrecisionToFloat(attributes.height());
+    FloatRect patternBoundaries; 
+    FloatRect patternContentBoundaries;
 
-    if (attributes.boundingBoxMode()) {
-        xValue *= targetRect.width();
-        yValue *= targetRect.height();
-        widthValue *= targetRect.width();
-        heightValue *= targetRect.height();
+    // Determine specified pattern size
+    if (attributes.boundingBoxMode())
+        patternBoundaries = FloatRect(attributes.x().valueAsPercentage() * targetRect.width(),
+                                      attributes.y().valueAsPercentage() * targetRect.height(),
+                                      attributes.width().valueAsPercentage() * targetRect.width(),
+                                      attributes.height().valueAsPercentage() * targetRect.height());
+    else
+        patternBoundaries = FloatRect(attributes.x().value(),
+                                      attributes.y().value(),
+                                      attributes.width().value(),
+                                      attributes.height().value());
+
+    // Clip pattern boundaries to target boundaries
+    if (patternBoundaries.width() > targetRect.width())
+        patternBoundaries.setWidth(targetRect.width());
+
+    if (patternBoundaries.height() > targetRect.height())
+        patternBoundaries.setHeight(targetRect.height());
+
+    // Eventually calculate the pattern content boundaries (only needed with overflow="visible").
+    RenderStyle* style = renderer()->style();
+    if (style->overflowX() == OVISIBLE && style->overflowY() == OVISIBLE) {
+        for (Node* n = attributes.patternContentElement()->firstChild(); n; n = n->nextSibling()) {
+            SVGElement* elem = svg_dynamic_cast(n);
+            if (!elem || !elem->isStyledTransformable())
+                continue;
+
+            SVGStyledElement* e = static_cast<SVGStyledElement*>(elem);
+            RenderObject* item = e->renderer();
+            if (!item)
+                continue;
+
+            patternContentBoundaries.unite(item->relativeBBox(true));
+        }
     }
 
-    // As we're allocating buffers here, clip the buffer size to the target object size as upper boundary
-    if (widthValue > targetRect.width())
-        widthValue = targetRect.width();
+    AffineTransform viewBoxCTM = viewBoxToViewTransform(patternBoundaries.width(), patternBoundaries.height()); 
+    FloatRect patternBoundariesIncludingOverflow = patternBoundaries;
 
-    if (heightValue > targetRect.height())
-        heightValue = targetRect.height();
+    // Apply objectBoundingBoxMode fixup for patternContentUnits, if viewBox is not set.
+    if (!patternContentBoundaries.isEmpty()) {
+        if (!viewBoxCTM.isIdentity())
+            patternContentBoundaries = viewBoxCTM.mapRect(patternContentBoundaries);
+        else if (attributes.boundingBoxModeContent())
+            patternContentBoundaries = FloatRect(patternContentBoundaries.x() * targetRect.width(),
+                                                 patternContentBoundaries.y() * targetRect.height(),
+                                                 patternContentBoundaries.width() * targetRect.width(),
+                                                 patternContentBoundaries.height() * targetRect.height());
 
-    auto_ptr<ImageBuffer> patternImage = ImageBuffer::create(IntSize(lroundf(widthValue), lroundf(heightValue)), false);
+        patternBoundariesIncludingOverflow.unite(patternContentBoundaries);
+    }
+
+    auto_ptr<ImageBuffer> patternImage = ImageBuffer::create(IntSize(lroundf(patternBoundariesIncludingOverflow.width()),
+                                                                     lroundf(patternBoundariesIncludingOverflow.height())), false);
+
     if (!patternImage.get())
         return;
 
     GraphicsContext* context = patternImage->context();
     ASSERT(context);
- 
-    if (attributes.boundingBoxModeContent()) {
-        context->save();
+
+    context->save();
+
+    // Move to pattern start origin
+    if (patternBoundariesIncludingOverflow.location() != patternBoundaries.location()) {
+        context->translate(patternBoundaries.x() - patternBoundariesIncludingOverflow.x(),
+                           patternBoundaries.y() - patternBoundariesIncludingOverflow.y());
+
+        patternBoundaries.setLocation(patternBoundariesIncludingOverflow.location());
+    }
+
+    // Process viewBox or boundingBoxModeContent correction
+    if (!viewBoxCTM.isIdentity())
+        context->concatCTM(viewBoxCTM);
+    else if (attributes.boundingBoxModeContent()) {
+        context->translate(targetRect.x(), targetRect.y());
         context->scale(FloatSize(targetRect.width(), targetRect.height()));
     }
 
@@ -177,11 +228,10 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
         ImageBuffer::renderSubtreeToImage(patternImage.get(), item);
     }
 
-    if (attributes.boundingBoxModeContent())
-        context->restore();
+    context->restore();
 
     m_resource->setPatternTransform(attributes.patternTransform());
-    m_resource->setPatternBoundaries(FloatRect(xValue, yValue, widthValue, heightValue));
+    m_resource->setPatternBoundaries(patternBoundaries); 
     m_resource->setTile(patternImage);
 }
 
@@ -217,16 +267,16 @@ PatternAttributes SVGPatternElement::collectPatternProperties() const
     const SVGPatternElement* current = this;
     while (current) {
         if (!attributes.hasX() && current->hasAttribute(SVGNames::xAttr))
-            attributes.setX(current->x().valueAsPercentage());
+            attributes.setX(current->x());
 
         if (!attributes.hasY() && current->hasAttribute(SVGNames::yAttr))
-            attributes.setY(current->y().valueAsPercentage());
+            attributes.setY(current->y());
 
         if (!attributes.hasWidth() && current->hasAttribute(SVGNames::widthAttr))
-            attributes.setWidth(current->width().valueAsPercentage());
+            attributes.setWidth(current->width());
 
         if (!attributes.hasHeight() && current->hasAttribute(SVGNames::heightAttr))
-            attributes.setHeight(current->height().valueAsPercentage());
+            attributes.setHeight(current->height());
 
         if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::patternUnitsAttr))
             attributes.setBoundingBoxMode(current->getAttribute(SVGNames::patternUnitsAttr) == "objectBoundingBox");
