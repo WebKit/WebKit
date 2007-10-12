@@ -1,3 +1,18 @@
+2007-10-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15102
+        XMLHttpRequests should dispatch a readystatechange event.
+
+        Test: http/tests/xmlhttprequest/readystatechange.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener): Added readystatechange
+        event support. Fixed the function to dispatch the same event to all listeners
+        instead of creating a new copy for each one. Changed bubbling/cancelability of
+        load and readystatechange events to match Firefox.
+
 2007-10-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.

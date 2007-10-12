@@ -1,5 +1,15 @@
 2007-10-02  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15102
+        XMLHttpRequests should dispatch a readystatechange event.
+
+        * http/tests/xmlhttprequest/readystatechange-expected.txt: Added.
+        * http/tests/xmlhttprequest/readystatechange.html: Added.
+
+2007-10-02  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         http://bugs.webkit.org/show_bug.cgi?id=10370
