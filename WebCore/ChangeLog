@@ -1,5 +1,17 @@
 2007-06-14  Rob Buis  <buis@kde.org>
 
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=9752
+        %-sizing of elements with a html parent is broken
+
+        Calculate width/height for length percentages when embedded in xhtml.
+
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::PercentageOfViewport):
+
+2007-06-14  Rob Buis  <buis@kde.org>
+
         Build fix.
 
         * rendering/SVGCharacterLayoutInfo.cpp:

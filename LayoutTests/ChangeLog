@@ -1,3 +1,16 @@
+2007-06-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=9752
+        %-sizing of elements with a html parent is broken
+
+        * svg/custom/percentage-of-html-parent-expected.checksum: Added.
+        * svg/custom/percentage-of-html-parent-expected.png: Added.
+        * svg/custom/percentage-of-html-parent-expected.txt: Added.
+        * svg/custom/percentage-of-html-parent.xhtml: Added.
+
 2007-06-11  Rob Buis  <buis@kde.org>
 
         Reviewed by weinig.
