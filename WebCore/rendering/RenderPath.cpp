@@ -304,9 +304,8 @@ static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
     FloatPoint inslopeChange = data.inslopePoints[1] - FloatSize(data.inslopePoints[0].x(), data.inslopePoints[0].y());
     FloatPoint outslopeChange = data.outslopePoints[1] - FloatSize(data.outslopePoints[0].x(), data.outslopePoints[0].y());
 
-    static const double deg2rad = piDouble / 180.0;
-    double inslope = atan2(inslopeChange.y(), inslopeChange.x()) / deg2rad;
-    double outslope = atan2(outslopeChange.y(), outslopeChange.x()) / deg2rad;
+    double inslope = rad2deg(atan2(inslopeChange.y(), inslopeChange.x()));
+    double outslope = rad2deg(atan2(outslopeChange.y(), outslopeChange.x()));
 
     double angle = 0.0;
     switch (data.type) {

@@ -26,13 +26,9 @@
 #include "SVGAngle.h"
 
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
-
-const float deg2rad = 0.017453292519943295769f; // pi/180
-const float deg2grad = 400.0f / 360.0f;
-
-#define rad2grad deg2grad / deg2rad
 
 SVGAngle::SVGAngle()
     : Shared<SVGAngle>()
@@ -65,9 +61,9 @@ float SVGAngle::value() const
 void SVGAngle::calculate()
 {
     if (m_unitType == SVG_ANGLETYPE_GRAD)
-        m_value = m_valueInSpecifiedUnits / deg2grad;
+        m_value = grad2deg(m_valueInSpecifiedUnits);
     else if (m_unitType == SVG_ANGLETYPE_RAD)
-        m_value = m_valueInSpecifiedUnits / deg2rad;
+        m_value = rad2deg(m_valueInSpecifiedUnits);
     else if (m_unitType == SVG_ANGLETYPE_UNSPECIFIED || m_unitType == SVG_ANGLETYPE_DEG)
         m_value = m_valueInSpecifiedUnits;
 }
@@ -138,17 +134,17 @@ void SVGAngle::convertToSpecifiedUnits(unsigned short unitType)
         return;
 
     if (m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_RAD)
-        m_valueInSpecifiedUnits *= deg2rad;
+        m_valueInSpecifiedUnits = deg2rad(m_valueInSpecifiedUnits);
     else if (m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_RAD)
-        m_valueInSpecifiedUnits /= rad2grad;
+        m_valueInSpecifiedUnits = grad2rad(m_valueInSpecifiedUnits);
     else if (m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_GRAD)
-        m_valueInSpecifiedUnits *= deg2grad;
+        m_valueInSpecifiedUnits = deg2grad(m_valueInSpecifiedUnits);
     else if (m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_GRAD)
-        m_valueInSpecifiedUnits *= rad2grad;
+        m_valueInSpecifiedUnits = rad2grad(m_valueInSpecifiedUnits);
     else if (m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_DEG)
-        m_valueInSpecifiedUnits /= deg2rad;
+        m_valueInSpecifiedUnits = rad2deg(m_valueInSpecifiedUnits);
     else if (m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_DEG)
-        m_valueInSpecifiedUnits /= deg2grad;
+        m_valueInSpecifiedUnits = grad2deg(m_valueInSpecifiedUnits);
 
     m_unitType = (SVGAngleType)unitType;
 }
@@ -156,12 +152,12 @@ void SVGAngle::convertToSpecifiedUnits(unsigned short unitType)
 // Helpers
 double SVGAngle::todeg(double rad)
 {
-    return rad / deg2rad;
+    return rad2deg(rad);
 }
 
 double SVGAngle::torad(double deg)
 {
-    return deg * deg2rad;
+    return deg2rad(deg);
 }
 
 double SVGAngle::shortestArcBisector(double angle1, double angle2)

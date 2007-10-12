@@ -1,3 +1,23 @@
+2007-10-11  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Eric Seidel.
+        
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15076
+        "deg2rad has multiple definitions"
+        
+        Define deg2rad, rad2deg, deg2grad, grad2deg, rad2grad, grad2rad
+        These are used through WebKit.
+        
+        Change based on original patch by Rob Buis.
+
+        * wtf/MathExtras.h:
+        (deg2rad):
+        (rad2deg):
+        (deg2grad):
+        (grad2deg):
+        (rad2grad):
+        (grad2rad):
+
 2007-10-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

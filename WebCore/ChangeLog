@@ -1,3 +1,34 @@
+2007-10-11  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Eric Seidel.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15076
+        "deg2rad has multiple definitions"
+        
+        Use deg2rad, rad2deg, deg2grad, grad2deg, rad2grad, grad2rad
+        from wtf where appropriate.
+        
+        No test cases as this doesn't change behaviour.
+        
+        Change based on original patch by Rob Buis.
+
+        * ksvg2/svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::calculate):
+        (WebCore::SVGAngle::convertToSpecifiedUnits):
+        (WebCore::SVGAngle::todeg):
+        (WebCore::SVGAngle::torad):
+        * platform/graphics/AffineTransform.cpp:
+        (WebCore::AffineTransform::rotateFromVector):
+        (WebCore::AffineTransform::skewX):
+        (WebCore::AffineTransform::skewY):
+        * platform/graphics/cg/AffineTransformCG.cpp:
+        (WebCore::AffineTransform::rotate):
+        * platform/graphics/svg/filters/cg/SVGFEColorMatrixCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.h:
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.mm:
+        * rendering/RenderPath.cpp:
+        (WebCore::drawMarkerWithData):
+
 2007-10-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

@@ -25,6 +25,8 @@
 #include "SVGFEColorMatrix.h"
 #include "SVGFEHelpersCg.h"
 
+#include <wtf/MathExtras.h>
+
 namespace WebCore {
 
 #define CMValuesCheck(expected, type) \

@@ -35,6 +35,8 @@
 #import "WKPointLightFilter.h"
 #import "WKSpotLightFilter.h"
 
+#include <wtf/MathExtras.h>
+
 namespace WebCore {
 
 CIVector* getVectorForChannel(SVGChannelSelectorType channel)

@@ -83,6 +83,4 @@ CIFilter* getNormalMap(CIImage* bumpMap, float scale);
     FE_QUARTZ_MAP_TO_SUBREGION_PREPARE(bbox); \
     FE_QUARTZ_MAP_TO_SUBREGION_APPLY(cropRect);
 
-#define deg2rad(d) ((d * (2.0 * M_PI)) / 360.0)
-
 #endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
