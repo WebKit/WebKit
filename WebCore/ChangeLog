@@ -1,3 +1,18 @@
+2007-08-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11909
+        Regression: large SVG from Illustrator comes out blank
+
+        Fix last issue with the Illustrator file by making relativeBBox
+        calculation take into account viewBox.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::relativeBBox):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::relativeBBox):
+
 2007-08-08  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

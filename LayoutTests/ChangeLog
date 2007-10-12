@@ -1,3 +1,40 @@
+2007-08-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        Added testcases for:
+        http://bugs.webkit.org/show_bug.cgi?id=11909
+        Regression: large SVG from Illustrator comes out blank
+
+        Also changed results are included, no pixel tests changed.
+
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.txt:
+        * svg/carto.net/textbox-expected.txt:
+        * svg/custom/circular-marker-reference-4-expected.txt:
+        * svg/custom/container-opacity-clip-viewBox-expected.checksum: Added.
+        * svg/custom/container-opacity-clip-viewBox-expected.png: Added.
+        * svg/custom/container-opacity-clip-viewBox-expected.txt: Added.
+        * svg/custom/container-opacity-clip-viewBox.svg: Added.
+        * svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * svg/custom/feComponentTransfer-Linear-expected.txt:
+        * svg/custom/feComponentTransfer-Table-expected.txt:
+        * svg/custom/marker-overflow-clip-expected.txt:
+        * svg/custom/preserve-aspect-ratio-syntax-expected.txt:
+        * svg/custom/root-container-opacity-clip-viewBox-expected.checksum: Added.
+        * svg/custom/root-container-opacity-clip-viewBox-expected.png: Added.
+        * svg/custom/root-container-opacity-clip-viewBox-expected.txt: Added.
+        * svg/custom/root-container-opacity-clip-viewBox.svg: Added.
+        * svg/custom/use-css-events-expected.txt:
+        * svg/custom/viewbox-syntax-expected.txt:
+
 2007-08-08  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Oliver.
