@@ -2579,6 +2579,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\CachedFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\CachedFont.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\CachedImage.cpp"
 				>
 			</File>
@@ -3111,6 +3119,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\FontSelector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\GlyphBuffer.h"
 				>
 			</File>
@@ -3507,6 +3519,14 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\FontCacheWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\FontCustomPlatformData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\FontCustomPlatformData.h"
 					>
 				</File>
 				<File
@@ -4454,11 +4474,47 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSFontFace.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFontFace.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSFontFaceRule.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\css\CSSFontFaceRule.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFontFaceRule.idl"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFontFaceSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFontFaceSource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFontFaceSrcValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFontFaceSrcValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFontSelector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSFontSelector.h"
 				>
 			</File>
 			<File
