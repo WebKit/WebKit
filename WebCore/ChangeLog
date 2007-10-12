@@ -1,3 +1,15 @@
+2007-10-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15088
+        HTMLOptionElement.selected returns false when parent HTMLSelectElement is "display: none" until parent's .selectedIndex is accessed
+
+        Make sure the list items are up to date when there is no renderer.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcStyle):
+
 2007-10-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.

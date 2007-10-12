@@ -106,7 +106,8 @@ void HTMLSelectElement::recalcStyle( StyleChange ch )
             static_cast<RenderMenuList*>(renderer())->setOptionsChanged(true);
         else
             static_cast<RenderListBox*>(renderer())->setOptionsChanged(true);
-    }
+    } else if (m_recalcListItems)
+        recalcListItems();
 
     HTMLFormControlElementWithState::recalcStyle(ch);
 }
