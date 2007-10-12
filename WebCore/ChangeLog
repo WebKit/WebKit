@@ -8,6 +8,20 @@
 
 2007-10-01  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        This only affects Debug builds, and the ability to save SVGs as WebArchives
+        neither are testable via DumpRenderTree.
+
+        * Configurations/WebCore.xcconfig: change where Xcode looks for WebCore.exp
+        * DerivedSources.make: adds SVG symbols to WebCore.exp when necessary
+        * WebCore.SVG.exp: Added.
+        * WebCore.exp: moved to WebCore.base.exp
+        * WebCore.xcodeproj/project.pbxproj: updated to reflect moved files
+        * bindings/objc/DOMSVGExecption.h: moved to DOMSVGException.h
+
+2007-10-01  Eric Seidel  <eric@webkit.org>
+
         Reviewed by olliej.
 
         Make feature-branch build again with ENABLE_SVG_EXPERIMENTAL_FEATURES

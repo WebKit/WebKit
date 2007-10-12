@@ -37,6 +37,9 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebArchiver.h>
 
+#if ENABLE(SVG)
+#import <WebKit/DOMSVG.h>
+#endif
 
 @implementation DOMNode (WebDOMNodeOperations)
 
@@ -64,10 +67,18 @@
     
     SEL selector = firstSel;
     do {
+#if ENABLE(SVG)
+        NSString *string;
+        id attributeValue = [self performSelector:selector];
+        if ([attributeValue isKindOfClass:[DOMSVGAnimatedString class]])
+            string = [(DOMSVGAnimatedString*)attributeValue animVal];
+        else
+            string = attributeValue;
+#else
         NSString *string = [self performSelector:selector];
-        if ([string length] > 0) {
+#endif
+        if ([string length] > 0)
             [URLs addObject:[[self ownerDocument] URLWithAttributeString:string]];
-        }
     } while ((selector = va_arg(args, SEL)) != nil);
     
     va_end(args);
@@ -180,6 +191,19 @@
 }
 
 @end
+
+#if ENABLE(SVG)
+
+@implementation DOMSVGImageElement (WebDOMSVGImageElementOperationsPrivate)
+
+- (NSArray *)_subresourceURLs
+{
+    return [self _URLsFromSelectors:@selector(href), nil];
+}
+
+@end
+
+#endif
 
 @implementation DOMHTMLEmbedElement (WebDOMHTMLEmbedElementOperationsPrivate)
 

@@ -1,3 +1,12 @@
+2007-10-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        * DOM/WebDOMOperations.mm: added DOMSVGElementImage _subresources implementation
+        (-[DOMNode _URLsFromSelectors:]): now handles DOMSVGAnimatedString return values
+        (-[DOMSVGImageElement _subresourceURLs]): added.
+        * MigrateHeaders.make: copies DOMSVG* headers into WebKit/PrivateHeaders
+
 2007-10-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark.
