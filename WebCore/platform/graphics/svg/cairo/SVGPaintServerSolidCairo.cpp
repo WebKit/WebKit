@@ -29,7 +29,7 @@
 #include "SVGPaintServerSolid.h"
 
 #include "GraphicsContext.h"
-#include "KCanvasRenderingStyle.h"
+#include "SVGPaintServer.h"
 #include "RenderPath.h"
 
 namespace WebCore {
@@ -53,17 +53,17 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
     if ((type & ApplyToStrokeTargetType) && style->hasStroke()) {
         alpha = style->strokeOpacity();
 
-        cairo_set_line_width(cr, KSVGPainterFactory::cssPrimitiveToLength(object, style->strokeWidth(), 1.0));
+        cairo_set_line_width(cr, SVGRenderStyle::cssPrimitiveToLength(object, style->strokeWidth(), 1.0));
         context->setLineCap(style->capStyle());
         context->setLineJoin(style->joinStyle());
         if (style->joinStyle() == MiterJoin)
             context->setMiterLimit(style->strokeMiterLimit());
 
-        const KCDashArray& dashes = KSVGPainterFactory::dashArrayFromRenderingStyle(object->style());
+        const DashArray& dashes = dashArrayFromRenderingStyle(object->style());
         double* dsh = new double[dashes.size()];
         for (int i = 0 ; i < dashes.size() ; i++)
             dsh[i] = dashes[i];
-        double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(object, style->strokeDashOffset(), 0.0);
+        double dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->strokeDashOffset(), 0.0);
         cairo_set_dash(cr, dsh, dashes.size(), dashOffset);
         delete[] dsh;
     }

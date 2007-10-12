@@ -1,3 +1,24 @@
+2007-10-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Lars.
+
+        Get Gtk+ port building on the feature branch.
+
+        * WebCore.pro:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * platform/graphics/svg/cairo/RenderPathCairo.cpp:
+        (WebCore::RenderPath::strokeContains):
+        * platform/graphics/svg/cairo/SVGPaintServerCairo.cpp:
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::renderPath):
+        * platform/graphics/svg/cairo/SVGPaintServerSolidCairo.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/graphics/svg/cairo/SVGResourceMaskerCairo.cpp:
+        (WebCore::SVGResourceMasker::applyMask):
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        * rendering/SVGInlineTextBox.cpp:
+        * rendering/SVGRootInlineBox.cpp:
+
 2007-10-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

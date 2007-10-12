@@ -1029,6 +1029,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         ksvg2/svg/SVGElementInstance.idl \
         ksvg2/svg/SVGElementInstanceList.idl \
         ksvg2/svg/SVGEllipseElement.idl \
+        ksvg2/svg/SVGException.idl \
         ksvg2/svg/SVGFEBlendElement.idl \
         ksvg2/svg/SVGFEColorMatrixElement.idl \
         ksvg2/svg/SVGFEComponentTransferElement.idl \
@@ -1109,6 +1110,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         ksvg2/svg/SVGSymbolElement.idl \
         ksvg2/svg/SVGTextContentElement.idl \
         ksvg2/svg/SVGTextElement.idl \
+        ksvg2/svg/SVGTextPathElement.idl \
         ksvg2/svg/SVGTextPositioningElement.idl \
         ksvg2/svg/SVGTitleElement.idl \
         ksvg2/svg/SVGTransform.idl \
@@ -1126,13 +1128,13 @@ contains(DEFINES, ENABLE_SVG=1) {
         bindings/js/JSSVGPathSegCustom.cpp \
         bindings/js/JSSVGPathSegListCustom.cpp \
         bindings/js/JSSVGPointListCustom.cpp \
+        bindings/js/JSSVGTransformListCustom.cpp \
         ksvg2/css/SVGCSSParser.cpp \
         ksvg2/css/SVGCSSStyleSelector.cpp \
         ksvg2/css/SVGRenderStyle.cpp \
         ksvg2/css/SVGRenderStyleDefs.cpp \
         ksvg2/events/JSSVGLazyEventListener.cpp \
         ksvg2/events/SVGZoomEvent.cpp \
-        ksvg2/misc/KCanvasRenderingStyle.cpp \
         ksvg2/misc/PointerEventsHitRules.cpp \
         ksvg2/misc/SVGDocumentExtensions.cpp \
         ksvg2/misc/SVGImageLoader.cpp \
@@ -1239,6 +1241,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         ksvg2/svg/SVGTests.cpp \
         ksvg2/svg/SVGTextContentElement.cpp \
         ksvg2/svg/SVGTextElement.cpp \
+        ksvg2/svg/SVGTextPathElement.cpp \
         ksvg2/svg/SVGTextPositioningElement.cpp \
         ksvg2/svg/SVGTitleElement.cpp \
         ksvg2/svg/SVGTransformable.cpp \
@@ -1250,6 +1253,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         ksvg2/svg/SVGURIReference.cpp \
         ksvg2/svg/SVGUseElement.cpp \
         ksvg2/svg/SVGViewElement.cpp \
+        ksvg2/svg/SVGViewSpec.cpp \
         ksvg2/svg/SVGZoomAndPan.cpp \
         platform/graphics/svg/filters/SVGFEBlend.cpp \
         platform/graphics/svg/filters/SVGFEColorMatrix.cpp \
@@ -1289,10 +1293,15 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGImage.cpp \
         rendering/RenderSVGInline.cpp \
         rendering/RenderSVGInlineText.cpp \
+        rendering/RenderSVGRoot.cpp \
         rendering/RenderSVGText.cpp \
+        rendering/RenderSVGTextPath.cpp \
         rendering/RenderSVGTSpan.cpp \
+        rendering/RenderSVGViewportContainer.cpp \
+        rendering/SVGCharacterLayoutInfo.cpp \
         rendering/SVGInlineFlowBox.cpp \
         rendering/SVGInlineTextBox.cpp \
+        rendering/SVGRenderSupport.cpp \
         rendering/SVGRootInlineBox.cpp
 
 qt-port:SOURCES += \

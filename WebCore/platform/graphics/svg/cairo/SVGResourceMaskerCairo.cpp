@@ -34,10 +34,10 @@
 
 namespace WebCore {
 
-void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox) const
+void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
 {
     cairo_t* cr = context->platformContext();
-    cairo_surface_t* surface = mask()->surface();
+    cairo_surface_t* surface = m_mask->surface();
     if (!surface)
         return;
     cairo_pattern_t* mask = cairo_pattern_create_for_surface(surface);

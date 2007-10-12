@@ -32,6 +32,8 @@
 #include "SVGTextPositioningElement.h"
 #include "RenderSVGTextPath.h"
 
+#include <float.h>
+
 namespace WebCore {
 
 // Helper function

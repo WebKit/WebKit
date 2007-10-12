@@ -27,13 +27,13 @@
 #include "RenderPath.h"
 
 #include "CairoPath.h"
-#include "KCanvasRenderingStyle.h"
+#include "SVGPaintServer.h"
 
 namespace WebCore {
 
 bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
 {
-    if (requiresStroke && !KSVGPainterFactory::strokePaintServer(style(), this))
+    if (requiresStroke && !SVGPaintServer::strokePaintServer(style(), this))
         return false;
 
     cairo_t* cr = path().platformPath()->m_cr;

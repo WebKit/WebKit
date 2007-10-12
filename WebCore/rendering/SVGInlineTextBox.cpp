@@ -37,6 +37,8 @@
 #include "Text.h"
 #include "TextStyle.h"
 
+#include <float.h>
+
 using std::max;
 
 namespace WebCore {

@@ -27,7 +27,7 @@
 #include "SVGSVGElement.h"
 
 #include "AffineTransform.h"
-#include "csshelper.h"
+#include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EventListener.h"

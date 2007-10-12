@@ -41,6 +41,8 @@
 #include "Text.h"
 #include "TextStyle.h"
 
+#include <float.h>
+
 // Text chunk creation is complex and the whole process
 // can easily be traced by setting this variable > 0.
 #define DEBUG_CHUNK_BUILDING 0
