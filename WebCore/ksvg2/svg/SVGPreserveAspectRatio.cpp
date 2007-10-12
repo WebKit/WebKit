@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -61,13 +61,11 @@ unsigned short SVGPreserveAspectRatio::meetOrSlice() const
     return m_meetOrSlice;
 }
 
-void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
+bool SVGPreserveAspectRatio::parsePreserveAspectRatio(const UChar*& currParam, const UChar* end, bool validate)
 {
     SVGPreserveAspectRatioType align = SVG_PRESERVEASPECTRATIO_NONE;
     SVGMeetOrSliceType meetOrSlice = SVG_MEETORSLICE_MEET;
-
-    const UChar* currParam = string.characters();
-    const UChar* end = currParam + string.length();
+    bool ret = false;
 
     if (!skipOptionalSpaces(currParam, end))
         goto bail_out;
@@ -149,18 +147,20 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
         }
     }
 
-    if (end != currParam) {
+    if (end != currParam && validate) {
 bail_out:
         // FIXME: Should the two values be set to UNKNOWN instead?
         align = SVG_PRESERVEASPECTRATIO_NONE;
         meetOrSlice = SVG_MEETORSLICE_MEET;
-    }
+    } else
+        ret = true;
 
     if (m_align == align && m_meetOrSlice == meetOrSlice)
-        return;
+        return ret;
 
     m_align = align;
     m_meetOrSlice = meetOrSlice;
+    return ret;
 }
 
 AffineTransform SVGPreserveAspectRatio::getCTM(float logicX, float logicY,

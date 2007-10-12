@@ -69,9 +69,11 @@ void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
         setXBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
         setYBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
-    else if (attr->name() == SVGNames::preserveAspectRatioAttr)
-        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(attr->value());
-    else if (attr->name() == SVGNames::widthAttr) {
+    else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
+        const UChar* c = attr->value().characters();
+        const UChar* end = c + attr->value().length();
+        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(c, end);
+    } else if (attr->name() == SVGNames::widthAttr) {
         setWidthBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
         addCSSProperty(attr, CSS_PROP_WIDTH, attr->value());
         if (width().value() < 0.0)

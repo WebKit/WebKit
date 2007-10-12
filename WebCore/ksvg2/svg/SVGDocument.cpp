@@ -31,6 +31,7 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
+#include "SVGViewSpec.h"
 #include "SVGZoomEvent.h"
 #include "SVGZoomAndPan.h"
 
@@ -74,8 +75,13 @@ void SVGDocument::dispatchScrollEvent()
 
 bool SVGDocument::zoomAndPanEnabled() const
 {
-    if (rootElement())
-        return rootElement()->zoomAndPan() == SVGZoomAndPan::SVG_ZOOMANDPAN_MAGNIFY;
+    if (rootElement()) {
+        if (rootElement()->useCurrentView()) {
+            if (rootElement()->currentView())
+                return rootElement()->currentView()->zoomAndPan() == SVGZoomAndPan::SVG_ZOOMANDPAN_MAGNIFY;
+        } else
+            return rootElement()->zoomAndPan() == SVGZoomAndPan::SVG_ZOOMANDPAN_MAGNIFY;
+    }
 
     return false;
 }

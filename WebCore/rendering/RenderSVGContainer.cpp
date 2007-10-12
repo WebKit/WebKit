@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "GraphicsContext.h"
 #include "RenderView.h"
+#include "SVGFitToViewBox.h"
 #include "SVGLength.h"
 #include "SVGMarkerElement.h"
 #include "SVGRenderSupport.h"
@@ -48,7 +49,6 @@ RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
     , m_width(0)
     , m_height(0)
     , m_drawsContents(true)
-    , m_slice(false)
 {
     setReplaced(true);
 }
@@ -356,8 +356,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
         }
     }
 
-    if (!viewBox().isEmpty())
-        paintInfo.context->concatCTM(viewportTransform());
+    paintInfo.context->concatCTM(viewportTransform());
 
     // default implementation. Just pass paint through to the children
     PaintInfo childInfo(paintInfo);
@@ -415,40 +414,17 @@ void RenderSVGContainer::calcViewport()
     }
 }
 
-void RenderSVGContainer::setViewBox(const FloatRect& viewBox)
-{
-    m_viewBox = viewBox;
-
-    if (style())
-        setNeedsLayout(true);
-}
-
-FloatRect RenderSVGContainer::viewBox() const
-{
-    return m_viewBox;
-}
-
-void RenderSVGContainer::setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType align)
-{
-    m_align = align;
-    if (style())
-        setNeedsLayout(true);
-}
-
-SVGPreserveAspectRatio::SVGPreserveAspectRatioType RenderSVGContainer::align() const
-{
-    return m_align;
-}
-
 AffineTransform RenderSVGContainer::viewportTransform() const
 {
-    // FIXME: The method name is confusing, since it does not
-    // do viewport translating anymore. Look into this while
-    //  fixing bug 12207.
-    if (!viewBox().isEmpty())
-        return getAspectRatio(viewBox(), viewport());
-
-    return AffineTransform();
+    if (element()->hasTagName(SVGNames::svgTag)) {
+        SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
+        return svg->viewBoxToViewTransform(viewport().width(), viewport().height());
+    } else if (element()->hasTagName(SVGNames::markerTag)) {
+        SVGMarkerElement* marker = static_cast<SVGMarkerElement*>(element());
+        return marker->viewBoxToViewTransform(viewport().width(), viewport().height());
+    }
+ 
+     return AffineTransform();
 }
 
 IntRect RenderSVGContainer::absoluteClippedOverflowRect()
@@ -523,59 +499,6 @@ FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
     }
 
     return rect;
-}
-
-void RenderSVGContainer::setSlice(bool slice)
-{
-    m_slice = slice;
-
-    if (style())
-        setNeedsLayout(true);
-}
-
-bool RenderSVGContainer::slice() const
-{
-    return m_slice;
-}
-
-AffineTransform RenderSVGContainer::getAspectRatio(const FloatRect& logical, const FloatRect& physical) const
-{
-    AffineTransform temp;
-
-    float logicX = logical.x();
-    float logicY = logical.y();
-    float logicWidth = logical.width();
-    float logicHeight = logical.height();
-    float physWidth = physical.width();
-    float physHeight = physical.height();
-
-    float vpar = logicWidth / logicHeight;
-    float svgar = physWidth / physHeight;
-
-    if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE) {
-        temp.scale(physWidth / logicWidth, physHeight / logicHeight);
-        temp.translate(-logicX, -logicY);
-    } else if ((vpar < svgar && !slice()) || (vpar >= svgar && slice())) {
-        temp.scale(physHeight / logicHeight, physHeight / logicHeight);
-
-        if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMAX)
-            temp.translate(-logicX, -logicY);
-        else if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX)
-            temp.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight) / 2, -logicY);
-        else
-            temp.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight), -logicY);
-    } else {
-        temp.scale(physWidth / logicWidth, physWidth / logicWidth);
-
-        if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMIN)
-            temp.translate(-logicX, -logicY);
-        else if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID)
-            temp.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth) / 2);
-        else
-            temp.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth));
-    }
-
-    return temp;
 }
 
 bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)

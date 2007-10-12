@@ -1,3 +1,90 @@
+2007-07-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Build fix. Not reviewed.
+
+        Rob forgot to land the changes to SVGResourceMarker in his last commit.
+
+        * platform/graphics/svg/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::draw):
+
+2007-07-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        http://bugs.webkit.org/show_bug.cgi?id=5996
+        SVG <view> is unimplemented
+
+        Implement <view> and refactor the code in the svg renderer container classes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::zoomAndPanEnabled): Take into account currentView for zoom/pan
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        (WebCore::SVGFitToViewBox::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBox.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGLocatable.h:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::createRenderer):
+        (WebCore::SVGMarkerElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        * ksvg2/svg/SVGPreserveAspectRatio.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::currentView):
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        (WebCore::SVGSVGElement::createRenderer):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform):
+        (WebCore::SVGSVGElement::inheritViewAttributes):
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformAttribute):
+        * ksvg2/svg/SVGTransformable.h:
+        * ksvg2/svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::parseMappedAttribute):
+        * ksvg2/svg/SVGViewElement.h:
+        * ksvg2/svg/SVGViewSpec.cpp: Added.
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        (WebCore::SVGViewSpec::~SVGViewSpec):
+        (WebCore::SVGViewSpec::setTransform):
+        (WebCore::SVGViewSpec::setViewBoxString):
+        (WebCore::SVGViewSpec::setPreserveAspectRatioString):
+        (WebCore::SVGViewSpec::setViewTargetString):
+        (WebCore::SVGViewSpec::viewTarget):
+        (WebCore::SVGViewSpec::contextElement):
+        (WebCore::):
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * ksvg2/svg/SVGViewSpec.h: Added.
+        (WebCore::SVGViewSpec::transform):
+        (WebCore::SVGViewSpec::viewTargetString):
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::parseMappedAttribute):
+        (WebCore::):
+        (WebCore::SVGZoomAndPan::parseZoomAndPan):
+        * ksvg2/svg/SVGZoomAndPan.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor):
+        * page/Frame.cpp:
+        (WebCore::Frame::setZoomFactor): do not zoom when it is disabled
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::viewportTransform):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::applyContentTransforms):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::absoluteTransform):
+        (WebCore::RenderSVGRoot::localTransform):
+        * rendering/RenderSVGRoot.h:
+
 2007-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.

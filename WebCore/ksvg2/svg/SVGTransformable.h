@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -45,6 +45,7 @@ namespace WebCore {
         virtual void updateLocalTransform(SVGTransformList*) = 0;
 
         static bool parseTransformAttribute(SVGTransformList*, const AtomicString& transform);
+        static bool parseTransformAttribute(SVGTransformList*, const UChar*& ptr, const UChar* end);
         static bool parseTransformValue(unsigned type, const UChar*& ptr, const UChar* end, SVGTransform&);
         AffineTransform getCTM(const SVGElement*) const;
         AffineTransform getScreenCTM(const SVGElement*) const;

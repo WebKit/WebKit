@@ -47,32 +47,37 @@ SVGFitToViewBox::~SVGFitToViewBox()
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, FloatRect, Rect, rect, ViewBox, viewBox, SVGNames::viewBoxAttr.localName(), m_viewBox)
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr.localName(), m_preserveAspectRatio.get())
 
-void SVGFitToViewBox::parseViewBox(const String& str)
+bool SVGFitToViewBox::parseViewBox(const UChar*& c, const UChar* end, double& x, double& y, double& w, double& h, bool validate)
 {
-    double x = 0, y = 0, w = 0, h = 0;
-    const UChar* c = str.characters();
-    const UChar* end = c + str.length();
     Document* doc = contextElement()->document();
+    String str(c, end - c);
 
     skipOptionalSpaces(c, end);
 
-    if (!(parseNumber(c, end, x) && parseNumber(c, end, y) &&
-          parseNumber(c, end, w) && parseNumber(c, end, h, false))) {
+    bool valid = (parseNumber(c, end, x) && parseNumber(c, end, y) &&
+          parseNumber(c, end, w) && parseNumber(c, end, h, false));
+    if (!validate)
+        return true;
+    if (!valid) {
         doc->accessSVGExtensions()->reportWarning("Problem parsing viewBox=\"" + str + "\"");
-        return;
+        return false;
     }
 
-    if (w < 0.0) // check that width is positive
+    if (w < 0.0) { // check that width is positive
         doc->accessSVGExtensions()->reportError("A negative value for ViewBox width is not allowed");
-    else if (h < 0.0) // check that height is positive
+        return false;
+    } else if (h < 0.0) { // check that height is positive
         doc->accessSVGExtensions()->reportError("A negative value for ViewBox height is not allowed");
-    else {
+        return false;
+    } else {
         skipOptionalSpaces(c, end);
-        if (c < end) // nothing should come after the last, fourth number
+        if (c < end) { // nothing should come after the last, fourth number
             doc->accessSVGExtensions()->reportWarning("Problem parsing viewBox=\"" + str + "\"");
-        else
-            setViewBoxBaseValue(FloatRect::narrowPrecision(x, y, w, h));
+            return false;
+        }
     }
+
+    return true;
 }
 
 AffineTransform SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHeight) const
@@ -89,10 +94,16 @@ AffineTransform SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float v
 bool SVGFitToViewBox::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::viewBoxAttr) {
-        parseViewBox(attr->value());
+        double x = 0, y = 0, w = 0, h = 0;
+        const UChar* c = attr->value().characters();
+        const UChar* end = c + attr->value().length();
+        if (parseViewBox(c, end, x, y, w, h))
+            setViewBoxBaseValue(FloatRect(x, y, w, h));
         return true;
     } else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
-        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(attr->value());
+        const UChar* c = attr->value().characters();
+        const UChar* end = c + attr->value().length();
+        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(c, end);
         return true;
     }
 

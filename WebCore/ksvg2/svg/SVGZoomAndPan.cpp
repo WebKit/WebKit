@@ -26,6 +26,7 @@
 
 #include "MappedAttribute.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 
 namespace WebCore {
 
@@ -51,14 +52,28 @@ void SVGZoomAndPan::setZoomAndPan(unsigned short zoomAndPan)
 bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::zoomAndPanAttr) {
-        if (attr->value() == "disable")
-            setZoomAndPan(SVG_ZOOMANDPAN_DISABLE);
-        else if (attr->value() == "magnify")
-            setZoomAndPan(SVG_ZOOMANDPAN_MAGNIFY);
+        const UChar* start = attr->value().characters();
+        const UChar* end = start + attr->value().length();
+        parseZoomAndPan(start, end);
         return true;
     }
 
     return false;
+}
+
+static const UChar disable[] =  {'d', 'i', 's', 'a', 'b', 'l', 'e'};
+static const UChar magnify[] =  {'m', 'a', 'g', 'n', 'i', 'f', 'y'};
+
+bool SVGZoomAndPan::parseZoomAndPan(const UChar*& start, const UChar* end)
+{
+    if (skipString(start, end, disable, sizeof(disable) / sizeof(UChar)))
+        setZoomAndPan(SVG_ZOOMANDPAN_DISABLE);
+    else if (skipString(start, end, magnify, sizeof(magnify) / sizeof(UChar)))
+        setZoomAndPan(SVG_ZOOMANDPAN_MAGNIFY);
+    else
+        return false;
+
+    return true;
 }
 
 }

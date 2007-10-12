@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,6 +24,8 @@
 #define SVGZoomAndPan_h
 #if ENABLE(SVG)
 
+#include "PlatformString.h"
+
 namespace WebCore {
 
     class MappedAttribute;
@@ -44,6 +46,8 @@ namespace WebCore {
         virtual void setZoomAndPan(unsigned short zoomAndPan);
 
         bool parseMappedAttribute(MappedAttribute*);
+
+        bool parseZoomAndPan(const UChar*& start, const UChar* end);
 
     private:
         unsigned short m_zoomAndPan;

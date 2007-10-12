@@ -82,8 +82,7 @@ void SVGResourceMarker::draw(GraphicsContext* context, const FloatRect& rect, do
     AffineTransform viewportTransform;
     if (m_useStrokeWidth)
         viewportTransform.scale(strokeWidth, strokeWidth);
-    if (!m_marker->viewBox().isEmpty())
-        viewportTransform *= m_marker->viewportTransform();
+    viewportTransform *= m_marker->viewportTransform();
     double refX, refY;
     viewportTransform.map(m_refX, m_refY, &refX, &refY);
     transform.translate(-refX, -refY);

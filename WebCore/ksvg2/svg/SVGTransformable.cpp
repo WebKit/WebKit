@@ -189,9 +189,13 @@ static inline bool parseAndSkipType(const UChar*& currTransform, const UChar* en
 
 bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
 {
-    const UChar* currTransform = transform.characters();
-    const UChar* end = currTransform + transform.length();
+    const UChar* start = transform.characters();
+    const UChar* end = start + transform.length();
+    return parseTransformAttribute(list, start, end);
+}
 
+bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const UChar*& currTransform, const UChar* end)
+{
     bool delimParsed = false;
     while (currTransform < end) {
         delimParsed = false;

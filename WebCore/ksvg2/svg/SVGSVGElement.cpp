@@ -43,6 +43,9 @@
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGTransform.h"
+#include "SVGTransformList.h"
+#include "SVGViewElement.h"
+#include "SVGViewSpec.h"
 #include "SVGZoomEvent.h"
 #include "SelectionController.h"
 #include "TextStream.h"
@@ -67,6 +70,7 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_height(this, LengthModeHeight)
     , m_useCurrentView(false)
     , m_timeScheduler(new TimeScheduler(doc))
+    , m_viewSpec(0)
 {
     setWidthBaseValue(SVGLength(this, LengthModeWidth, "100%"));
     setHeightBaseValue(SVGLength(this, LengthModeHeight, "100%"));
@@ -162,6 +166,14 @@ void SVGSVGElement::setUseCurrentView(bool currentView)
     m_useCurrentView = currentView;
 }
 
+SVGViewSpec* SVGSVGElement::currentView() const
+{
+    if (!m_viewSpec)
+        m_viewSpec = new SVGViewSpec(this);
+
+    return m_viewSpec;
+}
+
 float SVGSVGElement::currentScale() const
 {
     if (document() && document()->frame())
@@ -235,10 +247,7 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
         if (SVGFitToViewBox::parseMappedAttribute(attr) && renderer()) {
-            if (renderer()->isSVGContainer())
-                static_cast<RenderSVGContainer*>(renderer())->setViewBox(viewBox());
-            else
-                static_cast<RenderSVGRoot*>(renderer())->setViewBox(viewBox());
+            renderer()->setNeedsLayout(true);
             return;
         }
         if (SVGZoomAndPan::parseMappedAttribute(attr))
@@ -393,22 +402,11 @@ AffineTransform SVGSVGElement::getScreenCTM() const
 
 RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    if (!parentNode()->isSVGElement()) {
-        RenderSVGRoot* rootContainer = new (arena) RenderSVGRoot(this);
-        // FIXME: All this setup should be done after attributesChanged, not here.
-        rootContainer->setViewBox(viewBox());
-        rootContainer->setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType(preserveAspectRatio()->align()));
-        rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
-        return rootContainer;
-    } else  {
-        RenderSVGContainer* rootContainer = new (arena) RenderSVGContainer(this);
-
-        // FIXME: All this setup should be done after attributesChanged, not here.
-        rootContainer->setViewBox(viewBox());
-        rootContainer->setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType(preserveAspectRatio()->align()));
-        rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
-        return rootContainer;
-    }
+    // FIXME: All this setup should be done after attributesChanged, not here.
+    if (!parentNode()->isSVGElement())
+        return new (arena) RenderSVGRoot(this);
+    else
+        return new (arena) RenderSVGContainer(this);
 }
 
 void SVGSVGElement::insertedIntoDocument()
@@ -466,6 +464,46 @@ void SVGSVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
             renderer()->setNeedsLayout(true);
 
     SVGStyledElement::attributeChanged(attr, preserveDecls);
+}
+
+AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
+{
+    FloatRect viewBoxRect;
+    if (useCurrentView()) {
+        if (currentView()) // what if we should use it but it is not set?
+            viewBoxRect = currentView()->viewBox();
+    } else
+        viewBoxRect = viewBox();
+    if (!viewBoxRect.width() || !viewBoxRect.height())
+        return AffineTransform();
+
+    AffineTransform ctm = preserveAspectRatio()->getCTM(viewBoxRect.x(),
+            viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(),
+            0, 0, viewWidth, viewHeight);
+
+    if (useCurrentView() && currentView())
+        return currentView()->transform()->concatenate().matrix() * ctm;
+
+    return ctm;
+}
+
+void SVGSVGElement::inheritViewAttributes(SVGViewElement* viewElement)
+{
+    setUseCurrentView(true);
+    if (viewElement->hasAttribute(SVGNames::viewBoxAttr))
+        currentView()->setViewBox(viewElement->viewBox());
+    else
+        currentView()->setViewBox(viewBox());
+    if (viewElement->hasAttribute(SVGNames::preserveAspectRatioAttr)) {
+        currentView()->preserveAspectRatio()->setAlign(viewElement->preserveAspectRatio()->align());
+        currentView()->preserveAspectRatio()->setMeetOrSlice(viewElement->preserveAspectRatio()->meetOrSlice());
+    } else {
+        currentView()->preserveAspectRatio()->setAlign(preserveAspectRatio()->align());
+        currentView()->preserveAspectRatio()->setMeetOrSlice(preserveAspectRatio()->meetOrSlice());
+    }
+    if (viewElement->hasAttribute(SVGNames::zoomAndPanAttr))
+        currentView()->setZoomAndPan(viewElement->zoomAndPan());
+    renderer()->setNeedsLayout(true);
 }
 
 }

@@ -27,6 +27,7 @@
 #include "RenderSVGRoot.h"
 
 #include "GraphicsContext.h"
+#include "RenderPath.h"
 #include "RenderView.h"
 #include "SVGLength.h"
 #include "SVGRenderSupport.h"
@@ -41,23 +42,12 @@ namespace WebCore {
 
 RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
     : RenderContainer(node)
-    , m_slice(false)
 {
     setReplaced(true);
 }
 
 RenderSVGRoot::~RenderSVGRoot()
 {
-}
-
-AffineTransform RenderSVGRoot::localTransform() const
-{
-    return m_matrix;
-}
-
-void RenderSVGRoot::setLocalTransform(const AffineTransform& matrix)
-{
-    m_matrix = matrix;
 }
 
 short RenderSVGRoot::lineHeight(bool b, bool isRootLineBox) const
@@ -141,9 +131,6 @@ void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int parentX, in
         paintInfo.context->concatCTM(AffineTransform().translate(viewport().x(), viewport().y()));
     }
 
-    if (!localTransform().isIdentity())
-        paintInfo.context->concatCTM(localTransform());
-
     paintInfo.context->concatCTM(AffineTransform().translate(svg->currentTranslate().x(), svg->currentTranslate().y()));
 }
 
@@ -157,6 +144,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (viewport().isEmpty())
         calcViewport();
 
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     // A value of zero disables rendering of the element. 
     if (viewport().width() <= 0. || viewport().height() <= 0.)
         return;
@@ -197,8 +185,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
         }
     }
 
-    if (!viewBox().isEmpty())
-        childPaintInfo.context->concatCTM(viewportTransform());
+    paintInfo.context->concatCTM(svg->viewBoxToViewTransform(width(), height()));
 
     RenderContainer::paint(childPaintInfo, 0, 0);
 
@@ -240,46 +227,6 @@ void RenderSVGRoot::calcViewport()
     }
 }
 
-void RenderSVGRoot::setViewBox(const FloatRect& viewBox)
-{
-    m_viewBox = viewBox;
-
-    if (style())
-        setNeedsLayout(true);
-}
-
-FloatRect RenderSVGRoot::viewBox() const
-{
-    return m_viewBox;
-}
-
-void RenderSVGRoot::setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType align)
-{
-    m_align = align;
-    if (style())
-        setNeedsLayout(true);
-}
-
-SVGPreserveAspectRatio::SVGPreserveAspectRatioType RenderSVGRoot::align() const
-{
-    return m_align;
-}
-
-AffineTransform RenderSVGRoot::viewportTransform() const
-{
-    // FIXME: The method name is confusing, since it does not
-    // do viewport translating anymore. Look into this while
-    //  fixing bug 12207.
-    if (!viewBox().isEmpty()) {
-        FloatRect viewportRect = viewport();
-        viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
-
-        return getAspectRatio(viewBox(), viewportRect);
-    }
-
-    return AffineTransform();
-}
-
 IntRect RenderSVGRoot::absoluteClippedOverflowRect()
 {
     IntRect repaintRect;
@@ -315,7 +262,7 @@ AffineTransform RenderSVGRoot::absoluteTransform() const
     ctm.scale(svg->currentScale());
     ctm.translate(svg->currentTranslate().x(), svg->currentTranslate().y());
     ctm.translate(viewport().x(), viewport().y());
-    return viewportTransform() * ctm;
+    return svg->viewBoxToViewTransform(width(), height()) * ctm;
 }
 
 bool RenderSVGRoot::fillContains(const FloatPoint& p) const
@@ -358,57 +305,9 @@ FloatRect RenderSVGRoot::relativeBBox(bool includeStroke) const
     return rect;
 }
 
-void RenderSVGRoot::setSlice(bool slice)
+AffineTransform RenderSVGRoot::localTransform() const
 {
-    m_slice = slice;
-
-    if (style())
-        setNeedsLayout(true);
-}
-
-bool RenderSVGRoot::slice() const
-{
-    return m_slice;
-}
-
-AffineTransform RenderSVGRoot::getAspectRatio(const FloatRect& logical, const FloatRect& physical) const
-{
-    AffineTransform temp;
-
-    float logicX = logical.x();
-    float logicY = logical.y();
-    float logicWidth = logical.width();
-    float logicHeight = logical.height();
-    float physWidth = physical.width();
-    float physHeight = physical.height();
-
-    float vpar = logicWidth / logicHeight;
-    float svgar = physWidth / physHeight;
-
-    if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE) {
-        temp.scale(physWidth / logicWidth, physHeight / logicHeight);
-        temp.translate(-logicX, -logicY);
-    } else if ((vpar < svgar && !slice()) || (vpar >= svgar && slice())) {
-        temp.scale(physHeight / logicHeight, physHeight / logicHeight);
-
-        if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMAX)
-            temp.translate(-logicX, -logicY);
-        else if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX)
-            temp.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight) / 2, -logicY);
-        else
-            temp.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight), -logicY);
-    } else {
-        temp.scale(physWidth / logicWidth, physWidth / logicWidth);
-
-        if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMIN)
-            temp.translate(-logicX, -logicY);
-        else if (align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID)
-            temp.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth) / 2);
-        else
-            temp.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth));
-    }
-
-    return temp;
+    return AffineTransform();
 }
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)

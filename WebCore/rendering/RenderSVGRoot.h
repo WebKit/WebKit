@@ -25,12 +25,12 @@
 
 #if ENABLE(SVG)
 #include "RenderContainer.h"
-#include "RenderPath.h"
-#include "SVGPreserveAspectRatio.h"
+#include "FloatRect.h"
 
 namespace WebCore {
 
-class SVGElement;
+class SVGStyledElement;
+class AffineTransform;
 
 class RenderSVGRoot : public RenderContainer {
 public:
@@ -57,34 +57,16 @@ public:
     FloatRect relativeBBox(bool includeStroke = true) const;
     
     virtual AffineTransform localTransform() const;
-    void setLocalTransform(const AffineTransform&);
    
     FloatRect viewport() const;
 
-    void setViewBox(const FloatRect&);
-    FloatRect viewBox() const;
-
-    void setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType);
-    SVGPreserveAspectRatio::SVGPreserveAspectRatioType align() const;
-
-    void setSlice(bool);
-    bool slice() const;
-    
-    AffineTransform viewportTransform() const;
-    
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     
 private:
     void calcViewport(); 
-    AffineTransform getAspectRatio(const FloatRect& logical, const FloatRect& physical) const;
     void applyContentTransforms(PaintInfo&, int parentX, int parentY);
 
-    bool m_slice : 1;
-    AffineTransform m_matrix;
-    
     FloatRect m_viewport;
-    FloatRect m_viewBox;
-    SVGPreserveAspectRatio::SVGPreserveAspectRatioType m_align;
     IntRect m_absoluteBounds;
 };
 

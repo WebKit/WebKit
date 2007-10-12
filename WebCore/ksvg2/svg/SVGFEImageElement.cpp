@@ -59,9 +59,11 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEImageElement, SVGPreserveAspectRatio*, Preser
 void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::preserveAspectRatioAttr)
-        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(value);
-    else {
+    if (attr->name() == SVGNames::preserveAspectRatioAttr) {
+        const UChar* c = value.characters();
+        const UChar* end = c + value.length();
+        preserveAspectRatioBaseValue()->parsePreserveAspectRatio(c, end);
+    } else {
         if (SVGURIReference::parseMappedAttribute(attr)) {
             if (!href().startsWith("#")) {
                 // FIXME: this code needs to special-case url fragments and later look them up using getElementById instead of loading them here

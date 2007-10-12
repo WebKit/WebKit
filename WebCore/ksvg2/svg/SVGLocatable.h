@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -48,9 +48,10 @@ namespace WebCore {
         virtual AffineTransform getScreenCTM() const = 0;
         AffineTransform getTransformToElement(SVGElement*, ExceptionCode&) const;
 
-    protected:
         static SVGElement* nearestViewportElement(const SVGStyledElement*);
         static SVGElement* farthestViewportElement(const SVGStyledElement*);
+
+    protected:
         static FloatRect getBBox(const SVGStyledElement*);
         static AffineTransform getCTM(const SVGElement*);
         static AffineTransform getScreenCTM(const SVGElement*);

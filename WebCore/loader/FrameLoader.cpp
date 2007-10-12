@@ -84,12 +84,23 @@
 #include <kjs/JSLock.h>
 #include <kjs/object.h>
 
+#if ENABLE(SVG)
+#include "SVGDocument.h"
+#include "SVGLocatable.h"
+#include "SVGNames.h"
+#include "SVGPreserveAspectRatio.h"
+#include "SVGSVGElement.h"
+#include "SVGViewElement.h"
+#include "SVGViewSpec.h"
+#endif
+
 using KJS::UString;
 using KJS::JSLock;
 using KJS::JSValue;
 
 namespace WebCore {
 
+using namespace SVGNames;
 using namespace HTMLNames;
 using namespace EventNames;
 
@@ -1494,6 +1505,27 @@ bool FrameLoader::gotoAnchor(const String& name)
     Node* anchorNode = m_frame->document()->getElementById(AtomicString(name));
     if (!anchorNode)
         anchorNode = m_frame->document()->anchors()->namedItem(name, !m_frame->document()->inCompatMode());
+
+    if (m_frame->document()->isSVGDocument()) {
+        if (name.startsWith("xpointer(")) {
+            // We need to parse the xpointer reference here
+        } else if (name.startsWith("svgView(")) {
+            RefPtr<SVGSVGElement> svg = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+            if (!svg->currentView()->parseViewSpec(name))
+                return false;
+            svg->setUseCurrentView(true);
+        } else {
+            if (anchorNode && anchorNode->hasTagName(SVGNames::viewTag)) {
+                RefPtr<SVGViewElement> viewElement = anchorNode->hasTagName(SVGNames::viewTag) ? static_cast<SVGViewElement*>(anchorNode) : 0;
+                if (viewElement.get()) {
+                    RefPtr<SVGSVGElement> svg = static_cast<SVGSVGElement*>(SVGLocatable::nearestViewportElement(viewElement.get()));
+                    svg->inheritViewAttributes(viewElement.get());
+                }
+            }
+        }
+        // FIXME: need to decide which <svg> to focus on, and zoom to that one
+        // FIXME: need to actually "highlight" the viewTarget(s)
+    }
 
     m_frame->document()->setCSSTarget(anchorNode); // Setting to null will clear the current target.
   

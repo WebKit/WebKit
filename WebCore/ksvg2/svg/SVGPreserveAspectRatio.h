@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,6 +26,7 @@
 #if ENABLE(SVG)
 
 #include "Shared.h"
+#include <PlatformString.h>
 
 namespace WebCore {
 
@@ -70,7 +71,7 @@ namespace WebCore {
                                float physWidth, float physHeight);
 
         // Helper
-        void parsePreserveAspectRatio(const String&);
+        bool parsePreserveAspectRatio(const UChar*& currParam, const UChar* end, bool validate = true);
 
     protected:
         unsigned short m_align;

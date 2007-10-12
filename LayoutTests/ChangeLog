@@ -1,3 +1,43 @@
+2007-07-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        http://bugs.webkit.org/show_bug.cgi?id=5996
+        SVG <view> is unimplemented
+
+        Testcases for each possible viewSpec fragment and a test that
+        uses all fragments.
+
+        * svg/custom/linking-a-03-b-all-expected.checksum: Added.
+        * svg/custom/linking-a-03-b-all-expected.png: Added.
+        * svg/custom/linking-a-03-b-all-expected.txt: Added.
+        * svg/custom/linking-a-03-b-all.svg: Added.
+        * svg/custom/linking-a-03-b-preserveAspectRatio-expected.checksum: Added.
+        * svg/custom/linking-a-03-b-preserveAspectRatio-expected.png: Added.
+        * svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt: Added.
+        * svg/custom/linking-a-03-b-preserveAspectRatio.svg: Added.
+        * svg/custom/linking-a-03-b-transform-expected.checksum: Added.
+        * svg/custom/linking-a-03-b-transform-expected.png: Added.
+        * svg/custom/linking-a-03-b-transform-expected.txt: Added.
+        * svg/custom/linking-a-03-b-transform.svg: Added.
+        * svg/custom/linking-a-03-b-viewBox-expected.checksum: Added.
+        * svg/custom/linking-a-03-b-viewBox-expected.png: Added.
+        * svg/custom/linking-a-03-b-viewBox-expected.txt: Added.
+        * svg/custom/linking-a-03-b-viewBox-transform-expected.checksum: Added.
+        * svg/custom/linking-a-03-b-viewBox-transform-expected.png: Added.
+        * svg/custom/linking-a-03-b-viewBox-transform-expected.txt: Added.
+        * svg/custom/linking-a-03-b-viewBox-transform.svg: Added.
+        * svg/custom/linking-a-03-b-viewBox.svg: Added.
+        * svg/custom/linking-a-03-b-viewTarget-expected.checksum: Added.
+        * svg/custom/linking-a-03-b-viewTarget-expected.png: Added.
+        * svg/custom/linking-a-03-b-viewTarget-expected.txt: Added.
+        * svg/custom/linking-a-03-b-viewTarget.svg: Added.
+        * svg/custom/linking-a-03-b-zoomAndPan-expected.checksum: Added.
+        * svg/custom/linking-a-03-b-zoomAndPan-expected.png: Added.
+        * svg/custom/linking-a-03-b-zoomAndPan-expected.txt: Added.
+        * svg/custom/linking-a-03-b-zoomAndPan.svg: Added.
+        * svg/custom/resources/linkingCircle-f.svg: Added.
+
 2007-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.
