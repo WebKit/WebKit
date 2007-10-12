@@ -1,3 +1,15 @@
+2007-06-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14064
+        fill property is reported as type SVGColor
+
+        Do the checks in the right order.
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::toJS):
+
 2007-06-07  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

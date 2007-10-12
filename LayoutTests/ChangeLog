@@ -1,3 +1,15 @@
+2007-06-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14064
+        fill property is reported as type SVGColor
+
+        * svg/custom/fill-SVGPaint-interface-expected.checksum: Added.
+        * svg/custom/fill-SVGPaint-interface-expected.png: Added.
+        * svg/custom/fill-SVGPaint-interface-expected.txt: Added.
+        * svg/custom/fill-SVGPaint-interface.svg: Added.
+
 2007-06-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.
