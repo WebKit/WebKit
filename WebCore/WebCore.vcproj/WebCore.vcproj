@@ -1477,6 +1477,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSSVGException.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSSVGException.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFEBlendElement.cpp"
 				>
 			</File>
@@ -2114,6 +2122,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGTextElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSSVGTextPathElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSSVGTextPathElement.h"
 				>
 			</File>
 			<File
@@ -5242,6 +5258,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGRoot.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGRoot.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGText.cpp"
 				>
 			</File>
@@ -5250,11 +5274,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGTextPath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGTextPath.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGTSpan.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\rendering\RenderSVGTSpan.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGViewportContainer.cpp"
 				>
 			</File>
 			<File
@@ -5378,6 +5414,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\SVGCharacterLayoutInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGCharacterLayoutInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\SVGInlineFlowBox.cpp"
 				>
 			</File>
@@ -5391,6 +5435,14 @@
 			</File>
 			<File
 				RelativePath="..\rendering\SVGInlineTextBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGRenderSupport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGRenderSupport.h"
 				>
 			</File>
 			<File
@@ -7428,6 +7480,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSSVGTransformListCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSTreeWalkerCustom.cpp"
 					>
 				</File>
@@ -8432,6 +8488,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\ksvg2\svg\SVGTextPathElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGTextPathElement.h"
+					>
+				</File>
+				<File
 					RelativePath="..\ksvg2\svg\SVGTextPositioningElement.cpp"
 					>
 				</File>
@@ -8521,6 +8585,14 @@
 				</File>
 				<File
 					RelativePath="..\ksvg2\svg\SVGViewElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGViewSpec.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGViewSpec.h"
 					>
 				</File>
 				<File
