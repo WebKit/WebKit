@@ -1477,11 +1477,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSSVGException.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGException.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSSVGException.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGException.h"
 				>
 			</File>
 			<File
@@ -2125,11 +2125,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSSVGTextPathElement.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGTextPathElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\WebKitBuild\obj\WebCore\DerivedSources\JSSVGTextPathElement.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGTextPathElement.h"
 				>
 			</File>
 			<File
