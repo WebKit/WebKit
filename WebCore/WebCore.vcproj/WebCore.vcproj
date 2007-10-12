@@ -8584,14 +8584,6 @@
 				Name="misc"
 				>
 				<File
-					RelativePath="..\ksvg2\misc\KCanvasRenderingStyle.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\ksvg2\misc\KCanvasRenderingStyle.h"
-					>
-				</File>
-				<File
 					RelativePath="..\ksvg2\misc\PointerEventsHitRules.cpp"
 					>
 				</File>

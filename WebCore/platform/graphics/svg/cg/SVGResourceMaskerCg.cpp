@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-void SVGResourceMasker::applyMask(GraphicsContext*, const FloatRect&) const
+void SVGResourceMasker::applyMask(GraphicsContext*, const FloatRect&)
 {
     notImplemented();
 }
