@@ -127,6 +127,10 @@ void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int parentX, in
         paintInfo.rect.move(-origin.x(), -origin.y());
     }
 
+    // Respect scroll offset caused by html parents
+    AffineTransform ctm = RenderContainer::absoluteTransform();
+    paintInfo.rect.move(ctm.e(), ctm.f());
+
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     paintInfo.context->concatCTM(AffineTransform().scale(svg->currentScale()));
 

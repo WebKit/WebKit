@@ -1,5 +1,14 @@
 2007-07-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Rob.
+        
+        Land new test result, after scroll offsets are now respected again.
+
+        * svg/custom/invisible-text-after-scrolling-expected.checksum:
+        * svg/custom/invisible-text-after-scrolling-expected.png:
+
+2007-07-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver.
 
         Update all test results after the RenderSVGRoot renderName change.

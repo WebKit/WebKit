@@ -1,5 +1,18 @@
 2007-07-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Rob.
+
+        Fix invisible-text-after-scrolling.xhtml regression. Scroll offset not
+        taken into account properly. Also fix RenderSVGInlineText::selectionRect(),
+        so that SVG text can be selected, when being embedded in XHTML.
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::selectionRect):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::applyContentTransforms):
+
+2007-07-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=5940 (<svg> inside <body> incorrectly extends over top/bottom borders)

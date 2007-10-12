@@ -59,11 +59,54 @@ void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     }
 }
 
-IntRect RenderSVGInlineText::selectionRect(bool clipToVisibleContent)
+IntRect RenderSVGInlineText::selectionRect(bool)
 {
-    IntRect rect = RenderText::selectionRect(clipToVisibleContent);
-    rect = parent()->absoluteTransform().mapRect(rect);
-    return rect;
+    ASSERT(!needsLayout());
+
+    IntRect rect;
+    if (selectionState() == SelectionNone)
+        return rect;
+
+    RenderBlock* cb = containingBlock();
+    if (!cb)
+        return rect;
+
+    // Now calculate startPos and endPos for painting selection.
+    // We include a selection while endPos > 0
+    int startPos, endPos;
+    if (selectionState() == SelectionInside) {
+        // We are fully selected.
+        startPos = 0;
+        endPos = textLength();
+    } else {
+        selectionStartEnd(startPos, endPos);
+        if (selectionState() == SelectionStart)
+            endPos = textLength();
+        else if (selectionState() == SelectionEnd)
+            startPos = 0;
+    }
+
+    if (startPos == endPos)
+        return rect;
+
+    InlineTextBox* firstBox = firstTextBox();
+    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
+    RenderObject* object = rootBox ? rootBox->object() : 0;
+
+    if (!object)
+        return rect;
+
+    int xRef = xPos() + object->xPos();
+    int yRef = yPos() + object->yPos();
+
+    for (InlineTextBox* box = firstBox; box; box = box->nextTextBox()) {
+        IntRect origin(box->selectionRect(0, 0, startPos, endPos));
+        origin.setX(xRef - origin.x());
+        origin.setY(yRef - origin.y());
+        rect.unite(origin);
+    }
+
+    return absoluteTransform().mapRect(rect);
 }
 
 InlineTextBox* RenderSVGInlineText::createInlineTextBox()
