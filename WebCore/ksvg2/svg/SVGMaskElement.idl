@@ -30,8 +30,8 @@ module svg {
                                                  SVGLangSpace,
                                                  SVGExternalResourcesRequired,
                                                  SVGStylable {
-        // TODO readonly attribute SVGAnimatedEnumeration maskUnits;
-        // TODO readonly attribute SVGAnimatedEnumeration maskContentUnits;
+        readonly attribute SVGAnimatedEnumeration maskUnits;
+        readonly attribute SVGAnimatedEnumeration maskContentUnits;
 
         readonly attribute SVGAnimatedLength x;
         readonly attribute SVGAnimatedLength y;

@@ -1,3 +1,40 @@
+2007-06-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        Commit files missing from previous commit, oops!
+        
+        * platform/graphics/svg/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::SVGResourceMasker):
+        (WebCore::SVGResourceMasker::invalidate):
+        * platform/graphics/svg/SVGResourceMasker.h:
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask):
+
+2007-06-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        Add support for maskUnits and maskContentUnits
+        http://bugs.webkit.org/show_bug.cgi?id=12568
+        
+        This is covered by the W3C tests (including mask-intro01)
+
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        (WebCore::SVGMaskElement::canvasResource):
+        (WebCore::SVGMaskElement::notifyAttributeChange):
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGMaskElement.idl:
+        * platform/graphics/svg/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::SVGResourceMasker):
+        (WebCore::SVGResourceMasker::invalidate):
+        * platform/graphics/svg/SVGResourceMasker.h:
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask):
+
 2007-06-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by lars.

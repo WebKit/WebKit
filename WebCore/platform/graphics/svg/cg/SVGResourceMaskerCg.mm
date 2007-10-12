@@ -29,9 +29,11 @@
 #if ENABLE(SVG)
 #import "SVGResourceMasker.h"
 
+#import "BlockExceptions.h"
 #import "CgSupport.h"
 #import "GraphicsContext.h"
 #import "ImageBuffer.h"
+#import "SVGMaskElement.h"
 #import "SVGRenderStyle.h"
 #import "SVGResourceFilter.h"
 #import <QuartzCore/CIFilter.h>
@@ -89,33 +91,33 @@ static CIImage* transformImageIntoGrayscaleMask(CIImage* inputImage)
     return [multipliedGrayscale valueForKey:@"outputImage"];
 }
 
-void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox) const
+void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
 {
     if (!m_mask)
+        m_mask.set(m_ownerElement->drawMaskerContent(boundingBox, m_maskRect).release());
+    if (!m_mask)
         return;
-
-    IntSize maskSize = m_mask->size();
-
-    // The mask we operate on is has it's top left corner at (0, 0) on the CGImage.
-    // We have to translate to the current relative bbox, to get the clipping right.
-    CGRect maskDestinationRect = CGRectMake(lroundf(boundingBox.x()), lroundf(boundingBox.y()),
-                                            maskSize.width(), maskSize.height());
+    
+    IntSize maskSize(m_maskRect.width(), m_maskRect.height());
 
     // Create new graphics context in gray scale mode for image rendering
     auto_ptr<ImageBuffer> grayScaleImage(ImageBuffer::create(maskSize, true));
     if (!grayScaleImage.get())
         return;
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     CGContextRef grayScaleContext = grayScaleImage->context()->platformContext();
-
-    // Wrap CG context in CI context
     CIContext* ciGrayscaleContext = [CIContext contextWithCGContext:grayScaleContext options:nil];
 
     // Transform colorized mask to gray scale
-    CIImage* grayScaleMask = transformImageIntoGrayscaleMask([CIImage imageWithCGImage:m_mask->cgImage()]);
-    [ciGrayscaleContext drawImage:grayScaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, maskSize.width(), maskSize.height())];
+    CIImage* colorMask = [CIImage imageWithCGImage:m_mask->cgImage()];
+    if (!colorMask)
+        return;
+    CIImage* grayScaleMask = transformImageIntoGrayscaleMask(colorMask);
+    [ciGrayscaleContext drawImage:grayScaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, m_maskRect.width(), m_maskRect.height())];
 
-    // Do the actual masking!
-    CGContextClipToMask(context->platformContext(), maskDestinationRect, grayScaleImage->cgImage());
+    CGContextClipToMask(context->platformContext(), m_maskRect, grayScaleImage->cgImage());
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 } // namespace WebCore

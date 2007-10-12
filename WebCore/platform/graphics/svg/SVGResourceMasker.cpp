@@ -35,8 +35,9 @@ using namespace std;
 
 namespace WebCore {
 
-SVGResourceMasker::SVGResourceMasker()
+SVGResourceMasker::SVGResourceMasker(const SVGMaskElement* ownerElement)
     : SVGResource()
+    , m_ownerElement(ownerElement)
 {
 }
 
@@ -44,14 +45,9 @@ SVGResourceMasker::~SVGResourceMasker()
 {
 }
 
-void SVGResourceMasker::setMask(auto_ptr<ImageBuffer> mask)
+void SVGResourceMasker::invalidate()
 {
-    m_mask.set(mask.release());
-}
-
-ImageBuffer* SVGResourceMasker::mask() const
-{
-    return m_mask.get();
+    m_mask.clear();
 }
 
 TextStream& SVGResourceMasker::externalRepresentation(TextStream& ts) const

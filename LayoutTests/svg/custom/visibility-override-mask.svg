@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
-        <mask id="mymask" x="0" y="0" width="100px" height="100px">
+        <mask id="mymask">
             <rect x="0" y="0" width="100px" height="100px" fill='white'/>
         </mask>
     </defs>

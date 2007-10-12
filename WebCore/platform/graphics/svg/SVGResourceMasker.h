@@ -39,23 +39,26 @@ namespace WebCore {
 
     class FloatRect;
     class ImageBuffer;
+    class SVGMaskElement;
 
     class SVGResourceMasker : public SVGResource {
     public:
-        SVGResourceMasker();
+        SVGResourceMasker(const SVGMaskElement*);
         virtual ~SVGResourceMasker();
-
-        void setMask(std::auto_ptr<ImageBuffer> mask);
-        ImageBuffer* mask() const;
+        
+        virtual void invalidate();
 
         virtual bool isMasker() const { return true; }
         virtual TextStream& externalRepresentation(TextStream&) const;
 
         // To be implemented by the specific rendering devices
-        void applyMask(GraphicsContext*, const FloatRect& boundingBox) const;
+        void applyMask(GraphicsContext*, const FloatRect& boundingBox);
 
     private:
+        const SVGMaskElement* m_ownerElement;
+        
         OwnPtr<ImageBuffer> m_mask;
+        FloatRect m_maskRect;
     };
 
     SVGResourceMasker* getMaskerById(Document*, const AtomicString&);
