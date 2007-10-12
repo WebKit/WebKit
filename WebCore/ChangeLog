@@ -1,5 +1,18 @@
 2007-06-01  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by lars.
+        
+        Cursor does not change to hand over links containing <use>
+        http://bugs.webkit.org/show_bug.cgi?id=12630
+
+        Test: manual-tests/svg-link-hover-use.svg
+
+        * manual-tests/svg-link-hover-use.svg: Added.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest): use eventParentNode instead of parentNode
+
+2007-06-01  Eric Seidel  <eric@webkit.org>
+
         Reviewed by olliej.
 
         SVG is not correctly respecting scroll during hit testing

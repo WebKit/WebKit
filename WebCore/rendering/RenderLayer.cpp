@@ -1557,7 +1557,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
         // for imagemaps, URLElement is the associated area element not the image itself
         if (node->isLink() && !result.URLElement() && !node->hasTagName(imgTag))
             result.setURLElement(static_cast<Element*>(node));
-        node = node->parentNode();
+        node = node->eventParentNode();
     }
 
     // Next set up the correct :hover/:active state along the new chain.
