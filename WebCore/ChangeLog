@@ -1,3 +1,22 @@
+2007-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric.
+
+        Fix Bug 15433: Filters do not repaint when base resources change/update
+
+        SVGFEImage now actually responds to image updates, and triggers a repaint.
+
+        * platform/graphics/svg/SVGResource.h:
+        * platform/graphics/svg/filters/SVGFEImage.cpp:
+        (WebCore::SVGFEImage::setCachedImage):
+          Don't re-set the image lest we want to trigger infinite recursion.
+        (WebCore::SVGFEImage::imageChanged):
+          Image change means we need to tell our clients to repaint
+        * platform/graphics/svg/filters/SVGFEImage.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent):
+          make sure that users of filters are registered.
+
 2007-10-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alp.

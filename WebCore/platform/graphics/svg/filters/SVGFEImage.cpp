@@ -25,6 +25,8 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEImage.h"
+
+#include "SVGResourceFilter.h"
 #include "TextStream.h"
 
 namespace WebCore {
@@ -48,6 +50,9 @@ CachedImage* SVGFEImage::cachedImage() const
 
 void SVGFEImage::setCachedImage(CachedImage* image)
 {
+    if (m_cachedImage == image)
+        return;
+    
     if (m_cachedImage)
         m_cachedImage->deref(this);
 
@@ -64,6 +69,12 @@ TextStream& SVGFEImage::externalRepresentation(TextStream& ts) const
     // FIXME: should this dump also object returned by SVGFEImage::image() ?
     return ts;
 
+}
+
+void SVGFEImage::imageChanged(CachedImage*)
+{
+    if (SVGResourceFilter* filterResource = filter())
+        filterResource->repaintClients();
 }
 
 } // namespace WebCore

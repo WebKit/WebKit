@@ -48,6 +48,8 @@ public:
     virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
 #endif
 
+    virtual void imageChanged(CachedImage*);
+    
 private:
     CachedImage* m_cachedImage;
 };
