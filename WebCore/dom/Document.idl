@@ -144,11 +144,41 @@ module core {
         boolean            queryCommandSupported(in DOMString command);
         [ConvertNullStringTo=False] DOMString queryCommandValue(in DOMString command);
 
+        // Moved down from HTMLDocument
+
+                 attribute [ConvertNullToNullString] DOMString title;
+        readonly attribute DOMString referrer;
+#if defined(LANGUAGE_JAVASCRIPT)
+                 attribute [ConvertNullToNullString] DOMString domain;
+#else
+        readonly attribute DOMString domain;
+#endif
+        readonly attribute DOMString URL;
+
+        // FIXME: the DOM spec states that this attribute can 
+        // raise an exception on setting.
+                 attribute [ConvertNullToNullString] DOMString cookie
+                     /*setter raises (DOMException)*/;
+
+        // FIXME: the DOM spec does NOT have this attribute
+        // raising an exception.
+                 attribute HTMLElement body
+                     setter raises (DOMException);
+
+        readonly attribute HTMLCollection images;
+        readonly attribute HTMLCollection applets;
+        readonly attribute HTMLCollection links;
+        readonly attribute HTMLCollection forms;
+        readonly attribute HTMLCollection anchors;
+
+        NodeList getElementsByName(in DOMString elementName);
+
+#if defined(LANGUAGE_JAVASCRIPT)
+                 attribute [Custom] Location location;
+#endif
+
         // IE extensions
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
-        readonly attribute DOMString URL;
-#endif
                  attribute [ConvertNullStringTo=Undefined, ConvertNullToNullString] DOMString charset;
         readonly attribute [ConvertNullStringTo=Undefined] DOMString defaultCharset;
         readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;

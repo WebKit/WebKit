@@ -31,6 +31,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Comment.h"
+#include "CookieJar.h"
 #include "DOMImplementation.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
@@ -1346,6 +1347,20 @@ HTMLElement* Document::body()
     return static_cast<HTMLElement*>(body);
 }
 
+void Document::setBody(PassRefPtr<HTMLElement> newBody, ExceptionCode& ec)
+{
+    if (!newBody) { 
+        ec = HIERARCHY_REQUEST_ERR;
+        return;
+    }
+
+    HTMLElement* b = body();
+    if (!b)
+        documentElement()->appendChild(newBody, ec);
+    else
+        documentElement()->replaceChild(newBody, b, ec);
+}
+
 HTMLHeadElement* Document::head()
 {
     Node* de = documentElement();
@@ -2530,6 +2545,16 @@ Element* Document::ownerElement() const
     return frame()->ownerElement();
 }
 
+String Document::cookie() const
+{
+    return cookies(URL());
+}
+
+void Document::setCookie(const String& value)
+{
+    setCookies(URL(), policyBaseURL().deprecatedString(), value);
+}
+
 String Document::referrer() const
 {
     if (frame())
@@ -2578,6 +2603,16 @@ void Document::setDomainInternal(const String& newDomain)
 {
     m_domainWasSetInDOM = false;
     m_domain = newDomain;
+}
+
+String Document::lastModified() const
+{
+    String modifiedHeader;
+    if (Frame* f = frame()) {
+        if (DocumentLoader* documentLoader = f->loader()->documentLoader())
+            documentLoader->getResponseModifiedHeader(modifiedHeader);
+    }
+    return modifiedHeader;
 }
 
 bool Document::isValidName(const String &name)

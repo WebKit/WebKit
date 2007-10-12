@@ -21,6 +21,8 @@
 #include "JSDocument.h"
 
 #include "Document.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "JSHTMLDocument.h"
 #include "kjs_binding.h"
@@ -39,6 +41,35 @@ void JSDocument::mark()
 {
     DOMObject::mark();
     ScriptInterpreter::markDOMNodesForDocument(static_cast<Document*>(impl()));
+}
+
+JSValue* JSDocument::location(ExecState* exec) const
+{
+    Frame* frame = static_cast<Document*>(impl())->frame();
+    if (!frame)
+        return jsNull();
+
+    Window* win = Window::retrieveWindow(frame);
+    ASSERT(win);
+    return win->location();
+}
+
+void JSDocument::setLocation(ExecState* exec, JSValue* value)
+{
+    Frame* frame = static_cast<Document*>(impl())->frame();
+    if (!frame)
+        return;
+
+    String str = value->toString(exec);
+
+    // IE and Mozilla both resolve the URL relative to the source frame,
+    // not the target frame.
+    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();
+    if (activeFrame)
+        str = activeFrame->document()->completeURL(str);
+
+    bool userGesture = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->wasRunByUserGesture();
+    frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), false, userGesture);
 }
 
 JSValue* toJS(ExecState* exec, Document* doc)

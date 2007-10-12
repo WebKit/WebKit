@@ -1,3 +1,41 @@
+2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Update tests for http://bugs.webkit.org/show_bug.cgi?id=13707
+        REGRESSION: JavaScript exceptions on quotes.burntelectrons.org
+
+        * dom/xhtml/level2/html/HTMLBaseElement01-expected.checksum: Removed.
+        * dom/xhtml/level2/html/HTMLBaseElement01-expected.png: Removed.
+        * dom/xhtml/level2/html/HTMLBaseElement01-expected.txt:
+        * dom/xhtml/level2/html/HTMLBaseElement01.xhtml:
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.checksum: Removed.
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.png: Removed.
+        * dom/xhtml/level2/html/HTMLBaseElement02-expected.txt:
+        * dom/xhtml/level2/html/HTMLBaseElement02.xhtml:
+        * dom/xhtml/level2/html/HTMLBodyElement07-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement08-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement09-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement10-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement11-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement12-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument01-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument02-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument03-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument05-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument07-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument08-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument09-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument10-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument11-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument12-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument13-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument14-expected.txt:
+        * dom/xhtml/level2/html/doc01-expected.txt:
+        These now pass. Changed HTMLBaseElement* to dump as text.
+
+        * fast/dom/Window/window-properties-expected.txt: Added Document.prototype.getElementsByName
+
 2007-10-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.

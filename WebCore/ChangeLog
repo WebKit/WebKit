@@ -1,3 +1,44 @@
+2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=13707
+        REGRESSION: JavaScript exceptions on quotes.burntelectrons.org
+
+        http://bugs.webkit.org/show_bug.cgi?id=12628
+        document.body is not supported in XHTML documents
+
+        http://bugs.webkit.org/show_bug.cgi?id=14213
+        On page with MIME type application/xhtml+xml, cookie don't work
+
+        Moved a bunch of methods and properties from HTMLDocument down into Document to make
+        them available for all documents (xml, svg).
+        What was kept in HTMLDocument:
+        - some methods and properties that are not in HTML5 (yet?);
+        - open/write/writeln/close, as they will need to be modified to work on XML documents, and aren't
+        of much use for those anyway;
+        - designMode, because its definition in HTML5 is incompatible with our implementation.
+
+        Covered by existing tests.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setBody):
+        (WebCore::Document::cookie):
+        (WebCore::Document::setCookie):
+        (WebCore::Document::lastModified):
+        * dom/Document.h:
+        (WebCore::Document::title):
+        * dom/Document.idl:
+        * html/HTMLDocument.cpp:
+        * html/HTMLDocument.h:
+        * html/HTMLDocument.idl:
+
+=======
 2007-10-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.

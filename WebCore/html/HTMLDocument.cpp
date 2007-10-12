@@ -88,38 +88,6 @@ HTMLDocument::~HTMLDocument()
 {
 }
 
-String HTMLDocument::lastModified() const
-{
-    String modifiedHeader;
-    if (Frame* f = frame())
-        if (DocumentLoader* documentLoader = f->loader()->documentLoader())
-            documentLoader->getResponseModifiedHeader(modifiedHeader);
-    return modifiedHeader;
-}
-
-String HTMLDocument::cookie() const
-{
-    return cookies(URL());
-}
-
-void HTMLDocument::setCookie(const String& value)
-{
-    setCookies(URL(), policyBaseURL().deprecatedString(), value);
-}
-
-void HTMLDocument::setBody(HTMLElement* newBody, ExceptionCode& ec)
-{
-    if (!newBody) { 
-        ec = HIERARCHY_REQUEST_ERR;
-        return;
-    }
-    HTMLElement* b = body();
-    if (!b)
-        documentElement()->appendChild(newBody, ec);
-    else
-        documentElement()->replaceChild(newBody, b, ec);
-}
-
 int HTMLDocument::width()
 {
     updateLayoutIgnorePendingStylesheets();

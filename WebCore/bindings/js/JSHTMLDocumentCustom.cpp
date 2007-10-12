@@ -27,7 +27,6 @@
 #include "JSHTMLDocument.h"
 
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
@@ -88,35 +87,6 @@ void JSHTMLDocument::setAll(ExecState*, JSValue* value)
 {
     // Add "all" to the property map.
     putDirect("all", value);
-}
-
-JSValue* JSHTMLDocument::location(ExecState* exec) const
-{
-    Frame* frame = static_cast<HTMLDocument*>(impl())->frame();
-    if (!frame)
-        return jsNull();
-
-    Window* win = Window::retrieveWindow(frame);
-    ASSERT(win);
-    return win->location();
-}
-
-void JSHTMLDocument::setLocation(ExecState* exec, JSValue* value)
-{
-    Frame* frame = static_cast<HTMLDocument*>(impl())->frame();
-    if (!frame)
-        return;
-
-    String str = value->toString(exec);
-
-    // When assigning location, IE and Mozilla both resolve the URL
-    // relative not the target frame.
-    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();
-    if (activeFrame)
-        str = activeFrame->document()->completeURL(str);
-
-    bool userGesture = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->wasRunByUserGesture();
-    frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), false, userGesture);
 }
 
 // Custom functions
