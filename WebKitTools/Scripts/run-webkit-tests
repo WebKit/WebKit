@@ -424,6 +424,7 @@ die "no tests to run\n" if !@tests;
 my %counts;
 my %tests;
 my %imagesPresent;
+my %imageDifferences;
 my %durations;
 my $count = 0;
 my $leaksOutputFileNumber = 1;
@@ -598,6 +599,7 @@ for my $test (@tests) {
 
             if (/^diff: (.+)% (passed|failed)/) {
                 $diffPercentage = $1;
+                $imageDifferences{$base} = $diffPercentage;
                 $diffResult = $2;
             }
         }
@@ -905,7 +907,8 @@ if ($counts{mismatch}) {
         if ($pixelTests) {
             if ($imagesPresent{$base}) {
                 print HTML "<td><a href=\"$base-$expectedTag.png\">expected image</a></td>\n";
-                print HTML "<td><a href=\"$base-$diffsTag.html\">image diffs</a></td>\n";
+                print HTML "<td><a href=\"$base-$diffsTag.html\">image diffs</a>\n";
+                print HTML "<a href=\"$base-$diffsTag.png\">$imageDifferences{$base}%</a></td>\n";
             } else {
                 print HTML "<td></td><td></td>\n";
             }            
