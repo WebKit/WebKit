@@ -1077,6 +1077,7 @@ term:
   | function {
       $$ = $1;
   }
+  | '%' maybe_space {} /* Handle width: %; */
   ;
 
 unary_term:
