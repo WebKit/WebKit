@@ -1304,6 +1304,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGRoot.cpp \
         rendering/RenderSVGText.cpp \
         rendering/RenderSVGTextPath.cpp \
+        rendering/RenderSVGTransformableContainer.cpp \
         rendering/RenderSVGTSpan.cpp \
         rendering/RenderSVGViewportContainer.cpp \
         rendering/SVGCharacterLayoutInfo.cpp \
