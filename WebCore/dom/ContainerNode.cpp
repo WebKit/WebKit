@@ -55,24 +55,14 @@ ContainerNode::ContainerNode(Document* doc)
 {
 }
 
-void ContainerNode::removeAllChildren()
+void ContainerNode::addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode* container)
 {
-    // Avoid deep recursion when destroying the node tree.
-    static bool alreadyInsideDestructor; 
-    bool topLevel = !alreadyInsideDestructor;
-    if (topLevel)
-        alreadyInsideDestructor = true;
-
-    // List of nodes to be deleted.
-    static Node* head;
-    static Node* tail;
-
     // We have to tell all children that their parent has died.
     Node* n;
     Node* next;
-    for (n = m_firstChild; n != 0; n = next) {
+    for (n = container->firstChild(); n != 0; n = next) {
         ASSERT(!n->m_deletionHasBegun);
-
+        
         next = n->nextSibling();
         n->setPreviousSibling(0);
         n->setNextSibling(0);
@@ -92,25 +82,34 @@ void ContainerNode::removeAllChildren()
         } else if (n->inDocument())
             n->removedFromDocument();
     }
+    container->setFirstChild(0);
+    container->setLastChild(0);
+}
 
-    // Only for the top level call, do the actual deleting.
-    if (topLevel) {
-        while ((n = head) != 0) {
-            ASSERT(n->m_deletionHasBegun);
+void ContainerNode::removeAllChildren()
+{
+    // List of nodes to be deleted.
+    Node* head = 0;
+    Node* tail = 0;
 
-            next = n->nextSibling();
-            n->setNextSibling(0);
+    addChildNodesToDeletionQueue(head, tail, this);
 
-            head = next;
-            if (next == 0)
-                tail = 0;
+    Node* n;
+    Node* next;
+    while ((n = head) != 0) {
+        ASSERT(n->m_deletionHasBegun);
 
-            delete n;
-        }
+        next = n->nextSibling();
+        n->setNextSibling(0);
 
-        alreadyInsideDestructor = false;
-        m_firstChild = 0;
-        m_lastChild = 0;
+        head = next;
+        if (next == 0)
+            tail = 0;
+        
+        if (n->hasChildNodes())
+            addChildNodesToDeletionQueue(head, tail, static_cast<ContainerNode*>(n));
+        
+        delete n;
     }
 }
 

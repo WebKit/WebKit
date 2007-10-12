@@ -1,3 +1,19 @@
+2007-10-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=12310
+        Remove static variables from removeAllChildren causing crash.
+        removeAllChildren now iterates over the entire tree instead of recursing.
+        Also (according to Maciej) a possible 1-2% speedboost on HTML iBench.
+
+        Test: fast/images/svg-background-crash-on-refresh.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp:
+        (WebCore::addChildNodesToDeletionQueue):
+        (WebCore::ContainerNode::removeAllChildren): use new addChildNodesToDeletionQueue
+
 2007-10-03  David Hyatt  <hyatt@apple.com>
 
         Land support for the CSS @font-face rule.  This patch allows custom fonts

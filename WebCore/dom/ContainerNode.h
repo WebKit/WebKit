@@ -75,6 +75,8 @@ protected:
 private:
     virtual Node* virtualFirstChild() const;
     virtual Node* virtualLastChild() const;
+    
+    static void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode*);
 
     bool getUpperLeftCorner(int& x, int& y) const;
     bool getLowerRightCorner(int& x, int& y) const;

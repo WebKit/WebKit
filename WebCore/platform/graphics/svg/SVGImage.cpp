@@ -114,6 +114,8 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
     // having a tiled drawing callback (hopefully non-virtual).
     if (!m_frameCache) {
         m_frameCache.set(ImageBuffer::create(size(), false).release());
+        if (!m_frameCache) // failed to allocate image
+            return 0;
         ImageBuffer::renderSubtreeToImage(m_frameCache.get(), m_frame->renderer());
     }
 #if PLATFORM(CG)

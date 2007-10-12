@@ -42,7 +42,9 @@ IntSize ImageBuffer::size() const
 
 void ImageBuffer::renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
 {
-    ASSERT(item && image && image->context());
+    ASSERT(item);
+    ASSERT(image);
+    ASSERT(image->context());
     RenderObject::PaintInfo info(image->context(), IntRect(), PaintPhaseForeground, 0, 0, 0);
 
 #if ENABLE(SVG)

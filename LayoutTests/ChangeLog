@@ -1,3 +1,29 @@
+2007-10-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
+        Add new results for SVGImage now that ContainerNode::removeAllChildren crashing is fixed.
+        http://bugs.webkit.org/show_bug.cgi?id=12310#c11
+
+        * fast/images/resources/butterfly.svg: Added.
+        * fast/images/svg-as-background-expected.checksum: Removed.
+        * fast/images/svg-as-background-expected.png: Removed.
+        * fast/images/svg-as-background-expected.txt: Removed.
+        * fast/images/svg-as-image-expected.checksum: Removed.
+        * fast/images/svg-as-image-expected.png: Removed.
+        * fast/images/svg-as-image-expected.txt: Removed.
+        * fast/images/svg-background-crash-on-refresh.html: Added.
+        * platform/mac/fast/images: Added.
+        * platform/mac/fast/images/svg-as-background-expected.checksum: Added.
+        * platform/mac/fast/images/svg-as-background-expected.png: Added.
+        * platform/mac/fast/images/svg-as-background-expected.txt: Added.
+        * platform/mac/fast/images/svg-as-image-expected.checksum: Added.
+        * platform/mac/fast/images/svg-as-image-expected.png: Added.
+        * platform/mac/fast/images/svg-as-image-expected.txt: Added.
+        * platform/mac/fast/images/svg-background-crash-on-refresh-expected.checksum: Added.
+        * platform/mac/fast/images/svg-background-crash-on-refresh-expected.png: Added.
+        * platform/mac/fast/images/svg-background-crash-on-refresh-expected.txt: Added.
+
 2007-10-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.
