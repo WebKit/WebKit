@@ -367,6 +367,14 @@ void SVGUseElement::attach()
     attachShadowTree();
 }
 
+void SVGUseElement::detach()
+{
+    SVGStyledTransformableElement::detach();
+
+    if (m_shadowTreeRootElement)
+        m_shadowTreeRootElement->detach();
+}
+
 void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundProblem)
 {
     ASSERT(target);

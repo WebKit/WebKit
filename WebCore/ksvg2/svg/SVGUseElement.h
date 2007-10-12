@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -65,6 +65,7 @@ namespace WebCore
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual void attach();
+        virtual void detach();
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

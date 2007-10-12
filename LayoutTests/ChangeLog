@@ -1,3 +1,16 @@
+2007-08-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14927
+        use element in SVG does not render after parent is displayed off and on
+
+        * svg/custom/use-detach-expected.checksum: Added.
+        * svg/custom/use-detach-expected.png: Added.
+        * svg/custom/use-detach-expected.txt: Added.
+        * svg/custom/use-detach.svg: Added.
+
 2007-08-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.

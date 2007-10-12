@@ -1,3 +1,16 @@
+2007-08-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14927
+        use element in SVG does not render after parent is displayed off and on
+
+        Also detach the shadow tree when detaching the <use>.
+
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::detach):
+        * ksvg2/svg/SVGUseElement.h:
+
 2007-08-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Rob.
