@@ -64,7 +64,9 @@ private:
 
     void paintSelectionForTextBox(InlineTextBox*, int boxStartOffset, SVGChar*, const UChar*, int length, GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
 
-    void paintInlineBoxes(RenderObject::PaintInfo&, int tx, int ty, InlineFlowBox* start, Vector<SVGChar>::iterator& it);
+    void paintInlineBoxes(RenderObject::PaintInfo&, int tx, int ty, InlineFlowBox* start, Vector<SVGChar>::iterator&);
+    void paintChildInlineTextBox(RenderObject::PaintInfo&, int tx, int ty, InlineTextBox*, Vector<SVGChar>::iterator&);
+    void paintChildInlineFlowBox(RenderObject::PaintInfo&, int tx, int ty, InlineFlowBox*, Vector<SVGChar>::iterator&);
     void paintCharacterRangeForTextBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineTextBox*, const SVGChar&, const UChar* chars, int length);
 
 private:

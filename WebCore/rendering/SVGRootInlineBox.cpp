@@ -55,6 +55,7 @@ static void prepareTextRendering(RenderObject::PaintInfo& paintInfo, int tx, int
 static void prepareTextRendering(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* flowBox, FloatRect& boundingBox, void* filter)
 #endif
 {
+    ASSERT(paintInfo.phase == PaintPhaseForeground);
     RenderObject* object = flowBox->object();
 
     paintInfo.context->save();
@@ -114,7 +115,7 @@ FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator it, Vector<
 
 void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
-    if (paintInfo.context->paintingDisabled())
+    if (paintInfo.context->paintingDisabled() || paintInfo.phase != PaintPhaseForeground)
         return;
 
     FloatRect boundingBox;
@@ -970,101 +971,107 @@ void SVGRootInlineBox::paintSelectionForTextBox(InlineTextBox* textBox, int boxS
 void SVGRootInlineBox::paintInlineBoxes(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* start, Vector<SVGChar>::iterator& it)
 {
     for (InlineBox* curr = start->firstChild(); curr; curr = curr->nextOnLine()) {
-        if (curr->object()->isText()) {
-            InlineTextBox* textBox = static_cast<InlineTextBox*>(curr);
-
-            unsigned length = textBox->len();
-            if (!length)
-                continue;
-
-            RenderText* text = textBox->textObject();
-            ASSERT(text);
-
-            // Paint all contained characters, one-by-one as worst case.
-            for (unsigned i = 0; i < length; ++i) {
-                ASSERT(it != m_svgChars.end());
-
-                if (!(*it).visible) {
-                    it++;
-                    continue;
-                }
-
-                // Determine how many characters - starting from the current - can be drawn at once.
-                unsigned startOffset = i + 1, run = 1;
-                while (startOffset < length) {
-                    SVGChar chunk = *(it + startOffset - i);
-                    if (chunk.drawnSeperated)
-                        break;
-
-                    run++;
-                    startOffset++;
-                }
-
-                paintCharacterRangeForTextBox(paintInfo, tx, ty, textBox, *it, text->characters() + textBox->start() + i, run);
-
-                i += run - 1;
-                it += run;
-            }
-        } else {
+        if (curr->object()->isText())
+            paintChildInlineTextBox(paintInfo, tx, ty, static_cast<InlineTextBox*>(curr), it);
+        else {
             ASSERT(curr->isInlineFlowBox());
-            InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(curr);
-
-            FloatRect boundingBox;
-
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-            SVGResourceFilter* filter = 0;
-#else
-            void* filter = 0;
-#endif
-            prepareTextRendering(paintInfo, tx, ty, flowBox, boundingBox, filter);
-
-            RenderObject* object = flowBox->object();
-            RenderObject::PaintInfo pi(paintInfo);
-
-            if (!flowBox->isRootInlineBox())
-                pi.rect = (object->localTransform()).inverse().mapRect(pi.rect);
-
-            float opacity = object->style()->opacity();
-            if (opacity < 1.0f) {
-                paintInfo.context->clip(enclosingIntRect(boundingBox));
-                paintInfo.context->beginTransparencyLayer(opacity);
-            }
-
-            bool painted = false;
-            Vector<SVGChar>::iterator savedIt = it;
-    
-            SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(object->style(), object);
-            if (fillPaintServer) {
-                if (fillPaintServer->setup(pi.context, object, ApplyToFillTargetType, true)) {
-                    painted = true;
-
-                    paintInlineBoxes(pi, tx, ty, flowBox, it);
-                    fillPaintServer->teardown(pi.context, object, ApplyToFillTargetType, true);
-                }
-            }
-
-            SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(object->style(), object);
-            if (strokePaintServer) {
-                if (strokePaintServer->setup(pi.context, object, ApplyToStrokeTargetType, true)) {
-                    if (painted)
-                        it = savedIt;
-
-                    paintInlineBoxes(pi, tx, ty, flowBox, it);
-                    strokePaintServer->teardown(pi.context, object, ApplyToStrokeTargetType, true);
-                }
-            }
-
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-            if (filter)
-                filter->applyFilter(paintInfo.context, boundingBox);
-#endif
-
-            if (opacity < 1.0f)
-                paintInfo.context->endTransparencyLayer();
-
-            paintInfo.context->restore();
+            paintChildInlineFlowBox(paintInfo, tx, ty, static_cast<InlineFlowBox*>(curr), it);
         }
     }
+}
+
+void SVGRootInlineBox::paintChildInlineTextBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineTextBox* textBox, Vector<SVGChar>::iterator& it)
+{
+    unsigned length = textBox->len();
+    if (!length)
+        return;
+    
+    RenderText* text = textBox->textObject();
+    ASSERT(text);
+    
+    // Paint all contained characters, one-by-one as worst case.
+    for (unsigned i = 0; i < length; ++i) {
+        ASSERT(it != m_svgChars.end());
+        
+        if (!(*it).visible) {
+            it++;
+            continue;
+        }
+        
+        // Determine how many characters - starting from the current - can be drawn at once.
+        unsigned startOffset = i + 1, run = 1;
+        while (startOffset < length) {
+            SVGChar chunk = *(it + startOffset - i);
+            if (chunk.drawnSeperated)
+                break;
+            
+            run++;
+            startOffset++;
+        }
+        
+        paintCharacterRangeForTextBox(paintInfo, tx, ty, textBox, *it, text->characters() + textBox->start() + i, run);
+        
+        i += run - 1;
+        it += run;
+    }
+}
+
+void SVGRootInlineBox::paintChildInlineFlowBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* flowBox, Vector<SVGChar>::iterator& it)
+{
+    FloatRect boundingBox;
+    
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+    SVGResourceFilter* filter = 0;
+#else
+    void* filter = 0;
+#endif
+    prepareTextRendering(paintInfo, tx, ty, flowBox, boundingBox, filter);
+    
+    RenderObject* object = flowBox->object();
+    RenderObject::PaintInfo pi(paintInfo);
+    
+    if (!flowBox->isRootInlineBox())
+        pi.rect = (object->localTransform()).inverse().mapRect(pi.rect);
+    
+    float opacity = object->style()->opacity();
+    if (opacity < 1.0f) {
+        paintInfo.context->clip(enclosingIntRect(boundingBox));
+        paintInfo.context->beginTransparencyLayer(opacity);
+    }
+    
+    bool painted = false;
+    Vector<SVGChar>::iterator savedIt = it;
+    
+    SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(object->style(), object);
+    if (fillPaintServer) {
+        if (fillPaintServer->setup(pi.context, object, ApplyToFillTargetType, true)) {
+            painted = true;
+            
+            paintInlineBoxes(pi, tx, ty, flowBox, it);
+            fillPaintServer->teardown(pi.context, object, ApplyToFillTargetType, true);
+        }
+    }
+    
+    SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(object->style(), object);
+    if (strokePaintServer) {
+        if (strokePaintServer->setup(pi.context, object, ApplyToStrokeTargetType, true)) {
+            if (painted)
+                it = savedIt;
+            
+            paintInlineBoxes(pi, tx, ty, flowBox, it);
+            strokePaintServer->teardown(pi.context, object, ApplyToStrokeTargetType, true);
+        }
+    }
+    
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+    if (filter)
+        filter->applyFilter(paintInfo.context, boundingBox);
+#endif
+    
+    if (opacity < 1.0f)
+        paintInfo.context->endTransparencyLayer();
+    
+    paintInfo.context->restore();
 }
 
 void SVGRootInlineBox::paintCharacterRangeForTextBox(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineTextBox* textBox, const SVGChar& svgChar, const UChar* chars, int length)

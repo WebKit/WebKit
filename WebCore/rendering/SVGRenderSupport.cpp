@@ -48,7 +48,9 @@ void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& pa
     SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
+#endif
     AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
     AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
     

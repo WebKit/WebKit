@@ -1,3 +1,20 @@
+2007-06-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Niko.
+
+        Text gradients are broken on feature branch
+        http://bugs.webkit.org/show_bug.cgi?id=14142
+
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::prepareTextRendering):
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::paintInlineBoxes):
+        (WebCore::SVGRootInlineBox::paintChildInlineTextBox):
+        (WebCore::SVGRootInlineBox::paintChildInlineFlowBox):
+        * rendering/SVGRootInlineBox.h:
+
 2007-06-14  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.
