@@ -8,5 +8,5 @@
     </defs>
 
     <rect fill="url(#cycle1) green" width="100px" height="100px" />
-    <text x="10" y="150">The square above should be BLACK (since webkit correctly ignores cycles, but doesn"t support proper fill fallback yet 12062)</text>
+    <text x="10" y="150">The square above should show a pattern now that fill fallback is supported.</text>
 </svg>

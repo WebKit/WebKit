@@ -1,3 +1,21 @@
+2007-06-26  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12062
+        WebCore does not handle CSS-specified fill fallback correctly
+
+        Implement fallback for fill and stroke.
+
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * ksvg2/svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::SVGPaint):
+        * ksvg2/svg/SVGPaint.h:
+        * platform/graphics/svg/SVGPaintServer.cpp:
+        (WebCore::SVGPaintServer::fillPaintServer):
+        (WebCore::SVGPaintServer::strokePaintServer):
+
 2007-06-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

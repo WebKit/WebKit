@@ -35,6 +35,7 @@
 #include "SVGPaint.h"
 #include "ksvgcssproperties.c"
 #include "ksvgcssvalues.c"
+#include "DeprecatedString.h"
 
 using namespace std;
 
@@ -198,9 +199,13 @@ bool CSSParser::parseSVGValue(int propId, bool important)
                 parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_NONE);
             else if (id == SVGCSS_VAL_CURRENTCOLOR)
                 parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR);
-            else if (value->unit == CSSPrimitiveValue::CSS_URI)
-                parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_URI, domString(value->string));
-            else
+            else if (value->unit == CSSPrimitiveValue::CSS_URI) {
+                RGBA32 c = Color::transparent;
+                if (valueList->next() && parseColorFromValue(valueList->current(), c, true)) {
+                    parsedValue = new SVGPaint(domString(value->string), c);
+                } else
+                    parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_URI, domString(value->string));
+            } else
                 parsedValue = parseSVGPaint();
 
             if (parsedValue)

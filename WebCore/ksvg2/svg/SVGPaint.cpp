@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -34,7 +34,7 @@ SVGPaint::SVGPaint()
 
 SVGPaint::SVGPaint(const String& uri)
     : SVGColor()
-    , m_paintType(SVG_PAINTTYPE_URI)
+    , m_paintType(SVG_PAINTTYPE_URI_RGBCOLOR)
 {
     setUri(uri);
 }
@@ -56,6 +56,13 @@ SVGPaint::SVGPaint(const Color& c)
     : SVGColor(c)
     , m_paintType(SVG_PAINTTYPE_RGBCOLOR)
 {
+}
+
+SVGPaint::SVGPaint(const String& uri, const Color& c)
+    : SVGColor(c)
+    , m_paintType(SVG_PAINTTYPE_URI_RGBCOLOR)
+{
+    setUri(uri);
 }
 
 SVGPaint::~SVGPaint()

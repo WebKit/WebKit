@@ -1,3 +1,30 @@
+2007-06-26  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12062
+        WebCore does not handle CSS-specified fill fallback correctly
+
+        Other updates are changed results from having fallback.
+
+        * svg/custom/fill-fallback-expected.checksum: Added.
+        * svg/custom/fill-fallback-expected.png: Added.
+        * svg/custom/fill-fallback-expected.txt: Added.
+        * svg/custom/fill-fallback.svg: Added.
+        * svg/custom/gradient-cycle-detection-expected.checksum:
+        * svg/custom/gradient-cycle-detection-expected.png:
+        * svg/custom/gradient-cycle-detection-expected.txt:
+        * svg/custom/gradient-cycle-detection.svg:
+        * svg/custom/pattern-cycle-detection-expected.checksum:
+        * svg/custom/pattern-cycle-detection-expected.png:
+        * svg/custom/pattern-cycle-detection-expected.txt:
+        * svg/custom/pattern-cycle-detection.svg:
+        * svg/custom/stroke-fallback-expected.checksum: Added.
+        * svg/custom/stroke-fallback-expected.png: Added.
+        * svg/custom/stroke-fallback-expected.txt: Added.
+        * svg/custom/stroke-fallback.svg: Added.
+
 2007-06-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

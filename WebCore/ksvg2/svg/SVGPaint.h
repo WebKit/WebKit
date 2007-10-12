@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmial.com)
 
     This file is part of the KDE project
@@ -49,6 +49,7 @@ namespace WebCore {
         SVGPaint(SVGPaintType);
         SVGPaint(SVGPaintType, const String& uri, const String& rgbPaint = String(), const String& iccPaint = String());
         SVGPaint(const Color& c);
+        SVGPaint(const String& uri, const Color& c);
         virtual ~SVGPaint();
 
         // 'SVGPaint' functions
