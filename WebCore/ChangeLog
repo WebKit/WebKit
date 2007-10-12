@@ -1,3 +1,12 @@
+2007-09-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Rob Buis.
+
+        Already tested by SVG/W3C-SVG-1.1/linking-a-07-t.svg
+
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler): properly pass along target values
+
 2007-09-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

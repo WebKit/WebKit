@@ -127,10 +127,8 @@ void SVGAElement::defaultEventHandler(Event* evt)
         String xlinktarget = getAttribute(XLinkNames::showAttr);
         if (e && e->button() == MiddleButton)
             target = "_blank";
-        else if (xlinktarget == "new" || !(target.isEmpty() || target == "_self"))
-            target = "_blank";
-        else // default is replace/_self
-            target = "_self";
+        else if (target.isEmpty()) // if target is empty, default to "_self" or use xlink:target if set
+            target = (xlinktarget == "new") ? "_blank" : "_self";
 
         String url = parseURL(href());
         if (!evt->defaultPrevented())
