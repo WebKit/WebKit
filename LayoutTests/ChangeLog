@@ -1,5 +1,9 @@
 2007-10-12  Darin Adler  <darin@apple.com>
 
+        * fast/css/computed-style-expected.txt: Again, but right this time.
+
+2007-10-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver Hunt.
 
         * fast/css/computed-style-expected.txt: Added SVG CSS properties.
