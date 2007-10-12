@@ -68,12 +68,12 @@ static void prepareTextRendering(RenderObject::PaintInfo& paintInfo, int tx, int
     prepareToRenderSVGContent(object, paintInfo, boundingBox, filter);
 }
 
-inline bool isVerticalWritingMode(const SVGRenderStyle* style)
+static inline bool isVerticalWritingMode(const SVGRenderStyle* style)
 {
     return style->writingMode() == WM_TBRL || style->writingMode() == WM_TB; 
 }
 
-inline void startTextChunk(SVGTextChunkLayoutInfo& info)
+static inline void startTextChunk(SVGTextChunkLayoutInfo& info)
 {
     info.chunk.boxes.clear();
     info.chunk.boxes.append(SVGInlineBoxCharacterRange());
@@ -82,7 +82,7 @@ inline void startTextChunk(SVGTextChunkLayoutInfo& info)
     info.assignChunkProperties = true;
 }
 
-inline void closeTextChunk(SVGTextChunkLayoutInfo& info, Vector<SVGTextChunk>& textChunks)
+static inline void closeTextChunk(SVGTextChunkLayoutInfo& info, Vector<SVGTextChunk>& textChunks)
 {
     ASSERT(!info.chunk.boxes.last().isOpen());
     ASSERT(info.chunk.boxes.last().isClosed());
@@ -105,7 +105,7 @@ RenderSVGRoot* findSVGRootObject(RenderObject* start)
     return static_cast<RenderSVGRoot*>(start);
 }
 
-inline FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>& chars)
+static inline FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>& chars)
 {
     return topLeftPositionOfCharacterRange(chars.begin(), chars.end());
 }

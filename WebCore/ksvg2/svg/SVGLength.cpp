@@ -42,25 +42,25 @@
 namespace WebCore {
 
 // Helper functions
-inline unsigned int storeUnit(SVGLengthMode mode, SVGLengthType type)
+static inline unsigned int storeUnit(SVGLengthMode mode, SVGLengthType type)
 {
     return (mode << 4) | type;
 }
 
-inline SVGLengthMode extractMode(unsigned int unit)
+static inline SVGLengthMode extractMode(unsigned int unit)
 {
     unsigned int mode = unit >> 4;    
     return static_cast<SVGLengthMode>(mode);
 }
 
-inline SVGLengthType extractType(unsigned int unit)
+static inline SVGLengthType extractType(unsigned int unit)
 {
     unsigned int mode = unit >> 4;
     unsigned int type = unit ^ (mode << 4);
     return static_cast<SVGLengthType>(type);
 }
 
-inline String lengthTypeToString(SVGLengthType type)
+static inline String lengthTypeToString(SVGLengthType type)
 {
     switch (type) {
     case LengthTypeUnknown:
