@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+<title>&lt;br&gt; prevents click handler from firing</title>
+<script>
+function clickHandler(evt)
+{
+    evt.target.style.fill = "green";
+}
+
+if (window.layoutTestController)
+  layoutTestController.waitUntilDone();
+
+function doClick() {
+  if (window.eventSender) {
+      eventSender.mouseMoveTo(10, 70);
+      eventSender.mouseDown();
+      eventSender.mouseUp();
+      layoutTestController.notifyDone();
+  }
+}
+
+setTimeout("doClick()", 0);
+</script>
+  </head>
+  <body>
+    <p>
+    A test for hit testing when an svg container is relatively positioned in
+    a containing block. See bug 13981.
+    </p>
+    <br />
+    <svg xmlns="http://www.w3.org/2000/svg" width="720" height="15">
+      <rect width="720" height="15" onclick="clickHandler(evt)" />
+    </svg>
+  </body>
+</html>

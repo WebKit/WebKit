@@ -299,6 +299,7 @@ void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, int, int)
 AffineTransform RenderSVGRoot::absoluteTransform() const
 {
     AffineTransform ctm = RenderContainer::absoluteTransform();
+    ctm.translate(m_x, m_y);
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     ctm.scale(svg->currentScale());
     ctm.translate(svg->currentTranslate().x(), svg->currentTranslate().y());
@@ -401,6 +402,7 @@ AffineTransform RenderSVGRoot::getAspectRatio(const FloatRect& logical, const Fl
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
+    AffineTransform ctm = RenderContainer::absoluteTransform();
     if (!viewport().isEmpty()
         && style()->overflowX() == OHIDDEN
         && style()->overflowY() == OHIDDEN) {
@@ -410,7 +412,6 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
         // Check if we need to do anything at all.
         IntRect overflowBox = overflowRect(false);
         overflowBox.move(tx, ty);
-        AffineTransform ctm = RenderContainer::absoluteTransform();
         ctm.translate(viewport().x(), viewport().y());
         double localX, localY;
         ctm.inverse().map(_x - _tx, _y - _ty, &localX, &localY);
@@ -418,8 +419,10 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
             return false;
     }
 
+    int sx = (_tx - ctm.e()); // scroll offset
+    int sy = (_ty - ctm.f()); // scroll offset
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction)) {
+        if (child->nodeAtPoint(request, result, _x - sx, _y - sy, 0, 0, hitTestAction)) {
             updateHitTestResult(result, IntPoint(_x - _tx, _y - _ty));
             return true;
         }
