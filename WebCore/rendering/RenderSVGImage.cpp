@@ -124,13 +124,12 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
     }
 }
 
-void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
+void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN)
         return;
     
     paintInfo.context->save();
-    paintInfo.context->concatCTM(AffineTransform().translate(parentX, parentY));
     paintInfo.context->concatCTM(localTransform());
     paintInfo.context->concatCTM(translationForAttributes());
     
@@ -172,7 +171,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     }
     
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
-        paintOutline(paintInfo.context, parentX, parentY, width(), height(), style());
+        paintOutline(paintInfo.context, 0, 0, width(), height(), style());
 
     paintInfo.context->restore();
 }

@@ -1,3 +1,16 @@
+2007-06-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14051
+        <svg:image> fails to position correctly when <svg> is inside an inline <div>
+
+        * svg/custom/image-parent-translation-expected.checksum: Added.
+        * svg/custom/image-parent-translation-expected.png: Added.
+        * svg/custom/image-parent-translation-expected.txt: Added.
+        * svg/custom/image-parent-translation.xhtml: Added.
+
 2007-06-14  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

@@ -1,3 +1,15 @@
+2007-06-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14051
+        <svg:image> fails to position correctly when <svg> is inside an inline <div>
+
+        Leave parent translation to the containers.
+
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+
 2007-06-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
