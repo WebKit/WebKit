@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderSVGContainer.h"
+#include "RenderSVGRoot.h"
 #include "SVGAngle.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -388,14 +389,22 @@ AffineTransform SVGSVGElement::getScreenCTM() const
 
 RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    RenderSVGContainer* rootContainer = new (arena) RenderSVGContainer(this);
+    if (!parentNode()->isSVGElement()) {
+        RenderSVGRoot* rootContainer = new (arena) RenderSVGRoot(this);
+        // FIXME: All this setup should be done after attributesChanged, not here.
+        rootContainer->setViewBox(viewBox());
+        rootContainer->setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType(preserveAspectRatio()->align()));
+        rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
+        return rootContainer;
+    } else  {
+        RenderSVGContainer* rootContainer = new (arena) RenderSVGContainer(this);
 
-    // FIXME: All this setup should be done after attributesChanged, not here.
-    rootContainer->setViewBox(viewBox());
-    rootContainer->setAlign(KCAlign(preserveAspectRatio()->align() - 1));
-    rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
-    
-    return rootContainer;
+        // FIXME: All this setup should be done after attributesChanged, not here.
+        rootContainer->setViewBox(viewBox());
+        rootContainer->setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType(preserveAspectRatio()->align()));
+        rootContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
+        return rootContainer;
+    }
 }
 
 void SVGSVGElement::insertedIntoDocument()

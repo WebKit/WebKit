@@ -17,19 +17,18 @@
 
     You should have received a copy of the GNU Library General Public License
     aint with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301, USA.
+    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.
 */
 
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "RenderSVGContainer.h"
+#include "RenderSVGRoot.h"
 
 #include "GraphicsContext.h"
 #include "RenderView.h"
 #include "SVGLength.h"
-#include "SVGMarkerElement.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
@@ -40,55 +39,44 @@
 
 namespace WebCore {
 
-RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
+RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
     : RenderContainer(node)
-    , m_drawsContents(true)
     , m_slice(false)
 {
     setReplaced(true);
 }
 
-RenderSVGContainer::~RenderSVGContainer()
+RenderSVGRoot::~RenderSVGRoot()
 {
 }
 
-bool RenderSVGContainer::drawsContents() const
-{
-    return m_drawsContents;
-}
-
-void RenderSVGContainer::setDrawsContents(bool drawsContents)
-{
-    m_drawsContents = drawsContents;
-}
-
-AffineTransform RenderSVGContainer::localTransform() const
+AffineTransform RenderSVGRoot::localTransform() const
 {
     return m_matrix;
 }
 
-void RenderSVGContainer::setLocalTransform(const AffineTransform& matrix)
+void RenderSVGRoot::setLocalTransform(const AffineTransform& matrix)
 {
     m_matrix = matrix;
 }
 
-bool RenderSVGContainer::requiresLayer()
+bool RenderSVGRoot::requiresLayer()
 {
     // Only allow an <svg> element to generate a layer when it's positioned in a non-SVG context
     return false;
 }
 
-short RenderSVGContainer::lineHeight(bool b, bool isRootLineBox) const
+short RenderSVGRoot::lineHeight(bool b, bool isRootLineBox) const
 {
     return height() + marginTop() + marginBottom();
 }
 
-short RenderSVGContainer::baselinePosition(bool b, bool isRootLineBox) const
+short RenderSVGRoot::baselinePosition(bool b, bool isRootLineBox) const
 {
     return height() + marginTop() + marginBottom();
 }
 
-void RenderSVGContainer::layout()
+void RenderSVGRoot::layout()
 {
     ASSERT(needsLayout());
 
@@ -120,6 +108,9 @@ void RenderSVGContainer::layout()
     calcHeight();
 
     m_absoluteBounds = absoluteClippedOverflowRect();
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
+    m_width = m_width * svg->currentScale();
+    m_height = m_height * svg->currentScale();
 
     if (selfNeedsLayout() && checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
@@ -128,14 +119,21 @@ void RenderSVGContainer::layout()
     setNeedsLayout(false);
 }
 
-void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo, int& parentX, int& parentY)
+void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int& parentX, int& parentY)
 {
-    // Only the root <svg> element should need any translations using the HTML/CSS system
-    // parentX, parentY are also non-zero for first-level kids of these
-    // CSS-transformed <svg> root-elements (due to RenderBox::paint) for any other element
-    // they should be 0.   m_x, m_y should always be 0 for non-root svg containers
-    ASSERT(m_x == 0);
-    ASSERT(m_y == 0);
+    // Translate from parent offsets (html renderers) to a relative transform (svg renderers)
+    IntPoint origin;
+    origin.move(parentX, parentY);
+    origin.move(m_x, m_y);
+    origin.move(borderLeft(), borderTop());
+    origin.move(paddingLeft(), paddingTop());
+    if (origin.x() || origin.y()) {
+        paintInfo.context->concatCTM(AffineTransform().translate(origin.x(), origin.y()));
+        paintInfo.rect.move(-origin.x(), -origin.y());
+    }
+    parentX = parentY = 0;
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
+    paintInfo.context->concatCTM(AffineTransform().scale(svg->currentScale()));
     
     if (!viewport().isEmpty()) {
         if (style()->overflowX() != OVISIBLE)
@@ -145,12 +143,17 @@ void RenderSVGContainer::applyContentTransforms(PaintInfo& paintInfo, int& paren
     }
     if (!localTransform().isIdentity())
         paintInfo.context->concatCTM(localTransform());
+    paintInfo.context->concatCTM(AffineTransform().translate(svg->currentTranslate().x(), svg->currentTranslate().y()));
 }
 
-void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
+void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.context->paintingDisabled() || !drawsContents())
+    if (paintInfo.context->paintingDisabled())
         return;
+
+    // This should only exist for <svg> renderers
+    if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
+        paintBoxDecorations(paintInfo, m_x + parentX, m_y + parentY);
 
     if (!firstChild()) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
@@ -204,12 +207,12 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintOutline(paintInfo.context, m_absoluteBounds.x(), m_absoluteBounds.y(), m_absoluteBounds.width(), m_absoluteBounds.height(), style());
 }
 
-FloatRect RenderSVGContainer::viewport() const
+FloatRect RenderSVGRoot::viewport() const
 {
     return m_viewport;
 }
 
-void RenderSVGContainer::calcViewport()
+void RenderSVGRoot::calcViewport()
 {
     SVGElement* svgelem = static_cast<SVGElement*>(element());
     if (svgelem->hasTagName(SVGNames::svgTag)) {
@@ -218,27 +221,15 @@ void RenderSVGContainer::calcViewport()
         if (!selfNeedsLayout() && !svg->hasRelativeValues())
             return;
 
-        float x = 0.0f;
-        float y = 0.0f;
-        if (parent()->isSVGContainer()) {
-            x = svg->x().value();
-            y = svg->y().value();
-        }
-        float w = svg->width().value();
-        float h = svg->height().value();
+        double x = svg->x().value();
+        double y = svg->y().value();
+        double w = svg->width().value();
+        double h = svg->height().value();
         m_viewport = FloatRect(x, y, w, h);
-    } else if (svgelem->hasTagName(SVGNames::markerTag)) {
-        if (!selfNeedsLayout())
-            return;
-
-        SVGMarkerElement* svg = static_cast<SVGMarkerElement*>(element());
-        float w = svg->markerWidth().value();
-        float h = svg->markerHeight().value();
-        m_viewport = FloatRect(0.0f, 0.0f, w, h);
     }
 }
 
-void RenderSVGContainer::setViewBox(const FloatRect& viewBox)
+void RenderSVGRoot::setViewBox(const FloatRect& viewBox)
 {
     m_viewBox = viewBox;
 
@@ -246,35 +237,39 @@ void RenderSVGContainer::setViewBox(const FloatRect& viewBox)
         setNeedsLayout(true);
 }
 
-FloatRect RenderSVGContainer::viewBox() const
+FloatRect RenderSVGRoot::viewBox() const
 {
     return m_viewBox;
 }
 
-void RenderSVGContainer::setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType align)
+void RenderSVGRoot::setAlign(SVGPreserveAspectRatio::SVGPreserveAspectRatioType align)
 {
     m_align = align;
     if (style())
         setNeedsLayout(true);
 }
 
-SVGPreserveAspectRatio::SVGPreserveAspectRatioType RenderSVGContainer::align() const
+SVGPreserveAspectRatio::SVGPreserveAspectRatioType RenderSVGRoot::align() const
 {
     return m_align;
 }
 
-AffineTransform RenderSVGContainer::viewportTransform() const
+AffineTransform RenderSVGRoot::viewportTransform() const
 {
     // FIXME: The method name is confusing, since it does not
     // do viewport translating anymore. Look into this while
     //  fixing bug 12207.
-    if (!viewBox().isEmpty())
-        return getAspectRatio(viewBox(), viewport());
+    if (!viewBox().isEmpty()) {
+        FloatRect viewportRect = viewport();
+        viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
+
+        return getAspectRatio(viewBox(), viewportRect);
+    }
 
     return AffineTransform();
 }
 
-IntRect RenderSVGContainer::absoluteClippedOverflowRect()
+IntRect RenderSVGRoot::absoluteClippedOverflowRect()
 {
     IntRect repaintRect;
 
@@ -291,24 +286,27 @@ IntRect RenderSVGContainer::absoluteClippedOverflowRect()
     return repaintRect;
 }
 
-void RenderSVGContainer::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+void RenderSVGRoot::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
 {
     graphicsContext->addFocusRingRect(m_absoluteBounds);
 }
 
-void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int, bool)
+void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, int, int)
 {
     rects.append(absoluteClippedOverflowRect());
 }
 
-AffineTransform RenderSVGContainer::absoluteTransform() const
+AffineTransform RenderSVGRoot::absoluteTransform() const
 {
     AffineTransform ctm = RenderContainer::absoluteTransform();
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
+    ctm.scale(svg->currentScale());
+    ctm.translate(svg->currentTranslate().x(), svg->currentTranslate().y());
     ctm.translate(viewport().x(), viewport().y());
     return viewportTransform() * ctm;
 }
 
-bool RenderSVGContainer::fillContains(const FloatPoint& p) const
+bool RenderSVGRoot::fillContains(const FloatPoint& p) const
 {
     RenderObject* current = firstChild();
     while (current != 0) {
@@ -321,7 +319,7 @@ bool RenderSVGContainer::fillContains(const FloatPoint& p) const
     return false;
 }
 
-bool RenderSVGContainer::strokeContains(const FloatPoint& p) const
+bool RenderSVGRoot::strokeContains(const FloatPoint& p) const
 {
     RenderObject* current = firstChild();
     while (current != 0) {
@@ -334,7 +332,7 @@ bool RenderSVGContainer::strokeContains(const FloatPoint& p) const
     return false;
 }
 
-FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
+FloatRect RenderSVGRoot::relativeBBox(bool includeStroke) const
 {
     FloatRect rect;
     
@@ -348,7 +346,7 @@ FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
     return rect;
 }
 
-void RenderSVGContainer::setSlice(bool slice)
+void RenderSVGRoot::setSlice(bool slice)
 {
     m_slice = slice;
 
@@ -356,12 +354,12 @@ void RenderSVGContainer::setSlice(bool slice)
         setNeedsLayout(true);
 }
 
-bool RenderSVGContainer::slice() const
+bool RenderSVGRoot::slice() const
 {
     return m_slice;
 }
 
-AffineTransform RenderSVGContainer::getAspectRatio(const FloatRect& logical, const FloatRect& physical) const
+AffineTransform RenderSVGRoot::getAspectRatio(const FloatRect& logical, const FloatRect& physical) const
 {
     AffineTransform temp;
 
@@ -401,7 +399,7 @@ AffineTransform RenderSVGContainer::getAspectRatio(const FloatRect& logical, con
     return temp;
 }
 
-bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     if (!viewport().isEmpty()
         && style()->overflowX() == OHIDDEN

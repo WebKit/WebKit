@@ -30,7 +30,6 @@
 
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
-#include "KCanvasRenderingStyle.h"
 #include "PointerEventsHitRules.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
@@ -144,7 +143,7 @@ FloatRect RenderSVGText::relativeBBox(bool includeStroke) const
 
     // SVG needs to include the strokeWidth(), not the textStrokeWidth().
     if (includeStroke && style()->svgStyle()->hasStroke())
-        repaintRect.inflate(narrowPrecisionToFloat(KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 0.0)));
+        repaintRect.inflate(SVGRenderStyle::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 0.0));
 
     repaintRect.move(xPos(), yPos());
     return repaintRect;

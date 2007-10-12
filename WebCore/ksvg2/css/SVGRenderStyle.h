@@ -39,6 +39,9 @@ typedef unsigned long long uint64_t;
 
 namespace WebCore {
 
+    class RenderObject;
+    class RenderStyle;
+
     class SVGRenderStyle : public Shared<SVGRenderStyle> {    
     public:
         SVGRenderStyle();
@@ -102,6 +105,8 @@ namespace WebCore {
         // convenience
         bool hasStroke() const { return (strokePaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE); }
         bool hasFill() const { return (fillPaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE); }
+
+        static double cssPrimitiveToLength(const RenderObject*, CSSValue*, double defaultValue = 0.0);
 
     protected:
         // inherit

@@ -1911,8 +1911,6 @@
 		A88AD404095248F0001DD196 /* SVGRenderStyleDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F702089701F100BA5114 /* SVGRenderStyleDefs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD40A095248F0001DD196 /* SVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F7F5089701F300BA5114 /* SVGZoomEvent.cpp */; };
 		A88AD40B095248F0001DD196 /* SVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F7F6089701F300BA5114 /* SVGZoomEvent.h */; };
-		A88AD40C095248F0001DD196 /* KCanvasRenderingStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */; };
-		A88AD40D095248F0001DD196 /* KCanvasRenderingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */; };
 		A88AD40E095248F0001DD196 /* TimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */; };
 		A88AD40F095248F0001DD196 /* TimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F6F0089701F100BA5114 /* TimeScheduler.h */; };
 		A88AD411095248F0001DD196 /* SVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F7FF089701F300BA5114 /* SVGAElement.cpp */; };
@@ -2270,6 +2268,8 @@
 		AA0972CD0B6947A800A705E9 /* SVGInlineTextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0972CB0B6947A800A705E9 /* SVGInlineTextBox.h */; };
 		AA21ECCA0ABF0FBA002B834C /* CSSCursorImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */; };
 		AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AA31B5B40C1DFD1000AE7083 /* RenderSVGRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */; };
+		AA31B5B50C1DFD1000AE7083 /* RenderSVGRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */; };
 		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
 		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
 		AA882B2F0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA882B2D0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp */; };
@@ -5137,8 +5137,6 @@
 		A890DF1E0930974800513F88 /* SVGStyledLocatableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledLocatableElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A89943260B42338700D7C802 /* BitmapImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitmapImage.h; sourceTree = "<group>"; };
 		A89943270B42338700D7C802 /* BitmapImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImage.cpp; sourceTree = "<group>"; };
-		A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasRenderingStyle.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasRenderingStyle.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeScheduler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F0089701F100BA5114 /* TimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TimeScheduler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F4089701F100BA5114 /* CSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = CSSPropertyNames.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -5502,6 +5500,8 @@
 		AA0972CB0B6947A800A705E9 /* SVGInlineTextBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGInlineTextBox.h; sourceTree = "<group>"; };
 		AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCursorImageValue.cpp; sourceTree = "<group>"; };
 		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
+		AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGRoot.cpp; sourceTree = "<group>"; };
+		AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGRoot.h; sourceTree = "<group>"; };
 		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
 		AA882B2D0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PointerEventsHitRules.cpp; sourceTree = "<group>"; };
@@ -8678,8 +8678,6 @@
 			children = (
 				AA882B2D0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp */,
 				AA882B2E0B4EF5EB006D26D1 /* PointerEventsHitRules.h */,
-				A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */,
-				A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */,
 				A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */,
 				A8C0F6F0089701F100BA5114 /* TimeScheduler.h */,
 				A8DF5FA2098460AA0052981B /* SVGDocumentExtensions.cpp */,
@@ -9905,6 +9903,8 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */,
+				AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
@@ -10285,7 +10285,6 @@
 				A88AD402095248F0001DD196 /* SVGRenderStyle.h in Headers */,
 				A88AD404095248F0001DD196 /* SVGRenderStyleDefs.h in Headers */,
 				A88AD40B095248F0001DD196 /* SVGZoomEvent.h in Headers */,
-				A88AD40D095248F0001DD196 /* KCanvasRenderingStyle.h in Headers */,
 				A88AD40F095248F0001DD196 /* TimeScheduler.h in Headers */,
 				A88AD412095248F0001DD196 /* SVGAElement.h in Headers */,
 				A88AD416095248F0001DD196 /* SVGAnimateColorElement.h in Headers */,
@@ -11781,6 +11780,7 @@
 				51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */,
 				0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */,
 				A8F4FB940C169E7B002AFED5 /* SVGRenderSupport.h in Headers */,
+				AA31B5B50C1DFD1000AE7083 /* RenderSVGRoot.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12003,7 +12003,6 @@
 				A88AD401095248F0001DD196 /* SVGRenderStyle.cpp in Sources */,
 				A88AD403095248F0001DD196 /* SVGRenderStyleDefs.cpp in Sources */,
 				A88AD40A095248F0001DD196 /* SVGZoomEvent.cpp in Sources */,
-				A88AD40C095248F0001DD196 /* KCanvasRenderingStyle.cpp in Sources */,
 				A88AD40E095248F0001DD196 /* TimeScheduler.cpp in Sources */,
 				A88AD411095248F0001DD196 /* SVGAElement.cpp in Sources */,
 				A88AD415095248F0001DD196 /* SVGAnimateColorElement.cpp in Sources */,
@@ -13249,6 +13248,7 @@
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
 				51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */,
 				A8F4FB960C169E85002AFED5 /* SVGRenderSupport.cpp in Sources */,
+				AA31B5B40C1DFD1000AE7083 /* RenderSVGRoot.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

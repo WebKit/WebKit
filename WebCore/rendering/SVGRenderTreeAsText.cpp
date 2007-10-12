@@ -33,7 +33,6 @@
 #include "GraphicsTypes.h"
 #include "InlineTextBox.h"
 #include "HTMLNames.h"
-#include "KCanvasRenderingStyle.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
@@ -179,11 +178,11 @@ static void writeIndent(TextStream& ts, int indent)
 }
 
 // FIXME: Maybe this should be in KCanvasRenderingStyle.cpp
-static TextStream& operator<<(TextStream& ts, const KCDashArray& a)
+static TextStream& operator<<(TextStream& ts, const DashArray& a)
 {
     ts << "{";
-    KCDashArray::const_iterator end = a.end();
-    for (KCDashArray::const_iterator it = a.begin(); it != end; ++it) {
+    DashArray::const_iterator end = a.end();
+    for (DashArray::const_iterator it = a.begin(); it != end; ++it) {
         if (it != a.begin())
             ts << ", ";
         ts << *it;
@@ -239,16 +238,16 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
         ts << " [opacity=" << style->opacity() << "]";
     if (object.isRenderPath()) {
         const RenderPath& path = static_cast<const RenderPath&>(object);
-        SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style, &path);
+        SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(style, &path);
         if (strokePaintServer) {
             TextStreamSeparator s(" ");
             ts << " [stroke={";
             if (strokePaintServer)
                 ts << s << *strokePaintServer;
 
-            double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(&path, svgStyle->strokeDashOffset(), 0.0);
-            const KCDashArray& dashArray = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
-            double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(&path, svgStyle->strokeWidth(), 1.0);
+            double dashOffset = SVGRenderStyle::cssPrimitiveToLength(&path, svgStyle->strokeDashOffset(), 0.0);
+            const DashArray& dashArray = dashArrayFromRenderingStyle(style);
+            double strokeWidth = SVGRenderStyle::cssPrimitiveToLength(&path, svgStyle->strokeWidth(), 1.0);
 
             if (svgStyle->strokeOpacity() != 1.0f)
                 ts << s << "[opacity=" << svgStyle->strokeOpacity() << "]";
@@ -266,7 +265,7 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
                 ts << s << "[dash array=" << dashArray << "]";
             ts << "}]";
         }
-        SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style, &path);
+        SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(style, &path);
         if (fillPaintServer) {
             TextStreamSeparator s(" ");
             ts << " [fill={";

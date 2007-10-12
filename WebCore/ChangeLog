@@ -1,3 +1,100 @@
+2007-06-14  Rob Buis  <buis@kde.org>
+
+        Build fix.
+
+        * rendering/SVGCharacterLayoutInfo.cpp:
+
+2007-06-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12207
+        RenderSVGContainer should be split into multiple classes
+        http://bugs.webkit.org/show_bug.cgi?id=14125
+        KCanvasRenderingStyle should be removed
+
+        Introduce the RenderSVGRoot class and kill the KCanvas enums.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::cssPrimitiveToLength):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp: Removed.
+        * ksvg2/misc/KCanvasRenderingStyle.h: Removed.
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::createRenderer):
+        (WebCore::SVGMarkerElement::notifyAttributeChange):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createRenderer):
+        * ksvg2/svg/SVGSVGElement.h:
+        * platform/graphics/svg/SVGPaintServer.cpp:
+        (WebCore::sharedSolidPaintServer):
+        (WebCore::SVGPaintServer::fillPaintServer):
+        (WebCore::SVGPaintServer::strokePaintServer):
+        (WebCore::dashArrayFromRenderingStyle):
+        * platform/graphics/svg/SVGPaintServer.h:
+        * platform/graphics/svg/cg/CgSupport.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        * platform/graphics/svg/cg/RenderPathCg.cpp:
+        (WebCore::RenderPath::strokeContains):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::fillContains):
+        (WebCore::fillAndStrokePath):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::requiresLayer):
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::applyContentTransforms):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::setAlign):
+        (WebCore::RenderSVGContainer::align):
+        (WebCore::RenderSVGContainer::viewportTransform):
+        (WebCore::RenderSVGContainer::absoluteTransform):
+        (WebCore::RenderSVGContainer::getAspectRatio):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGInlineText.cpp:
+        * rendering/RenderSVGRoot.cpp: Added.
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::~RenderSVGRoot):
+        (WebCore::RenderSVGRoot::localTransform):
+        (WebCore::RenderSVGRoot::setLocalTransform):
+        (WebCore::RenderSVGRoot::requiresLayer):
+        (WebCore::RenderSVGRoot::lineHeight):
+        (WebCore::RenderSVGRoot::baselinePosition):
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::applyContentTransforms):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::viewport):
+        (WebCore::RenderSVGRoot::calcViewport):
+        (WebCore::RenderSVGRoot::setViewBox):
+        (WebCore::RenderSVGRoot::viewBox):
+        (WebCore::RenderSVGRoot::setAlign):
+        (WebCore::RenderSVGRoot::align):
+        (WebCore::RenderSVGRoot::viewportTransform):
+        (WebCore::RenderSVGRoot::absoluteClippedOverflowRect):
+        (WebCore::RenderSVGRoot::addFocusRingRects):
+        (WebCore::RenderSVGRoot::absoluteRects):
+        (WebCore::RenderSVGRoot::absoluteTransform):
+        (WebCore::RenderSVGRoot::fillContains):
+        (WebCore::RenderSVGRoot::strokeContains):
+        (WebCore::RenderSVGRoot::relativeBBox):
+        (WebCore::RenderSVGRoot::setSlice):
+        (WebCore::RenderSVGRoot::slice):
+        (WebCore::RenderSVGRoot::getAspectRatio):
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/RenderSVGRoot.h: Added.
+        (WebCore::RenderSVGRoot::isSVGContainer):
+        (WebCore::RenderSVGRoot::renderName):
+        * rendering/RenderSVGTSpan.cpp:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::relativeBBox):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeStyle):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::paintInlineBoxes):
+
 2007-06-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

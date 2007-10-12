@@ -126,6 +126,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
         friend class RenderSVGContainer;
+        friend class RenderSVGRoot;
         virtual bool hasRelativeValues() const;
 
     private:

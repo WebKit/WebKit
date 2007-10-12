@@ -27,7 +27,6 @@
 
 #include "InlineFlowBox.h"
 #include "InlineTextBox.h"
-#include "KCanvasRenderingStyle.h"
 #include "SVGLengthList.h"
 #include "SVGNumberList.h"
 #include "SVGTextPositioningElement.h"

@@ -32,7 +32,6 @@
 #include "RenderBlock.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRootInlineBox.h"
-#include "KCanvasRenderingStyle.h"
 
 namespace WebCore {
     

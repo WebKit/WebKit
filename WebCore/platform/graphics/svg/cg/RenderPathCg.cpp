@@ -31,9 +31,9 @@
 #include <wtf/Assertions.h>
 
 #include <ApplicationServices/ApplicationServices.h>
-#include "KCanvasRenderingStyle.h"
 #include "CgSupport.h"
 #include "RenderPath.h"
+#include "SVGPaintServer.h"
 #include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"
 
@@ -53,7 +53,7 @@ bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) co
     if (path().isEmpty())
         return false;
 
-    if (requiresStroke && !KSVGPainterFactory::strokePaintServer(style(), this))
+    if (requiresStroke && !SVGPaintServer::strokePaintServer(style(), this))
         return false;
 
     CGMutablePathRef cgPath = path().platformPath();

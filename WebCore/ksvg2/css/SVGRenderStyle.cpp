@@ -30,6 +30,12 @@
 #if ENABLE(SVG)
 #include "SVGRenderStyle.h"
 
+#include "CSSPrimitiveValue.h"
+#include "CSSValueList.h"
+#include "RenderObject.h"
+#include "RenderStyle.h"
+#include "SVGStyledElement.h"
+
 namespace WebCore {
 
 SVGRenderStyle *SVGRenderStyle::s_defaultStyle = 0;
@@ -113,6 +119,26 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle* svgInheritParent)
     text = svgInheritParent->text;
 
     svg_inherited_flags = svgInheritParent->svg_inherited_flags;
+}
+
+double SVGRenderStyle::cssPrimitiveToLength(const RenderObject* item, CSSValue* value, double defaultValue)
+{
+    CSSPrimitiveValue* primitive = static_cast<CSSPrimitiveValue*>(value);
+
+    unsigned short cssType = (primitive ? primitive->primitiveType() : (unsigned short) CSSPrimitiveValue::CSS_UNKNOWN);
+    if (!(cssType > CSSPrimitiveValue::CSS_UNKNOWN && cssType <= CSSPrimitiveValue::CSS_PC))
+        return defaultValue;
+
+    if (cssType == CSSPrimitiveValue::CSS_PERCENTAGE) {
+        SVGStyledElement* element = static_cast<SVGStyledElement*>(item->element());
+        SVGElement* viewportElement = (element ? element->viewportElement() : 0);
+        if (viewportElement) {
+            double result = primitive->getFloatValue() / 100.0;
+            return SVGLength::PercentageOfViewport(result, element, LengthModeOther);
+        }
+    }
+
+    return primitive->computeLengthFloat(const_cast<RenderStyle*>(item->style()));
 }
 
 }

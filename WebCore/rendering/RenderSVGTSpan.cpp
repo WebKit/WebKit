@@ -26,7 +26,6 @@
 #if ENABLE(SVG)
 #include "RenderSVGTSpan.h"
 #include "GraphicsContext.h"
-#include "KCanvasRenderingStyle.h"
 #include "SVGRootInlineBox.h"
 #include "SVGInlineFlowBox.h"
 #include "AffineTransform.h"
