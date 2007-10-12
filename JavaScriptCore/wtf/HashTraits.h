@@ -94,6 +94,20 @@ namespace WTF {
         static unsigned long long deletedValue() { return static_cast<unsigned long long>(-1); }
     };
     
+    template<typename T> struct FloatHashTraits {
+        typedef T TraitType;
+        typedef HashTraits<T> StorageTraits;
+        static T emptyValue() { return std::numeric_limits<T>::infinity(); }
+        static T deletedValue() { return -std::numeric_limits<T>::infinity(); }
+        static const bool emptyValueIsZero = false;
+        static const bool needsDestruction = false;
+        static const bool needsRef = false;
+    };
+    template<> struct HashTraits<float> : FloatHashTraits<float> {
+    };
+    template<> struct HashTraits<double> : FloatHashTraits<double> {
+    };
+
     template<typename P> struct HashTraits<P*> : GenericHashTraits<P*> {
         typedef HashTraits<typename IntTypes<sizeof(P*)>::SignedType> StorageTraits;
         static const bool emptyValueIsZero = true;
