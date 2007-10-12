@@ -62,14 +62,48 @@ Path& Path::operator=(const Path& other)
     return *this;
 }
 
+
+static void copyClosingSubpathsApplierFunction(void* info, const CGPathElement* element)
+{
+    CGMutablePathRef path = static_cast<CGMutablePathRef>(info);
+    CGPoint* points = element->points;
+    
+    switch (element->type) {
+    case kCGPathElementMoveToPoint:
+        if (!CGPathIsEmpty(path)) // to silence a warning when trying to close an empty path
+            CGPathCloseSubpath(path); // This is the only change from CGPathCreateMutableCopy
+        CGPathMoveToPoint(path, 0, points[0].x, points[0].y);
+        break;
+    case kCGPathElementAddLineToPoint:
+        CGPathAddLineToPoint(path, 0, points[0].x, points[0].y);
+        break;
+    case kCGPathElementAddQuadCurveToPoint:
+        CGPathAddQuadCurveToPoint(path, 0, points[0].x, points[0].y, points[1].x, points[1].y);
+        break;
+    case kCGPathElementAddCurveToPoint:
+        CGPathAddCurveToPoint(path, 0, points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y);
+        break;
+    case kCGPathElementCloseSubpath:
+        CGPathCloseSubpath(path);
+        break;
+    }
+}
+
+static CGMutablePathRef copyCGPathClosingSubpaths(CGPathRef originalPath)
+{
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathApply(originalPath, path, copyClosingSubpathsApplierFunction);
+    CGPathCloseSubpath(path);
+    return path;
+}
+
 bool Path::contains(const FloatPoint &point, WindRule rule) const
 {
-    // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
     if (!boundingRect().contains(point))
         return false;
 
-    CGMutablePathRef path = CGPathCreateMutableCopy(m_path);
-    CGPathCloseSubpath(path);
+    // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
+    CGMutablePathRef path = copyCGPathClosingSubpaths(m_path);
     bool ret = CGPathContainsPoint(path, 0, point, rule == RULE_EVENODD ? true : false);
     CGPathRelease(path);
     return ret;
