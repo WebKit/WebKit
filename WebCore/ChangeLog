@@ -1,3 +1,17 @@
+2007-10-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        Handle a race condition that could arise if a plugin was loaded while it
+        was scheduled to be freed: check whether the timer that schedules
+        library frees is active in PluginPackageWin::load().
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackageWin::freeLibrarySoon): Added assertions
+        (WebCore::PluginPackageWin::freeLibraryTimerFired): Added assertion
+        (WebCore::PluginPackageWin::load): If we are scheduled to free this
+        library, cancel the timer, and don't call LoadLibrary
+
 2007-10-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

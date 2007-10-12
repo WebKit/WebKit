@@ -83,14 +83,19 @@ static Vector<String> splitString(const String& str, char delimiter, int padTo)
 
 void PluginPackageWin::freeLibrarySoon()
 {
+    ASSERT(!m_freeLibraryTimer.isActive());
+    ASSERT(m_module);
+    ASSERT(m_loadCount == 0);
+
     m_freeLibraryTimer.startOneShot(0);
 }
 
 void PluginPackageWin::freeLibraryTimerFired(Timer<PluginPackageWin>* /*timer*/)
 {
     ASSERT(m_module);
+    ASSERT(m_loadCount == 0);
 
-    FreeLibrary(m_module);
+    ::FreeLibrary(m_module);
     m_module = 0;
 }
 
@@ -157,28 +162,31 @@ bool PluginPackageWin::fetchInfo()
 
 bool PluginPackageWin::load()
 {
-    if (m_isLoaded) {
+    if (m_freeLibraryTimer.isActive()) {
+        ASSERT(m_module);
+        m_freeLibraryTimer.stop();
+    } else if (m_isLoaded) {
         m_loadCount++;
         return true;
-    }
+    } else {
+        WCHAR currentPath[MAX_PATH];
 
-    WCHAR currentPath[MAX_PATH];
+        if (!::GetCurrentDirectoryW(MAX_PATH, currentPath))
+            return false;
 
-    if (!::GetCurrentDirectoryW(MAX_PATH, currentPath))
-        return false;
+        String path = m_path.substring(0, m_path.reverseFind('\\'));
 
-    String path = m_path.substring(0, m_path.reverseFind('\\'));
+        if (!::SetCurrentDirectoryW(path.charactersWithNullTermination()))
+            return false;
 
-    if (!::SetCurrentDirectoryW(path.charactersWithNullTermination()))
-        return false;
+        // Load the library
+        m_module = ::LoadLibraryW(m_path.charactersWithNullTermination());
 
-    // Load the library
-    m_module = ::LoadLibraryW(m_path.charactersWithNullTermination());
-
-    if (!::SetCurrentDirectoryW(currentPath)) {
-        if (m_module)
-            ::FreeLibrary(m_module);
-        return false;
+        if (!::SetCurrentDirectoryW(currentPath)) {
+            if (m_module)
+                ::FreeLibrary(m_module);
+            return false;
+        }
     }
 
     if (!m_module)
