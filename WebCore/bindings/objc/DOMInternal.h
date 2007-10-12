@@ -259,6 +259,7 @@
 #import "DOMSVGTSpanElementInternal.h"
 #import "DOMSVGTextContentElementInternal.h"
 #import "DOMSVGTextElementInternal.h"
+#import "DOMSVGTextPathElementInternal.h"
 #import "DOMSVGTextPositioningElementInternal.h"
 #import "DOMSVGTitleElementInternal.h"
 #import "DOMSVGTransformInternal.h"

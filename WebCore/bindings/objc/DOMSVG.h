@@ -146,6 +146,7 @@
 #import <WebCore/DOMSVGTests.h>
 #import <WebCore/DOMSVGTextContentElement.h>
 #import <WebCore/DOMSVGTextElement.h>
+#import <WebCore/DOMSVGTextPathElement.h>
 #import <WebCore/DOMSVGTextPositioningElement.h>
 #import <WebCore/DOMSVGTitleElement.h>
 #import <WebCore/DOMSVGTransform.h>

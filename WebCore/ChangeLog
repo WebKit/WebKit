@@ -1,5 +1,17 @@
 2007-07-25  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Sam.
+
+        Let <textPath> be recognized within the ObjC bindings.
+        Forgot to add that months ago.
+
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMSVG.h:
+
+2007-07-25  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=14065

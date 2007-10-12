@@ -248,6 +248,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::titleTag, [DOMSVGTitleElement class]);
     addElementClass(SVGNames::trefTag, [DOMSVGTRefElement class]);
     addElementClass(SVGNames::tspanTag, [DOMSVGTSpanElement class]);
+    addElementClass(SVGNames::textPathTag, [DOMSVGTextPathElement class]);
     addElementClass(SVGNames::useTag, [DOMSVGUseElement class]);
     addElementClass(SVGNames::viewTag, [DOMSVGViewElement class]);
 #endif
