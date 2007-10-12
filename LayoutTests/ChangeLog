@@ -1,3 +1,9 @@
+2007-07-03  Rob Buis  <buis@kde.org>
+
+        Correcting the pixel test result that was supposed to go in during r23849.
+
+        * svg/custom/image-small-width-height-expected.png:
+
 2007-06-28  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.
