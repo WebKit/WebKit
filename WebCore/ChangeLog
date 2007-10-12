@@ -1,3 +1,26 @@
+2007-06-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14155
+
+        JSSVGMatrix was not working properly.
+        "matrix.translate(10, 10)" actually altered 'matrix' instead of returning a
+        new SVGMatrix object, as described in SVG 1.1 specification.
+
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::translate):
+        (WebCore::JSSVGMatrix::scale):
+        (WebCore::JSSVGMatrix::scaleNonUniform):
+        (WebCore::JSSVGMatrix::rotate):
+        (WebCore::JSSVGMatrix::flipX):
+        (WebCore::JSSVGMatrix::flipY):
+        (WebCore::JSSVGMatrix::skewX):
+        (WebCore::JSSVGMatrix::skewY):
+        * ksvg2/svg/SVGMatrix.idl:
+
 2007-06-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Niko.

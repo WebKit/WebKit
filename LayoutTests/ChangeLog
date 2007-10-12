@@ -1,3 +1,14 @@
+2007-06-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for JSSVGMatrix problems.
+
+        * svg/custom/SVGMatrix-interface-expected.checksum: Added.
+        * svg/custom/SVGMatrix-interface-expected.png: Added.
+        * svg/custom/SVGMatrix-interface-expected.txt: Added.
+        * svg/custom/SVGMatrix-interface.svg: Added.
+
 2007-06-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

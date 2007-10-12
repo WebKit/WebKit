@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,15 +30,59 @@ using namespace KJS;
 
 namespace WebCore {
 
+JSValue* JSSVGMatrix::multiply(ExecState* exec, const List& args)
+{
+    AffineTransform imp(*impl());
+
+    AffineTransform secondMatrix = toSVGMatrix(args[0]);    
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.multiply(secondMatrix)));
+}
+
 JSValue* JSSVGMatrix::inverse(ExecState* exec, const List&)
 {
-    const AffineTransform imp(*impl());
+    AffineTransform imp(*impl());
     KJS::JSValue* result = toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.inverse()));
 
     if (!imp.isInvertible())
         setDOMException(exec, SVG_MATRIX_NOT_INVERTABLE);
 
     return result;
+}
+
+JSValue* JSSVGMatrix::translate(ExecState* exec, const List& args)
+{
+    AffineTransform imp(*impl());
+
+    float x = args[0]->toNumber(exec);
+    float y = args[1]->toNumber(exec);
+
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.translate(x, y)));
+}
+
+JSValue* JSSVGMatrix::scale(ExecState* exec, const List& args)
+{
+    AffineTransform imp(*impl());
+
+    float scaleFactor = args[0]->toNumber(exec);
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.scale(scaleFactor)));
+}
+
+JSValue* JSSVGMatrix::scaleNonUniform(ExecState* exec, const List& args)
+{
+    AffineTransform imp(*impl());
+
+    float scaleFactorX = args[0]->toNumber(exec);
+    float scaleFactorY = args[1]->toNumber(exec);
+
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.scaleNonUniform(scaleFactorX, scaleFactorY)));
+}
+
+JSValue* JSSVGMatrix::rotate(ExecState* exec, const List& args)
+{
+    AffineTransform imp(*impl());
+
+    float angle = args[0]->toNumber(exec);
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.rotate(angle)));
 }
 
 JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
@@ -55,7 +99,35 @@ JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
 
     return result;
 }
-    
+
+JSValue* JSSVGMatrix::flipX(ExecState* exec, const List&)
+{
+    AffineTransform imp(*impl());
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.flipX()));
+}
+
+JSValue* JSSVGMatrix::flipY(ExecState* exec, const List&)
+{
+    AffineTransform imp(*impl());
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.flipY()));
+}
+
+JSValue* JSSVGMatrix::skewX(ExecState* exec, const List& args)
+{
+    AffineTransform imp(*impl());
+
+    float angle = args[0]->toNumber(exec);
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.skewX(angle)));
+}
+
+JSValue* JSSVGMatrix::skewY(ExecState* exec, const List& args)
+{
+    AffineTransform imp(*impl());
+
+    float angle = args[0]->toNumber(exec);
+    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.skewY(angle)));
+}
+
 }
 
 #endif // ENABLE(SVG)
