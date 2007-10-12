@@ -1,3 +1,22 @@
+2007-10-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        SVG invalidates way too much during layout()
+        http://bugs.webkit.org/show_bug.cgi?id=14003
+
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::ownerSVGElement): simplify if
+        (WebCore::SVGElement::viewportElement): simplify if
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout): only layout children if parent changed
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout): only layout children when size changes
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout): hack to avoid bad RenderBlock::layout code
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::layout): don't use RenderSVGContainer::layout()
+
 2007-10-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric.

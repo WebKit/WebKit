@@ -27,6 +27,8 @@
 #include "RenderSVGViewportContainer.h"
 
 #include "GraphicsContext.h"
+
+#include "RenderView.h"
 #include "SVGMarkerElement.h"
 #include "SVGSVGElement.h"
 
@@ -44,8 +46,39 @@ RenderSVGViewportContainer::~RenderSVGViewportContainer()
 
 void RenderSVGViewportContainer::layout()
 {
+    ASSERT(needsLayout());
+    
     calcViewport();
-    RenderSVGContainer::layout();
+    
+    // Arbitrary affine transforms are incompatible with LayoutState.
+    view()->disableLayoutState();
+    
+    IntRect oldBounds = m_absoluteBounds;
+    IntRect oldOutlineBox;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (selfNeedsLayout() && checkForRepaint)
+        oldOutlineBox = absoluteOutlineBox();
+    
+    calcWidth();
+    
+    m_absoluteBounds = absoluteClippedOverflowRect();
+    bool boundsChanged = m_absoluteBounds != oldBounds;
+    
+    if (boundsChanged || normalChildNeedsLayout() || posChildNeedsLayout()) {
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+            if (boundsChanged && (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues()))
+                child->setNeedsLayout(true);
+            
+            child->layoutIfNeeded();
+            ASSERT(!child->needsLayout());
+        }
+    }
+    
+    if (selfNeedsLayout() && checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
+    
+    view()->enableLayoutState();
+    setNeedsLayout(false);
 }
 
 void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)

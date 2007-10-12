@@ -70,6 +70,9 @@ bool RenderSVGText::requiresLayer()
 void RenderSVGText::layout()
 {
     ASSERT(needsLayout());
+    
+    // FIXME: This is a hack to avoid the RenderBlock::layout() partial repainting code which is not (yet) SVG aware
+    setNeedsLayout(true);
 
     IntRect oldBounds;
     IntRect oldOutlineBox;

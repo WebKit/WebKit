@@ -70,24 +70,11 @@ void RenderSVGRoot::layout()
     // Arbitrary affine transforms are incompatible with LayoutState.
     view()->disableLayoutState();
 
-    IntRect oldBounds;
+    IntRect oldBounds = m_absoluteBounds;
     IntRect oldOutlineBox;
     bool checkForRepaint = checkForRepaintDuringLayout();
-    if (selfNeedsLayout() && checkForRepaint) {
-        oldBounds = m_absoluteBounds;
+    if (selfNeedsLayout() && checkForRepaint)
         oldOutlineBox = absoluteOutlineBox();
-    }
-
-    RenderObject* child = firstChild();
-    while (child) {
-        // FIXME: This check is bogus, see http://bugs.webkit.org/show_bug.cgi?id=14003
-        if (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues())
-            child->setNeedsLayout(true);
-
-        child->layoutIfNeeded();
-        ASSERT(!child->needsLayout());
-        child = child->nextSibling();
-    }
 
     calcWidth();
     calcHeight();
@@ -96,6 +83,18 @@ void RenderSVGRoot::layout()
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     m_width = m_width * svg->currentScale();
     m_height = m_height * svg->currentScale();
+    
+    bool boundsChanged = m_absoluteBounds != oldBounds;
+    
+    if (boundsChanged || normalChildNeedsLayout() || posChildNeedsLayout()) {
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+            if (boundsChanged && (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues()))
+                child->setNeedsLayout(true);
+            
+            child->layoutIfNeeded();
+            ASSERT(!child->needsLayout());
+        }
+    }
 
     if (selfNeedsLayout() && checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);

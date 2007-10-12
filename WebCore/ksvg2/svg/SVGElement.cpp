@@ -88,7 +88,7 @@ SVGSVGElement* SVGElement::ownerSVGElement() const
 {
     Node* n = parentNode();
     while (n) {
-        if (n->nodeType() == ELEMENT_NODE && n->hasTagName(SVGNames::svgTag))
+        if (n->hasTagName(SVGNames::svgTag))
             return static_cast<SVGSVGElement*>(n);
 
         n = n->parentNode();
@@ -103,8 +103,7 @@ SVGElement* SVGElement::viewportElement() const
     // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
     Node* n = isShadowNode() ? const_cast<SVGElement*>(this)->shadowParentNode() : parentNode();
     while (n) {
-        if (n->isElementNode() &&
-            (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag)))
+        if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag))
             return static_cast<SVGElement*>(n);
 
         n = n->isShadowNode() ? n->shadowParentNode() : n->parentNode();

@@ -234,15 +234,15 @@ void RenderSVGContainer::layout()
     IntRect oldBounds;
     IntRect oldOutlineBox;
     bool checkForRepaint = checkForRepaintDuringLayout();
-    if (selfNeedsLayout() && checkForRepaint) {
+    if (checkForRepaint) {
         oldBounds = m_absoluteBounds;
         oldOutlineBox = absoluteOutlineBox();
     }
 
     RenderObject* child = firstChild();
     while (child) {
-        // FIXME: This check is bogus, see http://bugs.webkit.org/show_bug.cgi?id=14003
-        if (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues())
+        // Only force our kids to layout if we're being asked to relayout as a result of a parent changing
+        if (selfNeedsLayout() && (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues()))
             child->setNeedsLayout(true);
 
         child->layoutIfNeeded();
@@ -255,7 +255,7 @@ void RenderSVGContainer::layout()
     m_height = calcReplacedHeight();
     m_absoluteBounds = absoluteClippedOverflowRect();
 
-    if (selfNeedsLayout() && checkForRepaint)
+    if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
 
     view()->enableLayoutState();
