@@ -1,3 +1,7 @@
+2007-10-01  Mark Rowe  <mrowe@apple.com>
+
+        * BuildSlaveSupport/build-launcher-dmg: Tweak once more to handle nightly builds for branches.
+
 2007-09-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
