@@ -892,33 +892,44 @@ for my $type ("match", "mismatch", "new", "crash") {
 
 mkpath $testResultsDirectory;
 
+copy(sourceDir() . "/WebKitTools/Scripts/resources/sorttable.js", "$testResultsDirectory/sorttable.js");
+
 open HTML, ">", $testResults or die;
 print HTML "<html>\n";
 print HTML "<head>\n";
 print HTML "<title>Layout Test Results</title>\n";
+print HTML "<script src=\"sorttable.js\"></script>";
 print HTML "</head>\n";
 print HTML "<body>\n";
 
 if ($counts{mismatch}) {
     print HTML "<p>Tests where results did not match expected results:</p>\n";
-    print HTML "<table>\n";
+    print HTML "<table class=\"sortable\">\n";
+    print HTML "<thead>\n<tr>\n";
+    print HTML "<th>Test Name</th>\n";
+    print HTML "<th></th><th></th><th></th>\n"; # sorttable.js doens't understand colspan
+    if ($pixelTests) {
+        print HTML "<th></th><th></th>\n";
+        print HTML "<th>Image Diff</th>\n";
+    }
+    print HTML "</tr>\n</thead>\n<tbody>\n";
     for my $test (@{$tests{mismatch}}) {
         my $base = stripExtension($test);
-        print HTML "<tr>\n";            
+        print HTML "<tr>\n";
         print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$test</a></td>\n";
         print HTML htmlForExpectedAndActualResults($base);
         if ($pixelTests) {
             if ($imagesPresent{$base}) {
                 print HTML "<td><a href=\"" . toURL("$base-$expectedTag.png") . "\">expected image</a></td>\n";
-                print HTML "<td><a href=\"" . toURL("$base-$diffsTag.html") . "\">image diffs</a>\n";
-                print HTML "<a href=\"" . toURL("$base-$diffsTag.png") . "\">$imageDifferences{$base}%</a></td>\n";
+                print HTML "<td><a href=\"" . toURL("$base-$diffsTag.html") . "\">image diffs</a></td>\n";
+                print HTML "<td><a href=\"" . toURL("$base-$diffsTag.png") . "\">$imageDifferences{$base}%</a></td>\n";
             } else {
-                print HTML "<td></td><td></td>\n";
+                print HTML "<td></td><td></td><td></td>\n";
             }            
         }
         print HTML "</tr>\n";
     }
-    print HTML "</table>\n";
+    print HTML "</tbody></table>\n";
 }
 
 if ($counts{crash}) {
