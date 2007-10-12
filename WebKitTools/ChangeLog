@@ -1,3 +1,9 @@
+2007-10-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/build-webkit: add --help, remove unused --color
+
 2007-10-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

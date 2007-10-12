@@ -628,9 +628,9 @@ sub qtMakeCommand()
     return "make";
 }
 
-sub buildQMakeProject($$)
+sub buildQMakeProject($)
 {
-    my ($project, $colorize) = @_;
+    my ($project) = @_;
 
     my @buildArgs = ("-r");
     my $make = qtMakeCommand();
@@ -693,9 +693,9 @@ sub buildQMakeProject($$)
     return $result;
 }
 
-sub buildQMakeGtkProject($$)
+sub buildQMakeGtkProject($)
 {
-    my ($project, $colorize) = @_;
+    my ($project) = @_;
 
     if ($project ne "WebKit") {
         die "The Gtk portbuilds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
