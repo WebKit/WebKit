@@ -170,7 +170,7 @@ template<typename PODType, typename PODTypeCreator>
 struct PODTypeReadWriteHashInfoHash {
     static unsigned hash(const PODTypeReadWriteHashInfo<PODType, PODTypeCreator>& info)
     {
-        return StringImpl::computeHash((UChar*) &info, sizeof(PODTypeReadWriteHashInfo<PODType, PODTypeCreator>) / sizeof(UChar));
+        return StringImpl::computeHash((::UChar*) &info, sizeof(PODTypeReadWriteHashInfo<PODType, PODTypeCreator>) / sizeof(::UChar));
     }
 
     static bool equal(const PODTypeReadWriteHashInfo<PODType, PODTypeCreator>& a, const PODTypeReadWriteHashInfo<PODType, PODTypeCreator>& b)
