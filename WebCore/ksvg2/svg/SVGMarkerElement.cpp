@@ -115,7 +115,7 @@ SVGResource* SVGMarkerElement::canvasResource()
     if (!m_marker)
         m_marker = new SVGResourceMarker();
 
-    m_marker->setMarker(static_cast<RenderSVGContainer*>(renderer()));
+    m_marker->setMarker(static_cast<RenderSVGViewportContainer*>(renderer()));
 
     // Spec: If the attribute is not specified, the effect is as if a
     // value of "0" were specified.
@@ -145,7 +145,7 @@ void SVGMarkerElement::notifyAttributeChange() const
     if (!m_marker || !attached() || document()->parsing())
         return;
 
-    RenderSVGContainer* markerContainer = static_cast<RenderSVGContainer*>(renderer());
+    RenderSVGViewportContainer* markerContainer = static_cast<RenderSVGViewportContainer*>(renderer());
 
     // NOTE: This is a typical case, where proper "attributeChanged" usage would reduce the number of updates needed.
     if (markerContainer)

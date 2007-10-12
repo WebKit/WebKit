@@ -36,6 +36,7 @@
 #include "SVGResourceFilter.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
+#include "SVGTransformList.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
@@ -67,6 +68,13 @@ bool RenderSVGText::requiresLayer()
     return false;
 }
 
+bool RenderSVGText::calculateLocalTransform()
+{
+    AffineTransform oldTransform = m_localTransform;
+    m_localTransform = static_cast<SVGTextElement*>(element())->animatedLocalTransform();
+    return (oldTransform != m_localTransform);
+}
+
 void RenderSVGText::layout()
 {
     ASSERT(needsLayout());
@@ -87,6 +95,8 @@ void RenderSVGText::layout()
     int xOffset = (int)(text->x()->getFirst().value());
     int yOffset = (int)(text->y()->getFirst().value());
     setPos(xOffset, yOffset);
+    
+    calculateLocalTransform();
 
     RenderBlock::layout();
 

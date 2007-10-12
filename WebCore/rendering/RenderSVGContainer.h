@@ -82,9 +82,8 @@ public:
 
     FloatRect relativeBBox(bool includeStroke = true) const;
 
+    virtual bool calculateLocalTransform();
     virtual AffineTransform localTransform() const;
-    void setLocalTransform(const AffineTransform&);
-
     virtual AffineTransform viewportTransform() const;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
@@ -106,10 +105,10 @@ private:
     bool selfWillPaint() const;
 
     bool m_drawsContents : 1;
-
+    
+protected:    
     IntRect m_absoluteBounds;
-
-    AffineTransform m_matrix;
+    AffineTransform m_localTransform;
 };
   
 } // namespace WebCore

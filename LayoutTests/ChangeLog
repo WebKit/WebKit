@@ -1,3 +1,14 @@
+2007-10-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+        
+        Updated results for:
+        http://bugs.webkit.org/show_bug.cgi?id=15458
+
+        * platform/mac/svg/custom/focus-ring-expected.checksum: Added.
+        * platform/mac/svg/custom/focus-ring-expected.png: Added.
+        * platform/mac/svg/custom/focus-ring-expected.txt: Added.
+
 2007-10-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders.

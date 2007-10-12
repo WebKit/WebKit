@@ -46,13 +46,13 @@ SVGTransformable::~SVGTransformable()
 AffineTransform SVGTransformable::getCTM(const SVGElement* element) const
 {
     AffineTransform ctm = SVGLocatable::getCTM(element);
-    return localMatrix() * ctm;
+    return animatedLocalTransform() * ctm;
 }
 
 AffineTransform SVGTransformable::getScreenCTM(const SVGElement* element) const
 {
     AffineTransform ctm = SVGLocatable::getScreenCTM(element);
-    return localMatrix() * ctm;
+    return animatedLocalTransform() * ctm;
 }
 
 int parseTransformParamList(const UChar*& ptr, const UChar* end, double* values, int required, int optional)

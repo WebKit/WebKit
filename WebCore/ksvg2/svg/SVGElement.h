@@ -162,14 +162,14 @@ PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProper
 { \
     const SVGElement* context = contextElement(); \
     ASSERT(context); \
-    return RefPtr<ClassName::SVGAnimatedTemplate##UpperProperty>(new ClassName::SVGAnimatedTemplate##UpperProperty(context)); \
+    return new ClassName::SVGAnimatedTemplate##UpperProperty(context); \
 }
 
 #define ANIMATED_PROPERTY_DEFINITIONS(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
 ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, this) \
 PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProperty##Animated() const \
 { \
-    return RefPtr<ClassName::SVGAnimatedTemplate##UpperProperty>(new ClassName::SVGAnimatedTemplate##UpperProperty(this)); \
+    return new ClassName::SVGAnimatedTemplate##UpperProperty(this); \
 }
 
 namespace WebCore {

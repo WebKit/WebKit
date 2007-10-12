@@ -49,11 +49,6 @@ SVGStyledTransformableElement::~SVGStyledTransformableElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGStyledTransformableElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr.localName(), m_transform.get())
 
-AffineTransform SVGStyledTransformableElement::localMatrix() const
-{
-    return m_localMatrix;
-}
-
 AffineTransform SVGStyledTransformableElement::getCTM() const
 {
     return SVGTransformable::getCTM(this);
@@ -64,17 +59,9 @@ AffineTransform SVGStyledTransformableElement::getScreenCTM() const
     return SVGTransformable::getScreenCTM(this);
 }
 
-void SVGStyledTransformableElement::updateLocalTransform(SVGTransformList* localTransforms)
+AffineTransform SVGStyledTransformableElement::animatedLocalTransform() const
 {
-    SVGTransform localTransform = localTransforms->concatenate();
-    if (localTransform.matrix() == m_localMatrix)
-        return;
-    
-    m_localMatrix = localTransform.matrix();
-    if (renderer()) {
-        renderer()->setLocalTransform(m_localMatrix);
-        renderer()->setNeedsLayout(true);
-    }
+    return transform()->concatenate().matrix();
 }
 
 void SVGStyledTransformableElement::parseMappedAttribute(MappedAttribute* attr)
@@ -87,8 +74,11 @@ void SVGStyledTransformableElement::parseMappedAttribute(MappedAttribute* attr)
  
         if (!SVGTransformable::parseTransformAttribute(localTransforms, attr->value()))
             localTransforms->clear(ec);
-        else
-            updateLocalTransform(localTransforms);
+        else {
+            setTransformBaseValue(localTransforms);
+            if (renderer())
+                renderer()->setNeedsLayout(true); // should really be in setTransform
+        }
     } else
         SVGStyledLocatableElement::parseMappedAttribute(attr);
 }
@@ -108,20 +98,17 @@ FloatRect SVGStyledTransformableElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-void SVGStyledTransformableElement::attach()
-{
-    SVGStyledElement::attach();
-
-    if (renderer() && !m_localMatrix.isIdentity())
-        renderer()->setLocalTransform(m_localMatrix);
-}
-
 void SVGStyledTransformableElement::notifyAttributeChange() const
 {
-    // FIXME: We should cache this, and only update if needed. The whole nAC() concept, should be
-    // switched to something similar like attributeChanged(), but specific to SVG DOM. (Niko)
-    const_cast<SVGStyledTransformableElement*>(this)->updateLocalTransform(transform());
+    if (renderer())
+        renderer()->setNeedsLayout(true);
     SVGStyledLocatableElement::notifyAttributeChange();
+}
+
+RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    // By default, any subclass is expected to do path-based drawing
+    return new (arena) RenderPath(style, this);
 }
 
 }

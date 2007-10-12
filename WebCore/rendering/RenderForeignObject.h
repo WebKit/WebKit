@@ -39,8 +39,8 @@ public:
 
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
-    virtual AffineTransform localTransform() const { return m_transform; }
-    virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
+    virtual AffineTransform localTransform() const { return m_localTransform; }
+    virtual bool calculateLocalTransform();
 
     virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed);
     virtual bool requiresLayer();
@@ -51,7 +51,7 @@ public:
  private:
     AffineTransform translationForAttributes();
 
-    AffineTransform m_transform;
+    AffineTransform m_localTransform;
     IntRect m_absoluteBounds;
 };
 

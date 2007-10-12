@@ -27,7 +27,10 @@
 
 #include "FloatRect.h"
 #include "SVGInlineTextBox.h"
+#include "SVGPathElement.h"
 #include "SVGRootInlineBox.h"
+#include "SVGTextPathElement.h"
+#include "SVGTransformList.h"
 
 namespace WebCore {
 
@@ -41,42 +44,37 @@ RenderSVGTextPath::RenderSVGTextPath(Node* n)
 
 Path RenderSVGTextPath::layoutPath() const
 {
-    return m_layoutPath;
-}
-
-void RenderSVGTextPath::setLayoutPath(const Path& path)
-{
-    m_layoutPath = path;
+    SVGTextPathElement* textPathElement = static_cast<SVGTextPathElement*>(element());
+        String pathId = SVGURIReference::getTarget(textPathElement->href());
+    Element* targetElement = textPathElement->document()->getElementById(pathId);    
+    if (!targetElement || !targetElement->hasTagName(SVGNames::pathTag))
+        return Path();
+    
+    SVGPathElement* pathElement = static_cast<SVGPathElement*>(targetElement);
+    
+    Path pathData = pathElement->toPathData();
+    // Spec:  The transform attribute on the referenced 'path' element represents a
+    // supplemental transformation relative to the current user coordinate system for
+    // the current 'text' element, including any adjustments to the current user coordinate
+    // system due to a possible transform attribute on the current 'text' element.
+    // http://www.w3.org/TR/SVG/text.html#TextPathElement
+    pathData.transform(pathElement->animatedLocalTransform());
+    return pathData;
 }
 
 float RenderSVGTextPath::startOffset() const
 {
-    return m_startOffset;
-}
-
-void RenderSVGTextPath::setStartOffset(float offset)
-{
-    m_startOffset = offset;
+    return static_cast<SVGTextPathElement*>(element())->startOffset().valueAsPercentage();
 }
 
 bool RenderSVGTextPath::exactAlignment() const
 {
-    return m_exactAlignment;
-}
-
-void RenderSVGTextPath::setExactAlignment(bool value)
-{
-    m_exactAlignment = value;
+    return static_cast<SVGTextPathElement*>(element())->spacing() == SVG_TEXTPATH_SPACINGTYPE_EXACT;
 }
 
 bool RenderSVGTextPath::stretchMethod() const
 {
-    return m_stretchMethod;
-}
-
-void RenderSVGTextPath::setStretchMethod(bool value)
-{
-    m_stretchMethod = value;
+    return static_cast<SVGTextPathElement*>(element())->method() == SVG_TEXTPATH_METHODTYPE_STRETCH;
 }
 
 void RenderSVGTextPath::absoluteRects(Vector<IntRect>& rects, int, int)

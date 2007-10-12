@@ -48,11 +48,6 @@ SVGTextElement::~SVGTextElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGTextElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr.localName(), m_transform.get())
 
-AffineTransform SVGTextElement::localMatrix() const
-{
-    return m_localMatrix;
-}
-
 void SVGTextElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::transformAttr) {
@@ -63,31 +58,13 @@ void SVGTextElement::parseMappedAttribute(MappedAttribute* attr)
 
         if (!SVGTransformable::parseTransformAttribute(localTransforms, attr->value()))
             localTransforms->clear(ec);
-        else
-            updateLocalTransform(localTransforms);
+        else {
+            setTransformBaseValue(localTransforms);
+            if (renderer())
+                renderer()->setNeedsLayout(true); // should be in setTransformBaseValue
+        }
     } else
         SVGTextPositioningElement::parseMappedAttribute(attr);
-}
-
-void SVGTextElement::updateLocalTransform(SVGTransformList* localTransforms)
-{
-    // Update cached local matrix
-    SVGTransform localTransform = localTransforms->concatenate();
-    if (localTransform.isValid()) {
-        m_localMatrix = localTransform.matrix();
-        if (renderer()) {
-            renderer()->setLocalTransform(m_localMatrix);
-            renderer()->setNeedsLayout(true);
-        }
-    }
-}
-
-void SVGTextElement::attach()
-{
-    SVGStyledElement::attach();
-
-    if (renderer() && !m_localMatrix.isIdentity())
-        renderer()->setLocalTransform(m_localMatrix);
 }
 
 SVGElement* SVGTextElement::nearestViewportElement() const
@@ -113,6 +90,11 @@ AffineTransform SVGTextElement::getScreenCTM() const
 AffineTransform SVGTextElement::getCTM() const
 {
     return SVGTransformable::getCTM(this);
+}
+
+AffineTransform SVGTextElement::animatedLocalTransform() const
+{
+    return transform()->concatenate().matrix();
 }
 
 RenderObject* SVGTextElement::createRenderer(RenderArena* arena, RenderStyle* style)

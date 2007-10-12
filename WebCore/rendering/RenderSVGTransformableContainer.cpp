@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+    2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -18,40 +18,30 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
-*/
+ */
 
-#ifndef SVGTRefElement_h
-#define SVGTRefElement_h
+#include "config.h"
 #if ENABLE(SVG)
 
-#include "SVGTextPositioningElement.h"
-#include "SVGURIReference.h"
+#include "RenderSVGTransformableContainer.h"
 
-namespace WebCore
+#include "SVGStyledTransformableElement.h"
+#include "SVGTransformList.h"
+
+namespace WebCore {
+    
+RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGStyledTransformableElement* node)
+    : RenderSVGContainer(node)
 {
-    class SVGTRefElement : public SVGTextPositioningElement, public SVGURIReference
-    {
-    public:
-        SVGTRefElement(const QualifiedName&, Document*);
-        virtual ~SVGTRefElement();
+}
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+bool RenderSVGTransformableContainer::calculateLocalTransform()
+{
+    AffineTransform oldTransform = m_localTransform;
+    m_localTransform = static_cast<SVGStyledTransformableElement*>(element())->animatedLocalTransform();
+    return (m_localTransform != oldTransform);
+}
 
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        bool childShouldCreateRenderer(Node*) const;
-
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
-    private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
-
-        void updateReferencedText();
-    };
-
-} // namespace WebCore
+}
 
 #endif // ENABLE(SVG)
-#endif
-
-// vim:ts=4:noet

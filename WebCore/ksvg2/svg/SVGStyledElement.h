@@ -36,7 +36,7 @@ namespace WebCore {
 
     class RenderPath;
 
-    class SVGStyledElement : public SVGElement {
+    class SVGStyledElement : public SVGElement, public SVGStylable {
     public:
         SVGStyledElement(const QualifiedName&, Document*);
         virtual ~SVGStyledElement();
@@ -46,11 +46,9 @@ namespace WebCore {
 
         // 'SVGStylable' functions
         virtual PassRefPtr<CSSValue> getPresentationAttribute(const String& name);
+        virtual CSSStyleDeclaration* style() { return StyledElement::style(); }
 
-        // These need to be implemented.
         virtual bool rendererIsNeeded(RenderStyle*);
-        virtual Path toPathData() const { return Path(); }
-        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual SVGResource* canvasResource() { return 0; }
         
         virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;

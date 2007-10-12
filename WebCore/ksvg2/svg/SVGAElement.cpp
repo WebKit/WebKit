@@ -37,7 +37,7 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
-#include "RenderSVGContainer.h"
+#include "RenderSVGTransformableContainer.h"
 #include "RenderSVGInline.h"
 #include "ResourceRequest.h"
 #include "SVGNames.h"
@@ -94,7 +94,7 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style
     if (static_cast<SVGElement*>(parent())->isTextContent())
         return new (arena) RenderSVGInline(this);
 
-    return new (arena) RenderSVGContainer(this);
+    return new (arena) RenderSVGTransformableContainer(this);
 }
 
 void SVGAElement::defaultEventHandler(Event* evt)

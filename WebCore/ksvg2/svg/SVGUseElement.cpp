@@ -36,7 +36,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "HTMLNames.h"
-#include "RenderSVGContainer.h"
+#include "RenderSVGTransformableContainer.h"
 #include "SVGElementInstance.h"
 #include "SVGElementInstanceList.h"
 #include "SVGGElement.h"
@@ -356,7 +356,7 @@ void SVGUseElement::buildPendingResource()
 
 RenderObject* SVGUseElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGContainer(this);
+    return new (arena) RenderSVGTransformableContainer(this);
 }
 
 void SVGUseElement::attach()
@@ -666,11 +666,6 @@ void SVGUseElement::attachShadowTree()
             if (RenderObject* shadowRenderer = m_shadowTreeRootElement->renderer()) {
                 shadowRenderer->setStyle(style);
                 renderer()->addChild(shadowRenderer, m_shadowTreeRootElement->nextRenderer());
-
-                // Mimic SVGStyledTransformableElement::attach() functionality
-                SVGGElement* gElement = static_cast<SVGGElement*>(m_shadowTreeRootElement.get());
-                shadowRenderer->setLocalTransform(gElement->localMatrix());
-
                 m_shadowTreeRootElement->setAttached();
             }
         }

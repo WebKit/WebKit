@@ -52,11 +52,8 @@ private:
 
     virtual void applyContentTransforms(PaintInfo&);
     virtual void applyAdditionalTransforms(PaintInfo&);
-
-    AffineTransform m_matrix;
     
     FloatRect m_viewport;
-    IntRect m_absoluteBounds;
 };
   
 } // namespace WebCore

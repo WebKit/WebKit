@@ -25,14 +25,16 @@
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGAnimateTransformElement.h"
 
-#include "TimeScheduler.h"
-#include "SVGAngle.h"
 #include "AffineTransform.h"
+#include "RenderObject.h"
+#include "SVGAngle.h"
+#include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
-#include "SVGParserUtilities.h"
+#include "TimeScheduler.h"
+
 #include <math.h>
 #include <wtf/MathExtras.h>
 
@@ -122,7 +124,9 @@ void SVGAnimateTransformElement::applyAnimatedValueToElement()
         transformList->clear(ec);
     
     transformList->appendItem(m_animatedTransform, ec);
-    transform->updateLocalTransform(transformList.get());
+    transform->setTransform(transformList.get());
+    if (transform->renderer())
+        transform->renderer()->setNeedsLayout(true); // should really be in setTransform
 }
 
 bool SVGAnimateTransformElement::calculateFromAndToValues(EAnimationMode animationMode, unsigned valueIndex)

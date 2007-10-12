@@ -194,7 +194,7 @@ FloatPoint SVGSVGElement::currentTranslate() const
 void SVGSVGElement::setCurrentTranslate(const FloatPoint &translation)
 {
     m_translation = translation;
-    if (parentNode() == document())
+    if (parentNode() == document() && document()->renderer())
         document()->renderer()->repaint();
 }
 

@@ -34,14 +34,14 @@
 namespace WebCore {
 
     class GraphicsContext;
-    class RenderSVGContainer;
+    class RenderSVGViewportContainer;
 
     class SVGResourceMarker : public SVGResource {
     public:
         SVGResourceMarker();
         virtual ~SVGResourceMarker();
 
-        void setMarker(RenderSVGContainer*);
+        void setMarker(RenderSVGViewportContainer*);
 
         void setRef(double refX, double refY);
         double refX() const { return m_refX; }
@@ -64,7 +64,7 @@ namespace WebCore {
         double m_refX, m_refY;
         FloatRect m_cachedBounds;
         float m_angle;
-        RenderSVGContainer* m_marker;
+        RenderSVGViewportContainer* m_marker;
         bool m_useStrokeWidth;
     };
 

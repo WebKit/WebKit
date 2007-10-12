@@ -125,6 +125,39 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
     }
 }
 
+bool RenderSVGImage::calculateLocalTransform()
+{
+    AffineTransform oldTransform = m_localTransform;
+    m_localTransform = static_cast<SVGStyledTransformableElement*>(element())->animatedLocalTransform();
+    return (m_localTransform != oldTransform);
+}
+
+void RenderSVGImage::layout()
+{
+    ASSERT(needsLayout());
+    
+    IntRect oldBounds;
+    IntRect oldOutlineBox;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint) {
+        oldBounds = absoluteClippedOverflowRect();
+        oldOutlineBox = absoluteOutlineBox();
+    }
+    
+    calculateLocalTransform();
+    
+    // minimum height
+    m_height = errorOccurred() ? intrinsicSize().height() : 0;
+    
+    calcWidth();
+    calcHeight();
+        
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
+    
+    setNeedsLayout(false);
+}
+
 void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN)
@@ -225,7 +258,9 @@ IntRect RenderSVGImage::absoluteClippedOverflowRect()
 
 void RenderSVGImage::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
 {
-    graphicsContext->addFocusRingRect(m_absoluteBounds);
+    // this is called from paint() after the localTransform has already been applied
+    IntRect contentRect = enclosingIntRect(relativeBBox());
+    graphicsContext->addFocusRingRect(contentRect);
 }
 
 void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int, int, bool)

@@ -33,16 +33,9 @@ namespace WebCore {
         RenderSVGTextPath(Node*);
 
         Path layoutPath() const;
-        void setLayoutPath(const Path&);
-
         float startOffset() const;
-        void setStartOffset(float);
-
         bool exactAlignment() const;
-        void setExactAlignment(bool);
-
         bool stretchMethod() const;
-        void setStretchMethod(bool);
 
         virtual const char* renderName() const { return "RenderSVGTextPath"; }
         virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);

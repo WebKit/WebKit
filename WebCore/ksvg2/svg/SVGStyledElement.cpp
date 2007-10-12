@@ -30,10 +30,10 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "PlatformString.h"
-#include "RenderPath.h"
 #include "SVGElement.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
+#include "RenderObject.h"
 #include "SVGRenderStyle.h"
 #include "SVGResource.h"
 #include "SVGSVGElement.h"
@@ -59,16 +59,15 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, String, string, ClassNam
 
 bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
 {
+    // http://www.w3.org/TR/SVG/extend.html#PrivateData
+    // Prevent anything other than SVG renderers from appearing in our render tree
+    // Spec: SVG allows inclusion of elements from foreign namespaces anywhere
+    // with the SVG content. In general, the SVG user agent will include the unknown
+    // elements in the DOM but will otherwise ignore unknown elements. 
     if (!parentNode() || parentNode()->isSVGElement())
         return StyledElement::rendererIsNeeded(style);
 
     return false;
-}
-
-RenderObject* SVGStyledElement::createRenderer(RenderArena* arena, RenderStyle* style)
-{
-    // The path data is set upon the first layout() call.
-    return new (arena) RenderPath(style, this);
 }
 
 static inline void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName, const char* cssPropertyName = 0)
@@ -219,10 +218,7 @@ void SVGStyledElement::notifyResourceParentIfExistant() const
         if (node->hasTagName(SVGNames::linearGradientTag) || node->hasTagName(SVGNames::radialGradientTag) ||
             node->hasTagName(SVGNames::patternTag) || node->hasTagName(SVGNames::clipPathTag) ||
             node->hasTagName(SVGNames::markerTag) || node->hasTagName(SVGNames::maskTag)) {
-            SVGElement* element = svg_dynamic_cast(node);
-            ASSERT(element);
-
-            element->notifyAttributeChange();
+            static_cast<SVGElement*>(node)->notifyAttributeChange();
         }
 
         node = node->parentNode();

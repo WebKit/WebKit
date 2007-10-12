@@ -45,14 +45,11 @@ namespace WebCore
         virtual FloatRect getBBox() const;
         virtual AffineTransform getCTM() const;
         virtual AffineTransform getScreenCTM() const;
+        virtual AffineTransform animatedLocalTransform() const;
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual bool childShouldCreateRenderer(Node*) const;
-        virtual void attach();
-        virtual AffineTransform localMatrix() const;
-        
-        virtual void updateLocalTransform(SVGTransformList*);
-        
+                
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 

@@ -113,35 +113,6 @@ void SVGTextPathElement::buildPendingResource()
     attach();
 }
 
-void SVGTextPathElement::attach()
-{ 
-    SVGStyledElement::attach();
-
-    if (!renderer())
-        return;
-
-    String id = SVGURIReference::getTarget(href());
-    Element* targetElement = ownerDocument()->getElementById(id);
-    ASSERT(targetElement);
-
-    if (!targetElement->hasTagName(SVGNames::pathTag))
-        return;
-
-    SVGPathElement* pathElement = static_cast<SVGPathElement*>(targetElement);
-
-    RenderSVGTextPath* textPath = static_cast<RenderSVGTextPath*>(renderer());
-    ASSERT(textPath);
-
-    textPath->setStartOffset(m_startOffset.valueAsPercentage());
-    textPath->setExactAlignment(m_method == SVG_TEXTPATH_SPACINGTYPE_EXACT);
-    textPath->setStretchMethod(m_spacing == SVG_TEXTPATH_METHODTYPE_STRETCH);
-
-    // TODO: Catch transform updates :-)
-    Path pathData = pathElement->toPathData();
-    pathData.transform(pathElement->localMatrix());
-    textPath->setLayoutPath(pathData);
-}
-
 }
 
 #endif // ENABLE(SVG)

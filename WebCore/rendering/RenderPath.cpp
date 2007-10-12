@@ -37,7 +37,8 @@
 #include "SVGResourceFilter.h"
 #include "SVGResourceMarker.h"
 #include "SVGResourceMasker.h"
-#include "SVGStyledElement.h"
+#include "SVGStyledTransformableElement.h"
+#include "SVGTransformList.h"
 #include "SVGURIReference.h"
 
 #include <wtf/MathExtras.h>
@@ -45,10 +46,11 @@
 namespace WebCore {
 
 // RenderPath
-RenderPath::RenderPath(RenderStyle* style, SVGStyledElement* node)
+RenderPath::RenderPath(RenderStyle* style, SVGStyledTransformableElement* node)
     : RenderObject(node)
 {
     ASSERT(style != 0);
+    ASSERT(static_cast<SVGElement*>(node)->isStyledTransformable());
 }
 
 RenderPath::~RenderPath()
@@ -57,12 +59,7 @@ RenderPath::~RenderPath()
 
 AffineTransform RenderPath::localTransform() const
 {
-    return m_matrix;
-}
-
-void RenderPath::setLocalTransform(const AffineTransform& matrix)
-{
-    m_matrix = matrix;
+    return m_localTransform;
 }
 
 FloatPoint RenderPath::mapAbsolutePointToLocal(const FloatPoint& point) const
@@ -116,6 +113,13 @@ const Path& RenderPath::path() const
     return m_path;
 }
 
+bool RenderPath::calculateLocalTransform()
+{
+    AffineTransform oldTransform = m_localTransform;
+    m_localTransform = static_cast<SVGStyledTransformableElement*>(element())->animatedLocalTransform();
+    return (m_localTransform != oldTransform);
+}
+
 void RenderPath::layout()
 {
     IntRect oldBounds;
@@ -125,8 +129,10 @@ void RenderPath::layout()
         oldBounds = m_absoluteBounds;
         oldOutlineBox = absoluteOutlineBox();
     }
+        
+    calculateLocalTransform();
 
-    setPath(static_cast<SVGStyledElement*>(element())->toPathData());
+    setPath(static_cast<SVGStyledTransformableElement*>(element())->toPathData());
 
     m_absoluteBounds = absoluteClippedOverflowRect();
 
@@ -216,7 +222,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
         paintOutline(paintInfo.context, boundingBox.x(), boundingBox.y(), boundingBox.width(), boundingBox.height(), style());
-
+    
     paintInfo.context->restore();
 }
 

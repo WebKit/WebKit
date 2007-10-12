@@ -25,7 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGGElement.h"
 
-#include "RenderSVGContainer.h"
+#include "RenderSVGTransformableContainer.h"
 
 namespace WebCore {
 
@@ -54,12 +54,7 @@ void SVGGElement::parseMappedAttribute(MappedAttribute* attr)
 
 RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    return new (arena) RenderSVGContainer(this);
-}
-
-AffineTransform SVGGElement::localMatrix() const
-{
-    return m_localMatrix;
+    return new (arena) RenderSVGTransformableContainer(this);
 }
 
 }

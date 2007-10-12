@@ -295,7 +295,6 @@ public:
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
 
     virtual AffineTransform localTransform() const;
-    virtual void setLocalTransform(const AffineTransform&);
     virtual AffineTransform absoluteTransform() const;
 #endif
 

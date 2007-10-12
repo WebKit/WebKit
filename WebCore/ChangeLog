@@ -1,3 +1,105 @@
+2007-10-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Make renderers pull localTransform instead of depending on DOM elements to push
+        This allows for cleaner invalidation code, and makes writing animation easier.
+        Also fixed a tiny bug in SVGRenderImage focus ring calculations while there
+        
+        Updated test results for svg/custom/focus-ring.svg
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::createRenderer):
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyAnimatedValueToElement):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::applyAnimatedValueToElement):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::createRenderer):
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getCTM):
+        (WebCore::SVGLocatable::getScreenCTM):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        (WebCore::SVGMarkerElement::notifyAttributeChange):
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::rendererIsNeeded):
+        (WebCore::SVGStyledElement::notifyResourceParentIfExistant):
+        * ksvg2/svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::style):
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::animatedLocalTransform):
+        (WebCore::SVGStyledTransformableElement::parseMappedAttribute):
+        (WebCore::SVGStyledTransformableElement::notifyAttributeChange):
+        (WebCore::SVGStyledTransformableElement::createRenderer):
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        (WebCore::SVGStyledTransformableElement::toPathData):
+        * ksvg2/svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::createRenderer):
+        * ksvg2/svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::parseMappedAttribute):
+        (WebCore::SVGTextElement::animatedLocalTransform):
+        * ksvg2/svg/SVGTextElement.h:
+        * ksvg2/svg/SVGTextPathElement.cpp:
+        * ksvg2/svg/SVGTextPathElement.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::getCTM):
+        (WebCore::SVGTransformable::getScreenCTM):
+        * ksvg2/svg/SVGTransformable.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::createRenderer):
+        (WebCore::SVGUseElement::attachShadowTree):
+        * platform/graphics/AffineTransform.h:
+        (WebCore::AffineTransform::operator!=):
+        * platform/graphics/svg/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::setMarker):
+        * platform/graphics/svg/SVGResourceMarker.h:
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::calculateLocalTransform):
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::localTransform):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::RenderPath):
+        (WebCore::RenderPath::localTransform):
+        (WebCore::RenderPath::calculateLocalTransform):
+        (WebCore::RenderPath::layout):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::localTransform):
+        (WebCore::RenderSVGContainer::calculateLocalTransform):
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::localTransform):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::calculateLocalTransform):
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::isSVGText):
+        (WebCore::RenderSVGText::localTransform):
+        * rendering/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath):
+        (WebCore::RenderSVGTextPath::startOffset):
+        (WebCore::RenderSVGTextPath::exactAlignment):
+        (WebCore::RenderSVGTextPath::stretchMethod):
+        * rendering/RenderSVGTextPath.h:
+        * rendering/RenderSVGTransformableContainer.cpp: Added.
+        (WebCore::RenderSVGTransformableContainer::RenderSVGTransformableContainer):
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/RenderSVGTransformableContainer.h: Added.
+        * rendering/RenderSVGViewportContainer.h:
+
 2007-10-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric.

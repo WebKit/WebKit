@@ -39,8 +39,7 @@ namespace WebCore {
         RenderSVGImage(SVGImageElement*);
         virtual ~RenderSVGImage();
         
-        virtual AffineTransform localTransform() const { return m_transform; }
-        virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
+        virtual AffineTransform localTransform() const { return m_localTransform; }
         
         virtual FloatRect relativeBBox(bool includeStroke = true) const;
         virtual IntRect absoluteClippedOverflowRect();
@@ -50,6 +49,8 @@ namespace WebCore {
 
         virtual void imageChanged(CachedImage*);
         void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio*);
+        
+        virtual void layout();
         virtual void paint(PaintInfo&, int parentX, int parentY);
 
         bool requiresLayer();
@@ -58,11 +59,11 @@ namespace WebCore {
 
         virtual void calcWidth();
         virtual void calcHeight();
+        bool calculateLocalTransform();
 
     private:
         AffineTransform translationForAttributes();
-        AffineTransform m_transform;
-        IntRect m_absoluteBounds;
+        AffineTransform m_localTransform;
         float m_imageWidth;
         float m_imageHeight;
     };

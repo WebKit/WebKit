@@ -28,6 +28,7 @@
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "SVGNames.h"
+#include "SVGTransformList.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
@@ -76,13 +77,12 @@ SVGResource* SVGClipPathElement::canvasResource()
 
     RenderStyle* clipPathStyle = styleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        SVGElement* e = svg_dynamic_cast(n);
-        if (e && e->isStyled()) {
-            SVGStyledElement* styled = static_cast<SVGStyledElement*>(e);
+        if (n->isSVGElement() && static_cast<SVGElement*>(n)->isStyledTransformable()) {
+            SVGStyledTransformableElement* styled = static_cast<SVGStyledTransformableElement*>(n);
             RenderStyle* pathStyle = document()->styleSelector()->styleForElement(styled, clipPathStyle);
             Path pathData = styled->toPathData();
-            if (e->isStyledTransformable())
-                pathData.transform(static_cast<SVGStyledTransformableElement*>(e)->localMatrix());
+            // FIXME: How do we know the element has done a layout?
+            pathData.transform(styled->animatedLocalTransform());
             if (!pathData.isEmpty())
                 m_clipper->addClipData(pathData, pathStyle->svgStyle()->clipRule(), bbox);
             pathStyle->deref(document()->renderArena());

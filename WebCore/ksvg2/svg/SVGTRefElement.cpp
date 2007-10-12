@@ -44,20 +44,12 @@ SVGTRefElement::~SVGTRefElement()
 
 void SVGTRefElement::updateReferencedText()
 {
-    Element* targetElement = ownerDocument()->getElementById(SVGURIReference::getTarget(href()));
-    SVGElement* target = svg_dynamic_cast(targetElement);
-    if (target) {
-        ExceptionCode ignore = 0;
-        setTextContent(target->textContent(), ignore);
-    }
-}
-
-void SVGTRefElement::attributeChanged(Attribute* attr, bool preserveDecls)
-{
-    if (attr->name().matches(XLinkNames::hrefAttr))
-        updateReferencedText();
-
-    SVGTextPositioningElement::attributeChanged(attr, preserveDecls);
+    Element* target = document()->getElementById(SVGURIReference::getTarget(href()));
+    String textContent;
+    if (target && target->isSVGElement())
+        textContent = static_cast<SVGElement*>(target)->textContent();
+    ExceptionCode ignore = 0;
+    setTextContent(textContent, ignore);
 }
 
 void SVGTRefElement::parseMappedAttribute(MappedAttribute* attr)

@@ -42,26 +42,25 @@ namespace WebCore {
         
         virtual bool isStyledTransformable() const { return true; }
 
-        // 'SVGTransformable' functions
-        virtual AffineTransform localMatrix() const;
-
         // Derived from: 'SVGLocatable'
         virtual AffineTransform getCTM() const;
         virtual AffineTransform getScreenCTM() const;
         virtual SVGElement* nearestViewportElement() const;
         virtual SVGElement* farthestViewportElement() const;
+        
+        virtual AffineTransform animatedLocalTransform() const;
 
         virtual FloatRect getBBox() const;
 
         virtual void parseMappedAttribute(MappedAttribute*);
-
-        void updateLocalTransform(SVGTransformList*);
         
-        virtual void attach();
+        // "base class" methods for all the elements which render as paths
+        virtual Path toPathData() const { return Path(); }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+        
         virtual void notifyAttributeChange() const;
 
     protected:
-        mutable AffineTransform m_localMatrix;
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledTransformableElement, SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)
     };
 

@@ -3056,11 +3056,6 @@ AffineTransform RenderObject::localTransform() const
     return AffineTransform(1, 0, 0, 1, xPos(), yPos());
 }
 
-void RenderObject::setLocalTransform(const AffineTransform&)
-{
-    ASSERT(false);
-}
-
 AffineTransform RenderObject::absoluteTransform() const
 {
     if (parent())

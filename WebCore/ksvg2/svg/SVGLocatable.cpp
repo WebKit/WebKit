@@ -97,8 +97,8 @@ AffineTransform SVGLocatable::getCTM(const SVGElement* element)
     AffineTransform ctm;
 
     Node* parent = element->parentNode();
-    if (parent && parent->isElementNode()) {
-        SVGElement* parentElement = svg_dynamic_cast(parent);
+    if (parent && parent->isSVGElement()) {
+        SVGElement* parentElement = static_cast<SVGElement*>(parent);
         if (parentElement && parentElement->isStyledLocatable()) {
             AffineTransform parentCTM = static_cast<SVGStyledLocatableElement*>(parentElement)->getCTM();
             ctm = parentCTM * ctm;
@@ -116,8 +116,8 @@ AffineTransform SVGLocatable::getScreenCTM(const SVGElement* element)
     AffineTransform ctm;
 
     Node* parent = element->parentNode();
-    if (parent && parent->isElementNode()) {
-        SVGElement* parentElement = svg_dynamic_cast(parent);
+    if (parent && parent->isSVGElement()) {
+        SVGElement* parentElement = static_cast<SVGElement*>(parent);
         if (parentElement && parentElement->isStyledLocatable()) {
             AffineTransform parentCTM = static_cast<SVGStyledLocatableElement*>(parentElement)->getScreenCTM();
             ctm = parentCTM * ctm;

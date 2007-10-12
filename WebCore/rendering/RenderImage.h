@@ -70,6 +70,8 @@ public:
 
 protected:
     Image* image() { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
+    
+    bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
 
 private:
     int calcAspectRatioWidth() const;
@@ -77,8 +79,6 @@ private:
 
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;
-
-    bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
 
     // The image we are rendering.
     CachedImage* m_cachedImage;

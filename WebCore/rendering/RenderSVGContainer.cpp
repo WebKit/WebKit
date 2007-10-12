@@ -200,12 +200,7 @@ void RenderSVGContainer::setDrawsContents(bool drawsContents)
 
 AffineTransform RenderSVGContainer::localTransform() const
 {
-    return m_matrix;
-}
-
-void RenderSVGContainer::setLocalTransform(const AffineTransform& matrix)
-{
-    m_matrix = matrix;
+    return m_localTransform;
 }
 
 bool RenderSVGContainer::requiresLayer()
@@ -224,6 +219,12 @@ short RenderSVGContainer::baselinePosition(bool b, bool isRootLineBox) const
     return height() + marginTop() + marginBottom();
 }
 
+bool RenderSVGContainer::calculateLocalTransform()
+{
+    // subclasses can override this to add transform support
+    return false;
+}
+
 void RenderSVGContainer::layout()
 {
     ASSERT(needsLayout());
@@ -238,11 +239,13 @@ void RenderSVGContainer::layout()
         oldBounds = m_absoluteBounds;
         oldOutlineBox = absoluteOutlineBox();
     }
+    
+    calculateLocalTransform();
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         // Only force our kids to layout if we're being asked to relayout as a result of a parent changing
-        // FIXME: We should be able to skip relayout of non-relative kids when only bounds have changed
-        // however, we can't tell the difference between bounds changing and transform changing.
+        // FIXME: We should be able to skip relayout of non-relative kids when only bounds size has changed
+        // that's a possible future optimization using LayoutState
         // http://bugs.webkit.org/show_bug.cgi?id=15391
         if (selfNeedsLayout())
             child->setNeedsLayout(true);

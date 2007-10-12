@@ -2126,6 +2126,8 @@
 		A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A88DD4880B4629B000C02990 /* PathTraversalState.cpp */; };
 		A89943280B42338800D7C802 /* BitmapImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A89943260B42338700D7C802 /* BitmapImage.h */; };
 		A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89943270B42338700D7C802 /* BitmapImage.cpp */; };
+		A8A909AC0CBCD6B50029B807 /* RenderSVGTransformableContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A909AA0CBCD6B50029B807 /* RenderSVGTransformableContainer.h */; };
+		A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A909AB0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp */; };
 		A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7EB09D563270003AC8D /* StyledElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A7FE09D563270003AC8D /* StyledElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EC09D563270003AC8D /* StyledElement.cpp */; };
 		A8C4A80009D563270003AC8D /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7EE09D563270003AC8D /* Node.cpp */; };
@@ -5865,6 +5867,8 @@
 		A890DF1E0930974800513F88 /* SVGStyledLocatableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledLocatableElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A89943260B42338700D7C802 /* BitmapImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitmapImage.h; sourceTree = "<group>"; };
 		A89943270B42338700D7C802 /* BitmapImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImage.cpp; sourceTree = "<group>"; };
+		A8A909AA0CBCD6B50029B807 /* RenderSVGTransformableContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGTransformableContainer.h; sourceTree = "<group>"; };
+		A8A909AB0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTransformableContainer.cpp; sourceTree = "<group>"; };
 		A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeScheduler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F0089701F100BA5114 /* TimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TimeScheduler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F6F4089701F100BA5114 /* SVGCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = SVGCSSPropertyNames.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -11280,6 +11284,8 @@
 				853CA9E40AEEC608002372DC /* SVGRootInlineBox.cpp */,
 				853CA9E50AEEC608002372DC /* SVGRootInlineBox.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
+				A8A909AA0CBCD6B50029B807 /* RenderSVGTransformableContainer.h */,
+				A8A909AB0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -13206,6 +13212,7 @@
 				BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */,
 				BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */,
 				A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */,
+				A8A909AC0CBCD6B50029B807 /* RenderSVGTransformableContainer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14689,6 +14696,7 @@
 				A84EBD780CB8C89200079609 /* JSStyleSheetListCustom.cpp in Sources */,
 				A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */,
 				A84EC1390CB9FDBC00079609 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
+				A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

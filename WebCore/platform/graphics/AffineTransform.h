@@ -104,6 +104,7 @@ public:
 #endif
 
     bool operator==(const AffineTransform&) const;
+    bool operator!=(const AffineTransform& other) const { return !(*this == other); }
     AffineTransform& operator*=(const AffineTransform&);
     AffineTransform operator*(const AffineTransform&);
     

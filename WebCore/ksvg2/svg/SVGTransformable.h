@@ -39,16 +39,14 @@ namespace WebCore {
         SVGTransformable();
         virtual ~SVGTransformable();
 
-        // 'SVGTransformable' functions
-        virtual AffineTransform localMatrix() const = 0;
-
-        virtual void updateLocalTransform(SVGTransformList*) = 0;
-
         static bool parseTransformAttribute(SVGTransformList*, const AtomicString& transform);
         static bool parseTransformAttribute(SVGTransformList*, const UChar*& ptr, const UChar* end);
         static bool parseTransformValue(unsigned type, const UChar*& ptr, const UChar* end, SVGTransform&);
+        
         AffineTransform getCTM(const SVGElement*) const;
         AffineTransform getScreenCTM(const SVGElement*) const;
+        
+        virtual AffineTransform animatedLocalTransform() const = 0;
     };
 
 } // namespace WebCore
