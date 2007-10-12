@@ -1,3 +1,14 @@
+2007-10-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mark.
+
+        Fix textLength.svg testcase - missed xmlns.
+
+        * svg/batik/text/textLength-expected.checksum:
+        * svg/batik/text/textLength-expected.png:
+        * svg/batik/text/textLength-expected.txt:
+        * svg/batik/text/textLength.svg:
+
 2007-10-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Eric Seidel.
