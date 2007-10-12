@@ -97,7 +97,6 @@ private:
 
     CIContext* m_filterCIContext;
     CGLayerRef m_filterCGLayer;
-    GraphicsContext* m_savedContext;
     NSMutableDictionary* m_imagesByName;
 #endif
 

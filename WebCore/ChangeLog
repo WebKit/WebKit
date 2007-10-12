@@ -1,3 +1,46 @@
+2007-08-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver & Rob.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12501 (SVG Text fails to respect opacity, fill-opacity and stroke-opacity)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14045 (Incorrect support for opacity, fill-opacity and stroke-opacity)
+
+        Based on an older patch from Rob, this fixes SVG text opacity as well as group opacity for solid fills & gradients.
+        The pattern changes are still missing a testcase (need to wait for Antoine Quint for that).
+
+        * platform/graphics/svg/SVGResourceFilter.h:
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/cg/SVGPaintServerSolidCg.cpp:
+        (WebCore::colorFromFloatComponents):
+        (WebCore::SVGPaintServerSolid::setup):
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::absoluteClippedOverflowRect):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::absoluteClippedOverflowRect):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteClippedOverflowRect):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent):
+        (WebCore::finishRenderSVGContent):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::prepareTextRendering):
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::paintChildInlineFlowBox):
+
 2007-08-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

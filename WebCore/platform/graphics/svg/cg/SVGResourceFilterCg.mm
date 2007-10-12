@@ -54,7 +54,6 @@ static const char* const SVGPreviousFilterOutputName = "__previousOutput__";
 SVGResourceFilter::SVGResourceFilter()
     : m_filterCIContext(0)
     , m_filterCGLayer(0)
-    , m_savedContext(0)
 {
     m_imagesByName = HardRetainWithNSRelease([[NSMutableDictionary alloc] init]);
 }
@@ -114,11 +113,11 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect
     [filterContextPool drain];
 
     m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
-    m_savedContext = context;
 
     context = new GraphicsContext(CGLayerGetContext(m_filterCGLayer));
     context->save();
-    context->concatCTM(AffineTransform().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
+
+    context->translate(-bbox.x(), -bbox.y());
 }
 
 void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& bbox)
@@ -133,11 +132,11 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
         CIImage* outputImage = [[filterStack lastObject] valueForKey:@"outputImage"];
         if (outputImage) {
             CGRect filterRect = CGRect(filterBBoxForItemBBox(bbox));
-            CGRect translated = filterRect;
-            CGPoint bboxOrigin = CGRect(bbox).origin;
-            CGRect sourceRect = CGRectIntersection(translated,[outputImage extent]);
+            CGRect sourceRect = CGRectIntersection(filterRect, [outputImage extent]);
 
+            CGPoint bboxOrigin = CGRect(bbox).origin;
             CGPoint destOrigin = sourceRect.origin;
+
             destOrigin.x += bboxOrigin.x;
             destOrigin.y += bboxOrigin.y;
 
@@ -152,8 +151,7 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
     m_filterCIContext = 0;
 
     delete context;
-    context = m_savedContext;
-    m_savedContext = 0;
+    context = 0;
 }
 
 NSArray* SVGResourceFilter::getCIFilterStack(CIImage* inputImage)

@@ -33,9 +33,7 @@
 #include "SVGLength.h"
 #include "SVGMarkerElement.h"
 #include "SVGRenderSupport.h"
-#include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
-#include "SVGResourceMasker.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
@@ -340,21 +338,13 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.context->save();
     applyContentTransforms(paintInfo);
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGResourceFilter* filter = 0;
-#else
-    void* filter = 0;
-#endif
+
+    PaintInfo savedInfo(paintInfo);
+
     FloatRect boundingBox = relativeBBox(true);
-    float opacity = style()->opacity();
-    if (paintInfo.phase == PaintPhaseForeground) {
-        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
-        
-        if (opacity < 1.0f) {
-            paintInfo.context->clip(enclosingIntRect(boundingBox));
-            paintInfo.context->beginTransparencyLayer(opacity);
-        }
-    }
+    if (paintInfo.phase == PaintPhaseForeground)
+        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter); 
 
     paintInfo.context->concatCTM(viewportTransform());
 
@@ -364,15 +354,8 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     for (RenderObject* child = firstChild(); child; child = child->nextSibling())
         child->paint(childInfo, 0, 0);
 
-    if (paintInfo.phase == PaintPhaseForeground) {
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-        if (filter)
-            filter->applyFilter(paintInfo.context, boundingBox);
-#endif
-
-        if (opacity < 1.0f)
-            paintInfo.context->endTransparencyLayer();
-    }
+    if (paintInfo.phase == PaintPhaseForeground)
+        finishRenderSVGContent(this, paintInfo, boundingBox, filter, savedInfo.context);
 
     paintInfo.context->restore();
     
@@ -429,7 +412,7 @@ AffineTransform RenderSVGContainer::viewportTransform() const
 
 IntRect RenderSVGContainer::absoluteClippedOverflowRect()
 {
-    IntRect repaintRect;
+    FloatRect repaintRect;
 
     for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
         repaintRect.unite(current->absoluteClippedOverflowRect());
@@ -438,10 +421,13 @@ IntRect RenderSVGContainer::absoluteClippedOverflowRect()
     // Filters can expand the bounding box
     SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)
-        repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
+        repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
 #endif
 
-    return repaintRect;
+    if (!repaintRect.isEmpty())
+        repaintRect.inflate(1); // inflate 1 pixel for antialiasing
+
+    return enclosingIntRect(repaintRect);
 }
 
 void RenderSVGContainer::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)

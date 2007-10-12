@@ -31,13 +31,12 @@
     <!-- Test content                                                  -->
     <!-- ============================================================= -->
 
-<!-- CRASHES WEBKIT
     <defs>
         <filter id="blur"  filterUnits="userSpaceOnUse" x="0" y="-80" width="200" height="100" filterRes="200">
             <feGaussianBlur stdDeviation="2 2" x="0" y="-80" width="200" height="100"/> 
         </filter>
     </defs>
--->
+
     <g id="testContent">
         <text class="title" x="50%" y="10%" font-size="15" text-anchor="middle" >
             Text Element Features</text>

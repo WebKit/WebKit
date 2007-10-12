@@ -34,8 +34,11 @@
 #include "RenderSVGRoot.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
+#include "SVGURIReference.h"
+#include "SVGResourceFilter.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
+
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -47,7 +50,19 @@ RenderSVGText::RenderSVGText(SVGTextElement* node)
 
 IntRect RenderSVGText::absoluteClippedOverflowRect()
 {
-    return enclosingIntRect(absoluteTransform().mapRect(relativeBBox(true)));
+    FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
+
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+    // Filters can expand the bounding box
+    SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
+    if (filter)
+        repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+#endif
+
+    if (!repaintRect.isEmpty())
+        repaintRect.inflate(1); // inflate 1 pixel for antialiasing
+
+    return enclosingIntRect(repaintRect);
 }
 
 bool RenderSVGText::requiresLayer()

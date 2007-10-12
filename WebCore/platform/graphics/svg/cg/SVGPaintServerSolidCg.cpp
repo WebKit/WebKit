@@ -30,12 +30,18 @@
 
 namespace WebCore {
 
+static inline Color colorFromFloatComponents(CGFloat* colorComponents)
+{
+    return Color(float(colorComponents[0]) * 255.0f,
+                 float(colorComponents[1]) * 255.0f,
+                 float(colorComponents[2]) * 255.0f,
+                 float(colorComponents[3]) * 255.0f);
+}
+
 bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     CGContextRef contextRef = context->platformContext();
     RenderStyle* style = object->style();
-
-    CGContextSetAlpha(contextRef, style->opacity());
 
     static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB(); // This should be shared from GraphicsContext, or some other central location
 
@@ -47,7 +53,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
         CGContextSetFillColorSpace(contextRef, deviceRGBColorSpace);
         CGContextSetFillColor(contextRef, colorComponents);
         if (isPaintingText) {
-            const_cast<RenderObject*>(object)->style()->setColor(color());
+            const_cast<RenderObject*>(object)->style()->setColor(colorFromFloatComponents(colorComponents));
             context->setTextDrawingMode(cTextFill);
         }
     }
@@ -61,7 +67,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
         CGContextSetStrokeColor(contextRef, colorComponents);
         applyStrokeStyleToContext(contextRef, style, object);
         if (isPaintingText) {
-            const_cast<RenderObject*>(object)->style()->setColor(color());
+            const_cast<RenderObject*>(object)->style()->setColor(colorFromFloatComponents(colorComponents));
             context->setTextDrawingMode(cTextStroke);
         }
     }

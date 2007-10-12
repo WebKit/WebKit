@@ -199,26 +199,21 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     paintInfo.context->save();
     paintInfo.context->concatCTM(localTransform());
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGResourceFilter* filter = 0;
-#else
-    void* filter = 0;
-#endif
+
     FloatRect boundingBox = relativeBBox(true);
     if (paintInfo.phase == PaintPhaseForeground) {
+        PaintInfo savedInfo(paintInfo);
+
         prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
-        
         fillAndStrokePath(m_path, paintInfo.context, style(), this);
 
         if (static_cast<SVGStyledElement*>(element())->supportsMarkers())
             m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-        if (filter)
-            filter->applyFilter(paintInfo.context, boundingBox);
-#endif
+        finishRenderSVGContent(this, paintInfo, boundingBox, filter, savedInfo.context);
     }
-    
+
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
         paintOutline(paintInfo.context, boundingBox.x(), boundingBox.y(), boundingBox.width(), boundingBox.height(), style());
 

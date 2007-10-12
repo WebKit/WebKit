@@ -26,6 +26,8 @@
 
 #if ENABLE(SVG)
 
+#include "SVGRenderSupport.h"
+
 #include "AffineTransform.h"
 #include "RenderObject.h"
 #include "SVGResourceClipper.h"
@@ -36,38 +38,48 @@
 
 namespace WebCore {
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
 void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter)
-#else
-void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, void*)
-#endif
 {    
     SVGElement* svgElement = static_cast<SVGElement*>(object->element());
     ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+    ASSERT(object);
     
     SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
-    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
-    
+    const RenderStyle* style = object->style();
+    ASSERT(style);
+
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    ASSERT(svgStyle);
+
+    // Setup transparency layers before setting up filters!
+    float opacity = style->opacity();    
+    if (opacity < 1.0f) {
+        paintInfo.context->clip(enclosingIntRect(boundingBox));
+        paintInfo.context->beginTransparencyLayer(opacity);
+    }
+
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
 #endif
+
     AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
     AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
-    
+
     Document* document = object->document();
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     filter = getFilterById(document, filterId);
 #endif
+
     SVGResourceClipper* clipper = getClipperById(document, clipperId);
     SVGResourceMasker* masker = getMaskerById(document, maskerId);
-    
+
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     if (filter)
         filter->prepareFilter(paintInfo.context, boundingBox);
     else if (!filterId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
 #endif
-    
+
     if (clipper) {
         clipper->addClient(styledElement);
         clipper->applyClip(paintInfo.context, boundingBox);
@@ -79,6 +91,25 @@ void prepareToRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& pa
         masker->applyMask(paintInfo.context, boundingBox);
     } else if (!maskerId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
+}
+
+void finishRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter, GraphicsContext* savedContext)
+{
+    ASSERT(object);
+
+    const RenderStyle* style = object->style();
+    ASSERT(style);
+
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+    if (filter) {
+        filter->applyFilter(paintInfo.context, boundingBox);
+        paintInfo.context = savedContext;
+    }
+#endif
+
+    float opacity = style->opacity();    
+    if (opacity < 1.0f)
+        paintInfo.context->endTransparencyLayer();
 }
 
 } // namespace WebCore

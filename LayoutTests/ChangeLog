@@ -1,3 +1,49 @@
+2007-08-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver & Rob.
+
+        Fix test results after the SVG text & group opacity fixes.
+
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-text-08-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-text-08-b-expected.png:
+        * svg/W3C-SVG-1.1/text-text-08-b-expected.txt:
+        * svg/batik/text/textAnchor-expected.checksum:
+        * svg/batik/text/textAnchor-expected.png:
+        * svg/batik/text/textFeatures-expected.checksum:
+        * svg/batik/text/textFeatures-expected.png:
+        * svg/custom/group-opacity-expected.checksum: Added.
+        * svg/custom/group-opacity-expected.png: Added.
+        * svg/custom/group-opacity-expected.txt: Added.
+        * svg/custom/group-opacity.svg: Added.
+        * svg/custom/js-update-bounce-expected.checksum:
+        * svg/custom/js-update-bounce-expected.png:
+        * svg/custom/resources/groupOpacityReference1.png: Added.
+        * svg/custom/resources/groupOpacityReference2.png: Added.
+        * svg/custom/resources/groupOpacityReference3.png: Added.
+        * svg/custom/resources/groupOpacityReference4.png: Added.
+        * svg/custom/text-image-opacity-expected.checksum:
+        * svg/custom/text-image-opacity-expected.png:
+        * svg/custom/use-instanceRoot-modifications-expected.checksum:
+        * svg/custom/use-instanceRoot-modifications-expected.png:
+        * svg/custom/use-modify-container-in-target-expected.checksum:
+        * svg/custom/use-modify-container-in-target-expected.png:
+        * svg/custom/use-modify-target-container-expected.checksum:
+        * svg/custom/use-modify-target-container-expected.png:
+        * svg/custom/use-on-g-containing-use-expected.checksum:
+        * svg/custom/use-on-g-containing-use-expected.png:
+        * svg/custom/use-on-g-expected.checksum:
+        * svg/custom/use-on-g-expected.png:
+        * svg/custom/use-on-use-expected.checksum:
+        * svg/custom/use-on-use-expected.png:
+        * svg/custom/use-transform-expected.checksum:
+        * svg/custom/use-transform-expected.png:
+        * svg/hixie/text/003-expected.txt:
+        * svg/text/text-text-08-b-expected.checksum:
+        * svg/text/text-text-08-b-expected.png:
+        * svg/text/text-text-08-b-expected.txt:
+
 2007-08-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

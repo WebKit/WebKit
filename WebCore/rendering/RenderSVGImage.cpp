@@ -134,24 +134,13 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
     paintInfo.context->concatCTM(localTransform());
 
     if (paintInfo.phase == PaintPhaseForeground) {
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
         SVGResourceFilter* filter = 0;
-#else
-        void* filter = 0;
-#endif
+
         AffineTransform imageCtm(translationForAttributes());
+        PaintInfo savedInfo(paintInfo);
 
         FloatRect boundingBox = FloatRect(imageCtm.e(), imageCtm.f(), m_imageWidth, m_imageHeight);
         prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
- 
-        float opacity = style()->opacity();
-        if (opacity < 1.0f) {
-            paintInfo.context->clip(enclosingIntRect(boundingBox));
-            paintInfo.context->beginTransparencyLayer(opacity);
-        }
-
-        PaintInfo pi(paintInfo);
-        pi.rect = absoluteTransform().inverse().mapRect(pi.rect);
 
         SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
 
@@ -164,13 +153,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         paintInfo.context->concatCTM(imageCtm);
         paintInfo.context->drawImage(image(), destRect, srcRect);
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-        if (filter)
-            filter->applyFilter(paintInfo.context, boundingBox);
-#endif
-
-        if (opacity < 1.0f)
-            paintInfo.context->endTransparencyLayer();
+        finishRenderSVGContent(this, paintInfo, boundingBox, filter, savedInfo.context);
     }
     
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
@@ -225,8 +208,7 @@ void RenderSVGImage::imageChanged(CachedImage* image)
 
 IntRect RenderSVGImage::absoluteClippedOverflowRect()
 {
-    FloatRect repaintRect = relativeBBox(true);
-    repaintRect = absoluteTransform().mapRect(repaintRect);
+    FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // Filters can expand the bounding box

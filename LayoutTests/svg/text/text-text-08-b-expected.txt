@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (19,120) size 345x77 contains 1 chunk(s) [color=#FF0000]
         RenderSVGInlineText {#text} at (0,-64) size 345x77
           chunk 1 text run 1 at (19.00,120.00) startOffset 0 endOffset 12 width 345.00: "Fill opacity"
-      RenderSVGText {text} at (19,180) size 465x77 contains 1 chunk(s) [color=#FF0000]
+      RenderSVGText {text} at (19,180) size 465x77 contains 1 chunk(s) [color=#FF00007F]
         RenderSVGInlineText {#text} at (0,-64) size 465x77
           chunk 1 text run 1 at (19.00,180.00) startOffset 0 endOffset 14 width 465.00: "Stroke opacity"
       RenderSVGText {text} at (19,240) size 242x77 contains 1 chunk(s) [color=#FF0000]

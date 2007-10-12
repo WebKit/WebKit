@@ -170,35 +170,17 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
  
     applyContentTransforms(childPaintInfo, parentX, parentY);
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGResourceFilter* filter = 0;
-#else
-    void* filter = 0;
-#endif
+
     FloatRect boundingBox = relativeBBox(true);
-    float opacity = style()->opacity();
-    if (childPaintInfo.phase == PaintPhaseForeground) {
-        prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter);
-        
-        if (opacity < 1.0f) {
-            childPaintInfo.context->clip(enclosingIntRect(boundingBox));
-            childPaintInfo.context->beginTransparencyLayer(opacity);
-        }
-    }
+    if (childPaintInfo.phase == PaintPhaseForeground)
+        prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter);        
 
-    paintInfo.context->concatCTM(svg->viewBoxToViewTransform(width(), height()));
-
+    childPaintInfo.context->concatCTM(svg->viewBoxToViewTransform(width(), height()));
     RenderContainer::paint(childPaintInfo, 0, 0);
 
-    if (childPaintInfo.phase == PaintPhaseForeground) {
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-        if (filter)
-            filter->applyFilter(childPaintInfo.context, boundingBox);
-#endif
-
-        if (opacity < 1.0f)
-            childPaintInfo.context->endTransparencyLayer();
-    }
+    if (childPaintInfo.phase == PaintPhaseForeground)
+        finishRenderSVGContent(this, childPaintInfo, boundingBox, filter, paintInfo.context);
 
     childPaintInfo.context->restore();
     
