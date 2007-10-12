@@ -1,3 +1,14 @@
+2007-10-02  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Reviewed by eseidel & hyatt.
+
+        Add support for CSS3 values 'start' and 'end' to text-align property.
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue): allow start and end values
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): handle start and end values
+
 2007-10-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark.

@@ -1,3 +1,10 @@
+2007-10-02  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Reviewed by eseidel & hyatt.
+
+        * fast/css/text-align-expected.txt: Added.
+        * fast/css/text-align.html: Added.
+
 2007-10-02  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by Maciej.

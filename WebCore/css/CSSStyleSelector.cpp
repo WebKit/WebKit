@@ -3167,9 +3167,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP_TEXT_ALIGN:
     {
         HANDLE_INHERIT_AND_INITIAL(textAlign, TextAlign)
-        if (!primitiveValue) return;
-        if (primitiveValue->getIdent())
-            style->setTextAlign((ETextAlign) (primitiveValue->getIdent() - CSS_VAL__WEBKIT_AUTO));
+        if (!primitiveValue)
+            return;
+        int id = primitiveValue->getIdent();
+        if (id == CSS_VAL_START)
+            id = style->direction() == LTR ? CSS_VAL_LEFT : CSS_VAL_RIGHT;
+        else if (id == CSS_VAL_END)
+            id = style->direction() == LTR ? CSS_VAL_RIGHT : CSS_VAL_LEFT;
+        
+        style->setTextAlign((ETextAlign) (id - CSS_VAL__WEBKIT_AUTO));
         return;
     }
 
