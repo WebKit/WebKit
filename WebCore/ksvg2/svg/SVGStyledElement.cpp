@@ -36,7 +36,6 @@
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"
-#include "ksvgcssproperties.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -71,22 +70,14 @@ RenderObject* SVGStyledElement::createRenderer(RenderArena* arena, RenderStyle* 
     return new (arena) RenderPath(style, this);
 }
 
-static inline int cssPropertyIdForName(const char* propertyName, int propertyLength)
-{
-    int propertyId = getPropertyID(propertyName, propertyLength);
-    if (propertyId == 0)
-        propertyId = SVG::getSVGCSSPropertyID(propertyName, propertyLength);
-    return propertyId;
-}
-
 static inline void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName, const char* cssPropertyName = 0)
 {
     int propertyId = 0;
     if (cssPropertyName)
-        propertyId = cssPropertyIdForName(cssPropertyName, strlen(cssPropertyName));
+        propertyId = getPropertyID(cssPropertyName, strlen(cssPropertyName));
     else {
         DeprecatedString propertyName = attrName.localName().deprecatedString();
-        propertyId = cssPropertyIdForName(propertyName.ascii(), propertyName.length());
+        propertyId = getPropertyID(propertyName.ascii(), propertyName.length());
     }
     ASSERT(propertyId > 0);
     propertyNameToIdMap->set(attrName.localName().impl(), propertyId);
@@ -124,7 +115,6 @@ int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attr
         mapAttributeToCSSProperty(propertyNameToIdMap, flood_opacityAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_familyAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_sizeAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, font_size_adjustAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_stretchAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_styleAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_variantAttr);

@@ -1487,6 +1487,10 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_TEXT_OVERLINE:
     case CSS_PROP_TEXT_UNDERLINE:
         return false;
+#if ENABLE(SVG)
+    default:
+        return parseSVGValue(propId, important);
+#endif
     }
 
     if (valid_primitive) {
@@ -1507,10 +1511,6 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         delete parsedValue;
     }
-#if ENABLE(SVG)
-    if (parseSVGValue(propId, important))
-        return true;
-#endif
     return false;
 }
 

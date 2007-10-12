@@ -40,11 +40,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if ENABLE(SVG)
-#include "ksvgcssproperties.h"
-#include "ksvgcssvalues.h"
-#endif
-
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -1002,10 +997,6 @@ property:
         const char* s = str.ascii();
         int l = str.length();
         $$ = getPropertyID(s, l);
-#if ENABLE(SVG)
-        if ($$ == 0)
-            $$ = SVG::getSVGCSSPropertyID(s, l);
-#endif
     }
   ;
 
@@ -1058,10 +1049,6 @@ term:
   | IDENT maybe_space {
       DeprecatedString str = deprecatedString($1);
       $$.id = getValueID(str.lower().latin1(), str.length());
-#if ENABLE(SVG)
-      if ($$.id == 0)
-          $$.id = SVG::getSVGCSSValueID(str.lower().latin1(), str.length());
-#endif
       $$.unit = CSSPrimitiveValue::CSS_IDENT;
       $$.string = $1;
   }

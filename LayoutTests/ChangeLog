@@ -1,3 +1,11 @@
+2007-10-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        * svg/css: Added.
+        * svg/css/getComputedStyle-basic-expected.txt: Added.
+        * svg/css/getComputedStyle-basic.xhtml: Added.
+
 2007-10-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Steve Falkenburg.

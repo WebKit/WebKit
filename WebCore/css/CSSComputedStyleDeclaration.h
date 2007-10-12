@@ -54,6 +54,9 @@ public:
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
 
     PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID, EUpdateLayout) const;
+#if ENABLE(SVG)
+    PassRefPtr<CSSValue> getSVGPropertyCSSValue(int propertyID, EUpdateLayout) const;
+#endif
 
     PassRefPtr<CSSMutableStyleDeclaration> copyInheritableProperties() const;
 

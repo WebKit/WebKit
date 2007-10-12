@@ -1,3 +1,42 @@
+2007-10-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        Implement getComputedStyle support for SVG CSS values
+        http://bugs.webkit.org/show_bug.cgi?id=15422
+        
+        This also unifies SVG and non-SVG CSS hash lookups. A unified hash
+        solves correctness problems as well as offers improved speed.
+        
+        Test: svg/css/getComputedStyle-basic.xhtml
+
+        * DerivedSources.make: unify SVG and non-SVG CSS hash files
+        * WebCore.xcodeproj/project.pbxproj: remove old SVG CSS hash files
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): call getPropertyCSSValue
+        * css/CSSComputedStyleDeclaration.h: add getPropertyCSSValue
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::propertyID):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * ksvg2/css/CSSPropertyNames.in: remove font-size-adjust
+        * ksvg2/css/SVGCSSComputedStyleDeclaration.cpp: Added.
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue): added.
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/scripts/cssmakeprops: Removed.
+        * ksvg2/scripts/cssmakevalues: Removed.
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::mapAttributeToCSSProperty):
+        (WebCore::SVGStyledElement::cssPropertyIdForSVGAttributeName): remove font-size-adjust
+
 2007-10-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Steve Falkenburg;

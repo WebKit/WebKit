@@ -562,20 +562,38 @@ all : \
     kjs_events.lut.h \
     kjs_navigator.lut.h \
     kjs_window.lut.h \
-    ksvgcssproperties.h \
-    ksvgcssvalues.h \
     tokenizer.cpp \
     WebCore.exp \
 #
 
 # CSS property names and value keywords
 
-CSSPropertyNames.h : css/CSSPropertyNames.in css/makeprop.pl
-	cat $< > CSSPropertyNames.in
+ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
+
+CSSPropertyNames.in : css/CSSPropertyNames.in ksvg2/css/CSSPropertyNames.in
+	if sort $< $(WebCore)/ksvg/css/CSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
+	cat $< $(WebCore)/ksvg2/css/CSSPropertyNames.in > CSSPropertyNames.in
+
+CSSValueKeywords.in : css/CSSValueKeywords.in ksvg2/css/CSSValueKeywords.in
+	# Lower case all the values, as CSS values are case-insensitive
+	perl -ne 'print lc' $(WebCore)/ksvg2/css/CSSValueKeywords.in > SVGCSSValueKeywords.in
+	if sort $< SVGCSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
+	cat $< SVGCSSValueKeywords.in > CSSValueKeywords.in
+
+else
+
+CSSPropertyNames.in : css/CSSValueKeywords.in
+	cp $< CSSPropertyNames.in
+
+CSSValueKeywords.in : css/CSSValueKeywords.in
+	cp $< CSSValueKeywords.in
+
+endif 
+
+CSSPropertyNames.h : CSSPropertyNames.in css/makeprop.pl
 	perl "$(WebCore)/css/makeprop.pl"
 
-CSSValueKeywords.h : css/CSSValueKeywords.in css/makevalues.pl
-	cat $< > CSSValueKeywords.in
+CSSValueKeywords.h : CSSValueKeywords.in css/makevalues.pl
 	perl "$(WebCore)/css/makevalues.pl"
 
 # DOCTYPE strings
@@ -670,20 +688,6 @@ XLinkNames.cpp : ksvg2/scripts/make_names.pl ksvg2/misc/xlinkattrs.in
 	perl $< --attrs $(WebCore)/ksvg2/misc/xlinkattrs.in \
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
 
-# SVG CSS property names and value keywords
-
-ksvgcssproperties.h : ksvg2/scripts/cssmakeprops css/CSSPropertyNames.in ksvg2/css/CSSPropertyNames.in
-	if sort $(WebCore)/css/CSSPropertyNames.in $(WebCore)/ksvg2/css/CSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
-	cat $(WebCore)/ksvg2/css/CSSPropertyNames.in > ksvgcssproperties.in
-	$(WebCore)/ksvg2/scripts/cssmakeprops -n SVG -f ksvgcssproperties.in
-
-ksvgcssvalues.h : ksvg2/scripts/cssmakevalues css/CSSValueKeywords.in ksvg2/css/CSSValueKeywords.in
-	if sort $(WebCore)/css/CSSValueKeywords.in $(WebCore)/ksvg2/css/CSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
-	# Lower case all the values, as CSS values are case-insensitive
-	perl -ne 'print lc' $(WebCore)/ksvg2/css/CSSValueKeywords.in > ksvgcssvalues.in
-	$(WebCore)/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in
-
-
 # Add SVG Symbols to the WebCore exported symbols file
 
 WebCore.exp : WebCore.base.exp WebCore.SVG.exp
@@ -699,12 +703,6 @@ SVGNames.cpp :
 
 XLinkNames.cpp :
 	echo > XLinkNames.cpp
-
-ksvgcssproperties.h :
-	echo > ksvgcssproperties.h
-
-ksvgcssvalues.h :
-	echo > ksvgcssvalues.h
 
 WebCore.exp : WebCore.base.exp
 	cp $(WebCore)/WebCore.base.exp WebCore.exp

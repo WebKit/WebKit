@@ -394,11 +394,9 @@
 		656581F309D1508D000E61D7 /* kjs_events.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DC09D1508D000E61D7 /* kjs_events.lut.h */; };
 		656581F509D1508D000E61D7 /* kjs_navigator.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */; };
 		656581F809D1508D000E61D7 /* kjs_window.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E109D1508D000E61D7 /* kjs_window.lut.h */; };
-		656581FB09D1508D000E61D7 /* ksvgcssproperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E409D1508D000E61D7 /* ksvgcssproperties.h */; };
 		656581FE09D1508D000E61D7 /* SVGElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E709D1508D000E61D7 /* SVGElementFactory.h */; };
 		6565820009D1508D000E61D7 /* SVGNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E909D1508D000E61D7 /* SVGNames.h */; };
 		6565820209D1508D000E61D7 /* XLinkNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581EB09D1508D000E61D7 /* XLinkNames.h */; };
-		6565821309D15111000E61D7 /* ksvgcssvalues.h in Headers */ = {isa = PBXBuildFile; fileRef = 6565820F09D15111000E61D7 /* ksvgcssvalues.h */; };
 		656B84E00AEA1D3100A095B4 /* ResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656B84DC0AEA1D3100A095B4 /* ResourceHandle.cpp */; };
 		656B84E20AEA1D3100A095B4 /* ResourceHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B84DE0AEA1D3100A095B4 /* ResourceHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656B84E30AEA1D3100A095B4 /* ResourceHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 656B84DF0AEA1D3100A095B4 /* ResourceHandleInternal.h */; };
@@ -1842,6 +1840,7 @@
 		A84EBD780CB8C89200079609 /* JSStyleSheetListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */; };
 		A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */ = {isa = PBXBuildFile; fileRef = A84EBD810CB8C97700079609 /* JSStyleSheetList.h */; };
 		A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */; };
+		A84EC1390CB9FDBC00079609 /* SVGCSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84EC1380CB9FDBC00079609 /* SVGCSSComputedStyleDeclaration.cpp */; };
 		A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629C909DA2B47009633A5 /* JSUIEvent.h */; };
 		A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */; };
 		A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CB09DA2B47009633A5 /* JSMouseEvent.h */; };
@@ -4413,20 +4412,12 @@
 		656581DC09D1508D000E61D7 /* kjs_events.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_events.lut.h; sourceTree = "<group>"; };
 		656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_navigator.lut.h; sourceTree = "<group>"; };
 		656581E109D1508D000E61D7 /* kjs_window.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_window.lut.h; sourceTree = "<group>"; };
-		656581E209D1508D000E61D7 /* ksvgcssproperties.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ksvgcssproperties.c; sourceTree = "<group>"; };
-		656581E309D1508D000E61D7 /* ksvgcssproperties.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssproperties.gperf; sourceTree = "<group>"; };
-		656581E409D1508D000E61D7 /* ksvgcssproperties.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ksvgcssproperties.h; sourceTree = "<group>"; };
-		656581E509D1508D000E61D7 /* ksvgcssproperties.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssproperties.in; sourceTree = "<group>"; };
 		656581E609D1508D000E61D7 /* SVGElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElementFactory.cpp; sourceTree = "<group>"; };
 		656581E709D1508D000E61D7 /* SVGElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGElementFactory.h; sourceTree = "<group>"; };
 		656581E809D1508D000E61D7 /* SVGNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGNames.cpp; sourceTree = "<group>"; };
 		656581E909D1508D000E61D7 /* SVGNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGNames.h; sourceTree = "<group>"; };
 		656581EA09D1508D000E61D7 /* XLinkNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XLinkNames.cpp; sourceTree = "<group>"; };
 		656581EB09D1508D000E61D7 /* XLinkNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XLinkNames.h; sourceTree = "<group>"; };
-		6565820D09D15111000E61D7 /* ksvgcssvalues.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ksvgcssvalues.c; sourceTree = "<group>"; };
-		6565820E09D15111000E61D7 /* ksvgcssvalues.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.gperf; sourceTree = "<group>"; };
-		6565820F09D15111000E61D7 /* ksvgcssvalues.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ksvgcssvalues.h; sourceTree = "<group>"; };
-		6565821009D15111000E61D7 /* ksvgcssvalues.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.in; sourceTree = "<group>"; };
 		656B84DC0AEA1D3100A095B4 /* ResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandle.cpp; sourceTree = "<group>"; };
 		656B84DE0AEA1D3100A095B4 /* ResourceHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceHandleClient.h; sourceTree = "<group>"; };
 		656B84DF0AEA1D3100A095B4 /* ResourceHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceHandleInternal.h; sourceTree = "<group>"; };
@@ -5798,6 +5789,7 @@
 		A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetListCustom.cpp; sourceTree = "<group>"; };
 		A84EBD810CB8C97700079609 /* JSStyleSheetList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStyleSheetList.h; sourceTree = "<group>"; };
 		A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetList.cpp; sourceTree = "<group>"; };
+		A84EC1380CB9FDBC00079609 /* SVGCSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A86629C909DA2B47009633A5 /* JSUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSUIEvent.h; sourceTree = "<group>"; };
 		A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEvent.cpp; sourceTree = "<group>"; };
@@ -8136,14 +8128,6 @@
 				656581DC09D1508D000E61D7 /* kjs_events.lut.h */,
 				656581DE09D1508D000E61D7 /* kjs_navigator.lut.h */,
 				656581E109D1508D000E61D7 /* kjs_window.lut.h */,
-				656581E209D1508D000E61D7 /* ksvgcssproperties.c */,
-				656581E309D1508D000E61D7 /* ksvgcssproperties.gperf */,
-				656581E409D1508D000E61D7 /* ksvgcssproperties.h */,
-				656581E509D1508D000E61D7 /* ksvgcssproperties.in */,
-				6565820D09D15111000E61D7 /* ksvgcssvalues.c */,
-				6565820E09D15111000E61D7 /* ksvgcssvalues.gperf */,
-				6565820F09D15111000E61D7 /* ksvgcssvalues.h */,
-				6565821009D15111000E61D7 /* ksvgcssvalues.in */,
 				656581E609D1508D000E61D7 /* SVGElementFactory.cpp */,
 				656581E709D1508D000E61D7 /* SVGElementFactory.h */,
 				656581E809D1508D000E61D7 /* SVGNames.cpp */,
@@ -9919,6 +9903,7 @@
 				A8C0F700089701F100BA5114 /* SVGRenderStyle.h */,
 				A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */,
 				A8C0F702089701F100BA5114 /* SVGRenderStyleDefs.h */,
+				A84EC1380CB9FDBC00079609 /* SVGCSSComputedStyleDeclaration.cpp */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -11826,11 +11811,9 @@
 				656581F309D1508D000E61D7 /* kjs_events.lut.h in Headers */,
 				656581F509D1508D000E61D7 /* kjs_navigator.lut.h in Headers */,
 				656581F809D1508D000E61D7 /* kjs_window.lut.h in Headers */,
-				656581FB09D1508D000E61D7 /* ksvgcssproperties.h in Headers */,
 				656581FE09D1508D000E61D7 /* SVGElementFactory.h in Headers */,
 				6565820009D1508D000E61D7 /* SVGNames.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
-				6565821309D15111000E61D7 /* ksvgcssvalues.h in Headers */,
 				650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */,
 				65DF31DB09D1C123000BE325 /* JSAttr.h in Headers */,
 				65DF31F409D1CC60000BE325 /* JSCharacterData.h in Headers */,
@@ -14705,6 +14688,7 @@
 				BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */,
 				A84EBD780CB8C89200079609 /* JSStyleSheetListCustom.cpp in Sources */,
 				A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */,
+				A84EC1390CB9FDBC00079609 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

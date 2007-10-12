@@ -28,7 +28,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"
 #include "DeprecatedValueList.h"
-#include "ksvgcssproperties.h"
 #include <ctype.h>
 
 namespace WebCore {
@@ -51,12 +50,7 @@ static int propertyID(const String& s)
         buffer[i] = tolower(c);
     }
 
-    int propID = getPropertyID(buffer, len);
-#if ENABLE(SVG)
-    if (!propID)
-        propID = SVG::getSVGCSSPropertyID(buffer, len);
-#endif
-    return propID;
+    return getPropertyID(buffer, len);
 }
 
 CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent)

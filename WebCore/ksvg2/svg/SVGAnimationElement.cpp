@@ -28,7 +28,6 @@
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "FloatConversion.h"
-#include "ksvgcssproperties.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"

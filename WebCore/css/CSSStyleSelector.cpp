@@ -4378,11 +4378,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT:
     case CSS_PROP__WEBKIT_TEXT_STROKE:
         return;
-    }
 #if ENABLE(SVG)
-    // Try the SVG properties
-    applySVGProperty(id, value);
+    default:
+        // Try the SVG properties
+        applySVGProperty(id, value);
 #endif
+    }
 }
 
 void CSSStyleSelector::mapBackgroundAttachment(BackgroundLayer* layer, CSSValue* value)

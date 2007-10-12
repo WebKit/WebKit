@@ -172,6 +172,46 @@ static const int computedProperties[] = {
     CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS,
     CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS,
     CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS
+    
+#if ENABLE(SVG)
+    ,
+    CSS_PROP_CLIP_PATH,
+    CSS_PROP_CLIP_RULE,
+    CSS_PROP_MASK,
+    CSS_PROP_FILTER,
+    CSS_PROP_FLOOD_COLOR,
+    CSS_PROP_FLOOD_OPACITY,
+    CSS_PROP_LIGHTING_COLOR,
+    CSS_PROP_STOP_COLOR,
+    CSS_PROP_STOP_OPACITY,
+    CSS_PROP_POINTER_EVENTS,
+    CSS_PROP_COLOR_INTERPOLATION,
+    CSS_PROP_COLOR_INTERPOLATION_FILTERS,
+    CSS_PROP_COLOR_RENDERING,
+    CSS_PROP_FILL,
+    CSS_PROP_FILL_OPACITY,
+    CSS_PROP_FILL_RULE,
+    CSS_PROP_IMAGE_RENDERING,
+    CSS_PROP_MARKER_END,
+    CSS_PROP_MARKER_MID,
+    CSS_PROP_MARKER_START,
+    CSS_PROP_SHAPE_RENDERING,
+    CSS_PROP_STROKE,
+    CSS_PROP_STROKE_DASHARRAY,
+    CSS_PROP_STROKE_DASHOFFSET,
+    CSS_PROP_STROKE_LINECAP,
+    CSS_PROP_STROKE_LINEJOIN,
+    CSS_PROP_STROKE_MITERLIMIT,
+    CSS_PROP_STROKE_OPACITY,
+    CSS_PROP_STROKE_WIDTH,
+    CSS_PROP_TEXT_RENDERING,
+    CSS_PROP_ALIGNMENT_BASELINE,
+    CSS_PROP_BASELINE_SHIFT,
+    CSS_PROP_DOMINANT_BASELINE,
+    CSS_PROP_KERNING,
+    CSS_PROP_TEXT_ANCHOR,
+    CSS_PROP_WRITING_MODE
+#endif
 };
 
 const unsigned numComputedProperties = sizeof(computedProperties) / sizeof(computedProperties[0]);
@@ -1654,6 +1694,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSS_PROP__WEBKIT_TEXT_STROKE:
             // FIXME: The above are unimplemented.
             break;
+#if ENABLE(SVG)
+        default:
+            return getSVGPropertyCSSValue(propertyID, DoNotUpdateLayout);
+#endif
     }
 
     LOG_ERROR("unimplemented propertyID: %d", propertyID);
