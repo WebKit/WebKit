@@ -1,5 +1,10 @@
 2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
 
+        * fast/dom/xmlhttprequest-get-expected.txt: Updated event properties
+        for changes made in bug 15102.
+
+2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Update tests for http://bugs.webkit.org/show_bug.cgi?id=13707
