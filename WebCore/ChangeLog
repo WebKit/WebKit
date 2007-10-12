@@ -1,5 +1,11 @@
 2007-10-08  Alexey Proskuryakov  <ap@webkit.org>
 
+        * platform/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::setFont): Restored one of the -1 checks removed in
+        the previous change - we do need to check m_font!
+
+2007-10-08  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         http://bugs.webkit.org/show_bug.cgi?id=15397

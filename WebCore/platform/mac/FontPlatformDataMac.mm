@@ -58,7 +58,7 @@ void FontPlatformData::setFont(NSFont* font) {
         return;
     if (font)
         CFRetain(font);
-    if (m_font)
+    if (m_font && m_font != (NSFont*)-1)
         CFRelease(m_font);
     m_font = font;
     m_size = font ? [font pointSize] : 0.0f;
