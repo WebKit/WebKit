@@ -196,12 +196,14 @@ struct SVGTextChunk {
     SVGTextChunk()
         : anchor(TA_START)
         , isVerticalText(false)
+        , isTextPath(false)
         , start(0)
         , end(0)
     { }
 
     ETextAnchor anchor;
     bool isVerticalText : 1;
+    bool isTextPath : 1;
 
     Vector<SVGChar>::iterator start;
     Vector<SVGChar>::iterator end;
@@ -212,12 +214,12 @@ struct SVGTextChunk {
 struct SVGTextChunkLayoutInfo {
     SVGTextChunkLayoutInfo()
         : assignChunkProperties(true)
-        , advanceOnly(false)
+        , handlingTextPath(false)
     {
     }
 
     bool assignChunkProperties : 1;
-    bool advanceOnly : 1;
+    bool handlingTextPath : 1;
 
     SVGTextChunk chunk;
     Vector<SVGChar>::iterator it;

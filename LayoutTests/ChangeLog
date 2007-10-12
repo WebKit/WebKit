@@ -1,3 +1,75 @@
+2007-07-29  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob.
+
+        Update layout tests now that textPaths participate in
+        text chunk building and after the selection rect fixes.
+
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * svg/batik/text/longTextOnPath-expected.txt:
+        * svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * svg/batik/text/textOnPath-expected.txt:
+        * svg/batik/text/textOnPath2-expected.txt:
+        * svg/batik/text/textOnPath3-expected.txt:
+        * svg/batik/text/textOnPathSpaces-expected.txt:
+        * svg/batik/text/verticalText-expected.txt:
+        * svg/batik/text/verticalTextOnPath-expected.txt:
+        * svg/text/text-align-01-b-expected.checksum:
+        * svg/text/text-align-01-b-expected.png:
+        * svg/text/text-align-02-b-expected.checksum:
+        * svg/text/text-align-02-b-expected.png:
+        * svg/text/text-align-03-b-expected.checksum:
+        * svg/text/text-align-03-b-expected.png:
+        * svg/text/text-align-04-b-expected.checksum:
+        * svg/text/text-align-04-b-expected.png:
+        * svg/text/text-align-04-b-expected.txt:
+        * svg/text/text-align-05-b-expected.checksum:
+        * svg/text/text-align-05-b-expected.png:
+        * svg/text/text-align-06-b-expected.checksum:
+        * svg/text/text-align-06-b-expected.png:
+        * svg/text/text-altglyph-01-b-expected.checksum:
+        * svg/text/text-altglyph-01-b-expected.png:
+        * svg/text/text-deco-01-b-expected.checksum:
+        * svg/text/text-deco-01-b-expected.png:
+        * svg/text/text-fonts-01-t-expected.checksum:
+        * svg/text/text-fonts-01-t-expected.png:
+        * svg/text/text-fonts-02-t-expected.checksum:
+        * svg/text/text-fonts-02-t-expected.png:
+        * svg/text/text-intro-05-t-expected.checksum:
+        * svg/text/text-intro-05-t-expected.png:
+        * svg/text/text-path-01-b-expected.checksum:
+        * svg/text/text-path-01-b-expected.png:
+        * svg/text/text-path-01-b-expected.txt:
+        * svg/text/text-spacing-01-b-expected.checksum:
+        * svg/text/text-spacing-01-b-expected.png:
+        * svg/text/text-text-01-b-expected.checksum:
+        * svg/text/text-text-01-b-expected.png:
+        * svg/text/text-text-03-b-expected.checksum:
+        * svg/text/text-text-03-b-expected.png:
+        * svg/text/text-text-04-t-expected.checksum:
+        * svg/text/text-text-04-t-expected.png:
+        * svg/text/text-text-05-t-expected.checksum:
+        * svg/text/text-text-05-t-expected.png:
+        * svg/text/text-text-06-t-expected.checksum:
+        * svg/text/text-text-06-t-expected.png:
+        * svg/text/text-text-07-t-expected.checksum:
+        * svg/text/text-text-07-t-expected.png:
+        * svg/text/text-text-08-b-expected.checksum:
+        * svg/text/text-text-08-b-expected.png:
+        * svg/text/text-tref-01-b-expected.checksum:
+        * svg/text/text-tref-01-b-expected.png:
+        * svg/text/text-tselect-01-b-expected.checksum:
+        * svg/text/text-tselect-01-b-expected.png:
+        * svg/text/text-tselect-02-f-expected.checksum:
+        * svg/text/text-tselect-02-f-expected.png:
+        * svg/text/text-tspan-01-b-expected.checksum:
+        * svg/text/text-tspan-01-b-expected.png:
+        * svg/text/text-ws-01-t-expected.checksum:
+        * svg/text/text-ws-01-t-expected.png:
+        * svg/text/text-ws-02-t-expected.checksum:
+        * svg/text/text-ws-02-t-expected.png:
+
 2007-07-26  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

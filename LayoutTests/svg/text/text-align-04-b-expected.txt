@@ -33,9 +33,10 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,-27) size 158x33
               chunk 1 (end anchor) text run 1 at (62.00,220.00) startOffset 0 endOffset 13 width 158.00: "end text tref"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGText {text} at (-9,0) size 229x293 contains 0 chunk(s) [color=#0000FF]
+        RenderSVGText {text} at (-9,0) size 229x293 contains 1 chunk(s) [color=#0000FF]
           RenderSVGTextPath {textPath} at (0,0) size 229x293
             RenderSVGInlineText {#text} at (0,-27) size 229x293
+              chunk 1 (end anchor) text run 1 at (-9.00,0.00) startOffset 0 endOffset 29 width 393.00: "Text-anchor: end text on path"
           RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46

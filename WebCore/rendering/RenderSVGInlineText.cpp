@@ -36,6 +36,18 @@
 
 namespace WebCore {
 
+static inline bool isChildOfHiddenContainer(RenderObject* start)
+{
+    while (start) {
+        if (start->isSVGHiddenContainer())
+            return true;
+
+        start = start->parent();
+    }
+
+    return false;
+}
+
 RenderSVGInlineText::RenderSVGInlineText(Node* n, StringImpl* str) 
     : RenderText(n, str)
 {
@@ -52,6 +64,10 @@ IntRect RenderSVGInlineText::selectionRect(bool)
 
     IntRect rect;
     if (selectionState() == SelectionNone)
+        return rect;
+
+    // Early exit if we're ie. a <text> within a <defs> section.
+    if (isChildOfHiddenContainer(this))
         return rect;
 
     // Now calculate startPos and endPos for painting selection.
@@ -80,7 +96,7 @@ IntRect RenderSVGInlineText::computeAbsoluteRectForRange(int startPos, int endPo
     IntRect rect;
 
     RenderBlock* cb = containingBlock();
-    if (!cb)
+    if (!cb || !cb->container())
         return rect;
 
     RenderSVGRoot* root = findSVGRootObject(parent());
@@ -92,16 +108,14 @@ IntRect RenderSVGInlineText::computeAbsoluteRectForRange(int startPos, int endPo
 
     // Mimic RenderBox::computeAbsoluteRepaintRect() functionality. But only the subset needed for SVG and respecting SVG transformations.
     int x, y;
-    cb->absolutePosition(x, y);
+    cb->container()->absolutePosition(x, y);
 
     // Remove HTML parent translation offsets here! These need to be retrieved from the RenderSVGRoot object.
+    // But do take the containingBlocks's container position into account, ie. SVG text in scrollable <div>.
     AffineTransform htmlParentCtm = root->RenderContainer::absoluteTransform();
-    FloatRect fixedRect = FloatRect(x - htmlParentCtm.e(), y - htmlParentCtm.f(), rect.width(), rect.height());
-    rect = enclosingIntRect(absoluteTransform().mapRect(fixedRect));
 
-    // Work around rounding issues which may occour above!
-    rect.inflate(1);
-    return rect;
+    FloatRect fixedRect(rect.x() + x - xPos() - htmlParentCtm.e(), rect.y() + y - yPos() - htmlParentCtm.f(), rect.width(), rect.height());
+    return enclosingIntRect(absoluteTransform().mapRect(fixedRect));
 }
 
 InlineTextBox* RenderSVGInlineText::createInlineTextBox()

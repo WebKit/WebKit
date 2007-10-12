@@ -278,7 +278,8 @@ static void applyTextAnchorToTextChunk(SVGTextChunk& chunk)
 {
 #if DEBUG_CHUNK_BUILDING > 0
     {
-        fprintf(stderr, "Handle TEXT CHUNK! anchor=%i, isVerticalText=%i, start=%p, end=%p -> dist: %i\n", (int) chunk.anchor, (int) chunk.isVerticalText, chunk.start, chunk.end, (unsigned int) (chunk.end-chunk.start));
+        fprintf(stderr, "Handle TEXT CHUNK! anchor=%i, isVerticalText=%i, isTextPath=%i start=%p, end=%p -> dist: %i\n",
+                (int) chunk.anchor, (int) chunk.isVerticalText, (int) chunk.isTextPath, chunk.start, chunk.end, (unsigned int) (chunk.end-chunk.start));
 
         Vector<SVGInlineBoxCharacterRange>::iterator boxIt = chunk.boxes.begin();
         Vector<SVGInlineBoxCharacterRange>::iterator boxEnd = chunk.boxes.end();
@@ -291,7 +292,7 @@ static void applyTextAnchorToTextChunk(SVGTextChunk& chunk)
     }
 #endif
 
-    if (chunk.anchor == TA_START)
+    if (chunk.anchor == TA_START || chunk.isTextPath)
         return;
 
     float shift = 0.0;
@@ -772,13 +773,8 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
                 continue;
 
 #if DEBUG_CHUNK_BUILDING > 1
-            fprintf(stderr, " -> Handle inline text box (%p) with %i characters, advanceOnly=%i\n", textBox, length, (int) info.advanceOnly);
+            fprintf(stderr, " -> Handle inline text box (%p) with %i characters, handlingTextPath=%i\n", textBox, length, (int) info.handlingTextPath);
 #endif
-
-            if (info.advanceOnly) {
-                info.it += length;
-                continue;
-            }
 
             RenderText* text = textBox->textObject();
             ASSERT(text);
@@ -810,6 +806,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
                     info.assignChunkProperties = false;
 
                     info.chunk.isVerticalText = isVerticalWritingMode(text->style()->svgStyle());
+                    info.chunk.isTextPath = info.handlingTextPath;
                     info.chunk.anchor = text->style()->svgStyle()->textAnchor();
 
 #if DEBUG_CHUNK_BUILDING > 1
@@ -841,6 +838,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
 
                         info.assignChunkProperties = false;
                         info.chunk.isVerticalText = isVerticalWritingMode(text->style()->svgStyle());
+                        info.chunk.isTextPath = info.handlingTextPath;
                         info.chunk.anchor = text->style()->svgStyle()->textAnchor();
 
                         range.box = curr;
@@ -906,7 +904,6 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
             ASSERT(curr->isInlineFlowBox());
             InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(curr);
 
-            // <textPath> doesn't need this chunk logic. FIXME: It's needed for text selection! (not for text-anchor though)
             bool isTextPath = flowBox->object()->element()->hasTagName(SVGNames::textPathTag);
 
 #if DEBUG_CHUNK_BUILDING > 1
@@ -914,12 +911,12 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
 #endif
 
             if (isTextPath)
-                info.advanceOnly = true;
+                info.handlingTextPath = true;
 
             buildTextChunks(flowBox, info);
 
             if (isTextPath)
-                info.advanceOnly = false;
+                info.handlingTextPath = false;
         }
     }
 

@@ -39,6 +39,8 @@ namespace WebCore {
         virtual ~RenderSVGHiddenContainer();
         
         virtual bool isSVGContainer() const { return true; }
+        virtual bool isSVGHiddenContainer() const { return true; }
+
         virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }
         
         virtual bool requiresLayer();

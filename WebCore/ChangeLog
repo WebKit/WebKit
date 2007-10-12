@@ -1,3 +1,32 @@
+2007-07-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver & Rob.
+
+        Enable SVG textPath selection. Actually build chunks for them instead of
+        ignoring them - was easier than I thought. Respect per-character transformation
+        when calculating the chunk boundaries for the selection rectangles. Also fixes
+        selection rect drawing of rotated characters.
+
+        Next thing todo is to unify the glyph size calculations, as per-glyph transformations
+        are not respected when calculating flow box sizes in SVGRootInlineBox.
+ 
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGHiddenContainer):
+        * rendering/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::isSVGHiddenContainer):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::isChildOfHiddenContainer):
+        (WebCore::RenderSVGInlineText::selectionRect):
+        (WebCore::RenderSVGInlineText::computeAbsoluteRectForRange):
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGTextChunk::SVGTextChunk):
+        (WebCore::SVGTextChunkLayoutInfo::SVGTextChunkLayoutInfo):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::selectionRect):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::applyTextAnchorToTextChunk):
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+
 2007-07-25  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

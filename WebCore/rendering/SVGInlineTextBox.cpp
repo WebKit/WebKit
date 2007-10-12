@@ -222,9 +222,8 @@ IntRect SVGInlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos
 
     const Font& font = textObject()->style()->font();
 
-    float lowX = FLT_MAX, lowY = FLT_MAX;
-    float highX = FLT_MIN, highY = FLT_MIN;
-
+    FloatRect selectionRect;
+    
     Vector<SVGTextChunk>::iterator it = chunks.begin();
     Vector<SVGTextChunk>::iterator end = chunks.end();
 
@@ -248,36 +247,33 @@ IntRect SVGInlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos
                 continue;
             }
 
-            // Walk chunk finding closest character
+            // Figure out chunk size
             Vector<SVGChar>::iterator itCharBegin = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.startOffset;
             Vector<SVGChar>::iterator itCharEnd = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.endOffset;
             ASSERT(itCharEnd <= curChunk.end);
 
             for (Vector<SVGChar>::iterator itChar = itCharBegin; itChar != itCharEnd; ++itChar) {
                 unsigned int newOffset = (itChar - itCharBegin) + firstRangeInFirstChunkStartOffset;
-
                 float glyphWidth = font.floatWidth(TextRun(textObject()->text()->characters() + newOffset, 1), TextStyle(0, 0));
-                float glyphHeight = font.ascent() + font.descent();
+ 
+                float x1 = (*itChar).x;
+                float x2 = (*itChar).x + glyphWidth;
 
-                float x = (*itChar).x;
-                float y = (*itChar).y;
+                float y1 = (*itChar).y - font.ascent();
+                float y2 = (*itChar).y + font.descent();
 
-                if (x < lowX)
-                    lowX = x;
+                FloatRect glyphRect(x1, y1, x2 - x1, y2 - y1);
 
-                if (x + glyphWidth > highX)
-                    highX = x + glyphWidth;
+                // Take per-character transformations into account
+                if (!(*itChar).transform.isIdentity())
+                    glyphRect = (*itChar).transform.mapRect(glyphRect);
 
-                if (y < lowY)
-                    lowY = y;
-
-                if (y + glyphHeight > highY)
-                    highY = y + glyphHeight;
+                selectionRect.unite(glyphRect);
             }
         }
     }
 
-    return enclosingIntRect(FloatRect(tx + lowX, ty + lowY, highX - lowX, highY - lowY));
+    return enclosingIntRect(selectionRect);
 }
 
 } // namespace WebCore
