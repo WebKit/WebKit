@@ -69,13 +69,12 @@ namespace WebCore {
         void addClipData(const Path&, WindRule, bool bboxUnits);
 
         const ClipDataList& clipData() const;
-
-        virtual bool isClipper() const { return true; }
+        
+        virtual SVGResourceType resourceType() const { return ClipperResourceType; }
         virtual TextStream& externalRepresentation(TextStream&) const;
 
         // To be implemented by the specific rendering devices
         void applyClip(GraphicsContext*, const FloatRect& boundingBox) const;
-
     private:
         ClipDataList m_clipData;
     };

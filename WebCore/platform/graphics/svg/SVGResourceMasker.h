@@ -47,8 +47,8 @@ namespace WebCore {
         virtual ~SVGResourceMasker();
         
         virtual void invalidate();
-
-        virtual bool isMasker() const { return true; }
+        
+        virtual SVGResourceType resourceType() const { return MaskerResourceType; }
         virtual TextStream& externalRepresentation(TextStream&) const;
 
         // To be implemented by the specific rendering devices

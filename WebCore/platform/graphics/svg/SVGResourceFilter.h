@@ -62,8 +62,8 @@ public:
     virtual ~SVGResourceFilter();
 
     static SVGFilterEffect* createFilterEffect(const SVGFilterEffectType&, SVGResourceFilter*);
-
-    virtual bool isFilter() const { return true; }
+    
+    virtual SVGResourceType resourceType() const { return FilterResourceType; }
 
     bool filterBoundingBoxMode() const { return m_filterBBoxMode; }
     void setFilterBoundingBoxMode(bool bboxMode) { m_filterBBoxMode = bboxMode; }

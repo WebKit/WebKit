@@ -56,8 +56,8 @@ namespace WebCore {
 
         FloatRect cachedBounds() const;
         void draw(GraphicsContext*, const FloatRect&, double x, double y, double strokeWidth = 1, double angle = 0);
-
-        virtual bool isMarker() const { return true; }
+        
+        virtual SVGResourceType resourceType() const { return MarkerResourceType; }
         virtual TextStream& externalRepresentation(TextStream&) const;
 
     private:

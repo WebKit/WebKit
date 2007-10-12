@@ -65,6 +65,8 @@ namespace WebCore {
         // Centralized place to force a manual style resolution. Hacky but needed for now.
         RenderStyle* resolveStyle(RenderStyle* parentStyle);
         
+        virtual void detach();
+        
     protected:
         virtual bool hasRelativeValues() const { return true; }
         

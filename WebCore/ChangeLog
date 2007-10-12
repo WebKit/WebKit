@@ -1,3 +1,36 @@
+2007-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric.
+
+        Bug 15451: SVGStyledElement must unregister itself from Resources on detach
+        
+        Use a global hashtable to maintain the relationship between the
+        various SVG resources and their clients, across dom updates, etc.
+
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::detach):
+        * ksvg2/svg/SVGStyledElement.h:
+        * platform/graphics/svg/SVGPaintServer.h:
+        * platform/graphics/svg/SVGResource.cpp:
+        (WebCore::ResourceSet::ResourceSet):
+        (WebCore::clientMap):
+        (WebCore::SVGResource::~SVGResource):
+        (WebCore::SVGResource::invalidate):
+        (WebCore::SVGResource::removeClient):
+        (WebCore::SVGResource::addClient):
+        * platform/graphics/svg/SVGResource.h:
+        (WebCore::):
+        (WebCore::SVGResource::isPaintServer):
+        (WebCore::SVGResource::isFilter):
+        (WebCore::SVGResource::isClipper):
+        (WebCore::SVGResource::isMarker):
+        (WebCore::SVGResource::isMasker):
+        * platform/graphics/svg/SVGResourceClipper.h:
+        (WebCore::SVGResourceClipper::resourceType):
+        * platform/graphics/svg/SVGResourceFilter.h:
+        * platform/graphics/svg/SVGResourceMarker.h:
+        * platform/graphics/svg/SVGResourceMasker.h:
+
 2007-10-10  Mark Rowe  <mrowe@apple.com>
 
         Windows build fix after r26109.

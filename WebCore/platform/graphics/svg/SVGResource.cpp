@@ -38,20 +38,92 @@ SVGResource::SVGResource()
 {
 }
 
+struct ResourceSet { 
+    ResourceSet() 
+    {
+        for (int i = 0; i < _ResourceTypeCount; i++)
+            resources[i] = 0;
+    }
+    SVGResource* resources[_ResourceTypeCount]; 
+};
+
+static HashMap<SVGStyledElement*, ResourceSet*>& clientMap() {
+    static HashMap<SVGStyledElement*, ResourceSet*> map;
+    return map;
+}
+
 SVGResource::~SVGResource()
 {
+    int type = -1;
+    HashSet<SVGStyledElement*>::iterator itr = m_clients.begin();
+    
+    for (; type < 0 && itr != m_clients.end(); ++itr) {
+        ResourceSet* target = clientMap().get(*itr);
+        if (!target)
+            continue;
+
+        for (int i = 0; i < _ResourceTypeCount; i++) {
+            if (target->resources[i] != this) 
+                continue;
+            type = i;
+            target->resources[i] = 0;
+            break;
+        }
+    }
+    
+    if (type < 0)
+        return;
+    
+    for (; itr != m_clients.end(); ++itr) {
+        ResourceSet* target = clientMap().get(*itr);
+        if (!target)
+            continue;
+        
+        if (target->resources[type] == this) 
+            target->resources[type] = 0;
+    }
 }
 
 void SVGResource::invalidate()
 {
 }
 
+void SVGResource::removeClient(SVGStyledElement* item) 
+{
+    HashMap<SVGStyledElement*, ResourceSet*>::iterator resourcePtr = clientMap().find(item);
+    if (resourcePtr == clientMap().end())
+        return;
+    
+    ResourceSet* set = resourcePtr->second;
+    ASSERT(set);
+    
+    clientMap().remove(resourcePtr);
+    
+    for (int i = 0; i < _ResourceTypeCount; i++)
+        if (set->resources[i])
+            set->resources[i]->m_clients.remove(item);
+    
+    delete set;
+}
+
 void SVGResource::addClient(SVGStyledElement* item)
 {
     if (m_clients.contains(item))
         return;
-
+        
     m_clients.add(item);
+
+    ResourceSet* target = clientMap().get(item);
+    if (!target) 
+        target = new ResourceSet;
+    
+    
+    SVGResourceType type = resourceType();
+    if (SVGResource* oldResource = target->resources[type])
+        oldResource->m_clients.remove(item);
+    
+    target->resources[type] = this;
+    clientMap().set(item, target);
 }
 
 void SVGResource::repaintClients() const
