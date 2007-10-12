@@ -33,6 +33,7 @@
 #include <WebCore/CharacterNames.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontDescription.h>
+#include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringTruncator.h>

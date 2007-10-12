@@ -37,6 +37,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontDescription.h>
+#include <WebCore/FontSelector.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
