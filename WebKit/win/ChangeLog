@@ -1,3 +1,5 @@
+=== End merge of feature-branch 11-11-2007 ===
+
 2007-10-11  Steve Falkenburg  <sfalken@apple.com>
 
         Delay load additional libraries to improve startup time.
