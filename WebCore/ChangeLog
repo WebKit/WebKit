@@ -1,3 +1,51 @@
+2007-06-07  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12122
+        SVGPathElement should not inherit from SVGPathParser
+
+        Use path builders for building Path and PathSegLists.
+
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::pointsListFromSVGData):
+        (WebCore::SVGPathParser::~SVGPathParser):
+        (WebCore::SVGPathParser::svgLineToHorizontal):
+        (WebCore::SVGPathParser::svgLineToVertical):
+        (WebCore::SVGPathParser::svgCurveToCubicSmooth):
+        (WebCore::SVGPathParser::svgCurveToQuadratic):
+        (WebCore::SVGPathParser::svgCurveToQuadraticSmooth):
+        (WebCore::SVGPathParser::svgArcTo):
+        (WebCore::PathBuilder::build):
+        (WebCore::PathBuilder::svgMoveTo):
+        (WebCore::PathBuilder::svgLineTo):
+        (WebCore::PathBuilder::svgCurveToCubic):
+        (WebCore::PathBuilder::svgClosePath):
+        (WebCore::pathFromSVGData):
+        (WebCore::SVGPathSegListBuilder::build):
+        (WebCore::SVGPathSegListBuilder::svgMoveTo):
+        (WebCore::SVGPathSegListBuilder::svgLineTo):
+        (WebCore::SVGPathSegListBuilder::svgLineToHorizontal):
+        (WebCore::SVGPathSegListBuilder::svgLineToVertical):
+        (WebCore::SVGPathSegListBuilder::svgCurveToCubic):
+        (WebCore::SVGPathSegListBuilder::svgCurveToCubicSmooth):
+        (WebCore::SVGPathSegListBuilder::svgCurveToQuadratic):
+        (WebCore::SVGPathSegListBuilder::svgCurveToQuadraticSmooth):
+        (WebCore::SVGPathSegListBuilder::svgArcTo):
+        (WebCore::SVGPathSegListBuilder::svgClosePath):
+        (WebCore::pathSegListFromSVGData):
+        * ksvg2/svg/SVGParserUtilities.h:
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPolyElement.h:
+
 2007-06-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,7 +28,6 @@
 #include "SVGAnimatedPoints.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
-#include "SVGParserUtilities.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
@@ -38,8 +37,7 @@ namespace WebCore
                             public SVGTests,
                             public SVGLangSpace,
                             public SVGExternalResourcesRequired,
-                            public SVGAnimatedPoints,
-                            public SVGPolyParser
+                            public SVGAnimatedPoints
     {
     public:
         SVGPolyElement(const QualifiedName&, Document*);
@@ -65,8 +63,6 @@ namespace WebCore
         mutable RefPtr<SVGPointList> m_points;
 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
-
-        virtual void svgPolyTo(double x1, double y1, int nr) const;
     };
 
 } // namespace WebCore

@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
    Copyright (C) 2002, 2003 The Karbon Developers
-                 2006       Rob Buis <buis@kde.org>
+                 2006, 2007 Rob Buis <buis@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -26,6 +26,10 @@
 
 namespace WebCore
 {
+    class Path;
+    class SVGPointList;
+    class SVGPathSegList;
+
     bool parseNumber(const UChar*& ptr, const UChar* end, double& number, bool skip = true);
     bool parseNumberOptionalNumber(const String& s, double& h, double& v);
 
@@ -77,47 +81,9 @@ namespace WebCore
         return true;
     }
 
-    class SVGPolyParser
-    {
-    public:
-        virtual ~SVGPolyParser() { }
-        bool parsePoints(const String& points) const;
-
-    protected:
-        virtual void svgPolyTo(double x1, double y1, int nr) const = 0;
-    };
-
-    /**
-     * Parser for svg path data, contained in the d attribute.
-     *
-     * The parser delivers encountered commands and parameters by calling
-     * methods that correspond to those commands. Clients have to derive
-     * from this class and implement the abstract command methods.
-     *
-     * There are two operating modes. By default the parser just delivers unaltered
-     * svg path data commands and parameters. In the second mode, it will convert all
-     * relative coordinates to absolute ones, and convert all curves to cubic beziers.
-     */
-    class SVGPathParser
-    {
-    public:
-        virtual ~SVGPathParser() { }
-        bool parseSVG(const String& d, bool process = false);
-
-    protected:
-        virtual void svgMoveTo(float x1, float y1, bool closed, bool abs = true) = 0;
-        virtual void svgLineTo(float x1, float y1, bool abs = true) = 0;
-        virtual void svgLineToHorizontal(float x, bool abs = true);
-        virtual void svgLineToVertical(float y, bool abs = true);
-        virtual void svgCurveToCubic(float x1, float y1, float x2, float y2, float x, float y, bool abs = true) = 0;
-        virtual void svgCurveToCubicSmooth(float x, float y, float x2, float y2, bool abs = true);
-        virtual void svgCurveToQuadratic(float x, float y, float x1, float y1, bool abs = true);
-        virtual void svgCurveToQuadraticSmooth(float x, float y, bool abs = true);
-        virtual void svgArcTo(float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag, bool abs = true);
-        virtual void svgClosePath() = 0;
-    private:
-        void calculateArc(bool relative, double& curx, double& cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag);
-    };
+    bool pointsListFromSVGData(SVGPointList* pointsList, const String& points);
+    bool pathFromSVGData(Path& path, const String& d);
+    bool pathSegListFromSVGData(SVGPathSegList* pathSegList, const String& d, bool process = false);
 
 } // namespace WebCore
 

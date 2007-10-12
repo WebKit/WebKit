@@ -23,8 +23,25 @@
 #if ENABLE(SVG)
 #include "SVGParserUtilities.h"
 
+#include "ExceptionCode.h"
 #include "FloatConversion.h"
+#include "FloatPoint.h"
+#include "Path.h"
 #include "PlatformString.h"
+#include "SVGPathSegList.h"
+#include "SVGPathSegArc.h"
+#include "SVGPathSegClosePath.h"
+#include "SVGPathSegCurvetoCubic.h"
+#include "SVGPathSegCurvetoCubicSmooth.h"
+#include "SVGPathSegCurvetoQuadratic.h"
+#include "SVGPathSegCurvetoQuadraticSmooth.h"
+#include "SVGPathSegLineto.h"
+#include "SVGPathSegLinetoHorizontal.h"
+#include "SVGPathSegLinetoVertical.h"
+#include "SVGPathSegList.h"
+#include "SVGPathSegMoveto.h"
+#include "SVGPointList.h"
+#include "SVGPathElement.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 
@@ -109,17 +126,16 @@ bool parseNumberOptionalNumber(const String& s, double& x, double& y)
     return cur == end;
 }
 
-bool SVGPolyParser::parsePoints(const String& s) const
+bool pointsListFromSVGData(SVGPointList* pointsList, const String& points)
 {
-    if (s.isEmpty())
+    if (points.isEmpty())
         return true;
-    const UChar* cur = s.characters();
-    const UChar* end = cur + s.length();
+    const UChar* cur = points.characters();
+    const UChar* end = cur + points.length();
 
     skipOptionalSpaces(cur, end);
 
     bool delimParsed = false;
-    int segmentNum = 0;
     while (cur < end) {
         delimParsed = false;
         double xPos = 0;
@@ -138,10 +154,43 @@ bool SVGPolyParser::parsePoints(const String& s) const
         }
         skipOptionalSpaces(cur, end);
 
-        svgPolyTo(xPos, yPos, segmentNum++);
+        ExceptionCode ec = 0;
+        pointsList->appendItem(FloatPoint(xPos, yPos), ec);
     }
     return cur == end && !delimParsed;
 }
+
+    /**
+     * Parser for svg path data, contained in the d attribute.
+     *
+     * The parser delivers encountered commands and parameters by calling
+     * methods that correspond to those commands. Clients have to derive
+     * from this class and implement the abstract command methods.
+     *
+     * There are two operating modes. By default the parser just delivers unaltered
+     * svg path data commands and parameters. In the second mode, it will convert all
+     * relative coordinates to absolute ones, and convert all curves to cubic beziers.
+     */
+    class SVGPathParser
+    {
+    public:
+        virtual ~SVGPathParser() { }
+        bool parseSVG(const String& d, bool process = false);
+
+    protected:
+        virtual void svgMoveTo(double x1, double y1, bool closed, bool abs = true) = 0;
+        virtual void svgLineTo(double x1, double y1, bool abs = true) = 0;
+        virtual void svgLineToHorizontal(double x, bool abs = true) {}
+        virtual void svgLineToVertical(double y, bool abs = true) {}
+        virtual void svgCurveToCubic(double x1, double y1, double x2, double y2, double x, double y, bool abs = true) = 0;
+        virtual void svgCurveToCubicSmooth(double x, double y, double x2, double y2, bool abs = true) {}
+        virtual void svgCurveToQuadratic(double x, double y, double x1, double y1, bool abs = true) {}
+        virtual void svgCurveToQuadraticSmooth(double x, double y, bool abs = true) {}
+        virtual void svgArcTo(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, bool abs = true) {}
+        virtual void svgClosePath() = 0;
+    private:
+        void calculateArc(bool relative, double& curx, double& cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag);
+    };
 
 bool SVGPathParser::parseSVG(const String& s, bool process)
 {
@@ -591,29 +640,160 @@ void SVGPathParser::calculateArc(bool relative, double& curx, double& cury, doub
         cury += y;    
 }
 
-void SVGPathParser::svgLineToHorizontal(float, bool)
+class PathBuilder : public SVGPathParser
 {
+public:
+    bool build(Path* path, const String& d)
+    {
+        m_path = path;
+        return parseSVG(d, true);
+    }
+
+private:
+    virtual void svgMoveTo(double x1, double y1, bool closed, bool abs = true)
+    {
+        current.setX(abs ? x1 : current.x() + x1);
+        current.setY(abs ? y1 : current.y() + y1);
+        if (closed)
+            m_path->closeSubpath();
+        m_path->moveTo(current);
+    }
+    virtual void svgLineTo(double x1, double y1, bool abs = true)
+    {
+        current.setX(abs ? x1 : current.x() + x1);
+        current.setY(abs ? y1 : current.y() + y1);
+        m_path->addLineTo(current);
+    }
+    virtual void svgCurveToCubic(double x1, double y1, double x2, double y2, double x, double y, bool abs = true)
+    {
+        if (!abs) {
+            x1 += current.x();
+            y1 += current.y();
+            x2 += current.x();
+            y2 += current.y();
+        }
+        current.setX(abs ? x : current.x() + x);
+        current.setY(abs ? y : current.y() + y);
+        m_path->addBezierCurveTo(FloatPoint(x1, y1), FloatPoint(x2, y2), current);
+    }
+    virtual void svgClosePath()
+    {
+        m_path->closeSubpath();
+    }
+    Path* m_path;
+    FloatPoint current;
+};
+
+bool pathFromSVGData(Path& path, const String& d)
+{
+    PathBuilder builder;
+    return builder.build(&path, d);
 }
 
-void SVGPathParser::svgLineToVertical(float, bool)
+class SVGPathSegListBuilder : public SVGPathParser
 {
-}
+public:
+    bool build(SVGPathSegList* segList, const String& d, bool process)
+    {
+        m_pathSegList = segList;
+        return parseSVG(d, process);
+    }
 
-void SVGPathParser::svgCurveToCubicSmooth(float, float, float, float, bool)
-{
-}
+private:
+    virtual void svgMoveTo(double x1, double y1, bool, bool abs = true)
+    {
+        ExceptionCode ec = 0;
 
-void SVGPathParser::svgCurveToQuadratic(float, float, float, float, bool)
-{
-}
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegMovetoAbs(x1, y1), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegMovetoRel(x1, y1), ec);
+    }
+    virtual void svgLineTo(double x1, double y1, bool abs = true)
+    {
+        ExceptionCode ec = 0;
 
-void SVGPathParser::svgCurveToQuadraticSmooth(float, float, bool)
-{
-}
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoAbs(x1, y1), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoRel(x1, y1), ec);
+    }
+    virtual void svgLineToHorizontal(double x, bool abs)
+    {
+        ExceptionCode ec = 0;
 
-void SVGPathParser::svgArcTo(float, float, float, float, float, bool, bool, bool)
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoHorizontalAbs(x), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoHorizontalRel(x), ec);
+    }
+    virtual void svgLineToVertical(double y, bool abs)
+    {
+        ExceptionCode ec = 0;
+
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoVerticalAbs(y), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoVerticalRel(y), ec);
+    }
+    virtual void svgCurveToCubic(double x1, double y1, double x2, double y2, double x, double y, bool abs = true)
+    {
+        ExceptionCode ec = 0;
+
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoCubicAbs(x, y, x1, y1, x2, y2), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoCubicRel(x, y, x1, y1, x2, y2), ec);
+    }
+    virtual void svgCurveToCubicSmooth(double x, double y, double x2, double y2, bool abs)
+    {
+        ExceptionCode ec = 0;
+
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs(x2, y2, x, y), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel(x2, y2, x, y), ec);
+    }
+    virtual void svgCurveToQuadratic(double x, double y, double x1, double y1, bool abs)
+    {
+        ExceptionCode ec = 0;
+
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoQuadraticAbs(x1, y1, x, y), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoQuadraticRel(x1, y1, x, y), ec);
+    }
+    virtual void svgCurveToQuadraticSmooth(double x, double y, bool abs)
+    {
+        ExceptionCode ec = 0;
+
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs(x, y), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel(x, y), ec);
+    }
+    virtual void svgArcTo(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, bool abs)
+    {
+        ExceptionCode ec = 0;
+
+        if (abs)
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegArcAbs(x, y, r1, r2, angle, largeArcFlag, sweepFlag), ec);
+        else
+            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegArcRel(x, y, r1, r2, angle, largeArcFlag, sweepFlag), ec);
+    }
+    virtual void svgClosePath()
+    {
+        ExceptionCode ec = 0;
+        m_pathSegList->appendItem(SVGPathElement::createSVGPathSegClosePath(), ec);
+    }
+    SVGPathSegList* m_pathSegList;
+};
+
+bool pathSegListFromSVGData(SVGPathSegList* path , const String& d, bool process)
 {
-} 
+    SVGPathSegListBuilder builder;
+    return builder.build(path, d, process);
+}
 
 }
 

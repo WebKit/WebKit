@@ -25,6 +25,7 @@
 #include "SVGAnimateMotionElement.h"
 
 #include "SVGMPathElement.h"
+#include "SVGParserUtilities.h"
 #include "SVGPathElement.h"
 #include "SVGTransformList.h"
 
@@ -87,12 +88,8 @@ void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
         m_keyPoints.clear();
         parseKeyNumbers(m_keyPoints, attr->value());
     } else if (attr->name() == SVGNames::dAttr) {
-        // FIXME: This dummy object is necessary until path parsing is untangled from SVGPathElement, see bug 12122
-        RefPtr<SVGPathElement> dummyPath = new SVGPathElement(SVGNames::pathTag, document());
-        if (dummyPath->parseSVG(attr->value(), true))
-            m_path = dummyPath->toPathData();
-        else
-            m_path = Path();
+        m_path = Path();
+        pathFromSVGData(m_path, attr->value());
     } else
         SVGAnimationElement::parseMappedAttribute(attr);
 }
