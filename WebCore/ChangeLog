@@ -1,5 +1,16 @@
 2007-09-25  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        I managed to break the SVG build when fixing the --no-svg build for
+        http://bugs.webkit.org/show_bug.cgi?id=15281
+        This adds the appropriate DOMSVG headers to the copy headers phase
+        (in fixing the no-svg build I mistakenly re-marked them project-only)
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2007-09-25  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Rob Buis.
 
         Already tested by SVG/W3C-SVG-1.1/linking-a-07-t.svg
