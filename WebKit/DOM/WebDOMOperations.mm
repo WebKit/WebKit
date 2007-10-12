@@ -203,6 +203,33 @@
 
 @end
 
+@implementation DOMSVGScriptElement (WebDOMSVGScriptElementOperationsPrivate)
+
+- (NSArray *)_subresourceURLs
+{
+    return [self _URLsFromSelectors:@selector(href), nil];
+}
+
+@end
+
+@implementation DOMSVGCursorElement (WebDOMSVGCursorElementOperationsPrivate)
+
+- (NSArray *)_subresourceURLs
+{
+    return [self _URLsFromSelectors:@selector(href), nil];
+}
+
+@end
+
+@implementation DOMSVGFEImageElement (WebDOMSVGFEImageElementOperationsPrivate)
+
+- (NSArray *)_subresourceURLs
+{
+    return [self _URLsFromSelectors:@selector(href), nil];
+}
+
+@end
+
 #endif
 
 @implementation DOMProcessingInstruction (WebDOMProcessingInstructionOperationsPrivate)

@@ -2,6 +2,19 @@
 
         Reviewed by Oliver Hunt.
         
+        SVG Subresources will not be saved when creating WebArchives
+        http://bugs.webkit.org/show_bug.cgi?id=15280
+
+        * svg/webarchive/resources/green-checker.png: Added.
+        * svg/webarchive/resources/svg-script-subresources.js: Added.
+        * svg/webarchive/svg-cursor-subresources.svg: Added.
+        * svg/webarchive/svg-feimage-subresources.svg: Added.
+        * svg/webarchive/svg-script-subresouces.svg: Added.
+
+2007-10-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+        
         WebArchives do not embed stylesheets referenced by xml-stylesheeet
         http://bugs.webkit.org/show_bug.cgi?id=15320
 

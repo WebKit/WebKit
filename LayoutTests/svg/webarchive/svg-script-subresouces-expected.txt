@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<data>
+		PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5z
+		OnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICA8c2Ny
+		aXB0PgogICAgaWYgKHdpbmRvdy5sYXlvdXRUZXN0Q29udHJvbGxlcikKICAg
+		ICAgICBsYXlvdXRUZXN0Q29udHJvbGxlci5kdW1wRE9NQXNXZWJBcmNoaXZl
+		KCk7CiAgPC9zY3JpcHQ+CiAgPHJlY3QgaWQ9InJlY3QiIHdpZHRoPSIxMDAi
+		IGhlaWdodD0iMTAwIiBmaWxsPSJyZWQiIHN0eWxlPSI6ICMwMDgwMDA7ICIv
+		PgogIDxzY3JpcHQgeGxpbms6aHJlZj0icmVzb3VyY2VzL3N2Zy1zY3JpcHQt
+		c3VicmVzb3VyY2VzLmpzIiB0eXBlPSJ0ZXh0L2VjbWFzY3JpcHQiLz4KPC9z
+		dmc+
+		</data>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>image/svg+xml</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/svg/webarchive/svg-script-subresouces.svg</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<string>document.getElementById("rect").style.fill = "green";</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/javascript</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/javascript</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/svg/webarchive/resources/svg-script-subresources.js</string>
+				<key>expectedContentLength</key>
+				<integer>53</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/svg/webarchive/resources/svg-script-subresources.js</string>
+		</dict>
+	</array>
+</dict>
+</plist>
