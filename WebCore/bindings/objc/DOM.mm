@@ -222,8 +222,8 @@ static void createElementClassMap()
     addElementClass(SVGNames::feTileTag, [DOMSVGFETileElement class]);
     addElementClass(SVGNames::feTurbulenceTag, [DOMSVGFETurbulenceElement class]);
     addElementClass(SVGNames::filterTag, [DOMSVGFilterElement class]);
-    addElementClass(SVGNames::foreignObjectTag, [DOMSVGForeignObjectElement class]);
 #endif
+    addElementClass(SVGNames::foreignObjectTag, [DOMSVGForeignObjectElement class]);
     addElementClass(SVGNames::gTag, [DOMSVGGElement class]);
     addElementClass(SVGNames::imageTag, [DOMSVGImageElement class]);
     addElementClass(SVGNames::lineTag, [DOMSVGLineElement class]);

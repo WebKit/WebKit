@@ -1,3 +1,28 @@
+2007-06-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric & Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14198
+
+        Reeanble <foreignObject>. Explicitely disallow <use> on <foreignObject>
+        as it may lead to bad problems. 
+
+        While I'm at it disallow <use> on any non-svg element.
+
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * ksvg2/svg/SVGForeignObjectElement.cpp:
+        * ksvg2/svg/SVGForeignObjectElement.h:
+        * ksvg2/svg/SVGForeignObjectElement.idl:
+        * ksvg2/svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::nearestViewportElement):
+        (WebCore::SVGLocatable::farthestViewportElement):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildPendingResource):
+        * ksvg2/svg/svgtags.in:
+        * rendering/RenderForeignObject.cpp:
+
 2007-06-19  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

@@ -21,17 +21,15 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
-
+#if ENABLE(SVG)
 #include "SVGForeignObjectElement.h"
 
+#include "CSSPropertyNames.h"
+#include "RenderForeignObject.h"
 #include "SVGNames.h"
 #include "SVGLength.h"
-#include "RenderForeignObject.h"
 
 #include <wtf/Assertions.h>
-
-#include "CSSPropertyNames.h"
 
 namespace WebCore {
 

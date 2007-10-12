@@ -230,6 +230,7 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(defs, Defs) \
     macro(desc, Desc) \
     macro(ellipse, Ellipse) \
+    macro(foreignObject, ForeignObject) \
     macro(g, G) \
     macro(image, Image) \
     macro(linearGradient, LinearGradient) \

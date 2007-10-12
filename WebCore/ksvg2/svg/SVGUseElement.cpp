@@ -223,6 +223,19 @@ void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstance* tar
 }
 #endif
 
+static bool subtreeContainsDisallowedElement(Node* start)
+{
+    if (start->hasTagName(SVGNames::foreignObjectTag))
+        return true;
+
+    for (Node* cur = start->firstChild(); cur; cur = cur->nextSibling()) {
+        if (subtreeContainsDisallowedElement(cur))
+            return true;
+    }
+
+    return false;
+}
+
 void SVGUseElement::buildPendingResource()
 {
     // Do not build the shadow/instance tree for <use> elements living in a shadow tree.
@@ -239,8 +252,10 @@ void SVGUseElement::buildPendingResource()
     Element* targetElement = ownerDocument()->getElementById(id); 
     SVGElement* target = svg_dynamic_cast(targetElement);
 
-    // Do not allow self-referencing.
-    if (!target || target == this)
+    // Do not allow self-referencing. Also explicitely disallow
+    // <use> on <foreignObject>, as that could lead to nasty bugs.
+    // 'target' may be null, if it's a non SVG namespaced element.
+    if (!target || target == this || subtreeContainsDisallowedElement(target))
         return;
 
     // Why a seperated instance/shadow tree? SVG demands it:
@@ -256,12 +271,12 @@ void SVGUseElement::buildPendingResource()
     m_targetElementInstance = new SVGElementInstance(this, target);
 
     // Eventually enter recursion to build SVGElementInstance objects for the sub-tree children
-    bool foundCycle = false;
-    buildInstanceTree(target, m_targetElementInstance.get(), foundCycle);
+    bool foundProblem = false;
+    buildInstanceTree(target, m_targetElementInstance.get(), foundProblem);
 
     // SVG specification does not say a word about <use> & cycles. My view on this is: just ignore it!
     // Non-appearing <use> content is easier to debug, then half-appearing content.
-    if (foundCycle) {
+    if (foundProblem) {
         m_targetElementInstance = 0;
         m_shadowTreeRootElement = 0;
         return;
@@ -336,10 +351,15 @@ void SVGUseElement::attach()
     attachShadowTree();
 }
 
-void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundCycle)
+void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundProblem)
 {
     ASSERT(target);
     ASSERT(targetInstance);
+
+    if (subtreeContainsDisallowedElement(target)) {
+        foundProblem = true;
+        return;
+    }
 
     // A general description from the SVG spec, describing what buildInstanceTree() actually does.
     //
@@ -351,7 +371,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     for (Node* node = target->firstChild(); node; node = node->nextSibling()) {
         SVGElement* element = svg_dynamic_cast(node);
 
-        // Skip any non-svg nodes.
+        // Skip any non-svg nodes or any disallowed element.
         if (!element)
             continue;
 
@@ -363,21 +383,21 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
 
         // Enter recursion, appending new instance tree nodes to the "instance" object.
         if (element->hasChildNodes())
-            buildInstanceTree(element, instancePtr, foundCycle);
+            buildInstanceTree(element, instancePtr, foundProblem);
 
         // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
         // object, the instance tree will contain recursive expansion of the indirect references to form a complete tree.
         if (element->hasTagName(SVGNames::useTag))
-            handleDeepUseReferencing(element, instancePtr, foundCycle);
+            handleDeepUseReferencing(element, instancePtr, foundProblem);
     }
 
     // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
     // object, the instance tree will contain recursive expansion of the indirect references to form a complete tree.
     if (target->hasTagName(SVGNames::useTag))
-        handleDeepUseReferencing(target, targetInstance, foundCycle);
+        handleDeepUseReferencing(target, targetInstance, foundProblem);
 }
 
-void SVGUseElement::handleDeepUseReferencing(SVGElement* use, SVGElementInstance* targetInstance, bool& foundCycle)
+void SVGUseElement::handleDeepUseReferencing(SVGElement* use, SVGElementInstance* targetInstance, bool& foundProblem)
 {
     String id = SVGURIReference::getTarget(use->href());
     Element* targetElement = ownerDocument()->getElementById(id); 
@@ -387,10 +407,10 @@ void SVGUseElement::handleDeepUseReferencing(SVGElement* use, SVGElementInstance
         return;
 
     // Cycle detection first!
-    foundCycle = (target == this);
+    foundProblem = (target == this);
 
     // Shortcut for self-references
-    if (foundCycle)
+    if (foundProblem)
         return;
 
     SVGElementInstance* instance = targetInstance->parentNode();
@@ -398,7 +418,7 @@ void SVGUseElement::handleDeepUseReferencing(SVGElement* use, SVGElementInstance
         SVGElement* element = instance->correspondingElement();
 
         if (element->getIDAttribute() == id) {
-            foundCycle = true;
+            foundProblem = true;
             return;
         }
     
@@ -410,7 +430,7 @@ void SVGUseElement::handleDeepUseReferencing(SVGElement* use, SVGElementInstance
     targetInstance->appendChild(newInstance);
 
     // Eventually enter recursion to build SVGElementInstance objects for the sub-tree children
-    buildInstanceTree(target, newInstance, foundCycle);
+    buildInstanceTree(target, newInstance, foundProblem);
 }
 
 PassRefPtr<SVGSVGElement> SVGUseElement::buildShadowTreeForSymbolTag(SVGElement* target, SVGElementInstance* targetInstance)

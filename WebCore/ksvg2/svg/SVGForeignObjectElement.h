@@ -22,7 +22,7 @@
 #ifndef SVGForeignObjectElement_h
 #define SVGForeignObjectElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG)
 
 #include "SVGTests.h"
 #include "SVGLangSpace.h"

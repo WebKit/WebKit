@@ -61,9 +61,7 @@ font_face_name
 font_face_src
 font_face_uri
 #endif
-#ifdef ENABLE_SVG_EXPERIMENTAL_FEATURES
 foreignObject
-#endif
 g
 #if 0
 glyph
