@@ -134,7 +134,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.context->concatCTM(localTransform());
     paintInfo.context->concatCTM(translationForAttributes());
     
-    if (paintInfo.phase != PaintPhaseForeground) {
+    if (paintInfo.phase == PaintPhaseForeground) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
         SVGResourceFilter* filter = 0;
 #else
