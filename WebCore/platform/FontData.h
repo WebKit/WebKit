@@ -61,6 +61,7 @@ public:
     int lineSpacing() const { return m_lineSpacing; }
     int lineGap() const { return m_lineGap; }
     float xHeight() const { return m_xHeight; }
+    unsigned unitsPerEm() const { return m_unitsPerEm; }
 
     float widthForGlyph(Glyph) const;
     float platformWidthForGlyph(Glyph) const;
@@ -103,7 +104,8 @@ public:
     int m_lineSpacing;
     int m_lineGap;
     float m_xHeight;
-    
+    unsigned m_unitsPerEm;
+
     FontPlatformData m_font;
     mutable GlyphWidthMap m_glyphToWidthMap;
 

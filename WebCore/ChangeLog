@@ -1,3 +1,27 @@
+2007-08-27  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mitz.
+
+        Expose unitsPerEm() in Font classes.
+        This is needed to implement SVG's advanced text decorations. We won't draw lines for text-decorations
+        but fillable & strokable rectangles with a certain height, computed through unitsPerEm & font size.
+
+        * platform/Font.cpp:
+        (WebCore::Font::unitsPerEm):
+        * platform/Font.h:
+        * platform/FontData.h:
+        (WebCore::FontData::unitsPerEm):
+        * platform/gdk/FontDataGdk.cpp:
+        (WebCore::FontData::platformInit):
+        * platform/mac/FontDataMac.mm:
+        (WebCore::FontData::platformInit):
+        * platform/qt/FontDataQt.cpp:
+        (WebCore::FontData::platformInit):
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::platformInit):
+        * platform/wx/FontDataWx.cpp:
+        (WebCore::FontData::platformInit):
+
 2007-08-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

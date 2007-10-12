@@ -50,6 +50,7 @@ void FontData::platformInit()
     m_descent = props.GetDescent();
     m_lineSpacing = props.GetLineSpacing();
     m_xHeight = props.GetXHeight();
+    m_unitsPerEm = 1; // FIXME!
     m_lineGap = props.GetLineGap();
 }
 

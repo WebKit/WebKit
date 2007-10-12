@@ -160,12 +160,11 @@ void FontData::platformInit()
     int iAscent;
     int iDescent;
     int iLineGap;
-    unsigned unitsPerEm;
-    wkGetFontMetrics(wkGetCGFontFromNSFont(m_font.font()), &iAscent, &iDescent, &iLineGap, &unitsPerEm); 
+    wkGetFontMetrics(wkGetCGFontFromNSFont(m_font.font()), &iAscent, &iDescent, &iLineGap, &m_unitsPerEm); 
     float pointSize = [m_font.font() pointSize];
-    float fAscent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
-    float fDescent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
-    float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
+    float fAscent = scaleEmToUnits(iAscent, m_unitsPerEm) * pointSize;
+    float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;
+    float fLineGap = scaleEmToUnits(iLineGap, m_unitsPerEm) * pointSize;
 
     // We need to adjust Times, Helvetica, and Courier to closely match the
     // vertical metrics of their Microsoft counterparts that are the de facto
