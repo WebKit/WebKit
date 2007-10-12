@@ -32,15 +32,22 @@
     macro(caller) \
     macro(constructor) \
     macro(fromCharCode) \
+    macro(global) \
+    macro(ignoreCase) \
+    macro(index) \
+    macro(input) \
+    macro(lastIndex) \
     macro(length) \
     macro(message) \
+    macro(multiline) \
     macro(name) \
     macro(prototype) \
-    macro(toLocaleString) \
-    macro(toString) \
-    macro(toFixed) \
+    macro(source) \
     macro(toExponential) \
+    macro(toFixed) \
+    macro(toLocaleString) \
     macro(toPrecision) \
+    macro(toString) \
     macro(valueOf)
 
 namespace KJS {

@@ -85,17 +85,17 @@ JSValue *RegExpProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
 
     UString input;
     if (args.isEmpty())
-      input = regExpObj->get(exec, "input")->toString(exec);
+      input = regExpObj->get(exec, exec->propertyNames().input)->toString(exec);
     else
       input = args[0]->toString(exec);
 
-    double lastIndex = thisObj->get(exec, "lastIndex")->toInteger(exec);
+    double lastIndex = thisObj->get(exec, exec->propertyNames().lastIndex)->toInteger(exec);
 
-    bool globalFlag = thisObj->get(exec, "global")->toBoolean(exec);
+    bool globalFlag = thisObj->get(exec, exec->propertyNames().global)->toBoolean(exec);
     if (!globalFlag)
       lastIndex = 0;
     if (lastIndex < 0 || lastIndex > input.size()) {
-      thisObj->put(exec, "lastIndex", jsNumber(0), DontDelete | DontEnum);
+      thisObj->put(exec, exec->propertyNames().lastIndex, jsNumber(0), DontDelete | DontEnum);
       return jsNull();
     }
 
@@ -110,24 +110,24 @@ JSValue *RegExpProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     // Exec
     if (didMatch) {
       if (globalFlag)
-        thisObj->put(exec, "lastIndex", jsNumber(foundIndex + match.size()), DontDelete | DontEnum);
+        thisObj->put(exec, exec->propertyNames().lastIndex, jsNumber(foundIndex + match.size()), DontDelete | DontEnum);
       return regExpObj->arrayOfMatches(exec, match);
     } else {
       if (globalFlag)
-        thisObj->put(exec, "lastIndex", jsNumber(0), DontDelete | DontEnum);
+        thisObj->put(exec, exec->propertyNames().lastIndex, jsNumber(0), DontDelete | DontEnum);
       return jsNull();
     }
   }
   break;
   case ToString:
-    UString result = "/" + thisObj->get(exec, "source")->toString(exec) + "/";
-    if (thisObj->get(exec, "global")->toBoolean(exec)) {
+    UString result = "/" + thisObj->get(exec, exec->propertyNames().source)->toString(exec) + "/";
+    if (thisObj->get(exec, exec->propertyNames().global)->toBoolean(exec)) {
       result += "g";
     }
-    if (thisObj->get(exec, "ignoreCase")->toBoolean(exec)) {
+    if (thisObj->get(exec, exec->propertyNames().ignoreCase)->toBoolean(exec)) {
       result += "i";
     }
-    if (thisObj->get(exec, "multiline")->toBoolean(exec)) {
+    if (thisObj->get(exec, exec->propertyNames().multiline)->toBoolean(exec)) {
       result += "m";
     }
     return jsString(result);
@@ -244,8 +244,8 @@ JSObject *RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &result
       }
     }
   JSObject *arr = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
-  arr->put(exec, "index", jsNumber(d->lastOvector[0]));
-  arr->put(exec, "input", jsString(d->lastInput));
+  arr->put(exec, exec->propertyNames().index, jsNumber(d->lastOvector[0]));
+  arr->put(exec, exec->propertyNames().input, jsString(d->lastInput));
   return arr;
 }
 
@@ -391,12 +391,12 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
   bool ignoreCase = (flags.find("i") >= 0);
   bool multiline = (flags.find("m") >= 0);
 
-  dat->putDirect("global", jsBoolean(global), DontDelete | ReadOnly | DontEnum);
-  dat->putDirect("ignoreCase", jsBoolean(ignoreCase), DontDelete | ReadOnly | DontEnum);
-  dat->putDirect("multiline", jsBoolean(multiline), DontDelete | ReadOnly | DontEnum);
+  dat->putDirect(exec->propertyNames().global, jsBoolean(global), DontDelete | ReadOnly | DontEnum);
+  dat->putDirect(exec->propertyNames().ignoreCase, jsBoolean(ignoreCase), DontDelete | ReadOnly | DontEnum);
+  dat->putDirect(exec->propertyNames().multiline, jsBoolean(multiline), DontDelete | ReadOnly | DontEnum);
 
-  dat->putDirect("source", jsString(p), DontDelete | ReadOnly | DontEnum);
-  dat->putDirect("lastIndex", jsNumber(0), DontDelete | DontEnum);
+  dat->putDirect(exec->propertyNames().source, jsString(p), DontDelete | ReadOnly | DontEnum);
+  dat->putDirect(exec->propertyNames().lastIndex, jsNumber(0), DontDelete | DontEnum);
 
   int reflags = RegExp::None;
   if (global)
