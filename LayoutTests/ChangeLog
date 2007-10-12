@@ -1,3 +1,12 @@
+2007-10-01  Oliver Hunt  <oliver@apple.com>
+
+        RS = Eric.
+
+        Correcting expected layout test results
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/images/svg-as-image-expected.txt:
+
 2007-10-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
