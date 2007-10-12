@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (30,10) size 660x500
         RenderSVGText {text} at (3,8) size 52x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 52x9
-            chunk 1 text run 1 at (3.00,8.00) startOffset 0 endOffset 16 width 50.00: " letter-spacing:"
+            chunk 1 text run 1 at (3.00,8.00) startOffset 0 endOffset 16 width 52.00: "letter-spacing:0"
         RenderSVGText {text} at (3,16) size 38x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 38x9
             chunk 1 text run 1 at (3.00,16.00) startOffset 0 endOffset 17 width 38.00: "letter-spacing:-1"

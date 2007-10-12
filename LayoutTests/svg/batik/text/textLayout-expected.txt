@@ -7,9 +7,9 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,-14) size 44x18
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 44.00: "sample"
     RenderSVGContainer {g} at (40,36) size 379x421
-      RenderSVGText {text} at (164,50) size 148x17 contains 1 chunk(s)
+      RenderSVGText {text} at (151,50) size 148x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 148x17
-          chunk 1 (middle anchor) text run 1 at (164.50,50.00) startOffset 0 endOffset 22 width 121.00: "            Text Layou"
+          chunk 1 (middle anchor) text run 1 at (151.00,50.00) startOffset 0 endOffset 22 width 148.00: "Text Layout Properties"
       RenderSVGText {text} at (170,75) size 110x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-10) size 110x13
           chunk 1 (middle anchor) text run 1 at (170.00,75.00) startOffset 0 endOffset 26 width 110.00: "Explicit Glyph Positioning"

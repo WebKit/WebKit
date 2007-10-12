@@ -224,7 +224,7 @@ public:
 
     void setHasBadParent();
 
-    int toAdd() { return m_toAdd; }
+    int toAdd() const { return m_toAdd; }
     
 public:
     RenderObject* m_object;

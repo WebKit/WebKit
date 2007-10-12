@@ -64,6 +64,20 @@ SVGRootInlineBox* SVGInlineTextBox::svgRootInlineBox() const
     return static_cast<SVGRootInlineBox*>(parentBox);
 }
 
+float SVGInlineTextBox::calculateGlyphWidth(RenderStyle* style, int offset) const
+{
+    return style->font().floatWidth(TextRun(textObject()->text()->characters() + offset, 1), svgTextStyleForInlineTextBox(style, this, 0));
+}
+
+float SVGInlineTextBox::calculateGlyphHeight(RenderStyle* style, int offset) const
+{
+    ASSERT(style);
+
+    // This is just a guess, and the only purpose of this function is to centralize this hack.
+    // In real-life top-top-bottom scripts this won't be enough, I fear.
+    return style->font().ascent() + style->font().descent();
+}
+
 SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset) const
 {
     // Find corresponding text chunk for our inline box & reference x position
@@ -73,15 +87,15 @@ SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset)
     // Iterate through the characters, respecting their individual placement
     // Find the character within the chunk with the smallest diagonal distance
     // to the current position. Check whether the passed x value hits that character.
-    SVGTextChunk chunk;
+    Vector<SVGChar>::iterator character = 0;
     float distance = FLT_MAX;
 
-    const Font& font = textObject()->style()->font();
+    RenderStyle* style = textObject()->style();
 
     Vector<SVGTextChunk>::iterator it = chunks.begin();
-    Vector<SVGTextChunk>::iterator end = chunks.end();
+    Vector<SVGTextChunk>::iterator itEnd = chunks.end();
 
-    for (; it != end; ++it) {
+    for (; it != itEnd; ++it) {
         SVGTextChunk& curChunk = *it;
 
         Vector<SVGInlineBoxCharacterRange>::iterator boxIt = curChunk.boxes.begin();
@@ -89,7 +103,7 @@ SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset)
 
         unsigned int chunkOffset = 0;        
         unsigned int firstRangeInFirstChunkStartOffset = 0;
-
+    
         for (; boxIt != boxEnd; ++boxIt) {
             SVGInlineBoxCharacterRange& range = *boxIt;
 
@@ -101,6 +115,7 @@ SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset)
                 continue;
             }
 
+            Vector<SVGChar>::iterator closestCharacter = 0;
             unsigned int closestOffset = UINT_MAX;
 
             // Walk chunk finding closest character
@@ -109,10 +124,20 @@ SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset)
             ASSERT(itCharEnd <= curChunk.end);
 
             for (Vector<SVGChar>::iterator itChar = itCharBegin; itChar != itCharEnd; ++itChar) {
-                unsigned int newOffset = (itChar - itCharBegin) + firstRangeInFirstChunkStartOffset;
+                unsigned int newOffset = start() + (itChar - itCharBegin) + firstRangeInFirstChunkStartOffset;
 
-                float glyphWidth = font.floatWidth(TextRun(textObject()->text()->characters() + newOffset, 1), TextStyle(0, 0));
-                float glyphHeight = font.ascent() + font.descent();
+                // Take RTL text into account and pick right glyph width/height.
+                float glyphWidth = 0.0;
+                float glyphHeight = 0.0;
+
+                if (!m_reversed) {
+                    glyphWidth = calculateGlyphWidth(style, newOffset);
+                    glyphHeight = calculateGlyphHeight(style, newOffset);
+                } else {    
+                    glyphWidth = calculateGlyphWidth(style, start() + end() - newOffset);
+                    glyphHeight = calculateGlyphHeight(style, start() + end() - newOffset);
+                    newOffset = start() + end() - newOffset;
+                }
 
                 // Calculate distances relative to the glyph mid-point. I hope this is accurate enough.
                 float xDistance = (*itChar).x + glyphWidth / 2.0 - x;
@@ -122,6 +147,7 @@ SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset)
                 if (newDistance <= distance) {
                     distance = newDistance;
                     closestOffset = newOffset;
+                    closestCharacter = itChar;
                 }
             }
 
@@ -130,22 +156,17 @@ SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset)
                 continue;
 
             // Record current chunk, if it contains the current closest character next to the mouse.
-            chunk = curChunk;
+            character = closestCharacter;
             offset = closestOffset;
         }
     }
 
-    if (!chunk.start) {
+    if (!character) {
         offset = 0;
         return 0;
     }
 
-    // Be very careful here! The chunk.start offset already takes the first range's
-    // startOffset into account! Need to subtract it here.
-    ASSERT(!chunk.boxes.isEmpty());
-    Vector<SVGInlineBoxCharacterRange>::iterator boxStart = chunk.boxes.begin();
-
-    return (chunk.start + offset - (*boxStart).startOffset);
+    return character;
 }
 
 bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
@@ -157,25 +178,36 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
     SVGChar& charAtPos = *charAtPosPtr;
     RenderStyle* style = textObject()->style(m_firstLine);
 
-    float glyphHeight = style->font().ascent() + style->font().descent();
+    float glyphWidth = calculateGlyphWidth(style, offset);
+    float glyphHeight = calculateGlyphHeight(style, offset);
 
-    // FIXME: Several things need to be done:
-    // (#13909) This code does not handle bottom-to-top vertical text (low priority).
-    // (#13909) This code does not handle top-to-bottom vertical text (higher priority).
-    // (#13010) This code does not handle right-to-left selection yet (highest priority).
+    if (m_reversed)
+        offset++;
+
+    // FIXME: todo list
+    // (#13910) This code does not handle bottom-to-top/top-to-bottom vertical text.
 
     // Check whether y position hits the current character 
     if (y < charAtPos.y - glyphHeight || y > charAtPos.y)
         return false;
 
     // Check whether x position hits the current character
-    float glyphWidth = style->font().floatWidth(TextRun(textObject()->text()->characters() + offset, 1), TextStyle(0, 0));
-    if (x < charAtPos.x)
+    if (x < charAtPos.x) {
+        if (offset > 0 && !m_reversed)
+            return true;
+        else if (offset < (int) end() && m_reversed)
+            return true;
+
+        return false;
+    }
+
+    // If we are past the last glyph of this box, don't mark it as 'hit' anymore.
+    if (x >= charAtPos.x + glyphWidth && offset == (int) end())
         return false;
 
     // Snap to character at half of it's advance
     if (x >= charAtPos.x + glyphWidth / 2.0)
-        offset++;
+        offset += m_reversed ? -1 : 1;
 
     return true;
 }
@@ -200,6 +232,7 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
 
     RenderStyle* style = textObject()->style(m_firstLine);
     IntRect rect = selectionRect(0, -style->font().ascent(), 0, len());
+
     if (object()->style()->visibility() == VISIBLE && rect.contains(x, y)) {
         object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
@@ -220,14 +253,15 @@ IntRect SVGInlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos
     SVGRootInlineBox* rootBox = svgRootInlineBox();
     Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(rootBox->svgTextChunks());
 
-    const Font& font = textObject()->style()->font();
+    RenderStyle* style = textObject()->style();
+    const Font& font = style->font();
 
     FloatRect selectionRect;
     
     Vector<SVGTextChunk>::iterator it = chunks.begin();
-    Vector<SVGTextChunk>::iterator end = chunks.end();
+    Vector<SVGTextChunk>::iterator itEnd = chunks.end();
 
-    for (; it != end; ++it) {
+    for (; it != itEnd; ++it) {
         SVGTextChunk& curChunk = *it;
 
         Vector<SVGInlineBoxCharacterRange>::iterator boxIt = curChunk.boxes.begin();
@@ -235,7 +269,7 @@ IntRect SVGInlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos
 
         unsigned int chunkOffset = 0;        
         unsigned int firstRangeInFirstChunkStartOffset = 0;
-
+    
         for (; boxIt != boxEnd; ++boxIt) {
             SVGInlineBoxCharacterRange& range = *boxIt;
 
@@ -247,15 +281,26 @@ IntRect SVGInlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos
                 continue;
             }
 
-            // Figure out chunk size
+            // Walk chunk finding closest character
             Vector<SVGChar>::iterator itCharBegin = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.startOffset;
             Vector<SVGChar>::iterator itCharEnd = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.endOffset;
             ASSERT(itCharEnd <= curChunk.end);
 
             for (Vector<SVGChar>::iterator itChar = itCharBegin; itChar != itCharEnd; ++itChar) {
-                unsigned int newOffset = (itChar - itCharBegin) + firstRangeInFirstChunkStartOffset;
-                float glyphWidth = font.floatWidth(TextRun(textObject()->text()->characters() + newOffset, 1), TextStyle(0, 0));
- 
+                unsigned int newOffset = start() + (itChar - itCharBegin) + firstRangeInFirstChunkStartOffset;
+
+                // Take RTL text into account and pick right glyph width/height.
+                float glyphWidth = 0.0;
+                float glyphHeight = 0.0;
+
+                if (!m_reversed) {
+                    glyphWidth = calculateGlyphWidth(style, newOffset);
+                    glyphHeight = calculateGlyphHeight(style, newOffset);
+                } else {    
+                    glyphWidth = calculateGlyphWidth(style, start() + end() - newOffset);
+                    glyphHeight = calculateGlyphHeight(style, start() + end() - newOffset);
+                }
+
                 float x1 = (*itChar).x;
                 float x2 = (*itChar).x + glyphWidth;
 
@@ -270,6 +315,8 @@ IntRect SVGInlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos
 
                 selectionRect.unite(glyphRect);
             }
+
+            chunkOffset += range.endOffset - range.startOffset;
         }
     }
 

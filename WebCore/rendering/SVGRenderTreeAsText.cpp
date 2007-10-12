@@ -355,16 +355,11 @@ static inline bool containsInlineTextBox(SVGTextChunk& chunk, SVGInlineTextBox* 
     return found;
 }
 
-static inline void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, int indent)
+static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textBox, int indent)
 {
-    SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(text.firstTextBox());
-
-    if (!textBox)
-        return;
-
     SVGRootInlineBox* rootBox = textBox->svgRootInlineBox();
     ASSERT(rootBox);
-    
+
     if (!rootBox)
         return;
 
@@ -437,13 +432,19 @@ static inline void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText&
                     ts << " override";
             }
 
-            ts << ": " << quoteAndEscapeNonPrintables(String(textBox->textObject()->text()).substring(range.startOffset, offset)) << endl;
+            ts << ": " << quoteAndEscapeNonPrintables(String(textBox->textObject()->text()).substring(textBox->start() + range.startOffset, offset)) << endl;
 
             j++;
         }
 
         i++;
     }
+}
+
+static inline void writeSVGInlineText(TextStream& ts, const RenderSVGInlineText& text, int indent)
+{
+    for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox())
+        writeSVGInlineTextBox(ts, static_cast<SVGInlineTextBox*>(box), indent);
 }
 
 static String getTagName(SVGStyledElement* elem)

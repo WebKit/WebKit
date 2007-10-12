@@ -50,7 +50,6 @@ public:
 
     // Used by SVGInlineTextBox
     const Vector<SVGTextChunk>& svgTextChunks() const;
-    float cummulatedWidthOfSelectionRange(InlineTextBox*, int startPos, int endPos, int length, int boxStartOffset = 0);
 
 private:
     void layoutInlineBoxes();
@@ -63,7 +62,7 @@ private:
     void buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutInfo&);
     void layoutTextChunks();
 
-    void paintSelectionForTextBox(InlineTextBox*, int boxStartOffset, SVGChar*, const UChar*, int length, GraphicsContext*, RenderStyle*, const Font*);
+    void paintSelectionForTextBox(InlineTextBox*, int boxStartOffset, const SVGChar&, const UChar*, int length, GraphicsContext*, RenderStyle*, const Font*);
 
     void paintInlineBoxes(RenderObject::PaintInfo&, int tx, int ty, InlineFlowBox* start, Vector<SVGChar>::iterator&);
     void paintChildInlineTextBox(RenderObject::PaintInfo&, int tx, int ty, InlineTextBox*, Vector<SVGChar>::iterator&);
@@ -75,7 +74,8 @@ private:
     Vector<SVGTextChunk> m_svgTextChunks;
 };
 
-// Shared with SVGRenderTreeAsText
+// Shared with SVGRenderTreeAsText / SVGInlineTextBox
+TextStyle svgTextStyleForInlineTextBox(RenderStyle* style, const InlineTextBox* textBox, float xPos);
 FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator start, Vector<SVGChar>::iterator end);
 float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range);
 float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range);

@@ -902,11 +902,16 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             }
         }
 
-        BidiContext* startEmbed;
-        if (style()->direction() == LTR)
+        BidiContext *startEmbed;
+        if (style()->direction() == LTR
+#if ENABLE(SVG)   
+            || (style()->unicodeBidi() == UBNormal && isSVGText())
+#endif
+           ) {
             startEmbed = new BidiContext(0, LeftToRight, style()->unicodeBidi() == Override);
-        else
+        } else {
             startEmbed = new BidiContext(1, RightToLeft, style()->unicodeBidi() == Override);
+        }
 
         bidi.setLastStrongDir(startEmbed->dir());
         bidi.setLastDir(startEmbed->dir());

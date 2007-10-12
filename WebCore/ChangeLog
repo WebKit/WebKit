@@ -1,3 +1,54 @@
+2007-08-08  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=13909 (SVG text selection doesn't work with RTL text)
+
+        Use drawHighlightForText() to draw the selection, instead of my home-brewn solution.
+        Affected code in SVGRootInlineBox::paintSelectionForTextBox. Removed not anymore needed
+        helper function cummulatedWidthOfSelectionRange.
+
+        Dump all contained InlineTextBox(es) in SVGRenderTreeAsText, take into account multiple
+        child text boxes in ie. a RenderSVGInlineText objects (which happens for RTL text and
+        LTR text cases where newlines were involved - see changed testcase results.)
+        This affects a lot of LTR tests which actually had more than one child text box, that
+        wasn't taken properly into account before (in terms of selection, not rendering.)
+
+        Fix selection for RTL text by taking box start offsets into account in closestCharacterToPosition()
+        and by offering RTL text selection special cases in svgCharacterHitsPosition().
+
+        Centralized the creation of a TextStyle object for text selection/painting in a new helper function
+        svgTextStyleForInlineTextBox. Add new helper functions calculateGlyphWidth/calculateGlyphHeight to
+        centralize these calculations -> use these new helpers everywhere to avoid code duplication.
+
+        A single fix in bidi.cpp was needed to fix SVG's unicode-bidi/direction handling, to fix text-intro-02-b.svg.
+        SVG didacts that the 'direction' attribute is ignored if unicode-bidi is set to 'normal' (default).
+        Discussed with Mitz.
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForCoordinates):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphWidth):
+        (WebCore::SVGInlineTextBox::calculateGlyphHeight):
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition):
+        (WebCore::SVGInlineTextBox::svgCharacterHitsPosition):
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        (WebCore::SVGInlineTextBox::selectionRect):
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineTextBox):
+        (WebCore::writeSVGInlineText):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::cummulatedWidthOfInlineBoxCharacterRange): Take box start offset into account.
+        (WebCore::svgTextStyleForInlineTextBox): New helper function.
+        (WebCore::totalAdvanceOfInlineTextBox): Take box start offset into account.
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox): Ditto. (correctly calculate advance values in RTL mode!)
+        (WebCore::SVGRootInlineBox::paintSelectionForTextBox): Use GraphicsContext drawHighlightForText() instead of self-made hacks.
+        (WebCore::SVGRootInlineBox::paintCharacterRangeForTextBox): Use new helper function svgTextStyleForInlineTextBox.
+        * rendering/SVGRootInlineBox.h:
+        * rendering/bidi.cpp: Add special case for SVG.
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2007-07-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver & Rob.

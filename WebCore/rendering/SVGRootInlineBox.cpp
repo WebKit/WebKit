@@ -35,6 +35,7 @@
 #include "Range.h"
 #include "RenderSVGRoot.h"
 #include "SVGInlineFlowBox.h"
+#include "SVGInlineTextBox.h"
 #include "SVGPaintServer.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourceClipper.h"
@@ -196,31 +197,6 @@ void SVGRootInlineBox::verticallyAlignBoxes(int& heightOfBlock)
     heightOfBlock = height();
 }
 
-float SVGRootInlineBox::cummulatedWidthOfSelectionRange(InlineTextBox* textBox, int startPos, int endPos, int length, int boxStartOffset)
-{
-    int chunkStartPos = boxStartOffset;
-    int chunkEndPos = chunkStartPos + length;
-
-    if ((startPos > chunkStartPos && endPos > chunkEndPos) || chunkStartPos >= endPos)
-        return FLT_MAX;
-
-    if (endPos > chunkEndPos)
-        endPos = chunkEndPos;
-
-    if (startPos < chunkStartPos)
-        startPos = chunkStartPos;
-
-    ASSERT(startPos >= chunkStartPos);
-    ASSERT(endPos <= chunkEndPos);
-
-    ASSERT(startPos < endPos);
-
-    RenderText* text = textBox->textObject();
-    const Font& font = text->style()->font();
-
-    return font.floatWidth(TextRun(text->characters() + startPos, endPos - startPos), TextStyle(0, 0));
-}
-
 float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range)
 {
     ASSERT(!range.isOpen());
@@ -229,9 +205,9 @@ float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range
 
     InlineTextBox* textBox = static_cast<InlineTextBox*>(range.box);
     RenderText* text = textBox->textObject();
-    const Font& font = text->style()->font();
+    RenderStyle* style = text->style();
 
-    return font.floatWidth(TextRun(text->characters() + range.startOffset, range.endOffset - range.startOffset), TextStyle(0, 0));
+    return style->font().floatWidth(TextRun(text->characters() + textBox->start() + range.startOffset, range.endOffset - range.startOffset), svgTextStyleForInlineTextBox(style, textBox, 0));
 }
 
 float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range)
@@ -246,6 +222,14 @@ float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& rang
 
     // FIXME: Wild guess - works for the W3C 1.1 vertical text examples - not really heavily tested so far.
     return (range.endOffset - range.startOffset) * (font.ascent() + font.descent());
+}
+
+TextStyle svgTextStyleForInlineTextBox(RenderStyle* style, const InlineTextBox* textBox, float xPos)
+{
+    ASSERT(textBox);
+    ASSERT(style);
+
+    return TextStyle(false, xPos, textBox->toAdd(), textBox->m_reversed, textBox->m_dirOverride || style->visuallyOrdered());
 }
 
 static float cummulatedWidthOfTextChunk(SVGTextChunk& chunk)
@@ -374,14 +358,16 @@ static void totalAdvanceOfInlineTextBox(InlineTextBox* textBox, int from, int to
     if (to > 0 && (unsigned int) to > textBox->len())
         to = textBox->len();
 
-    RenderText* text = static_cast<RenderText*>(textBox->object());
-    const Font& font = text->style()->font();
+    RenderStyle* style = textBox->object()->style();
+    SVGInlineTextBox* svgTextBox = static_cast<SVGInlineTextBox*>(textBox);
 
     for (int i = from; i < to; ++i) {
+        int offset = textBox->m_reversed ? textBox->end() - i : textBox->start() + i;
+
         if (!isVerticalText)
-            totalAdvance += font.floatWidth(TextRun(text->text()->characters() + i, 1), TextStyle(0, 0));
+            totalAdvance += svgTextBox->calculateGlyphWidth(style, offset);
         else
-            totalAdvance += font.ascent() + font.descent();
+            totalAdvance += svgTextBox->calculateGlyphHeight(style, offset);
     }
 }
 
@@ -597,7 +583,8 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
     RenderStyle* style = text->style(textBox->isFirstLineStyle());
     ASSERT(style);
 
-    const Font& font = style->font();
+    SVGInlineTextBox* svgTextBox = static_cast<SVGInlineTextBox*>(textBox);
+
     unsigned length = textBox->len();
     bool isVerticalText = isVerticalWritingMode(style->svgStyle());
 
@@ -607,8 +594,16 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         svgChar.newTextChunk = false;
 
         float angle = 0.0;
-        float glyphWidth = font.floatWidth(TextRun(text->text()->characters() + textBox->start() + i, 1), TextStyle(0, 0));
-        float glyphHeight = font.ascent() + font.descent();
+        float glyphWidth = 0.0;
+        float glyphHeight = 0.0;
+
+        if (!textBox->m_reversed) {
+            glyphWidth = svgTextBox->calculateGlyphWidth(style, textBox->start() + i);
+            glyphHeight = svgTextBox->calculateGlyphHeight(style, textBox->start() + i);
+        } else {
+            glyphWidth = svgTextBox->calculateGlyphWidth(style, textBox->end() - i);
+            glyphHeight = svgTextBox->calculateGlyphHeight(style, textBox->end() - i);
+        }
 
         bool assignedX = false;
         bool assignedY = false;
@@ -773,7 +768,8 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
                 continue;
 
 #if DEBUG_CHUNK_BUILDING > 1
-            fprintf(stderr, " -> Handle inline text box (%p) with %i characters, handlingTextPath=%i\n", textBox, length, (int) info.handlingTextPath);
+            fprintf(stderr, " -> Handle inline text box (%p) with %i characters (start: %i, end: %i), handlingTextPath=%i\n",
+                            textBox, length, textBox->start(), textBox->end(), (int) info.handlingTextPath);
 #endif
 
             RenderText* text = textBox->textObject();
@@ -826,7 +822,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
                     fprintf(stderr, " | -> Close mid-text chunk, at endOffset: %i and starting new mid chunk!\n", range.endOffset);
 #endif
     
-                    // Prepare for next chunk, if we're not at the end    
+                    // Prepare for next chunk, if we're not at the end
                     startTextChunk(info);
                     if (i + 1 == length) {
 #if DEBUG_CHUNK_BUILDING > 1
@@ -939,7 +935,7 @@ void SVGRootInlineBox::layoutTextChunks()
         applyTextAnchorToTextChunk(*it);
 }
 
-void SVGRootInlineBox::paintSelectionForTextBox(InlineTextBox* textBox, int boxStartOffset, SVGChar* svgCharPtr, const UChar* chars, int length, GraphicsContext* p, RenderStyle* style, const Font* f)
+void SVGRootInlineBox::paintSelectionForTextBox(InlineTextBox* textBox, int boxStartOffset, const SVGChar& svgChar, const UChar* chars, int length, GraphicsContext* p, RenderStyle* style, const Font* f)
 {
     if (textBox->selectionState() == RenderObject::SelectionNone)
         return;
@@ -948,10 +944,6 @@ void SVGRootInlineBox::paintSelectionForTextBox(InlineTextBox* textBox, int boxS
     textBox->selectionStartEnd(startPos, endPos);
 
     if (startPos >= endPos)
-        return;
-
-    float width = cummulatedWidthOfSelectionRange(textBox, startPos, endPos, length, boxStartOffset);
-    if (width == FLT_MAX)
         return;
 
     Color textColor = style->color();
@@ -964,14 +956,31 @@ void SVGRootInlineBox::paintSelectionForTextBox(InlineTextBox* textBox, int boxS
     if (textColor == color)
         color = Color(0xff - color.red(), 0xff - color.green(), 0xff - color.blue());
 
+    // Map from text box positions and a given start offset to chunk positions
+    // 'boxStartOffset' represents the beginning of the text chunk.
+    if ((startPos > boxStartOffset && endPos > boxStartOffset + length) || boxStartOffset >= endPos)
+        return;
+
+    if (endPos > boxStartOffset + length)
+        endPos = boxStartOffset + length;
+
+    if (startPos < boxStartOffset)
+        startPos = boxStartOffset;
+
+    ASSERT(startPos >= boxStartOffset);
+    ASSERT(endPos <= boxStartOffset + length);
+    ASSERT(startPos < endPos);
+
     p->save();
 
-    SVGChar firstChar = *(svgCharPtr + (startPos > boxStartOffset ? startPos - boxStartOffset : 0));
-    if (!firstChar.transform.isIdentity())
-        p->concatCTM(firstChar.transform);
+    if (!svgChar.transform.isIdentity())
+        p->concatCTM(svgChar.transform);
 
-    FloatRect selectionRect(firstChar.x, firstChar.y - f->ascent(), width, f->ascent() + f->descent());
-    p->fillRect(selectionRect, color);
+    int adjust = startPos >= boxStartOffset ? boxStartOffset : 0;
+    p->drawHighlightForText(TextRun(textBox->textObject()->text()->characters() + textBox->start() + boxStartOffset, length),
+                            IntPoint((int) svgChar.x, (int) svgChar.y - f->ascent()), f->ascent() + f->descent(),
+                            svgTextStyleForInlineTextBox(style, textBox, svgChar.x), color,
+                            startPos - adjust, endPos - adjust);
 
     p->restore();
 }
@@ -1129,7 +1138,7 @@ void SVGRootInlineBox::paintCharacterRangeForTextBox(RenderObject::PaintInfo& pa
         
         if (haveSelection && !useCustomUnderlines) {
             int boxStartOffset = chars - text->characters() - textBox->start();
-            paintSelectionForTextBox(textBox, boxStartOffset, const_cast<SVGChar*>(&svgChar), chars, length, paintInfo.context, styleToUse, font);
+            paintSelectionForTextBox(textBox, boxStartOffset, svgChar, chars, length, paintInfo.context, styleToUse, font);
         }
     }
 
@@ -1221,10 +1230,8 @@ void SVGRootInlineBox::paintCharacterRangeForTextBox(RenderObject::PaintInfo& pa
         }
     }
 
-    TextStyle textStyle(0, svgChar.x, textBox->toAdd(), textBox->m_reversed, textBox->m_dirOverride || styleToUse->visuallyOrdered());
-
     ASSERT(!paintSelectedTextOnly && !paintSelectedTextSeparately);
-    paintInfo.context->drawText(TextRun(chars, length), IntPoint(svgChar.x, svgChar.y), textStyle);
+    paintInfo.context->drawText(TextRun(chars, length), IntPoint((int) svgChar.x, (int) svgChar.y), svgTextStyleForInlineTextBox(styleToUse, textBox, svgChar.x));
 
     // Paint decorations
     if (d != TDNONE && paintInfo.phase != PaintPhaseSelection) {

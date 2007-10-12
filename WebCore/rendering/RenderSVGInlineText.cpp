@@ -143,7 +143,20 @@ VisiblePosition RenderSVGInlineText::positionForCoordinates(int x, int y)
         return VisiblePosition(element(), 0, DOWNSTREAM);
 
     int offset = 0;
-    textBox->svgCharacterHitsPosition(x + object->xPos(), y + object->yPos(), offset);
+
+    for (SVGInlineTextBox* box = textBox; box; box = static_cast<SVGInlineTextBox*>(box->nextTextBox())) {
+        if (box->svgCharacterHitsPosition(x + object->xPos(), y + object->yPos(), offset)) {
+            // If we're not at the end/start of the box, stop looking for other selected boxes.
+            if (!box->m_reversed) {
+                if (offset <= (int) box->end() + 1)
+                    break;
+            } else {
+                if (offset > (int) box->start())
+                    break;
+            }
+        }
+    }
+
     return VisiblePosition(element(), offset, DOWNSTREAM);
 }
 
