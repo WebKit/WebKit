@@ -72,9 +72,11 @@ CIFilter* getNormalMap(CIImage* bumpMap, float scale);
     { \
         CIFilter* crop = [CIFilter filterWithName:@"CICrop"]; \
         [crop setDefaults]; \
-        [crop setValue:[filter valueForKey:@"outputImage"] forKey:@"inputImage"]; \
-        [crop setValue:[CIVector vectorWithX:cropRect.x() Y:cropRect.y() Z:cropRect.width() W:cropRect.height()] forKey:@"inputRectangle"]; \
-        filter = crop; \
+        if (CIImage* currentFilterOutputImage = [filter valueForKey:@"outputImage"]) { \
+            [crop setValue:currentFilterOutputImage forKey:@"inputImage"]; \
+            [crop setValue:[CIVector vectorWithX:cropRect.x() Y:cropRect.y() Z:cropRect.width() W:cropRect.height()] forKey:@"inputRectangle"]; \
+            filter = crop; \
+        } \
     }
 
 #define FE_QUARTZ_MAP_TO_SUBREGION(bbox) \

@@ -159,7 +159,6 @@ CIFilter* SVGFEComponentTransfer::getCIFilter(const FloatRect& bbox) const
 
     FE_QUARTZ_MAP_TO_SUBREGION(bbox);
     FE_QUARTZ_OUTPUT_RETURN;
-    return nil;
 }
 
 }
