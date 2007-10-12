@@ -221,15 +221,15 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     }
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
-        paintOutline(paintInfo.context, boundingBox.x(), boundingBox.y(), boundingBox.width(), boundingBox.height(), style());
+        paintOutline(paintInfo.context, static_cast<int>(boundingBox.x()), static_cast<int>(boundingBox.y()),
+            static_cast<int>(boundingBox.width()), static_cast<int>(boundingBox.height()), style());
     
     paintInfo.context->restore();
 }
 
 void RenderPath::addFocusRingRects(GraphicsContext* graphicsContext, int, int) 
 {
-    FloatRect boundingBox = relativeBBox(true);
-    graphicsContext->addFocusRingRect(IntRect(boundingBox.x(), boundingBox.y(), boundingBox.width(), boundingBox.height()));
+    graphicsContext->addFocusRingRect(enclosingIntRect(relativeBBox(true)));
 }
 
 void RenderPath::absoluteRects(Vector<IntRect>& rects, int, int, bool)

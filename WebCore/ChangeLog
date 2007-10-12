@@ -1,3 +1,21 @@
+2007-10-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix float/int conversions that cause warnings on older versions
+          of gcc (like the version currently being used on the PowerPC
+          buildbot slave)
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint): Explicitly cast to int.
+        (WebCore::RenderPath::addFocusRingRects): Use enclosingIntRect
+        to convert a FloatRect to an IntRect.
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        Use 0 for the initial value of an int, rather than 0.0f.
+        (WebCore::svgTextStyleForInlineTextBox): Explicitly cast to int.
+        (WebCore::applyTextAnchorToTextChunk): Ditto.
+
 2007-10-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark.
