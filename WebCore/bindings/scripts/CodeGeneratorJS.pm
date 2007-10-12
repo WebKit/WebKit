@@ -1486,12 +1486,6 @@ sub NativeToJSValue
         }
     }
 
-    if ($type eq "StyleSheetList") {
-        $implIncludes{"StyleSheetList.h"} = 1;
-        $implIncludes{"kjs_css.h"} = 1;
-        return "toJS(exec, WTF::getPtr($value), imp)";
-    }
-
     if ($codeGenerator->IsSVGAnimatedType($type)) {
         $value =~ s/\(\)//;
         $value .= "Animated()";

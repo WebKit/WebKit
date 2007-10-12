@@ -45,6 +45,7 @@
 #import "JSRange.h"
 #import "JSRect.h"
 #import "JSStyleSheet.h"
+#import "JSStyleSheetList.h"
 #import "JSTreeWalker.h"
 #import "JSXPathExpression.h"
 #import "JSXPathResult.h"

@@ -24,41 +24,9 @@
 #define kjs_css_h
 
 #include "Color.h"
-#include "JSStyleSheet.h"
 #include "kjs_binding.h"
 
 namespace WebCore {
-
-    class Counter;
-    class CSSStyleSheet;
-    class StyleSheet;
-    class StyleSheetList;
-
-    class JSStyleSheetList : public KJS::DOMObject {
-    public:
-        JSStyleSheetList(KJS::ExecState*, StyleSheetList*, Document*);
-        virtual ~JSStyleSheetList();
-
-        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
-        KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
-        // no put - all read-only
-        virtual const KJS::ClassInfo* classInfo() const { return &info; }
-        static const KJS::ClassInfo info;
-
-        enum { Item, Length };
-
-        StyleSheetList* impl() const { return m_impl.get(); }
-
-    private:
-        static KJS::JSValue* indexGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
-        static KJS::JSValue* nameGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
-
-        RefPtr<StyleSheetList> m_impl;
-        RefPtr<Document> m_doc;
-    };
-
-    // The document is only used for get-stylesheet-by-name (make optional if necessary)
-    KJS::JSValue* toJS(KJS::ExecState*, StyleSheetList*, Document*);
 
     class JSRGBColor : public KJS::DOMObject {
     public:

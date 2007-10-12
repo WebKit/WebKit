@@ -1,3 +1,34 @@
+2007-10-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin & Nikolas.  Landed by eseidel.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=14455
+        Autogenerate the JS bindings for the StyleSheetList
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSStyleSheetListCustom.cpp: Added.
+        (WebCore::JSStyleSheetList::canGetItemsForName):
+        (WebCore::JSStyleSheetList::nameGetter):
+        * bindings/js/kjs_css.cpp:
+        * bindings/js/kjs_css.h:
+        * bindings/objc/DOMUtility.mm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::StyleSheetList):
+        (WebCore::StyleSheetList::documentDestroyed):
+        (WebCore::StyleSheetList::getNamedItem):
+        * css/StyleSheetList.h: Add Document member variable and
+        getNamedItem function to accommodate the odd javascript 
+        name getter functionality.
+        * css/StyleSheetList.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        * page/DOMWindow.idl: Add StyleSheetListConstructor
+
 2007-10-07  Lars Naesbye Christensen  <lars@naesbye.dk>
 
         Reviewed by Eric Seidel.

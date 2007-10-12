@@ -538,6 +538,7 @@ all : \
     JSSVGZoomEvent.h \
     JSScreen.h \
     JSStyleSheet.h \
+    JSStyleSheetList.h \
     JSText.h \
     JSTextEvent.h \
     JSTreeWalker.h \

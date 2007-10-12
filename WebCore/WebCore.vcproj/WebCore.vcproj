@@ -1237,6 +1237,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleSheetList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleSheetList.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGAElement.cpp"
 				>
 			</File>
@@ -7449,6 +7457,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSStyleSheetCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSStyleSheetListCustom.cpp"
 					>
 				</File>
 				<File

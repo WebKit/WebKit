@@ -1839,6 +1839,9 @@
 		A84942DA0B64A9CA0069F00F /* ColorDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84942D80B64A9CA0069F00F /* ColorDistance.cpp */; };
 		A84947AD0B67F4A10069F00F /* SVGTransformDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = A84947AB0B67F4A10069F00F /* SVGTransformDistance.h */; };
 		A84947AE0B67F4A10069F00F /* SVGTransformDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84947AC0B67F4A10069F00F /* SVGTransformDistance.cpp */; };
+		A84EBD780CB8C89200079609 /* JSStyleSheetListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */; };
+		A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */ = {isa = PBXBuildFile; fileRef = A84EBD810CB8C97700079609 /* JSStyleSheetList.h */; };
+		A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */; };
 		A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629C909DA2B47009633A5 /* JSUIEvent.h */; };
 		A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */; };
 		A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CB09DA2B47009633A5 /* JSMouseEvent.h */; };
@@ -5792,6 +5795,9 @@
 		A84942D80B64A9CA0069F00F /* ColorDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDistance.cpp; sourceTree = "<group>"; };
 		A84947AB0B67F4A10069F00F /* SVGTransformDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTransformDistance.h; sourceTree = "<group>"; };
 		A84947AC0B67F4A10069F00F /* SVGTransformDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTransformDistance.cpp; sourceTree = "<group>"; };
+		A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetListCustom.cpp; sourceTree = "<group>"; };
+		A84EBD810CB8C97700079609 /* JSStyleSheetList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStyleSheetList.h; sourceTree = "<group>"; };
+		A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetList.cpp; sourceTree = "<group>"; };
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A86629C909DA2B47009633A5 /* JSUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSUIEvent.h; sourceTree = "<group>"; };
 		A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEvent.cpp; sourceTree = "<group>"; };
@@ -7540,8 +7546,6 @@
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B22362260C3AF04A0008CA9B /* JSSVGTextPathElement.cpp */,
-				B22362270C3AF04A0008CA9B /* JSSVGTextPathElement.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */,
@@ -7552,8 +7556,6 @@
 				65DF323609D1DE65000BE325 /* JSCanvasPattern.h */,
 				65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */,
 				65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */,
-				B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */,
-				B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */,
 				93F9B79E0BA6032600854064 /* JSCDATASection.cpp */,
 				93F9B79F0BA6032600854064 /* JSCDATASection.h */,
 				65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */,
@@ -7766,6 +7768,8 @@
 				BCEC01C10C274DDD009F4EC9 /* JSScreen.h */,
 				BCE013980C0BEF180043860A /* JSStyleSheet.cpp */,
 				BCE013990C0BEF180043860A /* JSStyleSheet.h */,
+				A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */,
+				A84EBD810CB8C97700079609 /* JSStyleSheetList.h */,
 				B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */,
 				B20111060AB7740500DB0E68 /* JSSVGAElement.h */,
 				B222F6960AB771950022EFAD /* JSSVGAngle.cpp */,
@@ -7826,6 +7830,8 @@
 				B2CB923E0B5BD941009BAA78 /* JSSVGElementInstanceList.h */,
 				B2FA3C800AB75A6E000E5AC4 /* JSSVGEllipseElement.cpp */,
 				B2FA3C810AB75A6E000E5AC4 /* JSSVGEllipseElement.h */,
+				B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */,
+				B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */,
 				B2FA3C820AB75A6E000E5AC4 /* JSSVGFEBlendElement.cpp */,
 				B2FA3C830AB75A6E000E5AC4 /* JSSVGFEBlendElement.h */,
 				B2FA3C840AB75A6E000E5AC4 /* JSSVGFEColorMatrixElement.cpp */,
@@ -7986,6 +7992,8 @@
 				B2FA3D1B0AB75A6F000E5AC4 /* JSSVGTextContentElement.h */,
 				B2FA3D1C0AB75A6F000E5AC4 /* JSSVGTextElement.cpp */,
 				B2FA3D1D0AB75A6F000E5AC4 /* JSSVGTextElement.h */,
+				B22362260C3AF04A0008CA9B /* JSSVGTextPathElement.cpp */,
+				B22362270C3AF04A0008CA9B /* JSSVGTextPathElement.h */,
 				B2FA3D1E0AB75A6F000E5AC4 /* JSSVGTextPositioningElement.cpp */,
 				B2FA3D1F0AB75A6F000E5AC4 /* JSSVGTextPositioningElement.h */,
 				B2FA3D200AB75A6F000E5AC4 /* JSSVGTitleElement.cpp */,
@@ -10600,9 +10608,7 @@
 				8574D1F10ADE6122004CBA11 /* JSSVGElementWrapperFactory.cpp */,
 				8574D1F20ADE6122004CBA11 /* JSSVGElementWrapperFactory.h */,
 				B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */,
-				B2080A110B3CA3B600120852 /* JSSVGPointListCustom.cpp */,
 				B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */,
-				1A750E330A90F89F000FF215 /* JSTreeWalkerCustom.cpp */,
 				93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */,
 				93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */,
 				93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */,
@@ -10699,9 +10705,12 @@
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
 				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,
+				A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */,
 				B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */,
 				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
 				B297BC6F0B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp */,
+				B2080A110B3CA3B600120852 /* JSSVGPointListCustom.cpp */,
+				1A750E330A90F89F000FF215 /* JSTreeWalkerCustom.cpp */,
 				B2080A110B3CA3B600120852 /* JSSVGPointListCustom.cpp */,
 				1A750E330A90F89F000FF215 /* JSTreeWalkerCustom.cpp */,
 			);
@@ -13213,6 +13222,7 @@
 				BC64B4D80CB4298A005F2B62 /* CSSFontFaceSource.h in Headers */,
 				BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */,
 				BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */,
+				A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14693,6 +14703,8 @@
 				BC64B4D70CB4298A005F2B62 /* CSSFontFaceSource.cpp in Sources */,
 				BC64B4D90CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp in Sources */,
 				BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */,
+				A84EBD780CB8C89200079609 /* JSStyleSheetListCustom.cpp in Sources */,
+				A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

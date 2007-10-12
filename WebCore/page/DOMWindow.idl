@@ -132,6 +132,7 @@ module window {
         attribute CounterConstructor Counter;
         attribute CSSRuleListConstructor CSSRuleList;
         attribute RectConstructor Rect;
+        attribute StyleSheetListConstructor StyleSheetList;
 
         // FIXME: Implement the commented-out global constructors for interfaces listed in DOM Level 3 Core specification.
 //        attribute DOMExceptionConstructor DOMException;

@@ -250,7 +250,7 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     : ContainerNode(0)
     , m_implementation(impl)
     , m_domtree_version(0)
-    , m_styleSheets(new StyleSheetList)
+    , m_styleSheets(new StyleSheetList(this))
     , m_title("")
     , m_titleSetExplicitly(false)
     , m_imageLoadEventTimer(this, &Document::imageLoadEventTimerFired)
@@ -433,6 +433,9 @@ Document::~Document()
     unsigned count = sizeof(m_nameCollectionInfo) / sizeof(m_nameCollectionInfo[0]);
     for (unsigned i = 0; i < count; i++)
         deleteAllValues(m_nameCollectionInfo[i]);
+
+    if (m_styleSheets)
+        m_styleSheets->documentDestroyed();
 }
 
 void Document::resetLinkColor()
