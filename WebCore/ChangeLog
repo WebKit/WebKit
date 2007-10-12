@@ -1,3 +1,15 @@
+2007-08-19  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14926
+        WebKit has 'em' length handling problems related to CSS properties
+
+        Parse the properties in inline style attributes non-strict for SVG.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+
 2007-08-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

@@ -1,3 +1,48 @@
+2007-08-19  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14926
+        WebKit has 'em' length handling problems related to CSS properties
+
+        Changed results are improved results.
+
+        * svg/W3C-SVG-1.1/styling-css-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/styling-css-01-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-css-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/styling-css-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/styling-css-02-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-css-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/styling-css-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/styling-css-03-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-css-03-b-expected.txt:
+        * svg/custom/linking-a-03-b-all-expected.checksum:
+        * svg/custom/linking-a-03-b-all-expected.png:
+        * svg/custom/linking-a-03-b-all-expected.txt:
+        * svg/custom/linking-a-03-b-preserveAspectRatio-expected.checksum:
+        * svg/custom/linking-a-03-b-preserveAspectRatio-expected.png:
+        * svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt:
+        * svg/custom/linking-a-03-b-transform-expected.checksum:
+        * svg/custom/linking-a-03-b-transform-expected.png:
+        * svg/custom/linking-a-03-b-transform-expected.txt:
+        * svg/custom/linking-a-03-b-viewBox-expected.checksum:
+        * svg/custom/linking-a-03-b-viewBox-expected.png:
+        * svg/custom/linking-a-03-b-viewBox-expected.txt:
+        * svg/custom/linking-a-03-b-viewBox-transform-expected.checksum:
+        * svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * svg/custom/linking-a-03-b-viewBox-transform-expected.txt:
+        * svg/custom/linking-a-03-b-viewTarget-expected.checksum:
+        * svg/custom/linking-a-03-b-viewTarget-expected.png:
+        * svg/custom/linking-a-03-b-viewTarget-expected.txt:
+        * svg/custom/linking-a-03-b-zoomAndPan-expected.checksum:
+        * svg/custom/linking-a-03-b-zoomAndPan-expected.png:
+        * svg/custom/linking-a-03-b-zoomAndPan-expected.txt:
+        * svg/custom/style-attribute-font-size-expected.checksum: Added.
+        * svg/custom/style-attribute-font-size-expected.png: Added.
+        * svg/custom/style-attribute-font-size-expected.txt: Added.
+        * svg/custom/style-attribute-font-size.svg: Added.
+
 2007-08-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

@@ -129,7 +129,7 @@ void StyledElement::createInlineStyleDecl()
     m_inlineStyleDecl = new CSSMutableStyleDeclaration;
     m_inlineStyleDecl->setParent(document()->elementSheet());
     m_inlineStyleDecl->setNode(this);
-    m_inlineStyleDecl->setStrictParsing(!document()->inCompatMode());
+    m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inCompatMode());
 }
 
 void StyledElement::destroyInlineStyleDecl()
