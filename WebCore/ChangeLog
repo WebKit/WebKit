@@ -1,3 +1,17 @@
+2007-10-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric.
+
+        30%+ performance improvement for svg embedded in xhtml
+
+        Relayout internal to SVG was incorrectly being propagated to
+        the containing xhtml element, which subsequently resulted in
+        a full paint of the SVG, rather than just the dirty regions.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary):
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+
 2007-10-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.
