@@ -35,6 +35,7 @@
 #include "Range.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGPaintServer.h"
+#include "SVGRenderSupport.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
@@ -52,7 +53,7 @@ namespace WebCore {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
 static void prepareTextRendering(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* flowBox, FloatRect& boundingBox, SVGResourceFilter*& filter)
 #else
-static void prepareTextRendering(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* flowBox, FloatRect& boundingBox)
+static void prepareTextRendering(RenderObject::PaintInfo& paintInfo, int tx, int ty, InlineFlowBox* flowBox, FloatRect& boundingBox, void* filter)
 #endif
 {
     RenderObject* object = flowBox->object();
@@ -62,42 +63,7 @@ static void prepareTextRendering(RenderObject::PaintInfo& paintInfo, int tx, int
 
     boundingBox = FloatRect(tx + flowBox->xPos(), ty + flowBox->yPos(), flowBox->width(), flowBox->height());
 
-    SVGElement* svgElement = static_cast<SVGElement*>(object->element());
-    ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
-
-    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
-    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
-
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
-#endif
-
-    AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
-    AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
-
-    SVGResourceClipper* clipper = getClipperById(object->document(), clipperId);
-    SVGResourceMasker* masker = getMaskerById(object->document(), maskerId);
-
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES) 
-    filter = getFilterById(object->document(), filterId);
-
-    if (filter)
-        filter->prepareFilter(paintInfo.context, boundingBox);
-    else if (!filterId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
-#endif
-
-    if (clipper) {
-        clipper->addClient(styledElement);
-        clipper->applyClip(paintInfo.context, boundingBox);
-    } else if (!clipperId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
-
-    if (masker) {
-        masker->addClient(styledElement);
-        masker->applyMask(paintInfo.context, boundingBox);
-    } else if (!maskerId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
+    prepareToRenderSVGContent(object, paintInfo, boundingBox, filter);
 }
 
 inline bool isVerticalWritingMode(const SVGRenderStyle* style)
@@ -156,10 +122,10 @@ void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGResourceFilter* filter = 0;
-    prepareTextRendering(paintInfo, tx, ty, this, boundingBox, filter);
 #else
-    prepareTextRendering(paintInfo, tx, ty, this, boundingBox);
+    void* filter = 0;
 #endif
+    prepareTextRendering(paintInfo, tx, ty, this, boundingBox, filter);
 
     RenderObject::PaintInfo pi(paintInfo);
 
@@ -1048,10 +1014,10 @@ void SVGRootInlineBox::paintInlineBoxes(RenderObject::PaintInfo& paintInfo, int 
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
             SVGResourceFilter* filter = 0;
-            prepareTextRendering(paintInfo, tx, ty, flowBox, boundingBox, filter);
 #else
-            prepareTextRendering(paintInfo, tx, ty, flowBox, boundingBox);
+            void* filter = 0;
 #endif
+            prepareTextRendering(paintInfo, tx, ty, flowBox, boundingBox, filter);
 
             RenderObject* object = flowBox->object();
             RenderObject::PaintInfo pi(paintInfo);

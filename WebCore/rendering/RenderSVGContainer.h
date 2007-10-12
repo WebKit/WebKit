@@ -92,10 +92,13 @@ public:
     AffineTransform viewportTransform() const;
     
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    
+    bool isOutermostSVG() const;
 
 private:
     void calcViewport(); 
     AffineTransform getAspectRatio(const FloatRect& logical, const FloatRect& physical) const;
+    void applyContentTransforms(PaintInfo&, int& parentX, int& parentY);
 
     bool m_drawsContents : 1;
     bool m_slice : 1;

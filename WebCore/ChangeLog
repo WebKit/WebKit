@@ -1,3 +1,36 @@
+2007-06-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by weinig.
+        
+        Break out common SVG rendering logic into prepareToRenderSVGContent in SVGRenderSupport
+
+        No test cases should be changed by this.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderPath.cpp:
+        (WebCore::fillAndStrokePath):
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::requiresLayer):
+        (WebCore::RenderSVGContainer::isOutermostSVG):
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::applyContentTransforms):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::viewportTransform):
+        (WebCore::RenderSVGContainer::absoluteTransform):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::translationForAttributes):
+        * rendering/SVGRenderSupport.cpp: Added.
+        (WebCore::prepareToRenderSVGContent):
+        * rendering/SVGRenderSupport.h: Added.
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::prepareTextRendering):
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::paintInlineBoxes):
+
 2007-06-06  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

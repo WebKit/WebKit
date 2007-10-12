@@ -34,7 +34,7 @@
 #include "PointerEventsHitRules.h"
 #include "RenderSVGContainer.h"
 #include "SVGPaintServer.h"
-#include "SVGResourceClipper.h"
+#include "SVGRenderSupport.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMarker.h"
 #include "SVGResourceMasker.h"
@@ -175,72 +175,47 @@ short RenderPath::baselinePosition(bool b, bool isRootLineBox) const
     return static_cast<short>(relativeBBox(true).height());
 }
 
+static inline void fillAndStrokePath(const Path& path, GraphicsContext* context, RenderStyle* style, RenderPath* object)
+{
+    context->beginPath();
+
+    SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style, object);
+    if (fillPaintServer) {
+        context->addPath(path);
+        fillPaintServer->draw(context, object, ApplyToFillTargetType);
+    }
+    
+    SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style, object);
+    if (strokePaintServer) {
+        context->addPath(path); // path is cleared when filled.
+        strokePaintServer->draw(context, object, ApplyToStrokeTargetType);
+    }
+}
+
 void RenderPath::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN || m_path.isEmpty())
         return;
-
+    
     paintInfo.context->save();
     paintInfo.context->concatCTM(localTransform());
 
-    FloatRect strokeBBox = relativeBBox(true);
-
-    SVGElement* svgElement = static_cast<SVGElement*>(element());
-    ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
-
-    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
-    const SVGRenderStyle* svgStyle = style()->svgStyle();
-
-    AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
-    AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
-    AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
-
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    SVGResourceFilter* filter = getFilterById(document(), filterId);
+    SVGResourceFilter* filter = 0;
+#else
+    void* filter = 0;
 #endif
-    SVGResourceClipper* clipper = getClipperById(document(), clipperId);
-    SVGResourceMasker* masker = getMaskerById(document(), maskerId);
+    FloatRect boundingBox = relativeBBox(true);
+    prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
+    
+    fillAndStrokePath(m_path, paintInfo.context, style(), this);
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    if (filter)
-        filter->prepareFilter(paintInfo.context, strokeBBox);
-    else if (!filterId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
-#endif
-
-    if (clipper) {
-        clipper->addClient(styledElement);
-        clipper->applyClip(paintInfo.context, strokeBBox);
-    } else if (!clipperId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
-
-    if (masker) {
-        masker->addClient(styledElement);
-        masker->applyMask(paintInfo.context, strokeBBox);
-    } else if (!maskerId.isEmpty())
-        svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
-
-    paintInfo.context->beginPath();
-
-    SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
-    if (fillPaintServer) {
-        paintInfo.context->addPath(m_path);
-        fillPaintServer->draw(paintInfo.context, this, ApplyToFillTargetType);
-    }
-
-    SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
-    if (strokePaintServer) {
-        paintInfo.context->addPath(m_path); // path is cleared when filled.
-        strokePaintServer->draw(paintInfo.context, this, ApplyToStrokeTargetType);
-    }
-
-    if (styledElement->supportsMarkers())
+    if (static_cast<SVGStyledElement*>(element())->supportsMarkers())
         m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-    // actually apply the filter
     if (filter)
-        filter->applyFilter(paintInfo.context, strokeBBox);
+        filter->applyFilter(paintInfo.context, boundingBox);
 #endif
 
     paintInfo.context->restore();
