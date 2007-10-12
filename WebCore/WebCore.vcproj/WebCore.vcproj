@@ -4490,10 +4490,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSFontFaceRule.idl"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSFontFaceSource.cpp"
 				>
 			</File>
