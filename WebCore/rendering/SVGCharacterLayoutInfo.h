@@ -93,7 +93,7 @@ struct SVGCharacterLayoutInfo {
     float angleValueNext() const;
     float baselineShiftValueNext() const;
 
-    void processedChunk(float lastShiftX, float lastShiftY);
+    void processedChunk(float savedShiftX, float savedShiftY);
     void processedSingleCharacter();
 
     bool nextPathLayoutPointAndAngle(float& x, float& y, float& angle, float glyphAdvance, float newOffset);
@@ -111,11 +111,14 @@ struct SVGCharacterLayoutInfo {
     float curx;
     float cury;
 
+    // Global rotation
+    float angle;
+
     // Accumulated dx/dy values
     float dx;
     float dy;
 
-    // Accumulated applied shift values
+    // Accumulated baseline-shift values
     float shiftx;
     float shifty;
 
@@ -164,8 +167,10 @@ private:
 struct SVGChar {
     float x;
     float y;
+    float angle;
 
-    AffineTransform transform;
+    float pathXShift;
+    float pathYShift;
 
     // Determines wheter this char is visible (ie. false for chars "off" the text layout path)
     bool visible : 1;
@@ -175,6 +180,9 @@ struct SVGChar {
 
     // Determines wheter this char starts a new chunk
     bool newTextChunk : 1;
+
+    // Helper method
+    AffineTransform characterTransform() const;
 };
 
 struct SVGInlineBoxCharacterRange {

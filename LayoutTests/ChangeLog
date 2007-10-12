@@ -1,3 +1,51 @@
+2007-10-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Update results after the rotation & baseline-shift fixes.
+
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * svg/batik/text/longTextOnPath-expected.checksum:
+        * svg/batik/text/longTextOnPath-expected.png:
+        * svg/batik/text/longTextOnPath-expected.txt:
+        * svg/batik/text/smallFonts-expected.txt:
+        * svg/batik/text/textEffect3-expected.checksum:
+        * svg/batik/text/textEffect3-expected.png:
+        * svg/batik/text/textEffect3-expected.txt:
+        * svg/batik/text/textGlyphOrientationHorizontal-expected.checksum:
+        * svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * svg/batik/text/textLayout2-expected.checksum:
+        * svg/batik/text/textLayout2-expected.png:
+        * svg/batik/text/textLayout2-expected.txt:
+        * svg/batik/text/textOnPath-expected.checksum:
+        * svg/batik/text/textOnPath-expected.png:
+        * svg/batik/text/textOnPath-expected.txt:
+        * svg/batik/text/textOnPath2-expected.checksum:
+        * svg/batik/text/textOnPath2-expected.png:
+        * svg/batik/text/textOnPath2-expected.txt:
+        * svg/batik/text/textOnPath3-expected.checksum:
+        * svg/batik/text/textOnPath3-expected.png:
+        * svg/batik/text/textOnPath3-expected.txt:
+        * svg/batik/text/textOnPathSpaces-expected.checksum:
+        * svg/batik/text/textOnPathSpaces-expected.png:
+        * svg/batik/text/textOnPathSpaces-expected.txt:
+        * svg/batik/text/verticalText-expected.txt:
+        * svg/batik/text/verticalTextOnPath-expected.checksum:
+        * svg/batik/text/verticalTextOnPath-expected.png:
+        * svg/batik/text/verticalTextOnPath-expected.txt:
+        * svg/text/text-align-04-b-expected.checksum:
+        * svg/text/text-align-04-b-expected.png:
+        * svg/text/text-align-04-b-expected.txt:
+        * svg/text/text-path-01-b-expected.checksum:
+        * svg/text/text-path-01-b-expected.png:
+        * svg/text/text-path-01-b-expected.txt:
+
 2007-10-07  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.

@@ -72,6 +72,7 @@ static float calculateBaselineShift(RenderObject* item)
 SVGCharacterLayoutInfo::SVGCharacterLayoutInfo()
     : curx(0.0)
     , cury(0.0)
+    , angle(0.0)
     , dx(0.0)
     , dy(0.0)
     , shiftx(0.0)
@@ -165,11 +166,19 @@ void SVGCharacterLayoutInfo::processedSingleCharacter()
     baselineShiftStackWalk();
 }
 
-void SVGCharacterLayoutInfo::processedChunk(float lastShiftX, float lastShiftY)
+void SVGCharacterLayoutInfo::processedChunk(float savedShiftX, float savedShiftY)
 {
     // baseline-shift doesn't span across ancestors, unlike dx/dy.
-    curx += lastShiftX - shiftx;
-    cury += lastShiftY - shifty;
+    curx += savedShiftX - shiftx;
+    cury += savedShiftY - shifty;
+
+    if (inPathLayout()) {
+        shiftx = savedShiftX;
+        shifty = savedShiftY;
+    }
+
+    // rotation also doesn't span
+    angle = 0.0;
 
     if (xStackChanged) {
         ASSERT(!xStack.isEmpty());
@@ -483,6 +492,22 @@ void SVGCharacterLayoutInfo::baselineShiftStackWalk()
         baselineShiftStack.removeLast();
         baselineShiftStackChanged = false;
     }
+}
+
+AffineTransform SVGChar::characterTransform() const
+{
+    AffineTransform ctm;
+
+    // Rotate character around angle 
+    ctm.translate(x, y);
+    ctm.rotate(angle);
+    ctm.translate(-x, -y);
+
+    // Apply transformations which have to be applied after
+    // the rotation - only happens with textPath.
+    ctm.translate(pathXShift, pathYShift);
+
+    return ctm;
 }
 
 } // namespace WebCore
