@@ -11,7 +11,9 @@ function test() {
   try {
     serialized = (new XMLSerializer()).serializeToString(document.getElementById("testDiv\"'&<>"));
     if (serialized == "<div xmlns=\"http://www.w3.org/1999/xhtml\" id=\"testDiv&quot;'&amp;&lt;&gt;\"/>" ||
-        serialized == "<div xmlns=\"http://www.w3.org/1999/xhtml\" id=\"testDiv&quot;'&amp;&lt;&gt;\"></div>")
+        serialized == "<div xmlns=\"http://www.w3.org/1999/xhtml\" id=\"testDiv&quot;'&amp;&lt;&gt;\"></div>" ||
+        serialized == "<div xmlns=\"http://www.w3.org/1999/xhtml\" id=\"testDiv&quot;'&amp;&lt;>\"/>" ||
+        serialized == "<div xmlns=\"http://www.w3.org/1999/xhtml\" id=\"testDiv&quot;'&amp;&lt;>\"></div>")
       document.getElementById("result").textContent = "SUCCESS";
     else
       document.getElementById("result").textContent = "FAIL: " + (new XMLSerializer()).serializeToString(document.getElementsByTagName('div')[1]);

@@ -1,5 +1,43 @@
 2007-10-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver.
+
+        - Use Vector<UChar> instead of DeprecatedString for innerHTML, for 35% speedup on CK DOM test
+        http://bugs.webkit.org/show_bug.cgi?id=15339
+
+        Rewrote both versions of createMarkup to build based on
+        Vector<UChar> instead of String. Also other miscellaneous
+        speedups (mainly content strings are now encoded in a way that
+        doesn't take a function call per character, and switch is avoided).
+        
+        This also causes a functional change - we no longer escape '>' since this was unnecessary and it's faster
+        to avoid testing for it. See updated test results.
+        
+        * editing/markup.cpp:
+        (WebCore::appendString):
+        (WebCore::appendAttributeValue):
+        (WebCore::escapeContentText):
+        (WebCore::appendEscapedContent):
+        (WebCore::appendDeprecatedString):
+        (WebCore::appendQuotedURLAttributeValue):
+        (WebCore::stringValueForRange):
+        (WebCore::ucharRange):
+        (WebCore::appendUCharRange):
+        (WebCore::appendNamespace):
+        (WebCore::appendStartMarkup):
+        (WebCore::getStartMarkup):
+        (WebCore::appendEndMarkup):
+        (WebCore::getEndMarkup):
+        (WebCore::appendMarkup):
+        (WebCore::joinMarkups):
+        (WebCore::createMarkup):
+        * editing/markup.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge markupStringFromNode:nodes:]):
+        (-[WebCoreFrameBridge markupStringFromRange:nodes:]):
+
+2007-10-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
         
         - fixed "innerHTML updates layout every time (very bad if adding to it in a loop)"

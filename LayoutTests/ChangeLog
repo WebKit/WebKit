@@ -1,3 +1,16 @@
+2007-10-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - test updates for "file:///Volumes/Data/mjs/Work/src/Safari/OpenSource/LayoutTests/fast/dom/serialize-attribute.xhtml"
+        http://bugs.webkit.org/show_bug.cgi?id=15339
+
+        We no longer entity-escape the '>' character in content or attribute values since this is unnecessary.
+        
+        * fast/dom/dom-parse-serialize-expected.txt:
+        * fast/dom/serialize-attribute.xhtml:
+        * fast/xsl/xslt-processor-expected.txt:
+
 2007-10-02  Nicholas Shanks  <webkit@nickshanks.com>
 
         Reviewed by eseidel & hyatt.

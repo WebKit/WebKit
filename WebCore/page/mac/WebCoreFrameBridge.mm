@@ -343,7 +343,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     // FIXME: This is never "for interchange". Is that right? See the next method.
     Vector<Node*> nodeList;
-    NSString *markupString = createMarkup([node _node], IncludeNode, nodes ? &nodeList : 0).getNSString();
+    NSString *markupString = createMarkup([node _node], IncludeNode, nodes ? &nodeList : 0);
     if (nodes)
         *nodes = [self nodesFromList:&nodeList];
 
@@ -354,7 +354,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     // FIXME: This is always "for interchange". Is that right? See the previous method.
     Vector<Node*> nodeList;
-    NSString *markupString = createMarkup([range _range], nodes ? &nodeList : 0, AnnotateForInterchange).getNSString();
+    NSString *markupString = createMarkup([range _range], nodes ? &nodeList : 0, AnnotateForInterchange);
     if (nodes)
         *nodes = [self nodesFromList:&nodeList];
 
