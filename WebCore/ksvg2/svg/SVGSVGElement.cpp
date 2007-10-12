@@ -170,7 +170,7 @@ float SVGSVGElement::currentScale() const
 void SVGSVGElement::setCurrentScale(float scale)
 {
     if (document() && document()->frame())
-        document()->frame()->setZoomFactor(static_cast<int>(scale / 100.0f));
+        document()->frame()->setZoomFactor(scale / 100.0f);
 }
 
 FloatPoint SVGSVGElement::currentTranslate() const
@@ -181,6 +181,8 @@ FloatPoint SVGSVGElement::currentTranslate() const
 void SVGSVGElement::setCurrentTranslate(const FloatPoint &translation)
 {
     m_translation = translation;
+    if (parentNode() == document())
+        document()->renderer()->repaint();
 }
 
 void SVGSVGElement::addSVGWindowEventListener(const AtomicString& eventType, const Attribute* attr)
