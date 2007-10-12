@@ -94,7 +94,7 @@ SVGResource* SVGClipPathElement::canvasResource()
 
 void SVGClipPathElement::notifyAttributeChange() const
 {
-    if (!m_clipper || !attached() || ownerDocument()->parsing())
+    if (!m_clipper || !attached() || document()->parsing())
         return;
 
     m_clipper->invalidate();

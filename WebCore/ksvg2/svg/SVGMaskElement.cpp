@@ -184,7 +184,7 @@ SVGResource* SVGMaskElement::canvasResource()
 
 void SVGMaskElement::notifyAttributeChange() const
 {
-    if (!attached() || ownerDocument()->parsing())
+    if (!attached() || document()->parsing())
         return;
     
     if (m_masker) {

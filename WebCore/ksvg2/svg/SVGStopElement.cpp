@@ -62,7 +62,7 @@ RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle* st
 
 void SVGStopElement::notifyAttributeChange() const
 {
-    if (!attached() || ownerDocument()->parsing())
+    if (!attached() || document()->parsing())
         return;
 
     const_cast<SVGStopElement*>(this)->recalcStyle(Force);

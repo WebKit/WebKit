@@ -150,7 +150,7 @@ void SVGDocumentExtensions::mapInstanceToElement(SVGElementInstance* instance, S
     if (m_elementInstances.contains(element))
         m_elementInstances.get(element)->add(instance);
     else {
-        HashSet<SVGElementInstance*>* set = new HashSet<SVGElementInstance*>();;
+        HashSet<SVGElementInstance*>* set = new HashSet<SVGElementInstance*>();
         set->add(instance);
 
         m_elementInstances.add(element, set);

@@ -194,7 +194,7 @@ void SVGPathElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGPathElement::notifyAttributeChange() const
 {
-    if (!ownerDocument()->parsing())
+    if (!document()->parsing())
         rebuildRenderer();
 
     SVGStyledTransformableElement::notifyAttributeChange();

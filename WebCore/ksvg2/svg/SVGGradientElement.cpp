@@ -88,7 +88,7 @@ void SVGGradientElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGGradientElement::notifyAttributeChange() const
 {
-    if (!m_resource || !attached() || ownerDocument()->parsing())
+    if (!m_resource || !attached() || document()->parsing())
         return;
 
     m_resource->invalidate();

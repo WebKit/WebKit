@@ -79,7 +79,7 @@ void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGEllipseElement::notifyAttributeChange() const
 {
-    if (!ownerDocument()->parsing())
+    if (!document()->parsing())
         rebuildRenderer();
 
     SVGStyledTransformableElement::notifyAttributeChange();

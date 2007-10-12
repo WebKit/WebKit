@@ -84,7 +84,7 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGPolyElement::notifyAttributeChange() const
 {
-    if (m_ignoreAttributeChanges || ownerDocument()->parsing())
+    if (m_ignoreAttributeChanges || document()->parsing())
         return;
 
     m_ignoreAttributeChanges = true;

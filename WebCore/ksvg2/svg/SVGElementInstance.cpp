@@ -125,7 +125,7 @@ void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)
 }
 
 // Helper function for updateInstance
-bool containsUseChildNode(Node* start)
+static bool containsUseChildNode(Node* start)
 {
     if (start->hasTagName(SVGNames::useTag))
         return true;

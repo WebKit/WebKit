@@ -72,7 +72,7 @@ void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGCircleElement::notifyAttributeChange() const
 {
-    if (!ownerDocument()->parsing())
+    if (!document()->parsing())
         rebuildRenderer();
 
     SVGStyledTransformableElement::notifyAttributeChange();

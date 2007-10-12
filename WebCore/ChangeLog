@@ -1,3 +1,40 @@
+2007-10-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Use document() instead of ownerDocument() and a few other cleanups.
+
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::mapInstanceToElement):
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::notifyAttributeChange):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::notifyAttributeChange):
+        * ksvg2/svg/SVGElementInstance.cpp:
+        (WebCore::containsUseChildNode):
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::notifyAttributeChange):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::notifyAttributeChange):
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::notifyAttributeChange):
+        * ksvg2/svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::notifyAttributeChange):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::notifyAttributeChange):
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::notifyAttributeChange):
+
 2007-10-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
