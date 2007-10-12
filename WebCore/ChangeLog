@@ -1,3 +1,12 @@
+2007-10-07  Lars Naesbye Christensen  <lars@naesbye.dk>
+
+        Reviewed by Eric Seidel.
+
+        make CSS cell cursor more mac-like
+        http://bugs.webkit.org/show_bug.cgi?id=15325
+
+        * Resources/cellCursor.png:
+
 2007-10-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
