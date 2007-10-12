@@ -1,15 +1,5 @@
 2007-10-02  Eric Seidel  <eric@webkit.org>
 
-        Reviewed by Sam Wenig.
-        
-        Make layout results table sortable (using sorttable.js)
-
-        * Scripts/resources: Added.
-        * Scripts/resources/sorttable.js: Added.
-        * Scripts/run-webkit-tests:
-
-2007-10-02  Eric Seidel  <eric@webkit.org>
-
         Reviewed by Adam Roben.
         
         Make pixel tests more useful!
