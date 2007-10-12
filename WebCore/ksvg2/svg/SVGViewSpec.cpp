@@ -51,7 +51,7 @@ void SVGViewSpec::setTransform(const String& transform)
 
 void SVGViewSpec::setViewBoxString(const String& viewBox)
 {
-    double x, y, w, h;
+    float x, y, w, h;
     const UChar* c = viewBox.characters();
     const UChar* end = c + viewBox.length();
     if (!parseViewBox(c, end, x, y, w, h, false))
@@ -109,7 +109,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
                 if (*currViewSpec != '(')
                     return false;
                 currViewSpec++;
-                double x, y, w, h;
+                float x, y, w, h;
                 if (!parseViewBox(currViewSpec, end, x, y, w, h, false))
                     return false;
                 setViewBoxBaseValue(FloatRect(x, y, w, h));

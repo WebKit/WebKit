@@ -118,7 +118,7 @@ float SVGAnimationElement::getSimpleDuration(ExceptionCode&) const
 
 void SVGAnimationElement::parseKeyNumbers(Vector<float>& keyNumbers, const String& value)
 {
-    double number = 0.0;
+    float number = 0.0f;
     
     const UChar* ptr = value.characters();
     const UChar* end = ptr + value.length();
@@ -126,7 +126,7 @@ void SVGAnimationElement::parseKeyNumbers(Vector<float>& keyNumbers, const Strin
     while (ptr < end) {
         if (!parseNumber(ptr, end, number, false))
             return;
-        keyNumbers.append(narrowPrecisionToFloat(number));
+        keyNumbers.append(number);
         
         if (!skipOptionalSpaces(ptr, end) || *ptr != ';')
             return;
@@ -161,7 +161,7 @@ static void parseValues(Vector<String>& values, const String& value)
 
 static void parseKeySplines(Vector<SVGAnimationElement::KeySpline>& keySplines, const String& value)
 {
-    double number = 0.0;
+    float number = 0.0f;
     SVGAnimationElement::KeySpline keySpline;
     
     const UChar* ptr = value.characters();
@@ -170,16 +170,16 @@ static void parseKeySplines(Vector<SVGAnimationElement::KeySpline>& keySplines, 
     while (ptr < end) {
         if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
             return;
-        keySpline.control1.setX(narrowPrecisionToFloat(number));
+        keySpline.control1.setX(number);
         if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
             return;
-        keySpline.control1.setY(narrowPrecisionToFloat(number));
+        keySpline.control1.setY(number);
         if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
             return;
-        keySpline.control2.setX(narrowPrecisionToFloat(number));
+        keySpline.control2.setX(number);
         if (!parseNumber(ptr, end, number, false))
             return;
-        keySpline.control2.setY(narrowPrecisionToFloat(number));
+        keySpline.control2.setY(number);
         keySplines.append(keySpline);
         
         if (!skipOptionalSpaces(ptr, end) || *ptr != ';')

@@ -27,6 +27,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"
 
+#include "FloatConversion.h"
 #include "RenderBlock.h"
 #include "RenderSVGRoot.h"
 #include "SVGInlineTextBox.h"
@@ -112,7 +113,7 @@ IntRect RenderSVGInlineText::computeAbsoluteRectForRange(int startPos, int endPo
     // But do take the containingBlocks's container position into account, ie. SVG text in scrollable <div>.
     AffineTransform htmlParentCtm = root->RenderContainer::absoluteTransform();
 
-    FloatRect fixedRect(rect.x() + x - xPos() - htmlParentCtm.e(), rect.y() + y - yPos() - htmlParentCtm.f(), rect.width(), rect.height());
+    FloatRect fixedRect(narrowPrecisionToFloat(rect.x() + x - xPos() - htmlParentCtm.e()), narrowPrecisionToFloat(rect.y() + y - yPos() - htmlParentCtm.f()), rect.width(), rect.height());
     return enclosingIntRect(absoluteTransform().mapRect(fixedRect));
 }
 

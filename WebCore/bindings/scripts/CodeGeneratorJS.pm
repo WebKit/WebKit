@@ -304,7 +304,7 @@ sub GenerateHeader
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
     my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
-    push(@headerContent, "#include \"$podType.h\"\n") if $podType and $podType ne "double";
+    push(@headerContent, "#include \"$podType.h\"\n") if $podType and $podType ne "float";
 
     push(@headerContent, "#include \"JSSVGPODTypeWrapper.h\"\n") if $podType;
 
@@ -840,7 +840,7 @@ sub GenerateImplementation
                 $animatedType =~ s/SVG/SVGAnimated/;
 
                 # Special case for JSSVGNumber
-                if ($codeGenerator->IsSVGAnimatedType($animatedType) and $podType ne "double") {
+                if ($codeGenerator->IsSVGAnimatedType($animatedType) and $podType ne "float") {
                     push(@implContent, "    JSSVGPODTypeWrapperCache<$podType, $animatedType>::forgetWrapper(m_impl.get());\n");
                 }
             }
@@ -955,7 +955,7 @@ sub GenerateImplementation
             } elsif (!@{$attribute->getterExceptions}) {
                 if ($podType) {
                     push(@implContent, "        $podType imp(*impl());\n\n");
-                    if ($podType eq "double") { # Special case for JSSVGNumber
+                    if ($podType eq "float") { # Special case for JSSVGNumber
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp") . ";\n");
                     } else {
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$name()") . ";\n");
@@ -1052,7 +1052,7 @@ sub GenerateImplementation
                     } else {
                         if ($podType) {
                             push(@implContent, "        $podType imp(*impl());\n\n");
-                            if ($podType eq "double") { # Special case for JSSVGNumber
+                            if ($podType eq "float") { # Special case for JSSVGNumber
                                 push(@implContent, "        imp = " . JSValueToNative($attribute->signature, "value") . ";\n");
                             } else {
                                 push(@implContent, "        imp.set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value") . ");\n");
@@ -1239,7 +1239,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
 
         push(@implContent, "    return val->isObject(&${className}::info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(val)->impl() : ");
-        if ($podType and $podType ne "double") {
+        if ($podType and $podType ne "float") {
             push(@implContent, "$podType();\n}\n");
         } else {
             push(@implContent, "0;\n}\n");
@@ -1327,7 +1327,7 @@ sub GetNativeType
     return "AffineTransform" if $type eq "SVGMatrix";
     return "SVGTransform" if $type eq "SVGTransform";
     return "SVGLength" if $type eq "SVGLength";
-    return "double" if $type eq "SVGNumber";
+    return "float" if $type eq "SVGNumber";
     return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
 
     # Default, assume native type is a pointer with same type name as idl type
@@ -1392,8 +1392,8 @@ sub JSValueToNative
     my $type = $codeGenerator->StripModule($signature->type);
 
     return "$value->toBoolean(exec)" if $type eq "boolean";
-    return "$value->toNumber(exec)" if $type eq "double" or $type eq "SVGNumber";
-    return "$value->toFloat(exec)" if $type eq "float";
+    return "$value->toNumber(exec)" if $type eq "double";
+    return "$value->toFloat(exec)" if $type eq "float" or $type eq "SVGNumber";
     return "$value->toInt32(exec${maybeOkParam})" if $type eq "unsigned long" or $type eq "long" or $type eq "unsigned short";
 
     return "static_cast<Range::CompareHow>($value->toInt32(exec))" if $type eq "CompareHow";

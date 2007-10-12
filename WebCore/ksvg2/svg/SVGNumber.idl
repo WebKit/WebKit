@@ -24,9 +24,8 @@
 
 module svg {
 
-    interface [Conditional=SVG, PODType=double] SVGNumber {
-                 // FIXME: the spec says that this should be a float.
-                 attribute double value
+    interface [Conditional=SVG, PODType=float] SVGNumber {
+                 attribute float value
                      setter raises(DOMException);
     };
 

@@ -33,8 +33,8 @@ namespace WebCore {
 
 SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_stdDeviationX(0.0)
-    , m_stdDeviationY(0.0)
+    , m_stdDeviationX(0.0f)
+    , m_stdDeviationY(0.0f)
     , m_filterEffect(0)
 {
 }
@@ -56,7 +56,7 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::stdDeviationAttr) {
-        double x, y;
+        float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setStdDeviationXBaseValue(x);
             setStdDeviationYBaseValue(y);

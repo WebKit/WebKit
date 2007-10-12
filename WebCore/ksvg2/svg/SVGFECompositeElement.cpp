@@ -33,10 +33,10 @@ namespace WebCore {
 SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m__operator(SVG_FECOMPOSITE_OPERATOR_OVER)
-    , m_k1(0.0)
-    , m_k2(0.0)
-    , m_k3(0.0)
-    , m_k4(0.0)
+    , m_k1(0.0f)
+    , m_k2(0.0f)
+    , m_k3(0.0f)
+    , m_k4(0.0f)
     , m_filterEffect(0)
 {
 }
@@ -76,13 +76,13 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::in2Attr)
         setIn2BaseValue(value);
     else if (attr->name() == SVGNames::k1Attr)
-        setK1BaseValue(value.toDouble());
+        setK1BaseValue(value.toFloat());
     else if (attr->name() == SVGNames::k2Attr)
-        setK2BaseValue(value.toDouble());
+        setK2BaseValue(value.toFloat());
     else if (attr->name() == SVGNames::k3Attr)
-        setK3BaseValue(value.toDouble());
+        setK3BaseValue(value.toFloat());
     else if (attr->name() == SVGNames::k4Attr)
-        setK4BaseValue(value.toDouble());
+        setK4BaseValue(value.toFloat());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }

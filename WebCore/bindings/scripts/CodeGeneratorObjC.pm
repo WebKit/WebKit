@@ -928,7 +928,7 @@ sub GenerateImplementation
     my $podTypeWithNamespace;
 
     if ($podType) {
-        $podTypeWithNamespace = ($podType eq "double") ? "$podType" : "WebCore::$podType";
+        $podTypeWithNamespace = ($podType eq "float") ? "$podType" : "WebCore::$podType";
     }
 
     # - Add default header template.
@@ -956,7 +956,7 @@ sub GenerateImplementation
         if (!$podType) {
             $implIncludes{"$implClassName.h"} = 1;
         } else {
-            $implIncludes{"$podType.h"} = 1 unless $podType eq "double";
+            $implIncludes{"$podType.h"} = 1 unless $podType eq "float";
         }
     } 
 
@@ -1063,7 +1063,7 @@ sub GenerateImplementation
             my $getterContentTail = ")";
 
             # Special case for DOMSVGNumber
-            if ($podType and $podType eq "double") {
+            if ($podType and $podType eq "float") {
                 $getterContentHead = "*IMPL";
                 $getterContentTail = "";
             }
@@ -1180,7 +1180,7 @@ sub GenerateImplementation
 
                 if ($podType) {
                     # Special case for DOMSVGNumber
-                    if ($podType eq "double") {
+                    if ($podType eq "float") {
                         push(@implContent, "    *IMPL = $arg;\n");
                     } else {
                         push(@implContent, "    IMPL->$attributeName($arg);\n");
@@ -1443,7 +1443,7 @@ sub GenerateImplementation
     if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
         push(@internalHeaderContent, "#import <WebCore/SVGAnimatedTemplate.h>\n\n");
     } else {
-        if ($podType and $podType ne "double") {
+        if ($podType and $podType ne "float") {
             push(@internalHeaderContent, "\nnamespace WebCore { class $podType; }\n\n");
         } elsif ($interfaceName eq "Node") {
             push(@internalHeaderContent, "\nnamespace WebCore { class Node; class EventTarget; }\n\n");

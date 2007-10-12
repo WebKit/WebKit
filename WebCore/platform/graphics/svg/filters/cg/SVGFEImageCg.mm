@@ -47,7 +47,7 @@ CIFilter* SVGFEImage::getCIFilter(const FloatRect& bbox) const
     FloatRect imageRect = cachedImage()->image()->rect();
 
     // Flip image into right origin
-    CGAffineTransform cgTransform = CGAffineTransformMake(1.0, 0.0, 0.0, -1.0, 0.0, imageRect.bottom());
+    CGAffineTransform cgTransform = CGAffineTransformMake(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, imageRect.bottom());
     NSAffineTransform* nsTransform = [NSAffineTransform transform];
     [nsTransform setTransformStruct:*((NSAffineTransformStruct *)&cgTransform)];
     [filter setValue:nsTransform forKey:@"inputTransform"];

@@ -47,7 +47,7 @@ SVGFitToViewBox::~SVGFitToViewBox()
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, FloatRect, Rect, rect, ViewBox, viewBox, SVGNames::viewBoxAttr.localName(), m_viewBox)
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr.localName(), m_preserveAspectRatio.get())
 
-bool SVGFitToViewBox::parseViewBox(const UChar*& c, const UChar* end, double& x, double& y, double& w, double& h, bool validate)
+bool SVGFitToViewBox::parseViewBox(const UChar*& c, const UChar* end, float& x, float& y, float& w, float& h, bool validate)
 {
     Document* doc = contextElement()->document();
     String str(c, end - c);
@@ -94,7 +94,7 @@ AffineTransform SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float v
 bool SVGFitToViewBox::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::viewBoxAttr) {
-        double x = 0, y = 0, w = 0, h = 0;
+        float x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f;
         const UChar* c = attr->value().characters();
         const UChar* end = c + attr->value().length();
         if (parseViewBox(c, end, x, y, w, h))

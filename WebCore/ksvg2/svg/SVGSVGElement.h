@@ -100,7 +100,7 @@ namespace WebCore
         bool checkEnclosure(SVGElement*, const FloatRect&);
         void deselectAll();
 
-        static double createSVGNumber();
+        static float createSVGNumber();
         static SVGLength createSVGLength();
         static SVGAngle* createSVGAngle();
         static FloatPoint createSVGPoint();

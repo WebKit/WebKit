@@ -30,7 +30,7 @@
 namespace WebCore {
 
 SVGNumberList::SVGNumberList()
-    : SVGList<double>()
+    : SVGList<float>()
 {
 }
 
@@ -42,7 +42,7 @@ void SVGNumberList::parse(const String& value)
 {
     ExceptionCode ec = 0;
 
-    double number = 0;
+    float number = 0.0f;
    
     const UChar* ptr = value.characters();
     const UChar* end = ptr + value.length();

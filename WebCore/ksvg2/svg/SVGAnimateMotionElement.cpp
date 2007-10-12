@@ -83,7 +83,7 @@ void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
             m_rotateMode = AutoReverseMode;
         else {
             m_rotateMode = AngleMode;
-            m_angle = attr->value().toDouble();
+            m_angle = attr->value().toFloat();
         }
     } else if (attr->name() == SVGNames::keyPointsAttr) {
         m_keyPoints.clear();
@@ -117,7 +117,7 @@ bool SVGAnimateMotionElement::updateAnimatedValue(EAnimationMode animationMode, 
         // to-animations have a special equation: value = (to - base) * (time/duration) + base
         m_animatedTranslation.setWidth((m_toPoint.x() - m_basePoint.x()) * timePercentage + m_basePoint.x());
         m_animatedTranslation.setHeight((m_toPoint.y() - m_basePoint.y()) * timePercentage + m_basePoint.y());
-        m_animatedAngle = 0;
+        m_animatedAngle = 0.0f;
     } else {
         m_animatedTranslation.setWidth(m_pointDiff.width() * percentagePast + m_fromPoint.x());
         m_animatedTranslation.setHeight(m_pointDiff.height() * percentagePast + m_fromPoint.y());
@@ -136,11 +136,11 @@ static bool parsePoint(const String& s, FloatPoint& point)
     if (!skipOptionalSpaces(cur, end))
         return false;
     
-    double x = 0;
+    float x = 0.0f;
     if (!parseNumber(cur, end, x))
         return false;
     
-    double y = 0;
+    float y = 0.0f;
     if (!parseNumber(cur, end, y))
         return false;
     
@@ -152,8 +152,8 @@ static bool parsePoint(const String& s, FloatPoint& point)
 
 bool SVGAnimateMotionElement::calculateFromAndToValues(EAnimationMode animationMode, unsigned valueIndex)
 {
-    m_fromAngle = 0;
-    m_toAngle = 0;
+    m_fromAngle = 0.0f;
+    m_toAngle = 0.0f;
     switch (animationMode) {
     case FROM_TO_ANIMATION:
         parsePoint(m_from, m_fromPoint);
@@ -185,7 +185,7 @@ bool SVGAnimateMotionElement::calculateFromAndToValues(EAnimationMode animationM
     }
     
     m_pointDiff = m_toPoint - m_fromPoint;
-    m_angleDiff = 0;
+    m_angleDiff = 0.0f;
     return (m_pointDiff.width() != 0 || m_pointDiff.height() != 0);
 }
 

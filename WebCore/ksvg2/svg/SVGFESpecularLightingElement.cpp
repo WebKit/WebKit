@@ -35,11 +35,11 @@ namespace WebCore {
 
 SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_specularConstant(1.0)
-    , m_specularExponent(1.0)
-    , m_surfaceScale(1.0)
-    , m_kernelUnitLengthX(0.0)
-    , m_kernelUnitLengthY(0.0)
+    , m_specularConstant(1.0f)
+    , m_specularExponent(1.0f)
+    , m_surfaceScale(1.0f)
+    , m_kernelUnitLengthX(0.0f)
+    , m_kernelUnitLengthY(0.0f)
     , m_filterEffect(0)
 {
 }
@@ -62,13 +62,13 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::surfaceScaleAttr)
-        setSurfaceScaleBaseValue(value.toDouble());
+        setSurfaceScaleBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::specularConstantAttr)
-        setSpecularConstantBaseValue(value.toDouble());
+        setSpecularConstantBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::specularExponentAttr)
-        setSpecularExponentBaseValue(value.toDouble());
+        setSpecularExponentBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
-        double x, y;
+        float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setKernelUnitLengthXBaseValue(x);
             setKernelUnitLengthYBaseValue(y);

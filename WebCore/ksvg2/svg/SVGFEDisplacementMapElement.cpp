@@ -31,7 +31,7 @@ SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& ta
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_xChannelSelector(SVG_CHANNEL_A)
     , m_yChannelSelector(SVG_CHANNEL_A)
-    , m_scale(0.0)
+    , m_scale(0.0f)
     , m_filterEffect(0)
 {
 }
@@ -73,7 +73,7 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == SVGNames::in2Attr)
         setIn2BaseValue(value);
     else if (attr->name() == SVGNames::scaleAttr)
-        setScaleBaseValue(value.toDouble());
+        setScaleBaseValue(value.toFloat());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }

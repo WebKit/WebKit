@@ -31,8 +31,8 @@ namespace WebCore {
 
 SVGFEOffset::SVGFEOffset(SVGResourceFilter* filter)
     : SVGFilterEffect(filter)
-    , m_dx(0.0)
-    , m_dy(0.0)
+    , m_dx(0.0f)
+    , m_dy(0.0f)
 {
 }
 

@@ -209,7 +209,7 @@ typedef SVGTextContentElement::SVGLengthAdjustType ELengthAdjust;
 struct SVGTextChunk {
     SVGTextChunk()
         : anchor(TA_START)
-        , textLength(0.0)
+        , textLength(0.0f)
         , lengthAdjust(SVGTextContentElement::LENGTHADJUST_SPACING)
         , ctm()
         , isVerticalText(false)

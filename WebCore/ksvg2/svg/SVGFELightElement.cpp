@@ -30,16 +30,16 @@ namespace WebCore {
 
 SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_azimuth(0.0)
-    , m_elevation(0.0)
-    , m_x(0.0)
-    , m_y(0.0)
-    , m_z(0.0)
-    , m_pointsAtX(0.0)
-    , m_pointsAtY(0.0)
-    , m_pointsAtZ(0.0)
-    , m_specularExponent(1.0)
-    , m_limitingConeAngle(0.0)
+    , m_azimuth(0.0f)
+    , m_elevation(0.0f)
+    , m_x(0.0f)
+    , m_y(0.0f)
+    , m_z(0.0f)
+    , m_pointsAtX(0.0f)
+    , m_pointsAtY(0.0f)
+    , m_pointsAtZ(0.0f)
+    , m_specularExponent(1.0f)
+    , m_limitingConeAngle(0.0f)
 {
 }
 
@@ -63,25 +63,25 @@ void SVGFELightElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::azimuthAttr)
-        setAzimuthBaseValue(value.toDouble());
+        setAzimuthBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::elevationAttr)
-        setElevationBaseValue(value.toDouble());
+        setElevationBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(value.toDouble());
+        setXBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(value.toDouble());
+        setYBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::zAttr)
-        setZBaseValue(value.toDouble());
+        setZBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::pointsAtXAttr)
-        setPointsAtXBaseValue(value.toDouble());
+        setPointsAtXBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::pointsAtYAttr)
-        setPointsAtYBaseValue(value.toDouble());
+        setPointsAtYBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::pointsAtZAttr)
-        setPointsAtZBaseValue(value.toDouble());
+        setPointsAtZBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::specularExponentAttr)
-        setSpecularExponentBaseValue(value.toDouble());
+        setSpecularExponentBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::limitingConeAngleAttr)
-        setLimitingConeAngleBaseValue(value.toDouble());
+        setLimitingConeAngleBaseValue(value.toFloat());
     else
         SVGElement::parseMappedAttribute(attr);
 }

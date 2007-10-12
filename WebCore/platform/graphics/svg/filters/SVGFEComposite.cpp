@@ -32,10 +32,10 @@ namespace WebCore {
 SVGFEComposite::SVGFEComposite(SVGResourceFilter* filter)
     : SVGFilterEffect(filter)
     , m_operation(SVG_FECOMPOSITE_OPERATOR_UNKNOWN)
-    , m_k1(0.0)
-    , m_k2(0.0)
-    , m_k3(0.0)
-    , m_k4(0.0)
+    , m_k1(0.0f)
+    , m_k2(0.0f)
+    , m_k3(0.0f)
+    , m_k4(0.0f)
 {
 }
 

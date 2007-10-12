@@ -31,8 +31,8 @@ namespace WebCore {
 
 SVGFETurbulence::SVGFETurbulence(SVGResourceFilter* filter)
     : SVGFilterEffect(filter)
-    , m_baseFrequencyX(0.0)
-    , m_baseFrequencyY(0.0)
+    , m_baseFrequencyX(0.0f)
+    , m_baseFrequencyY(0.0f)
     , m_numOctaves(0)
     , m_seed(0)
     , m_stitchTiles(false)

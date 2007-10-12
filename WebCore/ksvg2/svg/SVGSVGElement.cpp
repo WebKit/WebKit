@@ -136,13 +136,13 @@ FloatRect SVGSVGElement::viewport() const
 float SVGSVGElement::pixelUnitToMillimeterX() const
 {
     // 2.54 / cssPixelsPerInch gives CM.
-    return (2.54 / cssPixelsPerInch) * 10.0;
+    return (2.54f / cssPixelsPerInch) * 10.0f;
 }
 
 float SVGSVGElement::pixelUnitToMillimeterY() const
 {
     // 2.54 / cssPixelsPerInch gives CM.
-    return (2.54 / cssPixelsPerInch) * 10.0;
+    return (2.54f / cssPixelsPerInch) * 10.0f;
 }
 
 float SVGSVGElement::screenPixelToMillimeterX() const
@@ -311,9 +311,9 @@ void SVGSVGElement::deselectAll()
     document()->frame()->selectionController()->clear();
 }
 
-double SVGSVGElement::createSVGNumber()
+float SVGSVGElement::createSVGNumber()
 {
-    return 0.0;
+    return 0.0f;
 }
 
 SVGLength SVGSVGElement::createSVGLength()

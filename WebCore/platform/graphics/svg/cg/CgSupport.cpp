@@ -54,7 +54,7 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
 void applyStrokeStyleToContext(CGContextRef context, RenderStyle* style, const RenderObject* object)
 {
     /* Shouldn't all these be in the stroke painter? */
-    CGContextSetLineWidth(context, SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0));
+    CGContextSetLineWidth(context, SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0f));
 
     CGContextSetLineCap(context, CGLineCapFromKC(style->svgStyle()->capStyle()));
     CGContextSetLineJoin(context, CGLineJoinFromKC(style->svgStyle()->joinStyle()));
@@ -62,7 +62,7 @@ void applyStrokeStyleToContext(CGContextRef context, RenderStyle* style, const R
     CGContextSetMiterLimit(context, style->svgStyle()->strokeMiterLimit());
 
     const DashArray& dashes = dashArrayFromRenderingStyle(style);
-    double dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0);
+    double dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0f);
 
     CGContextSetLineDash(context, narrowPrecisionToCGFloat(dashOffset), dashes.data(), dashes.size());
 }

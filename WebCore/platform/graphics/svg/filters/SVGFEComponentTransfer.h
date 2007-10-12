@@ -54,11 +54,11 @@ enum SVGComponentTransferType {
 struct SVGComponentTransferFunction {
     SVGComponentTransferFunction()
         : type(SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN)
-        , slope(0.0)
-        , intercept(0.0)
-        , amplitude(0.0)
-        , exponent(0.0)
-        , offset(0.0)
+        , slope(0.0f)
+        , intercept(0.0f)
+        , amplitude(0.0f)
+        , exponent(0.0f)
+        , offset(0.0f)
     {
     }
 

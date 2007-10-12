@@ -45,15 +45,15 @@ CIVector* getVectorForChannel(SVGChannelSelectorType channel)
     case SVG_CHANNEL_UNKNOWN:
         return nil;    
     case SVG_CHANNEL_R:
-        return [CIVector vectorWithX:1.0 Y:0.0 Z:0.0 W:0.0];
+        return [CIVector vectorWithX:1.0f Y:0.0f Z:0.0f W:0.0f];
     case SVG_CHANNEL_G:
-        return [CIVector vectorWithX:0.0 Y:1.0 Z:0.0 W:0.0];
+        return [CIVector vectorWithX:0.0f Y:1.0f Z:0.0f W:0.0f];
     case SVG_CHANNEL_B:
-        return [CIVector vectorWithX:0.0 Y:0.0 Z:1.0 W:0.0];
+        return [CIVector vectorWithX:0.0f Y:0.0f Z:1.0f W:0.0f];
     case SVG_CHANNEL_A:
-        return [CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:1.0];
+        return [CIVector vectorWithX:0.0f Y:0.0f Z:0.0f W:1.0f];
     default:
-        return [CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:0.0];
+        return [CIVector vectorWithX:0.0f Y:0.0f Z:0.0f W:0.0f];
     }
 }
 
@@ -105,9 +105,9 @@ CIFilter* getLightVectors(CIFilter* normals, const SVGLightSource* light, float 
         float elevation = dlight->elevation();
         azimuth = deg2rad(azimuth);
         elevation = deg2rad(elevation);
-        float Lx = cos(azimuth)*cos(elevation);
-        float Ly = sin(azimuth)*cos(elevation);
-        float Lz = sin(elevation);
+        float Lx = cosf(azimuth)*cosf(elevation);
+        float Ly = sinf(azimuth)*cosf(elevation);
+        float Lz = sinf(elevation);
 
         [filter setValue:[normals valueForKey:@"outputImage"] forKey:@"inputNormalMap"];
         [filter setValue:[CIVector vectorWithX:Lx Y:Ly Z:Lz] forKey:@"inputLightDirection"];

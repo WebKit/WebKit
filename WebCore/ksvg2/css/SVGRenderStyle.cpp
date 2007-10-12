@@ -121,7 +121,7 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle* svgInheritParent)
     svg_inherited_flags = svgInheritParent->svg_inherited_flags;
 }
 
-double SVGRenderStyle::cssPrimitiveToLength(const RenderObject* item, CSSValue* value, double defaultValue)
+float SVGRenderStyle::cssPrimitiveToLength(const RenderObject* item, CSSValue* value, float defaultValue)
 {
     CSSPrimitiveValue* primitive = static_cast<CSSPrimitiveValue*>(value);
 
@@ -133,7 +133,7 @@ double SVGRenderStyle::cssPrimitiveToLength(const RenderObject* item, CSSValue* 
         SVGStyledElement* element = static_cast<SVGStyledElement*>(item->element());
         SVGElement* viewportElement = (element ? element->viewportElement() : 0);
         if (viewportElement) {
-            double result = primitive->getFloatValue() / 100.0;
+            float result = primitive->getFloatValue() / 100.0f;
             return SVGLength::PercentageOfViewport(result, element, LengthModeOther);
         }
     }

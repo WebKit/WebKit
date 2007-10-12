@@ -31,7 +31,7 @@ namespace WebCore
 {
     class String;
 
-    class SVGNumberList : public SVGList<double>
+    class SVGNumberList : public SVGList<float>
     {
     public:
         SVGNumberList();

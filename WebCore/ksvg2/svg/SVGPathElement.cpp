@@ -48,7 +48,7 @@ SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_pathLength(0.0)
+    , m_pathLength(0.0f)
 {
 }
 

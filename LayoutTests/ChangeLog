@@ -1,3 +1,13 @@
+2007-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Bug 15469: feature branch has 100's of implicit double -> float conversions
+
+        Correct minor layout test change following double to float replacement        
+
+        * svg/batik/paints/gradientLimit-expected.txt:
+
 2007-10-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

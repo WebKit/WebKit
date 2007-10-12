@@ -14768,10 +14768,6 @@
 				DEAD_CODE_STRIPPING = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WARNING_CFLAGS = (
-					"$(WARNING_CFLAGS_$(CURRENT_ARCH))",
-					"-Wno-shorten-64-to-32",
-				);
 			};
 			name = Debug;
 		};
@@ -14780,10 +14776,6 @@
 			baseConfigurationReference = 1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */;
 			buildSettings = {
 				STRIP_INSTALLED_PRODUCT = NO;
-				WARNING_CFLAGS = (
-					"$(WARNING_CFLAGS_$(CURRENT_ARCH))",
-					"-Wno-shorten-64-to-32",
-				);
 			};
 			name = Release;
 		};
@@ -14791,10 +14783,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E60BA9C84600F90147 /* Base.xcconfig */;
 			buildSettings = {
-				WARNING_CFLAGS = (
-					"$(WARNING_CFLAGS_$(CURRENT_ARCH))",
-					"-Wno-shorten-64-to-32",
-				);
 			};
 			name = Production;
 		};

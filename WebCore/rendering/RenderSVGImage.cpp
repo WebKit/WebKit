@@ -172,7 +172,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         AffineTransform imageCtm(translationForAttributes());
         PaintInfo savedInfo(paintInfo);
 
-        FloatRect boundingBox = FloatRect(imageCtm.e(), imageCtm.f(), m_imageWidth, m_imageHeight);
+        FloatRect boundingBox = FloatRect(narrowPrecisionToFloat(imageCtm.e()), narrowPrecisionToFloat(imageCtm.f()), m_imageWidth, m_imageHeight);
         prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
 
         SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());

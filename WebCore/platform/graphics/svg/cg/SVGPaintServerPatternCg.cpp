@@ -69,7 +69,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     // "out of" cell boundaries, to draw the overflown content, instead of clipping it away. The uppermost
     // cell doesn't include the overflown content of the cell right above it though -> that's why we're moving
     // down the phase by a very small amount, so we're sure the "cell right above"'s overflown content gets drawn.
-    CGContextSetPatternPhase(contextRef, CGSizeMake(0.0, -0.01));
+    CGContextSetPatternPhase(contextRef, CGSizeMake(0.0f, -0.01f));
 
     RenderStyle* style = object->style();
     CGContextSetAlpha(contextRef, style->opacity());

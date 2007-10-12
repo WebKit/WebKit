@@ -33,10 +33,10 @@ namespace WebCore {
 SVGFEDiffuseLighting::SVGFEDiffuseLighting(SVGResourceFilter* filter)
     : SVGFilterEffect(filter)
     , m_lightingColor()
-    , m_surfaceScale(0.0)
-    , m_diffuseConstant(0.0)
-    , m_kernelUnitLengthX(0.0)
-    , m_kernelUnitLengthY(0.0)
+    , m_surfaceScale(0.0f)
+    , m_diffuseConstant(0.0f)
+    , m_kernelUnitLengthX(0.0f)
+    , m_kernelUnitLengthY(0.0f)
     , m_lightSource(0)
 {
 }

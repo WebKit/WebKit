@@ -32,8 +32,8 @@ namespace WebCore {
 SVGFEMorphology::SVGFEMorphology(SVGResourceFilter* filter)
     : SVGFilterEffect(filter)
     , m_operator(SVG_MORPHOLOGY_OPERATOR_UNKNOWN)
-    , m_radiusX(0.0)
-    , m_radiusY(0.0)
+    , m_radiusX(0.0f)
+    , m_radiusY(0.0f)
 {
 }
 

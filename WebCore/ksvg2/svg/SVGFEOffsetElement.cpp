@@ -32,8 +32,8 @@ namespace WebCore {
 
 SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_dx(0.0)
-    , m_dy(0.0)
+    , m_dx(0.0f)
+    , m_dy(0.0f)
     , m_filterEffect(0)
 {
 }
@@ -51,9 +51,9 @@ void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::dxAttr)
-        setDxBaseValue(value.toDouble());
+        setDxBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::dyAttr)
-        setDyBaseValue(value.toDouble());
+        setDyBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else

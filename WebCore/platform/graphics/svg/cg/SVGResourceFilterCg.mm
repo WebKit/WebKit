@@ -175,7 +175,7 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
 
             FloatRect filterRect = filterBBoxForItemBBox(bbox);
             FloatPoint destOrigin = filterRect.location();
-            filterRect.setLocation(FloatPoint(0.0, 0.0));
+            filterRect.setLocation(FloatPoint(0.0f, 0.0f));
 
             [m_filterCIContext drawImage:outputImage atPoint:CGPoint(destOrigin) fromRect:filterRect];
         }

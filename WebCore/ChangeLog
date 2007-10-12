@@ -1,3 +1,168 @@
+2007-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Bug 15469: feature branch has 100's of implicit double -> float conversions
+
+        Re-enable -Wshorten-64-to-32, and make required code changes to make us build sanely again.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::translate):
+        (WebCore::JSSVGMatrix::scale):
+        (WebCore::JSSVGMatrix::scaleNonUniform):
+        (WebCore::JSSVGMatrix::rotate):
+        (WebCore::JSSVGMatrix::skewX):
+        (WebCore::JSSVGMatrix::skewY):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::cssPrimitiveToLength):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        (WebCore::SVGAnimateMotionElement::updateAnimatedValue):
+        (WebCore::parsePoint):
+        (WebCore::SVGAnimateMotionElement::calculateFromAndToValues):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseKeyNumbers):
+        (WebCore::parseKeySplines):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        (WebCore::SVGComponentTransferFunctionElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::SVGFELightElement):
+        (WebCore::SVGFELightElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        (WebCore::SVGFEOffsetElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (WebCore::SVGFESpecularLightingElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBox.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValueAsString):
+        (WebCore::SVGLength::PercentageOfViewport):
+        * ksvg2/svg/SVGNumber.idl:
+        * ksvg2/svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::parse):
+        * ksvg2/svg/SVGNumberList.h:
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::_parseNumber):
+        (WebCore::parseNumber):
+        (WebCore::pointsListFromSVGData):
+        (WebCore::PathBuilder::svgMoveTo):
+        (WebCore::PathBuilder::svgLineTo):
+        (WebCore::PathBuilder::svgCurveToCubic):
+        (WebCore::SVGPathSegListBuilder::svgMoveTo):
+        (WebCore::SVGPathSegListBuilder::svgLineTo):
+        (WebCore::SVGPathSegListBuilder::svgLineToHorizontal):
+        (WebCore::SVGPathSegListBuilder::svgLineToVertical):
+        (WebCore::SVGPathSegListBuilder::svgCurveToCubic):
+        (WebCore::SVGPathSegListBuilder::svgCurveToCubicSmooth):
+        (WebCore::SVGPathSegListBuilder::svgCurveToQuadratic):
+        (WebCore::SVGPathSegListBuilder::svgCurveToQuadraticSmooth):
+        (WebCore::SVGPathSegListBuilder::svgArcTo):
+        * ksvg2/svg/SVGParserUtilities.h:
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterX):
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterY):
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::addToSVGTransform):
+        (WebCore::SVGTransformDistance::distance):
+        * ksvg2/svg/SVGTransformDistance.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformValue):
+        * ksvg2/svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * platform/graphics/svg/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::filterBBoxForItemBBox):
+        * platform/graphics/svg/cg/CgSupport.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        (WebCore::SVGResourceFilter::applyFilter):
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.h:
+        (WebCore::SVGComponentTransferFunction::SVGComponentTransferFunction):
+        * platform/graphics/svg/filters/SVGFEComposite.cpp:
+        (WebCore::SVGFEComposite::SVGFEComposite):
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::SVGFEConvolveMatrix::SVGFEConvolveMatrix):
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::SVGFEDiffuseLighting::SVGFEDiffuseLighting):
+        * platform/graphics/svg/filters/SVGFEFlood.cpp:
+        (WebCore::SVGFEFlood::SVGFEFlood):
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.cpp:
+        (WebCore::SVGFEGaussianBlur::SVGFEGaussianBlur):
+        * platform/graphics/svg/filters/SVGFEMorphology.cpp:
+        (WebCore::SVGFEMorphology::SVGFEMorphology):
+        * platform/graphics/svg/filters/SVGFEOffset.cpp:
+        (WebCore::SVGFEOffset::SVGFEOffset):
+        * platform/graphics/svg/filters/SVGFESpecularLighting.cpp:
+        (WebCore::SVGFESpecularLighting::SVGFESpecularLighting):
+        * platform/graphics/svg/filters/SVGFETurbulence.cpp:
+        (WebCore::SVGFETurbulence::SVGFETurbulence):
+        * platform/graphics/svg/filters/cg/SVGFEColorMatrixCg.mm:
+        (WebCore::SVGFEColorMatrix::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.mm:
+        (WebCore::getVectorForChannel):
+        (WebCore::getLightVectors):
+        * platform/graphics/svg/filters/cg/SVGFEImageCg.mm:
+        (WebCore::SVGFEImage::getCIFilter):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeAbsoluteRectForRange):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::applyContentTransforms):
+        (WebCore::RenderSVGRoot::calcViewport):
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects):
+        (WebCore::RenderSVGText::relativeBBox):
+        * rendering/RenderSVGTextPath.cpp:
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::calculateBaselineShift):
+        (WebCore::SVGCharacterLayoutInfo::SVGCharacterLayoutInfo):
+        (WebCore::SVGCharacterLayoutInfo::processedChunk):
+        (WebCore::SVGCharacterLayoutInfo::nextPathLayoutPointAndAngle):
+        (WebCore::SVGCharacterLayoutInfo::addLayoutInformation):
+        * rendering/SVGCharacterLayoutInfo.h:
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphBoundaries):
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback):
+        (WebCore::pathForDecoration):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        (WebCore::applyTextAnchorToTextChunk):
+        (WebCore::SVGRootInlineBox::buildLayoutInformation):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+
 2007-10-11  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Eric Seidel.

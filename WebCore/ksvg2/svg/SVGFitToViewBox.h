@@ -36,7 +36,7 @@ namespace WebCore {
         virtual ~SVGFitToViewBox();
 
         // 'SVGFitToViewBox' functions
-        bool parseViewBox(const UChar*& start, const UChar* end, double& x, double& y, double& w, double& h, bool validate = true);
+        bool parseViewBox(const UChar*& start, const UChar* end, float& x, float& y, float& w, float& h, bool validate = true);
         virtual AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
         bool parseMappedAttribute(MappedAttribute*);

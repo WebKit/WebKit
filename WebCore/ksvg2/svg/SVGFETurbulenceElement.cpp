@@ -32,10 +32,10 @@ namespace WebCore {
 
 SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_baseFrequencyX(0.0)
-    , m_baseFrequencyY(0.0)
+    , m_baseFrequencyX(0.0f)
+    , m_baseFrequencyY(0.0f)
     , m_numOctaves(1)
-    , m_seed(0.0)
+    , m_seed(0.0f)
     , m_stitchTiles(SVG_STITCHTYPE_NOSTITCH)
     , m_type(SVG_TURBULENCE_TYPE_TURBULENCE)
     , m_filterEffect(0)
@@ -68,13 +68,13 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
         else if (value == "nostitch")
             setStitchTilesBaseValue(SVG_STITCHTYPE_NOSTITCH);
     } else if (attr->name() == SVGNames::baseFrequencyAttr) {
-        double x, y;
+        float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setBaseFrequencyXBaseValue(x);
             setBaseFrequencyYBaseValue(y);
         }
     } else if (attr->name() == SVGNames::seedAttr)
-        setSeedBaseValue(value.toDouble());
+        setSeedBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::numOctavesAttr)
         setNumOctavesBaseValue(value.deprecatedString().toUInt());
     else

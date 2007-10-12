@@ -115,7 +115,7 @@ void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int parentX, in
 
     // Respect scroll offset caused by html parents
     AffineTransform ctm = RenderContainer::absoluteTransform();
-    paintInfo.rect.move(ctm.e(), ctm.f());
+    paintInfo.rect.move(static_cast<float>(ctm.e()), static_cast<float>(ctm.f()));
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     paintInfo.context->concatCTM(AffineTransform().scale(svg->currentScale()));
@@ -197,8 +197,8 @@ void RenderSVGRoot::calcViewport()
         if (!selfNeedsLayout() && !svg->hasRelativeValues())
             return;
 
-        double w = svg->width().value();
-        double h = svg->height().value();
+        float w = svg->width().value();
+        float h = svg->height().value();
         m_viewport = FloatRect(0, 0, w, h);
     }
 }
@@ -268,8 +268,8 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     AffineTransform ctm = RenderContainer::absoluteTransform();
 
-    int sx = (_tx - ctm.e()); // scroll offset
-    int sy = (_ty - ctm.f()); // scroll offset
+    int sx = (_tx - static_cast<float>(ctm.e())); // scroll offset
+    int sy = (_ty - static_cast<float>(ctm.f())); // scroll offset
  
     if (!viewport().isEmpty()
         && style()->overflowX() == OHIDDEN
