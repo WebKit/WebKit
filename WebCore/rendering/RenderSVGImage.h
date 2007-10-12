@@ -56,10 +56,15 @@ namespace WebCore {
 
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 
+        virtual void calcWidth();
+        virtual void calcHeight();
+
     private:
         AffineTransform translationForAttributes();
         AffineTransform m_transform;
         IntRect m_absoluteBounds;
+        float m_imageWidth;
+        float m_imageHeight;
     };
 
 } // namespace WebCore

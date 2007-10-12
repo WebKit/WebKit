@@ -1,3 +1,20 @@
+2007-06-28  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14241
+        SVG <image> with height or width less than 1 fails to render image
+
+        Keep extra member vars to get width/height as floats for accurate
+        calculations.
+
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::adjustRectsForAspectRatio):
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::calcWidth):
+        (WebCore::RenderSVGImage::calcHeight):
+        * rendering/RenderSVGImage.h:
+
 2007-06-26  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

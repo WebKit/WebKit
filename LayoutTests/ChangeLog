@@ -1,3 +1,16 @@
+2007-06-28  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14241
+        SVG <image> with height or width less than 1 fails to render image
+
+        * svg/custom/image-small-width-height-expected.checksum: Added.
+        * svg/custom/image-small-width-height-expected.png: Added.
+        * svg/custom/image-small-width-height-expected.txt: Added.
+        * svg/custom/image-small-width-height.svg: Added.
+
 2007-06-26  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.
