@@ -1,3 +1,11 @@
+2007-10-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark.
+
+        Enable Experimental SVG features by default when building from Xcode
+
+        * Configurations/WebCore.xcconfig:
+
 2007-10-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.
