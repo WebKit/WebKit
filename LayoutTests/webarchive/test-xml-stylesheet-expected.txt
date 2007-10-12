@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<data>
+		PD94bWwtc3R5bGVzaGVldCBocmVmPSJyZXNvdXJjZXMvdGVzdC14bWwtc3R5
+		bGVzaGVldC5jc3MiIHR5cGU9InRleHQvY3NzIj8+PGh0bWwgeG1sbnM9Imh0
+		dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPgogIDxzY3JpcHQ+CiAgICBp
+		ZiAod2luZG93LmxheW91dFRlc3RDb250cm9sbGVyKQogICAgICAgIGxheW91
+		dFRlc3RDb250cm9sbGVyLmR1bXBET01Bc1dlYkFyY2hpdmUoKTsKICA8L3Nj
+		cmlwdD4KICA8c3R5bGU+CiAgICBkaXYgeyBiYWNrZ3JvdW5kOiByZWQ7IHdp
+		ZHRoOiAxMDBweDsgaGVpZ2h0OiAxMDBweDsgfQogIDwvc3R5bGU+CiAgPGRp
+		diBpZD0idGVzdCI+CiAgPC9kaXY+CjwvaHRtbD4=
+		</data>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>application/xml</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-xml-stylesheet.xml</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<string>#test {
+  background: green;
+}
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<data>
+			YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVyWCR2ZXJzaW9uVCR0
+			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
+			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
+			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAQ
+			HxAHgAMjf+////////+AAFh0ZXh0L2Nzc9IdHh8gWCRjbGFzc2Vz
+			WiRjbGFzc25hbWWiICFdTlNVUkxSZXNwb25zZVhOU09iamVjdAgR
+			GyQpMkRJTGJkaW9+gYSHipGUl5mbnZ+hqqy1usPO0d8AAAAAAAAB
+			AQAAAAAAAAAiAAAAAAAAAAAAAAAAAAAA6A==
+			</data>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-xml-stylesheet.css</string>
+		</dict>
+	</array>
+</dict>
+</plist>

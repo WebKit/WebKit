@@ -1,6 +1,17 @@
 2007-10-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
+        
+        WebArchives do not embed stylesheets referenced by xml-stylesheeet
+        http://bugs.webkit.org/show_bug.cgi?id=15320
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMProcessingInstruction _stylesheetURL]): needed to access [[self sheet] href]
+        (-[DOMProcessingInstruction _subresourceURLs]): call and return _stylesheetURL
+
+2007-10-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
 
         * DOM/WebDOMOperations.mm: added DOMSVGElementImage _subresources implementation
         (-[DOMNode _URLsFromSelectors:]): now handles DOMSVGAnimatedString return values
