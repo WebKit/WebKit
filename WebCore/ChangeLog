@@ -1,3 +1,14 @@
+2007-10-06  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Gtk+ build fix and minor code cleanup.
+
+        * WebCore.pro:
+        * platform/gtk/FontCacheGtk.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::fontExists):
+
 2007-10-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.

@@ -347,7 +347,11 @@ SOURCES += \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \
     css/CSSCursorImageValue.cpp \
+    css/CSSFontFace.cpp \
     css/CSSFontFaceRule.cpp \
+    css/CSSFontFaceSrcValue.cpp \
+    css/CSSFontSelector.cpp \
+    css/CSSFontFaceSource.cpp \
     css/CSSHelper.cpp \
     css/CSSImageValue.cpp \
     css/CSSImportRule.cpp \
@@ -566,6 +570,7 @@ SOURCES += \
     html/HTMLViewSourceDocument.cpp \
     loader/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
+    loader/CachedFont.cpp \
     loader/CachedImage.cpp \
     loader/CachedResourceClientWalker.cpp \
     loader/CachedResource.cpp \

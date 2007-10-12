@@ -47,10 +47,7 @@ void FontCache::platformInit()
 
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-
-    FontData* fontData = 0;
-    fontData = new FontData(FontPlatformData(font.fontDescription(), font.family().family()));
-    return fontData;
+    return new FontData(FontPlatformData(font.fontDescription(), font.family().family()));
 }
 
 FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
@@ -58,12 +55,18 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
     return new FontPlatformData(font.fontDescription(), font.family().family());
 }
 
-FontPlatformData* FontCache::getLastResortFallbackFont(const Font& font)
+FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
     // FIXME: Would be even better to somehow get the user's default font here.
     // For now we'll pick the default that the user would get without changing any prefs.
     static AtomicString timesStr("Times New Roman");
-    return getCachedFontPlatformData(font.fontDescription(), timesStr);
+    return getCachedFontPlatformData(fontDescription, timesStr);
+}
+
+bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
+{
+    FontPlatformData platformData(fontDescription, family);
+    return platformData.m_pattern != 0;
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
