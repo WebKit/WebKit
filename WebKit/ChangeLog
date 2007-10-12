@@ -1,3 +1,12 @@
+2007-10-03  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Mark Rowe.
+        
+        Mac build fix for issue introduced in r26027
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
 2007-10-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.

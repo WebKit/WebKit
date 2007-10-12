@@ -51,7 +51,6 @@ void InitWebCoreSystemInterface(void)
     INIT(FontSmoothingModeIsLCD);
     INIT(GetATSStyleGroup);
     INIT(GetCGFontFromNSFont);
-    INIT(GetDefaultGlyphForChar);
     INIT(GetExtensionsForMIMEType);
     INIT(GetFontInLanguageForCharacter);
     INIT(GetFontInLanguageForRange);
