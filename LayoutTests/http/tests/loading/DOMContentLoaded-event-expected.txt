@@ -1,0 +1,19 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - willCloseFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: Test case for bug 5122: Equivalent of Mozilla's DOMContentLoaded needed
+main frame - didClearWindowObjectForFrame
+ALERT: DOMContentLoaded event fired on document!
+ALERT: DOMContentLoaded event bubbled to window!
+main frame - didFinishDocumentLoadForFrame
+ALERT: Timer callback called.
+ALERT: load event fired!
+ALERT: PASSED
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+Test case for bug 5122: Equivalent of Mozilla's DOMContentLoaded needed
+
+You should see a note about the DOMContentLoaded event being fired and bubbled, a timer being called, and then the load event being fired.
+
+
+

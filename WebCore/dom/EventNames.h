@@ -84,6 +84,7 @@ namespace WebCore { namespace EventNames {
     macro(DOMNodeRemoved) \
     macro(DOMNodeRemovedFromDocument) \
     macro(DOMSubtreeModified) \
+    macro(DOMContentLoaded) \
     \
     macro(webkitBeforeTextInserted) \
     macro(webkitEditableContentChanged) \
