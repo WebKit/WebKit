@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
+                  2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
 
