@@ -125,7 +125,8 @@ struct SVGInlineTextBoxClosestCharacterToPositionWalker {
     {
     }
 
-    void chunkPortionCallback(SVGInlineTextBox* textBox, int startOffset, const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
+    void chunkPortionCallback(SVGInlineTextBox* textBox, int startOffset, const AffineTransform& chunkCtm,
+                              const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
     {
         RenderStyle* style = textBox->textObject()->style();
 
@@ -139,12 +140,11 @@ struct SVGInlineTextBoxClosestCharacterToPositionWalker {
             if (textBox->m_reversed)
                 newOffset = textBox->start() + textBox->end() - newOffset;
 
-            float glyphWidth = textBox->calculateGlyphWidth(style, newOffset);
-            float glyphHeight = textBox->calculateGlyphHeight(style, newOffset);
+            FloatRect glyphRect = chunkCtm.mapRect(textBox->calculateGlyphBoundaries(style, newOffset, *it));
 
             // Calculate distances relative to the glyph mid-point. I hope this is accurate enough.
-            float xDistance = (*it).x + glyphWidth / 2.0 - m_x;
-            float yDistance = (*it).y - glyphHeight / 2.0 - m_y;
+            float xDistance = glyphRect.x() + glyphRect.width() / 2.0 - m_x;
+            float yDistance = glyphRect.y() - glyphRect.height() / 2.0 - m_y;
 
             float newDistance = sqrt(xDistance * xDistance + yDistance * yDistance);
             if (newDistance <= m_distance) {
@@ -189,7 +189,8 @@ struct SVGInlineTextBoxSelectionRectWalker {
     {
     }
 
-    void chunkPortionCallback(SVGInlineTextBox* textBox, int startOffset, const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
+    void chunkPortionCallback(SVGInlineTextBox* textBox, int startOffset, const AffineTransform& chunkCtm,
+                              const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
     {
         RenderStyle* style = textBox->textObject()->style();
 
@@ -202,6 +203,8 @@ struct SVGInlineTextBoxSelectionRectWalker {
 
             m_selectionRect.unite(textBox->calculateGlyphBoundaries(style, newOffset, *it));
         }
+
+        m_selectionRect = chunkCtm.mapRect(m_selectionRect);
     }
 
     FloatRect selectionRect() const
@@ -234,9 +237,7 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
 
     SVGChar& charAtPos = *charAtPosPtr;
     RenderStyle* style = textObject()->style(m_firstLine);
-
-    float glyphWidth = calculateGlyphWidth(style, offset);
-    float glyphHeight = calculateGlyphHeight(style, offset);
+    FloatRect glyphRect = calculateGlyphBoundaries(style, offset, charAtPos);
 
     if (m_reversed)
         offset++;
@@ -245,7 +246,7 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
     // (#13910) This code does not handle bottom-to-top/top-to-bottom vertical text.
 
     // Check whether y position hits the current character 
-    if (y < charAtPos.y - glyphHeight || y > charAtPos.y)
+    if (y < charAtPos.y - glyphRect.height() || y > charAtPos.y)
         return false;
 
     // Check whether x position hits the current character
@@ -259,11 +260,11 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
     }
 
     // If we are past the last glyph of this box, don't mark it as 'hit' anymore.
-    if (x >= charAtPos.x + glyphWidth && offset == (int) end())
+    if (x >= charAtPos.x + glyphRect.width() && offset == (int) end())
         return false;
 
     // Snap to character at half of it's advance
-    if (x >= charAtPos.x + glyphWidth / 2.0)
+    if (x >= charAtPos.x + glyphRect.width() / 2.0)
         offset += m_reversed ? -1 : 1;
 
     return true;

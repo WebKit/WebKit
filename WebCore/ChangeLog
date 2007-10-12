@@ -1,3 +1,44 @@
+2007-10-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=6421 (<text> textLength attribute is not respected)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=6422 (<text> lengthAdjust attribute is not respected)
+
+        Implement textLength and full lengthAdjust (both 'spacing' & 'spacingAndGlyphs' mode)
+        for <text> & <tspan> & friends. <textPath> is still todo, as it's special.
+
+        Also fix usage of cummulatedGlyphWidth/Height in SVGInlineTextBox, calculateGlyphBoundaries was
+        supposed to be used in the distance calculations, to take per character transformations into account (ie. rotation).
+
+        Fixes: svg/W3C-SVG-1.1/text-text-01-b.svg (complelty fixed the single W3C textLength testcase)
+        Partly fixed: svg/batik/text/textOnPathSpaces.svg (kerning support missing)
+        Partly fixed: svg/batik/text/textLayout.svg (word-letter spacing & textLength is todo)
+
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGCharacterLayoutInfo::nextPathLayoutPointAndAngle):
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGTextChunk::SVGTextChunk):
+        (WebCore::SVGTextChunkWalker::operator()):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBoxSelectionRectWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBox::svgCharacterHitsPosition):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        (WebCore::cummulatedWidthOrHeightOfTextChunk):
+        (WebCore::cummulatedWidthOfTextChunk):
+        (WebCore::cummulatedHeightOfTextChunk):
+        (WebCore::applyTextAnchorToTextChunk):
+        (WebCore::applyTextLengthCorrectionToTextChunk):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+        (WebCore::SVGRootInlineBox::layoutTextChunks):
+        (WebCore::SVGRootInlineBox::walkTextChunks):
+
 2007-10-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Niko.

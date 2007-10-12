@@ -37,13 +37,13 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (76,44) size 52x6 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-5) size 52x6
               chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 52.00: "lengthAdjust: default"
-      RenderSVGContainer {g} at (4.50,135) size 454.50x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}]
-        RenderSVGContainer {g} at (9,135) size 450x27
-          RenderSVGText {text} at (3,30) size 48x9 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-7) size 48x9
+      RenderSVGContainer {g} at (4.50,135) size 420x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}]
+        RenderSVGContainer {g} at (9,135) size 414x27
+          RenderSVGText {text} at (3,30) size 64x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-7) size 64x9
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 15 width 48.00: "Line to Stretch"
-          RenderSVGText {text} at (75,30) size 78x9 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-7) size 78x9
+          RenderSVGText {text} at (75,30) size 66x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-7) size 66x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 78.00: "this is a line to squeeze"
         RenderSVGContainer {g} at (4.50,160.50) size 420x13.50
           RenderPath {line} at (6,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
@@ -65,13 +65,13 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (76,44) size 52x6 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-5) size 52x6
               chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 52.00: "lengthAdjust: default"
-      RenderSVGContainer {g} at (4.50,201) size 454.50x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,44.00)}]
-        RenderSVGContainer {g} at (9,201) size 450x27
-          RenderSVGText {text} at (3,30) size 48x9 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-7) size 48x9
+      RenderSVGContainer {g} at (4.50,201) size 420x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,44.00)}]
+        RenderSVGContainer {g} at (9,201) size 414x27
+          RenderSVGText {text} at (3,30) size 64x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-7) size 64x9
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 15 width 48.00: "Line to Stretch"
-          RenderSVGText {text} at (75,30) size 78x9 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-7) size 78x9
+          RenderSVGText {text} at (75,30) size 66x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-7) size 66x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 78.00: "this is a line to squeeze"
         RenderSVGContainer {g} at (4.50,226.50) size 420x13.50
           RenderPath {line} at (6,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]

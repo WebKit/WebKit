@@ -1,3 +1,34 @@
+2007-10-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Update SVG baseline after the textLength addition & string bound fixes.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-28-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-28-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-felem-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-felem-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-tile-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/interact-zoom-01-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/interact-zoom-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.txt:
+        * platform/mac/svg/custom/use-infinite-recursion-expected.checksum: Added. (was missing in SVN)
+        * svg/batik/text/textLayout-expected.checksum:
+        * svg/batik/text/textLayout-expected.png:
+        * svg/batik/text/textLayout-expected.txt:
+        * svg/batik/text/textLength-expected.checksum:
+        * svg/batik/text/textLength-expected.png:
+        * svg/batik/text/textLength-expected.txt:
+        * svg/batik/text/textOnPathSpaces-expected.checksum:
+        * svg/batik/text/textOnPathSpaces-expected.png:
+        * svg/batik/text/textOnPathSpaces-expected.txt:
+        * svg/text/text-text-01-b-expected.checksum:
+        * svg/text/text-text-01-b-expected.png:
+        * svg/text/text-text-01-b-expected.txt:
+
 2007-10-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Niko.
@@ -79,10 +110,10 @@
 
 2007-10-09  Nikolas Zimmermann  <zimmermann@kde.org>
 
-    	Not reviewed.
+        Not reviewed.
 
-    	Regenerate the SVG test baseline, they have been generated with _trunk_ instead of feature-branch.
-    	Not sure who committed it, but it's wrong - so I'm fixing.
+        Regenerate the SVG test baseline, they have been generated with _trunk_ instead of feature-branch.
+        Not sure who committed it, but it's wrong - so I'm fixing.
 
         * platform/mac/svg/W3C-SVG-1.1/animate-elem-02-t-expected.txt:
         * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:

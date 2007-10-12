@@ -217,13 +217,16 @@ void SVGCharacterLayoutInfo::processedChunk(float savedShiftX, float savedShiftY
     }
 }
 
-bool SVGCharacterLayoutInfo::nextPathLayoutPointAndAngle(float& x, float& y, float& angle, float glyphAdvance, float newOffset)
+bool SVGCharacterLayoutInfo::nextPathLayoutPointAndAngle(float& x, float& y, float& angle, float glyphAdvance, float extraAdvance, float newOffset)
 {
     if (layoutPathLength <= 0.0)
         return false;
 
     if (newOffset != FLT_MIN)
         currentOffset = startOffset + newOffset;
+
+    // Respect translation along path (extraAdvance is orthogonal to the path)
+    currentOffset += extraAdvance;
 
     float offset = currentOffset + glyphAdvance / 2.0;
     currentOffset += glyphAdvance;
