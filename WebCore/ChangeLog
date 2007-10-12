@@ -1,3 +1,15 @@
+2007-07-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14312
+        Removing an attribute has no effect on SVG
+
+        Update the transform matrix also when transform attribute is empty.
+
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::updateLocalTransform):
+
 2007-07-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

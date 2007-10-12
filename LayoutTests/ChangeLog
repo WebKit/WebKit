@@ -1,3 +1,19 @@
+2007-07-26  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14312
+        Removing an attribute has no effect on SVG
+
+        The changed test is an improvement.
+
+        * svg/custom/transform-removeAttributeNS-expected.checksum: Added.
+        * svg/custom/transform-removeAttributeNS-expected.png: Added.
+        * svg/custom/transform-removeAttributeNS-expected.txt: Added.
+        * svg/custom/transform-removeAttributeNS.svg: Added.
+        * svg/custom/use-modify-target-container-expected.txt:
+
 2007-07-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Rob.

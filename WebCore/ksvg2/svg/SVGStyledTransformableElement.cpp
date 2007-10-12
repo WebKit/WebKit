@@ -68,12 +68,13 @@ void SVGStyledTransformableElement::updateLocalTransform(SVGTransformList* local
 {
     // Update cached local matrix
     SVGTransform localTransform = localTransforms->concatenate();
-    if (localTransform.isValid()) {
+    if (localTransform.isValid())
         m_localMatrix = localTransform.matrix();
-        if (renderer()) {
-            renderer()->setLocalTransform(m_localMatrix);
-            renderer()->setNeedsLayout(true);
-        }
+    else 
+        m_localMatrix = AffineTransform();
+    if (renderer()) {
+        renderer()->setLocalTransform(m_localMatrix);
+        renderer()->setNeedsLayout(true);
     }
 }
 
