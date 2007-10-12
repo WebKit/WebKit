@@ -1,3 +1,14 @@
+2007-09-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam Wenig.
+
+        ASSERT when dragging <svg:image> with non-null prefix
+        http://bugs.webkit.org/show_bug.cgi?id=15308
+
+        * bindings/objc/DOM.mm:
+        (WebCore::lookupElementClass): added
+        (WebCore::elementClass): use new lookupElementClass function
+
 2007-09-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.

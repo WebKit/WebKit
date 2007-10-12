@@ -1,3 +1,13 @@
+2007-09-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam Wenig.
+        
+        Elements with a prefix cause ASSERT when creating WebArchive
+        http://bugs.webkit.org/show_bug.cgi?id=15308
+
+        * svg/custom/image-with-prefix-in-webarchive-expected.txt: Added.
+        * svg/custom/image-with-prefix-in-webarchive.svg: Added.
+
 2007-09-09  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

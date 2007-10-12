@@ -254,11 +254,20 @@ static void createElementClassMap()
 #endif
 }
 
+static Class lookupElementClass(const QualifiedName& tag)
+{
+    // Do a special lookup to ignore element prefixes
+    if (tag.hasPrefix())
+        return elementClassMap->get(QualifiedName(nullAtom, tag.localName(), tag.namespaceURI()).impl());
+    
+    return elementClassMap->get(tag.impl());
+}
+
 static Class elementClass(const QualifiedName& tag, Class defaultClass)
 {
     if (!elementClassMap)
         createElementClassMap();
-    Class objcClass = elementClassMap->get(tag.impl());
+    Class objcClass = lookupElementClass(tag);
     if (!objcClass)
         objcClass = defaultClass;
     return objcClass;
