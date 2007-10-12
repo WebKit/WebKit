@@ -258,6 +258,14 @@ void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     notifyAttributeChange();
 }
 
+PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& name)
+{
+    MappedAttribute* cssSVGAttr = mappedAttributes()->getAttributeItem(name);
+    if (!cssSVGAttr || !cssSVGAttr->style())
+        return 0;
+    return cssSVGAttr->style()->getPropertyCSSValue(name);
+}
+
 void SVGStyledElement::rebuildRenderer() const
 {
     if (!renderer() || !renderer()->isRenderPath())

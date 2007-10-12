@@ -1,5 +1,20 @@
 2007-06-06  Rob Buis  <buis@kde.org>
 
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13976
+        getPresentationAttribute not implemented
+
+        Implement getPresentationAttribute.
+
+        * ksvg2/svg/SVGStylable.h:
+        * ksvg2/svg/SVGStylable.idl:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+        * ksvg2/svg/SVGStyledElement.h:
+
+2007-06-06  Rob Buis  <buis@kde.org>
+
         Reviewed by olliej and eric.
 
         http://bugs.webkit.org/show_bug.cgi?id=12430

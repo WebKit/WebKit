@@ -1,3 +1,16 @@
+2007-06-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+        
+        New testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=13976
+        getPresentationAttribute not implemented
+
+        * svg/custom/getPresentationAttribute-expected.checksum: Added.
+        * svg/custom/getPresentationAttribute-expected.png: Added.
+        * svg/custom/getPresentationAttribute-expected.txt: Added.
+        * svg/custom/getPresentationAttribute.svg: Added.
+
 2007-06-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

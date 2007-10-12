@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,12 +24,13 @@
 #define SVGStylable_h
 #if ENABLE(SVG)
 
+#include <wtf/PassRefPtr.h>
+
 namespace WebCore {
 
     class CSSValue;
     class CSSStyleDeclaration;
     class String;
-    class StringImpl;
 
     class SVGStylable {
     public:
@@ -38,7 +39,7 @@ namespace WebCore {
 
         // 'SVGStylable' functions
         virtual CSSStyleDeclaration* style() = 0;
-        virtual CSSValue* getPresentationAttribute(StringImpl* name) = 0;
+        virtual PassRefPtr<CSSValue> getPresentationAttribute(const String& name) = 0;
     };
 
 } // namespace WebCore
