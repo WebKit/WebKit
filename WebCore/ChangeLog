@@ -1,3 +1,16 @@
+2007-06-14  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11273
+
+        Implement pixelUnitToMillimeterX(), pixelUnitToMillimeterY() in SVGSVGElement.
+        Use cssPixelsPerInch, just like done in CSSPrimitiveValue & SVGLength.
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterX):
+        (WebCore::SVGSVGElement::pixelUnitToMillimeterY):
+
 2007-06-14  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
