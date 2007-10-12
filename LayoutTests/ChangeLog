@@ -1,3 +1,27 @@
+2007-10-02  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Maciej.
+        
+        Updating test results after feature-branch rebase for tests whose new results are more correct.
+        Also adding a few missing pixel test results.
+
+        * fast/dom/attribute-case-sensitivity-expected.txt:
+        * fast/dom/attribute-case-sensitivity2-expected.txt:
+        * fast/layers/scroll-rect-to-visible-expected.png:
+        * fast/text/international/bidi-neutral-run-expected.png:
+        * platform/mac/editing/pasteboard/5478250-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/5478250-expected.png: Added.
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.png:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-text-03-b-expected.png:
+        * svg/batik/text/textEffect-expected.png:
+        * svg/batik/text/textEffect3-expected.png:
+        * svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * svg/custom/use-infinite-recursion-expected.checksum: Added.
+        * svg/custom/use-infinite-recursion-expected.png: Added.
+
 2007-10-01  Oliver Hunt  <oliver@apple.com>
 
         RS = Eric.

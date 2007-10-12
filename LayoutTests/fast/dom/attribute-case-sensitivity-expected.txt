@@ -16,4 +16,3 @@ true	barbar	http://www.example.com/	test6	href	http://www.w3.org/1999/xlink	firs
 true	svg	http://www.w3.org/2000/svg	test7	testattr	undefined	first	second
 true	svg	http://www.w3.org/2000/svg	test7	namespacetest	http://www.example.com/	first	second
 true	svg	http://www.w3.org/2000/svg	test7	href	http://www.w3.org/1999/xlink	first	second
-
