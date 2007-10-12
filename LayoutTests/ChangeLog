@@ -1,5 +1,98 @@
 2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Mark.
+
+        Land new test results with experimental features on by default.
+        Files showing regressions have NOT been updated, of course.
+
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-05-b-expected.png:
+        * svg/batik/text/textEffect-expected.checksum:
+        * svg/batik/text/textEffect-expected.png:
+        * svg/batik/text/textEffect-expected.txt:
+        * svg/batik/text/textEffect3-expected.checksum:
+        * svg/batik/text/textEffect3-expected.png:
+        * svg/batik/text/textEffect3-expected.txt:
+        * svg/batik/text/textProperties-expected.checksum:
+        * svg/batik/text/textProperties-expected.png:
+        * svg/batik/text/textProperties-expected.txt:
+        * svg/carto.net/colourpicker-expected.checksum:
+        * svg/carto.net/colourpicker-expected.png:
+        * svg/carto.net/scrollbar-expected.checksum:
+        * svg/carto.net/scrollbar-expected.png:
+        * svg/custom/empty-merge-expected.checksum:
+        * svg/custom/empty-merge-expected.png:
+        * svg/custom/empty-merge-expected.txt:
+        * svg/custom/feComponentTransfer-Discrete-expected.checksum:
+        * svg/custom/feComponentTransfer-Discrete-expected.png:
+        * svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * svg/custom/feComponentTransfer-Gamma-expected.checksum:
+        * svg/custom/feComponentTransfer-Gamma-expected.png:
+        * svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * svg/custom/feComponentTransfer-Linear-expected.checksum:
+        * svg/custom/feComponentTransfer-Linear-expected.png:
+        * svg/custom/feComponentTransfer-Linear-expected.txt:
+        * svg/custom/feComponentTransfer-Table-expected.checksum:
+        * svg/custom/feComponentTransfer-Table-expected.png:
+        * svg/custom/feComponentTransfer-Table-expected.txt:
+        * svg/custom/feDisplacementMap-01-expected.checksum:
+        * svg/custom/feDisplacementMap-01-expected.png:
+        * svg/custom/feDisplacementMap-01-expected.txt:
+        * svg/custom/filter-source-alpha-expected.txt:
+        * svg/custom/invalid-css-expected.txt:
+        * svg/custom/non-opaque-filters-expected.checksum:
+        * svg/custom/non-opaque-filters-expected.png:
+        * svg/custom/non-opaque-filters-expected.txt:
+        * svg/custom/text-filter-expected.checksum:
+        * svg/custom/text-filter-expected.png:
+        * svg/custom/text-filter-expected.txt:
+        * svg/custom/visibility-override-filter-expected.checksum:
+        * svg/custom/visibility-override-filter-expected.png:
+        * svg/custom/visibility-override-filter-expected.txt:
+
+2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Sam.
 
         Check in correct results, now that the hashing bug is fixed here as well.

@@ -1,3 +1,11 @@
+2007-07-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubber stamped by Mark.
+
+        Enable svg experimental features as default here in feature-branch.
+
+        * Scripts/build-webkit:
+
 2007-06-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Weinig.
