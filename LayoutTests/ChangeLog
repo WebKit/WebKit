@@ -1,3 +1,119 @@
+2007-07-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubber stamped by Rob.
+
+        Copy over SVG text testcases from svg/text/W3C-SVG-1.1/text-*.svg to svg/text.
+        Enable dumping of selection rects in these set of testcases, to avoid a further regression in this area.
+
+        Also update the textEffect.svg test which has 0.0% difference, to make all tests pass again.
+
+        * svg/batik/text/textEffect-expected.checksum:
+        * svg/batik/text/textEffect-expected.png:
+        * svg/text/text-align-01-b-expected.checksum: Added.
+        * svg/text/text-align-01-b-expected.png: Added.
+        * svg/text/text-align-01-b-expected.txt: Added.
+        * svg/text/text-align-01-b.svg: Added.
+        * svg/text/text-align-02-b-expected.checksum: Added.
+        * svg/text/text-align-02-b-expected.png: Added.
+        * svg/text/text-align-02-b-expected.txt: Added.
+        * svg/text/text-align-02-b.svg: Added.
+        * svg/text/text-align-03-b-expected.checksum: Added.
+        * svg/text/text-align-03-b-expected.png: Added.
+        * svg/text/text-align-03-b-expected.txt: Added.
+        * svg/text/text-align-03-b.svg: Added.
+        * svg/text/text-align-04-b-expected.checksum: Added.
+        * svg/text/text-align-04-b-expected.png: Added.
+        * svg/text/text-align-04-b-expected.txt: Added.
+        * svg/text/text-align-04-b.svg: Added.
+        * svg/text/text-align-05-b-expected.checksum: Added.
+        * svg/text/text-align-05-b-expected.png: Added.
+        * svg/text/text-align-05-b-expected.txt: Added.
+        * svg/text/text-align-05-b.svg: Added.
+        * svg/text/text-align-06-b-expected.checksum: Added.
+        * svg/text/text-align-06-b-expected.png: Added.
+        * svg/text/text-align-06-b-expected.txt: Added.
+        * svg/text/text-align-06-b.svg: Added.
+        * svg/text/text-altglyph-01-b-expected.checksum: Added.
+        * svg/text/text-altglyph-01-b-expected.png: Added.
+        * svg/text/text-altglyph-01-b-expected.txt: Added.
+        * svg/text/text-altglyph-01-b.svg: Added.
+        * svg/text/text-deco-01-b-expected.checksum: Added.
+        * svg/text/text-deco-01-b-expected.png: Added.
+        * svg/text/text-deco-01-b-expected.txt: Added.
+        * svg/text/text-deco-01-b.svg: Added.
+        * svg/text/text-fonts-01-t-expected.checksum: Added.
+        * svg/text/text-fonts-01-t-expected.png: Added.
+        * svg/text/text-fonts-01-t-expected.txt: Added.
+        * svg/text/text-fonts-01-t.svg: Added.
+        * svg/text/text-fonts-02-t-expected.checksum: Added.
+        * svg/text/text-fonts-02-t-expected.png: Added.
+        * svg/text/text-fonts-02-t-expected.txt: Added.
+        * svg/text/text-fonts-02-t.svg: Added.
+        * svg/text/text-intro-05-t-expected.checksum: Added.
+        * svg/text/text-intro-05-t-expected.png: Added.
+        * svg/text/text-intro-05-t-expected.txt: Added.
+        * svg/text/text-intro-05-t.svg: Added.
+        * svg/text/text-path-01-b-expected.checksum: Added.
+        * svg/text/text-path-01-b-expected.png: Added.
+        * svg/text/text-path-01-b-expected.txt: Added.
+        * svg/text/text-path-01-b.svg: Added.
+        * svg/text/text-spacing-01-b-expected.checksum: Added.
+        * svg/text/text-spacing-01-b-expected.png: Added.
+        * svg/text/text-spacing-01-b-expected.txt: Added.
+        * svg/text/text-spacing-01-b.svg: Added.
+        * svg/text/text-text-01-b-expected.checksum: Added.
+        * svg/text/text-text-01-b-expected.png: Added.
+        * svg/text/text-text-01-b-expected.txt: Added.
+        * svg/text/text-text-01-b.svg: Added.
+        * svg/text/text-text-03-b-expected.checksum: Added.
+        * svg/text/text-text-03-b-expected.png: Added.
+        * svg/text/text-text-03-b-expected.txt: Added.
+        * svg/text/text-text-03-b.svg: Added.
+        * svg/text/text-text-04-t-expected.checksum: Added.
+        * svg/text/text-text-04-t-expected.png: Added.
+        * svg/text/text-text-04-t-expected.txt: Added.
+        * svg/text/text-text-04-t.svg: Added.
+        * svg/text/text-text-05-t-expected.checksum: Added.
+        * svg/text/text-text-05-t-expected.png: Added.
+        * svg/text/text-text-05-t-expected.txt: Added.
+        * svg/text/text-text-05-t.svg: Added.
+        * svg/text/text-text-06-t-expected.checksum: Added.
+        * svg/text/text-text-06-t-expected.png: Added.
+        * svg/text/text-text-06-t-expected.txt: Added.
+        * svg/text/text-text-06-t.svg: Added.
+        * svg/text/text-text-07-t-expected.checksum: Added.
+        * svg/text/text-text-07-t-expected.png: Added.
+        * svg/text/text-text-07-t-expected.txt: Added.
+        * svg/text/text-text-07-t.svg: Added.
+        * svg/text/text-text-08-b-expected.checksum: Added.
+        * svg/text/text-text-08-b-expected.png: Added.
+        * svg/text/text-text-08-b-expected.txt: Added.
+        * svg/text/text-text-08-b.svg: Added.
+        * svg/text/text-tref-01-b-expected.checksum: Added.
+        * svg/text/text-tref-01-b-expected.png: Added.
+        * svg/text/text-tref-01-b-expected.txt: Added.
+        * svg/text/text-tref-01-b.svg: Added.
+        * svg/text/text-tselect-01-b-expected.checksum: Added.
+        * svg/text/text-tselect-01-b-expected.png: Added.
+        * svg/text/text-tselect-01-b-expected.txt: Added.
+        * svg/text/text-tselect-01-b.svg: Added.
+        * svg/text/text-tselect-02-f-expected.checksum: Added.
+        * svg/text/text-tselect-02-f-expected.png: Added.
+        * svg/text/text-tselect-02-f-expected.txt: Added.
+        * svg/text/text-tselect-02-f.svg: Added.
+        * svg/text/text-tspan-01-b-expected.checksum: Added.
+        * svg/text/text-tspan-01-b-expected.png: Added.
+        * svg/text/text-tspan-01-b-expected.txt: Added.
+        * svg/text/text-tspan-01-b.svg: Added.
+        * svg/text/text-ws-01-t-expected.checksum: Added.
+        * svg/text/text-ws-01-t-expected.png: Added.
+        * svg/text/text-ws-01-t-expected.txt: Added.
+        * svg/text/text-ws-01-t.svg: Added.
+        * svg/text/text-ws-02-t-expected.checksum: Added.
+        * svg/text/text-ws-02-t-expected.png: Added.
+        * svg/text/text-ws-02-t-expected.txt: Added.
+        * svg/text/text-ws-02-t.svg: Added.
+
 2007-07-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

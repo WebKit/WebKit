@@ -173,9 +173,6 @@ struct SVGChar {
 
     // Determines wheter this char starts a new chunk
     bool newTextChunk : 1;
-
-    // Determines wheter this char is selected
-    bool selected : 1;
 };
 
 struct SVGInlineBoxCharacterRange {

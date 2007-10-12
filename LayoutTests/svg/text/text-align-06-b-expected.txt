@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0.83) size 801.67x604.17
+    RenderSVGContainer {g} at (0,6.67) size 801.67x598.33
+      RenderSVGText {text} at (0,40) size 481x44 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-36) size 481x44
+          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 481.00: "Test 'baseline-shift' (vertic.)"
+      RenderSVGContainer {g} at (135,110) size 483.33x495
+        RenderSVGContainer {g} at (135,110) size 483.33x495 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,60.00)}]
+          RenderSVGText {text} at (-9,33) size 23x165 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-27) size 21x66
+              chunk 1 (vertical) text run 1 at (-8.50,33.00) startOffset 0 endOffset 2 height 66.00: "te"
+            RenderSVGTSpan {tspan} at (0,0) size 16x33 [color=#FF0000]
+              RenderSVGInlineText {#text} at (7,39) size 17x33
+                chunk 1 (vertical) text run 2 at (-1.50,99.00) startOffset 0 endOffset 1 height 33.00: "7"
+            RenderSVGInlineText {#text} at (1,72) size 11x66
+              chunk 1 (vertical) text run 3 at (-7.50,132.00) startOffset 0 endOffset 2 height 66.00: "xt"
+          RenderSVGText {text} at (45,33) size 48x264 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (26,-27) size 21x66
+              chunk 1 (vertical) text run 1 at (71.50,33.00) startOffset 0 endOffset 2 height 66.00: "te"
+            RenderSVGTSpan {tspan} at (0,0) size 36x132 [color=#FF0000]
+              RenderSVGInlineText {#text} at (0,39) size 35x132
+                chunk 1 (vertical) text run 2 at (45.50,99.00) startOffset 0 endOffset 4 height 132.00: "-70%"
+            RenderSVGInlineText {#text} at (27,171) size 11x66
+              chunk 1 (vertical) text run 3 at (72.50,231.00) startOffset 0 endOffset 2 height 66.00: "xt"
+          RenderSVGText {text} at (155,33) size 38x231 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (16,-27) size 21x66
+              chunk 1 (vertical) text run 1 at (171.50,33.00) startOffset 0 endOffset 2 height 66.00: "te"
+            RenderSVGTSpan {tspan} at (0,0) size 18x99 [color=#FF0000]
+              RenderSVGInlineText {#text} at (0,39) size 18x99
+                chunk 1 (vertical) text run 2 at (155.00,99.00) startOffset 0 endOffset 3 height 99.00: "sub"
+            RenderSVGTSpan {tspan} at (0,0) size 15x33 [color=#0000FF]
+              RenderSVGInlineText {#text} at (17,138) size 15x33
+                chunk 1 (vertical) text run 3 at (172.50,198.00) startOffset 0 endOffset 1 height 33.00: "x"
+            RenderSVGInlineText {#text} at (21,171) size 8x33
+              chunk 1 (vertical) text run 4 at (176.00,231.00) startOffset 0 endOffset 1 height 33.00: "t"
+          RenderSVGText {text} at (251,33) size 30x297 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-27) size 21x66
+              chunk 1 (vertical) text run 1 at (251.50,33.00) startOffset 0 endOffset 2 height 66.00: "te"
+            RenderSVGTSpan {tspan} at (0,0) size 13x165 [color=#008000]
+              RenderSVGInlineText {#text} at (17,39) size 13x165
+                chunk 1 (vertical) text run 2 at (268.00,99.00) startOffset 0 endOffset 5 height 165.00: "super"
+            RenderSVGTSpan {tspan} at (0,0) size 15x33 [color=#0000FF]
+              RenderSVGInlineText {#text} at (1,204) size 15x33
+                chunk 1 (vertical) text run 3 at (252.50,264.00) startOffset 0 endOffset 1 height 33.00: "x"
+            RenderSVGInlineText {#text} at (5,237) size 8x33
+              chunk 1 (vertical) text run 4 at (256.00,297.00) startOffset 0 endOffset 1 height 33.00: "t"
+    RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-36) size 264x46
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.5 $"
+    RenderPath {rect} at (0.83,0.83) size 798.33x598.33 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+selection start: position 0 of child 0 {#text} of child 1 {text} of child 13 {g} of child 26 {svg} of document
+selection end:   position 16 of child 0 {#text} of child 15 {text} of child 26 {svg} of document

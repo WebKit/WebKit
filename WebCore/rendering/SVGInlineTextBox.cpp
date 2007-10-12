@@ -28,6 +28,7 @@
 #include "FloatRect.h"
 #include "TextStyle.h"
 #include "InlineFlowBox.h"
+#include "RenderSVGRoot.h"
 #include "SVGCharacterLayoutInfo.h"
 #include "SVGRootInlineBox.h"
 #endif
@@ -76,7 +77,7 @@ SVGChar* SVGInlineTextBox::closestCharacterToPosition(int x, int y, int& offset)
     float distance = FLT_MAX;
 
     const Font& font = textObject()->style()->font();
-                
+
     Vector<SVGTextChunk>::iterator it = chunks.begin();
     Vector<SVGTextChunk>::iterator end = chunks.end();
 
@@ -197,7 +198,8 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
 {
     ASSERT(!isLineBreak());
 
-    IntRect rect = selectionRect(tx, ty, 0, len());
+    RenderStyle* style = textObject()->style(m_firstLine);
+    IntRect rect = selectionRect(0, -style->font().ascent(), 0, len());
     if (object()->style()->visibility() == VISIBLE && rect.contains(x, y)) {
         object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
@@ -211,46 +213,71 @@ IntRect SVGInlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos
     if (startPos >= endPos)
         return IntRect();
 
+    // TODO: Actually respect startPos/endPos - we're returning the _full_ selectionRect
+    // here. This won't lead to visible bugs, but to extra work being done. Investigate.
+    
+    // Find corresponding text chunk for our inline box & reference x position
     SVGRootInlineBox* rootBox = svgRootInlineBox();
-
-    // Find corresponding text chunk for our inline box
     Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(rootBox->svgTextChunks());
+
+    const Font& font = textObject()->style()->font();
+
+    float lowX = FLT_MAX, lowY = FLT_MAX;
+    float highX = FLT_MIN, highY = FLT_MIN;
 
     Vector<SVGTextChunk>::iterator it = chunks.begin();
     Vector<SVGTextChunk>::iterator end = chunks.end();
 
-    float width = 0.0;
-    float beforeWidth = 0.0;
-
     for (; it != end; ++it) {
-        SVGTextChunk& chunk = *it;
+        SVGTextChunk& curChunk = *it;
 
-        Vector<SVGInlineBoxCharacterRange>::iterator boxIt = chunk.boxes.begin();
-        Vector<SVGInlineBoxCharacterRange>::iterator boxEnd = chunk.boxes.end();
+        Vector<SVGInlineBoxCharacterRange>::iterator boxIt = curChunk.boxes.begin();
+        Vector<SVGInlineBoxCharacterRange>::iterator boxEnd = curChunk.boxes.end();
+
+        unsigned int chunkOffset = 0;        
+        unsigned int firstRangeInFirstChunkStartOffset = 0;
 
         for (; boxIt != boxEnd; ++boxIt) {
             SVGInlineBoxCharacterRange& range = *boxIt;
-            if (range.box != this)
+
+            if (boxIt == curChunk.boxes.begin())
+                firstRangeInFirstChunkStartOffset = range.startOffset;
+
+            if (range.box != this) {
+                chunkOffset += range.endOffset - range.startOffset;
                 continue;
+            }
 
-            float newWidth = rootBox->cummulatedWidthOfSelectionRange(this, startPos, endPos, len(), 0);
-            if (newWidth != FLT_MAX) {
-                width += newWidth;
+            // Walk chunk finding closest character
+            Vector<SVGChar>::iterator itCharBegin = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.startOffset;
+            Vector<SVGChar>::iterator itCharEnd = curChunk.start + chunkOffset - firstRangeInFirstChunkStartOffset + range.endOffset;
+            ASSERT(itCharEnd <= curChunk.end);
 
-                if (startPos > 0) {
-                    newWidth = rootBox->cummulatedWidthOfSelectionRange(this, 0, startPos, len(), 0);
-                    if (newWidth != FLT_MAX)
-                        beforeWidth += newWidth;
-                }
-            }    
+            for (Vector<SVGChar>::iterator itChar = itCharBegin; itChar != itCharEnd; ++itChar) {
+                unsigned int newOffset = (itChar - itCharBegin) + firstRangeInFirstChunkStartOffset;
+
+                float glyphWidth = font.floatWidth(TextRun(textObject()->text()->characters() + newOffset, 1), TextStyle(0, 0));
+                float glyphHeight = font.ascent() + font.descent();
+
+                float x = (*itChar).x;
+                float y = (*itChar).y;
+
+                if (x < lowX)
+                    lowX = x;
+
+                if (x + glyphWidth > highX)
+                    highX = x + glyphWidth;
+
+                if (y < lowY)
+                    lowY = y;
+
+                if (y + glyphHeight > highY)
+                    highY = y + glyphHeight;
+            }
         }
     }
 
-    RenderStyle* style = textObject()->style(m_firstLine);
-    ASSERT(style);
-
-    float height = style->font().ascent() + style->font().descent();
-    return enclosingIntRect(FloatRect(tx + beforeWidth + xPos(), ty + yPos(), width, height));
+    return enclosingIntRect(FloatRect(tx + lowX, ty + lowY, highX - lowX, highY - lowY));
 }
 
 } // namespace WebCore

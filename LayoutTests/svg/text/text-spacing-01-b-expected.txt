@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (5,5) size 790x590
+    RenderSVGContainer {g} at (30,10) size 660x500
+      RenderSVGContainer {g} at (30,10) size 660x500
+        RenderSVGText {text} at (3,8) size 52x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 52x9
+            chunk 1 text run 1 at (3.00,8.00) startOffset 0 endOffset 16 width 50.00: " letter-spacing:"
+        RenderSVGText {text} at (3,16) size 38x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 38x9
+            chunk 1 text run 1 at (3.00,16.00) startOffset 0 endOffset 17 width 38.00: "letter-spacing:-1"
+        RenderSVGText {text} at (3,24) size 54x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 54x9
+            chunk 1 text run 1 at (3.00,24.00) startOffset 0 endOffset 17 width 54.00: "letter-spacing:.3"
+        RenderSVGText {text} at (3,33) size 63x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 63x9
+            chunk 1 text run 1 at (3.00,33.00) startOffset 0 endOffset 16 width 63.00: "ws:0 - Two Words"
+        RenderSVGText {text} at (3,41) size 66x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 66x9
+            chunk 1 text run 1 at (3.00,41.00) startOffset 0 endOffset 17 width 57.00: "ws:-3 - Two Words"
+        RenderSVGText {text} at (3,49) size 63x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 63x9
+            chunk 1 text run 1 at (3.00,49.00) startOffset 0 endOffset 16 width 72.00: "ws:3 - Two Words"
+    RenderSVGText {text} at (5,57) size 42x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-6) size 42x8
+        chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 42.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (5,5) size 790x590 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L79.00,1.00L79.00,59.00L1.00,59.00"]
+selection start: position 1 of child 0 {#text} of child 1 {text} of child 1 {g} of child 13 {g} of child 18 {svg} of document
+selection end:   position 16 of child 0 {#text} of child 15 {text} of child 18 {svg} of document

@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class InlineTextBox;
+class RenderSVGRoot;
 
 class SVGRootInlineBox : public RootInlineBox {
 public:
@@ -62,7 +63,7 @@ private:
     void buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutInfo&);
     void layoutTextChunks();
 
-    void paintSelectionForTextBox(InlineTextBox*, int boxStartOffset, SVGChar*, const UChar*, int length, GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
+    void paintSelectionForTextBox(InlineTextBox*, int boxStartOffset, SVGChar*, const UChar*, int length, GraphicsContext*, RenderStyle*, const Font*);
 
     void paintInlineBoxes(RenderObject::PaintInfo&, int tx, int ty, InlineFlowBox* start, Vector<SVGChar>::iterator&);
     void paintChildInlineTextBox(RenderObject::PaintInfo&, int tx, int ty, InlineTextBox*, Vector<SVGChar>::iterator&);
@@ -78,6 +79,8 @@ private:
 FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator start, Vector<SVGChar>::iterator end);
 float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range);
 float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range);
+
+RenderSVGRoot* findSVGRootObject(RenderObject* start);
 
 } // namespace WebCore
 

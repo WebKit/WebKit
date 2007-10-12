@@ -41,7 +41,11 @@ public:
 
     virtual IntRect caretRect(int offset, EAffinity, int* extraWidthToEndOfLine = 0);
     virtual VisiblePosition positionForCoordinates(int x, int y);
+
+private:
+    IntRect computeAbsoluteRectForRange(int startPos, int endPos);
 };
+
 }
 
 #endif // ENABLE(SVG)

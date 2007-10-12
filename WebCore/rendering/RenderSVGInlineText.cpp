@@ -30,6 +30,7 @@
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
 #include "RenderBlock.h"
+#include "RenderSVGRoot.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRootInlineBox.h"
 
@@ -42,21 +43,7 @@ RenderSVGInlineText::RenderSVGInlineText(Node* n, StringImpl* str)
 
 void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 {
-    InlineTextBox* firstBox = firstTextBox();
-
-    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
-    RenderObject* object = rootBox ? rootBox->object() : 0;
-
-    if (!object)
-        return;
-
-    int xRef = xPos() + object->xPos();
-    int yRef = yPos() + object->yPos();
-
-    for (InlineTextBox* curr = firstBox; curr; curr = curr->nextTextBox()) {
-        FloatRect rect(xRef - curr->xPos(), yRef - curr->yPos(), curr->width(), curr->height());
-        rects.append(enclosingIntRect(absoluteTransform().mapRect(rect)));
-    }
+    rects.append(computeAbsoluteRectForRange(0, textLength()));
 }
 
 IntRect RenderSVGInlineText::selectionRect(bool)
@@ -65,10 +52,6 @@ IntRect RenderSVGInlineText::selectionRect(bool)
 
     IntRect rect;
     if (selectionState() == SelectionNone)
-        return rect;
-
-    RenderBlock* cb = containingBlock();
-    if (!cb)
         return rect;
 
     // Now calculate startPos and endPos for painting selection.
@@ -89,24 +72,36 @@ IntRect RenderSVGInlineText::selectionRect(bool)
     if (startPos == endPos)
         return rect;
 
-    InlineTextBox* firstBox = firstTextBox();
-    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
-    RenderObject* object = rootBox ? rootBox->object() : 0;
+    return computeAbsoluteRectForRange(startPos, endPos);
+}
 
-    if (!object)
+IntRect RenderSVGInlineText::computeAbsoluteRectForRange(int startPos, int endPos)
+{
+    IntRect rect;
+
+    RenderBlock* cb = containingBlock();
+    if (!cb)
         return rect;
 
-    int xRef = xPos() + object->xPos();
-    int yRef = yPos() + object->yPos();
+    RenderSVGRoot* root = findSVGRootObject(parent());
+    if (!root)
+        return rect;
 
-    for (InlineTextBox* box = firstBox; box; box = box->nextTextBox()) {
-        IntRect origin(box->selectionRect(0, 0, startPos, endPos));
-        origin.setX(xRef - origin.x());
-        origin.setY(yRef - origin.y());
-        rect.unite(origin);
-    }
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
+        rect.unite(box->selectionRect(0, 0, startPos, endPos));
 
-    return absoluteTransform().mapRect(rect);
+    // Mimic RenderBox::computeAbsoluteRepaintRect() functionality. But only the subset needed for SVG and respecting SVG transformations.
+    int x, y;
+    cb->absolutePosition(x, y);
+
+    // Remove HTML parent translation offsets here! These need to be retrieved from the RenderSVGRoot object.
+    AffineTransform htmlParentCtm = root->RenderContainer::absoluteTransform();
+    FloatRect fixedRect = FloatRect(x - htmlParentCtm.e(), y - htmlParentCtm.f(), rect.width(), rect.height());
+    rect = enclosingIntRect(absoluteTransform().mapRect(fixedRect));
+
+    // Work around rounding issues which may occour above!
+    rect.inflate(1);
+    return rect;
 }
 
 InlineTextBox* RenderSVGInlineText::createInlineTextBox()

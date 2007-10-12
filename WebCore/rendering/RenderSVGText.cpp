@@ -31,6 +31,7 @@
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
+#include "RenderSVGRoot.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
 #include "SVGRootInlineBox.h"
@@ -119,7 +120,27 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 {
-    rects.append(absoluteClippedOverflowRect());
+    RenderSVGRoot* root = findSVGRootObject(parent());
+    if (!root)
+        return;
+
+    int x, y;
+    absolutePosition(x, y);
+
+    AffineTransform htmlParentCtm = root->RenderContainer::absoluteTransform();
+ 
+    // Don't use relativeBBox here, as it's unites the selection rects. Makes it hard
+    // to spot errors, if there are any using WebInspector. Individually feed them into 'rects'.
+    for (InlineRunBox* runBox = firstLineBox(); runBox; runBox = runBox->nextLineBox()) {
+        ASSERT(runBox->isInlineFlowBox());
+
+        InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(runBox);
+        for (InlineBox* box = flowBox->firstChild(); box; box = box->nextOnLine()) {
+            FloatRect boxRect(box->xPos(), box->yPos(), box->width(), box->height());
+            boxRect.move(x - htmlParentCtm.e(), y - htmlParentCtm.f());
+            rects.append(enclosingIntRect(absoluteTransform().mapRect(boxRect)));
+        }
+    }
 }
 
 void RenderSVGText::paint(PaintInfo& paintInfo, int, int)

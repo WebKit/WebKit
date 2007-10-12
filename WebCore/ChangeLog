@@ -1,3 +1,59 @@
+2007-07-25  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14065
+
+        Fix all known bugs regarding to SVG text selection, when embedded in XHTML.
+        Also fix inspecting <text> elements when embedded in XHTML. (WebInspector)
+
+        Short story: selectionRect() & friends are special in terms of the "HTML parent translation".
+        Caused by ie. CSS translation like "left: 50px; top: 50px" when <svg> is a child of a <div>.
+        For non-textual objects like RenderPath, we can easily add a translation to a new coordinate
+        space in RenderSVGRoot::applyContentTransformations() and we're done with it.
+
+        Same for painting text, but text selection makes problems in this concept.
+        We have to remove the 'html parent translation' from our selection rects that we return
+        from RenderSVGText & RenderSVGInlineText. Hopefully all issues are fixed now.
+
+        Long story:
+        - RenderSVGRoot::nodeAtPoint didn't take the parent 'scroll offset' into account. We exited
+          too early, because the overflow rect wasn't correctly sized. Fixed.
+        - RenderSVGRoot::absoluteRects() can't return the absoluteClippedOverflowRect() as it includes
+          the 'html parent translation', which needs to be removed, otherwhise the painted rects are off
+          when inspecting with WebInspector. -> Pass down absoluteRects() call to it's children..
+        - RenderSVGText::absoluteRects() can't use absoluteClippedOverflowRect() for the same reason.
+        - Add RenderSVGInlineText::computeAbsoluteRectForRange() function - shared by absoluteRects() and
+          selectionRect() - and remove the 'html parent translation' there by asking the RenderSVGRoot
+          object for the correct offsets.
+
+        This lead to nasty bugs showing that SVGInlineTextBox::selectionRect() wasn't actually returning
+        correct rectangles. It couldn't work for text chunks the way it was implemented. Fixed by implementing
+        it exactly the same way that closestCharacterToPosition() was done - could share more code later on.
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::absoluteRects):
+        (WebCore::RenderSVGInlineText::selectionRect):
+        (WebCore::RenderSVGInlineText::computeAbsoluteRectForRange):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::absoluteRects):
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects):
+        * rendering/SVGCharacterLayoutInfo.h: Removed unused variable 'bool selected'
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::closestCharacterToPosition):
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        (WebCore::SVGInlineTextBox::selectionRect):
+        * rendering/SVGRootInlineBox.cpp: Add 'findSVGRootObject' helper function.
+        (WebCore::findSVGRootObject):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        (WebCore::SVGRootInlineBox::paintSelectionForTextBox): Remove unused tx/ty parameters.
+        (WebCore::SVGRootInlineBox::paintChildInlineTextBox):
+        (WebCore::SVGRootInlineBox::paintCharacterRangeForTextBox):
+        * rendering/SVGRootInlineBox.h:
+
 2007-07-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Build fix. Not reviewed.
