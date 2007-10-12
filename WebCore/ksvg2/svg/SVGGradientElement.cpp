@@ -44,7 +44,7 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* d
     , SVGExternalResourcesRequired()
     , m_spreadMethod(0)
     , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_gradientTransform(new SVGTransformList)
+    , m_gradientTransform(new SVGTransformList(this))
 {
 }
 

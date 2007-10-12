@@ -197,7 +197,7 @@ void SVGPathElement::notifyAttributeChange() const
     if (!ownerDocument()->parsing())
         rebuildRenderer();
 
-    SVGStyledElement::notifyAttributeChange();
+    SVGStyledTransformableElement::notifyAttributeChange();
 }
 
 SVGPathSegList* SVGPathElement::pathSegList() const

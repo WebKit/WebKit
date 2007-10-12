@@ -92,7 +92,7 @@ void SVGRectElement::notifyAttributeChange() const
     if (!ownerDocument()->parsing())
         rebuildRenderer();
 
-    SVGStyledElement::notifyAttributeChange();
+    SVGStyledTransformableElement::notifyAttributeChange();
 }
 
 Path SVGRectElement::toPathData() const

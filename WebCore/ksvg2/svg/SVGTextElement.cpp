@@ -38,7 +38,7 @@ namespace WebCore {
 SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
     , SVGTransformable()
-    , m_transform(new SVGTransformList)
+    , m_transform(new SVGTransformList(this))
 {
 }
 

@@ -79,7 +79,7 @@ void SVGLineElement::notifyAttributeChange() const
     if (!ownerDocument()->parsing())
         rebuildRenderer();
 
-    SVGStyledElement::notifyAttributeChange();
+    SVGStyledTransformableElement::notifyAttributeChange();
 }
 
 Path SVGLineElement::toPathData() const

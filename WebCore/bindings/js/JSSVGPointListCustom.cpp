@@ -43,7 +43,6 @@ JSValue* JSSVGPointList::clear(ExecState* exec, const List&)
     imp->clear(ec);
     setDOMException(exec, ec);
 
-    ASSERT(imp->context());
     imp->context()->notifyAttributeChange();
 
     return jsUndefined();
@@ -63,7 +62,6 @@ JSValue* JSSVGPointList::initialize(ExecState* exec, const List& args)
     KJS::JSValue* result = toJS(exec, obj);
     setDOMException(exec, ec);
 
-    ASSERT(imp->context());
     imp->context()->notifyAttributeChange();
 
     return result;
@@ -112,7 +110,6 @@ JSValue* JSSVGPointList::insertItemBefore(ExecState* exec, const List& args)
     KJS::JSValue* result = toJS(exec, obj);
     setDOMException(exec, ec);
 
-    ASSERT(imp->context());
     imp->context()->notifyAttributeChange();
 
     return result;
@@ -139,7 +136,6 @@ JSValue* JSSVGPointList::replaceItem(ExecState* exec, const List& args)
     KJS::JSValue* result = toJS(exec, obj);
     setDOMException(exec, ec);
 
-    ASSERT(imp->context());
     imp->context()->notifyAttributeChange();
 
     return result;
@@ -165,7 +161,6 @@ JSValue* JSSVGPointList::removeItem(ExecState* exec, const List& args)
     KJS::JSValue* result = toJS(exec, obj);
     setDOMException(exec, ec);
 
-    ASSERT(imp->context());
     imp->context()->notifyAttributeChange();
 
     return result;
@@ -185,7 +180,6 @@ JSValue* JSSVGPointList::appendItem(ExecState* exec, const List& args)
     KJS::JSValue* result = toJS(exec, obj);
     setDOMException(exec, ec);
 
-    ASSERT(imp->context());
     imp->context()->notifyAttributeChange();
 
     return result;

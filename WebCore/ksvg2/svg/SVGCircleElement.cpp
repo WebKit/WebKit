@@ -75,7 +75,7 @@ void SVGCircleElement::notifyAttributeChange() const
     if (!ownerDocument()->parsing())
         rebuildRenderer();
 
-    SVGStyledElement::notifyAttributeChange();
+    SVGStyledTransformableElement::notifyAttributeChange();
 }
 
 Path SVGCircleElement::toPathData() const

@@ -29,19 +29,19 @@ module svg {
     interface [Conditional=SVG] SVGTransformList {
         readonly attribute unsigned long numberOfItems;
 
-        void clear()
+        [Custom] void clear()
             raises(DOMException);
-        SVGTransform initialize(in SVGTransform item)
+        [Custom] SVGTransform initialize(in SVGTransform item)
             raises(DOMException, SVGException);
-        SVGTransform getItem(in unsigned long index)
+        [Custom] SVGTransform getItem(in unsigned long index)
             raises(DOMException);
-        SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
+        [Custom] SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
             raises(DOMException, SVGException);
-        SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
+        [Custom] SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
             raises(DOMException, SVGException);
-        SVGTransform removeItem(in unsigned long index)
+        [Custom] SVGTransform removeItem(in unsigned long index)
             raises(DOMException);
-        SVGTransform appendItem(in SVGTransform item)
+        [Custom] SVGTransform appendItem(in SVGTransform item)
             raises(DOMException, SVGException);
         SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
         SVGTransform consolidate();

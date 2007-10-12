@@ -33,7 +33,7 @@ namespace WebCore {
     class SVGTransformList : public SVGPODList<SVGTransform>
     {
     public:
-        SVGTransformList();
+        SVGTransformList(const SVGElement* context);
         virtual ~SVGTransformList();
 
         SVGTransform createSVGTransformFromMatrix(const AffineTransform&) const;
@@ -42,6 +42,11 @@ namespace WebCore {
         // Internal use only
         SVGTransform concatenate() const;
         SVGTransform concatenateForType(SVGTransform::SVGTransformType) const;
+
+        const SVGElement* context() const;
+
+    private:
+        const SVGElement* m_context;
     };
 
 } // namespace WebCore

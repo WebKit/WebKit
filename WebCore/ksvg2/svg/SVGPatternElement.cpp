@@ -61,7 +61,7 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
     , m_height(this, LengthModeHeight)
     , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_patternTransform(new SVGTransformList)
+    , m_patternTransform(new SVGTransformList(this))
 {
 }
 

@@ -1,3 +1,18 @@
+2007-06-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Add new testcases testing SVGTransformList JS usage.
+
+        * svg/custom/js-update-transform-addition-expected.checksum: Added.
+        * svg/custom/js-update-transform-addition-expected.png: Added.
+        * svg/custom/js-update-transform-addition-expected.txt: Added.
+        * svg/custom/js-update-transform-addition.svg: Added.
+        * svg/custom/js-update-transform-changes-expected.checksum: Added.
+        * svg/custom/js-update-transform-changes-expected.png: Added.
+        * svg/custom/js-update-transform-changes-expected.txt: Added.
+        * svg/custom/js-update-transform-changes.svg: Added.
+
 2007-06-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

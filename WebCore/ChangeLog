@@ -1,3 +1,54 @@
+2007-06-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=14015 (SVGTransformList::initialize() has no effect)
+
+        Fix SVGTransformList usage in SVG DOM exposed to JS.
+        This also fixes SVG space invaders including most repainting issues. (still some unrelated ones left)
+
+        This is basically the _same_ fix applied to SVGPointList some months ago. We just forgot
+        to add JSSVGTransformListCustom when switching from SVGTransform* -> SVGTransform (POD type).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGTransformListCustom.cpp: Added.
+        (WebCore::JSSVGTransformList::clear):
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::getItem):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::removeItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::notifyAttributeChange):
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::notifyAttributeChange):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::notifyAttributeChange):
+        * ksvg2/svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::SVGStyledTransformableElement):
+        (WebCore::SVGStyledTransformableElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        * ksvg2/svg/SVGTransformList.cpp:
+        (SVGTransformList::SVGTransformList):
+        (SVGTransformList::context):
+        * ksvg2/svg/SVGTransformList.h:
+        * ksvg2/svg/SVGTransformList.idl:
+
 2007-06-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
