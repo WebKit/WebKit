@@ -1,3 +1,22 @@
+2007-10-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10370
+        RegExp fails to match non-ASCII characters against [\S\s]
+
+        Test: fast/js/regexp-negative-special-characters.html
+
+        * pcre/pcre_compile.c:
+        (compile_branch): Adjust opcode and bitmap as necessary to include (or exclude)
+        character codes >255. Fix suggested by Philip Hazel.
+
+        * pcre/pcre_exec.c:
+        (match): Merged fix for PCRE bug 580 (\S\S vs. \S{2}).
+
+        * tests/mozilla/expected.html: One test was fixed.
+        * pcre/MERGING: Added information about this fix.
+
 2007-10-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

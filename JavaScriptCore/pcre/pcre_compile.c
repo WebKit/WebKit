@@ -1713,6 +1713,7 @@ req_caseopt = ((options & PCRE_CASELESS) != 0)? REQ_CASELESS : 0;
 for (;; ptr++)
   {
   BOOL negate_class;
+  BOOL should_flip_negation; /* If a negative special such as \S is used, we should negate the whole class to properly support Unicode. */
   BOOL possessive_quantifier;
   BOOL is_quantifier;
   int class_charcount;
@@ -1853,6 +1854,7 @@ for (;; ptr++)
 
     case '[':
     previous = code;
+    should_flip_negation = FALSE;
 
     /* PCRE supports POSIX class stuff inside a class. Perl gives an error if
     they are encountered at the top level, so we'll do that too. */
@@ -2037,6 +2039,7 @@ for (;; ptr++)
             continue;
 
             case ESC_D:
+            should_flip_negation = TRUE;
             for (c = 0; c < 32; c++) classbits[c] |= ~cbits[c+cbit_digit];
             continue;
 
@@ -2045,6 +2048,7 @@ for (;; ptr++)
             continue;
 
             case ESC_W:
+            should_flip_negation = TRUE;
             for (c = 0; c < 32; c++) classbits[c] |= ~cbits[c+cbit_word];
             continue;
 
@@ -2056,6 +2060,7 @@ for (;; ptr++)
             continue;
 
             case ESC_S:
+            should_flip_negation = TRUE;
             for (c = 0; c < 32; c++) classbits[c] |= ~cbits[c+cbit_space];
 #if !JAVASCRIPT
             classbits[1] |= 0x08;    /* Perl 5.004 onwards omits VT from \s */
@@ -2354,7 +2359,7 @@ for (;; ptr++)
     we can omit the bitmap. */
 
 #ifdef SUPPORT_UTF8
-    if (class_utf8)
+    if (class_utf8 && !should_flip_negation)
       {
       *class_utf8data++ = XCL_END;    /* Marks the end of extra data */
       *code++ = OP_XCLASS;
@@ -2392,14 +2397,13 @@ for (;; ptr++)
     there can be no first char setting, whatever the repeat count. Any reqbyte
     setting must remain unchanged after any kind of repeat. */
 
+    *code++ = (negate_class == should_flip_negation) ? OP_CLASS : OP_NCLASS;
     if (negate_class)
       {
-      *code++ = OP_NCLASS;
       for (c = 0; c < 32; c++) code[c] = ~classbits[c];
       }
     else
       {
-      *code++ = OP_CLASS;
       memcpy(code, classbits, 32);
       }
     code += 32;

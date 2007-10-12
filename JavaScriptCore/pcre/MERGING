@@ -80,7 +80,9 @@ With the following differences.
 
     10) We marked some additional global data tables const.
 
-    11) And we fixed some compiler warnings.
+    11) We fixed Unicode support for negative special classes (bug 10370).
+
+    12) And we fixed some compiler warnings.
 
 For easy merging:
 

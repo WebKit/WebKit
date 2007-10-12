@@ -1,3 +1,14 @@
+2007-10-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10370
+        RegExp fails to match non-ASCII characters against [\S\s]
+
+        * fast/js/regexp-negative-special-characters-expected.txt: Added.
+        * fast/js/regexp-negative-special-characters.html: Added.
+        * fast/js/resources/regexp-negative-special-characters.js: Added.
+
 2007-10-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
