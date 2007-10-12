@@ -1,5 +1,18 @@
 2007-10-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        - more work toward getting layout tests passing
+
+        * fast/images/svg-background-crash-on-refresh.html: Removed.
+        * fast/images/svg-background-crash-on-refresh.html-disabled: Copied from fast/images/svg-background-crash-on-refresh.html.
+        Needed to disable this test because it causes a hang; not necessarily right after
+        this test, sometimes quite a few tests later.
+
+        * platform/mac-leopard/Skipped: Re-enabled a test that's fixed.
+
+2007-10-12  Darin Adler  <darin@apple.com>
+
         * fast/css/computed-style-expected.txt: Again, but right this time.
 
 2007-10-12  Darin Adler  <darin@apple.com>
