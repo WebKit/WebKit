@@ -1,5 +1,15 @@
 2007-10-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver.
+        
+        - skip extra hash lookup and avoid converting char* to UString for 19% speedup on CK JS array test 
+        http://bugs.webkit.org/show_bug.cgi?id=15350
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::callAsFunction): Implement the two mentioned optimizations.
+
+2007-10-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Mark.
         
         - Efficiently handle regexp property identifiers for 19% speedup on Celtic Kane regexp test
