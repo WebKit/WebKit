@@ -47,9 +47,6 @@ SOFT_LINK(libxslt, xsltLoadStylesheetPI, xsltStylesheetPtr, (xmlDocPtr doc), (do
 
 namespace WebCore {
 
-#define IS_BLANK_NODE(n)                                                \
-    (((n)->type == XML_TEXT_NODE) && (xsltIsBlank((n)->content)))
-    
 XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& href)
     : StyleSheet(parentRule, href)
     , m_ownerDocument(0)
@@ -174,11 +171,11 @@ void XSLStyleSheet::loadChildSheets()
         // Imports must occur first.
         xmlNodePtr curr = stylesheetRoot->children;
         while (curr) {
-            if (IS_BLANK_NODE(curr)) {
+            if (curr->type != XML_ELEMENT_NODE) {
                 curr = curr->next;
                 continue;
             }
-            if (curr->type == XML_ELEMENT_NODE && IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "import")) {
+            if (IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "import")) {
                 xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar*)"href", XSLT_NAMESPACE);                
                 loadChildSheet(DeprecatedString::fromUtf8((const char*)uriRef));
                 xmlFree(uriRef);
