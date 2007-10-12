@@ -1,56 +1,69 @@
+KCanvasResource {id="surfaceScaleA" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=1.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="surfaceScaleB" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="surfaceScaleC" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=-10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularConstantA" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=0.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularConstantB" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularConstantC" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=2.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularExponentA" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularExponentB" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=1.00] [specular exponent=2.00]]]}
+KCanvasResource {id="specularExponentC" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=1.00] [specular exponent=4.00]]]}
+KCanvasResource {id="lightingColorA" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="lightingColorB" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="lightingColorC" [type=FILTER]  [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 1x1"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (90,9) size 341x281
-        RenderSVGText {text} at (240,20) size 480x14
-          RenderSVGInlineText {#text} at (-71,-11) size 142x14
-            text run at (-71,-11) width 142: "Filters: feSpecularLighting"
-        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGContainer {g} at (90,31) size 291x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
-          RenderSVGText {text} at (90,25) size 480x18
-            RenderSVGInlineText {#text} at (0,-14) size 291x18
-              text run at (0,-14) width 291: "Various values for surfaceScale: 1, 10 and -10"
-          RenderSVGContainer {g} at (90,50) size 280x30
-            RenderPath {rect} at (90,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-            RenderPath {rect} at (205,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00L255.00,30.00L255.00,60.00L205.00,60.00"]
-            RenderPath {rect} at (320,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00L370.00,30.00L370.00,60.00L320.00,60.00"]
-          RenderImage {image} at (0,0) size 50x30
-          RenderImage {image} at (0,0) size 50x30
-          RenderImage {image} at (0,0) size 50x30
-        RenderSVGContainer {g} at (90,101) size 305x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
-          RenderSVGText {text} at (90,25) size 480x18
-            RenderSVGInlineText {#text} at (0,-14) size 305x18
-              text run at (0,-14) width 305: "Various values for specularConstants: 0, 1 and 2"
-          RenderSVGContainer {g} at (90,120) size 280x30
-            RenderPath {rect} at (90,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-            RenderPath {rect} at (205,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00L255.00,30.00L255.00,60.00L205.00,60.00"]
-            RenderPath {rect} at (320,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00L370.00,30.00L370.00,60.00L320.00,60.00"]
-          RenderImage {image} at (0,0) size 50x30
-          RenderImage {image} at (0,0) size 50x30
-          RenderImage {image} at (0,0) size 50x30
-        RenderSVGContainer {g} at (90,171) size 310x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
-          RenderSVGText {text} at (90,25) size 480x18
-            RenderSVGInlineText {#text} at (0,-14) size 310x18
-              text run at (0,-14) width 310: "Various values for specularExponents: 1, 2 and 4"
-          RenderSVGContainer {g} at (90,190) size 280x30
-            RenderPath {rect} at (90,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-            RenderPath {rect} at (205,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00L255.00,30.00L255.00,60.00L205.00,60.00"]
-            RenderPath {rect} at (320,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00L370.00,30.00L370.00,60.00L320.00,60.00"]
-          RenderImage {image} at (0,0) size 50x30
-          RenderImage {image} at (0,0) size 50x30
-          RenderImage {image} at (0,0) size 50x30
-        RenderSVGContainer {g} at (90,241) size 341x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,230.00)}]
-          RenderSVGText {text} at (90,25) size 480x18
-            RenderSVGInlineText {#text} at (0,-14) size 341x18
-              text run at (0,-14) width 341: "Various values for lighting color: red, yellow and blue"
-          RenderSVGContainer {g} at (90,260) size 280x30
-            RenderPath {rect} at (90,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-            RenderPath {rect} at (205,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00L255.00,30.00L255.00,60.00L205.00,60.00"]
-            RenderPath {rect} at (320,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00L370.00,30.00L370.00,60.00L320.00,60.00"]
-          RenderImage {image} at (0,0) size 50x30
-          RenderImage {image} at (0,0) size 50x30
-          RenderImage {image} at (0,0) size 50x30
-      RenderSVGText {text} at (10,340) size 480x46
-        RenderSVGInlineText {#text} at (0,-36) size 264x46
-          text run at (0,-36) width 264: "$Revision: 1.8 $"
-      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
+    RenderSVGContainer {g} at (90,9) size 341x281
+      RenderSVGText {text} at (169,20) size 142x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-11) size 142x14
+          chunk 1 (middle anchor) text run 1 at (169.00,20.00) startOffset 0 endOffset 27 width 142.00: "Filters: feSpecularLighting"
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (90,31) size 291x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
+        RenderSVGText {text} at (90,25) size 291x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 291x18
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 291.00: "Various values for surfaceScale: 1, 10 and -10"
+        RenderSVGContainer {g} at (90,50) size 280x30
+          RenderPath {rect} at (90,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
+          RenderPath {rect} at (205,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00L255.00,30.00L255.00,60.00L205.00,60.00"]
+          RenderPath {rect} at (320,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00L370.00,30.00L370.00,60.00L320.00,60.00"]
+        RenderImage {image} at (0,0) size 50x30
+        RenderImage {image} at (0,0) size 50x30
+        RenderImage {image} at (0,0) size 50x30
+      RenderSVGContainer {g} at (90,101) size 305x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+        RenderSVGText {text} at (90,25) size 305x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 305x18
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 305.00: "Various values for specularConstants: 0, 1 and 2"
+        RenderSVGContainer {g} at (90,120) size 280x30
+          RenderPath {rect} at (90,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
+          RenderPath {rect} at (205,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00L255.00,30.00L255.00,60.00L205.00,60.00"]
+          RenderPath {rect} at (320,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00L370.00,30.00L370.00,60.00L320.00,60.00"]
+        RenderImage {image} at (0,0) size 50x30
+        RenderImage {image} at (0,0) size 50x30
+        RenderImage {image} at (0,0) size 50x30
+      RenderSVGContainer {g} at (90,171) size 310x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
+        RenderSVGText {text} at (90,25) size 310x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 310x18
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 310.00: "Various values for specularExponents: 1, 2 and 4"
+        RenderSVGContainer {g} at (90,190) size 280x30
+          RenderPath {rect} at (90,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
+          RenderPath {rect} at (205,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00L255.00,30.00L255.00,60.00L205.00,60.00"]
+          RenderPath {rect} at (320,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00L370.00,30.00L370.00,60.00L320.00,60.00"]
+        RenderImage {image} at (0,0) size 50x30
+        RenderImage {image} at (0,0) size 50x30
+        RenderImage {image} at (0,0) size 50x30
+      RenderSVGContainer {g} at (90,241) size 341x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,230.00)}]
+        RenderSVGText {text} at (90,25) size 341x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 341x18
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 341.00: "Various values for lighting color: red, yellow and blue"
+        RenderSVGContainer {g} at (90,260) size 280x30
+          RenderPath {rect} at (90,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
+          RenderPath {rect} at (205,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00L255.00,30.00L255.00,60.00L205.00,60.00"]
+          RenderPath {rect} at (320,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00L370.00,30.00L370.00,60.00L320.00,60.00"]
+        RenderImage {image} at (0,0) size 50x30
+        RenderImage {image} at (0,0) size 50x30
+        RenderImage {image} at (0,0) size 50x30
+    RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-36) size 264x46
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

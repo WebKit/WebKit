@@ -11,10 +11,10 @@
 		aXB0PgogICAgaWYgKHdpbmRvdy5sYXlvdXRUZXN0Q29udHJvbGxlcikKICAg
 		ICAgICBsYXlvdXRUZXN0Q29udHJvbGxlci5kdW1wRE9NQXNXZWJBcmNoaXZl
 		KCk7CiAgPC9zY3JpcHQ+CiAgPHJlY3QgaWQ9InJlY3QiIHdpZHRoPSIxMDAi
-		IGhlaWdodD0iMTAwIiBmaWxsPSJyZWQiIHN0eWxlPSI6ICMwMDgwMDA7ICIv
-		PgogIDxzY3JpcHQgeGxpbms6aHJlZj0icmVzb3VyY2VzL3N2Zy1zY3JpcHQt
-		c3VicmVzb3VyY2VzLmpzIiB0eXBlPSJ0ZXh0L2VjbWFzY3JpcHQiLz4KPC9z
-		dmc+
+		IGhlaWdodD0iMTAwIiBmaWxsPSJyZWQiIHN0eWxlPSJmaWxsOiAjMDA4MDAw
+		OyAiLz4KICA8c2NyaXB0IHhsaW5rOmhyZWY9InJlc291cmNlcy9zdmctc2Ny
+		aXB0LXN1YnJlc291cmNlcy5qcyIgdHlwZT0idGV4dC9lY21hc2NyaXB0Ii8+
+		Cjwvc3ZnPg==
 		</data>
 		<key>WebResourceFrameName</key>
 		<string></string>

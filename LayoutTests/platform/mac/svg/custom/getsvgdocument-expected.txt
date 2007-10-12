@@ -11,20 +11,22 @@ layer at (0,0) size 800x600
         RenderPartObject {EMBED} at (0,0) size 85x20
           layer at (0,0) size 85x20
             RenderView at (0,0) size 85x20
-              RenderSVGContainer {svg} at (0,0) size 85x20
-                RenderPath {rect} at (0,0) size 85x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L85.00,0.00L85.00,20.00L0.00,20.00"]
-                RenderSVGText {text} at (5,16) size 85x18
-                  RenderSVGInlineText {#text} at (0,-14) size 71x18
-                    text run at (0,-14) width 71: "SUCCESS"
+          layer at (0,0) size 85x20
+            RenderSVGRoot {svg} at (0,0) size 85x20
+              RenderPath {rect} at (0,0) size 85x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L85.00,0.00L85.00,20.00L0.00,20.00"]
+              RenderSVGText {text} at (5,16) size 71x18 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,-14) size 71x18
+                  chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 71.00: "SUCCESS"
         RenderBR {BR} at (85,20) size 0x0
         RenderBR {BR} at (0,20) size 0x18
         RenderPartObject {OBJECT} at (0,38) size 85x20
           layer at (0,0) size 85x20
             RenderView at (0,0) size 85x20
-              RenderSVGContainer {svg} at (0,0) size 85x20
-                RenderPath {rect} at (0,0) size 85x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L85.00,0.00L85.00,20.00L0.00,20.00"]
-                RenderSVGText {text} at (5,16) size 85x18
-                  RenderSVGInlineText {#text} at (0,-14) size 71x18
-                    text run at (0,-14) width 71: "SUCCESS"
+          layer at (0,0) size 85x20
+            RenderSVGRoot {svg} at (0,0) size 85x20
+              RenderPath {rect} at (0,0) size 85x20 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L85.00,0.00L85.00,20.00L0.00,20.00"]
+              RenderSVGText {text} at (5,16) size 71x18 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,-14) size 71x18
+                  chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 7 width 71.00: "SUCCESS"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

@@ -1,27 +1,28 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (3,3) size 474x354
-      RenderSVGContainer {g} at (18,6) size 432x300
-        RenderSVGContainer {g} at (18,6) size 432x300
-          RenderSVGText {text} at (3,8) size 480x9
-            RenderSVGInlineText {#text} at (0,-7) size 52x9
-              text run at (0,-7) width 52: "letter-spacing:0"
-          RenderSVGText {text} at (3,16) size 480x9
-            RenderSVGInlineText {#text} at (0,-7) size 38x9
-              text run at (0,-7) width 38: "letter-spacing:-1"
-          RenderSVGText {text} at (3,24) size 480x9
-            RenderSVGInlineText {#text} at (0,-7) size 54x9
-              text run at (0,-7) width 54: "letter-spacing:.3"
-          RenderSVGText {text} at (3,33) size 480x9
-            RenderSVGInlineText {#text} at (0,-7) size 63x9
-              text run at (0,-7) width 63: "ws:0 - Two Words"
-          RenderSVGText {text} at (3,41) size 480x9
-            RenderSVGInlineText {#text} at (0,-7) size 57x9
-              text run at (0,-7) width 57: "ws:-3 - Two Words"
-          RenderSVGText {text} at (3,49) size 480x9
-            RenderSVGInlineText {#text} at (0,-7) size 72x9
-              text run at (0,-7) width 72: "ws:3 - Two Words"
-      RenderSVGText {text} at (5,57) size 480x8
-        RenderSVGInlineText {#text} at (0,-6) size 42x8
-          text run at (0,-6) width 42: "$Revision: 1.6 $"
-      RenderPath {rect} at (3,3) size 474x354 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L79.00,1.00L79.00,59.00L1.00,59.00"]
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (3,3) size 474x354
+    RenderSVGContainer {g} at (18,6) size 396x300
+      RenderSVGContainer {g} at (18,6) size 396x300
+        RenderSVGText {text} at (3,8) size 52x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 52x9
+            chunk 1 text run 1 at (3.00,8.00) startOffset 0 endOffset 16 width 52.00: "letter-spacing:0"
+        RenderSVGText {text} at (3,16) size 38x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 38x9
+            chunk 1 text run 1 at (3.00,16.00) startOffset 0 endOffset 17 width 38.00: "letter-spacing:-1"
+        RenderSVGText {text} at (3,24) size 54x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 54x9
+            chunk 1 text run 1 at (3.00,24.00) startOffset 0 endOffset 17 width 54.00: "letter-spacing:.3"
+        RenderSVGText {text} at (3,33) size 63x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 63x9
+            chunk 1 text run 1 at (3.00,33.00) startOffset 0 endOffset 16 width 63.00: "ws:0 - Two Words"
+        RenderSVGText {text} at (3,41) size 66x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 66x9
+            chunk 1 text run 1 at (3.00,41.00) startOffset 0 endOffset 17 width 57.00: "ws:-3 - Two Words"
+        RenderSVGText {text} at (3,49) size 63x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 63x9
+            chunk 1 text run 1 at (3.00,49.00) startOffset 0 endOffset 16 width 72.00: "ws:3 - Two Words"
+    RenderSVGText {text} at (5,57) size 42x8 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-6) size 42x8
+        chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 42.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (3,3) size 474x354 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L79.00,1.00L79.00,59.00L1.00,59.00"]
