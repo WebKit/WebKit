@@ -2,6 +2,25 @@
 
         Reviewed by olliej.
 
+        Add support for tabbing between links in an SVG file
+        Also add support for drawing a focus ring around focused svg content.
+        http://bugs.webkit.org/show_bug.cgi?id=8823
+        
+        Layout test is blocked by http://bugs.webkit.org/show_bug.cgi?id=14027
+
+        * css/svg.css:
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        (WebCore::SVGAElement::supportsFocus):
+        (WebCore::SVGAElement::isFocusable):
+        (WebCore::SVGAElement::isMouseFocusable):
+        (WebCore::SVGAElement::isKeyboardFocusable):
+        * ksvg2/svg/SVGAElement.h:
+
+2007-06-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
         Make SVG (mostly) support CSS outline property (and thus focus rings)
         http://bugs.webkit.org/show_bug.cgi?id=10849
 

@@ -30,6 +30,7 @@
 #include "Attr.h"
 #include "CSSHelper.h"
 #include "Document.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -98,7 +99,6 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style
 
 void SVGAElement::defaultEventHandler(Event* evt)
 {
-    // TODO : should use CLICK instead
     if (m_isLink && (evt->type() == clickEvent || (evt->type() == keydownEvent && m_focused))) {
         MouseEvent* e = 0;
         if (evt->type() == clickEvent && evt->isMouseEvent())
@@ -141,6 +141,42 @@ void SVGAElement::defaultEventHandler(Event* evt)
     }
 
     SVGStyledTransformableElement::defaultEventHandler(evt);
+}
+
+bool SVGAElement::supportsFocus() const
+{
+    if (isContentEditable())
+        return SVGStyledTransformableElement::supportsFocus();
+    return isFocusable() || (document() && !document()->haveStylesheetsLoaded());
+}
+
+bool SVGAElement::isFocusable() const
+{
+    if (isContentEditable())
+        return SVGStyledTransformableElement::isFocusable();
+    
+    // FIXME: Even if we are not visible, we might have a child that is visible.
+    // Dave wants to fix that some day with a "has visible content" flag or the like.
+    if (!renderer() || !(renderer()->style()->visibility() == VISIBLE))
+        return false;
+    
+    return !renderer()->absoluteClippedOverflowRect().isEmpty();
+}
+
+bool SVGAElement::isMouseFocusable() const
+{
+    return false;
+}
+
+bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
+{
+    if (!isFocusable())
+        return false;
+    
+    if (!document()->frame())
+        return false;
+    
+    return document()->frame()->eventHandler()->tabsToLinks(event);
 }
 
 bool SVGAElement::childShouldCreateRenderer(Node* child) const

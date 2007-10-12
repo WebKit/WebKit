@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+                  2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
 
@@ -46,12 +47,17 @@ namespace WebCore {
         
         virtual String title() const;
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
         // Derived from: 'SVGStyledElement'
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        virtual void defaultEventHandler(Event *evt);
+        virtual void defaultEventHandler(Event*);
+        
+        virtual bool supportsFocus() const;
+        virtual bool isMouseFocusable() const;
+        virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+        virtual bool isFocusable() const;
 
         virtual bool childShouldCreateRenderer(Node*) const;
 

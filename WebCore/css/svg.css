@@ -57,3 +57,9 @@ text, tspan, textPath {
 text, tspan, tref {
    -webkit-text-size-adjust: none;
 }
+
+/* states */
+
+:focus {
+    outline: auto 5px -webkit-focus-ring-color
+}
