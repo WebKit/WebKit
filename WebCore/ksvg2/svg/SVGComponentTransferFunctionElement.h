@@ -46,11 +46,11 @@ namespace WebCore
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, int, int, Type, type)
         ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGNumberList*, RefPtr<SVGNumberList>, TableValues, tableValues)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Slope, slope)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Intercept, intercept)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Amplitude, amplitude)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Exponent, exponent)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, double, double, Offset, offset)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Slope, slope)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Intercept, intercept)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Amplitude, amplitude)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Exponent, exponent)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Offset, offset)
     };
 
 } // namespace WebCore

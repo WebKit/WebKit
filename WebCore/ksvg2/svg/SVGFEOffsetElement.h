@@ -44,8 +44,8 @@ namespace WebCore
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, String, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, double, double, Dx, dx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, double, double, Dy, dy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, float, float, Dx, dx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, float, float, Dy, dy)
 
         mutable SVGFEOffset* m_filterEffect;
     };

@@ -47,17 +47,17 @@ SVGFELightElement::~SVGFELightElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, Azimuth, azimuth, SVGNames::azimuthAttr.localName(), m_azimuth)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, Elevation, elevation, SVGNames::elevationAttr.localName(), m_elevation)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, X, x, SVGNames::xAttr.localName(), m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, Y, y, SVGNames::yAttr.localName(), m_y)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, Azimuth, azimuth, SVGNames::azimuthAttr.localName(), m_azimuth)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, Elevation, elevation, SVGNames::elevationAttr.localName(), m_elevation)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, X, x, SVGNames::xAttr.localName(), m_x)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, Y, y, SVGNames::yAttr.localName(), m_y)
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, Z, z, SVGNames::zAttr.localName(), m_z)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, PointsAtX, pointsAtX, SVGNames::pointsAtXAttr.localName(), m_pointsAtX)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, PointsAtY, pointsAtY, SVGNames::pointsAtYAttr.localName(), m_pointsAtY)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, PointsAtZ, pointsAtZ, SVGNames::pointsAtZAttr.localName(), m_pointsAtZ)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, SpecularExponent, specularExponent, SVGNames::specularExponentAttr.localName(), m_specularExponent)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, double, Number, number, LimitingConeAngle, limitingConeAngle, SVGNames::limitingConeAngleAttr.localName(), m_limitingConeAngle)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, Z, z, SVGNames::zAttr.localName(), m_z)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, PointsAtX, pointsAtX, SVGNames::pointsAtXAttr.localName(), m_pointsAtX)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, PointsAtY, pointsAtY, SVGNames::pointsAtYAttr.localName(), m_pointsAtY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, PointsAtZ, pointsAtZ, SVGNames::pointsAtZAttr.localName(), m_pointsAtZ)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, SpecularExponent, specularExponent, SVGNames::specularExponentAttr.localName(), m_specularExponent)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Number, number, LimitingConeAngle, limitingConeAngle, SVGNames::limitingConeAngleAttr.localName(), m_limitingConeAngle)
 
 void SVGFELightElement::parseMappedAttribute(MappedAttribute* attr)
 {

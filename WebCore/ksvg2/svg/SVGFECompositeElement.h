@@ -46,10 +46,10 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, String, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, String, String, In2, in2)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, int, int, _operator, _operator)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K1, k1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K2, k2)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K3, k3)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, double, double, K4, k4)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, float, float, K1, k1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, float, float, K2, k2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, float, float, K3, k3)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, float, float, K4, k4)
 
         mutable SVGFEComposite* m_filterEffect;
     };

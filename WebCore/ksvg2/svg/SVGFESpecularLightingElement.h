@@ -44,11 +44,11 @@ namespace WebCore
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, String, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SpecularConstant, specularConstant)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SpecularExponent, specularExponent)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, SurfaceScale, surfaceScale)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, KernelUnitLengthX, kernelUnitLengthX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, double, double, KernelUnitLengthY, kernelUnitLengthY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, SpecularConstant, specularConstant)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, SpecularExponent, specularExponent)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, SurfaceScale, surfaceScale)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, KernelUnitLengthX, kernelUnitLengthX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, KernelUnitLengthY, kernelUnitLengthY)
 
         mutable SVGFESpecularLighting* m_filterEffect;
         

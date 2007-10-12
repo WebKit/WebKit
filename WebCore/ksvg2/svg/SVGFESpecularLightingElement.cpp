@@ -50,11 +50,11 @@ SVGFESpecularLightingElement::~SVGFESpecularLightingElement()
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, String, string, In1, in1, SVGNames::inAttr.localName(), m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, SpecularConstant, specularConstant, SVGNames::specularConstantAttr.localName(), m_specularConstant)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, SpecularExponent, specularExponent, SVGNames::specularExponentAttr.localName(), m_specularExponent)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr.localName(), m_surfaceScale)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, KernelUnitLengthX, kernelUnitLengthX, "kernelUnitLengthX", m_kernelUnitLengthX)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, double, Number, number, KernelUnitLengthY, kernelUnitLengthY, "kernelUnitLengthY", m_kernelUnitLengthY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SpecularConstant, specularConstant, SVGNames::specularConstantAttr.localName(), m_specularConstant)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SpecularExponent, specularExponent, SVGNames::specularExponentAttr.localName(), m_specularExponent)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr.localName(), m_surfaceScale)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, KernelUnitLengthX, kernelUnitLengthX, "kernelUnitLengthX", m_kernelUnitLengthX)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, KernelUnitLengthY, kernelUnitLengthY, "kernelUnitLengthY", m_kernelUnitLengthY)
 
 void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
 {    

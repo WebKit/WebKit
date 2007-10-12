@@ -45,7 +45,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, strin
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In2, in2, SVGNames::in2Attr.localName(), m_in2)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, XChannelSelector, xChannelSelector, SVGNames::xChannelSelectorAttr.localName(), m_xChannelSelector)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr.localName(), m_yChannelSelector)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, double, Number, number, Scale, scale, SVGNames::scaleAttr.localName(), m_scale)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, float, Number, number, Scale, scale, SVGNames::scaleAttr.localName(), m_scale)
 
 SVGChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {

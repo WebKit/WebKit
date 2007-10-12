@@ -1,3 +1,31 @@
+2007-10-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        Make feature-branch build again with ENABLE_SVG_EXPERIMENTAL_FEATURES
+        Needed a double -> float change to make the new filter types build.
+
+        Build fix, no test cases.
+
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.h:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        * ksvg2/svg/SVGFECompositeElement.h:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.h:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElement.h:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.h:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFELightElement.h:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.h:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElement.h:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        * ksvg2/svg/SVGFETurbulenceElement.h:
+
 2007-09-30  Julien  <julien.chaffraix@gmail.com>
 
         Reviewed by aroben & eseidel.
