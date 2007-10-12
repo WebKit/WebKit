@@ -8624,6 +8624,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\ksvg2\css\SVGCSSComputedStyleDeclaration.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\ksvg2\css\SVGCSSStyleSelector.cpp"
 					>
 				</File>

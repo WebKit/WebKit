@@ -1,3 +1,9 @@
+2007-10-10  Mark Rowe  <mrowe@apple.com>
+
+        Windows build fix after r26109.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-10-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric.
