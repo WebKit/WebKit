@@ -86,6 +86,7 @@ public:
 #if ENABLE(XBL)
         TypeStatistic xblDocs;
 #endif
+        TypeStatistic fonts;
     };
 
     // The loader that fetches resources.

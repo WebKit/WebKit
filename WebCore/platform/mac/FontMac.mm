@@ -115,7 +115,7 @@ static void initializeATSUStyle(const FontData* fontData)
         }
         
         CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
-        if (fontData->m_font.syntheticOblique)
+        if (fontData->m_font.m_syntheticOblique)
             transform = CGAffineTransformConcat(transform, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
         Fixed fontSize = FloatToFixed([fontData->m_font.font() pointSize]);
         // Turn off automatic kerning until it is supported in the CG code path (6136 in bugzilla)
@@ -624,19 +624,23 @@ void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const Glyp
                 [[[platformData.font() fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
     }
     
-    CGContextSetFont(cgContext, wkGetCGFontFromNSFont(drawFont));
+    CGContextSetFont(cgContext, platformData.m_cgFont);
 
-    CGAffineTransform matrix;
-    memcpy(&matrix, [drawFont matrix], sizeof(matrix));
+    CGAffineTransform matrix = CGAffineTransformIdentity;
+    if (drawFont)
+        memcpy(&matrix, [drawFont matrix], sizeof(matrix));
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
-    if (platformData.syntheticOblique)
+    if (platformData.m_syntheticOblique)
         matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
     CGContextSetTextMatrix(cgContext, matrix);
 
-    wkSetCGFontRenderingMode(cgContext, drawFont);
-    CGContextSetFontSize(cgContext, 1.0f);
-
+    if (drawFont) {
+        wkSetCGFontRenderingMode(cgContext, drawFont);
+        CGContextSetFontSize(cgContext, 1.0f);
+    } else
+        CGContextSetFontSize(cgContext, platformData.m_size);
+    
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     if (font->m_syntheticBoldOffset) {

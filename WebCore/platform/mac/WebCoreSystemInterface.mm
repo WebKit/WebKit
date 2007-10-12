@@ -38,7 +38,6 @@ void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
 BOOL (*wkFontSmoothingModeIsLCD)(int mode);
 OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
 CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
-ATSGlyphRef (*wkGetDefaultGlyphForChar)(NSFont*, UniChar);
 NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
 NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
 void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);

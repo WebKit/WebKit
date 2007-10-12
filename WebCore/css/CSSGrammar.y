@@ -551,11 +551,6 @@ page:
 pseudo_page
   : ':' IDENT
   ;
-
-font_face
-  : FONT_FACE_SYM maybe_space
-    '{' maybe_space declaration [ ';' maybe_space declaration ]* '}' maybe_space
-  ;
 */
 
 page:
@@ -568,10 +563,14 @@ page:
     ;
 
 font_face:
-    FONT_FACE_SYM error invalid_block {
+    FONT_FACE_SYM maybe_space
+    '{' maybe_space declaration_list '}'  maybe_space {
+        $$ = static_cast<CSSParser*>(parser)->createFontFaceRule();
+    }
+    | FONT_FACE_SYM error invalid_block {
       $$ = 0;
     }
-  | FONT_FACE_SYM error ';' {
+    | FONT_FACE_SYM error ';' {
       $$ = 0;
     }
 ;

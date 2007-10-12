@@ -42,13 +42,14 @@ namespace WebCore {
 
 class FontDescription;
 class FontPlatformData;
+class SharedBuffer;
 class WidthMap;
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class FontData : Noncopyable {
 public:
-    FontData(const FontPlatformData&);
+    FontData(const FontPlatformData&, bool customFont = false, bool loading = false);
     ~FontData();
 
 public:
@@ -70,6 +71,9 @@ public:
 
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
+
+    bool isCustomFont() const { return m_isCustomFont; }
+    bool isLoading() const { return m_isLoading; }
 
     const GlyphData& missingGlyphData() const { return m_missingGlyphData; }
 
@@ -97,6 +101,8 @@ public:
 private:
     void platformInit();
     void platformDestroy();
+    
+    void commonInit();
 
 public:
     int m_ascent;
@@ -107,9 +113,14 @@ public:
     unsigned m_unitsPerEm;
 
     FontPlatformData m_font;
+
     mutable GlyphWidthMap m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
+
+    bool m_isCustomFont;  // Whether or not we are custom font loaded via @font-face
+    bool m_isLoading; // Whether or not this custom font is still in the act of loading.
+
     Glyph m_spaceGlyph;
     float m_spaceWidth;
     float m_adjustedSpaceWidth;

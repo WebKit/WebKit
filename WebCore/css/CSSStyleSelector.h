@@ -24,16 +24,20 @@
 #ifndef CSSStyleSelector_h
 #define CSSStyleSelector_h
 
+#include "CSSFontSelector.h"
 #include "DeprecatedString.h"
 #include "RenderStyle.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSMutableStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSProperty;
+class CSSFontFace;
+class CSSFontFaceRule;
 class CSSRuleData;
 class CSSRuleDataList;
 class CSSRuleList;
@@ -78,16 +82,7 @@ class StyledElement;
     class CSSStyleSelector : public StyleSelector
     {
     public:
-        /**
-         * creates a new StyleSelector for a Document.
-         * goes through all StyleSheets defined in the document and
-         * creates a list of rules it needs to apply to objects
-         */
         CSSStyleSelector(Document*, const String& userStyleSheet, StyleSheetList *styleSheets, bool strictParsing);
-        /**
-         * same as above but for a single stylesheet.
-         */
-        CSSStyleSelector(CSSStyleSheet *sheet);
         ~CSSStyleSelector();
 
         static void loadDefaultStyle();
@@ -132,6 +127,9 @@ class StyledElement;
     
         bool hasSelectorForAttribute(const AtomicString &attrname);
  
+        CSSFontSelector* fontSelector() { return m_fontSelector.get(); }
+        CSSFontSelector* ensureFontSelector();
+
     protected:
 
         /* checks if a compound selector (which can consist of multiple simple selectors)
@@ -226,13 +224,17 @@ class StyledElement;
         CSSValue* m_lineHeightValue;
         bool fontDirty;
         bool isXMLDoc;
+        
+        RefPtr<CSSFontSelector> m_fontSelector;
 
-        HashSet<AtomicStringImpl *> m_selectorAttrs;
+        HashSet<AtomicStringImpl*> m_selectorAttrs;
         
         void applyProperty(int id, CSSValue *value);
 #if ENABLE(SVG)
         void applySVGProperty(int id, CSSValue *value);
 #endif
+
+        friend class CSSRuleSet;
     };
 
     class CSSRuleData {

@@ -35,15 +35,20 @@
 namespace WebCore {
 
 FontFallbackList::FontFallbackList()
-    : m_familyIndex(0), m_pitch(UnknownPitch)
+: m_familyIndex(0)
+, m_pitch(UnknownPitch)
+, m_loadingCustomFonts(false)
+, m_fontSelector(0)
 {
 }
 
-void FontFallbackList::invalidate()
+void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
 {
     m_fontList.clear();
     m_familyIndex = 0;    
     m_pitch = UnknownPitch;
+    m_loadingCustomFonts = false;
+    m_fontSelector = fontSelector;
 }
 
 void FontFallbackList::determinePitch(const Font* font) const
@@ -66,9 +71,12 @@ const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realized
     // We are obtaining this font for the first time.  We keep track of the families we've looked at before
     // in |m_familyIndex|, so that we never scan the same spot in the list twice.  getFontData will adjust our
     // |m_familyIndex| as it scans for the right font to make.
-    const FontData* result = FontCache::getFontData(*font, m_familyIndex);
-    if (result)
+    const FontData* result = FontCache::getFontData(*font, m_familyIndex, m_fontSelector.get());
+    if (result) {
         m_fontList.append(result);
+        if (result->isLoading())
+            m_loadingCustomFonts = true;
+    }
     return result;
 }
 

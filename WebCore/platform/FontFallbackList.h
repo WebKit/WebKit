@@ -26,6 +26,7 @@
 
 #include "FontData.h"
 #include "Shared.h"
+#include "FontSelector.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ class GraphicsContext;
 class IntRect;
 class FontDescription;
 class FontPlatformData;
+class FontSelector;
 
 const int cAllFamiliesScanned = -1;
 
@@ -42,10 +44,14 @@ class FontFallbackList : public Shared<FontFallbackList> {
 public:
     FontFallbackList();
 
-    void invalidate();
+    void invalidate(PassRefPtr<FontSelector>);
     
     bool isFixedPitch(const Font* f) const { if (m_pitch == UnknownPitch) determinePitch(f); return m_pitch == FixedPitch; };
     void determinePitch(const Font*) const;
+
+    bool loadingCustomFonts() const { return m_loadingCustomFonts; }
+
+    FontSelector* fontSelector() const { return m_fontSelector.get(); }
 
 private:
     const FontData* primaryFont(const Font* f) const { return fontDataAt(f, 0); }
@@ -57,7 +63,9 @@ private:
     mutable Vector<const FontData*, 1> m_fontList;
     mutable int m_familyIndex;
     mutable Pitch m_pitch;
-   
+    mutable bool m_loadingCustomFonts;
+    RefPtr<FontSelector> m_fontSelector;
+
     friend class Font;
 };
 

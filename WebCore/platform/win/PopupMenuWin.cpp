@@ -24,6 +24,7 @@
 #include "Document.h"
 #include "FloatRect.h"
 #include "FontData.h"
+#include "FontSelector.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -511,7 +512,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
             FontDescription d = itemFont.fontDescription();
             d.setBold(true);
             itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
-            itemFont.update();
+            itemFont.update(m_popupClient->fontSelector());
         }
         context.setFont(itemFont);
         

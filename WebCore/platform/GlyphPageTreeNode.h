@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #ifndef GlyphPageTreeNode_h
 #define GlyphPageTreeNode_h
 
+#include "Shared.h"
 #include <wtf/unicode/Unicode.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
@@ -55,7 +56,7 @@ struct GlyphData {
 // missing in the parimary font. It is owned by exactly one GlyphPageTreeNode,
 // although multiple nodes may reference it as their "page" if they are supposed
 // to be overriding the parent's node, but provide no additional information.
-struct GlyphPage {
+struct GlyphPage : public Shared<GlyphPage> {
     GlyphPage()
         : m_owner(0)
     {
@@ -109,26 +110,35 @@ class GlyphPageTreeNode {
 public:
     GlyphPageTreeNode()
         : m_parent(0)
-        , m_page(0)
         , m_level(0)
         , m_isSystemFallback(false)
         , m_systemFallbackChild(0)
+        , m_customFontCount(0)
 #ifndef NDEBUG
         , m_pageNumber(0)
 #endif
     {
     }
 
+    ~GlyphPageTreeNode();
+
+    static HashMap<int, GlyphPageTreeNode*>* roots;
+    static GlyphPageTreeNode* pageZeroRoot;
+
     static GlyphPageTreeNode* getRootChild(const FontData* fontData, unsigned pageNumber)
     {
         return getRoot(pageNumber)->getChild(fontData, pageNumber);
     }
 
+    static void pruneTreeCustomFontData(const FontData*);
+
+    void pruneCustomFontData(const FontData*);
+
     GlyphPageTreeNode* parent() const { return m_parent; }
     GlyphPageTreeNode* getChild(const FontData*, unsigned pageNumber);
 
     // Returns a page of glyphs (or NULL if there are no glyphs in this page's character range).
-    GlyphPage* page() const { return m_page; }
+    GlyphPage* page() const { return m_page.get(); }
 
     // Returns the level of this node. See class-level comment.
     unsigned level() const { return m_level; }
@@ -141,11 +151,13 @@ private:
     void initializePage(const FontData*, unsigned pageNumber);
 
     GlyphPageTreeNode* m_parent;
-    GlyphPage* m_page;
+    RefPtr<GlyphPage> m_page;
     unsigned m_level;
     bool m_isSystemFallback;
     HashMap<const FontData*, GlyphPageTreeNode*> m_children;
     GlyphPageTreeNode* m_systemFallbackChild;
+    unsigned m_customFontCount;
+
 #ifndef NDEBUG
     unsigned m_pageNumber;
 #endif

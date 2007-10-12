@@ -29,6 +29,8 @@
 #include "CSSCursorImageValue.h"
 #include "CSSHelper.h"
 #include "CSSImageValue.h"
+#include "CSSFontFaceRule.h"
+#include "CSSFontFaceSrcValue.h"
 #include "CSSImportRule.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
@@ -1062,6 +1064,9 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSS_VAL_AUTO || id == CSS_VAL_FIXED)
             valid_primitive = true;
         break;
+
+    case CSS_PROP_SRC:  // Only used within @font-face, so cannot use inherit | initial or be !important.  This is a list of urls or local references.
+        return parseFontFaceSrc();
 
     /* CSS3 properties */
     case CSS_PROP__WEBKIT_APPEARANCE:
@@ -2461,6 +2466,69 @@ CSSValueList* CSSParser::parseFontFamily()
     return list;
 }
 
+bool CSSParser::parseFontFaceSrc()
+{
+    CSSValueList* values = new CSSValueList();
+    Value* val;
+    bool expectComma = false;
+    bool allowFormat = false;
+    bool failed = false;
+    CSSFontFaceSrcValue* parsedValue = 0;
+    CSSFontFaceSrcValue* uriValue = 0;
+    while ((val = valueList->current())) {
+        parsedValue = 0;
+        if (val->unit == CSSPrimitiveValue::CSS_URI && !expectComma) {
+            String value = parseURL(domString(val->string));
+            parsedValue = new CSSFontFaceSrcValue(String(KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).url()), false);
+            uriValue = parsedValue;
+            allowFormat = true;
+        } else if (val->unit == Value::Function) {
+            // There are two allowed functions: local() and format().             
+            String fname = domString(val->function->name).lower();
+            ValueList* args = val->function->args;
+            if (args && args->size() == 1) {
+                if (fname == "local(" && !expectComma) {
+                    // Parse it.
+                    expectComma = true;
+                    allowFormat = false;
+                    Value* a = args->current();
+                    uriValue = 0;
+                    parsedValue = new CSSFontFaceSrcValue(domString(a->string), true);
+                } else if (fname == "format(" && allowFormat && uriValue) {
+                    allowFormat = false;
+                    uriValue->setFormat(domString(args->current()->string));
+                    uriValue = 0;
+                    valueList->next();
+                    continue;
+                }
+            }
+        } else if (val->unit == Value::Operator && val->iValue == ',' && expectComma) {
+            expectComma = false;
+            allowFormat = false;
+            uriValue = 0;
+            valueList->next();
+            continue;
+        }
+    
+        if (parsedValue)
+            values->append(parsedValue);
+        else {
+            failed = true;
+            break;
+        }
+        valueList->next();
+    }
+    
+    if (values->length() && !failed) {
+        addProperty(CSS_PROP_SRC, values, important);
+        valueList->next();
+        return true;
+    }
+    
+    delete values;
+    return false;
+}
+
 bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
 {
     if (!strict && Color::parseHexColor(name, rgb))
@@ -3320,6 +3388,15 @@ CSSRule* CSSParser::createStyleRule(CSSSelector* selector)
         rule->setSelector(sinkFloatingSelector(selector));
         rule->setDeclaration(new CSSMutableStyleDeclaration(rule, parsedProperties, numParsedProperties));
     }
+    clearProperties();
+    return rule;
+}
+
+CSSRule* CSSParser::createFontFaceRule()
+{
+    CSSFontFaceRule* rule = new CSSFontFaceRule(styleElement);
+    m_parsedStyleObjects.append(rule);
+    rule->setDeclaration(new CSSMutableStyleDeclaration(rule, parsedProperties, numParsedProperties));
     clearProperties();
     return rule;
 }

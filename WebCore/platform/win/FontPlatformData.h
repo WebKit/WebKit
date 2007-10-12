@@ -43,15 +43,20 @@ public:
     : m_font((HFONT)-1)
     , m_cgFont(NULL)
     , m_size(0)
+    , m_syntheticBold(false)
+    , m_syntheticOblique(false)
     {}
 
     FontPlatformData()
     : m_font(0)
     , m_cgFont(NULL)
     , m_size(0)
+    , m_syntheticBold(false)
+    , m_syntheticOblique(false)
     {}
 
     FontPlatformData(HFONT, int size, bool bold, bool oblique);
+    FontPlatformData(CGFontRef, int size, bool bold, bool oblique);
     ~FontPlatformData();
 
     HFONT hfont() const { return m_font; }
@@ -62,15 +67,14 @@ public:
     bool syntheticOblique() const { return m_syntheticOblique; }
 
     unsigned hash() const
-    { 
+    {
         return StringImpl::computeHash((UChar*)(&m_font), sizeof(HFONT) / sizeof(UChar));
     }
 
     bool operator==(const FontPlatformData& other) const
     { 
-        return m_font == other.m_font
-              && m_cgFont ==other.m_cgFont
-              && m_size == other.m_size;
+        return m_font == other.m_font && m_cgFont ==other.m_cgFont && m_size == other.m_size &&
+               m_syntheticBold == other.m_syntheticBold && m_syntheticOblique == other.m_syntheticOblique;
     }
 
 private:

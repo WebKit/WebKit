@@ -30,6 +30,7 @@
 
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
+#include "CachedFont.h"
 #include "CachedImage.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
@@ -91,6 +92,11 @@ CachedImage* DocLoader::requestImage(const String& url)
         cache()->loader()->load(this, resource, true);
     }
     return resource;
+}
+
+CachedFont* DocLoader::requestFont(const String& url)
+{
+    return static_cast<CachedFont*>(requestResource(CachedResource::FontResource, url));
 }
 
 CachedCSSStyleSheet* DocLoader::requestCSSStyleSheet(const String& url, const String& charset, bool isUserStyleSheet)

@@ -117,12 +117,63 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
-FontPlatformData* FontCache::getLastResortFallbackFont(const Font& font)
+FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
     static AtomicString timesStr("Times New Roman");
-    return getCachedFontPlatformData(font.fontDescription(), timesStr);
+    return getCachedFontPlatformData(fontDescription, timesStr);
+}
+
+bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
+{
+    LOGFONT winfont;
+
+    // The size here looks unusual.  The negative number is intentional.  The logical size constant is 32.
+    winfont.lfHeight = -fontDescription.computedPixelSize() * 32;
+    winfont.lfWidth = 0;
+    winfont.lfEscapement = 0;
+    winfont.lfOrientation = 0;
+    winfont.lfUnderline = false;
+    winfont.lfStrikeOut = false;
+    winfont.lfCharSet = DEFAULT_CHARSET;
+#if PLATFORM(CG)
+    winfont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
+#else
+    winfont.lfOutPrecision = OUT_TT_PRECIS;
+#endif
+    winfont.lfQuality = 5; // Force cleartype.
+    winfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
+    winfont.lfItalic = fontDescription.italic();
+
+    // FIXME: Support weights for real.  Do our own enumeration of the available weights.
+    // We can't rely on Windows here, since we need to follow the CSS2 algorithm for how to fill in
+    // gaps in the weight list.
+    // FIXME: Hardcoding Lucida Grande for now.  It uses different weights than typical Win32 fonts
+    // (500/600 instead of 400/700).
+    static AtomicString lucidaStr("Lucida Grande");
+    if (equalIgnoringCase(family, lucidaStr))
+        winfont.lfWeight = fontDescription.bold() ? 600 : 500;
+    else
+        winfont.lfWeight = fontDescription.bold() ? 700 : 400;
+    int len = min(family.length(), (unsigned int)LF_FACESIZE - 1);
+    memcpy(winfont.lfFaceName, family.characters(), len * sizeof(WORD));
+    winfont.lfFaceName[len] = '\0';
+
+    HFONT hfont = CreateFontIndirect(&winfont);
+    // Windows will always give us a valid pointer here, even if the face name is non-existent.  We have to double-check
+    // and see if the family name was really used.
+    HDC dc = GetDC((HWND)0);
+    SaveDC(dc);
+    SelectObject(dc, hfont);
+    WCHAR name[LF_FACESIZE];
+    GetTextFace(dc, LF_FACESIZE, name);
+    RestoreDC(dc, -1);
+    ReleaseDC(0, dc);
+
+    DeleteObject(hfont);
+
+    return !wcsicmp(winfont.lfFaceName, name);
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

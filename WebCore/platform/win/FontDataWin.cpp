@@ -45,42 +45,43 @@ namespace WebCore {
 
 using std::max;
 
+const float cSmallCapsFontSizeMultiplier = 0.7f;
+
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return unitsPerEm ? x / (float)unitsPerEm : x; }
 
 void FontData::platformInit()
 {    
-    HDC dc = GetDC(0);
-    SaveDC(dc);
-
-    SelectObject(dc, m_font.hfont());
-
-    int faceLength = GetTextFace(dc, 0, 0);
-    Vector<TCHAR> faceName(faceLength);
-    GetTextFace(dc, faceLength, faceName.data());
-
     m_syntheticBoldOffset = m_font.syntheticBold() ? 1.0f : 0.f;
 
     CGFontRef font = m_font.cgFont();
     int iAscent = CGFontGetAscent(font);
     int iDescent = CGFontGetDescent(font);
     int iLineGap = CGFontGetLeading(font);
-    unsigned unitsPerEm = CGFontGetUnitsPerEm(font);
+    m_unitsPerEm = CGFontGetUnitsPerEm(font);
     float pointSize = m_font.size();
-    float fAscent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
-    float fDescent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
-    float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
+    float fAscent = scaleEmToUnits(iAscent, m_unitsPerEm) * pointSize;
+    float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;
+    float fLineGap = scaleEmToUnits(iLineGap, m_unitsPerEm) * pointSize;
 
-    m_isSystemFont = !_tcscmp(faceName.data(), _T("Lucida Grande"));
-    
-    // We need to adjust Times, Helvetica, and Courier to closely match the
-    // vertical metrics of their Microsoft counterparts that are the de facto
-    // web standard. The AppKit adjustment of 20% is too big and is
-    // incorrectly added to line spacing, so we use a 15% adjustment instead
-    // and add it to the ascent.
-    if (!_tcscmp(faceName.data(), _T("Times")) || !_tcscmp(faceName.data(), _T("Helvetica")) || !_tcscmp(faceName.data(), _T("Courier")))
-        fAscent += floorf(((fAscent + fDescent) * 0.15f) + 0.5f);
+    m_isSystemFont = false;
+    if (!isCustomFont()) {
+        HDC dc = GetDC(0);
+        HGDIOBJ oldFont = SelectObject(dc, m_font.hfont());
+        int faceLength = GetTextFace(dc, 0, 0);
+        Vector<TCHAR> faceName(faceLength);
+        GetTextFace(dc, faceLength, faceName.data());
+        m_isSystemFont = !_tcscmp(faceName.data(), _T("Lucida Grande"));
+        SelectObject(dc, oldFont);
+        ReleaseDC(0, dc);
 
-    m_unitsPerEm = 1; // FIXME!
+        // We need to adjust Times, Helvetica, and Courier to closely match the
+        // vertical metrics of their Microsoft counterparts that are the de facto
+        // web standard. The AppKit adjustment of 20% is too big and is
+        // incorrectly added to line spacing, so we use a 15% adjustment instead
+        // and add it to the ascent.
+        if (!_tcscmp(faceName.data(), _T("Times")) || !_tcscmp(faceName.data(), _T("Helvetica")) || !_tcscmp(faceName.data(), _T("Courier")))
+            fAscent += floorf(((fAscent + fDescent) * 0.15f) + 0.5f);
+    }
 
     m_ascent = lroundf(fAscent);
     m_descent = lroundf(fDescent);
@@ -97,14 +98,11 @@ void FontData::platformInit()
         // and web pages that foolishly use this metric for width will be laid out
         // poorly if we return an accurate height. Classic case is Times 13 point,
         // which has an "x" that is 7x6 pixels.
-        m_xHeight = scaleEmToUnits(max(CGRectGetMaxX(xBox), CGRectGetMaxY(xBox)), unitsPerEm) * pointSize;
+        m_xHeight = scaleEmToUnits(max(CGRectGetMaxX(xBox), CGRectGetMaxY(xBox)), m_unitsPerEm) * pointSize;
     } else {
         int iXHeight = CGFontGetXHeight(font);
-        m_xHeight = scaleEmToUnits(iXHeight, unitsPerEm) * pointSize;
+        m_xHeight = scaleEmToUnits(iXHeight, m_unitsPerEm) * pointSize;
     }
-
-    RestoreDC(dc, -1);
-    ReleaseDC(0, dc);
 
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
@@ -112,8 +110,10 @@ void FontData::platformInit()
 
 void FontData::platformDestroy()
 {
-    CGFontRelease(m_font.cgFont());
-    DeleteObject(m_font.hfont());
+    if (!isCustomFont()) {
+        DeleteObject(m_font.hfont());
+        CGFontRelease(m_font.cgFont());
+    }
 
     // We don't hash this on Win32, so it's effectively owned by us.
     delete m_smallCapsFontData;
@@ -125,18 +125,28 @@ void FontData::platformDestroy()
 FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_smallCapsFontData) {
-        LOGFONT winfont;
-        GetObject(m_font.hfont(), sizeof(LOGFONT), &winfont);
-        int smallCapsHeight = lroundf(0.70f * fontDescription.computedSize());
-        winfont.lfHeight = -smallCapsHeight * 32;
-        HFONT hfont = CreateFontIndirect(&winfont);
-        m_smallCapsFontData = new FontData(FontPlatformData(hfont, smallCapsHeight, fontDescription.bold(), fontDescription.italic()));
+        int smallCapsHeight = lroundf(cSmallCapsFontSizeMultiplier * m_font.m_size);
+        if (isCustomFont()) {
+            FontPlatformData smallCapsFontData(m_font);
+            smallCapsFontData.m_size = smallCapsHeight;
+            m_smallCapsFontData = new FontData(smallCapsFontData, true, false);
+        } else {
+            LOGFONT winfont;
+            GetObject(m_font.hfont(), sizeof(LOGFONT), &winfont);
+            winfont.lfHeight = -smallCapsHeight * 32;
+            HFONT hfont = CreateFontIndirect(&winfont);
+            m_smallCapsFontData = new FontData(FontPlatformData(hfont, smallCapsHeight, fontDescription.bold(), fontDescription.italic()));
+        }
     }
     return m_smallCapsFontData;
 }
 
 bool FontData::containsCharacters(const UChar* characters, int length) const
 {
+    // FIXME: Support custom fonts.
+    if (isCustomFont())
+        return false;
+
     // FIXME: Microsoft documentation seems to imply that characters can be output using a given font and DC
     // merely by testing code page intersection.  This seems suspect though.  Can't a font only partially
     // cover a given code page?
@@ -169,6 +179,11 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
 
 void FontData::determinePitch()
 {
+    if (isCustomFont()) {
+        m_treatAsFixedPitch = false;
+        return;
+    }
+
     // TEXTMETRICS have this.  Set m_treatAsFixedPitch based off that.
     HDC dc = GetDC((HWND)0);
     SaveDC(dc);

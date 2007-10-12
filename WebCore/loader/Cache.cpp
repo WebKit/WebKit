@@ -24,6 +24,7 @@
 #include "Cache.h"
 
 #include "CachedCSSStyleSheet.h"
+#include "CachedFont.h"
 #include "CachedImage.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
@@ -70,6 +71,8 @@ static CachedResource* createResource(CachedResource::Type type, DocLoader* docL
         return new CachedCSSStyleSheet(docLoader, url.url(), *charset, skipCanLoadCheck, sendResourceLoadCallbacks);
     case CachedResource::Script:
         return new CachedScript(docLoader, url.url(), *charset);
+    case CachedResource::FontResource:
+        return new CachedFont(docLoader, url.url());
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
         return new CachedXSLStyleSheet(docLoader, url.url());
@@ -556,6 +559,12 @@ Cache::Statistics Cache::getStatistics()
                 stats.xslStyleSheets.decodedSize += o->decodedSize();
                 break;
 #endif
+            case CachedResource::FontResource:
+                stats.fonts.count++;
+                stats.fonts.size += o->size();
+                stats.fonts.liveSize += o->referenced() ? o->size() : 0;
+                stats.fonts.decodedSize += o->decodedSize();
+                break;
 #if ENABLE(XBL)
             case CachedResource::XBL:
                 stats.xblDocs.count++;

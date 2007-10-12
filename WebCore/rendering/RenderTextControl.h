@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class FontSelector;
 class HTMLTextFieldInnerElement;
 class HTMLTextFieldInnerTextElement;
 class HTMLSearchFieldCancelButtonElement;
@@ -121,7 +122,8 @@ private:
     virtual void setTextFromItem(unsigned listIndex);
     virtual bool shouldPopOver() const { return false; }
     virtual bool valueShouldChangeOnHotTrack() const { return false; }
-    
+    virtual FontSelector* fontSelector() const;
+
     RenderStyle* createInnerBlockStyle(RenderStyle* startStyle);
     RenderStyle* createInnerTextStyle(RenderStyle* startStyle);
     RenderStyle* createCancelButtonStyle(RenderStyle* startStyle);

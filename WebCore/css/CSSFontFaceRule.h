@@ -25,6 +25,7 @@
 #define CSSFontFaceRule_h
 
 #include "CSSRule.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -44,6 +45,8 @@ public:
     virtual unsigned short type() const { return FONT_FACE_RULE; }
 
     virtual String cssText() const;
+
+    void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
 
 protected:
     RefPtr<CSSMutableStyleDeclaration> m_style;

@@ -47,7 +47,8 @@ public:
     enum Type {
         ImageResource,
         CSSStyleSheet,
-        Script
+        Script,
+        FontResource
 #if ENABLE(XSLT)
         , XSLStyleSheet
 #endif

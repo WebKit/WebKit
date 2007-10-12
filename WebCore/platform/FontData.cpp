@@ -34,9 +34,11 @@
 
 namespace WebCore {
 
-FontData::FontData(const FontPlatformData& f)
+FontData::FontData(const FontPlatformData& f, bool customFont, bool loading)
     : m_font(f)
     , m_treatAsFixedPitch(false)
+    , m_isCustomFont(customFont)
+    , m_isLoading(loading)
     , m_smallCapsFontData(0)
 {    
     platformInit();
@@ -52,6 +54,7 @@ FontData::FontData(const FontPlatformData& f)
         m_missingGlyphData.glyph = 0;
         return;
     }
+
     // Nasty hack to determine if we should round or ceil space widths.
     // If the font is monospace or fake monospace we ceil to ensure that 
     // every character and the space are the same width.  Otherwise we round.

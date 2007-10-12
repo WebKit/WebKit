@@ -31,6 +31,7 @@
 #include "config.h"
 #include "RenderListBox.h"
 
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -108,7 +109,7 @@ void RenderListBox::updateFromElement()
                 FontDescription d = itemFont.fontDescription();
                 d.setBold(true);
                 itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
-                itemFont.update();
+                itemFont.update(document()->styleSelector()->fontSelector());
             }
                 
             if (!text.isEmpty()) {
@@ -324,7 +325,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
         FontDescription d = itemFont.fontDescription();
         d.setBold(true);
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
-        itemFont.update();
+        itemFont.update(document()->styleSelector()->fontSelector());
     }
     paintInfo.context->setFont(itemFont);
     

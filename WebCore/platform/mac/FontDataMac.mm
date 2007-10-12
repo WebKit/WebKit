@@ -35,6 +35,7 @@
 #import "Font.h"
 #import "FontCache.h"
 #import "FontDescription.h"
+#import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
 #import <ApplicationServices/ApplicationServices.h>
 #import <float.h>
@@ -54,11 +55,14 @@ static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x * (c
 
 bool initFontData(FontData* fontData)
 {
+    if (!fontData->m_font.m_cgFont)
+        return false;
+
     ATSUStyle fontStyle;
     if (ATSUCreateStyle(&fontStyle) != noErr)
         return false;
     
-    ATSUFontID fontId = wkGetNSFontATSUFontId(fontData->m_font.font());
+    ATSUFontID fontId = fontData->m_font.m_atsuFontID;
     if (!fontId) {
         ATSUDisposeStyle(fontStyle);
         return false;
@@ -98,8 +102,8 @@ void FontData::platformInit()
     m_ATSUMirrors = false;
     m_checkedShapesArabic = false;
     m_shapesArabic = false;
-    
-    m_syntheticBoldOffset = m_font.syntheticBold ? 1.0f : 0.f;
+
+    m_syntheticBoldOffset = m_font.m_syntheticBold ? 1.0f : 0.f;
     
     bool failedSetup = false;
     if (!initFontData(this)) {
@@ -160,8 +164,8 @@ void FontData::platformInit()
     int iAscent;
     int iDescent;
     int iLineGap;
-    wkGetFontMetrics(wkGetCGFontFromNSFont(m_font.font()), &iAscent, &iDescent, &iLineGap, &m_unitsPerEm); 
-    float pointSize = [m_font.font() pointSize];
+    wkGetFontMetrics(m_font.m_cgFont, &iAscent, &iDescent, &iLineGap, &m_unitsPerEm); 
+    float pointSize = m_font.m_size;
     float fAscent = scaleEmToUnits(iAscent, m_unitsPerEm) * pointSize;
     float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;
     float fLineGap = scaleEmToUnits(iLineGap, m_unitsPerEm) * pointSize;
@@ -214,7 +218,12 @@ void FontData::platformDestroy()
 FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_smallCapsFontData) {
-        NS_DURING
+        if (isCustomFont()) {
+            FontPlatformData smallCapsFontData(m_font);
+            smallCapsFontData.m_size = smallCapsFontData.m_size * smallCapsFontSizeMultiplier;
+            m_smallCapsFontData = new FontData(smallCapsFontData, true, false);
+        } else {
+            NS_DURING
             float size = [m_font.font() pointSize] * smallCapsFontSizeMultiplier;
             FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_font.font() toSize:size]);
             
@@ -226,20 +235,22 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
                 NSFontManager *fontManager = [NSFontManager sharedFontManager];
                 NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_font.font()];
 
-                if (m_font.syntheticBold)
+                if (m_font.m_syntheticBold)
                     fontTraits |= NSBoldFontMask;
-                if (m_font.syntheticOblique)
+                if (m_font.m_syntheticOblique)
                     fontTraits |= NSItalicFontMask;
 
                 NSFontTraitMask smallCapsFontTraits = [fontManager traitsOfFont:smallCapsFont.font()];
-                smallCapsFont.syntheticBold = (fontTraits & NSBoldFontMask) && !(smallCapsFontTraits & NSBoldFontMask);
-                smallCapsFont.syntheticOblique = (fontTraits & NSItalicFontMask) && !(smallCapsFontTraits & NSItalicFontMask);
+                smallCapsFont.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(smallCapsFontTraits & NSBoldFontMask);
+                smallCapsFont.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(smallCapsFontTraits & NSItalicFontMask);
 
                 m_smallCapsFontData = FontCache::getCachedFontData(&smallCapsFont);
             }
-        NS_HANDLER
+
+            NS_HANDLER
             NSLog(@"uncaught exception selecting font for small caps: %@", localException);
-        NS_ENDHANDLER
+            NS_ENDHANDLER
+        }
     }
     return m_smallCapsFontData;
 }
@@ -277,11 +288,11 @@ void FontData::determinePitch()
 
 float FontData::platformWidthForGlyph(Glyph glyph) const
 {
-    NSFont *font = m_font.font();
-    float pointSize = [font pointSize];
+    NSFont* font = m_font.font();
+    float pointSize = m_font.m_size;
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
-    if (!wkGetGlyphTransformedAdvances(wkGetCGFontFromNSFont(font), font, &m, &glyph, &advance)) {
+    if (!wkGetGlyphTransformedAdvances(m_font.m_cgFont, font, &m, &glyph, &advance)) {
         LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
         advance.width = 0;
     }
@@ -294,7 +305,7 @@ void FontData::checkShapesArabic() const
 
     m_checkedShapesArabic = true;
     
-    ATSUFontID fontID = wkGetNSFontATSUFontId(m_font.font());
+    ATSUFontID fontID = m_font.m_atsuFontID;
     if (!fontID) {
         LOG_ERROR("unable to get ATSUFontID for %@", m_font.font());
         return;

@@ -1,3 +1,246 @@
+2007-10-03  David Hyatt  <hyatt@apple.com>
+
+        Land support for the CSS @font-face rule.  This patch allows custom fonts
+        to be downloaded from the Web and rendered in Web pages.  Right now only
+        TrueType fonts are supported.  Proprietary formats like .eot are not
+        supported.
+
+        Reviewed by Eric Seidel
+
+        Many tests will be coming in a future landing.
+
+        * WebCore.base.exp:
+        Expose some more stuff for WebKit, caused by font restructuring.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add all the new font face files.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Make sure to ignore the 'src' property of @font-face rules.
+
+        * css/CSSFontFace.cpp: Added.
+        (WebCore::CSSFontFace::CSSFontFace):
+        (WebCore::CSSFontFace::~CSSFontFace):
+        (WebCore::CSSFontFace::isLoaded):
+        (WebCore::CSSFontFace::isValid):
+        (WebCore::CSSFontFace::addSource):
+        (WebCore::CSSFontFace::fontLoaded):
+        (WebCore::CSSFontFace::getFontData):
+        * css/CSSFontFace.h: Added.
+        A CSSFontFace is a composite object.  It consists of multiple font-face sources, where each source represents either a remote or local
+        file in a @font-face rule's src list.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::setDeclaration):
+        (WebCore::CSSFontFaceRule::cssText):
+        * css/CSSFontFaceRule.h:
+        The implementation of the @font-face rule itself in the CSS sheet back end.
+        
+        * css/CSSFontFaceSource.cpp: Added.
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::~CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::pruneTable):
+        (WebCore::CSSFontFaceSource::isLoaded):
+        (WebCore::CSSFontFaceSource::isValid):
+        (WebCore::CSSFontFaceSource::fontLoaded):
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontFaceSource.h: Added.
+        (WebCore::CSSFontFaceSource::string):
+        (WebCore::CSSFontFaceSource::setFontFace):
+        A font face source represents a single remote or local font.  If it represents a remote font than it wraps a CachedFont.
+        
+        * css/CSSFontFaceSrcValue.cpp: Added.
+        (WebCore::CSSFontFaceSrcValue::isSupportedFormat):
+        (WebCore::CSSFontFaceSrcValue::cssText):
+        * css/CSSFontFaceSrcValue.h: Added.
+        (WebCore::CSSFontFaceSrcValue::m_isLocal):
+        (WebCore::CSSFontFaceSrcValue::~CSSFontFaceSrcValue):
+        (WebCore::CSSFontFaceSrcValue::resource):
+        (WebCore::CSSFontFaceSrcValue::format):
+        (WebCore::CSSFontFaceSrcValue::isLocal):
+        (WebCore::CSSFontFaceSrcValue::setFormat):
+        Used in parsing.  Represents the parsed form of the src value that can then be used to build up a CSSFontFace.
+
+        * css/CSSFontSelector.cpp: Added.
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        (WebCore::CSSFontSelector::isEmpty):
+        (WebCore::CSSFontSelector::docLoader):
+        (WebCore::hashForFont):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::fontLoaded):
+        (WebCore::CSSFontSelector::getFontData):
+        * css/CSSFontSelector.h: Added.
+        The CSS font selector is the object that selects the correct font given a specified font family.  It builds up a database of CSSFontFaces that can then be handed
+        back.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::createFontFaceRule):
+        * css/CSSParser.h:
+        Modify the CSS grammar to now understand @font-face rules.
+
+        * css/CSSPropertyNames.in:
+        Add the src property.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::updateFont):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::ensureFontSelector):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::fontSelector):
+        The style selector now creates a font selector object and feeds it the appropriate information when @font-face rules are encountered.
+    
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        Patch the update method now that it takes a font selector argument.
+    
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        (WebCore::Cache::getStatistics):
+        * loader/Cache.h:
+        Teach the Cache about CachedFonts.
+
+        * loader/CachedFont.cpp: Added.
+        (WebCore::CachedFont::CachedFont):
+        (WebCore::CachedFont::~CachedFont):
+        (WebCore::CachedFont::ref):
+        (WebCore::CachedFont::data):
+        (WebCore::CachedFont::beginLoadIfNeeded):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        (WebCore::CachedFont::allReferencesRemoved):
+        (WebCore::CachedFont::checkNotify):
+        (WebCore::CachedFont::error):
+        * loader/CachedFont.h: Added.
+        (WebCore::CachedFont::schedule):
+        The implementation of CachedFont.  This represents the downloaded resource and has all the raw font data.
+
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::):
+        * loader/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::fontLoaded):
+        Add a new fontLoaded method for clients of cached resources to track when fonts finish downloading.
+    
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestFont):
+        * loader/DocLoader.h:
+         Add the ability to request a font.
+
+        * platform/Font.cpp:
+        (WebCore::Font::operator==):
+        (WebCore::Font::update):
+        (WebCore::Font::drawText):
+        * platform/Font.h:
+        * platform/FontCache.cpp:
+        (WebCore::FontCache::getFontData):
+        * platform/FontCache.h:
+        * platform/FontData.cpp:
+        (WebCore::FontData::FontData):
+        * platform/FontData.h:
+        (WebCore::FontData::isCustomFont):
+        (WebCore::FontData::isLoading):
+        * platform/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::FontFallbackList):
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::FontFallbackList::fontDataAt):
+        * platform/FontFallbackList.h:
+        (WebCore::FontFallbackList::loadingCustomFonts):
+        (WebCore::FontFallbackList::fontSelector):
+        * platform/FontSelector.h: Added.
+        (WebCore::FontSelector::~FontSelector):
+        * platform/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::getRoot):
+        (WebCore::GlyphPageTreeNode::pruneTreeCustomFontData):
+        (WebCore::GlyphPageTreeNode::~GlyphPageTreeNode):
+        (WebCore::GlyphPageTreeNode::initializePage):
+        (WebCore::GlyphPageTreeNode::getChild):
+        (WebCore::GlyphPageTreeNode::pruneCustomFontData):
+        * platform/GlyphPageTreeNode.h:
+        (WebCore::GlyphPageTreeNode::GlyphPageTreeNode):
+        (WebCore::GlyphPageTreeNode::page):
+        * platform/PopupMenuClient.h:
+        * platform/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::fontExists):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/mac/FontCustomPlatformData.cpp: Added.
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/mac/FontCustomPlatformData.h: Added.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        * platform/mac/FontDataMac.mm:
+        (WebCore::initFontData):
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::FontData::platformWidthForGlyph):
+        (WebCore::FontData::checkShapesArabic):
+        * platform/mac/FontMac.mm:
+        (WebCore::initializeATSUStyle):
+        (WebCore::Font::drawGlyphs):
+        * platform/mac/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        * platform/mac/FontPlatformDataMac.mm: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::~FontPlatformData):
+        (WebCore::FontPlatformData::setFont):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::fontExists):
+        * platform/win/FontCustomPlatformData.cpp: Added.
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::getData):
+        (WebCore::releaseData):
+        (WebCore::getBytesWithOffset):
+        (WebCore::createFontCustomPlatformData):
+        * platform/win/FontCustomPlatformData.h: Added.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::platformDestroy):
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::FontData::containsCharacters):
+        (WebCore::FontData::determinePitch):
+        * platform/win/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        * platform/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+        Changes to platform to support rendering of custom fonts.  Too large to go into, but for ports, the relevant object to implement is
+        FontCustomPlatformData (to get the data loaded into your native font format), and then you have to patch your other font objects to know
+        how to use the font.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::fontSelector):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::fontSelector):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::setFontFromControlSize):
+        Patches for update now taking a font selector argument.
+    
 2007-10-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

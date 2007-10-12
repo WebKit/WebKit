@@ -3291,6 +3291,20 @@
 		BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86820C33676000EEA649 /* DOMSelection.h */; };
 		BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */; };
 		BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */; };
+		BC64B4B90CB428C7005F2B62 /* FontSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4B80CB428C7005F2B62 /* FontSelector.h */; };
+		BC64B4BD0CB42929005F2B62 /* FontCustomPlatformData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4BA0CB42929005F2B62 /* FontCustomPlatformData.cpp */; };
+		BC64B4BE0CB42929005F2B62 /* FontCustomPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4BB0CB42929005F2B62 /* FontCustomPlatformData.h */; };
+		BC64B4BF0CB42929005F2B62 /* FontPlatformDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4BC0CB42929005F2B62 /* FontPlatformDataMac.mm */; };
+		BC64B4CB0CB4295D005F2B62 /* CachedFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */; };
+		BC64B4CC0CB4295D005F2B62 /* CachedFont.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4CA0CB4295D005F2B62 /* CachedFont.h */; };
+		BC64B4D50CB4298A005F2B62 /* CSSFontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */; };
+		BC64B4D60CB4298A005F2B62 /* CSSFontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4CE0CB4298A005F2B62 /* CSSFontFace.h */; };
+		BC64B4D70CB4298A005F2B62 /* CSSFontFaceSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4CF0CB4298A005F2B62 /* CSSFontFaceSource.cpp */; };
+		BC64B4D80CB4298A005F2B62 /* CSSFontFaceSource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4D00CB4298A005F2B62 /* CSSFontFaceSource.h */; };
+		BC64B4D90CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4D10CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp */; };
+		BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4D20CB4298A005F2B62 /* CSSFontFaceSrcValue.h */; };
+		BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4D30CB4298A005F2B62 /* CSSFontSelector.cpp */; };
+		BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4D40CB4298A005F2B62 /* CSSFontSelector.h */; };
 		BC6D44BE0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D44BD0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp */; };
 		BC6D44EC0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D44EA0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp */; };
 		BC6D44ED0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D44EB0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h */; };
@@ -7110,6 +7124,20 @@
 		BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMSelection.cpp; sourceTree = "<group>"; };
 		BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMSelection.h; sourceTree = "<group>"; };
 		BC5EC1760A507E3E006007F5 /* view-source.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "view-source.css"; sourceTree = "<group>"; };
+		BC64B4B80CB428C7005F2B62 /* FontSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSelector.h; sourceTree = "<group>"; };
+		BC64B4BA0CB42929005F2B62 /* FontCustomPlatformData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCustomPlatformData.cpp; sourceTree = "<group>"; };
+		BC64B4BB0CB42929005F2B62 /* FontCustomPlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontCustomPlatformData.h; sourceTree = "<group>"; };
+		BC64B4BC0CB42929005F2B62 /* FontPlatformDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontPlatformDataMac.mm; sourceTree = "<group>"; };
+		BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFont.cpp; sourceTree = "<group>"; };
+		BC64B4CA0CB4295D005F2B62 /* CachedFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFont.h; sourceTree = "<group>"; };
+		BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFace.cpp; sourceTree = "<group>"; };
+		BC64B4CE0CB4298A005F2B62 /* CSSFontFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFace.h; sourceTree = "<group>"; };
+		BC64B4CF0CB4298A005F2B62 /* CSSFontFaceSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceSource.cpp; sourceTree = "<group>"; };
+		BC64B4D00CB4298A005F2B62 /* CSSFontFaceSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFaceSource.h; sourceTree = "<group>"; };
+		BC64B4D10CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceSrcValue.cpp; sourceTree = "<group>"; };
+		BC64B4D20CB4298A005F2B62 /* CSSFontFaceSrcValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFaceSrcValue.h; sourceTree = "<group>"; };
+		BC64B4D30CB4298A005F2B62 /* CSSFontSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontSelector.cpp; sourceTree = "<group>"; };
+		BC64B4D40CB4298A005F2B62 /* CSSFontSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontSelector.h; sourceTree = "<group>"; };
 		BC6D44BD0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLEmbedElementCustom.cpp; sourceTree = "<group>"; };
 		BC6D44EA0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLEmbedElement.cpp; sourceTree = "<group>"; };
 		BC6D44EB0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLEmbedElement.h; sourceTree = "<group>"; };
@@ -8176,6 +8204,9 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				BC64B4BA0CB42929005F2B62 /* FontCustomPlatformData.cpp */,
+				BC64B4BB0CB42929005F2B62 /* FontCustomPlatformData.h */,
+				BC64B4BC0CB42929005F2B62 /* FontPlatformDataMac.mm */,
 				51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
@@ -10687,6 +10718,8 @@
 				BCB16BFF0979C3BD00467741 /* Cache.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
+				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,
+				BC64B4CA0CB4295D005F2B62 /* CachedFont.h */,
 				BCB16C020979C3BD00467741 /* CachedImage.cpp */,
 				BCB16C030979C3BD00467741 /* CachedImage.h */,
 				BCB16C060979C3BD00467741 /* CachedResource.cpp */,
@@ -10809,6 +10842,7 @@
 				BCEB377509B7BB0D00CB38B1 /* FontFallbackList.h */,
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
+				BC64B4B80CB428C7005F2B62 /* FontSelector.h */,
 				BCC71A120A0FF94D0014EE6E /* GlyphBuffer.h */,
 				BC6DB4730A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp */,
 				BC6DB3680A1A7CB700E5CD14 /* GlyphPageTreeNode.h */,
@@ -10965,6 +10999,14 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */,
+				BC64B4CE0CB4298A005F2B62 /* CSSFontFace.h */,
+				BC64B4CF0CB4298A005F2B62 /* CSSFontFaceSource.cpp */,
+				BC64B4D00CB4298A005F2B62 /* CSSFontFaceSource.h */,
+				BC64B4D10CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp */,
+				BC64B4D20CB4298A005F2B62 /* CSSFontFaceSrcValue.h */,
+				BC64B4D30CB4298A005F2B62 /* CSSFontSelector.cpp */,
+				BC64B4D40CB4298A005F2B62 /* CSSFontSelector.h */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,
 				930705C709E0C95F00B17FE4 /* Counter.idl */,
 				A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */,
@@ -13164,6 +13206,13 @@
 				A8E545BF0CA9D1C20097D09B /* DOMSVGTextElement.h in Headers */,
 				A8E545C00CA9D1C20097D09B /* DOMSVGDocument.h in Headers */,
 				A8E545C10CA9D1C20097D09B /* DOMSVGDescElementInternal.h in Headers */,
+				BC64B4B90CB428C7005F2B62 /* FontSelector.h in Headers */,
+				BC64B4BE0CB42929005F2B62 /* FontCustomPlatformData.h in Headers */,
+				BC64B4CC0CB4295D005F2B62 /* CachedFont.h in Headers */,
+				BC64B4D60CB4298A005F2B62 /* CSSFontFace.h in Headers */,
+				BC64B4D80CB4298A005F2B62 /* CSSFontFaceSource.h in Headers */,
+				BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */,
+				BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14638,6 +14687,13 @@
 				B2AE9B9D0C3AF27400F23F7F /* DOMSVGTextPathElement.mm in Sources */,
 				AA4038900C4C0D8B00DB56DC /* SVGViewSpec.cpp in Sources */,
 				B2CCEC470C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp in Sources */,
+				BC64B4BD0CB42929005F2B62 /* FontCustomPlatformData.cpp in Sources */,
+				BC64B4BF0CB42929005F2B62 /* FontPlatformDataMac.mm in Sources */,
+				BC64B4CB0CB4295D005F2B62 /* CachedFont.cpp in Sources */,
+				BC64B4D50CB4298A005F2B62 /* CSSFontFace.cpp in Sources */,
+				BC64B4D70CB4298A005F2B62 /* CSSFontFaceSource.cpp in Sources */,
+				BC64B4D90CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp in Sources */,
+				BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

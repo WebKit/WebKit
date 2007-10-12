@@ -86,6 +86,7 @@ private:
     virtual bool valueShouldChangeOnHotTrack() const { return true; }
     virtual bool shouldPopOver() const { return !POPUP_MENU_PULLS_DOWN; }
     virtual void valueChanged(unsigned listIndex, bool fireOnChange = true);
+    virtual FontSelector* fontSelector() const;
 
     virtual bool hasLineIfEmpty() const { return true; }
 

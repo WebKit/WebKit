@@ -141,9 +141,9 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
     NSFontManager *manager = [NSFontManager sharedFontManager];
 
     NSFontTraitMask traits = [manager traitsOfFont:nsFont];
-    if (platformData.syntheticBold)
+    if (platformData.m_syntheticBold)
         traits |= NSBoldFontMask;
-    if (platformData.syntheticOblique)
+    if (platformData.m_syntheticOblique)
         traits |= NSItalicFontMask;
 
     NSFont *bestVariation = [manager fontWithFamily:[substituteFont familyName]
@@ -185,22 +185,35 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
     return platformData;
 }
 
-FontPlatformData* FontCache::getLastResortFallbackFont(const Font& font)
+FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
     static AtomicString timesStr("Times");
     static AtomicString lucidaGrandeStr("Lucida Grande");
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    FontPlatformData* platformFont = getCachedFontPlatformData(font.fontDescription(), timesStr);
+    FontPlatformData* platformFont = getCachedFontPlatformData(fontDescription, timesStr);
     if (!platformFont)
         // The Times fallback will almost always work, but in the highly unusual case where
         // the user doesn't have it, we fall back on Lucida Grande because that's
         // guaranteed to be there, according to Nathan Taylor. This is good enough
         // to avoid a crash at least.
-        platformFont = getCachedFontPlatformData(font.fontDescription(), lucidaGrandeStr);
+        platformFont = getCachedFontPlatformData(fontDescription, lucidaGrandeStr);
 
     return platformFont;
+}
+
+bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
+{
+    NSFontTraitMask traits = 0;
+    if (fontDescription.italic())
+        traits |= NSItalicFontMask;
+    if (fontDescription.bold())
+        traits |= NSBoldFontMask;
+    float size = fontDescription.computedPixelSize();
+    
+    NSFont* nsFont = [WebFontCache fontWithFamily:family traits:traits size:size];
+    return nsFont != 0;
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
@@ -224,8 +237,8 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     
     // Use the correct font for print vs. screen.
     result->setFont(fontDescription.usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont]);
-    result->syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
-    result->syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
+    result->m_syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
+    result->m_syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
     return result;
 }
 

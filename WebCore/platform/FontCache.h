@@ -43,10 +43,11 @@ class FontData;
 class FontPlatformData;
 class Font;
 class FontDescription;
+class FontSelector;
 
 class FontCache {
 public:
-    static const FontData* getFontData(const Font&, int& familyIndex);
+    static const FontData* getFontData(const Font&, int& familyIndex, FontSelector*);
     
     // This method is implemented by the platform.
     static const FontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
@@ -58,13 +59,15 @@ public:
     static IMLangFontLink2* getFontLinkInterface();
 #endif
 
-private:
+    static bool fontExists(const FontDescription&, const AtomicString& family);
+
     static FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
     static FontData* getCachedFontData(const FontPlatformData*);
+    static FontPlatformData* getLastResortFallbackFont(const FontDescription&);
     
-    // These three methods are implemented by each platform.
+private:
+    // These methods are implemented by each platform.
     static FontPlatformData* getSimilarFontPlatformData(const Font&);
-    static FontPlatformData* getLastResortFallbackFont(const Font&);
     static FontPlatformData* createFontPlatformData(const FontDescription&, const AtomicString& family);
 
     friend class FontData;
