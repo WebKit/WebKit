@@ -51,7 +51,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (99,-69) size 57x71
             chunk 1 (middle anchor) text run 5 at (360.50,140.00) startOffset 0 endOffset 1 width 38.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGText {text} at (54,240) size 150x99 contains 1 chunk(s) [color=#FFFFFF]
+      RenderSVGText {text} at (54,240) size 150x99 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 36x59
           chunk 1 (middle anchor) text run 1 at (54.50,260.00) startOffset 0 endOffset 1 width 35.00: "B"
         RenderSVGTSpan {tspan} at (0,0) size 19x30
@@ -66,7 +66,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (96,-68) size 54x68
             chunk 1 (middle anchor) text run 5 at (150.50,240.00) startOffset 0 endOffset 1 width 35.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGText {text} at (261,240) size 156x102 contains 1 chunk(s) [color=#FFFFFF]
+      RenderSVGText {text} at (261,240) size 156x102 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 36x61
           chunk 1 (middle anchor) text run 1 at (261.50,260.00) startOffset 0 endOffset 1 width 35.00: "B"
         RenderSVGTSpan {tspan} at (0,0) size 20x31
@@ -81,7 +81,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (99,-69) size 57x71
             chunk 1 (middle anchor) text run 5 at (360.50,240.00) startOffset 0 endOffset 1 width 38.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGText {text} at (54,340) size 150x99 contains 1 chunk(s) [color=#FF0000]
+      RenderSVGText {text} at (54,340) size 150x99 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 36x59
           chunk 1 (middle anchor) text run 1 at (54.50,360.00) startOffset 0 endOffset 1 width 35.00: "B"
         RenderSVGTSpan {tspan} at (0,0) size 19x30
@@ -96,7 +96,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (96,-68) size 54x68
             chunk 1 (middle anchor) text run 5 at (150.50,340.00) startOffset 0 endOffset 1 width 35.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGText {text} at (261,340) size 156x102 contains 1 chunk(s) [color=#FF0000]
+      RenderSVGText {text} at (261,340) size 156x102 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 36x61
           chunk 1 (middle anchor) text run 1 at (261.50,360.00) startOffset 0 endOffset 1 width 35.00: "B"
         RenderSVGTSpan {tspan} at (0,0) size 20x31

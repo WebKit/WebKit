@@ -1,6 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (10,120) size 477x230
-      RenderSVGText {text} at (10,300) size 800x230 [color=#000080]
-        RenderSVGInlineText {#text} at (0,-180) size 477x230
-          text run at (0,-180) width 477: "PASS"
+layer at (0,0) size 800x400
+  RenderSVGRoot {svg} at (10,120) size 477x230
+    RenderSVGText {text} at (10,300) size 477x230 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-180) size 477x230
+        chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 4 width 477.00: "PASS"

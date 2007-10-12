@@ -11,7 +11,7 @@ layer at (0,0) size 450x500
         RenderPath {rect} at (74.50,69.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,70.00L375.00,70.00L375.00,110.00L75.00,110.00"]
         RenderPath {rect} at (74.50,109.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M75.00,110.00L375.00,110.00L375.00,150.00L75.00,150.00"]
         RenderPath {rect} at (74.50,149.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,150.00L375.00,150.00L375.00,190.00L75.00,190.00"]
-        RenderSVGText {text} at (90,64) size 192x17 contains 1 chunk(s) [color=#FFFFFF]
+        RenderSVGText {text} at (90,64) size 192x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-13) size 192x17
             chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 34 width 192.00: "x attribute define new text chunks"
         RenderSVGContainer {g} at (144.50,70) size 161x120
@@ -25,7 +25,7 @@ layer at (0,0) size 450x500
         RenderPath {rect} at (74.50,219.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,70.00L375.00,70.00L375.00,110.00L75.00,110.00"]
         RenderPath {rect} at (74.50,259.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M75.00,110.00L375.00,110.00L375.00,150.00L75.00,150.00"]
         RenderPath {rect} at (74.50,299.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,150.00L375.00,150.00L375.00,190.00L75.00,190.00"]
-        RenderSVGText {text} at (90,64) size 238x17 contains 1 chunk(s) [color=#FFFFFF]
+        RenderSVGText {text} at (90,64) size 238x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-13) size 238x17
             chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 42 width 238.00: "y attribute does not define new text chunk"
         RenderSVGContainer {g} at (224.50,220) size 1x120
@@ -35,7 +35,7 @@ layer at (0,0) size 450x500
         RenderPath {rect} at (74.50,369.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,70.00L375.00,70.00L375.00,110.00L75.00,110.00"]
         RenderPath {rect} at (74.50,409.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M75.00,110.00L375.00,110.00L375.00,150.00L75.00,150.00"]
         RenderPath {rect} at (74.50,449.50) size 301x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M75.00,150.00L375.00,150.00L375.00,190.00L75.00,190.00"]
-        RenderSVGText {text} at (90,64) size 223x17 contains 1 chunk(s) [color=#FFFFFF]
+        RenderSVGText {text} at (90,64) size 223x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-13) size 223x17
             chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 39 width 223.00: "x & y attributes define new text chunks"
         RenderSVGContainer {g} at (144.50,370) size 161x120

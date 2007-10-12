@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0.83,0.83) size 798.33x598.33
     RenderSVGContainer {g} at (1.67,46.67) size 785x436.67
-      RenderSVGText {text} at (19,61) size 76x39 contains 1 chunk(s) [color=#0000FF]
+      RenderSVGText {text} at (19,61) size 76x39 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-32) size 76x39
           chunk 1 text run 1 at (19.00,61.00) startOffset 0 endOffset 5 width 76.00: "Plain"
-      RenderSVGText {text} at (142,61) size 80x39 contains 1 chunk(s) [color=#0000FF]
+      RenderSVGText {text} at (142,61) size 80x39 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-32) size 80x39
           chunk 1 text run 1 at (142.00,61.00) startOffset 0 endOffset 6 width 80.00: "Italic"
-      RenderSVGText {text} at (257,60) size 79x39 contains 1 chunk(s) [color=#0000FF]
+      RenderSVGText {text} at (257,60) size 79x39 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-32) size 79x39
           chunk 1 text run 1 at (257.00,60.00) startOffset 0 endOffset 4 width 79.00: "Bold"
-      RenderSVGText {text} at (224,110) size 153x39 contains 1 chunk(s) [color=#0000FF]
+      RenderSVGText {text} at (224,110) size 153x39 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-32) size 153x39
           chunk 1 text run 1 at (224.00,110.00) startOffset 0 endOffset 9 width 153.00: "Underline"
-      RenderSVGText {text} at (39,147) size 203x39 contains 1 chunk(s) [color=#FF0000]
+      RenderSVGText {text} at (39,147) size 203x39 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-32) size 203x39
           chunk 1 text run 1 at (39.00,147.00) startOffset 0 endOffset 12 width 203.00: "Line through"
       RenderSVGText {text} at (1,200) size 471x39 contains 1 chunk(s)

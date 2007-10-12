@@ -47,7 +47,7 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (344,92) size 12x408 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-13) size 12x153
           chunk 1 (vertical) text run 1 at (344.00,92.00) startOffset 0 endOffset 9 height 153.00: "Embedded "
-        RenderSVGTSpan {tspan} at (0,0) size 8x119 [color=#FF0000]
+        RenderSVGTSpan {tspan} at (0,0) size 8x119
           RenderSVGInlineText {#text} at (2,140) size 8x119
             chunk 1 (vertical) text run 2 at (346.00,245.00) startOffset 0 endOffset 7 height 119.00: "<tspan>"
         RenderSVGInlineText {#text} at (0,259) size 12x136
@@ -55,7 +55,7 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (394,92) size 12x459 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-13) size 12x153
           chunk 1 (vertical) text run 1 at (394.00,92.00) startOffset 0 endOffset 9 height 153.00: "Embedded "
-        RenderSVGTSpan {tspan} at (0,0) size 8x170 [color=#0000FF]
+        RenderSVGTSpan {tspan} at (0,0) size 8x170
           RenderSVGInlineText {#text} at (2,140) size 8x170
             chunk 1 (vertical) text run 2 at (396.00,245.00) startOffset 0 endOffset 10 height 170.00: "orientated"
         RenderSVGInlineText {#text} at (0,310) size 12x136

@@ -1,23 +1,24 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (5,14) size 465x276
-        RenderSVGText {text} at (5,50) size 480x44
-          RenderSVGInlineText {#text} at (0,-36) size 403x44
-            text run at (0,-36) width 403: "Test 'altGlyph' facilities"
-        RenderSVGText {text} at (5,90) size 480x33
-          RenderSVGInlineText {#text} at (0,-27) size 463x33
-            text run at (0,-27) width 463: "and many-to-many chars to glyphs"
-        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGContainer {g} at (45,185) size 425x105
-          RenderSVGText {text} at (140,190) size 480x0
-          RenderSVGText {text} at (50,270) size 480x69 [color=#008000]
-            RenderSVGInlineText {#text} at (0,-54) size 43x69
-              text run at (0,-54) width 43: "D"
-          RenderSVGText {text} at (280,270) size 480x69 [color=#0000FF]
-            RenderSVGInlineText {#text} at (0,-54) size 185x69
-              text run at (0,-54) width 185: "SASSY"
-      RenderSVGText {text} at (10,340) size 480x46
-        RenderSVGInlineText {#text} at (0,-36) size 264x46
-          text run at (0,-36) width 264: "$Revision: 1.5 $"
-      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
+    RenderSVGContainer {g} at (5,14) size 465x276
+      RenderSVGText {text} at (5,50) size 403x44 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-36) size 403x44
+          chunk 1 text run 1 at (5.00,50.00) startOffset 0 endOffset 26 width 403.00: "Test 'altGlyph' facilities"
+      RenderSVGText {text} at (5,90) size 463x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-27) size 463x33
+          chunk 1 text run 1 at (5.00,90.00) startOffset 0 endOffset 32 width 463.00: "and many-to-many chars to glyphs"
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (45,185) size 425x105
+        RenderSVGText {text}
+        RenderSVGText {text} at (50,270) size 43x69 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-54) size 43x69
+            chunk 1 text run 1 at (50.00,270.00) startOffset 0 endOffset 1 width 43.00: "D"
+        RenderSVGText {text} at (280,270) size 185x69 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-54) size 185x69
+            chunk 1 text run 1 at (280.00,270.00) startOffset 0 endOffset 5 width 185.00: "SASSY"
+    RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-36) size 264x46
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.5 $"
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

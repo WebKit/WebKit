@@ -21,7 +21,7 @@ layer at (0,0) size 450x500
           RenderSVGTextPath {textPath} at (0,0) size 137x69
             RenderSVGInlineText {#text} at (-13,-14) size 71x54
               chunk 1 text run 1 at (17.67,12.16) startOffset 0 endOffset 6 width 60.00: "Batik "
-            RenderSVGTSpan {tspan} at (0,0) size 34x35 [color=#FF0000]
+            RenderSVGTSpan {tspan} at (0,0) size 34x35
               RenderSVGInlineText {#text} at (55,-19) size 34x35
                 chunk 1 text run 2 at (69.83,4.21) startOffset 0 endOffset 2 width 17.00: "is"
             RenderSVGTSpan {tspan} at (0,0) size 62x47
@@ -40,7 +40,7 @@ layer at (0,0) size 450x500
           RenderSVGTextPath {textPath} at (0,0) size 153x62
             RenderSVGInlineText {#text} at (-9,-7) size 67x48
               chunk 1 text run 1 at (19.16,17.35) startOffset 0 endOffset 6 width 60.00: "Batik "
-            RenderSVGTSpan {tspan} at (0,0) size 25x29 [color=#FF0000]
+            RenderSVGTSpan {tspan} at (0,0) size 25x29
               RenderSVGInlineText {#text} at (47,-21) size 25x29
                 chunk 1 text run 2 at (74.95,3.71) startOffset 0 endOffset 2 width 17.00: "is"
             RenderSVGTSpan {tspan} at (0,0) size 74x41
@@ -59,7 +59,7 @@ layer at (0,0) size 450x500
           RenderSVGTextPath {textPath} at (0,0) size 137x69
             RenderSVGInlineText {#text} at (-13,-14) size 71x54
               chunk 1 text run 1 at (17.67,12.16) startOffset 0 endOffset 6 width 60.00: "Batik "
-            RenderSVGTSpan {tspan} at (0,0) size 34x35 [color=#FF0000]
+            RenderSVGTSpan {tspan} at (0,0) size 34x35
               RenderSVGInlineText {#text} at (55,-19) size 34x35
                 chunk 1 text run 2 at (69.83,4.21) startOffset 0 endOffset 2 width 17.00: "is"
             RenderSVGTSpan {tspan} at (0,0) size 62x47
@@ -78,7 +78,7 @@ layer at (0,0) size 450x500
           RenderSVGTextPath {textPath} at (0,0) size 153x62
             RenderSVGInlineText {#text} at (-9,-7) size 67x48
               chunk 1 text run 1 at (19.16,17.35) startOffset 0 endOffset 6 width 60.00: "Batik "
-            RenderSVGTSpan {tspan} at (0,0) size 25x29 [color=#FF0000]
+            RenderSVGTSpan {tspan} at (0,0) size 25x29
               RenderSVGInlineText {#text} at (47,-21) size 25x29
                 chunk 1 text run 2 at (74.95,3.71) startOffset 0 endOffset 2 width 17.00: "is"
             RenderSVGTSpan {tspan} at (0,0) size 74x41

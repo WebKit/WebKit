@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0.83,0.83) size 798.33x598.33
     RenderSVGContainer {g} at (120.83,23.33) size 472.50x343.33
-      RenderSVGText {text} at (75,25) size 281x14 contains 1 chunk(s) [color=#0000FF]
+      RenderSVGText {text} at (75,25) size 281x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 281x14
           chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 55 width 281.00: "Test 'tref' element with an external referenced string."
       RenderSVGText {text}
