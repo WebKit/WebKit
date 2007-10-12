@@ -1,3 +1,15 @@
+2007-08-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14924
+        rotated rect with pattern draws incorrectly
+
+        Use the bounding box before transformation.
+
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2007-08-19  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

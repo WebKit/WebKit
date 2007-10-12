@@ -1,3 +1,16 @@
+2007-08-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=14924
+        rotated rect with pattern draws incorrectly
+
+        * svg/custom/pattern-rotate-expected.checksum: Added.
+        * svg/custom/pattern-rotate-expected.png: Added.
+        * svg/custom/pattern-rotate-expected.txt: Added.
+        * svg/custom/pattern-rotate.svg: Added.
+
 2007-08-19  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.
