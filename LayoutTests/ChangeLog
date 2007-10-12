@@ -3,6 +3,22 @@
         Reviewed by Maciej.
 
         Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=9976
+        Fix negative width issue in Hixie's test
+
+        * svg/hixie/error/013-broken-expected.checksum: Removed.
+        * svg/hixie/error/013-broken-expected.png: Removed.
+        * svg/hixie/error/013-broken-expected.txt: Removed.
+        * svg/hixie/error/013-broken.xml: Removed.
+        * svg/hixie/error/013-expected.checksum: Added.
+        * svg/hixie/error/013-expected.png: Added.
+        * svg/hixie/error/013-expected.txt: Added.
+
+2007-06-26  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Testcase for:
         http://bugs.webkit.org/show_bug.cgi?id=12062
         WebCore does not handle CSS-specified fill fallback correctly
 

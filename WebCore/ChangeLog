@@ -2,6 +2,20 @@
 
         Reviewed by Maciej.
 
+        http://bugs.webkit.org/show_bug.cgi?id=9976
+        Fix negative width issue in Hixie's test
+
+        Refuse to render zero or negative width/height.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+
+2007-06-26  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
         http://bugs.webkit.org/show_bug.cgi?id=12062
         WebCore does not handle CSS-specified fill fallback correctly
 

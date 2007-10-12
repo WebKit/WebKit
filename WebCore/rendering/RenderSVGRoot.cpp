@@ -151,6 +151,10 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.context->paintingDisabled())
         return;
 
+    // A value of zero disables rendering of the element. 
+    if (viewport().width() <= 0. || viewport().height() <= 0.)
+        return;
+
     // This should only exist for <svg> renderers
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, m_x + parentX, m_y + parentY);

@@ -152,6 +152,10 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.context->paintingDisabled() || !drawsContents())
         return;
 
+    // A value of zero disables rendering of the element. 
+    if (!viewport().isEmpty() && (viewport().width() <= 0. || viewport().height() <= 0.))
+        return;
+
     if (!firstChild()) {
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
         // Spec: groups w/o children still may render filter content.
