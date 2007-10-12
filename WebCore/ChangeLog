@@ -1,3 +1,41 @@
+2007-06-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=13963
+
+        Fix SVG space invaders. It actually highlighted a bad problem with our JSSVGPODTypeWrapper's.
+        Introduce a new "2nd-level cache" for all readwrite POD properties. Subsequent calls to ie.
+        myRect.x.baseVal.value don't create a new wrapper everytime, but are properly cached now.
+        This leads to a massive reduction in created wrappers.
+
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::JSSVGPODTypeWrapperCreatorReadWrite):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::~JSSVGPODTypeWrapperCreatorReadWrite):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::operator PODType):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::JSSVGPODTypeWrapperCreatorReadOnly):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::~JSSVGPODTypeWrapperCreatorReadOnly):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::operator PODType):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::JSSVGPODTypeWrapperCreatorForList):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::commitChange):
+        (WebCore::PODTypeReadWriteHashInfo::PODTypeReadWriteHashInfo):
+        (WebCore::PODTypeReadWriteHashInfo::operator==):
+        (WebCore::PODTypeReadWriteHashInfoHash::hash):
+        (WebCore::PODTypeReadWriteHashInfoHash::equal):
+        (WebCore::PODTypeReadWriteHashInfoTraits::deletedValue):
+        (WebCore::PODTypeReadWriteHashInfoTraits::emptyValue):
+        (WebCore::JSSVGPODTypeWrapperCache::readWriteHashMap):
+        (WebCore::JSSVGPODTypeWrapperCache::lookupOrCreateWrapper):
+        (WebCore::JSSVGPODTypeWrapperCache::forgetWrapper):
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::JSSVGPointList::removeItem):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-06-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Niko.
