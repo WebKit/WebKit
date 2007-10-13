@@ -1,3 +1,20 @@
+2007-10-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fixing a few testcases by enabling SVG_EXPERIMENTAL on windows, and making the
+        required fixes and corrections.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/build-generated-files.sh:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/scripts/make_names.pl:
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::colorFromRGBColorString):
+        * page/DOMWindow.idl:
+        * platform/graphics/svg/cg/SVGResourceFilterCg.cpp:
+        * platform/win/WebCoreTextRenderer.cpp:
+
 2007-10-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

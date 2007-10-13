@@ -39,5 +39,5 @@ mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
 
 export WebCore="${XSRCROOT}"
-export FEATURE_DEFINES="ENABLE_XPATH ENABLE_SVG"
+export FEATURE_DEFINES="ENABLE_XPATH ENABLE_SVG ENABLE_SVG_EXPERIMENTAL_FEATURES"
 make -f "$WebCore/DerivedSources.make" -j ${NUMCPUS} || exit 1

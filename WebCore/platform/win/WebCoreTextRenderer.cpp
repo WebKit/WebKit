@@ -36,8 +36,7 @@ namespace WebCore {
 
 static bool isOneLeftToRightRun(const TextRun& run)
 {
-    unsigned i;
-    for (i = 0; i < run.length(); i++) {
+    for (int i = 0; i < run.length(); i++) {
         WTF::Unicode::Direction direction = WTF::Unicode::direction(run[i]);
         if (direction == WTF::Unicode::RightToLeft || direction > WTF::Unicode::OtherNeutral)
             return false;

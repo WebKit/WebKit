@@ -81,15 +81,15 @@ void SVGColor::setRGBColor(const String& rgbColor, ExceptionCode& ec)
 
 Color SVGColor::colorFromRGBColorString(const String& colorString)
 {
-    RGBA32 color;
     String s = colorString.stripWhiteSpace();
     // hsl, hsla and rgba are not in the SVG spec.
     // FIXME: rework css parser so it is more svg aware
-    if (s.startsWith("hsl") || s.startsWith("rgba") ||
-        !CSSParser::parseColor(color, s))
+    if (s.startsWith("hsl") || s.startsWith("rgba"))
         return Color();
-
-    return color;
+    RGBA32 color;
+    if (CSSParser::parseColor(color, s))
+        return color;
+    return Color();
 }
 
 void SVGColor::setRGBColorICCColor(const String& /* rgbColor */, const String& /* iccColor */, ExceptionCode& ec)

@@ -51,8 +51,7 @@ void SVGResourceFilter::applyFilter(GraphicsContext*&, const FloatRect&)
     notImplemented();
 }
 
-
-SVGFilterEffect* SVGResourceFilter::createFilterEffect(const SVGFilterEffectType&)
+SVGFilterEffect* SVGResourceFilter::createFilterEffect(const SVGFilterEffectType&, SVGResourceFilter*)
 {
     return NULL;
 }
