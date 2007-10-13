@@ -1,5 +1,21 @@
 2007-10-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        - change test that was accidentally detecting changes in frame load delegate
+          calls to run in a directory where we do not log frame load delegate calls
+
+        At some point we may want to test them (and so re-add the test that is
+        currently intermittently giving different results), but this test is about
+        the DOMContentLoaded event and we want to test just that.
+
+        * http/tests/loading/DOMContentLoaded-event-expected.txt: Removed.
+        * http/tests/loading/DOMContentLoaded-event.html: Removed.
+        * http/tests/misc/DOMContentLoaded-event-expected.txt: Copied from http/tests/loading/DOMContentLoaded-event-expected.txt.
+        * http/tests/misc/DOMContentLoaded-event.html: Copied from http/tests/loading/DOMContentLoaded-event.html.
+
+2007-10-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Stephanie and Oliver.
 
         * platform/mac/fast/forms/select-change-listbox-to-popup-expected.txt:
