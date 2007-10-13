@@ -1,3 +1,10 @@
+2007-10-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        * platform/mac/editing/pasteboard/paste-RTFD-expected.txt: Update results to reflect current
+        tree. Reopening <rdar://problem/5483567> (see below) to note the potential bug.
+
 2007-10-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
