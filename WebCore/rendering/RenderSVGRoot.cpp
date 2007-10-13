@@ -81,8 +81,8 @@ void RenderSVGRoot::layout()
 
     m_absoluteBounds = absoluteClippedOverflowRect();
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
-    m_width = m_width * svg->currentScale();
-    m_height = m_height * svg->currentScale();
+    m_width = static_cast<int>(m_width * svg->currentScale());
+    m_height = static_cast<int>(m_height * svg->currentScale());
     
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (selfNeedsLayout()) // either bounds or transform changed, force kids to relayout
@@ -115,7 +115,7 @@ void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int parentX, in
 
     // Respect scroll offset caused by html parents
     AffineTransform ctm = RenderContainer::absoluteTransform();
-    paintInfo.rect.move(static_cast<float>(ctm.e()), static_cast<float>(ctm.f()));
+    paintInfo.rect.move(static_cast<int>(ctm.e()), static_cast<int>(ctm.f()));
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     paintInfo.context->concatCTM(AffineTransform().scale(svg->currentScale()));
@@ -268,8 +268,8 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     AffineTransform ctm = RenderContainer::absoluteTransform();
 
-    int sx = (_tx - static_cast<float>(ctm.e())); // scroll offset
-    int sy = (_ty - static_cast<float>(ctm.f())); // scroll offset
+    int sx = (_tx - static_cast<int>(ctm.e())); // scroll offset
+    int sy = (_ty - static_cast<int>(ctm.f())); // scroll offset
  
     if (!viewport().isEmpty()
         && style()->overflowX() == OHIDDEN
