@@ -1,3 +1,11 @@
+2007-10-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Stephanie and Oliver.
+
+        * platform/mac/fast/forms/select-change-listbox-to-popup-expected.txt:
+        Update result to reflect current behavior. This is a bug and we wrote
+        a bug report in Radar, <rdar://problem/5538793>.
+
 2007-10-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.
