@@ -1,7 +1,0 @@
-<div id="div" contenteditable="true">xx</div>
-
-<script>
-text = document.getElementById("div").firstChild;
-window.getSelection().setPosition(text, 1);
-document.execCommand("InsertHTML", false, " <div>foo</div> ");
-</script>

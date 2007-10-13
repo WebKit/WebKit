@@ -571,7 +571,8 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
         }
     }
     
-    if (m_startTableRow && m_startTableRow->inDocument()) {
+    // Remove empty rows after the start row.
+    if (m_startTableRow && m_startTableRow->inDocument() && m_startTableRow != m_endTableRow) {
         // Do not remove the row that contained the start of the selection,
         // since it now contains the selection.
         Node* row = m_startTableRow->nextSibling();

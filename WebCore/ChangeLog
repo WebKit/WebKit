@@ -1,3 +1,16 @@
+2007-10-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5483370> GoogleDocs: Deleting cell text in a table row also removes any empty rows beneath the row being edited
+        <rdar://problem/5482524> GoogleDocs: A hang occurs when applying list to selected table
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::modifyRange):
+        (WebCore::InsertListCommand::doApply):
+
 2007-10-12  Darin Adler  <darin@apple.com>
 
         - fix another float/int conversion
