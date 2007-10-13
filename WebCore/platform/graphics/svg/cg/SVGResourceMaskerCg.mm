@@ -98,7 +98,7 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
     if (!m_mask)
         return;
     
-    IntSize maskSize(m_maskRect.width(), m_maskRect.height());
+    IntSize maskSize(static_cast<int>(m_maskRect.width()), static_cast<int>(m_maskRect.height()));
 
     // Create new graphics context in gray scale mode for image rendering
     auto_ptr<ImageBuffer> grayScaleImage(ImageBuffer::create(maskSize, true));
