@@ -37,7 +37,7 @@
 
   <!-- <rect x="0" y="0" width="100%" height="100%" fill="lightgrey"/> -->
   <g transform="translate(0, 50)" 
-    fill="rgb(0,0,0)" font-family="Lucida Sans Typewriter" font-size="15.0">
+    fill="rgb(0,0,0)" font-family="Lucida Grande" font-size="15.0">
     <text x="31.0" y="24.0" text-decoration="underline"
         >This is a text<tspan x="31.0" dy="1.2em"
         >that covers multiple</tspan><tspan x="31.0" dy="1.2em"

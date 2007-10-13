@@ -1,3 +1,18 @@
+2007-10-13  Oliver Hunt  <oliver@apple.com>
+
+        RS=Eric
+
+        Make svg/batik/text/textDecoration2.svg use Lucida Grande
+
+        This test case used to use Lucida Sans which is apparently available on some
+        systems, but not all.  Switching to Lucida Grande results in a slight change
+        but we'll be testing with a font that everyone has.
+
+        * svg/batik/text/textDecoration2-expected.checksum:
+        * svg/batik/text/textDecoration2-expected.png:
+        * svg/batik/text/textDecoration2-expected.txt:
+        * svg/batik/text/textDecoration2.svg:
+
 2007-10-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
