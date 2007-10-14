@@ -30,6 +30,7 @@
 #define ChromeClientGtk_h
 
 #include "ChromeClient.h"
+#include "KURL.h"
 
 typedef struct _WebKitPage WebKitPage;
 
@@ -103,7 +104,7 @@ namespace WebKit {
         virtual void print(WebCore::Frame*);
     private:
         WebKitPage* m_webPage;
-        bool m_didSendLinkSignal;
+        WebCore::KURL m_hoveredLinkURL;
     };
 }
 

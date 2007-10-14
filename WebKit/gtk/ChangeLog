@@ -1,3 +1,16 @@
+2007-10-14  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15299
+        Fix "hovering_over_link" signal not emitted when consecutive links
+        are hovered.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::mouseDidMoveOverElement):
+        * WebCoreSupport/ChromeClientGtk.h:
+        - Remove m_didSendLinkSignal as it is superseded by m_hoveredLinkURL
+
 2007-10-10  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff Garen.
