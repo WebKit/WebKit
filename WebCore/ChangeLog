@@ -1,3 +1,13 @@
+2007-10-14  Maxime Britto  <mbritto@pleyo.com>
+
+        Reviewed by Mitz.
+
+        Fix an error in the goBackOrForward() function : confusion between forwardListCount and backListCount.
+        http://bugs.webkit.org/show_bug.cgi?id=15212
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::goBackOrForward):
+
 2007-10-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

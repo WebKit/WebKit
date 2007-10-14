@@ -1449,11 +1449,13 @@ void FrameLoader::goBackOrForward(int distance)
             if (forwardListCount > 0) 
                 item = list->itemAtIndex(forwardListCount);
         } else {
-            int backListCount = list->forwardListCount();
+            int backListCount = list->backListCount();
             if (backListCount > 0)
                 item = list->itemAtIndex(-backListCount);
         }
     }
+    
+    ASSERT(item); // we should not reach this line with an empty back/forward list
     if (item)
         page->goToItem(item, FrameLoadTypeIndexedBackForward);
 }
