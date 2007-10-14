@@ -1,3 +1,18 @@
+2007-10-14  Darin Adler  <darin@apple.com>
+
+        - moved a test that somehow ended up doubly-nested in platform/mac
+
+        * platform/mac/fast/text/justified-text-rect-expected.checksum: Copied from platform/mac/platform/mac/fast/text/justified-text-rect-expected.checksum.
+        * platform/mac/fast/text/justified-text-rect-expected.png: Copied from platform/mac/platform/mac/fast/text/justified-text-rect-expected.png.
+        * platform/mac/fast/text/justified-text-rect-expected.txt: Copied from platform/mac/platform/mac/fast/text/justified-text-rect-expected.txt.
+        * platform/mac/platform: Removed.
+        * platform/mac/platform/mac: Removed.
+        * platform/mac/platform/mac/fast: Removed.
+        * platform/mac/platform/mac/fast/text: Removed.
+        * platform/mac/platform/mac/fast/text/justified-text-rect-expected.checksum: Removed.
+        * platform/mac/platform/mac/fast/text/justified-text-rect-expected.png: Removed.
+        * platform/mac/platform/mac/fast/text/justified-text-rect-expected.txt: Removed.
+
 2007-10-14  Oliver Hunt  <oliver@apple.com>
 
         RS=Niko
@@ -5,7 +20,6 @@
         Revert layout test move.
 
         Filed http://bugs.webkit.org/show_bug.cgi?id=15513 to track correction for even earlier change
-
 
 2007-10-14  Nikolas Zimmermann  <zimmermann@kde.org>
 
