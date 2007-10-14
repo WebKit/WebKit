@@ -3869,10 +3869,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\ImageBuffer.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\ImageBuffer.h"
 					>
 				</File>

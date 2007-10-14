@@ -54,14 +54,8 @@ namespace WebCore {
         static std::auto_ptr<ImageBuffer> create(const IntSize&, bool grayScale);
         ~ImageBuffer();
 
-        IntSize size() const;
+        IntSize size() const { return m_size; }
         GraphicsContext* context() const;
-
-        // This offers a way to render parts of a WebKit rendering tree into this ImageBuffer class.
-        // FIXME: This doesn't belong in the platform directory.
-        // Bad layering that this knows about the render tree.
-        // We need to move it into RenderObject or somewhere in the SVG world.
-        static void renderSubtreeToImage(ImageBuffer*, RenderObject*);
 
 #if PLATFORM(CG)
         CGImageRef cgImage() const;

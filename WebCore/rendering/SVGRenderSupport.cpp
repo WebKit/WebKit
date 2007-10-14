@@ -25,11 +25,12 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-
 #include "SVGRenderSupport.h"
 
 #include "AffineTransform.h"
+#include "ImageBuffer.h"
 #include "RenderObject.h"
+#include "RenderSVGContainer.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
@@ -119,6 +120,27 @@ void finishRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paint
     float opacity = style->opacity();    
     if (opacity < 1.0f)
         paintInfo.context->endTransparencyLayer();
+}
+
+void renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
+{
+    ASSERT(item);
+    ASSERT(image);
+    ASSERT(image->context());
+    RenderObject::PaintInfo info(image->context(), IntRect(), PaintPhaseForeground, 0, 0, 0);
+
+    RenderSVGContainer* svgContainer = 0;
+    if (item && item->isSVGContainer())
+        svgContainer = static_cast<RenderSVGContainer*>(item);
+
+    bool drawsContents = svgContainer ? svgContainer->drawsContents() : false;
+    if (svgContainer && !drawsContents)
+        svgContainer->setDrawsContents(true);
+
+    item->paint(info, 0, 0);
+
+    if (svgContainer && !drawsContents)
+        svgContainer->setDrawsContents(false);
 }
 
 } // namespace WebCore

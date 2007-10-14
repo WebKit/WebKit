@@ -35,6 +35,7 @@
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPaintServerPattern.h"
+#include "SVGRenderSupport.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGSVGElement.h"
 #include "SVGTransformList.h"
@@ -225,7 +226,7 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
         if (!item)
             continue;
 
-        ImageBuffer::renderSubtreeToImage(patternImage.get(), item);
+        renderSubtreeToImage(patternImage.get(), item);
     }
 
     context->restore();

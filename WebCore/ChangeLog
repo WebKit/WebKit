@@ -1,3 +1,30 @@
+2007-10-14  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fix bad abstraction in ImageBuffer class.
+        While the class itself is platform-aware and thus it's location in platform/graphics
+        is fine, it contains the "renderSubtreeToImage" method which operates on RenderObject.
+
+        As it's SVG specific I decided to move this method into SVGRenderSupport, to avoid
+        implicit platform/ <-> rendering/ dependencies.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        * platform/graphics/ImageBuffer.cpp: Removed.
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::size):
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::renderSubtreeToImage):
+        * rendering/SVGRenderSupport.h:
+
 2007-10-14  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Maciej.

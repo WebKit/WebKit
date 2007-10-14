@@ -2771,7 +2771,6 @@
 		B2310B760B1F46A200D55D87 /* CgSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2310B730B1F46A200D55D87 /* CgSupport.cpp */; };
 		B2310B770B1F46A200D55D87 /* CgSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B2310B740B1F46A200D55D87 /* CgSupport.h */; };
 		B2310B780B1F46A300D55D87 /* RenderPathCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2310B750B1F46A200D55D87 /* RenderPathCg.cpp */; };
-		B23BCCE50B3829C9005B2415 /* ImageBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B23BCCE40B3829C9005B2415 /* ImageBuffer.cpp */; };
 		B24055650B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */; };
 		B24055660B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */; };
 		B25AE55F0B49D6630074C726 /* LinearGradientAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B25AE55D0B49D6630074C726 /* LinearGradientAttributes.h */; };
@@ -6475,7 +6474,6 @@
 		B2310B730B1F46A200D55D87 /* CgSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CgSupport.cpp; sourceTree = "<group>"; };
 		B2310B740B1F46A200D55D87 /* CgSupport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CgSupport.h; sourceTree = "<group>"; };
 		B2310B750B1F46A200D55D87 /* RenderPathCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPathCg.cpp; sourceTree = "<group>"; };
-		B23BCCE40B3829C9005B2415 /* ImageBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBuffer.cpp; sourceTree = "<group>"; };
 		B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceInternal.h; sourceTree = "<group>"; };
 		B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceListInternal.h; sourceTree = "<group>"; };
 		B25AE55D0B49D6630074C726 /* LinearGradientAttributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LinearGradientAttributes.h; sourceTree = "<group>"; };
@@ -10372,7 +10370,6 @@
 				B27535400B053814002CE64F /* Icon.h */,
 				B27535410B053814002CE64F /* Image.cpp */,
 				B27535420B053814002CE64F /* Image.h */,
-				B23BCCE40B3829C9005B2415 /* ImageBuffer.cpp */,
 				B2A10B910B3818BD00099AA4 /* ImageBuffer.h */,
 				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
 				B27535430B053814002CE64F /* ImageSource.h */,
@@ -14528,7 +14525,6 @@
 				AB7170A00B31193B0017123E /* SearchPopupMenuMac.mm in Sources */,
 				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
-				B23BCCE50B3829C9005B2415 /* ImageBuffer.cpp in Sources */,
 				B2C96D8D0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp in Sources */,
 				B297BC700B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp in Sources */,
 				14C9A5EA0B3D105F005A0232 /* Settings.cpp in Sources */,

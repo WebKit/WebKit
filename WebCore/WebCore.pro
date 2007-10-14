@@ -639,7 +639,6 @@ SOURCES += \
     platform/graphics/FloatSize.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsTypes.cpp \
-    platform/graphics/ImageBuffer.cpp \
     platform/graphics/Image.cpp \
     platform/graphics/IntRect.cpp \
     platform/graphics/Path.cpp \
