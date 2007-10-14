@@ -1,3 +1,13 @@
+2007-10-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by aroben.
+
+        Remove senseless malloc from paintOutline
+        No tests needed, no functional change.
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintOutline): remove unneeded malloc
+
 2007-10-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
