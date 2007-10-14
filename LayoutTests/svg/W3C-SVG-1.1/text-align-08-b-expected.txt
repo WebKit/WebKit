@@ -1,0 +1,22 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+    RenderSVGContainer {svg} at (0.50,0.50) size 594.50x359
+      RenderSVGContainer {g} at (50,64) size 545x174
+        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGText {text} at (50,200) size 480x174
+          RenderSVGInlineText {#text} at (0,-136) size 321x174
+            text run at (0,-136) width 321: "a\x{729C}\x{923}"
+          RenderSVGTSpan {tspan} at (0,0) size 160x86
+            RenderSVGInlineText {#text} at (321,-67) size 160x86
+              text run at (321,-67) width 160: "a\x{729C}\x{923}"
+          RenderSVGTSpan {tspan} at (0,0) size 64x36
+            RenderSVGInlineText {#text} at (481,-28) size 64x36
+              text run at (481,-28) width 64: "a\x{729C}\x{923}"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderPath {line} at (50,199.50) size 383x1 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,200.00L433.00,200.00"]
+        RenderPath {line} at (50,229.50) size 383x1 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,230.00L433.00,230.00"]
+        RenderPath {line} at (50,94.50) size 383x1 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M50.00,95.00L433.00,95.00"]
+      RenderSVGText {text} at (10,340) size 480x46
+        RenderSVGInlineText {#text} at (0,-36) size 264x46
+          text run at (0,-36) width 264: "$Revision: 1.7 $"
+      RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

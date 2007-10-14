@@ -1,3 +1,12 @@
+2007-10-14  Oliver Hunt  <oliver@apple.com>
+
+        RS=Niko
+
+        Revert layout test move.
+
+        Filed http://bugs.webkit.org/show_bug.cgi?id=15513 to track correction for even earlier change
+
+
 2007-10-14  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubberstamped by Eric.

@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (40,36) size 369x421
+  RenderSVGRoot {svg} at (40,36) size 379x421
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (0,0) size 44x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 44x18
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 44.00: "sample"
-    RenderSVGContainer {g} at (40,36) size 369x421
+    RenderSVGContainer {g} at (40,36) size 379x421
       RenderSVGText {text} at (151,50) size 148x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 148x17
           chunk 1 (middle anchor) text run 1 at (151.00,50.00) startOffset 0 endOffset 22 width 148.00: "Text Layout Properties"
@@ -58,9 +58,9 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (185,195) size 54x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 54x9
             chunk 1 text run 1 at (185.00,195.00) startOffset 0 endOffset 15 width 54.00: "textLength=\"70\""
-      RenderSVGContainer {g} at (290,158) size 119x39
-        RenderSVGText {text} at (290,180) size 119x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 119x28
+      RenderSVGContainer {g} at (290,158) size 69x39
+        RenderSVGText {text} at (290,180) size 69x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-22) size 69x28
             chunk 1 text run 1 at (290.00,180.00) startOffset 0 endOffset 6 width 69.00: "sample"
         RenderSVGText {text} at (290,195) size 44x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 44x9
@@ -85,55 +85,55 @@ layer at (0,0) size 450x500
           RenderSVGTSpan {tspan} at (0,0) size 114x9
             RenderSVGInlineText {#text} at (0,3) size 114x9
               chunk 2 text run 1 at (185.00,250.00) startOffset 0 endOffset 31 width 114.00: "lengthAdjust=\"spacingAndGlyphs\""
-      RenderSVGContainer {g} at (290,203) size 119x39
-        RenderSVGText {text} at (290,225) size 119x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 119x28
+      RenderSVGContainer {g} at (290,203) size 104x39
+        RenderSVGText {text} at (290,225) size 69x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-22) size 69x28
             chunk 1 text run 1 at (290.00,225.00) startOffset 0 endOffset 6 width 69.00: "sample"
         RenderSVGText {text} at (290,240) size 104x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 104x9
             chunk 1 text run 1 at (290.00,240.00) startOffset 0 endOffset 29 width 104.00: "textLength=\"120\",kerning=\"10\""
-      RenderSVGContainer {g} at (40,253) size 104x39
-        RenderSVGText {text} at (40,275) size 104x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 104x28
-            chunk 1 text run 1 at (40.00,275.00) startOffset 0 endOffset 6 width 69.00: "sample"
+      RenderSVGContainer {g} at (40,253) size 111x39
+        RenderSVGText {text} at (40,275) size 111x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-22) size 111x28
+            chunk 1 text run 1 at (40.00,275.00) startOffset 0 endOffset 6 width 111.00: "sample"
         RenderSVGText {text} at (40,290) size 76x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 76x9
             chunk 1 text run 1 at (40.00,290.00) startOffset 0 endOffset 22 width 76.00: "letter-spacing=\"0.3em\""
       RenderSVGContainer {g} at (185,253) size 63x39
-        RenderSVGText {text} at (185,275) size 54x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 54x28
-            chunk 1 text run 1 at (185.00,275.00) startOffset 0 endOffset 6 width 69.00: "sample"
+        RenderSVGText {text} at (185,275) size 51x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-22) size 51x28
+            chunk 1 text run 1 at (185.00,275.00) startOffset 0 endOffset 6 width 51.00: "sample"
         RenderSVGText {text} at (185,290) size 63x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 63x9
             chunk 1 text run 1 at (185.00,290.00) startOffset 0 endOffset 19 width 63.00: "letter-spacing=\"-3\""
-      RenderSVGContainer {g} at (290,253) size 119x39
-        RenderSVGText {text} at (290,275) size 119x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-22) size 119x28
-            chunk 1 text run 1 at (290.00,275.00) startOffset 0 endOffset 6 width 69.00: "sample"
+      RenderSVGContainer {g} at (290,253) size 129x39
+        RenderSVGText {text} at (290,275) size 129x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-22) size 129x28
+            chunk 1 text run 1 at (290.00,275.00) startOffset 0 endOffset 6 width 129.00: "sample"
         RenderSVGText {text} at (290,290) size 64x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 64x9
             chunk 1 text run 1 at (290.00,290.00) startOffset 0 endOffset 19 width 64.00: "letter-spacing=\"10\""
       RenderSVGText {text} at (171,320) size 108x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-10) size 108x13
           chunk 1 (middle anchor) text run 1 at (171.50,320.00) startOffset 0 endOffset 23 width 107.00: "Word Spacing Adjustment"
-      RenderSVGContainer {g} at (40,337) size 349x30
-        RenderSVGText {text} at (40,350) size 349x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-13) size 349x17
-            chunk 1 text run 1 at (40.00,350.00) startOffset 0 endOffset 29 width 199.00: "Wide separation between words"
+      RenderSVGContainer {g} at (40,337) size 214x30
+        RenderSVGText {text} at (40,350) size 214x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-13) size 214x17
+            chunk 1 text run 1 at (40.00,350.00) startOffset 0 endOffset 29 width 334.00: "Wide separation between words"
         RenderSVGText {text} at (40,365) size 130x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 130x9
             chunk 1 text run 1 at (40.00,365.00) startOffset 0 endOffset 35 width 130.00: "textLength=\"350\" word-spacing=\"3em\""
-      RenderSVGContainer {g} at (40,382) size 345x30
-        RenderSVGText {text} at (40,395) size 345x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-13) size 345x17
-            chunk 1 text run 1 at (40.00,395.00) startOffset 0 endOffset 31 width 213.00: "Narrow separation between words"
+      RenderSVGContainer {g} at (40,382) size 360x30
+        RenderSVGText {text} at (40,395) size 360x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-13) size 360x17
+            chunk 1 text run 1 at (40.00,395.00) startOffset 0 endOffset 31 width 198.00: "Narrow separation between words"
         RenderSVGText {text} at (40,410) size 123x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 123x9
             chunk 1 text run 1 at (40.00,410.00) startOffset 0 endOffset 34 width 123.00: "textLength=\"350\" word-spacing=\"-5\""
       RenderSVGContainer {g} at (40,427) size 239x30
-        RenderSVGText {text} at (40,440) size 198x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-13) size 198x17
-            chunk 1 text run 1 at (40.00,440.00) startOffset 0 endOffset 31 width 213.00: "Narrow separation between words"
+        RenderSVGText {text} at (40,440) size 213x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-13) size 213x17
+            chunk 1 text run 1 at (40.00,440.00) startOffset 0 endOffset 31 width 198.00: "Narrow separation between words"
         RenderSVGText {text} at (40,455) size 239x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 239x9
             chunk 1 text run 1 at (40.00,455.00) startOffset 0 endOffset 66 width 239.00: "textLength=\"350\" lengthAdjust=\"spacingAndGlyphs\" word-spacing=\"-5\""
