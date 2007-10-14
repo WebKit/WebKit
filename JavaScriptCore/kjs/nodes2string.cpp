@@ -140,7 +140,7 @@ void BooleanNode::streamTo(SourceStream &s) const
   s << (value ? "true" : "false");
 }
 
-void NumberNode::streamTo(SourceStream &s) const { s << value; }
+void NumberNode::streamTo(SourceStream &s) const { s << val; }
 
 void StringNode::streamTo(SourceStream &s) const
 {

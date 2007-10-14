@@ -49,6 +49,11 @@ PASS decompiledFunction is 'function () {  + + x;}'
 PASS decompiledFunction is 'function () {  + - x;}'
 PASS decompiledFunction is 'function () {  - + x;}'
 PASS decompiledFunction is 'function () {  - - x;}'
+PASS decompiledFunction is 'function () {  1;}'
+PASS decompiledFunction is 'function () {  -1;}'
+PASS decompiledFunction is 'function () {  - -1;}'
+PASS decompiledFunction is 'function () {  - - 0;}'
+PASS decompiledFunction is 'function () {  - - NaN;}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -63,6 +63,7 @@ static bool makeGetterOrSetterPropertyNode(PropertyNode*& result, Identifier &ge
 static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args);
 static Node *makeTypeOfNode(Node *expr);
 static Node *makeDeleteNode(Node *expr);
+static Node *makeNegateNode(Node *expr);
 
 #if COMPILER(MSVC)
 
@@ -359,7 +360,7 @@ UnaryExprCommon:
   | MINUSMINUS UnaryExpr                { $$ = makePrefixNode($2, OpMinusMinus); }
   | AUTOMINUSMINUS UnaryExpr            { $$ = makePrefixNode($2, OpMinusMinus); }
   | '+' UnaryExpr                       { $$ = new UnaryPlusNode($2); }
-  | '-' UnaryExpr                       { $$ = new NegateNode($2); }
+  | '-' UnaryExpr                       { $$ = makeNegateNode($2); }
   | '~' UnaryExpr                       { $$ = new BitwiseNotNode($2); }
   | '!' UnaryExpr                       { $$ = new LogicalNotNode($2); }
 
@@ -1001,6 +1002,20 @@ static bool makeGetterOrSetterPropertyNode(PropertyNode*& result, Identifier& ge
                               new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, body, params), type);
 
     return true;
+}
+
+static Node* makeNegateNode(Node *n)
+{
+    if (n->isNumber()) {
+        NumberNode* number = static_cast<NumberNode*>(n);
+
+        if (number->value() > 0.0) {
+            number->setValue(-number->value());
+            return number;
+        }
+    }
+
+    return new NegateNode(n);
 }
 
 /* called by yyparse on error */

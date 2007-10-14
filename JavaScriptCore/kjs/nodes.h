@@ -100,6 +100,7 @@ namespace KJS {
 
     virtual Node *nodeInsideAllParens() KJS_FAST_CALL;
 
+    virtual bool isNumber() const KJS_FAST_CALL { return false; }
     virtual bool isLocation() const KJS_FAST_CALL { return false; }
     virtual bool isResolveNode() const KJS_FAST_CALL { return false; }
     virtual bool isBracketAccessorNode() const KJS_FAST_CALL { return false; }
@@ -167,11 +168,15 @@ namespace KJS {
 
   class NumberNode : public Node {
   public:
-    NumberNode(double v) KJS_FAST_CALL : value(v) {}
+    NumberNode(double v) KJS_FAST_CALL : val(v) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+
+    virtual bool isNumber() const KJS_FAST_CALL { return true; }
+    double value() const KJS_FAST_CALL { return val; }
+    void setValue(double v) KJS_FAST_CALL { val = v; }
   private:
-    double value;
+    double val;
   };
 
   class StringNode : public Node {

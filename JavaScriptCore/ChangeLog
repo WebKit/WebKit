@@ -1,3 +1,19 @@
+2007-10-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Adds NegateNode optimization from KJS. The relevant revision in KDE
+        is 666736.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (NumberNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::Node::):
+        (KJS::NumberNode::):
+        * kjs/nodes2string.cpp:
+        (NumberNode::streamTo):
+
 2007-10-14  Jason Foreman  <jason@threeve.org>
 
         Reviewed by Maciej.

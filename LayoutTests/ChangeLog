@@ -1,3 +1,12 @@
+2007-10-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Adds serialization test cases for NegateNode optimization from KDE.
+
+        * fast/js/function-decompilation-operators-expected.txt:
+        * fast/js/function-decompilation-operators.html:
+
 2007-10-14  Jason Foreman  <jason@threeve.org>
 
         Reviewed by Maciej.
