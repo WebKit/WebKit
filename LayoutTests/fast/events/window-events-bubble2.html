@@ -32,7 +32,7 @@ function log(text) {
 </head>
 <body onload="test()">
     Tests that preventDefault() will still allow window events to bubble.
-    <div id="d1" style="position: absolute; top: 50; left: 50; border: solid thin" onclick="log('preventDefault called.  Test Failed.); event.preventDefault();">
+    <div id="d1" style="position: absolute; top: 50; left: 50; border: solid thin" onclick="log('preventDefault called.  Test Failed.'); event.preventDefault();">
        Clicking here should fire window.onclick.  This will match Firefox behavior.
     </div>
         
