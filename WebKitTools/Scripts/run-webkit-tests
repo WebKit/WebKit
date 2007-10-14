@@ -1475,10 +1475,10 @@ sub buildPlatformHierarchy()
 {
     mkpath($platformTestDirectory) if ($platform eq "undefined" && !-d "$platformTestDirectory");
 
-    my @platforms = split('-', $platformTestDirectory);
+    my @platforms = split('-', basename($platformTestDirectory));
     my @hierarchy;
     for (my $i=0; $i < @platforms; $i++) {
-        my $scoped = join('-', @platforms[0..($#platforms - $i)]);
+        my $scoped = catdir(dirname($platformTestDirectory), join('-', @platforms[0..($#platforms - $i)]));
         push(@hierarchy, $scoped) if (-d $scoped);
     }
 

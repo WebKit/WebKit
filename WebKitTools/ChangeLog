@@ -1,3 +1,16 @@
+2007-10-14  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Adam Roben.
+        
+        Fix run-webkit-tests is too greedy calculating platform hierarchy
+        http://bugs.webkit.org/show_bug.cgi?id=15465
+        
+        Fix run-webkit-tests being too greedy in trying to split the platform name up
+        causing it to try and find tests in every directory above the first "-" in the
+        path to the LayoutTests
+
+        * Scripts/run-webkit-tests:
+
 2007-10-14  Oleg Sukhodolsky <son.two@gmail.com>
 
         Reviewed by Darin.
