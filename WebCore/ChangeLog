@@ -1,3 +1,14 @@
+2007-10-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        REGRESSION: Javascript bug in getElementsByName
+        http://bugs.webkit.org/show_bug.cgi?id=15274
+
+        Test: fast/dom/getelementbyname-invalidation.html
+
+        * dom/NameNodeList.h: remove empty rootNodeChildrenChanged override
+
 2007-10-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

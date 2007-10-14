@@ -1,3 +1,13 @@
+2007-10-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=15274
+        REGRESSION: Javascript bug in getElementsByName
+
+        * fast/dom/getelementbyname-invalidation-expected.txt: Added.
+        * fast/dom/getelementbyname-invalidation.html: Added.
+
 2007-10-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
