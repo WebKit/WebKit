@@ -1,3 +1,12 @@
+2007-10-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Move pthreads up in the linker order and don't mark it for delay load.
+        Fixes crash during regsvr32 of WebKit (currently repro if you do a spade ti).
+        
+        Reviewed by Darin, Ada.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-10-11  Steve Falkenburg  <sfalken@apple.com>
 
         Delay load additional libraries to improve startup time.
