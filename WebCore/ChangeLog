@@ -1,1 +1,12 @@
+2007-10-14  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15142
+        Return correct frame count in GIFImageDecoder::frameBufferAtIndex(),
+        even if more data has arrived since the last decoding pass.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+
 == Rolled over to ChangeLog-2007-10-14 ==

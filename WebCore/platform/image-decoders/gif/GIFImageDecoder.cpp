@@ -158,7 +158,7 @@ int GIFImageDecoder::repetitionCount() const
 
 RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (index < 0 || index >= m_frameBufferCache.size())
+    if (index < 0 || index >= frameCount())
         return 0;
 
     RGBA32Buffer& frame = m_frameBufferCache[index];
