@@ -1,3 +1,10 @@
+2007-10-14  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark.
+
+        * Scripts/webkitdirs.pm: Use qmake binary specified via --qmake on command-line
+        when querying for QMAKE_MKSPECS.
+
 2007-10-14  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Adam Roben.

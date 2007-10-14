@@ -608,9 +608,10 @@ sub buildVisualStudioProject($)
     return system $vcBuildPath, $winProjectPath, "/build", $config;
 }
 
-sub qtMakeCommand()
+sub qtMakeCommand($)
 {
-    chomp(my $mkspec = `qmake -query QMAKE_MKSPECS`);
+    my ($qmakebin) = @_;
+    chomp(my $mkspec = `$qmakebin -query QMAKE_MKSPECS`);
     $mkspec .= "/default";
 
     my $compiler = "";
@@ -637,7 +638,6 @@ sub buildQMakeProject(@)
     my @buildArgs = @_;
 
     push @buildArgs, "-r";
-    my $make = qtMakeCommand();
 
     my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
     for my $i (0 .. $#ARGV) {
@@ -649,6 +649,7 @@ sub buildQMakeProject(@)
         }
     }
 
+    my $make = qtMakeCommand($qmakebin);
     my $config = configuration();
     my $prefix = $ENV{"WebKitInstallationPrefix"};
 
