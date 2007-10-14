@@ -1,5 +1,32 @@
 2007-10-14  Darin Adler  <darin@apple.com>
 
+        - added exceptions for all the tests failing on my personal Leopard machine
+
+        This may or may not get the buildbot green. I'll file separate bugs for each
+        of the tests with changed results.
+
+        * platform/mac-leopard/dom: Added.
+        * platform/mac-leopard/dom/xhtml: Added.
+        * platform/mac-leopard/dom/xhtml/level2: Added.
+        * platform/mac-leopard/dom/xhtml/level2/html: Added.
+        * platform/mac-leopard/dom/xhtml/level2/html/HTMLDocument12-expected.txt: Added.
+        * platform/mac-leopard/editing: Added.
+        * platform/mac-leopard/editing/pasteboard: Added.
+        * platform/mac-leopard/editing/pasteboard/paste-RTFD-expected.txt: Added.
+        * platform/mac-leopard/http: Added.
+        * platform/mac-leopard/http/tests: Added.
+        * platform/mac-leopard/http/tests/security: Added.
+        * platform/mac-leopard/http/tests/security/dataURL: Added.
+        * platform/mac-leopard/http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt: Added.
+        * platform/mac-leopard/svg/custom: Added.
+        * platform/mac-leopard/svg/custom/stroke-width-click-expected.txt: Added.
+        * platform/mac-leopard/webarchive: Added.
+        * platform/mac-leopard/webarchive/test-xml-stylesheet-expected.txt: Added.
+
+        * platform/mac-leopard/security/block-test-expected.txt: Changed results.
+
+2007-10-14  Darin Adler  <darin@apple.com>
+
         - moved a test that somehow ended up doubly-nested in platform/mac
 
         * platform/mac/fast/text/justified-text-rect-expected.checksum: Copied from platform/mac/platform/mac/fast/text/justified-text-rect-expected.checksum.

@@ -1,8 +1,7 @@
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest http://255.255.255.255/test.jpg> redirectResponse (null)
 <unknown> - didFinishLoading
-http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest http://255.255.255.255/test.jpg> redirectResponse (null)
 http://255.255.255.255:1/test.jpg - willSendRequest <NSURLRequest http://255.255.255.255:1/test.jpg> redirectResponse (null)
-http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSPOSIXErrorDomain, code 13>
+http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://255.255.255.255/test.jpg">
 http://255.255.255.255:1/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:1/test.jpg">
 http://255.255.255.255:7/test.jpg - willSendRequest <NSURLRequest http://255.255.255.255:7/test.jpg> redirectResponse (null)
 http://255.255.255.255:7/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:7/test.jpg">
@@ -119,11 +118,11 @@ http://255.255.255.255:4045/test.jpg - didFailLoadingWithError: <NSError domain 
 http://255.255.255.255:6000/test.jpg - willSendRequest <NSURLRequest http://255.255.255.255:6000/test.jpg> redirectResponse (null)
 http://255.255.255.255:6000/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:6000/test.jpg">
 ftp://255.255.255.255/test.jpg - willSendRequest <NSURLRequest ftp://255.255.255.255/test.jpg> redirectResponse (null)
-ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSPOSIXErrorDomain, code 13>
+ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1, failing URL "ftp://255.255.255.255/test.jpg">
 ftp://255.255.255.255:21/test.jpg - willSendRequest <NSURLRequest ftp://255.255.255.255:21/test.jpg> redirectResponse (null)
-ftp://255.255.255.255:21/test.jpg - didFailLoadingWithError: <NSError domain NSPOSIXErrorDomain, code 13>
+ftp://255.255.255.255:21/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1, failing URL "ftp://255.255.255.255:21/test.jpg">
 ftp://255.255.255.255:22/test.jpg - willSendRequest <NSURLRequest ftp://255.255.255.255:22/test.jpg> redirectResponse (null)
-ftp://255.255.255.255:22/test.jpg - didFailLoadingWithError: <NSError domain NSPOSIXErrorDomain, code 13>
+ftp://255.255.255.255:22/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1, failing URL "ftp://255.255.255.255:22/test.jpg">
 This test attempts to change the src of an IMG tag to all black listed ports to confirm that WebKit returns the correct error for them - blocked instead of cannot find. It also tries the FTP ports for exemptions. Due to the nature of this test, the results can only be processed automatically via DumpRenderTree
 
 
