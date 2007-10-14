@@ -1,3 +1,19 @@
+2007-10-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix SVGSVGElement::currentView() to not leak by using an OwnPtr.
+        This fix is incompatible with changes eventually needed for supporting
+        SVGSVGElement.currentView in the bindings (that needs a ref'd object)
+        There are also several parser crashers in SVGViewSpec, but those will be fixed
+        in my next patch.
+        
+        Leak fix only, no additional tests needed.
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentView): call .get() and .set()
+        * ksvg2/svg/SVGSVGElement.h: use OwnPtr
+
 2007-10-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

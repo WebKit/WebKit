@@ -168,9 +168,9 @@ void SVGSVGElement::setUseCurrentView(bool currentView)
 SVGViewSpec* SVGSVGElement::currentView() const
 {
     if (!m_viewSpec)
-        m_viewSpec = new SVGViewSpec(this);
+        m_viewSpec.set(new SVGViewSpec(this));
 
-    return m_viewSpec;
+    return m_viewSpec.get();
 }
 
 float SVGSVGElement::currentScale() const

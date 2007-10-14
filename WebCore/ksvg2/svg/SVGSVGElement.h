@@ -152,7 +152,7 @@ namespace WebCore
         bool m_useCurrentView;
         TimeScheduler* m_timeScheduler;
         FloatPoint m_translation;
-        mutable SVGViewSpec* m_viewSpec;
+        mutable OwnPtr<SVGViewSpec> m_viewSpec;
     };
 
 } // namespace WebCore
