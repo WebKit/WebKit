@@ -1,5 +1,25 @@
 2007-10-14  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15303
+          Remove now-redundant code to restore dialog arguments after clear
+
+        This patch reverts the kjs_window.* parts of r25576 because following
+        r25783, window properties, including dialog arguments, are not cleared
+        when the newly created modal dialog transitions to the document.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowPrivate::WindowPrivate):
+        (KJS::createWindow):
+        (KJS::showModalDialog):
+        (KJS::Window::clear):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::Window::setReturnValueSlot):
+        * bindings/js/kjs_window.h:
+
+2007-10-14  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=15309
