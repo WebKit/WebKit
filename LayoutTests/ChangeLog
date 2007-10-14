@@ -1,3 +1,15 @@
+2007-10-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15309
+          <rdar://problem/5512020> Crash due to infinite recursion in RenderTable::addChild
+
+        * fast/table/generated-caption.html: Added.
+        * platform/mac/fast/table/generated-caption-expected.checksum: Added.
+        * platform/mac/fast/table/generated-caption-expected.png: Added.
+        * platform/mac/fast/table/generated-caption-expected.txt: Added.
+
 2007-10-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.

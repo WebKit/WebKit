@@ -1,3 +1,17 @@
+2007-10-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15309
+          <rdar://problem/5512020> Crash due to infinite recursion in RenderTable::addChild
+
+        Test: fast/table/generated-caption.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Changed to make sure that the child is
+        not added into generated after content. Also made adding a child before
+        a table caption work correctly instead of adding the child after the caption.
+
 2007-10-14  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Maciej.
