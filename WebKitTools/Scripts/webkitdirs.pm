@@ -408,17 +408,24 @@ sub isQt()
     return $isQt;
 }
 
+sub checkArgv($)
+{
+    my $argToCheck = shift;
+    foreach my $opt (@ARGV) {
+        if ($opt =~ /^$argToCheck/i ) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 sub determineIsQt()
 {
     return if defined($isQt);
 
     # Allow override in case QTDIR is not set.
-    for my $i (0 .. $#ARGV) {
-        my $opt = $ARGV[$i];
-        if ($opt =~ /^--qt/i ) {
-            $isQt = 1;
-            return;
-        }
+    if (checkArgv("--qt")) {
+        return 1;
     }
 
     # The presence of QTDIR only means Qt if --gtk is not on the command-line
@@ -440,14 +447,11 @@ sub determineIsGtk()
 {
     return if defined($isGtk);
 
-    for my $i (0 .. $#ARGV) {
-        my $opt = $ARGV[$i];
-        if ($opt =~ /^--gtk$/i ) {
-            $isGtk = 1;
-            return;
-        }
+    if (checkArgv("--gtk")) {
+        $isGtk= 1;
+    } else {
+        $isGtk = 0;
     }
-    $isGtk = 0;
 }
 
 sub isCygwin()
@@ -628,11 +632,11 @@ sub qtMakeCommand()
     return "make";
 }
 
-sub buildQMakeProject($)
+sub buildQMakeProject(@)
 {
-    my ($project) = @_;
+    my @buildArgs = @_;
 
-    my @buildArgs = ("-r");
+    push @buildArgs, "-r";
     my $make = qtMakeCommand();
 
     my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
@@ -645,15 +649,10 @@ sub buildQMakeProject($)
         }
     }
 
-    if ($project ne "WebKit") {
-        die "Qt/Linux builds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
-    }
-
     my $config = configuration();
     my $prefix = $ENV{"WebKitInstallationPrefix"};
 
     push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
-    push @buildArgs, "CONFIG+=qt-port";
     push @buildArgs, sourceDir() . "/WebKit.pro";
     if ($config =~ m/debug/i) {
         push @buildArgs, "CONFIG-=release";
@@ -662,9 +661,6 @@ sub buildQMakeProject($)
         push @buildArgs, "CONFIG+=release";
         push @buildArgs, "CONFIG-=debug";
     }
-
-    print "Calling '$qmakebin @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
-    print "Installation directory: $prefix\n" if(defined($prefix));
 
     my $dir = baseProductDir();
     if (! -d $dir) {
@@ -677,20 +673,31 @@ sub buildQMakeProject($)
 
     chdir $dir or die "Failed to cd into " . $dir . "\n";
 
+    print "Calling '$qmakebin @buildArgs' in " . $dir . " ...\n\n";
+    print "Installation directory: $prefix\n" if(defined($prefix));
+
     my $result = system $qmakebin, @buildArgs;
-    if($result ne 0) {
+    if ($result ne 0) {
        die "Failed to setup build environment using $qmakebin!\n";
     }
 
     my $clean = $ENV{"WEBKIT_FULLBUILD"};
 
-    if(defined $clean) {
+    if (defined $clean) {
       system "$make clean";
     }
 
     $result = system "$make";
     chdir ".." or die;
     return $result;
+}
+
+sub buildQMakeQtProject($)
+{
+    my ($project) = @_;
+
+    my @buildArgs = ("CONFIG+=qt-port");
+    return buildQMakeProject(@buildArgs);
 }
 
 sub buildQMakeGtkProject($)
@@ -701,50 +708,10 @@ sub buildQMakeGtkProject($)
         die "The Gtk portbuilds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
     }
 
-    my $config = configuration();
-    my $prefix = $ENV{"WebKitInstallationPrefix"};
-
-    my @buildArgs = ("-r");
-
-    foreach my $opt (@ARGV) {
-        if ($opt =~ /^--qmakearg=(.*)/i ) {
-            push @buildArgs, $1;
-        }
-    }
-
-    push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
+    my @buildArgs = ("CONFIG+=gtk-port");
     push @buildArgs, "CONFIG-=qt";
-    push @buildArgs, "CONFIG+=gtk-port";
-    push @buildArgs, sourceDir() . "/WebKit.pro";
-    if ($config =~ m/debug/i) {
-        push @buildArgs, "CONFIG-=release";
-        push @buildArgs, "CONFIG+=debug";
-    } else {
-        push @buildArgs, "CONFIG+=release";
-        push @buildArgs, "CONFIG-=debug";
-    }
 
-    print "Calling 'qmake @buildArgs' in " . baseProductDir() . "/$config ...\n\n";
-    print "Installation directory: $prefix\n" if(defined($prefix));
-
-    system "mkdir -p " . baseProductDir() . "/$config";
-    chdir baseProductDir() . "/$config" or die "Failed to cd into " . baseProductDir() . "/$config \n";
-
-    my $result = system "qmake-qt4", @buildArgs;
-    $result =  system "qmake", @buildArgs if ($result ne 0);
-    if ($result ne 0) {
-       die "Failed to setup build environment using qmake!\n";
-    }
-
-    my $clean = $ENV{"WEBKIT_FULLBUILD"};
-
-    if (defined $clean) {
-      system "make clean";
-    }
-
-    $result = system "make";
-    chdir ".." or die;
-    return $result;
+    return buildQMakeProject(@buildArgs);
 }
 
 1;

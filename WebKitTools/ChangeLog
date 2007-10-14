@@ -1,3 +1,17 @@
+2007-10-14  Oleg Sukhodolsky <son.two@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15006
+        Refactoring of buildQMakeGdkProject()/buildQMakeQtProject() and isGdk()/isQt()
+        to reduce code duplication.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        buildQMakeProject() renamed to buildQMakeQtProject().
+        buildQMakeGdkProject()/buildQMakeQtProject() now take just one parameter (directory),
+        unused $colorize has been removed.
+
 === Start merge of feature-branch 2007-10-12 ===
 
 2007-10-08  Eric Seidel  <eric@webkit.org>

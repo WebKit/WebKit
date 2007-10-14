@@ -151,7 +151,7 @@ for my $dir (@projects) {
             chdir ".." or die;
             next;
         }
-        $result = buildQMakeProject($dir);
+        $result = buildQMakeQtProject($dir);
     } elsif (isOSX()) {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, $overrideFeatureDefinesString, @coverageSupportOption, @ARGV;
     } elsif (isCygwin()) {
@@ -180,5 +180,5 @@ if ($svgSupport) {
 if ($svgExperimentalSupport) {
     print "\n NOTE: WebKit has been built with experimental SVG features enabled.\n";
     print " Your build supports basic animation, filters, foreignObject & use support.\n";
-}    
+}
 print "===========================================================\n";
