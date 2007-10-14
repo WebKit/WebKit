@@ -2,6 +2,17 @@
 
         Reviewed by Maciej.
 
+        http://bugs.webkit.org/show_bug.cgi?id=15141
+        Feed GIF reader data from the point in the stream it expects.  Also,
+        mirror the reader's failure state up to the wrapping decoder.
+
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::read):
+
+2007-10-14  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Maciej.
+
         http://bugs.webkit.org/show_bug.cgi?id=15142
         Return correct frame count in GIFImageDecoder::frameBufferAtIndex(),
         even if more data has arrived since the last decoding pass.

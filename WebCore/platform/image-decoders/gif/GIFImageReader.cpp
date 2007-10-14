@@ -415,6 +415,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
       // Not enough in 'buf' to complete current block, get more
       bytes_in_hold += l;
       bytes_to_consume -= l;
+      if (clientptr)
+        clientptr->decodingHalted(0);
       return true;
     }
     // Reset hold buffer count
@@ -921,7 +923,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
     // Handle general errors
     case gif_error:
       // nsGIFDecoder2::EndGIF(gs->clientptr, gs->loop_count);
-      return true;
+      return false;
 
     // We shouldn't ever get here.
     default:
@@ -945,6 +947,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
     bytes_to_consume -= len;
   }
 
+  if (clientptr)
+    clientptr->decodingHalted(0);
   return true;
 }
 
