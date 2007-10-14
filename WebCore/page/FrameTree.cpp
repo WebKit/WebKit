@@ -25,23 +25,12 @@
 #include "Page.h"
 #include <stdarg.h>
 #include <wtf/Platform.h>
+#include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 
 using std::swap;
 
 namespace WebCore {
-
-// FIXME: This belongs in some header file where multiple clients can share it.
-#if COMPILER(MSVC)
-int snprintf(char* str, size_t size, const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    int result = vsnprintf_s(str, size, _TRUNCATE, format, args);
-    va_end(args);
-    return result;
-}
-#endif
 
 FrameTree::~FrameTree()
 {

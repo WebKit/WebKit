@@ -1,3 +1,15 @@
+2007-10-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Adam.
+
+        Add support for MSVC7, and fix cases where PLATFORM(WIN) should
+        be PLATFORM(WIN_OS) for other ports building on Windows.
+
+        * dom/XMLTokenizer.cpp:
+        * page/FrameTree.cpp:
+        * platform/StaticConstructors.h:
+        * platform/String.cpp:
+
 2007-10-14  Maxime Britto  <mbritto@pleyo.com>
 
         Reviewed by Mitz.

@@ -35,6 +35,12 @@
 
    For non-debug builds, everything is disabled by default.
    Defining any of the symbols explicitly prevents this from having any effect.
+   
+   MSVC7 note: variadic macro support was added in MSVC8, so for now we disable
+   those macros in MSVC7. For more info, see the MSDN document on variadic 
+   macros here:
+   
+   http://msdn2.microsoft.com/en-us/library/ms177415(VS.80).aspx
 */
 
 #include "Platform.h"
@@ -130,12 +136,16 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
         CRASH(); \
     } \
 while (0)
+#if COMPILER(MSVC7)
+#define ASSERT_WITH_MESSAGE(assertion) ((void)0)
+#else
 #define ASSERT_WITH_MESSAGE(assertion, ...) do \
     if (!(assertion)) { \
         WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
         CRASH(); \
     } \
 while (0)
+#endif // COMPILER(MSVC7)
 #define ASSERT_NOT_REACHED() do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
     CRASH(); \
@@ -169,6 +179,8 @@ while (0)
 
 #if FATAL_DISABLED
 #define FATAL(...) ((void)0)
+#elif COMPILER(MSVC7)
+#define FATAL() ((void)0)
 #else
 #define FATAL(...) do { \
     WTFReportFatalError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, __VA_ARGS__); \
@@ -180,6 +192,8 @@ while (0)
 
 #if ERROR_DISABLED
 #define LOG_ERROR(...) ((void)0)
+#elif COMPILER(MSVC7)
+#define LOG_ERROR() ((void)0)
 #else
 #define LOG_ERROR(...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, __VA_ARGS__)
 #endif
@@ -188,6 +202,8 @@ while (0)
 
 #if LOG_DISABLED
 #define LOG(channel, ...) ((void)0)
+#elif COMPILER(MSVC7)
+#define LOG() ((void)0)
 #else
 #define LOG(channel, ...) WTFLog(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX(prefix, channel) JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel)
@@ -198,6 +214,8 @@ while (0)
 
 #if LOG_DISABLED
 #define LOG_VERBOSE(channel, ...) ((void)0)
+#elif COMPILER(MSVC7)
+#define LOG_VERBOSE(channel) ((void)0)
 #else
 #define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
 #endif

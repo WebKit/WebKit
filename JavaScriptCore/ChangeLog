@@ -1,3 +1,20 @@
+2007-10-5  Kevin Ollivier  <kevino@theolliviers.com>
+ 
+        Reviewed by Adam.
+        
+        Add support for MSVC7, and fix cases where PLATFORM(WIN) should
+        be PLATFORM(WIN_OS) for other ports building on Windows.
+ 
+        * kjs/DateMath.cpp:
+        (KJS::getDSTOffsetSimple):
+        * kjs/JSImmediate.h:
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/Platform.h:
+        * wtf/StringExtras.h:
+        (snprintf):
+        (vsnprintf):
+
 2007-10-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.

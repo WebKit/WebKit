@@ -27,6 +27,7 @@
 #include "DeprecatedString.h"
 #include "TextEncoding.h"
 #include <kjs/identifier.h>
+#include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <stdarg.h>
 

@@ -33,10 +33,18 @@
 
 inline int snprintf(char *str, size_t size, const char* format, ...) 
 {
+    int result;
     va_list args;
     va_start(args, format);
-    return _vsnprintf(str, size, format, args);
+    result = _vsnprintf(str, size, format, args);
+    va_end(args);
+    return result;
 }
+
+#if COMPILER(MSVC7)
+// MSVC8 and above define this function
+#define vsnprintf snprintf
+#endif
 
 inline int strncasecmp(const char* s1, const char* s2, size_t len) { return strnicmp(s1, s2, len); }
 

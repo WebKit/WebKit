@@ -55,6 +55,7 @@
 #include <QDebug>
 #endif
 #include <wtf/Platform.h>
+#include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(XSLT)

@@ -25,6 +25,7 @@
 
 #include "JSType.h"
 #include <wtf/Assertions.h>
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
 
