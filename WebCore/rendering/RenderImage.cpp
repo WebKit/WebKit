@@ -223,18 +223,19 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
             return;
 
         if (cWidth > 2 && cHeight > 2) {
-            if (!errorOccurred()) {
-                context->setStrokeStyle(SolidStroke);
-                context->setStrokeColor(Color::lightGray);
-                context->setFillColor(Color::transparent);
-                context->drawRect(IntRect(tx + leftBorder + leftPad, ty + topBorder + topPad, cWidth, cHeight));
-            }
+            // Draw an outline rect where the image should be.
+            context->setStrokeStyle(SolidStroke);
+            context->setStrokeColor(Color::lightGray);
+            context->setFillColor(Color::transparent);
+            context->drawRect(IntRect(tx + leftBorder + leftPad, ty + topBorder + topPad, cWidth, cHeight));
 
             bool errorPictureDrawn = false;
             int imageX = 0;
             int imageY = 0;
-            int usableWidth = cWidth;
-            int usableHeight = cHeight;
+            // When calculating the usable dimensions, exclude the pixels of
+            // the ouline rect so the error image/alt text doesn't draw on it.
+            int usableWidth = cWidth - 2;
+            int usableHeight = cHeight - 2;
 
             if (errorOccurred() && !image()->isNull() && (usableWidth >= image()->width()) && (usableHeight >= image()->height())) {
                 // Center the error image, accounting for border and padding.
