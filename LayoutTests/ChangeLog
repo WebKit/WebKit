@@ -1,5 +1,19 @@
 2007-10-13  Oliver Hunt  <oliver@apple.com>
 
+        RS=Maciej.
+
+        Adding Leopard results for a few SVG tests
+
+        * platform/mac-leopard/svg/batik/text/smallFonts-expected.txt: Added.
+        * platform/mac-leopard/svg/batik/text/textBiDi-expected.txt: Added.
+        * platform/mac-leopard/svg/hixie/text/003-expected.txt:
+        * platform/mac-leopard/svg/hixie/text/003a-expected.txt:
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+        * platform/mac-leopard/svg/text/text-path-01-b-expected.txt: Added.
+
+2007-10-13  Oliver Hunt  <oliver@apple.com>
+
         RS=Eric
 
         Make svg/batik/text/textDecoration2.svg use Lucida Grande
