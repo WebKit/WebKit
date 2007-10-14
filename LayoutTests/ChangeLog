@@ -1,3 +1,16 @@
+2007-10-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15181
+          text-transform: uppercase not working in input (submit, reset, button) elements
+          <rdar://problem/5474647>
+
+        * fast/forms/button-text-transform.html: Added.
+        * platform/mac/fast/forms/button-text-transform-expected.checksum: Added.
+        * platform/mac/fast/forms/button-text-transform-expected.png: Added.
+        * platform/mac/fast/forms/button-text-transform-expected.txt: Added.
+
 2007-10-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.

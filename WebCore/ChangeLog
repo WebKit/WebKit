@@ -1,3 +1,22 @@
+2007-10-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15181
+          text-transform: uppercase not working in input (submit, reset, button) elements
+          <rdar://problem/5474647>
+
+        Test: fast/forms/button-text-transform.html
+
+        Text transformations require access to the original text. The button's inner
+        text was an anonymous RenderText, meaning it did not have a node to retrieve
+        the original text from. The patch fixes this by changing the inner text into a
+        RenderTextFragment, which stores its own original text.
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setText):
+        * rendering/RenderButton.h:
+
 2007-10-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.
