@@ -1,0 +1,12 @@
+This test checks a few Number.toPrecision cases, including 15145: (0.999).toPrecision(1) returns incorrect result.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (0.999).toPrecision(1) is '1'
+PASS (0.999).toPrecision(2) is '1.0'
+PASS (0.999).toPrecision(3) is '0.999'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

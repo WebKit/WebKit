@@ -367,6 +367,11 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
           
           if (fabs((n + 1.0) * tens - x) <= fabs(n * tens - x))
             ++n;
+          // maintain n < 10^(p)
+          if (n >= intPow10(p)) {
+              n = n / 10.0;
+              e = e + 1;
+          }
           assert(intPow10(p - 1) <= n);
           assert(n < intPow10(p));
           

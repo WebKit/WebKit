@@ -1,3 +1,14 @@
+2007-10-14  Jason Foreman  <jason@threeve.org>
+
+        Reviewed by Maciej.
+
+        Adding test for http://bugs.webkit.org/show_bug.cgi?id=15145.
+
+        * ChangeLog:
+        * fast/js/number-toprecision-expected.txt: Added.
+        * fast/js/number-toprecision.html: Added.
+        * fast/js/resources/number-toprecision.js: Added.
+
 2007-10-14  Feng Qian  <ian.eng.webkit@gmail.com>
 
         Reviewed by Maciej.

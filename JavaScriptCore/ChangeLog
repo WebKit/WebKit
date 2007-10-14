@@ -1,1 +1,13 @@
+2007-10-14  Jason Foreman  <jason@threeve.org>
+
+        Reviewed by Maciej.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=15145
+        
+        Ensure that if adjusting n to minimize the difference of n*intPow10(e-p+1) to x,
+        that the property n < intPow10(p) is maintained.
+
+        * kjs/number_object.cpp:
+        (NumberProtoFunc::callAsFunction):
+
 == Rolled over to ChangeLog-2007-10-14 ==
