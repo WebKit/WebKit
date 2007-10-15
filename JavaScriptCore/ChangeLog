@@ -1,5 +1,12 @@
 2007-10-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Double-reverse build fix. My tree was out of date.
+
+        * kjs/nodes.cpp:
+        (NumberNode::evaluate):
+
+2007-10-15  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix.
 
         * kjs/nodes.cpp:
