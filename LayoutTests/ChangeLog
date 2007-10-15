@@ -1,3 +1,10 @@
+2007-10-15  Oliver Hunt  <oliver@apple.com>
+
+        RS=Maciej.
+
+        Reset svg pixel tests to a tiger baseline and move them to platform/mac
+
+
 2007-10-14  Darin Adler  <darin@apple.com>
 
         - added exceptions for all the tests failing on my personal Leopard machine
