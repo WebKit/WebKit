@@ -414,9 +414,6 @@ editing/selection/5109817.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 
-# layoutTestController.setCustomPolicyDelegate is unimplemented <rdar://problem/5382546>
-http/tests/security/feed-urls-from-remote.html
-
 # These tests time out <rdar://problem/5382558>
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html

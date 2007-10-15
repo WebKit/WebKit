@@ -321,6 +321,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PolicyDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PolicyDelegate.h"
+				>
+			</File>
+			<File
 				RelativePath=".\UIDelegate.cpp"
 				>
 			</File>

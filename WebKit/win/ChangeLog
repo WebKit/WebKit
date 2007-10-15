@@ -1,3 +1,29 @@
+2007-10-15  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed <rdar://5382546> layoutTestController.setCustomPolicyDelegate is unimplemented causing tests to fail
+
+        * DefaultPolicyDelegate.cpp: Added.
+        Implementation is a direct port of WebKit/DefaultDelegates/WebDefaultPolicyDelegate.m
+        (DefaultPolicyDelegate::DefaultPolicyDelegate):
+        (DefaultPolicyDelegate::~DefaultPolicyDelegate):
+        (DefaultPolicyDelegate::sharedInstance):
+        (DefaultPolicyDelegate::createInstance):
+        (DefaultPolicyDelegate::QueryInterface):
+        (DefaultPolicyDelegate::AddRef):
+        (DefaultPolicyDelegate::Release):
+        (DefaultPolicyDelegate::decidePolicyForNavigationAction):
+        (DefaultPolicyDelegate::decidePolicyForNewWindowAction):
+        (DefaultPolicyDelegate::decidePolicyForMIMEType):
+        (DefaultPolicyDelegate::unableToImplementPolicyWithError):
+        * DefaultPolicyDelegate.h: Added.
+        * WebFrame.cpp:
+        (WebFrame::dispatchDecidePolicyForNavigationAction):
+        Implemented default action
+        * WebKit.vcproj/WebKit.vcproj:
+        Adding files to project
+
 2007-10-12  Steve Falkenburg  <sfalken@apple.com>
 
         Move pthreads up in the linker order and don't mark it for delay load.

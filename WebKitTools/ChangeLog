@@ -1,3 +1,30 @@
+2007-10-15  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed <rdar://5382546> layoutTestController.setCustomPolicyDelegate is unimplemented causing tests to fail
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Like on mac, before running each test, set the webview's policy delegate to null
+        (main): allocate the global policy delegate for DRT's custom use
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        Adding files to project
+        * DumpRenderTree/win/DumpRenderTreeWin.h: declaring global DRT policy delegate
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        set the webview's policy delegate to DRT's custom one if the test requests it.
+        * DumpRenderTree/win/PolicyDelegate.cpp: Added.
+        Implementation is a direct port of DumpRenderTree/mac/PolicyDelegate.mm
+        (PolicyDelegate::PolicyDelegate):
+        (PolicyDelegate::QueryInterface):
+        (PolicyDelegate::AddRef):
+        (PolicyDelegate::Release):
+        (PolicyDelegate::decidePolicyForNavigationAction):
+        * DumpRenderTree/win/PolicyDelegate.h: Added.
+        (PolicyDelegate::decidePolicyForNewWindowAction):
+        (PolicyDelegate::decidePolicyForMIMEType):
+        (PolicyDelegate::unableToImplementPolicyWithError):
+
 2007-10-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,33 +26,64 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DumpRenderTreeWin_h
-#define DumpRenderTreeWin_h
+#include "DumpRenderTree.h"
+#include "PolicyDelegate.h"
 
-#undef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500
+#include <string>
 
-#undef WINVER
-#define WINVER 0x0500
+using std::wstring;
 
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#undef max
-#define max max
-#undef min
-#define min min
+PolicyDelegate::PolicyDelegate()
+    : m_refCount(1)
+{
+}
 
-#undef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+// IUnknown
+HRESULT STDMETHODCALLTYPE PolicyDelegate::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IWebPolicyDelegate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebPolicyDelegate))
+        *ppvObject = static_cast<IWebPolicyDelegate*>(this);
+    else
+        return E_NOINTERFACE;
 
-struct IWebFrame;
-struct IWebPolicyDelegate;
-typedef struct HWND__* HWND;
+    AddRef();
+    return S_OK;
+}
 
-extern IWebFrame* topLoadingFrame;
-extern IWebFrame* frame;
-extern IWebPolicyDelegate* policyDelegate;
+ULONG STDMETHODCALLTYPE PolicyDelegate::AddRef(void)
+{
+    return ++m_refCount;
+}
 
-extern HWND webViewWindow;
+ULONG STDMETHODCALLTYPE PolicyDelegate::Release(void)
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete this;
 
-#endif // DumpRenderTreeWin_h
+    return newRef;
+}
+
+HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
+    /*[in]*/ IWebView* /*webView*/, 
+    /*[in]*/ IPropertyBag* /*actionInformation*/, 
+    /*[in]*/ IWebURLRequest* request, 
+    /*[in]*/ IWebFrame* frame, 
+    /*[in]*/ IWebPolicyDecisionListener* listener)
+{
+    BSTR frameName;
+    frame->name(&frameName);
+
+    BSTR url;
+    request->URL(&url);
+
+    printf("Frame %S attempted to load %S\n", frameName ? frameName : TEXT(""), url ? url : TEXT(""));
+    SysFreeString(frameName);
+    SysFreeString(url);
+    listener->ignore();
+
+    return S_OK;
+}

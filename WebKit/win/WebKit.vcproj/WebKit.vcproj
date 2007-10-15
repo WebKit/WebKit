@@ -353,6 +353,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\DefaultPolicyDelegate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\DOMCoreClasses.h"
 				>
 			</File>
@@ -574,6 +578,10 @@
 			</File>
 			<File
 				RelativePath="..\DefaultDownloadDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\DefaultPolicyDelegate.cpp"
 				>
 			</File>
 			<File

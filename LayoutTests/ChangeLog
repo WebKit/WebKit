@@ -1,3 +1,9 @@
+2007-10-15  Alice Liu  <alice.liu@apple.com>
+
+        removing fixed test
+
+        * platform/win/Skipped:
+
 2007-10-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
