@@ -223,7 +223,7 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
             smallCapsFontData.m_size = smallCapsFontData.m_size * smallCapsFontSizeMultiplier;
             m_smallCapsFontData = new FontData(smallCapsFontData, true, false);
         } else {
-            NS_DURING
+            BEGIN_BLOCK_OBJC_EXCEPTIONS;
             float size = [m_font.font() pointSize] * smallCapsFontSizeMultiplier;
             FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_font.font() toSize:size]);
             
@@ -246,10 +246,7 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
 
                 m_smallCapsFontData = FontCache::getCachedFontData(&smallCapsFont);
             }
-
-            NS_HANDLER
-            NSLog(@"uncaught exception selecting font for small caps: %@", localException);
-            NS_ENDHANDLER
+            END_BLOCK_OBJC_EXCEPTIONS;
         }
     }
     return m_smallCapsFontData;

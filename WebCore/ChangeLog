@@ -1,3 +1,11 @@
+2007-10-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Geoff
+
+        * platform/mac/FontDataMac.mm:
+        (WebCore::FontData::smallCapsFontData):
+        replace NS_DURING/NS_HANDLER with WebCore-style BEGIN/END_BLOCK_OBJC_EXCEPTIONS
+
 2007-10-15  David Hyatt  <hyatt@apple.com>
 
         The CSS WG has been discussing the concept of rotation.  In the latest draft specification, two properties
