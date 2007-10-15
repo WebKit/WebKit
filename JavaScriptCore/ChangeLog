@@ -1,3 +1,30 @@
+2007-10-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15490
+        Iteration statements sometimes incorrectly evaluate to the empty value 
+        (KDE r670547). 
+        
+        [ Broken off from http://bugs.webkit.org/show_bug.cgi?id=14868 ]
+        
+        This patch is a merge of KDE r670547, with substantial modification 
+        for performance.
+        
+        It fixes do-while statements to evaluate to a value. (They used
+        to evaluate to the empty value in all cases.) 
+
+        It also fixes SourceElementsNode to maintain the value of abnormal 
+        completions like "break" and "continue."
+        
+        It also re-works the main execution loop in SourceElementsNode so that
+        it (1) makes a little more sense and (2) avoids unnecessary work. This 
+        is a .28% speedup on command-line JS iBench.
+
+        * kjs/nodes.cpp:
+        (DoWhileNode::execute):
+        (SourceElementsNode::execute):
+
 2007-10-15  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

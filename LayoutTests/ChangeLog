@@ -1,3 +1,16 @@
+2007-10-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Layout tests for http://bugs.webkit.org/show_bug.cgi?id=15490
+        Iteration statements sometimes incorrectly evaluate to the empty value 
+        (KDE r670547)        
+
+        * fast/js/do-while-expression-value-expected.txt: Added.
+        * fast/js/do-while-expression-value.html: Added.
+        * fast/js/while-expression-value-expected.txt: Added.
+        * fast/js/while-expression-value.html: Added.
+
 2007-10-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
