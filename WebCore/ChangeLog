@@ -1,3 +1,9 @@
+2007-10-15  Mark Rowe  <mrowe@apple.com>
+
+        Gtk and Qt build fix.  Add new .cpp file to project.
+
+        * WebCore.pro:
+
 2007-10-15  John Sullivan  <sullivan@apple.com>
 
         * platform/mac/FontDataMac.mm:

@@ -372,6 +372,7 @@ SOURCES += \
     css/CSSStyleRule.cpp \
     css/CSSStyleSelector.cpp \
     css/CSSStyleSheet.cpp \
+    css/CSSTransformValue.cpp \
     css/CSSValueList.cpp \
     css/FontFamilyValue.cpp \
     css/FontValue.cpp \
