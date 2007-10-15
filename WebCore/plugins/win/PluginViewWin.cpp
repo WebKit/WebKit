@@ -727,7 +727,7 @@ static bool getString(KJSProxy* proxy, JSValue* result, String& string)
     ExecState* exec = proxy->interpreter()->globalExec();
     UString ustring = result->toString(exec);
     exec->clearException();
-    
+
     string = ustring;
     return true;
 }
@@ -738,14 +738,21 @@ void PluginViewWin::performRequest(PluginRequestWin* request)
     String jsString = scriptStringIfJavaScriptURL(requestURL);
 
     if (jsString.isNull()) {
-        m_parentFrame->loader()->urlSelected(request->frameLoadRequest(), 0, false, true);
-
-        // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
-        if (request->sendNotification()) {
-            KJS::JSLock::DropAllLocks dropAllLocks;
-            m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.url().utf8(), NPRES_DONE, request->notifyData());
+        // if this is not a targeted request, create a stream for it. otherwise,
+        // just pass it off to the loader
+        if (request->frameLoadRequest().frameName().isEmpty()) {
+            PluginStreamWin* stream = new PluginStreamWin(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData());
+            m_streams.add(stream);
+            stream->start();
+        } else {
+            m_parentFrame->loader()->urlSelected(request->frameLoadRequest(), 0, false, true);
+      
+            // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
+            if (request->sendNotification()) {
+                KJS::JSLock::DropAllLocks dropAllLocks;
+                m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.url().utf8(), NPRES_DONE, request->notifyData());
+            }
         }
-
         return;
     }
 
@@ -822,20 +829,13 @@ NPError PluginViewWin::load(const FrameLoadRequest& frameLoadRequest, bool sendN
         }
     }
 
-    if (!jsString.isNull() || !target.isNull()) {
-        if (!jsString.isNull() && !target.isNull() && m_parentFrame->tree()->find(target) != m_parentFrame) {
-            // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
-            return NPERR_INVALID_PARAM;
-        }
-
-        PluginRequestWin* request = new PluginRequestWin(frameLoadRequest, sendNotification, notifyData);
-        scheduleRequest(request);
-    } else {
-        PluginStreamWin* stream = new PluginStreamWin(this, m_parentFrame, frameLoadRequest.resourceRequest(), sendNotification, notifyData);
-        m_streams.add(stream);
-
-        stream->start();
+    if (!jsString.isNull() && !target.isNull() && m_parentFrame->tree()->find(target) != m_parentFrame) {
+        // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
+        return NPERR_INVALID_PARAM;
     }
+
+    PluginRequestWin* request = new PluginRequestWin(frameLoadRequest, sendNotification, notifyData);
+    scheduleRequest(request);
 
     return NPERR_NO_ERROR;
 }

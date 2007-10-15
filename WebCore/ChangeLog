@@ -1,3 +1,24 @@
+2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://5510700> Repro crash loading embedded Windows Media Player
+        content
+
+        Anders noticed that the older Windows Media Player plugin (npdsplay.dll)
+        will crash if it receives its resource requests out of order, whereas we
+        were immediately fulfilling untargeted, non-JavaScript requests and
+        scheduling targeted or JavaScript resource requests. Implement his
+        suggested fix, which is to schedule PluginRequests for all resource
+        requests 
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::getString):
+        (WebCore::PluginViewWin::performRequest): If this non-JavaScript request
+        has no target, create a stream for it
+        (WebCore::PluginViewWin::load): Schedule PluginRequests for all resource
+        requests
+
 2007-10-15  Mark Rowe  <mrowe@apple.com>
 
         Gtk and Qt build fix.  Add new .cpp file to project.
