@@ -1,5 +1,25 @@
 2007-10-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+        
+        Removed surprising self-named "hack" that made nested functions 
+        available as named properties of their containing functions, and placed
+        containing function objects in the scope chains of nested functions.
+        
+        [ Patch broken off from http://bugs.webkit.org/show_bug.cgi?id=14868 ]
+
+        Changed this test to reflect correct behavior:
+
+        * fast/js/kde/function-expected.txt:
+        * fast/js/kde/resources/function.js: (Also removed tab characters.)
+
+        Added this test to flesh out the behavior more:
+
+        * fast/js/nested-function-scope-expected.txt: Added.
+        * fast/js/nested-function-scope.html: Added.
+
+2007-10-15  Geoffrey Garen  <ggaren@apple.com>
+
         Committed revision 26618.
 
         Made function parameters DontDelete.

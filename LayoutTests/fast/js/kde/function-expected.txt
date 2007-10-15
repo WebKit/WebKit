@@ -34,7 +34,7 @@ PASS orgFuncClone('world') is 'Hello world'
 PASS groupClone(1, 2) is 9
 PASS String(Math.sin) is sinStr
 PASS shadow() is 2
-PASS nestedret is 'outer nest'
+PASS nestedret is 'inner nest'
 PASS not_nestedret is 'global nest'
 PASS sample.prototype.prototype is undefined.
 PASS sample.prototype.constructor == sample is true

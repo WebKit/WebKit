@@ -2,6 +2,29 @@
 
         Reviewed by Darin Adler.
         
+        Removed surprising self-named "hack" that made nested functions 
+        available as named properties of their containing functions, and placed
+        containing function objects in the scope chains of nested functions.
+        
+        There were a few reasons to remove this "hack:"
+
+        1. It contradicted FF, IE, and the ECMA spec.
+
+        2. It incurred a performance penalty, since merely parsing a function 
+        required parsing its body for nested functions (and so on).
+
+        3. SVN history contains no explanation for why it was added. It was just
+        legacy code in a large merge a long, long time ago.
+
+        [ Patch broken off from http://bugs.webkit.org/show_bug.cgi?id=14868 ]
+
+        * kjs/nodes.cpp:
+        (FuncDeclNode::processFuncDecl):
+
+2007-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
         Removed the concept of AnonymousCode. It was unused, and it doesn't
         exist in the ECMA spec.
         

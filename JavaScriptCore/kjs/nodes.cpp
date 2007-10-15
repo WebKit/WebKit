@@ -2486,17 +2486,6 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
 
   // ECMA 10.2.2
   context->variableObject()->put(exec, ident, func, Internal | (context->codeType() == EvalCode ? 0 : DontDelete));
-
-  if (body) {
-    // hack the scope so that the function gets put as a property of func, and it's scope
-    // contains the func as well as our current scope
-    JSObject *oldVar = context->variableObject();
-    context->setVariableObject(func);
-    context->pushScope(func);
-    body->processFuncDecl(exec);
-    context->popScope();
-    context->setVariableObject(oldVar);
-  }
 }
 
 Completion FuncDeclNode::execute(ExecState *)

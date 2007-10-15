@@ -137,8 +137,8 @@ shouldBe("f5.arguments", "null");
 ///////////////////////////////
 
 function manipulate(x) {
-   x[0] = 99;		// should operate on reference
-   x = "nothing";	// should detach
+   x[0] = 99;           // should operate on reference
+   x = "nothing";       // should detach
 }
 var arr = new Array(1, 2, 3);
 manipulate(arr);
@@ -178,10 +178,13 @@ var nest_property = "global nest";
 
 function nested_outer() {
 
+  var nest_property = "inner nest";
+
   function nested_inner() {
     return nest_property;
   }
 
+  return nested_inner;
 }
 
 function not_nested() {
@@ -190,9 +193,9 @@ function not_nested() {
 
 nested_outer.nest_property = "outer nest";
 
-var nested = nested_outer.nested_inner;
+var nested = nested_outer();
 var nestedret = nested();
-shouldBe("nestedret","'outer nest'");
+shouldBe("nestedret","'inner nest'");
 
 var not_nestedret = not_nested();
 shouldBe("not_nestedret","'global nest'");
