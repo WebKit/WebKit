@@ -584,7 +584,7 @@ CSSValueKeywords.h : css/CSSValueKeywords.in ksvg2/css/SVGCSSValueKeywords.in
 
 else
 
-CSSPropertyNames.h : css/CSSValueKeywords.in css/makeprop.pl
+CSSPropertyNames.h : css/CSSPropertyNames.in css/makeprop.pl
 	cp $< CSSPropertyNames.in
 	perl "$(WebCore)/css/makeprop.pl"
 

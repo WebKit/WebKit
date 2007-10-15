@@ -1,3 +1,13 @@
+2007-10-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix the no-SVG build.
+
+        * DerivedSources.make: Use the correct file as input to generate CSSPropertyNames.h.
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary):
+
 2007-10-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
