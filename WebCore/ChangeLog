@@ -1,3 +1,16 @@
+2007-10-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15520
+          alert(undefined) should say "undefined" in the alert
+
+        Test: fast/dom/Window/alert-undefined.html
+
+        * page/DOMWindow.idl: Remove ConvertUndefinedOrNullToNullString from alert, confirm, and prompt.
+        It turns out that the default behavior is what the other browsers do (browsers tested: IE 7,
+        Firefox 2).
+
 2007-10-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -1,4 +1,10 @@
-ALERT: 
-The alert that shows up (or if this is running under DRT, that is dumped) should be blank and not contain the text "undefined".
-
-
+ALERT: undefined
+ALERT: null
+CONFIRM: undefined
+CONFIRM: null
+PROMPT: undefined, default text: undefined
+PROMPT: null, default text: undefined
+ALERT: undefined
+CONFIRM: undefined
+PROMPT: undefined, default text: undefined
+The alerts that show up (or if this is running under DRT, that is dumped) should contain text; none should be empty. This isn't entirely consistent with other browsers in every case, but since there's no real use case for this, it's best to be explicit rather than subtle and empty.

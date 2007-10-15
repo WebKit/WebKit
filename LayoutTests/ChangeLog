@@ -1,3 +1,13 @@
+2007-10-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15520
+          alert(undefined) should say "undefined" in the alert
+
+        * fast/dom/Window/alert-undefined.html: Added tests of null and both confirm and prompt.
+        * fast/dom/Window/alert-undefined-expected.txt: Updated.
+
 2007-10-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

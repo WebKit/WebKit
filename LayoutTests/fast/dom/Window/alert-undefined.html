@@ -7,12 +7,22 @@
             if (window.layoutTestController)
                 layoutTestController.dumpAsText();
 
+            alert(undefined);
+            alert(null);
+            confirm(undefined);
+            confirm(null);
+            prompt(undefined);
+            prompt(null);
+
             alert();
+            confirm();
+            prompt();
         }
     </script>
 </head>
-<body onload="runTests();">
-    <p>The alert that shows up (or if this is running under DRT, that is dumped) should be blank and not contain the text "undefined".</p>
-    <pre id="console"></pre>
+<body onload="runTests()">
+    <p>The alerts that show up (or if this is running under DRT, that is dumped) should contain text; none should be empty.
+    This isn't entirely consistent with other browsers in every case, but since there's no real use case for this,
+    it's best to be explicit rather than subtle and empty.</p>
 </body>
 </html>
