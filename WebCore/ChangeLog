@@ -1,3 +1,16 @@
+2007-10-15  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Adapt to the latest API changes in the SVG API/Code.
+
+        * platform/graphics/svg/qt/RenderPathQt.cpp:
+        (WebCore::RenderPath::strokeContains):
+        (WebCore::getPathStroke):
+        * platform/graphics/svg/qt/SVGPaintServerQt.cpp:
+        (WebCore::SVGPaintServer::setPenProperties):
+        * platform/graphics/svg/qt/SVGResourceMaskerQt.cpp:
+
 2007-10-14  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

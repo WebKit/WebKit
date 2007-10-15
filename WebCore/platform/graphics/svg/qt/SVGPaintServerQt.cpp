@@ -25,7 +25,7 @@
 #include "SVGPaintServer.h"
 
 #include "GraphicsContext.h"
-#include "KCanvasRenderingStyle.h"
+#include "SVGRenderStyle.h"
 #include "RenderObject.h"
 
 #include <QPainter>
@@ -35,7 +35,7 @@ namespace WebCore {
 
 void SVGPaintServer::setPenProperties(const RenderObject* object, const RenderStyle* style, QPen& pen) const
 {
-    pen.setWidthF(KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0));
+    pen.setWidthF(SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0));
 
     if (style->svgStyle()->capStyle() == ButtCap)
         pen.setCapStyle(Qt::FlatCap);
@@ -48,8 +48,8 @@ void SVGPaintServer::setPenProperties(const RenderObject* object, const RenderSt
     } else if(style->svgStyle()->joinStyle() == RoundJoin)
         pen.setJoinStyle(Qt::RoundJoin);
 
-    const KCDashArray& dashes = KSVGPainterFactory::dashArrayFromRenderingStyle(style);
-    double dashOffset = KSVGPainterFactory::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0);
+    const DashArray& dashes = WebCore::dashArrayFromRenderingStyle(style);
+    double dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0);
 
     unsigned int dashLength = !dashes.isEmpty() ? dashes.size() : 0;
     if(dashLength) {
