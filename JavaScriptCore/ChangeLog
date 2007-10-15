@@ -1,3 +1,39 @@
+2007-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Some Vector optimizations. These are especially important when using
+        Vector as a stack for implementing recursive algorithms iteratively.
+        
+        [ Broken off from http://bugs.webkit.org/show_bug.cgi?id=14868 ]
+
+        1. Added shrink(), which is a version of resize() that you can call
+        to save a branch / improve code generation and inlining when you know 
+        that the vector is not getting bigger.
+        
+        2. Changed subclassing relationship in VectorBuffer to remove a call to
+        fastFree() in the destructor for the inlineCapacity != 0 template
+        specialization. This brings inline Vectors one step closer to true
+        stack-allocated arrays.
+        
+        Also changed abort() to CRASH(), since the latter works better.
+
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::deallocateBuffer):
+        (WTF::VectorBufferBase::VectorBufferBase):
+        (WTF::VectorBufferBase::~VectorBufferBase):
+        (WTF::):
+        (WTF::VectorBuffer::VectorBuffer):
+        (WTF::VectorBuffer::~VectorBuffer):
+        (WTF::VectorBuffer::deallocateBuffer):
+        (WTF::VectorBuffer::releaseBuffer):
+        (WTF::Vector::clear):
+        (WTF::Vector::removeLast):
+        (WTF::::operator):
+        (WTF::::fill):
+        (WTF::::shrink):
+
 2007-10-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
