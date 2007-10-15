@@ -44,6 +44,7 @@
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "CSSTransformValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Counter.h"
@@ -1244,6 +1245,31 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSS_VAL_CLIP || id == CSS_VAL_ELLIPSIS)
             valid_primitive = true;
         break;
+    case CSS_PROP__WEBKIT_TRANSFORM:
+        if (id == CSS_VAL_NONE)
+            valid_primitive = true;
+        else {
+            CSSValue* val = parseTransform();
+            if (val) {
+                addProperty(propId, val, important);
+                return true;
+            }
+            return false;
+        }
+        break;
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X:
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y: {
+        CSSValue *val1 = 0, *val2 = 0;
+        int propId1, propId2;
+        if (parseTransformOrigin(propId, propId1, propId2, val1, val2)) {
+            addProperty(propId1, val1, important);
+            if (val2)
+                addProperty(propId2, val2, important);
+            return true;
+        }
+        return false;
+    }
     case CSS_PROP__WEBKIT_MARGIN_COLLAPSE: {
         const int properties[2] = { CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE,
             CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE };
@@ -3001,6 +3027,166 @@ bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
     }
 
     return false;
+}
+
+class TransformParseContext
+{
+public:
+    TransformParseContext() :m_list(0) {}
+
+    CSSValueList* list() const { return m_list; }
+    CSSValueList* failed() { delete m_list; return 0; }
+
+    void addValue(CSSTransformValue* val) { m_list->append(val); }
+
+private:
+    CSSValueList* m_list;
+};
+
+class TransformOperationInfo
+{
+public:
+    TransformOperationInfo(const String& fname)
+    : m_type(CSSTransformValue::UnknownTransformOperation)
+    , m_argCount(1)
+    , m_allowSingleArgument(false)
+    , m_unit(CSSParser::FUnknown)
+    {
+        if (fname == "scale(" || fname == "scaleX(" || fname == "scaleY(") {
+            m_unit = CSSParser::FNumber;
+            if (fname == "scale(")
+                m_type = CSSTransformValue::ScaleTransformOperation;
+            else if (fname == "scaleX(")
+                m_type = CSSTransformValue::ScaleXTransformOperation;
+            else
+                m_type = CSSTransformValue::ScaleYTransformOperation;
+        } else if (fname == "rotate(") {
+            m_type = CSSTransformValue::RotateTransformOperation;
+            m_unit = CSSParser::FAngle;
+        } else if (fname == "skew(" || fname == "skewX(" || fname == "skewY(") {
+            m_unit = CSSParser::FAngle;
+            if (fname == "skew(")
+                m_type = CSSTransformValue::SkewTransformOperation;
+            else if (fname == "skewX(")
+                m_type = CSSTransformValue::SkewXTransformOperation;
+            else
+                m_type = CSSTransformValue::SkewYTransformOperation;
+        } else if (fname == "translate(" || fname == "translateX(" || fname == "translateY(") {
+            m_unit = CSSParser::FLength | CSSParser::FPercent;
+            if (fname == "translate(")
+                m_type = CSSTransformValue::TranslateTransformOperation;
+            else if (fname == "translateX(")
+                m_type = CSSTransformValue::TranslateXTransformOperation;
+            else
+                m_type = CSSTransformValue::TranslateYTransformOperation;
+        } else if (fname == "matrix(") {
+            m_type = CSSTransformValue::MatrixTransformOperation;
+            m_argCount = 11;
+            m_unit = CSSParser::FNumber;
+        }
+        
+        if (fname == "scale(" || fname == "skew(" || fname == "translate(") {
+            m_allowSingleArgument = true;
+            m_argCount = 3;
+        }
+    }
+    
+    CSSTransformValue::TransformOperationType type() const { return m_type; }
+    unsigned argCount() const { return m_argCount; }
+    CSSParser::Units unit() const { return m_unit; }
+
+    bool unknown() const { return m_type == CSSTransformValue::UnknownTransformOperation; }
+    bool hasCorrectArgCount(unsigned argCount) { return m_argCount == argCount || (m_allowSingleArgument && argCount == 1); }
+
+private:
+    CSSTransformValue::TransformOperationType m_type;
+    unsigned m_argCount;
+    bool m_allowSingleArgument;
+    CSSParser::Units m_unit;
+};
+
+CSSValue* CSSParser::parseTransform()
+{
+    if (!valueList)
+        return 0;
+
+    // The transform is a list of functional primitives that specify transform operations.  We collect a list
+    // of CSSTransformValues, where each value specifies a single operation.
+    TransformParseContext transformParseContext;
+    for (Value* value = valueList->current(); value; value = valueList->next()) {
+        if (value->unit != Value::Function || !value->function)
+            return transformParseContext.failed();
+        String fname = domString(value->function->name).lower();
+        
+        // Every primitive requires at least one argument.
+        ValueList* args = value->function->args;
+        if (!args)
+            return transformParseContext.failed();
+        
+        // See if the specified primitive is one we understand.
+        TransformOperationInfo info(fname);
+        if (info.unknown())
+            return transformParseContext.failed();
+       
+        if (!info.hasCorrectArgCount(args->size()))
+            return transformParseContext.failed();
+
+        // Create the new CSSTransformValue for this operation and add it to our list.
+        CSSTransformValue* transformValue = new CSSTransformValue(info.type());
+        transformParseContext.addValue(transformValue);
+
+        // Snag our values.
+        Value* a = args->current();
+        while (a) {
+            if (!validUnit(a, info.unit(), true)) // Always parse strictly, since this is a newer property, so there's no reason to be lax.
+                return transformParseContext.failed();
+            
+            // Add the value to the current transform operation.
+            transformValue->addValue(new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit));
+
+            a = args->next();
+            if (!a)
+                break;
+            if (a->unit != Value::Operator || a->iValue != ',')
+                return transformParseContext.failed();
+            a = args->next();
+        }
+    }
+    
+    return transformParseContext.list();
+}
+
+bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, CSSValue*& value, CSSValue*& value2)
+{
+    propId1 = propId;
+    propId2 = propId;
+    if (propId == CSS_PROP__WEBKIT_TRANSFORM_ORIGIN) {
+        propId1 = CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X;
+        propId2 = CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y;
+    }
+
+    switch (propId) {
+        case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
+            parseBackgroundPosition(value, value2);
+            // Unlike the other functions, parseBackgroundPosition advances the valueList pointer
+            break;
+        case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X: {
+            bool xFound = false, yFound = true;
+            value = parseBackgroundPositionXY(xFound, yFound);
+            if (value)
+                valueList->next();
+            break;
+        }
+        case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y: {
+            bool xFound = true, yFound = false;
+            value = parseBackgroundPositionXY(xFound, yFound);
+            if (value)
+                valueList->next();
+            break;
+        }
+    }
+    
+    return value;
 }
 
 #ifdef CSS_DEBUG

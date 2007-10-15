@@ -4697,6 +4697,14 @@
 				RelativePath="..\css\CSSStyleSheet.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\css\CSSTransformValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSTransformValue.h"
+				>
+			</File>
 			<File
 				RelativePath="..\css\CSSUnknownRule.h"
 				>

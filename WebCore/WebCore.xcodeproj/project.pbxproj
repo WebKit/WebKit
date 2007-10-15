@@ -3345,6 +3345,8 @@
 		BC94D1570C275CAB006BC617 /* GlobalHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC94D1560C275CAB006BC617 /* GlobalHistory.h */; };
 		BC94D1590C275CB6006BC617 /* GlobalHistoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC94D1580C275CB6006BC617 /* GlobalHistoryMac.mm */; };
 		BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */; };
+		BC9ADD230CC4032600098C4C /* CSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9ADD220CC4032600098C4C /* CSSTransformValue.h */; };
+		BC9ADD800CC4092200098C4C /* CSSTransformValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9ADD7F0CC4092200098C4C /* CSSTransformValue.cpp */; };
 		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
 		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
 		BCA85A100C3AEAF4006F8308 /* DOMSVGNumberInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA85A0F0C3AEAF4006F8308 /* DOMSVGNumberInternal.h */; };
@@ -7177,6 +7179,8 @@
 		BC94D1560C275CAB006BC617 /* GlobalHistory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GlobalHistory.h; sourceTree = "<group>"; };
 		BC94D1580C275CB6006BC617 /* GlobalHistoryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = GlobalHistoryMac.mm; sourceTree = "<group>"; };
 		BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetCustom.cpp; sourceTree = "<group>"; };
+		BC9ADD220CC4032600098C4C /* CSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSTransformValue.h; sourceTree = "<group>"; };
+		BC9ADD7F0CC4092200098C4C /* CSSTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSTransformValue.cpp; sourceTree = "<group>"; };
 		BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
 		BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableCaptionElement.h; sourceTree = "<group>"; };
 		BCA85A0F0C3AEAF4006F8308 /* DOMSVGNumberInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGNumberInternal.h; sourceTree = "<group>"; };
@@ -10996,6 +11000,7 @@
 			children = (
 				BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */,
 				BC64B4CE0CB4298A005F2B62 /* CSSFontFace.h */,
+				BC9ADD7F0CC4092200098C4C /* CSSTransformValue.cpp */,
 				BC64B4CF0CB4298A005F2B62 /* CSSFontFaceSource.cpp */,
 				BC64B4D00CB4298A005F2B62 /* CSSFontFaceSource.h */,
 				BC64B4D10CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp */,
@@ -11065,6 +11070,7 @@
 				A8EA80000A19516E00A8EF5F /* CSSStyleSheet.cpp */,
 				A8EA7FFF0A19516E00A8EF5F /* CSSStyleSheet.h */,
 				858C39100AA8FF0000B187A4 /* CSSStyleSheet.idl */,
+				BC9ADD220CC4032600098C4C /* CSSTransformValue.h */,
 				A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */,
 				85C56CAD0AA89FE000D95755 /* CSSUnknownRule.idl */,
 				A80E6CC40A1989CA007FB8C5 /* CSSValue.h */,
@@ -13210,6 +13216,7 @@
 				BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */,
 				A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */,
 				A8A909AC0CBCD6B50029B807 /* RenderSVGTransformableContainer.h in Headers */,
+				BC9ADD230CC4032600098C4C /* CSSTransformValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14693,6 +14700,7 @@
 				A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */,
 				A84EC1390CB9FDBC00079609 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
 				A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */,
+				BC9ADD800CC4092200098C4C /* CSSTransformValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

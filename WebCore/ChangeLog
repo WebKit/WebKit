@@ -1,3 +1,43 @@
+2007-10-15  David Hyatt  <hyatt@apple.com>
+
+        The CSS WG has been discussing the concept of rotation.  In the latest draft specification, two properties
+        have been introduced: rotation and rotation-point.  I believe these properties should be generalized to
+        allow for arbitrary transformations (e.g., translation, skew, rotate, scale).
+
+        This patch adds support for the back-end parsing of two new CSS properties: transform and transform-origin.
+        They are directly analogous to the properties specified by the CSS WG, except that they are designed to allow
+        for arbitrary affine transforms rather than just rotation.
+
+        Reviewed by Beth Dakin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::TransformParseContext:::m_list):
+        (WebCore::TransformParseContext::list):
+        (WebCore::TransformParseContext::failed):
+        (WebCore::TransformParseContext::addValue):
+        (WebCore::TransformOperationInfo::TransformOperationInfo):
+        (WebCore::TransformOperationInfo::type):
+        (WebCore::TransformOperationInfo::argCount):
+        (WebCore::TransformOperationInfo::unit):
+        (WebCore::TransformOperationInfo::unknown):
+        (WebCore::TransformOperationInfo::hasCorrectArgCount):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseTransformOrigin):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSTransformValue.cpp: Added.
+        (WebCore::CSSTransformValue::CSSTransformValue):
+        (WebCore::CSSTransformValue::~CSSTransformValue):
+        (WebCore::CSSTransformValue::addValue):
+        (WebCore::CSSTransformValue::cssText):
+        * css/CSSTransformValue.h: Added.
+        (WebCore::CSSTransformValue::):
+
 2007-10-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver.

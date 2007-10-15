@@ -203,6 +203,10 @@ z-index
 -webkit-text-stroke
 -webkit-text-stroke-color
 -webkit-text-stroke-width
+-webkit-transform
+-webkit-transform-origin
+-webkit-transform-origin-x
+-webkit-transform-origin-y
 -webkit-user-drag
 -webkit-user-modify
 -webkit-user-select
