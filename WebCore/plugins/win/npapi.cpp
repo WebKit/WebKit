@@ -65,7 +65,7 @@ void NPN_ReloadPlugins(NPBool reloadPages)
 
 NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
 {
-    return NPERR_GENERIC_ERROR;
+    return NPERR_STREAM_NOT_SEEKABLE;
 }
 
 NPError NPN_GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData)

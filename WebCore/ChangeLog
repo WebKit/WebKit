@@ -1,3 +1,13 @@
+2007-10-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Maciej.
+
+        Return a more appropriate error from NPN_RequestRange, which is
+        currently unimplemented
+
+        * plugins/win/npapi.cpp: return NPERR_STREAM_NOT_SEEKABLE 
+        (NPN_RequestRead):
+
 2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Maciej.
