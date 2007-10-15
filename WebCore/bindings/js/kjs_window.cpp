@@ -1186,32 +1186,34 @@ static void parseWindowFeatures(const String& features, WindowFeatures& windowFe
     }
 }
 
-// FIXME instead of the screen should we actually check the workspace?
-static void constrainToVisible(const FloatRect& screen, FloatRect& window)
+// Explain the 4 things this function does.
+// 1) Constrains the window rect to no smaller than 100 in each dimension and no
+//    bigger than the the float rect's dimensions.
+// 2) Constrain window rect to within the top and left boundaries of the screen rect
+// 3) Constraint the window rect to within the bottom and right boundaries of the
+//    screen rect.
+// 4) Translate the window rect coordinates to be within the coordinate space of
+//    the screen rect.
+static void adjustWindowRect(const FloatRect& screen, FloatRect& window)
 {
-    float x = window.x() + screen.x();
-    if (x < screen.x() || x >= screen.right())
-        x = screen.x(); // only safe choice until size is determined
-    window.setX(x);
+    // Resize the window to between 100 and the screen width and height if it's
+    // outside of those ranges.
+    window.setWidth(min(max(100.0f, window.width()), screen.width()));
+    window.setHeight(min(max(100.0f, window.height()), screen.height()));
+
+    // Constrain the window to the top and left of the screen if it's left or
+    // above it.
+    window.setX(max(window.x(), screen.x()));
+    window.setY(max(window.y(), screen.y()));
+
+    // Constrain the window to the bottom and right of the screen if it's past
+    // the right or below it.
+    window.setX(window.x() - max(0.0f, window.right() - screen.width()));
+    window.setY(window.y() - max(0.0f, window.bottom() - screen.height()));
     
-    float y = window.y() + screen.y();
-    if (y < screen.y() || y >= screen.bottom())
-        y = screen.y(); // only safe choice until size is determined
-    window.setY(y);
-    
-    float height = window.height();
-    if (height > screen.height())
-        height = screen.height();
-    if (height < 100)
-        height = 100;
-    window.setHeight(height);
-    
-    float width = window.width();
-    if (width > screen.width())
-        width = screen.width();
-    if (width < 100)
-        width = 100;
-    window.setWidth(width);
+    // Adjust the window rect to be in the coordinate space of the screen rect
+    window.setX(window.x() + screen.x());
+    window.setY(window.y() + screen.y());
 }
 
 JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -1293,7 +1295,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       String features = valueToStringWithUndefinedOrNullCheck(exec, args[2]);
       parseWindowFeatures(features, windowFeatures);
       FloatRect windowRect(windowFeatures.x, windowFeatures.y, windowFeatures.width, windowFeatures.height);
-      constrainToVisible(screenRect(page->mainFrame()->view()), windowRect);
+      adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), windowRect);
 
       windowFeatures.x = windowRect.x();
       windowFeatures.y = windowRect.y();
@@ -1323,18 +1325,18 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       FloatRect fr = page->chrome()->windowRect();
       fr.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      constrainToVisible(screenRect(page->mainFrame()->view()), fr);
+      adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr);
       page->chrome()->setWindowRect(fr);
     }
     return jsUndefined();
   case Window::MoveTo:
     if (args.size() >= 2 && page) {
       FloatRect fr = page->chrome()->windowRect();
-      FloatRect sr = screenRect(page->mainFrame()->view());
+      FloatRect sr = screenAvailableRect(page->mainFrame()->view());
       fr.setLocation(sr.location());
       fr.move(args[0]->toFloat(exec), args[1]->toFloat(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      constrainToVisible(sr, fr);
+      adjustWindowRect(sr, fr);
       page->chrome()->setWindowRect(fr);
     }
     return jsUndefined();
@@ -1343,7 +1345,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       FloatRect r = page->chrome()->windowRect();
       FloatSize dest = r.size() + FloatSize(args[0]->toFloat(exec), args[1]->toFloat(exec));
       FloatRect fr = FloatRect(r.location(), dest);
-      constrainToVisible(screenRect(page->mainFrame()->view()), fr);
+      adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr);
       page->chrome()->setWindowRect(fr);
     }
     return jsUndefined();
@@ -1352,7 +1354,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       FloatRect r = page->chrome()->windowRect();
       FloatSize dest = FloatSize(args[0]->toFloat(exec), args[1]->toFloat(exec));
       FloatRect fr = FloatRect(r.location(), dest);
-      constrainToVisible(screenRect(page->mainFrame()->view()), fr);
+      adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr);
       page->chrome()->setWindowRect(fr);
     }
     return jsUndefined();

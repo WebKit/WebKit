@@ -12,6 +12,16 @@ PASS window.outerWidth is screen.width
 Testing - resizeTo: Too Small
 PASS window.outerWidth is 100
 
+Testing - resizeTo: Full Screen Out of Bounds
+PASS window.screenY is screen.availTop
+PASS window.outerHeight is screen.availHeight
+PASS window.screenX is screen.availLeft
+PASS window.outerWidth is screen.width
+
+Testing - resizeTo: Not Full Screen Out of Bounds
+PASS window.outerHeight + window.screenY - screen.availTop is screen.availHeight
+PASS window.outerWidth + window.screenX - screen.availLeft is screen.width
+
 window.resizeBy Tests
 
 Testing - resizeBy: Too Small
@@ -23,65 +33,65 @@ PASS window.outerWidth is screen.width
 window.moveTo Tests
 
 Testing - moveTo: Top Left
-PASS window.screenY is 0
+PASS window.screenY is screen.availTop
 PASS window.screenX is screen.availLeft
 
 Testing - moveTo: Top
-PASS window.screenY is 0
+PASS window.screenY is screen.availTop
 PASS window.screenX is screen.availLeft
 
 Testing - moveTo: Top Right
-PASS window.screenY is 0
+PASS window.screenY is screen.availTop
 PASS window.outerWidth is screen.width
 
 Testing - moveTo: Right
-PASS window.screenY is 0
+PASS window.screenY is screen.availTop
 PASS window.outerWidth is screen.width
 
 Testing - moveTo: Bottom Right
-PASS window.outerHeight is screen.height
+PASS window.outerHeight is screen.availHeight
 PASS window.outerWidth is screen.width
 
 Testing - moveTo: Bottom
-PASS window.outerHeight is screen.height
-PASS window.screenX is 0
+PASS window.outerHeight is screen.availHeight
+PASS window.screenX is screen.availLeft
 
 Testing - moveTo: Bottom Left
-PASS window.outerHeight is screen.height
-PASS window.screenX is 0
+PASS window.outerHeight is screen.availHeight
+PASS window.screenX is screen.availLeft
 
 Testing - moveTo: Left
-PASS window.screenY is 0
-PASS window.screenX is 0
+PASS window.screenY is screen.availTop
+PASS window.screenX is screen.availLeft
 
 window.moveBy Tests
 
 Testing - moveBy: Top Left
-PASS window.screenY is 0
-PASS window.screenX is 0
+PASS window.screenY is screen.availTop
+PASS window.screenX is screen.availLeft
 
 Testing - moveBy: Top
-PASS window.screenY is 0
-PASS window.screenX is 0
+PASS window.screenY is screen.availTop
+PASS window.screenX is screen.availLeft
 
 Testing - moveBy: Top Right
-PASS window.screenY is 0
+PASS window.screenY is screen.availTop
 PASS window.outerWidth is screen.width
 
 Testing - moveBy: Right
-PASS window.screenY is 0
+PASS window.screenY is screen.availTop
 PASS window.outerWidth is screen.width
 
 Testing - moveBy: Bottom Right
-PASS window.outerHeight is screen.height
+PASS window.outerHeight is screen.availHeight
 PASS window.outerWidth is screen.width
 
 Testing - moveBy: Bottom
-PASS window.outerHeight is screen.height
+PASS window.outerHeight is screen.availHeight
 
 Testing - moveBy: Bottom Left
-PASS window.outerHeight is screen.height
-PASS window.screenX is 0
+PASS window.outerHeight is screen.availHeight
+PASS window.screenX is screen.availLeft
 
 Testing - moveBy: Left
 PASS window.screenX is screen.availLeft

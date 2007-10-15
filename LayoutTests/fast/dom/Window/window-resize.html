@@ -42,11 +42,41 @@
     debug("Testing - resizeTo: Too Small");
     shouldBe('window.outerWidth', '100');
 
+    debug('');
+    x = screen.width/10;
+    y = screen.height/10;
+    window.moveTo(x, y);
+    x = screen.width;
+    y = screen.height;
+    window.resizeTo(x, y);
+    debug("Testing - resizeTo: Full Screen Out of Bounds");
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.outerHeight', 'screen.availHeight');
+    shouldBe('window.screenX', 'screen.availLeft');
+    shouldBe('window.outerWidth', 'screen.width');
+
+    debug('');
+    x = 100;
+    y = 100;
+    window.resizeTo(x, y);
+    x = screen.width/2;
+    y = screen.height/2;
+    window.moveTo(x, y);
+    x += 10;
+    y += 10;
+    window.resizeTo(x, y);
+    debug("Testing - resizeTo: Not Full Screen Out of Bounds");
+    shouldBe('window.outerHeight + window.screenY - screen.availTop', 'screen.availHeight');
+    shouldBe('window.outerWidth + window.screenX - screen.availLeft', 'screen.width');
+
     // resizeBy /////////////////////////
     debug('');
     debug('window.resizeBy Tests');
     debug('');
 
+    x = 150;
+    y = 150;
+    window.resizeTo(x, y);
     x = -100;
     y = -100;
     window.resizeBy(x, y);
@@ -73,13 +103,8 @@
     y = -100;
     window.moveTo(x, y);
     debug("Testing - moveTo: Top Left");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.screenX', 'screen.availLeft');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.screenX', 'screen.availLeft');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.screenX', 'screen.availLeft');
 
     debug('');
 
@@ -87,13 +112,8 @@
     y = -100;
     window.moveTo(x, y);
     debug("Testing - moveTo: Top");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.screenX', 'screen.availLeft');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.screenX', 'screen.availLeft');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.screenX', 'screen.availLeft');
 
     debug('');
 
@@ -101,13 +121,8 @@
     y = -100;
     window.moveTo(x, y);
     debug("Testing - moveTo: Top Right");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.outerWidth', 'screen.width');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.outerWidth', 'screen.width');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.outerWidth', 'screen.width');
 
     debug('');
 
@@ -115,13 +130,8 @@
     y = 0;
     window.moveTo(x, y);
     debug("Testing - moveTo: Right");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.outerWidth', 'screen.width');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.outerWidth', 'screen.width');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.outerWidth', 'screen.width');
 
     debug('');
 
@@ -129,13 +139,8 @@
     y = 100;
     window.moveTo(x, y);
     debug("Testing - moveTo: Bottom Right");
-    if (window.layoutTestController) {
-        shouldBe('window.outerHeight', 'screen.height');
-        shouldBe('window.outerWidth', 'screen.width');
-    } else {
-        shouldBe('window.outerHeight', 'screen.availHeight');
-        shouldBe('window.outerWidth', 'screen.width');
-    }
+    shouldBe('window.outerHeight', 'screen.availHeight');
+    shouldBe('window.outerWidth', 'screen.width');
 
     debug('');
 
@@ -143,13 +148,8 @@
     y = 100;
     window.moveTo(x, y);
     debug("Testing - moveTo: Bottom");
-    if (window.layoutTestController) {
-        shouldBe('window.outerHeight', 'screen.height');
-        shouldBe('window.screenX', '0');
-    } else {
-        shouldBe('window.outerHeight', 'screen.availHeight');
-        shouldBe('window.screenX', 'screen.availLeft');
-    }
+    shouldBe('window.outerHeight', 'screen.availHeight');
+    shouldBe('window.screenX', 'screen.availLeft');
 
     debug('');
 
@@ -157,13 +157,8 @@
     y = 100;
     window.moveTo(x, y);
     debug("Testing - moveTo: Bottom Left");
-    if (window.layoutTestController) {
-        shouldBe('window.outerHeight', 'screen.height');
-        shouldBe('window.screenX', '0');
-    } else {
-        shouldBe('window.outerHeight', 'screen.availHeight');
-        shouldBe('window.screenX', 'screen.availLeft');
-    }
+    shouldBe('window.outerHeight', 'screen.availHeight');
+    shouldBe('window.screenX', 'screen.availLeft');
 
     debug('');
 
@@ -171,13 +166,8 @@
     y = 0;
     window.moveTo(x, y);
     debug("Testing - moveTo: Left");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.screenX', '0');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.screenX', 'screen.availLeft');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.screenX', 'screen.availLeft');
 
     window.moveTo(0,0);
     window.resizeTo(screen.width, screen.height);
@@ -191,13 +181,8 @@
     y = -100;
     window.moveBy(x, y);
     debug("Testing - moveBy: Top Left");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.screenX', '0');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.screenX', 'screen.availLeft');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.screenX', 'screen.availLeft');
 
     debug('');
 
@@ -205,13 +190,8 @@
     y = -100;
     window.moveBy(x, y);
     debug("Testing - moveBy: Top");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.screenX', '0');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.screenX', 'screen.availLeft');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.screenX', 'screen.availLeft');
 
     debug('');
 
@@ -219,13 +199,8 @@
     y = -100;
     window.moveBy(x, y);
     debug("Testing - moveBy: Top Right");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.outerWidth', 'screen.width');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.outerWidth', 'screen.width');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.outerWidth', 'screen.width');
 
     debug('');
 
@@ -233,13 +208,8 @@
     y = 0;
     window.moveBy(x, y);
     debug("Testing - moveBy: Right");
-    if (window.layoutTestController) {
-        shouldBe('window.screenY', '0');
-        shouldBe('window.outerWidth', 'screen.width');
-    } else {
-        shouldBe('window.screenY', 'screen.availTop');
-        shouldBe('window.outerWidth', 'screen.width');
-    }
+    shouldBe('window.screenY', 'screen.availTop');
+    shouldBe('window.outerWidth', 'screen.width');
 
     debug('');
 
@@ -247,13 +217,8 @@
     y = 100;
     window.moveBy(x, y);
     debug("Testing - moveBy: Bottom Right");
-    if (window.layoutTestController) {
-        shouldBe('window.outerHeight', 'screen.height');
-        shouldBe('window.outerWidth', 'screen.width');
-    } else {
-        shouldBe('window.outerHeight', 'screen.availHeight');
-        shouldBe('window.outerWidth', 'screen.width');
-    }
+    shouldBe('window.outerHeight', 'screen.availHeight');
+    shouldBe('window.outerWidth', 'screen.width');
 
     debug('');
 
@@ -261,10 +226,7 @@
     y = 100;
     window.moveBy(x, y);
     debug("Testing - moveBy: Bottom");
-    if (window.layoutTestController)
-        shouldBe('window.outerHeight', 'screen.height');
-    else
-        shouldBe('window.outerHeight', 'screen.availHeight');
+    shouldBe('window.outerHeight', 'screen.availHeight');
 
     debug('');
 
@@ -272,13 +234,8 @@
     y = 100;
     window.moveBy(x, y);
     debug("Testing - moveBy: Bottom Left");
-    if (window.layoutTestController) {
-        shouldBe('window.outerHeight', 'screen.height');
-        shouldBe('window.screenX', '0');
-    } else {
-        shouldBe('window.outerHeight', 'screen.availHeight');
-        shouldBe('window.screenX', 'screen.availLeft');
-    }
+    shouldBe('window.outerHeight', 'screen.availHeight');
+    shouldBe('window.screenX', 'screen.availLeft');
 
     debug('');
 

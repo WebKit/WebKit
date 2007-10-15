@@ -1,3 +1,14 @@
+2007-10-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - <rdar://problem/5238818> window.resizeTo doesn't restrict the resized window to the size of the screen
+        - Now we take the dock into account when resizing.
+        - Also I found an issue where we would resize to outside the window, because the resize would be smaller than the window size but the location of the window would make the resize go off-screen.  Now we move the window back into the screen.
+
+        * fast/dom/Window/window-resize-expected.txt:
+        * fast/dom/Window/window-resize.html:
+
 2007-10-15  Geoffrey Garen  <ggaren@apple.com>
 
         Changed line ending style of results file to fix layout test that was

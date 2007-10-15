@@ -1,3 +1,15 @@
+2007-10-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - <rdar://problem/5238818> window.resizeTo doesn't restrict the resized window to the size of the screen
+        - Now we take the doc into account when resizing.
+        - Also I found an issue where we would resize to outside the window, because the resize would be smaller than the window size but the location of the window would make the resize go off-screen.  Now we move the window back into the screen.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::adjustWindowRect):
+        (KJS::WindowFunc::callAsFunction):
+
 2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.
