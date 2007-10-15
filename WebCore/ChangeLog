@@ -1,3 +1,27 @@
+2007-10-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15518
+          Remove the unused attemptFontSubstitution feature and do some
+          cleanup of glyphDataForCharacter.
+
+        * platform/Font.h:
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance): Eliminated uneeded attemptFontSubstitution
+        and cluster parameters to the glyphDataForCharacter function.
+        (WebCore::Font::glyphDataForCharacter): Removed the cluster parameter and
+        attemptFontSubstitution parameter. Removed the isUpper check before calling
+        toUpper in the small caps code path. Split up the inner loop into separate
+        copies for non-small-caps and small caps. Broke out the system fallback
+        page handling so it's not inside the loop. Changed system fallback so it uses
+        the character and breaks it up into UTF-16 as needed, instead of using a
+        passed-in "character cluster".
+
+        * platform/TextStyle.h:
+        (WebCore::TextStyle::TextStyle): Removed attemptFontSubstitution.
+        (WebCore::TextStyle::applyWordRounding): Ditto.
+
 2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Ollie.
@@ -14,7 +38,9 @@
 
         - <rdar://problem/5238818> window.resizeTo doesn't restrict the resized window to the size of the screen
         - Now we take the doc into account when resizing.
-        - Also I found an issue where we would resize to outside the window, because the resize would be smaller than the window size but the location of the window would make the resize go off-screen.  Now we move the window back into the screen.
+        - Also I found an issue where we would resize to outside the window, because
+          the resize would be smaller than the window size but the location of the
+          window would make the resize go off-screen. Now we move the window back into the screen.
 
         * bindings/js/kjs_window.cpp:
         (KJS::adjustWindowRect):

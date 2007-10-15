@@ -120,7 +120,6 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
     const UChar* cp = m_run.data(currentCharacter);
 
     bool rtl = m_style.rtl();
-    bool attemptFontSubstitution = m_style.attemptFontSubstitution();
     bool hasExtraSpacing = m_font->letterSpacing() || m_font->wordSpacing() || m_padding;
 
     float runWidthSoFar = m_runWidthSoFar;
@@ -156,7 +155,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             }
         }
 
-        const GlyphData& glyphData = m_font->glyphDataForCharacter(c, cp, clusterLength, rtl, attemptFontSubstitution);
+        const GlyphData& glyphData = m_font->glyphDataForCharacter(c, rtl);
         Glyph glyph = glyphData.glyph;
         const FontData* fontData = glyphData.fontData;
 
@@ -354,16 +353,14 @@ bool Font::operator==(const Font& other) const
 // It is only required for the platform's FontCache::getFontDataForCharacters(), and it means
 // that this function is not correct if it transforms the character to uppercase and calls
 // FontCache::getFontDataForCharacters() afterwards.
-const GlyphData& Font::glyphDataForCharacter(UChar32 c, const UChar* cluster, unsigned clusterLength, bool mirror, bool attemptFontSubstitution) const
+const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror) const
 {
-    bool smallCaps = false;
-
-    if (m_fontDescription.smallCaps() && !Unicode::isUpper(c)) {
-        // Convert lowercase to upper.
+    bool useSmallCapsFont = false;
+    if (m_fontDescription.smallCaps()) {
         UChar32 upperC = Unicode::toUpper(c);
         if (upperC != c) {
             c = upperC;
-            smallCaps = true;
+            useSmallCapsFont = true;
         }
     }
 
@@ -381,85 +378,102 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, const UChar* cluster, un
             m_pageZero = node;
     }
 
-    if (!attemptFontSubstitution && node->level() != 1)
-        node = GlyphPageTreeNode::getRootChild(primaryFont(), pageNumber);
-
-    while (true) {
-        GlyphPage* page = node->page();
-
-        if (page) {
-            const GlyphData& data = page->glyphDataForCharacter(c);
-            if (data.glyph || !attemptFontSubstitution) {
-                if (!smallCaps)
-                    return data;  // We have a glyph for the character in question in the current page (or we've been told not to fall back).
-
-                const FontData* smallCapsFontData = data.fontData->smallCapsFontData(m_fontDescription);
-
-                if (!smallCapsFontData)
-                    // This should not happen, but if it does, we will return a big cap.
+    GlyphPage* page;
+    if (!useSmallCapsFont) {
+        // Fastest loop, for the common case (not small caps).
+        while (true) {
+            page = node->page();
+            if (page) {
+                const GlyphData& data = page->glyphDataForCharacter(c);
+                if (data.glyph)
                     return data;
-
-                GlyphPageTreeNode* smallCapsNode = GlyphPageTreeNode::getRootChild(smallCapsFontData, pageNumber);
-                GlyphPage* smallCapsPage = smallCapsNode->page();
-
-                if (smallCapsPage) {
-                    const GlyphData& data = smallCapsPage->glyphDataForCharacter(c);
-                    if (data.glyph || !attemptFontSubstitution)
-                        return data;
-                }
-                // Not attempting system fallback off the smallCapsFontData. This is the very unlikely case that
-                // a font has the lowercase character but not its uppercase version.
-                return smallCapsFontData->missingGlyphData();
+                if (node->isSystemFallback())
+                    break;
             }
-        } else if (!attemptFontSubstitution) {
-            if (smallCaps) {
-                if (const FontData* smallCapsFontData = primaryFont()->smallCapsFontData(m_fontDescription))
-                    return smallCapsFontData->missingGlyphData();
-            }
-            return primaryFont()->missingGlyphData();
-        }
 
-        if (node->isSystemFallback()) {
-            // System fallback is character-dependent. When we get here, we
-            // know that the character in question isn't in the system fallback
-            // font's glyph page. Try to lazily create it here.
-
-            // Convert characters that shouldn't render to zero width spaces when asking what font is
-            // appropriate.
-            const FontData* characterFontData;
-            if (clusterLength == 1 && Font::treatAsZeroWidthSpace(cluster[0]))
-                characterFontData = FontCache::getFontDataForCharacters(*this, &zeroWidthSpace, 1);
+            // Proceed with the fallback list.
+            node = node->getChild(fontDataAt(node->level()), pageNumber);
+            if (pageNumber)
+                m_pages.set(pageNumber, node);
             else
-                characterFontData = FontCache::getFontDataForCharacters(*this, cluster, clusterLength);
-            if (smallCaps)
-                characterFontData = characterFontData->smallCapsFontData(m_fontDescription);
-            if (characterFontData) {
-                // Got the fallback font, return the glyph page associated with
-                // it. We also store the FontData for the glyph in the fallback
-                // page for future use (it's lazily populated by us).
-                GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData, pageNumber)->page();
-                const GlyphData& data = fallbackPage ? fallbackPage->glyphDataForCharacter(c) : characterFontData->missingGlyphData();
-                if (!smallCaps)
-                    page->setGlyphDataForCharacter(c, data.glyph, characterFontData);
-                return data;
-            }
-            // Even system fallback can fail.
-            // FIXME: Should the last resort font be used?
-            const GlyphData& data = primaryFont()->missingGlyphData();
-            if (!smallCaps && page)
-                page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
-            return data;
+                m_pageZero = node;
         }
+    } else {
+        while (true) {
+            page = node->page();
+            if (page) {
+                const GlyphData& data = page->glyphDataForCharacter(c);
+                if (data.glyph) {
+                    // The smallCapsFontData function should not normally return 0.
+                    // But if it does, we will just render the capital letter big.
+                    const FontData* smallCapsFontData = data.fontData->smallCapsFontData(m_fontDescription);
+                    if (!smallCapsFontData)
+                        return data;
 
-        // Proceed with the fallback list.
-        const FontData* fontData = fontDataAt(node->level());
-        node = node->getChild(fontData, pageNumber);
+                    GlyphPageTreeNode* smallCapsNode = GlyphPageTreeNode::getRootChild(smallCapsFontData, pageNumber);
+                    const GlyphData& data = smallCapsNode->page()->glyphDataForCharacter(c);
+                    if (data.glyph)
+                        return data;
 
-        if (pageNumber)
-            m_pages.set(pageNumber, node);
-        else
-            m_pageZero = node;
+                    // Do not attempt system fallback off the smallCapsFontData. This is the very unlikely case that
+                    // a font has the lowercase character but the small caps font does not have its uppercase version.
+                    return smallCapsFontData->missingGlyphData();
+                }
+
+                if (node->isSystemFallback())
+                    break;
+            }
+
+            // Proceed with the fallback list.
+            node = node->getChild(fontDataAt(node->level()), pageNumber);
+            if (pageNumber)
+                m_pages.set(pageNumber, node);
+            else
+                m_pageZero = node;
+        }
     }
+
+    ASSERT(page);
+    ASSERT(node->isSystemFallback());
+
+    // System fallback is character-dependent. When we get here, we
+    // know that the character in question isn't in the system fallback
+    // font's glyph page. Try to lazily create it here.
+    UChar codeUnits[2];
+    int codeUnitsLength;
+    if (c <= 0xFFFF) {
+        UChar c16 = c;
+        if (Font::treatAsSpace(c16))
+            codeUnits[0] = ' ';
+        else if (Font::treatAsZeroWidthSpace(c16))
+            codeUnits[0] = zeroWidthSpace;
+        else
+            codeUnits[0] = c16;
+        codeUnitsLength = 1;
+    } else {
+        codeUnits[0] = U16_LEAD(c);
+        codeUnits[1] = U16_TRAIL(c);
+        codeUnitsLength = 2;
+    }
+    const FontData* characterFontData = FontCache::getFontDataForCharacters(*this, codeUnits, codeUnitsLength);
+    if (useSmallCapsFont)
+        characterFontData = characterFontData->smallCapsFontData(m_fontDescription);
+    if (characterFontData) {
+        // Got the fallback glyph and font.
+        GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData, pageNumber)->page();
+        const GlyphData& data = fallbackPage ? fallbackPage->glyphDataForCharacter(c) : characterFontData->missingGlyphData();
+        // Cache it so we don't have to do system fallback again next time.
+        if (!useSmallCapsFont)
+            page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+        return data;
+    }
+
+    // Even system fallback can fail; use the missing glyph in that case.
+    // FIXME: It would be nicer to use the missing glyph from the last resort font instead.
+    const GlyphData& data = primaryFont()->missingGlyphData();
+    if (!useSmallCapsFont)
+        page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+    return data;
 }
 
 const FontData* Font::primaryFont() const

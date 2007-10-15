@@ -144,7 +144,7 @@ public:
 #if !PLATFORM(QT)
     const FontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
-    const GlyphData& glyphDataForCharacter(UChar32, const UChar* cluster, unsigned clusterLength, bool mirror, bool attemptFontSubstitution) const;
+    const GlyphData& glyphDataForCharacter(UChar32, bool mirror) const;
     // Used for complex text, and does not utilize the glyph map cache.
     const FontData* fontDataForCharacters(const UChar*, int length) const;
 

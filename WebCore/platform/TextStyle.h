@@ -26,7 +26,7 @@ namespace WebCore {
 class TextStyle {
 public:
     TextStyle(bool allowTabs = false, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
-              bool applyRunRounding = true, bool applyWordRounding = true, bool attemptFontSubstitution = true)
+              bool applyRunRounding = true, bool applyWordRounding = true)
         : m_allowTabs(allowTabs)
         , m_xpos(xpos)
         , m_padding(padding)
@@ -34,7 +34,6 @@ public:
         , m_directionalOverride(directionalOverride)
         , m_applyRunRounding(applyRunRounding)
         , m_applyWordRounding(applyWordRounding)
-        , m_attemptFontSubstitution(attemptFontSubstitution)
     {
     }
 
@@ -46,7 +45,6 @@ public:
     bool directionalOverride() const { return m_directionalOverride; }
     bool applyRunRounding() const { return m_applyRunRounding; }
     bool applyWordRounding() const { return m_applyWordRounding; }
-    bool attemptFontSubstitution() const { return m_attemptFontSubstitution; }
 
     void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
     void setRTL(bool b) { m_rtl = b; }
@@ -60,7 +58,6 @@ private:
     bool m_directionalOverride;
     bool m_applyRunRounding;
     bool m_applyWordRounding;
-    bool m_attemptFontSubstitution;
 };
 
 }
