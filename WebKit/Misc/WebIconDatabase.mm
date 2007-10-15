@@ -460,7 +460,7 @@ static id objectFromPathForKey(NSString *databasePath, id key)
     NSData *data = [[NSData alloc] initWithContentsOfFile:filePath];
     NSUnarchiver *unarchiver = nil;
     
-    NS_DURING
+    @try {
         if (data) {
             unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
             if (unarchiver) {
@@ -476,10 +476,10 @@ static id objectFromPathForKey(NSString *databasePath, id key)
                 }
             }
         }
-    NS_HANDLER
+    } @catch (NSException *localException) {
         LOG(IconDatabase, "cannot unarchive cache file - %@", key);
         result = nil;
-    NS_ENDHANDLER
+    }
 
     [unarchiver release];
     [data release];

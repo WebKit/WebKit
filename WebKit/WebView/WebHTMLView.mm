@@ -2846,7 +2846,7 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
 
     [(WebClipView *)[self superview] setAdditionalClip:rect];
 
-    NS_DURING {
+    @try {
         if ([self _transparentBackground]) {
             [[NSColor clearColor] set];
             NSRectFill (rect);
@@ -2866,12 +2866,12 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
         [(WebClipView *)[self superview] resetAdditionalClip];
 
         [NSGraphicsContext restoreGraphicsState];
-    } NS_HANDLER {
+    } @catch (NSException *localException) {
         [(WebClipView *)[self superview] resetAdditionalClip];
         [NSGraphicsContext restoreGraphicsState];
         LOG_ERROR("Exception caught while drawing: %@", localException);
         [localException raise];
-    } NS_ENDHANDLER
+    }
 }
 
 - (void)drawRect:(NSRect)rect
@@ -3525,18 +3525,18 @@ noPromisedData:
 
 - (void)beginDocument
 {
-    NS_DURING
+    @try {
         // From now on we'll get a chance to call _endPrintMode in either beginDocument or
         // endDocument, so we can cancel the "just in case" pending call.
         [NSObject cancelPreviousPerformRequestsWithTarget:self
                                                  selector:@selector(_delayedEndPrintMode:)
                                                    object:[NSPrintOperation currentOperation]];
         [super beginDocument];
-    NS_HANDLER
+    } @catch (NSException *localException) {
         // Exception during [super beginDocument] means that endDocument will not get called,
         // so we need to clean up our "print mode" here.
         [self _endPrintMode];
-    NS_ENDHANDLER
+    }
 }
 
 - (void)endDocument
@@ -4639,11 +4639,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     } else {
         DOMRange *selection = [self _selectedRange];
         DOMRange *r;
-        NS_DURING
+        @try {
             r = unionDOMRanges(mark, selection);
-        NS_HANDLER
+        } @catch (NSException *localException) {
             r = selection;
-        NS_ENDHANDLER
+        }
         Frame* coreFrame = core([self _frame]);
         if (coreFrame)
             coreFrame->editor()->deleteRange([r _range], true, true, false, deleteSelectionAction, CharacterGranularity);

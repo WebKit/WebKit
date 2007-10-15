@@ -1850,62 +1850,58 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 {
     WebView *result = nil;
 
-NS_DURING
+    @try {
+        NSString *frameName;
+        NSString *groupName;
+        WebPreferences *preferences;
+        BOOL useBackForwardList = NO;
+        BOOL allowsUndo = YES;
+        
+        result = [super initWithCoder:decoder];
+        result->_private = [[WebViewPrivate alloc] init];
 
-    NSString *frameName;
-    NSString *groupName;
-    WebPreferences *preferences;
-    BOOL useBackForwardList = NO;
-    BOOL allowsUndo = YES;
-    
-    result = [super initWithCoder:decoder];
-    result->_private = [[WebViewPrivate alloc] init];
+        // We don't want any of the archived subviews. The subviews will always
+        // be created in _commonInitializationFrameName:groupName:.
+        [[result subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
-    // We don't want any of the archived subviews. The subviews will always
-    // be created in _commonInitializationFrameName:groupName:.
-    [[result subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        if ([decoder allowsKeyedCoding]) {
+            frameName = [decoder decodeObjectForKey:@"FrameName"];
+            groupName = [decoder decodeObjectForKey:@"GroupName"];
+            preferences = [decoder decodeObjectForKey:@"Preferences"];
+            useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
+            if ([decoder containsValueForKey:@"AllowsUndo"])
+                allowsUndo = [decoder decodeBoolForKey:@"AllowsUndo"];
+        } else {
+            int version;
+            [decoder decodeValueOfObjCType:@encode(int) at:&version];
+            frameName = [decoder decodeObject];
+            groupName = [decoder decodeObject];
+            preferences = [decoder decodeObject];
+            if (version > 1)
+                [decoder decodeValuesOfObjCTypes:"c", &useBackForwardList];
+            // The allowsUndo field is no longer written out in encodeWithCoder, but since there are
+            // version 3 NIBs that have this field encoded, we still need to read it in.
+            if (version == 3)
+                [decoder decodeValuesOfObjCTypes:"c", &allowsUndo];
+        }
 
-    if ([decoder allowsKeyedCoding]) {
-        frameName = [decoder decodeObjectForKey:@"FrameName"];
-        groupName = [decoder decodeObjectForKey:@"GroupName"];
-        preferences = [decoder decodeObjectForKey:@"Preferences"];
-        useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
-        if ([decoder containsValueForKey:@"AllowsUndo"])
-            allowsUndo = [decoder decodeBoolForKey:@"AllowsUndo"];
-    } else {
-        int version;
-        [decoder decodeValueOfObjCType:@encode(int) at:&version];
-        frameName = [decoder decodeObject];
-        groupName = [decoder decodeObject];
-        preferences = [decoder decodeObject];
-        if (version > 1)
-            [decoder decodeValuesOfObjCTypes:"c", &useBackForwardList];
-        // The allowsUndo field is no longer written out in encodeWithCoder, but since there are
-        // version 3 NIBs that have this field encoded, we still need to read it in.
-        if (version == 3)
-            [decoder decodeValuesOfObjCTypes:"c", &allowsUndo];
+        if (![frameName isKindOfClass:[NSString class]])
+            frameName = nil;
+        if (![groupName isKindOfClass:[NSString class]])
+            groupName = nil;
+        if (![preferences isKindOfClass:[WebPreferences class]])
+            preferences = nil;
+
+        LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
+        [result _commonInitializationWithFrameName:frameName groupName:groupName];
+        [result page]->backForwardList()->setEnabled(useBackForwardList);
+        result->_private->allowsUndo = allowsUndo;
+        if (preferences)
+            [result setPreferences:preferences];
+    } @catch (NSException *localException) {
+        result = nil;
+        [self release];
     }
-
-    if (![frameName isKindOfClass:[NSString class]])
-        frameName = nil;
-    if (![groupName isKindOfClass:[NSString class]])
-        groupName = nil;
-    if (![preferences isKindOfClass:[WebPreferences class]])
-        preferences = nil;
-
-    LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
-    [result _commonInitializationWithFrameName:frameName groupName:groupName];
-    [result page]->backForwardList()->setEnabled(useBackForwardList);
-    result->_private->allowsUndo = allowsUndo;
-    if (preferences)
-        [result setPreferences:preferences];
-
-NS_HANDLER
-
-    result = nil;
-    [self release];
-
-NS_ENDHANDLER
 
     return result;
 }

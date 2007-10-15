@@ -1,1 +1,22 @@
+2007-10-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Geoff Garen
+        
+        Replaced NS_DURING/NS_HANDLER with @try/@catch throughout WebKit
+
+        I made the following changes:
+        - replaced NS_DURING with @try, and added opening brace if there wasn't one
+        - replaced NS_HANDLER with @catch (NSException *localException), and added braces if there weren't any
+        - removed NS_ENDHANDLER, and added a closing brace if there wasn't one
+        - in a couple of places, fixed indentation therein
+
+        * Misc/WebIconDatabase.mm:
+        (objectFromPathForKey):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawSingleRect:]):
+        (-[WebHTMLView beginDocument]):
+        (-[WebHTMLView deleteToMark:]):
+        * WebView/WebView.mm:
+        (-[WebView initWithCoder:]):
+
 == Rolled over to ChangeLog-2007-10-14 ==
