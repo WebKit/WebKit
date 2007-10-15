@@ -1,5 +1,10 @@
 2007-10-15  John Sullivan  <sullivan@apple.com>
 
+        * platform/mac/FontDataMac.mm:
+        D'oh! Added missing #import to fix build
+
+2007-10-15  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Geoff
 
         * platform/mac/FontDataMac.mm:

@@ -30,6 +30,7 @@
 #import "config.h"
 #import "FontData.h"
 
+#import "BlockExceptions.h"
 #import "Color.h"
 #import "FloatRect.h"
 #import "Font.h"
