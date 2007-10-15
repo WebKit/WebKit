@@ -809,7 +809,11 @@ qt-port {
     platform/qt/DragImageQt.cpp \
     platform/qt/FileChooserQt.cpp \
     platform/qt/FileSystemQt.cpp \
+    platform/qt/FontCacheQt.cpp \
+    platform/qt/FontCustomPlatformData.cpp \
+    platform/qt/FontDataQt.cpp \
     platform/qt/FontQt.cpp \
+    platform/qt/GlyphPageTreeNodeQt.cpp \
     platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \

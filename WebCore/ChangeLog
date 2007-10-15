@@ -2,6 +2,22 @@
 
         Reviewed by Lars.
 
+        Fix the compilation of the Font code in the Qt port by adding the necessary stubs to support downloadable fonts through the @font-face rules.
+
+        * WebCore.pro:
+        * loader/CachedFont.cpp:
+        * platform/qt/FontCacheQt.cpp: Removed.
+        * platform/qt/FontCustomPlatformData.cpp: Removed.
+        * platform/qt/FontCustomPlatformData.h: Removed.
+        * platform/qt/FontDataQt.cpp: Removed.
+        * platform/qt/FontPlatformData.h: Removed.
+        * platform/qt/FontQt.cpp:
+        * platform/qt/GlyphPageTreeNodeQt.cpp: Removed.
+
+2007-10-15  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Adapt to the latest API changes in the SVG API/Code.
 
         * platform/graphics/svg/qt/RenderPathQt.cpp:

@@ -141,7 +141,17 @@ Font& Font::operator=(const Font& other)
     return *this;
 }
 
-void Font::update() const
+bool Font::operator==(const Font& other) const
+{
+    return m_fontDescription == other.m_fontDescription
+        && m_letterSpacing == other.m_letterSpacing
+        && m_wordSpacing == other.m_wordSpacing
+        && m_font == other.m_font
+        && m_scFont == other.m_scFont
+        && m_spaceWidth == other.m_spaceWidth;
+}
+
+void Font::update(PassRefPtr<FontSelector>) const
 {
     // don't think we need this
 }
@@ -457,6 +467,11 @@ int Font::lineSpacing() const
 float Font::xHeight() const
 {
     return QFontMetrics(m_font).xHeight();
+}
+
+unsigned Font::unitsPerEm() const
+{
+    return 1; // FIXME!
 }
 
 int Font::spaceWidth() const
