@@ -124,13 +124,13 @@ public:
     virtual HRESULT STDMETHODCALLTYPE runJavaScriptConfirmPanelWithMessage( 
         /* [in] */ IWebView *sender,
         /* [in] */ BSTR message,
-        /* [retval][out] */ BOOL *result) { return E_NOTIMPL; }
+        /* [retval][out] */ BOOL *result);
 
     virtual HRESULT STDMETHODCALLTYPE runJavaScriptTextInputPanelWithPrompt( 
         /* [in] */ IWebView *sender,
         /* [in] */ BSTR message,
         /* [in] */ BSTR defaultText,
-        /* [retval][out] */ BSTR *result) { return E_NOTIMPL; }
+        /* [retval][out] */ BSTR *result);
 
     virtual HRESULT STDMETHODCALLTYPE runBeforeUnloadConfirmPanelWithMessage( 
         /* [in] */ IWebView *sender,

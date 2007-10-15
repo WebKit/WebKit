@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,12 +56,12 @@ HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObje
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE UIDelegate::AddRef(void)
+ULONG STDMETHODCALLTYPE UIDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE UIDelegate::Release(void)
+ULONG STDMETHODCALLTYPE UIDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -98,7 +98,30 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptAlertPanelWithMessage(
         /* [in] */ IWebView* /*sender*/,
         /* [in] */ BSTR message)
 {
-    wprintf(L"ALERT: %s\n", message ? message : L"");
+    wprintf(L"ALERT: %s\n", message);
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptConfirmPanelWithMessage( 
+    /* [in] */ IWebView* sender,
+    /* [in] */ BSTR message,
+    /* [retval][out] */ BOOL* result)
+{
+    wprintf(L"CONFIRM: %s\n", message);
+    *result = TRUE;
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptTextInputPanelWithPrompt( 
+    /* [in] */ IWebView *sender,
+    /* [in] */ BSTR message,
+    /* [in] */ BSTR defaultText,
+    /* [retval][out] */ BSTR *result)
+{
+    wprintf(L"PROMPT: %s, default text: %s\n", message, defaultText);
+    *result = SysAllocString(defaultText);
 
     return S_OK;
 }
@@ -110,7 +133,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewAddMessageToConsole(
     /* [in] */ BSTR url,
     /* [in] */ BOOL isError)
 {
-    wprintf(L"CONSOLE MESSAGE: line %d: %s\n", lineNumber, message ? message : L"");
+    wprintf(L"CONSOLE MESSAGE: line %d: %s\n", lineNumber, message);
 
     return S_OK;
 }

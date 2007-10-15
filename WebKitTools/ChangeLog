@@ -1,3 +1,24 @@
+2007-10-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - added logging of window.prompt and window.confirm
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]):
+        Implement the recommended delegate rather than the deprecated one.
+        (-[UIDelegate webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:]):
+        Added.
+        (-[UIDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:]):
+        Added.
+
+        * DumpRenderTree/win/UIDelegate.h:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::runJavaScriptAlertPanelWithMessage): Got rid of unnecessary check for null string.
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage): Added.
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt): Added.
+        (UIDelegate::webViewAddMessageToConsole): Got rid of unnecessary check for null string.
+
 2007-10-15  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.
