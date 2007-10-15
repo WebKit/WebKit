@@ -1,3 +1,13 @@
+2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Ollie.
+
+        Remove an operator precedence warning on Windows
+
+        * editing/markup.cpp:
+        (WebCore::escapeContentText): Use (a) | (b)
+        (WebCore::appendEscapedContent): Use (a) | (b)
+
 2007-10-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
