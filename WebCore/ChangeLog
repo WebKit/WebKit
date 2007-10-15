@@ -1,3 +1,12 @@
+2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Maciej.
+
+        Add a missing function pointer to the m_browserFuncs structure
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackageWin::load):
+
 2007-10-15  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

@@ -213,6 +213,7 @@ bool PluginPackageWin::load()
     if (npErr != NPERR_NO_ERROR)
         goto abort;
 
+    memset(&m_browserFuncs, 0, sizeof(m_browserFuncs));
     m_browserFuncs.size = sizeof (m_browserFuncs);
     m_browserFuncs.version = NP_VERSION_MINOR;
     m_browserFuncs.geturl = NPN_GetURL;
@@ -245,6 +246,7 @@ bool PluginPackageWin::load()
     m_browserFuncs.getintidentifier = _NPN_GetIntIdentifier;
     m_browserFuncs.identifierisstring = _NPN_IdentifierIsString;
     m_browserFuncs.utf8fromidentifier = _NPN_UTF8FromIdentifier;
+    m_browserFuncs.intfromidentifier = _NPN_IntFromIdentifier;
     m_browserFuncs.createobject = _NPN_CreateObject;
     m_browserFuncs.retainobject = _NPN_RetainObject;
     m_browserFuncs.releaseobject = _NPN_ReleaseObject;
