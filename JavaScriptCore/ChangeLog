@@ -1,3 +1,11 @@
+2007-10-15  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Fix compilation with gcc 4.3 by including 'limits' due to the use of std::numeric_limits.
+
+        * wtf/HashTraits.h:
+
 2007-10-5  Kevin Ollivier  <kevino@theolliviers.com>
  
         Reviewed by Adam.

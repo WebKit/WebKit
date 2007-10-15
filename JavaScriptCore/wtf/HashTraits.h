@@ -25,6 +25,7 @@
 
 #include "HashFunctions.h"
 #include <utility>
+#include <limits>
 
 namespace WTF {
 
