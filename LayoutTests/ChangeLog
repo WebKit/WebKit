@@ -1,3 +1,21 @@
+2007-10-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - <rdar://problem/5536630> fast/dom/Window/new-window-opener.html fails
+        - This test used to pass because of a mistake in js-test-pre.js.
+        Now that the js file has been fixed this test has been updated, some
+        of the test cases fail because DRT does not implement delegate methods
+        for the bars for each WebView.
+        - See <rdar://problem/5538752> DumpRenderTree does not have a UIDelegate for each WebView.
+
+        - Also changed the test to correctly wait for the window to close before
+        starting a new testcase.  This is necessary because all the windows have
+        the same name and cannot override the settings of a pre-existing window.
+
+        * fast/dom/Window/new-window-opener-expected.txt:
+        * fast/dom/Window/new-window-opener.html:
+
 2007-10-15  Oliver Hunt  <oliver@apple.com>
 
         RS=Maciej.

@@ -16,95 +16,116 @@
             layoutTestController.dumpAsText();
             layoutTestController.waitUntilDone();
             layoutTestController.setCanOpenWindows();
-//            layoutTestController.setCloseRemainingWindowsWhenComplete();
         }
 
     
         description(
-            'This tests that the different arguments given to a new window are honored.'
+            'This tests that the different arguments given to a new window are honored.<br/>\
+            Take note that menubar is special and always on in Mac but not in Win.'
         );
 
+        var args = [ "scrollbars=yes,width=75,height=100"
+                   , "scrollbars=no,width=75,height=100"
+                   , "scrollbars=1,width=75,height=100"
+                   , "scrollbars=0,width=75,height=100"
+                   , "toolbar=yes,width=75,height=100"
+                   , "toolbar=no,width=75,height=100"
+                   , "toolbar=1,width=75,height=100"
+                   , "toolbar=0,width=75,height=100"
+                   , "status=yes,width=75,height=100"
+                   , "status=no,width=75,height=100"
+                   , "status=1,width=75,height=100"
+                   , "status=0,width=75,height=100"
+                   , "menubar=yes,width=75,height=100"
+                   , "menubar=no,width=75,height=100"
+                   , "menubar=1,width=75,height=100"
+                   , "menubar=0,width=75,height=100"
+                   , "location=yes,width=75,height=100"
+                   , "location=no,width=75,height=100"
+                   , "location=1,width=75,height=100"
+                   , "location=0,width=75,height=100"
+                   ];
+
+        var actual = [ "newWin.scrollbars.visible", "newWin.scrollbars.visible", "newWin.scrollbars.visible", "newWin.scrollbars.visible"
+                     , "newWin.toolbar.visible", "newWin.toolbar.visible", "newWin.toolbar.visible", "newWin.toolbar.visible"
+                     , "newWin.statusbar.visible", "newWin.statusbar.visible", "newWin.statusbar.visible", "newWin.statusbar.visible"
+                     , "newWin.menubar.visible", "newWin.menubar.visible", "newWin.menubar.visible", "newWin.menubar.visible"
+                     , "newWin.locationbar.visible", "newWin.locationbar.visible", "newWin.locationbar.visible", "newWin.locationbar.visible"
+                     ];
+
+        var expected = [ "true", "false", "true", "false"
+                       , "true", "false", "true", "false"
+                       , "true", "false", "true", "false"
+                       , "true", "isMenubarAlwaysExpected", "true", "isMenubarAlwaysExpected"
+                       , "true", "false", "true", "false"
+                       ];
+
+        // Since Mac always shows the menu bar we need to special case it, but in
+        // a way that does not require platform specific results.
+        var isMacOSX = navigator.userAgent.indexOf("Mac OS X");
+        var isMenubarAlwaysExpected;
+        if (isMacOSX != -1)
+            isMenubarAlwaysExpected = true;
+        else
+            isMenubarAlwaysExpected = false;
+
+        var testNum = 0;
+        var lastTest = args.length;
         var newWin;
-        debug("Scrollbars");
 
-        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=no,width=75,height=100" );
-        shouldBeFalse("newWin.scrollbars.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=yes,width=75,height=100" );
-        shouldBeTrue("newWin.scrollbars.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=0,width=75,height=100" );
-        shouldBeFalse("newWin.scrollbars.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=1,width=75,height=100" );
-        shouldBeTrue("newWin.scrollbars.visible");
-
-        debug("");
-        debug("Toolbars");
-        newWin = window.open("../resources/abe.png", "testWindow", "toolbar=no,width=75,height=100" );
-        shouldBeFalse("newWin.toolbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "toolbar=yes,width=75,height=100" );
-        shouldBeTrue("newWin.toolbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "toolbar=0,width=75,height=100" );
-        shouldBeFalse("newWin.toolbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "toolbar=1,width=75,height=100" );
-        shouldBeTrue("newWin.toolbar.visible");
-
-        debug("");
-        debug("Statusbar");
-        newWin = window.open("../resources/abe.png", "testWindow", "statusbar=no,width=75,height=100" );
-        shouldBeFalse("newWin.statusbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "statusbar=yes,width=75,height=100" );
-        shouldBeTrue("newWin.statusbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "statusbar=0,width=75,height=100" );
-        shouldBeFalse("newWin.statusbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "statusbar=1,width=75,height=100" );
-        shouldBeTrue("newWin.statusbar.visible");
-
-        debug("");
-        debug("Menubar");
-        newWin = window.open("../resources/abe.png", "testWindow", "menubar=no,width=75,height=100" );
-        shouldBeFalse("newWin.menubar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "menubar=yes,width=75,height=100" );
-        shouldBeTrue("newWin.menubar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "menubar=0,width=75,height=100" );
-        shouldBeFalse("newWin.menubar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "menubar=1,width=75,height=100" );
-        shouldBeTrue("newWin.menubar.visible");
-
-        debug("");
-        debug("Locationbar");
-        newWin = window.open("../resources/abe.png", "testWindow", "locationbar=no,width=75,height=100" );
-        shouldBeFalse("newWin.locationbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "locationbar=yes,width=75,height=100" );
-        shouldBeTrue("newWin.locationbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "locationbar=0,width=75,height=100" );
-        shouldBeFalse("newWin.locationbar.visible");
-        newWin = window.open("../resources/abe.png", "testWindow", "locationbar=1,width=75,height=100" );
-        shouldBeTrue("newWin.locationbar.visible");
-
-        debug("");
-        debug("All together now!");
-        newWin = window.open("../resources/abe.png", "testWindow", "scrollbars=yes, toolbar=yes, statusbar=yes, menubar=yes, locationbar=yes, width=75,height=100" );
-        shouldBeTrue("newWin.scrollbars.visible");
-        shouldBeTrue("newWin.toolbar.visible");
-        shouldBeTrue("newWin.statusbar.visible");
-        shouldBeTrue("newWin.menubar.visible");
-        shouldBeTrue("newWin.locationbar.visible");
-
-        newWin.close();
-
-        setTimeout(doneHandler, 1);
-        function doneHandler() {
-            if (newWin.closed) {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+        nextTest();
+        function nextTest() {
+            if (testNum == lastTest) {
+                finished();
                 return;
+            } else if (testNum == 0) {
+                debug("");
+                debug("Scrollbar");
+            } else if (testNum == 4) {
+                debug("");
+                debug("Toolbar");
+            } else if (testNum == 8) {
+                debug("");
+                debug("Statusbar");
+            } else if (testNum == 12) {
+                debug("");
+                debug("Menubar");
+            } else if (testNum == 16) {
+                debug("");
+                debug("Locationbar");
             }
 
+            //get the next test and run it.
+            newWin = window.open("../resources/abe.png", "testWindow", args[testNum] );
+            shouldBe(actual[testNum], expected[testNum]);
+            ++testNum;
+            closeAndRunNextTest(newWin);
+        }
+
+        function closeAndRunNextTest(winToClose) {
+            winToClose.close();
             setTimeout(doneHandler, 1);
+
+            function doneHandler() {
+                if (winToClose.closed) {
+                    setTimeout(nextTest, 1);
+                    return;
+                }
+                setTimeout(doneHandler, 1);
+            }    
+        }
+
+        function finished() {
+            shouldBeTrue("window.successfullyParsed");
+            debug('<br><span class="pass">TEST COMPLETE</span>');
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         }
 
         successfullyParsed = true;
 
     </script>
-    <script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>
+
