@@ -1,3 +1,12 @@
+2007-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Committed revision 26618.
+
+        Made function parameters DontDelete.
+
+        * fast/js/delete-function-parameter-expected.txt: Added.
+        * fast/js/delete-function-parameter.html: Added.
+
 2007-10-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

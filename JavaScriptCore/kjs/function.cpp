@@ -166,7 +166,7 @@ inline void FunctionImp::passInParameters(ExecState* exec, const List& args)
       fprintf(stderr, "setting parameter %s ", parameters.at(i).name.ascii());
       printInfo(exec, "to", args[i]);
 #endif
-      variable->put(exec, parameters[i].name, args[i]);
+      variable->put(exec, parameters[i].name, args[i], DontDelete);
     }
 }
 
