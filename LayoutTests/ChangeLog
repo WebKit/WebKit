@@ -1,3 +1,13 @@
+2007-10-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=15252
+        <rdar://problem/5498184> REGRESSION: <select multiple> doesn't scroll to top when old options are removed and new ones are added, leaving listbox empty-looking
+
+        * fast/forms/listbox-scroll-after-options-removed-expected.txt: Added.
+        * fast/forms/listbox-scroll-after-options-removed.html: Added.
+
 2007-10-15  Alice Liu  <alice.liu@apple.com>
 
         removing fixed test

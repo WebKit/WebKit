@@ -1,3 +1,13 @@
+2007-10-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15252
+        <rdar://problem/5498184> REGRESSION: <select multiple> doesn't scroll to top when old options are removed and new ones are added, leaving listbox empty-looking
+
+        * rendering/RenderListBox.cpp: (WebCore::RenderListBox::calcHeight): If the scrollbar is disabled, make sure the scroll offset gets reset to 0.  In general,
+          we don't want to unnecessarily adjust the scroll offset, but in this case, there won't be an obvious way for the user to adjust the scroller position once it's disabled.
+
 2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Maciej.
