@@ -1,3 +1,17 @@
+2007-10-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam.
+
+        Fix 'run-webkit-tests --qt' complaining about the --qt argument.
+
+        * Scripts/webkitdirs.pm:
+        - Change checkArgv to remove the options from @ARGV to prevent
+        them from interfering with further option processing.
+        - Fix logic error in determineIsQt that would prevent it from bailing out early.
+        - Change isOSX to mean OS X and not Qt or Gtk.  Most of our uses of isOSX assume that this is the meaning
+        already, so this change fixes several broken areas of the scripts including 'run-webkit-tests --qt' on a Mac
+        incorrectly using the Mac results, and 'run-webkit-tests --gtk' attempting to build the Mac DumpRenderTree.
+
 2007-10-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

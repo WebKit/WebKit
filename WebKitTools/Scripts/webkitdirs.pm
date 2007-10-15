@@ -348,7 +348,7 @@ sub checkFrameworks
 {
     return if isCygwin();
     my @frameworks = ("JavaScriptCore", "WebCore");
-    push(@frameworks, "WebKit") if isOSX() and not isGtk() and not isQt();
+    push(@frameworks, "WebKit") if isOSX();
     for my $framework (@frameworks) {
         my $path = builtDylibPathForName($framework);
         die "Can't find built framework at \"$path\".\n" unless -x $path;
@@ -413,6 +413,7 @@ sub checkArgv($)
     my $argToCheck = shift;
     foreach my $opt (@ARGV) {
         if ($opt =~ /^$argToCheck/i ) {
+            @ARGV = grep(!/^$argToCheck/i, @ARGV);
             return 1;
         }
     }
@@ -425,7 +426,8 @@ sub determineIsQt()
 
     # Allow override in case QTDIR is not set.
     if (checkArgv("--qt")) {
-        return 1;
+        $isQt = 1;
+        return;
     }
 
     # The presence of QTDIR only means Qt if --gtk is not on the command-line
@@ -448,7 +450,7 @@ sub determineIsGtk()
     return if defined($isGtk);
 
     if (checkArgv("--gtk")) {
-        $isGtk= 1;
+        $isGtk = 1;
     } else {
         $isGtk = 0;
     }
@@ -461,7 +463,8 @@ sub isCygwin()
 
 sub isOSX()
 {
-    return ($^O eq "darwin");
+    return ($^O eq "darwin") unless (isQt() or isGtk());
+    return 0;
 }
 
 sub determineOSXVersion()
