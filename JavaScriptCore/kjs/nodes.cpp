@@ -2107,9 +2107,8 @@ Completion ReturnNode::execute(ExecState *exec)
   KJS_BREAKPOINT;
 
   CodeType codeType = exec->context()->codeType();
-  if (codeType != FunctionCode && codeType != AnonymousCode ) {
+  if (codeType != FunctionCode)
     return createErrorCompletion(exec, SyntaxError, "Invalid return statement.");
-  }
 
   if (!value)
     return Completion(ReturnValue, jsUndefined());

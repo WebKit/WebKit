@@ -2,6 +2,22 @@
 
         Reviewed by Darin Adler.
         
+        Removed the concept of AnonymousCode. It was unused, and it doesn't
+        exist in the ECMA spec.
+        
+        [ Patch broken off from http://bugs.webkit.org/show_bug.cgi?id=14868 ]
+
+        * kjs/Context.cpp:
+        (KJS::Context::Context):
+        * kjs/function.h:
+        (KJS::):
+        * kjs/nodes.cpp:
+        (ReturnNode::execute):
+
+2007-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
         Made function parameters DontDelete. This matches FF and the vague
         description in ECMA 10.1.3. It's also required in order to make
         symbol table based lookup of function parameters valid. (If the 
