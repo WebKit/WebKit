@@ -4,7 +4,7 @@
 <script>
 function log(s)
 {
-    document.getElementById("console").appendChild(document.createTextNode(s + "\r\n"));
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
 }
 
 function shouldBe(evalA, a, b)
@@ -27,7 +27,7 @@ shouldBe(typeof f.f1, "typeof f.f1", "undefined");
 function f(x)
 {
     function f1() {
-        log("\r\nIn call to f:");
+        log("\nIn call to f:");
         log("-----");
         shouldBe(typeof f, "typeof f", "function");
         shouldBe(typeof f1, "typeof f1", "function");
@@ -40,7 +40,7 @@ function f(x)
 }
 f.y = 1;
 
-log("\r\nAfter parsing f, but before calling f:");
+log("\nAfter parsing f, but before calling f:");
 log("-----");
 shouldBe(typeof f, "typeof f", "function");
 shouldBe(typeof f.f1, "typeof f.f1", "undefined");

@@ -1,3 +1,13 @@
+2007-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed layout test for reals. Changed \r\n to \n, fixing mass confusion.
+
+        * fast/js/do-while-expression-value-expected.txt:
+        * fast/js/do-while-expression-value.html:
+        * fast/js/nested-function-scope.html:
+        * fast/js/while-expression-value-expected.txt:
+        * fast/js/while-expression-value.html:
+
 2007-10-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
