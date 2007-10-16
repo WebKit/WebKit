@@ -1,3 +1,15 @@
+2007-10-16  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15296
+          REGRESSION (r19716-r19719): width not specified for <marquee> tag is causing the alignment issue.
+
+        Test: fast/block/float/marquee-shrink-to-avoid-floats.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shrinkToAvoidFloats): Changed to return 'true' for <marquee>s with auto width.
+
 2007-10-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
