@@ -1,3 +1,12 @@
+2007-10-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        * Scripts/run-webkit-tests: Added --add-platform-exceptions; useful when you
+        want to turn failing tests into platform-specific test results. Also did a
+        number of tweaks, including fixing a potential bug where expectedDirectoryForTest
+        would take the type of results into account only some of the time.
+
 2007-10-16  Adam Roben  <aroben@apple.com>
 
         Updated for rename of WebKit_debug.dll to WebKit.dll for the Debug configuration

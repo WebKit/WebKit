@@ -89,7 +89,7 @@ sub recordActualResultsAndDiff($$);
 sub buildPlatformHierarchy();
 
 # Argument handling
-my $shouldCheckLeaks = '';
+my $addPlatformExceptions = 0;
 my $configuration = configuration();
 my $guardMalloc = '';
 my $httpdPort = 8000;
@@ -103,6 +103,7 @@ my $repaintSweepHorizontally = '';
 my $repaintTests = '';
 my $report10Slowest = 0;
 my $resetResults = 0;
+my $shouldCheckLeaks = 0;
 my $showHelp = 0;
 my $testsPerDumpTool = 1000;
 my $testHTTP = 1;
@@ -154,8 +155,10 @@ my $programName = basename($0);
 my $launchSafariDefault = $launchSafari ? "launch" : "do not launch";
 my $httpDefault = $testHTTP ? "run" : "do not run";
 
+# FIXME: "--strict" should be renamed to qt-mac-comparison, or something along those lines.
 my $usage = <<EOF;
 Usage: $programName [options] [testdir|testpath ...]
+  --add-platform-exceptions       Put new results for non-platform-specific failing tests into the platform-specific results directory
   -c|--configuration config       Set DumpRenderTree build configuration
   -g|--guard-malloc               Enable malloc guard
   --help                          Show this help message
@@ -217,6 +220,7 @@ my $getOptionsResult = GetOptions(
     'strict' => \$strictTesting,
     'strip-editing-callbacks!' => \$stripEditingCallbacks,
     'root=s' => \$root,
+    'add-platform-exceptions' => \$addPlatformExceptions,
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -463,6 +467,8 @@ $SIG{"PIPE"} = "catch_pipe";
 print "Testing ", scalar @tests, " test cases.\n";
 my $overallStartTime = time;
 
+my %expectedResultDirectory;
+
 for my $test (@tests) {
     next if $test eq 'results.html';
 
@@ -511,8 +517,7 @@ for my $test (@tests) {
             my $testPath = "$testDirectory/$test";
             if (isCygwin()) {
                 $testPath = toWindowsPath($testPath);
-            }
-            else {
+            } else {
                 $testPath = canonpath($testPath);
             }
             print OUT "$testPath\n";
@@ -525,13 +530,14 @@ for my $test (@tests) {
         $actual .= $_;
     }
     $actual =~ s/\r//g if isCygwin();
-    
+
     my $isText = isTextOnlyTest($actual);
 
     $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
     my $expectedDir = expectedDirectoryForTest($base, $isText);
+    $expectedResultDirectory{$base} = $expectedDir;
 
     if (!$resetResults && open EXPECTED, "<", "$expectedDir/$base-$expectedTag.txt") {
         $expected = "";
@@ -605,7 +611,7 @@ for my $test (@tests) {
         }
 
         if ($actualPNGSize && ($resetResults || !-f "$expectedDir/$base-$expectedTag.png")) {
-            mkpath(catfile($expectedDir, dirname($base))) if $testDirectory ne $expectedDir;
+            mkpath catfile($expectedDir, dirname($base)) if $testDirectory ne $expectedDir;
             open EXPECTED, ">", "$expectedDir/$base-expected.png" or die "could not create $expectedDir/$base-expected.png\n";
             print EXPECTED $actualPNG;
             close EXPECTED;
@@ -700,9 +706,7 @@ for my $test (@tests) {
         $result = "new";
 
         if ($generateNewResults || $resetResults) {
-            # Create the path if needed
-            mkpath(catfile($expectedDir, dirname($base))) if $testDirectory ne $expectedDir;
-
+            mkpath catfile($expectedDir, dirname($base)) if $testDirectory ne $expectedDir;
             open EXPECTED, ">", "$expectedDir/$base-$expectedTag.txt" or die "could not create $expectedDir/$base-$expectedTag.txt\n";
             print EXPECTED $actual;
             close EXPECTED;
@@ -729,7 +733,24 @@ for my $test (@tests) {
     } else {
         $result = "mismatch";
 
-        printFailureMessageForTest($test, $actual eq $expected ? "pixel test failed" : "failed");
+        my $message = $actual eq $expected ? "pixel test failed" : "failed";
+
+        if ($actual ne $expected && $addPlatformExceptions) {
+            my $testBase = catfile($testDirectory, $base);
+            my $expectedBase = catfile($expectedDir, $base);
+            my $testIsMaximallyPlatformSpecific = $testBase =~ m|^\Q$platformTestDirectory\E/|;
+            my $expectedResultIsMaximallyPlatformSpecific = $expectedBase =~ m|^\Q$platformTestDirectory\E/|;
+            if (!$testIsMaximallyPlatformSpecific && !$expectedResultIsMaximallyPlatformSpecific) {
+                mkpath catfile($platformTestDirectory, dirname($base));
+                my $expectedFile = catfile($platformTestDirectory, "$base-$expectedTag.txt");
+                open EXPECTED, ">", $expectedFile or die "could not create $expectedFile\n";
+                print EXPECTED $actual;
+                close EXPECTED;
+                $message .= " (results generated in $platformTestDirectory)";
+            }
+        }
+
+        printFailureMessageForTest($test, $message);
 
         my $dir = "$testResultsDirectory/$base";
         $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
@@ -926,7 +947,7 @@ if ($counts{crash}) {
     print HTML "<table>\n";
     for my $test (@{$tests{crash}}) {
         my $base = stripExtension($test);
-        my $expectedDir = expectedDirectoryForTest($base);
+        my $expectedDir = $expectedResultDirectory{$base};
         print HTML "<tr>\n";
         print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
         print HTML htmlForExpectedAndActualResults($base);
@@ -941,7 +962,7 @@ if ($counts{new}) {
     print HTML "<table>\n";
     for my $test (@{$tests{new}}) {
         my $base = stripExtension($test);
-        my $expectedDir = expectedDirectoryForTest($base);
+        my $expectedDir = $expectedResultDirectory{$base};
         print HTML "<tr>\n";
         print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
         print HTML "<td><a href=\"" . toURL("$expectedDir/$base-$expectedTag.txt") . "\">results</a></td>\n";
@@ -957,7 +978,7 @@ print HTML "</body>\n";
 print HTML "</html>\n";
 close HTML;
 
-if(isQt()) {
+if (isQt()) {
   system "konqueror", $testResults if $launchSafari;
 } elsif (isCygwin()) {
   system "cygstart", $testResults if $launchSafari;
@@ -977,34 +998,33 @@ sub countAndPrintLeaks($$$)
     $atLineStart = 1;
 
     # We are excluding the following reported leaks so they don't get in our way when looking for WebKit leaks:
+    # This allows us ignore known leaks and only be alerted when new leaks occur. Some leaks are in the old
+    # versions of the system frameworks that are being used by the leaks bots. Even though a leak has been
+    # fixed, it will be listed here until the bot has been updated with the newer frameworks.
 
     my @typesToExclude = (
     );
 
-    # callStacksToExclude is a list of strings that if are ever seen in a leaks call stack are ignored by this
-    # script and not reported as leaks.  This allows us ignore known leaks and only be alerted when new leaks occur.
-    # Some leaks are in the old versions of the system frameworks that are being used by the leaks bots.  Even though
-    # the leak has been fixed, they will be listed here until the bot has been updated with the newer frameworks.
     my @callStacksToExclude = (
-        "Flash_EnforceLocalSecurity" # leaks in Flash plug-in code, Radar 4449747
+        "Flash_EnforceLocalSecurity" # leaks in Flash plug-in code, rdar://problem/4449747
     );
 
-    # Leak list for the version of Tiger used on the build bot.
     if (isTiger()) {
+        # Leak list for the version of Tiger used on the build bot.
         push @callStacksToExclude, (
-            "CFRunLoopRunSpecific \\| malloc_zone_malloc", "CFRunLoopRunSpecific \\| CFAllocatorAllocate ", # leak in CFRunLoopRunSpecific, Radar 4670839
-            "CGImageSourceGetPropertiesAtIndex", # leak in ImageIO, Radar 4628809
-            "FOGetCoveredUnicodeChars", # leak in ATS, Radar 3943604
-            "GetLineDirectionPreference", "InitUnicodeUtilities", # leaks tool falsely reporting leak in CFNotificationCenterAddObserver, Radar 4964790
-            "ICCFPrefWrapper::GetPrefDictionary", # leaks in Internet Config. code, Radar 4449794
+            "CFRunLoopRunSpecific \\| malloc_zone_malloc", "CFRunLoopRunSpecific \\| CFAllocatorAllocate ", # leak in CFRunLoopRunSpecific, rdar://problem/4670839
+            "CGImageSourceGetPropertiesAtIndex", # leak in ImageIO, rdar://problem/4628809
+            "FOGetCoveredUnicodeChars", # leak in ATS, rdar://problem/3943604
+            "GetLineDirectionPreference", "InitUnicodeUtilities", # leaks tool falsely reporting leak in CFNotificationCenterAddObserver, rdar://problem/4964790
+            "ICCFPrefWrapper::GetPrefDictionary", # leaks in Internet Config. code, rdar://problem/4449794
             "NSHTTPURLProtocol setResponseHeader:", # leak in multipart/mixed-replace handling in Foundation, no Radar, but fixed in Leopard
-            "NSURLCache cachedResponseForRequest", # leak in CFURL cache, Radar 4768430
-            "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, Radar 3426998
-            "WebCore::Selection::toRange", # bug in 'leaks', Radar 4967949
-            "WebCore::SubresourceLoader::create", # bug in 'leaks', Radar 4985806
-            "_CFPreferencesDomainDeepCopyDictionary", # leak in CFPreferences, Radar 4220786
-            "_objc_msgForward", # leak in NSSpellChecker, Radar 4965278
-            "gldGetString" # leak in OpenGL, Radar 5013699
+            "NSURLCache cachedResponseForRequest", # leak in CFURL cache, rdar://problem/4768430
+            "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, rdar://problem/3426998
+            "WebCore::Selection::toRange", # bug in 'leaks', rdar://problem/4967949
+            "WebCore::SubresourceLoader::create", # bug in 'leaks', rdar://problem/4985806
+            "_CFPreferencesDomainDeepCopyDictionary", # leak in CFPreferences, rdar://problem/4220786
+            "_objc_msgForward", # leak in NSSpellChecker, rdar://problem/4965278
+            "gldGetString" # leak in OpenGL, rdar://problem/5013699
         );
         push @typesToExclude, (
             "THRD", # bug in 'leaks', Radar 3387783
@@ -1012,14 +1032,14 @@ sub countAndPrintLeaks($$$)
         );
     }
 
-     # Leak list for the version of Leopard used on the build bot.
      if (isLeopard()) {
+        # Leak list for the version of Leopard used on the build bot.
         push @callStacksToExclude, (
-            "CFHTTPMessageAppendBytes", #rdar://problem/5435912 47 leaks possibly under CFHTTPMessageAppendBytes
-            "sendDidReceiveDataCallback", #<rdar://problem/5441619> 7 possible leaks under sendDidReceiveDataCallback
-            "_CFHTTPReadStreamReadMark", #<rdar://problem/5441468> 2 leaks in _CFHTTPReadStreamReadMark
-            "httpProtocolStart", #<rdar://problem/5468837> REGRESSION: 18 leaks in httpProtocolStart
-            "_CFURLConnectionSendCallbacks", #<rdar://problem/5441600> 3 leaks under _CFURLConnectionSendCallbacks potentially in 
+            "CFHTTPMessageAppendBytes", # rdar://problem/5435912
+            "sendDidReceiveDataCallback", # rdar://problem/5441619
+            "_CFHTTPReadStreamReadMark", # rdar://problem/5441468
+            "httpProtocolStart", # rdar://problem/5468837
+            "_CFURLConnectionSendCallbacks", # rdar://problem/5441600
         );
     }
 
@@ -1331,7 +1351,7 @@ sub expectedDirectoryForTest($;$)
     my ($base, $isText) = @_;
 
     my @directories = @platformHierarchy;
-    push(@directories, $expectedDirectory);
+    push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.
     foreach my $directory (@directories) {
@@ -1342,6 +1362,8 @@ sub expectedDirectoryForTest($;$)
     # Note: The return value of this subroutine will be concatenated with $base
     # to determine the location of the new results, so returning $expectedDirectory
     # will put the results right next to the test.
+    # FIXME: We want to allow platform/mac tests with platform/mac-leopard results,
+    # so this needs to be enhanced.
     return $expectedDirectory if $base =~ /^platform/;
 
     # For cross-platform tests, text-only results should go in the cross-platform directory,
@@ -1464,7 +1486,7 @@ sub recordActualResultsAndDiff($$)
     print ACTUAL $actual;
     close ACTUAL;
 
-    my $expectedDir = expectedDirectoryForTest($base);
+    my $expectedDir = $expectedResultDirectory{$base};
     copy("$expectedDir/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
 
     system "diff -u \"$testResultsDirectory/$base-$expectedTag.txt\" \"$testResultsDirectory/$base-$actualTag.txt\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
