@@ -1,3 +1,28 @@
+2007-10-16  David Hyatt  <hyatt@apple.com>
+
+        Get transform-origin(x/y) mapped into the front end RenderStyle.  Adds a new StyleTransformData struct that
+        holds transform-origin (and that will also eventually hold the parsed transform operations as well).
+
+        Reviewed by Beth
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleTransformData::StyleTransformData):
+        (WebCore::StyleTransformData::operator==):
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleTransformData::operator!=):
+        (WebCore::RenderStyle::transformOriginX):
+        (WebCore::RenderStyle::transformOriginY):
+        (WebCore::RenderStyle::setTransformOriginX):
+        (WebCore::RenderStyle::setTransformOriginY):
+        (WebCore::RenderStyle::initialTransformOriginX):
+        (WebCore::RenderStyle::initialTransformOriginY):
+
 2007-10-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Alice.

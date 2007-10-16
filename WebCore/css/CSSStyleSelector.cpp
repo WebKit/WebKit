@@ -4322,6 +4322,38 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setTextStrokeWidth(width);
         return;
     }
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
+        HANDLE_INHERIT_AND_INITIAL(transformOriginX, TransformOriginX)
+        HANDLE_INHERIT_AND_INITIAL(transformOriginY, TransformOriginY)
+        return;
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X: {
+        HANDLE_INHERIT_AND_INITIAL(transformOriginX, TransformOriginX)
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        Length l;
+        int type = primitiveValue->primitiveType();
+        if (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
+            l = Length(primitiveValue->computeLengthIntForLength(style), Fixed);
+        else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+            l = Length(primitiveValue->getDoubleValue(), Percent);
+        else
+            return;
+        style->setTransformOriginX(l);
+        break;
+    }
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y: {
+        HANDLE_INHERIT_AND_INITIAL(transformOriginY, TransformOriginY)
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        Length l;
+        int type = primitiveValue->primitiveType();
+        if (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
+            l = Length(primitiveValue->computeLengthIntForLength(style), Fixed);
+        else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+            l = Length(primitiveValue->getDoubleValue(), Percent);
+        else
+            return;
+        style->setTransformOriginY(l);
+        break;
+    }
     case CSS_PROP_INVALID:
         return;
     case CSS_PROP_FONT_STRETCH:
