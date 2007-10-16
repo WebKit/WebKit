@@ -1,3 +1,13 @@
+2007-10-16  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adele.
+
+        fixed <rdar://5085596> Accesskeys don't work
+        
+        * dom/Document.cpp:
+        (WebCore::Document::defaultEventHandler):
+        accesskey modifier is platform-depedent.
+
 2007-10-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by John.
