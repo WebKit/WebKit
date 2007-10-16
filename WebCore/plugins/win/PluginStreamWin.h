@@ -30,6 +30,7 @@
 #include <windows.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/OwnPtr.h>
 #include "CString.h"
 #include "KURL.h"
 #include "npfunctions.h"
@@ -88,7 +89,7 @@ namespace WebCore {
         Timer<PluginStreamWin> m_delayDeliveryTimer;
         void delayDeliveryTimerFired(Timer<PluginStreamWin>*);
 
-        Vector<char>* m_deliveryData;
+        OwnPtr< Vector<char> > m_deliveryData;
 
         HANDLE m_tempFileHandle;
 

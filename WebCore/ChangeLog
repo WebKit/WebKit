@@ -1,3 +1,17 @@
+2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Ollie.
+
+        Use OwnPtr for m_deliveryData, and fix a bug where we were memmove()ing
+        over m_deliveryData instead of its data buffer
+
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::~PluginStreamWin): Don't delete
+        m_deliveryData
+        (WebCore::PluginStreamWin::deliverData): Fix memmove() call
+        (WebCore::PluginStreamWin::didReceiveData): Assign using OwnPtr::set()
+        * plugins/win/PluginStreamWin.h: Use OwnPtr
+
 2007-10-15  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver.
