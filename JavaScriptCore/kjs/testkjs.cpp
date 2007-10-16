@@ -123,7 +123,7 @@ public:
   virtual bool implementsCall() const { return true; }
   virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List &args);
 
-  enum { Print, Debug, Quit, GC, Version, Run };
+  enum { Print, Debug, Quit, GC, Version, Run, Load };
 
 private:
   int id;
@@ -138,7 +138,7 @@ JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List 
 {
   switch (id) {
     case Print:
-      printf("--> %s\n", args[0]->toString(exec).UTF8String().c_str());
+      printf("%s\n", args[0]->toString(exec).UTF8String().c_str());
       return jsUndefined();
     case Debug:
       fprintf(stderr, "--> %s\n", args[0]->toString(exec).UTF8String().c_str());
@@ -158,8 +158,10 @@ JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List 
       StopWatch stopWatch;
       char* fileName = strdup(args[0]->toString(exec).UTF8String().c_str());
       char* script = createStringWithContentsOfFile(fileName);
-      if (!script)
+      if (!script) {
+        free(fileName);
         return throwError(exec, GeneralError, "Could not open file.");
+      }
 
       stopWatch.start();
       exec->dynamicInterpreter()->evaluate(fileName, 0, script);
@@ -169,6 +171,22 @@ JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List 
       free(fileName);
       
       return jsNumber(stopWatch.getElapsedMS());
+    }
+    case Load:
+    {
+      char* fileName = strdup(args[0]->toString(exec).UTF8String().c_str());
+      char* script = createStringWithContentsOfFile(fileName);
+      if (!script) {
+        free(fileName);
+        return throwError(exec, GeneralError, "Could not open file.");
+      }
+
+      exec->dynamicInterpreter()->evaluate(fileName, 0, script);
+
+      free(script);
+      free(fileName);
+      
+      return jsUndefined();
     }
     case Quit:
       exit(0);
@@ -246,6 +264,7 @@ bool doIt(int argc, char** argv)
   // add "version" for compatibility with the mozilla js shell 
   global->put(interp->globalExec(), "version", new TestFunctionImp(TestFunctionImp::Version, 1));
   global->put(interp->globalExec(), "run", new TestFunctionImp(TestFunctionImp::Run, 1));
+  global->put(interp->globalExec(), "load", new TestFunctionImp(TestFunctionImp::Load, 1));
   
   Interpreter::setShouldPrintExceptions(true);
   
@@ -306,9 +325,6 @@ int kjsmain(int argc, char** argv)
   Collector::collect();
 #endif
 
-  if (success)
-    fprintf(stderr, "OK.\n");
-  
 #ifdef KJS_DEBUG_MEM
   Interpreter::finalCheck();
 #endif

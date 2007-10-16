@@ -1,3 +1,13 @@
+2007-10-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - New JavaScript benchmark
+        http://bugs.webkit.org/show_bug.cgi?id=15515
+
+        * Scripts/run-sunspider: Added. Wrapper to run sunspider on the
+        current development or release build of JavaScriptCore.
+
 2007-10-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam.

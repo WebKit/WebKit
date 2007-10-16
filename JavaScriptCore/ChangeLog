@@ -1,3 +1,17 @@
+2007-10-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - fixes for "New JavaScript benchmark"
+        http://bugs.webkit.org/show_bug.cgi?id=15515
+        
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::callAsFunction): Implement "load" for compatibility
+        with SpiderMonkey.
+        (TestFunctionImp::): ditto
+        (doIt): ditto
+        (kjsmain): Drop useless --> from output.
+
 2007-10-15  Geoffrey Garen  <ggaren@apple.com>
 
         Removed unnecessary #include.

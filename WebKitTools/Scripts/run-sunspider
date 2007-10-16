@@ -1,0 +1,93 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2007 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+use POSIX;
+
+
+# determine configuration
+my $configuration;
+setConfiguration();
+$configuration = configuration();
+
+my @xcodeArgs;
+my $root;
+
+# pre-evaluate arguments.  jsDriver args have - preceding, xcode args do not.
+# special arguments
+#     --root=<path to webkit root> use pre-built root
+#     --gtk build gtk 
+foreach my $arg(@ARGV) {
+    print $arg."\n";
+    if( $arg =~ /root=(.*)/ ){
+        $root = $1;
+    } elsif( $arg =~ /^--gtk$/i ){
+    } else {
+        push( @xcodeArgs, $arg );
+    }
+}
+
+setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+
+# Find JavaScriptCore directory
+chdirWebKit();
+chdir("JavaScriptCore");
+
+#compile TestKJS
+my @options = XcodeOptions();
+my $result;
+if (!defined($root)){
+    if (isOSX()) {
+        $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @xcodeArgs;
+    }elsif (isCygwin()) {
+        $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
+    }
+    exit WEXITSTATUS($result) if WEXITSTATUS($result);
+}
+
+my $productDir = productDir();
+
+$productDir .= "/JavaScriptCore" if (isQt() or isGtk());
+$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+
+my $testkjsName;
+sub determineTestkjsName
+{
+    return if $testkjsName;
+    if (isCygwin() && ($configuration eq "Debug")) {
+        $testkjsName = "testkjs_debug";
+    } else {
+        $testkjsName = "testkjs";
+    }
+}
+$testkjsName = determineTestkjsName();
+
+chdirWebKit();
+chdir("SunSpider");
+
+exec "./sunspider", "$productDir/$testkjsName";

@@ -1,0 +1,95 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2007 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+use strict;
+
+sub usage()
+{
+    die "Usage: sunspider engine [ max_runs ]\n";
+}
+
+if (scalar @ARGV < 1) {
+    usage();
+}
+
+my $jsshell = $ARGV[0];
+
+my $max = $ARGV[1];
+$max = 5 if !$max;
+
+if ($max =~ /\D/) {
+    usage();
+}
+
+print STDERR "Running SunSpider once for warmup, then $max times\n";
+
+my @tests = ();
+my @categories = ();
+my %uniqueCategories = ();
+
+open TESTLIST, "<./tests/LIST";
+while (<TESTLIST>) {
+    chomp;
+    next unless $_;
+    push @tests, $_;
+    my $category = $_;
+    $category =~ s/-.*//;
+    if (!$uniqueCategories{$category}) {
+        push @categories, $category;
+        $uniqueCategories{$category} = $category;
+    }
+}
+close TESTLIST;
+
+my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
+$prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
+
+open PREFIX, ">/tmp/sunspider-test-prefix.js";
+print PREFIX $prefix;
+close PREFIX;
+
+my $discard = `$jsshell -f /tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null`;
+
+print "Discarded first run.\n";
+
+my $result;
+my $count = 0;
+my @results = ();
+my $total = 0;
+while ($count++ < $max) {
+    $result = `$jsshell -f /tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null`;
+    chomp $result;
+    push @results, $result;
+    print $result . "\n";
+}
+
+my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
+
+open(OUTPUT, ">/tmp/sunspider-results.js");
+print OUTPUT $output;
+close(OUTPUT);
+
+system("$jsshell -f /tmp/sunspider-test-prefix.js -f /tmp/sunspider-results.js -f resources/sunspider-analyze-results.js");
+

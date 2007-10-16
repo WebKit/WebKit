@@ -1,0 +1,39 @@
+2007-10-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - New JavaScript benchmark
+        http://bugs.webkit.org/show_bug.cgi?id=15515
+        
+        A start on a new JavaScript benchmark, with standalone and
+        browser-hosted drivers.
+        
+        The test content is still incomplete and the drivers could use
+        some more features but there is enough here to make a good start.
+        
+        The drivers compute a 95% confidence interval on the mean for the
+        whole test, each category, and each individual test to make it
+        easier to tell whether differences are statistically
+        significant. The confidence interval can be narrowed by running
+        the test more times.
+        
+        * TODO: Added. Remaining things that need to be done.
+        * sunspider: Added. Perl script that acts as the standalone test driver.
+        * resources/sunspider-standalone-driver.js: Added. JavaScript part
+        of standalone test driver.
+        * resources/sunspider-analyze-results.js: Added. JavaScript statistical
+        analysis code.
+        * resources/TEMPLATE.html: Added. Template for browser-hosted tests.
+        * make-hosted: Added. Script to generate browser-hosted tests.
+        * hosted/sunspider.html: Added. Start page for browser-hosted test.
+        * hosted/sunspider-driver.html: Added. Driver for browser-hosted tests.
+        * hosted/sunspider-results.html: Added. Results page for browser-hosted
+        tests.
+        * hosted/sunspider-record-result.js: Added. Helper file for browser-hosted
+        tests.
+        * tests/LIST: Added. List of tests to use.
+        * tests/bitops-3bit-bits-in-byte.js: Added. Some initial test content.
+        * tests/bitops-bits-in-byte.js: Added. Ditto.
+        * tests/bitops-bitwise-and.js: Added. Ditto.
+        * tests/math-cordic.js: Added. Ditto.
+
