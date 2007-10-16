@@ -4355,6 +4355,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP__WEBKIT_PADDING_START:
     case CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT:
     case CSS_PROP__WEBKIT_TEXT_STROKE:
+    case CSS_PROP__WEBKIT_TRANSFORM:
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X:
+    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y:
         return;
 #if ENABLE(SVG)
     default:
