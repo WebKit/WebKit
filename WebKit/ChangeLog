@@ -1,3 +1,15 @@
+2007-10-15  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed: <rdar://problem/5520541> REGRESSION: Broken image when forwarding certain email on Tiger
+        
+        * WebCoreSupport/WebFrameBridge.mm: The problem was that we were loading Mail's WebKit plug-in
+        too soon, which borked some necessary housekeeping on behalf of Mail. The fix is to add a quirk
+        that treats Tiger Mail's WebKit plug-in like a Netscape plug-in, thus ensuring the plug-in will
+        load during first layout and not attach time. For this plug-in, loading at first layout is 
+        expected and is consistent with Safari 2 behavior.
+
 2007-10-15  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Geoff Garen

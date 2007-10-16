@@ -603,6 +603,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (ObjectContentType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL
 {
+    // This is a quirk that ensures Tiger Mail's WebKit plug-in will load during layout
+    // and not attach time. (5520541)
+    static BOOL isTigerMail = WKAppVersionCheckLessThan(@"com.apple.mail", -1, 3.0);
+    if (isTigerMail && [MIMEType isEqualToString:@"application/x-apple-msg-attachment"])
+        return ObjectContentNetscapePlugin;
+    
     if ([MIMEType length] == 0) {
         // Try to guess the MIME type based off the extension.
         NSString *extension = [[URL path] pathExtension];
