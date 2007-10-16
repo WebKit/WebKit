@@ -5,7 +5,7 @@
 function sendDeleteWordKey()
 {
     var deleteWordModifiers;
-    if (navigator.userAgent.search(/\bMac OS X\b/))
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
         deleteWordModifiers = ["altKey"];
     else
         deleteWordModifiers = ["ctrlKey"];

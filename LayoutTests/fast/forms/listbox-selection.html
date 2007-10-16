@@ -116,7 +116,7 @@
                 var meta = false;
                 var ctrl = false;
                 if (metaOrCtrl) {
-                    if (navigator.userAgent.search(/\bMac OS X\b/))
+                    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
                         meta = true;
                     else
                         ctrl = true;
@@ -135,7 +135,7 @@
                 var meta = false;
                 var ctrl = false;
                 if (metaOrCtrl) {
-                    if (navigator.userAgent.search(/\bMac OS X\b/))
+                    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
                         meta = true;
                     else
                         ctrl = true;

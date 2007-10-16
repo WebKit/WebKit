@@ -1,3 +1,15 @@
+2007-10-16  Alice Liu  <alice.liu@apple.com>
+
+        Rubber-stamped by Adele.
+
+        fixing incorrect usage of JS String search method.
+
+        * editing/deleting/delete-by-word-001.html:
+        * editing/deleting/delete-by-word-002.html:
+        * fast/forms/input-text-option-delete.html:
+        * fast/forms/listbox-onchange.html:
+        * fast/forms/listbox-selection.html:
+
 2007-10-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
