@@ -1,5 +1,11 @@
 2007-10-16  Darin Adler  <darin@apple.com>
 
+        - try to fix the GTK build
+
+        * kjs/ustring.cpp: Include ASCIICType.h.
+
+2007-10-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej and Geoff (and looked over by Eric).
 
         - http://bugs.webkit.org/show_bug.cgi?id=15519

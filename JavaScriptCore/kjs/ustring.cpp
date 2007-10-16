@@ -37,6 +37,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <wtf/ASCIICtype.h>
 #include <wtf/Vector.h>
 
 #if HAVE(STRING_H)
