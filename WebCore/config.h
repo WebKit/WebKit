@@ -66,7 +66,9 @@
 
 #endif
 
+#if !PLATFORM(QT) // this breaks compilation of <QFontDatabase>, at least, so turn it off for now
 #include <wtf/DisallowCType.h>
+#endif
 
 #if !COMPILER(MSVC) // can't get this to compile on Visual C++ yet
 #define AVOID_STATIC_CONSTRUCTORS 1

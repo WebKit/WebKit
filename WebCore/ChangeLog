@@ -1,5 +1,12 @@
 2007-10-16  Darin Adler  <darin@apple.com>
 
+        - try to fix the Qt build
+
+        * config.h: Don't use DisallowCType.h, since it's incompatible with some C++ headers
+        that are used in some Qt-specific source files.
+
+2007-10-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=15525
