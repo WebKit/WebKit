@@ -1,3 +1,16 @@
+2007-10-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+        
+        Cleaned up localizable strings
+
+        * English.lproj/Localizable.strings:
+        updated
+        * StringsNotToBeLocalized.txt:
+        updated
+        * WebKit.xcodeproj/project.pbxproj:
+        StringsNotToBeLocalized.txt recently moved but project file wasn't updated to match; now it is
+
 2007-10-15  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin Adler.
