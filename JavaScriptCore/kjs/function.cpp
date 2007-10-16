@@ -324,7 +324,7 @@ Completion DeclaredFunctionImp::execute(ExecState* exec)
 
 void DeclaredFunctionImp::processVarDecls(ExecState* exec)
 {
-  body->processVarDecls(exec);
+    body->processDeclarations(exec);
 }
 
 // ------------------------------ IndexToNameMap ---------------------------------
@@ -838,7 +838,7 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         }
         
         // execute the code
-        progNode->processVarDecls(&newExec);
+        progNode->processDeclarations(&newExec);
         Completion c = progNode->execute(&newExec);
           
         if (switchGlobal)

@@ -1,3 +1,34 @@
+2007-10-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Re-structured variable and function declaration code.
+        
+        Command-line JS iBench shows no regression.
+        
+        Here are the changes:
+
+        1. Function declarations are now processed at the same time as var 
+        declarations -- namely, immediately upon entry to an execution context. 
+        This does not match Firefox, which waits to process a function
+        declaration until the declaration's containing block executes, but it 
+        does match IE and the ECMA spec. (10.1.3 states that var and function 
+        declarations should be processed at the same time -- namely, "On 
+        entering an execution context." 12.2 states that "A Block does not 
+        define a new execution scope.")
+
+        2. Declaration processing proceeds iteratively now, rather than 
+        recursively, storing the nodes is finds in stacks. This will later 
+        facilitate an optimization to hold on to the gathered declaration nodes, 
+        rather than re-fetching them in every function call. 
+        [ http://bugs.webkit.org/show_bug.cgi?id=14868 ]
+
+        Modified these tests because they expected the incorrect Mozilla 
+        behavior described above:
+
+        * tests/mozilla/ecma_3/Function/scope-001.js:
+        * tests/mozilla/js1_5/Scope/regress-184107.js:
+
 2007-10-16  Darin Adler  <darin@apple.com>
 
         - try to fix the GTK build

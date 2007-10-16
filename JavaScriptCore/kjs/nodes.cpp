@@ -103,6 +103,7 @@ static HashSet<Node*>* newNodes;
 static HashCountedSet<Node*>* nodeExtraRefCounts;
 
 Node::Node()
+    : m_mayHaveDeclarations(false)
 {
 #ifndef NDEBUG
     ++NodeCounter::count;
@@ -325,10 +326,6 @@ bool StatementNode::hitStatement(ExecState* exec)
     return dbg->atStatement(exec, currentSourceId(exec), firstLine(), lastLine());
   else
     return true; // continue
-}
-
-void StatementNode::processFuncDecl(ExecState*)
-{
 }
 
 // ------------------------------ NullNode -------------------------------------
@@ -1585,6 +1582,12 @@ JSValue *AssignExprNode::evaluate(ExecState *exec)
 VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in, Type t)
     : varType(t), ident(id), init(in)
 {
+    m_mayHaveDeclarations = true; 
+}
+
+void VarDeclNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    stacks.varStack.append(this); 
 }
 
 JSValue* VarDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSValue* val)
@@ -1659,7 +1662,7 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
     return 0;
 }
 
-void VarDeclNode::processVarDecls(ExecState *exec)
+void VarDeclNode::processDeclaration(ExecState* exec)
 {
   JSObject* variable = exec->context()->variableObject();
 
@@ -1687,10 +1690,13 @@ JSValue *VarDeclListNode::evaluate(ExecState *exec)
   return jsUndefined();
 }
 
-void VarDeclListNode::processVarDecls(ExecState *exec)
+void VarDeclListNode::getDeclarations(DeclarationStacks& stacks) 
 {
-  for (VarDeclListNode *n = this; n; n = n->next.get())
-    n->var->processVarDecls(exec);
+    if (next) {
+        ASSERT(next->mayHaveDeclarations());
+        stacks.nodeStack.append(next.get()); 
+    }
+    stacks.varStack.append(var.get()); 
 }
 
 void VarDeclListNode::breakCycle() 
@@ -1711,9 +1717,10 @@ Completion VarStatementNode::execute(ExecState *exec)
   return Completion(Normal);
 }
 
-void VarStatementNode::processVarDecls(ExecState *exec)
+void VarStatementNode::getDeclarations(DeclarationStacks& stacks)
 {
-  next->processVarDecls(exec);
+    ASSERT(next->mayHaveDeclarations());
+    stacks.nodeStack.append(next.get());
 }
 
 // ------------------------------ BlockNode ------------------------------------
@@ -1721,6 +1728,7 @@ void VarStatementNode::processVarDecls(ExecState *exec)
 BlockNode::BlockNode(SourceElementsNode *s)
 {
   if (s) {
+    m_mayHaveDeclarations = true; 
     source = s->next.release();
     Parser::removeNodeCycle(source.get());
     setLoc(s->firstLine(), s->lastLine());
@@ -1729,21 +1737,19 @@ BlockNode::BlockNode(SourceElementsNode *s)
   }
 }
 
+void BlockNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    ASSERT(source && source->mayHaveDeclarations());
+    stacks.nodeStack.append(source.get()); 
+}
+
 // ECMA 12.1
 Completion BlockNode::execute(ExecState *exec)
 {
   if (!source)
     return Completion(Normal);
 
-  source->processFuncDecl(exec);
-
   return source->execute(exec);
-}
-
-void BlockNode::processVarDecls(ExecState *exec)
-{
-  if (source)
-    source->processVarDecls(exec);
 }
 
 // ------------------------------ EmptyStatementNode ---------------------------
@@ -1790,12 +1796,12 @@ Completion IfNode::execute(ExecState *exec)
   return statement2->execute(exec);
 }
 
-void IfNode::processVarDecls(ExecState *exec)
-{
-  statement1->processVarDecls(exec);
-
-  if (statement2)
-    statement2->processVarDecls(exec);
+void IfNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (statement2 && statement2->mayHaveDeclarations()) 
+        stacks.nodeStack.append(statement2.get()); 
+    if (statement1->mayHaveDeclarations()) 
+        stacks.nodeStack.append(statement1.get()); 
 }
 
 // ------------------------------ DoWhileNode ----------------------------------
@@ -1836,9 +1842,10 @@ Completion DoWhileNode::execute(ExecState *exec)
   return Completion(Normal, value);
 }
 
-void DoWhileNode::processVarDecls(ExecState *exec)
-{
-  statement->processVarDecls(exec);
+void DoWhileNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (statement->mayHaveDeclarations()) 
+        stacks.nodeStack.append(statement.get()); 
 }
 
 // ------------------------------ WhileNode ------------------------------------
@@ -1885,9 +1892,10 @@ Completion WhileNode::execute(ExecState *exec)
   return Completion(); // work around gcc 4.0 bug
 }
 
-void WhileNode::processVarDecls(ExecState *exec)
-{
-  statement->processVarDecls(exec);
+void WhileNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (statement->mayHaveDeclarations()) 
+        stacks.nodeStack.append(statement.get()); 
 }
 
 // ------------------------------ ForNode --------------------------------------
@@ -1935,12 +1943,12 @@ Completion ForNode::execute(ExecState *exec)
   return Completion(); // work around gcc 4.0 bug
 }
 
-void ForNode::processVarDecls(ExecState *exec)
-{
-  if (expr1)
-    expr1->processVarDecls(exec);
-
-  statement->processVarDecls(exec);
+void ForNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (statement->mayHaveDeclarations()) 
+        stacks.nodeStack.append(statement.get()); 
+    if (expr1 && expr1->mayHaveDeclarations()) 
+        stacks.nodeStack.append(expr1.get()); 
 }
 
 // ------------------------------ ForInNode ------------------------------------
@@ -1948,14 +1956,25 @@ void ForNode::processVarDecls(ExecState *exec)
 ForInNode::ForInNode(Node *l, Node *e, StatementNode *s)
   : init(0L), lexpr(l), expr(e), varDecl(0L), statement(s)
 {
+    m_mayHaveDeclarations = true; 
 }
 
 ForInNode::ForInNode(const Identifier &i, AssignExprNode *in, Node *e, StatementNode *s)
   : ident(i), init(in), expr(e), statement(s)
 {
+  m_mayHaveDeclarations = true; 
+
   // for( var foo = bar in baz )
   varDecl = new VarDeclNode(ident, init.get(), VarDeclNode::Variable);
   lexpr = new ResolveNode(ident);
+}
+
+void ForInNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (statement->mayHaveDeclarations()) 
+        stacks.nodeStack.append(statement.get()); 
+    if (varDecl && varDecl->mayHaveDeclarations()) 
+        stacks.nodeStack.append(varDecl.get()); 
 }
 
 // ECMA 12.6.4
@@ -2061,13 +2080,6 @@ Completion ForInNode::execute(ExecState *exec)
   return Completion(Normal, retval);
 }
 
-void ForInNode::processVarDecls(ExecState *exec)
-{
-  if (varDecl)
-    varDecl->processVarDecls(exec);
-  statement->processVarDecls(exec);
-}
-
 // ------------------------------ ContinueNode ---------------------------------
 
 // ECMA 12.7
@@ -2121,6 +2133,12 @@ Completion ReturnNode::execute(ExecState *exec)
 
 // ------------------------------ WithNode -------------------------------------
 
+void WithNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (statement->mayHaveDeclarations()) 
+        stacks.nodeStack.append(statement.get()); 
+}
+
 // ECMA 12.10
 Completion WithNode::execute(ExecState *exec)
 {
@@ -2137,12 +2155,13 @@ Completion WithNode::execute(ExecState *exec)
   return res;
 }
 
-void WithNode::processVarDecls(ExecState *exec)
-{
-  statement->processVarDecls(exec);
-}
-
 // ------------------------------ CaseClauseNode -------------------------------
+
+void CaseClauseNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (source && source->mayHaveDeclarations()) 
+        stacks.nodeStack.append(source.get()); 
+}
 
 // ECMA 12.11
 JSValue *CaseClauseNode::evaluate(ExecState *exec)
@@ -2162,40 +2181,21 @@ Completion CaseClauseNode::evalStatements(ExecState *exec)
     return Completion(Normal, jsUndefined());
 }
 
-void CaseClauseNode::processVarDecls(ExecState *exec)
-{
-  if (source)
-    source->processVarDecls(exec);
-}
-
-void CaseClauseNode::processFuncDecl(ExecState* exec)
-{
-  if (source)
-      source->processFuncDecl(exec);
-}
-
 // ------------------------------ ClauseListNode -------------------------------
+
+void ClauseListNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (next && next->mayHaveDeclarations()) 
+        stacks.nodeStack.append(next.get()); 
+    if (clause->mayHaveDeclarations()) 
+        stacks.nodeStack.append(clause.get()); 
+}
 
 JSValue *ClauseListNode::evaluate(ExecState *)
 {
   // should never be called
   assert(false);
   return 0;
-}
-
-// ECMA 12.11
-void ClauseListNode::processVarDecls(ExecState *exec)
-{
-  for (ClauseListNode *n = this; n; n = n->next.get())
-    if (n->clause)
-      n->clause->processVarDecls(exec);
-}
-
-void ClauseListNode::processFuncDecl(ExecState* exec)
-{
-  for (ClauseListNode* n = this; n; n = n->next.get())
-    if (n->clause)
-      n->clause->processFuncDecl(exec);
 }
 
 void ClauseListNode::breakCycle() 
@@ -2208,6 +2208,7 @@ void ClauseListNode::breakCycle()
 CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
                              ClauseListNode *l2)
 {
+  m_mayHaveDeclarations = true; 
   if (l1) {
     list1 = l1->next.release();
     Parser::removeNodeCycle(list1.get());
@@ -2225,6 +2226,16 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
   }
 }
  
+void CaseBlockNode::getDeclarations(DeclarationStacks& stacks) 
+{ 
+    if (list2 && list2->mayHaveDeclarations()) 
+        stacks.nodeStack.append(list2.get());
+    if (def && def->mayHaveDeclarations()) 
+        stacks.nodeStack.append(def.get()); 
+    if (list1 && list1->mayHaveDeclarations()) 
+        stacks.nodeStack.append(list1.get()); 
+}
+
 JSValue *CaseBlockNode::evaluate(ExecState *)
 {
   // should never be called
@@ -2295,27 +2306,13 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, JSValue *input)
   return Completion(Normal);
 }
 
-void CaseBlockNode::processVarDecls(ExecState *exec)
-{
-  if (list1)
-    list1->processVarDecls(exec);
-  if (def)
-    def->processVarDecls(exec);
-  if (list2)
-    list2->processVarDecls(exec);
-}
-
-void CaseBlockNode::processFuncDecl(ExecState* exec)
-{
-  if (list1)
-   list1->processFuncDecl(exec);
-  if (def)
-    def->processFuncDecl(exec);
-  if (list2)
-    list2->processFuncDecl(exec);
-}
-
 // ------------------------------ SwitchNode -----------------------------------
+
+void SwitchNode::getDeclarations(DeclarationStacks& stacks) 
+{ 
+    if (block->mayHaveDeclarations()) 
+        stacks.nodeStack.append(block.get()); 
+}
 
 // ECMA 12.11
 Completion SwitchNode::execute(ExecState *exec)
@@ -2334,17 +2331,13 @@ Completion SwitchNode::execute(ExecState *exec)
   return res;
 }
 
-void SwitchNode::processVarDecls(ExecState *exec)
-{
-  block->processVarDecls(exec);
-}
-
-void SwitchNode::processFuncDecl(ExecState* exec)
-{
-  block->processFuncDecl(exec);
-}
-
 // ------------------------------ LabelNode ------------------------------------
+
+void LabelNode::getDeclarations(DeclarationStacks& stacks) 
+{ 
+    if (statement->mayHaveDeclarations()) 
+        stacks.nodeStack.append(statement.get()); 
+}
 
 // ECMA 12.12
 Completion LabelNode::execute(ExecState *exec)
@@ -2357,11 +2350,6 @@ Completion LabelNode::execute(ExecState *exec)
   if ((e.complType() == Break) && (e.target() == label))
     return Completion(Normal, e.value());
   return e;
-}
-
-void LabelNode::processVarDecls(ExecState *exec)
-{
-  statement->processVarDecls(exec);
 }
 
 // ------------------------------ ThrowNode ------------------------------------
@@ -2379,6 +2367,16 @@ Completion ThrowNode::execute(ExecState *exec)
 }
 
 // ------------------------------ TryNode --------------------------------------
+
+void TryNode::getDeclarations(DeclarationStacks& stacks) 
+{ 
+    if (finallyBlock && finallyBlock->mayHaveDeclarations()) 
+        stacks.nodeStack.append(finallyBlock.get()); 
+    if (catchBlock && catchBlock->mayHaveDeclarations()) 
+        stacks.nodeStack.append(catchBlock.get()); 
+    if (tryBlock->mayHaveDeclarations()) 
+        stacks.nodeStack.append(tryBlock.get()); 
+}
 
 // ECMA 12.14
 Completion TryNode::execute(ExecState *exec)
@@ -2402,15 +2400,6 @@ Completion TryNode::execute(ExecState *exec)
   }
 
   return c;
-}
-
-void TryNode::processVarDecls(ExecState *exec)
-{
-  tryBlock->processVarDecls(exec);
-  if (catchBlock)
-    catchBlock->processVarDecls(exec);
-  if (finallyBlock)
-    finallyBlock->processVarDecls(exec);
 }
 
 // ------------------------------ ParameterNode --------------------------------
@@ -2437,10 +2426,36 @@ FunctionBodyNode::FunctionBodyNode(SourceElementsNode *s)
   setLoc(-1, -1);
 }
 
-void FunctionBodyNode::processFuncDecl(ExecState *exec)
+void FunctionBodyNode::processDeclarations(ExecState* exec)
 {
-    if (source)
-        source->processFuncDecl(exec);
+    Node* node = source.get();
+    if (!node)
+        return;
+
+    DeclarationStacks stacks;
+    DeclarationStacks::NodeStack& nodeStack = stacks.nodeStack;
+    
+    while (true) {
+        ASSERT(node->mayHaveDeclarations()); // Otherwise, we wasted time putting an irrelevant node on the stack.
+        node->getDeclarations(stacks);
+        
+        size_t size = nodeStack.size();
+        if (!size)
+            break;
+        --size;
+        node = nodeStack[size];
+        nodeStack.shrink(size);
+    }
+    
+    size_t i, size;
+
+    DeclarationStacks::FunctionStack& functionStack = stacks.functionStack;
+    for (i = 0, size = functionStack.size(); i < size; ++i)
+        functionStack[i]->processDeclaration(exec);
+
+    DeclarationStacks::VarStack& varStack = stacks.varStack;
+    for (i = 0, size = varStack.size(); i < size; ++i)
+        varStack[i]->processDeclaration(exec);
 }
 
 void FunctionBodyNode::addParam(const Identifier& ident)
@@ -2470,8 +2485,12 @@ void FuncDeclNode::addParams()
     body->addParam(p->ident());
 }
 
-// ECMA 13
-void FuncDeclNode::processFuncDecl(ExecState *exec)
+void FuncDeclNode::getDeclarations(DeclarationStacks& stacks) 
+{
+    stacks.functionStack.append(this);
+}
+
+void FuncDeclNode::processDeclaration(ExecState* exec)
 {
   Context *context = exec->context();
 
@@ -2536,6 +2555,7 @@ int SourceElementsNode::count = 0;
 SourceElementsNode::SourceElementsNode(StatementNode *s1)
   : node(s1), next(this)
 {
+    m_mayHaveDeclarations = true; 
     Parser::noteNodeCycle(this);
     setLoc(s1->firstLine(), s1->lastLine());
 }
@@ -2543,8 +2563,17 @@ SourceElementsNode::SourceElementsNode(StatementNode *s1)
 SourceElementsNode::SourceElementsNode(SourceElementsNode *s1, StatementNode *s2)
   : node(s2), next(s1->next)
 {
+  m_mayHaveDeclarations = true; 
   s1->next = this;
   setLoc(s1->firstLine(), s2->lastLine());
+}
+
+void SourceElementsNode::getDeclarations(DeclarationStacks& stacks)
+{ 
+    if (next && next->mayHaveDeclarations())
+        stacks.nodeStack.append(next.get());
+    if (node->mayHaveDeclarations())
+        stacks.nodeStack.append(node.get());
 }
 
 // ECMA 14
@@ -2567,19 +2596,6 @@ Completion SourceElementsNode::execute(ExecState *exec)
     if (!n)
         return c;
   }
-}
-
-// ECMA 14
-void SourceElementsNode::processFuncDecl(ExecState *exec)
-{
-  for (SourceElementsNode *n = this; n; n = n->next.get())
-    n->node->processFuncDecl(exec);
-}
-
-void SourceElementsNode::processVarDecls(ExecState *exec)
-{
-  for (SourceElementsNode *n = this; n; n = n->next.get())
-    n->node->processVarDecls(exec);
 }
 
 void SourceElementsNode::breakCycle() 

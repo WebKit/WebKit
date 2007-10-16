@@ -365,7 +365,7 @@ Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumbe
         Context ctx(globalObj, this, thisObj, progNode.get());
         ExecState newExec(this, &ctx);
         ctx.setExecState(&newExec);
-        progNode->processVarDecls(&newExec);
+        progNode->processDeclarations(&newExec);
         res = progNode->execute(&newExec);
     }
     

@@ -1,3 +1,15 @@
+2007-10-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Layout tests for http://bugs.webkit.org/show_bug.cgi?id=15478
+        Declare vars and functions iteratively upon entering an execution context
+
+        * fast/js/function-declarations-expected.txt: Added.
+        * fast/js/function-declarations.html: Added.
+        * fast/js/var-declarations-expected.txt: Added.
+        * fast/js/var-declarations.html: Added.
+
 2007-10-16  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adele.
