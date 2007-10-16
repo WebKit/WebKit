@@ -1,3 +1,12 @@
+2007-10-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Alice.
+
+        Fix for <rdar://problem/5538793> REGRESSION: Failing layout test: fast/forms/select-change-listbox-to-popup.html (due to landing feature branch)
+
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::parseMappedAttribute):  When switching between types of select elements, call setRecalcListItems
+          since recalcListItems updates the default selection in different ways for the different controls. 
+
 2007-10-16  Alice Liu  <alice.liu@apple.com>
 
         rubber-stamped by Darin.

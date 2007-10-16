@@ -1,3 +1,12 @@
+2007-10-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Alice.
+
+        Updating with correct results for:
+        <rdar://problem/5538793> REGRESSION: Failing layout test: fast/forms/select-change-listbox-to-popup.html (due to landing feature branch)
+
+        * platform/mac/fast/forms/select-change-listbox-to-popup-expected.txt:
+
 2007-10-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
