@@ -2129,6 +2129,7 @@ WEBCORE_COMMAND(moveWordLeft)
 WEBCORE_COMMAND(moveWordLeftAndModifySelection)
 WEBCORE_COMMAND(moveWordRight)
 WEBCORE_COMMAND(moveWordRightAndModifySelection)
+WEBCORE_COMMAND(transpose)
 
 #undef WEBCORE_COMMAND
 
@@ -4686,36 +4687,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     coreFrame->selectionController()->setSelectedRange(core(mark), DOWNSTREAM, true, ec);
     if (ec == 0)
         [bridge setMarkDOMRange:selection];
-}
-
-- (void)transpose:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    if (![self _canEdit])
-        return;
-
-    WebFrameBridge *bridge = [self _bridge];
-    DOMRange *r = [bridge rangeOfCharactersAroundCaret];
-    if (!r)
-        return;
-    NSString *characters = [bridge stringForRange:r];
-    if ([characters length] != 2)
-        return;
-    NSString *transposed = [[characters substringFromIndex:1] stringByAppendingString:[characters substringToIndex:1]];
-    WebView *webView = [self _webView];
-    if (![[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange]
-            toDOMRange:r affinity:NSSelectionAffinityDownstream stillSelecting:NO])
-        return;
-
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
-
-    ExceptionCode ec = 0;
-    coreFrame->selectionController()->setSelectedRange(core(r), DOWNSTREAM, true, ec);
-    if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped])
-        [bridge replaceSelectionWithText:transposed selectReplacement:NO smartReplace:NO];
 }
 
 - (void)toggleBaseWritingDirection:(id)sender

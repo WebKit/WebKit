@@ -74,7 +74,6 @@ namespace WebCore {
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
-class CommandByName;
 class DOMWindow;
 class Document;
 class Editor;
@@ -128,7 +127,6 @@ public:
     Document* document() const;
     FrameView* view() const;
 
-    CommandByName* command() const;
     DOMWindow* domWindow() const;
     Editor* editor() const;
     EventHandler* eventHandler() const;

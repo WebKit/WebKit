@@ -184,7 +184,6 @@ enum WebScrollGranularity {
 
 - (id)accessibilityTree;
 
-- (DOMRange *)rangeOfCharactersAroundCaret;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
 - (void)alterCurrentSelection:(WebCore::SelectionController::EAlteration)alteration verticalDistance:(float)distance;
 - (WebCore::TextGranularity)selectionGranularity;

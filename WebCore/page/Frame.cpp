@@ -349,11 +349,6 @@ Editor* Frame::editor() const
     return &d->m_editor;
 }
 
-CommandByName* Frame::command() const
-{
-    return &d->m_command;
-}
-
 TextGranularity Frame::selectionGranularity() const
 {
     return d->m_selectionGranularity;
@@ -1952,7 +1947,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_selectionController(thisFrame)
     , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
     , m_editor(thisFrame)
-    , m_command(thisFrame)
     , m_eventHandler(thisFrame)
     , m_caretVisible(false)
     , m_caretPaint(true)

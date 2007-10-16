@@ -1242,24 +1242,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     }
 }
 
-- (DOMRange *)rangeOfCharactersAroundCaret
-{
-    if (!m_frame)
-        return nil;
-        
-    Selection selection(m_frame->selectionController()->selection());
-    if (!selection.isCaret())
-        return nil;
-
-    VisiblePosition caret(selection.visibleStart());
-    VisiblePosition next = caret.next();
-    VisiblePosition previous = caret.previous();
-    if (previous.isNull() || next.isNull() || caret == next || caret == previous)
-        return nil;
-
-    return [DOMRange _wrapRange:makeRange(previous, next).get()];
-}
-
 - (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)URL
 {
     Document* doc = m_frame->document();

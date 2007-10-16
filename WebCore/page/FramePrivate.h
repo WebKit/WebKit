@@ -1,12 +1,10 @@
-/* This file is part of the KDE project
- *
- * Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
+/* Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
  *                     1999-2001 Lars Knoll <knoll@kde.org>
  *                     1999-2001 Antti Koivisto <koivisto@kde.org>
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -28,7 +26,6 @@
 #ifndef FramePrivate_h
 #define FramePrivate_h
 
-#include "CommandByName.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FrameTree.h"
@@ -91,7 +88,6 @@ namespace WebCore {
         Selection m_mark;
         Timer<Frame> m_caretBlinkTimer;
         Editor m_editor;
-        CommandByName m_command;
         EventHandler m_eventHandler;
 
         bool m_caretVisible : 1;

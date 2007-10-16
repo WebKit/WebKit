@@ -1195,6 +1195,12 @@ static bool execUndo(Frame* frame, Event*)
     return true;
 }
 
+static bool execTranspose(Frame* frame, Event*)
+{
+    frame->editor()->transpose();
+    return true;
+}
+
 static inline Frame* targetFrame(Frame* frame, Event* evt)
 {
     Node* node = evt ? evt->target()->toNode() : 0;
@@ -1336,6 +1342,7 @@ static CommandMap* createCommandMap()
         { "SelectAll", { enabled, execSelectAll } },
         { "ToggleBold", { hasRichlyEditableSelection, execToggleBold } },
         { "ToggleItalic", { hasRichlyEditableSelection, execToggleItalic } },
+        { "Transpose", { hasEditableSelection, execTranspose } },
         { "Undo", { canUndo, execUndo } }
     };
 
@@ -2394,6 +2401,48 @@ bool Editor::getCompositionSelection(unsigned& selectionStart, unsigned& selecti
     selectionStart = start.offset() - m_compositionStart;
     selectionEnd = start.offset() - m_compositionEnd;
     return true;
+}
+
+void Editor::transpose()
+{
+    if (!canEdit())
+        return;
+
+     Selection selection = m_frame->selectionController()->selection();
+     if (!selection.isCaret())
+         return;
+
+    // Make a selection that goes back one character and forward two characters.
+    VisiblePosition caret = selection.visibleStart();
+    VisiblePosition next = isEndOfParagraph(caret) ? caret : caret.next();
+    VisiblePosition previous = next.previous();
+    if (next == previous)
+        return;
+    previous = previous.previous();
+    if (!inSameParagraph(next, previous))
+        return;
+    RefPtr<Range> range = makeRange(previous, next);
+    if (!range)
+        return;
+    Selection newSelection(range.get(), DOWNSTREAM);
+
+    // Transpose the two characters.
+    String text = plainText(range.get());
+    if (text.length() != 2)
+        return;
+    String transposed = text.right(1) + text.left(1);
+
+    // Select the two characters.
+    if (newSelection != m_frame->selectionController()->selection()) {
+        if (!m_frame->shouldChangeSelection(newSelection))
+            return;
+        m_frame->selectionController()->setSelection(newSelection);
+    }
+
+    // Insert the transposed characters.
+    if (!shouldInsertText(transposed, range.get(), EditorInsertActionTyped))
+        return;
+    replaceSelectionWithText(transposed, false, false);
 }
 
 } // namespace WebCore

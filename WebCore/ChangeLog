@@ -1,5 +1,35 @@
 2007-10-16  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15525
+          transpose (control-T) should do the last two characters on a line if at end of line
+        - remove unused CommandByName class
+        - move transpose command implementation here from Mac OS X WebKit
+
+        * editing/Editor.h:
+        * editing/Editor.cpp:
+        (WebCore::execTranspose): Added.
+        (WebCore::Editor::transpose): Added. This has the transpose implementation from
+        WebCoreFrameBridge and WebHTMLView, translated into WebCore-style C++ and with
+        a special case for the end of a paragraph.
+
+        * page/Frame.h: Removed unused command() function member.
+        * page/FramePrivate.h: Removed unused m_command data member.
+        * page/Frame.cpp: Ditto.
+
+        * page/mac/WebCoreFrameBridge.h: Removed rangeOfCharactersAroundCaret method.
+        * page/mac/WebCoreFrameBridge.mm: Ditto.
+
+        * WebCore.pro: Removed CommandByName.h/cpp.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * editing/CommandByName.cpp: Removed.
+        * editing/CommandByName.h: Removed.
+
+2007-10-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej and Geoff (and looked over by Eric).
 
         - http://bugs.webkit.org/show_bug.cgi?id=15519

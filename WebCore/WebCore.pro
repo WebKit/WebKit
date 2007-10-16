@@ -444,7 +444,6 @@ SOURCES += \
     editing/AppendNodeCommand.cpp \
     editing/ApplyStyleCommand.cpp \
     editing/BreakBlockquoteCommand.cpp \
-    editing/CommandByName.cpp \
     editing/CompositeEditCommand.cpp \
     editing/CreateLinkCommand.cpp \
     editing/DeleteButtonController.cpp \

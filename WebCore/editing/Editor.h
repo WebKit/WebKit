@@ -106,6 +106,7 @@ public:
 
     void indent();
     void outdent();
+    void transpose();
 
     bool shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRefPtr<Range> replacingDOMRange, EditorInsertAction givenAction);
     bool shouldInsertText(const String&, Range*, EditorInsertAction) const;

@@ -309,8 +309,6 @@
 		4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */; };
 		4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8AF4A90B1CE02B00687690 /* ClipboardAccessPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4BBDBF7D0ACC9290005F6E97 /* CommandByName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BBDBF7B0ACC9290005F6E97 /* CommandByName.cpp */; };
-		4BBDBF7E0ACC9290005F6E97 /* CommandByName.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BBDBF7C0ACC9290005F6E97 /* CommandByName.h */; };
 		4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */; };
 		4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */; };
 		4E1959290A39DACC00220FE5 /* MediaQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1959230A39DACC00220FE5 /* MediaQuery.cpp */; };
@@ -4310,8 +4308,6 @@
 		4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplaceCF.cpp; sourceTree = "<group>"; };
 		4B8AF4A90B1CE02B00687690 /* ClipboardAccessPolicy.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ClipboardAccessPolicy.h; sourceTree = "<group>"; };
 		4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorDeleteAction.h; sourceTree = "<group>"; };
-		4BBDBF7B0ACC9290005F6E97 /* CommandByName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommandByName.cpp; sourceTree = "<group>"; };
-		4BBDBF7C0ACC9290005F6E97 /* CommandByName.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommandByName.h; sourceTree = "<group>"; };
 		4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFeatureNames.cpp; sourceTree = "<group>"; };
 		4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaFeatureNames.h; sourceTree = "<group>"; };
 		4E1959230A39DACC00220FE5 /* MediaQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQuery.cpp; sourceTree = "<group>"; };
@@ -9503,8 +9499,6 @@
 				93309D8A099E64910056E581 /* ApplyStyleCommand.h */,
 				93309D8B099E64910056E581 /* BreakBlockquoteCommand.cpp */,
 				93309D8C099E64910056E581 /* BreakBlockquoteCommand.h */,
-				4BBDBF7B0ACC9290005F6E97 /* CommandByName.cpp */,
-				4BBDBF7C0ACC9290005F6E97 /* CommandByName.h */,
 				93309D8D099E64910056E581 /* CompositeEditCommand.cpp */,
 				93309D8E099E64910056E581 /* CompositeEditCommand.h */,
 				D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */,
@@ -12501,7 +12495,6 @@
 				85989DCF0ACC8BBD00A0BC51 /* DOMOverflowEventInternal.h in Headers */,
 				85989DD00ACC8BBD00A0BC51 /* DOMUIEventInternal.h in Headers */,
 				85989DD10ACC8BBD00A0BC51 /* DOMWheelEventInternal.h in Headers */,
-				4BBDBF7E0ACC9290005F6E97 /* CommandByName.h in Headers */,
 				85ACEF0C0ACDCCCF001214FF /* DOMSVGAnimatedPathData.h in Headers */,
 				85ACEF0D0ACDCCCF001214FF /* DOMSVGAnimatedPoints.h in Headers */,
 				85ACEF0E0ACDCCCF001214FF /* DOMSVGAnimatedPreserveAspectRatio.h in Headers */,
@@ -14254,7 +14247,6 @@
 				850FD1FA0AC9C84200123D0D /* DOMSVGAnimatedTransformList.mm in Sources */,
 				85D79ADB0ACA17EB00F02FC5 /* DOMSVGStringList.mm in Sources */,
 				859C9C400ACACCCC00791611 /* DOMSVGRectElement.mm in Sources */,
-				4BBDBF7D0ACC9290005F6E97 /* CommandByName.cpp in Sources */,
 				85ACEF0F0ACDCCCF001214FF /* DOMSVGAnimatedPreserveAspectRatio.mm in Sources */,
 				85ACEF110ACDCCCF001214FF /* DOMSVGPreserveAspectRatio.mm in Sources */,
 				85ACEF7D0ACDCFCE001214FF /* DOMSVGAElement.mm in Sources */,

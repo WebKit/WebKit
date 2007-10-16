@@ -6265,14 +6265,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\editing\CommandByName.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\editing\CommandByName.h"
-				>
-			</File>
-			<File
 				RelativePath="..\editing\CompositeEditCommand.cpp"
 				>
 			</File>
