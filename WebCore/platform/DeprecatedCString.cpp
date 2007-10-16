@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,10 @@
 #include "config.h"
 #include "DeprecatedCString.h"
 
+#include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
-#include <ctype.h>
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -111,7 +113,7 @@ DeprecatedCString DeprecatedCString::lower() const
     {
         while( *str != 0 )
         {
-            *str = tolower(*str);
+            *str = toASCIILower(*str);
             str++;
         }
     }
@@ -128,7 +130,7 @@ DeprecatedCString DeprecatedCString::upper() const
     {
         while( *str != 0 )
         {
-            *str = toupper(*str);
+            *str = toASCIIUpper(*str);
             str++;
         }
     }
@@ -184,7 +186,7 @@ int DeprecatedCString::find(const char *sub, int index, bool cs) const
                 while( (a=sub[pos]) && (b=str[index]) && a==b )
                     pos++, index++;
             else
-                while( (a=sub[pos]) && (b=str[index]) && tolower(a)==tolower(b) )
+                while( (a=sub[pos]) && (b=str[index]) && toASCIILower(a)==toASCIILower(b) )
                     pos++, index++;
             
             // reached the end of our compare string without a mismatch?
@@ -211,11 +213,11 @@ int DeprecatedCString::contains(char c, bool cs) const
                 found += str[i] == c;
             }
         } else {
-            c = tolower(c);
+            c = toASCIILower(c);
 
             for (unsigned i = 0; i != len; ++i) {
                 char chr = str[i];
-                chr = tolower(chr);
+                chr = toASCIILower(chr);
                 found += chr == c;
             }
         }

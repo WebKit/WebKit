@@ -112,6 +112,7 @@
 
 using namespace WebCore;
 using namespace HTMLNames;
+using namespace WTF;
 
 @interface NSWindow (BorderViewAccess)
 - (NSView*)_web_borderView;
@@ -2070,7 +2071,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     ASSERT(selectorNameLength >= 2);
     ASSERT(selectorName[selectorNameLength - 1] == ':');
     Vector<char, 256> commandName(selectorNameLength - 1 + 1);
-    commandName[0] = toupper(selectorName[0]);
+    commandName[0] = toASCIIUpper(selectorName[0]);
     memcpy(&commandName[1], &selectorName[1], selectorNameLength - 2);
     commandName[selectorNameLength - 1] = 0;
 
@@ -5915,40 +5916,51 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return _popupWindow != nil;
 }
 
-// WebHTMLView gives us a crack at key events it sees.  Return whether we consumed the event.
+// WebHTMLView gives us a crack at key events it sees. Return whether we consumed the event.
 // The features for the various keys mimic NSTextView.
 - (BOOL)filterKeyDown:(NSEvent *)event
 {
-    if (_popupWindow) {
-        NSString *string = [event charactersIgnoringModifiers];
-        unichar c = [string characterAtIndex:0];
-        if (c == NSUpArrowFunctionKey) {
-            int selectedRow = [_tableView selectedRow];
-            if (0 < selectedRow) {
-                [_tableView selectRow:selectedRow-1 byExtendingSelection:NO];
-                [_tableView scrollRowToVisible:selectedRow-1];
-            }
-            return YES;
-        } else if (c == NSDownArrowFunctionKey) {
-            int selectedRow = [_tableView selectedRow];
-            if (selectedRow < (int)[_completions count]-1) {
-                [_tableView selectRow:selectedRow+1 byExtendingSelection:NO];
-                [_tableView scrollRowToVisible:selectedRow+1];
-            }
-            return YES;
-        } else if (c == NSRightArrowFunctionKey || c == '\n' || c == '\r' || c == '\t') {
-            [self endRevertingChange:NO moveLeft:NO];
-            return YES;
-        } else if (c == NSLeftArrowFunctionKey) {
-            [self endRevertingChange:NO moveLeft:YES];
-            return YES;
-        } else if (c == 0x1b || c == NSF5FunctionKey) {
-            [self endRevertingChange:YES moveLeft:NO];
-            return YES;
-        } else if (c == ' ' || ispunct(c)) {
-            [self endRevertingChange:NO moveLeft:NO];
-            return NO;  // let the char get inserted
+    if (!_popupWindow)
+        return NO;
+    NSString *string = [event charactersIgnoringModifiers];
+    if (![string length])
+        return NO;
+    unichar c = [string characterAtIndex:0];
+    if (c == NSUpArrowFunctionKey) {
+        int selectedRow = [_tableView selectedRow];
+        if (0 < selectedRow) {
+            [_tableView selectRow:selectedRow - 1 byExtendingSelection:NO];
+            [_tableView scrollRowToVisible:selectedRow - 1];
         }
+        return YES;
+    }
+    if (c == NSDownArrowFunctionKey) {
+        int selectedRow = [_tableView selectedRow];
+        if (selectedRow < (int)[_completions count] - 1) {
+            [_tableView selectRow:selectedRow + 1 byExtendingSelection:NO];
+            [_tableView scrollRowToVisible:selectedRow + 1];
+        }
+        return YES;
+    }
+    if (c == NSRightArrowFunctionKey || c == '\n' || c == '\r' || c == '\t') {
+        // FIXME: What about backtab?
+        [self endRevertingChange:NO moveLeft:NO];
+        return YES;
+    }
+    if (c == NSLeftArrowFunctionKey) {
+        [self endRevertingChange:NO moveLeft:YES];
+        return YES;
+    }
+    if (c == 0x1B || c == NSF5FunctionKey) {
+        // FIXME: F5?
+        [self endRevertingChange:YES moveLeft:NO];
+        return YES;
+    }
+    if (c == ' ' || c >= 0x21 && c <= 0x2F || c >= 0x3A && c <= 0x40 || c >= 0x5B && c <= 0x60 || c >= 0x7B && c <= 0x7D) {
+        // FIXME: Is the above list of keys really definitive?
+        // Originally this code called ispunct; aren't there other punctuation keys on international keyboards?
+        [self endRevertingChange:NO moveLeft:NO];
+        return NO; // let the char get inserted
     }
     return NO;
 }

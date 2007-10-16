@@ -907,7 +907,7 @@ static String stripLeadingWhiteSpace(const String& string)
     int i;
     for (i = 0; i < length; ++i)
         if (string[i] != noBreakSpace &&
-            (string[i] <= 0x7F ? !isspace(string[i]) : (direction(string[i]) != WhiteSpaceNeutral)))
+            (string[i] <= 0x7F ? !isASCIISpace(string[i]) : (direction(string[i]) != WhiteSpaceNeutral)))
             break;
 
     return string.substring(i, length - i);

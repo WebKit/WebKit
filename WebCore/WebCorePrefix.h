@@ -59,7 +59,6 @@
 
 #endif // defined(WIN32) || defined(_WIN32)
 
-#include <ctype.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <pthread.h>
@@ -83,24 +82,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <new>
-
-/* Work around bug 3553309 by re-including <ctype.h>. */
-#include <cctype>
-#if defined(__APPLE__)
-#define isalnum(c)      __istype((c), (_CTYPE_A|_CTYPE_D))
-#define isalpha(c)      __istype((c), _CTYPE_A)
-#define iscntrl(c)      __istype((c), _CTYPE_C)
-#define isdigit(c)      __isctype((c), _CTYPE_D)        /* ANSI -- locale independent */
-#define isgraph(c)      __istype((c), _CTYPE_G)
-#define islower(c)      __istype((c), _CTYPE_L)
-#define isprint(c)      __istype((c), _CTYPE_R)
-#define ispunct(c)      __istype((c), _CTYPE_P)
-#define isspace(c)      __istype((c), _CTYPE_S)
-#define isupper(c)      __istype((c), _CTYPE_U)
-#define isxdigit(c)     __isctype((c), _CTYPE_X)        /* ANSI -- locale independent */
-#define tolower(c)      __tolower(c)
-#define toupper(c)      __toupper(c)
-#endif
 
 #endif
 

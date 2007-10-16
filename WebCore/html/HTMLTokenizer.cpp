@@ -1,13 +1,11 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1997 Martin Jones (mjones@kde.org)
               (C) 1997 Torben Weis (weis@kde.org)
               (C) 1998 Waldo Bastian (bastian@kde.org)
               (C) 1999 Lars Knoll (knoll@kde.org)
               (C) 1999 Antti Koivisto (koivisto@kde.org)
               (C) 2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
+    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
     Copyright (C) 2005, 2006 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
@@ -46,6 +44,7 @@
 #include "Settings.h"
 #include "SystemTime.h"
 #include "kjs_proxy.h"
+#include <wtf/ASCIICType.h>
 
 #include "HTMLEntityNames.c"
 
@@ -61,6 +60,7 @@
 #endif
 
 using namespace std;
+using namespace WTF;
 
 namespace WebCore {
 
@@ -119,7 +119,7 @@ static inline bool tagMatch(const char* s1, const UChar* s2, unsigned length)
 {
     for (unsigned i = 0; i != length; ++i) {
         unsigned char c1 = s1[i];
-        unsigned char uc1 = toupper(c1);
+        unsigned char uc1 = toASCIIUpper(static_cast<char>(c1));
         UChar c2 = s2[i];
         if (c1 != c2 && uc1 != c2)
             return false;

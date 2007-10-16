@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,7 @@
 
 using namespace std;
 using namespace KJS;
+using namespace WTF;
 
 namespace WebCore {
 
@@ -135,7 +136,6 @@ static inline int ucstrcmp( const DeprecatedString &as, const DeprecatedString &
     return a->unicode() - b->unicode();
 }
 
-
 static bool equal(const DeprecatedChar *a, const char *b, int l)
 {
     ASSERT(l >= 0);
@@ -153,7 +153,7 @@ static bool equalCaseInsensitive(const char *a, const char *b, int l)
 {
     ASSERT(l >= 0);
     while (l--) {
-        if (tolower(*a) != tolower(*b))
+        if (toASCIILower(*a) != toASCIILower(*b))
             return false;
         a++; b++;
     }
@@ -164,7 +164,7 @@ static bool equalCaseInsensitive(const DeprecatedChar *a, const char *b, int l)
 {
     ASSERT(l >= 0);
     while (l--) {
-        if (tolower(a->unicode()) != tolower(*b))
+        if (toASCIILower(a->unicode()) != static_cast<unsigned char>(toASCIILower(*b)))
             return false;
         a++; b++;
     }
@@ -175,7 +175,7 @@ static bool equalCaseInsensitive(const DeprecatedChar *a, const DeprecatedChar *
 {
     ASSERT(l >= 0);
     while (l--) {
-        if (tolower(a->unicode()) != tolower(b->unicode()))
+        if (toASCIILower(a->unicode()) != toASCIILower(b->unicode()))
             return false;
         a++; b++;
     }
@@ -184,22 +184,22 @@ static bool equalCaseInsensitive(const DeprecatedChar *a, const DeprecatedChar *
 
 static inline bool equalCaseInsensitive(char c1, char c2)
 {
-    return tolower(c1) == tolower(c2);
+    return toASCIILower(c1) == toASCIILower(c2);
 }
 
 static inline bool equalCaseInsensitive(DeprecatedChar c1, char c2)
 {
-    return tolower(c1.unicode()) == tolower(static_cast<unsigned char>(c2));
+    return toASCIILower(c1.unicode()) == static_cast<unsigned char>(toASCIILower(c2));
 }
 
 static bool isCharacterAllowedInBase(DeprecatedChar c, int base)
 {
-    int uc = c.unicode();
+    ::UChar uc = c.unicode();
     if (uc > 0x7F)
         return false;
-    if (isdigit(uc))
+    if (isASCIIDigit(uc))
         return uc - '0' < base;
-    if (isalpha(uc)) {
+    if (isASCIIAlpha(uc)) {
         if (base > 36)
             base = 36;
         return (uc >= 'a' && uc < 'a' + base - 10)
@@ -973,8 +973,8 @@ int DeprecatedString::find(const DeprecatedString &str, int index, bool caseSens
         }
     } else {
         for ( i = 0; i < lstr; i++ ) {
-            hthis += tolower(uthis[i].unicode());
-            hstr += tolower(ustr[i].unicode());
+            hthis += toASCIILower(uthis[i].unicode());
+            hstr += toASCIILower(ustr[i].unicode());
         }
         i = 0;
         while ( true ) {
@@ -982,8 +982,8 @@ int DeprecatedString::find(const DeprecatedString &str, int index, bool caseSens
                 return index + i;
             if ( i == delta )
                 return -1;
-            hthis += tolower(uthis[i + lstr].unicode());
-            hthis -= tolower(uthis[i].unicode());
+            hthis += toASCIILower(uthis[i + lstr].unicode());
+            hthis -= toASCIILower(uthis[i].unicode());
             i++;
         }
     }
@@ -1021,9 +1021,9 @@ int DeprecatedString::find(const char *chs, int index, bool caseSensitive) const
                 }
             } while (--n);
         } else {
-            int lc = tolower(*chs);
+            unsigned char lc = toASCIILower(*chs);
             do {
-                if (tolower(*++ptr) == lc && equalCaseInsensitive(ptr + 1, chsPlusOne, chsLengthMinusOne)) {
+                if (toASCIILower(*++ptr) == lc && equalCaseInsensitive(ptr + 1, chsPlusOne, chsLengthMinusOne)) {
                     return data->_length - chsLength - n + 1;
                 }
             } while (--n);
@@ -1040,9 +1040,9 @@ int DeprecatedString::find(const char *chs, int index, bool caseSensitive) const
                 }
             } while (--n);
         } else {
-            int lc = tolower((unsigned char)*chs);
+            unsigned char lc = toASCIILower(*chs);
             do {
-                if (tolower((++ptr)->unicode()) == lc && equalCaseInsensitive(ptr + 1, chsPlusOne, chsLengthMinusOne)) {
+                if (toASCIILower((++ptr)->unicode()) == lc && equalCaseInsensitive(ptr + 1, chsPlusOne, chsLengthMinusOne)) {
                     return data->_length - chsLength - n + 1;
                 }
             } while (--n);
@@ -1162,9 +1162,9 @@ int DeprecatedString::contains(DeprecatedChar c, bool cs) const
             while (n--)
                 count += *cPtr++ == ac;
         } else {                                        // case insensitive
-            int lc = tolower(ac);
+            unsigned char lc = toASCIILower(ac);
             while (n--) {
-                count += tolower(*cPtr++) == lc;
+                count += toASCIILower(*cPtr++) == lc;
             }
         }
     } else {
@@ -1175,9 +1175,9 @@ int DeprecatedString::contains(DeprecatedChar c, bool cs) const
             while ( n-- )
                 count += *uc++ == c;
         } else {                                        // case insensitive
-            int lc = tolower(c.unicode());
+            ::UChar lc = toASCIILower(c.unicode());
             while (n--) {
-                count += tolower(uc->unicode()) == lc;
+                count += toASCIILower(uc->unicode()) == lc;
                 uc++;
             }
         }
@@ -1216,9 +1216,9 @@ int DeprecatedString::contains(const char *str, bool caseSensitive) const
                 p++;
             } while (--n);
         } else {
-            int lc = tolower(c);
+            char lc = toASCIILower(c);
             do {
-                count += tolower(*p) == lc && equalCaseInsensitive(p + 1, str + 1, len - 1);
+                count += toASCIILower(*p) == lc && equalCaseInsensitive(p + 1, str + 1, len - 1);
                 p++;
             } while (--n);
         }
@@ -1231,9 +1231,9 @@ int DeprecatedString::contains(const char *str, bool caseSensitive) const
                 p++;
             } while (--n);
         } else {
-            int lc = tolower(c);
+            unsigned char lc = toASCIILower(c);
             do {
-                count += tolower(p->unicode()) == lc && equalCaseInsensitive(p + 1, str + 1, len - 1);
+                count += toASCIILower(p->unicode()) == lc && equalCaseInsensitive(p + 1, str + 1, len - 1);
                 p++;
             } while (--n);
         }
@@ -1414,8 +1414,8 @@ IntegralType toIntegralType(const DeprecatedString& string, bool *ok, int base)
     while (length && isCharacterAllowedInBase(*p, base)) {
         length--;
         IntegralType digitValue;
-        int c = p->unicode();
-        if (isdigit(c))
+        ::UChar c = p->unicode();
+        if (isASCIIDigit(c))
             digitValue = c - '0';
         else if (c >= 'a')
             digitValue = c - 'a' + 10;

@@ -1,8 +1,6 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
-    Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
     Copyright (C) 2005, 2006, 2007 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
@@ -31,6 +29,9 @@
 #include "DeprecatedString.h"
 #include "HTMLNames.h"
 #include "TextCodec.h"
+#include <wtf/ASCIICType.h>
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -649,7 +650,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                        tag != linkTag && tag != metaTag && tag != objectTag &&
                        tag != titleTag && tag != baseTag && 
                        (end || tag != htmlTag) && !enclosingTagName &&
-                       (tag != headTag) && isalpha(tagBuffer[0])) {
+                       (tag != headTag) && isASCIIAlpha(tagBuffer[0])) {
                 m_checkedForHeadCharset = true;
                 return true;
             }

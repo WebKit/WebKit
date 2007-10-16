@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,8 @@
 #define DeprecatedString_h
 
 #include "DeprecatedCString.h"
-
+#include <wtf/ASCIICType.h>
 #include <wtf/unicode/Unicode.h>
-
-#include <ctype.h>
 
 /* On some ARM platforms GCC won't pack structures by default so sizeof(DeprecatedChar)
    will end up being != 2 which causes crashes since the code depends on that. */
@@ -123,7 +121,7 @@ inline bool DeprecatedChar::isSpace() const
 #if USE(ICU_UNICODE)
     // Use isspace() for basic Latin-1.
     // This will include newlines, which aren't included in unicode DirWS.
-    return c <= 0x7F ? isspace(c) : (u_charDirection(c) == U_WHITE_SPACE_NEUTRAL);
+    return c <= 0x7F ? WTF::isASCIISpace(c) : (u_charDirection(c) == U_WHITE_SPACE_NEUTRAL);
 #elif USE(QT4_UNICODE)
     return QChar(c).isSpace();
 #endif
@@ -133,7 +131,7 @@ inline DeprecatedChar DeprecatedChar::lower() const
 {
 #if USE(ICU_UNICODE)
     // FIXME: If fast enough, we should just call u_tolower directly.
-    return c <= 0x7F ? tolower(c) : u_tolower(c);
+    return c <= 0x7F ? WTF::toASCIILower(c) : u_tolower(c);
 #elif USE(QT4_UNICODE)
     return QChar(c).toLower().unicode();
 #endif
@@ -143,7 +141,7 @@ inline DeprecatedChar DeprecatedChar::upper() const
 {
 #if USE(ICU_UNICODE)
     // FIXME: If fast enough, we should just call u_toupper directly.
-    return c <= 0x7F ? toupper(c) : u_toupper(c);
+    return c <= 0x7F ? WTF::toASCIIUpper(c) : u_toupper(c);
 #elif USE(QT4_UNICODE)
     return QChar(c).toUpper().unicode();
 #endif

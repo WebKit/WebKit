@@ -404,7 +404,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, 
                     w += tabWidth - ((xPos + w) % tabWidth);
                 else
                     w += monospaceCharacterWidth;
-                if (isspace(c) && !isspace(previousChar))
+                if (isASCIISpace(c) && !isASCIISpace(previousChar))
                     w += f.wordSpacing();
             }
             previousChar = c;

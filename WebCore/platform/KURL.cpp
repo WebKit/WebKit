@@ -38,6 +38,7 @@
 #endif
 
 using namespace std;
+using namespace WTF;
 
 namespace WebCore {
 
@@ -1030,7 +1031,7 @@ void KURL::parse(const char *url, const DeprecatedString *originalString)
  
             // possible start of port
             portEnd = portStart;
-            while (isdigit(url[portEnd])) {
+            while (isASCIIDigit(url[portEnd])) {
                 portEnd++;
             }
         } else {

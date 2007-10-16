@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,9 @@
 #import "PlatformKeyboardEvent.h"
 
 #import "Logging.h"
+#import <wtf/ASCIICType.h>
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -322,7 +325,7 @@ static String keyIdentifierForKeyEvent(NSEvent* event)
             // FIXME: We should use something other than the vendor-area Unicode values for the above keys.
             // For now, just fall through to the default.
         default:
-            return String::format("U+%04X", toupper(c));
+            return String::format("U+%04X", toASCIIUpper(c));
     }
 }
 

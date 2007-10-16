@@ -51,7 +51,7 @@ static inline bool isSpace(UChar c)
 {
     // Use isspace() for basic Latin-1.
     // This will include newlines, which aren't included in unicode DirWS.
-    return c <= 0x7F ? isspace(c) : direction(c) == WhiteSpaceNeutral;
+    return c <= 0x7F ? isASCIISpace(c) : direction(c) == WhiteSpaceNeutral;
 }    
     
 static inline UChar* newUCharVector(unsigned n)
@@ -257,7 +257,7 @@ bool StringImpl::containsOnlyWhitespace(unsigned from, unsigned len) const
     // the "len" parameter means are different here from what's done in RenderText.
     // FIXME: No range checking here.
     for (unsigned i = from; i < len; i++)
-        if (m_data[i] > 0x7F || !isspace(m_data[i]))
+        if (m_data[i] > 0x7F || !isASCIISpace(m_data[i]))
             return false;
     return true;
 }
@@ -389,10 +389,7 @@ bool StringImpl::isLower() const
     UChar ored = 0;
     for (unsigned i = 0; i < m_length; i++) {
         UChar c = m_data[i];
-        // The islower function is only guaranteed to work correctly and 
-        // in a locale-independent fashion for ASCII characters. We mask
-        // to guarantee we don't pass any non-ASCII values in.
-        allLower = allLower && islower(c & 0x7F);
+        allLower = allLower && isASCIILower(c);
         ored |= c;
     }
     if (!(ored & ~0x7F))
@@ -426,10 +423,7 @@ StringImpl* StringImpl::lower() const
     for (int i = 0; i < length; i++) {
         UChar c = m_data[i];
         ored |= c;
-        // The tolower function is only guaranteed to work correctly and 
-        // in a locale-independent fashion for ASCII characters. We mask
-        // to guarantee we don't pass any non-ASCII values in.
-        data[i] = tolower(c & 0x7F);
+        data[i] = toASCIILower(c);
     }
     if (!(ored & ~0x7F))
         return c;
@@ -813,8 +807,8 @@ int StringImpl::find(const StringImpl* str, int index, bool caseSensitive) const
         }
     } else {
         for (int i = 0; i < lstr; i++ ) {
-            hthis += tolower(uthis[i]);
-            hstr += tolower(ustr[i]);
+            hthis += toASCIILower(uthis[i]);
+            hstr += toASCIILower(ustr[i]);
         }
         int i = 0;
         while (1) {
@@ -822,8 +816,8 @@ int StringImpl::find(const StringImpl* str, int index, bool caseSensitive) const
                 return index + i;
             if (i == delta)
                 return -1;
-            hthis += tolower(uthis[i + lstr]);
-            hthis -= tolower(uthis[i]);
+            hthis += toASCIILower(uthis[i + lstr]);
+            hthis -= toASCIILower(uthis[i]);
             i++;
         }
     }
@@ -885,8 +879,8 @@ int StringImpl::reverseFind(const StringImpl* str, int index, bool caseSensitive
         }
     } else {
         for (i = 0; i < lstr; i++) {
-            hthis += tolower(uthis[index + i]);
-            hstr += tolower(ustr[i]);
+            hthis += toASCIILower(uthis[index + i]);
+            hstr += toASCIILower(ustr[i]);
         }
         i = index;
         while (1) {
@@ -895,8 +889,8 @@ int StringImpl::reverseFind(const StringImpl* str, int index, bool caseSensitive
             if (i == 0)
                 return -1;
             i--;
-            hthis -= tolower(uthis[i + lstr]);
-            hthis += tolower(uthis[i]);
+            hthis -= toASCIILower(uthis[i + lstr]);
+            hthis += toASCIILower(uthis[i]);
         }
     }
     
@@ -1085,16 +1079,12 @@ bool equalIgnoringCase(const StringImpl* a, const char* b)
     UChar ored = 0;
     bool equal = true;
     for (unsigned i = 0; i != length; ++i) {
-        unsigned char bc = b[i];
+        char bc = b[i];
         if (!bc)
             return false;
         UChar ac = as[i];
         ored |= ac;
-        // The tolower function is only guaranteed to work correctly and 
-        // in a locale-independent fashion for ASCII characters. We mask
-        // to guarantee we don't pass any non-ASCII values in.
-        ASSERT(!(bc & ~0x7F));
-        equal = equal && (tolower(ac & 0x7F) == tolower(bc));
+        equal = equal && (toASCIILower(ac) == toASCIILower(bc));
     }
 
     // Do a slower implementation for cases that include non-ASCII characters.

@@ -59,6 +59,12 @@ static LPCTSTR kPopupWindowClassName = _T("PopupWindowClass");
 static ATOM registerPopup();
 static LRESULT CALLBACK PopupWndProc(HWND, UINT, WPARAM, LPARAM);
 
+// FIXME: Remove this as soon as practical.
+static inline bool isASCIIPrintable(unsigned c)
+{
+    return c >= 0x20 && c <= 0x7E;
+}
+
 PopupMenu::PopupMenu(PopupMenuClient* client)
     : m_popupClient(client)
     , m_scrollBar(0)
@@ -673,7 +679,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         popup->client()->hidePopup();
                         break;
                     default:
-                        if (isprint(::MapVirtualKey(LOWORD(wParam), 2)))
+                        if (isASCIIPrintable(::MapVirtualKey(LOWORD(wParam), 2)))
                             // Send the keydown to the WebView so it can be used for type-ahead find
                             ::SendMessage(popup->client()->clientDocument()->view()->containingWindow(), message, wParam, lParam);
                         else

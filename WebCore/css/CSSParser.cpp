@@ -162,7 +162,7 @@ void ParseString::lower()
             characters[i] = Unicode::toLower(characters[i]);
     else
         for (int i = 0; i < length; i++)
-            characters[i] = tolower(characters[i]);
+            characters[i] = toASCIILower(characters[i]);
 }
 
 void CSSParser::setupParser(const char* prefix, const String& string, const char* suffix)

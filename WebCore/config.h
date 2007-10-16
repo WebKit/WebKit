@@ -26,7 +26,6 @@
 #define HAVE_FUNC_USLEEP 1
 #endif /* __APPLE__ */
 
-
 #if PLATFORM(WIN_OS)
 
 #ifndef _WIN32_WINNT
@@ -66,6 +65,8 @@
 #include <wtf/FastMalloc.h>
 
 #endif
+
+#include <wtf/DisallowCType.h>
 
 #if !COMPILER(MSVC) // can't get this to compile on Visual C++ yet
 #define AVOID_STATIC_CONSTRUCTORS 1

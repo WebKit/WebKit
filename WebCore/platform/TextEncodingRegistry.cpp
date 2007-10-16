@@ -29,7 +29,7 @@
 #include "PlatformString.h"
 #include "TextCodecLatin1.h"
 #include "TextCodecUTF16.h"
-#include <ctype.h>
+#include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 
@@ -42,6 +42,8 @@
 #if PLATFORM(QT)
 #include "qt/TextCodecQt.h"
 #endif
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -64,11 +66,11 @@ struct TextEncodingNameHash {
         do {
             do
                 c1 = *s1++;
-            while (c1 && !isalnum(c1));
+            while (c1 && !isASCIIAlphanumeric(c1));
             do
                 c2 = *s2++;
-            while (c2 && !isalnum(c2));
-            if (tolower(c1) != tolower(c2))
+            while (c2 && !isASCIIAlphanumeric(c2));
+            if (toASCIILower(c1) != toASCIILower(c2))
                 return false;
         } while (c1 && c2);
         return !c1 && !c2;
@@ -90,8 +92,8 @@ struct TextEncodingNameHash {
                     h += (h << 15);
                     return h;
                 }
-            } while (!isalnum(c));
-            h += tolower(c);
+            } while (!isASCIIAlphanumeric(c));
+            h += toASCIILower(c);
             h += (h << 10); 
             h ^= (h >> 6); 
         }
@@ -218,7 +220,7 @@ const char* atomicCanonicalTextEncodingName(const UChar* characters, size_t leng
     size_t j = 0;
     for (size_t i = 0; i < length; ++i) {
         UChar c = characters[i];
-        if (isalnum(c)) {
+        if (isASCIIAlphanumeric(c)) {
             if (j == maxEncodingNameLength)
                 return 0;
             buffer[j++] = c;

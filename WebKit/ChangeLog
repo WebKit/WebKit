@@ -1,3 +1,21 @@
+2007-10-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej and Geoff (and looked over by Eric).
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15519
+          eliminate use of <ctype.h> for processing ASCII
+
+        * ForwardingHeaders/wtf/ASCIICType.h: Added.
+        * ForwardingHeaders/wtf/DisallowCType.h: Added.
+
+        * WebKitPrefix.h: Include DisallowCType.h.
+
+        * Misc/WebNSURLExtras.mm: (-[NSURL _web_URLWithLowercasedScheme]): Use toASCIILower.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView callWebCoreCommand:]): Use toASCIIUpper.
+        (-[WebTextCompleteController filterKeyDown:]): Add a list of specific character codes,
+        instead of using ispunct.
+
 2007-10-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben

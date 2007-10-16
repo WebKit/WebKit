@@ -1,8 +1,6 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,7 +29,9 @@
 #include "ExceptionCode.h"
 #include "Pair.h"
 #include "RenderStyle.h"
-#include <ctype.h>
+#include <wtf/ASCIICType.h>
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -46,13 +46,13 @@ static bool isCSSTokenizerIdentifier(const String& string)
         ++p;
 
     // {nmstart}
-    if (p == end || !(p[0] == '_' || p[0] >= 128 || isalpha(p[0])))
+    if (p == end || !(p[0] == '_' || p[0] >= 128 || isASCIIAlpha(p[0])))
         return false;
     ++p;
 
     // {nmchar}*
     for (; p != end; ++p) {
-        if (!(p[0] == '_' || p[0] == '-' || p[0] >= 128 || isalnum(p[0])))
+        if (!(p[0] == '_' || p[0] == '-' || p[0] >= 128 || isASCIIAlphanumeric(p[0])))
             return false;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,7 @@
 #include "Settings.h"
 #include <kjs/JSLock.h>
 #include <kjs/value.h>
+#include <wtf/ASCIICType.h>
 
 using KJS::ExecState;
 using KJS::Interpreter;
@@ -66,6 +67,8 @@ using KJS::UString;
 using KJS::Window;
 
 using std::min;
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -942,9 +945,9 @@ static inline String capitalizeRFC822HeaderFieldName(const String& name)
         UChar c;
 
         if (capitalizeCharacter && name[i] >= 'a' && name[i] <= 'z')
-            c = toupper(name[i]);
+            c = toASCIIUpper(name[i]);
         else if (!capitalizeCharacter && name[i] >= 'A' && name[i] <= 'Z')
-            c = tolower(name[i]);
+            c = toASCIILower(name[i]);
         else
             c = name[i];
 

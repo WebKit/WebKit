@@ -1,3 +1,25 @@
+2007-10-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej and Geoff (and looked over by Eric).
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15519
+          eliminate use of <ctype.h> for processing ASCII
+
+        * wtf/ASCIICType.h: Added.
+        * wtf/DisallowCType.h: Added.
+
+        * kjs/config.h: Include DisallowCType.h.
+
+        * kjs/date_object.cpp:
+        (KJS::skipSpacesAndComments):
+        (KJS::findMonth):
+        (KJS::parseDate):
+        * kjs/function.cpp:
+        (KJS::decode):
+        * kjs/ustring.cpp:
+        (KJS::UString::toDouble):
+        Use ASCIICType.h functions instead of ctype.h ones.
+
 2007-10-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

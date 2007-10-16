@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,26 +27,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNSURLExtras.h>
+#import "WebNSURLExtras.h"
 
+#import "WebKitNSStringExtras.h"
+#import "WebLocalizableStrings.h"
+#import "WebNSDataExtras.h"
+#import "WebNSObjectExtras.h"
+#import "WebSystemInterface.h"
+#import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNSDataExtras.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebLocalizableStrings.h>
 #import <WebCore/KURL.h>
 #import <WebCore/LoaderNSURLExtras.h>
-
 #import <WebKitSystemInterface.h>
-#import "WebSystemInterface.h"
-
-#import <Foundation/NSURLRequest.h>
-
 #import <unicode/uchar.h>
 #import <unicode/uidna.h>
 #import <unicode/uscript.h>
 
 using namespace WebCore;
+using namespace WTF;
 
 typedef void (* StringRangeApplierFunction)(NSString *string, NSRange range, void *context);
 
@@ -604,8 +602,8 @@ typedef struct {
     int i;
     BOOL changed = NO;
     for (i = 0; i < range.length; ++i) {
-        UInt8 c = buffer[range.location + i];
-        UInt8 lower = tolower(c);
+        char c = buffer[range.location + i];
+        char lower = toASCIILower(c);
         if (c != lower) {
             buffer[range.location + i] = lower;
             changed = YES;

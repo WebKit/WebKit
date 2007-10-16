@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,24 @@
 
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
+
 #include <windows.h>
+#include <wtf/ASCIICType.h>
 
-#define REPEAT_COUNT_MASK           0x0000FFFF
-#define NEW_RELEASE_STATE_MASK      0x80000000
-#define PREVIOUS_DOWN_STATE_MASK    0x40000000
-
-#define HIGH_BIT_MASK_SHORT         0x8000
+using namespace WTF;
 
 namespace WebCore {
+
+static const unsigned REPEAT_COUNT_MASK = 0x0000FFFF;
+static const unsigned NEW_RELEASE_STATE_MASK = 0x80000000;
+static const unsigned PREVIOUS_DOWN_STATE_MASK = 0x40000000;
+
+static const unsigned short HIGH_BIT_MASK_SHORT = 0x8000;
 
 // FIXME: This is incomplete. We could change this to mirror
 // more like what Firefox does, and generate these switch statements
 // at build time.
-static String keyIdentifierForWindowsKeyCode(short keyCode)
+static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
 {
     switch (keyCode) {
         case VK_MENU:
@@ -129,7 +133,7 @@ static String keyIdentifierForWindowsKeyCode(short keyCode)
         case VK_DELETE:
             return "U+007F";
         default:
-            return String::format("U+%04X", toupper(keyCode));
+            return String::format("U+%04X", toASCIIUpper(keyCode));
     }
 }
 
