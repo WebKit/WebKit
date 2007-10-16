@@ -1020,7 +1020,6 @@ sub countAndPrintLeaks($$$)
             "_CFHTTPReadStreamReadMark", #<rdar://problem/5441468> 2 leaks in _CFHTTPReadStreamReadMark
             "httpProtocolStart", #<rdar://problem/5468837> REGRESSION: 18 leaks in httpProtocolStart
             "_CFURLConnectionSendCallbacks", #<rdar://problem/5441600> 3 leaks under _CFURLConnectionSendCallbacks potentially in 
-            "SSLHandshake", #Unsure of the beg number, althout I think one existed and this leak is not on the current version of Leopard
         );
     }
 

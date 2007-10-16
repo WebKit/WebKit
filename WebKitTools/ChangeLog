@@ -1,3 +1,11 @@
+2007-10-16  Kevin McCullough  <kmccullough@apple.com>
+
+        - Updated leaks list because our internal bot upgraded it's version of leopard and 
+        one of the leaks was fixed between that revision and the bot's previous version of
+        leopard.
+
+        * Scripts/run-webkit-tests:
+
 2007-10-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
