@@ -2409,10 +2409,10 @@ void Document::defaultEventHandler(Event *evt)
     // handle accesskey
     if (evt->type() == keydownEvent) {
         KeyboardEvent* kevt = static_cast<KeyboardEvent *>(evt);
-#if PLATFORM(WIN)
-        if (kevt->altKey()) {
-#else
+#if PLATFORM(MAC)
         if (kevt->ctrlKey()) {
+#else
+        if (kevt->altKey()) {
 #endif
             const PlatformKeyboardEvent* ev = kevt->keyEvent();
             String key = (ev ? ev->unmodifiedText() : kevt->keyIdentifier()).lower();
