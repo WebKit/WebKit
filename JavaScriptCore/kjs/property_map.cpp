@@ -26,6 +26,7 @@
 #include "protect.h"
 #include "PropertyNameArray.h"
 #include <algorithm>
+#include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 
@@ -159,7 +160,7 @@ void PropertyMap::clear()
 
 JSValue *PropertyMap::get(const Identifier &name, unsigned &attributes) const
 {
-    assert(!name.isNull());
+    ASSERT(!name.isNull());
     
     UString::Rep *rep = name._ustring.rep();
     
@@ -200,7 +201,7 @@ JSValue *PropertyMap::get(const Identifier &name, unsigned &attributes) const
 
 JSValue *PropertyMap::get(const Identifier &name) const
 {
-    assert(!name.isNull());
+    ASSERT(!name.isNull());
     
     UString::Rep *rep = name._ustring.rep();
 
@@ -237,7 +238,7 @@ JSValue *PropertyMap::get(const Identifier &name) const
 
 JSValue **PropertyMap::getLocation(const Identifier &name)
 {
-    assert(!name.isNull());
+    ASSERT(!name.isNull());
     
     UString::Rep *rep = name._ustring.rep();
 
@@ -294,8 +295,8 @@ static void printAttributes(int attributes)
 
 void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bool roCheck)
 {
-    assert(!name.isNull());
-    assert(value != 0);
+    ASSERT(!name.isNull());
+    ASSERT(value != 0);
     
     checkConsistency();
 
@@ -381,7 +382,7 @@ void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bo
 
 void PropertyMap::insert(UString::Rep *key, JSValue *value, int attributes, int index)
 {
-    assert(m_u.table);
+    ASSERT(m_u.table);
 
     unsigned h = key->hash();
     int sizeMask = m_u.table->sizeMask;
@@ -393,7 +394,7 @@ void PropertyMap::insert(UString::Rep *key, JSValue *value, int attributes, int 
     numCollisions += entries[i].key && entries[i].key != key;
 #endif
     while (entries[i].key) {
-        assert(entries[i].key != deletedSentinel());
+        ASSERT(entries[i].key != deletedSentinel());
         if (k == 0)
             k = 1 | (h % sizeMask);
         i = (i + k) & sizeMask;
@@ -417,8 +418,8 @@ void PropertyMap::expand()
 
 void PropertyMap::rehash()
 {
-    assert(m_u.table);
-    assert(m_u.table->size);
+    ASSERT(m_u.table);
+    ASSERT(m_u.table->size);
     rehash(m_u.table->size);
 }
 
@@ -448,7 +449,7 @@ void PropertyMap::rehash(int newTableSize)
         // update the count, because single entries don't count towards
         // the table key count
         ++m_u.table->keyCount;
-        assert(m_u.table->keyCount == 1);
+        ASSERT(m_u.table->keyCount == 1);
     }
 #endif
     
@@ -471,7 +472,7 @@ void PropertyMap::rehash(int newTableSize)
 
 void PropertyMap::remove(const Identifier &name)
 {
-    assert(!name.isNull());
+    ASSERT(!name.isNull());
     
     checkConsistency();
 
@@ -522,7 +523,7 @@ void PropertyMap::remove(const Identifier &name)
     entries[i].key = key;
     entries[i].value = 0;
     entries[i].attributes = DontEnum;
-    assert(m_u.table->keyCount >= 1);
+    ASSERT(m_u.table->keyCount >= 1);
     --m_u.table->keyCount;
     ++m_u.table->sentinelCount;
     
@@ -701,7 +702,7 @@ void PropertyMap::save(SavedProperties &p) const
             if (isValid(e->key) && !(e->attributes & (ReadOnly | Function)))
                 *p++ = e;
         }
-        assert(p - sortedEntries.data() == count);
+        ASSERT(p - sortedEntries.data() == count);
 
         // Sort the entries by index.
         qsort(sortedEntries.data(), p - sortedEntries.data(), sizeof(Entry*), comparePropertyMapEntryIndices);
@@ -749,14 +750,14 @@ void PropertyMap::checkConsistency()
                 k = 1 | (h % m_u.table->sizeMask);
             i = (i + k) & m_u.table->sizeMask;
         }
-        assert(i == j);
+        ASSERT(i == j);
         ++count;
     }
-    assert(count == m_u.table->keyCount);
-    assert(sentinelCount == m_u.table->sentinelCount);
-    assert(m_u.table->size >= 16);
-    assert(m_u.table->sizeMask);
-    assert(m_u.table->size == m_u.table->sizeMask + 1);
+    ASSERT(count == m_u.table->keyCount);
+    ASSERT(sentinelCount == m_u.table->sentinelCount);
+    ASSERT(m_u.table->size >= 16);
+    ASSERT(m_u.table->sizeMask);
+    ASSERT(m_u.table->size == m_u.table->sizeMask + 1);
 }
 
 #endif // DO_CONSISTENCY_CHECK

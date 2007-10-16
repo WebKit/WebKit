@@ -1,3 +1,9 @@
+2007-10-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Global replace of assert with ASSERT.
+
 2007-10-16  Adam Roben  <aroben@apple.com>
 
         Updated testkjs for the rename of WebKit_debug.dll to WebKit.dll for the Debug configuration

@@ -22,7 +22,7 @@
 #ifndef KJS_SCOPE_CHAIN_H
 #define KJS_SCOPE_CHAIN_H
 
-#include <assert.h>
+#include <wtf/Assertions.h>
 
 namespace KJS {
 
@@ -122,14 +122,14 @@ inline JSObject *ScopeChain::bottom() const
 
 inline void ScopeChain::push(JSObject *o)
 {
-    assert(o);
+    ASSERT(o);
     _node = new ScopeChainNode(_node, o);
 }
 
 inline void ScopeChain::pop()
 {
     ScopeChainNode *oldNode = _node;
-    assert(oldNode);
+    ASSERT(oldNode);
     ScopeChainNode *newNode = oldNode->next;
     _node = newNode;
     

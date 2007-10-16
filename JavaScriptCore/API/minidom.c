@@ -25,6 +25,7 @@
  */
 
 #include "JSNode.h"
+#include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
 
 static char* createStringWithContentsOfFile(const char* fileName);
@@ -102,10 +103,10 @@ static char* createStringWithContentsOfFile(const char* fileName)
         if (buffer_size == buffer_capacity) { // guarantees space for trailing '\0'
             buffer_capacity *= 2;
             buffer = (char*)realloc(buffer, buffer_capacity);
-            assert(buffer);
+            ASSERT(buffer);
         }
         
-        assert(buffer_size < buffer_capacity);
+        ASSERT(buffer_size < buffer_capacity);
     }
     fclose(f);
     buffer[buffer_size] = '\0';

@@ -33,7 +33,8 @@
 #include "lexer.h"
 #include "internal.h"
 #include "CommonIdentifiers.h"
-    
+#include <wtf/MathExtras.h>
+
 // Not sure why, but yacc doesn't add this define along with the others.
 #define yylloc kjsyylloc
 
@@ -887,7 +888,7 @@ static Node* makeAssignNode(Node* loc, Operator op, Node* expr)
         BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
         return new AssignBracketNode(bracket->base(), bracket->subscript(), op, expr);
     }
-    assert(n->isDotAccessorNode());
+    ASSERT(n->isDotAccessorNode());
     DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
     return new AssignDotNode(dot->base(), dot->identifier(), op, expr);
 }
@@ -907,7 +908,7 @@ static Node* makePrefixNode(Node *expr, Operator op)
         BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
         return new PrefixBracketNode(bracket->base(), bracket->subscript(), op);
     }
-    assert(n->isDotAccessorNode());
+    ASSERT(n->isDotAccessorNode());
     DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
     return new PrefixDotNode(dot->base(), dot->identifier(), op);
 }
@@ -927,7 +928,7 @@ static Node* makePostfixNode(Node* expr, Operator op)
         BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
         return new PostfixBracketNode(bracket->base(), bracket->subscript(), op);
     }
-    assert(n->isDotAccessorNode());
+    ASSERT(n->isDotAccessorNode());
     DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
     return new PostfixDotNode(dot->base(), dot->identifier(), op);
 }
@@ -948,7 +949,7 @@ static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args)
         else
             return new FunctionCallBracketNode(bracket->base(), bracket->subscript(), args);
     } else {
-        assert(n->isDotAccessorNode());
+        ASSERT(n->isDotAccessorNode());
         DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
         if (n != func)
             return new FunctionCallParenDotNode(dot->base(), dot->identifier(), args);
@@ -981,7 +982,7 @@ static Node *makeDeleteNode(Node *expr)
         BracketAccessorNode *bracket = static_cast<BracketAccessorNode *>(n);
         return new DeleteBracketNode(bracket->base(), bracket->subscript());
     } else {
-        assert(n->isDotAccessorNode());
+        ASSERT(n->isDotAccessorNode());
         DotAccessorNode *dot = static_cast<DotAccessorNode *>(n);
         return new DeleteDotNode(dot->base(), dot->identifier());
     }

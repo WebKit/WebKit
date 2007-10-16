@@ -30,13 +30,13 @@
 #include "function.h"
 #include "identifier.h"
 #include "operations.h"
-#include <assert.h>
 #include <ctype.h>
 #include <float.h>
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <wtf/Assertions.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
 
@@ -217,8 +217,8 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
 
   base = base->baseString;
 
-  assert(-(offset + baseOffset) <= base->usedPreCapacity);
-  assert(offset + baseOffset + length <= base->usedCapacity);
+  ASSERT(-(offset + baseOffset) <= base->usedPreCapacity);
+  ASSERT(offset + baseOffset + length <= base->usedCapacity);
 
   Rep *r = new Rep;
   r->offset = baseOffset + offset;

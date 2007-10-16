@@ -42,20 +42,18 @@
 #include "object_object.h"
 #include "operations.h"
 #include "regexp_object.h"
+#include "runtime.h"
 #include "string_object.h"
 #include "types.h"
 #include "value.h"
-
-#include "runtime.h"
+#include <math.h>
+#include <signal.h>
+#include <stdio.h>
+#include <wtf/Assertions.h>
 
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
-
-#include <assert.h>
-#include <math.h>
-#include <signal.h>
-#include <stdio.h>
 
 #if PLATFORM(WIN_OS)
 #include <windows.h>

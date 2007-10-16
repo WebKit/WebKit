@@ -27,15 +27,14 @@
 #include "identifier.h"
 #include "internal.h"
 #include "interpreter.h"
-#include "list.h"
 #include "jni_jsobject.h"
 #include "jni_runtime.h"
 #include "jni_utility.h"
+#include "list.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
-
 #include <CoreFoundation/CoreFoundation.h>
-#include <assert.h>
+#include <wtf/Assertions.h>
 
 using namespace KJS::Bindings;
 using namespace KJS;

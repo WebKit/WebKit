@@ -26,12 +26,13 @@
 #include "array_object.h"
 #include "array_object.lut.h"
 
+#include "PropertyNameArray.h"
 #include "error_object.h"
 #include "lookup.h"
 #include "operations.h"
-#include "PropertyNameArray.h"
-#include <wtf/HashSet.h>
 #include <stdio.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashSet.h>
 
 
 using namespace KJS;
@@ -204,7 +205,7 @@ void ArrayInstance::put(ExecState *exec, unsigned index, JSValue *value, int att
     return;
   }
   
-  assert(index >= sparseArrayCutoff);
+  ASSERT(index >= sparseArrayCutoff);
   JSObject::put(exec, Identifier::from(index), value, attr);
 }
 
@@ -998,7 +999,7 @@ JSValue* ArrayProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, cons
     return jsNumber(-1);
 }
   default:
-    assert(0);
+    ASSERT(0);
     result = 0;
     break;
   }

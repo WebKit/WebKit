@@ -25,6 +25,7 @@
 
 #include "operations.h"
 #include "error_object.h"
+#include <wtf/Assertions.h>
 
 using namespace KJS;
 
@@ -72,7 +73,7 @@ JSValue *BooleanProtoFunc::callAsFunction(ExecState* exec, JSObject *thisObj, co
   // execute "toString()" or "valueOf()", respectively
 
   JSValue *v = static_cast<BooleanInstance*>(thisObj)->internalValue();
-  assert(v);
+  ASSERT(v);
 
   if (id == ToString)
     return jsString(v->toString(exec));

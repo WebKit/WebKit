@@ -40,6 +40,7 @@
 #if USE(ICU_UNICODE)
 #include <unicode/ucnv.h>
 #endif
+#include <wtf/Assertions.h>
 
 namespace KJS { namespace Bindings {
 
@@ -53,8 +54,8 @@ void convertNPStringToUTF16(const NPString *string, NPUTF16 **UTF16Chars, unsign
 void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16Chars, unsigned int *UTF16Length)
 {
 #if USE(ICU_UNICODE)
-    assert(UTF8Chars || UTF8Length == 0);
-    assert(UTF16Chars);
+    ASSERT(UTF8Chars || UTF8Length == 0);
+    ASSERT(UTF16Chars);
     
     if (UTF8Length == -1)
         UTF8Length = static_cast<int>(strlen(UTF8Chars));
@@ -88,7 +89,7 @@ void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16
             (*UTF16Chars)[i] = UTF8Chars[i] & 0xFF;
     }
 #else
-    assert(!"Implement me!");    
+    ASSERT(!"Implement me!");    
 #endif
 }
 

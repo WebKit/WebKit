@@ -41,12 +41,12 @@
 #include "operations.h"
 #include "regexp_object.h"
 #include "string_object.h"
-#include <assert.h>
+#include <math.h>
+#include <stdio.h>
+#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
-#include <math.h>
-#include <stdio.h>
 
 namespace KJS {
 
@@ -133,31 +133,31 @@ void GetterSetterImp::mark()
 
 JSValue *GetterSetterImp::toPrimitive(ExecState*, JSType) const
 {
-    assert(false);
+    ASSERT(false);
     return jsNull();
 }
 
 bool GetterSetterImp::toBoolean(ExecState*) const
 {
-    assert(false);
+    ASSERT(false);
     return false;
 }
 
 double GetterSetterImp::toNumber(ExecState *) const
 {
-    assert(false);
+    ASSERT(false);
     return 0.0;
 }
 
 UString GetterSetterImp::toString(ExecState *) const
 {
-    assert(false);
+    ASSERT(false);
     return UString::null();
 }
 
 JSObject *GetterSetterImp::toObject(ExecState *exec) const
 {
-    assert(false);
+    ASSERT(false);
     return jsNull()->toObject(exec);
 }
 

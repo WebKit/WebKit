@@ -27,11 +27,10 @@
 #include "objc_utility.h"
 
 #include "objc_instance.h"
-
 #include "runtime_array.h"
 #include "runtime_object.h"
-
 #include "WebScriptObject.h"
+#include <wtf/Assertions.h>
 
 #if !defined(_C_LNG_LNG)
 #define _C_LNG_LNG 'q'
@@ -83,7 +82,7 @@ namespace Bindings {
 */
 bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSize)
 {
-    assert(JSName && buffer);
+    ASSERT(JSName && buffer);
     
     const char *sp = JSName; // source pointer
     char *dp = buffer; // destination pointer
@@ -100,10 +99,10 @@ bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSi
 
         // If a future coder puts funny ++ operators above, we might write off the end 
         // of the buffer in the middle of this loop. Let's make sure to check for that.
-        assert(dp < end);
+        ASSERT(dp < end);
         
         if (*sp == 0) { // We finished converting JSName
-            assert(strlen(JSName) < bufferSize);
+            ASSERT(strlen(JSName) < bufferSize);
             return true;
         }
         
@@ -281,7 +280,7 @@ JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType ty
         default:
             // Should never get here. Argument types are filtered.
             fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);
-            assert(false);
+            ASSERT(false);
     }
     
     return 0;
@@ -347,7 +346,7 @@ ObjcValueType objcValueTypeForType(const char *type)
             default:
                 // Unhandled type. We don't handle C structs, unions, etc.
                 // FIXME: throw an exception?
-                assert(false);
+                ASSERT(false);
         }
 
         if (objcValueType != ObjcInvalidType)
@@ -359,7 +358,7 @@ ObjcValueType objcValueTypeForType(const char *type)
 
 JSObject *throwError(ExecState *exec, ErrorType type, NSString *message)
 {
-    assert(message);
+    ASSERT(message);
     size_t length = [message length];
     unichar *buffer = new unichar[length];
     [message getCharacters:buffer];

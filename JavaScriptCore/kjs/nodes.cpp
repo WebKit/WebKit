@@ -37,6 +37,7 @@
 #include "lexer.h"
 #include "operations.h"
 #include "PropertyNameArray.h"
+#include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/MathExtras.h>
@@ -190,7 +191,7 @@ static void substitute(UString &string, const UString &substring) KJS_FAST_CALL;
 static void substitute(UString &string, const UString &substring)
 {
     int position = string.find("%s");
-    assert(position != -1);
+    ASSERT(position != -1);
     string = string.substr(0, position) + substring + string.substr(position + 2);
 }
 
@@ -386,7 +387,7 @@ JSValue *ResolveNode::evaluate(ExecState *exec)
   ScopeChainIterator end = chain.end();
   
   // we must always have something in the scope chain
-  assert(iter != end);
+  ASSERT(iter != end);
 
   PropertySlot slot;
   do { 
@@ -490,11 +491,11 @@ JSValue *PropertyListNode::evaluate(ExecState *exec)
     Identifier propertyName = Identifier(n->toString(exec));
     switch (p->node->type) {
       case PropertyNode::Getter:
-        assert(v->isObject());
+        ASSERT(v->isObject());
         obj->defineGetter(exec, propertyName, static_cast<JSObject *>(v));
         break;
       case PropertyNode::Setter:
-        assert(v->isObject());
+        ASSERT(v->isObject());
         obj->defineSetter(exec, propertyName, static_cast<JSObject *>(v));
         break;
       case PropertyNode::Constant:
@@ -515,7 +516,7 @@ void PropertyListNode::breakCycle()
 // ECMA 11.1.5
 JSValue *PropertyNode::evaluate(ExecState*)
 {
-  assert(false);
+  ASSERT(false);
   return jsNull();
 }
 
@@ -566,7 +567,7 @@ JSValue *DotAccessorNode::evaluate(ExecState *exec)
 
 JSValue *ArgumentListNode::evaluate(ExecState *)
 {
-  assert(0);
+  ASSERT(0);
   return 0; // dummy, see evaluateList()
 }
 
@@ -593,7 +594,7 @@ void ArgumentListNode::breakCycle()
 
 JSValue *ArgumentsNode::evaluate(ExecState *)
 {
-  assert(0);
+  ASSERT(0);
   return 0; // dummy, see evaluateList()
 }
 
@@ -656,7 +657,7 @@ JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
   ScopeChainIterator end = chain.end();
   
   // we must always have something in the scope chain
-  assert(iter != end);
+  ASSERT(iter != end);
 
   PropertySlot slot;
   JSObject *base;
@@ -739,9 +740,9 @@ JSValue *FunctionCallBracketNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
 
   JSObject *thisObj = baseObj;
-  assert(thisObj);
-  assert(thisObj->isObject());
-  assert(!thisObj->isActivation());
+  ASSERT(thisObj);
+  ASSERT(thisObj->isObject());
+  ASSERT(!thisObj->isActivation());
 
   return func->call(exec, thisObj, argList);
 }
@@ -781,9 +782,9 @@ JSValue *FunctionCallDotNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
 
   JSObject *thisObj = baseObj;
-  assert(thisObj);
-  assert(thisObj->isObject());
-  assert(!thisObj->isActivation());
+  ASSERT(thisObj);
+  ASSERT(thisObj->isObject());
+  ASSERT(!thisObj->isActivation());
 
   return func->call(exec, thisObj, argList);
 }
@@ -799,7 +800,7 @@ JSValue *PostfixResolveNode::evaluate(ExecState *exec)
   ScopeChainIterator end = chain.end();
   
   // we must always have something in the scope chain
-  assert(iter != end);
+  ASSERT(iter != end);
 
   PropertySlot slot;
   JSObject *base;
@@ -901,7 +902,7 @@ JSValue *DeleteResolveNode::evaluate(ExecState *exec)
   ScopeChainIterator end = chain.end();
   
   // we must always have something in the scope chain
-  assert(iter != end);
+  ASSERT(iter != end);
 
   PropertySlot slot;
   JSObject *base;
@@ -1006,7 +1007,7 @@ JSValue *TypeOfResolveNode::evaluate(ExecState *exec)
   ScopeChainIterator end = chain.end();
   
   // we must always have something in the scope chain
-  assert(iter != end);
+  ASSERT(iter != end);
 
   PropertySlot slot;
   JSObject *base;
@@ -1044,7 +1045,7 @@ JSValue *PrefixResolveNode::evaluate(ExecState *exec)
   ScopeChainIterator end = chain.end();
   
   // we must always have something in the scope chain
-  assert(iter != end);
+  ASSERT(iter != end);
 
   PropertySlot slot;
   JSObject *base;
@@ -1230,7 +1231,7 @@ JSValue *ShiftNode::evaluate(ExecState *exec)
   case OpURShift:
     return jsNumber(v1->toUInt32(exec) >> i2);
   default:
-    assert(!"ShiftNode: unhandled switch case");
+    ASSERT(!"ShiftNode: unhandled switch case");
     return jsUndefined();
   }
 }
@@ -1422,7 +1423,7 @@ static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSV
   }
     break;
   default:
-    assert(0);
+    ASSERT(0);
     v = jsUndefined();
   }
   
@@ -1438,7 +1439,7 @@ JSValue *AssignResolveNode::evaluate(ExecState *exec)
   ScopeChainIterator end = chain.end();
   
   // we must always have something in the scope chain
-  assert(iter != end);
+  ASSERT(iter != end);
 
   PropertySlot slot;
   JSObject *base;
@@ -2021,7 +2022,7 @@ Completion ForInNode::execute(ExecState *exec)
         ScopeChainIterator end = chain.end();
   
         // we must always have something in the scope chain
-        assert(iter != end);
+        ASSERT(iter != end);
 
         PropertySlot slot;
         JSObject *o;
@@ -2044,7 +2045,7 @@ Completion ForInNode::execute(ExecState *exec)
 
         o->put(exec, ident, str);
     } else {
-        assert(lexpr->isBracketAccessorNode());
+        ASSERT(lexpr->isBracketAccessorNode());
         JSValue *v = static_cast<BracketAccessorNode *>(lexpr.get())->base()->evaluate(exec);
         KJS_CHECKEXCEPTION
         JSValue *v2 = static_cast<BracketAccessorNode *>(lexpr.get())->subscript()->evaluate(exec);
@@ -2194,7 +2195,7 @@ void ClauseListNode::getDeclarations(DeclarationStacks& stacks)
 JSValue *ClauseListNode::evaluate(ExecState *)
 {
   // should never be called
-  assert(false);
+  ASSERT(false);
   return 0;
 }
 
@@ -2239,7 +2240,7 @@ void CaseBlockNode::getDeclarations(DeclarationStacks& stacks)
 JSValue *CaseBlockNode::evaluate(ExecState *)
 {
   // should never be called
-  assert(false);
+  ASSERT(false);
   return 0;
 }
 

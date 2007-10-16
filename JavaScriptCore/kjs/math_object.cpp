@@ -22,11 +22,12 @@
 #include "config.h"
 #include "math_object.h"
 #include "math_object.lut.h"
-#include "wtf/MathExtras.h"
+#include <wtf/MathExtras.h>
 
 #include "operations.h"
 #include <math.h>
 #include <time.h>
+#include <wtf/Assertions.h>
 
 using namespace KJS;
 
@@ -107,7 +108,7 @@ JSValue *MathObjectImp::getValueProperty(ExecState *, int token) const
     d = sqrt(2.0);
     break;
   default:
-    assert(0);
+    ASSERT(0);
   }
 
   return jsNumber(d);
@@ -229,7 +230,7 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, con
 
   default:
     result = 0.0;
-    assert(0);
+    ASSERT(0);
   }
 
   return jsNumber(result);

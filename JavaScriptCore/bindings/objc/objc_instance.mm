@@ -27,6 +27,7 @@
 #import "objc_instance.h"
 
 #import "WebScriptObject.h"
+#include <wtf/Assertions.h>
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)
@@ -68,7 +69,7 @@ void ObjcInstance::begin()
 void ObjcInstance::end()
 {
     _beginCount--;
-    assert(_beginCount >= 0);
+    ASSERT(_beginCount >= 0);
     if (!_beginCount) {
         [_pool drain];
         _pool = 0;
@@ -97,7 +98,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
 
     // Overloading methods is not allowed in ObjectiveC.  Should only be one
     // name match for a particular method.
-    assert(methodList.size() == 1);
+    ASSERT(methodList.size() == 1);
 
 @try {
     ObjcMethod* method = 0;
@@ -138,7 +139,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
             // Must have a valid argument type.  This method signature should have
             // been filtered already to ensure that it has acceptable argument
             // types.
-            assert(objcValueType != ObjcInvalidType && objcValueType != ObjcVoidType);
+            ASSERT(objcValueType != ObjcInvalidType && objcValueType != ObjcVoidType);
 
             ObjcValue value = convertValueToObjcValue(exec, args.at(i-2), objcValueType);
 
@@ -177,7 +178,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
                     // the assert above should have fired in the impossible case
                     // of an invalid type anyway).
                     fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)objcValueType);
-                    assert(false);
+                    ASSERT(false);
             }
         }
     }
@@ -191,13 +192,13 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
     // Must have a valid return type.  This method signature should have
     // been filtered already to ensure that it have an acceptable return
     // type.
-    assert(objcValueType != ObjcInvalidType);
+    ASSERT(objcValueType != ObjcInvalidType);
 
     // Get the return value and convert it to a JavaScript value. Length
     // of return value will never exceed the size of largest scalar
     // or a pointer.
     char buffer[1024];
-    assert([signature methodReturnLength] < 1024);
+    ASSERT([signature methodReturnLength] < 1024);
 
     if (*type != 'v') {
         [invocation getReturnValue:buffer];

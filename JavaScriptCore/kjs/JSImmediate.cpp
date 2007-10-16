@@ -28,7 +28,7 @@ namespace KJS {
 
 JSObject *JSImmediate::toObject(const JSValue *v, ExecState *exec)
 {
-    assert(isImmediate(v));
+    ASSERT(isImmediate(v));
     if (v == jsNull())
         return throwError(exec, TypeError, "Null value");
     else if (v == jsUndefined())
@@ -58,7 +58,7 @@ UString JSImmediate::toString(const JSValue *v)
     else if (v == jsBoolean(false))
         return "false";
     else {
-        assert(isNumber(v));
+        ASSERT(isNumber(v));
         double d = toDouble(v);
         if (d == 0.0) // +0.0 or -0.0
             return "0";

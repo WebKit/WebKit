@@ -22,22 +22,21 @@
  */
 
 #include "config.h"
-#include "collector.h"
 
-#include <wtf/HashTraits.h>
 #include "JSLock.h"
-#include "object.h"
 #include "Parser.h"
-
+#include "collector.h"
+#include "object.h"
+#include "protect.h"
 #include <math.h>
 #include <stdio.h>
-
 #include <string.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashTraits.h>
+
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
-
-#include "protect.h"
 
 #if PLATFORM(WIN)
 #include <WebKitInitializer/WebKitInitializer.h>
@@ -336,25 +335,25 @@ static void testIsInteger()
   // Unit tests for WTF::IsInteger. Don't have a better place for them now.
   // FIXME: move these once we create a unit test directory for WTF.
 
-  assert(IsInteger<bool>::value);
-  assert(IsInteger<char>::value);
-  assert(IsInteger<signed char>::value);
-  assert(IsInteger<unsigned char>::value);
-  assert(IsInteger<short>::value);
-  assert(IsInteger<unsigned short>::value);
-  assert(IsInteger<int>::value);
-  assert(IsInteger<unsigned int>::value);
-  assert(IsInteger<long>::value);
-  assert(IsInteger<unsigned long>::value);
-  assert(IsInteger<long long>::value);
-  assert(IsInteger<unsigned long long>::value);
+  ASSERT(IsInteger<bool>::value);
+  ASSERT(IsInteger<char>::value);
+  ASSERT(IsInteger<signed char>::value);
+  ASSERT(IsInteger<unsigned char>::value);
+  ASSERT(IsInteger<short>::value);
+  ASSERT(IsInteger<unsigned short>::value);
+  ASSERT(IsInteger<int>::value);
+  ASSERT(IsInteger<unsigned int>::value);
+  ASSERT(IsInteger<long>::value);
+  ASSERT(IsInteger<unsigned long>::value);
+  ASSERT(IsInteger<long long>::value);
+  ASSERT(IsInteger<unsigned long long>::value);
 
-  assert(!IsInteger<char*>::value);
-  assert(!IsInteger<const char* >::value);
-  assert(!IsInteger<volatile char* >::value);
-  assert(!IsInteger<double>::value);
-  assert(!IsInteger<float>::value);
-  assert(!IsInteger<GlobalImp>::value);
+  ASSERT(!IsInteger<char*>::value);
+  ASSERT(!IsInteger<const char* >::value);
+  ASSERT(!IsInteger<volatile char* >::value);
+  ASSERT(!IsInteger<double>::value);
+  ASSERT(!IsInteger<float>::value);
+  ASSERT(!IsInteger<GlobalImp>::value);
 }
 
 static char* createStringWithContentsOfFile(const char* fileName)
@@ -377,10 +376,10 @@ static char* createStringWithContentsOfFile(const char* fileName)
     if (buffer_size == buffer_capacity) { // guarantees space for trailing '\0'
       buffer_capacity *= 2;
       buffer = (char*)realloc(buffer, buffer_capacity);
-      assert(buffer);
+      ASSERT(buffer);
     }
     
-    assert(buffer_size < buffer_capacity);
+    ASSERT(buffer_size < buffer_capacity);
   }
   fclose(f);
   buffer[buffer_size] = '\0';

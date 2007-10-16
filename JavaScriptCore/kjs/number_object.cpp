@@ -26,6 +26,7 @@
 #include "dtoa.h"
 #include "error_object.h"
 #include "operations.h"
+#include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
@@ -238,7 +239,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
               z += "0";
           m = z + m;
           k = f + 1;
-          assert(k == m.size());
+          ASSERT(k == m.size());
       }
       if (k-f < m.size())
           return jsString(s+m.substr(0,k-f)+"."+m.substr(k-f));
@@ -329,7 +330,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
           buf[i++] = '\0';
       }
       
-      assert(i <= 80);
+      ASSERT(i <= 80);
       
       kjs_freedtoa(result);
       
@@ -372,8 +373,8 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
               n = n / 10.0;
               e = e + 1;
           }
-          assert(intPow10(p - 1) <= n);
-          assert(n < intPow10(p));
+          ASSERT(intPow10(p - 1) <= n);
+          ASSERT(n < intPow10(p));
           
           m = integer_part_noexp(n);
           if (e < -6 || e >= p) {

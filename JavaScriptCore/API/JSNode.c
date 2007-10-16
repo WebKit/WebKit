@@ -29,7 +29,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "UnusedParam.h"
-#include <assert.h>
+#include <wtf/Assertions.h>
 
 static JSValueRef JSNode_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -124,7 +124,7 @@ static JSValueRef JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObj
 {
     UNUSED_PARAM(propertyName);
     Node* node = JSObjectGetPrivate(thisObject);
-    assert(node);
+    ASSERT(node);
     return JSNodeList_new(context, NodeList_new(node));
 }
 
@@ -147,7 +147,7 @@ static JSStaticValue JSNode_staticValues[] = {
 static void JSNode_initialize(JSContextRef context, JSObjectRef object)
 {
     Node* node = JSObjectGetPrivate(object);
-    assert(node);
+    ASSERT(node);
 
     Node_ref(node);
 }
@@ -155,7 +155,7 @@ static void JSNode_initialize(JSContextRef context, JSObjectRef object)
 static void JSNode_finalize(JSObjectRef object)
 {
     Node* node = JSObjectGetPrivate(object);
-    assert(node);
+    ASSERT(node);
 
     Node_deref(node);
 }

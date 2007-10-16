@@ -32,6 +32,7 @@
 #include "property_slot.h"
 #include "scope_chain.h"
 #include <wtf/AlwaysInline.h>
+#include <wtf/Assertions.h>
 
 namespace KJS {
 
@@ -507,7 +508,7 @@ JSObject *throwError(ExecState *, ErrorType);
 inline JSObject::JSObject(JSValue* proto)
     : _proto(proto)
 {
-    assert(proto);
+    ASSERT(proto);
 }
 
 inline JSObject::JSObject()
@@ -522,7 +523,7 @@ inline JSValue *JSObject::prototype() const
 
 inline void JSObject::setPrototype(JSValue *proto)
 {
-    assert(proto);
+    ASSERT(proto);
     _proto = proto;
 }
 
@@ -601,7 +602,7 @@ inline void ScopeChain::release()
 {
     // This function is only called by deref(),
     // Deref ensures these conditions are true.
-    assert(_node && _node->refCount == 0);
+    ASSERT(_node && _node->refCount == 0);
     ScopeChainNode *n = _node;
     do {
         ScopeChainNode *next = n->next;

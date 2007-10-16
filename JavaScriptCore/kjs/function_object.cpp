@@ -22,17 +22,17 @@
 
 #include "config.h"
 #include "function_object.h"
-#include "internal.h"
-#include "function.h"
-#include "array_object.h"
-#include "nodes.h"
-#include "lexer.h"
-#include "debugger.h"
-#include "object.h"
 
-#include <assert.h>
+#include "array_object.h"
+#include "debugger.h"
+#include "function.h"
+#include "internal.h"
+#include "lexer.h"
+#include "nodes.h"
+#include "object.h"
 #include <stdio.h>
 #include <string.h>
+#include <wtf/Assertions.h>
 
 using namespace KJS;
 
