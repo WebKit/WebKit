@@ -1,3 +1,18 @@
+2007-10-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15506
+        editing/pasteboard/paste-into-anchor-text.html accesses an external resource
+
+        Removed the external resource reference and made the test dump as text.
+
+        * editing/pasteboard/paste-into-anchor-text-expected.txt: Copied from platform/mac/editing/pasteboard/paste-into-anchor-text-expected.txt.
+        * editing/pasteboard/paste-into-anchor-text.html:
+        * platform/mac/editing/pasteboard/paste-into-anchor-text-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/paste-into-anchor-text-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-into-anchor-text-expected.txt: Removed.
+
 2007-10-15  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed layout test for reals. Changed \r\n to \n, fixing mass confusion.
