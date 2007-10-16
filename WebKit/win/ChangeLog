@@ -1,3 +1,19 @@
+2007-10-16  Adam Roben  <aroben@apple.com>
+
+        Rename WebKit_debug.dll to WebKit.dll for the Debug configuration
+
+        This is needed so that we can stop having Safari delay-load WebKit,
+        which in turn is needed so that Maciej can land a JavaScript speedup
+        which breaks delay-loading.
+
+        Reviewed by Kevin McCullough.
+
+        * WebKit.vcproj/WebKit.vcproj: Use WebKitDLLConfigSuffix for the name
+        of our DLL and module definition file.
+        * WebKit.vcproj/debug.vsprops: Added WebKitDLLConfigSuffix.
+        * WebKit.vcproj/debug_internal.vsprops: Ditto.
+        * WebKit.vcproj/release.vsprops: Ditto.
+
 2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Ollie.

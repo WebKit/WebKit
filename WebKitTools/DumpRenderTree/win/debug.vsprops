@@ -12,4 +12,8 @@
 		Name="LibraryConfigSuffix"
 		Value=""
 	/>
+	<UserMacro
+		Name="WebKitDLLConfigSuffix"
+		Value=""
+	/>
 </VisualStudioPropertySheet>

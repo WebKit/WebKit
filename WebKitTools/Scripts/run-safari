@@ -52,13 +52,11 @@ if (isOSX()) {
 } elsif (isCygwin()) {
     chomp(my $winSafariPath = `cygpath -wa "$safariPath"`);
     chomp(my $winProductDir = `cygpath -wa "$productDir"`);
-    my $extraArgs = "";
-    $extraArgs .= "/debug" if configuration() eq "Debug";
 
     my ($fh, $path) = tempfile(UNLINK => 0, SUFFIX => '.cmd') or die;
     print $fh <<EOF;
 \@echo off
-"$winSafariPath" /frameworkPath:"$winProductDir" $extraArgs
+"$winSafariPath" /frameworkPath:"$winProductDir"
 EOF
     chomp($path = `cygpath -ws "$path"`);
     $safariPath = "cmd";

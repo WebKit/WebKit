@@ -14,4 +14,8 @@
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
+	<UserMacro
+		Name="WebKitDLLConfigSuffix"
+		Value=""
+	/>
 </VisualStudioPropertySheet>

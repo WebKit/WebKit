@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="USE_DEBUG_SUPPORT_LIBS"
+		PreprocessorDefinitions="USE_DEBUG_SUPPORT_LIBS;DEBUG_WEBKIT_HAS_SUFFIX"
 	/>
 	<UserMacro
 		Name="WebKitConfigSuffix"

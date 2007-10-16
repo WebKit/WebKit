@@ -1,3 +1,16 @@
+2007-10-16  Adam Roben  <aroben@apple.com>
+
+        Updated testkjs for the rename of WebKit_debug.dll to WebKit.dll for the Debug configuration
+
+        Reviewed by Kevin McCullough.
+
+        * JavaScriptCore.vcproj/debug.vsprops: Added WebKitDLLConfigSuffix.
+        * JavaScriptCore.vcproj/debug_internal.vsprops: Ditto.
+        * JavaScriptCore.vcproj/release.vsprops: Ditto.
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj: Use
+        WebKitDLLConfigSuffix when referring to WebKit.dll, and fixed a typo
+        in the name of icuuc36[_debug].dll.
+
 2007-10-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -12,4 +12,8 @@
 		Name="LibraryConfigSuffix"
 		Value="_debug"
 	/>
+	<UserMacro
+		Name="WebKitDLLConfigSuffix"
+		Value="_debug"
+	/>
 </VisualStudioPropertySheet>

@@ -1,3 +1,22 @@
+2007-10-16  Adam Roben  <aroben@apple.com>
+
+        Updated for rename of WebKit_debug.dll to WebKit.dll for the Debug configuration
+
+        Reviewed by Kevin McCullough.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Use WebKitDLLConfigSuffix
+        when referring to WebKit.dll.
+        * DumpRenderTree/win/debug.vsprops: Added WebKitDLLConfigSuffix.
+        * DumpRenderTree/win/debug_internal.vsprops: Ditto.
+        * DumpRenderTree/win/release.vsprops: Ditto.
+        * Scripts/run-safari: Don't pass /debug to Safari anymore because we
+        never have a _debug suffix on WebKit.dll.
+        * WebKitInitializer/WebKitInitializer.cpp:
+        (initializeWebKit): Only use the _debug suffix for WebKit.dll when
+        specified.
+        * WebKitInitializer/debug_internal.vsprops: Added
+        DEBUG_WEBKIT_HAS_SUFFIX preprocessor definition.
+
 2007-10-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

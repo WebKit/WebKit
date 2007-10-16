@@ -56,6 +56,12 @@
 #define DLL(name) RELEASEDLL(name)
 #endif
 
+#ifdef DEBUG_WEBKIT_HAS_SUFFIX
+#define WEBKITDLL DEBUGDLL(WebKit)
+#else
+#define WEBKITDLL RELEASEDLL(WebKit)
+#endif
+
 static TCHAR* getStringValue(HKEY key, LPCTSTR valueName)
 {
     DWORD type = 0;
@@ -175,7 +181,7 @@ bool initializeWebKit()
             return false;
         }
 
-    HMODULE webKitModule = LoadLibrary(DLL(WebKit));
+    HMODULE webKitModule = LoadLibrary(WEBKITDLL);
     if (!webKitModule) {
         LOG_ERROR(TEXT("LoadLibrary(%s) failed\n"), DLL(WebKit));
         return false;

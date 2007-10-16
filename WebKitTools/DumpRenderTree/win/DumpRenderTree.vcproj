@@ -62,11 +62,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
-				DelayLoadDLLs="WebKit$(WebKitConfigSuffix).dll;CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
+				DelayLoadDLLs="WebKit$(WebKitDLLConfigSuffix).dll;CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -142,11 +142,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
-				DelayLoadDLLs="WebKit$(WebKitConfigSuffix).dll;CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
+				DelayLoadDLLs="WebKit$(WebKitDLLConfigSuffix).dll;CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -226,11 +226,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib WebKitInitializer$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;;&quot;$(WebKitOutputDir)\bin&quot;"
-				DelayLoadDLLs="WebKit$(WebKitConfigSuffix).dll;CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
+				DelayLoadDLLs="WebKit$(WebKitDLLConfigSuffix).dll;CoreGraphics$(LibraryConfigSuffix).dll;CoreFoundation$(LibraryConfigSuffix).dll;pthreadVC2$(LibraryConfigSuffix).dll"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
