@@ -147,7 +147,7 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
 // ECMA 10.1.3q
 inline void FunctionImp::passInParameters(ExecState* exec, const List& args)
 {
-    Vector<Parameter>& parameters = body->parameters();
+    Vector<Identifier>& parameters = body->parameters();
 
     JSObject* variable = exec->context()->variableObject();
 
@@ -163,7 +163,7 @@ inline void FunctionImp::passInParameters(ExecState* exec, const List& args)
       fprintf(stderr, "setting parameter %s ", parameters.at(i).name.ascii());
       printInfo(exec, "to", args[i]);
 #endif
-      variable->put(exec, parameters[i].name, args[i], DontDelete);
+      variable->put(exec, parameters[i], args[i], DontDelete);
     }
 }
 
@@ -258,17 +258,17 @@ bool FunctionImp::deleteProperty(ExecState* exec, const Identifier& propertyName
  */
 Identifier FunctionImp::getParameterName(int index)
 {
-    Vector<Parameter>& parameters = body->parameters();
+    Vector<Identifier>& parameters = body->parameters();
 
     if (static_cast<size_t>(index) >= body->numParams())
         return CommonIdentifiers::shared()->nullIdentifier;
   
-    Identifier name = parameters[index].name;
+    Identifier name = parameters[index];
 
     // Are there any subsequent parameters with the same name?
     size_t size = parameters.size();
     for (size_t i = index + 1; i < size; ++i)
-        if (parameters[i].name == name)
+        if (parameters[i] == name)
             return CommonIdentifiers::shared()->nullIdentifier;
 
     return name;

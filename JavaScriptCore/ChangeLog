@@ -2,6 +2,21 @@
 
         Reviewed by Darin Adler.
         
+        Removed the Parameter class because it was a redundant wrapper around 
+        Identifier.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::passInParameters):
+        (KJS::FunctionImp::getParameterName):
+        * kjs/nodes.cpp:
+        (FunctionBodyNode::addParam):
+        * kjs/nodes.h:
+        (KJS::FunctionBodyNode::):
+
+2007-10-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
         Global replace of assert with ASSERT.
 
 2007-10-16  Adam Roben  <aroben@apple.com>

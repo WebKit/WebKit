@@ -2461,7 +2461,7 @@ void FunctionBodyNode::processDeclarations(ExecState* exec)
 
 void FunctionBodyNode::addParam(const Identifier& ident)
 {
-  m_parameters.append(Parameter(ident));
+  m_parameters.append(ident);
 }
 
 UString FunctionBodyNode::paramString() const
