@@ -886,14 +886,14 @@ static double parseDate(const UString &date)
             if (month == -1)
                 return NaN;
 
-            while (*dateString && *dateString != '-' && *dateString != ',' && !isspace(*dateString))
+            while (*dateString && *dateString != '-' && *dateString != ',' && !isASCIISpace(*dateString))
                 dateString++;
 
             if (!*dateString)
                 return NaN;
 
             // '-99 23:12:40 GMT'
-            if (*dateString != '-' && *dateString != '/' && *dateString != ',' && !isspace(*dateString))
+            if (*dateString != '-' && *dateString != '/' && *dateString != ',' && !isASCIISpace(*dateString))
                 return NaN;
             dateString++;
         }
@@ -917,7 +917,7 @@ static double parseDate(const UString &date)
         dateString = newPosStr;
     else {
         // ' 23:12:40 GMT'
-        if (!(isspace(*newPosStr) || *newPosStr == ',')) {
+        if (!(isASCIISpace(*newPosStr) || *newPosStr == ',')) {
             if (*newPosStr != ':')
                 return NaN;
             // There was no year; the number was the hour.
