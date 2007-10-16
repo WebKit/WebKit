@@ -242,10 +242,6 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    static JSStringRef ctrlKey = JSStringCreateWithUTF8CString("ctrlKey");
-    static JSStringRef shiftKey = JSStringCreateWithUTF8CString("shiftKey");
-    static JSStringRef altKey = JSStringCreateWithUTF8CString("altKey");
-    static JSStringRef metaKey = JSStringCreateWithUTF8CString("metaKey");
     static JSStringRef lengthProperty = JSStringCreateWithUTF8CString("length");
 
     COMPtr<IWebFramePrivate> framePrivate;
@@ -258,12 +254,6 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     int virtualKeyCode = toupper(LOBYTE(VkKeyScan(charCode)));
     JSStringRelease(character);
 
-    // Hack to map option-delete to ctrl-delete
-    // Remove this when we fix <rdar://problem/5102974> layout tests need a way to decide how to choose the appropriate modifier keys
-    bool convertOptionToCtrl = false;
-    if (virtualKeyCode == VK_DELETE || virtualKeyCode == VK_BACK)
-        convertOptionToCtrl = true;
-    
     BYTE keyState[256];
     if (argumentCount > 1) {
         ::GetKeyboardState(keyState);
@@ -277,16 +267,13 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
             for (int i = 0; i < modifiersCount; ++i) {
                 JSValueRef value = JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0);
                 JSStringRef string = JSValueToStringCopy(context, value, 0);
-                if (JSStringIsEqual(string, ctrlKey))
+                if (JSStringIsEqualToUTF8CString(string, "ctrlKey"))
                     newKeyState[VK_CONTROL] = 0x80;
-                else if (JSStringIsEqual(string, shiftKey))
+                else if (JSStringIsEqualToUTF8CString(string, "shiftKey"))
                     newKeyState[VK_SHIFT] = 0x80;
-                else if (JSStringIsEqual(string, altKey)) {
-                    if (convertOptionToCtrl)
-                        newKeyState[VK_CONTROL] = 0x80;
-                    else
-                        newKeyState[VK_MENU] = 0x80;
-                } else if (JSStringIsEqual(string, metaKey))
+                else if (JSStringIsEqualToUTF8CString(string, "altKey"))
+                    newKeyState[VK_CONTROL] = 0x80;
+                else if (JSStringIsEqualToUTF8CString(string, "metaKey"))
                     newKeyState[VK_MENU] = 0x80;
 
                 JSStringRelease(string);

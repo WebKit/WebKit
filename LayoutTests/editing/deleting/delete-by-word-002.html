@@ -20,12 +20,23 @@
 
 <script>
 
-function editingTest() {
+function sendDeleteWordKey()
+{
+    var deleteWordModifiers;
+    if (navigator.userAgent.search(/\bMac OS X\b/))
+        deleteWordModifiers = ["altKey"];
+    else
+        deleteWordModifiers = ["ctrlKey"];
+    if (window.eventSender)
+        eventSender.keyDown(String.fromCharCode(8), deleteWordModifiers);
+}
+
+function editingTest()
+{
     moveSelectionForwardByWordCommand();
     moveSelectionForwardByWordCommand();
-	if (window.eventSender)
-		eventSender.keyDown(String.fromCharCode(127), ["altKey"]);
-	undoCommand();
+    sendDeleteWordKey();
+    undoCommand();
 }
 
 </script>

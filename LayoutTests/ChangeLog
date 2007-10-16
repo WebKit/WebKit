@@ -1,3 +1,25 @@
+2007-10-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15533
+          some tests have hard-coded Mac-specific modifier keys
+
+        - <rdar://problem/5102974> Layout tests fail on Windows because
+          they have hard-coded Mac-specific modifier keys
+        - <rdar://problem/5075449> fast/forms/listbox-onchange.html
+          is failing on Windows due to modifier key differences
+        - <rdar://problem/5134134> test 12 in fast/forms/listbox-selection.html
+          fails on Windows
+
+        * editing/deleting/delete-by-word-001.html: Use control key instead of alt key to
+        delete a word on non-Mac platforms. Also use character 8 instead of 127.
+        * editing/deleting/delete-by-word-002.html: Ditto.
+        * fast/forms/input-text-option-delete.html: Ditto.
+        * fast/forms/listbox-onchange.html: Use control key instead of meta key to toggle
+        a single list item on non-Mac platforms.
+        * fast/forms/listbox-selection.html: Ditto.
+
 2007-10-16  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

@@ -1,3 +1,10 @@
+2007-10-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        * DumpRenderTree/win/EventSender.cpp: (keyDownCallback):
+        Remove now-unneeded control/alt key hack; the tests have been updated.
+
 2007-10-16  Kevin McCullough  <kmccullough@apple.com>
 
         - Updated leaks list because our internal bot upgraded it's version of leopard and 

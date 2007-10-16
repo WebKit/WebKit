@@ -1,7 +1,8 @@
 <html>
     <head>
         <script>
-            function setup() {
+            function setup()
+            {
                 createSelect("sl1", 5, false, -1, " 1) Select one item with mouse (no previous selection)");
                 createSelect("sl2", 5, false, 1, " 2) Select one item with mouse (with previous selection)");
                 createSelect("sl3", 5, false, -1, " 3) Select one item with the keyboard (no previous selection)");
@@ -23,7 +24,8 @@
                 results.appendChild(document.createTextNode("Results:"));
                 document.body.appendChild(results);
             }
-            function test() {
+            function test()
+            {
                 setup();
                 
                 if (window.layoutTestController) {
@@ -109,25 +111,44 @@
                 
             }
             
-            function mouseDownOnSelect(selId, index, shift, meta) {
+            function mouseDownOnSelect(selId, index, shift, metaOrCtrl)
+            {
+                var meta = false;
+                var ctrl = false;
+                if (metaOrCtrl) {
+                    if (navigator.userAgent.search(/\bMac OS X\b/))
+                        meta = true;
+                    else
+                        ctrl = true;
+                }
                 var sl = document.getElementById(selId);
                 var itemHeight = 14;
                 var border = 1;
                 var y = border + index * itemHeight - window.pageYOffset;
                 var event = document.createEvent("MouseEvent");
-                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + border, sl.offsetTop + y, sl.offsetLeft + border, sl.offsetTop + y, false, false, shift, meta, 0, document);
+                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + border, sl.offsetTop + y, sl.offsetLeft + border, sl.offsetTop + y, ctrl, false, shift, meta, 0, document);
                 sl.dispatchEvent(event);
             }
             
-            function keyPressOnSelect(selId, identifier, shift, meta) {
+            function keyPressOnSelect(selId, identifier, shift, metaOrCtrl)
+            {
+                var meta = false;
+                var ctrl = false;
+                if (metaOrCtrl) {
+                    if (navigator.userAgent.search(/\bMac OS X\b/))
+                        meta = true;
+                    else
+                        ctrl = true;
+                }
                 var sl = document.getElementById(selId);
                 sl.focus();
                 var event = document.createEvent("KeyboardEvents");
-                event.initKeyboardEvent("keypress", true, true, document.defaultView, identifier, 0, false, false, shift, meta, false);
+                event.initKeyboardEvent("keypress", true, true, document.defaultView, identifier, 0, ctrl, false, shift, meta, false);
                 sl.dispatchEvent(event);
             }
             
-            function createSelect(idName, sz, mlt, selIndex, testMsg) {
+            function createSelect(idName, sz, mlt, selIndex, testMsg)
+            {
                 var sl = document.createElement("select");
                 var i = 0;
                 while (i < sz) {
@@ -146,7 +167,8 @@
                 document.body.appendChild(document.createElement("br"));
             }
             
-            function testResults(expectedArr, testNum) {
+            function testResults(expectedArr, testNum)
+            {
                 var sl = document.getElementById("sl" + testNum);
                 var res = document.getElementById('res');
                 var resultsArr = new Array(sl.options.length);
@@ -168,7 +190,8 @@
                 }
             }
             
-            function log(msg) {
+            function log(msg)
+            {
                 var r = document.getElementById('res');
                 r.innerHTML = r.innerHTML + "<br>" + msg;
             }

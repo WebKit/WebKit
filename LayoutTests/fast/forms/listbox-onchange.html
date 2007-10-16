@@ -1,18 +1,21 @@
 <html>
     <head>
         <script>
-            function setup() {
+            function setup()
+            {
                 var results = document.createElement('div');
                 results.id = "res";
                 results.appendChild(document.createTextNode("Results:"));
                 document.body.appendChild(results);
             }
-            function checkSelection(expected) {
+            function checkSelection(expected)
+            {
                 actual = getSelectedOptions("sl1");
                 if (actual.toString() != expected)
                     log('Incorrect selection: "' + actual + '" instead of "' + expected + '"');
             }
-            function test() {
+            function test()
+            {
                 setup();
                 
                 if (window.layoutTestController) {
@@ -106,34 +109,62 @@
                     layoutTestController.notifyDone();
             }
             
-            function mouseDownOnSelect(selId, index, shift, meta) {
+            function mouseDownOnSelect(selId, index, shift, metaOrCtrl)
+            {
+                var meta = false;
+                var ctrl = false;
+                if (metaOrCtrl) {
+                    if (navigator.userAgent.search(/\bMac OS X\b/))
+                        meta = true;
+                    else
+                        ctrl = true;
+                }
                 var sl = document.getElementById(selId);
                 var itemHeight = 14;
                 var border = 1;
                 var y = border + index * itemHeight - window.pageYOffset;
                 var event = document.createEvent("MouseEvent");
-                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + border, sl.offsetTop + y, sl.offsetLeft + border, sl.offsetTop + y, false, false, shift, meta, 0, document);
+                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + border, sl.offsetTop + y, sl.offsetLeft + border, sl.offsetTop + y, ctrl, false, shift, meta, 0, document);
                 sl.dispatchEvent(event);
             }
 
-            function mouseUpOnSelect(selId, index, shift, meta) {
+            function mouseUpOnSelect(selId, index, shift, metaOrCtrl)
+            {
+                var meta = false;
+                var ctrl = false;
+                if (metaOrCtrl) {
+                    if (navigator.userAgent.search(/\bMac OS X\b/))
+                        meta = true;
+                    else
+                        ctrl = true;
+                }
                 var sl = document.getElementById(selId);
                 var itemHeight = 14;
                 var border = 1;
                 var y = border + index * itemHeight - window.pageYOffset;
                 var event = document.createEvent("MouseEvent");
-                event.initMouseEvent("mouseup", true, true, document.defaultView, 1, sl.offsetLeft + border, sl.offsetTop + y, sl.offsetLeft + border, sl.offsetTop + y, false, false, shift, meta, 0, document);
+                event.initMouseEvent("mouseup", true, true, document.defaultView, 1, sl.offsetLeft + border, sl.offsetTop + y, sl.offsetLeft + border, sl.offsetTop + y, ctrl, false, shift, meta, 0, document);
                 sl.dispatchEvent(event);
             }
 
-            function keyPressOnSelect(selId, identifier, shift, meta) {
+            function keyPressOnSelect(selId, identifier, shift, metaOrCtrl)
+            {
+                var meta = false;
+                var ctrl = false;
+                if (metaOrCtrl) {
+                    if (navigator.userAgent.search(/\bMac OS X\b/))
+                        meta = true;
+                    else
+                        ctrl = true;
+                }
                 var sl = document.getElementById(selId);
                 var event = document.createEvent("KeyboardEvents");
-                event.initKeyboardEvent("keypress", true, true, document.defaultView, identifier, 0, false, false, shift, meta, false);
+                event.initKeyboardEvent("keypress", true, true, document.defaultView, identifier, 0, ctrl, false, shift, meta, false);
                 sl.dispatchEvent(event);
             }
             
-            function getSelectedOptions(selId) {
+            function getSelectedOptions(selId)
+            {
                 result = new Array;
                 var sl = document.getElementById(selId);
                 for (i = 0; i < sl.options.length; ++i)
@@ -142,7 +173,8 @@
                 return result;
             }
             
-            function log(msg) {
+            function log(msg)
+            {
                 var r = document.getElementById('res');
                 r.innerHTML = r.innerHTML + "<br>" + msg;
             }
