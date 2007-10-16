@@ -83,7 +83,7 @@
 
 /*!
     @method webScriptNameForSelector:
-    @param aSelector The selector that will be exposed to the script environment.
+    @param selector The selector that will be exposed to the script environment.
     @discussion Use the returned string as the exported name for the selector
     in the script environment. It is the responsibility of the class to ensure
     uniqueness of the returned name. If nil is returned or this
@@ -99,17 +99,17 @@
     @result Returns the name to be used to represent the specified selector in the
     scripting environment.
 */
-+ (NSString *)webScriptNameForSelector:(SEL)aSelector;
++ (NSString *)webScriptNameForSelector:(SEL)selector;
 
 /*!
     @method isSelectorExcludedFromWebScript:
-    @param aSelector The selector the will be exposed to the script environment.
+    @param selector The selector the will be exposed to the script environment.
     @discussion Return NO to export the selector to the script environment.
     Return YES to prevent the selector from being exported to the script environment. 
     If this method is not implemented on the class no selectors will be exported.
     @result Returns YES to hide the selector, NO to export the selector.
 */
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)selector;
 
 /*!
     @method webScriptNameForKey:
@@ -135,23 +135,23 @@
 /*!
     @method invokeUndefinedMethodFromWebScript:withArguments:
     @param name The name of the method to invoke.
-    @param args The args to pass the method.
+    @param arguments The arguments to pass the method.
     @discussion If a script attempts to invoke a method that is not exported, 
     invokeUndefinedMethodFromWebScript:withArguments: will be called.
     @result The return value of the invocation. The value will be converted as appropriate
     for the script environment.
 */
-- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
+- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)arguments;
 
 /*!
     @method invokeDefaultMethodWithArguments:
-    @param args The args to pass the method.
+    @param arguments The arguments to pass the method.
     @discussion If a script attempts to call an exposed object as a function, 
     this method will be called.
     @result The return value of the call. The value will be converted as appropriate
     for the script environment.
 */
-- (id)invokeDefaultMethodWithArguments:(NSArray *)args;
+- (id)invokeDefaultMethodWithArguments:(NSArray *)arguments;
 
 /*!
     @method finalizeForWebScript
@@ -183,13 +183,13 @@
         - (void)setValue:(id)value forKey:(NSString *)key
         - (id)valueForKey:(NSString *)key
 
-    As it possible to remove attributes from web script objects the following
+    As it possible to remove attributes from web script objects, the following
     additional method augments the basic KVC methods:
 
         - (void)removeWebScriptKey:(NSString *)name;
 
-    Also, the sparse array access allowed in web script objects doesn't map well to NSArray, so
-    the following methods can be used to access index based properties:
+    Also, since the sparse array access allowed in script objects doesn't map well
+    to NSArray, the following methods can be used to access index based properties:
 
         - (id)webScriptValueAtIndex:(unsigned)index;
         - (void)setWebScriptValueAtIndex:(unsigned)index value:(id)value;
@@ -217,13 +217,13 @@
 /*!
     @method callWebScriptMethod:withArguments:
     @param name The name of the method to call in the script environment.
-    @param args The arguments to pass to the script environment.
+    @param arguments The arguments to pass to the script environment.
     @discussion Calls the specified method in the script environment using the
     specified arguments.
     @result Returns the result of calling the script method.
     Returns WebUndefined when an exception is thrown in the script environment.
 */
-- (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)args;
+- (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)arguments;
 
 /*!
     @method evaluateWebScript:
@@ -243,7 +243,7 @@
 - (void)removeWebScriptKey:(NSString *)name;
 
 /*!
-    @method toString
+    @method stringRepresentation
     @discussion Converts the target object to a string representation. The coercion
     of non string objects type is dependent on the script environment.
     @result Returns the string representation of the object.
@@ -251,8 +251,8 @@
 - (NSString *)stringRepresentation;
 
 /*!
-    @method propertyAtIndex:
-    @param index The index of the property to return. Index based access is dependent
+    @method webScriptValueAtIndex:
+    @param index The index of the property to return.
     @discussion Gets the value of the property at the specified index.
     @result The value of the property. Returns WebUndefined when an exception is
     thrown in the script environment.
@@ -260,7 +260,7 @@
 - (id)webScriptValueAtIndex:(unsigned)index;
 
 /*!
-    @method setPropertyAtIndex:value:
+    @method setWebScriptValueAtIndex:value:
     @param index The index of the property to set.
     @param value The value of the property to set.
     @discussion Sets the property value at the specified index.
@@ -273,7 +273,7 @@
     @discussion Raises an exception in the script environment in the context of the
     current object.
 */
-- (void)setException: (NSString *)description;
+- (void)setException:(NSString *)description;
 
 @end
 
@@ -284,8 +284,6 @@
     @class WebUndefined
 */
 @interface WebUndefined : NSObject <NSCoding, NSCopying>
-{
-}
 
 /*!
     @method undefined

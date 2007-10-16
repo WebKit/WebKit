@@ -1,5 +1,14 @@
 2007-10-16  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15534
+          WebScriptObject.h has some formatting and editorial mistakes
+
+        * bindings/objc/WebScriptObject.h: Fix wording and formatting.
+
+2007-10-16  Darin Adler  <darin@apple.com>
+
         - try to fix the Qt build
 
         * config.h: Don't use DisallowCType.h, since it's incompatible with some C++ headers
