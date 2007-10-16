@@ -16,7 +16,10 @@ FAIL
 <script>
     if (window.eventSender) {
         var mod = [];
-        mod[0]='ctrlKey';
+        if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+            mod[0]='ctrlKey';
+        else
+            mod[0]='altKey';            
         eventSender.keyDown('a', mod);
     }
 </script>

@@ -1,3 +1,13 @@
+2007-10-16  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adele.
+
+        Fix <rdar://5134108> "fast/forms/select-accesskey.html and focus-selection-input.html fail on Windows"  
+
+        Adding code to choose the right accesskey modifier based on a useragent check for existance of mac platform. 
+        * fast/forms/focus-selection-input.html:
+        * fast/forms/select-accesskey.html:
+
 2007-10-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
