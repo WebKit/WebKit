@@ -29,19 +29,17 @@
 #include "config.h"
 #include "DebuggerDocument.h"
 
-#include "DebuggerClient.h"
+#include "ServerConnection.h"
 
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 #include <JavaScriptCore/RetainPtr.h>
-#include <JavaScriptCore/Vector.h>
 
-DebuggerDocument::DebuggerDocument(DebuggerClient* debugger)
-    : m_debuggerClient(debugger)
+DebuggerDocument::DebuggerDocument(ServerConnection* serverConn)
+    : m_server(serverConn)
 {
-    ASSERT(m_debuggerClient);
+    ASSERT(m_server);
 }
 
 //-- Callbacks
@@ -191,7 +189,7 @@ JSValueRef DebuggerDocument::logCallback(JSContextRef context, JSObjectRef /*fun
     return JSValueMakeUndefined(context);
 }
 
-//-- These are the calls into the JS. --//    
+//-- These are the calls into the JS. --//
 
 bool DebuggerDocument::isPaused(JSContextRef context) const
 {

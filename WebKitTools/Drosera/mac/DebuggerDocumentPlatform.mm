@@ -27,14 +27,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "DebuggerDocument.h"
 
 #import "DebuggerClient.h"
+#import "ServerConnection.h"
 
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/RetainPtr.h>
 
+// Converting string types
 NSString* NSStringCreateWithJSStringRef(JSStringRef jsString)
 {
     CFStringRef cfString = JSStringCopyCFString(kCFAllocatorDefault, jsString);
@@ -67,42 +70,33 @@ JSValueRef JSValueRefCreateWithNSString(JSContextRef context, NSString* nsString
 }
 @end
 
-@interface DebuggerClient (DebuggerExtras)
-- (void)pause;
-- (void)resume;
-- (void)stepInto;
-- (WebScriptCallFrame *)currentFrame;
-- (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object;
-+ (void)log:(NSString *)msg;
-@end
-
 // DebuggerDocument platform specific implementations
 
 void DebuggerDocument::platformPause()
 {
-    [m_debuggerClient pause];
+    [m_server pause];
 }
 
 void DebuggerDocument::platformResume()
 {
-    [m_debuggerClient resume];
+    [m_server resume];
 }
 
 void DebuggerDocument::platformStepInto()
 {
-    [m_debuggerClient stepInto];
+    [m_server stepInto];
 }
 
 JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStringRef script, int callFrame)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    WebScriptCallFrame *cframe = [m_server currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
     if (!cframe)
         return JSValueMakeUndefined(context);
     
-    RetainPtr<NSString *> scriptNS(AdoptNS, NSStringCreateWithJSStringRef(script));
+    RetainPtr<NSString> scriptNS(AdoptNS, NSStringCreateWithJSStringRef(script));
     id value = [cframe evaluateWebScript:scriptNS.get()];
     NSString *result = [NSString stringOrNilFromWebScriptResult:value];
     if (!result)
@@ -113,7 +107,7 @@ JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStri
 
 void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vector<JSValueRef>& currentStack)
 {
-    for (WebScriptCallFrame *frame = [m_debuggerClient currentFrame]; frame;) {
+    for (WebScriptCallFrame *frame = [m_server currentFrame]; frame;) {
         CFStringRef function;
         if ([frame functionName])
             function = (CFStringRef)[frame functionName];
@@ -129,7 +123,7 @@ void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vec
 
 void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef context, int callFrame, Vector<JSValueRef>& variableNames)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    WebScriptCallFrame *cframe = [m_server currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
@@ -139,7 +133,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
         return;
 
     WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:0]; // local is always first
-    NSArray *localScopeVariableNames = [m_debuggerClient webScriptAttributeKeysForScriptObject:scope];
+    NSArray *localScopeVariableNames = [m_server webScriptAttributeKeysForScriptObject:scope];
 
     for (int i = 0; i < [localScopeVariableNames count]; ++i) {
         variableNames.append(JSValueRefCreateWithNSString(context, [localScopeVariableNames objectAtIndex:i]));
@@ -148,7 +142,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
 
 JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef context, JSStringRef key, int callFrame)
 {
-    WebScriptCallFrame *cframe = [m_debuggerClient currentFrame];
+    WebScriptCallFrame *cframe = [m_server currentFrame];
     for (unsigned count = 0; count < callFrame; count++)
         cframe = [cframe caller];
 
@@ -167,7 +161,7 @@ JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef con
         
         id value = nil;
         @try {
-            RetainPtr<NSString *> keyNS(AdoptNS, NSStringCreateWithJSStringRef(key));
+            RetainPtr<NSString> keyNS(AdoptNS, NSStringCreateWithJSStringRef(key));
             value = [scope valueForKey:keyNS.get()];
         } @catch(NSException* localException) { // The value wasn't found.
         }
@@ -183,7 +177,7 @@ JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef con
 
 void DebuggerDocument::platformLog(JSStringRef msg)
 {
-    RetainPtr<NSString *> msgNS(AdoptNS, NSStringCreateWithJSStringRef(msg));
+    RetainPtr<NSString> msgNS(AdoptNS, NSStringCreateWithJSStringRef(msg));
     [DebuggerClient log:msgNS.get()];
 }
 

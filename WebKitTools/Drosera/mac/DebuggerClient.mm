@@ -27,17 +27,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "DebuggerClient.h"
 
-#import "DebuggerApplication.h"
 #import "DebuggerDocument.h"
+#import "ServerConnection.h"
 
-#import <Carbon/Carbon.h>
 #import <JavaScriptCore/JSContextRef.h>
-#import <JavaScriptCore/JSRetainPtr.h>
-#import <JavaScriptCore/JSStringRef.h>
-#import <JavaScriptCore/JSStringRefCF.h>
-#import <JavaScriptCore/RetainPtr.h>
 
 static NSString *DebuggerConsoleToolbarItem = @"DebuggerConsoleToolbarItem";
 static NSString *DebuggerContinueToolbarItem = @"DebuggerContinueToolbarItem";
@@ -64,73 +60,21 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 #pragma mark -
 
-- (id)initWithServerName:(NSString *)serverName
+- (id)initWithServerConnection:(ServerConnection *)serverConn;
 {
-    debuggerDocument = new DebuggerDocument(self);
+    if ((self = [super init])) {
+        server = [serverConn retain];
+        debuggerDocument = new DebuggerDocument(server);
+    }
 
-    if ((self = [super init]))
-        [self switchToServerNamed:serverName];
     return self;
 }
 
 - (void)dealloc
 {
     delete debuggerDocument;
-
     [server release];
-    [currentServerName release];
     [super dealloc];
-}
-
-#pragma mark -
-#pragma mark Stack & Variables
-
-- (WebScriptCallFrame *)currentFrame
-{
-    return currentFrame;
-}
-
-- (NSString *)currentFrameFunctionName
-{
-    return [currentFrame functionName];
-}
-
-- (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object
-{
-    WebScriptObject *enumerateAttributes = [object evaluateWebScript:@"(function () { var result = new Array(); for (var x in this) { result.push(x); } return result; })"];
-
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    WebScriptObject *variables = [enumerateAttributes callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObject:object]];
-    unsigned length = [[variables valueForKey:@"length"] intValue];
-    for (unsigned i = 0; i < length; i++) {
-        NSString *key = [variables webScriptValueAtIndex:i];
-        [result addObject:key];
-    }
-
-    [result sortUsingSelector:@selector(compare:)];
-    return [result autorelease];
-}
-
-#pragma mark -
-#pragma mark Pause & Step
-
-- (void)pause
-{
-    if ([[(NSDistantObject *)server connectionForProxy] isValid])
-        [server pause];
-    [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-}
-
-- (void)resume
-{
-    if ([[(NSDistantObject *)server connectionForProxy] isValid])
-        [server resume];
-}
-
-- (void)stepInto
-{
-    if ([[(NSDistantObject *)server connectionForProxy] isValid])
-        [server step];
 }
 
 #pragma mark -
@@ -183,8 +127,6 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 {
     [super windowDidLoad];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationTerminating:) name:NSApplicationWillTerminateNotification object:nil];
-
     NSString *path = [[NSBundle mainBundle] pathForResource:@"debugger" ofType:@"html" inDirectory:nil];
     [[webView mainFrame] loadRequest:[[[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]] autorelease]];
 
@@ -200,62 +142,9 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 {
     [[webView windowScriptObject] removeWebScriptKey:@"DebuggerDocument"];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:nil];
-
-    [self switchToServerNamed:nil];
+    [server switchToServerNamed:nil];
 
     [self autorelease]; // DebuggerApplication expects us to release on close
-}
-
-#pragma mark -
-#pragma mark Connection Handling
-
-- (void)switchToServerNamed:(NSString *)name
-{
-    if (server) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:[(NSDistantObject *)server connectionForProxy]];
-        if ([[(NSDistantObject *)server connectionForProxy] isValid]) {
-            [server removeListener:self];
-            [self resume];
-        }
-    }
-
-    id old = server;
-    server = ([name length] ? [[NSConnection rootProxyForConnectionWithRegisteredName:name host:nil] retain] : nil);
-    [old release];
-
-    old = currentServerName;
-    currentServerName = [name copy];
-    [old release];
-
-    if (server) {
-        @try {
-            [(NSDistantObject *)server setProtocolForProxy:@protocol(WebScriptDebugServer)];
-            [server addListener:self];
-        } @catch (NSException *exception) {
-            [currentServerName release];
-            currentServerName = nil;
-            [server release];
-            server = nil;
-        }
-
-        if (server)
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(serverConnectionDidDie:) name:NSConnectionDidDieNotification object:[(NSDistantObject *)server connectionForProxy]];  
-    }
-}
-
-- (void)applicationTerminating:(NSNotification *)notifiction
-{
-    if (server && [[(NSDistantObject *)server connectionForProxy] isValid]) {
-        [self switchToServerNamed:nil];
-        // call the runloop for a while to make sure our removeListener: is sent to the server
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
-    }
-}
-
-- (void)serverConnectionDidDie:(NSNotification *)notifiction
-{
-    [self switchToServerNamed:nil];
 }
 
 #pragma mark -
@@ -476,15 +365,17 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
     // note: this is the Debuggers's own WebView, not the one being debugged
-    if ([[sender window] isEqual:[self window]])
+    if ([[sender window] isEqual:[self window]]) {
         webViewLoaded = YES;
+        [server setGlobalContext:[[webView mainFrame] globalContext]];
+    }
 }
 
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
 {
     // note: this is the Debuggers's own WebViews, not the one being debugged
     if ([frame isEqual:[sender mainFrame]]) {
-        NSDictionary *info = [[(DebuggerApplication *)[[NSApplication sharedApplication] delegate] knownServers] objectForKey:currentServerName];
+        NSDictionary *info = [server knownServers];
         NSString *processName = [info objectForKey:WebScriptDebugServerProcessNameKey];
         if (info && [processName length]) {
             NSMutableString *newTitle = [[NSMutableString alloc] initWithString:processName];
@@ -497,114 +388,4 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     }
 }
 
-#pragma mark -
-#pragma mark Debug Listener Callbacks
-
-- (void)webView:(WebView *)view didLoadMainResourceForDataSource:(WebDataSource *)dataSource
-{  
-    NSString *documentSource = nil;
-    id <WebDocumentRepresentation> rep = [dataSource representation];
-    if ([rep canProvideDocumentSource])
-        documentSource = [rep documentSource];
-
-    if (!documentSource)
-        return;
-
-    JSRetainPtr<JSStringRef> documentSourceJS(Adopt, JSStringCreateWithCFString((CFStringRef)documentSource));     // We already checked for NULL
-    NSString *url = [[[dataSource response] URL] absoluteString];
-    JSRetainPtr<JSStringRef> urlJS(Adopt, JSStringCreateWithCFString(url ? (CFStringRef)url : CFSTR("")));
-
-    DebuggerDocument::updateFileSource([[webView mainFrame] globalContext], documentSourceJS.get(), urlJS.get());
-}
-
-- (void)webView:(WebView *)view didParseSource:(NSString *)source baseLineNumber:(unsigned)baseLine fromURL:(NSURL *)url sourceId:(int)sid forWebFrame:(WebFrame *)webFrame
-{
-    if (!webViewLoaded)
-        return;
-
-    RetainPtr<NSString *>sourceCopy = [source copy];
-    if (!sourceCopy.get())
-        return;
-
-    RetainPtr<NSString *>documentSourceCopy = nil;
-    RetainPtr<NSString *>urlCopy = [[url absoluteString] copy];
-
-    WebDataSource *dataSource = [webFrame dataSource];
-    if (!url || [[[dataSource response] URL] isEqual:url]) {
-        id <WebDocumentRepresentation> rep = [dataSource representation];
-        if ([rep canProvideDocumentSource])
-            documentSourceCopy = [[rep documentSource] copy];
-        if (!urlCopy.get())
-            urlCopy = [[[[dataSource response] URL] absoluteString] copy];
-    }
-
-    JSRetainPtr<JSStringRef> sourceCopyJS(Adopt, JSStringCreateWithCFString((CFStringRef)sourceCopy.get()));  // We checked for NULL earlier.
-    JSRetainPtr<JSStringRef> documentSourceCopyJS(Adopt, JSStringCreateWithCFString(documentSourceCopy.get() ? (CFStringRef)documentSourceCopy.get() : (CFStringRef)@""));
-    JSRetainPtr<JSStringRef> urlCopyJS(Adopt, JSStringCreateWithCFString(urlCopy.get() ? (CFStringRef)urlCopy.get() : (CFStringRef)@""));
-    JSContextRef context = [[webView mainFrame] globalContext];
-    JSValueRef sidJS = JSValueMakeNumber(context, sid);     // JSValueRefs are garbage collected
-    JSValueRef baseLineJS = JSValueMakeNumber(context, baseLine);
-
-    DebuggerDocument::didParseScript(context, sourceCopyJS.get(), documentSourceCopyJS.get(), urlCopyJS.get(), sidJS, baseLineJS);
-}
-
-- (void)webView:(WebView *)view failedToParseSource:(NSString *)source baseLineNumber:(unsigned)baseLine fromURL:(NSURL *)url withError:(NSError *)error forWebFrame:(WebFrame *)webFrame
-{
-}
-
-- (void)webView:(WebView *)view didEnterCallFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
-{
-    if (!webViewLoaded)
-        return;
-
-    id old = currentFrame;
-    currentFrame = [frame retain];
-    [old release];
-
-    JSContextRef context = [[webView mainFrame] globalContext];
-    JSValueRef sidJS = JSValueMakeNumber(context, sid);
-    JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
-
-    DebuggerDocument::didEnterCallFrame(context, sidJS, linenoJS);
-}
-
-- (void)webView:(WebView *)view willExecuteStatement:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
-{
-    if (!webViewLoaded)
-        return;
-
-    JSContextRef context = [[webView mainFrame] globalContext];
-    JSValueRef sidJS = JSValueMakeNumber(context, sid);
-    JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
-
-    DebuggerDocument::willExecuteStatement(context, sidJS, linenoJS);
-}
-
-- (void)webView:(WebView *)view willLeaveCallFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
-{
-    if (!webViewLoaded)
-        return;
-
-    JSContextRef context = [[webView mainFrame] globalContext];
-    JSValueRef sidJS = JSValueMakeNumber(context, sid);
-    JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
-
-    DebuggerDocument::willLeaveCallFrame(context, sidJS, linenoJS);
-
-    id old = currentFrame;
-    currentFrame = [[frame caller] retain];
-    [old release];
-}
-
-- (void)webView:(WebView *)view exceptionWasRaised:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
-{
-    if (!webViewLoaded)
-        return;
-
-    JSContextRef context = [[webView mainFrame] globalContext];
-    JSValueRef sidJS = JSValueMakeNumber(context, sid);
-    JSValueRef linenoJS = JSValueMakeNumber(context, lineno);
-
-    DebuggerDocument::exceptionWasRaised(context, sidJS, linenoJS);
-}
 @end

@@ -1,3 +1,63 @@
+2007-10-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        - I encapsulated out the server connecton functionality because it is a specific part
+        of Drosera that will be platform dependant until the WebScriptDebugServer can be moved
+        into WebCore and C++.  But if it is encapsulated out it can be easily replaced on
+        Windows.  So the majority of this patch is moving preexisting functionality.
+
+        - Also I removed the prefix header and changed to use config.h because it is more
+        standard on how we use config.h in windows and it didn't make much sense to keep
+        the prefix header and the config.h
+
+        * Drosera/DebuggerDocument.cpp:
+        (DebuggerDocument::DebuggerDocument):
+        * Drosera/DebuggerDocument.h:
+        * Drosera/config.h:
+        * Drosera/mac/DebuggerApplication.mm:
+        (-[DebuggerApplication attach:]):
+        * Drosera/mac/DebuggerClient.h:
+        * Drosera/mac/DebuggerClient.mm:
+        (-[DebuggerClient initWithServerConnection:]):
+        (-[DebuggerClient dealloc]):
+        (-[DebuggerClient windowDidLoad]):
+        (-[DebuggerClient windowWillClose:]):
+        (-[DebuggerClient webView:didFinishLoadForFrame:]):
+        (-[DebuggerClient webView:didReceiveTitle:forFrame:]):
+        * Drosera/mac/DebuggerDocumentPlatform.mm:
+        (DebuggerDocument::platformPause):
+        (DebuggerDocument::platformResume):
+        (DebuggerDocument::platformStepInto):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        (DebuggerDocument::platformLog):
+        * Drosera/mac/Drosera.pch: Removed.
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/mac/ServerConnection.h: Added.
+        * Drosera/mac/ServerConnection.mm: Added.
+        (-[ServerConnection initWithServerName:]):
+        (-[ServerConnection dealloc]):
+        (-[ServerConnection setGlobalContext:]):
+        (-[ServerConnection pause]):
+        (-[ServerConnection resume]):
+        (-[ServerConnection stepInto]):
+        (-[ServerConnection switchToServerNamed:]):
+        (-[ServerConnection applicationTerminating:]):
+        (-[ServerConnection serverConnectionDidDie:]):
+        (-[ServerConnection webView:didLoadMainResourceForDataSource:]):
+        (-[ServerConnection webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (-[ServerConnection webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:]):
+        (-[ServerConnection webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[ServerConnection webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[ServerConnection webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        (-[ServerConnection webView:exceptionWasRaised:sourceId:line:forWebFrame:]):
+        (-[ServerConnection currentFrame]):
+        (-[ServerConnection webScriptAttributeKeysForScriptObject:]):
+        (-[ServerConnection knownServers]):
+
 2007-10-15  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Eric.

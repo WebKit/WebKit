@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Vladimir Olexa (vladimir.olexa@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __OBJC__
+@class DebuggerClient;
+@class NSString;
+@class WebScriptCallFrame;
+@class WebScriptDebugServer;
 
-#import <Cocoa/Cocoa.h>
-#import <WebKit/WebKit.h>
-#import <WebKit/WebScriptDebugDelegate.h>
-#import <WebKit/WebScriptDebugServer.h>
+@interface ServerConnection : NSObject <WebScriptDebugListener>
+{
+    NSString *currentServerName;
+    WebScriptCallFrame *currentFrame;
+    id<WebScriptDebugServer> server;
+    JSGlobalContextRef globalContext;
+}
 
-#endif
+- (id)initWithServerName:(NSString *)serverName;
+- (void)setGlobalContext:(JSGlobalContextRef)globalContextRef;
+- (void)pause;
+- (void)resume;
+- (void)stepInto;
+- (void)switchToServerNamed:(NSString *)name;
+- (void)applicationTerminating:(NSNotification *)notifiction;
+- (WebScriptCallFrame *)currentFrame;
+- (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object;
+- (NSDictionary *)knownServers;
+
+@end

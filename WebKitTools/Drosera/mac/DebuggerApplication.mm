@@ -26,9 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "DebuggerApplication.h"
 
 #import "DebuggerClient.h"
+#import "ServerConnection.h"
+
 #import <WebKit/WebCoreStatistics.h>
 
 @implementation DebuggerApplication
@@ -107,8 +110,9 @@
     unsigned int row = [[attachTable selectedRowIndexes] firstIndex];
     NSString *key = [[knownServerNames allKeys] objectAtIndex:row];
 
-    // DebuggerClient will release on close
-    DebuggerClient *document = [[DebuggerClient alloc] initWithServerName:key];
+    ServerConnection *server = [[ServerConnection alloc] initWithServerName:key];
+    DebuggerClient *document = [[DebuggerClient alloc] initWithServerConnection:server];
+    [server release];
     [document showWindow:sender];
 }
 
