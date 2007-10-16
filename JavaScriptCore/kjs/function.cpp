@@ -106,15 +106,6 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
   if (newExec.hadException())
     comp = Completion(Throw, newExec.exception());
 
-#ifdef KJS_VERBOSE
-  if (comp.complType() == Throw)
-    printInfo(exec,"throwing", comp.value());
-  else if (comp.complType() == ReturnValue)
-    printInfo(exec,"returning", comp.value());
-  else
-    fprintf(stderr, "returning: undefined\n");
-#endif
-
   // The debugger may have been deallocated by now if the WebFrame
   // we were running in has been destroyed, so refetch it.
   // See http://bugs.webkit.org/show_bug.cgi?id=9477
@@ -151,18 +142,8 @@ inline void FunctionImp::passInParameters(ExecState* exec, const List& args)
 
     JSObject* variable = exec->context()->variableObject();
 
-#ifdef KJS_VERBOSE
-    fprintf(stderr, "---------------------------------------------------\n"
-          "processing parameters for %s call\n",
-          functionName().isEmpty() ? "(internal)" : functionName().ascii());
-#endif
-
     size_t size = parameters.size();
     for (size_t i = 0; i < size; ++i) {
-#ifdef KJS_VERBOSE
-      fprintf(stderr, "setting parameter %s ", parameters.at(i).name.ascii());
-      printInfo(exec, "to", args[i]);
-#endif
       variable->put(exec, parameters[i], args[i], DontDelete);
     }
 }

@@ -1,6 +1,22 @@
 2007-10-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
+
+        Removed KJS_VERBOSE because it was getting in the way of readability, 
+        and the messages didn't seem very helpful.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::FunctionImp::passInParameters):
+        * kjs/lookup.h:
+        (KJS::lookupPut):
+        * kjs/object.cpp:
+        (KJS::JSObject::put):
+        * kjs/value.h:
+
+2007-10-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
         
         Removed the Parameter class because it was a redundant wrapper around 
         Identifier.

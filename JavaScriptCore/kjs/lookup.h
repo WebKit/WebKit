@@ -242,13 +242,7 @@ namespace KJS {
 
     if (entry->attr & Function) // function: put as override property
       thisObj->JSObject::put(exec, propertyName, value, attr);
-    else if (entry->attr & ReadOnly) // readonly! Can't put!
-#ifdef KJS_VERBOSE
-      fprintf(stderr,"WARNING: Attempt to change value of readonly property '%s'\n",propertyName.ascii());
-#else
-      ; // do nothing
-#endif
-    else
+    else if (!(entry->attr & ReadOnly))
       thisObj->putValueProperty(exec, entry->value, value, attr);
 
     return true;
