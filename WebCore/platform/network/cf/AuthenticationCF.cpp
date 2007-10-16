@@ -155,6 +155,9 @@ CFURLProtectionSpaceRef createCF(const ProtectionSpace& coreSpace)
 
 Credential core(CFURLCredentialRef cfCredential)
 {
+    if (!cfCredential)
+        return Credential();
+
     CredentialPersistence persistence = CredentialPersistenceNone;
     switch (CFURLCredentialGetPersistence(cfCredential)) {
     case kCFURLCredentialPersistenceNone:

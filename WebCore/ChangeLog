@@ -1,3 +1,12 @@
+2007-10-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Oliver.
+
+        Add missing null check.
+
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::core):
+
 2007-10-15  Mark Rowe  <mrowe@apple.com>
 
         Fix the no-SVG build again.  Add new transform CSS properties to the switch statements.
