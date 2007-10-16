@@ -642,7 +642,6 @@
         linearly relative to available space. Caches that have bounded value 
         grow inverse-squaredly relative to available space.
 
->>>>>>> .r25438
 2007-09-05  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
@@ -762,7 +761,6 @@
         * WebView/WebViewInternal.h:
         * WebView/WebViewPrivate.h:
 
->>>>>>> .r25411
 2007-09-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
