@@ -1249,7 +1249,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSS_VAL_NONE)
             valid_primitive = true;
         else {
-            CSSValue* val = parseTransform();
+            PassRefPtr<CSSValue> val = parseTransform();
             if (val) {
                 addProperty(propId, val, important);
                 return true;
@@ -3029,20 +3029,6 @@ bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
     return false;
 }
 
-class TransformParseContext
-{
-public:
-    TransformParseContext() :m_list(0) {}
-
-    CSSValueList* list() const { return m_list; }
-    CSSValueList* failed() { delete m_list; return 0; }
-
-    void addValue(CSSTransformValue* val) { m_list->append(val); }
-
-private:
-    CSSValueList* m_list;
-};
-
 class TransformOperationInfo
 {
 public:
@@ -3105,41 +3091,41 @@ private:
     CSSParser::Units m_unit;
 };
 
-CSSValue* CSSParser::parseTransform()
+PassRefPtr<CSSValue> CSSParser::parseTransform()
 {
     if (!valueList)
         return 0;
 
     // The transform is a list of functional primitives that specify transform operations.  We collect a list
     // of CSSTransformValues, where each value specifies a single operation.
-    TransformParseContext transformParseContext;
+    RefPtr<CSSValueList> list = new CSSValueList;
     for (Value* value = valueList->current(); value; value = valueList->next()) {
         if (value->unit != Value::Function || !value->function)
-            return transformParseContext.failed();
+            return 0;
         String fname = domString(value->function->name).lower();
         
         // Every primitive requires at least one argument.
         ValueList* args = value->function->args;
         if (!args)
-            return transformParseContext.failed();
+            return 0;
         
         // See if the specified primitive is one we understand.
         TransformOperationInfo info(fname);
         if (info.unknown())
-            return transformParseContext.failed();
+            return 0;
        
         if (!info.hasCorrectArgCount(args->size()))
-            return transformParseContext.failed();
+            return 0;
 
         // Create the new CSSTransformValue for this operation and add it to our list.
         CSSTransformValue* transformValue = new CSSTransformValue(info.type());
-        transformParseContext.addValue(transformValue);
+        list->append(transformValue);
 
         // Snag our values.
         Value* a = args->current();
         while (a) {
             if (!validUnit(a, info.unit(), true)) // Always parse strictly, since this is a newer property, so there's no reason to be lax.
-                return transformParseContext.failed();
+                return 0;
             
             // Add the value to the current transform operation.
             transformValue->addValue(new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit));
@@ -3148,12 +3134,12 @@ CSSValue* CSSParser::parseTransform()
             if (!a)
                 break;
             if (a->unit != Value::Operator || a->iValue != ',')
-                return transformParseContext.failed();
+                return 0;
             a = args->next();
         }
     }
     
-    return transformParseContext.list();
+    return list.release();
 }
 
 bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, CSSValue*& value, CSSValue*& value2)
