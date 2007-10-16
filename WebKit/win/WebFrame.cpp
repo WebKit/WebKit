@@ -1650,8 +1650,8 @@ void WebFrame::didChangeTitle(DocumentLoader*)
 void WebFrame::finishedLoading(DocumentLoader* loader)
 {
     // Telling the frame we received some data and passing 0 as the data is our
-    // way to get work done that is noramlly done when the first bit of data is
-    // received, even for the case of a documenbt with no data (like about:blank)
+    // way to get work done that is normally done when the first bit of data is
+    // received, even for the case of a document with no data (like about:blank)
     if (!d->m_pluginView)
         committedLoad(loader, 0, 0);
     else {
@@ -1958,6 +1958,11 @@ void WebFrame::committedLoad(DocumentLoader* loader, const char* data, int lengt
     if (d->m_pluginView) {
         if (!d->m_hasSentResponseToPlugin) {
             d->m_pluginView->didReceiveResponse(d->frame->loader()->documentLoader()->response());
+            // didReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
+            // setting up this stream can cause the main document load to be cancelled, setting m_pluginView
+            // to null
+            if (!d->m_pluginView)
+                return;
             d->m_hasSentResponseToPlugin = true;
         }
         d->m_pluginView->didReceiveData(data, length);

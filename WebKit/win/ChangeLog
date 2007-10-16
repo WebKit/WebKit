@@ -1,3 +1,24 @@
+2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Ollie.
+
+        <rdar://5530789>: REGRESSION(303-310A19): Crash opening .wma files with
+        MediaPlayer for the first time
+
+        Failure to setup the stream in PluginView::didReceiveResponse will lead,
+        in a full-page plugin, to the main document load being cancelled. This
+        is the case with at least two versions of Windows Media Player, which
+        cancels the stream and brings up its own "Welcome to Windows Media
+        Player" dialog.
+        
+        As part of the main document load cancellation, m_pluginView is set to
+        null, and the crash came from dereferencing this pointer. This patch
+        adds a null check.
+
+        * WebFrame.cpp:
+        (WebFrame::finishedLoading): Fix some typos
+        (WebFrame::committedLoad): Added a null check
+
 2007-10-15  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.
