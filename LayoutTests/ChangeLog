@@ -1,3 +1,15 @@
+2007-10-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5517118> REGRESSION: 9A570 - Safari renders 
+        Amazon seller page way too small
+
+        * fast/css/pendingStylesheetFontSize.html: Added.
+        * platform/mac/fast/css/pendingStylesheetFontSize-expected.checksum: Added.
+        * platform/mac/fast/css/pendingStylesheetFontSize-expected.png: Added.
+        * platform/mac/fast/css/pendingStylesheetFontSize-expected.txt: Added.
+
 2007-10-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Alice.
