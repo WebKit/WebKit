@@ -1,3 +1,18 @@
+2007-10-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5494040> Reproducible assertion failure in WebCore::IconDatabase::iconForPageURL
+
+        A race condition between icon database import and Safari asking for an icon for the empty URL
+        was resulting in a PageURLRecord being created for a URL that can never be retained.  By enforcing
+        that PageURLRecord's cannot be created for the empty URL we can prevent the assertion from failing.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::getOrCreatePageURLRecord): Bail out early if the URL is empty.
+        (WebCore::IconDatabase::performURLImport): Don't create the PageURLRecord if the URL is empty.
+
 2007-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Ollie.

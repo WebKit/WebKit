@@ -267,7 +267,7 @@ Image* IconDatabase::iconForPageURL(const String& pageURLOriginal, const IntSize
     
     if (!isOpen())
         return defaultIcon(size);
-                
+
     MutexLocker locker(m_urlAndIconLock);
     
     String pageURLCopy; // Creates a null string for easy testing
@@ -895,6 +895,9 @@ PageURLRecord* IconDatabase::getOrCreatePageURLRecord(const String& pageURL)
     // Clients of getOrCreatePageURLRecord() are required to acquire the m_urlAndIconLock before calling this method
     ASSERT(m_urlAndIconLock.tryLock() == EBUSY);
 
+    if (pageURL.isEmpty())
+        return 0;
+
     PageURLRecord* pageRecord = m_pageURLToRecordMap.get(pageURL);
     
     MutexLocker locker(m_pendingReadingLock);
@@ -1229,7 +1232,7 @@ void IconDatabase::performURLImport()
             // so go ahead and actually create a pageURLRecord for this url even though it's not retained.
             // If database cleanup *is* allowed, we don't want to bother pulling in a page url from disk that noone is actually interested
             // in - we'll prune it later instead!
-            if (!pageRecord && databaseCleanupCounter) {
+            if (!pageRecord && databaseCleanupCounter && !pageURL.isEmpty()) {
                 pageRecord = new PageURLRecord(pageURL);
                 m_pageURLToRecordMap.set(pageURL, pageRecord);
             }
