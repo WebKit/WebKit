@@ -1,3 +1,10 @@
+2007-10-17  Anders Carlsson  <andersca@apple.com>
+
+        Update for locking primitive changes.
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::scheduleNotificationDelivery):
+
 2007-10-16  Adam Roben  <aroben@apple.com>
 
         Remove WebKitInitializer

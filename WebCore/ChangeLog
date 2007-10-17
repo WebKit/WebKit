@@ -1,3 +1,51 @@
+2007-10-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj:
+        
+        * config.h:
+        #define USE_PTHREADS on Windows.
+        
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::getOrCreateIconRecord):
+        (WebCore::IconDatabase::getOrCreatePageURLRecord):
+        Update for mutex changes.
+        
+        * platform/Threading.h:
+        (WebCore::):
+        (WebCore::ThreadSafeShared::ThreadSafeShared):
+        (WebCore::ThreadSafeShared::ref):
+        (WebCore::ThreadSafeShared::deref):
+        (WebCore::ThreadSafeShared::hasOneRef):
+        (WebCore::ThreadSafeShared::refCount):
+        (WebCore::ThreadSafeShared::isThreadSafe):
+        Add a new Shared base class that uses a mutex to manage its refcount.
+        
+        (WebCore::createThread):
+        (WebCore::waitForThreadCompletion):
+        (WebCore::detachThread):
+        New functions for thread creation.
+        
+        (WebCore::Mutex::Mutex):
+        (WebCore::Mutex::~Mutex):
+        (WebCore::Mutex::lock):
+        (WebCore::Mutex::tryLock):
+        (WebCore::Mutex::unlock):
+        Move the definitions to ThreadingPthreads.cpp
+        
+        (WebCore::ThreadCondition::ThreadCondition):
+        (WebCore::ThreadCondition::~ThreadCondition):
+        (WebCore::ThreadCondition::wait):
+        (WebCore::ThreadCondition::signal):
+        (WebCore::ThreadCondition::broadcast):
+        Move the definitions to ThreadingPthreads.cpp
+        
+        * platform/pthreads: Added.
+        * platform/pthreads/ThreadingPthreads.cpp: Added.
+        Add pthread specific implementation of the thread creation functions, Mutex and ThreadCondition.
+
 2007-10-17  David Hyatt  <hyatt@apple.com>
 
         Add support for creating a layer when a transform is in effect.  Add support to RenderStyle for
@@ -104,6 +152,7 @@
         * loader/DocLoader.cpp:
         (WebCore::DocLoader::setAutoLoadImages): Don't start a load if the CachedImage is already loading.
 
+>>>>>>> .r26704
 2007-10-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

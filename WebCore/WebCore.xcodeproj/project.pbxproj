@@ -89,6 +89,7 @@
 		1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D137F0A5325520064BF5F /* DOMXPath.mm */; };
 		1A2A68230B5BEDE70002A480 /* ProgressTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2A68210B5BEDE70002A480 /* ProgressTracker.cpp */; };
 		1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2A68220B5BEDE70002A480 /* ProgressTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A2E6FA40CC5795D004A2062 /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6FA30CC5795D004A2062 /* ThreadingPthreads.cpp */; };
 		1A3178930B20A81600316987 /* SubresourceLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3178920B20A81600316987 /* SubresourceLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */; };
 		1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */; };
@@ -4064,6 +4065,7 @@
 		1A1D137F0A5325520064BF5F /* DOMXPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMXPath.mm; sourceTree = "<group>"; };
 		1A2A68210B5BEDE70002A480 /* ProgressTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressTracker.cpp; sourceTree = "<group>"; };
 		1A2A68220B5BEDE70002A480 /* ProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProgressTracker.h; sourceTree = "<group>"; };
+		1A2E6FA30CC5795D004A2062 /* ThreadingPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadingPthreads.cpp; path = pthreads/ThreadingPthreads.cpp; sourceTree = "<group>"; };
 		1A3178920B20A81600316987 /* SubresourceLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubresourceLoaderClient.h; sourceTree = "<group>"; };
 		1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLElement.idl; sourceTree = "<group>"; };
 		1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElement.cpp; sourceTree = "<group>"; };
@@ -8080,6 +8082,14 @@
 			path = icon;
 			sourceTree = "<group>";
 		};
+		5154498E0CAA35F600194B2D /* pthreads */ = {
+			isa = PBXGroup;
+			children = (
+				1A2E6FA30CC5795D004A2062 /* ThreadingPthreads.cpp */,
+			);
+			name = pthreads;
+			sourceTree = "<group>";
+		};
 		5160F4920B0AA71500C1D2AF /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -10779,6 +10789,7 @@
 				B2A015910AF6CD53006BCE0E /* graphics */,
 				6582A14809999D6C00BEEB6D /* mac */,
 				656B84D70AEA1CE900A095B4 /* network */,
+				5154498E0CAA35F600194B2D /* pthreads */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
 				BCB16B890979B01400467741 /* ArrayImpl.cpp */,
@@ -14693,6 +14704,7 @@
 				A84EC1390CB9FDBC00079609 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
 				A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */,
 				BC9ADD800CC4092200098C4C /* CSSTransformValue.cpp in Sources */,
+				1A2E6FA40CC5795D004A2062 /* ThreadingPthreads.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

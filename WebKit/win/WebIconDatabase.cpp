@@ -319,7 +319,7 @@ void WebIconDatabase::dispatchDidAddIconForPageURL(const String& pageURL)
 void WebIconDatabase::scheduleNotificationDelivery()
 {
     // Caller of this method must hold the m_notificationQueue lock
-    ASSERT(m_notificationMutex.tryLock() == EBUSY);
+    ASSERT(!m_notificationMutex.tryLock());
 
     if (!m_deliveryRequested) {
         m_deliveryRequested = true;

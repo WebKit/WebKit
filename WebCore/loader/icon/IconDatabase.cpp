@@ -878,7 +878,7 @@ String IconDatabase::defaultDatabaseFilename()
 IconRecord* IconDatabase::getOrCreateIconRecord(const String& iconURL)
 {
     // Clients of getOrCreateIconRecord() are required to acquire the m_urlAndIconLock before calling this method
-    ASSERT(m_urlAndIconLock.tryLock() == EBUSY);
+    ASSERT(!m_urlAndIconLock.tryLock());
 
     if (IconRecord* icon = m_iconURLToRecordMap.get(iconURL))
         return icon;
@@ -893,7 +893,7 @@ IconRecord* IconDatabase::getOrCreateIconRecord(const String& iconURL)
 PageURLRecord* IconDatabase::getOrCreatePageURLRecord(const String& pageURL)
 {
     // Clients of getOrCreatePageURLRecord() are required to acquire the m_urlAndIconLock before calling this method
-    ASSERT(m_urlAndIconLock.tryLock() == EBUSY);
+    ASSERT(!m_urlAndIconLock.tryLock());
 
     if (pageURL.isEmpty())
         return 0;

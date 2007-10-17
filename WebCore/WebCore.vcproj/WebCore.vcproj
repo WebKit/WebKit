@@ -4453,6 +4453,14 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="pthreads"
+				>
+				<File
+					RelativePath="..\platform\pthreads\ThreadingPthreads.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="css"
@@ -4697,7 +4705,7 @@
 				RelativePath="..\css\CSSStyleSheet.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\css\CSSTransformValue.cpp"
 				>
 			</File>

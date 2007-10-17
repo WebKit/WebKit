@@ -29,46 +29,117 @@
 #ifndef Threading_h
 #define Threading_h
 
+#include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
+
+#if USE(PTHREADS)
 #include <pthread.h>
+#endif
 
 namespace WebCore {
 
-class ThreadCondition;
+typedef uint32_t ThreadIdentifier;
+typedef void* (*ThreadFunction)(void* argument);
 
+// Returns 0 if thread creation failed
+ThreadIdentifier createThread(ThreadFunction, void*);
+int waitForThreadCompletion(ThreadIdentifier, void**);
+void detachThread(ThreadIdentifier);
+    
 class Mutex : Noncopyable {
 friend class ThreadCondition;
 public:
-    Mutex() { pthread_mutex_init(&m_mutex, NULL); }
-    ~Mutex() { pthread_mutex_destroy(&m_mutex); }
+    Mutex();
+    ~Mutex();
 
-    int lock() { return pthread_mutex_lock(&m_mutex);}
-    int tryLock() { return pthread_mutex_trylock(&m_mutex); }
-    int unlock() { return pthread_mutex_unlock(&m_mutex); }
+    void lock();
+    bool tryLock();
+    void unlock();
     
 private:
+#if USE(PTHREADS)
     pthread_mutex_t m_mutex;
+#endif
 };
 
 class MutexLocker : Noncopyable {
 public:
     MutexLocker(Mutex& mutex) : m_mutex(mutex) { m_mutex.lock(); }
     ~MutexLocker() { m_mutex.unlock(); }
+
 private:
     Mutex& m_mutex;
 };
 
 class ThreadCondition : Noncopyable {
 public:
-    ThreadCondition() { pthread_cond_init(&m_condition, NULL); }
-    ~ThreadCondition() { pthread_cond_destroy(&m_condition); }
+    ThreadCondition();
+    ~ThreadCondition();
     
-    int wait(Mutex& mutex) { return pthread_cond_wait(&m_condition, &mutex.m_mutex); }
-    int signal() { return pthread_cond_signal(&m_condition); }
-    int broadcast() { return pthread_cond_broadcast(&m_condition); }
+    void wait(Mutex& mutex);
+    void signal();
+    void broadcast();
     
 private:
+#if USE(PTHREADS)
     pthread_cond_t m_condition;
+#endif
+};
+    
+template<class T> class ThreadSafeShared : Noncopyable {
+public:
+    ThreadSafeShared()
+        : m_refCount(0)
+#ifndef NDEBUG
+        , m_inDestructor(0)
+#endif
+    {
+    }
+
+    void ref()
+    {
+        MutexLocker locker(m_mutex);
+        ASSERT(!m_inDestructor);
+        ++m_refCount;
+    }
+
+    void deref()
+    {
+        {
+            MutexLocker locker(m_mutex);
+            ASSERT(!m_inDestructor);
+            --m_refCount;
+        }
+        
+        if (m_refCount <= 0) {
+#ifndef NDEBUG
+            m_inDestructor = true;
+#endif
+            delete static_cast<T*>(this);
+        }
+    }
+
+    bool hasOneRef()
+    {
+        MutexLocker locker(m_mutex);
+        ASSERT(!m_inDestructor);
+        return m_refCount == 1;
+    }
+
+    int refCount() const
+    {
+        MutexLocker locker(m_mutex);
+        return m_refCount;
+    }
+
+    bool isThreadSafe() { return true; }
+    
+private:
+    mutable Mutex m_mutex;
+    int m_refCount;
+#ifndef NDEBUG
+    bool m_inDestructor;
+#endif
 };
 
 void callOnMainThread(void (*)());
@@ -79,6 +150,24 @@ void initializeThreading();
 inline void initializeThreading()
 {
 }
+#endif
+
+#if !USE(PTHREADS)
+ThreadIdentifier createThread(ThreadFunction, void*) { return 0; }
+int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
+void detachThread(ThreadIdentifier) { }
+
+Mutex::Mutex() {}
+Mutex::~Mutex() {}
+void Mutex::lock() {}
+bool Mutex::tryLock() { return false; }
+void Mutex::unlock() {};
+
+ThreadCondition::ThreadCondition() {}
+ThreadCondition::~ThreadCondition() {}
+void ThreadCondition::wait(Mutex& mutex) {}
+void ThreadCondition::signal() {}
+void ThreadCondition::broadcast() {}
 #endif
 
 } // namespace WebCore

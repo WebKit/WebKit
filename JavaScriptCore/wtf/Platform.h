@@ -205,6 +205,7 @@
 
 #if PLATFORM(MAC)
 #define WTF_PLATFORM_CF 1
+#define WTF_USE_PTHREADS 1
 #endif
 
 #if PLATFORM(WIN)
