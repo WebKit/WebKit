@@ -86,26 +86,31 @@
             // Do a layout if pending, before checking if scrollbars are needed.
             // This fixes 2969367, although may introduce a slowdown in live resize performance.
             NSView *documentView = [self documentView];
-            if ((hasVerticalScroller != oldHasVertical ||
-                hasHorizontalScroller != oldHasHorizontal || [documentView inLiveResize]) && [documentView conformsToProtocol:@protocol(WebDocumentView)]) {
-                [(id <WebDocumentView>)documentView setNeedsLayout: YES];
-                [(id <WebDocumentView>)documentView layout];
-            }
+            if (!documentView) {
+                scrollsHorizontally = NO;
+                scrollsVertically = NO;
+            } else {
+                if ((hasVerticalScroller != oldHasVertical ||
+                    hasHorizontalScroller != oldHasHorizontal || [documentView inLiveResize]) && [documentView conformsToProtocol:@protocol(WebDocumentView)]) {
+                    [(id <WebDocumentView>)documentView setNeedsLayout: YES];
+                    [(id <WebDocumentView>)documentView layout];
+                }
 
-            NSSize documentSize = [documentView frame].size;
-            NSSize frameSize = [self frame].size;
+                NSSize documentSize = [documentView frame].size;
+                NSSize frameSize = [self frame].size;
 
-            scrollsVertically = (vScroll == WebCoreScrollbarAlwaysOn) ||
-                (vScroll == WebCoreScrollbarAuto && documentSize.height > frameSize.height);
-            if (scrollsVertically)
-                scrollsHorizontally = (hScroll == WebCoreScrollbarAlwaysOn) ||
-                    (hScroll == WebCoreScrollbarAuto && documentSize.width + [NSScroller scrollerWidth] > frameSize.width);
-            else {
-                scrollsHorizontally = (hScroll == WebCoreScrollbarAlwaysOn) ||
-                    (hScroll == WebCoreScrollbarAuto && documentSize.width > frameSize.width);
-                if (scrollsHorizontally)
-                    scrollsVertically = (vScroll == WebCoreScrollbarAlwaysOn) ||
-                        (vScroll == WebCoreScrollbarAuto && documentSize.height + [NSScroller scrollerWidth] > frameSize.height);
+                scrollsVertically = (vScroll == WebCoreScrollbarAlwaysOn) ||
+                    (vScroll == WebCoreScrollbarAuto && documentSize.height > frameSize.height);
+                if (scrollsVertically)
+                    scrollsHorizontally = (hScroll == WebCoreScrollbarAlwaysOn) ||
+                        (hScroll == WebCoreScrollbarAuto && documentSize.width + [NSScroller scrollerWidth] > frameSize.width);
+                else {
+                    scrollsHorizontally = (hScroll == WebCoreScrollbarAlwaysOn) ||
+                        (hScroll == WebCoreScrollbarAuto && documentSize.width > frameSize.width);
+                    if (scrollsHorizontally)
+                        scrollsVertically = (vScroll == WebCoreScrollbarAlwaysOn) ||
+                            (vScroll == WebCoreScrollbarAuto && documentSize.height + [NSScroller scrollerWidth] > frameSize.height);
+                }
             }
         } else {
             scrollsHorizontally = (hScroll == WebCoreScrollbarAuto) ? hasHorizontalScroller : (hScroll == WebCoreScrollbarAlwaysOn);

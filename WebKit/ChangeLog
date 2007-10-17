@@ -1,8 +1,19 @@
+2007-10-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix <rdar://problem/5183775> Uninitialized memory in -[WebDynamicScrollBarsView updateScrollers]
+
+        * WebView/WebDynamicScrollBarsView.m: (-[WebDynamicScrollBarsView updateScrollers]):
+        Change code path so it doesn't dispatch a method that returns an NSSize passing a nil object.
+        It's safe to do that for functions that return integers or pointers, but not structures.
+
 2007-10-16  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Timothy.
 
-        <rdar://problem/5544354> Wrong delegate method called in WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
+        <rdar://problem/5544354> Wrong delegate method called in
+        WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 
         * WebCoreSupport/WebFrameLoaderClient.mm:
         (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad): Fixed selector name.
