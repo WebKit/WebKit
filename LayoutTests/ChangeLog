@@ -1,3 +1,15 @@
+2007-10-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5481523> 
+        GoogleDocs: Safari hangs when indenting a particular table twice
+
+        * editing/execCommand/5481523.html: Added.
+        * platform/mac/editing/execCommand/5481523-expected.checksum: Added.
+        * platform/mac/editing/execCommand/5481523-expected.png: Added.
+        * platform/mac/editing/execCommand/5481523-expected.txt: Added.
+
 2007-10-16  Alice Liu  <alice.liu@apple.com>
 
         removing fixed tests

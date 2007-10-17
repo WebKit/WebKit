@@ -1,3 +1,31 @@
+2007-10-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5481523> 
+        GoogleDocs: Safari hangs when indenting a particular table twice
+        
+        Fixed by fixing problems with the selection preservation done by IndentOutdentCommand.
+        It is now more difficult to create selections that cause hangs.  Those are covered by:
+        <rdar://problem/5543472>
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::indexForVisiblePosition): Compute indices from the first VisiblePosition
+        in the document, instead of the first Position.
+        Use rangeCompliantEquivalents when creating the Range that we pass to rangeLength.
+        Tell TextIterator::rangeLength that we're doing selection preservation, so that it
+        will emit characters between all VisiblePositions.
+        (WebCore::IndentOutdentCommand::indentRegion): Fixed a bug where the range and location
+        passed to rangeFromLocationAndLength were reversed.
+        Tell rangeFromLocationAndLength that we're doing doing selection preservation, as
+        above.
+        * editing/TextIterator.cpp:
+        (WebCore::CharacterIterator::CharacterIterator): 
+        (WebCore::TextIterator::rangeLength): Rename emitSpacesForReplacedElements
+        to forSelectionPreservation, to match the name of the boolean inside TextIterator and
+        to match its meaning after r25522.
+        (WebCore::TextIterator::rangeFromLocationAndLength): Ditto.
+
 2007-10-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
