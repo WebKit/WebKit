@@ -152,7 +152,6 @@
         * loader/DocLoader.cpp:
         (WebCore::DocLoader::setAutoLoadImages): Don't start a load if the CachedImage is already loading.
 
->>>>>>> .r26704
 2007-10-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.
