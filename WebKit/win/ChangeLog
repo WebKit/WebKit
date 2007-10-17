@@ -1,3 +1,11 @@
+2007-10-17  Adam Roben  <aroben@apple.com>
+
+        Fix for clean builds needed after r26683
+
+        Reviewed by NOBODY.
+
+        * WebView.cpp: Remove #include of non-existant file.
+
 2007-10-17  Anders Carlsson  <andersca@apple.com>
 
         Update for locking primitive changes.

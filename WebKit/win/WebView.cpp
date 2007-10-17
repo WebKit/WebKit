@@ -50,7 +50,6 @@
 #include <CoreGraphics/CGContext.h>
 #include <WebCore/BString.h>
 #include <WebCore/Cache.h>
-#include <WebCore/CommandByName.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/CString.h>
