@@ -217,7 +217,7 @@
 		935AF46C09E9D9DB00ACD1D8 /* Forward.h in Headers */ = {isa = PBXBuildFile; fileRef = 935AF46909E9D9DB00ACD1D8 /* Forward.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935AF46E09E9D9DB00ACD1D8 /* UnusedParam.h in Headers */ = {isa = PBXBuildFile; fileRef = 935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */; };
 		935F69FE08245057003D1A45 /* dftables.c in Sources */ = {isa = PBXBuildFile; fileRef = 6541720E039E08B90058BFEB /* dftables.c */; };
-                937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.c in Sources */ = {isa = PBXBuildFile; fileRef = 937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.c */; settings = {COMPILER_FLAGS = "-Wno-sign-compare"; }; };
+		937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.c in Sources */ = {isa = PBXBuildFile; fileRef = 937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.c */; settings = {COMPILER_FLAGS = "-Wno-sign-compare"; }; };
 		938C4F6A0CA06BC700D9310A /* ASCIICType.h in Headers */ = {isa = PBXBuildFile; fileRef = 938C4F690CA06BC700D9310A /* ASCIICType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		938C4F6C0CA06BCE00D9310A /* DisallowCType.h in Headers */ = {isa = PBXBuildFile; fileRef = 938C4F6B0CA06BCE00D9310A /* DisallowCType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93AA4F780957251F0084B3A7 /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AA4F770957251F0084B3A7 /* AlwaysInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1365,6 +1365,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptCore */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;

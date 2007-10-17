@@ -48,12 +48,12 @@ namespace KJS {
 
 // ----------------------------- FunctionImp ----------------------------------
 
-const ClassInfo FunctionImp::info = {"Function", &InternalFunctionImp::info, 0, 0};
+const ClassInfo FunctionImp::info = { "Function", &InternalFunctionImp::info, 0, 0 };
 
-FunctionImp::FunctionImp(ExecState* exec, const Identifier& n, FunctionBodyNode* b)
-  : InternalFunctionImp(static_cast<FunctionPrototype*>
-                        (exec->lexicalInterpreter()->builtinFunctionPrototype()), n)
+FunctionImp::FunctionImp(ExecState* exec, const Identifier& name, FunctionBodyNode* b, const ScopeChain& sc)
+  : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
   , body(b)
+  , _scope(sc)
 {
 }
 
@@ -63,35 +63,27 @@ void FunctionImp::mark()
     _scope.mark();
 }
 
-FunctionImp::~FunctionImp()
-{
-}
-
 JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
   JSObject* globalObj = exec->dynamicInterpreter()->globalObject();
 
   // enter a new execution context
   Context ctx(globalObj, exec->dynamicInterpreter(), thisObj, body.get(),
-                 codeType(), exec->context(), this, &args);
+                 FunctionCode, exec->context(), this, &args);
   ExecState newExec(exec->dynamicInterpreter(), &ctx);
   if (exec->hadException())
     newExec.setException(exec->exception());
   ctx.setExecState(&newExec);
 
-  // assign user supplied arguments to parameters
   passInParameters(&newExec, args);
-  // add variable declarations (initialized to undefined)
   processVarDecls(&newExec);
 
   Debugger* dbg = exec->dynamicInterpreter()->debugger();
   int sid = -1;
   int lineno = -1;
   if (dbg) {
-    if (inherits(&DeclaredFunctionImp::info)) {
-      sid = static_cast<DeclaredFunctionImp*>(this)->body->sourceId();
-      lineno = static_cast<DeclaredFunctionImp*>(this)->body->firstLine();
-    }
+    sid = body->sourceId();
+    lineno = body->firstLine();
 
     bool cont = dbg->callEvent(&newExec,sid,lineno,this,args);
     if (!cont) {
@@ -112,8 +104,7 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
   dbg = exec->dynamicInterpreter()->debugger();
 
   if (dbg) {
-    if (inherits(&DeclaredFunctionImp::info))
-      lineno = static_cast<DeclaredFunctionImp*>(this)->body->lastLine();
+    lineno = body->lastLine();
 
     if (comp.complType() == Throw)
         newExec.setException(comp.value());
@@ -146,10 +137,6 @@ inline void FunctionImp::passInParameters(ExecState* exec, const List& args)
     for (size_t i = 0; i < size; ++i) {
       variable->put(exec, parameters[i], args[i], DontDelete);
     }
-}
-
-void FunctionImp::processVarDecls(ExecState*)
-{
 }
 
 JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
@@ -255,25 +242,8 @@ Identifier FunctionImp::getParameterName(int index)
     return name;
 }
 
-// ------------------------------ DeclaredFunctionImp --------------------------
-
-// ### is "Function" correct here?
-const ClassInfo DeclaredFunctionImp::info = {"Function", &FunctionImp::info, 0, 0};
-
-DeclaredFunctionImp::DeclaredFunctionImp(ExecState* exec, const Identifier& n,
-                                         FunctionBodyNode* b, const ScopeChain& sc)
-  : FunctionImp(exec, n, b)
-{
-  setScope(sc);
-}
-
-bool DeclaredFunctionImp::implementsConstruct() const
-{
-  return true;
-}
-
 // ECMA 13.2.2 [[Construct]]
-JSObject* DeclaredFunctionImp::construct(ExecState* exec, const List& args)
+JSObject* FunctionImp::construct(ExecState* exec, const List& args)
 {
   JSObject* proto;
   JSValue* p = get(exec, exec->propertyNames().prototype);
@@ -292,7 +262,7 @@ JSObject* DeclaredFunctionImp::construct(ExecState* exec, const List& args)
     return obj;
 }
 
-Completion DeclaredFunctionImp::execute(ExecState* exec)
+Completion FunctionImp::execute(ExecState* exec)
 {
   Completion result = body->execute(exec);
 
@@ -301,7 +271,7 @@ Completion DeclaredFunctionImp::execute(ExecState* exec)
   return Completion(Normal, jsUndefined()); // TODO: or ReturnValue ?
 }
 
-void DeclaredFunctionImp::processVarDecls(ExecState* exec)
+void FunctionImp::processVarDecls(ExecState* exec)
 {
     body->processDeclarations(exec);
 }
@@ -524,11 +494,6 @@ GlobalFuncImp::GlobalFuncImp(ExecState* exec, FunctionPrototype* funcProto, int 
   , id(i)
 {
   putDirect(exec->propertyNames().length, len, DontDelete|ReadOnly|DontEnum);
-}
-
-CodeType GlobalFuncImp::codeType() const
-{
-  return id == Eval ? EvalCode : codeType();
 }
 
 static JSValue* encode(ExecState* exec, const List& args, const char* do_not_escape)

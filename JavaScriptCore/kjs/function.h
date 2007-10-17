@@ -72,61 +72,32 @@ namespace KJS {
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   };
 
-  /**
-   * @short Implementation class for internal Functions.
-   */
   class FunctionImp : public InternalFunctionImp {
     friend class ActivationImp;
   public:
-    FunctionImp(ExecState*, const Identifier& n, FunctionBodyNode* b);
-    virtual ~FunctionImp();
+    FunctionImp(ExecState*, const Identifier& name, FunctionBodyNode*, const ScopeChain&);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
+    virtual bool implementsConstruct() const { return true; }
+    virtual JSObject* construct(ExecState*, const List& args);
+    
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
+    Completion execute(ExecState*);
 
     // Note: unlike body->paramName, this returns Identifier::null for parameters 
     // that will never get set, due to later param having the same name
     Identifier getParameterName(int index);
-    virtual CodeType codeType() const = 0;
-
-    virtual Completion execute(ExecState*) = 0;
 
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
     RefPtr<FunctionBodyNode> body;
 
-    /**
-     * Returns the scope of this object. This is used when execution declared
-     * functions - the execution context for the function is initialized with
-     * extra object in it's scope. An example of this is functions declared
-     * inside other functions:
-     *
-     * \code
-     * function f() {
-     *
-     *   function b() {
-     *     return prototype;
-     *   }
-     *
-     *   var x = 4;
-     *   // do some stuff
-     * }
-     * f.prototype = new String();
-     * \endcode
-     *
-     * When the function f.b is executed, its scope will include properties of
-     * f. So in the example above the return value of f.b() would be the new
-     * String object that was assigned to f.prototype.
-     *
-     * @param exec The current execution state
-     * @return The function's scope
-     */
-    const ScopeChain& scope() const { return _scope; }
     void setScope(const ScopeChain& s) { _scope = s; }
+    const ScopeChain& scope() const { return _scope; }
 
     virtual void mark();
 
@@ -138,25 +109,7 @@ namespace KJS {
     static JSValue* lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
 
     void passInParameters(ExecState*, const List&);
-    virtual void processVarDecls(ExecState*);
-  };
-
-  class DeclaredFunctionImp : public FunctionImp {
-  public:
-    DeclaredFunctionImp(ExecState*, const Identifier& n,
-                        FunctionBodyNode* b, const ScopeChain& sc);
-
-    bool implementsConstruct() const;
-    JSObject* construct(ExecState*, const List& args);
-
-    virtual Completion execute(ExecState*);
-    CodeType codeType() const { return FunctionCode; }
-
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-
-  private:
-    virtual void processVarDecls(ExecState*);
+    void processVarDecls(ExecState*);
   };
 
   class IndexToNameMap {
@@ -222,7 +175,6 @@ namespace KJS {
   public:
     GlobalFuncImp(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
-    virtual CodeType codeType() const;
     enum { Eval, ParseInt, ParseFloat, IsNaN, IsFinite, Escape, UnEscape,
            DecodeURI, DecodeURIComponent, EncodeURI, EncodeURIComponent
 #ifndef NDEBUG

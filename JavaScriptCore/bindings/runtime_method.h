@@ -42,8 +42,6 @@ public:
 
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
-    virtual CodeType codeType() const;
-    
     virtual Completion execute(ExecState *exec);
 
 private:

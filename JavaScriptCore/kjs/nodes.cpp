@@ -2496,7 +2496,7 @@ void FuncDeclNode::processDeclaration(ExecState* exec)
   Context *context = exec->context();
 
   // TODO: let this be an object with [[Class]] property "Function"
-  FunctionImp *func = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
+  FunctionImp *func = new FunctionImp(exec, ident, body.get(), context->scopeChain());
 
   JSObject *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
@@ -2536,7 +2536,7 @@ JSValue *FuncExprNode::evaluate(ExecState *exec)
     context->pushScope(functionScopeObject);
   }
 
-  FunctionImp* func = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
+  FunctionImp* func = new FunctionImp(exec, ident, body.get(), context->scopeChain());
   JSObject* proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
   func->put(exec, exec->propertyNames().prototype, proto, Internal | DontDelete);

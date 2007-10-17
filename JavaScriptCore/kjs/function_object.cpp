@@ -80,8 +80,8 @@ JSValue* FunctionProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, c
 #endif
       return throwError(exec, TypeError);
     }
-    if (thisObj->inherits(&DeclaredFunctionImp::info)) {
-        DeclaredFunctionImp *fi = static_cast<DeclaredFunctionImp*>(thisObj);
+    if (thisObj->inherits(&FunctionImp::info)) {
+        FunctionImp *fi = static_cast<FunctionImp*>(thisObj);
         return jsString("function " + fi->functionName().ustring() + "(" +
                         fi->body->paramString() + ") " + fi->body->toString());
      } else if (thisObj->inherits(&InternalFunctionImp::info) &&
@@ -208,7 +208,7 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
   scopeChain.push(exec->lexicalInterpreter()->globalObject());
   FunctionBodyNode *bodyNode = progNode.get();
 
-  FunctionImp* fimp = new DeclaredFunctionImp(exec, functionName, bodyNode, scopeChain);
+  FunctionImp* fimp = new FunctionImp(exec, functionName, bodyNode, scopeChain);
   
   // parse parameter list. throw syntax error on illegal identifiers
   int len = p.size();
