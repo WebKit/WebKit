@@ -34,7 +34,6 @@
 #include "cairo-ft.h"
 #include "cairo.h"
 #include <fontconfig/fcfreetype.h>
-#include <assert.h>
 
 namespace WebCore {
 

@@ -33,16 +33,14 @@
 
 #include "Font.h"
 #include "FontData.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
 void FontCache::platformInit()
 {
-    if (!FontPlatformData::init()) {
-        assert(0);
-        fprintf(stderr, "no fonts found exiting\n");
-        exit(-1);
-    }
+    if (!FontPlatformData::init())
+        ASSERT_NOT_REACHED();
 }
 
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
