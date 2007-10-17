@@ -1,3 +1,9 @@
+2007-10-17  Mark Rowe  <mrowe@apple.com>
+
+        Mac build fix.
+
+        * Configurations/WebCore.xcconfig:  Make it possible to include CoreGraphics header files.
+
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         Windows build fix
