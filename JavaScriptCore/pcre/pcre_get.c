@@ -168,15 +168,17 @@ Returns:         if successful:
                    PCRE_ERROR_NOSUBSTRING (-7) no such captured substring
 */
 
+/* FIXME: This is not available until pcre_get_stringnumber is available for UTF-16. */
+#if !PCRE_UTF16
 int
 pcre_copy_named_substring(const pcre *code, const pcre_char *subject, int *ovector,
   int stringcount, const pcre_char *stringname, pcre_char *buffer, int size)
 {
-int n = pcre_get_stringnumber(code, stringname);
+
 if (n <= 0) return n;
 return pcre_copy_substring(subject, ovector, stringcount, n, buffer, size);
 }
-
+#endif
 
 
 /*************************************************
@@ -324,6 +326,8 @@ Returns:         if successful:
                    PCRE_ERROR_NOSUBSTRING (-7) no such captured substring
 */
 
+/* FIXME: This is not available until pcre_get_stringnumber is available for UTF-16. */
+#if !PCRE_UTF16
 int
 pcre_get_named_substring(const pcre *code, const pcre_char *subject, int *ovector,
   int stringcount, const pcre_char *stringname, const pcre_char **stringptr)
@@ -332,7 +336,7 @@ int n = pcre_get_stringnumber(code, stringname);
 if (n <= 0) return n;
 return pcre_get_substring(subject, ovector, stringcount, n, stringptr);
 }
-
+#endif
 
 
 
