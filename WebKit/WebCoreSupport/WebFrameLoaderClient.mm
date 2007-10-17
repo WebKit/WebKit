@@ -460,7 +460,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations.didReceiveServerRedirectForProvisionalLoadForFrameFunc)
-        CallFrameLoadDelegate(implementations.didReceiveServerRedirectForProvisionalLoadForFrameFunc, webView, @selector(webView:didHandleOnloadEventsForFrame:), m_webFrame.get());
+        CallFrameLoadDelegate(implementations.didReceiveServerRedirectForProvisionalLoadForFrameFunc, webView, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:), m_webFrame.get());
 }
 
 void WebFrameLoaderClient::dispatchDidCancelClientRedirect()

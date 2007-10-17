@@ -1,3 +1,12 @@
+2007-10-16  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Timothy.
+
+        <rdar://problem/5544354> Wrong delegate method called in WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad): Fixed selector name.
+
 2007-10-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
