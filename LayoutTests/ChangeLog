@@ -1,3 +1,14 @@
+2007-10-17  Alice Liu  <alice.liu@apple.com>
+
+        Rubber-stamped by Adele.
+
+        Correct uses of initKeyboardEvent for tests that test accesskey.
+        Accesskey modifier is ctrl for mac and alt for other platforms.  
+
+        * fast/events/access-key-self-destruct.html:
+        * fast/forms/access-key.html:
+        * fast/forms/legend-access-key.html:
+
 2007-10-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

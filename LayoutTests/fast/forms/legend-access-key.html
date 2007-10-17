@@ -13,7 +13,10 @@ function test()
         layoutTestController.dumpAsText();
 
     var event = document.createEvent("KeyboardEvent");
-    event.initKeyboardEvent("keydown", true, true, document.defaultView, "f", 0, true, false, false, false, false);
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        event.initKeyboardEvent("keydown", true, true, document.defaultView, "f", 0, true, false, false, false, false);
+    else
+        event.initKeyboardEvent("keydown", true, true, document.defaultView, "f", 0, false, true, false, false, false);
     document.dispatchEvent(event);
 }
 </script>

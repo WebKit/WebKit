@@ -10,7 +10,10 @@ function log(message)
 function pressKey(key)
 {
     var event = document.createEvent("KeyboardEvent");
-    event.initKeyboardEvent("keydown", true, true, document.defaultView, key, 0, true, false, false, false, false);
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        event.initKeyboardEvent("keydown", true, true, document.defaultView, key, 0, true, false, false, false, false);
+    else
+        event.initKeyboardEvent("keydown", true, true, document.defaultView, key, 0, false, true, false, false, false);
     document.dispatchEvent(event);
 }
 function test()
@@ -18,13 +21,13 @@ function test()
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-	for(i = 1; i <= 9; i++) {
-		pressKey(i);
-	}
-	pressKey("a");
-	pressKey("b");
-	pressKey("c");
-	pressKey("d");
+    for(i = 1; i <= 9; i++) {
+        pressKey(i);
+    }
+    pressKey("a");
+    pressKey("b");
+    pressKey("c");
+    pressKey("d");
 }
 </script>
 </head>
@@ -44,8 +47,8 @@ function test()
 <label accesskey="9" for="test1"><input type="text" id="test1" onfocus="log('9 input type associated to label around input focussed')"/></label>
 <label accesskey="a" for="test2"></label><input type="text" id="test2" onfocus="log('a input type associated to label closed before input focussed')"/>
 <map name="mymap">
-	<area accesskey="b" shape="rect" coords="0,0,5,10" alt="" href="#" onclick="log('b area 1 clicked')">
-	<area accesskey="c" shape="rect" coords="6,0,10,10" alt="" href="#" onclick="log('c area 2 clicked')">
+    <area accesskey="b" shape="rect" coords="0,0,5,10" alt="" href="#" onclick="log('b area 1 clicked')">
+    <area accesskey="c" shape="rect" coords="6,0,10,10" alt="" href="#" onclick="log('c area 2 clicked')">
 </map>
 <img usemap="#mymap" alt="pic" src="#" height="10" width="10"/>
 </p>
