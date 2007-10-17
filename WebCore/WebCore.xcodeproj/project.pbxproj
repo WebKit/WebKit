@@ -2782,7 +2782,7 @@
 		B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */; };
 		B266CD4E0C3AEC6500EB08D2 /* JSSVGException.h in Headers */ = {isa = PBXBuildFile; fileRef = B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */; };
 		B27535560B053814002CE64F /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535270B053814002CE64F /* AffineTransform.cpp */; };
-		B27535570B053814002CE64F /* AffineTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535280B053814002CE64F /* AffineTransform.h */; };
+		B27535570B053814002CE64F /* AffineTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535280B053814002CE64F /* AffineTransform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352A0B053814002CE64F /* AffineTransformCG.cpp */; };
 		B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352B0B053814002CE64F /* FloatPointCG.cpp */; };
 		B275355A0B053814002CE64F /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352C0B053814002CE64F /* FloatRectCG.cpp */; };
@@ -3343,7 +3343,7 @@
 		BC94D1570C275CAB006BC617 /* GlobalHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC94D1560C275CAB006BC617 /* GlobalHistory.h */; };
 		BC94D1590C275CB6006BC617 /* GlobalHistoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC94D1580C275CB6006BC617 /* GlobalHistoryMac.mm */; };
 		BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */; };
-		BC9ADD230CC4032600098C4C /* CSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9ADD220CC4032600098C4C /* CSSTransformValue.h */; };
+		BC9ADD230CC4032600098C4C /* CSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9ADD220CC4032600098C4C /* CSSTransformValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC9ADD800CC4092200098C4C /* CSSTransformValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9ADD7F0CC4092200098C4C /* CSSTransformValue.cpp */; };
 		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
 		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
@@ -13248,7 +13248,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

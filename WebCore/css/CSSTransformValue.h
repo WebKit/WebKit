@@ -54,6 +54,9 @@ public:
     
     virtual String cssText() const;
  
+    TransformOperationType type() const { return m_type; }
+    CSSValueList* values() const { return m_values.get(); }
+    
 protected:
     TransformOperationType m_type;
     RefPtr<CSSValueList> m_values;

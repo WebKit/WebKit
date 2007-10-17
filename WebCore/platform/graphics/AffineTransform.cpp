@@ -68,6 +68,11 @@ AffineTransform& AffineTransform::flipY()
     return scale(1.0f, -1.0f);
 }
 
+AffineTransform& AffineTransform::skew(double angleX, double angleY)
+{
+    return shear(tan(deg2rad(angleX)), tan(deg2rad(angleY)));
+}
+
 AffineTransform& AffineTransform::skewX(double angle)
 {
     return shear(tan(deg2rad(angle)), 0.0f);

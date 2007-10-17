@@ -1,3 +1,56 @@
+2007-10-17  David Hyatt  <hyatt@apple.com>
+
+        Add support for mapping of the transform CSS property into RenderStyles.  Everything is now ready for the front
+        end to use.
+
+        Reviewed by Mitz Pettel
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSTransformValue.h:
+        (WebCore::CSSTransformValue::type):
+        (WebCore::CSSTransformValue::values):
+        * platform/graphics/AffineTransform.cpp:
+        (WebCore::AffineTransform::skew):
+        * platform/graphics/AffineTransform.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleTransformData::StyleTransformData):
+        (WebCore::StyleTransformData::operator==):
+        (WebCore::StyleTransformData::transformDataEquivalent):
+        * rendering/RenderStyle.h:
+        (WebCore::TransformOperation::~TransformOperation):
+        (WebCore::TransformOperation::operator!=):
+        (WebCore::TransformOperation::isScaleOperation):
+        (WebCore::TransformOperation::isRotateOperation):
+        (WebCore::TransformOperation::isSkewOperation):
+        (WebCore::TransformOperation::isTranslateOperation):
+        (WebCore::TransformOperation::isMatrixOperation):
+        (WebCore::ScaleTransformOperation::ScaleTransformOperation):
+        (WebCore::ScaleTransformOperation::isScaleOperation):
+        (WebCore::ScaleTransformOperation::operator==):
+        (WebCore::ScaleTransformOperation::apply):
+        (WebCore::RotateTransformOperation::RotateTransformOperation):
+        (WebCore::RotateTransformOperation::isRotateOperation):
+        (WebCore::RotateTransformOperation::operator==):
+        (WebCore::RotateTransformOperation::apply):
+        (WebCore::SkewTransformOperation::SkewTransformOperation):
+        (WebCore::SkewTransformOperation::isSkewOperation):
+        (WebCore::SkewTransformOperation::operator==):
+        (WebCore::SkewTransformOperation::apply):
+        (WebCore::TranslateTransformOperation::TranslateTransformOperation):
+        (WebCore::TranslateTransformOperation::isTranslateOperation):
+        (WebCore::TranslateTransformOperation::operator==):
+        (WebCore::TranslateTransformOperation::apply):
+        (WebCore::MatrixTransformOperation::MatrixTransformOperation):
+        (WebCore::MatrixTransformOperation::isMatrixOperation):
+        (WebCore::MatrixTransformOperation::operator==):
+        (WebCore::MatrixTransformOperation::apply):
+        (WebCore::StyleTransformData::operator!=):
+        (WebCore::RenderStyle::transform):
+        (WebCore::RenderStyle::setTransform):
+        (WebCore::RenderStyle::initialTransform):
+
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         * page/Frame.cpp: I had to touch this file when fixing the Windows

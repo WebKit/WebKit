@@ -88,6 +88,7 @@ public:
     AffineTransform& shear(double sx, double sy);
     AffineTransform& flipX();
     AffineTransform& flipY();
+    AffineTransform& skew(double angleX, double angleY);
     AffineTransform& skewX(double angle);
     AffineTransform& skewY(double angle);
  

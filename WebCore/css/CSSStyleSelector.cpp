@@ -4322,6 +4322,130 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setTextStrokeWidth(width);
         return;
     }
+    case CSS_PROP__WEBKIT_TRANSFORM: {
+        HANDLE_INHERIT_AND_INITIAL(transform, Transform);
+        Vector<RefPtr<TransformOperation> > operations;
+        if (!value->isPrimitiveValue()) {
+            CSSValueList* list = static_cast<CSSValueList*>(value);
+            unsigned size = list->length();
+            for (unsigned i = 0; i < size; i++) {
+                CSSTransformValue* val = static_cast<CSSTransformValue*>(list->item(i));
+                CSSValueList* values = val->values();
+                
+                CSSPrimitiveValue* firstValue = static_cast<CSSPrimitiveValue*>(values->item(0));
+                 
+                switch (val->type()) {
+                    case CSSTransformValue::ScaleTransformOperation:
+                    case CSSTransformValue::ScaleXTransformOperation:
+                    case CSSTransformValue::ScaleYTransformOperation: {
+                        double sx = 1.0;
+                        double sy = 1.0;
+                        if (val->type() == CSSTransformValue::ScaleYTransformOperation)
+                            sy = firstValue->getDoubleValue();
+                        else { 
+                            sx = firstValue->getDoubleValue();
+                            if (val->type() == CSSTransformValue::ScaleTransformOperation) {
+                                if (values->length() > 1) {
+                                    CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(values->item(1));
+                                    sy = secondValue->getDoubleValue();
+                                } else 
+                                    sy = sx;
+                            }
+                        }
+                        
+                        ScaleTransformOperation* scale = new ScaleTransformOperation(sx, sy);
+                        operations.append(scale);
+                        break;
+                    }
+                    case CSSTransformValue::TranslateTransformOperation:
+                    case CSSTransformValue::TranslateXTransformOperation:
+                    case CSSTransformValue::TranslateYTransformOperation: {
+                        bool ok;
+                        Length tx = Length(0, Fixed);
+                        Length ty = Length(0, Fixed);
+                        if (val->type() == CSSTransformValue::TranslateYTransformOperation)
+                            ty = convertToLength(firstValue, style, &ok);
+                        else { 
+                            tx = convertToLength(firstValue, style, &ok);
+                            if (val->type() == CSSTransformValue::TranslateTransformOperation) {
+                                if (values->length() > 1) {
+                                    CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(values->item(1));
+                                    ty = convertToLength(secondValue, style, &ok);
+                                } else
+                                    ty = tx;
+                            }
+                        }
+                        
+                        TranslateTransformOperation* translate = new TranslateTransformOperation(tx, ty);
+                        operations.append(translate);
+                        break;
+                    }
+                    case CSSTransformValue::RotateTransformOperation: {
+                        double angle = firstValue->getDoubleValue();
+                        if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
+                            angle = rad2deg(angle);
+                        else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
+                            angle = grad2deg(angle);
+                        RotateTransformOperation* rotate = new RotateTransformOperation(angle);
+                        operations.append(rotate);
+                        break;
+                    }
+                    case CSSTransformValue::SkewTransformOperation:
+                    case CSSTransformValue::SkewXTransformOperation:
+                    case CSSTransformValue::SkewYTransformOperation: {
+                        double angleX = 0;
+                        double angleY = 0;
+                        double angle = firstValue->getDoubleValue();
+                        if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
+                            angle = rad2deg(angle);
+                        else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
+                            angle = grad2deg(angle);
+                        if (val->type() == CSSTransformValue::SkewYTransformOperation)
+                            angleY = angle;
+                        else {
+                            angleX = angle;
+                            if (val->type() == CSSTransformValue::SkewTransformOperation) {
+                                if (values->length() > 1) {
+                                    CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(values->item(1));
+                                    angleY = secondValue->getDoubleValue();
+                                    if (secondValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
+                                        angleY = rad2deg(angle);
+                                    else if (secondValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
+                                        angleY = grad2deg(angle);
+                                } else
+                                    angleY = angleX;
+                            }
+                        }
+                        
+                        SkewTransformOperation* skew = new SkewTransformOperation(angleX, angleY);
+                        operations.append(skew);
+                        break;
+                    }
+                    case CSSTransformValue::MatrixTransformOperation: {
+                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(values->item(1));
+                        CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(values->item(2));
+                        CSSPrimitiveValue* fourthValue = static_cast<CSSPrimitiveValue*>(values->item(3));
+                        CSSPrimitiveValue* fifthValue = static_cast<CSSPrimitiveValue*>(values->item(4));
+                        CSSPrimitiveValue* sixthValue = static_cast<CSSPrimitiveValue*>(values->item(5));
+                        bool ok;
+                        MatrixTransformOperation* matrix = new MatrixTransformOperation(convertToLength(firstValue, style, &ok),
+                                                                                        convertToLength(secondValue, style, &ok),
+                                                                                        convertToLength(thirdValue, style, &ok),
+                                                                                        convertToLength(fourthValue, style, &ok),
+                                                                                        convertToLength(fifthValue, style, &ok),
+                                                                                        convertToLength(sixthValue, style, &ok));
+                        operations.append(matrix);
+                        break;
+                    }   
+                    
+                    default:
+                        break;
+                }
+            }
+        }
+        style->setTransform(operations);
+        return;
+    }
     case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
         HANDLE_INHERIT_AND_INITIAL(transformOriginX, TransformOriginX)
         HANDLE_INHERIT_AND_INITIAL(transformOriginY, TransformOriginY)
@@ -4333,7 +4457,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         int type = primitiveValue->primitiveType();
         if (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
             l = Length(primitiveValue->computeLengthIntForLength(style), Fixed);
-        else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
             l = Length(primitiveValue->getDoubleValue(), Percent);
         else
             return;
@@ -4387,7 +4511,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP__WEBKIT_PADDING_START:
     case CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT:
     case CSS_PROP__WEBKIT_TEXT_STROKE:
-    case CSS_PROP__WEBKIT_TRANSFORM:
         return;
 #if ENABLE(SVG)
     default:

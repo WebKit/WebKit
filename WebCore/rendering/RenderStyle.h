@@ -36,10 +36,12 @@
  * and produce invaliud results.
  */
 
+#include "AffineTransform.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "Color.h"
 #include "CSSCursorImageValue.h"
+#include "CSSTransformValue.h"
 #include "DataRef.h"
 #include "Font.h"
 #include "GraphicsTypes.h"
@@ -624,18 +626,182 @@ public:
 
 // CSS Transforms (may become part of CSS3)
 
+class TransformOperation : public Shared<TransformOperation>
+{
+public:
+    virtual ~TransformOperation() {}
+    
+    virtual bool operator==(const TransformOperation&) const = 0;
+    bool operator!=(const TransformOperation& o) const { return !(*this == o); }
+
+    virtual void apply(AffineTransform&, const IntSize& borderBoxSize) = 0;
+    
+    bool isScaleOperation() const { return false; }
+    bool isRotateOperation() const { return false; }
+    bool isSkewOperation() const { return false; }
+    bool isTranslateOperation() const { return false; }
+    bool isMatrixOperation() const { return false; }
+};
+
+class ScaleTransformOperation : public TransformOperation
+{
+public:
+    ScaleTransformOperation(double sx, double sy)
+    : m_x(sx), m_y(sy)
+    {}
+        
+    bool isScaleOperation() const { return true; }
+
+    virtual bool operator==(const TransformOperation& o) const
+    {
+        if (o.isScaleOperation()) {
+            const ScaleTransformOperation* s = static_cast<const ScaleTransformOperation*>(&o);
+            return m_x == s->m_x && m_y == s->m_y;
+        }
+        return false;
+    }
+
+    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    {
+        transform.scale(m_x, m_y);
+    }
+
+private:
+    double m_x;
+    double m_y;
+};
+
+class RotateTransformOperation : public TransformOperation
+{
+public:
+    RotateTransformOperation(double angle)
+    : m_angle(angle)
+    {}
+
+    bool isRotateOperation() const { return true; }
+
+    virtual bool operator==(const TransformOperation& o) const
+    {
+        if (o.isRotateOperation()) {
+            const RotateTransformOperation* r = static_cast<const RotateTransformOperation*>(&o);
+            return m_angle == r->m_angle;
+        }
+        return false;
+    }
+    
+    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    {
+        transform.rotate(m_angle);
+    }
+
+    
+private:
+    double m_angle;
+};
+
+class SkewTransformOperation : public TransformOperation
+{
+public:
+    SkewTransformOperation(double angleX, double angleY)
+    : m_angleX(angleX), m_angleY(angleY)
+    {}
+    
+    bool isSkewOperation() const { return true; }
+
+    virtual bool operator==(const TransformOperation& o) const
+    {
+        if (o.isSkewOperation()) {
+            const SkewTransformOperation* s = static_cast<const SkewTransformOperation*>(&o);
+            return m_angleX == s->m_angleX && m_angleY == s->m_angleY;
+        }
+        return false;
+    }
+
+    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    {
+        transform.skew(m_angleX, m_angleY);
+    }
+
+
+private:
+    double m_angleX;
+    double m_angleY;
+};
+
+class TranslateTransformOperation : public TransformOperation
+{
+public:
+    TranslateTransformOperation(const Length& tx, const Length& ty)
+    : m_x(tx), m_y(ty)
+    {}
+    
+    bool isTranslateOperation() const { return true; }
+
+    virtual bool operator==(const TransformOperation& o) const
+    {
+        if (o.isTranslateOperation()) {
+            const TranslateTransformOperation* t = static_cast<const TranslateTransformOperation*>(&o);
+            return m_x == t->m_x && m_y == t->m_y;
+        }
+        return false;
+    }
+
+    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    {
+        transform.translate(m_x.calcValue(borderBoxSize.width()), m_y.calcValue(borderBoxSize.height()));
+    }
+
+private:
+    Length m_x;
+    Length m_y;
+};
+
+class MatrixTransformOperation : public TransformOperation
+{
+public:
+    MatrixTransformOperation(const Length& a, const Length& b, const Length& c, const Length& d, const Length& e, const Length& f)
+    : m_a(a), m_b(b), m_c(c), m_d(d), m_e(e), m_f(f)
+    {}
+    
+    bool isMatrixOperation() const { return true; }
+
+    virtual bool operator==(const TransformOperation& o) const
+    {
+        if (o.isMatrixOperation()) {
+            const MatrixTransformOperation* m = static_cast<const MatrixTransformOperation*>(&o);
+            return m_a == m->m_a && m_b == m->m_b && m_c == m->m_c && m_d == m->m_d && m_e == m->m_e && m_f == m->m_f;
+        }
+        return false;
+    }
+
+    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    {
+        AffineTransform matrix(m_a.value(), m_b.value(), m_c.value(), m_d.value(), m_e.calcValue(borderBoxSize.width()), m_f.calcValue(borderBoxSize.height()));
+        transform.multiply(matrix);
+    }
+   
+private:
+    Length m_a;
+    Length m_b;
+    Length m_c;
+    Length m_d;
+    Length m_e;
+    Length m_f;
+};
+
 class StyleTransformData : public Shared<StyleTransformData> {
 public:
     StyleTransformData();
-    StyleTransformData(const StyleTransformData& o);
+    StyleTransformData(const StyleTransformData&);
 
-    bool operator==(const StyleTransformData& o) const;
-    bool operator!=(const StyleTransformData &o) const {
+    bool operator==(const StyleTransformData&) const;
+    bool operator!=(const StyleTransformData& o) const {
         return !(*this == o);
     }
 
-    // This will eventually hold the parsed transform operations as well.
-    // In this first landing, we're just mapping in the transform origin.
+    bool transformDataEquivalent(const StyleTransformData&) const;
+
+    Vector<RefPtr<TransformOperation> > m_operations;
     Length m_x;
     Length m_y;
 };
@@ -1505,6 +1671,7 @@ public:
     EPageBreak columnBreakBefore() const { return static_cast<EPageBreak>(rareNonInheritedData->m_multiCol->m_breakBefore); }
     EPageBreak columnBreakInside() const { return static_cast<EPageBreak>(rareNonInheritedData->m_multiCol->m_breakInside); }
     EPageBreak columnBreakAfter() const { return static_cast<EPageBreak>(rareNonInheritedData->m_multiCol->m_breakAfter); }
+    const Vector<RefPtr<TransformOperation> >& transform() const { return rareNonInheritedData->m_transform->m_operations; }
     Length transformOriginX() const { return rareNonInheritedData->m_transform->m_x; }
     Length transformOriginY() const { return rareNonInheritedData->m_transform->m_y; }
     // End CSS3 Getters
@@ -1749,6 +1916,7 @@ public:
     void setColumnBreakBefore(EPageBreak p) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_breakBefore, p); }
     void setColumnBreakInside(EPageBreak p) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_breakInside, p); }
     void setColumnBreakAfter(EPageBreak p) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_breakAfter, p); }
+    void setTransform(const Vector<RefPtr<TransformOperation> >& ops) { SET_VAR(rareNonInheritedData.access()->m_transform, m_operations, ops); }
     void setTransformOriginX(Length l) { SET_VAR(rareNonInheritedData.access()->m_transform, m_x, l); }
     void setTransformOriginY(Length l) { SET_VAR(rareNonInheritedData.access()->m_transform, m_y, l); }
     // End CSS3 Setters
@@ -1890,6 +2058,7 @@ public:
     static bool initialVisuallyOrdered() { return false; }
     static float initialTextStrokeWidth() { return 0; }
     static unsigned short initialColumnCount() { return 1; }
+    static const Vector<RefPtr<TransformOperation> >& initialTransform() { static Vector<RefPtr<TransformOperation> > ops; return ops; }
     static Length initialTransformOriginX() { return Length(50.0, Percent); }
     static Length initialTransformOriginY() { return Length(50.0, Percent); }
     

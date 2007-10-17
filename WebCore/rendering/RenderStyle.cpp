@@ -421,19 +421,35 @@ bool StyleMultiColData::operator==(const StyleMultiColData& o) const
 }
 
 StyleTransformData::StyleTransformData()
-    : m_x(RenderStyle::initialTransformOriginX())
+    : m_operations(RenderStyle::initialTransform())
+    , m_x(RenderStyle::initialTransformOriginX())
     , m_y(RenderStyle::initialTransformOriginY())
 {}
 
 StyleTransformData::StyleTransformData(const StyleTransformData& o)
     : Shared<StyleTransformData>()
+    , m_operations(o.m_operations)
     , m_x(o.m_x)
     , m_y(o.m_y)
 {}
 
 bool StyleTransformData::operator==(const StyleTransformData& o) const
 {
-    return m_x == o.m_x && m_y == o.m_y;
+    return m_x == o.m_x && m_y == o.m_y && transformDataEquivalent(o);
+}
+
+bool StyleTransformData::transformDataEquivalent(const StyleTransformData& o) const
+{
+    if (m_operations.size() != o.m_operations.size())
+        return false;
+        
+    unsigned s = m_operations.size();
+    for (unsigned i = 0; i < s; i++) {
+        if (*m_operations[i] != *o.m_operations[i])
+            return false;
+    }
+    
+    return true;
 }
 
 StyleRareNonInheritedData::StyleRareNonInheritedData()
