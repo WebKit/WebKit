@@ -1,5 +1,11 @@
 2007-10-16  Alice Liu  <alice.liu@apple.com>
 
+        removing fixed tests
+
+        * platform/win/Skipped:
+
+2007-10-16  Alice Liu  <alice.liu@apple.com>
+
         Rubber-stamped by Adele.
 
         fixing incorrect usage of JS String search method.
