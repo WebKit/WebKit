@@ -115,6 +115,22 @@
 
 2007-10-16  Adam Roben  <aroben@apple.com>
 
+        Make testkjs not delay-load WebKit
+
+        Soon, delay-loading WebKit will be impossible (because we will be
+        using __declspec(thread) for thread-local storage). This change
+        prepares testkjs for the future.
+
+        Reviewed by Sam.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Removed WebKitInitializer,
+        added FindSafari.
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj: Don't link against
+        WebKitInitializer, don't delay-load WebKit.
+        * kjs/testkjs.cpp: Don't use WebKitInitializer.
+
+2007-10-16  Adam Roben  <aroben@apple.com>
+
         Updated testkjs for the rename of WebKit_debug.dll to WebKit.dll for the Debug configuration
 
         Reviewed by Kevin McCullough.

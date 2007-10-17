@@ -43,7 +43,6 @@
 #include <pthread.h>
 #include <string>
 #include <tchar.h>
-#include <WebKitInitializer/WebKitInitializer.h>
 #include <WebKit/DOMPrivate.h>
 #include <WebKit/IWebFramePrivate.h>
 #include <WebKit/IWebHistoryItem.h>
@@ -114,11 +113,6 @@ extern "C" BOOL InitializeCoreGraphics();
 
 static wstring initialize(HMODULE hModule)
 {
-    if (!initializeWebKit()) {
-        fprintf(stderr, "WebKit failed to initialize\n");
-        abort();
-    }
-
     static LPCTSTR fontsToInstall[] = {
         TEXT("AHEM____.ttf"),
         TEXT("Apple Chancery.ttf"),

@@ -1,5 +1,13 @@
 2007-10-16  Adam Roben  <aroben@apple.com>
 
+        Remove WebKitInitializer
+
+        Reviewed by Sam.
+
+        * WebKit.vcproj/WebKit.sln:
+
+2007-10-16  Adam Roben  <aroben@apple.com>
+
         Add FindSafari
 
         Reviewed by Darin.

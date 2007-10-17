@@ -26,6 +26,34 @@
 
 2007-10-16  Adam Roben  <aroben@apple.com>
 
+        Replace WebKitInitializer with FindSafari
+
+        We now rely on setting the PATH environment variable to tell Windows
+        where to find WebKit and its dependencies (similar to
+        DYLD_FRAMEWORK_PATH on Mac).
+
+        This change also make DumpRenderTree no longer delay-load WebKit.
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/DumpRenderTree.sln: Removed WebKitInitializer, added
+        FindSafari.
+        * DumpRenderTree/win/DumpRenderTree.cpp: Don't use WebKitInitializer.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Don't link against
+        WebKitInitializer, don't delay-load WebKit.
+        * Scripts/run-javascriptcore-tests: Call setPathForRunningWebKitApp.
+        * Scripts/run-webkit-tests: Ditto.
+        * Scripts/webkitdirs.pm:
+        (sub setPathForRunningWebKitApp): Added.
+        * WebKitInitializer/WebKitInitializer.cpp: Removed.
+        * WebKitInitializer/WebKitInitializer.h: Removed.
+        * WebKitInitializer/WebKitInitializer.vcproj: Removed.
+        * WebKitInitializer/debug.vsprops: Removed.
+        * WebKitInitializer/debug_internal.vsprops: Removed.
+        * WebKitInitializer/release.vsprops: Removed.
+
+2007-10-16  Adam Roben  <aroben@apple.com>
+
         Fix Bug 15532: run-safari fails if Safari is installed in a non-default location
 
         http://bugs.webkit.org/show_bug.cgi?id=15532

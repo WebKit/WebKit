@@ -1179,6 +1179,7 @@ sub openDumpTool()
     if (isCygwin()) {
         $ENV{HOMEDRIVE} = $homeDrive;
         $ENV{HOMEPATH} = $homePath;
+        setPathForRunningWebKitApp(\%ENV) if isCygwin();
     }
         
     my @args = ();

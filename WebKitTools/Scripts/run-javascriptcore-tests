@@ -95,6 +95,7 @@ chdir "tests/mozilla" or die;
 
 $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+setPathForRunningWebKitApp(\%ENV) if isCygwin();
 
 my $testkjsName;
 sub determineTestkjsName
