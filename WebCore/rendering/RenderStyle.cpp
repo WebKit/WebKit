@@ -1328,6 +1328,13 @@ void ContentData::clear()
     }
 }
 
+void RenderStyle::applyTransform(AffineTransform& transform, const IntSize& borderBoxSize) const
+{
+    unsigned s = rareNonInheritedData->m_transform->m_operations.size();
+    for (unsigned i = 0; i < s; i++)
+        rareNonInheritedData->m_transform->m_operations[i]->apply(transform, borderBoxSize);
+}
+
 #if ENABLE(XBL)
 BindingURI::BindingURI(StringImpl* uri) 
 :m_next(0)

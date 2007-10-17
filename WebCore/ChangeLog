@@ -1,5 +1,32 @@
 2007-10-17  David Hyatt  <hyatt@apple.com>
 
+        Add support for creating a layer when a transform is in effect.  Add support to RenderStyle for
+        handing back a computed AffineTransform.
+
+        Reviewed by Mitz Pettel
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::requiresLayer):
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasTransform):
+        (WebCore::RenderObject::setHasTransform):
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::applyTransform):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::hasTransform):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::requiresLayer):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::requiresLayer):
+
+2007-10-17  David Hyatt  <hyatt@apple.com>
+
         Add support for mapping of the transform CSS property into RenderStyles.  Everything is now ready for the front
         end to use.
 

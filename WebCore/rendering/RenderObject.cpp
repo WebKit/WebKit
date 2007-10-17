@@ -189,6 +189,7 @@ RenderObject::RenderObject(Node* node)
     , m_isDragging(false)
     , m_hasLayer(false)
     , m_hasOverflowClip(false)
+    , m_hasTransform(false)
     , m_hasOverrideSize(false)
     , m_hasCounterNodeMap(false)
 {
@@ -492,7 +493,7 @@ RenderLayer* RenderObject::enclosingLayer() const
 
 bool RenderObject::requiresLayer()
 {
-    return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip();
+    return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform();
 }
 
 RenderBlock* RenderObject::firstLineBlock() const
@@ -2254,6 +2255,7 @@ void RenderObject::setStyle(RenderStyle* style)
         }
         m_paintBackground = false;
         m_hasOverflowClip = false;
+        m_hasTransform = false;
     }
 
     if (view()->frameView()) {

@@ -111,6 +111,8 @@ void RenderBox::setStyle(RenderStyle* newStyle)
         }
     }
 
+    setHasTransform(newStyle->hasTransform());
+
     if (requiresLayer()) {
         if (!m_layer) {
             if (wasFloating && isFloating())
@@ -126,6 +128,7 @@ void RenderBox::setStyle(RenderStyle* newStyle)
         RenderLayer* layer = m_layer;
         m_layer = 0;
         setHasLayer(false);
+        setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
         layer->removeOnlyThisLayer();
         if (wasFloating && isFloating())
             setChildNeedsLayout(true);

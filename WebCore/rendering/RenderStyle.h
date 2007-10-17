@@ -1674,6 +1674,8 @@ public:
     const Vector<RefPtr<TransformOperation> >& transform() const { return rareNonInheritedData->m_transform->m_operations; }
     Length transformOriginX() const { return rareNonInheritedData->m_transform->m_x; }
     Length transformOriginY() const { return rareNonInheritedData->m_transform->m_y; }
+    bool hasTransform() const { return !rareNonInheritedData->m_transform->m_operations.isEmpty(); }
+    void applyTransform(AffineTransform&, const IntSize& borderBoxSize) const;
     // End CSS3 Getters
 
     // Apple-specific property getter methods
