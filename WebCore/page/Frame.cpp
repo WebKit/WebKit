@@ -93,7 +93,7 @@ using namespace HTMLNames;
 
 static const double caretBlinkFrequency = 0.5;
 
-double Frame::s_currentPaintTimeStamp = 0;
+double Frame::s_currentPaintTimeStamp = 0.0;
 
 class UserStyleSheetLoader : public CachedResourceClient {
 public:

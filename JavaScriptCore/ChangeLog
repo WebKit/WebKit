@@ -1,5 +1,20 @@
 2007-10-17  Adam Roben  <aroben@apple.com>
 
+        Windows build fix part 2.
+
+        Fix was by Darin, reviewed by Anders and Adam.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Add
+        FastMallocPCRE.cpp to the project, and let Visual Studio have its way
+        with the post-build step.
+        * pcre/pcre.h: Don't DLL export the entry points just because this
+        is Win32 -- this is an internal copy of PCRE and should be private.
+        * pcre/pcre_compile.c: Fix an uninitialized variable warning --
+        there's no real problem but it's better to quiet the compiler by
+        tweaking the code slightly than turn off the warning entirely.
+
+2007-10-17  Adam Roben  <aroben@apple.com>
+
         Windows build fix.
 
         Reviewed by Anders.

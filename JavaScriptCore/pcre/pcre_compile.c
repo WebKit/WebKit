@@ -1596,7 +1596,7 @@ Yield:        TRUE when range returned; FALSE when no more
 static BOOL
 get_othercase_range(int *cptr, int d, int *ocptr, int *odptr)
 {
-int c, othercase, next;
+int c, othercase = 0, next;
 
 for (c = *cptr; c <= d; c++)
   { if ((othercase = _pcre_ucp_othercase(c)) >= 0) break; }

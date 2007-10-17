@@ -1,3 +1,8 @@
+2007-10-17  Adam Roben  <aroben@apple.com>
+
+        * page/Frame.cpp: I had to touch this file when fixing the Windows
+        build. Checking it in in case it helps others, too.
+
 2007-10-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
