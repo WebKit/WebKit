@@ -26,6 +26,21 @@
 
 2007-10-16  Adam Roben  <aroben@apple.com>
 
+        Add a new nightly launcher script for Windows
+
+        This new script is for versions of Safari that don't delay-load
+        WebKit. I had to make FindSafari be able to print out the nightly
+        launcher script on stdout because Windows shell scripts can't capture
+        the output from a command into an environment variable.
+
+        Reviewed by Steve.
+
+        * FindSafari/FindSafari.cpp:
+        (_tmain): Added /printSafariLauncher option.
+        * Scripts/run-webkit-nightly.cmd: Added.
+
+2007-10-16  Adam Roben  <aroben@apple.com>
+
         Replace WebKitInitializer with FindSafari
 
         We now rely on setting the PATH environment variable to tell Windows

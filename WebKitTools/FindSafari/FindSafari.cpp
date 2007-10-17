@@ -130,7 +130,26 @@ int _tmain(int argc, TCHAR* argv[])
         return 1;
     }
 
-    _tprintf(TEXT("%s"), path);
+    if (argc < 2 || _tcscmp(argv[1], TEXT("/printSafariLauncher"))) {
+        _tprintf(TEXT("%s"), path);
+        free(path);
+        return 0;
+    }
+
+    TCHAR* lines[] = {
+        TEXT("@echo off"),
+        TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
+        TEXT("xcopy /y /i /d \"%sSafari.exe\" \"%%TMP%%\\WebKitNightly\""),
+        TEXT("xcopy /y /i /d /e \"%sSafari.resources\" \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
+        TEXT("set PATH=\"%%CD%%;%s;%%PATH%%\""),
+        TEXT("\"%%TMP%%\\WebKitNightly\\Safari.exe\" /customWebKit"),
+    };
+
+    for (int i = 0; i < ARRAYSIZE(lines); ++i) {
+        _tprintf(lines[i], path);
+        _tprintf(TEXT("\n"));
+    }
+
     free(path);
     return 0;
 }
