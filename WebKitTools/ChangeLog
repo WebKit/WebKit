@@ -1,3 +1,20 @@
+2007-10-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - Minor mac improvements based on observations I made while implementing the
+        Windows code.
+
+        * Drosera/mac/DebuggerApplication.mm: Attach does not need to create the server
+        then hand it to the Client who will retain it, it should just be the client who
+        creates and owns the server.
+        (-[DebuggerApplication attach:]):
+        * Drosera/mac/DebuggerClient.h: Can now be created with just a server name.
+        * Drosera/mac/DebuggerClient.mm: Creates the server.
+        (-[DebuggerClient initWithServerName:]):
+        * Drosera/mac/ServerConnection.mm: Does not need to include 2 header files, but
+        can instead forward declare what it needs.
+
 2007-10-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

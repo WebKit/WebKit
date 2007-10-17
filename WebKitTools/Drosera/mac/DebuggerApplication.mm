@@ -110,9 +110,7 @@
     unsigned int row = [[attachTable selectedRowIndexes] firstIndex];
     NSString *key = [[knownServerNames allKeys] objectAtIndex:row];
 
-    ServerConnection *server = [[ServerConnection alloc] initWithServerName:key];
-    DebuggerClient *document = [[DebuggerClient alloc] initWithServerConnection:server];
-    [server release];
+    DebuggerClient *document = [[DebuggerClient alloc] initWithServerName:key];
     [document showWindow:sender];
 }
 

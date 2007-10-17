@@ -30,14 +30,14 @@
 #import "config.h"
 #import "ServerConnection.h"
 
-#import "DebuggerApplication.h"
-#import "DebuggerClient.h"
 #import "DebuggerDocument.h"
 
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/RetainPtr.h>
+
+@class DebuggerApplication;
 
 @implementation ServerConnection
 

@@ -60,10 +60,10 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 #pragma mark -
 
-- (id)initWithServerConnection:(ServerConnection *)serverConn;
+- (id)initWithServerName:(NSString *)serverName;
 {
     if ((self = [super init])) {
-        server = [serverConn retain];
+        server = [[ServerConnection alloc] initWithServerName:serverName];
         debuggerDocument = new DebuggerDocument(server);
     }
 

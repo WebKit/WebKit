@@ -27,10 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WebView;
-@class ServerConnection;
-
 class DebuggerDocument;
+
+@class ServerConnection;
+@class WebView;
 
 @interface DebuggerClient : NSWindowController
 {
@@ -42,7 +42,7 @@ class DebuggerDocument;
 
 + (void)log:(NSString *)msg;
 
-- (id)initWithServerConnection:(ServerConnection *)serverConn;
+- (id)initWithServerName:(NSString *)serverConn;
 - (IBAction)pause:(id)sender;
 - (IBAction)resume:(id)sender;
 - (IBAction)stepInto:(id)sender;
