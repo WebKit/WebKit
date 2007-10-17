@@ -6,7 +6,7 @@
 and semantics are as close as possible to those of the Perl 5 language.
 
                        Written by Philip Hazel
-           Copyright (c) 1997-2005 University of Cambridge
+           Copyright (c) 1997-2006 University of Cambridge
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -62,11 +62,11 @@ Returns:      the number of the named parentheses, or a negative number
                 (PCRE_ERROR_NOSUBSTRING) if not found
 */
 
+/* FIXME: This doesn't work for UTF-16 because the name table has 8-bit characters in it! */
+#if !PCRE_UTF16
 int
 pcre_get_stringnumber(const pcre *code, const pcre_char *stringname)
 {
-/* FIXME: This doesn't work for UTF-16 because the name table has 8-bit characters in it! */
-#if !PCRE_UTF16
 int rc;
 int entrysize;
 int top, bot;
@@ -90,13 +90,10 @@ while (top > bot)
   if (c == 0) return (entry[0] << 8) + entry[1];
   if (c > 0) bot = mid + 1; else top = mid;
   }
-#else
- UNUSED_PARAM(code);
- UNUSED_PARAM(stringname);
-#endif
 
 return PCRE_ERROR_NOSUBSTRING;
 }
+#endif
 
 
 
@@ -213,9 +210,8 @@ int double_count = stringcount * 2;
 pcre_char **stringlist;
 pcre_char *p;
 
-for (i = 0; i < double_count; i += 2) {
-  size += INT_CAST(sizeof(pcre_char *) + (ovector[i+1] - ovector[i] + 1) * sizeof(pcre_char));
-}
+for (i = 0; i < double_count; i += 2)
+  size += sizeof(pcre_char *) + (ovector[i+1] - ovector[i] + 1) * sizeof(pcre_char);
 
 stringlist = (pcre_char **)(pcre_malloc)(size);
 if (stringlist == NULL) return PCRE_ERROR_NOMEMORY;

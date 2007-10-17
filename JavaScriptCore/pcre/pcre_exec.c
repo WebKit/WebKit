@@ -6,7 +6,7 @@
 and semantics are as close as possible to those of the Perl 5 language.
 
                        Written by Philip Hazel
-           Copyright (c) 1997-2005 University of Cambridge
+           Copyright (c) 1997-2006 University of Cambridge
 
     Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
 
@@ -44,6 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 pattern matching using an NFA algorithm, trying to mimic Perl as closely as
 possible. There are also some static supporting functions. */
 
+
 #include "pcre_internal.h"
 
 /* Avoid warnings on Windows. */
@@ -58,7 +59,7 @@ are on the heap, not on the stack. */
 
 typedef struct eptrblock {
   struct eptrblock *epb_prev;
-  const pcre_uchar *epb_saved_eptr;
+  USPTR epb_saved_eptr;
 } eptrblock;
 
 /* Flag bits for the match() function */
@@ -138,10 +139,10 @@ Returns:      TRUE if matched
 */
 
 static BOOL
-match_ref(int offset, register const pcre_uchar *eptr, int length, match_data *md,
+match_ref(int offset, register USPTR eptr, int length, match_data *md,
   unsigned long int ims)
 {
-const pcre_uchar *p = md->start_subject + md->offset_vector[offset];
+USPTR p = md->start_subject + md->offset_vector[offset];
 
 #ifdef DEBUG
 if (eptr >= md->end_subject)
@@ -179,32 +180,50 @@ return TRUE;
 ****************************************************************************
                    RECURSION IN THE match() FUNCTION
 
-The match() function is highly recursive. Some regular expressions can cause
-it to recurse thousands of times. I was writing for Unix, so I just let it
-call itself recursively. This uses the stack for saving everything that has
-to be saved for a recursive call. On Unix, the stack can be large, and this
-works fine.
+The match() function is highly recursive, though not every recursive call
+increases the recursive depth. Nevertheless, some regular expressions can cause
+it to recurse to a great depth. I was writing for Unix, so I just let it call
+itself recursively. This uses the stack for saving everything that has to be
+saved for a recursive call. On Unix, the stack can be large, and this works
+fine.
 
-It turns out that on non-Unix systems there are problems with programs that
-use a lot of stack. (This despite the fact that every last chip has oodles
-of memory these days, and techniques for extending the stack have been known
-for decades.) So....
+It turns out that on some non-Unix-like systems there are problems with
+programs that use a lot of stack. (This despite the fact that every last chip
+has oodles of memory these days, and techniques for extending the stack have
+been known for decades.) So....
 
 There is a fudge, triggered by defining NO_RECURSE, which avoids recursive
 calls by keeping local variables that need to be preserved in blocks of memory
-obtained from malloc instead instead of on the stack. Macros are used to
+obtained from malloc() instead instead of on the stack. Macros are used to
 achieve this so that the actual code doesn't look very different to what it
 always used to.
 ****************************************************************************
 ***************************************************************************/
 
 
-/* These versions of the macros use the stack, as normal */
+/* These versions of the macros use the stack, as normal. There are debugging
+versions and production versions. */
 
 #ifndef NO_RECURSE
 #define REGISTER register
-#define RMATCH(num,rx,ra,rb,rc,rd,re,rf,rg) rx = match(ra,rb,rc,rd,re,rf,rg)
+#ifdef DEBUG
+#define RMATCH(rx,ra,rb,rc,rd,re,rf,rg) \
+  { \
+  printf("match() called in line %d\n", __LINE__); \
+  rx = match(ra,rb,rc,rd,re,rf,rg,rdepth+1); \
+  printf("to line %d\n", __LINE__); \
+  }
+#define RRETURN(ra) \
+  { \
+  printf("match() returned %d from line %d ", ra, __LINE__); \
+  return ra; \
+  }
+#else
+#define RMATCH(rx,ra,rb,rc,rd,re,rf,rg) \
+  rx = match(ra,rb,rc,rd,re,rf,rg,rdepth+1)
 #define RRETURN(ra) return ra
+#endif
+
 #else
 
 
@@ -250,6 +269,7 @@ a bit more code and notice if we use conflicting numbers.*/
   newframe->Xims = re;\
   newframe->Xeptrb = rf;\
   newframe->Xflags = rg;\
+  newframe->Xrdepth = frame->Xrdepth + 1;\
   newframe->Xprevframe = frame;\
   frame = newframe;\
   DPRINTF(("restarting from line %d\n", __LINE__));\
@@ -275,6 +295,7 @@ RRETURN_##num:\
   return ra;\
   }
 
+
 /* Structure for remembering the local variables in a private frame */
 
 typedef struct heapframe {
@@ -288,6 +309,7 @@ typedef struct heapframe {
   long int Xims;
   eptrblock *Xeptrb;
   int Xflags;
+  unsigned long int Xrdepth;
 
   /* Function local variables */
 
@@ -309,14 +331,15 @@ typedef struct heapframe {
   unsigned long int Xoriginal_ims;
 
 #ifdef SUPPORT_UCP
+#if !JAVASCRIPT
   int Xprop_type;
+  int Xprop_value;
   int Xprop_fail_result;
   int Xprop_category;
   int Xprop_chartype;
-  int Xprop_othercase;
-  int Xprop_test_against;
+  int Xprop_script;
   int *Xprop_test_variable;
-
+#endif
   int Xrepeat_othercase;
 #endif
 
@@ -337,7 +360,7 @@ typedef struct heapframe {
 
   /* Place to pass back result, and where to jump back to */
 
-  int Xresult;
+  int  Xresult;
 #ifndef __GNUC__
   int Xwhere;
 #else
@@ -381,17 +404,18 @@ Arguments:
    flags       can contain
                  match_condassert - this is an assertion condition
                  match_isgroup - this is the start of a bracketed group
+   rdepth      the recursion depth
 
 Returns:       MATCH_MATCH if matched            )  these values are >= 0
                MATCH_NOMATCH if failed to match  )
                a negative PCRE_ERROR_xxx value if aborted by an error condition
-                 (e.g. stopped by recursion limit)
+                 (e.g. stopped by repeated call or recursion limit)
 */
 
 static int
-match(REGISTER const pcre_uchar *eptr, REGISTER const uschar *ecode,
+match(REGISTER USPTR eptr, REGISTER const uschar *ecode,
   int offset_top, match_data *md, unsigned long int ims, eptrblock *eptrb,
-  int flags)
+  int flags, unsigned long int rdepth)
 {
 /* These variables do not need to be preserved over recursion in this function,
 so they can be ordinary variables in all cases. Mark them with "register"
@@ -400,7 +424,11 @@ because they are used a lot in loops. */
 register int  rrc;    /* Returns from recursive calls */
 register int  i;      /* Used for loops not involving calls to RMATCH() */
 register int  c;      /* Character values not kept over RMATCH() calls */
+#if PCRE_UTF16
+#define utf8 1
+#else
 register BOOL utf8;   /* Local copy of UTF-8 flag for speed */
+#endif
 
 /* When recursion is not being used, all "local" variables that have to be
 preserved over calls to RMATCH() are part of a "frame" which is obtained from
@@ -426,6 +454,7 @@ frame->Xoffset_top = offset_top;
 frame->Xims = ims;
 frame->Xeptrb = eptrb;
 frame->Xflags = flags;
+frame->Xrdepth = rdepth;
 
 /* This is where control jumps back to to effect "recursion" */
 
@@ -439,6 +468,7 @@ HEAP_RECURSE:
 #define ims                frame->Xims
 #define eptrb              frame->Xeptrb
 #define flags              frame->Xflags
+#define rdepth             frame->Xrdepth
 
 /* Ditto for the local variables */
 
@@ -462,17 +492,16 @@ HEAP_RECURSE:
 #define original_ims       frame->Xoriginal_ims
 
 #ifdef SUPPORT_UCP
-
+#if !JAVASCRIPT
 #define prop_type          frame->Xprop_type
+#define prop_value         frame->Xprop_value
 #define prop_fail_result   frame->Xprop_fail_result
 #define prop_category      frame->Xprop_category
 #define prop_chartype      frame->Xprop_chartype
-#define prop_othercase     frame->Xprop_othercase
-#define prop_test_against  frame->Xprop_test_against
+#define prop_script        frame->Xprop_script
 #define prop_test_variable frame->Xprop_test_variable
-
+#endif
 #define repeat_othercase   frame->Xrepeat_othercase
-
 #endif
 
 #define ctype              frame->Xctype
@@ -502,38 +531,36 @@ i, and fc and c, can be the same variables. */
 
 
 #if !PCRE_UTF16
-#ifdef SUPPORT_UTF8                /* Many of these variables are used ony */
-const uschar *charptr;             /* small blocks of the code. My normal  */
-#endif                             /* style of coding would have declared  */
+#ifdef SUPPORT_UTF8                /* Many of these variables are used only  */
+const uschar *charptr;             /* in small blocks of the code. My normal */
+#endif                             /* style of coding would have declared    */
 #endif
-const uschar *callpat;             /* them within each of those blocks.    */
-const uschar *data;                /* However, in order to accommodate the */
-const uschar *next;                /* version of this code that uses an    */
-const pcre_uchar *pp;              /* external "stack" implemented on the  */
-const uschar *prev;                /* heap, it is easier to declare them   */
-const pcre_uchar *saved_eptr;      /* all here, so the declarations can    */
-                                   /* be cut out in a block. The only      */
-recursion_info new_recursive;      /* declarations within blocks below are */
-                                   /* for variables that do not have to    */
-BOOL cur_is_word;                  /* be preserved over a recursive call   */
-BOOL condition;                    /* to RMATCH().                         */
+const uschar *callpat;             /* them within each of those blocks.      */
+const uschar *data;                /* However, in order to accommodate the   */
+const uschar *next;                /* version of this code that uses an      */
+USPTR         pp;                  /* external "stack" implemented on the    */
+const uschar *prev;                /* heap, it is easier to declare them all */
+USPTR         saved_eptr;          /* here, so the declarations can be cut   */
+                                   /* out in a block. The only declarations  */
+recursion_info new_recursive;      /* within blocks below are for variables  */
+                                   /* that do not have to be preserved over  */
+BOOL cur_is_word;                  /* a recursive call to RMATCH().          */
+BOOL condition;
 BOOL minimize;
 BOOL prev_is_word;
 
 unsigned long int original_ims;
 
+#if !JAVASCRIPT
 #ifdef SUPPORT_UCP
-
 int prop_type;
+int prop_value;
 int prop_fail_result;
 int prop_category;
 int prop_chartype;
-int prop_othercase;
-int prop_test_against;
+int prop_script;
 int *prop_test_variable;
-
-int repeat_othercase;
-
+#endif
 #endif
 
 int ctype;
@@ -553,24 +580,32 @@ eptrblock newptrb;
 /* These statements are here to stop the compiler complaining about unitialized
 variables. */
 
+#if !JAVASCRIPT
 #ifdef SUPPORT_UCP
+prop_value = 0;
 prop_fail_result = 0;
-prop_test_against = 0;
 prop_test_variable = NULL;
 #endif
+#endif
 
-/* OK, now we can get on with the real code of the function. Recursion is
-specified by the macros RMATCH and RRETURN. When NO_RECURSE is *not* defined,
-these just turn into a recursive call to match() and a "return", respectively.
-However, RMATCH isn't like a function call because it's quite a complicated
-macro. It has to be used in one particular way. This shouldn't, however, impact
-performance when true recursion is being used. */
+/* OK, now we can get on with the real code of the function. Recursive calls
+are specified by the macro RMATCH and RRETURN is used to return. When
+NO_RECURSE is *not* defined, these just turn into a recursive call to match()
+and a "return", respectively (possibly with some debugging if DEBUG is
+defined). However, RMATCH isn't like a function call because it's quite a
+complicated macro. It has to be used in one particular way. This shouldn't,
+however, impact performance when true recursion is being used. */
 
-utf8 = md->utf8;       /* Local copy of the flag */
+/* First check that we haven't called match() too many times, or that we
+haven't exceeded the recursive call limit. */
 
 if (md->match_call_count++ >= md->match_limit) RRETURN(PCRE_ERROR_MATCHLIMIT);
+if (rdepth >= md->match_limit_recursion) RRETURN(PCRE_ERROR_RECURSIONLIMIT);
 
 original_ims = ims;    /* Save for resetting on ')' */
+#if !PCRE_UTF16
+utf8 = md->utf8;       /* Local copy of the flag */
+#endif
 
 /* At the start of a bracketed group, add the current subject pointer to the
 stack of such pointers, to be re-instated at the end of the group when we hit
@@ -638,7 +673,7 @@ for (;;)
       save_capture_last = md->capture_last;
 
       DPRINTF(("saving %d %d %d\n", save_offset1, save_offset2, save_offset3));
-      md->offset_vector[md->offset_end - number] = INT_CAST(eptr - md->start_subject);
+      md->offset_vector[md->offset_end - number] = eptr - md->start_subject;
 
       do
         {
@@ -737,7 +772,7 @@ for (;;)
     if (md->recursive != NULL && md->recursive->group_num == 0)
       {
       recursion_info *rec = md->recursive;
-      DPRINTF(("Hit the end in a (?0) recursion\n"));
+      DPRINTF(("End of pattern in a (?0) recursion\n"));
       md->recursive = rec->prevrec;
       memmove(md->offset_vector, rec->offset_save,
         rec->saved_max * sizeof(int));
@@ -856,10 +891,10 @@ for (;;)
       cb.version          = 1;   /* Version 1 of the callout block */
       cb.callout_number   = ecode[1];
       cb.offset_vector    = md->offset_vector;
-      cb.subject          = (const pcre_char *)md->start_subject;
-      cb.subject_length   = INT_CAST(md->end_subject - md->start_subject);
-      cb.start_match      = INT_CAST(md->start_match - md->start_subject);
-      cb.current_position = INT_CAST(eptr - md->start_subject);
+      cb.subject          = (PCRE_SPTR)md->start_subject;
+      cb.subject_length   = md->end_subject - md->start_subject;
+      cb.start_match      = md->start_match - md->start_subject;
+      cb.current_position = eptr - md->start_subject;
       cb.pattern_position = GET(ecode, 2);
       cb.next_item_length = GET(ecode, 2 + LINK_SIZE);
       cb.capture_top      = offset_top/2;
@@ -938,12 +973,17 @@ for (;;)
             eptrb, match_isgroup);
         if (rrc == MATCH_MATCH)
           {
+          DPRINTF(("Recursion matched\n"));
           md->recursive = new_recursive.prevrec;
           if (new_recursive.offset_save != stacksave)
             (pcre_free)(new_recursive.offset_save);
           RRETURN(MATCH_MATCH);
           }
-        else if (rrc != MATCH_NOMATCH) RRETURN(rrc);
+        else if (rrc != MATCH_NOMATCH)
+          {
+          DPRINTF(("Recursion gave error %d\n", rrc));
+          RRETURN(rrc);
+          }
 
         md->recursive = &new_recursive;
         memcpy(md->offset_vector, new_recursive.offset_save,
@@ -1124,7 +1164,7 @@ for (;;)
             {
             md->offset_vector[offset] =
               md->offset_vector[md->offset_end - number];
-            md->offset_vector[offset+1] = INT_CAST(eptr - md->start_subject);
+            md->offset_vector[offset+1] = eptr - md->start_subject;
             if (offset_top <= offset) offset_top = offset + 2;
             }
 
@@ -1399,6 +1439,7 @@ for (;;)
     ecode++;
     break;
 
+#if !JAVASCRIPT
 #ifdef SUPPORT_UCP
     /* Check the next character by Unicode property. We will get here only
     if the support is in the binary; otherwise a compile-time error occurs. */
@@ -1408,23 +1449,43 @@ for (;;)
     if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
     GETCHARINCTEST(c, eptr);
       {
-      int chartype, rqdtype;
-      int othercase;
-      int category = _pcre_ucp_findchar(c, &chartype, &othercase);
+      int chartype, script;
+      int category = _pcre_ucp_findprop(c, &chartype, &script);
 
-      rqdtype = *(++ecode);
-      ecode++;
+      switch(ecode[1])
+        {
+        case PT_ANY:
+        if (op == OP_NOTPROP) RRETURN(MATCH_NOMATCH);
+        break;
 
-      if (rqdtype >= 128)
-        {
-        if ((rqdtype - 128 != category) == (op == OP_PROP))
+        case PT_LAMP:
+        if ((chartype == ucp_Lu ||
+             chartype == ucp_Ll ||
+             chartype == ucp_Lt) == (op == OP_NOTPROP))
           RRETURN(MATCH_NOMATCH);
-        }
-      else
-        {
-        if ((rqdtype != chartype) == (op == OP_PROP))
+         break;
+
+        case PT_GC:
+        if ((ecode[2] != category) == (op == OP_PROP))
           RRETURN(MATCH_NOMATCH);
+        break;
+
+        case PT_PC:
+        if ((ecode[2] != chartype) == (op == OP_PROP))
+          RRETURN(MATCH_NOMATCH);
+        break;
+
+        case PT_SC:
+        if ((ecode[2] != script) == (op == OP_PROP))
+          RRETURN(MATCH_NOMATCH);
+        break;
+
+        default:
+        RRETURN(PCRE_ERROR_INTERNAL);
+        break;
         }
+
+      ecode += 3;
       }
     break;
 
@@ -1435,9 +1496,8 @@ for (;;)
     if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
     GETCHARINCTEST(c, eptr);
       {
-      int chartype;
-      int othercase;
-      int category = _pcre_ucp_findchar(c, &chartype, &othercase);
+      int chartype, script;
+      int category = _pcre_ucp_findprop(c, &chartype, &script);
       if (category == ucp_M) RRETURN(MATCH_NOMATCH);
       while (eptr < md->end_subject)
         {
@@ -1446,13 +1506,14 @@ for (;;)
           {
           GETCHARLEN(c, eptr, len);
           }
-        category = _pcre_ucp_findchar(c, &chartype, &othercase);
+        category = _pcre_ucp_findprop(c, &chartype, &script);
         if (category != ucp_M) break;
         eptr += len;
         }
       }
     ecode++;
     break;
+#endif
 #endif
 
 
@@ -1478,7 +1539,7 @@ for (;;)
 #if JAVASCRIPT
         0 : /* in JavaScript these match the empty string */
 #else
-        INT_CAST(md->end_subject - eptr + 1) :
+        md->end_subject - eptr + 1 :
 #endif
         md->offset_vector[offset+1] - md->offset_vector[offset];
 
@@ -1743,8 +1804,8 @@ for (;;)
           while (eptr >= pp)
             {
             RMATCH(25, rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
-            eptr--;
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
+            eptr--;
             }
           }
 
@@ -1935,20 +1996,16 @@ for (;;)
             RRETURN(MATCH_NOMATCH);
         } else
 #endif
-          GETCHARINC(dc, eptr);
+        GETCHARINC(dc, eptr);
         ecode += length;
 
         /* If we have Unicode property support, we can use it to test the other
-        case of the character, if there is one. The result of _pcre_ucp_findchar() is
-        < 0 if the char isn't found, and othercase is returned as zero if there
-        isn't one. */
+        case of the character, if there is one. */
 
         if (fc != dc)
           {
 #ifdef SUPPORT_UCP
-          int chartype;
-          int othercase;
-          if (_pcre_ucp_findchar(fc, &chartype, &othercase) != ucp_L || dc != othercase)
+          if (dc != _pcre_ucp_othercase(fc))
 #endif
             RRETURN(MATCH_NOMATCH);
           }
@@ -2008,10 +2065,7 @@ for (;;)
 
       if (fc <= 0xFFFF)
         {
-        int othercase;
-        int chartype;
-        if ((ims & PCRE_CASELESS) == 0 || _pcre_ucp_findchar(fc, &chartype, &othercase) != ucp_L)
-          othercase = -1; /* Guaranteed to not match any character */
+        int othercase = (ims & PCRE_CASELESS) == 0 ? -1 : _pcre_ucp_othercase(fc);
 
         for (i = 1; i <= min; i++)
           {
@@ -2123,10 +2177,9 @@ for (;;)
 
 #ifdef SUPPORT_UCP
         int othercase;
-        int chartype;
         if ((ims & PCRE_CASELESS) != 0 &&
-             _pcre_ucp_findchar(fc, &chartype, &othercase) == ucp_L &&
-             othercase > 0)
+            (othercase = _pcre_ucp_othercase(fc)) >= 0 &&
+             othercase >= 0)
           oclength = _pcre_ord2utf8(othercase, occhars);
 #endif  /* SUPPORT_UCP */
 
@@ -2616,23 +2669,16 @@ for (;;)
     REPEATTYPE:
     ctype = *ecode++;      /* Code for the character type */
 
+#if !JAVASCRIPT
 #ifdef SUPPORT_UCP
     if (ctype == OP_PROP || ctype == OP_NOTPROP)
       {
       prop_fail_result = ctype == OP_NOTPROP;
       prop_type = *ecode++;
-      if (prop_type >= 128)
-        {
-        prop_test_against = prop_type - 128;
-        prop_test_variable = &prop_category;
-        }
-      else
-        {
-        prop_test_against = prop_type;
-        prop_test_variable = &prop_chartype;
-        }
+      prop_value = *ecode++;
       }
     else prop_type = -1;
+#endif
 #endif
 
     /* First, ensure the minimum number of matches are present. Use inline
@@ -2646,15 +2692,70 @@ for (;;)
     if (min > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
     if (min > 0)
       {
+#if !JAVASCRIPT
 #ifdef SUPPORT_UCP
-      if (prop_type > 0)
+      if (prop_type >= 0)
         {
-        for (i = 1; i <= min; i++)
+        switch(prop_type)
           {
-          GETCHARINC(c, eptr);
-          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
-          if ((*prop_test_variable == prop_test_against) == prop_fail_result)
-            RRETURN(MATCH_NOMATCH);
+          case PT_ANY:
+          if (prop_fail_result) RRETURN(MATCH_NOMATCH);
+          for (i = 1; i <= min; i++)
+            {
+            if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            }
+          break;
+
+          case PT_LAMP:
+          for (i = 1; i <= min; i++)
+            {
+            if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_chartype == ucp_Lu ||
+                 prop_chartype == ucp_Ll ||
+                 prop_chartype == ucp_Lt) == prop_fail_result)
+              RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          case PT_GC:
+          for (i = 1; i <= min; i++)
+            {
+            if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_category == prop_value) == prop_fail_result)
+              RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          case PT_PC:
+          for (i = 1; i <= min; i++)
+            {
+            if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_chartype == prop_value) == prop_fail_result)
+              RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          case PT_SC:
+          for (i = 1; i <= min; i++)
+            {
+            if (eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_script == prop_value) == prop_fail_result)
+              RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          default:
+          RRETURN(PCRE_ERROR_INTERNAL);
+          break;
           }
         }
 
@@ -2666,7 +2767,7 @@ for (;;)
         for (i = 1; i <= min; i++)
           {
           GETCHARINCTEST(c, eptr);
-          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
           if (prop_category == ucp_M) RRETURN(MATCH_NOMATCH);
           while (eptr < md->end_subject)
             {
@@ -2675,7 +2776,7 @@ for (;;)
               {
               GETCHARLEN(c, eptr, len);
               }
-            prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
             if (prop_category != ucp_M) break;
             eptr += len;
             }
@@ -2684,6 +2785,7 @@ for (;;)
 
       else
 #endif     /* SUPPORT_UCP */
+#endif
 
 /* Handle all other cases when the coding is UTF-8 */
 
@@ -2836,18 +2938,80 @@ for (;;)
 
     if (minimize)
       {
+#if !JAVASCRIPT
 #ifdef SUPPORT_UCP
-      if (prop_type > 0)
+      if (prop_type >= 0)
         {
-        for (fi = min;; fi++)
+        switch(prop_type)
           {
-          RMATCH(46, rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
-          if (rrc != MATCH_NOMATCH) RRETURN(rrc);
-          if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
-          GETCHARINC(c, eptr);
-          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
-          if ((*prop_test_variable == prop_test_against) == prop_fail_result)
-            RRETURN(MATCH_NOMATCH);
+          case PT_ANY:
+          for (fi = min;; fi++)
+            {
+            RMATCH(rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
+            if (rrc != MATCH_NOMATCH) RRETURN(rrc);
+            if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            if (prop_fail_result) RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          case PT_LAMP:
+          for (fi = min;; fi++)
+            {
+            RMATCH(rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
+            if (rrc != MATCH_NOMATCH) RRETURN(rrc);
+            if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_chartype == ucp_Lu ||
+                 prop_chartype == ucp_Ll ||
+                 prop_chartype == ucp_Lt) == prop_fail_result)
+              RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          case PT_GC:
+          for (fi = min;; fi++)
+            {
+            RMATCH(rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
+            if (rrc != MATCH_NOMATCH) RRETURN(rrc);
+            if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_category == prop_value) == prop_fail_result)
+              RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          case PT_PC:
+          for (fi = min;; fi++)
+            {
+            RMATCH(rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
+            if (rrc != MATCH_NOMATCH) RRETURN(rrc);
+            if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_chartype == prop_value) == prop_fail_result)
+              RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          case PT_SC:
+          for (fi = min;; fi++)
+            {
+            RMATCH(rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
+            if (rrc != MATCH_NOMATCH) RRETURN(rrc);
+            if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
+            GETCHARINC(c, eptr);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_script == prop_value) == prop_fail_result)
+              RRETURN(MATCH_NOMATCH);
+            }
+          break;
+
+          default:
+          RRETURN(PCRE_ERROR_INTERNAL);
+          break;
           }
         }
 
@@ -2858,11 +3022,11 @@ for (;;)
         {
         for (fi = min;; fi++)
           {
-          RMATCH(47, rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
+          RMATCH(rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
           GETCHARINCTEST(c, eptr);
-          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
           if (prop_category == ucp_M) RRETURN(MATCH_NOMATCH);
           while (eptr < md->end_subject)
             {
@@ -2871,7 +3035,7 @@ for (;;)
               {
               GETCHARLEN(c, eptr, len);
               }
-            prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
             if (prop_category != ucp_M) break;
             eptr += len;
             }
@@ -2880,6 +3044,7 @@ for (;;)
 
       else
 #endif     /* SUPPORT_UCP */
+#endif
 
 #ifdef SUPPORT_UTF8
       /* UTF-8 mode */
@@ -2995,25 +3160,83 @@ for (;;)
       {
       pp = eptr;  /* Remember where we started */
 
+#if !JAVASCRIPT
 #ifdef SUPPORT_UCP
-      if (prop_type > 0)
+      if (prop_type >= 0)
         {
-        for (i = min; i < max; i++)
+        switch(prop_type)
           {
-          int len = 1;
-          if (eptr >= md->end_subject) break;
-          GETCHARLEN(c, eptr, len);
-          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
-          if ((*prop_test_variable == prop_test_against) == prop_fail_result)
-            break;
-          eptr+= len;
+          case PT_ANY:
+          for (i = min; i < max; i++)
+            {
+            int len = 1;
+            if (eptr >= md->end_subject) break;
+            GETCHARLEN(c, eptr, len);
+            if (prop_fail_result) break;
+            eptr+= len;
+            }
+          break;
+
+          case PT_LAMP:
+          for (i = min; i < max; i++)
+            {
+            int len = 1;
+            if (eptr >= md->end_subject) break;
+            GETCHARLEN(c, eptr, len);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_chartype == ucp_Lu ||
+                 prop_chartype == ucp_Ll ||
+                 prop_chartype == ucp_Lt) == prop_fail_result)
+              break;
+            eptr+= len;
+            }
+          break;
+
+          case PT_GC:
+          for (i = min; i < max; i++)
+            {
+            int len = 1;
+            if (eptr >= md->end_subject) break;
+            GETCHARLEN(c, eptr, len);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_category == prop_value) == prop_fail_result)
+              break;
+            eptr+= len;
+            }
+          break;
+
+          case PT_PC:
+          for (i = min; i < max; i++)
+            {
+            int len = 1;
+            if (eptr >= md->end_subject) break;
+            GETCHARLEN(c, eptr, len);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_chartype == prop_value) == prop_fail_result)
+              break;
+            eptr+= len;
+            }
+          break;
+
+          case PT_SC:
+          for (i = min; i < max; i++)
+            {
+            int len = 1;
+            if (eptr >= md->end_subject) break;
+            GETCHARLEN(c, eptr, len);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
+            if ((prop_script == prop_value) == prop_fail_result)
+              break;
+            eptr+= len;
+            }
+          break;
           }
 
         /* eptr is now past the end of the maximum run */
 
         for(;;)
           {
-          RMATCH(50, rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
+          RMATCH(rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (eptr-- == pp) break;        /* Stop if tried at original pos */
           BACKCHAR(eptr);
@@ -3029,7 +3252,7 @@ for (;;)
           {
           if (eptr >= md->end_subject) break;
           GETCHARINCTEST(c, eptr);
-          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
           if (prop_category == ucp_M) break;
           while (eptr < md->end_subject)
             {
@@ -3038,7 +3261,7 @@ for (;;)
               {
               GETCHARLEN(c, eptr, len);
               }
-            prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
             if (prop_category != ucp_M) break;
             eptr += len;
             }
@@ -3048,7 +3271,7 @@ for (;;)
 
         for(;;)
           {
-          RMATCH(51, rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
+          RMATCH(rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (eptr-- == pp) break;        /* Stop if tried at original pos */
           for (;;)                        /* Move back over one extended */
@@ -3059,7 +3282,7 @@ for (;;)
               {
               GETCHARLEN(c, eptr, len);
               }
-            prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
+            prop_category = _pcre_ucp_findprop(c, &prop_chartype, &prop_script);
             if (prop_category != ucp_M) break;
             eptr--;
             }
@@ -3068,6 +3291,7 @@ for (;;)
 
       else
 #endif   /* SUPPORT_UCP */
+#endif
 
 #ifdef SUPPORT_UTF8
       /* UTF-8 mode */
@@ -3119,7 +3343,7 @@ for (;;)
             else
               {
               c = max - min;
-              if (c > md->end_subject - eptr) c = INT_CAST(md->end_subject - eptr);
+              if (c > md->end_subject - eptr) c = md->end_subject - eptr;
               eptr += c;
               }
             }
@@ -3129,7 +3353,7 @@ for (;;)
 
           case OP_ANYBYTE:
           c = max - min;
-          if (c > md->end_subject - eptr) c = INT_CAST(md->end_subject - eptr);
+          if (c > md->end_subject - eptr) c = md->end_subject - eptr;
           eptr += c;
           break;
 
@@ -3234,7 +3458,7 @@ for (;;)
 
           case OP_ANYBYTE:
           c = max - min;
-          if (c > md->end_subject - eptr) c = INT_CAST(md->end_subject - eptr);
+          if (c > md->end_subject - eptr) c = md->end_subject - eptr;
           eptr += c;
           break;
 
@@ -3408,6 +3632,8 @@ return 0;
 #endif
 #endif
 
+#undef utf8
+
 }
 
 
@@ -3493,9 +3719,9 @@ Returns:          > 0 => success; value is the number of elements filled in
                  < -1 => some kind of unexpected problem
 */
 
-PCRE_EXPORT int
+PCRE_DATA_SCOPE int
 pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
-  const pcre_char *subject, int length, int start_offset, int options, int *offsets,
+  PCRE_SPTR subject, int length, int start_offset, int options, int *offsets,
   int offsetcount)
 {
 int rc, resetcount, ocount;
@@ -3512,14 +3738,18 @@ BOOL req_byte_caseless = FALSE;
 match_data match_block;
 const uschar *tables;
 const uschar *start_bits = NULL;
-const pcre_uchar *start_match = (const pcre_uchar *)subject + start_offset;
-const pcre_uchar *end_subject;
-const pcre_uchar *req_byte_ptr = start_match - 1;
+USPTR start_match = (USPTR)subject + start_offset;
+USPTR end_subject;
+USPTR req_byte_ptr = start_match - 1;
 
+#if !JAVASCRIPT
 pcre_study_data internal_study;
+#endif
 const pcre_study_data *study;
 
+#if !JAVASCRIPT
 real_pcre internal_re;
+#endif
 const real_pcre *external_re = (const real_pcre *)argument_re;
 const real_pcre *re = external_re;
 
@@ -3535,6 +3765,7 @@ the default values. */
 
 study = NULL;
 match_block.match_limit = MATCH_LIMIT;
+match_block.match_limit_recursion = MATCH_LIMIT_RECURSION;
 match_block.callout_data = NULL;
 
 /* The table pointer is always in native byte order. */
@@ -3543,11 +3774,13 @@ tables = external_re->tables;
 
 if (extra_data != NULL)
   {
-  register unsigned long flags = extra_data->flags;
+  register unsigned int flags = extra_data->flags;
   if ((flags & PCRE_EXTRA_STUDY_DATA) != 0)
     study = (const pcre_study_data *)extra_data->study_data;
   if ((flags & PCRE_EXTRA_MATCH_LIMIT) != 0)
     match_block.match_limit = extra_data->match_limit;
+  if ((flags & PCRE_EXTRA_MATCH_LIMIT_RECURSION) != 0)
+    match_block.match_limit_recursion = extra_data->match_limit_recursion;
   if ((flags & PCRE_EXTRA_CALLOUT_DATA) != 0)
     match_block.callout_data = extra_data->callout_data;
   if ((flags & PCRE_EXTRA_TABLES) != 0) tables = extra_data->tables;
@@ -3564,12 +3797,14 @@ test for a regex that was compiled on a host of opposite endianness. If this is
 the case, flipped values are put in internal_re and internal_study if there was
 study data too. */
 
+#if !JAVASCRIPT
 if (re->magic_number != MAGIC_NUMBER)
   {
   re = _pcre_try_flipped(re, &internal_re, study, &internal_study);
   if (re == NULL) return PCRE_ERROR_BADMAGIC;
   if (study != NULL) study = &internal_study;
   }
+#endif
 
 /* Set up other data */
 
@@ -3582,7 +3817,7 @@ firstline = (re->options & PCRE_FIRSTLINE) != 0;
 match_block.start_code = (const uschar *)external_re + re->name_table_offset +
   re->name_count * re->name_entry_size;
 
-match_block.start_subject = (const pcre_uchar *)subject;
+match_block.start_subject = (USPTR)subject;
 match_block.start_offset = start_offset;
 match_block.end_subject = match_block.start_subject + length;
 end_subject = match_block.end_subject;
@@ -3710,7 +3945,7 @@ the loop runs just once. */
 
 do
   {
-  const pcre_uchar *save_end_subject = end_subject;
+  USPTR save_end_subject = end_subject;
 
   /* Reset the maximum number of extractions we might see. */
 
@@ -3729,7 +3964,7 @@ do
 
   if (firstline)
     {
-    const pcre_uchar *t = start_match;
+    USPTR t = start_match;
     while (t < save_end_subject && *t != '\n') t++;
     end_subject = t;
     }
@@ -3808,7 +4043,7 @@ do
       end_subject - start_match < REQ_BYTE_MAX &&
       !match_block.partial)
     {
-    register const pcre_uchar *p = start_match + ((first_byte >= 0)? 1 : 0);
+    register USPTR p = start_match + ((first_byte >= 0)? 1 : 0);
 
     /* We don't need to repeat the search if we haven't yet reached the
     place we found it at last time. */
@@ -3854,7 +4089,7 @@ do
   match_block.match_call_count = 0;
 
   rc = match(start_match, match_block.start_code, 2, &match_block, ims, NULL,
-    match_isgroup);
+    match_isgroup, 0);
 
   /* When the result is no match, if the subject's first character was a
   newline and the PCRE_FIRSTLINE option is set, break (which will return
@@ -3903,8 +4138,8 @@ do
 
   if (offsetcount < 2) rc = 0; else
     {
-    offsets[0] = INT_CAST(start_match - match_block.start_subject);
-    offsets[1] = INT_CAST(match_block.end_match_ptr - match_block.start_subject);
+    offsets[0] = start_match - match_block.start_subject;
+    offsets[1] = match_block.end_match_ptr - match_block.start_subject;
     }
 
   DPRINTF((">>>> returning %d\n", rc));

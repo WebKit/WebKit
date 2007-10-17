@@ -6,7 +6,7 @@
 and semantics are as close as possible to those of the Perl 5 language.
 
                        Written by Philip Hazel
-           Copyright (c) 1997-2005 University of Cambridge
+           Copyright (c) 1997-2006 University of Cambridge
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -86,29 +86,22 @@ for (i = 0; i < 256; i++) *p++ = tolower(i);
 
 for (i = 0; i < 256; i++) *p++ = islower(i)? toupper(i) : tolower(i);
 
-/* Then the character class tables. Don't try to be clever and save effort
-on exclusive ones - in some locales things may be different. Note that the
-table for "space" includes everything "isspace" gives, including VT in the
-default locale. This makes it work for the POSIX class [:space:]. */
+/* Then the character class tables. Don't try to be clever and save effort on
+exclusive ones - in some locales things may be different. Note that the table
+for "space" includes everything "isspace" gives, including VT in the default
+locale. This makes it work for the POSIX class [:space:]. Note also that it is
+possible for a character to be alnum or alpha without being lower or upper,
+such as "male and female ordinals" (\xAA and \xBA) in the fr_FR locale (at
+least under Debian Linux's locales as of 12/2005). So we must test for alnum
+specially. */
 
 memset(p, 0, cbit_length);
 for (i = 0; i < 256; i++)
   {
-  if (isdigit(i))
-    {
-    p[cbit_digit  + i/8] |= 1 << (i&7);
-    p[cbit_word   + i/8] |= 1 << (i&7);
-    }
-  if (isupper(i))
-    {
-    p[cbit_upper  + i/8] |= 1 << (i&7);
-    p[cbit_word   + i/8] |= 1 << (i&7);
-    }
-  if (islower(i))
-    {
-    p[cbit_lower  + i/8] |= 1 << (i&7);
-    p[cbit_word   + i/8] |= 1 << (i&7);
-    }
+  if (isdigit(i)) p[cbit_digit  + i/8] |= 1 << (i&7);
+  if (isupper(i)) p[cbit_upper  + i/8] |= 1 << (i&7);
+  if (islower(i)) p[cbit_lower  + i/8] |= 1 << (i&7);
+  if (isalnum(i)) p[cbit_word   + i/8] |= 1 << (i&7);
   if (i == '_')   p[cbit_word   + i/8] |= 1 << (i&7);
   if (isspace(i)) p[cbit_space  + i/8] |= 1 << (i&7);
   if (isxdigit(i))p[cbit_xdigit + i/8] |= 1 << (i&7);
@@ -122,12 +115,15 @@ p += cbit_length;
 /* Finally, the character type table. In this, we exclude VT from the white
 space chars, because Perl doesn't recognize it as such for \s and for comments
 within regexes. */
-/* But no, in JavaScriptCore we don't, so that's commented out below. */
 
 for (i = 0; i < 256; i++)
   {
   int x = 0;
-  if (/*i != 0x0b && */ isspace(i)) x += ctype_space;
+  if (
+#if !JAVASCRIPT
+      *i != 0x0b &&
+#endif
+        isspace(i)) x += ctype_space;
   if (isalpha(i)) x += ctype_letter;
   if (isdigit(i)) x += ctype_digit;
   if (isxdigit(i)) x += ctype_xdigit;

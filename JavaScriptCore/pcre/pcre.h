@@ -2,11 +2,11 @@
 *       Perl-Compatible Regular Expressions      *
 *************************************************/
 
-/* In its original form, this is the .in file that is transformed by
-"configure" into pcre.h.
+/* This is the public header file for the PCRE library, to be #included by
+applications that call the PCRE functions.
 
            Copyright (c) 1997-2005 University of Cambridge
-           Copyright (c) 2004, 2005 Apple Computer, Inc.
+           Copyright (c) 2004, 2005, 2006, 2007 Apple Inc.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -64,11 +64,39 @@ POSSIBILITY OF SUCH DAMAGE.
 #define pcre_study kjs_pcre_study
 #define pcre_version kjs_pcre_version
 
+/* The current PCRE version information. */
+
+/* NOTES FOR FUTURE MAINTAINERS: Do not use numbers with leading zeros, because
+they may be treated as octal constants. The PCRE_PRERELEASE feature is for
+identifying release candidates. It might be defined as -RC2, for example. In
+real releases, it should be defined empty. Do not change the alignment of these
+statments. The code in ./configure greps out the version numbers by using "cut"
+to get values from column 29 onwards. These are substituted into pcre-config
+and libpcre.pc. The values are not put into configure.ac and substituted here
+(which would simplify this issue) because that makes life harder for those who
+cannot run ./configure. As it now stands, this file need not be edited in that
+circumstance. */
+
 #define PCRE_MAJOR          6
-#define PCRE_MINOR          4
-#define PCRE_DATE           05-Sep-2005
+#define PCRE_MINOR          5
+#define PCRE_PRERELEASE
+#define PCRE_DATE           01-Feb-2006
 
 #define PCRE_UTF16          1
+
+/* Win32 uses DLL by default; it needs special stuff for exported functions. */
+
+#ifdef _WIN32
+#  ifdef PCRE_DEFINITION
+#    ifdef DLL_EXPORT
+#      define PCRE_DATA_SCOPE __declspec(dllexport)
+#    endif
+#  else
+#    ifndef PCRE_STATIC
+#      define PCRE_DATA_SCOPE extern __declspec(dllimport)
+#    endif
+#  endif
+#endif
 
 /* For other operating systems, we use the standard "extern". */
 
@@ -135,6 +163,7 @@ extern "C" {
 #define PCRE_ERROR_DFA_UMLIMIT    (-18)
 #define PCRE_ERROR_DFA_WSSIZE     (-19)
 #define PCRE_ERROR_DFA_RECURSE    (-20)
+#define PCRE_ERROR_RECURSIONLIMIT (-21)
 
 /* Request types for pcre_fullinfo() */
 
@@ -152,7 +181,8 @@ extern "C" {
 #define PCRE_INFO_STUDYSIZE         10
 #define PCRE_INFO_DEFAULT_TABLES    11
 
-/* Request types for pcre_config() */
+/* Request types for pcre_config(). Do not re-arrange, in order to remain
+compatible. */
 
 #define PCRE_CONFIG_UTF8                    0
 #define PCRE_CONFIG_NEWLINE                 1
@@ -161,13 +191,16 @@ extern "C" {
 #define PCRE_CONFIG_MATCH_LIMIT             4
 #define PCRE_CONFIG_STACKRECURSE            5
 #define PCRE_CONFIG_UNICODE_PROPERTIES      6
+#define PCRE_CONFIG_MATCH_LIMIT_RECURSION   7
 
-/* Bit flags for the pcre_extra structure */
+/* Bit flags for the pcre_extra structure. Do not re-arrange or redefine
+these bits, just add new ones on the end, in order to remain compatible. */
 
-#define PCRE_EXTRA_STUDY_DATA          0x0001
-#define PCRE_EXTRA_MATCH_LIMIT         0x0002
-#define PCRE_EXTRA_CALLOUT_DATA        0x0004
-#define PCRE_EXTRA_TABLES              0x0008
+#define PCRE_EXTRA_STUDY_DATA             0x0001
+#define PCRE_EXTRA_MATCH_LIMIT            0x0002
+#define PCRE_EXTRA_CALLOUT_DATA           0x0004
+#define PCRE_EXTRA_TABLES                 0x0008
+#define PCRE_EXTRA_MATCH_LIMIT_RECURSION  0x0010
 
 /* Types */
 
@@ -180,6 +213,14 @@ typedef char pcre_char;
 struct real_pcre;                 /* declaration; the definition is private  */
 typedef struct real_pcre pcre;
 
+/* When PCRE is compiled as a C++ library, the subject pointer type can be
+replaced with a custom type. For conventional use, the public interface is a
+const char *. */
+
+#ifndef PCRE_SPTR
+#define PCRE_SPTR const pcre_char *
+#endif
+
 /* The structure for passing additional data to pcre_exec(). This is defined in
 such as way as to be extensible. Always add new fields at the end, in order to
 remain compatible. */
@@ -190,6 +231,7 @@ typedef struct pcre_extra {
   unsigned long int match_limit;  /* Maximum number of calls to match() */
   void *callout_data;             /* Data passed back in callouts */
   const unsigned char *tables;    /* Pointer to character tables */
+  unsigned long int match_limit_recursion; /* Max recursive calls to match() */
 } pcre_extra;
 
 /* The structure for passing out data via the pcre_callout_function. We use a
@@ -202,7 +244,7 @@ typedef struct pcre_callout_block {
   /* ------------------------ Version 0 ------------------------------- */
   int          callout_number;    /* Number compiled into pattern */
   int         *offset_vector;     /* The offset vector */
-  const pcre_char  *subject;      /* The subject being matched */
+  PCRE_SPTR    subject;           /* The subject being matched */
   int          subject_length;    /* The length of the subject */
   int          start_match;       /* Offset to start of this match attempt */
   int          current_position;  /* Where we currently are in the subject */
@@ -248,7 +290,7 @@ PCRE_DATA_SCOPE int  pcre_copy_substring(const pcre_char *, int *, int, int, pcr
                   int);
 PCRE_DATA_SCOPE int  pcre_dfa_exec(const pcre *, const pcre_extra *,
                   const pcre_char *, int, int, int, int *, int , int *, int);
-PCRE_DATA_SCOPE int  pcre_exec(const pcre *, const pcre_extra *, const pcre_char *,
+PCRE_DATA_SCOPE int  pcre_exec(const pcre *, const pcre_extra *, PCRE_SPTR,
                    int, int, int, int *, int);
 PCRE_DATA_SCOPE void pcre_free_substring(const pcre_char *);
 PCRE_DATA_SCOPE void pcre_free_substring_list(const pcre_char **);

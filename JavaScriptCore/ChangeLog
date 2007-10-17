@@ -1,3 +1,47 @@
+2007-10-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - merged PCRE changes between 6.4 and 6.5
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Removed pcre_config.c, pcre_globals.c, pcre_info.c, pcre_maketables.c,
+        pcre_printint.src, pcre_refcount.c, pcre_study.c, pcre_try_flipped.c,
+        pcre_ucp_findchar.c, pcre_version.c, and ucptable.c. Added pcre_ucp_searchfuncs.c.
+
+        * pcre/AUTHORS:
+        * pcre/LICENCE:
+        * pcre/MERGING:
+        * pcre/dftables.c:
+        * pcre/pcre-config.h:
+        * pcre/pcre.h:
+        * pcre/pcre.pri:
+        * pcre/pcre_compile.c:
+        * pcre/pcre_exec.c:
+        * pcre/pcre_fullinfo.c:
+        * pcre/pcre_get.c:
+        * pcre/pcre_internal.h:
+        * pcre/pcre_maketables.c:
+        * pcre/pcre_ord2utf8.c:
+        * pcre/pcre_tables.c:
+        * pcre/pcre_ucp_searchfuncs.c: Copied from pcre/pcre_ucp_findchar.c.
+        * pcre/pcre_xclass.c:
+        * pcre/ucp.h:
+        * pcre/ucpinternal.h:
+        * pcre/ucptable.c:
+        Updated with new versions from the PCRE 6.5 release, merged with changes.
+
+        * pcre/pcre_config.c: Removed.
+        * pcre/pcre_globals.c: Removed.
+        * pcre/pcre_info.c: Removed.
+        * pcre/pcre_printint.src: Removed.
+        * pcre/pcre_refcount.c: Removed.
+        * pcre/pcre_study.c: Removed.
+        * pcre/pcre_try_flipped.c: Removed.
+        * pcre/pcre_ucp_findchar.c: Removed.
+        * pcre/pcre_version.c: Removed.
+
 2007-10-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

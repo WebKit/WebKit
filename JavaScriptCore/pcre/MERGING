@@ -2,7 +2,7 @@ This file has advice to help you merge newer versions of PCRE.
 
 JavaScriptCore's PCRE is currently based on:
 
-    PCRE 6.4
+    PCRE 6.5
 
 With the following differences.
 

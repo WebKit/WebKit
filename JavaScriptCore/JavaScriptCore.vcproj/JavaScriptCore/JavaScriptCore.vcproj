@@ -539,10 +539,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_config.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pcre\pcre_exec.c"
 				>
 			</File>
@@ -555,19 +551,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_globals.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_info.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pcre\pcre_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_maketables.c"
 				>
 			</File>
 			<File
@@ -575,31 +559,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_printint.src"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_refcount.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_study.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pcre\pcre_tables.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_try_flipped.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_ucp_findchar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_version.c"
+				RelativePath="..\..\pcre\pcre_ucp_searchfuncs.c"
 				>
 			</File>
 			<File
