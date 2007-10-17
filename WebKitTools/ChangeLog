@@ -26,6 +26,26 @@
 
 2007-10-16  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 15532: run-safari fails if Safari is installed in a non-default location
+
+        http://bugs.webkit.org/show_bug.cgi?id=15532
+
+        FindSafari simply prints the location of an installed Safari.exe on
+        stdout.
+
+        Reviewed by Darin.
+
+        * FindSafari/FindSafari.cpp: Copied from WebKitTools/WebKitInitializer/WebKitInitializer.cpp.
+        (getStringValue):
+        (getWebViewCLSID):
+        (getInstalledWebKitDirectory):
+        (_tmain):
+        * FindSafari/FindSafari.vcproj: Added.
+        * Scripts/webkitdirs.pm:
+        (sub installedSafariPath): Added. Calls FindSafari on Windows.
+
+2007-10-16  Adam Roben  <aroben@apple.com>
+
         Updated for rename of WebKit_debug.dll to WebKit.dll for the Debug configuration
 
         Reviewed by Kevin McCullough.

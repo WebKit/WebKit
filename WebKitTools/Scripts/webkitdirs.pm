@@ -290,6 +290,31 @@ sub setConfiguration
     $configuration = $passedConfiguration if $passedConfiguration;
 }
 
+sub safariPathFromSafariBundle
+{
+    my ($safariBundle) = @_;
+
+    return "$safariBundle/Contents/MacOS/Safari" if isOSX();
+    return $safariBundle if isCygwin();
+}
+
+sub installedSafariPath
+{
+    my $safariBundle;
+
+    if (isOSX()) {
+        $safariBundle = "/Applications/Safari.app";
+    } elsif (isCygwin()) {
+        $safariBundle = `"$configurationProductDir/FindSafari.exe"`;
+        $safariBundle =~ s/[\r\n]+$//;
+        $safariBundle = `cygpath -u '$safariBundle'`;
+        $safariBundle =~ s/[\r\n]+$//;
+        $safariBundle .= "Safari.exe";
+    }
+
+    return safariPathFromSafariBundle($safariBundle);
+}
+
 # Locate Safari.
 sub safariPath
 {
@@ -303,21 +328,10 @@ sub safariPath
         } elsif (isCygwin() && -x "$configurationProductDir/bin/Safari.exe") {
             $safariBundle = "$configurationProductDir/bin/Safari.exe";
         } else {
-            # Otherwise use the installed Safari
-            if (isOSX()) {
-                $safariBundle = "/Applications/Safari.app";
-            } elsif (isCygwin()) {
-                chomp(my $programFiles = `cygpath -u '$ENV{"PROGRAMFILES"}'`);
-                $safariBundle = "$programFiles/Safari/Safari.exe";
-            }
+            return installedSafariPath();
         }
     }
-    my $safariPath;
-    if (isOSX()) {
-        $safariPath = "$safariBundle/Contents/MacOS/Safari";
-    } elsif (isCygwin()) {
-        $safariPath = $safariBundle;
-    }
+    my $safariPath = safariPathFromSafariBundle($safariBundle);
     die "Can't find executable at $safariPath.\n" if isOSX() && !-x $safariPath;
     return $safariPath;
 }
