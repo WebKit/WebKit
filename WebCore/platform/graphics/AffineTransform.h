@@ -27,7 +27,7 @@
 #define AffineTransform_h
 
 #if PLATFORM(CG)
-#include <ApplicationServices/ApplicationServices.h>
+#include <CoreGraphics/CGAffineTransform.h>
 #elif PLATFORM(QT)
 #include <QMatrix>
 #elif PLATFORM(CAIRO)

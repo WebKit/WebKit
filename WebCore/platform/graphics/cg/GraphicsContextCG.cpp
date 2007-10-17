@@ -32,6 +32,7 @@
 #include "AffineTransform.h"
 #include "KURL.h"
 #include "Path.h"
+#include <CoreGraphics/CGPDFContext.h>
 #include <wtf/MathExtras.h>
 
 #include <GraphicsContextPlatformPrivate.h> // FIXME: Temporary.
