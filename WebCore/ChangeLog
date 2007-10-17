@@ -1,3 +1,21 @@
+2007-10-17  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix.  Move non-pthread stubs from Threading.h to ThreadingNone.cpp to prevent
+        multiple-definition link errors.
+
+        * WebCore.pro:
+        * platform/Threading.h:
+        * platform/ThreadingNone.cpp: Added.
+        (WebCore::createThread):
+        (WebCore::waitForThreadCompletion):
+        (WebCore::detachThread):
+        (WebCore::Mutex::Mutex):
+        (WebCore::Mutex::~Mutex):
+        (WebCore::Mutex::lock):
+        (WebCore::Mutex::tryLock):
+        (WebCore::Mutex::unlock):
+        (WebCore::ThreadCondition::ThreadCondition):
+
 2007-10-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

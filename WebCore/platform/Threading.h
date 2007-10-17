@@ -152,24 +152,6 @@ inline void initializeThreading()
 }
 #endif
 
-#if !USE(PTHREADS)
-ThreadIdentifier createThread(ThreadFunction, void*) { return 0; }
-int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
-void detachThread(ThreadIdentifier) { }
-
-Mutex::Mutex() {}
-Mutex::~Mutex() {}
-void Mutex::lock() {}
-bool Mutex::tryLock() { return false; }
-void Mutex::unlock() {};
-
-ThreadCondition::ThreadCondition() {}
-ThreadCondition::~ThreadCondition() {}
-void ThreadCondition::wait(Mutex& mutex) {}
-void ThreadCondition::signal() {}
-void ThreadCondition::broadcast() {}
-#endif
-
 } // namespace WebCore
 
 #endif // Threading_h

@@ -669,6 +669,7 @@ SOURCES += \
     platform/TextEncoding.cpp \
     platform/TextEncodingRegistry.cpp \
     platform/TextStream.cpp \
+    platform/ThreadingNone.cpp \
     platform/Timer.cpp \
     platform/Widget.cpp \
     rendering/AutoTableLayout.cpp \
