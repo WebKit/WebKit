@@ -31,6 +31,13 @@
   popular browser, so results on this benchmark will tell you how much
   you have to gain or lose by using a different browser.
 
+* Instead of using the standard error, the correct way to calculate
+  a 95% confidence interval for a small sample is the t-test. 
+  <http://en.wikipedia.org/wiki/Student%27s_t-test>. Basically this involves
+  using values from a 2-tailed t-distribution table instead of 1.96 to
+  multiply by the error function, a table is available at
+  <http://www.medcalc.be/manual/t-distribution.php>
+
 * Add support to compare two different engines (or two builds of the
   same engine) interleaved.
 

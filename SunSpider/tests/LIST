@@ -1,5 +1,7 @@
-math-cordic
-bitops-bits-in-byte
+3d-cube
+3d-morph
+3d-raytrace
 bitops-3bit-bits-in-byte
+bitops-bits-in-byte
 bitops-bitwise-and
-
+math-cordic

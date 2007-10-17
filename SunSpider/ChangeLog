@@ -1,3 +1,19 @@
+2007-10-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        * TODO: Updated with info on how to do the stats properly.
+
+        * hosted/sunspider-driver.html: Reduce timeout from 500 to 200 to
+        avoid overly slowing down the benchmark.
+
+        Added some 3D-related test cases.
+        
+        * tests/3d-cube.js: Added.
+        * tests/3d-morph.js: Added.
+        * tests/3d-raytrace.js: Added.
+        * tests/LIST:
+
 2007-10-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
