@@ -58,7 +58,7 @@
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
+				DisableSpecificWarnings="4018;4127;4355;4389;4510;4512;4610;4706;4996"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -133,7 +133,7 @@
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
+				DisableSpecificWarnings="4018;4127;4355;4389;4510;4512;4610;4706;4996"
 				ForcedIncludeFiles=""
 			/>
 			<Tool

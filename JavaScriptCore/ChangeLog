@@ -1,3 +1,14 @@
+2007-10-17  Adam Roben  <aroben@apple.com>
+
+        Windows build fix.
+
+        Reviewed by Anders.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Disable
+        some mismatched signed/unsigned comparison warnings.
+        * pcre/pcre_exec.c:
+        (match): #if-out some labels that don't seem to exist.
+
 2007-10-17  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.

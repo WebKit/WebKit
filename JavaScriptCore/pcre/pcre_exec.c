@@ -3604,12 +3604,16 @@ switch (frame->Xwhere)
   case 43: goto RRETURN_43;
   case 44: goto RRETURN_44;
   case 45: goto RRETURN_45;
+#if !JAVASCRIPT
   case 46: goto RRETURN_46;
   case 47: goto RRETURN_47;
+#endif
   case 48: goto RRETURN_48;
   case 49: goto RRETURN_49;
+#if !JAVASCRIPT
   case 50: goto RRETURN_50;
   case 51: goto RRETURN_51;
+#endif
   case 52: goto RRETURN_52;
   case 53: goto RRETURN_53;
   }
