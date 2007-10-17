@@ -39,7 +39,6 @@
         (FuncDeclNode::processFuncDecl):
         (FuncExprNode::evaluate):
 
->>>>>>> .r26715
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         Windows build fix part 2.
