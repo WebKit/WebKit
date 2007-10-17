@@ -1,3 +1,15 @@
+2007-10-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15543
+          <rdar://problem/5545639> REGRESSION (r26697):
+          GoogleDocs: Can't create new documents or open existing ones
+
+        * fast/js/regexp-non-character-expected.txt: Added.
+        * fast/js/regexp-non-character.html: Added.
+        * fast/js/resources/regexp-non-character.js: Added.
+
 2007-10-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

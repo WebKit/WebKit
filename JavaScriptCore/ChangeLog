@@ -1,3 +1,16 @@
+2007-10-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15543
+          <rdar://problem/5545639> REGRESSION (r26697):
+          GoogleDocs: Can't create new documents or open existing ones
+
+        Test: fast/js/regexp-non-character.html
+
+        * pcre/pcre_compile.c: (check_escape): Take out the checks for valid characters
+        in the \u sequences -- not needed and actively harmful.
+
 2007-10-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.

@@ -578,11 +578,6 @@ else
       if (cc >= 'a') cc -= 32;              /* Convert to upper case */
       c = c * 16 + cc - ((cc < 'A')? '0' : ('A' - 10));
       }
-    if (c >= 0xD800 && c <= 0xDFFF) *errorcodeptr = ERR34; // half of surrogate pair
-    else if (c >= 0xFDD0 && c <= 0xFDEF) *errorcodeptr = ERR34; // ?
-    else if (c == 0xFFFE) *errorcodeptr = ERR34; // not a character
-    else if (c == 0xFFFF)  *errorcodeptr = ERR34; // not a character
-    else if (c > 0x10FFFF) *errorcodeptr = ERR34; // out of Unicode character range
     break;
 #endif
 
