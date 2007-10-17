@@ -159,16 +159,9 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
     RenderStyle* style = renderer()->style();
     if (style->overflowX() == OVISIBLE && style->overflowY() == OVISIBLE) {
         for (Node* n = attributes.patternContentElement()->firstChild(); n; n = n->nextSibling()) {
-            SVGElement* elem = svg_dynamic_cast(n);
-            if (!elem || !elem->isStyledTransformable())
+            if (!n->isSVGElement() || !static_cast<SVGElement*>(n)->isStyledTransformable() || !n->renderer())
                 continue;
-
-            SVGStyledElement* e = static_cast<SVGStyledElement*>(elem);
-            RenderObject* item = e->renderer();
-            if (!item)
-                continue;
-
-            patternContentBoundaries.unite(item->relativeBBox(true));
+            patternContentBoundaries.unite(n->renderer()->relativeBBox(true));
         }
     }
 
@@ -217,16 +210,9 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
 
     // Render subtree into ImageBuffer
     for (Node* n = attributes.patternContentElement()->firstChild(); n; n = n->nextSibling()) {
-        SVGElement* elem = svg_dynamic_cast(n);
-        if (!elem || !elem->isStyled())
+        if (!n->isSVGElement() || !static_cast<SVGElement*>(n)->isStyled() || !n->renderer())
             continue;
-
-        SVGStyledElement* e = static_cast<SVGStyledElement*>(elem);
-        RenderObject* item = e->renderer();
-        if (!item)
-            continue;
-
-        renderSubtreeToImage(patternImage.get(), item);
+        renderSubtreeToImage(patternImage.get(), n->renderer());
     }
 
     context->restore();
