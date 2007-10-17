@@ -385,7 +385,7 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror) const
             page = node->page();
             if (page) {
                 const GlyphData& data = page->glyphDataForCharacter(c);
-                if (data.glyph)
+                if (data.fontData)
                     return data;
                 if (node->isSystemFallback())
                     break;
@@ -403,7 +403,7 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror) const
             page = node->page();
             if (page) {
                 const GlyphData& data = page->glyphDataForCharacter(c);
-                if (data.glyph) {
+                if (data.fontData) {
                     // The smallCapsFontData function should not normally return 0.
                     // But if it does, we will just render the capital letter big.
                     const FontData* smallCapsFontData = data.fontData->smallCapsFontData(m_fontDescription);
@@ -412,7 +412,7 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror) const
 
                     GlyphPageTreeNode* smallCapsNode = GlyphPageTreeNode::getRootChild(smallCapsFontData, pageNumber);
                     const GlyphData& data = smallCapsNode->page()->glyphDataForCharacter(c);
-                    if (data.glyph)
+                    if (data.fontData)
                         return data;
 
                     // Do not attempt system fallback off the smallCapsFontData. This is the very unlikely case that

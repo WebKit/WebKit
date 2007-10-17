@@ -1,3 +1,22 @@
+2007-10-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15536
+          need to cache missing glyph so we're not slow on pages that show missing glyphs
+
+        - <rdar://problem/5404359> UI thread stall (>60sec) in MLANG running stress test
+          (related to font data caching)
+
+        * platform/Font.cpp: (WebCore::Font::glyphDataForCharacter): Check for a null value
+        for fontData rather than for glyph to detect non-cached entries in the glyph data.
+
+        * platform/gtk/GlyphPageTreeNodeGtk.cpp: (WebCore::GlyphPage::fill):
+        * platform/mac/GlyphPageTreeNodeMac.cpp: (WebCore::GlyphPage::fill):
+        * platform/win/GlyphPageTreeNodeWin.cpp: (WebCore::GlyphPage::fill):
+        Set fontData to 0 for missing glyph entries. Also fixed the Windows and GTK versions
+        to return the proper value for haveGlyphs.
+
 2007-10-16  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.  Replace use of assert with ASSERT_NOT_REACHED.

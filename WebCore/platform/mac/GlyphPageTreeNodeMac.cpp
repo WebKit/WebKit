@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,9 +60,12 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontD
     ATSLayoutRecord* glyphRecord = (ATSLayoutRecord*)wkGetGlyphVectorFirstRecord(glyphVector);
     for (unsigned i = 0; i < GlyphPage::size; i++) {
         Glyph glyph = glyphRecord->glyphID;
-        setGlyphDataForIndex(i, glyph, fontData);
-        if (!haveGlyphs && glyph)
+        if (!glyph)
+            setGlyphDataForIndex(i, 0, 0);
+        else {
+            setGlyphDataForIndex(i, glyph, fontData);
             haveGlyphs = true;
+        }
         glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + wkGetGlyphVectorRecordSize(glyphVector));
     }
     wkClearGlyphVector(&glyphVector);

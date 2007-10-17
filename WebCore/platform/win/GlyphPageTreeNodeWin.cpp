@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,24 +28,31 @@
 
 #include "config.h"
 #include "FontData.h"
+
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 
-namespace WebCore
-{
+namespace WebCore {
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
-    // bufferLength will be greater than the glyph page size if the buffer has Unicode supplementary characters.
+    // The bufferLength will be greater than the glyph page size if the buffer has Unicode supplementary characters.
     // We won't support this for now.
     if (bufferLength > GlyphPage::size)
         return false;
 
+    bool haveGlyphs = false;
     CGGlyph localGlyphBuffer[GlyphPage::size];
     wkGetGlyphs(fontData->platformData().cgFont(), buffer, localGlyphBuffer, bufferLength);
-    for (unsigned i = 0; i < GlyphPage::size; i++)
-        setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
-    return true;
+    for (unsigned i = 0; i < GlyphPage::size; i++) {
+        Glyph glyph = localGlyphBuffer[i];
+        if (!glyph)
+            setGlyphDataForIndex(i, 0, 0);
+        else {
+            setGlyphDataForIndex(i, glyph, fontData);
+            haveGlyphs = true;
+        }
+    }
+    return haveGlyphs;
 }
 
 }
-
