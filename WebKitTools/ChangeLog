@@ -1,5 +1,19 @@
 2007-10-17  Adam Roben  <aroben@apple.com>
 
+        Add back the call to register WebKit that we had before WebKitInitializer existed
+
+        This is needed to ensure that the right WebKit is used when
+        instantiating COM objects.
+
+        Reviewed by Oliver.
+
+        * DumpRenderTree/win/debug_internal.vsprops: Define
+        DEBUG_WEBKIT_HAS_SUFFIX.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize):
+
+2007-10-17  Adam Roben  <aroben@apple.com>
+
         Import File::Basename in webkitdirs since we use it
 
         Reviewed by NOBODY.

@@ -4,6 +4,10 @@
 	Version="8.00"
 	Name="debug_internal"
 	>
+	<Tool
+		Name="VCCLCompilerTool"
+		PreprocessorDefinitions="DEBUG_WEBKIT_HAS_SUFFIX"
+	/>
 	<UserMacro
 		Name="WebKitConfigSuffix"
 		Value="_debug"
