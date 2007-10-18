@@ -1,5 +1,12 @@
 2007-10-18  Alexey Proskuryakov  <ap@webkit.org>
 
+        Windows build fix.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Add braces around cases that have local variables now.
+
+2007-10-18  Alexey Proskuryakov  <ap@webkit.org>
+
         Release build fix.
 
         * css/CSSStyleSelector.cpp:
