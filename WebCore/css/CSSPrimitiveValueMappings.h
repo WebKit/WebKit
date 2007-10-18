@@ -1598,6 +1598,33 @@ template<> inline CSSPrimitiveValue::operator EWordWrap() const
     return NormalWordWrap;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextDirection e)
+    : m_type(CSS_IDENT)
+{
+    switch (e) {
+        case LTR:
+            m_value.ident = CSS_VAL_LTR;
+            break;
+        case RTL:
+            m_value.ident = CSS_VAL_RTL;
+            break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextDirection() const
+{
+    switch (m_value.ident) {
+        case CSS_VAL_LTR:
+            return LTR;
+        case CSS_VAL_RTL:
+            return RTL;
+    }
+    ASSERT_NOT_REACHED();
+    return LTR;
+}
+
+#if ENABLE(SVG)
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineCap e)
     : m_type(CSS_IDENT)
 {
@@ -1658,31 +1685,6 @@ template<> inline CSSPrimitiveValue::operator LineJoin() const
     return MiterJoin;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextDirection e)
-    : m_type(CSS_IDENT)
-{
-    switch (e) {
-        case LTR:
-            m_value.ident = CSS_VAL_LTR;
-            break;
-        case RTL:
-            m_value.ident = CSS_VAL_RTL;
-            break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator TextDirection() const
-{
-    switch (m_value.ident) {
-        case CSS_VAL_LTR:
-            return LTR;
-        case CSS_VAL_RTL:
-            return RTL;
-    }
-    ASSERT_NOT_REACHED();
-    return LTR;
-}
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WindRule e)
     : m_type(CSS_IDENT)
 {
@@ -1708,7 +1710,6 @@ template<> inline CSSPrimitiveValue::operator WindRule() const
     return RULE_NONZERO;
 }
 
-#if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAlignmentBaseline e)
     : m_type(CSS_IDENT)
