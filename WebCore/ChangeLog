@@ -1,3 +1,18 @@
+2007-10-18  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5547462> Need to copy Inspector resources in Production builds
+
+        I also added an excludes file for the xcopy command to avoid copying
+        .svn folders.
+
+        Reviewed by Geoff.
+
+        * WebCore.vcproj/WebCore.make: Make sure we copy the Inspector
+        resources.
+        * WebCore.vcproj/WebCore.vcproj: Pass /exclude:xcopy.excludes to
+        xcopy.
+        * WebCore.vcproj/xcopy.excludes: Added.
+
 2007-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
