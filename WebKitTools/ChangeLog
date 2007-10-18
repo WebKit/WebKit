@@ -1,3 +1,12 @@
+2007-10-17  Adam Roben  <aroben@apple.com>
+
+        Build fix for VC++ Express
+
+        Reviewed by NOBODY.
+
+        * FindSafari/FindSafari.vcproj: Explicitly link against advapi32.lib
+        and ole32.lib.
+
 2007-10-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
