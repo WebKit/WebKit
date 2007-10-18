@@ -1,3 +1,12 @@
+2007-10-18  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5547784> ProgIDMacros.h should explicitly use wide strings
+
+        Reviewed by Adele.
+
+        * ProgIDMacros.h: Always use wide strings instead of relying on the
+        TEXT macro.
+
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         Fix for clean builds needed after r26683

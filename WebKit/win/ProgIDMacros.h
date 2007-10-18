@@ -27,11 +27,11 @@
 #define ProgIDMacros_h
 
 #define STRINGIFIED_VERSION(version) STRINGIFY(version)
-#define STRINGIFY(s) TEXT(#s)
+#define STRINGIFY(s) L###s
 
 #define CURRENT_PROGID_VERSION 523
-#define VERSION_INDEPENDENT_PRODUCTION_PROGID(className) TEXT("WebKit.") TEXT(#className)
-#define VERSION_INDEPENDENT_OPENSOURCE_PROGID(className) TEXT("OpenSource") VERSION_INDEPENDENT_PRODUCTION_PROGID(className)
-#define VERSIONED_PROGID(versionIndependentProgID, version) versionIndependentProgID TEXT(".") STRINGIFIED_VERSION(version)
+#define VERSION_INDEPENDENT_PRODUCTION_PROGID(className) L##"WebKit." L###className
+#define VERSION_INDEPENDENT_OPENSOURCE_PROGID(className) L##"OpenSource" VERSION_INDEPENDENT_PRODUCTION_PROGID(className)
+#define VERSIONED_PROGID(versionIndependentProgID, version) versionIndependentProgID L##"." STRINGIFIED_VERSION(version)
 
 #endif // !defined(ProgIDMacros_h)
