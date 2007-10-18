@@ -1,3 +1,12 @@
+2007-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15541
+          REGRESSION (r26616): prompt with one argument uses the literal "undefined" as default reply
+
+        * page/DOMWindow.idl: Add ConvertUndefinedOrNullToNullString back for defaultValue.
+
 2007-10-18  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Build fix. Not reviewed.

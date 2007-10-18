@@ -49,7 +49,8 @@ module window {
 
         void alert(in DOMString message);
         boolean confirm(in DOMString message);
-        [ConvertNullStringTo=Null] DOMString prompt(in DOMString message, in DOMString defaultValue);
+        [ConvertNullStringTo=Null] DOMString prompt(in DOMString message,
+                                                    in [ConvertUndefinedOrNullToNullString] DOMString defaultValue);
 
         boolean find(in DOMString string,
                      in boolean caseSensitive,
