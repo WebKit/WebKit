@@ -1,3 +1,11 @@
+2007-10-18  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Build fix. Not reviewed.
+
+        Hopefully fix win build by including wtf/MathExtras.h.
+
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+
 2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
 
         Reviewed by Nikolas Zimmermann.

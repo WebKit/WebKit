@@ -34,6 +34,8 @@
 #include "SVGPaintServerRadialGradient.h"
 #include "SVGRenderSupport.h"
 
+#include <wtf/MathExtras.h>
+
 using namespace std;
 
 namespace WebCore {
