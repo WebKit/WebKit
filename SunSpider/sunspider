@@ -66,11 +66,12 @@ close TESTLIST;
 my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
 $prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
 
-open PREFIX, ">/tmp/sunspider-test-prefix.js";
+mkdir "tmp";
+open PREFIX, ">tmp/sunspider-test-prefix.js";
 print PREFIX $prefix;
 close PREFIX;
 
-my $discard = `$jsshell -f /tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null`;
+my $discard = `"$jsshell" -f tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null`;
 
 print "Discarded first run.\n";
 
@@ -79,7 +80,7 @@ my $count = 0;
 my @results = ();
 my $total = 0;
 while ($count++ < $max) {
-    $result = `$jsshell -f /tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null`;
+    $result = `"$jsshell" -f tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null`;
     chomp $result;
     push @results, $result;
     print $result . "\n";
@@ -87,9 +88,8 @@ while ($count++ < $max) {
 
 my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
 
-open(OUTPUT, ">/tmp/sunspider-results.js");
+open(OUTPUT, ">tmp/sunspider-results.js");
 print OUTPUT $output;
 close(OUTPUT);
 
-system("$jsshell -f /tmp/sunspider-test-prefix.js -f /tmp/sunspider-results.js -f resources/sunspider-analyze-results.js");
-
+system("$jsshell", "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-results.js", "-f", "resources/sunspider-analyze-results.js");

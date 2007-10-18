@@ -39,7 +39,9 @@
 <script>
 var output = eval(decodeURI(location.search.substring(1)));
 function print(str) {
-    document.getElementById("console").appendChild(document.createTextNode(str + "\n"));
+    var console = document.getElementById("console");
+    console.appendChild(document.createTextNode(str));
+    console.appendChild(document.createElement("br"));
 }
 </script>
 

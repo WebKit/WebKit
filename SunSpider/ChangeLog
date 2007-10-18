@@ -1,5 +1,14 @@
 2007-10-18  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+        
+        - Support Windows and Windows browsers.
+
+        * hosted/sunspider-results.html: Display results correctly in IE.
+        * sunspider: tweaks to work on Windows, and with spaces in the path.
+
+2007-10-18  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Oliver.
 
         * tests/string-tagcloud.js: Remove stray print()
