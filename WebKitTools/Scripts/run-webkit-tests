@@ -123,7 +123,6 @@ my $actualTag = "actual";
 my $diffsTag = "diffs";
 my $errorTag = "stderr";
 
-my $useWinSkipped = 0;
 if (isTiger()) {
     $platform = "mac-tiger";
 } elsif (isLeopard()) {
@@ -135,15 +134,7 @@ if (isTiger()) {
 } elsif (isGtk()) {
     $platform = "gtk";
 } elsif (isCygwin()) {
-    # FIXME: The two lines below are a hack to represent that on Windows we
-    # currently want to
-    # 1) use the Mac expected results
-    # 2) use the Windows Skipped file
-    # Once Windows has its own results and/or we come up with a better way of
-    # sharing results with Mac, we should set $platform to "win" and get rid of
-    # $useWinSkipped entirely.
-    $platform = "mac";
-    $useWinSkipped = 1;
+    $platform = "win";
 }
 
 if (!defined($platform)) {
@@ -294,7 +285,8 @@ checkFrameworks() unless isCygwin();
 my $layoutTestsName = "LayoutTests";
 my $testDirectory = File::Spec->rel2abs($layoutTestsName);
 my $expectedDirectory = $testDirectory;
-my $platformTestDirectory = catdir($testDirectory, "platform", $platform);
+my $platformBaseDirectory = catdir($testDirectory, "platform");
+my $platformTestDirectory = catdir($platformBaseDirectory, $platform);
 my @platformHierarchy = buildPlatformHierarchy();
 
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
@@ -337,15 +329,7 @@ if ($ignoreTests) {
 }
 
 if (!$ignoreSkipped) {
-    # FIXME: See comments where $platform is set for info on why this is needed.
-    my @skippedHierarchy;
-    if ($useWinSkipped) {
-        @skippedHierarchy = (catdir($testDirectory, "platform", "win"));
-    } else {
-        @skippedHierarchy = @platformHierarchy;
-    }
-
-    foreach my $level (@skippedHierarchy) {
+    foreach my $level (@platformHierarchy) {
         if (open SKIPPED, "<", "$level/Skipped") {
             if ($verbose && !$skippedOnly) {
                 my ($dir, $name) = splitpath($level);
@@ -1355,6 +1339,7 @@ sub expectedDirectoryForTest($;$)
     my ($base, $isText) = @_;
 
     my @directories = @platformHierarchy;
+    push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-leopard mac) if isCygwin();
     push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.
@@ -1500,10 +1485,10 @@ sub buildPlatformHierarchy()
 {
     mkpath($platformTestDirectory) if ($platform eq "undefined" && !-d "$platformTestDirectory");
 
-    my @platforms = split('-', basename($platformTestDirectory));
+    my @platforms = split('-', $platform);
     my @hierarchy;
     for (my $i=0; $i < @platforms; $i++) {
-        my $scoped = catdir(dirname($platformTestDirectory), join('-', @platforms[0..($#platforms - $i)]));
+        my $scoped = catdir($platformBaseDirectory, join('-', @platforms[0..($#platforms - $i)]));
         push(@hierarchy, $scoped) if (-d $scoped);
     }
 

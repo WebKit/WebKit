@@ -1,5 +1,23 @@
 2007-10-17  Adam Roben  <aroben@apple.com>
 
+        Make it possible to have Windows-specific tests and results
+
+        When searching for tests to run and the Skipped file, we will only
+        look in platform/win and the cross-platform directory. When looking
+        for expected results, we will look in platform/win, then
+        platform/mac-leopard, then platform/mac, then finally the
+        cross-platform directory.
+
+        Reviewed by Sam.
+
+        * Scripts/run-webkit-tests:
+        (sub expectedDirectoryForTest): Search in mac-leopard and mac before
+        searching in the cross-platform directory.
+        (sub buildPlatformHierarchy): Removed some unneeded calls to
+        dirname/basename.
+
+2007-10-17  Adam Roben  <aroben@apple.com>
+
         Add back the call to register WebKit that we had before WebKitInitializer existed
 
         This is needed to ensure that the right WebKit is used when
