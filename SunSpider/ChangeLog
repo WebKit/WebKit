@@ -1,3 +1,16 @@
+\2007-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        Add some string test cases.
+
+        * tests/string-base64.js: Added. Does base64 encoding and decoding.
+        * tests/string-tagcloud.js: Added. Parses a JSON string and
+        generates tagcloud HTML markup based on the data.        
+        * tests/string-unpack-code.js: Added. Unpack compressed versions of
+        four of the most popular JavaScript libraries.
+        * tests/LIST: Added the new tests.
+
 2007-10-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

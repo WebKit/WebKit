@@ -5,3 +5,6 @@ bitops-3bit-bits-in-byte
 bitops-bits-in-byte
 bitops-bitwise-and
 math-cordic
+string-base64
+string-tagcloud
+string-unpack-code
