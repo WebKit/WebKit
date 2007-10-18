@@ -16,8 +16,8 @@ function description(msg)
 function debug(msg)
 {
     var span = document.createElement("span");
-    span.innerHTML = msg + '<br>';
-    document.getElementById("console").appendChild(span);
+    document.getElementById("console").appendChild(span); // insert it first so XHTML knows the namespace
+    span.innerHTML = msg + '<br />';
 }
 
 function escapeHTML(text)
@@ -27,12 +27,12 @@ function escapeHTML(text)
 
 function testPassed(msg)
 {
-    debug('<span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
+    debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
 }
 
 function testFailed(msg)
 {
-    debug('<span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
+    debug('<span><span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
 }
 
 function areArraysEqual(_a, _b)

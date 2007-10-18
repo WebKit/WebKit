@@ -204,7 +204,7 @@ sub finish
 }
 
 # Uppercase the first letter, while respecting WebKit style guidelines. 
-# E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
+# E.g., xmlEncoding becomes XMLEncoding, but xmllang becomes Xmllang.
 sub WK_ucfirst
 {
     my $param = shift;
@@ -386,6 +386,9 @@ sub GetParentAndProtocols
         my $firstParent = $codeGenerator->StripModule(shift(@parents));
         if (IsProtocolType($firstParent)) {
             push(@protocols, "DOM" . $firstParent);
+            if (!$isProtocol) {
+                $parent = "DOMObject";
+            }
         } else {
             $parent = "DOM" . $firstParent;
         }

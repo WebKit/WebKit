@@ -1,3 +1,15 @@
+2007-10-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
+        Test case for http://bugs.webkit.org/show_bug.cgi?id=15504
+        Landed -disabled as it's blocked by:
+        http://bugs.webkit.org/show_bug.cgi?id=15503
+
+        * fast/js/resources/js-test-post.js: add support for XHTML
+        * fast/js/resources/js-test-pre.js: add support for XHTML
+        * svg/dom/viewspec-parser.html-disabled: Added.
+
 2007-10-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin, Adam, and Maciej.

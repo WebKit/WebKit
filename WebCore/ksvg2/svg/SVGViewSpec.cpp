@@ -99,30 +99,30 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
     if (!skipString(currViewSpec, end, svgViewSpec, sizeof(svgViewSpec) / sizeof(UChar)))
         return false;
 
-    if (*currViewSpec != '(' )
+    if (currViewSpec >= end || *currViewSpec != '(' )
         return false;
     currViewSpec++;
 
-    while (*currViewSpec != ')' && currViewSpec < end) {
+    while (currViewSpec < end && *currViewSpec != ')') {
         if (*currViewSpec == 'v') {
             if (skipString(currViewSpec, end, viewBoxSpec, sizeof(viewBoxSpec) / sizeof(UChar))) {
-                if (*currViewSpec != '(')
+                if (currViewSpec >= end || *currViewSpec != '(')
                     return false;
                 currViewSpec++;
                 float x, y, w, h;
                 if (!parseViewBox(currViewSpec, end, x, y, w, h, false))
                     return false;
                 setViewBoxBaseValue(FloatRect(x, y, w, h));
-                if (*currViewSpec != ')')
+                if (currViewSpec >= end || *currViewSpec != ')')
                     return false;
                 currViewSpec++;
             } else if (skipString(currViewSpec, end, viewTargetSpec, sizeof(viewTargetSpec) / sizeof(UChar))) {
-                if (*currViewSpec != '(')
+                if (currViewSpec >= end || *currViewSpec != '(')
                     return false;
                 const UChar* viewTargetStart = ++currViewSpec;
-                while (*currViewSpec != ')' && currViewSpec <= end)
+                while (currViewSpec < end && *currViewSpec != ')')
                     currViewSpec++;
-                if (currViewSpec > end)
+                if (currViewSpec >= end)
                     return false;
                 setViewTargetString(String(viewTargetStart, currViewSpec - viewTargetStart));
                 currViewSpec++;
@@ -131,44 +131,43 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
         } else if (*currViewSpec == 'z') {
             if (!skipString(currViewSpec, end, zoomAndPanSpec, sizeof(zoomAndPanSpec) / sizeof(UChar)))
                 return false;
-            if (*currViewSpec != '(')
+            if (currViewSpec >= end || *currViewSpec != '(')
                 return false;
             currViewSpec++;
             if (!parseZoomAndPan(currViewSpec, end))
                 return false;
-            if (*currViewSpec != ')')
+            if (currViewSpec >= end || *currViewSpec != ')')
                 return false;
             currViewSpec++;
         } else if (*currViewSpec == 'p') {
             if (!skipString(currViewSpec, end, preserveAspectRatioSpec, sizeof(preserveAspectRatioSpec) / sizeof(UChar)))
                 return false;
-            if (*currViewSpec != '(')
+            if (currViewSpec >= end || *currViewSpec != '(')
                 return false;
             currViewSpec++;
             if (!preserveAspectRatioBaseValue()->parsePreserveAspectRatio(currViewSpec, end, false))
                 return false;
-            if (*currViewSpec != ')')
+            if (currViewSpec >= end || *currViewSpec != ')')
                 return false;
             currViewSpec++;
         } else if (*currViewSpec == 't') {
             if (!skipString(currViewSpec, end, transformSpec, sizeof(transformSpec) / sizeof(UChar)))
                 return false;
-            if (*currViewSpec != '(')
+            if (currViewSpec >= end || *currViewSpec != '(')
                 return false;
             currViewSpec++;
             SVGTransformable::parseTransformAttribute(m_transform.get(), currViewSpec, end);
-            if (*currViewSpec != ')')
+            if (currViewSpec >= end || *currViewSpec != ')')
                 return false;
             currViewSpec++;
-        }
+        } else
+            return false;
 
-        if (*currViewSpec == ';')
+        if (currViewSpec < end && *currViewSpec == ';')
             currViewSpec++;
     }
-    if (currViewSpec >= end)
-        return false;
-
-    if (*currViewSpec != ')')
+    
+    if (currViewSpec >= end || *currViewSpec != ')')
         return false;
 
     return true;

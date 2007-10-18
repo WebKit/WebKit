@@ -1,3 +1,18 @@
+2007-10-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix crashers in SVGViewSpec::parseViewSpec
+        http://bugs.webkit.org/show_bug.cgi?id=15504
+
+        Test is blocked by bug 15503, landed as:
+        * svg/dom/viewspec-parser.html-disabled
+
+        * bindings/scripts/CodeGeneratorObjC.pm: support classes where all parents are interfaces
+        * ksvg2/svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * ksvg2/svg/SVGViewSpec.idl: Added.
+
 2007-10-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin, Adam, and Maciej.
