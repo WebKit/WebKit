@@ -1,3 +1,28 @@
+2007-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - some small tweaks to the threading implementation
+
+        I had trouble building on Windows. Either the problem went away by itself
+        or one of these changes fixed it.
+
+        * platform/Threading.h: Eliminated the use of friend, and shared a single
+        declaration for the initializeThreading function.
+
+        * platform/pthreads/ThreadingPthreads.cpp: (WebCore::ThreadCondition::wait):
+        Call impl() here.
+
+        * platform/win/ThreadingWin.cpp: Got rid of two globals here with static
+        constructors. Also added a typedef for the type of the function queue.
+        (WebCore::functionQueueMutex): Added function.
+        (WebCore::functionQueue): Ditto.
+        (WebCore::callFunctionsOnMainThread): Use functions instead of using the
+        globals directly.
+        (WebCore::callOnMainThread): Ditto.
+
+        * css/CSSParser.cpp: Had to touch this file to make things build.
+
 2007-10-18  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5547462> Need to copy Inspector resources in Production builds

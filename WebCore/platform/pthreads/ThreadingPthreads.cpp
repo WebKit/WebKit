@@ -157,7 +157,7 @@ ThreadCondition::~ThreadCondition()
     
 void ThreadCondition::wait(Mutex& mutex)
 {
-    if (pthread_cond_wait(&m_condition, &mutex.m_mutex) != 0)
+    if (pthread_cond_wait(&m_condition, &mutex.impl()) != 0)
         ASSERT(false);
 }
     
