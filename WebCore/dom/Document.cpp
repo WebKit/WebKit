@@ -711,8 +711,9 @@ Element *Document::getElementById(const AtomicString& elementId) const
     Element *element = m_elementsById.get(elementId.impl());
     if (element)
         return element;
-        
+
     if (m_duplicateIds.contains(elementId.impl())) {
+        // We know there's at least one node with this id, but we don't know what the first one is.
         for (Node *n = traverseNextNode(); n != 0; n = n->traverseNextNode()) {
             if (n->isElementNode()) {
                 element = static_cast<Element*>(n);
@@ -723,6 +724,7 @@ Element *Document::getElementById(const AtomicString& elementId) const
                 }
             }
         }
+        ASSERT_NOT_REACHED();
     }
     return 0;
 }
@@ -817,10 +819,28 @@ Element* Document::elementFromPoint(int x, int y) const
 
 void Document::addElementById(const AtomicString& elementId, Element* element)
 {
-    if (!m_elementsById.contains(elementId.impl()))
-        m_elementsById.set(elementId.impl(), element);
-    else
+    typedef HashMap<AtomicStringImpl*, Element*>::iterator iterator;
+    if (!m_duplicateIds.contains(elementId.impl())) {
+        // Fast path. The ID is not already in m_duplicateIds, so we assume that it's
+        // also not already in m_elementsById and do an add. If that add succeeds, we're done.
+        pair<iterator, bool> addResult = m_elementsById.add(elementId.impl(), element);
+        if (addResult.second)
+            return;
+        // The add failed, so this ID was already cached in m_elementsById.
+        // There are multiple elements with this ID. Remove the m_elementsById
+        // cache for this ID so getElementById searches for it next time it is called.
+        m_elementsById.remove(addResult.first);
         m_duplicateIds.add(elementId.impl());
+    } else {
+        // There are multiple elements with this ID. If it exists, remove the m_elementsById
+        // cache for this ID so getElementById searches for it next time it is called.
+        iterator cachedItem = m_elementsById.find(elementId.impl());
+        if (cachedItem != m_elementsById.end()) {
+            m_elementsById.remove(cachedItem);
+            m_duplicateIds.add(elementId.impl());
+        }
+    }
+    m_duplicateIds.add(elementId.impl());
 }
 
 void Document::removeElementById(const AtomicString& elementId, Element* element)

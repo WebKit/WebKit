@@ -1,3 +1,15 @@
+2007-10-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin, Adam, and Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12988
+        First element (in document order) is not returned when other duplicate ID-ed elements were created first
+
+        Reset the element id cache when an id is added and there is a duplicate for that id.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addElementById):
+
 2007-10-17  Mark Rowe  <mrowe@apple.com>
 
         Mac build fix.

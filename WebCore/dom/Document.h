@@ -880,6 +880,9 @@ private:
     
     RefPtr<TextResourceDecoder> m_decoder;
 
+    // We maintain the invariant that m_duplicateIds is the count of all elements with a given ID
+    // excluding the one referenced in m_elementsById, if any. This means it one less than the total count
+    // when the first node with a given ID is cached, otherwise the same as the total count.
     mutable HashMap<AtomicStringImpl*, Element*> m_elementsById;
     mutable HashCountedSet<AtomicStringImpl*> m_duplicateIds;
     
