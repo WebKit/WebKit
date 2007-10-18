@@ -129,7 +129,16 @@ auto_ptr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetR
         heightValue = height().value();
     } 
 
-    auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(IntSize(lroundf(widthValue), lroundf(heightValue)), false);
+    IntSize imageSize(lroundf(widthValue), lroundf(heightValue));
+    clampImageBufferSizeToViewport(document()->renderer(), imageSize);
+
+    if (imageSize.width() < static_cast<int>(widthValue))
+        widthValue = imageSize.width();
+
+    if (imageSize.height() < static_cast<int>(heightValue))
+        heightValue = imageSize.height();
+
+    auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(imageSize, false);
     if (!maskImage.get())
         return maskImage;
 

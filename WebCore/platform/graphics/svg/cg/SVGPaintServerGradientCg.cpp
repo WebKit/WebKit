@@ -32,6 +32,7 @@
 #include "SVGGradientElement.h"
 #include "SVGPaintServerLinearGradient.h"
 #include "SVGPaintServerRadialGradient.h"
+#include "SVGRenderSupport.h"
 
 using namespace std;
 
@@ -187,6 +188,15 @@ void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObj
             AffineTransform transform = object->absoluteTransform();
             FloatRect textBoundary = transform.mapRect(maskBBox);
 
+            IntSize maskSize(lroundf(textBoundary.width()), lroundf(textBoundary.height()));
+            clampImageBufferSizeToViewport(object->document()->renderer(), maskSize);
+
+            if (maskSize.width() < static_cast<int>(textBoundary.width()))
+                textBoundary.setWidth(maskSize.width());
+
+            if (maskSize.height() < static_cast<int>(textBoundary.height()))
+                textBoundary.setHeight(maskSize.height());
+
             // Clip current context to mask image (gradient)
             m_savedContext->concatCTM(transform.inverse());
             CGContextClipToMask(m_savedContext->platformContext(), CGRect(textBoundary), m_imageBuffer->cgImage());
@@ -276,7 +286,10 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
         FloatRect maskBBox = const_cast<RenderObject*>(findTextRootObject(object))->relativeBBox(false);
         IntRect maskRect = enclosingIntRect(object->absoluteTransform().mapRect(maskBBox));
 
-        auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(IntSize(maskRect.width(), maskRect.height()), false);
+        IntSize maskSize(maskRect.width(), maskRect.height());
+        clampImageBufferSizeToViewport(object->document()->renderer(), maskSize);
+
+        auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(maskSize, false);
 
         if (!maskImage.get()) {
             context->restore();

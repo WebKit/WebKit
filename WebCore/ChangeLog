@@ -1,3 +1,26 @@
+2007-10-18  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Anders.
+
+        Fix last layout test failure seen on buildbot "trunk-mac-ppc-release".
+        Problem: "svg/custom/mask-excessive-malloc.svg -> crashed"
+
+        Clamp any ImageBuffer allocation within SVG to the RenderView's visibleSize
+        to avoid excessive mallocs (in the testcase above 1000000x1000000)
+
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::clampImageBufferSizeToViewport):
+        * rendering/SVGRenderSupport.h:
+
 2007-10-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.

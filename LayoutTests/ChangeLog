@@ -1,3 +1,13 @@
+2007-10-18  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Anders.
+
+        Regenerated result of following test, now that ImageBuffers are correctly clipped to the
+        visible frame size (RenderView) - no more drawing outside that region.
+
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.checksum:
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.png:
+
 2007-10-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.

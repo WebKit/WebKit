@@ -35,6 +35,8 @@ void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const Float
 class ImageBuffer;
 void renderSubtreeToImage(ImageBuffer*, RenderObject*);
 
+void clampImageBufferSizeToViewport(RenderObject*, IntSize&);
+
 }
 
 #endif

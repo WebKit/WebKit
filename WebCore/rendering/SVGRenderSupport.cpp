@@ -31,6 +31,7 @@
 #include "ImageBuffer.h"
 #include "RenderObject.h"
 #include "RenderSVGContainer.h"
+#include "RenderView.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
@@ -141,6 +142,25 @@ void renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
 
     if (svgContainer && !drawsContents)
         svgContainer->setDrawsContents(false);
+}
+
+void clampImageBufferSizeToViewport(RenderObject* object, IntSize& size)
+{
+    if (!object || !object->isRenderView())
+        return;
+
+    RenderView* view = static_cast<RenderView*>(object);
+    if (!view->frameView())
+        return;
+
+    int viewWidth = view->frameView()->visibleWidth();
+    int viewHeight = view->frameView()->visibleHeight();
+
+    if (size.width() > viewWidth)
+        size.setWidth(viewWidth);
+
+    if (size.height() > viewHeight)
+        size.setHeight(viewHeight);
 }
 
 } // namespace WebCore

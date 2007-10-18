@@ -34,6 +34,7 @@
 #import "GraphicsContext.h"
 #import "ImageBuffer.h"
 #import "SVGMaskElement.h"
+#import "SVGRenderSupport.h"
 #import "SVGRenderStyle.h"
 #import "SVGResourceFilter.h"
 #import <QuartzCore/CIFilter.h>
@@ -99,6 +100,7 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
         return;
     
     IntSize maskSize(static_cast<int>(m_maskRect.width()), static_cast<int>(m_maskRect.height()));
+    clampImageBufferSizeToViewport(m_ownerElement->document()->renderer(), maskSize);
 
     // Create new graphics context in gray scale mode for image rendering
     auto_ptr<ImageBuffer> grayScaleImage(ImageBuffer::create(maskSize, true));
@@ -114,7 +116,7 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
     if (!colorMask)
         return;
     CIImage* grayScaleMask = transformImageIntoGrayscaleMask(colorMask);
-    [ciGrayscaleContext drawImage:grayScaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, m_maskRect.width(), m_maskRect.height())];
+    [ciGrayscaleContext drawImage:grayScaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, maskSize.width(), maskSize.height())];
 
     CGContextClipToMask(context->platformContext(), m_maskRect, grayScaleImage->cgImage());
     END_BLOCK_OBJC_EXCEPTIONS

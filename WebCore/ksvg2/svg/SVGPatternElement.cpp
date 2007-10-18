@@ -155,6 +155,15 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
     if (patternBoundaries.height() > targetRect.height())
         patternBoundaries.setHeight(targetRect.height());
 
+    IntSize patternSize(patternBoundaries.width(), patternBoundaries.height());
+    clampImageBufferSizeToViewport(document()->renderer(), patternSize);
+
+    if (patternSize.width() < static_cast<int>(patternBoundaries.width()))
+        patternBoundaries.setWidth(patternSize.width());
+
+    if (patternSize.height() < static_cast<int>(patternBoundaries.height()))
+        patternBoundaries.setHeight(patternSize.height());
+
     // Eventually calculate the pattern content boundaries (only needed with overflow="visible").
     RenderStyle* style = renderer()->style();
     if (style->overflowX() == OVISIBLE && style->overflowY() == OVISIBLE) {
@@ -181,8 +190,10 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
         patternBoundariesIncludingOverflow.unite(patternContentBoundaries);
     }
 
-    auto_ptr<ImageBuffer> patternImage = ImageBuffer::create(IntSize(lroundf(patternBoundariesIncludingOverflow.width()),
-                                                                     lroundf(patternBoundariesIncludingOverflow.height())), false);
+    IntSize imageSize(lroundf(patternBoundariesIncludingOverflow.width()), lroundf(patternBoundariesIncludingOverflow.height()));
+    clampImageBufferSizeToViewport(document()->renderer(), imageSize);
+
+    auto_ptr<ImageBuffer> patternImage = ImageBuffer::create(imageSize, false);
 
     if (!patternImage.get())
         return;
