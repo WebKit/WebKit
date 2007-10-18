@@ -1,3 +1,17 @@
+2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15367
+          Assertion failure inspecting a document including soft hyphen code (0xad)
+
+        Test: fast/text/word-break-soft-hyphen.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::calcPrefWidths): Changed to treat soft hyphens as 
+        word boundaries. This fixes the bug and is consistent with the fact that
+        run rounding does occur at soft hyphens.
+
 2007-10-18  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Anders.

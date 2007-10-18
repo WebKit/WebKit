@@ -1,3 +1,15 @@
+2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15367
+          Assertion failure inspecting a document including soft hyphen code (0xad)
+
+        * fast/text/word-break-soft-hyphen.html: Added.
+        * platform/mac/fast/text/word-break-soft-hyphen-expected.checksum: Added.
+        * platform/mac/fast/text/word-break-soft-hyphen-expected.png: Added.
+        * platform/mac/fast/text/word-break-soft-hyphen-expected.txt: Added.
+
 2007-10-18  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Anders.

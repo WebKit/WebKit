@@ -582,9 +582,13 @@ void RenderText::calcPrefWidths(int leadWidth)
             ignoringSpaces = false;
 
         // Ignore spaces and soft hyphens
-        if (ignoringSpaces || c == softHyphen) {
+        if (ignoringSpaces) {
             ASSERT(lastWordBoundary == i);
             lastWordBoundary++;
+            continue;
+        } else if (c == softHyphen) {
+            currMaxWidth += widthFromCache(f, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth);
+            lastWordBoundary = i + 1;
             continue;
         }
 
