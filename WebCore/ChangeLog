@@ -1,3 +1,93 @@
+2007-10-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Split most of CSSPrimitiveValue enum mapping out of CSSComputedStyleDeclaration::getPropertyCSSValue()
+        and CSSStyleSelector::applyProperty() (and their SVG counterparts). This should make the code more readable.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getPositionOffsetValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::init):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSPrimitiveValueMappings.h: Added.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EBorderStyle):
+        (WebCore::CSSPrimitiveValue::operator CompositeOperator):
+        (WebCore::CSSPrimitiveValue::operator EAppearance):
+        (WebCore::CSSPrimitiveValue::operator EBackgroundBox):
+        (WebCore::CSSPrimitiveValue::operator EBackgroundRepeat):
+        (WebCore::CSSPrimitiveValue::operator EBoxAlignment):
+        (WebCore::CSSPrimitiveValue::operator EBoxDirection):
+        (WebCore::CSSPrimitiveValue::operator EBoxLines):
+        (WebCore::CSSPrimitiveValue::operator EBoxOrient):
+        (WebCore::CSSPrimitiveValue::operator ECaptionSide):
+        (WebCore::CSSPrimitiveValue::operator EClear):
+        (WebCore::CSSPrimitiveValue::operator ECursor):
+        (WebCore::CSSPrimitiveValue::operator EDisplay):
+        (WebCore::CSSPrimitiveValue::operator EEmptyCell):
+        (WebCore::CSSPrimitiveValue::operator EFloat):
+        (WebCore::CSSPrimitiveValue::operator EKHTMLLineBreak):
+        (WebCore::CSSPrimitiveValue::operator EListStylePosition):
+        (WebCore::CSSPrimitiveValue::operator EListStyleType):
+        (WebCore::CSSPrimitiveValue::operator EMarginCollapse):
+        (WebCore::CSSPrimitiveValue::operator EMarqueeBehavior):
+        (WebCore::CSSPrimitiveValue::operator EMarqueeDirection):
+        (WebCore::CSSPrimitiveValue::operator EMatchNearestMailBlockquoteColor):
+        (WebCore::CSSPrimitiveValue::operator ENBSPMode):
+        (WebCore::CSSPrimitiveValue::operator EOverflow):
+        (WebCore::CSSPrimitiveValue::operator EPageBreak):
+        (WebCore::CSSPrimitiveValue::operator EPosition):
+        (WebCore::CSSPrimitiveValue::operator EResize):
+        (WebCore::CSSPrimitiveValue::operator ETableLayout):
+        (WebCore::CSSPrimitiveValue::operator ETextAlign):
+        (WebCore::CSSPrimitiveValue::operator ETextSecurity):
+        (WebCore::CSSPrimitiveValue::operator ETextTransform):
+        (WebCore::CSSPrimitiveValue::operator EUnicodeBidi):
+        (WebCore::CSSPrimitiveValue::operator EUserDrag):
+        (WebCore::CSSPrimitiveValue::operator EUserModify):
+        (WebCore::CSSPrimitiveValue::operator EUserSelect):
+        (WebCore::CSSPrimitiveValue::operator EVisibility):
+        (WebCore::CSSPrimitiveValue::operator EWhiteSpace):
+        (WebCore::CSSPrimitiveValue::operator EWordBreak):
+        (WebCore::CSSPrimitiveValue::operator EWordWrap):
+        (WebCore::CSSPrimitiveValue::operator LineCap):
+        (WebCore::CSSPrimitiveValue::operator LineJoin):
+        (WebCore::CSSPrimitiveValue::operator TextDirection):
+        (WebCore::CSSPrimitiveValue::operator WindRule):
+        (WebCore::CSSPrimitiveValue::operator EAlignmentBaseline):
+        (WebCore::CSSPrimitiveValue::operator EColorInterpolation):
+        (WebCore::CSSPrimitiveValue::operator EColorRendering):
+        (WebCore::CSSPrimitiveValue::operator EDominantBaseline):
+        (WebCore::CSSPrimitiveValue::operator EImageRendering):
+        (WebCore::CSSPrimitiveValue::operator EPointerEvents):
+        (WebCore::CSSPrimitiveValue::operator EShapeRendering):
+        (WebCore::CSSPrimitiveValue::operator ETextAnchor):
+        (WebCore::CSSPrimitiveValue::operator ETextRendering):
+        (WebCore::CSSPrimitiveValue::operator EWritingMode):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::convertToLength):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundAttachment):
+        (WebCore::CSSStyleSelector::mapBackgroundClip):
+        (WebCore::CSSStyleSelector::mapBackgroundComposite):
+        (WebCore::CSSStyleSelector::mapBackgroundOrigin):
+        (WebCore::CSSStyleSelector::mapBackgroundRepeat):
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition):
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition):
+        * ksvg2/css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+
 2007-10-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.

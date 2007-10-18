@@ -2,6 +2,7 @@
     Copyright (C) 2005 Apple Computer, Inc.
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
 
     Based on khtml css code by:
     Copyright(C) 1999-2003 Lars Knoll(knoll@kde.org)
@@ -31,8 +32,8 @@
 #if ENABLE(SVG)
 #include "CSSStyleSelector.h"
 
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
@@ -102,48 +103,8 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             HANDLE_INHERIT_AND_INITIAL(alignmentBaseline, AlignmentBaseline)
             if (!primitiveValue)
                 break;
-
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_AUTO:
-                    svgstyle->setAlignmentBaseline(AB_AUTO);
-                    break;
-                case CSS_VAL_BASELINE:
-                    svgstyle->setAlignmentBaseline(AB_BASELINE);
-                    break;
-                case CSS_VAL_BEFORE_EDGE:
-                    svgstyle->setAlignmentBaseline(AB_BEFORE_EDGE);
-                    break;
-                case CSS_VAL_TEXT_BEFORE_EDGE:
-                    svgstyle->setAlignmentBaseline(AB_TEXT_BEFORE_EDGE);
-                    break;
-                case CSS_VAL_MIDDLE:
-                    svgstyle->setAlignmentBaseline(AB_MIDDLE);
-                    break;
-                case CSS_VAL_CENTRAL:
-                    svgstyle->setAlignmentBaseline(AB_CENTRAL);
-                    break;
-                case CSS_VAL_AFTER_EDGE:
-                    svgstyle->setAlignmentBaseline(AB_AFTER_EDGE);
-                    break;
-                case CSS_VAL_TEXT_AFTER_EDGE:
-                    svgstyle->setAlignmentBaseline(AB_TEXT_AFTER_EDGE);
-                    break;
-                case CSS_VAL_IDEOGRAPHIC:
-                    svgstyle->setAlignmentBaseline(AB_IDEOGRAPHIC);
-                    break;
-                case CSS_VAL_ALPHABETIC:
-                    svgstyle->setAlignmentBaseline(AB_ALPHABETIC);
-                    break;
-                case CSS_VAL_HANGING:
-                    svgstyle->setAlignmentBaseline(AB_HANGING);
-                    break;
-                case CSS_VAL_MATHEMATICAL:
-                    svgstyle->setAlignmentBaseline(AB_MATHEMATICAL);
-                    break;
-                default:
-                    return;
-            }
-
+            
+            svgstyle->setAlignmentBaseline(*primitiveValue);
             break;
         }
         case CSS_PROP_BASELINE_SHIFT:
@@ -192,240 +153,78 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             HANDLE_INHERIT_AND_INITIAL(pointerEvents, PointerEvents)
             if (!primitiveValue)
                 break;
-                
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_ALL:
-                    svgstyle->setPointerEvents(PE_ALL);
-                    break;
-                case CSS_VAL_NONE:
-                    svgstyle->setPointerEvents(PE_NONE);
-                    break;
-                case CSS_VAL_VISIBLEPAINTED:
-                    svgstyle->setPointerEvents(PE_VISIBLE_PAINTED);
-                    break;
-                case CSS_VAL_VISIBLEFILL:
-                    svgstyle->setPointerEvents(PE_VISIBLE_FILL);
-                    break;
-                case CSS_VAL_VISIBLESTROKE:
-                    svgstyle->setPointerEvents(PE_VISIBLE_STROKE);
-                    break;
-                case CSS_VAL_VISIBLE:
-                    svgstyle->setPointerEvents(PE_VISIBLE);
-                    break;
-                case CSS_VAL_PAINTED:
-                    svgstyle->setPointerEvents(PE_PAINTED);
-                    break;
-                case CSS_VAL_FILL:
-                    svgstyle->setPointerEvents(PE_FILL);
-                    break;
-                case CSS_VAL_STROKE:
-                    svgstyle->setPointerEvents(PE_STROKE);
-                default:
-                    return;
-            }
-
+            
+            svgstyle->setPointerEvents(*primitiveValue);
             break;
         }
         case CSS_PROP_DOMINANT_BASELINE:
         {
             HANDLE_INHERIT_AND_INITIAL(dominantBaseline, DominantBaseline)
-            if (!primitiveValue)
-                break;
-    
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_AUTO:
-                    svgstyle->setDominantBaseline(DB_AUTO);
-                    break;
-                case CSS_VAL_USE_SCRIPT:
-                    svgstyle->setDominantBaseline(DB_USE_SCRIPT);
-                    break;
-                case CSS_VAL_NO_CHANGE:
-                    svgstyle->setDominantBaseline(DB_NO_CHANGE);
-                    break;
-                case CSS_VAL_RESET_SIZE:
-                    svgstyle->setDominantBaseline(DB_RESET_SIZE);
-                    break;
-                case CSS_VAL_IDEOGRAPHIC:
-                    svgstyle->setDominantBaseline(DB_IDEOGRAPHIC);
-                    break;
-                case CSS_VAL_ALPHABETIC:
-                    svgstyle->setDominantBaseline(DB_ALPHABETIC);
-                    break;
-                case CSS_VAL_HANGING:
-                    svgstyle->setDominantBaseline(DB_HANGING);
-                    break;
-                case CSS_VAL_MATHEMATICAL:
-                    svgstyle->setDominantBaseline(DB_MATHEMATICAL);
-                    break;
-                case CSS_VAL_CENTRAL:
-                    svgstyle->setDominantBaseline(DB_CENTRAL);
-                    break;
-                case CSS_VAL_MIDDLE:
-                    svgstyle->setDominantBaseline(DB_MIDDLE);
-                    break;
-                case CSS_VAL_TEXT_AFTER_EDGE:
-                    svgstyle->setDominantBaseline(DB_TEXT_AFTER_EDGE);
-                    break;
-                case CSS_VAL_TEXT_BEFORE_EDGE:
-                    svgstyle->setDominantBaseline(DB_TEXT_BEFORE_EDGE);
-                    break;
-                default:
-                    return;
-            }
-    
+            if (primitiveValue)
+                svgstyle->setDominantBaseline(*primitiveValue);
             break;
         }
         case CSS_PROP_COLOR_INTERPOLATION:
         {
             HANDLE_INHERIT_AND_INITIAL(colorInterpolation, ColorInterpolation)
-            if (!primitiveValue)
-                return;
-                
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_SRGB:
-                    svgstyle->setColorInterpolation(CI_SRGB);
-                    break;
-                case CSS_VAL_LINEARRGB:
-                    svgstyle->setColorInterpolation(CI_LINEARRGB);
-                    break;
-                case CSS_VAL_AUTO:
-                    svgstyle->setColorInterpolation(CI_AUTO);
-                default:
-                    return;
-            }
-    
+            if (primitiveValue)
+                svgstyle->setColorInterpolation(*primitiveValue);
             break;
         }
         case CSS_PROP_COLOR_INTERPOLATION_FILTERS:
         {
             HANDLE_INHERIT_AND_INITIAL(colorInterpolationFilters, ColorInterpolationFilters)
-            if (!primitiveValue)
-                return;
-                
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_SRGB:
-                    svgstyle->setColorInterpolationFilters(CI_SRGB);
-                    break;
-                case CSS_VAL_LINEARRGB:
-                    svgstyle->setColorInterpolationFilters(CI_LINEARRGB);
-                    break;
-                case CSS_VAL_AUTO:
-                    svgstyle->setColorInterpolationFilters(CI_AUTO);
-                default:
-                    return;
-            }
-            
+            if (primitiveValue)
+                svgstyle->setColorInterpolationFilters(*primitiveValue);
+            break;
+        }
+        case CSS_PROP_COLOR_RENDERING:
+        {
+            HANDLE_INHERIT_AND_INITIAL(colorRendering, ColorRendering)
+            if (primitiveValue)
+                svgstyle->setColorRendering(*primitiveValue);
             break;
         }
         case CSS_PROP_CLIP_RULE:
         {
             HANDLE_INHERIT_AND_INITIAL(clipRule, ClipRule)
-            if (!primitiveValue)
-                break;
-                
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_NONZERO:
-                    svgstyle->setClipRule(RULE_NONZERO);
-                    break;
-                case CSS_VAL_EVENODD:
-                    svgstyle->setClipRule(RULE_EVENODD);
-                    break;
-                default:
-                    break;
-            }
-        
+            if (primitiveValue)
+                svgstyle->setClipRule(*primitiveValue);
             break;
         }
         case CSS_PROP_FILL_RULE:
         {
             HANDLE_INHERIT_AND_INITIAL(fillRule, FillRule)
-            if (!primitiveValue)
-                break;
-            
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_NONZERO:
-                    svgstyle->setFillRule(RULE_NONZERO);
-                    break;
-                case CSS_VAL_EVENODD:
-                    svgstyle->setFillRule(RULE_EVENODD);
-                default:
-                    return;
-            }
-        
+            if (primitiveValue)
+                svgstyle->setFillRule(*primitiveValue);
             break;
         }
         case CSS_PROP_STROKE_LINEJOIN:
         {
             HANDLE_INHERIT_AND_INITIAL(joinStyle, JoinStyle)
-
-            if (!primitiveValue)
-                break;
-                
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_MITER:
-                    svgstyle->setJoinStyle(MiterJoin);
-                    break;
-                case CSS_VAL_ROUND:
-                    svgstyle->setJoinStyle(RoundJoin);
-                    break;
-                case CSS_VAL_BEVEL:
-                    svgstyle->setJoinStyle(BevelJoin);
-                default:
-                    return;
-            }
-            
+            if (primitiveValue)
+                svgstyle->setJoinStyle(*primitiveValue);
             break;
         }
         case CSS_PROP_IMAGE_RENDERING:
         {
             HANDLE_INHERIT_AND_INITIAL(imageRendering, ImageRendering)
-            if (!primitiveValue)
-                return;
-            
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_AUTO:
-                    svgstyle->setImageRendering(IR_AUTO);
-                case CSS_VAL_OPTIMIZESPEED:
-                    svgstyle->setImageRendering(IR_OPTIMIZESPEED);
-                case CSS_VAL_OPTIMIZEQUALITY:
-                    svgstyle->setImageRendering(IR_OPTIMIZEQUALITY);
-            }
+            if (primitiveValue)
+                svgstyle->setImageRendering(*primitiveValue);
             break;
         }
         case CSS_PROP_SHAPE_RENDERING:
         {
             HANDLE_INHERIT_AND_INITIAL(shapeRendering, ShapeRendering)
-            if (!primitiveValue)
-                return;
-            
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_AUTO:
-                    svgstyle->setShapeRendering(SR_AUTO);
-                case CSS_VAL_OPTIMIZESPEED:
-                    svgstyle->setShapeRendering(SR_OPTIMIZESPEED);
-                case CSS_VAL_CRISPEDGES:
-                    svgstyle->setShapeRendering(SR_CRISPEDGES);
-                case CSS_VAL_GEOMETRICPRECISION:
-                    svgstyle->setShapeRendering(SR_GEOMETRICPRECISION);
-            }
+            if (primitiveValue)
+                svgstyle->setShapeRendering(*primitiveValue);
             break;
         }
         case CSS_PROP_TEXT_RENDERING:
         {
             HANDLE_INHERIT_AND_INITIAL(textRendering, TextRendering)
-            if (!primitiveValue)
-                return;
-            
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_AUTO:
-                    svgstyle->setTextRendering(TR_AUTO);
-                case CSS_VAL_OPTIMIZESPEED:
-                    svgstyle->setTextRendering(TR_OPTIMIZESPEED);
-                case CSS_VAL_OPTIMIZELEGIBILITY:
-                    svgstyle->setTextRendering(TR_OPTIMIZELEGIBILITY);
-                case CSS_VAL_GEOMETRICPRECISION:
-                    svgstyle->setTextRendering(TR_GEOMETRICPRECISION);
-            }
+            if (primitiveValue)
+                svgstyle->setTextRendering(*primitiveValue);
             break;
         }
         // end of ident only properties
@@ -585,22 +384,8 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSS_PROP_STROKE_LINECAP:
         {
             HANDLE_INHERIT_AND_INITIAL(capStyle, CapStyle)
-            if (!primitiveValue)
-                break;
-            
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_BUTT:
-                    svgstyle->setCapStyle(ButtCap);
-                    break;
-                case CSS_VAL_ROUND:
-                    svgstyle->setCapStyle(RoundCap);
-                    break;
-                case CSS_VAL_SQUARE:
-                    svgstyle->setCapStyle(SquareCap);
-                default:
-                    return;
-            }
-
+            if (primitiveValue)
+                svgstyle->setCapStyle(*primitiveValue);
             break;
         }
         case CSS_PROP_STROKE_MITERLIMIT:
@@ -669,29 +454,15 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSS_PROP_TEXT_ANCHOR:
         {
             HANDLE_INHERIT_AND_INITIAL(textAnchor, TextAnchor)
-            if (!primitiveValue)
-                break;
-            
-            switch (primitiveValue->getIdent()) {
-                case CSS_VAL_START:
-                    svgstyle->setTextAnchor(TA_START);
-                    break;
-                case CSS_VAL_MIDDLE:
-                    svgstyle->setTextAnchor(TA_MIDDLE);
-                    break;
-                case CSS_VAL_END:
-                    svgstyle->setTextAnchor(TA_END);
-                default:
-                    return;
-            }
-            
+            if (primitiveValue)
+                svgstyle->setTextAnchor(*primitiveValue);
             break;
         }
         case CSS_PROP_WRITING_MODE:
         {
             HANDLE_INHERIT_AND_INITIAL(writingMode, WritingMode)
             if (primitiveValue)
-                svgstyle->setWritingMode((EWritingMode)(primitiveValue->getIdent() - CSS_VAL_LR_TB));
+                svgstyle->setWritingMode(*primitiveValue);
             break;
         }
         case CSS_PROP_STOP_COLOR:

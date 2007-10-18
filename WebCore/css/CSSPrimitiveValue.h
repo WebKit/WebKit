@@ -3,6 +3,7 @@
  *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,6 +31,7 @@ namespace WebCore {
 
 class Counter;
 class DashboardRegion;
+struct Length;
 class Pair;
 class Rect;
 class RenderStyle;
@@ -75,11 +77,11 @@ public:
     CSSPrimitiveValue(int ident);
     CSSPrimitiveValue(double, UnitTypes);
     CSSPrimitiveValue(const String&, UnitTypes);
-    CSSPrimitiveValue(PassRefPtr<Counter>);
-    CSSPrimitiveValue(PassRefPtr<Rect>);
     CSSPrimitiveValue(unsigned color); // RGB value
-    CSSPrimitiveValue(PassRefPtr<Pair>);
-    CSSPrimitiveValue(PassRefPtr<DashboardRegion>); // FIXME: Why is dashboard region a primitive value? This makes no sense.
+    CSSPrimitiveValue(const Length&);
+    template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
+    template<typename T> CSSPrimitiveValue(T* val) { init(PassRefPtr<T>(val)); }
+    template<typename T> CSSPrimitiveValue(PassRefPtr<T> val) { init(val); }
 
     virtual ~CSSPrimitiveValue();
 
@@ -133,6 +135,7 @@ public:
     virtual unsigned short cssValueType() const;
 
     int getIdent();
+    template<typename T> operator T() const; // Defined in CSSPrimitiveValueMappings.h
 
     virtual bool parseString(const String&, bool = false);
     virtual String cssText() const;
@@ -151,6 +154,14 @@ protected:
         Pair* pair;
         DashboardRegion* region;
     } m_value;
+
+private:
+    template<typename T> operator T*(); // compile-time guard
+
+    void init(PassRefPtr<Counter>);
+    void init(PassRefPtr<Rect>);
+    void init(PassRefPtr<Pair>);
+    void init(PassRefPtr<DashboardRegion>); // FIXME: Why is dashboard region a primitive value? This makes no sense.
 };
 
 } // namespace WebCore

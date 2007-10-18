@@ -131,33 +131,63 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& str, UnitTypes type)
         m_value.string->ref();
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<Counter> c)
-    : m_type(CSS_COUNTER)
-{
-    m_value.counter = c.releaseRef();
-}
-
-CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<Rect> r)
-    : m_type(CSS_RECT)
-{
-    m_value.rect = r.releaseRef();
-}
-
-CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<DashboardRegion> r)
-    : m_type(CSS_DASHBOARD_REGION)
-{
-    m_value.region = r.releaseRef();
-}
-
 CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
     : m_type(CSS_RGBCOLOR)
 {
     m_value.rgbcolor = color;
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(PassRefPtr<Pair> p)
-    : m_type(CSS_PAIR)
+CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
 {
+    switch (length.type()) {
+        case Auto:
+            m_type = CSS_IDENT;
+            m_value.ident = CSS_VAL_AUTO;
+            break;
+        case WebCore::Fixed:
+            m_type = CSS_PX;
+            m_value.num = length.value();
+            break;
+        case Intrinsic:
+            m_type = CSS_IDENT;
+            m_value.ident = CSS_VAL_INTRINSIC;
+            break;
+        case MinIntrinsic:
+            m_type = CSS_IDENT;
+            m_value.ident = CSS_VAL_MIN_INTRINSIC;
+            break;
+        case Percent:
+            m_type = CSS_PERCENTAGE;
+            m_value.num = length.percent();
+            break;
+        case Relative:
+        case Static:
+            ASSERT_NOT_REACHED();
+            break;
+    }
+}
+
+void CSSPrimitiveValue::init(PassRefPtr<Counter> c)
+{
+    m_type = CSS_COUNTER;
+    m_value.counter = c.releaseRef();
+}
+
+void CSSPrimitiveValue::init(PassRefPtr<Rect> r)
+{
+    m_type = CSS_RECT;
+    m_value.rect = r.releaseRef();
+}
+
+void CSSPrimitiveValue::init(PassRefPtr<DashboardRegion> r)
+{
+    m_type = CSS_DASHBOARD_REGION;
+    m_value.region = r.releaseRef();
+}
+
+void CSSPrimitiveValue::init(PassRefPtr<Pair> p)
+{
+    m_type = CSS_PAIR;
     m_value.pair = p.releaseRef();
 }
 
