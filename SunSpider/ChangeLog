@@ -1,4 +1,10 @@
-\2007-10-17  Maciej Stachowiak  <mjs@apple.com>
+2007-10-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+
+        * tests/string-tagcloud.js: Remove stray print()
+
+2007-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
         

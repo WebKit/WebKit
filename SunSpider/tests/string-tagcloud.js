@@ -261,4 +261,3 @@ function makeTagCloud(tagInfo)
 }
 
 var tagcloud = makeTagCloud(tagInfo);
-print(tagcloud);
