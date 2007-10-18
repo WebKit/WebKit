@@ -1,3 +1,9 @@
+2007-10-17  Kevin McCullough  <kmccullough@apple.com>
+
+        - Updated the tiger leaks list to make the internal bots green.
+
+        * Scripts/run-webkit-tests:
+
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         Build fix for VC++ Express
