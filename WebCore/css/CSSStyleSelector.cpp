@@ -2443,7 +2443,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!primitiveValue->getIdent())
             return;
 
-        EResize r;
+        EResize r = RESIZE_NONE;
         if (primitiveValue->getIdent() == CSS_VAL_AUTO) {
             if (Settings* settings = m_document->settings())
                 r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
