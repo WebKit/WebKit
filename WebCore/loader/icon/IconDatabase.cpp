@@ -1348,6 +1348,8 @@ void* IconDatabase::syncThreadMainLoop()
     ASSERT_ICON_SYNC_THREAD();
     static bool prunedUnretainedIcons = false;
 
+    m_syncLock.lock();
+
     // It's possible thread termination is requested before the main loop even starts - in that case, just skip straight to cleanup
     while (!m_threadTerminationRequested) {
         m_syncLock.unlock();

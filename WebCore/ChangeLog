@@ -6,6 +6,16 @@
 
 2007-10-17  Adam Roben  <aroben@apple.com>
 
+        Fix an ASSERT on launch on Windows
+
+        Fix dictated to me by Brady.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::syncThreadMainLoop): Make sure we hold
+        m_syncLock before going into the loop.
+
+2007-10-17  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         Reviewed by NOBODY.
