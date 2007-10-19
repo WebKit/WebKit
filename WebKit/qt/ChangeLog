@@ -1,3 +1,12 @@
+2007-10-19  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Lars.
+
+        Fix the windows/qt build by including config.h first to fix wtf/MathExtras.h inclusion.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebpage.cpp:
+
 2007-10-10  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff Garen.
