@@ -970,6 +970,8 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 {
     HTMLStackElem* maxElem = 0;
     bool finished = false;
+    bool strayTableContent = elem->strayTableContent;
+
     m_handlingResidualStyleAcrossBlocks = true;
     while (!finished) {
         // Find the outermost element that crosses over to a higher level. If there exists another higher-level
@@ -1057,7 +1059,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
                     if (prevNode)
                         currNode->appendChild(prevNode, ec);
                     else // The new parent for the block element is going to be the innermost clone.
-                        parentElem = currNode;
+                        parentElem = currNode;  // FIXME: We shifted parentElem to be a residual inline.  We never checked to see if blockElem could be legally placed inside the inline though.
 
                     prevNode = currNode;
                 }
@@ -1067,7 +1069,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 
             // Now append the chain of new residual style elements if one exists.
             if (prevNode)
-                elem->node->appendChild(prevNode, ec);
+                elem->node->appendChild(prevNode, ec);  // FIXME: This append can result in weird stuff happening, like an inline chain being put into a table section.
         }
 
         // Check if the block is still in the tree. If it isn't, then we don't
@@ -1133,6 +1135,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
             elem->next = maxElem;
             elem->node = prevMaxElem->node;
             elem->didRefNode = prevMaxElem->didRefNode;
+            elem->strayTableContent = false;
             prevMaxElem->next = elem;
             ASSERT(newNodePtr);
             prevMaxElem->node = newNodePtr;
@@ -1141,9 +1144,16 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
             delete elem;
     }
 
+    // FIXME: If we ever make a case like this work:
+    // <table><b><i><form></b></form></i></table>
+    // Then this check will be too simplistic.  Right now the <i><form> chain will end up inside the <tbody>, which is pretty crazy.
+    if (strayTableContent)
+        inStrayTableContent--;
+
     // Step 7: Reopen intermediate inlines, e.g., <b><p><i>Foo</b>Goo</p>.
     // In the above example, Goo should stay italic.
     // We cap the number of tags we're willing to reopen based off cResidualStyleMaxDepth.
+    
     HTMLStackElem* curr = blockStack;
     HTMLStackElem* residualStyleStack = 0;
     unsigned stackDepth = 1;
@@ -1166,8 +1176,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         curr = blockStack;
     }
 
-    reopenResidualStyleTags(residualStyleStack, 0); // FIXME: Deal with stray table content some day
-                                                    // if it becomes necessary to do so.
+    reopenResidualStyleTags(residualStyleStack, 0); // Stray table content can't be an issue here, since some element above will always become the root of new stray table content.
 
     m_handlingResidualStyleAcrossBlocks = false;
 }

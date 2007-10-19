@@ -1,3 +1,14 @@
+2007-10-19  David Hyatt  <hyatt@apple.com>
+
+        Fix for ebay parser crash.
+
+        Reviewed by Beth
+
+        fast/invalid/table-residual-style-crash.html added as a test
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+
 2007-10-19  Sam Weinig  <sam@webkit.org>
 
         Fix Windows, Qt and GTK builds.
