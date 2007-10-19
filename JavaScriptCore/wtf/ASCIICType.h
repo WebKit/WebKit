@@ -29,6 +29,8 @@
 #ifndef WTF_ASCIICType_h
 #define WTF_ASCIICType_h
 
+#include <wtf/Platform.h>
+
 // The behavior of many of the functions in the <ctype.h> header is dependent
 // on the current locale. But in the WebKit project, all uses of those functions
 // are in code processing something that's not locale-specific. These equivalents
@@ -43,35 +45,51 @@ namespace WTF {
 
     inline bool isASCIIAlpha(char c) { return (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
     inline bool isASCIIAlpha(unsigned short c) { return (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
+#if !PLATFORM(WIN_OS) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline bool isASCIIAlpha(wchar_t c) { return (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
+#endif
 
     inline bool isASCIIAlphanumeric(char c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
     inline bool isASCIIAlphanumeric(unsigned short c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
+#if !PLATFORM(WIN_OS) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline bool isASCIIAlphanumeric(wchar_t c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
+#endif
 
     inline bool isASCIIDigit(char c) { return c >= '0' && c <= '9'; }
     inline bool isASCIIDigit(unsigned short c) { return c >= '0' && c <= '9'; }
+#if !PLATFORM(WIN_OS) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline bool isASCIIDigit(wchar_t c) { return c >= '0' && c <= '9'; }
+#endif
 
     inline bool isASCIIHexDigit(char c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'f'; }
     inline bool isASCIIHexDigit(unsigned short c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'f'; }
+#if !PLATFORM(WIN_OS) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline bool isASCIIHexDigit(wchar_t c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'f'; }
+#endif
 
     inline bool isASCIILower(char c) { return c >= 'a' && c <= 'z'; }
     inline bool isASCIILower(unsigned short c) { return c >= 'a' && c <= 'z'; }
+#if !PLATFORM(WIN_OS) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline bool isASCIILower(wchar_t c) { return c >= 'a' && c <= 'z'; }
+#endif
 
     inline bool isASCIISpace(char c) { return c == '\t' || c == '\n' || c == '\v' || c =='\f' || c == '\r' || c == ' '; }
     inline bool isASCIISpace(unsigned short c) { return c == '\t' || c == '\n' || c == '\v' || c =='\f' || c == '\r' || c == ' '; }
+#if !PLATFORM(WIN_OS) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline bool isASCIISpace(wchar_t c) { return c == '\t' || c == '\n' || c == '\v' || c =='\f' || c == '\r' || c == ' '; }
+#endif
 
     inline char toASCIILower(char c) { return c | ((c >= 'A' && c <= 'Z') << 5); }
     inline unsigned short toASCIILower(unsigned short c) { return c | ((c >= 'A' && c <= 'Z') << 5); }
+#if !PLATFORM(WIN_OS) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline wchar_t toASCIILower(wchar_t c) { return c | ((c >= 'A' && c <= 'Z') << 5); }
+#endif
 
     inline char toASCIIUpper(char c) { return static_cast<char>(c & ~((c >= 'a' && c <= 'z') << 5)); }
     inline unsigned short toASCIIUpper(unsigned short c) { return static_cast<unsigned short>(c & ~((c >= 'a' && c <= 'z') << 5)); }
+#if !PLATFORM(WIN_OS) || defined(_NATIVE_WCHAR_T_DEFINED)
     inline wchar_t toASCIIUpper(wchar_t c) { return static_cast<wchar_t>(c & ~((c >= 'a' && c <= 'z') << 5)); }
+#endif
 
 }
 

@@ -2,6 +2,23 @@
 
         Reviewed by Lars.
 
+        Fix compilation on Windows when wchar_t is a typedef instead of a native type (triggered by -Zc:wchar_t-).
+        Don't provide the wchar_t overloads then as they conflict with the unsigned short ones.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCIIAlpha):
+        (WTF::isASCIIAlphanumeric):
+        (WTF::isASCIIDigit):
+        (WTF::isASCIIHexDigit):
+        (WTF::isASCIILower):
+        (WTF::isASCIISpace):
+        (WTF::toASCIILower):
+        (WTF::toASCIIUpper):
+
+2007-10-19  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Another build fix for the windows/qt build: Apply the same fix as in revision 26686 also to kjs/config.h to disable the disallowctype feature.
 
         * kjs/config.h:
