@@ -35,13 +35,16 @@
 #pragma warning(pop)
 
 #include <JavaScriptCore/Vector.h>
-#include <JavaScriptCore/OwnPtr.h>
 
 // Forward Declarations
 #if PLATFORM(MAC)
+#include <JavaScriptCore/RetainPtr.h>
 @class ServerConnection;
+typedef RetainPtr<ServerConnection> ServerConnectionRef;
 #else if PLATFORM(WIN)
+#include <JavaScriptCore/OwnPtr.h>
 class ServerConnection;
+typedef OwnPtr<ServerConnection> ServerConnectionRef;
 #endif
 
 typedef struct OpaqueJSString* JSStringRef;
@@ -92,7 +95,7 @@ private:
 
     static void logException(JSContextRef, JSValueRef exception);
 
-    OwnPtr<ServerConnection> m_server;
+    ServerConnectionRef m_server;
 };
 
 #endif //DebuggerDocument_H

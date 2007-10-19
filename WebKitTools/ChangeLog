@@ -1,5 +1,43 @@
 2007-10-19  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Oliver and Tim.
+
+        - Made use of RetainPtr to avoid retain and release issues and moved the
+        log function to DebuggerDocumentPlatform, which seems to be a more
+        logical place for it to live.
+        - Also moved knownServers from the ServerConnection to
+        DebuggerApplication to match the Windows code and because it makes sense
+        that a connection knows its own server but not all of them.
+
+        * Drosera/mac/DebuggerClient.h: Moved the log function to
+          DebuggerDocumentPlatform.
+        * Drosera/mac/DebuggerClient.mm: Ditto. Also do not release the server
+          Because it's owned by an own Ptr in DebuggerDocument.  Also moved the
+          call for the server name up from the ServerConnection class.
+        (-[DebuggerClient dealloc]):
+        (-[DebuggerClient webView:didReceiveTitle:forFrame:]): Moved the call
+          for the server name up from the ServerConnection.
+        * Drosera/mac/DebuggerDocumentPlatform.mm: Made the server an OwnPtr.
+        (DebuggerDocument::platformPause):
+        (DebuggerDocument::platformResume):
+        (DebuggerDocument::platformStepInto):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        (DebuggerDocument::platformLog): Log directly from here. No need to call
+          DebuggerClient.
+        * Drosera/mac/ServerConnection.h: Removed the knownServers function. The
+          way I see it, a ServerConnection should only know about its connection
+          and the group of all possible servers should be kept by the
+          application.
+        * Drosera/mac/ServerConnection.mm: Removed knownServer but added
+          currentServerName, it makes sense that the connection should know that
+          name.
+        (-[ServerConnection currentServerName]):
+
+2007-10-19  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Adam.
 
         - Integrated changes from mac drosera.  Recently I've encapsulated

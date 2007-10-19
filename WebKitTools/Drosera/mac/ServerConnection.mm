@@ -37,8 +37,6 @@
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/RetainPtr.h>
 
-@class DebuggerApplication;
-
 @implementation ServerConnection
 
 #pragma mark -
@@ -276,8 +274,8 @@
 #pragma mark -
 #pragma mark Server Detection Callbacks
 
-- (NSDictionary *)knownServers
+-(NSString *)currentServerName
 {
-    return [[(DebuggerApplication *)[[NSApplication sharedApplication] delegate] knownServers] objectForKey:currentServerName];
+    return currentServerName;
 }
 @end

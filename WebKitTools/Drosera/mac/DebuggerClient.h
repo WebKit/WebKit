@@ -40,8 +40,6 @@ class DebuggerDocument;
     ServerConnection *server;
 }
 
-+ (void)log:(NSString *)msg;
-
 - (id)initWithServerName:(NSString *)serverConn;
 - (IBAction)pause:(id)sender;
 - (IBAction)resume:(id)sender;

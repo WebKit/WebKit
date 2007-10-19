@@ -42,6 +42,8 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 static NSString *DebuggerStepOverToolbarItem = @"DebuggerStepOverToolbarItem";
 static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
+@class DebuggerApplication;
+
 @implementation DebuggerClient
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
@@ -51,11 +53,6 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 + (BOOL)isKeyExcludedFromWebScript:(const char *)name
 {
     return NO;
-}
-
-+ (void)log:(NSString *)msg
-{
-    NSLog(@"%@", msg);
 }
 
 #pragma mark -
@@ -375,7 +372,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 {
     // note: this is the Debuggers's own WebViews, not the one being debugged
     if ([frame isEqual:[sender mainFrame]]) {
-        NSDictionary *info = [server knownServers];
+        NSDictionary *info = [[(DebuggerApplication *)[[NSApplication sharedApplication] delegate] knownServers] objectForKey:[server currentServerName]];
         NSString *processName = [info objectForKey:WebScriptDebugServerProcessNameKey];
         if (info && [processName length]) {
             NSMutableString *newTitle = [[NSMutableString alloc] initWithString:processName];
