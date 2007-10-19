@@ -1,3 +1,69 @@
+2007-10-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubberstamped by Oliver.
+
+        Land tiger baseline matching my MBP, as discussed with Oliver.
+        Mostly differences regarding the size of "(" / ")" characters.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-14-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-14-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-15-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-15-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-16-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-16-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-17-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-17-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-18-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-18-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-19-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-19-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-02-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-06-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-cond-02-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/struct-cond-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-fonts-01-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-fonts-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tspan-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-tspan-01-b-expected.png:
+        * platform/mac/svg/carto.net/colourpicker-expected.checksum:
+        * platform/mac/svg/carto.net/colourpicker-expected.png:
+        * platform/mac/svg/carto.net/combobox-expected.checksum:
+        * platform/mac/svg/carto.net/combobox-expected.png:
+        * platform/mac/svg/carto.net/scrollbar-expected.checksum:
+        * platform/mac/svg/carto.net/scrollbar-expected.png:
+        * platform/mac/svg/carto.net/selectionlist-expected.checksum:
+        * platform/mac/svg/carto.net/selectionlist-expected.png:
+
 2007-10-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.
