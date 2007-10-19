@@ -1,5 +1,12 @@
 2007-10-19  Sam Weinig  <sam@webkit.org>
 
+        Fix Windows, Qt and GTK builds.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+
+2007-10-19  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin.
 
         Encapsulate the same origin check into the new SecurityOrigin class.

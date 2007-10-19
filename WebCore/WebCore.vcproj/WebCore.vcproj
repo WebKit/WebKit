@@ -3271,6 +3271,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\SecurityOrigin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\SecurityOrigin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\SegmentedString.cpp"
 				>
 			</File>

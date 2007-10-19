@@ -658,6 +658,7 @@ SOURCES += \
     platform/RegularExpression.cpp \
     platform/ScrollBar.cpp \
 #    platform/SearchPopupMenu.cpp \
+    platform/SecurityOrigin.cpp \
     platform/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
     platform/String.cpp \
