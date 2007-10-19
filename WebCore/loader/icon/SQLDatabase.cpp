@@ -252,6 +252,7 @@ int SQLDatabase::authorizerFunction(void* userData, int actionCode, const char* 
             return auth->allowAlterTable(parameter1, parameter2);
         case SQLITE_REINDEX:
             return auth->allowReindex(parameter1);
+#if SQLITE_VERSION_NUMBER > 3004000 
         case SQLITE_ANALYZE:
             return auth->allowAnalyze(parameter1);
         case SQLITE_CREATE_VTABLE:
@@ -260,6 +261,7 @@ int SQLDatabase::authorizerFunction(void* userData, int actionCode, const char* 
             return auth->dropVTable(parameter1, parameter2);
         case SQLITE_FUNCTION:
             return auth->allowFunction(parameter1);
+#endif
         default:
             ASSERT_NOT_REACHED();
             return SQLAuthDeny;

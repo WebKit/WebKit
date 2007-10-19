@@ -1,4 +1,12 @@
 2007-10-19  Brady Eidson  <beidson@apple.com>
+
+        Build fix
+
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::authorizerFunction): I don't know *when* these constants were
+          added to SQLite, but I know they were by 3.4.0
+
+2007-10-19  Brady Eidson  <beidson@apple.com>
         Reviewed by Anders
 
         Windows specific changes, as well as renaming Queue -> Deque
