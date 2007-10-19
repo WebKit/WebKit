@@ -119,6 +119,7 @@ void* DatabaseThread::databaseThread()
 {
     LOG(StorageAPI, "Starting DatabaseThread %p", this);
 
+    m_threadMutex.lock();
     while (!m_terminationRequested) {
         m_threadMutex.unlock();
         AutodrainedPool pool;

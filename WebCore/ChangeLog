@@ -1,3 +1,13 @@
+2007-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Apparently the Win32 pthreads impl we use does not allow unlocking a mutex that has not
+        already been locked, so lock the mutex first.
+        
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+
 2007-10-19  Brady Eidson  <beidson@apple.com>
 
         Better build fix
