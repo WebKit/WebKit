@@ -136,17 +136,19 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [WebView _viewClass:nil andRepresentationClass:&repClass forMIMEType:MIMEType] ? repClass : nil;
 }
 
-#ifndef BUILDING_ON_TIGER
 - (NSString *)_MIMETypeOfResponse:(NSURLResponse *)response
 {
+#ifdef BUILDING_ON_TIGER
+    return [response MIMEType];
+#else
     // FIXME: This is part of a workaround for <rdar://problem/5321972> REGRESSION: Plain text document from HTTP server detected
     // as application/octet-stream
     NSString *MIMEType = [response MIMEType];
     if ([MIMEType isEqualToString:@"application/octet-stream"] && [response isKindOfClass:[NSHTTPURLResponse class]] && [[[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"])
         return @"text/plain";
     return MIMEType;
-}
 #endif
+}
 @end
 
 @implementation WebDataSource (WebPrivate)

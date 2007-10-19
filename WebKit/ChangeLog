@@ -1,5 +1,12 @@
 2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
 
+        Tiger build fix.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _MIMETypeOfResponse:]):
+
+2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+
         Reviewed by Adam Roben.
 
         - fix <rdar://problem/5313523>
