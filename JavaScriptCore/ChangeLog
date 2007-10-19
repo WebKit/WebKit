@@ -1,3 +1,24 @@
+2007-10-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+        
+        - use __declspec(thread) for fast thread-local storage on Windows
+        
+        - 2.2% speedup on sunspider (on Windows)
+        - 7% speedup on the string section
+        - 6% speedup on JS iBench
+        
+        - fixed <rdar://problem/5473084> PLT on Windows got 2.5% slower between r25406 and r25422
+        - fixed at least some of <rdar://5527965? i-Bench JS was 14% slower in 310A11 than 310A10
+        
+        
+        * wtf/FastMalloc.cpp:
+        (WTF::getThreadHeap):
+        (WTF::setThreadHeap):
+        (WTF::TCMalloc_ThreadCache::GetCache):
+        (WTF::TCMalloc_ThreadCache::GetCacheIfPresent):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+
 2007-10-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
