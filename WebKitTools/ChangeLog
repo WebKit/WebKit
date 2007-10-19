@@ -1,3 +1,11 @@
+2007-10-19  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+        correct the VK code for alt key.
+
 2007-10-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
