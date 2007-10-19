@@ -87,6 +87,15 @@ void ResourceResponse::doUpdateResourceResponse()
         NSEnumerator *e = [headers keyEnumerator];
         while (NSString *name = [e nextObject])
             m_httpHeaderFields.set(name, [headers objectForKey:name]);
+#ifndef BUILDING_ON_TIGER
+        // FIXME: This is part of a workaround for <rdar://problem/5321972> REGRESSION: Plain text document from HTTP server detected
+        // as application/octet-stream
+        if (m_mimeType == "application/octet-stream") {
+            static const String textPlainMIMEType("text/plain");
+            if (m_httpHeaderFields.get("Content-Type").startsWith(textPlainMIMEType))
+                m_mimeType = textPlainMIMEType;
+        }
+#endif
     } else {
         m_httpStatusCode = 0;
 

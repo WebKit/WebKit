@@ -1,3 +1,17 @@
+2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix <rdar://problem/5313523>
+        REGRESSION(Leopard): http/tests/incremental/slow-utf8-text.pl fails on Leopard
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::doUpdateResourceResponse): Work around
+        <rdar://problem/5321972> by testing for the case of a response
+        with a MIME type of application/octet-stream and a Content-Type header
+        starting with text/plain and setting the MIME type to text/plain in
+        that case.
+
 2007-10-18  Mark Rowe  <mrowe@apple.com>
 
         Fix the no-SVG build.

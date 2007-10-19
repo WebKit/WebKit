@@ -29,7 +29,7 @@
 #import "WebFrameView.h"
 
 #import "WebClipView.h"
-#import "WebDataSource.h"
+#import "WebDataSourcePrivate.h"
 #import "WebDocument.h"
 #import "WebDynamicScrollBarsView.h"
 #import "WebFrame.h"
@@ -187,7 +187,7 @@ enum {
 
 -(NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
 {
-    NSString* MIMEType = [[dataSource response] MIMEType];
+    NSString* MIMEType = [dataSource _responseMIMEType];
     if (!MIMEType)
         MIMEType = @"text/html";
     Class viewClass = [[self class] _viewClassForMIMEType:MIMEType];

@@ -1,3 +1,13 @@
+2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix <rdar://problem/5313523>
+        REGRESSION(Leopard): http/tests/incremental/slow-utf8-text.pl fails on Leopard
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump): Changed to use _responseMIMEType.
+
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         Make it possible to have Windows-specific tests and results

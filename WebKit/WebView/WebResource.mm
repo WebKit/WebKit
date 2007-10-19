@@ -248,13 +248,13 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return self;
 }
 
-- (id)_initWithData:(NSData *)data URL:(NSURL *)URL response:(NSURLResponse *)response
+- (id)_initWithData:(NSData *)data URL:(NSURL *)URL response:(NSURLResponse *)response MIMEType:(NSString *)MIMEType
 {
     // Pass NO for copyData since the data doesn't need to be copied since we know that callers will no longer modify it.
     // Copying it will also cause a performance regression.
     return [self _initWithData:data
                            URL:URL
-                      MIMEType:[response MIMEType]
+                      MIMEType:MIMEType
               textEncodingName:[response textEncodingName]
                      frameName:nil
                       response:response

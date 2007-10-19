@@ -38,7 +38,7 @@
            response:(NSURLResponse *)response
            copyData:(BOOL)copyData;
 
-- (id)_initWithData:(NSData *)data URL:(NSURL *)URL response:(NSURLResponse *)response;
+- (id)_initWithData:(NSData *)data URL:(NSURL *)URL response:(NSURLResponse *)response MIMEType:(NSString *)MIMEType;
 
 - (BOOL)_shouldIgnoreWhenUnarchiving;
 - (void)_ignoreWhenUnarchiving;

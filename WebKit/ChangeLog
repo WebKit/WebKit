@@ -1,3 +1,36 @@
+2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix <rdar://problem/5313523>
+        REGRESSION(Leopard): http/tests/incremental/slow-utf8-text.pl fails on Leopard
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::makeDocumentView): Changed to use _responseMIMEType.
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _MIMETypeOfResponse:]): Added. Works around
+        <rdar://problem/5321972> by testing for the case of an NSHTTPURLResponse
+        with a MIMEType of application/octet-stream and a Content-Type header
+        starting with text/plain and returning text/plain as the MIME type in
+        that case.
+        (-[WebDataSource _responseMIMEType]): Added. Used to get the correct
+        response MIME type.
+        (-[WebDataSource _isDocumentHTML]): Changed to use _responseMIMEType.
+        (-[WebDataSource _makeRepresentation]): Ditto.
+        (-[WebDataSource mainResource]): Ditto.
+        (-[WebDataSource subresources]): Changed to use _MIMETypeOfResponse and
+        pass the MIME type explicitly.
+        (-[WebDataSource subresourceForURL:]): Ditto.
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _makeDocumentViewForDataSource:]): Changed to use
+        _responseMIMEType.
+        * WebView/WebResource.mm:
+        (-[WebResource _initWithData:URL:response:MIMEType:]): Changed this
+        method to take a MIME type instead of extracting it from the response,
+        so that WebDataSource could pass the correct MIME type.
+        * WebView/WebResourcePrivate.h:
+
 2007-10-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

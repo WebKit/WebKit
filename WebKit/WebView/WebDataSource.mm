@@ -136,6 +136,17 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [WebView _viewClass:nil andRepresentationClass:&repClass forMIMEType:MIMEType] ? repClass : nil;
 }
 
+#ifndef BUILDING_ON_TIGER
+- (NSString *)_MIMETypeOfResponse:(NSURLResponse *)response
+{
+    // FIXME: This is part of a workaround for <rdar://problem/5321972> REGRESSION: Plain text document from HTTP server detected
+    // as application/octet-stream
+    NSString *MIMEType = [response MIMEType];
+    if ([MIMEType isEqualToString:@"application/octet-stream"] && [response isKindOfClass:[NSHTTPURLResponse class]] && [[[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"])
+        return @"text/plain";
+    return MIMEType;
+}
+#endif
 @end
 
 @implementation WebDataSource (WebPrivate)
@@ -172,6 +183,15 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     }
     
     return nil;
+}
+
+- (NSString *)_responseMIMEType
+{
+#ifdef BUILDING_ON_TIGER
+    return [[self response] MIMEType];
+#else
+    return [self _MIMETypeOfResponse:[self response]];
+#endif
 }
 
 @end
@@ -319,13 +339,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_isDocumentHTML
 {
-    NSString *MIMEType = [[self response] MIMEType];
+    NSString *MIMEType = [self _responseMIMEType];
     return [WebView canShowMIMETypeAsHTML:MIMEType];
 }
 
 -(void)_makeRepresentation
 {
-    Class repClass = [[self class] _representationClassForMIMEType:[[self response] MIMEType]];
+    Class repClass = [[self class] _representationClassForMIMEType:[self _responseMIMEType]];
     
     // Check if the data source was already bound?
     if (![[self representation] isKindOfClass:repClass]) {
@@ -471,7 +491,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     NSURLResponse *response = [self response];
     return [[[WebResource alloc] initWithData:[self data]
                                           URL:[response URL] 
-                                     MIMEType:[response MIMEType]
+                                     MIMEType:[self _responseMIMEType]
                              textEncodingName:[response textEncodingName]
                                     frameName:[[self webFrame] name]] autorelease];
 }
@@ -489,7 +509,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     NSMutableArray *subresources = [[NSMutableArray alloc] initWithCapacity:[datas count]];
     for (unsigned i = 0; i < [datas count]; ++i) {
         NSURLResponse *response = [responses objectAtIndex:i];
-        [subresources addObject:[[[WebResource alloc] _initWithData:[datas objectAtIndex:i] URL:[response URL] response:response] autorelease]];
+        [subresources addObject:[[[WebResource alloc] _initWithData:[datas objectAtIndex:i] URL:[response URL] response:response MIMEType:[self _MIMETypeOfResponse:response]] autorelease]];
     }
 
     return [subresources autorelease];
@@ -505,7 +525,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (![[self _bridge] getData:&data andResponse:&response forURL:[URL _web_originalDataAsString]])
         return [self _archivedSubresourceForURL:URL];
 
-    return [[[WebResource alloc] _initWithData:data URL:URL response:response] autorelease];
+    return [[[WebResource alloc] _initWithData:data URL:URL response:response MIMEType:[self _MIMETypeOfResponse:response]] autorelease];
 }
 
 - (void)addSubresource:(WebResource *)subresource

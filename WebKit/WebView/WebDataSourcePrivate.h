@@ -35,4 +35,6 @@
 - (void)_addSubframeArchives:(NSArray *) archives;
 
 - (NSError *)_mainDocumentError;
+
+- (NSString *)_responseMIMEType;
 @end

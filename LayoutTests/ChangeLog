@@ -1,3 +1,11 @@
+2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - removing fixed test
+
+        * platform/mac-leopard/Skipped:
+
 2007-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

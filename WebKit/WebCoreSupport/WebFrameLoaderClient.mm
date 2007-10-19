@@ -156,7 +156,7 @@ void WebFrameLoaderClient::makeDocumentView()
     WebFrameView *v = m_webFrame->_private->webFrameView;
     WebDataSource *ds = [m_webFrame.get() _dataSource];
 
-    bool willProduceHTMLView = [[WebFrameView class] _viewClassForMIMEType:[[ds response] MIMEType]] == [WebHTMLView class];
+    bool willProduceHTMLView = [[WebFrameView class] _viewClassForMIMEType:[ds _responseMIMEType]] == [WebHTMLView class];
     bool canSkipCreation = [m_webFrame.get() _frameLoader]->committingFirstRealLoad() && willProduceHTMLView;
     if (canSkipCreation) {
         [[v documentView] setDataSource:ds];

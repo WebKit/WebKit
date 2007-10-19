@@ -51,7 +51,7 @@
 #import <WebKit/DOMRange.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCoreStatistics.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
@@ -840,7 +840,7 @@ void dump()
         NSString *result = nil;
         
         bool dumpAsText = layoutTestController->dumpAsText();
-        dumpAsText |= [[[[mainFrame dataSource] response] MIMEType] isEqualToString:@"text/plain"];
+        dumpAsText |= [[[mainFrame dataSource] _responseMIMEType] isEqualToString:@"text/plain"];
         layoutTestController->setDumpAsText(dumpAsText);
         if (layoutTestController->dumpAsText()) {
             result = dumpFramesAsText(mainFrame);
