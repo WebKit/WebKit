@@ -29,13 +29,21 @@
 #ifndef FileSystem_h
 #define FileSystem_h
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
+class CString;
 class String;
 
 bool fileExists(const String&);
 bool deleteFile(const String&);
 bool fileSize(const String&, long long& result);
+String pathByAppendingComponent(const String& path, const String& component);
+bool makeAllDirectories(const String& path);
+String homeDirectoryPath();
+
+CString fileSystemRepresentation(const String&);
 
 } // namespace WebCore
 

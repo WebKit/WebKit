@@ -176,6 +176,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\Deque.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\FastMalloc.cpp"
 			>
 		</File>

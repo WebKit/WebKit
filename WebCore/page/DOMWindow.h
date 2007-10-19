@@ -36,6 +36,7 @@ namespace WebCore {
     class BarInfo;
     class CSSRuleList;
     class CSSStyleDeclaration;
+    class Database;
     class DOMSelection;
     class Document;
     class Element;
@@ -43,6 +44,8 @@ namespace WebCore {
     class History;
     class Screen;
     
+    typedef int ExceptionCode;
+
     class DOMWindow : public Shared<DOMWindow> {
     public:
         DOMWindow(Frame*);
@@ -127,6 +130,9 @@ namespace WebCore {
         // WebKit extensions
         PassRefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
         double devicePixelRatio() const;
+
+        // HTML 5 client-side database
+        PassRefPtr<Database> openDatabase(const String& name, const String& version, ExceptionCode&);
 
     private:
         Frame* m_frame;

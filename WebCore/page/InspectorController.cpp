@@ -31,6 +31,7 @@
 
 #include "CString.h"
 #include "CachedResource.h"
+#include "Database.h"
 #include "DocLoader.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -41,6 +42,7 @@
 #include "FrameTree.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
+#include "JSDatabase.h"
 #include "JSRange.h"
 #include "Page.h"
 #include "Range.h"
@@ -179,6 +181,44 @@ struct InspectorResource : public Shared<InspectorResource> {
     double startTime;
     double responseReceivedTime;
     double endTime;
+};
+
+
+struct InspectorDatabaseResource : public Shared<InspectorDatabaseResource> {
+    InspectorDatabaseResource(Database* database, String domain, String name, String version)
+        : database(database)
+        , domain(domain)
+        , name(name)
+        , version(version)
+        , scriptContext(0)
+        , scriptObject(0)
+    {
+    }
+
+    InspectorDatabaseResource()
+    {
+        setScriptObject(0, 0);
+    }
+
+    void setScriptObject(JSContextRef context, JSObjectRef newScriptObject)
+    {
+        if (scriptContext && scriptObject)
+            JSValueUnprotect(scriptContext, scriptObject);
+
+        scriptObject = newScriptObject;
+        scriptContext = context;
+
+        ASSERT((context && newScriptObject) || (!context && !newScriptObject));
+        if (context && newScriptObject)
+            JSValueProtect(context, newScriptObject);
+    }
+
+    RefPtr<Database> database;
+    String domain;
+    String name;
+    String version;
+    JSContextRef scriptContext;
+    JSObjectRef scriptObject;
 };
 
 static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
@@ -436,6 +476,45 @@ static JSValueRef search(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef
     return array;
 }
 
+static JSValueRef databaseTableNames(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(ctx);
+
+    Database* database = toDatabase(toJS(arguments[0]));
+    if (!database)
+        return JSValueMakeUndefined(ctx);
+
+    JSObjectRef global = JSContextGetGlobalObject(ctx);
+    JSStringRef arrayString = JSStringCreateWithUTF8CString("Array");
+    JSObjectRef arrayConstructor = JSValueToObject(ctx, JSObjectGetProperty(ctx, global, arrayString, 0), 0);
+    JSStringRelease(arrayString);
+
+    JSObjectRef result = JSObjectCallAsConstructor(ctx, arrayConstructor, 0, 0, 0);
+
+    JSStringRef pushString = JSStringCreateWithUTF8CString("push");
+    JSObjectRef pushFunction = JSValueToObject(ctx, JSObjectGetProperty(ctx, result, pushString, 0), 0);
+    JSStringRelease(pushString);
+
+    Vector<String> tableNames = database->tableNames();
+    unsigned length = tableNames.size();
+    for (unsigned i = 0; i < length; ++i) {
+        String tableName = tableNames[i];
+        JSStringRef tableNameString = JSStringCreateWithCharacters(tableName.characters(), tableName.length());
+        JSValueRef tableNameValue = JSValueMakeString(ctx, tableNameString);
+        JSStringRelease(tableNameString);
+
+        JSValueRef pushArguments[] = { tableNameValue };
+        JSObjectCallAsFunction(ctx, pushFunction, result, 1, pushArguments, 0);
+    }
+
+    return result;
+}
+
 static JSValueRef inspectedWindow(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
@@ -573,6 +652,7 @@ void InspectorController::setWindowVisible(bool visible)
     } else {
         clearScriptResources();
         clearScriptConsoleMessages();
+        clearDatabaseScriptResources();
         clearNetworkTimeline();
     }
 }
@@ -624,6 +704,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "detach", detach, kJSPropertyAttributeNone },
         { "log", log, kJSPropertyAttributeNone },
         { "search", search, kJSPropertyAttributeNone },
+        { "databaseTableNames", databaseTableNames, kJSPropertyAttributeNone },
         { "inspectedWindow", inspectedWindow, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
@@ -992,6 +1073,7 @@ void InspectorController::populateScriptResources()
 
     clearScriptResources();
     clearScriptConsoleMessages();
+    clearDatabaseScriptResources();
     clearNetworkTimeline();
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();
@@ -1001,6 +1083,79 @@ void InspectorController::populateScriptResources()
     unsigned messageCount = m_consoleMessages.size();
     for (unsigned i = 0; i < messageCount; ++i)
         addScriptConsoleMessage(m_consoleMessages[i]);
+
+    DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
+    for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
+        addDatabaseScriptResource((*it).get());
+}
+
+JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseResource* resource)
+{
+    ASSERT_ARG(resource, resource);
+
+    if (resource->scriptObject)
+        return resource->scriptObject;
+
+    ASSERT(m_scriptContext);
+    ASSERT(m_scriptObject);
+    if (!m_scriptContext || !m_scriptObject)
+        return 0;
+
+    JSStringRef databaseString = JSStringCreateWithUTF8CString("Database");
+    JSObjectRef databaseConstructor = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, databaseString, 0), 0);
+    JSStringRelease(databaseString);
+
+    JSValueRef database = toRef(toJS(toJS(m_scriptContext), resource->database.get()));
+
+    JSStringRef domain = JSStringCreateWithCharacters(resource->domain.characters(), resource->domain.length());
+    JSValueRef domainValue = JSValueMakeString(m_scriptContext, domain);
+    JSStringRelease(domain);
+
+    JSStringRef name = JSStringCreateWithCharacters(resource->name.characters(), resource->name.length());
+    JSValueRef nameValue = JSValueMakeString(m_scriptContext, name);
+    JSStringRelease(name);
+
+    JSStringRef version = JSStringCreateWithCharacters(resource->version.characters(), resource->version.length());
+    JSValueRef versionValue = JSValueMakeString(m_scriptContext, version);
+    JSStringRelease(version);
+
+    JSValueRef arguments[] = { database, domainValue, nameValue, versionValue };
+    JSObjectRef result = JSObjectCallAsConstructor(m_scriptContext, databaseConstructor, 4, arguments, 0);
+
+    resource->setScriptObject(m_scriptContext, result);
+
+    ASSERT(result);
+
+    JSStringRef addResourceString = JSStringCreateWithUTF8CString("addResource");
+    JSObjectRef addResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, addResourceString, 0), 0);
+    JSStringRelease(addResourceString);
+
+    JSValueRef addArguments[] = { result };
+    JSObjectCallAsFunction(m_scriptContext, addResourceFunction, m_scriptObject, 1, addArguments, 0);
+
+    return result;
+}
+
+void InspectorController::removeDatabaseScriptResource(InspectorDatabaseResource* resource)
+{
+    ASSERT(m_scriptContext);
+    ASSERT(m_scriptObject);
+    if (!m_scriptContext || !m_scriptObject)
+        return;
+
+    ASSERT(resource);
+    ASSERT(resource->scriptObject);
+    if (!resource || !resource->scriptObject)
+        return;
+
+    JSStringRef removeResourceString = JSStringCreateWithUTF8CString("removeResource");
+    JSObjectRef removeResourceFunction = JSValueToObject(m_scriptContext, JSObjectGetProperty(m_scriptContext, m_scriptObject, removeResourceString, 0), 0);
+    JSStringRelease(removeResourceString);
+
+    JSValueRef arguments[] = { resource->scriptObject };
+    JSObjectCallAsFunction(m_scriptContext, removeResourceFunction, m_scriptObject, 1, arguments, 0);
+
+    resource->setScriptObject(0, 0);
 }
 
 void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
@@ -1057,6 +1212,20 @@ void InspectorController::clearScriptResources()
     callClearFunction(m_scriptContext, m_scriptObject, "clearResources");
 }
 
+void InspectorController::clearDatabaseScriptResources()
+{
+    if (!m_scriptContext || !m_scriptObject)
+        return;
+
+    DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
+    for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it) {
+        InspectorDatabaseResource* resource = (*it).get();
+        resource->setScriptObject(0, 0);
+    }
+
+    callClearFunction(m_scriptContext, m_scriptObject, "clearDatabaseResources");
+}
+
 void InspectorController::clearScriptConsoleMessages()
 {
     if (!m_scriptContext || !m_scriptObject)
@@ -1102,10 +1271,15 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         // FIXME: Should look into asserting that m_mainResource->loader == loader here.
 
         m_client->inspectedURLChanged(loader->URL().url());
+
         deleteAllValues(m_consoleMessages);
         m_consoleMessages.clear();
+
+        m_databaseResources.clear();
+
         if (windowVisible()) {
             clearScriptConsoleMessages();
+            clearDatabaseScriptResources();
             clearNetworkTimeline();
 
             // We don't add the main resource until its load is committed. This
@@ -1309,6 +1483,19 @@ void InspectorController::didFailLoading(DocumentLoader* loader, unsigned long i
         updateScriptResource(resource.get(), resource->startTime, resource->responseReceivedTime, resource->endTime);
         updateScriptResource(resource.get(), resource->finished, resource->failed);
     }
+}
+
+void InspectorController::didOpenDatabase(Database* database, const String& domain, const String& name, const String& version)
+{
+    if (!enabled())
+        return;
+
+    InspectorDatabaseResource* resource = new InspectorDatabaseResource(database, domain, name, version);
+
+    m_databaseResources.add(resource);
+
+    if (windowVisible())
+        addDatabaseScriptResource(resource);
 }
 
 } // namespace WebCore

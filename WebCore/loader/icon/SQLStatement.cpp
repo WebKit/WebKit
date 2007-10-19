@@ -27,6 +27,7 @@
 #include "SQLStatement.h"
 
 #include "Logging.h"
+#include "SQLValue.h"
 #include <sqlite3.h>
 #include <wtf/Assertions.h>
 
@@ -49,7 +50,11 @@ int SQLStatement::prepare()
 {    
     const void* tail;
     LOG(SQLDatabase, "SQL - prepare - %s", m_query.ascii().data());
+#if SQLITE_VERSION_NUMBER > 3003000 
+    if (sqlite3_prepare16_v2(m_database.sqlite3Handle(), m_query.characters(), -1, &m_statement, &tail) != SQLITE_OK) {
+#else
     if (sqlite3_prepare16(m_database.sqlite3Handle(), m_query.characters(), -1, &m_statement, &tail) != SQLITE_OK) {
+#endif
         LOG(SQLDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", lastError(), m_query.ascii().data(), sqlite3_errmsg(m_database.sqlite3Handle()));
         m_statement = 0;
     }
@@ -152,9 +157,36 @@ int SQLStatement::bindInt64(int index, int64_t integer)
     return sqlite3_bind_int64(m_statement, index, integer);
 }
 
+int SQLStatement::bindDouble(int index, double number)
+{
+    return sqlite3_bind_double(m_statement, index, number);
+}
+
 int SQLStatement::bindNull(int index)
 {
     return sqlite3_bind_null(m_statement, index);
+}
+
+int SQLStatement::bindValue(int index, const SQLValue& value)
+{
+    switch (value.type()) {
+        case SQLValue::StringValue:
+            return bindText16(index, value.string());
+        case SQLValue::NumberValue:
+            return bindDouble(index, value.number());
+        case SQLValue::NullValue:
+            return bindNull(index);
+        default:
+            ASSERT_NOT_REACHED();
+            // To keep the compiler happy
+            return SQLITE_ERROR;
+    }
+}
+
+unsigned SQLStatement::bindParameterCount() const
+{
+    ASSERT(isPrepared());
+    return sqlite3_bind_parameter_count(m_statement);
 }
 
 int SQLStatement::columnCount()

@@ -33,6 +33,7 @@ VPATH = \
     $(WebCore)/dom \
     $(WebCore)/html \
     $(WebCore)/page \
+    $(WebCore)/storage \
     $(WebCore)/xml \
     $(WebCore)/ksvg2/svg \
     $(WebCore)/ksvg2/events \
@@ -321,6 +322,7 @@ all : \
     JSComment.h \
     JSCounter.h \
     JSCSSStyleDeclaration.h \
+    JSDatabase.h \
     JSDOMExceptionConstructor.lut.h \
     JSDOMImplementation.h \
     JSDOMParser.h \
@@ -411,6 +413,9 @@ all : \
     JSRange.h \
     JSRangeException.h \
     JSRect.h \
+    JSSQLCallback.h \
+    JSSQLResultSet.h \
+    JSSQLResultSetRowList.h \
     JSSVGAElement.h \
     JSSVGAngle.h \
     JSSVGAnimatedAngle.h \
@@ -543,6 +548,7 @@ all : \
     JSTextEvent.h \
     JSTreeWalker.h \
     JSUIEvent.h \
+    JSVersionChangeCallback.h \
     JSXPathEvaluator.h \
     JSXPathExpression.h \
     JSXPathNSResolver.h \

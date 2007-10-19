@@ -368,3 +368,13 @@ void WebChromeClient::print(Frame* frame)
     WebFrameView* frameView = [kit(frame) frameView];
     CallUIDelegate(m_webView, @selector(webView:printFrameView:), frameView);
 }
+
+bool WebChromeClient::runDatabaseSizeLimitPrompt(Frame* frame, const String& origin)
+{
+    id delegate = [m_webView UIDelegate];
+    SEL selector = @selector(webView:runDatabaseSizeLimitPromptForOrigin:initiatedByFrame:);
+    if ([delegate respondsToSelector:selector])
+        return CallUIDelegateReturningBoolean(NO, m_webView, selector, (NSString *)origin, kit(frame));
+
+    return NO;
+}

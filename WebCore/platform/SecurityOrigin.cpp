@@ -133,4 +133,9 @@ bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
     return equalIgnoringCase(m_host, String(url.host())) && equalIgnoringCase(m_protocol, String(url.protocol())) && m_port == url.port();
 }
 
+String SecurityOrigin::toString() const
+{
+    return m_protocol + ":" + m_host + ":" + String::number(m_port);
+}
+
 } // namespace WebCore

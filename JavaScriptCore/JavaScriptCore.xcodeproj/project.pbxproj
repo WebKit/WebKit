@@ -80,6 +80,7 @@
 		14BD5A360A3E91F600BAF59C /* JavaScriptCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD5A2F0A3E91F600BAF59C /* JavaScriptCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		14F137830A3A765B00F26F90 /* context.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F137820A3A765B00F26F90 /* context.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CAF34890A6C421700ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34880A6C421700ABE06E /* WebScriptObject.h */; };
+		5186111E0CC824900081412B /* Deque.h in Headers */ = {isa = PBXBuildFile; fileRef = 5186111D0CC824830081412B /* Deque.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F648D70BB4E2CA0033D760 /* RetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F648D60BB4E2CA0033D760 /* RetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DBD18AC0C54018700C15EAE /* CollectorHeapIntrospector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AA0C54018700C15EAE /* CollectorHeapIntrospector.h */; };
 		5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */; };
@@ -464,6 +465,7 @@
 		5182A53B06012C3000CBD2F2 /* c_class.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = c_class.h; path = bindings/c/c_class.h; sourceTree = "<group>"; tabWidth = 8; };
 		51856D8F0562EE95008B9D83 /* jni_utility.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jni_utility.cpp; path = bindings/jni/jni_utility.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		51856D900562EE95008B9D83 /* jni_utility.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = jni_utility.h; path = bindings/jni/jni_utility.h; sourceTree = "<group>"; tabWidth = 8; };
+		5186111D0CC824830081412B /* Deque.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Deque.h; sourceTree = "<group>"; };
 		518CF93605C72271003CF905 /* objc_class.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = objc_class.h; path = bindings/objc/objc_class.h; sourceTree = "<group>"; tabWidth = 8; };
 		518CF93705C72271003CF905 /* objc_class.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = objc_class.mm; path = bindings/objc/objc_class.mm; sourceTree = "<group>"; tabWidth = 8; };
 		518CF93805C72271003CF905 /* objc_runtime.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = objc_runtime.mm; path = bindings/objc/objc_runtime.mm; sourceTree = "<group>"; tabWidth = 8; };
@@ -899,6 +901,7 @@
 				938C4F690CA06BC700D9310A /* ASCIICType.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
+				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
@@ -1250,6 +1253,7 @@
 				95C18D490C90E82600E72F73 /* JSRetainPtr.h in Headers */,
 				938C4F6A0CA06BC700D9310A /* ASCIICType.h in Headers */,
 				938C4F6C0CA06BCE00D9310A /* DisallowCType.h in Headers */,
+				5186111E0CC824900081412B /* Deque.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

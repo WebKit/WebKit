@@ -116,6 +116,9 @@ public:
     virtual void setToolTip(const String&) { }
 
     virtual void print(Frame*) { }
+
+    virtual bool runDatabaseSizeLimitPrompt(Frame*, const String&) { return false; }
+
 };
 
 class SVGEmptyFrameLoaderClient : public FrameLoaderClient {

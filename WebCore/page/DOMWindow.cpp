@@ -31,6 +31,7 @@
 #include "CSSRuleList.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
+#include "Database.h"
 #include "DOMSelection.h"
 #include "Document.h"
 #include "Element.h"
@@ -547,6 +548,19 @@ double DOMWindow::devicePixelRatio() const
         return 0.0;
 
     return page->chrome()->scaleFactor();
+}
+
+PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& version, ExceptionCode& e)
+{
+    if (!m_frame)
+        return 0;
+
+    Document* doc = m_frame->document();
+    ASSERT(doc);
+    if (!doc)
+        return 0;
+
+    return Database::openDatabase(doc, name, version, e);
 }
 
 } // namespace WebCore

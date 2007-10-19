@@ -32,44 +32,9 @@
 
 namespace WebCore {
 
-bool fileExists(const String& path) 
+String homeDirectoryPath()
 {
-    const char* fsRep = [(NSString *)path fileSystemRepresentation];
-        
-    if (!fsRep || fsRep[0] == '\0')
-        return false;
-        
-    struct stat fileInfo;
-
-    // stat(...) returns 0 on successful stat'ing of the file, and non-zero in any case where the file doesn't exist or cannot be accessed
-    return !stat(fsRep, &fileInfo);
+    return NSHomeDirectory();
 }
 
-bool deleteFile(const String& path) 
-{
-    const char* fsRep = [(NSString *)path fileSystemRepresentation];
-        
-    if (!fsRep || fsRep[0] == '\0')
-        return false;
-        
-    // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
-    return !unlink(fsRep);
-}
-
-bool fileSize(const String& path, long long& result)
-{
-    const char* fsRep = [(NSString *)path fileSystemRepresentation];
-    
-    if (!fsRep || fsRep[0] == '\0')
-        return false;
-    
-    struct stat fileInfo;
-    
-    if (!stat(fsRep, &fileInfo))
-        return false;
-    
-    result = fileInfo.st_size;
-    return true;
-}
-
-} //namespace WebCore
+} // namespace WebCore

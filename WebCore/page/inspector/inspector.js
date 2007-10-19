@@ -204,6 +204,7 @@ WebInspector.loaded = function(event)
         stylesheets: new WebInspector.ResourceCategory("stylesheets"),
         images: new WebInspector.ResourceCategory("images"),
         scripts: new WebInspector.ResourceCategory("scripts"),
+        databases: new WebInspector.ResourceCategory("databases"),
         other: new WebInspector.ResourceCategory("other")
     };
 
@@ -558,12 +559,14 @@ WebInspector.updateViewButtons = function()
 WebInspector.addResource = function(resource)
 {
     this.resources.push(resource);
-    this.resourceURLMap[resource.url] = resource;
 
     if (resource.mainResource)
         this.mainResource = resource;
 
-    this.networkPanel.addResourceToTimeline(resource);
+    if (resource.url) {
+        this.resourceURLMap[resource.url] = resource;
+        this.networkPanel.addResourceToTimeline(resource);
+    }
 }
 
 WebInspector.removeResource = function(resource)
@@ -572,7 +575,8 @@ WebInspector.removeResource = function(resource)
 
     resource.category.removeResource(resource);
 
-    delete this.resourceURLMap[resource.url];
+    if (resource.url)
+        delete this.resourceURLMap[resource.url];
 
     var resourcesLength = this.resources.length;
     for (var i = 0; i < resourcesLength; ++i) {
@@ -591,6 +595,11 @@ WebInspector.clearResources = function()
     this.backForwardList = [];
     this.currentBackForwardIndex = -1;
     delete this.mainResource;
+}
+
+WebInspector.clearDatabaseResources = function()
+{
+    this.resourceCategories.databases.removeAllResources();
 }
 
 WebInspector.resourceURLChanged = function(resource, oldURL)

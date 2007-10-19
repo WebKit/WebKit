@@ -117,42 +117,6 @@ void IconDatabase::setClient(IconDatabaseClient* client)
     m_client = client;
 }
 
-bool makeAllDirectories(const String& path)
-{
-#if PLATFORM(WIN_OS)
-    String fullPath = path;
-    if (!SHCreateDirectoryEx(0, fullPath.charactersWithNullTermination(), 0)) {
-        DWORD error = GetLastError();
-        if (error != ERROR_FILE_EXISTS && error != ERROR_ALREADY_EXISTS) {
-            LOG_ERROR("Failed to create path %s", path.ascii().data());
-            return false;
-        }
-    }
-#else
-    CString fullPath = path.utf8();
-    if (!access(fullPath.data(), F_OK))
-        return true;
-        
-    char* p = fullPath.mutableData() + 1;
-    int length = fullPath.length();
-    
-    if(p[length - 1] == '/')
-        p[length - 1] = '\0';
-    for (; *p; ++p)
-        if (*p == '/') {
-            *p = '\0';
-            if (access(fullPath.data(), F_OK))
-                if (mkdir(fullPath.data(), S_IRWXU))
-                    return false;
-            *p = '/';
-        }
-    if (access(fullPath.data(), F_OK))        
-        if (mkdir(fullPath.data(), S_IRWXU))
-            return false;
-#endif   
-    return true;
-}
-
 bool IconDatabase::open(const String& databasePath)
 {
     ASSERT_NOT_SYNC_THREAD();
@@ -168,18 +132,8 @@ bool IconDatabase::open(const String& databasePath)
     m_databaseDirectory = databasePath.copy();
 
     // Formulate the full path for the database file
-#if PLATFORM(WIN_OS)
-    if (m_databaseDirectory[m_databaseDirectory.length()] == '\\')
-        m_completeDatabasePath = m_databaseDirectory + defaultDatabaseFilename();
-    else
-        m_completeDatabasePath = m_databaseDirectory + "\\" + defaultDatabaseFilename();
-#else
-    if (m_databaseDirectory[m_databaseDirectory.length()] == '/')
-        m_completeDatabasePath = m_databaseDirectory + defaultDatabaseFilename();
-    else
-        m_completeDatabasePath = m_databaseDirectory + "/" + defaultDatabaseFilename();
-#endif
-    
+    m_completeDatabasePath = pathByAppendingComponent(m_databaseDirectory, defaultDatabaseFilename());
+
     initializeThreading();
 
     // Lock here as well as first thing in the thread so the tread doesn't actually commence until the pthread_create() call 

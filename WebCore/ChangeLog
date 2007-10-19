@@ -1,3 +1,399 @@
+2007-10-19  Brady Eidson  <beidson@apple.com>
+        Reviewed by Anders
+
+        Windows specific changes, as well as renaming Queue -> Deque
+
+        * ForwardingHeaders/wtf/Deque.h: Added.
+        * ForwardingHeaders/wtf/Queue.h: Removed.
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::fileSize):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::fileSystemRepresentation):
+        (WebCore::makeAllDirectories):
+        (WebCore::homeDirectoryPath):
+        * storage/Database.h:
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::documentGoingAway):
+        (WebCore::DatabaseThread::databaseGoingAway):
+        (WebCore::DatabaseThread::dispatchNextTaskIdentifier):
+        (WebCore::DatabaseThread::scheduleTask):
+        (WebCore::DatabaseThread::scheduleImmediateTask):
+        * storage/DatabaseThread.h:
+
+2007-10-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Tim and Anders
+
+        Preliminary support for HTML5 local database storage (http://www.whatwg.org/specs/web-apps/current-work/)
+
+        The specification is still in flux but the fundamentals are pretty solid and we can start using and testing 
+        this implementation even while filing bugs to track changes in the spec as it becomes more final
+
+        There are some implementation details in this patch that seem unused or useless, but they remain in place 
+        while the spec is in flux and might go one way or another.
+
+        * platform/Logging.cpp: Add StorageAPI logging channel
+        * platform/Logging.h:
+
+        * storage/Database.cpp: Added.
+        (WebCore::Database::databaseInfoTableName):
+        (WebCore::databaseVersionKey):
+        (WebCore::Database::openDatabase): C++ version of the window.openDatabase() javascript API
+        (WebCore::Database::Database):
+        (WebCore::Database::~Database):
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::retrieveTextResultFromDatabase):
+        (WebCore::Database::getVersionFromDatabase):
+        (WebCore::setTextValueInDatabase):
+        (WebCore::Database::setVersionInDatabase):
+        (WebCore::Database::databaseThreadGoingAway): May be removed in the future
+        (WebCore::Database::disableAuthorizer): For internal (WebInspector) use to get around the authorizer's restrictions
+        (WebCore::Database::enableAuthorizer):
+        (WebCore::Database::guidForOriginAndName): Candidate for refactoring and/or moving to the database tracker.  
+          The GUID for each database identifier is currently for tracking the database version, but might be rescoped in the future
+        (WebCore::Database::resetAuthorizer):
+        (WebCore::Database::performPolicyChecks): Currently, the only post-executeSql policy check planned is the origin size usage 
+        (WebCore::Database::scheduleDatabaseCallback):
+        (WebCore::Database::performOpenAndVerify): 
+        (WebCore::Database::performChangeVersion):
+        (WebCore::Database::performExecuteSql):
+        (WebCore::Database::performCloseTransaction):
+        (WebCore::Database::performGetTableNames):
+        (WebCore::Database::version): C++ version of the javascript API
+        (WebCore::Database::changeVersion): Ditto
+        (WebCore::Database::executeSql): Ditto
+        (WebCore::Database::closeTransaction): Ditto
+        (WebCore::Database::tableNames): For internal (WebInspector) use
+        (WebCore::Database::deliverAllPendingCallbacks):
+        (WebCore::Database::deliverPendingCallbacks):
+        * storage/Database.h: Added.
+        (WebCore::Database::databaseDebugName): For debug logging purposes
+        * storage/Database.idl: Added.
+
+        * storage/DatabaseAuthorizer.cpp: Added.
+          The DatabaseAuthorizer is used to both prevent the script from doing "illegal" things in sql as well as
+          tracking when effects certain sql statements might have (such as increasing the size of the database)
+        (WebCore::DatabaseAuthorizer::DatabaseAuthorizer):
+        (WebCore::DatabaseAuthorizer::reset):
+        (WebCore::DatabaseAuthorizer::createTable):
+        (WebCore::DatabaseAuthorizer::createTempTable):
+        (WebCore::DatabaseAuthorizer::dropTable):
+        (WebCore::DatabaseAuthorizer::dropTempTable):
+        (WebCore::DatabaseAuthorizer::allowAlterTable):
+        (WebCore::DatabaseAuthorizer::createIndex):
+        (WebCore::DatabaseAuthorizer::createTempIndex):
+        (WebCore::DatabaseAuthorizer::dropIndex):
+        (WebCore::DatabaseAuthorizer::dropTempIndex):
+        (WebCore::DatabaseAuthorizer::createTrigger):
+        (WebCore::DatabaseAuthorizer::createTempTrigger):
+        (WebCore::DatabaseAuthorizer::dropTrigger):
+        (WebCore::DatabaseAuthorizer::dropTempTrigger):
+        (WebCore::DatabaseAuthorizer::createVTable):
+        (WebCore::DatabaseAuthorizer::dropVTable):
+        (WebCore::DatabaseAuthorizer::allowDelete):
+        (WebCore::DatabaseAuthorizer::allowInsert):
+        (WebCore::DatabaseAuthorizer::allowUpdate):
+        (WebCore::DatabaseAuthorizer::allowRead):
+        (WebCore::DatabaseAuthorizer::allowAnalyze):
+        (WebCore::DatabaseAuthorizer::allowPragma):
+        (WebCore::DatabaseAuthorizer::allowAttach):
+        (WebCore::DatabaseAuthorizer::allowDetach):
+        (WebCore::DatabaseAuthorizer::allowFunction):
+        (WebCore::DatabaseAuthorizer::disable):
+        (WebCore::DatabaseAuthorizer::enable):
+        (WebCore::DatabaseAuthorizer::denyBasedOnTableName): Don't allow access to the __WebKit meta info table as
+          it should be invisible to scripts
+        * storage/DatabaseAuthorizer.h: Added.
+        (WebCore::DatabaseAuthorizer::lastActionWasInsert):
+        (WebCore::DatabaseAuthorizer::lastActionIncreasedSize):
+
+        * storage/DatabaseCallback.cpp: Added.
+          Generic item to queue up for callbacks on the main thread for database activities that take place on 
+          a secondary thread
+        (WebCore::DatabaseChangeVersionCallback::DatabaseChangeVersionCallback):
+        (WebCore::DatabaseChangeVersionCallback::performCallback):
+        (WebCore::DatabaseExecuteSqlCallback::DatabaseExecuteSqlCallback):
+        (WebCore::DatabaseExecuteSqlCallback::performCallback):
+        * storage/DatabaseCallback.h: Added.
+        (WebCore::DatabaseCallback::~DatabaseCallback):
+        (WebCore::DatabaseChangeVersionCallback::~DatabaseChangeVersionCallback):
+        (WebCore::DatabaseExecuteSqlCallback::~DatabaseExecuteSqlCallback):
+
+        * storage/DatabaseTask.h: Added.
+          Generic work-item to be queued up on the background database thread
+        (WebCore::DatabaseTask::isComplete):
+        (WebCore::DatabaseOpenTask::exceptionCode):
+        (WebCore::DatabaseOpenTask::openSuccessful):
+        (WebCore::DatabaseTableNamesTask::tableNames):
+        * storage/DatabaseTask.cpp: Added.
+        (WebCore::DatabaseTask::DatabaseTask):
+        (WebCore::DatabaseTask::~DatabaseTask):
+        (WebCore::DatabaseTask::performTask):
+        (WebCore::DatabaseTask::lockForSynchronousScheduling): Used when the main thread needs this task accomplished 
+          synchronously
+        (WebCore::DatabaseTask::waitForSynchronousCompletion):
+
+        (WebCore::DatabaseOpenTask::DatabaseOpenTask):
+        (WebCore::DatabaseOpenTask::doPerformTask):
+
+        (WebCore::DatabaseExecuteSqlTask::DatabaseExecuteSqlTask):
+        (WebCore::DatabaseExecuteSqlTask::doPerformTask):
+
+        (WebCore::DatabaseChangeVersionTask::DatabaseChangeVersionTask):
+        (WebCore::DatabaseChangeVersionTask::doPerformTask):
+
+        (WebCore::DatabaseTableNamesTask::DatabaseTableNamesTask):
+        (WebCore::DatabaseTableNamesTask::doPerformTask):
+
+        * storage/DatabaseThread.cpp: Added.
+          The current design is that each Document will have its own DatabaseThread.  This makes scripts on each
+          individual document more response at the cost of adding more threads and potentially creating concurrency
+          issues when the same database is open twice from two different documents
+        (WebCore::DatabaseThread::DatabaseThread):
+        (WebCore::DatabaseThread::~DatabaseThread):
+        (WebCore::DatabaseThread::start):
+        (WebCore::DatabaseThread::documentGoingAway): Called to shut the thread down when the document is destroyed
+        (WebCore::DatabaseThread::databaseGoingAway): Remove all pending tasks for this database
+        (WebCore::DatabaseThread::databaseThreadStart):
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::dispatchNextTaskIdentifier):
+        (WebCore::DatabaseThread::scheduleTask):
+        (WebCore::DatabaseThread::scheduleImmediateTask): Schedule a task that gets to "cut to the front of the line" when
+          the main thread requires a task be performed synchronously
+        (WebCore::DatabaseThread::wakeWorkThread):
+        * storage/DatabaseThread.h: Added.
+
+        * storage/DatabaseTracker.cpp: Added.
+          The DatabaseTracker is the master management of all databases.  It will keep track of the filename for a given
+          unique database, keep track of the total disk usage per-origin, and policys per database/origin
+        (WebCore::DatabaseTracker::setDatabasePath):
+        (WebCore::DatabaseTracker::databasePath):
+        (WebCore::DatabaseTracker::tracker):
+        (WebCore::DatabaseTracker::DatabaseTracker):
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::addDatabase):
+        (WebCore::DatabaseTracker::deleteAllDatabases):
+        (WebCore::DatabaseTracker::deleteAllDatabasesForOrigin):
+        * storage/DatabaseTracker.h: Added.
+
+        * storage/SQLCallback.h: Added. C++ version of the javascript executeSql() callback
+        (WebCore::SQLCallback::~SQLCallback):
+        * storage/SQLCallback.idl: Added.
+
+        * storage/SQLResultSet.cpp: Added. C++ version of the javascript SQLResultSet object
+        (WebCore::SQLResultSet::SQLResultSet):
+        (WebCore::SQLResultSet::insertId):
+        (WebCore::SQLResultSet::rowsAffected):
+        (WebCore::SQLResultSet::errorCode):
+        (WebCore::SQLResultSet::error):
+        (WebCore::SQLResultSet::rows):
+        (WebCore::SQLResultSet::setInsertId):
+        (WebCore::SQLResultSet::setRowsAffected):
+        (WebCore::SQLResultSet::setErrorCode):
+        (WebCore::SQLResultSet::setErrorMessage):
+        * storage/SQLResultSet.h: Added.
+        * storage/SQLResultSet.idl: Added.
+
+        * storage/SQLResultSetRowList.cpp: Added. C++ version of the javascript SQLResultSetRowList object
+        (WebCore::SQLResultSetRowList::length):
+        * storage/SQLResultSetRowList.h: Added.
+        (WebCore::SQLResultSetRowList::columnNames):
+        (WebCore::SQLResultSetRowList::values):
+        (WebCore::SQLResultSetRowList::addColumn):
+        (WebCore::SQLResultSetRowList::addResult):
+        * storage/SQLResultSetRowList.idl: Added.
+
+        * storage/VersionChangeCallback.h: Added. C++ version of the javascript changeVersion() callback
+        (WebCore::VersionChangeCallback::~VersionChangeCallback):
+        * storage/VersionChangeCallback.idl: Added.
+
+2007-10-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Oliver + Same
+
+        Forwarding header for the new wtf/Queue.h
+
+        * ForwardingHeaders/wtf/Queue.h: Added.
+
+2007-10-19  Anders Carlsson <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Most of the Javascript binding support for the Storage API
+
+        * bindings/js/JSCustomSQLCallback.cpp: Added.
+        (WebCore::JSCustomSQLCallback::JSCustomSQLCallback):
+        (WebCore::JSCustomSQLCallback::handleEvent):
+        * bindings/js/JSCustomSQLCallback.h: Added.
+                Add JSCustomSQLCallback which is an SQLCallback implementation that dispatches
+                handleEvent to a JS function or a JS object with a handleEvent function.
+
+        * bindings/js/JSCustomVersionChangeCallback.cpp: Added.
+        (WebCore::JSCustomVersionChangeCallback::JSCustomVersionChangeCallback):
+        (WebCore::JSCustomVersionChangeCallback::handleEvent):
+        * bindings/js/JSCustomVersionChangeCallback.h: Added.
+                Add JSCustomSQLCallback which is an SQLCallback implementation that dispatches
+                handleEvent to a JS function or a JS object with a handleEvent function.
+
+        * bindings/js/JSDatabaseCustom.cpp: Added.
+        (WebCore::JSDatabase::executeSql):
+                Custom implementation of executeSql that takes an array of parameters.
+                
+        (WebCore::JSDatabase::changeVersion):
+                Custom implementation of changeVersion.
+                
+        * bindings/js/JSSQLResultSetRowListCustom.cpp: Added.
+        (WebCore::JSSQLResultSetRowList::item):
+                Custom method that returns a JS object that corresponds to a given row in the database.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::openDatabase):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+                Add openDatabase implementation.
+
+2007-10-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        Added tons of utility to the FileSystem abstractions, including moving
+        some stuff over from IconDatabase
+
+        * platform/FileSystem.h:
+
+        * platform/cf/FileSystemCF.cpp: Added.
+        (WebCore::fileSystemRepresentation):
+
+        * platform/mac/FileSystemMac.mm:
+
+        * platform/posix/FileSystemPOSIX.cpp: Added.
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::fileSize):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::makeAllDirectories):
+
+2007-10-19  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben
+
+        Preliminary Web Inspector support for the Storage API
+        (This patch does not include the support artwork)
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorDatabaseResource::setScriptObject):
+        (WebCore::databaseTableNames): Return the table names for a Database object.
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::populateScriptResources):
+        (WebCore::InspectorController::addDatabaseScriptResource): Add the script object for the database.
+        (WebCore::InspectorController::removeDatabaseScriptResource): Remove the script object for the database.
+        (WebCore::InspectorController::clearDatabaseScriptResources): Remove all the database resources.
+        (WebCore::InspectorController::didCommitLoad): Call clearDatabaseScriptResources().
+        (WebCore::InspectorController::didOpenDatabase): Make a new InspectorDatabaseResource and add it to m_databaseResources.
+        * page/InspectorController.h:
+        * page/inspector/Database.js: Added.
+        * page/inspector/DatabasePanel.js: Added.
+        * page/inspector/ResourceCategory.js: Make resource categories assume less about the resource.
+        * page/inspector/inspector.css: Add styles for the database panel.
+        * page/inspector/inspector.html: Include DatabasePanel.js
+        * page/inspector/inspector.js: Support for adding and removing Database resources.
+
+2007-10-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Added support for Chrome prompts required by the Storage API
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runDatabaseSizeLimitPrompt):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+
+2007-10-19  Brady Eidson <beidson@apple.com>
+
+        Contributions and Review by Anders
+
+        Various SQLite tweaks in preparation for the storage API
+
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::~SQLDatabase):
+        (WebCore::SQLDatabase::authorizerFunction): Static callback from sqlite for authorizer functions
+        (WebCore::SQLDatabase::setAuthorizer):
+        (WebCore::SQLDatabase::lock):
+        (WebCore::SQLDatabase::unlock):
+        * loader/icon/SQLDatabase.h:
+
+        * loader/icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::prepare): Switch to prepare16_v2
+        (WebCore::SQLStatement::bindDouble): Added
+        (WebCore::SQLStatement::bindValue): Bind a wrapped SQLValue object (described later)
+        (WebCore::SQLStatement::bindParameterCount): Accessor to the sqlite3 API for validating statements
+        * loader/icon/SQLStatement.h:
+        (WebCore::SQLStatement::isPrepared):
+
+        * platform/sql/SQLAuthorizer.cpp: Added.  Fully virtual interface to implement your own SQLite authorizer
+        * platform/sql/SQLAuthorizer.h: Added.
+        (WebCore::SQLAuthorizer::~SQLAuthorizer):
+        (WebCore::SQLAuthorizer::createTable):
+        (WebCore::SQLAuthorizer::createTempTable):
+        (WebCore::SQLAuthorizer::dropTable):
+        (WebCore::SQLAuthorizer::dropTempTable):
+        (WebCore::SQLAuthorizer::allowAlterTable):
+        (WebCore::SQLAuthorizer::createIndex):
+        (WebCore::SQLAuthorizer::createTempIndex):
+        (WebCore::SQLAuthorizer::dropIndex):
+        (WebCore::SQLAuthorizer::dropTempIndex):
+        (WebCore::SQLAuthorizer::createTrigger):
+        (WebCore::SQLAuthorizer::createTempTrigger):
+        (WebCore::SQLAuthorizer::dropTrigger):
+        (WebCore::SQLAuthorizer::dropTempTrigger):
+        (WebCore::SQLAuthorizer::createView):
+        (WebCore::SQLAuthorizer::createTempView):
+        (WebCore::SQLAuthorizer::dropView):
+        (WebCore::SQLAuthorizer::dropTempView):
+        (WebCore::SQLAuthorizer::createVTable):
+        (WebCore::SQLAuthorizer::dropVTable):
+        (WebCore::SQLAuthorizer::allowDelete):
+        (WebCore::SQLAuthorizer::allowInsert):
+        (WebCore::SQLAuthorizer::allowUpdate):
+        (WebCore::SQLAuthorizer::allowTransaction):
+        (WebCore::SQLAuthorizer::allowSelect):
+        (WebCore::SQLAuthorizer::allowRead):
+        (WebCore::SQLAuthorizer::allowAttach):
+        (WebCore::SQLAuthorizer::allowDetach):
+        (WebCore::SQLAuthorizer::allowReindex):
+        (WebCore::SQLAuthorizer::allowAnalyze):
+        (WebCore::SQLAuthorizer::allowFunction):
+
+        * platform/sql/SQLValue.cpp: Added.  Contains a value for a SQLite database that can be one of a few types.  
+          For now, just a String or a double
+        (WebCore::SQLValue::SQLValue):
+        (WebCore::SQLValue::string):
+        (WebCore::SQLValue::number):
+        * platform/sql/SQLValue.h: Added.
+        (WebCore::SQLValue::):
+        (WebCore::SQLValue::SQLValue):
+        (WebCore::SQLValue::type):
+
+2007-10-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Changed IconDatabase over to use new FileSystem apis
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+
 2007-10-19  David Hyatt  <hyatt@apple.com>
 
         Fix for ebay parser crash.

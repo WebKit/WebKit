@@ -94,6 +94,7 @@ public:
 
     virtual void print(WebCore::Frame*);
 
+    virtual bool runDatabaseSizeLimitPrompt(WebCore::Frame*, const WebCore::String& origin);
 private:
     WebView* m_webView;
 };

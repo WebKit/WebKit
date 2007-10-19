@@ -35,6 +35,7 @@ typedef struct sqlite3_stmt sqlite3_stmt;
 namespace WebCore {
 
 class SQLDatabase;
+class SQLValue;
 
 class SQLStatement : public Noncopyable
 {
@@ -43,12 +44,15 @@ public:
     ~SQLStatement();
     
     int prepare();
-    bool isPrepared() { return m_statement; }
+    bool isPrepared() const { return m_statement; }
     int bindBlob(int index, const void* blob, int size, bool copy = true);
     int bindText(int index, const char* text, bool copy = true);
     int bindText16(int index, const String& text, bool copy = true);
     int bindInt64(int index, int64_t integer);
+    int bindDouble(int index, double number);
     int bindNull(int index);
+    int bindValue(int index, const SQLValue&);
+    unsigned bindParameterCount() const;
 
     int step();
     int finalize();

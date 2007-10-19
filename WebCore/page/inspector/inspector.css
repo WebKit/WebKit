@@ -111,6 +111,37 @@ body.inactive #toolbar button, body.inactive #toolbar button:disabled:active {
     -webkit-border-image: url(Images/toolbarButtonInactive.png) 3 3 4 3;
 }
 
+#toolbar select, #toolbar select:disabled:active {
+    background-color: transparent;
+    border-width: 3px 12px 4px 3px;
+    border-color: transparent;
+    -webkit-border-image: url(Images/toolbarPopup.png) 3 12 4 3;
+    height: 19px;
+    font-size: 10px;
+    padding-left: 8px;
+    padding-right: 4px;
+    -webkit-box-sizing: border-box;
+    -webkit-border-radius: 0;
+    -webkit-appearance: none;
+    vertical-align: middle;
+}
+
+#toolbar select:focus {
+    outline: none;
+}
+
+#toolbar select:active, #toolbar select.selected {
+    -webkit-border-image: url(Images/toolbarPopupPressed.png) 3 12 4 3;
+}
+
+body.inactive #toolbar select:active, body.inactive #toolbar select.selected {
+    -webkit-border-image: url(Images/toolbarPopupPressedInactive.png) 3 12 4 3;
+}
+
+body.inactive #toolbar select, body.inactive #toolbar select:disabled:active {
+    -webkit-border-image: url(Images/toolbarPopupInactive.png) 3 12 4 3;
+}
+
 #toolbar .split-button-divider {
     width: 1px;
     height: 19px;
@@ -168,10 +199,11 @@ body.inactive #toolbar .split-button-divider {
     top: -1px;
     width: 8px;
     height: 7px;
+    opacity: 0.66;
 }
 
 .view-button-source.selected img {
-    content: url(Images/sourceViewButtonSelected.png);
+    opacity: 1;
 }
 
 .view-button-dom img {
@@ -181,10 +213,11 @@ body.inactive #toolbar .split-button-divider {
     left: 1px;
     width: 10px;
     height: 7px;
+    opacity: 0.66;
 }
 
 .view-button-dom.selected img {
-    content: url(Images/domViewButtonSelected.png);
+    opacity: 1;
 }
 
 #viewbuttons {
@@ -489,6 +522,10 @@ body.attached #attachToggle:active {
     background-image: url(Images/document.png);
     background-repeat: no-repeat;
     background-position: center center;
+}
+
+#list .icon.database {
+    background-image: url(Images/database.png);
 }
 
 #list .icon.plain {
@@ -1324,6 +1361,222 @@ body.inactive #sidebar li.selected {
     position: absolute;
     left: 7px;
     top: 1px;
+}
+
+.view-button-browse img {
+    content: url(Images/databaseBrowserViewButton.png);
+    position: relative;
+    top: -1px;
+    left: 1px;
+    width: 11px;
+    height: 7px;
+    opacity: 0.66;
+}
+
+.view-button-browse.selected img {
+    opacity: 1;
+}
+
+.view-button-query img {
+    content: url(Images/databaseQueryViewButton.png);
+    position: relative;
+    top: -1px;
+    left: 0px;
+    width: 10px;
+    height: 7px;
+    opacity: 0.66;
+}
+
+.view-button-query.selected img {
+    opacity: 1;
+}
+
+.database-table-reload {
+    padding-left: 0;
+    padding-right: 0;
+    width: 20px;
+    margin-left: 6px;
+}
+
+.database-table-reload img {
+    content: url(Images/reload.png);
+    position: relative;
+    top: -2px;
+    left: 0px;
+    width: 10px;
+    height: 11px;
+    opacity: 0.7;
+}
+
+.database-query.content {
+    bottom: 21px;
+}
+
+.database-browse.content {
+    font-size: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    bottom: 21px;
+}
+
+.database-browse.content .database-result-table {
+    border: none;
+}
+
+.database-browse.content .database-table-empty {
+    position: absolute;
+    top: 0;
+    bottom: 25%;
+    left: 0;
+    right: 0;
+    font-size: 24px;
+    color: rgb(75%, 75%, 75%);
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 50px;
+    line-height: 26px;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.database-browse.content .database-table-error {
+    position: absolute;
+    top: 0;
+    bottom: 25%;
+    left: 0;
+    right: 0;
+    font-size: 24px;
+    color: rgb(66%, 33%, 33%);
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 50px;
+    line-height: 26px;
+    text-align: center;
+    padding: 10px;
+}
+
+.database-browse-table {
+    height: 100%;
+}
+
+.database-result-table .database-result-filler-row {
+    height: auto;
+}
+
+.database-result-table .database-result-filler-row.alternate td {
+    background-position-y: 16px;
+}
+
+.database-result-filler-row td {
+    background-image: url(Images/alternateTableRows.png);
+}
+
+.database-table-select {
+    margin-left: 6px;
+    max-width: 150px;
+    min-width: 75px;
+}
+
+.database-command-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.database-prompt {
+    font-family: monospace;
+    font-size: 11px;
+    margin: 0;
+    padding: 2px 0 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 18px;
+    resize: none;
+    outline: none;
+    border: none;
+    border-top: 1px solid rgb(64%, 64%, 64%);
+}
+
+.database-command {
+    font-size: 10px;
+    margin: 0;
+    padding: 5px;
+    border-bottom: 1px solid rgb(75%, 75%, 75%);
+    word-break: break-word;
+    position: relative;
+}
+
+.database-command a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.database-command-query {
+    font-family: monospace;
+    font-size: 11px;
+    white-space: pre-wrap;
+}
+
+.database-command-result {
+    margin-top: 3px;
+}
+
+.database-command-result.error {
+    color: red;
+}
+
+.database-result-table {
+    border: 1px solid #aaa;
+    table-layout: fixed;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+}
+
+.database-result-table th {
+    text-align: left;
+    background: url(Images/glossyHeader.png) repeat-x;
+    border-right: 1px solid #aaa;
+    height: 15px;
+    -webkit-box-sizing: border-box;
+    border-bottom: 1px solid #aaa;
+    font-weight: normal;
+    vertical-align: middle;
+    padding: 0 4px;
+    white-space: nowrap;
+}
+
+.database-result-table tr {
+    height: 16px;
+}
+
+.database-result-table tr.alternate {
+    background-color: rgb(236, 243, 254);
+}
+
+.database-result-table td {
+    vertical-align: top;
+    padding: 2px 4px;
+    -webkit-box-sizing: border-box;
+    white-space: nowrap;
+    border-right: 1px solid #aaa;
+}
+
+.database-result-table td > div, .database-result-table th > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .network-timeline {

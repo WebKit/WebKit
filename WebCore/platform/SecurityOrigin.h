@@ -46,6 +46,8 @@ namespace WebCore {
         bool allowsAccessFrom(const SecurityOrigin&) const;
         bool isSecureTransitionTo(const KURL&) const;
 
+        String toString() const;
+        
     private:
         void clear();
         bool isEmpty() const;

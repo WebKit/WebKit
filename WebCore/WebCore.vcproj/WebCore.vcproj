@@ -189,7 +189,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\platform\graphics\svg&quot;;&quot;$(ProjectDir)..\platform\graphics\svg\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\svg\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\ksvg2&quot;;&quot;$(ProjectDir)..\ksvg2\css&quot;;&quot;$(ProjectDir)..\ksvg2\events&quot;;&quot;$(ProjectDir)..\ksvg2\misc&quot;;&quot;$(ProjectDir)..\ksvg2\svg&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\win&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\platform\graphics\svg&quot;;&quot;$(ProjectDir)..\platform\graphics\svg\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\svg\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\ksvg2&quot;;&quot;$(ProjectDir)..\ksvg2\css&quot;;&quot;$(ProjectDir)..\ksvg2\events&quot;;&quot;$(ProjectDir)..\ksvg2\misc&quot;;&quot;$(ProjectDir)..\ksvg2\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				PreprocessorDefinitions="WIN32;__WIN32__;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_EXPERIMENTAL_FEATURES;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -518,6 +518,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCSSValueList.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDatabase.h"
 				>
 			</File>
 			<File
@@ -1226,6 +1234,30 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSScreen.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLCallback.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLResultSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLResultSet.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLResultSetRowList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLResultSetRowList.h"
 				>
 			</File>
 			<File
@@ -4469,6 +4501,26 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="sql"
+				>
+				<File
+					RelativePath="..\platform\sql\SQLAuthorizer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLAuthorizer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLValue.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLValue.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="css"
@@ -7320,11 +7372,31 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSCustomSQLCallback.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomSQLCallback.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomVersionChangeCallback.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomVersionChangeCallback.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCustomXPathNSResolver.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSCustomXPathNSResolver.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDatabaseCustom.cpp"
 					>
 				</File>
 				<File
@@ -7473,6 +7545,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSNodeListCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSSQLResultSetRowListCustom.cpp"
 					>
 				</File>
 				<File
@@ -8748,6 +8824,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\ForwardingHeaders\wtf\Deque.h"
+					>
+				</File>
+				<File
 					RelativePath="..\ForwardingHeaders\wtf\FastMalloc.h"
 					>
 				</File>
@@ -8962,6 +9042,82 @@
 			</File>
 			<File
 				RelativePath="..\history\PageCache.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="storage"
+			>
+			<File
+				RelativePath="..\storage\Database.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\Database.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseAuthorizer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseAuthorizer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseCallback.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseTask.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseTask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseThread.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseTracker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseTracker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLResultSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLResultSet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLResultSetRowList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLResultSetRowList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\VersionChangeCallback.h"
 				>
 			</File>
 		</Filter>

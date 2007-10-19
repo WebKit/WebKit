@@ -102,6 +102,16 @@ namespace WebCore {
         virtual void setToolTip(const String&) = 0;
 
         virtual void print(Frame*) = 0;
+
+//  Possible permission levels -
+//  -Allow just this database to be created
+//  -Allow this domain to create whatever it wants
+//  -Don't allow this database
+//  -Don't allow this domain to ever create any
+//  -Don't allow any databases
+//        virtual bool runDatabaseCreationPrompt(Frame*, const String& origin, const String& name) = 0;
+
+        virtual bool runDatabaseSizeLimitPrompt(Frame*, const String& origin) = 0;
 };
 
 }

@@ -27,11 +27,15 @@
  */
 
 #include "config.h"
-
 #include "FileSystem.h"
+
+#include "CString.h"
+#include "NotImplemented.h"
 #include "PlatformString.h"
 
-#include <sys/stat.h>
+#include <windows.h>
+#include <winbase.h>
+#include <shlobj.h>
 
 namespace WebCore {
 
@@ -59,4 +63,36 @@ bool deleteFile(const String& path)
     return !!DeleteFileW(filename.charactersWithNullTermination());
 }
 
+String pathByAppendingComponent(const String& path, const String& component)
+{
+    if (path.endsWith("\\"))
+        return path + component;
+    else
+        return path + "\\" + component;
 }
+
+CString fileSystemRepresentation(const String&)
+{
+    return "";
+}
+
+bool makeAllDirectories(const String& path)
+{
+    String fullPath = path;
+    if (!SHCreateDirectoryEx(0, fullPath.charactersWithNullTermination(), 0)) {
+        DWORD error = GetLastError();
+        if (error != ERROR_FILE_EXISTS && error != ERROR_ALREADY_EXISTS) {
+            LOG_ERROR("Failed to create path %s", path.ascii().data());
+            return false;
+        }
+    }
+    return true;
+}
+
+String homeDirectoryPath()
+{
+    notImplemented();
+    return "";
+}
+
+} // namespace WebCore

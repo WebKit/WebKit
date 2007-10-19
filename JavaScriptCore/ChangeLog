@@ -1,3 +1,48 @@
+2007-10-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        Queue -> Deque! and small style tweaks
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj
+        * wtf/Deque.h: Added.
+        (WTF::DequeNode::DequeNode):
+        (WTF::Deque::Deque):
+        (WTF::Deque::~Deque):
+        (WTF::Deque::size):
+        (WTF::Deque::isEmpty):
+        (WTF::Deque::append):
+        (WTF::Deque::prepend):
+        (WTF::Deque::first):
+        (WTF::Deque::last):
+        (WTF::Deque::removeFirst):
+        (WTF::Deque::clear):
+        * wtf/Queue.h: Removed.
+
+
+2007-10-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        Added a simple LinkedList based Queue to wtf
+        We can make a better, more sophisticated an efficient one later, but have
+        needed one for some time, now!
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Queue.h: Added.
+        (WTF::QueueNode::QueueNode):
+        (WTF::Queue::Queue):
+        (WTF::Queue::~Queue):
+        (WTF::Queue::size):
+        (WTF::Queue::isEmpty):
+        (WTF::Queue::append):
+        (WTF::Queue::prepend):
+        (WTF::Queue::first):
+        (WTF::Queue::last):
+        (WTF::Queue::removeFirst):
+        (WTF::Queue::clear):
+
 2007-10-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Anders.

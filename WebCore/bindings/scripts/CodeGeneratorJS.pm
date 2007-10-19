@@ -1354,6 +1354,7 @@ sub TypeCanFailConversion
                 $type eq "Range" or
                 $type eq "NodeFilter" or
                 $type eq "DOMWindow" or
+                $type eq "SQLResultSet" or
                 $type eq "XPathEvaluator" or
                 $type eq "XPathNSResolver" or
                 $type eq "XPathResult" or

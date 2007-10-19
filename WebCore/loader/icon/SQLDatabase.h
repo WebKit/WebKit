@@ -27,6 +27,7 @@
 #define SQLDatabase_h
 
 #include "PlatformString.h"
+#include "Threading.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -42,20 +43,23 @@ typedef struct sqlite3 sqlite3;
 
 namespace WebCore {
 
+class SQLAuthorizer;
 class SQLStatement;
 class SQLTransaction;
 
-extern const int SQLResultError;
 extern const int SQLResultDone;
+extern const int SQLResultError;
 extern const int SQLResultOk;
 extern const int SQLResultRow;
+extern const int SQLResultSchema;
+
 
 class SQLDatabase : public Noncopyable
 {
 friend class SQLTransaction;
 public:
     SQLDatabase();
-    ~SQLDatabase() { close(); }
+    ~SQLDatabase();
 
     bool open(const String& filename);
     bool isOpen() const { return m_db; }
@@ -97,13 +101,24 @@ public:
         return m_db;
     }
     
+    void setAuthorizer(PassRefPtr<SQLAuthorizer>);
+
+    // (un)lock's the database like a mutex
+    void lock();
+    void unlock();
 private:
+    static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
+
     String   m_path;
     sqlite3* m_db;
     int m_lastError;
     
     bool m_transactionInProgress;
     
+    Mutex m_authorizerLock;
+    RefPtr<SQLAuthorizer> m_authorizer;
+
+    Mutex m_lockingMutex;
 #ifndef NDEBUG
     pthread_t m_openingThread;
 #endif

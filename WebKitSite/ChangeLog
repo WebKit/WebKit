@@ -1,3 +1,11 @@
+2007-10-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Sample database API usage
+
+        * misc/DatabaseExample.html: Added.
+
 2007-09-25  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam.

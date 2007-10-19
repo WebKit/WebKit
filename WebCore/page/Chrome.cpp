@@ -347,6 +347,12 @@ void Chrome::print(Frame* frame)
     m_client->print(frame);
 }
 
+bool Chrome::runDatabaseSizeLimitPrompt(Frame* f, const String& origin)
+{
+    return m_client->runDatabaseSizeLimitPrompt(f, origin);
+}
+
+
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 {
     const HashSet<Page*>* group = page->frameNamespace();

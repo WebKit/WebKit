@@ -85,4 +85,15 @@ enum {
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;
 - (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
 
+/*!
+    @method webView:runDatabaseSizeLimitPromptForOrigin:initiatedByFrame:
+    @param sender The WebView sending the delegate method
+    @param origin The Origin of the database that has reached its size limit
+    @param frame The WebFrame whose JavaScript initiated this call.
+    @result YES if the user hit Allow, NO if the user chose Deny.
+    @discussion Clients should prompt the user for permission to allow databases
+    from this origin to continue to grow.
+*/
+- (BOOL)webView:(WebView *)sender runDatabaseSizeLimitPromptForOrigin:(NSString *)origin initiatedByFrame:(WebFrame *)frame;
+
 @end

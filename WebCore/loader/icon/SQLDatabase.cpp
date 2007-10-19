@@ -27,16 +27,19 @@
 #include "SQLDatabase.h"
 
 #include "Logging.h"
-#include <sqlite3.h>
+#include "SQLAuthorizer.h"
 #include "SQLStatement.h"
 
+#include <sqlite3.h>
 
 namespace WebCore {
 
-const int SQLResultError = SQLITE_ERROR;
 const int SQLResultDone = SQLITE_DONE;
+const int SQLResultError = SQLITE_ERROR;
 const int SQLResultOk = SQLITE_OK;
 const int SQLResultRow = SQLITE_ROW;
+const int SQLResultSchema = SQLITE_SCHEMA;
+
 
 SQLDatabase::SQLDatabase()
     : m_db(0)
@@ -45,6 +48,11 @@ SQLDatabase::SQLDatabase()
 #ifndef NDEBUG
     memset(&m_openingThread, 0, sizeof(pthread_t));
 #endif
+}
+
+SQLDatabase::~SQLDatabase()
+{
+    close();
 }
 
 bool SQLDatabase::open(const String& filename)
@@ -182,6 +190,107 @@ int SQLDatabase::lastError()
 const char* SQLDatabase::lastErrorMsg()
 { 
     return sqlite3_errmsg(m_db);
+}
+
+int SQLDatabase::authorizerFunction(void* userData, int actionCode, const char* parameter1, const char* parameter2, const char* /*databaseName*/, const char* /*trigger_or_view*/)
+{
+    SQLAuthorizer* auth = static_cast<SQLAuthorizer*>(userData);
+    ASSERT(auth);
+
+    switch (actionCode) {
+        case SQLITE_CREATE_INDEX:
+            return auth->createIndex(parameter1, parameter2);
+        case SQLITE_CREATE_TABLE:
+            return auth->createTable(parameter1);
+        case SQLITE_CREATE_TEMP_INDEX:
+            return auth->createTempIndex(parameter1, parameter2);
+        case SQLITE_CREATE_TEMP_TABLE:
+            return auth->createTempTable(parameter1);
+        case SQLITE_CREATE_TEMP_TRIGGER:
+            return auth->createTempTrigger(parameter1, parameter2);
+        case SQLITE_CREATE_TEMP_VIEW:
+            return auth->createTempView(parameter1);
+        case SQLITE_CREATE_TRIGGER:
+            return auth->createTrigger(parameter1, parameter2);
+        case SQLITE_CREATE_VIEW:
+            return auth->createView(parameter1);
+        case SQLITE_DELETE:
+            return auth->allowDelete(parameter1);
+        case SQLITE_DROP_INDEX:
+            return auth->dropIndex(parameter1, parameter2);
+        case SQLITE_DROP_TABLE:
+            return auth->dropTable(parameter1);
+        case SQLITE_DROP_TEMP_INDEX:
+            return auth->dropTempIndex(parameter1, parameter2);
+        case SQLITE_DROP_TEMP_TABLE:
+            return auth->dropTempTable(parameter1);
+        case SQLITE_DROP_TEMP_TRIGGER:
+            return auth->dropTempTrigger(parameter1, parameter2);
+        case SQLITE_DROP_TEMP_VIEW:
+            return auth->dropTempView(parameter1);
+        case SQLITE_DROP_TRIGGER:
+            return auth->dropTrigger(parameter1, parameter2);
+        case SQLITE_DROP_VIEW:
+            return auth->dropView(parameter1);
+        case SQLITE_INSERT:
+            return auth->allowInsert(parameter1);
+        case SQLITE_PRAGMA:
+            return auth->allowPragma(parameter1, parameter2);
+        case SQLITE_READ:
+            return auth->allowRead(parameter1, parameter2);
+        case SQLITE_SELECT:
+            return auth->allowSelect();
+        case SQLITE_TRANSACTION:
+            return auth->allowTransaction();
+        case SQLITE_UPDATE:
+            return auth->allowUpdate(parameter1, parameter2);
+        case SQLITE_ATTACH:
+            return auth->allowAttach(parameter1);
+        case SQLITE_DETACH:
+            return auth->allowDetach(parameter1);
+        case SQLITE_ALTER_TABLE:
+            return auth->allowAlterTable(parameter1, parameter2);
+        case SQLITE_REINDEX:
+            return auth->allowReindex(parameter1);
+        case SQLITE_ANALYZE:
+            return auth->allowAnalyze(parameter1);
+        case SQLITE_CREATE_VTABLE:
+            return auth->createVTable(parameter1, parameter2);
+        case SQLITE_DROP_VTABLE:
+            return auth->dropVTable(parameter1, parameter2);
+        case SQLITE_FUNCTION:
+            return auth->allowFunction(parameter1);
+        default:
+            ASSERT_NOT_REACHED();
+            return SQLAuthDeny;
+    }
+}
+
+void SQLDatabase::setAuthorizer(PassRefPtr<SQLAuthorizer> auth)
+{
+    if (!m_db) {
+        LOG_ERROR("Attempt to set an authorizer on a non-open SQL database");
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    MutexLocker locker(m_authorizerLock);
+
+    m_authorizer = auth;
+    if (m_authorizer)
+        sqlite3_set_authorizer(m_db, SQLDatabase::authorizerFunction, m_authorizer.get());
+    else
+        sqlite3_set_authorizer(m_db, NULL, 0);
+}
+
+void SQLDatabase::lock()
+{
+    m_lockingMutex.lock();
+}
+
+void SQLDatabase::unlock()
+{
+    m_lockingMutex.unlock();
 }
 
 } // namespace WebCore

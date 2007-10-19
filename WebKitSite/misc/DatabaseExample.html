@@ -1,0 +1,86 @@
+<html>
+<style>
+#oddNote { background-color: White; }
+#evenNote { background-color: LightCyan; }
+#note { border: 2px dashed blue; padding: 2px; }
+</style>
+
+<script>
+
+var db;
+try {
+    db = openDatabase("NoteTest", "1.0");
+} catch(err) { }
+
+if (!db) {
+    alert("Failed to open the database on disk.  Are you using a WebKit nightly with this feature enabled?");
+}
+
+function saveNote()
+{    
+    if (!db)
+        return;
+
+    var note = document.getElementById("note").innerText;
+    var timestamp = new Date();
+    timestamp = timestamp.getTime();
+    
+    db.executeSql("CREATE TABLE IF NOT EXISTS WebKitNotes (note TEXT, timestamp REAL)", function(result) {
+        if (result.errorCode)
+            alert("Failed to save note in database");
+        db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", note, timestamp, function(result) {
+            if (result.errorCode)
+                alert("Failed to save note in database");
+            else
+                appendNote(note, timestamp);
+        });
+    });
+}
+
+var added = 0;
+var noteIDs = new Array();
+noteIDs[0] = "oddNote";
+noteIDs[1] = "evenNote";
+
+function appendNote(note, timestamp)
+{
+    if (!db)
+        return;
+
+    var previousNotes = document.getElementById("previousNotes");
+    
+    var date = new Date();
+    date.setTime(parseFloat(timestamp));
+
+    var newdiv = document.createElement('div');
+    newdiv.setAttribute('id', noteIDs[added++ % 2]);
+    newdiv.innerText = date + ": " + note;
+    
+    previousNotes.appendChild(newdiv);
+}
+
+function loaded()
+{
+    if (!db)
+        return;
+
+    db.executeSql("SELECT note, timestamp FROM WebKitNotes ORDER BY timestamp", function(result) {
+        if (result.errorCode) {
+            alert("Failed to retrieve previous notes from database");
+            return;
+        }
+        for (var i = 0; i < result.rows.length; ++i) {
+            var row = result.rows.item(i);
+            appendNote(row["note"], row["timestamp"]);
+        }
+    });
+}
+
+</script>
+
+<body onload="loaded()">
+<div id="note" contenteditable>Enter your note here</div>
+<input type=button onclick="saveNote()" value="Save Note">
+<div id="previousNotes"></div>
+</body>
+</html>
