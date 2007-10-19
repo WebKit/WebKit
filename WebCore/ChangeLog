@@ -1,3 +1,11 @@
+2007-10-19  Brady Eidson  <beidson@apple.com>
+
+        Remove stray printfs
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+
 2007-10-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.
