@@ -1,3 +1,11 @@
+2007-10-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adam.
+        
+        - don't delay-load WebKit in DumpRenderTree.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
 
         Reviewed by Adam Roben.
