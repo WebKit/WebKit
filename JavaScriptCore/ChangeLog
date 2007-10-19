@@ -1,3 +1,11 @@
+2007-10-19  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Another build fix for the windows/qt build: Apply the same fix as in revision 26686 also to kjs/config.h to disable the disallowctype feature.
+
+        * kjs/config.h:
+
 2007-10-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.
