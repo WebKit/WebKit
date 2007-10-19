@@ -2,6 +2,7 @@
 <head>
 <link rel="stylesheet" href="../js/resources/js-test-style.css">
 <script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -39,9 +40,7 @@ function testsDone()
         shouldBe("encode('" + charsets[i] + "', '" + unicodes[i] + "')", "'" + expectedResults[i] + "'");
     }
 
-    // Hack; we'd prefer to use js-test-post.js but it runs too soon.
-    shouldBeTrue("successfullyParsed");
-    debug('<br><span class="pass">TEST COMPLETE</span>');
+    isSuccessfullyParsed();
 
     if (window.layoutTestController)
         layoutTestController.notifyDone();

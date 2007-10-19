@@ -1,3 +1,13 @@
+2007-10-19  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        Provide the functionality of js-test-post.js in a function named isSuccessfullyParsed().
+
+        * fast/encoding/char-encoding.html: Updated to use js-test-post-function.js instead of local hack.
+        * fast/js/resources/js-test-post-function.js: Copied from LayoutTests/fast/js/resources/js-test-post.js.
+        Modified to create isSuccessfullyParsed() function.
+
 2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
 
         Rubber-stamped by Mark Rowe.
