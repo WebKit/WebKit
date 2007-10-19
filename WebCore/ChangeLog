@@ -1,3 +1,31 @@
+2007-10-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Encapsulate the same origin check into the new SecurityOrigin class.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::defaultEventHandler):
+        * dom/Document.h:
+        (WebCore::Document::securityOrigin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::setOpener):
+        * loader/FrameLoader.h:
+        * platform/SecurityOrigin.cpp: Added.
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::clear):
+        (WebCore::SecurityOrigin::isEmpty):
+        (WebCore::SecurityOrigin::setForFrame):
+        (WebCore::SecurityOrigin::setDomainFromDOM):
+        (WebCore::SecurityOrigin::allowsAccessFrom):
+        (WebCore::SecurityOrigin::isSecureTransitionTo):
+        * platform/SecurityOrigin.h: Added.
+
 2007-10-19  Simon Hausmann  <hausmann@kde.org>
 
         Fix the Qt/Windows build: Added missing FontSelector.h include.

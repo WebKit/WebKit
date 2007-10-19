@@ -3210,6 +3210,8 @@
 		B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */; };
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
 		B402FD0B0C4C9C3900210AA6 /* BidiResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B402FD090C4C9C3900210AA6 /* BidiResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC014C740CC5579D009C4B20 /* SecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC014C720CC5579D009C4B20 /* SecurityOrigin.cpp */; };
+		BC014C750CC5579D009C4B20 /* SecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = BC014C730CC5579D009C4B20 /* SecurityOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */; };
 		BC06ED070BFD5BAE00856E9D /* JSHTMLTableSectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */; };
@@ -7033,6 +7035,8 @@
 		B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomEvent.cpp; sourceTree = "<group>"; };
 		B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomEvent.h; sourceTree = "<group>"; };
 		B402FD090C4C9C3900210AA6 /* BidiResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiResolver.h; sourceTree = "<group>"; };
+		BC014C720CC5579D009C4B20 /* SecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOrigin.cpp; sourceTree = "<group>"; };
+		BC014C730CC5579D009C4B20 /* SecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SecurityOrigin.h; sourceTree = "<group>"; };
 		BC0564990C6ABC1000ACE412 /* character-sets.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "character-sets.txt"; sourceTree = "<group>"; };
 		BC05649A0C6ABC1000ACE412 /* make-charset-table.pl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; path = "make-charset-table.pl"; sourceTree = "<group>"; };
 		BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRenderer.h; sourceTree = "<group>"; };
@@ -10878,6 +10882,8 @@
 				93C09C850B0657AA005ABD4D /* ScrollTypes.h */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
+				BC014C720CC5579D009C4B20 /* SecurityOrigin.cpp */,
+				BC014C730CC5579D009C4B20 /* SecurityOrigin.h */,
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				BCFB2E830979FD4F00BA703D /* Shared.h */,
@@ -13225,6 +13231,7 @@
 				A8A909AC0CBCD6B50029B807 /* RenderSVGTransformableContainer.h in Headers */,
 				BC9ADD230CC4032600098C4C /* CSSTransformValue.h in Headers */,
 				E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */,
+				BC014C750CC5579D009C4B20 /* SecurityOrigin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14709,6 +14716,7 @@
 				A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */,
 				BC9ADD800CC4092200098C4C /* CSSTransformValue.cpp in Sources */,
 				1A2E6FA40CC5795D004A2062 /* ThreadingPthreads.cpp in Sources */,
+				BC014C740CC5579D009C4B20 /* SecurityOrigin.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

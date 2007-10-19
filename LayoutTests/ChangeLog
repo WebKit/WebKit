@@ -1,3 +1,25 @@
+2007-10-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Update results after changing the warning message in isSafeScript to print the frame URL 
+        rather than the security domain URL.  This now also prints the warning when using data:
+        URLs because we no longer return early.
+
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-window-open-expected.txt:
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-window-open-expected.txt:
+
 2007-10-19  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.

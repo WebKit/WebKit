@@ -85,6 +85,7 @@
 #include "RenderArena.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "Settings.h"
@@ -263,7 +264,6 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
 #if ENABLE(XBL)
     , m_bindingManager(new XBLBindingManager(this))
 #endif
-    , m_domainWasSetInDOM(false)
     , m_savedRenderer(0)
     , m_secureForms(0)
     , m_designMode(inherit)
@@ -334,7 +334,7 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     
     m_jsEditor = 0;
 
-    initSecurityPolicyURL();
+    initSecurityOrigin();
 
     static int docID = 0;
     m_docID = docID++;
@@ -2598,8 +2598,6 @@ String Document::domain() const
 
 void Document::setDomain(const String& newDomain)
 {
-    m_domainWasSetInDOM = true;
-
     // Not set yet (we set it on demand to save time and space)
     // Initially set to the host
     if (m_domain.isEmpty())
@@ -2624,11 +2622,12 @@ void Document::setDomain(const String& newDomain)
                 m_domain = newDomain;
         }
     }
+
+    m_securityOrigin.setDomainFromDOM(newDomain);
 }
 
 void Document::setDomainInternal(const String& newDomain)
 {
-    m_domainWasSetInDOM = false;
     m_domain = newDomain;
 }
 
@@ -3696,32 +3695,11 @@ bool Document::useSecureKeyboardEntryWhenActive() const
     return m_useSecureKeyboardEntryWhenActive;
 }
 
-void Document::initSecurityPolicyURL()
+void Document::initSecurityOrigin()
 {
     if (!m_frame)
         return;
-
-    FrameLoader* loader = m_frame->loader();
-    m_securityPolicyURL = loader->url();
-
-    // javascript: URLs create document using the "about" protocol
-    if (!m_securityPolicyURL.isEmpty() && !equalIgnoringCase(m_securityPolicyURL.protocol(), "about"))
-        return;
-
-    Frame* openerFrame = 0;
-    if (m_frame->tree()->parent())
-        openerFrame = m_frame->tree()->parent();
-    else if (loader->opener())
-        openerFrame = loader->opener();
-
-    if (!openerFrame)
-        return;
-
-    Document* openerDocument = openerFrame->document();
-    if (!openerDocument)
-        return;
-
-    m_securityPolicyURL = openerDocument->securityPolicyURL();
+    m_securityOrigin.setForFrame(m_frame);
 }
 
 void Document::updateFocusAppearanceSoon()

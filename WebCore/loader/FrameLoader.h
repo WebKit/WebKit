@@ -545,8 +545,6 @@ namespace WebCore {
         void stopRedirectionTimer();
 
         void startIconLoader();
-        
-        bool isSecureTransition(const KURL& fromURL, const KURL& toURL);
 
 #if USE(LOW_BANDWIDTH_DISPLAY)
         // implementation of CachedResourceClient        

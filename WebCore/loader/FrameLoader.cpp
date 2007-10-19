@@ -62,8 +62,8 @@
 #include "IconLoader.h"
 #include "InspectorController.h"
 #include "Logging.h"
-#include "MainResourceLoader.h"
 #include "MIMETypeRegistry.h"
+#include "MainResourceLoader.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "ProgressTracker.h"
@@ -71,6 +71,7 @@
 #include "RenderWidget.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
+#include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "Settings.h"
 #include "SystemTime.h"
@@ -872,21 +873,6 @@ void FrameLoader::setResponseMIMEType(const String& type)
     m_responseMIMEType = type;
 }
     
-bool FrameLoader::isSecureTransition(const KURL& fromURL, const KURL& toURL)
-{ 
-    // new window created by the application
-    if (fromURL.isEmpty())
-        return true;
-    
-    if (fromURL.isLocalFile())
-        return true;
-    
-    if (equalIgnoringCase(fromURL.host(), toURL.host()) && equalIgnoringCase(fromURL.protocol(), toURL.protocol()) && fromURL.port() == toURL.port())
-        return true;
-    
-    return false;
-}
-
 void FrameLoader::begin()
 {
     begin(KURL());
@@ -894,8 +880,7 @@ void FrameLoader::begin()
 
 void FrameLoader::begin(const KURL& url, bool dispatch)
 {
-    bool resetScripting = !(m_isDisplayingInitialEmptyDocument && m_frame->document() 
-                            && isSecureTransition(m_frame->document()->securityPolicyURL(), url));
+    bool resetScripting = !(m_isDisplayingInitialEmptyDocument && m_frame->document() && m_frame->document()->securityOrigin().isSecureTransitionTo(url));
     clear(resetScripting, resetScripting);
     if (dispatch)
         dispatchWindowObjectAvailable();
@@ -1674,7 +1659,7 @@ void FrameLoader::setOpener(Frame* opener)
     m_opener = opener;
 
     if (m_frame->document())
-        m_frame->document()->initSecurityPolicyURL();
+        m_frame->document()->initSecurityOrigin();
 }
 
 bool FrameLoader::openedByDOM() const

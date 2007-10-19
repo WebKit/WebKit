@@ -56,6 +56,7 @@
 #include "PlatformScreen.h"
 #include "PlugInInfoStore.h"
 #include "RenderView.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
 #include "htmlediting.h"
@@ -916,34 +917,23 @@ bool Window::isSafeScript(ExecState *exec) const
       return true;
 
   WebCore::Document* actDocument = activeFrame->document();
-  const KURL& actURL = actDocument->securityPolicyURL();
 
-  if (actURL.isLocalFile())
+  const SecurityOrigin& actSecurityOrigin = actDocument->securityOrigin();
+  const SecurityOrigin& thisSecurityOrigin = thisDocument->securityOrigin();
+
+  if (actSecurityOrigin.allowsAccessFrom(thisSecurityOrigin))
     return true;
 
-  const KURL& thisURL = thisDocument->securityPolicyURL();
+  // FIXME: this error message should contain more specifics of why the same origin check has failed.
+  String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
+                                  thisDocument->URL().utf8().data(), actDocument->URL().utf8().data());
 
-  // data: URL's are not allowed access to anything other than themselves.
-  if (equalIgnoringCase(thisURL.protocol(), "data") || equalIgnoringCase(actURL.protocol(), "data"))
-    return false;
+  if (Interpreter::shouldPrintExceptions())
+    printf("%s", message.utf8().data());
 
-  if (thisDocument->domainWasSetInDOM() && actDocument->domainWasSetInDOM()) {
-    if (thisDocument->domain() == actDocument->domain())
-      return true;
-  }
-
-  if (equalIgnoringCase(actURL.host(), thisURL.host()) && equalIgnoringCase(actURL.protocol(), thisURL.protocol()) && actURL.port() == thisURL.port())
-    return true;
-
-  if (Interpreter::shouldPrintExceptions()) {
-      printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n", 
-             thisURL.url().latin1(), actURL.url().latin1());
-  }
-  String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n", 
-                                  thisURL.url().latin1(), actURL.url().latin1());
   if (Page* page = frame->page())
-      page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String());
-  
+    page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String());
+
   return false;
 }
 
