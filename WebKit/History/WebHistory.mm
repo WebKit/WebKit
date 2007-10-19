@@ -305,6 +305,10 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     _entriesByDate->clear();
     [_entriesByURL removeAllObjects];
 
+    // Clear _orderedLastVisitedDays so it will be regenerated when next requested.
+    [_orderedLastVisitedDays release];
+    _orderedLastVisitedDays = nil;
+
     return YES;
 }
 

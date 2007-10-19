@@ -1,3 +1,14 @@
+2007-10-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+        
+        - fixed <rdar://problem/5540325> REGRESSION (2.0.4-3): History menu looks odd after clearing history
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate removeAllItems]):
+        This was fallout from r25275. We need to clear the orderedLastVisitedDays cache here, in addition
+        to the other places where it's cleared.
+
 2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
 
         Tiger build fix.
