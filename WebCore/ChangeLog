@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        Qt/Windows build fix: Threading.h uses int32_t but doesn't include stdint.h.
+
+        * platform/Threading.h:
+
+2007-10-19  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Fix the Qt/Windows build, don't use cat but use the perl print trick
         instead.
 

@@ -36,6 +36,8 @@
 #include <pthread.h>
 #endif
 
+#include <stdint.h>
+
 namespace WebCore {
 
 typedef uint32_t ThreadIdentifier;
