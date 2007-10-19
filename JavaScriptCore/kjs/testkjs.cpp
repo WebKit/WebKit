@@ -38,7 +38,7 @@
 #include <sys/time.h>
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN_OS)
 #include <crtdbg.h>
 #include <windows.h>
 #endif

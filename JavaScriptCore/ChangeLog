@@ -1,3 +1,11 @@
+2007-10-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Anders.
+
+        Try to fix Qt/Win build slave, by including windows.h also on Qt/Win.
+
+        * kjs/testkjs.cpp: Change PLATFORM(WIN) to PLATFORM(WIN_OS)
+
 2007-10-19  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.
