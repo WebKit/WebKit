@@ -1,5 +1,12 @@
 2007-10-19  Brady Eidson  <beidson@apple.com>
 
+        Better build fix
+
+        * loader/icon/SQLDatabase.cpp:
+        (WebCore::SQLDatabase::authorizerFunction):  Definite works by 3.3.13
+
+2007-10-19  Brady Eidson  <beidson@apple.com>
+
         Build fix
 
         * loader/icon/SQLDatabase.cpp:
