@@ -1,3 +1,16 @@
+2007-10-18  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Kevin McCullough.
+
+        <rdar://problem/5483526> 
+        GoogleDocs: A hang occurs when applying list styling to a selection containing a table and line breaks
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::exitNode): For selection preservation, we must emit a character
+        between every VisiblePosition.  We weren't emitting a space after some tables, because
+        we won't try to emit a space if shouldEmitNewlineAFterNode is true, even if no newline
+        was emitted.
+
 2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
 
         Reviewed by Adam Roben.

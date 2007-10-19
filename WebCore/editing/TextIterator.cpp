@@ -601,15 +601,16 @@ void TextIterator::exitNode()
         if (m_lastCharacter != '\n') {
             // insert a newline with a position following this block's contents.
             emitCharacter('\n', baseNode->parentNode(), baseNode, 1, 1);
-
             // remember whether to later add a newline for the current node
             ASSERT(!m_needAnotherNewline);
             m_needAnotherNewline = addNewline;
-        } else if (addNewline) {
+        } else if (addNewline)
             // insert a newline with a position following this block's contents.
             emitCharacter('\n', baseNode->parentNode(), baseNode, 1, 1);
-        }
-    } else if (shouldEmitSpaceBeforeAndAfterNode(m_node))
+    }
+    
+    // If nothing was emitted, see if we need to emit a space.
+    if (!m_positionNode && shouldEmitSpaceBeforeAndAfterNode(m_node))
         emitCharacter(' ', baseNode->parentNode(), baseNode, 1, 1);
 }
 

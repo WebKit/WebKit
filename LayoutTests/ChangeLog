@@ -1,3 +1,18 @@
+2007-10-18  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Kevin McCullough.
+        
+        <rdar://problem/5483526> 
+        GoogleDocs: A hang occurs when applying list styling to a selection containing a table and line breaks
+        
+        Demonstrates fix for the hang:
+        * editing/execCommand/5483526-expected.txt: Added.
+        * editing/execCommand/5483526.html: Added.
+        
+        Fixed selection endpoint (problems with selection painting prevent this
+        from being reflected in the pixel test results):
+        * platform/mac/editing/execCommand/5432254-2-expected.txt:
+
 2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
 
         Reviewed by Adam Roben.
