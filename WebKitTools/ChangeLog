@@ -2,10 +2,16 @@
 
         Reviewed by Darin.
 
+        Fix for these broken layout tests on Windows:
+        
+        fast/forms/focus-selection-input.html
+        fast/forms/focus-selection-textarea.html
+        fast/forms/select-accesskey.html
+        
         * DumpRenderTree/win/EventSender.cpp:
         (keyDownCallback):
         correct the VK code for alt key.
-
+        
 2007-10-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
