@@ -1369,7 +1369,7 @@ gtk-port:SOURCES += \
     # GENERATOR 6-A:
     cssprops.output = tmp/${QMAKE_FILE_BASE}.c
     cssprops.input = WALDOCSSPROPS
-    cssprops.commands = cat ${QMAKE_FILE_NAME} $$SVGCSSPROPERTIES > tmp/${QMAKE_FILE_BASE}.in && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSPROPERTIES > tmp/${QMAKE_FILE_BASE}.in && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
     cssprops.depend = ${QMAKE_FILE_NAME} SVGCSSPROPERTIES
     cssprops.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
