@@ -1,3 +1,11 @@
+2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        removing tests that no longer fail
+
+        * platform/mac-leopard/Skipped:
+
 2007-10-18  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Kevin McCullough.

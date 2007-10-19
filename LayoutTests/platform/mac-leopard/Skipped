@@ -1,6 +1,3 @@
-# <rdar://problem/5313520> editing/pasteboard/4076267-2.html fails on Leopard
-editing/pasteboard/4076267-2.html
-
 # <rdar://problem/5228256> Leopard regression test failures: security/block-test
 #security/block-test.html
 
@@ -25,7 +22,3 @@ dom/html/level2/html/HTMLDocument12.html
 # <rdar://problem/5313536> frame-loading-via-document-write.html sometimes fails on Leopard
 fast/dom/frame-loading-via-document-write.html
 http/tests/security/frame-loading-via-document-write.html
-
-# <rdar://problem/5338680> fast/forms/hidden-listbox and fast/forms/hidden-input-file are missing empty RenderText on Leopard
-fast/forms/hidden-listbox.html
-fast/forms/hidden-input-file.html
