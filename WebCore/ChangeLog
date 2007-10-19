@@ -1,3 +1,9 @@
+2007-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Release build fix.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-10-19  Brady Eidson  <beidson@apple.com>
 
         Remove stray printfs
