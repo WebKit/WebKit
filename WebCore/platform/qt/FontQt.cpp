@@ -22,6 +22,7 @@
 #include "config.h"
 #include "Font.h"
 #include "FontDescription.h"
+#include "FontSelector.h"
 #include "TextStyle.h"
 
 #include "GraphicsContext.h"

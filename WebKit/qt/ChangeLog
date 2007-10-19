@@ -1,3 +1,11 @@
+2007-10-19  Simon Hausmann  <hausmann@kde.org>
+
+        Fix the Qt/Windows build: Include the moc file from the .cpp file so
+        that config.h is included before wtf/MathExtras. The former defines
+        the MSVC defines for rand_s.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
 2007-10-19  Simon Hausmann  <shausman@trolltech.com>
 
         Reviewed by Lars.

@@ -981,3 +981,5 @@ QString FrameLoaderClientQt::chooseFile(const QString& oldFile)
 }
 
 }
+
+#include "moc_FrameLoaderClientQt.cpp"

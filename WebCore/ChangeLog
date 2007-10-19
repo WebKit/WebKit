@@ -1,5 +1,11 @@
 2007-10-19  Simon Hausmann  <hausmann@kde.org>
 
+        Fix the Qt/Windows build: Added missing FontSelector.h include.
+
+        * platform/qt/FontQt.cpp:
+
+2007-10-19  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Lars.
 
         Qt/Windows build fix: Threading.h uses int32_t but doesn't include stdint.h.
