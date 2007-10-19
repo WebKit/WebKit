@@ -1,6 +1,3 @@
-# <rdar://problem/5228256> Leopard regression test failures: security/block-test
-#security/block-test.html
-
 # <rdar://problem/5228259> Leopard regression test failures: svg/W3C-SVG-1.1/animate-elem...
 svg/W3C-SVG-1.1/animate-elem-06-t.svg
 svg/W3C-SVG-1.1/animate-elem-07-t.svg
@@ -12,9 +9,6 @@ svg/W3C-SVG-1.1/text-path-01-b.svg
 svg/custom/control-points-for-S-and-T.svg
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
-
-# <rdar://problem/5335898> REGRESSION (9A492-9A494): Stationery templates never finish loading due to CFNetwork not giving failure for unknown protocols
-editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
 
 # <rdar://problem/5313535> dom/html/level2/html/HTMLDocument12.html sometimes fails on Leopard
 dom/html/level2/html/HTMLDocument12.html
