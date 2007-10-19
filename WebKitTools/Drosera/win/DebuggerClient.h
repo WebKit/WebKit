@@ -29,25 +29,72 @@
 #ifndef DebuggerClient_H
 #define DebuggerClient_H
 
-//@interface DebuggerClientMac : NSWindowController <WebScriptDebugListener>
-//{
-//    IBOutlet WebView *webView;
-//    id<WebScriptDebugServer> server;
-//    WebScriptCallFrame *currentFrame;
-//    NSString *currentServerName;
-//    BOOL webViewLoaded;
-//    DebuggerDocument* debuggerDocument;
-//}
+#include "BaseDelegate.h"
 
-class DebuggerClient {
+#include <string>
+#include <WebCore/COMPtr.h>
+#include <wtf/OwnPtr.h>
+
+class DebuggerDocument;
+class ServerConnection;
+struct IWebView;
+struct IWebFrame;
+
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef struct OpaqueJSValue* JSObjectRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+
+class DebuggerClient : public BaseDelegate {
 public:
-    void pause();
-    void resume();
-    void stepInto();
-    //void stepOver();
-    //void stepOut();
-    //void showConsole();
-    //void closeCurrentFile();
+    DebuggerClient();
+    explicit DebuggerClient(const std::wstring& serverName);
+
+    void initWithServerName(const std::wstring& serverName);
+    bool webViewLoaded() const { return m_webViewLoaded; }
+
+    // IUnknown
+    HRESULT STDMETHODCALLTYPE QueryInterface(
+        /* [in] */ REFIID riid,
+        /* [retval][out] */ void** ppvObject);
+
+    ULONG STDMETHODCALLTYPE AddRef();
+    ULONG STDMETHODCALLTYPE Release();
+
+    // IWebFrameLoadDelegate
+    HRESULT STDMETHODCALLTYPE didFinishLoadForFrame( 
+        /* [in] */ IWebView*,
+        /* [in] */ IWebFrame*);
+
+    HRESULT STDMETHODCALLTYPE windowScriptObjectAvailable( 
+        /* [in] */ IWebView*,
+        /* [in] */ JSContextRef,
+        /* [in] */ JSObjectRef);
+
+    HRESULT STDMETHODCALLTYPE didReceiveTitle( 
+        /* [in] */ IWebView*,
+        /* [in] */ BSTR,
+        /* [in] */ IWebFrame*);
+
+    // IWebUIDelegate
+    HRESULT STDMETHODCALLTYPE runJavaScriptAlertPanelWithMessage( 
+        /* [in] */ IWebView*,
+        /* [in] */ BSTR);
+
+    HRESULT STDMETHODCALLTYPE createWebViewWithRequest( 
+        /* [in] */ IWebView*,
+        /* [in] */ IWebURLRequest*,
+        /* [retval][out] */ IWebView**);
+
+    // IWebNotificationObserver
+    HRESULT STDMETHODCALLTYPE onNotify(
+        /* [in] */ IWebNotification*);
+
+private:
+    bool m_webViewLoaded;
+
+    COMPtr<IWebView> m_webView;
+    OwnPtr<DebuggerDocument> m_debuggerDocument;
+    OwnPtr<ServerConnection> m_server;
 };
 
-#endif //DebuggerClientWin_H
+#endif //DebuggerClient_H

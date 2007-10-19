@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Vladimir Olexa (vladimir.olexa@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,50 +27,67 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Drosera_H
-#define Drosera_H
+#include "config.h"
+#include "ServerConnection.h"
 
 #include "DebuggerDocument.h"
 
-#include <string>
-#include <WebCore/COMPtr.h>
-#include <WebKit/IWebView.h>
-#include <WebKit/IWebViewPrivate.h>
-#include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
+#include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefCF.h>
+#include <JavaScriptCore/RetainPtr.h>
 
-class DebuggerClient;
+// FIXME: Some of the below functionality cannot be implemented until the WebScriptDebug Server works on windows.
 
-typedef HashMap<unsigned, std::wstring> ServerDictionary;
+ServerConnection* ServerConnection::initWithServerName(const std::wstring& serverName)
+{
+    ServerConnection* server = new ServerConnection();
+    server->switchToServerNamed(serverName);
 
-class Drosera {
-public:
-    static HINSTANCE getInst();
-    static void setInst(HINSTANCE);
+    return server;
+}
 
-    Drosera();
-    HRESULT initUI(HINSTANCE hInstance, int nCmdShow);
-    LRESULT onSize(WPARAM, LPARAM);
+ServerConnection::~ServerConnection()
+{
+    JSGlobalContextRelease(m_globalContext);
+}
 
-    bool webViewLoaded() const;
-    void applicationDidFinishLaunching();
+void ServerConnection::setGlobalContext(JSGlobalContextRef globalContextRef)
+{
+    m_globalContext = JSGlobalContextRetain(globalContextRef);
+}
 
-    void serverLoaded();
-    void serverUnloaded();
-    HRESULT attach(int sender);
+void ServerConnection::pause()
+{
+}
 
-    ServerDictionary* knownServers() const { return m_knownServerNames.get(); }
+void ServerConnection::resume()
+{
+}
 
-private:
-    HWND m_hWnd;
+void ServerConnection::stepInto()
+{
+}
 
-    COMPtr<IWebView> m_webView;
-    COMPtr<IWebViewPrivate> m_webViewPrivate;
-    COMPtr<IWebFrameLoadDelegate> m_webFrameLoadDelegate;
-    COMPtr<IWebUIDelegate> m_webUIDelegate;
+void ServerConnection::switchToServerNamed(const std::wstring& /*name*/)
+{
+}
 
-    OwnPtr<DebuggerClient> m_debuggerClient;
-    OwnPtr<ServerDictionary> m_knownServerNames;
-};
+// Connection Handling
 
-#endif //Drosera_H
+void ServerConnection::applicationTerminating()
+{
+}
+
+void ServerConnection::serverConnectionDidDie()
+{
+    switchToServerNamed(L"");
+}
+
+// Stack & Variables
+
+WebScriptCallFrame* ServerConnection::currentFrame() const
+{
+    return m_currentFrame;
+}
+

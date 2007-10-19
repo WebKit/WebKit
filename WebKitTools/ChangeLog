@@ -1,3 +1,103 @@
+2007-10-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Integrated changes from mac drosera.  Recently I've encapsulated
+        out the server connection object from the rest of Drosera because
+        it is very platform dependent right now and RPC is not implemented on
+        windows.  This functionality, of communicating with the WebKit server
+        is the next area I will be focusing on in Windows.
+
+        - Other changes and cleanup were made to organize the code and add notes
+        on which parts still need work.  Also some mac code is added and
+        commented out, to act as pseudocode for the logic of those parts.
+
+        * Drosera/DebuggerDocument.h: Make the ServerConnection live in a smart
+          pointer.
+        * Drosera/config.h: Added whitespace.
+        * Drosera/win/DebuggerApplication.cpp: Removed. The functionality of
+          these files got moved into Drosera.h/cpp
+        * Drosera/win/DebuggerApplication.h: Removed.
+        * Drosera/win/DebuggerClient.cpp: Lots of cleanup and restructuring 
+          happened here to better match the logic flow of the same code on the 
+          mac side and to use the new ServerConnection class.
+        (DebuggerClient::DebuggerClient): Constructor that takes a server name.
+        (DebuggerClient::initWithServerName): Initializer that will set up the
+          class to use a ServerConnection object.  This was necessary so I could
+          create a DebuggerClient without having to initilaize it at
+          construction.
+        (DebuggerClient::QueryInterface): Moved from Drosera.cpp, the Client
+          will be the UIDelegate and FrameLoadDelegate.
+        (DebuggerClient::AddRef): For IUnknown.
+        (DebuggerClient::Release): For IUnknown.
+        (DebuggerClient::didFinishLoadForFrame): Part of the FrameLoadDelegate
+          this still needs to set the global context of the server, but
+          IWebFrame does not have an accessor for the global context yet. 
+        (DebuggerClient::windowScriptObjectAvailable): Part of FrameLoadDelegate
+          this is a pass through for the same function in the document.
+        (DebuggerClient::didReceiveTitle): Unimplemented part of
+          FrameLoadDelegate this would change the title of the window.
+        (DebuggerClient::createWebViewWithRequest): Part of the
+          FrameLoadDelegate.  This is about new windows via Window.open() and
+          how their delegates are set.
+        (DebuggerClient::runJavaScriptAlertPanelWithMessage): Part of the
+          UIDelegate.  Just a debug function for printing messages.
+        * Drosera/win/DebuggerClient.h: Moved functionality from Drosera.h
+          because the Client should be the UIDelegate and FrameLoadDelegate
+          to match the delegates on mac.
+        (DebuggerClient::webViewLoaded): Added accessor method.
+        * Drosera/win/DebuggerDocumentPlatform.cpp: Added. I had apperently
+          forgotten to add this file before.  This is where the platform
+          dependent versions of the Documents functions live. Most of these are
+          unimplemented because some piece of functionality does not exist on
+          Windows yet.
+        (DebuggerDocument::platformPause):
+        (DebuggerDocument::platformResume):
+        (DebuggerDocument::platformStepInto):
+        (DebuggerDocument::platformEvaluateScript):
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        (DebuggerDocument::platformLog):
+        * Drosera/win/Drosera.cpp: Removed UIDelegate and FrameLoadDelegate
+          responsibilities becaue they belong in the Client. Also I laid the
+          groundwork for attaching Drosera to a WebKit process
+        (attachWndProc): Now if a server is selected the Client becomes it's
+          delegate.
+        (Drosera::Drosera): Added the construction of the Client and dictionary
+          of server names. 
+        (Drosera::initUI): This is no longer the delegates, the Client is.
+        (Drosera::webViewLoaded): Now asks the Client instead of holding local
+          state. 
+        (Drosera::applicationDidFinishLaunching): Placeholder for needed
+          notification registration when it's possible to implement.
+        (Drosera::serverLoaded): Ditto
+        (Drosera::serverUnloaded): Ditto
+        (Drosera::attach): Attach Drosera to the WebKit server.
+        * Drosera/win/Drosera.h: Ditto for Drosera.cpp comment.
+        (Drosera::getInst): 
+        (Drosera::setInst):
+        (Drosera::knownServers):
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Removed DebuggerApplication
+          and added the ServerConnection.
+        * Drosera/win/DroseraPrefix.h: Added an ifndef check.
+        * Drosera/win/ServerConnection.cpp: Added. This is the interesting part
+          Most of the functions are completely unimlemented because they cannot
+          connect with the WebKit server, because one does not exist on Windows
+          yet.
+        (ServerConnection::initWithServerName): 
+        (ServerConnection::~ServerConnection):
+        (ServerConnection::setGlobalContext):
+        (ServerConnection::pause):
+        (ServerConnection::resume):
+        (ServerConnection::stepInto):
+        (ServerConnection::switchToServerNamed):
+        (ServerConnection::applicationTerminating):
+        (ServerConnection::serverConnectionDidDie):
+        (ServerConnection::currentFrame):
+        * Drosera/win/ServerConnection.h: Added. Ditto.
+        (ServerConnection::ServerConnection):
+
 2007-10-19  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.

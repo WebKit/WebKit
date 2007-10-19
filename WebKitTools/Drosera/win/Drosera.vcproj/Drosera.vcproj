@@ -217,10 +217,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\DebuggerApplication.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\DebuggerClient.cpp"
 				>
 			</File>
@@ -256,6 +252,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="..\ServerConnection.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -268,10 +268,6 @@
 			</File>
 			<File
 				RelativePath="..\..\config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\DebuggerApplication.h"
 				>
 			</File>
 			<File
@@ -296,6 +292,10 @@
 			</File>
 			<File
 				RelativePath="..\resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\ServerConnection.h"
 				>
 			</File>
 		</Filter>

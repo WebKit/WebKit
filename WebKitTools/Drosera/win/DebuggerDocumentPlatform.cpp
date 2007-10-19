@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,51 +25,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef Drosera_H
-#define Drosera_H
-
+#include "config.h"
 #include "DebuggerDocument.h"
 
-#include <string>
-#include <WebCore/COMPtr.h>
-#include <WebKit/IWebView.h>
-#include <WebKit/IWebViewPrivate.h>
-#include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
+#include "ServerConnection.h"
 
-class DebuggerClient;
+#include <JavaScriptCore/JSStringRef.h>
 
-typedef HashMap<unsigned, std::wstring> ServerDictionary;
+// DebuggerDocument platform specific implementations
 
-class Drosera {
-public:
-    static HINSTANCE getInst();
-    static void setInst(HINSTANCE);
+void DebuggerDocument::platformPause()
+{
+    m_server->pause();
+}
 
-    Drosera();
-    HRESULT initUI(HINSTANCE hInstance, int nCmdShow);
-    LRESULT onSize(WPARAM, LPARAM);
+void DebuggerDocument::platformResume()
+{
+    m_server->resume();
+}
 
-    bool webViewLoaded() const;
-    void applicationDidFinishLaunching();
+void DebuggerDocument::platformStepInto()
+{
+    m_server->stepInto();
+}
 
-    void serverLoaded();
-    void serverUnloaded();
-    HRESULT attach(int sender);
+// FIXME: Some of the below functionality cannot be implemented until the WebScriptCallFrame Server works on windows.
 
-    ServerDictionary* knownServers() const { return m_knownServerNames.get(); }
+JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStringRef /*script*/, int /*callFrame*/)
+{
+    return JSValueMakeUndefined(context);
+}
 
-private:
-    HWND m_hWnd;
+void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef /*context*/, Vector<JSValueRef>& /*currentStack*/)
+{
+}
 
-    COMPtr<IWebView> m_webView;
-    COMPtr<IWebViewPrivate> m_webViewPrivate;
-    COMPtr<IWebFrameLoadDelegate> m_webFrameLoadDelegate;
-    COMPtr<IWebUIDelegate> m_webUIDelegate;
+void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef /*context*/, int /*callFrame*/, Vector<JSValueRef>& /*variableNames*/)
+{
+}
 
-    OwnPtr<DebuggerClient> m_debuggerClient;
-    OwnPtr<ServerDictionary> m_knownServerNames;
-};
+JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef context, JSStringRef /*key*/, int /*callFrame*/)
+{
+    return JSValueMakeUndefined(context);
+}
 
-#endif //Drosera_H
+void DebuggerDocument::platformLog(JSStringRef msg)
+{
+    printf("%S\n", JSStringGetCharactersPtr(msg));
+}

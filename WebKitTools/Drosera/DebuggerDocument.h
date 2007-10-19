@@ -35,12 +35,13 @@
 #pragma warning(pop)
 
 #include <JavaScriptCore/Vector.h>
+#include <JavaScriptCore/OwnPtr.h>
 
 // Forward Declarations
 #if PLATFORM(MAC)
 @class ServerConnection;
 #else if PLATFORM(WIN)
-class DebuggerClient;
+class ServerConnection;
 #endif
 
 typedef struct OpaqueJSString* JSStringRef;
@@ -80,11 +81,10 @@ public:
     static void willLeaveCallFrame(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception = 0);
     static void exceptionWasRaised(JSContextRef, JSValueRef sourceId, JSValueRef lineno, JSValueRef* exception = 0);
 
-    void windowScriptObjectAvailable(JSContextRef, JSObjectRef windowObject, JSValueRef* exception = 0);
     static JSValueRef toJSArray(JSContextRef, Vector<JSValueRef>&, JSValueRef* exception);
-
     static JSValueRef callGlobalFunction(JSContextRef, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
 
+    void windowScriptObjectAvailable(JSContextRef, JSObjectRef windowObject, JSValueRef* exception = 0);
 private:
     static JSValueRef callFunctionOnObject(JSContextRef, JSObjectRef object, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
     static JSClassRef getDroseraJSClass();
@@ -92,7 +92,7 @@ private:
 
     static void logException(JSContextRef, JSValueRef exception);
 
-    ServerConnection* m_server;
+    OwnPtr<ServerConnection> m_server;
 };
 
 #endif //DebuggerDocument_H

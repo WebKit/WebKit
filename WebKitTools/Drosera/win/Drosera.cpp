@@ -33,6 +33,7 @@
 #include "DebuggerDocument.h"
 #include "HelperFunctions.h"
 #include "resource.h"
+#include "ServerConnection.h"
 
 #include <JavaScriptCore/JSStringRef.h>
 #include <WebCore/IntRect.h>
@@ -48,7 +49,7 @@ TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
 static const LRESULT kNotHandledResult = -1;
 static LPCTSTR kDroseraPointerProp = TEXT("DroseraPointer");
-HINSTANCE Drosera::m_hInst(0);
+static HINSTANCE hInst;
 
 extern "C" BOOL InitializeCoreGraphics();
 
@@ -56,6 +57,10 @@ ATOM registerDroseraClass(HINSTANCE hInstance);
 LRESULT CALLBACK droseraWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK attachWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK aboutWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+
+HINSTANCE Drosera::getInst() { return hInst; }
+void Drosera::setInst(HINSTANCE in) { hInst = in; }
+
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                        HINSTANCE hPrevInstance,
@@ -197,8 +202,8 @@ INT_PTR CALLBACK attachWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 
 Drosera::Drosera()
     : m_hWnd(0)
-    , m_webViewLoaded(false)
-    , m_debuggerDocument(new DebuggerClient())
+    , m_debuggerClient(new DebuggerClient())
+    , m_knownServerNames(new ServerDictionary())
 {
 }
 
@@ -231,19 +236,11 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
     if (FAILED(ret))
         return ret;
 
-    ret = m_webView->QueryInterface(IID_IWebViewPrivate, reinterpret_cast<void**>(&m_webViewPrivate));
-    if (FAILED(ret))
-        return ret;
+    m_webViewPrivate.query(m_webView.get());
+    if (!m_webView)
+        return E_FAIL;
 
     ret = m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_hWnd));
-    if (FAILED(ret))
-        return ret;
-
-    ret = m_webView->setFrameLoadDelegate(this);
-    if (FAILED(ret))
-        return ret;
-
-    ret = m_webView->setUIDelegate(this);
     if (FAILED(ret))
         return ret;
 
@@ -284,8 +281,6 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
     if (FAILED(ret))
         return ret;
 
-    m_webViewLoaded = true;
-
     // FIXME: Implement window size/position save/restore
 
     RECT frame;
@@ -300,89 +295,7 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
     return 0;
 }
 
-// IUnknown ------------------------------
-HRESULT STDMETHODCALLTYPE Drosera::QueryInterface(REFIID riid, void** ppvObject) // how to cast between implemented interfaces
-{
-    *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IUnknown))
-        *ppvObject = this;
-    else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegate))
-        *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
-    else if (IsEqualGUID(riid, IID_IWebUIDelegate))
-        *ppvObject = static_cast<IWebUIDelegate*>(this);
-    else
-        return E_NOINTERFACE;
 
-    AddRef();
-    return S_OK;
-}
-
-ULONG STDMETHODCALLTYPE Drosera::AddRef(void)
-{   // COM ref-counting isn't useful to us because we're in charge of the lifetime of the WebView.
-    // We use the number 2 because of some idiosycracy with COM that expects us to be referenced twice.
-    return 2;
-}
-
-ULONG STDMETHODCALLTYPE Drosera::Release(void)
-{   // COM ref-counting isn't useful to us because we're in charge of the lifetime of the WebView.
-    // We use the number 2 because of some idiosycracy with COM that expects us to be referenced twice.
-    return 2;
-}
-
-// IWebFrameLoadDelegate ------------------------------
-HRESULT STDMETHODCALLTYPE Drosera::didFinishLoadForFrame(
-    /* [in] */ IWebView* m_webView,
-    /* [in] */ IWebFrame* frame)
-{
-    // note: this is Drosera's own WebView, not the one in the app that we are attached to.
-    m_webViewLoaded = true;
-
-    COMPtr<IWebFrame> mainFrame;
-    HRESULT hr = m_webView->mainFrame(&mainFrame);
-    if (FAILED(hr))
-        return hr;
-
-    if (mainFrame != frame)    // FIXME Replace below with X Drosera
-        return S_OK;
-
-    COMPtr<IDOMDocument> document;
-    hr = mainFrame->DOMDocument(&document);
-    if (FAILED(hr))
-        return hr;
-
-    COMPtr<IDOMHTMLDocument> htmlDocument;
-    hr = document->QueryInterface(IID_IDOMHTMLDocument, reinterpret_cast<void**>(&htmlDocument));
-    if (FAILED(hr))
-        return hr;
-
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE Drosera::windowScriptObjectAvailable( 
-    /* [in] */ IWebView*,
-    /* [in] */ JSContextRef context,
-    /* [in] */ JSObjectRef windowObject)
-{
-
-    JSValueRef exception = 0;
-    m_debuggerDocument.windowScriptObjectAvailable(context, windowObject, &exception);
-    if (exception)
-        return S_FALSE;
-
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE Drosera::runJavaScriptAlertPanelWithMessage(  // For debugging purposes
-    /* [in] */ IWebView*,
-    /* [in] */ BSTR message)
-{
-#ifndef NDEBUG
-    fwprintf(stderr, L"%s\n", message ? message : L"");
-#else
-    (void)message;
-#endif
-    return S_OK;
-}
 
 LRESULT Drosera::onSize(WPARAM, LPARAM)
 {
@@ -401,45 +314,41 @@ LRESULT Drosera::onSize(WPARAM, LPARAM)
     return 0;
 }
 
-void Drosera::initWithServerName(std::wstring* /*serverName*/)
+bool Drosera::webViewLoaded() const
 {
-//    m_debuggerDocument = new DebuggerDocument(m_debuggerClient);
-
-    //if ((self = [super init]))
-    //    [self switchToServerNamed:serverName];
-    //return self;
+    return m_debuggerClient->webViewLoaded();
 }
 
-void Drosera::switchToServerNamed(std::wstring* /*server*/)
+// FIXME: The below functionality cannot be implemented until the Notification and WebScriptDebugServer is implmented on Windows
+
+void Drosera::applicationDidFinishLaunching()
 {
-    //if (server) {
-    //    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:[(NSDistantObject *)server connectionForProxy]];
-    //    if ([[(NSDistantObject *)server connectionForProxy] isValid]) {
-    //        [server removeListener:self];
-    //        [self resume];
-    //    }
-    //}
-
-    //id old = server;
-    //server = ([name length] ? [[NSConnection rootProxyForConnectionWithRegisteredName:name host:nil] retain] : nil);
-    //[old release];
-
-    //old = currentServerName;
-    //currentServerName = [name copy];
-    //[old release];
-
-    //if (server) {
-    //    @try {
-    //        [(NSDistantObject *)server setProtocolForProxy:@protocol(WebScriptDebugServer)];
-    //        [server addListener:self];
-    //    } @catch (NSException *exception) {
-    //        [currentServerName release];
-    //        currentServerName = nil;
-    //        [server release];
-    //        server = nil;
-    //    }
-
-    //    if (server)
-    //        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(serverConnectionDidDie:) name:NSConnectionDidDieNotification object:[(NSDistantObject *)server connectionForProxy]];  
-    //}
+    // Adding functions to be associated with notifications
 }
+
+// Server Detection Callbacks
+
+void Drosera::serverLoaded()
+{
+}
+
+void Drosera::serverUnloaded()
+{
+}
+
+HRESULT Drosera::attach(int sender)
+{
+    // Get selected server
+    unsigned int row = sender;
+    std::wstring key = m_knownServerNames->get(row);
+    m_debuggerClient->initWithServerName(key);
+
+    HRESULT ret = m_webView->setFrameLoadDelegate(m_debuggerClient.get());
+    if (FAILED(ret))
+        return ret;
+
+    ret = m_webView->setUIDelegate(m_debuggerClient.get());
+
+    return ret;
+}
+

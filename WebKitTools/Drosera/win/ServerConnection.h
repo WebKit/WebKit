@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Vladimir Olexa (vladimir.olexa@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,36 +27,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DebuggerApplication_H
-#define DebuggerApplication_H
+#ifndef ServerConnection_H
+#define ServerConnection_H
 
 #include <string>
-#include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 
-typedef HashMap<unsigned, std::string> dictionary;
+class DebuggerClient;
+class WebScriptCallFrame;
+class WebScriptDebugServer;
 
-class DebuggerApplication {
+typedef struct OpaqueJSContext* JSGlobalContextRef;
+
+class ServerConnection {
 public:
-    DebuggerApplication()
-        : m_knownServerNames(new dictionary)
-    {
-    }
+    static ServerConnection* initWithServerName(const std::wstring& serverName);
+    ~ServerConnection();
 
-    void serverLoaded();
-    void serverUnloaded();
-    void attach(int sender);
+    void setGlobalContext(JSGlobalContextRef);
+    void pause();
+    void resume();
+    void stepInto();
+    void switchToServerNamed(const std::wstring& name);
 
-    // Delegates
-    int numberOfRowsInTableView() const;
-    std::string tableView();
-    void tableView(int row);
-
-    dictionary* knownServers() const { return m_knownServerNames.get(); }
+    void applicationTerminating();
+    void serverConnectionDidDie();
+    WebScriptCallFrame* currentFrame() const;
 
 private:
-    OwnPtr<dictionary> m_knownServerNames;
-    
+    ServerConnection() {}
+
+    std::wstring m_currentServerName;
+
+    // FIXME: Change these to OwnPtrs when they are implmented such that they
+    // can be destroyed on Windows.
+    WebScriptCallFrame* m_currentFrame;
+    WebScriptDebugServer* m_server;
+    JSGlobalContextRef m_globalContext;
 };
 
-#endif //DebuggerApplication_H
+#endif //ServerConnection_H

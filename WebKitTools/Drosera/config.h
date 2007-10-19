@@ -28,6 +28,7 @@
 #endif
 
 #if PLATFORM(WIN)
+
 // If we don't define these, they get defined in windef.h. 
 // We want to use std::min and std::max
 #ifndef max
