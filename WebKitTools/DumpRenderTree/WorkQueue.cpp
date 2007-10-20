@@ -55,8 +55,10 @@ void WorkQueue::queue(WorkQueueItem* item)
     ASSERT(endOfQueue < queueLength);
     ASSERT(endOfQueue >= startOfQueue);
 
-    if (m_frozen)
+    if (m_frozen) {
+        delete item;
         return;
+    }
 
     theQueue[endOfQueue++] = item;
 }

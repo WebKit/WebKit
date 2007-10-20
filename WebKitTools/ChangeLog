@@ -1,3 +1,19 @@
+2007-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15566
+          possible fix for leak seen in DumpRenderTree
+
+        * DumpRenderTree/WorkQueue.cpp: (WorkQueue::queue):
+        Delete the item if it's not put on the queue, since the caller has
+        no way of knowing that. Would be better to have the parameter type
+        be auto_ptr to express the fact that we take ownership.
+
+        - unrelated change
+
+        * Drosera/mac/main.m: Add missing include.
+
 2007-10-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
