@@ -1,3 +1,17 @@
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Workaround for http://bugs.webkit.org/show_bug.cgi?id=15574
+        Bug 15574: Web Inspector doesn't work with the new Database feature
+
+        The executeSql callback is executed in the security domain of the web page that owns the database,
+        while the inspector's window object is in the callback functions scope chain.  This is leading to a
+        security violation when the callback attempts to access "document".  We can work around this by
+        ensuring that "document" can be found in the scope chain before the window object.
+
+        * page/inspector/DatabasePanel.js:
+
 2007-10-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

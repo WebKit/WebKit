@@ -123,7 +123,11 @@ WebInspector.DatabasePanel = function(database)
     };
 }
 
-WebInspector.DatabasePanel.prototype = {
+// FIXME: The function and local variables are a workaround for http://bugs.webkit.org/show_bug.cgi?id=15574.
+WebInspector.DatabasePanel.prototype = (function() {
+var document = window.document;
+var Math = window.Math;
+return {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
@@ -506,5 +510,6 @@ WebInspector.DatabasePanel.prototype = {
         return table;
     }
 }
+})();
 
 WebInspector.DatabasePanel.prototype.__proto__ = WebInspector.Panel.prototype;
