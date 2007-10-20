@@ -349,12 +349,16 @@ BOOL replayingSavedEvents;
 
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers
 {
-    NSString *modifier = nil;
+    NSString *eventCharacter = character;
+    if ([character isEqualToString:@"rightArrow"]) {
+        const unichar rightArrowCharacter = NSRightArrowFunctionKey;
+        eventCharacter = [NSString stringWithCharacters:&rightArrowCharacter length:1];
+    }
+
     int mask = 0;
-    
     if ([modifiers isKindOfClass:[WebScriptObject class]])
         for (unsigned i = 0; [[modifiers webScriptValueAtIndex:i] isKindOfClass:[NSString class]]; i++) {
-            modifier = (NSString *)[modifiers webScriptValueAtIndex:i];
+            NSString *modifier = (NSString *)[modifiers webScriptValueAtIndex:i];
             if ([modifier isEqual:@"ctrlKey"])
                 mask |= NSControlKeyMask;
             else if ([modifier isEqual:@"shiftKey"])
@@ -363,26 +367,22 @@ BOOL replayingSavedEvents;
                 mask |= NSAlternateKeyMask;
             else if ([modifier isEqual:@"metaKey"])
                 mask |= NSCommandKeyMask;
-            else
-                break;
         }
 
     [[[mainFrame frameView] documentView] layout];
-    
+
     NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
                         location:NSMakePoint(5, 5)
                         modifierFlags:mask
                         timestamp:[self currentEventTime]
                         windowNumber:[[[mainFrame webView] window] windowNumber]
                         context:[NSGraphicsContext currentContext]
-                        characters:character
-                        charactersIgnoringModifiers:character
+                        characters:eventCharacter
+                        charactersIgnoringModifiers:eventCharacter
                         isARepeat:NO
                         keyCode:0];
-    
 
-    NSResponder *firstResponder = [[[mainFrame webView] window] firstResponder];
-    [firstResponder keyDown:event];
+    [[[[mainFrame webView] window] firstResponder] keyDown:event];
 }
 
 - (void)enableDOMUIEventLogging:(WebScriptObject *)node

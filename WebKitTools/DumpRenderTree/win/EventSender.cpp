@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -242,16 +242,21 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    static JSStringRef lengthProperty = JSStringCreateWithUTF8CString("length");
+    static const JSStringRef lengthProperty = JSStringCreateWithUTF8CString("length");
 
     COMPtr<IWebFramePrivate> framePrivate;
     if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
         framePrivate->layout();
     
     JSStringRef character = JSValueToStringCopy(context, arguments[0], exception);
-    ASSERT(!exception || !*exception);
-    int charCode = JSStringGetCharactersPtr(character)[0];
-    int virtualKeyCode = toupper(LOBYTE(VkKeyScan(charCode)));
+    ASSERT(!*exception);
+    int virtualKeyCode;
+    if (JSStringIsEqualToUTF8CString(string, "rightArrow")) {
+        virtualKeyCode = VK_RIGHT;
+    } else {
+        int charCode = JSStringGetCharactersPtr(character)[0];
+        virtualKeyCode = toupper(LOBYTE(VkKeyScan(charCode)));
+    }
     JSStringRelease(character);
 
     BYTE keyState[256];
@@ -336,7 +341,8 @@ static JSStaticValue staticValues[] = {
     { 0, 0, 0, 0 }
 };
 
-static JSClassRef getClass(JSContextRef context) {
+static JSClassRef getClass(JSContextRef context)
+{
     static JSClassRef eventSenderClass = 0;
 
     if (!eventSenderClass) {

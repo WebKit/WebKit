@@ -1,3 +1,13 @@
+2007-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15544
+          <rdar://problem/5076426> fast/events/arrow-navigation.html needs to
+          not rely on Apple-specific key codes
+
+        * fast/events/arrow-navigation.html: Use "rightArrow" instead.
+
 2007-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

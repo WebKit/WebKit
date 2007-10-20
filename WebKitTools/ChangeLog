@@ -1,3 +1,18 @@
+2007-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15544
+          <rdar://problem/5076426> fast/events/arrow-navigation.html needs to
+          not rely on Apple-specific key codes
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:]):
+        Added named key "rightArrow". Later we could have a whole table of these.
+        Also tweaked modifiers code a little.
+
+        * DumpRenderTree/win/EventSender.cpp: (keyDownCallback): Ditto.
+
 2007-10-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

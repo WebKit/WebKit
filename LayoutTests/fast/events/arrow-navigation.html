@@ -8,7 +8,7 @@
                 tf.setSelectionRange(0, 0);
                 if (window.layoutTestController) {
                     layoutTestController.dumpAsText();
-                    eventSender.keyDown(String.fromCharCode(0xf703));
+                    eventSender.keyDown("rightArrow");
                 }
                 if (tf.selectionStart == 1)
                     log("Test Passed");
