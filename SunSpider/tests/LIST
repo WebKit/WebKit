@@ -1,10 +1,16 @@
 3d-cube
 3d-morph
 3d-raytrace
+access-binary-trees
+access-nsieve
 bitops-3bit-bits-in-byte
 bitops-bits-in-byte
 bitops-bitwise-and
+bitops-nsieve-bits
 math-cordic
+math-partial-sums
+math-spectral-norm
 string-base64
+string-fasta
 string-tagcloud
 string-unpack-code

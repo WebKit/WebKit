@@ -1,5 +1,20 @@
 2007-10-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Mark.
+
+        - Add more new tests, mostly from the computer language shootout. Not normalized yet.
+        
+        * TODO:
+        * tests/LIST:
+        * tests/access-binary-trees.js: Added.
+        * tests/access-nsieve.js: Added.
+        * tests/bitops-nsieve-bits.js: Added.
+        * tests/math-partial-sums.js: Added.
+        * tests/math-spectral-norm.js: Added.
+        * tests/string-fasta.js: Added.
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         * TODO: Updated to note areas that are now well-covered.
