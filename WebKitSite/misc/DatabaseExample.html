@@ -169,7 +169,7 @@ Note.prototype = {
 
     close: function()
     {
-        this.killSaveTimer();
+        this.cancelPendingSave();
 
         db.executeSql("DELETE FROM WebKitStickyNotes WHERE id = ?", [this.id], function(result) {});
         document.body.removeChild(this.note);
