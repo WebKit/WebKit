@@ -1,3 +1,13 @@
+2007-10-20  Simon Hausmann  <hausmann@kde.org>
+
+        Build fix, not reviewed.
+
+        Fix the Qt build by adding the two missing FileSystem functions.
+
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::makeAllDirectories):
+        (WebCore::pathByAppendingComponent):
+
 2007-10-19  Alp Toker  <alp@atoker.com>
 
         Reviewed by Oliver.

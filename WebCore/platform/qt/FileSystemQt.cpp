@@ -28,6 +28,7 @@
 
 #include <PlatformString.h>
 #include <QFile>
+#include <QDir>
 
 namespace WebCore {
 
@@ -40,6 +41,19 @@ bool fileExists(const String& path)
 bool deleteFile(const String& path)
 {
     return QFile::remove(path);
+}
+
+bool makeAllDirectories(const String& path)
+{
+    return QDir::root().mkpath(path);
+}
+
+String pathByAppendingComponent(const String& path, const String& component)
+{
+    if (path.endsWith("/"))
+        return path + component;
+    else
+        return path + "/" + component;
 }
 
 }
