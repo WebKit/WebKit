@@ -1148,35 +1148,34 @@ unsigned StringImpl::computeHash(const UChar* m_data, unsigned len)
 
 // Paul Hsieh's SuperFastHash
 // http://www.azillionmonkeys.com/qed/hash.html
-unsigned StringImpl::computeHash(const char* m_data)
+unsigned StringImpl::computeHash(const char* data)
 {
     // This hash is designed to work on 16-bit chunks at a time. But since the normal case
     // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
     // were 16-bit chunks, which should give matching results
 
-    unsigned m_length = strlen(m_data);
     uint32_t hash = PHI;
     uint32_t tmp;
     
-    int rem = m_length & 1;
-    m_length >>= 1;
-    
     // Main loop
-    for (; m_length > 0; m_length--) {
-        hash += (unsigned char)m_data[0];
-        tmp = ((unsigned char)m_data[1] << 11) ^ hash;
+    for (;;) {
+        unsigned char b0 = data[0];
+        if (!b0)
+            break;
+        unsigned char b1 = data[1];
+        if (!b1) {
+            hash += b0;
+            hash ^= hash << 11;
+            hash += hash >> 17;
+            break;
+        }
+        hash += b0;
+        tmp = (b1 << 11) ^ hash;
         hash = (hash << 16) ^ tmp;
-        m_data += 2;
+        data += 2;
         hash += hash >> 11;
     }
     
-    // Handle end case
-    if (rem) {
-        hash += (unsigned char)m_data[0];
-        hash ^= hash << 11;
-        hash += hash >> 17;
-    }
-
     // Force "avalanching" of final 127 bits
     hash ^= hash << 3;
     hash += hash >> 5;
@@ -1238,10 +1237,20 @@ PassRefPtr<StringImpl> StringImpl::createStrippingNull(const UChar* str, unsigne
         return result;
     
     UChar* strippedCopy = newUCharVector(len);
-    int strippedLength = 0;
-    for (unsigned i = 0; i < len; i++)
-        if (UChar c = str[i])
-            strippedCopy[strippedLength++] = c;
+    int strippedLength = len;
+    bool foundNull = false;
+    for (unsigned i = 0; i < len; i++) {
+        UChar c = str[i];
+        strippedCopy[i] = c;
+        foundNull |= !c;
+    }
+    if (foundNull) {
+        strippedLength = 0;
+        for (unsigned i = 0; i < len; i++) {
+            if (UChar c = str[i])
+                strippedCopy[strippedLength++] = c;
+        }
+    }
 
     result->m_data = strippedCopy;
     result->m_length = strippedLength;

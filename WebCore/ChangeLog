@@ -1,3 +1,19 @@
+2007-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15567
+          speed up hashing const char* by removing call to strlen
+
+        This includes one other fix as well. Both were from a day where I did some
+        profiling to find hot spots when running the page load test.
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::computeHash): Compute the hash without calling strlen.
+        Also change the argument names to not confusingly use m_ prefixes.
+        (WebCore::StringImpl::createStrippingNull): Added a faster case for strings that
+        don't have null.
+
 2007-10-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp.
