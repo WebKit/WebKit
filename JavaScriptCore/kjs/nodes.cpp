@@ -2422,19 +2422,19 @@ FunctionBodyNode::FunctionBodyNode(SourceElementsNode *s)
     : BlockNode(s)
     , m_sourceURL(Lexer::curr()->sourceURL())
     , m_sourceId(Parser::sid)
+    , m_initializedDeclarationStacks(false)
 {
-
   setLoc(-1, -1);
 }
 
-void FunctionBodyNode::processDeclarations(ExecState* exec)
+void FunctionBodyNode::initializeDeclarationStacks()
 {
     Node* node = source.get();
     if (!node)
         return;
 
-    DeclarationStacks stacks;
-    DeclarationStacks::NodeStack& nodeStack = stacks.nodeStack;
+    DeclarationStacks::NodeStack nodeStack;
+    DeclarationStacks stacks(nodeStack, m_varStack, m_functionStack);
     
     while (true) {
         ASSERT(node->mayHaveDeclarations()); // Otherwise, we wasted time putting an irrelevant node on the stack.
@@ -2447,16 +2447,22 @@ void FunctionBodyNode::processDeclarations(ExecState* exec)
         node = nodeStack[size];
         nodeStack.shrink(size);
     }
-    
+
+    m_initializedDeclarationStacks = true;
+}
+
+void FunctionBodyNode::processDeclarations(ExecState* exec)
+{
+    if (!m_initializedDeclarationStacks)
+        initializeDeclarationStacks();
+
     size_t i, size;
 
-    DeclarationStacks::FunctionStack& functionStack = stacks.functionStack;
-    for (i = 0, size = functionStack.size(); i < size; ++i)
-        functionStack[i]->processDeclaration(exec);
+    for (i = 0, size = m_functionStack.size(); i < size; ++i)
+        m_functionStack[i]->processDeclaration(exec);
 
-    DeclarationStacks::VarStack& varStack = stacks.varStack;
-    for (i = 0, size = varStack.size(); i < size; ++i)
-        varStack[i]->processDeclaration(exec);
+    for (i = 0, size = m_varStack.size(); i < size; ++i)
+        m_varStack[i]->processDeclaration(exec);
 }
 
 void FunctionBodyNode::addParam(const Identifier& ident)

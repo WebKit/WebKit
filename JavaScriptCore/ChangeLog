@@ -1,3 +1,24 @@
+2007-10-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15570
+        Store gathered declaration nodes in the function body node.
+        
+        This means that you only have to gather the declaration nodes the first 
+        time the function executes. Performance gain of 2.10% on SunSpider, 
+        0.90% on command-line JS iBench.
+
+        * kjs/nodes.cpp: Split declaration stack initialization code off into 
+        initializeDeclarationStacks().
+        (FunctionBodyNode::FunctionBodyNode):
+        (FunctionBodyNode::initializeDeclarationStacks):
+        (FunctionBodyNode::processDeclarations):
+
+        * kjs/nodes.h: Changed DeclarationStacks structure to hold references, 
+        since the actual Vectors are now stored either on the stack or in the 
+        function body node.
+
 2007-10-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

@@ -89,9 +89,16 @@ namespace KJS {
       typedef Vector<VarDeclNode*, 16> VarStack;
       typedef Vector<FuncDeclNode*, 16> FunctionStack;
       
-      NodeStack nodeStack;
-      VarStack varStack; 
-      FunctionStack functionStack;
+      DeclarationStacks(NodeStack& n, VarStack& v, FunctionStack& f)
+        : nodeStack(n)
+        , varStack(v)
+        , functionStack(f)
+      {
+      }
+        
+      NodeStack& nodeStack;
+      VarStack& varStack; 
+      FunctionStack& functionStack;
   };
 
   class Node {
@@ -1056,6 +1063,11 @@ namespace KJS {
     UString m_sourceURL;
     int m_sourceId;
     Vector<Identifier> m_parameters;
+
+    void initializeDeclarationStacks();
+    bool m_initializedDeclarationStacks;
+    DeclarationStacks::VarStack m_varStack;
+    DeclarationStacks::FunctionStack m_functionStack;
   };
 
   class FuncExprNode : public Node {
