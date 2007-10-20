@@ -1,3 +1,14 @@
+2007-10-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Test for <rdar://problem/5518461> REGRESSION (2.0.4-3): Popup arrows are missing in small popups at homedepot.com
+
+        * fast/forms/menulist-no-overflow.html: Added.
+        * platform/mac/fast/forms/menulist-no-overflow-expected.checksum: Added.
+        * platform/mac/fast/forms/menulist-no-overflow-expected.png: Added.
+        * platform/mac/fast/forms/menulist-no-overflow-expected.txt: Added.
+
 2007-10-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubberstamped by Oliver.

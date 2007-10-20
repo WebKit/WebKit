@@ -1,3 +1,13 @@
+2007-10-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for: <rdar://problem/5518461> REGRESSION (2.0.4-3): Popup arrows are missing in small popups at homedepot.com
+
+        Test: fast/forms/menulist-no-overflow.html
+
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::setStyle): Don't allow overflow on menu lists.
+
 2007-10-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

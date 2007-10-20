@@ -114,7 +114,11 @@ void RenderMenuList::removeChild(RenderObject* oldChild)
 void RenderMenuList::setStyle(RenderStyle* newStyle)
 {
     bool fontChanged = !style() || style()->font() != newStyle->font();
-
+    
+    // Don't allow overflow on menu lists.
+    newStyle->setOverflowX(OVISIBLE);
+    newStyle->setOverflowY(OVISIBLE);
+    
     RenderBlock::setStyle(newStyle);
 
     if (m_buttonText)
