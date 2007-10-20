@@ -2,6 +2,9 @@
 
         Reviewed by Darin Adler.
         
+        http://bugs.webkit.org/show_bug.cgi?id=15559
+        Moved processDeclarations call into FunctionBodyNode::execute
+
         To improve encapsulation, moved processDeclarations call into
         FunctionBodyNode::execute. Also marked processDeclarations 
         ALWAYS_INLINE, since it has only 1 caller now. This is a .71% speedup 
