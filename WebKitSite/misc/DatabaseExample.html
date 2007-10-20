@@ -25,15 +25,17 @@ function saveNote()
     var timestamp = new Date();
     timestamp = timestamp.getTime();
     
-    db.executeSql("CREATE TABLE IF NOT EXISTS WebKitNotes (note TEXT, timestamp REAL)", function(result) {
+    // This might fail if the table already exists, so ignore that
+    try {
+        db.executeSql("CREATE TABLE WebKitNotes (note TEXT, timestamp REAL)", function(result) {});
+    } catch(err) { }
+    
+    // If the table exists already, this is expected to fail - so lets ignore the errorcode
+    db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", note, timestamp, function(result) {
         if (result.errorCode)
             alert("Failed to save note in database");
-        db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", note, timestamp, function(result) {
-            if (result.errorCode)
-                alert("Failed to save note in database");
-            else
-                appendNote(note, timestamp);
-        });
+        else
+            appendNote(note, timestamp);
     });
 }
 

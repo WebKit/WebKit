@@ -1,5 +1,13 @@
 2007-10-19  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Tim
+
+        Tiger's SQLite doesn't support CREATE TABLE IF NOT EXISTS :(
+
+        * misc/DatabaseExample.html:
+
+2007-10-19  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Tim Hatcher
 
         Sample database API usage

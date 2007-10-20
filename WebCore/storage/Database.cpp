@@ -335,10 +335,12 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
     ASSERT(m_databaseAuthorizer);
     m_threadSQLDatabase.setAuthorizer(m_databaseAuthorizer);
 
-    if (!m_threadSQLDatabase.executeCommand("CREATE TABLE IF NOT EXISTS " + databaseInfoTableName() + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
-        LOG_ERROR("Unable to create table %s in database %s", databaseInfoTableName().ascii().data(), databaseDebugName().ascii().data());
-        e = INVALID_STATE_ERR;
-        return false;
+    if (!m_threadSQLDatabase.tableExists(databaseInfoTableName())) {
+        if (!m_threadSQLDatabase.executeCommand("CREATE TABLE " + databaseInfoTableName() + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
+            LOG_ERROR("Unable to create table %s in database %s", databaseInfoTableName().ascii().data(), databaseDebugName().ascii().data());
+            e = INVALID_STATE_ERR;
+            return false;
+        }
     }
 
 
