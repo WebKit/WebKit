@@ -1,3 +1,11 @@
+2007-10-19  Oliver Hunt  <oliver@apple.com>
+
+        RS=Mark.
+        
+        Updating window properties to include new features from HTML5 database support
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2007-10-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.
