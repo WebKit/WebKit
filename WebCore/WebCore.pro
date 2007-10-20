@@ -926,6 +926,7 @@ gtk-port {
         platform/gtk/SoundGtk.cpp \
         platform/gtk/SystemTimeLinux.cpp \
         platform/gtk/TemporaryLinkStubs.cpp \
+        platform/gtk/ThreadingGtk.cpp \
         platform/gtk/WheelEventGtk.cpp \
         platform/gtk/WidgetGtk.cpp \
         platform/graphics/gtk/IconGtk.cpp \

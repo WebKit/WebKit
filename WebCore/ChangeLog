@@ -1,3 +1,16 @@
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp.
+
+        Implement callOnMainThread for Gtk+ via a one-shot zero-delay timer that will be dispatched
+        from the main event loop.
+
+        * WebCore.pro:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/gtk/ThreadingGtk.cpp: Added.
+        (WebCore::callFunctionOnMainThread):
+        (WebCore::callOnMainThread):
+
 2007-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
