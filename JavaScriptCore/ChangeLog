@@ -1,3 +1,22 @@
+2007-10-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        To improve encapsulation, moved processDeclarations call into
+        FunctionBodyNode::execute. Also marked processDeclarations 
+        ALWAYS_INLINE, since it has only 1 caller now. This is a .71% speedup 
+        on command-line JS iBench.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function.h:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate):
+        * kjs/nodes.cpp:
+        (FunctionBodyNode::execute):
+        * kjs/nodes.h:
+
 2007-10-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam
