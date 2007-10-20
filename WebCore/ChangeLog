@@ -1,3 +1,21 @@
+2007-10-20  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Eric.
+
+        Support text boundary detection.
+        Move TextBoundariesWin.cpp to platform/ since it's portable and useful.
+        Split out and implement some TemporaryLinkStubs.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/TextBoundariesICU.cpp: Copied from WebCore/platform/win/TextBoundariesWin.cpp.
+        * platform/gtk/Language.cpp: Added.
+        (WebCore::defaultLanguage):
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/gtk/TextBreakIteratorInternalICUGtk.cpp: Added.
+        (WebCore::currentTextBreakLocaleID):
+        * platform/win/TextBoundariesWin.cpp: Removed.
+
 2007-10-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -3355,6 +3355,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\TextBoundariesICU.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\TextBreakIterator.h"
 				>
 			</File>
@@ -3687,10 +3691,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\TemporaryLinkStubs.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\TextBoundariesWin.cpp"
 					>
 				</File>
 				<File

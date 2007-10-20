@@ -911,6 +911,7 @@ gtk-port {
         platform/gtk/FontPlatformDataGtk.cpp \
         platform/gtk/GlyphPageTreeNodeGtk.cpp \
         platform/gtk/KeyEventGtk.cpp \
+        platform/gtk/Language.cpp \
         platform/gtk/LocalizedStringsGtk.cpp \
         platform/gtk/LoggingGtk.cpp \
         platform/gtk/MIMETypeRegistryGtk.cpp \
@@ -926,6 +927,8 @@ gtk-port {
         platform/gtk/SoundGtk.cpp \
         platform/gtk/SystemTimeLinux.cpp \
         platform/gtk/TemporaryLinkStubs.cpp \
+        platform/TextBoundariesICU.cpp \
+        platform/gtk/TextBreakIteratorInternalICUGtk.cpp \
         platform/gtk/ThreadingGtk.cpp \
         platform/gtk/WheelEventGtk.cpp \
         platform/gtk/WidgetGtk.cpp \
