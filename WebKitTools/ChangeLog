@@ -1,3 +1,10 @@
+2007-10-20  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, Windows build fix.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+
 2007-10-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
