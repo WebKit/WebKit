@@ -1,3 +1,19 @@
+2007-10-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Oliver.
+
+        Use platform colors for text selection.
+        Update the cache when the GTK style is changed.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::gtkStyleSet):
+        (WebCore::RenderThemeGtk::gtkEntry):
+        * platform/gtk/RenderThemeGtk.h:
+
 2007-10-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

@@ -264,6 +264,34 @@ void RenderThemeGtk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
     addIntrinsicMargins(style);
 }
 
+Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
+{
+    GtkWidget* entry = gtkEntry();
+    GdkColor color = entry->style->base[GTK_STATE_SELECTED];
+    return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
+}
+
+Color RenderThemeGtk::platformInactiveSelectionBackgroundColor() const
+{
+    GtkWidget* entry = gtkEntry();
+    GdkColor color = entry->style->base[GTK_STATE_ACTIVE];
+    return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
+}
+
+Color RenderThemeGtk::platformActiveSelectionForegroundColor() const
+{
+    GtkWidget* entry = gtkEntry();
+    GdkColor color = entry->style->text[GTK_STATE_SELECTED];
+    return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
+}
+
+Color RenderThemeGtk::platformInactiveSelectionForegroundColor() const
+{
+    GtkWidget* entry = gtkEntry();
+    GdkColor color = entry->style->text[GTK_STATE_ACTIVE];
+    return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
+}
+
 void RenderThemeGtk::systemFont(int propId, FontDescription&) const
 {
 }
@@ -301,10 +329,16 @@ GtkWidget* RenderThemeGtk::gtkRadioButton() const
     return m_gtkRadioButton;
 }
 
+void RenderThemeGtk::gtkStyleSet(GtkWidget* widget, GtkStyle* previous, RenderTheme* renderTheme)
+{
+    renderTheme->platformColorsDidChange();
+}
+
 GtkWidget* RenderThemeGtk::gtkEntry() const
 {
     if (!m_gtkEntry) {
         m_gtkEntry = gtk_entry_new();
+        g_signal_connect(m_gtkEntry, "style-set", G_CALLBACK(gtkStyleSet), theme());
         gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkEntry);
         gtk_widget_realize(m_gtkEntry);
     }

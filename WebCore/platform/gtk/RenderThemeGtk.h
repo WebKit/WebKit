@@ -47,6 +47,12 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return true; }
 
+    // The platform selection color.
+    virtual Color platformActiveSelectionBackgroundColor() const;
+    virtual Color platformInactiveSelectionBackgroundColor() const;
+    virtual Color platformActiveSelectionForegroundColor() const;
+    virtual Color platformInactiveSelectionForegroundColor() const;
+
     // System fonts.
     virtual void systemFont(int propId, FontDescription&) const;
 
@@ -75,6 +81,7 @@ private:
 
     ThemeData getThemeData(RenderObject*);
 
+    static void gtkStyleSet(GtkWidget*, GtkStyle*, RenderTheme*);
 
     /*
      * hold the state
