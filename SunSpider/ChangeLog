@@ -1,5 +1,13 @@
 2007-10-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver.
+        
+        - Fix the browser-hosted driver to be compatible with Safari 2
+
+        * hosted/sunspider-driver.html:
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Hyatt.
         
         - Add BSD license notice to cordic test, the original author said to do so.

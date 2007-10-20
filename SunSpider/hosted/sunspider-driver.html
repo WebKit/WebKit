@@ -28,7 +28,7 @@
 
 <title>SunSpider JavaScript Benchmark In Progress...</title>
 </head>
-<body>
+<body onload="next()">
 
 <h2>SunSpider JavaScript Benchmark In Progress...</h2>
 
@@ -46,7 +46,7 @@ for (var i = 0; i < output.length; i++) {
 
 function next() 
 {
-    window.setTimeout(reallyNext, 200);
+    window.setTimeout(reallyNext, 500);
 }
 
 function reallyNext() 
@@ -65,6 +65,7 @@ function reallyNext()
 function recordResult(time)
 {
     output[currentRepeat][tests[testIndex]] = time;
+    next();
 }
 
 function finish()
@@ -86,7 +87,7 @@ function finish()
 
 </script>
 
-<iframe id="testframe" onload="next()" width="80%" height="500">
+<iframe id="testframe" width="80%" height="500">
 </iframe>
 
 </body>
