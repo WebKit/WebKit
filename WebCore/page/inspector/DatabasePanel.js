@@ -249,7 +249,7 @@ WebInspector.DatabasePanel.prototype = {
         try {
             var panel = this;
             var query = "SELECT * FROM " + this.currentTable;
-            this.database.database.executeSql(query, function(result) { panel.browseQueryFinished(result) });
+            this.database.database.executeSql(query, [], function(result) { panel.browseQueryFinished(result) });
         } catch(e) {
             // FIXME: handle this error a better way.
             this.views.browse.contentElement.removeChildren();
@@ -358,7 +358,7 @@ WebInspector.DatabasePanel.prototype = {
 
         try {
             var panel = this;
-            this.database.database.executeSql(query, function(result) { panel.queryFinished(query, result) });
+            this.database.database.executeSql(query, [], function(result) { panel.queryFinished(query, result) });
 
             this.queryPromptHistory.push(query);
             this.queryPromptHistoryOffset = 0;

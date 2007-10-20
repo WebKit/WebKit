@@ -38,6 +38,7 @@
 #include "JSCustomVersionChangeCallback.h"
 #include "PlatformString.h"
 #include "SQLValue.h"
+#include <JavaScriptCore/array_instance.h>
 
 namespace WebCore {
 
@@ -45,19 +46,21 @@ using namespace KJS;
 
 JSValue* JSDatabase::executeSql(ExecState* exec, const List& args)
 {
-    // There has to be at least two arguments
-    if (args.size() < 2) {
-        setDOMException(exec, SYNTAX_ERR);
-        return jsUndefined();
-    }
-
     String sqlStatement = args[0]->toString(exec);
 
     // Now assemble the list of SQL arguments
     Vector<SQLValue> SQLValues;
 
-    for (int i = 0 ; i < args.size() - 2; i++) {
-        JSValue* value = args[i + 1];
+    if (!args[1]->isObject() ||
+        !static_cast<JSObject*>(args[1])->inherits(&ArrayInstance::info)) {
+        setDOMException(exec, TYPE_MISMATCH_ERR);
+        return jsUndefined();
+    }
+    
+    ArrayInstance* array = static_cast<ArrayInstance*>(args[1]);
+    
+    for (unsigned i = 0 ; i < array->getLength(); i++) {
+        JSValue* value = array->getItem(i);
 
         if (value->isNull()) {
             SQLValues.append(SQLValue());
@@ -69,10 +72,7 @@ JSValue* JSDatabase::executeSql(ExecState* exec, const List& args)
         }
     }
 
-    // REVIEW: This checks that the last argument passed in is a JS Object
-    // (instead of a string or a number for example) and throws a type mismatch exception if it's not.
-    // Should this go into the spec?
-    JSObject* callback = args[args.size() - 1]->getObject();
+    JSObject* callback = args[2]->getObject();
     if (!callback) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();

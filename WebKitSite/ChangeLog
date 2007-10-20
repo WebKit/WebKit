@@ -1,3 +1,11 @@
+2007-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Update example.
+        
+        * misc/DatabaseExample.html:
+
 2007-10-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim

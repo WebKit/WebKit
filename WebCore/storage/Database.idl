@@ -31,7 +31,7 @@ module storage {
     interface Database {
         readonly attribute DOMString version;
         [Custom] boolean changeVersion(in DOMString oldVersion, in DOMString newVersion, in VersionChangeCallback callback);
-        [Custom] void executeSql(in DOMString sqlStatement, arguments..., in SQLCallback callback);
+        [Custom] void executeSql(in DOMString sqlStatement, in ObjectArray arguments, in SQLCallback callback);
         void closeTransaction();
     };
 

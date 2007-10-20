@@ -27,11 +27,11 @@ function saveNote()
     
     // This might fail if the table already exists, so ignore that
     try {
-        db.executeSql("CREATE TABLE WebKitNotes (note TEXT, timestamp REAL)", function(result) {});
+        db.executeSql("CREATE TABLE WebKitNotes (note TEXT, timestamp REAL)", [], function(result) {});
     } catch(err) { }
     
     // If the table exists already, this is expected to fail - so lets ignore the errorcode
-    db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", note, timestamp, function(result) {
+    db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", note, timestamp, [], function(result) {
         if (result.errorCode)
             alert("Failed to save note in database");
         else
@@ -66,7 +66,7 @@ function loaded()
     if (!db)
         return;
 
-    db.executeSql("SELECT note, timestamp FROM WebKitNotes ORDER BY timestamp", function(result) {
+    db.executeSql("SELECT note, timestamp FROM WebKitNotes ORDER BY timestamp", [], function(result) {
         if (result.errorCode) {
             alert("Failed to retrieve previous notes from database");
             return;

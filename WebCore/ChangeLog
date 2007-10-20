@@ -1,3 +1,15 @@
+2007-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Update to match the latest version of the spec. Now, executeSQL takes an array
+        of SQL parameters instead of them being passed as arguments.
+        
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::executeSql):
+        * page/inspector/DatabasePanel.js:
+        * storage/Database.idl:
+
 2007-10-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim
