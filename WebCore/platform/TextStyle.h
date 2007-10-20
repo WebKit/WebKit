@@ -34,6 +34,7 @@ public:
         , m_directionalOverride(directionalOverride)
         , m_applyRunRounding(applyRunRounding)
         , m_applyWordRounding(applyWordRounding)
+        , m_disableSpacing(false)
     {
     }
 
@@ -45,7 +46,9 @@ public:
     bool directionalOverride() const { return m_directionalOverride; }
     bool applyRunRounding() const { return m_applyRunRounding; }
     bool applyWordRounding() const { return m_applyWordRounding; }
+    bool spacingDisabled() const { return m_disableSpacing; }
 
+    void disableSpacing() { m_disableSpacing = true; }
     void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
     void setRTL(bool b) { m_rtl = b; }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
@@ -58,6 +61,7 @@ private:
     bool m_directionalOverride;
     bool m_applyRunRounding;
     bool m_applyWordRounding;
+    bool m_disableSpacing;
 };
 
 }

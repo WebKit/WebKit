@@ -63,7 +63,7 @@ static inline void startTextChunk(SVGTextChunkLayoutInfo& info)
     info.assignChunkProperties = true;
 }
 
-static inline void closeTextChunk(SVGTextChunkLayoutInfo& info, Vector<SVGTextChunk>& textChunks)
+static inline void closeTextChunk(SVGTextChunkLayoutInfo& info)
 {
     ASSERT(!info.chunk.boxes.last().isOpen());
     ASSERT(info.chunk.boxes.last().isClosed());
@@ -71,7 +71,7 @@ static inline void closeTextChunk(SVGTextChunkLayoutInfo& info, Vector<SVGTextCh
     info.chunk.end = info.it;
     ASSERT(info.chunk.end >= info.chunk.start);
 
-    textChunks.append(info.chunk);
+    info.svgTextChunks.append(info.chunk);
 }
 
 RenderSVGRoot* findSVGRootObject(RenderObject* start)
@@ -106,6 +106,23 @@ FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator it, Vector<
     }
 
     return FloatPoint(lowX, lowY);
+}
+
+// Helper function
+static float calculateKerning(RenderObject* item)
+{
+    const Font& font = item->style()->font();
+    const SVGRenderStyle* svgStyle = item->style()->svgStyle();
+
+    float kerning = 0.0f;
+    if (CSSPrimitiveValue* primitive = static_cast<CSSPrimitiveValue*>(svgStyle->kerning())) {
+        kerning = primitive->getFloatValue();
+
+        if (primitive->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE && font.pixelSize() > 0)
+            kerning = kerning / 100.0f * font.pixelSize();
+    }
+
+    return kerning;
 }
 
 // Helper class for paint()
@@ -370,7 +387,7 @@ void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     paintInfo.context->restore();
 }
 
-int SVGRootInlineBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing)
+int SVGRootInlineBox::placeBoxesHorizontally(int, int& leftPosition, int& rightPosition, bool&)
 {
     // Remove any offsets caused by RTL text layout
     leftPosition = 0;
@@ -416,7 +433,11 @@ TextStyle svgTextStyleForInlineTextBox(RenderStyle* style, const InlineTextBox* 
     ASSERT(textBox);
     ASSERT(style);
 
-    return TextStyle(false, static_cast<int>(xPos), textBox->toAdd(), textBox->m_reversed, textBox->m_dirOverride || style->visuallyOrdered());
+    TextStyle textStyle(false, static_cast<int>(xPos), textBox->toAdd(), textBox->m_reversed, textBox->m_dirOverride || style->visuallyOrdered());
+
+    // We handle letter & word spacing ourselves
+    textStyle.disableSpacing();
+    return textStyle;
 }
 
 static float cummulatedWidthOrHeightOfTextChunk(SVGTextChunk& chunk, bool calcWidthOnly)
@@ -499,11 +520,8 @@ static float cummulatedHeightOfTextChunk(SVGTextChunk& chunk)
     return cummulatedWidthOrHeightOfTextChunk(chunk, false);
 }
 
-static void applyTextAnchorToTextChunk(SVGTextChunk& chunk)
+static float calculateTextAnchorShiftForTextChunk(SVGTextChunk& chunk, ETextAnchor anchor)
 {
-    if (chunk.anchor == TA_START)
-        return;
-
     float shift = 0.0f;
 
     if (chunk.isVerticalText)
@@ -511,10 +529,20 @@ static void applyTextAnchorToTextChunk(SVGTextChunk& chunk)
     else
         shift = cummulatedWidthOfTextChunk(chunk);
 
-    if (chunk.anchor == TA_MIDDLE)
+    if (anchor == TA_MIDDLE)
         shift *= -0.5f;
     else
         shift *= -1.0f;
+
+    return shift;
+}
+
+static void applyTextAnchorToTextChunk(SVGTextChunk& chunk)
+{
+    if (chunk.anchor == TA_START)
+        return;
+
+    float shift = calculateTextAnchorShiftForTextChunk(chunk, chunk.anchor);
 
     // Apply correction to chunk
     Vector<SVGChar>::iterator chunkIt = chunk.start;
@@ -546,39 +574,55 @@ static void applyTextAnchorToTextChunk(SVGTextChunk& chunk)
     }
 }
 
-static void applyTextLengthCorrectionToTextChunk(SVGTextChunk& chunk)
+static float calculateTextLengthCorrectionForTextChunk(SVGTextChunk& chunk, ELengthAdjust lengthAdjust, float& computedLength)
 {
-    if (chunk.textLength <= FLT_EPSILON) // Not sure, why <= 0.0 doesn't work here (some fltpoint issue)
-        return;
+    if (chunk.textLength <= 0.0f)
+        return 0.0f;
 
     float computedWidth = cummulatedWidthOfTextChunk(chunk);
     float computedHeight = cummulatedHeightOfTextChunk(chunk);
 
-    if ((computedWidth <= 0.0 && !chunk.isVerticalText) ||
-        (computedHeight <= 0.0 && chunk.isVerticalText))
-        return;
-
-    float computedLength;
+    if ((computedWidth <= 0.0f && !chunk.isVerticalText) ||
+        (computedHeight <= 0.0f && chunk.isVerticalText))
+        return 0.0f;
 
     if (chunk.isVerticalText)
         computedLength = computedHeight;
     else
         computedLength = computedWidth;
 
-    if (chunk.lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS) {
-        SVGChar& firstChar = *(chunk.start);
-        chunk.ctm.translate(firstChar.x, firstChar.y);
-
+    if (lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS) {
         if (chunk.isVerticalText)
-            chunk.ctm.scale(1.0, chunk.textLength / computedLength);
+            chunk.ctm.scale(1.0f, chunk.textLength / computedLength);
         else
-            chunk.ctm.scale(chunk.textLength / computedLength, 1.0);
+            chunk.ctm.scale(chunk.textLength / computedLength, 1.0f);
 
-        chunk.ctm.translate(-firstChar.x, -firstChar.y);
-    } else {
-        float spacingToApply = (chunk.textLength - computedLength) / float(chunk.end - chunk.start);
+        return 0.0f;
+    }
 
-        // Apply correction to chunk 
+    return (chunk.textLength - computedLength) / float(chunk.end - chunk.start);
+}
+
+static void applyTextLengthCorrectionToTextChunk(SVGTextChunk& chunk)
+{
+    // lengthAdjust="spacingAndGlyphs" is handled by modifying chunk.ctm
+    float computedLength = 0.0f;
+    float spacingToApply = calculateTextLengthCorrectionForTextChunk(chunk, chunk.lengthAdjust, computedLength);
+
+    if (!chunk.ctm.isIdentity() && chunk.lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS) {
+        SVGChar& firstChar = *(chunk.start);
+
+        // Assure we apply the chunk scaling in the right origin
+        AffineTransform newChunkCtm;
+        newChunkCtm.translate(firstChar.x, firstChar.y);
+        newChunkCtm = chunk.ctm * newChunkCtm;
+        newChunkCtm.translate(-firstChar.x, -firstChar.y);
+
+        chunk.ctm = newChunkCtm;
+    }
+
+    // Apply correction to chunk 
+    if (spacingToApply != 0.0f) {
         Vector<SVGChar>::iterator chunkIt = chunk.start;
         for (; chunkIt != chunk.end; ++chunkIt) {
             SVGChar& curChar = *chunkIt;
@@ -599,13 +643,13 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
     m_svgTextChunks.clear();
 
     // Build layout information for all contained render objects
-    SVGCharacterLayoutInfo info;
+    SVGCharacterLayoutInfo info(m_svgChars);
     buildLayoutInformation(this, info);
 
     // Now all layout information are available for every character
     // contained in any of our child inline/flow boxes. Build list
     // of text chunks now, to be able to apply text-anchor shifts.
-    buildTextChunks();
+    buildTextChunks(m_svgChars, m_svgTextChunks, this);
 
     // Layout all text chunks
     // text-anchor needs to be applied to individual chunks.
@@ -619,40 +663,6 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
     // Layout all InlineText/Flow boxes
     // BEWARE: This requires the root top/left position to be set correctly before!
     layoutInlineBoxes();
-}
-
-static void totalAdvanceOfInlineTextBox(InlineTextBox* textBox, int from, int to, bool isVerticalText, float& totalAdvance)
-{
-    ASSERT(textBox);
-    ASSERT(textBox->object());
-
-    if (to > 0 && (unsigned int) to > textBox->len())
-        to = textBox->len();
-
-    RenderStyle* style = textBox->object()->style();
-    SVGInlineTextBox* svgTextBox = static_cast<SVGInlineTextBox*>(textBox);
-
-    for (int i = from; i < to; ++i) {
-        int offset = textBox->m_reversed ? textBox->end() - i : textBox->start() + i;
-
-        if (!isVerticalText)
-            totalAdvance += svgTextBox->calculateGlyphWidth(style, offset);
-        else
-            totalAdvance += svgTextBox->calculateGlyphHeight(style, offset);
-    }
-}
-
-static void totalAdvanceOfInlineBox(InlineFlowBox* start, bool isVerticalText, float& totalAdvance)
-{
-    for (InlineBox* curr = start->firstChild(); curr; curr = curr->nextOnLine()) {
-        if (curr->object()->isText()) {
-            InlineTextBox* textBox = static_cast<InlineTextBox*>(curr);
-            totalAdvanceOfInlineTextBox(textBox, 0, textBox->len(), isVerticalText, totalAdvance);
-        } else {
-            ASSERT(curr->isInlineFlowBox());
-            totalAdvanceOfInlineBox(static_cast<InlineFlowBox*>(curr), isVerticalText, totalAdvance);
-        }
-    }
 }
 
 void SVGRootInlineBox::buildLayoutInformation(InlineFlowBox* start, SVGCharacterLayoutInfo& info)
@@ -686,27 +696,50 @@ void SVGRootInlineBox::buildLayoutInformation(InlineFlowBox* start, SVGCharacter
             } else if (!isAnchor) {
                 info.setInPathLayout(true);
 
-                float textAnchorStartOffset = 0.0f;
-                bool isVerticalText = isVerticalWritingMode(flowBox->object()->style()->svgStyle());
+                // Handle text-anchor/textLength on path, which is special.
+                SVGElement* textElement = svg_dynamic_cast(flowBox->object()->element());
+                ASSERT(textElement);
 
-                // Handle text-anchor on path, which is special.
+                SVGTextContentElement* textContent = static_cast<SVGTextContentElement*>(textElement);
+                ASSERT(textContent);
+
+                ELengthAdjust lengthAdjust = (ELengthAdjust) textContent->lengthAdjust();
                 ETextAnchor anchor = flowBox->object()->style()->svgStyle()->textAnchor();
-                switch (anchor) {
-                    case TA_END:
-                    case TA_MIDDLE:
-                    {
-                        float totalAdvance = 0.0f;
-                        totalAdvanceOfInlineBox(flowBox, isVerticalText, totalAdvance);
+                float textAnchorStartOffset = 0.0f;
 
-                        if (anchor == TA_END)
-                            textAnchorStartOffset -= totalAdvance;
-                        else
-                            textAnchorStartOffset -= totalAdvance / 2.0f;
+                // Initialize sub-layout. We need to create text chunks from the textPath
+                // children using our standard layout code, to be able to measure the
+                // text length using our normal methods and not textPath specific hacks.
+                Vector<SVGChar> tempChars;
+                Vector<SVGTextChunk> tempChunks;
+
+                SVGCharacterLayoutInfo tempInfo(tempChars);
+                buildLayoutInformation(flowBox, tempInfo);
+
+                buildTextChunks(tempChars, tempChunks, flowBox);
+
+                Vector<SVGTextChunk>::iterator it = tempChunks.begin();
+                Vector<SVGTextChunk>::iterator end = tempChunks.end();
+
+                AffineTransform ctm;
+                float computedLength = 0.0f;
+ 
+                for (; it != end; ++it) {
+                    SVGTextChunk& chunk = *it;
+
+                    // Apply text-length calculation
+                    info.pathExtraAdvance += calculateTextLengthCorrectionForTextChunk(chunk, lengthAdjust, computedLength);
+
+                    if (lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS) {
+                        info.pathTextLength += computedLength;
+                        info.pathChunkLength += chunk.textLength;
                     }
-                    case TA_START:
-                        break;
-                    default:
-                        ASSERT_NOT_REACHED();
+
+                    // Calculate text-anchor start offset
+                    if (anchor == TA_START)
+                        continue;
+
+                    textAnchorStartOffset += calculateTextAnchorShiftForTextChunk(chunk, anchor);
                 }
 
                 info.addLayoutInformation(flowBox, textAnchorStartOffset);
@@ -839,6 +872,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
     RenderStyle* style = text->style(textBox->isFirstLineStyle());
     ASSERT(style);
 
+    const Font& font = style->font();
     SVGInlineTextBox* svgTextBox = static_cast<SVGInlineTextBox*>(textBox);
 
     unsigned length = textBox->len();
@@ -852,12 +886,12 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         float glyphWidth = 0.0f;
         float glyphHeight = 0.0f;
 
-        if (!textBox->m_reversed) {
-            glyphWidth = svgTextBox->calculateGlyphWidth(style, textBox->start() + i);
-            glyphHeight = svgTextBox->calculateGlyphHeight(style, textBox->start() + i);
-        } else {
+        if (textBox->m_reversed) {
             glyphWidth = svgTextBox->calculateGlyphWidth(style, textBox->end() - i);
             glyphHeight = svgTextBox->calculateGlyphHeight(style, textBox->end() - i);
+        } else {
+            glyphWidth = svgTextBox->calculateGlyphWidth(style, textBox->start() + i);
+            glyphHeight = svgTextBox->calculateGlyphHeight(style, textBox->start() + i);
         }
 
         bool assignedX = false;
@@ -906,10 +940,38 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
                 info.cury += dy;
         }
 
-        // Calculate absolute x/y values, if needed
-        if (!info.inPathLayout())
-            svgChar.visible = true;
-        else {
+        // Take letter & word spacing and kerning into account
+        float spacing = font.letterSpacing() + calculateKerning(textBox->object()->element()->renderer());
+
+        const UChar* currentCharacter = text->characters() + (textBox->m_reversed ? textBox->end() - i : textBox->start() + i);
+        const UChar* lastCharacter = 0;
+
+        if (textBox->m_reversed) {
+            if (i < textBox->end())
+                lastCharacter = text->characters() + textBox->end() - i +  1;
+        } else {
+            if (i > 0)
+                lastCharacter = text->characters() + textBox->start() + i - 1;
+        }
+
+        if (info.nextDrawnSeperated || spacing != 0.0f) {
+            info.nextDrawnSeperated = false;
+            svgChar.drawnSeperated = true;
+        }
+
+        if (currentCharacter && Font::treatAsSpace(*currentCharacter) && lastCharacter && !Font::treatAsSpace(*lastCharacter)) {
+            spacing += font.wordSpacing();
+
+            if (spacing != 0.0f && !info.inPathLayout())
+                info.nextDrawnSeperated = true;
+        }
+
+        svgChar.pathXScale = 1.0f;
+        svgChar.pathYScale = 1.0f;
+        svgChar.visible = true;
+
+        // Handle textPath layout mode
+        if (info.inPathLayout()) {
             float glyphAdvance = isVerticalText ? glyphHeight : glyphWidth;
             float extraAdvance = isVerticalText ? dy : dx;
 
@@ -920,8 +982,27 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             else if (assignedY && isVerticalText)
                 newOffset = info.cury;
 
-            svgChar.visible = info.nextPathLayoutPointAndAngle(info.curx, info.cury, info.angle, glyphAdvance, extraAdvance, newOffset);
+            // Handle lengthAdjust="spacingAndGlyphs" by specifying per-character scale operations
+            if (info.pathTextLength > 0.0f && info.pathChunkLength > 0.0f) { 
+                if (isVerticalText) {
+                    svgChar.pathYScale = info.pathChunkLength / info.pathTextLength;
+                    spacing *= svgChar.pathYScale;
+                    glyphAdvance *= svgChar.pathYScale;
+                } else {
+                    svgChar.pathXScale = info.pathChunkLength / info.pathTextLength;
+                    spacing *= svgChar.pathXScale;
+                    glyphAdvance *= svgChar.pathXScale;
+                }
+            }
+
+            // Handle letter & word spacing on text path
+            float pathExtraAdvance = info.pathExtraAdvance;
+            info.pathExtraAdvance += spacing;
+
+            svgChar.visible = info.nextPathLayoutPointAndAngle(glyphAdvance, extraAdvance, newOffset);
             svgChar.drawnSeperated = true;
+
+            info.pathExtraAdvance = pathExtraAdvance;
         }
 
         // Apply rotation
@@ -955,11 +1036,11 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
 
             // Translate to glyph midpoint
             if (isVerticalText) {
-                svgChar.pathYShift -= glyphHeight / 2.0f;
                 svgChar.pathXShift += info.dx;
+                svgChar.pathYShift -= glyphHeight / 2.0f;
             } else {
-                svgChar.pathYShift += info.dy;
                 svgChar.pathXShift -= glyphWidth / 2.0f;
+                svgChar.pathYShift += info.dy;
             }
         }
  
@@ -975,29 +1056,30 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         if (svgChar.angle != 0.0f)
             svgChar.drawnSeperated = true;
 
-        // Advance current position
-        if (!isVerticalText)
-            info.curx += glyphWidth;
+        // Advance to new position
+        if (isVerticalText)
+            info.cury += glyphHeight + spacing;
         else
-            info.cury += glyphHeight;
+            info.curx += glyphWidth + spacing;
 
-        m_svgChars.append(svgChar);
+        // Advance to next character
+        info.svgChars.append(svgChar);
         info.processedSingleCharacter();
     }
 }
 
-void SVGRootInlineBox::buildTextChunks()
+void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, Vector<SVGTextChunk>& svgTextChunks, InlineFlowBox* start)
 {
-    SVGTextChunkLayoutInfo info;
-    info.it = m_svgChars.begin();
-    info.chunk.start = m_svgChars.begin();
-    info.chunk.end = m_svgChars.begin();
+    SVGTextChunkLayoutInfo info(svgTextChunks);
+    info.it = svgChars.begin();
+    info.chunk.start = svgChars.begin();
+    info.chunk.end = svgChars.begin();
 
-    buildTextChunks(this, info);
-    ASSERT(info.it == m_svgChars.end());
+    buildTextChunks(svgChars, start, info);
+    ASSERT(info.it == svgChars.end());
 }
 
-void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutInfo& info)
+void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox* start, SVGTextChunkLayoutInfo& info)
 {
 #if DEBUG_CHUNK_BUILDING > 1
     fprintf(stderr, " -> buildTextChunks(start=%p)\n", start);
@@ -1026,7 +1108,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
             ASSERT(textContent);
             
             // Start new character range for the first chunk
-            bool isFirstCharacter = m_svgTextChunks.isEmpty() && info.chunk.start == info.it && info.chunk.start == info.chunk.end;
+            bool isFirstCharacter = info.svgTextChunks.isEmpty() && info.chunk.start == info.it && info.chunk.start == info.chunk.end;
             if (isFirstCharacter) {
                 ASSERT(info.chunk.boxes.isEmpty());
                 info.chunk.boxes.append(SVGInlineBoxCharacterRange());
@@ -1035,7 +1117,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
 
             // Walk string to find out new chunk positions, if existant
             for (unsigned i = 0; i < length; ++i) {
-                ASSERT(info.it != m_svgChars.end());
+                ASSERT(info.it != svgChars.end());
 
                 SVGInlineBoxCharacterRange& range = info.chunk.boxes.last();
                 if (range.isOpen()) {
@@ -1068,7 +1150,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
                     ASSERT(!range.isClosed());
 
                     range.endOffset = i;
-                    closeTextChunk(info, m_svgTextChunks);
+                    closeTextChunk(info);
 
 #if DEBUG_CHUNK_BUILDING > 1
                     fprintf(stderr, " | -> Close mid-text chunk, at endOffset: %i and starting new mid chunk!\n", range.endOffset);
@@ -1119,7 +1201,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
                 // Current text chunk is not yet closed. Finish the current range, but don't start a new chunk.
                 range.endOffset = length;
 
-                if (info.it != m_svgChars.end()) {
+                if (info.it != svgChars.end()) {
 #if DEBUG_CHUNK_BUILDING > 1
                     fprintf(stderr, " -> Not at last character yet!\n");
 #endif
@@ -1131,7 +1213,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
                         fprintf(stderr, " -> Next character starts new chunk! Closing current chunk, and starting a new one...\n");
 #endif
 
-                        closeTextChunk(info, m_svgTextChunks);
+                        closeTextChunk(info);
                         startTextChunk(info);
                     } else {
                         // Just start a new character range
@@ -1147,7 +1229,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
 #endif
 
                     // Close final chunk, once we're at the end of the last box
-                    closeTextChunk(info, m_svgTextChunks);
+                    closeTextChunk(info);
                 }
             }
         } else {
@@ -1163,7 +1245,7 @@ void SVGRootInlineBox::buildTextChunks(InlineFlowBox* start, SVGTextChunkLayoutI
             if (isTextPath)
                 info.handlingTextPath = true;
 
-            buildTextChunks(flowBox, info);
+            buildTextChunks(svgChars, flowBox, info);
 
             if (isTextPath)
                 info.handlingTextPath = false;
@@ -1205,11 +1287,13 @@ void SVGRootInlineBox::layoutTextChunks()
         }
 #endif
 
-        // text-path & text-anchor/textLength need special treatment.
         if (chunk.isTextPath)
             continue;
 
+        // text-path & textLength, with lengthAdjust="spacing" is already handled for textPath layouts.
         applyTextLengthCorrectionToTextChunk(chunk);
+ 
+        // text-anchor is already handled for textPath layouts.
         applyTextAnchorToTextChunk(chunk);
     }
 }

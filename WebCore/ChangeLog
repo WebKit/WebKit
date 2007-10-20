@@ -1,3 +1,48 @@
+2007-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add support for 'kerning' property in SVG text layout code.
+        Support all textLength/lengthAdjust modes on normal text & textPaths.
+
+        Support letter & word spacing on textPath.
+        Fix text selection when any spacing (letter/word/kerning) is involved.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15571
+        Fixes: svg/batik/text/textOnPathSpaces.svg (spacing)
+               svg/batik/text/textLayout.svg (kerning support)
+               svg/text/text-spacing-01-b.svg (text selection)
+
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/TextStyle.h:
+        (WebCore::TextStyle::TextStyle):
+        (WebCore::TextStyle::spacingDisabled):
+        (WebCore::TextStyle::disableSpacing):
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGCharacterLayoutInfo::SVGCharacterLayoutInfo):
+        (WebCore::SVGCharacterLayoutInfo::nextPathLayoutPointAndAngle):
+        (WebCore::SVGCharacterLayoutInfo::setInPathLayout):
+        (WebCore::SVGCharacterLayoutInfo::addLayoutInformation):
+        (WebCore::SVGChar::characterTransform):
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGTextChunkLayoutInfo::SVGTextChunkLayoutInfo):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::closeTextChunk):
+        (WebCore::calculateKerning):
+        (WebCore::SVGRootInlineBox::placeBoxesHorizontally):
+        (WebCore::svgTextStyleForInlineTextBox):
+        (WebCore::calculateTextAnchorShiftForTextChunk):
+        (WebCore::applyTextAnchorToTextChunk):
+        (WebCore::calculateTextLengthCorrectionForTextChunk):
+        (WebCore::applyTextLengthCorrectionToTextChunk):
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::SVGRootInlineBox::buildLayoutInformation):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+        (WebCore::SVGRootInlineBox::layoutTextChunks):
+        * rendering/SVGRootInlineBox.h:
+
 2007-10-20  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewd by Darin.

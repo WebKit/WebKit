@@ -74,9 +74,10 @@ private:
 };
 
 class PositionedFloatVector : public PositionedVector<float> { };
+struct SVGChar;
 
 struct SVGCharacterLayoutInfo {
-    SVGCharacterLayoutInfo();
+    SVGCharacterLayoutInfo(Vector<SVGChar>&);
 
     enum StackType { XStack, YStack, DxStack, DyStack, AngleStack, BaselineShiftStack };
 
@@ -97,10 +98,10 @@ struct SVGCharacterLayoutInfo {
     void processedChunk(float savedShiftX, float savedShiftY);
     void processedSingleCharacter();
 
-    bool nextPathLayoutPointAndAngle(float& x, float& y, float& angle, float glyphAdvance, float extraAdvance, float newOffset);
+    bool nextPathLayoutPointAndAngle(float glyphAdvance, float extraAdvance, float newOffset);
 
     // Used for text-on-path.
-    void addLayoutInformation(InlineFlowBox*, float textAnchorOffset = 0.0);
+    void addLayoutInformation(InlineFlowBox*, float textAnchorOffset = 0.0f);
 
     bool inPathLayout() const;
     void setInPathLayout(bool value);
@@ -122,6 +123,15 @@ struct SVGCharacterLayoutInfo {
     // Accumulated baseline-shift values
     float shiftx;
     float shifty;
+
+    // Path specific advance values to handle lengthAdjust
+    float pathExtraAdvance;
+    float pathTextLength;
+    float pathChunkLength;
+
+    // Result vector
+    Vector<SVGChar>& svgChars;
+    bool nextDrawnSeperated : 1;
 
 private:
     // Used for baseline-shift.
@@ -169,6 +179,9 @@ struct SVGChar {
     float x;
     float y;
     float angle;
+
+    float pathXScale;
+    float pathYScale;
 
     float pathXShift;
     float pathYShift;
@@ -335,17 +348,21 @@ private:
 };
 
 struct SVGTextChunkLayoutInfo {
-    SVGTextChunkLayoutInfo()
+    SVGTextChunkLayoutInfo(Vector<SVGTextChunk>& textChunks)
         : assignChunkProperties(true)
         , handlingTextPath(false)
+        , svgTextChunks(textChunks)
+        , it(0)
     {
     }
 
     bool assignChunkProperties : 1;
     bool handlingTextPath : 1;
 
-    SVGTextChunk chunk;
+    Vector<SVGTextChunk>& svgTextChunks;
     Vector<SVGChar>::iterator it;
+
+    SVGTextChunk chunk;
 };
 
 struct SVGTextDecorationInfo {

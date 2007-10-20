@@ -176,7 +176,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
                 width = fontData->m_adjustedSpaceWidth;
         }
 
-        if (hasExtraSpacing) {
+        if (hasExtraSpacing && !m_style.spacingDisabled()) {
             // Account for letter-spacing.
             if (width && m_font->letterSpacing())
                 width += m_font->letterSpacing();

@@ -1,3 +1,23 @@
+2007-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Updated tests that need textLength/lengthAdjust/kerning support.
+
+        * platform/mac/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt:
+        * svg/batik/text/textLayout-expected.checksum:
+        * svg/batik/text/textLayout-expected.png:
+        * svg/batik/text/textLayout-expected.txt:
+        * svg/batik/text/textOnPathSpaces-expected.checksum:
+        * svg/batik/text/textOnPathSpaces-expected.png:
+        * svg/batik/text/textOnPathSpaces-expected.txt:
+        * svg/batik/text/textPosition-expected.txt:
+        * svg/batik/text/textPosition2-expected.txt:
+        * svg/custom/text-letter-spacing-expected.txt:
+        * svg/text/text-spacing-01-b-expected.checksum:
+        * svg/text/text-spacing-01-b-expected.png:
+        * svg/text/text-spacing-01-b-expected.txt:
+
 2007-10-19  Oliver Hunt  <oliver@apple.com>
 
         RS=Mark.
