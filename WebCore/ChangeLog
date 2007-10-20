@@ -1,3 +1,17 @@
+2007-10-20  Jasper Bryant-Greene  <m@ni.ac.nz>
+
+        Reviewed by Maciej.
+
+        Changed the hard-coded scroll delta in WheelEventGtk from 120 to 0.25,
+        as suggested by George Wright in #15108 (which this patch will
+        resolve).
+
+        This gives a more sane scrolling behaviour, rather than the
+        jumping to the end or start of the document as occurred previously.
+
+        * platform/gtk/WheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2007-10-20  Alp Toker  <alp@atoker.com>
 
         Reviewed by Eric.
