@@ -1,3 +1,13 @@
+2007-10-20  Adam Roben  <aroben@apple.com>
+
+        Make the notes sticky!
+
+        Reviewed by Mark.
+
+        * misc/DatabaseExample.html:
+        * misc/deleteButton.tiff: Added.
+        * misc/deleteButtonPressed.tiff: Added.
+
 2007-10-19  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
