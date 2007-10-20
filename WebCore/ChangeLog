@@ -1,5 +1,26 @@
 2007-10-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Brady.
+
+        Move some SQL-related classes to platform/sql.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/icon/SQLDatabase.cpp: Removed.
+        * loader/icon/SQLDatabase.h: Removed.
+        * loader/icon/SQLStatement.cpp: Removed.
+        * loader/icon/SQLStatement.h: Removed.
+        * loader/icon/SQLTransaction.cpp: Removed.
+        * loader/icon/SQLTransaction.h: Removed.
+        * platform/sql/SQLDatabase.cpp: Copied from loader/icon/SQLDatabase.cpp.
+        * platform/sql/SQLDatabase.h: Copied from loader/icon/SQLDatabase.h.
+        * platform/sql/SQLStatement.cpp: Copied from loader/icon/SQLStatement.cpp.
+        * platform/sql/SQLStatement.h: Copied from loader/icon/SQLStatement.h.
+        * platform/sql/SQLTransaction.cpp: Copied from loader/icon/SQLTransaction.cpp.
+        * platform/sql/SQLTransaction.h: Copied from loader/icon/SQLTransaction.h.
+
+2007-10-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Update to match the latest version of the spec. Now, executeSQL takes an array

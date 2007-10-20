@@ -2897,30 +2897,6 @@
 					RelativePath="..\loader\icon\PageURLRecord.h"
 					>
 				</File>
-				<File
-					RelativePath="..\loader\icon\SQLDatabase.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\icon\SQLDatabase.h"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\icon\SQLStatement.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\icon\SQLStatement.h"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\icon\SQLTransaction.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\icon\SQLTransaction.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="win"
@@ -4510,6 +4486,30 @@
 				</File>
 				<File
 					RelativePath="..\platform\sql\SQLAuthorizer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLDatabase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLDatabase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLStatement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLStatement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLTransaction.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\sql\SQLTransaction.h"
 					>
 				</File>
 				<File
