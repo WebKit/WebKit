@@ -1,5 +1,29 @@
 2007-10-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Nikolas.
+        
+        - Rebalance test complexity.
+        
+        Scaled all the tests so they take 400-600ms on a reasonably normal user setup:
+        
+        Internet Explorer 7, Window XP, Dell Latitude D810 with a 2.13GHz Pentium M
+
+        However, for some tests, IE7 was a huge outlier compared to other
+        major browsers. For those tests, I used Firefox 2.0.0.8 on the
+        same OS and hardware as a normalization basis.
+        
+        * tests/3d-morph.js:
+        * tests/3d-raytrace.js:
+        * tests/bitops-3bit-bits-in-byte.js:
+        * tests/bitops-bits-in-byte.js:
+        * tests/bitops-bitwise-and.js:
+        * tests/math-cordic.js:
+        * tests/string-base64.js:
+        * tests/string-tagcloud.js:
+        * tests/string-unpack-code.js:
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver.
         
         - Fix the browser-hosted driver to be compatible with Safari 2

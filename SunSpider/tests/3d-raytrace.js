@@ -385,7 +385,7 @@ _scene.lights[2].colour = createVector(0.7, 0.7, 0.7);
 _scene.ambient = createVector(0.1, 0.1, 0.1);
 //  _scene.background = createVector(0.7, 0.7, 1.0);
 
-var size = 50;
+var size = 30;
 var pixels = new Array();
 for (var y = 0; y < size; y++) {
   pixels[y] = new Array();

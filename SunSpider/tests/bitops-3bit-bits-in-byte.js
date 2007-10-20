@@ -25,7 +25,7 @@ addr3,r3,r10
 
 function TimeFunc(func) {
 var x, y, t;
-for(var x=0; x<1000; x++)
+for(var x=0; x<500; x++)
 for(var y=0; y<256; y++) func(y);
 }
 

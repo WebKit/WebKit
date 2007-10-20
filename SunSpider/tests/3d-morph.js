@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-var loops = 30
+var loops = 15
 var nx = 120
 var nz = 120
 

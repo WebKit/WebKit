@@ -92,4 +92,4 @@ function cordic( runs ) {
   return end.getTime() - start.getTime();
 }
 
-cordic(30000);
+cordic(25000);

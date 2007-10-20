@@ -118,10 +118,10 @@ function base64ToString(data) {
 
 var str = "";
 
-for ( var i = 0; i < 2048; i++ )
+for ( var i = 0; i < 8192; i++ )
         str += String.fromCharCode( (25 * Math.random()) + 97 );
 
-for ( var i = 2048; i <= 16384; i *= 2 ) {
+for ( var i = 8192; i <= 16384; i *= 2 ) {
 
     var base64;
 
