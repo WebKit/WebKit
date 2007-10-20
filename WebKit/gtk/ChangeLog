@@ -1,5 +1,14 @@
 2007-10-20  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Alp.
+
+        Gtk changes needed to enable HTML 5 client-side database storage.
+
+        * Api/webkitgtkglobal.cpp: Set a default database path based on the user data directory.
+        This should become configurable by client applications in the future.
+
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Eric.
 
         Don't allow control characters to be inserted into editable regions.

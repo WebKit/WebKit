@@ -30,10 +30,18 @@
 #include "webkitgtkglobal.h"
 
 #include "Logging.h"
+#include "DatabaseTracker.h"
+
+#include <glib.h>
 
 extern "C" {
 void webkit_init(void)
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
+
+    // FIXME: It should be possible for client applications to override this default location
+    gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
+    WebCore::DatabaseTracker::setDatabasePath(databaseDirectory);
+    g_free(databaseDirectory);
 }
 }

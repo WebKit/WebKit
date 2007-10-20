@@ -31,6 +31,8 @@
 #include "Logging.h"
 #include <wtf/HashMap.h>
 
+#include <errno.h>
+
 namespace WebCore {
 
 static Mutex& threadMapMutex()

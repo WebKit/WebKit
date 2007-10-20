@@ -2,6 +2,15 @@
 
         Reviewed by Alp.
 
+        Gtk changes needed to enable HTML 5 client-side database storage.
+
+        * WebCore.pro: Have Gtk use ThreadingPthreads.cpp.
+        * platform/pthreads/ThreadingPthreads.cpp: Include errno so that EDEADLK and EBUSY are available.
+
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp.
+
         Implement callOnMainThread for Gtk+ via a one-shot zero-delay timer that will be dispatched
         from the main event loop.
 

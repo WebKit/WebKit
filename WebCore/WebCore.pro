@@ -682,7 +682,6 @@ SOURCES += \
     platform/TextEncoding.cpp \
     platform/TextEncodingRegistry.cpp \
     platform/TextStream.cpp \
-    platform/ThreadingNone.cpp \
     platform/Timer.cpp \
     platform/Widget.cpp \
     rendering/AutoTableLayout.cpp \
@@ -866,7 +865,8 @@ qt-port {
     ../WebKit/qt/Api/qwebsettings.cpp \
     ../WebKit/qt/Api/qwebobjectplugin.cpp \
     ../WebKit/qt/Api/qwebobjectpluginconnector.cpp \
-    ../WebKit/qt/Api/qwebhistoryinterface.cpp
+    ../WebKit/qt/Api/qwebhistoryinterface.cpp \
+    platform/ThreadingNone.cpp
 
     unix: SOURCES += platform/qt/SystemTimeQt.cpp
     else: SOURCES += platform/win/SystemTimeWin.cpp
@@ -946,6 +946,7 @@ gtk-port {
         platform/image-decoders/bmp/BMPImageDecoder.cpp \
         platform/image-decoders/ico/ICOImageDecoder.cpp \
         platform/image-decoders/xbm/XBMImageDecoder.cpp \
+        platform/pthreads/ThreadingPthreads.cpp \
         ../WebKit/gtk/Api/webkitgtkframe.cpp \
         ../WebKit/gtk/Api/webkitgtkglobal.cpp \
         ../WebKit/gtk/Api/webkitgtknetworkrequest.cpp \

@@ -1,3 +1,11 @@
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp.
+
+        Gtk changes needed to enable HTML 5 client-side database storage.
+
+        * wtf/Platform.h: Have Gtk use pthreads for now.
+
 2007-10-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
