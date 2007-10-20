@@ -1,3 +1,11 @@
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Hyatt.
+        
+        - Add BSD license notice to cordic test, the original author said to do so.
+
+        * tests/math-cordic.js:
+
 2007-10-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
