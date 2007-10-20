@@ -244,6 +244,12 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
                 frame->editor()->execCommand("MoveDown");
                 break;
             default:
+                if (kevent->text().length() == 1) {
+                    UChar ch = kevent->text()[0];
+                    // Don't insert null or control characters as they can result in unexpected behaviour
+                    if (ch < ' ')
+                        break;
+                }
                 frame->editor()->insertText(kevent->text(), event);
             }
             event->setDefaultHandled();
