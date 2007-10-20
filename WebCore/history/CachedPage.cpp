@@ -88,7 +88,7 @@ CachedPage::CachedPage(Page* page)
     
     Frame* mainFrame = page->mainFrame();
     KJSProxy* proxy = mainFrame->scriptProxy();
-    Window* window = Window::retrieveWindow(mainFrame);
+    KJS::Window* window = KJS::Window::retrieveWindow(mainFrame);
 
     mainFrame->clearTimers();
 
@@ -124,7 +124,7 @@ void CachedPage::restore(Page* page)
 
     Frame* mainFrame = page->mainFrame();
     KJSProxy* proxy = mainFrame->scriptProxy();
-    Window* window = Window::retrieveWindow(mainFrame);
+    KJS::Window* window = KJS::Window::retrieveWindow(mainFrame);
 
     JSLock lock;
 

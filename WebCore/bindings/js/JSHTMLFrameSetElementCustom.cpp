@@ -51,7 +51,7 @@ JSValue* JSHTMLFrameSetElement::nameGetter(ExecState* exec, JSObject* originalOb
 
     Node* frame = element->children()->namedItem(propertyName);
     if (Document* doc = static_cast<HTMLFrameElement*>(frame)->contentDocument()) {
-        if (Window* window = Window::retrieveWindow(doc->frame()))
+        if (KJS::Window* window = KJS::Window::retrieveWindow(doc->frame()))
             return window;
     }
 

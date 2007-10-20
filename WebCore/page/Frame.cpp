@@ -84,7 +84,6 @@
 using namespace std;
 
 using KJS::JSLock;
-using KJS::Window;
 
 namespace WebCore {
 
@@ -194,7 +193,7 @@ Frame::~Frame()
 #endif
 
     if (d->m_jscript && d->m_jscript->haveInterpreter())
-        static_cast<Window*>(d->m_jscript->interpreter()->globalObject())->disconnectFrame();
+        static_cast<KJS::Window*>(d->m_jscript->interpreter()->globalObject())->disconnectFrame();
 
     disconnectOwnerElement();
     
@@ -1765,7 +1764,7 @@ void Frame::pageDestroyed()
 
     // This will stop any JS timers
     if (d->m_jscript && d->m_jscript->haveInterpreter())
-        if (Window* w = Window::retrieveWindow(this))
+        if (KJS::Window* w = KJS::Window::retrieveWindow(this))
             w->disconnectFrame();
 
     d->m_page = 0;

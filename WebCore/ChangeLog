@@ -1,3 +1,20 @@
+2007-10-20  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewd by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15563
+        Fix conflict with X11 Window type in WebCore
+
+        * WebCore/bindings/js/JSDocumentCustom.cpp:
+        * WebCore/bindings/js/JSHTMLDocumentCustom.cpp:
+        * WebCore/bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        * WebCore/bindings/js/kjs_dom.cpp:
+        * WebCore/bindings/js/kjs_events.cpp:
+        * WebCore/bindings/js/kjs_proxy.cpp:
+        * WebCore/history/CachedPage.cpp:
+        * WebCore/page/Chrome.cpp:
+        * WebCore/page/Frame.cpp:
+
 2007-10-20  Simon Hausmann  <hausmann@kde.org>
 
         Build fix, not reviewed.

@@ -49,7 +49,7 @@ JSValue* JSDocument::location(ExecState* exec) const
     if (!frame)
         return jsNull();
 
-    Window* win = Window::retrieveWindow(frame);
+    KJS::Window* win = KJS::Window::retrieveWindow(frame);
     ASSERT(win);
     return win->location();
 }
@@ -94,7 +94,7 @@ JSValue* toJS(ExecState* exec, Document* doc)
     // Make sure the document is kept around by the window object, and works right with the
     // back/forward cache.
     if (doc->frame())
-        Window::retrieveWindow(doc->frame())->putDirect("document", ret, DontDelete|ReadOnly);
+        KJS::Window::retrieveWindow(doc->frame())->putDirect("document", ret, DontDelete|ReadOnly);
     else {
         size_t nodeCount = 0;
         for (Node* n = doc; n; n = n->traverseNextNode())
