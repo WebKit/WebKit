@@ -34,6 +34,7 @@ for (var j = 0; j < tests.length; j++) {
     var startTime = new Date;
     load(testName);
     times[j] = new Date() - startTime;
+    gc();
 }
 
 function recordResults(tests, times)

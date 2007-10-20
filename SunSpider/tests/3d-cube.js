@@ -326,3 +326,12 @@ function Init(CubeSize) {
 for ( var i = 20; i <= 160; i *= 2 ) {
   Init(i);
 }
+
+Q = null;
+MTrans = null;
+MQube = null;
+I = null;
+Origin = null;
+Testing = null;
+LoopTime = null;
+DisplArea = null;

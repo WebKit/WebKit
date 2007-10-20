@@ -23,6 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-var x = 4294967296;
+bitwiseAndValue = 4294967296;
 for (var i = 0; i < 600000; i++)
-    x = x & i;
+    bitwiseAndValue = bitwiseAndValue & i;

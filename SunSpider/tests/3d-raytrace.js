@@ -310,90 +310,132 @@ Camera.prototype.render = function(scene, pixels, width, height) {
 
 
 
-var startDate = new Date().getTime();
-var numTriangles = 2 * 6;
-var triangles = new Array();//numTriangles);
-var tfl = createVector(-10,  10, -10);
-var tfr = createVector( 10,  10, -10);
-var tbl = createVector(-10,  10,  10);
-var tbr = createVector( 10,  10,  10);
-var bfl = createVector(-10, -10, -10);
-var bfr = createVector( 10, -10, -10);
-var bbl = createVector(-10, -10,  10);
-var bbr = createVector( 10, -10,  10);
-            
-// cube!!!
-// front
-var i = 0;
+function raytraceScene()
+{
+    var startDate = new Date().getTime();
+    var numTriangles = 2 * 6;
+    var triangles = new Array();//numTriangles);
+    var tfl = createVector(-10,  10, -10);
+    var tfr = createVector( 10,  10, -10);
+    var tbl = createVector(-10,  10,  10);
+    var tbr = createVector( 10,  10,  10);
+    var bfl = createVector(-10, -10, -10);
+    var bfr = createVector( 10, -10, -10);
+    var bbl = createVector(-10, -10,  10);
+    var bbr = createVector( 10, -10,  10);
+    
+    // cube!!!
+    // front
+    var i = 0;
+    
+    triangles[i++] = new Triangle(tfl, tfr, bfr);
+    triangles[i++] = new Triangle(tfl, bfr, bfl);
+    // back
+    triangles[i++] = new Triangle(tbl, tbr, bbr);
+    triangles[i++] = new Triangle(tbl, bbr, bbl);
+    //        triangles[i-1].material = [0.7,0.2,0.2];
+    //            triangles[i-1].material.reflection = 0.8;
+    // left
+    triangles[i++] = new Triangle(tbl, tfl, bbl);
+    //            triangles[i-1].reflection = 0.6;
+    triangles[i++] = new Triangle(tfl, bfl, bbl);
+    //            triangles[i-1].reflection = 0.6;
+    // right
+    triangles[i++] = new Triangle(tbr, tfr, bbr);
+    triangles[i++] = new Triangle(tfr, bfr, bbr);
+    // top
+    triangles[i++] = new Triangle(tbl, tbr, tfr);
+    triangles[i++] = new Triangle(tbl, tfr, tfl);
+    // bottom
+    triangles[i++] = new Triangle(bbl, bbr, bfr);
+    triangles[i++] = new Triangle(bbl, bfr, bfl);
+    
+    //Floor!!!!
+    var green = createVector(0.0, 0.4, 0.0);
+    var grey = createVector(0.4, 0.4, 0.4);
+    grey.reflection = 1.0;
+    var floorShader = function(tri, pos, view) {
+        var x = ((pos[0]/32) % 2 + 2) % 2;
+        var z = ((pos[2]/32 + 0.3) % 2 + 2) % 2;
+        if (x < 1 != z < 1) {
+            //in the real world we use the fresnel term...
+            //    var angle = 1-dot(view, tri.normal);
+            //   angle *= angle;
+            //  angle *= angle;
+            // angle *= angle;
+            //grey.reflection = angle;
+            return grey;
+        } else 
+            return green;
+    }
+    var ffl = createVector(-1000, -30, -1000);
+    var ffr = createVector( 1000, -30, -1000);
+    var fbl = createVector(-1000, -30,  1000);
+    var fbr = createVector( 1000, -30,  1000);
+    triangles[i++] = new Triangle(fbl, fbr, ffr);
+    triangles[i-1].shader = floorShader;
+    triangles[i++] = new Triangle(fbl, ffr, ffl);
+    triangles[i-1].shader = floorShader;
+    
+    var _scene = new Scene(triangles);
+    _scene.lights[0] = createVector(20, 38, -22);
+    _scene.lights[0].colour = createVector(0.7, 0.3, 0.3);
+    _scene.lights[1] = createVector(-23, 40, 17);
+    _scene.lights[1].colour = createVector(0.7, 0.3, 0.3);
+    _scene.lights[2] = createVector(23, 20, 17);
+    _scene.lights[2].colour = createVector(0.7, 0.7, 0.7);
+    _scene.ambient = createVector(0.1, 0.1, 0.1);
+    //  _scene.background = createVector(0.7, 0.7, 1.0);
+    
+    var size = 30;
+    var pixels = new Array();
+    for (var y = 0; y < size; y++) {
+        pixels[y] = new Array();
+        for (var x = 0; x < size; x++) {
+            pixels[y][x] = 0;
+        }
+    }
 
-triangles[i++] = new Triangle(tfl, tfr, bfr);
-triangles[i++] = new Triangle(tfl, bfr, bfl);
-// back
-triangles[i++] = new Triangle(tbl, tbr, bbr);
-triangles[i++] = new Triangle(tbl, bbr, bbl);
-//        triangles[i-1].material = [0.7,0.2,0.2];
-//            triangles[i-1].material.reflection = 0.8;
-// left
-triangles[i++] = new Triangle(tbl, tfl, bbl);
-//            triangles[i-1].reflection = 0.6;
-triangles[i++] = new Triangle(tfl, bfl, bbl);
-//            triangles[i-1].reflection = 0.6;
-// right
-triangles[i++] = new Triangle(tbr, tfr, bbr);
-triangles[i++] = new Triangle(tfr, bfr, bbr);
-// top
-triangles[i++] = new Triangle(tbl, tbr, tfr);
-triangles[i++] = new Triangle(tbl, tfr, tfl);
-// bottom
-triangles[i++] = new Triangle(bbl, bbr, bfr);
-triangles[i++] = new Triangle(bbl, bfr, bfl);
+    var _camera = new Camera(createVector(-40, 40, 40), createVector(0, 0, 0), createVector(0, 1, 0));
+    _camera.render(_scene, pixels, size, size);
 
-//Floor!!!!
-var green = createVector(0.0, 0.4, 0.0);
-var grey = createVector(0.4, 0.4, 0.4);
-grey.reflection = 1.0;
-var floorShader = function(tri, pos, view) {
-    var x = ((pos[0]/32) % 2 + 2) % 2;
-    var z = ((pos[2]/32 + 0.3) % 2 + 2) % 2;
-    if (x < 1 != z < 1) {
-        //in the real world we use the fresnel term...
-        //    var angle = 1-dot(view, tri.normal);
-        //   angle *= angle;
-        //  angle *= angle;
-        // angle *= angle;
-        //grey.reflection = angle;
-        return grey;
-    } else 
-        return green;
+    return pixels;
 }
-var ffl = createVector(-1000, -30, -1000);
-var ffr = createVector( 1000, -30, -1000);
-var fbl = createVector(-1000, -30,  1000);
-var fbr = createVector( 1000, -30,  1000);
-triangles[i++] = new Triangle(fbl, fbr, ffr);
-triangles[i-1].shader = floorShader;
-triangles[i++] = new Triangle(fbl, ffr, ffl);
-triangles[i-1].shader = floorShader;
 
-var _scene = new Scene(triangles);
-_scene.lights[0] = createVector(20, 38, -22);
-_scene.lights[0].colour = createVector(0.7, 0.3, 0.3);
-_scene.lights[1] = createVector(-23, 40, 17);
-_scene.lights[1].colour = createVector(0.7, 0.3, 0.3);
-_scene.lights[2] = createVector(23, 20, 17);
-_scene.lights[2].colour = createVector(0.7, 0.7, 0.7);
-_scene.ambient = createVector(0.1, 0.1, 0.1);
-//  _scene.background = createVector(0.7, 0.7, 1.0);
+function arrayToCanvasCommands(pixels)
+{
+    var s = '<canvas id="renderCanvas" width="30px" height="30px"></canvas><scr' + 'ipt>\nvar pixels = [';
+    var size = 30;
+    for (var y = 0; y < size; y++) {
+        s += "[";
+        for (var x = 0; x < size; x++) {
+            s += "[" + pixels[y][x] + "],";
+        }
+        s+= "],";
+    }
+    s += '];\n    var canvas = document.getElementById("renderCanvas").getContext("2d");\n\
+\n\
+\n\
+    var size = 30;\n\
+    canvas.fillStyle = "red";\n\
+    canvas.fillRect(0, 0, size, size);\n\
+    canvas.scale(1, -1);\n\
+    canvas.translate(0, -size);\n\
+\n\
+    if (!canvas.setFillColor)\n\
+        canvas.setFillColor = function(r, g, b, a) {\n\
+            this.fillStyle = "rgb("+[Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)]+")";\n\
+    }\n\
+\n\
+for (var y = 0; y < size; y++) {\n\
+  for (var x = 0; x < size; x++) {\n\
+    var l = pixels[y][x];\n\
+    canvas.setFillColor(l[0], l[1], l[2], 1);\n\
+    canvas.fillRect(x, y, 1, 1);\n\
+  }\n\
+}</scr' + 'ipt>';
 
-var size = 30;
-var pixels = new Array();
-for (var y = 0; y < size; y++) {
-  pixels[y] = new Array();
-  for (var x = 0; x < size; x++) {
-      pixels[y][x] = 0;
-  }
+    return s;
 }
 
-
-var _camera = new Camera(createVector(-40, 40, 40), createVector(0, 0, 0), createVector(0, 1, 0));
-_camera.render(_scene, pixels, size, size);
+testOutput = arrayToCanvasCommands(raytraceScene());

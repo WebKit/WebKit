@@ -1,5 +1,22 @@
 2007-10-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+        * TODO: Updated to note areas that are now well-covered.
+        
+        - Change the tests and the driver to avoid leaving large object
+        graphs hanging around, since that throws off the subsequent tests.
+        
+        * resources/sunspider-standalone-driver.js:
+        * tests/3d-cube.js:
+        * tests/3d-morph.js:
+        * tests/3d-raytrace.js:
+        * tests/bitops-bitwise-and.js:
+        * tests/string-base64.js:
+        * tests/string-tagcloud.js:
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Nikolas.
         
         - Rebalance test complexity.

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
@@ -261,3 +262,4 @@ function makeTagCloud(tagInfo)
 }
 
 var tagcloud = makeTagCloud(tagInfo);
+tagInfo = null;

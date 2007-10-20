@@ -131,3 +131,5 @@ for ( var i = 8192; i <= 16384; i *= 2 ) {
     // Double the string
     str += str;
 }
+
+toBinaryTable = null;

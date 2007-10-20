@@ -2,11 +2,13 @@
 * Add more test cases. Categories we'd like to cover (with reasonably
   real-world tests, preferably not microbenchmarks) include:
 
+  (X marks the ones that are fairly well covered now).
+
     - math (general)
-    - bitops
-    - 3-d (the math bits)
+    X bitops
+    X 3-d (the math bits)
     - crypto / encoding
-    - string processing
+    X string processing
     - regexps
     - date processing
     - array processing

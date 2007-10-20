@@ -47,3 +47,8 @@ for (var i=0; i < nx*nz*3; ++i)
 for (var i = 0; i < loops; ++i) {
     morph(a, i/loops)
 }
+
+testOutput = 0;
+for (var i = 0; i < nx; i++)
+    testOutput += a[3*(i*nx+i)+1];
+a = null;
