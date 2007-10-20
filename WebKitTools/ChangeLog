@@ -1,5 +1,14 @@
 2007-10-19  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Adam.
+
+        - This change should be identical but for some reason was not working
+        on my machine.
+
+        * Scripts/prepare-ChangeLog:
+
+2007-10-19  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Oliver and Tim.
 
         - Made use of RetainPtr to avoid retain and release issues and moved the
