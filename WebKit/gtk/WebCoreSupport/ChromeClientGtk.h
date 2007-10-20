@@ -102,6 +102,9 @@ namespace WebKit {
         virtual void setToolTip(const WebCore::String&);
 
         virtual void print(WebCore::Frame*);
+
+        virtual bool runDatabaseSizeLimitPrompt(WebCore::Frame*, const WebCore::String&);
+
     private:
         WebKitPage* m_webPage;
         WebCore::KURL m_hoveredLinkURL;

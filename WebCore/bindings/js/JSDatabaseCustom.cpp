@@ -38,7 +38,11 @@
 #include "JSCustomVersionChangeCallback.h"
 #include "PlatformString.h"
 #include "SQLValue.h"
+#if PLATFORM(GTK) || PLATFORM(QT)
+#include <JavaScriptCore/kjs/array_instance.h>
+#else
 #include <JavaScriptCore/array_instance.h>
+#endif
 
 namespace WebCore {
 

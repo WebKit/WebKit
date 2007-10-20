@@ -297,4 +297,10 @@ void ChromeClient::print(Frame*)
 {
     notImplemented();
 }
+
+bool ChromeClient::runDatabaseSizeLimitPrompt(Frame*, const String& origin)
+{
+    notImplemented();
+    return false;
+}
 }

@@ -51,6 +51,7 @@ win32-g++ {
 }
 
 # Optional components (look for defs in config.h and included files!)
+!contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
 gtk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
@@ -118,6 +119,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform/graphics \
                 $$PWD/platform/graphics/svg \
                 $$PWD/platform/graphics/svg/filters \
+                $$PWD/platform/sql \
+                $$PWD/storage \
                 $$PWD/loader $$PWD/loader/icon \
                 $$PWD/css \
                 $$PWD/dom \
@@ -292,6 +295,11 @@ IDL_BINDINGS += \
     page/DOMWindow.idl \
     page/History.idl \
     page/Screen.idl \
+    storage/Database.idl \
+    storage/SQLResultSetRowList.idl \
+    storage/VersionChangeCallback.idl \
+    storage/SQLCallback.idl \
+    storage/SQLResultSet.idl \
     xml/DOMParser.idl \
     xml/XMLSerializer.idl
 
@@ -304,6 +312,10 @@ SOURCES += \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
     bindings/js/JSCSSValueCustom.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
+    bindings/js/JSCustomVersionChangeCallback.cpp \
+    bindings/js/JSCustomSQLCallback.cpp \
+    bindings/js/JSDatabaseCustom.cpp \
+    bindings/js/JSSQLResultSetRowListCustom.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDOMExceptionConstructor.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
@@ -946,17 +958,32 @@ gtk-port {
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp
 }
- 
-contains(DEFINES, ENABLE_ICONDATABASE=1) {
+
+# ENABLE_DATABASE probably cannot be disabled without breaking things
+contains(DEFINES, ENABLE_DATABASE=1) {
     qt-port: INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
     LIBS += -lsqlite3
     SOURCES += \
+        platform/sql/SQLAuthorizer.cpp \
+        platform/sql/SQLDatabase.cpp \
+        platform/sql/SQLStatement.cpp \
+        platform/sql/SQLTransaction.cpp \
+        platform/sql/SQLValue.cpp \
+        storage/DatabaseAuthorizer.cpp \
+        storage/DatabaseCallback.cpp \
+        storage/Database.cpp \
+        storage/DatabaseTask.cpp \
+        storage/DatabaseThread.cpp \
+        storage/DatabaseTracker.cpp \
+        storage/SQLResultSet.cpp \
+        storage/SQLResultSetRowList.cpp
+}
+
+contains(DEFINES, ENABLE_ICONDATABASE=1) {
+    SOURCES += \
         loader/icon/IconDatabase.cpp \
         loader/icon/IconRecord.cpp \
-        loader/icon/PageURLRecord.cpp \
-        loader/icon/SQLDatabase.cpp \
-        loader/icon/SQLStatement.cpp \
-        loader/icon/SQLTransaction.cpp
+        loader/icon/PageURLRecord.cpp
 } else {
     SOURCES += \
         loader/icon/IconDatabaseNone.cpp

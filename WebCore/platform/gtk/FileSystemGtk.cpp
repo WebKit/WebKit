@@ -77,4 +77,25 @@ bool fileSize(const String& path, long long& resultSize)
     return true;
 }
 
+String pathByAppendingComponent(const String& path, const String& component)
+{
+    // FIXME: Use the platform separator.
+
+    if (path.endsWith("/"))
+        return path + component;
+    else
+        return path + "/" + component;
+}
+
+bool makeAllDirectories(const String& path)
+{
+    gchar* filename = g_filename_from_utf8(path.utf8().data(), -1, 0, 0, 0);
+    if (!filename)
+        return false;
+
+    gint result = g_mkdir_with_parents(filename, S_IRWXU);
+    g_free(filename);
+
+    return result == 0;
+}
 }

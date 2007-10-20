@@ -1,3 +1,16 @@
+2007-10-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Oliver.
+
+        GTK+ build fix enabling the new local database storage feature.
+        There is also a prospective Qt build fix.
+
+        * WebCore.pro:
+        * bindings/js/JSDatabaseCustom.cpp:
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::pathByAppendingComponent):
+        (WebCore::makeAllDirectories):
+
 2007-10-19  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Brady Eidson.
