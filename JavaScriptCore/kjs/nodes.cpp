@@ -1998,9 +1998,8 @@ Completion ForInNode::execute(ExecState *exec)
   // the loop at all, because their object wrappers will have a
   // property list but will throw an exception if you attempt to
   // access any property.
-  if (e->isUndefinedOrNull()) {
-    return Completion(Normal, 0);
-  }
+  if (e->isUndefinedOrNull())
+    return Completion(Normal);
 
   KJS_CHECKEXCEPTION
   v = e->toObject(exec);
@@ -2090,10 +2089,9 @@ Completion ContinueNode::execute(ExecState *exec)
 
   if (ident.isEmpty() && !exec->context()->inIteration())
     return createErrorCompletion(exec, SyntaxError, "Invalid continue statement.");
-  else if (!ident.isEmpty() && !exec->context()->seenLabels()->contains(ident))
+  if (!ident.isEmpty() && !exec->context()->seenLabels()->contains(ident))
     return createErrorCompletion(exec, SyntaxError, "Label %s not found.", ident);
-  else
-    return Completion(Continue, 0, ident);
+  return Completion(Continue, &ident);
 }
 
 // ------------------------------ BreakNode ------------------------------------
@@ -2106,10 +2104,9 @@ Completion BreakNode::execute(ExecState *exec)
   if (ident.isEmpty() && !exec->context()->inIteration() &&
       !exec->context()->inSwitch())
     return createErrorCompletion(exec, SyntaxError, "Invalid break statement.");
-  else if (!ident.isEmpty() && !exec->context()->seenLabels()->contains(ident))
+  if (!ident.isEmpty() && !exec->context()->seenLabels()->contains(ident))
     return createErrorCompletion(exec, SyntaxError, "Label %s not found.");
-  else
-    return Completion(Break, 0, ident);
+  return Completion(Break, &ident);
 }
 
 // ------------------------------ ReturnNode -----------------------------------

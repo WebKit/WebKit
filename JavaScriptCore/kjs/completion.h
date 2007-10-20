@@ -1,9 +1,8 @@
 // -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc
+ *  Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,17 +21,14 @@
  *
  */
 
-#ifndef _KJS_COMPLETION_H_
-#define _KJS_COMPLETION_H_
-
-#include "CommonIdentifiers.h"
-#include "value.h"
+#ifndef KJS_COMPLETION_H
+#define KJS_COMPLETION_H
 
 namespace KJS {
 
-  /**
-   * Completion types.
-   */
+  class Identifier;
+  class JSValue;
+
   enum ComplType { Normal, Break, Continue, ReturnValue, Throw, Interrupted };
 
   /**
@@ -47,18 +43,21 @@ namespace KJS {
    */
   class Completion {
   public:
-    Completion(ComplType c = Normal, JSValue *v = NULL, const Identifier &t = CommonIdentifiers::shared()->nullIdentifier)
-        : comp(c), val(v), tar(t) { }
+    Completion(ComplType type = Normal, JSValue* value = 0)
+        : m_type(type), m_value(value), m_target(0) { }
+    Completion(ComplType type, const Identifier* target)
+        : m_type(type), m_value(0), m_target(target) { }
 
-    ComplType complType() const { return comp; }
-    JSValue *value() const { return val; }
-    void setValue(JSValue* v) { val = v; }
-    Identifier target() const { return tar; }
-    bool isValueCompletion() const { return !!val; }
+    ComplType complType() const { return m_type; }
+    JSValue* value() const { return m_value; }
+    void setValue(JSValue* v) { m_value = v; }
+    const Identifier& target() const { return *m_target; }
+    bool isValueCompletion() const { return !!m_value; }
+
   private:
-    ComplType comp;
-    JSValue *val;
-    Identifier tar;
+    ComplType m_type;
+    JSValue* m_value;
+    const Identifier* m_target;
   };
 
 }
