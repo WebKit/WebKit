@@ -47,7 +47,7 @@ svg, symbol, marker, pattern {
 }
 
 text, foreignObject {
-    display: block !important
+    display: block
 }
 
 text, tspan, textPath {

@@ -20,9 +20,6 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (-15,10) size 30x36 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-28) size 30x36
               chunk 1 (middle anchor) text run 1 at (-15.00,10.00) startOffset 0 endOffset 2 width 30.00: "38"
-          RenderSVGText {text} at (-15,10) size 30x36 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-28) size 30x36
-              chunk 1 (middle anchor) text run 1 at (-15.00,10.00) startOffset 0 endOffset 2 width 30.00: "02"
         RenderSVGText {text} at (-13,60) size 25x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (1,-14) size 25x18
             chunk 1 (middle anchor) text run 1 at (-12.50,60.00) startOffset 0 endOffset 3 width 25.00: "<a>"
@@ -60,9 +57,6 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (-15,10) size 30x36 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-28) size 30x36
               chunk 1 (middle anchor) text run 1 at (-15.00,10.00) startOffset 0 endOffset 2 width 30.00: "09"
-          RenderSVGText {text} at (-15,10) size 30x36 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-28) size 30x36
-              chunk 1 (middle anchor) text run 1 at (-15.00,10.00) startOffset 0 endOffset 2 width 30.00: "03"
         RenderSVGText {text} at (-13,60) size 25x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (1,-14) size 25x18
             chunk 1 (middle anchor) text run 1 at (-12.50,60.00) startOffset 0 endOffset 3 width 25.00: "<a>"
