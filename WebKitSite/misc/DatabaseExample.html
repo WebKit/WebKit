@@ -31,7 +31,7 @@ function saveNote()
     } catch(err) { }
     
     // If the table exists already, this is expected to fail - so lets ignore the errorcode
-    db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", note, timestamp, [], function(result) {
+    db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", [note, timestamp], function(result) {
         if (result.errorCode)
             alert("Failed to save note in database");
         else

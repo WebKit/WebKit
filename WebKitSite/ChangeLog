@@ -1,5 +1,13 @@
 2007-10-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Brady.
+        
+        Make example actually work.
+        
+        * misc/DatabaseExample.html:
+
+2007-10-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Update example.
