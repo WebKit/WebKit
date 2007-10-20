@@ -1,3 +1,15 @@
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Adam.
+
+        Convert TIFFs to PNGs so that the demo page is fully-functional in the Gtk port.
+
+        * misc/DatabaseExample.html:
+        * misc/deleteButton.png: Added.
+        * misc/deleteButton.tiff: Removed.
+        * misc/deleteButtonPressed.png: Added.
+        * misc/deleteButtonPressed.tiff: Removed.
+
 2007-10-20  Adam Roben  <aroben@apple.com>
 
         Make the notes sticky!
