@@ -1,3 +1,11 @@
+2007-10-19  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix a couple of exceptions for first time users.
+
+        * misc/DatabaseExample.html:
+
 2007-10-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

@@ -16,6 +16,16 @@ if (!db) {
     alert("Failed to open the database on disk.  Are you using a WebKit nightly with this feature enabled?");
 }
 
+function insertNote(note, timestamp)
+{
+    db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", [note, timestamp], function(result) {
+        if (result.errorCode)
+            alert("Failed to save note in database");
+        else
+            appendNote(note, timestamp);
+    });
+}
+
 function saveNote()
 {    
     if (!db)
@@ -24,19 +34,16 @@ function saveNote()
     var note = document.getElementById("note").innerText;
     var timestamp = new Date();
     timestamp = timestamp.getTime();
-    
-    // This might fail if the table already exists, so ignore that
+
+    // This CREATE TABLE might throw if the table already exists, so ignore that.
     try {
-        db.executeSql("CREATE TABLE WebKitNotes (note TEXT, timestamp REAL)", [], function(result) {});
-    } catch(err) { }
-    
-    // If the table exists already, this is expected to fail - so lets ignore the errorcode
-    db.executeSql("INSERT INTO WebKitNotes VALUES (?, ?)", [note, timestamp], function(result) {
-        if (result.errorCode)
-            alert("Failed to save note in database");
-        else
-            appendNote(note, timestamp);
-    });
+        db.executeSql("CREATE TABLE WebKitNotes (note TEXT, timestamp REAL)", [], function(result) {
+            insertNote(note, timestamp);
+        });
+    } catch(err) {
+        // The table already exists, so try an insert.
+        insertNote(note, timestamp);
+    }
 }
 
 var added = 0;
@@ -66,16 +73,18 @@ function loaded()
     if (!db)
         return;
 
-    db.executeSql("SELECT note, timestamp FROM WebKitNotes ORDER BY timestamp", [], function(result) {
-        if (result.errorCode) {
-            alert("Failed to retrieve previous notes from database");
-            return;
-        }
-        for (var i = 0; i < result.rows.length; ++i) {
-            var row = result.rows.item(i);
-            appendNote(row["note"], row["timestamp"]);
-        }
-    });
+    try {
+        db.executeSql("SELECT note, timestamp FROM WebKitNotes ORDER BY timestamp", [], function(result) {
+            if (result.errorCode) {
+                alert("Failed to retrieve previous notes from database");
+                return;
+            }
+            for (var i = 0; i < result.rows.length; ++i) {
+                var row = result.rows.item(i);
+                appendNote(row["note"], row["timestamp"]);
+            }
+        });
+    } catch(err) { }
 }
 
 </script>
