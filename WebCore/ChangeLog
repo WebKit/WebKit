@@ -1,3 +1,12 @@
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp.
+
+        Replace #ifdef'd code with the appropriate use of a forwarding header.
+
+        * ForwardingHeaders/kjs/array_instance.h: Added.
+        * bindings/js/JSDatabaseCustom.cpp:
+
 2007-10-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
