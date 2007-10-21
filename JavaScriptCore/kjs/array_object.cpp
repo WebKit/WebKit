@@ -190,7 +190,7 @@ void ArrayInstance::put(ExecState* exec, const Identifier& propertyName, JSValue
       throwError(exec, RangeError, "Invalid array length.");
       return;
     }
-    setLength(newLen, exec);
+    setLength(newLen);
     return;
   }
 
@@ -328,7 +328,7 @@ void ArrayInstance::resizeStorage(unsigned newLength)
     storageLength = newLength;
 }
 
-void ArrayInstance::setLength(unsigned newLength, ExecState *exec)
+void ArrayInstance::setLength(unsigned newLength)
 {
   if (newLength <= storageLength)
     resizeStorage(newLength);

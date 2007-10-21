@@ -55,7 +55,7 @@ namespace KJS {
   private:
     static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
-    void setLength(unsigned newLength, ExecState *exec);
+    void setLength(unsigned newLength);
     
     unsigned compactForSorting();
     
