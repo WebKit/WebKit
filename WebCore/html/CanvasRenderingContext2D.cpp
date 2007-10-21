@@ -976,13 +976,24 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
     painter->drawImage(dstRect, px, srcRect);
 #elif PLATFORM(CAIRO)
     cairo_surface_t* image = canvas->createPlatformImage();
+    if (!image)
+        return;
     willDraw(dstRect);
-    cairo_t* cr = c->platformContext();
-    cairo_save(cr);
-    cairo_set_source_surface(cr, image, srcRect.x(), srcRect.y());
-    cairo_rectangle(cr, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height());
-    cairo_fill(cr);
-    cairo_restore(cr);
+
+    float iw = cairo_image_surface_get_width(image);
+    float ih = cairo_image_surface_get_height(image);
+
+    if (sourceRect.x() == 0 && sourceRect.y() == 0 && iw == sourceRect.width() && ih == sourceRect.height()) {
+        cairo_t* cr = c->platformContext();
+        cairo_save(cr);
+        cairo_set_source_surface(cr, image, srcRect.x(), srcRect.y());
+        cairo_surface_destroy(image);
+        cairo_rectangle(cr, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height());
+        cairo_fill(cr);
+        cairo_restore(cr);
+    } else
+        notImplemented();
+
 #endif
 }
 

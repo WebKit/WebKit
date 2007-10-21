@@ -1,3 +1,30 @@
+2007-10-21  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Cairo canvas fixes:
+
+        Fix a refcounting issue leading to leaks and crashes on canvas
+        content.
+
+        Delegate memory management of canvas images to Cairo.
+
+        Mark unhandled conditions with notImplemented() instead of silently
+        ignoring them.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        * html/CanvasStyle.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::createDrawingContext):
+        (WebCore::HTMLCanvasElement::createPlatformImage):
+
 2007-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

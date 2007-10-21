@@ -50,7 +50,9 @@ namespace WebCore {
         CanvasPattern* pattern() const { return m_pattern.get(); }
 
         // These do nothing for gradients or patterns.
+#if !PLATFORM(CAIRO)
         void applyFillColor(GraphicsContext*);
+#endif
         void applyStrokeColor(GraphicsContext*);
 
     private:

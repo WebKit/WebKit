@@ -40,6 +40,7 @@
 #include <QPen>
 #include <QColor>
 #elif PLATFORM(CAIRO)
+#include "NotImplemented.h"
 #include <cairo.h>
 #endif
 
@@ -186,6 +187,8 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
             clr.setCmykF(m_cyan, m_magenta, m_yellow, m_black, m_alpha);
             currentPen.setColor(clr);
             p->setPen(currentPen);
+#elif PLATFORM(CAIRO)
+            notImplemented();
 #endif
             break;
         }
@@ -195,6 +198,9 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
     }
 }
 
+// Cairo's graphics model allows us to share a single code path for
+// stroke and fill.
+#if !PLATFORM(CAIRO)
 void CanvasStyle::applyFillColor(GraphicsContext* context)
 {
     if (!context)
@@ -286,5 +292,6 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
             break;
     }
 }
+#endif
 
 }
