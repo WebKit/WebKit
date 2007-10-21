@@ -45,7 +45,7 @@ sub wanted
         return;
     }
 
-    if ($file !~ /^\./ && $file =~ /.(h|cpp|c|mm|m)$/) {
+    if ($file !~ /^\./ && $file =~ /\.(h|cpp|c|mm|m)$/) {
         $paths{$file} = $File::Find::name;
         open FILE, $file or die;
         while (<FILE>) {

@@ -1,5 +1,11 @@
 2007-10-20  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by aroben.
+
+        * Scripts/find-extra-includes: fix path matching regex to not match ".patch"
+
+2007-10-20  Eric Seidel  <eric@webkit.org>
+
         Reviewed by darin.
         
         Add improved argument handling to run-sunspider, including
