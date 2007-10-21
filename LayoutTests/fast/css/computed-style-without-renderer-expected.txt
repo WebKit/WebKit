@@ -166,6 +166,8 @@ Computed style of an element whose parent's 'display' value is 'none':
     kerning: 
     text-anchor: start
     writing-mode: lr-tb
+    glyph-orientation-horizontal: 0deg
+    glyph-orientation-vertical: auto
     background-position: 0% 0%
     border-spacing: 0px 0px
     overflow: visible

@@ -167,6 +167,8 @@ dominant-baseline: auto;
 kerning: ;
 text-anchor: start;
 writing-mode: lr-tb;
+glyph-orientation-horizontal: 0deg;
+glyph-orientation-vertical: auto;
 
 Other attributes that the computed style class supports:
 

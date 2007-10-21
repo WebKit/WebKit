@@ -1,5 +1,14 @@
 2007-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed.
+
+        Forgot to land the new computed style results in fast/css - after the addition of glyph-orientation-*.
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+
+2007-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric.
 
         Add new testcase to stress test the glyph-orientation-* parsing rules.
