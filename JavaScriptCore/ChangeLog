@@ -1,4 +1,9 @@
-2007-10-20  Darin Adler  <darin@apple.com>
+2007-10-21  Darin Adler  <darin@apple.com>
+
+        * kjs/array_object.cpp: (KJS::ArrayInstance::put):
+        Add missing assignment that was causing regression test crash.
+
+2007-10-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
 

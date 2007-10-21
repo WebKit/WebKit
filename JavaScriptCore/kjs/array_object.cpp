@@ -227,7 +227,7 @@ void ArrayInstance::put(ExecState *exec, unsigned index, JSValue *value, int att
   if (!overflow) {
     overflow = new OverflowMap;
     if (!storage)
-      allocateStorage(1);
+      storage = allocateStorage(1);
     storage[-2] = reinterpret_cast<JSValue*>(overflow);
   }
   overflow->add(index, value);
