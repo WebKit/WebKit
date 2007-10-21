@@ -449,16 +449,17 @@ WebInspector.sidebarResizerDrag = function(event)
     var sidebar = document.getElementById("sidebar");
     if (sidebar.dragging == true) {
         var main = document.getElementById("main");
+        var buttonContainer = document.getElementById("viewbuttons");
 
         var x = event.clientX + window.scrollX;
-        var delta = sidebar.dragLastX - x;
-        var newWidth = WebInspector.constrainedWidthFromElement(x, main);
+        var newWidth = WebInspector.constrainedWidthOfSidebar(x);
 
         if (x == newWidth)
             sidebar.dragLastX = x;
 
         sidebar.style.width = newWidth + "px";
         main.style.left = newWidth + "px";
+        buttonContainer.style.left = newWidth + "px";
         event.preventDefault();
     }
 }
@@ -482,15 +483,19 @@ WebInspector.dividerDragEnd = function(element, dividerDrag, dividerDragEnd, eve
     document.body.style.removeProperty("cursor");
 }
 
-WebInspector.constrainedWidthFromElement = function(width, element, constrainLeft, constrainRight) 
+WebInspector.constrainedWidthOfSidebar = function(width, minWidth, maxWidth) 
 {
-    if (constrainLeft === undefined) constrainLeft = 0.25;
-    if (constrainRight === undefined) constrainRight = 0.75;
+    // FIXME: We can should come up with a better hueristic for constraining the size
+    // of the sidebar.
+    if (typeof minWidth == "undefined")
+        minWidth = 100;
+    if (typeof maxWidth == "undefined")
+        maxWidth = window.innerWidth - 100;
 
-    if (width < element.clientWidth * constrainLeft)
-        width = 200;
-    else if (width > element.clientWidth * constrainRight)
-        width = element.clientWidth * constrainRight;
+    if (width < minWidth)
+        width = minWidth;
+    else if (width > maxWidth)
+        width = maxWidth;
 
     return width;
 }

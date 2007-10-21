@@ -1,3 +1,17 @@
+2007-10-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fixes:
+            - http://bugs.webkit.org/show_bug.cgi?id=14393
+              Column on the left side of the Web Inspector should have a smaller minimum width for resizing
+            - http://bugs.webkit.org/show_bug.cgi?id=14394
+              Left pane of the Web Inspector "shakes" when resizing it to maximum width
+
+        * page/inspector/inspector.js: Change the constraint logic to only enforce a 100px min-width
+          and window.innerWidth - 100 max-width for the sidebar.  The change also makes the viewbuttons
+          move with the sidebar.
+
 2007-10-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
