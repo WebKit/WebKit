@@ -1,3 +1,24 @@
+2007-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Handle glyph-orientation-vertical / glyph-orientation-horizontal SVG CSS properties.
+
+        The SVG layouting code itself doesn't handle these properties yet,
+        it's just about recognizing them in the SVG CSS engine.
+
+        * ksvg2/css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::InheritedFlags::operator==):
+        (WebCore::SVGRenderStyle::InheritedFlags::operator!=):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+
 2007-10-21  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp.

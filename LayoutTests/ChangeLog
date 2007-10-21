@@ -1,3 +1,14 @@
+2007-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Add new testcase to stress test the glyph-orientation-* parsing rules.
+
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic.xhtml:
+        * svg/css/glyph-orientation-rounding-test-expected.txt: Added.
+        * svg/css/glyph-orientation-rounding-test.xhtml: Added.
+
 2007-10-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

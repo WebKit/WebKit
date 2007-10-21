@@ -29,6 +29,7 @@
 */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "CSSStyleSelector.h"
 
@@ -41,7 +42,6 @@
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
 #include "SVGStyledElement.h"
-#include <math.h>
 #include <stdlib.h>
 #include <wtf/MathExtras.h>
 
@@ -78,6 +78,36 @@ if (id == propID) { \
 }
 
 namespace WebCore {
+
+static float roundToNearestGlyphOrientationAngle(float angle)
+{
+    angle = fabs(fmodf(angle, 360.0f));
+
+    if (angle <= 45.0f || angle > 315.0f)
+        return 0.0f;
+    else if (angle > 45.0f && angle <= 135.0f)
+        return 90.0f;
+    else if (angle > 135.0f && angle <= 225.0f)
+        return 180.0f;
+
+    return 270.0f;
+}
+
+static int angleToGlyphOrientation(float angle)
+{
+    angle = roundToNearestGlyphOrientationAngle(angle);
+
+    if (angle == 0.0f)
+        return GO_0DEG;
+    else if (angle == 90.0f)
+        return GO_90DEG;
+    else if (angle == 180.0f)
+        return GO_180DEG;
+    else if (angle == 270.0f)
+        return GO_270DEG;
+
+    return -1;
+}
 
 void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
 {
@@ -536,10 +566,37 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             svgstyle->setFloodColor(col);
             break;
         }
-        case CSS_PROP_GLYPH_ORIENTATION_VERTICAL:
         case CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL:
-            // support for above properties has not been implemented in the engine yet
+        {
+            HANDLE_INHERIT_AND_INITIAL(glyphOrientationHorizontal, GlyphOrientationHorizontal)
+            if (!primitiveValue)
+                return;
+
+            if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_DEG) {
+                int orientation = angleToGlyphOrientation(primitiveValue->getFloatValue());
+                ASSERT(orientation != -1);
+
+                svgstyle->setGlyphOrientationHorizontal((EGlyphOrientation) orientation);
+            }
+
             break;
+        }
+        case CSS_PROP_GLYPH_ORIENTATION_VERTICAL:
+        {
+            HANDLE_INHERIT_AND_INITIAL(glyphOrientationVertical, GlyphOrientationVertical)
+            if (!primitiveValue)
+                return;
+
+            if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_DEG) {
+                int orientation = angleToGlyphOrientation(primitiveValue->getFloatValue());
+                ASSERT(orientation != -1);
+
+                svgstyle->setGlyphOrientationVertical((EGlyphOrientation) orientation);
+            } else if (primitiveValue->getIdent() == CSS_VAL_AUTO)
+                svgstyle->setGlyphOrientationVertical(GO_AUTO);
+
+            break;
+        }
         default:
             // If you crash here, it's because you added a css property and are not handling it
             // in either this switch statement or the one in CSSStyleSelector::applyProperty

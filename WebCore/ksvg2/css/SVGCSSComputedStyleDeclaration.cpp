@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "CSSComputedStyleDeclaration.h"
 
@@ -27,7 +28,23 @@
 #include "Document.h"
 
 namespace WebCore {
-    
+
+static CSSPrimitiveValue* glyphOrientationToCSSPrimitiveValue(EGlyphOrientation orientation)
+{
+    switch (orientation) {
+        case GO_0DEG:
+            return new CSSPrimitiveValue(0.0f, CSSPrimitiveValue::CSS_DEG);
+        case GO_90DEG:
+            return new CSSPrimitiveValue(90.0f, CSSPrimitiveValue::CSS_DEG);
+        case GO_180DEG:
+            return new CSSPrimitiveValue(180.0f, CSSPrimitiveValue::CSS_DEG);
+        case GO_270DEG:
+            return new CSSPrimitiveValue(270.0f, CSSPrimitiveValue::CSS_DEG);
+        default:
+            return 0;
+    }
+}
+
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
 {
     Node* node = m_node.get();
@@ -141,11 +158,20 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int pro
                     return svgStyle->baselineShiftValue();
             }
         }
+        case CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL:
+            return glyphOrientationToCSSPrimitiveValue(svgStyle->glyphOrientationHorizontal());
+        case CSS_PROP_GLYPH_ORIENTATION_VERTICAL: {
+            if (CSSPrimitiveValue* value = glyphOrientationToCSSPrimitiveValue(svgStyle->glyphOrientationVertical()))
+                return value;
+
+            if (svgStyle->glyphOrientationVertical() == GO_AUTO)
+                return new CSSPrimitiveValue(CSS_VAL_AUTO);
+
+            return 0;
+        }
         case CSS_PROP_MARKER:
         case CSS_PROP_ENABLE_BACKGROUND:
         case CSS_PROP_COLOR_PROFILE:
-        case CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL:
-        case CSS_PROP_GLYPH_ORIENTATION_VERTICAL:
             // the above properties are not yet implemented in the engine
             break;
     default:

@@ -43,8 +43,8 @@
     static Data initial##Type() { return Initial; }
 
 #define SVG_RS_DEFINE_ATTRIBUTE_INHERITED(Data, Type, Name, Initial) \
-    void set##Type(Data val) { svg_inherited_flags.f._##Name = val; } \
-    Data Name() const { return (Data) svg_inherited_flags.f._##Name; } \
+    void set##Type(Data val) { svg_inherited_flags._##Name = val; } \
+    Data Name() const { return (Data) svg_inherited_flags._##Name; } \
     static Data initial##Type() { return Initial; }
 
 // "Helper" macros for SVG's RenderStyle properties
@@ -102,7 +102,11 @@ namespace WebCore {
     enum EWritingMode {
         WM_LRTB, WM_LR, WM_RLTB, WM_RL, WM_TBRL, WM_TB
     };
-    
+
+    enum EGlyphOrientation {
+        GO_0DEG, GO_90DEG, GO_180DEG, GO_270DEG, GO_AUTO
+    };
+
     enum EAlignmentBaseline {
         AB_AUTO, AB_BASELINE, AB_BEFORE_EDGE, AB_TEXT_BEFORE_EDGE,
         AB_MIDDLE, AB_CENTRAL, AB_AFTER_EDGE, AB_TEXT_AFTER_EDGE,

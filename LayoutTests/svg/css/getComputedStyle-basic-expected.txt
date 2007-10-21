@@ -332,6 +332,10 @@ rect: style.getPropertyValue(text-anchor) : start
 rect: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(writing-mode) : lr-tb
 rect: style.getPropertyCSSValue(writing-mode) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
+rect: style.getPropertyCSSValue(glyph-orientation-horizontal) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(glyph-orientation-vertical) : auto
+rect: style.getPropertyCSSValue(glyph-orientation-vertical) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-attachment) : scroll
 g: style.getPropertyCSSValue(background-attachment) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-color) : rgba(0, 0, 0, 0)
@@ -666,4 +670,8 @@ g: style.getPropertyValue(text-anchor) : start
 g: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(writing-mode) : lr-tb
 g: style.getPropertyCSSValue(writing-mode) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
+g: style.getPropertyCSSValue(glyph-orientation-horizontal) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(glyph-orientation-vertical) : auto
+g: style.getPropertyCSSValue(glyph-orientation-vertical) : [object CSSPrimitiveValue]
 

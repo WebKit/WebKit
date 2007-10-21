@@ -22,8 +22,8 @@
 */
 
 #include "config.h"
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSParser.h"
@@ -180,14 +180,14 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             valid_primitive = true;
             break;
         }
-        /* fallthrough intentional */
-    case CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL: // <angle> | inherit
-        if (value->unit == CSSPrimitiveValue::CSS_DEG)
+    /* fallthrough intentional */
+    case CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL: // <angle> (restricted to _deg_ per SVG 1.1 spec) | inherit
+        if (value->unit == CSSPrimitiveValue::CSS_DEG || value->unit == CSSPrimitiveValue::CSS_NUMBER) {
             parsedValue = new CSSPrimitiveValue(value->fValue, CSSPrimitiveValue::CSS_DEG);
-        else if (value->unit == CSSPrimitiveValue::CSS_GRAD)
-            parsedValue = new CSSPrimitiveValue(value->fValue, CSSPrimitiveValue::CSS_GRAD);
-        else if (value->unit == CSSPrimitiveValue::CSS_RAD)
-            parsedValue = new CSSPrimitiveValue(value->fValue, CSSPrimitiveValue::CSS_RAD);
+
+            if (parsedValue)
+                valueList->next();
+        }
         break;
 
     case CSS_PROP_FILL:                 // <paint> | inherit

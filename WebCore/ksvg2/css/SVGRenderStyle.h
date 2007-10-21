@@ -25,17 +25,13 @@
 #define SVGRenderStyle_h
 
 #if ENABLE(SVG)
-
 #include "CSSValueList.h"
 #include "DataRef.h"
 #include "GraphicsTypes.h"
 #include "SVGPaint.h"
 #include "SVGRenderStyleDefs.h"
-#include <wtf/Platform.h>
 
-#if PLATFORM(WIN_OS)
-typedef unsigned long long uint64_t;
-#endif
+#include <wtf/Platform.h>
 
 namespace WebCore {
 
@@ -73,7 +69,9 @@ namespace WebCore {
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ETextAnchor, TextAnchor, textAnchor, TA_START)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ETextRendering, TextRendering, textRendering, TR_AUTO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EWritingMode, WritingMode, writingMode, WM_LRTB)
- 
+        SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EGlyphOrientation, GlyphOrientationHorizontal, glyphOrientationHorizontal, GO_0DEG)
+        SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EGlyphOrientation, GlyphOrientationVertical, glyphOrientationVertical, GO_AUTO)
+
         // SVG CSS Properties (using DataRef's)
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, fill, opacity, FillOpacity, fillOpacity, 1.0f)
         SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(SVGPaint, fill, paint, FillPaint, fillPaint, SVGPaint::defaultFill())
@@ -112,34 +110,50 @@ namespace WebCore {
     protected:
         // inherit
         struct InheritedFlags {
-            // 64 bit inherited, don't add to the struct, or the operator will break.
-            bool operator==(const InheritedFlags &other) const { return _iflags == other._iflags; }
-            bool operator!=(const InheritedFlags &other) const { return _iflags != other._iflags; }
+            bool operator==(const InheritedFlags& other) const
+            {
+                return (_colorRendering == other._colorRendering) &&
+                       (_imageRendering == other._imageRendering) &&
+                       (_shapeRendering == other._shapeRendering) &&
+                       (_textRendering == other._textRendering) &&
+                       (_clipRule == other._clipRule) &&
+                       (_fillRule == other._fillRule) &&
+                       (_capStyle == other._capStyle) &&
+                       (_joinStyle == other._joinStyle) &&
+                       (_textAnchor == other._textAnchor) &&
+                       (_colorInterpolation == other._colorInterpolation) &&
+                       (_colorInterpolationFilters == other._colorInterpolationFilters) &&
+                       (_pointerEvents == other._pointerEvents) &&
+                       (_writingMode == other._writingMode) &&
+                       (_glyphOrientationHorizontal == other._glyphOrientationHorizontal) &&
+                       (_glyphOrientationVertical == other._glyphOrientationVertical);
+            }
 
-            union {
-                struct {
-                    unsigned _colorRendering : 2; // EColorRendering
-                    unsigned _imageRendering : 2; // EImageRendering 
-                    unsigned _shapeRendering : 2; // EShapeRendering 
-                    unsigned _textRendering : 2; // ETextRendering
-                    unsigned _clipRule : 1; // WindRule
-                    unsigned _fillRule : 1; // WindRule
-                    unsigned _capStyle : 2; // LineCap
-                    unsigned _joinStyle : 2; // LineJoin
-                    unsigned _textAnchor : 2; // ETextAnchor
-                    unsigned _colorInterpolation : 2; // EColorInterpolation
-                    unsigned _colorInterpolationFilters : 2; // EColorInterpolation
-                    unsigned _pointerEvents : 4; // EPointerEvents
-                    unsigned _writingMode : 3; // EWritingMode
-                    // 5 bits unused
-                } f;
-                uint32_t _iflags;
-            };
+            bool operator!=(const InheritedFlags& other) const
+            {
+                return !(*this == other);
+            }
+
+            unsigned _colorRendering : 2; // EColorRendering
+            unsigned _imageRendering : 2; // EImageRendering 
+            unsigned _shapeRendering : 2; // EShapeRendering 
+            unsigned _textRendering : 2; // ETextRendering
+            unsigned _clipRule : 1; // WindRule
+            unsigned _fillRule : 1; // WindRule
+            unsigned _capStyle : 2; // LineCap
+            unsigned _joinStyle : 2; // LineJoin
+            unsigned _textAnchor : 2; // ETextAnchor
+            unsigned _colorInterpolation : 2; // EColorInterpolation
+            unsigned _colorInterpolationFilters : 2; // EColorInterpolation
+            unsigned _pointerEvents : 4; // EPointerEvents
+            unsigned _writingMode : 3; // EWritingMode
+            unsigned _glyphOrientationHorizontal : 3; // EGlyphOrientation
+            unsigned _glyphOrientationVertical : 3; // EGlyphOrientation
         } svg_inherited_flags;
 
         // don't inherit
         struct NonInheritedFlags {
-            // 64 bit non-inherited, don't add to the struct, or the operator will break.
+            // 32 bit non-inherited, don't add to the struct, or the operator will break.
             bool operator==(const NonInheritedFlags &other) const { return _niflags == other._niflags; }
             bool operator!=(const NonInheritedFlags &other) const { return _niflags != other._niflags; }
 
@@ -174,20 +188,21 @@ namespace WebCore {
 
         void setBitDefaults()
         {
-            svg_inherited_flags._iflags = 0;
-            svg_inherited_flags.f._clipRule = initialClipRule();
-            svg_inherited_flags.f._colorRendering = initialColorRendering();
-            svg_inherited_flags.f._fillRule = initialFillRule();
-            svg_inherited_flags.f._imageRendering = initialImageRendering();
-            svg_inherited_flags.f._shapeRendering = initialShapeRendering();
-            svg_inherited_flags.f._textRendering = initialTextRendering();
-            svg_inherited_flags.f._textAnchor = initialTextAnchor();
-            svg_inherited_flags.f._capStyle = initialCapStyle();
-            svg_inherited_flags.f._joinStyle = initialJoinStyle();
-            svg_inherited_flags.f._colorInterpolation = initialColorInterpolation();
-            svg_inherited_flags.f._colorInterpolationFilters = initialColorInterpolationFilters();
-            svg_inherited_flags.f._pointerEvents = initialPointerEvents();
-            svg_inherited_flags.f._writingMode = initialWritingMode();
+            svg_inherited_flags._clipRule = initialClipRule();
+            svg_inherited_flags._colorRendering = initialColorRendering();
+            svg_inherited_flags._fillRule = initialFillRule();
+            svg_inherited_flags._imageRendering = initialImageRendering();
+            svg_inherited_flags._shapeRendering = initialShapeRendering();
+            svg_inherited_flags._textRendering = initialTextRendering();
+            svg_inherited_flags._textAnchor = initialTextAnchor();
+            svg_inherited_flags._capStyle = initialCapStyle();
+            svg_inherited_flags._joinStyle = initialJoinStyle();
+            svg_inherited_flags._colorInterpolation = initialColorInterpolation();
+            svg_inherited_flags._colorInterpolationFilters = initialColorInterpolationFilters();
+            svg_inherited_flags._pointerEvents = initialPointerEvents();
+            svg_inherited_flags._writingMode = initialWritingMode();
+            svg_inherited_flags._glyphOrientationHorizontal = initialGlyphOrientationHorizontal();
+            svg_inherited_flags._glyphOrientationVertical = initialGlyphOrientationVertical();
 
             svg_noninherited_flags._niflags = 0;
             svg_noninherited_flags.f._alignmentBaseline = initialAlignmentBaseline();
