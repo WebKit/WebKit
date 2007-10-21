@@ -23,7 +23,7 @@ function primes(isPrime, n) {
 }
 
 function sieve() {
-    for (var i = 1; i <= 4; i++) {
+    for (var i = 4; i <= 4; i++) {
         var isPrime = new Array((10000<<i)+31>>5);
         primes(isPrime, i);
     }

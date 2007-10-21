@@ -1,3 +1,22 @@
+2007-10-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+        
+        - rebalance new tests
+        
+        Scaled the new tests so they take 400-600ms on a reasonably normal user setup:
+        
+        Internet Explorer 7, Window XP, Dell Latitude D810 with a 2.13GHz Pentium M
+
+        This balances them with the existing tests.
+
+        * tests/access-binary-trees.js:
+        * tests/access-nsieve.js:
+        * tests/bitops-nsieve-bits.js:
+        * tests/math-partial-sums.js:
+        * tests/math-spectral-norm.js:
+        * tests/string-fasta.js:
+
 2007-10-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

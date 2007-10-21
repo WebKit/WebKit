@@ -28,7 +28,7 @@ function nsieve(m, isPrime){
 }
 
 function sieve() {
-    for (var i = 1; i <= 4; i++ ) {
+    for (var i = 1; i <= 3; i++ ) {
         var m = (1<<i)*10000;
         var flags = Array(m+1);
         nsieve(m, flags);

@@ -27,7 +27,7 @@ function partial(n){
     }
 }
 
-for (var i = 1024; i <= 8192; i *= 2) {
+for (var i = 1024; i <= 16384; i *= 2) {
     partial(i);
 }
 

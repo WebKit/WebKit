@@ -46,6 +46,6 @@ function spectralnorm(n) {
   return Math.sqrt(vBv/vv);
 }
 
-for (var i = 8; i <= 64; i *= 2) {
+for (var i = 6; i <= 48; i *= 2) {
     spectralnorm(i);
 }

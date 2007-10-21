@@ -78,8 +78,8 @@ function fastaRandom(n, table) {
 
 var ret;
 
-for (var n = 2; n <= 16; n *= 2) {
-    ret = fastaRepeat(2*n*100000, ALU);
-    ret = fastaRandom(3*n*1000, IUB);
-    ret = fastaRandom(5*n*1000, HomoSap);
-}
+var count = 7;
+ret = fastaRepeat(2*count*100000, ALU);
+ret = fastaRandom(3*count*1000, IUB);
+ret = fastaRandom(5*count*1000, HomoSap);
+
