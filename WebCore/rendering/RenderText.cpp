@@ -447,11 +447,14 @@ void RenderText::trimmedPrefWidths(int leadWidth,
     hasBreakableChar = m_hasBreakableChar;
     hasBreak = m_hasBreak;
 
-    if (stripFrontSpaces && ((*m_text)[0] == ' ' || ((*m_text)[0] == '\n' && !style()->preserveNewline()) || (*m_text)[0] == '\t')) {
+    if ((*m_text)[0] == ' ' || ((*m_text)[0] == '\n' && !style()->preserveNewline()) || (*m_text)[0] == '\t') {
         const Font& f = style()->font(); // FIXME: This ignores first-line.
-        const UChar space = ' ';
-        int spaceWidth = f.width(TextRun(&space, 1));
-        maxW -= spaceWidth + f.wordSpacing();
+        if (stripFrontSpaces) {
+            const UChar space = ' ';
+            int spaceWidth = f.width(TextRun(&space, 1));
+            maxW -= spaceWidth;
+        } else
+            maxW += f.wordSpacing();
     }
 
     stripFrontSpaces = collapseWhiteSpace && m_hasEndWS;
@@ -676,7 +679,7 @@ void RenderText::calcPrefWidths(int leadWidth)
         }
     }
 
-    if (needsWordSpacing && len > 1)
+    if (needsWordSpacing && len > 1 || ignoringSpaces && !firstWord)
         currMaxWidth += wordSpacing;
 
     m_minWidth = max(currMinWidth, m_minWidth);

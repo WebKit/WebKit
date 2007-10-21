@@ -3526,8 +3526,9 @@ static inline void stripTrailingSpace(int& inlineMax, int& inlineMin,
         // Collapse away the trailing space at the end of a block.
         RenderText* t = static_cast<RenderText*>(trailingSpaceChild);
         const UChar space = ' ';
-        int spaceWidth = t->style()->font().width(TextRun(&space, 1)); // FIXME: This ignores first-line.
-        inlineMax -= spaceWidth;
+        const Font& font = t->style()->font(); // FIXME: This ignores first-line.
+        int spaceWidth = font.width(TextRun(&space, 1));
+        inlineMax -= spaceWidth + font.wordSpacing();
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
     }

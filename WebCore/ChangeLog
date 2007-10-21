@@ -1,3 +1,28 @@
+2007-10-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15259
+          <rdar://problem/5499902> REGRESSION: Text overflows when using word spacing and centering (affects myspace.com music videos page)
+
+        Test: fast/text/word-space.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::stripTrailingSpace): Added word-spacing to the width of the
+        space being stripped out.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::trimmedPrefWidths): Changed handling of
+        leading space. Since Font::width includes leading space width but not
+        leading word spacing, this method needs to either remove the width of a
+        space character or add word spacing,
+        depending on stripFrontSpaces. 
+        (WebCore::RenderText::calcPrefWidths): Corrected the check for adding
+        trailing word spacing so that it would work in the case where the last
+        space is ignored.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Changed to
+        actually add word spacing to the total width.
+
 2007-10-20  David Hyatt  <hyatt@apple.com>
 
         Land support for the transform CSS property.  Basic painting now works properly. There are many open issues
