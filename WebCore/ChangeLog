@@ -1,3 +1,16 @@
+2007-10-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Add basic @font-face to the Web Inspector.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorResource::type): Check for CachedResource::FontResource.
+        * page/inspector/Resource.js: Add support for Font types and font preview in the icon.
+        * page/inspector/ResourcePanel.js: Show a font preview for font resources.
+        * page/inspector/inspector.css: Style for the font preview and font icon.
+        * page/inspector/inspector.js: Add font mime types.
+
 2007-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

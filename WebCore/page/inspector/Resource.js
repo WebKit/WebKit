@@ -51,26 +51,29 @@ WebInspector.Resource.Type = {
     Document:   0,
     Stylesheet: 1,
     Image:      2,
-    Script:     3,
-    Other:      4,
+    Font:       3,
+    Script:     4,
+    Other:      5,
 
     isTextType: function(type)
     {
-        return (type == 0) || (type == 1) || (type == 3);
+        return (type == this.Document) || (type == this.Stylesheet) || (type == this.Script);
     },
 
     toString: function(type)
     {
         switch (type) {
-            case 0:
+            case this.Document:
                 return "document";
-            case 1:
+            case this.Stylesheet:
                 return "stylesheet";
-            case 2:
+            case this.Image:
                 return "image";
-            case 3:
+            case this.Font:
+                return "font";
+            case this.Script:
                 return "script";
-            case 4:
+            case this.Other:
             default:
                 return "other";
         }
@@ -318,6 +321,9 @@ WebInspector.Resource.prototype = {
             case WebInspector.Resource.Type.Image:
                 this.category = WebInspector.resourceCategories.images;
                 break;
+            case WebInspector.Resource.Type.Font:
+                this.category = WebInspector.resourceCategories.fonts;
+                break;
             case WebInspector.Resource.Type.Other:
             default:
                 this.category = WebInspector.resourceCategories.other;
@@ -527,13 +533,24 @@ WebInspector.Resource.prototype = {
         case WebInspector.resourceCategories.images:
         case WebInspector.resourceCategories.other:
             iconClass = "icon plain";
+            break;
+        case WebInspector.resourceCategories.fonts:
+            iconClass = "icon font";
         }
 
         if (!this.finished)
             fullTitle += "<div class=\"" + iconClass + "\"><canvas id=\"loadingIcon" + this.identifier + "\" class=\"progress\" width=\"16\" height=\"16\"></canvas></div>";
         else if (this.category === WebInspector.resourceCategories.images)
             fullTitle += "<div class=\"" + iconClass + "\"><img class=\"preview\" src=\"" + this.url + "\"></div>";
-        else
+        else if (this.category === WebInspector.resourceCategories.fonts) {
+            var uniqueFontName = "WebInspectorFontPreview" + this.identifier;
+
+            this.fontStyleElement = document.createElement("style");
+            this.fontStyleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this.url + "); }";
+            document.getElementsByTagName("head").item(0).appendChild(this.fontStyleElement);
+
+            fullTitle += "<div class=\"" + iconClass + "\"><div class=\"preview\" style=\"font-family: " + uniqueFontName + "\">Ag</div></div>";
+        } else
             fullTitle += "<div class=\"" + iconClass + "\"></div>";
 
         this.listItem.title = fullTitle;
@@ -568,6 +585,8 @@ WebInspector.Resource.prototype = {
     {
         if (this._panel)
             this.panel.detach();
+        if (this.fontStyleElement && this.fontStyleElement.parentNode)
+            this.fontStyleElement.parentNode.removeChild(this.fontStyleElement);
     },
 
     get errors()

@@ -37,13 +37,13 @@ WebInspector.ResourcePanel = function(resource)
 WebInspector.ResourcePanel.prototype = {
     show: function()
     {
+        WebInspector.Panel.prototype.show.call(this);
+
         this.resource.listItem.select(true);
         this.resource.listItem.reveal();
 
         if (this.currentView && "onshow" in this.currentView)
             this.currentView.onshow();
-
-        WebInspector.Panel.prototype.show.call(this);
     },
 
     hide: function()
@@ -312,14 +312,86 @@ WebInspector.ResourcePanel.prototype = {
 
             infoListElement.innerHTML = listHTML;
             container.appendChild(infoListElement);
-        } else if (this.resource.category === WebInspector.resourceCategories.stylesheets
-                   || this.resource.category === WebInspector.resourceCategories.scripts) {
-                this.views.source.contentElement.addStyleClass(this.resource.category.title.toLowerCase());
+        } else if (this.resource.category === WebInspector.resourceCategories.fonts) {
+            var panel = this;
+            var resizeListener = function() {
+                panel.updateFontPreviewSize();
+            };
+
+            this.views.source.onshow = function() {
+                this.panel.updateFontPreviewSize();
+                window.addEventListener("resize", resizeListener, false);
+            };
+
+            this.views.source.onhide = function() {
+                window.removeEventListener("resize", resizeListener, false);
+            };
+
+            window.addEventListener("resize", resizeListener, false);
+
+            this.views.source.contentElement.removeStyleClass("source");
+            this.views.source.contentElement.addStyleClass("font");
+
+            var uniqueFontName = "WebInspectorFontPreview" + this.resource.identifier;
+
+            this.fontPreviewElement = document.createElement("div");
+            this.fontPreviewElement.className = "preview";
+            this.views.source.contentElement.appendChild(this.fontPreviewElement);
+
+            this.fontPreviewElement.style.setProperty("font-family", uniqueFontName, null);
+            this.fontPreviewElement.innerHTML = "ABCDEFGHIJKLM<br>NOPQRSTUVWXYZ<br>abcdefghijklm<br>nopqrstuvwxyz<br>1234567890";
+
+            this.updateFontPreviewSize();
+        } else if (this.resource.category === WebInspector.resourceCategories.stylesheets || this.resource.category === WebInspector.resourceCategories.scripts) {
+            this.views.source.contentElement.addStyleClass(this.resource.category.title.toLowerCase());
             this._createSourceFrame();
         } else {
             if (this.resource.category)
                 this.views.source.contentElement.addStyleClass(this.resource.category.title.toLowerCase());
         }
+    },
+
+    updateFontPreviewSize: function ()
+    {
+        if (!this.fontPreviewElement)
+            return;
+
+        this.fontPreviewElement.removeStyleClass("preview");
+
+        var measureFontSize = 50;
+        this.fontPreviewElement.style.setProperty("position", "absolute", null);
+        this.fontPreviewElement.style.setProperty("font-size", measureFontSize + "px", null);
+        this.fontPreviewElement.style.removeProperty("height");
+
+        var height = this.fontPreviewElement.offsetHeight;
+        var width = this.fontPreviewElement.offsetWidth;
+
+        var containerHeight = this.views.source.contentElement.offsetHeight;
+        var containerWidth = this.views.source.contentElement.offsetWidth;
+
+        if (!height || !width || !containerHeight || !containerWidth) {
+            this.fontPreviewElement.style.removeProperty("font-size");
+            this.fontPreviewElement.style.removeProperty("position");
+            this.fontPreviewElement.addStyleClass("preview");
+            return;
+        }
+
+        var lineCount = this.fontPreviewElement.getElementsByTagName("br").length + 1;
+        var realLineHeight = Math.floor(height / lineCount);
+        var fontSizeLineRatio = measureFontSize / realLineHeight;
+        var widthRatio = containerWidth / width;
+        var heightRatio = containerHeight / height;
+
+        if (heightRatio < widthRatio)
+            var finalFontSize = Math.floor(realLineHeight * heightRatio * fontSizeLineRatio) - 1;
+        else
+            var finalFontSize = Math.floor(realLineHeight * widthRatio * fontSizeLineRatio) - 1;
+
+        this.fontPreviewElement.style.setProperty("font-size", finalFontSize + "px", null);
+        this.fontPreviewElement.style.setProperty("height", this.fontPreviewElement.offsetHeight + "px", null);
+        this.fontPreviewElement.style.removeProperty("position");
+
+        this.fontPreviewElement.addStyleClass("preview");
     },
 
     get currentView()

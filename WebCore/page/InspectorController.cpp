@@ -86,6 +86,7 @@ struct InspectorResource : public Shared<InspectorResource> {
         Doc,
         Stylesheet,
         Image,
+        Font,
         Script,
         Other
     };
@@ -136,6 +137,8 @@ struct InspectorResource : public Shared<InspectorResource> {
         switch (cachedResource->type()) {
             case CachedResource::ImageResource:
                 return Image;
+            case CachedResource::FontResource:
+                return Font;
             case CachedResource::CSSStyleSheet:
 #if ENABLE(XSLT)
             case CachedResource::XSLStyleSheet:
