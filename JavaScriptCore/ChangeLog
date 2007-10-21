@@ -2,6 +2,42 @@
 
         Reviewed by Maciej.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=15585
+          speed up sparse arrays by using a custom map
+    
+        Speeds up SunSpider by 10%.
+
+        * kjs/array_object.cpp:
+        (allocateStorage): Leave room for an additional pointer.
+        (reallocateStorage): Ditto.
+        (freeStorage): Ditto.
+        (ArrayInstance::~ArrayInstance): Delete the overflow map if present.
+        (ArrayInstance::getItem): Read values from the overflow map if present.
+        Removed the check of length, since it slows down the common case.
+        (ArrayInstance::getOwnPropertySlot): Ditto. Also removed the fallback
+        to the property map.
+        (ArrayInstance::put): Write values into the overflow map as needed.
+        Also create overflow map when needed.
+        (ArrayInstance::deleteProperty): Remove values from the overflow map
+        as appropriate.
+        (ArrayInstance::getPropertyNames): Add a name for each identifier in
+        the property map. This is extremely inefficient.
+        (ArrayInstance::setLength): Remove any values in the overflow map
+        that are past the new length, as we formerly did with the property map.
+        (ArrayInstance::mark): Mark any values in the overflow map.
+        (compareByStringForQSort): Removed unneeded undefined case, since
+        compactForSorting guarantees we will have no undefined values.
+        (compareWithCompareFunctionForQSort): Ditto.
+        (ArrayInstance::compactForSorting): Copy all the values out of the
+        overflow map and destroy it.
+
+        * kjs/property_map.h: Removed now-unused getSparseArrayPropertyNames.
+        * kjs/property_map.cpp: Ditto.
+
+2007-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - http://bugs.webkit.org/show_bug.cgi?id=15579
           stop churning identifier reference counts copying Completion objects
 

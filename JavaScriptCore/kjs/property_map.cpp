@@ -620,36 +620,6 @@ void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) c
         propertyNames.add(Identifier(q[0]->key));
 }
 
-void PropertyMap::getSparseArrayPropertyNames(PropertyNameArray& propertyNames) const
-{
-    if (!m_usingTable) {
-#if USE_SINGLE_ENTRY
-        UString::Rep *key = m_singleEntryKey;
-        if (key) {
-            UString k(key);
-            bool fitsInUInt32;
-            k.toUInt32(&fitsInUInt32);
-            if (fitsInUInt32)
-                propertyNames.add(Identifier(key));
-        }
-#endif
-        return;
-    }
-
-    int size = m_u.table->size;
-    Entry *entries = m_u.table->entries;
-    for (int i = 0; i != size; ++i) {
-        UString::Rep *key = entries[i].key;
-        if (isValid(key)) {
-            UString k(key);
-            bool fitsInUInt32;
-            k.toUInt32(&fitsInUInt32);
-            if (fitsInUInt32)
-                propertyNames.add(Identifier(key));
-        }
-    }
-}
-
 void PropertyMap::save(SavedProperties &p) const
 {
     int count = 0;
