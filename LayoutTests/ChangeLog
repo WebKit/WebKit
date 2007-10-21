@@ -1,3 +1,19 @@
+2007-10-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=15208
+          display:table causes the collapsed text to show at a different position when expanded
+
+        * fast/table/form-in-table-before-misnested-text-crash-css-expected.txt:
+        * fast/table/form-in-table-before-misnested-text-crash-expected.txt:
+        * fast/table/insert-before-anonymous-ancestors.html: Added.
+        * fast/table/section-in-table-before-misnested-text-crash-css-expected.txt:
+        * fast/table/section-in-table-before-misnested-text-crash-expected.txt:
+        * platform/mac/fast/table/insert-before-anonymous-ancestors-expected.checksum: Added.
+        * platform/mac/fast/table/insert-before-anonymous-ancestors-expected.png: Added.
+        * platform/mac/fast/table/insert-before-anonymous-ancestors-expected.txt: Added.
+
 2007-10-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

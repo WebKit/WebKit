@@ -1,3 +1,17 @@
+2007-10-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15208
+          display:table causes the collapsed text to show at a different position when expanded
+
+        Test: fast/table/insert-before-anonymous-ancestors.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Rolled out r11579. I think whatever
+        that change was supposed to accomplish has since been done in other
+        places in the code.
+
 2007-10-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dave Hyatt.
