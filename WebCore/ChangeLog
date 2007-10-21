@@ -1,3 +1,13 @@
+2007-10-21  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15589
+        Use glib's path separator on gtk
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::pathByAppendingComponent):
+
 2007-10-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

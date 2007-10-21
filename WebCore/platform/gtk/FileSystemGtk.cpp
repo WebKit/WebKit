@@ -79,12 +79,10 @@ bool fileSize(const String& path, long long& resultSize)
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    // FIXME: Use the platform separator.
-
-    if (path.endsWith("/"))
+    if (path.endsWith(G_DIR_SEPARATOR_S))
         return path + component;
     else
-        return path + "/" + component;
+        return path + G_DIR_SEPARATOR_S + component;
 }
 
 bool makeAllDirectories(const String& path)
