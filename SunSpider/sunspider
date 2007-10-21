@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 # Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,72 +25,123 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 use strict;
+use Getopt::Long;
+use File::Basename;
+use Cwd;
 
-sub usage()
+my $showHelp = 0;
+my $runShark = 0;
+my $jsShellPath;
+my $testsPattern;
+my $testRuns = 5; # This number may be different from what ./sunspider defaults to (that's OK)
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName --shell=[path] [options]
+  --help        Show this help message
+  --shell       Path to javascript shell
+  --runs        Number of times to run tests (default: $testRuns)
+  --tests       Only run tests matching provided pattern
+  --shark       Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
+EOF
+
+GetOptions('runs=i' => \$testRuns,
+           'shell=s' => \$jsShellPath,
+           'shark' => \$runShark,
+           'tests=s' => \$testsPattern,
+           'help' => \$showHelp);
+
+$testRuns = 1  if $runShark;
+
+if (!$jsShellPath || $showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
+
+sub dumpToFile($$)
 {
-    die "Usage: sunspider engine [ max_runs ]\n";
+    my ($contents, $path) = @_;
+    open FILE, ">$path";
+    print FILE $contents;
+    close FILE;
 }
 
-if (scalar @ARGV < 1) {
-    usage();
-}
-
-my $jsshell = $ARGV[0];
-
-my $max = $ARGV[1];
-$max = 5 if !$max;
-
-if ($max =~ /\D/) {
-    usage();
-}
-
-print STDERR "Running SunSpider once for warmup, then $max times\n";
-
+# FIXME: these globals are rather poor abstraction
 my @tests = ();
 my @categories = ();
 my %uniqueCategories = ();
 
-open TESTLIST, "<./tests/LIST";
-while (<TESTLIST>) {
-    chomp;
-    next unless $_;
-    push @tests, $_;
-    my $category = $_;
-    $category =~ s/-.*//;
-    if (!$uniqueCategories{$category}) {
-        push @categories, $category;
-        $uniqueCategories{$category} = $category;
+sub loadTestsList()
+{
+    open TESTLIST, "<./tests/LIST";
+    while (<TESTLIST>) {
+        chomp;
+        next unless !$testsPattern || /$testsPattern/;
+        
+        push @tests, $_;
+        my $category = $_;
+        $category =~ s/-.*//;
+        if (!$uniqueCategories{$category}) {
+            push @categories, $category;
+            $uniqueCategories{$category} = $category;
+        }
     }
+    close TESTLIST;
 }
-close TESTLIST;
 
-my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
-$prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
+sub writePrefixFile()
+{
+    my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
+    $prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
 
-mkdir "tmp";
-open PREFIX, ">tmp/sunspider-test-prefix.js";
-print PREFIX $prefix;
-close PREFIX;
+    mkdir "tmp";
+    dumpToFile($prefix, "tmp/sunspider-test-prefix.js");
+}
 
-my $discard = `"$jsshell" -f tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null`;
+sub runTestsOnce($)
+{
+    my ($useShark) = @_;
+    my $shellArgs = "-f tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null";
+    my $output;
+    if ($useShark) {
+        print STDERR "Running sunspider under Shark... (this will take a while)\n";
+        print STDERR "shark -i -q \"$jsShellPath\" $shellArgs\n";
+        $output = `shark -i -q "$jsShellPath" $shellArgs`;
+    } else {
+        $output = `"$jsShellPath" $shellArgs`;
+    }
+    return $output;
+}
 
+
+
+loadTestsList();
+if ($testsPattern) {
+    print STDERR "Found " . scalar(@tests) . " tests matching '" . $testsPattern . "'\n";
+} else {
+    print STDERR "Found " . scalar(@tests) . " tests\n";
+}
+die "No tests to run"  unless scalar(@tests);
+print STDERR "Running SunSpider once for warmup, then $testRuns times\n";
+writePrefixFile();
+
+runTestsOnce(0);
 print "Discarded first run.\n";
 
 my $result;
 my $count = 0;
 my @results = ();
 my $total = 0;
-while ($count++ < $max) {
-    $result = `"$jsshell" -f tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null`;
+while ($count++ < $testRuns) {
+    $result = runTestsOnce($runShark);
     chomp $result;
     push @results, $result;
     print $result . "\n";
 }
 
 my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
+dumpToFile($output, "tmp/sunspider-results.js");
 
-open(OUTPUT, ">tmp/sunspider-results.js");
-print OUTPUT $output;
-close(OUTPUT);
+system("$jsShellPath", "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-results.js", "-f", "resources/sunspider-analyze-results.js");
 
-system("$jsshell", "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-results.js", "-f", "resources/sunspider-analyze-results.js");
+print STDERR "Shark sessions can be found in " . getcwd() . "\n"  if $runShark;

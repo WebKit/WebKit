@@ -1,3 +1,13 @@
+2007-10-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Add improved argument handling to sunspider, including
+        --runs=<number>, --tests=<pattern, --shark, and --help
+        Also re-factor code into subroutines
+
+        * sunspider: improved argument handling
+
 2007-10-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.

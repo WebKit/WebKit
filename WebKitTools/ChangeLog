@@ -1,3 +1,17 @@
+2007-10-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Add improved argument handling to run-sunspider, including
+        --runs=<number>, --shell=<path>, --tests=<pattern>, --shark, and --help
+        Also re-factor code into subroutines
+
+        * Scripts/build-dumprendertree: removed bogus comments
+        * Scripts/build-testkjs: Added.
+        * Scripts/run-javascriptcore-tests: use build-testkjs
+        * Scripts/run-sunspider: improved argument handling, abstraction
+        * Scripts/run-webkit-tests: improved abstraction
+
 2007-10-20  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, Windows build fix.

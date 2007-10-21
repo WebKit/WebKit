@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 # Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,13 +39,12 @@ setConfiguration();
 chdirWebKit();
 my @options = XcodeOptions();
 
-# Build
-chdir "WebKitTools/DumpRenderTree" or die;
+chdir "JavaScriptCore" or die "Can't find JavaScriptCore directory to build from";
 my $result;
 if (isOSX()) {
-    $result = system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options;
+    $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @ARGV;
 } elsif (isCygwin()) {
-    $result = buildVisualStudioProject("DumpRenderTree.vcproj/DumpRenderTree.sln");
+    $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
 } elsif (isQt()) {
     # Qt/Linux builds everything in one-shot. No need to build anything here.
     $result = 0;
