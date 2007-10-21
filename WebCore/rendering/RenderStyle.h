@@ -636,11 +636,11 @@ public:
 
     virtual void apply(AffineTransform&, const IntSize& borderBoxSize) = 0;
     
-    bool isScaleOperation() const { return false; }
-    bool isRotateOperation() const { return false; }
-    bool isSkewOperation() const { return false; }
-    bool isTranslateOperation() const { return false; }
-    bool isMatrixOperation() const { return false; }
+    virtual bool isScaleOperation() const { return false; }
+    virtual bool isRotateOperation() const { return false; }
+    virtual bool isSkewOperation() const { return false; }
+    virtual bool isTranslateOperation() const { return false; }
+    virtual bool isMatrixOperation() const { return false; }
 };
 
 class ScaleTransformOperation : public TransformOperation
@@ -650,7 +650,7 @@ public:
     : m_x(sx), m_y(sy)
     {}
         
-    bool isScaleOperation() const { return true; }
+    virtual bool isScaleOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
@@ -678,7 +678,7 @@ public:
     : m_angle(angle)
     {}
 
-    bool isRotateOperation() const { return true; }
+    virtual bool isRotateOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
@@ -706,7 +706,7 @@ public:
     : m_angleX(angleX), m_angleY(angleY)
     {}
     
-    bool isSkewOperation() const { return true; }
+    virtual bool isSkewOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
@@ -735,7 +735,7 @@ public:
     : m_x(tx), m_y(ty)
     {}
     
-    bool isTranslateOperation() const { return true; }
+    virtual bool isTranslateOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
@@ -763,7 +763,7 @@ public:
     : m_a(a), m_b(b), m_c(c), m_d(d), m_e(e), m_f(f)
     {}
     
-    bool isMatrixOperation() const { return true; }
+    virtual bool isMatrixOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
     {

@@ -422,7 +422,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     l->updateZOrderLists();
     l->updateOverflowList();
 
-    bool shouldPaint = l->intersectsDamageRect(layerBounds, damageRect);
+    bool shouldPaint = l->intersectsDamageRect(layerBounds, damageRect, rootLayer);
     Vector<RenderLayer*>* negList = l->negZOrderList();
     if (shouldPaint && negList && negList->size() > 0)
         write(ts, *l, layerBounds, damageRect, clipRectToApply, outlineRect, -1, indent);

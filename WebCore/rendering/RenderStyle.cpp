@@ -1330,9 +1330,27 @@ void ContentData::clear()
 
 void RenderStyle::applyTransform(AffineTransform& transform, const IntSize& borderBoxSize) const
 {
+    // transform-origin brackets the transform with translate operations.
+    // Optimize for the case where the only transform is a translation, since the transform-origin is irrelevant
+    // in that case.
+    bool applyTransformOrigin = false;
     unsigned s = rareNonInheritedData->m_transform->m_operations.size();
-    for (unsigned i = 0; i < s; i++)
+    unsigned i;
+    for (i = 0; i < s; i++) {
+        if (!rareNonInheritedData->m_transform->m_operations[i]->isTranslateOperation()) {
+            applyTransformOrigin = true;
+            break;
+        }
+    }
+    
+    if (applyTransformOrigin)
+        transform.translate(transformOriginX().calcValue(borderBoxSize.width()), transformOriginY().calcValue(borderBoxSize.height()));
+    
+    for (i = 0; i < s; i++)
         rareNonInheritedData->m_transform->m_operations[i]->apply(transform, borderBoxSize);
+        
+    if (applyTransformOrigin)
+        transform.translate(-transformOriginX().calcValue(borderBoxSize.width()), -transformOriginY().calcValue(borderBoxSize.height()));
 }
 
 #if ENABLE(XBL)

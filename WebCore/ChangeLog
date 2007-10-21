@@ -1,3 +1,49 @@
+2007-10-20  David Hyatt  <hyatt@apple.com>
+
+        Land support for the transform CSS property.  Basic painting now works properly. There are many open issues
+        that will have to be covered by individual bugs.
+
+        Reviewed by olliej
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::parseTransform):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        (WebCore::RenderLayer::intersectsDamageRect):
+        (WebCore::RenderLayer::boundingBox):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::container):
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::applyTransform):
+        * rendering/RenderStyle.h:
+        (WebCore::TransformOperation::isScaleOperation):
+        (WebCore::TransformOperation::isRotateOperation):
+        (WebCore::TransformOperation::isSkewOperation):
+        (WebCore::TransformOperation::isTranslateOperation):
+        (WebCore::TransformOperation::isMatrixOperation):
+        (WebCore::ScaleTransformOperation::isScaleOperation):
+        (WebCore::RotateTransformOperation::isRotateOperation):
+        (WebCore::SkewTransformOperation::isSkewOperation):
+        (WebCore::TranslateTransformOperation::isTranslateOperation):
+        (WebCore::MatrixTransformOperation::isMatrixOperation):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::requiresLayer):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
 2007-10-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.
