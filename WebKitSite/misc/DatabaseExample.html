@@ -56,10 +56,6 @@ if (!db) {
     alert("Failed to open the database on disk.  Are you using a WebKit nightly with this feature enabled?");
 }
 
-try {
-    db.executeSql("CREATE TABLE WebKitStickyNotes (id REAL UNIQUE, note TEXT, timestamp REAL, left TEXT, top TEXT, zindex REAL)", [], function (result) {});
-} catch(e) { }
-
 var captured = null;
 var highestZ = 0;
 var highestId = 0;
@@ -260,6 +256,15 @@ Note.prototype = {
 }
 
 function loaded()
+{
+    try {
+        db.executeSql("SELECT COUNT(*) FROM WebKitStickyNotes", [], function(result) { loadNotes(); });
+    } catch(err) {
+        db.executeSql("CREATE TABLE WebKitStickyNotes (id REAL UNIQUE, note TEXT, timestamp REAL, left TEXT, top TEXT, zindex REAL)", [], function(result) { loadNotes(); });
+    }
+}
+
+function loadNotes()
 {
     db.executeSql("SELECT id, note, timestamp, left, top, zindex FROM WebKitStickyNotes", [], function(result) {
         if (result.errorCode) {
