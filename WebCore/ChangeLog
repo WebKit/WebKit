@@ -1,3 +1,15 @@
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=15584
+        Bug 15584: REGRESSION(r26696): GtkLauncher segfaults on WebCore::WidthIterator::advance
+
+        * platform/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter): If the fallback page exists but does not have a
+        glyph for the character, fall back to the missing glyph data rather than returning an
+        invalid GlyphData.
+
 2007-10-20  Jasper Bryant-Greene  <m@ni.ac.nz>
 
         Reviewed by Maciej.
