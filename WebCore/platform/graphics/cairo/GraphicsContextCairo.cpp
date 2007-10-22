@@ -47,6 +47,7 @@
 
 #if PLATFORM(GTK)
 #include <gdk/gdk.h>
+#include <pango/pango.h>
 #endif
 
 
@@ -461,9 +462,29 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
     drawLine(origin, endPoint);
 }
 
-void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint&, int width, bool grammar)
+void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& origin, int width, bool grammar)
 {
+    if (paintingDisabled())
+        return;
+
+#if PLATFORM(GTK)
+    cairo_t* cr = m_data->cr;
+    cairo_save(cr);
+
+    // Convention is green for grammar, red for spelling
+    // These need to become configurable
+    if (grammar)
+        cairo_set_source_rgb(cr, 0, 1, 0);
+    else
+        cairo_set_source_rgb(cr, 1, 0, 0);
+
+    // We ignore most of the provided constants in favour of the platform style
+    pango_cairo_show_error_underline(cr, origin.x(), origin.y(), width, cMisspellingLineThickness);
+
+    cairo_restore(cr);
+#else
     notImplemented();
+#endif
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)

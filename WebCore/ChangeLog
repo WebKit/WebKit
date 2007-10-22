@@ -2,6 +2,18 @@
 
         Reviewed by Mark Rowe.
 
+        Implement spelling and grammar mistake underlining with Pango/Cairo.
+
+        This change does not add any actual support for spelling or grammar
+        checking to any port.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+
+2007-10-21  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
         Cairo canvas fixes:
 
         Fix a refcounting issue leading to leaks and crashes on canvas
