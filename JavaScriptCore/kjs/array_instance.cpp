@@ -26,6 +26,8 @@
 #include "PropertyNameArray.h"
 #include <wtf/Assertions.h>
 
+using std::min;
+
 namespace KJS {
 
 typedef HashMap<unsigned, JSValue*> SparseArrayValueMap;

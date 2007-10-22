@@ -1,3 +1,9 @@
+2007-10-22  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix.
+
+        * kjs/array_instance.cpp:
+
 2007-10-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
