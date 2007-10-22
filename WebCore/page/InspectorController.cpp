@@ -42,7 +42,9 @@
 #include "FrameTree.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
+#if ENABLE(DATABASE)
 #include "JSDatabase.h"
+#endif
 #include "JSRange.h"
 #include "Page.h"
 #include "Range.h"

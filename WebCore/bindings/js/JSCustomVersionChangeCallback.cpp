@@ -32,7 +32,7 @@
 #include "CString.h"
 #include "Frame.h"
 #include "kjs_proxy.h"
-#include "JSSQLResultSet.h"
+#include "kjs_binding.h"
 #include "Page.h"
 
 namespace WebCore {

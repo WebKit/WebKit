@@ -1,3 +1,13 @@
+2007-10-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Nikolas.
+
+        Fix compilation from a clean build with the database feature disabled.
+        JSCustomVersionChangeCallback.cpp doesn't actually need the SQL header file, just ScriptInterpreter.
+
+        * bindings/js/JSCustomVersionChangeCallback.cpp:
+        * page/InspectorController.cpp:
+
 2007-10-22  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe.
