@@ -29,8 +29,8 @@
 #include "config.h"
 #include "Threading.h"
 
+#include "HashMap.h"
 #include "Logging.h"
-#include "Vector.h"
 
 #include <glib.h>
 
@@ -48,5 +48,131 @@ void callOnMainThread(void (*function)())
     ASSERT(function);
     g_timeout_add(0, callFunctionOnMainThread, reinterpret_cast<gpointer>(function));
 }
+
+void initializeThreading()
+{
+    if (!g_thread_supported())
+        g_thread_init(NULL);
+    ASSERT(g_thread_supported());
+}
+
+static Mutex& threadMapMutex()
+{
+    static Mutex mutex;
+    return mutex;
+}
+
+static HashMap<ThreadIdentifier, GThread*>& threadMap()
+{
+    static HashMap<ThreadIdentifier, GThread*> map;
+    return map;
+}
+
+static ThreadIdentifier establishIdentifierForThread(GThread*& thread)
+{
+    MutexLocker locker(threadMapMutex());
+
+    static ThreadIdentifier identifierCount = 1;
+
+    threadMap().add(identifierCount, thread);
+    
+    return identifierCount++;
+}
+
+static GThread* threadForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+    
+    return threadMap().get(id);
+}
+
+static void clearThreadForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+
+    ASSERT(threadMap().contains(id));
+    
+    threadMap().remove(id);
+}
+
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+{
+    GThread* thread;
+    if (!(thread = g_thread_create(entryPoint, data, TRUE, 0))) {
+        LOG_ERROR("Failed to create thread at entry point %p with data %p", entryPoint, data);
+        return 0;
+    }
+
+    ThreadIdentifier threadID = establishIdentifierForThread(thread);
+    LOG(Threading, "Created thread with thread id %u", threadID);
+    return threadID;
+}
+
+int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
+{
+    ASSERT(threadID);
+
+    GThread* thread = threadForIdentifier(threadID);
+
+    *result = g_thread_join(thread);
+
+    clearThreadForIdentifier(threadID);
+    return 0;
+}
+
+void detachThread(ThreadIdentifier)
+{
+}
+
+Mutex::Mutex()
+    : m_mutex(g_mutex_new())
+{
+}
+
+Mutex::~Mutex()
+{
+    g_mutex_free(m_mutex);
+}
+
+void Mutex::lock()
+{
+    g_mutex_lock(m_mutex);
+}
+    
+bool Mutex::tryLock()
+{
+    return g_mutex_trylock(m_mutex);
+}
+
+void Mutex::unlock()
+{
+    g_mutex_unlock(m_mutex);
+}
+
+ThreadCondition::ThreadCondition()
+    : m_condition(g_cond_new())
+{ 
+}
+
+ThreadCondition::~ThreadCondition()
+{
+    g_cond_free(m_condition);
+}
+
+void ThreadCondition::wait(Mutex& mutex)
+{
+    g_cond_wait(m_condition, mutex.impl());
+}
+
+void ThreadCondition::signal()
+{
+    g_cond_signal(m_condition);
+}
+
+void ThreadCondition::broadcast()
+{
+    g_cond_broadcast(m_condition);
+}
+
 
 }

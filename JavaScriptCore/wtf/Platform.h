@@ -214,7 +214,6 @@
 
 #if PLATFORM(GTK)
 #define WTF_USE_CURL 1
-#define WTF_USE_PTHREADS 1
 #endif
 
 #if PLATFORM(QT)

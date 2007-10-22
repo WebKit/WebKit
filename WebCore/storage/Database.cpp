@@ -125,6 +125,8 @@ Database::Database(Document* document, const String& name, const String& expecte
     if (m_name.isNull())
         m_name = "";
 
+    initializeThreading();
+
     m_guid = guidForOriginAndName(m_securityOrigin.toString(), name);
 
     {

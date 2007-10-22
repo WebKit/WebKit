@@ -1,5 +1,14 @@
 2007-10-21  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Alp.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15575
+        Bug 15575: [GTK] Implement threading using GThread
+
+        * wtf/Platform.h: Do not enable pthreads for Gtk.
+
+2007-10-21  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Mitz.
 
         Fix http://bugs.webkit.org/show_bug.cgi?id=15603

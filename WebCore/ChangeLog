@@ -1,5 +1,41 @@
 2007-10-21  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Alp.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15575
+        Bug 15575: [GTK] Implement threading using GThread
+
+        * WebCore.pro: Remove ThreadingPthreads.cpp from the Gtk build and link against libgthreads.
+        * loader/icon/IconDatabase.cpp: Initialize threading before the mutex is created to be compatible with gthreads.
+        (WebCore::iconDatabase):
+        (WebCore::IconDatabase::open):
+        * platform/Threading.h:
+        * platform/gtk/ThreadingGtk.cpp: Threading implementation in terms of GThread, based heavily on the pthreads implementation.
+        (WebCore::initializeThreading):
+        (WebCore::threadMapMutex):
+        (WebCore::threadMap):
+        (WebCore::establishIdentifierForThread):
+        (WebCore::threadForIdentifier):
+        (WebCore::clearThreadForIdentifier):
+        (WebCore::createThread):
+        (WebCore::waitForThreadCompletion):
+        (WebCore::detachThread):
+        (WebCore::Mutex::Mutex):
+        (WebCore::Mutex::~Mutex):
+        (WebCore::Mutex::lock):
+        (WebCore::Mutex::tryLock):
+        (WebCore::Mutex::unlock):
+        (WebCore::ThreadCondition::ThreadCondition):
+        (WebCore::ThreadCondition::~ThreadCondition):
+        (WebCore::ThreadCondition::wait):
+        (WebCore::ThreadCondition::signal):
+        (WebCore::ThreadCondition::broadcast):
+        * storage/Database.cpp:
+        (WebCore::Database::Database): Initialize threading when Database is used so that it will be initialized even
+        if the icon database is compiled out
+
+2007-10-21  Mark Rowe  <mrowe@apple.com>
+
         Build fix.
 
         * ksvg2/css/SVGCSSStyleSelector.cpp: Use fabsf when dealing with a float to prevent the

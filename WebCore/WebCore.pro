@@ -50,6 +50,8 @@ win32-g++ {
     QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
 }
 
+gtk-port: PKGCONFIG += gthread-2.0
+
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
@@ -949,7 +951,6 @@ gtk-port {
         platform/image-decoders/bmp/BMPImageDecoder.cpp \
         platform/image-decoders/ico/ICOImageDecoder.cpp \
         platform/image-decoders/xbm/XBMImageDecoder.cpp \
-        platform/pthreads/ThreadingPthreads.cpp \
         ../WebKit/gtk/Api/webkitgtkframe.cpp \
         ../WebKit/gtk/Api/webkitgtkglobal.cpp \
         ../WebKit/gtk/Api/webkitgtknetworkrequest.cpp \
