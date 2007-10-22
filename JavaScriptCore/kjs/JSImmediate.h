@@ -1,6 +1,5 @@
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2003-2006 Apple Computer, Inc
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -82,12 +81,15 @@ public:
     }
 
     static JSValue* fromDouble(double d);
-    static double toDouble(const JSValue* v);
-    static bool toBoolean(const JSValue* v);
+    static double toDouble(const JSValue*);
+    static bool toBoolean(const JSValue*);
     static JSObject* toObject(const JSValue*, ExecState*);
     static UString toString(const JSValue*);
     static JSType type(const JSValue*);
-    
+
+    static bool toInt32(const JSValue*, int32_t&);
+    static bool toUInt32(const JSValue*, uint32_t&);
+
     // It would nice just to use fromDouble() to create these values, but that would prevent them from
     // turning into compile-time constants.
     static JSValue* trueImmediate();
@@ -169,6 +171,32 @@ template<> struct JSImmediate::FPBitValues<true, false> {
         floatUnion.asBits = static_cast<uint32_t>(unTag(v));
         return floatUnion.asFloat;
     }
+
+    static bool toInt32(const JSValue* v, int32_t& i)
+    {
+        ASSERT(isImmediate(v));
+
+        FloatUnion floatUnion;
+        floatUnion.asBits = static_cast<uint32_t>(unTag(v));
+        float f = floatUnion.asFloat;
+        if (!(f >= -2147483648.0F && f < 2147483648.0F))
+            return false;
+        i = static_cast<int32_t>(f);
+        return isNumber(v);
+    }
+
+    static bool toUInt32(const JSValue* v, uint32_t& i)
+    {
+        ASSERT(isImmediate(v));
+
+        FloatUnion floatUnion;
+        floatUnion.asBits = static_cast<uint32_t>(unTag(v));
+        float f = floatUnion.asFloat;
+        if (!(f >= 0.0F && f < 4294967296.0F))
+            return false;
+        i = static_cast<uint32_t>(f);
+        return isNumber(v);
+    }
 };
 
 template<> struct JSImmediate::FPBitValues<false, true> {
@@ -195,6 +223,24 @@ template<> struct JSImmediate::FPBitValues<false, true> {
         DoubleUnion doubleUnion;
         doubleUnion.asBits = unTag(v);
         return doubleUnion.asDouble;
+    }
+
+    static bool toInt32(const JSValue* v, int32_t& i)
+    {
+        double d = toDouble(v);
+        if (!(d >= -2147483648.0 && d < 2147483648.0))
+            return false;
+        i = static_cast<int32_t>(d);
+        return isNumber(v);
+    }
+
+    static bool toUInt32(const JSValue* v, uint32_t& i)
+    {
+        double d = toDouble(v);
+        if (!(d >= 0.0 && d < 4294967296.0))
+            return false;
+        i = static_cast<uint32_t>(d);
+        return isNumber(v);
     }
 };
 
@@ -223,6 +269,16 @@ inline JSValue* JSImmediate::fromDouble(double d)
 inline double JSImmediate::toDouble(const JSValue* v)
 {
     return FPBitValues<is32bit, is64bit>::toDouble(v);
+}
+
+inline bool JSImmediate::toInt32(const JSValue* v, int32_t& i)
+{
+    return FPBitValues<is32bit, is64bit>::toInt32(v, i);
+}
+
+inline bool JSImmediate::toUInt32(const JSValue* v, uint32_t& i)
+{
+    return FPBitValues<is32bit, is64bit>::toUInt32(v, i);
 }
 
 } // namespace KJS

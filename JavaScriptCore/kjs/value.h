@@ -1,8 +1,7 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2005 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -28,6 +27,7 @@
 #include "collector.h"
 #include "ustring.h"
 #include <stddef.h> // for size_t
+#include <wtf/AlwaysInline.h>
 
 namespace KJS {
 
@@ -76,6 +76,7 @@ public:
     const JSObject *getObject() const; // NULL if not an object
 
     // Extracting integer values.
+    bool getInt32(int32_t&) const;
     bool getUInt32(uint32_t&) const;
 
     // Basic conversions.
@@ -101,6 +102,9 @@ public:
     bool marked() const;
 
 private:
+    int32_t toInt32SlowCase(ExecState*, bool& ok) const;
+    uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
+
     // Implementation details.
     JSCell *asCell();
     const JSCell *asCell() const;
@@ -136,6 +140,7 @@ public:
     const JSObject *getObject() const; // NULL if not an object
 
     // Extracting integer values.
+    virtual bool getInt32(int32_t&) const;
     virtual bool getUInt32(uint32_t&) const;
 
     // Basic conversions.
@@ -164,7 +169,6 @@ JSCell *jsOwnedString(const UString&);
 extern const double NaN;
 extern const double Inf;
 
-
 inline JSValue *jsUndefined()
 {
     return JSImmediate::undefinedImmediate();
@@ -185,7 +189,7 @@ inline JSValue *jsBoolean(bool b)
     return b ? JSImmediate::trueImmediate() : JSImmediate::falseImmediate();
 }
 
-inline JSValue *jsNumber(double d)
+ALWAYS_INLINE JSValue* jsNumber(double d)
 {
     JSValue *v = JSImmediate::fromDouble(d);
     return v ? v : jsNumberCell(d);
@@ -328,16 +332,14 @@ inline const JSObject *JSValue::getObject() const
     return JSImmediate::isImmediate(this) ? 0 : asCell()->getObject();
 }
 
+inline bool JSValue::getInt32(int32_t& v) const
+{
+    return JSImmediate::isImmediate(this) ? JSImmediate::toInt32(this, v) : asCell()->getInt32(v);
+}
+
 inline bool JSValue::getUInt32(uint32_t& v) const
 {
-    if (JSImmediate::isImmediate(this)) {
-        double d = JSImmediate::toDouble(this);
-        if (!(d >= 0) || d > 0xFFFFFFFFUL) // true for NaN
-            return false;
-        v = static_cast<uint32_t>(d);
-        return JSImmediate::isNumber(this);
-    }
-    return asCell()->getUInt32(v);
+    return JSImmediate::isImmediate(this) ? JSImmediate::toUInt32(this, v) : asCell()->getUInt32(v);
 }
 
 inline void JSValue::mark()
@@ -379,6 +381,44 @@ inline UString JSValue::toString(ExecState *exec) const
 inline JSObject* JSValue::toObject(ExecState* exec) const
 {
     return JSImmediate::isImmediate(this) ? JSImmediate::toObject(this, exec) : asCell()->toObject(exec);
+}
+
+ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const
+{
+    int32_t i;
+    if (JSImmediate::isImmediate(this) && JSImmediate::toInt32(this, i))
+        return i;
+    bool ok;
+    return toInt32SlowCase(exec, ok);
+}
+
+inline uint32_t JSValue::toUInt32(ExecState* exec) const
+{
+    uint32_t i;
+    if (JSImmediate::isImmediate(this) && JSImmediate::toUInt32(this, i))
+        return i;
+    bool ok;
+    return toUInt32SlowCase(exec, ok);
+}
+
+inline int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
+{
+    int32_t i;
+    if (JSImmediate::isImmediate(this) && JSImmediate::toInt32(this, i)) {
+        ok = true;
+        return i;
+    }
+    return toInt32SlowCase(exec, ok);
+}
+
+inline uint32_t JSValue::toUInt32(ExecState* exec, bool& ok) const
+{
+    uint32_t i;
+    if (JSImmediate::isImmediate(this) && JSImmediate::toUInt32(this, i)) {
+        ok = true;
+        return i;
+    }
+    return toUInt32SlowCase(exec, ok);
 }
 
 } // namespace

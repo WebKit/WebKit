@@ -1,8 +1,7 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -112,12 +111,20 @@ JSObject *NumberImp::toObject(ExecState *exec) const
   return static_cast<JSObject *>(exec->lexicalInterpreter()->builtinNumber()->construct(exec,args));
 }
 
-// FIXME: We can optimize this to work like JSValue::getUInt32. I'm ignoring it for now
-// because it never shows up on profiles.
+bool NumberImp::getInt32(int32_t& int32) const
+{
+    if (!(val >= -2147483648.0 && val < 2147483648.0))
+        return false;
+    int32 = static_cast<int32_t>(val);
+    return true;
+}
+
 bool NumberImp::getUInt32(uint32_t& uint32) const
 {
-  uint32 = (uint32_t)val;
-  return (double)uint32 == val;
+    if (!(val >= 0.0 && val < 4294967296.0))
+        return false;
+    uint32 = static_cast<uint32_t>(val);
+    return true;
 }
 
 // --------------------------- GetterSetterImp ---------------------------------

@@ -1,8 +1,43 @@
+2007-10-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15617
+          improve speed of integer conversions
+
+        Makes SunSpider 6% faster.
+
+        * kjs/JSImmediate.h: Added toInt32 and toUInt32, with separate versions for
+        32-bit and 64-bit.
+        * kjs/value.h:
+        (KJS::JSValue::getUInt32): Call JSImmediate::toUInt32.
+
+        * kjs/internal.h: Added getInt32.
+        * kjs/internal.cpp:
+        (KJS::NumberImp::getInt32): Added.
+        (KJS::NumberImp::getUInt32): Replaced with more-optimal implementation
+        stolen from JSValue.
+
+        * kjs/value.h:
+        (KJS::jsNumber): Marked ALWAYS_INLINE, because this wasn't getting
+        inlined.
+        (KJS::JSValue::getInt32): Added.
+        (KJS::JSValue::getUInt32): Changed to call the new JSImmediate::toUInt32
+        to avoid converting from float to double.
+        (KJS::JSValue::toInt32): Made inline, separated out the slow case.
+        (KJS::JSValue::toUInt32): Ditto.
+        * kjs/value.cpp:
+        (KJS::JSCell::getInt32): Added.
+        (KJS::JSValue::toInt32SlowCase): Renamed from toInt32. Changed to use the
+        new getInt32. Added a faster case for in-range numbers.
+        (KJS::JSValue::toUInt32SlowCase): Ditto.
+        (KJS::JSValue::toUInt16): Added a faster case for in-range numbers.
+
+        * JavaScriptCore.exp: Updated for changes.
+
 2007-10-22  Adam Roben  <aroben@apple.com>
 
         Windows build fix
-
-        Reviewed by NOBODY.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Turn off
         warning about implicit conversion to bool.
