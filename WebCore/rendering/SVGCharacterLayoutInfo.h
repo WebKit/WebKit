@@ -24,13 +24,13 @@
 #define SVGCharacterLayoutInfo_h
 
 #if ENABLE(SVG)
-
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 #include "AffineTransform.h"
+#include "Shared.h"
 #include "SVGRenderStyle.h"
 #include "SVGTextContentElement.h"
 
@@ -175,19 +175,48 @@ private:
     Vector<float> baselineShiftStack;
 };
 
+// Holds extra data, when the character is laid out on a path
+struct SVGCharOnPath : Shared<SVGCharOnPath> {
+    SVGCharOnPath()
+        : Shared<SVGCharOnPath>()
+        , xScale(1.0f)
+        , yScale(1.0f)
+        , xShift(0.0f)
+        , yShift(0.0f)
+        , visible(true)
+    {
+    }
+
+    float xScale;
+    float yScale;
+
+    float xShift;
+    float yShift;
+
+    // Determines wheter this char is visible (ie. false for chars "off" the text layout path)
+    bool visible : 1;
+};
+
 struct SVGChar {
+    SVGChar()
+        : x(0.0f)
+        , y(0.0f)
+        , angle(0.0f)
+        , pathData()
+        , drawnSeperated(false)
+        , newTextChunk(false)
+    {
+    }
+
+    ~SVGChar()
+    {
+    }
+
     float x;
     float y;
     float angle;
 
-    float pathXScale;
-    float pathYScale;
-
-    float pathXShift;
-    float pathYShift;
-
-    // Determines wheter this char is visible (ie. false for chars "off" the text layout path)
-    bool visible : 1;
+    RefPtr<SVGCharOnPath> pathData;
 
     // Determines wheter this char needs to be drawn seperated
     bool drawnSeperated : 1;

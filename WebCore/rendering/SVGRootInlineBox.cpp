@@ -291,7 +291,7 @@ struct SVGRootInlineBoxPaintWalker {
             m_paintInfo.context->concatCTM(chunkCtm);
 
         for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
-            if (!(*it).visible)
+            if ((*it).pathData && !(*it).pathData->visible)
                 continue;
 
             // Determine how many characters - starting from the current - can be drawn at once.
@@ -880,8 +880,9 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
 
     for (unsigned i = 0; i < length; ++i) {
         SVGChar svgChar;
-        svgChar.drawnSeperated = false;
-        svgChar.newTextChunk = false;
+
+        if (info.inPathLayout())
+            svgChar.pathData = new SVGCharOnPath();
 
         float glyphWidth = 0.0f;
         float glyphHeight = 0.0f;
@@ -966,10 +967,6 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
                 info.nextDrawnSeperated = true;
         }
 
-        svgChar.pathXScale = 1.0f;
-        svgChar.pathYScale = 1.0f;
-        svgChar.visible = true;
-
         // Handle textPath layout mode
         if (info.inPathLayout()) {
             float glyphAdvance = isVerticalText ? glyphHeight : glyphWidth;
@@ -985,13 +982,13 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             // Handle lengthAdjust="spacingAndGlyphs" by specifying per-character scale operations
             if (info.pathTextLength > 0.0f && info.pathChunkLength > 0.0f) { 
                 if (isVerticalText) {
-                    svgChar.pathYScale = info.pathChunkLength / info.pathTextLength;
-                    spacing *= svgChar.pathYScale;
-                    glyphAdvance *= svgChar.pathYScale;
+                    svgChar.pathData->yScale = info.pathChunkLength / info.pathTextLength;
+                    spacing *= svgChar.pathData->yScale;
+                    glyphAdvance *= svgChar.pathData->yScale;
                 } else {
-                    svgChar.pathXScale = info.pathChunkLength / info.pathTextLength;
-                    spacing *= svgChar.pathXScale;
-                    glyphAdvance *= svgChar.pathXScale;
+                    svgChar.pathData->xScale = info.pathChunkLength / info.pathTextLength;
+                    spacing *= svgChar.pathData->xScale;
+                    glyphAdvance *= svgChar.pathData->xScale;
                 }
             }
 
@@ -999,7 +996,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             float pathExtraAdvance = info.pathExtraAdvance;
             info.pathExtraAdvance += spacing;
 
-            svgChar.visible = info.nextPathLayoutPointAndAngle(glyphAdvance, extraAdvance, newOffset);
+            svgChar.pathData->visible = info.nextPathLayoutPointAndAngle(glyphAdvance, extraAdvance, newOffset);
             svgChar.drawnSeperated = true;
 
             info.pathExtraAdvance = pathExtraAdvance;
@@ -1027,20 +1024,17 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         if (!info.inPathLayout()) {
             svgChar.x += info.shiftx;
             svgChar.y += info.shifty;
-
-            svgChar.pathXShift = 0.0f;
-            svgChar.pathYShift = 0.0f;
         } else {
-            svgChar.pathXShift = info.shiftx;
-            svgChar.pathYShift = info.shifty;
+            svgChar.pathData->xShift = info.shiftx;
+            svgChar.pathData->yShift = info.shifty;
 
             // Translate to glyph midpoint
             if (isVerticalText) {
-                svgChar.pathXShift += info.dx;
-                svgChar.pathYShift -= glyphHeight / 2.0f;
+                svgChar.pathData->xShift += info.dx;
+                svgChar.pathData->yShift -= glyphHeight / 2.0f;
             } else {
-                svgChar.pathXShift -= glyphWidth / 2.0f;
-                svgChar.pathYShift += info.dy;
+                svgChar.pathData->xShift -= glyphWidth / 2.0f;
+                svgChar.pathData->yShift += info.dy;
             }
         }
  

@@ -1,3 +1,20 @@
+2007-10-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Simon.
+
+        Move textPath related SVGChar data in it's own structure SVGCharOnPath.
+        Store a pointer to that datastructure inside SVGChar, instead of 4 floats & one bool.
+
+        Saves space for the common case. And allows me to add more data (another float) to support
+        glyph-orientation-* on textPath later on...
+
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGChar::characterTransform):
+        * rendering/SVGCharacterLayoutInfo.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+
 2007-10-22  Alp Toker  <alp@atoker.com>
 
         Reviewed by Nikolas Zimmermann.
