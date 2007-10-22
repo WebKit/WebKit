@@ -30,6 +30,7 @@ use strict;
 use warnings;
 use FindBin;
 use File::Basename;
+use POSIX;
 
 BEGIN {
    use Exporter   ();
@@ -740,6 +741,15 @@ sub setPathForRunningWebKitApp
     return unless isCygwin();
 
     $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), $env->{PATH} || "");
+}
+
+sub exitStatus($)
+{
+    my ($returnvalue) = @_;
+    if ($^O eq "MSWin32") {
+        return $returnvalue >> 8;
+    }
+    return WEXITSTATUS($returnvalue);
 }
 
 1;

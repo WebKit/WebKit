@@ -259,7 +259,7 @@ if(!defined($root)){
     my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @args;
     if ($buildResult) {
         print STDERR "Compiling DumpRenderTree failed!\n";
-        exit WEXITSTATUS($buildResult);
+        exit exitStatus($buildResult);
     }
 }
 

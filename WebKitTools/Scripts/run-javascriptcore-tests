@@ -87,7 +87,7 @@ if(!defined($root)){
     my $buildResult = system "WebKitTools/Scripts/build-testkjs", @xcodeArgs;
     if ($buildResult) {
         print STDERR "Compiling testkjs failed!\n";
-        exit WEXITSTATUS($buildResult);
+        exit exitStatus($buildResult);
     }
 }
 
@@ -111,7 +111,7 @@ sub testKJSPath($)
 }
 
 my $result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", testKJSPath($productDir), "-f", "actual.html", @jsArgs;
-exit WEXITSTATUS($result)  if $result;
+exit exitStatus($result)  if $result;
 
 my %failures;
 

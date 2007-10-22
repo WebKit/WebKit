@@ -162,7 +162,7 @@ for my $dir (@projects) {
         }
     }
 
-    exit WEXITSTATUS($result) if WEXITSTATUS($result);
+    exit exitStatus($result) if exitStatus($result);
     chdir ".." or die;
 }
 

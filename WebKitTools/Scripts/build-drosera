@@ -50,4 +50,4 @@ if (isOSX()) {
 } else {
     die "Building not defined for this platform!\n";
 }
-exit WEXITSTATUS($result);
+exit exitStatus($result);

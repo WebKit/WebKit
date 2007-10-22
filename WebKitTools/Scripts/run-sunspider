@@ -74,7 +74,7 @@ sub buildTestKJS
         my $buildResult = system "WebKitTools/Scripts/build-testkjs", @ARGV;
         if ($buildResult) {
             print STDERR "Compiling testkjs failed!\n";
-            exit WEXITSTATUS($buildResult);
+            exit exitStatus($buildResult);
         }
     }
 }

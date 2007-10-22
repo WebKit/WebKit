@@ -1,3 +1,18 @@
+2007-10-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Nikolas.
+
+        Wrap WEXITSTATUS with a little exitStatus() helper function that falls back to the use of $returnvalue >> 8 on Windows to determine the exit status on platforms without WEXITSTATUS.
+
+        * Scripts/build-drosera:
+        * Scripts/build-dumprendertree:
+        * Scripts/build-testkjs:
+        * Scripts/build-webkit:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-sunspider:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2007-10-22  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe.
