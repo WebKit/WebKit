@@ -1214,14 +1214,14 @@ sub reviewerAndDescriptionForGitCommit($)
             if ($inHeader) {
                 if (!$line) {
                     $inHeader = 0;
-                } elsif ($line =~ /[Ss]igned-[Oo]ff-[Bb]y: (.+)/) {
-                    if (!$reviewer) {
-                        $reviewer = $1;
-                    } else {
-                        $reviewer .= ", " . $1;
-                    }
                 }
                 next;
+            } elsif ($line =~ /[Ss]igned-[Oo]ff-[Bb]y: (.+)/) {
+                if (!$reviewer) {
+                    $reviewer = $1;
+                } else {
+                    $reviewer .= ", " . $1;
+                }
             } elsif (length $line == 0) {
                 $description = $description . "\n";
             } else {

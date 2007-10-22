@@ -1,3 +1,13 @@
+2007-10-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by aroben.
+
+        Fix support for Signed-off-by detection in prepare-ChangeLog
+        --git-commit. The Signed-off-by tag does not appear in the header
+        but usually at the end.
+
+        * Scripts/prepare-ChangeLog:
+
 2007-10-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Eric.
