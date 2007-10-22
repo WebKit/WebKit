@@ -1,4 +1,5 @@
 TARGET = DumpRenderTree
+CONFIG  -= app_bundle
 
 include(../../../WebKit.pri)
 INCLUDEPATH += /usr/include/freetype2

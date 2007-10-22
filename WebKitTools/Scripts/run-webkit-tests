@@ -1126,6 +1126,7 @@ sub openDumpTool()
     # Save some requires variables for the linux environment...
     my $homeDir = $ENV{'HOME'};
     my $libraryPath = $ENV{'LD_LIBRARY_PATH'};
+    my $dyldLibraryPath = $ENV{'DYLD_LIBRARY_PATH'};
     my $dbusAddress = $ENV{'DBUS_SESSION_BUS_ADDRESS'};
     my $display = $ENV{'DISPLAY'};
     my $testfonts = $ENV{'WEBKIT_TESTFONTS'};
@@ -1144,6 +1145,9 @@ sub openDumpTool()
         $ENV{HOME} = $homeDir;
         if (defined $libraryPath) {
             $ENV{LD_LIBRARY_PATH} = $libraryPath;
+        }
+        if (defined $dyldLibraryPath) {
+            $ENV{DYLD_LIBRARY_PATH} = $dyldLibraryPath;
         }
         if (defined $dbusAddress) {
             $ENV{DBUS_SESSION_BUS_ADDRESS} = $dbusAddress;

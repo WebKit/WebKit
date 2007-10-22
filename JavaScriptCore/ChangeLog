@@ -1,3 +1,15 @@
+2007-10-22  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
+        * Do not build testkjs as an application bundle. This is
+        needed for run-javascriptcore-tests on OSX.
+        * Also, based on r26633, allow to test the WebKit/Qt port on OSX.
+        * Set DYLD_LIBRARY_PATH if it was set in the environment. It must be set
+        as we do not have -rpath on OSX.
+
+        * kjs/testkjs.pro:
+
 2007-10-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp.

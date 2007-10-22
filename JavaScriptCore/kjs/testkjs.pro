@@ -5,6 +5,7 @@ SOURCES = testkjs.cpp
 QT -= gui
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 INCLUDEPATH += $$PWD/.. $$PWD $$PWD/../bindings $$PWD/../bindings/c $$PWD/../wtf
+CONFIG -= app_bundle
 qt-port:DEFINES += BUILDING_QT__
 #qt-port:LIBS += -L$$OUTPUT_DIR/lib -lQtWebKit
 gtk-port {
