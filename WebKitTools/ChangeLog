@@ -2,6 +2,14 @@
 
         Reviewed by Nikolas.
 
+        When running build-testkjs make sure it's called through the perl interpreter, to fix the build for Qt/Windows.
+
+        * Scripts/run-javascriptcore-tests:
+
+2007-10-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Nikolas.
+
         Wrap WEXITSTATUS with a little exitStatus() helper function that falls back to the use of $returnvalue >> 8 on Windows to determine the exit status on platforms without WEXITSTATUS.
 
         * Scripts/build-drosera:

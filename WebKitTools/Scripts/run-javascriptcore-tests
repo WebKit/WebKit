@@ -84,7 +84,7 @@ if(!defined($root)){
     push(@xcodeArgs, "--qt")  if isQt();
     push(@xcodeArgs, "--gtk")  if isGtk();
 
-    my $buildResult = system "WebKitTools/Scripts/build-testkjs", @xcodeArgs;
+    my $buildResult = system "perl", "WebKitTools/Scripts/build-testkjs", @xcodeArgs;
     if ($buildResult) {
         print STDERR "Compiling testkjs failed!\n";
         exit exitStatus($buildResult);
