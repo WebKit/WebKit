@@ -47,8 +47,7 @@ DebuggerClient::DebuggerClient(const std::wstring& serverName)
 
 void DebuggerClient::initWithServerName(const std::wstring& serverName)
 {
-    m_server.set(ServerConnection::initWithServerName(serverName));
-    m_debuggerDocument.set(new DebuggerDocument(m_server.get()));
+    m_debuggerDocument.set(new DebuggerDocument(ServerConnection::initWithServerName(serverName)));
 }
 
 // IUnknown ------------------------------
@@ -96,8 +95,9 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::didFinishLoadForFrame(
         return S_OK;
 
     // FIXME: This cannot be implemented until IWebFrame has a globalContext
-    //    if (m_server)
-    //        m_server->setGlobalContext(mainFrame->globalContext());
+    //    ServerConnection* server = m_debuggerDocument->server();
+    //    if (server)
+    //        server->setGlobalContext(mainFrame->globalContext());
 
     return S_OK;
 }

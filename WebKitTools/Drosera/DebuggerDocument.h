@@ -42,7 +42,7 @@
 @class ServerConnection;
 typedef RetainPtr<ServerConnection> ServerConnectionRef;
 #else if PLATFORM(WIN)
-#include <JavaScriptCore/OwnPtr.h>
+#include <wtf/OwnPtr.h>
 class ServerConnection;
 typedef OwnPtr<ServerConnection> ServerConnectionRef;
 #endif

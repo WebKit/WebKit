@@ -1,3 +1,23 @@
+2007-10-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Changed the Client so that the DebuggerDocument now own the
+        ServerConnection.  This simplifies ownership and cleanup. 
+
+        * Drosera/win/DebuggerClient.cpp: The DebuggerDocument now owns the
+        ServerConnection.
+        (DebuggerClient::initWithServerName):
+        (DebuggerClient::didFinishLoadForFrame):
+        * Drosera/win/DebuggerClient.h: DebuggerDocument now owns the 
+        ServerConnection.
+        * Drosera/win/Drosera.cpp: Moved some WebFrame initialization logic to
+        until after we have a server which we are attached to.
+        (Drosera::initUI):
+        (Drosera::attach):
+        * Drosera/win/Drosera.h: Removed two needless pointers I forgot to take
+        out previously.
+
 2007-10-22  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Nikolas.

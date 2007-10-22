@@ -256,31 +256,6 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
 
     ::SetProp(viewWindow, kDroseraPointerProp, (HANDLE)this);
 
-    COMPtr<IWebFrame> mainFrame;
-    ret = m_webView->mainFrame(&mainFrame);
-    if (FAILED(ret))
-        return ret;
-
-    COMPtr<IWebMutableURLRequest> request;
-    ret = CoCreateInstance(CLSID_WebMutableURLRequest, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
-    if (FAILED(ret))
-        return ret;
-
-    RetainPtr<CFURLRef> htmlURLRef(AdoptCF, ::CFBundleCopyResourceURL(::CFBundleGetBundleWithIdentifier(CFSTR("org.webkit.drosera")), CFSTR("debugger"), CFSTR("html"), CFSTR("Drosera")));
-    if (!htmlURLRef)
-        return E_FAIL;
-
-    CFStringRef urlStringRef = ::CFURLGetString(htmlURLRef.get());
-    BSTR tempStr = cfStringToBSTR(urlStringRef);    // Both initWithRUL and SysFreeString can handle 0.
-    ret = request->initWithURL(tempStr, WebURLRequestUseProtocolCachePolicy, 60);
-    SysFreeString(tempStr);
-    if (FAILED(ret))
-        return ret;
-
-    ret = mainFrame->loadRequest(request.get());
-    if (FAILED(ret))
-        return ret;
-
     // FIXME: Implement window size/position save/restore
 
     RECT frame;
@@ -348,6 +323,31 @@ HRESULT Drosera::attach(int sender)
         return ret;
 
     ret = m_webView->setUIDelegate(m_debuggerClient.get());
+
+    COMPtr<IWebFrame> mainFrame;
+    ret = m_webView->mainFrame(&mainFrame);
+    if (FAILED(ret))
+        return ret;
+
+    COMPtr<IWebMutableURLRequest> request;
+    ret = CoCreateInstance(CLSID_WebMutableURLRequest, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
+    if (FAILED(ret))
+        return ret;
+
+    RetainPtr<CFURLRef> htmlURLRef(AdoptCF, ::CFBundleCopyResourceURL(::CFBundleGetBundleWithIdentifier(CFSTR("org.webkit.drosera")), CFSTR("debugger"), CFSTR("html"), CFSTR("Drosera")));
+    if (!htmlURLRef)
+        return E_FAIL;
+
+    CFStringRef urlStringRef = ::CFURLGetString(htmlURLRef.get());
+    BSTR tempStr = cfStringToBSTR(urlStringRef);    // Both initWithRUL and SysFreeString can handle 0.
+    ret = request->initWithURL(tempStr, WebURLRequestUseProtocolCachePolicy, 60);
+    SysFreeString(tempStr);
+    if (FAILED(ret))
+        return ret;
+
+    ret = mainFrame->loadRequest(request.get());
+    if (FAILED(ret))
+        return ret;
 
     return ret;
 }
