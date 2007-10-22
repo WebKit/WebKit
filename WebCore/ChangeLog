@@ -1,3 +1,24 @@
+2007-10-22  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 15624, make transforms work properly with opacity.
+
+        Make sure a unitless 0 is allowed as an angle argument to rotation/skew.
+
+        Reviewed by Mitz Pettel
+
+        fast/transforms/transforms-with-opacity.html
+        fast/transforms/skew-with-unitless-zero.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validUnit):
+        * rendering/RenderLayer.cpp:
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::transform):
+
 2007-10-22  Adam Roben  <aroben@apple.com>
 
         Windows build fix

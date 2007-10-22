@@ -436,38 +436,56 @@ RenderLayer::transparentAncestor()
     return curr;
 }
 
-static IntRect transparencyClipBox(const RenderLayer* l, const RenderLayer* rootLayer)
+static IntRect transparencyClipBox(const AffineTransform& enclosingTransform, const RenderLayer* l, const RenderLayer* rootLayer)
 {
-    // FIXME: This function does not work properly with transforms.
-
-    // FIXME: Although this completely ignores clipping, we ultimately intersect with the
+    // FIXME: Although this function completely ignores CSS-imposed clipping, we did already intersect with the
     // paintDirtyRect, and that should cut down on the amount we have to paint.  Still it
     // would be better to respect clips.
-    IntRect clipRect = l->boundingBox(rootLayer);
+    
+    AffineTransform* t = l->transform();
+    if (t) {
+        // The best we can do here is to use enclosed bounding boxes to establish a "fuzzy" enough clip to encompass
+        // the transformed layer and all of its children.
+        int x = 0;
+        int y = 0;
+        l->convertToLayerCoords(rootLayer, x, y);
+        AffineTransform transform;
+        transform.translate(x, y);
+        transform = *t * transform;
+        transform = transform * enclosingTransform;
+       
+        // We now have a transform that will produce a rectangle in our view's space.
+        IntRect clipRect = transform.mapRect(l->boundingBox(l));
+        
+        // Now shift the root layer to be us and pass down the new enclosing transform.
+        for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling())
+            clipRect.unite(transparencyClipBox(transform, curr, l));
+            
+        return clipRect;
+    }
     
     // Note: we don't have to walk z-order lists since transparent elements always establish
-    // a stacking context.  This means we can just walk the layer tree directly. 
+    // a stacking context.  This means we can just walk the layer tree directly.
+    IntRect clipRect = l->boundingBox(rootLayer);
     for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling())
-        clipRect.unite(transparencyClipBox(curr, rootLayer));
+        clipRect.unite(transparencyClipBox(enclosingTransform, curr, rootLayer));
     
     return clipRect;
 }
 
-void RenderLayer::beginTransparencyLayers(GraphicsContext* p, const IntRect& paintDirtyRect, const RenderLayer* rootLayer)
+void RenderLayer::beginTransparencyLayers(GraphicsContext* p, const RenderLayer* rootLayer)
 {
     if (p->paintingDisabled() || (isTransparent() && m_usedTransparency))
         return;
     
     RenderLayer* ancestor = transparentAncestor();
     if (ancestor)
-        ancestor->beginTransparencyLayers(p, paintDirtyRect, rootLayer);
+        ancestor->beginTransparencyLayers(p, rootLayer);
     
     if (isTransparent()) {
         m_usedTransparency = true;
-        IntRect clipRect = transparencyClipBox(this, rootLayer);
-        clipRect.intersect(paintDirtyRect);
         p->save();
-        p->clip(clipRect);
+        p->clip(transparencyClipBox(AffineTransform(), this, rootLayer));
         p->beginTransparencyLayer(renderer()->opacity());
     }
 }
@@ -1444,12 +1462,24 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (renderer()->document()->didLayoutWithPendingStylesheets() && !renderer()->isRenderView() && !renderer()->isRoot())
         return;
     
+    // If this layer is totally invisible then there is nothing to paint.
+    if (!m_object->opacity())
+        return;
+
+    if (isTransparent())
+        haveTransparency = true;
+
     // Apply a transform if we have one.
     if (m_transform && rootLayer != this) {
         // If the transform can't be inverted, then don't paint anything.
         if (!m_transform->isInvertible())
             return;
 
+        // If we have a transparency layer enclosing us and we are the root of a transform, then we need to establish the transparency
+        // layer from the parent now.
+        if (haveTransparency)
+            parent()->beginTransparencyLayers(p, rootLayer);
+  
         // Make sure the parent's clip rects have been calculated.
         parent()->calculateClipRects(rootLayer);
         IntRect clipRect = parent()->clipRects()->overflowClipRect();
@@ -1470,10 +1500,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // Apply the transform.
         p->save();
         p->concatCTM(transform);
-        
+
         // Now do a paint with the root layer shifted to be us.
-        // FIXME: We aren't handling transparency correctly yet.  We need to aggressively begin the transparency layer
-        // now so that the clip box will be computed properly.
         rootLayer = this;
         paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), haveTransparency, paintRestriction, paintingRoot);
         
@@ -1497,15 +1525,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     updateZOrderLists();
     updateOverflowList();
 
-    // If this layer is totally invisible then there is nothing to paint.
-    if (!m_object->opacity())
-        return;
-        
     bool selectionOnly = paintRestriction == PaintRestrictionSelectionOnly || paintRestriction == PaintRestrictionSelectionOnlyBlackText;
     bool forceBlackText = paintRestriction == PaintRestrictionSelectionOnlyBlackText;
-
-    if (isTransparent())
-        haveTransparency = true;
     
     // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
     // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
@@ -1514,13 +1535,13 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     RenderObject *paintingRootForRenderer = 0;
     if (paintingRoot && !m_object->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
-    
+
     // We want to paint our layer, but only if we intersect the damage rect.
     bool shouldPaint = intersectsDamageRect(layerBounds, damageRect, rootLayer) && m_hasVisibleContent;
     if (shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
         // Begin transparency layers lazily now that we know we have to paint something.
         if (haveTransparency)
-            beginTransparencyLayers(p, paintDirtyRect, rootLayer);
+            beginTransparencyLayers(p, rootLayer);
         
         // Paint our background first, before painting any child layers.
         // Establish the clip used to paint our background.
@@ -1548,7 +1569,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (shouldPaint && !clipRectToApply.isEmpty()) {
         // Begin transparency layers lazily now that we know we have to paint something.
         if (haveTransparency)
-            beginTransparencyLayers(p, paintDirtyRect, rootLayer);
+            beginTransparencyLayers(p, rootLayer);
 
         // Set up the clip used when painting our children.
         setClip(p, paintDirtyRect, clipRectToApply);
@@ -1742,8 +1763,8 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
         return; // We have the correct cached value.
 
     if (rootLayer == this || !parent()) {
-        // The root layer's clip rect is always just its dimensions.
-        m_clipRects = new (m_object->renderArena()) ClipRects(IntRect(0,0,width(),height()));
+        // The root layer's clip rect is always infinite.
+        m_clipRects = new (m_object->renderArena()) ClipRects(IntRect(INT_MIN/2, INT_MIN/2, INT_MAX, INT_MAX));
         m_clipRects->ref();
         return;
     }
