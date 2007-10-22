@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        Disable the Database feature for the qmake build for now.
+
+        * WebCore.pro:
+
+2007-10-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Make disabling the database feature (ENABLE_DATABASE=0) work by
         placing various #ifdefs into the code and making the compilation of
         some files optional.
