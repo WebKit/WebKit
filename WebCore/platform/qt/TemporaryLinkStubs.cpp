@@ -80,7 +80,6 @@ Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); 
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 
 float userIdleTime() { notImplemented(); return 0.0; }
-bool fileSize(const String& path, long long& result) { notImplemented(); return false; }
 
 }
 

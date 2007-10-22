@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Staikos Computing Services Inc.
+ * Copyright (C) 2007 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 
 #include <PlatformString.h>
 #include <QFile>
+#include <QFileInfo>
 #include <QDir>
 
 namespace WebCore {
@@ -41,6 +43,13 @@ bool fileExists(const String& path)
 bool deleteFile(const String& path)
 {
     return QFile::remove(path);
+}
+
+bool fileSize(const String& path, long long& result)
+{
+    QFileInfo info(path);
+    result = info.size();
+    return info.exists(); 
 }
 
 bool makeAllDirectories(const String& path)

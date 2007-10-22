@@ -1,3 +1,16 @@
+2007-10-22  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Implement the WebCore::fileSize function. The
+        implementation assumes that QFileInfo will cache
+        the result of the stat so that info.size() and
+        info.exists() use the same stat result.
+
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::deleteFile):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2007-10-21  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
