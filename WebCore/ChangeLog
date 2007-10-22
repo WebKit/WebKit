@@ -1,3 +1,21 @@
+2007-10-21  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Use the portable GLib time function.
+
+        Use event timestamps rather than the current time where available.
+
+        Rename SharedTimerLinux.cpp since it isn't Linux-specific.
+
+        * WebCore.pro:
+        * platform/gtk/MouseEventGtk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/gtk/SystemTimeGtk.cpp: Added.
+        (WebCore::currentTime):
+        * platform/gtk/SharedTimerGtk.cpp: Copied from platform/gtk/SharedTimerLinux.cpp.
+        * platform/gtk/SharedTimerLinux.cpp: Removed.
+
 2007-10-22  David Hyatt  <hyatt@apple.com>
 
         Fix for 15596, regression from my transform changes.  Preserve null checks on the clip rects calls for parent(),

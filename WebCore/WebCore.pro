@@ -925,9 +925,9 @@ gtk-port {
         platform/gtk/RenderThemeGtk.cpp \
         platform/gtk/SearchPopupMenuGtk.cpp \
         platform/gtk/ScrollViewGtk.cpp \
-        platform/gtk/SharedTimerLinux.cpp \
+        platform/gtk/SharedTimerGtk.cpp \
         platform/gtk/SoundGtk.cpp \
-        platform/gtk/SystemTimeLinux.cpp \
+        platform/gtk/SystemTimeGtk.cpp \
         platform/gtk/TemporaryLinkStubs.cpp \
         platform/TextBoundariesICU.cpp \
         platform/gtk/TextBreakIteratorInternalICUGtk.cpp \
