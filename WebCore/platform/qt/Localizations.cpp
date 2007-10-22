@@ -31,62 +31,267 @@
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
 
-using namespace WebCore;
-
-
 namespace WebCore {
-String submitButtonDefaultLabel() { return "Submit"; }
-String inputElementAltText() { return "Submit"; }
-String resetButtonDefaultLabel() { return "Reset"; }
-String defaultLanguage() { return "en"; }
-String searchableIndexIntroduction() { return "Searchable Index"; }
-String fileButtonChooseFileLabel() { return "Choose File"; }
-String fileButtonNoFileSelectedLabel() { return "No file selected"; }
-String contextMenuItemTagOpenLinkInNewWindow() { return "Open in New Window"; }
-String contextMenuItemTagDownloadLinkToDisk() { return "Save Link..."; }
-String contextMenuItemTagCopyLinkToClipboard() { return "Copy Link"; }
-String contextMenuItemTagOpenImageInNewWindow() { return "Open Image"; }
-String contextMenuItemTagDownloadImageToDisk() { return "Save Image"; }
-String contextMenuItemTagCopyImageToClipboard() { return "Copy Image"; }
-String contextMenuItemTagOpenFrameInNewWindow() { return "Open Frame"; }
-String contextMenuItemTagCopy() { return "Copy"; }
-String contextMenuItemTagGoBack() { return "Go Back"; }
-String contextMenuItemTagGoForward() { return "Go Forward"; }
-String contextMenuItemTagStop() { return "Stop"; }
-String contextMenuItemTagReload() { return "Reload"; }
-String contextMenuItemTagCut() { return "Cut"; }
-String contextMenuItemTagPaste() { return "Paste"; }
-String contextMenuItemTagNoGuessesFound() { return "No Guesses Found"; }
-String contextMenuItemTagIgnoreSpelling() { return "Ignore"; }
-String contextMenuItemTagLearnSpelling() { return "Add To Dictionary"; }
-String contextMenuItemTagSearchWeb() { return "Search The Web"; }
-String contextMenuItemTagLookUpInDictionary() { return "Look Up In Dictionary"; }
-String contextMenuItemTagOpenLink() { return "Open Link"; }
-String contextMenuItemTagIgnoreGrammar() { return "Ignore"; }
-String contextMenuItemTagSpellingMenu() { return "Spelling"; }
-String contextMenuItemTagShowSpellingPanel(bool show) { return show ? "Show Spelling and Grammar" : "Hide Spelling and Grammar"; }
-String contextMenuItemTagCheckSpelling() { return "Check Spelling"; }
-String contextMenuItemTagCheckSpellingWhileTyping() { return "Check Spelling While Typing"; }
-String contextMenuItemTagCheckGrammarWithSpelling() { return "Check Grammar With Spelling"; }
-String contextMenuItemTagFontMenu() { return "Fonts"; }
-String contextMenuItemTagBold() { return "Bold"; }
-String contextMenuItemTagItalic() { return "Italic"; }
-String contextMenuItemTagUnderline() { return "Underline"; }
-String contextMenuItemTagOutline() { return "Outline"; }
-String contextMenuItemTagWritingDirectionMenu() { return "Direction"; }
-String contextMenuItemTagDefaultDirection() { return "Default"; }
-String contextMenuItemTagLeftToRight() { return "LTR"; }
-String contextMenuItemTagRightToLeft() { return "RTL"; }
-String contextMenuItemTagInspectElement() { return "Inspect"; }
-String searchMenuNoRecentSearchesText() { return "No recent searches"; }
-String searchMenuRecentSearchesText() { return "Recent searches"; }
-String searchMenuClearRecentSearchesText() { return "Clear recent searches"; }
-String AXWebAreaText() { return String(); }
-String AXLinkText() { return String(); }
-String AXListMarkerText() { return String(); }
-String AXImageMapText() { return String(); }
-String AXHeadingText() { return String(); }
-String unknownFileSizeText() { return "Unknown"; }
+
+String submitButtonDefaultLabel()
+{
+    return "Submit";
+}
+
+String inputElementAltText()
+{
+    return "Submit";
+}
+
+String resetButtonDefaultLabel()
+{
+    return "Reset";
+}
+
+String defaultLanguage()
+{
+    return "en";
+}
+
+String searchableIndexIntroduction()
+{
+    return "Searchable Index";
+}
+    
+String fileButtonChooseFileLabel()
+{
+    return "Choose File";
+}
+
+String fileButtonNoFileSelectedLabel()
+{
+    return "No file selected";
+}
+
+String contextMenuItemTagOpenLinkInNewWindow()
+{
+    return "Open in New Window";
+}
+
+String contextMenuItemTagDownloadLinkToDisk()
+{
+    return "Save Link...";
+}
+
+String contextMenuItemTagCopyLinkToClipboard()
+{
+    return "Copy Link";
+}
+
+String contextMenuItemTagOpenImageInNewWindow()
+{
+    return "Open Image";
+}
+
+String contextMenuItemTagDownloadImageToDisk()
+{
+    return "Save Image";
+}
+
+String contextMenuItemTagCopyImageToClipboard()
+{
+    return "Copy Image";
+}
+
+String contextMenuItemTagOpenFrameInNewWindow()
+{
+    return "Open Frame";
+}
+
+String contextMenuItemTagCopy()
+{
+    return "Copy";
+}
+
+String contextMenuItemTagGoBack()
+{
+    return "Go Back";
+}
+
+String contextMenuItemTagGoForward()
+{
+    return "Go Forward";
+}
+
+String contextMenuItemTagStop()
+{
+    return "Stop";
+}
+
+String contextMenuItemTagReload()
+{
+    return "Reload";
+}
+
+String contextMenuItemTagCut()
+{
+    return "Cut";
+}
+
+String contextMenuItemTagPaste()
+{
+    return "Paste";
+}
+
+String contextMenuItemTagNoGuessesFound()
+{
+    return "No Guesses Found";
+}
+
+String contextMenuItemTagIgnoreSpelling()
+{
+    return "Ignore";
+}
+
+String contextMenuItemTagLearnSpelling()
+{
+    return "Add To Dictionary";
+}
+
+String contextMenuItemTagSearchWeb()
+{
+    return "Search The Web";
+}
+
+String contextMenuItemTagLookUpInDictionary()
+{
+    return "Look Up In Dictionary";
+}
+
+String contextMenuItemTagOpenLink()
+{
+    return "Open Link";
+}
+
+String contextMenuItemTagIgnoreGrammar()
+{
+    return "Ignore";
+}
+
+String contextMenuItemTagSpellingMenu()
+{
+    return "Spelling";
+}
+
+String contextMenuItemTagShowSpellingPanel(bool show)
+{
+    return show ? "Show Spelling and Grammar" : "Hide Spelling and Grammar";
+}
+
+String contextMenuItemTagCheckSpelling()
+{
+    return "Check Spelling";
+}
+
+String contextMenuItemTagCheckSpellingWhileTyping()
+{
+    return "Check Spelling While Typing";
+}
+
+String contextMenuItemTagCheckGrammarWithSpelling()
+{
+    return "Check Grammar With Spelling";
+}
+
+String contextMenuItemTagFontMenu()
+{
+    return "Fonts";
+}
+
+String contextMenuItemTagBold()
+{
+    return "Bold";
+}
+
+String contextMenuItemTagItalic()
+{
+    return "Italic";
+}
+
+String contextMenuItemTagUnderline()
+{
+    return "Underline";
+}
+
+String contextMenuItemTagOutline()
+{
+    return "Outline";
+}
+
+String contextMenuItemTagWritingDirectionMenu()
+{
+    return "Direction";
+}
+
+String contextMenuItemTagDefaultDirection()
+{
+    return "Default";
+}
+
+String contextMenuItemTagLeftToRight()
+{
+    return "LTR";
+}
+
+String contextMenuItemTagRightToLeft()
+{
+    return "RTL";
+}
+
+String contextMenuItemTagInspectElement()
+{
+    return "Inspect";
+}
+
+String searchMenuNoRecentSearchesText()
+{
+    return "No recent searches";
+}
+
+String searchMenuRecentSearchesText()
+{
+    return "Recent searches";
+}
+
+String searchMenuClearRecentSearchesText()
+{
+    return "Clear recent searches";
+}
+
+String AXWebAreaText()
+{
+    return String();
+}
+
+String AXLinkText()
+{
+    return String();
+}
+
+String AXListMarkerText()
+{
+    return String();
+}
+
+String AXImageMapText()
+{
+    return String();
+}
+
+String AXHeadingText()
+{
+    return String();
+}
+
+String unknownFileSizeText()
+{
+    return "Unknown";
+}
 
 }
 // vim: ts=4 sw=4 et
