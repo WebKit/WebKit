@@ -224,6 +224,10 @@
 #define ENABLE_ICONDATABASE 1
 #endif
 
+#if !defined(ENABLE_DATABASE)
+#define ENABLE_DATABASE 1
+#endif
+
 #if !defined(ENABLE_FTPDIR)
 #define ENABLE_FTPDIR 1
 #endif

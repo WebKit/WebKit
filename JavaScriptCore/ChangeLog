@@ -1,3 +1,12 @@
+2007-10-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Alp.
+
+        Build fix for the non-qmake builds.
+
+        * wtf/Platform.h: Default to enabling the database features unless
+        otherwise specified. (similar to ENABLE_ICONDATABASE)
+
 2007-10-22  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
