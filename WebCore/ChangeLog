@@ -1,3 +1,14 @@
+2007-10-22  Holger Hans Peter Freyther <zecke@selfish.org>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Shrink the TemporaryLinkStubs and move the
+        Frame::setNeedsReapplyStyles stub to FrameQt.cpp
+
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::setNeedsReapplyStyles):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2007-10-22  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Lars Knoll <lars@trolltech.com>.

@@ -68,8 +68,6 @@
 
 using namespace WebCore;
 
-void Frame::setNeedsReapplyStyles() { notImplemented(); }
-
 void FrameView::updateBorder() { notImplemented(); }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
