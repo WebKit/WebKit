@@ -60,8 +60,7 @@ ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, bool forDragging)
 
 ClipboardQt::~ClipboardQt()
 {
-    if (m_writableData)
-        delete m_writableData;
+    delete m_writableData;
     m_readableData = 0;
 }
 

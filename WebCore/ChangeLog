@@ -2,6 +2,14 @@
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
+        Style fix. It is allowed to attempt to delete 0.
+
+        * platform/qt/ClipboardQt.cpp:
+
+2007-10-22  Holger Hans Peter Freyther <zecke@selfish.org>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
         Make it actually localizable....
 
         * platform/qt/Localizations.cpp:
