@@ -105,8 +105,8 @@ sub runTestsOnce($)
     my $output;
     if ($useShark) {
         print STDERR "Running sunspider under Shark... (this will take a while)\n";
-        print STDERR "shark -i -q \"$jsShellPath\" $shellArgs\n";
-        $output = `shark -i -q "$jsShellPath" $shellArgs`;
+        print STDERR "shark -i -1 -q \"$jsShellPath\" $shellArgs\n";
+        $output = `shark -i -1 -q "$jsShellPath" $shellArgs`;
     } else {
         $output = `"$jsShellPath" $shellArgs`;
     }

@@ -1,3 +1,9 @@
+2007-10-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        * sunspider: make --shark only sample from testkjs
+
 2007-10-21  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
