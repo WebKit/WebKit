@@ -1,3 +1,24 @@
+2007-10-22  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15611
+        [GTK] Text selection behaviour different in Debug and Release builds
+
+        http://bugs.webkit.org/show_bug.cgi?id=15578
+        [GTK] Text editor caret does not blink
+
+        Never allow control to reach the end of non-void functions.
+
+        Return more sensible values, or in some cases, nulls.
+
+        * Api/webkitgtksettings.cpp:
+        * Api/webkitgtksettings.h:
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::actionMaskForDrag):
+        (WebKit::DragClient::dragSourceActionMaskForPoint):
+        (WebKit::DragClient::createDragImageForLink):
+
 2007-10-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp.

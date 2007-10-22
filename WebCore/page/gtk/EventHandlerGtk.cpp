@@ -44,9 +44,17 @@ namespace WebCore {
 
 using namespace EventNames;
 
+static bool isKeyboardOptionTab(KeyboardEvent* event)
+{
+    return event
+        && (event->type() == keydownEvent || event->type() == keypressEvent)
+        && event->altKey()
+        && event->keyIdentifier() == "U+0009";
+}
+
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 {
-    return true;
+    return isKeyboardOptionTab(event);
 }
 
 void EventHandler::focusDocumentView()
@@ -78,7 +86,11 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
 
 bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
 {
+    //GTK+ activation is not necessarily tied to mouse events, so it may
+    //not make sense to implement this
+
     notImplemented();
+    return false;
 }
 
 bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
