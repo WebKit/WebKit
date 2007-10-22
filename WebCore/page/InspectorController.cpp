@@ -479,6 +479,7 @@ static JSValueRef search(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef
     return array;
 }
 
+#if ENABLE(DATABASE)
 static JSValueRef databaseTableNames(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
@@ -517,6 +518,7 @@ static JSValueRef databaseTableNames(JSContextRef ctx, JSObjectRef /*function*/,
 
     return result;
 }
+#endif
 
 static JSValueRef inspectedWindow(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
@@ -707,7 +709,9 @@ void InspectorController::windowScriptObjectAvailable()
         { "detach", detach, kJSPropertyAttributeNone },
         { "log", log, kJSPropertyAttributeNone },
         { "search", search, kJSPropertyAttributeNone },
+#if ENABLE(DATABASE)
         { "databaseTableNames", databaseTableNames, kJSPropertyAttributeNone },
+#endif
         { "inspectedWindow", inspectedWindow, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
@@ -1087,11 +1091,14 @@ void InspectorController::populateScriptResources()
     for (unsigned i = 0; i < messageCount; ++i)
         addScriptConsoleMessage(m_consoleMessages[i]);
 
+#if ENABLE(DATABASE)
     DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
         addDatabaseScriptResource((*it).get());
+#endif
 }
 
+#if ENABLE(DATABASE)
 JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseResource* resource)
 {
     ASSERT_ARG(resource, resource);
@@ -1160,6 +1167,7 @@ void InspectorController::removeDatabaseScriptResource(InspectorDatabaseResource
 
     resource->setScriptObject(0, 0);
 }
+#endif
 
 void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
 {
@@ -1217,6 +1225,7 @@ void InspectorController::clearScriptResources()
 
 void InspectorController::clearDatabaseScriptResources()
 {
+#if ENABLE(DATABASE)
     if (!m_scriptContext || !m_scriptObject)
         return;
 
@@ -1227,6 +1236,7 @@ void InspectorController::clearDatabaseScriptResources()
     }
 
     callClearFunction(m_scriptContext, m_scriptObject, "clearDatabaseResources");
+#endif
 }
 
 void InspectorController::clearScriptConsoleMessages()
@@ -1278,11 +1288,15 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         deleteAllValues(m_consoleMessages);
         m_consoleMessages.clear();
 
+#if ENABLE(DATABASE)
         m_databaseResources.clear();
+#endif
 
         if (windowVisible()) {
             clearScriptConsoleMessages();
+#if ENABLE(DATABASE)
             clearDatabaseScriptResources();
+#endif
             clearNetworkTimeline();
 
             // We don't add the main resource until its load is committed. This
@@ -1488,6 +1502,7 @@ void InspectorController::didFailLoading(DocumentLoader* loader, unsigned long i
     }
 }
 
+#if ENABLE(DATABASE)
 void InspectorController::didOpenDatabase(Database* database, const String& domain, const String& name, const String& version)
 {
     if (!enabled())
@@ -1500,5 +1515,6 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
     if (windowVisible())
         addDatabaseScriptResource(resource);
 }
+#endif
 
 } // namespace WebCore

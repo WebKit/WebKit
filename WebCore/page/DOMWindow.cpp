@@ -550,6 +550,7 @@ double DOMWindow::devicePixelRatio() const
     return page->chrome()->scaleFactor();
 }
 
+#if ENABLE(DATABASE)
 PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& version, ExceptionCode& e)
 {
     if (!m_frame)
@@ -562,5 +563,6 @@ PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& v
 
     return Database::openDatabase(doc, name, version, e);
 }
+#endif
 
 } // namespace WebCore

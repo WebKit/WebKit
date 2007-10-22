@@ -99,7 +99,9 @@ public:
     void didFinishLoading(DocumentLoader*, unsigned long identifier);
     void didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
 
+#if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
+#endif
 
     const ResourcesMap& resources() const { return m_resources; }
 
@@ -128,8 +130,10 @@ private:
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }
 
+#if ENABLE(DATABASE)
     JSObjectRef addDatabaseScriptResource(InspectorDatabaseResource*);
     void removeDatabaseScriptResource(InspectorDatabaseResource*);
+#endif
 
     Page* m_inspectedPage;
     InspectorClient* m_client;
@@ -139,7 +143,9 @@ private:
     ResourcesMap m_resources;
     FrameResourcesMap m_frameResources;
     Vector<ConsoleMessage*> m_consoleMessages;
+#if ENABLE(DATABASE)
     DatabaseResourcesSet m_databaseResources;
+#endif
     JSObjectRef m_scriptObject;
     JSObjectRef m_controllerScriptObject;
     JSContextRef m_scriptContext;

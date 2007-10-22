@@ -1,3 +1,26 @@
+2007-10-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Make disabling the database feature (ENABLE_DATABASE=0) work by
+        placing various #ifdefs into the code and making the compilation of
+        some files optional.
+
+        * WebCore.pro:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::defaultEventHandler):
+        * dom/Document.h:
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::populateScriptResources):
+        (WebCore::InspectorController::clearDatabaseScriptResources):
+        (WebCore::InspectorController::didCommitLoad):
+        * page/InspectorController.h:
+
 2007-10-22  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

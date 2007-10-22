@@ -297,11 +297,6 @@ IDL_BINDINGS += \
     page/DOMWindow.idl \
     page/History.idl \
     page/Screen.idl \
-    storage/Database.idl \
-    storage/SQLResultSetRowList.idl \
-    storage/VersionChangeCallback.idl \
-    storage/SQLCallback.idl \
-    storage/SQLResultSet.idl \
     xml/DOMParser.idl \
     xml/XMLSerializer.idl
 
@@ -315,9 +310,6 @@ SOURCES += \
     bindings/js/JSCSSValueCustom.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSCustomVersionChangeCallback.cpp \
-    bindings/js/JSCustomSQLCallback.cpp \
-    bindings/js/JSDatabaseCustom.cpp \
-    bindings/js/JSSQLResultSetRowListCustom.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDOMExceptionConstructor.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
@@ -982,7 +974,18 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/DatabaseThread.cpp \
         storage/DatabaseTracker.cpp \
         storage/SQLResultSet.cpp \
-        storage/SQLResultSetRowList.cpp
+        storage/SQLResultSetRowList.cpp \
+        bindings/js/JSCustomSQLCallback.cpp \
+        bindings/js/JSDatabaseCustom.cpp \
+        bindings/js/JSSQLResultSetRowListCustom.cpp
+
+    IDL_BINDINGS += \
+        storage/Database.idl \
+        storage/SQLResultSetRowList.idl \
+        storage/VersionChangeCallback.idl \
+        storage/SQLCallback.idl \
+        storage/SQLResultSet.idl
+
 }
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {

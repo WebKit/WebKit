@@ -131,8 +131,10 @@ namespace WebCore {
         PassRefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
         double devicePixelRatio() const;
 
+#if ENABLE(DATABASE)
         // HTML 5 client-side database
         PassRefPtr<Database> openDatabase(const String& name, const String& version, ExceptionCode&);
+#endif
 
     private:
         Frame* m_frame;

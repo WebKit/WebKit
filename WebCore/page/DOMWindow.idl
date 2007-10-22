@@ -110,8 +110,10 @@ module window {
                                        in [Optional] boolean authorOnly);
         readonly attribute double devicePixelRatio;
 
+#if defined(ENABLE_DATABASE)
         Database openDatabase(in DOMString name, in DOMString version)
             raises(DOMException);
+#endif
 
 #if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors
