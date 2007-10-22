@@ -45,8 +45,8 @@ if (isOSX()) {
     $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", "-target", "testkjs", @options, @ARGV;
 } elsif (isCygwin()) {
     $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
-} elsif (isQt()) {
-    # Qt/Linux builds everything in one-shot. No need to build anything here.
+} elsif (isQt() or isGtk()) {
+    # Qt and Gtk build everything in one-shot. No need to build anything here.
     $result = 0;
 } else {
     die "Building not defined for this platform!\n";
