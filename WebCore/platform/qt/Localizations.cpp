@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * All rights reserved.
  *
@@ -31,21 +32,23 @@
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
 
+#include <QCoreApplication>
+
 namespace WebCore {
 
 String submitButtonDefaultLabel()
 {
-    return "Submit";
+    return QCoreApplication::translate("QWebPage", "Submit", "default label for Submit buttons in forms on web pages");
 }
 
 String inputElementAltText()
 {
-    return "Submit";
+    return QCoreApplication::translate("QWebPage", "Submit", "Submit (input element) alt text for <input> elements with no alt, title, or value");
 }
 
 String resetButtonDefaultLabel()
 {
-    return "Reset";
+    return QCoreApplication::translate("QWebPage", "Reset", "default label for Reset buttons in forms on web pages");
 }
 
 String defaultLanguage()
@@ -55,212 +58,213 @@ String defaultLanguage()
 
 String searchableIndexIntroduction()
 {
-    return "Searchable Index";
+    return QCoreApplication::translate("QWebPage", "Searchable Index", "text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index'");
 }
     
 String fileButtonChooseFileLabel()
 {
-    return "Choose File";
+    return QCoreApplication::translate("QWebPage", "Choose File", "title for file button used in HTML forms");
 }
 
 String fileButtonNoFileSelectedLabel()
 {
-    return "No file selected";
+    return QCoreApplication::translate("QWebPage", "No file selected", "text to display in file button used in HTML forms when no file is selected");
 }
 
 String contextMenuItemTagOpenLinkInNewWindow()
 {
-    return "Open in New Window";
+    return QCoreApplication::translate("QWebPage", "Open in New Window", "Open in New Window context menu item");
 }
 
 String contextMenuItemTagDownloadLinkToDisk()
 {
-    return "Save Link...";
+    return QCoreApplication::translate("QWebPage", "Save Link...", "Download Linked File context menu item");
 }
 
 String contextMenuItemTagCopyLinkToClipboard()
 {
-    return "Copy Link";
+    return QCoreApplication::translate("QWebPage", "Copy Link", "Copy Link context menu item");
 }
 
 String contextMenuItemTagOpenImageInNewWindow()
 {
-    return "Open Image";
+    return QCoreApplication::translate("QWebPage", "Open Image", "Open Image in New Window context menu item");
 }
 
 String contextMenuItemTagDownloadImageToDisk()
 {
-    return "Save Image";
+    return QCoreApplication::translate("QWebPage", "Save Image", "Download Image context menu item");
 }
 
 String contextMenuItemTagCopyImageToClipboard()
 {
-    return "Copy Image";
+    return QCoreApplication::translate("QWebPage", "Copy Image", "Copy Link context menu item");
 }
 
 String contextMenuItemTagOpenFrameInNewWindow()
 {
-    return "Open Frame";
+    return QCoreApplication::translate("QWebPage", "Open Frame", "Open Frame in New Window context menu item");
 }
 
 String contextMenuItemTagCopy()
 {
-    return "Copy";
+    return QCoreApplication::translate("QWebPage", "Copy", "Copy context menu item");
 }
 
 String contextMenuItemTagGoBack()
 {
-    return "Go Back";
+    return QCoreApplication::translate("QWebPage", "Go Back", "Back context menu item");
 }
 
 String contextMenuItemTagGoForward()
 {
-    return "Go Forward";
+    return QCoreApplication::translate("QWebPage", "Go Forward", "Forward context menu item");
 }
 
 String contextMenuItemTagStop()
 {
-    return "Stop";
+    return QCoreApplication::translate("QWebPage", "Stop", "Stop context menu item");
 }
 
 String contextMenuItemTagReload()
 {
-    return "Reload";
+    return QCoreApplication::translate("QWebPage", "Reload", "Reload context menu item");
 }
 
 String contextMenuItemTagCut()
 {
-    return "Cut";
+    return QCoreApplication::translate("QWebPage", "Cut", "Cut context menu item");
 }
 
 String contextMenuItemTagPaste()
 {
-    return "Paste";
+    return QCoreApplication::translate("QWebPage", "Paste", "Paste context menu item");
 }
 
 String contextMenuItemTagNoGuessesFound()
 {
-    return "No Guesses Found";
+    return QCoreApplication::translate("QWebPage", "No Guesses Found", "No Guesses Found context menu item");
 }
 
 String contextMenuItemTagIgnoreSpelling()
 {
-    return "Ignore";
+    return QCoreApplication::translate("QWebPage", "Ignore", "Ignore Spelling context menu item");
 }
 
 String contextMenuItemTagLearnSpelling()
 {
-    return "Add To Dictionary";
+    return QCoreApplication::translate("QWebPage", "Add To Dictionary", "Learn Spelling context menu item");
 }
 
 String contextMenuItemTagSearchWeb()
 {
-    return "Search The Web";
+    return QCoreApplication::translate("QWebPage", "Search The Web", "Search The Web context menu item");
 }
 
 String contextMenuItemTagLookUpInDictionary()
 {
-    return "Look Up In Dictionary";
+    return QCoreApplication::translate("QWebPage", "Look Up In Dictionary", "Look Up in Dictionary context menu item");
 }
 
 String contextMenuItemTagOpenLink()
 {
-    return "Open Link";
+    return QCoreApplication::translate("QWebPage", "Open Link", "Open Link context menu item");
 }
 
 String contextMenuItemTagIgnoreGrammar()
 {
-    return "Ignore";
+    return QCoreApplication::translate("QWebPage", "Ignore", "Ignore Grammar context menu item");
 }
 
 String contextMenuItemTagSpellingMenu()
 {
-    return "Spelling";
+    return QCoreApplication::translate("QWebPage", "Spelling", "Spelling and Grammar context sub-menu item");
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show)
 {
-    return show ? "Show Spelling and Grammar" : "Hide Spelling and Grammar";
+    return show ? QCoreApplication::translate("QWebPage", "Show Spelling and Grammar", "menu item title") : 
+                  QCoreApplication::translate("QWebPage", "Hide Spelling and Grammar", "menu item title");
 }
 
 String contextMenuItemTagCheckSpelling()
 {
-    return "Check Spelling";
+    return QCoreApplication::translate("QWebPage", "Check Spelling", "Check spelling context menu item");
 }
 
 String contextMenuItemTagCheckSpellingWhileTyping()
 {
-    return "Check Spelling While Typing";
+    return QCoreApplication::translate("QWebPage", "Check Spelling While Typing", "Check spelling while typing context menu item");
 }
 
 String contextMenuItemTagCheckGrammarWithSpelling()
 {
-    return "Check Grammar With Spelling";
+    return QCoreApplication::translate("QWebPage", "Check Grammar With Spelling", "Check grammar with spelling context menu item");
 }
 
 String contextMenuItemTagFontMenu()
 {
-    return "Fonts";
+    return QCoreApplication::translate("QWebPage", "Fonts", "Font context sub-menu item");
 }
 
 String contextMenuItemTagBold()
 {
-    return "Bold";
+    return QCoreApplication::translate("QWebPage", "Bold", "Bold context menu item");
 }
 
 String contextMenuItemTagItalic()
 {
-    return "Italic";
+    return QCoreApplication::translate("QWebPage", "Italic", "Italic context menu item");
 }
 
 String contextMenuItemTagUnderline()
 {
-    return "Underline";
+    return QCoreApplication::translate("QWebPage", "Underline", "Underline context menu item");
 }
 
 String contextMenuItemTagOutline()
 {
-    return "Outline";
+    return QCoreApplication::translate("QWebPage", "Outline", "Outline context menu item");
 }
 
 String contextMenuItemTagWritingDirectionMenu()
 {
-    return "Direction";
+    return QCoreApplication::translate("QWebPage", "Direction", "Writing direction context sub-menu item");
 }
 
 String contextMenuItemTagDefaultDirection()
 {
-    return "Default";
+    return QCoreApplication::translate("QWebPage", "Default", "Default writing direction context menu item");
 }
 
 String contextMenuItemTagLeftToRight()
 {
-    return "LTR";
+    return QCoreApplication::translate("QWebPage", "LTR", "Left to Right context menu item");
 }
 
 String contextMenuItemTagRightToLeft()
 {
-    return "RTL";
+    return QCoreApplication::translate("QWebPage", "RTL", "Right to Left context menu item");
 }
 
 String contextMenuItemTagInspectElement()
 {
-    return "Inspect";
+    return QCoreApplication::translate("QWebPage", "Inspect", "Inspect Element context menu item");
 }
 
 String searchMenuNoRecentSearchesText()
 {
-    return "No recent searches";
+    return QCoreApplication::translate("QWebPage", "No recent searches", "Label for only item in menu that appears when clicking on the search field image, when no searches have been performed");
 }
 
 String searchMenuRecentSearchesText()
 {
-    return "Recent searches";
+    return QCoreApplication::translate("QWebPage", "Recent searches", "label for first item in the menu that appears when clicking on the search field image, used as embedded menu title");
 }
 
 String searchMenuClearRecentSearchesText()
 {
-    return "Clear recent searches";
+    return QCoreApplication::translate("QWebPage", "Clear recent searches", "menu item in Recent Searches menu that empties menu's contents");
 }
 
 String AXWebAreaText()
@@ -290,7 +294,7 @@ String AXHeadingText()
 
 String unknownFileSizeText()
 {
-    return "Unknown";
+    return QCoreApplication::translate("QWebPage", "Unknown", "Unknown filesize FTP directory listing item");
 }
 
 }
