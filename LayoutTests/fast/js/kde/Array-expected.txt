@@ -75,6 +75,12 @@ PASS arr.length is 40
 PASS arr[maxint] is undefined
 PASS arr.length is maxint
 PASS arr[maxint-1] is "test2"
+PASS arr.length is 40
+PASS arr[55.5] is "test"
+PASS arr[65.11111111111111111111111111111] is "test"
+PASS arr.length is 40
+PASS arr[55.5] is undefined
+PASS arr[65.11111111111111111111111111111] is undefined
 PASS propnames.length is 3
 PASS propnames[0] is '0'
 PASS propnames[1] is '1'

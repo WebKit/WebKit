@@ -113,18 +113,14 @@ JSObject *NumberImp::toObject(ExecState *exec) const
 
 bool NumberImp::getInt32(int32_t& int32) const
 {
-    if (!(val >= -2147483648.0 && val < 2147483648.0))
-        return false;
     int32 = static_cast<int32_t>(val);
-    return true;
+    return int32 == val;
 }
 
 bool NumberImp::getUInt32(uint32_t& uint32) const
 {
-    if (!(val >= 0.0 && val < 4294967296.0))
-        return false;
     uint32 = static_cast<uint32_t>(val);
-    return true;
+    return uint32 == val;
 }
 
 // --------------------------- GetterSetterImp ---------------------------------

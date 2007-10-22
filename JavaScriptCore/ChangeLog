@@ -1,5 +1,37 @@
 2007-10-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15632
+          js1_5/Array/array-001.js test failing
+
+        One of the JavaScriptCore tests was failing; it failed because of
+        my change to NumberImp::getUInt32. The incorrect code I copied was
+        from JSImmediate::getUInt32, and was a pre-existing bug.
+
+        This patch fixes correctness, but will surely slow down SunSpider.
+        We may be able to code this tighter and get the speed back.
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::getInt32): Renamed from toInt32 to more accurately
+        reflect the fact that this function only returns true if the value is
+        accurate (no fractional part, etc.). Changed code so that it returns
+        false when the value has a fraction.
+        (KJS::JSImmediate::getUInt32): Ditto.
+
+        * kjs/internal.cpp:
+        (KJS::NumberImp::getInt32): Changed code so that it returns false when
+        the value has a fraction. Restores the old behavior.
+        (KJS::NumberImp::getUInt32): Ditto.
+
+        * kjs/value.h:
+        (KJS::JSValue::getInt32): Updated for name change.
+        (KJS::JSValue::getUInt32): Ditto.
+        (KJS::JSValue::toInt32): Ditto.
+        (KJS::JSValue::toUInt32): Ditto.
+
+2007-10-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Brady.
 
         - fix crash seen when running JavaScriptCore tests

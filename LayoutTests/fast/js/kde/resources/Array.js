@@ -149,6 +149,19 @@ arr[maxint-1] = "test2";
 shouldBe("arr.length","maxint");
 shouldBe("arr[maxint-1]","\"test2\"");
 
+// Floating point numbers also should not be treated as valid array indices.
+arr.length = 40;
+arr[55.5] = "test"; // does fit in a JSImmediate number
+arr[65.11111111111111111111111111111] = "test"; // does not fit in a JSImmediate number
+shouldBe("arr.length","40");
+shouldBe("arr[55.5]","\"test\"");
+shouldBe("arr[65.11111111111111111111111111111]","\"test\"");
+delete arr[55.5];
+delete arr[65.11111111111111111111111111111];
+shouldBe("arr.length","40");
+shouldBe("arr[55.5]","undefined");
+shouldBe("arr[65.11111111111111111111111111111]","undefined");
+
 arr = new Array('a','b','c');
 arr.__proto__ = { 1: 'x' };
 var propnames = new Array();

@@ -1,5 +1,17 @@
 2007-10-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - tests for http://bugs.webkit.org/show_bug.cgi?id=15632
+
+        Added tests for cases where you use something that looks like an array
+        index, but it has a fractional part.
+
+        * fast/js/kde/resources/Array.js: Added tests.
+        * fast/js/kde/Array-expected.txt: Updated.
+
+2007-10-22  Darin Adler  <darin@apple.com>
+
         * fast/js/kde/resources/Array.js: Added tests to cover missing value behavior
         (not the same as undefined values in arrays). This matches the ECMA JavaScript
         specification, but doesn't exactly match Firefox, because Firefox incorrectly
