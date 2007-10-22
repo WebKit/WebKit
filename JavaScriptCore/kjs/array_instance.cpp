@@ -421,9 +421,8 @@ void ArrayInstance::mark()
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        SparseArrayValueMap copy = *map;
-        SparseArrayValueMap::iterator end = copy.end();
-        for (SparseArrayValueMap::iterator it = copy.begin(); it != end; ++it) {
+        SparseArrayValueMap::iterator end = map->end();
+        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it) {
             JSValue* value = it->second;
             if (!value->marked())
                 value->mark();

@@ -1,3 +1,15 @@
+2007-10-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - fix crash seen when running JavaScriptCore tests
+
+        * kjs/array_instance.cpp: (KJS::ArrayInstance::mark):
+        Copy and paste error: I accidentally had code here that was
+        making a copy of the HashMap -- that's illegal inside a mark
+        function and was unnecessary. The other callsite was modifying
+        the map as it iterated it, but this function is not.
+
 2007-10-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
