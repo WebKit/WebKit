@@ -1,3 +1,55 @@
+2007-10-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15606
+          make cut-off for sparse vs. dense arrays smarter for speed with large arrays
+
+        Makes the morph test in SunSpider 26% faster, and the overall
+        benchmark 3% faster.
+
+        This also fixes some small problems we had with the distinction
+        between nonexistent and undefined values in arrays.
+
+        * kjs/array_instance.h: Tweaked formatting and naming.
+        * kjs/array_instance.cpp: Copied from kjs/array_object.cpp.
+        (KJS::storageSize): Added. Computes the size of the storage given a vector length.
+        (KJS::increasedVectorLength): Added. Implements the rule for resizing the vector.
+        (KJS::isDenseEnoughForVector): Added.
+        (KJS::ArrayInstance::ArrayInstance): Initialize the new fields.
+        (KJS::ArrayInstance::~ArrayInstance): Since m_storage is now never 0, delete it.
+        (KJS::ArrayInstance::getItem): Updated for name changes.
+        (KJS::ArrayInstance::lengthGetter): Ditto.
+        (KJS::ArrayInstance::inlineGetOwnPropertySlot): Added. Allows both versions of
+        getOwnPropertySlot to share more code.
+        (KJS::ArrayInstance::getOwnPropertySlot): Just refactored, no code change.
+        (KJS::ArrayInstance::put): Added logic for extending the vector as long as the
+        array is dense enough. Also keep m_numValuesInVector up to date.
+        (KJS::ArrayInstance::deleteProperty): Added code to keep m_numValuesInVector
+        up to date.
+        (KJS::ArrayInstance::getPropertyNames): Fixed bug where this would omit names
+        for array indices with undefined values.
+        (KJS::ArrayInstance::increaseVectorLength): Renamed from resizeStorage. Also
+        simplified to only handle getting larger.
+        (KJS::ArrayInstance::setLength): Added code to update m_numValuesInVector, to
+        zero out the unused part of the vector and to delete the map if it's no longer
+        needed.
+        (KJS::ArrayInstance::mark): Tweaked formatting.
+        (KJS::compareByStringForQSort): Ditto.
+        (KJS::ArrayInstance::sort): Ditto.
+        (KJS::CompareWithCompareFunctionArguments::CompareWithCompareFunctionArguments):
+        Ditto.
+        (KJS::compareWithCompareFunctionForQSort): Ditto.
+        (KJS::ArrayInstance::compactForSorting): Fixed bug where this would turn
+        undefined values into nonexistent values in some cases.
+
+        * kjs/array_object.h: Removed MAX_ARRAY_INDEX.
+        * kjs/array_object.cpp: Removed ArrayInstance. Moved to a separate file.
+
+        * JavaScriptCore.pri: Added array_instance.cpp.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * kjs/AllInOneFile.cpp: Ditto.
+
 2007-10-22  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe.

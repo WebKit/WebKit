@@ -28,6 +28,7 @@
 
 #include "function.cpp"
 #include "debugger.cpp"
+#include "array_instance.cpp"
 #include "array_object.cpp"
 #include "bool_object.cpp"
 #include "collector.cpp"

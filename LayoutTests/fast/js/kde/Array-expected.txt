@@ -45,14 +45,23 @@ PASS [].length is 0
 PASS ['a'].length is 1
 PASS ['a'][0] is 'a'
 PASS ['a',,'c'][2] is 'c'
+PASS ['a',undefined,'c'][1] is undefined
+PASS ['a',,'c'][1] is undefined
+PASS 1 in ['a',,'c'] is false
+PASS 1 in ['a',undefined,'c'] is true
+PASS 1 in arrayWithDeletion is false
 PASS forInSum([]) is ''
 PASS forInSum(Array()) is ''
 PASS forInSum(Array('a')) is 'a'
+PASS forInSum([,undefined,'x','aa']) is 'undefinedxaa'
 PASS forInSum(a0) is ''
 PASS forInSum(a1) is 'a'
 PASS String([].sort()) is ''
 PASS String([3,1,'2'].sort()) is '1,2,3'
 PASS String([,'x','aa'].sort()) is 'aa,x,'
+PASS String([,undefined,'x','aa'].sort()) is 'aa,x,,'
+PASS 2 in [,undefined,'x','aa'].sort() is true
+PASS 3 in [,undefined,'x','aa'].sort() is false
 PASS var a = ['aa', 'b', 'cccc', 'ddd']; String(a.sort(comp)) is 'b,aa,ddd,cccc'
 PASS [0, Infinity].sort(function(a, b) { return a - b }).toString() is '0,Infinity'
 PASS [].unshift('a') is 1

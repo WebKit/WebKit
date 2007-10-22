@@ -72,6 +72,14 @@ shouldBe("[].length", "0");
 shouldBe("['a'].length", "1");
 shouldBe("['a'][0]", "'a'");
 shouldBe("['a',,'c'][2]", "'c'");
+shouldBe("['a',undefined,'c'][1]", "undefined");
+shouldBe("['a',,'c'][1]", "undefined");
+shouldBe("1 in ['a',,'c']", "false");
+shouldBe("1 in ['a',undefined,'c']", "true");
+
+var arrayWithDeletion = ['a','b','c'];
+delete arrayWithDeletion[1];
+shouldBe("1 in arrayWithDeletion", "false");
 
 function forInSum(_a) {
   var s = '';
@@ -83,6 +91,7 @@ function forInSum(_a) {
 shouldBe("forInSum([])", "''");
 shouldBe("forInSum(Array())", "''");
 shouldBe("forInSum(Array('a'))", "'a'");
+shouldBe("forInSum([,undefined,'x','aa'])", "'undefinedxaa'");
 
 var a0 = [];
 shouldBe("forInSum(a0)", "''");
@@ -92,7 +101,10 @@ shouldBe("forInSum(a1)", "'a'");
 
 shouldBe("String([].sort())", "''")
 shouldBe("String([3,1,'2'].sort())", "'1,2,3'");
-shouldBe("String([,'x','aa'].sort())", "'aa,x,'"); // don't assume 'x'>undefined !
+shouldBe("String([,'x','aa'].sort())", "'aa,x,'");
+shouldBe("String([,undefined,'x','aa'].sort())", "'aa,x,,'");
+shouldBe("2 in [,undefined,'x','aa'].sort()", "true");
+shouldBe("3 in [,undefined,'x','aa'].sort()", "false");
 
 // sort by length
 function comp(a, b) {

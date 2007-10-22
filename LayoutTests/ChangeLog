@@ -1,3 +1,10 @@
+2007-10-22  Darin Adler  <darin@apple.com>
+
+        * fast/js/kde/resources/Array.js: Added tests to cover missing value behavior
+        (not the same as undefined values in arrays). This matches the ECMA JavaScript
+        specification, but doesn't exactly match Firefox.
+        * fast/js/kde/Array-expected.txt: Updated with results.
+
 2007-10-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Mitz.
@@ -9,8 +16,6 @@
         * fast/js/kde/resources/Array.js: Update to cover sorting an empty array.
 
 2007-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
-
-        Not reviewed.
 
         Forgot to land the new computed style results in fast/css - after the addition of glyph-orientation-*.
 

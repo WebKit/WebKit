@@ -56,6 +56,7 @@ SOURCES += \
     kjs/DateMath.cpp \
     kjs/JSWrapperObject.cpp \
     kjs/PropertyNameArray.cpp \
+    kjs/array_instance.cpp \
     kjs/array_object.cpp \
     kjs/bool_object.cpp \
     kjs/collector.cpp \

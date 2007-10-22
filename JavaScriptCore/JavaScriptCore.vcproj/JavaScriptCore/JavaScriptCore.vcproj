@@ -175,6 +175,10 @@
 			Name="KJS"
 			>
 			<File
+				RelativePath="..\..\kjs\array_instance.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\array_instance.h"
 				>
 			</File>
