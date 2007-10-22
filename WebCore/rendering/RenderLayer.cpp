@@ -1741,7 +1741,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
     if (m_clipRects)
         return; // We have the correct cached value.
 
-    if (rootLayer == this) {
+    if (rootLayer == this || !parent()) {
         // The root layer's clip rect is always just its dimensions.
         m_clipRects = new (m_object->renderArena()) ClipRects(IntRect(0,0,width(),height()));
         m_clipRects->ref();
@@ -1811,7 +1811,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
 void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
                                  IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect) const
 {
-    if (rootLayer != this) {
+    if (rootLayer != this && parent()) {
         parent()->calculateClipRects(rootLayer);
 
         backgroundRect = m_object->style()->position() == FixedPosition ? parent()->clipRects()->fixedClipRect() :
