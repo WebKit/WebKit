@@ -61,7 +61,7 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
 
         const DashArray& dashes = dashArrayFromRenderingStyle(object->style());
         double* dsh = new double[dashes.size()];
-        for (int i = 0 ; i < dashes.size() ; i++)
+        for (unsigned i = 0 ; i < dashes.size() ; i++)
             dsh[i] = dashes[i];
         double dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->strokeDashOffset(), 0.0);
         cairo_set_dash(cr, dsh, dashes.size(), dashOffset);

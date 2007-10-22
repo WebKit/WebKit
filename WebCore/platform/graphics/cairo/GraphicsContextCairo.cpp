@@ -605,7 +605,22 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
 {
-    notImplemented();
+    if (paintingDisabled())
+        return;
+
+    clip(rect);
+    Path path;
+
+    path.addEllipse(rect);
+
+    IntRect inner(rect);
+    inner.inflate(-thickness);
+    path.addEllipse(inner);
+
+    cairo_t* cr = m_data->cr;
+    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
+
+    clip(path);
 }
 
 void GraphicsContext::setShadow(IntSize const&, int, Color const&)
@@ -654,9 +669,18 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     cairo_restore(cr);
 }
 
-void GraphicsContext::strokeRect(const FloatRect&, float)
+void GraphicsContext::strokeRect(const FloatRect& rect, float width)
 {
-    notImplemented();
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->cr;
+    cairo_save(cr);
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    setColor(cr, strokeColor());
+    cairo_set_line_width(cr, width);
+    cairo_stroke(cr);
+    cairo_restore(cr);
 }
 
 void GraphicsContext::setLineCap(LineCap lineCap)

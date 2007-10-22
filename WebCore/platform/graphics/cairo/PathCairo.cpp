@@ -80,7 +80,7 @@ bool Path::isEmpty() const
     // return cairo_get_current_point(cr, &dx, &dy);
 
     cairo_t* cr = platformPath()->m_cr;
-    cairo_path_t* p = cairo_copy_path(platformPath()->m_cr);
+    cairo_path_t* p = cairo_copy_path(cr);
     bool hasData = p->num_data;
     cairo_path_destroy(p);
     return !hasData;
