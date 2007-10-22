@@ -1,5 +1,16 @@
 2007-10-21  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Eric.
+        
+        - added crypto tests (already balanced)
+
+        * tests/LIST:
+        * tests/crypto-aes.js: Added.
+        * tests/crypto-md5.js: Added.
+        * tests/crypto-sha1.js: Added.
+
+2007-10-21  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Adam.
         
         - rebalance new tests

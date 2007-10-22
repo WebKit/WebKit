@@ -7,6 +7,9 @@ bitops-3bit-bits-in-byte
 bitops-bits-in-byte
 bitops-bitwise-and
 bitops-nsieve-bits
+crypto-aes
+crypto-md5
+crypto-sha1
 math-cordic
 math-partial-sums
 math-spectral-norm
