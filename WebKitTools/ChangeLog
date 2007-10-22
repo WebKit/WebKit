@@ -1,3 +1,9 @@
+2007-10-22  Kevin McCullough  <kmccullough@apple.com>
+
+        - Removed a leak that was fixed.
+
+        * Scripts/run-webkit-tests:
+
 2007-10-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

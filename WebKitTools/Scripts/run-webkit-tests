@@ -1000,7 +1000,6 @@ sub countAndPrintLeaks($$$)
             "_CFPreferencesDomainDeepCopyDictionary", # leak in CFPreferences, rdar://problem/4220786
             "_objc_msgForward", # leak in NSSpellChecker, rdar://problem/4965278
             "gldGetString", # leak in OpenGL, rdar://problem/5013699
-            "LayoutTestController::queueReload", #rdar://problem/5546478 REGRESSION: 2 leaks on Tiger under LayoutTestController::queueReload
             "_setDefaultUserInfoFromURL", #rdar://problem/5546453 REGRESSION: 3 leaks on Tiger under _setDefaultUserInfoFromURL
             "SSLHandshake" #rdar://problem/5546440 REGRESSION: 1 leak on Tiger under SSL
         );
