@@ -82,6 +82,8 @@ my $productDir = productDir();
 my @options = XcodeOptions();
 my @overrideFeatureDefinesOption = ();
 
+push @overrideFeatureDefinesOption, "ENABLE_DATABASE";
+push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE";
 push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_EXPERIMENTAL_FEATURES" if $svgExperimentalSupport;
 push @overrideFeatureDefinesOption, "ENABLE_XPATH" if $xpathSupport;

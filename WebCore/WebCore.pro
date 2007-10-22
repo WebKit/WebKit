@@ -959,6 +959,7 @@ gtk-port {
 
 # ENABLE_DATABASE probably cannot be disabled without breaking things
 contains(DEFINES, ENABLE_DATABASE=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATABASE=1
     qt-port: INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
     LIBS += -lsqlite3
     SOURCES += \
