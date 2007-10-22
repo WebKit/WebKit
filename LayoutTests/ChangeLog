@@ -1,3 +1,13 @@
+2007-10-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=15603
+        Bug 15603: Regression(r26847): Crash when sorting an empty array from JavaScript
+
+        * fast/js/kde/Array-expected.txt:
+        * fast/js/kde/resources/Array.js: Update to cover sorting an empty array.
+
 2007-10-21  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed.

@@ -75,7 +75,8 @@ static inline void reallocateStorage(JSValue**& storage, size_t newCapacity)
 
 static inline void freeStorage(JSValue** storage)
 {
-  fastFree(storage - 2);
+    if (storage)
+        fastFree(storage - 2);
 }
 
 ArrayInstance::ArrayInstance(JSObject *proto, unsigned initialLength)

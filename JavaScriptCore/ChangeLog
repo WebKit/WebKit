@@ -1,3 +1,13 @@
+2007-10-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=15603
+        Bug 15603: Regression(r26847): Crash when sorting an empty array from JavaScript
+
+        * kjs/array_object.cpp:
+        (KJS::freeStorage): Reinstate null-check that was removed in r26847.
+
 2007-10-21  Darin Adler  <darin@apple.com>
 
         - fix Windows build

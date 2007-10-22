@@ -90,6 +90,7 @@ shouldBe("forInSum(a0)", "''");
 var a1 = [ 'a' ];
 shouldBe("forInSum(a1)", "'a'");
 
+shouldBe("String([].sort())", "''")
 shouldBe("String([3,1,'2'].sort())", "'1,2,3'");
 shouldBe("String([,'x','aa'].sort())", "'aa,x,'"); // don't assume 'x'>undefined !
 
@@ -107,8 +108,7 @@ function comp(a, b) {
 shouldBe("var a = ['aa', 'b', 'cccc', 'ddd']; String(a.sort(comp))", "'b,aa,ddd,cccc'");
 
 // +/-Infinity as function return value
-shouldBe("[0, Infinity].sort(function(a, b) { return a - b }).toString()",
-	 "'0,Infinity'");
+shouldBe("[0, Infinity].sort(function(a, b) { return a - b }).toString()", "'0,Infinity'");
 
 // Array.unshift()
 shouldBe("[].unshift('a')", "1");
