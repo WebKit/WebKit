@@ -1,3 +1,10 @@
+2007-10-21  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * ksvg2/css/SVGCSSStyleSelector.cpp: Use fabsf when dealing with a float to prevent the
+        implicit conversion warning.
+
 2007-10-21  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

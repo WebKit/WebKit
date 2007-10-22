@@ -81,7 +81,7 @@ namespace WebCore {
 
 static float roundToNearestGlyphOrientationAngle(float angle)
 {
-    angle = fabs(fmodf(angle, 360.0f));
+    angle = fabsf(fmodf(angle, 360.0f));
 
     if (angle <= 45.0f || angle > 315.0f)
         return 0.0f;
