@@ -2,7 +2,9 @@
 
         * fast/js/kde/resources/Array.js: Added tests to cover missing value behavior
         (not the same as undefined values in arrays). This matches the ECMA JavaScript
-        specification, but doesn't exactly match Firefox.
+        specification, but doesn't exactly match Firefox, because Firefox incorrectly
+        inserts undefined values rather than missing values in array literals with
+        extra commas.
         * fast/js/kde/Array-expected.txt: Updated with results.
 
 2007-10-21  Mark Rowe  <mrowe@apple.com>
