@@ -154,10 +154,9 @@ template<> struct JSImmediate::FPBitValues<true, false> {
             return 0;
 
         // check for data loss from conversion to float
-        DoubleUnion doubleUnion1, doubleUnion2;
-        doubleUnion1.asDouble = floatUnion.asFloat;
-        doubleUnion2.asDouble = d;
-        if (doubleUnion1.asBits != doubleUnion2.asBits)
+        // The d == d check is to allow NaN - it does not
+        // compare equal to itself, but we do want to allow it
+        if (floatUnion.asFloat != d && d == d)
             return 0;
 
         return tag(floatUnion.asBits, NumberType);

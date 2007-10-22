@@ -1,3 +1,14 @@
+2007-10-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - Avoid moving floats into integer registers in jsNumber() for 3% speedup on SunSpider
+        http://bugs.webkit.org/show_bug.cgi?id=15627
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::fromDouble): Avoid moving floats to integer
+        registers since this is very slow.
+
 2007-10-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.
