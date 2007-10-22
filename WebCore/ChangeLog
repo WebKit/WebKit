@@ -1,3 +1,21 @@
+2007-10-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://5548217>: [NTS] Java 6 update 3 crashes Safari when loading a 
+        java page
+
+        We purposefully do not destroy our Java VM when its reference count
+        reaches 0, but we were unloading our JavaPlugin.dll when its reference
+        count reached 0, which lost the reference to the VM. This led to our
+        process trying to create a new VM the next time a page using Java was
+        loaded, and the JNI spec states that a single process is not allowed to
+        create more than one VM. The fix is to avoid unloading the Java plugin
+        via our PluginQuirkDontUnloadPlugin. 
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginViewWin::determineQuirks):
+
 2007-10-22  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 15624, make transforms work properly with opacity.

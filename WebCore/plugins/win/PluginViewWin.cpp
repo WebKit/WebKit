@@ -57,6 +57,7 @@
 #include <kjs/JSLock.h>
 #include <kjs/value.h>
 #include <wtf/ASCIICType.h>
+#include <WebCore/MIMETypeRegistry.h>
 
 using KJS::ExecState;
 using KJS::Interpreter;
@@ -1360,6 +1361,11 @@ void PluginViewWin::determineQuirks(const String& mimeType)
     // Thus, we don't know that the object should be invalidated when the plug-in instance goes away.
     // See <rdar://problem/5487742>.
     if (mimeType == "application/x-silverlight")
+        m_quirks |= PluginQuirkDontUnloadPlugin;
+
+    // Because a single process cannot create multiple VMs, and we cannot reliably unload a
+    // Java VM, we cannot unload the Java plugin, or we'll lose reference to our only VM
+    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType))
         m_quirks |= PluginQuirkDontUnloadPlugin;
 
     // Prevent the Real plugin from calling the Window Proc recursively, causing the stack to overflow.
