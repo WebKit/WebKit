@@ -1,3 +1,21 @@
+2007-10-22  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
+        Implement ResourceHandle::loadResourceSynchronously using ResourceHandle and a special ResourceHandleClient. This approach has the possible danger of reentrancy.
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::WebCoreSynchronousLoader::resourceResponse):
+        (WebCore::WebCoreSynchronousLoader::resourceError):
+        (WebCore::WebCoreSynchronousLoader::data):
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::didReceiveResponse):
+        (WebCore::WebCoreSynchronousLoader::didReceiveData):
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        (WebCore::WebCoreSynchronousLoader::waitForCompletion):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2007-10-22  Holger Hans Peter Freyther <zecke@selfish.org>
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
