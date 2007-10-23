@@ -1,5 +1,18 @@
 2007-10-23  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15639
+          fix Math.abs(0), Math.ceil(-0), and Math.floor(-0)
+
+        Test: fast/js/math.html
+
+        * kjs/math_object.cpp: (MathFuncImp::callAsFunction):
+        Fix abs to look at the sign bit. Add a special case for values in the range
+        between -0 and -1 and a special case for ceil and for -0 for floor.
+
+2007-10-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - streamline exception handling code for a >1% speed-up of SunSpider

@@ -133,7 +133,7 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, con
 
   switch (id) {
   case MathObjectImp::Abs:
-    result = ( arg < 0 || arg == -0) ? (-arg) : arg;
+    result = signbit(arg) ? -arg : arg;
     break;
   case MathObjectImp::ACos:
     result = acos(arg);
@@ -148,7 +148,10 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, con
     result = atan2(arg, arg2);
     break;
   case MathObjectImp::Ceil:
-    result = ceil(arg);
+    if (signbit(arg) && arg > -1.0)
+      result = -0.0;
+    else
+      result = ceil(arg);
     break;
   case MathObjectImp::Cos:
     result = cos(arg);
@@ -157,7 +160,10 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, con
     result = exp(arg);
     break;
   case MathObjectImp::Floor:
-    result = floor(arg);
+    if (signbit(arg) && arg == 0.0)
+      result = -0.0;
+    else
+      result = floor(arg);
     break;
   case MathObjectImp::Log:
     result = log(arg);
