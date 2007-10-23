@@ -375,7 +375,7 @@ private:
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
                     bool haveTransparency, PaintRestriction, RenderObject* paintingRoot);
-    RenderLayer* hitTestLayer(RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&, const IntRect& hitTestRect);
+    RenderLayer* hitTestLayer(RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&, const IntRect& hitTestRect, const IntPoint& hitTestPoint);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 
     bool shouldBeOverflowOnly() const;

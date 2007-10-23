@@ -83,4 +83,13 @@ AffineTransform& AffineTransform::skewY(double angle)
     return shear(0.0f, tan(deg2rad(angle)));
 }
 
+IntPoint AffineTransform::mapPoint(const IntPoint& point) const
+{
+    double x2, y2;
+    map(point.x(), point.y(), &x2, &y2);
+    
+    // Round the point.
+    return IntPoint(lround(x2), lround(y2));
+}
+
 }

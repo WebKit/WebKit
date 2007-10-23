@@ -162,7 +162,7 @@ bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     // Hit test all phases of replaced elements atomically, as though the replaced element established its
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
-    return object()->hitTest(request, result, x, y, tx, ty);
+    return object()->hitTest(request, result, IntPoint(x, y), tx, ty);
 }
 
 RootInlineBox* InlineBox::root()

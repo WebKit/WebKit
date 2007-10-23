@@ -509,7 +509,7 @@ public:
         IntRect m_repaintRect;
     };
 
-    bool hitTest(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestFilter = HitTestAll);
+    bool hitTest(const HitTestRequest&, HitTestResult&, const IntPoint&, int tx, int ty, HitTestFilter = HitTestAll);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     void updateHitTestResult(HitTestResult&, const IntPoint&);
 

@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class IntPoint;
 class IntRect;
 class FloatRect;
 
@@ -53,6 +54,7 @@ public:
 
     void setMatrix(double a, double b, double c, double d, double e, double f);
     void map(double x, double y, double *x2, double *y2) const;
+    IntPoint mapPoint(const IntPoint&) const;
     IntRect mapRect(const IntRect&) const;
     FloatRect mapRect(const FloatRect&) const;
     
