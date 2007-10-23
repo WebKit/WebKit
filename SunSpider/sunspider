@@ -108,7 +108,7 @@ sub runTestsOnce($)
         print STDERR "shark -i -1 -q \"$jsShellPath\" $shellArgs\n";
         $output = `shark -i -1 -q "$jsShellPath" $shellArgs`;
     } else {
-        $output = `"$jsShellPath" $shellArgs`;
+        $output = `"$jsShellPath" $shellArgs | grep -v break`;
     }
     return $output;
 }
@@ -132,12 +132,15 @@ my $result;
 my $count = 0;
 my @results = ();
 my $total = 0;
+print "[";
 while ($count++ < $testRuns) {
     $result = runTestsOnce($runShark);
     chomp $result;
     push @results, $result;
-    print $result . "\n";
+    print $result;
+    print ",\n" unless ($count == $testRuns);
 }
+print "]\n";
 
 my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
 dumpToFile($output, "tmp/sunspider-results.js");
