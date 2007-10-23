@@ -1,3 +1,21 @@
+2007-10-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Review.
+        
+        - add more tests (probably the final set for now)
+        
+        Already balanced. Added date, regexp, control flow, and a few
+        more string and object/array access tests.
+        
+        * tests/LIST:
+        * tests/access-fannkuch.js: Added.
+        * tests/access-nbody.js: Added.
+        * tests/controlflow-recursive.js: Added.
+        * tests/date-format-tofte.js: Added.
+        * tests/date-format-xparb.js: Added.
+        * tests/regexp-dna.js: Added.
+        * tests/string-validate-input.js: Added.
+
 2007-10-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
