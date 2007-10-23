@@ -1,5 +1,11 @@
 2007-10-22  Eric Seidel  <eric@webkit.org>
 
+        Build fix only, no review.
+
+        * WebCore.xcodeproj/project.pbxproj: make sure DOMSVGAnimateElement.h is copied into headers.
+
+2007-10-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         Fix build by properly exposing SVG font-face dom bindings.

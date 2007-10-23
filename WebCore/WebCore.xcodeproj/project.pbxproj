@@ -1834,6 +1834,7 @@
 		A80F3A8C0CCDA38D002DD990 /* DOMSVGFontFaceSrcElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A83B793D0CCB0125000B0825 /* DOMSVGFontFaceSrcElementInternal.h */; };
 		A80F3A8D0CCDA38D002DD990 /* DOMSVGFontFaceUriElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A83B793C0CCB0125000B0825 /* DOMSVGFontFaceUriElement.h */; };
 		A80F3A8E0CCDA38D002DD990 /* DOMSVGFontFaceSrcElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A83B793F0CCB0125000B0825 /* DOMSVGFontFaceSrcElement.h */; };
+		A80F3B1A0CCDCC99002DD990 /* DOMSVGAnimateElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85ACEF760ACDCFCE001214FF /* DOMSVGAnimateElement.h */; };
 		A81369CA097374F600D74463 /* HTMLIsIndexElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369AE097374F500D74463 /* HTMLIsIndexElement.h */; };
 		A81369CB097374F600D74463 /* HTMLIsIndexElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */; };
 		A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElement.h */; };
@@ -3649,6 +3650,8 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				A80F3B1A0CCDCC99002DD990 /* DOMSVGAnimateElement.h in Copy Generated Headers */,
+				A8F46ACD0CB20A9D003A9670 /* DOMSVGAnimateElementInternal.h in Copy Generated Headers */,
 				A80F3A2D0CCD9D5A002DD990 /* DOMSVGDefinitionSrcElementInternal.h in Copy Generated Headers */,
 				A80F3A2E0CCD9D5A002DD990 /* DOMSVGDefinitionSrcElement.h in Copy Generated Headers */,
 				A80F3A850CCDA38D002DD990 /* DOMSVGFontFaceUriElementInternal.h in Copy Generated Headers */,
@@ -3726,7 +3729,6 @@
 				A8F46AC90CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticRel.h in Copy Generated Headers */,
 				A8F46ACA0CB20A9D003A9670 /* DOMSVGElementInternal.h in Copy Generated Headers */,
 				A8F46ACC0CB20A9D003A9670 /* DOMSVGNumberInternal.h in Copy Generated Headers */,
-				A8F46ACD0CB20A9D003A9670 /* DOMSVGAnimateElementInternal.h in Copy Generated Headers */,
 				A8F46ACE0CB20A9D003A9670 /* DOMSVGEllipseElementInternal.h in Copy Generated Headers */,
 				A8F46ACF0CB20A9D003A9670 /* DOMSVGFEBlendElementInternal.h in Copy Generated Headers */,
 				A8F46AD00CB20A9D003A9670 /* DOMSVGFEFloodElementInternal.h in Copy Generated Headers */,
