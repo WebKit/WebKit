@@ -1,3 +1,18 @@
+2007-10-23  Jasper Bryant-Greene  <m@ni.ac.nz>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15058
+        Precedence fault in KeyEventGdk causes shift, control, alt etc to work incorrectly
+
+        Corrected precendence fault which was causing Shift, Alt, Control and
+        Meta to behave incorrectly on GTK.
+
+        Coding style fix by Alp.
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2007-10-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.

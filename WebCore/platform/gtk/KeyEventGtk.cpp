@@ -475,10 +475,10 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     , m_autoRepeat(false)
     , m_WindowsKeyCode(windowsKeyCodeForKeyEvent(event->keyval))
     , m_isKeypad(false)
-    , m_shiftKey(event->state & GDK_SHIFT_MASK != 0)
-    , m_ctrlKey(event->state & GDK_CONTROL_MASK != 0)
-    , m_altKey(event->state & GDK_MOD1_MASK != 0)
-    , m_metaKey(event->state & GDK_MOD2_MASK != 0)
+    , m_shiftKey(event->state & GDK_SHIFT_MASK)
+    , m_ctrlKey(event->state & GDK_CONTROL_MASK)
+    , m_altKey(event->state & GDK_MOD1_MASK)
+    , m_metaKey(event->state & GDK_MOD2_MASK)
 {
 }
 
