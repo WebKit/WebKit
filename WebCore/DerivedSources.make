@@ -534,12 +534,12 @@ all : \
     JSSVGFETileElement.h \
     JSSVGFETurbulenceElement.h \
     JSSVGFilterElement.h \
-    JSSVGForeignObjectElement.h \
     JSSVGFontFaceElement.h \
     JSSVGFontFaceFormatElement.h \
     JSSVGFontFaceNameElement.h \
     JSSVGFontFaceSrcElement.h \
     JSSVGFontFaceUriElement.h \
+    JSSVGForeignObjectElement.h \
     JSSVGGElement.h \
     JSSVGGradientElement.h \
     JSSVGImageElement.h \

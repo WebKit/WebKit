@@ -1,3 +1,10 @@
+2007-10-22  Darin Adler  <darin@apple.com>
+
+        - a first cut at fixing the Qt and GTK builds
+
+        * WebCore.pro: Add new .idl and .cpp files.
+        * DerivedSources.make: Re-sorted.
+
 2007-10-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

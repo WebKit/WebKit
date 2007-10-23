@@ -1102,6 +1102,11 @@ contains(DEFINES, ENABLE_SVG=1) {
         ksvg2/svg/SVGFETileElement.idl \
         ksvg2/svg/SVGFETurbulenceElement.idl \
         ksvg2/svg/SVGFilterElement.idl \
+        ksvg2/svg/SVGFontFaceElement.idl \
+        ksvg2/svg/SVGFontFaceFormatElement.idl \
+        ksvg2/svg/SVGFontFaceNameElement.idl \
+        ksvg2/svg/SVGFontFaceSrcElement.idl \
+        ksvg2/svg/SVGFontFaceUriElement.idl \
         ksvg2/svg/SVGForeignObjectElement.idl \
         ksvg2/svg/SVGGElement.idl \
         ksvg2/svg/SVGGradientElement.idl \
@@ -1239,6 +1244,11 @@ contains(DEFINES, ENABLE_SVG=1) {
         ksvg2/svg/SVGFilterElement.cpp \
         ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp \
         ksvg2/svg/SVGFitToViewBox.cpp \
+        ksvg2/svg/SVGFontFaceElement.cpp \
+        ksvg2/svg/SVGFontFaceFormatElement.cpp \
+        ksvg2/svg/SVGFontFaceNameElement.cpp \
+        ksvg2/svg/SVGFontFaceSrcElement.cpp \
+        ksvg2/svg/SVGFontFaceUriElement.cpp \
         ksvg2/svg/SVGForeignObjectElement.cpp \
         ksvg2/svg/SVGGElement.cpp \
         ksvg2/svg/SVGGradientElement.cpp \
