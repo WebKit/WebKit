@@ -369,6 +369,8 @@ svg/hixie/viewbox/preserveAspectRatio/001.xml
 
 # No support for WebArchives in WebKitWin <rdar://problem/5066490>
 webarchive
+svg/webarchive
+svg/custom/image-with-prefix-in-webarchive.svg
 
 # Image document in frame has no size <rdar://problem/5230233>
 dom/xhtml/level2/html/frame.xhtml
@@ -462,6 +464,31 @@ fast/loader/local-svg-parsed-as-svg.svg
 # We can't make platform specifc results so keep this here for now
 # This test is dependant on DRT being able to open windows.
 fast/dom/Window/new-window-opener.html
+
+# SVG filter support not implemented <rdar://5555151>
+svg/W3C-SVG-1.1/filters-blend-01-b.svg
+svg/W3C-SVG-1.1/filters-color-01-b.svg
+svg/W3C-SVG-1.1/filters-composite-02-b.svg
+svg/W3C-SVG-1.1/filters-comptran-01-b.svg
+svg/W3C-SVG-1.1/filters-diffuse-01-f.svg
+svg/W3C-SVG-1.1/filters-displace-01-f.svg
+svg/W3C-SVG-1.1/filters-example-01-b.svg
+svg/W3C-SVG-1.1/filters-gauss-01-b.svg
+svg/W3C-SVG-1.1/filters-image-01-b.svg
+svg/W3C-SVG-1.1/filters-light-01-f.svg
+svg/W3C-SVG-1.1/filters-offset-01-b.svg
+svg/W3C-SVG-1.1/filters-specular-01-f.svg
+svg/W3C-SVG-1.1/filters-tile-01-b.svg
+svg/batik/filters/filterRegions.svg
+svg/custom/feComponentTransfer-Discrete.svg
+svg/custom/feComponentTransfer-Gamma.svg
+svg/custom/feComponentTransfer-Linear.svg
+svg/custom/feComponentTransfer-Table.svg
+svg/custom/feDisplacementMap-01.svg
+svg/custom/filter-source-alpha.svg
+svg/custom/non-opaque-filters.svg
+svg/custom/text-filter.svg
+svg/custom/visibility-override-filter.svg
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################
