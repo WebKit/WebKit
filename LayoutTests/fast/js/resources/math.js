@@ -4,15 +4,6 @@ description(
 
 );
 
-shouldBe("Math.E", "2.718281828459045");
-shouldBe("Math.LN10", "2.302585092994046");
-shouldBe("Math.LN2", "0.6931471805599453");
-shouldBe("Math.LOG2E", "1.4426950408889634");
-shouldBe("Math.LOG10E", "0.43429448190325176");
-shouldBe("Math.PI", "3.141592653589793");
-shouldBe("Math.SQRT1_2", "0.7071067811865476");
-shouldBe("Math.SQRT2", "1.4142135623730951");
-
 function addSignToZero(n)
 {
     if (n != 0)
@@ -37,10 +28,8 @@ shouldBe("Math.abs(Infinity)", "Infinity");
 shouldBe("Math.abs(-Infinity)", "Infinity");
 
 shouldBe("Math.acos(NaN)", "NaN");
-shouldBe("Math.acos(+0)", "1.5707963267948966");
-shouldBe("Math.acos(-0)", "1.5707963267948966");
+shouldBe("Math.acos(-0)", "Math.acos(+0)");
 shouldBe("addSignToZero(Math.acos(1))", "'+0'");
-shouldBe("Math.acos(-1)", "3.141592653589793");
 shouldBe("Math.acos(1.1)", "NaN");
 shouldBe("Math.acos(-1.1)", "NaN");
 shouldBe("Math.acos(Infinity)", "NaN");
@@ -49,8 +38,7 @@ shouldBe("Math.acos(-Infinity)", "NaN");
 shouldBe("Math.asin(NaN)", "NaN");
 shouldBe("addSignToZero(Math.asin(+0))", "'+0'");
 shouldBe("addSignToZero(Math.asin(-0))", "'-0'");
-shouldBe("Math.asin(1)", "1.5707963267948966");
-shouldBe("Math.asin(-1)", "-1.5707963267948966");
+shouldBe("Math.asin(1)", "-Math.asin(-1)");
 shouldBe("Math.asin(1.1)", "NaN");
 shouldBe("Math.asin(-1.1)", "NaN");
 shouldBe("Math.asin(Infinity)", "NaN");
@@ -59,12 +47,7 @@ shouldBe("Math.asin(-Infinity)", "NaN");
 shouldBe("Math.atan(NaN)", "NaN");
 shouldBe("addSignToZero(Math.atan(+0))", "'+0'");
 shouldBe("addSignToZero(Math.atan(-0))", "'-0'");
-shouldBe("Math.atan(1)", "0.7853981633974483");
-shouldBe("Math.atan(-1)", "-0.7853981633974483");
-shouldBe("Math.atan(1.1)", "0.8329812666744316");
-shouldBe("Math.atan(-1.1)", "-0.8329812666744316");
-shouldBe("Math.atan(Infinity)", "1.5707963267948966");
-shouldBe("Math.atan(-Infinity)", "-1.5707963267948966");
+shouldBe("Math.atan(Infinity)", "-Math.atan(-Infinity)");
 
 shouldBe("Math.atan2(NaN, NaN)", "NaN");
 shouldBe("Math.atan2(NaN, +0)", "NaN");
@@ -121,18 +104,12 @@ shouldBe("Math.ceil(-Infinity)", "-Infinity");
 shouldBe("Math.cos(NaN)", "NaN");
 shouldBe("Math.cos(+0)", "1");
 shouldBe("Math.cos(-0)", "1");
-shouldBe("Math.cos(1)", "0.5403023058681398");
-shouldBe("Math.cos(-1)", "0.5403023058681398");
 shouldBe("Math.cos(Infinity)", "NaN");
 shouldBe("Math.cos(-Infinity)", "NaN");
 
 shouldBe("Math.exp(NaN)", "NaN");
 shouldBe("Math.exp(+0)", "1");
 shouldBe("Math.exp(-0)", "1");
-shouldBe("Math.exp(1)", "2.718281828459045");
-shouldBe("Math.exp(-1)", "0.36787944117144233");
-shouldBe("Math.exp(1.1)", "3.0041660239464334");
-shouldBe("Math.exp(-1.1)", "0.33287108369807955");
 shouldBe("Math.exp(Infinity)", "Infinity");
 shouldBe("addSignToZero(Math.exp(-Infinity))", "'+0'");
 
@@ -156,7 +133,6 @@ shouldBe("Math.log(+0)", "-Infinity");
 shouldBe("Math.log(-0)", "-Infinity");
 shouldBe("addSignToZero(Math.log(1))", "'+0'");
 shouldBe("Math.log(-1)", "NaN");
-shouldBe("Math.log(1.1)", "0.09531017980432493");
 shouldBe("Math.log(-1.1)", "NaN");
 shouldBe("Math.log(Infinity)", "Infinity");
 shouldBe("Math.log(-Infinity)", "NaN");
@@ -232,8 +208,6 @@ shouldBe("Math.round(-Infinity)", "-Infinity");
 shouldBe("Math.sin(NaN)", "NaN");
 shouldBe("addSignToZero(Math.sin(+0))", "'+0'");
 shouldBe("addSignToZero(Math.sin(-0))", "'-0'");
-shouldBe("Math.sin(1)", "0.8414709848078965");
-shouldBe("Math.sin(-1)", "-0.8414709848078965");
 shouldBe("Math.sin(Infinity)", "NaN");
 shouldBe("Math.sin(-Infinity)", "NaN");
 
@@ -248,8 +222,6 @@ shouldBe("Math.sqrt(-Infinity)", "NaN");
 shouldBe("Math.tan(NaN)", "NaN");
 shouldBe("addSignToZero(Math.tan(+0))", "'+0'");
 shouldBe("addSignToZero(Math.tan(-0))", "'-0'");
-shouldBe("Math.tan(1)", "1.5574077246549023");
-shouldBe("Math.tan(-1)", "-1.5574077246549023");
 shouldBe("Math.tan(Infinity)", "NaN");
 shouldBe("Math.tan(-Infinity)", "NaN");
 

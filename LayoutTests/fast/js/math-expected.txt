@@ -3,14 +3,6 @@ This test checks the behavior of the Math object as described in 15.8 of the lan
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Math.E is 2.718281828459045
-PASS Math.LN10 is 2.302585092994046
-PASS Math.LN2 is 0.6931471805599453
-PASS Math.LOG2E is 1.4426950408889634
-PASS Math.LOG10E is 0.43429448190325176
-PASS Math.PI is 3.141592653589793
-PASS Math.SQRT1_2 is 0.7071067811865476
-PASS Math.SQRT2 is 1.4142135623730951
 PASS Math.abs(NaN) is NaN
 PASS addSignToZero(Math.abs(+0)) is '+0'
 PASS addSignToZero(Math.abs(-0)) is '+0'
@@ -23,10 +15,8 @@ PASS Math.abs(-Number.MAX_VALUE) is Number.MAX_VALUE
 PASS Math.abs(Infinity) is Infinity
 PASS Math.abs(-Infinity) is Infinity
 PASS Math.acos(NaN) is NaN
-PASS Math.acos(+0) is 1.5707963267948966
-PASS Math.acos(-0) is 1.5707963267948966
+PASS Math.acos(-0) is Math.acos(+0)
 PASS addSignToZero(Math.acos(1)) is '+0'
-PASS Math.acos(-1) is 3.141592653589793
 PASS Math.acos(1.1) is NaN
 PASS Math.acos(-1.1) is NaN
 PASS Math.acos(Infinity) is NaN
@@ -34,8 +24,7 @@ PASS Math.acos(-Infinity) is NaN
 PASS Math.asin(NaN) is NaN
 PASS addSignToZero(Math.asin(+0)) is '+0'
 PASS addSignToZero(Math.asin(-0)) is '-0'
-PASS Math.asin(1) is 1.5707963267948966
-PASS Math.asin(-1) is -1.5707963267948966
+PASS Math.asin(1) is -Math.asin(-1)
 PASS Math.asin(1.1) is NaN
 PASS Math.asin(-1.1) is NaN
 PASS Math.asin(Infinity) is NaN
@@ -43,12 +32,7 @@ PASS Math.asin(-Infinity) is NaN
 PASS Math.atan(NaN) is NaN
 PASS addSignToZero(Math.atan(+0)) is '+0'
 PASS addSignToZero(Math.atan(-0)) is '-0'
-PASS Math.atan(1) is 0.7853981633974483
-PASS Math.atan(-1) is -0.7853981633974483
-PASS Math.atan(1.1) is 0.8329812666744316
-PASS Math.atan(-1.1) is -0.8329812666744316
-PASS Math.atan(Infinity) is 1.5707963267948966
-PASS Math.atan(-Infinity) is -1.5707963267948966
+PASS Math.atan(Infinity) is -Math.atan(-Infinity)
 PASS Math.atan2(NaN, NaN) is NaN
 PASS Math.atan2(NaN, +0) is NaN
 PASS Math.atan2(NaN, -0) is NaN
@@ -77,17 +61,11 @@ PASS Math.ceil(-Infinity) is -Infinity
 PASS Math.cos(NaN) is NaN
 PASS Math.cos(+0) is 1
 PASS Math.cos(-0) is 1
-PASS Math.cos(1) is 0.5403023058681398
-PASS Math.cos(-1) is 0.5403023058681398
 PASS Math.cos(Infinity) is NaN
 PASS Math.cos(-Infinity) is NaN
 PASS Math.exp(NaN) is NaN
 PASS Math.exp(+0) is 1
 PASS Math.exp(-0) is 1
-PASS Math.exp(1) is 2.718281828459045
-PASS Math.exp(-1) is 0.36787944117144233
-PASS Math.exp(1.1) is 3.0041660239464334
-PASS Math.exp(-1.1) is 0.33287108369807955
 PASS Math.exp(Infinity) is Infinity
 PASS addSignToZero(Math.exp(-Infinity)) is '+0'
 PASS Math.floor(NaN) is NaN
@@ -109,7 +87,6 @@ PASS Math.log(+0) is -Infinity
 PASS Math.log(-0) is -Infinity
 PASS addSignToZero(Math.log(1)) is '+0'
 PASS Math.log(-1) is NaN
-PASS Math.log(1.1) is 0.09531017980432493
 PASS Math.log(-1.1) is NaN
 PASS Math.log(Infinity) is Infinity
 PASS Math.log(-Infinity) is NaN
@@ -158,8 +135,6 @@ PASS Math.round(-Infinity) is -Infinity
 PASS Math.sin(NaN) is NaN
 PASS addSignToZero(Math.sin(+0)) is '+0'
 PASS addSignToZero(Math.sin(-0)) is '-0'
-PASS Math.sin(1) is 0.8414709848078965
-PASS Math.sin(-1) is -0.8414709848078965
 PASS Math.sin(Infinity) is NaN
 PASS Math.sin(-Infinity) is NaN
 PASS Math.sqrt(NaN) is NaN
@@ -172,8 +147,6 @@ PASS Math.sqrt(-Infinity) is NaN
 PASS Math.tan(NaN) is NaN
 PASS addSignToZero(Math.tan(+0)) is '+0'
 PASS addSignToZero(Math.tan(-0)) is '-0'
-PASS Math.tan(1) is 1.5574077246549023
-PASS Math.tan(-1) is -1.5574077246549023
 PASS Math.tan(Infinity) is NaN
 PASS Math.tan(-Infinity) is NaN
 PASS successfullyParsed is true
