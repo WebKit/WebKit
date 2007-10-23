@@ -1,3 +1,26 @@
+2007-10-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://5548217>: [NTS] Java 6 update 3 crashes Safari when loading a 
+        java page
+
+        It is possible to load Mozilla's Java plugin instead of our own, which
+        can lead to a crash. The fix is to prefer plugins in our own Plugins
+        directory when searching for a plugin.
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::safariPluginsPath): Return the path to our own Plugins
+        directory
+        (WebCore::PluginDatabaseWin::defaultPluginPaths): Use new method
+        safariPluginsPath()
+        (WebCore::PluginDatabaseWin::pluginForMIMEType): If the plugin's path is
+        our Plugins path, return this plugin. Otherwise, continue scanning the
+        list of plugins
+        (WebCore::PluginDatabaseWin::pluginForExtension): Same
+        * plugins/win/PluginPackageWin.h:
+        (WebCore::PluginPackageWin::path): Return this plugin's path
+
 2007-10-23  Jasper Bryant-Greene  <m@ni.ac.nz>
 
         Reviewed by Darin.

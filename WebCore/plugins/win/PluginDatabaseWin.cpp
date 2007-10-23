@@ -379,24 +379,23 @@ static inline void addAdobeAcrobatPluginPath(Vector<String>& paths)
     RegCloseKey(key);
 }
 
-static inline void addPluginPath(Vector<String>& paths)
+static inline String safariPluginsPath()
 {
     WCHAR moduleFileNameStr[_MAX_PATH];
 
     int moduleFileNameLen = GetModuleFileName(0, moduleFileNameStr, _MAX_PATH);
 
     if (!moduleFileNameLen)
-        return;
+        return String();
 
     String moduleFileName = String(moduleFileNameStr, moduleFileNameLen);
     int i = moduleFileName.reverseFind('\\');
     if (i == -1)
-        return;
+        return String();
 
     String pluginsPath = moduleFileName.left(i);
     pluginsPath.append("\\Plugins");
-
-    paths.append(pluginsPath);
+    return pluginsPath;
 }
 
 static inline void addFlashPluginPath(Vector<String>& paths)
@@ -416,8 +415,10 @@ static inline void addFlashPluginPath(Vector<String>& paths)
 Vector<String> PluginDatabaseWin::defaultPluginPaths()
 {
     Vector<String> paths;
+    String ourPath = safariPluginsPath();
 
-    addPluginPath(paths);
+    if (!ourPath.isNull())
+        paths.append(ourPath);
     addQuickTimePluginPath(paths);
     addAdobeAcrobatPluginPath(paths);
     addMozillaPluginPaths(paths);
@@ -435,19 +436,28 @@ bool PluginDatabaseWin::isMIMETypeRegistered(const String& mimeType) const
 PluginPackageWin* PluginDatabaseWin::pluginForMIMEType(const String& mimeType)
 {
     String key = mimeType.lower();
+    String ourPath = safariPluginsPath();
+    PluginPackageWin* plugin = 0;
 
     PluginSet::const_iterator end = m_plugins.end();
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
-        if ((*it)->mimeToDescriptions().contains(key))
-            return (*it).get();
+        if ((*it)->mimeToDescriptions().contains(key)) {
+            plugin = (*it).get();
+            // prefer plugins in our own plugins directory
+            if (plugin->path() == ourPath)
+                break;
+        }
     }
 
-    return 0;
+    return plugin;
 }
 
 PluginPackageWin* PluginDatabaseWin::pluginForExtension(const String& extension)
 {
     PluginSet::const_iterator end = m_plugins.end();
+    String ourPath = safariPluginsPath();
+    PluginPackageWin* plugin = 0;
+
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
         MIMEToExtensionsMap::const_iterator mime_end = (*it)->mimeToExtensions().end();
 
@@ -455,13 +465,17 @@ PluginPackageWin* PluginDatabaseWin::pluginForExtension(const String& extension)
             const Vector<String>& extensions = mime_it->second;
 
             for (unsigned i = 0; i < extensions.size(); i++) {
-                if (extensions[i] == extension)
-                    return (*it).get();
+                if (extensions[i] == extension) {
+                    plugin = (*it).get();
+                    // prefer plugins in our own plugins directory
+                    if (plugin->path() == ourPath)
+                        break;
+                }
             }
         }
     }
 
-    return 0;
+    return plugin;
 }
 
 PluginPackageWin* PluginDatabaseWin::findPlugin(const KURL& url, const String& mimeType)
