@@ -1,3 +1,33 @@
+2007-10-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - After talking with Steve I now see that the WebKit server must be
+        running for DCOM to create the distributed objects, which makes sense
+        and currently WebKit only allows one instance to be running at a time
+        which avoids accidentally connecting to the wrong server
+        - In light of this I have removed the code for the attach box and
+        NotificationServer and known server names, since they are all extranious
+        now.
+
+        * Drosera/win/Drosera.cpp: Removed notification classes and known server
+        names.
+        (_tWinMain): Uses init instead of initUI.
+        (droseraWndProc): No longer creats an attach dialog box.
+        (Drosera::Drosera): Does the OleInitialize so COM is ready to go and
+        it's not manditory to call init before doing COM stuff.
+        (Drosera::init): calls initUI and will call attach when the
+        functionality exists. 
+        (Drosera::initUI): Has changed very little.
+        (Drosera::attach): Changed the signature to reflect that we no longer
+        need the dictionary of known server names.
+        * Drosera/win/Drosera.h: Removed notification classes and known server
+        names.  Also renamed and moved some functions.
+        * Drosera/win/Drosera.vcproj/Drosera.rc: Removed the Attach box.
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Moved resource.h from the
+        headers to the resources folder. 
+        * Drosera/win/resource.h: Removed the Attach box.
+
 2007-10-22  Adam Roben  <aroben@apple.com>
 
         Windows build fix

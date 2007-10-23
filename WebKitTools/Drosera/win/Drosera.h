@@ -40,34 +40,30 @@
 
 class DebuggerClient;
 
-typedef HashMap<unsigned, std::wstring> ServerDictionary;
-
 class Drosera {
 public:
+    Drosera();
+
     static HINSTANCE getInst();
     static void setInst(HINSTANCE);
 
-    Drosera();
-    HRESULT initUI(HINSTANCE hInstance, int nCmdShow);
+    HRESULT init(HINSTANCE hInstance, int nCmdShow);
     LRESULT onSize(WPARAM, LPARAM);
 
+    HRESULT attach(const std::wstring& serverName);
+
     bool webViewLoaded() const;
-    void applicationDidFinishLaunching();
-
-    void serverLoaded();
-    void serverUnloaded();
-    HRESULT attach(int sender);
-
-    ServerDictionary* knownServers() const { return m_knownServerNames.get(); }
 
 private:
+    HRESULT initUI(HINSTANCE hInstance, int nCmdShow);
+    HRESULT initServer();
+
     HWND m_hWnd;
 
     COMPtr<IWebView> m_webView;
     COMPtr<IWebViewPrivate> m_webViewPrivate;
 
     OwnPtr<DebuggerClient> m_debuggerClient;
-    OwnPtr<ServerDictionary> m_knownServerNames;
 };
 
 #endif //Drosera_H

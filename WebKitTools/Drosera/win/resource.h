@@ -8,8 +8,6 @@
 #define IDI_DROSERA                     107
 #define IDI_SMALL                       108
 #define IDC_DROSERA                     109
-#define IDD_ATTACH                      129
-#define IDAttach                        1000
 #define IDC_LIST1                       1001
 #define ID_DEBUG_SHOWCONSOLE            32771
 #define ID_DEBUG_CONTINUE               32772
@@ -29,7 +27,6 @@
 #define ID_FIND_USESELECTIONFORFIND     32787
 #define ID_FIND_JUMPTOSELECTION         32788
 #define ID_EDIT_SPECIALCHARACTERS       32789
-#define ID_FILE_ATTACH                  32790
 #define ID_FILE_EXIT                    32791
 #define ID_WINDOW                       32793
 #define ID_HELP_ABOUT                   32794

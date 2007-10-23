@@ -291,10 +291,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\resource.h"
-				>
-			</File>
-			<File
 				RelativePath="..\ServerConnection.h"
 				>
 			</File>
@@ -327,6 +323,10 @@
 						AdditionalIncludeDirectories="&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\..\Images&quot;"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\resource.h"
+				>
 			</File>
 			<File
 				RelativePath="..\..\Images\small.ico"
