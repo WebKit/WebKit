@@ -111,16 +111,26 @@ JSObject *NumberImp::toObject(ExecState *exec) const
   return static_cast<JSObject *>(exec->lexicalInterpreter()->builtinNumber()->construct(exec,args));
 }
 
-bool NumberImp::getInt32(int32_t& int32) const
-{
-    int32 = static_cast<int32_t>(val);
-    return int32 == val;
-}
-
 bool NumberImp::getUInt32(uint32_t& uint32) const
 {
     uint32 = static_cast<uint32_t>(val);
     return uint32 == val;
+}
+
+bool NumberImp::getTruncatedInt32(int32_t& int32) const
+{
+    if (!(val >= -2147483648.0 && val < 2147483648.0))
+        return false;
+    int32 = static_cast<int32_t>(val);
+    return true;
+}
+
+bool NumberImp::getTruncatedUInt32(uint32_t& uint32) const
+{
+    if (!(val >= 0.0 && val < 4294967296.0))
+        return false;
+    uint32 = static_cast<uint32_t>(val);
+    return true;
 }
 
 // --------------------------- GetterSetterImp ---------------------------------

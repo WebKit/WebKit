@@ -40,12 +40,17 @@ void *JSCell::operator new(size_t size)
     return Collector::allocate(size);
 }
 
-bool JSCell::getInt32(int32_t&) const
+bool JSCell::getUInt32(uint32_t&) const
 {
     return false;
 }
 
-bool JSCell::getUInt32(uint32_t&) const
+bool JSCell::getTruncatedInt32(int32_t&) const
+{
+    return false;
+}
+
+bool JSCell::getTruncatedUInt32(uint32_t&) const
 {
     return false;
 }
@@ -53,8 +58,8 @@ bool JSCell::getUInt32(uint32_t&) const
 // ECMA 9.4
 double JSValue::toInteger(ExecState *exec) const
 {
-    uint32_t i;
-    if (getUInt32(i))
+    int32_t i;
+    if (getTruncatedInt32(i))
         return i;
     return roundValue(exec, const_cast<JSValue*>(this));
 }
@@ -62,10 +67,6 @@ double JSValue::toInteger(ExecState *exec) const
 int32_t JSValue::toInt32SlowCase(ExecState* exec, bool& ok) const
 {
     ok = true;
-
-    int32_t i;
-    if (getInt32(i))
-        return i;
 
     double d = roundValue(exec, const_cast<JSValue*>(this));
     if (d >= -D32 / 2 && d < D32 / 2)
@@ -89,10 +90,6 @@ uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
 {
     ok = true;
 
-    uint32_t i;
-    if (getUInt32(i))
-        return i;
-
     double d = roundValue(exec, const_cast<JSValue*>(this));
     if (d >= 0.0 && d < D32)
         return static_cast<uint32_t>(d);
@@ -112,7 +109,7 @@ uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
 uint16_t JSValue::toUInt16(ExecState *exec) const
 {
     uint32_t i;
-    if (getUInt32(i))
+    if (getTruncatedUInt32(i))
         return static_cast<uint16_t>(i);
 
     double d = roundValue(exec, const_cast<JSValue*>(this));

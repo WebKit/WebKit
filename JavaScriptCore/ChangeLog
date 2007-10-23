@@ -1,5 +1,44 @@
 2007-10-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15636
+          some JavaScriptCore regression tests are failing due to numeric conversion
+
+        This should restore correctness and make speed better too, restoring some
+        of the optimization we lost in my last check-in.
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::getTruncatedInt32): Added. Uses the range checking idiom
+        I used in my patch yesterday.
+        (KJS::JSImmediate::getTruncatedUInt32): Ditto.
+
+        * kjs/internal.h: Removed getInt32 and added getTruncatedInt/UInt32.
+        * kjs/internal.cpp:
+        (KJS::NumberImp::getUInt32): Changed to always use double, since I can't find
+        a way to write this more efficiently for float.
+        (KJS::NumberImp::getTruncatedInt32): Added.
+        (KJS::NumberImp::getTruncatedUInt32): Added.
+
+        * kjs/value.h: Removed getInt32 and added getTruncatedInt/UInt32.
+        (KJS::JSValue::getUInt32):
+        (KJS::JSValue::getTruncatedInt32): Added.
+        (KJS::JSValue::getTruncatedUInt32): Added.
+        (KJS::JSValue::toInt32): Changed getInt32 call to getTruncatedInt32.
+        (KJS::JSValue::toUInt32): Changed getUInt32 call to getTruncatedUInt32.
+        * kjs/value.cpp:
+        (KJS::JSCell::getTruncatedInt32): Added.
+        (KJS::JSCell::getTruncatedUInt32): Added.
+        (KJS::JSValue::toInteger): Changed getUInt32 call to getTruncatedInt32.
+        (KJS::JSValue::toInt32SlowCase): Removed extra getInt32 call I accidentally
+        had left in here.
+        (KJS::JSValue::toUInt32SlowCase): Ditto.
+        (KJS::JSValue::toUInt16): Changed getUInt32 call to getTruncatedUInt32.
+
+        * JavaScriptCore.exp: Updated.
+
+2007-10-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=15632
