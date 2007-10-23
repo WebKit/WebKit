@@ -271,8 +271,13 @@ WebInspector.ResourcePanel.prototype = {
             this.views.dom.contentElement.sideContentElement.appendChild(this.views.dom.contentElement.crumbsElement);
             this.views.dom.contentElement.treeContentElement.appendChild(this.views.dom.contentElement.treeListElement);
 
+            this.views.dom.contentElement.resizeArea = document.createElement("div");
+            this.views.dom.contentElement.resizeArea.className = "sidebarResizeArea";
+            this.views.dom.contentElement.resizeArea.addEventListener("mousedown", function(event) { panel.rightSidebarResizerDragStart(event) }, false);
+
             this.views.dom.contentElement.appendChild(this.views.dom.contentElement.sideContentElement);
             this.views.dom.contentElement.appendChild(this.views.dom.contentElement.sidebarElement);
+            this.views.dom.contentElement.appendChild(this.views.dom.contentElement.resizeArea);
 
             this.rootDOMNode = this.resource.documentNode;
         } else if (this.resource.category === WebInspector.resourceCategories.images) {
@@ -997,6 +1002,37 @@ WebInspector.ResourcePanel.prototype = {
     {
         if (this.domTreeOutline && this.currentView && this.currentView === this.views.dom)
             this.domTreeOutline.handleKeyEvent(event);
+    },
+
+    rightSidebarResizerDragStart: function(event)
+    {
+        var panel = this; 
+        WebInspector.dividerDragStart(this.views.dom.contentElement.sidebarElement, function(event) { panel.rightSidebarResizerDrag(event) }, function(event) { panel.rightSidebarResizerDragEnd(event) }, event, "col-resize");
+    },
+
+    rightSidebarResizerDragEnd: function(event)
+    {
+        var panel = this;
+        WebInspector.dividerDragEnd(this.views.dom.contentElement.sidebarElement, function(event) { panel.rightSidebarResizerDrag(event) }, function(event) { panel.rightSidebarResizerDragEnd(event) }, event);
+    },
+
+    rightSidebarResizerDrag: function(event)
+    {
+        var rightSidebar = this.views.dom.contentElement.sidebarElement;
+        if (rightSidebar.dragging == true) {
+            var x = event.clientX + window.scrollX;
+
+            var leftSidebarWidth = document.defaultView.getComputedStyle(document.getElementById("sidebar")).getPropertyCSSValue("width").getFloatValue(CSSPrimitiveValue.CSS_PX);
+            var newWidth = Number.constrain(window.innerWidth - x, 100, window.innerWidth - leftSidebarWidth - 100);
+
+            if (x == newWidth)
+                rightSidebar.dragLastX = x;
+
+            rightSidebar.style.width = newWidth + "px";
+            this.views.dom.contentElement.sideContentElement.style.right = newWidth + "px";
+            this.views.dom.contentElement.resizeArea.style.right = (newWidth - 3) + "px";
+            event.preventDefault();
+        }
     }
 }
 

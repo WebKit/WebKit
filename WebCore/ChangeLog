@@ -1,3 +1,14 @@
+2007-10-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Add resizing of the DOM view right sidebar.  This allows us to actually see the values now.
+
+        * page/inspector/ResourcePanel.js:
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.js:
+        * page/inspector/utilities.js:
+
 2007-10-23  David Hyatt  <hyatt@apple.com>
 
         Get basic hit testing right for transforms.

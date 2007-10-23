@@ -592,6 +592,15 @@ Number.bytesToString = function(bytes)
     return (Math.round(megabytes * 1000) / 1000) + "MB";
 }
 
+Number.constrain = function(num, min, max)
+{
+    if (num < min)
+        num = min;
+    else if (num > max)
+        num = max;
+    return num;
+}
+
 HTMLTextAreaElement.prototype.moveCursorToEnd = function()
 {
     var length = this.value.length;

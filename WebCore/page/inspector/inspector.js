@@ -453,7 +453,10 @@ WebInspector.sidebarResizerDrag = function(event)
         var buttonContainer = document.getElementById("viewbuttons");
 
         var x = event.clientX + window.scrollX;
-        var newWidth = WebInspector.constrainedWidthOfSidebar(x);
+
+        // FIXME: We can should come up with a better hueristic for constraining the size
+        // of the sidebar.
+        var newWidth = Number.constrain(x, 100, window.innerWidth - 100);
 
         if (x == newWidth)
             sidebar.dragLastX = x;
@@ -482,23 +485,6 @@ WebInspector.dividerDragEnd = function(element, dividerDrag, dividerDragEnd, eve
     document.removeEventListener("mousemove", dividerDrag, true);
     document.removeEventListener("mouseup", dividerDragEnd, true);
     document.body.style.removeProperty("cursor");
-}
-
-WebInspector.constrainedWidthOfSidebar = function(width, minWidth, maxWidth) 
-{
-    // FIXME: We can should come up with a better hueristic for constraining the size
-    // of the sidebar.
-    if (typeof minWidth == "undefined")
-        minWidth = 100;
-    if (typeof maxWidth == "undefined")
-        maxWidth = window.innerWidth - 100;
-
-    if (width < minWidth)
-        width = minWidth;
-    else if (width > maxWidth)
-        width = maxWidth;
-
-    return width;
 }
 
 WebInspector.back = function()

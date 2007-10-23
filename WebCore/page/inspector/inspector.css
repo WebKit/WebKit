@@ -1924,3 +1924,13 @@ body.inactive #sidebar li.selected {
     margin-top: -10px;
     margin-bottom: -35px;
 }
+
+.sidebarResizeArea {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 222px;
+    width: 5px;
+    z-index: 100;
+    cursor: col-resize;
+}
