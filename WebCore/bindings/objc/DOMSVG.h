@@ -49,6 +49,7 @@
 #import <WebCore/DOMSVGColor.h>
 #import <WebCore/DOMSVGComponentTransferFunctionElement.h>
 #import <WebCore/DOMSVGCursorElement.h>
+#import <WebCore/DOMSVGDefinitionSrcElement.h>
 #import <WebCore/DOMSVGDefsElement.h>
 #import <WebCore/DOMSVGDescElement.h>
 #import <WebCore/DOMSVGDocument.h>
@@ -83,6 +84,11 @@
 #import <WebCore/DOMSVGFilterElement.h>
 #import <WebCore/DOMSVGFilterPrimitiveStandardAttributes.h>
 #import <WebCore/DOMSVGFitToViewBox.h>
+#import <WebCore/DOMSVGFontFaceElement.h>
+#import <WebCore/DOMSVGFontFaceFormatElement.h>
+#import <WebCore/DOMSVGFontFaceNameElement.h>
+#import <WebCore/DOMSVGFontFaceSrcElement.h>
+#import <WebCore/DOMSVGFontFaceUriElement.h>
 #import <WebCore/DOMSVGForeignObjectElement.h>
 #import <WebCore/DOMSVGGElement.h>
 #import <WebCore/DOMSVGGradientElement.h>

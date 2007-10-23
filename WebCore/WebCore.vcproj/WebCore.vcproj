@@ -1461,6 +1461,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGDefinitionSrcElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGDefinitionSrcElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGDefsElement.cpp"
 				>
 			</File>
@@ -1706,6 +1714,46 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFilterElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceFormatElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceFormatElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceNameElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceNameElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceSrcElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceSrcElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceUriElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGFontFaceUriElement.h"
 				>
 			</File>
 			<File
@@ -7864,6 +7912,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\ksvg2\svg\SVGDefinitionSrcElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGDefinitionSrcElement.h"
+					>
+				</File>
+				<File
 					RelativePath="..\ksvg2\svg\SVGDefsElement.cpp"
 					>
 				</File>
@@ -8137,6 +8193,46 @@
 				</File>
 				<File
 					RelativePath="..\ksvg2\svg\SVGFitToViewBox.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceFormatElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceFormatElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceNameElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceNameElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceSrcElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceSrcElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceUriElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\ksvg2\svg\SVGFontFaceUriElement.h"
 					>
 				</File>
 				<File

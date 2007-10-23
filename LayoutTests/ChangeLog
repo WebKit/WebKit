@@ -1,5 +1,15 @@
 2007-10-22  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+        
+        Add tests to verify that font-face-* DOM bindings are exposed correctly.
+
+        * fast/js/resources/js-test-pre.js: add shouldBeNull and shouldBeEqualToString
+        * svg/dom/font-face-elements-expected.txt: Added.
+        * svg/dom/font-face-elements.html: Added.
+
+2007-10-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by hyatt.
         
         Implement <font-face> and friends

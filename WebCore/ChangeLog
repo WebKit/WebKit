@@ -1,3 +1,18 @@
+2007-10-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix build by properly exposing SVG font-face dom bindings.
+
+        * DerivedSources.make:
+        * WebCore.vcproj/WebCore.vcproj: add font-face files to build
+        * WebCore.xcodeproj/project.pbxproj: add missing DOM bindings files
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * bindings/objc/DOMSVG.h:
+        * ksvg2/svg/SVGDefinitionSrcElement.idl: inherit from SVGElement
+
 2007-10-22  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.

@@ -30,6 +30,7 @@
 #include "JSSVGClipPathElement.h"
 #include "JSSVGCursorElement.h"
 #include "JSSVGDefsElement.h"
+#include "JSSVGDefinitionSrcElement.h"
 #include "JSSVGDescElement.h"
 #include "JSSVGEllipseElement.h"
 #include "JSSVGFEBlendElement.h"
@@ -99,6 +100,7 @@
 #include "SVGClipPathElement.h"
 #include "SVGCursorElement.h"
 #include "SVGDefsElement.h"
+#include "SVGDefinitionSrcElement.h"
 #include "SVGDescElement.h"
 #include "SVGEllipseElement.h"
 #include "SVGFEBlendElement.h"
@@ -177,6 +179,7 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(circle, Circle) \
     macro(clipPath, ClipPath) \
     macro(cursor, Cursor) \
+    macro(definition_src, DefinitionSrc) \
     macro(defs, Defs) \
     macro(desc, Desc) \
     macro(ellipse, Ellipse) \

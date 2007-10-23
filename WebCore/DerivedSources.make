@@ -173,6 +173,7 @@ all : \
     DOMSVGColor.h \
     DOMSVGComponentTransferFunctionElement.h \
     DOMSVGCursorElement.h \
+    DOMSVGDefinitionSrcElement.h \
     DOMSVGDefsElement.h \
     DOMSVGDescElement.h \
     DOMSVGDocument.h \
@@ -446,6 +447,7 @@ all : \
     JSSVGComponentTransferFunctionElement.h \
     JSSVGCursorElement.h \
     JSSVGDefsElement.h \
+    JSSVGDefinitionSrcElement.h \
     JSSVGDescElement.h \
     JSSVGDocument.h \
     JSSVGException.h \

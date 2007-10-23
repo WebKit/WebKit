@@ -82,6 +82,13 @@ function shouldBe(_a, _b)
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
 function shouldBeFalse(_a) { shouldBe(_a, "false"); }
 function shouldBeNaN(_a) { shouldBe(_a, "NaN"); }
+function shouldBeNull(_a) { shouldBe(_a, "null"); }
+
+function shouldBeEqualToString(a, b)
+{
+  var unevaledString = '"' + b.replace(/"/g, "\"") + '"';
+  shouldBe(a, unevaledString);
+}
 
 function shouldBeUndefined(_a)
 {

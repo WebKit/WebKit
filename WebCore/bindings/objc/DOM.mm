@@ -71,6 +71,7 @@
 #import "SVGDocument.h"
 #import "SVGElement.h"
 #import "SVGNames.h"
+#import "DOMSVG.h"
 #endif
 
 namespace WebCore {
@@ -195,6 +196,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::circleTag, [DOMSVGCircleElement class]);
     addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
     addElementClass(SVGNames::cursorTag, [DOMSVGCursorElement class]);
+    addElementClass(SVGNames::definition_srcTag, [DOMSVGDefinitionSrcElement class]);
     addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
     addElementClass(SVGNames::descTag, [DOMSVGDescElement class]);
     addElementClass(SVGNames::ellipseTag, [DOMSVGEllipseElement class]);
@@ -223,7 +225,11 @@ static void createElementClassMap()
     addElementClass(SVGNames::feTurbulenceTag, [DOMSVGFETurbulenceElement class]);
     addElementClass(SVGNames::filterTag, [DOMSVGFilterElement class]);
 #endif
-    addElementClass(SVGNames::foreignObjectTag, [DOMSVGForeignObjectElement class]);
+    addElementClass(SVGNames::font_faceTag, [DOMSVGFontFaceElement class]);
+    addElementClass(SVGNames::font_face_formatTag, [DOMSVGFontFaceFormatElement class]);
+    addElementClass(SVGNames::font_face_nameTag, [DOMSVGFontFaceNameElement class]);
+    addElementClass(SVGNames::font_face_srcTag, [DOMSVGFontFaceSrcElement class]);
+    addElementClass(SVGNames::font_face_uriTag, [DOMSVGFontFaceUriElement class]);
     addElementClass(SVGNames::gTag, [DOMSVGGElement class]);
     addElementClass(SVGNames::imageTag, [DOMSVGImageElement class]);
     addElementClass(SVGNames::lineTag, [DOMSVGLineElement class]);

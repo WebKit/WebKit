@@ -1,3 +1,9 @@
+2007-10-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        * MigrateHeaders.make: copy over font-face related DOM headers
+
 2007-10-22  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe.
