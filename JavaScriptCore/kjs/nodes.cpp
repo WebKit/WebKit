@@ -1,5 +1,4 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
@@ -25,44 +24,29 @@
 #include "config.h"
 #include "nodes.h"
 
-#include <math.h>
-#ifdef KJS_DEBUG_MEM
-#include <stdio.h>
-#include <typeinfo>
-#endif
-
+#include "PropertyNameArray.h"
 #include "context.h"
 #include "debugger.h"
 #include "function_object.h"
 #include "lexer.h"
 #include "operations.h"
-#include "PropertyNameArray.h"
+#include <math.h>
 #include <wtf/Assertions.h>
-#include <wtf/HashSet.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
 
-using namespace KJS;
+namespace KJS {
 
 #define KJS_BREAKPOINT \
   if (Debugger::debuggersPresent > 0 && !hitStatement(exec)) \
     return Completion(Normal);
 
-#define KJS_ABORTPOINT \
-  if (Debugger::debuggersPresent > 0 && \
-      exec->dynamicInterpreter()->imp()->debugger() && \
-      exec->dynamicInterpreter()->imp()->debugger()->imp()->aborted()) \
-    return Completion(Normal);
-
 #define KJS_CHECKEXCEPTION \
-  if (exec->hadException()) { \
-    JSValue *ex = exec->exception(); \
-    exec->clearException(); \
-    handleException(exec, ex); \
-    return Completion(Throw, ex); \
-  } \
+  if (exec->hadException()) \
+    return rethrowException(exec); \
   if (Collector::isOutOfMemory()) \
-    return Completion(Throw, Error::create(exec, GeneralError, "Out of memory"));
+    return createOutOfMemoryCompletion(exec);
 
 #define KJS_CHECKEXCEPTIONVALUE \
   if (exec->hadException()) { \
@@ -79,6 +63,11 @@ using namespace KJS;
   } \
   if (Collector::isOutOfMemory()) \
     return List(); // will be picked up by KJS_CHECKEXCEPTION
+
+static Completion createOutOfMemoryCompletion(ExecState* exec)
+{
+    return Completion(Throw, Error::create(exec, GeneralError, "Out of memory"));
+}
 
 // ------------------------------ Node -----------------------------------------
 
@@ -192,7 +181,10 @@ static void substitute(UString &string, const UString &substring)
 {
     int position = string.find("%s");
     ASSERT(position != -1);
-    string = string.substr(0, position) + substring + string.substr(position + 2);
+    UString newString = string.substr(0, position);
+    newString.append(substring);
+    newString.append(string.substr(position + 2));
+    string = newString;
 }
 
 static inline int currentSourceId(ExecState* exec) KJS_FAST_CALL;
@@ -298,6 +290,14 @@ void Node::handleException(ExecState* exec, JSValue* exceptionValue)
         if (!cont)
             dbg->imp()->abort();
     }
+}
+
+Completion Node::rethrowException(ExecState* exec)
+{
+    JSValue* exception = exec->exception();
+    exec->clearException();
+    handleException(exec, exception);
+    return Completion(Throw, exception);
 }
 
 Node *Node::nodeInsideAllParens()
@@ -2614,4 +2614,6 @@ void SourceElementsNode::breakCycle()
 
 ProgramNode::ProgramNode(SourceElementsNode *s) : FunctionBodyNode(s)
 {
+}
+
 }

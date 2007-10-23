@@ -1,3 +1,17 @@
+2007-10-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - streamline exception handling code for a >1% speed-up of SunSpider
+
+        * kjs/nodes.cpp: Changed macros to use functions for everything that's not
+        part of normal execution. We'll take function call overhead when propagating
+        an exception or out of memory.
+        (KJS::createOutOfMemoryCompletion): Added.
+        (KJS::substitute): Use append instead of the relatively inefficient + operator.
+        (KJS::Node::rethrowException): Added.
+        * kjs/nodes.h: Added rethrowException.
+
 2007-10-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
