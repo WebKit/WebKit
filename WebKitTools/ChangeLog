@@ -1,3 +1,11 @@
+2007-10-22  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        Reviewed by NOBODY.
+
+        * Scripts/build-dumprendertree: Fix path to DumpRenderTree.sln.
+
 2007-10-22  Kevin McCullough  <kmccullough@apple.com>
 
         - Removed a leak that was fixed.
