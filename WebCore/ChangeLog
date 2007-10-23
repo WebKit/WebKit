@@ -1,3 +1,9 @@
+2007-10-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * plugins/win/PluginViewWin.cpp:
+
 2007-10-22  Eric Seidel  <eric@webkit.org>
 
         Build fix only, no review.
