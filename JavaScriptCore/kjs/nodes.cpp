@@ -1183,23 +1183,47 @@ JSValue *LogicalNotNode::evaluate(ExecState *exec)
   return jsBoolean(!v->toBoolean(exec));
 }
 
-// ------------------------------ MultNode -------------------------------------
+// ------------------------------ Multiplicative Nodes -----------------------------------
 
-// ECMA 11.5
+// ECMA 11.5.1
 JSValue *MultNode::evaluate(ExecState *exec)
 {
-  JSValue *v1 = term1->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-
-  JSValue *v2 = term2->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-
-  return mult(exec, v1, v2, oper);
+    JSValue *v1 = term1->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+        
+    JSValue *v2 = term2->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+        
+    return mult(exec, v1, v2, '*');
 }
 
-// ------------------------------ AddNode --------------------------------------
+// ECMA 11.5.2
+JSValue *DivNode::evaluate(ExecState *exec)
+{
+    JSValue *v1 = term1->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+        
+    JSValue *v2 = term2->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+        
+    return mult(exec, v1, v2, '/');
+}
 
-// ECMA 11.6
+// ECMA 11.5.3
+JSValue *ModNode::evaluate(ExecState *exec)
+{
+    JSValue *v1 = term1->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+        
+    JSValue *v2 = term2->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+        
+    return mult(exec, v1, v2, '%');
+}
+
+// ------------------------------ Additive Nodes --------------------------------------
+
+// ECMA 11.6.1
 JSValue *AddNode::evaluate(ExecState *exec)
 {
   JSValue *v1 = term1->evaluate(exec);
@@ -1208,13 +1232,26 @@ JSValue *AddNode::evaluate(ExecState *exec)
   JSValue *v2 = term2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  return add(exec, v1, v2, oper);
+  return add(exec, v1, v2, '+');
 }
 
-// ------------------------------ ShiftNode ------------------------------------
 
-// ECMA 11.7
-JSValue *ShiftNode::evaluate(ExecState *exec)
+// ECMA 11.6.2
+JSValue *SubNode::evaluate(ExecState *exec)
+{
+    JSValue *v1 = term1->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+        
+    JSValue *v2 = term2->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+        
+    return add(exec, v1, v2, '-');
+}
+
+// ------------------------------ Shift Nodes ------------------------------------
+
+// ECMA 11.7.1
+JSValue *LeftShiftNode::evaluate(ExecState *exec)
 {
   JSValue *v1 = term1->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
@@ -1223,70 +1260,130 @@ JSValue *ShiftNode::evaluate(ExecState *exec)
   unsigned int i2 = v2->toUInt32(exec);
   i2 &= 0x1f;
 
-  switch (oper) {
-  case OpLShift:
-    return jsNumber(v1->toInt32(exec) << i2);
-  case OpRShift:
-    return jsNumber(v1->toInt32(exec) >> i2);
-  case OpURShift:
-    return jsNumber(v1->toUInt32(exec) >> i2);
-  default:
-    ASSERT(!"ShiftNode: unhandled switch case");
-    return jsUndefined();
-  }
+  return jsNumber(v1->toInt32(exec) << i2);
 }
 
-// ------------------------------ RelationalNode -------------------------------
+// ECMA 11.7.2
+JSValue *RightShiftNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = term1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = term2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  unsigned int i2 = v2->toUInt32(exec);
+  i2 &= 0x1f;
 
-// ECMA 11.8
-JSValue *RelationalNode::evaluate(ExecState *exec)
+  return jsNumber(v1->toInt32(exec) >> i2);
+}
+
+// ECMA 11.7.3
+JSValue *UnsignedRightShiftNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = term1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = term2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  unsigned int i2 = v2->toUInt32(exec);
+  i2 &= 0x1f;
+
+  return jsNumber(v1->toUInt32(exec) >> i2);
+}
+
+// ------------------------------ Relational Nodes -------------------------------
+
+// ECMA 11.8.1
+JSValue *LessNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  int r = relation(exec, v1, v2);
+  if (r < 0)
+      return jsBoolean(false);
+  return jsBoolean(r == 1);
+}
+
+// ECMA 11.8.2
+JSValue *GreaterNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  int r = relation(exec, v2, v1);
+  if (r < 0)
+      return jsBoolean(false);
+  return jsBoolean(r == 1);
+}
+
+// ECMA 11.8.3
+JSValue *LessEqNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  int r = relation(exec, v2, v1);
+  if (r < 0)
+      return jsBoolean(false);
+  return jsBoolean(r == 0);
+}
+
+// ECMA 11.8.4
+JSValue *GreaterEqNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  int r = relation(exec, v1, v2);
+  if (r < 0)
+      return jsBoolean(false);
+  return jsBoolean(r == 0);
+}
+
+// ECMA 11.8.6
+JSValue *InstanceOfNode::evaluate(ExecState *exec)
 {
   JSValue *v1 = expr1->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
   JSValue *v2 = expr2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  bool b;
-  if (oper == OpLess || oper == OpGreaterEq) {
-    int r = relation(exec, v1, v2);
-    if (r < 0)
-      b = false;
-    else
-      b = (oper == OpLess) ? (r == 1) : (r == 0);
-  } else if (oper == OpGreater || oper == OpLessEq) {
-    int r = relation(exec, v2, v1);
-    if (r < 0)
-      b = false;
-    else
-      b = (oper == OpGreater) ? (r == 1) : (r == 0);
-  } else if (oper == OpIn) {
-      // Is all of this OK for host objects?
-      if (!v2->isObject())
-          return throwError(exec,  TypeError,
-                             "Value %s (result of expression %s) is not an object. Cannot be used with IN expression.", v2, expr2.get());
-      JSObject *o2(static_cast<JSObject*>(v2));
-      b = o2->hasProperty(exec, Identifier(v1->toString(exec)));
-  } else {
-    if (!v2->isObject())
-        return throwError(exec,  TypeError,
-                           "Value %s (result of expression %s) is not an object. Cannot be used with instanceof operator.", v2, expr2.get());
+  if (!v2->isObject())
+      return throwError(exec,  TypeError,
+                          "Value %s (result of expression %s) is not an object. Cannot be used with instanceof operator.", v2, expr2.get());
 
-    JSObject *o2(static_cast<JSObject*>(v2));
-    if (!o2->implementsHasInstance())
+  JSObject *o2(static_cast<JSObject*>(v2));
+  if (!o2->implementsHasInstance())
       // According to the spec, only some types of objects "implement" the [[HasInstance]] property.
       // But we are supposed to throw an exception where the object does not "have" the [[HasInstance]]
       // property. It seems that all object have the property, but not all implement it, so in this
       // case we return false (consistent with mozilla)
       return jsBoolean(false);
-    return jsBoolean(o2->hasInstance(exec, v1));
-  }
-
-  return jsBoolean(b);
+  return jsBoolean(o2->hasInstance(exec, v1));
 }
 
-// ------------------------------ EqualNode ------------------------------------
+// ECMA 11.8.7
+JSValue *InNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
 
-// ECMA 11.9
+  // Is all of this OK for host objects?
+  if (!v2->isObject())
+      return throwError(exec,  TypeError,
+                         "Value %s (result of expression %s) is not an object. Cannot be used with IN expression.", v2, expr2.get());
+  JSObject *o2(static_cast<JSObject*>(v2));
+  return jsBoolean(o2->hasProperty(exec, Identifier(v1->toString(exec))));
+}
+
+// ------------------------------ Equality Nodes ------------------------------------
+
+// ECMA 11.9.1
 JSValue *EqualNode::evaluate(ExecState *exec)
 {
   JSValue *v1 = expr1->evaluate(exec);
@@ -1294,50 +1391,98 @@ JSValue *EqualNode::evaluate(ExecState *exec)
   JSValue *v2 = expr2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  bool result;
-  if (oper == OpEqEq || oper == OpNotEq) {
-    // == and !=
-    bool eq = equal(exec,v1, v2);
-    result = oper == OpEqEq ? eq : !eq;
-  } else {
-    // === and !==
-    bool eq = strictEqual(exec,v1, v2);
-    result = oper == OpStrEq ? eq : !eq;
-  }
-  return jsBoolean(result);
+  return jsBoolean(equal(exec,v1, v2));
 }
 
-// ------------------------------ BitOperNode ----------------------------------
-
-// ECMA 11.10
-JSValue *BitOperNode::evaluate(ExecState *exec)
+// ECMA 11.9.2
+JSValue *NotEqualNode::evaluate(ExecState *exec)
 {
   JSValue *v1 = expr1->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
   JSValue *v2 = expr2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
-  int i1 = v1->toInt32(exec);
-  int i2 = v2->toInt32(exec);
-  int result;
-  if (oper == OpBitAnd)
-    result = i1 & i2;
-  else if (oper == OpBitXOr)
-    result = i1 ^ i2;
-  else
-    result = i1 | i2;
 
-  return jsNumber(result);
+  return jsBoolean(!equal(exec,v1, v2));
 }
 
-// ------------------------------ BinaryLogicalNode ----------------------------
+// ECMA 11.9.4
+JSValue *StrictEqualNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  return jsBoolean(strictEqual(exec,v1, v2));
+}
+
+// ECMA 11.9.5
+JSValue *NotStrictEqualNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  return jsBoolean(!strictEqual(exec,v1, v2));
+}
+
+// ------------------------------ Bit Operation Nodes ----------------------------------
+
+// ECMA 11.10
+JSValue *BitAndNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  
+  return jsNumber(v1->toInt32(exec) & v2->toInt32(exec));
+}
+
+JSValue *BitXOrNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  
+  return jsNumber(v1->toInt32(exec) ^ v2->toInt32(exec));
+}
+
+JSValue *BitOrNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  
+  return jsNumber(v1->toInt32(exec) | v2->toInt32(exec));
+}
+
+// ------------------------------ Binary Logical Nodes ----------------------------
 
 // ECMA 11.11
-JSValue *BinaryLogicalNode::evaluate(ExecState *exec)
+JSValue *LogicalAndNode::evaluate(ExecState *exec)
 {
   JSValue *v1 = expr1->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
   bool b1 = v1->toBoolean(exec);
-  if ((!b1 && oper == OpAnd) || (b1 && oper == OpOr))
+  if (!b1)
+    return v1;
+
+  JSValue *v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  return v2;
+}
+
+JSValue *LogicalOrNode::evaluate(ExecState *exec)
+{
+  JSValue *v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  bool b1 = v1->toBoolean(exec);
+  if (b1)
     return v1;
 
   JSValue *v2 = expr2->evaluate(exec);

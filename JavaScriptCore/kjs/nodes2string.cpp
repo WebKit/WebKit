@@ -414,91 +414,117 @@ void LogicalNotNode::streamTo(SourceStream &s) const
 
 void MultNode::streamTo(SourceStream &s) const
 {
-  s << term1 << " " << oper << " " << term2;
+    s << term1 << " * " << term2;
+}
+
+void DivNode::streamTo(SourceStream &s) const
+{
+    s << term1 << " / " << term2;
+}
+
+void ModNode::streamTo(SourceStream &s) const
+{
+    s << term1 << " % " << term2;
 }
 
 void AddNode::streamTo(SourceStream &s) const
 {
-  s << term1 << " " << oper << " " << term2;
+    s << term1 << " + " << term2;
 }
 
-void ShiftNode::streamTo(SourceStream &s) const
+void SubNode::streamTo(SourceStream &s) const
 {
-  s << term1;
-  if (oper == OpLShift)
-    s << "<<";
-  else if (oper == OpRShift)
-    s << ">>";
-  else
-    s << ">>>";
-  s << term2;
+    s << term1 << " - " << term2;
 }
 
-void RelationalNode::streamTo(SourceStream &s) const
+void LeftShiftNode::streamTo(SourceStream &s) const
 {
-  s << expr1;
-  switch (oper) {
-  case OpLess:
-    s << " < ";
-    break;
-  case OpGreater:
-    s << " > ";
-    break;
-  case OpLessEq:
-    s << " <= ";
-    break;
-  case OpGreaterEq:
-    s << " >= ";
-    break;
-  case OpInstanceOf:
-    s << " instanceof ";
-    break;
-  case OpIn:
-    s << " in ";
-    break;
-  default:
-    ;
-  }
-  s << expr2;
+  s << term1 << "<<" << term2;
+}
+
+void RightShiftNode::streamTo(SourceStream &s) const
+{
+  s << term1 << ">>" << term2;
+}
+
+void UnsignedRightShiftNode::streamTo(SourceStream &s) const
+{
+  s << term1 << ">>>" << term2;
+}
+
+void LessNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " < " << expr2;
+}
+
+void GreaterNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " > " << expr2;
+}
+
+void LessEqNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " <= " << expr2;
+}
+
+void GreaterEqNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " >= " << expr2;
+}
+
+void InstanceOfNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " instanceof " << expr2;
+}
+
+void InNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " in " << expr2;
 }
 
 void EqualNode::streamTo(SourceStream &s) const
 {
-  s << expr1;
- switch (oper) {
- case OpEqEq:
-   s << " == ";
-   break;
- case OpNotEq:
-   s << " != ";
-   break;
- case OpStrEq:
-   s << " === ";
-   break;
- case OpStrNEq:
-   s << " !== ";
-   break;
- default:
-   ;
- }
-  s << expr2;
+  s << expr1 << " == " << expr2;
 }
 
-void BitOperNode::streamTo(SourceStream &s) const
+void NotEqualNode::streamTo(SourceStream &s) const
 {
-  s << expr1;
-  if (oper == OpBitAnd)
-    s << " & ";
-  else if (oper == OpBitXOr)
-    s << " ^ ";
-  else
-    s << " | ";
-  s << expr2;
+  s << expr1 << " == " << expr2;
 }
 
-void BinaryLogicalNode::streamTo(SourceStream &s) const
+void StrictEqualNode::streamTo(SourceStream &s) const
 {
-  s << expr1 << (oper == OpAnd ? " && " : " || ") << expr2;
+  s << expr1 << " === " << expr2;
+}
+
+void NotStrictEqualNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " !== " << expr2;
+}
+
+void BitAndNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " & " << expr2;
+}
+
+void BitXOrNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " ^ " << expr2;
+}
+
+void BitOrNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " | " << expr2;
+}
+
+void LogicalAndNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " && " << expr2;
+}
+
+void LogicalOrNode::streamTo(SourceStream &s) const
+{
+  s << expr1 << " || " << expr2;
 }
 
 void ConditionalNode::streamTo(SourceStream &s) const

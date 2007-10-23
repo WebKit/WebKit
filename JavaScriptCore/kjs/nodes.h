@@ -646,90 +646,256 @@ namespace KJS {
   private:
     RefPtr<Node> expr;
   };
-
+  
   class MultNode : public Node {
   public:
-    MultNode(Node *t1, Node *t2, char op) KJS_FAST_CALL : term1(t1), term2(t2), oper(op) {}
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+      MultNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
+      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   private:
-    RefPtr<Node> term1;
-    RefPtr<Node> term2;
-    char oper;
+      RefPtr<Node> term1;
+      RefPtr<Node> term2;
+  };
+  
+  class DivNode : public Node {
+  public:
+      DivNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
+      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+      RefPtr<Node> term1;
+      RefPtr<Node> term2;
+  };
+  
+  class ModNode : public Node {
+  public:
+      ModNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
+      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+      RefPtr<Node> term1;
+      RefPtr<Node> term2;
   };
 
   class AddNode : public Node {
   public:
-    AddNode(Node *t1, Node *t2, char op) KJS_FAST_CALL : term1(t1), term2(t2), oper(op) {}
+    AddNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
-    char oper;
+  };
+  
+  class SubNode : public Node {
+  public:
+      SubNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
+      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+      RefPtr<Node> term1;
+      RefPtr<Node> term2;
   };
 
-  class ShiftNode : public Node {
+  class LeftShiftNode : public Node {
   public:
-    ShiftNode(Node *t1, Operator o, Node *t2) KJS_FAST_CALL
-      : term1(t1), term2(t2), oper(o) {}
+    LeftShiftNode(Node *t1, Node *t2) KJS_FAST_CALL
+      : term1(t1), term2(t2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
-    Operator oper;
   };
 
-  class RelationalNode : public Node {
+  class RightShiftNode : public Node {
   public:
-    RelationalNode(Node *e1, Operator o, Node *e2) KJS_FAST_CALL :
-      expr1(e1), expr2(e2), oper(o) {}
+    RightShiftNode(Node *t1, Node *t2) KJS_FAST_CALL
+      : term1(t1), term2(t2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> term1;
+    RefPtr<Node> term2;
+  };
+
+  class UnsignedRightShiftNode : public Node {
+  public:
+    UnsignedRightShiftNode(Node *t1, Node *t2) KJS_FAST_CALL
+      : term1(t1), term2(t2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> term1;
+    RefPtr<Node> term2;
+  };
+
+  class LessNode : public Node {
+  public:
+    LessNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
-    Operator oper;
+  };
+
+  class GreaterNode : public Node {
+  public:
+    GreaterNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+  };
+
+  class LessEqNode : public Node {
+  public:
+    LessEqNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+  };
+
+  class GreaterEqNode : public Node {
+  public:
+    GreaterEqNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+  };
+
+  class InstanceOfNode : public Node {
+  public:
+    InstanceOfNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+  };
+
+  class InNode : public Node {
+  public:
+    InNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
   };
 
   class EqualNode : public Node {
   public:
-    EqualNode(Node *e1, Operator o, Node *e2) KJS_FAST_CALL
-      : expr1(e1), expr2(e2), oper(o) {}
+    EqualNode(Node *e1, Node *e2) KJS_FAST_CALL
+      : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
-    Operator oper;
   };
 
-  class BitOperNode : public Node {
+  class NotEqualNode : public Node {
   public:
-    BitOperNode(Node *e1, Operator o, Node *e2) KJS_FAST_CALL :
-      expr1(e1), expr2(e2), oper(o) {}
+    NotEqualNode(Node *e1, Node *e2) KJS_FAST_CALL
+      : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
-    Operator oper;
+  };
+
+  class StrictEqualNode : public Node {
+  public:
+    StrictEqualNode(Node *e1, Node *e2) KJS_FAST_CALL
+      : expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+  };
+
+  class NotStrictEqualNode : public Node {
+  public:
+    NotStrictEqualNode(Node *e1, Node *e2) KJS_FAST_CALL
+      : expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+  };
+
+  class BitAndNode : public Node {
+  public:
+    BitAndNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+  };
+
+  class BitOrNode : public Node {
+  public:
+    BitOrNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
+  };
+
+  class BitXOrNode : public Node {
+  public:
+    BitXOrNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
   };
 
   /**
    * expr1 && expr2, expr1 || expr2
    */
-  class BinaryLogicalNode : public Node {
+  class LogicalAndNode : public Node {
   public:
-    BinaryLogicalNode(Node *e1, Operator o, Node *e2) KJS_FAST_CALL :
-      expr1(e1), expr2(e2), oper(o) {}
+    LogicalAndNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
-    Operator oper;
+  };
+  
+  class LogicalOrNode : public Node {
+  public:
+    LogicalOrNode(Node *e1, Node *e2) KJS_FAST_CALL :
+      expr1(e1), expr2(e2) {}
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+  private:
+    RefPtr<Node> expr1;
+    RefPtr<Node> expr2;
   };
 
   /**

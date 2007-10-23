@@ -1,3 +1,87 @@
+2007-10-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Separating all of the simple (eg. non-read-modify-write) binary operators
+        into separate classes in preparation for further JS optimisations.
+        
+        Happily this produces a 0.8% to 1.0% performance increase in SunSpider with
+        no further work.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::MultNode::evaluate):
+        (KJS::DivNode::evaluate):
+        (KJS::ModNode::evaluate):
+        (KJS::AddNode::evaluate):
+        (KJS::SubNode::evaluate):
+        (KJS::LeftShiftNode::evaluate):
+        (KJS::RightShiftNode::evaluate):
+        (KJS::UnsignedRightShiftNode::evaluate):
+        (KJS::LessNode::evaluate):
+        (KJS::GreaterNode::evaluate):
+        (KJS::LessEqNode::evaluate):
+        (KJS::GreaterEqNode::evaluate):
+        (KJS::InstanceOfNode::evaluate):
+        (KJS::InNode::evaluate):
+        (KJS::EqualNode::evaluate):
+        (KJS::NotEqualNode::evaluate):
+        (KJS::StrictEqualNode::evaluate):
+        (KJS::NotStrictEqualNode::evaluate):
+        (KJS::BitAndNode::evaluate):
+        (KJS::BitXOrNode::evaluate):
+        (KJS::BitOrNode::evaluate):
+        (KJS::LogicalAndNode::evaluate):
+        (KJS::LogicalOrNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::MultNode::):
+        (KJS::DivNode::):
+        (KJS::ModNode::):
+        (KJS::AddNode::):
+        (KJS::SubNode::):
+        (KJS::LeftShiftNode::):
+        (KJS::RightShiftNode::):
+        (KJS::UnsignedRightShiftNode::):
+        (KJS::LessNode::):
+        (KJS::GreaterNode::):
+        (KJS::LessEqNode::):
+        (KJS::GreaterEqNode::):
+        (KJS::InstanceOfNode::):
+        (KJS::InNode::):
+        (KJS::EqualNode::):
+        (KJS::NotEqualNode::):
+        (KJS::StrictEqualNode::):
+        (KJS::NotStrictEqualNode::):
+        (KJS::BitAndNode::):
+        (KJS::BitOrNode::):
+        (KJS::BitXOrNode::):
+        (KJS::LogicalAndNode::):
+        (KJS::LogicalOrNode::):
+        * kjs/nodes2string.cpp:
+        (MultNode::streamTo):
+        (DivNode::streamTo):
+        (ModNode::streamTo):
+        (AddNode::streamTo):
+        (SubNode::streamTo):
+        (LeftShiftNode::streamTo):
+        (RightShiftNode::streamTo):
+        (UnsignedRightShiftNode::streamTo):
+        (LessNode::streamTo):
+        (GreaterNode::streamTo):
+        (LessEqNode::streamTo):
+        (GreaterEqNode::streamTo):
+        (InstanceOfNode::streamTo):
+        (InNode::streamTo):
+        (EqualNode::streamTo):
+        (NotEqualNode::streamTo):
+        (StrictEqualNode::streamTo):
+        (NotStrictEqualNode::streamTo):
+        (BitAndNode::streamTo):
+        (BitXOrNode::streamTo):
+        (BitOrNode::streamTo):
+        (LogicalAndNode::streamTo):
+
 2007-10-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
