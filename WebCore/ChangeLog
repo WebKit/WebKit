@@ -2,6 +2,12 @@
 
         Build fix only, no review.
 
+        * WebCore.xcodeproj/project.pbxproj: re-add all DOMSVG headers to copy-files phase to make sure.
+
+2007-10-22  Eric Seidel  <eric@webkit.org>
+
+        Build fix only, no review.
+
         * WebCore.xcodeproj/project.pbxproj: make sure DOMSVGAnimateElement.h is copied into headers.
 
 2007-10-22  Eric Seidel  <eric@webkit.org>

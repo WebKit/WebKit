@@ -1835,6 +1835,140 @@
 		A80F3A8D0CCDA38D002DD990 /* DOMSVGFontFaceUriElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A83B793C0CCB0125000B0825 /* DOMSVGFontFaceUriElement.h */; };
 		A80F3A8E0CCDA38D002DD990 /* DOMSVGFontFaceSrcElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A83B793F0CCB0125000B0825 /* DOMSVGFontFaceSrcElement.h */; };
 		A80F3B1A0CCDCC99002DD990 /* DOMSVGAnimateElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85ACEF760ACDCFCE001214FF /* DOMSVGAnimateElement.h */; };
+		A80F3B310CCDCE24002DD990 /* DOMSVGFECompositeElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5447F0CA9D1C20097D09B /* DOMSVGFECompositeElementInternal.h */; };
+		A80F3B320CCDCE24002DD990 /* DOMSVGFEMergeNodeElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544610CA9D1C20097D09B /* DOMSVGFEMergeNodeElementInternal.h */; };
+		A80F3B330CCDCE24002DD990 /* DOMSVGFESpotLightElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544570CA9D1C20097D09B /* DOMSVGFESpotLightElementInternal.h */; };
+		A80F3B340CCDCE24002DD990 /* DOMSVGTextContentElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543DF0CA9D1C10097D09B /* DOMSVGTextContentElementInternal.h */; };
+		A80F3B350CCDCE24002DD990 /* DOMSVGPathSegArcAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544300CA9D1C10097D09B /* DOMSVGPathSegArcAbsInternal.h */; };
+		A80F3B360CCDCE24002DD990 /* DOMSVGFEDistantLightElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544790CA9D1C20097D09B /* DOMSVGFEDistantLightElementInternal.h */; };
+		A80F3B370CCDCE24002DD990 /* DOMSVGFEGaussianBlurElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544690CA9D1C20097D09B /* DOMSVGFEGaussianBlurElementInternal.h */; };
+		A80F3B380CCDCE24002DD990 /* DOMSVGLinearGradientElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544440CA9D1C10097D09B /* DOMSVGLinearGradientElementInternal.h */; };
+		A80F3B390CCDCE24002DD990 /* DOMSVGRadialGradientElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543F30CA9D1C10097D09B /* DOMSVGRadialGradientElementInternal.h */; };
+		A80F3B3A0CCDCE24002DD990 /* DOMSVGAnimatedStringInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544A90CA9D1C20097D09B /* DOMSVGAnimatedStringInternal.h */; };
+		A80F3B3B0CCDCE24002DD990 /* DOMSVGAngle.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 854163690AC7180B0001E01B /* DOMSVGAngle.h */; };
+		A80F3B3C0CCDCE24002DD990 /* DOMSVGAnimatedIntegerInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544B90CA9D1C20097D09B /* DOMSVGAnimatedIntegerInternal.h */; };
+		A80F3B3D0CCDCE24002DD990 /* DOMSVGRenderingIntentInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543EF0CA9D1C10097D09B /* DOMSVGRenderingIntentInternal.h */; };
+		A80F3B3E0CCDCE24002DD990 /* DOMSVGAnimatedTransformListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544A70CA9D1C20097D09B /* DOMSVGAnimatedTransformListInternal.h */; };
+		A80F3B3F0CCDCE24002DD990 /* DOMSVGPathSegArcRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5442E0CA9D1C10097D09B /* DOMSVGPathSegArcRelInternal.h */; };
+		A80F3B400CCDCE24002DD990 /* DOMSVGAnimateColorElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544110CA9D1C10097D09B /* DOMSVGAnimateColorElementInternal.h */; };
+		A80F3B410CCDCE24002DD990 /* DOMSVGFEPointLightElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5445D0CA9D1C20097D09B /* DOMSVGFEPointLightElementInternal.h */; };
+		A80F3B420CCDCE24002DD990 /* DOMSVGFETurbulenceElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544640CA9D1C20097D09B /* DOMSVGFETurbulenceElementInternal.h */; };
+		A80F3B430CCDCE24002DD990 /* DOMSVGFEDiffuseLightingElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8502AB1C0AD438C000378540 /* DOMSVGFEDiffuseLightingElement.h */; };
+		A80F3B440CCDCE24002DD990 /* DOMSVGFEDiffuseLightingElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5447D0CA9D1C20097D09B /* DOMSVGFEDiffuseLightingElementInternal.h */; };
+		A80F3B450CCDCE24002DD990 /* DOMSVGFEDisplacementMapElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5447B0CA9D1C20097D09B /* DOMSVGFEDisplacementMapElementInternal.h */; };
+		A80F3B460CCDCE24002DD990 /* DOMSVGElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5448B0CA9D1C20097D09B /* DOMSVGElementInternal.h */; };
+		A80F3B470CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544270CA9D1C10097D09B /* DOMSVGPathSegCurvetoCubicRelInternal.h */; };
+		A80F3B480CCDCE24002DD990 /* DOMSVGFETileElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8502AB3C0AD438C000378540 /* DOMSVGFETileElement.h */; };
+		A80F3B490CCDCE24002DD990 /* DOMSVGAnimateElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544A50CA9D1C20097D09B /* DOMSVGAnimateElementInternal.h */; };
+		A80F3B4A0CCDCE24002DD990 /* DOMSVGEllipseElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5448A0CA9D1C20097D09B /* DOMSVGEllipseElementInternal.h */; };
+		A80F3B4B0CCDCE24002DD990 /* DOMSVGFEBlendElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544870CA9D1C20097D09B /* DOMSVGFEBlendElementInternal.h */; };
+		A80F3B4C0CCDCE24002DD990 /* DOMSVGFEFloodElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544730CA9D1C20097D09B /* DOMSVGFEFloodElementInternal.h */; };
+		A80F3B4D0CCDCE24002DD990 /* DOMSVGFEFuncAElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544710CA9D1C20097D09B /* DOMSVGFEFuncAElementInternal.h */; };
+		A80F3B4E0CCDCE24002DD990 /* DOMSVGFEFuncBElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5446F0CA9D1C20097D09B /* DOMSVGFEFuncBElementInternal.h */; };
+		A80F3B4F0CCDCE24002DD990 /* DOMSVGFEFuncGElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5446D0CA9D1C20097D09B /* DOMSVGFEFuncGElementInternal.h */; };
+		A80F3B500CCDCE24002DD990 /* DOMSVGFEFuncRElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5446B0CA9D1C20097D09B /* DOMSVGFEFuncRElementInternal.h */; };
+		A80F3B510CCDCE24002DD990 /* DOMSVGFEImageElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544670CA9D1C20097D09B /* DOMSVGFEImageElementInternal.h */; };
+		A80F3B520CCDCE24002DD990 /* DOMSVGFEMergeElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544630CA9D1C20097D09B /* DOMSVGFEMergeElementInternal.h */; };
+		A80F3B530CCDCE24002DD990 /* DOMSVGPatternElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543FF0CA9D1C10097D09B /* DOMSVGPatternElementInternal.h */; };
+		A80F3B540CCDCE24002DD990 /* DOMSVGPolygonElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544030CA9D1C10097D09B /* DOMSVGPolygonElementInternal.h */; };
+		A80F3B550CCDCE24002DD990 /* DOMSVGDefsElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544950CA9D1C20097D09B /* DOMSVGDefsElementInternal.h */; };
+		A80F3B560CCDCE24002DD990 /* DOMSVGDescElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544C30CA9D1C20097D09B /* DOMSVGDescElementInternal.h */; };
+		A80F3B570CCDCE24002DD990 /* DOMSVGElementInstanceListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5448D0CA9D1C20097D09B /* DOMSVGElementInstanceListInternal.h */; };
+		A80F3B580CCDCE24002DD990 /* DOMSVGLineElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544430CA9D1C10097D09B /* DOMSVGLineElementInternal.h */; };
+		A80F3B590CCDCE24002DD990 /* DOMSVGMaskElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5443D0CA9D1C10097D09B /* DOMSVGMaskElementInternal.h */; };
+		A80F3B5A0CCDCE24002DD990 /* DOMSVGPathElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5443B0CA9D1C10097D09B /* DOMSVGPathElementInternal.h */; };
+		A80F3B5B0CCDCE24002DD990 /* DOMSVGRectElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543F50CA9D1C10097D09B /* DOMSVGRectElementInternal.h */; };
+		A80F3B5C0CCDCE24002DD990 /* DOMSVGStopElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543E90CA9D1C10097D09B /* DOMSVGStopElementInternal.h */; };
+		A80F3B5D0CCDCE24002DD990 /* DOMSVGTextElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543DE0CA9D1C10097D09B /* DOMSVGTextElementInternal.h */; };
+		A80F3B5E0CCDCE24002DD990 /* DOMSVGTRefElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543E80CA9D1C10097D09B /* DOMSVGTRefElementInternal.h */; };
+		A80F3B5F0CCDCE24002DD990 /* DOMSVGViewElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543C90CA9D1C10097D09B /* DOMSVGViewElementInternal.h */; };
+		A80F3B600CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicAbs.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85CE1A1D0ADAC473003BBDEA /* DOMSVGPathSegCurvetoCubicAbs.h */; };
+		A80F3B610CCDCE24002DD990 /* DOMSVGLengthListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544770CA9D1C20097D09B /* DOMSVGLengthListInternal.h */; };
+		A80F3B620CCDCE24002DD990 /* DOMSVGAElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544150CA9D1C10097D09B /* DOMSVGAElementInternal.h */; };
+		A80F3B630CCDCE24002DD990 /* DOMSVGGElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5444D0CA9D1C20097D09B /* DOMSVGGElementInternal.h */; };
+		A80F3B640CCDCE24002DD990 /* DOMSVGEllipseElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85004D8E0ACEEAEF00C438F6 /* DOMSVGEllipseElement.h */; };
+		A80F3B650CCDCE24002DD990 /* DOMSVGAnimatedNumber.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8559F10E0AC9BE9900A3439C /* DOMSVGAnimatedNumber.h */; };
+		A80F3B660CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticSmoothAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544760CA9D1C20097D09B /* DOMSVGPathSegCurvetoQuadraticSmoothAbsInternal.h */; };
+		A80F3B670CCDCE24002DD990 /* DOMSVGPathSegLinetoHorizontalAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544170CA9D1C10097D09B /* DOMSVGPathSegLinetoHorizontalAbsInternal.h */; };
+		A80F3B680CCDCE24002DD990 /* DOMSVGFEComponentTransferElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544810CA9D1C20097D09B /* DOMSVGFEComponentTransferElementInternal.h */; };
+		A80F3B690CCDCE24002DD990 /* DOMSVGPointListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544080CA9D1C10097D09B /* DOMSVGPointListInternal.h */; };
+		A80F3B6A0CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicSmoothAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544250CA9D1C10097D09B /* DOMSVGPathSegCurvetoCubicSmoothAbsInternal.h */; };
+		A80F3B6B0CCDCE24002DD990 /* DOMSVGElementInstanceInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5448F0CA9D1C20097D09B /* DOMSVGElementInstanceInternal.h */; };
+		A80F3B6C0CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicSmoothRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544220CA9D1C10097D09B /* DOMSVGPathSegCurvetoCubicSmoothRelInternal.h */; };
+		A80F3B6D0CCDCE24002DD990 /* DOMSVGPathSegLinetoRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5441A0CA9D1C10097D09B /* DOMSVGPathSegLinetoRelInternal.h */; };
+		A80F3B6E0CCDCE24002DD990 /* DOMSVGPathSegMovetoRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544010CA9D1C10097D09B /* DOMSVGPathSegMovetoRelInternal.h */; };
+		A80F3B6F0CCDCE24002DD990 /* DOMSVGPathSegLinetoVerticalRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5440A0CA9D1C10097D09B /* DOMSVGPathSegLinetoVerticalRelInternal.h */; };
+		A80F3B700CCDCE24002DD990 /* DOMSVGAnimatedNumberListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544B10CA9D1C20097D09B /* DOMSVGAnimatedNumberListInternal.h */; };
+		A80F3B710CCDCE24002DD990 /* DOMSVGTransformListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543D30CA9D1C10097D09B /* DOMSVGTransformListInternal.h */; };
+		A80F3B720CCDCE24002DD990 /* DOMSVGLineElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85C9A2FD0AD7E94200FBFF1E /* DOMSVGLineElement.h */; };
+		A80F3B730CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticAbs.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85CE1A250ADAC473003BBDEA /* DOMSVGPathSegCurvetoQuadraticAbs.h */; };
+		A80F3B740CCDCE24002DD990 /* DOMSVGClipPathElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5449D0CA9D1C20097D09B /* DOMSVGClipPathElementInternal.h */; };
+		A80F3B750CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544290CA9D1C10097D09B /* DOMSVGPathSegCurvetoCubicAbsInternal.h */; };
+		A80F3B760CCDCE24002DD990 /* DOMSVGFEOffsetElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5445F0CA9D1C20097D09B /* DOMSVGFEOffsetElementInternal.h */; };
+		A80F3B770CCDCE24002DD990 /* DOMSVGTextPositioningElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543DA0CA9D1C10097D09B /* DOMSVGTextPositioningElementInternal.h */; };
+		A80F3B780CCDCE24002DD990 /* DOMSVGGradientElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5444B0CA9D1C10097D09B /* DOMSVGGradientElementInternal.h */; };
+		A80F3B790CCDCE24002DD990 /* DOMSVGMetadataElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544360CA9D1C10097D09B /* DOMSVGMetadataElementInternal.h */; };
+		A80F3B7A0CCDCE24002DD990 /* DOMSVGPolylineElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543FB0CA9D1C10097D09B /* DOMSVGPolylineElementInternal.h */; };
+		A80F3B7B0CCDCE24002DD990 /* DOMSVGSetElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543EB0CA9D1C10097D09B /* DOMSVGSetElementInternal.h */; };
+		A80F3B7C0CCDCE24002DD990 /* DOMSVGSVGElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543E10CA9D1C10097D09B /* DOMSVGSVGElementInternal.h */; };
+		A80F3B7D0CCDCE24002DD990 /* DOMSVGUseElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543CB0CA9D1C10097D09B /* DOMSVGUseElementInternal.h */; };
+		A80F3B7E0CCDCE24002DD990 /* DOMSVGAnimatedPreserveAspectRatioInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544AD0CA9D1C20097D09B /* DOMSVGAnimatedPreserveAspectRatioInternal.h */; };
+		A80F3B7F0CCDCE24002DD990 /* DOMSVGFESpecularLightingElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5445B0CA9D1C20097D09B /* DOMSVGFESpecularLightingElementInternal.h */; };
+		A80F3B800CCDCE24002DD990 /* DOMSVGColorInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5449B0CA9D1C20097D09B /* DOMSVGColorInternal.h */; };
+		A80F3B810CCDCE24002DD990 /* DOMSVGFEColorMatrixElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544830CA9D1C20097D09B /* DOMSVGFEColorMatrixElementInternal.h */; };
+		A80F3B820CCDCE24002DD990 /* DOMSVGForeignObjectElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5444F0CA9D1C20097D09B /* DOMSVGForeignObjectElementInternal.h */; };
+		A80F3B830CCDCE24002DD990 /* DOMSVGStringListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543E60CA9D1C10097D09B /* DOMSVGStringListInternal.h */; };
+		A80F3B840CCDCE24002DD990 /* DOMSVGMaskElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85C9A3010AD7E94200FBFF1E /* DOMSVGMaskElement.h */; };
+		A80F3B850CCDCE24002DD990 /* DOMSVGPathSegLinetoHorizontalRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5440C0CA9D1C10097D09B /* DOMSVGPathSegLinetoHorizontalRelInternal.h */; };
+		A80F3B860CCDCE24002DD990 /* DOMSVGAngleInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544130CA9D1C10097D09B /* DOMSVGAngleInternal.h */; };
+		A80F3B870CCDCE24002DD990 /* DOMSVGComponentTransferFunctionElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544990CA9D1C20097D09B /* DOMSVGComponentTransferFunctionElementInternal.h */; };
+		A80F3B880CCDCE24002DD990 /* DOMSVGNumberListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544310CA9D1C10097D09B /* DOMSVGNumberListInternal.h */; };
+		A80F3B890CCDCE24002DD990 /* DOMSVGPathSegLinetoVerticalAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544100CA9D1C10097D09B /* DOMSVGPathSegLinetoVerticalAbsInternal.h */; };
+		A80F3B8A0CCDCE24002DD990 /* DOMSVGLengthInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544490CA9D1C10097D09B /* DOMSVGLengthInternal.h */; };
+		A80F3B8B0CCDCE24002DD990 /* DOMSVGAnimatedNumberInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544B30CA9D1C20097D09B /* DOMSVGAnimatedNumberInternal.h */; };
+		A80F3B8C0CCDCE24002DD990 /* DOMSVGLength.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 854163670AC7180B0001E01B /* DOMSVGLength.h */; };
+		A80F3B8D0CCDCE24002DD990 /* DOMSVGAnimatedLengthInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544B70CA9D1C20097D09B /* DOMSVGAnimatedLengthInternal.h */; };
+		A80F3B8E0CCDCE24002DD990 /* DOMSVGPathSegListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544070CA9D1C10097D09B /* DOMSVGPathSegListInternal.h */; };
+		A80F3B8F0CCDCE24002DD990 /* DOMSVGPathSegInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5441B0CA9D1C10097D09B /* DOMSVGPathSegInternal.h */; };
+		A80F3B900CCDCE24002DD990 /* DOMSVGAnimatedBooleanInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544BD0CA9D1C20097D09B /* DOMSVGAnimatedBooleanInternal.h */; };
+		A80F3B910CCDCE24002DD990 /* DOMSVGFEGaussianBlurElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8502AB2C0AD438C000378540 /* DOMSVGFEGaussianBlurElement.h */; };
+		A80F3B920CCDCE24002DD990 /* DOMSVGPaintInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544400CA9D1C10097D09B /* DOMSVGPaintInternal.h */; };
+		A80F3B930CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544200CA9D1C10097D09B /* DOMSVGPathSegCurvetoQuadraticAbsInternal.h */; };
+		A80F3B940CCDCE24002DD990 /* DOMSVGAnimatedPoints.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85ACEF070ACDCCCF001214FF /* DOMSVGAnimatedPoints.h */; };
+		A80F3B950CCDCE24002DD990 /* DOMSVGPathSegLinetoAbs.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85CE1A2D0ADAC473003BBDEA /* DOMSVGPathSegLinetoAbs.h */; };
+		A80F3B960CCDCE24002DD990 /* DOMSVGNumberInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544330CA9D1C10097D09B /* DOMSVGNumberInternal.h */; };
+		A80F3B970CCDCE24002DD990 /* DOMSVGAnimatedAngleInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544BF0CA9D1C20097D09B /* DOMSVGAnimatedAngleInternal.h */; };
+		A80F3B980CCDCE24002DD990 /* DOMSVGUnitTypesInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543CE0CA9D1C10097D09B /* DOMSVGUnitTypesInternal.h */; };
+		A80F3B990CCDCE24002DD990 /* DOMSVGDocument.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85004D8C0ACEEAEF00C438F6 /* DOMSVGDocument.h */; };
+		A80F3B9A0CCDCE24002DD990 /* DOMSVGAnimateTransformElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544A30CA9D1C20097D09B /* DOMSVGAnimateTransformElementInternal.h */; };
+		A80F3B9B0CCDCE24002DD990 /* DOMSVGCircleElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5449F0CA9D1C20097D09B /* DOMSVGCircleElementInternal.h */; };
+		A80F3B9C0CCDCE24002DD990 /* DOMSVGCursorElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544970CA9D1C20097D09B /* DOMSVGCursorElementInternal.h */; };
+		A80F3B9D0CCDCE24002DD990 /* DOMSVGFETileElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544550CA9D1C20097D09B /* DOMSVGFETileElementInternal.h */; };
+		A80F3B9E0CCDCE24002DD990 /* DOMSVGFilterElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544530CA9D1C20097D09B /* DOMSVGFilterElementInternal.h */; };
+		A80F3B9F0CCDCE24002DD990 /* DOMSVGMarkerElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5443F0CA9D1C10097D09B /* DOMSVGMarkerElementInternal.h */; };
+		A80F3BA00CCDCE24002DD990 /* DOMSVGScriptElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543ED0CA9D1C10097D09B /* DOMSVGScriptElementInternal.h */; };
+		A80F3BA10CCDCE24002DD990 /* DOMSVGSwitchElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544850CA9D1C20097D09B /* DOMSVGSwitchElementInternal.h */; };
+		A80F3BA20CCDCE24002DD990 /* DOMSVGSymbolElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543EA0CA9D1C10097D09B /* DOMSVGSymbolElementInternal.h */; };
+		A80F3BA30CCDCE24002DD990 /* DOMSVGPreserveAspectRatioInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543F80CA9D1C10097D09B /* DOMSVGPreserveAspectRatioInternal.h */; };
+		A80F3BA40CCDCE24002DD990 /* DOMSVGPathSegClosePathInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5442B0CA9D1C10097D09B /* DOMSVGPathSegClosePathInternal.h */; };
+		A80F3BA50CCDCE24002DD990 /* DOMSVGImageElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544470CA9D1C10097D09B /* DOMSVGImageElementInternal.h */; };
+		A80F3BA60CCDCE24002DD990 /* DOMSVGStyleElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543E30CA9D1C10097D09B /* DOMSVGStyleElementInternal.h */; };
+		A80F3BA70CCDCE24002DD990 /* DOMSVGTitleElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543D80CA9D1C10097D09B /* DOMSVGTitleElementInternal.h */; };
+		A80F3BA80CCDCE24002DD990 /* DOMSVGMatrixInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544380CA9D1C10097D09B /* DOMSVGMatrixInternal.h */; };
+		A80F3BA90CCDCE24002DD990 /* DOMSVGTSpanElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543D00CA9D1C10097D09B /* DOMSVGTSpanElementInternal.h */; };
+		A80F3BAA0CCDCE24002DD990 /* DOMSVGAnimationElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544A10CA9D1C20097D09B /* DOMSVGAnimationElementInternal.h */; };
+		A80F3BAB0CCDCE24002DD990 /* DOMSVGAnimatedRectInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544AB0CA9D1C20097D09B /* DOMSVGAnimatedRectInternal.h */; };
+		A80F3BAC0CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5441E0CA9D1C10097D09B /* DOMSVGPathSegCurvetoQuadraticRelInternal.h */; };
+		A80F3BAD0CCDCE24002DD990 /* DOMSVGTransformInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543D50CA9D1C10097D09B /* DOMSVGTransformInternal.h */; };
+		A80F3BAE0CCDCE24002DD990 /* DOMSVGAnimatedLengthListInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544B50CA9D1C20097D09B /* DOMSVGAnimatedLengthListInternal.h */; };
+		A80F3BAF0CCDCE24002DD990 /* DOMSVGDocumentInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544930CA9D1C20097D09B /* DOMSVGDocumentInternal.h */; };
+		A80F3BB00CCDCE24002DD990 /* DOMSVGFEFuncAElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8502AB240AD438C000378540 /* DOMSVGFEFuncAElement.h */; };
+		A80F3BB10CCDCE24002DD990 /* DOMSVGZoomEventInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E543C60CA9D1C10097D09B /* DOMSVGZoomEventInternal.h */; };
+		A80F3BB20CCDCE24002DD990 /* DOMSVGAnimatedEnumerationInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544BB0CA9D1C20097D09B /* DOMSVGAnimatedEnumerationInternal.h */; };
+		A80F3BB30CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticSmoothRelInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E5441C0CA9D1C10097D09B /* DOMSVGPathSegCurvetoQuadraticSmoothRelInternal.h */; };
+		A80F3BB40CCDCE24002DD990 /* DOMSVGFETurbulenceElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8502AB3E0AD438C000378540 /* DOMSVGFETurbulenceElement.h */; };
+		A80F3BB50CCDCE24002DD990 /* DOMSVGPathSegLinetoAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544190CA9D1C10097D09B /* DOMSVGPathSegLinetoAbsInternal.h */; };
+		A80F3BB60CCDCE24002DD990 /* DOMSVGPathSegMovetoAbsInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8E544050CA9D1C10097D09B /* DOMSVGPathSegMovetoAbsInternal.h */; };
 		A81369CA097374F600D74463 /* HTMLIsIndexElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369AE097374F500D74463 /* HTMLIsIndexElement.h */; };
 		A81369CB097374F600D74463 /* HTMLIsIndexElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */; };
 		A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElement.h */; };
@@ -3650,83 +3784,294 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
-				A80F3B1A0CCDCC99002DD990 /* DOMSVGAnimateElement.h in Copy Generated Headers */,
-				A8F46ACD0CB20A9D003A9670 /* DOMSVGAnimateElementInternal.h in Copy Generated Headers */,
-				A80F3A2D0CCD9D5A002DD990 /* DOMSVGDefinitionSrcElementInternal.h in Copy Generated Headers */,
-				A80F3A2E0CCD9D5A002DD990 /* DOMSVGDefinitionSrcElement.h in Copy Generated Headers */,
-				A80F3A850CCDA38D002DD990 /* DOMSVGFontFaceUriElementInternal.h in Copy Generated Headers */,
-				A80F3A860CCDA38D002DD990 /* DOMSVGFontFaceFormatElementInternal.h in Copy Generated Headers */,
-				A80F3A870CCDA38D002DD990 /* DOMSVGFontFaceNameElementInternal.h in Copy Generated Headers */,
-				A80F3A880CCDA38D002DD990 /* DOMSVGFontFaceElementInternal.h in Copy Generated Headers */,
-				A80F3A890CCDA38D002DD990 /* DOMSVGFontFaceFormatElement.h in Copy Generated Headers */,
-				A80F3A8A0CCDA38D002DD990 /* DOMSVGFontFaceNameElement.h in Copy Generated Headers */,
-				A80F3A8B0CCDA38D002DD990 /* DOMSVGFontFaceElement.h in Copy Generated Headers */,
+				A80F3B310CCDCE24002DD990 /* DOMSVGFECompositeElementInternal.h in Copy Generated Headers */,
+				A8F46B1B0CB20A9D003A9670 /* DOMSVGAnimatedRect.h in Copy Generated Headers */,
+				A80F3B320CCDCE24002DD990 /* DOMSVGFEMergeNodeElementInternal.h in Copy Generated Headers */,
+				A8F46AFD0CB20A9D003A9670 /* DOMSVGZoomAndPan.h in Copy Generated Headers */,
+				A80F3B330CCDCE24002DD990 /* DOMSVGFESpotLightElementInternal.h in Copy Generated Headers */,
 				A80F3A8C0CCDA38D002DD990 /* DOMSVGFontFaceSrcElementInternal.h in Copy Generated Headers */,
-				A80F3A8D0CCDA38D002DD990 /* DOMSVGFontFaceUriElement.h in Copy Generated Headers */,
-				A80F3A8E0CCDA38D002DD990 /* DOMSVGFontFaceSrcElement.h in Copy Generated Headers */,
+				A8F46B470CB20A9D003A9670 /* DOMSVGPathSegClosePath.h in Copy Generated Headers */,
+				A80F3A850CCDA38D002DD990 /* DOMSVGFontFaceUriElementInternal.h in Copy Generated Headers */,
+				A80F3B340CCDCE24002DD990 /* DOMSVGTextContentElementInternal.h in Copy Generated Headers */,
+				A80F3B350CCDCE24002DD990 /* DOMSVGPathSegArcAbsInternal.h in Copy Generated Headers */,
+				A80F3B360CCDCE24002DD990 /* DOMSVGFEDistantLightElementInternal.h in Copy Generated Headers */,
+				A80F3B370CCDCE24002DD990 /* DOMSVGFEGaussianBlurElementInternal.h in Copy Generated Headers */,
+				A80F3A860CCDA38D002DD990 /* DOMSVGFontFaceFormatElementInternal.h in Copy Generated Headers */,
+				A80F3B380CCDCE24002DD990 /* DOMSVGLinearGradientElementInternal.h in Copy Generated Headers */,
+				A80F3B390CCDCE24002DD990 /* DOMSVGRadialGradientElementInternal.h in Copy Generated Headers */,
+				A8F46B6A0CB20A9D003A9670 /* DOMSVGTextPathElement.h in Copy Generated Headers */,
+				A80F3B3A0CCDCE24002DD990 /* DOMSVGAnimatedStringInternal.h in Copy Generated Headers */,
+				A80F3B3B0CCDCE24002DD990 /* DOMSVGAngle.h in Copy Generated Headers */,
+				A80F3B3C0CCDCE24002DD990 /* DOMSVGAnimatedIntegerInternal.h in Copy Generated Headers */,
+				A80F3B3D0CCDCE24002DD990 /* DOMSVGRenderingIntentInternal.h in Copy Generated Headers */,
+				A80F3B3E0CCDCE24002DD990 /* DOMSVGAnimatedTransformListInternal.h in Copy Generated Headers */,
+				A8F46ABE0CB20A9D003A9670 /* DOMSVGUseElement.h in Copy Generated Headers */,
+				A8F46AF60CB20A9D003A9670 /* DOMSVGPatternElement.h in Copy Generated Headers */,
+				A80F3B3F0CCDCE24002DD990 /* DOMSVGPathSegArcRelInternal.h in Copy Generated Headers */,
+				A8F46A980CB20A9D003A9670 /* DOMSVGSVGElement.h in Copy Generated Headers */,
+				A80F3B1A0CCDCC99002DD990 /* DOMSVGAnimateElement.h in Copy Generated Headers */,
 				A8F46A840CB20A9D003A9670 /* DOMSVGClipPathElement.h in Copy Generated Headers */,
+				A80F3B400CCDCE24002DD990 /* DOMSVGAnimateColorElementInternal.h in Copy Generated Headers */,
+				A80F3B410CCDCE24002DD990 /* DOMSVGFEPointLightElementInternal.h in Copy Generated Headers */,
+				A80F3B420CCDCE24002DD990 /* DOMSVGFETurbulenceElementInternal.h in Copy Generated Headers */,
+				A80F3A870CCDA38D002DD990 /* DOMSVGFontFaceNameElementInternal.h in Copy Generated Headers */,
+				A8F46B710CB20A9D003A9670 /* DOMSVGFEMergeNodeElement.h in Copy Generated Headers */,
+				A80F3B430CCDCE24002DD990 /* DOMSVGFEDiffuseLightingElement.h in Copy Generated Headers */,
+				A80F3B440CCDCE24002DD990 /* DOMSVGFEDiffuseLightingElementInternal.h in Copy Generated Headers */,
+				A80F3B450CCDCE24002DD990 /* DOMSVGFEDisplacementMapElementInternal.h in Copy Generated Headers */,
+				A8F46B260CB20A9D003A9670 /* DOMSVGAnimateTransformElement.h in Copy Generated Headers */,
+				A80F3B460CCDCE24002DD990 /* DOMSVGElementInternal.h in Copy Generated Headers */,
+				A8F46B6F0CB20A9D003A9670 /* DOMSVGScriptElement.h in Copy Generated Headers */,
+				A8F46B4A0CB20A9D003A9670 /* DOMSVGAnimatedString.h in Copy Generated Headers */,
+				A80F3B470CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicRelInternal.h in Copy Generated Headers */,
+				A80F3B480CCDCE24002DD990 /* DOMSVGFETileElement.h in Copy Generated Headers */,
+				A8F46AE00CB20A9D003A9670 /* DOMSVGStyleElement.h in Copy Generated Headers */,
+				A80F3B490CCDCE24002DD990 /* DOMSVGAnimateElementInternal.h in Copy Generated Headers */,
+				A80F3B4A0CCDCE24002DD990 /* DOMSVGEllipseElementInternal.h in Copy Generated Headers */,
+				A80F3B4B0CCDCE24002DD990 /* DOMSVGFEBlendElementInternal.h in Copy Generated Headers */,
+				A8F46A890CB20A9D003A9670 /* DOMSVGAnimateColorElement.h in Copy Generated Headers */,
+				A8F46B530CB20A9D003A9670 /* DOMSVGSymbolElement.h in Copy Generated Headers */,
+				A80F3B4C0CCDCE24002DD990 /* DOMSVGFEFloodElementInternal.h in Copy Generated Headers */,
+				A80F3B4D0CCDCE24002DD990 /* DOMSVGFEFuncAElementInternal.h in Copy Generated Headers */,
+				A80F3B4E0CCDCE24002DD990 /* DOMSVGFEFuncBElementInternal.h in Copy Generated Headers */,
+				A80F3B4F0CCDCE24002DD990 /* DOMSVGFEFuncGElementInternal.h in Copy Generated Headers */,
+				A80F3B500CCDCE24002DD990 /* DOMSVGFEFuncRElementInternal.h in Copy Generated Headers */,
+				A80F3B510CCDCE24002DD990 /* DOMSVGFEImageElementInternal.h in Copy Generated Headers */,
+				A80F3B520CCDCE24002DD990 /* DOMSVGFEMergeElementInternal.h in Copy Generated Headers */,
+				A80F3B530CCDCE24002DD990 /* DOMSVGPatternElementInternal.h in Copy Generated Headers */,
+				A80F3B540CCDCE24002DD990 /* DOMSVGPolygonElementInternal.h in Copy Generated Headers */,
+				A80F3B550CCDCE24002DD990 /* DOMSVGDefsElementInternal.h in Copy Generated Headers */,
+				A80F3B560CCDCE24002DD990 /* DOMSVGDescElementInternal.h in Copy Generated Headers */,
+				A80F3B570CCDCE24002DD990 /* DOMSVGElementInstanceListInternal.h in Copy Generated Headers */,
+				A80F3B580CCDCE24002DD990 /* DOMSVGLineElementInternal.h in Copy Generated Headers */,
+				A80F3B590CCDCE24002DD990 /* DOMSVGMaskElementInternal.h in Copy Generated Headers */,
+				A80F3B5A0CCDCE24002DD990 /* DOMSVGPathElementInternal.h in Copy Generated Headers */,
+				A80F3B5B0CCDCE24002DD990 /* DOMSVGRectElementInternal.h in Copy Generated Headers */,
+				A80F3B5C0CCDCE24002DD990 /* DOMSVGStopElementInternal.h in Copy Generated Headers */,
+				A80F3B5D0CCDCE24002DD990 /* DOMSVGTextElementInternal.h in Copy Generated Headers */,
+				A80F3B5E0CCDCE24002DD990 /* DOMSVGTRefElementInternal.h in Copy Generated Headers */,
+				A80F3B5F0CCDCE24002DD990 /* DOMSVGViewElementInternal.h in Copy Generated Headers */,
+				A80F3B600CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicAbs.h in Copy Generated Headers */,
+				A80F3B610CCDCE24002DD990 /* DOMSVGLengthListInternal.h in Copy Generated Headers */,
+				A80F3B620CCDCE24002DD990 /* DOMSVGAElementInternal.h in Copy Generated Headers */,
+				A80F3B630CCDCE24002DD990 /* DOMSVGGElementInternal.h in Copy Generated Headers */,
+				A8F46B080CB20A9D003A9670 /* DOMSVGRenderingIntent.h in Copy Generated Headers */,
+				A8F46AAF0CB20A9D003A9670 /* DOMSVGAnimatedNumberList.h in Copy Generated Headers */,
+				A8F46B0D0CB20A9D003A9670 /* DOMSVGPathSegArcAbs.h in Copy Generated Headers */,
+				A8F46AEE0CB20A9D003A9670 /* DOMSVGFEMergeElement.h in Copy Generated Headers */,
+				A80F3B640CCDCE24002DD990 /* DOMSVGEllipseElement.h in Copy Generated Headers */,
+				A8F46B360CB20A9D003A9670 /* DOMSVGTransformable.h in Copy Generated Headers */,
+				A8F46AA80CB20A9D003A9670 /* DOMSVGFEDistantLightElement.h in Copy Generated Headers */,
+				A8F46B150CB20A9D003A9670 /* DOMSVGFilterElement.h in Copy Generated Headers */,
+				A8F46B190CB20A9D003A9670 /* DOMSVGStylable.h in Copy Generated Headers */,
+				A8F46A900CB20A9D003A9670 /* DOMSVGAnimatedPathData.h in Copy Generated Headers */,
+				A80F3B650CCDCE24002DD990 /* DOMSVGAnimatedNumber.h in Copy Generated Headers */,
+				A8F46AB70CB20A9D003A9670 /* DOMSVGFilterPrimitiveStandardAttributes.h in Copy Generated Headers */,
+				A8F46AB90CB20A9D003A9670 /* DOMSVGRect.h in Copy Generated Headers */,
+				A8F46B200CB20A9D003A9670 /* DOMSVGURIReference.h in Copy Generated Headers */,
+				A8F46B700CB20A9D003A9670 /* DOMSVGAnimatedInteger.h in Copy Generated Headers */,
+				A80F3B660CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticSmoothAbsInternal.h in Copy Generated Headers */,
+				A80F3B670CCDCE24002DD990 /* DOMSVGPathSegLinetoHorizontalAbsInternal.h in Copy Generated Headers */,
+				A80F3B680CCDCE24002DD990 /* DOMSVGFEComponentTransferElementInternal.h in Copy Generated Headers */,
+				A8F46A940CB20A9D003A9670 /* DOMSVGPathSegLinetoVerticalRel.h in Copy Generated Headers */,
+				A8F46AC90CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticRel.h in Copy Generated Headers */,
+				A8F46AFE0CB20A9D003A9670 /* DOMSVGPolygonElement.h in Copy Generated Headers */,
+				A8F46A9E0CB20A9D003A9670 /* DOMSVGFitToViewBox.h in Copy Generated Headers */,
+				A80F3B690CCDCE24002DD990 /* DOMSVGPointListInternal.h in Copy Generated Headers */,
+				A80F3B6A0CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicSmoothAbsInternal.h in Copy Generated Headers */,
+				A8F46AE70CB20A9D003A9670 /* DOMSVGFEFloodElement.h in Copy Generated Headers */,
+				A80F3B6B0CCDCE24002DD990 /* DOMSVGElementInstanceInternal.h in Copy Generated Headers */,
+				A80F3B6C0CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicSmoothRelInternal.h in Copy Generated Headers */,
+				A80F3B6D0CCDCE24002DD990 /* DOMSVGPathSegLinetoRelInternal.h in Copy Generated Headers */,
+				A80F3B6E0CCDCE24002DD990 /* DOMSVGPathSegMovetoRelInternal.h in Copy Generated Headers */,
+				A8F46AB20CB20A9D003A9670 /* DOMSVGRectElement.h in Copy Generated Headers */,
+				A8F46AA20CB20A9D003A9670 /* DOMSVGGElement.h in Copy Generated Headers */,
+				A80F3B6F0CCDCE24002DD990 /* DOMSVGPathSegLinetoVerticalRelInternal.h in Copy Generated Headers */,
+				A80F3B700CCDCE24002DD990 /* DOMSVGAnimatedNumberListInternal.h in Copy Generated Headers */,
+				A80F3B710CCDCE24002DD990 /* DOMSVGTransformListInternal.h in Copy Generated Headers */,
+				A80F3B720CCDCE24002DD990 /* DOMSVGLineElement.h in Copy Generated Headers */,
+				A80F3B730CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticAbs.h in Copy Generated Headers */,
+				A8F46B720CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicSmoothAbs.h in Copy Generated Headers */,
+				A8F46AED0CB20A9D003A9670 /* DOMSVGAnimatedLength.h in Copy Generated Headers */,
+				A80F3B740CCDCE24002DD990 /* DOMSVGClipPathElementInternal.h in Copy Generated Headers */,
+				A80F3A8D0CCDA38D002DD990 /* DOMSVGFontFaceUriElement.h in Copy Generated Headers */,
+				A80F3B750CCDCE24002DD990 /* DOMSVGPathSegCurvetoCubicAbsInternal.h in Copy Generated Headers */,
+				A8F46B310CB20A9D003A9670 /* DOMSVGLangSpace.h in Copy Generated Headers */,
+				A8F46AAA0CB20A9D003A9670 /* DOMSVGFEDisplacementMapElement.h in Copy Generated Headers */,
+				A8F46B180CB20A9D003A9670 /* DOMSVGTransformList.h in Copy Generated Headers */,
+				A8F46B320CB20A9D003A9670 /* DOMSVGForeignObjectElement.h in Copy Generated Headers */,
+				A8F46B7C0CB20A9D003A9670 /* DOMSVGLinearGradientElement.h in Copy Generated Headers */,
+				A8F46B7D0CB20A9D003A9670 /* DOMSVGRadialGradientElement.h in Copy Generated Headers */,
+				A80F3B760CCDCE24002DD990 /* DOMSVGFEOffsetElementInternal.h in Copy Generated Headers */,
+				A80F3A880CCDA38D002DD990 /* DOMSVGFontFaceElementInternal.h in Copy Generated Headers */,
+				A80F3B770CCDCE24002DD990 /* DOMSVGTextPositioningElementInternal.h in Copy Generated Headers */,
+				A80F3B780CCDCE24002DD990 /* DOMSVGGradientElementInternal.h in Copy Generated Headers */,
+				A80F3B790CCDCE24002DD990 /* DOMSVGMetadataElementInternal.h in Copy Generated Headers */,
+				A80F3B7A0CCDCE24002DD990 /* DOMSVGPolylineElementInternal.h in Copy Generated Headers */,
+				A8F46AF70CB20A9D003A9670 /* DOMSVGTextPathElementInternal.h in Copy Generated Headers */,
+				A8F46B2E0CB20A9D003A9670 /* DOMSVGAnimatedPreserveAspectRatio.h in Copy Generated Headers */,
+				A80F3B7B0CCDCE24002DD990 /* DOMSVGSetElementInternal.h in Copy Generated Headers */,
+				A80F3B7C0CCDCE24002DD990 /* DOMSVGSVGElementInternal.h in Copy Generated Headers */,
+				A80F3B7D0CCDCE24002DD990 /* DOMSVGUseElementInternal.h in Copy Generated Headers */,
+				A80F3B7E0CCDCE24002DD990 /* DOMSVGAnimatedPreserveAspectRatioInternal.h in Copy Generated Headers */,
+				A8F46B4D0CB20A9D003A9670 /* DOMSVGUnitTypes.h in Copy Generated Headers */,
+				A80F3B7F0CCDCE24002DD990 /* DOMSVGFESpecularLightingElementInternal.h in Copy Generated Headers */,
+				A8F46AA50CB20A9D003A9670 /* DOMSVGElement.h in Copy Generated Headers */,
+				A80F3B800CCDCE24002DD990 /* DOMSVGColorInternal.h in Copy Generated Headers */,
+				A8F46AC70CB20A9D003A9670 /* DOMSVGNumberList.h in Copy Generated Headers */,
+				A80F3A2D0CCD9D5A002DD990 /* DOMSVGDefinitionSrcElementInternal.h in Copy Generated Headers */,
+				A80F3B810CCDCE24002DD990 /* DOMSVGFEColorMatrixElementInternal.h in Copy Generated Headers */,
+				A80F3B820CCDCE24002DD990 /* DOMSVGForeignObjectElementInternal.h in Copy Generated Headers */,
+				A8F46B7F0CB20A9D003A9670 /* DOMSVGPointInternal.h in Copy Generated Headers */,
+				A8F46AC40CB20A9D003A9670 /* DOMSVGCursorElement.h in Copy Generated Headers */,
+				A8F46B220CB20A9D003A9670 /* DOMSVGFEFuncGElement.h in Copy Generated Headers */,
+				A8F46B390CB20A9D003A9670 /* DOMSVGElementInstanceList.h in Copy Generated Headers */,
+				A80F3B830CCDCE24002DD990 /* DOMSVGStringListInternal.h in Copy Generated Headers */,
+				A8F46A990CB20A9D003A9670 /* DOMSVGFEColorMatrixElement.h in Copy Generated Headers */,
+				A80F3B840CCDCE24002DD990 /* DOMSVGMaskElement.h in Copy Generated Headers */,
+				A8F46A910CB20A9D003A9670 /* DOMSVGViewElement.h in Copy Generated Headers */,
+				A8F46A880CB20A9D003A9670 /* DOMSVGGradientElement.h in Copy Generated Headers */,
+				A80F3B850CCDCE24002DD990 /* DOMSVGPathSegLinetoHorizontalRelInternal.h in Copy Generated Headers */,
+				A8F46AEF0CB20A9D003A9670 /* DOMSVGFEBlendElement.h in Copy Generated Headers */,
+				A8F46AA10CB20A9D003A9670 /* DOMSVGFEComponentTransferElement.h in Copy Generated Headers */,
+				A8F46B4B0CB20A9D003A9670 /* DOMSVGTSpanElement.h in Copy Generated Headers */,
+				A80F3B860CCDCE24002DD990 /* DOMSVGAngleInternal.h in Copy Generated Headers */,
+				A8F46B2D0CB20A9D003A9670 /* DOMSVGDefsElement.h in Copy Generated Headers */,
+				A80F3B870CCDCE24002DD990 /* DOMSVGComponentTransferFunctionElementInternal.h in Copy Generated Headers */,
+				A8F46B740CB20A9D003A9670 /* DOMSVGPathElement.h in Copy Generated Headers */,
+				A8F46A950CB20A9D003A9670 /* DOMSVGAnimatedAngle.h in Copy Generated Headers */,
+				A80F3A8E0CCDA38D002DD990 /* DOMSVGFontFaceSrcElement.h in Copy Generated Headers */,
+				A8F46AEB0CB20A9D003A9670 /* DOMSVGTextContentElement.h in Copy Generated Headers */,
+				A80F3B880CCDCE24002DD990 /* DOMSVGNumberListInternal.h in Copy Generated Headers */,
+				A8F46AF00CB20A9D003A9670 /* DOMSVGNumber.h in Copy Generated Headers */,
+				A8F46B4F0CB20A9D003A9670 /* DOMSVGTRefElement.h in Copy Generated Headers */,
+				A80F3B890CCDCE24002DD990 /* DOMSVGPathSegLinetoVerticalAbsInternal.h in Copy Generated Headers */,
+				A80F3B8A0CCDCE24002DD990 /* DOMSVGLengthInternal.h in Copy Generated Headers */,
+				A8F46A920CB20A9D003A9670 /* DOMSVGPathSegLinetoRel.h in Copy Generated Headers */,
+				A80F3B8B0CCDCE24002DD990 /* DOMSVGAnimatedNumberInternal.h in Copy Generated Headers */,
+				A80F3B8C0CCDCE24002DD990 /* DOMSVGLength.h in Copy Generated Headers */,
+				A80F3B8D0CCDCE24002DD990 /* DOMSVGAnimatedLengthInternal.h in Copy Generated Headers */,
+				A8F46B540CB20A9D003A9670 /* DOMSVGPointList.h in Copy Generated Headers */,
+				A8F46B5B0CB20A9D003A9670 /* DOMSVGFESpecularLightingElement.h in Copy Generated Headers */,
+				A8F46B330CB20A9D003A9670 /* DOMSVGRectInternal.h in Copy Generated Headers */,
+				A80F3B8E0CCDCE24002DD990 /* DOMSVGPathSegListInternal.h in Copy Generated Headers */,
+				A80F3B8F0CCDCE24002DD990 /* DOMSVGPathSegInternal.h in Copy Generated Headers */,
+				A8F46ABD0CB20A9D003A9670 /* DOMSVGPathSegList.h in Copy Generated Headers */,
+				A8F46B590CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticSmoothAbs.h in Copy Generated Headers */,
+				A80F3B900CCDCE24002DD990 /* DOMSVGAnimatedBooleanInternal.h in Copy Generated Headers */,
+				A80F3B910CCDCE24002DD990 /* DOMSVGFEGaussianBlurElement.h in Copy Generated Headers */,
+				A8F46B3F0CB20A9D003A9670 /* DOMSVGTextPositioningElement.h in Copy Generated Headers */,
+				A8F46AE80CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicRel.h in Copy Generated Headers */,
+				A8F46B060CB20A9D003A9670 /* DOMSVGFEFuncRElement.h in Copy Generated Headers */,
+				A8F46B010CB20A9D003A9670 /* DOMSVGTransform.h in Copy Generated Headers */,
+				A8F46B5F0CB20A9D003A9670 /* DOMSVGColor.h in Copy Generated Headers */,
+				A80F3B920CCDCE24002DD990 /* DOMSVGPaintInternal.h in Copy Generated Headers */,
+				A8F46AD90CB20A9D003A9670 /* DOMSVGSwitchElement.h in Copy Generated Headers */,
+				A80F3A2E0CCD9D5A002DD990 /* DOMSVGDefinitionSrcElement.h in Copy Generated Headers */,
+				A80F3B930CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticAbsInternal.h in Copy Generated Headers */,
+				A8F46AC30CB20A9D003A9670 /* DOMSVGFECompositeElement.h in Copy Generated Headers */,
+				A80F3A890CCDA38D002DD990 /* DOMSVGFontFaceFormatElement.h in Copy Generated Headers */,
+				A8F46ABA0CB20A9D003A9670 /* DOMSVGComponentTransferFunctionElement.h in Copy Generated Headers */,
+				A8F46AA70CB20A9D003A9670 /* DOMSVGElementInstance.h in Copy Generated Headers */,
+				A8F46AB30CB20A9D003A9670 /* DOMSVGPathSegLinetoVerticalAbs.h in Copy Generated Headers */,
+				A8F46B670CB20A9D003A9670 /* DOMSVGAnimationElement.h in Copy Generated Headers */,
+				A8F46B6B0CB20A9D003A9670 /* DOMSVGAnimatedLengthList.h in Copy Generated Headers */,
+				A8F46AC50CB20A9D003A9670 /* DOMSVGPathSeg.h in Copy Generated Headers */,
+				A8F46B7B0CB20A9D003A9670 /* DOMSVGStopElement.h in Copy Generated Headers */,
+				A8F46AB80CB20A9D003A9670 /* DOMSVGExternalResourcesRequired.h in Copy Generated Headers */,
+				A80F3B940CCDCE24002DD990 /* DOMSVGAnimatedPoints.h in Copy Generated Headers */,
+				A8F46B250CB20A9D003A9670 /* DOMSVGPathSegLinetoHorizontalRel.h in Copy Generated Headers */,
+				A80F3B950CCDCE24002DD990 /* DOMSVGPathSegLinetoAbs.h in Copy Generated Headers */,
+				A8F46AE20CB20A9D003A9670 /* DOMSVGPathSegArcRel.h in Copy Generated Headers */,
+				A80F3B960CCDCE24002DD990 /* DOMSVGNumberInternal.h in Copy Generated Headers */,
+				A80F3B970CCDCE24002DD990 /* DOMSVGAnimatedAngleInternal.h in Copy Generated Headers */,
+				A80F3B980CCDCE24002DD990 /* DOMSVGUnitTypesInternal.h in Copy Generated Headers */,
+				A8F46B520CB20A9D003A9670 /* DOMSVGMarkerElement.h in Copy Generated Headers */,
+				A8F46B0C0CB20A9D003A9670 /* DOMSVGPathSegMovetoAbs.h in Copy Generated Headers */,
+				A80F3B990CCDCE24002DD990 /* DOMSVGDocument.h in Copy Generated Headers */,
+				A8F46A930CB20A9D003A9670 /* DOMSVGZoomEvent.h in Copy Generated Headers */,
+				A8F46B1C0CB20A9D003A9670 /* DOMSVGFEOffsetElement.h in Copy Generated Headers */,
+				A8F46A9A0CB20A9D003A9670 /* DOMSVGPreserveAspectRatio.h in Copy Generated Headers */,
+				A80F3B9A0CCDCE24002DD990 /* DOMSVGAnimateTransformElementInternal.h in Copy Generated Headers */,
+				A8F46B290CB20A9D003A9670 /* DOMSVGPathSegLinetoHorizontalAbs.h in Copy Generated Headers */,
+				A8F46AB50CB20A9D003A9670 /* DOMSVGPaint.h in Copy Generated Headers */,
+				A80F3B9B0CCDCE24002DD990 /* DOMSVGCircleElementInternal.h in Copy Generated Headers */,
+				A80F3B9C0CCDCE24002DD990 /* DOMSVGCursorElementInternal.h in Copy Generated Headers */,
+				A80F3B9D0CCDCE24002DD990 /* DOMSVGFETileElementInternal.h in Copy Generated Headers */,
+				A80F3B9E0CCDCE24002DD990 /* DOMSVGFilterElementInternal.h in Copy Generated Headers */,
+				A80F3B9F0CCDCE24002DD990 /* DOMSVGMarkerElementInternal.h in Copy Generated Headers */,
+				A80F3BA00CCDCE24002DD990 /* DOMSVGScriptElementInternal.h in Copy Generated Headers */,
+				A80F3BA10CCDCE24002DD990 /* DOMSVGSwitchElementInternal.h in Copy Generated Headers */,
+				A80F3BA20CCDCE24002DD990 /* DOMSVGSymbolElementInternal.h in Copy Generated Headers */,
+				A80F3BA30CCDCE24002DD990 /* DOMSVGPreserveAspectRatioInternal.h in Copy Generated Headers */,
+				A80F3BA40CCDCE24002DD990 /* DOMSVGPathSegClosePathInternal.h in Copy Generated Headers */,
+				A80F3A8A0CCDA38D002DD990 /* DOMSVGFontFaceNameElement.h in Copy Generated Headers */,
+				A8F46B580CB20A9D003A9670 /* DOMSVGTitleElement.h in Copy Generated Headers */,
+				A8F46B3A0CB20A9D003A9670 /* DOMSVGLocatable.h in Copy Generated Headers */,
+				A8F46AA40CB20A9D003A9670 /* DOMSVGTests.h in Copy Generated Headers */,
+				A8F46AAE0CB20A9D003A9670 /* DOMSVGImageElement.h in Copy Generated Headers */,
+				A8F46ABB0CB20A9D003A9670 /* DOMSVGDescElement.h in Copy Generated Headers */,
+				A8F46B420CB20A9D003A9670 /* DOMSVGPolylineElement.h in Copy Generated Headers */,
+				A8F46B070CB20A9D003A9670 /* DOMSVGMatrix.h in Copy Generated Headers */,
+				A80F3BA50CCDCE24002DD990 /* DOMSVGImageElementInternal.h in Copy Generated Headers */,
+				A80F3BA60CCDCE24002DD990 /* DOMSVGStyleElementInternal.h in Copy Generated Headers */,
+				A80F3BA70CCDCE24002DD990 /* DOMSVGTitleElementInternal.h in Copy Generated Headers */,
+				A80F3BA80CCDCE24002DD990 /* DOMSVGMatrixInternal.h in Copy Generated Headers */,
+				A8F46B4E0CB20A9D003A9670 /* DOMSVGAnimatedTransformList.h in Copy Generated Headers */,
+				A8F46B810CB20A9D003A9670 /* DOMSVGStringList.h in Copy Generated Headers */,
+				A80F3BA90CCDCE24002DD990 /* DOMSVGTSpanElementInternal.h in Copy Generated Headers */,
+				A80F3BAA0CCDCE24002DD990 /* DOMSVGAnimationElementInternal.h in Copy Generated Headers */,
+				A8F46A8E0CB20A9D003A9670 /* DOMSVGCircleElement.h in Copy Generated Headers */,
+				A80F3BAB0CCDCE24002DD990 /* DOMSVGAnimatedRectInternal.h in Copy Generated Headers */,
+				A8F46B040CB20A9D003A9670 /* DOMSVGPathSegMovetoRel.h in Copy Generated Headers */,
+				A80F3BAC0CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticRelInternal.h in Copy Generated Headers */,
+				A80F3BAD0CCDCE24002DD990 /* DOMSVGTransformInternal.h in Copy Generated Headers */,
+				A8F46AB60CB20A9D003A9670 /* DOMSVGLengthList.h in Copy Generated Headers */,
+				A80F3BAE0CCDCE24002DD990 /* DOMSVGAnimatedLengthListInternal.h in Copy Generated Headers */,
+				A80F3A8B0CCDA38D002DD990 /* DOMSVGFontFaceElement.h in Copy Generated Headers */,
+				A8F46B170CB20A9D003A9670 /* DOMSVGTextElement.h in Copy Generated Headers */,
+				A80F3BAF0CCDCE24002DD990 /* DOMSVGDocumentInternal.h in Copy Generated Headers */,
+				A80F3BB00CCDCE24002DD990 /* DOMSVGFEFuncAElement.h in Copy Generated Headers */,
+				A8F46B790CB20A9D003A9670 /* DOMSVGFEPointLightElement.h in Copy Generated Headers */,
+				A80F3BB10CCDCE24002DD990 /* DOMSVGZoomEventInternal.h in Copy Generated Headers */,
+				A80F3BB20CCDCE24002DD990 /* DOMSVGAnimatedEnumerationInternal.h in Copy Generated Headers */,
+				A80F3BB30CCDCE24002DD990 /* DOMSVGPathSegCurvetoQuadraticSmoothRelInternal.h in Copy Generated Headers */,
+				A80F3BB40CCDCE24002DD990 /* DOMSVGFETurbulenceElement.h in Copy Generated Headers */,
+				A8F46B1E0CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicSmoothRel.h in Copy Generated Headers */,
+				A8F46AE40CB20A9D003A9670 /* DOMSVGAElement.h in Copy Generated Headers */,
+				A8F46A9F0CB20A9D003A9670 /* DOMSVGMetadataElement.h in Copy Generated Headers */,
+				A8F46B660CB20A9D003A9670 /* DOMSVGFEImageElement.h in Copy Generated Headers */,
+				A8F46A8C0CB20A9D003A9670 /* DOMSVGSetElement.h in Copy Generated Headers */,
+				A8F46AA90CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticSmoothRel.h in Copy Generated Headers */,
+				A8F46B340CB20A9D003A9670 /* DOMSVGFESpotLightElement.h in Copy Generated Headers */,
+				A80F3BB50CCDCE24002DD990 /* DOMSVGPathSegLinetoAbsInternal.h in Copy Generated Headers */,
+				A80F3BB60CCDCE24002DD990 /* DOMSVGPathSegMovetoAbsInternal.h in Copy Generated Headers */,
+				A8F46B690CB20A9D003A9670 /* DOMSVGAnimatedEnumeration.h in Copy Generated Headers */,
+				A8F46B570CB20A9D003A9670 /* DOMSVGFEFuncBElement.h in Copy Generated Headers */,
+				A8F46AFF0CB20A9D003A9670 /* DOMSVGPoint.h in Copy Generated Headers */,
+				A8F46B030CB20A9D003A9670 /* DOMSVGAnimatedBoolean.h in Copy Generated Headers */,
+				A8F46ACD0CB20A9D003A9670 /* DOMSVGAnimateElementInternal.h in Copy Generated Headers */,
 				A8F46A850CB20A9D003A9670 /* DOMSVGElementInstanceListInternal.h in Copy Generated Headers */,
 				A8F46A860CB20A9D003A9670 /* DOMSVGFESpecularLightingElementInternal.h in Copy Generated Headers */,
-				A8F46A880CB20A9D003A9670 /* DOMSVGGradientElement.h in Copy Generated Headers */,
-				A8F46A890CB20A9D003A9670 /* DOMSVGAnimateColorElement.h in Copy Generated Headers */,
 				A8F46A8A0CB20A9D003A9670 /* DOMSVGForeignObjectElementInternal.h in Copy Generated Headers */,
 				A8F46A8B0CB20A9D003A9670 /* DOMSVGNumberListInternal.h in Copy Generated Headers */,
-				A8F46A8C0CB20A9D003A9670 /* DOMSVGSetElement.h in Copy Generated Headers */,
 				A8F46A8D0CB20A9D003A9670 /* DOMSVGFEColorMatrixElementInternal.h in Copy Generated Headers */,
-				A8F46A8E0CB20A9D003A9670 /* DOMSVGCircleElement.h in Copy Generated Headers */,
 				A8F46A8F0CB20A9D003A9670 /* DOMSVGRenderingIntentInternal.h in Copy Generated Headers */,
-				A8F46A900CB20A9D003A9670 /* DOMSVGAnimatedPathData.h in Copy Generated Headers */,
-				A8F46A910CB20A9D003A9670 /* DOMSVGViewElement.h in Copy Generated Headers */,
-				A8F46A920CB20A9D003A9670 /* DOMSVGPathSegLinetoRel.h in Copy Generated Headers */,
-				A8F46A930CB20A9D003A9670 /* DOMSVGZoomEvent.h in Copy Generated Headers */,
-				A8F46A940CB20A9D003A9670 /* DOMSVGPathSegLinetoVerticalRel.h in Copy Generated Headers */,
-				A8F46A950CB20A9D003A9670 /* DOMSVGAnimatedAngle.h in Copy Generated Headers */,
 				A8F46A970CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicAbsInternal.h in Copy Generated Headers */,
-				A8F46A980CB20A9D003A9670 /* DOMSVGSVGElement.h in Copy Generated Headers */,
-				A8F46A990CB20A9D003A9670 /* DOMSVGFEColorMatrixElement.h in Copy Generated Headers */,
-				A8F46A9A0CB20A9D003A9670 /* DOMSVGPreserveAspectRatio.h in Copy Generated Headers */,
 				A8F46A9B0CB20A9D003A9670 /* DOMSVGAnimateTransformElementInternal.h in Copy Generated Headers */,
 				A8F46A9C0CB20A9D003A9670 /* DOMSVGTextPositioningElementInternal.h in Copy Generated Headers */,
-				A8F46A9E0CB20A9D003A9670 /* DOMSVGFitToViewBox.h in Copy Generated Headers */,
-				A8F46A9F0CB20A9D003A9670 /* DOMSVGMetadataElement.h in Copy Generated Headers */,
-				A8F46AA10CB20A9D003A9670 /* DOMSVGFEComponentTransferElement.h in Copy Generated Headers */,
-				A8F46AA20CB20A9D003A9670 /* DOMSVGGElement.h in Copy Generated Headers */,
 				A8F46AA30CB20A9D003A9670 /* DOMSVGAnimatedTransformListInternal.h in Copy Generated Headers */,
-				A8F46AA40CB20A9D003A9670 /* DOMSVGTests.h in Copy Generated Headers */,
-				A8F46AA50CB20A9D003A9670 /* DOMSVGElement.h in Copy Generated Headers */,
 				A8F46AA60CB20A9D003A9670 /* DOMSVGPreserveAspectRatioInternal.h in Copy Generated Headers */,
-				A8F46AA70CB20A9D003A9670 /* DOMSVGElementInstance.h in Copy Generated Headers */,
-				A8F46AA80CB20A9D003A9670 /* DOMSVGFEDistantLightElement.h in Copy Generated Headers */,
-				A8F46AA90CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticSmoothRel.h in Copy Generated Headers */,
-				A8F46AAA0CB20A9D003A9670 /* DOMSVGFEDisplacementMapElement.h in Copy Generated Headers */,
 				A8F46AAB0CB20A9D003A9670 /* DOMSVGPathSegArcAbsInternal.h in Copy Generated Headers */,
 				A8F46AAD0CB20A9D003A9670 /* DOMSVGPathSegLinetoHorizontalRelInternal.h in Copy Generated Headers */,
-				A8F46AAE0CB20A9D003A9670 /* DOMSVGImageElement.h in Copy Generated Headers */,
-				A8F46AAF0CB20A9D003A9670 /* DOMSVGAnimatedNumberList.h in Copy Generated Headers */,
-				A8F46AB20CB20A9D003A9670 /* DOMSVGRectElement.h in Copy Generated Headers */,
-				A8F46AB30CB20A9D003A9670 /* DOMSVGPathSegLinetoVerticalAbs.h in Copy Generated Headers */,
 				A8F46AB40CB20A9D003A9670 /* DOMSVGPathSegArcRelInternal.h in Copy Generated Headers */,
-				A8F46AB50CB20A9D003A9670 /* DOMSVGPaint.h in Copy Generated Headers */,
-				A8F46AB60CB20A9D003A9670 /* DOMSVGLengthList.h in Copy Generated Headers */,
-				A8F46AB70CB20A9D003A9670 /* DOMSVGFilterPrimitiveStandardAttributes.h in Copy Generated Headers */,
-				A8F46AB80CB20A9D003A9670 /* DOMSVGExternalResourcesRequired.h in Copy Generated Headers */,
-				A8F46AB90CB20A9D003A9670 /* DOMSVGRect.h in Copy Generated Headers */,
-				A8F46ABA0CB20A9D003A9670 /* DOMSVGComponentTransferFunctionElement.h in Copy Generated Headers */,
-				A8F46ABB0CB20A9D003A9670 /* DOMSVGDescElement.h in Copy Generated Headers */,
 				A8F46ABC0CB20A9D003A9670 /* DOMSVGColorInternal.h in Copy Generated Headers */,
-				A8F46ABD0CB20A9D003A9670 /* DOMSVGPathSegList.h in Copy Generated Headers */,
-				A8F46ABE0CB20A9D003A9670 /* DOMSVGUseElement.h in Copy Generated Headers */,
 				A8F46ABF0CB20A9D003A9670 /* DOMSVGGElementInternal.h in Copy Generated Headers */,
 				A8F46AC00CB20A9D003A9670 /* DOMSVGAElementInternal.h in Copy Generated Headers */,
 				A8F46AC10CB20A9D003A9670 /* DOMSVGAnimationElementInternal.h in Copy Generated Headers */,
 				A8F46AC20CB20A9D003A9670 /* DOMSVGPathSegLinetoVerticalAbsInternal.h in Copy Generated Headers */,
-				A8F46AC30CB20A9D003A9670 /* DOMSVGFECompositeElement.h in Copy Generated Headers */,
-				A8F46AC40CB20A9D003A9670 /* DOMSVGCursorElement.h in Copy Generated Headers */,
-				A8F46AC50CB20A9D003A9670 /* DOMSVGPathSeg.h in Copy Generated Headers */,
 				A8F46AC60CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticAbsInternal.h in Copy Generated Headers */,
-				A8F46AC70CB20A9D003A9670 /* DOMSVGNumberList.h in Copy Generated Headers */,
 				A8F46AC80CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticRelInternal.h in Copy Generated Headers */,
-				A8F46AC90CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticRel.h in Copy Generated Headers */,
 				A8F46ACA0CB20A9D003A9670 /* DOMSVGElementInternal.h in Copy Generated Headers */,
 				A8F46ACC0CB20A9D003A9670 /* DOMSVGNumberInternal.h in Copy Generated Headers */,
 				A8F46ACE0CB20A9D003A9670 /* DOMSVGEllipseElementInternal.h in Copy Generated Headers */,
@@ -3740,56 +4085,32 @@
 				A8F46AD60CB20A9D003A9670 /* DOMSVGFEMergeElementInternal.h in Copy Generated Headers */,
 				A8F46AD70CB20A9D003A9670 /* DOMSVGPatternElementInternal.h in Copy Generated Headers */,
 				A8F46AD80CB20A9D003A9670 /* DOMSVGPolygonElementInternal.h in Copy Generated Headers */,
-				A8F46AD90CB20A9D003A9670 /* DOMSVGSwitchElement.h in Copy Generated Headers */,
 				A8F46ADB0CB20A9D003A9670 /* DOMSVGLengthInternal.h in Copy Generated Headers */,
 				A8F46ADD0CB20A9D003A9670 /* DOMSVGSetElementInternal.h in Copy Generated Headers */,
 				A8F46ADE0CB20A9D003A9670 /* DOMSVGSVGElementInternal.h in Copy Generated Headers */,
 				A8F46ADF0CB20A9D003A9670 /* DOMSVGUseElementInternal.h in Copy Generated Headers */,
-				A8F46AE00CB20A9D003A9670 /* DOMSVGStyleElement.h in Copy Generated Headers */,
 				A8F46AE10CB20A9D003A9670 /* DOMSVGFEComponentTransferElementInternal.h in Copy Generated Headers */,
-				A8F46AE20CB20A9D003A9670 /* DOMSVGPathSegArcRel.h in Copy Generated Headers */,
 				A8F46AE30CB20A9D003A9670 /* DOMSVGTransformListInternal.h in Copy Generated Headers */,
-				A8F46AE40CB20A9D003A9670 /* DOMSVGAElement.h in Copy Generated Headers */,
 				A8F46AE50CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticSmoothAbsInternal.h in Copy Generated Headers */,
 				A8F46AE60CB20A9D003A9670 /* DOMSVGAnimatedRectInternal.h in Copy Generated Headers */,
-				A8F46AE70CB20A9D003A9670 /* DOMSVGFEFloodElement.h in Copy Generated Headers */,
-				A8F46AE80CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicRel.h in Copy Generated Headers */,
 				A8F46AE90CB20A9D003A9670 /* DOMSVGElementInstanceInternal.h in Copy Generated Headers */,
 				A8F46AEA0CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicSmoothRelInternal.h in Copy Generated Headers */,
-				A8F46AEB0CB20A9D003A9670 /* DOMSVGTextContentElement.h in Copy Generated Headers */,
 				A8F46AEC0CB20A9D003A9670 /* DOMSVGAngleInternal.h in Copy Generated Headers */,
-				A8F46AED0CB20A9D003A9670 /* DOMSVGAnimatedLength.h in Copy Generated Headers */,
-				A8F46AEE0CB20A9D003A9670 /* DOMSVGFEMergeElement.h in Copy Generated Headers */,
-				A8F46AEF0CB20A9D003A9670 /* DOMSVGFEBlendElement.h in Copy Generated Headers */,
-				A8F46AF00CB20A9D003A9670 /* DOMSVGNumber.h in Copy Generated Headers */,
 				A8F46AF10CB20A9D003A9670 /* DOMSVGFECompositeElementInternal.h in Copy Generated Headers */,
 				A8F46AF20CB20A9D003A9670 /* DOMSVGFEMergeNodeElementInternal.h in Copy Generated Headers */,
 				A8F46AF30CB20A9D003A9670 /* DOMSVGFESpotLightElementInternal.h in Copy Generated Headers */,
 				A8F46AF40CB20A9D003A9670 /* DOMSVGTextContentElementInternal.h in Copy Generated Headers */,
 				A8F46AF50CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicSmoothAbsInternal.h in Copy Generated Headers */,
-				A8F46AF60CB20A9D003A9670 /* DOMSVGPatternElement.h in Copy Generated Headers */,
-				A8F46AF70CB20A9D003A9670 /* DOMSVGTextPathElementInternal.h in Copy Generated Headers */,
 				A8F46AF80CB20A9D003A9670 /* DOMSVGClipPathElementInternal.h in Copy Generated Headers */,
 				A8F46AF90CB20A9D003A9670 /* DOMSVGFEOffsetElementInternal.h in Copy Generated Headers */,
 				A8F46AFA0CB20A9D003A9670 /* DOMSVGGradientElementInternal.h in Copy Generated Headers */,
 				A8F46AFB0CB20A9D003A9670 /* DOMSVGMetadataElementInternal.h in Copy Generated Headers */,
 				A8F46AFC0CB20A9D003A9670 /* DOMSVGPolylineElementInternal.h in Copy Generated Headers */,
-				A8F46AFD0CB20A9D003A9670 /* DOMSVGZoomAndPan.h in Copy Generated Headers */,
-				A8F46AFE0CB20A9D003A9670 /* DOMSVGPolygonElement.h in Copy Generated Headers */,
-				A8F46AFF0CB20A9D003A9670 /* DOMSVGPoint.h in Copy Generated Headers */,
-				A8F46B010CB20A9D003A9670 /* DOMSVGTransform.h in Copy Generated Headers */,
 				A8F46B020CB20A9D003A9670 /* DOMSVGAnimatedBooleanInternal.h in Copy Generated Headers */,
-				A8F46B030CB20A9D003A9670 /* DOMSVGAnimatedBoolean.h in Copy Generated Headers */,
-				A8F46B040CB20A9D003A9670 /* DOMSVGPathSegMovetoRel.h in Copy Generated Headers */,
 				A8F46B050CB20A9D003A9670 /* DOMSVGAnimatedAngleInternal.h in Copy Generated Headers */,
-				A8F46B060CB20A9D003A9670 /* DOMSVGFEFuncRElement.h in Copy Generated Headers */,
-				A8F46B070CB20A9D003A9670 /* DOMSVGMatrix.h in Copy Generated Headers */,
-				A8F46B080CB20A9D003A9670 /* DOMSVGRenderingIntent.h in Copy Generated Headers */,
 				A8F46B090CB20A9D003A9670 /* DOMSVGPointListInternal.h in Copy Generated Headers */,
 				A8F46B0A0CB20A9D003A9670 /* DOMSVGTSpanElementInternal.h in Copy Generated Headers */,
 				A8F46B0B0CB20A9D003A9670 /* DOMSVGTitleElementInternal.h in Copy Generated Headers */,
-				A8F46B0C0CB20A9D003A9670 /* DOMSVGPathSegMovetoAbs.h in Copy Generated Headers */,
-				A8F46B0D0CB20A9D003A9670 /* DOMSVGPathSegArcAbs.h in Copy Generated Headers */,
 				A8F46B0E0CB20A9D003A9670 /* DOMSVGStyleElementInternal.h in Copy Generated Headers */,
 				A8F46B0F0CB20A9D003A9670 /* DOMSVGAnimatedLengthListInternal.h in Copy Generated Headers */,
 				A8F46B100CB20A9D003A9670 /* DOMSVGImageElementInternal.h in Copy Generated Headers */,
@@ -3797,109 +4118,56 @@
 				A8F46B120CB20A9D003A9670 /* DOMSVGPathSegMovetoRelInternal.h in Copy Generated Headers */,
 				A8F46B130CB20A9D003A9670 /* DOMSVGUnitTypesInternal.h in Copy Generated Headers */,
 				A8F46B140CB20A9D003A9670 /* DOMSVGPathSegInternal.h in Copy Generated Headers */,
-				A8F46B150CB20A9D003A9670 /* DOMSVGFilterElement.h in Copy Generated Headers */,
 				A8F46B160CB20A9D003A9670 /* DOMSVGAnimatedLengthInternal.h in Copy Generated Headers */,
-				A8F46B170CB20A9D003A9670 /* DOMSVGTextElement.h in Copy Generated Headers */,
-				A8F46B180CB20A9D003A9670 /* DOMSVGTransformList.h in Copy Generated Headers */,
-				A8F46B190CB20A9D003A9670 /* DOMSVGStylable.h in Copy Generated Headers */,
-				A8F46B1B0CB20A9D003A9670 /* DOMSVGAnimatedRect.h in Copy Generated Headers */,
-				A8F46B1C0CB20A9D003A9670 /* DOMSVGFEOffsetElement.h in Copy Generated Headers */,
 				A8F46B1D0CB20A9D003A9670 /* DOMSVGPathSegLinetoHorizontalAbsInternal.h in Copy Generated Headers */,
-				A8F46B1E0CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicSmoothRel.h in Copy Generated Headers */,
-				A8F46B200CB20A9D003A9670 /* DOMSVGURIReference.h in Copy Generated Headers */,
 				A8F46B210CB20A9D003A9670 /* DOMSVGPathSegClosePathInternal.h in Copy Generated Headers */,
-				A8F46B220CB20A9D003A9670 /* DOMSVGFEFuncGElement.h in Copy Generated Headers */,
 				A8F46B230CB20A9D003A9670 /* DOMSVGPaintInternal.h in Copy Generated Headers */,
 				A8F46B240CB20A9D003A9670 /* DOMSVGZoomEventInternal.h in Copy Generated Headers */,
-				A8F46B250CB20A9D003A9670 /* DOMSVGPathSegLinetoHorizontalRel.h in Copy Generated Headers */,
-				A8F46B260CB20A9D003A9670 /* DOMSVGAnimateTransformElement.h in Copy Generated Headers */,
 				A8F46B270CB20A9D003A9670 /* DOMSVGFETurbulenceElementInternal.h in Copy Generated Headers */,
 				A8F46B280CB20A9D003A9670 /* DOMSVGTransformInternal.h in Copy Generated Headers */,
-				A8F46B290CB20A9D003A9670 /* DOMSVGPathSegLinetoHorizontalAbs.h in Copy Generated Headers */,
 				A8F46B2A0CB20A9D003A9670 /* DOMSVGFEPointLightElementInternal.h in Copy Generated Headers */,
 				A8F46B2B0CB20A9D003A9670 /* DOMSVGFEDiffuseLightingElementInternal.h in Copy Generated Headers */,
 				A8F46B2C0CB20A9D003A9670 /* DOMSVGFEDisplacementMapElementInternal.h in Copy Generated Headers */,
-				A8F46B2D0CB20A9D003A9670 /* DOMSVGDefsElement.h in Copy Generated Headers */,
-				A8F46B2E0CB20A9D003A9670 /* DOMSVGAnimatedPreserveAspectRatio.h in Copy Generated Headers */,
 				A8F46B2F0CB20A9D003A9670 /* DOMSVGDocumentInternal.h in Copy Generated Headers */,
 				A8F46B300CB20A9D003A9670 /* DOMSVGAnimateColorElementInternal.h in Copy Generated Headers */,
-				A8F46B310CB20A9D003A9670 /* DOMSVGLangSpace.h in Copy Generated Headers */,
-				A8F46B320CB20A9D003A9670 /* DOMSVGForeignObjectElement.h in Copy Generated Headers */,
-				A8F46B330CB20A9D003A9670 /* DOMSVGRectInternal.h in Copy Generated Headers */,
-				A8F46B340CB20A9D003A9670 /* DOMSVGFESpotLightElement.h in Copy Generated Headers */,
 				A8F46B350CB20A9D003A9670 /* DOMSVGAnimatedStringInternal.h in Copy Generated Headers */,
-				A8F46B360CB20A9D003A9670 /* DOMSVGTransformable.h in Copy Generated Headers */,
 				A8F46B370CB20A9D003A9670 /* DOMSVGStringListInternal.h in Copy Generated Headers */,
 				A8F46B380CB20A9D003A9670 /* DOMSVG.h in Copy Generated Headers */,
-				A8F46B390CB20A9D003A9670 /* DOMSVGElementInstanceList.h in Copy Generated Headers */,
-				A8F46B3A0CB20A9D003A9670 /* DOMSVGLocatable.h in Copy Generated Headers */,
 				A8F46B3B0CB20A9D003A9670 /* DOMSVGViewElementInternal.h in Copy Generated Headers */,
 				A8F46B3C0CB20A9D003A9670 /* DOMSVGTRefElementInternal.h in Copy Generated Headers */,
 				A8F46B3D0CB20A9D003A9670 /* DOMSVGTextElementInternal.h in Copy Generated Headers */,
 				A8F46B3E0CB20A9D003A9670 /* DOMSVGStopElementInternal.h in Copy Generated Headers */,
-				A8F46B3F0CB20A9D003A9670 /* DOMSVGTextPositioningElement.h in Copy Generated Headers */,
 				A8F46B400CB20A9D003A9670 /* DOMSVGRectElementInternal.h in Copy Generated Headers */,
 				A8F46B410CB20A9D003A9670 /* DOMSVGPathElementInternal.h in Copy Generated Headers */,
-				A8F46B420CB20A9D003A9670 /* DOMSVGPolylineElement.h in Copy Generated Headers */,
 				A8F46B430CB20A9D003A9670 /* DOMSVGMaskElementInternal.h in Copy Generated Headers */,
 				A8F46B440CB20A9D003A9670 /* DOMSVGLineElementInternal.h in Copy Generated Headers */,
 				A8F46B450CB20A9D003A9670 /* DOMSVGDescElementInternal.h in Copy Generated Headers */,
 				A8F46B460CB20A9D003A9670 /* DOMSVGDefsElementInternal.h in Copy Generated Headers */,
-				A8F46B470CB20A9D003A9670 /* DOMSVGPathSegClosePath.h in Copy Generated Headers */,
 				A8F46B480CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicRelInternal.h in Copy Generated Headers */,
 				A8F46B490CB20A9D003A9670 /* DOMSVGComponentTransferFunctionElementInternal.h in Copy Generated Headers */,
-				A8F46B4A0CB20A9D003A9670 /* DOMSVGAnimatedString.h in Copy Generated Headers */,
-				A8F46B4B0CB20A9D003A9670 /* DOMSVGTSpanElement.h in Copy Generated Headers */,
 				A8F46B4C0CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticSmoothRelInternal.h in Copy Generated Headers */,
-				A8F46B4D0CB20A9D003A9670 /* DOMSVGUnitTypes.h in Copy Generated Headers */,
-				A8F46B4E0CB20A9D003A9670 /* DOMSVGAnimatedTransformList.h in Copy Generated Headers */,
-				A8F46B4F0CB20A9D003A9670 /* DOMSVGTRefElement.h in Copy Generated Headers */,
 				A8F46B500CB20A9D003A9670 /* DOMSVGLengthListInternal.h in Copy Generated Headers */,
 				A8F46B510CB20A9D003A9670 /* DOMSVGMatrixInternal.h in Copy Generated Headers */,
-				A8F46B520CB20A9D003A9670 /* DOMSVGMarkerElement.h in Copy Generated Headers */,
-				A8F46B530CB20A9D003A9670 /* DOMSVGSymbolElement.h in Copy Generated Headers */,
-				A8F46B540CB20A9D003A9670 /* DOMSVGPointList.h in Copy Generated Headers */,
 				A8F46B550CB20A9D003A9670 /* DOMSVGAnimatedNumberListInternal.h in Copy Generated Headers */,
 				A8F46B560CB20A9D003A9670 /* DOMSVGAnimatedEnumerationInternal.h in Copy Generated Headers */,
-				A8F46B570CB20A9D003A9670 /* DOMSVGFEFuncBElement.h in Copy Generated Headers */,
-				A8F46B580CB20A9D003A9670 /* DOMSVGTitleElement.h in Copy Generated Headers */,
-				A8F46B590CB20A9D003A9670 /* DOMSVGPathSegCurvetoQuadraticSmoothAbs.h in Copy Generated Headers */,
 				A8F46B5A0CB20A9D003A9670 /* DOMSVGSymbolElementInternal.h in Copy Generated Headers */,
-				A8F46B5B0CB20A9D003A9670 /* DOMSVGFESpecularLightingElement.h in Copy Generated Headers */,
 				A8F46B5C0CB20A9D003A9670 /* DOMSVGAnimatedIntegerInternal.h in Copy Generated Headers */,
 				A8F46B5D0CB20A9D003A9670 /* DOMSVGSwitchElementInternal.h in Copy Generated Headers */,
 				A8F46B5E0CB20A9D003A9670 /* DOMSVGScriptElementInternal.h in Copy Generated Headers */,
-				A8F46B5F0CB20A9D003A9670 /* DOMSVGColor.h in Copy Generated Headers */,
 				A8F46B600CB20A9D003A9670 /* DOMSVGMarkerElementInternal.h in Copy Generated Headers */,
 				A8F46B610CB20A9D003A9670 /* DOMSVGFilterElementInternal.h in Copy Generated Headers */,
 				A8F46B620CB20A9D003A9670 /* DOMSVGFETileElementInternal.h in Copy Generated Headers */,
 				A8F46B650CB20A9D003A9670 /* DOMSVGPathSegListInternal.h in Copy Generated Headers */,
-				A8F46B660CB20A9D003A9670 /* DOMSVGFEImageElement.h in Copy Generated Headers */,
-				A8F46B670CB20A9D003A9670 /* DOMSVGAnimationElement.h in Copy Generated Headers */,
 				A8F46B680CB20A9D003A9670 /* DOMSVGCursorElementInternal.h in Copy Generated Headers */,
-				A8F46B690CB20A9D003A9670 /* DOMSVGAnimatedEnumeration.h in Copy Generated Headers */,
-				A8F46B6A0CB20A9D003A9670 /* DOMSVGTextPathElement.h in Copy Generated Headers */,
-				A8F46B6B0CB20A9D003A9670 /* DOMSVGAnimatedLengthList.h in Copy Generated Headers */,
 				A8F46B6C0CB20A9D003A9670 /* DOMSVGCircleElementInternal.h in Copy Generated Headers */,
 				A8F46B6D0CB20A9D003A9670 /* DOMSVGPathSegMovetoAbsInternal.h in Copy Generated Headers */,
 				A8F46B6E0CB20A9D003A9670 /* DOMSVGPathSegLinetoAbsInternal.h in Copy Generated Headers */,
-				A8F46B6F0CB20A9D003A9670 /* DOMSVGScriptElement.h in Copy Generated Headers */,
-				A8F46B700CB20A9D003A9670 /* DOMSVGAnimatedInteger.h in Copy Generated Headers */,
-				A8F46B710CB20A9D003A9670 /* DOMSVGFEMergeNodeElement.h in Copy Generated Headers */,
-				A8F46B720CB20A9D003A9670 /* DOMSVGPathSegCurvetoCubicSmoothAbs.h in Copy Generated Headers */,
-				A8F46B740CB20A9D003A9670 /* DOMSVGPathElement.h in Copy Generated Headers */,
 				A8F46B750CB20A9D003A9670 /* DOMSVGFEDistantLightElementInternal.h in Copy Generated Headers */,
 				A8F46B760CB20A9D003A9670 /* DOMSVGFEGaussianBlurElementInternal.h in Copy Generated Headers */,
 				A8F46B770CB20A9D003A9670 /* DOMSVGLinearGradientElementInternal.h in Copy Generated Headers */,
 				A8F46B780CB20A9D003A9670 /* DOMSVGRadialGradientElementInternal.h in Copy Generated Headers */,
-				A8F46B790CB20A9D003A9670 /* DOMSVGFEPointLightElement.h in Copy Generated Headers */,
 				A8F46B7A0CB20A9D003A9670 /* DOMSVGException.h in Copy Generated Headers */,
-				A8F46B7B0CB20A9D003A9670 /* DOMSVGStopElement.h in Copy Generated Headers */,
-				A8F46B7C0CB20A9D003A9670 /* DOMSVGLinearGradientElement.h in Copy Generated Headers */,
-				A8F46B7D0CB20A9D003A9670 /* DOMSVGRadialGradientElement.h in Copy Generated Headers */,
 				A8F46B7E0CB20A9D003A9670 /* DOMSVGPathSegLinetoVerticalRelInternal.h in Copy Generated Headers */,
-				A8F46B7F0CB20A9D003A9670 /* DOMSVGPointInternal.h in Copy Generated Headers */,
-				A8F46B810CB20A9D003A9670 /* DOMSVGStringList.h in Copy Generated Headers */,
 				A8F46B820CB20A9D003A9670 /* DOMSVGAnimatedNumberInternal.h in Copy Generated Headers */,
 				A8F46B830CB20A9D003A9670 /* DOMSVGAnimatedPreserveAspectRatioInternal.h in Copy Generated Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */,
