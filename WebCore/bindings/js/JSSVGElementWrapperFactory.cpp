@@ -56,6 +56,11 @@
 #include "JSSVGFETurbulenceElement.h"
 #include "JSSVGFilterElement.h"
 #include "JSSVGForeignObjectElement.h"
+#include "JSSVGFontFaceElement.h"
+#include "JSSVGFontFaceFormatElement.h"
+#include "JSSVGFontFaceNameElement.h"
+#include "JSSVGFontFaceSrcElement.h"
+#include "JSSVGFontFaceUriElement.h"
 #include "JSSVGGElement.h"
 #include "JSSVGImageElement.h"
 #include "JSSVGLinearGradientElement.h"
@@ -120,6 +125,11 @@
 #include "SVGFETurbulenceElement.h"
 #include "SVGFilterElement.h"
 #include "SVGForeignObjectElement.h"
+#include "SVGFontFaceElement.h"
+#include "SVGFontFaceFormatElement.h"
+#include "SVGFontFaceNameElement.h"
+#include "SVGFontFaceSrcElement.h"
+#include "SVGFontFaceUriElement.h"
 #include "SVGGElement.h"
 #include "SVGImageElement.h"
 #include "SVGLinearGradientElement.h"
@@ -192,6 +202,11 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(feSpotLight, FESpotLight) \
     macro(feTile, FETile) \
     macro(feTurbulence, FETurbulence) \
+    macro(font_face, FontFace) \
+    macro(font_face_format, FontFaceFormat) \
+    macro(font_face_name, FontFaceName) \
+    macro(font_face_src, FontFaceSrc) \
+    macro(font_face_uri, FontFaceUri) \
     macro(filter, Filter) \
     macro(foreignObject, ForeignObject) \
     macro(g, G) \

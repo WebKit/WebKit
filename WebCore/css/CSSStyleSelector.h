@@ -82,7 +82,7 @@ class StyledElement;
     class CSSStyleSelector : public StyleSelector
     {
     public:
-        CSSStyleSelector(Document*, const String& userStyleSheet, StyleSheetList *styleSheets, bool strictParsing);
+        CSSStyleSelector(Document*, const String& userStyleSheet, StyleSheetList *styleSheets, CSSStyleSheet* mappedElementsSheet, bool strictParsing);
         ~CSSStyleSelector();
 
         static void loadDefaultStyle();

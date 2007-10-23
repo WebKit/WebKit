@@ -41,9 +41,6 @@
 
 namespace WebCore {
 
-// Defined in CSSGrammar.y, but not in any header, so just declare it here for now.
-int getPropertyID(const char* str, int len);
-
 using namespace SVGNames;
 
 SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* doc)

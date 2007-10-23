@@ -81,6 +81,10 @@ private:
     CSSStyleDeclaration& operator=(const CSSStyleDeclaration&);
 };
 
+// Defined in CSSGrammar.y, but not in any header.
+// We have poor control over CSSGrammar.h generation, so just define it here for others to use.
+int getPropertyID(const char* str, int len);
+
 } // namespace WebCore
 
 #endif // CSSStyleDeclaration_h

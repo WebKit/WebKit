@@ -203,6 +203,11 @@ all : \
     DOMSVGFESpotLightElement.h \
     DOMSVGFETileElement.h \
     DOMSVGFETurbulenceElement.h \
+    DOMSVGFontFaceElement.h \
+    DOMSVGFontFaceFormatElement.h \
+    DOMSVGFontFaceNameElement.h \
+    DOMSVGFontFaceSrcElement.h \
+    DOMSVGFontFaceUriElement.h \
     DOMSVGFilterElement.h \
     DOMSVGFilterPrimitiveStandardAttributes.h \
     DOMSVGFitToViewBox.h \
@@ -530,6 +535,11 @@ all : \
     JSSVGFETurbulenceElement.h \
     JSSVGFilterElement.h \
     JSSVGForeignObjectElement.h \
+    JSSVGFontFaceElement.h \
+    JSSVGFontFaceFormatElement.h \
+    JSSVGFontFaceNameElement.h \
+    JSSVGFontFaceSrcElement.h \
+    JSSVGFontFaceUriElement.h \
     JSSVGGElement.h \
     JSSVGGradientElement.h \
     JSSVGImageElement.h \

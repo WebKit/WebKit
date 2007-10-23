@@ -316,7 +316,7 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     m_usesFirstLetterRules = false;
     m_gotoAnchorNeededAfterStylesheetsLoad = false;
 
-    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), !inCompatMode());
+    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode());
     m_didCalculateStyleSelector = false;
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
@@ -1676,6 +1676,13 @@ CSSStyleSheet* Document::elementSheet()
     return m_elemSheet.get();
 }
 
+CSSStyleSheet* Document::mappedElementSheet()
+{
+    if (!m_mappedElementSheet)
+        m_mappedElementSheet = new CSSStyleSheet(this, baseURL());
+    return m_mappedElementSheet.get();
+}
+
 void Document::determineParseMode(const String&)
 {
     // For XML documents use strict parse mode.
@@ -2181,7 +2188,7 @@ void Document::recalcStyleSelector()
     String usersheet = m_usersheet;
     if (view() && view()->mediaType() == "print")
         usersheet += m_printSheet;
-    m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), !inCompatMode());
+    m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode());
     m_styleSelector->setEncodedURL(m_url);
     m_didCalculateStyleSelector = true;
 }

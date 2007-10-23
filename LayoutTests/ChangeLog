@@ -1,3 +1,21 @@
+2007-10-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+        
+        Implement <font-face> and friends
+        http://bugs.webkit.org/show_bug.cgi?id=10652
+
+        * platform/mac/svg/custom/font-face-cascade-order-expected.checksum: Added.
+        * platform/mac/svg/custom/font-face-cascade-order-expected.png: Added.
+        * platform/mac/svg/custom/font-face-cascade-order-expected.txt: Added.
+        * platform/mac/svg/custom/font-face-simple-expected.checksum: Added.
+        * platform/mac/svg/custom/font-face-simple-expected.png: Added.
+        * platform/mac/svg/custom/font-face-simple-expected.txt: Added.
+        * platform/mac/svg/custom/font-face-source-fallback-expected.txt: Added.
+        * svg/custom/font-face-cascade-order.svg: Added.
+        * svg/custom/font-face-simple.svg: Added.
+        * svg/custom/font-face-fallback.svg-disabled: Added. Disabled due to bug 15588
+
 2007-10-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

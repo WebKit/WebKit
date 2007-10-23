@@ -1,3 +1,63 @@
+2007-10-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        Implement <font-face> and friends for SVG.
+        http://bugs.webkit.org/show_bug.cgi?id=10652
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::mappedElementSheet):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        * ksvg2/scripts/make_names.pl:
+        * ksvg2/svg/SVGDefinitionSrcElement.cpp: Added.
+        (WebCore::SVGDefinitionSrcElement::SVGDefinitionSrcElement):
+        (WebCore::SVGDefinitionSrcElement::~SVGDefinitionSrcElement):
+        (WebCore::SVGDefinitionSrcElement::childrenChanged):
+        * ksvg2/svg/SVGDefinitionSrcElement.h: Added.
+        * ksvg2/svg/SVGDefinitionSrcElement.idl: Added.
+        * ksvg2/svg/SVGFontFaceElement.cpp: Added.
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        (WebCore::SVGFontFaceElement::~SVGFontFaceElement):
+        (WebCore::cssPropertyIdForName):
+        (WebCore::mapAttributeToCSSProperty):
+        (WebCore::cssPropertyIdForSVGAttributeName):
+        (WebCore::SVGFontFaceElement::parseMappedAttribute):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        (WebCore::SVGFontFaceElement::childrenChanged):
+        * ksvg2/svg/SVGFontFaceElement.h: Added.
+        * ksvg2/svg/SVGFontFaceElement.idl: Added.
+        * ksvg2/svg/SVGFontFaceFormatElement.cpp: Added.
+        (WebCore::SVGFontFaceFormatElement::SVGFontFaceFormatElement):
+        (WebCore::SVGFontFaceFormatElement::~SVGFontFaceFormatElement):
+        (WebCore::SVGFontFaceFormatElement::childrenChanged):
+        * ksvg2/svg/SVGFontFaceFormatElement.h: Added.
+        * ksvg2/svg/SVGFontFaceFormatElement.idl: Added.
+        * ksvg2/svg/SVGFontFaceNameElement.cpp: Added.
+        (WebCore::SVGFontFaceNameElement::SVGFontFaceNameElement):
+        (WebCore::SVGFontFaceNameElement::~SVGFontFaceNameElement):
+        (WebCore::SVGFontFaceNameElement::srcValue):
+        * ksvg2/svg/SVGFontFaceNameElement.h: Added.
+        * ksvg2/svg/SVGFontFaceNameElement.idl: Added.
+        * ksvg2/svg/SVGFontFaceSrcElement.cpp: Added.
+        (WebCore::SVGFontFaceSrcElement::SVGFontFaceSrcElement):
+        (WebCore::SVGFontFaceSrcElement::~SVGFontFaceSrcElement):
+        (WebCore::SVGFontFaceSrcElement::srcValue):
+        (WebCore::SVGFontFaceSrcElement::childrenChanged):
+        * ksvg2/svg/SVGFontFaceSrcElement.h: Added.
+        * ksvg2/svg/SVGFontFaceSrcElement.idl: Added.
+        * ksvg2/svg/SVGFontFaceUriElement.cpp: Added.
+        (WebCore::SVGFontFaceUriElement::SVGFontFaceUriElement):
+        (WebCore::SVGFontFaceUriElement::~SVGFontFaceUriElement):
+        (WebCore::SVGFontFaceUriElement::srcValue):
+        (WebCore::SVGFontFaceUriElement::childrenChanged):
+        * ksvg2/svg/SVGFontFaceUriElement.h: Added.
+        * ksvg2/svg/SVGFontFaceUriElement.idl: Added.
+        * ksvg2/svg/svgtags.in:
+
 2007-10-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.

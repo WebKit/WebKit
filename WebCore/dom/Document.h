@@ -383,6 +383,7 @@ public:
     const String& printStyleSheet() const { return m_printSheet; }
 
     CSSStyleSheet* elementSheet();
+    CSSStyleSheet* mappedElementSheet();
     virtual Tokenizer* createTokenizer();
     Tokenizer* tokenizer() { return m_tokenizer; }
     
@@ -719,6 +720,7 @@ private:
     bool m_hasNodesWithPlaceholderStyle;
 
     RefPtr<CSSStyleSheet> m_elemSheet;
+    RefPtr<CSSStyleSheet> m_mappedElementSheet;
 
     bool m_printing;
 

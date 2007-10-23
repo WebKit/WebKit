@@ -16,9 +16,7 @@ clipPath
 color_profile
 #endif
 cursor
-#if 0
 definition_src
-#endif
 defs
 desc
 ellipse
@@ -55,12 +53,12 @@ filter
 #endif
 #if 0
 font
+#endif
 font_face
 font_face_format
 font_face_name
 font_face_src
 font_face_uri
-#endif
 foreignObject
 g
 #if 0

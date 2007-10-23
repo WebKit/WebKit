@@ -151,7 +151,6 @@ sub svgCapitalizationHacks
     $name =~ s/svg/SVG/;
     $name =~ s/tref/TRef/;
     $name =~ s/tspan/TSpan/;
-    $name =~ s/uri/URI/;
     
     return $name;
 }

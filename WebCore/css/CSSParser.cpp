@@ -2508,19 +2508,20 @@ bool CSSParser::parseFontFaceSrc()
             parsedValue = new CSSFontFaceSrcValue(String(KURL(styleElement->baseURL().deprecatedString(), value.deprecatedString()).url()), false);
             uriValue = parsedValue;
             allowFormat = true;
+            expectComma = true;
         } else if (val->unit == Value::Function) {
             // There are two allowed functions: local() and format().             
             String fname = domString(val->function->name).lower();
             ValueList* args = val->function->args;
             if (args && args->size() == 1) {
                 if (fname == "local(" && !expectComma) {
-                    // Parse it.
                     expectComma = true;
                     allowFormat = false;
                     Value* a = args->current();
                     uriValue = 0;
                     parsedValue = new CSSFontFaceSrcValue(domString(a->string), true);
                 } else if (fname == "format(" && allowFormat && uriValue) {
+                    expectComma = true;
                     allowFormat = false;
                     uriValue->setFormat(domString(args->current()->string));
                     uriValue = 0;
