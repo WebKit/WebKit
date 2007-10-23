@@ -257,7 +257,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMSVGDefsElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGDefsElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGDefinitionSrcElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMSVGDefinitionSrcElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGDescElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGDescElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGDocument.h \
@@ -321,15 +320,10 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFilterPrimitiveStandardAttributes.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFitToViewBox.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFontFaceElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMSVGFontFaceElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFontFaceFormatElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMSVGFontFaceFormatElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFontFaceNameElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMSVGFontFaceNameElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFontFaceSrcElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMSVGFontFaceSrcElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFontFaceUriElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMSVGFontFaceUriElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGForeignObjectElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGForeignObjectElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGGElement.h \
@@ -450,7 +444,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMSVGTextElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGTextElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGTextPathElement.h \
-    $(INTERNAL_HEADERS_DIR)/DOMSVGTextPathElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGTextPositioningElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGTextPositioningElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGTitleElement.h \
