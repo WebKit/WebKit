@@ -32,9 +32,6 @@
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-// {A20B5645-692D-4147-BF80-E8CD84BE82A1}
-DEFINE_GUID(IID_WebPreferences, 0xa20b5645, 0x692d, 0x4147, 0xbf, 0x80, 0xe8, 0xcd, 0x84, 0xbe, 0x82, 0xa1);
-
 class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate {
 public:
     static WebPreferences* createInstance();

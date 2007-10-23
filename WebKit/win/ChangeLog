@@ -1,3 +1,28 @@
+2007-10-23  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5244261> SafariWin ignores cookie policy setting "never" in the preferences
+        Custom WebPreferences (not the shared WebPreferences) could override the cookie accept
+        policy setting on the default cookie storage.  To fix that, I added a new method in
+        WebView called updateGlobalSettingsFromPreferences() to handle updating the global pref
+        options such as cookie accept policy, and it's only called to update changes from
+        the shared WebPreferences.
+        
+        Use CLSID_WebPreferences and remove IID_WebPreferences.
+
+        Reviewed by Darin and Adam.
+
+        * WebPreferences.cpp:
+        (WebPreferences::QueryInterface):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::updateWebCoreSettingsFromPreferences):
+        (WebView::updateGlobalSettingsFromPreferences):
+        (WebView::updateSettingsFromPreferences):
+        (WebView::developerExtrasEnabled):
+        (WebView::initWithFrame):
+        (WebView::onNotify):
+        * WebView.h:
+
 2007-10-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

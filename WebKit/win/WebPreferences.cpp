@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "WebKit.h"
 #include "WebKitDLL.h"
 #include "WebPreferences.h"
 
@@ -46,10 +47,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
-
-#include <initguid.h>
-// {A20B5645-692D-4147-BF80-E8CD84BE82A1}
-DEFINE_GUID(IID_WebPreferences, 0xa20b5645, 0x692d, 0x4147, 0xbf, 0x80, 0xe8, 0xcd, 0x84, 0xbe, 0x82, 0xa1);
 
 static unsigned long long WebSystemMainMemory()
 {
@@ -558,8 +555,8 @@ HRESULT STDMETHODCALLTYPE WebPreferences::QueryInterface(REFIID riid, void** ppv
         *ppvObject = static_cast<IWebPreferences*>(this);
     else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate))
         *ppvObject = static_cast<IWebPreferencesPrivate*>(this);
-    else if (IsEqualGUID(riid, IID_WebPreferences))
-        *ppvObject = static_cast<WebPreferences*>(this);
+    else if (IsEqualGUID(riid, CLSID_WebPreferences))
+        *ppvObject = this;
     else
         return E_NOINTERFACE;
 
