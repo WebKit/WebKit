@@ -1,5 +1,14 @@
 2007-10-23  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Fix leaks seen on TOT from new font-face code.
+
+        * ksvg2/svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace): use a stack allocated CSSProperty instead of mallocing
+
+2007-10-23  Eric Seidel  <eric@webkit.org>
+
         Build fix only, no review.
 
         Sacrifice three virgin hours upon the altar of the heathen XCode gods

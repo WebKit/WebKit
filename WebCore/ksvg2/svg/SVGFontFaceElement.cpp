@@ -147,8 +147,11 @@ void SVGFontFaceElement::rebuildFontFace()
     if (parentNode() && parentNode()->localName() == "font") // SVGNames::fontTag isn't generated yet
         return; // this font-face applies to its parent font, which we ignore.
     else if (srcElement) {
-        CSSProperty* srcProperty = new CSSProperty(CSS_PROP_SRC, srcElement->srcValue());
-        m_styleDeclaration->addParsedProperties(&srcProperty, 1);
+        // This is the only class (other than CSSParser) to create CSSValue objects and set them on the CSSStyleDeclaration manually
+        // we use the addParsedProperties method, and fake having an array of CSSProperty pointers.
+        CSSProperty srcProperty(CSS_PROP_SRC, srcElement->srcValue());
+        const CSSProperty* srcPropertyRef = &srcProperty;
+        m_styleDeclaration->addParsedProperties(&srcPropertyRef, 1);
     }
     
     document()->updateStyleSelector();
