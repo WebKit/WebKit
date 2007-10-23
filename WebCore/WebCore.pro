@@ -1071,6 +1071,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         ksvg2/svg/SVGColor.idl \
         ksvg2/svg/SVGComponentTransferFunctionElement.idl \
         ksvg2/svg/SVGCursorElement.idl \
+        ksvg2/svg/SVGDefinitionSrcElement.idl \
         ksvg2/svg/SVGDefsElement.idl \
         ksvg2/svg/SVGDescElement.idl \
         ksvg2/svg/SVGDocument.idl \
@@ -1210,6 +1211,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         ksvg2/svg/SVGColor.cpp \
         ksvg2/svg/SVGComponentTransferFunctionElement.cpp \
         ksvg2/svg/SVGCursorElement.cpp \
+        ksvg2/svg/SVGDefinitionSrcElement.cpp \
         ksvg2/svg/SVGDefsElement.cpp \
         ksvg2/svg/SVGDescElement.cpp \
         ksvg2/svg/SVGDocument.cpp \
