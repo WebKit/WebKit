@@ -181,6 +181,7 @@ all : \
     DOMSVGElementInstance.h \
     DOMSVGElementInstanceList.h \
     DOMSVGEllipseElement.h \
+    DOMSVGException.h \
     DOMSVGExternalResourcesRequired.h \
     DOMSVGFEBlendElement.h \
     DOMSVGFEColorMatrixElement.h \
