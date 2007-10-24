@@ -1991,9 +1991,6 @@ Completion DoWhileNode::execute(ExecState *exec)
   JSValue* value = 0;
 
   do {
-    // bail out on error
-    KJS_CHECKEXCEPTION
-
     exec->context()->pushIteration();
     c = statement->execute(exec);
     exec->context()->popIteration();
@@ -2039,9 +2036,6 @@ Completion WhileNode::execute(ExecState *exec)
     bv = expr->evaluate(exec);
     KJS_CHECKEXCEPTION
     b = bv->toBoolean(exec);
-
-    // bail out on error
-    KJS_CHECKEXCEPTION
 
     if (!b)
       return Completion(Normal, value);
@@ -2091,8 +2085,6 @@ Completion ForNode::execute(ExecState *exec)
       if (!v->toBoolean(exec))
         return Completion(Normal, cval);
     }
-    // bail out on error
-    KJS_CHECKEXCEPTION
 
     exec->context()->pushIteration();
     Completion c = statement->execute(exec);
@@ -2247,9 +2239,6 @@ Completion ForInNode::execute(ExecState *exec)
       }
     }
   }
-
-  // bail out on error
-  KJS_CHECKEXCEPTION
 
   return Completion(Normal, retval);
 }
@@ -2762,7 +2751,6 @@ void SourceElementsNode::getDeclarations(DeclarationStacks& stacks)
 // ECMA 14
 Completion SourceElementsNode::execute(ExecState *exec)
 {
-  KJS_CHECKEXCEPTION
   JSValue* v = 0;
   SourceElementsNode* n = this;
   while (1) {

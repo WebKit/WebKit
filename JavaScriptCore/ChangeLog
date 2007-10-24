@@ -1,3 +1,16 @@
+2007-10-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - remove KJS_CHECKEXCEPTIONs in places where exceptions can't happen for 0.6% SunSpider speedup
+
+        * kjs/nodes.cpp:
+        (KJS::DoWhileNode::execute):
+        (KJS::WhileNode::execute):
+        (KJS::ForNode::execute):
+        (KJS::ForInNode::execute):
+        (KJS::SourceElementsNode::execute):
+
 2007-10-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
