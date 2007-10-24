@@ -34,6 +34,7 @@ function TreeOutline(listNode)
     this._childrenListNode.removeChildren();
     this._knownTreeElements = [];
     this._treeElementsExpandedState = [];
+    this.expandTreeElementsWhenArrowing = false;
     this.root = true;
     this.hasChildren = false;
     this.expanded = true;
@@ -295,12 +296,12 @@ TreeOutline.prototype.handleKeyEvent = function(event)
     if (event.keyIdentifier === "Up" && !event.altKey) {
         nextSelectedElement = this.selectedTreeElement.traversePreviousTreeElement(true);
         while (nextSelectedElement && !nextSelectedElement.selectable)
-            nextSelectedElement = nextSelectedElement.traversePreviousTreeElement(false);
+            nextSelectedElement = nextSelectedElement.traversePreviousTreeElement(!this.expandTreeElementsWhenArrowing);
         handled = nextSelectedElement ? true : false;
     } else if (event.keyIdentifier === "Down" && !event.altKey) {
         nextSelectedElement = this.selectedTreeElement.traverseNextTreeElement(true);
         while (nextSelectedElement && !nextSelectedElement.selectable)
-            nextSelectedElement = nextSelectedElement.traverseNextTreeElement(false);
+            nextSelectedElement = nextSelectedElement.traverseNextTreeElement(!this.expandTreeElementsWhenArrowing);
         handled = nextSelectedElement ? true : false;
     } else if (event.keyIdentifier === "Left") {
         if (this.selectedTreeElement.expanded) {

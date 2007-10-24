@@ -1,3 +1,17 @@
+2007-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 15476: DOM tree fully expands some elements when arrowing up
+        http://bugs.webkit.org/show_bug.cgi?id=15476
+
+        Add a new expandTreeElementsWhenArrowing option to TreeOutline. This option
+        is used only for the sidebar and search results.
+
+        * page/inspector/inspector.js: Opt-in for the sidebar and search results.
+        * page/inspector/treeoutline.js: Add expandTreeElementsWhenArrowing and pass
+          this option to traverseNextTreeElement and traversePreviousTreeElement.
+
 2007-10-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff and Mitz.

@@ -196,7 +196,10 @@ var WebInspector = {
 WebInspector.loaded = function(event)
 {
     this.fileOutline = new TreeOutline(document.getElementById("list"));
+    this.fileOutline.expandTreeElementsWhenArrowing = true;
+
     this.statusOutline = new TreeOutline(document.getElementById("status"));
+    this.statusOutline.expandTreeElementsWhenArrowing = true;
 
     this.resourceCategories = {
         documents: new WebInspector.ResourceCategory("documents"),
@@ -738,7 +741,9 @@ WebInspector.performSearch = function(query)
     var fileList = document.createElement("ol");
     fileList.className = "outline-disclosure";
     resultsContainer.appendChild(fileList);
+
     this.searchResultsTree = new TreeOutline(fileList);
+    this.searchResultsTree.expandTreeElementsWhenArrowing = true;
 
     var sourceResultSelected = function(element)
     {
