@@ -10,11 +10,6 @@ editing/selection/caret-and-focus-ring.html
 # ------- crashes 
 editing/execCommand/copy-without-selection.html
 
-# ------- tests that hang forever
-editing/selection/mixed-editability-8.html
-editing/style/remove-underline-across-paragraph.html
-editing/style/remove-underline-across-paragraph-in-bold.html
-
 # ------- failing editing tests
 editing/pasteboard/
 

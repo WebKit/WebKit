@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        these tests don't crash anymore :)
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/selection/mixed-editability-8-expected.txt: Added.
+        * platform/qt/editing/style/remove-underline-across-paragraph-expected.txt: Added.
+        * platform/qt/editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Added.
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         add a layoutTestController.dumpSelectionRect() dummy. It only has an effect on mac pixel tests anyway. Makes us pass another 5 test cases.
 
         * platform/qt/Skipped:
