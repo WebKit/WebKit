@@ -59,10 +59,7 @@ bool makeAllDirectories(const String& path)
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    if (path.endsWith("/"))
-        return path + component;
-    else
-        return path + "/" + component;
+    return QDir(path).filePath(component);
 }
 
 }

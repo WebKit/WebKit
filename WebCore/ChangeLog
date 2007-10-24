@@ -1,3 +1,11 @@
+2007-10-24  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Make the implementation of pathByAppendingComponent use QDir.
+
+        * platform/qt/FileSystemQt.cpp:
+
 2007-10-24  David Hyatt  <hyatt@apple.com>
 
         Make repainting work with transforms.
