@@ -1,6 +1,14 @@
 2007-10-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
+        
+        Don't print a massive pile of setenvs from tools that automatically build testkjs.
+
+        * Scripts/build-testkjs:
+
+2007-10-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
 
         - add wrapper that finds the right copy of testkjs
         
