@@ -1,3 +1,10 @@
+2007-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        * kjs/nodes.h:
+        (KJS::ImmediateNumberNode::): Fix ASSERT correctness (and debug build!)
+
 2007-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

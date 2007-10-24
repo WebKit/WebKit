@@ -210,7 +210,7 @@ namespace KJS {
       
       virtual bool isImmediateValue() const KJS_FAST_CALL { return true; }
       double value() const KJS_FAST_CALL { return JSImmediate::toDouble(m_value); }
-      void setValue(double v) KJS_FAST_CALL { m_value = JSImmediate::fromDouble(v); ASSERT(m_value == v); } 
+      void setValue(double v) KJS_FAST_CALL { m_value = JSImmediate::fromDouble(v); ASSERT(m_value); }
   private:
       JSValue* m_value;
   };
