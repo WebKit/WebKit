@@ -1,3 +1,17 @@
+2007-10-24  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15659
+        InlineTextBox does not setStrokeStyle() as needed
+
+        GraphicsContextCairo workaround to support a GraphicsContextCG quirk:
+
+        Save and restore the StrokeStyle manually.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+
 2007-10-24  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Darin.

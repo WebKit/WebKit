@@ -458,8 +458,14 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
     if (paintingDisabled())
         return;
 
+    // This is a workaround for http://bugs.webkit.org/show_bug.cgi?id=15659
+    StrokeStyle savedStrokeStyle = strokeStyle();
+    setStrokeStyle(SolidStroke);
+
     IntPoint endPoint = origin + IntSize(width, 0);
     drawLine(origin, endPoint);
+
+    setStrokeStyle(savedStrokeStyle);
 }
 
 void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& origin, int width, bool grammar)
