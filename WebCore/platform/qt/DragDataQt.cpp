@@ -35,6 +35,7 @@
 #include <QList>
 #include <QMimeData>
 #include <QUrl>
+#include <QColor>
 
 namespace WebCore {
 
@@ -45,27 +46,46 @@ bool DragData::canSmartReplace() const
     
 bool DragData::containsColor() const
 {
-    notImplemented();
-    return false;
+    if (!m_platformDragData)
+        return false;
+    return m_platformDragData->hasColor();
 }
 
 bool DragData::containsFiles() const
 {
-    notImplemented();
-    return false;
+    if (!m_platformDragData)
+        return false;
+    QList<QUrl> urls = m_platformDragData->urls();
+    foreach(const QUrl &url, urls) {
+        if (!url.toLocalFile().isEmpty())
+            return true;
+    }
+    return false;   
 }
 
 void DragData::asFilenames(Vector<String>& result) const
 {
+    if (!m_platformDragData)
+        return;
+    QList<QUrl> urls = m_platformDragData->urls();
+    foreach(const QUrl &url, urls) {
+        QString file = url.toLocalFile();
+        if (!file.isEmpty())
+            result.append(file);
+    }
 }
 
 bool DragData::containsPlainText() const
 {
+    if (!m_platformDragData)
+        return false;
     return m_platformDragData->hasText() || m_platformDragData->hasUrls();
 }
 
 String DragData::asPlainText() const
 {
+    if (!m_platformDragData)
+        return String();
     String text = m_platformDragData->text();
     if (!text.isEmpty())
         return text;
@@ -77,8 +97,9 @@ String DragData::asPlainText() const
     
 Color DragData::asColor() const
 {
-    notImplemented();
-    return Color();
+    if (!m_platformDragData)
+        return Color();
+    return qvariant_cast<QColor>(m_platformDragData->colorData());
 }
 
 Clipboard* DragData::createClipboard(ClipboardAccessPolicy policy) const
@@ -88,11 +109,15 @@ Clipboard* DragData::createClipboard(ClipboardAccessPolicy policy) const
     
 bool DragData::containsCompatibleContent() const
 {
-    return containsColor() || containsURL() || containsColor() || m_platformDragData->hasHtml() || m_platformDragData->hasText();
+    if (!m_platformDragData)
+        return false;
+    return containsColor() || containsURL() || m_platformDragData->hasHtml() || m_platformDragData->hasText();
 }
     
 bool DragData::containsURL() const
 {
+    if (!m_platformDragData)
+        return false;
     return m_platformDragData->hasUrls();
 }
     
@@ -105,7 +130,7 @@ String DragData::asURL(String* title) const
     
 PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
 {
-    if (m_platformDragData->hasHtml())
+    if (m_platformDragData && m_platformDragData->hasHtml())
         return createFragmentFromMarkup(doc, m_platformDragData->html(), "");
     
     return 0;

@@ -2,6 +2,24 @@
 
         Reviewed by Simon.
 
+        implement most of DragData.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asColor):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         remove a stupid notImplemented() warning and implement PasteBoad::clear().
 
         WARNING: NO TEST CASES ADDED OR CHANGED
