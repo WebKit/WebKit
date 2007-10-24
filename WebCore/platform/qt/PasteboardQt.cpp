@@ -42,7 +42,6 @@ namespace WebCore {
 
 Pasteboard::Pasteboard()
 {
-    notImplemented();
 }
 
 Pasteboard* Pasteboard::generalPasteboard()
@@ -109,7 +108,7 @@ void Pasteboard::writeImage(Node*, const KURL&, const String&)
 
 void Pasteboard::clear()
 {
-    notImplemented();
+    QApplication::clipboard()->clear();
 }
 
 }

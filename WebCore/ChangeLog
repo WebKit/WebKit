@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        remove a stupid notImplemented() warning and implement PasteBoad::clear().
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/PasteboardQt.cpp:
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         implement Pasteboard::documentFragment(), and fix a mem leak.
 
         WARNING: NO TEST CASES ADDED OR CHANGED
