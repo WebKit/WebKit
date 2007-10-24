@@ -699,6 +699,7 @@ void QWebPage::setSettings(const QWebSettings &settings)
 
     // ### should be configurable
     wSettings->setDefaultTextEncodingName("iso-8859-1");
+    wSettings->setDOMPasteAllowed(true);
 }
 
 QWebSettings QWebPage::settings() const

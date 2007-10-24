@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        allow paste from DOM so we pass more test cases.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setSettings):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Simplify the PlatformKeyEvent constructor. No need to have an extra boolean for isKeyUp in there, as the QKeyEvent has the information.
 
         * Api/qwebpage.cpp:
