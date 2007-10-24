@@ -1,3 +1,15 @@
+2007-10-23  Adam Roben  <aroben@apple.com>
+
+        Fix the behavior of pathByAppendingComponent when path is empty
+
+        We now use the Windows Shell API function PathAppendW instead of
+        rolling our own broken implementation.
+
+        Reviewed by Anders.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::pathByAppendingComponent):
+
 2007-10-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
