@@ -79,7 +79,7 @@ bool QtInstance::implementsCall() const
     return true;
 }
 
-QVariant convertValueToQVariant(ExecState* exec, JSValue* value); 
+QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QVariant::Type hint); 
 JSValue* convertQVariantToValue(ExecState* exec, const QVariant& variant);
     
 JSValue* QtInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const List& args)
@@ -113,13 +113,13 @@ JSValue* QtInstance::invokeMethod(ExecState* exec, const MethodList& methodList,
     qargs[0] = vargs[0].data();
 
     for (int i = 0; i < args.size(); ++i) {
-        vargs[i+1] = convertValueToQVariant(exec, args[i]);
         QVariant::Type type = (QVariant::Type) QMetaType::type(argTypes.at(i));
         if (!type) {
             qCritical("QtInstance::invokeMethod: Method %s has argument %s which is not registered with QMetaType!", metaMethod.signature(), argTypes.at(i).constData());
             return jsUndefined();
         }
-        if (!vargs[i+1].convert(type))
+        vargs[i+1] = convertValueToQVariant(exec, args[i], type);
+        if (vargs[i+1].type() == QVariant::Invalid)
             return jsUndefined();
 
         qargs[i+1] = vargs[i+1].data();

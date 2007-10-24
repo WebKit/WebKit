@@ -20,16 +20,19 @@
 #include "config.h"
 #include "qt_runtime.h"
 #include "qt_instance.h"
+#include "object.h"
+#include "array_instance.h"
 
 #include "qmetaobject.h"
 #include "qobject.h"
+#include "qstringlist.h"
 #include "qdebug.h"
 
 namespace KJS {
 namespace Bindings {
 
 // Variant value must be released with NPReleaseVariantValue()
-QVariant convertValueToQVariant(ExecState* exec, JSValue* value)
+QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QVariant::Type hint)
 {
     // check magic pointer values before dereferencing value
     if (value == jsNull() || value == jsNaN() || value == jsUndefined())
@@ -37,20 +40,82 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value)
 
     JSLock lock;
     JSType type = value->type();
+    if (hint == QVariant::Invalid) {
+        switch(type) {
+        case NullType:
+        case UndefinedType:
+        case UnspecifiedType:
+        case StringType:
+        case GetterSetterType:
+            hint = QVariant::String;
+            break;
+        case NumberType:
+            hint = QVariant::Double;
+            break;
+        case BooleanType:
+            hint = QVariant::Bool;
+            break;
+        case ObjectType: {
+            JSObject *object = value->toObject(exec);
+            if (object->inherits(&ArrayInstance::info)) 
+                hint = QVariant::List;
+            else
+                hint = QVariant::String;
+        }
+        }
+    }
 
-    if (type == StringType) {
+    switch (hint) {
+    case QVariant::Bool:
+        return value->toBoolean(exec);
+    case QVariant::Int:
+    case QVariant::UInt:
+    case QVariant::LongLong:
+    case QVariant::ULongLong:
+    case QVariant::Double: {
+        QVariant v(value->toNumber(exec));
+        v.convert(hint);
+        return v;
+    }
+    case QVariant::Char:
+        if (type == NumberType || type == BooleanType) {
+            return QChar((ushort)value->toNumber(exec));
+        } else {
+            UString str = value->toString(exec);
+            return QChar(str.size() ? *(const ushort*)str.rep()->data() : 0);
+        }
+    
+//     case QVariant::Map:
+//     case QVariant::List:
+    case QVariant::String: {
         UString ustring = value->toString(exec);
         return QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size());
-    } else if (type == NumberType) {
-        return value->toNumber(exec);
-    } else if (type == BooleanType) {
-        return value->toBoolean(exec);
-    } else if (type == UnspecifiedType) {
-        return QVariant();
-    } else if (type == NullType) {
-        return QVariant();
-    } else if (type == ObjectType) {
-        return QVariant(); // #####
+    }
+    case QVariant::StringList: {
+        if (type != ObjectType)
+            return QVariant();
+        JSObject *object = value->toObject(exec);
+        if (!object->inherits(&ArrayInstance::info))
+            return QVariant();
+        ArrayInstance *array = static_cast<ArrayInstance *>(object);
+
+        QStringList result;
+        int len = array->getLength();
+        for (int i = 0; i < len; ++i) {
+            JSValue *val = array->getItem(i);
+            UString ustring = val->toString(exec);
+            QString qstring = QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size());
+            
+            result.append(qstring);
+        }
+        return result;
+    }        
+    case QVariant::ByteArray: {
+        UString ustring = value->toString(exec);
+        return QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size()).toLatin1();
+    }
+    default:
+        break;
     }
     return QVariant();
 }
@@ -101,7 +166,7 @@ void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue*
     const QtInstance* instance = static_cast<const QtInstance*>(inst);
     QObject* obj = instance->getObject();
     
-    QVariant val = convertValueToQVariant(exec, aValue);
+    QVariant val = convertValueToQVariant(exec, aValue, QVariant::Invalid);
     property.write(obj, val);
 }
 
