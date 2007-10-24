@@ -1,3 +1,17 @@
+2007-10-23  Sam Weinig  <sam@webkit.org>
+
+        Check for null BSTR that can be passed to the UIDelegate methods
+        from javascript null and undefined.  Fixes a failing test case on
+        Windows (fast/dom/Window/alert-undefined.html)
+
+        Reviewed by Eric Seidel.
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::runJavaScriptAlertPanelWithMessage):
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage):
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt):
+        (UIDelegate::webViewAddMessageToConsole):
+
 2007-10-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
