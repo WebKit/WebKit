@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        add empty eventSender.clearKillRing(), and map some of the special keys used in eventSender.keyDown() to things that work on Qt/X11.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (EventSender::keyDown):
+        * DumpRenderTree/qt/jsobjects.h:
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         implement eventSender.keyDown().
 
         * DumpRenderTree/qt/jsobjects.cpp:

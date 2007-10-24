@@ -203,6 +203,7 @@ void EventSender::leapForward(int ms)
 
 void EventSender::keyDown(const QString &string, const QStringList &modifiers)
 {
+    QString s = string;
     Qt::KeyboardModifiers modifs = 0;
     for (int i = 0; i < modifiers.size(); ++i) {
         const QString &m = modifiers.at(i);
@@ -217,11 +218,56 @@ void EventSender::keyDown(const QString &string, const QStringList &modifiers)
     }
     int code = 0;
     if (string.length() == 1) {
-        code = string.unicode()->toUpper().unicode();
-        if (code == '\t')
+        code = string.unicode()->unicode();
+        qDebug() << ">>>>>>>>> keyDown" << code << (char)code;
+        // map special keycodes used by the tests to something that works for Qt/X11
+        if (code == '\t') {
             code = Qt::Key_Tab;
+            if (modifs == Qt::ShiftModifier)
+                code = Qt::Key_Backtab;
+            s = QString();
+        } else if (code == 127) {
+            code = Qt::Key_Backspace;
+            if (modifs == Qt::AltModifier)
+                modifs = Qt::ControlModifier;
+            s = QString();
+        } else if (code == 'o' && modifs == Qt::ControlModifier) {
+            s = QLatin1String("\n");
+            code = '\n';
+            modifs = 0;
+        } else if (code == 'y' && modifs == Qt::ControlModifier) {
+            s = QLatin1String("c");
+            code = 'c';
+        } else if (code == 'k' && modifs == Qt::ControlModifier) {
+            s = QLatin1String("x");
+            code = 'x';
+        } else if (code == 'a' && modifs == Qt::ControlModifier) {
+            s = QString();
+            code = Qt::Key_Home;
+            modifs = 0;
+        } else if (code == 0xf702) {
+            s = QString();
+            code = Qt::Key_Left;
+            if (modifs & Qt::MetaModifier) {
+                code = Qt::Key_Home;
+                modifs &= ~Qt::MetaModifier;
+            }
+        } else if (code == 0xf703) {
+            s = QString();
+            code = Qt::Key_Right;
+            if (modifs & Qt::MetaModifier) {
+                code = Qt::Key_End;
+                modifs &= ~Qt::MetaModifier;
+            }
+        } else if (code == 'a' && modifs == Qt::ControlModifier) {
+            s = QString();
+            code = Qt::Key_Home;
+            modifs = 0;
+        } else {
+            code = string.unicode()->toUpper().unicode();
+        }
     }
-    QKeyEvent event(QEvent::KeyPress, code, modifs, string);
+    QKeyEvent event(QEvent::KeyPress, code, modifs, s);
     QApplication::sendEvent(m_page, &event);
 }
 
