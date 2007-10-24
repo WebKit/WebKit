@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
-# Copyright (C) Eric Seidel <eric@webkit.org>
+# Copyright (C) 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -61,7 +61,7 @@ if (!$jsShellPath || $showHelp) {
 sub dumpToFile($$)
 {
     my ($contents, $path) = @_;
-    open FILE, ">$path";
+    open FILE, ">", $path or die;
     print FILE $contents;
     close FILE;
 }
@@ -73,7 +73,7 @@ my %uniqueCategories = ();
 
 sub loadTestsList()
 {
-    open TESTLIST, "<./tests/LIST";
+    open TESTLIST, "<", "tests/LIST" or die;
     while (<TESTLIST>) {
         chomp;
         next unless !$testsPattern || /$testsPattern/;
@@ -104,16 +104,12 @@ sub runTestsOnce($)
     my $shellArgs = "-f tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null";
     my $output;
     if ($useShark) {
-        print STDERR "Running sunspider under Shark... (this will take a while)\n";
-        print STDERR "shark -i -1 -q \"$jsShellPath\" $shellArgs\n";
         $output = `shark -i -1 -q "$jsShellPath" $shellArgs`;
     } else {
         $output = `"$jsShellPath" $shellArgs | grep -v break`;
     }
     return $output;
 }
-
-
 
 loadTestsList();
 if ($testsPattern) {
@@ -122,7 +118,7 @@ if ($testsPattern) {
     print STDERR "Found " . scalar(@tests) . " tests\n";
 }
 die "No tests to run"  unless scalar(@tests);
-print STDERR "Running SunSpider once for warmup, then $testRuns times\n";
+print STDERR "Running SunSpider once for warmup, then $testRuns time" . ($testRuns == 1 ? "" : "s") . ($runShark ? " under Shark" : "") . "\n";
 writePrefixFile();
 
 runTestsOnce(0);
@@ -147,4 +143,19 @@ dumpToFile($output, "tmp/sunspider-results.js");
 
 system("$jsShellPath", "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-results.js", "-f", "resources/sunspider-analyze-results.js");
 
-print STDERR "Shark sessions can be found in " . getcwd() . "\n"  if $runShark;
+if ($runShark) {
+    my $newestAge = 0;
+    my $newestMShark = 0;
+    opendir DIR, "." or die;
+    for my $file (readdir DIR) {
+        if ($file =~ /\.mshark$/) {
+            my $age = -M $file;
+            if ($age < $newestAge) {
+                $newestMShark = $file;
+                $newestAge = $age;
+            }
+        }
+    }
+    closedir DIR;
+    exec "/usr/bin/open", $newestMShark if $newestMShark;
+}

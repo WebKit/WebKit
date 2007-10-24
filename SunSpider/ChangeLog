@@ -1,3 +1,10 @@
+2007-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        * sunspider: Open the profile in shark after completing a run.
+        * sunspider-compare-results: Tiny perl tweaks.
+
 2007-10-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

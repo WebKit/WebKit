@@ -48,7 +48,7 @@ if (scalar @ARGV < 2 || !$jsShellPath || $showHelp) {
 sub readResultsFile($)
 {
     my ($filename) = @_;
-    open FILE, "<${filename}";
+    open FILE, "<", $filename or die;
     my $foundStart = 0;
     my $foundEnd = 0;
     my $result = "";
@@ -79,7 +79,7 @@ sub readResultsFile($)
 sub dumpToFile($$)
 {
     my ($contents, $path) = @_;
-    open FILE, ">$path";
+    open FILE, ">", $path or die;
     print FILE $contents;
     close FILE;
 }
@@ -90,5 +90,3 @@ $output .= "var output2 = " . readResultsFile($ARGV[1]) . ";\n";
 dumpToFile($output, "tmp/sunspider-comparison-data.js");
 
 system("$jsShellPath", "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-comparison-data.js", "-f", "resources/sunspider-compare-results.js");
-
-
