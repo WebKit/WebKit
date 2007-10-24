@@ -91,21 +91,23 @@ WebInspector.NetworkPanel = function()
     var networkPanel = this;
     window.addEventListener("resize", function() { networkPanel.updateTimelineDividersIfNeeded() }, false);
 
-    this.setup = true;
     this.drawSummaryGraph(); // draws an empty graph
+
+    this.needsRefresh = true; 
 }
 
 WebInspector.NetworkPanel.prototype = {
     show: function()
     {
-        WebInspector.networkListItem.select();
         WebInspector.Panel.prototype.show.call(this);
+        WebInspector.networkListItem.select();
+        this.refreshIfNeeded();
     },
 
     hide: function()
     {
-        WebInspector.networkListItem.deselect();
         WebInspector.Panel.prototype.hide.call(this);
+        WebInspector.networkListItem.deselect();
     },
 
     onClick: function(event)
@@ -138,11 +140,28 @@ WebInspector.NetworkPanel.prototype = {
         return this.latestEndTime - this.earliestStartTime;
     },
 
+    get needsRefresh() 
+    { 
+        return this._needsRefresh; 
+    }, 
+
+    set needsRefresh(x) 
+    { 
+        if (this._needsRefresh === x) 
+            return; 
+        this._needsRefresh = x; 
+        if (x && this.visible) 
+            this.refresh(); 
+    },
+
+    refreshIfNeeded: function() 
+    { 
+        if (this.needsRefresh) 
+            this.refresh(); 
+    },
+
     refresh: function()
     {
-        if (!this.setup)
-            return;
-
         this.needsRefresh = false;
 
         // calling refresh will call updateTimelineBoundriesIfNeeded, which can clear needsRefresh for future entries,

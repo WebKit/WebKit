@@ -52,14 +52,14 @@ WebInspector.ConsolePanel = function()
 WebInspector.ConsolePanel.prototype = {
     show: function()
     {
-        WebInspector.consoleListItem.item.select();
         WebInspector.Panel.prototype.show.call(this);
+        WebInspector.consoleListItem.item.select();
     },
 
     hide: function()
     {
-        WebInspector.consoleListItem.item.deselect();
         WebInspector.Panel.prototype.hide.call(this);
+        WebInspector.consoleListItem.item.deselect();
     },
 
     addMessage: function(msg)
