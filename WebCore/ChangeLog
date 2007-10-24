@@ -1,3 +1,16 @@
+2007-10-24  David Hyatt  <hyatt@apple.com>
+
+        Don't try to gap fill transformed selections.  Fix the invalidation of selection to use the clip to visible content
+        code path so that it works with multi-column layouts and transforms.
+
+        Reviewed by aroben
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelectionRoot):
+        (WebCore::RenderBlock::fillSelectionGaps):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection):
+
 2007-10-24  Eric Seidel  <eric@webkit.org>
 
         No review, I want to tickle the CIA bot to test changes,
