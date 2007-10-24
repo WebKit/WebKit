@@ -1,3 +1,21 @@
+2007-10-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5544856> 
+        REGRESSION: After typing 2-byte text, undo only undoes one keystroke at a time
+        
+        No layout test for now because I'm having trouble getting Undo during a layout
+        test to only undo the last Undo step, and I want to write a test that fails
+        without the code change.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::confirmComposition): When we replace the previous composition,
+        delete it with a sub-command of the command used to insert the new composition,
+        instead of with a separate command.  No new code was added because insertText
+        already deletes the current selection.
+        (WebCore::Editor::setComposition): Ditto.
+
 2007-10-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.

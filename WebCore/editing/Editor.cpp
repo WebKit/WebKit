@@ -1706,8 +1706,6 @@ void Editor::confirmComposition(const String& text, bool preserveSelection)
         return;
     }
 
-    deleteSelectionWithSmartDelete(false);
-
     m_compositionNode = 0;
     m_customCompositionUnderlines.clear();
 
@@ -1729,8 +1727,6 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         setIgnoreCompositionSelectionChange(false);
         return;
     }
-
-    deleteSelectionWithSmartDelete(false);
 
     m_compositionNode = 0;
     m_customCompositionUnderlines.clear();
