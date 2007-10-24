@@ -272,7 +272,7 @@ inline bool JSImmediate::getUInt32(const JSValue* v, uint32_t& i)
 {
     double d = toDouble(v);
     i = static_cast<uint32_t>(d);
-    return isNumber(v) && i == d;
+    return isNumber(v) & (i == d);
 }
 
 inline bool JSImmediate::getTruncatedInt32(const JSValue* v, int32_t& i)

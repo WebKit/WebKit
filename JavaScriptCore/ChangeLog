@@ -1,3 +1,10 @@
+2007-10-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * kjs/JSImmediate.h: (KJS::JSImmediate::getUInt32):
+        Changed an && to an & for a 1% gain in SunSpider.
+
 2007-10-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
