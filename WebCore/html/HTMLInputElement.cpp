@@ -1277,7 +1277,10 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         RenderObject* r = renderer();
         if (r && r->isTextField() && r->isEdited()) {
             onChange();
-            r->setEdited(false);
+            // Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
+            r = renderer();
+            if (r)
+                r->setEdited(false);
         }
         // Form may never have been present, or may have been destroyed by the change event.
         if (form())

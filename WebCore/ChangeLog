@@ -1,3 +1,14 @@
+2007-10-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5543228> CrashTracer: [USER] 2 crashes in Safari at com.apple.WebCore: WebCore::HTMLInputElement::defaultEventHandler + 872
+
+        Test: fast/forms/textfield-onchange-deletion.html
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler):
+          Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
+
 2007-10-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam Weinig.
