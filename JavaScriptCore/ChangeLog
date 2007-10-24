@@ -2,6 +2,24 @@
 
         Reviewed by Maciej.
 
+        Reduce branching in implementations of some operator implementations, yielding 1.3% boost to SunSpider.
+
+        * kjs/nodes.cpp:
+        (KJS::MultNode::evaluate):
+        (KJS::DivNode::evaluate):
+        (KJS::ModNode::evaluate):
+        (KJS::add):
+        (KJS::sub):
+        (KJS::AddNode::evaluate):
+        (KJS::SubNode::evaluate):
+        (KJS::valueForReadModifyAssignment):
+        * kjs/operations.cpp:
+        * kjs/operations.h:
+
+2007-10-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
         Separating all of the simple (eg. non-read-modify-write) binary operators
         into separate classes in preparation for further JS optimisations.
         

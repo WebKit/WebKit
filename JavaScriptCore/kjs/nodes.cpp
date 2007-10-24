@@ -1193,8 +1193,8 @@ JSValue *MultNode::evaluate(ExecState *exec)
         
     JSValue *v2 = term2->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
-        
-    return mult(exec, v1, v2, '*');
+
+    return jsNumber(v1->toNumber(exec) * v2->toNumber(exec));
 }
 
 // ECMA 11.5.2
@@ -1205,8 +1205,8 @@ JSValue *DivNode::evaluate(ExecState *exec)
         
     JSValue *v2 = term2->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
-        
-    return mult(exec, v1, v2, '/');
+
+    return jsNumber(v1->toNumber(exec) / v2->toNumber(exec));
 }
 
 // ECMA 11.5.3
@@ -1217,11 +1217,40 @@ JSValue *ModNode::evaluate(ExecState *exec)
         
     JSValue *v2 = term2->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
-        
-    return mult(exec, v1, v2, '%');
+
+    return jsNumber(fmod(v1->toNumber(exec), v2->toNumber(exec)));
 }
 
 // ------------------------------ Additive Nodes --------------------------------------
+
+
+// ECMA 11.6
+static inline JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2)
+{
+    // exception for the Date exception in defaultValue()
+    JSValue *p1 = v1->toPrimitive(exec, UnspecifiedType);
+    JSValue *p2 = v2->toPrimitive(exec, UnspecifiedType);
+    
+    if (p1->isString() || p2->isString()) {
+        UString value = p1->toString(exec) + p2->toString(exec);
+        if (value.isNull()) {
+            JSObject *error = Error::create(exec, GeneralError, "Out of memory");
+            exec->setException(error);
+            return error;
+        } else
+            return jsString(value);
+    }
+    
+    return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));
+}
+
+static inline JSValue *sub(ExecState *exec, JSValue *v1, JSValue *v2)
+{
+    JSValue *p1 = v1->toPrimitive(exec, NumberType);
+    JSValue *p2 = v2->toPrimitive(exec, NumberType);
+
+    return jsNumber(p1->toNumber(exec) - p2->toNumber(exec));
+}
 
 // ECMA 11.6.1
 JSValue *AddNode::evaluate(ExecState *exec)
@@ -1232,7 +1261,7 @@ JSValue *AddNode::evaluate(ExecState *exec)
   JSValue *v2 = term2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  return add(exec, v1, v2, '+');
+  return add(exec, v1, v2);
 }
 
 
@@ -1245,7 +1274,7 @@ JSValue *SubNode::evaluate(ExecState *exec)
     JSValue *v2 = term2->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
         
-    return add(exec, v1, v2, '-');
+    return sub(exec, v1, v2);
 }
 
 // ------------------------------ Shift Nodes ------------------------------------
@@ -1520,16 +1549,16 @@ static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSV
   unsigned int ui;
   switch (oper) {
   case OpMultEq:
-    v = mult(exec, v1, v2, '*');
+    v = jsNumber(v1->toNumber(exec) * v2->toNumber(exec));
     break;
   case OpDivEq:
-    v = mult(exec, v1, v2, '/');
+    v = jsNumber(v1->toNumber(exec) / v2->toNumber(exec));
     break;
   case OpPlusEq:
-    v = add(exec, v1, v2, '+');
+    v = add(exec, v1, v2);
     break;
   case OpMinusEq:
-    v = add(exec, v1, v2, '-');
+    v = sub(exec, v1, v2);
     break;
   case OpLShift:
     i1 = v1->toInt32(exec);

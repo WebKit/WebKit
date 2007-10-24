@@ -55,21 +55,6 @@ namespace KJS {
   int relation(ExecState *exec, JSValue *v1, JSValue *v2);
   int maxInt(int d1, int d2);
   int minInt(int d1, int d2);
-  /**
-   * Additive operator. Either performs an addition or substraction of v1
-   * and v2.
-   * @param oper '+' or '-' for an addition or substraction, respectively.
-   * @return The result of the operation.
-   */
-  JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2, char oper);
-  /**
-   * Multiplicative operator. Either multiplies/divides v1 and v2 or
-   * calculates the remainder from an division.
-   * @param oper '*', '/' or '%' for a multiplication, division or
-   * modulo operation.
-   * @return The result of the operation.
-   */
-  JSValue *mult(ExecState *exec, JSValue *v1, JSValue *v2, char oper);
 
 }
 

@@ -216,46 +216,4 @@ int minInt(int d1, int d2)
     return (d1 < d2) ? d1 : d2;
 }
 
-// ECMA 11.6
-JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2, char oper)
-{
-    // exception for the Date exception in defaultValue()
-    JSType preferred = oper == '+' ? UnspecifiedType : NumberType;
-    JSValue *p1 = v1->toPrimitive(exec, preferred);
-    JSValue *p2 = v2->toPrimitive(exec, preferred);
-    
-    if ((p1->isString() || p2->isString()) && oper == '+') {
-        UString value = p1->toString(exec) + p2->toString(exec);
-        if (value.isNull()) {
-            JSObject *error = Error::create(exec, GeneralError, "Out of memory");
-            exec->setException(error);
-            return error;
-        } else
-            return jsString(value);
-    }
-    
-    if (oper == '+')
-        return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));
-    else
-        return jsNumber(p1->toNumber(exec) - p2->toNumber(exec));
-}
-
-// ECMA 11.5
-JSValue *mult(ExecState *exec, JSValue *v1, JSValue *v2, char oper)
-{
-    double n1 = v1->toNumber(exec);
-    double n2 = v2->toNumber(exec);
-    
-    double result;
-    
-    if (oper == '*')
-        result = n1 * n2;
-    else if (oper == '/')
-        result = n1 / n2;
-    else
-        result = fmod(n1, n2);
-    
-    return jsNumber(result);
-}
-
 }
