@@ -1,3 +1,25 @@
+2007-10-23  Sam Weinig  <sam@webkit.org>
+
+        Make the WebNotificationCenter work with null (wildcard) and specific
+        observed objects, matching NSNotificationCenter.
+
+        - Removes the ObserverKey, ObserverHash, and ObserverKeyTraits as we now
+          hash against the notification name only and check the object on notification
+          posting.
+        - Use OwnPtr for the WebNotificationCenterPrivate member variable.
+
+        Reviewed by Adam Roben.
+
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::WebNotificationCenter):
+        (WebNotificationCenter::~WebNotificationCenter):
+        (WebNotificationCenter::postNotificationInternal):
+        (WebNotificationCenter::addObserver):
+        (WebNotificationCenter::postNotification):
+        (WebNotificationCenter::postNotificationName):
+        (WebNotificationCenter::removeObserver):
+        * WebNotificationCenter.h:
+
 2007-10-23  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5244261> SafariWin ignores cookie policy setting "never" in the preferences

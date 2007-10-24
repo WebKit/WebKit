@@ -27,13 +27,14 @@
 #define WebNotificationCenter_H
 
 #include "IWebNotificationCenter.h"
+#include <wtf/OwnPtr.h>
 
 struct WebNotificationCenterPrivate;
 
-class WebNotificationCenter : public IWebNotificationCenter
-{
+class WebNotificationCenter : public IWebNotificationCenter {
 public:
     static WebNotificationCenter* createInstance();
+
 protected:
     WebNotificationCenter();
     ~WebNotificationCenter();
@@ -72,8 +73,8 @@ public:
 
 protected:
     ULONG m_refCount;
-    WebNotificationCenterPrivate* d;
+    OwnPtr<WebNotificationCenterPrivate> d;
     static IWebNotificationCenter* m_defaultCenter;
 };
 
-#endif
+#endif // WebNotificationCenter_H

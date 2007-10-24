@@ -28,126 +28,25 @@
 #include "WebNotificationCenter.h"
 
 #include "WebNotification.h"
-#pragma warning( push, 0 )
-#include <WebCore/StringImpl.h>
+#pragma warning(push, 0)
+#include <WebCore/COMPtr.h>
+#include <WebCore/PlatformString.h>
+#include <WebCore/StringHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
+#include <wtf/Vector.h>
 #pragma warning(pop)
 #include <tchar.h>
+#include <utility>
 
 using namespace WebCore;
 
-// ----------------------------------------------------------------------------
+typedef std::pair<COMPtr<IUnknown>, COMPtr<IWebNotificationObserver> > ObjectObserverPair;
+typedef Vector<ObjectObserverPair> ObjectObserverList;
+typedef ObjectObserverList::iterator ObserverListIterator;
+typedef HashMap<String, ObjectObserverList> MappedObservers;
 
-struct ObserverHash;
-
-class ObserverKey
-{
-    friend ObserverHash;
-public:
-    ObserverKey(BSTR n = 0, IUnknown* o = 0);
-    ObserverKey(const ObserverKey& key);
-    ~ObserverKey();
-
-    bool operator==(const ObserverKey &) const;
-    ObserverKey& operator=(const ObserverKey &);
-
-private:
-    BSTR m_notificationName;
-    IUnknown* m_anObject;
-};
-
-ObserverKey::ObserverKey(BSTR n, IUnknown* o)
-: m_notificationName(0)
-, m_anObject(o)
-{
-    if (n == (BSTR)-1)
-        m_notificationName = n;
-    else if (n)
-        m_notificationName = SysAllocString(n);
-    if (o)
-       o->AddRef();
-}
-
-ObserverKey::ObserverKey(const ObserverKey& other)
-: m_notificationName(0)
-, m_anObject(0)
-{
-    *this = other;
-}
-
-ObserverKey::~ObserverKey()
-{
-    if (m_notificationName && m_notificationName != (BSTR)-1)
-        SysFreeString(m_notificationName);
-    if (m_anObject)
-        m_anObject->Release();
-}
-
-bool ObserverKey::operator==(const ObserverKey &other) const
-{
-    if (m_anObject && other.m_anObject && m_anObject != other.m_anObject)
-        return false; // only fail to match anObject if both are non-null (treat null as a wildcard)
-
-    if (m_notificationName == other.m_notificationName)
-        return true;
-
-    if (!m_notificationName || m_notificationName == (BSTR)-1 || !other.m_notificationName || other.m_notificationName == (BSTR)-1)
-        return false;
-
-    return !_tcscmp(m_notificationName, other.m_notificationName);
-}
-
-ObserverKey& ObserverKey::operator=(const ObserverKey& other)
-{
-    if (m_notificationName && m_notificationName != (BSTR)-1)
-        SysFreeString(m_notificationName);
-    m_notificationName = other.m_notificationName;
-    if (m_notificationName && m_notificationName != (BSTR)-1)
-        m_notificationName = SysAllocString(m_notificationName);
-    if (m_anObject != other.m_anObject) {
-        if (m_anObject)
-            m_anObject->Release();
-        m_anObject = other.m_anObject;
-        if (m_anObject)
-            m_anObject->AddRef();
-    }
-    return *this;
-}
-
-struct ObserverKeyTraits : WTF::GenericHashTraits<ObserverKey> {
-    static const bool emptyValueIsZero = true;
-    static const bool needsDestruction = true;
-    static ObserverKey deletedValue() { return ObserverKey((BSTR)-1, 0); }
-};
-
-struct ObserverHash {
-    static unsigned hash(const ObserverKey&);
-    static bool equal(const ObserverKey& a, const ObserverKey& b) { return a == b; }
-};
-
-unsigned ObserverHash::hash(const ObserverKey& key)
-{
-    unsigned h = 0;
-
-    if (key.m_notificationName) {
-        if (key.m_notificationName == (BSTR)-1)
-            h = (unsigned)-1;
-        else
-            h = StringImpl::computeHash(key.m_notificationName, SysStringLen(key.m_notificationName));
-    }
-
-    // DO NOT take m_anObject into account for the hash.  We need to match based on m_notificationName only.
-    // We ensure a match in operator== if both of the values are non-null.  This matches semantics of
-    // NSNotificationCenter.
-
-    return h;
-}
-
-typedef HashMap<ObserverKey, Vector<IWebNotificationObserver*>, ObserverHash, ObserverKeyTraits> MappedObservers;
-
-struct WebNotificationCenterPrivate
-{
+struct WebNotificationCenterPrivate {
     MappedObservers m_mappedObservers;
 };
 
@@ -156,15 +55,14 @@ struct WebNotificationCenterPrivate
 IWebNotificationCenter* WebNotificationCenter::m_defaultCenter = 0;
 
 WebNotificationCenter::WebNotificationCenter()
-: m_refCount(0)
-, d(new WebNotificationCenterPrivate)
+    : m_refCount(0)
+    , d(new WebNotificationCenterPrivate)
 {
     gClassCount++;
 }
 
 WebNotificationCenter::~WebNotificationCenter()
 {
-    delete d;
     gClassCount--;
 }
 
@@ -214,15 +112,21 @@ IWebNotificationCenter* WebNotificationCenter::defaultCenterInternal()
 
 void WebNotificationCenter::postNotificationInternal(IWebNotification* notification, BSTR notificationName, IUnknown* anObject)
 {
-    ObserverKey key(notificationName, anObject);
-    MappedObservers::iterator it = d->m_mappedObservers.find(key);
-    if (it != d->m_mappedObservers.end()) {
-        Vector<IWebNotificationObserver*> list = it->second;
+    String name(notificationName, SysStringLen(notificationName));
+    MappedObservers::iterator it = d->m_mappedObservers.find(name);
+    if (it == d->m_mappedObservers.end())
+        return;
 
-        Vector<IWebNotificationObserver*>::iterator end = list.end();
-        for (Vector<IWebNotificationObserver*>::iterator it2 = list.begin(); it2 != end; ++it2) {
-            (*it2)->onNotify(notification);
-        }
+    // Intentionally make a copy of the list to avoid the possibility of errors
+    // from a mutation of the list in the onNotify callback.
+    ObjectObserverList list = it->second;
+
+    ObserverListIterator end = list.end();
+    for (ObserverListIterator it2 = list.begin(); it2 != end; ++it2) {
+        IUnknown* observedObject = it2->first.get();
+        IWebNotificationObserver* observer = it2->second.get();
+        if (!observedObject || !anObject || observedObject == anObject)
+            observer->onNotify(notification);
     }
 }
 
@@ -241,15 +145,14 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::addObserver(
     /* [in] */ BSTR notificationName,
     /* [in] */ IUnknown* anObject)
 {
-    ObserverKey key(notificationName, anObject);
-    MappedObservers::iterator it = d->m_mappedObservers.find(key);
-    observer->AddRef();
+    String name(notificationName, SysStringLen(notificationName));
+    MappedObservers::iterator it = d->m_mappedObservers.find(name);
     if (it != d->m_mappedObservers.end())
-        it->second.append(observer);
+        it->second.append(ObjectObserverPair(anObject, observer));
     else {
-        Vector<IWebNotificationObserver*> list;
-        list.append(observer);
-        d->m_mappedObservers.add(key, list);
+        ObjectObserverList list;
+        list.append(ObjectObserverPair(anObject, observer));
+        d->m_mappedObservers.add(name, list);
     }
 
     return S_OK;
@@ -260,16 +163,16 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotification(
 {
     BSTR name;
     HRESULT hr = notification->name(&name);
-    if (SUCCEEDED(hr)) {
-        IUnknown* obj;
-        hr = notification->getObject(&obj);
-        if (SUCCEEDED(hr)) {
-            postNotificationInternal(notification, name, obj);
-            if (obj)
-                obj->Release();
-        }
-        SysFreeString(name);
-    }
+    if (FAILED(hr))
+        return hr;
+
+    COMPtr<IUnknown> obj;
+    hr = notification->getObject(&obj);
+    if (FAILED(hr))
+        return hr;
+
+    postNotificationInternal(notification, name, obj.get());
+    SysFreeString(name);
 
     return hr;
 }
@@ -279,9 +182,8 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotificationName(
     /* [in] */ IUnknown* anObject,
     /* [optional][in] */ IPropertyBag* userInfo)
 {
-    WebNotification* notification = WebNotification::createInstance(notificationName, anObject, userInfo);
-    postNotificationInternal(notification, notificationName, anObject);
-    notification->Release();
+    COMPtr<WebNotification> notification(AdoptCOM, WebNotification::createInstance(notificationName, anObject, userInfo));
+    postNotificationInternal(notification.get(), notificationName, anObject);
     return S_OK;
 }
 
@@ -290,24 +192,26 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::removeObserver(
     /* [in] */ BSTR notificationName,
     /* [optional][in] */ IUnknown* anObject)
 {
-    ObserverKey key(notificationName, anObject);
-    MappedObservers::iterator it = d->m_mappedObservers.find(key);
+    String name(notificationName, SysStringLen(notificationName));
+    MappedObservers::iterator it = d->m_mappedObservers.find(name);
     if (it == d->m_mappedObservers.end())
         return E_FAIL;
 
-    Vector<IWebNotificationObserver*>& observerList = it->second;
-    Vector<IWebNotificationObserver*>::iterator end = observerList.end();
-    int i=0;
-    for (Vector<IWebNotificationObserver*>::iterator it2 = observerList.begin(); it2 != end; ++it2, i++) {
-        if (*it2 == anObserver) {
-            (*it2)->Release();
+    ObjectObserverList& observerList = it->second;
+    ObserverListIterator end = observerList.end();
+
+    int i = 0;
+    for (ObserverListIterator it2 = observerList.begin(); it2 != end; ++it2, ++i) {
+        IUnknown* observedObject = it2->first.get();
+        IWebNotificationObserver* observer = it2->second.get();
+        if (observer == anObserver && (!anObject || anObject == observedObject)) {
             observerList.remove(i);
             break;
         }
     }
 
     if (observerList.isEmpty())
-        d->m_mappedObservers.remove(key);
+        d->m_mappedObservers.remove(name);
 
     return S_OK;
 }
