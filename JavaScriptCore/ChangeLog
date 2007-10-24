@@ -1,3 +1,19 @@
+2007-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - separate out the code to create a hash table the first time from the code
+          to rehash
+
+        SunSpider claims this was a 0.7% speedup.
+
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::expand): Changed to call either createTable or rehash.
+        (KJS::PropertyMap::createTable): Added. For the case where we had no table.
+        (KJS::PropertyMap::rehash): Removed code needed only in the case where we
+        had no table.
+        * kjs/property_map.h: Added createTable.
+
 2007-10-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

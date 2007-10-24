@@ -93,6 +93,7 @@ namespace KJS {
         void expand();
         void rehash();
         void rehash(int newTableSize);
+        void createTable();
         
         void insert(UString::Rep *, JSValue *value, int attributes, int index);
         

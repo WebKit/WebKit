@@ -411,34 +411,35 @@ void PropertyMap::insert(UString::Rep *key, JSValue *value, int attributes, int 
 
 void PropertyMap::expand()
 {
-    Table *oldTable = m_u.table;
-    int oldTableSize = m_usingTable ? oldTable->size : 0;    
-    rehash(oldTableSize ? oldTableSize * 2 : 16);
+    if (!m_usingTable)
+        createTable();
+    else
+        rehash(m_u.table->size * 2);
 }
 
 void PropertyMap::rehash()
 {
+    ASSERT(m_usingTable);
     ASSERT(m_u.table);
     ASSERT(m_u.table->size);
     rehash(m_u.table->size);
 }
 
-void PropertyMap::rehash(int newTableSize)
+void PropertyMap::createTable()
 {
+    const int newTableSize = 16;
+
+    ASSERT(!m_usingTable);
+
     checkConsistency();
 
 #if USE_SINGLE_ENTRY
     JSValue* oldSingleEntryValue = m_u.singleEntryValue;
 #endif
 
-    Table *oldTable = m_usingTable ? m_u.table : 0;
-    int oldTableSize = m_usingTable ? oldTable->size : 0;
-    int oldTableKeyCount = m_usingTable ? oldTable->keyCount : 0;
-    
-    m_u.table = (Table *)fastCalloc(1, sizeof(Table) + (newTableSize - 1) * sizeof(Entry) );
+    m_u.table = (Table *)fastCalloc(1, sizeof(Table) + (newTableSize - 1) * sizeof(Entry));
     m_u.table->size = newTableSize;
     m_u.table->sizeMask = newTableSize - 1;
-    m_u.table->keyCount = oldTableKeyCount;
     m_usingTable = true;
 
 #if USE_SINGLE_ENTRY
@@ -446,12 +447,29 @@ void PropertyMap::rehash(int newTableSize)
     if (key) {
         insert(key, oldSingleEntryValue, m_singleEntryAttributes, 0);
         m_singleEntryKey = 0;
-        // update the count, because single entries don't count towards
-        // the table key count
-        ++m_u.table->keyCount;
-        ASSERT(m_u.table->keyCount == 1);
+        m_u.table->keyCount = 1;
     }
 #endif
+
+    checkConsistency();
+}
+
+void PropertyMap::rehash(int newTableSize)
+{
+    ASSERT(!m_singleEntryKey);
+    ASSERT(m_u.table);
+    ASSERT(m_usingTable);
+
+    checkConsistency();
+
+    Table* oldTable = m_u.table;
+    int oldTableSize = oldTable->size;
+    int oldTableKeyCount = oldTable->keyCount;
+    
+    m_u.table = (Table *)fastCalloc(1, sizeof(Table) + (newTableSize - 1) * sizeof(Entry));
+    m_u.table->size = newTableSize;
+    m_u.table->sizeMask = newTableSize - 1;
+    m_u.table->keyCount = oldTableKeyCount;
     
     int lastIndexUsed = 0;
     for (int i = 0; i != oldTableSize; ++i) {
