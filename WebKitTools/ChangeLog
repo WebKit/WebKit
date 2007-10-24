@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        implement layoutTestController.dumpEditingCallbacks() correctly.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::dumpEditingCallbacks):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Implement support for testing editing.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:

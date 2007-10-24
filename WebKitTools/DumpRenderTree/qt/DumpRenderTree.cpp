@@ -123,7 +123,6 @@ DumpRenderTree::DumpRenderTree()
     : m_stdin(0)
     , m_notifier(0)
 {
-    qt_dump_editing_callbacks(true);
     m_controller = new LayoutTestController(this);
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
 
