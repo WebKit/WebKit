@@ -375,6 +375,8 @@ void TextInputController::doCommand(const QString &command)
         keycode = Qt::Key_Backspace;
     } else if(command == "deleteBackward:") {
         keycode = Qt::Key_Backspace;
+    } else if(command == "deleteForward:") {
+        keycode = Qt::Key_Delete;
     }
     QKeyEvent event(QEvent::KeyPress, keycode, modifiers);
     QApplication::sendEvent(parent(), &event);

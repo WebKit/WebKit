@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        add another command.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (TextInputController::doCommand):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         add empty eventSender.clearKillRing(), and map some of the special keys used in eventSender.keyDown() to things that work on Qt/X11.
 
         * DumpRenderTree/qt/jsobjects.cpp:
