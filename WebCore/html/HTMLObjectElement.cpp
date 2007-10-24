@@ -186,7 +186,7 @@ void HTMLObjectElement::attach()
                 // Set m_needWidgetUpdate to false before calling updateWidget because updateWidget may cause
                 // this method or recalcStyle (which also calls updateWidget) to be called.
                 m_needWidgetUpdate = false;
-                static_cast<RenderPartObject*>(renderer())->updateWidget(true);
+                static_cast<RenderPartObject*>(renderer())->updateWidgetSoon();
             } else {
                 m_needWidgetUpdate = true;
                 setChanged();

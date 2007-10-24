@@ -156,7 +156,7 @@ void HTMLEmbedElement::attach()
     HTMLPlugInElement::attach();
 
     if (renderer())
-        static_cast<RenderPartObject*>(renderer())->updateWidget(true);
+        static_cast<RenderPartObject*>(renderer())->updateWidgetSoon();
 }
 
 void HTMLEmbedElement::detach()

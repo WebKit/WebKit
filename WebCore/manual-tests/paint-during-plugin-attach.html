@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+</head>
+<body>
+<p><b>BUG ID:</b> <a href="http://bugs.webkit.org/show_bug.cgi?id=15405">Bugzilla bug 15405</a> ASSERTION FAILED: d->m_view && !d->m_view->needsLayout() in Frame::Paint</p>
+
+<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
+Open this page with a debug build of WebKit, and click the Test button below.
+</p>
+
+<p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
+A new window will open with a sheet saying Safari cannot find the Internet plug-in. You will be able to click the Cancel button and close the window.
+</p>
+
+<p id="failure" style="background-color:#FF3300; padding:3px;"><b>TEST FAIL:</b>  
+A new window will open with a sheet saying Safari cannot find the Internet plug-in, then Safari will crash due to an assertion failure.
+</p>
+
+<script>
+    function insertObject()
+    {
+        var objectMarkup = '<object type="application/x-fake-plugin"></object>';
+        open("data:text/html," + objectMarkup + "No assertion failure means the test passed.", "Test");
+    }
+</script>
+<button onclick="insertObject()">Test</button>
+</body>
+</html>
