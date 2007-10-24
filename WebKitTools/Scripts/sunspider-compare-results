@@ -1,0 +1,98 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+use strict;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use lib $FindBin::Bin;
+use webkitdirs;
+use POSIX;
+
+
+# determine configuration
+setConfiguration();
+my $configuration = configuration();
+
+my $root;
+my $showHelp = 0;
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options] FILE FILE
+  --help        Show this help message
+  --root        Path to root tools build
+EOF
+
+GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(Cwd::abs_path($value)); },
+           'help' => \$showHelp);
+
+if ($showHelp || scalar @ARGV < 2) {
+   print STDERR $usage;
+   exit 1;
+}
+
+sub buildTestKJS
+{
+    if (!defined($root)){
+        chdirWebKit();
+        my $buildResult = system "WebKitTools/Scripts/build-testkjs", "--" . $configuration;
+        if ($buildResult) {
+            print STDERR "Compiling testkjs failed!\n";
+            exit WEXITSTATUS($buildResult);
+        }
+    }
+}
+
+sub setupEnviromentForExecution($)
+{
+    my ($productDir) = @_;
+    print "Starting sunspider-compare-results with DYLD_FRAMEWORK_PATH set to point to built JavaScriptCore in $productDir.\n";
+    $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+    # FIXME: Other platforms may wish to augment this method to use LD_LIBRARY_PATH, etc.
+}
+
+sub testKJSPath($)
+{
+    my ($productDir) = @_;
+    my $testkjsName = "testkjs";
+    $testkjsName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
+    return "$productDir/$testkjsName";
+}
+
+buildTestKJS();
+
+chdirWebKit();
+chdir("SunSpider");
+
+my $productDir = productDir();
+# FIXME: This hack should be pushed down into productDir()
+$productDir .= "/JavaScriptCore" if (isQt() or isGtk());
+
+setupEnviromentForExecution($productDir);
+my @args = ("--shell", testKJSPath($productDir));
+# This code could be removed if we chose to pass extra args to sunspider instead of Xcode
+
+exec "./sunspider-compare-results", @args, @ARGV;

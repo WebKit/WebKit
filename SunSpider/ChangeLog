@@ -1,6 +1,14 @@
 2007-10-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
+
+        - Don't hardcode my path to testkjs
+        
+        * sunspider-compare-results:
+
+2007-10-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
         
         - Add a compare script to compare results, and improve formatting of standard results a bit.
 

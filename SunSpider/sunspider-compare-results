@@ -24,16 +24,25 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 use strict;
+use Getopt::Long;
 use File::Basename;
+
+my $showHelp = 0;
+my $jsShellPath;
 
 my $programName = basename($0);
 my $usage = <<EOF;
-Usage: $programName [file 1] [file 2]
+Usage: $programName --shell=[path] [options] FILE FILE
+  --help        Show this help message
+  --shell       Path to javascript shell
 EOF
 
-if (scalar @ARGV < 2) {
-    print STDERR $usage;
-    exit 1;
+GetOptions('shell=s' => \$jsShellPath,
+           'help' => \$showHelp);
+
+if (scalar @ARGV < 2 || !$jsShellPath || $showHelp) {
+   print STDERR $usage;
+   exit 1;
 }
 
 sub readResultsFile($)
@@ -79,8 +88,6 @@ my $output = "var output1 = " . readResultsFile($ARGV[0]) . ";\n";
 $output .= "var output2 = " . readResultsFile($ARGV[1]) . ";\n";
 
 dumpToFile($output, "tmp/sunspider-comparison-data.js");
-
-my $jsShellPath = "/Users/mjs/Work/symroots/Release/testkjs";
 
 system("$jsShellPath", "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-comparison-data.js", "-f", "resources/sunspider-compare-results.js");
 
