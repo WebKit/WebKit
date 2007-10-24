@@ -429,9 +429,92 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
     if (!mainFrame()->d->eventHandler)
         return;
 
-    bool handled = mainFrame()->d->eventHandler->keyEvent(kevent);
-    if (handled) {
-    } else {
+    bool handled = false;
+    QWebFrame *frame = mainFrame();
+    WebCore::Editor *editor = frame->d->frame->editor();
+    if (editor->canEdit()) {
+        const char *command = 0;
+        if (ev == QKeySequence::Cut) {
+            editor->cut();
+            handled = true;
+        } else if (ev == QKeySequence::Copy) {
+            editor->copy();
+            handled = true;
+        } else if (ev == QKeySequence::Paste) {
+            editor->paste();
+            handled = true;
+        } else if (ev == QKeySequence::Undo) {
+            editor->undo();
+            handled = true;
+        } else if (ev == QKeySequence::Redo) {
+            editor->redo();
+            handled = true;
+        } else if(ev == QKeySequence::MoveToNextChar) {
+            command = "MoveForward";
+        } else if(ev == QKeySequence::MoveToPreviousChar) {
+            command = "MoveBackward";
+        } else if(ev == QKeySequence::MoveToNextWord) {
+            command = "MoveWordForward";
+        } else if(ev == QKeySequence::MoveToPreviousWord) {
+            command = "MoveWordBackward";
+        } else if(ev == QKeySequence::MoveToNextLine) {
+            command = "MoveDown";
+        } else if(ev == QKeySequence::MoveToPreviousLine) {
+            command = "MoveUp";
+//             } else if(ev == QKeySequence::MoveToNextPage) {
+//             } else if(ev == QKeySequence::MoveToPreviousPage) {
+        } else if(ev == QKeySequence::MoveToStartOfLine) {
+            command = "MoveToBeginningOfLine";
+        } else if(ev == QKeySequence::MoveToEndOfLine) {
+            command = "MoveToEndOfLine";
+        } else if(ev == QKeySequence::MoveToStartOfBlock) {
+            command = "MoveToBeginningOfParagraph";
+        } else if(ev == QKeySequence::MoveToEndOfBlock) {
+            command = "MoveToEndOfParagraph";
+        } else if(ev == QKeySequence::MoveToStartOfDocument) {
+            command = "MoveToBeginningOfDocument";
+        } else if(ev == QKeySequence::MoveToEndOfDocument) {
+            command = "MoveToEndOfDocument";
+        } else if(ev == QKeySequence::SelectNextChar) {
+            command = "MoveForwardAndModifySelection";
+        } else if(ev == QKeySequence::SelectPreviousChar) {
+            command = "MoveBackwardAndModifySelection";
+        } else if(ev == QKeySequence::SelectNextWord) {
+            command = "MoveWordForwardAndModifySelection";
+        } else if(ev == QKeySequence::SelectPreviousWord) {
+            command = "MoveWordBackwardAndModifySelection";
+        } else if(ev == QKeySequence::SelectNextLine) {
+            command = "MoveDownAndModifySelection";
+        } else if(ev == QKeySequence::SelectPreviousLine) {
+            command = "MoveUpAndModifySelection";
+//             } else if(ev == QKeySequence::SelectNextPage) {
+//             } else if(ev == QKeySequence::SelectPreviousPage) {
+        } else if(ev == QKeySequence::SelectStartOfLine) {
+            command = "MoveToBeginningOfLineAndModifySelection";
+        } else if(ev == QKeySequence::SelectEndOfLine) {
+            command = "MoveToEndOfLineAndModifySelection";
+        } else if(ev == QKeySequence::SelectStartOfBlock) {
+            command = "MoveToBeginningOfParagraphAndModifySelection";
+        } else if(ev == QKeySequence::SelectEndOfBlock) {
+            command = "MoveToEndOfParagraphAndModifySelection";
+        } else if(ev == QKeySequence::SelectStartOfDocument) {
+            command = "MoveToBeginningOfDocumentAndModifySelection";
+        } else if(ev == QKeySequence::SelectEndOfDocument) {
+            command = "MoveToEndOfDocumentAndModifySelection";
+        } else if(ev == QKeySequence::DeleteStartOfWord) {
+            command = "DeleteWordBackward";
+        } else if(ev == QKeySequence::DeleteEndOfWord) {
+            command = "DeleteWordForward";
+//             } else if(ev == QKeySequence::DeleteEndOfLine) {
+        }
+        if (command) {
+            editor->execCommand(command);
+            handled = true;
+        }
+    }
+    if (!handled) 
+        handled = frame->d->eventHandler->keyEvent(kevent);
+    if (!handled) {
         handled = true;
         PlatformScrollbar *h, *v;
         h = mainFrame()->d->horizontalScrollBar();
@@ -445,25 +528,25 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
                 v->setValue(v->value() - height());
         } else {
             switch (ev->key()) {
-                case Qt::Key_Up:
-                    if (v)
-                        v->setValue(v->value() - 10);
-                    break;
-                case Qt::Key_Down:
-                    if (v)
-                        v->setValue(v->value() + 10);
-                    break;
-                case Qt::Key_Left:
-                    if (h)
-                        h->setValue(h->value() - 10);
-                    break;
-                case Qt::Key_Right:
-                    if (h)
-                        h->setValue(h->value() + 10);
-                    break;
-                default:
-                    handled = false;
-                    break;
+            case Qt::Key_Up:
+                if (v)
+                    v->setValue(v->value() - 10);
+                break;
+            case Qt::Key_Down:
+                if (v)
+                    v->setValue(v->value() + 10);
+                break;
+            case Qt::Key_Left:
+                if (h)
+                    h->setValue(h->value() - 10);
+                break;
+            case Qt::Key_Right:
+                if (h)
+                    h->setValue(h->value() + 10);
+                break;
+            default:
+                handled = false;
+                break;
             }
         }
     }

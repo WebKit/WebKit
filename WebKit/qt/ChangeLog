@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        implemented support for most editing shortcuts to make contentEditable usable.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::keyPressEvent):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         no need to call setIsActive ourselves on the frame, as the focus controller does it for us.
 
         * Api/qwebpage.cpp:
