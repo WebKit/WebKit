@@ -1,3 +1,14 @@
+2007-10-24  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix <rdar://5410959>  editing/selection/drag-to-contenteditable-iframe.html fails on Windows
+        
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        Some mouse move events are actually drags, which on mac return early from this function.
+        Adding the same logic to its Windows equivalent.  
+
 2007-10-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

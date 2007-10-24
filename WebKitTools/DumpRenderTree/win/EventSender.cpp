@@ -186,6 +186,7 @@ static void doMouseMove(MSG msg)
                 didDragEnter = true;
             }
             draggingInfo->dropSource()->GiveFeedback(effect);
+            replaySavedEvents();
         }
     }
 }

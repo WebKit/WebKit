@@ -415,10 +415,6 @@ http/tests/security/cross-frame-access-protocol.html
 # Reports large negative numbers for screenLeft and screenTop <rdar://problem/5382579>
 http/tests/security/cross-frame-access-put.html
 
-#rdar://problem/5410959 editing/selection/drag-to-contenteditable-iframe.html fails on Windows
-editing/selection/drag-to-contenteditable-iframe.html
-
-
 # <rdar://problem/5463489> A number of layout tests use textInputController for operations that should be crossplatform
 editing/deleting/5300379.html
 editing/deleting/delete-to-end-of-paragraph.html

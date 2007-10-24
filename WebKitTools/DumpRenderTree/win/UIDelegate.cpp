@@ -152,8 +152,6 @@ HRESULT STDMETHODCALLTYPE UIDelegate::doDragDrop(
 
     draggingInfo = new DraggingInfo(object, source);
 
-    replaySavedEvents();
-
     return S_OK;
 }
 

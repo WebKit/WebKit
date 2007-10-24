@@ -1,3 +1,16 @@
+2007-10-24  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix <rdar://5410959>  editing/selection/drag-to-contenteditable-iframe.html fails on Windows
+
+        Move the call to replaySavedEvents from doDragDrop to doMouseMove because we don't want to 
+        replay the saved events when we're still processing the mousedown that starts the drag
+        * DumpRenderTree/win/EventSender.cpp:
+        (doMouseMove):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::doDragDrop):
+
 2007-10-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam, Steve and Darin.
