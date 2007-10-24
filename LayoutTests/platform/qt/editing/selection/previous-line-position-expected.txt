@@ -1,0 +1,35 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 4 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x57
+        RenderText {#text} at (0,0) size 240x19
+          text run at (0,0) width 240: "There was a workaround added to fix "
+        RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
+          RenderText {#text} at (240,0) size 150x19
+            text run at (240,0) width 150: "rdar://problem/4033202"
+        RenderText {#text} at (390,0) size 294x19
+          text run at (390,0) width 8: ". "
+          text run at (398,0) width 286: "A bug to remove the workaround was filed as"
+        RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
+          RenderText {#text} at (0,19) size 150x19
+            text run at (0,19) width 150: "rdar://problem/4040763"
+        RenderText {#text} at (150,19) size 753x38
+          text run at (150,19) width 8: ". "
+          text run at (158,19) width 595: "The underlying problem with VisiblePositions was fixed, and so I removed the workaround and"
+          text run at (0,38) width 139: "added this layout test."
+      RenderBlock {DIV} at (0,71) size 784x59 [border: (1px solid #0000FF)]
+        RenderBlock {P} at (1,1) size 782x19
+          RenderText {#text} at (0,0) size 11x19
+            text run at (0,0) width 11: "hi"
+          RenderInline {SPAN} at (0,0) size 0x19
+        RenderBlock (anonymous) at (1,20) size 782x38
+          RenderBR {BR} at (0,0) size 0x19
+          RenderText {#text} at (0,19) size 23x19
+            text run at (0,19) width 23: "test"
+caret: position 0 of child 2 {BR} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 605x19
+          text run at (0,0) width 572: "This tests to make sure that plaintext-only regions aren't styled if they aren't fully selected. "
+          text run at (572,0) width 33: "Only "
+        RenderInline {B} at (0,0) size 23x20
+          RenderText {#text} at (605,0) size 23x20
+            text run at (605,0) width 23: "foo"
+        RenderText {#text} at (628,0) size 142x19
+          text run at (628,0) width 142: " should be bold below."
+      RenderBlock {DIV} at (0,34) size 784x49
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderInline {B} at (0,0) size 23x20
+            RenderText {#text} at (0,0) size 23x20
+              text run at (0,0) width 23: "foo"
+        RenderTable {TABLE} at (0,20) size 179x29 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 177x27
+            RenderTableRow {TR} at (0,2) size 177x23
+              RenderTableCell {TD} at (2,2) size 83x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 79x19
+                  text run at (2,2) width 79: "non-editable"
+              RenderTableCell {TD} at (87,2) size 88x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderInline {SPAN} at (0,0) size 53x19
+                  RenderText {#text} at (2,2) size 53x19
+                    text run at (2,2) width 53: "plaintext"
+                RenderText {#text} at (55,2) size 31x19
+                  text run at (55,2) width 31: "-only"
+selection start: position 0 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection end:   position 9 of child 0 {#text} of child 0 {SPAN} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

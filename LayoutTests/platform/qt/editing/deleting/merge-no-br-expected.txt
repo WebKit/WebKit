@@ -1,0 +1,32 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 738x38
+          text run at (0,0) width 738: "This places the caret before the 'T' in 'Two' and Deletes. 'One' and 'Two' should be merged but the blocks containing"
+          text run at (0,19) width 281: "'Three' and 'Four' should remain untouched."
+      RenderBlock {DIV} at (7,52) size 770x166
+        RenderBlock {DIV} at (14,14) size 742x39 [border: (3px solid #FF0000)]
+          RenderText {#text} at (10,10) size 27x19
+            text run at (10,10) width 27: "One"
+          RenderText {#text} at (37,10) size 27x19
+            text run at (37,10) width 27: "Two"
+        RenderBlock {DIV} at (14,60) size 742x92 [border: (3px solid #008000)]
+          RenderBlock (anonymous) at (10,10) size 722x0
+          RenderBlock {DIV} at (17,17) size 708x39 [border: (3px solid #000000)]
+            RenderText {#text} at (10,10) size 38x19
+              text run at (10,10) width 38: "Three"
+          RenderBlock (anonymous) at (10,63) size 722x19
+            RenderText {#text} at (0,0) size 30x19
+              text run at (0,0) width 30: "Four"
+caret: position 3 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of child 2 {BODY} of child 0 {HTML} of document

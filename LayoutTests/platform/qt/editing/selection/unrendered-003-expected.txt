@@ -1,0 +1,15 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 820x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 820x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,64) size 784x472
+      RenderBlock {DIV} at (64,0) size 748x196 [border: (50px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 33x31
+          RenderText {#text} at (74,82) size 33x31
+            text run at (74,82) width 33: "foo"
+        RenderText {#text} at (107,82) size 45x31
+          text run at (107,82) width 45: " baz"
+selection start: position 0 of child 3 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 3 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 771x38
+          text run at (0,0) width 322: "This tests that edited whitespaces aren't all nbsps. "
+          text run at (322,0) width 449: "When the region becomes non-editable, Hello and World should still be"
+          text run at (0,19) width 113: "on different lines. "
+          text run at (113,19) width 592: "This demonstrates a bug: the div's focus halo doesn't go away when it becomes non-editable."
+      RenderBlock {DIV} at (0,52) size 62x40 [border: (1px solid #000000)]
+        RenderText {#text} at (1,1) size 52x38
+          text run at (1,1) width 52: " Hello    "
+          text run at (1,20) width 41: "World "
+      RenderBlock {OL} at (0,106) size 784x0
+caret: position 17 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

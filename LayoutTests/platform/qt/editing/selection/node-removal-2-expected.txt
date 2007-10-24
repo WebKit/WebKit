@@ -1,0 +1,28 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > P > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 761x38
+          text run at (0,0) width 694: "This tests behavior when a node that serves as the start or end of a selection is removed from the document. "
+          text run at (694,0) width 67: "Ideally, we"
+          text run at (0,19) width 645: "would just adjust the selection when an endpoint is removed, for now, we just blow away the selection."
+      RenderBlock {P} at (0,52) size 784x38
+        RenderText {#text} at (0,0) size 780x38
+          text run at (0,0) width 484: "This test creates a selection that ends inside of a node that will be removed. "
+          text run at (484,0) width 175: "Then the node is removed. "
+          text run at (659,0) width 121: "Then a Select All is"
+          text run at (0,19) width 66: "executed. "
+          text run at (66,19) width 259: "The entire document should be selected."
+      RenderBlock {DIV} at (0,104) size 784x19
+        RenderText {#text} at (0,0) size 34x19
+          text run at (0,0) width 34: "hello "
+        RenderText {#text} at (34,0) size 38x19
+          text run at (34,0) width 38: "world!"
+selection start: position 0 of child 0 {#text} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 7 of child 1 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

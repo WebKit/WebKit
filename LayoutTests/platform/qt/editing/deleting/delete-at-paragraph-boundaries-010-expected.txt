@@ -1,0 +1,64 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x606
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x606
+  RenderBlock {HTML} at (0,0) size 800x606
+    RenderBody {BODY} at (8,8) size 784x590
+      RenderBlock {DIV} at (0,0) size 784x398 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x161
+          RenderText {#text} at (0,0) size 77x33
+            text run at (0,0) width 77: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,33) size 734x95
+            text run at (0,33) width 721: "Deleting when a selection starts at the beginning of a text following a"
+            text run at (0,65) width 734: "nested block, and extends out of the enclosing block into the following"
+            text run at (0,97) width 69: "block. "
+          RenderBR {BR} at (69,120) size 0x0
+          RenderText {#text} at (0,129) size 586x31
+            text run at (0,129) width 277: "FIXME: Currently broken! "
+            text run at (277,129) width 309: "See rdar://problem/4099839/."
+        RenderBlock {DIV} at (14,191) size 756x193
+          RenderText {#text} at (0,0) size 214x33
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,33) size 754x159
+            text run at (0,33) width 754: "Should see a total of five lines in the red box, with the third line inside of"
+            text run at (0,65) width 738: "a nested red box. First line should be \"one\". Next line should be \"two\"."
+            text run at (0,97) width 746: "Next line should be \"cha cha cha\", inside of a nested red box. Next line"
+            text run at (0,129) width 162: "should be \"ur\". "
+            text run at (162,129) width 404: "The last line should be \"cha cha cha\". "
+            text run at (566,129) width 149: "Insertion point"
+            text run at (0,161) width 556: "should be blinking at the start of the fourth line (\"ur\")."
+      RenderBlock {DIV} at (0,422) size 784x168
+        RenderBlock {DIV} at (0,0) size 784x168 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x32
+            RenderText {#text} at (0,0) size 39x31
+              text run at (0,0) width 39: "one"
+          RenderBlock {DIV} at (2,34) size 780x32
+            RenderText {#text} at (0,0) size 37x31
+              text run at (0,0) width 37: "two"
+          RenderBlock {DIV} at (2,66) size 780x36 [border: (2px solid #FF0000)]
+            RenderBlock {DIV} at (2,2) size 776x32
+              RenderText {#text} at (0,0) size 128x31
+                text run at (0,0) width 128: "cha cha cha"
+            RenderBlock (anonymous) at (2,34) size 776x0
+          RenderBlock {DIV} at (2,102) size 780x32
+            RenderText {#text} at (0,0) size 21x31
+              text run at (0,0) width 21: "ur"
+          RenderBlock {DIV} at (2,134) size 780x32
+            RenderText {#text} at (0,0) size 128x31
+              text run at (0,0) width 128: "cha cha cha"
+caret: position 0 of child 0 {#text} of child 4 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

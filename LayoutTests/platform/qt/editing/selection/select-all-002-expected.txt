@@ -1,0 +1,37 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 180 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 820x996
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 820x996
+  RenderBlock {HTML} at (0,0) size 800x996
+    RenderBody {BODY} at (8,64) size 784x868
+      RenderBlock {DIV} at (64,0) size 748x868 [border: (50px solid #FF0000)]
+        RenderBlock {DIV} at (74,74) size 600x720
+          RenderText {#text} at (0,8) size 561x127
+            text run at (0,8) width 556: "Four score and seven years ago our fathers brought "
+            text run at (0,56) width 561: "forth, upon this continent, a new nation, conceived in "
+            text run at (0,104) width 559: "Liberty, and dedicated to the proposition that all men "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,152) size 581x175
+            text run at (0,152) width 580: "are created equal. Now we are engaged in a great civil "
+            text run at (0,200) width 528: "war, testing whether that nation, or any nation, so "
+            text run at (0,248) width 581: "conceived, and so dedicated, can long endure. We are "
+            text run at (0,296) width 215: "met here on a great "
+          RenderBR {BR} at (215,319) size 0x0
+          RenderText {#text} at (0,344) size 600x175
+            text run at (0,344) width 543: "battlefield of that war. We have come to dedicate a "
+            text run at (0,392) width 572: "portion of it as a final resting place for those who here "
+            text run at (0,440) width 594: "gave their lives that that nation might live. It is altogether"
+            text run at (594,440) width 6: " "
+            text run at (0,488) width 429: "fitting and proper that we should do this. "
+          RenderBR {BR} at (429,511) size 0x0
+          RenderText {#text} at (0,536) size 600x175
+            text run at (0,536) width 556: "Four score and seven years ago our fathers brought "
+            text run at (0,584) width 561: "forth, upon this continent, a new nation, conceived in "
+            text run at (0,632) width 600: "Liberty, and dedicated to the proposition that all men are "
+            text run at (0,680) width 150: "created equal."
+selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 180 of child 6 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 780x38
+          text run at (0,0) width 780: "This tests for a bug where selecting a word would select the line break and word before it.  Only the word in the  paragraph "
+          text run at (0,19) width 164: "below should be selected:"
+      RenderBlock {DIV} at (0,38) size 784x19
+        RenderText {#text} at (0,0) size 20x19
+          text run at (0,0) width 20: "foo"
+selection start: position 0 of child 0 {#text} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+selection end:   position 3 of child 0 {#text} of child 3 {DIV} of child 0 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,67 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 13 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 31 of #text > DIV > DIV > BODY > HTML > #document to 31 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x208 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x19
+          RenderText {#text} at (0,0) size 47x19
+            text run at (0,0) width 47: "Radar: "
+          RenderInline {A} at (0,0) size 352x19 [color=#0000EE]
+            RenderText {#text} at (47,0) size 352x19
+              text run at (47,0) width 352: "rdar://problems/4038408&4154187&4125087&4125381"
+        RenderBlock {DIV} at (14,33) size 756x19
+          RenderText {#text} at (0,0) size 674x19
+            text run at (0,0) width 674: "Deletion of reply text should not produce reply text style unless the caret is inside the reply text blockquote."
+        RenderBlock {DIV} at (14,52) size 756x19
+          RenderBR {BR} at (0,0) size 0x19
+        RenderBlock {DIV} at (14,71) size 756x19
+          RenderText {#text} at (0,0) size 304x19
+            text run at (0,0) width 304: "This tests deletion from underneath quoted text:"
+        RenderBlock {DIV} at (14,90) size 756x19
+          RenderBR {BR} at (0,0) size 0x19
+        RenderBlock {DIV} at (14,109) size 756x85
+          RenderBlock {BLOCKQUOTE} at (0,0) size 756x66 [color=#0000FF] [border: (2px solid #0000FF)]
+            RenderBlock {DIV} at (16,14) size 726x19
+              RenderText {#text} at (0,0) size 146x19
+                text run at (0,0) width 146: "Here is some reply text"
+            RenderBlock {DIV} at (16,33) size 726x19
+              RenderText {#text} at (0,0) size 208x19
+                text run at (0,0) width 208: "It should have the reply text style"
+          RenderBlock (anonymous) at (0,66) size 756x19
+            RenderText {#text} at (0,0) size 196x19
+              text run at (0,0) width 196: "This text should not be quoted."
+caret: position 31 of child 2 {#text} of child 11 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

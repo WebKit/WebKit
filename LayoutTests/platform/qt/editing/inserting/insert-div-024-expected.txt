@@ -1,0 +1,72 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 8 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > B > P > BODY > HTML > #document to 6 of #text > B > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > B > P > BODY > HTML > #document to 6 of #text > B > P > BODY > HTML > #document toDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > P > BODY > HTML > #document to 1 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > P > BODY > HTML > #document to 1 of #text > P > BODY > HTML > #document toDOMRange:range from 2 of #text > P > BODY > HTML > #document to 2 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > P > BODY > HTML > #document to 2 of #text > P > BODY > HTML > #document toDOMRange:range from 3 of #text > P > BODY > HTML > #document to 3 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > P > BODY > HTML > #document to 3 of #text > P > BODY > HTML > #document toDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document toDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > P > BODY > HTML > #document to 1 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > P > BODY > HTML > #document to 1 of #text > P > BODY > HTML > #document toDOMRange:range from 2 of #text > P > BODY > HTML > #document to 2 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > P > BODY > HTML > #document to 2 of #text > P > BODY > HTML > #document toDOMRange:range from 3 of #text > P > BODY > HTML > #document to 3 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x568
+      RenderBlock (anonymous) at (0,0) size 784x128
+        RenderText {#text} at (0,0) size 770x63
+          text run at (0,0) width 770: "Test inserting paragraphs and managing typing style correctly: Only \"line "
+          text run at (0,32) width 703: "1\" should be bold. Other lines should be non-bold. Fix for this bug: "
+        RenderInline {A} at (0,0) size 274x31 [color=#0000EE]
+          RenderText {#text} at (0,64) size 274x31
+            text run at (0,64) width 274: "<rdar://problem/3944492>"
+        RenderText {#text} at (274,64) size 772x63
+          text run at (274,64) width 498: " after pressing return twice, text is bold when it "
+          text run at (0,96) width 127: "shouldn't be"
+      RenderBlock {DIV} at (0,128) size 784x12
+      RenderBlock {P} at (0,164) size 784x61 [border: (2px solid #0000FF)]
+        RenderInline {B} at (0,0) size 62x33
+          RenderText {#text} at (14,14) size 62x33
+            text run at (14,14) width 62: "line 1"
+      RenderBlock {P} at (0,249) size 784x60 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 36x31
+          text run at (14,14) width 36: "xxx"
+      RenderBlock {P} at (0,333) size 784x60 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x31 [bgcolor=#008000]
+      RenderBlock {P} at (0,417) size 784x60 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 36x31
+          text run at (14,14) width 36: "xxx"
+caret: position 3 of child 0 {#text} of child 8 {P} of child 1 {BODY} of child 0 {HTML} of document

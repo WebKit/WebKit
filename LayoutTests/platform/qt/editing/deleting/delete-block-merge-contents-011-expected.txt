@@ -1,0 +1,22 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x156 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x128
+          RenderBlock (anonymous) at (0,0) size 756x32
+            RenderText {#text} at (0,0) size 45x31
+              text run at (0,0) width 45: "One"
+          RenderBlock {DIV} at (0,32) size 756x64
+            RenderText {#text} at (0,0) size 45x31
+              text run at (0,0) width 45: "Two"
+            RenderBR {BR} at (45,23) size 0x0
+            RenderBR {BR} at (0,32) size 0x31
+          RenderBlock (anonymous) at (0,96) size 756x32
+            RenderText {#text} at (0,0) size 62x31
+              text run at (0,0) width 62: "Three"
+caret: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
