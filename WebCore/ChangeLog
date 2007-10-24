@@ -1,3 +1,11 @@
+2007-10-24  Eric Seidel  <eric@webkit.org>
+
+        No review, I want to tickle the CIA bot to test changes,
+        and took this as an opportunity to clean up some old change logs.
+
+        * ChangeLog-2005-08-23: update email address
+        * ChangeLog-2006-12-31: fix spelling mistakes
+
 2007-10-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

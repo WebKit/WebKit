@@ -4502,7 +4502,7 @@
           fixes these problems.
 
         It's quite hard too describe the actual changes, if one is not familiar with the code. This is the result
-        of endless discussions with Eric Seidel, and we hope this is a decent solution adressing all issues.
+        of endless discussions with Eric Seidel, and we hope this is a decent solution addressing all issues.
 
         * WebCore.xcodeproj/project.pbxproj:
         * bindings/js/JSSVGMatrixCustom.cpp:
@@ -27245,7 +27245,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
 
         Reviewed by mitz.
 
-        paths with no fill specified default to black but do not recieve paint-related mouse events
+        paths with no fill specified default to black but do not receive paint-related mouse events
         http://bugs.webkit.org/show_bug.cgi?id=11069
         The default fill was being applied at the wrong place in the rendering chain, causing this problem.
 

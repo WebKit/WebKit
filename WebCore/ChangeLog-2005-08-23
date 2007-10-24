@@ -14150,7 +14150,7 @@
 
 2005-07-01  Geoffrey Garen  <ggaren@apple.com>
 
-        -landed patch by Eric Seidel <macdome@opendarwin.org>
+        -landed patch by Eric Seidel <eric@webkit.org>
         
         -for http://bugs.webkit.org/show_bug.cgi?id=3657
         GroundWork:  Moving some functions from khtml->jsc following kjs TOT
@@ -14892,7 +14892,7 @@
 
 2005-06-23  Justin Garcia  <justin.garcia@apple.com>
 
-        Patch by Eric Seidel <macdome@opendarwin.org>
+        Patch by Eric Seidel <eric@webkit.org>
 
         Adds QTextIStream, QTextOStream to KWQ
 
@@ -14906,7 +14906,7 @@
 
 2005-06-23  Justin Garcia  <justin.garcia@apple.com>
 
-        Patch by Eric Seidel <macdome@opendarwin.org>
+        Patch by Eric Seidel <eric@webkit.org>
 
         This patch contains several small additions to KWQ
 
