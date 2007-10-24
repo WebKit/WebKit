@@ -983,6 +983,15 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
             y += offset.height();
         }
 
+        // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
+        // in the parent's coordinate space that encloses us.
+        if (m_layer && m_layer->transform()) {
+            fixed = false;
+            rect = m_layer->transform()->mapRect(rect);
+            x = rect.x() + m_x;
+            y = rect.y() + m_y;
+        }
+
         // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
         // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
         if (o->hasOverflowClip()) {
@@ -999,6 +1008,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
             rect.setX(x);
             rect.setY(y);
         }
+        
         o->computeAbsoluteRepaintRect(rect, fixed);
     }
 }
