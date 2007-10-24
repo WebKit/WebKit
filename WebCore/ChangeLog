@@ -16,27 +16,6 @@
         already deletes the current selection.
         (WebCore::Editor::setComposition): Ditto.
 
-2007-10-23  Dan Bernstein  <mitz@apple.com>
-
-        Reviewed by Eric Seidel.
-
-        - fix http://bugs.webkit.org/show_bug.cgi?id=15405
-          ASSERTION FAILED: d->m_view && !d->m_view->needsLayout() in Frame::Paint
-
-        Calling updateWidget() during attach() led to arbitrary (plugin and resource load delegate)
-        code execution under attach(). The fix is to use the mechanism that's already in place for
-        deferring updateWidget() until after layout.
-
-        * html/HTMLEmbedElement.cpp:
-        (WebCore::HTMLEmbedElement::attach): Replaced call to updateWidget() with call to updateWidgetSoon()
-        * html/HTMLObjectElement.cpp:
-        (WebCore::HTMLObjectElement::attach): Ditto.
-        * manual-tests/paint-during-plugin-attach.html: Added.
-        * rendering/RenderPartObject.cpp:
-        (WebCore::RenderPartObject::updateWidgetSoon): Added this function that schedules the
-        updateWidget() call for after the next layout.
-        * rendering/RenderPartObject.h:
-
 2007-10-23  Adam Roben  <aroben@apple.com>
 
         Fix the behavior of pathByAppendingComponent when path is empty

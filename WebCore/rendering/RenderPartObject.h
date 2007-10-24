@@ -38,7 +38,6 @@ public:
 
     virtual void layout();
     void updateWidget(bool onlyCreateNonPlugins);
-    void updateWidgetSoon();
 
     virtual void viewCleared();
 };
