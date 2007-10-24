@@ -1,3 +1,12 @@
+2007-10-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/5554130> DatabaseTracker.o has a global initializer
+
+        * Misc/WebDatabaseManager.mm:
+        (WebKitSetWebDatabasesPathIfNecessary): Call the member function instead of a static one
+
 2007-10-23  Mark Rowe  <mrowe@apple.com>
 
         Build fix for Eric's build fix in r26916.

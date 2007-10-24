@@ -96,7 +96,7 @@ void WebKitSetWebDatabasesPathIfNecessary()
     if (!databasesDirectory)
         databasesDirectory = @"~/Library/WebKit/Databases";
 
-    DatabaseTracker::setDatabasePath([databasesDirectory stringByStandardizingPath]);
+    DatabaseTracker::tracker().setDatabasePath([databasesDirectory stringByStandardizingPath]);
 
     pathSet = YES;
 }

@@ -1,3 +1,21 @@
+2007-10-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Windows portion of <rdar://5554130> 
+        
+        Slowly introduce Windows WebKit portion of the Database API that sets the 
+        on-disk location for databases
+        
+        * WebDatabaseManager.cpp: Added.
+        (WebKitSetWebDatabasesPathIfNecessary):
+        * WebDatabaseManager.h: Added.
+        
+        * WebKit.vcproj/WebKit.vcproj:
+        
+        * WebView.cpp:
+        (WebView::initWithFrame): Call WebKitSetWebDatabasesPathIfNecessary()
+
 2007-10-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam, Steve and Darin.

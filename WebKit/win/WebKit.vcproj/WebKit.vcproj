@@ -413,6 +413,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebDatabaseManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebDataSource.h"
 				>
 			</File>
@@ -626,6 +630,10 @@
 			</File>
 			<File
 				RelativePath="..\WebContextMenuClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebDatabaseManager.cpp"
 				>
 			</File>
 			<File

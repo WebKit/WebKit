@@ -1,3 +1,26 @@
+2007-10-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://5554130> DatabaseTracker.o has a global initializer
+
+        Since DatabaseTracker is a singleton, it makes much more sense to keep the database path as a member variable.
+        Now constructing the shared DatabaseTracker no longer implicitly opens it - It is only opened when the databases 
+        path is set.
+        
+        * WebCore.vcproj/WebCore.vcproj: Copy WebCore/storage headers for WebKit build
+        
+        * storage/Database.cpp:
+        (WebCore::Database::~Database): Remove bogus assertion
+        
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::DatabaseTracker): Does nothing now!  Move this code to openTrackerDatabase
+        (WebCore::DatabaseTracker::setDatabasePath): Set the member variable, also closing/opening the database if needed
+        (WebCore::DatabaseTracker::databasePath):
+        (WebCore::DatabaseTracker::openTrackerDatabase): To open and validate the Databases db, moved from the c'tor
+        (WebCore::DatabaseTracker::fullPathForDatabase): Return the member variable
+        * storage/DatabaseTracker.h:
+
 2007-10-24  David Hyatt  <hyatt@apple.com>
 
         Don't try to gap fill transformed selections.  Fix the invalidation of selection to use the clip to visible content
