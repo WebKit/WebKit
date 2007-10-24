@@ -1,3 +1,16 @@
+2007-10-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam, Steve and Darin.
+
+        - Added stubs for what will be neede to let Drosera attach to the
+        WebKit process and debug it.
+
+        * Interfaces/IWebScriptCallFrame.idl: Added.
+        * Interfaces/IWebScriptDebugListener.idl: Added.
+        * Interfaces/WebKit.idl:
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj:
+
 2007-10-23  Adam Roben  <aroben@apple.com>
 
         Move safe file creation code to WebCore

@@ -50,13 +50,11 @@ public:
     HRESULT init(HINSTANCE hInstance, int nCmdShow);
     LRESULT onSize(WPARAM, LPARAM);
 
-    HRESULT attach(const std::wstring& serverName);
-
     bool webViewLoaded() const;
 
 private:
     HRESULT initUI(HINSTANCE hInstance, int nCmdShow);
-    HRESULT initServer();
+    HRESULT attach();
 
     HWND m_hWnd;
 

@@ -190,6 +190,7 @@ HRESULT Drosera::init(HINSTANCE hInstance, int nCmdShow)
     if (FAILED(ret))
         return ret;
 
+    ret = attach();
     return ret;
 }
 
@@ -277,11 +278,9 @@ bool Drosera::webViewLoaded() const
 
 // Server Detection Callbacks
 
-HRESULT Drosera::attach(const std::wstring& serverName)
+HRESULT Drosera::attach()
 {
     // Get selected server
-    m_debuggerClient->initWithServerName(serverName);
-
     HRESULT ret = m_webView->setFrameLoadDelegate(m_debuggerClient.get());
     if (FAILED(ret))
         return ret;

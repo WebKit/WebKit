@@ -1,3 +1,51 @@
+2007-10-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam, Steve and Darin.
+
+        - Stubbed out the WebScriptDebugListener functionality in the Server
+        Connection class to prepare it for receiving those callbacks.
+        - Also I changed the instantiation of DebuggerClient, DebuggerDocument
+        and the ServerConnection to not need to be initialized with a server
+        name, since that is not the way we connect to the WebKit server. 
+
+        * Drosera/DebuggerDocument.cpp: Fixed a bug where I was always logging
+        no exception.  Now it only loggs when there is an exception
+        (DebuggerDocument::willExecuteStatement):
+        (DebuggerDocument::didEnterCallFrame):
+        (DebuggerDocument::willLeaveCallFrame):
+        (DebuggerDocument::windowScriptObjectAvailable):
+        (DebuggerDocument::callFunctionOnObject):
+        * Drosera/win/DebuggerClient.cpp: No longer needs the ServerConnection
+        to be instantiated with a server's name.
+        (DebuggerClient::DebuggerClient):
+        (DebuggerClient::didFinishLoadForFrame):
+        * Drosera/win/DebuggerClient.h: Removed unsued variable.
+        * Drosera/win/Drosera.cpp: Client no longer needs to be initialized with
+        a server name.
+        (Drosera::init):
+        (Drosera::initServer):
+        * Drosera/win/Drosera.h: No longer need the ServerConnection to be
+        instantiated with a server's name.
+        * Drosera/win/ServerConnection.cpp: 
+        (ServerConnection::ServerConnection): No longer needs a server name
+        (ServerConnection::~ServerConnection): Only release the global context
+        if there is one.
+        (ServerConnection::serverConnectionDidDie): Stub for
+        IWebScriptDebugListener
+        (ServerConnection::QueryInterface): ditto
+        (ServerConnection::AddRef): ditto
+        (ServerConnection::Release): ditto
+        (ServerConnection::didLoadMainResourceForDataSource): ditto
+        (ServerConnection::didParseSource): ditto
+        (ServerConnection::failedToParseSource): ditto
+        (ServerConnection::didEnterCallFrame): ditto
+        (ServerConnection::willExecuteStatement): ditto
+        (ServerConnection::willLeaveCallFrame): ditto
+        (ServerConnection::exceptionWasRaised): ditto
+        * Drosera/win/ServerConnection.h: Stubbed out the
+        IWebScriptDebugListener functions, and this class no longer needs to be
+        instantiated with a server name.
+
 2007-10-24  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

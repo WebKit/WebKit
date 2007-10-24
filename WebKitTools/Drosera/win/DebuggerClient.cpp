@@ -36,18 +36,8 @@
 
 DebuggerClient::DebuggerClient()
     : m_webViewLoaded(false)
+    , m_debuggerDocument(new DebuggerDocument(new ServerConnection()))
 {
-}
-
-DebuggerClient::DebuggerClient(const std::wstring& serverName)
-    : m_webViewLoaded(false)
-{
-    initWithServerName(serverName);
-}
-
-void DebuggerClient::initWithServerName(const std::wstring& serverName)
-{
-    m_debuggerDocument.set(new DebuggerDocument(ServerConnection::initWithServerName(serverName)));
 }
 
 // IUnknown ------------------------------
@@ -68,36 +58,27 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::QueryInterface(REFIID riid, void** ppv
 }
 
 ULONG STDMETHODCALLTYPE DebuggerClient::AddRef(void)
-{   // COM ref-counting isn't useful to us because we're in charge of the lifetime of the WebView.
-    return 2;
+{
+    // COM ref-counting isn't useful to us because we're in charge of the lifetime of the WebView.
+    return 1;
 }
 
 ULONG STDMETHODCALLTYPE DebuggerClient::Release(void)
-{   // COM ref-counting isn't useful to us because we're in charge of the lifetime of the WebView.
-    return 2;
+{
+    // COM ref-counting isn't useful to us because we're in charge of the lifetime of the WebView.
+    return 1;
 }
 
 // IWebFrameLoadDelegate ------------------------------
 HRESULT STDMETHODCALLTYPE DebuggerClient::didFinishLoadForFrame(
     /* [in] */ IWebView*,
-    /* [in] */ IWebFrame* frame)
+    /* [in] */ IWebFrame*)
 {
-    // FIXME: Check the IWebView passed in vs the m_webView which should be used?
     // note: this is Drosera's own WebView, not the one in the app that we are attached to.
-    m_webViewLoaded = true;
-
-    COMPtr<IWebFrame> mainFrame;
-    HRESULT hr = m_webView->mainFrame(&mainFrame);
-    if (FAILED(hr))
-        return hr;
-
-    if (mainFrame != frame)
-        return S_OK;
-
     // FIXME: This cannot be implemented until IWebFrame has a globalContext
-    //    ServerConnection* server = m_debuggerDocument->server();
-    //    if (server)
-    //        server->setGlobalContext(mainFrame->globalContext());
+    // m_debuggerDocument->server()->setGlobalContext(mainFrame->globalContext());
+
+    m_webViewLoaded = true;
 
     return S_OK;
 }

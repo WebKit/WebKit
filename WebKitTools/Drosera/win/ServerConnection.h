@@ -31,6 +31,7 @@
 #define ServerConnection_H
 
 #include <string>
+#include <WebKit/IWebScriptDebugListener.h>
 
 class DebuggerClient;
 class WebScriptCallFrame;
@@ -38,24 +39,78 @@ class WebScriptDebugServer;
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 
-class ServerConnection {
+class ServerConnection : public IWebScriptDebugListener {
 public:
-    static ServerConnection* initWithServerName(const std::wstring& serverName);
+    ServerConnection();
     ~ServerConnection();
 
     void setGlobalContext(JSGlobalContextRef);
     void pause();
     void resume();
     void stepInto();
-    void switchToServerNamed(const std::wstring& name);
 
     void applicationTerminating();
     void serverConnectionDidDie();
     WebScriptCallFrame* currentFrame() const;
 
-private:
-    ServerConnection() {}
+    // IUnknown
+    HRESULT STDMETHODCALLTYPE QueryInterface(
+        /* [in] */ REFIID riid,
+        /* [retval][out] */ void** ppvObject);
 
+    ULONG STDMETHODCALLTYPE AddRef();
+    ULONG STDMETHODCALLTYPE Release();
+
+    // IWebScriptDebugListener
+    HRESULT STDMETHODCALLTYPE didLoadMainResourceForDataSource(
+        /* [in] */ IWebView* view,
+        /* [in] */ IWebDataSource* dataSource);
+
+    HRESULT STDMETHODCALLTYPE didParseSource(
+        /* [in] */ IWebView* view,
+        /* [in] */ BSTR sourceCode,
+        /* [in] */ UINT baseLineNumber,
+        /* [in] */ BSTR url,
+        /* [in] */ int sourceID,
+        /* [in] */ IWebFrame* forWebFrame);
+
+    HRESULT STDMETHODCALLTYPE failedToParseSource(
+        /* [in] */ IWebView* view,
+        /* [in] */ BSTR sourceCode,
+        /* [in] */ UINT baseLineNumber,
+        /* [in] */ BSTR url,
+        /* [in] */ BSTR error,
+        /* [in] */ IWebFrame* forWebFrame);
+
+    HRESULT STDMETHODCALLTYPE didEnterCallFrame(
+        /* [in] */ IWebView* view,
+        /* [in] */ IWebScriptCallFrame* frame,
+        /* [in] */ int sourceID,
+        /* [in] */ int lineNumber,
+        /* [in] */ IWebFrame* forWebFrame);
+
+    HRESULT STDMETHODCALLTYPE willExecuteStatement(
+        /* [in] */ IWebView* view,
+        /* [in] */ IWebScriptCallFrame* frame,
+        /* [in] */ int sourceID,
+        /* [in] */ int lineNumber,
+        /* [in] */ IWebFrame* forWebFrame);
+
+    HRESULT STDMETHODCALLTYPE willLeaveCallFrame(
+        /* [in] */ IWebView* view,
+        /* [in] */ IWebScriptCallFrame* frame,
+        /* [in] */ int sourceID,
+        /* [in] */ int lineNumber,
+        /* [in] */ IWebFrame* forWebFrame);
+
+    HRESULT STDMETHODCALLTYPE exceptionWasRaised(
+        /* [in] */ IWebView* view,
+        /* [in] */ IWebScriptCallFrame* frame,
+        /* [in] */ int sourceID,
+        /* [in] */ int lineNumber,
+        /* [in] */ IWebFrame* forWebFrame);
+
+private:
     std::wstring m_currentServerName;
 
     // FIXME: Change these to OwnPtrs when they are implmented such that they

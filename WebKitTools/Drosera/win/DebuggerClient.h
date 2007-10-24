@@ -92,7 +92,6 @@ public:
 private:
     bool m_webViewLoaded;
 
-    COMPtr<IWebView> m_webView;
     OwnPtr<DebuggerDocument> m_debuggerDocument;
 };
 

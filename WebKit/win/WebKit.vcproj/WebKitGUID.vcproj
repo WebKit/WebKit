@@ -330,6 +330,14 @@
 			>
 		</File>
 		<File
+			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebScriptCallFrame_i.c"
+			>
+		</File>
+		<File
+			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebScriptDebugListener_i.c"
+			>
+		</File>
+		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebScriptObject_i.c"
 			>
 		</File>

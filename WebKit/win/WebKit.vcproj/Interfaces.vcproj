@@ -364,6 +364,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Interfaces\IWebScriptCallFrame.idl"
+			>
+		</File>
+		<File
+			RelativePath="..\Interfaces\IWebScriptDebugListener.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\IWebScriptObject.idl"
 			>
 		</File>
