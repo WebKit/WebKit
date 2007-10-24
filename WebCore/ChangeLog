@@ -5,7 +5,6 @@
         <rdar://problem/5493833>
         REGRESSION: ~5MB of image data leaked @ cuteoverload.com (often seen while browsing other sites, too)
 
-        * WebCore.xcodeproj/project.pbxproj:
         * bindings/js/kjs_binding.cpp:
         (KJS::ScriptInterpreter::markDOMNodesForDocument):
         If an image element that is currently loading an image is not in the document,
