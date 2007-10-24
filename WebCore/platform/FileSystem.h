@@ -29,6 +29,7 @@
 #ifndef FileSystem_h
 #define FileSystem_h
 
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -44,6 +45,11 @@ bool makeAllDirectories(const String& path);
 String homeDirectoryPath();
 
 CString fileSystemRepresentation(const String&);
+
+#if PLATFORM(WIN)
+String localUserSpecificStorageDirectory();
+String roamingUserSpecificStorageDirectory();
+#endif
 
 } // namespace WebCore
 

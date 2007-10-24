@@ -33,6 +33,7 @@
 #include "WebNotificationCenter.h"
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
+#include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Image.h>
 #include <WebCore/PlatformString.h>
@@ -58,39 +59,6 @@ WebIconDatabase::~WebIconDatabase()
     gClassCount--;
 }
 
-// FIXME - <rdar://problem/4721579>
-// This is code ripped directly from FileUtilities.cpp - it may be extremely useful
-// to have it in a centralized location in WebKit.  But also, getting the icon database
-// path should use the WebPreferences system before it falls back to some reasonable default
-HRESULT userIconDatabasePath(String& path)
-{
-    // get the path to the user's non-roaming application data folder (Example: C:\Documents and Settings\{username}\Local Settings\Application Data\)
-    TCHAR appDataPath[MAX_PATH];
-    HRESULT hr = SHGetFolderPath(0, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, appDataPath);
-    if (FAILED(hr))
-        return hr;
-
-    // make the Apple Computer and WebKit subfolder
-    path = String(appDataPath) + "\\Apple Computer\\";
-
-    WebCore::String appName = "WebKit";
-    CFBundleRef bundle = CFBundleGetMainBundle();
-    if (bundle) {
-        CFStringRef bundleExecutable = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleExecutableKey);
-        if (bundleExecutable)
-            appName = bundleExecutable;
-    }
-    path += appName;
-
-    if (!CreateDirectory(path.charactersWithNullTermination(), 0)) {
-        DWORD err = GetLastError();
-        if (err != ERROR_ALREADY_EXISTS)
-            return (HRESULT_FROM_WIN32(err));
-    }
-
-    return S_OK;
-}
-
 void WebIconDatabase::init()
 {
     WebPreferences* standardPrefs = WebPreferences::sharedStandardPreferences();
@@ -109,9 +77,12 @@ void WebIconDatabase::init()
 
     String databasePath(prefDatabasePath, SysStringLen(prefDatabasePath));
     SysFreeString(prefDatabasePath);
-    if (databasePath.isEmpty())
-        if (FAILED(userIconDatabasePath(databasePath)))
+
+    if (databasePath.isEmpty()) {
+        databasePath = localUserSpecificStorageDirectory();
+        if (databasePath.isEmpty())
             LOG_ERROR("Failed to construct default icon database path");
+    }
 
     if (!iconDatabase()->open(databasePath))
             LOG_ERROR("Failed to open icon database path");

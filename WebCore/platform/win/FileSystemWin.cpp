@@ -107,4 +107,61 @@ String homeDirectoryPath()
     return "";
 }
 
+static String bundleName()
+{
+    static bool initialized;
+    static String name = "WebKit";
+
+    if (!initialized) {
+        initialized = true;
+
+        if (CFBundleRef bundle = CFBundleGetMainBundle())
+            if (CFTypeRef bundleExecutable = CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleExecutableKey))
+                if (CFGetTypeID(bundleExecutable) == CFStringGetTypeID())
+                    name = reinterpret_cast<CFStringRef>(bundleExecutable);
+    }
+
+    return name;
+}
+
+static String storageDirectory(DWORD pathIdentifier)
+{
+    Vector<UChar> buffer(MAX_PATH);
+    if (FAILED(SHGetFolderPathW(0, pathIdentifier | CSIDL_FLAG_CREATE, 0, 0, buffer.data())))
+        return String();
+    buffer.resize(wcslen(buffer.data()));
+    String directory = String::adopt(buffer);
+
+    static const String companyNameDirectory = "Apple Computer\\";
+    directory = pathByAppendingComponent(directory, companyNameDirectory + bundleName());
+    if (!makeAllDirectories(directory))
+        return String();
+
+    return directory;
+}
+
+static String cachedStorageDirectory(DWORD pathIdentifier)
+{
+    static HashMap<DWORD, String> directories;
+
+    HashMap<DWORD, String>::iterator it = directories.find(pathIdentifier);
+    if (it != directories.end())
+        return it->second;
+
+    String directory = storageDirectory(pathIdentifier);
+    directories.add(pathIdentifier, directory);
+
+    return directory;
+}
+
+String localUserSpecificStorageDirectory()
+{
+    return cachedStorageDirectory(CSIDL_LOCAL_APPDATA);
+}
+
+String roamingUserSpecificStorageDirectory()
+{
+    return cachedStorageDirectory(CSIDL_APPDATA);
+}
+
 } // namespace WebCore

@@ -32,6 +32,7 @@
 #include "WebPreferenceKeysPrivate.h"
 
 #pragma warning( push, 0 )
+#include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringHash.h>
@@ -47,6 +48,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
+
+using namespace WebCore;
 
 static unsigned long long WebSystemMainMemory()
 {
@@ -471,30 +474,11 @@ void WebPreferences::removeValuesMatchingDefaultSettings()
 
 HRESULT WebPreferences::preferencesPath(LPTSTR path, size_t cchPath)
 {
-    // get the path to the user's Application Data folder (Example: C:\Documents and Settings\{username}\Application Data\Apple Computer\WebKit)
-    HRESULT hr = SHGetFolderPath(0, CSIDL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, path);
-    if (FAILED(hr))
-        return hr;
+    static const String filename = "WebKitPreferences.plist";
 
-    if (_tcscat_s(path, cchPath, TEXT("\\Apple Computer\\")))
-        return E_FAIL;
-
-    WebCore::String appName = "WebKit";
-    CFBundleRef bundle = CFBundleGetMainBundle();
-    if (bundle) {
-        CFStringRef bundleExecutable = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleExecutableKey);
-        if (bundleExecutable)
-            appName = bundleExecutable;
-    }
-    if (_tcscat_s(path, cchPath, appName.charactersWithNullTermination()))
-        return E_FAIL;
-
-    int err = SHCreateDirectoryEx(0, path, 0);
-    if (err != ERROR_SUCCESS && err != ERROR_ALREADY_EXISTS)
-        return E_FAIL;
-
-    if (_tcscat_s(path, cchPath, TEXT("\\WebKitPreferences.plist")))
-        return E_FAIL;
+    String prefs = pathByAppendingComponent(roamingUserSpecificStorageDirectory(), filename);
+    if (int err = _tcscpy_s(path, cchPath, prefs.charactersWithNullTermination()))
+        return HRESULT_FROM_WIN32(err);
 
     return S_OK;
 }

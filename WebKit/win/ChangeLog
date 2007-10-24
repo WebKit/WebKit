@@ -1,3 +1,15 @@
+2007-10-23  Adam Roben  <aroben@apple.com>
+
+        Reduce code duplication by using WebCore's FileSystem functions
+
+        Reviewed by Brady.
+
+        * WebIconDatabase.cpp: Removed a now-unused function and a fixed
+        FIXME.
+        (WebIconDatabase::init): Changed to use FileSystem functions.
+        * WebPreferences.cpp:
+        (WebPreferences::preferencesPath): Ditto.
+
 2007-10-23  Sam Weinig  <sam@webkit.org>
 
         Make the WebNotificationCenter work with null (wildcard) and specific

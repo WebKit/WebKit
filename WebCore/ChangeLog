@@ -1,3 +1,27 @@
+2007-10-24  Adam Roben  <aroben@apple.com>
+
+        Add methods to FileSystemWin to get some user profile directories
+
+        These directories are used to hold things like preferences, caches,
+        etc.
+
+        Reviewed by Brady.
+
+        * platform/FileSystem.h: Added new method declarations for Windows
+        only.
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::bundleName): Added.
+        (WebCore::storageDirectory): Added.
+        (WebCore::cachedStorageDirectory): Added.
+        (WebCore::localUserSpecificStorageDirectory): Added. Returns the
+        directory where WebKit should store any user-specific data that should
+        stay local to the current machine (i.e., shouldn't be stored in a
+        roaming profile).
+        (WebCore::roamingUserSpecificStorageDirectory): Added. Returns the
+        directory where WebKit should store any user-specific data that should
+        move with the user from machine to machine (i.e., should be stored in
+        a roaming profile).
+
 2007-10-24  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
