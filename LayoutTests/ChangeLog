@@ -1,3 +1,46 @@
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        update test results.
+
+        * fast/dom/Window/new-window-opener-expected.txt:
+        * fast/dom/Window/window-resize-expected.txt:
+        * fast/dom/open-and-close-by-DOM-expected.txt:
+        * fast/innerHTML/innerHTML-script-tag-crash-expected.txt:
+        * fast/js/date-DST-time-cusps-expected.txt:
+        * fast/js/date-big-setdate-expected.txt:
+        * fast/js/navigator-mimeTypes-length-expected.txt:
+        * fast/parser/entities-in-attributes-expected.txt:
+        * fast/xpath/4XPath/Borrowed/od_20000608-expected.txt:
+        * platform/qt/css1/text_properties/text-transCapitalize-expected.txt:
+        * platform/qt/css1/text_properties/text_transform-expected.txt:
+        * platform/qt/css2.1/t1605-c545-txttrans-00-b-ag-expected.txt:
+        * platform/qt/editing/selection/4402375-expected.txt: Added.
+        * platform/qt/editing/selection/4932260-3-expected.txt:
+        * platform/qt/editing/selection/5234383-2-expected.txt:
+        * platform/qt/editing/selection/extend-by-sentence-001-expected.txt:
+        * platform/qt/editing/selection/image-before-linebreak-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/image-before-linebreak-expected.txt.
+        * platform/qt/editing/selection/replaced-boundaries-1-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-1-expected.txt.
+        * platform/qt/editing/selection/replaced-boundaries-2-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-2-expected.txt.
+        * platform/qt/editing/selection/replaced-boundaries-3-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-3-expected.txt.
+        * platform/qt/fast/css/textCapitalizeEdgeCases-expected.txt:
+        * platform/qt/fast/dynamic/containing-block-change-expected.txt: Added.
+        * platform/qt/fast/events/event-listener-on-link-expected.txt: Copied from LayoutTests/platform/mac/fast/events/event-listener-on-link-expected.txt.
+        * platform/qt/fast/events/event-sender-mouse-moved-expected.txt: Added.
+        * platform/qt/fast/events/label-focus-expected.txt: Added.
+        * platform/qt/fast/events/onload-re-entry-expected.txt: Copied from LayoutTests/platform/mac/fast/events/onload-re-entry-expected.txt.
+        * platform/qt/fast/events/onloadFrameCrash-expected.txt: Copied from LayoutTests/platform/mac/fast/events/onloadFrameCrash-expected.txt.
+        * platform/qt/fast/repaint/body-background-image-expected.txt: Added.
+        * platform/qt/fast/repaint/focus-layers-expected.txt: Added.
+        * platform/qt/fast/repaint/layer-visibility-expected.txt: Copied from LayoutTests/platform/mac/fast/repaint/layer-visibility-expected.txt.
+        * platform/qt/fast/table/frame-and-rules-expected.txt:
+        * platform/qt/fast/text/international/003-expected.txt:
+        * platform/qt/fast/text/international/bidi-listbox-atsui-expected.txt:
+        * platform/qt/fast/text/international/bidi-listbox-expected.txt:
+        * platform/qt/fast/text/international/thai-line-breaks-expected.txt:
+        * platform/qt/plugins/embed-attributes-style-expected.txt: Added.
+
 2007-10-24  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Darin.

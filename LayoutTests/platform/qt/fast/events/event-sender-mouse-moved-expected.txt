@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {DIV} at (0,0) size 100x100
+      RenderBlock (anonymous) at (0,100) size 784x20
+        RenderText {#text} at (0,0) size 53x19
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 689x19
+          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
+            RenderText {#text} at (53,0) size 337x19
+              text run at (53,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7589"
+          RenderText {#text} at (390,0) size 352x19
+            text run at (390,0) width 352: " Mouse moved events do not work in DumpRenderTree"
+        RenderText {#text} at (742,0) size 4x19
+          text run at (742,0) width 4: "."
+      RenderBlock {HR} at (0,127) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,143) size 784x19
+        RenderText {#text} at (0,0) size 75x19
+          text run at (0,0) width 75: "Test result: "
+        RenderInline {SPAN} at (0,0) size 36x19
+          RenderText {#text} at (75,0) size 36x19
+            text run at (75,0) width 36: "PASS"

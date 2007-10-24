@@ -24,11 +24,11 @@ layer at (0,0) size 800x600
             RenderInline {DIV} at (0,0) size 13x19
               RenderText {#text} at (26,11) size 13x19
                 text run at (26,11) width 13: "or"
-            RenderText {#text} at (39,11) size 40x19
-              text run at (39,11) width 40: "d With"
-            RenderImage {IMG} at (79,0) size 25x25
-            RenderText {#text} at (104,11) size 61x19
-              text run at (104,11) width 61: "An Image"
+            RenderText {#text} at (39,11) size 42x19
+              text run at (39,11) width 42: "D With"
+            RenderImage {IMG} at (81,0) size 25x25
+            RenderText {#text} at (106,11) size 61x19
+              text run at (106,11) width 61: "An Image"
           RenderBlock {DIV} at (0,30) size 694x0
           RenderBlock (anonymous) at (0,30) size 694x19
             RenderText {#text} at (0,0) size 33x19
