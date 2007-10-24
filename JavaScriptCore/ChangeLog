@@ -1,3 +1,22 @@
+2007-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Inlined the fast path for creating an Identifier from an Identifier. 
+        
+        This is a .4% speedup on SunSpider overall, but as big as a 2.5% 
+        speedup on certain individual tests. 65% of the Identifiers creating 
+        by SunSpider are already Identifiers.
+        
+        (The main reason I'm making this change is that it resolves a large
+        regression in a patch I haven't checked in yet.)
+
+        * JavaScriptCore.exp:
+        * kjs/identifier.cpp:
+        (KJS::Identifier::addSlowCase):
+        * kjs/identifier.h:
+        (KJS::Identifier::Identifier::add):
+
 2007-10-24  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

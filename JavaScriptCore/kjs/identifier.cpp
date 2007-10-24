@@ -175,10 +175,9 @@ PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
     return *identifierTable().add<UCharBuffer, UCharBufferTranslator>(buf).first;
 }
 
-PassRefPtr<UString::Rep> Identifier::add(UString::Rep *r)
+PassRefPtr<UString::Rep> Identifier::addSlowCase(UString::Rep *r)
 {
-    if (r->isIdentifier)
-        return r;
+    ASSERT(!r->isIdentifier);
 
     if (r->len == 0)
         return &UString::Rep::empty;
