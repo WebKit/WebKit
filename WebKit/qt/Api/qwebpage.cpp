@@ -489,10 +489,8 @@ void QWebPage::keyReleaseEvent(QKeyEvent *ev)
 
 void QWebPage::focusInEvent(QFocusEvent *ev)
 {
-    if (ev->reason() != Qt::PopupFocusReason) {
+    if (ev->reason() != Qt::PopupFocusReason) 
         mainFrame()->d->frame->page()->focusController()->setFocusedFrame(mainFrame()->d->frame);
-        mainFrame()->d->frame->setIsActive(true);
-    }
     QWidget::focusInEvent(ev);
 }
 
