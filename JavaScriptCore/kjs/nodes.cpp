@@ -347,7 +347,13 @@ JSValue *BooleanNode::evaluate(ExecState *)
 
 JSValue *NumberNode::evaluate(ExecState *)
 {
-  return jsNumber(val);
+    // Number nodes are only created when the number can't fit in a JSImmediate, so no need to check again.
+    return jsNumberCell(val);
+}
+
+JSValue* ImmediateNumberNode::evaluate(ExecState*)
+{
+    return m_value;
 }
 
 // ------------------------------ StringNode -----------------------------------

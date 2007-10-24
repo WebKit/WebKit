@@ -65,6 +65,7 @@ static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args);
 static Node *makeTypeOfNode(Node *expr);
 static Node *makeDeleteNode(Node *expr);
 static Node *makeNegateNode(Node *expr);
+static Node* makeNumberNode(double);
 
 #if COMPILER(MSVC)
 
@@ -210,7 +211,7 @@ Literal:
     NULLTOKEN                           { $$ = new NullNode(); }
   | TRUETOKEN                           { $$ = new BooleanNode(true); }
   | FALSETOKEN                          { $$ = new BooleanNode(false); }
-  | NUMBER                              { $$ = new NumberNode($1); }
+  | NUMBER                              { $$ = makeNumberNode($1); }
   | STRING                              { $$ = new StringNode($1); }
   | '/' /* regexp */                    {
                                             Lexer *l = Lexer::curr();
@@ -1014,9 +1015,24 @@ static Node* makeNegateNode(Node *n)
             number->setValue(-number->value());
             return number;
         }
+    } else if (n->isImmediateValue()) {
+        ImmediateNumberNode* number = static_cast<ImmediateNumberNode*>(n);
+        double value = number->value();
+        if (value > 0.0) {
+            number->setValue(-value);
+            return number;
+        }
     }
 
     return new NegateNode(n);
+}
+
+static Node* makeNumberNode(double d)
+{
+    JSValue* value = JSImmediate::fromDouble(d);
+    if (value)
+        return new ImmediateNumberNode(value);
+    return new NumberNode(d);
 }
 
 /* called by yyparse on error */

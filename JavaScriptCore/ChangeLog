@@ -1,3 +1,20 @@
+2007-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Add ImmediateNumberNode to hold a JSValue* instead of a double for numbers
+        which can be represented by JSImmediate.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::NumberNode::evaluate):
+        (KJS::ImmediateNumberNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::Node::):
+        (KJS::ImmediateNumberNode::):
+        * kjs/nodes2string.cpp:
+        (ImmediateNumberNode::streamTo):
+
 2007-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

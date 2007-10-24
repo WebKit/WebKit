@@ -142,6 +142,11 @@ void BooleanNode::streamTo(SourceStream &s) const
 
 void NumberNode::streamTo(SourceStream &s) const { s << val; }
 
+void ImmediateNumberNode::streamTo(SourceStream& s) const
+{
+    s << value();
+}
+
 void StringNode::streamTo(SourceStream &s) const
 {
   s << '"' << escapeStringForPrettyPrinting(value) << '"';
