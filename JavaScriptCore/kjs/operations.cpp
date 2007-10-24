@@ -189,23 +189,6 @@ bool strictEqual(ExecState *exec, JSValue *v1, JSValue *v2)
     return false;
 }
 
-int relation(ExecState *exec, JSValue *v1, JSValue *v2)
-{
-    JSValue *p1 = v1->toPrimitive(exec,NumberType);
-    JSValue *p2 = v2->toPrimitive(exec,NumberType);
-    
-    if (p1->isString() && p2->isString())
-        return p1->toString(exec) < p2->toString(exec) ? 1 : 0;
-    
-    double n1 = p1->toNumber(exec);
-    double n2 = p2->toNumber(exec);
-    if (n1 < n2)
-        return 1;
-    if (n1 >= n2)
-        return 0;
-    return -1; // must be NaN, so undefined
-}
-
 int maxInt(int d1, int d2)
 {
     return (d1 > d2) ? d1 : d2;

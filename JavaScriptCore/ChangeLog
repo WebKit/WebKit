@@ -1,3 +1,19 @@
+2007-10-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Remove old relation method, replace with specialised LessThan and lessThenEq functions for a 0.5-0.6% improvement in SunSpider
+
+        * kjs/nodes.cpp:
+        (KJS::lessThan):
+        (KJS::lessThanEq):
+        (KJS::LessNode::evaluate):
+        (KJS::GreaterNode::evaluate):
+        (KJS::LessEqNode::evaluate):
+        (KJS::GreaterEqNode::evaluate):
+        * kjs/operations.cpp:
+        * kjs/operations.h:
+
 2007-10-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

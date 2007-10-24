@@ -44,15 +44,6 @@ namespace KJS {
 
   bool equal(ExecState *exec, JSValue *v1, JSValue *v2);
   bool strictEqual(ExecState *exec, JSValue *v1, JSValue *v2);
-  /**
-   * This operator performs an abstract relational comparison of the two
-   * arguments that can be of arbitrary type. If possible, conversions to the
-   * string or number type will take place before the comparison.
-   *
-   * @return 1 if v1 is "less-than" v2, 0 if the relation is "greater-than-or-
-   * equal". -1 if the result is undefined.
-   */
-  int relation(ExecState *exec, JSValue *v1, JSValue *v2);
   int maxInt(int d1, int d2);
   int minInt(int d1, int d2);
 
