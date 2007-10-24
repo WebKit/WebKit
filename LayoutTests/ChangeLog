@@ -1,3 +1,11 @@
+2007-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
+        Make sure we throw an un-catchable out of memory exception.
+
+        * fast/js/out-of-memory.html: Added.
+
 2007-10-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

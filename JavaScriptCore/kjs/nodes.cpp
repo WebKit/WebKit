@@ -44,30 +44,19 @@ namespace KJS {
 
 #define KJS_CHECKEXCEPTION \
   if (exec->hadException()) \
-    return rethrowException(exec); \
-  if (Collector::isOutOfMemory()) \
-    return createOutOfMemoryCompletion(exec);
+    return rethrowException(exec);
 
 #define KJS_CHECKEXCEPTIONVALUE \
   if (exec->hadException()) { \
     handleException(exec); \
     return jsUndefined(); \
-  } \
-  if (Collector::isOutOfMemory()) \
-    return jsUndefined(); // will be picked up by KJS_CHECKEXCEPTION
+  }
 
 #define KJS_CHECKEXCEPTIONLIST \
   if (exec->hadException()) { \
     handleException(exec); \
     return List(); \
-  } \
-  if (Collector::isOutOfMemory()) \
-    return List(); // will be picked up by KJS_CHECKEXCEPTION
-
-static Completion createOutOfMemoryCompletion(ExecState* exec)
-{
-    return Completion(Throw, Error::create(exec, GeneralError, "Out of memory"));
-}
+  }
 
 // ------------------------------ Node -----------------------------------------
 
@@ -2562,6 +2551,9 @@ Completion TryNode::execute(ExecState *exec)
 
   Completion c = tryBlock->execute(exec);
 
+  if (Collector::isOutOfMemory())
+      return c; // don't try to catch an out of memory exception thrown by the collector
+  
   if (catchBlock && c.complType() == Throw) {
     JSObject *obj = new JSObject;
     obj->put(exec, exceptionIdent, c.value(), DontDelete);

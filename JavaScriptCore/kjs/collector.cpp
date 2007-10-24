@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -892,9 +893,12 @@ bool Collector::collect()
   heap.numLiveObjectsAtLastCollect = numLiveObjects;
   heap.extraCost = 0;
   
-  memoryFull = (numLiveObjects >= KJS_MEM_LIMIT);
-
   heap.operationInProgress = NoOperation;
+  
+  bool newMemoryFull = (numLiveObjects >= KJS_MEM_LIMIT);
+  if (newMemoryFull && newMemoryFull != memoryFull)
+      reportOutOfMemoryToAllInterpreters();
+  memoryFull = newMemoryFull;
 
   return deleted;
 }
@@ -970,6 +974,21 @@ HashCountedSet<const char*>* Collector::rootObjectTypeCounts()
 bool Collector::isBusy()
 {
     return heap.operationInProgress != NoOperation;
+}
+
+void Collector::reportOutOfMemoryToAllInterpreters()
+{
+    if (!Interpreter::s_hook)
+        return;
+    
+    Interpreter* interpreter = Interpreter::s_hook;
+    do {
+        ExecState* exec = interpreter->context() ? interpreter->context()->execState() : interpreter->globalExec();
+        
+        exec->setException(Error::create(exec, GeneralError, "Out of memory"));
+        
+        interpreter = interpreter->next;
+    } while(interpreter != Interpreter::s_hook);
 }
 
 } // namespace KJS
