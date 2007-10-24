@@ -5,6 +5,7 @@
 # (c) 2000-2002 by Harri Porten <porten@kde.org> and
 #                  David Faure <faure@kde.org>
 # Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
+# Copyright (C) 2007 Apple Inc. All rights reserved.
 #
 # Part of the KJS library.
 #
@@ -27,11 +28,7 @@ use strict;
 
 my $file = $ARGV[0];
 shift;
-my $findSize = 0;
 my $includelookup = 0;
-
-# Use -s as second argument to make it try many hash sizes
-$findSize = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-s");
 
 # Use -i as second argument to make it include "lookup.h"
 $includelookup = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-i");
@@ -53,7 +50,7 @@ my @links = ();
 my $inside = 0;
 my $name;
 my $size;
-my $hashsize;
+my $hashSizeMask;
 my $banner = 0;
 sub calcTable();
 sub output();
@@ -65,22 +62,15 @@ while (<IN>) {
   if (/^\#|^$/) {
       # comment. do nothing
     } elsif (/^\@begin/ && !$inside) {
-      if (/^\@begin\s*([:_\w]+)\s*(\d+)\s*$/) {
+      if (/^\@begin\s*([:_\w]+)\s*\d*\s*$/) {
         $inside = 1;
         $name = $1;
-        $hashsize = $2;
       } else {
          printf STDERR "WARNING: \@begin without table name and hashsize, skipping $_\n";
       }
     } elsif (/^\@end\s*$/ && $inside) {
 
-      if($findSize) {
-	my $entriesnum=@keys;
-        print STDERR "Table: $name   $entriesnum entries\n";
-	for( my $i=3 ; $i<79 ; ++$i) { $hashsize=$i ; calcTable(); }
-      } else {
-        calcTable();
-      }
+      calcTable();
 
       output();
       @keys = ();
@@ -110,7 +100,21 @@ while (<IN>) {
 
 die "missing closing \@end" if ($inside);
 
+sub ceilingToPowerOf2
+{
+    my ($size) = @_;
+
+    my $powerOf2 = 1;
+    while ($size > $powerOf2) {
+        $powerOf2 <<= 1;
+    }
+
+    return $powerOf2;
+}
+
 sub calcTable() {
+  my $hashsize = ceilingToPowerOf2(2 * @keys);
+  $hashSizeMask = $hashsize - 1;
   $size = $hashsize;
   my $collisions = 0;
   my $maxdepth = 0;
@@ -129,7 +133,6 @@ sub calcTable() {
 	$size++;
       }
     }
-    #print STDERR "table[$h] = $i\n";
     $table[$h] = $i;
     $i++;
     $maxdepth = $depth if ( $depth > $maxdepth);
@@ -139,22 +142,6 @@ sub calcTable() {
   if ( $#table+1 < $size ) {
     $#table = $size-1;
   }
-  #print STDERR "After loop: size=$size table=".($#table+1)."\n";
-
-  if ($findSize) {
-    my $emptycount = 0;
-    foreach my $entry (@table) {
-      $emptycount++ if (!defined($entry));
-    }
-    print STDERR "Hashsize: $hashsize  Total Size: $size Empty: $emptycount MaxDepth: $maxdepth Collisions: $collisions\n";
-  }
-#  my $debugtable = 0;
-#  foreach my $entry (@table) {
-#    print STDERR "$debugtable " . (defined $entry ? $entry : '<undefined>');
-#    print STDERR " -> " . $links[$debugtable] if (defined($links[$debugtable]));
-#    print STDERR "\n";
-#    $debugtable++;
-#  }
 }
 
 sub leftShift($$) {
@@ -233,15 +220,7 @@ sub output() {
   }
   print "\nstatic const struct HashEntry ".$nameEntries."[] = {\n";
   my $i = 0;
-  #print STDERR "writing out table with ".($#table+1)." entries\n";
   
-  if ($hashsize eq 0) {
-    # To make the hash table lookup code fast, we don't allow tables of size 0.
-    # That way it can do a modulo by the size without a special case to avoid division by 0.
-    print "   \{ 0, 0, 0, 0, 0 \}\n";
-    $hashsize = 1;
-    $size = 1;
-  } else {
     foreach my $entry (@table) {
       if (defined($entry)) {
         my $key = $keys[$entry];
@@ -257,15 +236,15 @@ sub output() {
         }
         print "/* " . $hashes[$entry] . " */ ";
       } else {
-        print "   \{ 0, 0, 0, 0, 0 \}";
+        print "   { 0, 0, 0, 0, 0 }";
       }    
       print "," unless ($i == $size - 1);
       print "\n";
       $i++;
     }
-  }
+
   print "};\n\n";
   print "const struct HashTable $name = ";
-  print "\{ 2, $size, ".$nameEntries.", $hashsize \};\n\n";
+  print "\{ 3, $size, $nameEntries, $hashSizeMask \};\n\n";
   print "} // namespace\n";
 }

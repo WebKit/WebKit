@@ -1,3 +1,22 @@
+2007-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15657
+          change static hash tables to use powers of two for speed
+
+        Seems to give 0.7% SunSpider speedup.
+
+        * kjs/create_hash_table: Updated to generate new format.
+        * kjs/lookup.cpp:
+        (KJS::keysMatch): Took out unneeded typecast.
+        (KJS::findEntry): Updated to expect table type 3 -- changed the printf to a plain old assert.
+        Replaced the modulus with a bit mask.
+        (KJS::Lookup::findEntry): Get the hash directly, since we know identifiers already have computed
+        their hash -- saves a branch.
+        (KJS::Lookup::find): Ditto.
+        * kjs/lookup.h: Changed attr from 2-byte value to one-byte value. Replaced hashSize with hashSizeMask.
+
 2007-10-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

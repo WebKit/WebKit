@@ -1541,6 +1541,18 @@ sub NativeToJSValue
     return "toJS(exec, WTF::getPtr($value))";
 }
 
+sub ceilingToPowerOf2
+{
+    my ($size) = @_;
+
+    my $powerOf2 = 1;
+    while ($size > $powerOf2) {
+        $powerOf2 <<= 1;
+    }
+
+    return $powerOf2;
+}
+
 # Internal Helper
 sub GenerateHashTable
 {
@@ -1556,6 +1568,8 @@ sub GenerateHashTable
     # Helpers
     my @table = ();
     my @links = ();
+
+    $size = ceilingToPowerOf2($size * 2);
 
     my $maxDepth = 0;
     my $collisions = 0;
@@ -1594,8 +1608,6 @@ sub GenerateHashTable
     my $nameEntries = "${name}Entries";
     $nameEntries =~ s/:/_/g;
 
-    # first, build the string table
-    my %soffset = ();
     if (($name =~ /Prototype/) or ($name =~ /Constructor/)) {
         my $type = $name;
         my $implClass;
@@ -1633,7 +1645,7 @@ sub GenerateHashTable
                 push(@implContent, "0 \}");
             }
         } else {
-            push(@implContent, "    \{ 0, 0, 0, 0, 0 \}");
+            push(@implContent, "    { 0, 0, 0, 0, 0 }");
         }
 
         push(@implContent, ",") unless($i eq $size - 1);
@@ -1642,15 +1654,11 @@ sub GenerateHashTable
         $i++;
     }
 
-    if ($size eq 0) {
-        # dummy bucket -- an empty table would crash Lookup::findEntry
-        push(@implContent, "    \{ 0, 0, 0, 0, 0 \}\n") ;
-        $numEntries = 1;
-        $size = 1;
-    }
+    my $sizeMask = $numEntries - 1;
+
     push(@implContent, "};\n\n");
     push(@implContent, "static const HashTable $name = \n");
-    push(@implContent, "{\n    2, $size, $nameEntries, $numEntries\n};\n\n");
+    push(@implContent, "{\n    3, $size, $nameEntries, $sizeMask\n};\n\n");
 }
 
 # Internal helper

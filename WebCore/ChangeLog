@@ -1,3 +1,12 @@
+2007-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15657
+          change static hash tables to use powers of two for speed
+
+        * bindings/scripts/CodeGeneratorJS.pm: Updated to generate new format.
+
 2007-10-24  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.
