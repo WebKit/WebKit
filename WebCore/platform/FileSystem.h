@@ -32,6 +32,8 @@
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
+typedef const struct __CFData* CFDataRef;
+
 namespace WebCore {
 
 class CString;
@@ -49,6 +51,8 @@ CString fileSystemRepresentation(const String&);
 #if PLATFORM(WIN)
 String localUserSpecificStorageDirectory();
 String roamingUserSpecificStorageDirectory();
+
+bool safeCreateFile(const String&, CFDataRef);
 #endif
 
 } // namespace WebCore

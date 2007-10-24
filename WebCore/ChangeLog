@@ -1,5 +1,15 @@
 2007-10-24  Adam Roben  <aroben@apple.com>
 
+        Move Windows safe file creation code into WebCore from WebPreferences
+
+        Reviewed by Brady.
+
+        * platform/FileSystem.h:
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::safeCreateFile): Moved here from WebKit/win/WebPreferences.cpp.
+
+2007-10-23  Adam Roben  <aroben@apple.com>
+
         Add methods to FileSystemWin to get some user profile directories
 
         These directories are used to hold things like preferences, caches,

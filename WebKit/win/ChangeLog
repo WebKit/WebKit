@@ -1,5 +1,19 @@
 2007-10-23  Adam Roben  <aroben@apple.com>
 
+        Move safe file creation code to WebCore
+
+        Reviewed by Brady.
+
+        * WebPreferences.cpp:
+        (preferencesPath): Made into a static helper function.
+        (WebPreferences::save): Now calls WebCore's safeCreateFile function.
+        (WebPreferences::load): Uses String/CString to handle the UTF-8
+        conversion.
+        * WebPreferences.h: Removed preferencesPath and
+        safeCreateFileWithData.
+
+2007-10-23  Adam Roben  <aroben@apple.com>
+
         Reduce code duplication by using WebCore's FileSystem functions
 
         Reviewed by Brady.

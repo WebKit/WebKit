@@ -32,6 +32,7 @@
 #include "WebPreferenceKeysPrivate.h"
 
 #pragma warning( push, 0 )
+#include <WebCore/CString.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
 #include <WebCore/PlatformString.h>
@@ -58,6 +59,12 @@ static unsigned long long WebSystemMainMemory()
     statex.dwLength = sizeof(statex);
     GlobalMemoryStatusEx(&statex);
     return statex.ullTotalPhys;
+}
+
+static String preferencesPath()
+{
+    static String path = pathByAppendingComponent(roamingUserSpecificStorageDirectory(), "WebKitPreferences.plist");
+    return path;
 }
 
 // WebPreferences ----------------------------------------------------------------
@@ -361,10 +368,6 @@ void WebPreferences::setBoolValue(CFStringRef key, BOOL value)
 
 void WebPreferences::save()
 {
-    TCHAR appDataPath[MAX_PATH];
-    if (FAILED(preferencesPath(appDataPath, MAX_PATH)))
-        return;
-
     RetainPtr<CFWriteStreamRef> stream(AdoptCF,
         CFWriteStreamCreateWithAllocatedBuffers(kCFAllocatorDefault, kCFAllocatorDefault)); 
     if (!stream)
@@ -384,26 +387,16 @@ void WebPreferences::save()
     if (!dataRef)
         return;
 
-    void* bytes = (void*)CFDataGetBytePtr(dataRef.get());
-    size_t length = CFDataGetLength(dataRef.get());
-    safeCreateFileWithData(appDataPath, bytes, length);
+    safeCreateFile(preferencesPath(), dataRef.get());
 }
 
 void WebPreferences::load()
 {
     initializeDefaultSettings();
 
-    TCHAR appDataPath[MAX_PATH];
-    if (FAILED(preferencesPath(appDataPath, MAX_PATH)))
-        return;
+    CString path = preferencesPath().utf8();
 
-    DWORD appDataPathLength = (DWORD) _tcslen(appDataPath)+1;
-    int result = WideCharToMultiByte(CP_UTF8, 0, appDataPath, appDataPathLength, 0, 0, 0, 0);
-    Vector<UInt8> utf8Path(result);
-    if (!WideCharToMultiByte(CP_UTF8, 0, appDataPath, appDataPathLength, (LPSTR)utf8Path.data(), result, 0, 0))
-        return;
-
-    RetainPtr<CFURLRef> urlRef(AdoptCF, CFURLCreateFromFileSystemRepresentation(0, utf8Path.data(), result-1, false));
+    RetainPtr<CFURLRef> urlRef(AdoptCF, CFURLCreateFromFileSystemRepresentation(0, reinterpret_cast<const UInt8*>(path.data()), path.length(), false));
     if (!urlRef)
         return;
 
@@ -470,62 +463,6 @@ void WebPreferences::removeValuesMatchingDefaultSettings()
         if (CFEqual(values[i], defaultValue))
             CFDictionaryRemoveValue(m_privatePrefs.get(), keys[i]);
     }
-}
-
-HRESULT WebPreferences::preferencesPath(LPTSTR path, size_t cchPath)
-{
-    static const String filename = "WebKitPreferences.plist";
-
-    String prefs = pathByAppendingComponent(roamingUserSpecificStorageDirectory(), filename);
-    if (int err = _tcscpy_s(path, cchPath, prefs.charactersWithNullTermination()))
-        return HRESULT_FROM_WIN32(err);
-
-    return S_OK;
-}
-
-HRESULT WebPreferences::safeCreateFileWithData(LPCTSTR path, void* data, size_t length)
-{
-    TCHAR tempDirPath[MAX_PATH];
-    TCHAR tempPath[MAX_PATH];
-    HANDLE tempFileHandle = INVALID_HANDLE_VALUE;
-    HRESULT hr = S_OK;
-    tempPath[0] = 0;
-
-    // create a temporary file
-    if (!GetTempPath(sizeof(tempDirPath)/sizeof(tempDirPath[0]), tempDirPath)) {
-        hr = HRESULT_FROM_WIN32(GetLastError());
-        goto exit;
-    }
-    if (!GetTempFileName(tempDirPath, TEXT("WEBKIT"), 0, tempPath))
-        return HRESULT_FROM_WIN32(GetLastError());
-    tempFileHandle = CreateFile(tempPath, GENERIC_READ|GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-    if (tempFileHandle == INVALID_HANDLE_VALUE) {
-        hr = HRESULT_FROM_WIN32(GetLastError());
-        goto exit;
-    }
-
-    // write the data to this temp file
-    DWORD written;
-    if (!WriteFile(tempFileHandle, data, (DWORD)length, &written, 0)) {
-        hr = HRESULT_FROM_WIN32(GetLastError());
-        goto exit;
-    }
-
-    // copy the temp file to the destination file
-    CloseHandle(tempFileHandle);
-    tempFileHandle = INVALID_HANDLE_VALUE;
-    if (!MoveFileEx(tempPath, path, MOVEFILE_REPLACE_EXISTING)) {
-        hr = HRESULT_FROM_WIN32(GetLastError());
-        goto exit;
-    }
-
-exit:
-    if (tempFileHandle != INVALID_HANDLE_VALUE)
-        CloseHandle(tempFileHandle);
-    if (tempPath[0])
-        DeleteFile(tempPath);
-
-    return hr;
 }
 
 // IUnknown -------------------------------------------------------------------

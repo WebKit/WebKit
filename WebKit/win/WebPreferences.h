@@ -313,8 +313,6 @@ protected:
     void load();
     void migrateDefaultSettingsFromSafari3Beta();
     void removeValuesMatchingDefaultSettings();
-    static HRESULT preferencesPath(LPTSTR path, size_t cchPath);
-    static HRESULT safeCreateFileWithData(LPCTSTR path, void* data, size_t length);
 
 protected:
     ULONG m_refCount;
