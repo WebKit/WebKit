@@ -135,6 +135,7 @@ DumpRenderTree::DumpRenderTree()
             SLOT(titleChanged(const QString&)));
 
     m_eventSender = new EventSender(m_page);
+    m_textInputController = new TextInputController(m_page);
 
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
     QFocusEvent event(QEvent::FocusIn, Qt::ActiveWindowFocusReason);

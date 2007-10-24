@@ -40,6 +40,7 @@ class QWebFrame;
 
 class LayoutTestController;
 class EventSender;
+class TextInputController;
 
 namespace WebCore {
 
@@ -60,6 +61,7 @@ public:
 
     LayoutTestController *layoutTestController() const { return m_controller; }
     EventSender *eventSender() const { return m_eventSender; }
+    TextInputController *textInputController() const { return m_textInputController; }
 
     QWebPage *createWindow();
     int windowCount() const;
@@ -82,6 +84,7 @@ private:
     QWebPage *m_page;
 
     EventSender *m_eventSender;
+    TextInputController *m_textInputController;
 
     QFile *m_stdin;
     QSocketNotifier* m_notifier;

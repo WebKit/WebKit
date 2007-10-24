@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        first bit of implementation for the textinputcontroller.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (TextInputController::TextInputController):
+        (TextInputController::doCommand):
+        * DumpRenderTree/qt/jsobjects.h:
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         make the man webpage believe it has focus, so the editing tests work correctly.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
