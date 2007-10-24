@@ -1,3 +1,26 @@
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        use the new QTextBoundaryFinder class in Qt.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/TextBoundaries.cpp:
+        (WebCore::findNextWordFromIndex):
+        (WebCore::findWordBoundary):
+        * platform/qt/TextBreakIteratorQt.cpp:
+        (WebCore::wordBreakIterator):
+        (WebCore::characterBreakIterator):
+        (WebCore::lineBreakIterator):
+        (WebCore::sentenceBreakIterator):
+        (WebCore::textBreakFirst):
+        (WebCore::textBreakNext):
+        (WebCore::textBreakPreceding):
+        (WebCore::textBreakFollowing):
+        (WebCore::textBreakCurrent):
+        (WebCore::isTextBreak):
+
 2007-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
