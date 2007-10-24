@@ -1,3 +1,13 @@
+2007-10-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        * Stop crashing on fast/events/frame-tab-focus.html the keyEvent can be 0.
+        
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeypress):
+
 2007-10-24  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
