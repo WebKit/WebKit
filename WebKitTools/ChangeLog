@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        some smaller fixes to the editing support in DRT. Makes another few tests pass.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::initJSObjects):
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (TextInputController::doCommand):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         first bit of implementation for the textinputcontroller.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:

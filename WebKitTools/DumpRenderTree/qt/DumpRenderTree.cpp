@@ -45,7 +45,7 @@
 
 #include <unistd.h>
 #include <qdebug.h>
-extern void qt_dump_editing_callbacks(bool b);
+extern void qt_drt_run(bool b);
 extern void qt_dump_set_accepts_editing(bool b);
 
 
@@ -138,6 +138,7 @@ DumpRenderTree::DumpRenderTree()
     m_textInputController = new TextInputController(m_page);
 
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
+    qt_drt_run(true);
     QFocusEvent event(QEvent::FocusIn, Qt::ActiveWindowFocusReason);
     QApplication::sendEvent(m_page, &event);
 }
@@ -197,6 +198,7 @@ void DumpRenderTree::initJSObjects()
     Q_ASSERT(frame);
     frame->addToJSWindowObject("layoutTestController", m_controller);
     frame->addToJSWindowObject("eventSender", m_eventSender);
+    frame->addToJSWindowObject("textInputController", m_textInputController);
 }
 
 

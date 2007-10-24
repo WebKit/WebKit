@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        some smaller fixes to the editing support in DRT. Makes another few tests pass.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (qt_dump_editing_callbacks):
+        (qt_drt_run):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         implemented support for most editing shortcuts to make contentEditable usable.
 
         * Api/qwebpage.cpp:
