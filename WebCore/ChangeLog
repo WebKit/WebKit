@@ -1,3 +1,24 @@
+2007-10-23  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14412
+        [GDK] Clipboard support
+
+        Initial clipboard implementation for the GTK+ port.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::~Pasteboard):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::plainText):
+        * platform/gtk/TemporaryLinkStubs.cpp:
+
 2007-10-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

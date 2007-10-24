@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2007, Holger Hans Peter Freyther
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +31,14 @@
 #include "NotImplemented.h"
 #include "StringHash.h"
 
+#include "Editor.h"
+
 namespace WebCore {
+PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
+{
+    return new ClipboardGtk(policy, false);
+}
+
 ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, bool forDragging)
     : Clipboard(policy, forDragging)
 {
