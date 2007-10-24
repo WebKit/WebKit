@@ -1,3 +1,28 @@
+2007-10-24  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=15356
+        Bug 15356: getResponseHeader and getAllResponseHeaders do not throw exceptions
+
+        - getAllResponseHeaders and getResponseHeader throws INVALID_STATE_ERR exception as specified in the specification
+
+        - Add the check to field-name production in getResponseHeader (call to isValidToken) and returns an empty string if the header is not valid (Opera and IE behaviour)
+
+        - Updated XMLHttpRequest::responseMIMEType() to keep its behaviour
+
+        Tests: http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getAllRequestHeaders.html
+               http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getRequestHeader.html
+               http/tests/xmlhttprequest/xmlhttprequest-invalidHeader-getRequestHeader.html
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestPrototypeFunction::callAsFunction):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        (WebCore::XMLHttpRequest::responseMIMEType):
+        * xml/XMLHttpRequest.h:
+
 2007-10-24  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

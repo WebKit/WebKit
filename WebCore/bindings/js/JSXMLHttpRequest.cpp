@@ -219,15 +219,19 @@ JSValue* JSXMLHttpRequestPrototypeFunction::callAsFunction(ExecState* exec, JSOb
             request->m_impl->abort();
             return jsUndefined();
 
-        case JSXMLHttpRequest::GetAllResponseHeaders:
-            return jsStringOrUndefined(request->m_impl->getAllResponseHeaders());
-
-        case JSXMLHttpRequest::GetResponseHeader:
+        case JSXMLHttpRequest::GetAllResponseHeaders: {
+            JSValue* headers = jsStringOrUndefined(request->m_impl->getAllResponseHeaders(ec));
+            setDOMException(exec, ec);
+            return headers;
+        }
+        case JSXMLHttpRequest::GetResponseHeader: {
             if (args.size() < 1)
                 return throwError(exec, SyntaxError, "Not enough arguments");
 
-            return jsStringOrNull(request->m_impl->getResponseHeader(args[0]->toString(exec)));
-
+            JSValue* header = jsStringOrNull(request->m_impl->getResponseHeader(args[0]->toString(exec), ec));
+            setDOMException(exec, ec);
+            return header;
+        }
         case JSXMLHttpRequest::Open: {
             if (args.size() < 2)
                 return throwError(exec, SyntaxError, "Not enough arguments");

@@ -80,8 +80,8 @@ public:
     void abort();
     void setRequestHeader(const String& name, const String& value, ExceptionCode&);
     void overrideMIMEType(const String& override);
-    String getAllResponseHeaders() const;
-    String getResponseHeader(const String& name) const;
+    String getAllResponseHeaders(ExceptionCode&) const;
+    String getResponseHeader(const String& name, ExceptionCode&) const;
     const KJS::UString& getResponseText() const;
     Document* getResponseXML() const;
 

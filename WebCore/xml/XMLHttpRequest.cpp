@@ -542,8 +542,13 @@ String XMLHttpRequest::getRequestHeader(const String& name) const
     return m_requestHeaders.get(name);
 }
 
-String XMLHttpRequest::getAllResponseHeaders() const
+String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
 {
+    if (m_state < Receiving) {
+        ec = INVALID_STATE_ERR;
+        return "";
+    }
+
     Vector<UChar> stringBuilder;
     String separator(": ");
 
@@ -559,8 +564,16 @@ String XMLHttpRequest::getAllResponseHeaders() const
     return String::adopt(stringBuilder);
 }
 
-String XMLHttpRequest::getResponseHeader(const String& name) const
+String XMLHttpRequest::getResponseHeader(const String& name, ExceptionCode& ec) const
 {
+    if (m_state < Receiving) {
+        ec = INVALID_STATE_ERR;
+        return "";
+    }
+
+    if (!isValidToken(name))
+        return "";
+
     return m_response.httpHeaderField(name);
 }
 
@@ -569,7 +582,7 @@ String XMLHttpRequest::responseMIMEType() const
     String mimeType = extractMIMETypeFromMediaType(m_mimeTypeOverride);
     if (mimeType.isEmpty()) {
         if (m_response.isHTTP())
-            mimeType = extractMIMETypeFromMediaType(getResponseHeader("Content-Type"));
+            mimeType = extractMIMETypeFromMediaType(m_response.httpHeaderField("Content-Type"));
         else
             mimeType = m_response.mimeType();
     }

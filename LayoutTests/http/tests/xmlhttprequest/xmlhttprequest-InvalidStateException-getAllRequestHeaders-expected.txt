@@ -1,0 +1,7 @@
+Test page for the bug 15356 : getResponseHeader and getAllResponseHeaders do not throw exceptions
+
+PASSED 1
+PASSED 2
+PASSED 3
+PASSED 4
+

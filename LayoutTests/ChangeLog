@@ -1,3 +1,17 @@
+2007-10-24  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Darin.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=15356
+        getResponseHeader and getAllResponseHeaders do not throw exceptions
+
+        * http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getAllRequestHeaders-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getAllRequestHeaders.html: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getRequestHeader-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-InvalidStateException-getRequestHeader.html: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-invalidHeader-getRequestHeader-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-invalidHeader-getRequestHeader.html: Added.
+
 2007-10-24  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
