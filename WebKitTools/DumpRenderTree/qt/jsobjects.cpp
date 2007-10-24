@@ -203,7 +203,26 @@ void EventSender::leapForward(int ms)
 
 void EventSender::keyDown(const QString &string, const QStringList &modifiers)
 {
-    qDebug() << "EventSender::keyDown" << string << modifiers;
+    Qt::KeyboardModifiers modifs = 0;
+    for (int i = 0; i < modifiers.size(); ++i) {
+        const QString &m = modifiers.at(i);
+        if (m == "ctrlKey")
+            modifs |= Qt::ControlModifier;
+        else if (m == "shiftKey")
+            modifs |= Qt::ShiftModifier;
+        else if (m == "altKey")
+            modifs |= Qt::AltModifier;
+        else if (m == "metaKey")
+            modifs |= Qt::MetaModifier;
+    }
+    int code = 0;
+    if (string.length() == 1) {
+        code = string.unicode()->toUpper().unicode();
+        if (code == '\t')
+            code = Qt::Key_Tab;
+    }
+    QKeyEvent event(QEvent::KeyPress, code, modifs, string);
+    QApplication::sendEvent(m_page, &event);
 }
 
 QWebFrame *EventSender::frameUnderMouse() const

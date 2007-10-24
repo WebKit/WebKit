@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        implement eventSender.keyDown().
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (EventSender::keyDown):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         some smaller fixes to the editing support in DRT. Makes another few tests pass.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:
