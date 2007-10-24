@@ -1,5 +1,12 @@
 2007-10-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        * kjs/object.cpp: (KJS::JSObject::defaultValue): Get rid of a little
+        Identifier ref/deref for what SunSpider claims is a 0.4% speedup.
+
+2007-10-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - separate out the code to create a hash table the first time from the code

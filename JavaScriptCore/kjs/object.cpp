@@ -357,22 +357,18 @@ static ALWAYS_INLINE JSValue *tryGetAndCallProperty(ExecState *exec, const JSObj
 // ECMA 8.6.2.6
 JSValue* JSObject::defaultValue(ExecState* exec, JSType hint) const
 {
-  Identifier firstPropertyName;
-  Identifier secondPropertyName;
   /* Prefer String for Date objects */
   if ((hint == StringType) || (hint != StringType) && (hint != NumberType) && (_proto == exec->lexicalInterpreter()->builtinDatePrototype())) {
-    firstPropertyName = exec->propertyNames().toString;
-    secondPropertyName = exec->propertyNames().valueOf;
+    if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().toString))
+      return v;
+    if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().valueOf))
+      return v;
   } else {
-    firstPropertyName = exec->propertyNames().valueOf;
-    secondPropertyName = exec->propertyNames().toString;
+    if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().valueOf))
+      return v;
+    if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().toString))
+      return v;
   }
-
-  JSValue *v;
-  if ((v = tryGetAndCallProperty(exec, this, firstPropertyName)))
-    return v;
-  if ((v = tryGetAndCallProperty(exec, this, secondPropertyName)))
-    return v;
 
   if (exec->hadException())
     return exec->exception();
