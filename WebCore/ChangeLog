@@ -1,3 +1,16 @@
+2007-10-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - add "(anonymous)" to the renderName of anonymous table cells, rows and sections
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::renderName):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::renderName):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::renderName):
+
 2007-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

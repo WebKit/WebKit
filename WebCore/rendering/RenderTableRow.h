@@ -35,7 +35,7 @@ class RenderTableRow : public RenderContainer {
 public:
     RenderTableRow(Node*);
 
-    virtual const char* renderName() const { return "RenderTableRow"; }
+    virtual const char* renderName() const { return isAnonymous() ? "RenderTableRow (anonymous)" : "RenderTableRow"; }
 
     virtual bool isTableRow() const { return true; }
 

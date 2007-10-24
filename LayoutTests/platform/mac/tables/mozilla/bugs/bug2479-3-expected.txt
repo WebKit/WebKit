@@ -26,9 +26,9 @@ layer at (0,0) size 785x680
           RenderText {#text} at (0,0) size 233x18
             text run at (0,0) width 233: "If this paragraph breaks the line here:"
         RenderTable {SPAN} at (13,31) size 58x18
-          RenderTableSection at (0,0) size 58x18
-            RenderTableRow at (0,0) size 58x18
-              RenderTableCell at (0,0) size 58x18 [r=0 c=0 rs=1 cs=1]
+          RenderTableSection (anonymous) at (0,0) size 58x18
+            RenderTableRow (anonymous) at (0,0) size 58x18
+              RenderTableCell (anonymous) at (0,0) size 58x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 58x18
                   text run at (0,0) width 58: "and here:"
         RenderBlock (anonymous) at (13,49) size 743x36
@@ -51,8 +51,8 @@ layer at (0,0) size 785x680
           text run at (0,0) width 755: "Below there should be a gray bar, spanning the width of the BODY, with the text \"Left\" to the left and the text \"Right\","
           text run at (0,18) width 217: "on the same line, flush to the right."
       RenderTable {DIV} at (0,360) size 769x18 [bgcolor=#C0C0C0]
-        RenderTableSection at (0,0) size 769x18
-          RenderTableRow at (0,0) size 769x18
+        RenderTableSection (anonymous) at (0,0) size 769x18
+          RenderTableRow (anonymous) at (0,0) size 769x18
             RenderTableCell {DIV} at (0,0) size 327x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 26x18
                 text run at (0,0) width 26: "Left"

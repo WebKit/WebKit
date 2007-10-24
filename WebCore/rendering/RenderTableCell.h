@@ -33,7 +33,7 @@ class RenderTableCell : public RenderBlock {
 public:
     RenderTableCell(Node*);
 
-    virtual const char* renderName() const { return "RenderTableCell"; }
+    virtual const char* renderName() const { return isAnonymous() ? "RenderTableCell (anonymous)" : "RenderTableCell"; }
 
     virtual bool isTableCell() const { return true; }
 

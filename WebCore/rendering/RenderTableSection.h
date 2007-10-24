@@ -39,7 +39,7 @@ public:
     RenderTableSection(Node*);
     ~RenderTableSection();
 
-    virtual const char* renderName() const { return "RenderTableSection"; }
+    virtual const char* renderName() const { return isAnonymous() ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
 
     virtual bool isTableSection() const { return true; }
 

@@ -9,8 +9,8 @@ layer at (0,0) size 800x56
       RenderBlock {TABLE} at (0,18) size 784x22
         RenderTable at (0,0) size 279x22
           RenderTableSection {TBODY} at (0,0) size 279x22
-            RenderTableRow at (0,2) size 279x18
-              RenderTableCell at (2,2) size 275x18 [r=0 c=0 rs=1 cs=1]
+            RenderTableRow (anonymous) at (0,2) size 279x18
+              RenderTableCell (anonymous) at (2,2) size 275x18 [r=0 c=0 rs=1 cs=1]
                 RenderBlock {TR} at (0,0) size 275x18
                   RenderBlock {TD} at (0,0) size 275x18
                     RenderText {#text} at (0,0) size 275x18

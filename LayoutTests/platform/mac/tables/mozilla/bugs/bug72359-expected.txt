@@ -5,16 +5,16 @@ layer at (0,0) size 800x62
     RenderBody {body} at (8,8) size 784x0
       RenderBlock (floating) {float} at (0,0) size 157x54 [bgcolor=#FF0000]
         RenderTable at (0,0) size 157x54
-          RenderTableSection at (0,0) size 157x54
-            RenderTableRow at (0,0) size 157x18
+          RenderTableSection (anonymous) at (0,0) size 157x54
+            RenderTableRow (anonymous) at (0,0) size 157x18
               RenderTableCell {cell} at (0,0) size 157x18 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (52,0) size 53x18
                   text run at (52,0) width 53: "THERE"
             RenderTableRow {row} at (0,18) size 157x18
-              RenderTableCell at (0,18) size 157x18 [r=1 c=0 rs=1 cs=1]
+              RenderTableCell (anonymous) at (0,18) size 157x18 [r=1 c=0 rs=1 cs=1]
                 RenderTable {table} at (0,0) size 157x18
-                  RenderTableSection at (0,0) size 157x18
-                    RenderTableRow at (0,0) size 157x18
+                  RenderTableSection (anonymous) at (0,0) size 157x18
+                    RenderTableRow (anonymous) at (0,0) size 157x18
                       RenderTableCell {cell} at (0,0) size 82x18 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (0,0) size 82x18
                           text run at (0,0) width 82: "SHOULD B"
@@ -24,7 +24,7 @@ layer at (0,0) size 800x62
                       RenderTableCell {cell} at (108,0) size 49x18 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=2 rs=1 cs=1]
                         RenderText {#text} at (0,0) size 49x18
                           text run at (0,0) width 49: "O RED"
-            RenderTableRow at (0,36) size 157x18
+            RenderTableRow (anonymous) at (0,36) size 157x18
               RenderTableCell {cell} at (0,36) size 157x18 [color=#FFFFFF] [bgcolor=#008000] [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (31,0) size 94x18
                   text run at (31,0) width 94: "ANYWHERE"

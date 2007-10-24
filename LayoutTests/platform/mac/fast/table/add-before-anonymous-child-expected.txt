@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,96) size 106x206
         RenderTableSection {TBODY} at (0,0) size 106x206
-          RenderTableRow at (0,2) size 106x202
-            RenderTableCell at (2,2) size 102x202 [r=0 c=0 rs=1 cs=1]
+          RenderTableRow (anonymous) at (0,2) size 106x202
+            RenderTableCell (anonymous) at (2,2) size 102x202 [r=0 c=0 rs=1 cs=1]
               RenderBlock {TR} at (1,1) size 100x100 [bgcolor=#008000]
               RenderBlock {TR} at (1,101) size 100x100 [bgcolor=#0000FF]
