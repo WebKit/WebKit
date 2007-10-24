@@ -1,6 +1,12 @@
 # ------- many missing features in DRT
 editing
 
+# ------- tests that hang forever
+editing/selection/mixed-editability-8.html
+editing/style/remove-underline-across-paragraph.html
+editing/style/remove-underline-across-paragraph-in-bold.html
+
+
 # ------- tests that fail against Qt 4.3 due to bugs and missing features in QXmlStream
 fast/dom/set-innerHTML.xhtml
 fast/encoding/css-charset-default.xhtml
