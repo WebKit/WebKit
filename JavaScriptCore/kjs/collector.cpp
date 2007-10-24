@@ -23,6 +23,7 @@
 #include "config.h"
 #include "collector.h"
 
+#include "context.h"
 #include "internal.h"
 #include "list.h"
 #include "value.h"

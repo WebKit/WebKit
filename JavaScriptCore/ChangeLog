@@ -1,5 +1,11 @@
 2007-10-24  Eric Seidel  <eric@webkit.org>
 
+        Build fix for Gtk, no review.
+
+        * kjs/collector.cpp: #include "context.h"
+
+2007-10-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
         
         Stop checking isOutOfMemory after every allocation, instead let the collector
