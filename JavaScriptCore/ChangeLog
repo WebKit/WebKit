@@ -2,6 +2,15 @@
 
         Reviewed by Sam Weinig.
         
+        Disable ALWAYS_INLINE in debug builds, since it drives the debugger
+        crazy.
+
+        * wtf/AlwaysInline.h:
+
+2007-10-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Inlined the fast path for creating an Identifier from an Identifier. 
         
         This is a .4% speedup on SunSpider overall, but as big as a 2.5% 

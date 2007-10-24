@@ -20,7 +20,7 @@
  */
 
 #ifndef ALWAYS_INLINE
-#if COMPILER(GCC)
+#if COMPILER(GCC) && defined(NDEBUG)
 #define ALWAYS_INLINE inline __attribute__ ((__always_inline__))
 #else
 #define ALWAYS_INLINE inline
