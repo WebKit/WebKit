@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        remove some notImplemented() warnings.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientQt::isGrammarCheckingEnabled):
+        (WebCore::EditorClientQt::respondToChangedSelection):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         allow paste from DOM so we pass more test cases.
 
         * Api/qwebpage.cpp:

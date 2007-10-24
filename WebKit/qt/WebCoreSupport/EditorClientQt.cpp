@@ -115,19 +115,16 @@ bool EditorClientQt::shouldShowDeleteInterface(HTMLElement* element)
 
 bool EditorClientQt::isContinuousSpellCheckingEnabled()
 {
-    notImplemented();
     return false;
 }
 
 bool EditorClientQt::isGrammarCheckingEnabled()
 {
-    notImplemented();
     return false;
 }
 
 int EditorClientQt::spellCheckerDocumentTag()
 {
-    notImplemented();
     return 0;
 }
 
@@ -213,6 +210,7 @@ void EditorClientQt::respondToChangedSelection()
 {
     if (dumpEditingCallbacks)
         printf("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n");
+
     emit m_page->selectionChanged();
 }
 
