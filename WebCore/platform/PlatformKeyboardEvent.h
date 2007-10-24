@@ -84,7 +84,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(QT)
-        PlatformKeyboardEvent(QKeyEvent*, bool isKeyUp);
+        PlatformKeyboardEvent(QKeyEvent*);
 #endif
 
     private:

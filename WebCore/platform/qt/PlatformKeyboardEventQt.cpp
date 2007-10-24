@@ -430,13 +430,13 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event, bool isKeyUp)
+PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
 {
     const int state = event->modifiers();
     m_text = event->text();
     m_unmodifiedText = event->text(); // FIXME: not correct
     m_keyIdentifier = keyIdentifierForQtKeyCode(event->key());
-    m_isKeyUp = isKeyUp;
+    m_isKeyUp = (event->type() == QEvent::KeyRelease);
     m_autoRepeat = event->isAutoRepeat();
     m_ctrlKey = (state & Qt::ControlModifier) != 0;
     m_altKey = (state & Qt::AltModifier) != 0;

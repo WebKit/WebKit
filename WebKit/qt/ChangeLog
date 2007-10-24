@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        Simplify the PlatformKeyEvent constructor. No need to have an extra boolean for isKeyUp in there, as the QKeyEvent has the information.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::keyPressEvent):
+        (QWebPage::keyReleaseEvent):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         some smaller fixes to the editing support in DRT. Makes another few tests pass.
 
         * WebCoreSupport/EditorClientQt.cpp:

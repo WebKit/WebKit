@@ -424,8 +424,6 @@ void QWebPage::wheelEvent(QWheelEvent *ev)
 
 void QWebPage::keyPressEvent(QKeyEvent *ev)
 {
-    PlatformKeyboardEvent kevent(ev, false);
-
     if (!mainFrame()->d->eventHandler)
         return;
 
@@ -513,7 +511,7 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
         }
     }
     if (!handled) 
-        handled = frame->d->eventHandler->keyEvent(kevent);
+        handled = frame->d->eventHandler->keyEvent(ev);
     if (!handled) {
         handled = true;
         PlatformScrollbar *h, *v;
@@ -561,12 +559,10 @@ void QWebPage::keyReleaseEvent(QKeyEvent *ev)
         return;
     }
 
-    PlatformKeyboardEvent kevent(ev, true);
-
     if (!mainFrame()->d->eventHandler)
         return;
 
-    bool handled = mainFrame()->d->eventHandler->keyEvent(kevent);
+    bool handled = mainFrame()->d->eventHandler->keyEvent(ev);
     ev->setAccepted(handled);
 }
 
