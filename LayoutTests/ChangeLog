@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        convert the text to be text only, and fix it up a little so it doesn't depend on specific font metrics anymore.
+
+        * editing/deleting/pruning-after-merge-1-expected.txt: Added.
+        * editing/deleting/pruning-after-merge-1.html:
+        * platform/mac/editing/deleting/pruning-after-merge-1-expected.checksum: Removed.
+        * platform/mac/editing/deleting/pruning-after-merge-1-expected.png: Removed.
+        * platform/mac/editing/deleting/pruning-after-merge-1-expected.txt: Removed.
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         explicitly add some tests that currently cause DRT to hang.
 
         * platform/qt/Skipped:
