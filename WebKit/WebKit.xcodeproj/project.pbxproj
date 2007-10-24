@@ -58,7 +58,6 @@
 		6550B7C8099EFAE90090D781 /* WebArchiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6550B7C6099EFAE90090D781 /* WebArchiver.mm */; };
 		656D333E0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 658A40950A14853B005E6987 /* WebDataSourceInternal.h */; };
-		65A0006908527D1A005620FA /* libWebKitSystemInterface.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A0006808527D1A005620FA /* libWebKitSystemInterface.a */; };
 		65E0F88408500917007E5CB9 /* WebNSURLRequestExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */; };
 		65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */; };
 		65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -414,7 +413,6 @@
 		6578F5DF045F817400000128 /* WebDownload.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDownload.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65836F5E07EE425900682F95 /* WebPluginContainerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		658A40950A14853B005E6987 /* WebDataSourceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDataSourceInternal.h; sourceTree = "<group>"; };
-		65A0006808527D1A005620FA /* libWebKitSystemInterface.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitSystemInterface.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebUIDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65DA2608052CC18700A97B31 /* WebHistory.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHistory.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLRequestExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -608,7 +606,6 @@
 				9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */,
 				9398112E0824BF01008DF038 /* libicucore.dylib in Frameworks */,
 				9398112F0824BF01008DF038 /* Security.framework in Frameworks */,
-				65A0006908527D1A005620FA /* libWebKitSystemInterface.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,7 +655,6 @@
 				830E81E005853AC000AD0891 /* Security.framework */,
 				93D623DD051E791F002F47DD /* libicucore.dylib */,
 				F738C9E903FAD3DF0321FBE0 /* JavaScriptCore.framework */,
-				65A0006808527D1A005620FA /* libWebKitSystemInterface.a */,
 				F738C9EA03FAD3DF0321FBE0 /* WebCore.framework */,
 			);
 			name = "Frameworks and Libraries";
@@ -1626,6 +1622,7 @@
 					"-lobjc",
 					"-sub_library",
 					libobjc,
+					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
 			};
@@ -1642,6 +1639,7 @@
 					"-lobjc",
 					"-sub_library",
 					libobjc,
+					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
 			};
@@ -1655,6 +1653,7 @@
 				OTHER_LDFLAGS = (
 					"-sub_umbrella",
 					WebCore,
+					"-lWebKitSystemInterface",
 				);
 				SECTORDER_FLAGS = (
 					"-sectorder",

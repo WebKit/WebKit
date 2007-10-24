@@ -1,3 +1,15 @@
+2007-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/5069711> OpenSource version of libWebKitSystemInterface.a is Tiger only, causes issues if used on Leopard
+
+        Add system specific versions of WebKitSystemInterface.
+
+        * libWebKitSystemInterface.a: Removed.
+        * libWebKitSystemInterfaceLeopard.a: Added.
+        * libWebKitSystemInterfaceTiger.a: Added.
+
 2007-10-11  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5534421>
