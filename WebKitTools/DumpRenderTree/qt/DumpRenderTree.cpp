@@ -37,6 +37,7 @@
 #include <QScrollArea>
 #include <QApplication>
 #include <QUrl>
+#include <QFocusEvent>
 
 #include <qwebpage.h>
 #include <qwebframe.h>
@@ -136,6 +137,8 @@ DumpRenderTree::DumpRenderTree()
     m_eventSender = new EventSender(m_page);
 
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
+    QFocusEvent event(QEvent::FocusIn, Qt::ActiveWindowFocusReason);
+    QApplication::sendEvent(m_page, &event);
 }
 
 DumpRenderTree::~DumpRenderTree()
