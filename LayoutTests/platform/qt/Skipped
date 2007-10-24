@@ -1,5 +1,4 @@
 # ------- missing features in DRT
-editing/selection/4402375.html
 editing/selection/4975120.html
 editing/selection/5109817.html
 editing/selection/5213963.html
@@ -7,10 +6,6 @@ editing/selection/5240265.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 editing/selection/caret-and-focus-ring.html
-editing/selection/image-before-linebreak.html
-editing/selection/replaced-boundaries-1.html
-editing/selection/replaced-boundaries-2.html
-editing/selection/replaced-boundaries-3.html
 
 # ------- crashes 
 editing/execCommand/copy-without-selection.html

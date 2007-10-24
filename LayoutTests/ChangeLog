@@ -2,6 +2,14 @@
 
         Reviewed by Simon.
 
+        add a layoutTestController.dumpSelectionRect() dummy. It only has an effect on mac pixel tests anyway. Makes us pass another 5 test cases.
+
+        * platform/qt/Skipped:
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         we're passing most editing tests now. Commit them.
 
         * platform/qt/Skipped:
