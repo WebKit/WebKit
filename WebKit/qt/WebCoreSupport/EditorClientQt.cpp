@@ -43,20 +43,68 @@
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "NotImplemented.h"
+#include "Node.h"
+#include "Range.h"
 
 #include <stdio.h>
 
 #include <QUndoStack>
+#define methodDebug() qDebug("EditorClientQt: %s", __FUNCTION__);
+
+static bool dumpEditingCallbacks = false;
+static bool acceptsEditing = true;
+void QWEBKIT_EXPORT qt_dump_editing_callbacks(bool b)
+{
+    dumpEditingCallbacks = b;
+}
+
+void QWEBKIT_EXPORT qt_dump_set_accepts_editing(bool b)
+{
+    acceptsEditing = b;
+}
+
+
+static QString dumpPath(WebCore::Node *node)
+{
+    QString str = node->nodeName();
+    
+    WebCore::Node *parent = node->parentNode();
+    while (parent) {
+        str.append(QLatin1String(" > "));
+        str.append(parent->nodeName());
+        parent = parent->parentNode();
+    }
+    return str;
+}
+
+static QString dumpRange(WebCore::Range *range)
+{
+    if (!range)
+        return QLatin1String("(null)");
+    QString str;
+    WebCore::ExceptionCode code;
+    str.sprintf("range from %ld of %ls to %ld of %ls",
+                range->startOffset(code), dumpPath(range->startContainer(code)).unicode(),
+                range->endOffset(code), dumpPath(range->endContainer(code)).unicode());
+    return str;
+}
+    
 
 namespace WebCore {
 
-bool EditorClientQt::shouldDeleteRange(Range*)
+
+bool EditorClientQt::shouldDeleteRange(Range* range)
 {
+    if (dumpEditingCallbacks) 
+        printf("EDITING DELEGATE: shouldDeleteDOMRange:%s\n", dumpRange(range).toUtf8().constData());
+
     return true;
 }
 
-bool EditorClientQt::shouldShowDeleteInterface(HTMLElement*)
+bool EditorClientQt::shouldShowDeleteInterface(HTMLElement* element)
 {
+    if (dumpEditingCallbacks) 
+        return element->className() == "needsDeletionUI";
     return false;
 }
 
@@ -78,30 +126,62 @@ int EditorClientQt::spellCheckerDocumentTag()
     return 0;
 }
 
-bool EditorClientQt::shouldBeginEditing(WebCore::Range*)
+bool EditorClientQt::shouldBeginEditing(WebCore::Range* range)
 {
+    if (dumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n", dumpRange(range).toUtf8().constData());
     return true;
 }
 
-bool EditorClientQt::shouldEndEditing(WebCore::Range*)
+bool EditorClientQt::shouldEndEditing(WebCore::Range* range)
 {
+    if (dumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n", dumpRange(range).toUtf8().constData());
     return true;
 }
 
-bool EditorClientQt::shouldInsertText(String, Range*, EditorInsertAction)
+bool EditorClientQt::shouldInsertText(String string, Range* range, EditorInsertAction action)
 {
-    return true;
+    if (dumpEditingCallbacks) {
+        static const char *insertactionstring[] = {
+            "WebViewInsertActionTyped",
+            "WebViewInsertActionPasted",
+            "WebViewInsertActionDropped",
+        };
+        
+        printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n",
+               QString(string).toUtf8().constData(), dumpRange(range).toUtf8().constData(), insertactionstring[action]);
+    }
+    return acceptsEditing;
 }
 
-bool EditorClientQt::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting)
+bool EditorClientQt::shouldChangeSelectedRange(Range* currentRange, Range* proposedRange, EAffinity selectionAffinity, bool stillSelecting)
 {
-    return true;
+    if (dumpEditingCallbacks) {
+        static const char *affinitystring[] = {
+            "NSSelectionAffinityUpstream",
+            "NSSelectionAffinityDownstream"
+        };
+        static const char *boolstring[] = {
+            "FALSE",
+            "TRUE"
+        };
+        
+        printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n",
+               dumpRange(currentRange).toUtf8().constData(),
+               dumpRange(proposedRange).toUtf8().constData(),
+               affinitystring[selectionAffinity], boolstring[stillSelecting]);
+    }
+    return acceptsEditing;
 }
 
-bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
-                                      WebCore::Range*)
+bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration* style,
+                                      WebCore::Range* range)
 {
-    return true;
+    if (dumpEditingCallbacks)
+        printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n",
+               QString(style->cssText()).toUtf8().constData(), dumpRange(range).toUtf8().constData());
+    return acceptsEditing;
 }
 
 bool EditorClientQt::shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*)
@@ -112,21 +192,29 @@ bool EditorClientQt::shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*
 
 void EditorClientQt::didBeginEditing()
 {
+    if (dumpEditingCallbacks)
+        printf("EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification\n");
     m_editing = true;
 }
 
 void EditorClientQt::respondToChangedContents()
 {
+    if (dumpEditingCallbacks)
+        printf("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n");
     m_page->d->modified = true;
 }
 
 void EditorClientQt::respondToChangedSelection()
 {
+    if (dumpEditingCallbacks)
+        printf("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n");
     emit m_page->selectionChanged();
 }
 
 void EditorClientQt::didEndEditing()
 {
+    if (dumpEditingCallbacks)
+        printf("EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification\n");
     m_editing = false;
 }
 
@@ -147,7 +235,7 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
 }
 
 bool EditorClientQt::isEditable()
-{
+{ 
     // FIXME: should be controllable by a setting in QWebPage
     return false;
 }
@@ -194,9 +282,19 @@ void EditorClientQt::redo()
     m_inUndoRedo = false;
 }
 
-bool EditorClientQt::shouldInsertNode(Node*, Range*, EditorInsertAction)
+bool EditorClientQt::shouldInsertNode(Node* node, Range* range, EditorInsertAction action)
 {
-    return true;
+    if (dumpEditingCallbacks) {
+        static const char *insertactionstring[] = {
+            "WebViewInsertActionTyped",
+            "WebViewInsertActionPasted",
+            "WebViewInsertActionDropped",
+        };
+        
+        printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n", dumpPath(node).toUtf8().constData(),
+               dumpRange(range).toUtf8().constData(), insertactionstring[action]);
+    }
+    return acceptsEditing;
 }
 
 void EditorClientQt::pageDestroyed()

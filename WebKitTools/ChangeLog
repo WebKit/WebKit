@@ -1,3 +1,12 @@
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Implement support for testing editing.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2007-10-23  Sam Weinig  <sam@webkit.org>
 
         Check for null BSTR that can be passed to the UIDelegate methods

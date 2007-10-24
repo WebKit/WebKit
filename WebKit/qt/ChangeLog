@@ -1,3 +1,27 @@
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Implement support for testing editing.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (qt_dump_editing_callbacks):
+        (qt_dump_set_accepts_editing):
+        (dumpPath):
+        (dumpRange):
+        (WebCore::EditorClientQt::shouldDeleteRange):
+        (WebCore::EditorClientQt::shouldShowDeleteInterface):
+        (WebCore::EditorClientQt::shouldBeginEditing):
+        (WebCore::EditorClientQt::shouldEndEditing):
+        (WebCore::EditorClientQt::shouldInsertText):
+        (WebCore::EditorClientQt::shouldChangeSelectedRange):
+        (WebCore::EditorClientQt::shouldApplyStyle):
+        (WebCore::EditorClientQt::didBeginEditing):
+        (WebCore::EditorClientQt::respondToChangedContents):
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        (WebCore::EditorClientQt::didEndEditing):
+        (WebCore::EditorClientQt::shouldInsertNode):
+
 2007-10-19  Alp Toker  <alp@atoker.com>
 
         Reviewed by Oliver.

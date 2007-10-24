@@ -44,6 +44,9 @@
 
 #include <unistd.h>
 #include <qdebug.h>
+extern void qt_dump_editing_callbacks(bool b);
+extern void qt_dump_set_accepts_editing(bool b);
+
 
 namespace WebCore {
 
@@ -120,6 +123,7 @@ DumpRenderTree::DumpRenderTree()
     : m_stdin(0)
     , m_notifier(0)
 {
+    qt_dump_editing_callbacks(true);
     m_controller = new LayoutTestController(this);
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
 
