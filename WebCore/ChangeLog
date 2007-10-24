@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        implement Pasteboard::documentFragment(), and fix a mem leak.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::documentFragment):
+
+2007-10-24  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Simplify the PlatformKeyEvent constructor. No need to have an extra boolean for isKeyUp in there, as the QKeyEvent has the information.
 
         WARNING: NO TEST CASES ADDED OR CHANGED

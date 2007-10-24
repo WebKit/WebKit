@@ -36,6 +36,8 @@
 #include <qmimedata.h>
 #include <qapplication.h>
 
+#define methodDebug() qDebug() << "PasteboardQt: " << __FUNCTION__;
+
 namespace WebCore {
 
 Pasteboard::Pasteboard()
@@ -45,7 +47,9 @@ Pasteboard::Pasteboard()
 
 Pasteboard* Pasteboard::generalPasteboard()
 {
-    static Pasteboard* pasteboard = new Pasteboard();
+    static Pasteboard* pasteboard = 0;
+    if (!pasteboard)
+        pasteboard = new Pasteboard();
     return pasteboard;
 }
 
@@ -70,7 +74,26 @@ String Pasteboard::plainText(Frame* frame)
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
                                                           bool allowPlainText, bool& chosePlainText)
 {
-    notImplemented();
+    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+    
+    chosePlainText = false;
+
+    if (mimeData->hasHtml()) {
+        QString html = mimeData->html();
+        if (!html.isEmpty()) {
+            RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, "");
+            if (fragment)
+                return fragment.release();
+        }
+    }
+    
+    if (allowPlainText && mimeData->hasText()) {
+        chosePlainText = true;
+        RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), mimeData->text());
+        if (fragment)
+            return fragment.release();
+    }
+    
     return 0;
 }
 
