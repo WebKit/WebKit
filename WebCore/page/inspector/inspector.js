@@ -110,7 +110,6 @@ var WebInspector = {
             this._currentPanel.hide();
 
         this._currentPanel = x;
-        this.updateViewButtons();
 
         if (x)
             x.show();
@@ -450,7 +449,7 @@ WebInspector.sidebarResizerDrag = function(event)
     var sidebar = document.getElementById("sidebar");
     if (sidebar.dragging == true) {
         var main = document.getElementById("main");
-        var buttonContainer = document.getElementById("viewbuttons");
+        var buttonContainer = document.getElementById("toolbarButtons");
 
         var x = event.clientX + window.scrollX;
 
@@ -494,7 +493,7 @@ WebInspector.back = function()
         return;
     }
 
-    this.navigateToPanel(this.backForwardList[--this.currentBackForwardIndex], true);
+    this.navigateToPanel(this.backForwardList[--this.currentBackForwardIndex], null, true);
 }
 
 WebInspector.forward = function()
@@ -504,7 +503,7 @@ WebInspector.forward = function()
         return;
     }
 
-    this.navigateToPanel(this.backForwardList[++this.currentBackForwardIndex], true);
+    this.navigateToPanel(this.backForwardList[++this.currentBackForwardIndex], null, true);
 }
 
 WebInspector.updateBackForwardButtons = function()
@@ -513,39 +512,6 @@ WebInspector.updateBackForwardButtons = function()
 
     document.getElementById("back").disabled = index <= 0;
     document.getElementById("forward").disabled = index >= this.backForwardList.length - 1;
-}
-
-WebInspector.updateViewButtons = function()
-{
-    var buttonContainer = document.getElementById("viewbuttons");
-    buttonContainer.removeChildren();
-
-    if (!this.currentPanel || !this.currentPanel.viewButtons)
-        return;
-
-    var buttons = this.currentPanel.viewButtons;
-    if (buttons.length < 2)
-        return;
-
-    for (var i = 0; i < buttons.length; ++i) {
-        var button = buttons[i];
-
-        if (i === 0)
-            button.addStyleClass("first");
-        else if (i === (buttons.length - 1))
-            button.addStyleClass("last");
-
-        if (i) {
-            var divider = document.createElement("img");
-            divider.className = "split-button-divider";
-            buttonContainer.appendChild(divider);
-        }
-
-        button.addStyleClass("split-button");
-        button.addStyleClass("view-button-" + button.title.toLowerCase());
-
-        buttonContainer.appendChild(button);
-    }
 }
 
 WebInspector.addResource = function(resource)
@@ -668,7 +634,7 @@ WebInspector.updateFocusedNode = function(node)
         if (resource.documentNode !== node.ownerDocument)
             continue;
 
-        resource.panel.navigateToView("dom");
+        this.navigateToPanel(resource.panel, "dom");
         resource.panel.focusedDOMNode = node;
 
         this.currentFocusElement = document.getElementById("main");
@@ -714,17 +680,6 @@ WebInspector.addMainEventListeners = function(doc)
     doc.addEventListener("click", function(event) { WebInspector.documentClick(event) }, true);
 }
 
-WebInspector.navigateToView = function(view)
-{
-    if (!view) {
-        alert("Called navigateToView(null)");
-        return;
-    }
-
-    view.panel.currentView = view;
-    this.navigateToPanel(view.panel);
-}
-
 WebInspector.performSearch = function(query)
 {
     if (!query || !query.length) {
@@ -752,10 +707,9 @@ WebInspector.performSearch = function(query)
         var resource = resourcesToSearch[i];
 
         var sourceResults = [];
-        if (!isXPath) {
-            resource.panel.refreshIfNeeded();
-            if ("sourceFrame" in resource.panel)
-                sourceResults = InspectorController.search(resource.panel.sourceFrame.contentDocument, query);
+        if (!isXPath && "source" in resource.panel.views) {
+            resource.panel.setupSourceFrameIfNeeded();
+            sourceResults = InspectorController.search(resource.panel.views.source.frameElement.contentDocument, query);
         }
 
         var domResults = [];
@@ -792,14 +746,14 @@ WebInspector.performSearch = function(query)
         selection.removeAllRanges();
         selection.addRange(element.representedObject.range);
 
-        element.representedObject.panel.navigateToView("source");
+        WebInspector.navigateToPanel(element.representedObject.panel, "source");
         element.representedObject.line.scrollIntoView(true);
         resultsContainer.scrollToElement(element._listItemNode);
     }
 
     var domResultSelected = function(element)
     {
-        element.representedObject.panel.navigateToView("dom");
+        WebInspector.navigateToPanel(element.representedObject.panel, "dom");
         element.representedObject.panel.focusedDOMNode = element.representedObject.node;
         resultsContainer.scrollToElement(element._listItemNode);
     }
@@ -812,14 +766,14 @@ WebInspector.performSearch = function(query)
         fileItem.selectable = false;
         this.searchResultsTree.appendChild(fileItem);
 
-        if (file.sourceResults.length) {
+        if (file.sourceResults && file.sourceResults.length) {
             for (var j = 0; j < file.sourceResults.length; ++j) {
                 var range = file.sourceResults[j];
 
                 var line = range.startContainer;
                 while (line.parentNode && line.nodeName.toLowerCase() != "tr")
                     line = line.parentNode;
-                var lineRange = file.resource.panel.sourceFrame.contentDocument.createRange();
+                var lineRange = file.resource.panel.views.source.frameElement.contentDocument.createRange();
                 lineRange.selectNodeContents(line);
 
                 // Don't include any error bubbles in the search result
@@ -830,11 +784,11 @@ WebInspector.performSearch = function(query)
                     lineRange.setEndAfter(end);
                 }
 
-                var beforeRange = file.resource.panel.sourceFrame.contentDocument.createRange();
+                var beforeRange = file.resource.panel.views.source.frameElement.contentDocument.createRange();
                 beforeRange.setStart(lineRange.startContainer, lineRange.startOffset);
                 beforeRange.setEnd(range.startContainer, range.startOffset);
 
-                var afterRange = file.resource.panel.sourceFrame.contentDocument.createRange();
+                var afterRange = file.resource.panel.views.source.frameElement.contentDocument.createRange();
                 afterRange.setStart(range.endContainer, range.endOffset);
                 afterRange.setEnd(lineRange.endContainer, lineRange.endOffset);
 
@@ -881,10 +835,13 @@ WebInspector.navigateToResource = function(resource)
     this.navigateToPanel(resource.panel);
 }
 
-WebInspector.navigateToPanel = function(panel, fromBackForwardAction)
+WebInspector.navigateToPanel = function(panel, view, fromBackForwardAction)
 {
-    if (this.currentPanel == panel)
+    if (this.currentPanel === panel) {
+        if (panel && view)
+            panel.currentView = view;
         return;
+    }
 
     if (!fromBackForwardAction) {
         var oldIndex = this.currentBackForwardIndex;
@@ -895,85 +852,8 @@ WebInspector.navigateToPanel = function(panel, fromBackForwardAction)
     }
 
     this.currentPanel = panel;
-}
-
-WebInspector.Panel = function()
-{
-    this.element = document.createElement("div");
-    this.element.className = "panel";
-    this.attach();
-
-    this._needsRefresh = true;
-    this.refresh();
-}
-
-WebInspector.Panel.prototype = {
-    show: function()
-    {
-        this.visible = true;
-    },
-
-    hide: function()
-    {
-        this.visible = false;
-    },
-
-    attach: function()
-    {
-        document.getElementById("main").appendChild(this.element);
-    },
-
-    detach: function()
-    {
-        if (WebInspector.currentPanel === this)
-            WebInspector.currentPanel = null;
-        if (this.element && this.element.parentNode)
-            this.element.parentNode.removeChild(this.element);
-    },
-
-    refresh: function()
-    {
-    },
-
-    refreshIfNeeded: function()
-    {
-        if (this.needsRefresh)
-            this.refresh();
-    },
-
-    get visible()
-    {
-        return this._visible;
-    },
-
-    set visible(x)
-    {
-        if (this._visible === x)
-            return;
-
-        this._visible = x;
-
-        if (x) {
-            this.element.addStyleClass("selected");
-            this.refreshIfNeeded();
-        } else {
-            this.element.removeStyleClass("selected");
-        }
-    },
-
-    get needsRefresh()
-    {
-        return this._needsRefresh;
-    },
-
-    set needsRefresh(x)
-    {
-        if (this._needsRefresh === x)
-            return;
-        this._needsRefresh = x;
-        if (x && this.visible)
-            this.refresh();
-    }
+    if (panel && view)
+        panel.currentView = view;
 }
 
 WebInspector.StatusTreeElement = function(title)

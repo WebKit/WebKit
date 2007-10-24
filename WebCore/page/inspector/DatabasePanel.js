@@ -26,11 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabasePanel = function(database)
+WebInspector.DatabasePanel = function(database, views)
 {
-    WebInspector.Panel.call(this);
+    var allViews = [{ title: "Query" }, { title: "Browse" }];
+    if (views)
+        allViews = allViews.concat(views);
 
-    this.database = database;
+    WebInspector.ResourcePanel.call(this, database, allViews);
+
+    this.currentView = this.views.browse;
 
     this.queryPromptElement = document.createElement("textarea");
     this.queryPromptElement.className = "database-prompt";
@@ -42,80 +46,48 @@ WebInspector.DatabasePanel = function(database)
     this.queryPromptHistory = [];
     this.queryPromptHistoryOffset = 0;
 
-    var selectViewFunction = function(event)
-    {
-        WebInspector.navigateToView(event.currentTarget.view);
-    }
+    var queryView = this.views.query;
 
-    var views = [
-        { name: "query", title: "Query", selected: false },
-        { name: "browse", title: "Browse", selected: true }
-    ];
+    queryView.commandListElement = document.createElement("ol");
+    queryView.commandListElement.className = "database-command-list";
+    queryView.contentElement.appendChild(queryView.commandListElement);
 
-    this.views = {};
-    this.viewButtons = [];
-    for (var i = 0; i < views.length; ++i) {
-        var buttonElement = document.createElement("button");
-        buttonElement.setAttribute("title", views[i].title);
-        buttonElement.addEventListener("click", selectViewFunction, "true");
-        buttonElement.appendChild(document.createElement("img"));
-
-        var contentElement = document.createElement("div");
-        contentElement.className = "content database-" + views[i].name;
-
-        var view = {};
-        view.panel = this;
-        view.buttonElement = buttonElement;
-        view.contentElement = contentElement;
-        view.buttonElement.view = view;
-
-        this.views[views[i].name] = view;
-        this.viewButtons.push(buttonElement);
-        this.element.appendChild(contentElement);
-    }
-
-    this.currentView = this.views.browse;
-
-    var queryPanel = this.views.query;
-
-    queryPanel.commandListElement = document.createElement("ol");
-    queryPanel.commandListElement.className = "database-command-list";
-    queryPanel.contentElement.appendChild(queryPanel.commandListElement);
-
-    queryPanel.onshow = function()
+    queryView.show = function()
     {
         panel.queryPromptElement.focus();
         this.commandListElement.scrollTop = this.previousScrollTop;
     };
 
-    queryPanel.onhide = function()
+    queryView.hide = function()
     {
         this.previousScrollTop = this.commandListElement.scrollTop;
     };
 
-    var browsePanel = this.views.browse;
+    var browseView = this.views.browse;
 
-    browsePanel.reloadTableElement = document.createElement("button");
-    browsePanel.reloadTableElement.appendChild(document.createElement("img"));
-    browsePanel.reloadTableElement.className = "database-table-reload";
-    browsePanel.reloadTableElement.title = "Reload";
-    browsePanel.reloadTableElement.addEventListener("click", function() { panel.updateTableList(); panel.updateTableBrowser() }, false);
+    browseView.reloadTableElement = document.createElement("button");
+    browseView.reloadTableElement.appendChild(document.createElement("img"));
+    browseView.reloadTableElement.className = "database-table-reload";
+    browseView.reloadTableElement.title = "Reload";
+    browseView.reloadTableElement.addEventListener("click", function() { panel.updateTableList(); panel.updateTableBrowser() }, false);
 
-    browsePanel.onshow = function()
+    browseView.show = function()
     {
         panel.updateTableList();
         panel.queryPromptElement.focus();
 
         this.tableSelectElement.removeStyleClass("hidden");
-        document.getElementById("viewbuttons").appendChild(this.tableSelectElement);
+        if (!this.tableSelectElement.parentNode)
+            document.getElementById("toolbarButtons").appendChild(this.tableSelectElement);
 
         this.reloadTableElement.removeStyleClass("hidden");
-        document.getElementById("viewbuttons").appendChild(this.reloadTableElement);
+        if (!this.reloadTableElement.parentNode)
+            document.getElementById("toolbarButtons").appendChild(this.reloadTableElement);
 
         this.contentElement.scrollTop = this.previousScrollTop;
     };
 
-    browsePanel.onhide = function()
+    browseView.hide = function()
     {
         this.tableSelectElement.addStyleClass("hidden");
         this.reloadTableElement.addStyleClass("hidden");
@@ -130,47 +102,8 @@ var Math = window.Math;
 return {
     show: function()
     {
-        WebInspector.Panel.prototype.show.call(this);
+        WebInspector.ResourcePanel.prototype.show.call(this);
         this.queryPromptElement.focus();
-        if (this.currentView && "onshow" in this.currentView)
-            this.currentView.onshow.call(this.currentView);
-    },
-
-    hide: function()
-    {
-        if (this.currentView && "onhide" in this.currentView)
-            this.currentView.onhide();
-        WebInspector.Panel.prototype.hide.call(this);
-    },
-
-    get currentView()
-    {
-        return this._currentView;
-    },
-
-    set currentView(x)
-    {
-        if (this._currentView === x)
-            return;
-
-        if (this._currentView) {
-            if ("onhide" in this._currentView)
-                this._currentView.onhide.call(this._currentView);
-            this._currentView.buttonElement.removeStyleClass("selected");
-            this._currentView.contentElement.removeStyleClass("selected");
-        }
-
-        this._currentView = x;
-
-        if (x) {
-            x.buttonElement.addStyleClass("selected");
-            x.contentElement.addStyleClass("selected");
-            if ("onshow" in x)
-                x.onshow.call(x);
-
-            if (x.contentElement.parentNode !== this.element)
-                InspectorController.log("Tried to set currentView to a view " + x.title + " whose contentElement is a non-child");
-        }
     },
 
     get currentTable()
@@ -226,7 +159,7 @@ return {
         browseView.tableSelectElement.removeChildren();
 
         var selectedTableName = this.currentTable;
-        var tableNames = InspectorController.databaseTableNames(this.database.database).sort();
+        var tableNames = InspectorController.databaseTableNames(this.resource.database).sort();
 
         var length = tableNames.length;
         for (var i = 0; i < length; ++i) {
@@ -253,7 +186,7 @@ return {
         try {
             var panel = this;
             var query = "SELECT * FROM " + this.currentTable;
-            this.database.database.executeSql(query, [], function(result) { panel.browseQueryFinished(result) });
+            this.resource.database.executeSql(query, [], function(result) { panel.browseQueryFinished(result) });
         } catch(e) {
             // FIXME: handle this error a better way.
             this.views.browse.contentElement.removeChildren();
@@ -362,7 +295,7 @@ return {
 
         try {
             var panel = this;
-            this.database.database.executeSql(query, [], function(result) { panel.queryFinished(query, result) });
+            this.resource.database.executeSql(query, [], function(result) { panel.queryFinished(query, result) });
 
             this.queryPromptHistory.push(query);
             this.queryPromptHistoryOffset = 0;
@@ -512,4 +445,4 @@ return {
 }
 })();
 
-WebInspector.DatabasePanel.prototype.__proto__ = WebInspector.Panel.prototype;
+WebInspector.DatabasePanel.prototype.__proto__ = WebInspector.ResourcePanel.prototype;

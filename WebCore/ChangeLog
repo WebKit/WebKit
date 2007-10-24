@@ -1,3 +1,26 @@
+2007-10-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - Made seperate files for the various classes in ResourcePanel.js.
+        - Broke up ResourcePanel.js and created seperate panel classes for different resource types.
+        - Moved View code down to the Panel base-class.
+        - Reduced code duplication in DatabasePanel.js by sub-classing from the new ResourcePanel.
+
+        * page/inspector/DatabasePanel.js:
+        * page/inspector/DocumentPanel.js: Added.
+        * page/inspector/FontPanel.js: Added.
+        * page/inspector/ImagePanel.js: Added.
+        * page/inspector/Panel.js: Added.
+        * page/inspector/PropertiesSection.js: Added.
+        * page/inspector/Resource.js:
+        * page/inspector/ResourcePanel.js:
+        * page/inspector/SidebarPane.js: Added.
+        * page/inspector/SourcePanel.js: Added.
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.html:
+        * page/inspector/inspector.js:
+
 2007-10-23  Anders Carlsson  <andersca@apple.com>
 
         Correct the version #if check.

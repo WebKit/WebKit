@@ -234,10 +234,6 @@ WebInspector.Resource.prototype = {
             return;
 
         this._finished = x;
-        this.updateTitleSoon();
-
-        if (this.panel)
-            this.panel.needsRefresh = true;
 
         if (x) {
             var canvas = document.getElementById("loadingIcon" + this.identifier);
@@ -247,6 +243,9 @@ WebInspector.Resource.prototype = {
             this._checkTips();
             this._checkWarnings();
         }
+
+        this.updateTitleSoon();
+        this.updatePanel();
     },
 
     get failed()
@@ -257,6 +256,9 @@ WebInspector.Resource.prototype = {
     set failed(x)
     {
         this._failed = x;
+
+        this.updateTitleSoon();
+        this.updatePanel();
     },
 
     get category()
@@ -279,8 +281,7 @@ WebInspector.Resource.prototype = {
         if (this._category)
             this._category.addResource(this);
 
-        if (this.panel)
-            this.panel.needsRefresh = true;
+        this.updatePanel();
     },
 
     get mimeType()
@@ -557,10 +558,44 @@ WebInspector.Resource.prototype = {
         this.listItem.tooltip = this.url;
     },
 
+    updatePanel: function()
+    {
+        if (this._panel) {
+            var current = (WebInspector.currentPanel === this._panel);
+
+            this._panel.detach();
+            delete this._panel;
+
+            if (current)
+                WebInspector.currentPanel = this.panel;
+        }
+    },
+
     get panel()
     {
-        if (!this._panel)
-            this._panel = new WebInspector.ResourcePanel(this);
+        if (!this._panel) {
+            if (this.finished && !this.failed) {
+                switch (this.category) {
+                case WebInspector.resourceCategories.documents:
+                    this._panel = new WebInspector.DocumentPanel(this);
+                    break;
+                case WebInspector.resourceCategories.stylesheets:
+                case WebInspector.resourceCategories.scripts:
+                    this._panel = new WebInspector.SourcePanel(this);
+                    break;
+                case WebInspector.resourceCategories.images:
+                    this._panel = new WebInspector.ImagePanel(this);
+                    break;
+                case WebInspector.resourceCategories.fonts:
+                    this._panel = new WebInspector.FontPanel(this);
+                    break;
+                }
+            }
+
+            if (!this._panel)
+                this._panel = new WebInspector.ResourcePanel(this);
+        }
+
         return this._panel;
     },
 
@@ -578,13 +613,14 @@ WebInspector.Resource.prototype = {
 
     attach: function()
     {
-        this.panel.attach();
+        if (this._panel)
+            this._panel.attach();
     },
 
     detach: function()
     {
         if (this._panel)
-            this.panel.detach();
+            this._panel.detach();
         if (this.fontStyleElement && this.fontStyleElement.parentNode)
             this.fontStyleElement.parentNode.removeChild(this.fontStyleElement);
     },

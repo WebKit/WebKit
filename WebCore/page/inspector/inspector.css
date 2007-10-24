@@ -220,14 +220,10 @@ body.inactive #toolbar .split-button-divider {
     opacity: 1;
 }
 
-#viewbuttons {
+#toolbarButtons {
     position: absolute;
     left: 200px;
     padding-left: 8px;
-}
-
-#viewbuttons .selected {
-    font-weight: bold;
 }
 
 #search {
@@ -689,17 +685,14 @@ body.inactive #sidebar li.selected {
     background-color: transparent !important;
 }
 
-.content.font {
-    position: relative;
-    width: 100%;
-    height: 100%;
+.panel.font {
     font-size: 60px;
     white-space: pre-wrap;
     word-wrap: break-word;
     text-align: center;
 }
 
-.content.font .preview {
+.panel.font .preview {
     position: absolute;
     margin-top: auto;
     margin-bottom: auto;
@@ -709,20 +702,20 @@ body.inactive #sidebar li.selected {
     bottom: 0;
 }
 
-.content.image {
+.panel.image {
     position: relative;
     width: 100%;
     height: 100%;
 }
 
-.content.image > .image {
+.panel.image > .image {
     position: relative;
     -webkit-box-sizing: border-box;
     height: 70%;
     padding: 20px;
 }
 
-.content.image > .info {
+.panel.image > .info {
     position: relative;
     -webkit-box-sizing: border-box;
     height: 30%;
@@ -731,7 +724,7 @@ body.inactive #sidebar li.selected {
     font-size: 11px;
 }
 
-.content.image img {
+.panel.image img {
     margin: auto;
     position: absolute;
     top: 0;
@@ -744,23 +737,23 @@ body.inactive #sidebar li.selected {
     -webkit-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
 }
 
-.content.image .title {
+.panel.image .title {
     text-align: center;
     font-size: 13px;
 }
 
-.content.image .infoList {
+.panel.image .infoList {
     margin: 0;
 }
 
-.content.image .infoList dt {
+.panel.image .infoList dt {
     font-weight: bold;
     display: inline-block;
     width: 50%;
     text-align: right;
 }
 
-.content.image .infoList dd {
+.panel.image .infoList dd {
     -webkit-box-sizing: border-box;
     display: inline-block;
     padding-left: 10px;
@@ -769,7 +762,7 @@ body.inactive #sidebar li.selected {
     margin: 0;
 }
 
-.content.image .infoList dd::after {
+.panel.image .infoList dd::after {
     white-space: pre;
     content: "\A";
 }
@@ -1442,22 +1435,22 @@ body.inactive #sidebar li.selected {
     opacity: 0.7;
 }
 
-.database-query.content {
+.query.content {
     bottom: 21px;
 }
 
-.database-browse.content {
+.browse.content {
     font-size: 10px;
     overflow-y: auto;
     overflow-x: hidden;
     bottom: 21px;
 }
 
-.database-browse.content .database-result-table {
+.browse.content .database-result-table {
     border: none;
 }
 
-.database-browse.content .database-table-empty {
+.browse.content .database-table-empty {
     position: absolute;
     top: 0;
     bottom: 25%;
@@ -1474,7 +1467,7 @@ body.inactive #sidebar li.selected {
     padding: 10px;
 }
 
-.database-browse.content .database-table-error {
+.browse.content .database-table-error {
     position: absolute;
     top: 0;
     bottom: 25%;
@@ -1925,7 +1918,7 @@ body.inactive #sidebar li.selected {
     margin-bottom: -35px;
 }
 
-.sidebarResizeArea {
+.sidebar-resizer {
     position: absolute;
     top: 0;
     bottom: 0;
