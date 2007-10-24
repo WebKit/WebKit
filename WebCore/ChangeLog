@@ -1,3 +1,35 @@
+2007-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff and Mitz.
+
+        <rdar://problem/5493833>
+        REGRESSION: ~5MB of image data leaked @ cuteoverload.com (often seen while browsing other sites, too)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::markDOMNodesForDocument):
+        If an image element that is currently loading an image is not in the document,
+        it should still be marked.
+        
+        * bindings/js/kjs_html.cpp:
+        (WebCore::ImageConstructorImp::construct):
+        Force the document wrapper to be created.
+        
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::haveFiredLoadEvent):
+        New method which calls down to the image loader.
+        
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::HTMLImageLoader):
+        (WebCore::HTMLImageLoader::~HTMLImageLoader):
+        (WebCore::HTMLImageLoader::setLoadingImage):
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        Remove code that's not needed anymore.
+        
+        * html/HTMLImageLoader.h:
+        (WebCore::HTMLImageLoader::haveFiredLoadEvent):
+        Make this public.
+
 2007-10-24  Adam Roben  <aroben@apple.com>
 
         Move Windows safe file creation code into WebCore from WebPreferences

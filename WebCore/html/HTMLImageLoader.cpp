@@ -28,8 +28,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "EventNames.h"
-#include "kjs_binding.h"
-#include "JSNode.h"
 #include "HTMLNames.h"
 #include "RenderImage.h"
 
@@ -46,13 +44,11 @@ HTMLImageLoader::HTMLImageLoader(Element* elt)
     , m_firedLoad(true)
     , m_imageComplete(true)
     , m_loadManually(false)
-    , m_elementIsProtected(false)
 {
 }
 
 HTMLImageLoader::~HTMLImageLoader()
 {
-    ASSERT(!m_elementIsProtected);
     if (m_image)
         m_image->deref(this);
     m_element->document()->removeImage(this);
@@ -78,11 +74,6 @@ void HTMLImageLoader::setImage(CachedImage *newImage)
 
 void HTMLImageLoader::setLoadingImage(CachedImage *loadingImage)
 {
-    if (loadingImage)
-        protectElement();
-    else
-        unprotectElement();
-    
     m_firedLoad = false;
     m_imageComplete = false;
     m_image = loadingImage;
@@ -136,8 +127,6 @@ void HTMLImageLoader::dispatchLoadEvent()
         setHaveFiredLoadEvent(true);
         element()->dispatchHTMLEvent(image()->errorOccurred() ? errorEvent : loadEvent, false, false);
     }
-
-    unprotectElement();
 }
 
 void HTMLImageLoader::notifyFinished(CachedResource *image)
@@ -154,30 +143,5 @@ void HTMLImageLoader::notifyFinished(CachedResource *image)
         if (renderer->isImage())
             static_cast<RenderImage*>(renderer)->setCachedImage(m_image);
 }
-
-void HTMLImageLoader::protectElement()
-{
-    if (m_elementIsProtected)
-        return;
-    
-    KJS::JSLock lock;
-    if (JSNode* node = KJS::ScriptInterpreter::getDOMNodeForDocument(m_element->document(), m_element)) {
-        KJS::gcProtect(node);
-        m_elementIsProtected = true;
-    }    
-}
-    
-void HTMLImageLoader::unprotectElement()
-{
-    if (!m_elementIsProtected)
-        return;
-    
-    KJS::JSLock lock;
-    JSNode* node = KJS::ScriptInterpreter::getDOMNodeForDocument(m_element->document(), m_element);
-    ASSERT(node);
-    KJS::gcUnprotect(node);
-    m_elementIsProtected = false;
-}
-    
 
 }
