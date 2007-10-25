@@ -2,6 +2,17 @@
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
 
+        * Use the JobStatus to make sure to not deliver finished/data before the job has started. This is the case with the fast/dom/onerror-img.html test case.
+        * We have no idea if any data will come so we can still finish and then get pending data. This luckily can't happen for the local file case.
+        
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::doWork):
+
+2007-10-25  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
         * No need to initialize values in the QWebNetworkJob c'tor
         * Add a JobStatus to QWebNetworkJob and verify that the jobs are handled in the way we expect them to be handled. This means no data after the job has finished, not finishing a job before it has been started.
         

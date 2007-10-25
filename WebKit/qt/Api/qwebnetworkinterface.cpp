@@ -801,6 +801,10 @@ void QWebNetworkManager::doWork()
         if (hasSyncJobs && !syncJobs.contains(jobData->job))
             continue;
 
+        // This job was not yet started
+        if (static_cast<int>(jobData->job->status()) < QWebNetworkJob::JobStarted)
+            continue;
+
         m_queueMutex.lock();
         m_receivedData.removeAll(jobData);
         m_queueMutex.unlock();
@@ -812,6 +816,10 @@ void QWebNetworkManager::doWork()
 
     foreach(JobFinished* jobFinished, m_finishedJobs) {
         if (hasSyncJobs && !syncJobs.contains(jobFinished->job))
+            continue;
+
+        // This job was not yet started... we have no idea if data comes by...
+        if (static_cast<int>(jobFinished->job->status()) < QWebNetworkJob::JobStarted)
             continue;
 
         m_queueMutex.lock();
