@@ -323,7 +323,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitShowsURLsInToolTipsPreferenceKey,
         @"1",                           WebKitPDFDisplayModePreferenceKey,
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
-        @"1",                           WebKitUsePDFPreviewViewPreferenceKey,
         @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
         [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], WebKitEditableLinkBehaviorPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
@@ -785,16 +784,6 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setPDFDisplayMode:(PDFDisplayMode)mode
 {
     [self _setIntegerValue:mode forKey:WebKitPDFDisplayModePreferenceKey];
-}
-
-- (BOOL)_usePDFPreviewView
-{
-    return [self _boolValueForKey:WebKitUsePDFPreviewViewPreferenceKey];
-}
-
-- (void)_setUsePDFPreviewView:(BOOL)newValue
-{
-    [self _setBoolValue:newValue forKey:WebKitUsePDFPreviewViewPreferenceKey];
 }
 
 - (WebKitEditableLinkBehavior)editableLinkBehavior

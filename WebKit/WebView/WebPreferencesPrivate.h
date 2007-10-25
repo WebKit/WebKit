@@ -75,10 +75,6 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)_useSiteSpecificSpoofing;
 - (void)_setUseSiteSpecificSpoofing:(BOOL)newValue;
 
-// For debugging purposes, can be removed when no longer needed
-- (BOOL)_usePDFPreviewView;
-- (void)_setUsePDFPreviewView:(BOOL)newValue;
-
 // WARNING: Allowing paste through the DOM API opens a security hole. We only use it for testing purposes.
 - (BOOL)isDOMPasteAllowed;
 - (void)setDOMPasteAllowed:(BOOL)DOMPasteAllowed;

@@ -295,12 +295,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (self) {
         [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         
-        Class previewViewClass = nil;
-        if ([[WebPreferences standardPreferences] _usePDFPreviewView])
-            previewViewClass = [[self class] _PDFPreviewViewClass];
+        Class previewViewClass = [[self class] _PDFPreviewViewClass];
         
-        // We might not have found a previewViewClass even if we looked for one.
-        // But if we found the class we should be able to create an instance.
+        // We might not have found a previewViewClass, but if we did find it
+        // then we should be able to create an instance.
         if (previewViewClass) {
             previewView = [[previewViewClass alloc] initWithFrame:frame];
             ASSERT(previewView);

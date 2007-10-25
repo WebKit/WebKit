@@ -1,3 +1,29 @@
+2007-10-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+        
+        Removed the support for toggling whether WebKit uses the 10.5 PDFKit improvements. Now it
+        always does, when available.
+
+        * WebView/WebPreferencesPrivate.h:
+        removed _usePDFPreviewView and _setUsePDFPreviewView:. Note that these were guarded with
+        a comment that says that they can be removed when no longer needed. That time is now.
+
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        removed WebKitUsePDFPreviewViewPreferenceKey
+        (-[WebPreferences _usePDFPreviewView]):
+        removed
+        (-[WebPreferences _setUsePDFPreviewView:]):
+        removed
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView initWithFrame:]):
+        don't check _usePDFPreviewView
+        
+        * WebView/WebPreferenceKeysPrivate.h:
+        removed WebKitUsePDFPreviewViewPreferenceKey
+        
 2007-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
