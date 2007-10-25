@@ -2,6 +2,24 @@
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
 
+        * No need to initialize values in the QWebNetworkJob c'tor
+        * Add a JobStatus to QWebNetworkJob and verify that the jobs are handled in the way we expect them to be handled. This means no data after the job has finished, not finishing a job before it has been started.
+        
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkJob::status):
+        (QWebNetworkJob::setStatus):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (QWebNetworkManager::finished):
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        (QWebNetworkJobPrivate::QWebNetworkJobPrivate):
+
+2007-10-25  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
         * Consistency: Always name the jobs job.
         
 

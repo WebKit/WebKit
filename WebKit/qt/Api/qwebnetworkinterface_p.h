@@ -57,6 +57,7 @@ public:
         , redirected(false)
         , interface(0)
         , connector(0)
+        , jobStatus(QWebNetworkJob::JobCreated)
         {}
     int ref;
 
@@ -68,6 +69,7 @@ public:
 
     QWebNetworkInterface *interface;
     QWebObjectPluginConnector *connector;
+    QWebNetworkJob::JobStatus jobStatus;
 };
 
 class QWebNetworkManager : public QObject

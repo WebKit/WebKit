@@ -283,9 +283,6 @@ void QWebNetworkRequest::setPostData(const QByteArray &data)
 QWebNetworkJob::QWebNetworkJob()
     : d(new QWebNetworkJobPrivate)
 {
-    d->ref = 1;
-    d->redirected = false;
-    d->interface = 0;
 }
 
 /*!
@@ -400,6 +397,16 @@ QWebFrame *QWebNetworkJob::frame() const
     return 0;
 }
 
+QWebNetworkJob::JobStatus QWebNetworkJob::status() const
+{
+    return d->jobStatus;
+}
+
+void QWebNetworkJob::setStatus(const JobStatus& status)
+{
+    d->jobStatus = status;
+}
+
 /*!
   \class QWebNetworkManager
   \internal
@@ -468,7 +475,10 @@ void QWebNetworkManager::cancel(ResourceHandle *handle)
 void QWebNetworkManager::started(QWebNetworkJob *job)
 {
     Q_ASSERT(job->d);
+    Q_ASSERT(job->status() == QWebNetworkJob::JobCreated ||
+             job->status() == QWebNetworkJob::JobRecreated);
 
+    job->setStatus(QWebNetworkJob::JobStarted);
     ResourceHandleClient* client = 0;
     if (job->d->resourceHandle) {
         client = job->d->resourceHandle->client();
@@ -552,6 +562,10 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
 
 void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
 {
+    Q_ASSERT(job->status() == QWebNetworkJob::JobStarted ||
+             job->status() == QWebNetworkJob::JobReceivingData);
+
+    job->setStatus(QWebNetworkJob::JobReceivingData);
     ResourceHandleClient* client = 0;
     if (job->d->resourceHandle) {
         client = job->d->resourceHandle->client();
@@ -574,9 +588,13 @@ void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
 
 void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
 {
+    Q_ASSERT(job->status() == QWebNetworkJob::JobStarted ||
+             job->status() == QWebNetworkJob::JobReceivingData);
+
     if (m_synchronousJobs.contains(job))
         m_synchronousJobs.remove(job);
 
+    job->setStatus(QWebNetworkJob::JobFinished);
     ResourceHandleClient* client = 0;
     if (job->d->resourceHandle) {
         client = job->d->resourceHandle->client();
@@ -591,6 +609,7 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
 
     if (job->d->redirected) {
         job->d->redirected = false;
+        job->setStatus(QWebNetworkJob::JobRecreated);
         job->d->interface->addJob(job);
         return;
     }

@@ -85,6 +85,7 @@ private:
 class QWEBKIT_EXPORT QWebNetworkJob
 {
 public:
+
     QUrl url() const;
     QByteArray postData() const;
     QHttpRequestHeader httpHeader() const;
@@ -102,12 +103,25 @@ public:
     
     QWebFrame *frame() const;
 
+protected:
+    enum JobStatus {
+        JobCreated,
+        JobRecreated,
+        JobStarted,
+        JobReceivingData,
+        JobFinished
+    };
+
+    JobStatus status() const;
+    void setStatus(const JobStatus&);
+
 private:
     QWebNetworkJob();
     ~QWebNetworkJob();
 
     friend class QWebNetworkManager;
     friend class QWebObjectPluginConnector;
+    friend class QWebNetworkJobPrivate;
 
     QWebNetworkJobPrivate *d;
 };
