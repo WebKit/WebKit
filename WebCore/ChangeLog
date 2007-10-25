@@ -25,7 +25,7 @@
 
 2007-10-25  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Anders
+        Reviewed by Anders and Sam
 
         Bulk rename of platform/sql/SQL* to platform/sql/SQLite*
         
