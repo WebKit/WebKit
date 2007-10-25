@@ -1,3 +1,13 @@
+2007-10-24  David Kilzer  <ddkilzer@webkit.org>
+
+        Minor clean-up of prepare-ChangeLog script.
+
+        Reviewed by Adam.
+
+        * Scripts/prepare-ChangeLog: Keep list of updated ChangeLog files in an array instead
+        of a string.  Use multi-argument versions of open() and system() for flexibility and
+        security.
+
 2007-10-24  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Oliver.

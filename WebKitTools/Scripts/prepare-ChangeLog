@@ -3,7 +3,7 @@
 
 #
 #  Copyright (C) 2000, 2001 Eazel, Inc.
-#  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Apple Inc.
+#  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
 #
 #  prepare-ChangeLog is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public
@@ -261,14 +261,15 @@ foreach my $file (sort keys %function_lists) {
 }
 
 # Get the latest ChangeLog files from svn.
-my $logs = "";
+my @logs = ();
 foreach my $prefix (sort keys %files) {
-    $logs .= " ${prefix}ChangeLog";
+    push @logs, File::Spec->catfile($prefix, "ChangeLog");
 }
 
-if ($logs && $updateChangeLogs && $isSVN) {
+if (@logs && $updateChangeLogs && $isSVN) {
     print STDERR "  Running 'svn update' to update ChangeLog files.\n";
-    open ERRORS, "$SVN update -q$logs |" or die "The svn update of ChangeLog files failed: $!.\n";
+    open ERRORS, "-|", $SVN, "update", "-q", @logs
+        or die "The svn update of ChangeLog files failed: $!.\n";
     print STDERR "    $_" while <ERRORS>;
     close ERRORS;
 }
@@ -316,13 +317,13 @@ if ($spewDiff && @changed_files) {
 }
 
 # Open ChangeLogs.
-if ($openChangeLogs && $logs) {
+if ($openChangeLogs && @logs) {
     print STDERR "  Opening the edited ChangeLog files.\n";
     my $editor = $ENV{"CHANGE_LOG_EDIT_APPLICATION"};
     if ($editor) {
-        system "open -a '$editor'$logs";
+        system "open", "-a", $editor, @logs;
     } else {
-        system "open -e$logs";
+        system "open", "-e", @logs;
     }
 }
 
