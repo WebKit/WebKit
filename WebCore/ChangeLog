@@ -1,3 +1,12 @@
+2007-10-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt and Sam Weinig.
+
+        Build fix
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+
 2007-10-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp.
@@ -359,7 +368,6 @@
 
         * WebCore.vcproj/WebCore.vcproj:
 
->>>>>>> .r27047
 2007-10-24  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Oliver.
@@ -394,7 +402,6 @@
         (WebCore::DatabaseTracker::fullPathForDatabase): Return the member variable
         * storage/DatabaseTracker.h:
 
->>>>>>> .r27005
 2007-10-24  David Hyatt  <hyatt@apple.com>
 
         Don't try to gap fill transformed selections.  Fix the invalidation of selection to use the clip to visible content

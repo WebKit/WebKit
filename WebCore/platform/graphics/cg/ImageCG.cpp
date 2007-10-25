@@ -200,12 +200,12 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     CGContextTranslateCTM(context, 0, -destRect.height());
     
     // Compute the scaled tile size.
-    float scaledTileHeight = tileRect.height() * narrowPrecisionToCGFloat(patternTransform.d());
+    float scaledTileHeight = tileRect.height() * narrowPrecisionToFloat(patternTransform.d());
     
     // We have to adjust the phase to deal with the fact we're in Cartesian space now (with the bottom left corner of destRect being
     // the origin).
-    float adjustedX = phase.x() - destRect.x() + tileRect.x() * patternTransform.a(); // We translated the context so that destRect.x() is the origin, so subtract it out.
-    float adjustedY = destRect.height() - (phase.y() - destRect.y() + tileRect.y() * patternTransform.d() + scaledTileHeight);
+    float adjustedX = phase.x() - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
+    float adjustedY = destRect.height() - (phase.y() - destRect.y() + tileRect.y() * narrowPrecisionToFloat(patternTransform.d()) + scaledTileHeight);
 
     CGImageRef tileImage = nativeImageForCurrentFrame();
     float h = CGImageGetHeight(tileImage);
@@ -216,7 +216,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     // overall image buffer needs to tile with "gaps", we can't use the optimized tiling call in that case.  We also avoid this optimization
     // when tiling portions of an image, since until we can actually cache the subimage we want to tile, this code won't be any faster.
     // FIXME: Could create WebKitSystemInterface SPI for CGCreatePatternWithImage2 and probably make Tiger tile faster as well.
-    float scaledTileWidth = tileRect.width() * narrowPrecisionToCGFloat(patternTransform.a());
+    float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
     float w = CGImageGetWidth(tileImage);
     if (w == size().width() && h == size().height() && tileRect.size() == size())
         CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), tileImage);
