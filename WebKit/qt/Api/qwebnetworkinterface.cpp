@@ -49,8 +49,8 @@
 #define DEBUG if (1) {} else qDebug
 #endif
 
-static QWebNetworkInterface *default_interface = 0;
-static QWebNetworkManager *manager = 0;
+static QWebNetworkInterface *s_default_interface = 0;
+static QWebNetworkManager *s_manager = 0;
 
 using namespace WebCore;
 
@@ -294,6 +294,7 @@ QWebNetworkJob::QWebNetworkJob()
 QWebNetworkJob::~QWebNetworkJob()
 {
     delete d;
+    d = 0;
 }
 
 /*!
@@ -405,7 +406,9 @@ QWebFrame *QWebNetworkJob::frame() const
 */
 QWebNetworkManager::QWebNetworkManager()
     : QObject(0)
+    , m_scheduledWork(false)
 {
+    connect(this, SIGNAL(scheduleWork()), SLOT(doWork()), Qt::QueuedConnection);
 }
 
 QWebNetworkManager *QWebNetworkManager::self()
@@ -413,13 +416,13 @@ QWebNetworkManager *QWebNetworkManager::self()
     // ensure everything's constructed and connected
     QWebNetworkInterface::defaultInterface();
 
-    return manager;
+    return s_manager;
 }
 
-bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *interface)
+bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *interface, JobMode jobMode)
 {
     if (!interface)
-        interface = default_interface;
+        interface = s_default_interface;
 
     ASSERT(interface);
 
@@ -440,6 +443,11 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
 
     DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.httpHeader.toString();
 
+    if (jobMode == AsynchronousJob) {
+        Q_ASSERT(!m_synchronousJobs.contains(job));
+        m_synchronousJobs[job] = 1;
+    }
+
     interface->addJob(job);
 
     return true;
@@ -459,6 +467,8 @@ void QWebNetworkManager::cancel(ResourceHandle *handle)
 
 void QWebNetworkManager::started(QWebNetworkJob *job)
 {
+    Q_ASSERT(job->d);
+
     ResourceHandleClient* client = 0;
     if (job->d->resourceHandle) {
         client = job->d->resourceHandle->client();
@@ -564,6 +574,9 @@ void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
 
 void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
 {
+    if (m_synchronousJobs.contains(job))
+        m_synchronousJobs.remove(job);
+
     ResourceHandleClient* client = 0;
     if (job->d->resourceHandle) {
         client = job->d->resourceHandle->client();
@@ -641,11 +654,11 @@ void QWebNetworkInterfacePrivate::sendFileData(QWebNetworkJob* job, int statusCo
         response.setStatusLine(statusCode);
         response.setContentLength(data.length());
         job->setResponse(response);
-        emit q->started(job);
+        q->started(job);
         if (!data.isEmpty())
-            emit q->data(job, data);
+            q->data(job, data);
     }
-    emit q->finished(job, error);
+    q->finished(job, error);
 }
 
 void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
@@ -695,10 +708,106 @@ void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
     job->setResponse(response);
 
     int error = statusCode >= 400 ? 1 : 0;
-    emit q->started(job);
+    q->started(job);
     if (!data.isEmpty())
-        emit q->data(job, data);
-    emit q->finished(job, error);
+        q->data(job, data);
+    q->finished(job, error);
+}
+
+void QWebNetworkManager::queueStart(QWebNetworkJob* job)
+{
+    Q_ASSERT(job->d);
+
+    QMutexLocker locker(&m_queueMutex);
+    job->ref();
+    m_startedJobs.append(job);
+    doScheduleWork();
+}
+
+void QWebNetworkManager::queueData(QWebNetworkJob* job, const QByteArray& data)
+{
+    ASSERT(job->d);
+
+    QMutexLocker locker(&m_queueMutex);
+    job->ref();
+    m_receivedData.append(new JobData(job,data));
+    doScheduleWork();
+}
+
+void QWebNetworkManager::queueFinished(QWebNetworkJob* job, int errorCode)
+{
+    Q_ASSERT(job->d);
+    
+    QMutexLocker locker(&m_queueMutex);
+    job->ref();
+    m_finishedJobs.append(new JobFinished(job, errorCode));
+    doScheduleWork();
+}
+
+void QWebNetworkManager::doScheduleWork()
+{
+    if (!m_scheduledWork) {
+        m_scheduledWork = true;
+        emit scheduleWork();
+    }
+}
+
+
+/*
+ * WARNING: This is very fragile. doWork will dispatch jobs which then
+ * can create new jobs in the meantime, which can fill the queue while
+ * we are working on it.
+ */
+void QWebNetworkManager::doWork()
+{
+    m_queueMutex.lock();
+    m_scheduledWork = false;
+    bool hasSyncJobs = m_synchronousJobs.size();
+    const QHash<QWebNetworkJob*, int> syncJobs = m_synchronousJobs;
+    m_queueMutex.unlock();
+
+    foreach(QWebNetworkJob* job, m_startedJobs) {
+        if (hasSyncJobs && !syncJobs.contains(job))
+            continue;
+
+        m_queueMutex.lock();
+        m_startedJobs.removeAll(job);
+        m_queueMutex.unlock();
+
+        started(job);
+        job->deref();
+    }
+
+    foreach(JobData* jobData, m_receivedData) {
+        if (hasSyncJobs && !syncJobs.contains(jobData->job))
+            continue;
+
+        m_queueMutex.lock();
+        m_receivedData.removeAll(jobData);
+        m_queueMutex.unlock();
+        
+        data(jobData->job, jobData->data);
+        jobData->job->deref();
+        delete jobData;
+    }
+
+    foreach(JobFinished* jobFinished, m_finishedJobs) {
+        if (hasSyncJobs && !syncJobs.contains(jobFinished->job))
+            continue;
+
+        m_queueMutex.lock();
+        m_finishedJobs.removeAll(jobFinished);
+        m_queueMutex.unlock();
+
+        finished(jobFinished->job, jobFinished->errorCode);
+        jobFinished->job->deref();
+        delete jobFinished;
+    }
+
+    m_queueMutex.lock();
+    if (hasSyncJobs && m_synchronousJobs.size() == 0)
+        doScheduleWork();
+    m_queueMutex.unlock();
 }
 
 /*!
@@ -721,8 +830,8 @@ static bool gRoutineAdded = false;
 
 static void gCleanupInterface()
 {
-    delete default_interface;
-    default_interface = 0;
+    delete s_default_interface;
+    s_default_interface = 0;
 }
 
 /*!
@@ -731,11 +840,11 @@ static void gCleanupInterface()
 */
 void QWebNetworkInterface::setDefaultInterface(QWebNetworkInterface *defaultInterface)
 {
-    if (default_interface == defaultInterface)
+    if (s_default_interface == defaultInterface)
         return;
-    if (default_interface)
-        delete default_interface;
-    default_interface = defaultInterface;
+    if (s_default_interface)
+        delete s_default_interface;
+    s_default_interface = defaultInterface;
     if (!gRoutineAdded) {
         qAddPostRoutine(gCleanupInterface);
         gRoutineAdded = true;
@@ -749,10 +858,10 @@ void QWebNetworkInterface::setDefaultInterface(QWebNetworkInterface *defaultInte
 */
 QWebNetworkInterface *QWebNetworkInterface::defaultInterface()
 {
-    if (!default_interface) {
+    if (!s_default_interface) {
         setDefaultInterface(new QWebNetworkInterface);
     }
-    return default_interface;
+    return s_default_interface;
 }
 
 
@@ -765,15 +874,8 @@ QWebNetworkInterface::QWebNetworkInterface(QObject *parent)
     d = new QWebNetworkInterfacePrivate;
     d->q = this;
 
-    if (!manager)
-        manager = new QWebNetworkManager;
-
-    QObject::connect(this, SIGNAL(started(QWebNetworkJob*)),
-                     manager, SLOT(started(QWebNetworkJob*)), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(data(QWebNetworkJob*, const QByteArray &)),
-                     manager, SLOT(data(QWebNetworkJob*, const QByteArray &)), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(finished(QWebNetworkJob*, int)),
-                     manager, SLOT(finished(QWebNetworkJob*, int)), Qt::QueuedConnection);
+    if (!s_manager)
+        s_manager = new QWebNetworkManager;
 }
 
 /*!
@@ -862,6 +964,24 @@ void QWebNetworkInterface::cancelJob(QWebNetworkJob *job)
         QWebNetworkManager::self()->cancelHttpJob(job);
 }
 
+void QWebNetworkInterface::started(QWebNetworkJob* job)
+{
+    Q_ASSERT(s_manager);
+    s_manager->queueStart(job);
+}
+
+void QWebNetworkInterface::data(QWebNetworkJob* job, const QByteArray& data)
+{
+    Q_ASSERT(s_manager);
+    s_manager->queueData(job, data);
+}
+
+void QWebNetworkInterface::finished(QWebNetworkJob* job, int errorCode)
+{
+    Q_ASSERT(s_manager);
+    s_manager->queueFinished(job, errorCode);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 WebCoreHttp::WebCoreHttp(QObject* parent, const HostInfo &hi)
     : QObject(parent), info(hi),
@@ -914,7 +1034,7 @@ void WebCoreHttp::scheduleNextRequest()
     while (!job && !m_pendingRequests.isEmpty()) {
         job = m_pendingRequests.takeFirst();
         if (job->cancelled()) {
-            emit job->networkInterface()->finished(job, 1);
+            job->networkInterface()->finished(job, 1);
             job = 0;
         }
     }
@@ -968,7 +1088,7 @@ void WebCoreHttp::onResponseHeaderReceived(const QHttpResponseHeader &resp)
 
     job->setResponse(resp);
 
-    emit job->networkInterface()->started(job);
+    job->networkInterface()->started(job);
 }
 
 void WebCoreHttp::onReadyRead()
@@ -986,7 +1106,7 @@ void WebCoreHttp::onReadyRead()
     QByteArray data;
     data.resize(http->bytesAvailable());
     http->read(data.data(), data.length());
-    emit req->networkInterface()->data(req, data);
+    req->networkInterface()->data(req, data);
 }
 
 void WebCoreHttp::onRequestFinished(int id, bool error)
@@ -1011,9 +1131,10 @@ void WebCoreHttp::onRequestFinished(int id, bool error)
         QByteArray data;
         data.resize(http->bytesAvailable());
         http->read(data.data(), data.length());
-        emit req->networkInterface()->data(req, data);
+        req->networkInterface()->data(req, data);
     }
-    emit req->networkInterface()->finished(req, error ? 1 : 0);
+
+    req->networkInterface()->finished(req, error ? 1 : 0);
     connection[c].current = 0;
     connection[c].id = -1;
     scheduleNextRequest();
@@ -1049,7 +1170,7 @@ void WebCoreHttp::cancel(QWebNetworkJob* request)
     m_inCancel = false;
 
     if (doEmit)
-        emit request->networkInterface()->finished(request, 1);
+        request->networkInterface()->finished(request, 1);
 
     if (m_pendingRequests.isEmpty()
         && !connection[0].current && !connection[1].current)

@@ -1,3 +1,14 @@
+2007-10-25  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
+        * Implement our own queuing of network jobs to allow special handling of synchronous jobs. This makes us pass the fast/dom/xmlhttprequest-html-response-encoding.html test without a crash. Sync jobs will get a special treatment over the normals ones and in theory more than one sync job is supported.
+        * This should be thread-safe besides QWebNetworkJob::{ref,deref}
+        
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2007-10-25  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

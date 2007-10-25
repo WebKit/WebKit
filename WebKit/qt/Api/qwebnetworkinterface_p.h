@@ -24,6 +24,7 @@
 
 #include "qwebnetworkinterface.h"
 #include <qthread.h>
+#include <qmutex.h>
 
 namespace WebCore {
     struct HostInfo;
@@ -69,34 +70,75 @@ public:
     QWebObjectPluginConnector *connector;
 };
 
-
 class QWebNetworkManager : public QObject
 {
     Q_OBJECT
 public:
+    enum JobMode {
+        AsynchronousJob,
+        SynchronousJob
+    };
+
     static QWebNetworkManager *self();
 
-    bool add(WebCore::ResourceHandle *resourceHandle, QWebNetworkInterface *interface);
+    bool add(WebCore::ResourceHandle *resourceHandle, QWebNetworkInterface *interface, JobMode = AsynchronousJob);
     void cancel(WebCore::ResourceHandle *resourceHandle);
 
     void addHttpJob(QWebNetworkJob *job);
     void cancelHttpJob(QWebNetworkJob *job);
 
-public slots:
+protected:
+    void queueStart(QWebNetworkJob*);
+    void queueData(QWebNetworkJob*, const QByteArray&);
+    void queueFinished(QWebNetworkJob*, int errorCode);
+
+private:
     void started(QWebNetworkJob *);
     void data(QWebNetworkJob *, const QByteArray &data);
     void finished(QWebNetworkJob *, int errorCode);
+    void doScheduleWork();
 
 signals:
     void fileRequest(QWebNetworkJob*);
+    void scheduleWork();
 
 private slots:
     void httpConnectionClosed(const WebCore::HostInfo &);
+    void doWork();
 
 private:
     friend class QWebNetworkInterface;
     QWebNetworkManager();
     QHash<WebCore::HostInfo, WebCore::WebCoreHttp *> m_hostMapping;
+
+    struct JobData {
+        JobData(QWebNetworkJob* _job, const QByteArray& _data)
+            : job(_job)
+            , data(_data)
+        {}
+
+        QWebNetworkJob* job;
+        QByteArray data;
+    };
+
+    struct JobFinished {
+        JobFinished(QWebNetworkJob* _job, int _errorCode)
+            : job(_job)
+            , errorCode(_errorCode)
+        {}
+
+        QWebNetworkJob* job;
+        int errorCode;
+    };
+
+
+
+    QMutex m_queueMutex;
+    bool m_scheduledWork;
+    QList<QWebNetworkJob*> m_startedJobs;
+    QList<JobData*> m_receivedData;
+    QList<JobFinished*> m_finishedJobs;
+    QHash<QWebNetworkJob*, int> m_synchronousJobs;
 };
 
 
