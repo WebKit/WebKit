@@ -1,3 +1,16 @@
+2007-10-24  Sven Herzberg  <sven@imendio.com>
+
+        Reviewed by Mark Rowe.
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=15614
+        Bug 15614: [GTK] qmake based backends don't build on OS X
+
+        * Scripts/build-webkit: set QMAKESPEC correctly if building the QT or
+        GTK backend on a Mac
+        * Scripts/webkitdirs.pm: extracted the darwin-test from isOSX() into
+        isDarwin() to make it reusable in other places (like the workaround-
+        for-prebuilt-qmake in build-webkit)
+
 2007-10-24  David Kilzer  <ddkilzer@webkit.org>
 
         Refurbish update-webkit script.

@@ -477,9 +477,14 @@ sub isCygwin()
     return ($^O eq "cygwin");
 }
 
+sub isDarwin()
+{
+    return ($^O eq "darwin");
+}
+
 sub isOSX()
 {
-    return ($^O eq "darwin") unless (isQt() or isGtk());
+    return isDarwin() unless (isQt() or isGtk());
     return 0;
 }
 

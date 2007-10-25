@@ -136,6 +136,12 @@ if (isOSX()) {
     }
 }
 
+if ((isGtk() || isQt()) && isDarwin() && !$ENV{QMAKESPEC}) {
+    # The qmake from Trolltech's binary "QT for Mac" distribution tries to
+    # create xcode projects, not Makefiles
+    $ENV{QMAKESPEC} = "macx-g++";
+}
+
 if (isCygwin()) {
     # Copy WebKitSupportLibrary to the correct location in WebKitLibraries so it can be found.
     # Will fail if WebKitSupportLibrary.zip is not in source root.
