@@ -1,3 +1,14 @@
+2007-10-25  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Brady.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15686
+        GtkLauncher aborts on launch due to uninitialized threading subsystem
+
+        Re-enable database support in the GTK+ port, with a fix.
+
+        * WebCore.pro:
+
 2007-10-25  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Steve.

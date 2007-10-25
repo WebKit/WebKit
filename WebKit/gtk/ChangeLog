@@ -1,5 +1,18 @@
 2007-10-25  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Brady.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15686
+        GtkLauncher aborts on launch due to uninitialized threading subsystem
+
+        Re-enable database support in the GTK+ port, with a fix.
+
+        Initialize GLib threading as early as possible.
+
+        * Api/webkitgtkglobal.cpp:
+
+2007-10-25  Alp Toker  <alp@atoker.com>
+
         Unreviewed fix to make the GTK+ port run.
 
         http://bugs.webkit.org/show_bug.cgi?id=15686
