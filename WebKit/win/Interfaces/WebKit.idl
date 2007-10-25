@@ -83,7 +83,7 @@ import "IWebCache.idl";
 import "IWebJavaScriptCollector.idl";
 import "IWebKitStatistics.idl";
 import "IWebScrollBarPrivate.idl";
-import "IWebDebugProgram.idl";
+import "IWebScriptDebugServer.idl";
 
 [
 #if __BUILDBOT__
@@ -269,8 +269,8 @@ library OpenSourceWebKit
 #else
     [uuid(5BE39DBA-5887-4a69-9157-EBEE96BA3309)]
 #endif
-    coclass WebDebugProgram {
-        [default] interface IWebDebugProgram;
+    coclass WebScriptDebugServer {
+        [default] interface IWebScriptDebugServer;
     }
 
 #if __BUILDBOT__

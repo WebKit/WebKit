@@ -32,7 +32,6 @@
 #define FOR_EACH_COCLASS(macro) \
     macro(CFDictionaryPropertyBag) \
     macro(WebCache) \
-    macro(WebDebugProgram) \
     macro(WebDownload) \
     macro(WebError) \
     macro(WebHistory) \
@@ -44,6 +43,7 @@
     macro(WebNotificationCenter) \
     macro(WebPreferences) \
     macro(WebScrollBar) \
+    macro(WebScriptDebugServer) \
     macro(WebTextRenderer) \
     macro(WebURLCredential) \
     macro(WebURLProtectionSpace) \

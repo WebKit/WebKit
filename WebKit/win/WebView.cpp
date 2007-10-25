@@ -31,7 +31,6 @@
 #include "DOMCoreClasses.h"
 #include "IWebNotification.h"
 #include "WebDatabaseManager.h"
-#include "WebDebugProgram.h"
 #include "WebDocumentLoader.h"
 #include "WebEditorClient.h"
 #include "WebElementPropertyBag.h"
@@ -47,6 +46,7 @@
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
+#include "WebScriptDebugServer.h"
 #pragma warning( push, 0 )
 #include <CoreGraphics/CGContext.h>
 #include <WebCore/BString.h>
@@ -157,7 +157,7 @@ WebView::WebView()
             grammarCheckingEnabled = !!enabled;
     }
 
-    WebDebugProgram::viewAdded(this);
+    WebScriptDebugServer::viewAdded(this);
     WebViewCount++;
     gClassCount++;
 }
@@ -174,7 +174,7 @@ WebView::~WebView()
 
     delete m_page;
 
-    WebDebugProgram::viewRemoved(this);
+    WebScriptDebugServer::viewRemoved(this);
     WebViewCount--;
     gClassCount--;
 }

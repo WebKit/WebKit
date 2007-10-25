@@ -47,7 +47,7 @@
 #include "WebURLCredential.h"
 #include "WebURLProtectionSpace.h"
 #include "WebURLResponse.h"
-#include "WebDebugProgram.h"
+#include "WebScriptDebugServer.h"
 #include "WebView.h"
 #include <SafariTheme/SafariTheme.h>
 #pragma warning(push, 0)

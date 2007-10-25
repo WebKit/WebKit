@@ -244,10 +244,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\Interfaces\IWebDebugProgram.idl"
-			>
-		</File>
-		<File
 			RelativePath="..\Interfaces\IWebDocument.idl"
 			>
 		</File>
@@ -369,6 +365,10 @@
 		</File>
 		<File
 			RelativePath="..\Interfaces\IWebScriptDebugListener.idl"
+			>
+		</File>
+		<File
+			RelativePath="..\Interfaces\IWebScriptDebugServer.idl"
 			>
 		</File>
 		<File

@@ -261,8 +261,8 @@ STDAPI RunAsLocalServer(void)
 {
     DWORD reg;
     COMPtr<IUnknown> classFactory;
-    DllGetClassObject(CLSID_WebDebugProgram, IID_IUnknown, (void**)&classFactory);
-    CoRegisterClassObject(CLSID_WebDebugProgram, classFactory.get(), CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &reg);
+    DllGetClassObject(CLSID_WebScriptDebugServer, IID_IUnknown, (void**)&classFactory);
+    CoRegisterClassObject(CLSID_WebScriptDebugServer, classFactory.get(), CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &reg);
     return 0;
 }
 

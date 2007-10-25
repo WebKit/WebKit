@@ -422,10 +422,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebDebugProgram.h"
-				>
-			</File>
-			<File
 				RelativePath="..\WebDocumentLoader.h"
 				>
 			</File>
@@ -542,6 +538,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebScriptDebugServer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebScriptObject.h"
 				>
 			</File>
@@ -646,10 +646,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebDebugProgram.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\WebDocumentLoader.cpp"
 				>
 			</File>
@@ -731,6 +727,10 @@
 			</File>
 			<File
 				RelativePath="..\WebResource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebScriptDebugServer.cpp"
 				>
 			</File>
 			<File

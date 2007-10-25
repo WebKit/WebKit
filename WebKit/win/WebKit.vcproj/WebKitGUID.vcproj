@@ -210,10 +210,6 @@
 			>
 		</File>
 		<File
-			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebDebugProgram_i.c"
-			>
-		</File>
-		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebDocument_i.c"
 			>
 		</File>
@@ -335,6 +331,10 @@
 		</File>
 		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebScriptDebugListener_i.c"
+			>
+		</File>
+		<File
+			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebScriptDebugServer_i.c"
 			>
 		</File>
 		<File

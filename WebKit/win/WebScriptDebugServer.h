@@ -23,23 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebDebugProgram_H
-#define WebDebugProgram_H
+#ifndef WebScriptDebugServer_H
+#define WebScriptDebugServer_H
 
-#include "IWebDebugProgram.h"
+#include "IWebScriptDebugServer.h"
 
 interface IWebView;
 
-class WebDebugProgram : public IWebDebugProgram
+class WebScriptDebugServer : public IWebScriptDebugServer
 {
 public:
-    static WebDebugProgram* createInstance();
+    static WebScriptDebugServer* createInstance();
     static void viewAdded(IWebView* view);
     static void viewRemoved(IWebView* view);
 
 private:
-    WebDebugProgram();
-    ~WebDebugProgram();
+    WebScriptDebugServer();
+    ~WebScriptDebugServer();
 
 public:
     // IUnknown
@@ -51,7 +51,7 @@ public:
     
     virtual ULONG STDMETHODCALLTYPE Release( void);
 
-    // IWebDebugProgram
+    // IWebScriptDebugServer
     virtual HRESULT STDMETHODCALLTYPE attach( void);
     
     virtual HRESULT STDMETHODCALLTYPE detach( void);

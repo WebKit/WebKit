@@ -1,3 +1,40 @@
+2007-10-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Renamed WebDebugProgram to WebScriptDebugServer to match the naming
+        scheme on the mac.
+
+        * Interfaces/IWebDebugProgram.idl: Removed.
+        * Interfaces/IWebScriptDebugServer.idl: Copied from win/Interfaces/IWebDebugProgram.idl.
+        * Interfaces/WebKit.idl: 
+        * WebDebugProgram.cpp: Removed.
+        * WebDebugProgram.h: Removed.
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj:
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::CreateInstance):
+        * WebKitDLL.cpp:
+        (RunAsLocalServer):
+        * WebScriptDebugServer.cpp: Copied from win/WebDebugProgram.cpp.
+        (WebScriptDebugServer::WebScriptDebugServer):
+        (WebScriptDebugServer::~WebScriptDebugServer):
+        (WebScriptDebugServer::createInstance):
+        (WebScriptDebugServer::QueryInterface):
+        (WebScriptDebugServer::AddRef):
+        (WebScriptDebugServer::Release):
+        (WebScriptDebugServer::viewAdded):
+        (WebScriptDebugServer::viewRemoved):
+        (WebScriptDebugServer::attach):
+        (WebScriptDebugServer::detach):
+        (WebScriptDebugServer::statistics):
+        (WebScriptDebugServer::webViews):
+        * WebScriptDebugServer.h: Copied from win/WebDebugProgram.h.
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::~WebView):
+
 2007-10-24  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5549919> Initialize the font database before any font code is invoked
