@@ -1,3 +1,11 @@
+2007-10-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Update the Leopard WebKitSystemInterface to be 4-way univeral to include 64-bit.
+
+        * libWebKitSystemInterfaceLeopard.a:
+
 2007-10-25  Sam Weinig  <sam@webkit.org>
 
         Added wrapper for getting the foundation cache directory.
