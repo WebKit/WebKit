@@ -1,3 +1,18 @@
+2007-10-25  Alp Toker  <alp@atoker.com>
+
+        Unreviewed fix to make the GTK+ port run.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15686
+        GtkLauncher aborts on launch due to uninitialized threading subsystem
+
+        http://bugs.webkit.org/show_bug.cgi?id=15688
+        [GTK] Make it possible to disable database support
+
+        Make database path initialization conditional on database support
+        being enabled.
+
+        * Api/webkitgtkglobal.cpp:
+
 2007-10-24  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.  Track WebCore changes in r27004.

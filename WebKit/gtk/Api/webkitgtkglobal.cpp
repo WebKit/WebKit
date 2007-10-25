@@ -39,9 +39,11 @@ void webkit_init(void)
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
 
+#if ENABLE(DATABASE)
     // FIXME: It should be possible for client applications to override this default location
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
     WebCore::DatabaseTracker::tracker().setDatabasePath(databaseDirectory);
     g_free(databaseDirectory);
+#endif
 }
 }

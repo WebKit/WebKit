@@ -52,6 +52,9 @@ win32-g++ {
 
 gtk-port: PKGCONFIG += gthread-2.0
 
+# Database support temporarily disabled, see http://bugs.webkit.org/show_bug.cgi?id=15686
+gtk-port: DEFINES += ENABLE_ICONDATABASE=0 ENABLE_DATABASE=0
+
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1

@@ -1,3 +1,14 @@
+2007-10-25  Alp Toker  <alp@atoker.com>
+
+        Unreviewed fix to make the GTK+ port run.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15686
+        GtkLauncher aborts on launch due to uninitialized threading subsystem
+
+        Disable database support until #15686 is fixed.
+
+        * WebCore.pro:
+
 2007-10-25  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.
