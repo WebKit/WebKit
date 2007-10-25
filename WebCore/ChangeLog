@@ -1,3 +1,100 @@
+2007-10-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Bulk rename of platform/sql/SQL* to platform/sql/SQLite*
+        
+        This is more accurate in that there is no realistic "SQL" abstraction, the classes are obviously
+        tied extremely close to SQLite, and is necessitated by the introduction of "SQLTransaction" in 
+        the HTML5 database API which we are adopting.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::iconDatabaseSyncThread):
+        (WebCore::databaseVersionNumber):
+        (WebCore::isValidDatabase):
+        (WebCore::createDatabaseTables):
+        (WebCore::IconDatabase::performOpenInitialization):
+        (WebCore::IconDatabase::checkIntegrity):
+        (WebCore::IconDatabase::performURLImport):
+        (WebCore::IconDatabase::writeToDatabase):
+        (WebCore::IconDatabase::pruneUnretainedIcons):
+        (WebCore::IconDatabase::checkForDanglingPageURLs):
+        (WebCore::IconDatabase::imported):
+        (WebCore::IconDatabase::setImported):
+        (WebCore::readySQLiteStatement):
+        (WebCore::IconDatabase::setIconIDForPageURLInSQLDatabase):
+        (WebCore::IconDatabase::removePageURLFromSQLDatabase):
+        (WebCore::IconDatabase::getIconIDForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::addIconURLToSQLDatabase):
+        (WebCore::IconDatabase::getImageDataForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::removeIconFromSQLDatabase):
+        (WebCore::IconDatabase::writeIconSnapshotToSQLDatabase):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconRecord.cpp:
+        * platform/sql/SQLAuthorizer.cpp: Removed.
+        * platform/sql/SQLAuthorizer.h: Removed.
+        * platform/sql/SQLDatabase.cpp: Removed.
+        * platform/sql/SQLDatabase.h: Removed.
+        * platform/sql/SQLStatement.cpp: Removed.
+        * platform/sql/SQLStatement.h: Removed.
+        * platform/sql/SQLTransaction.cpp: Removed.
+        * platform/sql/SQLTransaction.h: Removed.
+        * platform/sql/SQLiteAuthorizer.cpp: Copied from platform/sql/SQLAuthorizer.cpp.
+        * platform/sql/SQLiteAuthorizer.h: Copied from platform/sql/SQLAuthorizer.h.
+        (WebCore::SQLiteAuthorizer::~SQLiteAuthorizer):
+        * platform/sql/SQLiteDatabase.cpp: Copied from platform/sql/SQLDatabase.cpp.
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::~SQLiteDatabase):
+        (WebCore::SQLiteDatabase::open):
+        (WebCore::SQLiteDatabase::close):
+        (WebCore::SQLiteDatabase::setFullsync):
+        (WebCore::SQLiteDatabase::setSynchronous):
+        (WebCore::SQLiteDatabase::setBusyTimeout):
+        (WebCore::SQLiteDatabase::setBusyHandler):
+        (WebCore::SQLiteDatabase::executeCommand):
+        (WebCore::SQLiteDatabase::returnsAtLeastOneResult):
+        (WebCore::SQLiteDatabase::tableExists):
+        (WebCore::SQLiteDatabase::clearAllTables):
+        (WebCore::SQLiteDatabase::runVacuumCommand):
+        (WebCore::SQLiteDatabase::lastInsertRowID):
+        (WebCore::SQLiteDatabase::lastChanges):
+        (WebCore::SQLiteDatabase::lastError):
+        (WebCore::SQLiteDatabase::lastErrorMsg):
+        (WebCore::SQLiteDatabase::authorizerFunction):
+        (WebCore::SQLiteDatabase::setAuthorizer):
+        (WebCore::SQLiteDatabase::lock):
+        (WebCore::SQLiteDatabase::unlock):
+        * platform/sql/SQLiteDatabase.h: Copied from platform/sql/SQLDatabase.h.
+        * platform/sql/SQLiteStatement.cpp: Copied from platform/sql/SQLStatement.cpp.
+        (WebCore::SQLiteStatement::SQLiteStatement):
+        (WebCore::SQLiteStatement::~SQLiteStatement):
+        (WebCore::SQLiteStatement::prepare):
+        * platform/sql/SQLiteStatement.h: Copied from platform/sql/SQLStatement.h.
+        (WebCore::SQLiteStatement::database):
+        * platform/sql/SQLiteTransaction.cpp: Copied from platform/sql/SQLTransaction.cpp.
+        (WebCore::SQLiteTransaction::SQLiteTransaction):
+        (WebCore::SQLiteTransaction::~SQLiteTransaction):
+        (WebCore::SQLiteTransaction::begin):
+        (WebCore::SQLiteTransaction::commit):
+        (WebCore::SQLiteTransaction::rollback):
+        * platform/sql/SQLiteTransaction.h: Copied from platform/sql/SQLTransaction.h.
+        * storage/Database.cpp:
+        (WebCore::retrieveTextResultFromDatabase):
+        (WebCore::setTextValueInDatabase):
+        (WebCore::Database::performExecuteSql):
+        (WebCore::Database::performGetTableNames):
+        (WebCore::Database::executeSql):
+        * storage/Database.h:
+        * storage/DatabaseAuthorizer.h:
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::addDatabase):
+        * storage/DatabaseTracker.h:
+
 2007-10-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

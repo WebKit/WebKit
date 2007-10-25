@@ -87,18 +87,18 @@
 		1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */; };
 		1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D137E0A5325520064BF5F /* DOMXPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D137F0A5325520064BF5F /* DOMXPath.mm */; };
-		1A2246490CC98DDB00C05240 /* SQLDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246430CC98DDB00C05240 /* SQLDatabase.cpp */; };
-		1A22464A0CC98DDB00C05240 /* SQLDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2246440CC98DDB00C05240 /* SQLDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A22464B0CC98DDB00C05240 /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246450CC98DDB00C05240 /* SQLStatement.cpp */; };
-		1A22464C0CC98DDB00C05240 /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2246460CC98DDB00C05240 /* SQLStatement.h */; };
-		1A22464D0CC98DDB00C05240 /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246470CC98DDB00C05240 /* SQLTransaction.cpp */; };
-		1A22464E0CC98DDB00C05240 /* SQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2246480CC98DDB00C05240 /* SQLTransaction.h */; };
+		1A2246490CC98DDB00C05240 /* SQLiteDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */; };
+		1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A22464B0CC98DDB00C05240 /* SQLiteStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246450CC98DDB00C05240 /* SQLiteStatement.cpp */; };
+		1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2246460CC98DDB00C05240 /* SQLiteStatement.h */; };
+		1A22464D0CC98DDB00C05240 /* SQLiteTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246470CC98DDB00C05240 /* SQLiteTransaction.cpp */; };
+		1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2246480CC98DDB00C05240 /* SQLiteTransaction.h */; };
 		1A2A68230B5BEDE70002A480 /* ProgressTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2A68210B5BEDE70002A480 /* ProgressTracker.cpp */; };
 		1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2A68220B5BEDE70002A480 /* ProgressTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E570CC55213004A2062 /* SQLValue.cpp */; };
 		1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E580CC55213004A2062 /* SQLValue.h */; };
-		1A2E6E7A0CC556D5004A2062 /* SQLAuthorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E780CC556D5004A2062 /* SQLAuthorizer.cpp */; };
-		1A2E6E7B0CC556D5004A2062 /* SQLAuthorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E790CC556D5004A2062 /* SQLAuthorizer.h */; };
+		1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */; };
+		1A2E6E7B0CC556D5004A2062 /* SQLiteAuthorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */; };
 		1A2E6FA40CC5795D004A2062 /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6FA30CC5795D004A2062 /* ThreadingPthreads.cpp */; };
 		1A2E6FF50CC67855004A2062 /* VersionChangeCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6FF30CC67855004A2062 /* VersionChangeCallback.h */; };
 		1A2E6FF80CC6788D004A2062 /* VersionChangeCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A2E6FF70CC6788D004A2062 /* VersionChangeCallback.idl */; };
@@ -4143,18 +4143,18 @@
 		1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSOverflowEvent.h; sourceTree = "<group>"; };
 		1A1D137E0A5325520064BF5F /* DOMXPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPath.h; sourceTree = "<group>"; };
 		1A1D137F0A5325520064BF5F /* DOMXPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMXPath.mm; sourceTree = "<group>"; };
-		1A2246430CC98DDB00C05240 /* SQLDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLDatabase.cpp; path = sql/SQLDatabase.cpp; sourceTree = "<group>"; };
-		1A2246440CC98DDB00C05240 /* SQLDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLDatabase.h; path = sql/SQLDatabase.h; sourceTree = "<group>"; };
-		1A2246450CC98DDB00C05240 /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLStatement.cpp; path = sql/SQLStatement.cpp; sourceTree = "<group>"; };
-		1A2246460CC98DDB00C05240 /* SQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLStatement.h; path = sql/SQLStatement.h; sourceTree = "<group>"; };
-		1A2246470CC98DDB00C05240 /* SQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLTransaction.cpp; path = sql/SQLTransaction.cpp; sourceTree = "<group>"; };
-		1A2246480CC98DDB00C05240 /* SQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLTransaction.h; path = sql/SQLTransaction.h; sourceTree = "<group>"; };
+		1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteDatabase.cpp; path = sql/SQLiteDatabase.cpp; sourceTree = "<group>"; };
+		1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteDatabase.h; path = sql/SQLiteDatabase.h; sourceTree = "<group>"; };
+		1A2246450CC98DDB00C05240 /* SQLiteStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteStatement.cpp; path = sql/SQLiteStatement.cpp; sourceTree = "<group>"; };
+		1A2246460CC98DDB00C05240 /* SQLiteStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteStatement.h; path = sql/SQLiteStatement.h; sourceTree = "<group>"; };
+		1A2246470CC98DDB00C05240 /* SQLiteTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteTransaction.cpp; path = sql/SQLiteTransaction.cpp; sourceTree = "<group>"; };
+		1A2246480CC98DDB00C05240 /* SQLiteTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteTransaction.h; path = sql/SQLiteTransaction.h; sourceTree = "<group>"; };
 		1A2A68210B5BEDE70002A480 /* ProgressTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressTracker.cpp; sourceTree = "<group>"; };
 		1A2A68220B5BEDE70002A480 /* ProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProgressTracker.h; sourceTree = "<group>"; };
 		1A2E6E570CC55213004A2062 /* SQLValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLValue.cpp; path = sql/SQLValue.cpp; sourceTree = "<group>"; };
 		1A2E6E580CC55213004A2062 /* SQLValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLValue.h; path = sql/SQLValue.h; sourceTree = "<group>"; };
-		1A2E6E780CC556D5004A2062 /* SQLAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLAuthorizer.cpp; path = sql/SQLAuthorizer.cpp; sourceTree = "<group>"; };
-		1A2E6E790CC556D5004A2062 /* SQLAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLAuthorizer.h; path = sql/SQLAuthorizer.h; sourceTree = "<group>"; };
+		1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteAuthorizer.cpp; path = sql/SQLiteAuthorizer.cpp; sourceTree = "<group>"; };
+		1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteAuthorizer.h; path = sql/SQLiteAuthorizer.h; sourceTree = "<group>"; };
 		1A2E6FA30CC5795D004A2062 /* ThreadingPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadingPthreads.cpp; path = pthreads/ThreadingPthreads.cpp; sourceTree = "<group>"; };
 		1A2E6FF30CC67855004A2062 /* VersionChangeCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionChangeCallback.h; sourceTree = "<group>"; };
 		1A2E6FF70CC6788D004A2062 /* VersionChangeCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VersionChangeCallback.idl; sourceTree = "<group>"; };
@@ -7709,14 +7709,14 @@
 		1A2E6E560CC551E0004A2062 /* sql */ = {
 			isa = PBXGroup;
 			children = (
-				1A2E6E780CC556D5004A2062 /* SQLAuthorizer.cpp */,
-				1A2E6E790CC556D5004A2062 /* SQLAuthorizer.h */,
-				1A2246430CC98DDB00C05240 /* SQLDatabase.cpp */,
-				1A2246440CC98DDB00C05240 /* SQLDatabase.h */,
-				1A2246450CC98DDB00C05240 /* SQLStatement.cpp */,
-				1A2246460CC98DDB00C05240 /* SQLStatement.h */,
-				1A2246470CC98DDB00C05240 /* SQLTransaction.cpp */,
-				1A2246480CC98DDB00C05240 /* SQLTransaction.h */,
+				1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */,
+				1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */,
+				1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */,
+				1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */,
+				1A2246450CC98DDB00C05240 /* SQLiteStatement.cpp */,
+				1A2246460CC98DDB00C05240 /* SQLiteStatement.h */,
+				1A2246470CC98DDB00C05240 /* SQLiteTransaction.cpp */,
+				1A2246480CC98DDB00C05240 /* SQLiteTransaction.h */,
 				1A2E6E570CC55213004A2062 /* SQLValue.cpp */,
 				1A2E6E580CC55213004A2062 /* SQLValue.h */,
 			);
@@ -13523,15 +13523,15 @@
 				BC9ADD230CC4032600098C4C /* CSSTransformValue.h in Headers */,
 				E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */,
 				1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */,
-				1A2E6E7B0CC556D5004A2062 /* SQLAuthorizer.h in Headers */,
+				1A2E6E7B0CC556D5004A2062 /* SQLiteAuthorizer.h in Headers */,
 				1A2E6FF50CC67855004A2062 /* VersionChangeCallback.h in Headers */,
 				1A2E6FFF0CC67907004A2062 /* JSVersionChangeCallback.h in Headers */,
 				1A2E70620CC67CAA004A2062 /* JSCustomVersionChangeCallback.h in Headers */,
 				51EC054F0CC6A615001DA88F /* DatabaseCallback.h in Headers */,
 				BC014C750CC5579D009C4B20 /* SecurityOrigin.h in Headers */,
-				1A22464A0CC98DDB00C05240 /* SQLDatabase.h in Headers */,
-				1A22464C0CC98DDB00C05240 /* SQLStatement.h in Headers */,
-				1A22464E0CC98DDB00C05240 /* SQLTransaction.h in Headers */,
+				1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */,
+				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
+				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
 				A83B78D70CCAFEC1000B0825 /* SVGFontFaceUriElement.h in Headers */,
 				A83B78DA0CCAFEC1000B0825 /* SVGFontFaceSrcElement.h in Headers */,
 				A83B78DD0CCAFEC1000B0825 /* SVGFontFaceNameElement.h in Headers */,
@@ -13613,6 +13613,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -15080,15 +15081,15 @@
 				A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */,
 				BC9ADD800CC4092200098C4C /* CSSTransformValue.cpp in Sources */,
 				1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */,
-				1A2E6E7A0CC556D5004A2062 /* SQLAuthorizer.cpp in Sources */,
+				1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */,
 				1A2E6FA40CC5795D004A2062 /* ThreadingPthreads.cpp in Sources */,
 				1A2E6FFE0CC67907004A2062 /* JSVersionChangeCallback.cpp in Sources */,
 				1A2E70630CC67CAA004A2062 /* JSCustomVersionChangeCallback.cpp in Sources */,
 				51EC05510CC6ACBA001DA88F /* DatabaseCallback.cpp in Sources */,
 				BC014C740CC5579D009C4B20 /* SecurityOrigin.cpp in Sources */,
-				1A2246490CC98DDB00C05240 /* SQLDatabase.cpp in Sources */,
-				1A22464B0CC98DDB00C05240 /* SQLStatement.cpp in Sources */,
-				1A22464D0CC98DDB00C05240 /* SQLTransaction.cpp in Sources */,
+				1A2246490CC98DDB00C05240 /* SQLiteDatabase.cpp in Sources */,
+				1A22464B0CC98DDB00C05240 /* SQLiteStatement.cpp in Sources */,
+				1A22464D0CC98DDB00C05240 /* SQLiteTransaction.cpp in Sources */,
 				A83B78D80CCAFEC1000B0825 /* SVGFontFaceUriElement.cpp in Sources */,
 				A83B78DB0CCAFEC1000B0825 /* SVGFontFaceSrcElement.cpp in Sources */,
 				A83B78DE0CCAFEC1000B0825 /* SVGFontFaceFormatElement.cpp in Sources */,

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "SQLStatement.h"
+#include "SQLiteStatement.h"
 
 #include "Logging.h"
 #include "SQLValue.h"
@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-SQLStatement::SQLStatement(SQLDatabase& db, const String& sql)
+SQLiteStatement::SQLiteStatement(SQLiteDatabase& db, const String& sql)
     : m_database(db)
     , m_query(sql)
     , m_statement(0)
@@ -41,12 +41,12 @@ SQLStatement::SQLStatement(SQLDatabase& db, const String& sql)
     m_query.append(UChar(0));
 }
 
-SQLStatement::~SQLStatement()
+SQLiteStatement::~SQLiteStatement()
 {
     finalize();
 }
 
-int SQLStatement::prepare()
+int SQLiteStatement::prepare()
 {    
     const void* tail;
     LOG(SQLDatabase, "SQL - prepare - %s", m_query.ascii().data());
@@ -61,7 +61,7 @@ int SQLStatement::prepare()
     return lastError();
 }
     
-int SQLStatement::step()
+int SQLiteStatement::step()
 {
     if (!isPrepared())
         return SQLITE_ERROR;
@@ -74,7 +74,7 @@ int SQLStatement::step()
     return error;
 }
     
-int SQLStatement::finalize()
+int SQLiteStatement::finalize()
 {
     if (m_statement) {
         LOG(SQLDatabase, "SQL - finalize - %s", m_query.ascii().data());
@@ -85,7 +85,7 @@ int SQLStatement::finalize()
     return lastError();
 }
 
-int SQLStatement::reset() 
+int SQLiteStatement::reset() 
 {
     if (m_statement) {
         LOG(SQLDatabase, "SQL - reset - %s", m_query.ascii().data());
@@ -94,7 +94,7 @@ int SQLStatement::reset()
     return SQLITE_ERROR;
 }
 
-bool SQLStatement::executeCommand()
+bool SQLiteStatement::executeCommand()
 {
     if (!isPrepared())
         if (prepare() != SQLITE_OK)
@@ -107,7 +107,7 @@ bool SQLStatement::executeCommand()
     return true;
 }
 
-bool SQLStatement::returnsAtLeastOneResult()
+bool SQLiteStatement::returnsAtLeastOneResult()
 {
     if (!isPrepared())
         if (prepare() != SQLITE_OK)
@@ -121,7 +121,7 @@ bool SQLStatement::returnsAtLeastOneResult()
 
 }
 
-int SQLStatement::bindBlob(int index, const void* blob, int size, bool copy)
+int SQLiteStatement::bindBlob(int index, const void* blob, int size, bool copy)
 {
     ASSERT(blob);
     ASSERT(size > -1);
@@ -132,7 +132,7 @@ int SQLStatement::bindBlob(int index, const void* blob, int size, bool copy)
     return lastError();
 }
 
-int SQLStatement::bindText(int index, const char* text, bool copy)
+int SQLiteStatement::bindText(int index, const char* text, bool copy)
 {
     ASSERT(text);
     if (copy)
@@ -142,7 +142,7 @@ int SQLStatement::bindText(int index, const char* text, bool copy)
     return lastError();
 }
 
-int SQLStatement::bindText16(int index, const String& text, bool copy)
+int SQLiteStatement::bindText16(int index, const String& text, bool copy)
 {
     if (copy)
         sqlite3_bind_text16(m_statement, index, text.characters(), sizeof(UChar) * text.length(), SQLITE_TRANSIENT);
@@ -152,22 +152,22 @@ int SQLStatement::bindText16(int index, const String& text, bool copy)
 }
 
 
-int SQLStatement::bindInt64(int index, int64_t integer)
+int SQLiteStatement::bindInt64(int index, int64_t integer)
 {
     return sqlite3_bind_int64(m_statement, index, integer);
 }
 
-int SQLStatement::bindDouble(int index, double number)
+int SQLiteStatement::bindDouble(int index, double number)
 {
     return sqlite3_bind_double(m_statement, index, number);
 }
 
-int SQLStatement::bindNull(int index)
+int SQLiteStatement::bindNull(int index)
 {
     return sqlite3_bind_null(m_statement, index);
 }
 
-int SQLStatement::bindValue(int index, const SQLValue& value)
+int SQLiteStatement::bindValue(int index, const SQLValue& value)
 {
     switch (value.type()) {
         case SQLValue::StringValue:
@@ -183,20 +183,20 @@ int SQLStatement::bindValue(int index, const SQLValue& value)
     }
 }
 
-unsigned SQLStatement::bindParameterCount() const
+unsigned SQLiteStatement::bindParameterCount() const
 {
     ASSERT(isPrepared());
     return sqlite3_bind_parameter_count(m_statement);
 }
 
-int SQLStatement::columnCount()
+int SQLiteStatement::columnCount()
 {
     if (m_statement)
         return sqlite3_data_count(m_statement);
     return 0;
 }
 
-String SQLStatement::getColumnName(int col)
+String SQLiteStatement::getColumnName(int col)
 {
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
@@ -207,7 +207,7 @@ String SQLStatement::getColumnName(int col)
     return String(sqlite3_column_name(m_statement, col));
 }
 
-String SQLStatement::getColumnName16(int col)
+String SQLiteStatement::getColumnName16(int col)
 {
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
@@ -217,7 +217,7 @@ String SQLStatement::getColumnName16(int col)
     return String((const UChar*)sqlite3_column_name16(m_statement, col));
 }
     
-String SQLStatement::getColumnText(int col)
+String SQLiteStatement::getColumnText(int col)
 {
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
@@ -227,7 +227,7 @@ String SQLStatement::getColumnText(int col)
     return String((const char*)sqlite3_column_text(m_statement, col));
 }
 
-String SQLStatement::getColumnText16(int col)
+String SQLiteStatement::getColumnText16(int col)
 {
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
@@ -237,7 +237,7 @@ String SQLStatement::getColumnText16(int col)
     return String((const UChar*)sqlite3_column_text16(m_statement, col));
 }
     
-double SQLStatement::getColumnDouble(int col)
+double SQLiteStatement::getColumnDouble(int col)
 {
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
@@ -247,7 +247,7 @@ double SQLStatement::getColumnDouble(int col)
     return sqlite3_column_double(m_statement, col);
 }
 
-int SQLStatement::getColumnInt(int col)
+int SQLiteStatement::getColumnInt(int col)
 {
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
@@ -257,7 +257,7 @@ int SQLStatement::getColumnInt(int col)
     return sqlite3_column_int(m_statement, col);
 }
 
-int64_t SQLStatement::getColumnInt64(int col)
+int64_t SQLiteStatement::getColumnInt64(int col)
 {
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
@@ -267,7 +267,7 @@ int64_t SQLStatement::getColumnInt64(int col)
     return sqlite3_column_int64(m_statement, col);
 }
     
-void SQLStatement::getColumnBlobAsVector(int col, Vector<char>& result)
+void SQLiteStatement::getColumnBlobAsVector(int col, Vector<char>& result)
 {
     if (!m_statement && prepareAndStep() != SQLITE_ROW) {
         result.clear();
@@ -292,7 +292,7 @@ void SQLStatement::getColumnBlobAsVector(int col, Vector<char>& result)
         result[i] = ((const unsigned char*)blob)[i];
 }
 
-const void* SQLStatement::getColumnBlob(int col, int& size)
+const void* SQLiteStatement::getColumnBlob(int col, int& size)
 {
     if (finalize() != SQLITE_OK)
         LOG(SQLDatabase, "Finalize failed");
@@ -315,7 +315,7 @@ const void* SQLStatement::getColumnBlob(int col, int& size)
     return 0;
 }
 
-bool SQLStatement::returnTextResults(int col, Vector<String>& v)
+bool SQLiteStatement::returnTextResults(int col, Vector<String>& v)
 {
     bool result = true;
     if (m_statement)
@@ -334,7 +334,7 @@ bool SQLStatement::returnTextResults(int col, Vector<String>& v)
     return result;
 }
 
-bool SQLStatement::returnTextResults16(int col, Vector<String>& v)
+bool SQLiteStatement::returnTextResults16(int col, Vector<String>& v)
 {
     bool result = true;
     if (m_statement)
@@ -353,7 +353,7 @@ bool SQLStatement::returnTextResults16(int col, Vector<String>& v)
     return result;
 }
 
-bool SQLStatement::returnIntResults(int col, Vector<int>& v)
+bool SQLiteStatement::returnIntResults(int col, Vector<int>& v)
 {
     bool result = true;
     if (m_statement)
@@ -372,7 +372,7 @@ bool SQLStatement::returnIntResults(int col, Vector<int>& v)
     return result;
 }
 
-bool SQLStatement::returnInt64Results(int col, Vector<int64_t>& v)
+bool SQLiteStatement::returnInt64Results(int col, Vector<int64_t>& v)
 {
     bool result = true;
     if (m_statement)
@@ -391,7 +391,7 @@ bool SQLStatement::returnInt64Results(int col, Vector<int64_t>& v)
     return result;
 }
 
-bool SQLStatement::returnDoubleResults(int col, Vector<double>& v)
+bool SQLiteStatement::returnDoubleResults(int col, Vector<double>& v)
 {
     bool result = true;
     if (m_statement)
@@ -410,7 +410,7 @@ bool SQLStatement::returnDoubleResults(int col, Vector<double>& v)
     return result;
 }
 
-bool SQLStatement::isExpired()
+bool SQLiteStatement::isExpired()
 {
     return m_statement ? sqlite3_expired(m_statement) : true;
 }

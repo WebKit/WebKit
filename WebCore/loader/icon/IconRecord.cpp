@@ -32,8 +32,8 @@
 #include "BitmapImage.h"
 #include "IconDatabase.h"
 #include "Logging.h"
-#include "SQLStatement.h"
-#include "SQLTransaction.h"
+#include "SQLiteStatement.h"
+#include "SQLiteTransaction.h"
 #include "SystemTime.h"
 
 #include <limits.h>

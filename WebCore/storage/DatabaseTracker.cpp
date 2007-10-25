@@ -31,7 +31,7 @@
 #include "Database.h"
 #include "FileSystem.h"
 #include "NotImplemented.h"
-#include "SQLStatement.h"
+#include "SQLiteStatement.h"
 
 namespace WebCore {
 
@@ -83,7 +83,7 @@ void DatabaseTracker::openTrackerDatabase()
     
 String DatabaseTracker::fullPathForDatabase(const String& origin, const String& name)
 {
-    SQLStatement statement(m_database, "SELECT path FROM Databases WHERE origin=? AND name=?;");
+    SQLiteStatement statement(m_database, "SELECT path FROM Databases WHERE origin=? AND name=?;");
 
     if (statement.prepare() != SQLResultOk)
         return "";
@@ -100,7 +100,7 @@ String DatabaseTracker::fullPathForDatabase(const String& origin, const String& 
         return "";
     }
 
-    SQLStatement sequenceStatement(m_database, "SELECT seq FROM sqlite_sequence WHERE name='Databases';");
+    SQLiteStatement sequenceStatement(m_database, "SELECT seq FROM sqlite_sequence WHERE name='Databases';");
 
     // FIXME: More informative error handling here, even though these steps should never fail
     if (sequenceStatement.prepare() != SQLResultOk)
@@ -139,7 +139,7 @@ void DatabaseTracker::populateOrigins()
     if (!m_database.isOpen())
         return;
 
-    SQLStatement statement(m_database, "SELECT DISTINCT origin FROM Databases;");
+    SQLiteStatement statement(m_database, "SELECT DISTINCT origin FROM Databases;");
 
     if (statement.prepare() != SQLResultOk)
         return;
@@ -167,7 +167,7 @@ bool DatabaseTracker::databaseNamesForOrigin(const String& origin, Vector<String
     if (!m_database.isOpen())
         return false;
 
-    SQLStatement statement(m_database, "SELECT name FROM Databases where origin=?;");
+    SQLiteStatement statement(m_database, "SELECT name FROM Databases where origin=?;");
 
     if (statement.prepare() != SQLResultOk)
         return false;
@@ -191,7 +191,7 @@ bool DatabaseTracker::addDatabase(const String& origin, const String& name, cons
     if (!m_database.isOpen())
         return false;
 
-    SQLStatement statement(m_database, "INSERT INTO Databases (origin, name, path) VALUES (?, ?, ?);");
+    SQLiteStatement statement(m_database, "INSERT INTO Databases (origin, name, path) VALUES (?, ?, ?);");
 
     if (statement.prepare() != SQLResultOk)
         return false;

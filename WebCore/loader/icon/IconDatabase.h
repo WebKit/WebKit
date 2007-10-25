@@ -27,7 +27,7 @@
 #define IconDatabase_h
 
 #if ENABLE(ICONDATABASE)
-#include "SQLDatabase.h"
+#include "SQLiteDatabase.h"
 #endif
 
 #include "StringHash.h"
@@ -213,26 +213,26 @@ private:
     // The client is set by the main thread before the thread starts, and from then on is only used by the sync thread
     IconDatabaseClient* m_client;
     
-    SQLDatabase m_syncDB;
+    SQLiteDatabase m_syncDB;
     
     // Track whether the "Safari 2" import is complete and/or set in the database
     bool m_imported;
     bool m_isImportedSet;
     
-    OwnPtr<SQLStatement> m_setIconIDForPageURLStatement;
-    OwnPtr<SQLStatement> m_removePageURLStatement;
-    OwnPtr<SQLStatement> m_getIconIDForIconURLStatement;
-    OwnPtr<SQLStatement> m_getImageDataForIconURLStatement;
-    OwnPtr<SQLStatement> m_addIconToIconInfoStatement;
-    OwnPtr<SQLStatement> m_addIconToIconDataStatement;
-    OwnPtr<SQLStatement> m_getImageDataStatement;
-    OwnPtr<SQLStatement> m_deletePageURLsForIconURLStatement;
-    OwnPtr<SQLStatement> m_deleteIconFromIconInfoStatement;
-    OwnPtr<SQLStatement> m_deleteIconFromIconDataStatement;
-    OwnPtr<SQLStatement> m_updateIconInfoStatement;
-    OwnPtr<SQLStatement> m_updateIconDataStatement;
-    OwnPtr<SQLStatement> m_setIconInfoStatement;
-    OwnPtr<SQLStatement> m_setIconDataStatement;
+    OwnPtr<SQLiteStatement> m_setIconIDForPageURLStatement;
+    OwnPtr<SQLiteStatement> m_removePageURLStatement;
+    OwnPtr<SQLiteStatement> m_getIconIDForIconURLStatement;
+    OwnPtr<SQLiteStatement> m_getImageDataForIconURLStatement;
+    OwnPtr<SQLiteStatement> m_addIconToIconInfoStatement;
+    OwnPtr<SQLiteStatement> m_addIconToIconDataStatement;
+    OwnPtr<SQLiteStatement> m_getImageDataStatement;
+    OwnPtr<SQLiteStatement> m_deletePageURLsForIconURLStatement;
+    OwnPtr<SQLiteStatement> m_deleteIconFromIconInfoStatement;
+    OwnPtr<SQLiteStatement> m_deleteIconFromIconDataStatement;
+    OwnPtr<SQLiteStatement> m_updateIconInfoStatement;
+    OwnPtr<SQLiteStatement> m_updateIconDataStatement;
+    OwnPtr<SQLiteStatement> m_setIconInfoStatement;
+    OwnPtr<SQLiteStatement> m_setIconDataStatement;
 #endif // ENABLE(ICONDATABASE)
 };
 

@@ -4537,35 +4537,35 @@
 				Name="sql"
 				>
 				<File
-					RelativePath="..\platform\sql\SQLAuthorizer.cpp"
+					RelativePath="..\platform\sql\SQLiteAuthorizer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\sql\SQLAuthorizer.h"
+					RelativePath="..\platform\sql\SQLiteAuthorizer.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\sql\SQLDatabase.cpp"
+					RelativePath="..\platform\sql\SQLiteDatabase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\sql\SQLDatabase.h"
+					RelativePath="..\platform\sql\SQLiteDatabase.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\sql\SQLStatement.cpp"
+					RelativePath="..\platform\sql\SQLiteStatement.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\sql\SQLStatement.h"
+					RelativePath="..\platform\sql\SQLiteStatement.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\sql\SQLTransaction.cpp"
+					RelativePath="..\platform\sql\SQLiteTransaction.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\sql\SQLTransaction.h"
+					RelativePath="..\platform\sql\SQLiteTransaction.h"
 					>
 				</File>
 				<File

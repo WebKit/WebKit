@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SQLAuthorizer_h
-#define SQLAuthorizer_h
+#ifndef SQLiteAuthorizer_h
+#define SQLiteAuthorizer_h
 
 #include "Threading.h"
 
@@ -38,9 +38,9 @@ extern const int SQLAuthAllow;
 extern const int SQLAuthIgnore;
 extern const int SQLAuthDeny;
 
-class SQLAuthorizer : public ThreadSafeShared<SQLAuthorizer> {
+class SQLiteAuthorizer : public ThreadSafeShared<SQLiteAuthorizer> {
 public:
-    virtual ~SQLAuthorizer() { }
+    virtual ~SQLiteAuthorizer() { }
 
     virtual int createTable(const String& tableName) { return SQLAuthAllow; }
     virtual int createTempTable(const String& tableName) { return SQLAuthAllow; }
@@ -85,4 +85,4 @@ public:
 
 } // namespace WebCore
 
-#endif // SQLAuthorizer_h
+#endif // SQLiteAuthorizer_h

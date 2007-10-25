@@ -23,25 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SQLStatement_h
-#define SQLStatement_h
+#ifndef SQLiteStatement_h
+#define SQLiteStatement_h
 
 #include "PlatformString.h"
-#include "SQLDatabase.h"
+#include "SQLiteDatabase.h"
 #include <wtf/Noncopyable.h>
 
 typedef struct sqlite3_stmt sqlite3_stmt;
 
 namespace WebCore {
 
-class SQLDatabase;
+class SQLiteDatabase;
 class SQLValue;
 
-class SQLStatement : public Noncopyable
+class SQLiteStatement : public Noncopyable
 {
 public:
-    SQLStatement(SQLDatabase& db, const String&);
-    ~SQLStatement();
+    SQLiteStatement(SQLiteDatabase& db, const String&);
+    ~SQLiteStatement();
     
     int prepare();
     bool isPrepared() const { return m_statement; }
@@ -95,9 +95,9 @@ public:
     int lastError() { return m_database.lastError(); }
     const char* lastErrorMsg() { return m_database.lastErrorMsg(); }
     
-    SQLDatabase* database() { return &m_database; }
+    SQLiteDatabase* database() { return &m_database; }
 private:
-    SQLDatabase& m_database;
+    SQLiteDatabase& m_database;
     String      m_query;
 
     sqlite3_stmt* m_statement;
@@ -105,4 +105,4 @@ private:
 
 } // namespace WebCore
 
-#endif // SQLStatement_h
+#endif // SQLiteStatement_h

@@ -43,9 +43,9 @@ typedef struct sqlite3 sqlite3;
 
 namespace WebCore {
 
-class SQLAuthorizer;
-class SQLStatement;
-class SQLTransaction;
+class SQLiteAuthorizer;
+class SQLiteStatement;
+class SQLiteTransaction;
 
 extern const int SQLResultDone;
 extern const int SQLResultError;
@@ -54,12 +54,12 @@ extern const int SQLResultRow;
 extern const int SQLResultSchema;
 
 
-class SQLDatabase : public Noncopyable
+class SQLiteDatabase : public Noncopyable
 {
-friend class SQLTransaction;
+friend class SQLiteTransaction;
 public:
-    SQLDatabase();
-    ~SQLDatabase();
+    SQLiteDatabase();
+    ~SQLiteDatabase();
 
     bool open(const String& filename);
     bool isOpen() const { return m_db; }
@@ -101,7 +101,7 @@ public:
         return m_db;
     }
     
-    void setAuthorizer(PassRefPtr<SQLAuthorizer>);
+    void setAuthorizer(PassRefPtr<SQLiteAuthorizer>);
 
     // (un)lock's the database like a mutex
     void lock();
@@ -116,14 +116,14 @@ private:
     bool m_transactionInProgress;
     
     Mutex m_authorizerLock;
-    RefPtr<SQLAuthorizer> m_authorizer;
+    RefPtr<SQLiteAuthorizer> m_authorizer;
 
     Mutex m_lockingMutex;
 #ifndef NDEBUG
     pthread_t m_openingThread;
 #endif
     
-}; // class SQLDatabase
+}; // class SQLiteDatabase
 
 inline String escapeSQLString(const String& s)
 {

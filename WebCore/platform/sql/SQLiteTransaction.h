@@ -23,54 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "SQLTransaction.h"
+#ifndef SQLiteTransaction_h
+#define SQLiteTransaction_h
 
-#include "SQLDatabase.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-SQLTransaction::SQLTransaction(SQLDatabase& db)
-    : m_db(db)
-    , m_began(false)
-{
-}
+class SQLiteDatabase;
 
-SQLTransaction::~SQLTransaction()
+class SQLiteTransaction : public Noncopyable
 {
-    if (m_began) 
-        rollback();
-}
+public:
+    SQLiteTransaction(SQLiteDatabase& db);
+    ~SQLiteTransaction();
     
-void SQLTransaction::begin()
-{
-    if (!m_began) {
-        ASSERT(!m_db.m_transactionInProgress);
-        m_began = m_db.executeCommand("BEGIN;");
-        m_db.m_transactionInProgress = true;
-    }
-}
-
-void SQLTransaction::commit()
-{
-    if (m_began) {
-        ASSERT(m_db.m_transactionInProgress);
-        if (m_db.executeCommand("COMMIT;")) {
-            m_began = false;
-            m_db.m_transactionInProgress = false;
-        }
-    }
-}
-
-void SQLTransaction::rollback()
-{
-    if (m_began) {
-        ASSERT(m_db.m_transactionInProgress);
-        if (m_db.executeCommand("ROLLBACK;")) {
-            m_began = false;
-            m_db.m_transactionInProgress = false;
-        }
-    }
-}
+    void begin();
+    void commit();
+    void rollback();
     
+private:
+    SQLiteDatabase& m_db;
+    bool m_began;
+
+};
+
 } // namespace WebCore
+
+#endif // SQLiteTransation_H
+

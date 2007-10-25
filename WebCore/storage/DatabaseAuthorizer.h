@@ -28,11 +28,11 @@
 #ifndef DatabaseAuthorizer_h
 #define DatabaseAuthorizer_h
 
-#include "SQLAuthorizer.h"
+#include "SQLiteAuthorizer.h"
 
 namespace WebCore {
 
-class DatabaseAuthorizer : public SQLAuthorizer {
+class DatabaseAuthorizer : public SQLiteAuthorizer {
 public:
     DatabaseAuthorizer();
 
