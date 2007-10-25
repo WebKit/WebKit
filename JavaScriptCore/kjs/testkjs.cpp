@@ -52,7 +52,7 @@ using namespace KJS;
 using namespace WTF;
 
 static void testIsInteger();
-static bool fillBufferWithContentsOfFile(const char* fileName, Vector<char>& buffer);
+static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer);
 
 class StopWatch
 {
@@ -159,7 +159,7 @@ JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List 
       StopWatch stopWatch;
       UString fileName = args[0]->toString(exec);
       Vector<char> script;
-      if (!fillBufferWithContentsOfFile(fileName.UTF8String().c_str(), script))
+      if (!fillBufferWithContentsOfFile(fileName, script))
         return throwError(exec, GeneralError, "Could not open file.");
 
       stopWatch.start();
@@ -172,7 +172,7 @@ JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List 
     {
       UString fileName = args[0]->toString(exec);
       Vector<char> script;
-      if (!fillBufferWithContentsOfFile(fileName.UTF8String().c_str(), script))
+      if (!fillBufferWithContentsOfFile(fileName, script))
         return throwError(exec, GeneralError, "Could not open file.");
 
       exec->dynamicInterpreter()->evaluate(fileName, 0, script.data());
@@ -187,26 +187,17 @@ JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List 
   return 0;
 }
 
-#if PLATFORM(WIN_OS)
-
 // Use SEH for Release builds only to get rid of the crash report dialog
-// (luckyly the same tests fail in Release and Debug builds so far). Need to
+// (luckily the same tests fail in Release and Debug builds so far). Need to
 // be in a separate main function because the kjsmain function requires object
 // unwinding.
 
-#if defined(_DEBUG)
-#define TRY
-#define EXCEPT(x)
-#else
+#if PLATFORM(WIN_OS) && !defined(_DEBUG)
 #define TRY       __try {
 #define EXCEPT(x) } __except (EXCEPTION_EXECUTE_HANDLER) { x; }
-#endif
-
 #else
-
 #define TRY
 #define EXCEPT(x)
-
 #endif
 
 int kjsmain(int argc, char** argv);
@@ -250,13 +241,13 @@ static PassRefPtr<Interpreter> setupInterpreter()
   return interp.release();
 }
 
-static bool prettyPrintScript(const char* fileName, const Vector<char>& script)
+static bool prettyPrintScript(const UString& fileName, const Vector<char>& script)
 {
   int errLine = 0;
   UString errMsg;
   UString s = Parser::prettyPrint(script.data(), &errLine, &errMsg);
   if (s.isNull()) {
-    fprintf(stderr, "%s:%d: %s.\n", fileName, errLine, errMsg.UTF8String().c_str());
+    fprintf(stderr, "%s:%d: %s.\n", fileName.UTF8String().c_str(), errLine, errMsg.UTF8String().c_str());
     return false;
   }
   
@@ -264,13 +255,35 @@ static bool prettyPrintScript(const char* fileName, const Vector<char>& script)
   return true;
 }
 
-static bool doIt(int argc, char** argv)
+static bool runWithScripts(const Vector<UString>& fileNames, bool prettyPrint)
 {
-  bool success = true;
-  bool prettyPrint = false;
-
   RefPtr<Interpreter> interp = setupInterpreter();
   Vector<char> script;
+  
+  bool success = true;
+  
+  for (size_t i = 0; i < fileNames.size(); i++) {
+    UString fileName = fileNames[i];
+    
+    if (!fillBufferWithContentsOfFile(fileName, script))
+      return false; // fail early so we can catch missing files
+    
+    if (prettyPrint)
+      prettyPrintScript(fileName, script);
+    else {
+      Completion completion = interp->evaluate(fileName, 0, script.data());
+      success = success && completion.complType() != Throw;
+    }
+  }
+  return success;
+}
+
+static void parseArguments(int argc, char** argv, Vector<UString>& fileNames, bool& prettyPrint)
+{
+  if (argc < 2) {
+    fprintf(stderr, "Usage: testkjs file1 [file2...]\n");
+    exit(-1);
+  }
   
   for (int i = 1; i < argc; i++) {
     const char* fileName = argv[i];
@@ -280,37 +293,21 @@ static bool doIt(int argc, char** argv)
       prettyPrint = true;
       continue;
     }
-    
-    script.clear();
-    if (!fillBufferWithContentsOfFile(fileName, script)) {
-      success = false;
-      break; // fail early so we can catch missing files
-    }
-    
-    if (prettyPrint)
-      prettyPrintScript(fileName, script);
-    else {
-      Completion completion = interp->evaluate(fileName, 0, script.data());
-      success = success && completion.complType() != Throw;
-    }
+    fileNames.append(fileName);
   }
-
-  return success;
 }
-
 
 int kjsmain(int argc, char** argv)
 {
-  if (argc < 2) {
-    fprintf(stderr, "Usage: testkjs file1 [file2...]\n");
-    return -1;
-  }
-
   testIsInteger();
 
   JSLock lock;
-
-  bool success = doIt(argc, argv);
+  
+  bool prettyPrint = false;
+  Vector<UString> fileNames;
+  parseArguments(argc, argv, fileNames, prettyPrint);
+  
+  bool success = runWithScripts(fileNames, prettyPrint);
 
 #ifndef NDEBUG
   Collector::collect();
@@ -348,11 +345,11 @@ static void testIsInteger()
   ASSERT(!IsInteger<GlobalImp>::value);
 }
 
-static bool fillBufferWithContentsOfFile(const char* fileName, Vector<char>& buffer)
+static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer)
 {
-  FILE* f = fopen(fileName, "r");
+  FILE* f = fopen(fileName.UTF8String().c_str(), "r");
   if (!f) {
-    fprintf(stderr, "Could not open file: %s\n", fileName);
+    fprintf(stderr, "Could not open file: %s\n", fileName.UTF8String().c_str());
     return false;
   }
   

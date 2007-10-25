@@ -2,6 +2,20 @@
 
         Reviewed by Maciej.
         
+        More preparation work before adding long-running mode to testkjs.
+
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::callAsFunction):
+        (prettyPrintScript):
+        (runWithScripts):
+        (parseArguments):
+        (kjsmain):
+        (fillBufferWithContentsOfFile):
+
+2007-10-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
         Bring testkjs code out of the dark ages in preparation for more
         radical improvements (like long-running testing support!)
 
