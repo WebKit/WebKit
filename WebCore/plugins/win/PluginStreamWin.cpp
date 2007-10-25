@@ -390,7 +390,6 @@ void PluginStreamWin::didReceiveData(NetscapePlugInStreamLoader* loader, const c
         if (!retval || (int)written != length)
             cancelAndDestroyStream(NPRES_NETWORK_ERR);
     }
-
 }
 
 void PluginStreamWin::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&)

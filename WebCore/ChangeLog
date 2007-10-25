@@ -1,3 +1,29 @@
+2007-10-25  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Steve.
+
+        <rdar://5548217>: [NTS] Java 6 update 3 crashes Safari when loading a 
+        java page
+
+        Previous patch erroneously compared a path and a
+        path-including-filename. This corrects that. It also caches the result
+        of safariPluginsPath() and uses shell API funcs for determining filename
+        and parent directory from a full path.
+
+        * ChangeLog:
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::safariPluginsPath): Cache return value. Use API functions to
+        build the path
+        (WebCore::PluginDatabaseWin::pluginForMIMEType): Compare again plugin's
+        parent directory, not full path
+        (WebCore::PluginDatabaseWin::pluginForExtension): Same
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackageWin::PluginPackageWin): Store parent directory
+        * plugins/win/PluginPackageWin.h:
+        (WebCore::PluginPackageWin::parentDirectory):
+        * plugins/win/PluginStreamWin.cpp:
+        (WebCore::PluginStreamWin::didReceiveData):
+
 2007-10-25  Alp Toker  <alp@atoker.com>
 
         Unreviewed fix to make the GTK+ port run.
@@ -162,6 +188,7 @@
 
         * WebCore.vcproj/WebCore.vcproj:
 
+>>>>>>> .r27047
 2007-10-24  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Oliver.
@@ -196,6 +223,7 @@
         (WebCore::DatabaseTracker::fullPathForDatabase): Return the member variable
         * storage/DatabaseTracker.h:
 
+>>>>>>> .r27005
 2007-10-24  David Hyatt  <hyatt@apple.com>
 
         Don't try to gap fill transformed selections.  Fix the invalidation of selection to use the clip to visible content

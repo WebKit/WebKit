@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <shlwapi.h>
+
 #include "config.h"
 #include "PluginPackageWin.h"
 
@@ -107,9 +109,8 @@ PluginPackageWin::PluginPackageWin(const String& path, const FILETIME& lastModif
     , m_loadCount(0)
     , m_freeLibraryTimer(this, &PluginPackageWin::freeLibraryTimerFired)
 {
-    int pos = m_path.deprecatedString().findRev('\\');
-
-    m_fileName = m_path.right(m_path.length() - pos - 1);
+    m_fileName = String(PathFindFileName(m_path.charactersWithNullTermination()));
+    m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
 }
 
 bool PluginPackageWin::fetchInfo()
