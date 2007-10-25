@@ -33,6 +33,7 @@
 
 #include <JavaScriptCore/value.h>
 #include <JavaScriptCore/object.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/types.h>
 #include <JavaScriptCore/interpreter.h>
 #include <JavaScriptCore/protect.h>

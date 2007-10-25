@@ -1,3 +1,16 @@
+2007-10-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Geoff.
+        
+        Make JSG build again after JSGlobalObject change.
+
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        (JSRun::GlobalObject):
+        * JSRun.h:
+        (JSInterpreter::JSInterpreter):
+        * JSUtils.h:
+
 2007-10-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
