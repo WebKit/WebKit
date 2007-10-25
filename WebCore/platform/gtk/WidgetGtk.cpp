@@ -148,15 +148,18 @@ void Widget::hide()
     gtk_widget_hide(gtkWidget());
 }
 
-void Widget::setEnabled(bool)
+void Widget::setEnabled(bool shouldEnable)
 {
-    notImplemented();
+    if (!gtkWidget())
+        return;
+    gtk_widget_set_sensitive(gtkWidget(), shouldEnable);
 }
 
 bool Widget::isEnabled() const
 {
-    notImplemented();
-    return false;
+    if (!gtkWidget())
+        return false;
+    return GTK_WIDGET_IS_SENSITIVE(gtkWidget());
 }
 
 void Widget::removeFromParent()
