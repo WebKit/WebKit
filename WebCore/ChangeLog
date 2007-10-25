@@ -1,3 +1,16 @@
+2007-10-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15650
+        XML attribute nodes are not importable
+
+        Tests: fast/dom/import-attribute-node.html
+               fast/dom/import-document-fragment.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::importNode): Implemented for Attribute and DocumentFragment nodes.
+
 2007-10-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
