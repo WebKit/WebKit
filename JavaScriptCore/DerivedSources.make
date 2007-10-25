@@ -59,5 +59,5 @@ grammar.cpp : grammar.y
 
 # character tables for PCRE
 
-chartables.c : $(BUILT_PRODUCTS_DIR)/dftables
+chartables.c : $(BUILT_PRODUCTS_DIR)/dftables$(DFTABLES_EXTENSION)
 	$^ $@

@@ -27,7 +27,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Constructing generated files..."
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(ConfigurationName)&quot; &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\bin\dftables$(WebKitConfigSuffix).exe&quot; &quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\chartables.c&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\APICast.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSBase.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSContextRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSObjectRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRefCF.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRefCF.cpp&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSValueRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JavaScriptCore.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSRetainPtr.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\APICast.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSBase.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSContextRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSObjectRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRefCF.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRefCF.cpp&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSValueRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JavaScriptCore.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSRetainPtr.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -46,7 +46,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
 				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -105,7 +105,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Constructing generated files..."
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(ConfigurationName)&quot; &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\bin\dftables$(WebKitConfigSuffix).exe&quot; &quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\chartables.c&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\APICast.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSBase.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSContextRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSObjectRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRefCF.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRefCF.cpp&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSValueRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JavaScriptCore.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSRetainPtr.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot; &quot;$(WebKitLibrariesDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\APICast.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSBase.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSContextRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSObjectRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRefCF.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSStringRefCF.cpp&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSValueRef.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JavaScriptCore.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\..\API\JSRetainPtr.h&quot; &quot;$(WebKitOutputDir)\include\JavaScriptCore\JavaScriptCore&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
 				PreprocessorDefinitions="HAVE_CONFIG_H;WIN32;__STD_C;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -296,10 +296,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\function_object.h"
-				>
-			</File>
-			<File
-				RelativePath=".\grammarWrapper.cpp"
 				>
 			</File>
 			<File
@@ -526,6 +522,46 @@
 				RelativePath="..\..\kjs\value.h"
 				>
 			</File>
+			<Filter
+				Name="DerivedSources"
+				>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\array_object.lut.h"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\date_object.lut.h"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\grammar.cpp"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\grammar.h"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\lexer.lut.h"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\math_object.lut.h"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\number_object.lut.h"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\regexp_object.lut.h"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\string_object.lut.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="PCRE"

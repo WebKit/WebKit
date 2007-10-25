@@ -1,3 +1,39 @@
+2007-10-25  Adam Roben  <aroben@apple.com>
+
+        Change JavaScriptCore.vcproj to use DerivedSources.make
+
+        We were trying to emulate the logic of make in
+        build-generated-files.sh, but we got it wrong. We now use a
+        build-generated-files very much like the one that WebCore uses to
+        invoke make.
+
+        We also now only have a Debug configuration of dftables which we build
+        even when doing a Release build of JavaScriptCore. dftables also no
+        longer has the "_debug" name suffix.
+
+        Changes mostly made by Darin, reviewed by me.
+
+        * DerivedSources.make: Add a variable to set the extension used for
+        the dftables executable.
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Updated to use Debug
+        dftables in Release configurations.
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+           - Updated include path to point to the new location of the derived
+             sources.
+           - Modified pre-build event to pass the right arguments to
+             build-generated-files.sh and not call dftables directly.
+           - Added the derived source files to the project.
+           - Removed grammarWrapper.cpp, which isn't needed now that we're
+             compiling grammar.cpp directly.
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+        Slightly modified from the WebCore version.
+        * JavaScriptCore.vcproj/JavaScriptCore/grammarWrapper.cpp: Removed.
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj:
+            - Changed the output location to match Mac.
+            - Removed the Release configuration.
+            - Removed the _debug suffix.
+
 2007-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.
