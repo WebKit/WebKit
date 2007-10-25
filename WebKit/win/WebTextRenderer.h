@@ -26,30 +26,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ForEachCoClass_h
-#define ForEachCoClass_h
+#ifndef WebTextRenderer_h
+#define WebTextRenderer_h
 
-#define FOR_EACH_COCLASS(macro) \
-    macro(CFDictionaryPropertyBag) \
-    macro(WebCache) \
-    macro(WebDebugProgram) \
-    macro(WebDownload) \
-    macro(WebError) \
-    macro(WebHistory) \
-    macro(WebHistoryItem) \
-    macro(WebIconDatabase) \
-    macro(WebJavaScriptCollector) \
-    macro(WebKitStatistics) \
-    macro(WebMutableURLRequest) \
-    macro(WebNotificationCenter) \
-    macro(WebPreferences) \
-    macro(WebScrollBar) \
-    macro(WebTextRenderer) \
-    macro(WebURLCredential) \
-    macro(WebURLProtectionSpace) \
-    macro(WebURLRequest) \
-    macro(WebURLResponse) \
-    macro(WebView) \
-    // end of macro
+#include "IWebTextRenderer.h"
 
-#endif // !defined(ForEachCoClass_h)
+class WebTextRenderer : public IWebTextRenderer {
+public:
+    static WebTextRenderer* createInstance();
+
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(
+        /* [in] */ REFIID riid,
+        /* [iid_is][out] */ void** ppvObject);
+    
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    
+    virtual ULONG STDMETHODCALLTYPE Release();
+
+    virtual HRESULT STDMETHODCALLTYPE registerPrivateFont(
+        /* [in] */ LPCOLESTR fontFilePath);
+    
+private:
+    WebTextRenderer();
+    ~WebTextRenderer();
+
+    ULONG m_refCount;
+};
+
+#endif // !defined(WebTextRenderer_h)

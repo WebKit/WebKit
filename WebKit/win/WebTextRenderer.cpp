@@ -26,30 +26,64 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ForEachCoClass_h
-#define ForEachCoClass_h
+#include "config.h"
+#include "WebTextRenderer.h"
 
-#define FOR_EACH_COCLASS(macro) \
-    macro(CFDictionaryPropertyBag) \
-    macro(WebCache) \
-    macro(WebDebugProgram) \
-    macro(WebDownload) \
-    macro(WebError) \
-    macro(WebHistory) \
-    macro(WebHistoryItem) \
-    macro(WebIconDatabase) \
-    macro(WebJavaScriptCollector) \
-    macro(WebKitStatistics) \
-    macro(WebMutableURLRequest) \
-    macro(WebNotificationCenter) \
-    macro(WebPreferences) \
-    macro(WebScrollBar) \
-    macro(WebTextRenderer) \
-    macro(WebURLCredential) \
-    macro(WebURLProtectionSpace) \
-    macro(WebURLRequest) \
-    macro(WebURLResponse) \
-    macro(WebView) \
-    // end of macro
+#include <CoreFoundation/CFString.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <wtf/RetainPtr.h>
 
-#endif // !defined(ForEachCoClass_h)
+WebTextRenderer* WebTextRenderer::createInstance()
+{
+    WebTextRenderer* instance = new WebTextRenderer;
+    instance->AddRef();
+    return instance;
+}
+
+WebTextRenderer::WebTextRenderer()
+    : m_refCount(0)
+{
+}
+
+WebTextRenderer::~WebTextRenderer()
+{
+}
+
+HRESULT STDMETHODCALLTYPE WebTextRenderer::QueryInterface(const IID &riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IWebTextRenderer*>(this);
+    else if (IsEqualGUID(riid, IID_IWebTextRenderer))
+        *ppvObject = static_cast<IWebTextRenderer*>(this);
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE WebTextRenderer::AddRef()
+{
+    return ++m_refCount;
+}
+
+ULONG STDMETHODCALLTYPE WebTextRenderer::Release()
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete this;
+
+    return newRef;
+}
+
+HRESULT STDMETHODCALLTYPE WebTextRenderer::registerPrivateFont(
+    /* [in] */ LPCOLESTR fontFilePath)
+{
+    if (!AddFontResourceEx(fontFilePath, FR_PRIVATE, 0))
+        return E_FAIL;
+
+    RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(fontFilePath), static_cast<CFIndex>(wcslen(fontFilePath))));
+    wkAddFontsAtPath(string.get());
+    return S_OK;
+}

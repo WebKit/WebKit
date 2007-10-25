@@ -384,6 +384,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Interfaces\IWebTextRenderer.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\IWebUIDelegate.idl"
 			>
 		</File>

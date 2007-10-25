@@ -43,6 +43,7 @@
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
+#include "WebTextRenderer.h"
 #include "WebURLCredential.h"
 #include "WebURLProtectionSpace.h"
 #include "WebURLResponse.h"

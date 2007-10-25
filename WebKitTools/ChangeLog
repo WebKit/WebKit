@@ -1,3 +1,12 @@
+2007-10-24  Adam Roben  <aroben@apple.com>
+
+        Use WebTextRenderer in DRT
+
+        Reviewed by Ada.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize): Use WebTextRenderer instead of using AddFontResourceEx.
+
 2007-10-24  Sven Herzberg  <sven@imendio.com>
 
         Reviewed by Mark Rowe.

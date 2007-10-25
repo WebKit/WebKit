@@ -51,6 +51,7 @@ cpp_quote(" */")
 import "oaidl.idl";
 import "ocidl.idl";
 
+import "IWebTextRenderer.idl";
 import "IWebView.idl";
 import "IWebViewPrivate.idl";
 import "IWebUIDelegate.idl";
@@ -279,5 +280,14 @@ library OpenSourceWebKit
 #endif
     coclass WebURLResponse {
         [default] interface IWebURLResponse;
+    }
+
+#if __BUILDBOT__
+    [uuid(24040cd6-aff4-4a51-9c8b-71539580ee76)]
+#else
+    [uuid(1fbff564-5ff4-484f-b3d9-217483f9f5fc)]
+#endif
+    coclass WebTextRenderer {
+        [default] interface IWebTextRenderer;
     }
 }

@@ -56,7 +56,6 @@
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4127;4355"
 				ForcedIncludeFiles="CodeAnalysisConfig.h"
-				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -148,7 +147,6 @@
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4127;4355"
 				ForcedIncludeFiles="CodeAnalysisConfig.h"
-				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -244,7 +242,6 @@
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4127;4355"
 				ForcedIncludeFiles="CodeAnalysisConfig.h"
-				EnablePREfast="$(EnablePREfast)"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -553,6 +550,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebTextRenderer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebURLAuthenticationChallenge.h"
 				>
 			</File>
@@ -738,6 +739,10 @@
 			</File>
 			<File
 				RelativePath="..\WebScrollBar.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebTextRenderer.cpp"
 				>
 			</File>
 			<File

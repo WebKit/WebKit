@@ -123,6 +123,9 @@ static wstring initialize(HMODULE hModule)
         if (FARPROC dllRegisterServer = GetProcAddress(webKitModule, "DllRegisterServer"))
             dllRegisterServer();
 
+    // Init COM
+    OleInitialize(0);
+
     static LPCTSTR fontsToInstall[] = {
         TEXT("AHEM____.ttf"),
         TEXT("Apple Chancery.ttf"),
@@ -159,11 +162,10 @@ static wstring initialize(HMODULE hModule)
     
     wstring resourcesPath(exePath + TEXT("DumpRenderTree.resources\\"));
 
-    for (int i = 0; i < ARRAYSIZE(fontsToInstall); ++i)
-        AddFontResourceEx(wstring(resourcesPath + fontsToInstall[i]).c_str(), FR_PRIVATE, 0);
-
-    // Init COM
-    OleInitialize(0);
+    COMPtr<IWebTextRenderer> textRenderer;
+    if (SUCCEEDED(CoCreateInstance(CLSID_WebTextRenderer, 0, CLSCTX_ALL, IID_IWebTextRenderer, (void**)&textRenderer)))
+        for (int i = 0; i < ARRAYSIZE(fontsToInstall); ++i)
+            textRenderer->registerPrivateFont(wstring(resourcesPath + fontsToInstall[i]).c_str());
 
     // Initialize CG
     InitializeCoreGraphics();

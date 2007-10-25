@@ -1,5 +1,31 @@
 2007-10-24  Adam Roben  <aroben@apple.com>
 
+        Add [I]WebTextRenderer
+
+        Right now this class can only be used to add private fonts for use by
+        the running process, but will eventually be the home of the
+        WebKitGraphics functions.
+
+        Reviewed by Ada.
+
+        * ForEachCoClass.h: Added WebTextRenderer.
+        * Interfaces/WebKit.idl: Ditto.
+        * WebKit.vcproj/Interfaces.vcproj: Ditto.
+        * WebKit.vcproj/WebKit.vcproj: Ditto.
+        * WebKit.vcproj/WebKitGUID.vcproj: Ditto.
+        * WebKitClassFactory.cpp: Ditto.
+        * WebTextRenderer.cpp: Added.
+        (WebTextRenderer::createInstance):
+        (WebTextRenderer::WebTextRenderer):
+        (WebTextRenderer::~WebTextRenderer):
+        (WebTextRenderer::QueryInterface):
+        (WebTextRenderer::AddRef):
+        (WebTextRenderer::Release):
+        (WebTextRenderer::registerPrivateFont):
+        * WebTextRenderer.h: Added.
+
+2007-10-24  Adam Roben  <aroben@apple.com>
+
         Use FOR_EACH_COCLASS in WebKitClassFactory
 
         Reviewed by Ada.
