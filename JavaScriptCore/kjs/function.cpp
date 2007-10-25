@@ -76,8 +76,6 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
     newExec.setException(exec->exception());
   ctx.setExecState(&newExec);
 
-  passInParameters(&newExec, args);
-
   Debugger* dbg = exec->dynamicInterpreter()->debugger();
   int sid = -1;
   int lineno = -1;
@@ -124,19 +122,6 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
     return comp.value();
   else
     return jsUndefined();
-}
-
-// ECMA 10.1.3q
-inline void FunctionImp::passInParameters(ExecState* exec, const List& args)
-{
-    Vector<Identifier>& parameters = body->parameters();
-
-    JSObject* variable = exec->context()->variableObject();
-
-    size_t size = parameters.size();
-    for (size_t i = 0; i < size; ++i) {
-      variable->put(exec, parameters[i], args[i], DontDelete);
-    }
 }
 
 JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)

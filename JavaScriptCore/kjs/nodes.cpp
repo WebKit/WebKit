@@ -1766,7 +1766,13 @@ VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in, Type t)
 }
 
 void VarDeclNode::getDeclarations(DeclarationStacks& stacks)
-{ 
+{
+    // The normal check to avoid overwriting pre-existing values with variable
+    // declarations doesn't work for the "arguments" property because we 
+    // instantiate it lazily. So we need to check here instead.
+    if (ident == stacks.exec->propertyNames().arguments)
+        return;
+
     stacks.varStack.append(this); 
 }
 
@@ -1844,18 +1850,19 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
 
 void VarDeclNode::processDeclaration(ExecState* exec)
 {
-  JSObject* variable = exec->context()->variableObject();
+  Context* context = exec->context();
+  JSObject* variable = context->variableObject();
 
-  // If a variable by this name already exists, don't clobber it -
-  // it might be a function parameter
-  if (!variable->hasProperty(exec, ident)) {
-    int flags = Internal;
-    if (exec->context()->codeType() != EvalCode)
-      flags |= DontDelete;
-    if (varType == VarDeclNode::Constant)
-      flags |= ReadOnly;
-    variable->put(exec, ident, jsUndefined(), flags);
-  }
+  if (context->codeType() != FunctionCode)
+    if (variable->hasProperty(exec, ident))
+        return;
+
+  int flags = Internal;
+  if (context->codeType() != EvalCode)
+    flags |= DontDelete;
+  if (varType == VarDeclNode::Constant)
+    flags |= ReadOnly;
+  variable->put(exec, ident, jsUndefined(), flags);
 }
 
 // ------------------------------ VarDeclListNode ------------------------------
@@ -1876,7 +1883,7 @@ void VarDeclListNode::getDeclarations(DeclarationStacks& stacks)
         ASSERT(next->mayHaveDeclarations());
         stacks.nodeStack.append(next.get()); 
     }
-    stacks.varStack.append(var.get()); 
+    stacks.nodeStack.append(var.get());
 }
 
 void VarDeclListNode::breakCycle() 
@@ -2595,14 +2602,14 @@ FunctionBodyNode::FunctionBodyNode(SourceElementsNode *s)
   setLoc(-1, -1);
 }
 
-void FunctionBodyNode::initializeDeclarationStacks()
+void FunctionBodyNode::initializeDeclarationStacks(ExecState* exec)
 {
     Node* node = source.get();
     if (!node)
         return;
 
     DeclarationStacks::NodeStack nodeStack;
-    DeclarationStacks stacks(nodeStack, m_varStack, m_functionStack);
+    DeclarationStacks stacks(exec, nodeStack, m_varStack, m_functionStack);
     
     while (true) {
         ASSERT(node->mayHaveDeclarations()); // Otherwise, we wasted time putting an irrelevant node on the stack.
@@ -2622,15 +2629,22 @@ void FunctionBodyNode::initializeDeclarationStacks()
 void FunctionBodyNode::processDeclarations(ExecState* exec)
 {
     if (!m_initializedDeclarationStacks)
-        initializeDeclarationStacks();
+        initializeDeclarationStacks(exec);
 
     size_t i, size;
 
-    for (i = 0, size = m_functionStack.size(); i < size; ++i)
-        m_functionStack[i]->processDeclaration(exec);
+    JSObject* variableObject = exec->context()->variableObject();
+    const List& args = *exec->context()->arguments();
 
+    // The order of additions to the variable object here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
     for (i = 0, size = m_varStack.size(); i < size; ++i)
         m_varStack[i]->processDeclaration(exec);
+
+    for (i = 0, size = m_parameters.size(); i < size; ++i)
+        variableObject->put(exec, m_parameters[i], args[i], DontDelete);
+
+    for (i = 0, size = m_functionStack.size(); i < size; ++i)
+        m_functionStack[i]->processDeclaration(exec);
 }
 
 void FunctionBodyNode::addParam(const Identifier& ident)

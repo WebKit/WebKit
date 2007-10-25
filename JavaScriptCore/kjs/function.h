@@ -107,8 +107,6 @@ namespace KJS {
     static JSValue* argumentsGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* callerGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-
-    void passInParameters(ExecState*, const List&);
   };
 
   class IndexToNameMap {

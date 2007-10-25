@@ -1,3 +1,38 @@
+2007-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15683
+        Re-order declaration initialization to avoid calling hasProperty inside
+        VarDeclNode::processDeclaration
+        
+        .7% speedup on SunSpider.
+
+        * kjs/function.h:
+        * kjs/function.cpp: Merged parameter processing into FunctionBodyNode's
+        other processing of declared symbols, so the order of execution could 
+        change.
+
+        * kjs/nodes.cpp:
+        (KJS::VarDeclNode::getDeclarations): Added special case for the 
+        "arguments" property name, explained in the comment.
+
+        (KJS::VarDeclNode::processDeclaration): Removed call to hasProperty
+        in the case of function code, since we know the declared symbol
+        management will resolve conflicts between symbols. Yay!
+
+        (KJS::VarDeclListNode::getDeclarations): Now that VarDeclNode's 
+        implementation of getDeclarations is non-trivial, we can't take a 
+        short-cut here any longer -- we need to put the VarDecl node on the 
+        stack so it gets processed normally.
+
+        (KJS::FunctionBodyNode::processDeclarations): Changed the order of 
+        processing to enforce mutual exclusion rules.
+
+        * kjs/nodes.h:
+        (KJS::DeclarationStacks::DeclarationStacks): Structure includes an 
+        ExecState now, for fast access to the "arguments" property name.
+
 2007-10-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.

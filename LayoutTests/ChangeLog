@@ -1,3 +1,13 @@
+2007-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout tests for bugs that might result from changes like 
+        http://bugs.webkit.org/show_bug.cgi?id=15683
+
+        * fast/js/vardecl-preserve-parameters-expected.txt: Added.
+        * fast/js/vardecl-preserve-parameters.html: Added.
+        * fast/js/vardecl-preserve-vardecl-expected.txt: Added.
+        * fast/js/vardecl-preserve-vardecl.html: Added.
+
 2007-10-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
