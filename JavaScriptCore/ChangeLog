@@ -1,5 +1,90 @@
 2007-10-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+        
+        Add a JSGlobalObject class and remove the InterpreterMap
+        http://bugs.webkit.org/show_bug.cgi?id=15681
+        
+        This required making JSCallbackObject a template class to allow for
+        JSGlobalObjects with JSCallbackObject functionality.
+        
+        SunSpider claims this was a 0.5% speedup.
+
+        * API/JSCallbackObject.cpp:
+        (KJS::):
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h: Copied from API/JSCallbackObject.cpp.
+        (KJS::::JSCallbackObject):
+        (KJS::::init):
+        (KJS::::~JSCallbackObject):
+        (KJS::::initializeIfNeeded):
+        (KJS::::className):
+        (KJS::::getOwnPropertySlot):
+        (KJS::::put):
+        (KJS::::deleteProperty):
+        (KJS::::implementsConstruct):
+        (KJS::::construct):
+        (KJS::::implementsHasInstance):
+        (KJS::::hasInstance):
+        (KJS::::implementsCall):
+        (KJS::::callAsFunction):
+        (KJS::::getPropertyNames):
+        (KJS::::toNumber):
+        (KJS::::toString):
+        (KJS::::setPrivate):
+        (KJS::::getPrivate):
+        (KJS::::inherits):
+        (KJS::::cachedValueGetter):
+        (KJS::::staticValueGetter):
+        (KJS::::staticFunctionGetter):
+        (KJS::::callbackGetter):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        * API/JSValueRef.cpp:
+        (JSValueIsObjectOfClass):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant):
+        * bindings/jni/jni_jsobject.cpp:
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        * kjs/Context.cpp:
+        (KJS::Context::Context):
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::lexicalInterpreter):
+        * kjs/JSGlobalObject.h: Added.
+        (KJS::JSGlobalObject::JSGlobalObject):
+        (KJS::JSGlobalObject::isGlobalObject):
+        (KJS::JSGlobalObject::interpreter):
+        (KJS::JSGlobalObject::setInterpreter):
+        * kjs/array_instance.cpp:
+        * kjs/context.h:
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::Interpreter):
+        (KJS::Interpreter::init):
+        (KJS::Interpreter::~Interpreter):
+        (KJS::Interpreter::globalObject):
+        (KJS::Interpreter::initGlobalObject):
+        (KJS::Interpreter::evaluate):
+        * kjs/interpreter.h:
+        * kjs/lookup.h:
+        (KJS::cacheGlobalObject):
+        * kjs/object.h:
+        (KJS::JSObject::isGlobalObject):
+        * kjs/testkjs.cpp:
+
+2007-10-24  Eric Seidel  <eric@webkit.org>
+
         Build fix for Gtk, no review.
 
         * kjs/collector.cpp: #include "context.h"

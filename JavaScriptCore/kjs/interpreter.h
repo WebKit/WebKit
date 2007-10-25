@@ -45,6 +45,7 @@ namespace KJS {
   class EvalErrorPrototype;
   class FunctionObjectImp;
   class FunctionPrototype;
+  class JSGlobalObject;
   class NativeErrorImp;
   class NativeErrorPrototype;
   class NumberObjectImp;
@@ -94,7 +95,7 @@ namespace KJS {
      *
      * @param global The object to use as the global object for this interpreter
      */
-    Interpreter(JSObject* globalObject);
+    Interpreter(JSGlobalObject*);
     /**
      * Creates a new interpreter. A global object will be created and
      * initialized with the standard global properties.
@@ -111,7 +112,7 @@ namespace KJS {
      * Returns the object that is used as the global object during all script
      * execution performed by this interpreter
      */
-    JSObject* globalObject() const;
+    JSGlobalObject* globalObject() const;
 
     /**
      * Returns the execution state object which can be used to execute
@@ -300,24 +301,6 @@ namespace KJS {
 
     void saveBuiltins (SavedBuiltins&) const;
     void restoreBuiltins (const SavedBuiltins&);
-
-    /**
-     * Determine if the value is a global object (for any interpreter).  This may
-     * be difficult to determine for multiple uses of JSC in a process that are
-     * logically independent of each other.  In the case of WebCore, this method
-     * is used to determine if an object is the Window object so we can perform
-     * security checks.
-     */
-    virtual bool isGlobalObject(JSValue*) { return false; }
-    
-    /** 
-     * Find the interpreter for a particular global object.  This should really
-     * be a static method, but we can't do that is C++.  Again, as with isGlobalObject()
-     * implementation really need to know about all instances of Interpreter
-     * created in an application to correctly implement this method.  The only
-     * override of this method is currently in WebCore.
-     */
-    virtual Interpreter* interpreterForGlobalObject(const JSValue*) { return 0; }
     
     /**
      * Determine if the it is 'safe' to execute code in the target interpreter from an
@@ -337,9 +320,7 @@ namespace KJS {
     
     void setContext(Context* c) { m_context = c; }
     Context* context() const { return m_context; }
-    
-    static Interpreter* interpreterWithGlobalObject(JSObject*);
-    
+        
     void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }
 
     void startTimeoutCheck();
@@ -388,7 +369,7 @@ private:
     unsigned m_tickCount;
     unsigned m_ticksUntilNextTimeoutCheck;
 
-    JSObject* m_globalObject;
+    JSGlobalObject* m_globalObject;
 
     ObjectObjectImp* m_Object;
     FunctionObjectImp* m_Function;

@@ -151,7 +151,7 @@ void KJSProxy::initScriptIfNeeded()
 
   // Build the global object - which is a Window instance
   JSLock lock;
-  JSObject* globalObject = new JSDOMWindow(m_frame->domWindow());
+  JSDOMWindow* globalObject = new JSDOMWindow(m_frame->domWindow());
 
   // Create a KJS interpreter for this frame
   m_script = new ScriptInterpreter(globalObject, m_frame);

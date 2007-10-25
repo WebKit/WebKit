@@ -215,6 +215,9 @@ Window::Window(DOMWindow* window)
   : m_impl(window)
   , d(new WindowPrivate)
 {
+    // Window destruction is not thread-safe because of
+    // the non-thread-safe WebCore structures it references.
+    Collector::collectOnMainThreadOnly(this);
 }
 
 Window::~Window()

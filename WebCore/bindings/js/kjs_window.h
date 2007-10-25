@@ -65,7 +65,8 @@ namespace KJS {
 
   class WindowPrivate;
 
-  class Window : public DOMObject {
+  // This is the only WebCore JS binding which does not inherit from DOMNode
+  class Window : public JSGlobalObject {
     friend class Location;
     friend class WindowFunc;
     friend class ScheduledAction;

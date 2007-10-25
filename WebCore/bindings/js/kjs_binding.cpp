@@ -130,7 +130,7 @@ static NodePerDocMap& domNodesPerDocument()
     return staticDOMNodesPerDocument;
 }
 
-ScriptInterpreter::ScriptInterpreter(JSObject* global, Frame* frame)
+ScriptInterpreter::ScriptInterpreter(JSGlobalObject* global, Frame* frame)
     : Interpreter(global)
     , m_frame(frame)
     , m_currentEvent(0)

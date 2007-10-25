@@ -1,9 +1,6 @@
-// -*- c-basic-offset: 2 -*-
+// -*- c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,22 +19,25 @@
  *
  */
 
-#include "context.h"
-#include "ExecState.h"
-#include "internal.h"
+#ifndef KJS_GlobalObject_h
+#define KJS_GlobalObject_h
+
+#include "object.h"
 
 namespace KJS {
-
-Interpreter* ExecState::lexicalInterpreter() const
-{
-    if (!m_context)
-        return dynamicInterpreter();
-    
-    JSObject* object = m_context->scopeChain().bottom();
-    if (object && object->isGlobalObject())
-        return static_cast<JSGlobalObject*>(object)->interpreter();
-
-    return dynamicInterpreter();
-}
-
+    class Interpreter;
+    class JSGlobalObject : public JSObject {
+    public:
+        JSGlobalObject() { }
+        JSGlobalObject(JSValue* proto) : JSObject(proto) { }
+        
+        virtual bool isGlobalObject() const { return true; }
+        
+        Interpreter* interpreter() const { return m_interpreter; }
+        void setInterpreter(Interpreter* i) { m_interpreter = i; }
+    private:
+        Interpreter* m_interpreter;
+    };
 } // namespace KJS
+
+#endif // KJS_GlobalObject_h

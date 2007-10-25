@@ -27,6 +27,7 @@
 #include "objc_utility.h"
 
 #include "objc_instance.h"
+#include "JSGlobalObject.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include "WebScriptObject.h"
@@ -140,8 +141,8 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
             RootObject* originRootObject = findRootObject(originInterpreter);
 
             Interpreter *interpreter = 0;
-            if (originInterpreter->isGlobalObject(value))
-                interpreter = originInterpreter->interpreterForGlobalObject(value);
+            if (value->isObject() && static_cast<JSObject*>(value)->isGlobalObject())
+                interpreter = static_cast<JSGlobalObject*>(value)->interpreter();
 
             if (!interpreter)
                 interpreter = originInterpreter;

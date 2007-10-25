@@ -30,6 +30,7 @@
 #include "jni_jsobject.h"
 #include "jni_runtime.h"
 #include "jni_utility.h"
+#include "JSGlobalObject.h"
 #include "list.h"
 #include "runtime_object.h"
 #include "runtime_root.h"

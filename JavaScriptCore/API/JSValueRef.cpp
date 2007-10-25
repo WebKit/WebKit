@@ -30,6 +30,7 @@
 #include "JSValueRef.h"
 
 #include <kjs/JSType.h>
+#include <kjs/JSGlobalObject.h>
 #include <kjs/internal.h>
 #include <kjs/operations.h>
 #include <kjs/protect.h>
@@ -104,9 +105,12 @@ bool JSValueIsObjectOfClass(JSContextRef, JSValueRef value, JSClassRef jsClass)
 {
     JSValue* jsValue = toJS(value);
     
-    if (JSObject* o = jsValue->getObject())
-        if (o->inherits(&JSCallbackObject::info))
-            return static_cast<JSCallbackObject*>(o)->inherits(jsClass);
+    if (JSObject* o = jsValue->getObject()) {
+        if (o->inherits(&JSCallbackObject<JSGlobalObject>::info))
+            return static_cast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
+        else if (o->inherits(&JSCallbackObject<JSObject>::info))
+            return static_cast<JSCallbackObject<JSObject>*>(o)->inherits(jsClass);
+    }
     return false;
 }
 

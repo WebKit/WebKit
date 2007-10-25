@@ -50,7 +50,7 @@ namespace KJS  {
    */
   class Context {
   public:
-    Context(JSObject* global, Interpreter*, JSObject* thisV,
+    Context(JSGlobalObject*, Interpreter*, JSObject* thisV,
             FunctionBodyNode* currentBody, CodeType type = GlobalCode,
             Context* callingContext = 0, FunctionImp* function = 0, const List* args = 0);
     ~Context();

@@ -1,3 +1,25 @@
+2007-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
+        Make Window subclass from JSGlobalObject (for a .5% win in Sunspider)
+        http://bugs.webkit.org/show_bug.cgi?id=15681
+
+        No test cases necessary, no functional changes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::ScriptInterpreter):
+        * bindings/js/kjs_binding.h:
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScriptIfNeeded):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::Window):
+        * bindings/js/kjs_window.h:
+        * bindings/objc/WebScriptObject.mm:
+        (_didExecute):
+        * bridge/mac/WebCoreScriptDebugger.mm:
+
 2007-10-24  Adam Roben  <aroben@apple.com>
 
         Add font database initialization code to WebCore

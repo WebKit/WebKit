@@ -19,12 +19,13 @@
  *
  */
 
-#ifndef _KJSLOOKUP_H_
-#define _KJSLOOKUP_H_
+#ifndef KJS_lookup_h
+#define KJS_lookup_h
 
 #include "context.h"
 #include "identifier.h"
 #include "interpreter.h"
+#include "JSGlobalObject.h"
 #include "object.h"
 #include <stdio.h>
 #include <wtf/Assertions.h>
@@ -269,7 +270,7 @@ namespace KJS {
   template <class ClassCtor>
   inline JSObject* cacheGlobalObject(ExecState* exec, const Identifier& propertyName)
   {
-    JSObject* globalObject = static_cast<JSObject*>(exec->lexicalInterpreter()->globalObject());
+    JSGlobalObject* globalObject = exec->lexicalInterpreter()->globalObject();
     JSValue* obj = globalObject->getDirect(propertyName);
     if (obj) {
       ASSERT(obj->isObject());
@@ -351,4 +352,4 @@ namespace KJS {
     int id; \
   };
 
-#endif
+#endif // KJS_lookup_h

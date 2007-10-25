@@ -32,6 +32,7 @@
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
+#include "JSGlobalObject.h"
 
 #include "identifier.h"
 #include "function.h"
@@ -77,7 +78,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
     if (!jsPrototype)
         jsPrototype = exec->lexicalInterpreter()->builtinObjectPrototype();
 
-    return toRef(new JSCallbackObject(exec, jsClass, jsPrototype, data));
+    return toRef(new JSCallbackObject<JSObject>(exec, jsClass, jsPrototype, data));
 }
 
 JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction)
@@ -235,8 +236,10 @@ void* JSObjectGetPrivate(JSObjectRef object)
 {
     JSObject* jsObject = toJS(object);
     
-    if (jsObject->inherits(&JSCallbackObject::info))
-        return static_cast<JSCallbackObject*>(jsObject)->getPrivate();
+    if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info))
+        return static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivate();
+    else if (jsObject->inherits(&JSCallbackObject<JSObject>::info))
+        return static_cast<JSCallbackObject<JSObject>*>(jsObject)->getPrivate();
     
     return 0;
 }
@@ -245,8 +248,11 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
 {
     JSObject* jsObject = toJS(object);
     
-    if (jsObject->inherits(&JSCallbackObject::info)) {
-        static_cast<JSCallbackObject*>(jsObject)->setPrivate(data);
+    if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info)) {
+        static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivate(data);
+        return true;
+    } else if (jsObject->inherits(&JSCallbackObject<JSObject>::info)) {
+        static_cast<JSCallbackObject<JSObject>*>(jsObject)->setPrivate(data);
         return true;
     }
         

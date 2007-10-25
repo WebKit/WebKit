@@ -26,6 +26,7 @@
 #include "JSLock.h"
 #include "Parser.h"
 #include "collector.h"
+#include "JSGlobalObject.h"
 #include "object.h"
 #include "protect.h"
 #include <math.h>
@@ -110,7 +111,7 @@ long StopWatch::getElapsedMS()
 #endif
 }
 
-class GlobalImp : public JSObject {
+class GlobalImp : public JSGlobalObject {
 public:
   virtual UString className() const { return "global"; }
 };

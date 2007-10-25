@@ -35,6 +35,7 @@
 #import <JavaScriptCore/objc_instance.h>
 #import <JavaScriptCore/runtime_object.h>
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSGlobalObject.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
@@ -115,7 +116,7 @@ static void _didExecute(WebScriptObject *obj)
     ExecState* exec = root->interpreter()->globalExec();
     KJSDidExecuteFunctionPtr func = Instance::didExecuteFunction();
     if (func)
-        func(exec, static_cast<JSObject*>(root->interpreter()->globalObject()));
+        func(exec, root->interpreter()->globalObject());
 }
 
 - (void)_setImp:(JSObject*)imp originRootObject:(PassRefPtr<RootObject>)originRootObject rootObject:(PassRefPtr<RootObject>)rootObject

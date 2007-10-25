@@ -1,6 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +34,8 @@
 
 namespace KJS {
 
-class JSCallbackObject : public JSObject
+template <class Base>
+class JSCallbackObject : public Base
 {
 public:
     JSCallbackObject(ExecState*, JSClassRef, JSValue* prototype, void* data);
@@ -91,5 +93,8 @@ private:
 };
 
 } // namespace KJS
+
+// include the actual template class implementation
+#include "JSCallbackObjectFunctions.h"
 
 #endif // JSCallbackObject_h

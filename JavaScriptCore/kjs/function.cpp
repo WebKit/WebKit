@@ -30,6 +30,7 @@
 #include "dtoa.h"
 #include "function_object.h"
 #include "internal.h"
+#include "JSGlobalObject.h"
 #include "lexer.h"
 #include "nodes.h"
 #include "operations.h"
@@ -65,7 +66,7 @@ void FunctionImp::mark()
 
 JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
-  JSObject* globalObj = exec->dynamicInterpreter()->globalObject();
+  JSGlobalObject* globalObj = exec->dynamicInterpreter()->globalObject();
 
   // enter a new execution context
   Context ctx(globalObj, exec->dynamicInterpreter(), thisObj, body.get(),
@@ -754,10 +755,10 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
         if (!progNode)
           return throwError(exec, SyntaxError, errMsg, errLine, sid, NULL);
 
-        bool switchGlobal = thisObj && exec->dynamicInterpreter()->isGlobalObject(thisObj) && thisObj != exec->dynamicInterpreter()->globalObject();
+        bool switchGlobal = thisObj && thisObj != exec->dynamicInterpreter()->globalObject();
           
         // enter a new execution context
-        Interpreter* interpreter = switchGlobal ? exec->dynamicInterpreter()->interpreterForGlobalObject(thisObj) : exec->dynamicInterpreter();
+        Interpreter* interpreter = switchGlobal ? static_cast<JSGlobalObject*>(thisObj)->interpreter() : exec->dynamicInterpreter();
         JSObject* thisVal = static_cast<JSObject*>(exec->context()->thisValue());
         Context ctx(interpreter->globalObject(),
                        interpreter,
