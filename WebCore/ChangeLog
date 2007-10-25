@@ -1,3 +1,25 @@
+2007-10-25  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Add support for list box theme colors and styled menu list buttons.
+
+        Remove obsolete FIXMEs.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::RenderThemeGtk::paintCheckbox):
+        (WebCore::RenderThemeGtk::paintRadio):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::RenderThemeGtk::adjustMenuListStyle):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::gtkTreeView):
+        * platform/gtk/RenderThemeGtk.h:
+
 2007-10-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Geoff.

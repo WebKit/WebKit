@@ -53,6 +53,12 @@ public:
     virtual Color platformActiveSelectionForegroundColor() const;
     virtual Color platformInactiveSelectionForegroundColor() const;
 
+    // List Box selection color
+    virtual Color activeListBoxSelectionBackgroundColor() const;
+    virtual Color activeListBoxSelectionForegroundColor() const;
+    virtual Color inactiveListBoxSelectionBackgroundColor() const;
+    virtual Color inactiveListBoxSelectionForegroundColor() const;
+
     // System fonts.
     virtual void systemFont(int propId, FontDescription&) const;
 
@@ -70,6 +76,9 @@ protected:
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
     virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 private:
     void addIntrinsicMargins(RenderStyle*) const;
@@ -91,6 +100,7 @@ private:
     GtkWidget* gtkRadioButton() const;
     GtkWidget* gtkEntry() const;
     GtkWidget* gtkEditable() const;
+    GtkWidget* gtkTreeView() const;
 
     /*
      * unmapped GdkWindow having a container. This is holding all
@@ -104,6 +114,7 @@ private:
     mutable GtkWidget* m_gtkRadioButton;
     mutable GtkWidget* m_gtkEntry;
     mutable GtkWidget* m_gtkEditable;
+    mutable GtkWidget* m_gtkTreeView;
 
     mutable GtkWidget* m_unmappedWindow;
     mutable GtkWidget* m_container;

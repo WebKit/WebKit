@@ -77,6 +77,7 @@ RenderThemeGtk::RenderThemeGtk()
     , m_gtkRadioButton(0)
     , m_gtkEntry(0)
     , m_gtkEditable(0)
+    , m_gtkTreeView(0)
     , m_unmappedWindow(0)
     , m_container(0)
 {
@@ -180,7 +181,6 @@ void RenderThemeGtk::setCheckboxSize(RenderStyle* style) const
 
 bool RenderThemeGtk::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
-    // FIXME: is it the right thing to do?
     GtkWidget* checkbox = gtkCheckbox();
     IntPoint pos = i.context->translatePoint(rect.location());
     gtk_paint_check(checkbox->style, i.context->gdkDrawable(),
@@ -213,7 +213,6 @@ void RenderThemeGtk::setRadioSize(RenderStyle* style) const
 
 bool RenderThemeGtk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 { 
-    // FIXME: is it the right thing to do?
     GtkWidget* radio = gtkRadioButton();
     IntPoint pos = i.context->translatePoint(rect.location());
     gtk_paint_option(radio->style, i.context->gdkDrawable(),
@@ -226,12 +225,28 @@ bool RenderThemeGtk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& 
 
 bool RenderThemeGtk::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect) 
 { 
-    // FIXME: should use theme-aware drawing. This should honor the state as well
     GtkWidget* button = gtkButton();
     IntPoint pos = i.context->translatePoint(rect.location());
     gtk_paint_box(button->style, i.context->gdkDrawable(),
                   determineState(o), determineShadow(o),
                   NULL, button, "button",
+                  pos.x(), pos.y(), rect.width(), rect.height());
+    return false;
+}
+
+void RenderThemeGtk::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+{
+    addIntrinsicMargins(style);
+}
+
+bool RenderThemeGtk::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+{
+    // TODO: Render a real menu list button, not just a box
+    GtkWidget* button = gtkButton();
+    IntPoint pos = i.context->translatePoint(rect.location());
+    gtk_paint_box(button->style, i.context->gdkDrawable(),
+                  determineState(o), determineShadow(o),
+                  NULL, button, NULL,
                   pos.x(), pos.y(), rect.width(), rect.height());
     return false;
 }
@@ -292,6 +307,34 @@ Color RenderThemeGtk::platformInactiveSelectionForegroundColor() const
     return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
 }
 
+Color RenderThemeGtk::activeListBoxSelectionBackgroundColor() const
+{
+    GtkWidget* widget = gtkTreeView();
+    GdkColor color = widget->style->base[GTK_STATE_SELECTED];
+    return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
+}
+
+Color RenderThemeGtk::inactiveListBoxSelectionBackgroundColor() const
+{
+    GtkWidget* widget = gtkTreeView();
+    GdkColor color = widget->style->base[GTK_STATE_ACTIVE];
+    return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
+}
+
+Color RenderThemeGtk::activeListBoxSelectionForegroundColor() const
+{
+    GtkWidget* widget = gtkTreeView();
+    GdkColor color = widget->style->text[GTK_STATE_SELECTED];
+    return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
+}
+
+Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
+{
+    GtkWidget* widget = gtkTreeView();
+    GdkColor color = widget->style->text[GTK_STATE_ACTIVE];
+    return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
+}
+
 void RenderThemeGtk::systemFont(int propId, FontDescription&) const
 {
 }
@@ -344,6 +387,18 @@ GtkWidget* RenderThemeGtk::gtkEntry() const
     }
 
     return m_gtkEntry;
+}
+
+GtkWidget* RenderThemeGtk::gtkTreeView() const
+{
+    if (!m_gtkTreeView) {
+        m_gtkTreeView = gtk_tree_view_new();
+        g_signal_connect(m_gtkTreeView, "style-set", G_CALLBACK(gtkStyleSet), theme());
+        gtk_container_add(GTK_CONTAINER(gtkWindowContainer()), m_gtkTreeView);
+        gtk_widget_realize(m_gtkTreeView);
+    }
+
+    return m_gtkTreeView;
 }
 
 GtkWidget* RenderThemeGtk::gtkWindowContainer() const
