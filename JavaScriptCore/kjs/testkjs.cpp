@@ -52,7 +52,7 @@ using namespace KJS;
 using namespace WTF;
 
 static void testIsInteger();
-static char* createStringWithContentsOfFile(const char* fileName);
+static bool fillBufferWithContentsOfFile(const char* fileName, Vector<char>& buffer);
 
 class StopWatch
 {
@@ -118,24 +118,26 @@ public:
 
 class TestFunctionImp : public JSObject {
 public:
-  TestFunctionImp(int i, int length);
+  enum TestFunctionType { Print, Debug, Quit, GC, Version, Run, Load };
+
+  TestFunctionImp(TestFunctionType i, int length);
   virtual bool implementsCall() const { return true; }
   virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List &args);
 
-  enum { Print, Debug, Quit, GC, Version, Run, Load };
-
 private:
-  int id;
+  TestFunctionType m_type;
 };
 
-TestFunctionImp::TestFunctionImp(int i, int length) : JSObject(), id(i)
+TestFunctionImp::TestFunctionImp(TestFunctionType i, int length)
+  : JSObject()
+  , m_type(i)
 {
   putDirect(Identifier("length"), length, DontDelete | ReadOnly | DontEnum);
 }
 
 JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List &args)
 {
-  switch (id) {
+  switch (m_type) {
     case Print:
       printf("%s\n", args[0]->toString(exec).UTF8String().c_str());
       return jsUndefined();
@@ -155,36 +157,26 @@ JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List 
     case Run:
     {
       StopWatch stopWatch;
-      char* fileName = strdup(args[0]->toString(exec).UTF8String().c_str());
-      char* script = createStringWithContentsOfFile(fileName);
-      if (!script) {
-        free(fileName);
+      UString fileName = args[0]->toString(exec);
+      Vector<char> script;
+      if (!fillBufferWithContentsOfFile(fileName.UTF8String().c_str(), script))
         return throwError(exec, GeneralError, "Could not open file.");
-      }
 
       stopWatch.start();
-      exec->dynamicInterpreter()->evaluate(fileName, 0, script);
+      exec->dynamicInterpreter()->evaluate(fileName, 0, script.data());
       stopWatch.stop();
-
-      free(script);
-      free(fileName);
       
       return jsNumber(stopWatch.getElapsedMS());
     }
     case Load:
     {
-      char* fileName = strdup(args[0]->toString(exec).UTF8String().c_str());
-      char* script = createStringWithContentsOfFile(fileName);
-      if (!script) {
-        free(fileName);
+      UString fileName = args[0]->toString(exec);
+      Vector<char> script;
+      if (!fillBufferWithContentsOfFile(fileName.UTF8String().c_str(), script))
         return throwError(exec, GeneralError, "Could not open file.");
-      }
 
-      exec->dynamicInterpreter()->evaluate(fileName, 0, script);
+      exec->dynamicInterpreter()->evaluate(fileName, 0, script.data());
 
-      free(script);
-      free(fileName);
-      
       return jsUndefined();
     }
     case Quit:
@@ -237,14 +229,9 @@ int main(int argc, char** argv)
     return res;
 }
 
-
-bool doIt(int argc, char** argv)
+static PassRefPtr<Interpreter> setupInterpreter()
 {
-  bool success = true;
-  bool prettyPrint = false;
   GlobalImp* global = new GlobalImp();
-
-  // create interpreter
   RefPtr<Interpreter> interp = new Interpreter(global);
   // add debug() function
   global->put(interp->globalExec(), "debug", new TestFunctionImp(TestFunctionImp::Debug, 1));
@@ -258,8 +245,32 @@ bool doIt(int argc, char** argv)
   global->put(interp->globalExec(), "version", new TestFunctionImp(TestFunctionImp::Version, 1));
   global->put(interp->globalExec(), "run", new TestFunctionImp(TestFunctionImp::Run, 1));
   global->put(interp->globalExec(), "load", new TestFunctionImp(TestFunctionImp::Load, 1));
-  
+
   Interpreter::setShouldPrintExceptions(true);
+  return interp.release();
+}
+
+static bool prettyPrintScript(const char* fileName, const Vector<char>& script)
+{
+  int errLine = 0;
+  UString errMsg;
+  UString s = Parser::prettyPrint(script.data(), &errLine, &errMsg);
+  if (s.isNull()) {
+    fprintf(stderr, "%s:%d: %s.\n", fileName, errLine, errMsg.UTF8String().c_str());
+    return false;
+  }
+  
+  printf("%s\n", s.UTF8String().c_str());
+  return true;
+}
+
+static bool doIt(int argc, char** argv)
+{
+  bool success = true;
+  bool prettyPrint = false;
+
+  RefPtr<Interpreter> interp = setupInterpreter();
+  Vector<char> script;
   
   for (int i = 1; i < argc; i++) {
     const char* fileName = argv[i];
@@ -270,31 +281,18 @@ bool doIt(int argc, char** argv)
       continue;
     }
     
-    char* script = createStringWithContentsOfFile(fileName);
-    if (!script) {
+    script.clear();
+    if (!fillBufferWithContentsOfFile(fileName, script)) {
       success = false;
       break; // fail early so we can catch missing files
     }
     
-    if (prettyPrint) {
-      int errLine = 0;
-      UString errMsg;
-      UString s = Parser::prettyPrint(script, &errLine, &errMsg);
-      if (s.isNull()) {
-        fprintf(stderr, "%s:%d: %s.\n", fileName, errLine, errMsg.UTF8String().c_str());
-        success = false;
-        free(script);
-        break;
-      }
-      
-      printf("%s\n", s.UTF8String().c_str());
-      
-    } else {
-      Completion completion = interp->evaluate(fileName, 0, script);
+    if (prettyPrint)
+      prettyPrintScript(fileName, script);
+    else {
+      Completion completion = interp->evaluate(fileName, 0, script.data());
       success = success && completion.complType() != Throw;
     }
-    
-    free(script);
   }
 
   return success;
@@ -350,33 +348,28 @@ static void testIsInteger()
   ASSERT(!IsInteger<GlobalImp>::value);
 }
 
-static char* createStringWithContentsOfFile(const char* fileName)
+static bool fillBufferWithContentsOfFile(const char* fileName, Vector<char>& buffer)
 {
-  char* buffer;
-  
-  size_t buffer_size = 0;
-  size_t buffer_capacity = 1024;
-  buffer = (char*)malloc(buffer_capacity);
-  
   FILE* f = fopen(fileName, "r");
   if (!f) {
     fprintf(stderr, "Could not open file: %s\n", fileName);
-    free(buffer);
-    return 0;
+    return false;
   }
   
+  size_t buffer_size = 0;
+  size_t buffer_capacity = 1024;
+  
+  buffer.resize(buffer_capacity);
+  
   while (!feof(f) && !ferror(f)) {
-    buffer_size += fread(buffer + buffer_size, 1, buffer_capacity - buffer_size, f);
+    buffer_size += fread(buffer.data() + buffer_size, 1, buffer_capacity - buffer_size, f);
     if (buffer_size == buffer_capacity) { // guarantees space for trailing '\0'
       buffer_capacity *= 2;
-      buffer = (char*)realloc(buffer, buffer_capacity);
-      ASSERT(buffer);
+      buffer.resize(buffer_capacity);
     }
-    
-    ASSERT(buffer_size < buffer_capacity);
   }
   fclose(f);
   buffer[buffer_size] = '\0';
   
-  return buffer;
+  return true;
 }

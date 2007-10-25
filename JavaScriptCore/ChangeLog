@@ -1,3 +1,16 @@
+2007-10-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
+        Bring testkjs code out of the dark ages in preparation for more
+        radical improvements (like long-running testing support!)
+
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::callAsFunction):
+        (setupInterpreter):
+        (doIt):
+        (fillBufferWithContentsOfFile):
+
 2007-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
