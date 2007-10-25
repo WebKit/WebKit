@@ -1099,14 +1099,14 @@ void WebCoreHttp::onReadyRead()
         return;
     }
     int c = getConnection();
-    QWebNetworkJob *req = connection[c].current;
+    QWebNetworkJob *job = connection[c].current;
     Q_ASSERT(http == connection[c].http);
     //DEBUG() << "WebCoreHttp::slotReadyRead connection=" << c;
 
     QByteArray data;
     data.resize(http->bytesAvailable());
     http->read(data.data(), data.length());
-    req->networkInterface()->data(req, data);
+    job->networkInterface()->data(job, data);
 }
 
 void WebCoreHttp::onRequestFinished(int id, bool error)
@@ -1116,14 +1116,14 @@ void WebCoreHttp::onRequestFinished(int id, bool error)
         return;
     }
 
-    QWebNetworkJob *req = connection[c].current;
-    if (!req) {
+    QWebNetworkJob *job = connection[c].current;
+    if (!job) {
         scheduleNextRequest();
         return;
     }
 
     QHttp *http = connection[c].http;
-    DEBUG() << "WebCoreHttp::slotFinished connection=" << c << error << req;
+    DEBUG() << "WebCoreHttp::slotFinished connection=" << c << error << job;
     if (error)
         DEBUG() << "   error: " << http->errorString();
 
@@ -1131,10 +1131,10 @@ void WebCoreHttp::onRequestFinished(int id, bool error)
         QByteArray data;
         data.resize(http->bytesAvailable());
         http->read(data.data(), data.length());
-        req->networkInterface()->data(req, data);
+        job->networkInterface()->data(job, data);
     }
 
-    req->networkInterface()->finished(req, error ? 1 : 0);
+    job->networkInterface()->finished(job, error ? 1 : 0);
     connection[c].current = 0;
     connection[c].id = -1;
     scheduleNextRequest();
@@ -1180,10 +1180,10 @@ void WebCoreHttp::cancel(QWebNetworkJob* request)
 void WebCoreHttp::onSslErrors(const QList<QSslError>& errors)
 {
     int c = getConnection();
-    QWebNetworkJob *req = connection[c].current;
-    if (req) {
+    QWebNetworkJob *job = connection[c].current;
+    if (job) {
         bool continueAnyway = false;
-        emit req->networkInterface()->sslErrors(req->frame(), req->url(), errors, &continueAnyway);
+        emit job->networkInterface()->sslErrors(job->frame(), job->url(), errors, &continueAnyway);
 #ifndef QT_NO_OPENSSL
         if (continueAnyway)
             connection[c].http->ignoreSslErrors();
@@ -1194,9 +1194,9 @@ void WebCoreHttp::onSslErrors(const QList<QSslError>& errors)
 void WebCoreHttp::onAuthenticationRequired(const QString& hostname, quint16 port, QAuthenticator *auth)
 {
     int c = getConnection();
-    QWebNetworkJob *req = connection[c].current;
-    if (req) {
-        emit req->networkInterface()->authenticate(req->frame(), req->url(), hostname, port, auth);
+    QWebNetworkJob *job = connection[c].current;
+    if (job) {
+        emit job->networkInterface()->authenticate(job->frame(), job->url(), hostname, port, auth);
         if (auth->isNull())
             connection[c].http->abort();
     }
@@ -1205,9 +1205,9 @@ void WebCoreHttp::onAuthenticationRequired(const QString& hostname, quint16 port
 void WebCoreHttp::onProxyAuthenticationRequired(const QNetworkProxy& proxy, QAuthenticator *auth)
 {
     int c = getConnection();
-    QWebNetworkJob *req = connection[c].current;
-    if (req) {
-        emit req->networkInterface()->authenticateProxy(req->frame(), req->url(), proxy, auth);
+    QWebNetworkJob *job = connection[c].current;
+    if (job) {
+        emit job->networkInterface()->authenticateProxy(job->frame(), job->url(), proxy, auth);
         if (auth->isNull())
             connection[c].http->abort();
     }
