@@ -64,6 +64,47 @@ static bool operator==(const HostInfo &i1, const HostInfo &i2)
     return i1.port == i2.port && i1.host == i2.host;
 }
 
+enum ParserState {
+    State_Begin,
+    State_FirstChar,
+    State_SecondChar
+};
+
+/*
+ * Decode URLs without doing any charset conversion.
+ *
+ * Most simple approach to do it without any lookahead.
+ */
+static QByteArray decodePercentEncoding(const QByteArray& input)
+{
+    int actualLength = 0;
+    QByteArray tmpVal;
+    QByteArray output;
+    ParserState state = State_Begin;
+
+    output.resize(input.length());
+    tmpVal.resize(2);
+
+    for (int i = 0; i < input.length(); ++i)
+        if (state == State_Begin) {
+            if (input.at(i) == '%') {
+                state = State_FirstChar;
+            } else {
+                output[actualLength++] = input[i];
+            }
+        } else if (state == State_FirstChar) {
+            state = State_SecondChar;
+            tmpVal[0] = input[i];
+        } else if (state == State_SecondChar) {
+            state = State_Begin;
+            tmpVal[1] = input[i];
+            output[actualLength++] = tmpVal.toShort(0, 16);
+        }
+
+    output.resize(actualLength);
+    return output;
+}
+
 void QWebNetworkRequestPrivate::init(const WebCore::ResourceRequest &resourceRequest)
 {
     KURL url = resourceRequest.url();
@@ -638,9 +679,11 @@ void QWebNetworkInterfacePrivate::parseDataUrl(QWebNetworkJob* job)
     } else {
         data = QByteArray();
     }
-    data = QUrl::fromPercentEncoding(data).toLatin1();
+
     if (base64) {
         data = QByteArray::fromBase64(data);
+    } else {
+        data = decodePercentEncoding(data);
     }
 
     if (header.isEmpty())

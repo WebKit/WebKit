@@ -1,3 +1,14 @@
+2007-10-25  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
+        * Do the percent replacement only when we are not base64. With base64 we should not have any % in it anyway.
+        * Have a custom decodePercentEncoding method that works without doing any charset conversion. With converting back to latin1() we lost some information.
+        * We pass the char-decoding.html test now
+        
+
+        * platform/qt/Skipped:
+
 2007-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Layout tests for bugs that might result from changes like 
