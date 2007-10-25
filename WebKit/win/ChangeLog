@@ -1,3 +1,15 @@
+2007-10-24  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5552221> REGRESSION(310A24-ToT): Shortcut key disable. (15604)
+
+        Reviewed by Adam.
+
+        * WebView.cpp:
+        (WebView::handleEditingKeyboardEvent): don't handle system key events as text input
+        (WebView::keyDown): only remove WM_SYSCHAR message from the queue if we handle it.
+        For WM_SYSCHAR message that we don't handle, let it stay in the queue and return 
+        false to let windows handle it.
+
 2007-10-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
