@@ -2,6 +2,17 @@
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
 
+        * Make fast/loader/xmlhttprequest-bad-mimetype.html pass. We use QHttp to download local files but we may not set the HTTP result code on the ResourceResponse.
+        * We can use the cross-platform result now. QWebNetworkInterface/Manager behaves the same as mac for local files.
+        
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/xmlhttprequest-get-expected.txt: Removed.
+
+2007-10-25  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
         * Implement our own queuing of network jobs to allow special handling of synchronous jobs. This makes us pass the fast/dom/xmlhttprequest-html-response-encoding.html test without a crash. Sync jobs will get a special treatment over the normals ones and in theory more than one sync job is supported.
         * This should be thread-safe besides QWebNetworkJob::{ref,deref}
         

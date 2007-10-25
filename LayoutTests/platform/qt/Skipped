@@ -92,7 +92,6 @@ fast/forms/select-double-onchange.html
 fast/frames/frame-src-attribute.html
 fast/frames/removal-before-attach-crash.html
 fast/loader/user-style-sheet-resource-load-callbacks.html
-fast/loader/xmlhttprequest-bad-mimetype.html
 fast/loader/xmlhttprequest-missing-file-exception.html
 fast/overflow/003.xml
 fast/text/zero-width-characters.html

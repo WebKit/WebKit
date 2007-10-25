@@ -542,7 +542,9 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
                               String() /* FIXME */);
 
     int statusCode = job->d->response.statusCode();
-    response.setHTTPStatusCode(statusCode);
+    if (job->url().scheme() != QLatin1String("file"))
+        response.setHTTPStatusCode(statusCode);
+
     /* Fill in the other fields */
 
     if (statusCode >= 300 && statusCode < 400) {
