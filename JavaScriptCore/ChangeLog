@@ -1,3 +1,44 @@
+2007-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15694
+        Shrink the size of an activation object by 1 word
+        
+        This is in preparation for adding a symbol table to the activation 
+        object.
+        
+        The basic strategy here is to rely on the mutual exclusion between
+        the arguments object pointer and the function pointer (you only need
+        the latter in order to create the former), and store them in the same 
+        place. The LazyArgumentsObject class encapsulates this strategy.
+        
+        Also inlined the ArgumentsImp constructor, for good measure.
+        
+        SunSpider reports no regression. Regression tests pass.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/Context.cpp:
+        (KJS::Context::~Context):
+        * kjs/function.cpp:
+        (KJS::ActivationImp::LazyArgumentsObject::createArgumentsObject):
+        (KJS::ActivationImp::LazyArgumentsObject::mark):
+        (KJS::):
+        (KJS::ActivationImp::argumentsGetter):
+        (KJS::ActivationImp::mark):
+        * kjs/function.h:
+        (KJS::ActivationImp::LazyArgumentsObject::LazyArgumentsObject):
+        (KJS::ActivationImp::LazyArgumentsObject::getOrCreate):
+        (KJS::ActivationImp::LazyArgumentsObject::resetArguments):
+        (KJS::ActivationImp::LazyArgumentsObject::setArgumentsObject):
+        (KJS::ActivationImp::LazyArgumentsObject::argumentsObject):
+        (KJS::ActivationImp::LazyArgumentsObject::setFunction):
+        (KJS::ActivationImp::LazyArgumentsObject::function):
+        (KJS::ActivationImp::LazyArgumentsObject::createdArgumentsObject):
+        (KJS::ActivationImp::LazyArgumentsObject::):
+        (KJS::ActivationImp::ActivationImp::ActivationImp):
+        (KJS::ActivationImp::resetArguments):
+
 2007-10-25  Adam Roben  <aroben@apple.com>
 
         Change JavaScriptCore.vcproj to use DerivedSources.make

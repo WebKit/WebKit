@@ -143,7 +143,64 @@ namespace KJS {
 
   class ActivationImp : public JSObject {
   public:
-    ActivationImp(FunctionImp* function, const List& arguments);
+    class LazyArgumentsObject {
+    public:
+        LazyArgumentsObject(FunctionImp* f, const List& a)
+            : arguments(a)
+        {
+            ASSERT(f);
+            setFunction(f);
+        }
+
+        Arguments* getOrCreate(ExecState* exec, ActivationImp* activationImp)
+        {
+            if (!createdArgumentsObject())
+                createArgumentsObject(exec, activationImp);
+            return argumentsObject();
+        }
+
+        void resetArguments() { arguments.reset(); }
+        void mark();
+
+    private:
+        static const uintptr_t TagMask = 1; // Pointer alignment leaves this bit open for tagging.
+        
+        void setArgumentsObject(Arguments* a)
+        { 
+            u.argumentsObject = a;
+            u.bits |= TagMask;
+        }
+
+        Arguments* argumentsObject()
+        {
+            ASSERT(createdArgumentsObject());
+            return reinterpret_cast<Arguments*>(u.bits & ~TagMask);
+        }
+
+        void setFunction(FunctionImp* f) { u.function = f; }
+        FunctionImp* function()
+        {
+            ASSERT(!createdArgumentsObject());
+            return u.function;
+        }
+
+        bool createdArgumentsObject() { return (u.bits & TagMask) != 0; }
+        void createArgumentsObject(ExecState*, ActivationImp*);
+
+        List arguments;
+        union {
+            // The low bit in this union is a flag: 0 means the union holds a 
+            // FunctionImp*; 1 means the union holds an Arguments*.
+            uintptr_t bits;
+            FunctionImp* function;
+            Arguments* argumentsObject;
+        } u;
+    };
+    
+    ActivationImp::ActivationImp(FunctionImp* function, const List& arguments)
+        : m_lazyArgumentsObject(function, arguments)
+    {
+    }
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
@@ -156,16 +213,13 @@ namespace KJS {
 
     bool isActivation() { return true; }
 
-    void releaseArguments() { _arguments.reset(); }
+    void resetArguments() { m_lazyArgumentsObject.resetArguments(); }
 
   private:
     static PropertySlot::GetValueFunc getArgumentsGetter();
     static JSValue* argumentsGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
-    void createArgumentsObject(ExecState*);
-
-    FunctionImp* _function;
-    List _arguments;
-    mutable Arguments* _argumentsObject;
+    
+    LazyArgumentsObject m_lazyArgumentsObject;
   };
 
   class GlobalFuncImp : public InternalFunctionImp {

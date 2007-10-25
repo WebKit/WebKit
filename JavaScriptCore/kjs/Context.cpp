@@ -87,7 +87,7 @@ Context::~Context()
     // This prevents lists of Lists from building up, waiting to be garbage collected
     ActivationImp* activation = static_cast<ActivationImp*>(m_activation);
     if (activation)
-        activation->releaseArguments();
+        activation->resetArguments();
 }
 
 void Context::mark()
