@@ -2,6 +2,13 @@
 
         Reviewed by Oliver Hunt.
         
+        Rolled out my last patch. It turns out that I needed 2 words, not 1,
+        so it didn't help.
+
+2007-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
         Fixed http://bugs.webkit.org/show_bug.cgi?id=15694
         Shrink the size of an activation object by 1 word
         

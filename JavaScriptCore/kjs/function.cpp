@@ -390,34 +390,24 @@ bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName)
 
 // ------------------------------ ActivationImp --------------------------------
 
-void ActivationImp::LazyArgumentsObject::createArgumentsObject(ExecState* exec, ActivationImp* activationImp)
-{
-    setArgumentsObject(new Arguments(exec, function(), arguments, activationImp));
-
-    // The arguments list is only needed to create the arguments object, so 
-    // discard it now. This prevents lists of Lists from building up, waiting 
-    // to be garbage collected.
-    arguments.reset();
-}
-
-void ActivationImp::LazyArgumentsObject::mark()
-{
-    JSObject* o;
-    if (createdArgumentsObject())
-        o = argumentsObject();
-    else
-        o = function();
-
-    if (!o->marked())
-        o->mark();
-}
-
 const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
+
+// ECMA 10.1.6
+ActivationImp::ActivationImp(FunctionImp* function, const List& arguments)
+    : _function(function), _arguments(arguments), _argumentsObject(0)
+{
+  // FIXME: Do we need to support enumerating the arguments property?
+}
 
 JSValue* ActivationImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
   ActivationImp* thisObj = static_cast<ActivationImp*>(slot.slotBase());
-  return thisObj->m_lazyArgumentsObject.getOrCreate(exec, thisObj);
+
+  // default: return builtin arguments array
+  if (!thisObj->_argumentsObject)
+    thisObj->createArgumentsObject(exec);
+  
+  return thisObj->_argumentsObject;
 }
 
 PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
@@ -462,8 +452,18 @@ void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* val
 
 void ActivationImp::mark()
 {
-    m_lazyArgumentsObject.mark();
+    if (_function && !_function->marked()) 
+        _function->mark();
+    if (_argumentsObject && !_argumentsObject->marked())
+        _argumentsObject->mark();
     JSObject::mark();
+}
+
+void ActivationImp::createArgumentsObject(ExecState* exec)
+{
+  _argumentsObject = new Arguments(exec, _function, _arguments, const_cast<ActivationImp*>(this));
+  // The arguments list is only needed to create the arguments object, so discard it now
+  _arguments.reset();
 }
 
 // ------------------------------ GlobalFunc -----------------------------------
