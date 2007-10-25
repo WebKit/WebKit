@@ -58,4 +58,6 @@ CFDictionaryRef wkGetSSLCertificateInfo(CFURLResponseRef);
 void* wkGetSSLPeerCertificateData(CFDictionaryRef);
 CFHTTPCookieStorageRef wkGetDefaultHTTPCookieStorage();
 
-#endif
+CFStringRef wkCopyFoundationCacheDirectory();
+
+#endif // WebKitSystemInterface_h
