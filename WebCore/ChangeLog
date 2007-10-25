@@ -1,3 +1,15 @@
+2007-10-25  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Fixed a crash in the Qt 4.4 based text iterators when they're called with a null string.
+
+        * platform/qt/TextBreakIteratorQt.cpp:
+        (WebCore::wordBreakIterator):
+        (WebCore::characterBreakIterator):
+        (WebCore::lineBreakIterator):
+        (WebCore::sentenceBreakIterator):
+
 2007-10-25  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
