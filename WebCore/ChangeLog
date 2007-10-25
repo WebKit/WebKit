@@ -1,5 +1,11 @@
 2007-10-25  Brady Eidson  <beidson@apple.com>
 
+        Blind build fix attempt
+
+        * WebCore.pro:
+
+2007-10-25  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders
 
         Bulk rename of platform/sql/SQL* to platform/sql/SQLite*

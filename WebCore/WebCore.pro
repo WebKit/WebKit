@@ -962,10 +962,10 @@ contains(DEFINES, ENABLE_DATABASE=1) {
     qt-port: INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
     LIBS += -lsqlite3
     SOURCES += \
-        platform/sql/SQLAuthorizer.cpp \
-        platform/sql/SQLDatabase.cpp \
-        platform/sql/SQLStatement.cpp \
-        platform/sql/SQLTransaction.cpp \
+        platform/sql/SQLiteAuthorizer.cpp \
+        platform/sql/SQLiteDatabase.cpp \
+        platform/sql/SQLiteStatement.cpp \
+        platform/sql/SQLiteTransaction.cpp \
         platform/sql/SQLValue.cpp \
         storage/DatabaseAuthorizer.cpp \
         storage/DatabaseCallback.cpp \
