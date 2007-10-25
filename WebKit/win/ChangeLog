@@ -1,3 +1,19 @@
+2007-10-24  Adam Roben  <aroben@apple.com>
+
+        Put FOR_EACH_COCLASS macro into its own file and export it
+
+        The macro used to be called FOR_EACH_CLASS and lived in WebKitDLL.cpp.
+        This way we will be able to use the macro in more places that care
+        about all WebKit's COM classes.
+
+        Reviewed by Ada.
+
+        * ForEachCoClass.h: Added.
+        * WebKit.vcproj/WebKit.vcproj: Copy ForEachCoClass.h to
+        WebKitOutputDir, and added it to the project.
+        * WebKitDLL.cpp: Updated for macro rename, and changed to #undef the
+        macros we pass to FOR_EACH_COCLASS after we're done with them.
+
 2007-10-24  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5552221> REGRESSION(310A24-ToT): Shortcut key disable. (15604)
