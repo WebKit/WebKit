@@ -31,11 +31,12 @@
 #define ServerConnection_H
 
 #include <string>
+#include <WebCore/COMPtr.h>
 #include <WebKit/IWebScriptDebugListener.h>
+#include <WebKit/IWebScriptDebugServer.h>
 
 class DebuggerClient;
 class WebScriptCallFrame;
-class WebScriptDebugServer;
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 
@@ -113,10 +114,8 @@ public:
 private:
     std::wstring m_currentServerName;
 
-    // FIXME: Change these to OwnPtrs when they are implmented such that they
-    // can be destroyed on Windows.
     WebScriptCallFrame* m_currentFrame;
-    WebScriptDebugServer* m_server;
+    COMPtr<IWebScriptDebugServer> m_server;
     JSGlobalContextRef m_globalContext;
 };
 

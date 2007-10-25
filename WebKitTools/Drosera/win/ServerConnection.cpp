@@ -36,15 +36,22 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 #include <JavaScriptCore/RetainPtr.h>
+#include <WebKit/WebKit.h>
 
 // FIXME: Some of the below functionality cannot be implemented until the WebScriptDebug Server works on windows.
 ServerConnection::ServerConnection()
     : m_globalContext(0)
 {
+    HRESULT serverCreated = CoCreateInstance(CLSID_WebScriptDebugServer, 0, CLSCTX_LOCAL_SERVER, IID_IWebScriptDebugServer, (void**)&m_server);
+    if (!FAILED(serverCreated))
+        m_server->addListener(this);
 }
 
 ServerConnection::~ServerConnection()
 {
+    if (m_server)
+        m_server->removeListener(this);
+
     if (m_globalContext)
         JSGlobalContextRelease(m_globalContext);
 }
@@ -56,24 +63,34 @@ void ServerConnection::setGlobalContext(JSGlobalContextRef globalContextRef)
 
 void ServerConnection::pause()
 {
+    if (m_server)
+        m_server->pause();
 }
 
 void ServerConnection::resume()
 {
+    if (m_server)
+        m_server->resume();
 }
 
 void ServerConnection::stepInto()
 {
+    if (m_server)
+        m_server->step();
 }
 
 // Connection Handling
 
 void ServerConnection::applicationTerminating()
 {
+    if (m_server)
+        m_server->removeListener(this);
 }
 
 void ServerConnection::serverConnectionDidDie()
 {
+    if (m_server)
+        m_server->removeListener(this);
 }
 
 // Stack & Variables

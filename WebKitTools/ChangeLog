@@ -1,3 +1,23 @@
+2007-10-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - Implemented server calls now the WebScriptDebugServer exists.
+        - Also removed no longer needed call to initialize CG.
+
+        * Drosera/win/Drosera.cpp: No longer initializes CG because this happens
+        automatically now.
+        (_tWinMain):
+        * Drosera/win/ServerConnection.cpp: Now uses the COM class.
+        (ServerConnection::ServerConnection):
+        (ServerConnection::~ServerConnection):
+        (ServerConnection::pause):
+        (ServerConnection::resume):
+        (ServerConnection::stepInto):
+        (ServerConnection::applicationTerminating):
+        (ServerConnection::serverConnectionDidDie):
+        * Drosera/win/ServerConnection.h: Now uses the COM class.
+
 2007-10-24  George Staikos  <staikos@kde.org>
 
         Unbreak Qt build.
