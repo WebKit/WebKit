@@ -25,6 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 use strict;
+use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
@@ -53,6 +54,8 @@ if ($showHelp || scalar @ARGV < 2) {
    print STDERR $usage;
    exit 1;
 }
+
+@ARGV = map { File::Spec->rel2abs($_) } @ARGV;
 
 sub buildTestKJS
 {

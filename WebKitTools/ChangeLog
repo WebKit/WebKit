@@ -1,3 +1,12 @@
+2007-10-25  Adam Roben  <aroben@apple.com>
+
+        Make sunspider-compare-results work with relative paths
+
+        Reviewed by Sam.
+
+        * Scripts/sunspider-compare-results: Convert arguments to absolute
+        paths before we chdir.
+
 2007-10-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
