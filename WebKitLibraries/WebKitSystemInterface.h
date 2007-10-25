@@ -122,6 +122,7 @@ ATSUFontID WKGetNSFontATSUFontId(NSFont *font);
 void WKReleaseStyleGroup(void *group);
 BOOL WKCGContextGetShouldSmoothFonts(CGContextRef cgContext);
 
+void WKSetPatternBaseCTM(CGContextRef, CGAffineTransform);
 void WKSetPatternPhaseInUserSpace(CGContextRef, CGPoint);
 
 typedef void *WKGlyphVectorRef;
