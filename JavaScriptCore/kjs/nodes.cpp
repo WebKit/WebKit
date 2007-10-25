@@ -1849,23 +1849,6 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
     return 0;
 }
 
-void VarDeclNode::processDeclaration(ExecState* exec)
-{
-  Context* context = exec->context();
-  JSObject* variable = context->variableObject();
-
-  if (context->codeType() != FunctionCode)
-    if (variable->hasProperty(exec, ident))
-        return;
-
-  int flags = Internal;
-  if (context->codeType() != EvalCode)
-    flags |= DontDelete;
-  if (varType == VarDeclNode::Constant)
-    flags |= ReadOnly;
-  variable->put(exec, ident, jsUndefined(), flags);
-}
-
 // ------------------------------ VarDeclListNode ------------------------------
 
 // ECMA 12.2
@@ -2627,25 +2610,60 @@ void FunctionBodyNode::initializeDeclarationStacks(ExecState* exec)
     m_initializedDeclarationStacks = true;
 }
 
-void FunctionBodyNode::processDeclarations(ExecState* exec)
+void FunctionBodyNode::processDeclarationsFunctionCode(ExecState* exec)
 {
-    if (!m_initializedDeclarationStacks)
-        initializeDeclarationStacks(exec);
-
     size_t i, size;
 
-    JSObject* variableObject = exec->context()->variableObject();
-    const List& args = *exec->context()->arguments();
+    Context* context = exec->context();
+    JSObject* variableObject = context->variableObject();
 
     // The order of additions to the variable object here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
-    for (i = 0, size = m_varStack.size(); i < size; ++i)
-        m_varStack[i]->processDeclaration(exec);
+    for (i = 0, size = m_varStack.size(); i < size; ++i) {
+        VarDeclNode* node = m_varStack[i];
+        int flags = Internal | DontDelete;
+        if (node->varType == VarDeclNode::Constant)
+            flags |= ReadOnly;
+        variableObject->put(exec, node->ident, jsUndefined(), flags);
+    }
 
+    const List& args = *context->arguments();
     for (i = 0, size = m_parameters.size(); i < size; ++i)
         variableObject->put(exec, m_parameters[i], args[i], DontDelete);
 
-    for (i = 0, size = m_functionStack.size(); i < size; ++i)
-        m_functionStack[i]->processDeclaration(exec);
+    for (i = 0, size = m_functionStack.size(); i < size; ++i) {
+        FuncDeclNode* node = m_functionStack[i];
+        variableObject->put(exec, node->ident, node->makeFunction(exec), Internal | DontDelete);
+    }
+}
+
+void FunctionBodyNode::processDeclarationsProgramCode(ExecState* exec)
+{
+    size_t i, size;
+
+    Context* context = exec->context();
+    JSObject* variableObject = context->variableObject();
+
+    // The order of additions to the variable object here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
+    for (i = 0, size = m_varStack.size(); i < size; ++i) {
+        VarDeclNode* node = m_varStack[i];
+        if (!variableObject->hasProperty(exec, node->ident)) {
+            int flags = Internal;
+            if (context->codeType() != EvalCode)
+                flags |= DontDelete;
+            if (node->varType == VarDeclNode::Constant)
+                flags |= ReadOnly;
+            variableObject->put(exec, node->ident, jsUndefined(), flags);
+        }
+    }
+    
+    const List& args = *context->arguments();
+    for (i = 0, size = m_parameters.size(); i < size; ++i)
+        variableObject->put(exec, m_parameters[i], args[i], DontDelete);
+
+    for (i = 0, size = m_functionStack.size(); i < size; ++i) {
+        FuncDeclNode* node = m_functionStack[i];
+        variableObject->put(exec, node->ident, node->makeFunction(exec), Internal | (context->codeType() == EvalCode ? 0 : DontDelete));
+    }
 }
 
 void FunctionBodyNode::addParam(const Identifier& ident)
@@ -2664,6 +2682,17 @@ UString FunctionBodyNode::paramString() const
   }
 
   return s;
+}
+
+void FunctionBodyNode::processDeclarations(ExecState* exec)
+{
+    if (!m_initializedDeclarationStacks)
+        initializeDeclarationStacks(exec);
+
+    if (exec->context()->codeType() == FunctionCode)
+        processDeclarationsFunctionCode(exec);
+    else
+        processDeclarationsProgramCode(exec);
 }
 
 Completion FunctionBodyNode::execute(ExecState* exec)
@@ -2685,21 +2714,16 @@ void FuncDeclNode::getDeclarations(DeclarationStacks& stacks)
     stacks.functionStack.append(this);
 }
 
-void FuncDeclNode::processDeclaration(ExecState* exec)
+FunctionImp* FuncDeclNode::makeFunction(ExecState* exec)
 {
-  Context *context = exec->context();
-
-  // TODO: let this be an object with [[Class]] property "Function"
-  FunctionImp *func = new FunctionImp(exec, ident, body.get(), context->scopeChain());
+  FunctionImp *func = new FunctionImp(exec, ident, body.get(), exec->context()->scopeChain());
 
   JSObject *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
   func->put(exec, exec->propertyNames().prototype, proto, Internal|DontDelete);
 
   func->put(exec, exec->propertyNames().length, jsNumber(body->numParams()), ReadOnly|DontDelete|DontEnum);
-
-  // ECMA 10.2.2
-  context->variableObject()->put(exec, ident, func, Internal | (context->codeType() == EvalCode ? 0 : DontDelete));
+  return func;
 }
 
 Completion FuncDeclNode::execute(ExecState *)

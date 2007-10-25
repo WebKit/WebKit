@@ -1004,12 +1004,11 @@ namespace KJS {
     VarDeclNode(const Identifier &id, AssignExprNode *in, Type t) KJS_FAST_CALL;
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    ALWAYS_INLINE void processDeclaration(ExecState*) KJS_FAST_CALL;
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
-  private:
-    JSValue* handleSlowCase(ExecState*, const ScopeChain&, JSValue*) KJS_FAST_CALL KJS_NO_INLINE;
     Type varType;
     Identifier ident;
+  private:
+    JSValue* handleSlowCase(ExecState*, const ScopeChain&, JSValue*) KJS_FAST_CALL KJS_NO_INLINE;
     RefPtr<AssignExprNode> init;
   };
 
@@ -1241,7 +1240,9 @@ namespace KJS {
     Identifier paramName(size_t pos) const KJS_FAST_CALL { return m_parameters[pos]; }
     UString paramString() const KJS_FAST_CALL;
     Vector<Identifier>& parameters() KJS_FAST_CALL { return m_parameters; }
-    ALWAYS_INLINE void processDeclarations(ExecState*) KJS_FAST_CALL;
+    ALWAYS_INLINE void processDeclarations(ExecState*);
+    ALWAYS_INLINE void processDeclarationsFunctionCode(ExecState*);
+    ALWAYS_INLINE void processDeclarationsProgramCode(ExecState*);
   private:
     UString m_sourceURL;
     int m_sourceId;
@@ -1249,6 +1250,7 @@ namespace KJS {
     void initializeDeclarationStacks(ExecState*);
     bool m_initializedDeclarationStacks;
 
+    // Properties that will go into the ActivationImp's symbol table. (Used for initializing the ActivationImp.)
     DeclarationStacks::VarStack m_varStack;
     DeclarationStacks::FunctionStack m_functionStack;
     Vector<Identifier> m_parameters;
@@ -1278,10 +1280,10 @@ namespace KJS {
     virtual Completion execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
-    ALWAYS_INLINE void processDeclaration(ExecState*) KJS_FAST_CALL;
+    ALWAYS_INLINE FunctionImp* makeFunction(ExecState*) KJS_FAST_CALL;
+    Identifier ident;
   private:
     void addParams() KJS_FAST_CALL;
-    Identifier ident;
     RefPtr<ParameterNode> param;
     RefPtr<FunctionBodyNode> body;
   };

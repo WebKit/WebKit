@@ -1,3 +1,28 @@
+2007-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Make a fast path for declaration processing inside Function Code.
+        
+        Lifted declaration processing code up from individual declaration nodes
+        and into processDeclarations.
+        
+        Broke out processDeclarations into two cases, depending on the type of 
+        code. This eliminates 2 branches, and facilitates more radical 
+        divergeance in the future.
+        
+        2.5% SunSpider speedup.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/nodes.cpp:
+        (KJS::FunctionBodyNode::initializeDeclarationStacks):
+        (KJS::FunctionBodyNode::processDeclarationsFunctionCode):
+        (KJS::FunctionBodyNode::processDeclarationsProgramCode):
+        (KJS::FunctionBodyNode::execute):
+        (KJS::FuncDeclNode::makeFunction):
+        * kjs/nodes.h:
+        (KJS::):
+
 2007-10-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.
