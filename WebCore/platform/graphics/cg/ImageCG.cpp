@@ -259,11 +259,11 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     
     CGColorRelease(color);
     
-    ctxt->restore();
-    
 #ifndef BUILDING_ON_TIGER
     }
 #endif
+
+    ctxt->restore();
 
     if (imageObserver())
         imageObserver()->didDraw(this);
