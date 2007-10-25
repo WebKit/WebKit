@@ -544,6 +544,8 @@ void QWebNetworkManager::started(QWebNetworkJob *job)
     int statusCode = job->d->response.statusCode();
     if (job->url().scheme() != QLatin1String("file"))
         response.setHTTPStatusCode(statusCode);
+    else if (statusCode == 404)
+        response.setHTTPStatusCode(statusCode);
 
     /* Fill in the other fields */
 
@@ -989,6 +991,13 @@ void QWebNetworkInterface::addJob(QWebNetworkJob *job)
             statusCode = 404;
         }
     }
+
+    if (statusCode == 404) {
+        QHttpResponseHeader response;
+        response.setStatusLine(404);
+        job->setResponse(response);
+    }
+
     d->sendFileData(job, statusCode, data);
 }
 

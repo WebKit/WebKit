@@ -2,6 +2,19 @@
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
 
+        * We need to set a != 0 status code for the fast/loader/xmlhttprequest-missing-file-exception.html
+        * libxml2 has the semantic that when writing an empty string and finishing it will report an error. For QXmlStreamReader this is valid.
+        * This is causing some regressions...
+        
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::started):
+        (QWebNetworkInterface::addJob):
+
+2007-10-25  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
         * Make fast/loader/xmlhttprequest-bad-mimetype.html pass. We use QHttp to download local files but we may not set the HTTP result code on the ResourceResponse.
         * We can use the cross-platform result now. QWebNetworkInterface/Manager behaves the same as mac for local files.
         

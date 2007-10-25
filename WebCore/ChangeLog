@@ -2,6 +2,21 @@
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
 
+        * We need to set a != 0 status code for the fast/loader/xmlhttprequest-missing-file-exception.html
+        * libxml2 has the semantic that when writing an empty string and finishing it will report an error. For QXmlStreamReader this is valid.
+        * This is causing some regressions...
+        
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::write):
+        (WebCore::XMLTokenizer::end):
+        * dom/XMLTokenizer.h:
+
+2007-10-25  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
         * fast/dom/onerror-img.html regressed due checking the JobStates because in case of error (e.g. not being able to connect) the job will no be started.
         * Use the error message from Qt. It might or might not be translated.
         
