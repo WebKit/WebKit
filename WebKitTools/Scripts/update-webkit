@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,24 +31,40 @@
 use strict;
 use FindBin;
 use lib $FindBin::Bin;
+use File::Basename;
 use Getopt::Long;
 use webkitdirs;
 
 # Handle options
-my $quiet ='';
-my $svnoptions = '';
-GetOptions('quiet|q' => \$quiet); 
-$svnoptions = '-q' if $quiet;
+my $quiet = '';
+my $showHelp;
+
+my $getOptionsResult = GetOptions(
+    'h|help'  => \$showHelp,
+    'q|quiet' => \$quiet,
+); 
+
+if (!$getOptionsResult || $showHelp) {
+    print STDERR <<__END__;
+Usage: @{[ basename($0) ]} [options]
+  -h|--help   show the help message
+  -q|--quiet  pass -q to svn update for quiet updates
+__END__
+    exit 1;
+}
+
+my @svnOptions = ();
+push @svnOptions, '-q' if $quiet;
 
 chdirWebKit();
 print "Updating OpenSource\n" unless $quiet;
-(system("svn $svnoptions up") == 0) or die;
+(system("svn", "update", @svnOptions) == 0) or die;
 if (isCygwin()) {
-    (system("perl WebKitTools/Scripts/update-webkit-auxiliary-libs") == 0) or die;
+    (system("perl", "WebKitTools/Scripts/update-webkit-auxiliary-libs") == 0) or die;
 }
 
-if (-x "../Internal") {
+if (-d "../Internal") {
     chdir("../Internal");
     print "Updating Internal\n" unless $quiet;
-    (system("svn $svnoptions up") == 0) or die;
+    (system("svn", "update", @svnOptions) == 0) or die;
 }

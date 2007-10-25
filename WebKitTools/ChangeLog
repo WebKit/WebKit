@@ -1,5 +1,16 @@
 2007-10-24  David Kilzer  <ddkilzer@webkit.org>
 
+        Refurbish update-webkit script.
+
+        Reviewed by Adam.
+
+        * Scripts/update-webkit: Add -h|--help switch and usage statement.  Check result of
+        GetOptions() call.  Fix -q|--quiet switch to be passed to svn command properly.  Use
+        multi-argument version of system() for flexibility and security.  Check for existence
+        of Internal directory using -d test instead of -x.
+
+2007-10-24  David Kilzer  <ddkilzer@webkit.org>
+
         Minor clean-up of prepare-ChangeLog script.
 
         Reviewed by Adam.
