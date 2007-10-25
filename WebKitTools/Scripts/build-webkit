@@ -111,14 +111,22 @@ for my $dir (@projects, @otherDirs) {
 
 if (isOSX()) {
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
-    my $srcLib = "WebKitLibraries/libWebKitSystemInterface.a";
-    my $lib = "$productDir/libWebKitSystemInterface.a";
+    my $srcLib = "WebKitLibraries/libWebKitSystemInterfaceTiger.a";
+    my $lib = "$productDir/libWebKitSystemInterfaceTiger.a";
     if (!-e $lib || -M $lib > -M $srcLib) {
         print "Updating $lib\n";
         system "ditto", $srcLib, $lib;
         system "ranlib", $lib;
     }
-    
+
+    $srcLib = "WebKitLibraries/libWebKitSystemInterfaceLeopard.a";
+    $lib = "$productDir/libWebKitSystemInterfaceLeopard.a";
+    if (!-e $lib || -M $lib > -M $srcLib) {
+        print "Updating $lib\n";
+        system "ditto", $srcLib, $lib;
+        system "ranlib", $lib;
+    }
+
     my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
     my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
     if (!-e $header || -M $header > -M $srcHeader) {
