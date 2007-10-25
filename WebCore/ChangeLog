@@ -1,3 +1,28 @@
+2007-10-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Correcting the fix for:
+        <rdar://problem/5544856> 
+        REGRESSION: After typing 2-byte text, undo only undoes one keystroke at a time
+        
+        Made removal of the previous composition part of the current Undo step in the 
+        case where the new composition is the empty string, too.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::confirmComposition): Call the new TypingCommand::deleteSelection,
+        which either has the currently open typing command delete the current selection, or
+        opens a new typing command (of type DeleteSelection) if one is not already open.
+        (WebCore::Editor::setComposition): Ditto.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteSelection): Added.
+        (WebCore::TypingCommand::doApply): Handle DeleteSelection.
+        (WebCore::TypingCommand::deleteKeyPressed): Clarified which deleteSelection
+        is called.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        (WebCore::TypingCommand::preservesTypingStyle): Handle DeleteSelection.
+        * editing/TypingCommand.h:
+
 2007-10-24  Sam Weinig  <sam@webkit.org>
 
         Build fix.

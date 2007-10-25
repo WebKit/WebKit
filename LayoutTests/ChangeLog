@@ -1,3 +1,14 @@
+2007-10-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5544856> 
+        REGRESSION: After typing 2-byte text, undo only undoes one keystroke at a time
+
+        * platform/mac/editing/input/text-input-controller-expected.txt: The delete
+        we were using previously to remove the old composition makes fewer calls to 
+        the editing delegate.
+
 2007-10-24  Alice Liu  <alice.liu@apple.com>
 
         Removing fixed test

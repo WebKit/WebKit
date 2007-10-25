@@ -33,6 +33,7 @@ namespace WebCore {
 class TypingCommand : public CompositeEditCommand {
 public:
     enum ETypingCommand { 
+        DeleteSelection,
         DeleteKey, 
         ForwardDeleteKey, 
         InsertText, 
@@ -43,6 +44,7 @@ public:
 
     TypingCommand(Document*, ETypingCommand, const String& text = "", bool selectInsertedText = false, TextGranularity = CharacterGranularity);
 
+    static void deleteSelection(Document*, bool smartDelete = false);
     static void deleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity);
     static void forwardDeleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity);
     static void insertText(Document*, const String&, bool selectInsertedText = false, bool insertedTextIsComposition = false);
@@ -66,6 +68,7 @@ public:
     void insertParagraphSeparator();
     void deleteKeyPressed(TextGranularity);
     void forwardDeleteKeyPressed(TextGranularity);
+    void deleteSelection(bool);
 
 private:
     bool smartDelete() { return m_smartDelete; }
