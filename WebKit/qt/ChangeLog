@@ -2,6 +2,23 @@
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
 
+        * fast/dom/onerror-img.html regressed due checking the JobStates because in case of error (e.g. not being able to connect) the job will no be started.
+        * Use the error message from Qt. It might or might not be translated.
+        
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkJob::errorString):
+        (QWebNetworkJob::setErrorString):
+        (QWebNetworkManager::finished):
+        (QWebNetworkManager::doWork):
+        (WebCoreHttp::onRequestFinished):
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+
+2007-10-25  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
         * Use the JobStatus to make sure to not deliver finished/data before the job has started. This is the case with the fast/dom/onerror-img.html test case.
         * We have no idea if any data will come so we can still finish and then get pending data. This luckily can't happen for the local file case.
         

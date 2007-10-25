@@ -91,6 +91,7 @@ void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*)
 void WebCoreSynchronousLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     m_error = error;
+    m_finished = true;
 }
 
 void WebCoreSynchronousLoader::waitForCompletion()

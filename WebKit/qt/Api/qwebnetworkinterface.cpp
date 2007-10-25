@@ -335,12 +335,25 @@ QHttpResponseHeader QWebNetworkJob::response() const
 }
 
 /*!
+  The last error of the Job.
+*/
+QString QWebNetworkJob::errorString() const
+{
+    return d->errorString;
+}
+
+/*!
   Sets the HTTP reponse header. The response header has to be called before
   emitting QWebNetworkInterface::started.
 */
 void QWebNetworkJob::setResponse(const QHttpResponseHeader &response)
 {
     d->response = response;
+}
+
+void QWebNetworkJob::setErrorString(const QString& errorString)
+{
+    d->errorString = errorString;
 }
 
 /*!
@@ -588,7 +601,8 @@ void QWebNetworkManager::data(QWebNetworkJob *job, const QByteArray &data)
 
 void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
 {
-    Q_ASSERT(job->status() == QWebNetworkJob::JobStarted ||
+    Q_ASSERT(errorCode == 1 ||
+             job->status() == QWebNetworkJob::JobStarted ||
              job->status() == QWebNetworkJob::JobReceivingData);
 
     if (m_synchronousJobs.contains(job))
@@ -622,7 +636,7 @@ void QWebNetworkManager::finished(QWebNetworkJob *job, int errorCode)
             //FIXME: error setting error was removed from ResourceHandle
             client->didFail(job->d->resourceHandle,
                             ResourceError(job->d->request.url.host(), job->d->response.statusCode(),
-                                          job->d->request.url.toString(), String()));
+                                          job->d->request.url.toString(), job->d->errorString));
         } else {
             client->didFinishLoading(job->d->resourceHandle);
         }
@@ -819,7 +833,8 @@ void QWebNetworkManager::doWork()
             continue;
 
         // This job was not yet started... we have no idea if data comes by...
-        if (static_cast<int>(jobFinished->job->status()) < QWebNetworkJob::JobStarted)
+        // and it won't start in case of errors
+        if (static_cast<int>(jobFinished->job->status()) < QWebNetworkJob::JobStarted && jobFinished->errorCode != 1)
             continue;
 
         m_queueMutex.lock();
@@ -1151,8 +1166,10 @@ void WebCoreHttp::onRequestFinished(int id, bool error)
 
     QHttp *http = connection[c].http;
     DEBUG() << "WebCoreHttp::slotFinished connection=" << c << error << job;
-    if (error)
+    if (error) {
         DEBUG() << "   error: " << http->errorString();
+        job->setErrorString(http->errorString());
+    }
 
     if (!error && http->bytesAvailable()) {
         QByteArray data;

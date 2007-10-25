@@ -90,9 +90,11 @@ public:
     QByteArray postData() const;
     QHttpRequestHeader httpHeader() const;
     QWebNetworkRequest request() const;
+    QString errorString() const;
 
     QHttpResponseHeader response() const;
     void setResponse(const QHttpResponseHeader &response);
+    void setErrorString(const QString&);
 
     bool cancelled() const;
 
