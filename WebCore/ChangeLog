@@ -1,3 +1,9 @@
+2007-10-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Geoff.
+
+        * bindings/js/kjs_window.h: fix bogus comment, s/DOMNode/DOMObject/
+
 2007-10-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.
