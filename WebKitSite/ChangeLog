@@ -1,3 +1,11 @@
+2007-10-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        * images/download.png: Updated to say "Nightly builds" instead of
+       "Nightly (6 MB)" - the Mac version is ~17 MB now, and this isn't a direct
+       download link anyway.
+
 2007-10-21  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.
