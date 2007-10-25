@@ -27,6 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebKitClassFactory.h"
 
+#include "ForEachCoClass.h"
 #include "CFDictionaryPropertyBag.h"
 #include "WebCache.h"
 #include "WebDownload.h"
@@ -113,46 +114,28 @@ HRESULT STDMETHODCALLTYPE WebKitClassFactory::CreateInstance(IUnknown* pUnkOuter
     if (pUnkOuter)
         return CLASS_E_NOAGGREGATION;
 
-    if (IsEqualGUID(m_targetClass, CLSID_WebView))
-        unknown = static_cast<IWebView*>(WebView::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebIconDatabase))
-        unknown = static_cast<IWebIconDatabase*>(WebIconDatabase::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebMutableURLRequest))
-        unknown = static_cast<IWebMutableURLRequest*>(WebMutableURLRequest::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebNotificationCenter))
-        unknown = static_cast<IWebNotificationCenter*>(WebNotificationCenter::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebHistory))
-        unknown = static_cast<IWebHistory*>(WebHistory::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_CFDictionaryPropertyBag))
-        unknown = static_cast<IPropertyBag*>(CFDictionaryPropertyBag::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebHistoryItem))
-        unknown = static_cast<IWebHistoryItem*>(WebHistoryItem::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebCache))
-        unknown = static_cast<IWebCache*>(WebCache::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebJavaScriptCollector))
-        unknown = static_cast<IWebJavaScriptCollector*>(WebJavaScriptCollector::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebPreferences))
-        unknown = static_cast<IWebPreferences*>(WebPreferences::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebScrollBar))
-        unknown = static_cast<IWebScrollBarPrivate*>(WebScrollBar::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebKitStatistics))
-        unknown = static_cast<IWebKitStatistics*>(WebKitStatistics::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebError))
-        unknown = static_cast<IWebError*>(WebError::createInstance(ResourceError()));
-    else if (IsEqualGUID(m_targetClass, CLSID_WebURLCredential))
-        unknown = static_cast<IWebURLCredential*>(WebURLCredential::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebDownload))
-        unknown = static_cast<IWebDownload*>(WebDownload::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebURLRequest))
-        unknown = static_cast<IWebURLRequest*>(WebMutableURLRequest::createImmutableInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebURLProtectionSpace))
-        unknown = static_cast<IWebURLProtectionSpace*>(WebURLProtectionSpace::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebDebugProgram))
-        unknown = static_cast<IWebDebugProgram*>(WebDebugProgram::createInstance());
-    else if (IsEqualGUID(m_targetClass, CLSID_WebURLResponse))
-        unknown = static_cast<IWebURLResponse*>(WebURLResponse::createInstance());
-    else
+#define INITIALIZE_IF_CLASS(cls) \
+    if (IsEqualGUID(m_targetClass, CLSID_##cls)) \
+        unknown = static_cast<I##cls*>(cls::createInstance()); \
+    else \
+    // end of macro
+
+    // These #defines are needed to appease the INITIALIZE_IF_CLASS macro.
+    // There is no ICFDictionaryPropertyBag, we use IPropertyBag instead.
+#define ICFDictionaryPropertyBag IPropertyBag
+    // There is no IWebScrollBar, we only have IWebScrollBarPrivate.
+#define IWebScrollBar IWebScrollBarPrivate
+    // There is no class called WebURLRequest -- WebMutableURLRequest implements it for us.
+#define WebURLRequest WebMutableURLRequest
+
+    FOR_EACH_COCLASS(INITIALIZE_IF_CLASS)
+        // This is the final else case
         return CLASS_E_CLASSNOTAVAILABLE;
+
+#undef ICFDictionaryPropertyBag
+#undef IWebScrollBar
+#undef WebURLRequest
+#undef INITIALIZE_IF_CLASS
 
     if (!unknown)
         return E_OUTOFMEMORY;

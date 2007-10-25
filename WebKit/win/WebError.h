@@ -37,6 +37,7 @@
 class WebError : public IWebError, IWebErrorPrivate {
 public:
     static WebError* createInstance(const WebCore::ResourceError&, IPropertyBag* userInfo = 0);
+    static WebError* createInstance();
 protected:
     WebError(const WebCore::ResourceError&, IPropertyBag* userInfo);
     ~WebError();

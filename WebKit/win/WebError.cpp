@@ -57,6 +57,11 @@ WebError* WebError::createInstance(const ResourceError& error, IPropertyBag* use
     return instance;
 }
 
+WebError* WebError::createInstance()
+{
+    return createInstance(ResourceError());
+}
+
 // IUnknown -------------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebError::QueryInterface(REFIID riid, void** ppvObject)

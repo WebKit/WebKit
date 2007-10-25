@@ -1,5 +1,18 @@
 2007-10-24  Adam Roben  <aroben@apple.com>
 
+        Use FOR_EACH_COCLASS in WebKitClassFactory
+
+        Reviewed by Ada.
+
+        * WebError.cpp:
+        (WebError::createInstance): Added an overload that takes no arguments
+        to make the macro used in WebKitClassFactory work.
+        * WebError.h:
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::CreateInstance): Use FOR_EACH_COCLASS.
+
+2007-10-24  Adam Roben  <aroben@apple.com>
+
         Put FOR_EACH_COCLASS macro into its own file and export it
 
         The macro used to be called FOR_EACH_CLASS and lived in WebKitDLL.cpp.
