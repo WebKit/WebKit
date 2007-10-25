@@ -56,7 +56,10 @@ cpp_quote(" */")
 
 import "oaidl.idl";
 import "ocidl.idl";
-import "IWebKitStatistics.idl";
+
+import "IWebScriptDebugListener.idl";
+
+interface IWebScriptDebugListener;
 
 [
     object,
@@ -66,8 +69,10 @@ import "IWebKitStatistics.idl";
 ]
 interface IWebScriptDebugServer : IUnknown
 {
-    HRESULT attach();
-    HRESULT detach();
-    HRESULT statistics([out, retval] IWebKitStatistics** statistics);
-    HRESULT webViews([out, retval] IEnumVARIANT** enumViews);
+    HRESULT addListener([in] const IWebScriptDebugListener*);
+    HRESULT removeListener([in] const IWebScriptDebugListener*);
+    HRESULT step();
+    HRESULT pause();
+    HRESULT resume();
+    HRESULT isPaused([out, retval] BOOL* isPaused);
 }

@@ -48,19 +48,24 @@ public:
         /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
     
     virtual ULONG STDMETHODCALLTYPE AddRef( void);
-    
+
     virtual ULONG STDMETHODCALLTYPE Release( void);
 
     // IWebScriptDebugServer
-    virtual HRESULT STDMETHODCALLTYPE attach( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE detach( void);
-    
-    virtual HRESULT STDMETHODCALLTYPE statistics( 
-        /* [retval][out] */ IWebKitStatistics **statistics);
-    
-    virtual HRESULT STDMETHODCALLTYPE webViews( 
-        /* [retval][out] */ IEnumVARIANT **enumViews);
+    virtual HRESULT STDMETHODCALLTYPE addListener(
+        /* [in] */ const IWebScriptDebugListener*);
+
+    virtual HRESULT STDMETHODCALLTYPE removeListener(
+        /* [in] */ const IWebScriptDebugListener*);
+
+    virtual HRESULT STDMETHODCALLTYPE step();
+
+    virtual HRESULT STDMETHODCALLTYPE pause();
+
+    virtual HRESULT STDMETHODCALLTYPE resume();
+
+    virtual HRESULT STDMETHODCALLTYPE isPaused(
+        /* [out, retval] */ BOOL* isPaused);
 
 private:
     ULONG m_refCount;

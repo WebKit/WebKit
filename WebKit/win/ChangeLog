@@ -1,3 +1,20 @@
+2007-10-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Rubber stamped by Geoff.
+
+        - Stubbed out the WebScriptDebugServer methods to give Drosera something
+        to connect to and now the signature of the interface matches the mac.
+
+        * Interfaces/IWebScriptDebugServer.idl:
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::addListener):
+        (WebScriptDebugServer::removeListener):
+        (WebScriptDebugServer::step):
+        (WebScriptDebugServer::pause):
+        (WebScriptDebugServer::resume):
+        (WebScriptDebugServer::isPaused):
+        * WebScriptDebugServer.h:
+
 2007-10-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
