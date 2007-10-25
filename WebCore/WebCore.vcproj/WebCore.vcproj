@@ -3622,6 +3622,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\FontDatabase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\FontDatabase.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\FontDataWin.cpp"
 					>
 				</File>

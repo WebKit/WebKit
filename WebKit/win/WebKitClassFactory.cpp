@@ -50,6 +50,9 @@
 #include "WebDebugProgram.h"
 #include "WebView.h"
 #include <SafariTheme/SafariTheme.h>
+#pragma warning(push, 0)
+#include <WebCore/FontDatabase.h>
+#pragma warning(pop)
 
 // WebKitClassFactory ---------------------------------------------------------
 
@@ -66,6 +69,8 @@ WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
                 stInit();
         didInitializeSafariTheme = true;
     }
+
+    WebCore::populateFontDatabase();
 
     gClassCount++;
 }

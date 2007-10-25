@@ -1,5 +1,16 @@
 2007-10-24  Adam Roben  <aroben@apple.com>
 
+        Remove now-unnecessary call to InitializeCoreGraphics
+
+        WebKit takes care of this now.
+
+        Reviewed by Ada.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize):
+
+2007-10-24  Adam Roben  <aroben@apple.com>
+
         Use WebTextRenderer in DRT
 
         Reviewed by Ada.

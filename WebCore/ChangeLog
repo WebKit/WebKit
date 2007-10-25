@@ -1,3 +1,24 @@
+2007-10-24  Adam Roben  <aroben@apple.com>
+
+        Add font database initialization code to WebCore
+
+        Reviewed by Ada.
+
+        * WebCore.vcproj/WebCore.vcproj: Added FontDatabase.{cpp,h}.
+        * platform/win/FontDatabase.cpp: Added.
+        (WebCore::systemFontsDirectory):
+        (WebCore::fontsPlistPath):
+        (WebCore::systemHasFontsNewerThanFontsPlist):
+        (WebCore::readFontPlist):
+        (WebCore::populateFontDatabaseFromPlist):
+        (WebCore::populateFontDatabaseFromFileSystem):
+        (WebCore::writeFontDatabaseToPlist):
+        (WebCore::populateFontDatabase): This is the only function callable
+        from outside this file. It populates the font database once, either
+        from the fonts plist, or from the filesystem (and then saves a new
+        fonts plist).
+        * platform/win/FontDatabase.h: Added.
+
 2007-10-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
@@ -142,7 +163,7 @@
         (WebCore::HTMLImageLoader::haveFiredLoadEvent):
         Make this public.
 
-2007-10-24  Adam Roben  <aroben@apple.com>
+2007-10-23  Adam Roben  <aroben@apple.com>
 
         Move Windows safe file creation code into WebCore from WebPreferences
 

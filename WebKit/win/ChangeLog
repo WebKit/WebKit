@@ -1,5 +1,25 @@
 2007-10-24  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://5549919> Initialize the font database before any font code is invoked
+
+        We initialize the database in two places:
+           1. When instantiating WebKitClassFactory, which is guaranteed to
+           happen before any WebView is instantiated.
+           2. When making a WebCore::Font in WebKitGraphics.
+
+        This ensures that the font database will be populated before any font
+        code is invoked. We rely on WebCore to only populate the database
+        once.
+
+        Reviewed by Ada.
+
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory): Populate the font database.
+        * WebKitGraphics.cpp:
+        (makeFont): Ditto.
+
+2007-10-24  Adam Roben  <aroben@apple.com>
+
         Add [I]WebTextRenderer
 
         Right now this class can only be used to add private fonts for use by
