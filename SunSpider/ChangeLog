@@ -1,3 +1,14 @@
+2007-10-25  Adam Roben  <aroben@apple.com>
+
+        Strip carriage returns from results
+
+        Carriage returns were screwing up sunspider-compare-results on
+        Windows.
+
+        Rubberstamped by Oliver.
+
+        * sunspider:
+
 2007-10-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

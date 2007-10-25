@@ -131,6 +131,7 @@ my $total = 0;
 print "[";
 while ($count++ < $testRuns) {
     $result = runTestsOnce($runShark);
+    $result =~ s/\r\n/\n/g;
     chomp $result;
     push @results, $result;
     print $result;
