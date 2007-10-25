@@ -40,15 +40,19 @@ use strict;
 use Getopt::Mixed "nextOption";
 
 my $os_type = &get_os_type;
-my $unixish = ($os_type ne "WIN");
-my $path_sep = "/";  # This script uses unix paths internally and converts to native when needed
+my $unixish = (($os_type ne "WIN") && ($os_type ne "MAC"));
+my $path_sep = ($os_type eq "MAC") ? ":" : "/";
 my $win_sep  = ($os_type eq "WIN")? &get_win_sep : "";
-my $redirect_command = " 2>&1";
+my $redirect_command = ($os_type ne "MAC") ? " 2>&1" : "";
 
 # command line option defaults
 my $opt_suite_path;
 my $opt_trace = 0;
-my $opt_engine_type = "kjs";
+my $opt_classpath = "";
+my $opt_rhino_opt = 0;
+my $opt_rhino_ms = 0;
+my @opt_engine_list;
+my $opt_engine_type = "";
 my $opt_engine_params = "";
 my $opt_user_output_file = 0;
 my $opt_output_file = "";
@@ -59,6 +63,7 @@ my $opt_java_path = "";
 my $opt_bug_url = "http://bugzilla.mozilla.org/show_bug.cgi?id=";
 my $opt_console_failures = 0;
 my $opt_lxr_url = "./"; # "http://lxr.mozilla.org/mozilla/source/js/tests/";
+my $opt_exit_munge = ($os_type ne "MAC") ? 1 : 0;
 
 # command line option definition
 my $options = "b=s bugurl>b c=s classpath>c e=s engine>e f=s file>f " .
@@ -66,7 +71,13 @@ my $options = "b=s bugurl>b c=s classpath>c e=s engine>e f=s file>f " .
 "o=s opt>o p=s testpath>p s=s shellpath>s t trace>t u=s lxrurl>u " .
 "x noexitmunge>x";
 
-$opt_suite_path = "./";
+if ($os_type eq "MAC") {
+    $opt_suite_path = `directory`;
+    $opt_suite_path =~ s/[\n\r]//g;
+        $opt_suite_path .= ":";
+} else {
+    $opt_suite_path = "./";
+}
 
 &parse_args;
 
@@ -96,37 +107,42 @@ if ($unixish) {
 sub main {
     my $start_time;
     
-    $engine_command = &get_engine_command;
-    $html = "";
-    @failed_tests = ();
-    $failures_reported = 0;
-    $tests_completed = 0;
-    $start_time = time;
-    
-    
-    &execute_tests (@test_list);
-    
-    my $exec_time = (time - $start_time);
-    my $exec_hours = int($exec_time / 60 / 60);
-    $exec_time -= $exec_hours * 60 * 60;
-    my $exec_mins = int($exec_time / 60);
-    $exec_time -= $exec_mins * 60;
-    my $exec_secs = ($exec_time % 60);
-    
-    if ($exec_hours > 0) {
-        $exec_time_string = "$exec_hours hours, $exec_mins minutes, " .
-        "$exec_secs seconds";
-    } elsif ($exec_mins > 0) {
-        $exec_time_string = "$exec_mins minutes, $exec_secs seconds";
-    } else {
-        $exec_time_string = "$exec_secs seconds";
+    while ($opt_engine_type = pop (@opt_engine_list)) {
+        dd ("Testing engine '$opt_engine_type'");
+        
+        $engine_command = &get_engine_command;
+        $html = "";
+        @failed_tests = ();
+        $failures_reported = 0;
+        $tests_completed = 0;
+        $start_time = time;
+        
+        
+        &execute_tests (@test_list);
+        
+        my $exec_time = (time - $start_time);
+        my $exec_hours = int($exec_time / 60 / 60);
+        $exec_time -= $exec_hours * 60 * 60;
+        my $exec_mins = int($exec_time / 60);
+        $exec_time -= $exec_mins * 60;
+        my $exec_secs = ($exec_time % 60);
+        
+        if ($exec_hours > 0) {
+            $exec_time_string = "$exec_hours hours, $exec_mins minutes, " .
+            "$exec_secs seconds";
+        } elsif ($exec_mins > 0) {
+            $exec_time_string = "$exec_mins minutes, $exec_secs seconds";
+        } else {
+            $exec_time_string = "$exec_secs seconds";
+        }
+        
+        if (!$opt_user_output_file) {
+            $opt_output_file = &get_tempfile_name;
+        }
+        
+        &write_results;
+        
     }
-    
-    if (!$opt_user_output_file) {
-        $opt_output_file = &get_tempfile_name;
-    }
-    
-    &write_results;
 }
 
 sub execute_tests {
@@ -185,15 +201,22 @@ sub execute_tests {
         
         @output = grep (!/js\>/, @output);
         
+        if ($opt_exit_munge == 1) {
 # signal information in the lower 8 bits, exit code above that
-        $got_exit = ($? >> 8);
-        $exit_signal = ($? & 255);
+            $got_exit = ($? >> 8);
+            $exit_signal = ($? & 255);
+        } else {
+# user says not to munge the exit code
+            $got_exit = $?;
+            $exit_signal = 0;
+        }
         
         $failure_lines = "";
         $bug_number = "";
         $status_lines = "";
         
         foreach $line (@output) {
+            
 # watch for testcase to proclaim what exit code it expects to
 # produce (0 by default)
             if ($line =~ /expect(ed)?\s*exit\s*code\s*\:?\s*(\d+)/i) {
@@ -354,7 +377,15 @@ sub parse_args {
             &dd ("opt: setting bugurl to '$value'.");
             $opt_bug_url = $value;
             
-        }elsif ($option eq "f") {
+        } elsif ($option eq "c") {
+            &dd ("opt: setting classpath to '$value'.");
+            $opt_classpath = $value;
+            
+        } elsif (($option eq "e") || (($option eq "") && ($lastopt eq "e"))) {
+            &dd ("opt: adding engine $value.");
+            push (@opt_engine_list, $value);
+            
+        } elsif ($option eq "f") {
             if (!$value) {
                 die ("Output file cannot be null.\n");
             }
@@ -392,8 +423,15 @@ sub parse_args {
             
         } elsif ($option eq "p") {
             $opt_suite_path = $value;
-            if (!($opt_suite_path =~ /[\/\\]$/)) {
-                $opt_suite_path .= "/";
+            
+            if ($os_type eq "MAC") {
+                if (!($opt_suite_path =~ /\:$/)) {
+                    $opt_suite_path .= ":";
+                }
+            } else {
+                if (!($opt_suite_path =~ /[\/\\]$/)) {
+                    $opt_suite_path .= "/";
+                }
             }
             
             &dd ("opt: setting suite path to '$opt_suite_path'.");
@@ -411,14 +449,24 @@ sub parse_args {
             &dd ("opt: setting lxr url to '$value'.");
             $opt_lxr_url = $value;
             
+        } elsif ($option eq "x") {
+            &dd ("opt: turning off exit munging.");
+            $opt_exit_munge = 0;
+            
         } else {
             &usage;
         }
         
         $lastopt = $option;
+        
     }
     
     Getopt::Mixed::cleanup();
+    
+    if ($#opt_engine_list == -1) {
+        die "You must select a shell to test in.\n";
+    }
+    
 }
 
 #
@@ -429,6 +477,11 @@ sub usage {
     ("\nusage: $0 [<options>] \n" .
      "(-b|--bugurl)             Bugzilla URL.\n" .
      "                          (default is $opt_bug_url)\n" .
+     "(-c|--classpath)          Classpath (Rhino only.)\n" .
+     "(-e|--engine) <type> ...  Specify the type of engine(s) to test.\n" .
+     "                          <type> is one or more of\n" .
+     "                          (kjs|smopt|smdebug|lcopt|lcdebug|xpcshell|" .
+     "rhino|rhinoi|rhinoms|rhinomsi|rhino9|rhinoms9).\n" .
      "(-f|--file) <file>        Redirect output to file named <file>.\n" .
      "                          (default is " .
      "results-<engine-type>-<date-stamp>.html)\n" .
@@ -458,9 +511,52 @@ sub get_engine_command {
     
     my $retval;
     
-   if ($opt_engine_type eq "kjs") {
+    if ($opt_engine_type eq "rhino") {
+        &dd ("getting rhino engine command.");
+        $opt_rhino_opt = 0;
+        $opt_rhino_ms = 0;
+        $retval = &get_rhino_engine_command;
+    } elsif ($opt_engine_type eq "rhinoi") {
+        &dd ("getting rhinoi engine command.");
+        $opt_rhino_opt = -1;
+        $opt_rhino_ms = 0;
+        $retval = &get_rhino_engine_command;
+    } elsif ($opt_engine_type eq "rhino9") {
+        &dd ("getting rhino engine command.");
+        $opt_rhino_opt = 9;
+        $opt_rhino_ms = 0;
+        $retval = &get_rhino_engine_command;
+    } elsif ($opt_engine_type eq "rhinoms") {
+        &dd ("getting rhinoms engine command.");
+        $opt_rhino_opt = 0;
+        $opt_rhino_ms = 1;
+        $retval = &get_rhino_engine_command;
+    } elsif ($opt_engine_type eq "rhinomsi") {
+        &dd ("getting rhinomsi engine command.");
+        $opt_rhino_opt = -1;
+        $opt_rhino_ms = 1;
+        $retval = &get_rhino_engine_command;
+    } elsif ($opt_engine_type eq "rhinoms9") {
+        &dd ("getting rhinomsi engine command.");
+        $opt_rhino_opt = 9;
+        $opt_rhino_ms = 1;
+        $retval = &get_rhino_engine_command;
+    } elsif ($opt_engine_type eq "xpcshell") {
+        &dd ("getting xpcshell engine command.");
+        $retval = &get_xpc_engine_command;
+    } elsif ($opt_engine_type =~ /^lc(opt|debug)$/) {
+        &dd ("getting liveconnect engine command.");
+        $retval = &get_lc_engine_command;   
+    } elsif ($opt_engine_type =~ /^sm(opt|debug)$/) {
+        &dd ("getting spidermonkey engine command.");
+        $retval = &get_sm_engine_command;
+    }  elsif ($opt_engine_type =~ /^ep(opt|debug)$/) {
+        &dd ("getting epimetheus engine command.");
+        $retval = &get_ep_engine_command;
+    } elsif ($opt_engine_type eq "kjs") {
         &dd ("getting kjs engine command.");
         $retval = &get_kjs_engine_command;
+        
     } else {
         die ("Unknown engine type selected, '$opt_engine_type'.\n");
     }
@@ -470,6 +566,70 @@ sub get_engine_command {
     &dd ("got '$retval'");
     
     return $retval;
+    
+}
+
+#
+# get the shell command used to run rhino
+#
+sub get_rhino_engine_command {
+    my $retval = $opt_java_path . ($opt_rhino_ms ? "jview " : "java ");
+    
+    if ($opt_shell_path) {
+        $opt_classpath = ($opt_classpath) ?
+        $opt_classpath . ":" . $opt_shell_path :
+        $opt_shell_path;
+    }
+    
+    if ($opt_classpath) {
+        $retval .= ($opt_rhino_ms ? "/cp:p" : "-classpath") . " $opt_classpath ";
+    }
+    
+    $retval .= "org.mozilla.javascript.tools.shell.Main";
+    
+    if ($opt_rhino_opt) {
+        $retval .= " -opt $opt_rhino_opt";
+    }
+    
+    return $retval;
+    
+}
+
+#
+# get the shell command used to run xpcshell
+#
+sub get_xpc_engine_command {
+    my $retval;
+    my $m5_home = @ENV{"MOZILLA_FIVE_HOME"} ||
+        die ("You must set MOZILLA_FIVE_HOME to use the xpcshell" ,
+             (!$unixish) ? "." : ", also " .
+             "setting LD_LIBRARY_PATH to the same directory may get rid of " .
+             "any 'library not found' errors.\n");
+    
+    if (($unixish) && (!@ENV{"LD_LIBRARY_PATH"})) {
+        print STDERR "-#- WARNING: LD_LIBRARY_PATH is not set, xpcshell may " .
+        "not be able to find the required components.\n";
+    }
+    
+    if (!($m5_home =~ /[\/\\]$/)) {
+        $m5_home .= "/";
+    }
+    
+    $retval = $m5_home . "xpcshell";
+    
+    if ($os_type eq "WIN") {
+        $retval .= ".exe";
+    }
+    
+    $retval = &xp_path($retval);
+    
+    if (($os_type ne "MAC") && !(-x $retval)) {
+# mac doesn't seem to deal with -x correctly
+        die ($retval . " is not a valid executable on this system.\n");
+    }
+    
+    return $retval;
+    
 }
 
 #
@@ -487,7 +647,213 @@ sub get_kjs_engine_command {
     return $retval;
 }
 
+#
+# get the shell command used to run spidermonkey
+#
+sub get_sm_engine_command {
+    my $retval;
+    
+# Look for Makefile.ref style make first.
+# (On Windows, spidermonkey can be made by two makefiles, each putting the
+# executable in a diferent directory, under a different name.)
+    
+    if ($opt_shell_path) {
+# if the user provided a path to the shell, return that.
+        $retval = $opt_shell_path;
+        
+    } else {
+        
+        if ($os_type eq "MAC") {
+            $retval = $opt_suite_path . ":src:macbuild:JS";
+        } else {
+            $retval = $opt_suite_path . "../src/";
+            opendir (SRC_DIR_FILES, $retval);
+            my @src_dir_files = readdir(SRC_DIR_FILES);
+            closedir (SRC_DIR_FILES);
+            
+            my ($dir, $object_dir);
+            my $pattern = ($opt_engine_type eq "smdebug") ?
+                'DBG.OBJ' : 'OPT.OBJ';
+            
+# scan for the first directory matching
+# the pattern expected to hold this type (debug or opt) of engine
+            foreach $dir (@src_dir_files) {
+                if ($dir =~ $pattern) {
+                    $object_dir = $dir;
+                    last;
+                }
+            }
+            
+            if (!$object_dir && $os_type ne "WIN") {
+                die ("Could not locate an object directory in $retval " .
+                     "matching the pattern *$pattern.  Have you built the " .
+                     "engine?\n");
+            }
+            
+            if (!(-x $retval . $object_dir . "/js.exe") && ($os_type eq "WIN")) {
+# On windows, you can build with js.mak as well as Makefile.ref
+# (Can you say WTF boys and girls?  I knew you could.)
+# So, if the exe the would have been built by Makefile.ref isn't 
+# here, check for the js.mak version before dying.
+                if ($opt_shell_path) {
+                    $retval = $opt_shell_path;
+                    if (!($retval =~ /[\/\\]$/)) {
+                        $retval .= "/";
+                    }
+                } else {
+                    if ($opt_engine_type eq "smopt") {
+                        $retval = "../src/Release/";
+                    } else {
+                        $retval = "../src/Debug/";
+                    }
+                }
+                
+                $retval .= "jsshell.exe";
+                
+            } else {
+                $retval .= $object_dir . "/js";
+                if ($os_type eq "WIN") {
+                    $retval .= ".exe";
+                }
+            }
+        } # mac/ not mac
+        
+        $retval = &xp_path($retval);
+        
+    } # (user provided a path)
+        
+        
+        if (($os_type ne "MAC") && !(-x $retval)) {
+# mac doesn't seem to deal with -x correctly
+            die ($retval . " is not a valid executable on this system.\n");
+        }
+    
+    return $retval;
+    
+}
+
+#
+# get the shell command used to run epimetheus
+#
+sub get_ep_engine_command {
+    my $retval;
+    
+    if ($opt_shell_path) {
+# if the user provided a path to the shell, return that -
+        $retval = $opt_shell_path;
+        
+    } else {
+        my $dir;
+        my $os;
+        my $debug;
+        my $opt;
+        my $exe;
+        
+        $dir = $opt_suite_path . "../../js2/src/";
+        
+        if ($os_type eq "MAC") {
+#
+# On the Mac, the debug and opt builds lie in the same directory -
+#
+            $os = "macbuild:";
+            $debug = "";
+            $opt = "";
+            $exe = "JS2";
+        } elsif ($os_type eq "WIN") {
+            $os = "winbuild/Epimetheus/";
+            $debug = "Debug/";
+            $opt = "Release/";
+            $exe = "Epimetheus.exe";
+        } else {
+            $os = "";
+            $debug = "";
+            $opt = "";    # <<<----- XXX THIS IS NOT RIGHT! CHANGE IT!
+                $exe = "epimetheus";
+        }
+        
+        
+        if ($opt_engine_type eq "epdebug") {
+            $retval = $dir . $os . $debug . $exe;
+        } else {
+            $retval = $dir . $os . $opt . $exe;
+        }
+        
+        $retval = &xp_path($retval);
+        
+    }# (user provided a path)
+        
+        
+        if (($os_type ne "MAC") && !(-x $retval)) {
+# mac doesn't seem to deal with -x correctly
+            die ($retval . " is not a valid executable on this system.\n");
+        }
+    
+    return $retval;
+}
+
+#
+# get the shell command used to run the liveconnect shell
+#
+sub get_lc_engine_command {
+    my $retval;
+    
+    if ($opt_shell_path) {
+        $retval = $opt_shell_path;
+    } else {
+        if ($os_type eq "MAC") {
+            die "Don't know how to run the lc shell on the mac yet.\n";
+        } else {
+            $retval = $opt_suite_path . "../src/liveconnect/";
+            opendir (SRC_DIR_FILES, $retval);
+            my @src_dir_files = readdir(SRC_DIR_FILES);
+            closedir (SRC_DIR_FILES);
+            
+            my ($dir, $object_dir);
+            my $pattern = ($opt_engine_type eq "lcdebug") ?
+                'DBG.OBJ' : 'OPT.OBJ';
+            
+            foreach $dir (@src_dir_files) {
+                if ($dir =~ $pattern) {
+                    $object_dir = $dir;
+                    last;
+                }
+            }
+            
+            if (!$object_dir) {
+                die ("Could not locate an object directory in $retval " .
+                     "matching the pattern *$pattern.  Have you built the " .
+                     "engine?\n");
+            }
+            
+            $retval .= $object_dir . "/";
+            
+            if ($os_type eq "WIN") {
+                $retval .= "lcshell.exe";
+            } else {
+                $retval .= "lcshell";
+            }
+        } # mac/ not mac
+        
+        $retval = &xp_path($retval);
+        
+    } # (user provided a path)
+        
+        
+        if (($os_type ne "MAC") && !(-x $retval)) {
+# mac doesn't seem to deal with -x correctly
+            die ("$retval is not a valid executable on this system.\n");
+        }
+    
+    return $retval;
+    
+}
+
 sub get_os_type {
+    
+    if ("\n" eq "\015") {
+        return "MAC";
+    }
+    
     my $uname = `uname -a`;
     
     if ($uname =~ /WIN/) {
@@ -498,6 +864,7 @@ sub get_os_type {
     
     &dd ("get_os_type returning '$uname'.");
     return $uname;
+    
 }
 
 sub get_test_list {
@@ -537,9 +904,12 @@ sub get_test_list {
              " tests will be skipped.");
         &dd ((($#neg_list + 1) - $actually_skipped) . " skip tests were " .
              "not actually part of the test list.");
+        
+        
     }
     
     return @test_list;
+    
 }
 
 #
@@ -551,12 +921,25 @@ sub expand_user_test_list {
     my ($list_file) = @_;
     my @retval = ();
     
-    # We will call expand_test_list_entry(), which does pattern-matching on $list_file.
-    # This will make the pattern-matching the same as it would be on Linux/Windows -
-    #
+#
+# Trim off the leading path separator that begins relative paths on the Mac.
+# Each path will get concatenated with $opt_suite_path, which ends in one.
+#
+# Also note:
+#
+# We will call expand_test_list_entry(), which does pattern-matching on $list_file.
+# This will make the pattern-matching the same as it would be on Linux/Windows -
+#
+    if ($os_type eq "MAC") {
+        $list_file =~ s/^$path_sep//;
+    }
+    
     if ($list_file =~ /\.js$/ || -d $opt_suite_path . $list_file) {
+        
         push (@retval, &expand_test_list_entry($list_file));
+        
     } else {
+        
         open (TESTLIST, $list_file) ||
         die("Error opening test list file '$list_file': $!\n");
         
@@ -569,9 +952,11 @@ sub expand_user_test_list {
         }
         
         close (TESTLIST);
+        
     }
     
     return @retval;
+    
 }
 
 
@@ -630,6 +1015,7 @@ sub expand_test_list_entry {
     }
  
  return @retval;
+ 
 }
 
 #
@@ -659,6 +1045,7 @@ sub get_default_test_list {
     }
     
     return @retval;
+    
 }
 
 #
@@ -667,7 +1054,17 @@ sub get_default_test_list {
 sub get_tempfile_name {
     my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) =
     &get_padded_time (localtime);
-    return "res-" . $year . $mon . $mday . $hour . $min . $sec . "-" . $opt_engine_type . ".html";
+    my $rv;
+    
+    if ($os_type ne "MAC") {
+        $rv = "results-" . $year . "-" . $mon . "-" . $mday . "-" . $hour .
+        $min . $sec . "-" . $opt_engine_type;
+    } else {
+        $rv = "res-" . $year . $mon . $mday . $hour . $min . $sec . "-" .
+        $opt_engine_type
+    }
+    
+    return $rv . ".html";
 }
 
 sub get_padded_time {
@@ -682,6 +1079,7 @@ sub get_padded_time {
     $hour = &zero_pad($hour);
     
     return ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst);
+    
 }
 
 sub zero_pad {
@@ -702,6 +1100,38 @@ sub subtract_arrays {
     }
     
     return @whole;
+    
+}
+
+#
+# Convert unix path to mac style.
+#
+sub unix_to_mac {
+    my ($path) = @_;
+    my @path_elements = split ("/", $path);
+    my $rv = "";
+    my $i;
+    
+    foreach $i (0 .. $#path_elements) {
+        if ($path_elements[$i] eq ".") {
+            if (!($rv =~ /\:$/)) {
+                $rv .= ":";
+            }
+        } elsif ($path_elements[$i] eq "..") {
+            if (!($rv =~ /\:$/)) {
+                $rv .= "::";
+            } else {
+                $rv .= ":";
+            }
+        } elsif ($path_elements[$i] ne "") {
+            $rv .= $path_elements[$i] . ":";
+        }
+        
+    }
+    
+    $rv =~ s/\:$//;
+        
+        return $rv;
 }
 
 #
@@ -733,7 +1163,9 @@ sub get_win_sep {
 sub xp_path {
     my ($path) = @_;
     
-    if ($os_type eq "WIN") {
+    if ($os_type eq "MAC") {
+        return &unix_to_mac($path);
+    } elsif($os_type eq "WIN") {
         return &unix_to_win($path);
     } else {
         return $path;
@@ -748,8 +1180,8 @@ sub numericcmp($$)
     my @b = split /(\d+)/, $bb;
 
     while (@a && @b) {
-    my $a = shift @a;
-    my $b = shift @b;
+	my $a = shift @a;
+	my $b = shift @b;
         return $a <=> $b if $a =~ /^\d/ && $b =~ /^\d/ && $a != $b;
         return $a cmp $b if $a ne $b;
     }
@@ -764,8 +1196,14 @@ sub get_subdirs {
     my ($dir)  = @_;
     my @subdirs;
     
-    if (!($dir =~ /\/$/)) {
-        $dir = $dir . "/";
+    if ($os_type ne "MAC") {
+        if (!($dir =~ /\/$/)) {
+            $dir = $dir . "/";
+        }
+    } else {
+        if (!($dir =~ /\:$/)) {
+            $dir = $dir . ":";
+        }
     }
     opendir (DIR, $dir) || die ("couldn't open directory $dir: $!");
     my @testdir_contents = sort numericcmp readdir(DIR);
@@ -854,13 +1292,17 @@ sub report_failure {
 }
 
 sub dd {
+    
     if ($opt_trace) {
         print ("-*- ", @_ , "\n");
     }
+    
 }
 
 sub status {
+    
     print ("-#- ", @_ , "\n");
+    
 }
 
 sub int_handler {
@@ -877,4 +1319,5 @@ sub int_handler {
     } elsif ($resp =~ /[Rr]/) {
         $user_exit = 1;
     }
+    
 }
