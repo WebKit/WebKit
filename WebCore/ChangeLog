@@ -1,3 +1,22 @@
+2007-10-25  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 15672, background images don't tile properly inside transforms.  This patch fixes background
+        tiling to work in the presence of transforms and fixes bugs in both SVG and CSS transforms.
+
+        Reviewed by aroben and mitz
+
+        * WebCore.base.exp:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::setData):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::ImageInfo::ImageInfo):
+        (WebCore::Image::drawPatternCallback):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2007-10-25  Brady Eidson  <beidson@apple.com>
 
         Blind build fix attempt

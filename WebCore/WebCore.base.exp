@@ -738,6 +738,7 @@ _wkSetCGFontRenderingMode
 _wkSetDragImage
 _wkSetNSURLConnectionDefersCallbacks
 _wkSetNSURLRequestShouldContentSniff
+_wkSetPatternBaseCTM
 _wkSetPatternPhaseInUserSpace
 _wkSetUpFontCache
 _wkSignalCFReadStreamEnd

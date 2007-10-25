@@ -76,6 +76,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SetDragImage);
     INIT(SetNSURLConnectionDefersCallbacks);
     INIT(SetNSURLRequestShouldContentSniff);
+    INIT(SetPatternBaseCTM);
     INIT(SetPatternPhaseInUserSpace);
     INIT(SetUpFontCache);
     INIT(SignalCFReadStreamEnd);

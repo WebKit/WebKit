@@ -163,7 +163,9 @@ void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint& point, 
     
     // FIXME: This code should not use NSGraphicsContext currentContext
     // In order to remove this requirement we will need to use CGPattern instead of NSColor
-    
+    // FIXME: This code should not be using wkSetPatternPhaseInUserSpace, as this approach is wrong
+    // for transforms.
+
     // Draw underline
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     CGContextRef context = (CGContextRef)[currentContext graphicsPort];

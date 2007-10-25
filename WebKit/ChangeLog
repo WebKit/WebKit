@@ -1,3 +1,15 @@
+2007-10-25  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 15672, backgrounds don't tile properly inside transforms.  This patch fixes tiling
+        of backgrounds inside CSS transforms and also of HTML content with background images inside SVG
+        transforms.
+
+        Reviewed by aroben and mmitz
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-10-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher

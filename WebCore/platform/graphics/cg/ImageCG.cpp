@@ -38,6 +38,10 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include "WebCoreSystemInterface.h"
 
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
+
 namespace WebCore {
 
 void FrameData::clear()
@@ -167,49 +171,56 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
         imageObserver()->didDraw(this);
 }
 
+struct ImageInfo {
+    ImageInfo(const FloatPoint& point, Image* i)
+    : tilePoint(point)
+    , image(i)
+    {}
+    
+    FloatPoint tilePoint;
+    Image* image;
+};
+
 void Image::drawPatternCallback(void* info, CGContextRef context)
 {
-    Image* data = (Image*)info;
-    CGImageRef image = data->nativeImageForCurrentFrame();
-    float w = CGImageGetWidth(image);
-    float h = CGImageGetHeight(image);
-    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, -h, w, h)), image);
+    ImageInfo* data = (ImageInfo*)info;
+    CGImageRef image = data->image->nativeImageForCurrentFrame();
+    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(data->tilePoint.x(), data->tilePoint.y(), CGImageGetWidth(image), CGImageGetHeight(image))), image);
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
                         const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
     CGContextRef context = ctxt->platformContext();
+    ctxt->save();
+    CGContextClipToRect(context, destRect);
+    ctxt->setCompositeOperation(op);
+    CGContextTranslateCTM(context, destRect.x(), destRect.y());
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -destRect.height());
+    
+    // Compute the scaled tile size.
+    float scaledTileHeight = tileRect.height() * narrowPrecisionToCGFloat(patternTransform.d());
+    
+    // We have to adjust the phase to deal with the fact we're in Cartesian space now (with the bottom left corner of destRect being
+    // the origin).
+    float adjustedX = phase.x() - destRect.x() + tileRect.x() * patternTransform.a(); // We translated the context so that destRect.x() is the origin, so subtract it out.
+    float adjustedY = destRect.height() - (phase.y() - destRect.y() + tileRect.y() * patternTransform.d() + scaledTileHeight);
 
+    CGImageRef tileImage = nativeImageForCurrentFrame();
+    float h = CGImageGetHeight(tileImage);
+    
 #ifndef BUILDING_ON_TIGER
     // Leopard has an optimized call for the tiling of image patterns, but we can only use it if the image has been decoded enough that
     // its buffer is the same size as the overall image.  Because a partially decoded CGImageRef with a smaller width or height than the
     // overall image buffer needs to tile with "gaps", we can't use the optimized tiling call in that case.  We also avoid this optimization
     // when tiling portions of an image, since until we can actually cache the subimage we want to tile, this code won't be any faster.
     // FIXME: Could create WebKitSystemInterface SPI for CGCreatePatternWithImage2 and probably make Tiger tile faster as well.
-    CGImageRef tileImage = nativeImageForCurrentFrame();
+    float scaledTileWidth = tileRect.width() * narrowPrecisionToCGFloat(patternTransform.a());
     float w = CGImageGetWidth(tileImage);
-    float h = CGImageGetHeight(tileImage);
-    if (w == size().width() && h == size().height() && tileRect.size() == size()) {
-        ctxt->save();
-        CGContextClipToRect(context, destRect);
-        ctxt->setCompositeOperation(op);
-        CGContextTranslateCTM(context, destRect.x(), destRect.y());
-        CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, 0, -destRect.height());
-        
-        // Compute the scaled tile size.
-        float scaledTileWidth = tileRect.width() * narrowPrecisionToCGFloat(patternTransform.a());
-        float scaledTileHeight = tileRect.height() * narrowPrecisionToCGFloat(patternTransform.d());
-    
-        // We have to adjust the phase to deal with the fact we're in Cartesian space now (with the bottom left corner of destRect being
-        // the origin).
-        float adjustedX = phase.x() - destRect.x(); // We translated the context so that destRect.x() is the origin, so subtract it out.
-        float adjustedY = destRect.height() - (phase.y() - destRect.y() + scaledTileHeight);
-
+    if (w == size().width() && h == size().height() && tileRect.size() == size())
         CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), tileImage);
-        ctxt->restore();
-    } else {
+    else {
 #endif
 
     // On Leopard, this code now only runs for partially decoded images whose buffers do not yet match the overall size of the image or for
@@ -218,31 +229,38 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     // pattern is destroyed before exiting the function.  This means any decoding the pattern does doesn't end up cached anywhere, so we
     // redecode every time we paint.
     static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, NULL };
-    CGPatternRef pattern = CGPatternCreate(this, FloatRect(tileRect.x(), -tileRect.y() - tileRect.height(), tileRect.width(), tileRect.height()),
-                                           CGAffineTransform(patternTransform), tileRect.width(), tileRect.height(), 
+    CGAffineTransform matrix = CGAffineTransformMake(narrowPrecisionToCGFloat(patternTransform.a()), 0, 0, narrowPrecisionToCGFloat(patternTransform.d()), adjustedX, adjustedY);
+    matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
+    
+    // If we're painting a subimage, store the offset to the image.
+    ImageInfo info(FloatPoint(-tileRect.x(), tileRect.y() + tileRect.height() - h), this);
+    CGPatternRef pattern = CGPatternCreate(&info, CGRectMake(0, 0, tileRect.width(), tileRect.height()),
+                                           matrix, tileRect.width(), tileRect.height(), 
                                            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
-    if (!pattern)
+    if (pattern == NULL) {
+        ctxt->restore();
         return;
-    
-    ctxt->save();
-    
-    // FIXME: Really want a public API for this.
-    wkSetPatternPhaseInUserSpace(context, phase);
-    
+    }
+
     CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
+    
+    CGFloat alpha = 1;
+    CGColorRef color = CGColorCreateWithPattern(patternSpace, pattern, &alpha);
     CGContextSetFillColorSpace(context, patternSpace);
     CGColorSpaceRelease(patternSpace);
-    
-    CGFloat patternAlpha = 1;
-    CGContextSetFillPattern(context, pattern, &patternAlpha);
-    
-    ctxt->setCompositeOperation(op);
-    
-    CGContextFillRect(context, destRect);
-    
-    ctxt->restore();
     CGPatternRelease(pattern);
 
+    // FIXME: Really want a public API for this.  It is just CGContextSetBaseCTM(context, CGAffineTransformIdentiy).
+    wkSetPatternBaseCTM(context, CGAffineTransformIdentity);
+    CGContextSetPatternPhase(context, CGSizeZero);
+
+    CGContextSetFillColorWithColor(context, color);
+    CGContextFillRect(context, CGContextGetClipBoundingBox(context));
+    
+    CGColorRelease(color);
+    
+    ctxt->restore();
+    
 #ifndef BUILDING_ON_TIGER
     }
 #endif

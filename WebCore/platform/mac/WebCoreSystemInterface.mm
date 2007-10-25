@@ -59,6 +59,7 @@ void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selecte
 void (*wkReleaseStyleGroup)(void* group);
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
+void (*wkSetPatternBaseCTM)(CGContextRef, CGAffineTransform);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
 void (*wkSetUpFontCache)(size_t);
 void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
