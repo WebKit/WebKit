@@ -85,6 +85,16 @@ RenderFlow* RenderFlow::continuationBefore(RenderObject* beforeChild)
 
 void RenderFlow::addChildWithContinuation(RenderObject* newChild, RenderObject* beforeChild)
 {
+    if (beforeChild && (beforeChild->parent()->isTableRow() || beforeChild->parent()->isTableSection() || beforeChild->parent()->isTable())) {
+        RenderObject* anonymousTablePart = beforeChild->parent();
+        ASSERT(anonymousTablePart->isAnonymous());
+        while (!anonymousTablePart->isTable()) {
+            anonymousTablePart = anonymousTablePart->parent();
+            ASSERT(anonymousTablePart->isAnonymous());
+        }
+        return anonymousTablePart->addChild(newChild, beforeChild);
+    }
+
     RenderFlow* flow = continuationBefore(beforeChild);
     ASSERT(!beforeChild || beforeChild->parent()->isRenderBlock() ||
                 beforeChild->parent()->isRenderInline());

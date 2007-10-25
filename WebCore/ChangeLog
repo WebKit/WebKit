@@ -1,3 +1,17 @@
+2007-10-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15362
+          <rdar://problem/5558715> Safari Crashes when opening a JS TreeGrid widget
+
+        Test: fast/dynamic/insert-before-table-part-in-continuation.html
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::addChildWithContinuation): If beforeChild's
+        parent is an anonymous table part, let the table figure out where to
+        insert the new child.
+
 2007-10-25  Alp Toker  <alp@atoker.com>
 
         Reviewed by Brady.

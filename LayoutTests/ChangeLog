@@ -1,3 +1,15 @@
+2007-10-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15362
+          <rdar://problem/5558715> Safari Crashes when opening a JS TreeGrid widget
+
+        * fast/dynamic/insert-before-table-part-in-continuation.html: Added.
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.checksum: Added.
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.png: Added.
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Added.
+
 2007-10-25  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
