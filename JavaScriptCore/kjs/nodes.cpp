@@ -24,6 +24,7 @@
 #include "config.h"
 #include "nodes.h"
 
+#include "JSGlobalObject.h"
 #include "PropertyNameArray.h"
 #include "context.h"
 #include "debugger.h"

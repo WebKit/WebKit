@@ -23,6 +23,7 @@
  */
 
 #include "context.h"
+#include "JSGlobalObject.h"
 #include "ExecState.h"
 #include "internal.h"
 

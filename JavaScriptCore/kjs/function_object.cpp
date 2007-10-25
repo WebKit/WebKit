@@ -23,6 +23,7 @@
 #include "config.h"
 #include "function_object.h"
 
+#include "JSGlobalObject.h"
 #include "array_object.h"
 #include "debugger.h"
 #include "function.h"

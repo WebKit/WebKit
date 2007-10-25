@@ -24,6 +24,8 @@
 
 #include "context.h"
 
+#include "JSGlobalObject.h"
+
 namespace KJS {
 
 // ECMA 10.2

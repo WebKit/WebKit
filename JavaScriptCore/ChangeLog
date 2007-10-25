@@ -1,3 +1,17 @@
+2007-10-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+        
+        - add header includes needed on platforms that don't use AllInOneFile.cpp
+
+        * API/JSCallbackObject.cpp:
+        * kjs/Context.cpp:
+        * kjs/ExecState.cpp:
+        * kjs/array_instance.cpp:
+        * kjs/function_object.cpp:
+        * kjs/interpreter.cpp:
+        * kjs/nodes.cpp:
+
 2007-10-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Geoff.
