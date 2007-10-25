@@ -1,3 +1,9 @@
+2007-10-24  Sam Weinig  <sam@webkit.org>
+
+        Build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-10-24  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Oliver.
