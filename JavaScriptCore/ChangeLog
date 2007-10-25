@@ -1,3 +1,18 @@
+2007-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+        
+        Slightly elaborated the differences between declaration procesing in 
+        Function Code and Program Code.
+        
+        .3% speedup on SunSpider.
+
+        * kjs/nodes.cpp:
+        (KJS::FunctionBodyNode::processDeclarationsFunctionCode): 
+        (KJS::FunctionBodyNode::processDeclarationsProgramCode): Store a 
+        minimum set of attributes instead of recomputing all the time. Also,
+        ignore m_parameters, since programs don't have arguments.
+
 2007-10-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.

@@ -2617,13 +2617,15 @@ void FunctionBodyNode::processDeclarationsFunctionCode(ExecState* exec)
     Context* context = exec->context();
     JSObject* variableObject = context->variableObject();
 
+    int minAttributes = Internal | DontDelete;
+
     // The order of additions to the variable object here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
         VarDeclNode* node = m_varStack[i];
-        int flags = Internal | DontDelete;
+        int attributes = minAttributes;
         if (node->varType == VarDeclNode::Constant)
-            flags |= ReadOnly;
-        variableObject->put(exec, node->ident, jsUndefined(), flags);
+            attributes |= ReadOnly;
+        variableObject->put(exec, node->ident, jsUndefined(), attributes);
     }
 
     const List& args = *context->arguments();
@@ -2632,7 +2634,7 @@ void FunctionBodyNode::processDeclarationsFunctionCode(ExecState* exec)
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i) {
         FuncDeclNode* node = m_functionStack[i];
-        variableObject->put(exec, node->ident, node->makeFunction(exec), Internal | DontDelete);
+        variableObject->put(exec, node->ident, node->makeFunction(exec), minAttributes);
     }
 }
 
@@ -2642,27 +2644,24 @@ void FunctionBodyNode::processDeclarationsProgramCode(ExecState* exec)
 
     Context* context = exec->context();
     JSObject* variableObject = context->variableObject();
+    
+    int minAttributes = Internal | (exec->context()->codeType() != EvalCode ? DontDelete : 0);
 
-    // The order of additions to the variable object here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
         VarDeclNode* node = m_varStack[i];
-        if (!variableObject->hasProperty(exec, node->ident)) {
-            int flags = Internal;
-            if (context->codeType() != EvalCode)
-                flags |= DontDelete;
-            if (node->varType == VarDeclNode::Constant)
-                flags |= ReadOnly;
-            variableObject->put(exec, node->ident, jsUndefined(), flags);
-        }
+        if (variableObject->hasProperty(exec, node->ident))
+            continue;
+        int attributes = minAttributes;
+        if (node->varType == VarDeclNode::Constant)
+            attributes |= ReadOnly;
+        variableObject->put(exec, node->ident, jsUndefined(), attributes);
     }
-    
-    const List& args = *context->arguments();
-    for (i = 0, size = m_parameters.size(); i < size; ++i)
-        variableObject->put(exec, m_parameters[i], args[i], DontDelete);
+
+    ASSERT(!m_parameters.size());
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i) {
         FuncDeclNode* node = m_functionStack[i];
-        variableObject->put(exec, node->ident, node->makeFunction(exec), Internal | (context->codeType() == EvalCode ? 0 : DontDelete));
+        variableObject->put(exec, node->ident, node->makeFunction(exec), minAttributes);
     }
 }
 
