@@ -32,13 +32,15 @@ var Preferences = {
     showUserAgentStyles: true,
     maxInlineTextChildLength: 80,
     maxTextSearchResultLength: 80,
-    showInheritedComputedStyleProperties: false
+    showInheritedComputedStyleProperties: false,
+    toolbarHeight: 28
 }
 
 var WebInspector = {
     resources: [],
     resourceURLMap: {},
     backForwardList: [],
+    searchResultsHeight: 100,
 
     get consolePanel()
     {
@@ -177,16 +179,22 @@ var WebInspector = {
         this._showingSearchResults = x;
 
         var resultsContainer = document.getElementById("searchResults");
+        var searchResultsResizer = document.getElementById("searchResultsResizer");
+
         if (x) {
+            searchResultsResizer.style.display = null;
             var animations = [
-                {element: resultsContainer, end: {top: 28}},
-                {element: document.getElementById("main"), end: {top: 129}}
+                {element: resultsContainer, end: {top: Preferences.toolbarHeight}},
+                {element: searchResultsResizer, end: {top: WebInspector.searchResultsHeight + Preferences.toolbarHeight - 2}},
+                {element: document.getElementById("main"), end: {top: WebInspector.searchResultsHeight + Preferences.toolbarHeight + 1}}
             ];
             WebInspector.animateStyle(animations, 250);
         } else {
+            searchResultsResizer.style.display = "none";
             var animations = [
-                {element: resultsContainer, end: {top: -73}},
-                {element: document.getElementById("main"), end: {top: 28}}
+                {element: resultsContainer, end: {top: Preferences.toolbarHeight - WebInspector.searchResultsHeight - 1}},
+                {element: searchResultsResizer, end: {top: 0}},
+                {element: document.getElementById("main"), end: {top: Preferences.toolbarHeight}}
             ];
             WebInspector.animateStyle(animations, 250, function() { resultsContainer.removeChildren(); delete this.searchResultsTree; });
         }
@@ -242,6 +250,7 @@ WebInspector.loaded = function(event)
     document.getElementById("attachToggle").addEventListener("click", function(event) { WebInspector.toggleAttach() }, true);
     document.getElementById("statusToggle").addEventListener("click", function(event) { WebInspector.toggleStatusArea() }, true);
     document.getElementById("sidebarResizeWidget").addEventListener("mousedown", WebInspector.sidebarResizerDragStart, true);
+    document.getElementById("searchResultsResizer").addEventListener("mousedown", WebInspector.searchResultsResizerDragStart, false);
 
     document.body.addStyleClass("detached");
 
@@ -451,8 +460,6 @@ WebInspector.sidebarResizerDrag = function(event)
 {
     var sidebar = document.getElementById("sidebar");
     if (sidebar.dragging == true) {
-        var main = document.getElementById("main");
-        var buttonContainer = document.getElementById("toolbarButtons");
 
         var x = event.clientX + window.scrollX;
 
@@ -464,8 +471,38 @@ WebInspector.sidebarResizerDrag = function(event)
             sidebar.dragLastX = x;
 
         sidebar.style.width = newWidth + "px";
-        main.style.left = newWidth + "px";
-        buttonContainer.style.left = newWidth + "px";
+        document.getElementById("main").style.left = newWidth + "px";
+        document.getElementById("toolbarButtons").style.left = newWidth + "px";
+        document.getElementById("searchResults").style.left = newWidth + "px";
+        document.getElementById("searchResultsResizer").style.left = newWidth + "px";
+        event.preventDefault();
+    }
+}
+
+WebInspector.searchResultsResizerDragStart = function(event)
+{
+    WebInspector.dividerDragStart(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event, "row-resize");
+}
+
+WebInspector.searchResultsResizerDragEnd = function(event)
+{
+    WebInspector.dividerDragEnd(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event);
+}
+
+WebInspector.searchResultsResizerDrag = function(event)
+{
+    var searchResults = document.getElementById("searchResults");
+    if (searchResults.dragging == true) {
+        var y = event.clientY;
+        var newHeight = Number.constrain(y, 100, window.innerHeight - 100);
+
+        if (y == newHeight)
+            searchResults.dragLastY = y;
+
+        WebInspector.searchResultsHeight = newHeight - Preferences.toolbarHeight;
+        searchResults.style.height = WebInspector.searchResultsHeight + "px";
+        document.getElementById("main").style.top = newHeight + "px";
+        document.getElementById("searchResultsResizer").style.top = (newHeight - 2) + "px";
         event.preventDefault();
     }
 }

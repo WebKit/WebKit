@@ -1,3 +1,17 @@
+2007-10-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15446
+        Web Inspector find window is not resizable
+
+        - Adds ability to resize the find window.
+        - Fixes bug that messed up the find window when resizing the left sidebar. 
+
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.html:
+        * page/inspector/inspector.js:
+
 2007-10-26  Ada Chan  <adachan@apple.com>
 
         Update m_current index after we've removed an item:

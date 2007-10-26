@@ -1927,3 +1927,12 @@ body.inactive #sidebar li.selected {
     z-index: 100;
     cursor: col-resize;
 }
+
+#searchResultsResizer {
+    position: absolute;
+    top: 0;
+    left: 200px;
+    right: 0;
+    height: 5px;
+    cursor: row-resize;
+}
