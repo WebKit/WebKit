@@ -1,12 +1,15 @@
 2007-10-26  Kevin McCullough  <kmccullough@apple.com>
 
+        - Corrected function name mistake in this changelog.
+
+2007-10-26  Kevin McCullough  <kmccullough@apple.com>
         Reviewed by Sam and Steve.
 
         - Added convenience methods for converting between BSTR and JSStringRefs
 
         * API/JSStringRefCOM.cpp: Added.
-        (JSStringCreateWithCFString):
-        (JSStringCopyCFString):
+        (JSStringCreateWithBSTR):
+        (JSStringCopyBSTR):
         * API/JSStringRefCOM.h: Added.
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
 
