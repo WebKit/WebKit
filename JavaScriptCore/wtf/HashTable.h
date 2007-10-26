@@ -396,14 +396,20 @@ namespace WTF {
         int probeCount = 0;
 #endif
 
-        ValueType *table = m_table;
-        ValueType *entry;
-        ValueType *deletedEntry = 0;
-        while (!isEmptyBucket(*(entry = table + i))) {
+        ValueType* table = m_table;
+        ValueType* deletedEntry = 0;
+
+        while (1) {
+            ValueType* entry = table + i;
+
+            if (isEmptyBucket(*entry))
+                return makeLookupResult(deletedEntry ? deletedEntry : entry, false, h);
+            
             if (isDeletedBucket(*entry))
                 deletedEntry = entry;
             else if (HashTranslator::equal(Extractor::extract(*entry), key))
                 return makeLookupResult(entry, true, h);
+
 #if DUMP_HASHTABLE_STATS
             ++probeCount;
             HashTableStats::recordCollisionAtCount(probeCount);
@@ -412,10 +418,7 @@ namespace WTF {
                 k = 1 | (h % sizeMask);
             i = (i + k) & sizeMask;
         }
-
-        return makeLookupResult(deletedEntry ? deletedEntry : entry, false, h);
     }
-
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename T, typename Extra, typename HashTranslator>
