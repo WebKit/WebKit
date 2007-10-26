@@ -52,6 +52,8 @@ void wkAddFontsAtPath(CFStringRef);
 void wkAddFontsFromPlistRepresentation(CFDataRef);
 CFDataRef wkCreateFontsPlistRepresentation();
 
+void wkSetPatternBaseCTM(CGContextRef, CGAffineTransform);
+
 void wkDrawFocusRing(CGContextRef, CGColorRef, float radius);
 
 CFDictionaryRef wkGetSSLCertificateInfo(CFURLResponseRef);
