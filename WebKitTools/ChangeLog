@@ -1,3 +1,11 @@
+2007-10-25  Stephanie  <slewis@apple.com>
+
+        Reviewed by Mark Rowe, Adam Roben.
+
+        Weak link against WebCore so DumpRenderTree can be bundled with production roots.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: 
+
 2007-10-25  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam.

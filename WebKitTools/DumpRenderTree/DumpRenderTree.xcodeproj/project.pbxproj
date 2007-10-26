@@ -25,7 +25,6 @@
 /* Begin PBXBuildFile section */
 		141BF435096A455900E0753C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		141BF436096A455900E0753C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
-		141BF437096A455900E0753C /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090108B1643800CCB9FB /* WebCore.framework */; };
 		141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
 		141BF439096A455900E0753C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		141BF44A096A45C800E0753C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 141BF445096A45C800E0753C /* main.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
@@ -38,7 +37,6 @@
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
-		A817090208B1643800CCB9FB /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090108B1643800CCB9FB /* WebCore.framework */; };
 		A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
 		A84F608A08B136DA00E9745F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
 		AE8259F308D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
@@ -121,7 +119,6 @@
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
-		A817090108B1643800CCB9FB /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A84F608908B136DA00E9745F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "qt/fonts/AHEM____.TTF"; sourceTree = "<group>"; };
@@ -175,7 +172,6 @@
 			files = (
 				141BF435096A455900E0753C /* WebKit.framework in Frameworks */,
 				141BF436096A455900E0753C /* Cocoa.framework in Frameworks */,
-				141BF437096A455900E0753C /* WebCore.framework in Frameworks */,
 				141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */,
 				141BF439096A455900E0753C /* Carbon.framework in Frameworks */,
 			);
@@ -187,7 +183,6 @@
 			files = (
 				9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */,
 				A84F608A08B136DA00E9745F /* Cocoa.framework in Frameworks */,
-				A817090208B1643800CCB9FB /* WebCore.framework in Frameworks */,
 				A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */,
 				AE8259F308D22463000507AB /* Carbon.framework in Frameworks */,
 			);
@@ -310,7 +305,6 @@
 			children = (
 				9335435F03D75502008635CE /* WebKit.framework */,
 				A817090308B164D300CCB9FB /* JavaScriptCore.framework */,
-				A817090108B1643800CCB9FB /* WebCore.framework */,
 				B5A752A108AF5D1F00138E45 /* QuartzCore.framework */,
 				A84F608908B136DA00E9745F /* Cocoa.framework */,
 				AE8257EF08D22389000507AB /* Carbon.framework */,
@@ -628,6 +622,10 @@
 				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					WebCore.framework,
+				);
 				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -651,6 +649,7 @@
 				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -667,7 +666,10 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					WebCore,
+				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
 				SECTORDER_FLAGS = "";
@@ -686,7 +688,10 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					WebCore,
+				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
 				SECTORDER_FLAGS = "";
