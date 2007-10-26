@@ -2,6 +2,15 @@
 
         Reviewed by Tim Hatcher.
 
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15175
+        Cannot copy text of errors from Web Inspector from Console view
+
+        * page/inspector/inspector.css: add -webkit-user-select: text for console messages.
+
+2007-10-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
         Fix for http://bugs.webkit.org/show_bug.cgi?id=15446
         Web Inspector find window is not resizable
 

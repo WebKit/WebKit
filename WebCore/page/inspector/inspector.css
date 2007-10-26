@@ -1335,6 +1335,7 @@ body.inactive #sidebar li.selected {
     border-bottom: 1px solid rgb(75%, 75%, 75%);
     word-break: break-word;
     position: relative;
+    -webkit-user-select: text;
 }
 
 .console-command a:hover {
