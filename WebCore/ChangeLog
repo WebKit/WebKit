@@ -1,3 +1,17 @@
+2007-10-26  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15693
+        [GTK] Paging does not work when widget is added to a GtkScrolledWindow
+
+        Eliminate MagicGtkScrollConstant in favour of the same calculations as
+        GtkTextView for step and page increments. This also makes paging work,
+        as the page increment was previously always 0.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2007-10-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt and Sam Weinig.

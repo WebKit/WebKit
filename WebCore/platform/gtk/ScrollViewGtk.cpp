@@ -47,8 +47,6 @@
 
 using namespace std;
 
-static const int MagicGtkScrollConstant = 13;
-
 namespace WebCore {
 
 class ScrollViewScrollbar : public PlatformScrollbar {
@@ -574,7 +572,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
     if (m_data->horizontalAdjustment) {
         m_data->horizontalAdjustment->page_size = visibleWidth();
-        m_data->horizontalAdjustment->step_increment = MagicGtkScrollConstant;
+        m_data->horizontalAdjustment->step_increment = visibleWidth() / 10.0;
+        m_data->horizontalAdjustment->page_increment = visibleWidth() * 0.9;
         m_data->horizontalAdjustment->upper = contentsWidth();
         gtk_adjustment_changed(m_data->horizontalAdjustment);
 
@@ -607,7 +606,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
     if (m_data->verticalAdjustment) {
         m_data->verticalAdjustment->page_size = visibleHeight();
-        m_data->verticalAdjustment->step_increment = MagicGtkScrollConstant;
+        m_data->verticalAdjustment->step_increment = visibleHeight() / 10.0;
+        m_data->verticalAdjustment->page_increment = visibleHeight() * 0.9;
         m_data->verticalAdjustment->upper = contentsHeight();
         gtk_adjustment_changed(m_data->verticalAdjustment);
 
