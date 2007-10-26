@@ -1834,7 +1834,7 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
         if (varType == VarDeclNode::Constant)
             flags |= ReadOnly;
         
-        ASSERT(variableObject->getDirect(ident) || ident == exec->propertyNames().arguments);
+        ASSERT(variableObject->hasProperty(exec, ident));
         variableObject->put(exec, ident, val, flags);
     }
 
@@ -2578,6 +2578,7 @@ FunctionBodyNode::FunctionBodyNode(SourceElementsNode *s)
     , m_sourceURL(Lexer::curr()->sourceURL())
     , m_sourceId(Parser::sid)
     , m_initializedDeclarationStacks(false)
+    , m_initializedSymbolTable(false)
 {
   setLoc(-1, -1);
 }
@@ -2606,34 +2607,69 @@ void FunctionBodyNode::initializeDeclarationStacks(ExecState* exec)
     m_initializedDeclarationStacks = true;
 }
 
-void FunctionBodyNode::processDeclarationsFunctionCode(ExecState* exec)
+void FunctionBodyNode::initializesymbolTable()
 {
     size_t i, size;
+    size_t count = 0;
 
-    JSObject* variableObject = exec->variableObject();
+    // The order of additions here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
+    for (i = 0, size = m_varStack.size(); i < size; ++i)
+        m_symbolTable.set(m_varStack[i]->ident, count++);
 
+    for (i = 0, size = m_parameters.size(); i < size; ++i)
+        m_symbolTable.set(m_parameters[i], count++);
+
+    for (i = 0, size = m_functionStack.size(); i < size; ++i)
+        m_symbolTable.set(m_functionStack[i]->ident, count++);
+
+    m_initializedSymbolTable = true;
+}
+
+void FunctionBodyNode::processDeclarations(ExecState* exec)
+{
+    if (!m_initializedDeclarationStacks)
+        initializeDeclarationStacks(exec);
+
+    if (exec->codeType() == FunctionCode)
+        processDeclarationsForFunctionCode(exec);
+    else
+        processDeclarationsForProgramCode(exec);
+}
+
+void FunctionBodyNode::processDeclarationsForFunctionCode(ExecState* exec)
+{
+    if (!m_initializedSymbolTable)
+        initializesymbolTable();
+
+    ASSERT(exec->variableObject()->isActivation());
+    ActivationImp::LocalStorage& localStorage = static_cast<ActivationImp*>(exec->variableObject())->localStorage();
+    localStorage.reserveCapacity(m_varStack.size() + m_parameters.size() + m_functionStack.size());
+    
     int minAttributes = Internal | DontDelete;
+    
+    size_t i, size;
 
-    // The order of additions to the variable object here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
+    // NOTE: Must match the order of addition in initializesymbolTable().
+
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
         VarDeclNode* node = m_varStack[i];
         int attributes = minAttributes;
         if (node->varType == VarDeclNode::Constant)
             attributes |= ReadOnly;
-        variableObject->put(exec, node->ident, jsUndefined(), attributes);
+        localStorage.append(ActivationImp::LocalStorageEntry(jsUndefined(), attributes));
     }
 
     const List& args = *exec->arguments();
     for (i = 0, size = m_parameters.size(); i < size; ++i)
-        variableObject->put(exec, m_parameters[i], args[i], DontDelete);
+        localStorage.append(ActivationImp::LocalStorageEntry(args[i], DontDelete));
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i) {
         FuncDeclNode* node = m_functionStack[i];
-        variableObject->put(exec, node->ident, node->makeFunction(exec), minAttributes);
+        localStorage.append(ActivationImp::LocalStorageEntry(node->makeFunction(exec), minAttributes));
     }
 }
 
-void FunctionBodyNode::processDeclarationsProgramCode(ExecState* exec)
+void FunctionBodyNode::processDeclarationsForProgramCode(ExecState* exec)
 {
     size_t i, size;
 
@@ -2675,17 +2711,6 @@ UString FunctionBodyNode::paramString() const
   }
 
   return s;
-}
-
-void FunctionBodyNode::processDeclarations(ExecState* exec)
-{
-    if (!m_initializedDeclarationStacks)
-        initializeDeclarationStacks(exec);
-
-    if (exec->codeType() == FunctionCode)
-        processDeclarationsFunctionCode(exec);
-    else
-        processDeclarationsProgramCode(exec);
 }
 
 Completion FunctionBodyNode::execute(ExecState* exec)

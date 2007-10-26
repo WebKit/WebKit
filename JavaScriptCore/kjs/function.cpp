@@ -390,22 +390,21 @@ bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName)
 
 const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
 
-// ECMA 10.1.6
 ActivationImp::ActivationImp(FunctionImp* function, const List& arguments)
-    : _function(function), _arguments(arguments), _argumentsObject(0)
+    : d(new ActivationImpPrivate(function, arguments))
+    , symbolTable(&function->body->symbolTable())
 {
-  // FIXME: Do we need to support enumerating the arguments property?
 }
 
 JSValue* ActivationImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
   ActivationImp* thisObj = static_cast<ActivationImp*>(slot.slotBase());
-
-  // default: return builtin arguments array
-  if (!thisObj->_argumentsObject)
+  ActivationImpPrivate* d = thisObj->d.get();
+  
+  if (!d->argumentsObject)
     thisObj->createArgumentsObject(exec);
   
-  return thisObj->_argumentsObject;
+  return d->argumentsObject;
 }
 
 PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
@@ -415,15 +414,23 @@ PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
 
 bool ActivationImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    // do this first so property map arguments property wins over the below
-    // we don't call JSObject because we won't have getter/setter properties
-    // and we don't want to support __proto__
+    // We don't call through to JSObject because there's no way to give an 
+    // acitvation object getter/setter properties, and exposing __proto__ in
+    // the scope chain would be bizarre.
+    ASSERT(!_prop.hasGetterSetterProperties());
+
+    size_t index;
+    if (symbolTable->get(propertyName, index)) {
+        slot.setValueSlot(this, &d->localStorage[index].value);
+        return true;
+    }
 
     if (JSValue** location = getDirectLocation(propertyName)) {
         slot.setValueSlot(this, location);
         return true;
     }
 
+    // Only return the built-in arguments object if it wasn't overridden above.
     if (propertyName == exec->propertyNames().arguments) {
         slot.setCustom(this, getArgumentsGetter());
         return true;
@@ -436,32 +443,56 @@ bool ActivationImp::deleteProperty(ExecState* exec, const Identifier& propertyNa
 {
     if (propertyName == exec->propertyNames().arguments)
         return false;
+
+    size_t index;
+    if (symbolTable->get(propertyName, index))
+        return false;
+
     return JSObject::deleteProperty(exec, propertyName);
 }
 
 void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* value, int attr)
 {
-  // There's no way that an activation object can have a prototype or getter/setter properties
+  // There's no way that an activation object can have a prototype or getter/setter properties.
   ASSERT(!_prop.hasGetterSetterProperties());
   ASSERT(prototype() == jsNull());
+
+  size_t index;
+  if (symbolTable->get(propertyName, index)) {
+    LocalStorageEntry& entry = d->localStorage[index];
+    entry.value = value;
+    entry.attributes = attr;
+    return;
+  }
 
   _prop.put(propertyName, value, attr, (attr == None || attr == DontDelete));
 }
 
 void ActivationImp::mark()
 {
-    if (_function && !_function->marked()) 
-        _function->mark();
-    if (_argumentsObject && !_argumentsObject->marked())
-        _argumentsObject->mark();
     JSObject::mark();
+
+    if (!d->function->marked())
+        d->function->mark();
+
+    size_t size = d->localStorage.size();
+    for (size_t i = 0; i < size; ++i) {
+        JSValue* value = d->localStorage[i].value;
+        if (!value->marked())
+            value->mark();
+    }
+
+    if (d->argumentsObject && !d->argumentsObject->marked())
+        d->argumentsObject->mark();
 }
 
 void ActivationImp::createArgumentsObject(ExecState* exec)
 {
-  _argumentsObject = new Arguments(exec, _function, _arguments, const_cast<ActivationImp*>(this));
-  // The arguments list is only needed to create the arguments object, so discard it now
-  _arguments.reset();
+  d->argumentsObject = new Arguments(exec, d->function, d->arguments, this);
+
+  // The arguments list is only needed to create the arguments object, so discard it now.
+  // This prevents lists of Lists from building up, waiting to be garbage collected.
+  d->arguments.reset();
 }
 
 // ------------------------------ GlobalFunc -----------------------------------

@@ -1,3 +1,51 @@
+2007-10-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Switched ActivationImp to using a symbol table. For now, though, all
+        clients take the slow path.
+        
+        Net .6% speedup on SunSpider.
+        
+        Slowdowns:
+            - ActivationImp now mallocs in its constructor
+            - Local variable hits use an extra level of indirection to retrieve 
+            data
+            - Local variable misses do two lookups
+
+        Speedups:
+            - Fast initialization of local variables upon function entry
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added SymbolTable.h
+        
+        * kjs/function.cpp:
+        (KJS::ActivationImp::ActivationImp): Malloc a private structure to hold
+        data that won't fit in a JSCell.
+        (KJS::ActivationImp::argumentsGetter): Use slow symbol table path for 
+        lookup.
+        (KJS::ActivationImp::getOwnPropertySlot): ditto
+        (KJS::ActivationImp::deleteProperty): ditto
+        (KJS::ActivationImp::put): ditto
+        (KJS::ActivationImp::createArgumentsObject): ditto
+
+        (KJS::ActivationImp::mark): Call JSObject::mark first so that one of
+        our properties doesn't try to recursively mark us. (This caused a crash
+        in earlier testing. Not sure why we haven't run into it before.)
+
+        * kjs/nodes.cpp: Functions now build a symbol table the first time 
+        they're called.
+        (KJS::VarDeclNode::evaluate):
+        (KJS::FunctionBodyNode::FunctionBodyNode):
+        (KJS::FunctionBodyNode::initializeSymbolTable):
+        (KJS::FunctionBodyNode::processDeclarations):
+        (KJS::FunctionBodyNode::processDeclarationsForFunctionCode):
+        (KJS::FunctionBodyNode::processDeclarationsForProgramCode):
+
+        * kjs/nodes.h:
+        (KJS::FunctionBodyNode::symbolTable):
+
+        * wtf/Forward.h: Added Vector.
+
 2007-10-26  Kevin McCullough  <kmccullough@apple.com>
 
         - Corrected function name mistake in this changelog.

@@ -66,6 +66,7 @@
 		1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B7E20A43076000517CFC /* JSObjectRef.cpp */; };
 		1483B58A099BC1950016E4F0 /* JSImmediate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1483B589099BC1950016E4F0 /* JSImmediate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148A1627095D16BB00666D0D /* ListRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A1626095D16BB00666D0D /* ListRefPtr.h */; };
+		14A396A70CD2933100B5B4FF /* SymbolTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A396A60CD2933100B5B4FF /* SymbolTable.h */; };
 		14ABB36F099C076400E2A24F /* value.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB36E099C076400E2A24F /* value.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14ABB455099C2A0F00E2A24F /* JSType.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB454099C2A0F00E2A24F /* JSType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14ABDF5F0A437FEF00ECCA01 /* JSCallbackObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABDF5D0A437FEF00ECCA01 /* JSCallbackObject.h */; };
@@ -420,6 +421,7 @@
 		1482B7E20A43076000517CFC /* JSObjectRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObjectRef.cpp; sourceTree = "<group>"; };
 		1483B589099BC1950016E4F0 /* JSImmediate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSImmediate.h; sourceTree = "<group>"; };
 		148A1626095D16BB00666D0D /* ListRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ListRefPtr.h; sourceTree = "<group>"; };
+		14A396A60CD2933100B5B4FF /* SymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolTable.h; sourceTree = "<group>"; };
 		14ABB36E099C076400E2A24F /* value.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = value.h; sourceTree = "<group>"; };
 		14ABB454099C2A0F00E2A24F /* JSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSType.h; sourceTree = "<group>"; };
 		14ABDF5D0A437FEF00ECCA01 /* JSCallbackObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObject.h; sourceTree = "<group>"; };
@@ -1037,6 +1039,7 @@
 				9374D3A7038D9D74008635CE /* scope_chain.h */,
 				F692A87F0255597D01FF60F7 /* string_object.cpp */,
 				F692A8800255597D01FF60F7 /* string_object.h */,
+				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				F692A8840255597D01FF60F7 /* types.h */,
 				F692A8850255597D01FF60F7 /* ustring.cpp */,
 				F692A8860255597D01FF60F7 /* ustring.h */,
@@ -1262,6 +1265,7 @@
 				5186111E0CC824900081412B /* Deque.h in Headers */,
 				A8E894320CD0602400367179 /* JSCallbackObjectFunctions.h in Headers */,
 				A8E894340CD0603F00367179 /* JSGlobalObject.h in Headers */,
+				14A396A70CD2933100B5B4FF /* SymbolTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
