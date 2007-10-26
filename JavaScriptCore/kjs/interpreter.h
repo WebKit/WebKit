@@ -35,7 +35,6 @@ namespace KJS {
   class ArrayPrototype;
   class BooleanObjectImp;
   class BooleanPrototype;
-  class Context;
   class DateObjectImp;
   class DatePrototype;
   class Debugger;
@@ -318,8 +317,8 @@ namespace KJS {
     Debugger* debugger() const { return m_debugger; }
     void setDebugger(Debugger* d) { m_debugger = d; }
     
-    void setContext(Context* c) { m_context = c; }
-    Context* context() const { return m_context; }
+    void setCurrentExec(ExecState* exec) { m_currentExec = exec; }
+    ExecState* currentExec() const { return m_currentExec; }
         
     void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }
 
@@ -350,6 +349,8 @@ private:
     
     int m_refCount;
     
+    ExecState* m_currentExec;
+    JSGlobalObject* m_globalObject;
     ExecState m_globalExec;
 
     // Chained list of interpreters (ring) - for collector
@@ -359,7 +360,6 @@ private:
     int m_recursion;
     
     Debugger* m_debugger;
-    Context* m_context;
     CompatMode m_compatMode;
 
     unsigned m_timeAtLastCheckTimeout;
@@ -369,7 +369,6 @@ private:
     unsigned m_tickCount;
     unsigned m_ticksUntilNextTimeoutCheck;
 
-    JSGlobalObject* m_globalObject;
 
     ObjectObjectImp* m_Object;
     FunctionObjectImp* m_Function;

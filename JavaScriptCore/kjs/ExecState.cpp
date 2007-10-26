@@ -1,9 +1,9 @@
-// -*- c-basic-offset: 2 -*-
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -33,11 +33,13 @@ namespace KJS {
 
 
 // ECMA 10.2
-Context::Context(JSGlobalObject* glob, Interpreter* interpreter, JSObject* thisV, 
-                 FunctionBodyNode* currentBody, CodeType type, Context* callingCon, 
-                 FunctionImp* func, const List* args)
+ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* glob, JSObject* thisV, 
+                     FunctionBodyNode* currentBody, CodeType type, ExecState* callingExec, 
+                     FunctionImp* func, const List* args)
     : m_interpreter(interpreter)
-    , m_savedContext(interpreter->context())
+    , m_exception(0)
+    , m_propertyNames(CommonIdentifiers::shared())
+    , m_savedExecState(interpreter->currentExec())
     , m_currentBody(currentBody)
     , m_function(func)
     , m_arguments(args)
@@ -45,7 +47,7 @@ Context::Context(JSGlobalObject* glob, Interpreter* interpreter, JSObject* thisV
     , m_switchDepth(0) 
 {
     m_codeType = type;
-    m_callingContext = callingCon;
+    m_callingExecState = callingExec;
     
     // create and initialize activation object (ECMA 10.1.6)
     if (type == FunctionCode) {
@@ -59,10 +61,10 @@ Context::Context(JSGlobalObject* glob, Interpreter* interpreter, JSObject* thisV
     // ECMA 10.2
     switch(type) {
     case EvalCode:
-        if (m_callingContext) {
-            scope = m_callingContext->scopeChain();
-            m_variable = m_callingContext->variableObject();
-            m_thisVal = m_callingContext->thisValue();
+        if (m_callingExecState) {
+            scope = m_callingExecState->scopeChain();
+            m_variable = m_callingExecState->variableObject();
+            m_thisVal = m_callingExecState->thisValue();
             break;
         } // else same as GlobalCode
     case GlobalCode:
@@ -78,12 +80,13 @@ Context::Context(JSGlobalObject* glob, Interpreter* interpreter, JSObject* thisV
         break;
     }
 
-    m_interpreter->setContext(this);
+    if (currentBody)
+        m_interpreter->setCurrentExec(this);
 }
 
-Context::~Context()
+ExecState::~ExecState()
 {
-    m_interpreter->setContext(m_savedContext);
+    m_interpreter->setCurrentExec(m_savedExecState);
 
     // The arguments list is only needed to potentially create the  arguments object, 
     // which isn't accessible from nested scopes so we can discard the list as soon 
@@ -94,22 +97,23 @@ Context::~Context()
         activation->releaseArguments();
 }
 
-void Context::mark()
+void ExecState::mark()
 {
-    for (Context* context = this; context; context = context->m_callingContext)
-        context->scope.mark();
+    for (ExecState* exec = this; exec; exec = exec->m_callingExecState)
+        exec->scope.mark();
 }
 
 Interpreter* ExecState::lexicalInterpreter() const
 {
-    if (!m_context)
+    if (scopeChain().isEmpty())
         return dynamicInterpreter();
     
-    JSObject* object = m_context->scopeChain().bottom();
+    JSObject* object = scopeChain().bottom();
     if (object && object->isGlobalObject())
         return static_cast<JSGlobalObject*>(object)->interpreter();
 
     return dynamicInterpreter();
 }
+
 
 } // namespace KJS

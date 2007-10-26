@@ -38,7 +38,6 @@ namespace KJS  {
         FunctionCode,
     };
     
-    class ExecState;
     class JSGlobalObject;
     class ScopeChain;
     class Interpreter;
@@ -47,72 +46,38 @@ namespace KJS  {
     class FunctionBodyNode;
     
     /**
-     * @short Execution context.
-     *
-     * Represents an execution context, as specified by section 10 of the ECMA
-     * spec.
-     *
-     * An execution context contains information about the current state of the
-     * script - the scope for variable lookup, the value of "this", etc. A new
-     * execution context is entered whenever global code is executed (e.g. with
-     * Interpreter::evaluate()), a function is called (see
-     * Object::call()), or the builtin "eval" function is executed.
-     *
-     * Most inheritable functions in the KJS api take a ExecState pointer as
-     * their first parameter. This can be used to obtain a handle to the current
-     * execution context.
+     * Represents the current state of script execution. This is
+     * passed as the first argument to most functions.
      */
-    class Context {
+    class ExecState {
+        friend class Interpreter;
+        friend class FunctionImp;
+        friend class GlobalFuncImp;
     public:
-        Context(JSGlobalObject*, Interpreter*, JSObject* thisV,
-                FunctionBodyNode* currentBody, CodeType type = GlobalCode,
-                Context* callingContext = 0, FunctionImp* function = 0, const List* args = 0);
-        ~Context();
+        /**
+         * Returns the interpreter currently running code
+         */
+        Interpreter* dynamicInterpreter() const { return m_interpreter; }
         
         /**
-         * Returns the scope chain for this execution context. This is used for
-         * variable lookup, with the list being searched from start to end until a
-         * variable is found.
-         *
-         * @return The execution context's scope chain
+         * Returns the interpreter associated with the current scope's global object
          */
+        Interpreter* lexicalInterpreter() const;
+                
+        void setException(JSValue* e) { m_exception = e; }
+        void clearException() { m_exception = 0; }
+        JSValue* exception() const { return m_exception; }
+        JSValue** exceptionSlot() { return &m_exception; }
+        bool hadException() const { return !!m_exception; }
+        
         const ScopeChain& scopeChain() const { return scope; }
         
-        /**
-         * Returns the variable object for the execution context. This contains a
-         * property for each variable declared in the execution context.
-         *
-         * @return The execution context's variable object
-         */
         JSObject* variableObject() const { return m_variable; }
         void setVariableObject(JSObject* v) { m_variable = v; }
         
-        /**
-         * Returns the "this" value for the execution context. This is the value
-         * returned when a script references the special variable "this". It should
-         * always be an Object, unless application-specific code has passed in a
-         * different type.
-         *
-         * The object that is used as the "this" value depends on the type of
-         * execution context - for global contexts, the global object is used. For
-         * function objewcts, the value is given by the caller (e.g. in the case of
-         * obj.func(), obj would be the "this" value). For code executed by the
-         * built-in "eval" function, the this value is the same as the calling
-         * context.
-         *
-         * @return The execution context's "this" value
-         */
         JSObject* thisValue() const { return m_thisVal; }
         
-        /**
-         * Returns the context from which the current context was invoked. For
-         * global code this will be a null context (i.e. one for which
-         * isNull() returns true). You should check isNull() on the returned
-         * value before calling any of it's methods.
-         *
-         * @return The calling execution context
-         */
-        Context* callingContext() { return m_callingContext; }
+        ExecState* callingExecState() { return m_callingExecState; }
         
         JSObject* activationObject() { return m_activation; }
         CodeType codeType() { return m_codeType; }
@@ -134,18 +99,26 @@ namespace KJS  {
         
         void mark();
         
-        void setExecState(ExecState* exec) { m_execState = exec; }
-        ExecState* execState() { return m_execState; }
+        // This is a workaround to avoid accessing the global variables for these identifiers in
+        // important property lookup functions, to avoid taking PIC branches in Mach-O binaries
+        const CommonIdentifiers& propertyNames() const { return *m_propertyNames; }
         
     private:
-        // Contexts are always stack-allocated, and the garbage collector
+        ExecState(Interpreter* interp, JSGlobalObject* glob, JSObject* thisV,
+                  FunctionBodyNode* currentBody, CodeType type = GlobalCode,
+                  ExecState* callingExecState = 0, FunctionImp* function = 0, const List* args = 0);
+        ExecState::~ExecState();
+
+        // ExecStates are always stack-allocated, and the garbage collector
         // marks the stack, so we don't need to protect the objects below from GC.
-        
+
         Interpreter* m_interpreter;
-        Context* m_callingContext;
-        Context* m_savedContext;
+        JSValue* m_exception;
+        CommonIdentifiers* m_propertyNames;
+
+        ExecState* m_callingExecState;
+        ExecState* m_savedExecState;
         FunctionBodyNode* m_currentBody;
-        ExecState* m_execState;
         
         FunctionImp* m_function;
         const List* m_arguments;
@@ -159,63 +132,6 @@ namespace KJS  {
         int m_iterationDepth;
         int m_switchDepth;
         CodeType m_codeType;
-    };
-    
-    
-    /**
-     * Represents the current state of script execution. This object allows you
-     * obtain a handle the interpreter that is currently executing the script,
-     * and also the current execution context.
-     */
-    class ExecState {
-        friend class Interpreter;
-        friend class FunctionImp;
-        friend class GlobalFuncImp;
-    public:
-        /**
-         * Returns the interpreter associated with this execution state
-         *
-         * @return The interpreter executing the script
-         */
-        Interpreter* dynamicInterpreter() const { return m_interpreter; }
-        
-        /**
-         * Returns the interpreter associated with the current scope's
-         * global object
-         *
-         * @return The interpreter currently in scope
-         */
-        Interpreter* lexicalInterpreter() const;
-        
-        /**
-         * Returns the execution context associated with this execution state
-         *
-         * @return The current execution state context
-         */
-        Context* context() const { return m_context; }
-        
-        void setException(JSValue* e) { m_exception = e; }
-        void clearException() { m_exception = 0; }
-        JSValue* exception() const { return m_exception; }
-        JSValue** exceptionSlot() { return &m_exception; }
-        bool hadException() const { return !!m_exception; }
-        
-        // This is a workaround to avoid accessing the global variables for these identifiers in
-        // important property lookup functions, to avoid taking PIC branches in Mach-O binaries
-        const CommonIdentifiers& propertyNames() const { return *m_propertyNames; }
-        
-    private:
-        ExecState(Interpreter* interp, Context* con)
-            : m_interpreter(interp)
-            , m_context(con)
-            , m_exception(0)
-            , m_propertyNames(CommonIdentifiers::shared())
-        { 
-        }
-        Interpreter* m_interpreter;
-        Context* m_context;
-        JSValue* m_exception;
-        CommonIdentifiers* m_propertyNames;
     };
 
 } // namespace KJS

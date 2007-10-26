@@ -69,12 +69,10 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
   JSGlobalObject* globalObj = exec->dynamicInterpreter()->globalObject();
 
   // enter a new execution context
-  Context ctx(globalObj, exec->dynamicInterpreter(), thisObj, body.get(),
-                 FunctionCode, exec->context(), this, &args);
-  ExecState newExec(exec->dynamicInterpreter(), &ctx);
+  ExecState newExec(exec->dynamicInterpreter(), globalObj, thisObj, body.get(),
+                    FunctionCode, exec, this, &args);
   if (exec->hadException())
     newExec.setException(exec->exception());
-  ctx.setExecState(&newExec);
 
   Debugger* dbg = exec->dynamicInterpreter()->debugger();
   int sid = -1;
@@ -127,11 +125,11 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
 JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
-  Context* context = exec->m_context;
-  while (context) {
-    if (context->function() == thisObj)
-      return static_cast<ActivationImp*>(context->activationObject())->get(exec, propertyName);
-    context = context->callingContext();
+  ExecState* e = exec;
+  while (e) {
+    if (e->function() == thisObj)
+      return static_cast<ActivationImp*>(e->activationObject())->get(exec, propertyName);
+    e = e->callingExecState();
   }
   return jsNull();
 }
@@ -139,21 +137,21 @@ JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifi
 JSValue* FunctionImp::callerGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
     FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
-    Context* context = exec->m_context;
-    while (context) {
-        if (context->function() == thisObj)
+    ExecState* e = exec;
+    while (e) {
+        if (e->function() == thisObj)
             break;
-        context = context->callingContext();
+        e = e->callingExecState();
     }
 
-    if (!context)
+    if (!e)
         return jsNull();
     
-    Context* callingContext = context->callingContext();
-    if (!callingContext)
+    ExecState* callingExecState = e->callingExecState();
+    if (!callingExecState)
         return jsNull();
     
-    FunctionImp* callingFunction = callingContext->function();
+    FunctionImp* callingFunction = callingExecState->function();
     if (!callingFunction)
         return jsNull();
 
@@ -744,27 +742,20 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
           
         // enter a new execution context
         Interpreter* interpreter = switchGlobal ? static_cast<JSGlobalObject*>(thisObj)->interpreter() : exec->dynamicInterpreter();
-        JSObject* thisVal = static_cast<JSObject*>(exec->context()->thisValue());
-        Context ctx(interpreter->globalObject(),
-                       interpreter,
-                       thisVal,
-                       progNode.get(),
-                       EvalCode,
-                       exec->context());
-        ExecState newExec(interpreter, &ctx);
+        JSObject* thisVal = static_cast<JSObject*>(exec->thisValue());
+        ExecState newExec(interpreter, interpreter->globalObject(), thisVal, progNode.get(), EvalCode, exec);
         if (exec->hadException())
             newExec.setException(exec->exception());
-        ctx.setExecState(&newExec);
           
         if (switchGlobal) {
-            ctx.pushScope(thisObj);
-            ctx.setVariableObject(thisObj);
+            newExec.pushScope(thisObj);
+            newExec.setVariableObject(thisObj);
         }
         
         Completion c = progNode->execute(&newExec);
           
         if (switchGlobal)
-            ctx.popScope();
+            newExec.popScope();
 
         // if an exception occured, propogate it back to the previous execution object
         if (newExec.hadException())

@@ -180,13 +180,13 @@ static void substitute(UString &string, const UString &substring)
 static inline int currentSourceId(ExecState* exec) KJS_FAST_CALL;
 static inline int currentSourceId(ExecState* exec)
 {
-    return exec->context()->currentBody()->sourceId();
+    return exec->currentBody()->sourceId();
 }
 
 static inline const UString& currentSourceURL(ExecState* exec) KJS_FAST_CALL;
 static inline const UString& currentSourceURL(ExecState* exec)
 {
-    return exec->context()->currentBody()->sourceURL();
+    return exec->currentBody()->sourceURL();
 }
 
 Completion Node::createErrorCompletion(ExecState* exec, ErrorType e, const char *msg)
@@ -370,7 +370,7 @@ JSValue *RegExpNode::evaluate(ExecState *exec)
 // ECMA 11.1.1
 JSValue *ThisNode::evaluate(ExecState *exec)
 {
-  return exec->context()->thisValue();
+  return exec->thisValue();
 }
 
 // ------------------------------ ResolveNode ----------------------------------
@@ -378,7 +378,7 @@ JSValue *ThisNode::evaluate(ExecState *exec)
 // ECMA 11.1.2 & 10.1.4
 JSValue *ResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context()->scopeChain();
+  const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -648,7 +648,7 @@ JSValue *FunctionCallValueNode::evaluate(ExecState *exec)
 // ECMA 11.2.3
 JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context()->scopeChain();
+  const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -791,7 +791,7 @@ JSValue *FunctionCallDotNode::evaluate(ExecState *exec)
 
 JSValue *PostfixResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context()->scopeChain();
+  const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -893,7 +893,7 @@ JSValue* PostfixErrorNode::evaluate(ExecState* exec)
 
 JSValue *DeleteResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context()->scopeChain();
+  const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -998,7 +998,7 @@ static JSValue *typeStringForValue(JSValue *v)
 
 JSValue *TypeOfResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context()->scopeChain();
+  const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -1036,7 +1036,7 @@ JSValue *TypeOfValueNode::evaluate(ExecState *exec)
 
 JSValue *PrefixResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context()->scopeChain();
+  const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -1610,7 +1610,7 @@ static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSV
 
 JSValue *AssignResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context()->scopeChain();
+  const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -1804,8 +1804,8 @@ JSValue* VarDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, J
 // ECMA 12.2
 JSValue* VarDeclNode::evaluate(ExecState* exec)
 {
-    const ScopeChain& chain = exec->context()->scopeChain();
-    JSObject* variableObject = exec->context()->variableObject();
+    const ScopeChain& chain = exec->scopeChain();
+    JSObject* variableObject = exec->variableObject();
 
     ASSERT(!chain.isEmpty());
 
@@ -1814,7 +1814,7 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
     if (inGlobalScope && (init || !variableObject->getDirect(ident))) {
         JSValue* val = init ? init->evaluate(exec) : jsUndefined();
         int flags = Internal;
-        if (exec->context()->codeType() != EvalCode)
+        if (exec->codeType() != EvalCode)
             flags |= DontDelete;
         if (varType == VarDeclNode::Constant)
             flags |= ReadOnly;
@@ -1983,9 +1983,9 @@ Completion DoWhileNode::execute(ExecState *exec)
   JSValue* value = 0;
 
   do {
-    exec->context()->pushIteration();
+    exec->pushIteration();
     c = statement->execute(exec);
-    exec->context()->popIteration();
+    exec->popIteration();
     
     if (exec->dynamicInterpreter()->timedOut())
         return Completion(Interrupted);
@@ -2032,9 +2032,9 @@ Completion WhileNode::execute(ExecState *exec)
     if (!b)
       return Completion(Normal, value);
 
-    exec->context()->pushIteration();
+    exec->pushIteration();
     c = statement->execute(exec);
-    exec->context()->popIteration();
+    exec->popIteration();
 
     if (exec->dynamicInterpreter()->timedOut())
         return Completion(Interrupted);
@@ -2078,9 +2078,9 @@ Completion ForNode::execute(ExecState *exec)
         return Completion(Normal, cval);
     }
 
-    exec->context()->pushIteration();
+    exec->pushIteration();
     Completion c = statement->execute(exec);
-    exec->context()->popIteration();
+    exec->popIteration();
     if (c.isValueCompletion())
       cval = c.value();
     if (!((c.complType() == Continue) && ls.contains(c.target()))) {
@@ -2174,7 +2174,7 @@ Completion ForInNode::execute(ExecState *exec)
       if (lexpr->isResolveNode()) {
         const Identifier &ident = static_cast<ResolveNode *>(lexpr.get())->identifier();
 
-        const ScopeChain& chain = exec->context()->scopeChain();
+        const ScopeChain& chain = exec->scopeChain();
         ScopeChainIterator iter = chain.begin();
         ScopeChainIterator end = chain.end();
   
@@ -2217,9 +2217,9 @@ Completion ForInNode::execute(ExecState *exec)
 
     KJS_CHECKEXCEPTION
 
-    exec->context()->pushIteration();
+    exec->pushIteration();
     c = statement->execute(exec);
-    exec->context()->popIteration();
+    exec->popIteration();
     if (c.isValueCompletion())
       retval = c.value();
 
@@ -2242,9 +2242,9 @@ Completion ContinueNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  if (ident.isEmpty() && !exec->context()->inIteration())
+  if (ident.isEmpty() && !exec->inIteration())
     return createErrorCompletion(exec, SyntaxError, "Invalid continue statement.");
-  if (!ident.isEmpty() && !exec->context()->seenLabels()->contains(ident))
+  if (!ident.isEmpty() && !exec->seenLabels()->contains(ident))
     return createErrorCompletion(exec, SyntaxError, "Label %s not found.", ident);
   return Completion(Continue, &ident);
 }
@@ -2256,10 +2256,10 @@ Completion BreakNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  if (ident.isEmpty() && !exec->context()->inIteration() &&
-      !exec->context()->inSwitch())
+  if (ident.isEmpty() && !exec->inIteration() &&
+      !exec->inSwitch())
     return createErrorCompletion(exec, SyntaxError, "Invalid break statement.");
-  if (!ident.isEmpty() && !exec->context()->seenLabels()->contains(ident))
+  if (!ident.isEmpty() && !exec->seenLabels()->contains(ident))
     return createErrorCompletion(exec, SyntaxError, "Label %s not found.");
   return Completion(Break, &ident);
 }
@@ -2271,7 +2271,7 @@ Completion ReturnNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  CodeType codeType = exec->context()->codeType();
+  CodeType codeType = exec->codeType();
   if (codeType != FunctionCode)
     return createErrorCompletion(exec, SyntaxError, "Invalid return statement.");
 
@@ -2301,9 +2301,9 @@ Completion WithNode::execute(ExecState *exec)
   KJS_CHECKEXCEPTION
   JSObject *o = v->toObject(exec);
   KJS_CHECKEXCEPTION
-  exec->context()->pushScope(o);
+  exec->pushScope(o);
   Completion res = statement->execute(exec);
-  exec->context()->popScope();
+  exec->popScope();
 
   return res;
 }
@@ -2475,9 +2475,9 @@ Completion SwitchNode::execute(ExecState *exec)
   JSValue *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTION
 
-  exec->context()->pushSwitch();
+  exec->pushSwitch();
   Completion res = block->evalBlock(exec,v);
-  exec->context()->popSwitch();
+  exec->popSwitch();
 
   if ((res.complType() == Break) && ls.contains(res.target()))
     return Completion(Normal, res.value());
@@ -2495,10 +2495,10 @@ void LabelNode::getDeclarations(DeclarationStacks& stacks)
 // ECMA 12.12
 Completion LabelNode::execute(ExecState *exec)
 {
-  if (!exec->context()->seenLabels()->push(label))
+  if (!exec->seenLabels()->push(label))
     return createErrorCompletion(exec, SyntaxError, "Duplicated label %s found.", label);
   Completion e = statement->execute(exec);
-  exec->context()->seenLabels()->pop();
+  exec->seenLabels()->pop();
 
   if ((e.complType() == Break) && (e.target() == label))
     return Completion(Normal, e.value());
@@ -2544,9 +2544,9 @@ Completion TryNode::execute(ExecState *exec)
   if (catchBlock && c.complType() == Throw) {
     JSObject *obj = new JSObject;
     obj->put(exec, exceptionIdent, c.value(), DontDelete);
-    exec->context()->pushScope(obj);
+    exec->pushScope(obj);
     c = catchBlock->execute(exec);
-    exec->context()->popScope();
+    exec->popScope();
   }
 
   if (finallyBlock) {
@@ -2610,8 +2610,7 @@ void FunctionBodyNode::processDeclarationsFunctionCode(ExecState* exec)
 {
     size_t i, size;
 
-    Context* context = exec->context();
-    JSObject* variableObject = context->variableObject();
+    JSObject* variableObject = exec->variableObject();
 
     int minAttributes = Internal | DontDelete;
 
@@ -2624,7 +2623,7 @@ void FunctionBodyNode::processDeclarationsFunctionCode(ExecState* exec)
         variableObject->put(exec, node->ident, jsUndefined(), attributes);
     }
 
-    const List& args = *context->arguments();
+    const List& args = *exec->arguments();
     for (i = 0, size = m_parameters.size(); i < size; ++i)
         variableObject->put(exec, m_parameters[i], args[i], DontDelete);
 
@@ -2638,10 +2637,9 @@ void FunctionBodyNode::processDeclarationsProgramCode(ExecState* exec)
 {
     size_t i, size;
 
-    Context* context = exec->context();
-    JSObject* variableObject = context->variableObject();
+    JSObject* variableObject = exec->variableObject();
     
-    int minAttributes = Internal | (exec->context()->codeType() != EvalCode ? DontDelete : 0);
+    int minAttributes = Internal | (exec->codeType() != EvalCode ? DontDelete : 0);
 
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
         VarDeclNode* node = m_varStack[i];
@@ -2684,7 +2682,7 @@ void FunctionBodyNode::processDeclarations(ExecState* exec)
     if (!m_initializedDeclarationStacks)
         initializeDeclarationStacks(exec);
 
-    if (exec->context()->codeType() == FunctionCode)
+    if (exec->codeType() == FunctionCode)
         processDeclarationsFunctionCode(exec);
     else
         processDeclarationsProgramCode(exec);
@@ -2711,7 +2709,7 @@ void FuncDeclNode::getDeclarations(DeclarationStacks& stacks)
 
 FunctionImp* FuncDeclNode::makeFunction(ExecState* exec)
 {
-  FunctionImp *func = new FunctionImp(exec, ident, body.get(), exec->context()->scopeChain());
+  FunctionImp *func = new FunctionImp(exec, ident, body.get(), exec->scopeChain());
 
   JSObject *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
@@ -2737,7 +2735,6 @@ void FuncExprNode::addParams()
 
 JSValue *FuncExprNode::evaluate(ExecState *exec)
 {
-  Context *context = exec->context();
   bool named = !ident.isNull();
   JSObject *functionScopeObject = 0;
 
@@ -2746,17 +2743,17 @@ JSValue *FuncExprNode::evaluate(ExecState *exec)
     // but they won't register with the current scope chain and should
     // be contained as single property in an anonymous object.
     functionScopeObject = new JSObject;
-    context->pushScope(functionScopeObject);
+    exec->pushScope(functionScopeObject);
   }
 
-  FunctionImp* func = new FunctionImp(exec, ident, body.get(), context->scopeChain());
+  FunctionImp* func = new FunctionImp(exec, ident, body.get(), exec->scopeChain());
   JSObject* proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
   func->put(exec, exec->propertyNames().prototype, proto, Internal | DontDelete);
 
   if (named) {
-    functionScopeObject->put(exec, ident, func, Internal | ReadOnly | (context->codeType() == EvalCode ? 0 : DontDelete));
-    context->popScope();
+    functionScopeObject->put(exec, ident, func, Internal | ReadOnly | (exec->codeType() == EvalCode ? 0 : DontDelete));
+    exec->popScope();
   }
 
   return func;

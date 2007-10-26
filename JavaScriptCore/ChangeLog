@@ -13,6 +13,74 @@
 
 2007-10-26  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Mark.
+        
+        - Merge Context class fully into ExecState, since they are always created and used together.
+        
+        No measurable performance impact but this is a useful cleanup.
+
+        * JavaScriptCore.pri:
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        (KJS::ExecState::~ExecState):
+        (KJS::ExecState::mark):
+        (KJS::ExecState::lexicalInterpreter):
+        * kjs/ExecState.h:
+        (KJS::ExecState::dynamicInterpreter):
+        (KJS::ExecState::setException):
+        (KJS::ExecState::clearException):
+        (KJS::ExecState::exception):
+        (KJS::ExecState::exceptionSlot):
+        (KJS::ExecState::hadException):
+        (KJS::ExecState::scopeChain):
+        (KJS::ExecState::callingExecState):
+        (KJS::ExecState::propertyNames):
+        * kjs/collector.cpp:
+        (KJS::Collector::reportOutOfMemoryToAllInterpreters):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::FunctionImp::callerGetter):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::Interpreter):
+        (KJS::Interpreter::init):
+        (KJS::Interpreter::evaluate):
+        (KJS::Interpreter::mark):
+        * kjs/interpreter.h:
+        (KJS::Interpreter::setCurrentExec):
+        (KJS::Interpreter::currentExec):
+        * kjs/nodes.cpp:
+        (KJS::currentSourceId):
+        (KJS::currentSourceURL):
+        (KJS::ThisNode::evaluate):
+        (KJS::ResolveNode::evaluate):
+        (KJS::FunctionCallResolveNode::evaluate):
+        (KJS::PostfixResolveNode::evaluate):
+        (KJS::DeleteResolveNode::evaluate):
+        (KJS::TypeOfResolveNode::evaluate):
+        (KJS::PrefixResolveNode::evaluate):
+        (KJS::AssignResolveNode::evaluate):
+        (KJS::VarDeclNode::evaluate):
+        (KJS::DoWhileNode::execute):
+        (KJS::WhileNode::execute):
+        (KJS::ForNode::execute):
+        (KJS::ForInNode::execute):
+        (KJS::ContinueNode::execute):
+        (KJS::BreakNode::execute):
+        (KJS::ReturnNode::execute):
+        (KJS::WithNode::execute):
+        (KJS::SwitchNode::execute):
+        (KJS::LabelNode::execute):
+        (KJS::TryNode::execute):
+        (KJS::FunctionBodyNode::processDeclarationsFunctionCode):
+        (KJS::FunctionBodyNode::processDeclarationsProgramCode):
+        (KJS::FunctionBodyNode::processDeclarations):
+        (KJS::FuncDeclNode::makeFunction):
+        (KJS::FuncExprNode::evaluate):
+
+2007-10-26  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver.
         
         - moved Context class into ExecState.{h,cpp} in preparation for merging 
