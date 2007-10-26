@@ -1,0 +1,268 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2007 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Merge and resolve ChangeLog conflicts for svn and git repositories
+
+use strict;
+
+use FindBin;
+use lib $FindBin::Bin;
+
+use File::Basename;
+use Getopt::Long;
+use VCSUtils;
+
+sub conflictFiles($);
+sub fixChangeLogPatch($);
+sub mergeChanges($$$);
+sub resolveConflict($);
+sub showStatus($);
+
+my $SVN = "svn";
+my $GIT = "git";
+
+my $printWarnings = 1;
+my $showHelp;
+
+my $getOptionsResult = GetOptions(
+    'h|help'         => \$showHelp,
+    'w|warnings!'    => \$printWarnings,
+);
+
+my @changeLogFiles = grep { basename($_) eq "ChangeLog" } @ARGV;
+
+if (scalar(@changeLogFiles) != scalar(@ARGV)) {
+    print STDERR "ERROR: Files listed on command-line that are not ChangeLogs.\n";
+    undef $getOptionsResult;
+} elsif (scalar(@changeLogFiles) == 0) {
+    print STDERR "ERROR: No ChangeLog files listed on command-line.\n";
+    undef $getOptionsResult;
+}
+
+if (!$getOptionsResult || $showHelp) {
+    print STDERR <<__END__;
+Usage: @{[ basename($0) ]} [options] path/to/ChangeLog [path/to/another/ChangeLog ...]
+  -h|--help           show this help message
+  -w|--[no-]warnings  show or suppress warnings (default: show warnings)
+__END__
+    exit 1;
+}
+
+for my $file (@changeLogFiles) {
+    my ($fileMine, $fileOlder, $fileNewer) = conflictFiles($file);
+    if (!$fileMine || !$fileOlder || !$fileNewer) {
+        next;
+    }
+    if (mergeChanges($fileMine, $fileOlder, $fileNewer)) {
+        unlink($file);
+        rename($fileNewer, $file) || die;
+        unlink($fileMine, $fileOlder);
+        resolveConflict($file);
+        showStatus($file);
+    } else {
+        showStatus($file);
+        print STDERR "WARNING: ${file} could not be merged using fuzz level 3.\n" if $printWarnings;
+        unlink($fileMine, $fileOlder, $fileNewer) if isGit();
+    }
+}
+
+exit 0;
+
+sub conflictFiles($)
+{
+    my ($file) = @_;
+    my $fileMine;
+    my $fileOlder;
+    my $fileNewer;
+
+    if (isSVN()) {
+        open STAT, "-|", $SVN, "status", $file || die;
+        my $status = <STAT>;
+        close STAT;
+        if (!$status || $status !~ m/^C\s+/) {
+            print STDERR "WARNING: ${file} is not in a conflicted state.\n" if $printWarnings;
+            return ();
+        }
+
+        $fileMine = "${file}.mine" if -e "${file}.mine";
+
+        my $currentRevision;
+        open INFO, "-|", $SVN, "info", $file || die;
+        while (my $line = <INFO>) {
+            $currentRevision = $1 if $line =~ m/^Revision: ([0-9]+)/;
+        }
+        close INFO;
+        $fileNewer = "${file}.r${currentRevision}" if -e "${file}.r${currentRevision}";
+
+        my @matchingFiles = grep { $_ ne $fileNewer } glob("${file}.r[0-9][0-9]*");
+        if (scalar(@matchingFiles) > 1) {
+            print STDERR "WARNING: Too many conflict files exist for ${file}!\n" if $printWarnings;
+        } else {
+            $fileOlder = shift @matchingFiles;
+        }
+    } elsif (isGit()) {
+        my $gitPrefix = `$GIT rev-parse --show-prefix`;
+        chomp $gitPrefix;
+        open GIT, "-|", $GIT, "ls-files", "--unmerged", $file || die;
+        while (my $line = <GIT>) {
+            my ($mode, $hash, $stage, $fileName) = split(' ', $line);
+            my $outputFile;
+            if ($stage == 1) {
+                $fileOlder = "${file}.BASE.$$";
+                $outputFile = $fileOlder;
+            } elsif ($stage == 2) {
+                $fileNewer = "${file}.LOCAL.$$";
+                $outputFile = $fileNewer;
+            } elsif ($stage == 3) {
+                $fileMine = "${file}.REMOTE.$$";
+                $outputFile = $fileMine;
+            } else {
+                die "Unknown file stage: $stage";
+            }
+            system("$GIT cat-file blob :${stage}:${gitPrefix}${file} > $outputFile");
+        }
+        close GIT;
+    } else {
+        die "Unknown version control system";
+    }
+
+    if (!$fileMine && !$fileOlder && !$fileNewer) {
+        print STDERR "WARNING: ${file} does not need merging.\n" if $printWarnings;
+    } elsif (!$fileMine || !$fileOlder || !$fileNewer) {
+        print STDERR "WARNING: ${file} is missing some conflict files.\n" if $printWarnings;
+    }
+
+    return ($fileMine, $fileOlder, $fileNewer);
+}
+
+sub fixChangeLogPatch($)
+{
+    my $patch = shift;
+    my $contextLineCount = 3;
+
+    return $patch if $patch !~ /\n@@ -1,(\d+) \+1,(\d+) @@\n( .*\n)+(\+.*\n)+( .*\n){$contextLineCount}$/m;
+    my ($oldLineCount, $newLineCount) = ($1, $2);
+    return $patch if $oldLineCount <= $contextLineCount;
+
+    # The diff(1) command is greedy when matching lines, so a new ChangeLog entry will
+    # have lines of context at the top of a patch when the existing entry has the same
+    # date and author as the new entry.  This nifty loop alters a ChangeLog patch so
+    # that the added lines ("+") in the patch always start at the beginning of the
+    # patch and there are no initial lines of context.
+    my $newPatch;
+    my $lineCountInState = 0;
+    my $oldContentLineCountReduction = $oldLineCount - $contextLineCount;
+    my $newContentLineCountWithoutContext = $newLineCount - $oldLineCount - $oldContentLineCountReduction;
+    my ($stateHeader, $statePreContext, $stateNewChanges, $statePostContext) = (1..4);
+    my $state = $stateHeader;
+    foreach my $line (split(/\n/, $patch)) {
+        $lineCountInState++;
+        if ($state == $stateHeader && $line =~ /^@@ -1,$oldLineCount \+1,$newLineCount @\@$/) {
+            $line = "@@ -1,$contextLineCount +1," . ($newLineCount - $oldContentLineCountReduction) . " @@";
+            $lineCountInState = 0;
+            $state = $statePreContext;
+        } elsif ($state == $statePreContext && substr($line, 0, 1) eq " ") {
+            $line = "+" . substr($line, 1);
+            if ($lineCountInState == $oldContentLineCountReduction) {
+                $lineCountInState = 0;
+                $state = $stateNewChanges;
+            }
+        } elsif ($state == $stateNewChanges && substr($line, 0, 1) eq "+") {
+            # No changes to these lines
+            if ($lineCountInState == $newContentLineCountWithoutContext) {
+                $lineCountInState = 0;
+                $state = $statePostContext;
+            }
+        } elsif ($state == $statePostContext) {
+            if (substr($line, 0, 1) eq "+" && $lineCountInState <= $oldContentLineCountReduction) {
+                $line = " " . substr($line, 1);
+            } elsif ($lineCountInState > $contextLineCount && substr($line, 0, 1) eq " ") {
+                next; # Discard
+            }
+        }
+        $newPatch .= $line . "\n";
+    }
+
+    return $newPatch;
+}
+
+sub mergeChanges($$$)
+{
+    my ($fileMine, $fileOlder, $fileNewer) = @_;
+
+    local $/ = undef;
+
+    open(DIFF, "diff -u $fileOlder $fileMine |") || die;
+    my $patch = <DIFF>;
+    close(DIFF);
+
+    unlink("${fileNewer}.orig");
+    unlink("${fileNewer}.rej");
+
+    open(PATCH, "| patch --fuzz=3 $fileNewer > /dev/null") || die;
+    print PATCH fixChangeLogPatch($patch);
+    close(PATCH);
+
+    # Refuse to merge the patch if it did not apply cleanly
+    if (-e "${fileNewer}.rej") {
+        unlink("${fileNewer}.rej");
+        unlink($fileNewer);
+        rename("${fileNewer}.orig", $fileNewer);
+        return 0;
+    }
+
+    unlink("${fileNewer}.orig");
+
+    return 1;
+}
+
+sub resolveConflict($)
+{
+    my ($file) = @_;
+
+    if (isSVN()) {
+        system($SVN, "resolved", $file);
+    } elsif (isGit()) {
+        system($GIT, "add", $file);
+    } else {
+        die "Unknown version control system";
+    }
+}
+
+sub showStatus($)
+{
+    my ($file) = @_;
+
+    if (isSVN()) {
+        system($SVN, "status", $file);
+    } elsif (isGit()) {
+        system($GIT, "diff", "--name-status", $file);
+    } else {
+        die "Unknown version control system";
+    }
+}

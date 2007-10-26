@@ -1,3 +1,19 @@
+2007-10-26  David Kilzer  <ddkilzer@webkit.org>
+
+        prepare-ChangeLog and update-webkit create needless ChangeLog conflicts
+        <http://bugs.webkit.org/show_bug.cgi?id=15600>
+
+        Reviewed by Darin.
+
+        The resolve-ChangeLog script merges conflicted ChangeLogs in svn or git by creating
+        a patch of the local changes and applying it with a fuzz level of 3 to the new file.
+        If the patch is successful, it runs 'svn resolved' or 'git add' on the new ChangeLog
+        file.  Note that it may also be used as a stand-alone script.
+
+        * Scripts/prepare-ChangeLog: Call resolve-ChangeLogs for conflicted ChangeLog files.
+        * Scripts/resolve-ChangeLogs: Added.
+        * Scripts/update-webkit: Call resolve-ChangeLogs for conflicted ChangeLog files.
+
 2007-10-26  Mark Rowe  <mrowe@apple.com>
 
         Qt build fix.  r27084 added a destructor implementation for LayoutTestController

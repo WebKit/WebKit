@@ -32,8 +32,11 @@ use strict;
 use FindBin;
 use lib $FindBin::Bin;
 use File::Basename;
+use File::Spec;
 use Getopt::Long;
 use webkitdirs;
+
+sub runSvnUpdate();
 
 # Handle options
 my $quiet = '';
@@ -58,7 +61,7 @@ push @svnOptions, '-q' if $quiet;
 
 chdirWebKit();
 print "Updating OpenSource\n" unless $quiet;
-(system("svn", "update", @svnOptions) == 0) or die;
+runSvnUpdate();
 if (isCygwin()) {
     (system("perl", "WebKitTools/Scripts/update-webkit-auxiliary-libs") == 0) or die;
 }
@@ -66,5 +69,25 @@ if (isCygwin()) {
 if (-d "../Internal") {
     chdir("../Internal");
     print "Updating Internal\n" unless $quiet;
-    (system("svn", "update", @svnOptions) == 0) or die;
+    runSvnUpdate();
+}
+
+exit 0;
+
+sub runSvnUpdate()
+{
+    open UPDATE, "-|", "svn", "update", @svnOptions or die;
+    my @conflictedChangeLogs;
+    while (my $line = <UPDATE>) {
+        print $line;
+        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.+)\s*$/ && basename($1) eq "ChangeLog";
+    }
+    close UPDATE;
+
+    if (@conflictedChangeLogs) {
+        print "Attempting to merge conflicted ChangeLogs.\n";
+        my $resolveChangeLogsPath = File::Spec->catfile(dirname($0), "resolve-ChangeLogs");
+        (system($resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs) == 0)
+            or die "Could not open resolve-ChangeLogs script: $!.\n";
+    }
 }
