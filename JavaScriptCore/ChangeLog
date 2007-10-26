@@ -1,3 +1,29 @@
+2007-10-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - moved Context class into ExecState.{h,cpp} in preparation for merging 
+        ExecState and Context classes.
+
+        * kjs/ExecState.h: Moved CodeType enum and Context class here in
+        preparation for merging ExecState and Context.
+        * kjs/ExecState.cpp: Moved Context class here from Context.cpp.
+        (KJS::Context::Context):
+        (KJS::Context::~Context):
+        (KJS::Context::mark):
+        * kjs/context.h: Removed.
+        * kjs/Context.cpp: Removed.
+        * kjs/function.h: Removed CodeType enum.
+        * kjs/LabelStack.h: Added. Pulled LabelStack class out of internal.h.
+        * kjs/internal.h: Removed LabelStack.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added new file, removed ones that are gone.
+        * kjs/collector.cpp: Fixed includes.
+        * kjs/function.cpp: ditto
+        * kjs/internal.cpp: ditto
+        * kjs/interpreter.cpp: ditto
+        * kjs/lookup.h: ditto
+        * kjs/nodes.cpp: ditto
+
 2007-10-26  Mark Rowe  <mrowe@apple.com>
 
         Windows build fix.

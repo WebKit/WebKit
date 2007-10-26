@@ -26,7 +26,7 @@
 #include "config.h"
 #include "runtime_method.h"
 
-#include "context.h"
+#include "ExecState.h"
 #include "runtime_object.h"
 #include "function_object.h"
 

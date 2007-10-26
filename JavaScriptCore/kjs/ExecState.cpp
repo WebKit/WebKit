@@ -22,12 +22,82 @@
  *
  */
 
-#include "context.h"
-#include "JSGlobalObject.h"
+#include "config.h"
 #include "ExecState.h"
+
+#include "JSGlobalObject.h"
 #include "internal.h"
 
 namespace KJS {
+
+
+// ECMA 10.2
+Context::Context(JSGlobalObject* glob, Interpreter* interpreter, JSObject* thisV, 
+                 FunctionBodyNode* currentBody, CodeType type, Context* callingCon, 
+                 FunctionImp* func, const List* args)
+    : m_interpreter(interpreter)
+    , m_savedContext(interpreter->context())
+    , m_currentBody(currentBody)
+    , m_function(func)
+    , m_arguments(args)
+    , m_iterationDepth(0)
+    , m_switchDepth(0) 
+{
+    m_codeType = type;
+    m_callingContext = callingCon;
+    
+    // create and initialize activation object (ECMA 10.1.6)
+    if (type == FunctionCode) {
+        m_activation = new ActivationImp(func, *args);
+        m_variable = m_activation;
+    } else {
+        m_activation = 0;
+        m_variable = glob;
+    }
+    
+    // ECMA 10.2
+    switch(type) {
+    case EvalCode:
+        if (m_callingContext) {
+            scope = m_callingContext->scopeChain();
+            m_variable = m_callingContext->variableObject();
+            m_thisVal = m_callingContext->thisValue();
+            break;
+        } // else same as GlobalCode
+    case GlobalCode:
+        scope.clear();
+        scope.push(glob);
+        m_thisVal = static_cast<JSObject*>(glob);
+        break;
+    case FunctionCode:
+        scope = func->scope();
+        scope.push(m_activation);
+        m_variable = m_activation; // TODO: DontDelete ? (ECMA 10.2.3)
+        m_thisVal = thisV;
+        break;
+    }
+
+    m_interpreter->setContext(this);
+}
+
+Context::~Context()
+{
+    m_interpreter->setContext(m_savedContext);
+
+    // The arguments list is only needed to potentially create the  arguments object, 
+    // which isn't accessible from nested scopes so we can discard the list as soon 
+    // as the function is done running.
+    // This prevents lists of Lists from building up, waiting to be garbage collected
+    ActivationImp* activation = static_cast<ActivationImp*>(m_activation);
+    if (activation)
+        activation->releaseArguments();
+}
+
+void Context::mark()
+{
+    for (Context* context = this; context; context = context->m_callingContext)
+        context->scope.mark();
+}
 
 Interpreter* ExecState::lexicalInterpreter() const
 {

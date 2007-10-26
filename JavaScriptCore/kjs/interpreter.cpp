@@ -25,12 +25,12 @@
 #include "config.h"
 #include "interpreter.h"
 
+#include "ExecState.h"
 #include "JSGlobalObject.h"
 #include "SavedBuiltins.h"
 #include "array_object.h"
 #include "bool_object.h"
 #include "collector.h"
-#include "context.h"
 #include "date_object.h"
 #include "debugger.h"
 #include "error_object.h"

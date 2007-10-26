@@ -36,7 +36,6 @@
 #include "CollectorHeapIntrospector.cpp"
 #endif
 #include "CommonIdentifiers.cpp"
-#include "Context.cpp"
 #include "date_object.cpp"
 #include "DateMath.cpp"
 #include "dtoa.cpp"

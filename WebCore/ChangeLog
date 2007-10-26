@@ -1,3 +1,12 @@
+2007-10-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - update for JavaScriptCore header changes
+
+        * bindings/objc/WebScriptObject.mm:
+        * bridge/mac/WebCoreScriptDebugger.mm:
+
 2007-10-26  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

@@ -34,8 +34,9 @@
 #import "PlatformString.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
-#import <JavaScriptCore/context.h>
 #import <JavaScriptCore/debugger.h>
+#import <JavaScriptCore/ExecState.h>
+#import <JavaScriptCore/function.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 
 using namespace KJS;

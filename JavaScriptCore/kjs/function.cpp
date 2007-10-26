@@ -25,7 +25,7 @@
 #include "config.h"
 #include "function.h"
 
-#include "context.h"
+#include "ExecState.h"
 #include "debugger.h"
 #include "dtoa.h"
 #include "function_object.h"

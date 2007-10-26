@@ -31,7 +31,7 @@
 #import "PlatformString.h"
 #import "WebCoreObjCExtras.h"
 #import "WebCoreFrameBridge.h"
-#import <JavaScriptCore/context.h>
+#import <JavaScriptCore/ExecState.h>
 #import <JavaScriptCore/objc_instance.h>
 #import <JavaScriptCore/runtime_object.h>
 #import <JavaScriptCore/APICast.h>

@@ -90,41 +90,6 @@ namespace KJS {
   };
 
 
-  /**
-   * @short The "label set" in Ecma-262 spec
-   */
-  class LabelStack : Noncopyable {
-  public:
-    LabelStack()
-      : tos(0)
-    {
-    }
-    ~LabelStack();
-
-    /**
-     * If id is not empty and is not in the stack already, puts it on top of
-     * the stack and returns true, otherwise returns false
-     */
-    bool push(const Identifier &id);
-    /**
-     * Is the id in the stack?
-     */
-    bool contains(const Identifier &id) const;
-    /**
-     * Removes from the stack the last pushed id (what else?)
-     */
-    void pop();
-
-  private:
-    struct StackElem {
-      Identifier id;
-      StackElem *prev;
-    };
-
-    StackElem *tos;
-  };
-
-
   // ---------------------------------------------------------------------------
   //                            Evaluation
   // ---------------------------------------------------------------------------
@@ -148,23 +113,6 @@ namespace KJS {
 #ifndef NDEBUG
   void printInfo(ExecState *exec, const char *s, JSValue *, int lineno = -1);
 #endif
-
-inline LabelStack::~LabelStack()
-{
-    StackElem *prev;
-    for (StackElem *e = tos; e; e = prev) {
-        prev = e->prev;
-        delete e;
-    }
-}
-
-inline void LabelStack::pop()
-{
-    if (StackElem *e = tos) {
-        tos = e->prev;
-        delete e;
-    }
-}
 
 } // namespace
 
