@@ -24,6 +24,7 @@
 #define WTF_RefPtr_h
 
 #include <algorithm>
+#include "AlwaysInline.h"
 
 namespace WTF {
 
@@ -47,7 +48,7 @@ namespace WTF {
         PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = 0; return tmp; }
 
         T& operator*() const { return *m_ptr; }
-        T *operator->() const { return m_ptr; }
+        ALWAYS_INLINE T *operator->() const { return m_ptr; }
         
         bool operator!() const { return !m_ptr; }
     

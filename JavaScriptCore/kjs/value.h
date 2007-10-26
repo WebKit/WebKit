@@ -337,12 +337,12 @@ inline const JSObject *JSValue::getObject() const
     return JSImmediate::isImmediate(this) ? 0 : asCell()->getObject();
 }
 
-inline bool JSValue::getUInt32(uint32_t& v) const
+ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
 {
     return JSImmediate::isImmediate(this) ? JSImmediate::getUInt32(this, v) : asCell()->getUInt32(v);
 }
 
-inline bool JSValue::getTruncatedInt32(int32_t& v) const
+ALWAYS_INLINE bool JSValue::getTruncatedInt32(int32_t& v) const
 {
     return JSImmediate::isImmediate(this) ? JSImmediate::getTruncatedInt32(this, v) : asCell()->getTruncatedInt32(v);
 }
@@ -387,7 +387,7 @@ inline bool JSValue::toBoolean(ExecState *exec) const
     return JSImmediate::isImmediate(this) ? JSImmediate::toBoolean(this) : asCell()->toBoolean(exec);
 }
 
-inline double JSValue::toNumber(ExecState *exec) const
+ALWAYS_INLINE double JSValue::toNumber(ExecState *exec) const
 {
     return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : asCell()->toNumber(exec);
 }

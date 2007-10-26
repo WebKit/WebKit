@@ -1,3 +1,18 @@
+2007-10-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - encourage GCC a little harder to inline a few hot functions for 1.5% improvement on SunSpider.
+
+        * kjs/value.h:
+        (KJS::JSValue::getUInt32):
+        (KJS::JSValue::getTruncatedInt32):
+        (KJS::JSValue::toNumber):
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr::~PassRefPtr):
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::operator->):
+
 2007-10-26  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.
