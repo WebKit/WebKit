@@ -836,7 +836,7 @@ JSValue *StringObjectFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisOb
     UChar *p = buf;
     ListIterator it = args.begin();
     while (it != args.end()) {
-      unsigned short u = it->toUInt32(exec);
+      unsigned short u = static_cast<unsigned short>(it->toUInt32(exec));
       *p++ = UChar(u);
       it++;
     }
