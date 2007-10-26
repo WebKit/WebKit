@@ -1,3 +1,11 @@
+2007-10-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Remove JSStringRefCFHack from windows as it is no longer needed.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2007-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

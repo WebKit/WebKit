@@ -1,5 +1,13 @@
 2007-10-25  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Remove JSStringRefCFHack.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
+2007-10-25  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Steve Falkenburg.
 
         Fix for <rdar://problem/5463608>
