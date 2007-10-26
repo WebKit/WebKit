@@ -1,3 +1,9 @@
+2007-10-26  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Add missing #include of Platform.h.
+
+        * Api/qwebhistoryinterface.cpp:
+
 2007-10-25  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.

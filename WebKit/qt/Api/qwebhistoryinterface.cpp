@@ -23,6 +23,7 @@
 
 #include <QCoreApplication>
 
+#include <wtf/Platform.h>
 #include "DeprecatedString.h"
 
 namespace WebCore {
