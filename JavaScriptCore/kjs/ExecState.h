@@ -107,7 +107,7 @@ namespace KJS  {
         ExecState(Interpreter* interp, JSGlobalObject* glob, JSObject* thisV,
                   FunctionBodyNode* currentBody, CodeType type = GlobalCode,
                   ExecState* callingExecState = 0, FunctionImp* function = 0, const List* args = 0);
-        ExecState::~ExecState();
+        ~ExecState();
 
         // ExecStates are always stack-allocated, and the garbage collector
         // marks the stack, so we don't need to protect the objects below from GC.

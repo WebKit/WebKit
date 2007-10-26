@@ -1,5 +1,11 @@
 2007-10-26  Mark Rowe  <mrowe@apple.com>
 
+        Gtk build fix.
+
+        * kjs/ExecState.h:
+
+2007-10-26  Mark Rowe  <mrowe@apple.com>
+
         Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
