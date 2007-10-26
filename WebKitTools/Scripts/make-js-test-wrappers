@@ -69,7 +69,8 @@ for my $tfile (@templates) {
 
     for my $file (@files) {
         chomp $file;
-        next if $file =~ /js-test-.*\.js/;
+        next if $file =~ /js-test-.*\.js$/;
+        next if $file =~ m:resources/intersectsNode\.js$:;
 
         my $html = $file;
         $html =~ s:resources/(.*)\.js:$1.html:;

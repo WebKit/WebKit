@@ -263,7 +263,11 @@ foreach my $file (sort keys %function_lists) {
 # Get the latest ChangeLog files from svn.
 my @logs = ();
 foreach my $prefix (sort keys %files) {
-    push @logs, File::Spec->catfile($prefix, "ChangeLog");
+    if ($prefix eq "") {
+        push @logs, "ChangeLog";
+    } else {
+        push @logs, File::Spec->catfile($prefix, "ChangeLog");
+    }
 }
 
 if (@logs && $updateChangeLogs && $isSVN) {

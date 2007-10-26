@@ -1,3 +1,10 @@
+2007-10-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/make-js-test-wrappers: Don't generate a wrapper for intersectsNode.js.
+        * Scripts/prepare-ChangeLog: Add a special case for prefix of empty string.
+
 2007-10-25  Stephanie  <slewis@apple.com>
 
         build Fix
