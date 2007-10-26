@@ -1,5 +1,13 @@
 2007-10-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: svn add SymbolTable.h
+
+        * kjs/SymbolTable.h: Added.
+        (KJS::SymbolTable::set):
+        (KJS::SymbolTable::get):
+
+2007-10-26  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: export SymbolTable.h to WebCore.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
