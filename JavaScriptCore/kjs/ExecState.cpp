@@ -26,6 +26,7 @@
 #include "ExecState.h"
 
 #include "JSGlobalObject.h"
+#include "function.h"
 #include "internal.h"
 
 namespace KJS {
