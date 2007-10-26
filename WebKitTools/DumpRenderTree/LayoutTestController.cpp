@@ -56,10 +56,6 @@ LayoutTestController::LayoutTestController(bool testRepaintDefault, bool testRep
 {
 }
 
-LayoutTestController::~LayoutTestController()
-{
-}
-
 // Static Functions
 
 static JSValueRef dumpAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

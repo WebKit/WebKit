@@ -1,3 +1,28 @@
+2007-10-25  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam.
+
+        Fixed <rdar://5549689> 2 tests in fast/forms fail when run with other tests on Windows
+
+        Moving destructor into platform-specific files
+        * DumpRenderTree/LayoutTestController.cpp:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::~LayoutTestController):
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::~LayoutTestController):
+
+        LayoutTestController wasn't being destroyed
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+
+        Added declspec
+        * DumpRenderTree/win/EditingDelegate.h:
+
+        Reset certain values on the webview (or related delegate) that might 
+        have changed while running a test
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::~LayoutTestController):
+
 2007-10-25  Adam Roben  <aroben@apple.com>
 
         Make sunspider-compare-results work with relative paths

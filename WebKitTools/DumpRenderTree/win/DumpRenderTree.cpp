@@ -615,6 +615,8 @@ static void runTest(const char* pathOrURL)
     }
 exit:
     SysFreeString(urlBStr);
+    delete ::layoutTestController;
+
     return;
 }
 

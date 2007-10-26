@@ -46,6 +46,10 @@
 #import <WebKit/WebViewPrivate.h>
 #import <Foundation/Foundation.h>
 
+LayoutTestController::~LayoutTestController()
+{
+}
+
 void LayoutTestController::addDisallowedURL(JSStringRef url)
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));

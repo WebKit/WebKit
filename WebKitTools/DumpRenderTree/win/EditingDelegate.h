@@ -31,7 +31,7 @@
 
 #include <WebKit/IWebEditingDelegate.h>
 
-class EditingDelegate : public IWebEditingDelegate {
+class __declspec(uuid("265DCD4B-79C3-44a2-84BC-511C3EDABD6F")) EditingDelegate : public IWebEditingDelegate {
 public:
     EditingDelegate();
 

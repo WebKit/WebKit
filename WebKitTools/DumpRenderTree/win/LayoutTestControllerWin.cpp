@@ -47,6 +47,29 @@
 using std::string;
 using std::wstring;
 
+LayoutTestController::~LayoutTestController()
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    // reset webview-related states back to default values in preparation for next test
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (SUCCEEDED(webView->QueryInterface(&viewPrivate)))
+        viewPrivate->setTabKeyCyclesThroughElements(TRUE);
+
+    COMPtr<IWebViewEditing> viewEditing;
+    if (FAILED(webView->QueryInterface(&viewEditing)))
+        return;
+    COMPtr<IWebEditingDelegate> delegate;
+    if (FAILED(viewEditing->editingDelegate(&delegate)))
+        return;
+    COMPtr<EditingDelegate> editingDelegate(Query, viewEditing.get());
+    if (editingDelegate)
+        editingDelegate->setAcceptsEditing(TRUE);
+}
+
 void LayoutTestController::addDisallowedURL(JSStringRef url)
 {
     // FIXME: Implement!
