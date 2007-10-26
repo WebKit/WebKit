@@ -1,5 +1,14 @@
 2007-10-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Suggested by Anders Carlsson.
+        
+        Fixed tyop.
+
+        * kjs/function.cpp:
+        (KJS::ActivationImp::getOwnPropertySlot):
+
+2007-10-26  Geoffrey Garen  <ggaren@apple.com>
+
         Suggested by Darin Adler.
         
         Use computedHash(), which is safer than just directly accessing _hash.
