@@ -784,6 +784,7 @@ void Collector::markMainThreadOnlyObjects()
 
 template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThreadIsMainThread)
 {
+    UNUSED_PARAM(currentThreadIsMainThread); // currentThreadIsMainThread is only used in ASSERTs
     // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
     CollectorHeap& heap = heapType == Collector::PrimaryHeap ? primaryHeap : numberHeap;
     
@@ -893,8 +894,8 @@ bool Collector::collect()
   ASSERT(JSLock::lockCount() > 0);
   ASSERT(JSLock::currentThreadIsHoldingLock());
 
-  ASSERT(primaryHeap.operationInProgress == NoOperation | numberHeap.operationInProgress == NoOperation);
-  if (primaryHeap.operationInProgress != NoOperation | numberHeap.operationInProgress != NoOperation)
+  ASSERT((primaryHeap.operationInProgress == NoOperation) | (numberHeap.operationInProgress == NoOperation));
+  if ((primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation))
     abort();
     
   primaryHeap.operationInProgress = Collection;
@@ -1016,7 +1017,7 @@ HashCountedSet<const char*>* Collector::rootObjectTypeCounts()
 
 bool Collector::isBusy()
 {
-    return primaryHeap.operationInProgress != NoOperation | numberHeap.operationInProgress != NoOperation;
+    return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation)
 }
 
 void Collector::reportOutOfMemoryToAllInterpreters()
