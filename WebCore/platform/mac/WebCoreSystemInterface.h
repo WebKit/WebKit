@@ -84,6 +84,7 @@ extern OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsig
 extern id (*wkCreateNSURLConnectionDelegateProxy)(void);
 extern void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
 extern void (*wkDrawTextFieldCellFocusRing)(NSTextFieldCell*, NSRect);
+extern void (*wkDrawCapsLockIndicator)(CGContextRef, CGRect);
 extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 extern void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
 extern BOOL (*wkFontSmoothingModeIsLCD)(int mode);

@@ -1,3 +1,12 @@
+2007-10-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Adding wkDrawCapsLockIndicator in preparation for fixing the caps lock indicator.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2007-10-25  Adam Roben  <aroben@apple.com>
 
         Add wkSetPatternBaseCTM.

@@ -1,3 +1,12 @@
+2007-10-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Adding WebKitSystemInterface support for the caps lock indicator
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2007-10-26  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Darin Adler.
