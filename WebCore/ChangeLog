@@ -1,3 +1,31 @@
+2007-10-26  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://5557379> Crash in Silverlight when opening microsoft.com
+
+        The crash is within Silverlight, and the latest version of the plugin
+        does not exhibit this crash, so just avoid loading this version of the
+        plugin.
+
+        * plugins/win/PluginDatabaseWin.cpp: Added isPluginBlacklisted() and
+        constants silverlightPluginMinRequiredVersionMSDWORD and
+        silverlightPluginMinRequiredVersionLSDWORD. Their values are taken from 
+        the version info of Silverlight 1.0.20926.0, which is a version known
+        not to exhibit this crash
+        (WebCore::PluginDatabaseWin::isPluginBlacklisted): Determine whether
+        this plugin is blacklisted
+        * plugins/win/PluginDatabaseWin.h:
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackageWin::PluginPackageWin): Initialize m_fileVersion*
+        (WebCore::PluginPackageWin::getFileVersion):
+        (WebCore::PluginPackageWin::storeFileVersion): Read version info for
+        the plugin, and store the file version
+        (WebCore::PluginPackageWin::fetchInfo): After determining the name,
+        description, and file version, determine whether this plug-in is
+        blacklisted. If so, return false so this plug-in isn't loaded
+        * plugins/win/PluginPackageWin.h:
+
 2007-10-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.
@@ -145,6 +173,7 @@
         * platform/graphics/cg/ImageCG.cpp:
         (WebCore::Image::drawPattern):
 
+>>>>>>> .r27120
 2007-10-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp.

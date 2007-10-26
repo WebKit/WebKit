@@ -52,12 +52,12 @@ namespace WebCore {
         Vector<PluginPackageWin*> plugins() const;
         bool isMIMETypeRegistered(const String& mimeType) const;
         void addExtraPluginPath(const String&);
+        static bool isPluginBlacklisted(PluginPackageWin* plugin);
     private:
         void setPluginPaths(const Vector<String>& paths) { m_pluginPaths = paths; }
         PluginSet getPluginsInPaths() const;
 
         PluginPackageWin* findPlugin(const KURL& url, const String& mimeType);
-
         PluginPackageWin* pluginForMIMEType(const String& mimeType);
         PluginPackageWin* pluginForExtension(const String& extension);
 

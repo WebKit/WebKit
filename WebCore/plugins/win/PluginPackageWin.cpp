@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "PluginPackageWin.h"
+#include "PluginDatabaseWin.h"
 
 #include "Timer.h"
 #include "DeprecatedString.h"
@@ -108,9 +109,27 @@ PluginPackageWin::PluginPackageWin(const String& path, const FILETIME& lastModif
     , m_isLoaded(false)
     , m_loadCount(0)
     , m_freeLibraryTimer(this, &PluginPackageWin::freeLibraryTimerFired)
+    , m_fileVersionLS(0)
+    , m_fileVersionMS(0)
 {
     m_fileName = String(PathFindFileName(m_path.charactersWithNullTermination()));
     m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
+}
+
+void PluginPackageWin::getFileVersion(DWORD& mostSignificant, DWORD& leastSignificant) const
+{
+    mostSignificant = m_fileVersionMS;
+    leastSignificant = m_fileVersionLS;
+}
+
+void PluginPackageWin::storeFileVersion(LPVOID versionInfoData)
+{
+    VS_FIXEDFILEINFO* info;
+    UINT infoSize;
+    if (!VerQueryValue(versionInfoData, TEXT("\\"), (LPVOID*) &info, &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
+        return;
+    m_fileVersionLS = info->dwFileVersionLS;
+    m_fileVersionMS = info->dwFileVersionMS;
 }
 
 bool PluginPackageWin::fetchInfo()
@@ -132,6 +151,13 @@ bool PluginPackageWin::fetchInfo()
     m_description = getVersionInfo(versionInfoData, "FileDescription");
 
     if (m_name.isNull() || m_description.isNull()) {
+        fastFree(versionInfoData);
+        return false;
+    }
+
+    storeFileVersion(versionInfoData);
+
+    if (PluginDatabaseWin::isPluginBlacklisted(this)) {
         fastFree(versionInfoData);
         return false;
     }
