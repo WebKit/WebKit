@@ -1,3 +1,14 @@
+2007-10-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam and Steve.
+
+        - Added convenience methods for converting between BSTR and JSSTringRefs
+        - Added WebKit_debug.def to the project.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKit_debug.def:
+
 2007-10-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

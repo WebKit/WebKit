@@ -822,6 +822,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\WebKit_debug.def"
+				>
+			</File>
+			<File
 				RelativePath="..\WebKitGraphics.cpp"
 				>
 			</File>

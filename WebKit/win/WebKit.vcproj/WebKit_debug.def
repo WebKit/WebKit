@@ -41,7 +41,9 @@ EXPORTS
         JSPropertyNameArrayGetNameAtIndex
         JSPropertyNameArrayRelease
         JSPropertyNameArrayRetain
+        JSStringCopyBSTR
         JSStringCopyCFString
+        JSStringCreateWithBSTR
         JSStringCreateWithCFString
         JSStringCreateWithCharacters
         JSStringCreateWithUTF8CString
