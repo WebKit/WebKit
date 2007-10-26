@@ -807,6 +807,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\API\JSStringRefCF.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\API\JSStringRefCF.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\API\JSValueRef.cpp"
 				>
 			</File>
