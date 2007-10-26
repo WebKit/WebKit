@@ -1,3 +1,14 @@
+2007-10-26  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Added new test cases to handle non-number input to window adjusting
+        functions like resizeTo, resizeBy, moveTo, and moveBy for 
+        <rdar://problem/5555053>.
+
+        * fast/dom/Window/window-resize-nan-expected.txt: Added.
+        * fast/dom/Window/window-resize-nan.html: Added.
+
 2007-10-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

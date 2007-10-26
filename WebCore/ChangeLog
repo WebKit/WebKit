@@ -1,3 +1,23 @@
+2007-10-26  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5555053> REGRESSION:9A581: Window disappears when opening http://research.microsoft.com/users/darkok/
+        The problem was caused by checkin r24654. This change moved explicit bounds checking into adjustWindowRect
+        but failed to account for bounds checking (instead replaced with bounds clipping).  This caused issues
+        when NaN was used. This patch goes one step further and does NaN checking to prevent the possibility of
+        setting window bounds to NaN before an update occurs.
+
+        Test: fast/dom/Window/window-resize-nan.html
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::adjustWindowRect):
+        Added a new parameter, pendingChanges, which takes pending changes to the window
+        rect, and if they are valid (not NaN) sets them on window.
+        
+        (KJS::WindowFunc::callAsFunction):
+        Adjusted uses of adjustWindowRect to take new update parameter.
+
 2007-10-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.
