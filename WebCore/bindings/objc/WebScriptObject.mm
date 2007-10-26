@@ -260,14 +260,10 @@ static void _didExecute(WebScriptObject *obj)
         if (!interp)
             return NO;
 
-        // If the interpreter has a context, we set the exception.
-        if (interp->context()) {
-            ExecState *exec = interp->context()->execState();
-            
-            if (exec) {
-                throwError(exec, GeneralError, exceptionMessage);
-                return YES;
-            }
+        // If the interpreter has a current exec state, we set the exception.
+        if (ExecState* exec = interp->currentExec()) {
+            throwError(exec, GeneralError, exceptionMessage);
+            return YES;
         }
         interp = interp->nextInterpreter();
     } while (interp != first);
@@ -500,10 +496,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObj
 
     JSLock lock;
     
-    if ([self _rootObject]->interpreter()->context()) {
-        ExecState *exec = [self _rootObject]->interpreter()->context()->execState();
-
-        ASSERT(exec);
+    if (ExecState* exec = [self _rootObject]->interpreter()->currentExec()) {
         throwError(exec, GeneralError, description);
     } else
         throwError([self _rootObject]->interpreter()->globalExec(), GeneralError, description);

@@ -1,5 +1,13 @@
 2007-10-26  Maciej Stachowiak  <mjs@apple.com>
 
+        No review, build fix.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject throwException:]):
+        (-[WebScriptObject setException:]):
+
+2007-10-26  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber Stamped by Mark.
 
         - fix build
