@@ -151,18 +151,6 @@ bool HTMLPlugInElement::checkDTD(const Node* newChild)
     return newChild->hasTagName(paramTag) || HTMLFrameOwnerElement::checkDTD(newChild);
 }
 
-void HTMLPlugInElement::willRemove()
-{
-    if (Frame* parentFrame = document()->frame()) {
-        if (Frame* contentFrame = parentFrame->tree()->child(m_frameName)) {
-            contentFrame->disconnectOwnerElement();
-            contentFrame->loader()->frameDetached();
-        }
-    }
-
-    HTMLFrameOwnerElement::willRemove();
-}
-
 void HTMLPlugInElement::defaultEventHandler(Event* event)
 {
     RenderObject* r = renderer();

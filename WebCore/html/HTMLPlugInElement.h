@@ -45,8 +45,6 @@ public:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
 
-    virtual void willRemove();
-
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual bool checkDTD(const Node* newChild);
 
@@ -69,8 +67,6 @@ public:
     virtual NPObject* getNPObject();
 #endif
 
-    void setFrameName(const AtomicString& frameName) { m_frameName = frameName; }
-
     virtual void defaultEventHandler(Event*);
 private:
 #if USE(NPOBJECT)
@@ -85,9 +81,6 @@ protected:
 #if USE(NPOBJECT)
     NPObject* m_NPObject;
 #endif
-
-private:
-    AtomicString m_frameName;
 };
 
 } // namespace WebCore

@@ -23,6 +23,7 @@
 
 #include "DOMWindow.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 
 namespace WebCore {
 
@@ -31,6 +32,16 @@ HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Docum
     , m_contentFrame(0)
     , m_createdByParser(false)
 {
+}
+
+void HTMLFrameOwnerElement::willRemove()
+{
+    if (Frame* frame = contentFrame()) {
+        frame->disconnectOwnerElement();
+        frame->loader()->frameDetached();
+    }
+
+    HTMLElement::willRemove();
 }
 
 HTMLFrameOwnerElement::~HTMLFrameOwnerElement()

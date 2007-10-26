@@ -1,3 +1,23 @@
+2007-10-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Fix for <rdar://problem/5421754>
+        m_frameName member variable in HTMLPlugInElement unnecessary
+
+        - Refactor the willRemove() method down into HTMLFrameOwnerElement now that
+          we no longer need to use the m_frameName variable.
+
+        * html/HTMLFrameElementBase.cpp:
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::willRemove):
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLPlugInElement.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestObject):
+
 2007-10-26  Adele Peterson  <adele@apple.com>
 
         Export _wkDrawCapsLockIndicator.

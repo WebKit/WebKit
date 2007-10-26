@@ -36,6 +36,8 @@ protected:
 public:
     virtual ~HTMLFrameOwnerElement();
 
+    virtual void willRemove();
+
     Frame* contentFrame() const { return m_contentFrame; }
     DOMWindow* contentWindow() const;
     Document* contentDocument() const;

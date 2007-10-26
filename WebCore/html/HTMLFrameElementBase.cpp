@@ -203,16 +203,6 @@ void HTMLFrameElementBase::attach()
             renderPart->setWidget(frame->view());
 }
 
-void HTMLFrameElementBase::willRemove()
-{
-    if (Frame* frame = contentFrame()) {
-        frame->disconnectOwnerElement();
-        frame->loader()->frameDetached();
-    }
-
-    HTMLFrameOwnerElement::willRemove();
-}
-
 String HTMLFrameElementBase::location() const
 {
     return src();

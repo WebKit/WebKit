@@ -37,7 +37,6 @@ public:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void willRemove();
 
     virtual void attach();
 
