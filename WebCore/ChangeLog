@@ -1,5 +1,11 @@
 2007-10-26  Adele Peterson  <adele@apple.com>
 
+        Export _wkDrawCapsLockIndicator.
+
+        * WebCore.base.exp:
+
+2007-10-26  Adele Peterson  <adele@apple.com>
+
         Reviewed by Oliver.
 
         Adding WebKitSystemInterface support for the caps lock indicator
