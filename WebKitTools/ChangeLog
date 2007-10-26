@@ -1,3 +1,11 @@
+2007-10-26  Mark Rowe  <mrowe@apple.com>
+
+        Qt build fix.  r27084 added a destructor implementation for LayoutTestController
+        to the Qt port on the assumption that it was an implementation of the cross-platform
+        LayoutTestController class.  It is not, so it did not need to be changed.
+
+        * DumpRenderTree/qt/jsobjects.cpp: Remove empty destructor.
+
 2007-10-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.
