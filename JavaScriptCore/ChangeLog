@@ -1,5 +1,15 @@
 2007-10-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Suggested by Darin Adler.
+        
+        Use computedHash(), which is safer than just directly accessing _hash.
+
+        * kjs/lookup.cpp:
+        (KJS::Lookup::findEntry):
+        (KJS::Lookup::find):
+
+2007-10-26  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: svn add SymbolTable.h
 
         * kjs/SymbolTable.h: Added.
