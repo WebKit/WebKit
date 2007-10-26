@@ -283,13 +283,11 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (NSArray *)scopeChain
 {
-    Context* context = _state->context();
-
-    if (!context) {  // global frame
+    if (!_state->currentBody()) {  // global frame
         return [NSArray arrayWithObject:_globalObj];
     }
 
-    ScopeChain      chain  = context->scopeChain();
+    ScopeChain      chain  = _state->scopeChain();
     NSMutableArray *scopes = [[NSMutableArray alloc] init];
 
     while (!chain.isEmpty()) {
@@ -308,10 +306,8 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (NSString *)functionName
 {
-    Context* context = _state->context();
-
-    if (context) {
-        FunctionImp *func = context->function();
+    if (_state->currentBody()) {
+        FunctionImp *func = _state->function();
         if (func) {
             Identifier fn = func->functionName();
             return toNSString(fn.ustring());
@@ -348,7 +344,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
     // find "eval"
     JSObject *eval = NULL;
-    if (state->context()) {  // "eval" won't work without context (i.e. at global scope)
+    if (state->currentBody()) {  // "eval" won't work without context (i.e. at global scope)
         JSValue *v = globObj->get(state, "eval");
         if (v->isObject() && static_cast<JSObject *>(v)->implementsCall())
             eval = static_cast<JSObject *>(v);

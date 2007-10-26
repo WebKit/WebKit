@@ -1,5 +1,16 @@
 2007-10-26  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber Stamped by Oliver.
+
+        - fix build
+
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame scopeChain]):
+        (-[WebCoreScriptCallFrame functionName]):
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+
+2007-10-26  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver.
 
         - update for JavaScriptCore header changes
