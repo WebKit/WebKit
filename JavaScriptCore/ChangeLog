@@ -2,6 +2,28 @@
 
         Reviewed by Maciej Stachowiak.
         
+        Tweaked property maps to remove 2 branches. 2.5% speedup on SunSpider.
+
+        * kjs/property_map.cpp: Use a special no branch accessor to the UString's
+        hash value. Also, return immediately instead of branching to the end
+        of the loop if the value is not found.
+        (KJS::PropertyMap::get):
+        (KJS::PropertyMap::getLocation):
+        (KJS::PropertyMap::put):
+        (KJS::PropertyMap::insert):
+        (KJS::PropertyMap::remove):
+        (KJS::PropertyMap::checkConsistency):
+
+        * kjs/ustring.h:
+        (KJS::UString::Rep::computedHash): Special no branch accessor to the
+        UString's hash value. Used when the caller knows that the hash value
+        has already been computed. (For example, if the caller got the UString
+        from an Identifier.)
+
+2007-10-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
         Switched ActivationImp to using a symbol table. For now, though, all
         clients take the slow path.
         

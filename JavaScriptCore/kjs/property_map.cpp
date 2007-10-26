@@ -37,7 +37,7 @@ using std::max;
 #define DUMP_STATISTICS 0
 #define USE_SINGLE_ENTRY 1
 
-// 2/28/2006 ggaren: super accurate JS iBench says that USE_SINGLE_ENTRY is a
+// 2/28/2006 ggaren: command-line JS iBench says that USE_SINGLE_ENTRY is a
 // 3.2% performance boost.
 
 #if !DO_CONSISTENCY_CHECK
@@ -175,7 +175,7 @@ JSValue *PropertyMap::get(const Identifier &name, unsigned &attributes) const
         return 0;
     }
     
-    unsigned h = rep->hash();
+    unsigned h = rep->computedHash();
     int sizeMask = m_u.table->sizeMask;
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
@@ -184,11 +184,17 @@ JSValue *PropertyMap::get(const Identifier &name, unsigned &attributes) const
     ++numProbes;
     numCollisions += entries[i].key && entries[i].key != rep;
 #endif
-    while (UString::Rep *key = entries[i].key) {
+    while (1) {
+        UString::Rep* key = entries[i].key;
+
+        if (!key)
+            return 0;
+
         if (rep == key) {
             attributes = entries[i].attributes;
             return entries[i].value;
         }
+        
         if (k == 0)
             k = 1 | (h % sizeMask);
         i = (i + k) & sizeMask;
@@ -196,7 +202,6 @@ JSValue *PropertyMap::get(const Identifier &name, unsigned &attributes) const
         ++numRehashes;
 #endif
     }
-    return 0;
 }
 
 JSValue *PropertyMap::get(const Identifier &name) const
@@ -214,7 +219,7 @@ JSValue *PropertyMap::get(const Identifier &name) const
         return 0;
     }
     
-    unsigned h = rep->hash();
+    unsigned h = rep->computedHash();
     int sizeMask = m_u.table->sizeMask;
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
@@ -223,9 +228,15 @@ JSValue *PropertyMap::get(const Identifier &name) const
     ++numProbes;
     numCollisions += entries[i].key && entries[i].key != rep;
 #endif
-    while (UString::Rep *key = entries[i].key) {
+    while (1) {
+        UString::Rep* key = entries[i].key;
+
+        if (!key)
+            return 0;
+
         if (rep == key)
             return entries[i].value;
+        
         if (k == 0)
             k = 1 | (h % sizeMask);
         i = (i + k) & sizeMask;
@@ -233,7 +244,6 @@ JSValue *PropertyMap::get(const Identifier &name) const
         ++numRehashes;
 #endif
     }
-    return 0;
 }
 
 JSValue **PropertyMap::getLocation(const Identifier &name)
@@ -251,7 +261,7 @@ JSValue **PropertyMap::getLocation(const Identifier &name)
         return 0;
     }
     
-    unsigned h = rep->hash();
+    unsigned h = rep->computedHash();
     int sizeMask = m_u.table->sizeMask;
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
@@ -260,9 +270,15 @@ JSValue **PropertyMap::getLocation(const Identifier &name)
     ++numProbes;
     numCollisions += entries[i].key && entries[i].key != rep;
 #endif
-    while (UString::Rep *key = entries[i].key) {
+    while (1) {
+        UString::Rep* key = entries[i].key;
+
+        if (!key)
+            return 0;
+
         if (rep == key)
             return &entries[i].value;
+        
         if (k == 0)
             k = 1 | (h % sizeMask);
         i = (i + k) & sizeMask;
@@ -270,7 +286,6 @@ JSValue **PropertyMap::getLocation(const Identifier &name)
         ++numRehashes;
 #endif
     }
-    return 0;
 }
 
 #if DEBUG_PROPERTIES
@@ -330,7 +345,7 @@ void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bo
     if (!m_usingTable || m_u.table->keyCount * 2 >= m_u.table->size)
         expand();
     
-    unsigned h = rep->hash();
+    unsigned h = rep->computedHash();
     int sizeMask = m_u.table->sizeMask;
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
@@ -384,7 +399,7 @@ void PropertyMap::insert(UString::Rep *key, JSValue *value, int attributes, int 
 {
     ASSERT(m_u.table);
 
-    unsigned h = key->hash();
+    unsigned h = key->computedHash();
     int sizeMask = m_u.table->sizeMask;
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
@@ -511,7 +526,7 @@ void PropertyMap::remove(const Identifier &name)
     }
 
     // Find the thing to remove.
-    unsigned h = rep->hash();
+    unsigned h = rep->computedHash();
     int sizeMask = m_u.table->sizeMask;
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
@@ -728,7 +743,7 @@ void PropertyMap::checkConsistency()
             ++sentinelCount;
             continue;
         }
-        unsigned h = rep->hash();
+        unsigned h = rep->computedHash();
         int i = h & m_u.table->sizeMask;
         int k = 0;
         while (UString::Rep *key = m_u.table->entries[i].key) {
