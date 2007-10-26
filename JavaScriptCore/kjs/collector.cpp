@@ -1017,7 +1017,7 @@ HashCountedSet<const char*>* Collector::rootObjectTypeCounts()
 
 bool Collector::isBusy()
 {
-    return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation)
+    return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation);
 }
 
 void Collector::reportOutOfMemoryToAllInterpreters()
