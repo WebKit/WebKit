@@ -1,3 +1,14 @@
+2007-10-26  Ada Chan  <adachan@apple.com>
+
+        Update m_current index after we've removed an item:
+        - if item removed is before m_current, decrement m_current
+        - if the current item is removed, make sure m_current is within bounds.
+
+        Reviewed by Darin.
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::removeItem):
+
 2007-10-26  Mark Rowe  <mrowe@apple.com>
 
         Debug build fix.

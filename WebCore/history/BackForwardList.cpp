@@ -242,10 +242,19 @@ void BackForwardList::removeItem(HistoryItem* item)
     if (!item)
         return;
     
-    for (int i = 0; i < (int)m_entries.size(); ++i)
+    for (unsigned i = 0; i < m_entries.size(); ++i)
         if (m_entries[i] == item) {
             m_entries.remove(i);
             m_entryHash.remove(item);
+            if (m_current == NoCurrentItemIndex || m_current < i)
+                break;
+            if (m_current > i)
+                m_current--;
+            else {
+                size_t count = m_entries.size();
+                if (m_current >= count)
+                    m_current = count ? count-1 : NoCurrentItemIndex;
+            }
             break;
         }
 }
