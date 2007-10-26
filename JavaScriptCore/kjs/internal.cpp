@@ -55,9 +55,15 @@ namespace KJS {
 
 // ------------------------------ StringImp ------------------------------------
 
-JSValue *StringImp::toPrimitive(ExecState *, JSType) const
+JSValue* StringImp::toPrimitive(ExecState*, JSType) const
 {
-  return const_cast<StringImp *>(this);
+  return const_cast<StringImp*>(this);
+}
+
+bool StringImp::getPrimitiveNumber(ExecState*, double& number) const
+{
+    number = val.toDouble();
+    return false;
 }
 
 bool StringImp::toBoolean(ExecState *) const
@@ -82,9 +88,15 @@ JSObject* StringImp::toObject(ExecState *exec) const
 
 // ------------------------------ NumberImp ------------------------------------
 
-JSValue *NumberImp::toPrimitive(ExecState *, JSType) const
+JSValue* NumberImp::toPrimitive(ExecState*, JSType) const
 {
-  return const_cast<NumberImp *>(this);
+    return const_cast<NumberImp*>(this);
+}
+
+bool NumberImp::getPrimitiveNumber(ExecState*, double& number) const
+{
+    number = val;
+    return true;
 }
 
 bool NumberImp::toBoolean(ExecState *) const
@@ -144,10 +156,17 @@ void GetterSetterImp::mark()
         setter->mark();
 }
 
-JSValue *GetterSetterImp::toPrimitive(ExecState*, JSType) const
+JSValue* GetterSetterImp::toPrimitive(ExecState*, JSType) const
 {
     ASSERT(false);
     return jsNull();
+}
+
+bool GetterSetterImp::getPrimitiveNumber(ExecState*, double& number) const
+{
+    ASSERT(false);
+    number = 0;
+    return true;
 }
 
 bool GetterSetterImp::toBoolean(ExecState*) const

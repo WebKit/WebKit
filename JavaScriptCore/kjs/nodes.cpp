@@ -1240,14 +1240,6 @@ static inline JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2)
     return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));
 }
 
-static inline JSValue *sub(ExecState *exec, JSValue *v1, JSValue *v2)
-{
-    JSValue *p1 = v1->toPrimitive(exec, NumberType);
-    JSValue *p2 = v2->toPrimitive(exec, NumberType);
-
-    return jsNumber(p1->toNumber(exec) - p2->toNumber(exec));
-}
-
 // ECMA 11.6.1
 JSValue *AddNode::evaluate(ExecState *exec)
 {
@@ -1270,7 +1262,7 @@ JSValue *SubNode::evaluate(ExecState *exec)
     JSValue *v2 = term2->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
         
-    return sub(exec, v1, v2);
+    return jsNumber(v1->toNumber(exec) - v2->toNumber(exec));
 }
 
 // ------------------------------ Shift Nodes ------------------------------------
@@ -1318,24 +1310,28 @@ JSValue *UnsignedRightShiftNode::evaluate(ExecState *exec)
 
 static inline JSValue* lessThan(ExecState *exec, JSValue* v1, JSValue* v2) 
 {
-  JSValue *p1 = v1->toPrimitive(exec, NumberType);
-  JSValue *p2 = v2->toPrimitive(exec, NumberType);
+    double n1;
+    double n2;
+    bool wasNotString1 = v1->getPrimitiveNumber(exec, n1);
+    bool wasNotString2 = v2->getPrimitiveNumber(exec, n2);
     
-  if (p1->isString() && p2->isString())
-    return jsBoolean(p1->toString(exec) < p2->toString(exec));
-    
-  return jsBoolean(p1->toNumber(exec) < p2->toNumber(exec));
+    if (wasNotString1 | wasNotString2)
+        return jsBoolean(n1 < n2);
+
+    return jsBoolean(v1->toString(exec) < v2->toString(exec));
 }
 
 static inline JSValue* lessThanEq(ExecState *exec, JSValue* v1, JSValue* v2) 
 {
-  JSValue *p1 = v1->toPrimitive(exec, NumberType);
-  JSValue *p2 = v2->toPrimitive(exec, NumberType);
+    double n1;
+    double n2;
+    bool wasNotString1 = v1->getPrimitiveNumber(exec, n1);
+    bool wasNotString2 = v2->getPrimitiveNumber(exec, n2);
     
-  if (p1->isString() && p2->isString())
-    return jsBoolean(!(p2->toString(exec) < p1->toString(exec)));
+    if (wasNotString1 | wasNotString2)
+        return jsBoolean(n1 <= n2);
 
-  return jsBoolean(p1->toNumber(exec) <= p2->toNumber(exec));
+    return jsBoolean(!(v2->toString(exec) < v1->toString(exec)));
 }
 
 // ECMA 11.8.1
@@ -1564,7 +1560,7 @@ static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSV
     v = add(exec, v1, v2);
     break;
   case OpMinusEq:
-    v = sub(exec, v1, v2);
+    v = jsNumber(v1->toNumber(exec) - v2->toNumber(exec));
     break;
   case OpLShift:
     i1 = v1->toInt32(exec);

@@ -81,7 +81,9 @@ public:
     bool getTruncatedUInt32(uint32_t&) const;
 
     // Basic conversions.
-    JSValue *toPrimitive(ExecState *exec, JSType preferredType = UnspecifiedType) const;
+    JSValue* toPrimitive(ExecState* exec, JSType preferredType = UnspecifiedType) const;
+    bool getPrimitiveNumber(ExecState* exec, double& number) const;
+
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
@@ -147,6 +149,7 @@ public:
 
     // Basic conversions.
     virtual JSValue *toPrimitive(ExecState *exec, JSType preferredType = UnspecifiedType) const = 0;
+    virtual bool getPrimitiveNumber(ExecState* exec, double& number) const = 0;
     virtual bool toBoolean(ExecState *exec) const = 0;
     virtual double toNumber(ExecState *exec) const = 0;
     virtual UString toString(ExecState *exec) const = 0;
@@ -365,9 +368,18 @@ inline JSType JSValue::type() const
     return JSImmediate::isImmediate(this) ? JSImmediate::type(this) : asCell()->type();
 }
 
-inline JSValue *JSValue::toPrimitive(ExecState *exec, JSType preferredType) const
+inline JSValue* JSValue::toPrimitive(ExecState* exec, JSType preferredType) const
 {
-    return JSImmediate::isImmediate(this) ? const_cast<JSValue *>(this) : asCell()->toPrimitive(exec, preferredType);
+    return JSImmediate::isImmediate(this) ? const_cast<JSValue*>(this) : asCell()->toPrimitive(exec, preferredType);
+}
+
+inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number) const
+{
+    if (JSImmediate::isImmediate(this)) {
+        number = JSImmediate::toDouble(this);
+        return true;
+    }
+    return asCell()->getPrimitiveNumber(exec, number);
 }
 
 inline bool JSValue::toBoolean(ExecState *exec) const

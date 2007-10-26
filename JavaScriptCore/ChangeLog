@@ -1,3 +1,34 @@
+2007-10-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - fold together toPrimitive() and toNumber() conversions for 0.5% gain on SunSpider
+
+        * kjs/nodes.cpp:
+        (KJS::SubNode::evaluate): Subtract directly, since toPrimitive() is not
+        adding any value over toNumber() here.
+        (KJS::valueForReadModifyAssignment): Ditto.
+        (KJS::lessThan): Use new getPrimitiveNumber() method to avoid some virtual calls
+        and branches.
+        (KJS::lessThanEq): Ditto.
+        * JavaScriptCore.exp: Export new functions as needed.
+        * kjs/value.h:
+        (KJS::JSValue::toPrimitive): Fixed formatting.
+        (KJS::JSValue::getPrimitiveNumber): New method - this simultaneously converts
+        to number and tells you whether a toPrimitive() conversion with a Number hint
+        would have given a string.
+        * kjs/internal.cpp:
+        (KJS::StringImp::getPrimitiveNumber): Implemented. 
+        (KJS::NumberImp::getPrimitiveNumber): ditto
+        (KJS::GetterSetterImp::getPrimitiveNumber): ditto
+        (KJS::StringImp::toPrimitive): Fixed formatting.
+        (KJS::NumberImp::toPrimitive): ditto
+        (KJS::GetterSetterImp::toPrimitive): ditto
+        * kjs/internal.h:
+        * kjs/object.cpp:
+        (KJS::JSObject::getPrimitiveNumber): Implemented.
+        * kjs/object.h:
+
 2007-10-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
