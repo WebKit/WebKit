@@ -73,7 +73,7 @@ var answers = [['""', 'NaN'],
 ['""', 'NaN'],
 ['""', 'NaN'],
 ['""', 'NaN'],
-['""', 'NaN'],
+['"x"', '120'],
 ['"x"', '120'],
 ['"x"', '120'],
 ['"x"', '120'],
@@ -86,7 +86,7 @@ var answers = [['""', 'NaN'],
 ['""', 'NaN'],
 ['""', 'NaN'],
 ['""', 'NaN'],
-['""', 'NaN']];
+['"x"', '120']];
 
 for (var i = 0; i < cases.length; ++i)
 {
@@ -94,16 +94,16 @@ for (var i = 0; i < cases.length; ++i)
     var result = answers[i];
     if (item[1] == "omitted") {
         shouldBe('"' + item[0] + '".charAt()', result[0]);
-	if (result[1] == 'NaN')
-	    shouldBeNaN('"' + item[0] + '".charCodeAt()');
-	else
-	    shouldBe('"' + item[0] + '".charCodeAt()', result[1]);
+        if (result[1] == 'NaN')
+            shouldBeNaN('"' + item[0] + '".charCodeAt()');
+        else
+            shouldBe('"' + item[0] + '".charCodeAt()', result[1]);
     } else {
         shouldBe('"' + item[0] + '".charAt(' + item[1] + ')', result[0]);
-	if (result[1] == 'NaN')
-	    shouldBeNaN('"' + item[0] + '".charCodeAt(' + item[1] + ')');
-	else
-	    shouldBe('"' + item[0] + '".charCodeAt(' + item[1] + ')', result[1]);
+        if (result[1] == 'NaN')
+            shouldBeNaN('"' + item[0] + '".charCodeAt(' + item[1] + ')');
+        else
+            shouldBe('"' + item[0] + '".charCodeAt(' + item[1] + ')', result[1]);
     }
 }
 

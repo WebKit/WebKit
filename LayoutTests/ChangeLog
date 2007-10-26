@@ -1,3 +1,15 @@
+2007-10-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test changes for http://bugs.webkit.org/show_bug.cgi?id=15703
+          fix numeric functions -- improve correctness and speed
+
+        * fast/js/resources/char-at.js: Updated test to expect that we get the first
+        character if we pass NaN to charAt and charCodeAt; it's what the specification
+        asks for and matches other browsers too.
+        * fast/js/char-at-expected.txt: Updated.
+
 2007-10-26  Mark Rowe  <mrowe@apple.com>
 
         Update expected results.

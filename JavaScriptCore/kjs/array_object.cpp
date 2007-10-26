@@ -253,32 +253,30 @@ JSValue* ArrayProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, cons
     // We return a new array
     JSObject *resObj = static_cast<JSObject *>(exec->lexicalInterpreter()->builtinArray()->construct(exec,List::empty()));
     result = resObj;
-    double begin = 0;
-    if (!args[0]->isUndefined()) {
-        begin = args[0]->toInteger(exec);
-        if (begin >= 0) { // false for NaN
-            if (begin > length)
-                begin = length;
-        } else {
-            begin += length;
-            if (!(begin >= 0)) // true for NaN
-                begin = 0;
-        }
+    double begin = args[0]->toInteger(exec);
+    if (begin >= 0) {
+      if (begin > length)
+        begin = length;
+    } else {
+      begin += length;
+      if (begin < 0)
+        begin = 0;
     }
-    double end = length;
-    if (!args[1]->isUndefined()) {
+    double end;
+    if (args[1]->isUndefined())
+      end = length;
+    else {
       end = args[1]->toInteger(exec);
-      if (end < 0) { // false for NaN
+      if (end < 0) {
         end += length;
         if (end < 0)
           end = 0;
       } else {
-        if (!(end <= length)) // true for NaN
+        if (end > length)
           end = length;
       }
     }
 
-    //printf( "Slicing from %d to %d \n", begin, end );
     int n = 0;
     int b = static_cast<int>(begin);
     int e = static_cast<int>(end);
@@ -549,7 +547,7 @@ JSValue* ArrayProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, cons
       // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:lastIndexOf 
 
     int index = length - 1;
-    double d = args[1]->toInteger(exec);
+    double d = args[1]->toIntegerPreserveNaN(exec);
 
     if (d < 0) {
         d += length;

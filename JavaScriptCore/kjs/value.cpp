@@ -61,14 +61,23 @@ double JSValue::toInteger(ExecState *exec) const
     int32_t i;
     if (getTruncatedInt32(i))
         return i;
-    return roundValue(exec, const_cast<JSValue*>(this));
+    double d = toNumber(exec);
+    return isNaN(d) ? 0.0 : trunc(d);
+}
+
+double JSValue::toIntegerPreserveNaN(ExecState *exec) const
+{
+    int32_t i;
+    if (getTruncatedInt32(i))
+        return i;
+    return trunc(toNumber(exec));
 }
 
 int32_t JSValue::toInt32SlowCase(ExecState* exec, bool& ok) const
 {
     ok = true;
 
-    double d = roundValue(exec, const_cast<JSValue*>(this));
+    double d = toNumber(exec);
     if (d >= -D32 / 2 && d < D32 / 2)
         return static_cast<int32_t>(d);
 
@@ -76,13 +85,12 @@ int32_t JSValue::toInt32SlowCase(ExecState* exec, bool& ok) const
         ok = false;
         return 0;
     }
-    double d32 = fmod(d, D32);
 
+    double d32 = fmod(trunc(d), D32);
     if (d32 >= D32 / 2)
         d32 -= D32;
     else if (d32 < -D32 / 2)
         d32 += D32;
-
     return static_cast<int32_t>(d32);
 }
 
@@ -90,7 +98,7 @@ uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
 {
     ok = true;
 
-    double d = roundValue(exec, const_cast<JSValue*>(this));
+    double d = toNumber(exec);
     if (d >= 0.0 && d < D32)
         return static_cast<uint32_t>(d);
 
@@ -98,32 +106,11 @@ uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
         ok = false;
         return 0;
     }
-    double d32 = fmod(d, D32);
 
+    double d32 = fmod(trunc(d), D32);
     if (d32 < 0)
         d32 += D32;
-
     return static_cast<uint32_t>(d32);
-}
-
-uint16_t JSValue::toUInt16(ExecState *exec) const
-{
-    uint32_t i;
-    if (getTruncatedUInt32(i))
-        return static_cast<uint16_t>(i);
-
-    double d = roundValue(exec, const_cast<JSValue*>(this));
-    if (d >= 0.0 && d < D16)
-        return static_cast<uint16_t>(d);
-
-    if (isNaN(d) || isInf(d))
-        return 0;
-    double d16 = fmod(d, D16);
-
-    if (d16 < 0)
-        d16 += D16;
-
-    return static_cast<uint16_t>(d16);
 }
 
 float JSValue::toFloat(ExecState* exec) const

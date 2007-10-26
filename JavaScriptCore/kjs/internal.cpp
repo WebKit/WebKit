@@ -49,10 +49,6 @@
 
 namespace KJS {
 
-#if PLATFORM(WIN_OS)
-#define copysign _copysign
-#endif
-
 // ------------------------------ StringImp ------------------------------------
 
 JSValue* StringImp::toPrimitive(ExecState*, JSType) const
@@ -249,15 +245,6 @@ bool InternalFunctionImp::implementsHasInstance() const
 }
 
 // ------------------------------ global functions -----------------------------
-
-double roundValue(ExecState *exec, JSValue *v)
-{
-  double d = v->toNumber(exec);
-  double ad = fabs(d);
-  if (ad == 0 || isNaN(d) || isInf(d))
-    return d;
-  return copysign(floor(ad), d);
-}
 
 #ifndef NDEBUG
 #include <stdio.h>

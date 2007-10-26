@@ -91,11 +91,11 @@ public:
 
     // Integer conversions.
     double toInteger(ExecState*) const;
+    double toIntegerPreserveNaN(ExecState*) const;
     int32_t toInt32(ExecState*) const;
     int32_t toInt32(ExecState*, bool& ok) const;
     uint32_t toUInt32(ExecState*) const;
     uint32_t toUInt32(ExecState*, bool& ok) const;
-    uint16_t toUInt16(ExecState*) const;
 
     // Floating point conversions.
     float toFloat(ExecState*) const;
@@ -405,7 +405,7 @@ inline JSObject* JSValue::toObject(ExecState* exec) const
 ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const
 {
     int32_t i;
-    if (JSImmediate::isImmediate(this) && JSImmediate::getTruncatedInt32(this, i))
+    if (getTruncatedInt32(i))
         return i;
     bool ok;
     return toInt32SlowCase(exec, ok);
@@ -414,7 +414,7 @@ ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const
 inline uint32_t JSValue::toUInt32(ExecState* exec) const
 {
     uint32_t i;
-    if (JSImmediate::isImmediate(this) && JSImmediate::getTruncatedUInt32(this, i))
+    if (getTruncatedUInt32(i))
         return i;
     bool ok;
     return toUInt32SlowCase(exec, ok);
@@ -423,7 +423,7 @@ inline uint32_t JSValue::toUInt32(ExecState* exec) const
 inline int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
 {
     int32_t i;
-    if (JSImmediate::isImmediate(this) && JSImmediate::getTruncatedInt32(this, i)) {
+    if (getTruncatedInt32(i)) {
         ok = true;
         return i;
     }
@@ -433,7 +433,7 @@ inline int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
 inline uint32_t JSValue::toUInt32(ExecState* exec, bool& ok) const
 {
     uint32_t i;
-    if (JSImmediate::isImmediate(this) && JSImmediate::getTruncatedUInt32(this, i)) {
+    if (getTruncatedUInt32(i)) {
         ok = true;
         return i;
     }

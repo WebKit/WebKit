@@ -275,7 +275,7 @@ static void fillStructuresUsingTimeArgs(ExecState *exec, const List &args, int m
     
     // milliseconds
     if (idx < numArgs) {
-        milliseconds += roundValue(exec, args[idx]);
+        milliseconds += args[idx]->toNumber(exec);
     } else {
         milliseconds += *ms;
     }
@@ -551,7 +551,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   case GetTimezoneOffset:
     return jsNumber(-gmtoffset(t) / minutesPerHour);
   case SetTime:
-    milli = roundValue(exec, args[0]);
+    milli = timeClip(args[0]->toNumber(exec));
     result = jsNumber(milli);
     thisDateObj->setInternalValue(result);
     break;
@@ -648,11 +648,11 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
       t.year = (year >= 0 && year <= 99) ? year : year - 1900;
       t.month = args[1]->toInt32(exec);
       t.monthDay = (numArgs >= 3) ? args[2]->toInt32(exec) : 1;
-      t.hour = (numArgs >= 4) ? args[3]->toInt32(exec) : 0;
-      t.minute = (numArgs >= 5) ? args[4]->toInt32(exec) : 0;
-      t.second = (numArgs >= 6) ? args[5]->toInt32(exec) : 0;
+      t.hour = args[3]->toInt32(exec);
+      t.minute = args[4]->toInt32(exec);
+      t.second = args[5]->toInt32(exec);
       t.isDST = -1;
-      double ms = (numArgs >= 7) ? roundValue(exec, args[6]) : 0;
+      double ms = (numArgs >= 7) ? args[6]->toNumber(exec) : 0;
       value = gregorianDateTimeToMS(t, ms, false);
     }
   }
@@ -702,10 +702,10 @@ JSValue *DateObjectFuncImp::callAsFunction(ExecState* exec, JSObject*, const Lis
     t.year = (year >= 0 && year <= 99) ? year : year - 1900;
     t.month = args[1]->toInt32(exec);
     t.monthDay = (n >= 3) ? args[2]->toInt32(exec) : 1;
-    t.hour = (n >= 4) ? args[3]->toInt32(exec) : 0;
-    t.minute = (n >= 5) ? args[4]->toInt32(exec) : 0;
-    t.second = (n >= 6) ? args[5]->toInt32(exec) : 0;
-    double ms = (n >= 7) ? roundValue(exec, args[6]) : 0;
+    t.hour = args[3]->toInt32(exec);
+    t.minute = args[4]->toInt32(exec);
+    t.second = args[5]->toInt32(exec);
+    double ms = (n >= 7) ? args[6]->toNumber(exec) : 0;
     return jsNumber(gregorianDateTimeToMS(t, ms, true));
   }
 }
@@ -1084,10 +1084,9 @@ double timeClip(double t)
 {
     if (!isfinite(t))
         return NaN;
-    double at = fabs(t);
-    if (at > 8.64E15)
+    if (fabs(t) > 8.64E15)
         return NaN;
-    return copysign(floor(at), t);
+    return trunc(t);
 }
 
 }

@@ -1,3 +1,69 @@
+2007-10-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15703
+          fix numeric functions -- improve correctness and speed
+
+        Gives about 1% gain on SunSpider.
+
+        * kjs/value.h: Added toIntegerPreserveNan, removed toUInt16.
+        (KJS::JSValue::toInt32): Changed to call getTruncatedInt32 in a way that works
+        with both immediate and number values.
+        (KJS::JSValue::toUInt32): Ditto.
+        * kjs/value.cpp:
+        (KJS::JSValue::toInteger): Moved the logic from roundValue here, with a couple
+        differences. One is that it now correctly returns 0 for NaN, and another is that
+        there's no special case for 0 or infinity, since the general case already handles
+        those correctly.
+        (KJS::JSValue::toIntegerPreserveNaN): Added. Like toInteger, but without the
+        check for NaN.
+        (KJS::JSValue::toInt32SlowCase): Call toNumber instead of roundValue. The
+        truncation done by the typecast already does the necessary truncation that
+        roundValue was doing.
+        (KJS::JSValue::toUInt32SlowCase): Ditto.
+        (KJS::JSValue::toUInt16): Removed.
+
+        * kjs/internal.h: Removed roundValue.
+        * kjs/internal.cpp: Ditto.
+
+        * kjs/array_object.cpp: (KJS::ArrayProtoFunc::callAsFunction): Remove unneeded
+        code to handle NaN in Array.slice; toInteger now never returns NaN as specified.
+
+        * kjs/date_object.cpp:
+        (KJS::fillStructuresUsingTimeArgs): Replaced call to roundValue with a call to
+        toNumber as specified.
+        (KJS::DateProtoFunc::callAsFunction): In SetTime case, replaced call to roundValue
+        with a call to toNumber and timeClip as specified.
+        (KJS::DateObjectImp::construct): Removed unnecessary checks of numArgs in cases
+        where the default behavior of toInt32 (returning 0) was already correct. Replaced
+        call to roundValue with a call to toNumber as specified.
+        (KJS::DateObjectFuncImp::callAsFunction): Ditto.
+
+        * kjs/math_object.cpp: (MathFuncImp::callAsFunction): Removed unnecessary special
+        cases for the pow function that the library already handles correctly.
+
+        * kjs/number_object.cpp: (NumberProtoFunc::callAsFunction): Changed ToString to
+        call toIntegerPreserveNaN, so we can continue to handle the NaN case differently.
+        The real toInteger now returns 0 for NaN. Took out unneeded special case in
+        ToFixed for undefined; was only needed because our toInteger was wrong. Same
+        thing in ToExponential. Changed ToPrecision to call toIntegerPreserveNaN.
+
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFunc::callAsFunction): Took out CharAt and CharCodeAt special
+        cases for undefined that were only needed because toInteger was wrong. Same in
+        IndexOf, and was able to remove some special cases. In LastIndexOf, used
+        toIntegerPreserveNaN, but was able to remove some special cases there too.
+        Changed Substr implementation to preserve correct behavior with the change
+        to toInteger and match the specification. Also made sure we weren't converting
+        an out of range double to an int.
+        (KJS::StringObjectFuncImp::callAsFunction): Changed constructor to just use
+        toUInt32, because truncating toUInt32 to 16 bits is the same thing and there's
+        no reason to have toUInt16 as a second, less-optimized function that's only
+        called at this one call site.
+
+        * wtf/MathExtras.h: Added trunc function for Windows.
+
 2007-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

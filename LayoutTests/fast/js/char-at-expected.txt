@@ -53,8 +53,8 @@ PASS "x".charAt(-1) is ""
 PASS "x".charCodeAt(-1) is NaN
 PASS "x".charAt(-Infinity) is ""
 PASS "x".charCodeAt(-Infinity) is NaN
-PASS "x".charAt(NaN) is ""
-PASS "x".charCodeAt(NaN) is NaN
+PASS "x".charAt(NaN) is "x"
+PASS "x".charCodeAt(NaN) is 120
 PASS "xy".charAt() is "x"
 PASS "xy".charCodeAt() is 120
 PASS "xy".charAt(undefined) is "x"
@@ -79,8 +79,8 @@ PASS "xy".charAt(-1) is ""
 PASS "xy".charCodeAt(-1) is NaN
 PASS "xy".charAt(-Infinity) is ""
 PASS "xy".charCodeAt(-Infinity) is NaN
-PASS "xy".charAt(NaN) is ""
-PASS "xy".charCodeAt(NaN) is NaN
+PASS "xy".charAt(NaN) is "x"
+PASS "xy".charCodeAt(NaN) is 120
 PASS successfullyParsed is true
 
 TEST COMPLETE

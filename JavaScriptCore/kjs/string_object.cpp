@@ -457,20 +457,16 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     // handled above
     break;
   case CharAt:
-    // Other browsers treat an omitted parameter as 0 rather than NaN.
-    // That doesn't match the ECMA standard, but is needed for site compatibility.
-    dpos = a0->isUndefined() ? 0 : a0->toInteger(exec);
-    if (dpos >= 0 && dpos < len) // false for NaN
+    dpos = a0->toInteger(exec);
+    if (dpos >= 0 && dpos < len)
       u = s.substr(static_cast<int>(dpos), 1);
     else
       u = "";
     result = jsString(u);
     break;
   case CharCodeAt:
-    // Other browsers treat an omitted parameter as 0 rather than NaN.
-    // That doesn't match the ECMA standard, but is needed for site compatibility.
-    dpos = a0->isUndefined() ? 0 : a0->toInteger(exec);
-    if (dpos >= 0 && dpos < len) // false for NaN
+    dpos = a0->toInteger(exec);
+    if (dpos >= 0 && dpos < len)
       result = jsNumber(s[static_cast<int>(dpos)].unicode());
     else
       result = jsNaN();
@@ -485,31 +481,21 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
   }
   case IndexOf:
     u2 = a0->toString(exec);
-    if (a1->isUndefined())
+    dpos = a1->toInteger(exec);
+    if (dpos < 0)
       dpos = 0;
-    else {
-      dpos = a1->toInteger(exec);
-      if (dpos >= 0) { // false for NaN
-        if (dpos > len)
-          dpos = len;
-      } else
-        dpos = 0;
-    }
+    else if (dpos > len)
+      dpos = len;
     result = jsNumber(s.find(u2, static_cast<int>(dpos)));
     break;
   case LastIndexOf:
     u2 = a0->toString(exec);
     d = a1->toNumber(exec);
-    if (a1->isUndefined() || KJS::isNaN(d))
+    dpos = a1->toIntegerPreserveNaN(exec);
+    if (dpos < 0)
+      dpos = 0;
+    else if (!(dpos <= len)) // true for NaN
       dpos = len;
-    else {
-      dpos = a1->toInteger(exec);
-      if (dpos >= 0) { // false for NaN
-        if (dpos > len)
-          dpos = len;
-      } else
-        dpos = 0;
-    }
     result = jsNumber(s.rfind(u2, static_cast<int>(dpos)));
     break;
   case Match:
@@ -658,22 +644,20 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     }
     break;
   case Substr: {
-    double d = a0->toInteger(exec);
-    double d2 = a1->toInteger(exec);
-    if (!(d >= 0)) { // true for NaN
-      d += len;
-      if (!(d >= 0)) // true for NaN
-        d = 0;
+    double start = a0->toInteger(exec);
+    double length = a1->isUndefined() ? len : a1->toInteger(exec);
+    if (start >= len)
+      return jsString("");
+    if (length < 0)
+      return jsString("");
+    if (start < 0) {
+      start += len;
+      if (start < 0)
+        start = 0;
     }
-    if (isNaN(d2))
-      d2 = len - d;
-    else {
-      if (d2 < 0)
-        d2 = 0;
-      if (d2 > len - d)
-        d2 = len - d;
-    }
-    result = jsString(s.substr(static_cast<int>(d), static_cast<int>(d2)));
+    if (length > len - d)
+      length = len - d;
+    result = jsString(s.substr(static_cast<int>(start), static_cast<int>(length)));
     break;
   }
   case Substring: {
@@ -852,7 +836,7 @@ JSValue *StringObjectFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisOb
     UChar *p = buf;
     ListIterator it = args.begin();
     while (it != args.end()) {
-      unsigned short u = it->toUInt16(exec);
+      unsigned short u = it->toUInt32(exec);
       *p++ = UChar(u);
       it++;
     }

@@ -153,7 +153,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   case ToString: {
     double dradix = 10;
     if (!args.isEmpty())
-      dradix = args[0]->toInteger(exec);
+      dradix = args[0]->toIntegerPreserveNaN(exec);
     if (dradix >= 2 && dradix <= 36 && dradix != 10) { // false for NaN
       int radix = static_cast<int>(dradix);
       const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -208,9 +208,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   {
       JSValue *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
-      if (fractionDigits->isUndefined())
-            df = 0;
-      if (!(df >= 0 && df <= 20)) // true for NaN
+      if (!(df >= 0 && df <= 20))
           return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
       int f = (int)df;
       
@@ -255,7 +253,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       
       JSValue *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
-      if (!fractionDigits->isUndefined() && !(df >= 0 && df <= 20)) // true for NaN
+      if (!(df >= 0 && df <= 20))
           return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
       int f = (int)df;
       
@@ -342,7 +340,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       int e = 0;
       UString m;
       
-      double dp = args[0]->toInteger(exec);
+      double dp = args[0]->toIntegerPreserveNaN(exec);
       double x = v->toNumber(exec);
       if (isNaN(dp) || isNaN(x) || isInf(x))
           return jsString(v->toString(exec));
