@@ -92,6 +92,8 @@ CFReadStreamRef WKCreateCustomCFReadStream(void *(*formCreate)(CFReadStreamRef, 
     void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
     void *context);
 
+void WKDrawCapsLockIndicator(CGContextRef, CGRect);
+
 void WKDrawFocusRing(CGContextRef context, CGRect clipRect, CGColorRef color, int radius);
     // Ignore the context's clipping.
     // The CG context's current path is the focus ring's path.

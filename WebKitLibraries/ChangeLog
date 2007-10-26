@@ -1,8 +1,16 @@
 2007-10-26  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        Updating header too for WKDrawCapsLockIndicator.
+
+        * WebKitSystemInterface.h:
+
+2007-10-26  Adele Peterson  <adele@apple.com>
+
         Reviewed by Oliver.
 
-        Adding wkDrawCapsLockIndicator in preparation for fixing the caps lock indicator.
+        Adding WKDrawCapsLockIndicator in preparation for fixing the caps lock indicator.
 
         * libWebKitSystemInterfaceLeopard.a:
         * libWebKitSystemInterfaceTiger.a:
