@@ -4,25 +4,12 @@
 
         * kjs/ExecState.h:
 
-2007-10-26  Mark Rowe  <mrowe@apple.com>
-
-        Windows build fix.
-
-        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
-
-2007-10-26  Mark Rowe  <mrowe@apple.com>
-
-        Gtk build fix.
-
-        * JavaScriptCore.pri:
-        * kjs/ExecState.cpp:
-
 2007-10-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
-        
+
         - Merge Context class fully into ExecState, since they are always created and used together.
-        
+
         No measurable performance impact but this is a useful cleanup.
 
         * JavaScriptCore.pri:
@@ -84,6 +71,19 @@
         (KJS::FunctionBodyNode::processDeclarations):
         (KJS::FuncDeclNode::makeFunction):
         (KJS::FuncExprNode::evaluate):
+
+2007-10-26  Mark Rowe  <mrowe@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2007-10-26  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix.
+
+        * JavaScriptCore.pri:
+        * kjs/ExecState.cpp:
 
 2007-10-26  Maciej Stachowiak  <mjs@apple.com>
 
