@@ -3628,7 +3628,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (!preferences)
         return E_NOINTERFACE;
 
-    ASSERT(preferences != m_preferences);
+    ASSERT(preferences == m_preferences);
 
     BSTR str;
     int size;
