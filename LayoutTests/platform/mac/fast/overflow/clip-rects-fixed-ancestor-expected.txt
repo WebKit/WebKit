@@ -177,7 +177,7 @@ layer at (705,149) size 162x370 backgroundClip at (0,0) size 785x1029 clip at (0
     RenderBlock (anonymous) at (6,6) size 150x18
       RenderText {#text} at (0,0) size 48x18
         text run at (0,0) width 48: "#fixed3"
-layer at (716,178) size 140x330 backgroundClip at (716,178) size 69x330 clip at (717,179) size 68x328 outlineClip at (0,64) size 785x965
+layer at (716,178) size 140x330 backgroundClip at (716,178) size 69x330 clip at (717,179) size 68x328 outlineClip at (0,0) size 785x1029
   RenderBlock {DIV} at (11,29) size 140x330 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 128x18
       RenderText {#text} at (0,0) size 108x18
