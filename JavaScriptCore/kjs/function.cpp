@@ -415,8 +415,9 @@ PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
 bool ActivationImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // We don't call through to JSObject because there's no way to give an 
-    // acitvation object getter/setter properties, and exposing __proto__ in
-    // the scope chain would be bizarre.
+    // acitvation object getter/setter properties, and __proto__ is a 
+    // non-standard extension that other implementations do not expose in the 
+    // activation object.
     ASSERT(!_prop.hasGetterSetterProperties());
 
     size_t index;

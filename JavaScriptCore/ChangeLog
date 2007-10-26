@@ -1,5 +1,12 @@
 2007-10-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Comment tweak suggested by Maciej.
+
+        * kjs/function.cpp:
+        (KJS::ActivationImp::getOwnPropertySlot):
+
+2007-10-26  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
         
         Tweaked property maps to remove 2 branches. 2.5% speedup on SunSpider.
