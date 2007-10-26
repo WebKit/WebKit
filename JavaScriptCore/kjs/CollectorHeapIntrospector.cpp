@@ -39,13 +39,14 @@ malloc_introspection_t jscore_collector_introspection = { &CollectorHeapIntrospe
     &CollectorHeapIntrospector::log, &CollectorHeapIntrospector::forceLock, &CollectorHeapIntrospector::forceUnlock, &CollectorHeapIntrospector::statistics };
 }
 
-void CollectorHeapIntrospector::init(CollectorHeap* heap)
+void CollectorHeapIntrospector::init(CollectorHeap* primaryHeap, CollectorHeap* numberHeap)
 {
-    static CollectorHeapIntrospector zone(heap);
+    static CollectorHeapIntrospector zone(primaryHeap, numberHeap);
 }
 
-CollectorHeapIntrospector::CollectorHeapIntrospector(CollectorHeap* heap)
-    : m_heap(heap)
+CollectorHeapIntrospector::CollectorHeapIntrospector(CollectorHeap* primaryHeap, CollectorHeap* numberHeap)
+    : m_primaryHeap(primaryHeap)
+    , m_numberHeap(numberHeap)
 {
     memset(&m_zone, 0, sizeof(m_zone));
     m_zone.zone_name = "JavaScriptCore Collector";
@@ -64,24 +65,27 @@ kern_return_t CollectorHeapIntrospector::enumerate(task_t task, void* context, u
 {
     RemoteMemoryReader memoryReader(task, reader);
     CollectorHeapIntrospector* zone = memoryReader(reinterpret_cast<CollectorHeapIntrospector*>(zoneAddress));
-    CollectorHeap* heap = memoryReader(zone->m_heap);
+    CollectorHeap* heaps[2] = {memoryReader(zone->m_primaryHeap), memoryReader(zone->m_numberHeap)};
 
-    if (!heap->blocks)
+    if (!heaps[0]->blocks && !heaps[1]->blocks)
         return 0;
 
-    CollectorBlock** blocks = memoryReader(heap->blocks);
-    for (unsigned i = 0; i < heap->usedBlocks; i++) {
-        vm_address_t remoteBlockAddress = reinterpret_cast<vm_address_t>(blocks[i]);
-        vm_range_t ptrRange = { remoteBlockAddress, sizeof(CollectorBlock) };
-
-        if (typeMask & (MALLOC_PTR_REGION_RANGE_TYPE | MALLOC_ADMIN_REGION_RANGE_TYPE))
-            (*recorder)(task, context, MALLOC_PTR_REGION_RANGE_TYPE, &ptrRange, 1);
-
-        // Recording individual cells causes frequent false-positives.  Any garbage cells
-        // which have yet to be collected are labeled as leaks.  Recording on a per-block
-        // basis provides less detail but avoids these false-positives.
-        if (memoryReader(blocks[i])->usedCells && (typeMask & MALLOC_PTR_IN_USE_RANGE_TYPE))
-            (*recorder)(task, context, MALLOC_PTR_IN_USE_RANGE_TYPE, &ptrRange, 1);
+    for (int currentHeap = 0; currentHeap < 2; currentHeap++) {
+        CollectorHeap* heap = heaps[currentHeap];
+        CollectorBlock** blocks = memoryReader(heap->blocks);
+        for (unsigned i = 0; i < heap->usedBlocks; i++) {
+            vm_address_t remoteBlockAddress = reinterpret_cast<vm_address_t>(blocks[i]);
+            vm_range_t ptrRange = { remoteBlockAddress, sizeof(CollectorBlock) };
+            
+            if (typeMask & (MALLOC_PTR_REGION_RANGE_TYPE | MALLOC_ADMIN_REGION_RANGE_TYPE))
+                (*recorder)(task, context, MALLOC_PTR_REGION_RANGE_TYPE, &ptrRange, 1);
+            
+            // Recording individual cells causes frequent false-positives.  Any garbage cells
+            // which have yet to be collected are labeled as leaks.  Recording on a per-block
+            // basis provides less detail but avoids these false-positives.
+            if (memoryReader(blocks[i])->usedCells && (typeMask & MALLOC_PTR_IN_USE_RANGE_TYPE))
+                (*recorder)(task, context, MALLOC_PTR_IN_USE_RANGE_TYPE, &ptrRange, 1);
+        }
     }
 
     return 0;

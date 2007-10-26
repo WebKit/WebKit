@@ -38,6 +38,7 @@ namespace KJS {
   class Collector {
   public:
     static void* allocate(size_t s);
+    static void* allocateNumber(size_t s);
     static bool collect();
     static bool isBusy(); // true if an allocation or collection is in progress
 
@@ -66,6 +67,9 @@ namespace KJS {
     static void markCell(JSCell*);
 
   private:
+    enum HeapType { PrimaryHeap, NumberHeap };
+    template <Collector::HeapType heapType> static void* heapAllocate(size_t s);
+    template <Collector::HeapType heapType> static size_t sweep(bool);
     static const CollectorBlock* cellBlock(const JSCell*);
     static CollectorBlock* cellBlock(JSCell*);
     static size_t cellOffset(const JSCell*);

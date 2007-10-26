@@ -1,3 +1,28 @@
+2007-10-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Make the JSC GC use a separate heap for JSNumbers to get a 0.7-1.4% progression in SunSpider.
+
+        * kjs/CollectorHeapIntrospector.cpp:
+        (KJS::CollectorHeapIntrospector::init):
+        (KJS::CollectorHeapIntrospector::enumerate):
+        * kjs/CollectorHeapIntrospector.h:
+        * kjs/collector.cpp:
+        (KJS::Collector::recordExtraCost):
+        (KJS::Collector::heapAllocate):
+        (KJS::Collector::allocate):
+        (KJS::Collector::allocateNumber):
+        (KJS::Collector::registerThread):
+        (KJS::Collector::markStackObjectsConservatively):
+        (KJS::Collector::markMainThreadOnlyObjects):
+        (KJS::Collector::sweep):
+        (KJS::Collector::collect):
+        * kjs/collector.h:
+        * kjs/internal.h:
+        (KJS::NumberImp::operator new):
+          Force numbers to be allocated in the secondary heap.
+
 2007-10-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

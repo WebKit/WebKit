@@ -95,7 +95,8 @@ struct CollectorHeap {
   OperationInProgress operationInProgress;
 };
 
-static CollectorHeap heap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
+static CollectorHeap primaryHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
+static CollectorHeap numberHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 
 // FIXME: I don't think this needs to be a static data member of the Collector class.
 // Just a private global like "heap" above would be fine.
@@ -167,12 +168,14 @@ void Collector::recordExtraCost(size_t cost)
     // are either very short lived temporaries, or have extremely long lifetimes. So
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
+    // NOTE: we target the primaryHeap unconditionally as JSNumber doesn't modify cost 
 
-    heap.extraCost += cost;
+    primaryHeap.extraCost += cost;
 }
 
-void* Collector::allocate(size_t s)
+template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
 {
+  CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
   ASSERT(JSLock::lockCount() > 0);
   ASSERT(JSLock::currentThreadIsHoldingLock());
   ASSERT(s <= CELL_SIZE);
@@ -188,11 +191,11 @@ void* Collector::allocate(size_t s)
   size_t numLiveObjects = heap.numLiveObjects;
   size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
   size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
-  size_t newCost = numNewObjects + heap.extraCost;
+  const size_t newCost = heapType == PrimaryHeap ? numNewObjects + heap.extraCost : numNewObjects;
 
   if (newCost >= ALLOCATIONS_PER_COLLECTION && newCost >= numLiveObjectsAtLastCollect) {
-    collect();
-    numLiveObjects = heap.numLiveObjects;
+      collect();
+      numLiveObjects = heap.numLiveObjects;
   }
   
   ASSERT(heap.operationInProgress == NoOperation);
@@ -254,6 +257,16 @@ allocateNewBlock:
 #endif
 
   return newCell;
+}
+
+void* Collector::allocate(size_t s) 
+{
+    return heapAllocate<PrimaryHeap>(s);
+}
+
+void* Collector::allocateNumber(size_t s) 
+{
+    return heapAllocate<NumberHeap>(s);
 }
 
 static inline void* currentThreadStackBase()
@@ -406,7 +419,7 @@ void Collector::registerThread()
   if (!pthread_getspecific(registeredThreadKey)) {
 #if PLATFORM(DARWIN)
       if (onMainThread())
-          CollectorHeapIntrospector::init(&heap);
+          CollectorHeapIntrospector::init(&primaryHeap, &numberHeap);
 #endif
 
     Collector::Thread *thread = new Collector::Thread(pthread_self(), getCurrentPlatformThread());
@@ -438,28 +451,43 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
   
   char** p = (char**)start;
   char** e = (char**)end;
-  
-  size_t usedBlocks = heap.usedBlocks;
-  CollectorBlock **blocks = heap.blocks;
+    
+  size_t usedPrimaryBlocks = primaryHeap.usedBlocks;
+  size_t usedNumberBlocks = numberHeap.usedBlocks;
+  CollectorBlock **primaryBlocks = primaryHeap.blocks;
+  CollectorBlock **numberBlocks = numberHeap.blocks;
 
   const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
 
   while (p != e) {
-    char* x = *p++;
-    if (IS_CELL_ALIGNED(x) && x) {
-      uintptr_t offset = reinterpret_cast<uintptr_t>(x) & BLOCK_OFFSET_MASK;
-      CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(x - offset);
-      for (size_t block = 0; block < usedBlocks; block++) {
-        if ((blocks[block] == blockAddr) & (offset <= lastCellOffset)) {
-          if (((CollectorCell*)x)->u.freeCell.zeroIfFree != 0) {
-            JSCell* imp = reinterpret_cast<JSCell*>(x);
-            if (!imp->marked())
-              imp->mark();
+      char* x = *p++;
+      if (IS_CELL_ALIGNED(x) && x) {
+          uintptr_t offset = reinterpret_cast<uintptr_t>(x) & BLOCK_OFFSET_MASK;
+          CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(x - offset);
+          // Mark the the number heap, we can mark these Cells directly to avoid the virtual call cost
+          for (size_t block = 0; block < usedNumberBlocks; block++) {
+              if ((numberBlocks[block] == blockAddr) & (offset <= lastCellOffset)) {
+                  if (((CollectorCell*)x)->u.freeCell.zeroIfFree != 0)
+                      // Don't check whether we need to mark as we're only setting a bit in this case
+                      Collector::markCell(reinterpret_cast<JSCell*>(x));
+                  goto endMarkLoop;
+              }
           }
-          break;
-        }
+          
+          // Mark the primary heap
+          for (size_t block = 0; block < usedPrimaryBlocks; block++) {
+              if ((primaryBlocks[block] == blockAddr) & (offset <= lastCellOffset)) {
+                  if (((CollectorCell*)x)->u.freeCell.zeroIfFree != 0) {
+                      JSCell* imp = reinterpret_cast<JSCell*>(x);
+                      if (!imp->marked())
+                          imp->mark();
+                  }
+                  break;
+              }
+          }
+      endMarkLoop:
+          ;
       }
-    }
   }
 }
 
@@ -730,10 +758,11 @@ void Collector::markMainThreadOnlyObjects()
     
     size_t count = 0;
     
-    for (size_t block = 0; block < heap.usedBlocks; block++) {
+    // We don't look at the numberHeap as primitive values can never be marked as main thread only
+    for (size_t block = 0; block < primaryHeap.usedBlocks; block++) {
         ASSERT(count < mainThreadOnlyObjectCount);
         
-        CollectorBlock* curBlock = heap.blocks[block];
+        CollectorBlock* curBlock = primaryHeap.blocks[block];
         size_t minimumCellsToProcess = curBlock->usedCells;
         for (size_t i = 0; (i < minimumCellsToProcess) & (i < CELLS_PER_BLOCK); i++) {
             CollectorCell* cell = curBlock->cells + i;
@@ -753,16 +782,123 @@ void Collector::markMainThreadOnlyObjects()
     }
 }
 
+template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThreadIsMainThread)
+{
+    // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
+    CollectorHeap& heap = heapType == Collector::PrimaryHeap ? primaryHeap : numberHeap;
+    
+    size_t emptyBlocks = 0;
+    size_t numLiveObjects = heap.numLiveObjects;
+    
+    for (size_t block = 0; block < heap.usedBlocks; block++) {
+        CollectorBlock *curBlock = heap.blocks[block];
+        
+        size_t usedCells = curBlock->usedCells;
+        CollectorCell *freeList = curBlock->freeList;
+        
+        if (usedCells == CELLS_PER_BLOCK) {
+            // special case with a block where all cells are used -- testing indicates this happens often
+            for (size_t i = 0; i < CELLS_PER_BLOCK; i++) {
+                if (!curBlock->marked.get(i)) {
+                    CollectorCell* cell = curBlock->cells + i;
+                    
+                    // special case for allocated but uninitialized object
+                    // (We don't need this check earlier because nothing prior this point 
+                    // assumes the object has a valid vptr.)
+                    if (cell->u.freeCell.zeroIfFree == 0)
+                        continue;
+                    
+                    JSCell* imp = reinterpret_cast<JSCell*>(cell);
+                    if (heapType != Collector::NumberHeap) {
+                        ASSERT(currentThreadIsMainThread || !curBlock->collectOnMainThreadOnly.get(i));
+                        if (curBlock->collectOnMainThreadOnly.get(i)) {
+                            curBlock->collectOnMainThreadOnly.clear(i);
+                            --Collector::mainThreadOnlyObjectCount;
+                        }
+                        imp->~JSCell();
+                    }
+                    
+                    --usedCells;
+                    --numLiveObjects;
+                    
+                    // put cell on the free list
+                    cell->u.freeCell.zeroIfFree = 0;
+                    cell->u.freeCell.next = reinterpret_cast<char *>(freeList) - reinterpret_cast<char *>(cell + 1);
+                    freeList = cell;
+                }
+            }
+        } else {
+            size_t minimumCellsToProcess = usedCells;
+            for (size_t i = 0; (i < minimumCellsToProcess) & (i < CELLS_PER_BLOCK); i++) {
+                CollectorCell *cell = curBlock->cells + i;
+                if (cell->u.freeCell.zeroIfFree == 0) {
+                    ++minimumCellsToProcess;
+                } else {
+                    if (!curBlock->marked.get(i)) {
+                        JSCell *imp = reinterpret_cast<JSCell *>(cell);
+                        if (heapType != Collector::NumberHeap) {
+                            ASSERT(currentThreadIsMainThread || !curBlock->collectOnMainThreadOnly.get(i));
+                            if (curBlock->collectOnMainThreadOnly.get(i)) {
+                                curBlock->collectOnMainThreadOnly.clear(i);
+                                --Collector::mainThreadOnlyObjectCount;
+                            }
+                            imp->~JSCell();
+                        }
+                        --usedCells;
+                        --numLiveObjects;
+                        
+                        // put cell on the free list
+                        cell->u.freeCell.zeroIfFree = 0;
+                        cell->u.freeCell.next = reinterpret_cast<char *>(freeList) - reinterpret_cast<char *>(cell + 1);
+                        freeList = cell;
+                    }
+                }
+            }
+        }
+        
+        curBlock->usedCells = static_cast<uint32_t>(usedCells);
+        curBlock->freeList = freeList;
+        curBlock->marked.clearAll();
+        
+        if (usedCells == 0) {
+            emptyBlocks++;
+            if (emptyBlocks > SPARE_EMPTY_BLOCKS) {
+#if !DEBUG_COLLECTOR
+                freeBlock(curBlock);
+#endif
+                // swap with the last block so we compact as we go
+                heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
+                heap.usedBlocks--;
+                block--; // Don't move forward a step in this case
+                
+                if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
+                    heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
+                    heap.blocks = (CollectorBlock **)fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
+                }
+            }
+        }
+    }
+    
+    if (heap.numLiveObjects != numLiveObjects)
+        heap.firstBlockWithPossibleSpace = 0;
+        
+    heap.numLiveObjects = numLiveObjects;
+    heap.numLiveObjectsAtLastCollect = numLiveObjects;
+    heap.extraCost = 0;
+    return numLiveObjects;
+}
+    
 bool Collector::collect()
 {
   ASSERT(JSLock::lockCount() > 0);
   ASSERT(JSLock::currentThreadIsHoldingLock());
 
-  ASSERT(heap.operationInProgress == NoOperation);
-  if (heap.operationInProgress != NoOperation)
+  ASSERT(primaryHeap.operationInProgress == NoOperation | numberHeap.operationInProgress == NoOperation);
+  if (primaryHeap.operationInProgress != NoOperation | numberHeap.operationInProgress != NoOperation)
     abort();
-
-  heap.operationInProgress = Collection;
+    
+  primaryHeap.operationInProgress = Collection;
+  numberHeap.operationInProgress = Collection;
 
   bool currentThreadIsMainThread = onMainThread();
 
@@ -794,119 +930,25 @@ bool Collector::collect()
 #ifndef NDEBUG
   fastMallocAllow();
 #endif
-
-  // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
-  
-  size_t emptyBlocks = 0;
-  size_t numLiveObjects = heap.numLiveObjects;
-
-  for (size_t block = 0; block < heap.usedBlocks; block++) {
-    CollectorBlock *curBlock = heap.blocks[block];
-
-    size_t usedCells = curBlock->usedCells;
-    CollectorCell *freeList = curBlock->freeList;
-
-    if (usedCells == CELLS_PER_BLOCK) {
-      // special case with a block where all cells are used -- testing indicates this happens often
-      for (size_t i = 0; i < CELLS_PER_BLOCK; i++) {
-        if (!curBlock->marked.get(i)) {
-          CollectorCell* cell = curBlock->cells + i;
-
-          // special case for allocated but uninitialized object
-          // (We don't need this check earlier because nothing prior this point 
-          // assumes the object has a valid vptr.)
-          if (cell->u.freeCell.zeroIfFree == 0)
-            continue;
-
-          JSCell* imp = reinterpret_cast<JSCell*>(cell);
-
-          ASSERT(currentThreadIsMainThread || !curBlock->collectOnMainThreadOnly.get(i));
-          if (curBlock->collectOnMainThreadOnly.get(i)) {
-            curBlock->collectOnMainThreadOnly.clear(i);
-            --mainThreadOnlyObjectCount;
-          }
-          imp->~JSCell();
-          --usedCells;
-          --numLiveObjects;
-
-          // put cell on the free list
-          cell->u.freeCell.zeroIfFree = 0;
-          cell->u.freeCell.next = reinterpret_cast<char *>(freeList) - reinterpret_cast<char *>(cell + 1);
-          freeList = cell;
-        }
-      }
-    } else {
-      size_t minimumCellsToProcess = usedCells;
-      for (size_t i = 0; (i < minimumCellsToProcess) & (i < CELLS_PER_BLOCK); i++) {
-        CollectorCell *cell = curBlock->cells + i;
-        if (cell->u.freeCell.zeroIfFree == 0) {
-          ++minimumCellsToProcess;
-        } else {
-          if (!curBlock->marked.get(i)) {
-            JSCell *imp = reinterpret_cast<JSCell *>(cell);
-            ASSERT(currentThreadIsMainThread || !curBlock->collectOnMainThreadOnly.get(i));
-            if (curBlock->collectOnMainThreadOnly.get(i)) {
-              curBlock->collectOnMainThreadOnly.clear(i);
-              --mainThreadOnlyObjectCount;
-            }
-            imp->~JSCell();
-            --usedCells;
-            --numLiveObjects;
-
-            // put cell on the free list
-            cell->u.freeCell.zeroIfFree = 0;
-            cell->u.freeCell.next = reinterpret_cast<char *>(freeList) - reinterpret_cast<char *>(cell + 1);
-            freeList = cell;
-          }
-        }
-      }
-    }
     
-    curBlock->usedCells = static_cast<uint32_t>(usedCells);
-    curBlock->freeList = freeList;
-    curBlock->marked.clearAll();
-
-    if (usedCells == 0) {
-      emptyBlocks++;
-      if (emptyBlocks > SPARE_EMPTY_BLOCKS) {
-#if !DEBUG_COLLECTOR
-        freeBlock(curBlock);
-#endif
-        // swap with the last block so we compact as we go
-        heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
-        heap.usedBlocks--;
-        block--; // Don't move forward a step in this case
-
-        if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
-          heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
-          heap.blocks = (CollectorBlock **)fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
-        }
-      }
-    }
-  }
-
-  if (heap.numLiveObjects != numLiveObjects)
-    heap.firstBlockWithPossibleSpace = 0;
+  size_t originalLiveObjects = primaryHeap.numLiveObjects + numberHeap.numLiveObjects;
+  size_t numLiveObjects = sweep<PrimaryHeap>(currentThreadIsMainThread);
+  numLiveObjects += sweep<NumberHeap>(currentThreadIsMainThread);
   
-  bool deleted = heap.numLiveObjects != numLiveObjects;
-
-  heap.numLiveObjects = numLiveObjects;
-  heap.numLiveObjectsAtLastCollect = numLiveObjects;
-  heap.extraCost = 0;
-  
-  heap.operationInProgress = NoOperation;
+  primaryHeap.operationInProgress = NoOperation;
+  numberHeap.operationInProgress = NoOperation;
   
   bool newMemoryFull = (numLiveObjects >= KJS_MEM_LIMIT);
   if (newMemoryFull && newMemoryFull != memoryFull)
       reportOutOfMemoryToAllInterpreters();
   memoryFull = newMemoryFull;
 
-  return deleted;
+  return originalLiveObjects < numLiveObjects;
 }
 
 size_t Collector::size() 
 {
-  return heap.numLiveObjects; 
+  return primaryHeap.numLiveObjects + numberHeap.numLiveObjects; 
 }
 
 size_t Collector::numInterpreters()
@@ -974,7 +1016,7 @@ HashCountedSet<const char*>* Collector::rootObjectTypeCounts()
 
 bool Collector::isBusy()
 {
-    return heap.operationInProgress != NoOperation;
+    return primaryHeap.operationInProgress != NoOperation | numberHeap.operationInProgress != NoOperation;
 }
 
 void Collector::reportOutOfMemoryToAllInterpreters()

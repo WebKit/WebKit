@@ -38,7 +38,7 @@ struct CollectorHeap;
     
 class CollectorHeapIntrospector {
 public:
-    static void init(CollectorHeap*);
+    static void init(CollectorHeap*, CollectorHeap*);
     static kern_return_t enumerate(task_t, void* context, unsigned typeMask, vm_address_t zoneAddress, memory_reader_t, vm_range_recorder_t);
     static size_t goodSize(malloc_zone_t*, size_t size) { return size; }
     static boolean_t check(malloc_zone_t*) { return true; }
@@ -49,7 +49,7 @@ public:
     static void statistics(malloc_zone_t*, malloc_statistics_t*) { }
 
 private:
-    CollectorHeapIntrospector(CollectorHeap*);
+    CollectorHeapIntrospector(CollectorHeap*, CollectorHeap*);
     static size_t size(malloc_zone_t*, const void*) { return 0; }
     static void* zoneMalloc(malloc_zone_t*, size_t) { LOG_ERROR("malloc is not supported"); return 0; }
     static void* zoneCalloc(malloc_zone_t*, size_t numItems, size_t size) { LOG_ERROR("calloc is not supported"); return 0; }
@@ -59,7 +59,8 @@ private:
     static void zoneDestroy(malloc_zone_t*) { }
 
     malloc_zone_t m_zone;
-    CollectorHeap* m_heap;
+    CollectorHeap* m_primaryHeap;
+    CollectorHeap* m_numberHeap;
 };
 
 }
