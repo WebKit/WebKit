@@ -68,4 +68,7 @@ interface IWebPreferencesPrivate : IUnknown
 {
     HRESULT setDeveloperExtrasEnabled([in] BOOL enabled);
     HRESULT developerExtrasEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setAutomaticallyDetectsCacheModel([in] BOOL automaticallyDetectsCacheModel);
+    HRESULT automaticallyDetectsCacheModel([out, retval] BOOL* automaticallyDetectsCacheModel);
 }

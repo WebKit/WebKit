@@ -43,6 +43,7 @@
 #include "WebInspectorClient.h"
 #include "WebKit.h"
 #include "WebKitStatisticsPrivate.h"
+#include "WebKitSystemBits.h"
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
@@ -60,6 +61,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventHandler.h>
+#include <WebCore/FileSystem.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
@@ -90,8 +92,11 @@
 #pragma warning(pop)
 #include <JavaScriptCore/collector.h>
 #include <JavaScriptCore/value.h>
+#include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <wtf/HashSet.h>
 #include <tchar.h>
 #include <dimm.h>
 #include <windowsx.h>
@@ -100,6 +105,103 @@
 using namespace WebCore;
 using KJS::JSLock;
 using std::min;
+using std::max;
+
+class PreferencesChangedOrRemovedObserver : public IWebNotificationObserver {
+public:
+    static PreferencesChangedOrRemovedObserver* sharedInstance();
+
+private:
+    PreferencesChangedOrRemovedObserver() {}
+    ~PreferencesChangedOrRemovedObserver() {}
+
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void**) { return E_FAIL; }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return 0; }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return 0; }
+
+public:
+    // IWebNotificationObserver
+    virtual HRESULT STDMETHODCALLTYPE onNotify( 
+        /* [in] */ IWebNotification* notification);
+
+private:
+    HRESULT notifyPreferencesChanged(WebCacheModel);
+    HRESULT notifyPreferencesRemoved(WebCacheModel);
+};
+
+PreferencesChangedOrRemovedObserver* PreferencesChangedOrRemovedObserver::sharedInstance()
+{
+    static PreferencesChangedOrRemovedObserver* shared = new PreferencesChangedOrRemovedObserver;
+    return shared;
+}
+
+HRESULT PreferencesChangedOrRemovedObserver::onNotify(IWebNotification* notification)
+{
+    HRESULT hr = S_OK;
+
+    COMPtr<IUnknown> unkPrefs;
+    hr = notification->getObject(&unkPrefs);
+    if (FAILED(hr))
+        return hr;
+
+    COMPtr<IWebPreferences> preferences(Query, unkPrefs);
+    if (preferences)
+        return E_NOINTERFACE;
+
+    WebCacheModel cacheModel;
+    hr = preferences->cacheModel(&cacheModel);
+    if (FAILED(hr))
+        return hr;
+
+    BSTR nameBSTR;
+    hr = notification->name(&nameBSTR);
+    if (FAILED(hr))
+        return hr;
+    BString name;
+    name.adoptBSTR(nameBSTR);
+
+    if (wcscmp(name, WebPreferences::webPreferencesChangedNotification()) == 0)
+        return notifyPreferencesChanged(cacheModel);
+
+    if (wcscmp(name, WebPreferences::webPreferencesRemovedNotification()) == 0)
+        return notifyPreferencesRemoved(cacheModel);
+
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
+}
+
+HRESULT PreferencesChangedOrRemovedObserver::notifyPreferencesChanged(WebCacheModel cacheModel)
+{
+    HRESULT hr = S_OK;
+
+    if (WebView::didSetCacheModel() || cacheModel > WebView::cacheModel())
+        WebView::setCacheModel(cacheModel);
+    else if (cacheModel < WebView::cacheModel()) {
+        WebCacheModel sharedPreferencesCacheModel;
+        hr = WebPreferences::sharedStandardPreferences()->cacheModel(&sharedPreferencesCacheModel);
+        if (FAILED(hr))
+            return hr;
+        WebView::setCacheModel(max(sharedPreferencesCacheModel, WebView::maxCacheModelInAnyInstance()));
+    }
+
+    return hr;
+}
+
+HRESULT PreferencesChangedOrRemovedObserver::notifyPreferencesRemoved(WebCacheModel cacheModel)
+{
+    HRESULT hr = S_OK;
+
+    if (cacheModel == WebView::cacheModel()) {
+        WebCacheModel sharedPreferencesCacheModel;
+        hr = WebPreferences::sharedStandardPreferences()->cacheModel(&sharedPreferencesCacheModel);
+        if (FAILED(hr))
+            return hr;
+        WebView::setCacheModel(max(sharedPreferencesCacheModel, WebView::maxCacheModelInAnyInstance()));
+    }
+
+    return hr;
+}
+
 
 const LPCWSTR kWebViewWindowClassName = L"WebViewWindowClass";
 
@@ -111,10 +213,17 @@ static const int maxToolTipWidth = 250;
 static ATOM registerWebView();
 static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+static void initializeStaticObservers();
+
+static HRESULT updateSharedSettingsFromPreferencesIfNeeded(IWebPreferences*);
+
 HRESULT createMatchEnumerator(Vector<IntRect>* rects, IEnumTextMatches** matches);
 
 static bool continuousSpellCheckingEnabled;
 static bool grammarCheckingEnabled;
+
+static bool s_didSetCacheModel;
+static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 
 // WebView ----------------------------------------------------------------
 
@@ -148,16 +257,17 @@ WebView::WebView()
 
     CoCreateInstance(CLSID_DragDropHelper, 0, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper,(void**)&m_dropTargetHelper);
 
-    COMPtr<IWebPreferences> prefs;
-    if (SUCCEEDED(preferences(&prefs))) {
-        BOOL enabled;
-        if (SUCCEEDED(prefs->continuousSpellCheckingEnabled(&enabled)))
-            continuousSpellCheckingEnabled = !!enabled;
-        if (SUCCEEDED(prefs->grammarCheckingEnabled(&enabled)))
-            grammarCheckingEnabled = !!enabled;
-    }
+    initializeStaticObservers();
+
+    WebPreferences* sharedPreferences = WebPreferences::sharedStandardPreferences();
+    BOOL enabled;
+    if (SUCCEEDED(sharedPreferences->continuousSpellCheckingEnabled(&enabled)))
+        continuousSpellCheckingEnabled = !!enabled;
+    if (SUCCEEDED(sharedPreferences->grammarCheckingEnabled(&enabled)))
+        grammarCheckingEnabled = !!enabled;
 
     WebScriptDebugServer::viewAdded(this);
+
     WebViewCount++;
     gClassCount++;
 }
@@ -172,7 +282,8 @@ WebView::~WebView()
     if (::IsWindow(m_viewWindow))
         ::DestroyWindow(m_viewWindow);
 
-    delete m_page;
+    ASSERT(!m_page);
+    ASSERT(!m_preferences);
 
     WebScriptDebugServer::viewRemoved(this);
     WebViewCount--;
@@ -186,12 +297,270 @@ WebView* WebView::createInstance()
     return instance;
 }
 
+void initializeStaticObservers()
+{
+    static bool initialized;
+    if (initialized)
+        return;
+    initialized = true;
+
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+    notifyCenter->addObserver(PreferencesChangedOrRemovedObserver::sharedInstance(), WebPreferences::webPreferencesChangedNotification(), 0);
+    notifyCenter->addObserver(PreferencesChangedOrRemovedObserver::sharedInstance(), WebPreferences::webPreferencesRemovedNotification(), 0);
+}
+
+static HashSet<WebView*>& allWebViewsSet()
+{
+    static HashSet<WebView*> allWebViewsSet;
+    return allWebViewsSet;
+}
+
+void WebView::addToAllWebViewsSet()
+{
+    allWebViewsSet().add(this);
+}
+
+void WebView::removeFromAllWebViewsSet()
+{
+    allWebViewsSet().remove(this);
+}
+
+void WebView::setCacheModel(WebCacheModel cacheModel)
+{
+    if (s_didSetCacheModel && cacheModel == s_cacheModel)
+        return;
+
+    RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, wkCopyFoundationCacheDirectory());
+    if (!cfurlCacheDirectory)
+        cfurlCacheDirectory.adoptCF(WebCore::localUserSpecificStorageDirectory().createCFString());
+
+
+    CFURLCacheRef cfurlSharedCache = CFURLCacheSharedURLCache();
+
+    // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
+    // count doesn't align exactly to a megabyte boundary.
+    unsigned long long memSize = WebMemorySize() / 1024 / 1000;
+    unsigned long long diskFreeSize = WebVolumeFreeSize(cfurlCacheDirectory.get()) / 1024 / 1000;
+
+    unsigned cacheTotalCapacity = 0;
+    unsigned cacheMinDeadCapacity = 0;
+    unsigned cacheMaxDeadCapacity = 0;
+
+    unsigned pageCacheCapacity = 0;
+
+    CFIndex cfurlCacheMemoryCapacity = 0;
+    CFIndex cfurlCacheDiskCapacity = 0;
+
+    switch (cacheModel) {
+    case WebCacheModelDocumentViewer: {
+        // Page cache capacity (in pages)
+        pageCacheCapacity = 0;
+
+        // Object cache capacities (in bytes)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 256 * 1024 * 1024;
+        else if (memSize >= 3072)
+            cacheTotalCapacity = 192 * 1024 * 1024;
+        else if (memSize >= 2048)
+            cacheTotalCapacity = 128 * 1024 * 1024;
+        else if (memSize >= 1536)
+            cacheTotalCapacity = 86 * 1024 * 1024;
+        else if (memSize >= 1024)
+            cacheTotalCapacity = 64 * 1024 * 1024;
+        else if (memSize >= 512)
+            cacheTotalCapacity = 32 * 1024 * 1024;
+        else if (memSize >= 256)
+            cacheTotalCapacity = 16 * 1024 * 1024; 
+
+        cacheMinDeadCapacity = 0;
+        cacheMaxDeadCapacity = 0;
+
+        // Foundation memory cache capacity (in bytes)
+        cfurlCacheMemoryCapacity = 0;
+
+        // Foundation disk cache capacity (in bytes)
+        cfurlCacheDiskCapacity = CFURLCacheDiskCapacity(cfurlSharedCache);
+
+        break;
+    }
+    case WebCacheModelDocumentBrowser: {
+        // Page cache capacity (in pages)
+        if (memSize >= 1024)
+            pageCacheCapacity = 3;
+        else if (memSize >= 512)
+            pageCacheCapacity = 2;
+        else if (memSize >= 256)
+            pageCacheCapacity = 1;
+        else
+            pageCacheCapacity = 0;
+
+        // Object cache capacities (in bytes)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 256 * 1024 * 1024;
+        else if (memSize >= 3072)
+            cacheTotalCapacity = 192 * 1024 * 1024;
+        else if (memSize >= 2048)
+            cacheTotalCapacity = 128 * 1024 * 1024;
+        else if (memSize >= 1536)
+            cacheTotalCapacity = 86 * 1024 * 1024;
+        else if (memSize >= 1024)
+            cacheTotalCapacity = 64 * 1024 * 1024;
+        else if (memSize >= 512)
+            cacheTotalCapacity = 32 * 1024 * 1024;
+        else if (memSize >= 256)
+            cacheTotalCapacity = 16 * 1024 * 1024; 
+
+        cacheMinDeadCapacity = cacheTotalCapacity / 8;
+        cacheMaxDeadCapacity = cacheTotalCapacity / 4;
+
+        // Foundation memory cache capacity (in bytes)
+        if (memSize >= 2048)
+            cfurlCacheMemoryCapacity = 4 * 1024 * 1024;
+        else if (memSize >= 1024)
+            cfurlCacheMemoryCapacity = 2 * 1024 * 1024;
+        else if (memSize >= 512)
+            cfurlCacheMemoryCapacity = 1 * 1024 * 1024;
+        else
+            cfurlCacheMemoryCapacity =      512 * 1024; 
+
+        // Foundation disk cache capacity (in bytes)
+        if (diskFreeSize >= 16384)
+            cfurlCacheDiskCapacity = 50 * 1024 * 1024;
+        else if (diskFreeSize >= 8192)
+            cfurlCacheDiskCapacity = 40 * 1024 * 1024;
+        else if (diskFreeSize >= 4096)
+            cfurlCacheDiskCapacity = 30 * 1024 * 1024;
+        else
+            cfurlCacheDiskCapacity = 20 * 1024 * 1024;
+
+        break;
+    }
+    case WebCacheModelPrimaryWebBrowser: {
+        // Page cache capacity (in pages)
+        // (Research indicates that value / page drops substantially after 3 pages.)
+        if (memSize >= 8192)
+            pageCacheCapacity = 7;
+        if (memSize >= 4096)
+            pageCacheCapacity = 6;
+        else if (memSize >= 2048)
+            pageCacheCapacity = 5;
+        else if (memSize >= 1024)
+            pageCacheCapacity = 4;
+        else if (memSize >= 512)
+            pageCacheCapacity = 3;
+        else if (memSize >= 256)
+            pageCacheCapacity = 2;
+        else
+            pageCacheCapacity = 1;
+
+        // Object cache capacities (in bytes)
+        // (Testing indicates that value / MB depends heavily on content and
+        // browsing pattern. Even growth above 128MB can have substantial 
+        // value / MB for some content / browsing patterns.)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 512 * 1024 * 1024;
+        else if (memSize >= 3072)
+            cacheTotalCapacity = 384 * 1024 * 1024;
+        else if (memSize >= 2048)
+            cacheTotalCapacity = 256 * 1024 * 1024;
+        else if (memSize >= 1536)
+            cacheTotalCapacity = 172 * 1024 * 1024;
+        else if (memSize >= 1024)
+            cacheTotalCapacity = 128 * 1024 * 1024;
+        else if (memSize >= 512)
+            cacheTotalCapacity = 64 * 1024 * 1024;
+        else if (memSize >= 256)
+            cacheTotalCapacity = 32 * 1024 * 1024; 
+
+        cacheMinDeadCapacity = cacheTotalCapacity / 4;
+        cacheMaxDeadCapacity = cacheTotalCapacity / 2;
+
+        // This code is here to avoid a PLT regression. We can remove it if we
+        // can prove that the overall system gain would justify the regression.
+        cacheMaxDeadCapacity = max(24u, cacheMaxDeadCapacity);
+
+        // Foundation memory cache capacity (in bytes)
+        // (These values are small because WebCore does most caching itself.)
+        if (memSize >= 1024)
+            cfurlCacheMemoryCapacity = 4 * 1024 * 1024;
+        else if (memSize >= 512)
+            cfurlCacheMemoryCapacity = 2 * 1024 * 1024;
+        else if (memSize >= 256)
+            cfurlCacheMemoryCapacity = 1 * 1024 * 1024;
+        else
+            cfurlCacheMemoryCapacity =      512 * 1024; 
+
+        // Foundation disk cache capacity (in bytes)
+        if (diskFreeSize >= 16384)
+            cfurlCacheDiskCapacity = 175 * 1024 * 1024;
+        else if (diskFreeSize >= 8192)
+            cfurlCacheDiskCapacity = 150 * 1024 * 1024;
+        else if (diskFreeSize >= 4096)
+            cfurlCacheDiskCapacity = 125 * 1024 * 1024;
+        else if (diskFreeSize >= 2048)
+            cfurlCacheDiskCapacity = 100 * 1024 * 1024;
+        else if (diskFreeSize >= 1024)
+            cfurlCacheDiskCapacity = 75 * 1024 * 1024;
+        else
+            cfurlCacheDiskCapacity = 50 * 1024 * 1024;
+
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+    };
+
+    // Don't shrink a big disk cache, since that would cause churn.
+    cfurlCacheDiskCapacity = max(cfurlCacheDiskCapacity, CFURLCacheDiskCapacity(cfurlSharedCache));
+
+    cache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
+    pageCache()->setCapacity(pageCacheCapacity);
+
+    CFURLCacheSetMemoryCapacity(cfurlSharedCache, cfurlCacheMemoryCapacity);
+    CFURLCacheSetDiskCapacity(cfurlSharedCache, cfurlCacheDiskCapacity);
+
+    s_didSetCacheModel = true;
+    s_cacheModel = cacheModel;
+    return;
+}
+
+WebCacheModel WebView::cacheModel()
+{
+    return s_cacheModel;
+}
+
+bool WebView::didSetCacheModel()
+{
+    return s_didSetCacheModel;
+}
+
+WebCacheModel WebView::maxCacheModelInAnyInstance()
+{
+    WebCacheModel cacheModel = WebCacheModelDocumentViewer;
+
+    HashSet<WebView*>::iterator end = allWebViewsSet().end();
+    for (HashSet<WebView*>::iterator it = allWebViewsSet().begin(); it != end; ++it) {
+        COMPtr<IWebPreferences> pref;
+        if (FAILED((*it)->preferences(&pref)))
+            continue;
+        WebCacheModel prefCacheModel = WebCacheModelDocumentViewer;
+        if (FAILED(pref->cacheModel(&prefCacheModel)))
+            continue;
+
+        cacheModel = max(cacheModel, prefCacheModel);
+    }
+
+    return cacheModel;
+}
+
 void WebView::close()
 {
     if (m_didClose)
         return;
 
     m_didClose = true;
+
+    removeFromAllWebViewsSet();
 
     Frame* frame = m_page->mainFrame();
     if (frame)
@@ -214,18 +583,17 @@ void WebView::close()
 
     registerForIconNotification(false);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
-    COMPtr<IWebPreferences> prefs;
-    if (SUCCEEDED(preferences(&prefs)))
-        notifyCenter->removeObserver(this, WebPreferences::webPreferencesChangedNotification(), prefs.get());
-    prefs = 0;  // make sure we release the reference, since WebPreferences::removeReferenceForIdentifier will check for last reference to WebPreferences
-    if (m_preferences) {
-        BSTR identifier = 0;
-        if (SUCCEEDED(m_preferences->identifier(&identifier)))
-            WebPreferences::removeReferenceForIdentifier(identifier);
-        if (identifier)
-            SysFreeString(identifier);
-        m_preferences = 0;
-    }
+    notifyCenter->removeObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
+
+    BSTR identifier = 0;
+    if (SUCCEEDED(m_preferences->identifier(&identifier)))
+        WebPreferences::removeReferenceForIdentifier(identifier);
+    if (identifier)
+        SysFreeString(identifier);
+
+    COMPtr<WebPreferences> preferences = m_preferences;
+    m_preferences = 0;
+    preferences->didRemoveFromWebView();
 
     deleteBackingStore();
 }
@@ -1112,27 +1480,6 @@ bool WebView::inResizer(LPARAM lParam)
     return !!PtInRect(&r, pt);
 }
 
-void WebView::initializeCacheSizesIfNecessary()
-{
-    static bool didInitialize;
-    if (didInitialize)
-        return;
-
-    COMPtr<IWebPreferences> prefs;
-    if (FAILED(preferences(&prefs)))
-        return;
-
-   UINT pageCacheSize;
-   if (SUCCEEDED(prefs->pageCacheSize(&pageCacheSize)))
-        pageCache()->setCapacity(pageCacheSize);
-
-   UINT objectCacheSize;
-   if (SUCCEEDED(prefs->objectCacheSize(&objectCacheSize)))
-        cache()->setCapacities(0, objectCacheSize, objectCacheSize);
-
-    didInitialize = true;
-}
-
 static ATOM registerWebViewWindowClass()
 {
     static bool haveRegisteredWindowClass = false;
@@ -1403,212 +1750,14 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
     return lResult;
 }
 
-HRESULT WebView::updateWebCoreSettingsFromPreferences(IWebPreferences* preferences)
-{
-    HRESULT hr;
-    BSTR str;
-    int size;
-    BOOL enabled;
-    
-    Settings* settings = m_page->settings();
-
-    hr = preferences->cursiveFontFamily(&str);
-    if (FAILED(hr))
-        return hr;
-    settings->setCursiveFontFamily(AtomicString(str, SysStringLen(str)));
-    SysFreeString(str);
-
-    hr = preferences->defaultFixedFontSize(&size);
-    if (FAILED(hr))
-        return hr;
-    settings->setDefaultFixedFontSize(size);
-
-    hr = preferences->defaultFontSize(&size);
-    if (FAILED(hr))
-        return hr;
-    settings->setDefaultFontSize(size);
-    
-    hr = preferences->defaultTextEncodingName(&str);
-    if (FAILED(hr))
-        return hr;
-    settings->setDefaultTextEncodingName(String(str, SysStringLen(str)));
-    SysFreeString(str);
-
-    hr = preferences->fantasyFontFamily(&str);
-    if (FAILED(hr))
-        return hr;
-    settings->setFantasyFontFamily(AtomicString(str, SysStringLen(str)));
-    SysFreeString(str);
-
-    hr = preferences->fixedFontFamily(&str);
-    if (FAILED(hr))
-        return hr;
-    settings->setFixedFontFamily(AtomicString(str, SysStringLen(str)));
-    SysFreeString(str);
-
-    hr = preferences->isJavaEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setJavaEnabled(!!enabled);
-
-    hr = preferences->isJavaScriptEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setJavaScriptEnabled(!!enabled);
-
-    hr = preferences->javaScriptCanOpenWindowsAutomatically(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setJavaScriptCanOpenWindowsAutomatically(!!enabled);
-
-    hr = preferences->minimumFontSize(&size);
-    if (FAILED(hr))
-        return hr;
-    settings->setMinimumFontSize(size);
-
-    hr = preferences->minimumLogicalFontSize(&size);
-    if (FAILED(hr))
-        return hr;
-    settings->setMinimumLogicalFontSize(size);
-
-    hr = preferences->arePlugInsEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setPluginsEnabled(!!enabled);
-
-    hr = preferences->privateBrowsingEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setPrivateBrowsingEnabled(!!enabled);
-
-    hr = preferences->sansSerifFontFamily(&str);
-    if (FAILED(hr))
-        return hr;
-    settings->setSansSerifFontFamily(AtomicString(str, SysStringLen(str)));
-    SysFreeString(str);
-
-    hr = preferences->serifFontFamily(&str);
-    if (FAILED(hr))
-        return hr;
-    settings->setSerifFontFamily(AtomicString(str, SysStringLen(str)));
-    SysFreeString(str);
-
-    hr = preferences->standardFontFamily(&str);
-    if (FAILED(hr))
-        return hr;
-    settings->setStandardFontFamily(AtomicString(str, SysStringLen(str)));
-    SysFreeString(str);
-
-    hr = preferences->loadsImagesAutomatically(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setLoadsImagesAutomatically(!!enabled);
-
-    hr = preferences->userStyleSheetEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    if (enabled) {
-        hr = preferences->userStyleSheetLocation(&str);
-        if (FAILED(hr))
-            return hr;
-
-        RetainPtr<CFStringRef> urlString(AdoptCF, String(str, SysStringLen(str)).createCFString());
-        RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(kCFAllocatorDefault, urlString.get(), 0));
-
-        // Check if the passed in string is a path and convert it to a URL.
-        // FIXME: This is a workaround for nightly builds until we can get Safari to pass 
-        // in an URL here. See <rdar://problem/5478378>
-        if (!url) {
-            DWORD len = SysStringLen(str) + 1;
-
-            int result = WideCharToMultiByte(CP_UTF8, 0, str, len, 0, 0, 0, 0);
-            Vector<UInt8> utf8Path(result);
-            if (!WideCharToMultiByte(CP_UTF8, 0, str, len, (LPSTR)utf8Path.data(), result, 0, 0))
-                return E_FAIL;
-
-            url.adoptCF(CFURLCreateFromFileSystemRepresentation(0, utf8Path.data(), result - 1, false));
-        }
-
-        settings->setUserStyleSheetLocation(url.get());
-        SysFreeString(str);
-    } else {
-        settings->setUserStyleSheetLocation(KURL(DeprecatedString("")));
-    }
-
-    hr = preferences->shouldPrintBackgrounds(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setShouldPrintBackgrounds(!!enabled);
-
-    hr = preferences->textAreasAreResizable(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setTextAreasAreResizable(!!enabled);
-
-    WebKitEditableLinkBehavior behavior;
-    hr = preferences->editableLinkBehavior(&behavior);
-    if (FAILED(hr))
-        return hr;
-    settings->setEditableLinkBehavior((EditableLinkBehavior)behavior);
-
-    hr = preferences->usesPageCache(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setUsesPageCache(!!enabled);
-
-    hr = preferences->isDOMPasteAllowed(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setDOMPasteAllowed(!!enabled);
-
-    settings->setShowsURLsInToolTips(false);
-
-    settings->setForceFTPDirectoryListings(true);
-
-    settings->setDeveloperExtrasEnabled(developerExtrasEnabled());
-
-    m_mainFrame->invalidate(); // FIXME
-
-    return S_OK;
-}
-
-HRESULT WebView::updateGlobalSettingsFromPreferences(IWebPreferences* preferences)
-{
-    WebKitCookieStorageAcceptPolicy acceptPolicy;
-    HRESULT hr = preferences->cookieStorageAcceptPolicy(&acceptPolicy);
-    if (FAILED(hr))
-        return hr;
-
-    // set cookie storage accept policy
-    if (CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage())
-        CFHTTPCookieStorageSetCookieAcceptPolicy(defaultCookieStorage, acceptPolicy);
-
-    return S_OK;
-}
-
-HRESULT WebView::updateSettingsFromPreferences(IWebPreferences* preferences)
-{
-    HRESULT hr = updateWebCoreSettingsFromPreferences(preferences);
-    if (FAILED(hr))
-        return hr;
-
-    COMPtr<WebPreferences> webPreferences(Query, preferences);
-    if (webPreferences && webPreferences == WebPreferences::sharedStandardPreferences())
-        hr = updateGlobalSettingsFromPreferences(preferences);
-
-    return hr;
-}
-
 bool WebView::developerExtrasEnabled() const
 {
-    COMPtr<WebPreferences> webPrefs(Query, m_preferences);
-    if (webPrefs && webPrefs->developerExtrasDisabledByOverride())
+    if (m_preferences->developerExtrasDisabledByOverride())
         return false;
 
 #ifdef NDEBUG
-    BOOL enabled = FALSE;
-    COMPtr<IWebPreferencesPrivate> prefsPrivate;
-    return SUCCEEDED(m_preferences->QueryInterface(&prefsPrivate)) && SUCCEEDED(prefsPrivate->developerExtrasEnabled(&enabled)) && enabled;
+    BOOL enabled;
+    return SUCCEEDED(m_preferences->developerExtrasEnabled(&enabled)) && enabled;
 #else
     return true;
 #endif
@@ -1818,6 +1967,10 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     if (FAILED(hr))
         return hr;
 
+    WebPreferences* sharedPreferences = WebPreferences::sharedStandardPreferences();
+    sharedPreferences->willAddToWebView();
+    m_preferences = sharedPreferences;
+
     m_groupName = String(groupName, SysStringLen(groupName));
 
     WebKitSetWebDatabasesPathIfNecessary();
@@ -1852,31 +2005,17 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     m_page->mainFrame()->init();
     m_page->setGroupName(m_groupName);
 
+    addToAllWebViewsSet();
+
     #pragma warning(suppress: 4244)
     SetWindowLongPtr(m_viewWindow, 0, (LONG_PTR)this);
     ShowWindow(m_viewWindow, SW_SHOW);
 
-    initializeCacheSizesIfNecessary();
     initializeToolTipWindow();
 
-    // Update WebCore with preferences.  These values will either come from an archived WebPreferences,
-    // or from the standard preferences, depending on whether this method was called from initWithCoder:
-    // or initWithFrame, respectively.
-    //[self _updateWebCoreSettingsFromPreferences: [self preferences]];
-    COMPtr<IWebPreferences> prefs;
-    if (FAILED(preferences(&prefs)))
-        return hr;
-    hr = updateSettingsFromPreferences(prefs.get());
-    if (FAILED(hr))
-        return hr;
-
-    // Register to receive notifications whenever preference values change.
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
-    //                                             name:WebPreferencesChangedNotification object:[self preferences]];
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
-    if (!WebPreferences::webPreferencesChangedNotification())
-        return E_OUTOFMEMORY;
-    notifyCenter->addObserver(this, WebPreferences::webPreferencesChangedNotification(), prefs.get());
+    notifyCenter->addObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
+    m_preferences->postPreferencesChangesNotification();
 
     setSmartInsertDeleteEnabled(TRUE);
     return hr;
@@ -2343,28 +2482,37 @@ HRESULT STDMETHODCALLTYPE WebView::windowScriptObject(
 HRESULT STDMETHODCALLTYPE WebView::setPreferences( 
     /* [in] */ IWebPreferences* prefs)
 {
+    if (!prefs)
+        prefs = WebPreferences::sharedStandardPreferences();
+
     if (m_preferences == prefs)
         return S_OK;
 
+    COMPtr<WebPreferences> webPrefs(Query, prefs);
+    if (!webPrefs)
+        return E_NOINTERFACE;
+    webPrefs->willAddToWebView();
+
+    COMPtr<WebPreferences> oldPrefs = m_preferences;
+
     IWebNotificationCenter* nc = WebNotificationCenter::defaultCenterInternal();
-    COMPtr<IWebPreferences> oldPrefs;
-    if (SUCCEEDED(preferences(&oldPrefs)) && oldPrefs) {
-        nc->removeObserver(this, WebPreferences::webPreferencesChangedNotification(), oldPrefs.get());
-        BSTR identifier = 0;
-        HRESULT hr = oldPrefs->identifier(&identifier);
-        oldPrefs = 0;   // make sure we release the reference, since WebPreferences::removeReferenceForIdentifier will check for last reference to WebPreferences
-        if (SUCCEEDED(hr))
-            WebPreferences::removeReferenceForIdentifier(identifier);
-        if (identifier)
-            SysFreeString(identifier);
+    nc->removeObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
+
+    BSTR identifierBSTR = 0;
+    HRESULT hr = oldPrefs->identifier(&identifierBSTR);
+    oldPrefs->didRemoveFromWebView();
+    oldPrefs = 0; // Make sure we release the reference, since WebPreferences::removeReferenceForIdentifier will check for last reference to WebPreferences
+    if (SUCCEEDED(hr)) {
+        BString identifier;
+        identifier.adoptBSTR(identifierBSTR);
+        WebPreferences::removeReferenceForIdentifier(identifier);
     }
-    m_preferences = prefs;
-    COMPtr<IWebPreferences> newPrefs;
-    if (SUCCEEDED(preferences(&newPrefs)))
-        nc->addObserver(this, WebPreferences::webPreferencesChangedNotification(), newPrefs.get());
-    HRESULT hr = nc->postNotificationName(WebPreferences::webPreferencesChangedNotification(), newPrefs.get(), 0);
-    if (FAILED(hr))
-        return hr;
+
+    m_preferences = webPrefs;
+
+    nc->addObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
+
+    m_preferences->postPreferencesChangesNotification();
 
     return S_OK;
 }
@@ -2372,13 +2520,12 @@ HRESULT STDMETHODCALLTYPE WebView::setPreferences(
 HRESULT STDMETHODCALLTYPE WebView::preferences( 
     /* [retval][out] */ IWebPreferences** prefs)
 {
-    HRESULT hr = S_OK;
-
-    if (!m_preferences)
-        m_preferences = WebPreferences::sharedStandardPreferences();
-
-    m_preferences.copyRefTo(prefs);
-    return hr;
+    if (!prefs)
+        return E_POINTER;
+    *prefs = m_preferences.get();
+    if (m_preferences)
+        m_preferences->AddRef();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::setPreferencesIdentifier( 
@@ -3459,22 +3606,213 @@ HRESULT STDMETHODCALLTYPE WebView::onNotify(
     BString name;
     name.adoptBSTR(nameBSTR);
 
-    if (!_tcscmp(name, WebIconDatabase::iconDatabaseDidAddIconNotification()))
+    if (!wcscmp(name, WebIconDatabase::iconDatabaseDidAddIconNotification()))
         return notifyDidAddIcon(notification);
+
+    if (!wcscmp(name, WebPreferences::webPreferencesChangedNotification()))
+        return notifyPreferencesChanged(notification);
+
+    return hr;
+}
+
+HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
+{
+    HRESULT hr;
 
     COMPtr<IUnknown> unkPrefs;
     hr = notification->getObject(&unkPrefs);
     if (FAILED(hr))
         return hr;
 
-    COMPtr<IWebPreferences> preferences;
-    hr = unkPrefs->QueryInterface(IID_IWebPreferences, (void**)&preferences);
+    COMPtr<IWebPreferences> preferences(Query, unkPrefs);
+    if (!preferences)
+        return E_NOINTERFACE;
+
+    ASSERT(preferences != m_preferences);
+
+    BSTR str;
+    int size;
+    BOOL enabled;
+
+    Settings* settings = m_page->settings();
+
+    hr = preferences->cursiveFontFamily(&str);
+    if (FAILED(hr))
+        return hr;
+    settings->setCursiveFontFamily(AtomicString(str, SysStringLen(str)));
+    SysFreeString(str);
+
+    hr = preferences->defaultFixedFontSize(&size);
+    if (FAILED(hr))
+        return hr;
+    settings->setDefaultFixedFontSize(size);
+
+    hr = preferences->defaultFontSize(&size);
+    if (FAILED(hr))
+        return hr;
+    settings->setDefaultFontSize(size);
+    
+    hr = preferences->defaultTextEncodingName(&str);
+    if (FAILED(hr))
+        return hr;
+    settings->setDefaultTextEncodingName(String(str, SysStringLen(str)));
+    SysFreeString(str);
+
+    hr = preferences->fantasyFontFamily(&str);
+    if (FAILED(hr))
+        return hr;
+    settings->setFantasyFontFamily(AtomicString(str, SysStringLen(str)));
+    SysFreeString(str);
+
+    hr = preferences->fixedFontFamily(&str);
+    if (FAILED(hr))
+        return hr;
+    settings->setFixedFontFamily(AtomicString(str, SysStringLen(str)));
+    SysFreeString(str);
+
+    hr = preferences->isJavaEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setJavaEnabled(!!enabled);
+
+    hr = preferences->isJavaScriptEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setJavaScriptEnabled(!!enabled);
+
+    hr = preferences->javaScriptCanOpenWindowsAutomatically(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setJavaScriptCanOpenWindowsAutomatically(!!enabled);
+
+    hr = preferences->minimumFontSize(&size);
+    if (FAILED(hr))
+        return hr;
+    settings->setMinimumFontSize(size);
+
+    hr = preferences->minimumLogicalFontSize(&size);
+    if (FAILED(hr))
+        return hr;
+    settings->setMinimumLogicalFontSize(size);
+
+    hr = preferences->arePlugInsEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setPluginsEnabled(!!enabled);
+
+    hr = preferences->privateBrowsingEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setPrivateBrowsingEnabled(!!enabled);
+
+    hr = preferences->sansSerifFontFamily(&str);
+    if (FAILED(hr))
+        return hr;
+    settings->setSansSerifFontFamily(AtomicString(str, SysStringLen(str)));
+    SysFreeString(str);
+
+    hr = preferences->serifFontFamily(&str);
+    if (FAILED(hr))
+        return hr;
+    settings->setSerifFontFamily(AtomicString(str, SysStringLen(str)));
+    SysFreeString(str);
+
+    hr = preferences->standardFontFamily(&str);
+    if (FAILED(hr))
+        return hr;
+    settings->setStandardFontFamily(AtomicString(str, SysStringLen(str)));
+    SysFreeString(str);
+
+    hr = preferences->loadsImagesAutomatically(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setLoadsImagesAutomatically(!!enabled);
+
+    hr = preferences->userStyleSheetEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    if (enabled) {
+        hr = preferences->userStyleSheetLocation(&str);
+        if (FAILED(hr))
+            return hr;
+
+        RetainPtr<CFStringRef> urlString(AdoptCF, String(str, SysStringLen(str)).createCFString());
+        RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(kCFAllocatorDefault, urlString.get(), 0));
+
+        // Check if the passed in string is a path and convert it to a URL.
+        // FIXME: This is a workaround for nightly builds until we can get Safari to pass 
+        // in an URL here. See <rdar://problem/5478378>
+        if (!url) {
+            DWORD len = SysStringLen(str) + 1;
+
+            int result = WideCharToMultiByte(CP_UTF8, 0, str, len, 0, 0, 0, 0);
+            Vector<UInt8> utf8Path(result);
+            if (!WideCharToMultiByte(CP_UTF8, 0, str, len, (LPSTR)utf8Path.data(), result, 0, 0))
+                return E_FAIL;
+
+            url.adoptCF(CFURLCreateFromFileSystemRepresentation(0, utf8Path.data(), result - 1, false));
+        }
+
+        settings->setUserStyleSheetLocation(url.get());
+        SysFreeString(str);
+    } else {
+        settings->setUserStyleSheetLocation(KURL(DeprecatedString("")));
+    }
+
+    hr = preferences->shouldPrintBackgrounds(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShouldPrintBackgrounds(!!enabled);
+
+    hr = preferences->textAreasAreResizable(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setTextAreasAreResizable(!!enabled);
+
+    WebKitEditableLinkBehavior behavior;
+    hr = preferences->editableLinkBehavior(&behavior);
+    if (FAILED(hr))
+        return hr;
+    settings->setEditableLinkBehavior((EditableLinkBehavior)behavior);
+
+    hr = preferences->usesPageCache(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setUsesPageCache(!!enabled);
+
+    hr = preferences->isDOMPasteAllowed(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setDOMPasteAllowed(!!enabled);
+
+    settings->setShowsURLsInToolTips(false);
+    settings->setForceFTPDirectoryListings(true);
+    settings->setDeveloperExtrasEnabled(developerExtrasEnabled());
+
+    m_mainFrame->invalidate(); // FIXME
+
+    hr = updateSharedSettingsFromPreferencesIfNeeded(preferences.get());
     if (FAILED(hr))
         return hr;
 
-    hr = updateSettingsFromPreferences(preferences.get());
+    return S_OK;
+}
 
-    return hr;
+HRESULT updateSharedSettingsFromPreferencesIfNeeded(IWebPreferences* preferences)
+{
+    if (preferences != WebPreferences::sharedStandardPreferences())
+        return S_OK;
+
+    WebKitCookieStorageAcceptPolicy acceptPolicy;
+    HRESULT hr = preferences->cookieStorageAcceptPolicy(&acceptPolicy);
+    if (FAILED(hr))
+        return hr;
+
+    // Set cookie storage accept policy
+    if (CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage())
+        CFHTTPCookieStorageSetCookieAcceptPolicy(defaultCookieStorage, acceptPolicy);
+
+    return S_OK;
 }
 
 // IWebViewPrivate ------------------------------------------------------------

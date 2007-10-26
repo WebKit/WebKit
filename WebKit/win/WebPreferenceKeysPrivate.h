@@ -52,14 +52,13 @@
 #define WebKitAllowAnimatedImagesPreferenceKey "WebKitAllowAnimatedImagesPreferenceKey"
 #define WebKitAllowAnimatedImageLoopingPreferenceKey "WebKitAllowAnimatedImageLoopingPreferenceKey"
 #define WebKitDisplayImagesKey "WebKitDisplayImagesKey"
-#define WebKitPageCacheSizePreferenceKey "WebKitPageCacheSizePreferenceKey"
-#define WebKitObjectCacheSizePreferenceKey "WebKitObjectCacheSizePreferenceKey"
 #define WebKitBackForwardCacheExpirationIntervalKey "WebKitBackForwardCacheExpirationIntervalKey"
 #define WebKitTabToLinksPreferenceKey "WebKitTabToLinksPreferenceKey"
 #define WebKitPrivateBrowsingEnabledPreferenceKey "WebKitPrivateBrowsingEnabled"
 #define WebKitIconDatabaseLocationKey "WebKitIconDatabaseLocation"
 #define WebKitIconDatabaseEnabledPreferenceKey "WebKitIconDatabaseEnabled"
 #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
+#define WebKitCacheModelPreferenceKey "WebKitCacheModelPreferenceKey"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.
@@ -78,6 +77,10 @@
 // to NO, or has no value.  For compatibility with Mac OS X 10.4.6, deferred updates are OFF by
 // default.
 #define WebKitEnableDeferredUpdatesPreferenceKey "WebKitEnableDeferredUpdates"
+
+// For debugging only.  Don't use these.
+#define WebKitPageCacheSizePreferenceKey "WebKitPageCacheSizePreferenceKey"
+#define WebKitObjectCacheSizePreferenceKey "WebKitObjectCacheSizePreferenceKey"
 
 // From WebHistory.h
 #define WebKitHistoryItemLimitKey "WebKitHistoryItemLimit" // default: "1000"

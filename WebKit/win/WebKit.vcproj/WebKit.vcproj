@@ -324,6 +324,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebKitSystemBits.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\WebNodeHighlight.cpp"
 				>
 			</File>
@@ -503,6 +507,10 @@
 			</File>
 			<File
 				RelativePath="..\WebKitStatisticsPrivate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebKitSystemBits.h"
 				>
 			</File>
 			<File

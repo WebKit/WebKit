@@ -212,12 +212,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setUsesPageCache( 
         /* [in] */ BOOL usesPageCache);
 
-    virtual HRESULT STDMETHODCALLTYPE pageCacheSize( 
-        /* [retval][out] */ unsigned int *limit);
+    virtual HRESULT STDMETHODCALLTYPE unused1();
+    virtual HRESULT STDMETHODCALLTYPE unused2();
 
-    virtual HRESULT STDMETHODCALLTYPE objectCacheSize( 
-        /* [retval][out] */ unsigned int *limit);
-    
     virtual HRESULT STDMETHODCALLTYPE iconDatabaseLocation(
         /* [retval][out] */ BSTR* location);
 
@@ -272,6 +269,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setDOMPasteAllowed( 
         /* [in] */ BOOL enabled);
 
+     virtual HRESULT STDMETHODCALLTYPE cacheModel(
+         /* [retval][out] */ WebCacheModel* cacheModel);
+
+     virtual HRESULT STDMETHODCALLTYPE setCacheModel(
+         /* [in] */ WebCacheModel cacheModel);
+
     // IWebPreferencesPrivate
     virtual HRESULT STDMETHODCALLTYPE setDeveloperExtrasEnabled(
         /* [in] */ BOOL);
@@ -279,6 +282,11 @@ public:
     virtual HRESULT STDMETHODCALLTYPE developerExtrasEnabled(
         /* [retval][out] */ BOOL*);
 
+     virtual HRESULT STDMETHODCALLTYPE setAutomaticallyDetectsCacheModel(
+         /* [in] */ BOOL automaticallyDetectsCacheModel);
+
+     virtual HRESULT STDMETHODCALLTYPE automaticallyDetectsCacheModel(
+         /* [out, retval] */ BOOL* automaticallyDetectsCacheModel);
 
     // WebPreferences
 
@@ -287,6 +295,8 @@ public:
     bool developerExtrasDisabledByOverride();
 
     static BSTR webPreferencesChangedNotification();
+    static BSTR webPreferencesRemovedNotification();
+
     static void setInstance(WebPreferences* instance, BSTR identifier);
     static void removeReferenceForIdentifier(BSTR identifier);
     static WebPreferences* sharedStandardPreferences();
@@ -297,8 +307,12 @@ public:
     HRESULT historyAgeInDaysLimit(int* limit);
     HRESULT setHistoryAgeInDaysLimit(int limit);
 
-protected:
+     void willAddToWebView();
+     void didRemoveFromWebView();
+
     HRESULT postPreferencesChangesNotification();
+
+protected:
     const void* valueForKey(CFStringRef key);
     BSTR stringValueForKey(CFStringRef key);
     int integerValueForKey(CFStringRef key);
@@ -317,8 +331,11 @@ protected:
 protected:
     ULONG m_refCount;
     RetainPtr<CFMutableDictionaryRef> m_privatePrefs;
-    bool m_autoSaves;
     WebCore::BString m_identifier;
+    bool m_autoSaves;
+    bool m_automaticallyDetectsCacheModel;
+    unsigned m_numWebViews;
+
     static CFDictionaryRef s_defaultSettings;
     static WebPreferences* s_standardPreferences;
 };

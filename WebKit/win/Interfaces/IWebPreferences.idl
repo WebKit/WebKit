@@ -49,6 +49,7 @@ cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAG
 cpp_quote(" */")
 
 cpp_quote("#define WebPreferencesChangedNotification TEXT(\"WebPreferencesChangedNotification\")")
+cpp_quote("#define WebPreferencesRemovedNotification TEXT(\"WebPreferencesRemovedNotification\")")
 
 import "oaidl.idl";
 import "ocidl.idl";
@@ -168,8 +169,8 @@ interface IWebPreferences : IUnknown
     HRESULT textAreasAreResizable([out, retval] BOOL* enabled);
     HRESULT setTextAreasAreResizable([in] BOOL enabled);
 
-    HRESULT pageCacheSize([out, retval] unsigned int* enabled);
-    HRESULT objectCacheSize([out, retval] unsigned int* enabled);
+    HRESULT unused1();
+    HRESULT unused2();
 
     HRESULT iconDatabaseLocation([out, retval] BSTR* location);
     HRESULT setIconDatabaseLocation([in] BSTR location);
@@ -198,4 +199,7 @@ interface IWebPreferences : IUnknown
 
     HRESULT usesPageCache([out, retval] BOOL* usesPageCache);
     HRESULT setUsesPageCache([in] BOOL usesPageCache);
+
+    HRESULT cacheModel([out, retval] WebCacheModel* cacheModel);
+    HRESULT setCacheModel([in] WebCacheModel cacheModel);
 }

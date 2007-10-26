@@ -1,3 +1,80 @@
+2007-10-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Steve Falkenburg.
+
+        Fix for <rdar://problem/5463608>
+        Port WebKit cache model code (Windows needs a big disk cache, smarter memory cache) 
+
+        * Interfaces/IWebPreferences.idl: 
+        Deprecate pageCacheSize and objectCacheSize and add cacheModel/setCacheModel.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        Add automaticallyDetectsCacheModel/setAutomaticallyDetectsCacheModel
+     
+        * WebFrame.cpp:
+        (WebFrame::didPerformFirstNavigation):
+        Implement based on the mac version.
+
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKitSystemBits.cpp: Added.
+        (WebMemorySize): Moved and renamed from WebPreferences.cpp
+        (WebVolumeFreeSize): Added.
+        * WebKitSystemBits.h: Added.
+        * WebPreferenceKeysPrivate.h: Added WebKitCacheModelPreferenceKey.
+
+        * WebPreferences.cpp:
+        (WebPreferences::sharedStandardPreferences):
+        (WebPreferences::WebPreferences):
+        (WebPreferences::initializeDefaultSettings): Added default for cacheModel.
+        (WebPreferences::webPreferencesChangedNotification):
+        (WebPreferences::webPreferencesRemovedNotification):
+        (WebPreferences::initWithIdentifier): Post a preferences change notification.
+        (WebPreferences::pageCacheSize): Deprecated.
+        (WebPreferences::objectCacheSize): Deprecated.
+        (WebPreferences::cacheModel): Added.
+        (WebPreferences::setCacheModel): Added.
+        (WebPreferences::setAutomaticallyDetectsCacheModel): Added.
+        (WebPreferences::automaticallyDetectsCacheModel): Added.
+        (WebPreferences::willAddToWebView): Added.
+        (WebPreferences::didRemoveFromWebView): Added.
+        * WebPreferences.h:
+
+        * WebView.cpp:
+        (PreferencesChangedOrRemovedObserver::PreferencesChangedOrRemovedObserver):
+        (PreferencesChangedOrRemovedObserver::~PreferencesChangedOrRemovedObserver):
+        (PreferencesChangedOrRemovedObserver::QueryInterface):
+        (PreferencesChangedOrRemovedObserver::AddRef):
+        (PreferencesChangedOrRemovedObserver::Release):
+        (PreferencesChangedOrRemovedObserver::sharedInstance):
+        (PreferencesChangedOrRemovedObserver::onNotify):
+        (PreferencesChangedOrRemovedObserver::notifyPreferencesChanged):
+        (PreferencesChangedOrRemovedObserver::notifyPreferencesRemoved):
+        This singleton class updates static properties for all webviews when
+        preferenceChange or preferenceRemoved notifications are fired for
+        any WebPreference.
+        (WebView::WebView):
+        (WebView::~WebView):
+        (initializeStaticObservers):
+        (allWebViewsSet):
+        (WebView::addToAllWebViewsSet):
+        (WebView::removeFromAllWebViewsSet):
+        (WebView::setCacheModel):
+        (WebView::cacheModel):
+        (WebView::didSetCacheModel):
+        (WebView::maxCacheModelInAnyInstance):
+        (WebView::close):
+        (WebViewWndProc):
+        (WebView::developerExtrasEnabled):
+        (WebView::initWithFrame):
+        (WebView::setPreferences):
+        (WebView::preferences):
+        (WebView::onNotify):
+        (WebView::notifyPreferencesChanged):
+        (updateSharedSettingsFromPreferencesIfNeeded):
+        * WebView.h:
+        Match the macs behavior by using explicit postings of notifications to
+        update the preferences.
+
 2007-10-25  Adam Roben  <aroben@apple.com>
 
         Update WebKit.sln for the removal of Release dftables
