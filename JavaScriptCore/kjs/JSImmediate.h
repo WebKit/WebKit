@@ -24,6 +24,7 @@
 
 #include "JSType.h"
 #include <wtf/Assertions.h>
+#include <wtf/AlwaysInline.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -59,23 +60,23 @@ class UString;
 
 class JSImmediate {
 public:
-    static bool isImmediate(const JSValue* v)
+    static ALWAYS_INLINE bool isImmediate(const JSValue* v)
     {
         return getTag(v) != 0;
     }
     
-    static bool isNumber(const JSValue* v)
+    static ALWAYS_INLINE bool isNumber(const JSValue* v)
     {
         return (getTag(v) == NumberType);
     }
     
-    static bool isBoolean(const JSValue* v)
+    static ALWAYS_INLINE bool isBoolean(const JSValue* v)
     {
         return (getTag(v) == BooleanType);
     }
     
     // Since we have room for only 3 unique tags, null and undefined have to share.
-    static bool isUndefinedOrNull(const JSValue* v)
+    static ALWAYS_INLINE bool isUndefinedOrNull(const JSValue* v)
     {
         return (getTag(v) == UndefinedType);
     }
@@ -102,17 +103,17 @@ public:
 private:
     static const uintptr_t TagMask = 3; // type tags are 2 bits long
     
-    static JSValue* tag(uintptr_t bits, uintptr_t tag)
+    static ALWAYS_INLINE JSValue* tag(uintptr_t bits, uintptr_t tag)
     {
         return reinterpret_cast<JSValue*>(bits | tag);
     }
     
-    static uintptr_t unTag(const JSValue* v)
+    static ALWAYS_INLINE uintptr_t unTag(const JSValue* v)
     {
         return reinterpret_cast<uintptr_t>(v) & ~TagMask;
     }
     
-    static uintptr_t getTag(const JSValue* v)
+    static ALWAYS_INLINE uintptr_t getTag(const JSValue* v)
     {
         return reinterpret_cast<uintptr_t>(v) & TagMask;
     }
@@ -145,7 +146,7 @@ template<> struct JSImmediate::FPBitValues<true, false> {
     static const uint32_t oneAsBits = 0x3f800000;
     static const uint32_t zeroAsBits = 0x0;
 
-    static JSValue* fromDouble(double d)
+    static ALWAYS_INLINE JSValue* fromDouble(double d)
     {
         FloatUnion floatUnion;
         floatUnion.asFloat = static_cast<float>(d);
@@ -163,7 +164,7 @@ template<> struct JSImmediate::FPBitValues<true, false> {
         return tag(floatUnion.asBits, NumberType);
     }
 
-    static float toFloat(const JSValue* v)
+    static ALWAYS_INLINE float toFloat(const JSValue* v)
     {
         ASSERT(isImmediate(v));
 
@@ -172,12 +173,12 @@ template<> struct JSImmediate::FPBitValues<true, false> {
         return floatUnion.asFloat;
     }
 
-    static double toDouble(const JSValue* v)
+    static ALWAYS_INLINE double toDouble(const JSValue* v)
     {
         return toFloat(v);
     }
 
-    static bool getTruncatedInt32(const JSValue* v, int32_t& i)
+    static ALWAYS_INLINE bool getTruncatedInt32(const JSValue* v, int32_t& i)
     {
         float f = toFloat(v);
         if (!(f >= -2147483648.0F && f < 2147483648.0F))
@@ -186,7 +187,7 @@ template<> struct JSImmediate::FPBitValues<true, false> {
         return isNumber(v);
     }
 
-    static bool getTruncatedUInt32(const JSValue* v, uint32_t& i)
+    static ALWAYS_INLINE bool getTruncatedUInt32(const JSValue* v, uint32_t& i)
     {
         float f = toFloat(v);
         if (!(f >= 0.0F && f < 4294967296.0F))
@@ -201,7 +202,7 @@ template<> struct JSImmediate::FPBitValues<false, true> {
     static const uint64_t oneAsBits = 0x3ff00000ULL << 32;
     static const uint64_t zeroAsBits = 0x0;
 
-    static JSValue* fromDouble(double d)
+    static ALWAYS_INLINE JSValue* fromDouble(double d)
     {
         DoubleUnion doubleUnion;
         doubleUnion.asDouble = d;
@@ -213,7 +214,7 @@ template<> struct JSImmediate::FPBitValues<false, true> {
         return tag(static_cast<uintptr_t>(doubleUnion.asBits), NumberType);
     }
 
-    static double toDouble(const JSValue* v)
+    static ALWAYS_INLINE double toDouble(const JSValue* v)
     {
         ASSERT(isImmediate(v));
 
@@ -222,7 +223,7 @@ template<> struct JSImmediate::FPBitValues<false, true> {
         return doubleUnion.asDouble;
     }
 
-    static bool getTruncatedInt32(const JSValue* v, int32_t& i)
+    static ALWAYS_INLINE bool getTruncatedInt32(const JSValue* v, int32_t& i)
     {
         double d = toDouble(v);
         if (!(d >= -2147483648.0 && d < 2147483648.0))
@@ -231,7 +232,7 @@ template<> struct JSImmediate::FPBitValues<false, true> {
         return isNumber(v);
     }
 
-    static bool getTruncatedUInt32(const JSValue* v, uint32_t& i)
+    static ALWAYS_INLINE bool getTruncatedUInt32(const JSValue* v, uint32_t& i)
     {
         double d = toDouble(v);
         if (!(d >= 0.0 && d < 4294967296.0))
@@ -241,13 +242,13 @@ template<> struct JSImmediate::FPBitValues<false, true> {
     }
 };
 
-inline JSValue* JSImmediate::trueImmediate() { return tag(FPBitValues<is32bit, is64bit>::oneAsBits, BooleanType); }
-inline JSValue* JSImmediate::falseImmediate() { return tag(FPBitValues<is32bit, is64bit>::zeroAsBits, BooleanType); }
-inline JSValue* JSImmediate::NaNImmediate() { return tag(FPBitValues<is32bit, is64bit>::nanAsBits, NumberType); }
-inline JSValue* JSImmediate::undefinedImmediate() { return tag(FPBitValues<is32bit, is64bit>::nanAsBits, UndefinedType); }
-inline JSValue* JSImmediate::nullImmediate() { return tag(FPBitValues<is32bit, is64bit>::zeroAsBits, UndefinedType); }
+ALWAYS_INLINE JSValue* JSImmediate::trueImmediate() { return tag(FPBitValues<is32bit, is64bit>::oneAsBits, BooleanType); }
+ALWAYS_INLINE JSValue* JSImmediate::falseImmediate() { return tag(FPBitValues<is32bit, is64bit>::zeroAsBits, BooleanType); }
+ALWAYS_INLINE JSValue* JSImmediate::NaNImmediate() { return tag(FPBitValues<is32bit, is64bit>::nanAsBits, NumberType); }
+ALWAYS_INLINE JSValue* JSImmediate::undefinedImmediate() { return tag(FPBitValues<is32bit, is64bit>::nanAsBits, UndefinedType); }
+ALWAYS_INLINE JSValue* JSImmediate::nullImmediate() { return tag(FPBitValues<is32bit, is64bit>::zeroAsBits, UndefinedType); }
 
-inline bool JSImmediate::toBoolean(const JSValue* v)
+ALWAYS_INLINE bool JSImmediate::toBoolean(const JSValue* v)
 {
     ASSERT(isImmediate(v));
 
@@ -258,29 +259,29 @@ inline bool JSImmediate::toBoolean(const JSValue* v)
     return bits != FPBitValues<is32bit, is64bit>::nanAsBits;
 }
 
-inline JSValue* JSImmediate::fromDouble(double d)
+ALWAYS_INLINE JSValue* JSImmediate::fromDouble(double d)
 {
     return FPBitValues<is32bit, is64bit>::fromDouble(d);
 }
 
-inline double JSImmediate::toDouble(const JSValue* v)
+ALWAYS_INLINE double JSImmediate::toDouble(const JSValue* v)
 {
     return FPBitValues<is32bit, is64bit>::toDouble(v);
 }
 
-inline bool JSImmediate::getUInt32(const JSValue* v, uint32_t& i)
+ALWAYS_INLINE bool JSImmediate::getUInt32(const JSValue* v, uint32_t& i)
 {
     double d = toDouble(v);
     i = static_cast<uint32_t>(d);
     return isNumber(v) & (i == d);
 }
 
-inline bool JSImmediate::getTruncatedInt32(const JSValue* v, int32_t& i)
+ALWAYS_INLINE bool JSImmediate::getTruncatedInt32(const JSValue* v, int32_t& i)
 {
     return FPBitValues<is32bit, is64bit>::getTruncatedInt32(v, i);
 }
 
-inline bool JSImmediate::getTruncatedUInt32(const JSValue* v, uint32_t& i)
+ALWAYS_INLINE bool JSImmediate::getTruncatedUInt32(const JSValue* v, uint32_t& i)
 {
     return FPBitValues<is32bit, is64bit>::getTruncatedUInt32(v, i);
 }

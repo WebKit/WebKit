@@ -27,7 +27,6 @@
 #include "collector.h"
 #include "ustring.h"
 #include <stddef.h> // for size_t
-#include <wtf/AlwaysInline.h>
 
 namespace KJS {
 

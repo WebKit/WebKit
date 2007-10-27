@@ -31,8 +31,6 @@
 #include "property_map.h"
 #include "property_slot.h"
 #include "scope_chain.h"
-#include <wtf/AlwaysInline.h>
-#include <wtf/Assertions.h>
 
 namespace KJS {
 

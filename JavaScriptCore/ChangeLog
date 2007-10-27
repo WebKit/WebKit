@@ -1,3 +1,15 @@
+2007-10-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15711
+          force JSImmediate to be inlined for roughly 1.2% SunSpider speedup
+
+        * kjs/JSImmediate.h: Put ALWAYS_INLINE on everything.
+
+        * kjs/object.h: Removed redundant includes.
+        * kjs/value.h: Ditto.
+
 2007-10-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
