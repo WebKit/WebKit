@@ -1,3 +1,11 @@
+2007-10-27  Adam Roben  <aroben@apple.com>
+
+        Add some more failing tests to the Windows Skipped file
+
+        Reviewed by NOBODY.
+
+        * platform/win/Skipped:
+
 2007-10-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

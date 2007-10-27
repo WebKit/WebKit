@@ -109,6 +109,16 @@ svg/W3C-SVG-1.1/animate-elem-06-t.svg
 svg/W3C-SVG-1.1/animate-elem-07-t.svg
 svg/W3C-SVG-1.1/paths-data-01-t.svg
 svg/W3C-SVG-1.1/text-path-01-b.svg
+svg/batik/text/smallFonts.svg
+svg/batik/text/textAnchor.svg
+svg/batik/text/textBiDi.svg
+svg/batik/text/textEffect3.svg
+svg/batik/text/textEffect.svg
+svg/batik/text/textFeatures.svg
+svg/batik/text/textPosition2.svg
+svg/batik/text/textProperties2.svg
+svg/batik/text/textProperties.svg
+svg/batik/text/textStyles.svg
 svg/carto.net/button.svg
 svg/carto.net/colourpicker.svg
 svg/carto.net/combobox.svg
@@ -126,6 +136,17 @@ svg/custom/marker-viewBox-changes.svg
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
 svg/custom/use-referencing-nonexisting-symbol.svg
 svg/custom/width-full-percentage.svg
+svg/hixie/text/003.html
+svg/hixie/text/003a.xml
+svg/hixie/viewbox/preserveAspectRatio/002.xml
+svg/text/text-altglyph-01-b.svg
+svg/text/text-fonts-01-t.svg
+svg/text/text-intro-05-t.svg
+svg/text/text-path-01-b.svg
+svg/text/text-text-04-t.svg
+svg/text/text-text-05-t.svg
+svg/text/text-text-06-t.svg
+svg/text/text-tselect-02-f.svg
 tables/mozilla/core/bloomberg.html
 tables/mozilla/bugs/bug8381.html
 tables/mozilla/bugs/bug10633.html
@@ -409,8 +430,10 @@ editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 
 # These tests time out <rdar://problem/5382558>
+fast/frames/frameElement-widthheight.html
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
+svg/custom/image-clipped-hit.svg
 
 # Reports large negative numbers for screenLeft and screenTop <rdar://problem/5382579>
 http/tests/security/cross-frame-access-put.html
@@ -476,15 +499,25 @@ svg/W3C-SVG-1.1/filters-offset-01-b.svg
 svg/W3C-SVG-1.1/filters-specular-01-f.svg
 svg/W3C-SVG-1.1/filters-tile-01-b.svg
 svg/batik/filters/filterRegions.svg
+svg/custom/empty-merge.svg
 svg/custom/feComponentTransfer-Discrete.svg
 svg/custom/feComponentTransfer-Gamma.svg
 svg/custom/feComponentTransfer-Linear.svg
 svg/custom/feComponentTransfer-Table.svg
 svg/custom/feDisplacementMap-01.svg
 svg/custom/filter-source-alpha.svg
+svg/custom/image-with-transform-clip-filter.svg
+svg/custom/invalid-css.svg
 svg/custom/non-opaque-filters.svg
 svg/custom/text-filter.svg
 svg/custom/visibility-override-filter.svg
+
+# SVG image support is turned off <rdar://5563572>
+fast/images/svg-as-image.html
+
+# Window resize tests are failing <rdar://5563578>
+fast/dom/Window/window-resize-nan.html
+fast/dom/Window/window-resize.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################
