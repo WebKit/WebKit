@@ -47,6 +47,20 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return true; }
 
+    // A method asking if the theme is able to draw the focus ring.
+    virtual bool supportsFocusRing(const RenderStyle*) const;
+
+    // A method asking if the control changes its tint when the window has focus or not.
+    virtual bool controlSupportsTints(const RenderObject*) const;
+
+    // A general method asking if any control tinting is supported at all.
+    virtual bool supportsControlTints() const { return true; }
+
+    // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
+    // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
+    // controls that need to do this.
+    virtual short baselinePosition(const RenderObject*) const;
+    
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;
@@ -86,7 +100,7 @@ private:
 
     GtkStateType determineState(RenderObject*);
     GtkShadowType determineShadow(RenderObject*);
-    bool supportsFocus(EAppearance);
+    bool supportsFocus(EAppearance) const;
 
     ThemeData getThemeData(RenderObject*);
 

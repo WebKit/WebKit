@@ -1,3 +1,26 @@
+2007-10-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15722
+        [GTK] Refactor gtk/RenderThemeGtk and implement a few more methods
+
+        Refactor/enhance GTK RenderTheme
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::supportsFocus): added TextArea, Menulist, Radio, and Checkbox Appearances
+        (WebCore::RenderThemeGtk::supportsFocusRing): call supportsFocus() to check if focus on appearance is supported
+        (WebCore::RenderThemeGtk::controlSupportsTints): copied from Qt and Safari ports
+        (WebCore::RenderThemeGtk::baselinePosition): copied from Qt and Safari ports
+        (WebCore::RenderThemeGtk::paintCheckbox): moved painting in paintButton
+        (WebCore::RenderThemeGtk::paintRadio): moved painting in paintButton
+        (WebCore::RenderThemeGtk::paintButton): paint the different buttons here, checking for the right appearance before doing so
+        (WebCore::RenderThemeGtk::paintMenuList): use 0 instead of NULLs
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle):
+        (WebCore::RenderThemeGtk::getThemeData):
+        * platform/gtk/RenderThemeGtk.h:
+        (WebCore::RenderThemeGtk::supportsControlTints):
+
 2007-10-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

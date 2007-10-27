@@ -112,20 +112,47 @@ void RenderThemeGtk::addIntrinsicMargins(RenderStyle* style) const
     }
 }
 
-bool RenderThemeGtk::supportsFocus(EAppearance appearance)
+bool RenderThemeGtk::supportsFocus(EAppearance appearance) const
 {
     switch (appearance) {
         case PushButtonAppearance:
         case ButtonAppearance:
         case TextFieldAppearance:
+        case TextAreaAppearance:
+        case MenulistAppearance:
+        case RadioAppearance:
+        case CheckboxAppearance:
             return true;
         default:
             return false;
     }
-
-    return false;
 }
 
+bool RenderThemeGtk::supportsFocusRing(const RenderStyle* style) const 
+{
+    return supportsFocus(style->appearance());
+}
+
+bool RenderThemeGtk::controlSupportsTints(const RenderObject* o) const
+{
+    if (!isEnabled(o))
+        return false;
+
+    // Checkboxes have tints when enabled.
+    if (o->style()->appearance() == CheckboxAppearance)
+        return isChecked(o);
+
+    return true;
+}
+
+short RenderThemeGtk::baselinePosition(const RenderObject* o) const 
+{
+    if (o->style()->appearance() == CheckboxAppearance ||
+        o->style()->appearance() == RadioAppearance)
+        return o->marginTop() + o->height() - 2; // Same as in old khtml
+    return RenderTheme::baselinePosition(o);
+}
+    
 GtkStateType RenderThemeGtk::determineState(RenderObject* o)
 {
     if (!isEnabled(o) || isReadOnlyControl(o))
@@ -152,24 +179,24 @@ ThemeData RenderThemeGtk::getThemeData(RenderObject* o)
         case PushButtonAppearance:
         case ButtonAppearance:
             result.m_part = BP_BUTTON;
-            result.m_state = determineState(o);
             break;
         case CheckboxAppearance:
             result.m_part = BP_CHECKBOX;
-            result.m_state = determineState(o);
             break;
         case RadioAppearance:
             result.m_part = BP_RADIO;
-            result.m_state = determineState(o);
             break;
         case TextFieldAppearance:
+        case ListboxAppearance:
+        case MenulistAppearance:
+        case TextAreaAppearance:
             result.m_part = TFP_TEXTFIELD;
-            result.m_state = determineState(o);
             break;
         default:
-            // FIXME: much more?
-            break;
+            break; // FIXME: much more?
     }
+
+    result.m_state = determineState(o);
 
     return result;
 }
@@ -181,19 +208,18 @@ void RenderThemeGtk::setCheckboxSize(RenderStyle* style) const
 
 bool RenderThemeGtk::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
-    GtkWidget* checkbox = gtkCheckbox();
-    IntPoint pos = i.context->translatePoint(rect.location());
-    gtk_paint_check(checkbox->style, i.context->gdkDrawable(),
-                    determineState(o), determineShadow(o),
-                    NULL, checkbox, "checkbutton",
-                    pos.x(), pos.y(), rect.width(), rect.height());
+    paintButton(o, i, rect);    
+    return false;
+}
 
+bool RenderThemeGtk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+{
+    paintButton(o, i, rect);
     return false;
 }
 
 void RenderThemeGtk::setRadioSize(RenderStyle* style) const 
 { 
-    notImplemented(); 
     // If the width and height are both specified, then we have nothing to do.
     if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
         return;
@@ -211,26 +237,33 @@ void RenderThemeGtk::setRadioSize(RenderStyle* style) const
         style->setHeight(Length(ff, Fixed));
 }
 
-bool RenderThemeGtk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
-{ 
-    GtkWidget* radio = gtkRadioButton();
-    IntPoint pos = i.context->translatePoint(rect.location());
-    gtk_paint_option(radio->style, i.context->gdkDrawable(),
-                     determineState(o), determineShadow(o),
-                     NULL, radio, "radiobutton",
-                     pos.x(), pos.y(), rect.width(), rect.height());
-
-    return false;
-}
-
 bool RenderThemeGtk::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect) 
-{ 
-    GtkWidget* button = gtkButton();
-    IntPoint pos = i.context->translatePoint(rect.location());
-    gtk_paint_box(button->style, i.context->gdkDrawable(),
-                  determineState(o), determineShadow(o),
-                  NULL, button, "button",
-                  pos.x(), pos.y(), rect.width(), rect.height());
+{
+    EAppearance appearance = o->style()->appearance();
+
+    if (appearance == PushButtonAppearance || appearance == ButtonAppearance) {
+        GtkWidget* button = gtkButton();
+        IntPoint pos = i.context->translatePoint(rect.location());
+        gtk_paint_box(button->style, i.context->gdkDrawable(),
+                      determineState(o), determineShadow(o),
+                      0, button, "button",
+                      pos.x(), pos.y(), rect.width(), rect.height());
+    } else if (appearance == CheckboxAppearance) {
+        GtkWidget* checkbox = gtkCheckbox();
+        IntPoint pos = i.context->translatePoint(rect.location());
+        gtk_paint_check(checkbox->style, i.context->gdkDrawable(),
+                        determineState(o), determineShadow(o),
+                        0, checkbox, "checkbutton",
+                        pos.x(), pos.y(), rect.width(), rect.height());
+    } else if (appearance == RadioAppearance) {
+        GtkWidget* radio = gtkRadioButton();
+        IntPoint pos = i.context->translatePoint(rect.location());
+        gtk_paint_option(radio->style, i.context->gdkDrawable(),
+                         determineState(o), determineShadow(o),
+                         0, radio, "radiobutton",
+                         pos.x(), pos.y(), rect.width(), rect.height());
+    }
+
     return false;
 }
 
@@ -246,19 +279,18 @@ bool RenderThemeGtk::paintMenuList(RenderObject* o, const RenderObject::PaintInf
     IntPoint pos = i.context->translatePoint(rect.location());
     gtk_paint_box(button->style, i.context->gdkDrawable(),
                   determineState(o), determineShadow(o),
-                  NULL, button, NULL,
+                  0, button, 0,
                   pos.x(), pos.y(), rect.width(), rect.height());
     return false;
 }
 
-void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element* e) const 
+void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const 
 { 
-    notImplemented(); 
+    addIntrinsicMargins(style);
 }
 
 bool RenderThemeGtk::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
-    // FIXME: should use theme-aware drawing
     GtkWidget* entry = gtkEntry();
     IntPoint pos = i.context->translatePoint(rect.location());
 
