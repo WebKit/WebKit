@@ -1,3 +1,14 @@
+2007-10-26  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Adam.
+
+        Fix fallout from r26072, which leads to all plugin streams for local
+        resources being cancelled
+
+        * loader/win/NetscapePlugInStreamLoaderWin.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse): Ensure this
+        is an HTTP response before checking the HTTP response code
+
 2007-10-26  David Hyatt  <hyatt@apple.com>
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=15719, transformed box doesn't repaint properly
