@@ -1,3 +1,12 @@
+2007-10-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/5530657>
+
+        * fast/table/colgroup-relative-expected.txt: Added.
+        * fast/table/colgroup-relative.html: Added.
+
 2007-10-27  Julien  <julien.chaffraix@gmail.com>
 
         Reviewed by Alexey.
@@ -1129,7 +1138,7 @@
         * fast/js/resources/js-test-post-function.js: Copied from LayoutTests/fast/js/resources/js-test-post.js.
         Modified to create isSuccessfullyParsed() function.
 
-2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+2007-10-18  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.
 
@@ -1152,7 +1161,7 @@
         from being reflected in the pixel test results):
         * platform/mac/editing/execCommand/5432254-2-expected.txt:
 
-2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+2007-10-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
 
@@ -1169,7 +1178,7 @@
 
         * fast/dom/Window/alert-undefined-expected.txt: Back to expecting empty string for default value.
 
-2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+2007-10-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Nikolas Zimmermann.
 

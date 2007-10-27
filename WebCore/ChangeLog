@@ -1,3 +1,16 @@
+2007-10-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix a crash when opening Zenoss server history view
+          <rdar://problem/5530657>
+
+        Test: fast/table/colgroup-relative.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState): Added a hasLayer() check before
+        accessing layer().
+
 2007-10-27  Julien  <julien.chaffraix@gmail.com>
 
         Reviewed by Alexey.
@@ -2630,7 +2643,7 @@
         we won't try to emit a space if shouldEmitNewlineAFterNode is true, even if no newline
         was emitted.
 
-2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+2007-10-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
 
@@ -2708,7 +2721,7 @@
 
         * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
 
-2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+2007-10-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Nikolas Zimmermann.
 
