@@ -1,3 +1,15 @@
+2007-10-27  Mark Ambachtsheer  <mark.a@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for bug 15710, When QD plugins draw to an offscreen bitmap and the plugin is not at 
+        (0, 0) the clipping rectangle is not correct.
+        Added the origin to the window clip rectangle coordinates to account for plugins that
+        don't originate at (0,0); affects code for offscreen GWorlds only.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+
 2007-10-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

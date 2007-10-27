@@ -498,7 +498,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
                         // Use the clip bounds from the context instead of the bounds we created
                         // from the window above.
-                        getNPRect(CGContextGetClipBoundingBox(currentContext), window.clipRect);
+                        getNPRect(CGRectOffset(CGContextGetClipBoundingBox(currentContext), -origin.x, origin.y), window.clipRect);
                     }
                 }
             }
