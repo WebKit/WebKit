@@ -65,4 +65,8 @@ import "ocidl.idl";
 ]
 interface IWebScriptCallFrame : IUnknown
 {
+    HRESULT caller([out, retval] IWebScriptCallFrame**);
+    HRESULT scopeChain([out, retval] VARIANT*);
+    HRESULT functionName([out, retval] BSTR*);
+    HRESULT evaluateWebScript([in] BSTR script, [out, retval] VARIANT*);
 }

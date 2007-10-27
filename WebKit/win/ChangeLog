@@ -1,3 +1,24 @@
+2007-10-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Stubbed out IWebScriptCallFrame for Drosera.
+
+        * Interfaces/IWebScriptCallFrame.idl: Added function declarations.
+        * WebKit.vcproj/WebKit.vcproj: Added .h/.cpp files to the project.
+        * WebScriptCallFrame.cpp: Added.
+        (WebScriptCallFrame::WebScriptCallFrame):
+        (WebScriptCallFrame::~WebScriptCallFrame):
+        (WebScriptCallFrame::createInstance):
+        (WebScriptCallFrame::QueryInterface):
+        (WebScriptCallFrame::AddRef):
+        (WebScriptCallFrame::Release):
+        (WebScriptCallFrame::caller):
+        (WebScriptCallFrame::scopeChain):
+        (WebScriptCallFrame::functionName):
+        (WebScriptCallFrame::evaluateWebScript):
+        * WebScriptCallFrame.h: Added.
+
 2007-10-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam and Steve.
