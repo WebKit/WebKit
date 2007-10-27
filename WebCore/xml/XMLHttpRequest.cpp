@@ -334,7 +334,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     m_createdDocument = false;
     m_responseXML = 0;
 
-    changeState(Uninitialized);
+    ASSERT(m_state == Uninitialized);
 
     if (!urlMatchesDocumentDomain(url)) {
         ec = PERMISSION_DENIED;
@@ -478,6 +478,8 @@ void XMLHttpRequest::abort()
 
     if (hadLoader)
         dropProtection();
+
+    m_state = Uninitialized;
 }
 
 void XMLHttpRequest::dropProtection()        

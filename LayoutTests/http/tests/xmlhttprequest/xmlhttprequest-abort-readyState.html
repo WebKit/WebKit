@@ -1,0 +1,67 @@
+<html>
+<head></head>
+<body>
+
+<p>Test bug 13141 : XMLHttpRequest should set readyState to 0 after abort() </p>
+<p>Should see "PASS" four times:</p>
+<div id="ans"></div>
+
+<script type="text/javascript">
+function log(message) {
+    document.getElementById("ans").appendChild(document.createTextNode(message));
+    document.getElementById("ans").appendChild(document.createElement("br"));
+}
+
+// Used to detect if a readystate event is dispatched
+function catchReadystateEventAbort() {
+    log("FAILED (readystate event send)");
+}
+
+function test(num)
+{
+    var xhr;
+
+    if (window.XMLHttpRequest) {
+        xhr = new XMLHttpRequest();
+    } else {
+        try {
+            xhr = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (ex) {
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+    }
+
+    xhr.onreadystatechange = function () {
+        if (this.readyState == num) {
+            ++finishedTests;
+            this.onreadystatechange = catchReadystateEventAbort;
+            this.abort();
+            if (this.readyState == 0)
+                log("PASS");
+            else
+                log("FAILED");
+        }
+        
+        if (finishedTests == 4 && window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    xhr.open("GET", "resources/1251.html", true);
+    if (num != 1)
+        xhr.send(null);
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var finishedTests = 0;
+
+for (i = 1; i < 5; i++) {
+    test(i);
+}
+
+</script>
+</body>
+</html>

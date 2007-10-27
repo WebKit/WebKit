@@ -1,3 +1,16 @@
+2007-10-27  Julien  <julien.chaffraix@gmail.com>
+
+        Reviewed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13141
+        XMLHttpRequest should set readyState to 0 after abort()
+        
+        Test: http/tests/xmlhttprequest/xmlhttprequest-abort-readyState.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::abort):
+
 2007-10-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

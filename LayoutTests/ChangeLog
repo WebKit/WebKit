@@ -1,3 +1,14 @@
+2007-10-27  Julien  <julien.chaffraix@gmail.com>
+
+        Reviewed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13141
+        XMLHttpRequest should set readyState to 0 after abort()
+
+        * fast/dom/xmlhttprequest-html-response-encoding.html: correct malformed page
+        * http/tests/xmlhttprequest/xmlhttprequest-abord-readyState-expect.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState.html: Added.
+
 2007-10-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
