@@ -421,11 +421,13 @@ UString::UString(const char *c)
     m_rep = &Rep::null;
     return;
   }
-  size_t length = strlen(c);
-  if (length == 0) {
+
+  if (!c[0]) {
     m_rep = &Rep::empty;
     return;
   }
+
+  size_t length = strlen(c);
   UChar *d = allocChars(length);
   if (!d)
       m_rep = &Rep::null;
@@ -897,12 +899,12 @@ UString &UString::operator=(const char *c)
         return *this;
     }
 
-    int l = static_cast<int>(strlen(c));
-    if (!l) {
+    if (!c[0]) {
         m_rep = &Rep::empty;
         return *this;
     }
 
+  int l = static_cast<int>(strlen(c));
   UChar *d;
   if (m_rep->rc == 1 && l <= m_rep->capacity && m_rep->baseIsSelf() && m_rep->offset == 0 && m_rep->preCapacity == 0) {
     d = m_rep->buf;

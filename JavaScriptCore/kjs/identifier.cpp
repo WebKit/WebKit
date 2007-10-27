@@ -125,11 +125,15 @@ struct CStringTranslator
 
 PassRefPtr<UString::Rep> Identifier::add(const char *c)
 {
-    if (!c)
+    if (!c) {
+        UString::Rep::null.hash();
         return &UString::Rep::null;
-    size_t length = strlen(c);
-    if (length == 0)
+    }
+
+    if (!c[0]) {
+        UString::Rep::empty.hash();
         return &UString::Rep::empty;
+    }
     
     return *identifierTable().add<const char *, CStringTranslator>(c).first;
 }
@@ -168,8 +172,10 @@ struct UCharBufferTranslator
 
 PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
 {
-    if (length == 0)
+    if (!length) {
+        UString::Rep::empty.hash();
         return &UString::Rep::empty;
+    }
     
     UCharBuffer buf = {s, length}; 
     return *identifierTable().add<UCharBuffer, UCharBufferTranslator>(buf).first;

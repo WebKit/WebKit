@@ -1,3 +1,19 @@
+2007-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed the rest of "ASSERTION FAILED: _hash in KJS::UString::Rep::
+        computedHash()"
+        http://bugs.webkit.org/show_bug.cgi?id=15718
+
+        * kjs/identifier.cpp: Fixed more cases where an Identifier didn't get a 
+        hash value. Also changed O(n) strlen to O(1) check for empty string.
+        (KJS::Identifier::add):
+
+        * kjs/ustring.cpp: Changed O(n) strlens to O(1) checks for empty string.
+        (KJS::UString::UString):
+        (KJS::UString::operator=):
+
 2007-10-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
