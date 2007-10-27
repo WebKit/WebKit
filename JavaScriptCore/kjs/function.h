@@ -173,7 +173,7 @@ namespace KJS {
     };
 
   public:
-    ActivationImp::ActivationImp(FunctionImp* function, const List& arguments);
+    ActivationImp(FunctionImp* function, const List& arguments);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
