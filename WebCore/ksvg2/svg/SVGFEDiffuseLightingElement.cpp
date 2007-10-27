@@ -77,9 +77,7 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
 SVGFilterEffect* SVGFEDiffuseLightingElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect) 
-        m_filterEffect = static_cast<SVGFEDiffuseLighting*>(SVGResourceFilter::createFilterEffect(FE_DIFFUSE_LIGHTING, filter));
-    if (!m_filterEffect)
-        return 0;
+        m_filterEffect = new SVGFEDiffuseLighting(filter);
 
     m_filterEffect->setIn(in1());
     m_filterEffect->setDiffuseConstant(diffuseConstant());

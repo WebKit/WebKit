@@ -81,9 +81,7 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEDisplacementMap*>(SVGResourceFilter::createFilterEffect(FE_DISPLACEMENT_MAP, filter));
-    if (!m_filterEffect)
-        return 0;
+        m_filterEffect = new SVGFEDisplacementMap(filter);
 
     m_filterEffect->setXChannelSelector((SVGChannelSelectorType) xChannelSelector());
     m_filterEffect->setYChannelSelector((SVGChannelSelectorType) yChannelSelector());

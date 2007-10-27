@@ -70,9 +70,8 @@ void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEBlend* SVGFEBlendElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEBlend*>(SVGResourceFilter::createFilterEffect(FE_BLEND, filter));
-    if (!m_filterEffect)
-        return 0;
+        m_filterEffect = new SVGFEBlend(filter);
+    
     m_filterEffect->setBlendMode((SVGBlendModeType) mode());
     m_filterEffect->setIn(in1());
     m_filterEffect->setIn2(in2());

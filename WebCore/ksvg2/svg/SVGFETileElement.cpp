@@ -56,9 +56,7 @@ void SVGFETileElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFETile* SVGFETileElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFETile*>(SVGResourceFilter::createFilterEffect(FE_TILE, filter));
-    if (!m_filterEffect)
-        return 0;
+        m_filterEffect = new SVGFETile(filter);
 
     m_filterEffect->setIn(in1());
 

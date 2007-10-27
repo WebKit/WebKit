@@ -70,10 +70,8 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEGaussianBlur* SVGFEGaussianBlurElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEGaussianBlur*>(SVGResourceFilter::createFilterEffect(FE_GAUSSIAN_BLUR, filter));
-    if (!m_filterEffect)
-        return 0;
-
+        m_filterEffect = new SVGFEGaussianBlur(filter);
+    
     m_filterEffect->setIn(in1());
     m_filterEffect->setStdDeviationX(stdDeviationX());
     m_filterEffect->setStdDeviationY(stdDeviationY());

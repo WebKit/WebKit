@@ -72,9 +72,7 @@ void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEColorMatrix* SVGFEColorMatrixElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEColorMatrix*>(SVGResourceFilter::createFilterEffect(FE_COLOR_MATRIX, filter));
-    if (!m_filterEffect)
-        return 0;
+        m_filterEffect = new SVGFEColorMatrix(filter);
         
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);

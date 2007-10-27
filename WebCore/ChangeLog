@@ -1,3 +1,44 @@
+2007-10-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by aroben.
+        
+        Remove legacy createFilterEffect function (causing extra filter tests to fail on windows)
+
+        No functional changes, thus no tests.
+
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::filterEffect):
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::filterEffect):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::filterEffect):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::filterEffect):
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::filterEffect):
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::filterEffect):
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::filterEffect):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::filterEffect):
+        * ksvg2/svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::filterEffect):
+        * platform/graphics/svg/SVGResourceFilter.h:
+        * platform/graphics/svg/cg/SVGResourceFilterCg.cpp:
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        * platform/graphics/svg/qt/SVGResourceFilterQt.cpp:
+
 2007-10-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

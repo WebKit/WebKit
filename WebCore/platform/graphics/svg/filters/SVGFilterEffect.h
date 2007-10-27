@@ -38,28 +38,6 @@ class CIFilter;
 
 namespace WebCore {
 
-enum SVGFilterEffectType {
-    FE_DISTANT_LIGHT      = 0,
-    FE_POINT_LIGHT        = 1,
-    FE_SPOT_LIGHT         = 2,
-    FE_BLEND              = 3,
-    FE_COLOR_MATRIX       = 4,
-    FE_COMPONENT_TRANSFER = 5,
-    FE_COMPOSITE          = 6,
-    FE_CONVOLVE_MATRIX    = 7,
-    FE_DIFFUSE_LIGHTING   = 8,
-    FE_DISPLACEMENT_MAP   = 9,
-    FE_FLOOD              = 10,
-    FE_GAUSSIAN_BLUR      = 11,
-    FE_IMAGE              = 12,
-    FE_MERGE              = 13,
-    FE_MORPHOLOGY         = 14,
-    FE_OFFSET             = 15,
-    FE_SPECULAR_LIGHTING  = 16,
-    FE_TILE               = 17,
-    FE_TURBULENCE         = 18
-};
-
 class SVGResourceFilter;
 class TextStream;
 
@@ -67,8 +45,6 @@ class SVGFilterEffect {
 public:
     SVGFilterEffect(SVGResourceFilter*);
     virtual ~SVGFilterEffect() { }
-
-    virtual SVGFilterEffectType effectType() const { return FE_TURBULENCE; }
 
     bool xBoundingBoxMode() const { return m_xBBoxMode; }
     void setXBoundingBoxMode(bool bboxMode) { m_xBBoxMode = bboxMode; }

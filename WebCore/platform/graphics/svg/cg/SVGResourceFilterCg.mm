@@ -72,36 +72,6 @@ SVGResourceFilter::~SVGResourceFilter()
     ASSERT(!m_filterCIContext);
 }
 
-SVGFilterEffect* SVGResourceFilter::createFilterEffect(const SVGFilterEffectType& type, SVGResourceFilter* filter)
-{
-    switch (type)
-    {
-    /* Light sources are contained by the diffuse/specular light blocks 
-    case FE_DISTANT_LIGHT: 
-    case FE_POINT_LIGHT: 
-    case FE_SPOT_LIGHT: 
-    */
-    case FE_BLEND: return new SVGFEBlend(filter);
-    case FE_COLOR_MATRIX: return new SVGFEColorMatrix(filter);
-    case FE_COMPONENT_TRANSFER: return new SVGFEComponentTransfer(filter);
-    case FE_COMPOSITE: return new SVGFEComposite(filter);
-//  case FE_CONVOLVE_MATRIX:
-    case FE_DIFFUSE_LIGHTING: return new SVGFEDiffuseLighting(filter);
-    case FE_DISPLACEMENT_MAP: return new SVGFEDisplacementMap(filter);
-    case FE_FLOOD: return new SVGFEFlood(filter);
-    case FE_GAUSSIAN_BLUR: return new SVGFEGaussianBlur(filter);
-    case FE_IMAGE: return new SVGFEImage(filter);
-    case FE_MERGE: return new SVGFEMerge(filter);
-//  case FE_MORPHOLOGY:
-    case FE_OFFSET: return new SVGFEOffset(filter);
-    case FE_SPECULAR_LIGHTING: return new SVGFESpecularLighting(filter);
-    case FE_TILE: return new SVGFETile(filter);
-//  case FE_TURBULENCE:
-    default:
-        return 0;
-    }
-}
-
 void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect& bbox)
 {
     if (bbox.isEmpty() || m_effects.isEmpty())

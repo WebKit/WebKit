@@ -90,10 +90,8 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
 SVGFEComposite* SVGFECompositeElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEComposite*>(SVGResourceFilter::createFilterEffect(FE_COMPOSITE, filter));
-    if (!m_filterEffect)
-        return 0;
-
+        m_filterEffect = new SVGFEComposite(filter);
+    
     m_filterEffect->setOperation((SVGCompositeOperationType) _operator());
     m_filterEffect->setIn(in1());
     m_filterEffect->setIn2(in2());

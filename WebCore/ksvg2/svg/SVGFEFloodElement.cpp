@@ -58,10 +58,8 @@ void SVGFEFloodElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEFlood* SVGFEFloodElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEFlood*>(SVGResourceFilter::createFilterEffect(FE_FLOOD, filter));
-    if (!m_filterEffect)
-        return 0;
-
+        m_filterEffect = new SVGFEFlood(filter);
+    
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
 

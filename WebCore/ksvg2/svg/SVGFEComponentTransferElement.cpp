@@ -61,9 +61,7 @@ void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEComponentTransfer* SVGFEComponentTransferElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEComponentTransfer*>(SVGResourceFilter::createFilterEffect(FE_COMPONENT_TRANSFER, filter));
-    if (!m_filterEffect)
-        return 0;
+        m_filterEffect = new SVGFEComponentTransfer(filter);
     
     m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);

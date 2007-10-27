@@ -80,9 +80,7 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFESpecularLighting* SVGFESpecularLightingElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect) 
-        m_filterEffect = static_cast<SVGFESpecularLighting*>(SVGResourceFilter::createFilterEffect(FE_SPECULAR_LIGHTING, filter));
-    if (!m_filterEffect)
-        return 0;
+        m_filterEffect = new SVGFESpecularLighting(filter);
 
     m_filterEffect->setIn(in1());
     m_filterEffect->setSpecularConstant((specularConstant()));

@@ -83,10 +83,9 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
 
 SVGFETurbulence* SVGFETurbulenceElement::filterEffect(SVGResourceFilter* filter) const
 {
+    
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFETurbulence*>(SVGResourceFilter::createFilterEffect(FE_TURBULENCE, filter));
-    if (!m_filterEffect)
-        return 0;
+        m_filterEffect = new SVGFETurbulence(filter);
     
     m_filterEffect->setType((SVGTurbulanceType) type());
     m_filterEffect->setBaseFrequencyX(baseFrequencyX());

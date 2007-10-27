@@ -93,10 +93,8 @@ void SVGFEImageElement::notifyFinished(CachedResource* finishedObj)
 SVGFEImage* SVGFEImageElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEImage*>(SVGResourceFilter::createFilterEffect(FE_IMAGE, filter));
-    if (!m_filterEffect)
-        return 0;
-
+        m_filterEffect = new SVGFEImage(filter);
+    
     // The resource may already be loaded!
     if (m_cachedImage)
         m_filterEffect->setCachedImage(m_cachedImage);

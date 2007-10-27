@@ -44,10 +44,7 @@ SVGFEMergeElement::~SVGFEMergeElement()
 SVGFEMerge* SVGFEMergeElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<SVGFEMerge*>(SVGResourceFilter::createFilterEffect(FE_MERGE, filter));
-    if (!m_filterEffect)
-        return 0;
-
+        m_filterEffect = new SVGFEMerge(filter);
     setStandardAttributes(m_filterEffect);
 
     Vector<String> mergeInputs;
