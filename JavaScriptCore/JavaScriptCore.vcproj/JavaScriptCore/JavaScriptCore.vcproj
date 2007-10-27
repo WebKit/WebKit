@@ -803,19 +803,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\API\JSStringRefBSTR.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\API\JSStringRefBSTR.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\API\JSStringRefCF.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\API\JSStringRefCF.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\API\JSStringRefCOM.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\API\JSStringRefCOM.h"
 				>
 			</File>
 			<File

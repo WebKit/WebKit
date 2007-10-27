@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "JSStringRefCOM.h"
+#include "JSStringRefBSTR.h"
 
 #include "JSStringRef.h"
 

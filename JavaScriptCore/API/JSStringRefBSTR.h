@@ -27,8 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSStringRefCOM_h
-#define JSStringRefCOM_h
+#ifndef JSStringRefBSTR_h
+#define JSStringRefBSTR_h
 
 #include "JSBase.h"
 
@@ -60,4 +60,4 @@ BSTR JSStringCopyBSTR(const JSStringRef string);
 }
 #endif
 
-#endif // JSStringRefCOM_h
+#endif // JSStringRefBSTR_h

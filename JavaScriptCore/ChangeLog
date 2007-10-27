@@ -1,5 +1,18 @@
 2007-10-26  Kevin McCullough  <kmccullough@apple.com>
 
+       Rubber stamp by Adam. 
+
+        - Renamed JSStringRefCOM to JSStringRefBSTR since it he only thing the
+        files contain are functions that operate on BSTRs.
+
+        * API/JSStringRefBSTR.cpp: Copied from API/JSStringRefCOM.cpp.
+        * API/JSStringRefBSTR.h: Copied from API/JSStringRefCOM.h.
+        * API/JSStringRefCOM.cpp: Removed.
+        * API/JSStringRefCOM.h: Removed.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2007-10-26  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Adam.
 
         - Made JSStringCreateWithBSTR capable of handling null BSTRs.
