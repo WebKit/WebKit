@@ -1,3 +1,14 @@
+2007-10-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        - fixed "ASSERTION FAILED: _hash in KJS::UString::Rep::computedHash()"
+        http://bugs.webkit.org/show_bug.cgi?id=15718
+
+        * kjs/identifier.cpp:
+        (KJS::Identifier::addSlowCase): Ensure that empty Identifiers have a hash computed,
+        now that we count on all Identifiers already having one.
+
 2007-10-27  Mark Rowe  <mrowe@apple.com>
 
         Silence a warning.

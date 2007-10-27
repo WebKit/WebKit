@@ -179,8 +179,10 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(UString::Rep *r)
 {
     ASSERT(!r->isIdentifier);
 
-    if (r->len == 0)
+    if (r->len == 0) {
+        UString::Rep::empty.hash();
         return &UString::Rep::empty;
+    }
 
     UString::Rep *result = *identifierTable().add(r).first;
     if (result == r)
