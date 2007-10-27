@@ -1,3 +1,17 @@
+2007-10-26  David Hyatt  <hyatt@apple.com>
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15719, transformed box doesn't repaint properly
+        when only translation changes.
+
+        Move the updating of the transform to in between the old repaint and the new repaint.
+
+        Reviewed by mitz
+
+        fast/repaint/transform-translate.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+
 2007-10-26  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.
@@ -173,7 +187,6 @@
         * platform/graphics/cg/ImageCG.cpp:
         (WebCore::Image::drawPattern):
 
->>>>>>> .r27120
 2007-10-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp.
