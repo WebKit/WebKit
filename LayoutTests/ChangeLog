@@ -1,3 +1,16 @@
+2007-10-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Test by Christopher Rogers <christorogers@gmail.com>.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15467
+        Setting innerHTML to blank string in application/xhtml+xml mode
+        throws DOM Exception 7
+
+        * fast/dom/blank-innerHTML-expected.txt: Added.
+        * fast/dom/blank-innerHTML.xhtml: Added.
+
 2007-10-26  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Darin Adler.

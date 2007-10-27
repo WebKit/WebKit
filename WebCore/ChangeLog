@@ -1,3 +1,16 @@
+2007-10-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15467
+        Setting innerHTML to blank string in application/xhtml+xml mode
+        throws DOM Exception 7
+
+        Test: fast/dom/blank-innerHTML.xhtml
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::parseXMLDocumentFragment): Bail out early if the input string is empty.
+
 2007-10-26  Sam Weinig  <sam@webkit.org>
 
         Enable dragging the left sidebar using the separator.
