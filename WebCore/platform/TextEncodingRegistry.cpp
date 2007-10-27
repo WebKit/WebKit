@@ -28,6 +28,7 @@
 
 #include "PlatformString.h"
 #include "TextCodecLatin1.h"
+#include "TextCodecUserDefined.h"
 #include "TextCodecUTF16.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
@@ -166,6 +167,9 @@ static void buildBaseTextCodecMaps()
 
     TextCodecUTF16::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecUTF16::registerCodecs(addToTextCodecMap);
+
+    TextCodecUserDefined::registerEncodingNames(addToTextEncodingNameMap);
+    TextCodecUserDefined::registerCodecs(addToTextCodecMap);
 
 #if USE(ICU_UNICODE)
     TextCodecICU::registerBaseEncodingNames(addToTextEncodingNameMap);

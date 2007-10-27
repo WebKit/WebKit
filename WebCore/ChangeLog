@@ -2,6 +2,30 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=15555
+        XMLHttpRequest does not support charset "x-user-defined", which can
+        facilitate loading of binary data
+
+        Test: http/tests/xmlhttprequest/binary-x-user-defined.html
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/TextCodecUserDefined.cpp: Added.
+        (WebCore::TextCodecUserDefined::registerEncodingNames):
+        (WebCore::newStreamingTextDecoderUserDefined):
+        (WebCore::TextCodecUserDefined::registerCodecs):
+        (WebCore::TextCodecUserDefined::decode):
+        (WebCore::encodeComplexUserDefined):
+        (WebCore::TextCodecUserDefined::encode):
+        * platform/TextCodecUserDefined.h: Added.
+        * platform/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+
+2007-10-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=15467
         Setting innerHTML to blank string in application/xhtml+xml mode
         throws DOM Exception 7

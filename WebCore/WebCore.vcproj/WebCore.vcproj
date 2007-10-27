@@ -3467,6 +3467,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\TextCodecUserDefined.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\TextCodecUserDefined.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\TextCodecUTF16.cpp"
 				>
 			</File>

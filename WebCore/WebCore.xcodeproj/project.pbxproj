@@ -3594,6 +3594,8 @@
 		E14842FF0A674A31007E4D39 /* TextCodecICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14842FE0A674A31007E4D39 /* TextCodecICU.cpp */; };
 		E148432F0A674FC2007E4D39 /* TextCodecMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E148432E0A674FC2007E4D39 /* TextCodecMac.h */; };
 		E14843D60A6754A6007E4D39 /* TextCodecMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14843910A6752BF007E4D39 /* TextCodecMac.cpp */; };
+		E15863990CD10B730066E2C9 /* TextCodecUserDefined.h in Headers */ = {isa = PBXBuildFile; fileRef = E15863970CD10B730066E2C9 /* TextCodecUserDefined.h */; };
+		E158639A0CD10B730066E2C9 /* TextCodecUserDefined.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15863980CD10B730066E2C9 /* TextCodecUserDefined.cpp */; };
 		E1D8E3160B29E39C00F4BAF6 /* HTTPParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = E1D8E3150B29E39C00F4BAF6 /* HTTPParsers.h */; };
 		E1D8E31A0B29E3B600F4BAF6 /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1D8E3190B29E3B600F4BAF6 /* HTTPParsers.cpp */; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
@@ -7500,6 +7502,8 @@
 		E14842FE0A674A31007E4D39 /* TextCodecICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecICU.cpp; sourceTree = "<group>"; };
 		E148432E0A674FC2007E4D39 /* TextCodecMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = TextCodecMac.h; path = mac/TextCodecMac.h; sourceTree = "<group>"; };
 		E14843910A6752BF007E4D39 /* TextCodecMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = TextCodecMac.cpp; path = mac/TextCodecMac.cpp; sourceTree = "<group>"; };
+		E15863970CD10B730066E2C9 /* TextCodecUserDefined.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecUserDefined.h; sourceTree = "<group>"; };
+		E15863980CD10B730066E2C9 /* TextCodecUserDefined.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUserDefined.cpp; sourceTree = "<group>"; };
 		E1D8E3150B29E39C00F4BAF6 /* HTTPParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPParsers.h; sourceTree = "<group>"; };
 		E1D8E3190B29E3B600F4BAF6 /* HTTPParsers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPParsers.cpp; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
@@ -11230,6 +11234,8 @@
 				932CA7C00AAA20C100AD1FAD /* TextCodecLatin1.h */,
 				E14843910A6752BF007E4D39 /* TextCodecMac.cpp */,
 				E148432E0A674FC2007E4D39 /* TextCodecMac.h */,
+				E15863970CD10B730066E2C9 /* TextCodecUserDefined.h */,
+				E15863980CD10B730066E2C9 /* TextCodecUserDefined.cpp */,
 				932CA8470AAA66CB00AD1FAD /* TextCodecUTF16.cpp */,
 				932CA83A0AAA667F00AD1FAD /* TextCodecUTF16.h */,
 				932CA7640AAA1DF500AD1FAD /* TextDecoder.cpp */,
@@ -13575,6 +13581,7 @@
 				A80F3A750CCDA318002DD990 /* DOMSVGPathSegCurvetoQuadraticAbs.h in Headers */,
 				A80F3A7D0CCDA324002DD990 /* DOMSVGAngle.h in Headers */,
 				A80F43520CCDE604002DD990 /* DOMSVGAnimateElementInternal.h in Headers */,
+				E15863990CD10B730066E2C9 /* TextCodecUserDefined.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13613,7 +13620,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -15108,6 +15114,7 @@
 				A83B79560CCB0125000B0825 /* DOMSVGFontFaceElement.mm in Sources */,
 				A80F393E0CCD971A002DD990 /* JSSVGDefinitionSrcElement.cpp in Sources */,
 				A80F39590CCD9796002DD990 /* DOMSVGDefinitionSrcElement.mm in Sources */,
+				E158639A0CD10B730066E2C9 /* TextCodecUserDefined.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

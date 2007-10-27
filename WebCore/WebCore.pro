@@ -671,6 +671,7 @@ SOURCES += \
     platform/StringImpl.cpp \
     platform/TextCodec.cpp \
     platform/TextCodecLatin1.cpp \
+    platform/TextCodecUserDefined.cpp \
     platform/TextCodecUTF16.cpp \
     platform/TextDecoder.cpp \
     platform/TextEncoding.cpp \
