@@ -26,6 +26,7 @@
 
 #include "Parser.h"
 #include "internal.h"
+#include "SymbolTable.h"
 #include <wtf/ListRefPtr.h>
 #include <wtf/Vector.h>
 

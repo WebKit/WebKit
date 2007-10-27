@@ -1,3 +1,10 @@
+2007-10-26  Sam Weinig  <sam@webkit.org>
+
+        Windows build fix.
+
+        * kjs/SymbolTable.h: Add header gaurd.
+        * kjs/nodes.h: #include "SymbolTable.h"
+
 2007-10-26  Geoffrey Garen  <ggaren@apple.com>
 
         Suggested by Anders Carlsson.
