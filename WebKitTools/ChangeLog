@@ -1,3 +1,23 @@
+2007-10-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Implemented the WebScriptDebugListener functions now that the
+        WebScriptDebugServer exists
+
+        * Drosera/win/ServerConnection.cpp: Implemented WebScriptDebugListener
+        functions.
+        (ServerConnection::currentFrame):
+        (ServerConnection::didLoadMainResourceForDataSource):
+        (ServerConnection::didParseSource):
+        (ServerConnection::failedToParseSource):
+        (ServerConnection::didEnterCallFrame):
+        (ServerConnection::willExecuteStatement):
+        (ServerConnection::willLeaveCallFrame):
+        (ServerConnection::exceptionWasRaised):
+        * Drosera/win/ServerConnection.h: Removed unused arguments from the
+        members arguments list.
+
 2007-10-26  David Kilzer  <ddkilzer@webkit.org>
 
         prepare-ChangeLog and update-webkit create needless ChangeLog conflicts

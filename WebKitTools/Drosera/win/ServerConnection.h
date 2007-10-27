@@ -36,7 +36,7 @@
 #include <WebKit/IWebScriptDebugServer.h>
 
 class DebuggerClient;
-class WebScriptCallFrame;
+interface IWebScriptCallFrame;
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 
@@ -52,7 +52,7 @@ public:
 
     void applicationTerminating();
     void serverConnectionDidDie();
-    WebScriptCallFrame* currentFrame() const;
+    IWebScriptCallFrame* currentFrame() const;
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(
@@ -64,57 +64,58 @@ public:
 
     // IWebScriptDebugListener
     HRESULT STDMETHODCALLTYPE didLoadMainResourceForDataSource(
-        /* [in] */ IWebView* view,
+        /* [in] */ IWebView*,
         /* [in] */ IWebDataSource* dataSource);
 
     HRESULT STDMETHODCALLTYPE didParseSource(
-        /* [in] */ IWebView* view,
+        /* [in] */ IWebView*,
         /* [in] */ BSTR sourceCode,
         /* [in] */ UINT baseLineNumber,
         /* [in] */ BSTR url,
         /* [in] */ int sourceID,
-        /* [in] */ IWebFrame* forWebFrame);
+        /* [in] */ IWebFrame* webFrame);
 
     HRESULT STDMETHODCALLTYPE failedToParseSource(
-        /* [in] */ IWebView* view,
+        /* [in] */ IWebView*,
         /* [in] */ BSTR sourceCode,
         /* [in] */ UINT baseLineNumber,
         /* [in] */ BSTR url,
         /* [in] */ BSTR error,
-        /* [in] */ IWebFrame* forWebFrame);
+        /* [in] */ IWebFrame*);
 
     HRESULT STDMETHODCALLTYPE didEnterCallFrame(
-        /* [in] */ IWebView* view,
+        /* [in] */ IWebView*,
         /* [in] */ IWebScriptCallFrame* frame,
         /* [in] */ int sourceID,
         /* [in] */ int lineNumber,
-        /* [in] */ IWebFrame* forWebFrame);
+        /* [in] */ IWebFrame*);
 
     HRESULT STDMETHODCALLTYPE willExecuteStatement(
-        /* [in] */ IWebView* view,
-        /* [in] */ IWebScriptCallFrame* frame,
+        /* [in] */ IWebView*,
+        /* [in] */ IWebScriptCallFrame*,
         /* [in] */ int sourceID,
         /* [in] */ int lineNumber,
-        /* [in] */ IWebFrame* forWebFrame);
+        /* [in] */ IWebFrame*);
 
     HRESULT STDMETHODCALLTYPE willLeaveCallFrame(
-        /* [in] */ IWebView* view,
+        /* [in] */ IWebView*,
         /* [in] */ IWebScriptCallFrame* frame,
         /* [in] */ int sourceID,
         /* [in] */ int lineNumber,
-        /* [in] */ IWebFrame* forWebFrame);
+        /* [in] */ IWebFrame*);
 
     HRESULT STDMETHODCALLTYPE exceptionWasRaised(
-        /* [in] */ IWebView* view,
-        /* [in] */ IWebScriptCallFrame* frame,
+        /* [in] */ IWebView*,
+        /* [in] */ IWebScriptCallFrame*,
         /* [in] */ int sourceID,
         /* [in] */ int lineNumber,
-        /* [in] */ IWebFrame* forWebFrame);
+        /* [in] */ IWebFrame*);
 
 private:
     std::wstring m_currentServerName;
 
-    WebScriptCallFrame* m_currentFrame;
+    // FIXME: make this a COMPtr when the Interface exists and the destructor can be called.
+    IWebScriptCallFrame* m_currentFrame;
     COMPtr<IWebScriptDebugServer> m_server;
     JSGlobalContextRef m_globalContext;
 };

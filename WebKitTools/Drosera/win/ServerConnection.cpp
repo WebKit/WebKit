@@ -34,11 +34,10 @@
 
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <JavaScriptCore/JSStringRefCF.h>
+#include <JavaScriptCore/JSStringRefCOM.h>
 #include <JavaScriptCore/RetainPtr.h>
 #include <WebKit/WebKit.h>
 
-// FIXME: Some of the below functionality cannot be implemented until the WebScriptDebug Server works on windows.
 ServerConnection::ServerConnection()
     : m_globalContext(0)
 {
@@ -95,7 +94,7 @@ void ServerConnection::serverConnectionDidDie()
 
 // Stack & Variables
 
-WebScriptCallFrame* ServerConnection::currentFrame() const
+IWebScriptCallFrame* ServerConnection::currentFrame() const
 {
     return m_currentFrame;
 }
@@ -129,70 +128,202 @@ ULONG STDMETHODCALLTYPE ServerConnection::Release(void)
 }
 // IWebScriptDebugListener -----------------------------------
 HRESULT STDMETHODCALLTYPE ServerConnection::didLoadMainResourceForDataSource(
-    /* [in] */ IWebView* /*view*/,
-    /* [in] */ IWebDataSource* /*dataSource*/)
+    /* [in] */ IWebView*,
+    /* [in] */ IWebDataSource* dataSource)
 {
+    // Get document source
+    COMPtr<IWebDocumentRepresentation> rep;
+    HRESULT ret = dataSource->representation(&rep);
+    if (FAILED(ret))
+        return ret;
+
+    BOOL canProvideDocumentSource = FALSE;
+    ret = rep->canProvideDocumentSource(&canProvideDocumentSource);
+    if (FAILED(ret))
+        return ret;
+
+    BSTR documentSource = 0;
+    if (canProvideDocumentSource)
+        ret = rep->documentSource(&documentSource);
+
+    if (FAILED(ret) || !documentSource)
+        return ret;
+
+    JSRetainPtr<JSStringRef> documentSourceJS(Adopt, JSStringCreateWithBSTR(documentSource));
+    SysFreeString(documentSource);
+
+    // Get URL
+    COMPtr<IWebURLResponse> response;
+    ret = dataSource->response(&response);
+    if (FAILED(ret))
+        return ret;
+
+    BSTR url = 0;
+    ret = response->URL(&url);
+    if (FAILED(ret))
+        return ret;
+
+    JSRetainPtr<JSStringRef> urlJS(Adopt, JSStringCreateWithBSTR(url));
+    SysFreeString(url);
+
+    DebuggerDocument::updateFileSource(m_globalContext, documentSourceJS.get(), urlJS.get());
+
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE ServerConnection::didParseSource(
-    /* [in] */ IWebView* /*view*/,
-    /* [in] */ BSTR /*sourceCode*/,
-    /* [in] */ UINT /*baseLineNumber*/,
-    /* [in] */ BSTR /*url*/,
-    /* [in] */ int /*sourceID*/,
-    /* [in] */ IWebFrame* /*forWebFrame*/)
+    /* [in] */ IWebView*,
+    /* [in] */ BSTR sourceCode,
+    /* [in] */ UINT baseLineNumber,
+    /* [in] */ BSTR url,
+    /* [in] */ int sourceID,
+    /* [in] */ IWebFrame* webFrame)
 {
+    HRESULT ret = S_OK;
+    if (!m_globalContext || !sourceCode)
+        return ret;
+
+    COMPtr<IWebDataSource> dataSource;
+    ret = webFrame->dataSource(&dataSource);
+    if (FAILED(ret))
+        return ret;
+
+    COMPtr<IWebURLResponse> response;
+    ret = dataSource->response(&response);
+    if (FAILED(ret))
+        return ret;
+
+    BSTR responseURL;
+    ret = response->URL(&responseURL);
+    if (FAILED(ret))
+        return ret;
+
+    BSTR documentSource = 0;
+    if (!url || !wcscmp(responseURL, url)) {
+        COMPtr<IWebDocumentRepresentation> rep;
+        ret = dataSource->representation(&rep);
+        if (FAILED(ret))
+            return ret;
+
+        BOOL canProvideDocumentSource;
+        rep->canProvideDocumentSource(&canProvideDocumentSource);
+        if (FAILED(ret))
+            return ret;
+
+        if (canProvideDocumentSource) {
+            ret = rep->documentSource(&documentSource);
+            if (FAILED(ret))
+                return ret;
+        }
+
+        if (!url) {
+            ret = response->URL(&url);
+            if (FAILED(ret))
+                return ret;
+        }
+    }
+    SysFreeString(responseURL);
+
+    JSRetainPtr<JSStringRef> sourceJS(Adopt, JSStringCreateWithBSTR(sourceCode));
+    JSRetainPtr<JSStringRef> documentSourceJS(Adopt, JSStringCreateWithBSTR(documentSource));
+    SysFreeString(documentSource);
+    JSRetainPtr<JSStringRef> urlJS(Adopt, JSStringCreateWithBSTR(url));
+    JSValueRef sidJS = JSValueMakeNumber(m_globalContext, sourceID);
+    JSValueRef baseLineJS = JSValueMakeNumber(m_globalContext, baseLineNumber);
+
+    DebuggerDocument::didParseScript(m_globalContext, sourceJS.get(), documentSourceJS.get(), urlJS.get(), sidJS, baseLineJS);
+
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE ServerConnection::failedToParseSource(
-    /* [in] */ IWebView* /*view*/,
-    /* [in] */ BSTR /*sourceCode*/,
-    /* [in] */ UINT /*baseLineNumber*/,
-    /* [in] */ BSTR /*url*/,
-    /* [in] */ BSTR /*error*/,
-    /* [in] */ IWebFrame* /*forWebFrame*/)
+    /* [in] */ IWebView*,
+    /* [in] */ BSTR,
+    /* [in] */ UINT,
+    /* [in] */ BSTR,
+    /* [in] */ BSTR,
+    /* [in] */ IWebFrame*)
 {
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE ServerConnection::didEnterCallFrame(
-    /* [in] */ IWebView* /*view*/,
-    /* [in] */ IWebScriptCallFrame* /*frame*/,
-    /* [in] */ int /*sourceID*/,
-    /* [in] */ int /*lineNumber*/,
-    /* [in] */ IWebFrame* /*forWebFrame*/)
+    /* [in] */ IWebView*,
+    /* [in] */ IWebScriptCallFrame* frame,
+    /* [in] */ int sourceID,
+    /* [in] */ int lineNumber,
+    /* [in] */ IWebFrame*)
 {
-    return S_OK;
+    HRESULT ret = S_OK;
+    if (!m_globalContext)
+        return ret;
+
+    // FIXME: This won't be relevant until IWebScriptCallFrame is implemented on Windows
+    m_currentFrame = frame;
+
+    JSValueRef sidJS = JSValueMakeNumber(m_globalContext, sourceID);
+    JSValueRef linenoJS = JSValueMakeNumber(m_globalContext, lineNumber);
+
+    DebuggerDocument::didEnterCallFrame(m_globalContext, sidJS, linenoJS);
+
+    return ret;
 }
 
 HRESULT STDMETHODCALLTYPE ServerConnection::willExecuteStatement(
-    /* [in] */ IWebView* /*view*/,
-    /* [in] */ IWebScriptCallFrame* /*frame*/,
-    /* [in] */ int /*sourceID*/,
-    /* [in] */ int /*lineNumber*/,
-    /* [in] */ IWebFrame* /*forWebFrame*/)
+    /* [in] */ IWebView*,
+    /* [in] */ IWebScriptCallFrame*,
+    /* [in] */ int sourceID,
+    /* [in] */ int lineNumber,
+    /* [in] */ IWebFrame*)
 {
-    return S_OK;
+    HRESULT ret = S_OK;
+    if (!m_globalContext)
+        return ret;
+
+    JSValueRef sidJS = JSValueMakeNumber(m_globalContext, sourceID);
+    JSValueRef linenoJS = JSValueMakeNumber(m_globalContext, lineNumber);
+
+    DebuggerDocument::willExecuteStatement(m_globalContext, sidJS, linenoJS);
+    return ret;
 }
 
 HRESULT STDMETHODCALLTYPE ServerConnection::willLeaveCallFrame(
-    /* [in] */ IWebView* /*view*/,
-    /* [in] */ IWebScriptCallFrame* /*frame*/,
-    /* [in] */ int /*sourceID*/,
-    /* [in] */ int /*lineNumber*/,
-    /* [in] */ IWebFrame* /*forWebFrame*/)
+    /* [in] */ IWebView*,
+    /* [in] */ IWebScriptCallFrame* frame,
+    /* [in] */ int sourceID,
+    /* [in] */ int lineNumber,
+    /* [in] */ IWebFrame*)
 {
+    HRESULT ret = S_OK;
+    if (!m_globalContext)
+        return ret;
+
+    JSValueRef sidJS = JSValueMakeNumber(m_globalContext, sourceID);
+    JSValueRef linenoJS = JSValueMakeNumber(m_globalContext, lineNumber);
+
+    DebuggerDocument::willLeaveCallFrame(m_globalContext, sidJS, linenoJS);
+
+    // FIXME: This won't be relevant until IWebScriptCallFrame is implemented on Windows
+    m_currentFrame = frame;
+
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE ServerConnection::exceptionWasRaised(
-    /* [in] */ IWebView* /*view*/,
-    /* [in] */ IWebScriptCallFrame* /*frame*/,
-    /* [in] */ int /*sourceID*/,
-    /* [in] */ int /*lineNumber*/,
-    /* [in] */ IWebFrame* /*forWebFrame*/)
+    /* [in] */ IWebView*,
+    /* [in] */ IWebScriptCallFrame*,
+    /* [in] */ int sourceID,
+    /* [in] */ int lineNumber,
+    /* [in] */ IWebFrame*)
 {
-    return S_OK;
+    HRESULT ret = S_OK;
+    if (!m_globalContext)
+        return ret;
+
+    JSValueRef sidJS = JSValueMakeNumber(m_globalContext, sourceID);
+    JSValueRef linenoJS = JSValueMakeNumber(m_globalContext, lineNumber);
+
+    DebuggerDocument::exceptionWasRaised(m_globalContext, sidJS, linenoJS);
+
+    return ret;
 }
