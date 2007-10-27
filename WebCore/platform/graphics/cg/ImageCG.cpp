@@ -171,21 +171,10 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
         imageObserver()->didDraw(this);
 }
 
-struct ImageInfo {
-    ImageInfo(const FloatPoint& point, Image* i)
-    : tilePoint(point)
-    , image(i)
-    {}
-    
-    FloatPoint tilePoint;
-    Image* image;
-};
-
 void Image::drawPatternCallback(void* info, CGContextRef context)
 {
-    ImageInfo* data = (ImageInfo*)info;
-    CGImageRef image = data->image->nativeImageForCurrentFrame();
-    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(data->tilePoint.x(), data->tilePoint.y(), CGImageGetWidth(image), CGImageGetHeight(image))), image);
+    CGImageRef image = (CGImageRef)info;
+    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), CGImageGetHeight(image))), image);
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
@@ -209,35 +198,44 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
 
     CGImageRef tileImage = nativeImageForCurrentFrame();
     float h = CGImageGetHeight(tileImage);
+
+    CGImageRef subImage;
+    if (tileRect.size() == size())
+        subImage = tileImage;
+    else {
+        // Copying a sub-image out of a partially-decoded image stops the decoding of the original image. It should never happen
+        // because sub-images are only used for border-image, which only renders when the image is fully decoded.
+        ASSERT(h == height());
+        subImage = CGImageCreateWithImageInRect(tileImage, tileRect);
+    }
     
 #ifndef BUILDING_ON_TIGER
     // Leopard has an optimized call for the tiling of image patterns, but we can only use it if the image has been decoded enough that
     // its buffer is the same size as the overall image.  Because a partially decoded CGImageRef with a smaller width or height than the
-    // overall image buffer needs to tile with "gaps", we can't use the optimized tiling call in that case.  We also avoid this optimization
-    // when tiling portions of an image, since until we can actually cache the subimage we want to tile, this code won't be any faster.
+    // overall image buffer needs to tile with "gaps", we can't use the optimized tiling call in that case.
     // FIXME: Could create WebKitSystemInterface SPI for CGCreatePatternWithImage2 and probably make Tiger tile faster as well.
     float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
     float w = CGImageGetWidth(tileImage);
-    if (w == size().width() && h == size().height() && tileRect.size() == size())
-        CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), tileImage);
+    if (w == size().width() && h == size().height())
+        CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), subImage);
     else {
 #endif
 
-    // On Leopard, this code now only runs for partially decoded images whose buffers do not yet match the overall size of the image or for
-    // tiling a portion of an image (i.e., a subimage like the ones used by CSS border-image).
+    // On Leopard, this code now only runs for partially decoded images whose buffers do not yet match the overall size of the image.
     // On Tiger this code runs all the time.  This code is suboptimal because the pattern does not reference the image directly, and the
     // pattern is destroyed before exiting the function.  This means any decoding the pattern does doesn't end up cached anywhere, so we
     // redecode every time we paint.
     static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, NULL };
     CGAffineTransform matrix = CGAffineTransformMake(narrowPrecisionToCGFloat(patternTransform.a()), 0, 0, narrowPrecisionToCGFloat(patternTransform.d()), adjustedX, adjustedY);
     matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
-    
-    // If we're painting a subimage, store the offset to the image.
-    ImageInfo info(FloatPoint(-tileRect.x(), tileRect.y() + tileRect.height() - h), this);
-    CGPatternRef pattern = CGPatternCreate(&info, CGRectMake(0, 0, tileRect.width(), tileRect.height()),
+    // The top of a partially-decoded image is drawn at the bottom of the tile. Map it to the top.
+    matrix = CGAffineTransformTranslate(matrix, 0, size().height() - h);
+    CGPatternRef pattern = CGPatternCreate(subImage, CGRectMake(0, 0, tileRect.width(), tileRect.height()),
                                            matrix, tileRect.width(), tileRect.height(), 
                                            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
     if (pattern == NULL) {
+        if (subImage != tileImage)
+            CGImageRelease(subImage);
         ctxt->restore();
         return;
     }
@@ -263,6 +261,8 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     }
 #endif
 
+    if (subImage != tileImage)
+        CGImageRelease(subImage);
     ctxt->restore();
 
     if (imageObserver())

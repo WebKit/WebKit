@@ -1,3 +1,16 @@
+2007-10-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix rotated border images by using a temporary subimage containing
+          only the part we want to tile
+
+        Test: fast/borders/border-image-rotate-transform.html
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPatternCallback):
+        (WebCore::Image::drawPattern):
+
 2007-10-27  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp.

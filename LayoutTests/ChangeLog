@@ -1,3 +1,14 @@
+2007-10-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - rotated border image test
+
+        * fast/borders/border-image-rotate-transform.html: Added.
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.checksum: Added.
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.png: Added.
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.txt: Added.
+
 2007-10-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
