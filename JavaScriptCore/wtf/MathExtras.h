@@ -100,9 +100,12 @@ inline double wtf_atan2(double x, double y)
 // Work around a bug in the Microsoft CRT, where fmod(x, +-infinity) yields NaN instead of x.
 inline double wtf_fmod(double x, double y) { return (!isinf(x) && isinf(y)) ? x : fmod(x, y); }
 
-#define fmod(x, y) wtf_fmod(x, y)
+// Work around a bug in the Microsoft CRT, where pow(NaN, 0) yields NaN instead of 1.
+inline double wtf_pow(double x, double y) { return y == 0 ? 1 : pow(x, y); }
 
 #define atan2(x, y) wtf_atan2(x, y)
+#define fmod(x, y) wtf_fmod(x, y)
+#define pow(x, y) wtf_pow(x, y)
 
 #if defined(_CRT_RAND_S)
 // Initializes the random number generator.

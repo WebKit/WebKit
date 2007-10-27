@@ -22,12 +22,11 @@
 #include "config.h"
 #include "math_object.h"
 #include "math_object.lut.h"
-#include <wtf/MathExtras.h>
 
 #include "operations.h"
-#include <math.h>
 #include <time.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 
 using namespace KJS;
 
@@ -199,13 +198,13 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, con
     break;
   }
   case MathObjectImp::Pow:
-    // ECMA 15.8.2.1.13 (::pow takes care of most of the critera)
+    // ECMA 15.8.2.1.13
     if (isNaN(arg2))
       result = NaN;
     else if (isInf(arg2) && fabs(arg) == 1)
       result = NaN;
     else
-      result = ::pow(arg, arg2);
+      result = pow(arg, arg2);
     break;
   case MathObjectImp::Random:
       if (!didInitRandom) {

@@ -1,5 +1,21 @@
 2007-10-27  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - a couple of Windows fixes
+
+        * wtf/MathExtras.h: (wtf_pow): Add a special case for MSVC, which has
+        a "pow" function that does not properly handle the case where arg1 is
+        NaN and arg2 is 0.
+
+        * kjs/math_object.cpp: (MathFuncImp::callAsFunction): Don't explicity
+        specify "::pow" -- just "pow" is fine.
+
+        * wtf/ASCIICType.h: Check the compiler, not the OS, since it's the
+        compiler/library that has the wchar_t that is just a typedef.
+
+2007-10-27  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - http://bugs.webkit.org/show_bug.cgi?id=15711
