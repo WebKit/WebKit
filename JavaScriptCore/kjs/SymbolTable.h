@@ -59,4 +59,4 @@ namespace KJS {
 
 } // namespace KJS
 
-#endif SymbolTable_h
+#endif // SymbolTable_h

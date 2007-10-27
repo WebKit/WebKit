@@ -1,5 +1,11 @@
 2007-10-27  Mark Rowe  <mrowe@apple.com>
 
+        Silence a warning.
+
+        * kjs/SymbolTable.h:
+
+2007-10-27  Mark Rowe  <mrowe@apple.com>
+
         Gtk build fix.
 
         * kjs/function.h:
