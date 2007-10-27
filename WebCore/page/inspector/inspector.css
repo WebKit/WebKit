@@ -1919,21 +1919,27 @@ body.inactive #sidebar li.selected {
     margin-bottom: -35px;
 }
 
-.sidebar-resizer {
+.sidebar-resizer-vertical {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 222px;
     width: 5px;
     z-index: 100;
     cursor: col-resize;
 }
 
+.sidebar-resizer-vertical-left {
+    left: 197px;
+}
+
+.sidebar-resizer-vertical-right {
+    right: 222px;
+}
+
 #searchResultsResizer {
     position: absolute;
-    top: 0;
+    height: 5px;
     left: 200px;
     right: 0;
-    height: 5px;
     cursor: row-resize;
 }

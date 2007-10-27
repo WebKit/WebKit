@@ -250,6 +250,7 @@ WebInspector.loaded = function(event)
     document.getElementById("attachToggle").addEventListener("click", function(event) { WebInspector.toggleAttach() }, true);
     document.getElementById("statusToggle").addEventListener("click", function(event) { WebInspector.toggleStatusArea() }, true);
     document.getElementById("sidebarResizeWidget").addEventListener("mousedown", WebInspector.sidebarResizerDragStart, true);
+    document.getElementById("sidebarResizer").addEventListener("mousedown", WebInspector.sidebarResizerDragStart, true);
     document.getElementById("searchResultsResizer").addEventListener("mousedown", WebInspector.searchResultsResizerDragStart, false);
 
     document.body.addStyleClass("detached");
@@ -471,6 +472,7 @@ WebInspector.sidebarResizerDrag = function(event)
             sidebar.dragLastX = x;
 
         sidebar.style.width = newWidth + "px";
+        document.getElementById("sidebarResizer").style.left = (newWidth - 3) + "px";
         document.getElementById("main").style.left = newWidth + "px";
         document.getElementById("toolbarButtons").style.left = newWidth + "px";
         document.getElementById("searchResults").style.left = newWidth + "px";

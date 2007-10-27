@@ -81,7 +81,7 @@ WebInspector.DocumentPanel = function(resource, views)
     domView.treeContentElement.appendChild(domView.treeListElement);
 
     domView.sidebarResizeElement = document.createElement("div");
-    domView.sidebarResizeElement.className = "sidebar-resizer";
+    domView.sidebarResizeElement.className = "sidebar-resizer-vertical sidebar-resizer-vertical-right";
     domView.sidebarResizeElement.addEventListener("mousedown", function(event) { panel.rightSidebarResizerDragStart(event) }, false);
 
     domView.contentElement.appendChild(domView.sideContentElement);

@@ -1,5 +1,16 @@
 2007-10-26  Sam Weinig  <sam@webkit.org>
 
+        Enable dragging the left sidebar using the separator.
+
+        Reviewed by Anders (unless Mitz says otherwise).
+
+        * page/inspector/DocumentPanel.js:
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.html:
+        * page/inspector/inspector.js:
+
+2007-10-26  Sam Weinig  <sam@webkit.org>
+
         Fix an off by one error when resizing the Inspector find window.
 
         Reviewed by Hyatt.
