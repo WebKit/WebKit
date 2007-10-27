@@ -501,7 +501,7 @@ WebInspector.searchResultsResizerDrag = function(event)
 
         WebInspector.searchResultsHeight = newHeight - Preferences.toolbarHeight;
         searchResults.style.height = WebInspector.searchResultsHeight + "px";
-        document.getElementById("main").style.top = newHeight + "px";
+        document.getElementById("main").style.top = (newHeight + 1) + "px";
         document.getElementById("searchResultsResizer").style.top = (newHeight - 2) + "px";
         event.preventDefault();
     }

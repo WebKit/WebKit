@@ -1,3 +1,11 @@
+2007-10-26  Sam Weinig  <sam@webkit.org>
+
+        Fix an off by one error when resizing the Inspector find window.
+
+        Reviewed by Hyatt.
+
+        * page/inspector/inspector.js:
+
 2007-10-26  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Adam.
