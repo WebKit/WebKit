@@ -1,3 +1,39 @@
+2007-10-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=14953
+        Implement window.console in WebCore
+
+        - Adds a window.console object that has 4 methods (log, info, warn, and error)
+          that send messages to the Chrome.  This moves functionality that was in the
+          app down into WebCore.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm: Add extended attribute
+        to mark attributes as [Replacable] which indicates they can 
+        overridden when set.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::addMessageToConsole): Allow all messages to go
+        up to the ChromeClient.
+        * page/Console.cpp: Added.
+        (WebCore::Console::Console):
+        (WebCore::Console::disconnectFrame):
+        (WebCore::Console::error):
+        (WebCore::Console::info):
+        (WebCore::Console::log):
+        (WebCore::Console::warn):
+        * page/Console.h: Added.
+        * page/Console.idl: Added.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::console):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2007-10-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by aroben.

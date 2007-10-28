@@ -31,6 +31,7 @@
 #include "CSSRuleList.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
+#include "Console.h"
 #include "Database.h"
 #include "DOMSelection.h"
 #include "Document.h"
@@ -99,6 +100,10 @@ void DOMWindow::clear()
     if (m_toolbar)
         m_toolbar->disconnectFrame();
     m_toolbar = 0;
+
+    if (m_console)
+        m_console->disconnectFrame();
+    m_console = 0;
 }
 
 Screen* DOMWindow::screen() const
@@ -155,6 +160,13 @@ BarInfo* DOMWindow::toolbar() const
     if (!m_toolbar)
         m_toolbar = new BarInfo(m_frame, BarInfo::Toolbar);
     return m_toolbar.get();
+}
+
+Console* DOMWindow::console() const
+{
+    if (!m_console)
+        m_console = new Console(m_frame);
+    return m_console.get();
 }
 
 DOMSelection* DOMWindow::getSelection()

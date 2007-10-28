@@ -293,6 +293,7 @@ IDL_BINDINGS += \
     html/HTMLTitleElement.idl \
     html/HTMLUListElement.idl \
     page/BarInfo.idl \
+    page/Console.idl \
     page/DOMSelection.idl \
     page/DOMWindow.idl \
     page/History.idl \
@@ -605,6 +606,7 @@ SOURCES += \
     loader/TextResourceDecoder.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
+    page/Console.cpp \
     page/ContextMenuController.cpp \
     page/DOMSelection.cpp \
     page/DOMWindow.cpp \

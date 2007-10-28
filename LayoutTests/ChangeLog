@@ -1,3 +1,13 @@
+2007-10-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Update tests for http://bugs.webkit.org/show_bug.cgi?id=14953
+        Implement window.console in WebCore
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+
 2007-10-27  Matt Lilek  <webkit@mattlilek.com>
 
         Update results.

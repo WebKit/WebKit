@@ -1047,6 +1047,8 @@ sub GenerateImplementation
                         $implIncludes{"JS" . $constructorType . ".h"} = 1;
                         push(@implContent, "        // Shadowing a built-in constructor\n");
                         push(@implContent, "        JSObject::put(exec, \"$name\", value);\n");
+                    } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
+                        push(@implContent, "        JSObject::put(exec, \"$name\", value);\n");
                     } else {
                         if ($podType) {
                             push(@implContent, "        $podType imp(*impl());\n\n");

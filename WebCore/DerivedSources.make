@@ -327,6 +327,7 @@ all : \
     JSCanvasRenderingContext2D.h \
     JSCharacterData.h \
     JSComment.h \
+    JSConsole.h \
     JSCounter.h \
     JSCSSStyleDeclaration.h \
     JSDatabase.h \

@@ -36,6 +36,7 @@ namespace WebCore {
     class BarInfo;
     class CSSRuleList;
     class CSSStyleDeclaration;
+    class Console;
     class Database;
     class DOMSelection;
     class Document;
@@ -43,7 +44,7 @@ namespace WebCore {
     class Frame;
     class History;
     class Screen;
-    
+
     typedef int ExceptionCode;
 
     class DOMWindow : public Shared<DOMWindow> {
@@ -136,6 +137,8 @@ namespace WebCore {
         PassRefPtr<Database> openDatabase(const String& name, const String& version, ExceptionCode&);
 #endif
 
+        Console* console() const;
+
     private:
         Frame* m_frame;
         mutable RefPtr<Screen> m_screen;
@@ -147,6 +150,7 @@ namespace WebCore {
         mutable RefPtr<BarInfo> m_scrollbars;
         mutable RefPtr<BarInfo> m_statusbar;
         mutable RefPtr<BarInfo> m_toolbar;
+        mutable RefPtr<Console> m_console;
     };
 
 } // namespace WebCore

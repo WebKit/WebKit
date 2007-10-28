@@ -409,6 +409,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSConsole.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSConsole.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCounter.cpp"
 				>
 			</File>
@@ -2500,6 +2508,14 @@
 			</File>
 			<File
 				RelativePath="..\page\ChromeClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Console.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Console.h"
 				>
 			</File>
 			<File

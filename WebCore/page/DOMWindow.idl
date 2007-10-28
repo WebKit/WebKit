@@ -115,6 +115,8 @@ module window {
             raises(DOMException);
 #endif
 
+                 attribute [Replaceable] Console console;
+
 #if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors
         attribute StyleSheetConstructor StyleSheet;
