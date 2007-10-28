@@ -1,3 +1,9 @@
+2007-10-28  Darin Adler  <darin@apple.com>
+
+        * platform/graphics/svg/mac/SVGResourceFilterPlatformDataMac.h:
+        We don't include "config.h" in headers. Hope this desn't break
+        the non-SVG build again.
+
 2007-10-28  Eric Seidel  <eric@webkit.org>
 
         Build fix for non-SVG build, no review.
