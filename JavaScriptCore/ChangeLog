@@ -1,3 +1,12 @@
+2007-10-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix ASCIICType.h for some Windows compiles
+
+        * wtf/ASCIICType.h: Check the compiler, not the OS, since it's the
+        compiler/library that has the wchar_t that is just a typedef.
+
 2007-10-27  Kevin McCullough  <kmccullough@apple.com>
 
         - BuildFix
@@ -25,7 +34,7 @@
 
         Reviewed by Eric.
 
-        - a couple of Windows fixes
+        - fix pow on Windows
 
         * wtf/MathExtras.h: (wtf_pow): Add a special case for MSVC, which has
         a "pow" function that does not properly handle the case where arg1 is
@@ -33,9 +42,6 @@
 
         * kjs/math_object.cpp: (MathFuncImp::callAsFunction): Don't explicity
         specify "::pow" -- just "pow" is fine.
-
-        * wtf/ASCIICType.h: Check the compiler, not the OS, since it's the
-        compiler/library that has the wchar_t that is just a typedef.
 
 2007-10-27  Darin Adler  <darin@apple.com>
 
