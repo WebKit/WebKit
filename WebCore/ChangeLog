@@ -1,3 +1,13 @@
+2007-10-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15217
+        Plugin complains that xpcom_core.dll missing
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabaseWin::isPluginBlacklisted): Blacklist npmozax.dll.
+
 2007-10-28  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.
