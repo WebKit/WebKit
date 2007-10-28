@@ -1,3 +1,20 @@
+2007-10-27  Adam Roben  <aroben@apple.com>
+
+        Fix HTMLDocument12.xhtml on Leopard/Windows
+
+        <rdar://5313535> and <rdar://5539816>
+
+        The test succeeds on Leopard and Windows, but fails on Tiger. For some
+        reason, failing expected results had been checked in to
+        platform/mac-leopard. The test seems to be passing now, so I moved the
+        failing results to platform/mac-tiger.
+
+        Reviewed by Maciej and Sam.
+
+        * platform/mac-leopard/dom/xhtml/level2/html/HTMLDocument12-expected.txt: Removed.
+        * platform/mac-tiger/dom/xhtml/level2/html/HTMLDocument12-expected.txt:
+        Moved from platform/mac-leopard.
+
 2007-10-27  Sam Weinig  <sam@webkit.org>
 
         Hit with the rubber-stamp of Timothy Hatcher.
