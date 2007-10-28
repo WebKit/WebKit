@@ -26,8 +26,6 @@
 #ifndef XMLTokenizer_h
 #define XMLTokenizer_h
 
-#include "config.h"
-
 #include "CachedResourceClient.h"
 #include "SegmentedString.h"
 #include "StringHash.h"

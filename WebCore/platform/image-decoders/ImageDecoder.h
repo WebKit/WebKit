@@ -26,7 +26,6 @@
 #ifndef IMAGE_DECODER_H_
 #define IMAGE_DECODER_H_
 
-#include "config.h"
 #include "IntRect.h"
 #include "ImageSource.h"
 #include "SharedBuffer.h"

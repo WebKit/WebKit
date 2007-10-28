@@ -24,8 +24,6 @@
 
 #include <sys/types.h>
 
-#include "config.h"
-
 #if HAVE(PCREPOSIX)
 #include <pcre.h>
 #else  // POSIX regex - not so good...

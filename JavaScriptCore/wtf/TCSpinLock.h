@@ -33,8 +33,6 @@
 #ifndef TCMALLOC_INTERNAL_SPINLOCK_H__
 #define TCMALLOC_INTERNAL_SPINLOCK_H__
 
-#include "config.h"
-
 #if (PLATFORM(X86) || PLATFORM(PPC)) && COMPILER(GCC)
 
 #include <time.h>       /* For nanosleep() */

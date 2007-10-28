@@ -25,8 +25,6 @@
 #ifndef _JNI_INSTANCE_H_
 #define _JNI_INSTANCE_H_
 
-#include "config.h"
-
 #include "runtime.h"
 
 #include <JavaVM/jni.h>
