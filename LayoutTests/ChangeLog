@@ -1,5 +1,14 @@
 2007-10-27  Sam Weinig  <sam@webkit.org>
 
+        Hit with the rubber-stamp of Timothy Hatcher.
+
+        Tests for window.console's functions.
+
+        * fast/dom/Window/console-functions-expected.txt: Added.
+        * fast/dom/Window/console-functions.html: Added.
+
+2007-10-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Tim Hatcher.
 
         Speculative fix for an intermittently failing test
