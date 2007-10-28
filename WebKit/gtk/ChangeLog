@@ -1,3 +1,14 @@
+2007-10-28  Lars Lindner  <lars.lindner@gmail.com>
+
+        Reviewed by Alp.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15466
+        [gtk] widget does not take focus on mouse click
+
+        Grab widget focus in mouse press callback.
+
+        * Api/webkitgtkpage.cpp:
+
 2007-10-25  Alp Toker  <alp@atoker.com>
 
         Reviewed by Brady.

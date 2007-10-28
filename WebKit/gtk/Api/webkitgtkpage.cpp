@@ -102,8 +102,12 @@ static gboolean webkit_page_button_event(GtkWidget* widget, GdkEventButton* even
 
     if (event->type == GDK_BUTTON_RELEASE)
         frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
-    else
+    else {
         frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+
+        //FIXME need to keep track of subframe focus for key events!
+        gtk_widget_grab_focus(GTK_WIDGET(widget));
+    }
 
     return FALSE;
 }
