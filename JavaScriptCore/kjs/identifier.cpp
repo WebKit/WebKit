@@ -38,6 +38,7 @@ namespace WTF {
     template<> struct StrHash<KJS::UString::Rep *> {
         static unsigned hash(const KJS::UString::Rep *key) { return key->hash(); }
         static bool equal(const KJS::UString::Rep *a, const KJS::UString::Rep *b) { return KJS::Identifier::equal(a, b); }
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
     template<> struct DefaultHash<KJS::UString::Rep *> {

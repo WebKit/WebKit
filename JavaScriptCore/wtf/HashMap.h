@@ -129,7 +129,7 @@ namespace WTF {
 
         static unsigned hash(const KeyType& key) { return HashFunctions::hash(key); }
         static bool equal(const KeyStorageType& a, const KeyType& b) { return HashFunctions::equal(*(KeyType*)&a, b); }
-        static void translate(ValueStorageType& location, const KeyType& key, const MappedType& mapped, unsigned)
+        static void translate(ValueStorageType& location, const KeyType& key, const MappedType& mapped)
         {
             Assigner<KeyTraits::needsRef, KeyType, KeyStorageType, KeyTraits>::assign(key, location.first);
             Assigner<MappedTraits::needsRef, MappedType, MappedStorageType, MappedTraits>::assign(mapped, location.second);
@@ -150,7 +150,7 @@ namespace WTF {
         
         static unsigned hash(const KeyType& key) { return HashFunctions::hash(key); }
         static bool equal(const KeyStorageType& a, const KeyType& b) { return HashFunctions::equal(*(KeyType*)&a, b); }
-        static void translate(ValueStorageType& location, const KeyType& key, const MappedType& mapped, unsigned)
+        static void translate(ValueStorageType& location, const KeyType& key, const MappedType& mapped)
         {
             if (location.first == KeyStorageTraits::deletedValue())
                 location.first = KeyStorageTraits::emptyValue();
@@ -291,13 +291,15 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
-    inline typename HashMap<T, U, V, W, MappedTraits>::MappedType
+    typename HashMap<T, U, V, W, MappedTraits>::MappedType
     HashMap<T, U, V, W, MappedTraits>::get(const KeyType& key) const
     {
-        const_iterator it = find(key);
-        if (it == end())
+        if (m_impl.isEmpty())
             return MappedTraits::emptyValue();
-        return it->second;
+        ValueStorageType* entry = const_cast<HashTableType&>(m_impl).lookup(*(const KeyStorageType*)&key);
+        if (!entry)
+            return MappedTraits::emptyValue();
+        return ((ValueType *)entry)->second;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>

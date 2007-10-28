@@ -220,6 +220,7 @@ namespace WTF {
         
         static unsigned hash(Node* const& key) { return HashArg::hash(key->m_value); }
         static bool equal(Node* const& a, Node* const& b) { return HashArg::equal(a->m_value, b->m_value); }
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
     template<typename ValueArg, typename HashArg> class ListHashSetIterator {
@@ -340,7 +341,7 @@ namespace WTF {
     public:
         static unsigned hash(const ValueType& key) { return HashFunctions::hash(key); }
         static bool equal(Node* const& a, const ValueType& b) { return HashFunctions::equal(a->m_value, b); }
-        static void translate(Node*& location, const ValueType& key, NodeAllocator* allocator, unsigned)
+        static void translate(Node*& location, const ValueType& key, NodeAllocator* allocator)
         {
             location = new (allocator) Node(key);
         }

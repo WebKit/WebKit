@@ -65,11 +65,13 @@ namespace WTF {
     template<typename T> struct IntHash {
         static unsigned hash(T key) { return intHash(static_cast<typename IntTypes<sizeof(T)>::UnsignedType>(key)); }
         static bool equal(T a, T b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
     template<typename T> struct FloatHash {
         static unsigned hash(T key) { return intHash(*reinterpret_cast<typename IntTypes<sizeof(T)>::UnsignedType*>(&key)); }
         static bool equal(T a, T b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
     // pointer identity hash function
@@ -87,10 +89,12 @@ namespace WTF {
 #endif
         }
         static bool equal(T a, T b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
     };
     template<typename P> struct PtrHash<RefPtr<P> > {
         static unsigned hash(const RefPtr<P>& key) { return PtrHash<P*>::hash(key.get()); }
         static bool equal(const RefPtr<P>& a, const RefPtr<P>& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
     // default hash function for each type

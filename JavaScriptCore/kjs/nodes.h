@@ -1257,9 +1257,9 @@ namespace KJS {
     bool m_initializedSymbolTable;
     
     // Properties that will go into the ActivationImp's local storage. (Used for initializing the ActivationImp.)
-     DeclarationStacks::VarStack m_varStack;
-     DeclarationStacks::FunctionStack m_functionStack;
-     Vector<Identifier> m_parameters;
+    DeclarationStacks::VarStack m_varStack;
+    DeclarationStacks::FunctionStack m_functionStack;
+    Vector<Identifier> m_parameters;
 
     // Mapping from property name -> local storage index. (Used once to transform the AST, and subsequently for residual slow case lookups.)
     SymbolTable m_symbolTable;

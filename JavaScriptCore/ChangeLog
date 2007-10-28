@@ -1,3 +1,63 @@
+2007-10-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - numerous HashTable performance improvements
+        
+        This does not quite add up to a measurable win on SunSpider, but it allows a
+        follow-on > 3% improvement and probably helps WebCore too.
+        
+        I made the following improvements, among others:
+        
+        - Made HashFunctions note whether it is ok to compare a real value with the equal() function
+        to the empty or deleted value, and used this to optimize the comparisons done in hash lookup.
+        
+        - Specialized lookup so it doesn't have to do so many extra branches and build so many extra
+        std::pairs for cases that don't need them. There are now four versions, one for read-only access,
+        two for writing, and one folded directly into add() (these all were improvments).
+        
+        - Made HashMap::get() use lookup() directly instead of find() to avoid having to build iterators.
+        
+        - Made a special constructor for iterators that knows it points to
+        a valid filled cell and so skips updating itself.
+
+        - Reordered memory accesses in the various lookup functions for better codegetion
+        
+        - Made simple translators avoid passing a hash code around
+        
+        - Other minor tweaks
+        
+        * wtf/HashTable.h:
+        (WTF::):
+        (WTF::HashTableConstIterator::HashTableConstIterator):
+        (WTF::HashTableIterator::HashTableIterator):
+        (WTF::IdentityHashTranslator::translate):
+        (WTF::HashTable::end):
+        (WTF::HashTable::lookup):
+        (WTF::HashTable::lookupForWriting):
+        (WTF::HashTable::makeKnownGoodIterator):
+        (WTF::HashTable::makeKnownGoodConstIterator):
+        (WTF::::lookup):
+        (WTF::::lookupForWriting):
+        (WTF::::fullLookupForWriting):
+        (WTF::::add):
+        (WTF::::addPassingHashCode):
+        (WTF::::reinsert):
+        (WTF::::find):
+        (WTF::::contains):
+        * kjs/identifier.cpp:
+        (WTF::):
+        * wtf/HashFunctions.h:
+        (WTF::):
+        * wtf/HashMap.h:
+        (WTF::):
+        (WTF::::get):
+        * wtf/HashSet.h:
+        (WTF::):
+        (WTF::::add):
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetTranslator::translate):
+
 2007-10-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

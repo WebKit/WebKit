@@ -111,7 +111,7 @@ namespace WTF {
         typedef typename StorageTraits::TraitType StorageType;
         static unsigned hash(const ValueType& key) { return HashFunctions::hash(key); }
         static bool equal(const StorageType& a, const ValueType& b) { return HashFunctions::equal(*(const ValueType*)&a, b); }
-        static void translate(StorageType& location, const ValueType& key, const ValueType&, unsigned)
+        static void translate(StorageType& location, const ValueType& key, const ValueType&)
         {
             Assigner<ValueTraits::needsRef, ValueType, StorageType, ValueTraits>::assign(key, location);
         }
@@ -122,7 +122,7 @@ namespace WTF {
         typedef typename StorageTraits::TraitType StorageType;
         static unsigned hash(const ValueType& key) { return HashFunctions::hash(key); }
         static bool equal(const StorageType& a, const ValueType& b) { return HashFunctions::equal(*(const ValueType*)&a, b); }
-        static void translate(StorageType& location, const ValueType& key, const ValueType&, unsigned)
+        static void translate(StorageType& location, const ValueType& key, const ValueType&)
         {
             if (location == StorageTraits::deletedValue())
                 location = StorageTraits::emptyValue();
@@ -276,7 +276,7 @@ namespace WTF {
     {
         const bool canReplaceDeletedValue = !ValueTraits::needsDestruction || StorageTraits::needsDestruction;
         typedef HashSetTranslatorAdapter<canReplaceDeletedValue, ValueType, StorageTraits, T, Translator> Adapter;
-        return m_impl.template add<T, T, Adapter>(value, value);
+        return m_impl.template addPassingHashCode<T, T, Adapter>(value, value);
     }
 
     template<typename T, typename U, typename V>
