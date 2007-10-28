@@ -1,3 +1,11 @@
+2007-10-28  Adam Roben  <aroben@apple.com>
+
+        Re-enable a bunch of passing tests on Windows
+
+        Reviewed by NOBODY.
+
+        * platform/win/Skipped:
+
 2007-10-27  Adam Roben  <aroben@apple.com>
 
         Updated Windows Skipped file for currently failing tests
