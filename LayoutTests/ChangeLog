@@ -1,5 +1,14 @@
 2007-10-27  Adam Roben  <aroben@apple.com>
 
+        Speculative fix for an intermittently failing test
+
+        Reviewed by Sam and Eric.
+
+        * http/tests/local/style-access-before-stylesheet-loaded.html: Use
+        waitUntilDone/notifyDone.
+
+2007-10-27  Adam Roben  <aroben@apple.com>
+
         Add some more failing tests to the Windows Skipped file
 
         Reviewed by NOBODY.

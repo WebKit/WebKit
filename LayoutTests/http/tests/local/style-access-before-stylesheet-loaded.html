@@ -12,6 +12,9 @@ function test() {
         e.offsetLeft;
     var time = new Date().getTime() - start;
     console.innerHTML = ((time < 500) ? "<span style='color:green'>PASS</span> " :  "<span style='color:red'>FAIL</span> ");// + time;
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </script>
 
@@ -24,6 +27,8 @@ Works as HTTP test only.
 <div id=console></div>
 <div id=t></div>
 <script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
 // increase document complexity a bit
 for (n = 0; n < 500; n++)
     document.write("<div><span></span><div><span></span></div></div>");
