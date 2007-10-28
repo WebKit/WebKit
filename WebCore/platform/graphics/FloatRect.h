@@ -45,6 +45,10 @@ typedef struct _NSRect NSRect;
 class QRectF;
 #endif
 
+#if PLATFORM(WX) && USE(WXGC)
+class wxRect2DDouble;
+#endif
+
 namespace WebCore {
 
 class IntRect;
@@ -126,6 +130,11 @@ public:
     FloatRect(const TRect&);
     operator TRect() const;
     TRect rect() const;
+#endif
+
+#if PLATFORM(WX) && USE(WXGC)
+    FloatRect(const wxRect2DDouble&);
+    operator wxRect2DDouble() const;
 #endif
 
 private:

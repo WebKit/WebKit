@@ -127,6 +127,10 @@ public:
     virtual bool getHBITMAPOfSize(HBITMAP, LPSIZE);
 #endif
 
+#if PLATFORM(WX)
+    virtual wxBitmap* getWxBitmap() const;
+#endif
+
     virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
 
 private:
@@ -134,7 +138,7 @@ private:
     virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator);
 #endif
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(WX)
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                              const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
 #endif    

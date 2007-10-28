@@ -36,6 +36,10 @@ typedef struct CGColor* CGColorRef;
 class QColor;
 #endif
 
+#if PLATFORM(WX)
+class wxColour;
+#endif
+
 namespace WebCore {
 
 class String;
@@ -85,6 +89,11 @@ public:
 #if PLATFORM(QT)
     Color(const QColor&);
     operator QColor() const;
+#endif
+
+#if PLATFORM(WX)
+    Color(const wxColour&);
+    operator wxColour() const;
 #endif
 
     static bool parseHexColor(const String& name, RGBA32& rgb);

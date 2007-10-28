@@ -28,6 +28,10 @@
 
 #include "Color.h"
 
+#if PLATFORM(WX)
+class wxPen;
+#endif
+
 namespace WebCore {
 
 class Pen {
@@ -51,6 +55,11 @@ public:
 
     bool operator==(const Pen &) const;
     bool operator!=(const Pen &) const;
+    
+#if PLATFORM(WX)
+    Pen(const wxPen&);
+    operator wxPen() const;
+#endif
 
 private:
     PenStyle  m_style;

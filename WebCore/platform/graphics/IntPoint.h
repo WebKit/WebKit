@@ -51,6 +51,10 @@ class QPoint;
 class TPoint;
 #endif
 
+#if PLATFORM(WX)
+class wxPoint;
+#endif
+
 namespace WebCore {
 
 class IntPoint {
@@ -88,6 +92,11 @@ public:
 #if PLATFORM(SYMBIAN)
     IntPoint(const TPoint&);
     operator TPoint() const;
+#endif
+
+#if PLATFORM(WX)
+    IntPoint(const wxPoint&);
+    operator wxPoint() const;
 #endif
 
 private:

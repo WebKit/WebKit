@@ -29,7 +29,9 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(CG)
+#if PLATFORM(WX)
+class wxBitmap;
+#elif PLATFORM(CG)
 typedef struct CGImageSource* CGImageSourceRef;
 typedef struct CGImage* CGImageRef;
 typedef const struct __CFData* CFDataRef;
@@ -45,7 +47,12 @@ namespace WebCore {
 class IntSize;
 class SharedBuffer;
 
-#if PLATFORM(CG)
+#if PLATFORM(WX)
+class ImageDecoder;
+typedef ImageDecoder* NativeImageSourcePtr;
+typedef const Vector<char>* NativeBytePtr;
+typedef wxBitmap* NativeImagePtr;
+#elif PLATFORM(CG)
 typedef CGImageSourceRef NativeImageSourcePtr;
 typedef CGImageRef NativeImagePtr;
 #elif PLATFORM(QT)

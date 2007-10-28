@@ -32,6 +32,9 @@ typedef struct CGPath PlatformPath;
 #elif PLATFORM(QT)
 class QPainterPath;
 typedef QPainterPath PlatformPath;
+#elif PLATFORM(WX) && USE(WXGC)
+class wxGraphicsPath;
+typedef wxGraphicsPath PlatformPath;
 #elif PLATFORM(CAIRO)
 namespace WebCore {
     struct CairoPath;

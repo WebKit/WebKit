@@ -32,6 +32,9 @@
 #include <QMatrix>
 #elif PLATFORM(CAIRO)
 #include "cairo.h"
+#elif PLATFORM(WX) && USE(WXGC)
+#include <wx/defs.h>
+#include <wx/graphics.h>
 #endif
 
 namespace WebCore {
@@ -50,6 +53,8 @@ public:
     AffineTransform(const QMatrix &matrix);
 #elif PLATFORM(CAIRO)
     AffineTransform(const cairo_matrix_t &matrix);
+#elif PLATFORM(WX) && USE(WXGC)
+    AffineTransform(const wxGraphicsMatrix &matrix);
 #endif
 
     void setMatrix(double a, double b, double c, double d, double e, double f);
@@ -104,6 +109,8 @@ public:
     operator QMatrix() const;
 #elif PLATFORM(CAIRO)
     operator cairo_matrix_t() const;
+#elif PLATFORM(WX) && USE(WXGC)
+    operator wxGraphicsMatrix() const;
 #endif
 
     bool operator==(const AffineTransform&) const;
@@ -118,6 +125,8 @@ private:
     QMatrix m_transform;
 #elif PLATFORM(CAIRO)
     cairo_matrix_t m_transform;
+#elif PLATFORM(WX) && USE(WXGC)
+    wxGraphicsMatrix m_transform;
 #endif
 };
 
