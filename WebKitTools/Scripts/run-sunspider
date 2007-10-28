@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2007 Apple Inc. All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,13 @@ use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
 
-
-# determine configuration
+# determine configuration, but default to "Release" instead of last-used configuration
+setConfiguration("Release");
 setConfiguration();
 my $configuration = configuration();
 
 my $root;
-my $testRuns = 5; # This number may be different from what ./sunspider defaults to (that's OK)
+my $testRuns = 5; # This number may be different from what sunspider defaults to (that's OK)
 my $runShark = 0;
 my $showHelp = 0;
 my $testsPattern;
@@ -58,7 +58,7 @@ GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(C
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
-$testRuns = 1  if $runShark;
+$testRuns = 1 if $runShark;
 
 if ($showHelp) {
    print STDERR $usage;
@@ -79,7 +79,7 @@ sub buildTestKJS
     }
 }
 
-sub setupEnviromentForExecution($)
+sub setupEnvironmentForExecution($)
 {
     my ($productDir) = @_;
     print "Starting sunspider with DYLD_FRAMEWORK_PATH set to point to built JavaScriptCore in $productDir.\n";
@@ -104,10 +104,10 @@ my $productDir = productDir();
 # FIXME: This hack should be pushed down into productDir()
 $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
 
-setupEnviromentForExecution($productDir);
+setupEnvironmentForExecution($productDir);
 my @args = ("--shell", testKJSPath($productDir), "--runs", $testRuns);
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
-push(@args, "--shark")  if $runShark;
-push(@args, "--tests", $testsPattern)  if $testsPattern;
+push @args, "--shark" if $runShark;
+push @args, "--tests", $testsPattern if $testsPattern;
 
 exec "./sunspider", @args;

@@ -32,7 +32,6 @@ use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
 
-
 # determine configuration
 setConfiguration();
 my $configuration = configuration();
@@ -69,7 +68,7 @@ sub buildTestKJS
     }
 }
 
-sub setupEnviromentForExecution($)
+sub setupEnvironmentForExecution($)
 {
     my ($productDir) = @_;
     print "Starting sunspider-compare-results with DYLD_FRAMEWORK_PATH set to point to built JavaScriptCore in $productDir.\n";
@@ -94,7 +93,7 @@ my $productDir = productDir();
 # FIXME: This hack should be pushed down into productDir()
 $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
 
-setupEnviromentForExecution($productDir);
+setupEnvironmentForExecution($productDir);
 my @args = ("--shell", testKJSPath($productDir));
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
 

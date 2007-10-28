@@ -1,3 +1,14 @@
+2007-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * Scripts/run-sunspider: Default to "Release" configuration rather than
+        defaulting to the last configuration used as other scripts do. This can
+        still be overriden on the command line with "--debug" if there's some
+        reason to do so. Also fix a typo.
+
+        * Scripts/sunspider-compare-results: Fix a typo.
+
 2007-10-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
