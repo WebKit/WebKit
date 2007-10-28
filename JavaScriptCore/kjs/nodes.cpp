@@ -290,11 +290,6 @@ Completion Node::rethrowException(ExecState* exec)
     return Completion(Throw, exception);
 }
 
-Node *Node::nodeInsideAllParens()
-{
-    return this;
-}
-
 // ------------------------------ StatementNode --------------------------------
 
 StatementNode::StatementNode() 
@@ -398,23 +393,6 @@ JSValue *ResolveNode::evaluate(ExecState *exec)
   return throwUndefinedVariableError(exec, ident);
 }
 
-// ------------------------------ GroupNode ------------------------------------
-
-// ECMA 11.1.6
-JSValue *GroupNode::evaluate(ExecState *exec)
-{
-  return group->evaluate(exec);
-}
-
-Node *GroupNode::nodeInsideAllParens()
-{
-    Node *n = this;
-    do
-        n = static_cast<GroupNode *>(n)->group.get();
-    while (n->isGroupNode());
-    return n;
-}
-
 // ------------------------------ ElementNode ----------------------------------
 
 // ECMA 11.1.4
@@ -479,23 +457,20 @@ JSValue *PropertyListNode::evaluate(ExecState *exec)
   JSObject *obj = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   
   for (PropertyListNode *p = this; p; p = p->next.get()) {
-    JSValue *n = p->node->name->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
     JSValue *v = p->node->assign->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
     
-    Identifier propertyName = Identifier(n->toString(exec));
     switch (p->node->type) {
       case PropertyNode::Getter:
         ASSERT(v->isObject());
-        obj->defineGetter(exec, propertyName, static_cast<JSObject *>(v));
+        obj->defineGetter(exec, p->node->name(), static_cast<JSObject *>(v));
         break;
       case PropertyNode::Setter:
         ASSERT(v->isObject());
-        obj->defineSetter(exec, propertyName, static_cast<JSObject *>(v));
+        obj->defineSetter(exec, p->node->name(), static_cast<JSObject *>(v));
         break;
       case PropertyNode::Constant:
-        obj->put(exec, propertyName, v);
+        obj->put(exec, p->node->name(), v);
         break;
     }
   }
@@ -514,22 +489,6 @@ JSValue *PropertyNode::evaluate(ExecState*)
 {
   ASSERT(false);
   return jsNull();
-}
-
-// ---------------------------- PropertyNameNode -------------------------------
-
-// ECMA 11.1.5
-JSValue *PropertyNameNode::evaluate(ExecState*)
-{
-  JSValue *s;
-
-  if (str.isNull()) {
-    s = jsString(UString::from(numeric));
-  } else {
-    s = jsOwnedString(str.ustring());
-  }
-
-  return s;
 }
 
 // ------------------------------ BracketAccessorNode --------------------------------

@@ -1,3 +1,112 @@
+2007-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15735
+          remove GroupNode to simplify AST and possibly get a modest speedup
+
+        This patch removes 4 node types: GroupNode, PropertyNameNode,
+        FunctionCallParenBracketNode, and FunctionCallParenDotNode.
+
+        To remove GroupNode, we add knowledge of precedence to the tree nodes,
+        and use that when serializing to determine where parentheses are needed.
+        This means we no longer have to represent parentheses in the tree.
+
+        The precedence values are named after productions in the grammar from the
+        JavaScript standard.
+
+        SunSpider says this is an 0.4% speedup.
+
+        * kjs/function.h:
+        * kjs/function.cpp: Removed escapeStringForPrettyPrinting -- it's part of
+        serialization, so I moved it to the file that takes care of that.
+
+        * kjs/grammar.y: Changed makeGetterOrSetterPropertyNode to use 0 to
+        indicate failure instead of a separate boolean. Got rid of PropertyNameNode
+        by merging the PropertyName rule into the Property rule (which was easier
+        than figuring out how to pass the Identifier from one node to another).
+        Got rid of GroupNode, nodeInsideAllParens(), FunctionCallParenBracketNode,
+        and FunctionCallParenDotNode.
+
+        * kjs/nodes.h: Removed unused forward declarations and Operator values.
+        Added Precedence enum, and precedence function to all nodes. Removed
+        nodeInsideAllParens. Added streamBinaryOperator function for serialization.
+        Removed GroupNode and PropertyNameNode. Made PropertyNode store an Identifier.
+        Removed FunctionCallParenBracketNode and FunctionCallParenDotNode.
+
+        * kjs/nodes.cpp: Removed Node::nodinsideAllParens, GroupNode, and PropertyNameNode.
+        (KJS::PropertyListNode::evaluate): Changed code to get name directly instead
+        of converting it from an Identifier to a jsString then back to a UString
+        then into an Identifier again!
+
+        * kjs/nodes2string.cpp: Changed special-token implementation to use a separate
+        function for each of Endl, Indent, Unindent, and DotExpr instead of using a
+        single function with a switch. Added a precedence that you can stream in, to
+        cause the next node serialized to add parentheses based on that precedence value.
+        (KJS::operatorString): Moved to the top of the file.
+        (KJS::escapeStringForPrettyPrinting): Moved here from function.cpp. Removed old
+        workaround for snprintf, since StringExtras.h takes care of that.
+        (KJS::operator<<): Made the char and char* versions faster by using UString's
+        character append functions instead of constructing a UString. Added the logic
+        to the Node* version to add parentheses if needed.
+        (KJS::Node::streamLeftAssociativeBinaryOperator): Added helper function.
+        (KJS::ElementNode::streamTo): Use PrecAssignment for the elements.
+        (KJS::BracketAccessorNode::streamTo): Use PrecCall for the expression before
+        the bracket.
+        (KJS::DotAccessorNode::streamTo): Use PrecCall for the expression before the dot.
+        (KJS::ArgumentListNode::streamTo): Use PrecAssignment for the arguments.
+        (KJS::NewExprNode::streamTo): Use PrecMember for the expression.
+        (KJS::FunctionCallValueNode::streamTo): Use PrecCall.
+        (KJS::FunctionCallBracketNode::streamTo): Ditto.
+        (KJS::FunctionCallDotNode::streamTo): Ditto.
+        (KJS::PostfixBracketNode::streamTo): Ditto.
+        (KJS::PostfixDotNode::streamTo): Ditto.
+        (KJS::PostfixErrorNode::streamTo): Use PrecLeftHandSide.
+        (KJS::DeleteBracketNode::streamTo): Use PrecCall.
+        (KJS::DeleteDotNode::streamTo): Ditto.
+        (KJS::DeleteValueNode::streamTo): Use PrecUnary.
+        (KJS::VoidNode::streamTo): Ditto.
+        (KJS::TypeOfValueNode::streamTo): Ditto.
+        (KJS::PrefixBracketNode::streamTo): Use PrecCall.
+        (KJS::PrefixDotNode::streamTo): Ditto.
+        (KJS::PrefixErrorNode::streamTo): Use PrecUnary.
+        (KJS::UnaryPlusNode::streamTo): Ditto.
+        (KJS::NegateNode::streamTo): Ditto.
+        (KJS::BitwiseNotNode::streamTo): Ditto.
+        (KJS::LogicalNotNode::streamTo): Ditto.
+        (KJS::MultNode::streamTo): Use streamLeftAssociativeBinaryOperator.
+        (KJS::DivNode::streamTo): Ditto.
+        (KJS::ModNode::streamTo): Ditto.
+        (KJS::AddNode::streamTo): Ditto.
+        (KJS::SubNode::streamTo): Ditto.
+        (KJS::LeftShiftNode::streamTo): Ditto.
+        (KJS::RightShiftNode::streamTo): Ditto.
+        (KJS::UnsignedRightShiftNode::streamTo): Ditto.
+        (KJS::LessNode::streamTo): Ditto.
+        (KJS::GreaterNode::streamTo): Ditto.
+        (KJS::LessEqNode::streamTo): Ditto.
+        (KJS::GreaterEqNode::streamTo): Ditto.
+        (KJS::InstanceOfNode::streamTo): Ditto.
+        (KJS::InNode::streamTo): Ditto.
+        (KJS::EqualNode::streamTo): Ditto.
+        (KJS::NotEqualNode::streamTo): Ditto.
+        (KJS::StrictEqualNode::streamTo): Ditto.
+        (KJS::NotStrictEqualNode::streamTo): Ditto.
+        (KJS::BitAndNode::streamTo): Ditto.
+        (KJS::BitXOrNode::streamTo): Ditto.
+        (KJS::BitOrNode::streamTo): Ditto.
+        (KJS::LogicalAndNode::streamTo): Ditto.
+        (KJS::LogicalOrNode::streamTo): Ditto.
+        (KJS::ConditionalNode::streamTo): Ditto.
+        (KJS::AssignResolveNode::streamTo): Use PrecAssignment for the right side.
+        (KJS::AssignBracketNode::streamTo): Use PrecCall for the expression before
+        the bracket and PrecAssignment for the right side.
+        (KJS::AssignDotNode::streamTo): Ditto.
+        (KJS::AssignErrorNode::streamTo): Use PrecLeftHandSide for the left side
+        and PrecAssignment for the right side.
+        (KJS::CommaNode::streamTo): Use PrecAssignment for both expressions.
+        (KJS::AssignExprNode::streamTo): Use PrecAssignment.
+
 2007-10-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         Define wx port and set wx port USE options.
@@ -70,7 +179,7 @@
         - Made a special constructor for iterators that knows it points to
         a valid filled cell and so skips updating itself.
 
-        - Reordered memory accesses in the various lookup functions for better codegetion
+        - Reordered memory accesses in the various lookup functions for better code generation
         
         - Made simple translators avoid passing a hash code around
         

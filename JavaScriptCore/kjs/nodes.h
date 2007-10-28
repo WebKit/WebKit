@@ -44,45 +44,50 @@
 
 namespace KJS {
 
-  class FuncDeclNode;
-  class ProgramNode;
-  class PropertyNameNode;
-  class PropertyListNode;
-  class RegExp;
-  class SourceElementsNode;
-  class SourceStream;
-  class VarDeclNode;
+    class FuncDeclNode;
+    class PropertyListNode;
+    class SourceElementsNode;
+    class SourceStream;
+    class VarDeclNode;
 
-  enum Operator { OpEqual,
-                  OpEqEq,
-                  OpNotEq,
-                  OpStrEq,
-                  OpStrNEq,
-                  OpPlusEq,
-                  OpMinusEq,
-                  OpMultEq,
-                  OpDivEq,
-                  OpPlusPlus,
-                  OpMinusMinus,
-                  OpLess,
-                  OpLessEq,
-                  OpGreater,
-                  OpGreaterEq,
-                  OpAndEq,
-                  OpXOrEq,
-                  OpOrEq,
-                  OpModEq,
-                  OpAnd,
-                  OpOr,
-                  OpBitAnd,
-                  OpBitXOr,
-                  OpBitOr,
-                  OpLShift,
-                  OpRShift,
-                  OpURShift,
-                  OpIn,
-                  OpInstanceOf
-  };
+    enum Operator {
+        OpEqual,
+        OpPlusEq,
+        OpMinusEq,
+        OpMultEq,
+        OpDivEq,
+        OpPlusPlus,
+        OpMinusMinus,
+        OpAndEq,
+        OpXOrEq,
+        OpOrEq,
+        OpModEq,
+        OpLShift,
+        OpRShift,
+        OpURShift,
+    };
+
+    enum Precedence {
+        PrecPrimary,
+        PrecMember,
+        PrecCall,
+        PrecLeftHandSide,
+        PrecPostfix,
+        PrecUnary,
+        PrecMultiplicitave,
+        PrecAdditive,
+        PrecShift,
+        PrecRelational,
+        PrecEquality,
+        PrecBitwiseAnd,
+        PrecBitwiseXor,
+        PrecBitwiseOr,
+        PrecLogicalAnd,
+        PrecLogicalOr,
+        PrecConditional,
+        PrecAssignment,
+        PrecExpression
+    };
   
   struct DeclarationStacks {
       typedef Vector<Node*, 16> NodeStack;
@@ -110,14 +115,11 @@ namespace KJS {
 
     virtual JSValue *evaluate(ExecState *exec) KJS_FAST_CALL = 0;
     UString toString() const KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL = 0;
     int lineNo() const KJS_FAST_CALL { return m_line; }
     void ref() KJS_FAST_CALL;
     void deref() KJS_FAST_CALL;
     unsigned refcount() KJS_FAST_CALL;
     static void clearNewNodes() KJS_FAST_CALL;
-
-    virtual Node *nodeInsideAllParens() KJS_FAST_CALL;
 
     virtual bool isNumber() const KJS_FAST_CALL { return false; }
     virtual bool isImmediateValue() const KJS_FAST_CALL { return false; }
@@ -125,10 +127,13 @@ namespace KJS {
     virtual bool isResolveNode() const KJS_FAST_CALL { return false; }
     virtual bool isBracketAccessorNode() const KJS_FAST_CALL { return false; }
     virtual bool isDotAccessorNode() const KJS_FAST_CALL { return false; }
-    virtual bool isGroupNode() const KJS_FAST_CALL { return false; }
+
+    // Serialization.
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL = 0;
+    virtual Precedence precedence() const = 0;
 
     // Used for iterative, depth-first traversal of the node tree. Does not cross function call boundaries.
-    bool mayHaveDeclarations() { return m_mayHaveDeclarations; }
+    bool mayHaveDeclarations() const { return m_mayHaveDeclarations; }
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL { ASSERT_NOT_REACHED(); }
 
     virtual void breakCycle() KJS_FAST_CALL { }
@@ -169,6 +174,7 @@ namespace KJS {
     bool hitStatement(ExecState*) KJS_FAST_CALL;
     virtual Completion execute(ExecState *exec) KJS_FAST_CALL = 0;
     void pushLabel(const Identifier &id) KJS_FAST_CALL { ls.push(id); }
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   protected:
     LabelStack ls;
   private:
@@ -181,6 +187,7 @@ namespace KJS {
     NullNode() KJS_FAST_CALL {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPrimary; }
   };
 
   class BooleanNode : public Node {
@@ -188,6 +195,7 @@ namespace KJS {
     BooleanNode(bool v) KJS_FAST_CALL : value(v) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPrimary; }
   private:
     bool value;
   };
@@ -197,6 +205,7 @@ namespace KJS {
     NumberNode(double v) KJS_FAST_CALL : val(v) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPrimary; }
 
     virtual bool isNumber() const KJS_FAST_CALL { return true; }
     double value() const KJS_FAST_CALL { return val; }
@@ -210,6 +219,7 @@ namespace KJS {
       ImmediateNumberNode(JSValue* v) KJS_FAST_CALL : m_value(v) {}
       JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+      virtual Precedence precedence() const { return PrecPrimary; }
       
       virtual bool isImmediateValue() const KJS_FAST_CALL { return true; }
       double value() const KJS_FAST_CALL { return JSImmediate::toDouble(m_value); }
@@ -223,6 +233,7 @@ namespace KJS {
     StringNode(const UString *v) KJS_FAST_CALL { value = *v; }
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPrimary; }
   private:
     UString value;
   };
@@ -233,6 +244,7 @@ namespace KJS {
       : pattern(p), flags(f) { }
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPrimary; }
   private:
     UString pattern, flags;
   };
@@ -242,13 +254,15 @@ namespace KJS {
     ThisNode() KJS_FAST_CALL {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-  };
+    virtual Precedence precedence() const { return PrecPrimary; }
+ };
 
   class ResolveNode : public Node {
   public:
     ResolveNode(const Identifier &s) KJS_FAST_CALL : ident(s) { }
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPrimary; }
 
     virtual bool isLocation() const KJS_FAST_CALL { return true; }
     virtual bool isResolveNode() const KJS_FAST_CALL { return true; }
@@ -256,17 +270,6 @@ namespace KJS {
 
   private:
     Identifier ident;
-  };
-
-  class GroupNode : public Node {
-  public:
-    GroupNode(Node *g) KJS_FAST_CALL : group(g) { }
-    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-    virtual Node *nodeInsideAllParens() KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    virtual bool isGroupNode() const KJS_FAST_CALL { return true; }
-  private:
-    RefPtr<Node> group;
   };
 
   class ElementNode : public Node {
@@ -279,6 +282,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     PassRefPtr<ElementNode> releaseNext() KJS_FAST_CALL { return next.release(); }
     virtual void breakCycle() KJS_FAST_CALL;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     friend class ArrayNode;
     ListRefPtr<ElementNode> next;
@@ -295,33 +299,25 @@ namespace KJS {
       : element(ele->next.release()), elision(eli), opt(true) { Parser::removeNodeCycle(element.get()); }
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPrimary; }
   private:
     RefPtr<ElementNode> element;
     int elision;
     bool opt;
   };
 
-  class PropertyNameNode : public Node {
-  public:
-    PropertyNameNode(double d) KJS_FAST_CALL : numeric(d) { }
-    PropertyNameNode(const Identifier &s) KJS_FAST_CALL : str(s) { }
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-  private:
-    double numeric;
-    Identifier str;
-  };
-  
   class PropertyNode : public Node {
   public:
     enum Type { Constant, Getter, Setter };
-    PropertyNode(PropertyNameNode *n, Node *a, Type t) KJS_FAST_CALL
-      : name(n), assign(a), type(t) { }
+    PropertyNode(const Identifier& n, Node *a, Type t) KJS_FAST_CALL
+      : m_name(n), assign(a), type(t) { }
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     friend class PropertyListNode;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
+    const Identifier& name() const { return m_name; }
   private:
-    RefPtr<PropertyNameNode> name;
+    Identifier m_name;
     RefPtr<Node> assign;
     Type type;
   };
@@ -337,6 +333,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     PassRefPtr<PropertyListNode> releaseNext() KJS_FAST_CALL { return next.release(); }
     virtual void breakCycle() KJS_FAST_CALL;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     friend class ObjectLiteralNode;
     RefPtr<PropertyNode> node;
@@ -349,6 +346,7 @@ namespace KJS {
     ObjectLiteralNode(PropertyListNode *l) KJS_FAST_CALL : list(l->next.release()) { Parser::removeNodeCycle(list.get()); }
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPrimary; }
   private:
     RefPtr<PropertyListNode> list;
   };
@@ -358,6 +356,7 @@ namespace KJS {
     BracketAccessorNode(Node *e1, Node *e2) KJS_FAST_CALL : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecMember; }
 
     virtual bool isLocation() const KJS_FAST_CALL { return true; }
     virtual bool isBracketAccessorNode() const KJS_FAST_CALL { return true; }
@@ -374,6 +373,7 @@ namespace KJS {
     DotAccessorNode(Node *e, const Identifier &s) KJS_FAST_CALL : expr(e), ident(s) { }
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecMember; }
 
     virtual bool isLocation() const KJS_FAST_CALL { return true; }
     virtual bool isDotAccessorNode() const KJS_FAST_CALL { return true; }
@@ -396,6 +396,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     PassRefPtr<ArgumentListNode> releaseNext() KJS_FAST_CALL { return next.release(); }
     virtual void breakCycle() KJS_FAST_CALL;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     friend class ArgumentsNode;
     ListRefPtr<ArgumentListNode> next;
@@ -410,6 +411,7 @@ namespace KJS {
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     List evaluateList(ExecState *exec) KJS_FAST_CALL { return list ? list->evaluateList(exec) : List(); }
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     RefPtr<ArgumentListNode> list;
   };
@@ -420,6 +422,7 @@ namespace KJS {
     NewExprNode(Node *e, ArgumentsNode *a) KJS_FAST_CALL : expr(e), args(a) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecLeftHandSide; }
   private:
     RefPtr<Node> expr;
     RefPtr<ArgumentsNode> args;
@@ -430,6 +433,7 @@ namespace KJS {
     FunctionCallValueNode(Node *e, ArgumentsNode *a) KJS_FAST_CALL : expr(e), args(a) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecCall; }
   private:
     RefPtr<Node> expr;
     RefPtr<ArgumentsNode> args;
@@ -440,6 +444,7 @@ namespace KJS {
     FunctionCallResolveNode(const Identifier& i, ArgumentsNode *a) KJS_FAST_CALL : ident(i), args(a) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecCall; }
   private:
     Identifier ident;
     RefPtr<ArgumentsNode> args;
@@ -450,16 +455,11 @@ namespace KJS {
     FunctionCallBracketNode(Node *b, Node *s, ArgumentsNode *a) KJS_FAST_CALL : base(b), subscript(s), args(a) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecCall; }
   protected:
     RefPtr<Node> base;
     RefPtr<Node> subscript;
     RefPtr<ArgumentsNode> args;
-  };
-
-  class FunctionCallParenBracketNode : public FunctionCallBracketNode {
-  public:
-    FunctionCallParenBracketNode(Node *b, Node *s, ArgumentsNode *a) KJS_FAST_CALL : FunctionCallBracketNode(b, s, a) {}
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
   class FunctionCallDotNode : public Node {
@@ -467,16 +467,11 @@ namespace KJS {
     FunctionCallDotNode(Node *b, const Identifier &i, ArgumentsNode *a) KJS_FAST_CALL : base(b), ident(i), args(a) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecCall; }
   protected:
     RefPtr<Node> base;
     Identifier ident;
     RefPtr<ArgumentsNode> args;
-  };
-
-  class FunctionCallParenDotNode : public FunctionCallDotNode {
-  public:
-    FunctionCallParenDotNode(Node *b, const Identifier &i, ArgumentsNode *a) KJS_FAST_CALL : FunctionCallDotNode(b, i, a) {}
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
   };
 
   class PostfixResolveNode : public Node {
@@ -484,6 +479,7 @@ namespace KJS {
     PostfixResolveNode(const Identifier& i, Operator o) KJS_FAST_CALL : m_ident(i), m_oper(o) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPostfix; }
   private:
     Identifier m_ident;
     Operator m_oper;
@@ -494,6 +490,7 @@ namespace KJS {
     PostfixBracketNode(Node *b, Node *s, Operator o) KJS_FAST_CALL : m_base(b), m_subscript(s), m_oper(o) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPostfix; }
   private:
     RefPtr<Node> m_base;
     RefPtr<Node> m_subscript;
@@ -505,6 +502,7 @@ namespace KJS {
     PostfixDotNode(Node *b, const Identifier& i, Operator o) KJS_FAST_CALL : m_base(b), m_ident(i), m_oper(o) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPostfix; }
   private:
     RefPtr<Node> m_base;
     Identifier m_ident;
@@ -516,6 +514,7 @@ namespace KJS {
     PostfixErrorNode(Node* e, Operator o) KJS_FAST_CALL : m_expr(e), m_oper(o) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecPostfix; }
   private:
     RefPtr<Node> m_expr;
     Operator m_oper;
@@ -526,6 +525,7 @@ namespace KJS {
     DeleteResolveNode(const Identifier& i) KJS_FAST_CALL : m_ident(i) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     Identifier m_ident;
   };
@@ -535,6 +535,7 @@ namespace KJS {
     DeleteBracketNode(Node *base, Node *subscript) KJS_FAST_CALL : m_base(base), m_subscript(subscript) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> m_base;
     RefPtr<Node> m_subscript;
@@ -545,6 +546,7 @@ namespace KJS {
     DeleteDotNode(Node *base, const Identifier& i) KJS_FAST_CALL : m_base(base), m_ident(i) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> m_base;
     Identifier m_ident;
@@ -555,6 +557,7 @@ namespace KJS {
     DeleteValueNode(Node *e) KJS_FAST_CALL : m_expr(e) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> m_expr;
   };
@@ -564,6 +567,7 @@ namespace KJS {
     VoidNode(Node *e) KJS_FAST_CALL : expr(e) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> expr;
   };
@@ -573,6 +577,7 @@ namespace KJS {
     TypeOfResolveNode(const Identifier& i) KJS_FAST_CALL : m_ident(i) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     Identifier m_ident;
   };
@@ -582,6 +587,7 @@ namespace KJS {
     TypeOfValueNode(Node *e) KJS_FAST_CALL : m_expr(e) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> m_expr;
   };
@@ -591,6 +597,7 @@ namespace KJS {
     PrefixResolveNode(const Identifier& i, Operator o) KJS_FAST_CALL : m_ident(i), m_oper(o) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     Identifier m_ident;
     Operator m_oper;
@@ -601,6 +608,7 @@ namespace KJS {
     PrefixBracketNode(Node *b, Node *s, Operator o) KJS_FAST_CALL : m_base(b), m_subscript(s), m_oper(o) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> m_base;
     RefPtr<Node> m_subscript;
@@ -612,6 +620,7 @@ namespace KJS {
     PrefixDotNode(Node *b, const Identifier& i, Operator o) KJS_FAST_CALL : m_base(b), m_ident(i), m_oper(o) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> m_base;
     Identifier m_ident;
@@ -623,6 +632,7 @@ namespace KJS {
     PrefixErrorNode(Node* e, Operator o) KJS_FAST_CALL : m_expr(e), m_oper(o) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> m_expr;
     Operator m_oper;
@@ -633,6 +643,7 @@ namespace KJS {
     UnaryPlusNode(Node *e) KJS_FAST_CALL : expr(e) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> expr;
   };
@@ -642,6 +653,7 @@ namespace KJS {
     NegateNode(Node *e) KJS_FAST_CALL : expr(e) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> expr;
   };
@@ -651,6 +663,7 @@ namespace KJS {
     BitwiseNotNode(Node *e) KJS_FAST_CALL : expr(e) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> expr;
   };
@@ -660,6 +673,7 @@ namespace KJS {
     LogicalNotNode(Node *e) KJS_FAST_CALL : expr(e) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecUnary; }
   private:
     RefPtr<Node> expr;
   };
@@ -669,6 +683,7 @@ namespace KJS {
       MultNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
       JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+      virtual Precedence precedence() const { return PrecMultiplicitave; }
   private:
       RefPtr<Node> term1;
       RefPtr<Node> term2;
@@ -679,6 +694,7 @@ namespace KJS {
       DivNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
       JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+      virtual Precedence precedence() const { return PrecMultiplicitave; }
   private:
       RefPtr<Node> term1;
       RefPtr<Node> term2;
@@ -689,6 +705,7 @@ namespace KJS {
       ModNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
       JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+      virtual Precedence precedence() const { return PrecMultiplicitave; }
   private:
       RefPtr<Node> term1;
       RefPtr<Node> term2;
@@ -699,6 +716,7 @@ namespace KJS {
     AddNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+      virtual Precedence precedence() const { return PrecAdditive; }
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
@@ -709,6 +727,7 @@ namespace KJS {
       SubNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
       JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+      virtual Precedence precedence() const { return PrecAdditive; }
   private:
       RefPtr<Node> term1;
       RefPtr<Node> term2;
@@ -720,6 +739,7 @@ namespace KJS {
       : term1(t1), term2(t2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecShift; }
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
@@ -731,6 +751,7 @@ namespace KJS {
       : term1(t1), term2(t2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecShift; }
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
@@ -742,6 +763,7 @@ namespace KJS {
       : term1(t1), term2(t2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecShift; }
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
@@ -753,6 +775,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecRelational; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -764,6 +787,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecRelational; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -775,6 +799,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecRelational; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -786,6 +811,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecRelational; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -797,6 +823,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecRelational; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -808,6 +835,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecRelational; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -819,6 +847,7 @@ namespace KJS {
       : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecEquality; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -830,6 +859,7 @@ namespace KJS {
       : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecEquality; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -841,6 +871,7 @@ namespace KJS {
       : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecEquality; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -852,6 +883,7 @@ namespace KJS {
       : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecEquality; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -863,6 +895,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecBitwiseAnd; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -874,6 +907,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecBitwiseOr; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -885,6 +919,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecBitwiseXor; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -899,6 +934,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecLogicalAnd; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -910,6 +946,7 @@ namespace KJS {
       expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecLogicalOr; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -924,6 +961,7 @@ namespace KJS {
       logical(l), expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecConditional; }
   private:
     RefPtr<Node> logical;
     RefPtr<Node> expr1;
@@ -936,6 +974,7 @@ namespace KJS {
       : m_ident(ident), m_oper(oper), m_right(right) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecAssignment; }
   protected:
     Identifier m_ident;
     Operator m_oper;
@@ -948,6 +987,7 @@ namespace KJS {
       : m_base(base), m_subscript(subscript), m_oper(oper), m_right(right) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecAssignment; }
   protected:
     RefPtr<Node> m_base;
     RefPtr<Node> m_subscript;
@@ -961,6 +1001,7 @@ namespace KJS {
       : m_base(base), m_ident(ident), m_oper(oper), m_right(right) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecAssignment; }
   protected:
     RefPtr<Node> m_base;
     Identifier m_ident;
@@ -974,6 +1015,7 @@ namespace KJS {
       : m_left(left), m_oper(oper), m_right(right) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecAssignment; }
   protected:
     RefPtr<Node> m_left;
     Operator m_oper;
@@ -985,6 +1027,7 @@ namespace KJS {
     CommaNode(Node *e1, Node *e2) KJS_FAST_CALL : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecExpression; }
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -995,17 +1038,19 @@ namespace KJS {
     AssignExprNode(Node *e) KJS_FAST_CALL : expr(e) {}
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     RefPtr<Node> expr;
   };
 
-  class VarDeclNode: public Node {
+  class VarDeclNode : public Node {
   public:
     enum Type { Variable, Constant };
     VarDeclNode(const Identifier &id, AssignExprNode *in, Type t) KJS_FAST_CALL;
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
     Type varType;
     Identifier ident;
   private:
@@ -1024,6 +1069,7 @@ namespace KJS {
     PassRefPtr<VarDeclListNode> releaseNext() KJS_FAST_CALL { return next.release(); }
     virtual void breakCycle() KJS_FAST_CALL;
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     friend class ForNode;
     friend class VarStatementNode;
@@ -1220,6 +1266,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     PassRefPtr<ParameterNode> releaseNext() KJS_FAST_CALL { return next.release(); }
     virtual void breakCycle() KJS_FAST_CALL;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     friend class FuncDeclNode;
     friend class FuncExprNode;
@@ -1271,6 +1318,7 @@ namespace KJS {
       : ident(i), param(p ? p->next.release() : 0), body(b) { if (p) { Parser::removeNodeCycle(param.get()); } addParams(); }
     virtual JSValue *evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+    virtual Precedence precedence() const { return PrecMember; }
   private:
     void addParams() KJS_FAST_CALL;
     // Used for streamTo
@@ -1326,6 +1374,7 @@ namespace KJS {
       Completion evalStatements(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
       virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
+      virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
       RefPtr<Node> expr;
       RefPtr<SourceElementsNode> source;
@@ -1344,6 +1393,7 @@ namespace KJS {
       PassRefPtr<ClauseListNode> releaseNext() KJS_FAST_CALL { return next.release(); }
       virtual void breakCycle() KJS_FAST_CALL;
       virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
+      virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
       friend class CaseBlockNode;
       RefPtr<CaseClauseNode> clause;
@@ -1357,6 +1407,7 @@ namespace KJS {
       Completion evalBlock(ExecState *exec, JSValue *input) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
       virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
+      virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
       RefPtr<ClauseListNode> list1;
       RefPtr<CaseClauseNode> def;

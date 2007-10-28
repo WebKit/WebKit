@@ -1,16 +1,30 @@
+2007-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15735
+          remove GroupNode to simplify AST and possibly get a modest speedup
+
+        One test is a start at testing that parentheses are added when needed.
+        The other test checks some aspects of object literals, since I changed
+        the way the property names is handled in those. More tests are needed.
+
+        * fast/js/function-toString-object-literals-expected.txt: Added.
+        * fast/js/function-toString-object-literals.html: Added.
+        * fast/js/function-toString-parentheses-expected.txt: Added.
+        * fast/js/function-toString-parentheses.html: Added.
+        * fast/js/resources/function-toString-object-literals.js: Added.
+        * fast/js/resources/function-toString-parentheses.js: Added.
+
 2007-10-28  Adam Roben  <aroben@apple.com>
 
         Re-enable a bunch of passing tests on Windows
-
-        Reviewed by NOBODY.
 
         * platform/win/Skipped:
 
 2007-10-27  Adam Roben  <aroben@apple.com>
 
         Updated Windows Skipped file for currently failing tests
-
-        Reviewed by NOBODY.
 
         * platform/win/Skipped:
 
@@ -79,8 +93,6 @@
 2007-10-27  Adam Roben  <aroben@apple.com>
 
         Add some more failing tests to the Windows Skipped file
-
-        Reviewed by NOBODY.
 
         * platform/win/Skipped:
 

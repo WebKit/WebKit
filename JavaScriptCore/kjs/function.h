@@ -1,8 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -215,8 +214,6 @@ namespace KJS {
 
   static const double mantissaOverflowLowerBound = 9007199254740992.0;
   double parseIntOverflow(const char* s, int length, int radix);
-
-UString escapeStringForPrettyPrinting(const UString& s);
 
 } // namespace
 

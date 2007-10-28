@@ -889,46 +889,4 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
   return res;
 }
 
-UString escapeStringForPrettyPrinting(const UString& s)
-{
-    UString escapedString;
-    
-    for (int i = 0; i < s.size(); i++) {
-        unsigned short c = s.data()[i].unicode();
-        
-        switch (c) {
-        case '\"':
-            escapedString += "\\\"";
-            break;
-        case '\n':
-            escapedString += "\\n";
-            break;
-        case '\r':
-            escapedString += "\\r";
-            break;
-        case '\t':
-            escapedString += "\\t";
-            break;
-        case '\\':
-            escapedString += "\\\\";
-            break;
-        default:
-            if (c < 128 && isPrintableChar(c))
-                escapedString.append(c);
-            else {
-                char hexValue[7];
-            
-#if PLATFORM(WIN_OS)
-                _snprintf(hexValue, 7, "\\u%04x", c);
-#else
-                snprintf(hexValue, 7, "\\u%04x", c);
-#endif
-                escapedString += hexValue;
-            }
-        }
-    }
-    
-    return escapedString;    
-}
-
 } // namespace
