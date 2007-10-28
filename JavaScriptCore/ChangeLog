@@ -1,5 +1,17 @@
 2007-10-28  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Mark.
+        
+        - avoid using non-portable SIZE_T_MAX in favor of std::numeric_limits
+
+        * kjs/SymbolTable.h:
+        (KJS::SymbolTableIndexHashTraits::emptyValue):
+        * kjs/function.cpp:
+        (KJS::ActivationImp::getOwnPropertySlot):
+        (KJS::ActivationImp::put):
+
+2007-10-28  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
         
         - switch SymbolTable to be a HashMap instead of a PropertyMap for 3% SunSpider speedup

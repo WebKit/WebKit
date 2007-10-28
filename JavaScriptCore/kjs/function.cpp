@@ -421,9 +421,9 @@ bool ActivationImp::getOwnPropertySlot(ExecState* exec, const Identifier& proper
     ASSERT(!_prop.hasGetterSetterProperties());
 
     // it's more efficient to just get and check for a special empty
-    // value of SIZE_T_MAX than to do a separate contains check
+    // value than to do a separate contains check
     size_t index = symbolTable->get(propertyName.ustring().rep());
-    if (index != SIZE_T_MAX) {
+    if (index != missingSymbolMarker) {
         slot.setValueSlot(this, &d->localStorage[index].value);
         return true;
     }
@@ -460,9 +460,9 @@ void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* val
   ASSERT(prototype() == jsNull());
 
   // it's more efficient to just get and check for a special empty
-  // value of SIZE_T_MAX than to do a separate contains check
+  // value than to do a separate contains check
   size_t index = symbolTable->get(propertyName.ustring().rep());
-  if (index != SIZE_T_MAX) {
+  if (index != missingSymbolMarker) {
     LocalStorageEntry& entry = d->localStorage[index];
     entry.value = value;
     entry.attributes = attr;
