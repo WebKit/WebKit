@@ -19,8 +19,6 @@
 
         Add wkSetPatternBaseCTM.
 
-        Reviewed by NOBODY.
-
         * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
         * win/lib/WebKitSystemInterface.lib:
         * win/lib/WebKitSystemInterface_debug.lib:
