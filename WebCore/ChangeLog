@@ -1,3 +1,15 @@
+2007-10-28  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15701
+        The curl http backend does not deal properly with redirects
+
+        Implement http redirect support.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback):
+
 2007-10-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         Define types and accessors needed for wx implementation

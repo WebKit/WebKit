@@ -113,11 +113,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
     unsigned int totalSize = size * nmemb;
     ResourceHandleClient* client = d->client();
-    if (!client) {
-        return totalSize;
-    }
 
-    
     String header(static_cast<const char*>(ptr), totalSize);
 
     /*
@@ -144,7 +140,25 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         d->m_response.setTextEncodingName(extractCharsetFromMediaType(d->m_response.httpHeaderField("Content-Type")));
         d->m_response.setSuggestedFilename(filenameFromHTTPContentDisposition(d->m_response.httpHeaderField("Content-Disposition")));
 
-        client->didReceiveResponse(job, d->m_response);
+        // HTTP redirection
+        if (httpCode >= 300 && httpCode < 400) {
+            String location = d->m_response.httpHeaderField("location");
+            if (!location.isEmpty()) {
+                KURL newURL = KURL(job->request().url(), location.deprecatedString());
+
+                ResourceRequest redirectedRequest = job->request();
+                redirectedRequest.setURL(newURL);
+                if (client)
+                    client->willSendRequest(job, redirectedRequest, d->m_response);
+
+                d->m_request.setURL(newURL);
+
+                return totalSize;
+            }
+        }
+
+        if (client)
+            client->didReceiveResponse(job, d->m_response);
     } else {
         int splitPos = header.find(":");
         if (splitPos != -1)
