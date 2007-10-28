@@ -1,5 +1,16 @@
 2007-10-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Tim Hatcher.
+
+        Speculative fix for an intermittently failing test
+
+        * fast/dom/Window/resources/opened-window.html: Added.
+        * fast/dom/Window/window-early-properties.html: Use onload for opened
+        window and use a local file instead of a data: URL to avoid same origin
+        check issues.
+
+2007-10-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Update tests for http://bugs.webkit.org/show_bug.cgi?id=14953
