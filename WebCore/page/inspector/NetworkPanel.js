@@ -88,9 +88,6 @@ WebInspector.NetworkPanel = function()
     this.legendElement.className = "network-graph-legend";
     graphSideElement.appendChild(this.legendElement);
 
-    var networkPanel = this;
-    window.addEventListener("resize", function() { networkPanel.updateTimelineDividersIfNeeded() }, false);
-
     this.drawSummaryGraph(); // draws an empty graph
 
     this.needsRefresh = true; 
@@ -108,6 +105,11 @@ WebInspector.NetworkPanel.prototype = {
     {
         WebInspector.Panel.prototype.hide.call(this);
         WebInspector.networkListItem.deselect();
+    },
+
+    resize: function()
+    {
+        this.updateTimelineDividersIfNeeded();
     },
 
     onClick: function(event)

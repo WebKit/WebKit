@@ -42,19 +42,17 @@ WebInspector.FontPanel = function(resource)
     this.fontPreviewElement.innerHTML = "ABCDEFGHIJKLM<br>NOPQRSTUVWXYZ<br>abcdefghijklm<br>nopqrstuvwxyz<br>1234567890";
 
     this.updateFontPreviewSize();
-
-    var panel = this;
-    var resizeListener = function() {
-        panel.updateFontPreviewSize();
-    };
-
-    window.addEventListener("resize", resizeListener, false);
 }
 
 WebInspector.FontPanel.prototype = {
     show: function()
     {
         WebInspector.ResourcePanel.prototype.show.call(this);
+        this.updateFontPreviewSize();
+    },
+
+    resize: function()
+    {
         this.updateFontPreviewSize();
     },
 

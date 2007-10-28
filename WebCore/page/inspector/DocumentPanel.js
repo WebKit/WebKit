@@ -48,9 +48,6 @@ WebInspector.DocumentPanel = function(resource, views)
     domView.treeOutline = new TreeOutline(domView.treeListElement);
     domView.treeOutline.panel = this;
 
-    var panel = this;
-    window.addEventListener("resize", function() { panel.updateTreeSelection() }, false);
-
     domView.crumbsElement = document.createElement("div");
     domView.crumbsElement.className = "crumbs";
 
@@ -92,6 +89,17 @@ WebInspector.DocumentPanel = function(resource, views)
 }
 
 WebInspector.DocumentPanel.prototype = {
+    show: function()
+    {
+        WebInspector.SourcePanel.prototype.show.call(this);
+        this.updateTreeSelection();
+    },
+
+    resize: function()
+    {
+        this.updateTreeSelection();
+    },
+
     updateTreeSelection: function()
     {
         if (!this.views.dom.treeOutline || !this.views.dom.treeOutline.selectedTreeElement)
@@ -703,6 +711,9 @@ WebInspector.DocumentPanel.prototype = {
             rightSidebar.style.width = newWidth + "px";
             this.views.dom.sideContentElement.style.right = newWidth + "px";
             this.views.dom.sidebarResizeElement.style.right = (newWidth - 3) + "px";
+
+            this.updateTreeSelection();
+
             event.preventDefault();
         }
     }

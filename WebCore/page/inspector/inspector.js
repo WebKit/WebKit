@@ -236,6 +236,8 @@ WebInspector.loaded = function(event)
     this.addMainEventListeners(document);
 
     window.addEventListener("unload", function(event) { WebInspector.windowUnload(event) }, true);
+    window.addEventListener("resize", function(event) { WebInspector.windowResize(event) }, true);
+
     document.addEventListener("mousedown", function(event) { WebInspector.changeFocus(event) }, true);
     document.addEventListener("focus", function(event) { WebInspector.changeFocus(event) }, true);
     document.addEventListener("keypress", function(event) { WebInspector.documentKeypress(event) }, true);
@@ -266,6 +268,12 @@ window.addEventListener("load", function(event) { WebInspector.loaded(event) }, 
 WebInspector.windowUnload = function(event)
 {
     InspectorController.windowUnloading();
+}
+
+WebInspector.windowResize = function(event)
+{
+    if (this.currentPanel && this.currentPanel.resize)
+        this.currentPanel.resize();
 }
 
 WebInspector.windowFocused = function(event)
@@ -461,7 +469,6 @@ WebInspector.sidebarResizerDrag = function(event)
 {
     var sidebar = document.getElementById("sidebar");
     if (sidebar.dragging == true) {
-
         var x = event.clientX + window.scrollX;
 
         // FIXME: We can should come up with a better hueristic for constraining the size
@@ -477,6 +484,10 @@ WebInspector.sidebarResizerDrag = function(event)
         document.getElementById("toolbarButtons").style.left = newWidth + "px";
         document.getElementById("searchResults").style.left = newWidth + "px";
         document.getElementById("searchResultsResizer").style.left = newWidth + "px";
+
+        if (WebInspector.currentPanel && WebInspector.currentPanel.resize)
+            WebInspector.currentPanel.resize();
+
         event.preventDefault();
     }
 }

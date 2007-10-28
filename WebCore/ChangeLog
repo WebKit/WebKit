@@ -1,3 +1,19 @@
+2007-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 15727: Resizing the resource sidebar doesn't scale the font preview or network timeline
+        http://bugs.webkit.org/show_bug.cgi?id=15727
+
+        Add one window resize listener and call the new resize function on the currentPanel.
+        Also call the currentPanel's resize function when resizing the sidebar.
+
+        * page/inspector/DocumentPanel.js: Implement resize and call updateTreeSelection() when
+          the panel is shown and when resizing the DOM sidebar.
+        * page/inspector/FontPanel.js: Implement resize.
+        * page/inspector/NetworkPanel.js: Ditto.
+        * page/inspector/inspector.js: Add a window resize listener.
+
 2007-10-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
