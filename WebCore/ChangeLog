@@ -2,6 +2,18 @@
 
         Reviewed by Adam.
 
+        Pass the Document's domain to InspectorController:didOpenDatabase. This matches
+        what the Inspector shows for other resources.
+
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+
+        * dom/Document.h: Remove KURL.h, no longer needed.
+
+2007-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
         Bug 15728: Selected Resource background image gradient has banding
         http://bugs.webkit.org/show_bug.cgi?id=15728
 
