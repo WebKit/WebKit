@@ -1,3 +1,27 @@
+2007-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 15728: Selected Resource background image gradient has banding
+        http://bugs.webkit.org/show_bug.cgi?id=15728
+
+        - Reduced images to 1px wide that are tiled horizontally in CSS.
+        - Corrected the -webkit-background-size usage to specify auto for the width.
+
+        * page/inspector/Images/attachedShadow.png:
+        * page/inspector/Images/bottomShadow.png:
+        * page/inspector/Images/darkShadow.png:
+        * page/inspector/Images/gradient.png:
+        * page/inspector/Images/gradientHighlight.png:
+        * page/inspector/Images/gradientHighlightBottom.png:
+        * page/inspector/Images/sidebarSelection.png:
+        * page/inspector/Images/sidebarSelectionBlurred.png:
+        * page/inspector/Images/sidebarSelectionBlurredTall.png:
+        * page/inspector/Images/sidebarSelectionGray.png:
+        * page/inspector/Images/sidebarSelectionGrayTall.png:
+        * page/inspector/Images/sidebarSelectionTall.png:
+        * page/inspector/inspector.css:
+
 2007-10-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.
