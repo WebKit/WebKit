@@ -402,8 +402,6 @@
 
         Windows build fix
 
-        Reviewed by NOBODY.
-
         * Scripts/build-dumprendertree: Fix path to DumpRenderTree.sln.
 
 2007-10-22  Kevin McCullough  <kmccullough@apple.com>
@@ -779,8 +777,6 @@
 
         Import File::Basename in webkitdirs since we use it
 
-        Reviewed by NOBODY.
-
         * Scripts/webkitdirs.pm:
 
 2007-10-17  Kevin McCullough  <kmccullough@apple.com>
@@ -792,8 +788,6 @@
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         Build fix for VC++ Express
-
-        Reviewed by NOBODY.
 
         * FindSafari/FindSafari.vcproj: Explicitly link against advapi32.lib
         and ole32.lib.
@@ -3464,8 +3458,6 @@
 2007-08-02  Adam Roben  <aroben@apple.com>
 
         Don't delete the stderr file right after creating it
-
-        Reviewed by NOBODY.
 
         * Scripts/run-webkit-tests:
 
@@ -6964,8 +6956,6 @@
 
 2006-12-29  David Kilzer  <ddkilzer@webkit.org>
 
-        Reviewed by NOBODY (build fix).
-
         Reverted last commit until WebResourceData issue is fixed.
 
         http://bugs.webkit.org/show_bug.cgi?id=11882
@@ -8934,7 +8924,7 @@
 
 2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
 
-        Build fix. Reviewed by NOBODY.
+        Build fix.
 
         - Backed out http://bugs.webkit.org/show_bug.cgi?id=7802
           devenv.com not available in VC++ Express installations
@@ -8961,8 +8951,6 @@
         * Scripts/do-webcore-rename: Next round of renaming. (Last round was done.)
 
 2006-07-09  David Kilzer  <ddkilzer@kilzer.net>
-
-        Reviewed by NOBODY (build fix).
 
         - http://bugs.webkit.org/show_bug.cgi?id=7802
           devenv.com not available in VC++ Express installations
@@ -9217,7 +9205,7 @@
 
 2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
 
-        Formatting fix per Bug 9571 Comment #2.  Reviewed by NOBODY.
+        Formatting fix per Bug 9571 Comment #2.
 
         http://bugs.webkit.org/show_bug.cgi?id=9571#c2
 
@@ -9306,7 +9294,7 @@
 
 2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
 
-        Build fix. Reviewed by NOBODY.
+        Build fix.
 
         - Backed out http://bugs.webkit.org/show_bug.cgi?id=7802
           devenv.com not available in VC++ Express installations
@@ -10218,8 +10206,6 @@
         * DumpRenderTree/EventSendingController.m: Added now-needed include.
 
 2006-03-30  Tim Omernick  <timo@apple.com>
-
-        Reviewed by NOBODY (just fixing copyrights)
 
         * DumpRenderTree/ObjCPlugin.h:
         Fixed copyright.
