@@ -1593,8 +1593,6 @@
 
         Windows build fix
 
-        Reviewed by NOBODY.
-
         * WebCore.vcproj/WebCore.vcproj: Copy header files from platform/sql.
         * page/Page.cpp: Touched to force the header files to be copied.
 
@@ -3197,8 +3195,6 @@
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         Windows build fix
-
-        Reviewed by NOBODY.
 
         * platform/graphics/AffineTransform.h: Don't #include
         ApplicationServices.h.
