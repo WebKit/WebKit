@@ -47,6 +47,8 @@ class QMimeData;
 typedef const QMimeData* DragDataRef;
 #elif PLATFORM(WIN)
 typedef struct IDataObject* DragDataRef;
+#elif PLATFORM(WX)
+typedef class wxDataObject* DragDataRef;
 #elif PLATFORM(GTK)
 // FIXME: this should probably be something gdk-specific
 typedef void* DragDataRef;

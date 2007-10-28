@@ -1,3 +1,11 @@
+2007-10-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Define wx port and set wx port USE options.
+
+        Reviewed by Adam Roben.
+
+        * wtf/Platform.h:
+
 2007-10-28  Mark Rowe  <mrowe@apple.com>
 
         We don't include "config.h" in headers.

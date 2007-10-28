@@ -40,6 +40,8 @@ class NSImage;
 class QImage;
 #elif PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
+#elif PLATFORM(WX)
+class wxDragImage;
 #endif
 
 //We need to #define YOffset as it needs to be shared with WebKit
@@ -60,6 +62,8 @@ namespace WebCore {
     typedef QImage* DragImageRef;
 #elif PLATFORM(WIN)
     typedef HBITMAP DragImageRef;
+#elif PLATFORM(WX)
+    typedef wxDragImage* DragImageRef;
 #elif PLATFORM(GTK)
     typedef void* DragImageRef;
 #endif

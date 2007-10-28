@@ -37,6 +37,11 @@ typedef const struct __CFString * CFStringRef;
 class QString;
 #endif
 
+#if PLATFORM(WX)
+class wxString;
+#endif
+
+
 namespace WebCore {
 
 class CString;
@@ -176,6 +181,11 @@ public:
     String(const TDesC&);
     operator TPtrC() const { return des(); }
     TPtrC des() const { if (!m_impl) return KNullDesC(); return m_impl->des(); }
+#endif
+
+#if PLATFORM(WX)
+    String(const wxString&);
+    operator wxString() const;
 #endif
 
 #ifndef NDEBUG

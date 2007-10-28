@@ -52,6 +52,10 @@ typedef struct _GdkEventKey GdkEventKey;
 class QKeyEvent;
 #endif
 
+#if PLATFORM(WX)
+class wxKeyEvent;
+#endif
+
 namespace WebCore {
 
     class PlatformKeyboardEvent {
@@ -87,6 +91,11 @@ namespace WebCore {
         PlatformKeyboardEvent(QKeyEvent*);
 #endif
 
+#if PLATFORM(WX)
+        PlatformKeyboardEvent(wxKeyEvent&);
+        bool isWxCharEvent() const { return m_isWxCharEvent; }
+#endif
+
     private:
         String m_text;
         String m_unmodifiedText;
@@ -99,7 +108,9 @@ namespace WebCore {
         bool m_ctrlKey;
         bool m_altKey;
         bool m_metaKey;
-
+#if PLATFORM(WX)
+        bool m_isWxCharEvent;
+#endif
 #if PLATFORM(MAC)
         RetainPtr<NSEvent> m_macEvent;
 #endif

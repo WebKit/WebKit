@@ -84,6 +84,8 @@
 #define WTF_PLATFORM_KDE 1
 #endif
 
+#elif defined(BUILDING_WX__)
+#define WTF_PLATFORM_WX 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
 #elif PLATFORM(DARWIN)
@@ -99,7 +101,7 @@
 #if PLATFORM(MAC)
 #define WTF_PLATFORM_CG 1
 #define WTF_PLATFORM_CI 1
-#elif !PLATFORM(QT)
+#elif !PLATFORM(QT) && !PLATFORM(WX)
 #define WTF_PLATFORM_CAIRO 1
 #endif
 
@@ -210,6 +212,11 @@
 
 #if PLATFORM(WIN)
 #define WTF_USE_WININET 1
+#endif
+
+#if PLATFORM(WX)
+#define WTF_USE_CURL 1
+#define WTF_USE_PTHREADS 1
 #endif
 
 #if PLATFORM(GTK)

@@ -47,6 +47,10 @@ class NSCursor;
 #endif
 #endif
 
+#if PLATFORM(WX)
+class wxCursor;
+#endif
+
 namespace WebCore {
 
     class Image;
@@ -70,6 +74,8 @@ namespace WebCore {
     typedef GdkCursor* PlatformCursor;
 #elif PLATFORM(QT) && !defined(QT_NO_CURSOR)
     typedef QCursor PlatformCursor;
+#elif PLATFORM(WX)
+    typedef wxCursor* PlatformCursor;
 #else
     typedef void* PlatformCursor;
 #endif

@@ -1,3 +1,39 @@
+2007-10-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Define types and accessors needed for wx implementation
+        of platform classes. Also, turn off DisallowCTypes.h because
+        disallowed methods appear in wx headers.
+
+        Reviewed by Adam Roben.
+
+        * config.h:
+        * platform/ContextMenuItem.h:
+        * platform/Cursor.h:
+        * platform/DeprecatedString.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/FontData.h:
+        (WebCore::FontData::getWxFont):
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::isWxCharEvent):
+        * platform/PlatformMenuDescription.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformString.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        * platform/image-decoders/xbm/XBMImageDecoder.cpp:
+
 2007-10-28  Mark Rowe  <mrowe@apple.com>
 
         We don't include "config.h" in headers.

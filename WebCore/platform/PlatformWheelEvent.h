@@ -50,6 +50,11 @@ typedef struct _GdkEventScroll GdkEventScroll;
 class QWheelEvent;
 #endif
 
+#if PLATFORM(WX)
+class wxMouseEvent;
+class wxPoint;
+#endif
+
 namespace WebCore {
 
     class PlatformWheelEvent {
@@ -89,6 +94,9 @@ namespace WebCore {
 #endif
 #if PLATFORM(QT)
         PlatformWheelEvent(QWheelEvent*);
+#endif
+#if PLATFORM(WX)
+        PlatformWheelEvent(const wxMouseEvent&, const wxPoint&);
 #endif
 
     private:
