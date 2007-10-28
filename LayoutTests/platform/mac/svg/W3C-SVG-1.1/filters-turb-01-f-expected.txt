@@ -1,9 +1,9 @@
-KCanvasResource {id="Turb1" [type=FILTER] }
-KCanvasResource {id="Turb2" [type=FILTER] }
-KCanvasResource {id="Turb3" [type=FILTER] }
-KCanvasResource {id="Turb4" [type=FILTER] }
-KCanvasResource {id="Turb5" [type=FILTER] }
-KCanvasResource {id="Turb6" [type=FILTER] }
+KCanvasResource {id="Turb1" [type=FILTER]  [effects=[[type=TURBULENCE]  [subregion="at (0,0) size 1x1"] [turbulence type=TURBULANCE] [base frequency x=0.05 y=0.05] [seed=0.00] [num octaves=1] [stitch tiles=0]]]}
+KCanvasResource {id="Turb2" [type=FILTER]  [effects=[[type=TURBULENCE]  [subregion="at (0,0) size 1x1"] [turbulence type=TURBULANCE] [base frequency x=0.10 y=0.10] [seed=0.00] [num octaves=1] [stitch tiles=0]]]}
+KCanvasResource {id="Turb3" [type=FILTER]  [effects=[[type=TURBULENCE]  [subregion="at (0,0) size 1x1"] [turbulence type=TURBULANCE] [base frequency x=0.05 y=0.05] [seed=0.00] [num octaves=1] [stitch tiles=0]]]}
+KCanvasResource {id="Turb4" [type=FILTER]  [effects=[[type=TURBULENCE]  [subregion="at (0,0) size 1x1"] [turbulence type=NOISE] [base frequency x=0.10 y=0.10] [seed=0.00] [num octaves=1] [stitch tiles=0]]]}
+KCanvasResource {id="Turb5" [type=FILTER]  [effects=[[type=TURBULENCE]  [subregion="at (0,0) size 1x1"] [turbulence type=NOISE] [base frequency x=0.40 y=0.40] [seed=0.00] [num octaves=1] [stitch tiles=0]]]}
+KCanvasResource {id="Turb6" [type=FILTER]  [effects=[[type=TURBULENCE]  [subregion="at (0,0) size 1x1"] [turbulence type=NOISE] [base frequency x=0.10 y=0.10] [seed=0.00] [num octaves=1] [stitch tiles=0]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
