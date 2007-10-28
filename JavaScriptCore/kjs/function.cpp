@@ -420,8 +420,10 @@ bool ActivationImp::getOwnPropertySlot(ExecState* exec, const Identifier& proper
     // activation object.
     ASSERT(!_prop.hasGetterSetterProperties());
 
-    size_t index;
-    if (symbolTable->get(propertyName, index)) {
+    // it's more efficient to just get and check for a special empty
+    // value of SIZE_T_MAX than to do a separate contains check
+    size_t index = symbolTable->get(propertyName.ustring().rep());
+    if (index != SIZE_T_MAX) {
         slot.setValueSlot(this, &d->localStorage[index].value);
         return true;
     }
@@ -445,8 +447,7 @@ bool ActivationImp::deleteProperty(ExecState* exec, const Identifier& propertyNa
     if (propertyName == exec->propertyNames().arguments)
         return false;
 
-    size_t index;
-    if (symbolTable->get(propertyName, index))
+    if (symbolTable->contains(propertyName.ustring().rep()))
         return false;
 
     return JSObject::deleteProperty(exec, propertyName);
@@ -458,8 +459,10 @@ void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* val
   ASSERT(!_prop.hasGetterSetterProperties());
   ASSERT(prototype() == jsNull());
 
-  size_t index;
-  if (symbolTable->get(propertyName, index)) {
+  // it's more efficient to just get and check for a special empty
+  // value of SIZE_T_MAX than to do a separate contains check
+  size_t index = symbolTable->get(propertyName.ustring().rep());
+  if (index != SIZE_T_MAX) {
     LocalStorageEntry& entry = d->localStorage[index];
     entry.value = value;
     entry.attributes = attr;

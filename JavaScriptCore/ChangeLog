@@ -1,3 +1,23 @@
+2007-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - switch SymbolTable to be a HashMap instead of a PropertyMap for 3% SunSpider speedup
+
+        * kjs/SymbolTable.h:
+        (KJS::IdentifierRepHash::hash): Special hash function for identifier reps.
+        (KJS::IdentifierRepHash::equal): ditto
+        (KJS::SymbolTableIndexHashTraits::emptyValue): Special HashTraits for the index value.
+        (KJS::SymbolTable): change to a typedef for a HashMap.
+        * kjs/function.cpp:
+        (KJS::ActivationImp::getOwnPropertySlot): Adjusted for new SymbolTable API.
+        (KJS::ActivationImp::deleteProperty): ditto
+        (KJS::ActivationImp::put): ditto
+
+        * kjs/nodes.cpp:
+        (KJS::FunctionBodyNode::initializesymbolTable): Adjusted, since
+        you now have to store a UString::rep, not an identifier.
+
 2007-10-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

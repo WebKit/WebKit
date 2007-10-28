@@ -2614,13 +2614,13 @@ void FunctionBodyNode::initializesymbolTable()
 
     // The order of additions here implicitly enforces the mutual exclusion described in ECMA 10.1.3.
     for (i = 0, size = m_varStack.size(); i < size; ++i)
-        m_symbolTable.set(m_varStack[i]->ident, count++);
+        m_symbolTable.set(m_varStack[i]->ident.ustring().rep(), count++);
 
     for (i = 0, size = m_parameters.size(); i < size; ++i)
-        m_symbolTable.set(m_parameters[i], count++);
+        m_symbolTable.set(m_parameters[i].ustring().rep(), count++);
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i)
-        m_symbolTable.set(m_functionStack[i]->ident, count++);
+        m_symbolTable.set(m_functionStack[i]->ident.ustring().rep(), count++);
 
     m_initializedSymbolTable = true;
 }

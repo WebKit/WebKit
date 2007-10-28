@@ -35,27 +35,22 @@ namespace KJS {
 
     class JSValue;
 
-    // SymbolTable is implemented in terms of a PropertyMap hack for now,
-    // but it should move to WTF::HashMap once that's fast enough.
-
-    class SymbolTable : private PropertyMap {
-    public:
-        void set(const Identifier& name, size_t index)
-        {
-            JSValue* v = reinterpret_cast<JSValue*>(index + 1); // Increment index by 1 because PropertyMap uses 0 to mean "not found."
-            ASSERT(v); // Check for overflow.
-            PropertyMap::put(name, v, 0, false);
-        }
-
-        bool get(const Identifier& name, size_t& index)
-        {
-            if (JSValue* v = PropertyMap::get(name)) {
-                index = reinterpret_cast<uintptr_t>(v) - 1; // Decrement index by 1 to balance the increment in set.
-                return true;
-            }
-            return false;
-        }
+    struct IdentifierRepHash {
+        static unsigned hash(const KJS::UString::Rep *key) { return key->computedHash(); }
+        static bool equal(const KJS::UString::Rep *a, const KJS::UString::Rep *b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
     };
+
+    struct SymbolTableIndexHashTraits {
+        typedef size_t TraitType;
+        typedef SymbolTableIndexHashTraits StorageTraits;
+        static size_t emptyValue() { return SIZE_T_MAX; }
+        static const bool emptyValueIsZero = false;
+        static const bool needsDestruction = false;
+        static const bool needsRef = false;
+    };
+
+    typedef HashMap<UString::Rep*, size_t, IdentifierRepHash, HashTraits<UString::Rep*>, SymbolTableIndexHashTraits> SymbolTable;
 
 } // namespace KJS
 
