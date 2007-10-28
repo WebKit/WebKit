@@ -126,15 +126,19 @@ void base64Encode(const Vector<char>& in, Vector<char>& out, bool insertLFs)
 bool base64Decode(const Vector<char>& in, Vector<char>& out)
 {
     out.clear();
-    if (in.isEmpty())
-        return true;
 
     // If the input string is pathologically large, just return nothing.
     if (in.size() > UINT_MAX)
         return false;
 
-    unsigned len = in.size();
-    const char* data = in.data();
+    return base64Decode(in.data(), in.size(), out);
+}
+
+bool base64Decode(const char* data, unsigned len, Vector<char>& out)
+{
+    out.clear();
+    if (len == 0)
+        return true;
 
     while (len && data[len-1] == '=')
         --len;

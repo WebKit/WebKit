@@ -1,5 +1,23 @@
 2007-10-28  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Anders Carlsson.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14124
+        [CURL] Support data URLs
+
+        Add data URL support (both Base64 and percent-encoded formats).
+
+        Inspired by code from the Qt port.
+
+        * platform/Base64.cpp:
+        (WebCore::base64Decode):
+        * platform/Base64.h:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::startScheduledJobs):
+        (WebCore::parseDataUrl):
+
+2007-10-28  Alp Toker  <alp@atoker.com>
+
         Reviewed by Adam Roben.
 
         http://bugs.webkit.org/show_bug.cgi?id=15701
