@@ -28,6 +28,7 @@ use strict;
 use Getopt::Long;
 use File::Basename;
 use Cwd;
+use POSIX qw(strftime);
 
 my $showHelp = 0;
 my $runShark = 0;
@@ -51,7 +52,7 @@ GetOptions('runs=i' => \$testRuns,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
-$testRuns = 1  if $runShark;
+$testRuns = 1 if $runShark;
 
 if (!$jsShellPath || $showHelp) {
    print STDERR $usage;
@@ -66,7 +67,6 @@ sub dumpToFile($$)
     close FILE;
 }
 
-# FIXME: these globals are rather poor abstraction
 my @tests = ();
 my @categories = ();
 my %uniqueCategories = ();
@@ -89,19 +89,23 @@ sub loadTestsList()
     close TESTLIST;
 }
 
+my $timeString = strftime "%Y-%m-%d-%H:%M:%S", localtime $^T;
+my $prefixFile = "tmp/sunspider-test-prefix.js";
+my $resultsFile = "tmp/sunspider-results-$timeString.js";
+
 sub writePrefixFile()
 {
     my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
     $prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
 
     mkdir "tmp";
-    dumpToFile($prefix, "tmp/sunspider-test-prefix.js");
+    dumpToFile($prefix, $prefixFile);
 }
 
 sub runTestsOnce($)
 {
     my ($useShark) = @_;
-    my $shellArgs = "-f tmp/sunspider-test-prefix.js -f resources/sunspider-standalone-driver.js 2> /dev/null";
+    my $shellArgs = "-f $prefixFile -f resources/sunspider-standalone-driver.js 2> /dev/null";
     my $output;
     if ($useShark) {
         $output = `shark -i -1 -q "$jsShellPath" $shellArgs`;
@@ -118,7 +122,7 @@ if ($testsPattern) {
     print STDERR "Found " . scalar(@tests) . " tests\n";
 }
 die "No tests to run"  unless scalar(@tests);
-print STDERR "Running SunSpider once for warmup, then $testRuns time" . ($testRuns == 1 ? "" : "s") . ($runShark ? " under Shark" : "") . "\n";
+print STDERR "Running SunSpider once for warmup, then " . ($runShark ? "under Shark" : "$testRuns time" . ($testRuns == 1 ? "" : "s")) . "\n";
 writePrefixFile();
 
 runTestsOnce(0);
@@ -140,9 +144,9 @@ while ($count++ < $testRuns) {
 print "]\n";
 
 my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
-dumpToFile($output, "tmp/sunspider-results.js");
+dumpToFile($output, $resultsFile);
 
-system("$jsShellPath", "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-results.js", "-f", "resources/sunspider-analyze-results.js");
+system("$jsShellPath", "-f", $prefixFile, "-f", $resultsFile, "-f", "resources/sunspider-analyze-results.js");
 
 if ($runShark) {
     my $newestAge = 0;
@@ -158,5 +162,9 @@ if ($runShark) {
         }
     }
     closedir DIR;
-    exec "/usr/bin/open", $newestMShark if $newestMShark;
+    if ($newestMShark) {
+        my $profileFile = "tmp/sunspider-profile-$timeString.mshark";
+        rename $newestMShark, $profileFile or die;
+        exec "/usr/bin/open", $profileFile;
+    }
 }

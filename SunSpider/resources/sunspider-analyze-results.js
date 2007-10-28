@@ -180,6 +180,9 @@ function formatResult(meanWidth, mean, stdErr, n)
         meanString = " " + meanString;
     }
 
+    if (n == 1)
+        return meanString + "ms";
+
     return meanString + "ms +/- " + ((tDist(n) * stdErr / mean) * 100).toFixed(1) + "%";
 }
 
@@ -238,11 +241,14 @@ function printOutput()
     var meanWidth = computeMeanWidth();
 
     print("\n");
-    print("========================================");
-    print("RESULTS (means and 95% confidence intervals)");
-    print("----------------------------------------");
+    print("============================================");
+    if (count == 1)
+        print("RESULTS");
+    else
+        print("RESULTS (means and 95% confidence intervals)");
+    print("--------------------------------------------");
     print(resultLine(labelWidth, 0, "Total", meanWidth, mean, stdErr));
-    print("----------------------------------------");
+    print("--------------------------------------------");
     for (var category in categoryMeans) {
         print("");
         print(resultLine(labelWidth, 2, category, meanWidth, categoryMeans[category], categoryStdErrs[category]));

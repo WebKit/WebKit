@@ -1,3 +1,19 @@
+2007-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * resources/sunspider-analyze-results.js: Tweak the output format a little.
+        Change so that when there's only one run we don't write out confidence
+        intervals at all rather than writing "NaN" over and over again.
+
+        * sunspider: Use the time and date as a suffix on the results file, that way
+        all the results are left behind in the tmp directory. This will make it easy
+        for us to add features that compare past results in the future. Also rename
+        the .mshark files using the same scheme.
+
+        * sunspider-compare-results: Relax the parsing rules so we can parse the
+        results file exactly as it's emitted from sunspider.
+
 2007-10-25  Adam Roben  <aroben@apple.com>
 
         Strip carriage returns from results
