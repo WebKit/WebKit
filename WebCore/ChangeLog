@@ -1,3 +1,11 @@
+2007-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Don't print the line number in the Inspector Console if it is Zero.
+
+        * page/inspector/ConsolePanel.js:
+
 2007-10-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

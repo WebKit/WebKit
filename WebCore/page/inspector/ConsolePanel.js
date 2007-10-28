@@ -283,7 +283,7 @@ WebInspector.ConsoleMessage.prototype = {
         urlDiv.innerText = this.url;
         item.appendChild(urlDiv);
 
-        if (this.line >= 0) {
+        if (this.line) {
             var lineDiv = document.createElement("div");
             lineDiv.className = "console-message-line";
             lineDiv.innerText = this.line;
