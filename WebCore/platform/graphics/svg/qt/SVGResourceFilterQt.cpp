@@ -26,12 +26,9 @@
 
 namespace WebCore {
 
-SVGResourceFilter::SVGResourceFilter()
+SVGResourceFilterPlatformData* SVGResourceFilter::createPlatformData()
 {
-}
-
-SVGResourceFilter::~SVGResourceFilter()
-{
+    return 0;
 }
 
 void SVGResourceFilter::prepareFilter(GraphicsContext*&, const FloatRect&)

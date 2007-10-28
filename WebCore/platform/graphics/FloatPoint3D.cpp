@@ -1,9 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
-
-    This file is part of the KDE project
+                  2005 Eric Seidel <eric@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -30,9 +28,9 @@
 namespace WebCore {
 
 FloatPoint3D::FloatPoint3D()
-    : m_x(0)
-    , m_y(0)
-    , m_z(0)
+    : m_x(0.f)
+    , m_y(0.f)
+    , m_z(0.f)
 {
 }
 

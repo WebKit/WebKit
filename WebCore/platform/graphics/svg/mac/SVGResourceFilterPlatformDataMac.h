@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2006 Dave MacLachlan (dmaclach@mac.com)
- *               2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef SVGResourceFilterPlatformDataMac_h
+#define SVGResourceFilterPlatformDataMac_h
 
-#include "config.h"
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
-#include "NotImplemented.h"
 #include "SVGResourceFilter.h"
 
+#include <ApplicationServices/ApplicationServices.h>
+#include <wtf/RetainPtr.h>
+
+@class CIImage;
+@class CIFilter;
+@class CIContext;
+@class NSArray;
+@class NSMutableDictionary;
+
 namespace WebCore {
-
-SVGResourceFilterPlatformData* SVGResourceFilter::createPlatformData()
-{
-    return 0;
+    class SVGResourceFilterPlatformDataMac : public SVGResourceFilterPlatformData {
+    public:
+        SVGResourceFilterPlatformDataMac(SVGResourceFilter*);
+        ~SVGResourceFilterPlatformDataMac();
+        
+        CIImage* imageForName(const String&) const;
+        void setImageForName(CIImage*, const String&);
+        
+        void setOutputImage(const SVGFilterEffect*, CIImage*);
+        CIImage* inputImage(const SVGFilterEffect*);
+        
+        NSArray* getCIFilterStack(CIImage* inputImage, const FloatRect& bbox);
+        
+        CIContext* m_filterCIContext;
+        CGLayerRef m_filterCGLayer;
+        RetainPtr<NSMutableDictionary> m_imagesByName;
+        SVGResourceFilter* m_filter;
+    };
 }
 
-void SVGResourceFilter::prepareFilter(GraphicsContext*&, const FloatRect&)
-{
-    notImplemented();
-}
+#endif // SVGResourceFilterPlatformDataMac_h
 
-void SVGResourceFilter::applyFilter(GraphicsContext*&, const FloatRect&)
-{
-    notImplemented();
-}
-
-}
-
-#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

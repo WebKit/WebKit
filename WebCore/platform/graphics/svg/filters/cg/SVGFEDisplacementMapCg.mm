@@ -32,13 +32,15 @@ namespace WebCore {
 CIFilter* SVGFEDisplacementMap::getCIFilter(const FloatRect& bbox) const
 {
     SVGResourceFilter* svgFilter = filter();
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData());
+
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [WKDisplacementMapFilter class];
     filter = [CIFilter filterWithName:@"WKDisplacementMapFilter"];
     [filter setDefaults];
-    CIImage* inputImage = svgFilter->inputImage(this);
-    CIImage* displacementMap = svgFilter->imageForName(in2());
+    CIImage* inputImage = filterPlatformData->inputImage(this);
+    CIImage* displacementMap = filterPlatformData->imageForName(in2());
     FE_QUARTZ_CHECK_INPUT(inputImage);
     FE_QUARTZ_CHECK_INPUT(displacementMap);
     [filter setValue:inputImage forKey:@"inputImage"];

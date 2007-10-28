@@ -1,3 +1,96 @@
+2007-10-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Push SVGResourceFilter platform specific data down into m_platformData
+        in preparation for implementing a non-mac filter solution.
+        
+        Also update a very old email address in copyright headers
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FloatPoint3D.cpp:
+        (WebCore::FloatPoint3D::FloatPoint3D):
+        * platform/graphics/FloatPoint3D.h:
+        * platform/graphics/svg/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        * platform/graphics/svg/SVGResourceFilter.h:
+        (WebCore::SVGResourceFilter::platformData):
+        (WebCore::SVGResourceFilter::effects):
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        (WebCore::SVGResourceFilter::createPlatformData):l
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * platform/graphics/svg/filters/SVGDistantLightSource.h:
+        * platform/graphics/svg/filters/SVGFEBlend.cpp:
+        * platform/graphics/svg/filters/SVGFEBlend.h:
+        * platform/graphics/svg/filters/SVGFEColorMatrix.cpp:
+        * platform/graphics/svg/filters/SVGFEColorMatrix.h:
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.cpp:
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.h:
+        * platform/graphics/svg/filters/SVGFEComposite.cpp:
+        * platform/graphics/svg/filters/SVGFEComposite.h:
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.cpp:
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.h:
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.cpp:
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.h:
+        * platform/graphics/svg/filters/SVGFEDisplacementMap.cpp:
+        * platform/graphics/svg/filters/SVGFEDisplacementMap.h:
+        * platform/graphics/svg/filters/SVGFEFlood.cpp:
+        * platform/graphics/svg/filters/SVGFEFlood.h:
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.cpp:
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.h:
+        * platform/graphics/svg/filters/SVGFEImage.cpp:
+        * platform/graphics/svg/filters/SVGFEImage.h:
+        * platform/graphics/svg/filters/SVGFEMerge.cpp:
+        * platform/graphics/svg/filters/SVGFEMerge.h:
+        * platform/graphics/svg/filters/SVGFEMorphology.cpp:
+        * platform/graphics/svg/filters/SVGFEMorphology.h:
+        * platform/graphics/svg/filters/SVGFEOffset.cpp:
+        * platform/graphics/svg/filters/SVGFEOffset.h:
+        * platform/graphics/svg/filters/SVGFESpecularLighting.cpp:
+        * platform/graphics/svg/filters/SVGFESpecularLighting.h:
+        * platform/graphics/svg/filters/SVGFETile.h:
+        * platform/graphics/svg/filters/SVGFETurbulence.cpp:
+        * platform/graphics/svg/filters/SVGFETurbulence.h:
+        * platform/graphics/svg/filters/SVGFilterEffect.cpp:
+        * platform/graphics/svg/filters/SVGFilterEffect.h:
+        * platform/graphics/svg/filters/SVGLightSource.cpp:
+        * platform/graphics/svg/filters/SVGLightSource.h:
+        * platform/graphics/svg/filters/SVGPointLightSource.h:
+        * platform/graphics/svg/filters/SVGSpotLightSource.h:
+        * platform/graphics/svg/filters/cg/SVGFEBlendCg.mm:
+        (WebCore::SVGFEBlend::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEColorMatrixCg.mm:
+        (WebCore::SVGFEColorMatrix::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEComponentTransferCg.mm:
+        (WebCore::SVGFEComponentTransfer::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFECompositeCg.mm:
+        (WebCore::SVGFEComposite::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEDiffuseLightingCg.mm:
+        (WebCore::SVGFEDiffuseLighting::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEDisplacementMapCg.mm:
+        (WebCore::SVGFEDisplacementMap::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEFloodCg.mm:
+        (WebCore::SVGFEFlood::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.h:
+        * platform/graphics/svg/filters/cg/SVGFEImageCg.mm:
+        (WebCore::SVGFEImage::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFEMergeCg.mm:
+        (WebCore::SVGFEMerge::getCIFilter):
+        * platform/graphics/svg/filters/cg/SVGFESpecularLightingCg.mm:
+        (WebCore::SVGFESpecularLighting::getCIFilter):
+        * platform/graphics/svg/mac: Added.
+        * platform/graphics/svg/mac/SVGResourceFilterPlatformDataMac.h: Added.
+        * platform/graphics/svg/mac/SVGResourceFilterPlatformDataMac.mm: Added.
+        (WebCore::SVGResourceFilterPlatformDataMac::SVGResourceFilterPlatformDataMac):
+        (WebCore::SVGResourceFilterPlatformDataMac::~SVGResourceFilterPlatformDataMac):
+        (WebCore::SVGResourceFilterPlatformDataMac::getCIFilterStack):
+        (WebCore::alphaImageForImage):
+        (WebCore::SVGResourceFilterPlatformDataMac::imageForName):
+        (WebCore::SVGResourceFilterPlatformDataMac::setImageForName):
+        (WebCore::SVGResourceFilterPlatformDataMac::setOutputImage):
+        (WebCore::SVGResourceFilterPlatformDataMac::inputImage):
+
 2007-10-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

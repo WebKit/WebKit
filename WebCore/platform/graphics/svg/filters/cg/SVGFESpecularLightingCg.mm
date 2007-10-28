@@ -38,11 +38,12 @@ CIFilter* SVGFESpecularLighting::getCIFilter(const FloatRect& bbox) const
     [WKSpecularLightingFilter class];
 
     SVGResourceFilter* svgFilter = filter();
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData());
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"WKSpecularLighting"];
     [filter setDefaults];
-    CIImage* inputImage = svgFilter->inputImage(this);
+    CIImage* inputImage = filterPlatformData->inputImage(this);
     FE_QUARTZ_CHECK_INPUT(inputImage);
     CIFilter* normals = getNormalMap(inputImage, surfaceScale());
     if (!normals)

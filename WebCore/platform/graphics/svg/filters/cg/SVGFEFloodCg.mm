@@ -33,6 +33,7 @@ namespace WebCore {
 CIFilter* SVGFEFlood::getCIFilter(const FloatRect& bbox) const
 {
     SVGResourceFilter* svgFilter = filter();
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData());
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"CIConstantColorGenerator"];

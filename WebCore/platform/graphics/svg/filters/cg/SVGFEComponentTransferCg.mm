@@ -143,13 +143,14 @@ CIFilter* SVGFEComponentTransfer::getCIFilter(const FloatRect& bbox) const
     [WKGammaTransferFilter class];
 
     SVGResourceFilter* svgFilter = filter();
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData());
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"WKComponentMerge"];
     if (!filter)
         return nil;
     [filter setDefaults];
-    CIImage* inputImage = svgFilter->inputImage(this);
+    CIImage* inputImage = filterPlatformData->inputImage(this);
     FE_QUARTZ_CHECK_INPUT(inputImage);
 
     [filter setValue:getFunctionFilter(SVG_CHANNEL_R, inputImage) forKey:@"inputFuncR"];

@@ -1,9 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
-
-    This file is part of the KDE project
+                  2005 Eric Seidel <eric@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -31,6 +29,15 @@
 #include "TextStream.h"
 
 namespace WebCore {
+
+SVGResourceFilter::SVGResourceFilter()
+    : m_platformData(createPlatformData())
+    , m_filterBBoxMode(false)
+    , m_effectBBoxMode(false)
+    , m_xBBoxMode(false)
+    , m_yBBoxMode(false)
+{
+}
 
 void SVGResourceFilter::clearEffects()
 {

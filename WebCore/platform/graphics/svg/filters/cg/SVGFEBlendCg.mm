@@ -30,6 +30,7 @@ namespace WebCore {
 CIFilter* SVGFEBlend::getCIFilter(const FloatRect& bbox) const
 {
     SVGResourceFilter* svgFilter = filter();
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData());
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -59,11 +60,11 @@ CIFilter* SVGFEBlend::getCIFilter(const FloatRect& bbox) const
 
     [filter setDefaults];
 
-    CIImage* inputImage = svgFilter->inputImage(this);
+    CIImage* inputImage = filterPlatformData->inputImage(this);
     FE_QUARTZ_CHECK_INPUT(inputImage);
     [filter setValue:inputImage forKey:@"inputImage"];
 
-    CIImage* backgroundImage = svgFilter->imageForName(in2());
+    CIImage* backgroundImage = filterPlatformData->imageForName(in2());
     FE_QUARTZ_CHECK_INPUT(backgroundImage);
     [filter setValue:backgroundImage forKey:@"inputBackgroundImage"];
 

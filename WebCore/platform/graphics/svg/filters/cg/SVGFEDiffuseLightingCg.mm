@@ -38,6 +38,8 @@ CIFilter* SVGFEDiffuseLighting::getCIFilter(const FloatRect& bbox) const
     [WKDiffuseLightingFilter class];
 
     SVGResourceFilter* svgFilter = filter();
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData());
+
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     filter = [CIFilter filterWithName:@"WKDiffuseLighting"];
@@ -45,7 +47,7 @@ CIFilter* SVGFEDiffuseLighting::getCIFilter(const FloatRect& bbox) const
         return nil;
 
     [filter setDefaults];
-    CIImage* inputImage = svgFilter->inputImage(this);
+    CIImage* inputImage = filterPlatformData->inputImage(this);
     FE_QUARTZ_CHECK_INPUT(inputImage);
     CIFilter* normals = getNormalMap(inputImage, surfaceScale());
     if (!normals)

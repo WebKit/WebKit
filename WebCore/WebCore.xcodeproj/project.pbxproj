@@ -2083,6 +2083,8 @@
 		A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */; };
 		A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */; };
 		A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */; };
+		A869385C0CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A869385A0CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.mm */; };
+		A86938D00CD4931300B666A1 /* SVGResourceFilterPlatformDataMac.h in Headers */ = {isa = PBXBuildFile; fileRef = A86938590CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.h */; };
 		A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */; };
 		A871D4570A127CBC00B12A68 /* HTMLPlugInElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */; };
 		A871D4580A127CBC00B12A68 /* HTMLParamElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */; };
@@ -5978,6 +5980,8 @@
 		A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEvent.cpp; sourceTree = "<group>"; };
 		A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSKeyboardEvent.h; sourceTree = "<group>"; };
 		A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyboardEvent.cpp; sourceTree = "<group>"; };
+		A86938590CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SVGResourceFilterPlatformDataMac.h; path = mac/SVGResourceFilterPlatformDataMac.h; sourceTree = "<group>"; };
+		A869385A0CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SVGResourceFilterPlatformDataMac.mm; path = mac/SVGResourceFilterPlatformDataMac.mm; sourceTree = "<group>"; };
 		A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInElement.h; sourceTree = "<group>"; };
 		A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInElement.cpp; sourceTree = "<group>"; };
 		A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParamElement.h; sourceTree = "<group>"; };
@@ -10170,6 +10174,15 @@
 			name = XML;
 			sourceTree = "<group>";
 		};
+		A86938690CD487DE00B666A1 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				A86938590CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.h */,
+				A869385A0CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
 		A8C0F6E9089701F100BA5114 /* ksvg2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -10718,6 +10731,7 @@
 		B2A015960AF6CD53006BCE0E /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				A86938690CD487DE00B666A1 /* mac */,
 				B2A015970AF6CD53006BCE0E /* cg */,
 				B2E27BDD0B0F2AE500F17C7B /* filters */,
 				A8C9DD250B4374260097883A /* SVGImage.cpp */,
@@ -13623,6 +13637,7 @@
 				E15863990CD10B730066E2C9 /* TextCodecUserDefined.h in Headers */,
 				BC0B36A50CD3C67C00AC7EB5 /* Console.h in Headers */,
 				BC98543E0CD3D98C00069BC1 /* JSConsole.h in Headers */,
+				A86938D00CD4931300B666A1 /* SVGResourceFilterPlatformDataMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15160,6 +15175,7 @@
 				E158639A0CD10B730066E2C9 /* TextCodecUserDefined.cpp in Sources */,
 				BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */,
 				BC98543D0CD3D98B00069BC1 /* JSConsole.cpp in Sources */,
+				A869385C0CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

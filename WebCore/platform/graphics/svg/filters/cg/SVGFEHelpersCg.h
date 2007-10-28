@@ -24,6 +24,7 @@
 #include "BlockExceptions.h"
 #include "SVGFEDisplacementMap.h"
 #include "SVGResourceFilter.h"
+#include "SVGResourceFilterPlatformDataMac.h"
 #include <QuartzCore/CoreImage.h>
 #include <wtf/MathExtras.h>
 
@@ -44,7 +45,8 @@ CIFilter* getNormalMap(CIImage* bumpMap, float scale);
 
 // Macros used by the SVGFE*Cg classes
 #define FE_QUARTZ_SETUP_INPUT(name) \
-    CIImage* inputImage = svgFilter->inputImage(this); \
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData()); \
+    CIImage* inputImage = filterPlatformData->inputImage(this); \
     FE_QUARTZ_CHECK_INPUT(inputImage) \
     CIFilter* filter; \
     BEGIN_BLOCK_OBJC_EXCEPTIONS; \
@@ -57,7 +59,7 @@ CIFilter* getNormalMap(CIImage* bumpMap, float scale);
         return nil;
 
 #define FE_QUARTZ_OUTPUT_RETURN \
-    svgFilter->setOutputImage(this, [filter valueForKey:@"outputImage"]); \
+    filterPlatformData->setOutputImage(this, [filter valueForKey:@"outputImage"]); \
     return filter; \
     END_BLOCK_OBJC_EXCEPTIONS; \
     return nil;

@@ -1,9 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
-
-    This file is part of the KDE project
+                  2005 Eric Seidel <eric@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,42 +22,26 @@
 #ifndef SVGResourceFilter_h
 #define SVGResourceFilter_h
 
+#include "config.h"
+
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGResource.h"
 #include "SVGFilterEffect.h"
 
 #include "FloatRect.h"
 
-#if PLATFORM(CI)
-#include <ApplicationServices/ApplicationServices.h>
-
-#ifdef __OBJC__
-@class CIImage;
-@class CIFilter;
-@class CIContext;
-@class NSArray;
-@class NSMutableDictionary;
-#else
-class CIImage;
-class CIFilter;
-class CIContext;
-class NSArray;
-class NSMutableDictionary;
-#endif
-#endif
-
-#include <wtf/RetainPtr.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
 class GraphicsContext;
 class SVGFilterEffect;
+    
+class SVGResourceFilterPlatformData {};
 
 class SVGResourceFilter : public SVGResource {
 public:
-    // To be implemented in platform specific code.
     SVGResourceFilter();
-    virtual ~SVGResourceFilter();
     
     virtual SVGResourceType resourceType() const { return FilterResourceType; }
 
@@ -88,24 +70,14 @@ public:
     // To be implemented in platform specific code.
     void prepareFilter(GraphicsContext*&, const FloatRect& bbox);
     void applyFilter(GraphicsContext*&, const FloatRect& bbox);
-
-#if PLATFORM(CI)
-    CIImage* imageForName(const String&) const;
-    void setImageForName(CIImage*, const String&);
-
-    void setOutputImage(const SVGFilterEffect*, CIImage*);
-    CIImage* inputImage(const SVGFilterEffect*);
-#endif
-
+    
+    SVGResourceFilterPlatformData* platformData() { return m_platformData.get(); }
+    const Vector<SVGFilterEffect*>& effects() { return m_effects; }
+    
 private:
-    // FIXME: This should be pulled out of this header and into platform-specific static methods and private data
-#if PLATFORM(CI)
-    NSArray* getCIFilterStack(CIImage* inputImage, const FloatRect& bbox);
-
-    CIContext* m_filterCIContext;
-    CGLayerRef m_filterCGLayer;
-    RetainPtr<NSMutableDictionary> m_imagesByName;
-#endif
+    SVGResourceFilterPlatformData* createPlatformData();
+    
+    OwnPtr<SVGResourceFilterPlatformData> m_platformData;
 
     bool m_filterBBoxMode : 1;
     bool m_effectBBoxMode : 1;

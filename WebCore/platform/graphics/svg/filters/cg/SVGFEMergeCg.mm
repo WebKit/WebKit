@@ -30,13 +30,15 @@ namespace WebCore {
 CIFilter* SVGFEMerge::getCIFilter(const FloatRect& bbox) const
 {
     SVGResourceFilter* svgFilter = filter();
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData());
+
     CIFilter* filter = nil;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     const Vector<String>& inputs = mergeInputs();
 
-    CIImage* previousOutput = svgFilter->inputImage(this);
+    CIImage* previousOutput = filterPlatformData->inputImage(this);
     for (unsigned x = 0; x < inputs.size(); x++) {
-        CIImage* inputImage = svgFilter->imageForName(inputs[x]);
+        CIImage* inputImage = filterPlatformData->imageForName(inputs[x]);
         FE_QUARTZ_CHECK_INPUT(inputImage);
         FE_QUARTZ_CHECK_INPUT(previousOutput);
         filter = [CIFilter filterWithName:@"CISourceOverCompositing"];

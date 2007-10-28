@@ -27,10 +27,11 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#include "SVGResourceFilter.h"
+
 #include "AffineTransform.h"
 #include "FoundationExtras.h"
 #include "GraphicsContext.h"
-#include "SVGResourceFilter.h"
 
 #include "SVGFEBlend.h"
 #include "SVGFEColorMatrix.h"
@@ -45,6 +46,7 @@
 #include "SVGFEOffset.h"
 #include "SVGFESpecularLighting.h"
 #include "SVGFETile.h"
+#include "SVGResourceFilterPlatformDataMac.h"
 
 #include <QuartzCore/CoreImage.h>
 
@@ -53,23 +55,9 @@
 
 namespace WebCore {
 
-static const char* const SVGPreviousFilterOutputName = "__previousOutput__";
-
-SVGResourceFilter::SVGResourceFilter()
-    : m_filterCIContext(0)
-    , m_filterCGLayer(0)
-    , m_imagesByName(AdoptNS, [[NSMutableDictionary alloc] init])
-    , m_filterBBoxMode(false)
-    , m_effectBBoxMode(false)
-    , m_xBBoxMode(false)
-    , m_yBBoxMode(false)
+SVGResourceFilterPlatformData* SVGResourceFilter::createPlatformData()
 {
-}
-
-SVGResourceFilter::~SVGResourceFilter()
-{
-    ASSERT(!m_filterCGLayer);
-    ASSERT(!m_filterCIContext);
+    return new SVGResourceFilterPlatformDataMac(this);
 }
 
 void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect& bbox)
@@ -77,6 +65,8 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect
     if (bbox.isEmpty() || m_effects.isEmpty())
         return;
 
+    SVGResourceFilterPlatformDataMac* platform = static_cast<SVGResourceFilterPlatformDataMac*>(platformData());
+    
     CGContextRef cgContext = context->platformContext();
 
     // Use of CGBegin/EndTransparencyLayer around this call causes over release
@@ -86,7 +76,7 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect
     // <http://bugs.webkit.org/show_bug.cgi?id=6947>
     // <rdar://problem/4647735>
     NSAutoreleasePool* filterContextPool = [[NSAutoreleasePool alloc] init];
-    m_filterCIContext = HardRetain([CIContext contextWithCGContext:cgContext options:nil]);
+    platform->m_filterCIContext = HardRetain([CIContext contextWithCGContext:cgContext options:nil]);
     [filterContextPool drain];
 
     FloatRect filterRect = filterBBoxForItemBBox(bbox);
@@ -96,9 +86,9 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect
     float width = filterRect.width();
     float height = filterRect.height();
 
-    m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGSizeMake(width, height) info:NULL];
+    platform->m_filterCGLayer = [platform->m_filterCIContext createCGLayerWithSize:CGSizeMake(width, height) info:NULL];
 
-    context = new GraphicsContext(CGLayerGetContext(m_filterCGLayer));
+    context = new GraphicsContext(CGLayerGetContext(platform->m_filterCGLayer));
     context->save();
 
     context->translate(-filterRect.x(), -filterRect.y());
@@ -132,9 +122,11 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
     if (bbox.isEmpty() || m_effects.isEmpty())
         return;
 
+    SVGResourceFilterPlatformDataMac* platform = static_cast<SVGResourceFilterPlatformDataMac*>(platformData());
+    
     // actually apply the filter effects
-    CIImage* inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];
-    NSArray* filterStack = getCIFilterStack(inputImage, bbox);
+    CIImage* inputImage = [CIImage imageWithCGLayer:platform->m_filterCGLayer];
+    NSArray* filterStack = platform->getCIFilterStack(inputImage, bbox);
     if ([filterStack count]) {
         CIImage* outputImage = [[filterStack lastObject] valueForKey:@"outputImage"];
 
@@ -147,93 +139,18 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
             FloatPoint destOrigin = filterRect.location();
             filterRect.setLocation(FloatPoint(0.0f, 0.0f));
 
-            [m_filterCIContext drawImage:outputImage atPoint:CGPoint(destOrigin) fromRect:filterRect];
+            [platform->m_filterCIContext drawImage:outputImage atPoint:CGPoint(destOrigin) fromRect:filterRect];
         }
     }
 
-    CGLayerRelease(m_filterCGLayer);
-    m_filterCGLayer = 0;
+    CGLayerRelease(platform->m_filterCGLayer);
+    platform->m_filterCGLayer = 0;
 
-    HardRelease(m_filterCIContext);
-    m_filterCIContext = 0;
+    HardRelease(platform->m_filterCIContext);
+    platform->m_filterCIContext = 0;
 
     delete context;
     context = 0;
-}
-
-NSArray* SVGResourceFilter::getCIFilterStack(CIImage* inputImage, const FloatRect& bbox)
-{
-    NSMutableArray* filterEffects = [NSMutableArray array];
-
-    setImageForName(inputImage, "SourceGraphic"); // input
-
-    for (unsigned int i = 0; i < m_effects.size(); i++) {
-        CIFilter* filter = m_effects[i]->getCIFilter(bbox);
-        if (filter)
-            [filterEffects addObject:filter];
-    }
-
-    [m_imagesByName.get() removeAllObjects]; // clean up before next time.
-
-    return filterEffects;
-}
-
-CIImage* SVGResourceFilter::imageForName(const String& name) const
-{
-    return [m_imagesByName.get() objectForKey:name];
-}
-
-void SVGResourceFilter::setImageForName(CIImage* image, const String& name)
-{
-    [m_imagesByName.get() setValue:image forKey:name];
-}
-
-void SVGResourceFilter::setOutputImage(const SVGFilterEffect* filterEffect, CIImage* output)
-{
-    if (!filterEffect->result().isEmpty())
-        setImageForName(output, filterEffect->result());
-
-    setImageForName(output, SVGPreviousFilterOutputName);
-}
-
-static inline CIImage* alphaImageForImage(CIImage* image)
-{
-    CIFilter* onlyAlpha = [CIFilter filterWithName:@"CIColorMatrix"];
-    CGFloat zero[4] = {0, 0, 0, 0};
-    [onlyAlpha setDefaults];
-    [onlyAlpha setValue:image forKey:@"inputImage"];
-    [onlyAlpha setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputRVector"];
-    [onlyAlpha setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputGVector"];
-    [onlyAlpha setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputBVector"];
-    return [onlyAlpha valueForKey:@"outputImage"];
-}
-
-CIImage* SVGResourceFilter::inputImage(const SVGFilterEffect* filterEffect)
-{
-    if (filterEffect->in().isEmpty()) {
-        CIImage* inImage = imageForName(SVGPreviousFilterOutputName);
-
-        if (!inImage)
-            inImage = imageForName("SourceGraphic");
-
-        return inImage;
-    } else if (filterEffect->in() == "SourceAlpha") {
-        CIImage* sourceAlpha = imageForName(filterEffect->in());
-
-        if (!sourceAlpha) {
-            CIImage* sourceGraphic = imageForName("SourceGraphic");
-
-            if (!sourceGraphic)
-                return nil;
-
-            sourceAlpha = alphaImageForImage(sourceGraphic);
-            setImageForName(sourceAlpha, "SourceAlpha");
-        }
-
-        return sourceAlpha;
-    }
-
-    return imageForName(filterEffect->in());
 }
 
 }

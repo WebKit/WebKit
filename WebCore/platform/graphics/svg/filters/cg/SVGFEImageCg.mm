@@ -36,6 +36,8 @@ CIFilter* SVGFEImage::getCIFilter(const FloatRect& bbox) const
         return nil;
 
     SVGResourceFilter* svgFilter = filter();
+    SVGResourceFilterPlatformDataMac* filterPlatformData = static_cast<SVGResourceFilterPlatformDataMac*>(svgFilter->platformData());
+
     CIFilter* filter;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     CIImage* ciImage = [CIImage imageWithCGImage:cachedImage()->image()->getCGImageRef()];
