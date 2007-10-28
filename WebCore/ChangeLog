@@ -1,3 +1,22 @@
+2007-10-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - update for HashTable changes
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        * dom/Document.h:
+        * dom/QualifiedName.cpp:
+        * dom/StyledElement.cpp:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        * platform/FontCache.cpp:
+        * platform/StringHash.h:
+        (WTF::):
+        * platform/TextEncodingRegistry.cpp:
+        * platform/graphics/IntSizeHash.h:
+        (WTF::):
+        * plugins/win/PluginPackageWin.h:
+
 2007-10-28  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.

@@ -100,6 +100,7 @@ namespace WebCore {
 
         static bool equal(const int a, const int b) { return equal(reinterpret_cast<PluginPackageWin*>(a), reinterpret_cast<PluginPackageWin*>(b)); }
         static bool equal(const RefPtr<PluginPackageWin>& a, const RefPtr<PluginPackageWin>& b) { return PluginPackageWin::equal(*a.get(), *b.get()); }
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
 } // namespace WebCore

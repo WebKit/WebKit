@@ -58,6 +58,7 @@ struct MappedAttributeKeyTraits : WTF::GenericHashTraits<MappedAttributeKey> {
 struct MappedAttributeHash {
     static unsigned hash(const MappedAttributeKey&);
     static bool equal(const MappedAttributeKey& a, const MappedAttributeKey& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 typedef HashMap<MappedAttributeKey, CSSMappedAttributeDeclaration*, MappedAttributeHash, MappedAttributeKeyTraits> MappedAttributeDecls;

@@ -177,6 +177,8 @@ struct PODTypeReadWriteHashInfoHash {
     {
         return a == b;
     }
+
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 template<typename PODType, typename PODTypeCreator>

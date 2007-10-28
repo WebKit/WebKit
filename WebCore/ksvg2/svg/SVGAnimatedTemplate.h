@@ -79,6 +79,8 @@ namespace WebCore {
         {
             return a == b;
         }
+
+        static const bool safeToCompareToEmptyOrDeleted = true;
     };
     
     struct SVGAnimatedTypeWrapperKeyHashTraits : WTF::GenericHashTraits<SVGAnimatedTypeWrapperKey> {

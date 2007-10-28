@@ -82,6 +82,8 @@ struct FontPlatformDataCacheKeyHash {
     {
         return a == b;
     }
+
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 struct FontPlatformDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformDataCacheKey> {
@@ -175,6 +177,8 @@ struct FontDataCacheKeyHash {
     {
         return a == b;
     }
+
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {

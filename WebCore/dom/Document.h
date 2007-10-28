@@ -130,6 +130,7 @@ inline bool operator==(const FormElementKey& a, const FormElementKey& b)
 struct FormElementKeyHash {
     static unsigned hash(const FormElementKey&);
     static bool equal(const FormElementKey& a, const FormElementKey& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {

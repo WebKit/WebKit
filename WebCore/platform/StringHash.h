@@ -57,6 +57,7 @@ namespace WTF {
 
             return true;
         }
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
     
     template<> struct StrHash<WebCore::AtomicStringImpl*> : public StrHash<WebCore::StringImpl*> { };
@@ -67,6 +68,7 @@ namespace WTF {
         {
             return StrHash<WebCore::StringImpl*>::equal(a.get(), b.get());
         }
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
     template<> struct StrHash<WebCore::String> {
@@ -75,6 +77,7 @@ namespace WTF {
         {
             return StrHash<WebCore::StringImpl*>::equal(a.impl(), b.impl());
         }
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
     template<typename T> struct CaseInsensitiveHash;
@@ -185,6 +188,8 @@ namespace WTF {
                 return false;
             return WTF::Unicode::umemcasecmp(a->characters(), b->characters(), length) == 0;
         }
+
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
     template<> struct CaseInsensitiveHash<WebCore::AtomicStringImpl*> : public CaseInsensitiveHash<WebCore::StringImpl*> { };
@@ -199,6 +204,8 @@ namespace WTF {
         {
             return CaseInsensitiveHash<WebCore::StringImpl*>::equal(a.get(), b.get());
         }
+
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
     template<> struct CaseInsensitiveHash<WebCore::String> {
@@ -210,6 +217,8 @@ namespace WTF {
         {
             return CaseInsensitiveHash<WebCore::StringImpl*>::equal(a.impl(), b.impl());
         }
+
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
     // store WebCore::String as StringImpl*

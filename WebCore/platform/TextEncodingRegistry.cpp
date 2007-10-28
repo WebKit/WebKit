@@ -100,6 +100,7 @@ struct TextEncodingNameHash {
         }
     }
 
+    static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
 struct TextCodecFactory {
