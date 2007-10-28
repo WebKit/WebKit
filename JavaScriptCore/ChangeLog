@@ -1,5 +1,12 @@
 2007-10-28  Darin Adler  <darin@apple.com>
 
+        - fix GTK build
+
+        * kjs/nodes2string.cpp: (KJS::isParserRoundTripNumber):
+        Use isNaN and isInf instead of isnan and isinf.
+
+2007-10-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - http://bugs.webkit.org/show_bug.cgi?id=15735

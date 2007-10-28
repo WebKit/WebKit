@@ -22,6 +22,7 @@
 #include "config.h"
 #include "nodes.h"
 
+#include "operations.h" // isNaN, isInf
 #include <wtf/StringExtras.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -138,7 +139,7 @@ static const char* operatorString(Operator oper)
 static bool isParserRoundTripNumber(const UString& string)
 {
     double number = string.toDouble(false, false);
-    if (isnan(number) || isinf(number))
+    if (isNaN(number) || isInf(number))
         return false;
     return string == UString::from(number);
 }
