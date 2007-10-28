@@ -1,5 +1,12 @@
 2007-10-28  Eric Seidel  <eric@webkit.org>
 
+        Build fix for non-SVG build, no review.
+
+        * platform/graphics/svg/mac/SVGResourceFilterPlatformDataMac.h:
+        * platform/graphics/svg/mac/SVGResourceFilterPlatformDataMac.mm:
+
+2007-10-28  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Oliver.
 
         Push SVGResourceFilter platform specific data down into m_platformData

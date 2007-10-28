@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+
 #include "SVGResourceFilterPlatformDataMac.h"
 #include <QuartzCore/CoreImage.h>
 
@@ -122,3 +125,5 @@ CIImage* SVGResourceFilterPlatformDataMac::inputImage(const SVGFilterEffect* fil
     
 
 }
+
+#endif // #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

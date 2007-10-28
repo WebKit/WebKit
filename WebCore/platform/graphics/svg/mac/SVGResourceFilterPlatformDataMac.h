@@ -26,6 +26,9 @@
 #ifndef SVGResourceFilterPlatformDataMac_h
 #define SVGResourceFilterPlatformDataMac_h
 
+#include "config.h"
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+
 #include "SVGResourceFilter.h"
 
 #include <ApplicationServices/ApplicationServices.h>
@@ -57,6 +60,8 @@ namespace WebCore {
         SVGResourceFilter* m_filter;
     };
 }
+
+#endif // #if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #endif // SVGResourceFilterPlatformDataMac_h
 
