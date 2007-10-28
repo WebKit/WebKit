@@ -367,6 +367,29 @@ Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
     return Color(color.red >> 8, color.green >> 8, color.blue >> 8);
 }
 
+bool RenderThemeGtk::caretShouldBlink() const
+{
+    GtkSettings* settings = gtk_widget_get_settings(gtkEntry());
+
+    gboolean value;
+    g_object_get(settings, "gtk-cursor-blink", &value, 0);
+
+    return value;
+}
+
+double RenderThemeGtk::caretBlinkFrequency() const
+{
+    if (!caretShouldBlink())
+        return 0;
+
+    GtkSettings* settings = gtk_widget_get_settings(gtkEntry());
+
+    gint time;
+    g_object_get(settings, "gtk-cursor-blink-time", &time, 0);
+
+    return time / 2000.;
+}
+
 void RenderThemeGtk::systemFont(int propId, FontDescription&) const
 {
 }

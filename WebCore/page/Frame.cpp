@@ -90,8 +90,6 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-static const double caretBlinkFrequency = 0.5;
-
 double Frame::s_currentPaintTimeStamp = 0.0;
 
 class UserStyleSheetLoader : public CachedResourceClient {
@@ -620,7 +618,7 @@ void Frame::selectionLayoutChanged()
     // Start blinking with a black caret. Be sure not to restart if we're
     // already blinking in the right location.
     if (shouldBlink && !d->m_caretBlinkTimer.isActive()) {
-        d->m_caretBlinkTimer.startRepeating(caretBlinkFrequency);
+        d->m_caretBlinkTimer.startRepeating(theme()->caretBlinkFrequency());
         if (!d->m_caretPaint) {
             d->m_caretPaint = true;
             selectionController()->invalidateCaretRect();

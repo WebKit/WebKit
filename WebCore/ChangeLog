@@ -1,3 +1,20 @@
+2007-10-28  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15646
+        [GTK] caretBlinkFrequency is hard-coded in Frame.cpp
+
+        Abstract caretBlinkFrequency to RenderTheme.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::caretShouldBlink):
+        (WebCore::RenderThemeGtk::caretBlinkFrequency):
+        * platform/gtk/RenderThemeGtk.h:
+        * rendering/RenderTheme.h:
+
 2007-10-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.
