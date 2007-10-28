@@ -1,3 +1,11 @@
+2007-10-28  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * WebKit.vcproj/WebKit.vcproj: Suppress warning 4800 (conversion to bool),
+        since we don't want to add !! everywhere, and because HashTable.h has a
+        conversion to bool of this type now.
+
 2007-10-27  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
