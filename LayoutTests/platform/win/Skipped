@@ -119,6 +119,7 @@ svg/batik/text/textPosition2.svg
 svg/batik/text/textProperties2.svg
 svg/batik/text/textProperties.svg
 svg/batik/text/textStyles.svg
+svg/batik/paints/patternRegions.svg
 svg/carto.net/button.svg
 svg/carto.net/colourpicker.svg
 svg/carto.net/combobox.svg
@@ -430,10 +431,8 @@ editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 
 # These tests time out <rdar://problem/5382558>
-fast/frames/frameElement-widthheight.html
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
-svg/custom/image-clipped-hit.svg
 
 # Reports large negative numbers for screenLeft and screenTop <rdar://problem/5382579>
 http/tests/security/cross-frame-access-put.html
@@ -477,8 +476,11 @@ editing/selection/5057506-2.html
 editing/selection/5057506.html
 editing/selection/drag-select-1.html
 fast/dom/Window/window-early-properties.html
+fast/frames/frameElement-widthheight.html
 fast/frames/frame-js-url-clientWidth.html
 fast/loader/local-svg-parsed-as-svg.svg
+svg/custom/image-clipped-hit.svg
+svg/custom/use-clipped-hit.svg
 
 # We can't make platform specifc results so keep this here for now
 # This test is dependant on DRT being able to open windows.
@@ -518,6 +520,12 @@ fast/images/svg-as-image.html
 # Window resize tests are failing <rdar://5563578>
 fast/dom/Window/window-resize-nan.html
 fast/dom/Window/window-resize.html
+
+# Results are wildly wrong <rdar://5563746>
+svg/css/glyph-orientation-rounding-test.xhtml
+
+# URL of frame is about:blank in security warning message, warnings sometimes bleed into subsequent tests <rdar://5563750>
+http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################

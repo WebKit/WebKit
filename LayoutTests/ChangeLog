@@ -1,5 +1,13 @@
 2007-10-27  Adam Roben  <aroben@apple.com>
 
+        Updated Windows Skipped file for currently failing tests
+
+        Reviewed by NOBODY.
+
+        * platform/win/Skipped:
+
+2007-10-27  Adam Roben  <aroben@apple.com>
+
         Fix HTMLDocument12.xhtml on Leopard/Windows
 
         <rdar://5313535> and <rdar://5539816>
