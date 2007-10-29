@@ -1,3 +1,16 @@
+2007-10-29  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15725
+        [GTK] WebCore.pro header dependencies are incorrect
+
+        Fix header dependencies in the build system
+
+        INCLUDEPATH and DEPENDPATH are now up to date.
+
+        * WebCore.pro:
+
 2007-10-29  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

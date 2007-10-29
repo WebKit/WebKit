@@ -92,23 +92,38 @@ DEPENDPATH += editing/qt history/qt loader/qt page/qt \
 
 gtk-port {
     INCLUDEPATH += \
+    $$PWD/platform/gtk \
+    $$PWD/platform/graphics/gtk \
+    $$PWD/platform/graphics/cairo \
     $$PWD/platform/graphics/svg/cairo \
+    $$PWD/platform/network/curl \
     $$PWD/platform/image-decoders/bmp \
     $$PWD/platform/image-decoders/gif \
     $$PWD/platform/image-decoders/ico \
     $$PWD/platform/image-decoders/jpeg \
     $$PWD/platform/image-decoders/png \
-    $$PWD/platform/image-decoders/xbm
+    $$PWD/platform/image-decoders/xbm \
+    $$PWD/loader/gtk \
+    $$PWD/page/gtk \
+    $$PWD/../WebKit/gtk/WebCoreSupport \
+    $$PWD/../WebKit/gtk/Api
 
-    DEPENDPATH += platform/graphics/gdk       \
-                  platform/gdk                \
-                  loader/gdk                  \
-                  page/gdk                    \
-                  platform/graphics/cairo     \
-                  platform/graphics/svg/cairo \
-                  platform/network/curl       \
-                  ../WebKit/gtk/Api           \
-                  ../WebKit/gtk/WebCoreSupport
+    DEPENDPATH += \
+    platform/gtk \
+    platform/graphics/gtk \
+    platform/graphics/cairo \
+    platform/graphics/svg/cairo \
+    platform/network/curl \
+    platform/image-decoders/bmp \
+    platform/image-decoders/gif \
+    platform/image-decoders/ico \
+    platform/image-decoders/jpeg \
+    platform/image-decoders/png \
+    platform/image-decoders/xbm \
+    loader/gtk \
+    page/gtk \
+    ../WebKit/gtk/WebCoreSupport \
+    ../WebKit/gtk/Api
 }
 
 INCLUDEPATH +=  $$PWD \
@@ -116,6 +131,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/.. \
                 $$PWD/../JavaScriptCore/kjs \
                 $$PWD/../JavaScriptCore/bindings \
+                $$PWD/../JavaScriptCore/wtf \
                 $$PWD/platform \
                 $$PWD/platform/network \
                 $$PWD/platform/graphics \
