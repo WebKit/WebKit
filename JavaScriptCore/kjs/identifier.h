@@ -1,6 +1,5 @@
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2003 Apple Computer, Inc
+ *  Copyright (C) 2003, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -34,6 +33,9 @@ namespace KJS {
         Identifier(const UChar* s, int length) : _ustring(add(s, length)) { }
         explicit Identifier(UString::Rep* rep) : _ustring(add(rep)) { } 
         explicit Identifier(const UString& s) : _ustring(add(s.rep())) { }
+
+        // Special constructor for cases where we overwrite an object in place.
+        Identifier(PlacementNewAdoptType) : _ustring(PlacementNewAdopt) { }
         
         const UString& ustring() const { return _ustring; }
         DOM::DOMString domString() const;

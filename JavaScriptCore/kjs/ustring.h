@@ -1,8 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -50,6 +49,8 @@ namespace DOM {
 class KJScript;
 
 namespace KJS {
+
+    enum PlacementNewAdoptType { PlacementNewAdopt };
 
   class UString;
 
@@ -221,6 +222,9 @@ namespace KJS {
      * Destructor.
      */
     ~UString() {}
+
+    // Special constructor for cases where we overwrite an object in place.
+    UString(PlacementNewAdoptType) { }
 
     /**
      * Constructs a string from an int.

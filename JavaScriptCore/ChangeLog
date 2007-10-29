@@ -1,5 +1,21 @@
 2007-10-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix a storage leak where we ref the UString every time we replace
+          a ResolveNode with a LocalVarAccessNode
+
+        * kjs/identifier.h: (KJS::Identifier::Identifier): Added a constructor
+        that takes PlacementNewAdopt.
+
+        * kjs/nodes.h: (KJS::ResolveNode::ResolveNode): Initialize the ident
+        with PlacementNewAdopt instead of the old value of ident.
+
+        * kjs/ustring.h: (KJS::UString::UString): Added a constructor that
+        takes PlacementNewAdopt.
+
+2007-10-28  Darin Adler  <darin@apple.com>
+
         - Windows build fix; get rid of unused parameter
 
         * kjs/nodes.cpp: (KJS::ResolveNode::optimizeVariableAccess): Don't pass it.

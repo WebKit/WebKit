@@ -89,11 +89,6 @@ namespace KJS {
         PrecExpression
     };
   
-    // Specifies that a Node should adopt the memory layout it was initialized into.
-    // We use this to swap a pre-existing base class node with a more optimized 
-    // subclass node.
-    enum PlacementNewAdoptTag { PlacementNewAdopt };
-
   struct DeclarationStacks {
       typedef Vector<Node*, 16> NodeStack;
       typedef Vector<VarDeclNode*, 16> VarStack;
@@ -116,7 +111,7 @@ namespace KJS {
   class Node {
   public:
     Node() KJS_FAST_CALL;
-    Node(PlacementNewAdoptTag) KJS_FAST_CALL { }
+    Node(PlacementNewAdoptType) KJS_FAST_CALL { }
     virtual ~Node();
 
     virtual JSValue *evaluate(ExecState *exec) KJS_FAST_CALL = 0;
@@ -273,9 +268,10 @@ namespace KJS {
     { 
     }
 
-    ResolveNode(PlacementNewAdoptTag) KJS_FAST_CALL 
+    // Special constructor for cases where we overwrite an object in place.
+    ResolveNode(PlacementNewAdoptType) KJS_FAST_CALL 
         : Node(PlacementNewAdopt)
-        , ident(ident) 
+        , ident(PlacementNewAdopt) 
     {
     }
 
@@ -296,6 +292,7 @@ namespace KJS {
 
   class LocalVarAccessNode : public ResolveNode {
   public:
+    // Overwrites a ResolveNode in place.
     LocalVarAccessNode(size_t i)
         : ResolveNode(PlacementNewAdopt)
     {
