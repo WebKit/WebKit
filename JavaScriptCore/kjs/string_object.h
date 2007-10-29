@@ -31,11 +31,13 @@ namespace KJS {
   class StringInstance : public JSWrapperObject {
   public:
     StringInstance(JSObject *proto);
-    StringInstance(JSObject *proto, StringImp* string);
-    StringInstance(JSObject *proto, const UString &string);
+    StringInstance(JSObject *proto, StringImp*);
+    StringInstance(JSObject *proto, const UString&);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr = None);
+    virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+
+    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue*, int attr = None);
     virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName);
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
@@ -45,8 +47,10 @@ namespace KJS {
     StringImp* internalValue() const { return static_cast<StringImp*>(JSWrapperObject::internalValue());}
 
   private:
-    static JSValue *lengthGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot &slot);
-    static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot &slot);
+    bool inlineGetOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
+
+    static JSValue* lengthGetter(ExecState*, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue* indexGetter(ExecState*, JSObject *, const Identifier&, const PropertySlot&);
   };
 
   // WebCore uses this to make style.filter undetectable

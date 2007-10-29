@@ -1,3 +1,20 @@
+2007-10-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Give StringInstance a getOwnPropertySlot(ExecState, unsigned, PropertySlot) fastpath, just like Arrays.
+        Make it a compile time error to use toString(ExecState) on a StringInstance
+        
+        SunSpider claims this was a 6.6% speedup overall (22% on string-base64)
+
+        * kjs/internal.h:
+        (KJS::StringImp::getLength):
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::lengthGetter):
+        (KJS::StringInstance::inlineGetOwnPropertySlot):
+        (KJS::StringInstance::getOwnPropertySlot):
+        * kjs/string_object.h:
+
 2007-10-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.

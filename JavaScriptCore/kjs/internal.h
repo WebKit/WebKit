@@ -49,18 +49,18 @@ namespace KJS {
     StringImp(const UString& v) : val(v) { Collector::reportExtraMemoryCost(v.cost()); }
     enum HasOtherOwnerType { HasOtherOwner };
     StringImp(const UString& value, HasOtherOwnerType) : val(value) { }
-    UString value() const { return val; }
+    const UString& value() const { return val; }
 
+  private:
     virtual JSType type() const { return StringType; }
 
     virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
     virtual bool getPrimitiveNumber(ExecState*, double& number) const;
     virtual bool toBoolean(ExecState *exec) const;
     virtual double toNumber(ExecState *exec) const;
-    virtual UString toString(ExecState *exec) const;
     virtual JSObject *toObject(ExecState *exec) const;
-
-  private:
+    virtual UString toString(ExecState*) const;
+    
     UString val;
   };
 
