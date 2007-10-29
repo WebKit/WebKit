@@ -1,5 +1,14 @@
 2007-10-28  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: use the new-fangled missingSymbolMarker().
+
+        * kjs/nodes.cpp:
+        (KJS::ResolveNode::optimizeVariableAccess):
+        * kjs/nodes.h:
+        (KJS::LocalVarAccessNode::LocalVarAccessNode):
+
+2007-10-28  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak, Darin Adler.
         
         Much supporting work done by Maciej Stachowiak, Maks Orlovich, and 
