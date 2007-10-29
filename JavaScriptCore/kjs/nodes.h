@@ -296,17 +296,13 @@ namespace KJS {
 
   class LocalVarAccessNode : public ResolveNode {
   public:
-    LocalVarAccessNode(ResolveNode* n, size_t i)
+    LocalVarAccessNode(size_t i)
         : ResolveNode(PlacementNewAdopt)
     {
-        ASSERT(n == this);
-        ASSERT(sizeof(n) == sizeof(this));
-
         ASSERT(i != missingSymbolMarker());
         index = i;
     }
-
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
   };
 
   class ElementNode : public Node {
