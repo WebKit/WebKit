@@ -19,7 +19,7 @@ Version: 1.01
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 You may contact the author of Snoopy by e-mail at:
 monte@ispi.net
@@ -796,7 +796,7 @@ class Snoopy
 			$headers .= "User-Agent: ".$this->agent."\r\n";
 		if(!empty($this->host) && !isset($this->rawheaders['Host'])) {
 			$headers .= "Host: ".$this->host;
-			if(!empty($this->port))
+			if(!empty($this->port) && $this->port != 80)
 				$headers .= ":".$this->port;
 			$headers .= "\r\n";
 		}
@@ -816,7 +816,7 @@ class Snoopy
 				$cookie_headers .= $cookieKey."=".urlencode($cookieVal)."; ";
 				}
 				$headers .= substr($cookie_headers,0,-2) . "\r\n";
-			} 
+			}
 		}
 		if(!empty($this->rawheaders))
 		{

@@ -6,7 +6,7 @@
 <?php if (isset($mode) && 'bookmarklet' == $mode) : ?>
 <input type="hidden" name="mode" value="bookmarklet" />
 <?php endif; ?>
-<input type="hidden" name="user_ID" value="<?php echo $user_ID ?>" />
+<input type="hidden" name="user_ID" value="<?php echo (int) $user_ID ?>" />
 <input type="hidden" name="action" value='post' />
 
 <script type="text/javascript">
@@ -20,19 +20,18 @@ addLoadEvent(focusit);
 
 <div id="poststuff">
     <fieldset id="titlediv">
-      <legend><a href="http://wordpress.org/docs/reference/post/#title" title="<?php _e('Help on titles') ?>"><?php _e('Title') ?></a></legend> 
-	  <div><input type="text" name="post_title" size="30" tabindex="1" value="<?php echo $post->post_title; ?>" id="title" /></div>
+      <legend><a href="http://wordpress.org/docs/reference/post/#title" title="<?php _e('Help on titles') ?>"><?php _e('Title') ?></a></legend>
+	  <div><input type="text" name="post_title" size="30" tabindex="1" value="<?php echo attribute_escape( $post->post_title ); ?>" id="title" /></div>
     </fieldset>
 
     <fieldset id="categorydiv">
-      <legend><a href="http://wordpress.org/docs/reference/post/#category" title="<?php _e('Help on categories') ?>"><?php _e('Categories') ?></a></legend> 
+      <legend><a href="http://wordpress.org/docs/reference/post/#category" title="<?php _e('Help on categories') ?>"><?php _e('Categories') ?></a></legend>
 	  <div><?php dropdown_categories($post->post_category); ?></div>
     </fieldset>
 
 <br />
 <fieldset id="postdiv">
     <legend><a href="http://wordpress.org/docs/reference/post/#post" title="<?php _e('Help with post field') ?>"><?php _e('Post') ?></a></legend>
-<?php the_quicktags(); ?>
 <?php
  $rows = get_option('default_post_edit_rows');
  if (($rows < 3) || ($rows > 100)) {
@@ -49,7 +48,7 @@ edCanvas = document.getElementById('content');
 //-->
 </script>
 
-<input type="hidden" name="post_pingback" value="<?php echo get_option('default_pingback_flag') ?>" id="post_pingback" />
+<input type="hidden" name="post_pingback" value="<?php echo (int) get_option('default_pingback_flag') ?>" id="post_pingback" />
 
 <p><label for="trackback"> <?php printf(__('<a href="%s" title="Help on trackbacks"><strong>TrackBack</strong> a <abbr title="Universal Resource Locator">URL</abbr></a>:</label> (Separate multiple <abbr title="Universal Resource Locator">URL</abbr>s with spaces.)'), 'http://wordpress.org/docs/reference/post/#trackback'); echo '<br />'; ?>
 	<input type="text" name="trackback_url" style="width: 360px" id="trackback" tabindex="7" /></p>
@@ -64,7 +63,7 @@ edCanvas = document.getElementById('content');
 <?php if ('bookmarklet' != $mode) {
 		echo '<input name="advanced" type="submit" id="advancededit" tabindex="7" value="' .  __('Advanced Editing &raquo;') . '" />';
 	} ?>
-	<input name="referredby" type="hidden" id="referredby" value="<?php if ( wp_get_referer() ) echo urlencode(wp_get_referer()); ?>" />
+	<input name="referredby" type="hidden" id="referredby" value="<?php if ( $refby = wp_get_referer() ) echo urlencode($refby); ?>" />
 </p>
 
 <?php do_action('simple_edit_form', ''); ?>

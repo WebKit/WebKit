@@ -45,6 +45,8 @@ case 'edit':
 	$page_ID = $post_ID = $p = (int) $_GET['post'];
 	$post = get_post_to_edit($page_ID);
 
+	if ( empty($post->ID) ) wp_die( __("You attempted to edit a page that doesn't exist. Perhaps it was deleted?") );
+
 	if ( 'post' == $post->post_type ) {
 		wp_redirect("post.php?action=edit&post=$post_ID");
 		exit();
@@ -137,7 +139,7 @@ case 'delete':
 		if ( ! wp_delete_attachment($page_id) )
 			wp_die( __('Error in deleting...') );
 	} else {
-		if ( !wp_delete_post($page_id) ) 
+		if ( !wp_delete_post($page_id) )
 			wp_die( __('Error in deleting...') );
 	}
 

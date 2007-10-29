@@ -25,7 +25,7 @@ require_once ('admin-header.php');
 <select name="author">
 <option value="all" selected="selected"><?php _e('All'); ?></option>
 <?php
-$authors = $wpdb->get_col( "SELECT post_author FROM $wpdb->posts GROUP BY post_author" );  
+$authors = $wpdb->get_col( "SELECT post_author FROM $wpdb->posts GROUP BY post_author" );
 foreach ( $authors as $id ) {
 	$o = get_userdata( $id );
 	echo "<option value='$o->ID'>$o->display_name</option>";
@@ -45,13 +45,15 @@ foreach ( $authors as $id ) {
 <?php
 
 function export_wp() {
-global $wpdb, $posts, $post;
+global $wpdb, $post_ids, $post;
+
+do_action('export_wp');
 
 $filename = 'wordpress.' . date('Y-m-d') . '.xml';
 
 header('Content-Description: File Transfer');
 header("Content-Disposition: attachment; filename=$filename");
-header('Content-type: text/xml; charset=' . get_option('blog_charset'), true);
+header('Content-Type: text/xml; charset=' . get_option('blog_charset'), true);
 
 $where = '';
 if ( isset( $_GET['author'] ) && $_GET['author'] != 'all' ) {
@@ -59,16 +61,18 @@ if ( isset( $_GET['author'] ) && $_GET['author'] != 'all' ) {
 	$where = " WHERE post_author = '$author_id' ";
 }
 
-$posts = $wpdb->get_results("SELECT * FROM $wpdb->posts $where ORDER BY post_date_gmt ASC");
+// grab a snapshot of post IDs, just in case it changes during the export
+$post_ids = $wpdb->get_col("SELECT ID FROM $wpdb->posts $where ORDER BY post_date_gmt ASC");
 
-$categories = (array) $wpdb->get_results("SELECT cat_ID, cat_name, category_nicename, category_description, category_parent, posts_private, links_private FROM $wpdb->categories LEFT JOIN $wpdb->post2cat ON (category_id = cat_id) LEFT JOIN $wpdb->posts ON (post_id <=> id) $where GROUP BY cat_id");
+$categories = (array) get_categories('get=all');
+$tags = (array) get_tags('get=all');
 
 function wxr_missing_parents($categories) {
 	if ( !is_array($categories) || empty($categories) )
 		return array();
 
 	foreach ( $categories as $category )
-		$parents[$category->cat_ID] = $category->category_parent;
+		$parents[$category->term_id] = $category->parent;
 
 	$parents = array_unique(array_diff($parents, array_keys($parents)));
 
@@ -79,7 +83,7 @@ function wxr_missing_parents($categories) {
 }
 
 while ( $parents = wxr_missing_parents($categories) ) {
-	$found_parents = $wpdb->get_results("SELECT cat_ID, cat_name, category_nicename, category_description, category_parent, posts_private, links_private FROM $wpdb->categories WHERE cat_ID IN (" . join(', ', $parents) . ")");
+	$found_parents = get_categories("include=" . join(', ', $parents));
 	if ( is_array($found_parents) && count($found_parents) )
 		$categories = array_merge($categories, $found_parents);
 	else
@@ -90,8 +94,8 @@ while ( $parents = wxr_missing_parents($categories) ) {
 $pass = 0;
 $passes = 1000 + count($categories);
 while ( ( $cat = array_shift($categories) ) && ++$pass < $passes ) {
-	if ( $cat->category_parent == 0 || isset($cats[$cat->category_parent]) ) {
-		$cats[$cat->cat_ID] = $cat;
+	if ( $cat->parent == 0 || isset($cats[$cat->parent]) ) {
+		$cats[$cat->term_id] = $cat;
 	} else {
 		$categories[] = $cat;
 	}
@@ -110,44 +114,74 @@ function wxr_cdata($str) {
 }
 
 function wxr_cat_name($c) {
-	if ( empty($c->cat_name) )
+	if ( empty($c->name) )
 		return;
 
-	echo '<wp:cat_name>' . wxr_cdata($c->cat_name) . '</wp:cat_name>';
+	echo '<wp:cat_name>' . wxr_cdata($c->name) . '</wp:cat_name>';
 }
 
 function wxr_category_description($c) {
-	if ( empty($c->category_description) )
+	if ( empty($c->description) )
 		return;
 
-	echo '<wp:category_description>' . wxr_cdata($c->category_description) . '</wp:category_description>';
+	echo '<wp:category_description>' . wxr_cdata($c->description) . '</wp:category_description>';
 }
 
-print '<?xml version="1.0" encoding="' . get_bloginfo('charset') . '"?' . ">\n";
+function wxr_tag_name($t) {
+	if ( empty($t->name) )
+		return;
+
+	echo '<wp:tag_name>' . wxr_cdata($t->name) . '</wp:tag_name>';
+}
+
+function wxr_tag_description($t) {
+	if ( empty($t->description) )
+		return;
+
+	echo '<wp:tag_description>' . wxr_cdata($t->description) . '</wp:tag_description>';
+}
+
+function wxr_post_taxonomy() {
+	$categories = get_the_category();
+	$tags = get_the_tags();
+	$cat_names = array();
+	$tag_names = array();
+	$the_list = '';
+	$filter = 'rss';
+
+	if ( !empty($categories) ) foreach ( (array) $categories as $category ) {
+		$cat_name = sanitize_term_field('name', $category->name, $category->term_id, 'category', $filter);
+		$the_list .= "\n\t\t<category><![CDATA[$cat_name]]></category>\n";
+	}
+
+	if ( !empty($tags) ) foreach ( (array) $tags as $tag ) {
+		$tag_name = sanitize_term_field('name', $tag->name, $tag->term_id, 'post_tag', $filter);
+		$the_list .= "\n\t\t<category domain=\"tag\"><![CDATA[$tag_name]]></category>\n";
+	}
+
+	echo $the_list;
+}
+
+echo '<?xml version="1.0" encoding="' . get_bloginfo('charset') . '"?' . ">\n";
 
 ?>
+<!-- This is a WordPress eXtended RSS file generated by WordPress as an export of your blog. -->
+<!-- It contains information about your blog's posts, comments, and categories. -->
+<!-- You may use this file to transfer that content from one site to another. -->
+<!-- This file is not intended to serve as a complete backup of your blog. -->
 
-<!--
-	This is a WordPress eXtended RSS file generated by WordPress as an export of 
-	your blog. It contains information about your blog's posts, comments, and 
-	categories. You may use this file to transfer that content from one site to 
-	another. This file is not intended to serve as a complete backup of your 
-	blog.
-	
-	To import this information into a WordPress blog follow these steps:
-	
-	1.	Log into that blog as an administrator.
-	2.	Go to Manage > Import in the blog's admin.
-	3.	Choose "WordPress" from the list of importers.
-	4.	Upload this file using the form provided on that page.
-	5.	You will first be asked to map the authors in this export file to users 
-		on the blog. For each author, you may choose to map an existing user on 
-		the blog or to create a new user.
-	6.	WordPress will then import each of the posts, comments, and categories 
-		contained in this file onto your blog.
--->
+<!-- To import this information into a WordPress blog follow these steps. -->
+<!-- 1. Log into that blog as an administrator. -->
+<!-- 2. Go to Manage: Import in the blog's admin panels. -->
+<!-- 3. Choose "WordPress" from the list. -->
+<!-- 4. Upload this file using the form provided on that page. -->
+<!-- 5. You will first be asked to map the authors in this export file to users -->
+<!--    on the blog.  For each author, you may choose to map to an -->
+<!--    existing user on the blog or to create a new user -->
+<!-- 6. WordPress will then import each of the posts, comments, and categories -->
+<!--    contained in this file into your blog -->
 
-<!-- generator="wordpress/<?php bloginfo_rss('version') ?>" created="<?php echo date('Y-m-d H:m'); ?>"-->
+<!-- generator="wordpress/<?php bloginfo_rss('version') ?>" created="<?php echo date('Y-m-d H:i'); ?>"-->
 <rss version="2.0"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
 	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
@@ -163,16 +197,27 @@ print '<?xml version="1.0" encoding="' . get_bloginfo('charset') . '"?' . ">\n";
 	<generator>http://wordpress.org/?v=<?php bloginfo_rss('version'); ?></generator>
 	<language><?php echo get_option('rss_language'); ?></language>
 <?php if ( $cats ) : foreach ( $cats as $c ) : ?>
-	<wp:category><wp:category_nicename><?php echo $c->category_nicename; ?></wp:category_nicename><wp:category_parent><?php echo $c->category_parent ? $cats[$c->category_parent]->cat_name : ''; ?></wp:category_parent><wp:posts_private><?php echo $c->posts_private ? '1' : '0'; ?></wp:posts_private><wp:links_private><?php echo $c->links_private ? '1' : '0'; ?></wp:links_private><?php wxr_cat_name($c); ?><?php wxr_category_description($c); ?></wp:category>
+	<wp:category><wp:category_nicename><?php echo $c->slug; ?></wp:category_nicename><wp:category_parent><?php echo $c->parent ? $cats[$c->parent]->name : ''; ?></wp:category_parent><?php wxr_cat_name($c); ?><?php wxr_category_description($c); ?></wp:category>
+<?php endforeach; endif; ?>
+<?php if ( $tags ) : foreach ( $tags as $t ) : ?>
+	<wp:tag><wp:tag_slug><?php echo $t->slug; ?></wp:tag_slug><?php wxr_tag_name($t); ?><?php wxr_tag_description($t); ?></wp:tag>
 <?php endforeach; endif; ?>
 	<?php do_action('rss2_head'); ?>
-	<?php if ($posts) { foreach ($posts as $post) { start_wp(); ?>
+	<?php if ($post_ids) {
+		global $wp_query;
+		$wp_query->in_the_loop = true;  // Fake being in the loop.
+		// fetch 20 posts at a time rather than loading the entire table into memory
+		while ( $next_posts = array_splice($post_ids, 0, 20) ) {
+			$where = "WHERE ID IN (".join(',', $next_posts).")";
+			$posts = $wpdb->get_results("SELECT * FROM $wpdb->posts $where ORDER BY post_date_gmt ASC");
+				foreach ($posts as $post) {
+			setup_postdata($post); ?>
 <item>
 <title><?php the_title_rss() ?></title>
-<link><?php permalink_single_rss() ?></link>
+<link><?php the_permalink_rss() ?></link>
 <pubDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_post_time('Y-m-d H:i:s', true), false); ?></pubDate>
 <dc:creator><?php the_author() ?></dc:creator>
-<?php the_category_rss() ?>
+<?php wxr_post_taxonomy() ?>
 
 <guid isPermaLink="false"><?php the_guid(); ?></guid>
 <description></description>
@@ -203,7 +248,7 @@ $comments = $wpdb->get_results("SELECT * FROM $wpdb->comments WHERE comment_post
 if ( $comments ) { foreach ( $comments as $c ) { ?>
 <wp:comment>
 <wp:comment_id><?php echo $c->comment_ID; ?></wp:comment_id>
-<wp:comment_author><?php echo $c->comment_author; ?></wp:comment_author>
+<wp:comment_author><?php echo wxr_cdata($c->comment_author); ?></wp:comment_author>
 <wp:comment_author_email><?php echo $c->comment_author_email; ?></wp:comment_author_email>
 <wp:comment_author_url><?php echo $c->comment_author_url; ?></wp:comment_author_url>
 <wp:comment_author_IP><?php echo $c->comment_author_IP; ?></wp:comment_author_IP>
@@ -216,7 +261,7 @@ if ( $comments ) { foreach ( $comments as $c ) { ?>
 </wp:comment>
 <?php } } ?>
 	</item>
-<?php } } ?>
+<?php } } } ?>
 </channel>
 </rss>
 <?php

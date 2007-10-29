@@ -1,0 +1,38 @@
+.dropzone,
+#palettediv,
+.handle,
+.controlform {
+	direction: rtl;
+	text-align: justify;
+	}
+.dropzone {
+	float: right;
+	margin-left: 10px;
+	margin-right: auto;
+	width: 240px;
+	}
+* html .dropzone ul {
+	margin-right: 0;
+	}
+* .handle, #lastmodule span {
+	border-left: 1px solid #e8e8e8;
+	border-right: 1px solid #f2f2f2;
+	}
+* .popper {
+	right: auto;
+	left: 3px;
+	}
+#palettediv .module, #lastmodule {
+	margin-right: auto;
+	margin-left: 10px;
+	float: right;
+	}
+#palettediv ul {
+	padding: 0 10px 0 0;
+	margin-right: 0;
+	width: 100%;
+	}
+.placemat {
+	margin-right: 0;
+	float: right;
+	}

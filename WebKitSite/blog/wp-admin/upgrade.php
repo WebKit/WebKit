@@ -5,23 +5,20 @@ if (!file_exists('../wp-config.php'))
 
 require('../wp-config.php');
 timer_start();
-require_once(ABSPATH . '/wp-admin/upgrade-functions.php');
+require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 if (isset($_GET['step']))
 	$step = (int) $_GET['step'];
 else
 	$step = 0;
-@header('Content-type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
+@header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" <?php language_attributes(); ?>>
 <head>
 	<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_option('blog_charset'); ?>" />
 	<title><?php _e('WordPress &rsaquo; Upgrade'); ?></title>
-	<link rel="stylesheet" href="<?php echo get_option('siteurl') ?>/wp-admin/install.css?version=<?php bloginfo('version'); ?>" type="text/css" />
-	<?php if ( ('rtl' == $wp_locale->text_direction) ) : ?>
-	<link rel="stylesheet" href="<?php echo get_option('siteurl') ?>/wp-admin/install-rtl.css?version=<?php bloginfo('version'); ?>" type="text/css" />
-	<?php endif; ?>
+	<?php wp_admin_css( 'css/install' ); ?>
 </head>
 <body>
 <h1 id="logo"><img alt="WordPress" src="images/wordpress-logo.png" /></h1>
@@ -39,7 +36,7 @@ switch($step) :
 ?>
 <h2><?php _e('Database Upgrade Required'); ?></h2>
 <p><?php _e('Your WordPress database is out-of-date, and must be upgraded before you can continue.'); ?></p>
-<p><?php _e('The upgrade process may take a while, so please be patient.'); ?></p> 
+<p><?php _e('The upgrade process may take a while, so please be patient.'); ?></p>
 <h2 class="step"><a href="upgrade.php?step=1&amp;backto=<?php echo $goback; ?>"><?php _e('Upgrade WordPress &raquo;'); ?></a></h2>
 <?php
 		break;
@@ -50,7 +47,7 @@ switch($step) :
 			$backto = __get_option('home') . '/';
 		else
 			$backto = clean_url(stripslashes($_GET['backto']));
-?> 
+?>
 <h2><?php _e('Upgrade Complete'); ?></h2>
 	<p><?php _e('Your WordPress database has been successfully upgraded!'); ?></p>
 	<h2 class="step"><a href="<?php echo $backto; ?>"><?php _e('Continue &raquo;'); ?></a></h2>

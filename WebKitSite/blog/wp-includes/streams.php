@@ -16,7 +16,7 @@
 
    You should have received a copy of the GNU General Public License
    along with PHP-gettext; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
@@ -28,17 +28,17 @@ class StreamReader {
   function read($bytes) {
     return false;
   }
-  
+
   // should return new position
   function seekto($position) {
     return false;
   }
-  
+
   // returns current position
   function currentpos() {
     return false;
   }
-  
+
   // returns length of entire stream (limit for seekto()s)
   function length() {
     return false;
@@ -114,7 +114,7 @@ class FileReader {
         $bytes -= strlen($chunk);
       }
       $this->_pos = ftell($this->_fd);
-      
+
       return $data;
     } else return '';
   }
@@ -139,7 +139,7 @@ class FileReader {
 
 }
 
-// Preloads entire file in memory first, then creates a StringReader 
+// Preloads entire file in memory first, then creates a StringReader
 // over it (it assumes knowledge of StringReader internals)
 class CachedFileReader extends StringReader {
   function CachedFileReader($filename) {

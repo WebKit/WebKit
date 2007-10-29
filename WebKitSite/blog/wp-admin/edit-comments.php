@@ -39,14 +39,14 @@ function getNumChecked(form)
 </script>
 <div class="wrap">
 <h2><?php _e('Comments'); ?></h2>
-<form name="searchform" action="" method="get" id="editcomments"> 
-  <fieldset> 
-  <legend><?php _e('Show Comments That Contain...') ?></legend> 
-  <input type="text" name="s" value="<?php if (isset($_GET['s'])) echo attribute_escape($_GET['s']); ?>" size="17" /> 
-  <input type="submit" name="submit" value="<?php _e('Search') ?>"  />  
+<form name="searchform" action="" method="get" id="editcomments">
+  <fieldset>
+  <legend><?php _e('Show Comments That Contain...') ?></legend>
+  <input type="text" name="s" value="<?php if (isset($_GET['s'])) echo attribute_escape($_GET['s']); ?>" size="17" />
+  <input type="submit" name="submit" value="<?php _e('Search') ?>"  />
   <input type="hidden" name="mode" value="<?php echo $mode; ?>" />
   <?php _e('(Searches within comment text, e-mail, URL, and IP address.)') ?>
-  </fieldset> 
+  </fieldset>
 </form>
 <p><a href="?mode=view"><?php _e('View Mode') ?></a> | <a href="?mode=edit"><?php _e('Mass Edit Mode') ?></a></p>
 <?php
@@ -76,9 +76,10 @@ if ( !empty( $_POST['delete_comments'] ) ) :
 endif;
 
 if ( isset( $_GET['apage'] ) )
-	$page = (int) $_GET['apage'];
+	$page = abs( (int) $_GET['apage'] );
 else
 	$page = 1;
+
 $start = $offset = ( $page - 1 ) * 20;
 
 list($_comments, $total) = _wp_get_comment_list( isset($_GET['s']) ? $_GET['s'] : false, $start, 25 ); // Grab a few extra
@@ -87,8 +88,8 @@ $comments = array_slice($_comments, 0, 20);
 $extra_comments = array_slice($_comments, 20);
 
 $page_links = paginate_links( array(
-	'base' => 'edit-comments.php?%_%',
-	'format' => 'apage=%#%',
+	'base' => add_query_arg( 'apage', '%#%' ),
+	'format' => '',
 	'total' => ceil($total / 20),
 	'current' => $page
 ));
@@ -150,21 +151,22 @@ if ( $extra_comments ) : ?>
   </tr>
 </thead>';
 		foreach ($comments as $comment) {
-		$authordata = get_userdata($wpdb->get_var("SELECT post_author FROM $wpdb->posts WHERE ID = $comment->comment_post_ID"));
+		$post = get_post($comment->comment_post_ID);
+		$authordata = get_userdata($post->post_author);
 		$comment_status = wp_get_comment_status($comment->comment_ID);
 		$class = ('alternate' == $class) ? '' : 'alternate';
 		$class .= ('unapproved' == $comment_status) ? ' unapproved' : '';
 ?>
   <tr id="comment-<?php echo $comment->comment_ID; ?>" class='<?php echo $class; ?>'>
-    <td><?php if ( current_user_can('edit_post', $comment->comment_post_ID) ) { ?><input type="checkbox" name="delete_comments[]" value="<?php echo $comment->comment_ID; ?>" /><?php } ?></td>
+    <td style="text-align: center"><?php if ( current_user_can('edit_post', $comment->comment_post_ID) ) { ?><input type="checkbox" name="delete_comments[]" value="<?php echo $comment->comment_ID; ?>" /><?php } ?></td>
     <td><?php comment_author_link() ?></td>
     <td><?php comment_author_email_link() ?></td>
-    <td><a href="http://ws.arin.net/cgi-bin/whois.pl?queryinput=<?php comment_author_IP() ?>"><?php comment_author_IP() ?></a></td>
+    <td><a href="edit-comments.php?s=<?php comment_author_IP() ?>&amp;mode=edit"><?php comment_author_IP() ?></a></td>
     <td><?php comment_excerpt(); ?></td>
     <td>
-    	<?php if ('unapproved' == $comment_status) { ?>
-    		(Unapproved)
-    	<?php } else { ?>
+    	<?php if ('unapproved' == $comment_status) {
+    		_e('Unapproved');
+    	} else { ?>
     		<a href="<?php echo get_permalink($comment->comment_post_ID); ?>#comment-<?php comment_ID() ?>" class="edit"><?php _e('View') ?></a>
     	<?php } ?>
     </td>
@@ -174,7 +176,7 @@ if ( $extra_comments ) : ?>
 		echo "<a href=\"comment.php?action=deletecomment&amp;p=".$comment->comment_post_ID."&amp;c=".$comment->comment_ID."\" onclick=\"return deleteSomething( 'comment', $comment->comment_ID, '" . js_escape(sprintf(__("You are about to delete this comment by '%s'. \n  'Cancel' to stop, 'OK' to delete."), $comment->comment_author ))  . "', theCommentList );\" class='delete'>" . __('Delete') . "</a> ";
 		} ?></td>
   </tr>
-		<?php 
+		<?php
 		} // end foreach
 	?></table>
 <p class="submit"><input type="submit" name="delete_button" class="delete" value="<?php _e('Delete Checked Comments &raquo;') ?>" onclick="var numchecked = getNumChecked(document.getElementById('deletecomments')); if(numchecked < 1) { alert('<?php echo js_escape(__("Please select some comments to delete")); ?>'); return false } return confirm('<?php echo sprintf(js_escape(__("You are about to delete %s comments permanently \n  'Cancel' to stop, 'OK' to delete.")), "' + numchecked + '"); ?>')" />

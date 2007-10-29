@@ -76,11 +76,11 @@ if ( isset($_GET['deleted']) ) {
 <p><?php _e('Here you <a href="link-add.php">add links</a> to sites that you visit often and share them on your blog. When you have a list of links in your sidebar to other blogs, it&#8217;s called a &#8220;blogroll.&#8221;'); ?></p>
 <form id="cats" method="get" action="">
 <p><?php
-$categories = get_categories("hide_empty=1&type=link");
+$categories = get_terms('link_category', "hide_empty=1");
 $select_cat = "<select name=\"cat_id\">\n";
 $select_cat .= '<option value="all"'  . (($cat_id == 'all') ? " selected='selected'" : '') . '>' . __('All') . "</option>\n";
 foreach ((array) $categories as $cat)
-	$select_cat .= '<option value="' . $cat->cat_ID . '"' . (($cat->cat_ID == $cat_id) ? " selected='selected'" : '') . '>' . wp_specialchars(apply_filters('link_category', $cat->cat_name)) . "</option>\n";
+	$select_cat .= '<option value="' . $cat->term_id . '"' . (($cat->term_id == $cat_id) ? " selected='selected'" : '') . '>' . sanitize_term_field('name', $cat->name, $cat->term_id, 'link_category', 'display') . "</option>\n";
 $select_cat .= "</select>\n";
 
 $select_order = "<select name=\"order_by\">\n";
@@ -131,9 +131,8 @@ if ( $links ) {
 	<tbody id="the-list">
 <?php
 	foreach ($links as $link) {
-		$link->link_name = attribute_escape(apply_filters('link_title', $link->link_name));
-		$link->link_description = wp_specialchars(apply_filters('link_description', $link->link_description));
-		$link->link_url = clean_url($link->link_url);
+		$link = sanitize_bookmark($link);
+		$link->link_name = attribute_escape($link->link_name);
 		$link->link_category = wp_get_link_cats($link->link_id);
 		$short_url = str_replace('http://', '', $link->link_url);
 		$short_url = str_replace('www.', '', $short_url);
@@ -159,8 +158,10 @@ if ( $links ) {
 					?><td><?php
 					$cat_names = array();
 					foreach ($link->link_category as $category) {
-						$cat_name = get_the_category_by_ID($category);
-						$cat_name = wp_specialchars(apply_filters('link_category', $cat_name));
+						$cat = get_term($category, 'link_category', OBJECT, 'display');
+						if ( is_wp_error( $cat ) )
+							echo $cat->get_error_message();
+						$cat_name = $cat->name;
 						if ( $cat_id != $category )
 							$cat_name = "<a href='link-manager.php?cat_id=$category'>$cat_name</a>";
 						$cat_names[] = $cat_name;
@@ -195,7 +196,7 @@ if ( $links ) {
 
 <div id="ajax-response"></div>
 
-<p class="submit"><input type="submit" class="button" name="deletebookmarks" id="deletebookmarks" value="<?php _e('Delete Checked Links') ?> &raquo;" onclick="return confirm('<?php echo js_escape(__("You are about to delete these links permanently.\n'Cancel' to stop, 'OK' to delete.")); ?>')" /></p>
+<p class="submit"><input type="submit" class="button" name="deletebookmarks" id="deletebookmarks" value="<?php _e('Delete Checked Links &raquo;') ?>" onclick="return confirm('<?php echo js_escape(__("You are about to delete these links permanently.\n'Cancel' to stop, 'OK' to delete.")); ?>')" /></p>
 </form>
 
 <?php } ?>

@@ -1,5 +1,11 @@
 2007-10-29  Mark Rowe  <mrowe@apple.com>
 
+        Upgrade WordPress.
+
+        * blog: Updated.
+
+2007-10-29  Mark Rowe  <mrowe@apple.com>
+
         Files that have been added or modified on the web server without making it in to SVN.
 
         * .htaccess:

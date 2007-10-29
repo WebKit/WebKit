@@ -1,7 +1,6 @@
 <?php
 require_once('../wp-config.php');
-require_once('admin-functions.php');
-require_once('admin-db.php');
+require_once('includes/admin.php');
 
 define('DOING_AJAX', true);
 
@@ -126,6 +125,28 @@ case 'add-category' : // On the Fly
 	}
 	$x->send();
 	break;
+case 'add-link-category' : // On the Fly
+	if ( !current_user_can( 'manage_categories' ) )
+		die('-1');
+	$names = explode(',', $_POST['newcat']);
+	$x = new WP_Ajax_Response();
+	foreach ( $names as $cat_name ) {
+		$cat_name = trim($cat_name);
+		if ( !$slug = sanitize_title($cat_name) )
+			die('0');
+		if ( !$cat_id = is_term( $cat_name, 'link_category' ) ) {
+			$cat_id = wp_insert_term( $cat_name, 'link_category' );
+			$cat_id = $cat_id['term_id'];
+		}
+		$cat_name = wp_specialchars(stripslashes($cat_name));
+		$x->add( array(
+			'what' => 'link-category',
+			'id' => $cat_id,
+			'data' => "<li id='link-category-$cat_id'><label for='in-link-category-$cat_id' class='selectit'><input value='$cat_id' type='checkbox' checked='checked' name='link_category[]' id='in-link-category-$cat_id'/> $cat_name</label></li>"
+		) );
+	}
+	$x->send();
+	break;
 case 'add-cat' : // From Manage->Categories
 	if ( !current_user_can( 'manage_categories' ) )
 		die('-1');
@@ -183,8 +204,11 @@ case 'add-meta' :
 		$now = current_time('timestamp', 1);
 		if ( $pid = wp_insert_post( array(
 			'post_title' => sprintf('Draft created on %s at %s', date(get_option('date_format'), $now), date(get_option('time_format'), $now))
-		) ) )
+		) ) ) {
+			if ( is_wp_error( $pid ) )
+				return $pid;
 			$mid = add_meta( $pid );
+		}
 		else
 			die('0');
 	} else if ( !$mid = add_meta( $id ) ) {
@@ -286,7 +310,7 @@ case 'autosave-generate-nonces' :
 			die(wp_create_nonce('update-page_' . $ID));
 		}
 	}
-	die($_POST['post_type']);
+	die('0');
 break;
 default :
 	do_action( 'wp_ajax_' . $_POST['action'] );

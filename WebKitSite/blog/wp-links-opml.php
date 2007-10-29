@@ -5,7 +5,7 @@ if (empty($wp)) {
 	wp();
 }
 
-header('Content-type: text/xml; charset=' . get_option('blog_charset'), true);
+header('Content-Type: text/xml; charset=' . get_option('blog_charset'), true);
 $link_cat = $_GET['link_cat'];
 if ((empty ($link_cat)) || ($link_cat == 'all') || ($link_cat == '0')) {
 	$link_cat = '';
@@ -17,7 +17,7 @@ if ((empty ($link_cat)) || ($link_cat == 'all') || ($link_cat == '0')) {
 <!-- generator="wordpress/<?php bloginfo_rss('version') ?>" -->
 <opml version="1.0">
 	<head>
-		<title>Links for <?php echo attribute_escape(get_bloginfo('name').$cat_name); ?></title>
+		<title>Links for <?php echo attribute_escape(get_bloginfo('name', 'display').$cat_name); ?></title>
 		<dateCreated><?php echo gmdate("D, d M Y H:i:s"); ?> GMT</dateCreated>
 	</head>
 	<body>
@@ -29,13 +29,13 @@ else
 	$cats = array (get_category($link_cat));
 
 foreach ((array) $cats as $cat) {
-	$catname = apply_filters('link_category', $cat->cat_name);
+	$catname = apply_filters('link_category', $cat->name);
 
 ?>
 <outline type="category" title="<?php echo attribute_escape($catname); ?>">
 <?php
 
-	$bookmarks = get_bookmarks("category={$cat->cat_ID}");
+	$bookmarks = get_bookmarks("category={$cat->term_id}");
 	foreach ((array) $bookmarks as $bookmark) {
 		$title = attribute_escape(apply_filters('link_title', $bookmark->link_name));
 ?>

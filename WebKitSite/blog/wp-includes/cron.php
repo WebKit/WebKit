@@ -83,18 +83,20 @@ function spawn_cron() {
 
 	$cron_url = get_option( 'siteurl' ) . '/wp-cron.php';
 	$parts = parse_url( $cron_url );
-	
+
 	if ($parts['scheme'] == 'https') {
 		// support for SSL was added in 4.3.0
 		if (version_compare(phpversion(), '4.3.0', '>=') && function_exists('openssl_open')) {
-			$argyle = @fsockopen('ssl://' . $parts['host'], $_SERVER['SERVER_PORT'], $errno, $errstr, 0.01);
+			$port = isset($parts['port']) ? $parts['port'] : 443;
+			$argyle = @fsockopen('ssl://' . $parts['host'], $port, $errno, $errstr, 0.01);
 		} else {
 			return false;
 		}
 	} else {
-		$argyle = @ fsockopen( $parts['host'], $_SERVER['SERVER_PORT'], $errno, $errstr, 0.01 );
+		$port = isset($parts['port']) ? $parts['port'] : 80;
+		$argyle = @ fsockopen( $parts['host'], $port, $errno, $errstr, 0.01 );
 	}
-	
+
 	if ( $argyle )
 		fputs( $argyle,
 			  "GET {$parts['path']}?check=" . wp_hash('187425') . " HTTP/1.0\r\n"

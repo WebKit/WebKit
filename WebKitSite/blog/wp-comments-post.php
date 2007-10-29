@@ -1,9 +1,9 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] != "POST") {
-    header('Allow: POST');
-	header("HTTP/1.1 405 Method Not Allowed");
-	header("Content-type: text/plain");
-    exit;
+if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
+	header('Allow: POST');
+	header('HTTP/1.1 405 Method Not Allowed');
+	header('Content-Type: text/plain');
+	exit;
 }
 require( dirname(__FILE__) . '/wp-config.php' );
 
@@ -19,7 +19,7 @@ if ( empty($status->comment_status) ) {
 } elseif ( 'closed' ==  $status->comment_status ) {
 	do_action('comment_closed', $comment_post_ID);
 	wp_die( __('Sorry, comments are closed for this item.') );
-} elseif ( 'draft' == $status->post_status ) {
+} elseif ( in_array($status->post_status, array('draft', 'pending') ) ) {
 	do_action('comment_on_draft', $comment_post_ID);
 	exit;
 }
@@ -63,11 +63,11 @@ $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_emai
 $comment_id = wp_new_comment( $commentdata );
 
 $comment = get_comment($comment_id);
-if ( !$user->ID ) :
+if ( !$user->ID ) {
 	setcookie('comment_author_' . COOKIEHASH, $comment->comment_author, time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
 	setcookie('comment_author_email_' . COOKIEHASH, $comment->comment_author_email, time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
 	setcookie('comment_author_url_' . COOKIEHASH, clean_url($comment->comment_author_url), time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
-endif;
+}
 
 $location = ( empty($_POST['redirect_to']) ? get_permalink($comment_post_ID) : $_POST['redirect_to'] ) . '#comment-' . $comment_id;
 $location = apply_filters('comment_post_redirect', $location, $comment);

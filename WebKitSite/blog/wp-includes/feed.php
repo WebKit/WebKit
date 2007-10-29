@@ -12,6 +12,8 @@ function bloginfo_rss($show = '') {
 
 function get_wp_title_rss($sep = '&#187;') {
 	$title = wp_title($sep, false);
+	if ( is_wp_error( $title ) )
+		return $title->get_error_message();
 	$title = apply_filters('get_wp_title_rss', $title);
 	return $title;
 }
@@ -22,7 +24,6 @@ function wp_title_rss($sep = '&#187;') {
 
 function get_the_title_rss() {
 	$title = get_the_title();
-	$title = apply_filters('the_title', $title);
 	$title = apply_filters('the_title_rss', $title);
 	return $title;
 }
@@ -66,15 +67,14 @@ function the_content_rss($more_link_text='(more...)', $stripteaser=0, $more_file
 
 
 function the_excerpt_rss() {
-	$output = get_the_excerpt(true);
+	$output = get_the_excerpt();
 	echo apply_filters('the_excerpt_rss', $output);
 }
 
+function the_permalink_rss() {
+	echo apply_filters('the_permalink_rss', get_permalink());
 
-function permalink_single_rss($file = '') {
-	echo get_permalink();
 }
-
 
 function comment_link() {
 	echo get_comment_link();
@@ -117,7 +117,7 @@ function get_author_rss_link($echo = false, $author_id, $author_nicename) {
 		$link = get_option('home') . '?feed=rss2&amp;author=' . $author_id;
 	} else {
 		$link = get_author_posts_url($author_id, $author_nicename);
-		$link = $link . user_trailingslashit('feed', 'feed');
+		$link = trailingslashit($link) . user_trailingslashit('feed', 'feed');
 	}
 
 	$link = apply_filters('author_feed_link', $link);
@@ -135,7 +135,7 @@ function get_category_rss_link($echo = false, $cat_ID, $category_nicename) {
 		$link = get_option('home') . '?feed=rss2&amp;cat=' . $cat_ID;
 	} else {
 		$link = get_category_link($cat_ID);
-		$link = $link . user_trailingslashit('feed', 'feed');
+		$link = trailingslashit($link) . user_trailingslashit('feed', 'feed');
 	}
 
 	$link = apply_filters('category_feed_link', $link);
@@ -148,23 +148,66 @@ function get_category_rss_link($echo = false, $cat_ID, $category_nicename) {
 
 function get_the_category_rss($type = 'rss') {
 	$categories = get_the_category();
+	$tags = get_the_tags();
 	$home = get_bloginfo_rss('home');
 	$the_list = '';
-	foreach ( (array) $categories as $category ) {
-		$category->cat_name = convert_chars($category->cat_name);
-		if ( 'rdf' == $type )
-			$the_list .= "\n\t\t<dc:subject><![CDATA[$category->cat_name]]></dc:subject>\n";
-		if ( 'atom' == $type )
-			$the_list .= "<category scheme='$home' term='$category->cat_name' />";
-		else
-			$the_list .= "\n\t\t<category><![CDATA[$category->cat_name]]></category>\n";
+	$cat_names = array();
+
+	$filter = 'rss';
+	if ( 'atom' == $type )
+		$filter = 'raw';
+
+	if ( !empty($categories) ) foreach ( (array) $categories as $category ) {
+		$cat_names[] = sanitize_term_field('name', $category->name, $category->term_id, 'category', $filter);
 	}
+
+	if ( !empty($tags) ) foreach ( (array) $tags as $tag ) {
+		$cat_names[] = sanitize_term_field('name', $tag->name, $tag->term_id, 'post_tag', $filter);
+	}
+
+	$cat_names = array_unique($cat_names);
+
+	foreach ( $cat_names as $cat_name ) {
+		if ( 'rdf' == $type )
+			$the_list .= "\n\t\t<dc:subject><![CDATA[$cat_name]]></dc:subject>\n";
+		elseif ( 'atom' == $type )
+			$the_list .= sprintf( '<category scheme="%1$s" term="%2$s" />', attribute_escape( apply_filters( 'get_bloginfo_rss', get_bloginfo( 'url' ) ) ), attribute_escape( $cat_name ) );
+		else
+			$the_list .= "\n\t\t<category><![CDATA[$cat_name]]></category>\n";
+	}
+
 	return apply_filters('the_category_rss', $the_list, $type);
 }
 
 
 function the_category_rss($type = 'rss') {
 	echo get_the_category_rss($type);
+}
+
+function get_tag_feed_link($tag_id, $feed = 'rss2') {
+	$tag_id = (int) $tag_id;
+
+	$tag = get_tag($tag_id);
+
+	if ( empty($tag) || is_wp_error($tag) )
+		return false;
+
+	$permalink_structure = get_option('permalink_structure');
+
+	if ( '' == $permalink_structure ) {
+		$link = get_option('home') . "?feed=$feed&amp;tag=" . $tag->slug;
+	} else {
+		$link = get_tag_link($tag->term_id);
+		if ( 'rss2' == $feed )
+			$feed_link = 'feed';
+		else
+			$feed_link = "feed/$feed";
+		$link = $link . user_trailingslashit($feed_link, 'feed');
+	}
+
+	$link = apply_filters('tag_feed_link', $link, $feed);
+
+	return $link;
 }
 
 function html_type_rss() {

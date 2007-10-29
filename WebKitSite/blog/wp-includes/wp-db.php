@@ -34,6 +34,10 @@ class wpdb {
 	var $optiongroups;
 	var $optiongroup_options;
 	var $postmeta;
+	var $usermeta;
+	var $terms;
+	var $term_taxonomy;
+	var $term_relationships;
 
 	var $charset;
 	var $collate;
@@ -79,7 +83,7 @@ class wpdb {
 	}
 
 	function __destruct() {
-		return true;	
+		return true;
 	}
 
 	/**
@@ -111,6 +115,29 @@ class wpdb {
 			return mysql_escape_string( $string );
 		else
 			return mysql_real_escape_string( $string, $this->dbh );
+	}
+
+	/**
+	 * Escapes content by reference for insertion into the database, for security
+	 * @param string $s
+	 */
+	function escape_by_ref(&$s) {
+		$s = $this->escape($s);
+	}
+
+	/**
+	 * Prepares a SQL query for safe use, using sprintf() syntax
+	 */
+	function prepare($args=NULL) {
+		if ( NULL === $args )
+			return;
+		$args = func_get_args();
+		$query = array_shift($args);
+		$query = str_replace("'%s'", '%s', $query); // in case someone mistakenly already singlequoted it
+		$query = str_replace('"%s"', '%s', $query); // doublequote unquoting
+		$query = str_replace('%s', "'%s'", $query); // quote the strings
+		array_walk($args, array(&$this, 'escape_by_ref'));
+		return @vsprintf($query, $args);
 	}
 
 	// ==================================================================
@@ -255,7 +282,9 @@ class wpdb {
 		$this->func_call = "\$db->get_row(\"$query\",$output,$y)";
 		if ( $query )
 			$this->query($query);
-	
+		else
+			return null;
+
 		if ( !isset($this->last_result[$y]) )
 			return null;
 
@@ -280,6 +309,7 @@ class wpdb {
 		if ( $query )
 			$this->query($query);
 
+		$new_array = array();
 		// Extract the column values
 		for ( $i=0; $i < count($this->last_result); $i++ ) {
 			$new_array[$i] = $this->get_var(null, $x, $i);
@@ -298,6 +328,8 @@ class wpdb {
 
 		if ( $query )
 			$this->query($query);
+		else
+			return null;
 
 		// Send back array of objects. Each row is an object
 		if ( $output == OBJECT ) {
@@ -369,29 +401,7 @@ class wpdb {
 	function bail($message) { // Just wraps errors in a nice header and footer
 		if ( !$this->show_errors )
 			return false;
-
-		header('Content-Type: text/html; charset=utf-8');
-
-		if (strpos($_SERVER['PHP_SELF'], 'wp-admin') !== false)
-			$admin_dir = '';
-		else
-			$admin_dir = 'wp-admin/';
-
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<title>WordPress &rsaquo; Error</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" href="<?php echo $admin_dir; ?>install.css" type="text/css" />
-</head>
-<body>
-	<h1 id="logo"><img alt="WordPress" src="<?php echo $admin_dir; ?>images/wordpress-logo.png" /></h1>
-	<p><?php echo $message; ?></p>
-</body>
-</html>
-<?php
-		die();
+		wp_die($message);
 	}
 }
 

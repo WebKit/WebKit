@@ -46,6 +46,7 @@ $submenu['edit.php'][40] = array(__('Export'), 'import', 'export.php');
 $submenu['link-manager.php'][5] = array(__('Manage Blogroll'), 'manage_links', 'link-manager.php');
 $submenu['link-manager.php'][10] = array(__('Add Link'), 'manage_links', 'link-add.php');
 $submenu['link-manager.php'][20] = array(__('Import Links'), 'manage_links', 'link-import.php');
+$submenu['link-manager.php'][30] = array(__('Categories'), 'manage_links', 'edit-link-categories.php');
 
 if ( current_user_can('edit_users') ) {
 	$_wp_real_parent_file['profile.php'] = 'users.php'; // Back-compat for plugins adding submenus to profile.php.
@@ -95,7 +96,7 @@ foreach ($submenu as $parent => $sub) {
 // Menus for which the original parent is not acessible due to lack of privs will have the next
 // submenu in line be assigned as the new menu parent.
 foreach ( $menu as $id => $data ) {
-	if ( empty($submenu[$data[2]]) ) 
+	if ( empty($submenu[$data[2]]) )
 		continue;
 	$subs = $submenu[$data[2]];
 	$first_sub = array_shift($subs);

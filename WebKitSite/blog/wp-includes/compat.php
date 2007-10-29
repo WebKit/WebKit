@@ -73,7 +73,7 @@ if (!defined('CASE_UPPER')) {
  * @link        http://php.net/function.array_change_key_case
  * @author      Stephan Schmidt <schst@php.net>
  * @author      Aidan Lister <aidan@php.net>
- * @version     $Revision: 5187 $
+ * @version     $Revision: 6070 $
  * @since       PHP 4.2.0
  * @require     PHP 4.0.0 (user_error)
  */
@@ -98,18 +98,40 @@ if (!function_exists('array_change_key_case')) {
 		}
 }
 
-// From php.net
-if(!function_exists('http_build_query')) {
-	 function http_build_query( $formdata, $numeric_prefix = null, $key = null ) {
-			 $res = array();
-			 foreach ((array)$formdata as $k=>$v) {
-					 $tmp_key = urlencode(is_int($k) ? $numeric_prefix.$k : $k);
-					 if ($key) $tmp_key = $key.'['.$tmp_key.']';
-					 $res[] = ( ( is_array($v) || is_object($v) ) ? http_build_query($v, null, $tmp_key) : $tmp_key."=".urlencode($v) );
-			 }
-			 $separator = ini_get('arg_separator.output');
-			 return implode($separator, $res);
-	 }
+if (!function_exists('http_build_query')) {
+	function http_build_query($data, $prefix=null, $sep=null) {
+		return _http_build_query($data, $prefix, $sep);
+	}
+}
+
+// from php.net (modified by Mark Jaquith to behave like the native PHP5 function)
+function _http_build_query($data, $prefix=null, $sep=null, $key='', $urlencode=true) {
+	$ret = array();
+
+	foreach ( (array) $data as $k => $v ) {
+		if ( $urlencode)
+			$k = urlencode($k);
+		if ( is_int($k) && $prefix != null )
+			$k = $prefix.$k;
+		if ( !empty($key) )
+			$k = $key . '%5B' . $k . '%5D';
+		if ( $v === NULL )
+			continue;
+		elseif ( $v === FALSE )
+			$v = '0';
+
+		if ( is_array($v) || is_object($v) )
+			array_push($ret,_http_build_query($v, '', $sep, $k, $urlencode));
+		elseif ( $urlencode )
+			array_push($ret, $k.'='.urlencode($v));
+		else
+			array_push($ret, $k.'='.$v);
+	}
+
+	if ( NULL === $sep )
+		$sep = ini_get('arg_separator.output');
+
+	return implode($sep, $ret);
 }
 
 if ( !function_exists('_') ) {

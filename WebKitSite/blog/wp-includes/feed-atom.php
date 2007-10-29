@@ -1,5 +1,5 @@
 <?php
-header('Content-type: application/atom+xml; charset=' . get_option('blog_charset'), true);
+header('Content-Type: application/atom+xml; charset=' . get_option('blog_charset'), true);
 $more = 1;
 
 ?>
@@ -26,17 +26,19 @@ $more = 1;
 	<entry>
 		<author>
 			<name><?php the_author() ?></name>
+			<?php $author_url = get_the_author_url(); if ( !empty($author_url) ) : ?>
 			<uri><?php the_author_url()?></uri>
+			<?php endif; ?>
 		</author>
 		<title type="<?php html_type_rss(); ?>"><![CDATA[<?php the_title_rss() ?>]]></title>
-		<link rel="alternate" type="text/html" href="<?php permalink_single_rss() ?>" />
+		<link rel="alternate" type="text/html" href="<?php the_permalink_rss() ?>" />
 		<id><?php the_guid(); ?></id>
-		<updated><?php echo get_post_time('Y-m-d\TH:i:s\Z', true); ?></updated>
+		<updated><?php echo get_post_modified_time('Y-m-d\TH:i:s\Z', true); ?></updated>
 		<published><?php echo get_post_time('Y-m-d\TH:i:s\Z', true); ?></published>
 		<?php the_category_rss('atom') ?>
 		<summary type="<?php html_type_rss(); ?>"><![CDATA[<?php the_excerpt_rss(); ?>]]></summary>
 <?php if ( !get_option('rss_use_excerpt') ) : ?>
-		<content type="<?php html_type_rss(); ?>" xml:base="<?php permalink_single_rss() ?>"><![CDATA[<?php the_content('', 0, '') ?>]]></content>
+		<content type="<?php html_type_rss(); ?>" xml:base="<?php the_permalink_rss() ?>"><![CDATA[<?php the_content('', 0, '') ?>]]></content>
 <?php endif; ?>
 <?php atom_enclosure(); ?>
 <?php do_action('atom_entry'); ?>

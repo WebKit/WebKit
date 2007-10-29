@@ -33,14 +33,14 @@
 
 	// Get input parameters.
 
-	$check = urldecode($_REQUEST['check']);
-	$cmd = sanitize($_REQUEST['cmd']);
-	$lang = sanitize($_REQUEST['lang'], "strict");
-	$mode = sanitize($_REQUEST['mode'], "strict");
-	$spelling = sanitize($_REQUEST['spelling'], "strict");
-	$jargon = sanitize($_REQUEST['jargon'], "strict");
-	$encoding = sanitize($_REQUEST['encoding'], "strict");
-	$sg = sanitize($_REQUEST['sg'], "bool");
+	$check = urldecode(getRequestParam('check'));
+	$cmd = sanitize(getRequestParam('cmd'));
+	$lang = sanitize(getRequestParam('lang'), "strict");
+	$mode = sanitize(getRequestParam('mode'), "strict");
+	$spelling = sanitize(getRequestParam('spelling'), "strict");
+	$jargon = sanitize(getRequestParam('jargon'), "strict");
+	$encoding = sanitize(getRequestParam('encoding'), "strict");
+	$sg = sanitize(getRequestParam('sg'), "bool");
 	$words = array();
 
 	$validRequest = true;
@@ -83,6 +83,28 @@
 		return $str;
 	}
 
+	function getRequestParam($name, $default_value = false) {
+		if (!isset($_REQUEST[$name]))
+			return $default_value;
+
+		if (!isset($_GLOBALS['magic_quotes_gpc']))
+			$_GLOBALS['magic_quotes_gpc'] = ini_get("magic_quotes_gpc");
+
+		if (isset($_GLOBALS['magic_quotes_gpc'])) {
+			if (is_array($_REQUEST[$name])) {
+				$newarray = array();
+
+				foreach($_REQUEST[$name] as $name => $value)
+					$newarray[stripslashes($name)] = stripslashes($value);
+
+				return $newarray;
+			}
+			return stripslashes($_REQUEST[$name]);
+		}
+
+		return $_REQUEST[$name];
+	}
+
 	$result = array();
 	$tinyspell = new $spellCheckerConfig['class']($spellCheckerConfig, $lang, $mode, $spelling, $jargon, $encoding);
 
@@ -93,7 +115,7 @@
 				$words = preg_split("/ |\n/", $check, -1, PREG_SPLIT_NO_EMPTY);
 				$result = $tinyspell->checkWords($words);
 			break;
-	
+
 			case "suggest":
 				$result = $tinyspell->getSuggestion($check);
 			break;
@@ -116,7 +138,7 @@
 			header('Content-type: text/xml; charset=utf-8');
 			$body  = '<?xml version="1.0" encoding="utf-8" ?>';
 			$body .= "\n";
-			
+
 			if (count($result) == 0)
 				$body .= '<res id="' . $id . '" cmd="'. $cmd .'" />';
 			else

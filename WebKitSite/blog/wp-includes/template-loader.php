@@ -8,7 +8,7 @@ if ( defined('WP_USE_THEMES') && constant('WP_USE_THEMES') ) {
 		do_feed();
 		return;
 	} else if ( is_trackback() ) {
-		include(ABSPATH . '/wp-trackback.php');
+		include(ABSPATH . 'wp-trackback.php');
 		return;
 	} else if ( is_404() && $template = get_404_template() ) {
 		include($template);
@@ -33,6 +33,9 @@ if ( defined('WP_USE_THEMES') && constant('WP_USE_THEMES') ) {
 		include($template);
 		return;
 	} else if ( is_category() && $template = get_category_template()) {
+		include($template);
+		return;
+	} else if ( is_tag() && $template = get_tag_template()) {
 		include($template);
 		return;
 	} else if ( is_author() && $template = get_author_template() ) {
@@ -65,7 +68,7 @@ if ( defined('WP_USE_THEMES') && constant('WP_USE_THEMES') ) {
 		do_feed();
 		return;
 	} else if ( is_trackback() ) {
-		include(ABSPATH . '/wp-trackback.php');
+		include(ABSPATH . 'wp-trackback.php');
 		return;
 	}
 }

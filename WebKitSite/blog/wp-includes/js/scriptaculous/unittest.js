@@ -1,8 +1,8 @@
-// script.aculo.us unittest.js v1.7.0, Fri Jan 19 19:16:36 CET 2007
+// script.aculo.us unittest.js v1.7.1_beta3, Fri May 25 17:19:41 +0200 2007
 
-// Copyright (c) 2005, 2006 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
-//           (c) 2005, 2006 Jon Tirsen (http://www.tirsen.com)
-//           (c) 2005, 2006 Michael Schuerig (http://www.schuerig.de/michael/)
+// Copyright (c) 2005-2007 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
+//           (c) 2005-2007 Jon Tirsen (http://www.tirsen.com)
+//           (c) 2005-2007 Michael Schuerig (http://www.schuerig.de/michael/)
 //
 // script.aculo.us is freely distributable under the terms of an MIT-style license.
 // For details, see the script.aculo.us web site: http://script.aculo.us/
@@ -121,7 +121,7 @@ Test.Unit.Logger.prototype = {
     this.loglines = $('loglines');
   },
   _toHTML: function(txt) {
-    return txt.escapeHTML().replace(/\n/g,"<br/>");
+    return txt.escapeHTML().replace(/\n/g,"<br />");
   },
   addLinksToResults: function(){ 
     $$("tr.failed .nameCell").each( function(td){ // todo: limit to children of this.log

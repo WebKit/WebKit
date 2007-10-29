@@ -7,7 +7,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '" ?' . '>'
 	xml:lang="<?php echo get_option('rss_language'); ?>"
 	<?php do_action('atom_ns'); ?>
 >
-	<title type="text"><?php 
+	<title type="text"><?php
 		if ( is_singular() )
 			printf(__('Comments on: %s'), get_the_title_rss());
 		elseif ( is_search() )
@@ -20,7 +20,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '" ?' . '>'
 	<updated><?php echo mysql2date('Y-m-d\TH:i:s\Z', get_lastcommentmodified('GMT')); ?></updated>
 	<generator uri="http://wordpress.org/" version="<?php bloginfo('version'); ?>">WordPress</generator>
 
-	<link rel="alternate" type="<?php bloginfo_rss('html_type'); ?>" content="<?php bloginfo_rss('home'); ?>" />
+	<link rel="alternate" type="<?php bloginfo_rss('html_type'); ?>" href="<?php bloginfo_rss('home'); ?>" />
 	<link rel="self" type="application/atom+xml" href="<?php bloginfo_rss('comments_atom_url'); ?>" />
 	<id><?php bloginfo_rss('comments_atom_url'); ?></id>
 
@@ -33,14 +33,13 @@ if ( have_comments() ) : while ( have_comments() ) : the_comment();
 		<title><?php
 			if ( !is_singular() ) {
 				$title = get_the_title($comment_post->ID);
-				$title = apply_filters('the_title', $title);
 				$title = apply_filters('the_title_rss', $title);
 				printf(__('Comment on %1$s by %2$s'), $title, get_comment_author_rss());
 			} else {
 				printf(__('By: %s'), get_comment_author_rss());
 			}
 		?></title>
-		<link rel="alternate" href="<?php comment_link(); ?>" type="<?php bloginfo_rss('content_type'); ?>" />
+		<link rel="alternate" href="<?php comment_link(); ?>" type="<?php bloginfo_rss('html_type'); ?>" />
 
 		<author>
 			<name><?php comment_author_rss(); ?></name>
@@ -49,8 +48,8 @@ if ( have_comments() ) : while ( have_comments() ) : the_comment();
 		</author>
 
 		<id><?php comment_link(); ?></id>
-		<updated><?php echo mysql2date('D, d M Y H:i:s +0000', get_comment_time('Y-m-d H:i:s', true), false); ?></updated>
-		<published><?php echo mysql2date('D, d M Y H:i:s +0000', get_comment_time('Y-m-d H:i:s', true), false); ?></published>
+		<updated><?php echo mysql2date('Y-m-d\TH:i:s\Z', get_comment_time('Y-m-d H:i:s', true), false); ?></updated>
+		<published><?php echo mysql2date('Y-m-d\TH:i:s\Z', get_comment_time('Y-m-d H:i:s', true), false); ?></published>
 <?php if (!empty($comment_post->post_password) && $_COOKIE['wp-postpass'] != $comment_post->post_password) : ?>
 		<content type="html" xml:base="<?php comment_link(); ?>"><![CDATA[<?php echo get_the_password_form(); ?>]]></content>
 <?php else : // post pass ?>

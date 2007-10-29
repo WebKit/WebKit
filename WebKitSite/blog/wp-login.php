@@ -20,6 +20,10 @@ if ( defined('RELOCATE') ) { // Move flag is set
 		update_option('siteurl', dirname($schema . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']) );
 }
 
+//Set a cookie now to see if they are supported by the browser.
+setcookie(TEST_COOKIE, 'WP Cookie check', 0, COOKIEPATH, COOKIE_DOMAIN);
+if ( SITECOOKIEPATH != COOKIEPATH )
+	setcookie(TEST_COOKIE, 'WP Cookie check', 0, SITECOOKIEPATH, COOKIE_DOMAIN);
 
 // Rather than duplicating this HTML all over the place, we'll stick it in function
 function login_header($title = 'Login', $message = '') {
@@ -31,10 +35,7 @@ function login_header($title = 'Login', $message = '') {
 <head>
 	<title><?php bloginfo('name'); ?> &rsaquo; <?php echo $title; ?></title>
 	<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>" />
-	<link rel="stylesheet" href="<?php bloginfo('wpurl'); ?>/wp-admin/wp-admin.css?version=<?php bloginfo('version'); ?>" type="text/css" />
-<?php if ( ('rtl' == $wp_locale->text_direction) ) : ?>
-	<link rel="stylesheet" href="<?php bloginfo('wpurl'); ?>/wp-admin/rtl.css?version=<?php bloginfo('version'); ?>" type="text/css" />
-<?php endif; ?>
+	<?php wp_admin_css(); ?>
 	<!--[if IE]><style type="text/css">#login h1 a { margin-top: 35px; } #login #login_error { margin-bottom: 10px; }</style><![endif]--><!-- Curse you, IE! -->
 	<script type="text/javascript">
 		function focusit() {
@@ -79,7 +80,7 @@ case 'logout' :
 	if ( isset( $_REQUEST['redirect_to'] ) )
 		$redirect_to = $_REQUEST['redirect_to'];
 
-	wp_redirect($redirect_to);
+	wp_safe_redirect($redirect_to);
 	exit();
 
 break;
@@ -153,9 +154,9 @@ case 'retrievepassword' :
 <?php if (get_option('users_can_register')) : ?>
 	<li><a href="<?php bloginfo('wpurl'); ?>/wp-login.php"><?php _e('Login') ?></a></li>
 	<li><a href="<?php bloginfo('wpurl'); ?>/wp-login.php?action=register"><?php _e('Register') ?></a></li>
-	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title')); ?></a></li>
+	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title', 'display' )); ?></a></li>
 <?php else : ?>
-	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title')); ?></a></li>
+	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title', 'display' )); ?></a></li>
 	<li><a href="<?php bloginfo('wpurl'); ?>/wp-login.php"><?php _e('Login') ?></a></li>
 <?php endif; ?>
 </ul>
@@ -215,7 +216,7 @@ case 'register' :
 		require_once( ABSPATH . WPINC . '/registration.php');
 
 		$user_login = sanitize_user( $_POST['user_login'] );
-		$user_email = apply_filters( 'user_registration_email', $_POST['user_email'] ); 
+		$user_email = apply_filters( 'user_registration_email', $_POST['user_email'] );
 
 		// Check the username
 		if ( $user_login == '' )
@@ -275,7 +276,7 @@ case 'register' :
 <ul>
 	<li><a href="<?php bloginfo('wpurl'); ?>/wp-login.php"><?php _e('Login') ?></a></li>
 	<li><a href="<?php bloginfo('wpurl'); ?>/wp-login.php?action=lostpassword" title="<?php _e('Password Lost and Found') ?>"><?php _e('Lost your password?') ?></a></li>
-	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title')); ?></a></li>
+	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title', 'display')); ?></a></li>
 </ul>
 
 </body>
@@ -310,6 +311,10 @@ default:
 
 	do_action_ref_array('wp_authenticate', array(&$user_login, &$user_pass));
 
+	// If cookies are disabled we can't log in even with a valid user+pass
+	if ( $_POST && empty($_COOKIE[TEST_COOKIE]) )
+		$errors['test_cookie'] = __('<strong>ERROR</strong>: WordPress requires Cookies but your browser does not support them or they are blocked.');
+
 	if ( $user_login && $user_pass && empty( $errors ) ) {
 		$user = new WP_User(0, $user_login);
 
@@ -321,7 +326,7 @@ default:
 			if ( !$using_cookie )
 				wp_setcookie($user_login, $user_pass, false, '', '', $rememberme);
 			do_action('wp_login', $user_login);
-			wp_redirect($redirect_to);
+			wp_safe_redirect($redirect_to);
 			exit();
 		} else {
 			if ( $using_cookie )
@@ -345,6 +350,7 @@ default:
 ?>
 
 <form name="loginform" id="loginform" action="wp-login.php" method="post">
+<?php if ( !in_array( $_GET['checkemail'], array('confirm', 'newpass') ) ) : ?>
 	<p>
 		<label><?php _e('Username:') ?><br />
 		<input type="text" name="log" id="user_login" class="input" value="<?php echo attribute_escape(stripslashes($user_login)); ?>" size="20" tabindex="10" /></label>
@@ -359,16 +365,21 @@ default:
 		<input type="submit" name="wp-submit" id="wp-submit" value="<?php _e('Login'); ?> &raquo;" tabindex="100" />
 		<input type="hidden" name="redirect_to" value="<?php echo attribute_escape($redirect_to); ?>" />
 	</p>
+<?php else : ?>
+	<p>&nbsp;</p>
+<?php endif; ?>
 </form>
 </div>
 
 <ul>
-<?php if (get_option('users_can_register')) : ?>
+<?php if ( in_array( $_GET['checkemail'], array('confirm', 'newpass') ) ) : ?>
+	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title', 'display')); ?></a></li>
+<?php elseif (get_option('users_can_register')) : ?>
 	<li><a href="<?php bloginfo('wpurl'); ?>/wp-login.php?action=register"><?php _e('Register') ?></a></li>
 	<li><a href="<?php bloginfo('wpurl'); ?>/wp-login.php?action=lostpassword" title="<?php _e('Password Lost and Found') ?>"><?php _e('Lost your password?') ?></a></li>
-	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title')); ?></a></li>
+	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title', 'display')); ?></a></li>
 <?php else : ?>
-	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title')); ?></a></li>
+	<li><a href="<?php bloginfo('url'); ?>/" title="<?php _e('Are you lost?') ?>"><?php printf(__('Back to %s'), get_bloginfo('title', 'display')); ?></a></li>
 	<li><a href="<?php bloginfo('wpurl'); ?>/wp-login.php?action=lostpassword" title="<?php _e('Password Lost and Found') ?>"><?php _e('Lost your password?') ?></a></li>
 <?php endif; ?>
 </ul>

@@ -278,7 +278,7 @@ function akismet_manage_page() {
 }
 
 function akismet_caught() {
-	global $wpdb, $comment, $akismet_caught;
+	global $wpdb, $comment, $akismet_caught, $akismet_nonce;
 	akismet_recheck_queue();
 	if (isset($_POST['submit']) && 'recover' == $_POST['action'] && ! empty($_POST['not_spam'])) {
 		check_admin_referer( $akismet_nonce );

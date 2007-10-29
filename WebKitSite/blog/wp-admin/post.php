@@ -38,6 +38,9 @@ case 'post':
 	if ( isset($_POST['save']) )
 		$location = "post.php?action=edit&post=$post_ID";
 
+	if ( empty($post_ID) )
+		$location = 'post-new.php';
+
 	wp_redirect($location);
 	exit();
 	break;
@@ -47,6 +50,8 @@ case 'edit':
 	$editing = true;
 	$post_ID = $p = (int) $_GET['post'];
 	$post = get_post($post_ID);
+
+	if ( empty($post->ID) ) wp_die( __("You attempted to edit a post that doesn't exist. Perhaps it was deleted?") );
 
 	if ( 'page' == $post->post_type ) {
 		wp_redirect("page.php?action=edit&post=$post_ID");
@@ -149,7 +154,7 @@ case 'delete':
 		if ( ! wp_delete_attachment($post_id) )
 			wp_die( __('Error in deleting...') );
 	} else {
-		if ( !wp_delete_post($post_id) ) 
+		if ( !wp_delete_post($post_id) )
 			wp_die( __('Error in deleting...') );
 	}
 

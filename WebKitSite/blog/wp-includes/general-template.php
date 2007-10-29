@@ -60,28 +60,16 @@ function wp_meta() {
 
 
 function bloginfo($show='') {
-	$info = get_bloginfo($show);
-	
-	// Don't filter URL's.
-	if (strpos($show, 'url') === false || 
-		strpos($show, 'directory') === false || 
-		strpos($show, 'home') === false) {
-		$info = apply_filters('bloginfo', $info, $show);
-		$info = convert_chars($info);
-	} else {
-		$info = apply_filters('bloginfo_url', $info, $show);
-	}
-
-	echo $info;
+	echo get_bloginfo($show, 'display');
 }
 
 /**
- * Note: some of these values are DEPRECATED. Meaning they could be 
- * taken out at any time and shouldn't be relied upon. Options 
- * without "// DEPRECATED" are the preferred and recommended ways 
+ * Note: some of these values are DEPRECATED. Meaning they could be
+ * taken out at any time and shouldn't be relied upon. Options
+ * without "// DEPRECATED" are the preferred and recommended ways
  * to get the information.
  */
-function get_bloginfo($show='') {
+function get_bloginfo($show = '', $filter = 'raw') {
 
 	switch($show) {
 		case 'url' :
@@ -109,6 +97,7 @@ function get_bloginfo($show='') {
 			break;
 		case 'comments_atom_url':
 			$output = get_feed_link('comments_atom');
+			break;
 		case 'comments_rss2_url':
 			$output = get_feed_link('comments_rss2');
 			break;
@@ -152,6 +141,20 @@ function get_bloginfo($show='') {
 			$output = get_option('blogname');
 			break;
 	}
+
+	$url = true;
+	if (strpos($show, 'url') === false &&
+		strpos($show, 'directory') === false &&
+		strpos($show, 'home') === false)
+		$url = false;
+
+	if ( 'display' == $filter ) {
+		if ( $url )
+			$output = apply_filters('bloginfo_url', $output, $show);
+		else
+			$output = apply_filters('bloginfo', $output, $show);
+	}
+
 	return $output;
 }
 
@@ -160,6 +163,7 @@ function wp_title($sep = '&raquo;', $display = true) {
 	global $wpdb, $wp_locale, $wp_query;
 
 	$cat = get_query_var('cat');
+	$tag = get_query_var('tag_id');
 	$p = get_query_var('p');
 	$name = get_query_var('name');
 	$category_name = get_query_var('category_name');
@@ -184,8 +188,17 @@ function wp_title($sep = '&raquo;', $display = true) {
 				else
 					$category_name = $category_name[count($category_name)-2]; // there was a trailling slash
 		}
-		$title = $wpdb->get_var("SELECT cat_name FROM $wpdb->categories WHERE category_nicename = '$category_name'");
-		$title = apply_filters('single_cat_title', $title);
+		$cat = get_term_by('slug', $category_name, 'category', OBJECT, 'display');
+		if ( $cat )
+			$title = apply_filters('single_cat_title', $cat->name);
+	}
+
+	if ( !empty($tag) ) {
+		$tag = get_term($tag, 'post_tag', OBJECT, 'display');
+		if ( is_wp_error( $tag ) ) 
+			return $tag;
+		if ( ! empty($tag->name) )
+			$title = apply_filters('single_tag_title', $tag->name);
 	}
 
 	// If there's an author
@@ -217,8 +230,7 @@ function wp_title($sep = '&raquo;', $display = true) {
 	// If there is a post
 	if ( is_single() || is_page() ) {
 		$post = $wp_query->get_queried_object();
-		$title = apply_filters('single_post_title', $title);
-		$title = strip_tags($post->post_title);
+		$title = strip_tags( apply_filters( 'single_post_title', $post->post_title ) );
 	}
 
 	$prefix = '';
@@ -264,6 +276,29 @@ function single_cat_title($prefix = '', $display = true ) {
 				echo $prefix.strip_tags($my_cat_name);
 			else
 				return strip_tags($my_cat_name);
+		}
+	} else if ( is_tag() ) {
+		return single_tag_title($prefix, $display);
+	}
+}
+
+
+function single_tag_title($prefix = '', $display = true ) {
+	if ( !is_tag() )
+		return;
+
+	$tag_id = intval( get_query_var('tag_id') );
+
+	if ( !empty($tag_id) ) {
+		$my_tag = &get_term($tag_id, 'post_tag', OBJECT, 'display');
+		if ( is_wp_error( $my_tag ) ) 
+			return false;
+		$my_tag_name = apply_filters('single_tag_title', $my_tag->name);
+		if ( !empty($my_tag_name) ) {
+			if ( $display )
+				echo $prefix . $my_tag_name;
+			else
+				return $my_tag_name;
 		}
 	}
 }
@@ -313,16 +348,16 @@ function get_archives_link($url, $text, $format = 'html', $before = '', $after =
 
 
 function wp_get_archives($args = '') {
-	global $wp_locale, $wpdb;
+	global $wpdb, $wp_locale;
 
-	if ( is_array($args) )
-		$r = &$args;
-	else
-		parse_str($args, $r);
+	$defaults = array(
+		'type' => 'monthly', 'limit' => '',
+		'format' => 'html', 'before' => '',
+		'after' => '', 'show_post_count' => false
+	);
 
-	$defaults = array('type' => 'monthly', 'limit' => '', 'format' => 'html', 'before' => '', 'after' => '', 'show_post_count' => false);
-	$r = array_merge($defaults, $r);
-	extract($r);
+	$r = wp_parse_args( $args, $defaults );
+	extract( $r, EXTR_SKIP );
 
 	if ( '' == $type )
 		$type = 'monthly';
@@ -365,7 +400,7 @@ function wp_get_archives($args = '') {
 			foreach ( $arcresults as $arcresult ) {
 				$url	= get_month_link($arcresult->year,	$arcresult->month);
 				$text = sprintf(__('%1$s %2$d'), $wp_locale->get_month($arcresult->month), $arcresult->year);
-				if ( $show_post_count ) 
+				if ( $show_post_count )
 					$after = '&nbsp;('.$arcresult->posts.')' . $afterafter;
 				echo get_archives_link($url, $text, $format, $before, $after);
 			}
@@ -585,10 +620,10 @@ function get_calendar($initial = true) {
 	);
 	if ( $ak_post_titles ) {
 		foreach ( $ak_post_titles as $ak_post_title ) {
-			
+
 				$post_title = apply_filters( "the_title", $ak_post_title->post_title );
 				$post_title = str_replace('"', '&quot;', wptexturize( $post_title ));
-								
+
 				if ( empty($ak_titles_for_day['day_'.$ak_post_title->dom]) )
 					$ak_titles_for_day['day_'.$ak_post_title->dom] = '';
 				if ( empty($ak_titles_for_day["$ak_post_title->dom"]) ) // first one
@@ -635,7 +670,7 @@ function get_calendar($initial = true) {
 	ob_end_clean();
 	echo $output;
 	$cache[ $key ] = $output;
-	wp_cache_add( 'get_calendar', $cache, 'calendar' );
+	wp_cache_set( 'get_calendar', $cache, 'calendar' );
 }
 
 function delete_get_calendar_cache() {
@@ -675,7 +710,7 @@ function the_date_xml() {
 
 
 function the_date($d='', $before='', $after='', $echo = true) {
-	global $id, $post, $day, $previousday, $newday;
+	global $id, $post, $day, $previousday;
 	$the_date = '';
 	if ( $day != $previousday ) {
 		$the_date .= $before;
@@ -794,6 +829,11 @@ function rsd_link() {
 	echo '	<link rel="EditURI" type="application/rsd+xml" title="RSD" href="' . get_bloginfo('wpurl') . "/xmlrpc.php?rsd\" />\n";
 }
 
+function wlwmanifest_link() {
+	echo ' <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="'
+		. get_bloginfo('wpurl') . '/wp-includes/wlwmanifest.xml" /> ';
+}
+
 function noindex() {
 	// If the blog is not public, tell robots to go away.
 	if ( '0' == get_option('blog_public') )
@@ -809,11 +849,12 @@ function rich_edit_exists() {
 
 function user_can_richedit() {
 	global $wp_rich_edit, $pagenow;
-	
+
 	if ( !isset( $wp_rich_edit) ) {
-		if ( get_user_option( 'rich_editing' ) == 'true' && 
-			( ( preg_match( '!AppleWebKit/(\d+)!', $_SERVER['HTTP_USER_AGENT'], $match ) && intval($match[1]) >= 420 ) || 
-				!preg_match( '!opera[ /][2-8]|konqueror|safari!i', $_SERVER['HTTP_USER_AGENT'] ) ) ) {
+		if ( get_user_option( 'rich_editing' ) == 'true' &&
+			( ( preg_match( '!AppleWebKit/(\d+)!', $_SERVER['HTTP_USER_AGENT'], $match ) && intval($match[1]) >= 420 ) ||
+				!preg_match( '!opera[ /][2-8]|konqueror|safari!i', $_SERVER['HTTP_USER_AGENT'] ) )
+				&& 'comment.php' != $pagenow ) {
 			$wp_rich_edit = true;
 		} else {
 			$wp_rich_edit = false;
@@ -861,30 +902,6 @@ function the_editor($content, $id = 'content', $prev_id = 'title') {
 	// <![CDATA[
 		if ( typeof tinyMCE != "undefined" && tinyMCE.configs.length > 0 )
 			document.getElementById("quicktags").style.display="none";
-
-		function edInsertContent(myField, myValue) {
-			//IE support
-			if (document.selection) {
-				myField.focus();
-				sel = document.selection.createRange();
-				sel.text = myValue;
-				myField.focus();
-			}
-			//MOZILLA/NETSCAPE support
-			else if (myField.selectionStart || myField.selectionStart == "0") {
-				var startPos = myField.selectionStart;
-				var endPos = myField.selectionEnd;
-				myField.value = myField.value.substring(0, startPos)
-				              + myValue 
-		                      + myField.value.substring(endPos, myField.value.length);
-				myField.focus();
-				myField.selectionStart = startPos + myValue.length;
-				myField.selectionEnd = startPos + myValue.length;
-			} else {
-				myField.value += myValue;
-				myField.focus();
-			}
-		}
 	// ]]>
 	</script>
 	<?php
@@ -899,10 +916,11 @@ function the_editor($content, $id = 'content', $prev_id = 'title') {
 	//<!--
 	edCanvas = document.getElementById('<?php echo $id; ?>');
 	<?php if ( $prev_id && user_can_richedit() ) : ?>
+	// If tinyMCE is defined.
+	if ( typeof tinyMCE != 'undefined' ) {
 	// This code is meant to allow tabbing from Title to Post (TinyMCE).
-	if ( tinyMCE.isMSIE )
-		document.getElementById('<?php echo $prev_id; ?>').onkeydown = function (e)
-			{
+		if ( tinyMCE.isMSIE ) {
+			document.getElementById('<?php echo $prev_id; ?>').onkeydown = function (e) {
 				e = e ? e : window.event;
 				if (e.keyCode == 9 && !e.shiftKey && !e.controlKey && !e.altKey) {
 					var i = tinyMCE.getInstanceById('<?php echo $id; ?>');
@@ -915,9 +933,8 @@ function the_editor($content, $id = 'content', $prev_id = 'title') {
 					return false;
 				}
 			}
-	else
-		document.getElementById('<?php echo $prev_id; ?>').onkeypress = function (e)
-			{
+		} else {
+			document.getElementById('<?php echo $prev_id; ?>').onkeypress = function (e) {
 				e = e ? e : window.event;
 				if (e.keyCode == 9 && !e.shiftKey && !e.controlKey && !e.altKey) {
 					var i = tinyMCE.getInstanceById('<?php echo $id; ?>');
@@ -930,15 +947,20 @@ function the_editor($content, $id = 'content', $prev_id = 'title') {
 					return false;
 				}
 			}
+		}
+	}
 	<?php endif; ?>
 	//-->
 	</script>
 	<?php
 }
 
+function get_search_query() {
+	return apply_filters( 'get_search_query', stripslashes( get_query_var( 's' ) ) );
+}
+
 function the_search_query() {
-	global $s;
-	echo attribute_escape(stripslashes($s));
+	echo attribute_escape( apply_filters( 'the_search_query', get_search_query() ) );
 }
 
 function language_attributes() {
@@ -955,27 +977,24 @@ function language_attributes() {
 	echo $output;
 }
 
-function paginate_links( $arg = '' ) {
-	if ( is_array($arg) )
-		$a = &$arg;
-	else
-		parse_str($arg, $a);
+function paginate_links( $args = '' ) {
+	$defaults = array(
+		'base' => '%_%', // http://example.com/all_posts.php%_% : %_% is replaced by format (below)
+		'format' => '?page=%#%', // ?page=%#% : %#% is replaced by the page number
+		'total' => 1,
+		'current' => 0,
+		'show_all' => false,
+		'prev_next' => true,
+		'prev_text' => __('&laquo; Previous'),
+		'next_text' => __('Next &raquo;'),
+		'end_size' => 1, // How many numbers on either end including the end
+		'mid_size' => 2, // How many numbers to either side of current not including current
+		'type' => 'plain',
+		'add_args' => false // array of query args to aadd
+	);
 
-	// Defaults
-	$base = '%_%'; // http://example.com/all_posts.php%_% : %_% is replaced by format (below)
-	$format = '?page=%#%'; // ?page=%#% : %#% is replaced by the page number
-	$total = 1;
-	$current = 0;
-	$show_all = false;
-	$prev_next = true;
-	$prev_text = __('&laquo; Previous');
-	$next_text = __('Next &raquo;');
-	$end_size = 1; // How many numbers on either end including the end
-	$mid_size = 2; // How many numbers to either side of current not including current
-	$type = 'plain';
-	$add_args = false; // array of query args to aadd
-
-	extract($a);
+	$args = wp_parse_args( $args, $defaults );
+	extract($args, EXTR_SKIP);
 
 	// Who knows what else people pass in $args
 	$total    = (int) $total;
@@ -1037,4 +1056,23 @@ function paginate_links( $arg = '' ) {
 	endswitch;
 	return $r;
 }
+
+function wp_admin_css_uri( $file = 'wp-admin' ) {
+	if ( defined('WP_INSTALLING') )
+	{
+		$_file = add_query_arg( 'version', get_bloginfo( 'version' ), "./$file.css" );
+	} else {
+		$_file = add_query_arg( 'version', get_bloginfo( 'version' ), get_option( 'siteurl' ) . "/wp-admin/$file.css" );
+	}
+	return apply_filters( 'wp_admin_css_uri', $_file, $file );
+}
+
+function wp_admin_css( $file = 'wp-admin' ) {
+	echo apply_filters( 'wp_admin_css', "<link rel='stylesheet' href='" . wp_admin_css_uri( $file ) . "' type='text/css' />\n", $file );
+	if ( 'rtl' == get_bloginfo( 'text_direction' ) ) {
+		$rtl = ( 'wp-admin' == $file ) ? 'rtl' : "$file-rtl";
+		echo apply_filters( 'wp_admin_css', "<link rel='stylesheet' href='" . wp_admin_css_uri( $rtl ) . "' type='text/css' />\n", $rtl );
+	}
+}
+
 ?>

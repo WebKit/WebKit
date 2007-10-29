@@ -11,7 +11,7 @@ if ( isset($_GET['action']) ) {
 		if ( ! file_exists(ABSPATH . PLUGINDIR . '/' . $plugin) )
 			wp_die(__('Plugin file does not exist.'));
 		if (!in_array($plugin, $current)) {
-			wp_redirect('plugins.php?error=true'); // we'll override this later if the plugin can be included without fatal error
+			wp_redirect(add_query_arg('_error_nonce', wp_create_nonce('plugin-activation-error_' . $plugin), 'plugins.php?error=true&plugin=' . $plugin)); // we'll override this later if the plugin can be included without fatal error
 			ob_start();
 			@include(ABSPATH . PLUGINDIR . '/' . $plugin);
 			$current[] = $plugin;
@@ -21,7 +21,15 @@ if ( isset($_GET['action']) ) {
 			ob_end_clean();
 		}
 		wp_redirect('plugins.php?activate=true'); // overrides the ?error=true one above
-	} else if ('deactivate' == $_GET['action']) {
+	} elseif ('error_scrape' == $_GET['action']) {
+		$plugin = trim($_GET['plugin']);
+		check_admin_referer('plugin-activation-error_' . $plugin);
+		if ( validate_file($plugin) )
+			wp_die(__('Invalid plugin.'));
+		if ( ! file_exists(ABSPATH . PLUGINDIR . '/' . $plugin) )
+			wp_die(__('Plugin file does not exist.'));
+		include(ABSPATH . PLUGINDIR . '/' . $plugin);
+	} elseif ('deactivate' == $_GET['action']) {
 		check_admin_referer('deactivate-plugin_' . $_GET['plugin']);
 		$current = get_option('active_plugins');
 		array_splice($current, array_search( $_GET['plugin'], $current), 1 ); // Array-fu!
@@ -31,12 +39,12 @@ if ( isset($_GET['action']) ) {
 	} elseif ($_GET['action'] == 'deactivate-all') {
 		check_admin_referer('deactivate-all');
 		$current = get_option('active_plugins');
-		
+
 		foreach ($current as $plugin) {
 			array_splice($current, array_search($plugin, $current), 1);
 			do_action('deactivate_' . $plugin);
 		}
-		
+
 		update_option('active_plugins', array());
 		wp_redirect('plugins.php?deactivate-all=true');
 	}
@@ -73,7 +81,15 @@ foreach ($check_plugins as $check_plugin) {
 ?>
 
 <?php if ( isset($_GET['error']) ) : ?>
-	<div id="message" class="updated fade"><p><?php _e('Plugin could not be activated because it triggered a <strong>fatal error</strong>.') ?></p></div>
+	<div id="message" class="updated fade"><p><?php _e('Plugin could not be activated because it triggered a <strong>fatal error</strong>.') ?></p>
+	<?php
+		$plugin = trim($_GET['plugin']);
+		if ( wp_verify_nonce($_GET['_error_nonce'], 'plugin-activation-error_' . $plugin) && 1 == strtolower(ini_get('display_errors'))) { ?>
+	<iframe style="border:0" width="100%" height="70px" src="<?php bloginfo('wpurl'); ?>/wp-admin/plugins.php?action=error_scrape&amp;plugin=<?php echo attribute_escape($plugin); ?>&amp;_wpnonce=<?php echo attribute_escape($_GET['_error_nonce']); ?>"></iframe>
+	<?php
+		}
+	?>
+	</div>
 <?php elseif ( isset($_GET['activate']) ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Plugin <strong>activated</strong>.') ?></p></div>
 <?php elseif ( isset($_GET['deactivate']) ) : ?>
@@ -136,17 +152,20 @@ if (empty($plugins)) {
 		else
 			$edit = '';
 
+		$author = ( empty($plugin_data['Author']) ) ? '' :  ' <cite>' . sprintf( __('By %s'), $plugin_data['Author'] ) . '.</cite>';
+
 		echo "
 	<tr $style>
 		<td class='name'>{$plugin_data['Title']}</td>
 		<td class='vers'>{$plugin_data['Version']}</td>
-		<td class='desc'><p>{$plugin_data['Description']} <cite>".sprintf(__('By %s'), $plugin_data['Author']).".</cite></p></td>
+		<td class='desc'><p>{$plugin_data['Description']}$author</p></td>
 		<td class='togl'>$toggle</td>";
 		if ( current_user_can('edit_plugins') )
 		echo "
 		<td>$edit</td>";
 		echo"
 	</tr>";
+	do_action( 'after_plugin_row', $plugin_file );
 	}
 ?>
 

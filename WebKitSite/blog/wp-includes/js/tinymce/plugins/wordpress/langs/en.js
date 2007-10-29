@@ -4,6 +4,10 @@ if (navigator.userAgent.indexOf('Mac OS') != -1) {
 // Mac OS browsers use Ctrl to hit accesskeys
 	var metaKey = 'Ctrl';
 }
+else if (navigator.userAgent.indexOf('Firefox/2') != -1) {
+// Firefox 2.x uses Alt+Shift to hit accesskeys
+	var metaKey = 'Alt+Shift';
+}
 else {
 	var metaKey = 'Alt';
 }
@@ -11,7 +15,7 @@ else {
 tinyMCE.addToLang('',{
 wordpress_more_button : 'Split post with More tag (' + metaKey + '+t)',
 wordpress_page_button : 'Split post with Page tag',
-wordpress_adv_button : 'Show/Hide Advanced Toolbar (' + metaKey + '+b)',
+wordpress_adv_button : 'Show/Hide Advanced Toolbar (' + metaKey + '+v)',
 wordpress_more_alt : 'More...',
 wordpress_page_alt : '...page...',
 help_button_title : 'Help (' + metaKey + '+h)',
