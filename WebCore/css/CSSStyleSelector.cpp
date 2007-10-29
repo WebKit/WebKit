@@ -41,6 +41,7 @@
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
 #include "CachedImage.h"
 #include "Counter.h"
@@ -98,15 +99,15 @@ if (isInitial) { \
     return;\
 }
 
-#define HANDLE_BACKGROUND_INHERIT_AND_INITIAL(prop, Prop) \
+#define HANDLE_MULTILAYER_INHERIT_AND_INITIAL(layerType, LayerType, prop, Prop) \
 if (isInherit) { \
-    BackgroundLayer* currChild = style->accessBackgroundLayers(); \
-    BackgroundLayer* prevChild = 0; \
-    const BackgroundLayer* currParent = parentStyle->backgroundLayers(); \
+    LayerType* currChild = style->access##LayerType##s(); \
+    LayerType* prevChild = 0; \
+    const LayerType* currParent = parentStyle->layerType##s(); \
     while (currParent && currParent->is##Prop##Set()) { \
         if (!currChild) { \
             /* Need to make a new layer.*/ \
-            currChild = new BackgroundLayer(); \
+            currChild = new LayerType(); \
             prevChild->setNext(currChild); \
         } \
         currChild->set##Prop(currParent->prop()); \
@@ -123,19 +124,19 @@ if (isInherit) { \
     return; \
 } \
 if (isInitial) { \
-    BackgroundLayer* currChild = style->accessBackgroundLayers(); \
+    LayerType* currChild = style->access##LayerType##s(); \
     currChild->set##Prop(RenderStyle::initial##Prop()); \
     for (currChild = currChild->next(); currChild; currChild = currChild->next()) \
         currChild->clear##Prop(); \
     return; \
 }
 
-#define HANDLE_BACKGROUND_VALUE(prop, Prop, value) { \
-HANDLE_BACKGROUND_INHERIT_AND_INITIAL(prop, Prop) \
+#define HANDLE_MULTILAYER_VALUE(layerType, LayerType, prop, Prop, value) { \
+HANDLE_MULTILAYER_INHERIT_AND_INITIAL(layerType, LayerType, prop, Prop) \
 if (!value->isPrimitiveValue() && !value->isValueList()) \
     return; \
-BackgroundLayer* currChild = style->accessBackgroundLayers(); \
-BackgroundLayer* prevChild = 0; \
+LayerType* currChild = style->access##LayerType##s(); \
+LayerType* prevChild = 0; \
 if (value->isPrimitiveValue()) { \
     map##Prop(currChild, value); \
     currChild = currChild->next(); \
@@ -146,7 +147,7 @@ else { \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
         if (!currChild) { \
             /* Need to make a new layer to hold this value */ \
-            currChild = new BackgroundLayer(); \
+            currChild = new LayerType(); \
             prevChild->setNext(currChild); \
         } \
         map##Prop(currChild, valueList->item(i)); \
@@ -159,6 +160,18 @@ while (currChild) { \
     currChild->clear##Prop(); \
     currChild = currChild->next(); \
 } }
+
+#define HANDLE_BACKGROUND_INHERIT_AND_INITIAL(prop, Prop) \
+HANDLE_MULTILAYER_INHERIT_AND_INITIAL(backgroundLayer, BackgroundLayer, prop, Prop)
+
+#define HANDLE_BACKGROUND_VALUE(prop, Prop, value) \
+HANDLE_MULTILAYER_VALUE(backgroundLayer, BackgroundLayer, prop, Prop, value)
+
+#define HANDLE_TRANSITION_INHERIT_AND_INITIAL(prop, Prop) \
+HANDLE_MULTILAYER_INHERIT_AND_INITIAL(transition, Transition, prop, Prop)
+
+#define HANDLE_TRANSITION_VALUE(prop, Prop, value) \
+HANDLE_MULTILAYER_VALUE(transition, Transition, prop, Prop, value)
 
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
 if (id == propID) { \
@@ -4009,6 +4022,24 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setTransformOriginY(l);
         break;
     }
+    case CSS_PROP__WEBKIT_TRANSITION:
+        if (isInitial)
+            style->clearTransitions();
+        else if (isInherit)
+            style->inheritTransitions(parentStyle->transitions());
+        return;
+    case CSS_PROP__WEBKIT_TRANSITION_DURATION:
+        HANDLE_TRANSITION_VALUE(transitionDuration, TransitionDuration, value)
+        return;
+    case CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT:
+        HANDLE_TRANSITION_VALUE(transitionRepeatCount, TransitionRepeatCount, value)
+        return;
+    case CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION:
+        HANDLE_TRANSITION_VALUE(transitionTimingFunction, TransitionTimingFunction, value)
+        return;
+    case CSS_PROP__WEBKIT_TRANSITION_PROPERTY:
+        HANDLE_TRANSITION_VALUE(transitionProperty, TransitionProperty, value)
+        return;
     case CSS_PROP_INVALID:
         return;
     case CSS_PROP_FONT_STRETCH:
@@ -4227,6 +4258,78 @@ void CSSStyleSelector::mapBackgroundYPosition(BackgroundLayer* layer, CSSValue* 
     else
         return;
     layer->setBackgroundYPosition(l);
+}
+
+void CSSStyleSelector::mapTransitionDuration(Transition* layer, CSSValue* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setTransitionDuration(RenderStyle::initialTransitionDuration());
+        return;
+    }
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
+        layer->setTransitionDuration(int(1000*primitiveValue->getFloatValue()));
+    else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_MS)
+        layer->setTransitionDuration(int(primitiveValue->getFloatValue()));
+}
+
+void CSSStyleSelector::mapTransitionRepeatCount(Transition* layer, CSSValue* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setTransitionRepeatCount(RenderStyle::initialTransitionRepeatCount());
+        return;
+    }
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    if (primitiveValue->getIdent() == CSS_VAL_INFINITE)
+        layer->setTransitionRepeatCount(-1);
+    else
+        layer->setTransitionRepeatCount(int(primitiveValue->getFloatValue()));
+}
+
+void CSSStyleSelector::mapTransitionTimingFunction(Transition* layer, CSSValue* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setTransitionTimingFunction(RenderStyle::initialTransitionTimingFunction());
+        return;
+    }
+
+    if (value->isPrimitiveValue()) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        switch (primitiveValue->getIdent()) {
+            case CSS_VAL_LINEAR:
+                layer->setTransitionTimingFunction(TimingFunction(LinearTimingFunction));
+                break;
+            case CSS_VAL_AUTO:
+                layer->setTransitionTimingFunction(TimingFunction());
+                break;
+            case CSS_VAL_EASE_IN:
+                layer->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, FloatPoint(.42f, .0f), FloatPoint(1.0f, 1.0f)));
+                break;
+            case CSS_VAL_EASE_OUT:
+                layer->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, FloatPoint(.0f, .0f), FloatPoint(.58f, 1.0f)));
+                break;
+            case CSS_VAL_EASE_IN_OUT:
+                layer->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, FloatPoint(.42, .0f), FloatPoint(.58f, 1.0f)));
+                break;
+        }
+        return;
+    }
+    
+    CSSTimingFunctionValue* timingFunction = static_cast<CSSTimingFunctionValue*>(value);
+    layer->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, timingFunction->firstPoint(), timingFunction->secondPoint()));
+}
+
+void CSSStyleSelector::mapTransitionProperty(Transition* layer, CSSValue* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setTransitionProperty(RenderStyle::initialTransitionProperty());
+        return;
+    }
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    layer->setTransitionProperty(primitiveValue->getStringValue());
 }
 
 void CSSStyleSelector::checkForTextSizeAdjust()

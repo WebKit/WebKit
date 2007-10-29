@@ -2490,6 +2490,14 @@
 		<Filter
 			Name="page"
 			>
+                        <File
+				RelativePath="..\page\AnimationController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AnimationController.h"
+				>
+			</File>
 			<File
 				RelativePath="..\page\BarInfo.cpp"
 				>
@@ -4843,6 +4851,14 @@
 			</File>
 			<File
 				RelativePath="..\css\CSSStyleSheet.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\css\CSSTimingFunctionValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSTimingFunctionValue.h"
 				>
 			</File>
 			<File

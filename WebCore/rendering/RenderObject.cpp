@@ -3050,6 +3050,11 @@ bool RenderObject::isScrollable() const
     return l && (l->verticalScrollbar() || l->horizontalScrollbar());
 }
 
+AnimationController* RenderObject::animationController() const
+{
+    return document()->frame()->animationController();
+}
+
 #if ENABLE(SVG)
 
 FloatRect RenderObject::relativeBBox(bool) const

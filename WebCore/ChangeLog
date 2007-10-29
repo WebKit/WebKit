@@ -1,3 +1,92 @@
+2007-10-29  David Hyatt  <hyatt@apple.com>
+
+        Land the back end for CSS animated property transitions.  I am landing this in stages, so the AnimationController
+        class is deliberately left empty.
+
+        Reviewed by darin/aroben
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSTimingFunctionValue.cpp: Added.
+        (WebCore::CSSTimingFunctionValue::cssText):
+        * css/CSSTimingFunctionValue.h: Added.
+        (WebCore::CSSTimingFunctionValue::CSSTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::firstPoint):
+        (WebCore::CSSTimingFunctionValue::secondPoint):
+        * css/CSSValueKeywords.in:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * page/AnimationController.cpp: Added.
+        (WebCore::AnimationController::AnimationController):
+        (WebCore::AnimationController::~AnimationController):
+        (WebCore::AnimationController::cancelTransitions):
+        (WebCore::AnimationController::updateTransitions):
+        (WebCore::AnimationController::suspendAnimations):
+        (WebCore::AnimationController::resumeAnimations):
+        * page/AnimationController.h: Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::animationController):
+        (WebCore::Frame::clearTimers):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::destroy):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::animationController):
+        * rendering/RenderObject.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::Transition::Transition):
+        (WebCore::Transition::~Transition):
+        (WebCore::Transition::operator=):
+        (WebCore::Transition::operator==):
+        (WebCore::Transition::fillUnsetProperties):
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::~StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareNonInheritedData::transitionDataEquivalent):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::adjustTransitions):
+        (WebCore::RenderStyle::accessTransitions):
+        * rendering/RenderStyle.h:
+        (WebCore::BackgroundLayer::next):
+        (WebCore::):
+        (WebCore::TimingFunction::TimingFunction):
+        (WebCore::TimingFunction::operator==):
+        (WebCore::Transition::next):
+        (WebCore::Transition::isTransitionDurationSet):
+        (WebCore::Transition::isTransitionRepeatCountSet):
+        (WebCore::Transition::isTransitionTimingFunctionSet):
+        (WebCore::Transition::isTransitionPropertySet):
+        (WebCore::Transition::isEmpty):
+        (WebCore::Transition::clearTransitionDuration):
+        (WebCore::Transition::clearTransitionRepeatCount):
+        (WebCore::Transition::clearTransitionTimingFunction):
+        (WebCore::Transition::clearTransitionProperty):
+        (WebCore::Transition::transitionDuration):
+        (WebCore::Transition::transitionRepeatCount):
+        (WebCore::Transition::transitionTimingFunction):
+        (WebCore::Transition::transitionProperty):
+        (WebCore::Transition::setTransitionDuration):
+        (WebCore::Transition::setTransitionRepeatCount):
+        (WebCore::Transition::setTransitionTimingFunction):
+        (WebCore::Transition::setTransitionProperty):
+        (WebCore::Transition::setNext):
+        (WebCore::Transition::operator!=):
+        (WebCore::RenderStyle::transitions):
+        (WebCore::RenderStyle::clearTransitions):
+        (WebCore::RenderStyle::inheritTransitions):
+        (WebCore::RenderStyle::initialTransitionDuration):
+        (WebCore::RenderStyle::initialTransitionRepeatCount):
+        (WebCore::RenderStyle::initialTransitionTimingFunction):
+        (WebCore::RenderStyle::initialTransitionProperty):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2007-10-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -907,6 +907,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
         case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X:
         case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y:
+        case CSS_PROP__WEBKIT_TRANSITION:
+        case CSS_PROP__WEBKIT_TRANSITION_DURATION:
+        case CSS_PROP__WEBKIT_TRANSITION_PROPERTY:
+        case CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT:
+        case CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION:
             // FIXME: The above are unimplemented.
             break;
 #if ENABLE(SVG)

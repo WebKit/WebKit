@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedPage.h"
 
+#include "AnimationController.h"
 #include "Document.h"
 #include "Element.h"
 #include "EventHandler.h"
@@ -139,6 +140,8 @@ void CachedPage::restore(Page* page)
     if (m_document && m_document->svgExtensions())
         m_document->accessSVGExtensions()->unpauseAnimations();
 #endif
+
+    mainFrame->animationController()->resumeAnimations();
 
     mainFrame->eventHandler()->setMousePressNode(mousePressNode());
         

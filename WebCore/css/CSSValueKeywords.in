@@ -550,3 +550,11 @@ visual
 # CSS_PROP__WEBKIT_BORDER_FIT
 #
 lines
+
+#
+# CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION
+#
+linear
+ease-in
+ease-out
+ease-in-out

@@ -71,6 +71,7 @@ typedef int NSWritingDirection;
 
 namespace WebCore {
 
+class AnimationController;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
@@ -133,6 +134,7 @@ public:
     FrameLoader* loader() const;
     SelectionController* selectionController() const;
     FrameTree* tree() const;
+    AnimationController* animationController() const;
 
     // FIXME: Rename to contentRenderer and change type to RenderView.
     RenderObject* renderer() const; // root renderer for the document contained in this frame

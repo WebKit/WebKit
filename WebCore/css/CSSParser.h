@@ -146,6 +146,15 @@ namespace WebCore {
 
         void addBackgroundValue(CSSValue*& lval, CSSValue* rval);
 
+        void addTransitionValue(CSSValue*& lval, CSSValue* rval);
+        CSSValue* parseTransitionDuration();
+        CSSValue* parseTransitionRepeatCount();
+        CSSValue* parseTransitionTimingFunction();
+        bool parseTimingFunctionValue(ValueList*& args, float& result);
+        CSSValue* parseTransitionProperty();
+        bool parseTransitionProperty(int propId, CSSValue*&);
+        bool parseTransitionShorthand(bool important);
+        
         bool parseDashboardRegions(int propId, bool important);
 
         bool parseShape(int propId, bool important);

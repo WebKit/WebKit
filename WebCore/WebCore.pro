@@ -379,6 +379,7 @@ SOURCES += \
     css/CSSStyleRule.cpp \
     css/CSSStyleSelector.cpp \
     css/CSSStyleSheet.cpp \
+    css/CSSTimingFunctionValue.cpp \
     css/CSSTransformValue.cpp \
     css/CSSValueList.cpp \
     css/FontFamilyValue.cpp \
@@ -604,6 +605,7 @@ SOURCES += \
     loader/SubresourceLoader.cpp \
     loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \
+    page/AnimationController.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/Console.cpp \

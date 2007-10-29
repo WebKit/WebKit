@@ -362,6 +362,11 @@ SelectionController* Frame::dragCaretController() const
 }
 
 
+AnimationController* Frame::animationController() const
+{
+    return &d->m_animationController;
+}
+
 // Either get cached regexp or build one that matches any of the labels.
 // The regexp we build is of the form:  (STR1|STR2|STRN)
 static RegularExpression *regExpForLabels(const Vector<String>& labels)
@@ -1475,6 +1480,7 @@ void Frame::clearTimers(FrameView *view)
             Document* document = view->frame()->document();
             if (document && document->renderer() && document->renderer()->hasLayer())
                 document->renderer()->layer()->suspendMarquees();
+            view->frame()->animationController()->suspendAnimations();
         }
     }
 }

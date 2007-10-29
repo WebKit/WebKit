@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSParser.h"
 
+#include "CSSTimingFunctionValue.h"
 #include "CSSBorderImageValue.h"
 #include "CSSCharsetRule.h"
 #include "CSSCursorImageValue.h"
@@ -1270,6 +1271,17 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         return false;
     }
+    case CSS_PROP__WEBKIT_TRANSITION_DURATION:
+    case CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT:
+    case CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION:
+    case CSS_PROP__WEBKIT_TRANSITION_PROPERTY: {
+        CSSValue* val = 0;
+        if (parseTransitionProperty(propId, val)) {
+            addProperty(propId, val, important);
+            return true;
+        }
+        return false;
+    }
     case CSS_PROP__WEBKIT_MARGIN_COLLAPSE: {
         const int properties[2] = { CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE,
             CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE };
@@ -1505,6 +1517,8 @@ bool CSSParser::parseValue(int propId, bool important)
         const int properties[2] = { CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH, CSS_PROP__WEBKIT_TEXT_STROKE_COLOR };
         return parseShorthand(propId, properties, 2, important);
     }
+    case CSS_PROP__WEBKIT_TRANSITION:
+        return parseTransitionShorthand(important);
     case CSS_PROP_INVALID:
         return false;
     case CSS_PROP_FONT_STRETCH:
@@ -1641,6 +1655,84 @@ fail:
     for (int k = 0; k < numProperties; k++)
         delete values[k];
     delete positionYValue;
+    return false;
+}
+
+void CSSParser::addTransitionValue(CSSValue*& lval, CSSValue* rval)
+{
+    if (lval) {
+        if (lval->isValueList())
+            static_cast<CSSValueList*>(lval)->append(rval);
+        else {
+            CSSValue* oldVal = lval;
+            CSSValueList* list = new CSSValueList();
+            lval = list;
+            list->append(oldVal);
+            list->append(rval);
+        }
+    }
+    else
+        lval = rval;
+}
+
+bool CSSParser::parseTransitionShorthand(bool important)
+{
+    const int properties[] = { CSS_PROP__WEBKIT_TRANSITION_PROPERTY, CSS_PROP__WEBKIT_TRANSITION_DURATION, 
+                               CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION, CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT };
+    const int numProperties = sizeof(properties) / sizeof(properties[0]);
+    
+    ShorthandScope scope(this, CSS_PROP__WEBKIT_TRANSITION);
+
+    bool parsedProperty[numProperties] = { false }; // compiler will repeat false as necessary
+    CSSValue* values[numProperties] = { 0 }; // compiler will repeat 0 as necessary
+    
+    int i;
+    while (valueList->current()) {
+        Value* val = valueList->current();
+        if (val->unit == Value::Operator && val->iValue == ',') {
+            // We hit the end.  Fill in all remaining values with the initial value.
+            valueList->next();
+            for (i = 0; i < numProperties; ++i) {
+                if (!parsedProperty[i])
+                    addTransitionValue(values[i], new CSSInitialValue(true));
+                parsedProperty[i] = false;
+            }
+            if (!valueList->current())
+                break;
+        }
+        
+        bool found = false;
+        for (i = 0; !found && i < numProperties; ++i) {
+            if (!parsedProperty[i]) {
+                CSSValue* val = 0;
+                if (parseTransitionProperty(properties[i], val)) {
+                    parsedProperty[i] = found = true;
+                    addTransitionValue(values[i], val);
+                }
+            }
+        }
+
+        // if we didn't find at least one match, this is an
+        // invalid shorthand and we have to ignore it
+        if (!found)
+            goto fail;
+    }
+    
+    // Fill in any remaining properties with the initial value.
+    for (i = 0; i < numProperties; ++i) {
+        if (!parsedProperty[i])
+            addTransitionValue(values[i], new CSSInitialValue(true));
+    }
+    
+    // Now add all of the properties we found.
+    for (i = 0; i < numProperties; i++)
+        addProperty(properties[i], values[i], important);
+    
+    return true;
+
+fail:
+    for (int k = 0; k < numProperties; k++)
+        delete values[k];
     return false;
 }
 
@@ -2071,6 +2163,157 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
 failed:
     delete values; delete values2;
     delete value; delete value2;
+    return false;
+}
+
+CSSValue* CSSParser::parseTransitionDuration()
+{
+    Value* value = valueList->current();
+    if (validUnit(value, FTime, strict))
+        return new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
+    return 0;
+}
+
+CSSValue* CSSParser::parseTransitionRepeatCount()
+{
+    Value* value = valueList->current();
+    if (value->id == CSS_VAL_INFINITE)
+        return new CSSPrimitiveValue(value->id);
+    if (validUnit(value, FInteger|FNonNeg, strict))
+        return new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
+    return 0;
+}
+
+bool CSSParser::parseTimingFunctionValue(ValueList*& args, float& result)
+{
+    Value* v = args->current();
+    if (!validUnit(v, FNumber, strict))
+        return false;
+    result = v->fValue;
+    if (result < 0 || result > 1.0f)
+        return false;
+    v = args->next();
+    if (v->unit != Value::Operator && v->iValue != ',')
+        return false;
+    v = args->next();
+    return true;
+}
+
+CSSValue* CSSParser::parseTransitionTimingFunction()
+{
+    Value* value = valueList->current();
+    if (value->id == CSS_VAL_AUTO || value->id == CSS_VAL_LINEAR || value->id == CSS_VAL_EASE_IN || value->id == CSS_VAL_EASE_OUT || value->id == CSS_VAL_EASE_IN_OUT)
+        return new CSSPrimitiveValue(value->id);
+    
+    // We must be a function.
+    if (value->unit != Value::Function)
+        return 0;
+    
+    // The only timing function we accept for now is a cubic bezier function.  4 points must be specified.
+    ValueList* args = value->function->args;
+    String fname = domString(value->function->name).lower();
+    if (fname != "cubic-bezier(" || !args || args->size() != 7)
+        return 0;
+
+    // There are two points specified.  The values must be between 0 and 1.
+    float x1, y1, x2, y2;
+
+    if (!parseTimingFunctionValue(args, x1))
+        return 0;
+    if (!parseTimingFunctionValue(args, y1))
+        return 0;
+    if (!parseTimingFunctionValue(args, x2))
+        return 0;
+    if (!parseTimingFunctionValue(args, y2))
+        return 0;
+
+    return new CSSTimingFunctionValue(x1, y1, x2, y2);
+}
+
+CSSValue* CSSParser::parseTransitionProperty()
+{
+    Value* value = valueList->current();
+    if (value->unit == CSSPrimitiveValue::CSS_STRING)
+        return new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
+    return 0;
+}
+
+bool CSSParser::parseTransitionProperty(int propId, CSSValue*& result)
+{
+    CSSValueList* values = 0;
+    Value* val;
+    CSSValue* value = 0;
+    bool allowComma = false;
+    
+    result = 0;
+
+    while ((val = valueList->current())) {
+        CSSValue* currValue = 0;
+        if (allowComma) {
+            if (val->unit != Value::Operator || val->iValue != ',')
+                goto failed;
+            valueList->next();
+            allowComma = false;
+        }
+        else {
+            switch (propId) {
+                case CSS_PROP__WEBKIT_TRANSITION_DURATION:
+                    currValue = parseTransitionDuration();
+                    if (currValue)
+                        valueList->next();
+                    break;
+                case CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT:
+                    currValue = parseTransitionRepeatCount();
+                    if (currValue)
+                        valueList->next();
+                    break;
+                case CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION:
+                    currValue = parseTransitionTimingFunction();
+                    if (currValue)
+                        valueList->next();
+                    break;
+                case CSS_PROP__WEBKIT_TRANSITION_PROPERTY:
+                    currValue = parseTransitionProperty();
+                    if (currValue)
+                        valueList->next();
+                    break;
+            }
+            
+            if (!currValue)
+                goto failed;
+            
+            if (value && !values) {
+                values = new CSSValueList();
+                values->append(value);
+                value = 0;
+            }
+            
+            if (values)
+                values->append(currValue);
+            else
+                value = currValue;
+            
+            allowComma = true;
+        }
+        
+        // When parsing the 'animation' shorthand property, we let it handle building up the lists for all
+        // properties.
+        if (inShorthand())
+            break;
+    }
+    
+    if (values && values->length()) {
+        result = values;
+        return true;
+    }
+    if (value) {
+        result = value;
+        return true;
+    }
+
+failed:
+    delete values;
+    delete value;
     return false;
 }
 
