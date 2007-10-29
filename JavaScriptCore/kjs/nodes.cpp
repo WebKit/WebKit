@@ -373,6 +373,11 @@ JSValue *ThisNode::evaluate(ExecState *exec)
 // ECMA 11.1.2 & 10.1.4
 JSValue *ResolveNode::evaluate(ExecState *exec)
 {
+  // Check for missed optimization opportunity.
+  ASSERT(exec->codeType() != FunctionCode
+         || exec->variableObject() != exec->scopeChain().top() 
+         || (exec->variableObject()->isActivation() && !static_cast<ActivationImp*>(exec->variableObject())->symbolTable().contains(ident.ustring().rep())));
+
   const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
@@ -393,7 +398,30 @@ JSValue *ResolveNode::evaluate(ExecState *exec)
   return throwUndefinedVariableError(exec, ident);
 }
 
+void ResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, DeclarationStacks::NodeStack&)
+{
+    size_t index = functionBody->symbolTable().get(ident.ustring().rep());
+    if (index != missingSymbolMarker)
+        new (this) LocalVarAccessNode(this, index);
+}
+
+JSValue* LocalVarAccessNode::evaluate(ExecState* exec)
+{
+    ActivationImp* variableObject = static_cast<ActivationImp*>(exec->variableObject());
+    ASSERT(variableObject->isActivation());
+    ASSERT(variableObject == exec->scopeChain().top());
+    return variableObject->localStorage()[index].value;
+}
+
 // ------------------------------ ElementNode ----------------------------------
+
+void ElementNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (next)
+        nodeStack.append(next.get());
+    ASSERT(node);
+    nodeStack.append(node.get());
+}
 
 // ECMA 11.1.4
 JSValue *ElementNode::evaluate(ExecState *exec)
@@ -415,6 +443,13 @@ void ElementNode::breakCycle()
 }
 
 // ------------------------------ ArrayNode ------------------------------------
+
+void ArrayNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (element)
+        nodeStack.append(element.get());
+}
+
 
 // ECMA 11.1.4
 JSValue *ArrayNode::evaluate(ExecState *exec)
@@ -440,6 +475,12 @@ JSValue *ArrayNode::evaluate(ExecState *exec)
 
 // ------------------------------ ObjectLiteralNode ----------------------------
 
+void ObjectLiteralNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (list)
+        nodeStack.append(list.get());
+}
+
 // ECMA 11.1.5
 JSValue *ObjectLiteralNode::evaluate(ExecState *exec)
 {
@@ -450,6 +491,13 @@ JSValue *ObjectLiteralNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ PropertyListNode -----------------------------
+
+void PropertyListNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (next)
+        nodeStack.append(next.get());
+    nodeStack.append(node.get());
+}
 
 // ECMA 11.1.5
 JSValue *PropertyListNode::evaluate(ExecState *exec)
@@ -484,6 +532,12 @@ void PropertyListNode::breakCycle()
 }
 
 // ------------------------------ PropertyNode -----------------------------
+
+void PropertyNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(assign.get());
+}
+
 // ECMA 11.1.5
 JSValue *PropertyNode::evaluate(ExecState*)
 {
@@ -492,6 +546,12 @@ JSValue *PropertyNode::evaluate(ExecState*)
 }
 
 // ------------------------------ BracketAccessorNode --------------------------------
+
+void BracketAccessorNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
 
 // ECMA 11.2.1a
 JSValue *BracketAccessorNode::evaluate(ExecState *exec)
@@ -509,6 +569,11 @@ JSValue *BracketAccessorNode::evaluate(ExecState *exec)
 
 // ------------------------------ DotAccessorNode --------------------------------
 
+void DotAccessorNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr.get());
+}
+
 // ECMA 11.2.1b
 JSValue *DotAccessorNode::evaluate(ExecState *exec)
 {
@@ -519,6 +584,14 @@ JSValue *DotAccessorNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ ArgumentListNode -----------------------------
+
+void ArgumentListNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (next)
+        nodeStack.append(next.get());
+    ASSERT(expr);
+    nodeStack.append(expr.get());
+}
 
 JSValue *ArgumentListNode::evaluate(ExecState *)
 {
@@ -547,6 +620,12 @@ void ArgumentListNode::breakCycle()
 
 // ------------------------------ ArgumentsNode --------------------------------
 
+void ArgumentsNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (list)
+        nodeStack.append(list.get());
+}
+
 JSValue *ArgumentsNode::evaluate(ExecState *)
 {
   ASSERT(0);
@@ -554,6 +633,13 @@ JSValue *ArgumentsNode::evaluate(ExecState *)
 }
 
 // ------------------------------ NewExprNode ----------------------------------
+
+void NewExprNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (args)
+        nodeStack.append(args.get());
+    nodeStack.append(expr.get());
+}
 
 // ECMA 11.2.2
 
@@ -580,6 +666,12 @@ JSValue *NewExprNode::evaluate(ExecState *exec)
   return constr->construct(exec, argList);
 }
 
+void FunctionCallValueNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(args.get());
+    nodeStack.append(expr.get());
+}
+
 // ECMA 11.2.3
 JSValue *FunctionCallValueNode::evaluate(ExecState *exec)
 {
@@ -602,6 +694,11 @@ JSValue *FunctionCallValueNode::evaluate(ExecState *exec)
   JSObject *thisObj =  exec->dynamicInterpreter()->globalObject();
 
   return func->call(exec, thisObj, argList);
+}
+
+void FunctionCallResolveNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(args.get());
 }
 
 // ECMA 11.2.3
@@ -651,6 +748,13 @@ JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
   } while (iter != end);
   
   return throwUndefinedVariableError(exec, ident);
+}
+
+void FunctionCallBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(args.get());
+    nodeStack.append(subscript.get());
+    nodeStack.append(base.get());
 }
 
 // ECMA 11.2.3
@@ -712,6 +816,12 @@ static const char *dotExprDoesNotAllowCallsString() KJS_FAST_CALL;
 static const char *dotExprDoesNotAllowCallsString()
 {
   return "Object %s (result of expression %s.%s) does not allow calls.";
+}
+
+void FunctionCallDotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(args.get());
+    nodeStack.append(base.get());
 }
 
 // ECMA 11.2.3
@@ -780,6 +890,12 @@ JSValue *PostfixResolveNode::evaluate(ExecState *exec)
 
 // ------------------------------ PostfixBracketNode ----------------------------------
 
+void PostfixBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_subscript.get());
+    nodeStack.append(m_base.get());
+}
+
 JSValue *PostfixBracketNode::evaluate(ExecState *exec)
 {
   JSValue *baseValue = m_base->evaluate(exec);
@@ -817,6 +933,11 @@ JSValue *PostfixBracketNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ PostfixDotNode ----------------------------------
+
+void PostfixDotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_base.get());
+}
 
 JSValue *PostfixDotNode::evaluate(ExecState *exec)
 {
@@ -875,6 +996,12 @@ JSValue *DeleteResolveNode::evaluate(ExecState *exec)
 
 // ------------------------------ DeleteBracketNode -----------------------------------
 
+void DeleteBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_subscript.get());
+    nodeStack.append(m_base.get());
+}
+
 JSValue *DeleteBracketNode::evaluate(ExecState *exec)
 {
   JSValue *baseValue = m_base->evaluate(exec);
@@ -893,6 +1020,12 @@ JSValue *DeleteBracketNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ DeleteDotNode -----------------------------------
+
+void DeleteDotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_base.get());
+}
+
 JSValue *DeleteDotNode::evaluate(ExecState *exec)
 {
   JSValue *baseValue = m_base->evaluate(exec);
@@ -903,6 +1036,12 @@ JSValue *DeleteDotNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ DeleteValueNode -----------------------------------
+
+void DeleteValueNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_expr.get());
+}
+
 JSValue *DeleteValueNode::evaluate(ExecState *exec)
 {
   m_expr->evaluate(exec);
@@ -913,6 +1052,11 @@ JSValue *DeleteValueNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ VoidNode -------------------------------------
+
+void VoidNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr.get());
+}
 
 // ECMA 11.4.2
 JSValue *VoidNode::evaluate(ExecState *exec)
@@ -926,6 +1070,11 @@ JSValue *VoidNode::evaluate(ExecState *exec)
 // ECMA 11.4.3
 
 // ------------------------------ TypeOfValueNode -----------------------------------
+
+void TypeOfValueNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_expr.get());
+}
 
 static JSValue *typeStringForValue(JSValue *v) KJS_FAST_CALL;
 static JSValue *typeStringForValue(JSValue *v)
@@ -1026,6 +1175,12 @@ JSValue *PrefixResolveNode::evaluate(ExecState *exec)
 
 // ------------------------------ PrefixBracketNode ----------------------------------
 
+void PrefixBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_subscript.get());
+    nodeStack.append(m_base.get());
+}
+
 JSValue *PrefixBracketNode::evaluate(ExecState *exec)
 {
   JSValue *baseValue = m_base->evaluate(exec);
@@ -1066,6 +1221,11 @@ JSValue *PrefixBracketNode::evaluate(ExecState *exec)
 
 // ------------------------------ PrefixDotNode ----------------------------------
 
+void PrefixDotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_base.get());
+}
+
 JSValue *PrefixDotNode::evaluate(ExecState *exec)
 {
   JSValue *baseValue = m_base->evaluate(exec);
@@ -1097,6 +1257,11 @@ JSValue* PrefixErrorNode::evaluate(ExecState* exec)
 
 // ------------------------------ UnaryPlusNode --------------------------------
 
+void UnaryPlusNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr.get());
+}
+
 // ECMA 11.4.6
 JSValue *UnaryPlusNode::evaluate(ExecState *exec)
 {
@@ -1107,6 +1272,11 @@ JSValue *UnaryPlusNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ NegateNode -----------------------------------
+
+void NegateNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr.get());
+}
 
 // ECMA 11.4.7
 JSValue *NegateNode::evaluate(ExecState *exec)
@@ -1120,6 +1290,11 @@ JSValue *NegateNode::evaluate(ExecState *exec)
 
 // ------------------------------ BitwiseNotNode -------------------------------
 
+void BitwiseNotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr.get());
+}
+
 // ECMA 11.4.8
 JSValue *BitwiseNotNode::evaluate(ExecState *exec)
 {
@@ -1130,6 +1305,11 @@ JSValue *BitwiseNotNode::evaluate(ExecState *exec)
 
 // ------------------------------ LogicalNotNode -------------------------------
 
+void LogicalNotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr.get());
+}
+
 // ECMA 11.4.9
 JSValue *LogicalNotNode::evaluate(ExecState *exec)
 {
@@ -1139,6 +1319,12 @@ JSValue *LogicalNotNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ Multiplicative Nodes -----------------------------------
+
+void MultNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(term1.get());
+    nodeStack.append(term2.get());
+}
 
 // ECMA 11.5.1
 JSValue *MultNode::evaluate(ExecState *exec)
@@ -1152,6 +1338,12 @@ JSValue *MultNode::evaluate(ExecState *exec)
     return jsNumber(v1->toNumber(exec) * v2->toNumber(exec));
 }
 
+void DivNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(term1.get());
+    nodeStack.append(term2.get());
+}
+
 // ECMA 11.5.2
 JSValue *DivNode::evaluate(ExecState *exec)
 {
@@ -1162,6 +1354,12 @@ JSValue *DivNode::evaluate(ExecState *exec)
     KJS_CHECKEXCEPTIONVALUE
 
     return jsNumber(v1->toNumber(exec) / v2->toNumber(exec));
+}
+
+void ModNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(term1.get());
+    nodeStack.append(term2.get());
 }
 
 // ECMA 11.5.3
@@ -1199,6 +1397,12 @@ static inline JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2)
     return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));
 }
 
+void AddNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(term1.get());
+    nodeStack.append(term2.get());
+}
+
 // ECMA 11.6.1
 JSValue *AddNode::evaluate(ExecState *exec)
 {
@@ -1211,6 +1415,11 @@ JSValue *AddNode::evaluate(ExecState *exec)
   return add(exec, v1, v2);
 }
 
+void SubNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(term1.get());
+    nodeStack.append(term2.get());
+}
 
 // ECMA 11.6.2
 JSValue *SubNode::evaluate(ExecState *exec)
@@ -1226,6 +1435,12 @@ JSValue *SubNode::evaluate(ExecState *exec)
 
 // ------------------------------ Shift Nodes ------------------------------------
 
+void LeftShiftNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(term1.get());
+    nodeStack.append(term2.get());
+}
+
 // ECMA 11.7.1
 JSValue *LeftShiftNode::evaluate(ExecState *exec)
 {
@@ -1239,6 +1454,12 @@ JSValue *LeftShiftNode::evaluate(ExecState *exec)
   return jsNumber(v1->toInt32(exec) << i2);
 }
 
+void RightShiftNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(term1.get());
+    nodeStack.append(term2.get());
+}
+
 // ECMA 11.7.2
 JSValue *RightShiftNode::evaluate(ExecState *exec)
 {
@@ -1250,6 +1471,12 @@ JSValue *RightShiftNode::evaluate(ExecState *exec)
   i2 &= 0x1f;
 
   return jsNumber(v1->toInt32(exec) >> i2);
+}
+
+void UnsignedRightShiftNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(term1.get());
+    nodeStack.append(term2.get());
 }
 
 // ECMA 11.7.3
@@ -1293,6 +1520,12 @@ static inline JSValue* lessThanEq(ExecState *exec, JSValue* v1, JSValue* v2)
     return jsBoolean(!(v2->toString(exec) < v1->toString(exec)));
 }
 
+void LessNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.8.1
 JSValue *LessNode::evaluate(ExecState *exec)
 {
@@ -1301,6 +1534,12 @@ JSValue *LessNode::evaluate(ExecState *exec)
   JSValue *v2 = expr2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
   return lessThan(exec, v1, v2);
+}
+
+void GreaterNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
 }
 
 // ECMA 11.8.2
@@ -1313,6 +1552,12 @@ JSValue *GreaterNode::evaluate(ExecState *exec)
   return lessThan(exec, v2, v1);
 }
 
+void LessEqNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.8.3
 JSValue *LessEqNode::evaluate(ExecState *exec)
 {
@@ -1323,6 +1568,12 @@ JSValue *LessEqNode::evaluate(ExecState *exec)
   return lessThanEq(exec, v1, v2);
 }
 
+void GreaterEqNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.8.4
 JSValue *GreaterEqNode::evaluate(ExecState *exec)
 {
@@ -1331,6 +1582,12 @@ JSValue *GreaterEqNode::evaluate(ExecState *exec)
   JSValue *v2 = expr2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
   return lessThanEq(exec, v2, v1);
+}
+
+void InstanceOfNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
 }
 
 // ECMA 11.8.6
@@ -1355,6 +1612,12 @@ JSValue *InstanceOfNode::evaluate(ExecState *exec)
   return jsBoolean(o2->hasInstance(exec, v1));
 }
 
+void InNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.8.7
 JSValue *InNode::evaluate(ExecState *exec)
 {
@@ -1373,6 +1636,12 @@ JSValue *InNode::evaluate(ExecState *exec)
 
 // ------------------------------ Equality Nodes ------------------------------------
 
+void EqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.9.1
 JSValue *EqualNode::evaluate(ExecState *exec)
 {
@@ -1382,6 +1651,12 @@ JSValue *EqualNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
 
   return jsBoolean(equal(exec,v1, v2));
+}
+
+void NotEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
 }
 
 // ECMA 11.9.2
@@ -1395,6 +1670,12 @@ JSValue *NotEqualNode::evaluate(ExecState *exec)
   return jsBoolean(!equal(exec,v1, v2));
 }
 
+void StrictEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.9.4
 JSValue *StrictEqualNode::evaluate(ExecState *exec)
 {
@@ -1404,6 +1685,12 @@ JSValue *StrictEqualNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
 
   return jsBoolean(strictEqual(exec,v1, v2));
+}
+
+void NotStrictEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
 }
 
 // ECMA 11.9.5
@@ -1419,6 +1706,12 @@ JSValue *NotStrictEqualNode::evaluate(ExecState *exec)
 
 // ------------------------------ Bit Operation Nodes ----------------------------------
 
+void BitAndNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.10
 JSValue *BitAndNode::evaluate(ExecState *exec)
 {
@@ -1430,6 +1723,12 @@ JSValue *BitAndNode::evaluate(ExecState *exec)
   return jsNumber(v1->toInt32(exec) & v2->toInt32(exec));
 }
 
+void BitXOrNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 JSValue *BitXOrNode::evaluate(ExecState *exec)
 {
   JSValue *v1 = expr1->evaluate(exec);
@@ -1438,6 +1737,12 @@ JSValue *BitXOrNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
   
   return jsNumber(v1->toInt32(exec) ^ v2->toInt32(exec));
+}
+
+void BitOrNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
 }
 
 JSValue *BitOrNode::evaluate(ExecState *exec)
@@ -1452,6 +1757,12 @@ JSValue *BitOrNode::evaluate(ExecState *exec)
 
 // ------------------------------ Binary Logical Nodes ----------------------------
 
+void LogicalAndNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.11
 JSValue *LogicalAndNode::evaluate(ExecState *exec)
 {
@@ -1465,6 +1776,12 @@ JSValue *LogicalAndNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
 
   return v2;
+}
+
+void LogicalOrNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
 }
 
 JSValue *LogicalOrNode::evaluate(ExecState *exec)
@@ -1482,6 +1799,13 @@ JSValue *LogicalOrNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ ConditionalNode ------------------------------
+
+void ConditionalNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+    nodeStack.append(logical.get());
+}
 
 // ECMA 11.12
 JSValue *ConditionalNode::evaluate(ExecState *exec)
@@ -1567,6 +1891,11 @@ static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSV
 
 // ------------------------------ AssignResolveNode -----------------------------------
 
+void AssignResolveNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_right.get());
+}
+
 JSValue *AssignResolveNode::evaluate(ExecState *exec)
 {
   const ScopeChain& chain = exec->scopeChain();
@@ -1609,6 +1938,12 @@ JSValue *AssignResolveNode::evaluate(ExecState *exec)
 
 // ------------------------------ AssignDotNode -----------------------------------
 
+void AssignDotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_right.get());
+    nodeStack.append(m_base.get());
+}
+
 JSValue *AssignDotNode::evaluate(ExecState *exec)
 {
   JSValue *baseValue = m_base->evaluate(exec);
@@ -1643,6 +1978,13 @@ JSValue* AssignErrorNode::evaluate(ExecState* exec)
 }
 
 // ------------------------------ AssignBracketNode -----------------------------------
+
+void AssignBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_right.get());
+    nodeStack.append(m_subscript.get());
+    nodeStack.append(m_base.get());
+}
 
 JSValue *AssignBracketNode::evaluate(ExecState *exec)
 {
@@ -1693,6 +2035,12 @@ JSValue *AssignBracketNode::evaluate(ExecState *exec)
 
 // ------------------------------ CommaNode ------------------------------------
 
+void CommaNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr2.get());
+    nodeStack.append(expr1.get());
+}
+
 // ECMA 11.14
 JSValue *CommaNode::evaluate(ExecState *exec)
 {
@@ -1706,6 +2054,11 @@ JSValue *CommaNode::evaluate(ExecState *exec)
 
 // ------------------------------ AssignExprNode -------------------------------
 
+void AssignExprNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr.get());
+}
+
 // ECMA 12.2
 JSValue *AssignExprNode::evaluate(ExecState *exec)
 {
@@ -1714,13 +2067,20 @@ JSValue *AssignExprNode::evaluate(ExecState *exec)
 
 // ------------------------------ VarDeclNode ----------------------------------
 
-    
 VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in, Type t)
-    : varType(t), ident(id), init(in)
+    : varType(t)
+    , ident(id)
+    , init(in)
 {
     m_mayHaveDeclarations = true; 
 }
 
+void VarDeclNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (init)
+        nodeStack.append(init.get());
+}
+    
 void VarDeclNode::getDeclarations(DeclarationStacks& stacks)
 {
     // The normal check to avoid overwriting pre-existing values with variable
@@ -1806,6 +2166,13 @@ JSValue* VarDeclNode::evaluate(ExecState* exec)
 
 // ------------------------------ VarDeclListNode ------------------------------
 
+void VarDeclListNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (next)
+        nodeStack.append(next.get());
+    nodeStack.append(var.get());
+}
+
 // ECMA 12.2
 JSValue *VarDeclListNode::evaluate(ExecState *exec)
 {
@@ -1832,6 +2199,12 @@ void VarDeclListNode::breakCycle()
 
 // ------------------------------ VarStatementNode -----------------------------
 
+void VarStatementNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    ASSERT(next);
+    nodeStack.append(next.get());
+}
+
 // ECMA 12.2
 Completion VarStatementNode::execute(ExecState *exec)
 {
@@ -1850,6 +2223,12 @@ void VarStatementNode::getDeclarations(DeclarationStacks& stacks)
 }
 
 // ------------------------------ BlockNode ------------------------------------
+
+void BlockNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (source)
+        nodeStack.append(source.get());
+}
 
 BlockNode::BlockNode(SourceElementsNode *s)
 {
@@ -1888,6 +2267,12 @@ Completion EmptyStatementNode::execute(ExecState *)
 
 // ------------------------------ ExprStatementNode ----------------------------
 
+void ExprStatementNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    ASSERT(expr);
+    nodeStack.append(expr.get());
+}
+
 // ECMA 12.4
 Completion ExprStatementNode::execute(ExecState *exec)
 {
@@ -1900,6 +2285,16 @@ Completion ExprStatementNode::execute(ExecState *exec)
 }
 
 // ------------------------------ IfNode ---------------------------------------
+
+void IfNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (statement2)
+        nodeStack.append(statement2.get());
+    ASSERT(statement1);
+    nodeStack.append(statement1.get());
+    ASSERT(expr);
+    nodeStack.append(expr.get());
+}
 
 // ECMA 12.5
 Completion IfNode::execute(ExecState *exec)
@@ -1931,6 +2326,12 @@ void IfNode::getDeclarations(DeclarationStacks& stacks)
 }
 
 // ------------------------------ DoWhileNode ----------------------------------
+
+void DoWhileNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(statement.get());
+    nodeStack.append(expr.get());
+}
 
 // ECMA 12.6.1
 Completion DoWhileNode::execute(ExecState *exec)
@@ -1972,6 +2373,12 @@ void DoWhileNode::getDeclarations(DeclarationStacks& stacks)
 }
 
 // ------------------------------ WhileNode ------------------------------------
+
+void WhileNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(statement.get());
+    nodeStack.append(expr.get());
+}
 
 // ECMA 12.6.2
 Completion WhileNode::execute(ExecState *exec)
@@ -2019,6 +2426,17 @@ void WhileNode::getDeclarations(DeclarationStacks& stacks)
 }
 
 // ------------------------------ ForNode --------------------------------------
+
+void ForNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(statement.get());
+    if (expr3)
+        nodeStack.append(expr3.get());
+    if (expr2)
+        nodeStack.append(expr2.get());
+    if (expr1)
+        nodeStack.append(expr1.get());
+}
 
 // ECMA 12.6.3
 Completion ForNode::execute(ExecState *exec)
@@ -2085,6 +2503,15 @@ ForInNode::ForInNode(const Identifier &i, AssignExprNode *in, Node *e, Statement
   // for( var foo = bar in baz )
   varDecl = new VarDeclNode(ident, init.get(), VarDeclNode::Variable);
   lexpr = new ResolveNode(ident);
+}
+
+void ForInNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(statement.get());
+    nodeStack.append(expr.get());
+    nodeStack.append(lexpr.get());
+    if (varDecl)
+        nodeStack.append(varDecl.get());
 }
 
 void ForInNode::getDeclarations(DeclarationStacks& stacks)
@@ -2225,6 +2652,12 @@ Completion BreakNode::execute(ExecState *exec)
 
 // ------------------------------ ReturnNode -----------------------------------
 
+void ReturnNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (value)
+        nodeStack.append(value.get());
+}
+
 // ECMA 12.9
 Completion ReturnNode::execute(ExecState *exec)
 {
@@ -2251,6 +2684,12 @@ void WithNode::getDeclarations(DeclarationStacks& stacks)
         stacks.nodeStack.append(statement.get()); 
 }
 
+void WithNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    // Can't optimize within statement because "with" introduces a dynamic scope.
+    nodeStack.append(expr.get());
+}
+
 // ECMA 12.10
 Completion WithNode::execute(ExecState *exec)
 {
@@ -2268,6 +2707,14 @@ Completion WithNode::execute(ExecState *exec)
 }
 
 // ------------------------------ CaseClauseNode -------------------------------
+
+void CaseClauseNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (expr)
+        nodeStack.append(expr.get());
+    if (source)
+        nodeStack.append(source.get());
+}
 
 void CaseClauseNode::getDeclarations(DeclarationStacks& stacks)
 { 
@@ -2294,6 +2741,13 @@ Completion CaseClauseNode::evalStatements(ExecState *exec)
 }
 
 // ------------------------------ ClauseListNode -------------------------------
+
+void ClauseListNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (next)
+        nodeStack.append(next.get());
+    nodeStack.append(clause.get());
+}
 
 void ClauseListNode::getDeclarations(DeclarationStacks& stacks)
 { 
@@ -2338,6 +2792,16 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
   }
 }
  
+void CaseBlockNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (list2)
+        nodeStack.append(list2.get());
+    if (def)
+        nodeStack.append(def.get());
+    if (list1)
+        nodeStack.append(list1.get());
+}
+
 void CaseBlockNode::getDeclarations(DeclarationStacks& stacks) 
 { 
     if (list2 && list2->mayHaveDeclarations()) 
@@ -2420,6 +2884,12 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, JSValue *input)
 
 // ------------------------------ SwitchNode -----------------------------------
 
+void SwitchNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(block.get());
+    nodeStack.append(expr.get());
+}
+
 void SwitchNode::getDeclarations(DeclarationStacks& stacks) 
 { 
     if (block->mayHaveDeclarations()) 
@@ -2445,6 +2915,11 @@ Completion SwitchNode::execute(ExecState *exec)
 
 // ------------------------------ LabelNode ------------------------------------
 
+void LabelNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(statement.get());
+}
+
 void LabelNode::getDeclarations(DeclarationStacks& stacks) 
 { 
     if (statement->mayHaveDeclarations()) 
@@ -2466,6 +2941,11 @@ Completion LabelNode::execute(ExecState *exec)
 
 // ------------------------------ ThrowNode ------------------------------------
 
+void ThrowNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(expr.get());
+}
+
 // ECMA 12.13
 Completion ThrowNode::execute(ExecState *exec)
 {
@@ -2479,6 +2959,14 @@ Completion ThrowNode::execute(ExecState *exec)
 }
 
 // ------------------------------ TryNode --------------------------------------
+
+void TryNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    // Can't optimize within catchBlock because "catch" introduces a dynamic scope.
+    if (finallyBlock)
+        nodeStack.append(finallyBlock.get());
+    nodeStack.append(tryBlock.get());
+}
 
 void TryNode::getDeclarations(DeclarationStacks& stacks) 
 { 
@@ -2538,6 +3026,7 @@ FunctionBodyNode::FunctionBodyNode(SourceElementsNode *s)
     , m_sourceId(Parser::sid)
     , m_initializedDeclarationStacks(false)
     , m_initializedSymbolTable(false)
+    , m_optimizedResolveNodes(false)
 {
   setLoc(-1, -1);
 }
@@ -2566,7 +3055,7 @@ void FunctionBodyNode::initializeDeclarationStacks(ExecState* exec)
     m_initializedDeclarationStacks = true;
 }
 
-void FunctionBodyNode::initializesymbolTable()
+void FunctionBodyNode::initializeSymbolTable()
 {
     size_t i, size;
     size_t count = 0;
@@ -2584,6 +3073,28 @@ void FunctionBodyNode::initializesymbolTable()
     m_initializedSymbolTable = true;
 }
 
+void FunctionBodyNode::optimizeVariableAccess()
+{
+    Node* node = source.get();
+    if (!node)
+        return;
+
+    DeclarationStacks::NodeStack nodeStack;
+
+    while (true) {
+        node->optimizeVariableAccess(this, nodeStack);
+        
+        size_t size = nodeStack.size();
+        if (!size)
+            break;
+        --size;
+        node = nodeStack[size];
+        nodeStack.shrink(size);
+    }
+
+    m_optimizedResolveNodes = true;
+}
+
 void FunctionBodyNode::processDeclarations(ExecState* exec)
 {
     if (!m_initializedDeclarationStacks)
@@ -2598,7 +3109,10 @@ void FunctionBodyNode::processDeclarations(ExecState* exec)
 void FunctionBodyNode::processDeclarationsForFunctionCode(ExecState* exec)
 {
     if (!m_initializedSymbolTable)
-        initializesymbolTable();
+        initializeSymbolTable();
+
+    if (!m_optimizedResolveNodes)
+        optimizeVariableAccess();
 
     ASSERT(exec->variableObject()->isActivation());
     ActivationImp::LocalStorage& localStorage = static_cast<ActivationImp*>(exec->variableObject())->localStorage();
@@ -2608,7 +3122,7 @@ void FunctionBodyNode::processDeclarationsForFunctionCode(ExecState* exec)
     
     size_t i, size;
 
-    // NOTE: Must match the order of addition in initializesymbolTable().
+    // NOTE: Must match the order of addition in initializeSymbolTable().
 
     for (i = 0, size = m_varStack.size(); i < size; ++i) {
         VarDeclNode* node = m_varStack[i];
@@ -2761,6 +3275,13 @@ SourceElementsNode::SourceElementsNode(SourceElementsNode *s1, StatementNode *s2
   m_mayHaveDeclarations = true; 
   s1->next = this;
   setLoc(s1->firstLine(), s2->lastLine());
+}
+
+void SourceElementsNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    if (next)
+        nodeStack.append(next.get());
+    nodeStack.append(node.get());
 }
 
 void SourceElementsNode::getDeclarations(DeclarationStacks& stacks)

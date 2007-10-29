@@ -1,3 +1,44 @@
+2007-10-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak, Darin Adler.
+        
+        Much supporting work done by Maciej Stachowiak, Maks Orlovich, and 
+        Cameron Zwarich.
+        
+        AST transfom to replace slow resolve nodes with fast local variable
+        alternatives that do direct memory access. Currently, only ResolveNode
+        provides a fast local variable alternative. 6 others are soon to come.
+        
+        16.7% speedup on SunSpider.
+        
+        Most of this patch is just scaffolding to support iterating all the 
+        resolve nodes in the AST through optimizeResolveNodes(). In 
+        optimizeResolveNodes(), most classes just push their child nodes onto 
+        the processing stack, while ResolveNodes actually replace themselves in 
+        the tree with more optimized alternatives, if possible.
+
+        Here are the interesting bits:
+
+        * kjs/nodes.h: Added PlacementNewAdoptTag, along with implementations 
+        in Node and ResolveNode. This tag allows you to use placement new to 
+        swap out a base class Node in favor of a subclass copy that holds the
+        same data. (Without this tag, default initialization would NULL out
+        RefPtrs, change line numbers, etc.)
+
+        * kjs/nodes.cpp:
+        (KJS::ResolveNode::evaluate): Since we're taking the slow path, ASSERT
+        that the fast path is impossible, to make sure we didn't leave anything
+        on the table.
+
+        (KJS::FunctionBodyNode::optimizeResolveNodes): Here's where the AST 
+        transformation happens.
+        
+        (KJS::ResolveNode::optimizeResolveNodes): Here's where the ResolveNode
+        optimization happens.
+
+        * kjs/function.h: Added symbolTable() accessor for, for the sake of 
+        an ASSERT.
+
 2007-10-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.

@@ -187,7 +187,8 @@ namespace KJS {
 
     void releaseArguments() { d->arguments.reset(); }
     
-    LocalStorage& localStorage() { return d->localStorage; };
+    LocalStorage& localStorage() { return d->localStorage; }
+    SymbolTable& symbolTable() { return *m_symbolTable; }
 
   private:
     static PropertySlot::GetValueFunc getArgumentsGetter();
@@ -195,7 +196,7 @@ namespace KJS {
     void createArgumentsObject(ExecState*);
     
     OwnPtr<ActivationImpPrivate> d;
-    SymbolTable* symbolTable;
+    SymbolTable* m_symbolTable;
   };
 
   class GlobalFuncImp : public InternalFunctionImp {
