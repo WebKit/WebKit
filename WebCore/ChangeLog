@@ -1,3 +1,15 @@
+2007-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5424455> REGRESSION (r21168-r21193, Tiger only): Safari scrollbar is clipped at top when loading particular RSS page
+
+        Test: fast/repaint/layout-state-only-posiitoned.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects): Pop layout state
+        before updating scroll info, which possibly repaints us.
+
 2007-10-29  David Kilzer  <ddkilzer@webkit.org>
 
         REGRESSION (r17701): Favicons should be viewable as image documents

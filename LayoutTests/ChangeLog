@@ -1,3 +1,14 @@
+2007-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan,
+
+        - repaint test for <rdar://problem/5424455> REGRESSION (r21168-r21193, Tiger only): Safari scrollbar is clipped at top when loading particular RSS page
+
+        * fast/repaint/layout-state-only-posiitoned.html: Added.
+        * platform/mac/fast/repaint/layout-state-only-posiitoned-expected.checksum: Added.
+        * platform/mac/fast/repaint/layout-state-only-posiitoned-expected.png: Added.
+        * platform/mac/fast/repaint/layout-state-only-posiitoned-expected.txt: Added.
+
 2007-10-29  David Kilzer  <ddkilzer@webkit.org>
 
         Test for:  REGRESSION (r17701): Favicons should be viewable as image documents

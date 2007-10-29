@@ -1276,20 +1276,21 @@ bool RenderBlock::layoutOnlyPositionedObjects()
     if (!posChildNeedsLayout() || normalChildNeedsLayout() || selfNeedsLayout())
         return false;
 
-    // All we have to is lay out our positioned objects.
     if (!m_hasColumns)
         view()->pushLayoutState(this, IntSize(xPos(), yPos()));
     else
         view()->disableLayoutState();
 
+    // All we have to is lay out our positioned objects.
     layoutPositionedObjects(false);
-    if (hasOverflowClip())
-        m_layer->updateScrollInfoAfterLayout();
 
     if (!m_hasColumns)
         view()->popLayoutState();
     else
         view()->enableLayoutState();
+
+    if (hasOverflowClip())
+        m_layer->updateScrollInfoAfterLayout();
 
     setNeedsLayout(false);
     return true;
