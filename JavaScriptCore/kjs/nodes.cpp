@@ -938,10 +938,10 @@ JSValue* LocalVarPostfixNode::evaluate(ExecState* exec)
     ASSERT(variableObject->isActivation());
     ASSERT(variableObject == exec->scopeChain().top());
 
-    JSValue** v = &variableObject->localStorage()[index].value;
-    double n = (*v)->toNumber(exec);
+    JSValue** slot = &variableObject->localStorage()[index].value;
+    double n = (*slot)->toNumber(exec);
     double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
-    *v = jsNumber(newValue);
+    *slot = jsNumber(newValue);
     return jsNumber(n);
 }
 
@@ -1180,10 +1180,10 @@ void TypeOfResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, D
 {
     size_t index = functionBody->symbolTable().get(m_ident.ustring().rep());
     if (index != missingSymbolMarker())
-        new (this) LocalTypeOfAccessNode(index);
+        new (this) LocalVarTypeOfNode(index);
 }
 
-JSValue* LocalTypeOfAccessNode::evaluate(ExecState* exec)
+JSValue* LocalVarTypeOfNode::evaluate(ExecState* exec)
 {
     ActivationImp* variableObject = static_cast<ActivationImp*>(exec->variableObject());
     ASSERT(variableObject->isActivation());
@@ -1233,10 +1233,10 @@ void PrefixResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, D
 {
     size_t index = functionBody->symbolTable().get(m_ident.ustring().rep());
     if (index != missingSymbolMarker())
-        new (this) PrefixLocalAccessNode(index);
+        new (this) LocalVarPrefixNode(index);
 }
 
-JSValue* PrefixLocalAccessNode::evaluate(ExecState* exec)
+JSValue* LocalVarPrefixNode::evaluate(ExecState* exec)
 {
     ActivationImp* variableObject = static_cast<ActivationImp*>(exec->variableObject());
     ASSERT(variableObject->isActivation());
@@ -2005,28 +2005,27 @@ void AssignResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, D
     nodeStack.append(m_right.get());
     size_t index = functionBody->symbolTable().get(m_ident.ustring().rep());
     if (index != missingSymbolMarker())
-        new (this) AssignLocalAccessNode(index);
+        new (this) LocalVarAssignNode(index);
 }
 
-JSValue* AssignLocalAccessNode::evaluate(ExecState* exec)
+JSValue* LocalVarAssignNode::evaluate(ExecState* exec)
 {
     ActivationImp* variableObject = static_cast<ActivationImp*>(exec->variableObject());
     ASSERT(variableObject->isActivation());
     ASSERT(variableObject == exec->scopeChain().top());
     JSValue* v;
+    JSValue** slot = &variableObject->localStorage()[m_index].value;
 
     if (m_oper == OpEqual)
         v = m_right->evaluate(exec);
     else {
-        JSValue* v1 = variableObject->localStorage()[m_index].value;
-        KJS_CHECKEXCEPTIONVALUE
         JSValue* v2 = m_right->evaluate(exec);
-        v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+        v = valueForReadModifyAssignment(exec, *slot, v2, m_oper);
     }
 
     KJS_CHECKEXCEPTIONVALUE
 
-    variableObject->localStorage()[m_index].value = v;
+    *slot = v;
     return v;
 }
 

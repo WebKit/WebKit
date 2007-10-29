@@ -707,9 +707,9 @@ namespace KJS {
     size_t m_index; // Used by LocalTypeOfNode.
   };
     
-  class LocalTypeOfAccessNode : public TypeOfResolveNode {
+  class LocalVarTypeOfNode : public TypeOfResolveNode {
   public:
-    LocalTypeOfAccessNode(size_t i) KJS_FAST_CALL 
+    LocalVarTypeOfNode(size_t i) KJS_FAST_CALL 
         : TypeOfResolveNode(PlacementNewAdopt)
     { 
         ASSERT(i != missingSymbolMarker());
@@ -741,7 +741,6 @@ namespace KJS {
     PrefixResolveNode(PlacementNewAdoptType) KJS_FAST_CALL 
         : Node(PlacementNewAdopt)
         , m_ident(PlacementNewAdopt) 
-        , m_oper(m_oper) 
     {
     }
     
@@ -754,12 +753,12 @@ namespace KJS {
   protected:
     Identifier m_ident;
     Operator m_oper;
-    size_t m_index;
+    size_t m_index; // Used by LocalVarPrefixNode.
   };
 
-  class PrefixLocalAccessNode : public PrefixResolveNode {
+  class LocalVarPrefixNode : public PrefixResolveNode {
   public:
-    PrefixLocalAccessNode(size_t i) KJS_FAST_CALL 
+    LocalVarPrefixNode(size_t i) KJS_FAST_CALL 
         : PrefixResolveNode(PlacementNewAdopt)
     { 
         ASSERT(i != missingSymbolMarker());
@@ -1176,7 +1175,6 @@ namespace KJS {
     AssignResolveNode(PlacementNewAdoptType) KJS_FAST_CALL 
       : Node(PlacementNewAdopt)
       , m_ident(PlacementNewAdopt) 
-      , m_oper(m_oper) 
       , m_right(PlacementNewAdopt) 
     {
     }
@@ -1189,12 +1187,12 @@ namespace KJS {
     Identifier m_ident;
     Operator m_oper;
     RefPtr<Node> m_right;
-    size_t m_index;
+    size_t m_index; // Used by LocalVarAssignNode.
   };
 
-  class AssignLocalAccessNode : public AssignResolveNode {
+  class LocalVarAssignNode : public AssignResolveNode {
   public:
-    AssignLocalAccessNode(size_t i) KJS_FAST_CALL 
+    LocalVarAssignNode(size_t i) KJS_FAST_CALL 
         : AssignResolveNode(PlacementNewAdopt)
     { 
         ASSERT(i != missingSymbolMarker());
