@@ -3,6 +3,8 @@
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
+ *  Copyright (C) 2007 Maks Orlovich
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -293,7 +295,7 @@ namespace KJS {
   class LocalVarAccessNode : public ResolveNode {
   public:
     // Overwrites a ResolveNode in place.
-    LocalVarAccessNode(size_t i)
+    LocalVarAccessNode(size_t i) KJS_FAST_CALL
         : ResolveNode(PlacementNewAdopt)
     {
         ASSERT(i != missingSymbolMarker());
@@ -482,14 +484,40 @@ namespace KJS {
 
   class FunctionCallResolveNode : public Node {
   public:
-    FunctionCallResolveNode(const Identifier& i, ArgumentsNode *a) KJS_FAST_CALL : ident(i), args(a) {}
+    FunctionCallResolveNode(const Identifier& i, ArgumentsNode* a) KJS_FAST_CALL
+        : ident(i)
+        , args(a)
+    {
+    }
+
+    FunctionCallResolveNode(PlacementNewAdoptType) KJS_FAST_CALL 
+        : Node(PlacementNewAdopt)
+        , ident(PlacementNewAdopt)
+        , args(PlacementNewAdopt)
+    {
+    }
+
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecCall; }
-  private:
+
+  protected:
     Identifier ident;
     RefPtr<ArgumentsNode> args;
+    size_t index; // Used by LocalVarFunctionCallNode.
+  };
+
+  class LocalVarFunctionCallNode : public FunctionCallResolveNode {
+  public:
+    LocalVarFunctionCallNode(size_t i) KJS_FAST_CALL
+        : FunctionCallResolveNode(PlacementNewAdopt)
+    {
+        ASSERT(i != missingSymbolMarker());
+        index = i;
+    }
+
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
   };
 
   class FunctionCallBracketNode : public Node {
@@ -521,12 +549,34 @@ namespace KJS {
   class PostfixResolveNode : public Node {
   public:
     PostfixResolveNode(const Identifier& i, Operator o) KJS_FAST_CALL : m_ident(i), m_oper(o) {}
+
+    PostfixResolveNode(PlacementNewAdoptType) KJS_FAST_CALL 
+        : Node(PlacementNewAdopt)
+        , m_ident(PlacementNewAdopt)
+    {
+    }
+
+    virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecPostfix; }
-  private:
+
+  protected:
     Identifier m_ident;
     Operator m_oper;
+    size_t index; // Used by LocalVarPostfixNode.
+  };
+
+  class LocalVarPostfixNode : public PostfixResolveNode {
+  public:
+    LocalVarPostfixNode(size_t i) KJS_FAST_CALL
+        : PostfixResolveNode(PlacementNewAdopt)
+    {
+        ASSERT(i != missingSymbolMarker());
+        index = i;
+    }
+
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
   };
 
   class PostfixBracketNode : public Node {
@@ -569,11 +619,28 @@ namespace KJS {
   class DeleteResolveNode : public Node {
   public:
     DeleteResolveNode(const Identifier& i) KJS_FAST_CALL : m_ident(i) {}
+    DeleteResolveNode(PlacementNewAdoptType) KJS_FAST_CALL 
+        : Node(PlacementNewAdopt)
+        , m_ident(PlacementNewAdopt)
+    {
+    }
+
+    virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecUnary; }
   private:
     Identifier m_ident;
+  };
+
+  class LocalVarDeleteNode : public DeleteResolveNode {
+  public:
+    LocalVarDeleteNode() KJS_FAST_CALL
+        : DeleteResolveNode(PlacementNewAdopt)
+    {
+    }
+
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
   };
 
   class DeleteBracketNode : public Node {

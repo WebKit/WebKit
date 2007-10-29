@@ -3,6 +3,7 @@
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
+ *  Copyright (C) 2007 Maks Orlovich
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -58,6 +59,28 @@ namespace KJS {
     handleException(exec); \
     return List(); \
   }
+
+#if !ASSERT_DISABLED
+static inline bool canSkipLookup(ExecState* exec, const Identifier& ident)
+{
+    // Static lookup in EvalCode is impossible because variables aren't DontDelete. 
+    // Static lookup in GlobalCode may be possible, but we haven't implemented support for it yet.
+    if (exec->codeType() != FunctionCode)
+        return false;
+
+    // Static lookup is impossible when something dynamic has been added to the front of the scope chain.
+    if (exec->variableObject() != exec->scopeChain().top())
+        return false;
+
+    ASSERT(exec->variableObject()->isActivation()); // Because this is function code.
+
+    // Static lookup is impossible if the symbol isn't statically declared.
+    if (!static_cast<ActivationImp*>(exec->variableObject())->symbolTable().contains(ident.ustring().rep()))
+        return false;
+        
+    return true;
+}
+#endif
 
 // ------------------------------ Node -----------------------------------------
 
@@ -374,9 +397,7 @@ JSValue *ThisNode::evaluate(ExecState *exec)
 JSValue *ResolveNode::evaluate(ExecState *exec)
 {
   // Check for missed optimization opportunity.
-  ASSERT(exec->codeType() != FunctionCode
-         || exec->variableObject() != exec->scopeChain().top() 
-         || (exec->variableObject()->isActivation() && !static_cast<ActivationImp*>(exec->variableObject())->symbolTable().contains(ident.ustring().rep())));
+  ASSERT(!canSkipLookup(exec, ident));
 
   const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
@@ -696,14 +717,21 @@ JSValue *FunctionCallValueNode::evaluate(ExecState *exec)
   return func->call(exec, thisObj, argList);
 }
 
-void FunctionCallResolveNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+void FunctionCallResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, DeclarationStacks::NodeStack& nodeStack)
 {
     nodeStack.append(args.get());
+
+    size_t index = functionBody->symbolTable().get(ident.ustring().rep());
+    if (index != missingSymbolMarker())
+        new (this) LocalVarFunctionCallNode(index);
 }
 
 // ECMA 11.2.3
 JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
 {
+  // Check for missed optimization opportunity.
+  ASSERT(!canSkipLookup(exec, ident));
+
   const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
@@ -748,6 +776,27 @@ JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
   } while (iter != end);
   
   return throwUndefinedVariableError(exec, ident);
+}
+
+JSValue* LocalVarFunctionCallNode::evaluate(ExecState* exec)
+{
+    ActivationImp* variableObject = static_cast<ActivationImp*>(exec->variableObject());
+    ASSERT(variableObject->isActivation());
+    ASSERT(variableObject == exec->scopeChain().top());
+
+    JSValue* v = variableObject->localStorage()[index].value;
+
+    if (!v->isObject())
+        return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, ident);
+      
+    JSObject* func = static_cast<JSObject*>(v);
+    if (!func->implementsCall())
+        return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, ident);
+      
+    List argList = args->evaluateList(exec);
+    KJS_CHECKEXCEPTIONVALUE
+
+    return func->call(exec, exec->dynamicInterpreter()->globalObject(), argList);
 }
 
 void FunctionCallBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -858,8 +907,18 @@ JSValue *FunctionCallDotNode::evaluate(ExecState *exec)
 
 // ------------------------------ PostfixResolveNode ----------------------------------
 
+void PostfixResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, DeclarationStacks::NodeStack&)
+{
+    size_t index = functionBody->symbolTable().get(m_ident.ustring().rep());
+    if (index != missingSymbolMarker())
+        new (this) LocalVarPostfixNode(index);
+}
+
 JSValue *PostfixResolveNode::evaluate(ExecState *exec)
 {
+  // Check for missed optimization opportunity.
+  ASSERT(!canSkipLookup(exec, m_ident));
+
   const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
@@ -886,6 +945,19 @@ JSValue *PostfixResolveNode::evaluate(ExecState *exec)
   } while (iter != end);
 
   return throwUndefinedVariableError(exec, m_ident);
+}
+
+JSValue* LocalVarPostfixNode::evaluate(ExecState* exec)
+{
+    ActivationImp* variableObject = static_cast<ActivationImp*>(exec->variableObject());
+    ASSERT(variableObject->isActivation());
+    ASSERT(variableObject == exec->scopeChain().top());
+
+    JSValue** v = &variableObject->localStorage()[index].value;
+    double n = (*v)->toNumber(exec);
+    double newValue = (m_oper == OpPlusPlus) ? n + 1 : n - 1;
+    *v = jsNumber(newValue);
+    return jsNumber(n);
 }
 
 // ------------------------------ PostfixBracketNode ----------------------------------
@@ -969,10 +1041,20 @@ JSValue* PostfixErrorNode::evaluate(ExecState* exec)
 
 // ------------------------------ DeleteResolveNode -----------------------------------
 
+void DeleteResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, DeclarationStacks::NodeStack&)
+{
+    size_t index = functionBody->symbolTable().get(m_ident.ustring().rep());
+    if (index != missingSymbolMarker())
+        new (this) LocalVarDeleteNode();
+}
+
 // ECMA 11.4.1
 
 JSValue *DeleteResolveNode::evaluate(ExecState *exec)
 {
+  // Check for missed optimization opportunity.
+  ASSERT(!canSkipLookup(exec, m_ident));
+
   const ScopeChain& chain = exec->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
@@ -992,6 +1074,11 @@ JSValue *DeleteResolveNode::evaluate(ExecState *exec)
   } while (iter != end);
 
   return jsBoolean(true);
+}
+
+JSValue* LocalVarDeleteNode::evaluate(ExecState*)
+{
+    return jsBoolean(false);
 }
 
 // ------------------------------ DeleteBracketNode -----------------------------------
