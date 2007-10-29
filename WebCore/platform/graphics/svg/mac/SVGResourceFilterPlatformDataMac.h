@@ -43,7 +43,7 @@ namespace WebCore {
     class SVGResourceFilterPlatformDataMac : public SVGResourceFilterPlatformData {
     public:
         SVGResourceFilterPlatformDataMac(SVGResourceFilter*);
-        ~SVGResourceFilterPlatformDataMac();
+        virtual ~SVGResourceFilterPlatformDataMac();
         
         CIImage* imageForName(const String&) const;
         void setImageForName(CIImage*, const String&);

@@ -35,7 +35,10 @@ namespace WebCore {
 class GraphicsContext;
 class SVGFilterEffect;
     
-class SVGResourceFilterPlatformData {};
+class SVGResourceFilterPlatformData {
+public:
+    virtual ~SVGResourceFilterPlatformData() {}
+};
 
 class SVGResourceFilter : public SVGResource {
 public:

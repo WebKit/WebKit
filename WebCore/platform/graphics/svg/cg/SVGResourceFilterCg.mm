@@ -33,19 +33,6 @@
 #include "FoundationExtras.h"
 #include "GraphicsContext.h"
 
-#include "SVGFEBlend.h"
-#include "SVGFEColorMatrix.h"
-#include "SVGFEComponentTransfer.h"
-#include "SVGFEComposite.h"
-#include "SVGFEDiffuseLighting.h"
-#include "SVGFEDisplacementMap.h"
-#include "SVGFEFlood.h"
-#include "SVGFEGaussianBlur.h"
-#include "SVGFEImage.h"
-#include "SVGFEMerge.h"
-#include "SVGFEOffset.h"
-#include "SVGFESpecularLighting.h"
-#include "SVGFETile.h"
 #include "SVGResourceFilterPlatformDataMac.h"
 
 #include <QuartzCore/CoreImage.h>

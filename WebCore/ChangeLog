@@ -1,3 +1,17 @@
+2007-10-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Fix leaks on TOT and prevent Path code from logging to console so frequently
+
+        * platform/graphics/svg/SVGResourceFilter.h:
+        (WebCore::SVGResourceFilterPlatformData::SVGResourceFilterPlatformData):
+        (WebCore::SVGResourceFilterPlatformData::~SVGResourceFilterPlatformData):
+        * platform/graphics/svg/cg/CgSupport.cpp:
+        (WebCore::strokeBoundingBox):
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        * platform/graphics/svg/mac/SVGResourceFilterPlatformDataMac.h:
+
 2007-10-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.

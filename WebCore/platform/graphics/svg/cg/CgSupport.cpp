@@ -104,6 +104,12 @@ FloatRect strokeBoundingBox(const Path& path, RenderStyle* style, const RenderOb
     CGContextAddPath(context, cgPath);
     applyStrokeStyleToContext(context, style, object);
     CGContextReplacePathWithStrokedPath(context);
+    if (CGContextIsPathEmpty(context)) {
+        // CGContextReplacePathWithStrokedPath seems to fail to create a path sometimes, this is not well understood.
+        // returning here prevents CG from logging to the console from CGContextGetPathBoundingBox
+        CGContextRestoreGState(context);
+        return FloatRect();
+    }
     CGRect box = CGContextGetPathBoundingBox(context);
         
     CGContextRestoreGState(context);
