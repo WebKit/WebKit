@@ -1,3 +1,36 @@
+2007-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej and Tim.
+
+        Replace uses of isNaN and isInf with isnan and isinf, and
+        remove isNaN and isInf.
+
+        * kjs/config.h: Remove unused HAVE_'s.
+        * kjs/date_object.cpp:
+        (KJS::DateInstance::getTime):
+        (KJS::DateInstance::getUTCTime):
+        (KJS::DateProtoFunc::callAsFunction):
+        (KJS::DateObjectImp::construct):
+        (KJS::DateObjectFuncImp::callAsFunction):
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/math_object.cpp:
+        (MathFuncImp::callAsFunction):
+        * kjs/nodes2string.cpp:
+        (KJS::isParserRoundTripNumber):
+        * kjs/number_object.cpp:
+        (NumberProtoFunc::callAsFunction):
+        * kjs/operations.cpp:
+        * kjs/operations.h:
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFunc::callAsFunction):
+        * kjs/ustring.cpp:
+        (KJS::UString::from):
+        * kjs/value.cpp:
+        (KJS::JSValue::toInteger):
+        (KJS::JSValue::toInt32SlowCase):
+        (KJS::JSValue::toUInt32SlowCase):
+
 2007-10-28  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: use the new-fangled missingSymbolMarker().

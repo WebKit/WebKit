@@ -40,6 +40,7 @@
 #include <string.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 #include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
@@ -811,11 +812,11 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
     res = jsNumber(parseFloat(args[0]->toString(exec)));
     break;
   case IsNaN:
-    res = jsBoolean(isNaN(args[0]->toNumber(exec)));
+    res = jsBoolean(isnan(args[0]->toNumber(exec)));
     break;
   case IsFinite: {
     double n = args[0]->toNumber(exec);
-    res = jsBoolean(!isNaN(n) && !isInf(n));
+    res = jsBoolean(!isnan(n) && !isinf(n));
     break;
   }
   case DecodeURI:

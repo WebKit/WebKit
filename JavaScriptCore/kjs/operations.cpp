@@ -28,84 +28,11 @@
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 
-#if HAVE(FUNC_ISINF) && HAVE(IEEEFP_H)
-#include <ieeefp.h>
-#endif
-
 #if HAVE(FLOAT_H)
 #include <float.h>
 #endif
 
 namespace KJS {
-    
-#if !PLATFORM(DARWIN)
-
-// FIXME: Should probably be inlined on non-Darwin platforms too, and controlled exclusively
-// by HAVE macros rather than PLATFORM.
-
-// FIXME: Merge with isnan in MathExtras.h and remove this one entirely.
-bool isNaN(double d)
-{
-#if HAVE(FUNC_ISNAN)
-    return isnan(d);
-#elif HAVE(FLOAT_H)
-    return _isnan(d) != 0;
-#else
-    return !(d == d);
-#endif
-}
-
-// FIXME: Merge with isinf in MathExtras.h and remove this one entirely.
-bool isInf(double d)
-{
-    // FIXME: should be HAVE(_FPCLASS)
-#if PLATFORM(WIN_OS)
-    int fpClass = _fpclass(d);
-    return _FPCLASS_PINF == fpClass || _FPCLASS_NINF == fpClass;
-#elif HAVE(FUNC_ISINF)
-    return isinf(d);
-#elif HAVE(FUNC_FINITE)
-    return finite(d) == 0 && d == d;
-#elif HAVE(FUNC__FINITE)
-    return _finite(d) == 0 && d == d;
-#else
-    return false;
-#endif
-}
-
-bool isPosInf(double d)
-{
-    // FIXME: should be HAVE(_FPCLASS)
-#if PLATFORM(WIN_OS)
-    return _FPCLASS_PINF == _fpclass(d);
-#elif HAVE(FUNC_ISINF)
-    return (isinf(d) == 1);
-#elif HAVE(FUNC_FINITE)
-    return !finite(d) && d == d; // ### can we distinguish between + and - ?
-#elif HAVE(FUNC__FINITE)
-    return !_finite(d) && d == d; // ###
-#else
-    return false;
-#endif
-}
-
-bool isNegInf(double d)
-{
-    // FIXME: should be HAVE(_FPCLASS)
-#if PLATFORM(WIN_OS)
-    return _FPCLASS_NINF == _fpclass(d);
-#elif HAVE(FUNC_ISINF)
-    return (isinf(d) == -1);
-#elif HAVE(FUNC_FINITE)
-    return finite(d) == 0 && d == d; // ###
-#elif HAVE(FUNC__FINITE)
-    return _finite(d) == 0 && d == d; // ###
-#else
-    return false;
-#endif
-}
-
-#endif
 
 // ECMA 11.9.3
 bool equal(ExecState *exec, JSValue *v1, JSValue *v2)

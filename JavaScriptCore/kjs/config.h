@@ -28,8 +28,6 @@
 #if PLATFORM(DARWIN)
 
 #define HAVE_ERRNO_H 1
-#define HAVE_FUNC_ISINF 1
-#define HAVE_FUNC_ISNAN 1
 #define HAVE_MMAP 1
 #define HAVE_MERGESORT 1
 #define HAVE_SBRK 1
@@ -49,7 +47,6 @@
 #define _CRT_RAND_S
 
 #define HAVE_FLOAT_H 1
-#define HAVE_FUNC__FINITE 1
 #define HAVE_SYS_TIMEB_H 1
 #define HAVE_VIRTUALALLOC 1
 
@@ -58,8 +55,6 @@
 /* FIXME: is this actually used or do other platforms generate their own config.h? */
 
 #define HAVE_ERRNO_H 1
-#define HAVE_FUNC_ISINF 1
-#define HAVE_FUNC_ISNAN 1
 #define HAVE_MMAP 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1

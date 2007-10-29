@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <wtf/Assertions.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
 #if HAVE(STRING_H)
@@ -598,7 +599,7 @@ UString UString::from(long l)
 UString UString::from(double d)
 {
   // avoid ever printing -NaN, in JS conceptually there is only one NaN value
-  if (isNaN(d))
+  if (isnan(d))
     return "NaN";
 
   char buf[80];

@@ -323,7 +323,7 @@ DateInstance::DateInstance(JSObject *proto)
 bool DateInstance::getTime(GregorianDateTime &t, int &offset) const
 {
     double milli = internalValue()->getNumber();
-    if (isNaN(milli))
+    if (isnan(milli))
         return false;
     
     msToGregorianDateTime(milli, false, t);
@@ -334,7 +334,7 @@ bool DateInstance::getTime(GregorianDateTime &t, int &offset) const
 bool DateInstance::getUTCTime(GregorianDateTime &t) const
 {
     double milli = internalValue()->getNumber();
-    if (isNaN(milli))
+    if (isnan(milli))
         return false;
     
     msToGregorianDateTime(milli, true, t);
@@ -344,7 +344,7 @@ bool DateInstance::getUTCTime(GregorianDateTime &t) const
 bool DateInstance::getTime(double &milli, int &offset) const
 {
     milli = internalValue()->getNumber();
-    if (isNaN(milli))
+    if (isnan(milli))
         return false;
     
     GregorianDateTime t;
@@ -356,7 +356,7 @@ bool DateInstance::getTime(double &milli, int &offset) const
 bool DateInstance::getUTCTime(double &milli) const
 {
     milli = internalValue()->getNumber();
-    if (isNaN(milli))
+    if (isnan(milli))
         return false;
     
     return true;
@@ -457,7 +457,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   UString s;
   JSValue *v = thisDateObj->internalValue();
   double milli = v->toNumber(exec);
-  if (isNaN(milli)) {
+  if (isnan(milli)) {
     switch (id) {
       case ToString:
       case ToDateString:
@@ -634,13 +634,13 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
         value = primitive->toNumber(exec);
     }
   } else {
-    if (isNaN(args[0]->toNumber(exec))
-        || isNaN(args[1]->toNumber(exec))
-        || (numArgs >= 3 && isNaN(args[2]->toNumber(exec)))
-        || (numArgs >= 4 && isNaN(args[3]->toNumber(exec)))
-        || (numArgs >= 5 && isNaN(args[4]->toNumber(exec)))
-        || (numArgs >= 6 && isNaN(args[5]->toNumber(exec)))
-        || (numArgs >= 7 && isNaN(args[6]->toNumber(exec)))) {
+    if (isnan(args[0]->toNumber(exec))
+        || isnan(args[1]->toNumber(exec))
+        || (numArgs >= 3 && isnan(args[2]->toNumber(exec)))
+        || (numArgs >= 4 && isnan(args[3]->toNumber(exec)))
+        || (numArgs >= 5 && isnan(args[4]->toNumber(exec)))
+        || (numArgs >= 6 && isnan(args[5]->toNumber(exec)))
+        || (numArgs >= 7 && isnan(args[6]->toNumber(exec)))) {
       value = NaN;
     } else {
       GregorianDateTime t;
@@ -686,13 +686,13 @@ JSValue *DateObjectFuncImp::callAsFunction(ExecState* exec, JSObject*, const Lis
   }
   else { // UTC
     int n = args.size();
-    if (isNaN(args[0]->toNumber(exec))
-        || isNaN(args[1]->toNumber(exec))
-        || (n >= 3 && isNaN(args[2]->toNumber(exec)))
-        || (n >= 4 && isNaN(args[3]->toNumber(exec)))
-        || (n >= 5 && isNaN(args[4]->toNumber(exec)))
-        || (n >= 6 && isNaN(args[5]->toNumber(exec)))
-        || (n >= 7 && isNaN(args[6]->toNumber(exec)))) {
+    if (isnan(args[0]->toNumber(exec))
+        || isnan(args[1]->toNumber(exec))
+        || (n >= 3 && isnan(args[2]->toNumber(exec)))
+        || (n >= 4 && isnan(args[3]->toNumber(exec)))
+        || (n >= 5 && isnan(args[4]->toNumber(exec)))
+        || (n >= 6 && isnan(args[5]->toNumber(exec)))
+        || (n >= 7 && isnan(args[6]->toNumber(exec)))) {
       return jsNaN();
     }
 

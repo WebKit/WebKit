@@ -1,3 +1,12 @@
+2007-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        Replace uses of isNaN and isInf with isnan and isinf.
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::setLength):
+
 2007-10-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.

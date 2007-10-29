@@ -28,7 +28,7 @@
 #include "JSHTMLOptionElement.h"
 #include "JSHTMLSelectElementCustom.h"
 
-#include <kjs/operations.h>
+#include <wtf/MathExtras.h>
 
 using namespace KJS;
 
@@ -46,7 +46,7 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue* value)
     ExceptionCode ec = 0;
     unsigned newLength = 0;
     double lengthValue = value->toNumber(exec);
-    if (!isNaN(lengthValue) && !isInf(lengthValue)) {
+    if (!isnan(lengthValue) && !isinf(lengthValue)) {
         if (lengthValue < 0.0)
             ec = INDEX_SIZE_ERR;
         else if (lengthValue > static_cast<double>(UINT_MAX))

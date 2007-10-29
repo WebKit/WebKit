@@ -172,7 +172,7 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, con
     result = -Inf;
     for ( unsigned int k = 0 ; k < argsCount ; ++k ) {
       double val = args[k]->toNumber(exec);
-      if ( isNaN( val ) )
+      if ( isnan( val ) )
       {
         result = NaN;
         break;
@@ -187,7 +187,7 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, con
     result = +Inf;
     for ( unsigned int k = 0 ; k < argsCount ; ++k ) {
       double val = args[k]->toNumber(exec);
-      if ( isNaN( val ) )
+      if ( isnan( val ) )
       {
         result = NaN;
         break;
@@ -199,9 +199,9 @@ JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, con
   }
   case MathObjectImp::Pow:
     // ECMA 15.8.2.1.13
-    if (isNaN(arg2))
+    if (isnan(arg2))
       result = NaN;
-    else if (isInf(arg2) && fabs(arg) == 1)
+    else if (isinf(arg2) && fabs(arg) == 1)
       result = NaN;
     else
       result = pow(arg, arg2);

@@ -23,24 +23,10 @@
 #ifndef _KJS_OPERATIONS_H_
 #define _KJS_OPERATIONS_H_
 
-#include <math.h>
-
 namespace KJS {
 
   class ExecState;
   class JSValue;
-
-#if PLATFORM(DARWIN)
-  inline bool isNaN(double d) { return isnan(d); }
-  inline bool isInf(double d) { return isinf(d); }
-  inline bool isPosInf(double d) { return isinf(d) && d > 0; }
-  inline bool isNegInf(double d) { return isinf(d) && d < 0; }
-#else
-  bool isNaN(double d);
-  bool isInf(double d);
-  bool isPosInf(double d);
-  bool isNegInf(double d);
-#endif
 
   bool equal(ExecState *exec, JSValue *v1, JSValue *v2);
   bool strictEqual(ExecState *exec, JSValue *v1, JSValue *v2);

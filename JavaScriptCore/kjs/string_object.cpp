@@ -663,9 +663,9 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
   case Substring: {
     double start = a0->toNumber(exec);
     double end = a1->toNumber(exec);
-    if (isNaN(start))
+    if (isnan(start))
       start = 0;
-    if (isNaN(end))
+    if (isnan(end))
       end = 0;
     if (start < 0)
       start = 0;
