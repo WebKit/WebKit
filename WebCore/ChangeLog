@@ -1,3 +1,12 @@
+2007-10-29  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTimingFunctionValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapTransitionTimingFunction):
+
 2007-10-29  David Hyatt  <hyatt@apple.com>
 
         Land the back end for CSS animated property transitions.  I am landing this in stages, so the AnimationController

@@ -2189,7 +2189,7 @@ bool CSSParser::parseTimingFunctionValue(ValueList*& args, float& result)
     Value* v = args->current();
     if (!validUnit(v, FNumber, strict))
         return false;
-    result = v->fValue;
+    result = (float)v->fValue;
     if (result < 0 || result > 1.0f)
         return false;
     v = args->next();

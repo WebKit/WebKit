@@ -4311,7 +4311,7 @@ void CSSStyleSelector::mapTransitionTimingFunction(Transition* layer, CSSValue* 
                 layer->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, FloatPoint(.0f, .0f), FloatPoint(.58f, 1.0f)));
                 break;
             case CSS_VAL_EASE_IN_OUT:
-                layer->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, FloatPoint(.42, .0f), FloatPoint(.58f, 1.0f)));
+                layer->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, FloatPoint(.42f, .0f), FloatPoint(.58f, 1.0f)));
                 break;
         }
         return;
