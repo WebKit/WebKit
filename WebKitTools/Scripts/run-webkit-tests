@@ -108,7 +108,6 @@ my $shouldCheckLeaks = 0;
 my $showHelp = 0;
 my $testsPerDumpTool = 1000;
 my $testHTTP = 1;
-my $testOnlySVGs = '';
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $threaded = 0;
 my $treatSkipped = "default";
@@ -176,7 +175,6 @@ Usage: $programName [options] [testdir|testpath ...]
   --slowest                       Report the 10 slowest tests
   --strict                        Do a comparison with the output on Mac (Qt only)
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
-  --svg                           Run only SVG tests (implies --pixel-tests)
   -t|--threaded                   Run a concurrent JavaScript thead with each test
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
@@ -205,7 +203,6 @@ my $getOptionsResult = GetOptions(
     'nthly=i' => \$testsPerDumpTool,
     'skipped=s' => \&validateSkippedArg,
     'slowest' => \$report10Slowest,
-    'svg' => \$testOnlySVGs, 
     'threaded|t' => \$threaded,
     'verbose|v' => \$verbose,
     'valgrind' => \$useValgrind,
@@ -231,7 +228,6 @@ my $configurationOption = "--" . lc($configuration);
 
 $repaintTests = 1 if $repaintSweepHorizontally;
 
-$pixelTests = 1 if $testOnlySVGs;
 $pixelTests = 1 if $repaintTests;
 
 $verbose = 1 if $testsPerDumpTool == 1;
@@ -282,11 +278,6 @@ my @platformHierarchy = buildPlatformHierarchy();
 
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
 
-if ($testOnlySVGs) {
-    $testDirectory .= "/svg";
-    $expectedDirectory .= "/svg";
-}
-
 my $testResults = catfile($testResultsDirectory, "results.html");
 
 print "Running tests from $testDirectory\n";
@@ -300,9 +291,7 @@ my %ignoredFiles = ();
 my %ignoredDirectories = map { $_ => 1 } qw(platform);
 my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources);
 my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml pl php);
-if ($testOnlySVGs) {
-    %supportedFileExtensions = map { $_ => 1 } qw(svg xml);
-} elsif (checkWebCoreSVGSupport($testOnlySVGs)) { 
+if (checkWebCoreSVGSupport(0)) { 
     $supportedFileExtensions{'svg'} = 1;
 } elsif (isCygwin()) {
     # FIXME: We should fix webkitdirs.pm:hasSVGSupport() to do the correct
