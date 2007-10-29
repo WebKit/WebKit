@@ -443,7 +443,7 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
 
   // toString and valueOf are no generic function.
   if (id == ToString || id == ValueOf) {
-    if (!thisObj || !thisObj->inherits(&StringInstance::info))
+    if (!thisObj->inherits(&StringInstance::info))
       return throwError(exec, TypeError);
 
     return static_cast<StringInstance*>(thisObj)->internalValue();
@@ -454,7 +454,8 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
   double dpos;
   double d = 0.0;
 
-  UString s = thisObj->toString(exec);
+  // This optimizes the common case that thisObj is a StringInstance
+  UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
 
   int len = s.size();
   JSValue *a0 = args[0];

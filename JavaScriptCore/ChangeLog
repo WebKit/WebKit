@@ -1,3 +1,12 @@
+2007-10-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+        
+        SunSpider claims this was a 0.7% speedup.
+
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFunc::callAsFunction): avoid mallocing a jsString in the common case
+
 2007-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
