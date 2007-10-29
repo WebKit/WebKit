@@ -62,7 +62,7 @@ if (!$jsShellPath || $showHelp) {
 sub dumpToFile($$)
 {
     my ($contents, $path) = @_;
-    open FILE, ">", $path or die;
+    open FILE, ">", $path or die "Failed to open $path";
     print FILE $contents;
     close FILE;
 }
@@ -89,7 +89,7 @@ sub loadTestsList()
     close TESTLIST;
 }
 
-my $timeString = strftime "%Y-%m-%d-%H:%M:%S", localtime $^T;
+my $timeString = strftime "%Y-%m-%d-%H.%M.%S", localtime $^T;
 my $prefixFile = "tmp/sunspider-test-prefix.js";
 my $resultsFile = "tmp/sunspider-results-$timeString.js";
 
