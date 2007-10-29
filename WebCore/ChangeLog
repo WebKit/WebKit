@@ -1,3 +1,18 @@
+2007-10-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10734
+        Made HTMLOptionElement.index read-only, matching IE and DOM standard.
+
+        Test: fast/dom/HTMLOptionElement/set-option-index-text.html
+
+        * html/HTMLOptionElement.idl: Marked index as readonly.
+
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLOptionElement.h:
+        Removed setIndex().
+
 2007-10-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

@@ -1,3 +1,12 @@
+2007-10-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=10734
+
+        * fast/dom/HTMLOptionElement/set-option-index-text-expected.txt: Added.
+        * fast/dom/HTMLOptionElement/set-option-index-text.html: Added.
+
 2007-10-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by aroben.
