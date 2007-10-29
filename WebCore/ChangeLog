@@ -1,3 +1,21 @@
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+
+        - fixed assertion failures detected by the new assertions
+
+        * bindings/objc/DOMRGBColor.mm:
+        (-[DOMRGBColor dealloc]): Clear _internal before calling [super dealloc]
+        because it's not a pointer and shouldn't be in the normal wrapper cache.
+        * dom/Document.cpp:
+        (WebCore::Document::addImageMap): Don't access hashmap if name is null.
+        (WebCore::Document::removeImageMap): ditto
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseMappedAttribute): Don't claim we have a class
+        when the class attribute is empty.
+        * platform/TextCodecICU.cpp:
+        (WebCore::gbkCallbackEscape): Don't look up 0 code points.
+
 2007-10-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

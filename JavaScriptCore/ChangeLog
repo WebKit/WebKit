@@ -1,3 +1,15 @@
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        - re-enable asserts for access to empty or deleted keys
+
+        * wtf/HashTable.h:
+        (WTF::::lookup):
+        (WTF::::lookupForWriting):
+        (WTF::::fullLookupForWriting):
+        (WTF::::add):
+
 2007-10-29  Eric Seidel  <eric@webkit.org>
 
         Build fix only, no review.

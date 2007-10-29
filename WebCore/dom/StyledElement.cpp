@@ -216,7 +216,7 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
         setChanged();
     } else if (attr->name() == classAttr) {
         // class
-        setHasClass(!attr->isNull());
+        setHasClass(!attr->isEmpty());
         if (namedAttrMap)
             mappedAttributes()->parseClassAttribute(attr->value());
         setChanged();
