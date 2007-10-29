@@ -30,6 +30,7 @@
 #define SymbolTable_h
 
 #include "property_map.h"
+#include "AlwaysInline.h"
 
 namespace KJS {
 
@@ -41,12 +42,12 @@ namespace KJS {
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
 
-    static const size_t missingSymbolMarker = std::numeric_limits<size_t>::max();
+    static ALWAYS_INLINE size_t missingSymbolMarker() { return std::numeric_limits<size_t>::max(); }
 
     struct SymbolTableIndexHashTraits {
         typedef size_t TraitType;
         typedef SymbolTableIndexHashTraits StorageTraits;
-        static size_t emptyValue() { return missingSymbolMarker; }
+        static size_t emptyValue() { return missingSymbolMarker(); }
         static const bool emptyValueIsZero = false;
         static const bool needsDestruction = false;
         static const bool needsRef = false;

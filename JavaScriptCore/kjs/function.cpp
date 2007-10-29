@@ -423,7 +423,7 @@ bool ActivationImp::getOwnPropertySlot(ExecState* exec, const Identifier& proper
     // it's more efficient to just get and check for a special empty
     // value than to do a separate contains check
     size_t index = symbolTable->get(propertyName.ustring().rep());
-    if (index != missingSymbolMarker) {
+    if (index != missingSymbolMarker()) {
         slot.setValueSlot(this, &d->localStorage[index].value);
         return true;
     }
@@ -462,7 +462,7 @@ void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* val
   // it's more efficient to just get and check for a special empty
   // value than to do a separate contains check
   size_t index = symbolTable->get(propertyName.ustring().rep());
-  if (index != missingSymbolMarker) {
+  if (index != missingSymbolMarker()) {
     LocalStorageEntry& entry = d->localStorage[index];
     entry.value = value;
     entry.attributes = attr;

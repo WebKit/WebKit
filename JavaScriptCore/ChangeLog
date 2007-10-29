@@ -1,3 +1,18 @@
+2007-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix "AllInOneFile.o has a global initializer in it".
+
+        Some versions of gcc generate a global initializer for std::numeric_limits<size_t>::max().
+        We can avoid this by moving it inside an inline function.
+
+        * kjs/SymbolTable.h:
+        (KJS::missingSymbolMarker):
+        * kjs/function.cpp:
+        (KJS::ActivationImp::getOwnPropertySlot):
+        (KJS::ActivationImp::put):
+
 2007-10-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
