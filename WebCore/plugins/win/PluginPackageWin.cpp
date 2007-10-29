@@ -180,6 +180,8 @@ bool PluginPackageWin::fetchInfo()
             description = description.left(pos);
         }
 
+        mimeTypes[i] = mimeTypes[i].lower();
+
         m_mimeToExtensions.add(mimeTypes[i], splitString(fileExtents[i], ',', -1));
         m_mimeToDescriptions.add(mimeTypes[i], description);
     }

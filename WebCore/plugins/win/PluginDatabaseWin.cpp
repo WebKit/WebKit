@@ -461,11 +461,14 @@ bool PluginDatabaseWin::isPluginBlacklisted(PluginPackageWin* plugin)
 
 PluginPackageWin* PluginDatabaseWin::pluginForMIMEType(const String& mimeType)
 {
+    if (mimeType.isEmpty())
+        return 0;
+
     String key = mimeType.lower();
     String ourPath = safariPluginsPath();
     PluginPackageWin* plugin = 0;
-
     PluginSet::const_iterator end = m_plugins.end();
+
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
         if ((*it)->mimeToDescriptions().contains(key)) {
             plugin = (*it).get();
@@ -478,10 +481,14 @@ PluginPackageWin* PluginDatabaseWin::pluginForMIMEType(const String& mimeType)
     return plugin;
 }
 
-PluginPackageWin* PluginDatabaseWin::pluginForExtension(const String& extension)
+String PluginDatabaseWin::MIMETypeForExtension(const String& extension) const
 {
+    if (extension.isEmpty())
+        return String();
+
     PluginSet::const_iterator end = m_plugins.end();
     String ourPath = safariPluginsPath();
+    String mimeType;
     PluginPackageWin* plugin = 0;
 
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
@@ -489,9 +496,9 @@ PluginPackageWin* PluginDatabaseWin::pluginForExtension(const String& extension)
 
         for (MIMEToExtensionsMap::const_iterator mime_it = (*it)->mimeToExtensions().begin(); mime_it != mime_end; ++mime_it) {
             const Vector<String>& extensions = mime_it->second;
-
             for (unsigned i = 0; i < extensions.size(); i++) {
-                if (extensions[i] == extension) {
+                if (equalIgnoringCase(extensions[i], extension)) {
+                    mimeType = mime_it->first;
                     plugin = (*it).get();
                     // prefer plugins in our own plugins directory
                     if (plugin->parentDirectory() == ourPath)
@@ -501,38 +508,47 @@ PluginPackageWin* PluginDatabaseWin::pluginForExtension(const String& extension)
         }
     }
 
-    return plugin;
+    return mimeType;
 }
 
-PluginPackageWin* PluginDatabaseWin::findPlugin(const KURL& url, const String& mimeType)
+PluginPackageWin* PluginDatabaseWin::findPlugin(const KURL& url, String& mimeType)
 {   
-    PluginPackageWin* plugin = 0;
-
-    if (!mimeType.isNull())
-        plugin = pluginForMIMEType(mimeType);
+    PluginPackageWin* plugin = pluginForMIMEType(mimeType);
+    String filename = url.url();
     
     if (!plugin) {
-        String path = url.path();
-        String extension = path.substring(path.reverseFind('.') + 1);
+        String filename = url.lastPathComponent();
+        if (!filename.endsWith("/")) {
+            int extensionPos = filename.reverseFind('.');
+            if (extensionPos != -1) {
+                String extension = filename.substring(extensionPos + 1);
 
-        plugin = pluginForExtension(extension);
-
-        // FIXME: if no plugin could be found, query Windows for the mime type 
-        // corresponding to the extension.
+                mimeType = MIMETypeForExtension(extension);
+                plugin = pluginForMIMEType(mimeType);
+            }
+        }
     }
+
+    // FIXME: if no plugin could be found, query Windows for the mime type 
+    // corresponding to the extension.
 
     return plugin;
 }
 
 PluginViewWin* PluginDatabaseWin::createPluginView(Frame* parentFrame, const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-    PluginPackageWin* plugin = findPlugin(url, mimeType);
+    // if we fail to find a plugin for this MIME type, findPlugin will search for
+    // a plugin by the file extension and update the MIME type, so pass a mutable String
+    String mimeTypeCopy = mimeType;
+    PluginPackageWin* plugin = findPlugin(url, mimeTypeCopy);
     
     // No plugin was found, try refreshing the database and searching again
-    if (!plugin && refresh())
-        plugin = findPlugin(url, mimeType);
+    if (!plugin && refresh()) {
+        mimeTypeCopy = mimeType;
+        plugin = findPlugin(url, mimeTypeCopy);
+    }
         
-    return new PluginViewWin(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeType, loadManually);
+    return new PluginViewWin(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeTypeCopy, loadManually);
 }
 
 }

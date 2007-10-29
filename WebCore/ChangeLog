@@ -1,3 +1,42 @@
+2007-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        Speculative fix for <rdar://5538489> Safari 3.0.4 seed hangs at
+        http://tgmonline.futuregamer.it/ (works fine on Safari 2.0.4 and Safari
+        Beta for Mac)
+        
+        I cannot reproduce this hang, but it is likely due to our not limiting
+        WM_USER+1 messages or InvalidateRect calls for a plugin with initially-
+        unknown MIME type. The embed tag on the page is missing a type
+        attribute, so as fallback, we choose to load the Flash plugin based on
+        the file extension of "swf." However, we do not record this determined
+        MIME type, and so our quirks cannot be established.
+        
+        Changed findPlugin() so that, if it fails to find a plugin for the
+        given MIME type, it will lookup the MIME type for the file extension -
+        overwriting its passed MIME type parameter - and search for a plugin
+        for that MIME type.
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabaseWin::pluginForMIMEType): Added an early return
+        if the MIME type is empty
+        (WebCore::PluginDatabaseWin::MIMETypeForExtension): Added to replace
+        pluginForExtension. Returns a String with the MIME type for the file
+        extension. Also, changed to use case-insensitive compares
+        (WebCore::PluginDatabaseWin::findPlugin): If we fail to find a plugin
+        for the given extension, overwrite the incoming MIME type parameter
+        with the MIME type for the file extension, and search for a plugin for
+        that MIME type. Also, changed the way that the extension is determined
+        (WebCore::PluginDatabaseWin::createPluginView): Pass a mutable String
+        to findPlugin() so that it can be updated if necessary
+        * plugins/win/PluginDatabaseWin.h: Changed findPlugin() to take a non-
+        const String, removed definition of pluginForExtension, added
+        definition for MIMETypeForExtension
+        * plugins/win/PluginPackageWin.cpp: 
+        (WebCore::PluginPackageWin::fetchInfo): Store the MIME type in
+        lowercase for easier compares
+
 2007-10-29  Andrew Wellington  <proton@wiretapped.net>
 
         Not reviewed - build fix

@@ -57,9 +57,9 @@ namespace WebCore {
         void setPluginPaths(const Vector<String>& paths) { m_pluginPaths = paths; }
         PluginSet getPluginsInPaths() const;
 
-        PluginPackageWin* findPlugin(const KURL& url, const String& mimeType);
+        PluginPackageWin* findPlugin(const KURL& url, String& mimeType);
         PluginPackageWin* pluginForMIMEType(const String& mimeType);
-        PluginPackageWin* pluginForExtension(const String& extension);
+        String MIMETypeForExtension(const String& extension) const;
 
         static Vector<String> defaultPluginPaths();
 
