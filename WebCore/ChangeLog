@@ -1,3 +1,22 @@
+2007-10-29  David Kilzer  <ddkilzer@webkit.org>
+
+        REGRESSION (r17701): Favicons should be viewable as image documents
+        <http://bugs.webkit.org/show_bug.cgi?id=15640>
+
+        Reviewed by Darin.
+
+        On Tiger and Leopard, the image/x-icon MIME type is not returned from
+        CGImageSourceCopyTypeIdentifiers(), so opening a URL to a favicon caused
+        the icon to be downloaded instead being displayed in an image document.
+
+        Test: fast/images/favicon-as-image.html
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initialiseSupportedImageMIMETypes): Manually add image/x-icon to
+        supportedImageMIMETypes and supportedImageResourceMIMETypes.  Also fixed
+        comment about the image/bmp MIME type since it applies to both Tiger and
+        Leopard.
+
 2007-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.

@@ -64,11 +64,15 @@ static void initialiseSupportedImageMIMETypes()
         CFRelease(supportedType);
     }
     CFRelease(supportedTypes);
-    
-    // On Tiger, com.microsoft.bmp doesn't have a MIME type in the registry.
+
+    // On Tiger and Leopard, com.microsoft.bmp doesn't have a MIME type in the registry.
     supportedImageMIMETypes->add("image/bmp");
     supportedImageResourceMIMETypes->add("image/bmp");
-    
+
+    // Favicons don't have a MIME type in the registry either.
+    supportedImageMIMETypes->add("image/x-icon");
+    supportedImageResourceMIMETypes->add("image/x-icon");
+
     //  We only get one MIME type per UTI, hence our need to add these manually
     supportedImageMIMETypes->add("image/pjpeg");
     supportedImageResourceMIMETypes->add("image/pjpeg");
