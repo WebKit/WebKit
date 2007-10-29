@@ -458,11 +458,6 @@ JSValue *ElementNode::evaluate(ExecState *exec)
   return array;
 }
 
-void ElementNode::breakCycle() 
-{ 
-    next = 0;
-}
-
 // ------------------------------ ArrayNode ------------------------------------
 
 void ArrayNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -547,11 +542,6 @@ JSValue *PropertyListNode::evaluate(ExecState *exec)
   return obj;
 }
 
-void PropertyListNode::breakCycle() 
-{ 
-    next = 0;
-}
-
 // ------------------------------ PropertyNode -----------------------------
 
 void PropertyNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -632,11 +622,6 @@ List ArgumentListNode::evaluateList(ExecState *exec)
   }
 
   return l;
-}
-
-void ArgumentListNode::breakCycle() 
-{ 
-    next = 0;
 }
 
 // ------------------------------ ArgumentsNode --------------------------------
@@ -2279,11 +2264,6 @@ void VarDeclListNode::getDeclarations(DeclarationStacks& stacks)
     stacks.nodeStack.append(var.get());
 }
 
-void VarDeclListNode::breakCycle() 
-{ 
-    next = 0;
-}
-
 // ------------------------------ VarStatementNode -----------------------------
 
 void VarStatementNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2317,12 +2297,11 @@ void BlockNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::Nod
         nodeStack.append(source.get());
 }
 
-BlockNode::BlockNode(SourceElementsNode *s)
+BlockNode::BlockNode(SourceElementsNode* s)
 {
   if (s) {
     m_mayHaveDeclarations = true; 
-    source = s->next.release();
-    Parser::removeNodeCycle(source.get());
+    source = s;
     setLoc(s->firstLine(), s->lastLine());
   } else {
     source = 0;
@@ -2851,32 +2830,14 @@ JSValue *ClauseListNode::evaluate(ExecState *)
   return 0;
 }
 
-void ClauseListNode::breakCycle() 
-{ 
-    next = 0;
-}
-
 // ------------------------------ CaseBlockNode --------------------------------
 
-CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
-                             ClauseListNode *l2)
+CaseBlockNode::CaseBlockNode(ClauseListNode* l1, CaseClauseNode* d, ClauseListNode* l2)
+    : list1(l1)
+    , def(d)
+    , list2(l2)
 {
-  m_mayHaveDeclarations = true; 
-  if (l1) {
-    list1 = l1->next.release();
-    Parser::removeNodeCycle(list1.get());
-  } else {
-    list1 = 0;
-  }
-
-  def = d;
-
-  if (l2) {
-    list2 = l2->next.release();
-    Parser::removeNodeCycle(list2.get());
-  } else {
-    list2 = 0;
-  }
+    m_mayHaveDeclarations = true; 
 }
  
 void CaseBlockNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -3100,14 +3061,9 @@ JSValue *ParameterNode::evaluate(ExecState *)
   return jsUndefined();
 }
 
-void ParameterNode::breakCycle() 
-{ 
-    next = 0;
-}
-
 // ------------------------------ FunctionBodyNode -----------------------------
 
-FunctionBodyNode::FunctionBodyNode(SourceElementsNode *s)
+FunctionBodyNode::FunctionBodyNode(SourceElementsNode* s)
     : BlockNode(s)
     , m_sourceURL(Lexer::curr()->sourceURL())
     , m_sourceId(Parser::sid)
@@ -3348,16 +3304,15 @@ JSValue *FuncExprNode::evaluate(ExecState *exec)
 
 int SourceElementsNode::count = 0;
 
-SourceElementsNode::SourceElementsNode(StatementNode *s1)
-  : node(s1), next(this)
+SourceElementsNode::SourceElementsNode(StatementNode* s1)
+  : node(s1)
 {
     m_mayHaveDeclarations = true; 
-    Parser::noteNodeCycle(this);
     setLoc(s1->firstLine(), s1->lastLine());
 }
 
-SourceElementsNode::SourceElementsNode(SourceElementsNode *s1, StatementNode *s2)
-  : node(s2), next(s1->next)
+SourceElementsNode::SourceElementsNode(SourceElementsNode* s1, StatementNode* s2)
+  : node(s2)
 {
   m_mayHaveDeclarations = true; 
   s1->next = this;
@@ -3400,12 +3355,8 @@ Completion SourceElementsNode::execute(ExecState *exec)
   }
 }
 
-void SourceElementsNode::breakCycle() 
-{ 
-    next = 0;
-}
-
-ProgramNode::ProgramNode(SourceElementsNode *s) : FunctionBodyNode(s)
+ProgramNode::ProgramNode(SourceElementsNode* s)
+    : FunctionBodyNode(s)
 {
 }
 

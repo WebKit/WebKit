@@ -53,8 +53,6 @@ namespace KJS {
         static void accept(PassRefPtr<ProgramNode>);
 
         static void saveNewNode(Node*);
-        static void noteNodeCycle(Node*);
-        static void removeNodeCycle(Node*);
 
         static int sid;
     };

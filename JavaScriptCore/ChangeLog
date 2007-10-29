@@ -1,3 +1,39 @@
+2007-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - avoid creating and then breaking circular lists in the parser, instead track head and tail pointers at parse time
+        http://bugs.webkit.org/show_bug.cgi?id=15748
+        
+        Not a significant speedup or slowdown on SunSpider.
+
+        * kjs/Parser.cpp:
+        (KJS::clearNewNodes):
+        * kjs/Parser.h:
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::BlockNode::BlockNode):
+        (KJS::CaseBlockNode::CaseBlockNode):
+        (KJS::FunctionBodyNode::FunctionBodyNode):
+        (KJS::SourceElementsNode::SourceElementsNode):
+        (KJS::ProgramNode::ProgramNode):
+        * kjs/nodes.h:
+        (KJS::ElementNode::):
+        (KJS::ArrayNode::):
+        (KJS::PropertyListNode::):
+        (KJS::ObjectLiteralNode::):
+        (KJS::ArgumentListNode::):
+        (KJS::ArgumentsNode::):
+        (KJS::VarDeclListNode::):
+        (KJS::VarStatementNode::):
+        (KJS::ForNode::):
+        (KJS::ParameterNode::):
+        (KJS::FuncExprNode::):
+        (KJS::FuncDeclNode::):
+        (KJS::SourceElementsNode::):
+        (KJS::CaseClauseNode::):
+        (KJS::ClauseListNode::):
+
 2007-10-28  Mark Rowe  <mrowe@apple.com>
 
         Disable assertions in a manner that doesn't break the Qt Windows build.

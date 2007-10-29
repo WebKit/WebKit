@@ -37,31 +37,6 @@ namespace KJS {
 int Parser::sid = 0;
 
 static RefPtr<ProgramNode>* progNode;
-static HashSet<Node*>* nodeCycles;
-
-void Parser::noteNodeCycle(Node *node)
-{
-    if (!nodeCycles)
-        nodeCycles = new HashSet<Node*>;
-    nodeCycles->add(node);
-}
-
-void Parser::removeNodeCycle(Node *node)
-{
-    ASSERT(nodeCycles);
-    nodeCycles->remove(node);
-}
-
-static void clearNewNodes()
-{
-    if (nodeCycles) {
-        for (HashSet<Node*>::iterator it = nodeCycles->begin(); it != nodeCycles->end(); ++it)
-            (*it)->breakCycle();
-        delete nodeCycles;
-        nodeCycles = 0;
-    }
-    Node::clearNewNodes();
-}
 
 PassRefPtr<ProgramNode> Parser::parse(const UString& sourceURL, int startingLineNumber,
     const UChar* code, unsigned length,
@@ -90,7 +65,7 @@ PassRefPtr<ProgramNode> Parser::parse(const UString& sourceURL, int startingLine
     PassRefPtr<ProgramNode> prog = progNode->release();
     *progNode = 0;
 
-    clearNewNodes();
+    Node::clearNewNodes();
 
     if (parseError || lexError) {
         int eline = Lexer::curr()->lineNo();

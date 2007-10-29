@@ -80,6 +80,41 @@ static Node* makeNumberNode(double);
 
 #endif
 
+struct ElementList {
+    ElementNode* head;
+    ElementNode* tail;
+};
+
+struct PropertyList {
+    PropertyListNode* head;
+    PropertyListNode* tail;
+};
+
+struct ArgumentList {
+    ArgumentListNode* head;
+    ArgumentListNode* tail;
+};
+
+struct VarDeclList {
+    VarDeclListNode* head;
+    VarDeclListNode* tail;
+};
+
+struct ParameterList {
+    ParameterNode* head;
+    ParameterNode* tail;
+};
+
+struct SourceElementList {
+    SourceElementsNode* head;
+    SourceElementsNode* tail;
+};
+
+struct ClauseList {
+    ClauseListNode* head;
+    ClauseListNode* tail;
+};
+
 %}
 
 %union {
@@ -89,23 +124,23 @@ static Node* makeNumberNode(double);
   Identifier          *ident;
   Node                *node;
   StatementNode       *stat;
-  ParameterNode       *param;
+  ParameterList       param;
   FunctionBodyNode    *body;
   FuncDeclNode        *func;
   FuncExprNode        *funcExpr;
   ProgramNode         *prog;
   AssignExprNode      *init;
-  SourceElementsNode  *srcs;
+  SourceElementList   srcs;
   ArgumentsNode       *args;
-  ArgumentListNode    *alist;
+  ArgumentList        alist;
   VarDeclNode         *decl;
-  VarDeclListNode     *vlist;
+  VarDeclList         vlist;
   CaseBlockNode       *cblk;
-  ClauseListNode      *clist;
+  ClauseList          clist;
   CaseClauseNode      *ccl;
-  ElementNode         *elm;
+  ElementList         elm;
   Operator            op;
-  PropertyListNode   *plist;
+  PropertyList        plist;
   PropertyNode       *pnode;
 }
 
@@ -197,7 +232,7 @@ static Node* makeNumberNode(double);
 %type <decl>  VariableDeclaration VariableDeclarationNoIn ConstDeclaration
 %type <cblk>  CaseBlock
 %type <ccl>   CaseClause DefaultClause
-%type <clist> CaseClauses  CaseClausesOpt
+%type <clist> CaseClauses CaseClausesOpt
 %type <ival>  Elision ElisionOpt
 %type <elm>   ElementList
 %type <pnode> Property
@@ -228,20 +263,22 @@ Property:
   | NUMBER ':' AssignmentExpr           { $$ = new PropertyNode(Identifier(UString::from($1)), $3, PropertyNode::Constant); }
   | IDENT IDENT '(' ')' FunctionBody    { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, 0, $5); if (!$$) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' FunctionBody
-                                        { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, $4, $6); if (!$$) YYABORT; }
+                                        { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, $4.head, $6); if (!$$) YYABORT; }
 ;
 
 PropertyList:
-    Property                            { $$ = new PropertyListNode($1); }
-  | PropertyList ',' Property           { $$ = new PropertyListNode($3, $1); }
+    Property                            { $$.head = new PropertyListNode($1); 
+                                          $$.tail = $$.head; }
+  | PropertyList ',' Property           { $$.head = $1.head;
+                                          $$.tail = new PropertyListNode($3, $1.tail); }
 ;
 
 PrimaryExpr:
     PrimaryExprNoBrace
   | '{' '}'                             { $$ = new ObjectLiteralNode(); }
-  | '{' PropertyList '}'                { $$ = new ObjectLiteralNode($2); }
+  | '{' PropertyList '}'                { $$ = new ObjectLiteralNode($2.head); }
   /* allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939 */
-  | '{' PropertyList ',' '}'            { $$ = new ObjectLiteralNode($2); }
+  | '{' PropertyList ',' '}'            { $$ = new ObjectLiteralNode($2.head); }
 ;
 
 PrimaryExprNoBrace:
@@ -254,14 +291,16 @@ PrimaryExprNoBrace:
 
 ArrayLiteral:
     '[' ElisionOpt ']'                  { $$ = new ArrayNode($2); }
-  | '[' ElementList ']'                 { $$ = new ArrayNode($2); }
-  | '[' ElementList ',' ElisionOpt ']'  { $$ = new ArrayNode($4, $2); }
+  | '[' ElementList ']'                 { $$ = new ArrayNode($2.head); }
+  | '[' ElementList ',' ElisionOpt ']'  { $$ = new ArrayNode($4, $2.head); }
 ;
 
 ElementList:
-    ElisionOpt AssignmentExpr           { $$ = new ElementNode($1, $2); }
+    ElisionOpt AssignmentExpr           { $$.head = new ElementNode($1, $2); 
+                                          $$.tail = $$.head; }
   | ElementList ',' ElisionOpt AssignmentExpr
-                                        { $$ = new ElementNode($1, $3, $4); }
+                                        { $$.head = $1.head;
+                                          $$.tail = new ElementNode($1.tail, $3, $4); }
 ;
 
 ElisionOpt:
@@ -315,12 +354,14 @@ CallExprNoBF:
 
 Arguments:
     '(' ')'                             { $$ = new ArgumentsNode(); }
-  | '(' ArgumentList ')'                { $$ = new ArgumentsNode($2); }
+  | '(' ArgumentList ')'                { $$ = new ArgumentsNode($2.head); }
 ;
 
 ArgumentList:
-    AssignmentExpr                      { $$ = new ArgumentListNode($1); }
-  | ArgumentList ',' AssignmentExpr     { $$ = new ArgumentListNode($1, $3); }
+    AssignmentExpr                      { $$.head = new ArgumentListNode($1);
+                                          $$.tail = $$.head; }
+  | ArgumentList ',' AssignmentExpr     { $$.head = $1.head;
+                                          $$.tail = new ArgumentListNode($1.tail, $3); }
 ;
 
 LeftHandSideExpr:
@@ -645,24 +686,28 @@ Statement:
 
 Block:
     '{' '}'                             { $$ = new BlockNode(0); DBG($$, @2, @2); }
-  | '{' SourceElements '}'              { $$ = new BlockNode($2); DBG($$, @3, @3); }
+  | '{' SourceElements '}'              { $$ = new BlockNode($2.head); DBG($$, @3, @3); }
 ;
 
 VariableStatement:
-    VAR VariableDeclarationList ';'     { $$ = new VarStatementNode($2); DBG($$, @1, @3); }
-  | VAR VariableDeclarationList error   { $$ = new VarStatementNode($2); DBG($$, @1, @2); AUTO_SEMICOLON; }
+    VAR VariableDeclarationList ';'     { $$ = new VarStatementNode($2.head); DBG($$, @1, @3); }
+  | VAR VariableDeclarationList error   { $$ = new VarStatementNode($2.head); DBG($$, @1, @2); AUTO_SEMICOLON; }
 ;
 
 VariableDeclarationList:
-    VariableDeclaration                 { $$ = new VarDeclListNode($1); }
+    VariableDeclaration                 { $$.head = new VarDeclListNode($1); 
+                                          $$.tail = $$.head; }
   | VariableDeclarationList ',' VariableDeclaration
-                                        { $$ = new VarDeclListNode($1, $3); }
+                                        { $$.head = $1.head;
+                                          $$.tail = new VarDeclListNode($1.tail, $3); }
 ;
 
 VariableDeclarationListNoIn:
-    VariableDeclarationNoIn             { $$ = new VarDeclListNode($1); }
-  | VariableDeclarationListNoIn ',' VariableDeclarationNoIn
-                                        { $$ = new VarDeclListNode($1, $3); }
+    VariableDeclarationNoIn             { $$.head = new VarDeclListNode($1); 
+                                          $$.tail = $$.head; }
+  | VariableDeclarationListNoIn ',' VariableDeclaration
+                                        { $$.head = $1.head;
+                                          $$.tail = new VarDeclListNode($1.tail, $3); }
 ;
 
 VariableDeclaration:
@@ -676,15 +721,17 @@ VariableDeclarationNoIn:
 ;
 
 ConstStatement:
-    CONSTTOKEN ConstDeclarationList ';' { $$ = new VarStatementNode($2); DBG($$, @1, @3); }
+    CONSTTOKEN ConstDeclarationList ';' { $$ = new VarStatementNode($2.head); DBG($$, @1, @3); }
   | CONSTTOKEN ConstDeclarationList error
-                                        { $$ = new VarStatementNode($2); DBG($$, @1, @2); AUTO_SEMICOLON; }
+                                        { $$ = new VarStatementNode($2.head); DBG($$, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ConstDeclarationList:
-    ConstDeclaration                    { $$ = new VarDeclListNode($1); }
+    ConstDeclaration                    { $$.head = new VarDeclListNode($1);
+                                          $$.tail = $$.head; }
   | ConstDeclarationList ',' ConstDeclaration
-                                        { $$ = new VarDeclListNode($1, $3); }
+                                        { $$.head = $1.head;
+                                          $$.tail = new VarDeclListNode($1.tail, $3); }
 ;
 
 ConstDeclaration:
@@ -723,7 +770,7 @@ IterationStatement:
   | FOR '(' ExprNoInOpt ';' ExprOpt ';' ExprOpt ')' Statement
                                         { $$ = new ForNode($3, $5, $7, $9); DBG($$, @1, @8); }
   | FOR '(' VAR VariableDeclarationListNoIn ';' ExprOpt ';' ExprOpt ')' Statement
-                                        { $$ = new ForNode($4, $6, $8, $10); DBG($$, @1, @9); }
+                                        { $$ = new ForNode($4.head, $6, $8, $10); DBG($$, @1, @9); }
   | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
                                         {
                                             Node *n = $3;
@@ -778,29 +825,31 @@ SwitchStatement:
 ;
 
 CaseBlock:
-    '{' CaseClausesOpt '}'              { $$ = new CaseBlockNode($2, 0, 0); }
+    '{' CaseClausesOpt '}'              { $$ = new CaseBlockNode($2.head, 0, 0); }
   | '{' CaseClausesOpt DefaultClause CaseClausesOpt '}'
-                                        { $$ = new CaseBlockNode($2, $3, $4); }
+                                        { $$ = new CaseBlockNode($2.head, $3, $4.head); }
 ;
 
 CaseClausesOpt:
-    /* nothing */                       { $$ = 0; }
+    /* nothing */                       { $$.head = 0; $$.tail = 0; }
   | CaseClauses
 ;
 
 CaseClauses:
-    CaseClause                          { $$ = new ClauseListNode($1); }
-  | CaseClauses CaseClause              { $$ = new ClauseListNode($1, $2); }
+    CaseClause                          { $$.head = new ClauseListNode($1);
+                                          $$.tail = $$.head; }
+  | CaseClauses CaseClause              { $$.head = $1.head; 
+                                          $$.tail = new ClauseListNode($1.tail, $2); }
 ;
 
 CaseClause:
     CASE Expr ':'                       { $$ = new CaseClauseNode($2); }
-  | CASE Expr ':' SourceElements        { $$ = new CaseClauseNode($2, $4); }
+  | CASE Expr ':' SourceElements        { $$ = new CaseClauseNode($2, $4.head); }
 ;
 
 DefaultClause:
     DEFAULT ':'                         { $$ = new CaseClauseNode(0); }
-  | DEFAULT ':' SourceElements          { $$ = new CaseClauseNode(0, $3); }
+  | DEFAULT ':' SourceElements          { $$ = new CaseClauseNode(0, $3.head); }
 ;
 
 LabelledStatement:
@@ -827,36 +876,40 @@ DebuggerStatement:
 FunctionDeclaration:
     FUNCTION IDENT '(' ')' FunctionBody { $$ = new FuncDeclNode(*$2, $5); }
   | FUNCTION IDENT '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncDeclNode(*$2, $4, $6); }
+                                        { $$ = new FuncDeclNode(*$2, $4.head, $6); }
 ;
 
 FunctionExpr:
     FUNCTION '(' ')' FunctionBody       { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $4); }
   | FUNCTION '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $5, $3); }
+                                        { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $5, $3.head); }
   | FUNCTION IDENT '(' ')' FunctionBody { $$ = new FuncExprNode(*$2, $5); }
   | FUNCTION IDENT '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncExprNode(*$2, $6, $4); }
+                                        { $$ = new FuncExprNode(*$2, $6, $4.head); }
 ;
 
 FormalParameterList:
-    IDENT                               { $$ = new ParameterNode(*$1); }
-  | FormalParameterList ',' IDENT       { $$ = new ParameterNode($1, *$3); }
+    IDENT                               { $$.head = new ParameterNode(*$1);
+                                          $$.tail = $$.head; }
+  | FormalParameterList ',' IDENT       { $$.head = $1.head;
+                                          $$.tail = new ParameterNode($1.tail, *$3); }
 ;
 
 FunctionBody:
     '{' '}' /* not in spec */           { $$ = new FunctionBodyNode(0); DBG($$, @1, @2); }
-  | '{' SourceElements '}'              { $$ = new FunctionBodyNode($2); DBG($$, @1, @3); }
+  | '{' SourceElements '}'              { $$ = new FunctionBodyNode($2.head); DBG($$, @1, @3); }
 ;
 
 Program:
     /* not in spec */                   { Parser::accept(new ProgramNode(0)); }
-    | SourceElements                    { Parser::accept(new ProgramNode($1)); }
+    | SourceElements                    { Parser::accept(new ProgramNode($1.head)); }
 ;
 
 SourceElements:
-    SourceElement                       { $$ = new SourceElementsNode($1); }
-  | SourceElements SourceElement        { $$ = new SourceElementsNode($1, $2); }
+    SourceElement                       { $$.head = new SourceElementsNode($1);
+                                          $$.tail = $$.head; }
+  | SourceElements SourceElement        { $$.head = $1.head;
+                                          $$.tail = new SourceElementsNode($1.tail, $2); }
 ;
 
 SourceElement:
