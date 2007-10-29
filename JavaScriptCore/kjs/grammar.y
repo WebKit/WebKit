@@ -80,41 +80,6 @@ static Node* makeNumberNode(double);
 
 #endif
 
-struct ElementList {
-    ElementNode* head;
-    ElementNode* tail;
-};
-
-struct PropertyList {
-    PropertyListNode* head;
-    PropertyListNode* tail;
-};
-
-struct ArgumentList {
-    ArgumentListNode* head;
-    ArgumentListNode* tail;
-};
-
-struct VarDeclList {
-    VarDeclListNode* head;
-    VarDeclListNode* tail;
-};
-
-struct ParameterList {
-    ParameterNode* head;
-    ParameterNode* tail;
-};
-
-struct SourceElementList {
-    SourceElementsNode* head;
-    SourceElementsNode* tail;
-};
-
-struct ClauseList {
-    ClauseListNode* head;
-    ClauseListNode* tail;
-};
-
 %}
 
 %union {
