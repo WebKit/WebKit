@@ -1,3 +1,15 @@
+2007-10-29  Andrew Wellington  <proton@wiretapped.net>
+
+        Not reviewed - build fix
+
+        Fix Mac Build.
+        
+        WebKit/WebCore/xml/XSLTProcessor.cpp:79: warning: 'level' may be used uninitialized
+        in this function
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::parseErrorFunc):
+
 2007-10-29  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.

@@ -86,6 +86,7 @@ void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
             break;
         case XML_ERR_ERROR:
         case XML_ERR_FATAL:
+        default:
             level = ErrorMessageLevel;
             break;
     }
