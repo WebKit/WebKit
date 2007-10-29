@@ -1,3 +1,12 @@
+2007-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Disable assertions in a manner that doesn't break the Qt Windows build.
+
+        * wtf/HashTable.h:
+        (WTF::::lookup):
+        (WTF::::lookupForWriting):
+        (WTF::::fullLookupForWriting):
+
 2007-10-28  Geoffrey Garen  <ggaren@apple.com>
 
         Temporarily disabling some ASSERTs I introduced in my last check-in 
