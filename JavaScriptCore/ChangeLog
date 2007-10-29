@@ -1,5 +1,12 @@
 2007-10-28  Darin Adler  <darin@apple.com>
 
+        - fix "broken everything" from the storage leak fix
+
+        * wtf/RefPtr.h: (WTF::RefPtr::RefPtr): Added a PlacementNewAdopt constructor.
+        * kjs/ustring.h: (KJS::UString::UString): Pass PlacementNewAdopt along to RefPtr.
+
+2007-10-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Adam.
 
         - turn on unused parameter waring on Mac OS X because it's already on elsewhere

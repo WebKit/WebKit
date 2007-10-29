@@ -1,7 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -28,16 +27,20 @@
 
 namespace WTF {
 
+    enum PlacementNewAdoptType { PlacementNewAdopt };
+
     template <typename T> class PassRefPtr;
 
-    template <typename T> class RefPtr
-    {
+    template <typename T> class RefPtr {
     public:
         RefPtr() : m_ptr(0) {}
         RefPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
         RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->ref(); }
         // see comment in PassRefPtr.h for why this takes const reference
         template <typename U> RefPtr(const PassRefPtr<U>&);
+
+        // Special constructor for cases where we overwrite an object in place.
+        RefPtr(PlacementNewAdoptType) { }
 
         ~RefPtr() { if (T *ptr = m_ptr) ptr->deref(); }
         
@@ -65,7 +68,7 @@ namespace WTF {
         void swap(RefPtr&);
 
     private:
-        T *m_ptr;
+        T* m_ptr;
     };
     
     template <typename T> template <typename U> inline RefPtr<T>::RefPtr(const PassRefPtr<U>& o)
