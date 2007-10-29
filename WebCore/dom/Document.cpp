@@ -2466,10 +2466,11 @@ void Document::defaultEventHandler(Event *evt)
     if (evt->type() == keydownEvent) {
         KeyboardEvent* kevt = static_cast<KeyboardEvent *>(evt);
 #if PLATFORM(MAC)
-        if (kevt->ctrlKey()) {
+        if (kevt->ctrlKey())
 #else
-        if (kevt->altKey()) {
+        if (kevt->altKey())
 #endif
+        {
             const PlatformKeyboardEvent* ev = kevt->keyEvent();
             String key = (ev ? ev->unmodifiedText() : kevt->keyIdentifier()).lower();
             Element* elem = getElementByAccessKey(key);
@@ -3345,9 +3346,9 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
     RefPtr<XSLTProcessor> processor = new XSLTProcessor;
     processor->setXSLStylesheet(static_cast<XSLStyleSheet*>(pi->sheet()));
     
-    DeprecatedString resultMIMEType;
-    DeprecatedString newSource;
-    DeprecatedString resultEncoding;
+    String resultMIMEType;
+    String newSource;
+    String resultEncoding;
     if (!processor->transformToString(this, resultMIMEType, newSource, resultEncoding))
         return;
     // FIXME: If the transform failed we should probably report an error (like Mozilla does).

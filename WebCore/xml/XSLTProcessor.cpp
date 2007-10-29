@@ -1,7 +1,7 @@
 /**
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple, Inc.
  * Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -36,6 +36,7 @@
 #include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLTokenizer.h"
+#include "Page.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -60,8 +61,8 @@ SOFT_LINK_LIBRARY(libxslt);
 SOFT_LINK(libxslt, xsltFreeStylesheet, void, (xsltStylesheetPtr sheet), (sheet))
 SOFT_LINK(libxslt, xsltFreeTransformContext, void, (xsltTransformContextPtr ctxt), (ctxt))
 SOFT_LINK(libxslt, xsltNewTransformContext, xsltTransformContextPtr, (xsltStylesheetPtr style, xmlDocPtr doc), (style, doc))
-SOFT_LINK(libxslt, xsltApplyStylesheetUser, xmlDocPtr, (xsltStylesheetPtr style, xmlDocPtr doc, const char **params, const char *output, FILE * profile, xsltTransformContextPtr userCtxt), (style, doc, params, output, profile, userCtxt))
-SOFT_LINK(libxslt, xsltQuoteUserParams, int, (xsltTransformContextPtr ctxt, const char **params), (ctxt, params))
+SOFT_LINK(libxslt, xsltApplyStylesheetUser, xmlDocPtr, (xsltStylesheetPtr style, xmlDocPtr doc, const char** params, const char* output, FILE* profile, xsltTransformContextPtr userCtxt), (style, doc, params, output, profile, userCtxt))
+SOFT_LINK(libxslt, xsltQuoteUserParams, int, (xsltTransformContextPtr ctxt, const char** params), (ctxt, params))
 SOFT_LINK(libxslt, xsltSetLoaderFunc, void, (xsltDocLoaderFunc f), (f))
 SOFT_LINK(libxslt, xsltSaveResultTo, int, (xmlOutputBufferPtr buf, xmlDocPtr result, xsltStylesheetPtr style), (buf, result, style))
 SOFT_LINK(libxslt, xsltNextImport, xsltStylesheetPtr, (xsltStylesheetPtr style), (style))
@@ -69,28 +70,33 @@ SOFT_LINK(libxslt, xsltNextImport, xsltStylesheetPtr, (xsltStylesheetPtr style),
 
 namespace WebCore {
 
-static void parseErrorFunc(void *ctxt, const char *msg, ...)
+void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
 {
-    // FIXME: It would be nice to display error messages somewhere.
-#if !PLATFORM(WIN_OS)
-    // FIXME: No vasprintf support.
-#ifndef ERROR_DISABLED
-    char *errorMessage = 0;
-    va_list args;
-    va_start(args, msg);
-    vasprintf(&errorMessage, msg, args);
-    LOG_ERROR("%s", errorMessage);
-    if (errorMessage)
-        free(errorMessage);
-    va_end(args);
-#endif
-#endif
+    Chrome* chrome = static_cast<Chrome*>(userData);
+    if (!chrome)
+        return;
+
+    MessageLevel level;
+    switch (error->level) {
+        case XML_ERR_NONE:
+            level = TipMessageLevel;
+            break;
+        case XML_ERR_WARNING:
+            level = WarningMessageLevel;
+            break;
+        case XML_ERR_ERROR:
+        case XML_ERR_FATAL:
+            level = ErrorMessageLevel;
+            break;
+    }
+
+    chrome->addMessageToConsole(XMLMessageSource, level, error->message, error->line, error->file);
 }
 
 // FIXME: There seems to be no way to control the ctxt pointer for loading here, thus we have globals.
-static XSLTProcessor *globalProcessor = 0;
-static DocLoader *globalDocLoader = 0;
-static xmlDocPtr docLoaderFunc(const xmlChar *uri,
+static XSLTProcessor* globalProcessor = 0;
+static DocLoader* globalDocLoader = 0;
+static xmlDocPtr docLoaderFunc(const xmlChar* uri,
                                     xmlDictPtr dict,
                                     int options,
                                     void* ctxt,
@@ -102,24 +108,28 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
     switch (type) {
         case XSLT_LOAD_DOCUMENT: {
             xsltTransformContextPtr context = (xsltTransformContextPtr)ctxt;
-            xmlChar *base = xmlNodeGetBase(context->document->doc, context->node);
+            xmlChar* base = xmlNodeGetBase(context->document->doc, context->node);
             KURL url((const char*)base, (const char*)uri);
             xmlFree(base);
             ResourceError error;
             ResourceResponse response;
-            xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
-            void *oldErrorContext = xmlGenericErrorContext;
 
             Vector<char> data;
-                
+
             if (globalDocLoader->frame()) 
                 globalDocLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
 
-            xmlSetGenericErrorFunc(0, parseErrorFunc);
+            Chrome* chrome = 0;
+            if (Page* page = globalProcessor->xslStylesheet()->ownerDocument()->page())
+                chrome = page->chrome();
+            xmlSetStructuredErrorFunc(chrome, XSLTProcessor::parseErrorFunc);
+
             // We don't specify an encoding here. Neither Gecko nor WinIE respects
             // the encoding specified in the HTTP headers.
             xmlDocPtr doc = xmlReadMemory(data.data(), data.size(), (const char*)uri, 0, options);
-            xmlSetGenericErrorFunc(oldErrorContext, oldErrorFunc);
+
+            xmlSetStructuredErrorFunc(0, 0);
+
             return doc;
         }
         case XSLT_LOAD_STYLESHEET:
@@ -131,27 +141,27 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
     return 0;
 }
 
-static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor *processor, DocLoader *loader)
+static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor* processor, DocLoader* loader)
 {
     xsltSetLoaderFunc(func);
     globalProcessor = processor;
     globalDocLoader = loader;
 }
 
-static int writeToQString(void *context, const char *buffer, int len)
+static int writeToString(void* context, const char* buffer, int len)
 {
-    DeprecatedString &resultOutput = *static_cast<DeprecatedString *>(context);
-    resultOutput += DeprecatedString::fromUtf8(buffer, len);
+    String& resultOutput = *static_cast<String*>(context);
+    resultOutput += String::fromUTF8(buffer, len);
     return len;
 }
 
-static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, DeprecatedString &resultString)
+static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, String& resultString)
 {
     xmlOutputBufferPtr outputBuf = xmlAllocOutputBuffer(0);
     if (!outputBuf)
         return false;
     outputBuf->context = &resultString;
-    outputBuf->writecallback = writeToQString;
+    outputBuf->writecallback = writeToString;
     
     int retval = xsltSaveResultTo(outputBuf, resultDoc, sheet);
     xmlOutputBufferClose(outputBuf);
@@ -159,7 +169,7 @@ static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, Dep
     return (retval >= 0);
 }
 
-static inline void transformTextStringToXHTMLDocumentString(String &text)
+static inline void transformTextStringToXHTMLDocumentString(String& text)
 {
     // Modify the output so that it is a well-formed XHTML document with a <pre> tag enclosing the text.
     text.replace('&', "&amp;");
@@ -174,12 +184,12 @@ static inline void transformTextStringToXHTMLDocumentString(String &text)
         "</html>\n";
 }
 
-static const char **xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& parameters)
+static const char** xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& parameters)
 {
     if (parameters.isEmpty())
         return 0;
 
-    const char **parameterArray = (const char **)fastMalloc(((parameters.size() * 2) + 1) * sizeof(char *));
+    const char** parameterArray = (const char**)fastMalloc(((parameters.size() * 2) + 1) * sizeof(char*));
 
     XSLTProcessor::ParameterMap::iterator end = parameters.end();
     unsigned index = 0;
@@ -192,22 +202,22 @@ static const char **xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& 
     return parameterArray;
 }
 
-static void freeXsltParamArray(const char **params)
+static void freeXsltParamArray(const char** params)
 {
-    const char **temp = params;
+    const char** temp = params;
     if (!params)
         return;
     
     while (*temp) {
-        free((void *)*(temp++)); // strdup returns malloc'd blocks, so we have to use free() here
-        free((void *)*(temp++));
+        free((void*)*(temp++)); // strdup returns malloc'd blocks, so we have to use free() here
+        free((void*)*(temp++));
     }
     fastFree(params);
 }
 
 
-RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString& sourceString,
-    const DeprecatedString& sourceEncoding, const DeprecatedString& sourceMIMEType, Node* sourceNode, Frame* frame)
+RefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
+    const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame)
 {
     RefPtr<Document> ownerDocument = sourceNode->document();
     bool sourceIsDocument = (sourceNode == ownerDocument.get());
@@ -247,7 +257,7 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString&
     return result;
 }
 
-static inline RefPtr<DocumentFragment> createFragmentFromSource(DeprecatedString sourceString, DeprecatedString sourceMIMEType, Node *sourceNode, Document *outputDoc)
+static inline RefPtr<DocumentFragment> createFragmentFromSource(String sourceString, String sourceMIMEType, Node* sourceNode, Document* outputDoc)
 {
     RefPtr<DocumentFragment> fragment = new DocumentFragment(outputDoc);
     
@@ -266,7 +276,7 @@ static inline RefPtr<DocumentFragment> createFragmentFromSource(DeprecatedString
     return fragment;
 }
 
-static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet> &cachedStylesheet, Node *stylesheetRootNode)
+static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStylesheet, Node* stylesheetRootNode)
 {
     if (!cachedStylesheet && stylesheetRootNode) {
         cachedStylesheet = new XSLStyleSheet(stylesheetRootNode->parent() ? stylesheetRootNode->parent() : stylesheetRootNode, stylesheetRootNode->document()->URL());
@@ -279,7 +289,7 @@ static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet> &cachedStyl
     return cachedStylesheet->compileStyleSheet();
 }
 
-static inline xmlDocPtr xmlDocPtrFromNode(Node *sourceNode, bool &shouldDelete)
+static inline xmlDocPtr xmlDocPtrFromNode(Node* sourceNode, bool& shouldDelete)
 {
     RefPtr<Document> ownerDocument = sourceNode->document();
     bool sourceIsDocument = (sourceNode == ownerDocument.get());
@@ -294,26 +304,26 @@ static inline xmlDocPtr xmlDocPtrFromNode(Node *sourceNode, bool &shouldDelete)
     return sourceDoc;
 }
 
-static inline DeprecatedString resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet)
+static inline String resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet)
 {
     // There are three types of output we need to be able to deal with:
     // HTML (create an HTML document), XML (create an XML document),
     // and text (wrap in a <pre> and create an XML document).
 
-    const xmlChar *resultType = 0;
+    const xmlChar* resultType = 0;
     XSLT_GET_IMPORT_PTR(resultType, sheet, method);
     if (resultType == 0 && resultDoc->type == XML_HTML_DOCUMENT_NODE)
-        resultType = (const xmlChar *)"html";
+        resultType = (const xmlChar*)"html";
     
-    if (xmlStrEqual(resultType, (const xmlChar *)"html"))
-        return DeprecatedString("text/html");
-    else if (xmlStrEqual(resultType, (const xmlChar *)"text"))
-        return DeprecatedString("text/plain");
+    if (xmlStrEqual(resultType, (const xmlChar*)"html"))
+        return "text/html";
+    else if (xmlStrEqual(resultType, (const xmlChar*)"text"))
+        return "text/plain";
         
-    return DeprecatedString("application/xml");
+    return "application/xml";
 }
 
-bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeType, DeprecatedString &resultString, DeprecatedString &resultEncoding)
+bool XSLTProcessor::transformToString(Node* sourceNode, String& mimeType, String& resultString, String& resultEncoding)
 {
     RefPtr<Document> ownerDocument = sourceNode->document();
     
@@ -344,7 +354,7 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
         if (transformContext->globalVars == NULL)
            transformContext->globalVars = xmlHashCreate(20);
 
-        const char **params = xsltParamArrayFromParameterMap(m_parameters);
+        const char** params = xsltParamArrayFromParameterMap(m_parameters);
         xsltQuoteUserParams(transformContext, params);
         xmlDocPtr resultDoc = xsltApplyStylesheetUser(sheet, sourceDoc, 0, 0, 0, transformContext);
         
@@ -356,7 +366,7 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
         
         if (success = saveResultToString(resultDoc, sheet, resultString)) {
             mimeType = resultMIMEType(resultDoc, sheet);
-            resultEncoding = (char *)resultDoc->encoding;
+            resultEncoding = (char*)resultDoc->encoding;
         }
         xmlFreeDoc(resultDoc);
     }
@@ -369,11 +379,11 @@ bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeTy
     return success;
 }
 
-RefPtr<Document> XSLTProcessor::transformToDocument(Node *sourceNode)
+RefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
 {
-    DeprecatedString resultMIMEType;
-    DeprecatedString resultString;
-    DeprecatedString resultEncoding;
+    String resultMIMEType;
+    String resultString;
+    String resultEncoding;
     if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
         return 0;
     return createDocumentFromSource(resultString, resultEncoding, resultMIMEType, sourceNode, 0);
@@ -381,9 +391,9 @@ RefPtr<Document> XSLTProcessor::transformToDocument(Node *sourceNode)
 
 RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode, Document* outputDoc)
 {
-    DeprecatedString resultMIMEType;
-    DeprecatedString resultString;
-    DeprecatedString resultEncoding;
+    String resultMIMEType;
+    String resultString;
+    String resultEncoding;
 
     // If the output document is HTML, default to HTML method.
     if (outputDoc->isHTMLDocument())

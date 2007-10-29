@@ -1,3 +1,40 @@
+2007-10-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=6040
+        XSLT does not report errors to the user
+
+        Made parseErrorFunc a static member function of XSLTProcessor to be reusable from XSLStylesheet.
+        Switched to xmlSetStructuredErrorFunc to get an error structure instead of pre-formatted console
+        output. Got rid of DeprecatedString in XSLTProcessor.
+
+        * dom/Document.cpp:
+        (WebCore::Document::applyXSLTransform):
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::parseErrorFunc):
+        (WebCore::docLoaderFunc):
+        (WebCore::setXSLTLoadCallBack):
+        (WebCore::writeToString):
+        (WebCore::saveResultToString):
+        (WebCore::transformTextStringToXHTMLDocumentString):
+        (WebCore::xsltParamArrayFromParameterMap):
+        (WebCore::freeXsltParamArray):
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+        (WebCore::createFragmentFromSource):
+        (WebCore::xsltStylesheetPointer):
+        (WebCore::xmlDocPtrFromNode):
+        (WebCore::resultMIMEType):
+        (WebCore::XSLTProcessor::transformToString):
+        (WebCore::XSLTProcessor::transformToDocument):
+        (WebCore::XSLTProcessor::transformToFragment):
+        * xml/XSLTProcessor.h:
+        (WebCore::XSLTProcessor::setXSLStylesheet):
+        (WebCore::XSLTProcessor::importStylesheet):
+        (WebCore::XSLTProcessor::xslStylesheet):
+
 2007-10-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
