@@ -402,6 +402,12 @@ namespace WTF {
     inline Value* HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookup(const T& key)
     {
         ASSERT(m_table);
+#ifndef ASSERT_DISABLED
+        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+            ASSERT(!HashTranslator::equal(KeyTraits::deletedValue(), key));
+        }
+#endif
 
         int k = 0;
         int sizeMask = m_tableSizeMask;
@@ -446,6 +452,12 @@ namespace WTF {
     inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::LookupType HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookupForWriting(const T& key)
     {
         ASSERT(m_table);
+#ifndef ASSERT_DISABLED
+        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+            ASSERT(!HashTranslator::equal(KeyTraits::deletedValue(), key));
+        }
+#endif
 
         int k = 0;
         ValueType* table = m_table;
@@ -497,6 +509,12 @@ namespace WTF {
     inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::FullLookupType HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::fullLookupForWriting(const T& key)
     {
         ASSERT(m_table);
+#ifndef ASSERT_DISABLED
+        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+            ASSERT(!HashTranslator::equal(KeyTraits::deletedValue(), key));
+        }
+#endif
 
         int k = 0;
         ValueType* table = m_table;
@@ -547,6 +565,13 @@ namespace WTF {
     template<typename T, typename Extra, typename HashTranslator>
     inline pair<typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(const T& key, const Extra& extra)
     {
+#ifndef ASSERT_DISABLED
+        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+            ASSERT(!HashTranslator::equal(KeyTraits::deletedValue(), key));
+        }
+#endif
+
         invalidateIterators();
 
         if (!m_table)

@@ -1521,6 +1521,11 @@ void Window::clearAllTimeouts()
 int Window::installTimeout(ScheduledAction* a, int t, bool singleShot)
 {
     int timeoutId = ++lastUsedTimeoutId;
+
+    // avoid wraparound going negative on us
+    if (timeoutId <= 0)
+        timeoutId = 1;
+
     int nestLevel = timerNestingLevel + 1;
     DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, nestLevel, this, a);
     ASSERT(!d->m_timeouts.get(timeoutId));
@@ -1592,6 +1597,12 @@ void Window::resumeTimeouts(PausedTimeouts* timeouts)
 
 void Window::clearTimeout(int timeoutId, bool delAction)
 {
+    // timeout IDs have to be positive, and 0 and -1 are unsafe to
+    // even look up since they are the empty and deleted value
+    // respectively
+    if (timeoutId <= 0)
+        return;
+
     WindowPrivate::TimeoutsMap::iterator it = d->m_timeouts.find(timeoutId);
     if (it == d->m_timeouts.end())
         return;

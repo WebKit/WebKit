@@ -1,3 +1,15 @@
+2007-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        - Added assertions to protect against adding empty or deleted keys to a HashTable
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::lookup):
+        (WTF::HashTable::lookupForWriting):
+        (WTF::HashTable::fullLookupForWriting):
+        (WTF::HashTable::add):
+
 2007-10-28  Darin Adler  <darin@apple.com>
 
         - fix GTK build
