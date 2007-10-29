@@ -2,6 +2,21 @@
 
         Reviewed by Darin Adler.
         
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15746
+        #ifndef ASSERT_DISABLED is no good!
+        
+        Replaced with #if !ASSERT_DISABLED.
+
+        * wtf/HashTable.h:
+        (WTF::::lookup):
+        (WTF::::lookupForWriting):
+        (WTF::::fullLookupForWriting):
+        (WTF::::add):
+
+2007-10-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
         Added FunctionCallResolveNode, PostfixResolveNode, and DeleteResolveNode
         to the AST transfom that replaces slow resolve nodes with fast local 
         variable alternatives.
