@@ -49,6 +49,7 @@
 #include "Counter.h"
 #include "DashboardRegion.h"
 #include "Document.h"
+#include "FloatConversion.h"
 #include "FontFamilyValue.h"
 #include "FontValue.h"
 #include "KURL.h"
@@ -2189,7 +2190,7 @@ bool CSSParser::parseTimingFunctionValue(ValueList*& args, float& result)
     Value* v = args->current();
     if (!validUnit(v, FNumber, strict))
         return false;
-    result = (float)v->fValue;
+    result = narrowPrecisionToFloat(v->fValue);
     if (result < 0 || result > 1.0f)
         return false;
     v = args->next();
