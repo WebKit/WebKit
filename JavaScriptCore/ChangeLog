@@ -1,5 +1,11 @@
 2007-10-28  Mark Rowe  <mrowe@apple.com>
 
+        Gtk build fix.  Add include of MathExtras.h.
+
+        * kjs/string_object.cpp:
+
+2007-10-28  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Maciej and Tim.
 
         Replace uses of isNaN and isInf with isnan and isinf, and

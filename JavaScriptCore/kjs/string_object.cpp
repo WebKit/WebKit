@@ -28,6 +28,7 @@
 #include "operations.h"
 #include "PropertyNameArray.h"
 #include "regexp_object.h"
+#include <wtf/MathExtras.h>
 #include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(CF)
