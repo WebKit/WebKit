@@ -1,3 +1,15 @@
+2007-10-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=10030
+        Star Alliance site is opened without the main frame
+
+        * fast/frames/location-change-expected.txt: Added.
+        * fast/frames/location-change.html: Added.
+        * fast/frames/resources/location-change-frame-1.html: Added.
+        * fast/frames/resources/location-change-frame-2.html: Added.
+
 2007-10-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan,
