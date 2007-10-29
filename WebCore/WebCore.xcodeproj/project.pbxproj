@@ -101,7 +101,6 @@
 		1A2E6E7B0CC556D5004A2062 /* SQLiteAuthorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */; };
 		1A2E6FA40CC5795D004A2062 /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6FA30CC5795D004A2062 /* ThreadingPthreads.cpp */; };
 		1A2E6FF50CC67855004A2062 /* VersionChangeCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6FF30CC67855004A2062 /* VersionChangeCallback.h */; };
-		1A2E6FF80CC6788D004A2062 /* VersionChangeCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A2E6FF70CC6788D004A2062 /* VersionChangeCallback.idl */; };
 		1A2E6FFE0CC67907004A2062 /* JSVersionChangeCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6FFC0CC67907004A2062 /* JSVersionChangeCallback.cpp */; };
 		1A2E6FFF0CC67907004A2062 /* JSVersionChangeCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6FFD0CC67907004A2062 /* JSVersionChangeCallback.h */; };
 		1A2E70620CC67CAA004A2062 /* JSCustomVersionChangeCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E70600CC67CAA004A2062 /* JSCustomVersionChangeCallback.h */; };
@@ -257,7 +256,6 @@
 		1AE831070CAB166E002237AE /* JSCustomSQLCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE831050CAB166E002237AE /* JSCustomSQLCallback.cpp */; };
 		1AFE117D0CBFFB36003017FA /* SQLResultSetRowList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFE117B0CBFFB36003017FA /* SQLResultSetRowList.cpp */; };
 		1AFE117E0CBFFB36003017FA /* SQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE117C0CBFFB36003017FA /* SQLResultSetRowList.h */; };
-		1AFE118D0CBFFC4E003017FA /* SQLResultSetRowList.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1AFE118C0CBFFC4E003017FA /* SQLResultSetRowList.idl */; };
 		1AFE11990CBFFCC4003017FA /* JSSQLResultSetRowList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */; };
 		1AFE119A0CBFFCC4003017FA /* JSSQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */; };
 		1C11CCB50AA6093700DADB20 /* DOMNotation.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85CA96E80A9624E900690CCF /* DOMNotation.h */; };
@@ -2026,22 +2024,16 @@
 		A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A833C80A0A2CF25600D57664 /* XMLNames.cpp */; };
 		A833C80D0A2CF25600D57664 /* XMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A833C80B0A2CF25600D57664 /* XMLNames.h */; };
 		A833C8520A2CF52800D57664 /* SVGElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581E609D1508D000E61D7 /* SVGElementFactory.cpp */; };
-		A83B78D60CCAFEC1000B0825 /* SVGFontFaceUriElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A83B78C40CCAFEC1000B0825 /* SVGFontFaceUriElement.idl */; };
 		A83B78D70CCAFEC1000B0825 /* SVGFontFaceUriElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A83B78C50CCAFEC1000B0825 /* SVGFontFaceUriElement.h */; };
 		A83B78D80CCAFEC1000B0825 /* SVGFontFaceUriElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83B78C60CCAFEC1000B0825 /* SVGFontFaceUriElement.cpp */; };
-		A83B78D90CCAFEC1000B0825 /* SVGFontFaceSrcElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A83B78C70CCAFEC1000B0825 /* SVGFontFaceSrcElement.idl */; };
 		A83B78DA0CCAFEC1000B0825 /* SVGFontFaceSrcElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A83B78C80CCAFEC1000B0825 /* SVGFontFaceSrcElement.h */; };
 		A83B78DB0CCAFEC1000B0825 /* SVGFontFaceSrcElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83B78C90CCAFEC1000B0825 /* SVGFontFaceSrcElement.cpp */; };
-		A83B78DC0CCAFEC1000B0825 /* SVGFontFaceNameElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A83B78CA0CCAFEC1000B0825 /* SVGFontFaceNameElement.idl */; };
 		A83B78DD0CCAFEC1000B0825 /* SVGFontFaceNameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A83B78CB0CCAFEC1000B0825 /* SVGFontFaceNameElement.h */; };
 		A83B78DE0CCAFEC1000B0825 /* SVGFontFaceFormatElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83B78CC0CCAFEC1000B0825 /* SVGFontFaceFormatElement.cpp */; };
-		A83B78DF0CCAFEC1000B0825 /* SVGFontFaceFormatElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A83B78CD0CCAFEC1000B0825 /* SVGFontFaceFormatElement.idl */; };
 		A83B78E00CCAFEC1000B0825 /* SVGFontFaceNameElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83B78CE0CCAFEC1000B0825 /* SVGFontFaceNameElement.cpp */; };
 		A83B78E10CCAFEC1000B0825 /* SVGFontFaceElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83B78CF0CCAFEC1000B0825 /* SVGFontFaceElement.cpp */; };
-		A83B78E20CCAFEC1000B0825 /* SVGFontFaceElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A83B78D00CCAFEC1000B0825 /* SVGFontFaceElement.idl */; };
 		A83B78E30CCAFEC1000B0825 /* SVGFontFaceFormatElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A83B78D10CCAFEC1000B0825 /* SVGFontFaceFormatElement.h */; };
 		A83B78E40CCAFEC1000B0825 /* SVGFontFaceElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A83B78D20CCAFEC1000B0825 /* SVGFontFaceElement.h */; };
-		A83B78E50CCAFEC1000B0825 /* SVGDefinitionSrcElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A83B78D30CCAFEC1000B0825 /* SVGDefinitionSrcElement.idl */; };
 		A83B78E60CCAFEC1000B0825 /* SVGDefinitionSrcElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A83B78D40CCAFEC1000B0825 /* SVGDefinitionSrcElement.h */; };
 		A83B78E70CCAFEC1000B0825 /* SVGDefinitionSrcElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83B78D50CCAFEC1000B0825 /* SVGDefinitionSrcElement.cpp */; };
 		A83B78FC0CCAFF15000B0825 /* JSSVGFontFaceUriElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A83B78F20CCAFF15000B0825 /* JSSVGFontFaceUriElement.h */; };
@@ -2853,7 +2845,6 @@
 		B25DFAAF0B2E2929000E6510 /* JSSVGMatrixCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */; };
 		B26554C00B80AD6000A50EC3 /* SVGTextPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554BD0B80AD6000A50EC3 /* SVGTextPathElement.cpp */; };
 		B26554C10B80AD6000A50EC3 /* SVGTextPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554BE0B80AD6000A50EC3 /* SVGTextPathElement.h */; };
-		B26554C20B80AD6000A50EC3 /* SVGTextPathElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B26554BF0B80AD6000A50EC3 /* SVGTextPathElement.idl */; };
 		B26554EA0B80D74900A50EC3 /* RenderSVGTextPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */; };
 		B26554EB0B80D74900A50EC3 /* RenderSVGTextPath.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */; };
 		B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */; };
@@ -3302,7 +3293,6 @@
 		BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC073BA90C399B1F000F5979 /* FloatConversion.h */; };
 		BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0B36A10CD3C67C00AC7EB5 /* Console.cpp */; };
 		BC0B36A50CD3C67C00AC7EB5 /* Console.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0B36A20CD3C67C00AC7EB5 /* Console.h */; };
-		BC0B36A60CD3C67C00AC7EB5 /* Console.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC0B36A30CD3C67C00AC7EB5 /* Console.idl */; };
 		BC124EE70C2641CD009E2349 /* BarInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EE40C2641CD009E2349 /* BarInfo.cpp */; };
 		BC124EE80C2641CD009E2349 /* BarInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EE50C2641CD009E2349 /* BarInfo.h */; };
 		BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */; };
@@ -13744,21 +13734,11 @@
 				B2E27C740B0F2AE600F17C7B /* WKTableTransferFilter.cikernel in Resources */,
 				4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */,
 				46BD16E30B279473001F0839 /* noneCursor.png in Resources */,
-				B26554C20B80AD6000A50EC3 /* SVGTextPathElement.idl in Resources */,
 				464EA2730B8A350B00A8E6E3 /* crossHairCursor.png in Resources */,
 				464EA2740B8A350B00A8E6E3 /* notAllowedCursor.png in Resources */,
 				06693F7B0BFBC91700216072 /* inspector in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				1AFE118D0CBFFC4E003017FA /* SQLResultSetRowList.idl in Resources */,
-				1A2E6FF80CC6788D004A2062 /* VersionChangeCallback.idl in Resources */,
-				A83B78D60CCAFEC1000B0825 /* SVGFontFaceUriElement.idl in Resources */,
-				A83B78D90CCAFEC1000B0825 /* SVGFontFaceSrcElement.idl in Resources */,
-				A83B78DC0CCAFEC1000B0825 /* SVGFontFaceNameElement.idl in Resources */,
-				A83B78DF0CCAFEC1000B0825 /* SVGFontFaceFormatElement.idl in Resources */,
-				A83B78E20CCAFEC1000B0825 /* SVGFontFaceElement.idl in Resources */,
-				A83B78E50CCAFEC1000B0825 /* SVGDefinitionSrcElement.idl in Resources */,
-				BC0B36A60CD3C67C00AC7EB5 /* Console.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
