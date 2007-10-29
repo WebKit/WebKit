@@ -1,3 +1,9 @@
+2007-10-29  Eric Seidel  <eric@webkit.org>
+
+        Build fix only, no review.
+
+        * JavaScriptCore.exp: Export symbol for new StringInstance::getOwnPropertySlot
+
 2007-10-29  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.  Move struct declarations into nodes.h.
