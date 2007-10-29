@@ -1,3 +1,15 @@
+2007-10-29  Mark Rowe  <mrowe@apple.com>
+
+        Files that have been added or modified on the web server without making it in to SVN.
+
+        * .htaccess:
+        * blog/wp-content/databaseexample.png: Added.
+        * blog/wp-content/uploads: Added.
+        * blog/wp-content/uploads/2007: Added.
+        * blog/wp-content/uploads/2007/06: Added.
+        * blog/wp-content/uploads/2007/06/newinspector.png: Added.
+        * building/cygwin-downloader.zip: Added.
+
 2007-10-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Mark Rowe.
