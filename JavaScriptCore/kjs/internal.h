@@ -51,14 +51,14 @@ namespace KJS {
     StringImp(const UString& value, HasOtherOwnerType) : val(value) { }
     UString value() const { return val; }
 
-    JSType type() const { return StringType; }
+    virtual JSType type() const { return StringType; }
 
-    JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
-    bool getPrimitiveNumber(ExecState*, double& number) const;
-    bool toBoolean(ExecState *exec) const;
-    double toNumber(ExecState *exec) const;
-    UString toString(ExecState *exec) const;
-    JSObject *toObject(ExecState *exec) const;
+    virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
+    virtual bool getPrimitiveNumber(ExecState*, double& number) const;
+    virtual bool toBoolean(ExecState *exec) const;
+    virtual double toNumber(ExecState *exec) const;
+    virtual UString toString(ExecState *exec) const;
+    virtual JSObject *toObject(ExecState *exec) const;
 
   private:
     UString val;
@@ -70,14 +70,14 @@ namespace KJS {
   public:
     double value() const { return val; }
 
-    JSType type() const { return NumberType; }
+    virtual JSType type() const { return NumberType; }
 
-    JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
-    bool getPrimitiveNumber(ExecState*, double& number) const;
-    bool toBoolean(ExecState *exec) const;
-    double toNumber(ExecState *exec) const;
-    UString toString(ExecState *exec) const;
-    JSObject *toObject(ExecState *exec) const;
+    virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
+    virtual bool getPrimitiveNumber(ExecState*, double& number) const;
+    virtual bool toBoolean(ExecState *exec) const;
+    virtual double toNumber(ExecState *exec) const;
+    virtual UString toString(ExecState *exec) const;
+    virtual JSObject *toObject(ExecState *exec) const;
     
     void* operator new(size_t size)
     {

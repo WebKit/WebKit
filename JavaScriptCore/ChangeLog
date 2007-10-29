@@ -1,3 +1,16 @@
+2007-10-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Inline UString::Rep::deref() for a 0.8% improvement in SunSpider
+        Add virtual keyword to a few virtual functions previously unmarked.
+
+        * kjs/internal.h:
+        (KJS::StringImp::type):
+        (KJS::NumberImp::type):
+        * kjs/ustring.h:
+        (KJS::UString::Rep::deref):
+
 2007-10-28  Darin Adler  <darin@apple.com>
 
         - fix "broken everything" from the storage leak fix
