@@ -1,3 +1,17 @@
+2007-10-29  David Kilzer  <ddkilzer@webkit.org>
+
+        Fixed showStatus() to print status for successfully resolved conflicts when using git.
+
+        Reviewed by Mark Rowe.
+
+        Previously showStatus() would run "git diff --name-status" after a ChangeLog conflict
+        was successfully resolved, but this would not show any status because the change had
+        already been cached in the index using "git add".  The solution is to add an optional
+        second argument to showStatus() which adds the "--cached" switch to the command.
+
+        * Scripts/resolve-ChangeLogs:
+        (showStatus):
+
 2007-10-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej and Geoff, in unison.

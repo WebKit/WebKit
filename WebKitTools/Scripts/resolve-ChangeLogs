@@ -41,7 +41,7 @@ sub conflictFiles($);
 sub fixChangeLogPatch($);
 sub mergeChanges($$$);
 sub resolveConflict($);
-sub showStatus($);
+sub showStatus($;$);
 
 my $SVN = "svn";
 my $GIT = "git";
@@ -83,7 +83,7 @@ for my $file (@changeLogFiles) {
         rename($fileNewer, $file) || die;
         unlink($fileMine, $fileOlder);
         resolveConflict($file);
-        showStatus($file);
+        showStatus($file, 1);
     } else {
         showStatus($file);
         print STDERR "WARNING: ${file} could not be merged using fuzz level 3.\n" if $printWarnings;
@@ -254,14 +254,16 @@ sub resolveConflict($)
     }
 }
 
-sub showStatus($)
+sub showStatus($;$)
 {
-    my ($file) = @_;
+    my ($file, $isConflictResolved) = @_;
 
     if (isSVN()) {
         system($SVN, "status", $file);
     } elsif (isGit()) {
-        system($GIT, "diff", "--name-status", $file);
+        my @args = qw(--name-status);
+        unshift @args, qw(--cached) if $isConflictResolved;
+        system($GIT, "diff", @args, $file);
     } else {
         die "Unknown version control system";
     }
