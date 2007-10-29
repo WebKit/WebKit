@@ -31,6 +31,8 @@
 
 static JSValueRef JSNodeList_item(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    UNUSED_PARAM(object);
+
     if (argumentCount > 0) {
         NodeList* nodeList = JSObjectGetPrivate(thisObject);
         ASSERT(nodeList);
@@ -50,6 +52,8 @@ static JSStaticFunction JSNodeList_staticFunctions[] = {
 static JSValueRef JSNodeList_length(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(exception);
     
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     ASSERT(nodeList);
@@ -78,6 +82,8 @@ static JSValueRef JSNodeList_getProperty(JSContextRef context, JSObjectRef thisO
 
 static void JSNodeList_initialize(JSContextRef context, JSObjectRef thisObject)
 {
+    UNUSED_PARAM(context);
+
     NodeList* nodeList = JSObjectGetPrivate(thisObject);
     ASSERT(nodeList);
     
@@ -94,6 +100,8 @@ static void JSNodeList_finalize(JSObjectRef thisObject)
 
 static JSClassRef JSNodeList_class(JSContextRef context)
 {
+    UNUSED_PARAM(context);
+
     static JSClassRef jsClass;
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionEmpty;

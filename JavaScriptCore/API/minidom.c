@@ -73,8 +73,11 @@ int main(int argc, char* argv[])
 
 static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(thisObject);
+
     if (argumentCount > 0) {
-        JSStringRef string = JSValueToStringCopy(context, arguments[0], NULL);
+        JSStringRef string = JSValueToStringCopy(context, arguments[0], exception);
         size_t numChars = JSStringGetMaximumUTF8CStringSize(string);
         char stringUTF8[numChars];
         JSStringGetUTF8CString(string, stringUTF8, numChars);

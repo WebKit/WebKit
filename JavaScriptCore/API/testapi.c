@@ -141,6 +141,7 @@ static bool MyObject_setProperty(JSContextRef context, JSObjectRef object, JSStr
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     UNUSED_PARAM(value);
+    UNUSED_PARAM(exception);
 
     if (JSStringIsEqualToUTF8CString(propertyName, "cantSet"))
         return true; // pretend we set the property in order to swallow it
@@ -167,6 +168,7 @@ static bool MyObject_deleteProperty(JSContextRef context, JSObjectRef object, JS
 static void MyObject_getPropertyNames(JSContextRef context, JSObjectRef object, JSPropertyNameAccumulatorRef propertyNames)
 {
     UNUSED_PARAM(context);
+    UNUSED_PARAM(object);
     
     JSStringRef propertyName;
     
@@ -184,6 +186,7 @@ static JSValueRef MyObject_callAsFunction(JSContextRef context, JSObjectRef obje
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
     UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(exception);
 
     if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(context, 0)))
         return JSValueMakeNumber(context, 1);
@@ -197,26 +200,27 @@ static JSObjectRef MyObject_callAsConstructor(JSContextRef context, JSObjectRef 
     UNUSED_PARAM(object);
 
     if (argumentCount > 0 && JSValueIsStrictEqual(context, arguments[0], JSValueMakeNumber(context, 0)))
-        return JSValueToObject(context, JSValueMakeNumber(context, 1), NULL);
+        return JSValueToObject(context, JSValueMakeNumber(context, 1), exception);
     
-    return JSValueToObject(context, JSValueMakeNumber(context, 0), NULL);
+    return JSValueToObject(context, JSValueMakeNumber(context, 0), exception);
 }
 
 static bool MyObject_hasInstance(JSContextRef context, JSObjectRef constructor, JSValueRef possibleValue, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
+    UNUSED_PARAM(constructor);
 
     JSStringRef numberString = JSStringCreateWithUTF8CString("Number");
-    JSObjectRef numberConstructor = JSValueToObject(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), numberString, NULL), NULL);
+    JSObjectRef numberConstructor = JSValueToObject(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), numberString, exception), exception);
     JSStringRelease(numberString);
 
-    return JSValueIsInstanceOfConstructor(context, possibleValue, numberConstructor, NULL);
+    return JSValueIsInstanceOfConstructor(context, possibleValue, numberConstructor, exception);
 }
 
 static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception)
 {
-    UNUSED_PARAM(context);
     UNUSED_PARAM(object);
+    UNUSED_PARAM(exception);
     
     switch (type) {
     case kJSTypeNumber:
@@ -264,6 +268,8 @@ JSClassDefinition MyObject_definition = {
 
 static JSClassRef MyObject_class(JSContextRef context)
 {
+    UNUSED_PARAM(context);
+
     static JSClassRef jsClass;
     if (!jsClass)
         jsClass = JSClassCreate(&MyObject_definition);
@@ -273,16 +279,15 @@ static JSClassRef MyObject_class(JSContextRef context)
 
 static JSValueRef Base_get(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
-    UNUSED_PARAM(ctx);
     UNUSED_PARAM(object);
     UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(exception);
 
     return JSValueMakeNumber(ctx, 1); // distinguish base get form derived get
 }
 
 static bool Base_set(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
-    UNUSED_PARAM(ctx);
     UNUSED_PARAM(object);
     UNUSED_PARAM(propertyName);
     UNUSED_PARAM(value);
@@ -293,11 +298,11 @@ static bool Base_set(JSContextRef ctx, JSObjectRef object, JSStringRef propertyN
 
 static JSValueRef Base_callAsFunction(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    UNUSED_PARAM(ctx);
     UNUSED_PARAM(function);
     UNUSED_PARAM(thisObject);
     UNUSED_PARAM(argumentCount);
     UNUSED_PARAM(arguments);
+    UNUSED_PARAM(exception);
     
     return JSValueMakeNumber(ctx, 1); // distinguish base call from derived call
 }
@@ -317,6 +322,8 @@ static JSStaticValue Base_staticValues[] = {
 static bool TestInitializeFinalize;
 static void Base_initialize(JSContextRef context, JSObjectRef object)
 {
+    UNUSED_PARAM(context);
+
     if (TestInitializeFinalize) {
         ASSERT((void*)1 == JSObjectGetPrivate(object));
         JSObjectSetPrivate(object, (void*)2);
@@ -334,6 +341,8 @@ static void Base_finalize(JSObjectRef object)
 
 static JSClassRef Base_class(JSContextRef context)
 {
+    UNUSED_PARAM(context);
+
     static JSClassRef jsClass;
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionEmpty;
@@ -348,9 +357,9 @@ static JSClassRef Base_class(JSContextRef context)
 
 static JSValueRef Derived_get(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
-    UNUSED_PARAM(ctx);
     UNUSED_PARAM(object);
     UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(exception);
 
     return JSValueMakeNumber(ctx, 2); // distinguish base get form derived get
 }
@@ -368,11 +377,11 @@ static bool Derived_set(JSContextRef ctx, JSObjectRef object, JSStringRef proper
 
 static JSValueRef Derived_callAsFunction(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    UNUSED_PARAM(ctx);
     UNUSED_PARAM(function);
     UNUSED_PARAM(thisObject);
     UNUSED_PARAM(argumentCount);
     UNUSED_PARAM(arguments);
+    UNUSED_PARAM(exception);
     
     return JSValueMakeNumber(ctx, 2); // distinguish base call from derived call
 }
@@ -393,6 +402,8 @@ static JSStaticValue Derived_staticValues[] = {
 
 static void Derived_initialize(JSContextRef context, JSObjectRef object)
 {
+    UNUSED_PARAM(context);
+
     if (TestInitializeFinalize) {
         ASSERT((void*)2 == JSObjectGetPrivate(object));
         JSObjectSetPrivate(object, (void*)3);
@@ -426,6 +437,7 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
 {
     UNUSED_PARAM(functionObject);
     UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(exception);
     
     if (argumentCount > 0) {
         JSStringRef string = JSValueToStringCopy(context, arguments[0], NULL);
@@ -442,6 +454,7 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
 static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(constructorObject);
+    UNUSED_PARAM(exception);
     
     JSObjectRef result = JSObjectMake(context, NULL, NULL);
     if (argumentCount > 0) {

@@ -1,5 +1,22 @@
 2007-10-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam.
+
+        - turn on unused parameter waring on Mac OS X because it's already on elsewhere
+
+        * Configurations/Base.xcconfig: Took out -wno-unused-parameter.
+
+        * API/JSNode.c:
+        * API/JSNodeList.c:
+        * API/minidom.c:
+        * API/testapi.c:
+        Fixed unused variables by using them or marked them with UNUSED_PARAM.
+
+        * kjs/CollectorHeapIntrospector.h: (KJS::CollectorHeapIntrospector::zoneCalloc):
+        Removed parameter names to indicate they are unused.
+
+2007-10-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix a storage leak where we ref the UString every time we replace

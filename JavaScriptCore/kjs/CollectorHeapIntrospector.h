@@ -52,7 +52,7 @@ private:
     CollectorHeapIntrospector(CollectorHeap*, CollectorHeap*);
     static size_t size(malloc_zone_t*, const void*) { return 0; }
     static void* zoneMalloc(malloc_zone_t*, size_t) { LOG_ERROR("malloc is not supported"); return 0; }
-    static void* zoneCalloc(malloc_zone_t*, size_t numItems, size_t size) { LOG_ERROR("calloc is not supported"); return 0; }
+    static void* zoneCalloc(malloc_zone_t*, size_t, size_t) { LOG_ERROR("calloc is not supported"); return 0; }
     static void zoneFree(malloc_zone_t*, void*) { LOG_ERROR("free is not supported"); }
     static void* zoneRealloc(malloc_zone_t*, void*, size_t) { LOG_ERROR("realloc is not supported"); return 0; }
     static void* zoneValloc(malloc_zone_t*, size_t) { LOG_ERROR("valloc is not supported"); return 0; }

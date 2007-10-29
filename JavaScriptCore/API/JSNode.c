@@ -65,7 +65,7 @@ static JSValueRef JSNode_removeChild(JSContextRef context, JSObjectRef function,
         if (JSValueIsObjectOfClass(context, thisObject, JSNode_class(context))) {
             if (JSValueIsObjectOfClass(context, arguments[0], JSNode_class(context))) {
                 Node* node = JSObjectGetPrivate(thisObject);
-                Node* child = JSObjectGetPrivate(JSValueToObject(context, arguments[0], NULL));
+                Node* child = JSObjectGetPrivate(JSValueToObject(context, arguments[0], exception));
                 
                 Node_removeChild(node, child);
             }
@@ -85,8 +85,8 @@ static JSValueRef JSNode_replaceChild(JSContextRef context, JSObjectRef function
             if (JSValueIsObjectOfClass(context, arguments[0], JSNode_class(context))) {
                 if (JSValueIsObjectOfClass(context, arguments[1], JSNode_class(context))) {
                     Node* node = JSObjectGetPrivate(thisObject);
-                    Node* newChild = JSObjectGetPrivate(JSValueToObject(context, arguments[0], NULL));
-                    Node* oldChild = JSObjectGetPrivate(JSValueToObject(context, arguments[1], NULL));
+                    Node* newChild = JSObjectGetPrivate(JSValueToObject(context, arguments[0], exception));
+                    Node* oldChild = JSObjectGetPrivate(JSValueToObject(context, arguments[1], exception));
                     
                     Node_replaceChild(node, newChild, oldChild);
                 }
@@ -108,6 +108,7 @@ static JSValueRef JSNode_getNodeType(JSContextRef context, JSObjectRef object, J
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(exception);
 
     Node* node = JSObjectGetPrivate(object);
     if (node) {
@@ -123,6 +124,8 @@ static JSValueRef JSNode_getNodeType(JSContextRef context, JSObjectRef object, J
 static JSValueRef JSNode_getChildNodes(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(exception);
+
     Node* node = JSObjectGetPrivate(thisObject);
     ASSERT(node);
     return JSNodeList_new(context, NodeList_new(node));
@@ -133,6 +136,7 @@ static JSValueRef JSNode_getFirstChild(JSContextRef context, JSObjectRef object,
     UNUSED_PARAM(context);
     UNUSED_PARAM(propertyName);
     UNUSED_PARAM(object);
+    UNUSED_PARAM(exception);
     
     return JSValueMakeUndefined(context);
 }
@@ -146,6 +150,8 @@ static JSStaticValue JSNode_staticValues[] = {
 
 static void JSNode_initialize(JSContextRef context, JSObjectRef object)
 {
+    UNUSED_PARAM(context);
+
     Node* node = JSObjectGetPrivate(object);
     ASSERT(node);
 
@@ -162,6 +168,8 @@ static void JSNode_finalize(JSObjectRef object)
 
 JSClassRef JSNode_class(JSContextRef context)
 {
+    UNUSED_PARAM(context);
+
     static JSClassRef jsClass;
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionEmpty;
@@ -185,6 +193,7 @@ JSObjectRef JSNode_construct(JSContextRef context, JSObjectRef object, size_t ar
     UNUSED_PARAM(object);
     UNUSED_PARAM(argumentCount);
     UNUSED_PARAM(arguments);
+    UNUSED_PARAM(exception);
 
     return JSNode_new(context, Node_new());
 }
