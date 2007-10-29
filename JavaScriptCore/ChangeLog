@@ -1,3 +1,29 @@
+2007-10-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Add nodes to allow Assignment, TypeOf, and prefix operators to 
+        make use of the new optimised local variable look up.
+
+        5% gain on sunspider
+
+        * kjs/nodes.cpp:
+        (KJS::TypeOfResolveNode::optimizeVariableAccess):
+        (KJS::LocalTypeOfAccessNode::evaluate):
+        (KJS::PrefixResolveNode::optimizeVariableAccess):
+        (KJS::PrefixLocalAccessNode::evaluate):
+        (KJS::AssignResolveNode::optimizeVariableAccess):
+        (KJS::AssignLocalAccessNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::TypeOfResolveNode::):
+        (KJS::TypeOfResolveNode::precedence):
+        (KJS::LocalTypeOfAccessNode::):
+        (KJS::PrefixResolveNode::):
+        (KJS::PrefixResolveNode::precedence):
+        (KJS::PrefixLocalAccessNode::):
+        (KJS::AssignResolveNode::):
+        (KJS::AssignLocalAccessNode::):
+
 2007-10-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
