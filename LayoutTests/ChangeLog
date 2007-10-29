@@ -1,3 +1,9 @@
+2007-10-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by aroben.
+
+        * platform/mac/svg/custom/path-bad-data-expected.txt: updated to better results
+
 2007-10-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
