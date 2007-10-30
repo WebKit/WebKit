@@ -1,3 +1,22 @@
+2007-10-29  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        Add GTK+ convenience conversions for various primitives
+
+        * WebCore.pro:
+        * platform/graphics/Color.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/gtk/ColorGtk.cpp: Added.
+        (WebCore::Color::Color):
+        * platform/graphics/gtk/IntPointGtk.cpp: Added.
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::IntPoint::operator GdkPoint):
+        * platform/graphics/gtk/IntRectGtk.cpp: Added.
+        (WebCore::IntRect::IntRect):
+        (WebCore::IntRect::operator GdkRectangle):
+
 2007-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.
