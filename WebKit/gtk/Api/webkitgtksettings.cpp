@@ -33,10 +33,12 @@
 extern "C" {
 GType webkit_web_settings_get_type(void)
 {
+    return GType();
 }
 
 WebKitSettings* webkit_web_settings_copy(WebKitSettings* setting)
 {
+    return 0;
 }
 
 void webkit_web_settings_free(WebKitSettings* setting)
