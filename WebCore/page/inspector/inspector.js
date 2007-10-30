@@ -567,6 +567,18 @@ WebInspector.updateBackForwardButtons = function()
     document.getElementById("forward").disabled = index >= this.backForwardList.length - 1;
 }
 
+WebInspector.showConsole = function()
+{
+    this.showingStatusArea = true;
+    this.navigateToPanel(WebInspector.consolePanel);
+}
+
+WebInspector.showTimeline = function()
+{
+    this.showingStatusArea = true;
+    this.navigateToPanel(WebInspector.networkPanel);
+}
+
 WebInspector.addResource = function(resource)
 {
     this.resources.push(resource);

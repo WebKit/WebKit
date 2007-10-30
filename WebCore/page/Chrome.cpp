@@ -200,8 +200,7 @@ void Chrome::addMessageToConsole(MessageSource source, MessageLevel level, const
     if (source == JSMessageSource)
         m_client->addMessageToConsole(message, lineNumber, sourceID);
 
-    if (InspectorController* inspector = m_page->inspectorController())
-        inspector->addMessageToConsole(source, level, message, lineNumber, sourceID);
+    m_page->inspectorController()->addMessageToConsole(source, level, message, lineNumber, sourceID);
 }
 
 bool Chrome::canRunBeforeUnloadConfirmPanel()

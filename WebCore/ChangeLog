@@ -1,3 +1,28 @@
+2007-10-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - Allow showing and closing the inspector programatically.
+        - Add showConsole() and showTimeline() methods. 
+
+        * WebCore.base.exp: Add exports for WebKit.
+        * page/InspectorController.cpp:
+        (WebCore::callSimpleFunction): Renamed from callClearFunction().
+        (WebCore::unloading): Renamed to close().
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspect): Moved showing code to show().
+        (WebCore::InspectorController::setWindowVisible): Show the timeline or console if needed.
+        (WebCore::InspectorController::show): Code factored out of inspect().
+        (WebCore::InspectorController::showConsole): Call show() and the JS showConsole().
+        (WebCore::InspectorController::showTimeline): Call show() and the JS showTimeline().
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::clearScriptResources): Call the new callSimpleFunction.
+        (WebCore::InspectorController::clearDatabaseScriptResources): Ditto.
+        (WebCore::InspectorController::clearScriptConsoleMessages): Ditto.
+        (WebCore::InspectorController::clearNetworkTimeline): Ditto.
+        * page/InspectorController.h: Add and rename methods.
+        * page/inspector/inspector.js: Add showConsole() and showTimeline().
+
 2007-10-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam.

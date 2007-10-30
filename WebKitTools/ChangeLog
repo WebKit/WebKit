@@ -1,3 +1,13 @@
+2007-10-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John Sullivan.
+        
+        - Place the Localizable.strings file in mac or win directories
+          if that location exists.
+        - Also look for UI_STRING in .c files.
+
+        * Scripts/extract-localizable-strings:
+
 2007-10-30  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
@@ -30,7 +40,6 @@
         * Drosera/win/ServerConnection.cpp: Added a helper function.
         (ServerConnection::getCallerFrame):
         * Drosera/win/ServerConnection.h: Added a helper function.
-
 
 2007-10-29  Kevin McCullough  <kmccullough@apple.com>
 

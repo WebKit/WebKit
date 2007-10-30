@@ -79,7 +79,7 @@ my %usedException;
 if (open EXCEPTIONS, $exceptionsFile) {
     while (<EXCEPTIONS>) {
         chomp;
-        if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w.]+.(h|m|mm|cpp)$/ or /^[-_\/\w.]+.(h|m|mm|cpp):"([^\\"]|\\.)*"$/) {
+        if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w.]+.(h|m|mm|c|cpp)$/ or /^[-_\/\w.]+.(h|m|mm|c|cpp):"([^\\"]|\\.)*"$/) {
             if ($exception{$_}) {
                 print "$exceptionsFile:$.:exception for $_ appears twice\n";
                 print "$exceptionsFile:$exception{$_}:first appearance\n";
@@ -98,7 +98,7 @@ for my $dir (@directoriesToSkip) {
     $quotedDirectoriesString .= ' -path "' . $dir . '" -prune';
 }
 
-my @files = ( split "\n", `find $quotedDirectoriesString -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.cpp"` );
+my @files = ( split "\n", `find $quotedDirectoriesString -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.c" -o -name "*.cpp"` );
 
 for my $file (sort @files) {
     next if $file =~ /\/WebLocalizableStrings\.h$/;
@@ -339,7 +339,21 @@ for my $key (sort keys %commentByKey) {
 utf8::decode($localizedStrings) if $^V ge chr(5).chr(8);
 my $output = pack "n*", (0xFEFF, unpack "U*", $localizedStrings);
 foreach my $directory (@directories) {
-    open STRINGS, ">", "$directory/$stringsFile" or die;
-    print STRINGS $output;
-    close STRINGS;
+    if (-e "$directory/mac/$stringsFile") {
+        open STRINGS, ">", "$directory/mac/$stringsFile" or die;
+        print STRINGS $output;
+        close STRINGS;
+    }
+
+    if (-e "$directory/win/$stringsFile") {
+        open STRINGS, ">", "$directory/win/$stringsFile" or die;
+        print STRINGS $output;
+        close STRINGS;
+    }
+
+    if (-e "$directory/$stringsFile") {
+        open STRINGS, ">", "$directory/$stringsFile" or die;
+        print STRINGS $output;
+        close STRINGS;
+    }
 }

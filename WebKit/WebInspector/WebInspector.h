@@ -26,17 +26,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <Foundation/NSObject.h>
 
-@class WebFrame;
 @class WebView;
 
 @interface WebInspector : NSObject
 {
     WebView *_webView;
 }
-+ (WebInspector *)sharedWebInspector;
-+ (WebInspector *)webInspector;
-- (void)setWebFrame:(WebFrame*)frame;
-- (void)showWindow:(id)sender;
+- (id)initWithWebView:(WebView *)webView;
+- (void)webViewClosed;
+- (void)show:(id)sender;
+- (void)showConsole:(id)sender;
+- (void)showTimeline:(id)sender;
+- (void)close:(id)sender;
+- (void)attach:(id)sender;
+- (void)detach:(id)sender;
 @end

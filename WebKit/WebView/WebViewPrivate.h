@@ -39,6 +39,7 @@
 
 @class NSError;
 @class WebFrame;
+@class WebInspector;
 @class WebPreferences;
 
 @protocol WebFormDelegate;
@@ -151,6 +152,8 @@ typedef enum {
 
 + (BOOL)_developerExtrasEnabled;
 + (BOOL)_scriptDebuggerEnabled;
+
+- (WebInspector *)inspector;
 
 /*!
     @method setBackgroundColor:

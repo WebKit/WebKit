@@ -65,6 +65,18 @@
 
 namespace WebCore {
 
+static void callSimpleFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName)
+{
+    ASSERT_ARG(context, context);
+    ASSERT_ARG(thisObject, thisObject);
+
+    JSStringRef string = JSStringCreateWithUTF8CString(functionName);
+    JSObjectRef function = JSValueToObject(context, JSObjectGetProperty(context, thisObject, string, 0), 0);
+    JSStringRelease(string);
+
+    JSObjectCallAsFunction(context, function, thisObject, 0, 0, 0);
+}
+
 struct ConsoleMessage {
     ConsoleMessage(MessageSource s, MessageLevel l, const String& m, unsigned li, const String& u)
         : source(s)
@@ -389,7 +401,7 @@ static JSValueRef unloading(JSContextRef ctx, JSObjectRef /*function*/, JSObject
     if (!controller)
         return JSValueMakeUndefined(ctx);
 
-    controller->windowUnloading();
+    controller->close();
     return JSValueMakeUndefined(ctx);
 }
 
@@ -539,6 +551,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_controllerScriptObject(0)
     , m_scriptContext(0)
     , m_windowVisible(false)
+    , m_showAfterVisible(FocusedNodeDocumentPanel)
     , m_nextIdentifier(-2)
 {
     ASSERT_ARG(page, page);
@@ -575,25 +588,19 @@ void InspectorController::inspect(Node* node)
     if (!node || !enabled())
         return;
 
-    if (!m_page) {
-        m_page = m_client->createPage();
-        if (!m_page)
-            return;
-
-        m_page->setParentInspectorController(this);
-    }
+    show();
 
     if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
         node = node->parentNode();
     m_nodeToFocus = node;
 
-    if (!m_scriptObject)
+    if (!m_scriptObject) {
+        m_showAfterVisible = FocusedNodeDocumentPanel;
         return;
+    }
 
     if (windowVisible())
         focusNode();
-    else
-        m_client->showWindow();
 }
 
 void InspectorController::focusNode()
@@ -656,12 +663,18 @@ void InspectorController::setWindowVisible(bool visible)
         populateScriptResources();
         if (m_nodeToFocus)
             focusNode();
+        if (m_showAfterVisible == ConsolePanel)
+            showConsole();
+        else if (m_showAfterVisible == TimelinePanel)
+            showTimeline();
     } else {
         clearScriptResources();
         clearScriptConsoleMessages();
         clearDatabaseScriptResources();
         clearNetworkTimeline();
     }
+
+    m_showAfterVisible = FocusedNodeDocumentPanel;
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
@@ -760,8 +773,59 @@ void InspectorController::scriptObjectReady()
     m_client->showWindow();
 }
 
-void InspectorController::windowUnloading()
+void InspectorController::show()
 {
+    if (!enabled())
+        return;
+
+    if (!m_page) {
+        m_page = m_client->createPage();
+        if (!m_page)
+            return;
+        m_page->setParentInspectorController(this);
+
+        // m_client->showWindow() will be called after the page loads in scriptObjectReady()
+        return;
+    }
+
+    m_client->showWindow();
+}
+
+void InspectorController::showConsole()
+{
+    if (!enabled())
+        return;
+
+    show();
+
+    if (!m_scriptObject) {
+        m_showAfterVisible = ConsolePanel;
+        return;
+    }
+
+    callSimpleFunction(m_scriptContext, m_scriptObject, "showConsole");
+}
+
+void InspectorController::showTimeline()
+{
+    if (!enabled())
+        return;
+
+    show();
+
+    if (!m_scriptObject) {
+        m_showAfterVisible = TimelinePanel;
+        return;
+    }
+
+    callSimpleFunction(m_scriptContext, m_scriptObject, "showTimeline");
+}
+
+void InspectorController::close()
+{
+    if (!enabled())
+        return;
+
     m_client->closeWindow();
     if (m_page)
         m_page->setParentInspectorController(0);
@@ -1199,18 +1263,6 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
     JSObjectCallAsFunction(m_scriptContext, addMessage, m_scriptObject, 1, &messageObject, 0);
 }
 
-static void callClearFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName)
-{
-    ASSERT_ARG(context, context);
-    ASSERT_ARG(thisObject, thisObject);
-
-    JSStringRef string = JSStringCreateWithUTF8CString(functionName);
-    JSObjectRef function = JSValueToObject(context, JSObjectGetProperty(context, thisObject, string, 0), 0);
-    JSStringRelease(string);
-
-    JSObjectCallAsFunction(context, function, thisObject, 0, 0, 0);
-}
-
 void InspectorController::clearScriptResources()
 {
     if (!m_scriptContext || !m_scriptObject)
@@ -1222,7 +1274,7 @@ void InspectorController::clearScriptResources()
         resource->setScriptObject(0, 0);
     }
 
-    callClearFunction(m_scriptContext, m_scriptObject, "clearResources");
+    callSimpleFunction(m_scriptContext, m_scriptObject, "clearResources");
 }
 
 void InspectorController::clearDatabaseScriptResources()
@@ -1237,7 +1289,7 @@ void InspectorController::clearDatabaseScriptResources()
         resource->setScriptObject(0, 0);
     }
 
-    callClearFunction(m_scriptContext, m_scriptObject, "clearDatabaseResources");
+    callSimpleFunction(m_scriptContext, m_scriptObject, "clearDatabaseResources");
 #endif
 }
 
@@ -1246,7 +1298,7 @@ void InspectorController::clearScriptConsoleMessages()
     if (!m_scriptContext || !m_scriptObject)
         return;
 
-    callClearFunction(m_scriptContext, m_scriptObject, "clearConsoleMessages");
+    callSimpleFunction(m_scriptContext, m_scriptObject, "clearConsoleMessages");
 }
 
 void InspectorController::clearNetworkTimeline()
@@ -1254,7 +1306,7 @@ void InspectorController::clearNetworkTimeline()
     if (!m_scriptContext || !m_scriptObject)
         return;
 
-    callClearFunction(m_scriptContext, m_scriptObject, "clearNetworkTimeline");
+    callSimpleFunction(m_scriptContext, m_scriptObject, "clearNetworkTimeline");
 }
 
 void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoader* loaderToKeep)

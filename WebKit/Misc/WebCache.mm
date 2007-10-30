@@ -74,4 +74,9 @@
     WebCore::cache()->setDisabled(disabled);
 }
 
++ (BOOL)isDisabled
+{
+    return WebCore::cache()->disabled();
+}
+
 @end

@@ -38,28 +38,91 @@
 using namespace WebCore;
 
 @implementation WebInspector
+- (id)initWithWebView:(WebView *)webView
+{
+    if (!(self = [super init]))
+        return nil;
+    _webView = webView; // not retained to prevent a cycle
+    return self;
+}
 
-// This method name is used by the Safari 3 beta
+- (void)webViewClosed
+{
+    _webView = nil;
+}
+
+- (void)show:(id)sender
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->show();
+}
+
+- (void)showConsole:(id)sender
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->showConsole();
+}
+
+- (void)showTimeline:(id)sender
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->showTimeline();
+}
+
+- (void)close:(id)sender 
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->close();
+}
+
+- (void)attach:(id)sender
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->attachWindow();
+}
+
+- (void)detach:(id)sender
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->detachWindow();
+}
+@end
+
+@implementation WebInspector (Obsolete)
 + (WebInspector *)sharedWebInspector
 {
-    return [self webInspector];
+    // Safari 3 beta calls this method
+    static BOOL logged = NO;
+    if (!logged) {
+        NSLog(@"+[WebInspector sharedWebInspector]: this method is obsolete.");
+        logged = YES;
+    }
+
+    return [[[WebInspector alloc] init] autorelease];
 }
 
 + (WebInspector *)webInspector
 {
-    return [[[WebInspector alloc] init] autorelease];
-}
+    // Safari 3 beta calls this method
+    static BOOL logged = NO;
+    if (!logged) {
+        NSLog(@"+[WebInspector webInspector]: this method is obsolete.");
+        logged = YES;
+    }
 
-- (void)dealloc
-{
-    [_webView release];
-    [super dealloc];
+    return [[[WebInspector alloc] init] autorelease];
 }
 
 - (void)setWebFrame:(WebFrame *)frame
 {
-    [_webView release];
-    _webView = [[frame webView] retain];
+    // Safari 3 beta calls this method
+    static BOOL logged = NO;
+    if (!logged) {
+        NSLog(@"-[WebInspector setWebFrame:]: this method is obsolete.");
+        logged = YES;
+    }
+
+    _webView = [frame webView];
 }
 
 - (NSWindow *)window
@@ -67,7 +130,7 @@ using namespace WebCore;
     // Shiira calls this internal method, return nil since we can't easily return the window
     static BOOL logged = NO;
     if (!logged) {
-        NSLog(@"-[WebInspector window]: this method is obsolete and now returns nil. The WebInspector class will be removed in a future release.");
+        NSLog(@"-[WebInspector window]: this method is obsolete and now returns nil.");
         logged = YES;
     }
 
@@ -76,8 +139,13 @@ using namespace WebCore;
 
 - (void)showWindow:(id)sender
 {
-    if (Page* page = core(_webView))
-        if (InspectorController* inspectorController = page->inspectorController())
-            inspectorController->inspect(page->mainFrame()->document());
+    // Safari 3 beta calls this method
+    static BOOL logged = NO;
+    if (!logged) {
+        NSLog(@"-[WebInspector showWindow:]: this method is obsolete.");
+        logged = YES;
+    }
+
+    [self show:sender];
 }
 @end

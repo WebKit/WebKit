@@ -60,6 +60,7 @@
 #import "WebHistoryItemInternal.h"
 #import "WebIconDatabase.h"
 #import "WebIconDatabaseInternal.h"
+#import "WebInspector.h"
 #import "WebInspectorClient.h"
 #import "WebKitErrors.h"
 #import "WebKitLogging.h"
@@ -294,6 +295,8 @@ static int pluginDatabaseClientCount = 0;
     id scriptDebugDelegate;
     id scriptDebugDelegateForwarder;
 
+    WebInspector *inspector;
+
     BOOL allowsUndo;
         
     float textSizeMultiplier;
@@ -466,6 +469,7 @@ static BOOL grammarCheckingEnabled;
     [applicationNameForUserAgent release];
     [backgroundColor release];
     
+    [inspector release];
     [hostWindow release];
 
     [policyDelegateForwarder release];
@@ -696,7 +700,9 @@ static bool debugWidget = true;
     [self setResourceLoadDelegate:nil];
     [self setScriptDebugDelegate:nil];
     [self setUIDelegate:nil];
-    
+
+    [_private->inspector webViewClosed];
+
     // setHostWindow:nil must be called before this value is set (see 5408186)
     _private->closed = YES;
 
@@ -786,6 +792,13 @@ static bool debugWidget = true;
 
     CallUIDelegate(newWindowWebView, @selector(webViewShow:));
     return newWindowWebView;
+}
+
+- (WebInspector *)inspector
+{
+    if (!_private->inspector)
+        _private->inspector = [[WebInspector alloc] initWithWebView:self];
+    return _private->inspector;
 }
 
 - (WebCore::Page*)page

@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#if __OBJC__
+@class NSBundle;
+#else
+typedef struct NSBundle NSBundle;
+#endif
 
 typedef struct {
     const char *identifier;
@@ -37,7 +41,11 @@ typedef struct {
 extern "C" {
 #endif
 
+#if __OBJC__
 NSString *WebLocalizedString(WebLocalizableStringsBundle *bundle, const char *key);
+#else
+CFStringRef WebLocalizedString(WebLocalizableStringsBundle *bundle, const char *key);
+#endif
 
 #ifdef __cplusplus
 }

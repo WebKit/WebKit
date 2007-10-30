@@ -293,8 +293,11 @@ void WebInspectorClient::updateWindowTitle() const
 
 - (IBAction)showWindow:(id)sender
 {
-    if (_visible)
+    if (_visible) {
+        if (!_attachedToInspectedWebView)
+            [super showWindow:sender]; // call super so the window will be ordered front if needed
         return;
+    }
 
     _visible = YES;
 
@@ -469,6 +472,27 @@ void WebInspectorClient::updateWindowTitle() const
         _movingWindows = NO;
         [self showWindow:nil];
     }
+}
+
+
+#pragma mark -
+
+// These methods can be used by UI elements such as menu items and toolbar buttons when the inspector is the key window.
+
+// This method is really only implemented to keep any UI elements enabled.
+- (void)showWebInspector:(id)sender
+{
+    [_inspectedWebView page]->inspectorController()->show();
+}
+
+- (void)showErrorConsole:(id)sender
+{
+    [_inspectedWebView page]->inspectorController()->showConsole();
+}
+
+- (void)showNetworkTimeline:(id)sender
+{
+    [_inspectedWebView page]->inspectorController()->showTimeline();
 }
 
 @end

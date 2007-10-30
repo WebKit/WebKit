@@ -1,3 +1,53 @@
+2007-10-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Various semi-related changes:
+        - A WebView can now be asked for it's WebInspector. There is one
+          WebInspector per WebView. 
+        - Refactor the WebInspector class and move obsolete methods to
+          a special category.
+        - Add new WebInspector methods to show, hide and show the
+          console/timeline panels.
+        - Add an isDisabled method to WebCache.
+        - Allow WebLocalizableStrings.h to be used in C files.
+
+        * Misc/WebCache.h: Add isDisabled.
+        * Misc/WebCache.mm:
+        (+[WebCache isDisabled]): New method.
+
+        * Misc/WebLocalizableStrings.h: Changes to allow use in plain C files.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController showWindow:]): Call super if already visible
+          so the window will be ordered front.
+        (-[WebInspectorWindowController showWebInspector:]): Method used by menu items,
+          so they are enabled and work when the Inspector window is key.
+        (-[WebInspectorWindowController showErrorConsole:]): Ditto.
+        (-[WebInspectorWindowController showNetworkTimeline:]): Ditto.
+
+        * WebInspector/WebInspector.h: Add and remove methods.
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector webViewClosed]): Called when the WebView is closed/dealloced.
+          Clears the _webView pointer.
+        (-[WebInspector show:]): Calls thru to the Page's InspectorController.
+        (-[WebInspector showConsole:]): Ditto.
+        (-[WebInspector showTimeline:]): Ditto.
+        (-[WebInspector close:]): Ditto.
+        (-[WebInspector attach:]): Ditto.
+        (-[WebInspector detach:]): Ditto.
+        (+[WebInspector sharedWebInspector]): Moved to the obsolete category.
+        (+[WebInspector webInspector]): Ditto.
+        (-[WebInspector setWebFrame:]): Ditto.
+        (-[WebInspector window]): Ditto.
+        (-[WebInspector showWindow:]): Ditto.
+
+        * WebView/WebView.mm:
+        (-[WebViewPrivate dealloc]): Release the WebInspector.
+        (-[WebView _close]): Call webViewClosed on the WebInspector.
+        (-[WebView inspector]): Create a WebInspector if needed and return it.
+        * WebView/WebViewPrivate.h: Add the inspector method.
+
 2007-10-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
