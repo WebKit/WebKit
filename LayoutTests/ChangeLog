@@ -2,6 +2,17 @@
 
         Rubber stamped by Geoff.
 
+        This test needed updated results from my patch last night. It has 
+        <parsererror> tags, which are now block instead on inline.
+
+        * platform/mac/fast/frames/onlyCommentInIFrame-expected.checksum: Replaced.
+        * platform/mac/fast/frames/onlyCommentInIFrame-expected.png: Replaced.
+        * platform/mac/fast/frames/onlyCommentInIFrame-expected.txt:
+
+2007-10-30  Beth Dakin  <bdakin@apple.com>
+
+        Rubber stamped by Geoff.
+
         Fixing two layout test mixups from my patch last night.
 
         I added this test, but checked in old results:
