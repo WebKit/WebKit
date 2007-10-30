@@ -1,3 +1,85 @@
+2007-10-29  Oliver Hunt  <oliver@apple.com>
+
+        Debranching various Node::evaluate implementations
+        
+        Reviewed by Maciej.
+        
+        Split the read-modify-write assignment cases out of AssignResolveNode and into ReadModifyResolveNode
+        Split the increment and decrement cases for Prefix- and Postfix- ResolveNode, BracketNode, and DotNode
+        
+        Gains 1.6% on SunSpider
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::PostIncResolveNode::optimizeVariableAccess):
+        (KJS::PostIncResolveNode::evaluate):
+        (KJS::PostIncLocalVarNode::evaluate):
+        (KJS::PostDecResolveNode::optimizeVariableAccess):
+        (KJS::PostDecResolveNode::evaluate):
+        (KJS::PostDecLocalVarNode::evaluate):
+        (KJS::PostIncBracketNode::evaluate):
+        (KJS::PostDecBracketNode::evaluate):
+        (KJS::PostIncDotNode::evaluate):
+        (KJS::PostDecDotNode::evaluate):
+        (KJS::PreIncResolveNode::optimizeVariableAccess):
+        (KJS::PreIncLocalVarNode::evaluate):
+        (KJS::PreIncResolveNode::evaluate):
+        (KJS::PreDecResolveNode::optimizeVariableAccess):
+        (KJS::PreDecLocalVarNode::evaluate):
+        (KJS::PreDecResolveNode::evaluate):
+        (KJS::PreIncBracketNode::evaluate):
+        (KJS::PreDecBracketNode::evaluate):
+        (KJS::PreIncDotNode::evaluate):
+        (KJS::PreDecDotNode::evaluate):
+        (KJS::ReadModifyResolveNode::optimizeVariableAccess):
+        (KJS::AssignResolveNode::optimizeVariableAccess):
+        (KJS::AssignLocalVarNode::evaluate):
+        (KJS::AssignResolveNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::PostDecResolveNode::):
+        (KJS::PostDecResolveNode::precedence):
+        (KJS::PostDecLocalVarNode::):
+        (KJS::PostfixBracketNode::):
+        (KJS::PostfixBracketNode::precedence):
+        (KJS::PostIncBracketNode::):
+        (KJS::PostIncBracketNode::isIncrement):
+        (KJS::PostDecBracketNode::):
+        (KJS::PostDecBracketNode::isIncrement):
+        (KJS::PostfixDotNode::):
+        (KJS::PostfixDotNode::precedence):
+        (KJS::PostIncDotNode::):
+        (KJS::PostIncDotNode::isIncrement):
+        (KJS::PostDecDotNode::):
+        (KJS::PreIncResolveNode::):
+        (KJS::PreDecResolveNode::):
+        (KJS::PreDecResolveNode::precedence):
+        (KJS::PreDecLocalVarNode::):
+        (KJS::PrefixBracketNode::):
+        (KJS::PrefixBracketNode::precedence):
+        (KJS::PreIncBracketNode::):
+        (KJS::PreIncBracketNode::isIncrement):
+        (KJS::PreDecBracketNode::):
+        (KJS::PreDecBracketNode::isIncrement):
+        (KJS::PrefixDotNode::):
+        (KJS::PrefixDotNode::precedence):
+        (KJS::PreIncDotNode::):
+        (KJS::PreIncDotNode::isIncrement):
+        (KJS::PreDecDotNode::):
+        (KJS::ReadModifyResolveNode::):
+        (KJS::ReadModifyLocalVarNode::):
+        (KJS::AssignResolveNode::):
+        (KJS::AssignResolveNode::precedence):
+        * kjs/nodes2string.cpp:
+        (KJS::PostIncResolveNode::streamTo):
+        (KJS::PostDecResolveNode::streamTo):
+        (KJS::PostfixBracketNode::streamTo):
+        (KJS::PostfixDotNode::streamTo):
+        (KJS::PreIncResolveNode::streamTo):
+        (KJS::PreDecResolveNode::streamTo):
+        (KJS::ReadModifyResolveNode::streamTo):
+        (KJS::AssignResolveNode::streamTo):
+
 2007-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, build fix.

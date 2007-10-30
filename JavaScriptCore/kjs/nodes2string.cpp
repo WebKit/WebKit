@@ -413,19 +413,20 @@ void FunctionCallDotNode::streamTo(SourceStream& s) const
     s << DotExpr << PrecCall << base << "." << ident << args;
 }
 
-void PostfixResolveNode::streamTo(SourceStream& s) const
+void PostIncResolveNode::streamTo(SourceStream& s) const
 {
-    s << m_ident;
-    if (m_oper == OpPlusPlus)
-        s << "++";
-    else
-        s << "--";
+    s << m_ident << "++";
+}
+
+void PostDecResolveNode::streamTo(SourceStream& s) const
+{
+    s << m_ident << "--";
 }
 
 void PostfixBracketNode::streamTo(SourceStream& s) const
 {
     s << PrecCall << m_base << "[" << m_subscript << "]";
-    if (m_oper == OpPlusPlus)
+    if (isIncrement())
         s << "++";
     else
         s << "--";
@@ -434,7 +435,7 @@ void PostfixBracketNode::streamTo(SourceStream& s) const
 void PostfixDotNode::streamTo(SourceStream& s) const
 {
     s << DotExpr << PrecCall << m_base << "." << m_ident;
-    if (m_oper == OpPlusPlus)
+    if (isIncrement())
         s << "++";
     else
         s << "--";
@@ -484,18 +485,19 @@ void TypeOfResolveNode::streamTo(SourceStream& s) const
     s << "typeof " << m_ident;
 }
 
-void PrefixResolveNode::streamTo(SourceStream& s) const
+void PreIncResolveNode::streamTo(SourceStream& s) const
 {
-    if (m_oper == OpPlusPlus)
-        s << "++";
-    else
-        s << "--";
-    s << m_ident;
+    s << "++" << m_ident;
+}
+
+void PreDecResolveNode::streamTo(SourceStream& s) const
+{
+    s << "--" << m_ident;
 }
 
 void PrefixBracketNode::streamTo(SourceStream& s) const
 {
-    if (m_oper == OpPlusPlus)
+    if (isIncrement())
         s << "++";
     else
         s << "--";
@@ -504,7 +506,7 @@ void PrefixBracketNode::streamTo(SourceStream& s) const
 
 void PrefixDotNode::streamTo(SourceStream& s) const
 {
-    if (m_oper == OpPlusPlus)
+    if (isIncrement())
         s << "++";
     else
         s << "--";
@@ -661,9 +663,14 @@ void ConditionalNode::streamTo(SourceStream& s) const
         << " : " << PrecAssignment << expr2;
 }
 
-void AssignResolveNode::streamTo(SourceStream& s) const
+void ReadModifyResolveNode::streamTo(SourceStream& s) const
 {
     s << m_ident << ' ' << operatorString(m_oper) << ' ' << PrecAssignment << m_right;
+}
+
+void AssignResolveNode::streamTo(SourceStream& s) const
+{
+    s << m_ident << " = " << PrecAssignment << m_right;
 }
 
 void AssignBracketNode::streamTo(SourceStream& s) const

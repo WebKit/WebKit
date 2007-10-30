@@ -891,7 +891,10 @@ static Node* makeAssignNode(Node* loc, Operator op, Node* expr)
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
-        return new AssignResolveNode(resolve->identifier(), op, expr);
+        if (op == OpEqual)
+            return new AssignResolveNode(resolve->identifier(), expr);
+        else
+            return new ReadModifyResolveNode(resolve->identifier(), op, expr);
     }
     if (loc->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(loc);
@@ -909,15 +912,23 @@ static Node* makePrefixNode(Node* expr, Operator op)
     
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new PrefixResolveNode(resolve->identifier(), op);
+        if (op == OpPlusPlus)
+            return new PreIncResolveNode(resolve->identifier());
+        else
+            return new PreDecResolveNode(resolve->identifier());
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        return new PrefixBracketNode(bracket->base(), bracket->subscript(), op);
+        if (op == OpPlusPlus)
+            return new PreIncBracketNode(bracket->base(), bracket->subscript());
+        else
+            return new PreDecBracketNode(bracket->base(), bracket->subscript());
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    return new PrefixDotNode(dot->base(), dot->identifier(), op);
+    if (op == OpPlusPlus)
+        return new PreIncDotNode(dot->base(), dot->identifier());
+    return new PreDecDotNode(dot->base(), dot->identifier());
 }
 
 static Node* makePostfixNode(Node* expr, Operator op)
@@ -927,15 +938,24 @@ static Node* makePostfixNode(Node* expr, Operator op)
     
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new PostfixResolveNode(resolve->identifier(), op);
+        if (op == OpPlusPlus)
+            return new PostIncResolveNode(resolve->identifier());
+        else
+            return new PostDecResolveNode(resolve->identifier());
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        return new PostfixBracketNode(bracket->base(), bracket->subscript(), op);
+        if (op == OpPlusPlus)
+            return new PostIncBracketNode(bracket->base(), bracket->subscript());
+        else
+            return new PostDecBracketNode(bracket->base(), bracket->subscript());
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    return new PostfixDotNode(dot->base(), dot->identifier(), op);
+    
+    if (op == OpPlusPlus)
+        return new PostIncDotNode(dot->base(), dot->identifier());
+    return new PostDecDotNode(dot->base(), dot->identifier());
 }
 
 static Node* makeFunctionCallNode(Node* func, ArgumentsNode* args)
