@@ -32,6 +32,7 @@ use POSIX qw(strftime);
 
 my $showHelp = 0;
 my $runShark = 0;
+my $runShark20 = 0;
 my $jsShellPath;
 my $testsPattern;
 my $testRuns = 5; # This number may be different from what ./sunspider defaults to (that's OK)
@@ -40,18 +41,21 @@ my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName --shell=[path] [options]
   --help        Show this help message
-  --shell       Path to javascript shell
+  --shell       Path to JavaScript shell
   --runs        Number of times to run tests (default: $testRuns)
   --tests       Only run tests matching provided pattern
   --shark       Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
+  --shark20     Like --shark, but with a 20 microsecond sampling interval
 EOF
 
 GetOptions('runs=i' => \$testRuns,
            'shell=s' => \$jsShellPath,
            'shark' => \$runShark,
+           'shark20' => \$runShark20,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
+$runShark = 20 if $runShark20;
 $testRuns = 1 if $runShark;
 
 if (!$jsShellPath || $showHelp) {
@@ -108,7 +112,8 @@ sub runTestsOnce($)
     my $shellArgs = "-f $prefixFile -f resources/sunspider-standalone-driver.js 2> /dev/null";
     my $output;
     if ($useShark) {
-        $output = `shark -i -1 -q "$jsShellPath" $shellArgs`;
+        my $intervalArg = $useShark == 20 ? "-I 20u" : "";
+        $output = `shark $intervalArg -i -1-q "$jsShellPath" $shellArgs`;
     } else {
         $output = `"$jsShellPath" $shellArgs | grep -v break`;
     }

@@ -1,3 +1,10 @@
+2007-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * sunspider: Added --shark20 option, to run Shark at its highest sample
+        resolution instead of its default.
+
 2007-10-28  Adam Roben  <aroben@apple.com>
 
         Fix SunSpider on Windows

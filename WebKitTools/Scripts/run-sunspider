@@ -39,6 +39,7 @@ my $configuration = configuration();
 my $root;
 my $testRuns = 5; # This number may be different from what sunspider defaults to (that's OK)
 my $runShark = 0;
+my $runShark20 = 0;
 my $showHelp = 0;
 my $testsPattern;
 
@@ -50,15 +51,15 @@ Usage: $programName [options] [options to pass to build system]
   --runs        Number of times to run tests (default: $testRuns)
   --tests       Only run tests matching provided pattern
   --shark       Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
+  --shark20     Like --shark, but with a 20 microsecond sampling interval
 EOF
 
 GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(Cwd::abs_path($value)); },
            'runs=i' => \$testRuns,
            'shark' => \$runShark,
+           'shark20' => \$runShark20,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
-
-$testRuns = 1 if $runShark;
 
 if ($showHelp) {
    print STDERR $usage;
@@ -108,6 +109,7 @@ setupEnvironmentForExecution($productDir);
 my @args = ("--shell", testKJSPath($productDir), "--runs", $testRuns);
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
 push @args, "--shark" if $runShark;
+push @args, "--shark20" if $runShark20;
 push @args, "--tests", $testsPattern if $testsPattern;
 
 exec "./sunspider", @args;
