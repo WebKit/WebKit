@@ -28,6 +28,7 @@
 #include "WebScriptDebugServer.h"
 
 #include "WebView.h"
+#include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
 static Vector<IWebView*> sViews;
@@ -183,32 +184,38 @@ void WebScriptDebugServer::viewRemoved(IWebView* view)
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::addListener(
     /* [in] */ const IWebScriptDebugListener*)
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::removeListener(
     /* [in] */ const IWebScriptDebugListener*)
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::step()
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::pause()
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::resume()
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::isPaused(
     /* [out, retval] */ BOOL*)
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }

@@ -30,6 +30,8 @@
 #include "WebKitDLL.h"
 #include "WebScriptCallFrame.h"
 
+#include <wtf/Assertions.h>
+
 // WebScriptCallFrame ------------------------------------------------------------
 
 WebScriptCallFrame::WebScriptCallFrame()
@@ -85,24 +87,28 @@ ULONG STDMETHODCALLTYPE WebScriptCallFrame::Release(void)
 HRESULT STDMETHODCALLTYPE WebScriptCallFrame::caller(
     /* [out, retval] */ IWebScriptCallFrame**)
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptCallFrame::scopeChain(
-    /* [out, retval] */ VARIANT*)
+    /* [out, retval] */ IEnumVARIANT**)
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptCallFrame::functionName(
     /* [out, retval] */ BSTR*)
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebScriptCallFrame::evaluateWebScript(
+HRESULT STDMETHODCALLTYPE WebScriptCallFrame::stringByEvaluatingJavaScriptFromString(
     /* [in] */ BSTR,
-    /* [out, retval] */ VARIANT*)
+    /* [out, retval] */ BSTR*)
 {
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
 }

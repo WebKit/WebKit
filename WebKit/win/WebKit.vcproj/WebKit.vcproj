@@ -558,6 +558,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebScriptScope.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebScrollBar.h"
 				>
 			</File>
@@ -751,6 +755,10 @@
 			</File>
 			<File
 				RelativePath="..\WebScriptObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebScriptScope.cpp"
 				>
 			</File>
 			<File

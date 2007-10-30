@@ -26,45 +26,68 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebScriptCallFrame_h
-#define WebScriptCallFrame_h
+#include "WebKitDLL.h"
 
-#include "IWebScriptCallFrame.h"
+#include "WebScriptScope.h"
 
-class WebScriptCallFrame : public IWebScriptCallFrame {
-public:
-    static WebScriptCallFrame* createInstance();
+#include <wtf/Assertions.h>
 
-private:
-    WebScriptCallFrame();
-    ~WebScriptCallFrame();
+// WebScriptScope ------------------------------------------------------------
 
-public:
-    // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
-        /* [in] */ REFIID riid,
-        /* [retval][out] */ void** ppvObject);
-    
-    virtual ULONG STDMETHODCALLTYPE AddRef( void);
+WebScriptScope::WebScriptScope()
+: m_refCount(0)
+{
+    gClassCount++;
+}
 
-    virtual ULONG STDMETHODCALLTYPE Release( void);
+WebScriptScope::~WebScriptScope()
+{
+    gClassCount--;
+}
 
-    // IWebScriptCallFrame
-    virtual HRESULT STDMETHODCALLTYPE caller(
-        /* [out, retval] */ IWebScriptCallFrame**);
+// IUnknown -------------------------------------------------------------------
 
-    virtual HRESULT STDMETHODCALLTYPE scopeChain(
-        /* [out, retval] */ IEnumVARIANT**);
+HRESULT STDMETHODCALLTYPE WebScriptScope::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IWebScriptScope*>(this);
+    else if (IsEqualGUID(riid, IID_IWebScriptScope))
+        *ppvObject = static_cast<IWebScriptScope*>(this);
+    else
+        return E_NOINTERFACE;
 
-    virtual HRESULT STDMETHODCALLTYPE functionName(
-        /* [out, retval] */ BSTR*);
+    AddRef();
+    return S_OK;
+}
 
-    virtual HRESULT STDMETHODCALLTYPE stringByEvaluatingJavaScriptFromString(
-        /* [in] */ BSTR script,
-        /* [out, retval] */ BSTR*);
+ULONG STDMETHODCALLTYPE WebScriptScope::AddRef(void)
+{
+    return ++m_refCount;
+}
 
-private:
-    ULONG m_refCount;
-};
+ULONG STDMETHODCALLTYPE WebScriptScope::Release(void)
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete(this);
 
-#endif
+    return newRef;
+}
+
+// WebScriptScope ------------------------------------------------------------
+
+HRESULT STDMETHODCALLTYPE WebScriptScope::variableNames(
+    /* [out, retval] */ IEnumVARIANT**)
+{
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE WebScriptScope::valueForVariable(
+    /* [in] */ BSTR /*key*/,
+    /* [out, retval] */ BSTR* /*value*/)
+{
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
+}

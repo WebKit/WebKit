@@ -26,44 +26,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebScriptCallFrame_h
-#define WebScriptCallFrame_h
+#ifndef WebScriptScope_H
+#define WebScriptScope_H
 
-#include "IWebScriptCallFrame.h"
+#include "IWebScriptScope.h"
 
-class WebScriptCallFrame : public IWebScriptCallFrame {
+class WebScriptScope : public IWebScriptScope {
 public:
-    static WebScriptCallFrame* createInstance();
+    WebScriptScope();
+    virtual ~WebScriptScope();
 
-private:
-    WebScriptCallFrame();
-    ~WebScriptCallFrame();
-
-public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
-        /* [in] */ REFIID riid,
-        /* [retval][out] */ void** ppvObject);
-    
-    virtual ULONG STDMETHODCALLTYPE AddRef( void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void);
+    virtual ULONG STDMETHODCALLTYPE Release(void);
 
-    virtual ULONG STDMETHODCALLTYPE Release( void);
-
-    // IWebScriptCallFrame
-    virtual HRESULT STDMETHODCALLTYPE caller(
-        /* [out, retval] */ IWebScriptCallFrame**);
-
-    virtual HRESULT STDMETHODCALLTYPE scopeChain(
+    // IWebScriptScope
+    virtual HRESULT STDMETHODCALLTYPE variableNames(
         /* [out, retval] */ IEnumVARIANT**);
 
-    virtual HRESULT STDMETHODCALLTYPE functionName(
-        /* [out, retval] */ BSTR*);
-
-    virtual HRESULT STDMETHODCALLTYPE stringByEvaluatingJavaScriptFromString(
-        /* [in] */ BSTR script,
-        /* [out, retval] */ BSTR*);
-
-private:
+    virtual HRESULT STDMETHODCALLTYPE valueForVariable(
+        /* [in] */ BSTR key,
+        /* [out, retval] */ BSTR* value);
+    
+protected:
     ULONG m_refCount;
 };
 

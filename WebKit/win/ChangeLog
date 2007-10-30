@@ -1,3 +1,44 @@
+2007-10-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam and Maciej.
+
+        - Added the IWebScriptScope interface which is used by Drosera to get
+        information and run contextually significant code with respect to the
+        current JS stack frame.
+
+        * Interfaces/IWebScriptCallFrame.idl: Line endings changed, not sure why
+        but the real changes were to change the return type of scopeChain() and
+        the return type and name of evaluateWebScript() to
+        stringByEvaluatingJavaScriptFromString().
+        * Interfaces/IWebScriptScope.idl: Added.
+        * WebKit.vcproj/Interfaces.vcproj: Added the new interface.
+        * WebKit.vcproj/WebKit.vcproj: Added the files for the new class.
+        * WebKit.vcproj/WebKitGUID.vcproj: Added the new interfaces.
+        * WebScriptCallFrame.cpp: Changed the return type to E_NOTIMPL and
+        asserted so it would be obvious if I accidentally try to use one of
+        these functions before it's implemented.
+        (WebScriptCallFrame::caller):
+        (WebScriptCallFrame::scopeChain):
+        (WebScriptCallFrame::functionName):
+        (WebScriptCallFrame::stringByEvaluatingJavaScriptFromString):
+        * WebScriptCallFrame.h: Changed the return types mentioned above.
+        * WebScriptDebugServer.cpp: Also changed the return type to E_NOTIMPL.
+        (WebScriptDebugServer::addListener):
+        (WebScriptDebugServer::removeListener):
+        (WebScriptDebugServer::step):
+        (WebScriptDebugServer::pause):
+        (WebScriptDebugServer::resume):
+        (WebScriptDebugServer::isPaused):
+        * WebScriptScope.cpp: Added.
+        (WebScriptScope::WebScriptScope):
+        (WebScriptScope::~WebScriptScope):
+        (WebScriptScope::QueryInterface):
+        (WebScriptScope::AddRef):
+        (WebScriptScope::Release):
+        (WebScriptScope::getVariableNames):
+        (WebScriptScope::getValueForVariable):
+        * WebScriptScope.h: Added.
+
 2007-10-28  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

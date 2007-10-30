@@ -376,6 +376,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Interfaces\IWebScriptScope.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\IWebScrollBarDelegatePrivate.idl"
 			>
 		</File>
