@@ -1,3 +1,15 @@
+2007-10-30  Beth Dakin  <bdakin@apple.com>
+
+        Rubber stamped by Geoff.
+
+        Fixing two layout test mixups from my patch last night.
+
+        I added this test, but checked in old results:
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.txt:
+        
+        I removed the results of this test by accident:
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.txt: Added.
+
 2007-10-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
