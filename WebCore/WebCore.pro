@@ -947,8 +947,11 @@ gtk-port {
         platform/gtk/ThreadingGtk.cpp \
         platform/gtk/WheelEventGtk.cpp \
         platform/gtk/WidgetGtk.cpp \
+        platform/graphics/gtk/ColorGtk.cpp \
         platform/graphics/gtk/IconGtk.cpp \
         platform/graphics/gtk/ImageGtk.cpp \
+        platform/graphics/gtk/IntPointGtk.cpp \
+        platform/graphics/gtk/IntRectGtk.cpp \
         platform/network/curl/ResourceHandleCurl.cpp \
         platform/network/curl/ResourceHandleManager.cpp \
         platform/graphics/cairo/AffineTransformCairo.cpp \

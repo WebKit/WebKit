@@ -45,6 +45,8 @@ typedef struct _NSRect NSRect;
 typedef struct tagRECT RECT;
 #elif PLATFORM(QT)
 class QRect;
+#elif PLATFORM(GTK)
+typedef struct _GdkRectangle GdkRectangle;
 #endif
 #if PLATFORM(SYMBIAN)
 class TRect;
@@ -135,6 +137,9 @@ public:
 #elif PLATFORM(QT)
     IntRect(const QRect&);
     operator QRect() const;
+#elif PLATFORM(GTK)
+    IntRect(const GdkRectangle&);
+    operator GdkRectangle() const;
 #endif
 #if PLATFORM(SYMBIAN)
     IntRect(const TRect&);
