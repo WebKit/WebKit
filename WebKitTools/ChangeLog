@@ -1,5 +1,10 @@
 2007-10-30  Kevin McCullough  <kmccullough@apple.com>
 
+        - Made Adam the reviewer for a previous checkin. Not sure how it didn't
+        get caught by the pre-commit hooks.
+
+2007-10-30  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Adam.
 
         - This is a collection of relatively unrelated changes and cleanups
@@ -28,7 +33,7 @@
 
 2007-10-30  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Adam.
 
         - Small cleanup in the ServerConnection class.
 
