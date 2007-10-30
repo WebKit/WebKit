@@ -1,5 +1,38 @@
 2007-10-29  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Maciej.
+
+        Debranching remaining assignment nodes, and miscellaneous cleanup
+        
+        Split read-modify code paths out of AssignBracketNode and AssignDotNode
+        Removed now unnecessary check for write-only assignment in ReadModifyLocalVarNode 
+        and ReadModifyResolveNode evaluate methods
+
+        Leads to a 1% gain in SunSpider.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::ReadModifyLocalVarNode::evaluate):
+        (KJS::ReadModifyResolveNode::evaluate):
+        (KJS::AssignDotNode::evaluate):
+        (KJS::ReadModifyDotNode::optimizeVariableAccess):
+        (KJS::ReadModifyDotNode::evaluate):
+        (KJS::AssignBracketNode::evaluate):
+        (KJS::ReadModifyBracketNode::optimizeVariableAccess):
+        (KJS::ReadModifyBracketNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::AssignBracketNode::):
+        (KJS::AssignBracketNode::precedence):
+        (KJS::AssignDotNode::):
+        (KJS::AssignDotNode::precedence):
+        * kjs/nodes2string.cpp:
+        (KJS::ReadModifyBracketNode::streamTo):
+        (KJS::AssignBracketNode::streamTo):
+        (KJS::ReadModifyDotNode::streamTo):
+        (KJS::AssignDotNode::streamTo):
+
+2007-10-29  Oliver Hunt  <oliver@apple.com>
+
         Debranching various Node::evaluate implementations
         
         Reviewed by Maciej.

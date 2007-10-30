@@ -898,11 +898,16 @@ static Node* makeAssignNode(Node* loc, Operator op, Node* expr)
     }
     if (loc->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(loc);
-        return new AssignBracketNode(bracket->base(), bracket->subscript(), op, expr);
+        if (op == OpEqual)
+            return new AssignBracketNode(bracket->base(), bracket->subscript(), expr);
+        else
+            return new ReadModifyBracketNode(bracket->base(), bracket->subscript(), op, expr);
     }
     ASSERT(loc->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
-    return new AssignDotNode(dot->base(), dot->identifier(), op, expr);
+    if (op == OpEqual)
+        return new AssignDotNode(dot->base(), dot->identifier(), expr);
+    return new ReadModifyDotNode(dot->base(), dot->identifier(), op, expr);
 }
 
 static Node* makePrefixNode(Node* expr, Operator op)

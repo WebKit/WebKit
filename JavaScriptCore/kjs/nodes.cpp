@@ -2206,12 +2206,9 @@ JSValue* ReadModifyLocalVarNode::evaluate(ExecState* exec)
     JSValue* v;
     JSValue** slot = &variableObject->localStorage()[m_index].value;
 
-    if (m_oper == OpEqual)
-        v = m_right->evaluate(exec);
-    else {
-        JSValue* v2 = m_right->evaluate(exec);
-        v = valueForReadModifyAssignment(exec, *slot, v2, m_oper);
-    }
+    ASSERT(m_oper != OpEqual);
+    JSValue* v2 = m_right->evaluate(exec);
+    v = valueForReadModifyAssignment(exec, *slot, v2, m_oper);
 
     KJS_CHECKEXCEPTIONVALUE
 
@@ -2252,20 +2249,18 @@ JSValue *ReadModifyResolveNode::evaluate(ExecState *exec)
     ++iter;
   } while (iter != end);
 
-  if (m_oper != OpEqual)
-    return throwUndefinedVariableError(exec, m_ident);
+  ASSERT(m_oper != OpEqual);
+  return throwUndefinedVariableError(exec, m_ident);
 
  found:
   JSValue *v;
 
-  if (m_oper == OpEqual) {
-    v = m_right->evaluate(exec);
-  } else {
-    JSValue *v1 = slot.getValue(exec, base, m_ident);
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue *v2 = m_right->evaluate(exec);
-    v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
-  }
+  
+  ASSERT(m_oper != OpEqual);
+  JSValue *v1 = slot.getValue(exec, base, m_ident);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = m_right->evaluate(exec);
+  v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
 
   KJS_CHECKEXCEPTIONVALUE
 
@@ -2301,7 +2296,7 @@ JSValue *AssignResolveNode::evaluate(ExecState *exec)
   return v;
 }
 
-// ------------------------------ AssignDotNode -----------------------------------
+// ------------------------------ ReadModifyDotNode -----------------------------------
 
 void AssignDotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
@@ -2315,17 +2310,34 @@ JSValue *AssignDotNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
   JSObject *base = baseValue->toObject(exec);
 
+  JSValue *v = m_right->evaluate(exec);
+
+  KJS_CHECKEXCEPTIONVALUE
+
+  base->put(exec, m_ident, v);
+  return v;
+}
+
+void ReadModifyDotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_right.get());
+    nodeStack.append(m_base.get());
+}
+
+JSValue *ReadModifyDotNode::evaluate(ExecState *exec)
+{
+  JSValue *baseValue = m_base->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSObject *base = baseValue->toObject(exec);
+
   JSValue *v;
 
-  if (m_oper == OpEqual) {
-    v = m_right->evaluate(exec);
-  } else {
-    PropertySlot slot;
-    JSValue *v1 = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, base, m_ident) : jsUndefined();
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue *v2 = m_right->evaluate(exec);
-    v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
-  }
+  ASSERT(m_oper != OpEqual);
+  PropertySlot slot;
+  JSValue *v1 = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, base, m_ident) : jsUndefined();
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = m_right->evaluate(exec);
+  v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
 
   KJS_CHECKEXCEPTIONVALUE
 
@@ -2362,16 +2374,45 @@ JSValue *AssignBracketNode::evaluate(ExecState *exec)
 
   uint32_t propertyIndex;
   if (subscript->getUInt32(propertyIndex)) {
+    JSValue *v = m_right->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+
+    base->put(exec, propertyIndex, v);
+    return v;
+  }
+
+  Identifier propertyName(subscript->toString(exec));
+  JSValue *v = m_right->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  base->put(exec, propertyName, v);
+  return v;
+}
+void ReadModifyBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
+{
+    nodeStack.append(m_right.get());
+    nodeStack.append(m_subscript.get());
+    nodeStack.append(m_base.get());
+}
+
+JSValue *ReadModifyBracketNode::evaluate(ExecState *exec)
+{
+  JSValue *baseValue = m_base->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *subscript = m_subscript->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  JSObject *base = baseValue->toObject(exec);
+
+  uint32_t propertyIndex;
+  if (subscript->getUInt32(propertyIndex)) {
     JSValue *v;
-    if (m_oper == OpEqual) {
-      v = m_right->evaluate(exec);
-    } else {
-      PropertySlot slot;
-      JSValue *v1 = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, base, propertyIndex) : jsUndefined();
-      KJS_CHECKEXCEPTIONVALUE
-      JSValue *v2 = m_right->evaluate(exec);
-      v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
-    }
+    ASSERT(m_oper != OpEqual);
+    PropertySlot slot;
+    JSValue *v1 = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, base, propertyIndex) : jsUndefined();
+    KJS_CHECKEXCEPTIONVALUE
+    JSValue *v2 = m_right->evaluate(exec);
+    v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
 
     KJS_CHECKEXCEPTIONVALUE
 
@@ -2382,15 +2423,12 @@ JSValue *AssignBracketNode::evaluate(ExecState *exec)
   Identifier propertyName(subscript->toString(exec));
   JSValue *v;
 
-  if (m_oper == OpEqual) {
-    v = m_right->evaluate(exec);
-  } else {
-    PropertySlot slot;
-    JSValue *v1 = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, base, propertyName) : jsUndefined();
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue *v2 = m_right->evaluate(exec);
-    v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
-  }
+  ASSERT(m_oper != OpEqual);
+  PropertySlot slot;
+  JSValue *v1 = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, base, propertyName) : jsUndefined();
+  KJS_CHECKEXCEPTIONVALUE
+  JSValue *v2 = m_right->evaluate(exec);
+  v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
 
   KJS_CHECKEXCEPTIONVALUE
 

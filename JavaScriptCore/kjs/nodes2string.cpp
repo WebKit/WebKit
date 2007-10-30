@@ -673,16 +673,26 @@ void AssignResolveNode::streamTo(SourceStream& s) const
     s << m_ident << " = " << PrecAssignment << m_right;
 }
 
-void AssignBracketNode::streamTo(SourceStream& s) const
+void ReadModifyBracketNode::streamTo(SourceStream& s) const
 {
     s << PrecCall << m_base << '[' << m_subscript << "] "
         << operatorString(m_oper) << ' ' << PrecAssignment << m_right;
 }
 
-void AssignDotNode::streamTo(SourceStream& s) const
+void AssignBracketNode::streamTo(SourceStream& s) const
+{
+    s << PrecCall << m_base << '[' << m_subscript << "] = " << PrecAssignment << m_right;
+}
+
+void ReadModifyDotNode::streamTo(SourceStream& s) const
 {
     s << DotExpr << PrecCall << m_base << "." << m_ident << ' '
         << operatorString(m_oper) << ' ' << PrecAssignment << m_right;
+}
+
+void AssignDotNode::streamTo(SourceStream& s) const
+{
+    s << DotExpr << PrecCall << m_base << "." << m_ident << " = " << PrecAssignment << m_right;
 }
 
 void AssignErrorNode::streamTo(SourceStream& s) const
