@@ -33,10 +33,10 @@
 #include <string>
 #include <WebCore/COMPtr.h>
 #include <WebKit/IWebScriptDebugListener.h>
-#include <WebKit/IWebScriptDebugServer.h>
 
 class DebuggerClient;
 interface IWebScriptCallFrame;
+interface IWebScriptDebugServer;
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 
@@ -46,14 +46,15 @@ public:
     ~ServerConnection();
 
     void setGlobalContext(JSGlobalContextRef);
+
+    // Pause & Step    
     void pause();
     void resume();
     void stepInto();
 
+    // Connection Handling
     void applicationTerminating();
     void serverConnectionDidDie();
-    IWebScriptCallFrame* currentFrame() const;
-    IWebScriptCallFrame* getCallerFrame(int callFrame) const;
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(
@@ -112,11 +113,14 @@ public:
         /* [in] */ int lineNumber,
         /* [in] */ IWebFrame*);
 
+    // Stack & Variables
+    IWebScriptCallFrame* currentFrame() const;
+    IWebScriptCallFrame* getCallerFrame(int callFrame) const;
+
 private:
     std::wstring m_currentServerName;
 
-    // FIXME: make this a COMPtr when the Interface exists and the destructor can be called.
-    IWebScriptCallFrame* m_currentFrame;
+    COMPtr<IWebScriptCallFrame> m_currentFrame;
     COMPtr<IWebScriptDebugServer> m_server;
     JSGlobalContextRef m_globalContext;
 };
