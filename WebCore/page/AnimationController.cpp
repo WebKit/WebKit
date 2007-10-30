@@ -31,6 +31,7 @@
 
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "FloatConversion.h"
 #include "Frame.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
@@ -245,12 +246,17 @@ double ImplicitAnimation::progress() const
 
 static inline int blendFunc(int from, int to, double progress)
 {  
-    return from + (to - from) * progress;
+    return static_cast<int>(round(from + (to - from) * progress));
 }
 
 static inline double blendFunc(double from, double to, double progress)
 {  
     return from + (to - from) * progress;
+}
+
+static inline float blendFunc(float from, float to, double progress)
+{  
+    return narrowPrecisionToFloat(from + (to - from) * progress);
 }
 
 static inline Color blendFunc(const Color& from, const Color& to, double progress)

@@ -1,5 +1,13 @@
 2007-10-30  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Sam.
+
+        Build fix.
+
+        * page/AnimationController.cpp: (WebCore::blendFunc):
+
+2007-10-30  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin.
 
         WebCore part of fix for http://bugs.webkit.org/show_bug.cgi?id=10577
