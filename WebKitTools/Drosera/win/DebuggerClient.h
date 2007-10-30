@@ -32,25 +32,19 @@
 #include "BaseDelegate.h"
 
 #include <string>
-#include <WebCore/COMPtr.h>
 #include <wtf/OwnPtr.h>
 
 class DebuggerDocument;
-class ServerConnection;
 struct IWebView;
 struct IWebFrame;
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
-typedef const struct OpaqueJSValue* JSValueRef;
 
 class DebuggerClient : public BaseDelegate {
 public:
     DebuggerClient();
     explicit DebuggerClient(const std::wstring& serverName);
-
-    void initWithServerName(const std::wstring& serverName);
-    bool webViewLoaded() const { return m_webViewLoaded; }
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(
@@ -88,6 +82,8 @@ public:
     // IWebNotificationObserver
     HRESULT STDMETHODCALLTYPE onNotify(
         /* [in] */ IWebNotification*);
+
+    bool webViewLoaded() const { return m_webViewLoaded; }
 
 private:
     bool m_webViewLoaded;

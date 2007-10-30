@@ -1,5 +1,33 @@
 2007-10-30  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Adam.
+
+        - This is a collection of relatively unrelated changes and cleanups
+        to Drosera to prepare it for interacting with WebKit.  A lot of these
+        changes are just correcting mistakes, for example removing included
+        headers that are no longer needed.
+
+        * Drosera/DebuggerDocument.h: Added accessor for the ServerConnection
+        this will be needed by the DebuggerClient.
+        (DebuggerDocument::server):
+        * Drosera/win/BaseDelegate.h: Removed unnecessary include.
+        * Drosera/win/DebuggerClient.cpp: 
+        (DebuggerClient::didFinishLoadForFrame): Finished implementing.
+        (DebuggerClient::didReceiveTitle): Added comment about its purpose.
+        (DebuggerClient::createWebViewWithRequest): Added comment about its
+        purpose. 
+        * Drosera/win/DebuggerClient.h: Removed unnecessary include, and forward
+        declarations.
+        (DebuggerClient::webViewLoaded): Moved.
+        * Drosera/win/Drosera.cpp: Moved a function from the HelperFunctions
+        file, since this was the only place it was used.
+        (cfStringToBSTR):
+        * Drosera/win/Drosera.h: Cleaned up the includes.
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Removed HelperFunctions.h
+        * Drosera/win/HelperFunctions.h: Removed.
+
+2007-10-30  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by NOBODY (OOPS!).
 
         - Small cleanup in the ServerConnection class.

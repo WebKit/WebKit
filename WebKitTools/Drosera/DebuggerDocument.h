@@ -88,6 +88,9 @@ public:
     static JSValueRef callGlobalFunction(JSContextRef, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
 
     void windowScriptObjectAvailable(JSContextRef, JSObjectRef windowObject, JSValueRef* exception = 0);
+
+    ServerConnection* server() const { return m_server.get(); }
+
 private:
     static JSValueRef callFunctionOnObject(JSContextRef, JSObjectRef object, const char* functionName, int argumentCount, JSValueRef arguments[], JSValueRef* exception = 0);   // Implementation for calls into JS
     static JSClassRef getDroseraJSClass();

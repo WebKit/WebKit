@@ -30,7 +30,6 @@
 #define BaseDelegate_H
 
 #include <WebKit/IWebFrameLoadDelegate.h>
-#include <WebKit/IWebNotificationObserver.h>
 #include <WebKit/IWebUIDelegate.h>
 
 struct IDataObject;

@@ -31,14 +31,12 @@
 
 #include "DebuggerDocument.h"
 
-#include <string>
 #include <WebCore/COMPtr.h>
-#include <WebKit/IWebView.h>
-#include <WebKit/IWebViewPrivate.h>
-#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 
 class DebuggerClient;
+interface IWebView;
+interface IWebViewPrivate;
 
 class Drosera {
 public:

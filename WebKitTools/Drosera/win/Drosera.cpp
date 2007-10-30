@@ -31,7 +31,6 @@
 
 #include "DebuggerClient.h"
 #include "DebuggerDocument.h"
-#include "HelperFunctions.h"
 #include "resource.h"
 #include "ServerConnection.h"
 
@@ -40,6 +39,7 @@
 #include <WebKit/IWebMutableURLRequest.h>
 #include <WebKit/IWebView.h>
 #include <WebKit/WebKit.h>
+#include <wtf/RetainPtr.h>
 
 const unsigned MAX_LOADSTRING = 100;
 
@@ -50,13 +50,14 @@ static const LRESULT kNotHandledResult = -1;
 static LPCTSTR kDroseraPointerProp = TEXT("DroseraPointer");
 static HINSTANCE hInst;
 
+BSTR cfStringToBSTR(CFStringRef cfstr);
+
 ATOM registerDroseraClass(HINSTANCE hInstance);
 LRESULT CALLBACK droseraWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK aboutWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 HINSTANCE Drosera::getInst() { return hInst; }
 void Drosera::setInst(HINSTANCE in) { hInst = in; }
-
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                        HINSTANCE hPrevInstance,
@@ -309,4 +310,21 @@ HRESULT Drosera::attach()
         return ret;
 
     return ret;
+}
+
+BSTR cfStringToBSTR(CFStringRef cfstr)
+{
+    if (!cfstr)
+        return 0;
+
+    const UniChar* uniChars = CFStringGetCharactersPtr(cfstr);
+    if (uniChars)
+        return SysAllocStringLen((LPCTSTR)uniChars, CFStringGetLength(cfstr));
+
+    CFIndex length = CFStringGetLength(cfstr);
+    BSTR bstr = SysAllocStringLen(0, length);
+    CFStringGetCharacters(cfstr, CFRangeMake(0, length), (UniChar*)bstr);
+    bstr[length] = 0;
+
+    return bstr;
 }

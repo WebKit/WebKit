@@ -287,10 +287,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\HelperFunctions.h"
-				>
-			</File>
-			<File
 				RelativePath="..\ServerConnection.h"
 				>
 			</File>

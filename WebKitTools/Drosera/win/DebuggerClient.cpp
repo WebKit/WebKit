@@ -71,16 +71,26 @@ ULONG STDMETHODCALLTYPE DebuggerClient::Release(void)
 
 // IWebFrameLoadDelegate ------------------------------
 HRESULT STDMETHODCALLTYPE DebuggerClient::didFinishLoadForFrame(
-    /* [in] */ IWebView*,
+    /* [in] */ IWebView* webView,
     /* [in] */ IWebFrame*)
 {
-    // note: this is Drosera's own WebView, not the one in the app that we are attached to.
-    // FIXME: This cannot be implemented until IWebFrame has a globalContext
-    // m_debuggerDocument->server()->setGlobalContext(mainFrame->globalContext());
+    HRESULT ret = S_OK;
+
+    COMPtr<IWebFrame> mainFrame;
+    ret = webView->mainFrame(&mainFrame);
+    if (FAILED(ret))
+        return ret;
+
+    JSGlobalContextRef context;
+    ret = mainFrame->globalContext(&context);
+    if (FAILED(ret))
+        return ret;
+
+    m_debuggerDocument->server()->setGlobalContext(context);
 
     m_webViewLoaded = true;
 
-    return S_OK;
+    return ret;
 }
 
 HRESULT STDMETHODCALLTYPE DebuggerClient::windowScriptObjectAvailable( 
@@ -100,9 +110,10 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::windowScriptObjectAvailable(
 
 HRESULT STDMETHODCALLTYPE DebuggerClient::didReceiveTitle(
     /* [in] */ IWebView*,
-    /* [in] */ BSTR,
+    /* [in] */ BSTR /* title */,
     /* [in] */ IWebFrame*)
 {
+    // FIXME: Set the title of Drosera's window to "[server name] - [title]"
     return S_OK;
 }
 
@@ -111,6 +122,7 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::createWebViewWithRequest(
         /* [in] */ IWebURLRequest*,
         /* [retval][out] */ IWebView**)
 {
+    // FIXME: Opens the console window, this might get replaced by some Windows Fu
     return S_OK;
 }
 
