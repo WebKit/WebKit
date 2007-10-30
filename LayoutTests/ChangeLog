@@ -1,3 +1,26 @@
+2007-10-29  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Simplify the dataURL xxs tests.
+
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level.html:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame.html:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html:
+        * http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url.html:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html:
+
 2007-10-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.

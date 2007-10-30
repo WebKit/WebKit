@@ -1,10 +1,6 @@
 <html>
 <head>
     <script src="../resources/cross-frame-access.js"></script>
-</head>
-<body>
-    <p>Opener Frame</p>
-    <pre id="console"></pre>
     <script>
         if (window.layoutTestController) {
             layoutTestController.dumpAsText();
@@ -12,41 +8,54 @@
             layoutTestController.setCanOpenWindows();
         }
 
-        var url = "data:text/html,<html><body><p>Opened Frame</p><p id='accessMe'></p><iframe></iframe></body></html>";
-        var openedWindow = window.open(url);
+        var openedWindow;
 
-        var testDone = false;
+        function loaded() {
+            var url = "data:text/html,<html>"
+                + "<head>"
+                +     "<scr" + "ipt>"
+                +         "function fireSentinel() {"
+                +             "if (window.layoutTestController)"
+                +                 "layoutTestController.globalFlag = true;"
+                +         "}"
+                +     "</scr" + "ipt>"
+                + "</head>"
+                + "<body onload=\"fireSentinel();\">"
+                +     "<p>Opened Frame</p>"
+                +     "<p id='accessMe'>PASS: Cross frame access from an opener frame was denied</p>"
+                + "</body>"
+                + "</html>";
+    
+            openedWindow = window.open(url);
 
-        setTimeout(test, 1);
-
-        setTimeout(function() {
-            if (!testDone) {
-                log("FAIL: Access to a window opened with a data: URL was denied.");
-                closeWindowAndNotifyDone(openedWindow);
-            }
-        }, 2000);
-
-        function test() {
-            var flag = openedWindow.frames[0];
-            if (!flag) {
-                setTimeout(test, 1);
-                return;
-            }
-
-            try {
-                if (openedWindow.document.getElementById('accessMe')) {
-                    log("FAIL: Access to a window opened with a data: URL was allowed.");
-                    testDone = true;
-                    closeWindowAndNotifyDone(openedWindow);
-                    return;
+            if (window.layoutTestController) {
+                setTimeout(waitForFlag, 1);
+                function waitForFlag() {
+                    if (!layoutTestController.globalFlag) {
+                        setTimeout(waitForFlag, 1);
+                        return;
+                    }
+                    performTest();
                 }
+            } else {
+                log("Click the button when all the subframes have finished loading.");
+            }
+        }
+    
+        function performTest() {
+            try {
+                openedWindow.document.getElementById('accessMe').innerHTML = 'FAIL: Access to a window opened with a data: URL was allowed.';
             } catch (e) {
             }
 
-            log("PASS: Access to a window opened with a data: URL was denied.");
-            testDone = true;
-            closeWindowAndNotifyDone(openedWindow);
-        }
+            if (window.layoutTestController)
+                closeWindowAndNotifyDone(openedWindow);
+        }    
     </script>
+</head>
+<body onload="loaded();">
+    <p>Opener Frame</p>
+    <button onclick="performTest()">Test</button>
+    <pre id="console"></pre>
 </body>
 </html>
