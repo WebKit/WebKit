@@ -1,5 +1,13 @@
 2007-10-29  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+        
+        - Added list of ECMAScript3 features that SunSpider does not cover currently.
+
+        * UNCOVERED: Added.
+
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver.
         
         - Give better error messages when sunspider-compare-results fails
