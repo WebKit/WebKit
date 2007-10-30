@@ -229,7 +229,7 @@ void DebuggerDocument::willExecuteStatement(JSContextRef context, JSValueRef sou
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
 
     DebuggerDocument::callGlobalFunction(context, "willExecuteStatement", argumentsSize, arguments, exception);
-    if (*exception)
+    if (exception && *exception)
         logException(context, *exception);
 }
 
@@ -239,7 +239,7 @@ void DebuggerDocument::didEnterCallFrame(JSContextRef context, JSValueRef source
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
 
     DebuggerDocument::callGlobalFunction(context, "didEnterCallFrame", argumentsSize, arguments, exception);
-    if (*exception)
+    if (exception && *exception)
         logException(context, *exception);
 }
 
@@ -249,7 +249,7 @@ void DebuggerDocument::willLeaveCallFrame(JSContextRef context, JSValueRef sourc
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);
 
     DebuggerDocument::callGlobalFunction(context, "willLeaveCallFrame", argumentsSize, arguments, exception);
-    if (*exception)
+    if (exception && *exception)
         logException(context, *exception);
 }
 
@@ -267,7 +267,7 @@ void DebuggerDocument::windowScriptObjectAvailable(JSContextRef context, JSObjec
     JSValueRef droseraObject = JSObjectMake(context, getDroseraJSClass(), this);
 
     JSObjectSetProperty(context, windowObject, droseraStr.get(), droseraObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
-    if (*exception)
+    if (exception && *exception)
         logException(context, *exception);
 }
 
@@ -315,7 +315,7 @@ JSValueRef DebuggerDocument::callFunctionOnObject(JSContextRef context, JSObject
     ASSERT(JSObjectIsFunction(context, function));
  
     JSValueRef returnValue = JSObjectCallAsFunction(context, function, 0, argumentCount, arguments, exception);
-    if (*exception)
+    if (exception && *exception)
         logException(context, *exception);
 
     return returnValue;

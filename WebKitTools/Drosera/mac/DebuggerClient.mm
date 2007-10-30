@@ -30,6 +30,7 @@
 #import "config.h"
 #import "DebuggerClient.h"
 
+#import "DebuggerApplication.h"
 #import "DebuggerDocument.h"
 #import "ServerConnection.h"
 
@@ -41,8 +42,6 @@ static NSString *DebuggerPauseToolbarItem = @"DebuggerPauseToolbarItem";
 static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 static NSString *DebuggerStepOverToolbarItem = @"DebuggerStepOverToolbarItem";
 static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
-
-@class DebuggerApplication;
 
 @implementation DebuggerClient
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector

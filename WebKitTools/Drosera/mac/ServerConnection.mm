@@ -124,9 +124,6 @@
     }
 }
 
-#pragma mark -
-#pragma mark Connection Handling
-
 - (void)applicationTerminating:(NSNotification *)notifiction
 {
     if (server && [[(NSDistantObject *)server connectionForProxy] isValid]) {
@@ -145,7 +142,8 @@
 #pragma mark Debug Listener Callbacks
 
 - (void)webView:(WebView *)view didLoadMainResourceForDataSource:(WebDataSource *)dataSource
-{  
+{
+    // Get document source
     NSString *documentSource = nil;
     id <WebDocumentRepresentation> rep = [dataSource representation];
     if ([rep canProvideDocumentSource])
@@ -155,6 +153,8 @@
         return;
 
     JSRetainPtr<JSStringRef> documentSourceJS(Adopt, JSStringCreateWithCFString((CFStringRef)documentSource));
+
+    // Get URL
     NSString *url = [[[dataSource response] URL] absoluteString];
     JSRetainPtr<JSStringRef> urlJS(Adopt, JSStringCreateWithCFString(url ? (CFStringRef)url : CFSTR("")));
 
@@ -253,22 +253,6 @@
 - (WebScriptCallFrame *)currentFrame
 {
     return currentFrame;
-}
-
-- (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object
-{
-    WebScriptObject *enumerateAttributes = [object evaluateWebScript:@"(function () { var result = new Array(); for (var x in this) { result.push(x); } return result; })"];
-
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    WebScriptObject *variables = [enumerateAttributes callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObject:object]];
-    unsigned length = [[variables valueForKey:@"length"] intValue];
-    for (unsigned i = 0; i < length; i++) {
-        NSString *key = [variables webScriptValueAtIndex:i];
-        [result addObject:key];
-    }
-
-    [result sortUsingSelector:@selector(compare:)];
-    return [result autorelease];
 }
 
 #pragma mark -

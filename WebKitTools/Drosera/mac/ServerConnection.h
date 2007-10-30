@@ -48,7 +48,6 @@
 - (void)switchToServerNamed:(NSString *)name;
 - (void)applicationTerminating:(NSNotification *)notifiction;
 - (WebScriptCallFrame *)currentFrame;
-- (NSArray *)webScriptAttributeKeysForScriptObject:(WebScriptObject *)object;
 - (NSString *)currentServerName;
 
 @end

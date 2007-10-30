@@ -70,6 +70,28 @@ JSValueRef JSValueRefCreateWithNSString(JSContextRef context, NSString* nsString
 }
 @end
 
+@interface WebScriptObject (WebScriptObjectExtras)
++ (NSArray *)webScriptAttributeKeys:(WebScriptObject *)object;
+@end
+
+@implementation WebScriptObject (WebScriptObjectExtras)
++ (NSArray *)webScriptAttributeKeys:(WebScriptObject *)object;
+{
+    WebScriptObject *enumerateAttributes = [object evaluateWebScript:@"(function () { var result = new Array(); for (var x in this) { result.push(x); } return result; })"];
+
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    WebScriptObject *variables = [enumerateAttributes callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObject:object]];
+    unsigned length = [[variables valueForKey:@"length"] intValue];
+    for (unsigned i = 0; i < length; i++) {
+        NSString *key = [variables webScriptValueAtIndex:i];
+        [result addObject:key];
+    }
+
+    [result sortUsingSelector:@selector(compare:)];
+    return [result autorelease];
+}
+@end
+
 // DebuggerDocument platform specific implementations
 
 void DebuggerDocument::platformPause()
@@ -133,7 +155,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
         return;
 
     WebScriptObject *scope = [[cframe scopeChain] objectAtIndex:0]; // local is always first
-    NSArray *localScopeVariableNames = [m_server.get() webScriptAttributeKeysForScriptObject:scope];
+    NSArray *localScopeVariableNames = [WebScriptObject webScriptAttributeKeys:scope];
 
     for (int i = 0; i < [localScopeVariableNames count]; ++i) {
         variableNames.append(JSValueRefCreateWithNSString(context, [localScopeVariableNames objectAtIndex:i]));

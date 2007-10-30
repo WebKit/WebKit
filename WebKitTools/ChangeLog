@@ -1,3 +1,29 @@
+2007-10-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej and Adam.
+
+        - Minor mac-side improvements including moving a function to a more
+        appropriate location, fixing a warning, and correctly checking
+        exceptions.
+
+        * Drosera/DebuggerDocument.cpp: Corrected the exception checking.
+        (DebuggerDocument::willExecuteStatement):
+        (DebuggerDocument::didEnterCallFrame):
+        (DebuggerDocument::willLeaveCallFrame):
+        (DebuggerDocument::windowScriptObjectAvailable):
+        (DebuggerDocument::callFunctionOnObject):
+        * Drosera/mac/DebuggerClient.mm: Fixes a warning.
+        * Drosera/mac/DebuggerDocumentPlatform.mm: Moved
+        webScriptAttributeKeysForScriptObject to DebuggerDocumentPlatform
+        because it doesn't require the ServerConnection at all.
+        (NSStringCreateWithJSStringRef): Made an argument const.
+        (JSValueRefCreateWithNSString): Made an argument const.
+        (+[WebScriptObject webScriptAttributeKeysForScriptObject:]):
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        * Drosera/mac/ServerConnection.h: Moved aforementioned function.
+        * Drosera/mac/ServerConnection.mm: Ditto.
+        (-[ServerConnection webView:didLoadMainResourceForDataSource:]):
+
 2007-10-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
