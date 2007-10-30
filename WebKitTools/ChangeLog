@@ -1,6 +1,9 @@
 2007-10-29  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Maciej and Adam.
+        updated reviewers for my previous changelog.
+
+2007-10-29  Kevin McCullough  <kmccullough@apple.com>
+        Reviewed by Maciej and Adam and Geoff.
 
         - Minor mac-side improvements including moving a function to a more
         appropriate location, fixing a warning, and correctly checking
