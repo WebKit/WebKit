@@ -1,3 +1,23 @@
+2007-10-30  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        * Drosera/win/DebuggerDocumentPlatform.cpp:Implemented much of the
+        functionality that could not have existed previously without the new
+        interfaces.
+        (JSValueRefCreateWithBSTR): Added a helper function to easily convert
+        from a BSTR to a JSValueRef.
+        (DebuggerDocument::platformEvaluateScript): Implemented.
+        (DebuggerDocument::getPlatformCurrentFunctionStack): Implemented.
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        Implemented.
+        (DebuggerDocument::platformValueForScopeVariableNamed): Implemented.
+        * Drosera/win/HelperFunctions.h: Cleaned up some comments.
+        * Drosera/win/ServerConnection.cpp: Added a helper function.
+        (ServerConnection::getCallerFrame):
+        * Drosera/win/ServerConnection.h: Added a helper function.
+
+
 2007-10-29  Kevin McCullough  <kmccullough@apple.com>
 
         updated reviewers for my previous changelog.

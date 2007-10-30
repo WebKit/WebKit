@@ -30,7 +30,17 @@
 
 #include "ServerConnection.h"
 
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSStringRefBSTR.h>
+#include <WebKit/IWebScriptCallFrame.h>
+#include <WebKit/IWebScriptScope.h>
+
+JSValueRef JSValueRefCreateWithBSTR(JSContextRef context, BSTR string)
+{
+    JSRetainPtr<JSStringRef> jsString(Adopt, JSStringCreateWithBSTR(string));
+    return JSValueMakeString(context, jsString.get());
+}
 
 // DebuggerDocument platform specific implementations
 
@@ -49,25 +59,145 @@ void DebuggerDocument::platformStepInto()
     m_server->stepInto();
 }
 
-// FIXME: Some of the below functionality cannot be implemented until the WebScriptCallFrame Server works on windows.
-
-JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStringRef /*script*/, int /*callFrame*/)
+JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStringRef script, int callFrame)
 {
-    return JSValueMakeUndefined(context);
+    HRESULT ret = S_OK;
+
+    COMPtr<IWebScriptCallFrame> cframe = m_server->getCallerFrame(callFrame);
+    if (!cframe)
+        return JSValueMakeUndefined(context);
+
+    // Convert script to BSTR
+    BSTR scriptBSTR = JSStringCopyBSTR(script);
+    BSTR value = 0;
+    ret = cframe->stringByEvaluatingJavaScriptFromString(scriptBSTR, &value);
+    SysFreeString(scriptBSTR);
+    if (FAILED(ret)) {
+        SysFreeString(value);
+        return JSValueMakeUndefined(context);
+    }
+
+    JSValueRef returnValue = JSValueRefCreateWithBSTR(context, value);
+    SysFreeString(value);
+    return returnValue;
+
 }
 
-void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef /*context*/, Vector<JSValueRef>& /*currentStack*/)
+void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vector<JSValueRef>& currentStack)
 {
+    HRESULT ret = S_OK;
+
+    COMPtr<IWebScriptCallFrame> caller;
+    for (COMPtr<IWebScriptCallFrame> frame = m_server->currentFrame(); frame; frame = caller) {
+        BSTR function = 0;
+        ret = frame->functionName(&function);
+        if (FAILED(ret)) {
+            SysFreeString(function);
+            return;
+        }
+
+        ret = frame->caller(&caller);
+        if (FAILED(ret))
+            return;
+
+        bool needToFree = true;
+        if (!function) {
+            needToFree = false;
+            if (caller)
+                function = L"(anonymous function)";
+            else
+                function = L"(global scope)";
+        }
+
+        currentStack.append(JSValueRefCreateWithBSTR(context, function));
+        if (needToFree)
+            SysFreeString(function);
+    }
 }
 
-void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef /*context*/, int /*callFrame*/, Vector<JSValueRef>& /*variableNames*/)
+void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef context, int callFrame, Vector<JSValueRef>& variableNames)
 {
+    HRESULT ret = S_OK;
+
+    COMPtr<IWebScriptCallFrame> cframe = m_server->getCallerFrame(callFrame);
+    if (!cframe)
+        return;
+
+    COMPtr<IEnumVARIANT> scopeChain;
+    ret = cframe->scopeChain(&scopeChain);
+    if (FAILED(ret))
+        return;
+
+    VARIANT var;
+    VariantInit(&var);
+    ret = scopeChain->Next(1, &var, 0); // local is always first
+    if (FAILED(ret)) {
+        VariantClear(&var);
+        return;
+    }
+
+    ASSERT(V_VT(&var) == VT_UNKNOWN);
+    COMPtr<IWebScriptScope> scope;
+    scope.query(V_UNKNOWN(&var));
+    VariantClear(&var);
+
+    COMPtr<IEnumVARIANT> localScopeVariableNames;
+    ret = scope->variableNames(&localScopeVariableNames);
+    if (FAILED(ret))
+        return;
+
+    while (localScopeVariableNames->Next(1, &var, 0) == S_OK) {
+        ASSERT(V_VT(&var) == VT_BSTR);
+        BSTR variableName;
+
+        variableName = V_BSTR(&var);
+        variableNames.append(JSValueRefCreateWithBSTR(context, variableName));
+
+        SysFreeString(variableName);
+        VariantClear(&var);
+    }
 }
 
-JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef context, JSStringRef /*key*/, int /*callFrame*/)
+JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef context, JSStringRef key, int callFrame)
 {
-    return JSValueMakeUndefined(context);
+    HRESULT ret = S_OK;
+
+    COMPtr<IWebScriptCallFrame> cframe = m_server->getCallerFrame(callFrame);
+    if (!cframe)
+        return JSValueMakeUndefined(context);
+
+    COMPtr<IEnumVARIANT> scopeChain;
+    ret = cframe->scopeChain(&scopeChain);
+    if (FAILED(ret))
+        return JSValueMakeUndefined(context);
+
+    VARIANT var;
+    VariantInit(&var);
+
+    BSTR resultString = 0;
+    BSTR bstrKey = JSStringCopyBSTR(key);
+    while (scopeChain->Next(1, &var, 0) == S_OK && resultString == 0) {
+        ASSERT(V_VT(&var) == VT_UNKNOWN);
+
+        COMPtr<IWebScriptScope> scope;
+        scope.query(V_UNKNOWN(&var));
+        ret = scope->valueForVariable(bstrKey, &resultString);
+        VariantClear(&var);
+
+        if (FAILED(ret)) {
+            SysFreeString(bstrKey);
+            SysFreeString(resultString);
+            return JSValueMakeUndefined(context);
+        }
+    }
+    SysFreeString(bstrKey);
+
+    JSValueRef returnValue = JSValueRefCreateWithBSTR(context, resultString);
+    SysFreeString(resultString);
+
+    return returnValue;
 }
+
 
 void DebuggerDocument::platformLog(JSStringRef msg)
 {

@@ -33,9 +33,7 @@
 
 #include <wtf/RetainPtr.h>
 
-// These functions are actually defined somewhere else but could not be linked for one reason or another.
-
-// This function was copied from WebCore BString.cpp I would lik to it if I could
+// This function was copied from WebCore BString.cpp I would link to it if I could.
 BSTR cfStringToBSTR(CFStringRef cfstr)
 {
     BSTR bstr;
@@ -56,10 +54,6 @@ BSTR cfStringToBSTR(CFStringRef cfstr)
 
     return bstr;
 }
-
-//FIXME This is a class I believe I will need in the future but if not should be removed.
-// It will include a Smart JSStringRef ptr
-//#include <JavaScriptCore/JSStringRef.h>
 
 #endif //HelperFunctions_H
 

@@ -34,7 +34,7 @@
 
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <JavaScriptCore/JSStringRefCOM.h>
+#include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/RetainPtr.h>
 #include <WebKit/WebKit.h>
 
@@ -97,6 +97,20 @@ void ServerConnection::serverConnectionDidDie()
 IWebScriptCallFrame* ServerConnection::currentFrame() const
 {
     return m_currentFrame;
+}
+
+IWebScriptCallFrame* ServerConnection::getCallerFrame(int callFrame) const
+{
+    COMPtr<IWebScriptCallFrame> cframe = currentFrame();
+    COMPtr<IWebScriptCallFrame> callerFrame;
+    for (int count = 0; count < callFrame; count++) {
+        if (FAILED(cframe->caller(&callerFrame)))
+            return 0;
+
+        cframe = callerFrame;
+    }
+
+    return cframe.get();
 }
 
 

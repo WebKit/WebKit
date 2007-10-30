@@ -53,6 +53,7 @@ public:
     void applicationTerminating();
     void serverConnectionDidDie();
     IWebScriptCallFrame* currentFrame() const;
+    IWebScriptCallFrame* getCallerFrame(int callFrame) const;
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(
