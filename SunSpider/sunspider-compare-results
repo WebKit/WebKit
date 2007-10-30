@@ -79,7 +79,8 @@ sub readResultsFile($)
     }
     close FILE;
 
-    die "Cound not find data in file - needs to be bracketed by [{ and }]." unless ($foundStart && $foundEnd);
+    die "Cound not find data in ${filename} - needs to start with [{" unless $foundStart;
+    die "Cound not find data in ${filename} - needs to end with }]" unless $foundEnd;
 
     return $result;
 }

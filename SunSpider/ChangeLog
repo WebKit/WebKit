@@ -1,5 +1,13 @@
 2007-10-29  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver.
+        
+        - Give better error messages when sunspider-compare-results fails
+
+        * sunspider-compare-results:
+
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - fix Date tests to work in command-line SpiderMonkey
