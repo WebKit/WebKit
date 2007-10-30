@@ -2,6 +2,14 @@
 
         Not reviewed, build fix.
         
+        - Include Vector.h in a way that actually works.
+
+        * kjs/LocalStorage.h:
+
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, build fix.
+        
         - Install LocalStorage.h as a private header.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
