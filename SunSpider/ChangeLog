@@ -1,3 +1,12 @@
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - fix Date tests to work in command-line SpiderMonkey
+
+        * tests/date-format-tofte.js:
+        * tests/date-format-xparb.js:
+
 2007-10-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

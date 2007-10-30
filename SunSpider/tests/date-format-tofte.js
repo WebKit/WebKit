@@ -1,6 +1,6 @@
-Array.prototype.exists = function (x) {
-    for (var i = 0; i < this.length; i++) {
-        if (this[i] == x) return true;
+function arrayExists(array, x) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] == x) return true;
     }
     return false;
 }
@@ -276,7 +276,7 @@ Date.prototype.formatDate = function (input,time) {
             // this is our way of allowing users to escape stuff
             ia.splice(ij,1);
         } else {
-            if (switches.exists(ia[ij])) {
+            if (arrayExists(switches,ia[ij])) {
                 ia[ij] = eval(ia[ij] + "()");
             }
         }
@@ -292,8 +292,8 @@ Date.prototype.formatDate = function (input,time) {
 var date = new Date("1/1/2007 1:11:11");
 
 for (i = 0; i < 500; ++i) {
-    var short = date.formatDate("Y-m-d");
-    var long = date.formatDate("l, F d, Y g:i:s A");
+    var shortFormat = date.formatDate("Y-m-d");
+    var longFormat = date.formatDate("l, F d, Y g:i:s A");
     date.setTime(date.getTime() + 84266956);
 }
 

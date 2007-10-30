@@ -411,7 +411,7 @@ Date.patterns = {
 var date = new Date("1/1/2007 1:11:11");
 
 for (i = 0; i < 4000; ++i) {
-    var short = date.dateFormat("Y-m-d");
-    var long = date.dateFormat("l, F d, Y g:i:s A");
+    var shortFormat = date.dateFormat("Y-m-d");
+    var longFormat = date.dateFormat("l, F d, Y g:i:s A");
     date.setTime(date.getTime() + 84266956);
 }
