@@ -165,9 +165,6 @@ void RenderBox::destroy()
     // A lot of the code in this funtion is just pasted into
     // RenderWidget::destroy. If anything in this function changes,
     // be sure to fix RenderWidget::destroy() as well.
-    if (style()->transitions())
-        animationController()->cancelTransitions(this);
-
     if (hasOverrideSize())
         gOverrideSizeMap->remove(this);
 

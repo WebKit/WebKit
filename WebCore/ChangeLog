@@ -1,5 +1,17 @@
 2007-10-29  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - fix crashing tests fast/frames/inline-object-inside-frameset.html and
+          fast/forms/form-hides-table.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::destroy):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
+2007-10-29  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Adam Roben.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=15750
