@@ -1,3 +1,18 @@
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - Define good VectorTraits for LocalStorage entry for 0.5% speed improvement on SunSpider.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/LocalStorage.h: Added.
+        (KJS::LocalStorageEntry::LocalStorageEntry):
+        (WTF::):
+        * kjs/function.h:
+        * kjs/nodes.cpp:
+        (KJS::FunctionBodyNode::processDeclarationsForFunctionCode):
+
 2007-10-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

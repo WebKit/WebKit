@@ -3219,7 +3219,7 @@ void FunctionBodyNode::processDeclarationsForFunctionCode(ExecState* exec)
         optimizeVariableAccess();
 
     ASSERT(exec->variableObject()->isActivation());
-    ActivationImp::LocalStorage& localStorage = static_cast<ActivationImp*>(exec->variableObject())->localStorage();
+    LocalStorage& localStorage = static_cast<ActivationImp*>(exec->variableObject())->localStorage();
     localStorage.reserveCapacity(m_varStack.size() + m_parameters.size() + m_functionStack.size());
     
     int minAttributes = Internal | DontDelete;
@@ -3233,16 +3233,16 @@ void FunctionBodyNode::processDeclarationsForFunctionCode(ExecState* exec)
         int attributes = minAttributes;
         if (node->varType == VarDeclNode::Constant)
             attributes |= ReadOnly;
-        localStorage.append(ActivationImp::LocalStorageEntry(jsUndefined(), attributes));
+        localStorage.append(LocalStorageEntry(jsUndefined(), attributes));
     }
 
     const List& args = *exec->arguments();
     for (i = 0, size = m_parameters.size(); i < size; ++i)
-        localStorage.append(ActivationImp::LocalStorageEntry(args[i], DontDelete));
+        localStorage.append(LocalStorageEntry(args[i], DontDelete));
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i) {
         FuncDeclNode* node = m_functionStack[i];
-        localStorage.append(ActivationImp::LocalStorageEntry(node->makeFunction(exec), minAttributes));
+        localStorage.append(LocalStorageEntry(node->makeFunction(exec), minAttributes));
     }
 }
 

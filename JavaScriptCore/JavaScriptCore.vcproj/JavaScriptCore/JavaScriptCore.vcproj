@@ -355,6 +355,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\LocalStorage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\lookup.cpp"
 				>
 			</File>

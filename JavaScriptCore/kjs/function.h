@@ -25,10 +25,10 @@
 #ifndef KJS_FUNCTION_H
 #define KJS_FUNCTION_H
 
+#include "LocalStorage.h"
 #include "SymbolTable.h"
 #include "object.h"
 #include <wtf/OwnPtr.h>
-#include <wtf/Vector.h>
 
 namespace KJS {
 
@@ -138,24 +138,6 @@ namespace KJS {
   };
 
   class ActivationImp : public JSObject {
-  public:
-    struct LocalStorageEntry {
-        LocalStorageEntry()
-        {
-        }
-
-        LocalStorageEntry(JSValue* v, int a)
-            : value(v)
-            , attributes(a)
-        {
-        }
-
-        JSValue* value;
-        int attributes;
-    };
-
-    typedef Vector<LocalStorageEntry, 32> LocalStorage;
-
   private:
     struct ActivationImpPrivate {
         ActivationImpPrivate(FunctionImp* f, const List& a)
