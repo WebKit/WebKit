@@ -1,3 +1,37 @@
+2007-10-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebCore part of fix for http://bugs.webkit.org/show_bug.cgi?id=10577
+        <rdar://problem/5103625> REGRESSION: Caps lock icon should show in password fields
+
+        Test: manual-tests/password-caps-lock.html
+
+        * WebCore.base.exp: Added symbol for capsLockStateMayHaveChanged.
+
+        * page/Frame.cpp: (WebCore::Frame::setIsActive): Calls capsLockStateMayHaveChanged.
+        * page/EventHandler.cpp: (WebCore::EventHandler::capsLockStateMayHaveChanged): Added. Tells the focused node's renderer that the capsLockStateMayHaveChanged.
+        * page/EventHandler.h:
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/mac/KeyEventMac.mm: (WebCore::PlatformKeyboardEvent::currentCapsLockState): Added.
+        * platform/win/KeyEventWin.cpp: (WebCore::PlatformKeyboardEvent::currentCapsLockState): Added.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        (WebCore::RenderTextControl::paint): Added.  If m_shouldDrawCapsLockIndicator is true, paints the caps lock indicator after the background.
+        (WebCore::RenderTextControl::forwardEvent): When the control gets and loses focus, update the caps lock state.
+        (WebCore::RenderTextControl::capsLockStateMayHaveChanged): Added. Updates m_shouldDrawCapsLockIndicator, which is true if the field is a password field, 
+         and the frame is active, and the element is focused, and the caps lock is on.  Causes a repaint when m_shouldDrawCapsLockIndicator changes state.
+        * rendering/RenderTextControl.h: Added m_shouldDrawCapsLockIndicator.
+        * rendering/RenderObject.h: (WebCore::RenderObject::capsLockStateMayHaveChanged): Added.
+
+        * rendering/RenderTheme.h: (WebCore::RenderTheme::paintCapsLockIndicator): Added.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::paintCapsLockIndicator): Added.  Calls wkDrawCapsLockIndicator.
+        * rendering/RenderThemeSafari.cpp: (WebCore::RenderThemeSafari::paintCapsLockIndicator): Added.  Calls paintThemePart for the CapsLockPart.
+        * rendering/RenderThemeSafari.h:
+
 2007-10-30  David Hyatt  <hyatt@apple.com>
 
         Land support for implicit animation in CSS.

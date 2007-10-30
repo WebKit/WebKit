@@ -547,6 +547,20 @@ void RenderThemeSafari::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, El
 {
 }
 
+bool RenderThemeSafari::paintCapsLockIndicator(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{    
+#if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 1
+    if (paintInfo.context->paintingDisabled())
+        return true;
+
+    paintThemePart(CapsLockPart, paintInfo.context->platformContext(), r, (NSControlSize)0, (ThemeControlState)0);
+
+    return false;
+#else
+    return true;
+#endif
+}
+
 bool RenderThemeSafari::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     paintThemePart(TextAreaPart, paintInfo.context->platformContext(), r, (NSControlSize)0, determineState(o) & ~FocusedState);

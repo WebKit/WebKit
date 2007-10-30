@@ -1564,6 +1564,9 @@ void Frame::setIsActive(bool flag)
         setSelectionFromNone();
     setCaretVisible(flag);
 
+    // Update for caps lock state
+    eventHandler()->capsLockStateMayHaveChanged();
+
     // Because CSSStyleSelector::checkOneSelector() and
     // RenderTheme::isFocused() check if the frame is active, we have to
     // update style and theme state that depended on those.

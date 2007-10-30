@@ -862,6 +862,8 @@ public:
     void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
     
     virtual void removeLeftoverAnonymousBlock(RenderBlock* child);
+    
+    virtual void capsLockStateMayHaveChanged() { }
 
     AnimationController* animationController() const;
 

@@ -154,4 +154,9 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM virtualKeyCode, LPARAM
 {
 }
 
+bool PlatformKeyboardEvent::currentCapsLockState()
+{
+     return GetKeyState(VK_CAPITAL) & 1;
+}
+
 }

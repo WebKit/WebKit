@@ -668,6 +668,16 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Eleme
 {
 }
 
+bool RenderThemeMac::paintCapsLockIndicator(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    if (paintInfo.context->paintingDisabled())
+        return true;
+
+    wkDrawCapsLockIndicator(paintInfo.context->platformContext(), r);
+    
+    return false;
+}
+
 bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);

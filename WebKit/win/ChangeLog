@@ -1,3 +1,12 @@
+2007-10-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKitWin part of fix for http://bugs.webkit.org/show_bug.cgi?id=10577
+        <rdar://problem/5110427> REGRESSION: Caps lock icon should show in password fields
+
+        * WebView.cpp: (WebView::keyDown): Call capsLockStateMayHaveChanged so WebCore knows it may have to update a password field.
+
 2007-10-29  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam and Maciej.

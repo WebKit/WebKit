@@ -958,6 +958,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
+    // This is a workaround for: <rdar://problem/2981619> NSResponder_Private should include notification for FlagsChanged
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
         location:[[flagsChangedEvent window] convertScreenToBase:[NSEvent mouseLocation]]
         modifierFlags:[flagsChangedEvent modifierFlags]
@@ -2988,7 +2989,7 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
     [self retain];
     Frame* frame = core([self _frame]);
     if (!frame || !frame->eventHandler()->wheelEvent(event))
-        [[self nextResponder] scrollWheel:event];    
+        [super scrollWheel:event];
     [self release];
 }
 
@@ -3582,6 +3583,13 @@ noPromisedData:
     if (eventWasSentToWebCore || !core([self _frame])->eventHandler()->keyEvent(event))
         [super keyUp:event];    
     [self release];
+}
+
+- (void)flagsChanged:(NSEvent *)event
+{
+    if (Frame* frame = core([self _frame]))
+        frame->eventHandler()->capsLockStateMayHaveChanged();
+    [super flagsChanged:event];
 }
 
 - (id)accessibilityAttributeValue:(NSString*)attributeName

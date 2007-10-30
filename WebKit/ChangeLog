@@ -1,3 +1,15 @@
+2007-10-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKit part of fix for http://bugs.webkit.org/show_bug.cgi?id=10577
+        <rdar://problem/5103625> REGRESSION: Caps lock icon should show in password fields
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView flagsChanged:]): Call capsLockStateMayHaveChanged so WebCore knows it may have to update a password field.
+        (+[WebHTMLView _postFlagsChangedEvent:]): Added a comment with a Radar number for why this isn't just in flagsChanged.
+        (-[WebHTMLView scrollWheel:]): Instead of calling the next responder explicitly, we can just call super, which will take care of this.
+
 2007-10-27  Mark Ambachtsheer  <mark.a@apple.com>
 
         Reviewed by Darin.

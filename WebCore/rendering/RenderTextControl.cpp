@@ -38,6 +38,7 @@
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "PlatformKeyboardEvent.h"
 #include "PlatformScrollBar.h"
 #include "RenderTheme.h"
 #include "SearchPopupMenu.h"
@@ -77,6 +78,7 @@ RenderTextControl::RenderTextControl(Node* node, bool multiLine)
     , m_multiLine(multiLine)
     , m_placeholderVisible(false)
     , m_userEdited(false)
+    , m_shouldDrawCapsLockIndicator(false)
     , m_searchPopup(0)
     , m_searchPopupIsVisible(false)
     , m_searchEventTimer(this, &RenderTextControl::searchEventTimerFired)
@@ -827,6 +829,13 @@ void RenderTextControl::layout()
     }
 }
 
+void RenderTextControl::paint(PaintInfo& paintInfo, int tx, int ty)
+{
+    RenderBlock::paint(paintInfo, tx, ty);
+    if (paintInfo.phase == PaintPhaseBlockBackground && m_shouldDrawCapsLockIndicator)
+        theme()->paintCapsLockIndicator(this, paintInfo, absoluteContentBox());
+} 
+
 void RenderTextControl::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());
@@ -895,9 +904,11 @@ void RenderTextControl::forwardEvent(Event* evt)
                 innerLayer->scrollToOffset(style()->direction() == RTL ? innerLayer->scrollWidth() : 0, 0);
         }
         updatePlaceholder();
-    } else if (evt->type() == focusEvent)
+        capsLockStateMayHaveChanged();
+    } else if (evt->type() == focusEvent) {
         updatePlaceholder();
-    else {
+        capsLockStateMayHaveChanged();
+    } else {
         if (evt->isMouseEvent() && m_resultsButton && static_cast<MouseEvent*>(evt)->x() < m_innerText->renderer()->absoluteBoundingBoxRect().x())
             m_resultsButton->defaultEventHandler(evt);
         else if (evt->isMouseEvent() && m_cancelButton && static_cast<MouseEvent*>(evt)->x() > m_innerText->renderer()->absoluteBoundingBoxRect().right())
@@ -1191,6 +1202,27 @@ bool RenderTextControl::isScrollable() const
 FontSelector* RenderTextControl::fontSelector() const
 {
     return document()->styleSelector()->fontSelector();
+}
+
+void RenderTextControl::capsLockStateMayHaveChanged()
+{
+    // Only draw the caps lock indicator if these things are true:
+    // 1) The field is a password field
+    // 2) The frame is active
+    // 3) The element is focused
+    // 4) The caps lock is on
+
+    bool shouldDrawCapsLockIndicator = false;
+    if (Node* n = node())
+        if (Document* d = document())
+            if (Frame* f = d->frame())
+                shouldDrawCapsLockIndicator = !m_multiLine && static_cast<HTMLInputElement*>(n)->inputType() == HTMLInputElement::PASSWORD && 
+                                               f->isActive() && d->focusedNode() == n && PlatformKeyboardEvent::currentCapsLockState();
+
+    if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
+        m_shouldDrawCapsLockIndicator = shouldDrawCapsLockIndicator;
+        repaint();
+    }
 }
 
 } // namespace WebCore

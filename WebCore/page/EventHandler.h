@@ -146,6 +146,8 @@ public:
 
     void focusDocumentView();
 
+    void capsLockStateMayHaveChanged();
+    
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
 

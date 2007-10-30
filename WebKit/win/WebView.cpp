@@ -1371,6 +1371,10 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
 
 bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (virtualKeyCode == VK_CAPITAL)
+        frame->eventHandler()->capsLockStateMayHaveChanged();
+
     // Don't send key events for shift, ctrl, alt and capslock keys when they're by themselves
     if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL ||  virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
         return false;
@@ -1396,7 +1400,6 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
         virtualKeyCode = MapVirtualKey(LOBYTE(HIWORD(keyData)), 1);
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
     bool handled = frame->eventHandler()->keyEvent(keyEvent);
     m_inIMEKeyDown = false;
     if (handled)

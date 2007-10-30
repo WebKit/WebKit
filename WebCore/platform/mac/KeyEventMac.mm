@@ -27,6 +27,7 @@
 #import "PlatformKeyboardEvent.h"
 
 #import "Logging.h"
+#import <Carbon/Carbon.h>
 #import <wtf/ASCIICType.h>
 
 using namespace WTF;
@@ -731,6 +732,11 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event, bool forceAutoRepea
         m_text = "\x9";
         m_unmodifiedText = "\x9";
     }
+}
+
+bool PlatformKeyboardEvent::currentCapsLockState()
+{
+    return GetCurrentKeyModifiers() & alphaLock;
 }
 
 }

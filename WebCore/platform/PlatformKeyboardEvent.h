@@ -74,6 +74,8 @@ namespace WebCore {
         bool altKey() const { return m_altKey; }
         bool metaKey() const { return m_metaKey; }
 
+        static bool currentCapsLockState();
+
 #if PLATFORM(MAC)
         PlatformKeyboardEvent(NSEvent*, bool forceAutoRepeat = false);
         NSEvent* macEvent() const { return m_macEvent.get(); }

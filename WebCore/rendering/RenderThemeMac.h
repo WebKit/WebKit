@@ -74,6 +74,8 @@ public:
     virtual int popupInternalPaddingRight(RenderStyle*) const;
     virtual int popupInternalPaddingTop(RenderStyle*) const;
     virtual int popupInternalPaddingBottom(RenderStyle*) const;
+    
+    virtual bool paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 protected:
     // Methods for each appearance value.
