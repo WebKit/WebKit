@@ -2,6 +2,20 @@
 
         Reviewed by Adam.
 
+        - Set the eol-style to native and made all the line endings the same
+        so that I avoid messy diffs that show eol changes.
+
+        * Drosera/win/ServerConnection.cpp:
+        (ServerConnection::didParseSource):
+        (ServerConnection::didEnterCallFrame):
+        (ServerConnection::willExecuteStatement):
+        (ServerConnection::willLeaveCallFrame):
+        (ServerConnection::exceptionWasRaised):
+
+2007-10-30  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
         * Drosera/win/DebuggerDocumentPlatform.cpp:Implemented much of the
         functionality that could not have existed previously without the new
         interfaces.
