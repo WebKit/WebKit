@@ -1,5 +1,13 @@
 2007-10-29  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, build fix.
+        
+        - Install LocalStorage.h as a private header.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - Define good VectorTraits for LocalStorage entry for 0.5% speed improvement on SunSpider.
