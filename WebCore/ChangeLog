@@ -1,3 +1,33 @@
+2007-10-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5399614> anchor tag is not rendered without 
+        text content, works in Firefox with CSS background-image (13237)
+
+        This patch allows empty inlines that have box decorations or width 
+        from border/padding/margin to have line boxes.
+
+        * rendering/bidi.cpp:
+        (WebCore::inlineFlowAllowsLineBox): Convenience function that 
+        defines when we allow an inline flow to have a line box.
+        (WebCore::requiresLineBox): Call inlineFlowAllowsLineBox.
+        (WebCore::shouldSkipWhitespaceAfterStartObject): New function to 
+        merge some shared code between list markers and empty inline flows 
+        that fall at the beginning of a line.
+        (WebCore::RenderBlock::findNextLineBreak): Make flows more like 
+        list markers.
+
+        One interesting side effect of this bug appeared in our xhtml/svg 
+        tests that generate parser error tags. The tag we generate was 
+        actually an empty inline with box decorations. This patch causes 
+        those inlines to draw now, and the parser errors looked strange. So 
+        I changed it so that the parsererror tag is display:block. This 
+        matches Firefox, and I think was the original intent of the tag 
+        since that causes its red background and border to show up.
+        * dom/XMLTokenizer.cpp:
+        (WebCore::createXHTMLParserErrorHeader):
+
 2007-10-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

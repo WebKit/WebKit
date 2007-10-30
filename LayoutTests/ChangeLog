@@ -1,3 +1,53 @@
+2007-10-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        New tests and new results for old tests for <rdar://problem/
+        5399614> anchor tag is not rendered without text content, works in 
+        Firefox with CSS background-image (13237)
+
+        New tests:
+        * fast/inline/drawStyledEmptyInlines.html: Added.
+        * fast/inline/drawStyledEmptyInlinesWithWS.html: Added.
+        * fast/inline/emptyInlinesWithinLists.html: Added.
+        * fast/inline/styledEmptyInlinesWithBRs.html: Added.
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.checksum: Added.
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.png: Added.
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.txt: Added.
+        * platform/mac/fast/inline/drawStyledEmptyInlinesWithWS-expected.checksum: Added.
+        * platform/mac/fast/inline/drawStyledEmptyInlinesWithWS-expected.png: Added.
+        * platform/mac/fast/inline/drawStyledEmptyInlinesWithWS-expected.txt: Added.
+        * platform/mac/fast/inline/emptyInlinesWithinLists-expected.checksum: Added.
+        * platform/mac/fast/inline/emptyInlinesWithinLists-expected.png: Added.
+        * platform/mac/fast/inline/emptyInlinesWithinLists-expected.txt: Added.
+        * platform/mac/fast/inline/styledEmptyInlinesWithBRs-expected.checksum: Added.
+        * platform/mac/fast/inline/styledEmptyInlinesWithBRs-expected.png: Added.
+        * platform/mac/fast/inline/styledEmptyInlinesWithBRs-expected.txt: Added.
+        
+        New results for tests with <paserererrors> since <parsererror> is 
+        now block.
+        * platform/mac/fast/invalid/junk-data-expected.checksum: Replaced.
+        * platform/mac/fast/invalid/junk-data-expected.png: Replaced.
+        * platform/mac/fast/invalid/junk-data-expected.txt:
+        * platform/mac/fast/invalid/missing-end-tag-expected.checksum: Replaced.
+        * platform/mac/fast/invalid/missing-end-tag-expected.png: Replaced.
+        * platform/mac/fast/invalid/missing-end-tag-expected.txt:
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.checksum: Replaced.
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.png: Replaced.
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.checksum: Replaced.
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.png: Replaced.
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.txt: Removed.
+        * platform/mac/svg/custom/junk-data-expected.checksum: Replaced.
+        * platform/mac/svg/custom/junk-data-expected.png: Replaced.
+        * platform/mac/svg/custom/junk-data-expected.txt:
+        * platform/mac/svg/custom/missing-xlink-expected.checksum: Replaced.
+        * platform/mac/svg/custom/missing-xlink-expected.png: Replaced.
+        * platform/mac/svg/custom/missing-xlink-expected.txt:
+        * platform/mac/svg/hixie/error/012-expected.checksum: Replaced.
+        * platform/mac/svg/hixie/error/012-expected.png: Replaced.
+        * platform/mac/svg/hixie/error/012-expected.txt:
+
 2007-10-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

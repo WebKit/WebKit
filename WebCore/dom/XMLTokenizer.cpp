@@ -1263,7 +1263,7 @@ static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const 
 {
     ExceptionCode ec = 0;
     RefPtr<Element> reportElement = doc->createElementNS(xhtmlNamespaceURI, "parsererror", ec);
-    reportElement->setAttribute(styleAttr, "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
+    reportElement->setAttribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
     
     RefPtr<Element> h3 = doc->createElementNS(xhtmlNamespaceURI, "h3", ec);
     reportElement->appendChild(h3.get(), ec);
