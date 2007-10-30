@@ -1,3 +1,9 @@
+2007-10-30  Adam Roben  <aroben@apple.com>
+
+        Add another failing test to the Windows Skipped file
+
+        * platform/win/Skipped:
+
 2007-10-30  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.
