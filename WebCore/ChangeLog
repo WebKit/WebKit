@@ -1,3 +1,87 @@
+2007-10-30  David Hyatt  <hyatt@apple.com>
+
+        Land support for implicit animation in CSS.
+	
+        Reviewed by mitz, darin
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTimingFunctionValue):
+        (WebCore::CSSParser::parseTransitionTimingFunction):
+        (WebCore::CSSParser::parseTransitionProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapTransitionDuration):
+        (WebCore::CSSStyleSelector::mapTransitionRepeatCount):
+        (WebCore::CSSStyleSelector::mapTransitionTimingFunction):
+        (WebCore::CSSStyleSelector::mapTransitionProperty):
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSTimingFunctionValue::CSSTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::x1):
+        (WebCore::CSSTimingFunctionValue::y1):
+        (WebCore::CSSTimingFunctionValue::x2):
+        (WebCore::CSSTimingFunctionValue::y2):
+        * dom/Element.cpp:
+        (WebCore::Element::styleForRenderer):
+        (WebCore::Element::createRenderer):
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        (WebCore::Node::setRenderStyle):
+        * page/AnimationController.cpp:
+        (WebCore::CurveData::CurveData):
+        (WebCore::CurveData::sampleCurveX):
+        (WebCore::CurveData::sampleCurveY):
+        (WebCore::CurveData::sampleCurveDerivativeX):
+        (WebCore::CurveData::solveCurveX):
+        (WebCore::solveEpsilon):
+        (WebCore::solveCubicBezierFunction):
+        (WebCore::ImplicitAnimation::finished):
+        (WebCore::CompositeImplicitAnimation::~CompositeImplicitAnimation):
+        (WebCore::CompositeImplicitAnimation::hasAnimationForProperty):
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::ImplicitAnimation::~ImplicitAnimation):
+        (WebCore::ImplicitAnimation::reset):
+        (WebCore::ImplicitAnimation::progress):
+        (WebCore::blendFunc):
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::CompositeImplicitAnimation::animate):
+        (WebCore::CompositeImplicitAnimation::animating):
+        (WebCore::CompositeImplicitAnimation::reset):
+        (WebCore::AnimationControllerPrivate::hasImplicitAnimations):
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::~AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::get):
+        (WebCore::AnimationControllerPrivate::clear):
+        (WebCore::AnimationControllerPrivate::updateTimer):
+        (WebCore::AnimationControllerPrivate::timerFired):
+        (WebCore:::m_data):
+        (WebCore::AnimationController::~AnimationController):
+        (WebCore::AnimationController::cancelImplicitAnimations):
+        (WebCore::AnimationController::updateImplicitAnimations):
+        (WebCore::AnimationController::suspendAnimations):
+        (WebCore::AnimationController::resumeAnimations):
+        * page/AnimationController.h:
+        * page/Frame.cpp:
+        (WebCore::FramePrivate::FramePrivate):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::destroy):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setAnimatableStyle):
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        * rendering/RenderStyle.h:
+        (WebCore::TimingFunction::TimingFunction):
+        (WebCore::TimingFunction::operator==):
+        (WebCore::TimingFunction::x1):
+        (WebCore::TimingFunction::y1):
+        (WebCore::TimingFunction::x2):
+        (WebCore::TimingFunction::y2):
+        (WebCore::TimingFunction::type):
+        (WebCore::Transition::transitionProperty):
+        (WebCore::Transition::setTransitionProperty):
+        (WebCore::RenderStyle::initialTransitionProperty):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2007-10-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

@@ -27,6 +27,7 @@
 
 #include "AXObjectCache.h"
 #include "AffineTransform.h"
+#include "AnimationController.h"
 #include "CSSStyleSelector.h"
 #include "CachedImage.h"
 #include "Chrome.h"
@@ -2136,6 +2137,17 @@ void RenderObject::handleDynamicFloatPositionChange()
     }
 }
 
+void RenderObject::setAnimatableStyle(RenderStyle* style)
+{
+    if (!isText() && m_style && style) {
+        if (!m_style->transitions())
+            animationController()->cancelImplicitAnimations(this);
+        else
+            style = animationController()->updateImplicitAnimations(this, style);
+    }
+    setStyle(style);
+}
+
 void RenderObject::setStyle(RenderStyle* style)
 {
     if (m_style == style)
@@ -2511,6 +2523,8 @@ void RenderObject::destroy()
 
     if (AXObjectCache::accessibilityEnabled())
         document()->axObjectCache()->remove(this);
+
+    animationController()->cancelImplicitAnimations(this);
 
     // By default no ref-counting. RenderWidget::destroy() doesn't call
     // this function because it needs to do ref-counting. If anything

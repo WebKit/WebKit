@@ -1024,7 +1024,7 @@ void Node::createRendererIfNeeded()
                     r->destroy();
                 else {
                     setRenderer(r);
-                    renderer()->setStyle(style);
+                    renderer()->setAnimatableStyle(style);
                     parentRenderer->addChild(renderer(), nextRenderer());
                 }
             }
@@ -1059,7 +1059,7 @@ RenderStyle* Node::renderStyle() const
 void Node::setRenderStyle(RenderStyle* s)
 {
     if (m_renderer)
-        m_renderer->setStyle(s); 
+        m_renderer->setAnimatableStyle(s); 
 }
 
 RenderStyle* Node::computedStyle()

@@ -610,17 +610,18 @@ bool Element::isURLAttribute(Attribute *attr) const
     return false;
 }
 
-RenderStyle *Element::styleForRenderer(RenderObject *parentRenderer)
+RenderStyle* Element::styleForRenderer(RenderObject* parentRenderer)
 {
     return document()->styleSelector()->styleForElement(this);
 }
 
-RenderObject *Element::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* Element::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     if (document()->documentElement() == this && style->display() == NONE) {
         // Ignore display: none on root elements.  Force a display of block in that case.
         RenderBlock* result = new (arena) RenderBlock(this);
-        if (result) result->setStyle(style);
+        if (result)
+            result->setAnimatableStyle(style);
         return result;
     }
     return RenderObject::createObject(this, style);

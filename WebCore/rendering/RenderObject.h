@@ -519,6 +519,11 @@ public:
 
     virtual void dirtyLinesFromChangedChild(RenderObject*);
 
+    // Called to update a style that is allowed to trigger animations.
+    // FIXME: Right now this will typically be called only when updating happens from the DOM on explicit elements.
+    // We don't yet handle generated content animation such as first-letter or before/after (we'll worry about this later).
+    void setAnimatableStyle(RenderStyle*);
+
     // Set the style of the object and update the state of the object accordingly.
     virtual void setStyle(RenderStyle*);
 

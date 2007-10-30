@@ -1008,22 +1008,40 @@ struct TimingFunction
 {
     TimingFunction()
     : m_type(CubicBezierTimingFunction)
-    , m_firstPoint(.25f, .1f)
-    , m_secondPoint(.25f, 1.0f)
+    , m_x1(.25)
+    , m_y1(.1)
+    , m_x2(.25)
+    , m_y2(1.0)
     {}
 
-    TimingFunction(ETimingFunctionType timingFunction, const FloatPoint& p1 = FloatPoint(), const FloatPoint& p2 = FloatPoint())
+    TimingFunction(ETimingFunctionType timingFunction, double x1 = .0, double y1 = .0, double x2 = .0, double y2 = .0)
     : m_type(timingFunction)
-    , m_firstPoint(p1)
-    , m_secondPoint(p2)
-    {}
-    
-    bool operator==(const TimingFunction& o) const { return m_type == o.m_type && m_firstPoint == o.m_firstPoint && m_secondPoint == o.m_secondPoint; }
+    , m_x1(x1)
+    , m_y1(y1)
+    , m_x2(x2)
+    , m_y2(y2)
+    {
+    }
 
+    bool operator==(const TimingFunction& o) const { return m_type == o.m_type && m_x1 == o.m_x1 && m_y1 == o.m_y1 && m_x2 == o.m_x2 && m_y2 == o.m_y2; }
+
+    double x1() const { return m_x1; }
+    double y1() const { return m_y1; }
+    double x2() const { return m_x2; }
+    double y2() const { return m_y2; }
+
+    ETimingFunctionType type() const { return m_type; }
+
+private:
     ETimingFunctionType m_type;
-    FloatPoint m_firstPoint;
-    FloatPoint m_secondPoint;
+
+    double m_x1;
+    double m_y1;
+    double m_x2;
+    double m_y2;
 };
+
+static const int cAnimateAll = -2;
 
 struct Transition {
 public:
@@ -1047,12 +1065,12 @@ public:
     int transitionDuration() const { return m_duration; }
     int transitionRepeatCount() const { return m_repeatCount; }
     const TimingFunction& transitionTimingFunction() const { return m_timingFunction; }
-    const AtomicString& transitionProperty() const { return m_property; }
+    int transitionProperty() const { return m_property; }
     
     void setTransitionDuration(int d) { m_duration = d; m_durationSet = true; }
     void setTransitionRepeatCount(int c) { m_repeatCount = c; m_repeatCountSet = true; }
     void setTransitionTimingFunction(const TimingFunction& f) { m_timingFunction = f; m_timingFunctionSet = true; }
-    void setTransitionProperty(const AtomicString& t) { m_property = t; m_propertySet = true; }
+    void setTransitionProperty(int t) { m_property = t; m_propertySet = true; }
 
     void setNext(Transition* n) { if (m_next != n) { delete m_next; m_next = n; } }
 
@@ -1069,7 +1087,7 @@ public:
     int m_duration;
     int m_repeatCount;
     TimingFunction m_timingFunction;
-    AtomicString m_property;
+    int m_property;
 
     bool m_durationSet;
     bool m_repeatCountSet;
@@ -2154,7 +2172,7 @@ public:
     static int initialTransitionDuration() { return 250; }
     static int initialTransitionRepeatCount() { return 1; }
     static TimingFunction initialTransitionTimingFunction() { return TimingFunction(); }
-    static const AtomicString& initialTransitionProperty() { return nullAtom; }
+    static int initialTransitionProperty() { return cAnimateAll; }
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }

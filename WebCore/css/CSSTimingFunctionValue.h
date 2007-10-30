@@ -33,17 +33,26 @@ namespace WebCore {
 class CSSTimingFunctionValue : public CSSValue
 {
 public:
-    CSSTimingFunctionValue(float x1, float y1, float x2, float y2)
-    : m_firstPoint(x1, y1), m_secondPoint(x2, y2) {}
+    CSSTimingFunctionValue(double x1, double y1, double x2, double y2)
+    : m_x1(x1)
+    , m_y1(y1)
+    , m_x2(x2)
+    , m_y2(y2)
+    {
+    }
 
     virtual String cssText() const;
     
-    const FloatPoint& firstPoint() const { return m_firstPoint; }
-    const FloatPoint& secondPoint() const { return m_secondPoint; }
+    double x1() const { return m_x1; }
+    double y1() const { return m_y1; }
+    double x2() const { return m_x2; }
+    double y2() const { return m_y2; }
 
 private:
-    FloatPoint m_firstPoint;
-    FloatPoint m_secondPoint;
+    double m_x1;
+    double m_y1;
+    double m_x2;
+    double m_y2;
 };
 
 } // namespace

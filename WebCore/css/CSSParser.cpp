@@ -2185,13 +2185,13 @@ CSSValue* CSSParser::parseTransitionRepeatCount()
     return 0;
 }
 
-bool CSSParser::parseTimingFunctionValue(ValueList*& args, float& result)
+bool CSSParser::parseTimingFunctionValue(ValueList*& args, double& result)
 {
     Value* v = args->current();
     if (!validUnit(v, FNumber, strict))
         return false;
-    result = narrowPrecisionToFloat(v->fValue);
-    if (result < 0 || result > 1.0f)
+    result = v->fValue;
+    if (result < 0 || result > 1.0)
         return false;
     v = args->next();
     if (v->unit != Value::Operator && v->iValue != ',')
@@ -2217,7 +2217,7 @@ CSSValue* CSSParser::parseTransitionTimingFunction()
         return 0;
 
     // There are two points specified.  The values must be between 0 and 1.
-    float x1, y1, x2, y2;
+    double x1, y1, x2, y2;
 
     if (!parseTimingFunctionValue(args, x1))
         return 0;
@@ -2234,8 +2234,14 @@ CSSValue* CSSParser::parseTransitionTimingFunction()
 CSSValue* CSSParser::parseTransitionProperty()
 {
     Value* value = valueList->current();
-    if (value->unit == CSSPrimitiveValue::CSS_STRING)
-        return new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
+    if (value->unit == CSSPrimitiveValue::CSS_STRING) {
+        // Use getPropertyID to map from a string value to a property id.
+        // FIXME: Reduce the amount of copying here.
+        DeprecatedString str = deprecatedString(value->string);
+        str.lower();
+        int result = getPropertyID(str.ascii(), str.length());
+        return new CSSPrimitiveValue(result);
+    }
     return 0;
 }
 
@@ -2297,7 +2303,7 @@ bool CSSParser::parseTransitionProperty(int propId, CSSValue*& result)
             allowComma = true;
         }
         
-        // When parsing the 'animation' shorthand property, we let it handle building up the lists for all
+        // When parsing the 'transition' shorthand property, we let it handle building up the lists for all
         // properties.
         if (inShorthand())
             break;

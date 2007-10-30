@@ -1951,6 +1951,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
     , m_editor(thisFrame)
     , m_eventHandler(thisFrame)
+    , m_animationController(thisFrame)
     , m_caretVisible(false)
     , m_caretPaint(true)
     , m_isActive(false)

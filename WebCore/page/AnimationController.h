@@ -29,26 +29,27 @@
 #ifndef AnimationController_h
 #define AnimationController_h
 
-#include <wtf/Noncopyable.h>
-
 namespace WebCore {
 
+class AnimationControllerPrivate;
+class Frame;
 class RenderObject;
 class RenderStyle;
 
-class AnimationController : public Noncopyable {
+class AnimationController
+{
 public:
-    AnimationController();
+    AnimationController(Frame*);
     ~AnimationController();
-
-    void cancelTransitions(RenderObject*);
-    void updateTransitions(RenderObject*, RenderStyle* fromStyle, RenderStyle* toStyle);
-
+    
+    void cancelImplicitAnimations(RenderObject*);
+    RenderStyle* updateImplicitAnimations(RenderObject*, RenderStyle* newStyle);
+    
     void suspendAnimations();
     void resumeAnimations();
     
 private:
-
+    AnimationControllerPrivate* m_data;
 };
 
 }
