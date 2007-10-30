@@ -1,3 +1,32 @@
+2007-10-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed <rdar://problem/5567504> shift/reduce conflict introduced in r24457
+        
+        JS tests, including 
+
+            ecma_2/Statements/dowhile-001.js
+            ecma_2/Statements/dowhile-002.js
+            ecma_2/Statements/dowhile-003.js
+            ecma_2/Statements/dowhile-004.js
+            ecma_2/Statements/dowhile-005.js
+            ecma_2/Statements/dowhile-006.js
+            ecma_2/Statements/dowhile-007.js
+            js1_2/statements/do_while.js
+
+        and layout tests, including
+
+            do-while-expression-value.html
+            do-while-semicolon.html
+            do-while-without-semicolon.html
+        
+        pass.
+        
+        * kjs/grammar.y: Use the explicit "error" production, as we do with other
+        automatic semicolon insertions, to disambiguate "do { } while();" from
+        "do { } while()" followed by ";" (the empty statement).
+
 2007-10-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

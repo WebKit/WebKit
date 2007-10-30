@@ -729,8 +729,8 @@ IfStatement:
 ;
 
 IterationStatement:
-    DO Statement WHILE '(' Expr ')' ';'    { $$ = new DoWhileNode($2, $5); DBG($$, @1, @3);}
-  | DO Statement WHILE '(' Expr ')'     { $$ = new DoWhileNode($2, $5); DBG($$, @1, @3);}
+    DO Statement WHILE '(' Expr ')' ';'    { $$ = new DoWhileNode($2, $5); DBG($$, @1, @3); }
+  | DO Statement WHILE '(' Expr ')' error  { $$ = new DoWhileNode($2, $5); DBG($$, @1, @3); } // Always performs automatic semicolon insertion.
   | WHILE '(' Expr ')' Statement        { $$ = new WhileNode($3, $5); DBG($$, @1, @4); }
   | FOR '(' ExprNoInOpt ';' ExprOpt ';' ExprOpt ')' Statement
                                         { $$ = new ForNode($3, $5, $7, $9); DBG($$, @1, @8); }
