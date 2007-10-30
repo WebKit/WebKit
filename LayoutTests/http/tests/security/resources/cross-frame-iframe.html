@@ -1,5 +1,14 @@
 <html>
-<body>
+<head>
+    <script>
+        function fireSentinel()
+        {
+            if (window.layoutTestController)
+                layoutTestController.globalFlag = true;
+        }
+    </script>
+</head>
+<body onload="fireSentinel();">
     <p id='accessMe'></p>
     <p>Inner iframe.</p>
     <iframe name='flag'></iframe>

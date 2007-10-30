@@ -1,3 +1,14 @@
+2007-10-30  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Update test to not intermittently fail.
+
+        * http/tests/security/host-compare-case-insensitive-expected.txt:
+        * http/tests/security/host-compare-case-insensitive.html:
+        * http/tests/security/resources/cross-frame-iframe.html:
+        * http/tests/security/resources/localhost-accesssor.html:
+
 2007-10-30  Beth Dakin  <bdakin@apple.com>
 
         Rubber stamped by Geoff.

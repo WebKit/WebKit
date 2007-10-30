@@ -1,10 +1,39 @@
 <html>
-<body>
-    <p>Other inner iframe.</p>
-    <iframe name='flag'></iframe>
+<head>
+    <script src="cross-frame-access.js"></script>
     <script>
-        var otherFrame = window.parent.frames[0];
-        otherFrame.document.getElementById('accessMe').innerHTML = "PASS: Host name compare is case insensitive.";
+        function loaded()
+        {
+            if (window.layoutTestController) {
+                setTimeout(waitForFlag, 1);
+                function waitForFlag() {
+                    if (!layoutTestController.globalFlag) {
+                        setTimeout(waitForFlag, 1);
+                        return;
+                    }
+                    performTest();
+                }
+            } else {
+                log("Click the button when all the subframes have finished loading.");
+            }
+        }
+
+        function performTest()
+        {
+            try {
+                window.parent.frames[0].document.getElementById('accessMe').innerHTML = "PASS: Host name compare is case insensitive.";
+            } catch (e) {
+                log("FAIL: An error occurred during testing.")
+            }
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
     </script>
+</head>
+<body onload="loaded();">
+    <p>Other inner iframe.</p>
+    <button onclick="performTest();">Test</button>
+    <pre id='console'></pre>
 </body>
 </html>

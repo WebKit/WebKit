@@ -2,7 +2,6 @@ This tests that the comparison of the host for security is done case insensitive
 
   
 
-
 --------
 Frame: 'frameA'
 --------
@@ -22,9 +21,5 @@ Frame: 'frameB'
 --------
 Other inner iframe.
 
-
-
---------
-Frame: 'flag'
---------
+Test
 
