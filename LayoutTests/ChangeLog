@@ -1,3 +1,15 @@
+2007-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15750
+          REGRESSION(r27173): Web Inspector freezes beneath Image::drawPattern()
+
+        * fast/backgrounds/size/zero.html: Added.
+        * platform/mac/fast/backgrounds/size/zero-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/size/zero-expected.png: Added.
+        * platform/mac/fast/backgrounds/size/zero-expected.txt: Added.
+
 2007-10-29  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.

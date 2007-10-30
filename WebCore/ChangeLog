@@ -1,3 +1,19 @@
+2007-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15750
+          REGRESSION(r27173): Web Inspector freezes beneath Image::drawPattern()
+
+        Test: fast/backgrounds/size/zero.html
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern): Added an ASSERT and an early return
+        to guard against singular pattern transforms.
+        * rendering/RenderBox.cpp:
+        (WebCore::cacluateBackgroundSize): Changed to ensure a minimum tile
+        size of 1x1.
+
 2007-10-29  Alp Toker  <alp@atoker.com>
 
         Reviewed by Maciej.
