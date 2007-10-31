@@ -558,21 +558,6 @@ static bool debugWidget = true;
 }
 #endif
 
-+ (BOOL)_developerExtrasEnabled
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([defaults boolForKey:@"DisableWebKitDeveloperExtras"])
-        return NO;
-#ifdef NDEBUG
-    BOOL enableDebugger = [defaults boolForKey:@"WebKitDeveloperExtras"];
-    if (!enableDebugger)
-        enableDebugger = [defaults boolForKey:@"IncludeDebugMenu"];
-    return enableDebugger;
-#else
-    return YES; // always enable in debug builds
-#endif
-}
-
 + (BOOL)_scriptDebuggerEnabled
 {
 #ifdef NDEBUG
@@ -949,7 +934,7 @@ static bool debugWidget = true;
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings->setUsesPageCache([self usesPageCache]);
     settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
-    settings->setDeveloperExtrasEnabled([WebView _developerExtrasEnabled]);
+    settings->setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);

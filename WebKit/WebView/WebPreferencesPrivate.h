@@ -44,6 +44,10 @@ extern NSString *WebPreferencesRemovedNotification;
 @interface WebPreferences (WebPrivate)
 
 // Preferences that might be public in a future release
+
+- (BOOL)developerExtrasEnabled;
+- (void)setDeveloperExtrasEnabled:(BOOL)flag;
+
 - (BOOL)respectStandardStyleKeyEquivalents;
 - (void)setRespectStandardStyleKeyEquivalents:(BOOL)flag;
 

@@ -328,6 +328,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitUsesPageCachePreferenceKey,
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
+        [NSNumber numberWithBool:NO],  WebKitDeveloperExtrasEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -704,6 +705,25 @@ static WebCacheModel cacheModelForMainBundle(void)
 @end
 
 @implementation WebPreferences (WebPrivate)
+
+- (BOOL)developerExtrasEnabled
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults boolForKey:@"DisableWebKitDeveloperExtras"])
+        return NO;
+#ifdef NDEBUG
+    if ([defaults boolForKey:@"WebKitDeveloperExtras"] || [defaults boolForKey:@"IncludeDebugMenu"])
+        return YES;
+    return [self _boolValueForKey:WebKitDeveloperExtrasEnabledPreferenceKey];
+#else
+    return YES; // always enable in debug builds
+#endif
+}
+
+- (void)setDeveloperExtrasEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitDeveloperExtrasEnabledPreferenceKey];
+}
 
 - (BOOL)respectStandardStyleKeyEquivalents
 {

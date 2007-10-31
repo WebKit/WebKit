@@ -1,3 +1,21 @@
+2007-10-31  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Move the developer extras preference to WebPreferences.
+
+        * WebView/WebPreferenceKeysPrivate.h: Add WebKitDeveloperExtrasEnabledPreferenceKey
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]): Initialize WebKitDeveloperExtrasEnabledPreferenceKey to NO.
+        (-[WebPreferences developerExtrasEnabled]): Check DisableWebKitDeveloperExtras, WebKitDeveloperExtras
+          and IncludeDebugMenu in addition to WebKitDeveloperExtrasEnabledPreferenceKey.
+        (-[WebPreferences setDeveloperExtrasEnabled:]): Set WebKitDeveloperExtrasEnabledPreferenceKey.
+        * WebView/WebPreferencesPrivate.h: Add developerExtrasEnabled and setDeveloperExtrasEnabled:.
+        * WebView/WebView.mm:
+        (+[WebView _developerExtrasEnabled]): Removed.
+        (-[WebView _preferencesChangedNotification:]): Check the WebPreferences object for developerExtrasEnabled.
+        * WebView/WebViewPrivate.h: Removed _developerExtrasEnabled.
+
 2007-10-30  David D. Kilzer  <ddkilzer@webkit.org>
 
         Generated files missing from WebCore's Xcode project file
