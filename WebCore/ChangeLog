@@ -1,3 +1,9 @@
+2007-10-30  Adele Peterson  <adele@apple.com>
+
+        RS by Darin.
+
+        * page/AnimationController.cpp: (WebCore::blendFunc): Use lround instead of round.
+
 2007-10-29  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John Sullivan.
@@ -68,7 +74,7 @@
 2007-10-30  David Hyatt  <hyatt@apple.com>
 
         Land support for implicit animation in CSS.
-	
+
         Reviewed by mitz, darin
 
         * css/CSSParser.cpp:
