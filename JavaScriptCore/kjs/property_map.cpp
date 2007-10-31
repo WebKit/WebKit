@@ -25,10 +25,10 @@
 #include "object.h"
 #include "protect.h"
 #include "PropertyNameArray.h"
-#include "HashTable.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/HashTable.h>
 #include <wtf/Vector.h>
 
 using std::max;
