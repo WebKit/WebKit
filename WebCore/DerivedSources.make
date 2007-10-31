@@ -427,6 +427,7 @@ all : \
     JSRangeException.h \
     JSRect.h \
     JSSQLCallback.h \
+    JSSQLError.h \
     JSSQLResultSet.h \
     JSSQLResultSetRowList.h \
     JSSVGAElement.h \

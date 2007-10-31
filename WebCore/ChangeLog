@@ -1,3 +1,18 @@
+2007-10-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add new SQLError implementation.
+        
+        * DerivedSources.make:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/SQLError.h: Added.
+        (WebCore::SQLError::SQLError):
+        (WebCore::SQLError::code):
+        (WebCore::SQLError::message):
+        * storage/SQLError.idl: Added.
+
 2007-10-31  David Hyatt  <hyatt@apple.com>
 
         Change the initial value of transition-property to all.  Change the initial value of

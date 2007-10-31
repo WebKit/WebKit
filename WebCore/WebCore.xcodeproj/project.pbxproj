@@ -137,6 +137,10 @@
 		1A762C780A074F2600989F5B /* JSXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A762C700A074F2600989F5B /* JSXPathNSResolver.h */; };
 		1A762C790A074F2600989F5B /* JSXPathResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A762C710A074F2600989F5B /* JSXPathResult.cpp */; };
 		1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A762C720A074F2600989F5B /* JSXPathResult.h */; };
+		1A7CCAEA0CD901A100B7B64E /* SQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCAE80CD901A100B7B64E /* SQLError.h */; };
+		1A7CCAEB0CD901A100B7B64E /* SQLError.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCAE90CD901A100B7B64E /* SQLError.idl */; };
+		1A7CCAEE0CD901DB00B7B64E /* JSSQLError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7CCAEC0CD901DB00B7B64E /* JSSQLError.cpp */; };
+		1A7CCAEF0CD901DB00B7B64E /* JSSQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCAED0CD901DB00B7B64E /* JSSQLError.h */; };
 		1A8180A50B1D4E4300CE46C4 /* ResourceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8180A40B1D4E4300CE46C4 /* ResourceResponse.cpp */; };
 		1A820D910A13EBA600AF843C /* ImageDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */; };
 		1A820D920A13EBA600AF843C /* ImageDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A820D900A13EBA600AF843C /* ImageDocument.h */; };
@@ -4260,6 +4264,10 @@
 		1A762C700A074F2600989F5B /* JSXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXPathNSResolver.h; sourceTree = "<group>"; };
 		1A762C710A074F2600989F5B /* JSXPathResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResult.cpp; sourceTree = "<group>"; };
 		1A762C720A074F2600989F5B /* JSXPathResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXPathResult.h; sourceTree = "<group>"; };
+		1A7CCAE80CD901A100B7B64E /* SQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLError.h; sourceTree = "<group>"; };
+		1A7CCAE90CD901A100B7B64E /* SQLError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLError.idl; sourceTree = "<group>"; };
+		1A7CCAEC0CD901DB00B7B64E /* JSSQLError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLError.cpp; sourceTree = "<group>"; };
+		1A7CCAED0CD901DB00B7B64E /* JSSQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLError.h; sourceTree = "<group>"; };
 		1A8180A40B1D4E4300CE46C4 /* ResourceResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponse.cpp; sourceTree = "<group>"; };
 		1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDocument.cpp; sourceTree = "<group>"; };
 		1A820D900A13EBA600AF843C /* ImageDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageDocument.h; sourceTree = "<group>"; };
@@ -7877,6 +7885,8 @@
 				1AD51A120CB59CD300953D11 /* DatabaseTracker.h */,
 				519611650CAC56570010A80C /* SQLCallback.h */,
 				519611660CAC56570010A80C /* SQLCallback.idl */,
+				1A7CCAE80CD901A100B7B64E /* SQLError.h */,
+				1A7CCAE90CD901A100B7B64E /* SQLError.idl */,
 				519611670CAC56570010A80C /* SQLResultSet.cpp */,
 				519611680CAC56570010A80C /* SQLResultSet.h */,
 				519611690CAC56570010A80C /* SQLResultSet.idl */,
@@ -10315,6 +10325,8 @@
 				1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */,
 				1AE8301B0CAB0999002237AE /* JSSQLCallback.cpp */,
 				1AE8301C0CAB0999002237AE /* JSSQLCallback.h */,
+				1A7CCAEC0CD901DB00B7B64E /* JSSQLError.cpp */,
+				1A7CCAED0CD901DB00B7B64E /* JSSQLError.h */,
 				1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */,
 				1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */,
 				1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */,
@@ -13839,6 +13851,8 @@
 				BC0B36A50CD3C67C00AC7EB5 /* Console.h in Headers */,
 				BC98543E0CD3D98C00069BC1 /* JSConsole.h in Headers */,
 				A86938D00CD4931300B666A1 /* SVGResourceFilterPlatformDataMac.h in Headers */,
+				1A7CCAEA0CD901A100B7B64E /* SQLError.h in Headers */,
+				1A7CCAEF0CD901DB00B7B64E /* JSSQLError.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13952,6 +13966,7 @@
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				E44613B10CD6331000FADA75 /* TimeRanges.idl in Resources */,
 				E44613B20CD6331000FADA75 /* VoidCallback.idl in Resources */,
+				1A7CCAEB0CD901A100B7B64E /* SQLError.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15390,6 +15405,7 @@
 				BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */,
 				BC98543D0CD3D98B00069BC1 /* JSConsole.cpp in Sources */,
 				A869385C0CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.mm in Sources */,
+				1A7CCAEE0CD901DB00B7B64E /* JSSQLError.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

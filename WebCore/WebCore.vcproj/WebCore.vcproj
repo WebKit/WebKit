@@ -1261,6 +1261,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLError.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLError.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLResultSet.cpp"
 				>
 			</File>
@@ -9258,6 +9266,10 @@
 			</File>
 			<File
 				RelativePath="..\storage\SQLCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLError.h"
 				>
 			</File>
 			<File
