@@ -142,6 +142,30 @@ namespace WebCore {
         bool isStatic() const { return type() == Static; }
         bool isIntrinsicOrAuto() const { return type() == Auto || type() == MinIntrinsic || type() == Intrinsic; }
 
+        Length blend(const Length& from, double progress) const
+        {
+            // Blend two lengths to produce a new length that is in between them.  Used for animation.
+            if (!from.isZero() && !isZero() && from.type() != type())
+                return *this;
+    
+            if (from.isZero() && isZero())
+                return *this;
+            
+            LengthType resultType = type();
+            if (isZero())
+                resultType = from.type();
+            
+            if (resultType == Percent) {
+                double fromPercent = from.isZero() ? 0. : from.percent();
+                double toPercent = isZero() ? 0. : percent();
+                return Length(fromPercent + (fromPercent - toPercent) * progress, Percent);
+            } 
+                
+            double fromValue = from.isZero() ? 0 : from.value();
+            double toValue = isZero() ? 0 : value();
+            return Length(fromValue + (fromValue - toValue) * progress, resultType);
+        }
+        
     private:
         int m_value;
     };

@@ -435,10 +435,10 @@ StyleTransformData::StyleTransformData(const StyleTransformData& o)
 
 bool StyleTransformData::operator==(const StyleTransformData& o) const
 {
-    return m_x == o.m_x && m_y == o.m_y && transformDataEquivalent(o);
+    return m_x == o.m_x && m_y == o.m_y && m_operations == o.m_operations;
 }
 
-bool StyleTransformData::transformDataEquivalent(const StyleTransformData& o) const
+bool TransformOperations::operator==(const TransformOperations& o) const
 {
     if (m_operations.size() != o.m_operations.size())
         return false;
@@ -450,6 +450,98 @@ bool StyleTransformData::transformDataEquivalent(const StyleTransformData& o) co
     }
     
     return true;
+}
+
+static inline Length blendLengths(const Length& from, const Length& to, double progress)
+{  
+    if (from.type() != to.type())
+        return to;
+    return from.type() == Percent ? Length(from.percent() + (to.percent() - from.percent()) * progress, Percent)
+                                  : Length(from.value() + (to.value() - from.value()) * progress, from.type());
+}
+
+TransformOperation* ScaleTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+{
+    if (from && !from->isScaleOperation())
+        return this;
+    
+    if (blendToIdentity)
+        return new ScaleTransformOperation(m_x + (1. - m_x) * progress, m_y + (1. - m_y) * progress);
+    
+    const ScaleTransformOperation* fromOp = static_cast<const ScaleTransformOperation*>(from);
+    double fromX = fromOp ? fromOp->m_x : 1.;
+    double fromY = fromOp ? fromOp->m_y : 1.;
+    return new ScaleTransformOperation(fromX + (m_x - fromX) * progress, fromY + (m_y - fromY) * progress);
+}
+
+TransformOperation* RotateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+{
+    if (from && !from->isRotateOperation())
+        return this;
+    
+    if (blendToIdentity)
+        return new RotateTransformOperation(m_angle - m_angle * progress);
+    
+    const RotateTransformOperation* fromOp = static_cast<const RotateTransformOperation*>(from);
+    double fromAngle = fromOp ? fromOp->m_angle : 0;
+    return new RotateTransformOperation(fromAngle + (m_angle - fromAngle) * progress);
+}
+
+TransformOperation* SkewTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+{
+    if (from && !from->isSkewOperation())
+        return this;
+    
+    if (blendToIdentity)
+        return new SkewTransformOperation(m_angleX - m_angleX * progress, m_angleY - m_angleY * progress);
+    
+    const SkewTransformOperation* fromOp = static_cast<const SkewTransformOperation*>(from);
+    double fromAngleX = fromOp ? fromOp->m_angleX : 0;
+    double fromAngleY = fromOp ? fromOp->m_angleY : 0;
+    return new SkewTransformOperation(fromAngleX + (m_angleX - fromAngleX) * progress, fromAngleY + (m_angleY - fromAngleY) * progress);
+}
+
+TransformOperation* TranslateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+{
+    if (from && !from->isTranslateOperation())
+        return this;
+    
+    if (blendToIdentity)
+        return new TranslateTransformOperation(Length(0, m_x.type()).blend(m_x, progress), Length(0, m_y.type()).blend(m_y, progress));
+
+    const TranslateTransformOperation* fromOp = static_cast<const TranslateTransformOperation*>(from);
+    Length fromX = fromOp ? fromOp->m_x : Length(0, m_x.type());
+    Length fromY = fromOp ? fromOp->m_y : Length(0, m_y.type());
+    return new TranslateTransformOperation(m_x.blend(fromX, progress), m_y.blend(fromY, progress));
+}
+
+TransformOperation* MatrixTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+{
+    if (from && !from->isMatrixOperation())
+        return this;
+    
+    if (blendToIdentity)
+        return new MatrixTransformOperation(Length(1, m_a.type()).blend(m_a, progress),
+                                            Length(0, m_b.type()).blend(m_b, progress),
+                                            Length(0, m_c.type()).blend(m_c, progress),
+                                            Length(1, m_d.type()).blend(m_d, progress),
+                                            Length(0, m_e.type()).blend(m_e, progress),
+                                            Length(0, m_f.type()).blend(m_f, progress));
+
+    const MatrixTransformOperation* fromOp = static_cast<const MatrixTransformOperation*>(from);
+    Length fromA = fromOp ? fromOp->m_a : Length(1, m_a.type());
+    Length fromB = fromOp ? fromOp->m_b : Length(0, m_b.type());
+    Length fromC = fromOp ? fromOp->m_c : Length(0, m_c.type());
+    Length fromD = fromOp ? fromOp->m_d : Length(1, m_d.type());
+    Length fromE = fromOp ? fromOp->m_e : Length(0, m_e.type());
+    Length fromF = fromOp ? fromOp->m_f : Length(0, m_f.type());
+    
+    return new MatrixTransformOperation(m_a.blend(fromA, progress),
+                                        m_b.blend(fromB, progress),
+                                        m_c.blend(fromC, progress),
+                                        m_d.blend(fromD, progress),
+                                        m_e.blend(fromE, progress),
+                                        m_f.blend(fromF, progress));
 }
 
 Transition::Transition()

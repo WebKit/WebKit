@@ -3868,7 +3868,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
     case CSS_PROP__WEBKIT_TRANSFORM: {
         HANDLE_INHERIT_AND_INITIAL(transform, Transform);
-        Vector<RefPtr<TransformOperation> > operations;
+        TransformOperations operations;
         if (!value->isPrimitiveValue()) {
             CSSValueList* list = static_cast<CSSValueList*>(value);
             unsigned size = list->length();

@@ -1,3 +1,35 @@
+2007-10-30  David Hyatt  <hyatt@apple.com>
+
+        Make sure CSS transforms can be animated using the CSS transition property.
+
+        Reviewed by Dan and Antti
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/AnimationController.cpp:
+        (WebCore::blendFunc):
+        (WebCore::ImplicitAnimation::animate):
+        * rendering/Length.h:
+        (WebCore::Length::blend):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleTransformData::operator==):
+        (WebCore::TransformOperations::operator==):
+        (WebCore::blendLengths):
+        (WebCore::ScaleTransformOperation::blend):
+        (WebCore::RotateTransformOperation::blend):
+        (WebCore::SkewTransformOperation::blend):
+        (WebCore::TranslateTransformOperation::blend):
+        (WebCore::MatrixTransformOperation::blend):
+        * rendering/RenderStyle.h:
+        (WebCore::TransformOperations::operator!=):
+        (WebCore::TransformOperations::isEmpty):
+        (WebCore::TransformOperations::size):
+        (WebCore::TransformOperations::operator[]):
+        (WebCore::TransformOperations::append):
+        (WebCore::RenderStyle::transform):
+        (WebCore::RenderStyle::setTransform):
+        (WebCore::RenderStyle::initialTransform):
+
 2007-10-30  Antti Koivisto  <antti@apple.com>
 
         Another Qt/GTK build fix.
