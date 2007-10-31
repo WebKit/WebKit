@@ -161,9 +161,9 @@ namespace WebCore {
                 return Length(fromPercent + (fromPercent - toPercent) * progress, Percent);
             } 
                 
-            double fromValue = from.isZero() ? 0 : from.value();
-            double toValue = isZero() ? 0 : value();
-            return Length(fromValue + (fromValue - toValue) * progress, resultType);
+            int fromValue = from.isZero() ? 0 : from.value();
+            int toValue = isZero() ? 0 : value();
+            return Length(int(fromValue + (fromValue - toValue) * progress), resultType);
         }
         
     private:

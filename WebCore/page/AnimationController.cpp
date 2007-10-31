@@ -246,7 +246,7 @@ double ImplicitAnimation::progress() const
 
 static inline int blendFunc(int from, int to, double progress)
 {  
-    return lround(from + (to - from) * progress);
+    return int(from + (to - from) * progress);
 }
 
 static inline double blendFunc(double from, double to, double progress)
