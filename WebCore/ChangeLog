@@ -1,5 +1,11 @@
 2007-10-30  Antti Koivisto  <antti@apple.com>
 
+        Another Qt/GTK build fix.
+
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+
+2007-10-30  Antti Koivisto  <antti@apple.com>
+
         Attempt to fix Qt/GTK build.
 
         * WebCore.pro:
