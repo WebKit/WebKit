@@ -1,3 +1,13 @@
+2007-10-31  Adam Roben  <aroben@apple.com>
+
+        Switch the Debug configuration to using the non-debug CRT
+
+        This matches WebKit.
+
+        Reviewed by Steve.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2007-10-31  Antti Koivisto  <antti@apple.com>
 
         Reviewed by bdash.

@@ -1,3 +1,14 @@
+2007-10-31  Adam Roben  <aroben@apple.com>
+
+        Switch the Debug configuration to using the non-debug CRT
+
+        The debug CRT conflicts with what Safari uses, which causes loading
+        problems.
+
+        Reviewed by Steve.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-10-30  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam and Geoff.
