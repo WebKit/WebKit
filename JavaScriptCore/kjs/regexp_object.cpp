@@ -23,14 +23,15 @@
 #include "regexp_object.h"
 #include "regexp_object.lut.h"
 
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-#include "operations.h"
-#include "internal.h"
-#include "regexp.h"
+#include "array_instance.h"
 #include "error_object.h"
+#include "internal.h"
+#include "interpreter.h"
+#include "object.h"
+#include "operations.h"
+#include "regexp.h"
+#include "types.h"
+#include "value.h"
 
 #include <stdio.h>
 
