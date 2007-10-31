@@ -1,3 +1,12 @@
+2007-10-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix intermediate length calculation
+
+        * rendering/Length.h:
+        (WebCore::Length::blend):
+
 2007-10-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

@@ -158,12 +158,12 @@ namespace WebCore {
             if (resultType == Percent) {
                 double fromPercent = from.isZero() ? 0. : from.percent();
                 double toPercent = isZero() ? 0. : percent();
-                return Length(fromPercent + (fromPercent - toPercent) * progress, Percent);
+                return Length(fromPercent + (toPercent - fromPercent) * progress, Percent);
             } 
                 
             int fromValue = from.isZero() ? 0 : from.value();
             int toValue = isZero() ? 0 : value();
-            return Length(int(fromValue + (fromValue - toValue) * progress), resultType);
+            return Length(int(fromValue + (toValue - fromValue) * progress), resultType);
         }
         
     private:
