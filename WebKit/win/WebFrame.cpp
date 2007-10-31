@@ -592,6 +592,22 @@ HRESULT STDMETHODCALLTYPE WebFrame::currentForm(
     return *currentForm ? S_OK : E_FAIL;
 }
 
+HRESULT STDMETHODCALLTYPE WebFrame::globalContext(
+    /* [retval][out] */ JSGlobalContextRef* context)
+{
+    if (!context)
+        return E_POINTER;
+
+    *context = 0;
+
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    *context = toGlobalRef(coreFrame->scriptProxy()->interpreter()->globalExec());
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebFrame::loadRequest( 
     /* [in] */ IWebURLRequest* request)
 {

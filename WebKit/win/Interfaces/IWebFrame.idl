@@ -57,6 +57,13 @@ import "IWebView.idl";
 import "IWebURLRequest.idl";
 import "DOMCore.idl";
 
+cpp_quote("// this is done to get midl to treat the JavaScriptCore API types as pointer types")
+cpp_quote("#if 0")
+typedef void* JSGlobalContextRef;
+cpp_quote("#else")
+cpp_quote("typedef struct OpaqueJSContext* JSGlobalContextRef;")
+cpp_quote("#endif")
+
 interface IDOMDocument;
 interface IDOMHTMLElement;
 interface IWebURLRequest;
@@ -248,4 +255,11 @@ interface IWebFrame : IUnknown
         - (BOOL)allowsScrolling;
     */
    HRESULT allowsScrolling([out, retval] BOOL* flag);
+
+    /*!
+        @method globalContext
+        @result The frame's global JavaScript execution context.  Use this method to
+        bridge between the WebKit and JavaScriptCore APIs.
+    */
+   [local] HRESULT globalContext([out, retval] JSGlobalContextRef* context);
 }

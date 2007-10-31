@@ -1,3 +1,14 @@
+2007-10-30  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam and Geoff.
+
+        - Added the globalContext method so Drosera can ask a WebFrame for its
+        context.
+
+        * Interfaces/IWebFrame.idl:
+        * WebFrame.cpp:
+        * WebFrame.h:
+
 2007-10-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -1,3 +1,12 @@
+2007-10-30  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam and Geoff.
+
+        - Added a new cast so all the casts are in the same place.
+
+        * API/APICast.h:
+        (toGlobalRef):
+
 2007-10-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
