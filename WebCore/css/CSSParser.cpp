@@ -2234,13 +2234,16 @@ CSSValue* CSSParser::parseTransitionTimingFunction()
 CSSValue* CSSParser::parseTransitionProperty()
 {
     Value* value = valueList->current();
-    if (value->unit == CSSPrimitiveValue::CSS_STRING) {
-        // Use getPropertyID to map from a string value to a property id.
-        // FIXME: Reduce the amount of copying here.
+    if (value->unit == CSSPrimitiveValue::CSS_IDENT) {
         DeprecatedString str = deprecatedString(value->string);
         str.lower();
+        if (str == "all")
+            return new CSSPrimitiveValue(cAnimateAll);
+        if (str == "none")
+            return new CSSPrimitiveValue(cAnimateNone);
         int result = getPropertyID(str.ascii(), str.length());
-        return new CSSPrimitiveValue(result);
+        if (result)
+            return new CSSPrimitiveValue(result);
     }
     return 0;
 }

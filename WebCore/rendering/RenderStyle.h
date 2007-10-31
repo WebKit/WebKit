@@ -37,6 +37,7 @@
  */
 
 #include "AffineTransform.h"
+#include "CSSHelper.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "Color.h"
@@ -1066,8 +1067,6 @@ private:
     double m_x2;
     double m_y2;
 };
-
-static const int cAnimateAll = -2;
 
 struct Transition {
 public:
@@ -2198,7 +2197,7 @@ public:
     static int initialTransitionDuration() { return 250; }
     static int initialTransitionRepeatCount() { return 1; }
     static TimingFunction initialTransitionTimingFunction() { return TimingFunction(); }
-    static int initialTransitionProperty() { return cAnimateAll; }
+    static int initialTransitionProperty() { return cAnimateNone; }
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }

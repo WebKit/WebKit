@@ -1131,6 +1131,9 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
     // Cull out any useless layers and also repeat patterns into additional layers.
     style->adjustBackgroundLayers();
 
+    // Do the same for transitions.
+    style->adjustTransitions();
+
     // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
     // alter fonts and heights/widths.
     if (e && e->isControl() && style->fontSize() >= 11) {

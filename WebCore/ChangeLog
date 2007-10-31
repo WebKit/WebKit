@@ -1,3 +1,33 @@
+2007-10-30  David Hyatt  <hyatt@apple.com>
+
+        transition-property was defaulting to all when it should default to none.  
+
+        It was taking a string type.  I figured out how to make it take an ident instead, so you can write:
+
+        transition-property: opacity
+
+        instead of
+
+        transition-property: "opacity"
+
+        Transition layers also weren't properly repeating patterns the way they were supposed to.  I fixed that.
+
+        Finally, I fixed a bug in the code to fix up transition layers where something was misplaced that should have been inside a null check.
+
+        Reviewed by aroben
+
+        * css/CSSHelper.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTransitionProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * page/AnimationController.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::adjustTransitions):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::initialTransitionProperty):
+
 2007-10-30  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff.
