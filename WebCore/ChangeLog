@@ -1,11 +1,19 @@
+2007-10-31  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        * QMimeData::removeData will be new in Qt4.4, don't use it for Qt4.3 
+        * Provide a bad fallback implementation to filter the format list.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::clearData):
+
 2007-10-31  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
 
         add an entitiy resolver to QXmlStream.
         Fixes fast/parser/entities-in-attributes.xhtml.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * dom/XMLTokenizer.cpp:
         (WebCore::EntityResolver::resolveUndeclaredEntity):
@@ -37,8 +45,6 @@
 
         add support for dragging images.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/DragImage.h:
         * platform/qt/ClipboardQt.cpp:
         (WebCore::ClipboardQt::clearData):
@@ -54,8 +60,6 @@
         Reviewed by Simon.
 
         fix most of the issues I found with Clipboard and DnD.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * editing/qt/EditorQt.cpp:
         * platform/qt/ClipboardQt.cpp:
