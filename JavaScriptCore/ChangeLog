@@ -1,3 +1,20 @@
+2007-10-30  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 15586: REGRESSION (r26759-r26785): Windows nightly builds crash with Safari 3 Public Beta
+
+        http://bugs.webkit.org/show_bug.cgi?id=15586
+
+        Also fixes: <rdar://5565303> Cannot use regsvr32.exe to register WebKit.dll
+
+        Use Win32 TLS functions instead of __declspec(thread), which breaks
+        delay-loading.
+
+        Reviewed by Steve.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::getThreadHeap):
+        (WTF::TCMalloc_ThreadCache::InitModule):
+
 2007-10-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

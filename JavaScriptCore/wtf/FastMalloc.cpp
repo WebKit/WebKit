@@ -190,6 +190,10 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+#if COMPILER(MSVC)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
 
 #if WTF_CHANGES
 
@@ -1293,13 +1297,13 @@ static inline TCMalloc_PageHeap* getPageHeap()
 static bool tsd_inited = false;
 static pthread_key_t heap_key;
 #if COMPILER(MSVC)
-__declspec(thread) TCMalloc_ThreadCache* threadHeap;
+DWORD tlsIndex = TLS_OUT_OF_INDEXES;
 #endif
 
 static ALWAYS_INLINE TCMalloc_ThreadCache* getThreadHeap()
 {
 #if COMPILER(MSVC)
-    return threadHeap;
+    return static_cast<TCMalloc_ThreadCache*>(TlsGetValue(tlsIndex));
 #else
     return static_cast<TCMalloc_ThreadCache*>(pthread_getspecific(heap_key));
 #endif
@@ -1311,7 +1315,7 @@ static ALWAYS_INLINE void setThreadHeap(TCMalloc_ThreadCache* heap)
     // benefit from the delete callback.
     pthread_setspecific(heap_key, heap);
 #if COMPILER(MSVC)
-    threadHeap = heap;
+    TlsSetValue(tlsIndex, heap);
 #endif
 }
 
@@ -1642,6 +1646,9 @@ void TCMalloc_ThreadCache::InitModule() {
 void TCMalloc_ThreadCache::InitTSD() {
   ASSERT(!tsd_inited);
   pthread_key_create(&heap_key, DeleteCache);
+#if COMPILER(MSVC)
+  tlsIndex = TlsAlloc();
+#endif
   tsd_inited = true;
     
   // We may have used a fake pthread_t for the main thread.  Fix it.
