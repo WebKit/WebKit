@@ -85,7 +85,7 @@ INCLUDEPATH += \
                 $$PWD/../WebKit/qt/Api
 
 DEPENDPATH += editing/qt history/qt loader/qt page/qt \
-	platform/graphics/qt ../WeKitQt/Api ../WebKit/qt/WebCoreSupport
+	platform/graphics/qt ../WebKit/qt/Api ../WebKit/qt/WebCoreSupport
 
     DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
 }

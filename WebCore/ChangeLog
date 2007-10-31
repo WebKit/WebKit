@@ -1,3 +1,11 @@
+2007-10-31  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Fix dependency path to header files of the public API of the Qt port.
+
+        * WebCore.pro:
+
 2007-10-31  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
