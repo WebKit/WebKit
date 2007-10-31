@@ -20,7 +20,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLTableColElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=4e886641-910e-424a-995c-e525c09dcfd3,
+        ImplementationUUID=5f4cdf17-44f1-4b1d-9c68-206737085892
+    ] HTMLTableColElement : HTMLElement {
 
         attribute [ConvertNullToNullString] DOMString       align;
         attribute [ConvertNullToNullString] DOMString       ch;

@@ -20,7 +20,15 @@
 
 module html {
 
-    interface [GenerateConstructor, CustomPutFunction, CustomGetOwnPropertySlot, CustomCall, HasOverridingNameGetter] HTMLObjectElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        CustomPutFunction,
+        CustomGetOwnPropertySlot,
+        CustomCall,
+        HasOverridingNameGetter,
+        InterfaceUUID=9d04a3b8-9016-4b64-913a-3b00d548aca7,
+        ImplementationUUID=2dd24554-6784-4ef9-9713-179f3d37b2f9
+    ] HTMLObjectElement : HTMLElement {
         readonly attribute HTMLFormElement form;
                  attribute [ConvertNullToNullString] DOMString       code;
                  attribute [ConvertNullToNullString] DOMString       align;
@@ -43,9 +51,11 @@ module html {
         // Introduced in DOM Level 2:
         readonly attribute [CheckFrameSecurity] Document        contentDocument;
 
+#if !defined(LANGUAGE_COM)
 #if ENABLE_SVG
         [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
             raises(DOMException);
+#endif
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)

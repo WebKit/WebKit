@@ -20,13 +20,19 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLStyleElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=3aaa334c-9660-48cf-b8e2-6d2b4ac0a1da,
+        ImplementationUUID=73024a55-b8a1-461b-ad85-befa4089f80d
+    ] HTMLStyleElement : HTMLElement {
         attribute  boolean              disabled;
         attribute  [ConvertNullToNullString] DOMString            media;
         attribute  [ConvertNullToNullString] DOMString            type;
-        
+
+#if !defined(LANGUAGE_COM)
         // DOM Level 2 Style
         readonly attribute StyleSheet sheet;
+#endif
     };
 
 }

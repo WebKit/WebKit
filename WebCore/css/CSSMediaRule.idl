@@ -21,7 +21,11 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor] CSSMediaRule : CSSRule {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=9c623c09-2677-4d28-ba90-826da0ae316a,
+        ImplementationUUID=30493ec9-e139-4e9e-ae24-cc8f532006d9
+    ] CSSMediaRule : CSSRule {
         readonly attribute stylesheets::MediaList media;
         readonly attribute CSSRuleList cssRules;
         

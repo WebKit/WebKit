@@ -21,7 +21,11 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [ObjCCustomImplementation] RGBColor {
+    interface [
+        ObjCCustomImplementation,
+        InterfaceUUID=2e3b1501-2cf7-4a4a-bbf7-d8843d1c3be7,
+        ImplementationUUID=cf779953-4898-4800-aa31-6c9e3f4711be
+    ] RGBColor {
         readonly attribute CSSPrimitiveValue  red;
         readonly attribute CSSPrimitiveValue  green;
         readonly attribute CSSPrimitiveValue  blue;

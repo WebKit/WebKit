@@ -20,7 +20,13 @@
 
 module core {
 
-    interface [GenerateConstructor, HasIndexGetter, HasNameGetter] NamedNodeMap {
+    interface [
+        GenerateConstructor,
+        HasIndexGetter,
+        HasNameGetter,
+        InterfaceUUID=08DAF7A4-4C32-4709-B72F-622721FF0FB8,
+        ImplementationUUID=A1CC9F5B-092D-4a04-96D9-D7718A8D6242
+    ] NamedNodeMap {
 
         Node getNamedItem(in DOMString name);
 

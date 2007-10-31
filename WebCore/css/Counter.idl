@@ -20,7 +20,11 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor] Counter {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=365d0f26-3a6e-457c-a34c-174d98f79798,
+        ImplementationUUID=8bfdc968-9a1b-4e4f-8d36-732d49b48eaa
+    ] Counter {
         readonly attribute DOMString identifier;
         readonly attribute DOMString listStyle;
         readonly attribute DOMString separator;

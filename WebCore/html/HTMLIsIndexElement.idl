@@ -18,8 +18,14 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLIsIndexElement : HTMLInputElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=94fc4e39-4d81-44e3-a37d-364553b23a37,
+        ImplementationUUID=b31d409b-8f68-495d-a0c2-b81520716974
+    ] HTMLIsIndexElement : HTMLInputElement {
         readonly attribute HTMLFormElement form;
         attribute [ConvertNullToNullString] DOMString prompt;
     };
+
 }

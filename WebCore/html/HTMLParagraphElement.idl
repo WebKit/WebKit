@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLParagraphElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=dffe0809-f3f8-499d-8d5c-7d9893f23337,
+        ImplementationUUID=21d60b62-4ecb-4849-8729-0a40c64d12aa
+    ] HTMLParagraphElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString align;
     };
 

@@ -18,7 +18,13 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLHeadingElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=91c029bb-aa3a-4877-8ab5-59f304525fd5,
+        ImplementationUUID=ab39e189-5d0c-465d-b518-f57bc920038b
+    ] HTMLHeadingElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString align;
     };
+
 }

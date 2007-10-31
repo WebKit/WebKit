@@ -20,7 +20,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLTableCellElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=3ad21d30-ce64-4a6f-9296-c07a16170783,
+        ImplementationUUID=36fe6075-c9c1-4f22-bbc2-dd440f21f7cf
+    ] HTMLTableCellElement : HTMLElement {
 
         readonly attribute long            cellIndex;
                  attribute [ConvertNullToNullString] DOMString       abbr;

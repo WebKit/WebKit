@@ -19,7 +19,11 @@
 
 module core {
 
-    interface [GenerateConstructor] DocumentFragment : EventTargetNode {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=F5C8DAF0-D728-4b2b-9D9C-630621B07D35,
+        ImplementationUUID=E57BF71F-3FAA-495c-A307-E288F8E5B2EC
+    ] DocumentFragment : EventTargetNode {
     };
 
 }

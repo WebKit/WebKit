@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLBaseFontElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=434b1be5-408e-45b5-be83-c70e11e9bb37,
+        ImplementationUUID=1dc8508e-53c4-4e7e-93c0-16772372b2dc
+    ] HTMLBaseFontElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString color;
         attribute [ConvertNullToNullString] DOMString face;
 #if defined(LANGUAGE_OBJECTIVE_C)

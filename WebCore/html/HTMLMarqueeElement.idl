@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLMarqueeElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=100ca673-eb1e-40b6-8cba-a15abc4cd590,
+        ImplementationUUID=b9427505-1f10-4299-8b85-4e2891428988
+    ] HTMLMarqueeElement : HTMLElement {
         void start();
         void stop();
 

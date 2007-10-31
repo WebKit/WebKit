@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLDirectoryElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=49292c6b-2b2e-49cb-98b6-20d4cd806bd2,
+        ImplementationUUID=45749798-4afe-4884-a42a-a2c8b3d98795
+    ] HTMLDirectoryElement : HTMLElement {
         attribute boolean compact;
     };
 

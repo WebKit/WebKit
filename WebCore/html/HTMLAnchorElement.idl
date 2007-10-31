@@ -20,7 +20,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLAnchorElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=0c74cef8-b1f7-4b44-83a9-8deeb376a257,
+        ImplementationUUID=30f797d5-d145-498e-a126-d8e9ddeedea3
+    ] HTMLAnchorElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString accessKey;
         attribute [ConvertNullToNullString] DOMString charset;
         attribute [ConvertNullToNullString] DOMString coords;
@@ -33,10 +37,10 @@ module html {
         attribute long tabIndex;
         attribute [ConvertNullToNullString] DOMString target;
         attribute [ConvertNullToNullString] DOMString type;
-        
+
         void blur();
         void focus();
-        
+
         // IE Extensions
         readonly attribute DOMString hash;
         readonly attribute DOMString host;

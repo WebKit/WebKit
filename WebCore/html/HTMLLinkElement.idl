@@ -20,7 +20,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLLinkElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=a9e9ef29-f20b-429d-848e-e5dadd32694a,
+        ImplementationUUID=2d9b944e-88e3-451a-8640-06c593c339a8
+    ] HTMLLinkElement : HTMLElement {
         attribute  boolean              disabled;
         attribute  [ConvertNullToNullString] DOMString            charset;
         attribute  [ConvertNullToNullString] DOMString            href;
@@ -31,8 +35,10 @@ module html {
         attribute  [ConvertNullToNullString] DOMString            target;
         attribute  [ConvertNullToNullString] DOMString            type;
 
+#if !defined(LANGUAGE_COM)
         // DOM Level 2 Style
         readonly attribute StyleSheet   sheet;
+#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:

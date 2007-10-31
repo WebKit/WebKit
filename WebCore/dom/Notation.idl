@@ -19,7 +19,11 @@
 
 module core {
 
-    interface [GenerateConstructor] Notation : Node {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=6580C703-F5FF-40a7-ACF2-AB80EBC83CA1,
+        ImplementationUUID=A52869F7-A3CE-4f4c-8C27-E369C4ED9FF9
+    ] Notation : Node {
         readonly attribute [ConvertNullStringTo=Null] DOMString publicId;
         readonly attribute [ConvertNullStringTo=Null] DOMString systemId;
     };

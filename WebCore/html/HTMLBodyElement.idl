@@ -19,18 +19,24 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLBodyElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=4789afc6-2d9e-4f3b-8c27-12abc9d4a014,
+        ImplementationUUID=d2e16911-2f7e-4d58-a92c-94700d445b38
+    ] HTMLBodyElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString aLink;
         attribute [ConvertNullToNullString] DOMString background;
         attribute [ConvertNullToNullString] DOMString bgColor;
         attribute [ConvertNullToNullString] DOMString link;
         attribute [ConvertNullToNullString] DOMString text;
         attribute [ConvertNullToNullString] DOMString vLink; 
-        
+
         // IE Extensions
-        attribute long scrollLeft;
-        attribute long scrollTop;
+                 attribute long scrollLeft;
+                 attribute long scrollTop;
         readonly attribute long scrollWidth;
         readonly attribute long scrollHeight;
     };
+
 }

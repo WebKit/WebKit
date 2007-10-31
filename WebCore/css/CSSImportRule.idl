@@ -21,7 +21,11 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor] CSSImportRule : CSSRule {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=8f60b3a2-ebf0-484d-a714-47a9974a6a9e,
+        ImplementationUUID=437ea93c-68e5-4897-85fe-e161653801eb
+    ] CSSImportRule : CSSRule {
         readonly attribute [ConvertNullStringTo=Null] DOMString href;
         readonly attribute stylesheets::MediaList media;
         readonly attribute CSSStyleSheet styleSheet;

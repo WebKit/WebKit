@@ -20,7 +20,12 @@
 
 module css {
 
-    interface [GenerateConstructor, ObjCCustomInternalImpl] CSSValue {
+    interface [
+        GenerateConstructor,
+        ObjCCustomInternalImpl,
+        InterfaceUUID=9fd62a7b-539d-4500-bd6c-ec075abbc404,
+        ImplementationUUID=e10a2860-f98e-4bd3-96b4-1493ad941dfe
+    ] CSSValue {
 
         // UnitTypes
         const unsigned short CSS_INHERIT         = 0;

@@ -26,7 +26,12 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor, HasIndexGetter] CSSValueList : CSSValue {
+    interface [
+        GenerateConstructor,
+        HasIndexGetter,
+        InterfaceUUID=2fb74620-9029-400c-bc4b-4ce8e25b081f,
+        ImplementationUUID=1d8fc822-f89a-48d5-a2ac-827e5a24357e
+    ] CSSValueList : CSSValue {
         readonly attribute unsigned long    length;
         CSSValue           item(in unsigned long index);
     };

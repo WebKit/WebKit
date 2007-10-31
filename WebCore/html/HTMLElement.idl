@@ -20,7 +20,13 @@
 
 module html {
 
-    interface [GenerateConstructor, GenerateNativeConverter, CustomPushEventHandlerScope] HTMLElement : Element {
+    interface [
+        GenerateConstructor,
+        GenerateNativeConverter,
+        CustomPushEventHandlerScope,
+        InterfaceUUID=b2f172f1-d209-446f-8143-5f21de678f95,
+        ImplementationUUID=c81b0e16-a2b9-448b-ad0a-81c9346d6f8a
+    ] HTMLElement : Element {
                  // iht.com relies on id returning the empty string when no id is present. 
                  // Other browsers do this as well. So we don't convert null to JS null.
                  attribute [ConvertNullToNullString] DOMString id;

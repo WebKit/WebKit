@@ -18,7 +18,13 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLMenuElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=fb353af6-4927-4512-ad43-4ad8191b5615,
+        ImplementationUUID=ec26257c-a2a4-43dc-b234-cf644d22b1fb
+    ] HTMLMenuElement : HTMLElement {
         attribute boolean compact;
     };
+
 }

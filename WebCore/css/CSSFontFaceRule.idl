@@ -21,7 +21,11 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor] CSSFontFaceRule : CSSRule {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=8afa4b1a-39fe-49fb-be6d-4d56e81d9b4a,
+        ImplementationUUID=5a7971d9-5aad-4ed7-be67-3a1644560256
+    ] CSSFontFaceRule : CSSRule {
         readonly attribute CSSStyleDeclaration style;
     };
 

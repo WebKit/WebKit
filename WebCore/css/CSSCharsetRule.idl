@@ -21,7 +21,11 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor] CSSCharsetRule : CSSRule {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=94180bad-a74e-4df9-adbc-6ce4e5b96155,
+        ImplementationUUID=354aa39e-ad53-4e9a-a927-80c3966c47f2
+    ] CSSCharsetRule : CSSRule {
 #if defined(LANGUAGE_OBJECTIVE_C)
         readonly attribute [ConvertNullStringTo=Null] DOMString encoding;
 #else

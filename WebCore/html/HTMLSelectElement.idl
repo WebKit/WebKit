@@ -20,7 +20,13 @@
 
 module html {
 
-    interface [HasIndexGetter, HasCustomIndexSetter, GenerateConstructor] HTMLSelectElement : HTMLElement {
+    interface [
+        HasIndexGetter,
+        HasCustomIndexSetter,
+        GenerateConstructor,
+        InterfaceUUID=99013cd3-d644-4bb5-86a3-2e743821383b,
+        ImplementationUUID=afe20462-588d-469a-9b4c-8879c4a461d5
+    ] HTMLSelectElement : HTMLElement {
 
         readonly attribute DOMString       type;
                  attribute long            selectedIndex;

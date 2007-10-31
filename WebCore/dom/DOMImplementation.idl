@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,11 @@
 
 module core {
 
-    interface [GenerateConstructor] DOMImplementation {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=B0CC344F-963C-4acc-9FC6-EB22649345E5,
+        ImplementationUUID=9E835092-2CA3-426b-826B-8272A8105E49
+    ] DOMImplementation {
 
         // DOM Level 1
 
@@ -40,6 +44,7 @@ module core {
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
+#if !defined(LANGUAGE_COM)
         [OldStyleObjC] CSSStyleSheet createCSSStyleSheet(in DOMString title,
                                                          in DOMString media)
             raises(DOMException);
@@ -47,6 +52,7 @@ module core {
         // HTMLDOMImplementation interface from DOM Level 2 HTML
 
         HTMLDocument createHTMLDocument(in DOMString title);
+#endif
     };
 
 }

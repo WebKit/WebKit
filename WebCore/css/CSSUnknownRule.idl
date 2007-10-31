@@ -21,7 +21,10 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface CSSUnknownRule : CSSRule {
+    interface [
+        InterfaceUUID=35670098-b732-419c-b7cd-dc0d5e26d5e3,
+        ImplementationUUID=4b755f87-2509-4b98-a953-8ecb88fe4b21
+    ] CSSUnknownRule : CSSRule {
     };
 
 }

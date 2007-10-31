@@ -21,7 +21,11 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor] CSSStyleRule : CSSRule {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=ce4e3330-c40b-4430-8ed4-030ab4ddbc93,
+        ImplementationUUID=c3d2f1b8-3970-4b36-882e-ce7f5668d8e2
+    ] CSSStyleRule : CSSRule {
 
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectorText
                      setter raises(DOMException);

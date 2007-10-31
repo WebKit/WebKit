@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,14 +21,18 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface [ObjCProtocol] EventTarget {
-        [OldStyleObjC] void addEventListener(in DOMString type, 
+    interface [
+        ObjCProtocol,
+        PureInterface,
+        InterfaceUUID=1D71C7EC-0BA0-4044-BDFD-56B3E8F5F9D4
+    ] EventTarget {
+        [OldStyleObjC, EventTargetNodeCast] void addEventListener(in DOMString type, 
                                              in EventListener listener, 
                                              in boolean useCapture);
-        [OldStyleObjC] void removeEventListener(in DOMString type, 
+        [OldStyleObjC, EventTargetNodeCast] void removeEventListener(in DOMString type, 
                                                 in EventListener listener, 
                                                 in boolean useCapture);
-        boolean            dispatchEvent(in Event event)
+        [EventTargetNodeCast] boolean dispatchEvent(in Event event)
             raises(EventException);
     };
 

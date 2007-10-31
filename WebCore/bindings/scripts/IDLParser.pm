@@ -146,7 +146,7 @@ sub dumpExtendedAttributes
 sub parseExtendedAttributes
 {
     my $str = shift;
-    $str =~ s/\[\s*(.*)\]/$1/g;
+    $str =~ s/\[\s*(.*?)\s*\]/$1/g;
 
     my %attrs = ();
 

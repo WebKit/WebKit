@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLParamElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=76e05eee-c30d-4d52-a356-271f17b31dbf,
+        ImplementationUUID=418d8a82-0a99-4c6f-a630-1e6071a74350
+    ] HTMLParamElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString name;
         attribute [ConvertNullToNullString] DOMString type;
         attribute [ConvertNullToNullString] DOMString value;

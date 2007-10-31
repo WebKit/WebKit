@@ -19,11 +19,17 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLLegendElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=a6eb4254-6066-465a-a1c0-b4732281c255,
+        ImplementationUUID=323e883c-edf8-4b13-a165-8604f4f06ae2
+    ] HTMLLegendElement : HTMLElement {
         readonly attribute HTMLFormElement form;
         attribute [ConvertNullToNullString] DOMString accessKey;
         attribute [ConvertNullToNullString] DOMString align;
 
         void focus();
     };
+
 }

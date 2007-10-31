@@ -19,7 +19,11 @@
 
 module css {
 
-    interface [GenerateConstructor] Rect {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=696bc4d9-c1d3-4225-a5b3-2cef28967705,
+        ImplementationUUID=ae83743f-4dc4-4785-869b-8c3010c7d006
+    ] Rect {
         readonly attribute CSSPrimitiveValue  top;
         readonly attribute CSSPrimitiveValue  right;
         readonly attribute CSSPrimitiveValue  bottom;

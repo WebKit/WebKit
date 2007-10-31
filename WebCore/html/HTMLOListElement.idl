@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLOListElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=64165a4c-8889-4725-a149-abd13d5b4b61,
+        ImplementationUUID=a20e9b6a-e3a5-4276-aa43-0097e57df8d8
+    ] HTMLOListElement : HTMLElement {
         attribute boolean compact;
         attribute long start;
         attribute [ConvertNullToNullString] DOMString type;

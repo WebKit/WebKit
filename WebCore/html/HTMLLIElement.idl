@@ -18,8 +18,14 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLLIElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=83a4a75c-4427-4f53-b974-8107fedb4c2b,
+        ImplementationUUID=5747808d-8cbd-49c9-b89b-3fdc315c55fe
+    ] HTMLLIElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString type;
         attribute long value;    
     };
+
 }

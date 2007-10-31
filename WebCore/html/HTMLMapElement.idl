@@ -19,8 +19,14 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLMapElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=8a660b48-4beb-4f9e-855b-e04131eb2519,
+        ImplementationUUID=7ad57e02-91e5-4761-a1ca-e967188e5e0d
+    ] HTMLMapElement : HTMLElement {
         readonly attribute HTMLCollection areas;
         attribute [ConvertNullToNullString] DOMString name;
     };
+
 }

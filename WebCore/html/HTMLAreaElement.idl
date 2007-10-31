@@ -20,7 +20,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLAreaElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=aac98729-47d3-4623-8c5b-004783af5bd6,
+        ImplementationUUID=f0631a41-5f55-40e5-a879-c09e663c26ba
+    ] HTMLAreaElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString accessKey;
         attribute [ConvertNullToNullString] DOMString alt;
         attribute [ConvertNullToNullString] DOMString coords;

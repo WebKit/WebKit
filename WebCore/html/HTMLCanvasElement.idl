@@ -25,7 +25,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLCanvasElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=a14d88c8-c6af-4e34-ad17-659700c77a10,
+        ImplementationUUID=7ae731bc-c264-4ee3-a4b4-5d4540af26c3
+    ] HTMLCanvasElement : HTMLElement {
 
         attribute long width;
         attribute long height;

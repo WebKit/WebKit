@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLScriptElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=57ddf4da-1c9b-4005-87d7-eb9b2ed78e95,
+        ImplementationUUID=2edb1093-08f1-4e76-9728-df5dedb879fe
+    ] HTMLScriptElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString text;
         attribute [ConvertNullToNullString] DOMString htmlFor;
         attribute [ConvertNullToNullString] DOMString event;

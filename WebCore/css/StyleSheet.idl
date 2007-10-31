@@ -21,7 +21,12 @@
 module stylesheets {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor, ObjCCustomInternalImpl] StyleSheet {
+    interface [
+        GenerateConstructor,
+        ObjCCustomInternalImpl,
+        InterfaceUUID=2bd2db5f-aaab-4422-96a0-e05455313f35,
+        ImplementationUUID=a8ca694d-71f2-4479-8c76-ee9c1c729b49
+    ] StyleSheet {
         readonly attribute [ConvertNullStringTo=Null] DOMString        type;
                  attribute boolean          disabled;
         readonly attribute Node             ownerNode;

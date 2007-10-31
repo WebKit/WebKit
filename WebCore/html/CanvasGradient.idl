@@ -25,7 +25,10 @@
 
 module html {
 
-    interface CanvasGradient {
+    interface [
+        InterfaceUUID=bb1108ea-6b8c-4a08-894a-218628630cdb,
+        ImplementationUUID=a2942ae6-2731-4286-98cc-9d5e79e20de1
+    ] CanvasGradient {
 
         void addColorStop(in float offset, in DOMString color);
 

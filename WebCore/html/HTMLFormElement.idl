@@ -20,7 +20,13 @@
 
 module html {
 
-    interface [HasIndexGetter, HasOverridingNameGetter, GenerateConstructor] HTMLFormElement : HTMLElement {
+    interface [
+        HasIndexGetter,
+        HasOverridingNameGetter,
+        GenerateConstructor,
+        InterfaceUUID=c7e79252-3b6d-4636-9efb-0667192ca5c3,
+        ImplementationUUID=3561288f-5f67-4c45-9290-de4191d4c9c9
+    ] HTMLFormElement : HTMLElement {
         readonly attribute HTMLCollection  elements;
         readonly attribute long            length;
                  attribute [ConvertNullToNullString] DOMString       name;

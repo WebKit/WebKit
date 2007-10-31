@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLModElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=78c2bf89-c6e7-4d81-97df-429d07b91ff8,
+        ImplementationUUID=39e7c659-40be-4620-949b-15ec6a25bb90
+    ] HTMLModElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString cite;
         attribute [ConvertNullToNullString] DOMString dateTime;
     };

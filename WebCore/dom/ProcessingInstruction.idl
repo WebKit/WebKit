@@ -20,7 +20,11 @@
 
 module core {
 
-    interface [GenerateConstructor] ProcessingInstruction : Node {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=5947E8F8-B5CB-4a51-B883-B91F344F1E13,
+        ImplementationUUID=7EEC0376-3D76-4643-A964-97B8AC1FB6D3
+    ] ProcessingInstruction : Node {
 
         // DOM Level 1
 
@@ -28,9 +32,10 @@ module core {
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString data
                      setter raises(DOMException);
 
+#if !defined(LANGUAGE_COM)
         // interface LinkStyle from DOM Level 2 Style Sheets
-
         readonly attribute StyleSheet sheet;
+#endif
 
     };
 

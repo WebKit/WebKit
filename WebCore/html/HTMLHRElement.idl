@@ -18,10 +18,16 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLHRElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=20477b34-ab22-47e3-b9aa-80c388d32975,
+        ImplementationUUID=6cfc8977-172d-48f6-8f08-c7671f02354c
+    ] HTMLHRElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString align;
         attribute boolean noShade;
         attribute [ConvertNullToNullString] DOMString size;
         attribute [ConvertNullToNullString] DOMString width;
     };
+
 }

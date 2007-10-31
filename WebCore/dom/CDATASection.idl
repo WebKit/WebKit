@@ -19,7 +19,11 @@
 
 module core {
 
-    interface [GenerateConstructor] CDATASection : Text {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=DC8E30FD-42DD-4a12-9B74-78D634321B41,
+        ImplementationUUID=10A5D70C-D93E-409c-A6BA-9D7CB4E3D06A
+    ] CDATASection : Text {
     };
 
 }

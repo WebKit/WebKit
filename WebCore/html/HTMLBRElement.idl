@@ -18,7 +18,13 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLBRElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=e84b14bc-b0aa-431f-83c4-fcc297e354b0,
+        ImplementationUUID=c10d45a4-b042-45d0-b170-6ac7173ee823
+    ] HTMLBRElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString clear;
     };
+
 }

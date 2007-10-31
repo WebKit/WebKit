@@ -19,7 +19,12 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLImageElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=b21b8125-d00b-4bdf-b0e8-659678db3923,
+        ImplementationUUID=2121ca21-8118-4f1b-b9fe-4788a9050281
+    ] HTMLImageElement : HTMLElement {
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute [ConvertNullToNullString] DOMString align;
                  attribute [ConvertNullToNullString] DOMString alt;
@@ -47,4 +52,5 @@ module html {
         readonly attribute URL absoluteImageURL;
 #endif
     };
+
 }

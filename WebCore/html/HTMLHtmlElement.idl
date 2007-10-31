@@ -19,10 +19,14 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLHtmlElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=162828a5-d4d9-4973-b5ca-00ccbb26ded9,
+        ImplementationUUID=362f4f5f-99c5-4bbf-91ba-9ae7f9a7b297
+    ] HTMLHtmlElement : HTMLElement {
 
         attribute [ConvertNullToNullString] DOMString version;
-        
+
     };
 
 }

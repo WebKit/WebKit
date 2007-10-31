@@ -20,7 +20,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLButtonElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=b9715643-5591-442d-ab65-e05309607271,
+        ImplementationUUID=1be13b5f-40df-4550-b70e-8c805e546cad
+    ] HTMLButtonElement : HTMLElement {
         readonly attribute  HTMLFormElement      form;
                  attribute  [ConvertNullToNullString] DOMString            accessKey;
                  attribute  boolean              disabled;
@@ -28,9 +32,8 @@ module html {
                  attribute  long                 tabIndex;
         readonly attribute  DOMString            type;
                  attribute  [ConvertNullToNullString] DOMString            value;
-                 
-        void click();
 
+        void click();
     };
 
 }

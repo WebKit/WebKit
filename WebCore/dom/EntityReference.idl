@@ -19,7 +19,11 @@
 
 module core {
 
-    interface [GenerateConstructor] EntityReference : Node {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=61BF4A03-19FB-4ac4-A624-5BF0893FDA65,
+        ImplementationUUID=486E1182-CF4F-450b-B411-A584CA42BBD0
+    ] EntityReference : Node {
     };
 
 }

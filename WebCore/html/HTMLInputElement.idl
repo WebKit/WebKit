@@ -20,7 +20,12 @@
 
 module html {
 
-    interface [LegacyParent=JSHTMLInputElementBase, GenerateConstructor] HTMLInputElement : HTMLElement {
+    interface [
+        LegacyParent=JSHTMLInputElementBase,
+        GenerateConstructor,
+        InterfaceUUID=8f388ea3-1c31-4cca-8edd-449d14e222e1,
+        ImplementationUUID=aeb56b87-a90e-4d9d-a4d5-7eec3687c338
+    ] HTMLInputElement : HTMLElement {
                  attribute [ConvertNullToNullString] DOMString defaultValue;
                  attribute boolean         defaultChecked;
         readonly attribute HTMLFormElement form;
@@ -36,6 +41,7 @@ module html {
 #if defined(LANGUAGE_OBJECTIVE_C)
                  attribute [ConvertToString] DOMString size; // DOM level 2 changed this to a long, but our existing API is a string
 #else
+                 // FIXME: the spec says this should be a long, not an unsigned long
                  attribute unsigned long   size; // Changed string -> long as part of DOM level 2
 #endif
                  attribute [ConvertNullToNullString] DOMString src;

@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLBlockquoteElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=902d9011-c6d6-4363-b6fe-bd2d28ef553b,
+        ImplementationUUID=345db946-ba9c-44b9-87fd-06083aa472e4
+    ] HTMLBlockquoteElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString cite;
     };
 

@@ -21,7 +21,12 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor, ObjCCustomInternalImpl] Event {
+    interface [
+        GenerateConstructor,
+        ObjCCustomInternalImpl,
+        InterfaceUUID=D17495FA-ACAD-4d27-9362-E19E057B189D,
+        ImplementationUUID=CFDCDDB2-5B3F-412d-BDA4-80B23C721549
+    ] Event {
 
         // DOM PhaseType
         const unsigned short CAPTURING_PHASE     = 1;
@@ -54,7 +59,9 @@ module events {
         readonly attribute unsigned short   eventPhase;
         readonly attribute boolean          bubbles;
         readonly attribute boolean          cancelable;
+#if !defined(LANGUAGE_COM)
         readonly attribute DOMTimeStamp     timeStamp;
+#endif
         void               stopPropagation();
         void               preventDefault();
         [OldStyleObjC] void initEvent(in DOMString eventTypeArg, 

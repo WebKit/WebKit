@@ -19,7 +19,11 @@
 
 module core {
 
-    interface [GenerateConstructor] Comment : CharacterData {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=5D16069F-7E6B-4b28-8647-C36B2ED81ED1,
+        ImplementationUUID=CB55DB55-411F-451f-97C6-284B99E77F8E
+    ] Comment : CharacterData {
     };
 
 }

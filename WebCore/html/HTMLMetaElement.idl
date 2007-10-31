@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLMetaElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=65e3374d-4789-4c81-983b-1b5a29d2c075,
+        ImplementationUUID=a9ac9c73-055d-4c00-bd02-1fa215ae32f1
+    ] HTMLMetaElement : HTMLElement {
         attribute  [ConvertNullToNullString] DOMString    content;
         attribute  [ConvertNullToNullString] DOMString    httpEquiv;
         attribute  [ConvertNullToNullString] DOMString    name;

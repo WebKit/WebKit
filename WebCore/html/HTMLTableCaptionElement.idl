@@ -20,7 +20,12 @@
 
 module html {
 
-    interface [GenerateNativeConverter, GenerateConstructor] HTMLTableCaptionElement : HTMLElement {
+    interface [
+        GenerateNativeConverter,
+        GenerateConstructor,
+        InterfaceUUID=cd92752d-2f0e-44af-b68e-12c178e1f087,
+        ImplementationUUID=7c0e3749-0f81-4063-9760-8cec314a5b72
+    ] HTMLTableCaptionElement : HTMLElement {
 
         attribute [ConvertNullToNullString] DOMString       align;
 

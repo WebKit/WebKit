@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLDivElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=46fb9095-b485-4925-b6fd-2622935fd8bf,
+        ImplementationUUID=5f8661b7-96ad-4a8b-864a-85d544319fd2
+    ] HTMLDivElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString align;
     };
 

@@ -19,7 +19,12 @@
 
 module core {
 
-    interface [GenerateConstructor, GenerateNativeConverter] DocumentType : Node {
+    interface [
+        GenerateConstructor,
+        GenerateNativeConverter,
+        InterfaceUUID=20F04535-A423-4273-8CFE-3AD996100D29,
+        ImplementationUUID=736D952F-DBAF-458b-834B-F1638700BD88
+    ] DocumentType : Node {
 
         // DOM Level 1
 

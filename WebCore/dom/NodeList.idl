@@ -20,7 +20,14 @@
 
 module core {
 
-    interface [GenerateConstructor, HasIndexGetter, HasNameGetter, CustomCall] NodeList {
+    interface [
+        GenerateConstructor,
+        HasIndexGetter,
+        HasNameGetter,
+        CustomCall,
+        InterfaceUUID=F9A9F6A9-385C-414e-A6F6-E2E0CF574130,
+        ImplementationUUID=BBB49E8B-DB1D-4c4a-B970-D300FB4609FA
+    ] NodeList {
 
         Node item(in [IsIndex] unsigned long index);
 

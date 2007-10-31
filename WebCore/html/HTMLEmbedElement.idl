@@ -20,7 +20,15 @@
 
 module html {
 
-    interface [GenerateConstructor, CustomPutFunction, CustomGetOwnPropertySlot, CustomCall, HasOverridingNameGetter] HTMLEmbedElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        CustomPutFunction,
+        CustomGetOwnPropertySlot,
+        CustomCall,
+        HasOverridingNameGetter,
+        InterfaceUUID=18f9bd58-6bb3-4b5c-aa30-6da13adfc91e,
+        ImplementationUUID=93e0407a-8380-4ff0-978d-f773f2dee6a3
+    ] HTMLEmbedElement : HTMLElement {
                  attribute [ConvertNullToNullString] DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT)
                  attribute [ConvertNullToNullString] DOMString height;
@@ -36,9 +44,11 @@ module html {
                  attribute [ConvertFromString] long width;
 #endif
 
+#if !defined(LANGUAGE_COM)
 #if ENABLE_SVG
         [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
             raises(DOMException);
+#endif
 #endif
     };
 

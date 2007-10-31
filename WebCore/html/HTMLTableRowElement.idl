@@ -20,7 +20,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLTableRowElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=f14ea3d9-8643-4cfd-a692-cefe6d5c65ea,
+        ImplementationUUID=0ce090da-33bb-4163-bb35-3ca8a2f6be47
+    ] HTMLTableRowElement : HTMLElement {
 
         readonly attribute long            rowIndex;
         readonly attribute long            sectionRowIndex;

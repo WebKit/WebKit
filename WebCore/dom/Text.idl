@@ -19,7 +19,11 @@
 
 module core {
 
-    interface [GenerateConstructor] Text : CharacterData {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=4EA6B89C-F8E5-462a-A807-519446123184,
+        ImplementationUUID=CB5D61CB-D30D-486e-9BD7-F42B7611C2E5
+    ] Text : CharacterData {
 
         // DOM Level 1
 

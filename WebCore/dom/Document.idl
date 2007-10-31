@@ -20,10 +20,15 @@
 
 module core {
 
-    interface [GenerateConstructor, GenerateToJS, CustomMarkFunction] Document : EventTargetNode {
+    interface [
+        GenerateConstructor,
+        GenerateToJS,
+        CustomMarkFunction,
+        InterfaceUUID=48BB95FC-2D08-4c54-BE65-7558736A4CAE,
+        ImplementationUUID=FF5CBE81-F817-429c-A6C2-0CCCD2328062
+    ] Document : EventTargetNode {
 
         // DOM Level 1 Core
-
         readonly attribute DocumentType doctype;
         readonly attribute DOMImplementation implementation;
         readonly attribute Element documentElement;
@@ -74,6 +79,7 @@ module core {
 
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString documentURI;
 
+#if !defined(LANGUAGE_COM)
         // DOM Level 2 Events (DocumentEvents interface)
 
         Event              createEvent(in DOMString eventType)
@@ -96,7 +102,7 @@ module core {
                                             in NodeFilter filter,
                                             in boolean entityReferenceExpansion)
             raises(DOMException);
-#endif
+#endif // !defined(LANGUAGE_OBJECTIVE_C)
 
         // DOM Level 2 Abstract Views (DocumentView interface)
 
@@ -110,7 +116,6 @@ module core {
 
         [OldStyleObjC] CSSStyleDeclaration getOverrideStyle(in Element element,
                                                             in DOMString pseudoElement);
-
 #ifdef ENABLE_XPATH
         // DOM Level 3 XPath (XPathEvaluator interface)
         [OldStyleObjC] XPathExpression createExpression(in DOMString expression,
@@ -123,7 +128,8 @@ module core {
                                             in unsigned short type,
                                             in XPathResult inResult)
             raises(DOMException);
-#endif
+#endif // ENABLE_XPATH
+#endif // !defined(LANGUAGE_COM)
 
         // Common extensions
 
@@ -194,8 +200,10 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString preferredStylesheetSet;
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectedStylesheetSet;
 
+#if !defined(LANGUAGE_COM)
 #if !defined(LANGUAGE_JAVASCRIPT)
         CSSStyleDeclaration createCSSStyleDeclaration();
+#endif
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)

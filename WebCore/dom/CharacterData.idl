@@ -19,7 +19,11 @@
 
 module core {
 
-    interface [GenerateConstructor] CharacterData : EventTargetNode {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=149159F4-D2BA-4040-8137-6BF6424C972A,
+        ImplementationUUID=E2095280-B9BD-446a-8C03-79F78417CDFF
+    ] CharacterData : EventTargetNode {
 
         attribute [ConvertNullToNullString] DOMString data
             setter raises(DOMException);

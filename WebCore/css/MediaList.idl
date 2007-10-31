@@ -26,7 +26,12 @@
 module stylesheets {
 
     // Introduced in DOM Level 2:
-    interface [GenerateConstructor, HasIndexGetter] MediaList {
+    interface [
+        GenerateConstructor,
+        HasIndexGetter,
+        InterfaceUUID=4ed02a0b-15b3-4a20-8f16-d91295aaf2cb,
+        ImplementationUUID=6c5095d8-fdcc-4f9a-b04a-23c2a6d2cf49
+    ] MediaList {
 
                  attribute [ConvertNullToNullString, ConvertNullStringTo=Null] DOMString mediaText
                      setter raises(DOMException);

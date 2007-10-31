@@ -18,9 +18,15 @@
  */
 
 module html {
-    interface [GenerateConstructor] HTMLFontElement : HTMLElement {
+
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=f6a11dbe-7f40-49dc-a304-7997b25b2cb9,
+        ImplementationUUID=a37453b9-f7ba-4896-8e91-37d1ecc5b7ce
+    ] HTMLFontElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString color;
         attribute [ConvertNullToNullString] DOMString face;
         attribute [ConvertNullToNullString] DOMString size;
     };
+
 }

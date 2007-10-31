@@ -19,7 +19,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLDListElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=5665c589-aea9-4322-844f-d3395fd5839e,
+        ImplementationUUID=99ac26a3-224b-4bc6-b287-89946a6de9a7
+    ] HTMLDListElement : HTMLElement {
         attribute boolean compact;
     };
 

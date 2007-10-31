@@ -20,7 +20,11 @@
 
 module html {
 
-    interface [GenerateConstructor] HTMLTextAreaElement : HTMLElement {
+    interface [
+        GenerateConstructor,
+        InterfaceUUID=8b16bba6-efa9-4887-b863-308b4f9b9202,
+        ImplementationUUID=2414be6e-bae0-472d-b124-beed5ca82d3b
+    ] HTMLTextAreaElement : HTMLElement {
                  attribute  [ConvertNullToNullString] DOMString            defaultValue;
         readonly attribute  HTMLFormElement      form;
                  attribute  [ConvertNullToNullString] DOMString            accessKey;

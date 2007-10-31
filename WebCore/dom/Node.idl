@@ -20,7 +20,15 @@
 
 module core {
 
-    interface [CustomMarkFunction, GenerateConstructor, GenerateNativeConverter, GenerateToJS, ObjCCustomInternalImpl] Node {        
+    interface [
+        CustomMarkFunction,
+        GenerateConstructor,
+        GenerateNativeConverter,
+        GenerateToJS,
+        ObjCCustomInternalImpl,
+        InterfaceUUID=84BA0D7A-7E3E-4a7b-B6FB-7653E8FB54ED,
+        ImplementationUUID=81B47FDB-94B0-40fd-8E0C-FB2A6E53CC04
+    ] Node {
         // NodeType
         const unsigned short      ELEMENT_NODE                   = 1;
         const unsigned short      ATTRIBUTE_NODE                 = 2;
