@@ -452,14 +452,6 @@ bool TransformOperations::operator==(const TransformOperations& o) const
     return true;
 }
 
-static inline Length blendLengths(const Length& from, const Length& to, double progress)
-{  
-    if (from.type() != to.type())
-        return to;
-    return from.type() == Percent ? Length(from.percent() + (to.percent() - from.percent()) * progress, Percent)
-                                  : Length(from.value() + (to.value() - from.value()) * progress, from.type());
-}
-
 TransformOperation* ScaleTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isScaleOperation())
