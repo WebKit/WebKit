@@ -68,7 +68,8 @@
 using namespace WebCore;
 
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
-    : q(qq), modified(false)
+    : q(qq)
+    , modified(false)
 {
     q->setMouseTracking(true);
     q->setFocusPolicy(Qt::ClickFocus);
@@ -601,11 +602,7 @@ void QWebPage::dragEnterEvent(QDragEnterEvent *ev)
 
 void QWebPage::dragLeaveEvent(QDragLeaveEvent *ev)
 {
-#ifndef QT_NO_DRAGANDDROP
-    DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
-    d->page->dragController()->dragExited(&dragData);
-    ev->accept();
-#endif
+    // nothing to do here for the moment
 }
 
 void QWebPage::dragMoveEvent(QDragMoveEvent *ev)
