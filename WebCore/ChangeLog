@@ -1,3 +1,12 @@
+2007-10-30  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff.
+
+        Leak fix
+
+        * platform/graphics/mac/MoviePrivateQTKit.mm:
+        (WebCore::MoviePrivate::getSupportedTypes):
+
 2007-10-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Stephanie Lewis.

@@ -572,10 +572,12 @@ void MoviePrivate::getSupportedTypes(HashSet<String>& types)
         CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)ext, NULL);
         if (!uti)
             continue;
-        NSString* mime = (NSString*)UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType);
+        CFStringRef mime = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType);
+        CFRelease(uti);
         if (!mime)
             continue;
-        types.add(String(mime));
+        types.add(String((NSString*)mime));
+        CFRelease(mime);
     }
 } 
 
