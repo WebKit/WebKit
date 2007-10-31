@@ -181,7 +181,6 @@ all : \
     DOMSVGElementInstance.h \
     DOMSVGElementInstanceList.h \
     DOMSVGEllipseElement.h \
-    DOMSVGException.h \
     DOMSVGExternalResourcesRequired.h \
     DOMSVGFEBlendElement.h \
     DOMSVGFEColorMatrixElement.h \
@@ -443,7 +442,6 @@ all : \
     JSSVGAnimatedLengthList.h \
     JSSVGAnimatedNumber.h \
     JSSVGAnimatedNumberList.h \
-    JSSVGAnimatedPoints.h \
     JSSVGAnimatedPreserveAspectRatio.h \
     JSSVGAnimatedRect.h \
     JSSVGAnimatedString.h \

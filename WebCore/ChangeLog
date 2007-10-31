@@ -1,3 +1,27 @@
+2007-10-30  David Kilzer  <ddkilzer@webkit.org>
+
+        Generated files missing from WebCore's Xcode project file
+        <http://bugs.webkit.org/show_bug.cgi?id=15406>
+
+        Reviewed by Darin.
+
+        Added the following files to the Xcode project file (note that
+        JSHTMLInputElementBaseTable.cpp is used as a header file):
+
+        - DOMCSSStyleSheetPrivate.h
+        - DOMEventPrivate.h
+        - DOMHTMLCollectionPrivate.h
+        - DOMHTMLEmbedElementPrivate.h
+        - DOMHTMLIFrameElementPrivate.h
+        - DOMHTMLObjectElementPrivate.h
+        - DOMHTMLSelectElementPrivate.h
+        - DOMTextEventInternal.h
+        - JSHTMLInputElementBaseTable.cpp
+
+        * DerivedSources.make: Removed DOMSVGException.h and JSSVGAnimatedPoints.h
+        since their generated code was not used.
+        * WebCore.xcodeproj/project.pbxproj: Added missing header files.
+
 2007-10-29  Antti Koivisto  <antti@apple.com>
 
         Rubber stamped by Adele.

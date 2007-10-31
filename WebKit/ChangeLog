@@ -1,3 +1,22 @@
+2007-10-30  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Generated files missing from WebCore's Xcode project file
+        <http://bugs.webkit.org/show_bug.cgi?id=15406>
+
+        Reviewed by Darin.
+
+        Added the following private header files to MigrateHeaders.make:
+
+        - DOMCSSStyleSheetPrivate.h
+        - DOMEventPrivate.h
+        - DOMHTMLCollectionPrivate.h
+        - DOMHTMLEmbedElementPrivate.h
+        - DOMHTMLIFrameElementPrivate.h
+        - DOMHTMLObjectElementPrivate.h
+        - DOMHTMLSelectElementPrivate.h
+
+        * MigrateHeaders.make:
+
 2007-10-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

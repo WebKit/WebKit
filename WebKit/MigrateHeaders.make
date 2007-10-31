@@ -50,6 +50,7 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMCSSStyleDeclarationInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSStyleRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSStyleSheet.h \
+    $(PRIVATE_HEADERS_DIR)/DOMCSSStyleSheetPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSUnknownRule.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSValue.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSSValueList.h \
@@ -71,6 +72,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMEvent.h \
     $(PUBLIC_HEADERS_DIR)/DOMEventException.h \
     $(PUBLIC_HEADERS_DIR)/DOMEventListener.h \
+    $(PRIVATE_HEADERS_DIR)/DOMEventPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMEventTarget.h \
     $(PUBLIC_HEADERS_DIR)/DOMEvents.h \
     $(PUBLIC_HEADERS_DIR)/DOMException.h \
@@ -89,6 +91,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLButtonElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLButtonElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLCollection.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLCollectionPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDListElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDirectoryElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLDivElement.h \
@@ -97,6 +100,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMHTMLElementInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLEmbedElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLEmbedElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFontElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLFormElement.h \
@@ -109,6 +113,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHeadingElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLHtmlElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLIFrameElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLIFrameElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLImageElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLImageElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLInputElement.h \
@@ -129,6 +134,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLModElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLOListElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLObjectElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLObjectElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLOptGroupElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLOptionElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLOptionsCollection.h \
@@ -140,6 +146,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLQuoteElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLScriptElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLSelectElement.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLSelectElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLStyleElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLStyleElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLTableCaptionElement.h \
