@@ -34,7 +34,7 @@ extern "C" { // bug with some libc5 distributions
 #endif
 
 #include "ustring.h"
-#include <wtf/Vector.h>
+#include <wtf/OwnArrayPtr.h>
 
 namespace KJS {
 
