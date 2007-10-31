@@ -1,5 +1,17 @@
 2007-10-30  Adam Roben  <aroben@apple.com>
 
+        Use GetCurrentThreadId instead of pthread_self in FastMalloc
+
+        Speeds up SunSpider by 0.3%.
+
+        Reviewed by Steve.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::InitTSD):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+
+2007-10-30  Adam Roben  <aroben@apple.com>
+
         Switch to a Win32 critical section implementation of spinlocks
         
         Speeds up SunSpider by 0.4%.

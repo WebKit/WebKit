@@ -1145,9 +1145,14 @@ class TCMalloc_ThreadCache_FreeList {
 class TCMalloc_ThreadCache {
  private:
   typedef TCMalloc_ThreadCache_FreeList FreeList;
+#if COMPILER(MSVC)
+  typedef DWORD ThreadIdentifier;
+#else
+  typedef pthread_t ThreadIdentifier;
+#endif
 
   size_t        size_;                  // Combined size of data
-  pthread_t     tid_;                   // Which thread owns it
+  ThreadIdentifier tid_;                // Which thread owns it
   bool          setspecific_;           // Called pthread_setspecific?
   FreeList      list_[kNumClasses];     // Array indexed by size-class
 
@@ -1160,7 +1165,7 @@ class TCMalloc_ThreadCache {
   TCMalloc_ThreadCache* next_;
   TCMalloc_ThreadCache* prev_;
 
-  void Init(pthread_t tid);
+  void Init(ThreadIdentifier tid);
   void Cleanup();
 
   // Accessors (mostly just for printing stats)
@@ -1471,7 +1476,7 @@ inline bool TCMalloc_ThreadCache::SampleAllocation(size_t k) {
   }
 }
 
-void TCMalloc_ThreadCache::Init(pthread_t tid) {
+void TCMalloc_ThreadCache::Init(ThreadIdentifier tid) {
   size_ = 0;
   next_ = NULL;
   prev_ = NULL;
@@ -1656,18 +1661,26 @@ void TCMalloc_ThreadCache::InitTSD() {
 #endif
   tsd_inited = true;
     
+#if !COMPILER(MSVC)
   // We may have used a fake pthread_t for the main thread.  Fix it.
   pthread_t zero;
   memset(&zero, 0, sizeof(zero));
+#endif
 #ifndef WTF_CHANGES
   SpinLockHolder h(&pageheap_lock);
 #else
   ASSERT(pageheap_lock.IsLocked());
 #endif
   for (TCMalloc_ThreadCache* h = thread_heaps; h != NULL; h = h->next_) {
+#if COMPILER(MSVC)
+    if (h->tid_ == 0) {
+      h->tid_ = GetCurrentThreadId();
+    }
+#else
     if (pthread_equal(h->tid_, zero)) {
       h->tid_ = pthread_self();
     }
+#endif
   }
 }
 
@@ -1677,6 +1690,14 @@ TCMalloc_ThreadCache* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
   {
     SpinLockHolder h(&pageheap_lock);
 
+#if COMPILER(MSVC)
+    DWORD me;
+    if (!tsd_inited) {
+      me = 0;
+    } else {
+      me = GetCurrentThreadId();
+    }
+#else
     // Early on in glibc's life, we cannot even call pthread_self()
     pthread_t me;
     if (!tsd_inited) {
@@ -1684,12 +1705,17 @@ TCMalloc_ThreadCache* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
     } else {
       me = pthread_self();
     }
+#endif
 
     // This may be a recursive malloc call from pthread_setspecific()
     // In that case, the heap for this thread has already been created
     // and added to the linked list.  So we search for that first.
     for (TCMalloc_ThreadCache* h = thread_heaps; h != NULL; h = h->next_) {
+#if COMPILER(MSVC)
+      if (h->tid_ == me) {
+#else
       if (pthread_equal(h->tid_, me)) {
+#endif
         heap = h;
         break;
       }
