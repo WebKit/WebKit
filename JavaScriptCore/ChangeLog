@@ -1,3 +1,11 @@
+2007-10-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben, Sam Weinig.
+        
+        Made conflicts in grammar.y a persistent build failure.
+
+        * DerivedSources.make:
+
 2007-10-30  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam and Geoff.

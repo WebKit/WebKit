@@ -50,8 +50,9 @@ lexer.lut.h: create_hash_table keywords.table
 
 # JavaScript language grammar
 
-grammar.cpp : grammar.y
-	bison -d -p kjsyy $< -o $@
+grammar.cpp: grammar.y
+	bison -d -p kjsyy $< -o $@ > bison_out.txt 2>&1
+	perl -e "while (<>) { if (/conflict/) { print; unlink 'grammar.cpp'; die; } }" < bison_out.txt
 	touch grammar.cpp.h
 	touch grammar.hpp
 	cat grammar.cpp.h grammar.hpp > grammar.h
