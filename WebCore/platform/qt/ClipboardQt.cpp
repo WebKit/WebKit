@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +28,19 @@
 #include "config.h"
 #include "ClipboardQt.h"
 
-#include "NotImplemented.h"
+#include "CachedImage.h"
+#include "CSSHelper.h"
 #include "DeprecatedString.h"
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
+#include "HTMLNames.h"
+#include "Image.h"
 #include "IntPoint.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "Range.h"
+#include "RenderImage.h"
 #include "StringHash.h"
 #include <QList>
 #include <QMimeData>
@@ -85,7 +92,7 @@ void ClipboardQt::clearData(const String& type)
         return;
 
     ASSERT(m_writableData);
-    notImplemented();
+    m_writableData->removeFormat(type);
 }
 
 void ClipboardQt::clearAllData() 
@@ -135,34 +142,82 @@ HashSet<String> ClipboardQt::types() const
     return result;
 }
 
-void ClipboardQt::setDragImage(CachedImage*, const IntPoint&) 
+void ClipboardQt::setDragImage(CachedImage* image, const IntPoint& point) 
 {
-    if (policy() != ClipboardImageWritable && policy() != ClipboardWritable)
-        return;
-
-    notImplemented();
+    setDragImage(image, 0, point);
 }
 
-void ClipboardQt::setDragImageElement(Node*, const IntPoint&)
+void ClipboardQt::setDragImageElement(Node* node, const IntPoint& point)
+{
+    setDragImage(0, node, point);
+}
+
+void ClipboardQt::setDragImage(CachedImage* image, Node *node, const IntPoint &loc)
 {
     if (policy() != ClipboardImageWritable && policy() != ClipboardWritable)
         return;
 
-    notImplemented();
+    if (m_dragImage)
+        m_dragImage->deref(this);
+    m_dragImage = image;
+    if (m_dragImage)
+        m_dragImage->ref(this);
+    
+    m_dragLoc = loc;
+    m_dragImageElement = node;
 }
 
 DragImageRef ClipboardQt::createDragImage(IntPoint& dragLoc) const
-{ 
-    notImplemented();
+{
+    if (!m_dragImage)
+        return 0;
+    dragLoc = m_dragLoc;
+    return m_dragImage->image()->getPixmap();
+}
+
+
+static CachedImage* getCachedImage(Element* element)
+{
+    // Attempt to pull CachedImage from element
+    ASSERT(element);
+    RenderObject* renderer = element->renderer();
+    if (!renderer || !renderer->isImage()) 
+        return 0;
+    
+    RenderImage* image = static_cast<RenderImage*>(renderer);
+    if (image->cachedImage() && !image->cachedImage()->errorOccurred())
+        return image->cachedImage();
+
     return 0;
 }
 
-void ClipboardQt::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame* frame) 
+void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame) 
 {
     ASSERT(frame);
     ASSERT(m_writableData);
+    Q_UNUSED(url);
+    Q_UNUSED(title);
 
-    notImplemented();
+    //WebCore::writeURL(m_writableDataObject.get(), url, title, true, false);
+
+    CachedImage* cachedImage = getCachedImage(element);
+    if (!cachedImage || !cachedImage->image() || !cachedImage->isLoaded())
+        return;
+    QPixmap *pixmap = cachedImage->image()->getPixmap();
+    if (pixmap)
+        m_writableData->setImageData(pixmap);
+
+    AtomicString imageURL = element->getAttribute(HTMLNames::srcAttr);
+    if (imageURL.isEmpty()) 
+        return;
+
+    String fullURL = frame->document()->completeURL(parseURL(imageURL));
+    if (fullURL.isEmpty()) 
+        return;
+
+    QList<QUrl> urls;
+    urls.append(QUrl(fullURL));
+    m_writableData->setUrls(urls);
 }
 
 void ClipboardQt::writeURL(const KURL& url, const String&, Frame* frame) 

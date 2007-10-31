@@ -2,6 +2,24 @@
 
         Reviewed by Simon.
 
+        add support for dragging images.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/DragImage.h:
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::setDragImage):
+        (WebCore::ClipboardQt::setDragImageElement):
+        (WebCore::ClipboardQt::createDragImage):
+        (WebCore::getCachedImage):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        * platform/qt/ClipboardQt.h:
+
+2007-10-31  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         fix most of the issues I found with Clipboard and DnD.
 
         WARNING: NO TEST CASES ADDED OR CHANGED
