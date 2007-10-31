@@ -1,3 +1,13 @@
+2007-10-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        - fix <rdar://problem/5547237> REGRESSION (304-ToT): Repro font-related crash in fontdatawin.cpp Line 93 (many sites)
+
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::platformInit): Handle the case where the font has no
+        glyphs on page zero.
+
 2007-10-30  David Hyatt  <hyatt@apple.com>
 
         Make sure CSS transforms can be animated using the CSS transition property.
