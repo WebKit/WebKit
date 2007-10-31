@@ -1,3 +1,12 @@
+2007-10-31  David Hyatt  <hyatt@apple.com>
+
+        Disable style sharing for animating styles.
+
+        Reviewed by mitzpettel
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+
 2007-10-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

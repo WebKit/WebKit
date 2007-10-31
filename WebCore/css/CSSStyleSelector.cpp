@@ -700,6 +700,9 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
                              (s->isChecked() != element->isChecked()))
                 return false;
             
+            if (style->transitions())
+                return false;
+
             bool classesMatch = true;
             if (s->hasClass()) {
                 const AtomicString& class1 = element->getAttribute(classAttr);
