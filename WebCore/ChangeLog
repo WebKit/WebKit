@@ -1,3 +1,14 @@
+2007-10-31  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        <rdar://problem/5569741> Pasting content with a line break into a list can remove the list
+
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingEmptyListItem): A single list item can contain multiple 
+        paragraphs, so if the incoming VisiblePosition is in an empty paragraph in a 
+        list item, that list item isn't necessarily empty.
+
 2007-10-31  David Hyatt  <hyatt@apple.com>
 
         Disable style sharing for animating styles.

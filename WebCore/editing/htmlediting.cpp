@@ -687,6 +687,12 @@ Node* enclosingEmptyListItem(const VisiblePosition& visiblePos)
     Node* listChildNode = enclosingListChild(visiblePos.deepEquivalent().node());
     if (!listChildNode || !isStartOfParagraph(visiblePos) || !isEndOfParagraph(visiblePos))
         return 0;
+        
+    VisiblePosition firstInListChild(Position(listChildNode, 0));
+    VisiblePosition lastInListChild(Position(listChildNode, maxDeepOffset(listChildNode)));
+    
+    if (firstInListChild != visiblePos || lastInListChild != visiblePos)
+        return 0;
     
     if (embeddedSublist(listChildNode) || appendedSublist(listChildNode))
         return 0;
