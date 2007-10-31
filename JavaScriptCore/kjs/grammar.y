@@ -95,7 +95,7 @@ static Node* makeNumberNode(double);
   FuncExprNode        *funcExpr;
   ProgramNode         *prog;
   AssignExprNode      *init;
-  SourceElementList   srcs;
+  Vector<RefPtr<StatementNode> > *srcs;
   ArgumentsNode       *args;
   ArgumentList        alist;
   VarDeclNode         *decl;
@@ -651,7 +651,7 @@ Statement:
 
 Block:
     '{' '}'                             { $$ = new BlockNode(0); DBG($$, @2, @2); }
-  | '{' SourceElements '}'              { $$ = new BlockNode($2.head); DBG($$, @3, @3); }
+  | '{' SourceElements '}'              { $$ = new BlockNode($2); DBG($$, @3, @3); }
 ;
 
 VariableStatement:
@@ -809,12 +809,12 @@ CaseClauses:
 
 CaseClause:
     CASE Expr ':'                       { $$ = new CaseClauseNode($2); }
-  | CASE Expr ':' SourceElements        { $$ = new CaseClauseNode($2, $4.head); }
+  | CASE Expr ':' SourceElements        { $$ = new CaseClauseNode($2, $4); }
 ;
 
 DefaultClause:
     DEFAULT ':'                         { $$ = new CaseClauseNode(0); }
-  | DEFAULT ':' SourceElements          { $$ = new CaseClauseNode(0, $3.head); }
+  | DEFAULT ':' SourceElements          { $$ = new CaseClauseNode(0, $3); }
 ;
 
 LabelledStatement:
@@ -862,19 +862,18 @@ FormalParameterList:
 
 FunctionBody:
     '{' '}' /* not in spec */           { $$ = new FunctionBodyNode(0); DBG($$, @1, @2); }
-  | '{' SourceElements '}'              { $$ = new FunctionBodyNode($2.head); DBG($$, @1, @3); }
+  | '{' SourceElements '}'              { $$ = new FunctionBodyNode($2); DBG($$, @1, @3); }
 ;
 
 Program:
     /* not in spec */                   { Parser::accept(new ProgramNode(0)); }
-    | SourceElements                    { Parser::accept(new ProgramNode($1.head)); }
+    | SourceElements                    { Parser::accept(new ProgramNode($1)); }
 ;
 
 SourceElements:
-    SourceElement                       { $$.head = new SourceElementsNode($1);
-                                          $$.tail = $$.head; }
-  | SourceElements SourceElement        { $$.head = $1.head;
-                                          $$.tail = new SourceElementsNode($1.tail, $2); }
+    SourceElement                       { $$ = new Vector<RefPtr<StatementNode> >();
+                                          $$->append($1); }
+  | SourceElements SourceElement        { $$->append($2); }
 ;
 
 SourceElement:

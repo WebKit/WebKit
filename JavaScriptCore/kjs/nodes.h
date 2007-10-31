@@ -48,7 +48,6 @@ namespace KJS {
 
     class FuncDeclNode;
     class PropertyListNode;
-    class SourceElementsNode;
     class SourceStream;
     class VarDeclNode;
 
@@ -1506,13 +1505,13 @@ namespace KJS {
 
   class BlockNode : public StatementNode {
   public:
-    BlockNode(SourceElementsNode *s) KJS_FAST_CALL;
+    BlockNode(Vector<RefPtr<StatementNode> > *children) KJS_FAST_CALL;
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     virtual Completion execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
   protected:
-    RefPtr<SourceElementsNode> source;
+    OwnPtr<Vector<RefPtr<StatementNode> > > m_children;
   };
 
   class EmptyStatementNode : public StatementNode {
@@ -1702,7 +1701,7 @@ namespace KJS {
   // inherited by ProgramNode
   class FunctionBodyNode : public BlockNode {
   public:
-    FunctionBodyNode(SourceElementsNode *) KJS_FAST_CALL;
+    FunctionBodyNode(Vector<RefPtr<StatementNode> > *children) KJS_FAST_CALL;
     int sourceId() KJS_FAST_CALL { return m_sourceId; }
     const UString& sourceURL() KJS_FAST_CALL { return m_sourceURL; }
 
@@ -1773,30 +1772,11 @@ namespace KJS {
     RefPtr<FunctionBodyNode> body;
   };
 
-  // A linked list of source element nodes
-  class SourceElementsNode : public StatementNode {
-  public:
-    static int count;
-    SourceElementsNode(StatementNode*) KJS_FAST_CALL;
-    SourceElementsNode(SourceElementsNode*, StatementNode*) KJS_FAST_CALL;
-    
-    virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    Completion execute(ExecState*) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    PassRefPtr<SourceElementsNode> releaseNext() KJS_FAST_CALL { return next.release(); }
-    virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
-  private:
-    friend class BlockNode;
-    friend class CaseClauseNode;
-    RefPtr<StatementNode> node;
-    ListRefPtr<SourceElementsNode> next;
-  };
-
   class CaseClauseNode : public Node {
   public:
       CaseClauseNode(Node *e) KJS_FAST_CALL : expr(e) { m_mayHaveDeclarations = true; }
-      CaseClauseNode(Node *e, SourceElementsNode *s) KJS_FAST_CALL
-      : expr(e), source(s) { m_mayHaveDeclarations = true; }
+      CaseClauseNode(Node *e, Vector<RefPtr<StatementNode> > *children) KJS_FAST_CALL
+      : expr(e), m_children(children) { m_mayHaveDeclarations = true; }
       virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
       JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       Completion evalStatements(ExecState*) KJS_FAST_CALL;
@@ -1805,7 +1785,7 @@ namespace KJS {
       virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
       RefPtr<Node> expr;
-      RefPtr<SourceElementsNode> source;
+      OwnPtr<Vector<RefPtr<StatementNode> > > m_children;
   };
   
   class ClauseListNode : public Node {
@@ -1856,7 +1836,7 @@ namespace KJS {
   
   class ProgramNode : public FunctionBodyNode {
   public:
-    ProgramNode(SourceElementsNode* s) KJS_FAST_CALL;
+    ProgramNode(Vector<RefPtr<StatementNode> > *children) KJS_FAST_CALL;
   };
 
   struct ElementList {
@@ -1882,11 +1862,6 @@ namespace KJS {
   struct ParameterList {
       ParameterNode* head;
       ParameterNode* tail;
-  };
-
-  struct SourceElementList {
-      SourceElementsNode* head;
-      SourceElementsNode* tail;
   };
 
   struct ClauseList {

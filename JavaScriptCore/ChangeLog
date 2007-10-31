@@ -1,3 +1,31 @@
+2007-10-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Remove SourceCodeElement class and replaced with a Vector for a 0.8% gain on sunspider
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::statementListPushFIFO):
+        (KJS::statementListGetDeclarations):
+        (KJS::statementListInitializeDeclarationStacks):
+        (KJS::statementListInitializeVariableAccessStack):
+        (KJS::statementListExecute):
+        (KJS::BlockNode::optimizeVariableAccess):
+        (KJS::BlockNode::BlockNode):
+        (KJS::BlockNode::getDeclarations):
+        (KJS::BlockNode::execute):
+        (KJS::CaseClauseNode::optimizeVariableAccess):
+        (KJS::CaseClauseNode::getDeclarations):
+        (KJS::CaseClauseNode::evalStatements):
+        (KJS::FunctionBodyNode::initializeDeclarationStacks):
+        (KJS::FunctionBodyNode::optimizeVariableAccess):
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+        (KJS::statementListStreamTo):
+        (KJS::BlockNode::streamTo):
+        (KJS::CaseClauseNode::streamTo):
+
 2007-10-30  Mark Rowe  <mrowe@apple.com>
 
         Build fix for non-Mac ports.

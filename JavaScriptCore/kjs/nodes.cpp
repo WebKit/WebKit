@@ -2620,38 +2620,88 @@ void VarStatementNode::getDeclarations(DeclarationStacks& stacks)
     stacks.nodeStack.append(next.get());
 }
 
+// ------------------------------ Helper functions for handling Vectors of StatementNode -------------------------------
+
+static inline void statementListPushFIFO(Vector<RefPtr<StatementNode> >& statements, DeclarationStacks::NodeStack& stack)
+{
+    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.end() - 1; ptr >= statements.begin(); ptr--)
+        stack.append((*ptr).get());
+}
+
+static inline void statementListGetDeclarations(Vector<RefPtr<StatementNode> >& statements, DeclarationStacks& stacks)
+{
+    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.end() - 1; ptr >= statements.begin(); ptr--)
+        if ((*ptr)->mayHaveDeclarations())
+            stacks.nodeStack.append((*ptr).get());
+}
+
+static inline Node* statementListInitializeDeclarationStacks(Vector<RefPtr<StatementNode> >& statements, DeclarationStacks::NodeStack& stack)
+{
+    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.end() - 1; ptr >= statements.begin(); ptr--)
+        if ((*ptr)->mayHaveDeclarations())
+             stack.append((*ptr).get());
+    if (!stack.size())
+        return 0;
+    Node* n = stack.last();
+    stack.removeLast();
+    return n;
+}
+
+static inline Node* statementListInitializeVariableAccessStack(Vector<RefPtr<StatementNode> >& statements, DeclarationStacks::NodeStack& stack)
+{
+    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.end() - 1; ptr != statements.begin(); ptr--)
+        stack.append((*ptr).get());
+    return statements[0].get();
+}
+
+static inline Completion statementListExecute(Vector<RefPtr<StatementNode> >& statements, ExecState *exec)
+{
+    JSValue* v = 0;
+    Completion c(Normal);
+    const Vector<RefPtr<StatementNode> >::iterator end = statements.end();
+    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.begin(); ptr != end; ptr++) {
+        c = (*ptr)->execute(exec);
+        
+        if (JSValue* v2 = c.value())
+            v = v2;
+        c.setValue(v);
+        
+        if (c.complType() != Normal)
+            return c;
+    }
+    return c;
+}
+    
 // ------------------------------ BlockNode ------------------------------------
 
 void BlockNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
-    if (source)
-        nodeStack.append(source.get());
+    if (m_children)
+        statementListPushFIFO(*m_children, nodeStack);
 }
 
-BlockNode::BlockNode(SourceElementsNode* s)
+BlockNode::BlockNode(Vector<RefPtr<StatementNode> >* children)
 {
-  if (s) {
+  if (children) {
     m_mayHaveDeclarations = true; 
-    source = s;
-    setLoc(s->firstLine(), s->lastLine());
-  } else {
-    source = 0;
+    m_children.set(children);
+    setLoc(children->at(0)->firstLine(), children->at(children->size() - 1)->lastLine());
   }
 }
 
 void BlockNode::getDeclarations(DeclarationStacks& stacks)
 { 
-    ASSERT(source && source->mayHaveDeclarations());
-    stacks.nodeStack.append(source.get()); 
+    ASSERT(m_children);
+    statementListGetDeclarations(*m_children, stacks);
 }
 
 // ECMA 12.1
 Completion BlockNode::execute(ExecState *exec)
 {
-  if (!source)
+  if (!m_children)
     return Completion(Normal);
 
-  return source->execute(exec);
+  return statementListExecute(*m_children, exec);
 }
 
 // ------------------------------ EmptyStatementNode ---------------------------
@@ -3102,21 +3152,21 @@ Completion WithNode::execute(ExecState *exec)
 
   return res;
 }
-
+    
 // ------------------------------ CaseClauseNode -------------------------------
 
 void CaseClauseNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
     if (expr)
         nodeStack.append(expr.get());
-    if (source)
-        nodeStack.append(source.get());
+    if (m_children)
+        statementListPushFIFO(*m_children, nodeStack);
 }
 
 void CaseClauseNode::getDeclarations(DeclarationStacks& stacks)
 { 
-    if (source && source->mayHaveDeclarations()) 
-        stacks.nodeStack.append(source.get()); 
+    if (m_children) 
+        statementListGetDeclarations(*m_children, stacks);
 }
 
 // ECMA 12.11
@@ -3131,8 +3181,8 @@ JSValue *CaseClauseNode::evaluate(ExecState *exec)
 // ECMA 12.11
 Completion CaseClauseNode::evalStatements(ExecState *exec)
 {
-  if (source)
-    return source->execute(exec);
+  if (m_children)
+    return statementListExecute(*m_children, exec);
   else
     return Completion(Normal, jsUndefined());
 }
@@ -3394,8 +3444,8 @@ JSValue *ParameterNode::evaluate(ExecState *)
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-FunctionBodyNode::FunctionBodyNode(SourceElementsNode* s)
-    : BlockNode(s)
+FunctionBodyNode::FunctionBodyNode(Vector<RefPtr<StatementNode> > *children)
+    : BlockNode(children)
     , m_sourceURL(Lexer::curr()->sourceURL())
     , m_sourceId(Parser::sid)
     , m_initializedDeclarationStacks(false)
@@ -3407,12 +3457,14 @@ FunctionBodyNode::FunctionBodyNode(SourceElementsNode* s)
 
 void FunctionBodyNode::initializeDeclarationStacks(ExecState* exec)
 {
-    Node* node = source.get();
-    if (!node)
+    if (!m_children)
         return;
 
     DeclarationStacks::NodeStack nodeStack;
     DeclarationStacks stacks(exec, nodeStack, m_varStack, m_functionStack);
+    Node* node = statementListInitializeDeclarationStacks(*m_children, nodeStack);
+    if (!node)
+        return;
     
     while (true) {
         ASSERT(node->mayHaveDeclarations()); // Otherwise, we wasted time putting an irrelevant node on the stack.
@@ -3449,12 +3501,14 @@ void FunctionBodyNode::initializeSymbolTable()
 
 void FunctionBodyNode::optimizeVariableAccess()
 {
-    Node* node = source.get();
-    if (!node)
+    if (!m_children)
         return;
 
     DeclarationStacks::NodeStack nodeStack;
-
+    Node* node = statementListInitializeVariableAccessStack(*m_children, nodeStack);
+    if (!node)
+        return;
+    
     while (true) {
         node->optimizeVariableAccess(this, nodeStack);
         
@@ -3631,63 +3685,8 @@ JSValue *FuncExprNode::evaluate(ExecState *exec)
   return func;
 }
 
-// ------------------------------ SourceElementsNode ---------------------------
-
-int SourceElementsNode::count = 0;
-
-SourceElementsNode::SourceElementsNode(StatementNode* s1)
-  : node(s1)
-{
-    m_mayHaveDeclarations = true; 
-    setLoc(s1->firstLine(), s1->lastLine());
-}
-
-SourceElementsNode::SourceElementsNode(SourceElementsNode* s1, StatementNode* s2)
-  : node(s2)
-{
-  m_mayHaveDeclarations = true; 
-  s1->next = this;
-  setLoc(s1->firstLine(), s2->lastLine());
-}
-
-void SourceElementsNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
-{
-    if (next)
-        nodeStack.append(next.get());
-    nodeStack.append(node.get());
-}
-
-void SourceElementsNode::getDeclarations(DeclarationStacks& stacks)
-{ 
-    if (next && next->mayHaveDeclarations())
-        stacks.nodeStack.append(next.get());
-    if (node->mayHaveDeclarations())
-        stacks.nodeStack.append(node.get());
-}
-
-// ECMA 14
-Completion SourceElementsNode::execute(ExecState *exec)
-{
-  JSValue* v = 0;
-  SourceElementsNode* n = this;
-  while (1) {
-    Completion c = n->node->execute(exec);
-
-    if (JSValue* v2 = c.value())
-      v = v2;
-    c.setValue(v);
-
-    if (c.complType() != Normal)
-        return c;
-
-    n = n->next.get();
-    if (!n)
-        return c;
-  }
-}
-
-ProgramNode::ProgramNode(SourceElementsNode* s)
-    : FunctionBodyNode(s)
+ProgramNode::ProgramNode(Vector<RefPtr<StatementNode> >* children)
+    : FunctionBodyNode(children)
 {
 }
 

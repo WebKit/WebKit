@@ -728,9 +728,20 @@ void VarStatementNode::streamTo(SourceStream& s) const
     s << Endl << next << ';';
 }
 
+static inline void statementListStreamTo(Vector<RefPtr<StatementNode> >* nodes, SourceStream& s)
+{
+    if (!nodes)
+        return;
+    
+    for (Vector<RefPtr<StatementNode> >::iterator ptr = nodes->begin(); ptr != nodes->end(); ptr++)
+        s << *ptr;
+}
+    
 void BlockNode::streamTo(SourceStream& s) const
 {
-    s << Endl << "{" << Indent << source << Unindent << Endl << "}";
+    s << Endl << "{" << Indent;
+    statementListStreamTo(m_children.get(), s); 
+    s << Unindent << Endl << "}";
 }
 
 void EmptyStatementNode::streamTo(SourceStream& s) const
@@ -817,7 +828,9 @@ void CaseClauseNode::streamTo(SourceStream& s) const
         s << "case " << expr;
     else
         s << "default";
-    s << ":" << Indent << source << Unindent;
+    s << ":" << Indent;
+    statementListStreamTo(m_children.get(), s);
+    s << Unindent;
 }
 
 void ClauseListNode::streamTo(SourceStream& s) const
@@ -876,12 +889,6 @@ void FuncDeclNode::streamTo(SourceStream& s) const
 void FuncExprNode::streamTo(SourceStream& s) const
 {
     s << "function " << ident << '(' << param << ')' << body;
-}
-
-void SourceElementsNode::streamTo(SourceStream& s) const
-{
-    for (const SourceElementsNode* n = this; n; n = n->next.get())
-        s << n->node;
 }
 
 }
