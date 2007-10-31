@@ -1,5 +1,19 @@
 2007-10-30  Adam Roben  <aroben@apple.com>
 
+        Change ALWAYS_INLINE and WTF_PRIVATE_INLINE to use __forceinline on Windows
+
+        Speeds up SunSpider by 0.4%.
+
+        Reviewed by Steve and Maciej.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Disable
+        a warning during LTCG in release builds about double -> float
+        conversion.
+        * wtf/AlwaysInline.h:
+        * wtf/FastMalloc.h:
+
+2007-10-30  Adam Roben  <aroben@apple.com>
+
         Use GetCurrentThreadId instead of pthread_self in FastMalloc
 
         Speeds up SunSpider by 0.3%.
