@@ -1,3 +1,19 @@
+2007-10-31  Antti Koivisto  <antti@apple.com>
+
+        Remove timing dependent, occasionally failing cue point tests.
+        Cue points will be replaced with cue ranges soon anyway.
+
+        * media/video-cuepoint-pause-expected.txt: Removed.
+        * media/video-cuepoint-remove-multiple-expected.txt: Removed.
+        * media/video-cuepoint-multiple-expected.txt: Removed.
+        * media/video-cuepoint-remove-expected.txt: Removed.
+        * media/video-cuepoint-pause.html: Removed.
+        * media/video-cuepoint-remove-multiple.html: Removed.
+        * media/video-cuepoint-multiple.html: Removed.
+        * media/video-cuepoint-remove.html: Removed.
+        * media/video-cuepoint-add-expected.txt: Removed.
+        * media/video-cuepoint-add.html: Removed.
+
 2007-10-31  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
@@ -36,7 +52,7 @@
         * fast/parser/resources/external-entities.xsl.xsl:
         These tests depended on old buggy behavior.
 
-2007-10-29  Antti Koivisto  <antti@apple.com>
+2007-10-30  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
         

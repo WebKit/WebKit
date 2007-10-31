@@ -1,8 +1,0 @@
-TEST(video.currentTime.toFixed(1) == 0.2) OK
-TEST(!video.paused) OK
-TEST(video.currentTime.toFixed(1) == 0.4) OK
-TEST(!video.paused) OK
-TEST(video.currentTime.toFixed(1) == 0) OK
-TEST(!video.paused) OK
-END OF TEST
-
