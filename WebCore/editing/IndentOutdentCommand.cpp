@@ -60,7 +60,7 @@ static bool isIndentBlockquote(const Node* node)
     if (!node || !node->hasTagName(blockquoteTag) || !node->isElementNode())
         return false;
 
-    Element* elem = static_cast<const Element*>(node);
+    const Element* elem = static_cast<const Element*>(node);
     return elem->getAttribute(classAttr) == indentBlockquoteString();
 }
 
