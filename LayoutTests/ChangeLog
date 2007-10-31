@@ -1,5 +1,16 @@
 2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11001
+        WebKit doesn't support RegExp.compile method
+
+        * fast/js/regexp-compile-expected.txt: Added.
+        * fast/js/regexp-compile.html: Added.
+        * fast/js/resources/regexp-compile.js: Added.
+
+2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Anders.
 
         http://bugs.webkit.org/show_bug.cgi?id=15762

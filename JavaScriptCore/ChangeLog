@@ -1,3 +1,21 @@
+2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11001
+        WebKit doesn't support RegExp.compile method
+
+        Test: fast/js/regexp-compile.html
+
+        * kjs/regexp_object.cpp:
+        (RegExpPrototype::RegExpPrototype):
+        (RegExpProtoFunc::callAsFunction):
+        * kjs/regexp_object.h:
+        (KJS::RegExpProtoFunc::):
+        Added RegExp.compile.
+
+        * tests/mozilla/expected.html: js1_2/regexp/compile.js now passes.
+
 2007-10-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by ChangeLog.

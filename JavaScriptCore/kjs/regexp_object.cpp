@@ -48,9 +48,11 @@ RegExpPrototype::RegExpPrototype(ExecState *exec,
                                        FunctionPrototype *funcProto)
   : JSObject(objProto)
 {
+  static const Identifier* compilePropertyName = new Identifier("compile");
   static const Identifier* execPropertyName = new Identifier("exec");
   static const Identifier* testPropertyName = new Identifier("test");
 
+  putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::Compile, 0, *compilePropertyName), DontEnum);
   putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::Exec, 0, *execPropertyName), DontEnum);
   putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::Test, 0, *testPropertyName), DontEnum);
   putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::ToString, 0, exec->propertyNames().toString), DontEnum);
@@ -119,6 +121,56 @@ JSValue *RegExpProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     }
   }
   break;
+  case Compile:
+  {
+    UString source;
+    bool global = false;
+    bool ignoreCase = false;
+    bool multiline = false;
+    if (args.size() > 0) {
+      if (args[0]->isObject(&RegExpImp::info)) {
+        if (args.size() != 1)
+          return throwError(exec, TypeError, "cannot supply flags when constructing one RegExp from another.");
+
+        // Flags are mirrored on the JS object and in the implementation, while source is only preserved on the JS object.
+        RegExp* rhsRegExp = static_cast<RegExpImp*>(args[0])->regExp();
+        global = rhsRegExp->flags() & RegExp::Global;
+        ignoreCase = rhsRegExp->flags() & RegExp::IgnoreCase;
+        multiline = rhsRegExp->flags() & RegExp::Multiline;
+        source = static_cast<RegExpImp*>(args[0])->get(exec, exec->propertyNames().source)->toString(exec);
+      } else
+        source = args[0]->toString(exec);
+
+      if (!args[1]->isUndefined()) {
+        UString flags = args[1]->toString(exec);
+
+        global = (flags.find("g") >= 0);
+        ignoreCase = (flags.find("i") >= 0);
+        multiline = (flags.find("m") >= 0);
+      }
+    }
+
+    int reflags = RegExp::None;
+    if (global)
+        reflags |= RegExp::Global;
+    if (ignoreCase)
+        reflags |= RegExp::IgnoreCase;
+    if (multiline)
+        reflags |= RegExp::Multiline;
+
+    OwnPtr<RegExp> newRegExp(new RegExp(source, reflags));
+    if (!newRegExp->isValid())
+        return throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(newRegExp->errorMessage()));
+
+    thisObj->putDirect(exec->propertyNames().global, jsBoolean(global), DontDelete | ReadOnly | DontEnum);
+    thisObj->putDirect(exec->propertyNames().ignoreCase, jsBoolean(ignoreCase), DontDelete | ReadOnly | DontEnum);
+    thisObj->putDirect(exec->propertyNames().multiline, jsBoolean(multiline), DontDelete | ReadOnly | DontEnum);
+    thisObj->putDirect(exec->propertyNames().source, jsString(source), DontDelete | ReadOnly | DontEnum);
+    thisObj->putDirect(exec->propertyNames().lastIndex, jsNumber(0), DontDelete | DontEnum);
+
+    static_cast<RegExpImp*>(thisObj)->setRegExp(newRegExp.release());
+    return jsUndefined();
+  }
   case ToString:
     UString result = "/" + thisObj->get(exec, exec->propertyNames().source)->toString(exec) + "/";
     if (thisObj->get(exec, exec->propertyNames().global)->toBoolean(exec)) {
