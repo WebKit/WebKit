@@ -1,3 +1,20 @@
+2007-10-30  Justin Garcia  <set EMAIL_ADDRESS environment variable>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5549929> CrashTracer: [USER] 35 crashes at WebCore::CharacterData::insertData
+
+        * editing/inserting/5549929-1-expected.txt: Added.
+        * editing/inserting/5549929-1.html: Added.
+        * editing/inserting/5549929-2.html: Added.
+        * editing/inserting/5549929-3.html: Added.
+        * platform/mac/editing/inserting/5549929-2-expected.checksum: Added.
+        * platform/mac/editing/inserting/5549929-2-expected.png: Added.
+        * platform/mac/editing/inserting/5549929-2-expected.txt: Added.
+        * platform/mac/editing/inserting/5549929-3-expected.checksum: Added.
+        * platform/mac/editing/inserting/5549929-3-expected.png: Added.
+        * platform/mac/editing/inserting/5549929-3-expected.txt: Added.
+
 2007-10-30  Adam Roben  <aroben@apple.com>
 
         Add another failing test to the Windows Skipped file

@@ -55,16 +55,16 @@ static PassRefPtr<Element> createIndentBlockquoteElement(Document* document)
     return indentBlockquoteElement.release();
 }
 
-static bool isIndentBlockquote(Node* node)
+static bool isIndentBlockquote(const Node* node)
 {
     if (!node || !node->hasTagName(blockquoteTag) || !node->isElementNode())
         return false;
 
-    Element* elem = static_cast<Element*>(node);
+    Element* elem = static_cast<const Element*>(node);
     return elem->getAttribute(classAttr) == indentBlockquoteString();
 }
 
-static bool isListOrIndentBlockquote(Node* node)
+static bool isListOrIndentBlockquote(const Node* node)
 {
     return node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || isIndentBlockquote(node));
 }

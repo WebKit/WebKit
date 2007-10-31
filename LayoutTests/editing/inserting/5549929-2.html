@@ -1,0 +1,14 @@
+<p>This tests to make sure that a br isn't inserted into a tab span during an InsertLineBreak operation.  You can test for its existence with the DOM inspector or you can look at the render tree.</p>
+<div id="div" contenteditable="true">
+<div><span class="Apple-tab-span" style="white-space:pre">	</span>foo</div>
+<div><span class="Apple-tab-span" style="white-space:pre">	</span>bar</div>
+</div>
+
+<script>
+div = document.getElementById("div");
+div.focus();
+sel = window.getSelection();
+sel.setPosition(div, 0);
+sel.modify("extend", "forward", "paragraph");
+document.execCommand("InsertLineBreak");
+</script>

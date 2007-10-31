@@ -52,7 +52,7 @@ static bool isTableCell(Node* node)
     return node && (node->hasTagName(tdTag) || node->hasTagName(thTag));
 }
 
-static bool isTableRow(Node* node)
+static bool isTableRow(const Node* node)
 {
     return node && node->hasTagName(trTag);
 }

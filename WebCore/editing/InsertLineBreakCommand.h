@@ -40,6 +40,7 @@ private:
     virtual bool preservesTypingStyle() const;
     void insertNodeAfterPosition(Node*, const Position&);
     void insertNodeBeforePosition(Node*, const Position&);
+    bool shouldUseBreakElement(const Position&);
 };
 
 } // namespace WebCore

@@ -190,7 +190,7 @@ Element* editableRootForPosition(const Position& p)
     return node->rootEditableElement();
 }
 
-bool isContentEditable(Node* node)
+bool isContentEditable(const Node* node)
 {
     return node->isContentEditable();
 }
@@ -286,7 +286,7 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
 }
 
 // Whether or not content before and after this node will collapse onto the same line as it.
-bool isBlock(Node* node)
+bool isBlock(const Node* node)
 {
     return node && node->renderer() && !node->renderer()->isInline();
 }
@@ -577,7 +577,7 @@ Node* enclosingNodeWithTag(Node* node, const QualifiedName& tagName)
     return 0;
 }
 
-Node* enclosingNodeOfType(Node* node, bool (*nodeIsOfType)(Node*))
+Node* enclosingNodeOfType(Node* node, bool (*nodeIsOfType)(const Node*))
 {
     if (!node)
         return 0;
@@ -786,7 +786,7 @@ bool isTabSpanNode(const Node *node)
 
 bool isTabSpanTextNode(const Node *node)
 {
-    return (node && node->parentNode() && isTabSpanNode(node->parentNode()));
+    return node && node->isTextNode() && node->parentNode() && isTabSpanNode(node->parentNode());
 }
 
 Node *tabSpanNode(const Node *node)

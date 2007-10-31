@@ -1,3 +1,50 @@
+2007-10-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5549929> CrashTracer: [USER] 35 crashes at WebCore::CharacterData::insertData
+        
+        We were trying to insert a tab into a br, after the br incorrectly ended up inside
+        a tab span.
+        
+        * editing/DeleteButtonController.cpp: 
+        (WebCore::isDeletableElement): Changed to take in a const Node* instead of a Node*.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::isTableRow): Ditto.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::isIndentBlockquote): Ditto.
+        (WebCore::isListOrIndentBlockquote): Ditto.
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::shouldUseBreakElement): Added, moved code from
+        doApply here.
+        (WebCore::InsertLineBreakCommand::doApply): 
+        Don't upstream() the insertion position.  upstream()ing it will only have an effect
+        when the insertion position is the first in its paragraph (since we canonicalize
+        VisiblePositions to the upstream() candidate).  In this start of paragraph case, 
+        upstream() can move outside inline elements like tab spans or elements that might
+        have a different whitespace mode (added two test cases to cover these).
+        Moved code to decide whether to insert a br or a '\n' to its own method.
+        Removed special case code for inserting at a position inside a tab span.  We instead
+        adjust the insertion position before insertion if it is inside a tab span and
+        handle insertion in the appropriate if-block.  This fixes a bug where we would 
+        only insert one line break when two were needed (added a testcase).
+        Removed special case code for inserting before and after tables and horizontal
+        rules.  We handle these insertions in the appropriate if-block.
+        * editing/InsertLineBreakCommand.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isMailPasteAsQuotationNode): Change to take in a const Node*.
+        * editing/htmlediting.cpp:
+        (WebCore::isContentEditable): Ditto.
+        (WebCore::isBlock): Ditto.
+        (WebCore::enclosingNodeOfType): Changed to take a function pointer to a function
+        that takes in a const Node*.
+        (WebCore::isTabSpanTextNode): Check to see that the node actually a text node,
+        and not, say, a br.
+        * editing/htmlediting.h:
+        * editing/markup.cpp:
+        (WebCore::styleFromMatchedRulesAndInlineDecl): Changed to take in a const Node*.
+        (WebCore::elementHasTextDecorationProperty): Ditto.
+
 2007-10-30  Antti Koivisto  <antti@apple.com>
 
         Reviewed by NOBODY.

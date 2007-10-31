@@ -77,6 +77,12 @@ void InsertLineBreakCommand::insertNodeBeforePosition(Node *node, const Position
         insertNodeBefore(node, pos.node());
 }
 
+// Whether we should insert a break element or a '\n'.
+bool InsertLineBreakCommand::shouldUseBreakElement(const Position& insertionPos)
+{
+    return insertionPos.node()->renderer() && !insertionPos.node()->renderer()->style()->preserveNewline();
+}
+
 void InsertLineBreakCommand::doApply()
 {
     deleteSelection();
@@ -85,59 +91,41 @@ void InsertLineBreakCommand::doApply()
         return;
     
     VisiblePosition caret(selection.visibleStart());
-
-    Position pos(caret.deepEquivalent().upstream());
-    Position canonicalPos(caret.deepEquivalent());
+    Position pos(caret.deepEquivalent());
 
     pos = positionAvoidingSpecialElementBoundary(pos);
-
-    Node* styleNode = pos.node();
-    bool isTabSpan = isTabSpanTextNode(styleNode);
-    if (isTabSpan)
-        styleNode = styleNode->parentNode()->parentNode();
-    RenderObject* styleRenderer = styleNode->renderer();
-    bool useBreakElement = !styleRenderer || !styleRenderer->style()->preserveNewline();
+    
+    pos = positionOutsideTabSpan(pos);
 
     RefPtr<Node> nodeToInsert;
-    if (useBreakElement)
+    if (shouldUseBreakElement(pos))
         nodeToInsert = createBreakElement(document());
     else
         nodeToInsert = document()->createTextNode("\n");
-        // FIXME: Need to merge text nodes when inserting just after or before text.
     
-    if (isTabSpan) {
-        insertNodeAtTabSpanPosition(nodeToInsert.get(), pos);
-        setEndingSelection(Selection(Position(nodeToInsert->traverseNextNode(), 0), DOWNSTREAM));
-    } else if (canonicalPos.node()->renderer() && canonicalPos.node()->renderer()->isTable() ||
-               canonicalPos.node()->hasTagName(hrTag)) {
-        if (canonicalPos.offset() == 0) {
-            insertNodeBefore(nodeToInsert.get(), canonicalPos.node());
-            // Insert an extra br or '\n' if the just inserted one collapsed.
-            if (!isStartOfParagraph(VisiblePosition(Position(nodeToInsert.get(), 0))))
-                insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
-            // Leave the selection where it was, just before the table/horizontal rule.
-        } else if (canonicalPos.offset() == maxDeepOffset(canonicalPos.node())) {
-            insertNodeAfter(nodeToInsert.get(), canonicalPos.node());
-            setEndingSelection(Selection(VisiblePosition(Position(nodeToInsert.get(), 0))));
-        } else
-            // There aren't any VisiblePositions like this yet.
-            ASSERT_NOT_REACHED();
-    } else if (isEndOfParagraph(caret) && !lineBreakExistsAtPosition(caret)) {
+    // FIXME: Need to merge text nodes when inserting just after or before text.
+    
+    if (isEndOfParagraph(caret) && !lineBreakExistsAtPosition(caret)) {
+        bool needExtraLineBreak = !pos.node()->hasTagName(hrTag) && !pos.node()->hasTagName(tableTag);
+        
         insertNodeAt(nodeToInsert.get(), pos);
-        insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
+        
+        if (needExtraLineBreak)
+            insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
+        
         VisiblePosition endingPosition(Position(nodeToInsert.get(), 0));
         setEndingSelection(Selection(endingPosition));
     } else if (pos.offset() <= pos.node()->caretMinOffset()) {
-        // Insert node before downstream position, and place caret there as well. 
-        Position endingPosition = pos.downstream();
-        insertNodeBeforePosition(nodeToInsert.get(), endingPosition);
-        setEndingSelection(Selection(endingPosition, DOWNSTREAM));
+        insertNodeAt(nodeToInsert.get(), pos);
+        
+        // Insert an extra br or '\n' if the just inserted one collapsed.
+        if (!isStartOfParagraph(VisiblePosition(Position(nodeToInsert.get(), 0))))
+            insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
+        
+        setEndingSelection(Selection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
     } else if (pos.offset() >= pos.node()->caretMaxOffset()) {
-        // Insert BR after this node. Place caret in the position that is downstream
-        // of the current position, reckoned before inserting the BR in between.
-        Position endingPosition = pos.downstream();
-        insertNodeAfterPosition(nodeToInsert.get(), pos);
-        setEndingSelection(Selection(endingPosition, DOWNSTREAM));
+        insertNodeAt(nodeToInsert.get(), pos);
+        setEndingSelection(Selection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
     } else {
         // Split a text node
         ASSERT(pos.node()->isTextNode());

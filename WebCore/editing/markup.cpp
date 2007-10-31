@@ -572,12 +572,12 @@ static bool needInterchangeNewlineAfter(const VisiblePosition& v)
     return isEndOfParagraph(v) && isStartOfParagraph(next) && !(upstreamNode->hasTagName(brTag) && upstreamNode == downstreamNode);
 }
 
-static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesAndInlineDecl(Node* node)
+static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesAndInlineDecl(const Node* node)
 {
     if (!node->isHTMLElement())
         return 0;
     
-    HTMLElement* element = static_cast<HTMLElement*>(node);
+    HTMLElement* element = static_cast<const HTMLElement*>(node);
     RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(element);
     RefPtr<CSSMutableStyleDeclaration> inlineStyleDecl = element->getInlineStyleDecl();
     style->merge(inlineStyleDecl.get());
@@ -596,7 +596,7 @@ static bool propertyMissingOrEqualToNone(CSSMutableStyleDeclaration* style, int 
     return static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == CSS_VAL_NONE;
 }
 
-static bool elementHasTextDecorationProperty(Node* node)
+static bool elementHasTextDecorationProperty(const Node* node)
 {
     RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesAndInlineDecl(node);
     if (!style)

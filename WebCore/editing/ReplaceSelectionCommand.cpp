@@ -318,9 +318,9 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
            shouldMerge(endOfInsertedContent, next);
 }
 
-static bool isMailPasteAsQuotationNode(Node* node)
+static bool isMailPasteAsQuotationNode(const Node* node)
 {
-    return node && node->hasTagName(blockquoteTag) && node->isElementNode() && static_cast<Element*>(node)->getAttribute(classAttr) == ApplePasteAsQuotation;
+    return node && node->hasTagName(blockquoteTag) && node->isElementNode() && static_cast<const Element*>(node)->getAttribute(classAttr) == ApplePasteAsQuotation;
 }
 
 // Wrap CompositeEditCommand::removeNodePreservingChildren() so we can update the nodes we track
