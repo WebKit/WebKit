@@ -1,3 +1,14 @@
+2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15762
+        XSLStylesheet loads subresources from a wrong URL
+
+        * fast/xsl/resources/xslt-second-level-import.xsl:
+        * fast/parser/resources/external-entities.xsl.xsl:
+        These tests depended on old buggy behavior.
+
 2007-10-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

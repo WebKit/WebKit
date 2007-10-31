@@ -1,5 +1,18 @@
 2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15762
+        XSLStylesheet loads subresources from a wrong URL
+
+        Covered by corrected existing tests.
+
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::parseString): Pass stylesheet URL, not
+        the document one.
+
+2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         http://bugs.webkit.org/show_bug.cgi?id=10818

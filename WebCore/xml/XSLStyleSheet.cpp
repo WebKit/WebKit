@@ -145,7 +145,7 @@ bool XSLStyleSheet::parseString(const String& string, bool strict)
     xmlSetStructuredErrorFunc(chrome, XSLTProcessor::parseErrorFunc);
 
     m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char*>(string.characters()), string.length() * sizeof(UChar),
-        m_ownerDocument->URL().ascii(),
+        href().utf8().data(),
         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
         XML_PARSE_NOENT | XML_PARSE_DTDATTR | XML_PARSE_NOWARNING | XML_PARSE_NOCDATA);
     loadChildSheets();
