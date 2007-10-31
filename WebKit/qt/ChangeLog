@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        QDrag objects need to be created on the heap.
+
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+
+2007-10-31  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         a dragLeave event is not the same as cancelling a drag.
 
         * Api/qwebpage.cpp:
