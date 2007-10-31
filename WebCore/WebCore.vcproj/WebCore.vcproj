@@ -1213,6 +1213,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSProgressEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSProgressEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSRange.cpp"
 				>
 			</File>
@@ -2490,7 +2498,7 @@
 		<Filter
 			Name="page"
 			>
-                        <File
+			<File
 				RelativePath="..\page\AnimationController.cpp"
 				>
 			</File>
@@ -4853,7 +4861,7 @@
 				RelativePath="..\css\CSSStyleSheet.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\css\CSSTimingFunctionValue.cpp"
 				>
 			</File>
@@ -6238,6 +6246,14 @@
 			</File>
 			<File
 				RelativePath="..\dom\ProcessingInstruction.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ProgressEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ProgressEvent.h"
 				>
 			</File>
 			<File
