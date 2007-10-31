@@ -1,5 +1,22 @@
 2007-10-30  Adam Roben  <aroben@apple.com>
 
+        Switch to a Win32 critical section implementation of spinlocks
+        
+        Speeds up SunSpider by 0.4%.
+        
+        Reviewed by Steve.
+        
+        * wtf/FastMalloc.cpp:
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::TCMalloc_SpinLock):
+        (TCMalloc_SpinLock::Init):
+        (TCMalloc_SpinLock::Finalize):
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        * wtf/TCSystemAlloc.cpp:
+
+2007-10-30  Adam Roben  <aroben@apple.com>
+
         Fix Bug 15586: REGRESSION (r26759-r26785): Windows nightly builds crash with Safari 3 Public Beta
 
         http://bugs.webkit.org/show_bug.cgi?id=15586

@@ -149,6 +149,32 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
   }
 }
 
+#elif COMPILER(MSVC)
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+struct TCMalloc_SpinLock {
+  CRITICAL_SECTION private_lock_;
+
+  inline TCMalloc_SpinLock() {
+    Init();
+  }
+
+  inline void Init() {
+    InitializeCriticalSection(&private_lock_);
+  }
+  inline void Finalize() {
+    DeleteCriticalSection(&private_lock_);
+  }
+  inline void Lock() {
+    EnterCriticalSection(&private_lock_);
+  }
+  inline void Unlock() {
+    LeaveCriticalSection(&private_lock_);
+  }
+};
+
 #else
 
 #include <pthread.h>

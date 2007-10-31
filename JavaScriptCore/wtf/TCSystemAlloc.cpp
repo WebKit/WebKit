@@ -59,8 +59,12 @@ union MemoryAligner {
   size_t s;
 };
 
+#if COMPILER(MSVC)
+static SpinLock spinlock;
+#else
 static SpinLock spinlock = SPINLOCK_INITIALIZER;
-  
+#endif
+
 // Page size is initialized on demand
 static size_t pagesize = 0;
 
