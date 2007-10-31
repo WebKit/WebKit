@@ -32,6 +32,7 @@
 #include <wtf/Vector.h>
 
 using std::max;
+using WTF::doubleHash;
 
 #define DEBUG_PROPERTIES 0
 #define DO_CONSISTENCY_CHECK 0
