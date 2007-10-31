@@ -1,5 +1,11 @@
 2007-10-30  Adam Roben  <aroben@apple.com>
 
+        Build fix
+
+        * kjs/collector.h: Make HeapType public.
+
+2007-10-30  Adam Roben  <aroben@apple.com>
+
         Change ALWAYS_INLINE and WTF_PRIVATE_INLINE to use __forceinline on Windows
 
         Speeds up SunSpider by 0.4%.

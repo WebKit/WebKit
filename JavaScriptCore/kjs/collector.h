@@ -66,8 +66,9 @@ namespace KJS {
     static bool isCellMarked(const JSCell*);
     static void markCell(JSCell*);
 
-  private:
     enum HeapType { PrimaryHeap, NumberHeap };
+
+  private:
     template <Collector::HeapType heapType> static void* heapAllocate(size_t s);
     template <Collector::HeapType heapType> static size_t sweep(bool);
     static const CollectorBlock* cellBlock(const JSCell*);
