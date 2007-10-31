@@ -108,6 +108,7 @@ my $shouldCheckLeaks = 0;
 my $showHelp = 0;
 my $testsPerDumpTool = 1000;
 my $testHTTP = 1;
+my $testMedia = 1;
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $threaded = 0;
 my $treatSkipped = "default";
@@ -239,6 +240,9 @@ if ($shouldCheckLeaks && $testsPerDumpTool > 1000) {
 # Force --no-http for Qt/Linux, for now.
 $testHTTP = 0 if isQt();
 
+# Stack logging does not play well with QuickTime on Tiger (rdar://problem/5537157)
+$testMedia = 0 if $shouldCheckLeaks && isTiger();
+
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
 $productDir .= "/bin" if (isQt());
@@ -302,6 +306,10 @@ if (checkWebCoreSVGSupport(0)) {
 }
 if (!$testHTTP) {
     $ignoredDirectories{'http'} = 1;
+}
+
+if (!$testMedia) {
+    $ignoredDirectories{'media'} = 1;
 }
 
 if ($ignoreTests) {

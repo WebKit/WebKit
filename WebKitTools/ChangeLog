@@ -1,3 +1,12 @@
+2007-10-31  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by bdash.
+        
+        Disable media tests when doing leak checking on Tiger.
+        They crash in QuickTime (rdar://problem/5537157).
+
+        * Scripts/run-webkit-tests:
+
 2007-10-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
