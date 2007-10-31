@@ -238,6 +238,7 @@ IDL_BINDINGS += \
     dom/Notation.idl \
     dom/OverflowEvent.idl \
     dom/ProcessingInstruction.idl \
+    dom/ProgressEvent.idl \
     dom/RangeException.idl \
     dom/Range.idl \
     dom/Text.idl \
@@ -452,6 +453,7 @@ SOURCES += \
     dom/Position.cpp \
     dom/PositionIterator.cpp \
     dom/ProcessingInstruction.cpp \
+    dom/ProgressEvent.cpp \
     dom/QualifiedName.cpp \
     dom/Range.cpp \
     dom/RegisteredEventListener.cpp \

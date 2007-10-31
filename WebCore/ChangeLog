@@ -1,3 +1,9 @@
+2007-10-30  Antti Koivisto  <antti@apple.com>
+
+        Attempt to fix Qt/GTK build.
+
+        * WebCore.pro:
+
 2007-10-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
