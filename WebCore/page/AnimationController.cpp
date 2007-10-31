@@ -37,7 +37,6 @@
 #include "RenderStyle.h"
 #include "SystemTime.h"
 #include "Timer.h"
-#include "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
