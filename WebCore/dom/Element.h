@@ -123,6 +123,7 @@ public:
 
     // convenience methods which ignore exceptions
     void setAttribute(const QualifiedName&, const String& value);
+    void setBooleanAttribute(const QualifiedName& name, bool);
 
     virtual NamedAttrMap* attributes() const;
     NamedAttrMap* attributes(bool readonly) const;
@@ -181,8 +182,8 @@ public:
     IntSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const IntSize&);
 
-    // The following method is called when a Document is restored from the page cache
-    // and the element has registered itself with the Document via registerForDidRestorePageCallback()
+    // Use Document::registerForPageCacheCallbacks() to subscribe these
+    virtual void willSaveToCache() { }
     virtual void didRestoreFromCache() { }
     
 private:

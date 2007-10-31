@@ -2172,7 +2172,7 @@ void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderL
     updateVisibilityStatus();
         
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
-    if (m_hasVisibleContent && !isOverflowOnly()) {
+    if ((m_hasVisibleContent || (m_hasVisibleDescendant && isStackingContext())) && !isOverflowOnly()) {
         // Determine which buffer the child should be in.
         Vector<RenderLayer*>*& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
 

@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
+#include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
 #include "TextEvent.h"
 #include "UIEvent.h"
@@ -539,6 +540,13 @@ bool EventTargetNode::dispatchHTMLEvent(const AtomicString &eventType, bool canB
     ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
     return dispatchEvent(new Event(eventType, canBubbleArg, cancelableArg), ec, true);
+}
+
+bool EventTargetNode::dispatchProgressEvent(const AtomicString &eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg)
+{
+    ASSERT(!eventDispatchForbidden());
+    ExceptionCode ec = 0;
+    return dispatchEvent(new ProgressEvent(eventType, lengthComputableArg, loadedArg, totalArg), ec, true);
 }
 
 void EventTargetNode::removeHTMLEventListener(const AtomicString &eventType)

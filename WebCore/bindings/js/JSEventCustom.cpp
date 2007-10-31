@@ -35,6 +35,7 @@
 #include "JSMouseEvent.h"
 #include "JSMutationEvent.h"
 #include "JSOverflowEvent.h"
+#include "JSProgressEvent.h"
 #include "JSTextEvent.h"
 #include "JSUIEvent.h"
 #include "JSWheelEvent.h"
@@ -42,6 +43,7 @@
 #include "MouseEvent.h"
 #include "MutationEvent.h"
 #include "OverflowEvent.h"
+#include "ProgressEvent.h"
 #include "TextEvent.h"
 #include "UIEvent.h"
 #include "WheelEvent.h"
@@ -81,6 +83,8 @@ KJS::JSValue* toJS(KJS::ExecState* exec, Event* event)
         ret = new JSMutationEvent(exec, static_cast<MutationEvent*>(event));
     else if (event->isOverflowEvent())
         ret = new JSOverflowEvent(exec, static_cast<OverflowEvent*>(event));
+    else if (event->isProgressEvent())
+        ret = new JSProgressEvent(exec, static_cast<ProgressEvent*>(event));
     else
         ret = new JSEvent(exec, event);
 

@@ -747,8 +747,6 @@ private:
     typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
     ListHashSet<HTMLFormControlElementWithState*> m_formElementsWithState;
     FormElementStateMap m_stateForNewFormElements;
-
-    HashSet<Element*> m_didRestorePageCallbackSet;
     
     Color m_linkColor;
     Color m_visitedLinkColor;
@@ -818,12 +816,12 @@ private:
 public:
     bool inPageCache();
     void setInPageCache(bool flag);
-
-    // Elements can register themselves for the "didRestoreFromCache()" callback which will be
-    // called if the document is restored from the Page Cache
-    void registerForDidRestoreFromCacheCallback(Element*);
-    void unregisterForDidRestoreFromCacheCallback(Element*);
     
+    // Elements can register themselves for the "willSaveToCache()" and  
+    // "didRestoreFromCache()" callbacks
+    void registerForCacheCallbacks(Element*);
+    void unregisterForCacheCallbacks(Element*);
+    void willSaveToCache();
     void didRestoreFromCache();
 
     void setShouldCreateRenderers(bool);
@@ -917,9 +915,11 @@ private:
     bool m_createRenderers;
     bool m_inPageCache;
     String m_iconURL;
+    
+    HashSet<Element*> m_pageCacheCallbackElements;
 
     bool m_isAllowedToLoadLocalResources;
-    
+
     bool m_useSecureKeyboardEntryWhenActive;
 
     bool m_isXHTML;

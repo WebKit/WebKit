@@ -167,6 +167,16 @@ void Element::setAttribute(const QualifiedName& name, const String &value)
     setAttribute(name, value.impl(), ec);
 }
 
+void Element::setBooleanAttribute(const QualifiedName& name, bool b)
+{
+    if (b)
+        setAttribute(name, name.localName());
+    else {
+        ExceptionCode ex;
+        removeAttribute(name, ex);
+    }
+}
+
 // Virtual function, defined in base class.
 NamedAttrMap *Element::attributes() const
 {

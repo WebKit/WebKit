@@ -57,6 +57,8 @@ void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* cont
 OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
 NSString* (*wkPathFromFont)(NSFont*);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
+int (*wkQTMovieDataRate)(QTMovie*);
+float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
 void (*wkReleaseStyleGroup)(void* group);
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);

@@ -347,6 +347,7 @@ all : \
     JSHTMLAppletElement.h \
     JSHTMLAnchorElement.h \
     JSHTMLAreaElement.h \
+    JSHTMLAudioElement.h \
     JSHTMLBaseElement.h \
     JSHTMLBaseFontElement.h \
     JSHTMLBlockquoteElement.h \
@@ -381,6 +382,7 @@ all : \
     JSHTMLLinkElement.h \
     JSHTMLMapElement.h \
     JSHTMLMarqueeElement.h \
+    JSHTMLMediaElement.h \
     JSHTMLMenuElement.h \
     JSHTMLMetaElement.h \
     JSHTMLModElement.h \
@@ -395,6 +397,7 @@ all : \
     JSHTMLQuoteElement.h \
     JSHTMLScriptElement.h \
     JSHTMLSelectElement.h \
+    JSHTMLSourceElement.h \
     JSHTMLStyleElement.h \
     JSHTMLTableCaptionElement.h \
     JSHTMLTableCellElement.h \
@@ -405,8 +408,10 @@ all : \
     JSHTMLTextAreaElement.h \
     JSHTMLTitleElement.h \
     JSHTMLUListElement.h \
+    JSHTMLVideoElement.h \
     JSHistory.h \
     JSKeyboardEvent.h \
+    JSMediaError.h \
     JSMediaList.h \
     JSMouseEvent.h \
     JSMutationEvent.h \
@@ -418,6 +423,7 @@ all : \
     JSNotation.h \
     JSOverflowEvent.h \
     JSProcessingInstruction.h \
+    JSProgressEvent.h \
     JSRange.h \
     JSRangeException.h \
     JSRect.h \
@@ -560,9 +566,11 @@ all : \
     JSStyleSheetList.h \
     JSText.h \
     JSTextEvent.h \
+    JSTimeRanges.h \
     JSTreeWalker.h \
     JSUIEvent.h \
     JSVersionChangeCallback.h \
+    JSVoidCallback.h \
     JSXPathEvaluator.h \
     JSXPathExpression.h \
     JSXPathNSResolver.h \

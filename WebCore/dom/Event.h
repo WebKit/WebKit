@@ -109,6 +109,7 @@ namespace WebCore {
         virtual bool isWheelEvent() const;
         virtual bool isBeforeTextInsertedEvent() const;
         virtual bool isOverflowEvent() const;
+        virtual bool isProgressEvent() const;
 #if ENABLE(SVG)
         virtual bool isSVGZoomEvent() const;
 #endif

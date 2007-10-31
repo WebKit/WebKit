@@ -81,6 +81,7 @@
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "ProcessingInstruction.h"
+#include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
 #include "RegularExpression.h"
 #include "RenderArena.h"
@@ -2424,6 +2425,8 @@ PassRefPtr<Event> Document::createEvent(const String &eventType, ExceptionCode& 
         return new KeyboardEvent;
     if (eventType == "HTMLEvents" || eventType == "Event" || eventType == "Events")
         return new Event;
+    if (eventType == "ProgressEvent")
+        return new ProgressEvent;
     if (eventType == "TextEvent")
         return new TextEvent;
     if (eventType == "OverflowEvent")
@@ -2838,21 +2841,28 @@ void Document::setInPageCache(bool flag)
     }
 }
 
-void Document::registerForDidRestoreFromCacheCallback(Element* e)
+void Document::willSaveToCache() 
 {
-    m_didRestorePageCallbackSet.add(e);
+    HashSet<Element*>::iterator end = m_pageCacheCallbackElements.end();
+    for (HashSet<Element*>::iterator i = m_pageCacheCallbackElements.begin(); i != end; ++i)
+        (*i)->willSaveToCache();
 }
 
-void Document::unregisterForDidRestoreFromCacheCallback(Element* e)
+void Document::didRestoreFromCache() 
 {
-    m_didRestorePageCallbackSet.remove(e);
+    HashSet<Element*>::iterator end = m_pageCacheCallbackElements.end();
+    for (HashSet<Element*>::iterator i = m_pageCacheCallbackElements.begin(); i != end; ++i)
+        (*i)->didRestoreFromCache();
 }
 
-void Document::didRestoreFromCache()
+void Document::registerForCacheCallbacks(Element* e)
 {
-    HashSet<Element*>::iterator it = m_didRestorePageCallbackSet.begin();
-    for (; it != m_didRestorePageCallbackSet.end(); ++it) 
-        (*it)->didRestoreFromCache();
+    m_pageCacheCallbackElements.add(e);
+}
+
+void Document::unregisterForCacheCallbacks(Element* e)
+{
+    m_pageCacheCallbackElements.remove(e);
 }
 
 void Document::setShouldCreateRenderers(bool f)

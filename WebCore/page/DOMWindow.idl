@@ -245,6 +245,13 @@ module window {
         attribute DOMParserConstructor DOMParser;
         attribute XMLSerializerConstructor XMLSerializer;
 
+#if defined(ENABLE_VIDEO)
+        attribute HTMLAudioElementConstructor HTMLAudioElement;
+        attribute HTMLMediaElementConstructor HTMLMediaElement;
+        attribute HTMLVideoElementConstructor HTMLVideoElement;
+        attribute MediaErrorConstructor MediaError;
+#endif
+
 #if defined(ENABLE_XPATH)
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;

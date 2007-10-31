@@ -87,6 +87,8 @@ CachedPage::CachedPage(Page* page)
     ++CachedPageCounter::count;
 #endif
     
+    m_document->willSaveToCache(); 
+    
     Frame* mainFrame = page->mainFrame();
     KJSProxy* proxy = mainFrame->scriptProxy();
     KJS::Window* window = KJS::Window::retrieveWindow(mainFrame);

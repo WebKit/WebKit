@@ -1,3 +1,342 @@
+2007-10-29  Antti Koivisto  <antti@apple.com>
+
+        Rubber stamped by Adele.
+
+        Initial media (<video> and <audio>) support from feature branch and 
+        QTKit based platform implementation.
+        
+        This will need to be updated to match current draft specification.
+
+        * Configurations/WebCore.xcconfig:
+        * DerivedSources.make:
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLAudioElementConstructor.cpp: Added.
+        (WebCore::JSHTMLAudioElementConstructor::JSHTMLAudioElementConstructor):
+        (WebCore::JSHTMLAudioElementConstructor::implementsConstruct):
+        (WebCore::JSHTMLAudioElementConstructor::construct):
+        * bindings/js/JSHTMLAudioElementConstructor.h: Added.
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createJSHTMLWrapper):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        (WebCore::Document::willSaveToCache):
+        (WebCore::Document::didRestoreFromCache):
+        (WebCore::Document::registerForCacheCallbacks):
+        (WebCore::Document::unregisterForCacheCallbacks):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::setBooleanAttribute):
+        * dom/Element.h:
+        (WebCore::Element::willSaveToCache):
+        * dom/Event.cpp:
+        (WebCore::Event::isProgressEvent):
+        * dom/Event.h:
+        * dom/EventNames.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchProgressEvent):
+        * dom/EventTargetNode.h:
+        * dom/ProgressEvent.cpp: Added.
+        (WebCore::ProgressEvent::ProgressEvent):
+        (WebCore::ProgressEvent::initProgressEvent):
+        (WebCore::ProgressEvent::initProgressEventNS):
+        * dom/ProgressEvent.h: Added.
+        (WebCore::ProgressEvent::lengthComputable):
+        (WebCore::ProgressEvent::loaded):
+        (WebCore::ProgressEvent::total):
+        (WebCore::ProgressEvent::isProgressEvent):
+        * dom/ProgressEvent.idl: Added.
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        * html/HTMLAttributeNames.in:
+        * html/HTMLAudioElement.cpp: Added.
+        (WebCore::HTMLAudioElement::HTMLAudioElement):
+        * html/HTMLAudioElement.h: Added.
+        (WebCore::HTMLAudioElement::tagPriority):
+        * html/HTMLAudioElement.idl: Added.
+        * html/HTMLElement.cpp:
+        (WebCore::inlineTagList):
+        * html/HTMLElementFactory.cpp:
+        (WebCore::audioConstructor):
+        (WebCore::videoConstructor):
+        (WebCore::sourceConstructor):
+        (WebCore::createFunctionMap):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLInputElement::didMoveToNewOwnerDocument):
+        * html/HTMLMediaElement.cpp: Added.
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::checkDTD):
+        (WebCore::HTMLMediaElement::rendererIsNeeded):
+        (WebCore::HTMLMediaElement::createRenderer):
+        (WebCore::HTMLMediaElement::insertedIntoDocument):
+        (WebCore::HTMLMediaElement::removedFromDocument):
+        (WebCore::HTMLMediaElement::scheduleLoad):
+        (WebCore::HTMLMediaElement::initAndDispatchProgressEvent):
+        (WebCore::HTMLMediaElement::dispatchEventAsync):
+        (WebCore::HTMLMediaElement::loadTimerFired):
+        (WebCore::HTMLMediaElement::asyncEventTimerFired):
+        (WebCore::serializeTimeOffset):
+        (WebCore::parseTimeOffset):
+        (WebCore::HTMLMediaElement::getTimeOffsetAttribute):
+        (WebCore::HTMLMediaElement::setTimeOffsetAttribute):
+        (WebCore::HTMLMediaElement::error):
+        (WebCore::HTMLMediaElement::src):
+        (WebCore::HTMLMediaElement::HTMLMediaElement::setSrc):
+        (WebCore::HTMLMediaElement::currentSrc):
+        (WebCore::HTMLMediaElement::networkState):
+        (WebCore::HTMLMediaElement::bufferingRate):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::movieNetworkStateChanged):
+        (WebCore::HTMLMediaElement::movieReadyStateChanged):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::progressEventTimerFired):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::readyState):
+        (WebCore::HTMLMediaElement::seeking):
+        (WebCore::HTMLMediaElement::currentTime):
+        (WebCore::HTMLMediaElement::setCurrentTime):
+        (WebCore::HTMLMediaElement::duration):
+        (WebCore::HTMLMediaElement::paused):
+        (WebCore::HTMLMediaElement::defaultPlaybackRate):
+        (WebCore::HTMLMediaElement::setDefaultPlaybackRate):
+        (WebCore::HTMLMediaElement::playbackRate):
+        (WebCore::HTMLMediaElement::setPlaybackRate):
+        (WebCore::HTMLMediaElement::ended):
+        (WebCore::HTMLMediaElement::autoplay):
+        (WebCore::HTMLMediaElement::setAutoplay):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::loopCount):
+        (WebCore::HTMLMediaElement::setLoopCount):
+        (WebCore::HTMLMediaElement::start):
+        (WebCore::HTMLMediaElement::setStart):
+        (WebCore::HTMLMediaElement::end):
+        (WebCore::HTMLMediaElement::setEnd):
+        (WebCore::HTMLMediaElement::loopStart):
+        (WebCore::HTMLMediaElement::setLoopStart):
+        (WebCore::HTMLMediaElement::loopEnd):
+        (WebCore::HTMLMediaElement::setLoopEnd):
+        (WebCore::HTMLMediaElement::currentLoop):
+        (WebCore::HTMLMediaElement::setCurrentLoop):
+        (WebCore::HTMLMediaElement::controls):
+        (WebCore::HTMLMediaElement::setControls):
+        (WebCore::HTMLMediaElement::volume):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::muted):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::pickMedia):
+        (WebCore::HTMLMediaElement::checkIfSeekNeeded):
+        (WebCore::HTMLMediaElement::movieVolumeChanged):
+        (WebCore::HTMLMediaElement::movieDidEnd):
+        (WebCore::HTMLMediaElement::movieCuePointReached):
+        (WebCore::HTMLMediaElement::addCuePoint):
+        (WebCore::HTMLMediaElement::removeCuePoint):
+        (WebCore::HTMLMediaElement::buffered):
+        (WebCore::HTMLMediaElement::played):
+        (WebCore::HTMLMediaElement::seekable):
+        (WebCore::HTMLMediaElement::effectiveStart):
+        (WebCore::HTMLMediaElement::effectiveEnd):
+        (WebCore::HTMLMediaElement::effectiveLoopStart):
+        (WebCore::HTMLMediaElement::effectiveLoopEnd):
+        (WebCore::HTMLMediaElement::activelyPlaying):
+        (WebCore::HTMLMediaElement::endedPlayback):
+        (WebCore::HTMLMediaElement::willSaveToCache):
+        (WebCore::HTMLMediaElement::didRestoreFromCache):
+        * html/HTMLMediaElement.h: Added.
+        (WebCore::HTMLMediaElement::movie):
+        (WebCore::HTMLMediaElement::isVideo):
+        (WebCore::HTMLMediaElement::):
+        (WebCore::HTMLMediaElement::CallbackEntry::CallbackEntry):
+        * html/HTMLMediaElement.idl: Added.
+        * html/HTMLSourceElement.cpp: Added.
+        (WebCore::HTMLSourceElement::HTMLSourceElement):
+        (WebCore::HTMLSourceElement::~HTMLSourceElement):
+        (WebCore::HTMLSourceElement::insertedIntoDocument):
+        (WebCore::HTMLSourceElement::src):
+        (WebCore::HTMLSourceElement::setSrc):
+        (WebCore::HTMLSourceElement::media):
+        (WebCore::HTMLSourceElement::setMedia):
+        (WebCore::HTMLSourceElement::type):
+        (WebCore::HTMLSourceElement::setType):
+        * html/HTMLSourceElement.h: Added.
+        (WebCore::HTMLSourceElement::endTagRequirement):
+        (WebCore::HTMLSourceElement::tagPriority):
+        * html/HTMLSourceElement.idl: Added.
+        * html/HTMLTagNames.in:
+        * html/HTMLVideoElement.cpp: Added.
+        (WebCore::HTMLVideoElement::HTMLVideoElement):
+        (WebCore::HTMLVideoElement::videoWidth):
+        (WebCore::HTMLVideoElement::videoHeight):
+        * html/HTMLVideoElement.h: Added.
+        (WebCore::HTMLVideoElement::tagPriority):
+        (WebCore::HTMLVideoElement::isVideo):
+        * html/HTMLVideoElement.idl: Added.
+        * html/MediaError.h: Added.
+        (WebCore::MediaError::):
+        (WebCore::MediaError::MediaError):
+        (WebCore::MediaError::code):
+        * html/MediaError.idl: Added.
+        * html/TimeRanges.cpp: Added.
+        (TimeRanges::TimeRanges):
+        (TimeRanges::start):
+        (TimeRanges::end):
+        (TimeRanges::add):
+        (TimeRanges::contain):
+        * html/TimeRanges.h: Added.
+        (WebCore::TimeRanges::TimeRanges):
+        (WebCore::TimeRanges::length):
+        (WebCore::TimeRanges::Range::Range):
+        * html/TimeRanges.idl: Added.
+        * page/DOMWindow.idl:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initialiseSupportedMovieMIMETypes):
+        (WebCore::initialiseMIMETypeRegistry):
+        (WebCore::MIMETypeRegistry::isSupportedMovieMIMEType):
+        (WebCore::MIMETypeRegistry::getSupportedMovieMIMETypes):
+        * platform/MIMETypeRegistry.h:
+        * platform/graphics/Movie.cpp: Added.
+        (WebCore::Movie::Movie):
+        (WebCore::Movie::~Movie):
+        (WebCore::Movie::load):
+        (WebCore::Movie::cancelLoad):
+        (WebCore::Movie::play):
+        (WebCore::Movie::pause):
+        (WebCore::Movie::duration):
+        (WebCore::Movie::currentTime):
+        (WebCore::Movie::seek):
+        (WebCore::Movie::paused):
+        (WebCore::Movie::seeking):
+        (WebCore::Movie::naturalSize):
+        (WebCore::Movie::hasVideo):
+        (WebCore::Movie::networkState):
+        (WebCore::Movie::readyState):
+        (WebCore::Movie::volume):
+        (WebCore::Movie::setVolume):
+        (WebCore::Movie::rate):
+        (WebCore::Movie::setRate):
+        (WebCore::Movie::muted):
+        (WebCore::Movie::setMuted):
+        (WebCore::Movie::dataRate):
+        (WebCore::Movie::setEndTime):
+        (WebCore::Movie::addCuePoint):
+        (WebCore::Movie::removeCuePoint):
+        (WebCore::Movie::clearCuePoints):
+        (WebCore::Movie::maxTimeBuffered):
+        (WebCore::Movie::maxTimeSeekable):
+        (WebCore::Movie::bytesLoaded):
+        (WebCore::Movie::totalBytesKnown):
+        (WebCore::Movie::totalBytes):
+        (WebCore::Movie::setRect):
+        (WebCore::Movie::visible):
+        (WebCore::Movie::setVisible):
+        (WebCore::Movie::paint):
+        (WebCore::Movie::getSupportedTypes):
+        (WebCore::Movie::networkStateChanged):
+        (WebCore::Movie::readyStateChanged):
+        (WebCore::Movie::volumeChanged):
+        (WebCore::Movie::didEnd):
+        (WebCore::Movie::cuePointReached):
+        * platform/graphics/Movie.h: Added.
+        (WebCore::MovieClient::~MovieClient):
+        (WebCore::MovieClient::movieNetworkStateChanged):
+        (WebCore::MovieClient::movieReadyStateChanged):
+        (WebCore::MovieClient::movieVolumeChanged):
+        (WebCore::MovieClient::movieDidEnd):
+        (WebCore::MovieClient::movieCuePointReached):
+        (WebCore::Movie::parentWidget):
+        (WebCore::Movie::setParentWidget):
+        (WebCore::Movie::rect):
+        (WebCore::Movie::):
+        * platform/graphics/mac/MoviePrivateQTKit.h: Added.
+        * platform/graphics/mac/MoviePrivateQTKit.mm: Added.
+        (WebCore::MoviePrivate::MoviePrivate):
+        (WebCore::MoviePrivate::~MoviePrivate):
+        (WebCore::MoviePrivate::createQTMovie):
+        (WebCore::MoviePrivate::createQTMovieView):
+        (WebCore::MoviePrivate::createQTTime):
+        (WebCore::MoviePrivate::load):
+        (WebCore::MoviePrivate::play):
+        (WebCore::MoviePrivate::pause):
+        (WebCore::MoviePrivate::duration):
+        (WebCore::MoviePrivate::currentTime):
+        (WebCore::MoviePrivate::seek):
+        (WebCore::MoviePrivate::setEndTime):
+        (WebCore::MoviePrivate::addCuePoint):
+        (WebCore::MoviePrivate::removeCuePoint):
+        (WebCore::MoviePrivate::clearCuePoints):
+        (WebCore::MoviePrivate::startCuePointTimerIfNeeded):
+        (WebCore::MoviePrivate::cancelSeek):
+        (WebCore::MoviePrivate::seekTimerFired):
+        (WebCore::MoviePrivate::cuePointTimerFired):
+        (WebCore::MoviePrivate::paused):
+        (WebCore::MoviePrivate::seeking):
+        (WebCore::MoviePrivate::naturalSize):
+        (WebCore::MoviePrivate::hasVideo):
+        (WebCore::MoviePrivate::setVolume):
+        (WebCore::MoviePrivate::setMuted):
+        (WebCore::MoviePrivate::setRate):
+        (WebCore::MoviePrivate::dataRate):
+        (WebCore::MoviePrivate::networkState):
+        (WebCore::MoviePrivate::readyState):
+        (WebCore::MoviePrivate::maxTimeBuffered):
+        (WebCore::MoviePrivate::maxTimeSeekable):
+        (WebCore::MoviePrivate::maxTimeLoaded):
+        (WebCore::MoviePrivate::bytesLoaded):
+        (WebCore::MoviePrivate::totalBytesKnown):
+        (WebCore::MoviePrivate::totalBytes):
+        (WebCore::MoviePrivate::cancelLoad):
+        (WebCore::MoviePrivate::updateStates):
+        (WebCore::MoviePrivate::loadStateChanged):
+        (WebCore::MoviePrivate::rateChanged):
+        (WebCore::MoviePrivate::sizeChanged):
+        (WebCore::MoviePrivate::timeChanged):
+        (WebCore::MoviePrivate::volumeChanged):
+        (WebCore::MoviePrivate::didEnd):
+        (WebCore::MoviePrivate::setRect):
+        (WebCore::MoviePrivate::setVisible):
+        (WebCore::MoviePrivate::paint):
+        (WebCore::MoviePrivate::getSupportedTypes):
+        (-[WebCoreMovieObserver loadStateChanged:]):
+        (-[WebCoreMovieObserver rateChanged:]):
+        (-[WebCoreMovieObserver sizeChanged:]):
+        (-[WebCoreMovieObserver timeChanged:]):
+        (-[WebCoreMovieObserver volumeChanged:]):
+        (-[WebCoreMovieObserver didEnd:]):
+        (-[WebCoreMovieObserver setCallback:WebCore::]):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectLayers):
+        * rendering/RenderVideo.cpp: Added.
+        (WebCore::RenderVideo::RenderVideo):
+        (WebCore::RenderVideo::~RenderVideo):
+        (WebCore::RenderVideo::movie):
+        (WebCore::RenderVideo::videoSizeChanged):
+        (WebCore::RenderVideo::paint):
+        (WebCore::RenderVideo::layout):
+        (WebCore::RenderVideo::updateFromElement):
+        (WebCore::RenderVideo::updateMovie):
+        (WebCore::RenderVideo::isWidthSpecified):
+        (WebCore::RenderVideo::isHeightSpecified):
+        (WebCore::RenderVideo::calcReplacedWidth):
+        (WebCore::RenderVideo::calcReplacedHeight):
+        (WebCore::RenderVideo::calcAspectRatioWidth):
+        (WebCore::RenderVideo::calcAspectRatioHeight):
+        (WebCore::RenderVideo::calcPrefWidths):
+        * rendering/RenderVideo.h: Added.
+        (WebCore::RenderVideo::renderName):
+
 2007-10-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

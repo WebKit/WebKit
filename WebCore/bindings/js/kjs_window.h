@@ -164,7 +164,7 @@ namespace KJS {
         Onbeforeunload,
 
         // Constructors
-        DOMException, Image, Option, XMLHttpRequest,
+        DOMException, Audio, Image, Option, XMLHttpRequest,
         XSLTProcessor_
     };
 

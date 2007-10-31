@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#include "Movie.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -44,7 +45,8 @@ namespace WebCore
 static WTF::HashSet<String>* supportedImageResourceMIMETypes;
 static WTF::HashSet<String>* supportedImageMIMETypes;
 static WTF::HashSet<String>* supportedNonImageMIMETypes;
-    
+static WTF::HashSet<String>* supportedMovieMIMETypes;
+
 #if PLATFORM(CG)
 extern String getMIMETypeForUTI(const String& uti);
 #endif
@@ -144,15 +146,24 @@ static void initialiseSupportedNonImageMimeTypes()
     for (size_t i = 0; i < sizeof(types)/sizeof(types[0]); ++i)
       supportedNonImageMIMETypes->add(types[i]);
 }
+    
+static void initialiseSupportedMovieMIMETypes()
+{
+#if ENABLE(VIDEO)
+    Movie::getSupportedTypes(*supportedMovieMIMETypes);
+#endif
+}
 
 static void initialiseMIMETypeRegistry()
 {
     supportedImageResourceMIMETypes = new WTF::HashSet<String>();
     supportedImageMIMETypes = new WTF::HashSet<String>();
     supportedNonImageMIMETypes = new WTF::HashSet<String>();
+    supportedMovieMIMETypes = new WTF::HashSet<String>();
     
     initialiseSupportedNonImageMimeTypes();
     initialiseSupportedImageMIMETypes();
+    initialiseSupportedMovieMIMETypes();
 }
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
@@ -186,6 +197,14 @@ bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
     return !mimeType.isEmpty() && supportedNonImageMIMETypes->contains(mimeType);
 }
 
+bool MIMETypeRegistry::isSupportedMovieMIMEType(const String& mimeType)
+{
+    if (!supportedMovieMIMETypes)
+        initialiseMIMETypeRegistry();
+    return !mimeType.isEmpty() && supportedMovieMIMETypes->contains(mimeType);     
+}
+    
+    
 bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
 {
     // Since this set is very limited and is likely to remain so we won't bother with the overhead
@@ -218,4 +237,11 @@ HashSet<String> &MIMETypeRegistry::getSupportedNonImageMIMETypes()
     return *supportedNonImageMIMETypes;
 }
 
+HashSet<String> &MIMETypeRegistry::getSupportedMovieMIMETypes()
+{
+    if (!supportedMovieMIMETypes)
+        initialiseMIMETypeRegistry();
+    return *supportedMovieMIMETypes;
+}
+    
 }

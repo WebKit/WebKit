@@ -120,6 +120,11 @@ bool Event::isOverflowEvent() const
     return false;
 }
 
+bool Event::isProgressEvent() const
+{
+    return false;
+}
+
 #if ENABLE(SVG)
 bool Event::isSVGZoomEvent() const
 {

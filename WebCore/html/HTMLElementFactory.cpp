@@ -26,6 +26,7 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLAppletElement.h"
 #include "HTMLAreaElement.h"
+#include "HTMLAudioElement.h"
 #include "HTMLBaseFontElement.h"
 #include "HTMLBaseElement.h"
 #include "HTMLBlockquoteElement.h"
@@ -70,6 +71,7 @@
 #include "HTMLPreElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLSelectElement.h"
+#include "HTMLSourceElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTableElement.h"
@@ -79,6 +81,7 @@
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "HTMLTitleElement.h"
+#include "HTMLVideoElement.h"
 #include "HTMLUListElement.h"
 #include "HTMLQuoteElement.h"
 
@@ -381,6 +384,23 @@ static PassRefPtr<HTMLElement> marqueeConstructor(const AtomicString&, Document*
     return new HTMLMarqueeElement(doc);
 }
 
+#if ENABLE(VIDEO)
+static PassRefPtr<HTMLElement> audioConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool)
+{
+    return new HTMLAudioElement(doc);
+}
+
+static PassRefPtr<HTMLElement> videoConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool)
+{
+    return new HTMLVideoElement(doc);
+}
+
+static PassRefPtr<HTMLElement> sourceConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool)
+{
+    return new HTMLSourceElement(doc);
+}
+#endif
+
 static void addTag(const QualifiedName& tag, ConstructorFunc func)
 {
     gFunctionMap->set(tag.localName().impl(), func);
@@ -462,6 +482,11 @@ static void createFunctionMap()
     addTag(trTag, tableRowConstructor);
     addTag(ulTag, ulConstructor);
     addTag(xmpTag, preConstructor);
+#if ENABLE(VIDEO)
+    addTag(audioTag, audioConstructor);
+    addTag(sourceTag, sourceConstructor);
+    addTag(videoTag, videoConstructor);
+#endif
 }
 
 PassRefPtr<HTMLElement> HTMLElementFactory::createHTMLElement(const AtomicString& tagName, Document* doc, HTMLFormElement* form, bool createdByParser)

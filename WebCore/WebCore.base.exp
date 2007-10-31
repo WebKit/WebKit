@@ -740,6 +740,8 @@ _wkInitializeGlyphVector
 _wkNSURLProtocolClassForReqest
 _wkPathFromFont
 _wkPopupMenu
+_wkQTMovieDataRate
+_wkQTMovieMaxTimeLoaded
 _wkReleaseStyleGroup
 _wkSecondsSinceLastInputEvent
 _wkSetCGFontRenderingMode
