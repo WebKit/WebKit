@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -19,54 +19,48 @@
  *
  */
 
-#ifndef _KJS_REGEXP_H_
-#define _KJS_REGEXP_H_
+#ifndef KJS_REGEXP_H
+#define KJS_REGEXP_H
 
 #include <sys/types.h>
 
-#if HAVE(PCREPOSIX)
+#if USE(PCRE16)
 #include <pcre.h>
-#else  // POSIX regex - not so good...
+#else
+// POSIX regex - not so good.
 extern "C" { // bug with some libc5 distributions
 #include <regex.h>
 }
-#endif // HAVE(PCREPOSIX)
+#endif
 
 #include "ustring.h"
+#include <wtf/Vector.h>
 
 namespace KJS {
 
-  class RegExp {
+  class RegExp : Noncopyable {
   public:
     enum { None = 0, Global = 1, IgnoreCase = 2, Multiline = 4 };
 
-    RegExp(const UString &pattern, int flags = None);
+    RegExp(const UString& pattern, int flags = None);
     ~RegExp();
 
     int flags() const { return m_flags; }
     bool isValid() const { return !m_constructionError; }
     const char* errorMessage() const { return m_constructionError; }
 
-    UString match(const UString &s, int i, int *pos = 0, int **ovector = 0);
+    int match(const UString&, int offset, OwnArrayPtr<int>* ovector = 0);
     unsigned subPatterns() const { return m_numSubPatterns; }
 
   private:
-#if HAVE(PCREPOSIX)
-    pcre *m_regex;
+#if USE(PCRE16)
+    pcre* m_regex;
 #else
     regex_t m_regex;
 #endif
     int m_flags;
     char* m_constructionError;
     unsigned m_numSubPatterns;
-
-    RegExp(const RegExp &);
-    RegExp &operator=(const RegExp &);
-
-    static bool isHexDigit(UChar);
-    static unsigned char convertHex(int);
-    static unsigned char convertHex(int, int);
-    static UChar convertUnicode(UChar, UChar, UChar, UChar);
   };
 
 } // namespace

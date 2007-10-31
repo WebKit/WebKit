@@ -33,32 +33,27 @@ namespace KJS {
 RegExp::RegExp(const UString &p, int flags)
   : m_flags(flags), m_constructionError(0), m_numSubPatterns(0)
 {
-#if HAVE(PCREPOSIX)
+#if USE(PCRE16)
 
   int options = PCRE_UTF8;
-  // Note: the Global flag is already handled by RegExpProtoFunc::execute.
-  // FIXME: That last comment is dubious. Not all RegExps get run through RegExpProtoFunc::execute.
   if (flags & IgnoreCase)
     options |= PCRE_CASELESS;
   if (flags & Multiline)
     options |= PCRE_MULTILINE;
 
-  const char *errorMessage;
+  const char* errorMessage;
   int errorOffset;
-  
-  m_regex = pcre_compile(reinterpret_cast<const uint16_t*>(p.data()), p.size(),
-                        options, &errorMessage, &errorOffset, NULL);
+  m_regex = pcre_compile2(reinterpret_cast<const uint16_t*>(p.data()), p.size(),
+                          options, NULL, &errorMessage, &errorOffset, NULL);
   if (!m_regex) {
     m_constructionError = strdup(errorMessage);
     return;
   }
 
-#ifdef PCRE_INFO_CAPTURECOUNT
   // Get number of subpatterns that will be returned.
   pcre_fullinfo(m_regex, NULL, PCRE_INFO_CAPTURECOUNT, &m_numSubPatterns);
-#endif
 
-#else /* HAVE(PCREPOSIX) */
+#else /* USE(PCRE16) */
 
   int regflags = 0;
 #ifdef REG_EXTENDED
@@ -88,7 +83,7 @@ RegExp::RegExp(const UString &p, int flags)
 
 RegExp::~RegExp()
 {
-#if HAVE(PCREPOSIX)
+#if USE(PCRE16)
   pcre_free(m_regex);
 #else
   /* TODO: is this really okay after an error ? */
@@ -97,28 +92,24 @@ RegExp::~RegExp()
   free(m_constructionError);
 }
 
-UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
+int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
 {
   if (i < 0)
     i = 0;
-  int dummyPos;
-  if (!pos)
-    pos = &dummyPos;
-  *pos = -1;
   if (ovector)
-    *ovector = 0;
+    ovector->clear();
 
   if (i > s.size() || s.isNull())
-    return UString::null();
+    return -1;
 
-#if HAVE(PCREPOSIX)
+#if USE(PCRE16)
 
   if (!m_regex)
-    return UString::null();
+    return -1;
 
   // Set up the offset vector for the result.
   // First 2/3 used for result, the last third used by PCRE.
-  int *offsetVector;
+  int* offsetVector;
   int offsetVectorSize;
   int fixedSizeOffsetVector[3];
   if (!ovector) {
@@ -127,24 +118,22 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
   } else {
     offsetVectorSize = (m_numSubPatterns + 1) * 3;
     offsetVector = new int [offsetVectorSize];
+    ovector->set(offsetVector);
   }
 
-  const int numMatches = pcre_exec(m_regex, NULL, reinterpret_cast<const uint16_t *>(s.data()), s.size(), i, 0, offsetVector, offsetVectorSize);
+  int numMatches = pcre_exec(m_regex, NULL, reinterpret_cast<const uint16_t *>(s.data()), s.size(), i, 0, offsetVector, offsetVectorSize);
 
   if (numMatches < 0) {
 #ifndef NDEBUG
     if (numMatches != PCRE_ERROR_NOMATCH)
       fprintf(stderr, "KJS: pcre_exec() failed with result %d\n", numMatches);
 #endif
-    if (offsetVector != fixedSizeOffsetVector)
-      delete [] offsetVector;
-    return UString::null();
+    if (ovector)
+      ovector->clear();
+    return -1;
   }
 
-  *pos = offsetVector[0];
-  if (ovector)
-    *ovector = offsetVector;
-  return s.substr(offsetVector[0], offsetVector[1] - offsetVector[0]);
+  return offsetVector[0];
 
 #else
 
@@ -180,38 +169,6 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
   return s.substr((*ovector)[0], (*ovector)[1] - (*ovector)[0]);
 
 #endif
-}
-
-bool RegExp::isHexDigit(UChar uc)
-{
-  int c = uc.unicode();
-  return (c >= '0' && c <= '9' ||
-          c >= 'a' && c <= 'f' ||
-          c >= 'A' && c <= 'F');
-}
-
-unsigned char RegExp::convertHex(int c)
-{
-  if (c >= '0' && c <= '9')
-    return static_cast<unsigned char>(c - '0');
-  if (c >= 'a' && c <= 'f')
-    return static_cast<unsigned char>(c - 'a' + 10);
-  return static_cast<unsigned char>(c - 'A' + 10);
-}
-
-unsigned char RegExp::convertHex(int c1, int c2)
-{
-  return ((convertHex(c1) << 4) + convertHex(c2));
-}
-
-UChar RegExp::convertUnicode(UChar uc1, UChar uc2, UChar uc3, UChar uc4)
-{
-  int c1 = uc1.unicode();
-  int c2 = uc2.unicode();
-  int c3 = uc3.unicode();
-  int c4 = uc4.unicode();
-  return UChar((convertHex(c1) << 4) + convertHex(c2),
-               (convertHex(c3) << 4) + convertHex(c4));
 }
 
 } // namespace KJS

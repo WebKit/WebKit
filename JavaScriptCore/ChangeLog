@@ -1,3 +1,45 @@
+2007-10-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15749
+          RegExp/RegExpObjectImp cause needless UString creation
+
+        Speeds things up 0.4% according to SunSpider.
+
+        * kjs/config.h: Define USE(PCRE16) instead of HAVE(PCREPOSIX),
+        because this library doesn't use the real PCRE -- it uses its
+        own PCRE that works on UTF-16.
+
+        * kjs/regexp.h: Removed a few unused functions. Changed the ifdef.
+        Use Noncopyable. Change the return value of match.
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp): Call pcre_compile2, for a slight speed boost.
+        (KJS::RegExp::~RegExp): PCRE16 rather than PCREPOSIX.
+        (KJS::RegExp::match): Change to return the position as an int and the
+        ovector as a OwnArrayPtr<int> for efficiency and clearer storage management.
+
+        * kjs/regexp_object.h: Change performMatch and arrayOfMatches to no longer
+        require a result string.
+        * kjs/regexp_object.cpp:
+        (RegExpProtoFunc::callAsFunction): Update for new signature of performMatch.
+        (RegExpObjectImp::performMatch): Change so it doesn't return a string.
+        (RegExpObjectImp::arrayOfMatches): Simplify by unifying the handling of
+        the main result with the backreferences; now it doesn't need to take
+        a result parameter.
+        (RegExpObjectImp::getBackref): Minor tweaks.
+        (RegExpObjectImp::getLastParen): Ditto.
+        (RegExpObjectImp::getLeftContext): Ditto.
+        (RegExpObjectImp::getRightContext): Ditto.
+        (RegExpObjectImp::getValueProperty): Change LastMatch case to call
+        getBackref(0) so we don't need a separate getLastMatch function.
+
+        * kjs/string_object.cpp:
+        (KJS::replace): Update to use new performMatch, including merging the
+        matched string section with the other substrings.
+        (KJS::StringProtoFunc::callAsFunction): Update functions to use the
+        new performMatch and match. Also change to use OwnArrayPtr.
+
 2007-10-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (qt buildfix)

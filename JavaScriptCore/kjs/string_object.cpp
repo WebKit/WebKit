@@ -338,7 +338,6 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
 
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp());
 
-    int matchIndex = 0;
     int lastIndex = 0;
     int startPosition = 0;
 
@@ -351,11 +350,12 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
 
     // This is either a loop (if global is set) or a one-way (if not).
     do {
-      int *ovector;
-      UString matchString = regExpObj->performMatch(reg, source, startPosition, &matchIndex, &ovector);
-      if (matchIndex == -1)
+      int matchIndex;
+      int matchLen;
+      int* ovector;
+      regExpObj->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
+      if (matchIndex < 0)
         break;
-      int matchLen = matchString.size();
 
       pushSourceRange(sourceRanges, sourceRangeCount, sourceRangeCapacity, UString::Range(lastIndex, matchIndex - lastIndex));
 
@@ -364,11 +364,9 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
           int completeMatchStart = ovector[0];
           List args;
 
-          args.append(jsString(matchString));
-
-          for (unsigned i = 0; i < reg->subPatterns(); i++) {
-              int matchStart = ovector[(i + 1) * 2];
-              int matchLen = ovector[(i + 1) * 2 + 1] - matchStart;
+          for (unsigned i = 0; i < reg->subPatterns() + 1; i++) {
+              int matchStart = ovector[i * 2];
+              int matchLen = ovector[i * 2 + 1] - matchStart;
 
               if (matchStart < 0)
                 args.append(jsUndefined());
@@ -524,30 +522,28 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
       reg = tmpReg = new RegExp(a0->toString(exec), RegExp::None);
     }
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp());
-    UString mstr = regExpObj->performMatch(reg, u, 0, &pos);
+    int pos;
+    int matchLength;
+    regExpObj->performMatch(reg, u, 0, pos, matchLength);
     if (id == Search) {
       result = jsNumber(pos);
     } else {
-      // Exec
+      // Match
       if ((reg->flags() & RegExp::Global) == 0) {
         // case without 'g' flag is handled like RegExp.prototype.exec
-        if (mstr.isNull()) {
+        if (pos < 0)
           result = jsNull();
-        } else {
-          result = regExpObj->arrayOfMatches(exec,mstr);
-        }
+        else
+          result = regExpObj->arrayOfMatches(exec);
       } else {
         // return array of matches
         List list;
         int lastIndex = 0;
         while (pos >= 0) {
-          if (mstr.isNull())
-            list.append(jsUndefined());
-          else
-            list.append(jsString(mstr));
+          list.append(jsString(u.substr(pos, matchLength)));
           lastIndex = pos;
-          pos += mstr.isEmpty() ? 1 : mstr.size();
-          mstr = regExpObj->performMatch(reg, u, pos, &pos);
+          pos += matchLength == 0 ? 1 : matchLength;
+          regExpObj->performMatch(reg, u, pos, pos, matchLength);
         }
         if (imp)
           imp->put(exec, "lastIndex", jsNumber(lastIndex), DontDelete|DontEnum);
@@ -599,24 +595,22 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     uint32_t limit = a1->isUndefined() ? 0xFFFFFFFFU : a1->toUInt32(exec);
     if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
       RegExp *reg = static_cast<RegExpImp *>(a0)->regExp();
-      if (u.isEmpty() && !reg->match(u, 0).isNull()) {
+      if (u.isEmpty() && reg->match(u, 0) >= 0) {
         // empty string matched by regexp -> empty array
         res->put(exec, exec->propertyNames().length, jsNumber(0));
         break;
       }
       pos = 0;
       while (static_cast<uint32_t>(i) != limit && pos < u.size()) {
-        int mpos;
-        int* ovector;
-        UString mstr = reg->match(u, pos, &mpos, &ovector);
-        if (mpos < 0) {
-          delete [] ovector;
+        OwnArrayPtr<int> ovector;
+        int mpos = reg->match(u, pos, &ovector);
+        if (mpos < 0)
           break;
-        }
-        pos = mpos + (mstr.isEmpty() ? 1 : mstr.size());
-        if (mpos != p0 || !mstr.isEmpty()) {
+        int mlen = ovector[1] - ovector[0];
+        pos = mpos + (mlen == 0 ? 1 : mlen);
+        if (mpos != p0 || mlen) {
           res->put(exec,i, jsString(u.substr(p0, mpos-p0)));
-          p0 = mpos + mstr.size();
+          p0 = mpos + mlen;
           i++;
         }
         for (unsigned si = 1; si <= reg->subPatterns(); ++si) {
@@ -626,7 +620,6 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
           else
             res->put(exec, i++, jsString(u.substr(spos, ovector[si * 2 + 1] - spos)));
         }
-        delete [] ovector;
       }
     } else {
       u2 = a0->toString(exec);

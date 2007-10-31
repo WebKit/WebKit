@@ -1,6 +1,5 @@
 // -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2003, 2007 Apple Inc. All Rights Reserved.
  *
@@ -102,23 +101,22 @@ JSValue *RegExpProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     }
 
     int foundIndex;
-    UString match = regExpObj->performMatch(regExp, input, static_cast<int>(lastIndex), &foundIndex);
-    bool didMatch = !match.isNull();
+    int foundLength;
+    regExpObj->performMatch(regExp, input, static_cast<int>(lastIndex), foundIndex, foundLength);
 
     // Test
     if (id == Test)
-      return jsBoolean(didMatch);
+      return jsBoolean(foundIndex >= 0);
 
     // Exec
-    if (didMatch) {
-      if (globalFlag)
-        thisObj->put(exec, exec->propertyNames().lastIndex, jsNumber(foundIndex + match.size()), DontDelete | DontEnum);
-      return regExpObj->arrayOfMatches(exec, match);
-    } else {
+    if (foundIndex < 0) {
       if (globalFlag)
         thisObj->put(exec, exec->propertyNames().lastIndex, jsNumber(0), DontDelete | DontEnum);
       return jsNull();
     }
+    if (globalFlag)
+      thisObj->put(exec, exec->propertyNames().lastIndex, jsNumber(foundIndex + foundLength), DontDelete | DontEnum);
+    return regExpObj->arrayOfMatches(exec);
   }
   break;
   case Compile:
@@ -257,89 +255,60 @@ RegExpObjectImp::RegExpObjectImp(ExecState* exec, FunctionPrototype* funcProto, 
   expression matching through the performMatch function. We use cached results to calculate, 
   e.g., RegExp.lastMatch and RegExp.leftParen.
 */
-UString RegExpObjectImp::performMatch(RegExp* r, const UString& s, int startOffset, int *endOffset, int **ovector)
+void RegExpObjectImp::performMatch(RegExp* r, const UString& s, int startOffset, int& position, int& length, int** ovector)
 {
-  int tmpOffset;
-  int *tmpOvector;
-  UString match = r->match(s, startOffset, &tmpOffset, &tmpOvector);
+  OwnArrayPtr<int> tmpOvector;
+  position = r->match(s, startOffset, &tmpOvector);
 
-  if (endOffset)
-    *endOffset = tmpOffset;
   if (ovector)
-    *ovector = tmpOvector;
+    *ovector = tmpOvector.get();
   
-  if (!match.isNull()) {
+  if (position != -1) {
     ASSERT(tmpOvector);
-    
+
+    length = tmpOvector[1] - tmpOvector[0];
+
     d->lastInput = s;
-    d->lastOvector.set(tmpOvector);
+    d->lastOvector.set(tmpOvector.release());
     d->lastNumSubPatterns = r->subPatterns();
   }
-  
-  return match;
 }
 
-JSObject *RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &result) const
+JSObject* RegExpObjectImp::arrayOfMatches(ExecState* exec) const
 {
-  List list;
-  // The returned array contains 'result' as first item, followed by the list of matches
-  list.append(jsString(result));
-  if (d->lastOvector)
-    for (unsigned i = 1 ; i < d->lastNumSubPatterns + 1 ; ++i)
-    {
-      int start = d->lastOvector[2*i];
-      if (start == -1)
-        list.append(jsUndefined());
-      else {
-        UString substring = d->lastInput.substr(start, d->lastOvector[2*i+1] - start);
-        list.append(jsString(substring));
-      }
-    }
-  JSObject *arr = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
+  unsigned lastNumSubpatterns = d->lastNumSubPatterns;
+  ArrayInstance* arr = new ArrayInstance(exec->lexicalInterpreter()->builtinArrayPrototype(), lastNumSubpatterns + 1);
+  for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
+    int start = d->lastOvector[2 * i];
+    if (start >= 0)
+      arr->put(exec, i, jsString(d->lastInput.substr(start, d->lastOvector[2 * i + 1] - start)));
+  }
   arr->put(exec, exec->propertyNames().index, jsNumber(d->lastOvector[0]));
   arr->put(exec, exec->propertyNames().input, jsString(d->lastInput));
   return arr;
 }
 
-JSValue *RegExpObjectImp::getBackref(unsigned i) const
+JSValue* RegExpObjectImp::getBackref(unsigned i) const
 {
-  if (d->lastOvector && i < d->lastNumSubPatterns + 1) {
-    UString substring = d->lastInput.substr(d->lastOvector[2*i], d->lastOvector[2*i+1] - d->lastOvector[2*i] );
-    return jsString(substring);
-  } 
-
+  if (d->lastOvector && i <= d->lastNumSubPatterns)
+    return jsString(d->lastInput.substr(d->lastOvector[2 * i], d->lastOvector[2 * i + 1] - d->lastOvector[2 * i]));
   return jsString("");
 }
 
-JSValue *RegExpObjectImp::getLastMatch() const
+JSValue* RegExpObjectImp::getLastParen() const
 {
-  if (d->lastOvector) {
-    UString substring = d->lastInput.substr(d->lastOvector[0], d->lastOvector[1] - d->lastOvector[0]);
-    return jsString(substring);
-  }
-  
-  return jsString("");
-}
-
-JSValue *RegExpObjectImp::getLastParen() const
-{
-  int i = d->lastNumSubPatterns;
+  unsigned i = d->lastNumSubPatterns;
   if (i > 0) {
     ASSERT(d->lastOvector);
-    UString substring = d->lastInput.substr(d->lastOvector[2*i], d->lastOvector[2*i+1] - d->lastOvector[2*i]);
-    return jsString(substring);
+    return jsString(d->lastInput.substr(d->lastOvector[2 * i], d->lastOvector[2 * i + 1] - d->lastOvector[2 * i]));
   }
-    
   return jsString("");
 }
 
 JSValue *RegExpObjectImp::getLeftContext() const
 {
-  if (d->lastOvector) {
-    UString substring = d->lastInput.substr(0, d->lastOvector[0]);
-    return jsString(substring);
-  }
-  
+  if (d->lastOvector)
+    return jsString(d->lastInput.substr(0, d->lastOvector[0]));
   return jsString("");
 }
 
@@ -347,10 +316,8 @@ JSValue *RegExpObjectImp::getRightContext() const
 {
   if (d->lastOvector) {
     UString s = d->lastInput;
-    UString substring = s.substr(d->lastOvector[1], s.size() - d->lastOvector[1]);
-    return jsString(substring);
+    return jsString(s.substr(d->lastOvector[1], s.size() - d->lastOvector[1]));
   }
-  
   return jsString("");
 }
 
@@ -385,7 +352,7 @@ JSValue *RegExpObjectImp::getValueProperty(ExecState*, int token) const
     case Multiline:
       return jsBoolean(d->multiline);
     case LastMatch:
-      return getLastMatch();
+      return getBackref(0);
     case LastParen:
       return getLastParen();
     case LeftContext:

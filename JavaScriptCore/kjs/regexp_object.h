@@ -78,13 +78,12 @@ namespace KJS {
     void putValueProperty(ExecState *, int token, JSValue *, int attr);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *, int token) const;
-    UString performMatch(RegExp *, const UString&, int startOffset = 0, int *endOffset = 0, int **ovector = 0);
-    JSObject *arrayOfMatches(ExecState *exec, const UString &result) const;
+    void performMatch(RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
+    JSObject* arrayOfMatches(ExecState*) const;
     
     virtual const ClassInfo *classInfo() const { return &info; }
   private:
     JSValue *getBackref(unsigned) const;
-    JSValue *getLastMatch() const;
     JSValue *getLastParen() const;
     JSValue *getLeftContext() const;
     JSValue *getRightContext() const;
