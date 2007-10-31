@@ -1,0 +1,10 @@
+<video></video>
+<script src=video-test.js></script>
+<script>
+test("!video.muted");
+video.muted = true;
+test("video.muted");
+video.muted = false;
+test("!video.muted");
+endTest();
+</script>

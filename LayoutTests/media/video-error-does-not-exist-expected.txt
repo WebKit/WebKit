@@ -1,0 +1,4 @@
+TEST(!video.error) OK
+EVENT(emptied) TEST(video.error.code == MediaError.MEDIA_ERR_NETWORK) OK
+END OF TEST
+

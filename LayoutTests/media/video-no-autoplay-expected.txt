@@ -1,0 +1,5 @@
+TEST(video.paused) OK
+EVENT(load)
+TEST(video.paused) OK
+END OF TEST
+

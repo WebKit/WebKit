@@ -1,0 +1,5 @@
+TEST(audio instanceof HTMLAudioElement) OK
+EVENT(load) TEST(relativeURL(audio.currentSrc)=='content/test.wav') OK
+EVENT(play)
+END OF TEST
+

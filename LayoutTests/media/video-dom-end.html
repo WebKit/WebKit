@@ -1,0 +1,8 @@
+<video autoplay src=content/test.mp4></video>
+<script src=video-test.js></script>
+<script>
+video.end = 0.5;
+test("video.end == 0.5");
+test("video.getAttribute('end') == '0.5s'");
+waitForEventTestAndEnd('ended', "video.currentTime == 0.5");
+</script>

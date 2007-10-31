@@ -1,0 +1,5 @@
+TEST(video.currentSrc=='') OK
+TEST(video.currentSrc=='') OK
+EVENT(load) TEST(relativeURL(video.currentSrc)=='content/test.mp4') OK
+END OF TEST
+

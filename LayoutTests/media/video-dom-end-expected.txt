@@ -1,0 +1,5 @@
+TEST(video.end == 0.5) OK
+TEST(video.getAttribute('end') == '0.5s') OK
+EVENT(ended) TEST(video.currentTime == 0.5) OK
+END OF TEST
+

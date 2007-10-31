@@ -1011,3 +1011,6 @@ webarchive/test-script-src.html
 webarchive/test-table-background.html
 webarchive/test-td-background.html
 webarchive/loading/test-loading-archive.html
+
+# ------- <video> support
+media

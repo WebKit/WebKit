@@ -1,0 +1,7 @@
+TEST(video.volume == 0.5) OK
+TEST(video.volume == 1) OK
+TEST(video.volume == 0) OK
+TEST(video.volume = 1.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.volume = -0.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
+END OF TEST
+

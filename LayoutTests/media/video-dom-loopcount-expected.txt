@@ -1,0 +1,6 @@
+TEST(video.loopCount == 2) OK
+TEST(video.currentLoop == 0) OK
+TEST(video.getAttribute('loopCount') == 2) OK
+EVENT(ended) TEST(video.currentLoop == 1) OK
+END OF TEST
+

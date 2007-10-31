@@ -1,0 +1,12 @@
+<video></video>
+<script src=video-test.js></script>
+<script>
+test("video.volume == 0.5");
+video.volume = 1;
+test("video.volume == 1");
+video.volume = 0;
+test("video.volume == 0");
+testException("video.volume = 1.5", "DOMException.INDEX_SIZE_ERR");
+testException("video.volume = -0.5", "DOMException.INDEX_SIZE_ERR");
+endTest();
+</script>

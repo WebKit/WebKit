@@ -1,0 +1,13 @@
+<video src=content/test.mp4></video>
+<script src=video-test.js></script>
+<script>
+test("video.currentTime == 0")
+waitForEventAndTest('load', "video.currentTime == 0");
+video.addEventListener('load', function() { video.play(); setTimeout(testCurrentTime, 500) });
+waitForEventAndTest('play', "video.currentTime == 0");
+function testCurrentTime()
+{
+    test("video.currentTime > 0")
+    endTest();
+}
+</script>

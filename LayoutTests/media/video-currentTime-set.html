@@ -1,0 +1,15 @@
+<video src=content/test.mp4></video>
+<script src=video-test.js></script>
+<script>
+waitForEvent('load',  
+function () { 
+    video.currentTime = video.duration - 0.2; 
+    video.play(); 
+});
+waitForEvent('play',
+function () {
+    setTimeout(function () { test("false") }, 400);
+});
+waitForEventAndEnd('ended');
+
+</script>

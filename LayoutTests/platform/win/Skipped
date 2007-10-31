@@ -613,3 +613,6 @@ http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/small-chunks-response-text.html
 plugins/netscape-plugin-setwindow-size.html
 svg/custom/gradient-stop-style-change.svg
+
+# <video> support
+media

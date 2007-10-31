@@ -1,0 +1,9 @@
+<video src=content/test.mp4 loopcount=2 autoplay></video>
+<script src=video-test.js></script>
+<script>
+video.loopStart = 1.0;
+test("video.loopStart==1.0");
+test("video.getAttribute('loopstart') == '1s'");
+waitForEvent('play', function () { video.currentTime = 500; });
+waitForEventTestAndEnd('timeupdate', "video.currentTime.toFixed(1) && video.currentLoop==1");
+</script>

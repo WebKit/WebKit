@@ -1,0 +1,6 @@
+<video src=content/test.mp4 start=1s></video>
+<script src=video-test.js></script>
+<script>
+test("video.start == 1.0");
+waitForEventTestAndEnd('canplaythrough', "video.currentTime == 1.0");
+</script>

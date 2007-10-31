@@ -1,0 +1,9 @@
+<video>
+    <source src=content/error.mpeg media="print">
+    <source src=content/error2.mpeg media="screen and (min-device-width: 80000px)">
+    <source src=content/test.mp4 media="screen and (min-device-width: 100px)">
+</video>
+<script src=video-test.js></script>
+<script>
+waitForEventTestAndEnd('begin', "relativeURL(video.currentSrc) == 'content/test.mp4'");
+</script>

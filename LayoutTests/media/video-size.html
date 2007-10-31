@@ -1,0 +1,6 @@
+<video src=content/test.mp4></video>
+<script src=video-test.js></script>
+<script>
+test("video.videoWidth == 0 && video.videoHeight == 0");
+waitForEventTestAndEnd('loadedmetadata', "video.videoWidth > 0 && video.videoHeight > 0");
+</script>

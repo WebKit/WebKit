@@ -1,0 +1,16 @@
+<video src=content/test.mp4></video>
+<script src=video-test.js></script>
+<script>
+function cueHit() {
+    test("video.currentTime.toFixed(1) == 0.1");
+    test("!video.paused");    
+}
+function cueHit2() {
+    test("video.currentTime.toFixed(1) == 0.2");
+    test("video.paused");    
+    endTest();
+}
+video.addCuePoint(0.1, cueHit);
+video.addCuePoint(0.2, cueHit2, true);
+video.play();
+</script>

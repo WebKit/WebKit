@@ -1,0 +1,15 @@
+TEST(video.seekable.length == 0) OK
+TEST(video.seekable.start(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.seekable.end(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.seekable.start(0)) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.seekable.end(0)) THROWS(DOMException.INDEX_SIZE_ERR) OK
+EVENT(load)
+TEST(video.seekable.length == 1) OK
+TEST(video.seekable.start(0) == 0) OK
+TEST(video.seekable.end(0) > 0) OK
+TEST(video.seekable.start(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.seekable.end(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.seekable.start(1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.seekable.end(1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
+END OF TEST
+

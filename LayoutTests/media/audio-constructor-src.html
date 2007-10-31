@@ -1,0 +1,11 @@
+<body>
+<script src=video-test.js></script>
+<script>
+var audio = new Audio("content/test.wav");
+media = audio;
+
+test("audio instanceof HTMLAudioElement");
+waitForEventAndTest("load", "relativeURL(audio.currentSrc)=='content/test.wav'");
+waitForEventAndEnd("play");
+audio.play();
+</script>

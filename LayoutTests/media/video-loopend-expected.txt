@@ -1,0 +1,4 @@
+TEST(video.loopEnd==0.5) OK
+EVENT(timeupdate) TEST(video.currentTime.toFixed(1) == 0 && video.currentLoop==1) OK
+END OF TEST
+

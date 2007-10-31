@@ -1,0 +1,4 @@
+TEST(video.start == 1.0) OK
+EVENT(canplaythrough) TEST(video.currentTime == 1.0) OK
+END OF TEST
+

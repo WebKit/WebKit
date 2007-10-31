@@ -1,0 +1,10 @@
+<video></video>
+<script src=video-test.js></script>
+<script>
+test("video.currentSrc==''");
+var source = document.createElement("source");
+source.setAttribute("src", "content/test.mp4");
+video.appendChild(source);
+test("video.currentSrc==''");
+waitForEventTestAndEnd("load", "relativeURL(video.currentSrc)=='content/test.mp4'");
+</script>

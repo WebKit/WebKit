@@ -1,0 +1,7 @@
+<video src=content/test.mp4></video>
+<script src=video-test.js></script>
+<script>
+test("video.paused");
+waitForEventAndTest("play", "false");
+waitForEvent("load", function () { setTimeout(testAndEnd('video.paused', 500)) });
+</script>

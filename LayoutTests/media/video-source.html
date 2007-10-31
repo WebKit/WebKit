@@ -1,0 +1,7 @@
+<video>
+    <source src=content/test.mp4>
+</video>
+<script src=video-test.js></script>
+<script>
+waitForEventTestAndEnd('begin', "relativeURL(video.currentSrc) == 'content/test.mp4'");
+</script>
