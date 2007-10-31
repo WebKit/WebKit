@@ -30,6 +30,7 @@
 #include "internal.h"
 #include "SymbolTable.h"
 #include <wtf/ListRefPtr.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(X86) && COMPILER(GCC)

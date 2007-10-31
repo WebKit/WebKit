@@ -1,5 +1,10 @@
 2007-10-31  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (qt buildfix)
+        * kjs/nodes.h: include OwnPtr.h
+
+2007-10-31  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej.
 
         Remove SourceCodeElement class and replaced with a Vector for a 0.8% gain on sunspider
