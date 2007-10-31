@@ -482,7 +482,9 @@ XMLTokenizer::XMLTokenizer(Document* _doc, FrameView* _view)
 XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
     : m_doc(fragment->document())
     , m_view(0)
-#ifndef USE_QXMLSTREAM
+#ifdef USE_QXMLSTREAM
+    , m_wroteText(false)
+#else
     , m_context(0)
 #endif
     , m_currentNode(fragment)
@@ -523,6 +525,7 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
     if (elemStack.isEmpty())
         return;
     
+#ifndef USE_QXMLSTREAM
     for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
         if (NamedAttrMap* attrs = element->attributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
@@ -534,6 +537,23 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
             }
         }
     }
+#else
+    QXmlStreamNamespaceDeclarations namespaces;
+    for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
+        if (NamedAttrMap* attrs = element->attributes()) {
+            for (unsigned i = 0; i < attrs->length(); i++) {
+                Attribute* attr = attrs->attributeItem(i);
+                if (attr->localName() == "xmlns")
+                    m_defaultNamespaceURI = attr->value();
+                else if (attr->prefix() == "xmlns")
+                    namespaces.append(QXmlStreamNamespaceDeclaration(attr->localName(), attr->value()));
+            }
+        }
+    }
+#if QT_VERSION >= 0x040400
+    m_stream.addExtraNamespaceDeclarations(namespaces);
+#endif
+#endif
 }
 
 XMLTokenizer::~XMLTokenizer()
@@ -591,6 +611,7 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
     m_wroteText = true;
     QString data(parseString);
     if (!data.isEmpty()) {
+#if QT_VERSION < 0x040400
         if (!m_sawFirstElement) {
             int idx = data.indexOf(QLatin1String("<?xml"));
             if (idx != -1) {
@@ -610,6 +631,7 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
                 }
             }
         }
+#endif
         m_stream.addData(data);
         parse();
     }
@@ -696,7 +718,7 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
     String localName = toString(xmlLocalName);
     String uri = toString(xmlURI);
     String prefix = toString(xmlPrefix);
-    
+
     if (m_parsingFragment && uri.isNull()) {
         if (!prefix.isNull())
             uri = m_prefixToNamespaceMap.get(prefix);
@@ -1524,9 +1546,11 @@ bool parseXMLDocumentFragment(const String& string, DocumentFragment* fragment, 
     int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, (const xmlChar*)string.utf8().data(), 0);
     return result == 0;
 #else
+    tokenizer.write(String("<qxmlstreamdummyelement>"), false);
     tokenizer.write(string, false);
+    tokenizer.write(String("</qxmlstreamdummyelement>"), false);
     tokenizer.finish();
-    return tokenizer.hasError();
+    return !tokenizer.hasError();
 #endif
 }
 
@@ -1725,12 +1749,27 @@ void XMLTokenizer::startDocument()
     initializeParserContext();
     ExceptionCode ec = 0;
 
-    if (!m_parsingFragment)
+    if (!m_parsingFragment) {
         m_doc->setXMLStandalone(m_stream.isStandaloneDocument(), ec);
+
+#if QT_VERSION >= 0x040400
+        QStringRef version = m_stream.documentVersion();
+        if (!version.isEmpty())
+            m_doc->setXMLVersion(version, ec);
+        QStringRef encoding = m_stream.documentEncoding();
+        if (!encoding.isEmpty())
+            m_doc->setXMLEncoding(encoding);
+#endif
+    }
 }
 
 void XMLTokenizer::parseStartElement()
 {
+    if (!m_sawFirstElement && m_parsingFragment) {
+        // skip dummy element for fragments
+        m_sawFirstElement = true;
+        return;
+    }
     m_sawFirstElement = true;
 
     exitText();
@@ -1740,10 +1779,8 @@ void XMLTokenizer::parseStartElement()
     String prefix    = prefixFromQName(m_stream.qualifiedName().toString());
 
     if (m_parsingFragment && uri.isNull()) {
-        if (!prefix.isNull())
-            uri = m_prefixToNamespaceMap.get(prefix);
-        else
-            uri = m_defaultNamespaceURI;
+        Q_ASSERT (prefix.isNull());
+        uri = m_defaultNamespaceURI;
     }
 
     ExceptionCode ec = 0;
@@ -1791,6 +1828,11 @@ void XMLTokenizer::parseEndElement()
     exitText();
 
     Node* n = m_currentNode;
+
+    // skip end of dummy element
+//     if (m_parsingFragment & n->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)
+//         return;
+    
     RefPtr<Node> parent = n->parentNode();
     n->finishedParsing();
 
@@ -1905,6 +1947,7 @@ bool XMLTokenizer::hasError() const
     return m_stream.hasError();
 }
 
+#if QT_VERSION < 0x040400
 static QString parseId(const QString &dtd, int *pos, bool *ok)
 {
     *ok = true;
@@ -1923,9 +1966,15 @@ static QString parseId(const QString &dtd, int *pos, bool *ok)
     *pos = end + 1;
     return dtd.mid(start, end - start);
 }
+#endif
 
 void XMLTokenizer::parseDtd()
 {
+#if QT_VERSION >= 0x040400
+    QStringRef name = m_stream.dtdName();
+    QStringRef publicId = m_stream.dtdPublicId();
+    QStringRef systemId = m_stream.dtdSystemId();
+#else
     QString dtd = m_stream.text().toString();
 
     int start = dtd.indexOf("<!DOCTYPE ") + 10;
@@ -1974,10 +2023,9 @@ void XMLTokenizer::parseDtd()
         handleError(fatal, "Invalid DOCTYPE", lineNumber(), columnNumber());
         return;
     }
-    
-    //qDebug() << dtd << name << publicId << systemId;
-    const QXmlStreamNotationDeclarations& decls = m_stream.notationDeclarations();
+#endif    
 
+    //qDebug() << dtd << name << publicId << systemId;
     if ((publicId == "-//W3C//DTD XHTML 1.0 Transitional//EN")
         || (publicId == "-//W3C//DTD XHTML 1.1//EN")
         || (publicId == "-//W3C//DTD XHTML 1.0 Strict//EN")

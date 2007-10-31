@@ -160,8 +160,8 @@ namespace WebCore {
         String m_defaultNamespaceURI;
 
         typedef HashMap<String, String> PrefixForNamespaceMap;
-        PrefixForNamespaceMap m_prefixToNamespaceMap;
 #ifndef USE_QXMLSTREAM
+        PrefixForNamespaceMap m_prefixToNamespaceMap;
         OwnPtr<PendingCallbacks> m_pendingCallbacks;
 #endif
         SegmentedString m_pendingSrc;

@@ -2,6 +2,25 @@
 
         Reviewed by Simon.
 
+        Fixes in the XML tokenizer when using QXmlStream.
+        
+        Use new functionality of QXmlStream in Qt 4.4 to simplify
+        the code (but keep the old code for now to still support Qt 4.3).
+        
+        Add proper support for namespace handling when parsing into
+        a document fragment.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::write):
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::):
+        * dom/XMLTokenizer.h:
+
+2007-10-31  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         add support for dragging images.
 
         WARNING: NO TEST CASES ADDED OR CHANGED

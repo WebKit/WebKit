@@ -1,3 +1,19 @@
+2007-10-31  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes in the XML tokenizer when using QXmlStream.
+        
+        Use new functionality of QXmlStream in Qt 4.4 to simplify
+        the code (but keep the old code for now to still support Qt 4.3).
+        
+        Add proper support for namespace handling when parsing into
+        a document fragment.
+
+        * platform/qt/Skipped:
+        * platform/qt/dom/xhtml/level3/core/canonicalform10-expected.txt: Removed.
+        * platform/qt/dom/xhtml/level3/core/canonicalform11-expected.txt: Removed.
+
 2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
