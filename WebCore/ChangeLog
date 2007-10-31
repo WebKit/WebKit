@@ -1,5 +1,14 @@
 2007-10-31  Simon Hausmann  <hausmann@kde.org>
 
+        Reviewed by Maciej;
+
+        Build fix for non-Qt builds.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+
+2007-10-31  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Lars.
 
         Fix dependency path to header files of the public API of the Qt port.

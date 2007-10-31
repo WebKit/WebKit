@@ -539,7 +539,7 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
     if (elemStack.isEmpty())
         return;
     
-#if QT_VERSION < 0x040400
+#if !PLATFORM(QT) || QT_VERSION < 0x040400
     for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
         if (NamedAttrMap* attrs = element->attributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
