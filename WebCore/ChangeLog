@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        add an entitiy resolver to QXmlStream.
+        Fixes fast/parser/entities-in-attributes.xhtml.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::EntityResolver::resolveUndeclaredEntity):
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::~XMLTokenizer):
+
+2007-10-31  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixes in the XML tokenizer when using QXmlStream.
         
         Use new functionality of QXmlStream in Qt 4.4 to simplify
