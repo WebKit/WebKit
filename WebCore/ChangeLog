@@ -1,3 +1,11 @@
+2007-10-31  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        The new Color must be marked valid.
+
+        * platform/graphics/gtk/ColorGtk.cpp:
+
 2007-10-31  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Maciej;
