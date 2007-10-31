@@ -32,7 +32,7 @@
 
 2007-10-31  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by ChangeLog.
+        Reviewed by Oliver.
         
         - get rid of integer divide in PropertyMap and HashTable for 1% SunSpider speedup
         
