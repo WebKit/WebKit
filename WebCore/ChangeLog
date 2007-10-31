@@ -1,3 +1,19 @@
+2007-10-30  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by NOBODY.
+
+        Add missing files.
+
+        * html/VoidCallback.cpp: Added.
+        (VoidCallback::VoidCallback):
+        (VoidCallback::~VoidCallback):
+        (VoidCallback::handleEvent):
+        (VoidCallback::execute):
+        (VoidCallback::operator==):
+        (WebCore::toVoidCallback):
+        * html/VoidCallback.h: Added.
+        * html/VoidCallback.idl: Added.
+
 2007-10-30  David Kilzer  <ddkilzer@webkit.org>
 
         Generated files missing from WebCore's Xcode project file
