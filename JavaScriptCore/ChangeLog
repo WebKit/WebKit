@@ -1,3 +1,30 @@
+2007-10-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by ChangeLog.
+        
+        - get rid of integer divide in PropertyMap and HashTable for 1% SunSpider speedup
+        
+        Integer divide sucks. Fortunately, a bunch of shifts and XORs
+        biased towards the high bits is sufficient to provide a good
+        double hash. Besides the SunSpider win, I used the dump statistics
+        mode for both to verify that collisions did not increase and that
+        the longest collision chain is not any longer.
+
+        * kjs/property_map.cpp:
+        (KJS::doubleHash):
+        (KJS::PropertyMap::get):
+        (KJS::PropertyMap::getLocation):
+        (KJS::PropertyMap::put):
+        (KJS::PropertyMap::insert):
+        (KJS::PropertyMap::remove):
+        (KJS::PropertyMap::checkConsistency):
+        * wtf/HashTable.h:
+        (WTF::doubleHash):
+        (WTF::::lookup):
+        (WTF::::lookupForWriting):
+        (WTF::::fullLookupForWriting):
+        (WTF::::add):
+
 2007-10-30  Adam Roben  <aroben@apple.com>
 
         Build fix

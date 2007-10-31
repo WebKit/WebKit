@@ -25,6 +25,7 @@
 #include "object.h"
 #include "protect.h"
 #include "PropertyNameArray.h"
+#include "HashTable.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
@@ -34,7 +35,7 @@ using std::max;
 
 #define DEBUG_PROPERTIES 0
 #define DO_CONSISTENCY_CHECK 0
-#define DUMP_STATISTICS 0
+#define DUMP_PROPERTYMAP_STATS 0
 #define USE_SINGLE_ENTRY 1
 
 // 2/28/2006 ggaren: command-line JS iBench says that USE_SINGLE_ENTRY is a
@@ -50,7 +51,7 @@ namespace KJS {
 // but it's not going to blow out the stack to allocate this number of pointers.
 const int smallMapThreshold = 1024;
 
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
 
 static int numProbes;
 static int numCollisions;
@@ -180,7 +181,7 @@ JSValue *PropertyMap::get(const Identifier &name, unsigned &attributes) const
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
     int k = 0;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
     ++numProbes;
     numCollisions += entries[i].key && entries[i].key != rep;
 #endif
@@ -196,9 +197,9 @@ JSValue *PropertyMap::get(const Identifier &name, unsigned &attributes) const
         }
         
         if (k == 0)
-            k = 1 | (h % sizeMask);
+            k = 1 | doubleHash(h);
         i = (i + k) & sizeMask;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
         ++numRehashes;
 #endif
     }
@@ -224,7 +225,7 @@ JSValue *PropertyMap::get(const Identifier &name) const
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
     int k = 0;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
     ++numProbes;
     numCollisions += entries[i].key && entries[i].key != rep;
 #endif
@@ -238,9 +239,9 @@ JSValue *PropertyMap::get(const Identifier &name) const
             return entries[i].value;
         
         if (k == 0)
-            k = 1 | (h % sizeMask);
+            k = 1 | doubleHash(h);
         i = (i + k) & sizeMask;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
         ++numRehashes;
 #endif
     }
@@ -266,7 +267,7 @@ JSValue **PropertyMap::getLocation(const Identifier &name)
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
     int k = 0;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
     ++numProbes;
     numCollisions += entries[i].key && entries[i].key != rep;
 #endif
@@ -280,9 +281,9 @@ JSValue **PropertyMap::getLocation(const Identifier &name)
             return &entries[i].value;
         
         if (k == 0)
-            k = 1 | (h % sizeMask);
+            k = 1 | doubleHash(h);
         i = (i + k) & sizeMask;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
         ++numRehashes;
 #endif
     }
@@ -352,7 +353,7 @@ void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bo
     int k = 0;
     bool foundDeletedElement = false;
     int deletedElementIndex = 0;    /* initialize to make the compiler happy */
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
     ++numProbes;
     numCollisions += entries[i].key && entries[i].key != rep;
 #endif
@@ -371,9 +372,9 @@ void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bo
             deletedElementIndex = i;
         }
         if (k == 0)
-            k = 1 | (h % sizeMask);
+            k = 1 | doubleHash(h);
         i = (i + k) & sizeMask;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
         ++numRehashes;
 #endif
     }
@@ -404,16 +405,16 @@ void PropertyMap::insert(UString::Rep *key, JSValue *value, int attributes, int 
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
     int k = 0;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
     ++numProbes;
     numCollisions += entries[i].key && entries[i].key != key;
 #endif
     while (entries[i].key) {
         ASSERT(entries[i].key != deletedSentinel());
         if (k == 0)
-            k = 1 | (h % sizeMask);
+            k = 1 | doubleHash(h);
         i = (i + k) & sizeMask;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
         ++numRehashes;
 #endif
     }
@@ -531,7 +532,7 @@ void PropertyMap::remove(const Identifier &name)
     Entry *entries = m_u.table->entries;
     int i = h & sizeMask;
     int k = 0;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
     ++numProbes;
     ++numRemoves;
     numCollisions += entries[i].key && entries[i].key != rep;
@@ -540,9 +541,9 @@ void PropertyMap::remove(const Identifier &name)
         if (rep == key)
             break;
         if (k == 0)
-            k = 1 | (h % sizeMask);
+            k = 1 | doubleHash(h);
         i = (i + k) & sizeMask;
-#if DUMP_STATISTICS
+#if DUMP_PROPERTYMAP_STATS
         ++numRehashes;
 #endif
     }
@@ -750,7 +751,7 @@ void PropertyMap::checkConsistency()
             if (rep == key)
                 break;
             if (k == 0)
-                k = 1 | (h % m_u.table->sizeMask);
+                k = 1 | doubleHash(h);
             i = (i + k) & m_u.table->sizeMask;
         }
         ASSERT(i == j);
