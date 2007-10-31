@@ -173,12 +173,33 @@ void Collector::recordExtraCost(size_t cost)
     primaryHeap.extraCost += cost;
 }
 
+template <Collector::HeapType heapType> struct HeapConstants;
+
+template <> struct HeapConstants<Collector::PrimaryHeap> {
+    static const size_t cellSize = CELL_SIZE;
+    static const size_t cellsPerBlock = CELLS_PER_BLOCK;
+    static const size_t bitmapShift = 0;
+    typedef CollectorCell Cell;
+    typedef CollectorBlock Block;
+};
+
+template <> struct HeapConstants<Collector::NumberHeap> {
+    static const size_t cellSize = SMALL_CELL_SIZE;
+    static const size_t cellsPerBlock = SMALL_CELLS_PER_BLOCK;
+    static const size_t bitmapShift = 1;
+    typedef SmallCollectorCell Cell;
+    typedef SmallCellCollectorBlock Block;
+};
+
 template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
 {
+  typedef typename HeapConstants<heapType>::Block Block;
+  typedef typename HeapConstants<heapType>::Cell Cell;
+
   CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
   ASSERT(JSLock::lockCount() > 0);
   ASSERT(JSLock::currentThreadIsHoldingLock());
-  ASSERT(s <= CELL_SIZE);
+  ASSERT(s <= HeapConstants<heapType>::cellSize);
   UNUSED_PARAM(s); // s is now only used for the above assert
 
   ASSERT(heap.operationInProgress == NoOperation);
@@ -209,18 +230,18 @@ template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
   size_t usedBlocks = heap.usedBlocks;
 
   size_t i = heap.firstBlockWithPossibleSpace;
-  CollectorBlock *targetBlock;
+  Block* targetBlock;
   size_t targetBlockUsedCells;
   if (i != usedBlocks) {
-    targetBlock = heap.blocks[i];
+    targetBlock = (Block*)heap.blocks[i];
     targetBlockUsedCells = targetBlock->usedCells;
-    ASSERT(targetBlockUsedCells <= CELLS_PER_BLOCK);
-    while (targetBlockUsedCells == CELLS_PER_BLOCK) {
+    ASSERT(targetBlockUsedCells <= HeapConstants<heapType>::cellsPerBlock);
+    while (targetBlockUsedCells == HeapConstants<heapType>::cellsPerBlock) {
       if (++i == usedBlocks)
         goto allocateNewBlock;
-      targetBlock = heap.blocks[i];
+      targetBlock = (Block*)heap.blocks[i];
       targetBlockUsedCells = targetBlock->usedCells;
-      ASSERT(targetBlockUsedCells <= CELLS_PER_BLOCK);
+      ASSERT(targetBlockUsedCells <= HeapConstants<heapType>::cellsPerBlock);
     }
     heap.firstBlockWithPossibleSpace = i;
   } else {
@@ -233,20 +254,20 @@ allocateNewBlock:
       heap.blocks = static_cast<CollectorBlock **>(fastRealloc(heap.blocks, numBlocks * sizeof(CollectorBlock *)));
     }
 
-    targetBlock = allocateBlock();
+    targetBlock = (Block*)allocateBlock();
     targetBlock->freeList = targetBlock->cells;
     targetBlockUsedCells = 0;
-    heap.blocks[usedBlocks] = targetBlock;
+    heap.blocks[usedBlocks] = (CollectorBlock*)targetBlock;
     heap.usedBlocks = usedBlocks + 1;
     heap.firstBlockWithPossibleSpace = usedBlocks;
   }
   
   // find a free spot in the block and detach it from the free list
-  CollectorCell *newCell = targetBlock->freeList;
+  Cell *newCell = targetBlock->freeList;
   
   // "next" field is a byte offset -- 0 means next cell, so a zeroed block is already initialized
   // could avoid the casts by using a cell offset, but this avoids a relatively-slow multiply
-  targetBlock->freeList = reinterpret_cast<CollectorCell *>(reinterpret_cast<char *>(newCell + 1) + newCell->u.freeCell.next);
+  targetBlock->freeList = reinterpret_cast<Cell*>(reinterpret_cast<char*>(newCell + 1) + newCell->u.freeCell.next);
 
   targetBlock->usedCells = static_cast<uint32_t>(targetBlockUsedCells + 1);
   heap.numLiveObjects = numLiveObjects + 1;
@@ -435,7 +456,7 @@ void Collector::registerThread()
 #define IS_POINTER_ALIGNED(p) (((intptr_t)(p) & (sizeof(char *) - 1)) == 0)
 
 // cell size needs to be a power of two for this to be valid
-#define IS_CELL_ALIGNED(p) (((intptr_t)(p) & CELL_MASK) == 0)
+#define IS_HALF_CELL_ALIGNED(p) (((intptr_t)(p) & (CELL_MASK >> 1)) == 0)
 
 void Collector::markStackObjectsConservatively(void *start, void *end)
 {
@@ -461,15 +482,15 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
 
   while (p != e) {
       char* x = *p++;
-      if (IS_CELL_ALIGNED(x) && x) {
-          uintptr_t offset = reinterpret_cast<uintptr_t>(x) & BLOCK_OFFSET_MASK;
-          CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(x - offset);
+      if (IS_HALF_CELL_ALIGNED(x) && x) {
+          uintptr_t xAsBits = reinterpret_cast<uintptr_t>(x);
+          xAsBits &= CELL_ALIGN_MASK;
+          uintptr_t offset = xAsBits & BLOCK_OFFSET_MASK;
+          CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(xAsBits - offset);
           // Mark the the number heap, we can mark these Cells directly to avoid the virtual call cost
           for (size_t block = 0; block < usedNumberBlocks; block++) {
               if ((numberBlocks[block] == blockAddr) & (offset <= lastCellOffset)) {
-                  if (((CollectorCell*)x)->u.freeCell.zeroIfFree != 0)
-                      // Don't check whether we need to mark as we're only setting a bit in this case
-                      Collector::markCell(reinterpret_cast<JSCell*>(x));
+                  Collector::markCell(reinterpret_cast<JSCell*>(xAsBits));
                   goto endMarkLoop;
               }
           }
@@ -477,8 +498,8 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
           // Mark the primary heap
           for (size_t block = 0; block < usedPrimaryBlocks; block++) {
               if ((primaryBlocks[block] == blockAddr) & (offset <= lastCellOffset)) {
-                  if (((CollectorCell*)x)->u.freeCell.zeroIfFree != 0) {
-                      JSCell* imp = reinterpret_cast<JSCell*>(x);
+                  if (((CollectorCell*)xAsBits)->u.freeCell.zeroIfFree != 0) {
+                      JSCell* imp = reinterpret_cast<JSCell*>(xAsBits);
                       if (!imp->marked())
                           imp->mark();
                   }
@@ -784,6 +805,9 @@ void Collector::markMainThreadOnlyObjects()
 
 template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThreadIsMainThread)
 {
+    typedef typename HeapConstants<heapType>::Block Block;
+    typedef typename HeapConstants<heapType>::Cell Cell;
+
     UNUSED_PARAM(currentThreadIsMainThread); // currentThreadIsMainThread is only used in ASSERTs
     // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
     CollectorHeap& heap = heapType == Collector::PrimaryHeap ? primaryHeap : numberHeap;
@@ -792,25 +816,25 @@ template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThre
     size_t numLiveObjects = heap.numLiveObjects;
     
     for (size_t block = 0; block < heap.usedBlocks; block++) {
-        CollectorBlock *curBlock = heap.blocks[block];
+        Block* curBlock = (Block*)heap.blocks[block];
         
         size_t usedCells = curBlock->usedCells;
-        CollectorCell *freeList = curBlock->freeList;
+        Cell* freeList = curBlock->freeList;
         
-        if (usedCells == CELLS_PER_BLOCK) {
+        if (usedCells == HeapConstants<heapType>::cellsPerBlock) {
             // special case with a block where all cells are used -- testing indicates this happens often
-            for (size_t i = 0; i < CELLS_PER_BLOCK; i++) {
-                if (!curBlock->marked.get(i)) {
-                    CollectorCell* cell = curBlock->cells + i;
+            for (size_t i = 0; i < HeapConstants<heapType>::cellsPerBlock; i++) {
+                if (!curBlock->marked.get(i >> HeapConstants<heapType>::bitmapShift)) {
+                    Cell* cell = curBlock->cells + i;
                     
-                    // special case for allocated but uninitialized object
-                    // (We don't need this check earlier because nothing prior this point 
-                    // assumes the object has a valid vptr.)
-                    if (cell->u.freeCell.zeroIfFree == 0)
-                        continue;
-                    
-                    JSCell* imp = reinterpret_cast<JSCell*>(cell);
                     if (heapType != Collector::NumberHeap) {
+                        JSCell* imp = reinterpret_cast<JSCell*>(cell);
+                        // special case for allocated but uninitialized object
+                        // (We don't need this check earlier because nothing prior this point 
+                        // assumes the object has a valid vptr.)
+                        if (cell->u.freeCell.zeroIfFree == 0)
+                            continue;
+                        
                         ASSERT(currentThreadIsMainThread || !curBlock->collectOnMainThreadOnly.get(i));
                         if (curBlock->collectOnMainThreadOnly.get(i)) {
                             curBlock->collectOnMainThreadOnly.clear(i);
@@ -824,20 +848,20 @@ template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThre
                     
                     // put cell on the free list
                     cell->u.freeCell.zeroIfFree = 0;
-                    cell->u.freeCell.next = reinterpret_cast<char *>(freeList) - reinterpret_cast<char *>(cell + 1);
+                    cell->u.freeCell.next = reinterpret_cast<char*>(freeList) - reinterpret_cast<char*>(cell + 1);
                     freeList = cell;
                 }
             }
         } else {
             size_t minimumCellsToProcess = usedCells;
-            for (size_t i = 0; (i < minimumCellsToProcess) & (i < CELLS_PER_BLOCK); i++) {
-                CollectorCell *cell = curBlock->cells + i;
+            for (size_t i = 0; (i < minimumCellsToProcess) & (i < HeapConstants<heapType>::cellsPerBlock); i++) {
+                Cell *cell = curBlock->cells + i;
                 if (cell->u.freeCell.zeroIfFree == 0) {
                     ++minimumCellsToProcess;
                 } else {
-                    if (!curBlock->marked.get(i)) {
-                        JSCell *imp = reinterpret_cast<JSCell *>(cell);
+                    if (!curBlock->marked.get(i >> HeapConstants<heapType>::bitmapShift)) {
                         if (heapType != Collector::NumberHeap) {
+                            JSCell *imp = reinterpret_cast<JSCell*>(cell);
                             ASSERT(currentThreadIsMainThread || !curBlock->collectOnMainThreadOnly.get(i));
                             if (curBlock->collectOnMainThreadOnly.get(i)) {
                                 curBlock->collectOnMainThreadOnly.clear(i);
@@ -850,7 +874,7 @@ template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThre
                         
                         // put cell on the free list
                         cell->u.freeCell.zeroIfFree = 0;
-                        cell->u.freeCell.next = reinterpret_cast<char *>(freeList) - reinterpret_cast<char *>(cell + 1);
+                        cell->u.freeCell.next = reinterpret_cast<char*>(freeList) - reinterpret_cast<char*>(cell + 1);
                         freeList = cell;
                     }
                 }
@@ -865,7 +889,7 @@ template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThre
             emptyBlocks++;
             if (emptyBlocks > SPARE_EMPTY_BLOCKS) {
 #if !DEBUG_COLLECTOR
-                freeBlock(curBlock);
+                freeBlock((CollectorBlock*)curBlock);
 #endif
                 // swap with the last block so we compact as we go
                 heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
@@ -874,7 +898,7 @@ template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThre
                 
                 if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
                     heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
-                    heap.blocks = (CollectorBlock **)fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
+                    heap.blocks = (CollectorBlock**)fastRealloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
                 }
             }
         }

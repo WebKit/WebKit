@@ -1,3 +1,23 @@
+2007-10-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - allocate numbers in half-size cells, for an 0.5% SunSpider speedup
+        http://bugs.webkit.org/show_bug.cgi?id=15772
+        
+        We do this by using a single mark bit per two number cells, and
+        tweaking marking.
+        
+        Besides being an 0.5% win overall, this is a 7.1% win on morph.
+
+        * kjs/collector.cpp:
+        (KJS::):
+        (KJS::Collector::heapAllocate):
+        (KJS::Collector::markStackObjectsConservatively):
+        (KJS::Collector::sweep):
+        * kjs/collector.h:
+        (KJS::SmallCollectorCell::):
+
 2007-10-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam Roben, Sam Weinig.

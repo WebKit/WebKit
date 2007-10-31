@@ -103,8 +103,11 @@ namespace KJS {
   const size_t MINIMUM_CELL_SIZE = CellSize<sizeof(void*)>::m_value;
   const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
   const size_t CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
+  const size_t SMALL_CELL_SIZE = CELL_SIZE / 2;
   const size_t CELL_MASK = CELL_SIZE - 1;
+  const size_t CELL_ALIGN_MASK = ~CELL_MASK;
   const size_t CELLS_PER_BLOCK = (BLOCK_SIZE * 8 - sizeof(uint32_t) * 8 - sizeof(void *) * 8 - 2 * (7 + 3 * 8)) / (CELL_SIZE * 8 + 2);
+  const size_t SMALL_CELLS_PER_BLOCK = 2 * CELLS_PER_BLOCK;
   const size_t BITMAP_SIZE = (CELLS_PER_BLOCK + 7) / 8;
   const size_t BITMAP_WORDS = (BITMAP_SIZE + 3) / sizeof(uint32_t);
   
@@ -126,11 +129,30 @@ namespace KJS {
     } u;
   };
 
+  struct SmallCollectorCell {
+    union {
+      double memory[CELL_ARRAY_LENGTH / 2];
+      struct {
+        void* zeroIfFree;
+        ptrdiff_t next;
+      } freeCell;
+    } u;
+  };
+
   class CollectorBlock {
   public:
     CollectorCell cells[CELLS_PER_BLOCK];
     uint32_t usedCells;
     CollectorCell* freeList;
+    CollectorBitmap marked;
+    CollectorBitmap collectOnMainThreadOnly;
+  };
+
+  class SmallCellCollectorBlock {
+  public:
+    SmallCollectorCell cells[SMALL_CELLS_PER_BLOCK];
+    uint32_t usedCells;
+    SmallCollectorCell* freeList;
     CollectorBitmap marked;
     CollectorBitmap collectOnMainThreadOnly;
   };
