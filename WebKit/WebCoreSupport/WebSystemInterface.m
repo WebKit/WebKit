@@ -84,6 +84,8 @@ void InitWebCoreSystemInterface(void)
     INIT(SignalCFReadStreamError);
     INIT(SignalCFReadStreamHasBytes);
     INIT(SupportsMultipartXMixedReplace);
+    INIT(QTMovieDataRate);
+    INIT(QTMovieMaxTimeLoaded);
 
     
     didInit = true;
