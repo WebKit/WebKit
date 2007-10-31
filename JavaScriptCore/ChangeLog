@@ -42,7 +42,6 @@
 
 2007-10-31  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (qt buildfix)
         * kjs/nodes.h: include OwnPtr.h
 
 2007-10-31  Oliver Hunt  <oliver@apple.com>
@@ -75,17 +74,13 @@
 
 2007-10-30  Mark Rowe  <mrowe@apple.com>
 
-        Build fix for non-Mac ports.
-
-        * kjs/property_map.cpp:
+        * kjs/property_map.cpp: Added a missing using directive to fix the build
+        for non-Mac ports. Mac worked only because it does the AllInOneFile compile.
 
 2007-10-31  Maciej Stachowiak  <mjs@apple.com>
 
-        Not reviewed, build fix.
-        
-        - fix builds
-
-        * kjs/property_map.cpp: Include HashTable.h the right way.
+        * kjs/property_map.cpp: Include HashTable.h the right way to fix the build
+        for non-Mac ports.
 
 2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
 
@@ -134,9 +129,8 @@
 
 2007-10-30  Adam Roben  <aroben@apple.com>
 
-        Build fix
-
-        * kjs/collector.h: Make HeapType public.
+        * kjs/collector.h: Make HeapType public so it can be used for non-member
+        things like the HeapConstants struct template. Fixes the build on Windows.
 
 2007-10-30  Adam Roben  <aroben@apple.com>
 
