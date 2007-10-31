@@ -1,3 +1,18 @@
+2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10818
+        String::append does 2 full copies instead of 1 (or zero!)
+
+        No change in functionality, thus no test.
+
+        * platform/String.cpp:
+        (WebCore::String::append): Rewrote to copy once. Also removed an ancient
+        FIXME that doesn't seem to make any sense. Note that append() behavior doesn't 
+        match documented String behavior ("modifications to one instance will
+        also modify all others"), but there are a lot of methods that don't.
+
 2007-10-31  Adam Roben  <aroben@apple.com>
 
         Windows build fix

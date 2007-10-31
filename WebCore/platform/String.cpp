@@ -99,34 +99,36 @@ String::String(const char* str, unsigned length)
 void String::append(const String &str)
 {
     if (str.m_impl) {
-        if (!m_impl) {
-            // ### FIXME!!!
+        if (m_impl) {
+            Vector<UChar> newCharacters(m_impl->length() + str.length());
+            memcpy(newCharacters.data(), m_impl->characters(), m_impl->length() * sizeof(UChar));
+            memcpy(newCharacters.data() + m_impl->length(), str.characters(), str.length() * sizeof(UChar));
+            m_impl = StringImpl::adopt(newCharacters);
+        } else
             m_impl = str.m_impl;
-            return;
-        }
-        m_impl = m_impl->copy();
-        m_impl->append(str.m_impl.get());
     }
 }
 
 void String::append(char c)
 {
-    if (!m_impl)
+    if (m_impl) {
+        Vector<UChar> newCharacters(m_impl->length() + 1);
+        memcpy(newCharacters.data(), m_impl->characters(), m_impl->length() * sizeof(UChar));
+        newCharacters[m_impl->length()] = c;
+        m_impl = StringImpl::adopt(newCharacters);
+    } else
         m_impl = new StringImpl(&c, 1);
-    else {
-        m_impl = m_impl->copy();
-        m_impl->append(c);
-    }
 }
 
 void String::append(UChar c)
 {
-    if (!m_impl)
+    if (m_impl) {
+        Vector<UChar> newCharacters(m_impl->length() + 1);
+        memcpy(newCharacters.data(), m_impl->characters(), m_impl->length() * sizeof(UChar));
+        newCharacters[m_impl->length()] = c;
+        m_impl = StringImpl::adopt(newCharacters);
+    } else
         m_impl = new StringImpl(&c, 1);
-    else {
-        m_impl = m_impl->copy();
-        m_impl->append(c);
-    }
 }
 
 String operator+(const String& a, const String& b)
