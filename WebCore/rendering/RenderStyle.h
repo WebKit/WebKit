@@ -2194,10 +2194,10 @@ public:
     static Length initialTransformOriginY() { return Length(50.0, Percent); }
     
     // Keep these at the end.
-    static int initialTransitionDuration() { return 250; }
+    static int initialTransitionDuration() { return 0; }
     static int initialTransitionRepeatCount() { return 1; }
     static TimingFunction initialTransitionTimingFunction() { return TimingFunction(); }
-    static int initialTransitionProperty() { return cAnimateNone; }
+    static int initialTransitionProperty() { return cAnimateAll; }
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }

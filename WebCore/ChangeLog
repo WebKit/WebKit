@@ -1,3 +1,14 @@
+2007-10-31  David Hyatt  <hyatt@apple.com>
+
+        Change the initial value of transition-property to all.  Change the initial value of
+        transition-duration to 0.
+
+        Reviewed by antti
+
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::initialTransitionDuration):
+        (WebCore::RenderStyle::initialTransitionProperty):
+
 2007-10-31  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
