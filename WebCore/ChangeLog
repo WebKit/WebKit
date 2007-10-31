@@ -1,3 +1,12 @@
+2007-10-30  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Gtk and Qt builds by stubbing out PlatformKeyboardEvent::currentCapsLockState.
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+
 2007-10-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders.

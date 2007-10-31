@@ -31,6 +31,7 @@
 
 #include "DeprecatedString.h"
 #include "KeyboardCodes.h"
+#include "NotImplemented.h"
 #include "TextEncoding.h"
 
 #include <gdk/gdk.h>
@@ -480,6 +481,12 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     , m_altKey(event->state & GDK_MOD1_MASK)
     , m_metaKey(event->state & GDK_MOD2_MASK)
 {
+}
+
+bool PlatformKeyboardEvent::currentCapsLockState()
+{
+    notImplemented();
+    return false;
 }
 
 }
