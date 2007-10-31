@@ -1,5 +1,21 @@
 2007-10-31  Holger Freyther  <zecke@selfish.org>
 
+        Reviewed by Simon.
+
+        * QXmlStreamNamespaceDeclaration doesn't have the constructor we
+        want to use for Qt4.3. Reenable the old code path which is likely
+        to be dead as I have not checked if m_prefixToNamespaceMap is actually
+        used.
+        * Guard the entity resolver with the QT_VERSION as well.
+        * Partially reverts 369506279abdaa863e15efed649ca19e062f2c30 and
+        d2b54d0fc1b07a2480f4f7a1417abd7a636b0107 for Qt4.3.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        * dom/XMLTokenizer.h:
+
+2007-10-31  Holger Freyther  <zecke@selfish.org>
+
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
         * QMimeData::removeData will be new in Qt4.4, don't use it for Qt4.3 

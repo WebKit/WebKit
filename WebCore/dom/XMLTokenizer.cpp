@@ -446,7 +446,7 @@ static xmlParserCtxtPtr createStringParser(xmlSAXHandlerPtr handlers, void* user
 }
 #endif
 
-#ifdef USE_QXMLSTREAM
+#if defined(USE_QXMLSTREAM) && QT_VERSION >= 0x040400
 class EntityResolver : public QXmlStreamEntityResolver
 {
     virtual QString resolveUndeclaredEntity(const QString &name);
@@ -539,7 +539,7 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
     if (elemStack.isEmpty())
         return;
     
-#ifndef USE_QXMLSTREAM
+#if QT_VERSION < 0x040400
     for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
         if (NamedAttrMap* attrs = element->attributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
@@ -564,10 +564,8 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
             }
         }
     }
-#if QT_VERSION >= 0x040400
     m_stream.addExtraNamespaceDeclarations(namespaces);
     m_stream.setEntityResolver(new EntityResolver);
-#endif
 #endif
 }
 
