@@ -602,7 +602,11 @@ void QWebPage::dragEnterEvent(QDragEnterEvent *ev)
 
 void QWebPage::dragLeaveEvent(QDragLeaveEvent *ev)
 {
-    // nothing to do here for the moment
+#ifndef QT_NO_DRAGANDDROP
+    DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
+    d->page->dragController()->dragExited(&dragData);
+    ev->accept();
+#endif
 }
 
 void QWebPage::dragMoveEvent(QDragMoveEvent *ev)

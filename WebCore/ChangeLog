@@ -1,3 +1,30 @@
+2007-10-31  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        fix most of the issues I found with Clipboard and DnD.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * editing/qt/EditorQt.cpp:
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::~ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::getData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::types):
+        (WebCore::ClipboardQt::setDragImage):
+        (WebCore::ClipboardQt::setDragImageElement):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+        (WebCore::ClipboardQt::hasData):
+        * platform/qt/ClipboardQt.h:
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::asURL):
+
 2007-10-30  Mark Rowe  <mrowe@apple.com>
 
         Fix the Gtk and Qt builds by stubbing out PlatformKeyboardEvent::currentCapsLockState.

@@ -38,10 +38,10 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste
     class ClipboardQt : public Clipboard {
     public:
-        ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readableClipboard, bool forDragging);
+        ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readableClipboard);
         
         // Clipboard is writable so it will create its own QMimeData object
-        ClipboardQt(ClipboardAccessPolicy policy, bool forDragging);
+        ClipboardQt(ClipboardAccessPolicy policy, bool forDragging = false);
         ~ClipboardQt();
     
         void clearData(const String& type);
@@ -52,10 +52,7 @@ namespace WebCore {
         // extensions beyond IE's API
         HashSet<String> types() const;
     
-        IntPoint dragLocation() const;
-        CachedImage* dragImage() const;
         void setDragImage(CachedImage*, const IntPoint&);
-        Node* dragImageElement();
         void setDragImageElement(Node*, const IntPoint&);
 
         virtual DragImageRef createDragImage(IntPoint& dragLoc) const;
