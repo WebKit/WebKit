@@ -958,8 +958,16 @@ body.inactive #sidebar li.selected {
     padding-right: 2px;
 }
 
+.blurred .outline-disclosure li.parent.selected::before, body.inactive .outline-disclosure li.parent.selected::before {
+    content: url(Images/treeRightTriangleBlack.png);
+}
+
 .outline-disclosure li.parent.selected::before {
     content: url(Images/treeRightTriangleWhite.png);
+}
+
+.blurred .outline-disclosure li.parent.expanded.selected::before, body.inactive .outline-disclosure li.parent.expanded.selected::before {
+    content: url(Images/treeDownTriangleBlack.png);
 }
 
 .outline-disclosure li.parent.expanded:before {
