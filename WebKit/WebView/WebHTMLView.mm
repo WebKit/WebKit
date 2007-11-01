@@ -3585,6 +3585,13 @@ noPromisedData:
 {
     if (Frame* frame = core([self _frame]))
         frame->eventHandler()->capsLockStateMayHaveChanged();
+    
+    RetainPtr<WebHTMLView> selfProtector = self;
+    
+    //Don't make an event from the function key
+    if ([event keyCode] != 63)
+        core([self _frame])->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
+        
     [super flagsChanged:event];
 }
 
@@ -5221,6 +5228,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         NSEvent *macEvent = platformEvent->macEvent();
         if ([macEvent type] == NSKeyDown && [_private->compController filterKeyDown:macEvent])
             return true;
+        
+        if ([macEvent type] == NSFlagsChanged)
+            return false;
+        
         parameters.event = event;
         _private->interpretKeyEventsParameters = &parameters;
         _private->receivedNOOP = NO;

@@ -1,3 +1,31 @@
+2007-11-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Correct event behaviour on certain control keys
+
+        Make sure we send the correct keyDown and keyUp events for the
+        control keys CapsLock, Shift, Ctrl, Alt, and Meta/Command, and
+        uses Windows key codes for the event keyCode.
+
+        * WebCore.base.exp:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        * platform/PlatformKeyboardEvent.h:
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        (WebCore::WindowsKeyCodeForKeyEvent):
+        (WebCore::isKeyUpEvent):
+        (WebCore::textFromEvent):
+        (WebCore::unmodifiedTextFromEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/wx/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2007-11-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam.

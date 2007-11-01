@@ -480,6 +480,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     , m_ctrlKey(event->state & GDK_CONTROL_MASK)
     , m_altKey(event->state & GDK_MOD1_MASK)
     , m_metaKey(event->state & GDK_MOD2_MASK)
+    , m_isModifierKeyPress(false)
 {
 }
 

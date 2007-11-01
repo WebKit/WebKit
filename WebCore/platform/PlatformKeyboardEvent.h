@@ -73,6 +73,7 @@ namespace WebCore {
         bool ctrlKey() const { return m_ctrlKey; }
         bool altKey() const { return m_altKey; }
         bool metaKey() const { return m_metaKey; }
+        bool isModifierKeyPress() const { return m_isModifierKeyPress; }
 
         static bool currentCapsLockState();
 
@@ -110,6 +111,10 @@ namespace WebCore {
         bool m_ctrlKey;
         bool m_altKey;
         bool m_metaKey;
+        
+        // A control key event -- eg. keydown/up for shift, ctrl, alt, and meta -- needs
+        // a flag to indicate that we should not generate a keyPress event.
+        bool m_isModifierKeyPress;
 #if PLATFORM(WX)
         bool m_isWxCharEvent;
 #endif

@@ -1472,7 +1472,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     if (keypress->defaultHandled())
         return true;
     
-    if (handledByInputMethod)
+    if (handledByInputMethod || initialKeyEvent.isModifierKeyPress())
         return result;
     
     // If the default handling has been prevented on the keydown, we prevent it on
