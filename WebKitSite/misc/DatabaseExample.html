@@ -16,7 +16,14 @@ body {
     -webkit-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
 }
 
+/* FIXME: this empty rule works around a bug in our css handling */
+.note:hover { }
+.note:hover .closebutton {
+    display: block;
+} 
+
 .closebutton {
+    display: none;
     background-image: url(deleteButton.png);
     height: 30px;
     position: absolute;
@@ -72,7 +79,7 @@ function Note()
 
     var close = document.createElement('div');
     close.className = 'closebutton';
-    close.addEventListener('click', function() { return self.close() }, false);
+    close.addEventListener('click', function(event) { return self.close(event) }, false);
     note.appendChild(close);
 
     var edit = document.createElement('div');
@@ -163,12 +170,21 @@ Note.prototype = {
         this.note.style.zIndex = x;
     },
 
-    close: function()
+    close: function(event)
     {
         this.cancelPendingSave();
 
         db.executeSql("DELETE FROM WebKitStickyNotes WHERE id = ?", [this.id], function(result) {});
-        document.body.removeChild(this.note);
+
+        var duration = event.shiftKey ? 2 : .5;
+        this.note.style.webkitTransition = '-webkit-transform ' + duration + 's ease-in, opacity ' + duration + 's ease-in';
+        this.note.offsetTop; // Force style recalc
+        this.note.style.webkitTransformOrigin = "0 0";
+        this.note.style.webkitTransform = 'skew(30deg, 0deg) scale(0)';
+        this.note.style.opacity = '0';
+
+        var self = this;
+        setTimeout(function() { document.body.removeChild(self.note) }, duration * 1000);
     },
 
     saveSoon: function()

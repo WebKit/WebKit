@@ -1,3 +1,12 @@
+2007-11-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        - Don't show the close button on the notes unless hovering over the note.
+        - Do transformation and fade when closing a note using the new transition properties.
+
+        * misc/DatabaseExample.html:
+
 2007-10-29  Mark Rowe  <mrowe@apple.com>
 
         Upgrade WordPress.
