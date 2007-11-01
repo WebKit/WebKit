@@ -1,3 +1,16 @@
+2007-11-01  Dan Bernstein  <mitz@apple.com>
+
+        - fix typo in test name
+
+        * fast/repaint/layout-state-only-posiitoned.html: Removed.
+        * fast/repaint/layout-state-only-positioned.html: Copied from fast/repaint/layout-state-only-posiitoned.html.
+        * platform/mac/fast/repaint/layout-state-only-posiitoned-expected.checksum: Removed.
+        * platform/mac/fast/repaint/layout-state-only-posiitoned-expected.png: Removed.
+        * platform/mac/fast/repaint/layout-state-only-posiitoned-expected.txt: Removed.
+        * platform/mac/fast/repaint/layout-state-only-positioned-expected.checksum: Copied from platform/mac/fast/repaint/layout-state-only-posiitoned-expected.checksum.
+        * platform/mac/fast/repaint/layout-state-only-positioned-expected.png: Copied from platform/mac/fast/repaint/layout-state-only-posiitoned-expected.png.
+        * platform/mac/fast/repaint/layout-state-only-positioned-expected.txt: Copied from platform/mac/fast/repaint/layout-state-only-posiitoned-expected.txt.
+
 2007-11-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
