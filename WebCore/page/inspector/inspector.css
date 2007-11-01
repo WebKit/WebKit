@@ -949,7 +949,7 @@ body.inactive #sidebar li.selected {
     margin-left: -12px;
 }
 
-.outline-disclosure li.parent:before {
+.outline-disclosure li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
     float: left;
     width: 8px;
@@ -958,8 +958,16 @@ body.inactive #sidebar li.selected {
     padding-right: 2px;
 }
 
+.outline-disclosure li.parent.selected::before {
+    content: url(Images/treeRightTriangleWhite.png);
+}
+
 .outline-disclosure li.parent.expanded:before {
     content: url(Images/treeDownTriangleBlack.png);
+}
+
+.outline-disclosure li.parent.expanded.selected::before {
+    content: url(Images/treeDownTriangleWhite.png);
 }
 
 .outline-disclosure ol.children {

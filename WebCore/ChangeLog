@@ -1,3 +1,10 @@
+2007-11-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam.
+
+        * page/inspector/inspector.css: Use the white disclosure triangles
+          when a parent DOM element is sepected.
+
 2007-11-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
