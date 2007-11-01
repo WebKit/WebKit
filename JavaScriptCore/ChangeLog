@@ -1,3 +1,18 @@
+2007-11-01  Adam Roben  <aroben@apple.com>
+
+        Use jsNumberCell instead of jsNumber when converting double constants to JSValues
+
+        This fixes fast/js/math.html, which was suffering from a bug in MSVC.
+        It also gets rid of an MSVC warning that we previously had to silence.
+
+        Reviewed by Geoff.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Turn
+        back on the "overflow in constant arithmetic" warning.
+        * kjs/number_object.cpp:
+        (NumberObjectImp::getValueProperty): Use jsNumberCell instead of
+        jsNumber.
+
 2007-10-31  Adam Roben  <aroben@apple.com>
 
         Windows build fix

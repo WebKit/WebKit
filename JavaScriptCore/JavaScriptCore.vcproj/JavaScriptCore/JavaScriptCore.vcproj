@@ -389,14 +389,6 @@
 			<File
 				RelativePath="..\..\kjs\number_object.cpp"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						DisableSpecificWarnings="4756"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\kjs\number_object.h"

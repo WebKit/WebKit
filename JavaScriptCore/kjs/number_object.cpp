@@ -443,13 +443,13 @@ JSValue *NumberObjectImp::getValueProperty(ExecState *, int token) const
   case NaNValue:
     return jsNaN();
   case NegInfinity:
-    return jsNumber(-Inf);
+    return jsNumberCell(-Inf);
   case PosInfinity:
-    return jsNumber(Inf);
+    return jsNumberCell(Inf);
   case MaxValue:
-    return jsNumber(1.7976931348623157E+308);
+    return jsNumberCell(1.7976931348623157E+308);
   case MinValue:
-    return jsNumber(5E-324);
+    return jsNumberCell(5E-324);
   }
   return jsNull();
 }
