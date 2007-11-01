@@ -1,5 +1,13 @@
 2007-10-31  Adam Roben  <aroben@apple.com>
 
+        Add Windows-specific results for window-properties
+
+        HTML Timed Media elements aren't implemented yet on Windows.
+
+        * platform/win/fast/dom/Window/window-properties-expected.txt: Added.
+
+2007-10-31  Adam Roben  <aroben@apple.com>
+
         New test for a crash when parsing a cubic-bezier function
 
         Reviewed by Hyatt.
