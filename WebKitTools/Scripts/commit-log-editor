@@ -7,13 +7,13 @@
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
+#     documentation and/or other materials provided with the distribution.
 # 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -29,6 +29,8 @@
 # Script to put change log comments in as default check-in comment.
 
 use strict;
+use File::Basename;
+use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
 use VCSUtils;
@@ -83,6 +85,8 @@ close LOG;
 # (as can happen with git-commit --amend)
 exec $editor, @ARGV if $existingLog;
 
+my $topLevel = topLevelSourceDirectory();
+
 my %changeLogSort;
 my %changeLogContents;
 for my $changeLog (@changeLogs) {
@@ -103,12 +107,10 @@ for my $changeLog (@changeLogs) {
     }
     close CHANGELOG;
 
-    my $label;
-    if ($changeLog =~ m-^(.*/)?([^/]+)/ChangeLog$-) {
-        $label = $2;
-    } else {
-        $label = "top level";
-    }
+    $changeLog = File::Spec->abs2rel(File::Spec->rel2abs($changeLog), $topLevel);
+
+    my $label = dirname($changeLog);
+    $label = "top level" unless length $label;
 
     my $sortKey = lc $label;
     if ($label eq "top level") {
@@ -161,3 +163,27 @@ if ($foundComment) {
 }
 
 unlink "$log.edit";
+
+sub topLevelSourceDirectory
+{
+    if (isGit()) {
+        chomp(my $gitDir = `git rev-parse --git-dir`);
+        return dirname($gitDir);
+    } elsif (isSVN()) {
+        open(INFO, "-|", qw(svn info)) or die;
+        my ($root, $url);
+        while (my $line = <INFO>) {
+            if ($line =~ /^Repository Root: (.*)$/) {
+                $root = $1;
+            } elsif ($line =~ /^URL: (.*)$/) {
+                $url = $1;
+            }
+        }
+        close(INFO);
+
+        my $path = $url;
+        $path =~ s/^\Q$root\E//;
+        $path =~ s/^\/?(branches\/[^\/]*|trunk)\/?//;
+        return File::Spec->rel2abs(File::Spec->catdir(map { ".." } File::Spec->splitdir($path)));
+    }
+}

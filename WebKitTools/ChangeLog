@@ -1,3 +1,12 @@
+2007-11-01  Adam Roben  <aroben@apple.com>
+
+        Make changes in WebKit/win show up under "WebKit/win:" instead of just "win:"
+
+        Reviewed by Sam.
+
+        * Scripts/commit-log-editor: Show all the directories beneath the
+        source root, instead of just the last one.
+
 2007-11-01  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Adam Roben.
