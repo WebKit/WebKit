@@ -1,3 +1,12 @@
+2007-11-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fixed line endings that got confused in this file somehow.
+
+        * platform/network/ResourceResponse.cpp:
+        (WebCore::ResourceResponse::isAttachment):
+
 2007-11-01  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Dave Hyatt.
