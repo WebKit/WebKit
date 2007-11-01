@@ -33,7 +33,7 @@
 #ifndef TCMALLOC_INTERNAL_SPINLOCK_H__
 #define TCMALLOC_INTERNAL_SPINLOCK_H__
 
-#if (PLATFORM(X86) || PLATFORM(PPC)) && COMPILER(GCC)
+#if (PLATFORM(X86) || PLATFORM(PPC)) && (COMPILER(GCC) || COMPILER(MSVC))
 
 #include <time.h>       /* For nanosleep() */
 
@@ -48,6 +48,11 @@
 #endif
 #include <stdlib.h>     /* for abort() */
 
+#if COMPILER(MSVC)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 static void TCMalloc_SlowLock(volatile unsigned int* lockword);
 
 // The following is a struct so that it can be initialized at compile time
@@ -59,6 +64,7 @@ struct TCMalloc_SpinLock {
     
   inline void Lock() {
     int r;
+#if COMPILER(GCC)
 #if PLATFORM(X86)
     __asm__ __volatile__
       ("xchgl %0, %1"
@@ -76,10 +82,19 @@ struct TCMalloc_SpinLock {
          : "r" (1), "1" (lockword_ptr)
          : "memory");
 #endif
+#elif COMPILER(MSVC)
+    __asm {
+        mov eax, this    ; store &private_lockword_ (which is this+0) in eax
+        mov ebx, 1       ; store 1 in ebx
+        xchg [eax], ebx  ; exchange private_lockword_ and 1
+        mov r, ebx       ; store old value of private_lockword_ in r
+    }
+#endif
     if (r) TCMalloc_SlowLock(&private_lockword_);
   }
 
   inline void Unlock() {
+#if COMPILER(GCC)
 #if PLATFORM(X86)
     __asm__ __volatile__
       ("movl $0, %0"
@@ -94,6 +109,12 @@ struct TCMalloc_SpinLock {
        : "=o" (private_lockword_) 
        : "r" (0)
        : "memory");
+#endif
+#elif COMPILER(MSVC)
+      __asm {
+          mov eax, this  ; store &private_lockword_ (which is this+0) in eax
+          mov [eax], 0   ; set private_lockword_ to 0
+      }
 #endif
   }
 
@@ -110,6 +131,7 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
   sched_yield();        // Yield immediately since fast path failed
   while (true) {
     int r;
+#if COMPILER(GCC)
 #if PLATFORM(X86)
     __asm__ __volatile__
       ("xchgl %0, %1"
@@ -128,6 +150,14 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
          : "r" (tmp), "1" (lockword)
          : "memory");
 #endif
+#elif COMPILER(MSVC)
+    __asm {
+        mov eax, lockword     ; assign lockword into eax
+        mov ebx, 1            ; assign 1 into ebx
+        xchg [eax], ebx       ; exchange *lockword and 1
+        mov r, ebx            ; store old value of *lockword in r
+    }
+#endif
     if (!r) {
       return;
     }
@@ -142,38 +172,16 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
     // from taking 30 seconds to 16 seconds.
 
     // Sleep for a few milliseconds
+#if COMPILER(MSVC)
+    Sleep(2);
+#else
     struct timespec tm;
     tm.tv_sec = 0;
     tm.tv_nsec = 2000001;
     nanosleep(&tm, NULL);
+#endif
   }
 }
-
-#elif COMPILER(MSVC)
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
-struct TCMalloc_SpinLock {
-  CRITICAL_SECTION private_lock_;
-
-  inline TCMalloc_SpinLock() {
-    Init();
-  }
-
-  inline void Init() {
-    InitializeCriticalSection(&private_lock_);
-  }
-  inline void Finalize() {
-    DeleteCriticalSection(&private_lock_);
-  }
-  inline void Lock() {
-    EnterCriticalSection(&private_lock_);
-  }
-  inline void Unlock() {
-    LeaveCriticalSection(&private_lock_);
-  }
-};
 
 #else
 

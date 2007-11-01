@@ -1275,12 +1275,7 @@ class TCMalloc_Central_FreeListPadded : public TCMalloc_Central_FreeList {
 static TCMalloc_Central_FreeListPadded central_cache[kNumClasses];
 
 // Page-level allocator
-#if COMPILER(MSVC)
-static SpinLock pageheap_lock;
-#else
 static SpinLock pageheap_lock = SPINLOCK_INITIALIZER;
-#endif
-
 static void* pageheap_memory[(sizeof(TCMalloc_PageHeap) + sizeof(void*) - 1) / sizeof(void*)];
 static bool phinited = false;
 

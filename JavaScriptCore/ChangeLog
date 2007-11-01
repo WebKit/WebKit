@@ -1,3 +1,21 @@
+2007-10-31  Adam Roben  <aroben@apple.com>
+
+        Fix a crash on launch due to a static initializer race
+
+        We now use fast inline assembler spinlocks which can be statically
+        initialized at compile time.
+
+        As a side benefit, this speeds up SunSpider by 0.4%.
+
+        Reviewed by Oliver.
+
+        * wtf/FastMalloc.cpp:
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SlowLock):
+        * wtf/TCSystemAlloc.cpp:
+
 2007-10-31  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
