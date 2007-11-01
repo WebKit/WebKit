@@ -1,3 +1,12 @@
+2007-11-01  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mitz Pettel.
+
+        Fix an unbalanced save/restore.
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+
 2007-11-01  David Hyatt  <hyatt@apple.com>
 
         Add support for the animation of the visibility property.

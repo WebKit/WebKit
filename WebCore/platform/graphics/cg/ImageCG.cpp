@@ -111,9 +111,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
         return;
     }
 
-    CGContextRef context = ctxt->platformContext();
-    ctxt->save();
-
     // Get the height (in adjusted, i.e. scaled, coords) of the portion of the image
     // that is currently decoded.  This could be less that the actual height.
     CGSize selfSize = size();                          // full image size, in pixels
@@ -133,6 +130,9 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
             fr.size.height = frHeight;
         }
     }
+
+    CGContextRef context = ctxt->platformContext();
+    ctxt->save();
 
     // Flip the coords.
     ctxt->setCompositeOperation(compositeOp);
