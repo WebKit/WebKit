@@ -1,3 +1,11 @@
+2007-10-31  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - Corrected spelling.
+
+        * wtf/HashTraits.h:
+
 2007-10-31  Mark Rowe  <mrowe@apple.com>
 
         Further Gtk build fixage.

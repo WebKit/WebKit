@@ -209,7 +209,7 @@ namespace WTF {
         }
     };
 
-    // hassh functions and traits that are equivalent (for code sharing)
+    // hash functions and traits that are equivalent (for code sharing)
 
     template<typename HashArg, typename TraitsArg> struct HashKeyStorageTraits {
         typedef HashArg Hash;
