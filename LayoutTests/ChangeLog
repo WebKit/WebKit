@@ -1,3 +1,12 @@
+2007-10-31  Adam Roben  <aroben@apple.com>
+
+        New test for a crash when parsing a cubic-bezier function
+
+        Reviewed by Hyatt.
+
+        * fast/css/parse-timing-function-crash-expected.txt: Added.
+        * fast/css/parse-timing-function-crash.html: Added.
+
 2007-10-31  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dave Harrison.

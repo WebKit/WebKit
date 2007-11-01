@@ -2194,6 +2194,9 @@ bool CSSParser::parseTimingFunctionValue(ValueList*& args, double& result)
     if (result < 0 || result > 1.0)
         return false;
     v = args->next();
+    if (!v)
+        // The last number in the function has no comma after it, so we're done.
+        return true;
     if (v->unit != Value::Operator && v->iValue != ',')
         return false;
     v = args->next();

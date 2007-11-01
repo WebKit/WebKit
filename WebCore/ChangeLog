@@ -1,3 +1,16 @@
+2007-10-31  Adam Roben  <aroben@apple.com>
+
+        Fix a crash when parsing a cubic-bezier function
+
+        Reviewed by Hyatt.
+
+        Test: fast/css/parse-timing-function-crash.html
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTimingFunctionValue): Don't walk off the end
+        of the ValueList.
+
 2007-10-31  David Hyatt  <hyatt@apple.com>
 
         Fix a merge error from when I applied my patch to ToT.  A couple of lines should be part of an if.
