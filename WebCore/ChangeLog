@@ -1,3 +1,13 @@
+2007-11-01  David Hyatt  <hyatt@apple.com>
+
+        Add support for the animation of the visibility property.
+
+        Reviewed by oliver, aroben
+
+        * page/AnimationController.cpp:
+        (WebCore::blendFunc):
+        (WebCore::ImplicitAnimation::animate):
+
 2007-11-01  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
