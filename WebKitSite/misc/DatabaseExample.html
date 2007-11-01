@@ -176,7 +176,7 @@ Note.prototype = {
 
         db.executeSql("DELETE FROM WebKitStickyNotes WHERE id = ?", [this.id], function(result) {});
 
-        var duration = event.shiftKey ? 2 : .5;
+        var duration = event.shiftKey ? 2 : .25;
         this.note.style.webkitTransition = '-webkit-transform ' + duration + 's ease-in, opacity ' + duration + 's ease-in';
         this.note.offsetTop; // Force style recalc
         this.note.style.webkitTransformOrigin = "0 0";

@@ -1,5 +1,11 @@
 2007-11-01  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Tim Hatcher.
+
+        * misc/DatabaseExample.html: Speed up default close speed to .25s
+
+2007-11-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         - Don't show the close button on the notes unless hovering over the note.
