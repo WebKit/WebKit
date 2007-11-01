@@ -4,7 +4,8 @@
         
         - shave some cycles off of local storage access for a 1% SunSpider speedup
         
-        Keep the LocalStorage pointer in the ExecState, not 
+        Keep the LocalStorage pointer in the ExecState, instead of getting
+        it from the ActivationImp all the time.
 
         * kjs/ExecState.cpp:
         (KJS::ExecState::updateLocalStorage):
