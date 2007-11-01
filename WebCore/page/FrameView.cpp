@@ -729,12 +729,23 @@ void FrameView::scheduleRelayoutOfSubtree(Node* n)
 
     if (layoutPending()) {
         if (d->layoutRoot != n) {
-            // Just do a full relayout
-            if (d->layoutRoot && d->layoutRoot->renderer())
-                d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
-            d->layoutRoot = 0;
-            if (n->renderer())
-                n->renderer()->markContainingBlocksForLayout(false);
+            if (n->isDescendantOf(d->layoutRoot.get())) {
+                // Keep the current root
+                if (n->renderer())
+                    n->renderer()->markContainingBlocksForLayout(false);
+            } else if (d->layoutRoot && d->layoutRoot->isDescendantOf(n)) {
+                // Re-root at n
+                if (d->layoutRoot->renderer())
+                    d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
+                d->layoutRoot = n;
+            } else {
+                // Just do a full relayout
+                if (d->layoutRoot && d->layoutRoot->renderer())
+                    d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
+                d->layoutRoot = 0;
+                if (n->renderer())
+                    n->renderer()->markContainingBlocksForLayout(false);
+            }
         }
     } else {
         int delay = m_frame->document()->minimumLayoutDelay();

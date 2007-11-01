@@ -1,3 +1,25 @@
+2007-11-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15015
+          <rdar://problem/5420308> Most of www.aol.com redraws unnecessarily when headline/photo section changes
+
+        Test: fast/repaint/overflow-clip-subtree-layout.html
+
+        This patch does not address the bigger issue of doing a full relayout
+        of inline flows containing floats, but it addresses the problem on
+        aol.com, where the changes that trigger layout are confined to an
+        overflow area inside the float.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleRelayoutOfSubtree): If the new and old
+        layout roots are different but one descends from the other, make (or
+        keep) the ancestor as the layout root.
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary): Made boxes with overflow
+        clipping and non-auto width and height relayout boundaries.
+
 2007-11-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.

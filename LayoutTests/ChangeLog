@@ -1,3 +1,15 @@
+2007-11-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=15015
+          <rdar://problem/5420308> Most of www.aol.com redraws unnecessarily when headline/photo section changes
+
+        * fast/repaint/overflow-clip-subtree-layout.html: Added.
+        * platform/mac/fast/repaint/overflow-clip-subtree-layout-expected.checksum: Added.
+        * platform/mac/fast/repaint/overflow-clip-subtree-layout-expected.png: Added.
+        * platform/mac/fast/repaint/overflow-clip-subtree-layout-expected.txt: Added.
+
 2007-10-31  Adam Roben  <aroben@apple.com>
 
         Add Windows-specific results for window-properties
