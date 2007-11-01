@@ -1715,10 +1715,11 @@ void RenderStyle::adjustTransitions()
         Transition* next;
         for (Transition* p = accessTransitions(); p; p = next) {
             next = p->m_next;
-            if (next && next->isEmpty())
+            if (next && next->isEmpty()) {
                 delete next;
-            p->m_next = 0;
-            break;
+                p->m_next = 0;
+                break;
+            }
         }
     
         // Repeat patterns into layers that don't have some properties set.

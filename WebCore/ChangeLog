@@ -1,3 +1,10 @@
+2007-10-31  David Hyatt  <hyatt@apple.com>
+
+        Fix a merge error from when I applied my patch to ToT.  A couple of lines should be part of an if.
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::adjustTransitions):
+
 2007-10-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
