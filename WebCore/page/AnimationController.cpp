@@ -271,6 +271,12 @@ static inline Length blendFunc(const Length& from, const Length& to, double prog
     return to.blend(from, progress);
 }
 
+static inline IntSize blendFunc(const IntSize& from, const IntSize& to, double progress)
+{  
+    return IntSize(blendFunc(from.width(), to.width(), progress),
+                   blendFunc(from.height(), to.height(), progress));
+}
+
 static inline ShadowData* blendFunc(const ShadowData* from, const ShadowData* to, double progress)
 {  
     ASSERT(from && to);
@@ -392,6 +398,10 @@ void ImplicitAnimation::animate(CompositeImplicitAnimation* animation, RenderObj
     BLEND(CSS_PROP__WEBKIT_TRANSFORM, transform, setTransform);
     BLEND(CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X, transformOriginX, setTransformOriginX);
     BLEND(CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y, transformOriginY, setTransformOriginY);
+    BLEND(CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS, borderTopLeftRadius, setBorderTopLeftRadius);
+    BLEND(CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS, borderTopRightRadius, setBorderTopRightRadius);
+    BLEND(CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS, borderBottomLeftRadius, setBorderBottomLeftRadius);
+    BLEND(CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS, borderBottomRightRadius, setBorderBottomRightRadius);
     BLEND(CSS_PROP_VISIBILITY, visibility, setVisibility);
 }
 

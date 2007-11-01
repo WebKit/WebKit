@@ -1,3 +1,13 @@
+2007-11-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Add support for the animation of the -webkit-border-raduis properties.
+
+        * page/AnimationController.cpp:
+        (WebCore::blendFunc): Added for IntSize.
+        (WebCore::ImplicitAnimation::animate): Added cases for border radius properties.
+
 2007-11-01  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mitz Pettel.
