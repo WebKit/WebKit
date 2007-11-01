@@ -154,6 +154,22 @@ StringImpl* AtomicString::add(const UChar* s, int length)
     return *stringTable->add<UCharBuffer, UCharBufferTranslator>(buf).first;
 }
 
+StringImpl* AtomicString::add(const UChar* s)
+{
+    if (!s)
+        return 0;
+
+    int length = 0;
+    while (s[length] != UChar(0))
+        length++;
+
+    if (length == 0)
+        return StringImpl::empty();
+
+    UCharBuffer buf = {s, length}; 
+    return *stringTable->add<UCharBuffer, UCharBufferTranslator>(buf).first;
+}
+
 StringImpl* AtomicString::add(StringImpl* r)
 {
     if (!r || r->m_inTable)

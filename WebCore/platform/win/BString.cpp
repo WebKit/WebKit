@@ -26,6 +26,8 @@
 #include "config.h"
 #include "BString.h"
 
+#include "AtomicString.h"
+#include "DeprecatedString.h"
 #include "PlatformString.h"
 #include <tchar.h>
 #include <windows.h>
@@ -58,6 +60,22 @@ BString::BString(const wchar_t* characters, size_t length)
 }
 
 BString::BString(const String& s)
+{
+    if (s.isNull())
+        m_bstr = 0;
+    else
+        m_bstr = SysAllocStringLen(s.characters(), s.length());
+}
+
+BString::BString(const DeprecatedString& s)
+{
+    if (s.isNull())
+        m_bstr = 0;
+    else
+        m_bstr = SysAllocStringLen(String(s).characters(), s.length());
+}
+
+BString::BString(const AtomicString& s)
 {
     if (s.isNull())
         m_bstr = 0;

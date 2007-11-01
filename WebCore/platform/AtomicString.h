@@ -31,10 +31,11 @@ namespace WebCore {
 class AtomicString {
 public:
     static void init();
-    
+
     AtomicString() { }
     AtomicString(const char* s) : m_string(add(s)) { }
     AtomicString(const UChar* s, int length) : m_string(add(s, length)) { }
+    AtomicString(const UChar* s) : m_string(add(s)) { }
     AtomicString(const KJS::UString& s) : m_string(add(s)) { }
     AtomicString(const KJS::Identifier& s) : m_string(add(s)) { }
     AtomicString(StringImpl* imp) : m_string(add(imp)) { }
@@ -100,6 +101,7 @@ private:
     
     static StringImpl* add(const char*);
     static StringImpl* add(const UChar*, int length);
+    static StringImpl* add(const UChar*);
     static StringImpl* add(StringImpl*);
     static StringImpl* add(const KJS::UString&);
     static StringImpl* add(const KJS::Identifier&);
