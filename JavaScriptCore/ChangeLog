@@ -1,5 +1,20 @@
 2007-11-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Adam Roben.
+        
+        Addressed some of Darin's review comments.
+        
+        Used perl -p, which is the shorthand while(<>) {}.
+        
+        Made sure not to suppress bison's output.
+        
+        Added line to removed bison_out.txt, since this script removes other 
+        intermediate files, too.
+
+        * DerivedSources.make:
+
+2007-11-01  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
         
         Removed List from ActivationImp, in preparation for making all lists
