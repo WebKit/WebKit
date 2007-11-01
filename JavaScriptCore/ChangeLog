@@ -1,3 +1,27 @@
+2007-10-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - shave some cycles off of local storage access for a 1% SunSpider speedup
+        
+        Keep the LocalStorage pointer in the ExecState, not 
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::updateLocalStorage):
+        * kjs/ExecState.h:
+        (KJS::ExecState::localStorage):
+        * kjs/nodes.cpp:
+        (KJS::LocalVarAccessNode::evaluate):
+        (KJS::LocalVarFunctionCallNode::evaluate):
+        (KJS::PostIncLocalVarNode::evaluate):
+        (KJS::PostDecLocalVarNode::evaluate):
+        (KJS::LocalVarTypeOfNode::evaluate):
+        (KJS::PreIncLocalVarNode::evaluate):
+        (KJS::PreDecLocalVarNode::evaluate):
+        (KJS::ReadModifyLocalVarNode::evaluate):
+        (KJS::AssignLocalVarNode::evaluate):
+        (KJS::FunctionBodyNode::processDeclarationsForFunctionCode):
+
 2007-10-31  Adam Roben  <aroben@apple.com>
 
         Fix a crash on launch due to a static initializer race

@@ -44,6 +44,7 @@ namespace KJS  {
     class FunctionImp;
     class GlobalFuncImp;
     class FunctionBodyNode;
+    class LocalStorageEntry;
     
     /**
      * Represents the current state of script execution. This is
@@ -102,7 +103,10 @@ namespace KJS  {
         // This is a workaround to avoid accessing the global variables for these identifiers in
         // important property lookup functions, to avoid taking PIC branches in Mach-O binaries
         const CommonIdentifiers& propertyNames() const { return *m_propertyNames; }
-        
+
+        LocalStorageEntry* localStorage() { return m_localStorageBuffer; }
+        void updateLocalStorage();
+    
     private:
         ExecState(Interpreter* interp, JSGlobalObject* glob, JSObject* thisV,
                   FunctionBodyNode* currentBody, CodeType type = GlobalCode,
@@ -123,7 +127,8 @@ namespace KJS  {
         FunctionImp* m_function;
         const List* m_arguments;
         JSObject* m_activation;
-        
+        LocalStorageEntry* m_localStorageBuffer;
+
         ScopeChain scope;
         JSObject* m_variable;
         JSObject* m_thisVal;
