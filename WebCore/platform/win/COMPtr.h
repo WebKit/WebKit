@@ -54,6 +54,7 @@ public:
     ~COMPtr() { if (m_ptr) m_ptr->Release(); }
 
     T* get() const { return m_ptr; }
+    T* releaseRef() { T* tmp = m_ptr; m_ptr = 0; return tmp; }
 
     T& operator*() const { return *m_ptr; }
     T* operator->() const { return m_ptr; }
