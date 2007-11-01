@@ -1,3 +1,13 @@
+2007-11-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Layout test for http://bugs.webkit.org/show_bug.cgi?id=15785
+        REGRESSION(r27344): Crash on load at finance.yahoo.com
+
+        * fast/js/activation-object-function-lifetime-expected.txt: Added.
+        * fast/js/activation-object-function-lifetime.html: Added.
+
 2007-11-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

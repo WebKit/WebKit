@@ -484,6 +484,10 @@ void ActivationImp::mark()
         if (!value->marked())
             value->mark();
     }
+    
+    ASSERT(d->function);
+    if (!d->function->marked())
+        d->function->mark();
 
     if (d->argumentsObject && !d->argumentsObject->marked())
         d->argumentsObject->mark();
@@ -491,7 +495,10 @@ void ActivationImp::mark()
 
 void ActivationImp::createArgumentsObject(ExecState* exec)
 {
-    d->argumentsObject = new Arguments(exec, d->exec->function(), *d->exec->arguments(), this);
+    // Since "arguments" is only accessible while a function is being called,
+    // we can retrieve our argument list from the ExecState for our function 
+    // call instead of storing the list ourselves.
+    d->argumentsObject = new Arguments(exec, d->function, *d->exec->arguments(), this);
 }
 
 // ------------------------------ GlobalFunc -----------------------------------

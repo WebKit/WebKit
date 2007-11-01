@@ -1,5 +1,35 @@
 2007-11-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15785
+        REGRESSION(r27344): Crash on load at finance.yahoo.com
+        
+        Reverted a small portion of my last check-in. (The speedup and the List 
+        removal are still there, though.)
+        
+        ActivationImp needs to hold a pointer to its function, and mark that 
+        pointer (rather than accessing its function through its ExecState, and 
+        counting on the active scope to mark its function) because a closure 
+        can cause an ActivationImp to outlive its ExecState along with any 
+        active scope.
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::~FunctionImp):
+        (KJS::ActivationImp::ActivationImp):
+        * kjs/function.h:
+        (KJS::ActivationImp::ActivationImpPrivate::ActivationImpPrivate):
+
+        Also made HashTable a little more crash-happy in debug builds, so 
+        problems like this will show up earlier:
+        
+        * wtf/HashTable.h:
+        (WTF::HashTable::~HashTable):
+
+2007-11-01  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Adam Roben.
         
         Addressed some of Darin's review comments.

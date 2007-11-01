@@ -142,12 +142,14 @@ namespace KJS {
     struct ActivationImpPrivate {
         ActivationImpPrivate(ExecState* e)
             : exec(e)
+            , function(e->function())
             , argumentsObject(0)
         {
         }
         
         LocalStorage localStorage;
         ExecState* exec;
+        FunctionImp* function;
         Arguments* argumentsObject;
     };
 
