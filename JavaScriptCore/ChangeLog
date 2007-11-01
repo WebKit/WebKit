@@ -22,7 +22,9 @@
 
         Use jsNumberCell instead of jsNumber when converting double constants to JSValues
 
-        This fixes fast/js/math.html, which was suffering from a bug in MSVC.
+        This fixes fast/js/math.html, ecma/Date/15.9.5.10-1.js, and
+        ecma/Date/15.9.5.12-1.js, which were suffering from a bug in MSVC.
+
         It also gets rid of an MSVC warning that we previously had to silence.
 
         Reviewed by Geoff.
