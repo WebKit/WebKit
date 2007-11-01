@@ -1,3 +1,18 @@
+2007-11-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Renamed a flag inside of SQLiteTransaction and added an accessor (for future work)
+
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::SQLiteTransaction):
+        (WebCore::SQLiteTransaction::~SQLiteTransaction):
+        (WebCore::SQLiteTransaction::begin):
+        (WebCore::SQLiteTransaction::commit):
+        (WebCore::SQLiteTransaction::rollback):
+        * platform/sql/SQLiteTransaction.h:
+        (WebCore::SQLiteTransaction::inProgress):
+
 2007-11-01  Adam Roben  <aroben@apple.com>
 
         Remove all duplicate xcopy commands from WebCore's post-build step

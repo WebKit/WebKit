@@ -32,31 +32,31 @@ namespace WebCore {
 
 SQLiteTransaction::SQLiteTransaction(SQLiteDatabase& db)
     : m_db(db)
-    , m_began(false)
+    , m_inProgress(false)
 {
 }
 
 SQLiteTransaction::~SQLiteTransaction()
 {
-    if (m_began) 
+    if (m_inProgress) 
         rollback();
 }
     
 void SQLiteTransaction::begin()
 {
-    if (!m_began) {
+    if (!m_inProgress) {
         ASSERT(!m_db.m_transactionInProgress);
-        m_began = m_db.executeCommand("BEGIN;");
+        m_inProgress = m_db.executeCommand("BEGIN;");
         m_db.m_transactionInProgress = true;
     }
 }
 
 void SQLiteTransaction::commit()
 {
-    if (m_began) {
+    if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
         if (m_db.executeCommand("COMMIT;")) {
-            m_began = false;
+            m_inProgress = false;
             m_db.m_transactionInProgress = false;
         }
     }
@@ -64,10 +64,10 @@ void SQLiteTransaction::commit()
 
 void SQLiteTransaction::rollback()
 {
-    if (m_began) {
+    if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
         if (m_db.executeCommand("ROLLBACK;")) {
-            m_began = false;
+            m_inProgress = false;
             m_db.m_transactionInProgress = false;
         }
     }
