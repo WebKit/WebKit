@@ -392,9 +392,9 @@ bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName)
 
 const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
 
-ActivationImp::ActivationImp(FunctionImp* function, const List& arguments)
-    : d(new ActivationImpPrivate(function, arguments))
-    , m_symbolTable(&function->body->symbolTable())
+ActivationImp::ActivationImp(ExecState* exec)
+    : d(new ActivationImpPrivate(exec))
+    , m_symbolTable(&exec->function()->body->symbolTable())
 {
 }
 
@@ -478,9 +478,6 @@ void ActivationImp::mark()
 {
     JSObject::mark();
 
-    if (!d->function->marked())
-        d->function->mark();
-
     size_t size = d->localStorage.size();
     for (size_t i = 0; i < size; ++i) {
         JSValue* value = d->localStorage[i].value;
@@ -494,11 +491,7 @@ void ActivationImp::mark()
 
 void ActivationImp::createArgumentsObject(ExecState* exec)
 {
-  d->argumentsObject = new Arguments(exec, d->function, d->arguments, this);
-
-  // The arguments list is only needed to create the arguments object, so discard it now.
-  // This prevents lists of Lists from building up, waiting to be garbage collected.
-  d->arguments.reset();
+    d->argumentsObject = new Arguments(exec, d->exec->function(), *d->exec->arguments(), this);
 }
 
 // ------------------------------ GlobalFunc -----------------------------------

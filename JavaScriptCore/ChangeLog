@@ -1,3 +1,23 @@
+2007-11-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Removed List from ActivationImp, in preparation for making all lists
+        stack-allocated.
+        
+        Tests pass.
+        
+        1.0% speedup on SunSpider, presumably due to reduced List refcount thrash.
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        (KJS::ExecState::~ExecState):
+        * kjs/function.cpp:
+        (KJS::ActivationImp::ActivationImp):
+        (KJS::ActivationImp::createArgumentsObject):
+        * kjs/function.h:
+        (KJS::ActivationImp::ActivationImpPrivate::ActivationImpPrivate):
+
 2007-11-01  Adam Roben  <aroben@apple.com>
 
         Use jsNumberCell instead of jsNumber when converting double constants to JSValues

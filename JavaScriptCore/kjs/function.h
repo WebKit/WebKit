@@ -140,23 +140,19 @@ namespace KJS {
   class ActivationImp : public JSObject {
   private:
     struct ActivationImpPrivate {
-        ActivationImpPrivate(FunctionImp* f, const List& a)
-            : function(f)
-            , arguments(a)
+        ActivationImpPrivate(ExecState* e)
+            : exec(e)
             , argumentsObject(0)
         {
-            ASSERT(f);
         }
         
-        FunctionImp* function;
         LocalStorage localStorage;
-
-        List arguments;
+        ExecState* exec;
         Arguments* argumentsObject;
     };
 
   public:
-    ActivationImp(FunctionImp* function, const List& arguments);
+    ActivationImp(ExecState*);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
@@ -169,8 +165,6 @@ namespace KJS {
 
     bool isActivation() { return true; }
 
-    void releaseArguments() { d->arguments.reset(); }
-    
     LocalStorage& localStorage() { return d->localStorage; }
     SymbolTable& symbolTable() { return *m_symbolTable; }
 

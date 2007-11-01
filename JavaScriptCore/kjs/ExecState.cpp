@@ -51,7 +51,7 @@ ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* glob, JSObject* t
     
     // create and initialize activation object (ECMA 10.1.6)
     if (type == FunctionCode) {
-        m_activation = new ActivationImp(func, *args);
+        m_activation = new ActivationImp(this);
         m_variable = m_activation;
     } else {
         m_activation = 0;
@@ -87,14 +87,6 @@ ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* glob, JSObject* t
 ExecState::~ExecState()
 {
     m_interpreter->setCurrentExec(m_savedExecState);
-
-    // The arguments list is only needed to potentially create the  arguments object, 
-    // which isn't accessible from nested scopes so we can discard the list as soon 
-    // as the function is done running.
-    // This prevents lists of Lists from building up, waiting to be garbage collected
-    ActivationImp* activation = static_cast<ActivationImp*>(m_activation);
-    if (activation)
-        activation->releaseArguments();
 }
 
 void ExecState::mark()
