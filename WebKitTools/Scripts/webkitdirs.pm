@@ -523,9 +523,18 @@ sub isLeopard()
     return isOSX() && osXVersion()->{"minor"} == 5;
 }
 
+sub relativeScriptsDir()
+{
+    my $scriptDir = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), getcwd()), "");
+    if ($scriptDir eq "") {
+        $scriptDir = ".";
+    }
+    return $scriptDir;
+}
+
 sub launcherPath()
 {
-    my $relativeScriptsPath = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), getcwd()), "");
+    my $relativeScriptsPath = relativeScriptsDir();
     if (isGtk() || isQt()) {
         return "$relativeScriptsPath/run-launcher";
     } elsif (isOSX() || isCygwin()) {

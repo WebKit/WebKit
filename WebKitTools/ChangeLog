@@ -1,3 +1,13 @@
+2007-11-01  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Adam Roben.
+
+        Print out an error message when the Windows build fails
+        and provide guidance on how to find out what went wrong.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
 2007-11-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Adam Roben.
