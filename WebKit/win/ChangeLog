@@ -1,3 +1,10 @@
+2007-11-01  Kevin McCullough  <kmccullough@apple.com>
+
+        - Fixed a build failure
+
+        * WebEditorClient.cpp:
+        (WebEditorClient::textWillBeDeletedInTextField):
+
 2007-11-01  Adam Roben  <aroben@apple.com>
 
         Fix the parameter type of WebLocalizedString to match the UI_STRING macro

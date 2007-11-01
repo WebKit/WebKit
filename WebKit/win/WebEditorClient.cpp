@@ -383,7 +383,7 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* e)
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
                 BOOL result;
-                formDelegate->doPlatformCommand(domInputElement, BString("BackwardDelete"), kit(e->document()->frame()), &result);
+                formDelegate->doPlatformCommand(domInputElement, BString(L"BackwardDelete"), kit(e->document()->frame()), &result);
                 domInputElement->Release();
             }
             domElement->Release();
