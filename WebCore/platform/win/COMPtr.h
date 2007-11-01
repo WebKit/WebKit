@@ -31,6 +31,7 @@
 #include <guiddef.h>
 #include <unknwn.h>
 #include <WTF/Assertions.h>
+#include <WTF/HashTraits.h>
 
 typedef long HRESULT;
 
@@ -171,6 +172,44 @@ template <typename T, typename U> inline bool operator!=(const COMPtr<T>& a, U* 
 template <typename T, typename U> inline bool operator!=(T* a, const COMPtr<U>& b)
 {
     return a != b.get();
+}
+
+namespace WTF {
+    template<typename P> struct HashTraits<COMPtr<P> > : GenericHashTraits<COMPtr<P> > {
+        typedef HashTraits<typename IntTypes<sizeof(P*)>::SignedType> StorageTraits;
+        typedef typename StorageTraits::TraitType StorageType;
+        static const bool emptyValueIsZero = true;
+        static const bool needsRef = true;
+
+        typedef union { 
+            P* m_p; 
+            StorageType m_s; 
+        } UnionType;
+
+        static void ref(const StorageType& s) 
+        { 
+            if (const P* p = reinterpret_cast<const UnionType*>(&s)->m_p) 
+                const_cast<P*>(p)->AddRef(); 
+        }
+        static void deref(const StorageType& s) 
+        { 
+            if (const P* p = reinterpret_cast<const UnionType*>(&s)->m_p) 
+                const_cast<P*>(p)->Release(); 
+        }
+    };
+
+    template<typename P> struct HashKeyStorageTraits<PtrHash<COMPtr<P> >, HashTraits<COMPtr<P> > > {
+        typedef typename IntTypes<sizeof(P*)>::SignedType IntType;
+        typedef IntHash<IntType> Hash;
+        typedef HashTraits<IntType> Traits;
+    };
+
+    template<typename P> struct DefaultHash<COMPtr<P> > { typedef PtrHash<COMPtr<P> > Hash; };
+
+    template<typename P> struct PtrHash<COMPtr<P> > {
+        static unsigned hash(const COMPtr<P>& key) { return PtrHash<P*>::hash(key.get()); }
+        static bool equal(const COMPtr<P>& a, const COMPtr<P>& b) { return a == b; }
+    };
 }
 
 #endif

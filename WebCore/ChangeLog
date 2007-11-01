@@ -1,3 +1,13 @@
+2007-11-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Made COMPtr be able to be used by certain other templates,
+        specifically HashSet.
+
+        * platform/win/COMPtr.h:
+        (WTF::):
+
 2007-11-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
