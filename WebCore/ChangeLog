@@ -1,5 +1,26 @@
 2007-11-01  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx impl. for DragController and EventHandler interfaces.
+
+        Reviewed by Adam Roben.
+
+        * page/wx: Added.
+        * page/wx/DragControllerWx.cpp: Added.
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::dragOperation):
+        (WebCore::DragController::maxDragImageSize):
+        * page/wx/EventHandlerWx.cpp: Added.
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::eventActivatedView):
+        (WebCore::EventHandler::createDraggingClipboard):
+
+2007-11-01  Kevin Ollivier  <kevino@theolliviers.com>
+
         Adding files for wx impl. of editing interfaces.
 
         Reviewed by Adam Roben.
