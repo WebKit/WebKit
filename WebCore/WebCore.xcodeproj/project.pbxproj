@@ -141,6 +141,26 @@
 		1A7CCAEB0CD901A100B7B64E /* SQLError.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCAE90CD901A100B7B64E /* SQLError.idl */; };
 		1A7CCAEE0CD901DB00B7B64E /* JSSQLError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7CCAEC0CD901DB00B7B64E /* JSSQLError.cpp */; };
 		1A7CCAEF0CD901DB00B7B64E /* JSSQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCAED0CD901DB00B7B64E /* JSSQLError.h */; };
+		1A7CCB030CD945DD00B7B64E /* JSCustomSQLStatementCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7CCAFB0CD945DD00B7B64E /* JSCustomSQLStatementCallback.cpp */; };
+		1A7CCB040CD945DD00B7B64E /* JSCustomSQLStatementCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCAFC0CD945DD00B7B64E /* JSCustomSQLStatementCallback.h */; };
+		1A7CCB050CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7CCAFD0CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.cpp */; };
+		1A7CCB060CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCAFE0CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.h */; };
+		1A7CCB070CD945DD00B7B64E /* JSCustomSQLTransactionCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7CCAFF0CD945DD00B7B64E /* JSCustomSQLTransactionCallback.cpp */; };
+		1A7CCB080CD945DD00B7B64E /* JSCustomSQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB000CD945DD00B7B64E /* JSCustomSQLTransactionCallback.h */; };
+		1A7CCB090CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7CCB010CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.cpp */; };
+		1A7CCB0A0CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB020CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.h */; };
+		1A7CCB100CD9462C00B7B64E /* SQLStatementCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB0C0CD9462C00B7B64E /* SQLStatementCallback.idl */; };
+		1A7CCB110CD9462C00B7B64E /* SQLStatementErrorCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB0D0CD9462C00B7B64E /* SQLStatementErrorCallback.idl */; };
+		1A7CCB120CD9462C00B7B64E /* SQLTransactionCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB0E0CD9462C00B7B64E /* SQLTransactionCallback.idl */; };
+		1A7CCB130CD9462C00B7B64E /* SQLTransactionErrorCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB0F0CD9462C00B7B64E /* SQLTransactionErrorCallback.idl */; };
+		1A7CCB190CD9469A00B7B64E /* SQLStatementCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB150CD9469A00B7B64E /* SQLStatementCallback.h */; };
+		1A7CCB1A0CD9469A00B7B64E /* SQLStatementErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB160CD9469A00B7B64E /* SQLStatementErrorCallback.h */; };
+		1A7CCB1B0CD9469A00B7B64E /* SQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB170CD9469A00B7B64E /* SQLTransactionCallback.h */; };
+		1A7CCB1C0CD9469A00B7B64E /* SQLTransactionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB180CD9469A00B7B64E /* SQLTransactionErrorCallback.h */; };
+		1A7CCB240CD946FD00B7B64E /* SQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB220CD946FD00B7B64E /* SQLTransaction.h */; };
+		1A7CCB250CD946FD00B7B64E /* SQLTransaction.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB230CD946FD00B7B64E /* SQLTransaction.idl */; };
+		1A7CCB2E0CD9499700B7B64E /* JSSQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7CCB2C0CD9499700B7B64E /* JSSQLTransaction.cpp */; };
+		1A7CCB2F0CD9499700B7B64E /* JSSQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB2D0CD9499700B7B64E /* JSSQLTransaction.h */; };
 		1A8180A50B1D4E4300CE46C4 /* ResourceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8180A40B1D4E4300CE46C4 /* ResourceResponse.cpp */; };
 		1A820D910A13EBA600AF843C /* ImageDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */; };
 		1A820D920A13EBA600AF843C /* ImageDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A820D900A13EBA600AF843C /* ImageDocument.h */; };
@@ -4268,6 +4288,26 @@
 		1A7CCAE90CD901A100B7B64E /* SQLError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLError.idl; sourceTree = "<group>"; };
 		1A7CCAEC0CD901DB00B7B64E /* JSSQLError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLError.cpp; sourceTree = "<group>"; };
 		1A7CCAED0CD901DB00B7B64E /* JSSQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLError.h; sourceTree = "<group>"; };
+		1A7CCAFB0CD945DD00B7B64E /* JSCustomSQLStatementCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSQLStatementCallback.cpp; sourceTree = "<group>"; };
+		1A7CCAFC0CD945DD00B7B64E /* JSCustomSQLStatementCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomSQLStatementCallback.h; sourceTree = "<group>"; };
+		1A7CCAFD0CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSQLStatementErrorCallback.cpp; sourceTree = "<group>"; };
+		1A7CCAFE0CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomSQLStatementErrorCallback.h; sourceTree = "<group>"; };
+		1A7CCAFF0CD945DD00B7B64E /* JSCustomSQLTransactionCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSQLTransactionCallback.cpp; sourceTree = "<group>"; };
+		1A7CCB000CD945DD00B7B64E /* JSCustomSQLTransactionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomSQLTransactionCallback.h; sourceTree = "<group>"; };
+		1A7CCB010CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSQLTransactionErrorCallback.cpp; sourceTree = "<group>"; };
+		1A7CCB020CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomSQLTransactionErrorCallback.h; sourceTree = "<group>"; };
+		1A7CCB0C0CD9462C00B7B64E /* SQLStatementCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLStatementCallback.idl; sourceTree = "<group>"; };
+		1A7CCB0D0CD9462C00B7B64E /* SQLStatementErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLStatementErrorCallback.idl; sourceTree = "<group>"; };
+		1A7CCB0E0CD9462C00B7B64E /* SQLTransactionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransactionCallback.idl; sourceTree = "<group>"; };
+		1A7CCB0F0CD9462C00B7B64E /* SQLTransactionErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransactionErrorCallback.idl; sourceTree = "<group>"; };
+		1A7CCB150CD9469A00B7B64E /* SQLStatementCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatementCallback.h; sourceTree = "<group>"; };
+		1A7CCB160CD9469A00B7B64E /* SQLStatementErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatementErrorCallback.h; sourceTree = "<group>"; };
+		1A7CCB170CD9469A00B7B64E /* SQLTransactionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionCallback.h; sourceTree = "<group>"; };
+		1A7CCB180CD9469A00B7B64E /* SQLTransactionErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionErrorCallback.h; sourceTree = "<group>"; };
+		1A7CCB220CD946FD00B7B64E /* SQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransaction.h; sourceTree = "<group>"; };
+		1A7CCB230CD946FD00B7B64E /* SQLTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransaction.idl; sourceTree = "<group>"; };
+		1A7CCB2C0CD9499700B7B64E /* JSSQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransaction.cpp; sourceTree = "<group>"; };
+		1A7CCB2D0CD9499700B7B64E /* JSSQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransaction.h; sourceTree = "<group>"; };
 		1A8180A40B1D4E4300CE46C4 /* ResourceResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponse.cpp; sourceTree = "<group>"; };
 		1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDocument.cpp; sourceTree = "<group>"; };
 		1A820D900A13EBA600AF843C /* ImageDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageDocument.h; sourceTree = "<group>"; };
@@ -7856,6 +7896,17 @@
 			name = sql;
 			sourceTree = "<group>";
 		};
+		1A7CCB140CD9463100B7B64E /* To Be Removed */ = {
+			isa = PBXGroup;
+			children = (
+				519611650CAC56570010A80C /* SQLCallback.h */,
+				519611660CAC56570010A80C /* SQLCallback.idl */,
+				1A2E6FF30CC67855004A2062 /* VersionChangeCallback.h */,
+				1A2E6FF70CC6788D004A2062 /* VersionChangeCallback.idl */,
+			);
+			name = "To Be Removed";
+			sourceTree = "<group>";
+		};
 		1AE42F670AA4B8CB00C8612D /* cf */ = {
 			isa = PBXGroup;
 			children = (
@@ -7870,6 +7921,7 @@
 		1AE82EC90CAAE177002237AE /* storage */ = {
 			isa = PBXGroup;
 			children = (
+				1A7CCB140CD9463100B7B64E /* To Be Removed */,
 				5196115E0CAC56570010A80C /* Database.cpp */,
 				5196115F0CAC56570010A80C /* Database.h */,
 				519611600CAC56570010A80C /* Database.idl */,
@@ -7883,8 +7935,6 @@
 				519611620CAC56570010A80C /* DatabaseThread.h */,
 				1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */,
 				1AD51A120CB59CD300953D11 /* DatabaseTracker.h */,
-				519611650CAC56570010A80C /* SQLCallback.h */,
-				519611660CAC56570010A80C /* SQLCallback.idl */,
 				1A7CCAE80CD901A100B7B64E /* SQLError.h */,
 				1A7CCAE90CD901A100B7B64E /* SQLError.idl */,
 				519611670CAC56570010A80C /* SQLResultSet.cpp */,
@@ -7893,8 +7943,16 @@
 				1AFE117B0CBFFB36003017FA /* SQLResultSetRowList.cpp */,
 				1AFE117C0CBFFB36003017FA /* SQLResultSetRowList.h */,
 				1AFE118C0CBFFC4E003017FA /* SQLResultSetRowList.idl */,
-				1A2E6FF30CC67855004A2062 /* VersionChangeCallback.h */,
-				1A2E6FF70CC6788D004A2062 /* VersionChangeCallback.idl */,
+				1A7CCB150CD9469A00B7B64E /* SQLStatementCallback.h */,
+				1A7CCB0C0CD9462C00B7B64E /* SQLStatementCallback.idl */,
+				1A7CCB160CD9469A00B7B64E /* SQLStatementErrorCallback.h */,
+				1A7CCB0D0CD9462C00B7B64E /* SQLStatementErrorCallback.idl */,
+				1A7CCB170CD9469A00B7B64E /* SQLTransactionCallback.h */,
+				1A7CCB0E0CD9462C00B7B64E /* SQLTransactionCallback.idl */,
+				1A7CCB180CD9469A00B7B64E /* SQLTransactionErrorCallback.h */,
+				1A7CCB0F0CD9462C00B7B64E /* SQLTransactionErrorCallback.idl */,
+				1A7CCB220CD946FD00B7B64E /* SQLTransaction.h */,
+				1A7CCB230CD946FD00B7B64E /* SQLTransaction.idl */,
 			);
 			indentWidth = 4;
 			path = storage;
@@ -10331,6 +10389,8 @@
 				1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */,
 				1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */,
 				1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */,
+				1A7CCB2C0CD9499700B7B64E /* JSSQLTransaction.cpp */,
+				1A7CCB2D0CD9499700B7B64E /* JSSQLTransaction.h */,
 				1A2E6FFC0CC67907004A2062 /* JSVersionChangeCallback.cpp */,
 				1A2E6FFD0CC67907004A2062 /* JSVersionChangeCallback.h */,
 			);
@@ -11095,6 +11155,14 @@
 				1432E8460C51493800B1500F /* GCController.h */,
 				1AE831050CAB166E002237AE /* JSCustomSQLCallback.cpp */,
 				1AE831040CAB166E002237AE /* JSCustomSQLCallback.h */,
+				1A7CCAFB0CD945DD00B7B64E /* JSCustomSQLStatementCallback.cpp */,
+				1A7CCAFC0CD945DD00B7B64E /* JSCustomSQLStatementCallback.h */,
+				1A7CCAFD0CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.cpp */,
+				1A7CCAFE0CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.h */,
+				1A7CCAFF0CD945DD00B7B64E /* JSCustomSQLTransactionCallback.cpp */,
+				1A7CCB000CD945DD00B7B64E /* JSCustomSQLTransactionCallback.h */,
+				1A7CCB010CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.cpp */,
+				1A7CCB020CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.h */,
 				1A2E70610CC67CAA004A2062 /* JSCustomVersionChangeCallback.cpp */,
 				1A2E70600CC67CAA004A2062 /* JSCustomVersionChangeCallback.h */,
 				E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */,
@@ -13853,6 +13921,16 @@
 				A86938D00CD4931300B666A1 /* SVGResourceFilterPlatformDataMac.h in Headers */,
 				1A7CCAEA0CD901A100B7B64E /* SQLError.h in Headers */,
 				1A7CCAEF0CD901DB00B7B64E /* JSSQLError.h in Headers */,
+				1A7CCB040CD945DD00B7B64E /* JSCustomSQLStatementCallback.h in Headers */,
+				1A7CCB060CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.h in Headers */,
+				1A7CCB080CD945DD00B7B64E /* JSCustomSQLTransactionCallback.h in Headers */,
+				1A7CCB0A0CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.h in Headers */,
+				1A7CCB190CD9469A00B7B64E /* SQLStatementCallback.h in Headers */,
+				1A7CCB1A0CD9469A00B7B64E /* SQLStatementErrorCallback.h in Headers */,
+				1A7CCB1B0CD9469A00B7B64E /* SQLTransactionCallback.h in Headers */,
+				1A7CCB1C0CD9469A00B7B64E /* SQLTransactionErrorCallback.h in Headers */,
+				1A7CCB240CD946FD00B7B64E /* SQLTransaction.h in Headers */,
+				1A7CCB2F0CD9499700B7B64E /* JSSQLTransaction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13967,6 +14045,11 @@
 				E44613B10CD6331000FADA75 /* TimeRanges.idl in Resources */,
 				E44613B20CD6331000FADA75 /* VoidCallback.idl in Resources */,
 				1A7CCAEB0CD901A100B7B64E /* SQLError.idl in Resources */,
+				1A7CCB100CD9462C00B7B64E /* SQLStatementCallback.idl in Resources */,
+				1A7CCB110CD9462C00B7B64E /* SQLStatementErrorCallback.idl in Resources */,
+				1A7CCB120CD9462C00B7B64E /* SQLTransactionCallback.idl in Resources */,
+				1A7CCB130CD9462C00B7B64E /* SQLTransactionErrorCallback.idl in Resources */,
+				1A7CCB250CD946FD00B7B64E /* SQLTransaction.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15406,6 +15489,11 @@
 				BC98543D0CD3D98B00069BC1 /* JSConsole.cpp in Sources */,
 				A869385C0CD4831500B666A1 /* SVGResourceFilterPlatformDataMac.mm in Sources */,
 				1A7CCAEE0CD901DB00B7B64E /* JSSQLError.cpp in Sources */,
+				1A7CCB030CD945DD00B7B64E /* JSCustomSQLStatementCallback.cpp in Sources */,
+				1A7CCB050CD945DD00B7B64E /* JSCustomSQLStatementErrorCallback.cpp in Sources */,
+				1A7CCB070CD945DD00B7B64E /* JSCustomSQLTransactionCallback.cpp in Sources */,
+				1A7CCB090CD945DD00B7B64E /* JSCustomSQLTransactionErrorCallback.cpp in Sources */,
+				1A7CCB2E0CD9499700B7B64E /* JSSQLTransaction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

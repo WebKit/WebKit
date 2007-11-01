@@ -1,3 +1,46 @@
+2007-10-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Add new SQL callback interfaces and JS implementations of them.
+        
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCustomSQLStatementCallback.cpp: Added.
+        (WebCore::JSCustomSQLStatementCallback::JSCustomSQLStatementCallback):
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementCallback.h: Added.
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp: Added.
+        (WebCore::JSCustomSQLStatementErrorCallback::JSCustomSQLStatementErrorCallback):
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.h: Added.
+        * bindings/js/JSCustomSQLTransactionCallback.cpp: Added.
+        (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback):
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.h: Added.
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp: Added.
+        (WebCore::JSCustomSQLTransactionErrorCallback::JSCustomSQLTransactionErrorCallback):
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h: Added.
+        * storage/JSCustomSQLStatementCallback.h: Added.
+        * storage/JSCustomSQLStatementErrorCallback.h: Added.
+        * storage/JSCustomSQLTransactionCallback.h: Added.
+        * storage/JSCustomSQLTransactionErrorCallback.h: Added.
+        * storage/SQLStatementCallback.h: Added.
+        (WebCore::SQLStatementCallback::~SQLStatementCallback):
+        * storage/SQLStatementCallback.idl: Added.
+        * storage/SQLStatementErrorCallback.h: Added.
+        (WebCore::SQLStatementErrorCallback::~SQLStatementErrorCallback):
+        * storage/SQLStatementErrorCallback.idl: Added.
+        * storage/SQLTransaction.h: Added.
+        * storage/SQLTransaction.idl: Added.
+        * storage/SQLTransactionCallback.h: Added.
+        (WebCore::SQLTransactionCallback::~SQLTransactionCallback):
+        * storage/SQLTransactionCallback.idl: Added.
+        * storage/SQLTransactionErrorCallback.h: Added.
+        (WebCore::SQLTransactionErrorCallback::~SQLTransactionErrorCallback):
+        * storage/SQLTransactionErrorCallback.idl: Added.
+
 2007-10-31  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dave Harrison.

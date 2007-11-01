@@ -430,6 +430,7 @@ all : \
     JSSQLError.h \
     JSSQLResultSet.h \
     JSSQLResultSetRowList.h \
+    JSSQLTransaction.h \
     JSSVGAElement.h \
     JSSVGAngle.h \
     JSSVGAnimatedAngle.h \
