@@ -1,3 +1,11 @@
+2007-11-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Rolled out r27326 - debug CRT seems to cause no problems after all.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-10-31  Adam Roben  <aroben@apple.com>
 
         Switch the Debug configuration to using the non-debug CRT
