@@ -1,3 +1,13 @@
+2007-11-01  Adam Roben  <aroben@apple.com>
+
+        Remove all duplicate xcopy commands from WebCore's post-build step
+
+        Also add the /d option to the copy of platform/sql.
+
+        Rubberstamped by Sam.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2007-11-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
