@@ -110,7 +110,7 @@ void GIFImageReader::output_row()
 {
   GIFFrameReader* gs = frame_reader;
 
-  int width, drow_start, drow_end;
+  int drow_start, drow_end;
 
   drow_start = drow_end = gs->irow;
 
@@ -158,19 +158,10 @@ void GIFImageReader::output_row()
   if ((unsigned)drow_start >= gs->height)
     return;
 
-  /* Check for scanline below edge of logical screen */
-  if ((gs->y_offset + gs->irow) < screen_height) {
-    /* Clip if right edge of image exceeds limits */
-    if ((gs->x_offset + gs->width) > screen_width)
-      width = screen_width - gs->x_offset;
-    else
-      width = gs->width;
-
-    // CALLBACK: Let the client know we have decoded a row.
-    if (width > 0 && clientptr && frame_reader)
-      clientptr->haveDecodedRow(images_count - 1, frame_reader->rowbuf, frame_reader->rowend,
-                                drow_start, drow_end - drow_start + 1);
-  }
+  // CALLBACK: Let the client know we have decoded a row.
+  if (clientptr && frame_reader)
+    clientptr->haveDecodedRow(images_count - 1, frame_reader->rowbuf, frame_reader->rowend,
+                              drow_start, drow_end - drow_start + 1);
 
   gs->rowp = gs->rowbuf;
 
@@ -782,26 +773,18 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
           /* XXX Deviant! */
 
           delete []frame_reader->rowbuf;
-          frame_reader->rowbuf = new unsigned char[width];
-
-          if (!frame_reader->rowbuf) {
-            state = gif_oom;
-            break;
-          }
-
           screen_width = width;
-          if (screen_height < frame_reader->height)
-            screen_height = frame_reader->height;
-        }
-        else {
-          if (!frame_reader->rowbuf)
-            frame_reader->rowbuf = new unsigned char[screen_width];
+          frame_reader->rowbuf = new unsigned char[screen_width];
+        } else if (!frame_reader->rowbuf) {
+          frame_reader->rowbuf = new unsigned char[screen_width];
         }
 
         if (!frame_reader->rowbuf) {
           state = gif_oom;
           break;
         }
+        if (screen_height < height)
+          screen_height = height;
 
         if (q[8] & 0x40) {
           frame_reader->interlaced = true;
