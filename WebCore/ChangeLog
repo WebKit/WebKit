@@ -1,3 +1,22 @@
+2007-11-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/5195056> Huge plain text pastes are slow, time spent in ApplyStyleCommand::doApply
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): No need to match style when pasting
+        into a plaintext-only region, since when we build the fragment to insert from
+        plain text, we don't put any style information on it, so it will automatically
+        match style with no intervention.
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText): Place paragraphs into clones of the
+        block being inserted into, instead of default paragraph elements,
+        so that when inserted content will match the surrounding paragraph style.
+        This was broken before, but I haven't added a layout test yet because
+        there currently isn't a way to get only plain text onto the pasteboard
+        in a layout test.
+
 2007-11-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben. 

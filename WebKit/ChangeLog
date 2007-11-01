@@ -1,3 +1,18 @@
+2007-11-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/5195056> Huge plain text pastes are slow, time spent in ApplyStyleCommand::doApply
+        
+        No need to match style when pasting plain text, since the fragment we build for plain text
+        won't have any style information on it.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:]): There's no
+        longer a need to know whether this function chosePlaintext.
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:]):
+
 2007-10-31  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John Sullivan.
