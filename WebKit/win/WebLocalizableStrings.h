@@ -37,7 +37,7 @@ typedef struct {
 extern "C" {
 #endif
 
-CFStringRef WebLocalizedString(WebLocalizableStringsBundle *bundle, const UniChar *key);
+CFStringRef WebLocalizedString(WebLocalizableStringsBundle *bundle, LPCTSTR key);
 LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle *bundle, LPCTSTR key);
 void SetWebLocalizedStringMainBundle(CFBundleRef bundle);
 

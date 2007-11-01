@@ -94,7 +94,7 @@ void SetWebLocalizedStringMainBundle(CFBundleRef bundle)
     localizedStringsMainBundle = bundle;
 }
 
-CFStringRef WebLocalizedString(WebLocalizableStringsBundle* stringsBundle, const UniChar* key)
+CFStringRef WebLocalizedString(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
 {
     static CFStringRef notFound = CFSTR("localized string not found");
 
@@ -116,7 +116,7 @@ CFStringRef WebLocalizedString(WebLocalizableStringsBundle* stringsBundle, const
             stringsBundle->bundle = bundle;
         }
     }
-    CFStringRef keyString = CFStringCreateWithCharacters(0, key, (CFIndex)wcslen(reinterpret_cast<const wchar_t*>(key)));
+    CFStringRef keyString = CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(key), (CFIndex)wcslen(key));
     CFStringRef result = CFCopyLocalizedStringWithDefaultValue(keyString, 0, bundle, notFound, 0);
     CFRelease(keyString);
     ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key);
@@ -133,7 +133,7 @@ LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, LPCTSTR 
     if (stringsBundle && stringsBundle->bundle == WebKitLocalizableStringsBundle.bundle && frameworkLocStrings.contains(keyString))
         return frameworkLocStrings.get(keyString).charactersWithNullTermination();
 
-    CFStringRef cfStr = WebLocalizedString(stringsBundle, reinterpret_cast<const UniChar*>(key));
+    CFStringRef cfStr = WebLocalizedString(stringsBundle, key);
     String str(cfStr);
     if (cfStr)
         CFRelease(cfStr);

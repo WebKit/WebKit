@@ -1,3 +1,14 @@
+2007-11-01  Adam Roben  <aroben@apple.com>
+
+        Fix the parameter type of WebLocalizedString to match the UI_STRING macro
+
+        Reviewed by Sam.
+
+        * WebLocalizableStrings.cpp:
+        (WebLocalizedString):
+        (WebLocalizedLPCTSTR):
+        * WebLocalizableStrings.h:
+
 2007-11-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Adam Roben.
