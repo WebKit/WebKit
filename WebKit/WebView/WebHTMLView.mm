@@ -3589,7 +3589,7 @@ noPromisedData:
     RetainPtr<WebHTMLView> selfProtector = self;
     
     //Don't make an event from the function key
-    if ([event keyCode] != 63)
+    if ([event keyCode] != 0 && [event keyCode] != 63)
         core([self _frame])->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
         
     [super flagsChanged:event];

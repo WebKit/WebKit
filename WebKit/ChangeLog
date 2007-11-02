@@ -1,3 +1,13 @@
+2007-11-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix an assertion failure when Command-Tabbing out of Safari
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView flagsChanged:]): Avoid passing key code 0 down to
+        webCore.
+
 2007-11-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
@@ -261,14 +271,14 @@
         This was fallout from r25275. We need to clear the orderedLastVisitedDays cache here, in addition
         to the other places where it's cleared.
 
-2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+2007-10-18  Dan Bernstein  <mitz@apple.com>
 
         Tiger build fix.
 
         * WebView/WebDataSource.mm:
         (-[WebDataSource _MIMETypeOfResponse:]):
 
-2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+2007-10-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
 
