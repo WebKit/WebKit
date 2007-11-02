@@ -1,3 +1,13 @@
+2007-11-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey.
+
+        Allow Shift, Ctrl, Alt, Meta and Capslock keys to be sent into WebCore.
+
+        * WebView.cpp:
+        (WebView::keyDown):
+        (WebView::keyUp):
+
 2007-11-01  Kevin McCullough  <kmccullough@apple.com>
 
         - Fixed a build failure

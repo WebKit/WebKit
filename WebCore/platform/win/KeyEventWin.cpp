@@ -47,6 +47,15 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
     switch (keyCode) {
         case VK_MENU:
             return "Alt";
+        case VK_CONTROL:
+            return "Control";
+        case VK_SHIFT:
+            return "Shift";
+        case VK_CAPITAL:
+            return "CapsLock";
+        case VK_LWIN:
+        case VK_RWIN:
+            return "Win";
         case VK_CLEAR:
             return "Clear";
         case VK_DOWN:
@@ -151,7 +160,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM virtualKeyCode, LPARAM
     , m_ctrlKey(GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)
     , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
     , m_metaKey(m_altKey)
-    , m_isModifierKeyPress(false)
+    , m_isModifierKeyPress(virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
 {
 }
 

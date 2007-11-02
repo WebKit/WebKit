@@ -1236,10 +1236,6 @@ bool WebView::execCommand(WPARAM wParam, LPARAM /*lParam*/)
 
 bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData)
 {
-    // Don't send key events for shift, ctrl, alt and capslock keys when they're by themselves
-    if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
-        return false;
-
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, m_currentCharacterCode);
 
     // Don't send key events for alt+space and alt+f4.
@@ -1374,10 +1370,6 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (virtualKeyCode == VK_CAPITAL)
         frame->eventHandler()->capsLockStateMayHaveChanged();
-
-    // Don't send key events for shift, ctrl, alt and capslock keys when they're by themselves
-    if (virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL ||  virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
-        return false;
 
     // Don't send key events for alt+space and alt+f4, since the OS needs to handle that.
     if (systemKeyDown && (virtualKeyCode == VK_SPACE || virtualKeyCode == VK_F4))
