@@ -1,3 +1,20 @@
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix <rdar://problem/5530185> WebKit does not show <object> fallback content when both
+          URL and MIME type is omitted
+
+        Already covered by existing tests (that had incorrect results).
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::requestObject): Return false to indicate
+        failure when both URL and MIME type are empty. The old code would not attempt a load, but
+        it would indicate success.
+
+        * rendering/RenderPartObject.cpp: (WebCore::RenderPartObject::updateWidget): Remove
+        non-helpful early exit for the case where there is no URL and no type. Returning early
+        prevents the fallback code from running.
+
 2007-11-02  Alp Toker  <alp@atoker.com>
 
         Reviewed by Darin.

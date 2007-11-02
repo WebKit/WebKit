@@ -204,9 +204,6 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
       if (serviceType.isEmpty() && !o->m_classId.isEmpty())
           mapClassIdToServiceType(o->m_classId, serviceType);
       
-      // If no URL and type, abort.
-      if (url.isEmpty() && serviceType.isEmpty())
-          return;
       if (!isURLAllowed(document(), url))
           return;
 

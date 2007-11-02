@@ -523,7 +523,8 @@ layer at (0,0) size 785x3543
         RenderText {#text} at (0,0) size 68x18
           text run at (0,0) width 68: "OBJECT: "
         RenderInline {FONT} at (0,0) size 171x18 [color=#008000]
-          RenderPartObject {OBJECT} at (68,14) size 0x0
+          RenderInline {OBJECT} at (0,0) size 0x18
+            RenderInline {FONT} at (0,0) size 0x18 [color=#FF0000]
           RenderText {#text} at (68,0) size 171x18
             text run at (68,0) width 171: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
@@ -577,7 +578,8 @@ layer at (0,0) size 785x3543
         RenderText {#text} at (0,0) size 66x18
           text run at (0,0) width 66: "PARAM: "
         RenderInline {FONT} at (0,0) size 171x18 [color=#008000]
-          RenderPartObject {OBJECT} at (66,14) size 0x0
+          RenderInline {OBJECT} at (0,0) size 0x18
+            RenderInline {FONT} at (0,0) size 0x18 [color=#FF0000]
           RenderText {#text} at (66,0) size 171x18
             text run at (66,0) width 171: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0

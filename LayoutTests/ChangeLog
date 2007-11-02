@@ -1,3 +1,15 @@
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - update tests affected by fix for <rdar://problem/5530185> WebKit does not show
+          <object> fallback content when both URL and MIME type is omitted
+
+        * dom/html/level2/html/AppletsCollection-expected.txt: The text "Nothing here!" renders now.
+        * fast/dom/HTMLDocument/object-by-name-unknown-child-element-expected.txt: Some blank
+        space renders now.
+        * platform/mac/fast/invalid/residual-style-expected.txt: A font element renders now.
+
 2007-11-01  Dan Bernstein  <mitz@apple.com>
 
         - fix typo in test name

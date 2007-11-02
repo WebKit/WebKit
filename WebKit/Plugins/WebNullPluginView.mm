@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,38 +26,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/Document.h>
-#import <WebCore/Element.h>
-#import <WebKit/WebDataSource.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebNullPluginView.h>
-#import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebViewInternal.h>
+#import "WebNullPluginView.h"
 
-static NSImage *image = nil;
+#import "WebFrameInternal.h"
+#import "WebViewInternal.h"
+#import <WebCore/Document.h>
 
 @implementation WebNullPluginView
 
-- initWithFrame:(NSRect)frame error:(NSError *)pluginError DOMElement:(DOMElement *)anElement
+- initWithFrame:(NSRect)frame error:(NSError *)err DOMElement:(DOMElement *)elem
 {    
-    self = [super initWithFrame:frame];
-    if (self) {
-
-        if (!image) {
-            NSBundle *bundle = [NSBundle bundleForClass:[WebNullPluginView class]];
-            NSString *imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
-            image = [[NSImage alloc] initWithContentsOfFile:imagePath];
-        }
-        
-        [self setImage:image];
-
-        error = [pluginError retain];
-        element = [anElement retain];
+    static NSImage *nullPlugInImage;
+    if (!nullPlugInImage) {
+        NSBundle *bundle = [NSBundle bundleForClass:[WebNullPluginView class]];
+        NSString *imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
+        nullPlugInImage = [[NSImage alloc] initWithContentsOfFile:imagePath];
     }
+    
+    self = [super initWithFrame:frame];
+    if (!self)
+        return nil;
+
+    error = [err retain];
+    if (err)
+        element = [elem retain];
+
+    [self setImage:nullPlugInImage];
+
     return self;
 }
 
@@ -69,18 +64,35 @@ static NSImage *image = nil;
     [super dealloc];
 }
 
-- (void)viewDidMoveToWindow
+- (void)reportFailure
 {
-    if (!didSendError && _window && error) {
-        didSendError = YES;
-        WebFrame *webFrame = kit(core(element)->document()->frame());
-        WebView *webView = [webFrame webView];
-        WebDataSource *dataSource = [webFrame _dataSource];
+    NSError *localError = error;
+    DOMElement *localElement = element;
 
+    error = nil;
+    element = nil;
+
+    WebFrame *webFrame = kit(core(localElement)->document()->frame());
+    if (webFrame) {
+        WebView *webView = [webFrame webView];
         WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
         if (implementations.plugInFailedWithErrorFunc)
-            CallResourceLoadDelegate(implementations.plugInFailedWithErrorFunc, webView, @selector(webView:plugInFailedWithError:dataSource:), error, dataSource);
+            CallResourceLoadDelegate(implementations.plugInFailedWithErrorFunc, webView,
+                @selector(webView:plugInFailedWithError:dataSource:), localError, [webFrame _dataSource]);
     }
+
+    [localError release];
+    [localElement release];
+}
+
+- (void)viewDidMoveToWindow
+{
+    if (!error)
+        return;
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reportFailure) object:nil];
+    if ([self window])
+        [self performSelector:@selector(reportFailure) withObject:nil afterDelay:0.0];
 }
 
 @end

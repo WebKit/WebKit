@@ -1,3 +1,33 @@
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix problem I ran into while doing some testing on Mac for
+          <rdar://problem/5530185> WebKit does not show <object>
+          fallback content when both URL and MIME type is omitted
+
+        I don't know how to reproduce this failure in DumpRenderTree, so there is no
+        regression test.
+
+        * Plugins/WebNullPluginView.h: Removed some unneeded declarations, including
+        the didSendError local variable. Instead we just set the error to nil once
+        we've sent it.
+        * Plugins/WebNullPluginView.mm:
+        (-[WebNullPluginView initWithFrame:error:DOMElement:]): Refactored so that
+        the null plug-in image code is separate from the rest of the function and
+        so that the whole thing is not inside an if statement. Also don't hold a
+        reference to the DOM element if there is no error to report.
+        (-[WebNullPluginView reportFailure]): Added. Does the actual delegate
+        callback. Happens back at the top level of the run loop so it doesn't
+        fire deep inside layout. Also wrote this so that it is guaranteed not to
+        reenter and so that it can handle the case where the delegate destroys
+        the world (including this object). NOTE: This is not a real, general
+        solution to the problem of plug-ins that do work inside layout. We will need
+        a more general fix that works for other plug-ins, and we'll track that with
+        a separate bug report.
+        (-[WebNullPluginView viewDidMoveToWindow]): Removed most of the code;
+        changed so it just does a performSelector:afterDelay:0.
+
 2007-11-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
