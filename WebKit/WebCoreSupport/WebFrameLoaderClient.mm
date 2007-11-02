@@ -1114,7 +1114,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
             modifierFlags |= NSCommandKeyMask;
     }
     if (const MouseEvent* mouseEvent = findMouseEvent(event)) {
-        IntPoint point(mouseEvent->clientX(), mouseEvent->clientY());
+        IntPoint point(mouseEvent->pageX(), mouseEvent->pageY());
         WebElementDictionary *element = [[WebElementDictionary alloc]
             initWithHitTestResult:core(m_webFrame.get())->eventHandler()->hitTestResultAtPoint(point, false)];
         NSDictionary *result = [NSDictionary dictionaryWithObjectsAndKeys:

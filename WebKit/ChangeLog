@@ -1,3 +1,14 @@
+2007-11-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=15780
+        Bug 15780: WebFrameLoaderClient: WebActionElementKey wrong if view is scrolled
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary): Retrieve the mouse event coordinates
+        in the page coordinate system rather than the client area coordinate system.
+
 2007-11-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
