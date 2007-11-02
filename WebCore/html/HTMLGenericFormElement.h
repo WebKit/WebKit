@@ -92,6 +92,9 @@ public:
 
     void formDestroyed() { m_form = 0; }
 
+protected:
+    void removeFromForm();
+
 private:
     virtual HTMLFormElement* virtualForm() const;
 

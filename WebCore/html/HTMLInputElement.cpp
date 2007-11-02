@@ -144,8 +144,12 @@ HTMLInputElement::~HTMLInputElement()
         document()->unregisterForCacheCallbacks(this);
 
     document()->checkedRadioButtons().removeButton(this);
-    
+
     delete m_imageLoader;
+
+    // Need to remove this from the form while it is still an HTMLInputElement,
+    // so can't wait for the base class's destructor to do it.
+    removeFromForm();
 }
 
 const AtomicString& HTMLInputElement::name() const

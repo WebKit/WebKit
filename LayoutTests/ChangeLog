@@ -2,6 +2,16 @@
 
         Reviewed by Mitz.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15806
+          <rdar://problem/5561626> ASSERT(element->isRadioButton()) fires destroying form elements
+
+        * fast/forms/remove-radio-button-assert-expected.txt: Added.
+        * fast/forms/remove-radio-button-assert.html: Added.
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
         - update tests affected by fix for <rdar://problem/5530185> WebKit does not show
           <object> fallback content when both URL and MIME type is omitted
 

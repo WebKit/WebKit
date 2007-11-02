@@ -2,6 +2,26 @@
 
         Reviewed by Mitz.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15806
+          <rdar://problem/5561626> ASSERT(element->isRadioButton()) fires destroying form elements
+
+        Test: fast/forms/remove-radio-button-assert.html
+
+        * html/HTMLGenericFormElement.cpp: (WebCore::HTMLGenericFormElement::removeFromForm):
+        Added protected function to be used by derived classes that need to do the same sort
+        of removal from form that's automatically done by the base class in certain circumstances.
+        * html/HTMLGenericFormElement.h: Added removeFromForm.
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::~HTMLInputElement):
+        Call removeFromForm here so the element is removed before we destroy the HTMLInputElement
+        part of this object. By the time we get to the base class's destructor it's too late.
+        The problem is specific to radio buttons so we don't have to worry about other classes
+        derived from HTMLGenericFormElement.
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
         - speculative fix for http://bugs.webkit.org/show_bug.cgi?id=15805
           <rdar://problem/5510779> crashes in isLoadingMultipartContent
 
