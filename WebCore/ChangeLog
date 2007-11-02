@@ -2,6 +2,16 @@
 
         Reviewed by Mitz.
 
+        - speculative fix for http://bugs.webkit.org/show_bug.cgi?id=15805
+          <rdar://problem/5510779> crashes in isLoadingMultipartContent
+
+        * loader/DocumentLoader.cpp: (WebCore::DocumentLoader::isLoadingMultipartContent):
+        Instead of asserting the frame loader is non-0, return false if it is 0.
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
         - fix <rdar://problem/5530185> WebKit does not show <object> fallback content when both
           URL and MIME type is omitted
 

@@ -672,8 +672,7 @@ bool DocumentLoader::isLoadingPlugIns() const
 
 bool DocumentLoader::isLoadingMultipartContent() const
 {
-    ASSERT(m_mainResourceLoader);
-    return m_mainResourceLoader->isLoadingMultipartContent();
+    return m_mainResourceLoader && m_mainResourceLoader->isLoadingMultipartContent();
 }
 
 bool DocumentLoader::startLoadingMainResource(unsigned long identifier)
