@@ -31,7 +31,7 @@
 #elif PLATFORM(QT)
 #include <QMatrix>
 #elif PLATFORM(CAIRO)
-#include "cairo.h"
+#include <cairo.h>
 #elif PLATFORM(WX) && USE(WXGC)
 #include <wx/defs.h>
 #include <wx/graphics.h>

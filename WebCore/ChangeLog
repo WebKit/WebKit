@@ -1,3 +1,14 @@
+2007-11-02  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Darin.
+
+        Include Cairo headers properly
+
+        * platform/graphics/AffineTransform.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/AffineTransformCairo.cpp:
+        * platform/gtk/FontPlatformDataGtk.cpp:
+
 2007-11-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey.

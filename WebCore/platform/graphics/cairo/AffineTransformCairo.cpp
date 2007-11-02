@@ -28,7 +28,7 @@
 #include "IntRect.h"
 #include "FloatRect.h"
 
-#include "cairo.h"
+#include <cairo.h>
 
 namespace WebCore {
 

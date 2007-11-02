@@ -41,7 +41,7 @@ class QPainter;
 #endif
 
 #if PLATFORM(CAIRO)
-struct _cairo_surface;
+typedef struct _cairo_surface cairo_surface_t;
 #endif
 
 namespace WebCore {
@@ -62,7 +62,7 @@ namespace WebCore {
 #elif PLATFORM(QT)
         QPixmap* pixmap() const;
 #elif PLATFORM(CAIRO)
-        _cairo_surface* surface() const;
+        cairo_surface_t* surface() const;
 #endif
 
     private:
@@ -79,8 +79,8 @@ namespace WebCore {
         mutable QPixmap m_pixmap;
         mutable QPainter* m_painter;
 #elif PLATFORM(CAIRO)
-        ImageBuffer(_cairo_surface* surface);
-        mutable _cairo_surface *m_surface;
+        ImageBuffer(cairo_surface_t* surface);
+        mutable cairo_surface_t* m_surface;
 #endif
     };
 }
