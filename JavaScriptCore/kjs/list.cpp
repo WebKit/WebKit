@@ -276,64 +276,26 @@ void List::append(JSValue *v)
     imp->overflow[i - inlineValuesSize] = v;
 }
 
-List List::copy() const
+void List::slice(int startIndex, List& result) const
 {
-    List copy;
-    copy.copyFrom(*this);
-    return copy;
-}
-
-void List::copyFrom(const List& other)
-{
-    ListImp *imp = static_cast<ListImp *>(other._impBase);
-
-    int size = imp->size;
-
-    int inlineSize = min(size, inlineValuesSize);
-    for (int i = 0; i != inlineSize; ++i)
-        append(imp->values[i]);
-
-    JSValue** overflow = imp->overflow;
-    int overflowSize = size - inlineSize;
-    for (int i = 0; i != overflowSize; ++i)
-        append(overflow[i]);
-}
-
-
-List List::copyTail() const
-{
-    List copy;
-
     ListImp *imp = static_cast<ListImp *>(_impBase);
 
     int size = imp->size;
 
     int inlineSize = min(size, inlineValuesSize);
-    for (int i = 1; i < inlineSize; ++i)
-        copy.append(imp->values[i]);
+    for (int i = startIndex; i < inlineSize; ++i)
+        result.append(imp->values[i]);
 
     JSValue** overflow = imp->overflow;
     int overflowSize = size - inlineSize;
     for (int i = 0; i < overflowSize; ++i)
-        copy.append(overflow[i]);
-
-    return copy;
+        result.append(overflow[i]);
 }
 
 const List& List::empty()
 {
     static List* staticEmptyList = new List;
     return *staticEmptyList;
-}
-
-List &List::operator=(const List &b)
-{
-    ListImpBase *bImpBase = b._impBase;
-    ++bImpBase->refCount;
-    ++bImpBase->valueRefCount;
-    deref();
-    _impBase = bImpBase;
-    return *this;
 }
 
 } // namespace KJS

@@ -1,6 +1,25 @@
 2007-11-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
+        
+        In preparation for making List a simple stack-allocated Vector:
+
+        Removed all instances of List copying and/or assignment, and made List 
+        inherit from Noncopyable.
+        
+        Functions that used to return a List by copy now take List& out 
+        parameters.
+        
+        Layout tests and JS tests pass.
+
+        * kjs/list.cpp:
+        (KJS::List::slice): Replaced copyTail with a more generic slice 
+        alternative. (JavaScriptCore only calls slice(1), but WebCore calls 
+        slice(2)).
+
+2007-11-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
 
         Fixed http://bugs.webkit.org/show_bug.cgi?id=15785
         REGRESSION(r27344): Crash on load at finance.yahoo.com

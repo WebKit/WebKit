@@ -425,7 +425,7 @@ namespace KJS {
       : expr(e) { l->next = this; }
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-    List evaluateList(ExecState*) KJS_FAST_CALL;
+    void evaluateList(ExecState*, List&) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     PassRefPtr<ArgumentListNode> releaseNext() KJS_FAST_CALL { return next.release(); }
     virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
@@ -439,14 +439,14 @@ namespace KJS {
   public:
     ArgumentsNode() KJS_FAST_CALL { }
     ArgumentsNode(ArgumentListNode* l) KJS_FAST_CALL
-      : list(l) { }
+      : listNode(l) { }
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-    List evaluateList(ExecState *exec) KJS_FAST_CALL { return list ? list->evaluateList(exec) : List(); }
+    void evaluateList(ExecState* exec, List& list) KJS_FAST_CALL { if (listNode) listNode->evaluateList(exec, list); }
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
-    RefPtr<ArgumentListNode> list;
+    RefPtr<ArgumentListNode> listNode;
   };
 
   class NewExprNode : public Node {

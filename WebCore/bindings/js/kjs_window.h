@@ -196,15 +196,14 @@ namespace KJS {
    */
     class ScheduledAction {
     public:
-        ScheduledAction(JSValue *func, const List& args)
-            : m_func(func), m_args(args) { }
+        ScheduledAction(JSValue* func, const List& args);
         ScheduledAction(const WebCore::String& code)
             : m_code(code) { }
         void execute(Window *);
 
     private:
         ProtectedPtr<JSValue> m_func;
-        List m_args;
+        Vector<ProtectedPtr<JSValue> > m_args;
         WebCore::String m_code;
     };
 

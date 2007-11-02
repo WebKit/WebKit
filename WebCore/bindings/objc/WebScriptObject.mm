@@ -271,16 +271,14 @@ static void _didExecute(WebScriptObject *obj)
     return NO;
 }
 
-static List listFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObject)
+static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObject, List& aList)
 {
     int i, numObjects = array ? [array count] : 0;
-    List aList;
     
     for (i = 0; i < numObjects; i++) {
         id anObject = [array objectAtIndex:i];
         aList.append(convertObjcValueToValue(exec, &anObject, ObjcObjectType, rootObject));
     }
-    return aList;
 }
 
 - (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)args
@@ -305,7 +303,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array, RootObject* rootObj
     if (!funcImp->implementsCall())
         return 0;
 
-    List argList = listFromNSArray(exec, args, [self _rootObject]);
+    List argList;
+    getListFromNSArray(exec, args, [self _rootObject], argList);
 
     if (![self _isSafeScript])
         return nil;

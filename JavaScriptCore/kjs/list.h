@@ -41,20 +41,11 @@ namespace KJS {
      * List is a native ECMAScript type. List values are only used for
      * intermediate results of expression evaluation and cannot be stored
      * as properties of objects.
-     *
-     * The list is explicitly shared. Note that while copyTail() returns a
-     * copy of the list the referenced objects are still shared.
      */
-    class List {
+    class List : Noncopyable {
     public:
         List();
         ~List() { deref(); }
-
-        List(const List &b) : _impBase(b._impBase) {
-            ++_impBase->refCount; 
-            ++_impBase->valueRefCount; 
-        }
-        List &operator=(const List &);
 
         /**
          * Append an object to the end of the list.
@@ -70,20 +61,9 @@ namespace KJS {
         void reset() { deref(); ++(_impBase = empty()._impBase)->refCount; }
 
         /**
-         * Make a copy of the list
+         * Make a copy of the list, starting from startIndex.
          */
-        List copy() const;
-
-        /**
-         * Copy all elements from the second list here
-         */
-        void copyFrom(const List& other);
-
-        /**
-         * Make a copy of the list, omitting the first element.
-         */
-        List copyTail() const;
-    
+        void slice(int startIndex, List& result) const;
         /**
          * @return true if the list is empty. false otherwise.
          */

@@ -176,7 +176,8 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     // Call the function object.
     JSObject *funcImp = static_cast<JSObject*>(func);
     JSObject *thisObj = const_cast<JSObject*>(_imp);
-    List argList = listFromJArray(args);
+    List argList;
+    getListFromJArray(args, argList);
     rootObject->interpreter()->startTimeoutCheck();
     JSValue *result = funcImp->call(exec, thisObj, argList);
     rootObject->interpreter()->stopTimeoutCheck();
@@ -473,16 +474,15 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     return newImp;
 }
 
-List JavaJSObject::listFromJArray(jobjectArray jArray) const
+void JavaJSObject::getListFromJArray(jobjectArray jArray, List& list) const
 {
     JNIEnv *env = getJNIEnv();
     int i, numObjects = jArray ? env->GetArrayLength (jArray) : 0;
-    List aList;
     
     for (i = 0; i < numObjects; i++) {
         jobject anObject = env->GetObjectArrayElement ((jobjectArray)jArray, i);
         if (anObject) {
-            aList.append (convertJObjectToValue(anObject));
+            list.append(convertJObjectToValue(anObject));
             env->DeleteLocalRef (anObject);
         }
         else {
@@ -490,7 +490,6 @@ List JavaJSObject::listFromJArray(jobjectArray jArray) const
             env->ExceptionClear();
         }
     }
-    return aList;
 }
 
 extern "C" {

@@ -1388,12 +1388,11 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     else if (v->isObject() && static_cast<JSObject *>(v)->implementsCall()) {
       JSValue *func = args[0];
       int i = args[1]->toInt32(exec);
+      
+      List argsTail;
+      args.slice(2, argsTail);
 
-      // All arguments after the second should go to the function
-      // FIXME: could be more efficient
-      List funcArgs = args.copyTail().copyTail();
-
-      int r = (const_cast<Window*>(window))->installTimeout(func, funcArgs, i, true /*single shot*/);
+      int r = (const_cast<Window*>(window))->installTimeout(func, argsTail, i, true /*single shot*/);
       return jsNumber(r);
     }
     else
@@ -1410,11 +1409,10 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       JSValue *func = args[0];
       int i = args[1]->toInt32(exec);
 
-      // All arguments after the second should go to the function
-      // FIXME: could be more efficient
-      List funcArgs = args.copyTail().copyTail();
+      List argsTail;
+      args.slice(2, argsTail);
 
-      int r = (const_cast<Window*>(window))->installTimeout(func, funcArgs, i, false);
+      int r = (const_cast<Window*>(window))->installTimeout(func, argsTail, i, false);
       return jsNumber(r);
     }
     else
@@ -1490,8 +1488,15 @@ void ScheduledAction::execute(Window* window)
         if (func->isObject() && static_cast<JSObject*>(func)->implementsCall()) {
             ExecState* exec = interpreter->globalExec();
             ASSERT(window == interpreter->globalObject());
+            
+            List args;
+            size_t size = m_args.size();
+            for (size_t i = 0; i < size; ++i) {
+                args.append(m_args[i]);
+            }
+
             interpreter->startTimeoutCheck();
-            static_cast<JSObject*>(func)->call(exec, window, m_args);
+            static_cast<JSObject*>(func)->call(exec, window, args);
             interpreter->stopTimeoutCheck();
             if (exec->hadException()) {
                 JSObject* exception = exec->exception()->toObject(exec);
@@ -1549,6 +1554,15 @@ int Window::installTimeout(ScheduledAction* a, int t, bool singleShot)
     else
         timer->startRepeating(interval);
     return timeoutId;
+}
+
+ScheduledAction::ScheduledAction(JSValue* func, const List& args)
+    : m_func(func)
+{
+    ListIterator it = args.begin();
+    ListIterator end = args.end();
+    while (it != end)
+        m_args.append(*it);
 }
 
 int Window::installTimeout(const UString& handler, int t, bool singleShot)

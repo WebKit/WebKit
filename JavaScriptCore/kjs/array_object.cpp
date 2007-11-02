@@ -135,11 +135,13 @@ JSValue* ArrayProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, cons
         if (id == ToLocaleString) {
             JSObject* o = element->toObject(exec);
             JSValue* conversionFunction = o->get(exec, exec->propertyNames().toLocaleString);
-            if (conversionFunction->isObject() && static_cast<JSObject*>(conversionFunction)->implementsCall())
-                str += static_cast<JSObject*>(conversionFunction)->call(exec, o, List())->toString(exec);
-            else
+            if (conversionFunction->isObject() && static_cast<JSObject*>(conversionFunction)->implementsCall()) {
+                List args;
+                str += static_cast<JSObject*>(conversionFunction)->call(exec, o, args)->toString(exec);
+            } else {
                 // try toString() fallback
                 fallback = true;
+            }
         }
 
         if (id == ToString || id == Join || fallback)

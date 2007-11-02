@@ -1,3 +1,28 @@
+2007-11-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        In preparation for making List a simple stack-allocated Vector:
+
+        Removed all instances of List copying, assignment, and/or storage.
+        
+        Layout tests and JS tests pass.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction): Stores a Vector of protected 
+        JSValue*'s instead of a List now. Converts to List on the fly when 
+        calling the timer function. This is slightly less efficient, but the 
+        common case is 0-2 arguments, so it's no biggie.
+
+        (HTML iBench shows no regression. PLT does not use JS timers.)
+        
+        (KJS::ScheduledAction::execute): Uses the more efficient and non-copying
+        List::slice now.
+        (KJS::ScheduledAction::ScheduledAction): ditto
+
+        * bindings/objc/WebScriptObject.mm:
+        (getListFromNSArray): Takes a List out parameter now, to avoid copying.
+
 2007-11-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.

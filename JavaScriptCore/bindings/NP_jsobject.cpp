@@ -39,12 +39,10 @@
 using namespace KJS;
 using namespace KJS::Bindings;
 
-static List listFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject)
+static void getListFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject, List& aList)
 {
-    List aList; 
     for (unsigned i = 0; i < argCount; i++)
         aList.append(convertNPVariantToValue(exec, &args[i], rootObject));
-    return aList;
 }
 
 static NPObject* jsAllocate(NPP, NPClass*)
@@ -126,7 +124,8 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         if (!funcImp->implementsCall())
             return false;
         
-        List argList = listFromVariantArgs(exec, args, argCount, rootObject);
+        List argList;
+        getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         rootObject->interpreter()->startTimeoutCheck();
         JSValue *resultV = funcImp->call (exec, funcImp, argList);
         rootObject->interpreter()->stopTimeoutCheck();
@@ -181,7 +180,8 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         // Call the function object.
         JSObject *funcImp = static_cast<JSObject*>(func);
         JSObject *thisObj = const_cast<JSObject*>(obj->imp);
-        List argList = listFromVariantArgs(exec, args, argCount, rootObject);
+        List argList;
+        getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         rootObject->interpreter()->startTimeoutCheck();
         JSValue *resultV = funcImp->call (exec, thisObj, argList);
         rootObject->interpreter()->stopTimeoutCheck();

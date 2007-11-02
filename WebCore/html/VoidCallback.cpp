@@ -71,7 +71,8 @@ void VoidCallback::execute(Frame* frame)
     ExecState* exec = interpreter->globalExec();
     ASSERT(window == interpreter->globalObject());
     interpreter->startTimeoutCheck();
-    static_cast<JSObject*>(m_func)->call(exec, window, List());
+    List args;
+    static_cast<JSObject*>(m_func)->call(exec, window, args);
     interpreter->stopTimeoutCheck();
     if (exec->hadException()) {
         JSObject* exception = exec->exception()->toObject(exec);
