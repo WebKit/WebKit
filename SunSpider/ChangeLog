@@ -1,3 +1,18 @@
+2007-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - Add compare mode and a description of the benchmark to the hosted version.
+
+        * hosted/sunspider-results.html: Add compare mode - you can just paste in another results URL.
+        * hosted/sunspider.html: Added intro text.
+        * make-hosted: Copy new file.
+        * resources/sunspider-compare-results.js: Made more reusable by putting the implementation in
+        a function.
+        * resources/sunspider-standalone-compare.js: Added. Calls the function in the way standalone mode
+        expects.
+        * sunspider-compare-results: Use sunspider-standalone-compare.js.
+
 2007-11-02  Darin Adler  <darin@apple.com>
 
         * sunspider: Changed "--base" to "--set-baseline".

@@ -72,5 +72,6 @@ print PREFIX $prefix;
 close PREFIX;
 
 system("cp resources/sunspider-analyze-results.js hosted");
+system("cp resources/sunspider-compare-results.js hosted");
 
 print "hosted/sunspider.html is ready to use.\n";

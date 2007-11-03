@@ -31,10 +31,15 @@
 <body>
 <h2>SunSpider JavaScript Benchmark Results</h2>
 
+<p><a href="sunspider-driver.html">Run Again</a></p>
+
+<form onsubmit="event.preventDefault(); compare(other.value);">Compare (paste another result URL here and press enter):<br>
+<input style="width: 90%;" name="other" type="text"></input>
+</form>
+
 <pre id="console">
 </pre>
 
-<a href="sunspider-driver.html">Run Again</a>
 
 <script>
 var output = eval(decodeURI(location.search.substring(1)));
@@ -47,6 +52,19 @@ function print(str) {
 
 <script src="sunspider-test-prefix.js"></script>
 <script src="sunspider-analyze-results.js"></script>
+<script src="sunspider-compare-results.js"></script>
+
+<script>
+var output2 = output;
+
+function compare(other)
+{
+    document.getElementById("console").innerHTML = "";
+    var output1 = eval(decodeURI(other.split("?")[1]));
+    sunspiderCompareResults(output1, output2);
+}
+</script>
+
 
 </body>
 </html>

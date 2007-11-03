@@ -139,4 +139,4 @@ $output .= "var output2 = " . readResultsFile($file2) . ";\n";
 
 dumpToFile($output, "tmp/sunspider-comparison-data.js");
 
-system($jsShellPath, "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-comparison-data.js", "-f", "resources/sunspider-compare-results.js");
+system($jsShellPath, "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-comparison-data.js", "-f", "resources/sunspider-compare-results.js", "-f", "resources/sunspider-standalone-compare.js");
