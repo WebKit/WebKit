@@ -25,6 +25,8 @@
 
 module html {
     interface [GenerateConstructor, Conditional=VIDEO] HTMLVideoElement : HTMLMediaElement {
+        attribute long width;
+        attribute long height;
         readonly attribute unsigned long videoWidth;
         readonly attribute unsigned long videoHeight;
     };

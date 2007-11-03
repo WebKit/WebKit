@@ -39,6 +39,13 @@ public:
     
     virtual int tagPriority() const { return 5; }
     
+    void parseMappedAttribute(MappedAttribute* attr);
+    
+    int width() const;
+    void setWidth(int);
+    int height() const;
+    void setHeight(int);
+    
     int videoWidth() const;
     int videoHeight() const;
     

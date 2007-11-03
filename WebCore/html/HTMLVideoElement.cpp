@@ -28,6 +28,8 @@
 #if ENABLE(VIDEO)
 #include "HTMLVideoElement.h"
 
+#include "CSSHelper.h"
+#include "CSSPropertyNames.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -37,6 +39,17 @@ using namespace HTMLNames;
 HTMLVideoElement::HTMLVideoElement(Document* doc)
     : HTMLMediaElement(HTMLNames::videoTag, doc)
 {
+}
+    
+void HTMLVideoElement::parseMappedAttribute(MappedAttribute* attr)
+{
+    const QualifiedName& attrName = attr->name();
+    if (attrName == widthAttr)
+        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+    else if (attrName == heightAttr)
+        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+    else
+        HTMLMediaElement::parseMappedAttribute(attr);
 }
 
 int HTMLVideoElement::videoWidth() const
@@ -53,5 +66,29 @@ int HTMLVideoElement::videoHeight() const
     return m_movie->naturalSize().height();
 }
 
+int HTMLVideoElement::width() const
+{
+    bool ok;
+    int w = getAttribute(widthAttr).toInt(&ok);
+    return ok ? w : 0;
+}
+    
+void HTMLVideoElement::setWidth(int value)
+{
+    setAttribute(widthAttr, String::number(value));
+}
+    
+int HTMLVideoElement::height() const
+{
+    bool ok;
+    int h = getAttribute(heightAttr).toInt(&ok);
+    return ok ? h : 0;
+}
+    
+void HTMLVideoElement::setHeight(int value)
+{
+    setAttribute(heightAttr, String::number(value));
+}
+    
 }
 #endif

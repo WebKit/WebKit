@@ -1,3 +1,20 @@
+2007-11-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+        
+        Add video width/height DOM and content attributes from latest HTML5 draft.
+
+        Test: media/video-width-height.html
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseMappedAttribute):
+        (WebCore::HTMLVideoElement::width):
+        (WebCore::HTMLVideoElement::setWidth):
+        (WebCore::HTMLVideoElement::height):
+        (WebCore::HTMLVideoElement::setHeight):
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.idl:
+
 2007-11-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

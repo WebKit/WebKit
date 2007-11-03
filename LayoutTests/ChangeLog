@@ -1,3 +1,12 @@
+2007-11-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+        
+        Test for video width/height DOM and content attributes. 
+
+        * media/video-width-height-expected.txt: Added.
+        * media/video-width-height.html: Added.
+
 2007-11-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
