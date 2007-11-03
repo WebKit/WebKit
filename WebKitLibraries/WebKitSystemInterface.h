@@ -9,6 +9,7 @@
 #import <Carbon/Carbon.h>
 
 @class QTMovie;
+@class QTMovieView;
 
 #ifdef __cplusplus
 extern "C" {
@@ -158,6 +159,7 @@ BOOL WKAppVersionCheckLessThan(NSString *, int, double);
 
 int WKQTMovieDataRate(QTMovie* movie);
 float WKQTMovieMaxTimeLoaded(QTMovie* movie);
+void WKQTMovieViewSetDrawSynchronously(QTMovieView* view, BOOL sync);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 
