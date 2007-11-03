@@ -32,6 +32,7 @@
 #include "function_object.h"
 #include "lexer.h"
 #include "operations.h"
+#include "regexp_object.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashCountedSet.h>
