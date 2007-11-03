@@ -949,6 +949,7 @@ gtk-port {
         platform/gtk/ThreadingGtk.cpp \
         platform/gtk/WheelEventGtk.cpp \
         platform/gtk/WidgetGtk.cpp \
+        platform/gtk/gtk2drawing.c \
         platform/graphics/gtk/ColorGtk.cpp \
         platform/graphics/gtk/IconGtk.cpp \
         platform/graphics/gtk/ImageGtk.cpp \

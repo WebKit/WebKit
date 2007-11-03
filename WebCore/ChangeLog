@@ -1,5 +1,129 @@
 2007-11-03  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Adam Roben.
+
+        RenderThemeGtk implementation based on Mozilla's GTK+ style code
+
+        There is still work needed to complete this feature.
+
+        * WebCore.pro:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::theme):
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::supportsFocus):
+        (WebCore::RenderThemeGtk::supportsFocusRing):
+        (WebCore::RenderThemeGtk::controlSupportsTints):
+        (WebCore::RenderThemeGtk::baselinePosition):
+        (WebCore::adjustMozStyle):
+        (WebCore::setMozState):
+        (WebCore::paintMozWidget):
+        (WebCore::setButtonPadding):
+        (WebCore::setToggleSize):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::paintCheckbox):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::RenderThemeGtk::paintRadio):
+        (WebCore::RenderThemeGtk::adjustButtonStyle):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::RenderThemeGtk::adjustMenuListStyle):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::adjustSearchFieldStyle):
+        (WebCore::RenderThemeGtk::paintSearchField):
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::caretBlinkFrequency):
+        (WebCore::RenderThemeGtk::systemFont):
+        (WebCore::gtkStyleSetCallback):
+        (WebCore::RenderThemeGtk::gtkContainer):
+        (WebCore::RenderThemeGtk::gtkEntry):
+        (WebCore::RenderThemeGtk::gtkTreeView):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/gtk2drawing.c: Added.
+        (moz_gtk_enable_style_props):
+        (ensure_window_widget):
+        (setup_widget_prototype):
+        (ensure_button_widget):
+        (ensure_checkbox_widget):
+        (ensure_radiobutton_widget):
+        (ensure_scrollbar_widget):
+        (ensure_spin_widget):
+        (ensure_scale_widget):
+        (ensure_entry_widget):
+        (ensure_option_menu_widget):
+        (ensure_arrow_widget):
+        (ensure_handlebox_widget):
+        (ensure_toolbar_widget):
+        (ensure_tooltip_widget):
+        (ensure_tab_widget):
+        (ensure_progress_widget):
+        (ensure_frame_widget):
+        (ensure_menu_bar_widget):
+        (ensure_menu_bar_item_widget):
+        (ensure_menu_popup_widget):
+        (ensure_menu_item_widget):
+        (ensure_check_menu_item_widget):
+        (ConvertGtkState):
+        (TSOffsetStyleGCArray):
+        (TSOffsetStyleGCs):
+        (moz_gtk_button_paint):
+        (moz_gtk_init):
+        (moz_gtk_checkbox_get_metrics):
+        (moz_gtk_radio_get_metrics):
+        (moz_gtk_checkbox_get_focus):
+        (moz_gtk_radio_get_focus):
+        (moz_gtk_button_get_focus):
+        (moz_gtk_option_menu_get_metrics):
+        (moz_gtk_toggle_paint):
+        (calculate_arrow_dimensions):
+        (moz_gtk_scrollbar_button_paint):
+        (moz_gtk_scrollbar_trough_paint):
+        (moz_gtk_scrollbar_thumb_paint):
+        (moz_gtk_spin_paint):
+        (moz_gtk_scale_paint):
+        (moz_gtk_scale_thumb_paint):
+        (moz_gtk_gripper_paint):
+        (moz_gtk_entry_paint):
+        (moz_gtk_option_menu_paint):
+        (moz_gtk_dropdown_arrow_paint):
+        (moz_gtk_container_paint):
+        (moz_gtk_toggle_label_paint):
+        (moz_gtk_toolbar_paint):
+        (moz_gtk_tooltip_paint):
+        (moz_gtk_frame_paint):
+        (moz_gtk_progressbar_paint):
+        (moz_gtk_progress_chunk_paint):
+        (moz_gtk_tab_paint):
+        (moz_gtk_tabpanels_paint):
+        (moz_gtk_menu_bar_paint):
+        (moz_gtk_menu_popup_paint):
+        (moz_gtk_menu_item_paint):
+        (moz_gtk_check_menu_item_paint):
+        (moz_gtk_window_paint):
+        (moz_gtk_get_widget_border):
+        (moz_gtk_get_dropdown_arrow_size):
+        (moz_gtk_get_scalethumb_metrics):
+        (moz_gtk_get_scrollbar_metrics):
+        (moz_gtk_widget_paint):
+        (moz_gtk_get_scrollbar_widget):
+        (moz_gtk_shutdown):
+        * platform/gtk/gtkdrawing.h: Added.
+
+2007-11-03  Alp Toker  <alp@atoker.com>
+
         Reviewed by Mark Rowe.
 
         Do not allow scrollbars to handle wheel events

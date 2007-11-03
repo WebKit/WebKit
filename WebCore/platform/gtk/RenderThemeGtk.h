@@ -4,6 +4,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -32,13 +33,6 @@
 #include <gtk/gtk.h>
 
 namespace WebCore {
-
-struct ThemeData {
-    ThemeData() : m_part(0), m_state(0) {}
-
-    unsigned m_part;
-    unsigned m_state;
-};
 
 class RenderThemeGtk : public RenderTheme {
 public:
@@ -73,7 +67,6 @@ public:
     virtual Color inactiveListBoxSelectionBackgroundColor() const;
     virtual Color inactiveListBoxSelectionForegroundColor() const;
 
-    virtual bool caretShouldBlink() const;
     virtual double caretBlinkFrequency() const;
 
     // System fonts.
@@ -92,49 +85,43 @@ protected:
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
     virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+    virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldCancelButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+
 private:
-    void addIntrinsicMargins(RenderStyle*) const;
-    void close();
-
-    GtkStateType determineState(RenderObject*);
-    GtkShadowType determineShadow(RenderObject*);
-    bool supportsFocus(EAppearance) const;
-
-    ThemeData getThemeData(RenderObject*);
-
-    static void gtkStyleSet(GtkWidget*, GtkStyle*, RenderTheme*);
-
     /*
      * hold the state
      */
-    GtkWidget* gtkButton() const;
-    GtkWidget* gtkCheckbox() const;
-    GtkWidget* gtkRadioButton() const;
     GtkWidget* gtkEntry() const;
-    GtkWidget* gtkEditable() const;
     GtkWidget* gtkTreeView() const;
 
     /*
      * unmapped GdkWindow having a container. This is holding all
      * our fake widgets
      */
-    GtkWidget* gtkWindowContainer() const;
+    GtkContainer* gtkContainer() const;
 
 private:
-    mutable GtkWidget* m_gtkButton;
-    mutable GtkWidget* m_gtkCheckbox;
-    mutable GtkWidget* m_gtkRadioButton;
+    mutable GtkWidget* m_gtkWindow;
+    mutable GtkContainer* m_gtkContainer;
     mutable GtkWidget* m_gtkEntry;
-    mutable GtkWidget* m_gtkEditable;
     mutable GtkWidget* m_gtkTreeView;
-
-    mutable GtkWidget* m_unmappedWindow;
-    mutable GtkWidget* m_container;
 };
 
 }
