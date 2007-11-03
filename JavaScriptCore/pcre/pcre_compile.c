@@ -580,10 +580,13 @@ else
         c = 'u';
         break;
         }
-      int cc;                               /* Some compilers don't like ++ */
-      cc = *(++pt);                        /* in initializers */
-      if (cc >= 'a') cc -= 32;              /* Convert to upper case */
-      c = c * 16 + cc - ((cc < 'A')? '0' : ('A' - 10));
+      else
+        {
+        int cc;                              /* Some compilers don't like ++ */
+        cc = *(++pt);                        /* in initializers */
+        if (cc >= 'a') cc -= 32;             /* Convert to upper case */
+        c = c * 16 + cc - ((cc < 'A')? '0' : ('A' - 10));
+        }
       }
     ptr = pt;
     break;
