@@ -170,10 +170,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				141BF435096A455900E0753C /* WebKit.framework in Frameworks */,
+				141BF439096A455900E0753C /* Carbon.framework in Frameworks */,
 				141BF436096A455900E0753C /* Cocoa.framework in Frameworks */,
 				141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */,
-				141BF439096A455900E0753C /* Carbon.framework in Frameworks */,
+				141BF435096A455900E0753C /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,10 +181,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */,
+				AE8259F308D22463000507AB /* Carbon.framework in Frameworks */,
 				A84F608A08B136DA00E9745F /* Cocoa.framework in Frameworks */,
 				A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */,
-				AE8259F308D22463000507AB /* Carbon.framework in Frameworks */,
+				9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,9 +192,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */,
-				A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */,
 				AE8259F408D22463000507AB /* Carbon.framework in Frameworks */,
+				A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */,
+				B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,25 +328,25 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */,
-				14770FE20A22ADF7009342EE /* GCController.h in Headers */,
-				BC9D90250C97472E0099A4A3 /* WorkQueue.h in Headers */,
-				BC9D90260C97472E0099A4A3 /* WorkQueueItem.h in Headers */,
-				BC0131DB0C9772010087317D /* LayoutTestController.h in Headers */,
-				BCA18B310C9B01B400114369 /* ObjCController.h in Headers */,
 				BCA18B380C9B021900114369 /* AppleScriptController.h in Headers */,
-				BCA18B3C0C9B024900114369 /* TextInputController.h in Headers */,
-				BCA18B610C9B08C200114369 /* EditingDelegate.h in Headers */,
-				BCA18B630C9B08C200114369 /* FrameLoadDelegate.h in Headers */,
-				BCA18B650C9B08C200114369 /* PolicyDelegate.h in Headers */,
-				BCA18B670C9B08C200114369 /* ResourceLoadDelegate.h in Headers */,
-				BCA18B690C9B08C200114369 /* UIDelegate.h in Headers */,
-				BCA18B6F0C9B08DB00114369 /* EventSendingController.h in Headers */,
-				BCA18B710C9B08DB00114369 /* NavigationController.h in Headers */,
 				BCA18B7A0C9B08F100114369 /* DumpRenderTreeDraggingInfo.h in Headers */,
+				BCA18C0B0C9B59EF00114369 /* DumpRenderTreeMac.h in Headers */,
+				9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */,
+				BCA18B610C9B08C200114369 /* EditingDelegate.h in Headers */,
+				BCA18B6F0C9B08DB00114369 /* EventSendingController.h in Headers */,
+				BCA18B630C9B08C200114369 /* FrameLoadDelegate.h in Headers */,
+				14770FE20A22ADF7009342EE /* GCController.h in Headers */,
+				BC0131DB0C9772010087317D /* LayoutTestController.h in Headers */,
+				BCA18B710C9B08DB00114369 /* NavigationController.h in Headers */,
+				BCA18B310C9B01B400114369 /* ObjCController.h in Headers */,
 				BCA18B7D0C9B08F100114369 /* ObjCPlugin.h in Headers */,
 				BCA18B7F0C9B08F100114369 /* ObjCPluginFunction.h in Headers */,
-				BCA18C0B0C9B59EF00114369 /* DumpRenderTreeMac.h in Headers */,
+				BCA18B650C9B08C200114369 /* PolicyDelegate.h in Headers */,
+				BCA18B670C9B08C200114369 /* ResourceLoadDelegate.h in Headers */,
+				BCA18B3C0C9B024900114369 /* TextInputController.h in Headers */,
+				BCA18B690C9B08C200114369 /* UIDelegate.h in Headers */,
+				BC9D90250C97472E0099A4A3 /* WorkQueue.h in Headers */,
+				BC9D90260C97472E0099A4A3 /* WorkQueueItem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -451,9 +451,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				141BF44A096A45C800E0753C /* main.c in Sources */,
 				141BF44B096A45C800E0753C /* PluginObject.c in Sources */,
 				1A8F02E70BB9B4EC008CFA34 /* TestObject.c in Sources */,
+				141BF44A096A45C800E0753C /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,26 +461,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
-				BC0131DA0C9772010087317D /* LayoutTestController.cpp in Sources */,
+				BCA18B390C9B021900114369 /* AppleScriptController.m in Sources */,
+				BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */,
+				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
+				BCA18B620C9B08C200114369 /* EditingDelegate.mm in Sources */,
+				BCA18B700C9B08DB00114369 /* EventSendingController.mm in Sources */,
+				BCA18B640C9B08C200114369 /* FrameLoadDelegate.mm in Sources */,
 				BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */,
 				BCA18B230C9B014B00114369 /* GCControllerMac.mm in Sources */,
+				BC0131DA0C9772010087317D /* LayoutTestController.cpp in Sources */,
 				BCA18B240C9B014B00114369 /* LayoutTestControllerMac.mm in Sources */,
-				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
-				BCA18B320C9B01B400114369 /* ObjCController.m in Sources */,
-				BCA18B390C9B021900114369 /* AppleScriptController.m in Sources */,
-				BCA18B490C9B02C400114369 /* TextInputController.m in Sources */,
-				BCA18B620C9B08C200114369 /* EditingDelegate.mm in Sources */,
-				BCA18B640C9B08C200114369 /* FrameLoadDelegate.mm in Sources */,
-				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
-				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
-				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
-				BCA18B700C9B08DB00114369 /* EventSendingController.mm in Sources */,
 				BCA18B720C9B08DB00114369 /* NavigationController.m in Sources */,
-				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
+				BCA18B320C9B01B400114369 /* ObjCController.m in Sources */,
 				BCA18B7E0C9B08F100114369 /* ObjCPlugin.m in Sources */,
 				BCA18B800C9B08F100114369 /* ObjCPluginFunction.m in Sources */,
-				BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */,
+				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
+				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
+				BCA18B490C9B02C400114369 /* TextInputController.m in Sources */,
+				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
+				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
+				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

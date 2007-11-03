@@ -262,12 +262,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD66F3BB08F73ED700C75FD7 /* JavaScriptGlue.h in Headers */,
 				DD66F3BC08F73ED700C75FD7 /* JSBase.h in Headers */,
-				DD66F3BD08F73ED700C75FD7 /* JSUtils.h in Headers */,
 				DD66F3BE08F73ED700C75FD7 /* JSObject.h in Headers */,
 				DD66F3BF08F73ED700C75FD7 /* JSRun.h in Headers */,
+				DD66F3BD08F73ED700C75FD7 /* JSUtils.h in Headers */,
 				DD66F3C008F73ED700C75FD7 /* JSValueWrapper.h in Headers */,
+				DD66F3BB08F73ED700C75FD7 /* JavaScriptGlue.h in Headers */,
 				DD66F3C108F73ED700C75FD7 /* UserObjectImp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -394,12 +394,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD66F3C608F73ED700C75FD7 /* JavaScriptGlue.cpp in Sources */,
-				DD66F3C708F73ED700C75FD7 /* JSRun.cpp in Sources */,
-				DD66F3C808F73ED700C75FD7 /* JSUtils.cpp in Sources */,
 				DD66F3C908F73ED700C75FD7 /* JSBase.cpp in Sources */,
 				DD66F3CA08F73ED700C75FD7 /* JSObject.cpp in Sources */,
+				DD66F3C708F73ED700C75FD7 /* JSRun.cpp in Sources */,
+				DD66F3C808F73ED700C75FD7 /* JSUtils.cpp in Sources */,
 				DD66F3CB08F73ED700C75FD7 /* JSValueWrapper.cpp in Sources */,
+				DD66F3C608F73ED700C75FD7 /* JavaScriptGlue.cpp in Sources */,
 				DD66F3CC08F73ED700C75FD7 /* UserObjectImp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

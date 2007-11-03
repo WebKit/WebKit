@@ -1,8 +1,19 @@
 2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
 
-        Script to sort "files(...);" sections in Xcode project.pbxproj files.
+        Sort files(...); sections of Xcode project files.
 
         Rubber-stamped by Darin.
+
+        * DrawTest/DrawTest.xcodeproj/project.pbxproj:
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+
+2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Script to sort "files(...);" sections in Xcode project.pbxproj files.
+
+        Reviewed by Darin.
 
         * Scripts/sort-Xcode-project-file: Added.
 

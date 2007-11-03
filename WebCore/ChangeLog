@@ -1,3 +1,12 @@
+2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Sort files(...); sections of Xcode project files.
+
+        Rubber-stamped by Darin.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * manual-tests/NPN_Invoke/NPN_Invoke.xcodeproj/project.pbxproj:
+
 2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         Coding style fixes for platform/wx files.

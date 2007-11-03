@@ -179,10 +179,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
-				1C27ABC60A413B720016ECF4 /* WebKit.framework in Frameworks */,
 				63D54CBD0AE72C990064C440 /* Carbon.framework in Frameworks */,
+				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				D23E47C60C4460C600B7CD07 /* JavaScriptCore.framework in Frameworks */,
+				1C27ABC60A413B720016ECF4 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,8 +415,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D2C827F0A816BA700C193FD /* Drosera.icns in Resources */,
 				1CD8D5A60A49102900E5677B /* Drosera.app in Resources */,
+				5D2C827F0A816BA700C193FD /* Drosera.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,58 +424,58 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */,
 				8D15AC2E0486D014006FF6A4 /* Debugger.nib in Resources */,
-				1C27AC200A413D2D0016ECF4 /* debugger.html in Resources */,
-				1C27B1260A421D870016ECF4 /* debugger.js in Resources */,
+				1C3487980A81208400101C5C /* Drosera.icns in Resources */,
+				8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */,
+				1C2632D70A4AF0B800EA7CD8 /* SourceArrow.png in Resources */,
+				1C2632D80A4AF0B800EA7CD8 /* SourceArrowBlank.png in Resources */,
+				15CE85580ADBEA620078A734 /* SourceArrowOpen.png in Resources */,
+				1C2632DA0A4AF0D200EA7CD8 /* background_stripe.png in Resources */,
 				1CC058EE0A44A210006FE533 /* breakPoint.tif in Resources */,
 				1CC058EF0A44A210006FE533 /* breakPointDisabled.tif in Resources */,
+				63D54F780AE8280F0064C440 /* breakpointEditor.html in Resources */,
+				63D54BD70AE600560064C440 /* breakpointeditor.png in Resources */,
+				63D54D800AE75CF10064C440 /* close.tif in Resources */,
+				63D54D7E0AE75CF10064C440 /* close_active.tif in Resources */,
+				63D54D7F0AE75CF10064C440 /* close_hover.tif in Resources */,
+				1C6F84550A58EE06004FCD89 /* console.css in Resources */,
+				1C6F84560A58EE06004FCD89 /* console.html in Resources */,
+				1C6F86730A59A18B004FCD89 /* console.js in Resources */,
+				1C6F84520A58EDFE004FCD89 /* console.png in Resources */,
+				1CC0591A0A44A210006FE533 /* continue.tif in Resources */,
+				1C4FF7440A44F52C0000D05D /* debugger.css in Resources */,
+				1C27AC200A413D2D0016ECF4 /* debugger.html in Resources */,
+				1C27B1260A421D870016ECF4 /* debugger.js in Resources */,
+				15CE85540ADBEA620078A734 /* fileIcon.jpg in Resources */,
 				1CC059020A44A210006FE533 /* glossyFooterFill.tif in Resources */,
+				1C4FF9210A45F3520000D05D /* glossyHeader.png in Resources */,
+				1CD434B20A4B86F800A007AB /* glossyHeaderPressed.png in Resources */,
+				1C4FF7540A44F6320000D05D /* gutter.png in Resources */,
 				1CC0590E0A44A210006FE533 /* navLeftDisabled.png in Resources */,
 				1CC0590F0A44A210006FE533 /* navLeftNormal.png in Resources */,
 				1CC059100A44A210006FE533 /* navLeftPressed.png in Resources */,
 				1CC059110A44A210006FE533 /* navRightDisabled.png in Resources */,
 				1CC059120A44A210006FE533 /* navRightNormal.png in Resources */,
 				1CC059130A44A210006FE533 /* navRightPressed.png in Resources */,
-				1CC059160A44A210006FE533 /* programCounter.tif in Resources */,
-				1CC059170A44A210006FE533 /* splitterBar.tif in Resources */,
-				1CC059180A44A210006FE533 /* splitterDimple.tif in Resources */,
-				1CC0591A0A44A210006FE533 /* continue.tif in Resources */,
 				1CC0591D0A44A210006FE533 /* pause.tif in Resources */,
-				1CC0591E0A44A210006FE533 /* run.tif in Resources */,
-				1CC0591F0A44A210006FE533 /* step.tif in Resources */,
-				1CC059200A44A210006FE533 /* stepOver.tif in Resources */,
-				1CC059700A44A485006FE533 /* toolbarBackground.png in Resources */,
-				1C4FF7440A44F52C0000D05D /* debugger.css in Resources */,
-				1C4FF7540A44F6320000D05D /* gutter.png in Resources */,
-				1C4FF9210A45F3520000D05D /* glossyHeader.png in Resources */,
 				1C4FF94E0A45F5060000D05D /* popUpArrows.png in Resources */,
+				1CC059160A44A210006FE533 /* programCounter.tif in Resources */,
 				1C4FFE5E0A466F5D0000D05D /* programCounterBreakPoint.tif in Resources */,
 				1C4FFE5F0A466F5D0000D05D /* programCounterBreakPointDisabled.tif in Resources */,
-				1C74F0350A47BF8300FEC632 /* viewer.html in Resources */,
-				1C74F04B0A47BFE800FEC632 /* viewer.css in Resources */,
-				1C2632D30A4AF0A800EA7CD8 /* verticalSplitterBar.tiff in Resources */,
-				1C2632D40A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff in Resources */,
-				1C2632D70A4AF0B800EA7CD8 /* SourceArrow.png in Resources */,
-				1C2632D80A4AF0B800EA7CD8 /* SourceArrowBlank.png in Resources */,
-				1C2632DA0A4AF0D200EA7CD8 /* background_stripe.png in Resources */,
-				1CD434B20A4B86F800A007AB /* glossyHeaderPressed.png in Resources */,
-				1C6F83FF0A58E97D004FCD89 /* stepOut.tif in Resources */,
-				1C6F84520A58EDFE004FCD89 /* console.png in Resources */,
-				1C6F84550A58EE06004FCD89 /* console.css in Resources */,
-				1C6F84560A58EE06004FCD89 /* console.html in Resources */,
-				1C6F86730A59A18B004FCD89 /* console.js in Resources */,
-				1C3487980A81208400101C5C /* Drosera.icns in Resources */,
-				15CE85540ADBEA620078A734 /* fileIcon.jpg in Resources */,
+				1CC0591E0A44A210006FE533 /* run.tif in Resources */,
 				15CE85550ADBEA620078A734 /* siteCollapsed.tif in Resources */,
 				15CE85560ADBEA620078A734 /* siteExpanded.tif in Resources */,
 				15CE85570ADBEA620078A734 /* siteIcon.tif in Resources */,
-				15CE85580ADBEA620078A734 /* SourceArrowOpen.png in Resources */,
-				63D54BD70AE600560064C440 /* breakpointeditor.png in Resources */,
-				63D54D7E0AE75CF10064C440 /* close_active.tif in Resources */,
-				63D54D7F0AE75CF10064C440 /* close_hover.tif in Resources */,
-				63D54D800AE75CF10064C440 /* close.tif in Resources */,
-				63D54F780AE8280F0064C440 /* breakpointEditor.html in Resources */,
+				1CC059170A44A210006FE533 /* splitterBar.tif in Resources */,
+				1CC059180A44A210006FE533 /* splitterDimple.tif in Resources */,
+				1CC0591F0A44A210006FE533 /* step.tif in Resources */,
+				1C6F83FF0A58E97D004FCD89 /* stepOut.tif in Resources */,
+				1CC059200A44A210006FE533 /* stepOver.tif in Resources */,
+				1CC059700A44A485006FE533 /* toolbarBackground.png in Resources */,
+				1C2632D30A4AF0A800EA7CD8 /* verticalSplitterBar.tiff in Resources */,
+				1C2632D40A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff in Resources */,
+				1C74F04B0A47BFE800FEC632 /* viewer.css in Resources */,
+				1C74F0350A47BF8300FEC632 /* viewer.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -494,12 +494,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				1C74F1850A47DEE600FEC632 /* DebuggerApplication.mm in Sources */,
-				D2D794FD0C4BED83004784F7 /* DebuggerDocument.cpp in Sources */,
 				95B2A4500C95EECD00850C41 /* DebuggerClient.mm in Sources */,
+				D2D794FD0C4BED83004784F7 /* DebuggerDocument.cpp in Sources */,
 				95B955250C975C7500AAB83B /* DebuggerDocumentPlatform.mm in Sources */,
 				957876850C9A226A008B6383 /* ServerConnection.mm in Sources */,
+				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
