@@ -95,7 +95,7 @@ static Node* makeNumberNode(double);
   FuncExprNode        *funcExpr;
   ProgramNode         *prog;
   AssignExprNode      *init;
-  Vector<RefPtr<StatementNode> > *srcs;
+  SourceElements      *srcs;
   ArgumentsNode       *args;
   ArgumentList        alist;
   VarDeclNode         *decl;

@@ -2614,22 +2614,22 @@ void VarStatementNode::getDeclarations(DeclarationStacks& stacks)
 
 // ------------------------------ Helper functions for handling Vectors of StatementNode -------------------------------
 
-static inline void statementListPushFIFO(Vector<RefPtr<StatementNode> >& statements, DeclarationStacks::NodeStack& stack)
+static inline void statementListPushFIFO(SourceElements& statements, DeclarationStacks::NodeStack& stack)
 {
-    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.end() - 1; ptr >= statements.begin(); ptr--)
+    for (SourceElements::iterator ptr = statements.end() - 1; ptr >= statements.begin(); --ptr)
         stack.append((*ptr).get());
 }
 
-static inline void statementListGetDeclarations(Vector<RefPtr<StatementNode> >& statements, DeclarationStacks& stacks)
+static inline void statementListGetDeclarations(SourceElements& statements, DeclarationStacks& stacks)
 {
-    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.end() - 1; ptr >= statements.begin(); ptr--)
+    for (SourceElements::iterator ptr = statements.end() - 1; ptr >= statements.begin(); --ptr)
         if ((*ptr)->mayHaveDeclarations())
             stacks.nodeStack.append((*ptr).get());
 }
 
-static inline Node* statementListInitializeDeclarationStacks(Vector<RefPtr<StatementNode> >& statements, DeclarationStacks::NodeStack& stack)
+static inline Node* statementListInitializeDeclarationStacks(SourceElements& statements, DeclarationStacks::NodeStack& stack)
 {
-    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.end() - 1; ptr >= statements.begin(); ptr--)
+    for (SourceElements::iterator ptr = statements.end() - 1; ptr >= statements.begin(); --ptr)
         if ((*ptr)->mayHaveDeclarations())
              stack.append((*ptr).get());
     if (!stack.size())
@@ -2639,19 +2639,19 @@ static inline Node* statementListInitializeDeclarationStacks(Vector<RefPtr<State
     return n;
 }
 
-static inline Node* statementListInitializeVariableAccessStack(Vector<RefPtr<StatementNode> >& statements, DeclarationStacks::NodeStack& stack)
+static inline Node* statementListInitializeVariableAccessStack(SourceElements& statements, DeclarationStacks::NodeStack& stack)
 {
-    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.end() - 1; ptr != statements.begin(); ptr--)
+    for (SourceElements::iterator ptr = statements.end() - 1; ptr != statements.begin(); --ptr)
         stack.append((*ptr).get());
     return statements[0].get();
 }
 
-static inline Completion statementListExecute(Vector<RefPtr<StatementNode> >& statements, ExecState *exec)
+static inline Completion statementListExecute(SourceElements& statements, ExecState* exec)
 {
     JSValue* v = 0;
     Completion c(Normal);
-    const Vector<RefPtr<StatementNode> >::iterator end = statements.end();
-    for (Vector<RefPtr<StatementNode> >::iterator ptr = statements.begin(); ptr != end; ptr++) {
+    const SourceElements::iterator end = statements.end();
+    for (SourceElements::iterator ptr = statements.begin(); ptr != end; ++ptr) {
         c = (*ptr)->execute(exec);
         
         if (JSValue* v2 = c.value())
@@ -2672,7 +2672,7 @@ void BlockNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::Nod
         statementListPushFIFO(*m_children, nodeStack);
 }
 
-BlockNode::BlockNode(Vector<RefPtr<StatementNode> >* children)
+BlockNode::BlockNode(SourceElements* children)
 {
   if (children) {
     m_mayHaveDeclarations = true; 
@@ -3436,7 +3436,7 @@ JSValue *ParameterNode::evaluate(ExecState *)
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-FunctionBodyNode::FunctionBodyNode(Vector<RefPtr<StatementNode> > *children)
+FunctionBodyNode::FunctionBodyNode(SourceElements* children)
     : BlockNode(children)
     , m_sourceURL(Lexer::curr()->sourceURL())
     , m_sourceId(Parser::sid)
@@ -3679,7 +3679,7 @@ JSValue *FuncExprNode::evaluate(ExecState *exec)
   return func;
 }
 
-ProgramNode::ProgramNode(Vector<RefPtr<StatementNode> >* children)
+ProgramNode::ProgramNode(SourceElements* children)
     : FunctionBodyNode(children)
 {
 }

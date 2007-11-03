@@ -1504,15 +1504,17 @@ namespace KJS {
     RefPtr<VarDeclListNode> next;
   };
 
+  typedef Vector<RefPtr<StatementNode> > SourceElements;
+
   class BlockNode : public StatementNode {
   public:
-    BlockNode(Vector<RefPtr<StatementNode> > *children) KJS_FAST_CALL;
+    BlockNode(SourceElements* children) KJS_FAST_CALL;
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     virtual Completion execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
   protected:
-    OwnPtr<Vector<RefPtr<StatementNode> > > m_children;
+    OwnPtr<SourceElements> m_children;
   };
 
   class EmptyStatementNode : public StatementNode {
@@ -1702,7 +1704,7 @@ namespace KJS {
   // inherited by ProgramNode
   class FunctionBodyNode : public BlockNode {
   public:
-    FunctionBodyNode(Vector<RefPtr<StatementNode> > *children) KJS_FAST_CALL;
+    FunctionBodyNode(SourceElements* children) KJS_FAST_CALL;
     int sourceId() KJS_FAST_CALL { return m_sourceId; }
     const UString& sourceURL() KJS_FAST_CALL { return m_sourceURL; }
 
@@ -1775,8 +1777,8 @@ namespace KJS {
 
   class CaseClauseNode : public Node {
   public:
-      CaseClauseNode(Node *e) KJS_FAST_CALL : expr(e) { m_mayHaveDeclarations = true; }
-      CaseClauseNode(Node *e, Vector<RefPtr<StatementNode> > *children) KJS_FAST_CALL
+      CaseClauseNode(Node* e) KJS_FAST_CALL : expr(e) { m_mayHaveDeclarations = true; }
+      CaseClauseNode(Node* e, SourceElements* children) KJS_FAST_CALL
       : expr(e), m_children(children) { m_mayHaveDeclarations = true; }
       virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
       JSValue* evaluate(ExecState*) KJS_FAST_CALL;
@@ -1786,7 +1788,7 @@ namespace KJS {
       virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
       RefPtr<Node> expr;
-      OwnPtr<Vector<RefPtr<StatementNode> > > m_children;
+      OwnPtr<SourceElements> m_children;
   };
   
   class ClauseListNode : public Node {
@@ -1837,7 +1839,7 @@ namespace KJS {
   
   class ProgramNode : public FunctionBodyNode {
   public:
-    ProgramNode(Vector<RefPtr<StatementNode> > *children) KJS_FAST_CALL;
+    ProgramNode(SourceElements* children) KJS_FAST_CALL;
   };
 
   struct ElementList {
