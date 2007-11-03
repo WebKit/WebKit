@@ -281,15 +281,8 @@ void ArrayInstance::put(ExecState* exec, unsigned i, JSValue* value, int attribu
             storage->m_vector[j] = 0;
         map->remove(i);
     } else {
-        for (unsigned j = vectorLength; j < newVectorLength; ++j) {
-            SparseArrayValueMap::iterator it = map->find(j);
-            if (it == map->end())
-                storage->m_vector[j] = 0;
-            else {
-                storage->m_vector[j] = it->second;
-                map->remove(it);
-            }
-        }
+        for (unsigned j = vectorLength; j < newVectorLength; ++j)
+            storage->m_vector[j] = map->take(j);
     }
 
     storage->m_vector[i] = value;

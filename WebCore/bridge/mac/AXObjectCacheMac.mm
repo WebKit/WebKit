@@ -69,13 +69,11 @@ WebCoreAXObject* AXObjectCache::get(RenderObject* renderer)
 
 void AXObjectCache::remove(RenderObject* renderer)
 {
-    HashMap<RenderObject*, WebCoreAXObject*>::iterator it = m_objects.find(renderer);
-    if (it == m_objects.end())
+    WebCoreAXObject* obj = m_objects.take(renderer);
+    if (!obj)
         return;
-    WebCoreAXObject* obj = (*it).second;
     [obj detach];
     HardRelease(obj);
-    m_objects.remove(it);
 
     ASSERT(m_objects.size() >= m_idsInUse.size());
 }

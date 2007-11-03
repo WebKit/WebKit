@@ -1,8 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * This file is part of the KDE libraries
- *
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -97,8 +95,10 @@ namespace WTF {
         pair<iterator, bool> add(const KeyType&, const MappedType&); 
 
         void remove(const KeyType&);
-        void remove(iterator it);
+        void remove(iterator);
         void clear();
+
+        MappedType take(const KeyType&); // efficient combination of get with remove
 
     private:
         pair<iterator, bool> inlineAdd(const KeyType&, const MappedType&);
@@ -322,6 +322,19 @@ namespace WTF {
     {
         derefAll();
         m_impl.clear();
+    }
+
+    template<typename T, typename U, typename V, typename W, typename MappedTraits>
+    typename HashMap<T, U, V, W, MappedTraits>::MappedType
+    HashMap<T, U, V, W, MappedTraits>::take(const KeyType& key)
+    {
+        // This can probably be made more efficient to avoid ref/deref churn.
+        iterator it = find(key);
+        if (it == end())
+            return MappedTraits::emptyValue();
+        typename HashMap<T, U, V, W, MappedTraits>::MappedType result = it->second;
+        remove(it);
+        return result;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>

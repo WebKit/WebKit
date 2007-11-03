@@ -1625,12 +1625,7 @@ void Window::clearTimeout(int timeoutId, bool delAction)
     if (timeoutId <= 0)
         return;
 
-    WindowPrivate::TimeoutsMap::iterator it = d->m_timeouts.find(timeoutId);
-    if (it == d->m_timeouts.end())
-        return;
-    DOMWindowTimer* timer = it->second;
-    d->m_timeouts.remove(it);
-    delete timer;
+    delete d->m_timeouts.take(timeoutId);
 }
 
 void Window::timerFired(DOMWindowTimer* timer)

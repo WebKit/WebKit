@@ -1,3 +1,29 @@
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - use the new HashMap::take function where appropriate
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::addWrapper): Made an inline rather than a macro; inlines good, macros bad.
+        (KJS::removeWrapper): Ditto.
+        (KJS::removeWrappers): Ditto.
+        (KJS::ScriptInterpreter::putDOMObject): Use the inline instead of the macro.
+        (KJS::ScriptInterpreter::forgetDOMObject): Ditto. This involves using take instead
+        of remove -- in theory ever so slightly less efficient, but I think it's fine.
+        (KJS::ScriptInterpreter::forgetDOMNodeForDocument): Ditto.
+        (KJS::ScriptInterpreter::putDOMNodeForDocument): Use the inline instead of the macro.
+        (KJS::ScriptInterpreter::forgetAllDOMNodesForDocument): Use take instead of find/remove.
+        (KJS::ScriptInterpreter::updateDOMNodeDocument): Use the inlines instead of the macros.
+
+        * bindings/js/kjs_window.cpp: (KJS::Window::clearTimeout): Use take instead of find/remove.
+        * bridge/mac/AXObjectCacheMac.mm: (WebCore::AXObjectCache::remove): Ditto.
+        * page/AnimationController.cpp: (WebCore::AnimationControllerPrivate::clear): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock): Ditto.
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth): Ditto.
+        * rendering/RootInlineBox.cpp: Ditto.(WebCore::RootInlineBox::detachEllipsisBox): Ditto.
+
 2007-11-02  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

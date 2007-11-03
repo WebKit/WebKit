@@ -1,3 +1,16 @@
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15807
+          HashMap needs a take() function that combines get and remove
+
+        * wtf/HashMap.h: Added take function. Simplistic implementation for now,
+        but still does only one hash table lookup.
+
+        * kjs/array_instance.cpp: (KJS::ArrayInstance::put): Use take rather than
+        a find followed by a remove.
+
 2007-11-02  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin.

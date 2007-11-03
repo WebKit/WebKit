@@ -116,11 +116,8 @@ RenderBlock::~RenderBlock()
     delete m_positionedObjects;
     delete m_maxMargin;
     
-    if (m_hasColumns) {
-        ColumnInfoMap::iterator it = gColumnInfoMap->find(this);
-        delete it->second;
-        gColumnInfoMap->remove(it);
-    }
+    if (m_hasColumns)
+        delete gColumnInfoMap->take(this);
 }
 
 void RenderBlock::setStyle(RenderStyle* _style)
@@ -3160,9 +3157,7 @@ void RenderBlock::setDesiredColumnCountAndWidth(int count, int width)
 {
     if (count == 1) {
         if (m_hasColumns) {
-            ColumnInfoMap::iterator it = gColumnInfoMap->find(this);
-            delete it->second;
-            gColumnInfoMap->remove(it);
+            delete gColumnInfoMap->take(this);
             m_hasColumns = false;
         }
     } else {

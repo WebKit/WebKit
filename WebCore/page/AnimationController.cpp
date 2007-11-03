@@ -493,16 +493,12 @@ CompositeImplicitAnimation* AnimationControllerPrivate::get(RenderObject* render
 
 bool AnimationControllerPrivate::clear(RenderObject* renderer)
 {
-    CompositeImplicitAnimation* animation = 0;
-    HashMap<RenderObject*, CompositeImplicitAnimation*>::iterator it = m_animations.find(renderer);
-    if (it != m_animations.end()) {
-        animation = it->second;
-        m_animations.remove(it);
-        animation->reset(renderer);
-        delete animation;
-        return true;
-    }
-    return false;
+    CompositeImplicitAnimation* animation = m_animations.take(renderer);
+    if (!animation)
+        return false;
+    animation->reset(renderer);
+    delete animation;
+    return true;
 }
 
 void AnimationControllerPrivate::updateTimer()
