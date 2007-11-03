@@ -1,3 +1,23 @@
+2007-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - remove VarDeclListNode and simplify VarDeclNode evaluation for 0.4% SunSpider speedup
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::VarDeclNode::optimizeVariableAccess):
+        (KJS::VarDeclNode::getDeclarations):
+        (KJS::VarDeclNode::handleSlowCase):
+        (KJS::VarDeclNode::evaluateSingle):
+        (KJS::VarDeclNode::evaluate):
+        (KJS::VarStatementNode::execute):
+        * kjs/nodes.h:
+        (KJS::VarDeclNode::):
+        (KJS::VarStatementNode::):
+        * kjs/nodes2string.cpp:
+        (KJS::VarDeclNode::streamTo):
+
 2007-11-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

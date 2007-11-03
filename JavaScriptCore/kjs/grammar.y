@@ -660,19 +660,21 @@ VariableStatement:
 ;
 
 VariableDeclarationList:
-    VariableDeclaration                 { $$.head = new VarDeclListNode($1); 
+    VariableDeclaration                 { $$.head = $1; 
                                           $$.tail = $$.head; }
   | VariableDeclarationList ',' VariableDeclaration
                                         { $$.head = $1.head;
-                                          $$.tail = new VarDeclListNode($1.tail, $3); }
+                                          $1.tail->next = $3;
+                                          $$.tail = $3; }
 ;
 
 VariableDeclarationListNoIn:
-    VariableDeclarationNoIn             { $$.head = new VarDeclListNode($1); 
+    VariableDeclarationNoIn             { $$.head = $1; 
                                           $$.tail = $$.head; }
-  | VariableDeclarationListNoIn ',' VariableDeclaration
+  | VariableDeclarationListNoIn ',' VariableDeclarationNoIn
                                         { $$.head = $1.head;
-                                          $$.tail = new VarDeclListNode($1.tail, $3); }
+                                          $1.tail->next = $3;
+                                          $$.tail = $3; }
 ;
 
 VariableDeclaration:
@@ -692,11 +694,12 @@ ConstStatement:
 ;
 
 ConstDeclarationList:
-    ConstDeclaration                    { $$.head = new VarDeclListNode($1);
+    ConstDeclaration                    { $$.head = $1; 
                                           $$.tail = $$.head; }
   | ConstDeclarationList ',' ConstDeclaration
                                         { $$.head = $1.head;
-                                          $$.tail = new VarDeclListNode($1.tail, $3); }
+                                          $1.tail->next = $3;
+                                          $$.tail = $3; }
 ;
 
 ConstDeclaration:

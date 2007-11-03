@@ -1464,44 +1464,30 @@ namespace KJS {
     enum Type { Variable, Constant };
     VarDeclNode(const Identifier &id, AssignExprNode *in, Type t) KJS_FAST_CALL;
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual KJS::JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    void evaluateSingle(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
     virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
+    PassRefPtr<VarDeclNode> releaseNext() KJS_FAST_CALL { return next.release(); }
+
     Type varType;
     Identifier ident;
+    ListRefPtr<VarDeclNode> next;
   private:
-    JSValue* handleSlowCase(ExecState*, const ScopeChain&, JSValue*) KJS_FAST_CALL KJS_NO_INLINE;
+    void handleSlowCase(ExecState*, const ScopeChain&, JSValue*) KJS_FAST_CALL KJS_NO_INLINE;
     RefPtr<AssignExprNode> init;
-  };
-
-  class VarDeclListNode : public Node {
-  public:
-    VarDeclListNode(VarDeclNode* v) KJS_FAST_CALL : var(v) { m_mayHaveDeclarations = true; }
-    VarDeclListNode(VarDeclListNode* l, VarDeclNode* v) KJS_FAST_CALL
-      : var(v) { l->next = this; m_mayHaveDeclarations = true; }
-    virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    PassRefPtr<VarDeclListNode> releaseNext() KJS_FAST_CALL { return next.release(); }
-    virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
-    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-  private:
-    friend class ForNode;
-    friend class VarStatementNode;
-    ListRefPtr<VarDeclListNode> next;
-    RefPtr<VarDeclNode> var;
   };
 
   class VarStatementNode : public StatementNode {
   public:
-    VarStatementNode(VarDeclListNode* l) KJS_FAST_CALL : next(l) { m_mayHaveDeclarations = true; }
+    VarStatementNode(VarDeclNode* l) KJS_FAST_CALL : next(l) { m_mayHaveDeclarations = true; }
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     virtual Completion execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL;
   private:
-    RefPtr<VarDeclListNode> next;
+    RefPtr<VarDeclNode> next;
   };
 
   typedef Vector<RefPtr<StatementNode> > SourceElements;
@@ -1858,8 +1844,8 @@ namespace KJS {
   };
 
   struct VarDeclList {
-      VarDeclListNode* head;
-      VarDeclListNode* tail;
+      VarDeclNode* head;
+      VarDeclNode* tail;
   };
 
   struct ParameterList {

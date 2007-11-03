@@ -713,14 +713,9 @@ void AssignExprNode::streamTo(SourceStream& s) const
 
 void VarDeclNode::streamTo(SourceStream& s) const
 {
-    s << ident << init;
-}
-
-void VarDeclListNode::streamTo(SourceStream& s) const
-{
-    s << "var " << var;
-    for (VarDeclListNode* n = next.get(); n; n = n->next.get())
-        s << ", " << n->var;
+    s << "var " << ident << init;
+    for (VarDeclNode* n = next.get(); n; n = n->next.get())
+        s << ", " << ident << init;
 }
 
 void VarStatementNode::streamTo(SourceStream& s) const
