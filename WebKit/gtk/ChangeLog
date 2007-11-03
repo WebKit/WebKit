@@ -2,6 +2,17 @@
 
         Reviewed by Mark Rowe.
 
+        Restore correct double and triple click behaviour
+
+        We ended up ignoring GDK_2BUTTON_PRESS and GDK_3BUTTON_PRESS after
+        recent refactoring.
+
+        * Api/webkitgtkpage.cpp:
+
+2007-11-03  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
         Frame scrolling and invalidation fixes
 
         Make upward scroll events have a positive delta to match other ports.

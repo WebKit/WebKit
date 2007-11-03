@@ -98,16 +98,12 @@ static gboolean webkit_page_button_event(GtkWidget* widget, GdkEventButton* even
 {
     Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
 
-    switch (event->type) {
-        case GDK_BUTTON_PRESS:
-            // FIXME: need to keep track of subframe focus for key events
-            gtk_widget_grab_focus(GTK_WIDGET(widget));
-            return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
-        case GDK_BUTTON_RELEASE:
-            return frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
-        default:
-            return FALSE;
-    }
+    if (event->type == GDK_BUTTON_RELEASE)
+        return frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
+
+    // FIXME: need to keep track of subframe focus for key events
+    gtk_widget_grab_focus(GTK_WIDGET(widget));
+    return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
 }
 
 static gboolean webkit_page_motion_event(GtkWidget* widget, GdkEventMotion* event)
