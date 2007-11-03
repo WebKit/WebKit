@@ -1,3 +1,12 @@
+2007-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+        
+        - don't print the var twice for ForInNodes with a var declaration
+
+        * kjs/nodes2string.cpp:
+        (KJS::ForInNode::streamTo):
+
 2007-11-03  Darin Adler  <darin@apple.com>
 
         * pcre/pcre_compile.c: (check_escape): Windows build fix. Get rid of

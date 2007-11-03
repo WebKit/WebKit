@@ -780,7 +780,7 @@ void ForInNode::streamTo(SourceStream& s) const
 {
     s << Endl << "for (";
     if (varDecl)
-        s << "var " << varDecl;
+        s << varDecl;
     else
         s << PrecLeftHandSide << lexpr;
 
