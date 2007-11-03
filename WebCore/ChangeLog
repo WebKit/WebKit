@@ -2,6 +2,19 @@
 
         Reviewed by Mark Rowe.
 
+        Do not allow scrollbars to handle wheel events
+        
+        We bubble the wheel event up so the parent can handle it instead.
+
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        (gtkScrollEventCallback):
+        (PlatformScrollbar::PlatformScrollbar):
+        (PlatformScrollbar::~PlatformScrollbar):
+
+2007-11-03  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
         Frame scrolling and invalidation fixes
 
         Make upward scroll events have a positive delta to match other ports.
