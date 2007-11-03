@@ -2,6 +2,17 @@
 
         Reviewed by Mark Rowe.
 
+        Implement platform scrollbar static width/height getters
+
+        * platform/gtk/PlatformScrollBar.h:
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        (scrollbarSize):
+        (PlatformScrollbar::horizontalScrollbarHeight):
+
+2007-11-03  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
         Cast function pointers to gpointer.
 
         * platform/gtk/PlatformScrollBarGtk.cpp:

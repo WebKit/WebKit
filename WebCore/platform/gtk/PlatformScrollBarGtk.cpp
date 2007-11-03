@@ -30,11 +30,10 @@
 #include "IntRect.h"
 #include "GraphicsContext.h"
 #include "FrameView.h"
-
 #include "NotImplemented.h"
+#include "gtkdrawing.h"
+
 #include <gtk/gtk.h>
-#include <cairo/cairo.h>
-#include <stdio.h>
 
 using namespace WebCore;
 
@@ -135,4 +134,28 @@ void PlatformScrollbar::geometryChanged()
 void PlatformScrollbar::gtkValueChanged(GtkAdjustment*, PlatformScrollbar* that)
 {
     that->setValue(gtk_adjustment_get_value(that->m_adjustment));
+}
+
+static int scrollbarSize()
+{
+    static int size = 0;
+
+    if (size)
+        return size;
+
+    MozGtkScrollbarMetrics metrics;
+    moz_gtk_get_scrollbar_metrics(&metrics);
+    size = metrics.slider_width;
+
+    return size;
+}
+
+int PlatformScrollbar::horizontalScrollbarHeight()
+{
+    return scrollbarSize();
+}
+
+int PlatformScrollbar::verticalScrollbarWidth()
+{
+    return scrollbarSize();
 }
