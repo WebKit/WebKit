@@ -718,21 +718,21 @@ XLinkNames.cpp : ksvg2/scripts/make_names.pl ksvg2/misc/xlinkattrs.in
 # Add SVG Symbols to the WebCore exported symbols file
 
 WebCore.exp : WebCore.base.exp WebCore.SVG.exp
-	cat $(WebCore)/WebCore.base.exp $(WebCore)/WebCore.SVG.exp > WebCore.exp
+	cat $^ > $@
 
 else
 
 SVGElementFactory.cpp :
-	echo > SVGElementFactory.cpp
+	echo > $@
 
 SVGNames.cpp :
-	echo > SVGNames.cpp
+	echo > $@
 
 XLinkNames.cpp :
-	echo > XLinkNames.cpp
+	echo > $@
 
 WebCore.exp : WebCore.base.exp
-	cp $(WebCore)/WebCore.base.exp WebCore.exp
+	cat $^ > $@
 
 endif
 

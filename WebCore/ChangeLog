@@ -2,6 +2,14 @@
 
         Reviewed by Maciej.
 
+        * DerivedSources.make: Remove a few explicit filenames from some rules by using
+        make variables a little more.
+        * WebCore.LP64.exp: Fix typo, grammar.
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - use the new HashMap::take function where appropriate
 
         * bindings/js/kjs_binding.cpp:
