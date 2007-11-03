@@ -49,15 +49,15 @@ namespace KJS {
 
   class RegExpImp : public JSObject {
   public:
-    RegExpImp(RegExpPrototype *regexpProto);
-    ~RegExpImp();
-    void setRegExp(RegExp *r) { reg = r; }
-    RegExp* regExp() const { return reg; }
+    RegExpImp(RegExpPrototype* regexpProto);
+    virtual ~RegExpImp();
+    void setRegExp(RegExp* r) { m_regExp.set(r); }
+    RegExp* regExp() const { return m_regExp.get(); }
 
-    virtual const ClassInfo *classInfo() const { return &info; }
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
   private:
-    RegExp *reg;
+    OwnPtr<RegExp> m_regExp;
   };
 
   struct RegExpObjectImpPrivate;

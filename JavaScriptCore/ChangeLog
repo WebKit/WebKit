@@ -1,3 +1,19 @@
+2007-11-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15800
+        REGRESSION (r27303): RegExp leaks
+
+        * kjs/regexp_object.h:
+        (KJS::RegExpImp::setRegExp):
+        (KJS::RegExpImp::regExp):
+        (KJS::RegExpImp::classInfo):
+        * kjs/regexp_object.cpp:
+        (RegExpImp::RegExpImp):
+        (RegExpImp::~RegExpImp):
+        Renamed reg member variable to m_regExp, changed it to use OwnPtr.
+
 2007-11-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
