@@ -1,3 +1,33 @@
+2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        LGPL'ed files contain incorrect FSF address
+        <http://bugs.webkit.org/show_bug.cgi?id=14885>
+
+        Reviewed by NOBODY (follow-up fix).
+
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        * ksvg2/svg/SVGException.idl:
+        * ksvg2/svg/SVGTextPathElement.cpp:
+        * ksvg2/svg/SVGTextPathElement.h:
+        * ksvg2/svg/SVGViewSpec.cpp:
+        * ksvg2/svg/SVGViewSpec.h:
+        * platform/mac/FontCustomPlatformData.cpp:
+        * platform/mac/FontCustomPlatformData.h:
+        * platform/mac/FontPlatformDataMac.mm:
+        * platform/win/FontCustomPlatformData.cpp:
+        * platform/win/FontCustomPlatformData.h:
+        * rendering/RenderSVGRoot.cpp:
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGTextPath.cpp:
+        * rendering/RenderSVGTextPath.h:
+        * rendering/RenderSVGTransformableContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        * rendering/SVGCharacterLayoutInfo.h:
+        * rendering/SVGRenderSupport.cpp:
+        * rendering/SVGRenderSupport.h:
+
 2007-11-02  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.
