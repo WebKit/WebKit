@@ -59,6 +59,7 @@ NSString* (*wkPathFromFont)(NSFont*);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 int (*wkQTMovieDataRate)(QTMovie*);
 float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
+void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 void (*wkReleaseStyleGroup)(void* group);
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);

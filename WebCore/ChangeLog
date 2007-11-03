@@ -1,3 +1,15 @@
+2007-11-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Enable video composition.
+
+        * WebCore.base.exp:
+        * platform/graphics/mac/MoviePrivateQTKit.mm:
+        (WebCore::MoviePrivate::createQTMovieView):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2007-11-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

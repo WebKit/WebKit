@@ -45,6 +45,7 @@ typedef struct _NSRect NSRect;
 @class NSMutableURLRequest;
 @class NSURLRequest;
 @class QTMovie;
+@class QTMovieView;
 #else
 typedef struct NSArray NSArray;
 typedef struct NSDate NSDate;
@@ -61,6 +62,7 @@ typedef struct NSURLResponse NSURLResponse;
 typedef struct NSView NSView;
 typedef struct objc_object *id;
 typedef struct QTMovie QTMovie;
+typedef struct QTMovieView QTMovieView;
 #endif
 
 #ifdef __cplusplus
@@ -112,6 +114,7 @@ extern NSString* (*wkPathFromFont)(NSFont*);
 extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 extern int (*wkQTMovieDataRate)(QTMovie*);
 extern float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
+extern void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 extern void (*wkReleaseStyleGroup)(void* group);
 extern void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 extern void (*wkSetDragImage)(NSImage*, NSPoint offset);

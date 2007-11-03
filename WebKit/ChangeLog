@@ -1,3 +1,12 @@
+2007-11-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Add method to enable video composition.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
 2007-11-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

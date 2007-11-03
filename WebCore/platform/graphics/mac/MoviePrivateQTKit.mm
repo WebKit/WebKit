@@ -143,6 +143,7 @@ void MoviePrivate::createQTMovieView()
     [m_qtMovieView.get() setMovie:m_qtMovie.get()];
     [m_qtMovieView.get() setControllerVisible:NO];
     [m_qtMovieView.get() setPreservesAspectRatio:YES];
+    wkQTMovieViewSetDrawSynchronously(m_qtMovieView.get(), YES);
 }
 
 QTTime MoviePrivate::createQTTime(float time)

@@ -86,6 +86,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SupportsMultipartXMixedReplace);
     INIT(QTMovieDataRate);
     INIT(QTMovieMaxTimeLoaded);
+    INIT(QTMovieViewSetDrawSynchronously);
 
     
     didInit = true;

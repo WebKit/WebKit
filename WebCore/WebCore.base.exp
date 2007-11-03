@@ -743,6 +743,7 @@ _wkPathFromFont
 _wkPopupMenu
 _wkQTMovieDataRate
 _wkQTMovieMaxTimeLoaded
+_wkQTMovieViewSetDrawSynchronously
 _wkReleaseStyleGroup
 _wkSecondsSinceLastInputEvent
 _wkSetCGFontRenderingMode
