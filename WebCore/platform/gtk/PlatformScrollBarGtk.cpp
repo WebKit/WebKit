@@ -71,8 +71,8 @@ PlatformScrollbar::~PlatformScrollbar()
     /*
      * the Widget does not take over ownership.
      */
-    g_signal_handlers_disconnect_by_func(G_OBJECT(gtkWidget()), reinterpret_cast<void*>(PlatformScrollbar::gtkValueChanged), this);
-    g_signal_handlers_disconnect_by_func(G_OBJECT(gtkWidget()), reinterpret_cast<void*>(gtkScrollEventCallback), this);
+    g_signal_handlers_disconnect_by_func(G_OBJECT(gtkWidget()), reinterpret_cast<gpointer>(PlatformScrollbar::gtkValueChanged), this);
+    g_signal_handlers_disconnect_by_func(G_OBJECT(gtkWidget()), reinterpret_cast<gpointer>(gtkScrollEventCallback), this);
     g_object_unref(G_OBJECT(gtkWidget()));
 }
 

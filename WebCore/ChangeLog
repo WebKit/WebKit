@@ -1,5 +1,14 @@
 2007-11-03  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Mark Rowe.
+
+        Cast function pointers to gpointer.
+
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        (PlatformScrollbar::~PlatformScrollbar):
+
+2007-11-03  Alp Toker  <alp@atoker.com>
+
         Reviewed by Adam Roben.
 
         RenderThemeGtk implementation based on Mozilla's GTK+ style code
