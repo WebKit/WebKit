@@ -28,8 +28,7 @@
 #include "config.h"
 #include "MimeTypeRegistry.h"
 
-namespace WebCore 
-{
+namespace WebCore {
 
 struct ExtensionMap {
     const char* extension;
@@ -56,7 +55,7 @@ static const ExtensionMap extensionMap [] = {
     { 0, 0 }
 };
     
-String MimeTypeRegistry::getMIMETypeForExtension(const String &ext)
+String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
     String s = ext.lower();
     const ExtensionMap *e = extensionMap;

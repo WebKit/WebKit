@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #include "PlatformMouseEvent.h"
 
 #include <wx/defs.h>
@@ -30,7 +31,7 @@
 
 namespace WebCore {
 
-PlatformMouseEvent::PlatformMouseEvent(wxMouseEvent& event, wxPoint& globalPoint)
+PlatformMouseEvent::PlatformMouseEvent(const wxMouseEvent& event, const wxPoint& globalPoint)
     : m_position(event.GetPosition())
     , m_globalPosition(globalPoint)
     , m_clickCount(event.ButtonDClick() ? 2 : 1)

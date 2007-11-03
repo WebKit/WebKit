@@ -1,3 +1,24 @@
+2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fixes to get wx impls. building on trunk.
+
+        Reviewed by Mark Rowe.
+
+        * platform/wx/DragDataWx.cpp:
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+        * platform/wx/DragImageWx.cpp:
+        (WebCore::scaleDragImage):
+        * platform/wx/MimeTypeRegistryWx.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/wx/MouseEventWx.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/wx/MouseWheelEventWx.cpp:
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::setCursor):
+
 2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
 
         Sort files(...); sections of Xcode project files.
