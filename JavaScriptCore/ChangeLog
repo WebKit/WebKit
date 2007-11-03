@@ -2,6 +2,45 @@
 
         Reviewed by Maciej.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=15791
+          change property map data structure for less memory use, better speed
+
+        The property map now has an array of indices and a separate array of
+        property map entries. This slightly slows down lookup because of a second
+        memory acess, but makes property maps smaller and faster to iterate in
+        functions like mark().
+
+        SunSpider says this is 1.2% faster, although it makes the bitwise-end test
+        more than 10% slower. To fix that we'll need to optimize global variable lookup.
+
+        * kjs/property_map.cpp:
+        (KJS::PropertyMapEntry::PropertyMapEntry):
+        (KJS::PropertyMapHashTable::entries):
+        (KJS::PropertyMapHashTable::allocationSize):
+        (KJS::SavedProperties::SavedProperties):
+        (KJS::SavedProperties::~SavedProperties):
+        (KJS::PropertyMap::checkConsistency):
+        (KJS::PropertyMap::~PropertyMap):
+        (KJS::PropertyMap::clear):
+        (KJS::PropertyMap::get):
+        (KJS::PropertyMap::getLocation):
+        (KJS::PropertyMap::put):
+        (KJS::PropertyMap::insert):
+        (KJS::PropertyMap::createTable):
+        (KJS::PropertyMap::rehash):
+        (KJS::PropertyMap::remove):
+        (KJS::PropertyMap::mark):
+        (KJS::comparePropertyMapEntryIndices):
+        (KJS::PropertyMap::containsGettersOrSetters):
+        (KJS::PropertyMap::getEnumerablePropertyNames):
+        (KJS::PropertyMap::save):
+        (KJS::PropertyMap::restore):
+        * kjs/property_map.h:
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - http://bugs.webkit.org/show_bug.cgi?id=15807
           HashMap needs a take() function that combines get and remove
 
