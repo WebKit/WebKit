@@ -27,6 +27,7 @@
 use strict;
 use Getopt::Long;
 use File::Basename;
+use File::Spec;
 use Cwd;
 use POSIX qw(strftime);
 
@@ -34,6 +35,7 @@ my $showHelp = 0;
 my $runShark = 0;
 my $runShark20 = 0;
 my $jsShellPath;
+my $setBase = 0;
 my $testsPattern;
 my $testRuns = 5; # This number may be different from what ./sunspider defaults to (that's OK)
 
@@ -41,6 +43,7 @@ my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName --shell=[path] [options]
   --help        Show this help message
+  --base        Set baseline for future comparisons
   --shell       Path to JavaScript shell
   --runs        Number of times to run tests (default: $testRuns)
   --tests       Only run tests matching provided pattern
@@ -48,7 +51,8 @@ Usage: $programName --shell=[path] [options]
   --shark20     Like --shark, but with a 20 microsecond sampling interval
 EOF
 
-GetOptions('runs=i' => \$testRuns,
+GetOptions('base' => \$setBase,
+           'runs=i' => \$testRuns,
            'shell=s' => \$jsShellPath,
            'shark' => \$runShark,
            'shark20' => \$runShark20,
@@ -120,6 +124,27 @@ sub runTestsOnce($)
     return $output;
 }
 
+sub newestFile($$)
+{
+    my ($dir, $pattern) = @_;
+
+    my $newestAge;
+    my $newestFile = "";
+    opendir DIR, $dir or die;
+    for my $file (readdir DIR) {
+        if ($file =~ $pattern) {
+            my $age = -M "$dir/$file";
+            if (!defined $newestAge || $age < $newestAge) {
+                $newestFile = $file;
+                $newestAge = $age;
+            }
+        }
+    }
+    closedir DIR;
+
+    return "$dir/$newestFile";
+}
+
 loadTestsList();
 if ($testsPattern) {
     print STDERR "Found " . scalar(@tests) . " tests matching '" . $testsPattern . "'\n";
@@ -150,23 +175,12 @@ print "]\n";
 
 my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
 dumpToFile($output, $resultsFile);
+dumpToFile(File::Spec->rel2abs($resultsFile), "tmp/baseline-filename.txt") if $setBase;
 
 system("$jsShellPath", "-f", $prefixFile, "-f", $resultsFile, "-f", "resources/sunspider-analyze-results.js");
 
 if ($runShark) {
-    my $newestAge = 0;
-    my $newestMShark = 0;
-    opendir DIR, "." or die;
-    for my $file (readdir DIR) {
-        if ($file =~ /\.mshark$/) {
-            my $age = -M $file;
-            if ($age < $newestAge) {
-                $newestMShark = $file;
-                $newestAge = $age;
-            }
-        }
-    }
-    closedir DIR;
+    my $newestMShark = newestFile(".", qr/\.mshark$/);
     if ($newestMShark) {
         my $profileFile = "tmp/sunspider-profile-$timeString.mshark";
         rename $newestMShark, $profileFile or die;

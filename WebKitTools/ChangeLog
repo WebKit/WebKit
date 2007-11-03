@@ -1,3 +1,13 @@
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * Scripts/run-sunspider: Pass the "--base" option through.
+
+        * Scripts/sunspider-compare-results: Don't check the number of parameters; let
+        the real script do that. Default configuration to Release to match run-sunspider
+        so we don't end up building Debug just to compare results.
+
 2007-11-01  Adam Roben  <aroben@apple.com>
 
         Make changes in WebKit/win show up under "WebKit/win:" instead of just "win:"

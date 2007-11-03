@@ -40,7 +40,7 @@ EOF
 GetOptions('shell=s' => \$jsShellPath,
            'help' => \$showHelp);
 
-if (scalar @ARGV < 2 || !$jsShellPath || $showHelp) {
+if ((scalar @ARGV != 0 && scalar @ARGV != 2) || !$jsShellPath || $showHelp) {
    print STDERR $usage;
    exit 1;
 }
@@ -93,8 +93,49 @@ sub dumpToFile($$)
     close FILE;
 }
 
-my $output = "var output1 = " . readResultsFile($ARGV[0]) . ";\n";
-$output .= "var output2 = " . readResultsFile($ARGV[1]) . ";\n";
+sub readFile($)
+{
+    my ($path) = @_;
+    open FILE, "<", $path or die;
+    my $result = <FILE>;
+    close FILE;
+    return $result;
+}
+
+sub newestFile($$)
+{
+    my ($dir, $pattern) = @_;
+
+    my $newestAge;
+    my $newestFile = "";
+    opendir DIR, $dir or die;
+    for my $file (readdir DIR) {
+        if ($file =~ $pattern) {
+            my $age = -M "$dir/$file";
+            if (!defined $newestAge || $age < $newestAge) {
+                $newestFile = $file;
+                $newestAge = $age;
+            }
+        }
+    }
+    closedir DIR;
+
+    return "$dir/$newestFile";
+}
+
+my $file1;
+my $file2;
+
+if (scalar @ARGV == 2) {
+    $file1 = $ARGV[0];
+    $file2 = $ARGV[1];
+} else {
+    $file1 = readFile("tmp/baseline-filename.txt");
+    $file2 = newestFile("tmp", qr/sunspider-results-.+\.js$/);
+}
+
+my $output = "var output1 = " . readResultsFile($file1) . ";\n";
+$output .= "var output2 = " . readResultsFile($file2) . ";\n";
 
 dumpToFile($output, "tmp/sunspider-comparison-data.js");
 

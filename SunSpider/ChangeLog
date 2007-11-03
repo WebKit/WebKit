@@ -1,3 +1,14 @@
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * sunspider: Added a "--base" option that records the current test as a baseline.
+        Moved the code to find the newest .mshark file into a function (since I needed to use
+        it in the other script and I prefer to copy/paste a function).
+
+        * sunspider-compare-results: Added logic to compare the baseline with the last
+        run when you don't pass any parameters.
+
 2007-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
