@@ -1347,9 +1347,6 @@ int decodeUTF8Sequence(const char *sequence)
     // UTF-16 surrogates should never appear in UTF-8 data.
     if (c >= 0xD800 && c <= 0xDFFF)
       return -1;
-    // Backwards BOM and U+FFFF should never appear in UTF-8 data.
-    if (c == 0xFFFE || c == 0xFFFF)
-      return -1;
     return c;
   }
 
@@ -1369,8 +1366,11 @@ int decodeUTF8Sequence(const char *sequence)
   return -1;
 }
 
-CString UString::UTF8String() const
+CString UString::UTF8String(bool* utf16WasGood) const
 {
+  if (utf16WasGood)
+    *utf16WasGood = true;
+
   // Allocate a buffer big enough to hold all the characters.
   const int length = size();
   Vector<char, 1024> buffer(length * 3);
@@ -1393,6 +1393,8 @@ CString UString::UTF8String() const
       *p++ = (char)((sc | 0x80) & 0xBF); // next 6 bits, with high bit set
       ++i;
     } else {
+      if (utf16WasGood && c >= 0xD800 && c <= 0xDFFF)
+        *utf16WasGood = false;
       *p++ = (char)((c >> 12) | 0xE0); // E0 is the 3-byte flag for UTF-8
       *p++ = (char)(((c >> 6) | 0x80) & 0xBF); // next 6 bits, with high bit set
       *p++ = (char)((c | 0x80) & 0xBF); // next 6 bits, with high bit set
@@ -1404,5 +1406,11 @@ CString UString::UTF8String() const
 
   return result;
 }
+
+CString UString::UTF8String() const
+{
+    return UTF8String(0);
+}
+
 
 } // namespace KJS

@@ -514,7 +514,10 @@ GlobalFuncImp::GlobalFuncImp(ExecState* exec, FunctionPrototype* funcProto, int 
 static JSValue* encode(ExecState* exec, const List& args, const char* do_not_escape)
 {
   UString r = "", s, str = args[0]->toString(exec);
-  CString cstr = str.UTF8String();
+  bool wasGoodUTF16;
+  CString cstr = str.UTF8String(&wasGoodUTF16);
+  if (!wasGoodUTF16)
+    return throwError(exec, URIError, "String contained an illegal UTF-16 sequence.");
   const char* p = cstr.c_str();
   for (size_t k = 0; k < cstr.size(); k++, p++) {
     char c = *p;

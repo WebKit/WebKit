@@ -2,6 +2,27 @@
 
         Reviewed by Maciej.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15814
+          <rdar://problem/5536644> fast/js/kde/encode_decode_uri.html fails
+
+        These changes cause us to match the JavaScript specification and pass the
+        fast/js/kde/encode_decode_uri.html test.
+
+        * kjs/function.cpp: (KJS::encode): Call the UTF-8 string conversion in its
+        new strict mode, throwing an exception if there are malformed UTF-16 surrogate
+        pairs in the text.
+
+        * kjs/ustring.h: Added a strict version of the UTF-8 string conversion.
+        * kjs/ustring.cpp:
+        (KJS::decodeUTF8Sequence): Removed code to disallow U+FFFE and U+FFFF; while
+        those might be illegal in some sense, they aren't supposed to get any special
+        handling in the place where this function is currently used.
+        (KJS::UString::UTF8String): Added the strictness.
+
+2007-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - http://bugs.webkit.org/show_bug.cgi?id=15812
           some JavaScript tests (from the Mozilla test suite) are failing
 

@@ -22,7 +22,7 @@ if (($submitWithPost && $method eq "POST") || ($redirectHappened && $method eq "
     print "Cache-Control: no-store, no-cache, must-revalidate\r\n";
     print "\r\n";
 
-    print <<HERE_DOC_END
+    print <<HERE_DOC_END;
     <html>
     <body style="font-size: 32">
     This is just a minimal page that we navigate in response to an HTTP POST.

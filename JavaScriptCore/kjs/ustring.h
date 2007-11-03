@@ -284,6 +284,7 @@ namespace KJS {
      * be otherwise valid.
      */
     CString UTF8String() const;
+    CString UTF8String(bool* utf16WasGood) const;
 
     /**
      * @see UString(const DOM::DOMString&).

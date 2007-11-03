@@ -1,3 +1,14 @@
+2007-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - updates for http://bugs.webkit.org/show_bug.cgi?id=15814
+          <rdar://problem/5536644> fast/js/kde/encode_decode_uri.html fails
+
+        * fast/js/kde/resources/encode_decode_uri.js: Rewrote the test to cover edges better,
+        and use the should functions in a way that makes failures easier to understand.
+        * fast/js/kde/encode_decode_uri-expected.txt: Updated.
+
 2007-11-02  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.
