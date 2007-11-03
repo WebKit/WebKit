@@ -1231,7 +1231,7 @@ for (;;)
     if (md->notbol && eptr == md->start_subject) RRETURN(MATCH_NOMATCH);
     if ((ims & PCRE_MULTILINE) != 0)
       {
-      if (eptr != md->start_subject && eptr[-1] != NEWLINE)
+      if (eptr != md->start_subject && !IS_NEWLINE(eptr[-1]))
         RRETURN(MATCH_NOMATCH);
       ecode++;
       break;
@@ -1259,7 +1259,7 @@ for (;;)
     if ((ims & PCRE_MULTILINE) != 0)
       {
       if (eptr < md->end_subject)
-        { if (*eptr != NEWLINE) RRETURN(MATCH_NOMATCH); }
+        { if (!IS_NEWLINE(*eptr)) RRETURN(MATCH_NOMATCH); }
       else
         { if (md->noteol) RRETURN(MATCH_NOMATCH); }
       ecode++;
@@ -1271,7 +1271,7 @@ for (;;)
       if (!md->endonly)
         {
         if (eptr < md->end_subject - 1 ||
-           (eptr == md->end_subject - 1 && *eptr != NEWLINE))
+           (eptr == md->end_subject - 1 && !IS_NEWLINE(*eptr)))
           RRETURN(MATCH_NOMATCH);
         ecode++;
         break;
@@ -1290,7 +1290,7 @@ for (;;)
 
     case OP_EODN:
     if (eptr < md->end_subject - 1 ||
-       (eptr == md->end_subject - 1 && *eptr != NEWLINE)) RRETURN(MATCH_NOMATCH);
+       (eptr == md->end_subject - 1 && !IS_NEWLINE(*eptr))) RRETURN(MATCH_NOMATCH);
     ecode++;
     break;
 
@@ -1343,7 +1343,7 @@ for (;;)
     /* Match a single character type; inline for speed */
 
     case OP_ANY:
-    if ((ims & PCRE_DOTALL) == 0 && eptr < md->end_subject && *eptr == NEWLINE)
+    if ((ims & PCRE_DOTALL) == 0 && eptr < md->end_subject && IS_NEWLINE(*eptr))
       RRETURN(MATCH_NOMATCH);
     if (eptr++ >= md->end_subject) RRETURN(MATCH_NOMATCH);
 #ifdef SUPPORT_UTF8
@@ -2796,8 +2796,9 @@ for (;;)
         for (i = 1; i <= min; i++)
           {
           if (eptr >= md->end_subject ||
-             (*eptr++ == NEWLINE && (ims & PCRE_DOTALL) == 0))
+             (IS_NEWLINE(*eptr) && (ims & PCRE_DOTALL) == 0))
             RRETURN(MATCH_NOMATCH);
+          ++eptr;
           while (eptr < md->end_subject && ISMIDCHAR(*eptr)) eptr++;
           }
         break;
@@ -2882,7 +2883,10 @@ for (;;)
         if ((ims & PCRE_DOTALL) == 0)
           {
           for (i = 1; i <= min; i++)
-            if (*eptr++ == NEWLINE) RRETURN(MATCH_NOMATCH);
+            {
+            if (IS_NEWLINE(*eptr)) RRETURN(MATCH_NOMATCH);
+            ++eptr;
+            }
           }
         else eptr += min;
         break;
@@ -3060,7 +3064,7 @@ for (;;)
           switch(ctype)
             {
             case OP_ANY:
-            if ((ims & PCRE_DOTALL) == 0 && c == NEWLINE) RRETURN(MATCH_NOMATCH);
+            if ((ims & PCRE_DOTALL) == 0 && IS_NEWLINE(c)) RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_ANYBYTE:
@@ -3114,7 +3118,7 @@ for (;;)
           switch(ctype)
             {
             case OP_ANY:
-            if ((ims & PCRE_DOTALL) == 0 && c == NEWLINE) RRETURN(MATCH_NOMATCH);
+            if ((ims & PCRE_DOTALL) == 0 && IS_NEWLINE(c)) RRETURN(MATCH_NOMATCH);
             break;
 
             case OP_ANYBYTE:
@@ -3312,7 +3316,7 @@ for (;;)
               {
               for (i = min; i < max; i++)
                 {
-                if (eptr >= md->end_subject || *eptr == NEWLINE) break;
+                if (eptr >= md->end_subject || IS_NEWLINE(*eptr)) break;
                 eptr++;
                 while (eptr < md->end_subject && (*eptr & 0xc0) == 0x80) eptr++;
                 }
@@ -3335,7 +3339,7 @@ for (;;)
               {
               for (i = min; i < max; i++)
                 {
-                if (eptr >= md->end_subject || *eptr == NEWLINE) break;
+                if (eptr >= md->end_subject || IS_NEWLINE(*eptr)) break;
                 eptr++;
                 }
               break;
@@ -3449,7 +3453,7 @@ for (;;)
             {
             for (i = min; i < max; i++)
               {
-              if (eptr >= md->end_subject || *eptr == NEWLINE) break;
+              if (eptr >= md->end_subject || IS_NEWLINE(*eptr)) break;
               eptr++;
               }
             break;
@@ -4001,7 +4005,7 @@ do
     {
     if (start_match > match_block.start_subject + start_offset)
       {
-      while (start_match < end_subject && start_match[-1] != NEWLINE)
+      while (start_match < end_subject && !IS_NEWLINE(start_match[-1]))
         start_match++;
       }
     }
@@ -4104,7 +4108,7 @@ do
 
   if (rc == MATCH_NOMATCH)
     {
-    if (firstline && *start_match == NEWLINE) break;
+    if (firstline && IS_NEWLINE(*start_match)) break;
     start_match++;
 #ifdef SUPPORT_UTF8
     if (match_block.utf8)

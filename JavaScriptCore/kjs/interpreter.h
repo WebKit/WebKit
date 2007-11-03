@@ -197,7 +197,7 @@ namespace KJS {
     /**
      * Returns the builtin "RegExp" object.
      */
-    JSObject *builtinRegExp() const;
+    RegExpObjectImp* builtinRegExp() const { return m_RegExp; }
 
     /**
      * Returns the builtin "Error" object.

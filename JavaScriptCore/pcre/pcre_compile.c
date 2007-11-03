@@ -569,16 +569,25 @@ else
     break;
 
 #if JAVASCRIPT
-    case 'u':
+    case 'u': {
+    const pcre_uchar *pt = ptr;
     c = 0;
-    while (i++ < 4 && ptr + 1 < patternEnd && (DIGITAB(ptr[1]) & ctype_xdigit) != 0)
+    while (i++ < 4)
       {
+      if (pt + 1 >= patternEnd || (DIGITAB(pt[1]) & ctype_xdigit) == 0)
+        {
+        pt = ptr;
+        c = 'u';
+        break;
+        }
       int cc;                               /* Some compilers don't like ++ */
-      cc = *(++ptr);                        /* in initializers */
+      cc = *(++pt);                        /* in initializers */
       if (cc >= 'a') cc -= 32;              /* Convert to upper case */
       c = c * 16 + cc - ((cc < 'A')? '0' : ('A' - 10));
       }
+    ptr = pt;
     break;
+    }
 #endif
 
     /* Other special escapes not starting with a digit are straightforward */

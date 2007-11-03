@@ -1,3 +1,48 @@
+2007-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15812
+          some JavaScript tests (from the Mozilla test suite) are failing
+
+        Two or three fixes get 7 more of the Mozilla tests passing.
+        This gets us down from 61 failing tests to 54.
+
+        * kjs/interpreter.h: (KJS::Interpreter::builtinRegExp):
+        Made this inline and gave it a more specific type. Some day we should
+        probably do that for all of these -- might even get a bit of a speed
+        boost from it.
+        * kjs/interpreter.cpp: Removed Interpreter::builtinRegExp now that it's
+        inline in the header.
+
+        * kjs/regexp_object.h:
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpProtoFunc::callAsFunction): Moved test and exec out of the
+        switch statement into the RegExpImp object, so they can be shared with
+        RegExpImp::callAsFunction.
+        (KJS::RegExpImp::match): Added. Common code used by both test and exec.
+        (KJS::RegExpImp::test): Added.
+        (KJS::RegExpImp::exec): Added.
+        (KJS::RegExpImp::implementsCall): Added.
+        (KJS::RegExpImp::callAsFunction): Added.
+        (KJS::RegExpObjectImpPrivate::RegExpObjectImpPrivate): Initialize
+        lastInput to null rather than empty string -- we take advantage of the
+        difference in RegExpImp::match.
+        (KJS::RegExpObjectImp::input): Added. No reason to go through hash tables
+        just to get at a field like this.
+
+        * pcre/pcre_compile.c: (check_escape): Changed the \u handling to match
+        the JavaScript specification. If there are not 4 hex digits after the \u,
+        then it's processed as if it wasn't an escape sequence at all.
+
+        * pcre/pcre_internal.h: Added IS_NEWLINE, with the appropriate definition
+        for JavaScript (4 specific Unicode values).
+        * pcre/pcre_exec.c:
+        (match): Changed all call sites to use IS_NEWLINE.
+        (pcre_exec): Ditto.
+
+        * tests/mozilla/expected.html: Updated to expect 7 more successful tests.
+
 2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
 
         Sort files(...); sections of Xcode project files.

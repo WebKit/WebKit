@@ -1020,6 +1020,12 @@ extern int         _pcre_ucp_othercase(const int);
 extern int         _pcre_valid_utf8(const uschar *, int);
 extern BOOL        _pcre_xclass(int, const uschar *);
 
+#if JAVASCRIPT
+#define IS_NEWLINE(nl) ((nl) == 0xA || (nl) == 0xD || (nl) == 0x2028 || (nl) == 0x2029)
+#else
+#define IS_NEWLINE(nl) ((nl) == NEWLINE)
+#endif
+
 #endif
 
 /* End of pcre_internal.h */

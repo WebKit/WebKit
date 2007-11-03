@@ -1,7 +1,6 @@
-// -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2003, 2007 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,72 +25,79 @@
 #include "regexp.h"
 
 namespace KJS {
-  class ExecState;
-  class RegExpPrototype : public JSObject {
-  public:
-    RegExpPrototype(ExecState *exec,
-                       ObjectPrototype *objProto,
-                       FunctionPrototype *funcProto);
-    virtual const ClassInfo *classInfo() const { return &info; }
-    static const ClassInfo info;
-  };
 
-  class RegExpProtoFunc : public InternalFunctionImp {
-  public:
-    RegExpProtoFunc(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
+    struct RegExpObjectImpPrivate;
 
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+    class RegExpPrototype : public JSObject {
+    public:
+        RegExpPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
+    };
 
-    enum { Compile, Exec, Test, ToString };
-  private:
-    int id;
-  };
+    class RegExpProtoFunc : public InternalFunctionImp {
+    public:
+        enum { Compile, Exec, Test, ToString };
 
-  class RegExpImp : public JSObject {
-  public:
-    RegExpImp(RegExpPrototype* regexpProto);
-    virtual ~RegExpImp();
-    void setRegExp(RegExp* r) { m_regExp.set(r); }
-    RegExp* regExp() const { return m_regExp.get(); }
+        RegExpProtoFunc(ExecState*, FunctionPrototype*, int id, int len, const Identifier&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
 
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  private:
-    OwnPtr<RegExp> m_regExp;
-  };
+    private:
+        int id;
+    };
 
-  struct RegExpObjectImpPrivate;
+    class RegExpImp : public JSObject {
+    public:
+        RegExpImp(RegExpPrototype*, RegExp*);
+        virtual ~RegExpImp();
 
-  class RegExpObjectImp : public InternalFunctionImp {
-  public:
-    enum { Dollar1, Dollar2, Dollar3, Dollar4, Dollar5, Dollar6, Dollar7, Dollar8, Dollar9, 
-           Input, Multiline, LastMatch, LastParen, LeftContext, RightContext };
-    
-    RegExpObjectImp(ExecState *exec,
-                    FunctionPrototype *funcProto,
-                    RegExpPrototype *regProto);
-    virtual bool implementsConstruct() const;
-    virtual JSObject *construct(ExecState *exec, const List &args);
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+        void setRegExp(RegExp* r) { m_regExp.set(r); }
+        RegExp* regExp() const { return m_regExp.get(); }
 
-    virtual void put(ExecState *, const Identifier &, JSValue *, int attr = None);
-    void putValueProperty(ExecState *, int token, JSValue *, int attr);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *, int token) const;
-    void performMatch(RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
-    JSObject* arrayOfMatches(ExecState*) const;
-    
-    virtual const ClassInfo *classInfo() const { return &info; }
-  private:
-    JSValue *getBackref(unsigned) const;
-    JSValue *getLastParen() const;
-    JSValue *getLeftContext() const;
-    JSValue *getRightContext() const;
+        JSValue* test(ExecState*, const List& args);
+        JSValue* exec(ExecState*, const List& args);
 
-    OwnPtr<RegExpObjectImpPrivate> d;
-    
-    static const ClassInfo info;
-  };
+        virtual bool implementsCall() const;
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
+
+    private:
+        bool match(ExecState*, const List& args);
+
+        OwnPtr<RegExp> m_regExp;
+    };
+
+    class RegExpObjectImp : public InternalFunctionImp {
+    public:
+        enum { Dollar1, Dollar2, Dollar3, Dollar4, Dollar5, Dollar6, Dollar7, Dollar8, Dollar9, 
+               Input, Multiline, LastMatch, LastParen, LeftContext, RightContext };
+
+        RegExpObjectImp(ExecState*, FunctionPrototype*, RegExpPrototype*);
+
+        virtual bool implementsConstruct() const;
+        virtual JSObject* construct(ExecState*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual void put(ExecState*, const Identifier&, JSValue*, int attributes = None);
+        void putValueProperty(ExecState*, int token, JSValue*, int attributes);
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
+        virtual const ClassInfo* classInfo() const { return &info; }
+
+        void performMatch(RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
+        JSObject* arrayOfMatches(ExecState*) const;
+        const UString& input() const;
+
+    private:
+        JSValue* getBackref(unsigned) const;
+        JSValue* getLastParen() const;
+        JSValue* getLeftContext() const;
+        JSValue* getRightContext() const;
+
+        OwnPtr<RegExpObjectImpPrivate> d;
+
+        static const ClassInfo info;
+    };
 
 } // namespace
 
