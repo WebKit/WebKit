@@ -24,11 +24,10 @@
  */
 
 #include "config.h"
-#include "Screen.h"
 
+#include "Screen.h"
 #include "IntRect.h"
 #include "FloatRect.h"
-#include "Widget.h"
 #include "Widget.h"
 
 #include <wx/defs.h>

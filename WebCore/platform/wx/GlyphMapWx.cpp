@@ -27,8 +27,8 @@
  */
 
 #include "config.h"
-#include "GlyphPageTreeNode.h"
 #include "FontData.h"
+#include "GlyphPageTreeNode.h"
 #include <unicode/utf16.h>
 
 namespace WebCore

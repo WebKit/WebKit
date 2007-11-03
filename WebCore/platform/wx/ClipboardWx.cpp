@@ -24,13 +24,14 @@
  */
 
 #include "config.h"
-#include "HashTable.h"
 #include "ClipboardWx.h"
+#include "HashTable.h"
 #include "IntPoint.h"
+#include "NotImplemented.h"
+#include "Pasteboard.h"
 #include "PlatformString.h"
 #include "StringHash.h"
-#include "Pasteboard.h"
-#include "NotImplemented.h"
+
 
 namespace WebCore {
     
