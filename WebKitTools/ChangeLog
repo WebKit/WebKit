@@ -1,5 +1,9 @@
 2007-11-02  Darin Adler  <darin@apple.com>
 
+        * Scripts/run-sunspider: Changed "--base" to "--set-baseline".
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         * Scripts/run-sunspider: Pass the "--base" option through.

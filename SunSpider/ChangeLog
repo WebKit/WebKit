@@ -1,5 +1,9 @@
 2007-11-02  Darin Adler  <darin@apple.com>
 
+        * sunspider: Changed "--base" to "--set-baseline".
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         * sunspider: Added a "--base" option that records the current test as a baseline.

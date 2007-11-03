@@ -40,25 +40,25 @@ my $root;
 my $testRuns = 5; # This number may be different from what sunspider defaults to (that's OK)
 my $runShark = 0;
 my $runShark20 = 0;
-my $setBase = 0;
+my $setBaseline = 0;
 my $showHelp = 0;
 my $testsPattern;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
-  --help        Show this help message
-  --base        Set baseline for future comparisons
-  --root        Path to root tools build
-  --runs        Number of times to run tests (default: $testRuns)
-  --tests       Only run tests matching provided pattern
-  --shark       Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
-  --shark20     Like --shark, but with a 20 microsecond sampling interval
+  --help            Show this help message
+  --set-baseline    Set baseline for future comparisons
+  --root            Path to root tools build
+  --runs            Number of times to run tests (default: $testRuns)
+  --tests           Only run tests matching provided pattern
+  --shark           Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
+  --shark20         Like --shark, but with a 20 microsecond sampling interval
 EOF
 
-GetOptions('base' => \$setBase,
-           'root=s' => sub { my ($argName, $value); setConfigurationProductDir(Cwd::abs_path($value)); },
+GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(Cwd::abs_path($value)); },
            'runs=i' => \$testRuns,
+           'set-baseline' => \$setBaseline,
            'shark' => \$runShark,
            'shark20' => \$runShark20,
            'tests=s' => \$testsPattern,
@@ -111,9 +111,9 @@ $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
 setupEnvironmentForExecution($productDir);
 my @args = ("--shell", testKJSPath($productDir), "--runs", $testRuns);
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
+push @args, "--set-baseline" if $setBaseline;
 push @args, "--shark" if $runShark;
 push @args, "--shark20" if $runShark20;
-push @args, "--base" if $setBase;
 push @args, "--tests", $testsPattern if $testsPattern;
 
 exec "./sunspider", @args;

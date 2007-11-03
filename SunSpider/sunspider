@@ -35,24 +35,24 @@ my $showHelp = 0;
 my $runShark = 0;
 my $runShark20 = 0;
 my $jsShellPath;
-my $setBase = 0;
+my $setBaseline = 0;
 my $testsPattern;
 my $testRuns = 5; # This number may be different from what ./sunspider defaults to (that's OK)
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName --shell=[path] [options]
-  --help        Show this help message
-  --base        Set baseline for future comparisons
-  --shell       Path to JavaScript shell
-  --runs        Number of times to run tests (default: $testRuns)
-  --tests       Only run tests matching provided pattern
-  --shark       Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
-  --shark20     Like --shark, but with a 20 microsecond sampling interval
+  --help            Show this help message
+  --set-baseline    Set baseline for future comparisons
+  --shell           Path to JavaScript shell
+  --runs            Number of times to run tests (default: $testRuns)
+  --tests           Only run tests matching provided pattern
+  --shark           Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
+  --shark20         Like --shark, but with a 20 microsecond sampling interval
 EOF
 
-GetOptions('base' => \$setBase,
-           'runs=i' => \$testRuns,
+GetOptions('runs=i' => \$testRuns,
+           'set-baseline' => \$setBaseline,
            'shell=s' => \$jsShellPath,
            'shark' => \$runShark,
            'shark20' => \$runShark20,
@@ -175,7 +175,7 @@ print "]\n";
 
 my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
 dumpToFile($output, $resultsFile);
-dumpToFile(File::Spec->rel2abs($resultsFile), "tmp/baseline-filename.txt") if $setBase;
+dumpToFile(File::Spec->rel2abs($resultsFile), "tmp/baseline-filename.txt") if $setBaseline;
 
 system("$jsShellPath", "-f", $prefixFile, "-f", $resultsFile, "-f", "resources/sunspider-analyze-results.js");
 
