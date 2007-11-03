@@ -1,3 +1,11 @@
+2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Script to sort "files(...);" sections in Xcode project.pbxproj files.
+
+        Rubber-stamped by Darin.
+
+        * Scripts/sort-Xcode-project-file: Added.
+
 2007-11-02  Darin Adler  <darin@apple.com>
 
         * Scripts/run-sunspider: Changed "--base" to "--set-baseline".
