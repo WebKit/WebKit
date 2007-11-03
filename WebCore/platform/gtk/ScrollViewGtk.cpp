@@ -126,8 +126,13 @@ void ScrollViewScrollbar::geometryChanged()
     ASSERT(parent()->isFrameView());
 
     FrameView* frameView = static_cast<FrameView*>(parent());
-    IntRect windowRect = IntRect(frameView->convertToContainingWindow(frameGeometry().location()), frameGeometry().size());
-    GtkAllocation allocation = { windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height() };
+    IntPoint loc = frameView->convertToContainingWindow(frameGeometry().location());
+
+    // Don't allow the allocation size to be negative
+    IntSize sz = frameGeometry().size();
+    sz.clampNegativeToZero();
+
+    GtkAllocation allocation = { loc.x(), loc.y(), sz.width(), sz.height() };
     gtk_widget_size_allocate(gtkWidget(), &allocation);
 }
 
@@ -292,10 +297,7 @@ void ScrollView::updateContents(const IntRect& updateRect, bool now)
     IntRect containingWindowRect = updateRect;
     containingWindowRect.setLocation(windowPoint);
 
-    GdkRectangle rect = { containingWindowRect.x(),
-                          containingWindowRect.y(),
-                          containingWindowRect.width(),
-                          containingWindowRect.height() };
+    GdkRectangle rect = containingWindowRect;
     GdkWindow* window = GTK_WIDGET(containingWindow())->window;
 
     if (window)
@@ -312,7 +314,7 @@ void ScrollView::update()
 {
     ASSERT(containingWindow());
 
-    GdkRectangle rect = { 0, 0, m_data->contentsSize.width(), m_data->contentsSize.height() };
+    GdkRectangle rect = frameGeometry();
     gdk_window_invalidate_rect(GTK_WIDGET(containingWindow())->window, &rect, true);
 }
 
@@ -505,7 +507,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         (e.deltaY() > 0 && scrollOffset().height() > 0))
         e.accept();
 
-    scrollBy(e.deltaX() * LINE_STEP, e.deltaY() * LINE_STEP);
+    scrollBy(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP);
 }
 
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
@@ -574,6 +576,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         m_data->horizontalAdjustment->page_size = visibleWidth();
         m_data->horizontalAdjustment->step_increment = visibleWidth() / 10.0;
         m_data->horizontalAdjustment->page_increment = visibleWidth() * 0.9;
+        m_data->horizontalAdjustment->lower = 0;
         m_data->horizontalAdjustment->upper = contentsWidth();
         gtk_adjustment_changed(m_data->horizontalAdjustment);
 
@@ -608,6 +611,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         m_data->verticalAdjustment->page_size = visibleHeight();
         m_data->verticalAdjustment->step_increment = visibleHeight() / 10.0;
         m_data->verticalAdjustment->page_increment = visibleHeight() * 0.9;
+        m_data->verticalAdjustment->lower = 0;
         m_data->verticalAdjustment->upper = contentsHeight();
         gtk_adjustment_changed(m_data->verticalAdjustment);
 

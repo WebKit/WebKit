@@ -1,3 +1,23 @@
+2007-11-03  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Frame scrolling and invalidation fixes
+
+        Make upward scroll events have a positive delta to match other ports.
+
+        Fix the invalidation rect offset for frames so that scrolling works properly.
+
+        Avoid allocating negative sizes to widgets to avoid GTK+ warnings.
+
+        Allow tabbing to all widgets and links.
+
+        Fix event returns, improving the focus situation and correcting scroll wheel
+        behavior.
+
+        * Api/webkitgtkpage.cpp:
+        * WebCoreSupport/ChromeClientGtk.cpp:
+
 2007-10-29  Alp Toker  <alp@atoker.com>
 
         Reviewed by Maciej.

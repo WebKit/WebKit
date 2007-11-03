@@ -81,8 +81,7 @@ static gboolean webkit_page_expose_event(GtkWidget* widget, GdkEventExpose* even
     ctx.setGdkExposeEvent(event);
     if (frame->renderer()) {
         frame->view()->layoutIfNeededRecursive();
-        IntRect rect(clip.x, clip.y, clip.width, clip.height);
-        frame->view()->paint(&ctx, rect);
+        frame->view()->paint(&ctx, clip);
     }
     cairo_destroy(cr);
 
@@ -92,40 +91,36 @@ static gboolean webkit_page_expose_event(GtkWidget* widget, GdkEventExpose* even
 static gboolean webkit_page_key_event(GtkWidget* widget, GdkEventKey* event)
 {
     Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
-    frame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
-    return FALSE;
+    return frame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
 }
 
 static gboolean webkit_page_button_event(GtkWidget* widget, GdkEventButton* event)
 {
     Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
 
-    if (event->type == GDK_BUTTON_RELEASE)
-        frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
-    else {
-        frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
-
-        //FIXME need to keep track of subframe focus for key events!
-        gtk_widget_grab_focus(GTK_WIDGET(widget));
+    switch (event->type) {
+        case GDK_BUTTON_PRESS:
+            // FIXME: need to keep track of subframe focus for key events
+            gtk_widget_grab_focus(GTK_WIDGET(widget));
+            return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
+        case GDK_BUTTON_RELEASE:
+            return frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
+        default:
+            return FALSE;
     }
-
-    return FALSE;
 }
 
 static gboolean webkit_page_motion_event(GtkWidget* widget, GdkEventMotion* event)
 {
     Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
-    frame->eventHandler()->mouseMoved(PlatformMouseEvent(event));
-    return FALSE;
+    return frame->eventHandler()->mouseMoved(PlatformMouseEvent(event));
 }
 
 static gboolean webkit_page_scroll_event(GtkWidget* widget, GdkEventScroll* event)
 {
     Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
-
     PlatformWheelEvent wheelEvent(event);
-    frame->eventHandler()->handleWheelEvent(wheelEvent);
-    return FALSE;
+    return frame->eventHandler()->handleWheelEvent(wheelEvent);
 }
 
 static void webkit_page_size_allocate(GtkWidget* widget, GtkAllocation* allocation)

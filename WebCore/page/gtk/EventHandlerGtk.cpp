@@ -44,17 +44,10 @@ namespace WebCore {
 
 using namespace EventNames;
 
-static bool isKeyboardOptionTab(KeyboardEvent* event)
-{
-    return event
-        && (event->type() == keydownEvent || event->type() == keypressEvent)
-        && event->altKey()
-        && event->keyIdentifier() == "U+0009";
-}
-
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 {
-    return isKeyboardOptionTab(event);
+    // We always allow tabs to all controls
+    return true;
 }
 
 void EventHandler::focusDocumentView()
@@ -93,10 +86,13 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
     return false;
 }
 
-bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
+bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& event, Widget* widget)
 {
-    notImplemented();
-    return false;
+    ASSERT(widget);
+    if (!widget->isFrameView())
+        return false;
+
+    return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleWheelEvent(event);
 }
 
 Clipboard* EventHandler::createDraggingClipboard() const 

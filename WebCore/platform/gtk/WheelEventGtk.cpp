@@ -34,19 +34,26 @@ namespace WebCore {
 
 PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 {
-    static const float delta = 0.25f;
+    static const float delta = 1;
 
     m_deltaX = 0;
     m_deltaY = 0;
 
-    if (event->direction == GDK_SCROLL_UP)
-        m_deltaY = -delta;
-    else if (event->direction == GDK_SCROLL_LEFT)
-        m_deltaX = -delta;
-    else if (event->direction == GDK_SCROLL_RIGHT)
-        m_deltaX = delta;
-    else
-        m_deltaY = delta;
+    // Docs say an upwards scroll (away from the user) has a positive delta
+    switch (event->direction) {
+        case GDK_SCROLL_UP:
+            m_deltaY = delta;
+            break;
+        case GDK_SCROLL_DOWN:
+            m_deltaY = -delta;
+            break;
+        case GDK_SCROLL_LEFT:
+            m_deltaX = -delta;
+            break;
+        case GDK_SCROLL_RIGHT:
+            m_deltaX = delta;
+            break;
+    }
 
     m_position = IntPoint((int)event->x, (int)event->y);
     m_globalPosition = IntPoint((int)event->x_root, (int)event->y_root);

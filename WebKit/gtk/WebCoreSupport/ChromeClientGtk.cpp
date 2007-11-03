@@ -245,8 +245,7 @@ bool ChromeClient::shouldInterruptJavaScript()
 
 bool ChromeClient::tabsToLinks() const
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 IntRect ChromeClient::windowResizerRect() const
