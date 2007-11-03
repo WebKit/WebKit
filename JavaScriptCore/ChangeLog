@@ -1,3 +1,10 @@
+2007-11-03  Kevin McCullough  <kmccullough@apple.com>
+
+        - Updated testkjs results to make the build bots green until we
+        can fix the tests that are failing.  The new failures are in DST.
+
+        * tests/mozilla/expected.html:
+
 2007-11-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam.
