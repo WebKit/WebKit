@@ -117,9 +117,12 @@ String Pasteboard::plainText(Frame*)
     GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
 
     gchar* utf8 = gtk_clipboard_wait_for_text(clipboard);
+
+    if (!utf8)
+        return String();
+
     String text = String::fromUTF8(utf8);
-    if (utf8)
-        g_free(utf8);
+    g_free(utf8);
 
     return text;
 }
