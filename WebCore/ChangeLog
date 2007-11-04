@@ -1,5 +1,15 @@
 2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx <-> WebKit conversions for IntPoint, IntRect and FloatRect
+
+        Reviewed by Mark Rowe.
+
+        * platform/graphics/wx/FloatRectWx.cpp: Added.
+        * platform/graphics/wx/IntPointWx.cpp: Added.
+        * platform/graphics/wx/IntRectWx.cpp: Added.
+
+2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx <-> WebKit data type conversions for Pen and Color.
 
         Reviewed by Darin Adler.
