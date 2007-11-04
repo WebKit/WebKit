@@ -140,6 +140,8 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
     COMPtr<IWebScriptScope> scope;
     scope.query(V_UNKNOWN(&var));
     VariantClear(&var);
+    if (!scope)
+        return;
 
     COMPtr<IEnumVARIANT> localScopeVariableNames;
     ret = scope->variableNames(&localScopeVariableNames);
@@ -181,6 +183,9 @@ JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef con
 
         COMPtr<IWebScriptScope> scope;
         scope.query(V_UNKNOWN(&var));
+        if (!scope)
+            return JSValueMakeUndefined(context);
+
         ret = scope->valueForVariable(bstrKey, &resultString);
         VariantClear(&var);
 

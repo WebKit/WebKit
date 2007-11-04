@@ -1,3 +1,49 @@
+2007-11-04  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej.
+
+        - This patch involves several changes, all of them were noticed that
+        they were needed by the work being done in WebKit to get Drosera and
+        WebKit working together on Windows.
+        - The changes are:
+        1) Added a debugger console for output messages.
+        2) Drosera now listens for the WebKit server (before, the server would
+        have to be running before Drosera was started.)
+        3) Fixed a bug where the WebView started out as 0x0 pixels.
+        4) Fixed a bug when there is no scope.
+        5) Added the HTML, JS, and CSS to the project file to make them easy to
+        find.
+        6) Made the ServerConnection functions virtual.
+
+        * Drosera/win/DebuggerClient.cpp: This is part of how Drosera listens
+        for the WebKit server.
+        (DebuggerClient::DebuggerClient):
+        (DebuggerClient::~DebuggerClient):
+        (DebuggerClient::didFinishLoadForFrame):
+        (DebuggerClient::serverConnected):
+        (DebuggerClient::attemptToCreateServerConnection):
+        * Drosera/win/DebuggerClient.h: Ditto.
+        * Drosera/win/DebuggerDocumentPlatform.cpp: Fixed a bug when there is no
+        scope.
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        * Drosera/win/Drosera.cpp:
+        (_tWinMain): Added a console in debug for output messages.
+        (Drosera::Drosera): Listen for server.
+        (Drosera::initUI): The server now Initializes COM.
+        (Drosera::serverConnected): Part of the listening for the server.
+        (Drosera::attemptToCreateServerConnection): Ditto.
+        * Drosera/win/Drosera.h: New interface for listening for the server.
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Added HTML, JS, and CSS
+        files to the VS project.
+        * Drosera/win/ServerConnection.cpp: Part of listening for the server
+        connection.
+        (ServerConnection::ServerConnection):
+        (ServerConnection::attemptToCreateServerConnection):
+        * Drosera/win/ServerConnection.h: Ditto and virtualized the Interface
+        methods.
+        (ServerConnection::serverConnected):
+
 2007-11-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

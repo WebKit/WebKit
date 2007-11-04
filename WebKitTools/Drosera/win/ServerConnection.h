@@ -45,6 +45,8 @@ public:
     ServerConnection();
     ~ServerConnection();
 
+    bool serverConnected() const { return m_serverConnected; }
+    void attemptToCreateServerConnection(JSGlobalContextRef = 0);
     void setGlobalContext(JSGlobalContextRef);
 
     // Pause & Step    
@@ -57,19 +59,19 @@ public:
     void serverConnectionDidDie();
 
     // IUnknown
-    HRESULT STDMETHODCALLTYPE QueryInterface(
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(
         /* [in] */ REFIID riid,
         /* [retval][out] */ void** ppvObject);
 
-    ULONG STDMETHODCALLTYPE AddRef();
-    ULONG STDMETHODCALLTYPE Release();
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebScriptDebugListener
-    HRESULT STDMETHODCALLTYPE didLoadMainResourceForDataSource(
+    virtual HRESULT STDMETHODCALLTYPE didLoadMainResourceForDataSource(
         /* [in] */ IWebView*,
         /* [in] */ IWebDataSource* dataSource);
 
-    HRESULT STDMETHODCALLTYPE didParseSource(
+    virtual HRESULT STDMETHODCALLTYPE didParseSource(
         /* [in] */ IWebView*,
         /* [in] */ BSTR sourceCode,
         /* [in] */ UINT baseLineNumber,
@@ -77,7 +79,7 @@ public:
         /* [in] */ int sourceID,
         /* [in] */ IWebFrame* webFrame);
 
-    HRESULT STDMETHODCALLTYPE failedToParseSource(
+    virtual HRESULT STDMETHODCALLTYPE failedToParseSource(
         /* [in] */ IWebView*,
         /* [in] */ BSTR sourceCode,
         /* [in] */ UINT baseLineNumber,
@@ -85,28 +87,28 @@ public:
         /* [in] */ BSTR error,
         /* [in] */ IWebFrame*);
 
-    HRESULT STDMETHODCALLTYPE didEnterCallFrame(
+    virtual HRESULT STDMETHODCALLTYPE didEnterCallFrame(
         /* [in] */ IWebView*,
         /* [in] */ IWebScriptCallFrame* frame,
         /* [in] */ int sourceID,
         /* [in] */ int lineNumber,
         /* [in] */ IWebFrame*);
 
-    HRESULT STDMETHODCALLTYPE willExecuteStatement(
+    virtual HRESULT STDMETHODCALLTYPE willExecuteStatement(
         /* [in] */ IWebView*,
         /* [in] */ IWebScriptCallFrame*,
         /* [in] */ int sourceID,
         /* [in] */ int lineNumber,
         /* [in] */ IWebFrame*);
 
-    HRESULT STDMETHODCALLTYPE willLeaveCallFrame(
+    virtual HRESULT STDMETHODCALLTYPE willLeaveCallFrame(
         /* [in] */ IWebView*,
         /* [in] */ IWebScriptCallFrame* frame,
         /* [in] */ int sourceID,
         /* [in] */ int lineNumber,
         /* [in] */ IWebFrame*);
 
-    HRESULT STDMETHODCALLTYPE exceptionWasRaised(
+    virtual HRESULT STDMETHODCALLTYPE exceptionWasRaised(
         /* [in] */ IWebView*,
         /* [in] */ IWebScriptCallFrame*,
         /* [in] */ int sourceID,
@@ -118,6 +120,7 @@ public:
     IWebScriptCallFrame* getCallerFrame(int callFrame) const;
 
 private:
+    bool m_serverConnected;
     std::wstring m_currentServerName;
 
     COMPtr<IWebScriptCallFrame> m_currentFrame;

@@ -58,6 +58,9 @@ INT_PTR CALLBACK aboutWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 
 HINSTANCE Drosera::getInst() { return hInst; }
 void Drosera::setInst(HINSTANCE in) { hInst = in; }
+void launchConsoleWindow();
+
+extern "C" __declspec(dllimport) HANDLE* __pioinfo;
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                        HINSTANCE hPrevInstance,
@@ -69,6 +72,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
     MSG msg;
 
+#ifndef NDEBUG
+    launchConsoleWindow();
+#endif
+
     Drosera drosera;
 
     HRESULT ret = drosera.init(hInstance, nCmdShow);
@@ -79,6 +86,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
     // Main message loop:
     while (GetMessage(&msg, 0, 0, 0)) {
+        if (!drosera.serverConnected())
+            drosera.attemptToCreateServerConnection();
+
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -86,6 +96,21 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     }
 
     return static_cast<int>(msg.wParam);
+}
+
+void launchConsoleWindow()
+{
+    if (AllocConsole()) {
+        // MSVCRT exports __pioinfo which is an array of ioinfo handles. the first three are stdout, stdin, and stderr
+        // the first pointer in the ioinfo object is the kernel handle for the console, so we can simplify the expression
+        // to just deref the exported symbol, setting it to the newly allocated console handle.
+        *__pioinfo = GetStdHandle(STD_OUTPUT_HANDLE);
+        // When an app is created without a console, stdout, stderr and stdin are all invalid handles (i.e. negative)
+        // Since we've introduced new handles, we can reset their file index - which is the index into the ioinfo array.
+        // This hooks up the standard cruntime APIS to the new console, allowing a functional output.  As for input YMMV.
+        stdout->_file = 0;
+        stderr->_file = 0;
+    }
 }
 
 ////////////////// Setup Windows Specific Interface //////////////////
@@ -178,7 +203,6 @@ Drosera::Drosera()
     : m_hWnd(0)
     , m_debuggerClient(new DebuggerClient())
 {
-    OleInitialize(0);
 }
 
 HRESULT Drosera::init(HINSTANCE hInstance, int nCmdShow)
@@ -225,8 +249,9 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
     if (FAILED(ret))
         return ret;
 
-    RECT rect = {0};
-    ret = m_webView->initWithFrame(rect, 0, 0);
+    RECT clientRect = {0};
+    ::GetClientRect(m_hWnd, &clientRect);
+    ret = m_webView->initWithFrame(clientRect, 0, 0);
     if (FAILED(ret))
         return ret;
 
@@ -238,13 +263,6 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
     ::SetProp(viewWindow, kDroseraPointerProp, (HANDLE)this);
 
     // FIXME: Implement window size/position save/restore
-
-    RECT frame;
-    frame.left = 60;
-    frame.top = 200;
-    frame.right = 750;
-    frame.bottom = 550;
-    ::SetWindowPos(m_hWnd, HWND_TOPMOST, frame.left, frame.top, frame.right - frame.left, frame.bottom - frame.top, 0);
     ShowWindow(m_hWnd, nCmdShow);
     UpdateWindow(m_hWnd);
 
@@ -328,3 +346,16 @@ BSTR cfStringToBSTR(CFStringRef cfstr)
 
     return bstr;
 }
+
+// Server Connection Functions
+
+bool Drosera::serverConnected() const
+{
+    return m_debuggerClient->serverConnected();
+}
+
+void Drosera::attemptToCreateServerConnection()
+{
+    m_debuggerClient->attemptToCreateServerConnection();
+}
+

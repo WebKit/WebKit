@@ -329,6 +329,46 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="WebSource"
+			>
+			<File
+				RelativePath="..\..\breakpointEditor.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\console.css"
+				>
+			</File>
+			<File
+				RelativePath="..\..\console.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\console.js"
+				>
+			</File>
+			<File
+				RelativePath="..\..\debugger.css"
+				>
+			</File>
+			<File
+				RelativePath="..\..\debugger.html"
+				>
+			</File>
+			<File
+				RelativePath="..\..\debugger.js"
+				>
+			</File>
+			<File
+				RelativePath="..\..\viewer.css"
+				>
+			</File>
+			<File
+				RelativePath="..\..\viewer.html"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

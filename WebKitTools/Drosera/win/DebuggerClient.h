@@ -44,6 +44,7 @@ typedef struct OpaqueJSValue* JSObjectRef;
 class DebuggerClient : public BaseDelegate {
 public:
     DebuggerClient();
+    ~DebuggerClient();
     explicit DebuggerClient(const std::wstring& serverName);
 
     // IUnknown
@@ -85,8 +86,14 @@ public:
 
     bool webViewLoaded() const { return m_webViewLoaded; }
 
+    // Server Connection Functions
+
+    bool serverConnected() const;
+    void attemptToCreateServerConnection();
+
 private:
     bool m_webViewLoaded;
+    JSGlobalContextRef m_globalContext;
 
     OwnPtr<DebuggerDocument> m_debuggerDocument;
 };
