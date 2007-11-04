@@ -1,3 +1,13 @@
+2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx <-> WebKit data type conversions for Pen and Color.
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/wx: Added.
+        * platform/graphics/wx/ColorWx.cpp: Added.
+        * platform/graphics/wx/PenWx.cpp: Added.
+
 2007-11-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.
