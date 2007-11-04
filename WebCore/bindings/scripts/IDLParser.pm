@@ -72,7 +72,8 @@ sub Parse
 
     print " | *** Starting to parse $fileName...\n |\n" unless $beQuiet;
 
-    open FILE, $preprocessor . " " . join(" ", (map { "-D$_" } split(/ /, $defines))) . " ". $fileName . "|" or die "Could not open $fileName";
+    open FILE, "-|", split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName
+        or die "Could not open $fileName: $!";
     my @documentContent = <FILE>;
     close FILE;
 
