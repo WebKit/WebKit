@@ -30,7 +30,7 @@
 #include "UserObjectImp.h"
 #include <JavaScriptCore/PropertyNameArray.h>
 
-const ClassInfo UserObjectImp::info = {"UserObject", 0, 0, 0};
+const ClassInfo UserObjectImp::info = { "UserObject", 0, 0 };
 
 UserObjectImp::UserObjectImp(JSUserObject* userObject)
     : fJSUserObject((JSUserObject*)userObject->Retain())

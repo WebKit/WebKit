@@ -1,3 +1,9 @@
+2007-11-03  Sam Weinig  <sam@webkit.org>
+
+        Build-fix.
+
+        * UserObjectImp.cpp:
+
 2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
 
         Sort files(...); sections of Xcode project files.
