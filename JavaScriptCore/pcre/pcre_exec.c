@@ -754,16 +754,12 @@ for (;;)
       }
     else
       {
-        {
-        if (frame->eptr < md->end_subject - 1 ||
-           (frame->eptr == md->end_subject - 1 && !IS_NEWLINE(*frame->eptr)))
-          RRETURN(MATCH_NOMATCH);
-        frame->ecode++;
-        break;
-        }
+      if (frame->eptr < md->end_subject - 1 ||
+         (frame->eptr == md->end_subject - 1 && !IS_NEWLINE(*frame->eptr)))
+        RRETURN(MATCH_NOMATCH);
+      frame->ecode++;
+      break;
       }
-    if (frame->eptr < md->end_subject) RRETURN(MATCH_NOMATCH);
-    frame->ecode++;
     break;
 
     /* Word boundary assertions */
