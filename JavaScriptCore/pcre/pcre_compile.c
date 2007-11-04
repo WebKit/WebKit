@@ -71,7 +71,6 @@ compile time. */
 
 #define BRASTACK_SIZE 200
 
-
 /* Table for handling escaped characters in the range '0'-'z'. Positive returns
 are simple data values; negative values are for special things like \d and so
 on. Zero means further processing is needed (for things like \x), or the escape
@@ -84,9 +83,9 @@ static const short int escapes[] = {
      0,      0,      0,      0,      0,      0,      0,      0,   /* H - O */
      0,      0,      0, -ESC_S,      0,      0,      0, -ESC_W,   /* P - W */
      0,      0,      0,    '[',   '\\',    ']',    '^',    '_',   /* X - _ */
-   '`',      7, -ESC_b,      0, -ESC_d,      0,  ESC_f,      0,   /* ` - g */
-     0,      0,      0,      0,      0,      0,  ESC_n,      0,   /* h - o */
-     0,      0,  ESC_r, -ESC_s,  ESC_tee,    0,  ESC_v, -ESC_w,   /* p - w */
+   '`',      7, -ESC_b,      0, -ESC_d,      0,   '\f',      0,   /* ` - g */
+     0,      0,      0,      0,      0,      0,   '\n',      0,   /* h - o */
+     0,      0,    '\r', -ESC_s,   '\t',      0,  '\v', -ESC_w,   /* p - w */
      0,      0,      0                                            /* x - z */
 };
 
@@ -211,7 +210,7 @@ static const unsigned char digitab[] =
 
 static BOOL
   compile_regex(int, int *, uschar **, const pcre_uchar **, const pcre_uchar *, int *, int,
-    int *, int *, branch_chain *, compile_data *);
+    int *, int *, compile_data *);
 
 
 
@@ -954,7 +953,6 @@ Arguments:
   errorcodeptr   points to error code variable
   firstbyteptr   set to initial literal character, or < 0 (REQ_UNSET, REQ_NONE)
   reqbyteptr     set to the last literal character required, else < 0
-  bcptr          points to current branch chain
   cd             contains pointers to tables etc.
 
 Returns:         TRUE on success
@@ -964,7 +962,7 @@ Returns:         TRUE on success
 static BOOL
 compile_branch(int *optionsptr, int *brackets, uschar **codeptr,
   const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, int *errorcodeptr, int *firstbyteptr,
-  int *reqbyteptr, branch_chain *bcptr, compile_data *cd)
+  int *reqbyteptr, compile_data *cd)
 {
 int repeat_type, op_type;
 int repeat_min = 0, repeat_max = 0;      /* To please picky compilers */
@@ -1159,7 +1157,6 @@ for (;; ptr++)
         c = check_escape(&ptr, patternEnd, errorcodeptr, *brackets, TRUE);
 
         if (-c == ESC_b) c = '\b';       /* \b is backslash in a class */
-        else if (-c == ESC_X) c = 'X';   /* \X is literal X in a class */
 
         if (c < 0)
           {
@@ -1235,7 +1232,7 @@ for (;; ptr++)
           if (d < 0)
             {
             if (d == -ESC_b) d = '\b';
-            else if (d == -ESC_X) d = 'X'; else
+            else
               {
               ptr = oldptr - 2;
               goto LONE_SINGLE_CHARACTER;  /* A few lines below */
@@ -2017,7 +2014,6 @@ for (;; ptr++)
          skipbytes,                    /* Skip over OP_COND/OP_BRANUMBER */
          &subfirstbyte,                /* For possible first char */
          &subreqbyte,                  /* For possible last char */
-         bcptr,                        /* Current branch chain */
          cd))                          /* Tables block */
       goto FAILED;
 
@@ -2103,7 +2099,7 @@ for (;; ptr++)
     are arranged to be the negation of the corresponding OP_values. For the
     back references, the values are ESC_REF plus the reference number. Only
     back references and those types that consume a character may be repeated.
-    We can test for values between ESC_b and ESC_Z for the latter; this may
+    We can test for values between ESC_b and ESC_w for the latter; this may
     have to change if any new ones are ever created. */
 
     if (c < 0)
@@ -2111,7 +2107,7 @@ for (;; ptr++)
       /* For metasequences that actually match a character, we disable the
       setting of a first character if it hasn't already been set. */
 
-      if (firstbyte == REQ_UNSET && -c > ESC_b && -c < ESC_Z)
+      if (firstbyte == REQ_UNSET && -c > ESC_b && -c <= ESC_w)
         firstbyte = REQ_NONE;
 
       /* Set values to reset to if this is followed by a zero repeat. */
@@ -2134,7 +2130,7 @@ for (;; ptr++)
 
       else
         {
-        previous = (-c > ESC_b && -c < ESC_Z)? code : NULL;
+        previous = (-c > ESC_b && -c <= ESC_w)? code : NULL;
         *code++ = -c;
         }
       continue;
@@ -2245,7 +2241,6 @@ Argument:
   skipbytes      skip this many bytes at start (for OP_COND, OP_BRANUMBER)
   firstbyteptr   place to put the first required character, or a negative number
   reqbyteptr     place to put the last required character, or a negative number
-  bcptr          pointer to the chain of currently open branches
   cd             points to the data block with tables pointers etc.
 
 Returns:      TRUE on success
@@ -2254,7 +2249,7 @@ Returns:      TRUE on success
 static BOOL
 compile_regex(int options, int *brackets, uschar **codeptr,
   const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, int *errorcodeptr, int skipbytes,
-  int *firstbyteptr, int *reqbyteptr, branch_chain *bcptr, compile_data *cd)
+  int *firstbyteptr, int *reqbyteptr, compile_data *cd)
 {
 const pcre_uchar *ptr = *ptrptr;
 uschar *code = *codeptr;
@@ -2262,10 +2257,6 @@ uschar *last_branch = code;
 uschar *start_bracket = code;
 int firstbyte, reqbyte;
 int branchfirstbyte, branchreqbyte;
-branch_chain bc;
-
-bc.outer = bcptr;
-bc.current = code;
 
 firstbyte = reqbyte = REQ_UNSET;
 
@@ -2281,7 +2272,7 @@ for (;;)
   /* Now compile the branch */
 
   if (!compile_branch(&options, brackets, &code, &ptr, patternEnd, errorcodeptr,
-        &branchfirstbyte, &branchreqbyte, &bc, cd))
+        &branchfirstbyte, &branchreqbyte, cd))
     {
     *ptrptr = ptr;
     return FALSE;
@@ -2369,7 +2360,7 @@ for (;;)
 
   *code = OP_ALT;
   PUT(code, 1, code - last_branch);
-  bc.current = last_branch = code;
+  last_branch = code;
   code += 1 + LINK_SIZE;
   ptr++;
   }
@@ -2840,7 +2831,6 @@ while (++ptr < patternEnd)
         /* \b is backspace inside a class; \X is literal */
 
         if (-c == ESC_b) c = '\b';
-        else if (-c == ESC_X) c = 'X';
 
         /* Handle escapes that turn into characters */
 
@@ -2852,15 +2842,6 @@ while (++ptr < patternEnd)
         else
           {
           class_optcount = 10;         /* \d, \s etc; make sure > 1 */
-          if (-c == ESC_p || -c == ESC_P)
-            {
-            if (!class_utf8)
-              {
-              class_utf8 = TRUE;
-              length += LINK_SIZE + 2;
-              }
-            length += 3;
-            }
           }
         }
 
@@ -2895,7 +2876,6 @@ while (++ptr < patternEnd)
             d = check_escape(&ptr, patternEnd, &errorcode, bracount, TRUE);
             if (errorcode != 0) goto PCRE_ERROR_RETURN;
             if (-d == ESC_b) d = '\b';        /* backspace */
-            else if (-d == ESC_X) d = 'X';    /* literal X in a class */
             }
           else if (ptr + 1 < patternEnd && ptr[1] != ']')
             {
@@ -3216,20 +3196,11 @@ the end; it's there to help in the case when a regex compiled on a system with
 
 re->size = (pcre_uint32)size;
 re->options = options;
-re->name_table_offset = sizeof(real_pcre);
-re->name_entry_size = max_name_size + 3;
-re->name_count = name_count;
-re->ref_count = 0;
-re->tables = 0;
-re->nullpad = NULL;
 
 /* The starting points of the name/number translation table and of the code are
 passed around in the compile data block. */
 
-compile_block.names_found = 0;
-compile_block.name_entry_size = max_name_size + 3;
-compile_block.name_table = (uschar *)re + re->name_table_offset;
-codestart = compile_block.name_table + re->name_entry_size * re->name_count;
+codestart = (const uschar *)(re + 1);
 compile_block.start_code = codestart;
 compile_block.start_pattern = (const pcre_uchar *)pattern;
 compile_block.req_varyopt = 0;
@@ -3244,7 +3215,7 @@ code = (uschar *)codestart;
 bracount = 0;
 (void)compile_regex(options, &bracount, &code, &ptr,
   patternEnd,
-  &errorcode, 0, &firstbyte, &reqbyte, NULL, &compile_block);
+  &errorcode, 0, &firstbyte, &reqbyte, &compile_block);
 re->top_bracket = bracount;
 re->top_backref = compile_block.top_backref;
 

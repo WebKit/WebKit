@@ -121,7 +121,6 @@
 		65FB3F5109D11B2400F49DEB /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4909D11B2400F49DEB /* grammar.h */; };
 		65FB3F5409D11B2400F49DEB /* regexp_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4C09D11B2400F49DEB /* regexp_object.lut.h */; };
 		65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; };
-		93008A920CA98E23002F58FB /* pcre_fullinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 93008A910CA98E23002F58FB /* pcre_fullinfo.c */; };
 		9302043B0B790750000C6115 /* FastMallocPCRE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302043A0B790750000C6115 /* FastMallocPCRE.cpp */; };
 		9303F568099118FA00AD71B8 /* OwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F567099118FA00AD71B8 /* OwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5690991190000AD71B8 /* Noncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -228,9 +227,7 @@
 		93E26BCA08B1511900F85226 /* pcre_ord2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BC908B1511900F85226 /* pcre_ord2utf8.c */; };
 		93E26BD408B1514100F85226 /* pcre_xclass.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BD308B1514100F85226 /* pcre_xclass.c */; };
 		93E26BE608B1517100F85226 /* pcre_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BE508B1517100F85226 /* pcre_internal.h */; };
-		93E26BFD08B151D400F85226 /* ucp.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFB08B151D400F85226 /* ucp.h */; };
 		93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFC08B151D400F85226 /* ucpinternal.h */; };
-		93E26CF708B29A1C00F85226 /* pcre_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26CF608B29A1C00F85226 /* pcre_get.c */; };
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; };
 		95C18D490C90E82600E72F73 /* JSRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8E894320CD0602400367179 /* JSCallbackObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */; };
@@ -550,7 +547,6 @@
 		70B16A260569A10900DB756D /* runtime_object.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_object.cpp; path = bindings/runtime_object.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		70B16A270569A10900DB756D /* runtime_object.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = runtime_object.h; path = bindings/runtime_object.h; sourceTree = "<group>"; tabWidth = 8; };
 		84ABF1DE070B628C00A3AC05 /* npruntime_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = npruntime_impl.h; path = bindings/npruntime_impl.h; sourceTree = "<group>"; tabWidth = 8; };
-		93008A910CA98E23002F58FB /* pcre_fullinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pcre_fullinfo.c; path = pcre/pcre_fullinfo.c; sourceTree = "<group>"; };
 		9302043A0B790750000C6115 /* FastMallocPCRE.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastMallocPCRE.cpp; sourceTree = "<group>"; };
 		9303F567099118FA00AD71B8 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
 		9303F5690991190000AD71B8 /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noncopyable.h; sourceTree = "<group>"; };
@@ -584,9 +580,7 @@
 		93E26BC908B1511900F85226 /* pcre_ord2utf8.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_ord2utf8.c; path = pcre/pcre_ord2utf8.c; sourceTree = "<group>"; tabWidth = 8; };
 		93E26BD308B1514100F85226 /* pcre_xclass.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_xclass.c; path = pcre/pcre_xclass.c; sourceTree = "<group>"; tabWidth = 8; };
 		93E26BE508B1517100F85226 /* pcre_internal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = pcre_internal.h; path = pcre/pcre_internal.h; sourceTree = "<group>"; tabWidth = 8; };
-		93E26BFB08B151D400F85226 /* ucp.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = ucp.h; path = pcre/ucp.h; sourceTree = "<group>"; tabWidth = 8; };
 		93E26BFC08B151D400F85226 /* ucpinternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = ucpinternal.h; path = pcre/ucpinternal.h; sourceTree = "<group>"; tabWidth = 8; };
-		93E26CF608B29A1C00F85226 /* pcre_get.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_get.c; path = pcre/pcre_get.c; sourceTree = "<group>"; tabWidth = 8; };
 		93F0B3A909BB4DC00068FCE3 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		93F0B3AA09BB4DC00068FCE3 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; tabWidth = 8; };
@@ -1062,14 +1056,11 @@
 				6541720F039E08B90058BFEB /* pcre.h */,
 				930754BF08B0F68000AB3056 /* pcre_compile.c */,
 				930754E908B0F78500AB3056 /* pcre_exec.c */,
-				93008A910CA98E23002F58FB /* pcre_fullinfo.c */,
-				93E26CF608B29A1C00F85226 /* pcre_get.c */,
 				93E26BE508B1517100F85226 /* pcre_internal.h */,
 				93E26BC908B1511900F85226 /* pcre_ord2utf8.c */,
 				930754CE08B0F74500AB3056 /* pcre_tables.c */,
 				937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.c */,
 				93E26BD308B1514100F85226 /* pcre_xclass.c */,
-				93E26BFB08B151D400F85226 /* ucp.h */,
 				93E26BFC08B151D400F85226 /* ucpinternal.h */,
 			);
 			name = pcre;
@@ -1266,7 +1257,6 @@
 				932F5B590822A1C700736975 /* string_object.h in Headers */,
 				65B174F809D100FA00820339 /* string_object.lut.h in Headers */,
 				932F5B5B0822A1C700736975 /* types.h in Headers */,
-				93E26BFD08B151D400F85226 /* ucp.h in Headers */,
 				93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */,
 				932F5B5C0822A1C700736975 /* ustring.h in Headers */,
 				14ABB36F099C076400E2A24F /* value.h in Headers */,
@@ -1550,8 +1540,6 @@
 				932F5BC30822A1C700736975 /* objc_utility.mm in Sources */,
 				930754C108B0F68000AB3056 /* pcre_compile.c in Sources */,
 				930754EB08B0F78500AB3056 /* pcre_exec.c in Sources */,
-				93008A920CA98E23002F58FB /* pcre_fullinfo.c in Sources */,
-				93E26CF708B29A1C00F85226 /* pcre_get.c in Sources */,
 				93E26BCA08B1511900F85226 /* pcre_ord2utf8.c in Sources */,
 				930754D008B0F74600AB3056 /* pcre_tables.c in Sources */,
 				937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.c in Sources */,

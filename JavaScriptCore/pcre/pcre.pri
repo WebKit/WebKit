@@ -5,8 +5,6 @@ INCLUDEPATH += $$PWD $$OUTPUT_DIR/JavaScriptCore/kjs/tmp
 SOURCES += \
     pcre_compile.c \
     pcre_exec.c \
-    pcre_fullinfo.c \
-    pcre_get.c \
     pcre_ord2utf8.c \
     pcre_tables.c \
     pcre_ucp_searchfuncs.c \

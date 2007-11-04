@@ -587,14 +587,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_fullinfo.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_get.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pcre\pcre_internal.h"
 				>
 			</File>
@@ -612,10 +604,6 @@
 			</File>
 			<File
 				RelativePath="..\..\pcre\pcre_xclass.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\ucp.h"
 				>
 			</File>
 			<File

@@ -335,45 +335,6 @@ typedef int BOOL;
 #define FALSE   0
 #define TRUE    1
 
-/* Escape items that are just an encoding of a particular data value. Note that
-ESC_n is defined as yet another macro, which is set in config.h to either \n
-(the default) or \r (which some people want). */
-
-#ifndef ESC_e
-#define ESC_e 27
-#endif
-
-#ifndef ESC_f
-#define ESC_f '\f'
-#endif
-
-#ifndef ESC_n
-#define ESC_n '\n'
-#endif
-
-#ifndef ESC_r
-#define ESC_r '\r'
-#endif
-
-/* We can't officially use ESC_t because it is a POSIX reserved identifier
-(presumably because of all the others like size_t). */
-
-#ifndef ESC_tee
-#define ESC_tee '\t'
-#endif
-
-#ifndef ESC_v
-#define ESC_v '\v'
-#endif
-
-/* Codes for different types of Unicode property */
-
-#define PT_ANY        0    /* Any property - matches all chars */
-#define PT_LAMP       1    /* L& - the union of Lu, Ll, Lt */
-#define PT_GC         2    /* General characteristic (e.g. L) */
-#define PT_PC         3    /* Particular characteristic (e.g. Lu) */
-#define PT_SC         4    /* Script (e.g. Han) */
-
 /* Flag bits and data types for the extended class (OP_XCLASS) for classes that
 contain UTF-8 characters with values greater than 255. */
 
@@ -383,8 +344,6 @@ contain UTF-8 characters with values greater than 255. */
 #define XCL_END       0    /* Marks end of individual items */
 #define XCL_SINGLE    1    /* Single item (one multibyte char) follows */
 #define XCL_RANGE     2    /* A range (two multibyte chars) follows */
-#define XCL_PROP      3    /* Unicode property (2-byte property code follows) */
-#define XCL_NOTPROP   4    /* Unicode inverted property (ditto) */
 
 /* These are escaped items that aren't just an encoding of a particular data
 value such as \n. They must have non-zero values, as check_escape() returns
@@ -397,9 +356,7 @@ detect the types that may be repeated. These are the types that consume
 characters. If any new escapes are put in between that don't consume a
 character, that code will have to change. */
 
-enum { ESC_A = 1, ESC_G, ESC_B, ESC_b, ESC_D, ESC_d, ESC_S, ESC_s, ESC_W,
-       ESC_w, ESC_dum1, ESC_C, ESC_P, ESC_p, ESC_X, ESC_Z, ESC_z, ESC_E,
-       ESC_Q, ESC_REF };
+enum { ESC_B = 1, ESC_b, ESC_D, ESC_d, ESC_S, ESC_s, ESC_W, ESC_w, ESC_REF };
 
 /* Opcode table: OP_BRA must be last, as all values >= it are used for brackets
 that extract substrings. Starting from 1 (i.e. after OP_END), the values up to
@@ -412,8 +369,6 @@ enum {
 
   /* Values corresponding to backslashed metacharacters */
 
-  xOP_SOD,            /* 1 Start of data: \A */
-  xOP_SOM,            /* 2 Start of match (subject + offset): \G */
   OP_NOT_WORD_BOUNDARY,  /*  3 \B */
   OP_WORD_BOUNDARY,      /*  4 \b */
   OP_NOT_DIGIT,          /*  5 \D */
@@ -422,15 +377,9 @@ enum {
   OP_WHITESPACE,         /*  8 \s */
   OP_NOT_WORDCHAR,       /*  9 \W */
   OP_WORDCHAR,           /* 10 \w */
-  OP_ANY,            /* 11 Match any character */
-  xOP_ANYBYTE,        /* 12 Match any byte (\C); different to OP_ANY for UTF-8 */
-  xOP_NOTPROP,        /* 13 \P (not Unicode property) */
-  xOP_PROP,           /* 14 \p (Unicode property) */
-  xOP_EXTUNI,         /* 15 \X (extended Unicode sequence */
-  xOP_EODN,           /* 16 End of data or \n at end of data: \Z. */
-  xOP_EOD,            /* 17 End of data: \z */
 
-  xOP_OPT,            /* 18 Set runtime options */
+  OP_ANY,            /* 11 Match any character */
+
   OP_CIRC,           /* 19 Start of line - varies with multiline switch */
   OP_DOLL,           /* 20 End of line - varies with multiline switch */
   OP_CHAR,           /* 21 Match one character, casefully */
@@ -485,8 +434,6 @@ enum {
                            class. This does both positive and negative. */
 
   OP_REF,            /* 62 Match a back reference */
-  xOP_RECURSE,        /* 63 Match a numbered subpattern (possibly recursive) */
-  xOP_CALLOUT,        /* 64 Call out to external function if provided */
 
   OP_ALT,            /* 65 Start of alternation */
   OP_KET,            /* 66 End of group that doesn't have an unbounded repeat */
@@ -497,16 +444,11 @@ enum {
 
   OP_ASSERT,         /* 69 Positive lookahead */
   OP_ASSERT_NOT,     /* 70 Negative lookahead */
-  xOP_ASSERTBACK,     /* 71 Positive lookbehind */
-  xOP_ASSERTBACK_NOT, /* 72 Negative lookbehind */
-  xOP_REVERSE,        /* 73 Move pointer back - used in lookbehind assertions */
 
   /* ONCE and COND must come after the assertions, with ONCE first, as there's
   a test for >= ONCE for a subpattern that isn't an assertion. */
 
   OP_ONCE,           /* 74 Once matched, don't back up into the subpattern */
-  xOP_COND,           /* 75 Conditional group */
-  xOP_CREF,           /* 76 Used to hold an extraction string number (cond ref) */
 
   OP_BRAZERO,        /* 77 These two must remain together and in this */
   OP_BRAMINZERO,     /* 78 order. */
@@ -532,25 +474,6 @@ opcodes. */
 #define EXTRACT_BASIC_MAX  100
 
 
-/* This macro defines textual names for all the opcodes. These are used only
-for debugging. The macro is referenced only in pcre_printint.c. */
-
-#define OP_NAME_LIST \
-  "End", "\\A", "\\G", "\\B", "\\b", "\\D", "\\d",                \
-  "\\S", "\\s", "\\W", "\\w", "Any", "Anybyte",                   \
-  "notprop", "prop", "extuni",                                    \
-  "\\Z", "\\z",                                                   \
-  "Opt", "^", "$", "char", "charnc", "not",                       \
-  "*", "*?", "+", "+?", "?", "??", "{", "{", "{",                 \
-  "*", "*?", "+", "+?", "?", "??", "{", "{", "{",                 \
-  "*", "*?", "+", "+?", "?", "??", "{", "{", "{",                 \
-  "*", "*?", "+", "+?", "?", "??", "{", "{",                      \
-  "class", "nclass", "xclass", "Ref", "Recurse", "Callout",       \
-  "Alt", "Ket", "KetRmax", "KetRmin", "Assert", "Assert not",     \
-  "AssertB", "AssertB not", "Reverse", "Once", "Cond", "Cond ref",\
-  "Brazero", "Braminzero", "Branumber", "Bra"
-
-
 /* This macro defines the length of fixed length operations in the compiled
 regex. The lengths are used when searching for specific things, and also in the
 debugging printing of a compiled regex. We use a macro so that it can be
@@ -562,10 +485,9 @@ in UTF-8 mode. The code that uses this table must know about such things. */
 
 #define OP_LENGTHS \
   1,                             /* End                                    */ \
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* \A, \G, \B, \B, \D, \d, \S, \s, \W, \w */ \
-  1, 1,                          /* Any, Anybyte                           */ \
-  3, 3, 1,                       /* NOTPROP, PROP, EXTUNI                  */ \
-  1, 1, 2, 1, 1,                 /* \Z, \z, Opt, ^, $                      */ \
+  1, 1, 1, 1, 1, 1, 1, 1,        /* \B, \b, \D, \d, \S, \s, \W, \w         */ \
+  1,                             /* Any                                    */ \
+  1, 1,                          /* ^, $                                   */ \
   2,                             /* Char  - the minimum length             */ \
   2,                             /* Charnc  - the minimum length           */ \
   2,                             /* not                                    */ \
@@ -585,28 +507,17 @@ in UTF-8 mode. The code that uses this table must know about such things. */
  33,                             /* NCLASS                                 */ \
   0,                             /* XCLASS - variable length               */ \
   3,                             /* REF                                    */ \
-  1+LINK_SIZE,                   /* RECURSE                                */ \
-  2+2*LINK_SIZE,                 /* CALLOUT                                */ \
   1+LINK_SIZE,                   /* Alt                                    */ \
   1+LINK_SIZE,                   /* Ket                                    */ \
   1+LINK_SIZE,                   /* KetRmax                                */ \
   1+LINK_SIZE,                   /* KetRmin                                */ \
   1+LINK_SIZE,                   /* Assert                                 */ \
   1+LINK_SIZE,                   /* Assert not                             */ \
-  1+LINK_SIZE,                   /* Assert behind                          */ \
-  1+LINK_SIZE,                   /* Assert behind not                      */ \
-  1+LINK_SIZE,                   /* Reverse                                */ \
   1+LINK_SIZE,                   /* Once                                   */ \
-  1+LINK_SIZE,                   /* COND                                   */ \
-  3,                             /* CREF                                   */ \
   1, 1,                          /* BRAZERO, BRAMINZERO                    */ \
   3,                             /* BRANUMBER                              */ \
   1+LINK_SIZE                    /* BRA                                    */ \
 
-
-/* A magic value for OP_CREF to indicate the "in recursion" condition. */
-
-#define CREF_RECURSE  0xffff
 
 /* Error code numbers. They are given names so that they can more easily be
 tracked. */
@@ -642,23 +553,7 @@ typedef struct real_pcre {
   pcre_uint16 top_backref;
   pcre_uint16 first_byte;
   pcre_uint16 req_byte;
-  pcre_uint16 name_table_offset;  /* Offset to name table that follows */
-  pcre_uint16 name_entry_size;    /* Size of any name items */
-  pcre_uint16 name_count;         /* Number of name items */
-  pcre_uint16 ref_count;          /* Reference count */
-
-  const unsigned char *tables;    /* Pointer to tables or NULL for std */
-  const unsigned char *nullpad;   /* NULL padding */
 } real_pcre;
-
-/* The format of the block used to store data from pcre_study(). The same
-remark (see NOTE above) about extending this structure applies. */
-
-typedef struct pcre_study_data {
-  pcre_uint32 size;               /* Total that was malloced */
-  pcre_uint32 options;
-  uschar start_bits[32];
-} pcre_study_data;
 
 /* Structure for passing "static" information around between the functions
 doing the compiling, so that they are thread-safe. */
@@ -670,21 +565,10 @@ typedef struct compile_data {
   const uschar *ctypes;         /* Points to table of type maps */
   const uschar *start_code;     /* The start of the compiled code */
   const pcre_uchar *start_pattern;   /* The start of the pattern */
-  uschar *name_table;           /* The name/number table */
-  int  names_found;             /* Number of entries so far */
-  int  name_entry_size;         /* Size of each entry */
   int  top_backref;             /* Maximum back reference */
   unsigned int backref_map;     /* Bitmap of low back refs */
   int  req_varyopt;             /* "After variable item" flag for reqbyte */
 } compile_data;
-
-/* Structure for maintaining a chain of pointers to the currently incomplete
-branches, for testing for left recursion. */
-
-typedef struct branch_chain {
-  struct branch_chain *outer;
-  uschar *current;
-} branch_chain;
 
 /* When compiling in a mode that doesn't use recursive calls to match(),
 a structure is used to remember local variables on the heap. It is defined in
@@ -712,7 +596,6 @@ typedef struct match_data {
   USPTR  start_match;           /* Start of this match attempt */
   USPTR  end_match_ptr;         /* Subject position at end match */
   int    end_offset_top;        /* Highwater mark at end of match */
-  struct heapframe *thisframe;  /* Used only when compiling for no recursion */
   BOOL   multiline;
   BOOL   caseless;
 } match_data;

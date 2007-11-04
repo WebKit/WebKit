@@ -1,5 +1,27 @@
 2007-11-03  Darin Adler  <darin@apple.com>
 
+        - fix non-Mac builds; remove some more unused PCRE stuff
+
+        * pcre/pcre_compile.c:
+        (compile_branch): Removed branch chain and some unused ESC values.
+        (compile_regex): Ditto.
+        (jsRegExpCompile): Ditto.
+        * pcre/pcre_exec.c:
+        (match): Removed unused branch targets. Don't use macros any more.
+        (jsRegExpExecute): More of the same.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Update for removed files.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * pcre/pcre.pri: Ditto.
+
+        * pcre/MERGING: Removed.
+        * pcre/pcre_fullinfo.c: Removed.
+        * pcre/pcre_get.c: Removed.
+        * pcre/pcre_internal.h:
+        * pcre/ucp.h: Removed.
+
+2007-11-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - http://bugs.webkit.org/show_bug.cgi?id=15821
