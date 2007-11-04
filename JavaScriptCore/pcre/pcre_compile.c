@@ -553,7 +553,7 @@ first_significant_code(const uschar *code, BOOL skipassert)
 {
 for (;;)
   {
-  switch ((int)*code)
+  switch (*code)
     {
     case OP_ASSERT_NOT:
     if (!skipassert) return code;
@@ -661,9 +661,16 @@ for (;;)
 
     case OP_CHAR:
     case OP_CHARNC:
+    case OP_NOT:
     branchlength++;
     cc += 2;
-      while ((*cc & 0xc0) == 0x80) cc++;
+    while ((*cc & 0xc0) == 0x80) cc++;
+    break;
+
+    case OP_ASCII_CHAR:
+    case OP_ASCII_LETTER_NC:
+    branchlength++;
+    cc += 2;
     break;
 
     /* Handle exact repetitions. The count is already in characters, but we
@@ -672,7 +679,7 @@ for (;;)
     case OP_EXACT:
     branchlength += GET2(cc,1);
     cc += 4;
-      while((*cc & 0x80) == 0x80) cc++;
+    while((*cc & 0x80) == 0x80) cc++;
     break;
 
     case OP_TYPEEXACT:
@@ -829,6 +836,8 @@ for (code = first_significant_code(code + 1 + LINK_SIZE, TRUE);
     case OP_ANY:
     case OP_CHAR:
     case OP_CHARNC:
+    case OP_ASCII_CHAR:
+    case OP_ASCII_LETTER_NC:
     case OP_NOT:
     case OP_PLUS:
     case OP_MINPLUS:
@@ -1399,17 +1408,11 @@ for (;; ptr++)
         break;
         }
 
-      /* For a single, positive character, get the value into mcbuffer, and
+      /* For a single, positive character, get the value into c, and
       then we can handle this with the normal one-character code. */
 
-      if (class_lastchar > 127)
-        mclength = _pcre_ord2utf8(class_lastchar, mcbuffer);
-      else
-        {
-        mcbuffer[0] = class_lastchar;
-        mclength = 1;
-        }
-      goto ONE_CHAR;
+      c = class_lastchar;
+      goto NORMAL_CHAR;
       }       /* End of 1-char optimization */
 
     /* The general case - not the one-char optimization. If this is the first
@@ -1563,16 +1566,19 @@ for (;; ptr++)
         c |= 0x80;                      /* Flag c as a length */
         }
       else
-
-      /* Handle the case of a single byte - either with no UTF8 support, or
-      with UTF-8 disabled, or for a UTF-8 character < 128. */
-
         {
         c = code[-1];
         if (repeat_min > 1) reqbyte = c | req_caseopt | cd->req_varyopt;
         }
 
       goto OUTPUT_SINGLE_REPEAT;   /* Code shared with single character types */
+      }
+
+    else if (*previous == OP_ASCII_CHAR || *previous == OP_ASCII_LETTER_NC)
+      {
+      c = previous[1];
+      if (repeat_min > 1) reqbyte = c | req_caseopt | cd->req_varyopt;
+      goto OUTPUT_SINGLE_REPEAT;
       }
 
     /* If previous was a single negated character ([^a] or similar), we use
@@ -2011,7 +2017,7 @@ for (;; ptr++)
          &ptr,                         /* Input pointer (updated) */
          patternEnd,
          errorcodeptr,                 /* Where to put an error message */
-         skipbytes,                    /* Skip over OP_COND/OP_BRANUMBER */
+         skipbytes,                    /* Skip over OP_BRANUMBER */
          &subfirstbyte,                /* For possible first char */
          &subreqbyte,                  /* For possible last char */
          cd))                          /* Tables block */
@@ -2136,19 +2142,7 @@ for (;; ptr++)
       continue;
       }
 
-    /* We have a data character whose value is in c. In UTF-8 mode it may have
-    a value > 127. We set its representation in the length/buffer, and then
-    handle it as a data character. */
-
-    if (c > 127)
-      mclength = _pcre_ord2utf8(c, mcbuffer);
-    else
-     {
-     mcbuffer[0] = c;
-     mclength = 1;
-     }
-
-    goto ONE_CHAR;
+    /* Fall through. */
 
     /* Handle a literal character. It is guaranteed not to be whitespace or #
     when the extended flag is set. If we are in UTF-8 mode, it may be a
@@ -2156,21 +2150,32 @@ for (;; ptr++)
 
     default:
     NORMAL_CHAR:
+
+    previous = code;
+
     if (c < 128)
       {
-       mclength = 1;
-       mcbuffer[0] = c;
-     }
+      mclength = 1;
+      mcbuffer[0] = c;
+
+      if (options & PCRE_CASELESS && (c | 0x20) >= 'a' && (c | 0x20) <= 'z')
+        {
+        *code++ = OP_ASCII_LETTER_NC;
+        *code++ = c | 0x20;
+        }
+      else
+        {
+        *code++ = OP_ASCII_CHAR;
+        *code++ = c;
+        }
+      }
     else
+      {
       mclength = _pcre_ord2utf8(c, mcbuffer);
 
-    /* At this point we have the character's bytes in mcbuffer, and the length
-    in mclength. When not in UTF-8 mode, the length is always 1. */
-
-    ONE_CHAR:
-    previous = code;
-    *code++ = ((options & PCRE_CASELESS) != 0)? OP_CHARNC : OP_CHAR;
-    for (c = 0; c < mclength; c++) *code++ = mcbuffer[c];
+      *code++ = ((options & PCRE_CASELESS) != 0)? OP_CHARNC : OP_CHAR;
+      for (c = 0; c < mclength; c++) *code++ = mcbuffer[c];
+      }
 
     /* Set the first and required bytes appropriately. If no previous first
     byte, set it from this character, but revert to none on a zero repeat.
@@ -2238,7 +2243,7 @@ Argument:
   codeptr        -> the address of the current code pointer
   ptrptr         -> the address of the current pattern pointer
   errorcodeptr   -> pointer to error code variable
-  skipbytes      skip this many bytes at start (for OP_COND, OP_BRANUMBER)
+  skipbytes      skip this many bytes at start (for OP_BRANUMBER)
   firstbyteptr   place to put the first required character, or a negative number
   reqbyteptr     place to put the last required character, or a negative number
   cd             points to the data block with tables pointers etc.
@@ -2564,6 +2569,8 @@ do {
 
      case OP_CHAR:
      case OP_CHARNC:
+     case OP_ASCII_CHAR:
+     case OP_ASCII_LETTER_NC:
      case OP_PLUS:
      case OP_MINPLUS:
      if (!inassert) return -1;

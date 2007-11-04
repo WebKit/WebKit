@@ -1,5 +1,37 @@
 2007-11-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15826
+          optimize opcode loop and case insensitive ASCII compares for a 30% speedup
+
+        SunSpider says it's 2.6% faster overall, 32.5% in the regular expression tests.
+
+        * pcre/pcre_internal.h: Added OP_ASCII_CHAR and OP_ASCII_LETTER_NC.
+
+        * pcre/pcre_compile.c:
+        (find_fixedlength): Added cases for OP_ASCII_CHAR and OP_ASCII_LETTER_NC. Also
+        added OP_NOT since there was no reason it should not be in here.
+        (could_be_empty_branch): Ditto.
+        (compile_branch): Streamlined all the single-character cases; there was a bit of
+        duplicate code. Added cases for OP_ASCII_CHAR and OP_ASCII_LETTER_NC as needed.
+        But in particular, compile to those opcodes when the single character match is
+        ASCII.
+        (find_firstassertedchar): Added cases for OP_ASCII_CHAR and OP_ASCII_LETTER_NC.
+
+        * pcre/pcre_exec.c: (match): Removed the "min", "minimize", and "op" fields from
+        the matchframe, after I discovered that none of them needed to be saved and restored
+        across recursive match calls. Also eliminated the ignored result field from the
+        matchframe, since I discovered that rrc ("recursive result code") was already the
+        exact same thing. Moved the handling of opcodes higher than OP_BRA into the default
+        statement of the switch instead of doing them before the switch. This removes a
+        branch from each iteration of the opcode interpreter, just as removal of "op"
+        removed at least one store from each iteration. Last, but not least, add the
+        OP_ASCII_CHAR and OP_ASCII_LETTER_NC functions. Neither can ever match a
+        surrogate pair and the letter case can be handled efficiently.
+
+2007-11-04  Darin Adler  <darin@apple.com>
+
         * pcre/pcre_exec.c: (match): Try to fix the Windows build by removing unreachable code.
 
 2007-11-03  Darin Adler  <darin@apple.com>

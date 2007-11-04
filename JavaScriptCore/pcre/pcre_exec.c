@@ -216,7 +216,7 @@ a bit more code and notice if we use conflicting numbers.*/
 #endif
 
 
-#define RMATCH(num,rx,rb,rf,rg)\
+#define RMATCH(num, ra, rb, rc)\
   {\
   if (frame >= stackframes && frame + 1 < stackframesend)\
     newframe = frame + 1;\
@@ -224,19 +224,18 @@ a bit more code and notice if we use conflicting numbers.*/
     newframe = (pcre_malloc)(sizeof(matchframe));\
   frame->where = RMATCH_WHERE(num);\
   newframe->eptr = frame->eptr;\
-  newframe->ecode = rb;\
+  newframe->ecode = (ra);\
   newframe->offset_top = frame->offset_top;\
-  newframe->eptrb = rf;\
-  is_group_start = rg;\
+  newframe->eptrb = (rb);\
+  is_group_start = (rc);\
   ++rdepth;\
   newframe->prevframe = frame;\
   frame = newframe;\
   DPRINTF(("restarting from line %d\n", __LINE__));\
   goto HEAP_RECURSE;\
 RRETURN_##num:\
-  DPRINTF(("did a goto back to line %d\n", __LINE__));\
-  rx = result;\
   --rdepth;\
+  DPRINTF(("did a goto back to line %d\n", __LINE__));\
   }
 
 #define RRETURN(ra)\
@@ -247,12 +246,11 @@ RRETURN_##num:\
     (pcre_free)(newframe);\
   if (frame != NULL)\
     {\
-    result = ra;\
+    rrc = (ra);\
     goto RRETURN_LABEL;\
     }\
   return ra;\
   }
-
 
 /* Structure for remembering the local variables in a private frame */
 
@@ -274,8 +272,6 @@ typedef struct matchframe {
   const uschar *prev;
   const pcre_uchar *saved_eptr;
 
-  BOOL minimize;
-
   int repeat_othercase;
 
   int ctype;
@@ -283,10 +279,8 @@ typedef struct matchframe {
   int fi;
   int length;
   int max;
-  int min;
   int number;
   int offset;
-  int op;
   int save_offset1, save_offset2, save_offset3;
 
   eptrblock newptrb;
@@ -318,11 +312,6 @@ strings. This function is called recursively in many circumstances. Whenever it
 returns a negative (error) response, the outer incarnation must also return the
 same response.
 
-Performance note: It might be tempting to extract commonly used fields from the
-md structure (e.g. utf8, end_subject) into individual variables to improve
-performance. Tests using gcc on a SPARC disproved this; in the first case, it
-made performance worse.
-
 Arguments:
    eptr        pointer in subject
    ecode       position in code
@@ -350,6 +339,8 @@ unsigned rdepth = 0;
 BOOL cur_is_word;
 BOOL prev_is_word;
 BOOL is_group_start = TRUE;
+int min;
+BOOL minimize = FALSE; /* Initialization not really needed, but some compilers think so. */
 
 /* When recursion is not being used, all "local" variables that have to be
 preserved over calls to RMATCH() are part of a "frame" which is obtained from
@@ -364,7 +355,6 @@ matchframe *stackframesend = stackframes + sizeof(stackframes) / sizeof(stackfra
 
 matchframe *frame = stackframes;
 matchframe *newframe;
-int result;
 frame->prevframe = NULL;            /* Marks the top level */
 
 /* Copy in the original argument variables */
@@ -408,80 +398,14 @@ if (is_group_start)
 
 for (;;)
   {
-  frame->op = *frame->ecode;
-  frame->minimize = FALSE;
-
-  /* Opening capturing bracket. If there is space in the offset vector, save
-  the current subject position in the working slot at the top of the vector. We
-  mustn't change the current values of the data slot, because they may be set
-  from a previous iteration of this group, and be referred to by a reference
-  inside the group.
-
-  If the bracket fails to match, we need to restore this value and also the
-  values of the final offsets, in case they were set by a previous iteration of
-  the same bracket.
-
-  If there isn't enough space in the offset vector, treat this as if it were a
-  non-capturing bracket. Don't worry about setting the flag for the error case
-  here; that is handled in the code for KET. */
-
-  if (frame->op > OP_BRA)
-    {
-    frame->number = frame->op - OP_BRA;
-
-    /* For extended extraction brackets (large number), we have to fish out the
-    number from a dummy opcode at the start. */
-
-    if (frame->number > EXTRACT_BASIC_MAX)
-      frame->number = GET2(frame->ecode, 2+LINK_SIZE);
-    frame->offset = frame->number << 1;
-
-#ifdef DEBUG
-    printf("start bracket %d subject=", frame->number);
-    pchars(frame->eptr, 16, TRUE, md);
-    printf("\n");
-#endif
-
-    if (frame->offset < md->offset_max)
-      {
-      frame->save_offset1 = md->offset_vector[frame->offset];
-      frame->save_offset2 = md->offset_vector[frame->offset+1];
-      frame->save_offset3 = md->offset_vector[md->offset_end - frame->number];
-
-      DPRINTF(("saving %d %d %d\n", frame->save_offset1, frame->save_offset2, frame->save_offset3));
-      md->offset_vector[md->offset_end - frame->number] = frame->eptr - md->start_subject;
-
-      do
-        {
-        RMATCH(1, rrc, frame->ecode + 1 + LINK_SIZE, frame->eptrb, match_isgroup);
-        if (rrc != MATCH_NOMATCH) RRETURN(rrc);
-        frame->ecode += GET(frame->ecode, 1);
-        }
-      while (*frame->ecode == OP_ALT);
-
-      DPRINTF(("bracket %d failed\n", frame->number));
-
-      md->offset_vector[frame->offset] = frame->save_offset1;
-      md->offset_vector[frame->offset+1] = frame->save_offset2;
-      md->offset_vector[md->offset_end - frame->number] = frame->save_offset3;
-
-      RRETURN(MATCH_NOMATCH);
-      }
-
-    /* Insufficient room for saving captured contents */
-
-    else frame->op = OP_BRA;
-    }
-
-  /* Other types of node can be handled by a switch */
-
-  switch(frame->op)
+  switch (*frame->ecode)
     {
     case OP_BRA:     /* Non-capturing bracket: optimized */
+    NON_CAPTURING_BRACKET:
     DPRINTF(("start bracket 0\n"));
     do
       {
-      RMATCH(2, rrc, frame->ecode + 1 + LINK_SIZE, frame->eptrb, match_isgroup);
+      RMATCH(2, frame->ecode + 1 + LINK_SIZE, frame->eptrb, match_isgroup);
       if (rrc != MATCH_NOMATCH) RRETURN(rrc);
       frame->ecode += GET(frame->ecode, 1);
       }
@@ -505,7 +429,7 @@ for (;;)
     case OP_ASSERT:
     do
       {
-      RMATCH(6, rrc, frame->ecode + 1 + LINK_SIZE, NULL, match_isgroup);
+      RMATCH(6, frame->ecode + 1 + LINK_SIZE, NULL, match_isgroup);
       if (rrc == MATCH_MATCH) break;
       if (rrc != MATCH_NOMATCH) RRETURN(rrc);
       frame->ecode += GET(frame->ecode, 1);
@@ -526,7 +450,7 @@ for (;;)
     case OP_ASSERT_NOT:
     do
       {
-      RMATCH(7, rrc, frame->ecode + 1 + LINK_SIZE, NULL, match_isgroup);
+      RMATCH(7, frame->ecode + 1 + LINK_SIZE, NULL, match_isgroup);
       if (rrc == MATCH_MATCH) RRETURN(MATCH_NOMATCH);
       if (rrc != MATCH_NOMATCH) RRETURN(rrc);
       frame->ecode += GET(frame->ecode,1);
@@ -550,7 +474,7 @@ for (;;)
 
       do
         {
-        RMATCH(9, rrc, frame->ecode + 1 + LINK_SIZE, frame->eptrb, match_isgroup);
+        RMATCH(9, frame->ecode + 1 + LINK_SIZE, frame->eptrb, match_isgroup);
         if (rrc == MATCH_MATCH) break;
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
         frame->ecode += GET(frame->ecode,1);
@@ -588,16 +512,16 @@ for (;;)
 
       if (*frame->ecode == OP_KETRMIN)
         {
-        RMATCH(10, rrc, frame->ecode + 1 + LINK_SIZE, frame->eptrb, 0);
+        RMATCH(10, frame->ecode + 1 + LINK_SIZE, frame->eptrb, 0);
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
-        RMATCH(11, rrc, frame->prev, frame->eptrb, match_isgroup);
+        RMATCH(11, frame->prev, frame->eptrb, match_isgroup);
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
         }
       else  /* OP_KETRMAX */
         {
-        RMATCH(12, rrc, frame->prev, frame->eptrb, match_isgroup);
+        RMATCH(12, frame->prev, frame->eptrb, match_isgroup);
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
-        RMATCH(13, rrc, frame->ecode + 1+LINK_SIZE, frame->eptrb, 0);
+        RMATCH(13, frame->ecode + 1+LINK_SIZE, frame->eptrb, 0);
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
         }
       }
@@ -619,7 +543,7 @@ for (;;)
     case OP_BRAZERO:
       {
       frame->next = frame->ecode+1;
-      RMATCH(14, rrc, frame->next, frame->eptrb, match_isgroup);
+      RMATCH(14, frame->next, frame->eptrb, match_isgroup);
       if (rrc != MATCH_NOMATCH) RRETURN(rrc);
       do frame->next += GET(frame->next,1); while (*frame->next == OP_ALT);
       frame->ecode = frame->next + 1+LINK_SIZE;
@@ -630,7 +554,7 @@ for (;;)
       {
       frame->next = frame->ecode+1;
       do frame->next += GET(frame->next,1); while (*frame->next == OP_ALT);
-      RMATCH(15, rrc, frame->next + 1+LINK_SIZE, frame->eptrb, match_isgroup);
+      RMATCH(15, frame->next + 1+LINK_SIZE, frame->eptrb, match_isgroup);
       if (rrc != MATCH_NOMATCH) RRETURN(rrc);
       frame->ecode++;
       }
@@ -711,16 +635,16 @@ for (;;)
 
       if (*frame->ecode == OP_KETRMIN)
         {
-        RMATCH(16, rrc, frame->ecode + 1+LINK_SIZE, frame->eptrb, 0);
+        RMATCH(16, frame->ecode + 1+LINK_SIZE, frame->eptrb, 0);
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
-        RMATCH(17, rrc, frame->prev, frame->eptrb, match_isgroup);
+        RMATCH(17, frame->prev, frame->eptrb, match_isgroup);
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
         }
       else  /* OP_KETRMAX */
         {
-        RMATCH(18, rrc, frame->prev, frame->eptrb, match_isgroup);
+        RMATCH(18, frame->prev, frame->eptrb, match_isgroup);
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
-        RMATCH(19, rrc, frame->ecode + 1+LINK_SIZE, frame->eptrb, 0);
+        RMATCH(19, frame->ecode + 1+LINK_SIZE, frame->eptrb, 0);
         if (rrc != MATCH_NOMATCH) RRETURN(rrc);
         }
       }
@@ -903,16 +827,16 @@ for (;;)
         case OP_CRQUERY:
         case OP_CRMINQUERY:
         c = *frame->ecode++ - OP_CRSTAR;
-        frame->minimize = (c & 1) != 0;
-        frame->min = rep_min[c];                 /* Pick up values from tables; */
+        minimize = (c & 1) != 0;
+        min = rep_min[c];                 /* Pick up values from tables; */
         frame->max = rep_max[c];                 /* zero for max => infinity */
         if (frame->max == 0) frame->max = INT_MAX;
         break;
 
         case OP_CRRANGE:
         case OP_CRMINRANGE:
-        frame->minimize = (*frame->ecode == OP_CRMINRANGE);
-        frame->min = GET2(frame->ecode, 1);
+        minimize = (*frame->ecode == OP_CRMINRANGE);
+        min = GET2(frame->ecode, 1);
         frame->max = GET2(frame->ecode, 3);
         if (frame->max == 0) frame->max = INT_MAX;
         frame->ecode += 5;
@@ -931,7 +855,7 @@ for (;;)
 
       /* First, ensure the minimum number of matches are present. */
 
-      for (i = 1; i <= frame->min; i++)
+      for (i = 1; i <= min; i++)
         {
         if (!match_ref(frame->offset, frame->eptr, frame->length, md)) RRETURN(MATCH_NOMATCH);
         frame->eptr += frame->length;
@@ -940,15 +864,15 @@ for (;;)
       /* If min = max, continue at the same level without recursion.
       They are not both allowed to be zero. */
 
-      if (frame->min == frame->max) continue;
+      if (min == frame->max) continue;
 
       /* If minimizing, keep trying and advancing the pointer */
 
-      if (frame->minimize)
+      if (minimize)
         {
-        for (frame->fi = frame->min;; frame->fi++)
+        for (frame->fi = min;; frame->fi++)
           {
-          RMATCH(20, rrc, frame->ecode, frame->eptrb, 0);
+          RMATCH(20, frame->ecode, frame->eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (frame->fi >= frame->max || !match_ref(frame->offset, frame->eptr, frame->length, md))
             RRETURN(MATCH_NOMATCH);
@@ -962,14 +886,14 @@ for (;;)
       else
         {
         frame->pp = frame->eptr;
-        for (i = frame->min; i < frame->max; i++)
+        for (i = min; i < frame->max; i++)
           {
           if (!match_ref(frame->offset, frame->eptr, frame->length, md)) break;
           frame->eptr += frame->length;
           }
         while (frame->eptr >= frame->pp)
           {
-          RMATCH(21, rrc, frame->ecode, frame->eptrb, 0);
+          RMATCH(21, frame->ecode, frame->eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           frame->eptr -= frame->length;
           }
@@ -1006,36 +930,36 @@ for (;;)
         case OP_CRQUERY:
         case OP_CRMINQUERY:
         c = *frame->ecode++ - OP_CRSTAR;
-        frame->minimize = (c & 1) != 0;
-        frame->min = rep_min[c];                 /* Pick up values from tables; */
+        minimize = (c & 1) != 0;
+        min = rep_min[c];                 /* Pick up values from tables; */
         frame->max = rep_max[c];                 /* zero for max => infinity */
         if (frame->max == 0) frame->max = INT_MAX;
         break;
 
         case OP_CRRANGE:
         case OP_CRMINRANGE:
-        frame->minimize = (*frame->ecode == OP_CRMINRANGE);
-        frame->min = GET2(frame->ecode, 1);
+        minimize = (*frame->ecode == OP_CRMINRANGE);
+        min = GET2(frame->ecode, 1);
         frame->max = GET2(frame->ecode, 3);
         if (frame->max == 0) frame->max = INT_MAX;
         frame->ecode += 5;
         break;
 
         default:               /* No repeat follows */
-        frame->min = frame->max = 1;
+        min = frame->max = 1;
         break;
         }
 
       /* First, ensure the minimum number of matches are present. */
 
         {
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (frame->eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
           GETCHARINC(c, frame->eptr);
           if (c > 255)
             {
-            if (frame->op == OP_CLASS) RRETURN(MATCH_NOMATCH);
+            if (frame->data[-1] == OP_CLASS) RRETURN(MATCH_NOMATCH);
             }
           else
             {
@@ -1047,23 +971,23 @@ for (;;)
       /* If max == min we can continue with the main loop without the
       need to recurse. */
 
-      if (frame->min == frame->max) continue;
+      if (min == frame->max) continue;
 
       /* If minimizing, keep testing the rest of the expression and advancing
       the pointer while it matches the class. */
 
-      if (frame->minimize)
+      if (minimize)
         {
           {
-          for (frame->fi = frame->min;; frame->fi++)
+          for (frame->fi = min;; frame->fi++)
             {
-            RMATCH(22, rrc, frame->ecode, frame->eptrb, 0);
+            RMATCH(22, frame->ecode, frame->eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             if (frame->fi >= frame->max || frame->eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
             GETCHARINC(c, frame->eptr);
             if (c > 255)
               {
-              if (frame->op == OP_CLASS) RRETURN(MATCH_NOMATCH);
+              if (frame->data[-1] == OP_CLASS) RRETURN(MATCH_NOMATCH);
               }
             else
               {
@@ -1081,14 +1005,14 @@ for (;;)
         frame->pp = frame->eptr;
 
           {
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
             GETCHARLEN(c, frame->eptr, len);
             if (c > 255)
               {
-              if (frame->op == OP_CLASS) break;
+              if (frame->data[-1] == OP_CLASS) break;
               }
             else
               {
@@ -1098,7 +1022,7 @@ for (;;)
             }
           for (;;)
             {
-            RMATCH(24, rrc, frame->ecode, frame->eptrb, 0);
+            RMATCH(24, frame->ecode, frame->eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             if (frame->eptr-- == frame->pp) break;        /* Stop if tried at original pos */
             BACKCHAR(frame->eptr);
@@ -1127,29 +1051,29 @@ for (;;)
         case OP_CRQUERY:
         case OP_CRMINQUERY:
         c = *frame->ecode++ - OP_CRSTAR;
-        frame->minimize = (c & 1) != 0;
-        frame->min = rep_min[c];                 /* Pick up values from tables; */
+        minimize = (c & 1) != 0;
+        min = rep_min[c];                 /* Pick up values from tables; */
         frame->max = rep_max[c];                 /* zero for max => infinity */
         if (frame->max == 0) frame->max = INT_MAX;
         break;
 
         case OP_CRRANGE:
         case OP_CRMINRANGE:
-        frame->minimize = (*frame->ecode == OP_CRMINRANGE);
-        frame->min = GET2(frame->ecode, 1);
+        minimize = (*frame->ecode == OP_CRMINRANGE);
+        min = GET2(frame->ecode, 1);
         frame->max = GET2(frame->ecode, 3);
         if (frame->max == 0) frame->max = INT_MAX;
         frame->ecode += 5;
         break;
 
         default:               /* No repeat follows */
-        frame->min = frame->max = 1;
+        min = frame->max = 1;
         break;
         }
 
       /* First, ensure the minimum number of matches are present. */
 
-      for (i = 1; i <= frame->min; i++)
+      for (i = 1; i <= min; i++)
         {
         if (frame->eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
         GETCHARINC(c, frame->eptr);
@@ -1159,16 +1083,16 @@ for (;;)
       /* If max == min we can continue with the main loop without the
       need to recurse. */
 
-      if (frame->min == frame->max) continue;
+      if (min == frame->max) continue;
 
       /* If minimizing, keep testing the rest of the expression and advancing
       the pointer while it matches the class. */
 
-      if (frame->minimize)
+      if (minimize)
         {
-        for (frame->fi = frame->min;; frame->fi++)
+        for (frame->fi = min;; frame->fi++)
           {
-          RMATCH(26, rrc, frame->ecode, frame->eptrb, 0);
+          RMATCH(26, frame->ecode, frame->eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (frame->fi >= frame->max || frame->eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
           GETCHARINC(c, frame->eptr);
@@ -1182,7 +1106,7 @@ for (;;)
       else
         {
         frame->pp = frame->eptr;
-        for (i = frame->min; i < frame->max; i++)
+        for (i = min; i < frame->max; i++)
           {
           int len = 1;
           if (frame->eptr >= md->end_subject) break;
@@ -1192,7 +1116,7 @@ for (;;)
           }
         for(;;)
           {
-          RMATCH(27, rrc, frame->ecode, frame->eptrb, 0);
+          RMATCH(27, frame->ecode, frame->eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (frame->eptr-- == frame->pp) break;        /* Stop if tried at original pos */
           BACKCHAR(frame->eptr)
@@ -1276,18 +1200,41 @@ for (;;)
       }
     break;
 
+    /* Match a single ASCII character. */
+
+    case OP_ASCII_CHAR:
+    if (md->end_subject == frame->eptr)
+      RRETURN(MATCH_NOMATCH);
+    if (*frame->eptr != frame->ecode[1])
+      RRETURN(MATCH_NOMATCH);
+    ++frame->eptr;
+    frame->ecode += 2;
+    break;
+
+    /* Match one of two cases of an ASCII character. */
+
+    case OP_ASCII_LETTER_NC:
+    if (md->end_subject == frame->eptr)
+      RRETURN(MATCH_NOMATCH);
+    if ((*frame->eptr | 0x20) != frame->ecode[1])
+      RRETURN(MATCH_NOMATCH);
+    ++frame->eptr;
+    frame->ecode += 2;
+    break;
+
     /* Match a single character repeatedly; different opcodes share code. */
 
     case OP_EXACT:
-    frame->min = frame->max = GET2(frame->ecode, 1);
+    min = frame->max = GET2(frame->ecode, 1);
+    minimize = FALSE;
     frame->ecode += 3;
     goto REPEATCHAR;
 
     case OP_UPTO:
     case OP_MINUPTO:
-    frame->min = 0;
+    min = 0;
     frame->max = GET2(frame->ecode, 1);
-    frame->minimize = *frame->ecode == OP_MINUPTO;
+    minimize = *frame->ecode == OP_MINUPTO;
     frame->ecode += 3;
     goto REPEATCHAR;
 
@@ -1298,8 +1245,8 @@ for (;;)
     case OP_QUERY:
     case OP_MINQUERY:
     c = *frame->ecode++ - OP_STAR;
-    frame->minimize = (c & 1) != 0;
-    frame->min = rep_min[c];                 /* Pick up values from tables; */
+    minimize = (c & 1) != 0;
+    min = rep_min[c];                 /* Pick up values from tables; */
     frame->max = rep_max[c];                 /* zero for max => infinity */
     if (frame->max == 0) frame->max = INT_MAX;
 
@@ -1312,27 +1259,27 @@ for (;;)
       frame->length = 1;
       GETUTF8CHARLEN(frame->fc, frame->ecode, frame->length);
       {
-      if (frame->min * (frame->fc > 0xFFFF ? 2 : 1) > md->end_subject - frame->eptr) RRETURN(MATCH_NOMATCH);
+      if (min * (frame->fc > 0xFFFF ? 2 : 1) > md->end_subject - frame->eptr) RRETURN(MATCH_NOMATCH);
       frame->ecode += frame->length;
 
       if (frame->fc <= 0xFFFF)
         {
         int othercase = md->caseless ? _pcre_ucp_othercase(frame->fc) : -1;
 
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (*frame->eptr != frame->fc && *frame->eptr != othercase) RRETURN(MATCH_NOMATCH);
           ++frame->eptr;
           }
 
-        if (frame->min == frame->max) continue;
+        if (min == frame->max) continue;
 
-        if (frame->minimize)
+        if (minimize)
           {
           frame->repeat_othercase = othercase;
-          for (frame->fi = frame->min;; frame->fi++)
+          for (frame->fi = min;; frame->fi++)
             {
-            RMATCH(28, rrc, frame->ecode, frame->eptrb, 0);
+            RMATCH(28, frame->ecode, frame->eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             if (frame->fi >= frame->max || frame->eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
             if (*frame->eptr != frame->fc && *frame->eptr != frame->repeat_othercase) RRETURN(MATCH_NOMATCH);
@@ -1343,7 +1290,7 @@ for (;;)
         else
           {
           frame->pp = frame->eptr;
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             if (frame->eptr >= md->end_subject) break;
             if (*frame->eptr != frame->fc && *frame->eptr != othercase) break;
@@ -1351,7 +1298,7 @@ for (;;)
             }
           while (frame->eptr >= frame->pp)
            {
-           RMATCH(29, rrc, frame->ecode, frame->eptrb, 0);
+           RMATCH(29, frame->ecode, frame->eptrb, 0);
            if (rrc != MATCH_NOMATCH) RRETURN(rrc);
            --frame->eptr;
            }
@@ -1363,7 +1310,7 @@ for (;;)
         {
         /* No case on surrogate pairs, so no need to bother with "othercase". */
 
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           int nc;
           GETCHAR(nc, frame->eptr);
@@ -1371,14 +1318,14 @@ for (;;)
           frame->eptr += 2;
           }
 
-        if (frame->min == frame->max) continue;
+        if (min == frame->max) continue;
 
-        if (frame->minimize)
+        if (minimize)
           {
-          for (frame->fi = frame->min;; frame->fi++)
+          for (frame->fi = min;; frame->fi++)
             {
             int nc;
-            RMATCH(30, rrc, frame->ecode, frame->eptrb, 0);
+            RMATCH(30, frame->ecode, frame->eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             if (frame->fi >= frame->max || frame->eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
             GETCHAR(nc, frame->eptr);
@@ -1390,7 +1337,7 @@ for (;;)
         else
           {
           frame->pp = frame->eptr;
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int nc;
             if (frame->eptr > md->end_subject - 2) break;
@@ -1400,7 +1347,7 @@ for (;;)
             }
           while (frame->eptr >= frame->pp)
            {
-           RMATCH(31, rrc, frame->ecode, frame->eptrb, 0);
+           RMATCH(31, frame->ecode, frame->eptrb, 0);
            if (rrc != MATCH_NOMATCH) RRETURN(rrc);
            frame->eptr -= 2;
            }
@@ -1438,15 +1385,16 @@ for (;;)
     about... */
 
     case OP_NOTEXACT:
-    frame->min = frame->max = GET2(frame->ecode, 1);
+    min = frame->max = GET2(frame->ecode, 1);
+    minimize = FALSE;
     frame->ecode += 3;
     goto REPEATNOTCHAR;
 
     case OP_NOTUPTO:
     case OP_NOTMINUPTO:
-    frame->min = 0;
+    min = 0;
     frame->max = GET2(frame->ecode, 1);
-    frame->minimize = *frame->ecode == OP_NOTMINUPTO;
+    minimize = *frame->ecode == OP_NOTMINUPTO;
     frame->ecode += 3;
     goto REPEATNOTCHAR;
 
@@ -1457,8 +1405,8 @@ for (;;)
     case OP_NOTQUERY:
     case OP_NOTMINQUERY:
     c = *frame->ecode++ - OP_NOTSTAR;
-    frame->minimize = (c & 1) != 0;
-    frame->min = rep_min[c];                 /* Pick up values from tables; */
+    minimize = (c & 1) != 0;
+    min = rep_min[c];                 /* Pick up values from tables; */
     frame->max = rep_max[c];                 /* zero for max => infinity */
     if (frame->max == 0) frame->max = INT_MAX;
 
@@ -1467,7 +1415,7 @@ for (;;)
     subject. */
 
     REPEATNOTCHAR:
-    if (frame->min > md->end_subject - frame->eptr) RRETURN(MATCH_NOMATCH);
+    if (min > md->end_subject - frame->eptr) RRETURN(MATCH_NOMATCH);
     frame->fc = *frame->ecode++;
 
     /* The code is duplicated for the caseless and caseful cases, for speed,
@@ -1478,7 +1426,7 @@ for (;;)
     maximum. Alternatively, if maximizing, find the maximum number of
     characters and work backwards. */
 
-    DPRINTF(("negative matching %c{%d,%d}\n", frame->fc, frame->min, frame->max));
+    DPRINTF(("negative matching %c{%d,%d}\n", frame->fc, min, frame->max));
 
     if (md->caseless)
       {
@@ -1486,7 +1434,7 @@ for (;;)
 
         {
         register int d;
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           GETCHARINC(d, frame->eptr);
           if (d < 128) d = md->lcc[d];
@@ -1494,15 +1442,15 @@ for (;;)
           }
         }
 
-      if (frame->min == frame->max) continue;
+      if (min == frame->max) continue;
 
-      if (frame->minimize)
+      if (minimize)
         {
           {
           register int d;
-          for (frame->fi = frame->min;; frame->fi++)
+          for (frame->fi = min;; frame->fi++)
             {
-            RMATCH(38, rrc, frame->ecode, frame->eptrb, 0);
+            RMATCH(38, frame->ecode, frame->eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             GETCHARINC(d, frame->eptr);
             if (d < 128) d = md->lcc[d];
@@ -1521,7 +1469,7 @@ for (;;)
 
           {
           register int d;
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
@@ -1532,7 +1480,7 @@ for (;;)
             }
           for(;;)
             {
-            RMATCH(40, rrc, frame->ecode, frame->eptrb, 0);
+            RMATCH(40, frame->ecode, frame->eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             if (frame->eptr-- == frame->pp) break;        /* Stop if tried at original pos */
             BACKCHAR(frame->eptr);
@@ -1550,22 +1498,22 @@ for (;;)
       {
         {
         register int d;
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           GETCHARINC(d, frame->eptr);
           if (frame->fc == d) RRETURN(MATCH_NOMATCH);
           }
         }
 
-      if (frame->min == frame->max) continue;
+      if (min == frame->max) continue;
 
-      if (frame->minimize)
+      if (minimize)
         {
           {
           register int d;
-          for (frame->fi = frame->min;; frame->fi++)
+          for (frame->fi = min;; frame->fi++)
             {
-            RMATCH(42, rrc, frame->ecode, frame->eptrb, 0);
+            RMATCH(42, frame->ecode, frame->eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             GETCHARINC(d, frame->eptr);
             if (frame->fi >= frame->max || frame->eptr >= md->end_subject || frame->fc == d)
@@ -1583,7 +1531,7 @@ for (;;)
 
           {
           register int d;
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
@@ -1593,7 +1541,7 @@ for (;;)
             }
           for(;;)
             {
-            RMATCH(44, rrc, frame->ecode, frame->eptrb, 0);
+            RMATCH(44, frame->ecode, frame->eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             if (frame->eptr-- == frame->pp) break;        /* Stop if tried at original pos */
             BACKCHAR(frame->eptr);
@@ -1610,16 +1558,16 @@ for (;;)
     repeat it in the interests of efficiency. */
 
     case OP_TYPEEXACT:
-    frame->min = frame->max = GET2(frame->ecode, 1);
-    frame->minimize = TRUE;
+    min = frame->max = GET2(frame->ecode, 1);
+    minimize = TRUE;
     frame->ecode += 3;
     goto REPEATTYPE;
 
     case OP_TYPEUPTO:
     case OP_TYPEMINUPTO:
-    frame->min = 0;
+    min = 0;
     frame->max = GET2(frame->ecode, 1);
-    frame->minimize = *frame->ecode == OP_TYPEMINUPTO;
+    minimize = *frame->ecode == OP_TYPEMINUPTO;
     frame->ecode += 3;
     goto REPEATTYPE;
 
@@ -1630,8 +1578,8 @@ for (;;)
     case OP_TYPEQUERY:
     case OP_TYPEMINQUERY:
     c = *frame->ecode++ - OP_TYPESTAR;
-    frame->minimize = (c & 1) != 0;
-    frame->min = rep_min[c];                 /* Pick up values from tables; */
+    minimize = (c & 1) != 0;
+    min = rep_min[c];                 /* Pick up values from tables; */
     frame->max = rep_max[c];                 /* zero for max => infinity */
     if (frame->max == 0) frame->max = INT_MAX;
 
@@ -1650,13 +1598,13 @@ for (;;)
     is tidier. Also separate the UCP code, which can be the same for both UTF-8
     and single-bytes. */
 
-    if (frame->min > md->end_subject - frame->eptr) RRETURN(MATCH_NOMATCH);
-    if (frame->min > 0)
+    if (min > md->end_subject - frame->eptr) RRETURN(MATCH_NOMATCH);
+    if (min > 0)
       {
       switch(frame->ctype)
         {
         case OP_ANY:
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (frame->eptr >= md->end_subject || IS_NEWLINE(*frame->eptr))
             RRETURN(MATCH_NOMATCH);
@@ -1666,7 +1614,7 @@ for (;;)
         break;
 
         case OP_NOT_DIGIT:
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (frame->eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
           GETCHARINC(c, frame->eptr);
@@ -1676,7 +1624,7 @@ for (;;)
         break;
 
         case OP_DIGIT:
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (frame->eptr >= md->end_subject ||
              *frame->eptr >= 128 || (md->ctypes[*frame->eptr++] & ctype_digit) == 0)
@@ -1686,7 +1634,7 @@ for (;;)
         break;
 
         case OP_NOT_WHITESPACE:
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (frame->eptr >= md->end_subject ||
              (*frame->eptr < 128 && (md->ctypes[*frame->eptr] & ctype_space) != 0))
@@ -1696,7 +1644,7 @@ for (;;)
         break;
 
         case OP_WHITESPACE:
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (frame->eptr >= md->end_subject ||
              *frame->eptr >= 128 || (md->ctypes[*frame->eptr++] & ctype_space) == 0)
@@ -1706,7 +1654,7 @@ for (;;)
         break;
 
         case OP_NOT_WORDCHAR:
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (frame->eptr >= md->end_subject ||
              (*frame->eptr < 128 && (md->ctypes[*frame->eptr] & ctype_word) != 0))
@@ -1716,7 +1664,7 @@ for (;;)
         break;
 
         case OP_WORDCHAR:
-        for (i = 1; i <= frame->min; i++)
+        for (i = 1; i <= min; i++)
           {
           if (frame->eptr >= md->end_subject ||
              *frame->eptr >= 128 || (md->ctypes[*frame->eptr++] & ctype_word) == 0)
@@ -1732,18 +1680,17 @@ for (;;)
 
     /* If min = max, continue at the same level without recursing */
 
-    if (frame->min == frame->max) continue;
+    if (min == frame->max) continue;
 
     /* If minimizing, we have to test the rest of the pattern before each
-    subsequent match. Again, separate the UTF-8 case for speed, and also
-    separate the UCP cases. */
+    subsequent match. */
 
-    if (frame->minimize)
+    if (minimize)
       {
         {
-        for (frame->fi = frame->min;; frame->fi++)
+        for (frame->fi = min;; frame->fi++)
           {
-          RMATCH(48, rrc, frame->ecode, frame->eptrb, 0);
+          RMATCH(48, frame->ecode, frame->eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (frame->fi >= frame->max || frame->eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
 
@@ -1793,8 +1740,7 @@ for (;;)
       }
 
     /* If maximizing it is worth using inline code for speed, doing the type
-    test once at the start (i.e. keep it out of the loop). Again, keep the
-    UTF-8 and UCP stuff separate. */
+    test once at the start (i.e. keep it out of the loop). */
 
     else
       {
@@ -1812,7 +1758,7 @@ for (;;)
           if (frame->max < INT_MAX)
             {
               {
-              for (i = frame->min; i < frame->max; i++)
+              for (i = min; i < frame->max; i++)
                 {
                 if (frame->eptr >= md->end_subject || IS_NEWLINE(*frame->eptr)) break;
                 frame->eptr++;
@@ -1826,7 +1772,7 @@ for (;;)
           else
             {
               {
-              for (i = frame->min; i < frame->max; i++)
+              for (i = min; i < frame->max; i++)
                 {
                 if (frame->eptr >= md->end_subject || IS_NEWLINE(*frame->eptr)) break;
                 frame->eptr++;
@@ -1837,7 +1783,7 @@ for (;;)
           break;
 
           case OP_NOT_DIGIT:
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
@@ -1848,7 +1794,7 @@ for (;;)
           break;
 
           case OP_DIGIT:
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
@@ -1859,7 +1805,7 @@ for (;;)
           break;
 
           case OP_NOT_WHITESPACE:
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
@@ -1870,7 +1816,7 @@ for (;;)
           break;
 
           case OP_WHITESPACE:
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
@@ -1881,7 +1827,7 @@ for (;;)
           break;
 
           case OP_NOT_WORDCHAR:
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
@@ -1892,7 +1838,7 @@ for (;;)
           break;
 
           case OP_WORDCHAR:
-          for (i = frame->min; i < frame->max; i++)
+          for (i = min; i < frame->max; i++)
             {
             int len = 1;
             if (frame->eptr >= md->end_subject) break;
@@ -1910,7 +1856,7 @@ for (;;)
 
         for(;;)
           {
-          RMATCH(52, rrc, frame->ecode, frame->eptrb, 0);
+          RMATCH(52, frame->ecode, frame->eptrb, 0);
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (frame->eptr-- == frame->pp) break;        /* Stop if tried at original pos */
           BACKCHAR(frame->eptr);
@@ -1923,12 +1869,74 @@ for (;;)
       }
     /* Control never gets here */
 
+    default:
+      /* Opening capturing bracket. If there is space in the offset vector, save
+      the current subject position in the working slot at the top of the vector. We
+      mustn't change the current values of the data slot, because they may be set
+      from a previous iteration of this group, and be referred to by a reference
+      inside the group.
+
+      If the bracket fails to match, we need to restore this value and also the
+      values of the final offsets, in case they were set by a previous iteration of
+      the same bracket.
+
+      If there isn't enough space in the offset vector, treat this as if it were a
+      non-capturing bracket. Don't worry about setting the flag for the error case
+      here; that is handled in the code for KET. */
+
+      if (*frame->ecode > OP_BRA)
+        {
+        frame->number = *frame->ecode - OP_BRA;
+
+        /* For extended extraction brackets (large number), we have to fish out the
+        number from a dummy opcode at the start. */
+
+        if (frame->number > EXTRACT_BASIC_MAX)
+          frame->number = GET2(frame->ecode, 2+LINK_SIZE);
+        frame->offset = frame->number << 1;
+
+#ifdef DEBUG
+        printf("start bracket %d subject=", frame->number);
+        pchars(frame->eptr, 16, TRUE, md);
+        printf("\n");
+#endif
+
+        if (frame->offset < md->offset_max)
+          {
+          frame->save_offset1 = md->offset_vector[frame->offset];
+          frame->save_offset2 = md->offset_vector[frame->offset+1];
+          frame->save_offset3 = md->offset_vector[md->offset_end - frame->number];
+
+          DPRINTF(("saving %d %d %d\n", frame->save_offset1, frame->save_offset2, frame->save_offset3));
+          md->offset_vector[md->offset_end - frame->number] = frame->eptr - md->start_subject;
+
+          do
+            {
+            RMATCH(1, frame->ecode + 1 + LINK_SIZE, frame->eptrb, match_isgroup);
+            if (rrc != MATCH_NOMATCH) RRETURN(rrc);
+            frame->ecode += GET(frame->ecode, 1);
+            }
+          while (*frame->ecode == OP_ALT);
+
+          DPRINTF(("bracket %d failed\n", frame->number));
+
+          md->offset_vector[frame->offset] = frame->save_offset1;
+          md->offset_vector[frame->offset+1] = frame->save_offset2;
+          md->offset_vector[md->offset_end - frame->number] = frame->save_offset3;
+
+          RRETURN(MATCH_NOMATCH);
+          }
+
+        /* Insufficient room for saving captured contents */
+
+        goto NON_CAPTURING_BRACKET;
+        }
+
     /* There's been some horrible disaster. Since all codes > OP_BRA are
     for capturing brackets, and there shouldn't be any gaps between 0 and
     OP_BRA, arrival here can only mean there is something seriously wrong
     in the code above or the OP_xxx definitions. */
 
-    default:
     DPRINTF(("Unknown opcode %d\n", *frame->ecode));
     RRETURN(JS_REGEXP_ERROR_INTERNAL);
     }

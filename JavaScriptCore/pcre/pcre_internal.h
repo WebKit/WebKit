@@ -365,100 +365,102 @@ Note that whenever this list is updated, the two macro definitions that follow
 must also be updated to match. */
 
 enum {
-  OP_END,            /* 0 End of pattern */
+  OP_END,                   /* End of pattern */
 
   /* Values corresponding to backslashed metacharacters */
 
-  OP_NOT_WORD_BOUNDARY,  /*  3 \B */
-  OP_WORD_BOUNDARY,      /*  4 \b */
-  OP_NOT_DIGIT,          /*  5 \D */
-  OP_DIGIT,              /*  6 \d */
-  OP_NOT_WHITESPACE,     /*  7 \S */
-  OP_WHITESPACE,         /*  8 \s */
-  OP_NOT_WORDCHAR,       /*  9 \W */
-  OP_WORDCHAR,           /* 10 \w */
+  OP_NOT_WORD_BOUNDARY,     /* \B */
+  OP_WORD_BOUNDARY,         /* \b */
+  OP_NOT_DIGIT,             /* \D */
+  OP_DIGIT,                 /* \d */
+  OP_NOT_WHITESPACE,        /* \S */
+  OP_WHITESPACE,            /* \s */
+  OP_NOT_WORDCHAR,          /* \W */
+  OP_WORDCHAR,              /* \w */
 
-  OP_ANY,            /* 11 Match any character */
+  OP_ANY,                   /* . -- Match any character */
 
-  OP_CIRC,           /* 19 Start of line - varies with multiline switch */
-  OP_DOLL,           /* 20 End of line - varies with multiline switch */
-  OP_CHAR,           /* 21 Match one character, casefully */
-  OP_CHARNC,         /* 22 Match one character, caselessly */
-  OP_NOT,            /* 23 Match anything but the following char */
+  OP_CIRC,                  /* ^ */
+  OP_DOLL,                  /* $ */
+  OP_CHAR,                  /* Match one character, casefully */
+  OP_CHARNC,                /* Match one character, caselessly */
+  OP_ASCII_CHAR,            /* Match one ASCII (0-127) character. */
+  OP_ASCII_LETTER_NC,       /* Match one ASCII letter, caselessly. */
+  OP_NOT,                   /* Match anything but the following char */
 
-  OP_STAR,           /* 24 The maximizing and minimizing versions of */
-  OP_MINSTAR,        /* 25 all these opcodes must come in pairs, with */
-  OP_PLUS,           /* 26 the minimizing one second. */
-  OP_MINPLUS,        /* 27 This first set applies to single characters */
-  OP_QUERY,          /* 28 */
-  OP_MINQUERY,       /* 29 */
-  OP_UPTO,           /* 30 From 0 to n matches */
-  OP_MINUPTO,        /* 31 */
-  OP_EXACT,          /* 32 Exactly n matches */
+  OP_STAR,                  /* The maximizing and minimizing versions of */
+  OP_MINSTAR,               /* all these opcodes must come in pairs, with */
+  OP_PLUS,                  /* the minimizing one second. */
+  OP_MINPLUS,               /* This first set applies to single characters */
+  OP_QUERY,
+  OP_MINQUERY,
+  OP_UPTO,                  /* From 0 to n matches */
+  OP_MINUPTO,
+  OP_EXACT,                 /* Exactly n matches */
 
-  OP_NOTSTAR,        /* 33 The maximizing and minimizing versions of */
-  OP_NOTMINSTAR,     /* 34 all these opcodes must come in pairs, with */
-  OP_NOTPLUS,        /* 35 the minimizing one second. */
-  OP_NOTMINPLUS,     /* 36 This set applies to "not" single characters */
-  OP_NOTQUERY,       /* 37 */
-  OP_NOTMINQUERY,    /* 38 */
-  OP_NOTUPTO,        /* 39 From 0 to n matches */
-  OP_NOTMINUPTO,     /* 40 */
-  OP_NOTEXACT,       /* 41 Exactly n matches */
+  OP_NOTSTAR,               /* This set applies to "not" single characters */
+  OP_NOTMINSTAR,
+  OP_NOTPLUS,
+  OP_NOTMINPLUS,
+  OP_NOTQUERY,
+  OP_NOTMINQUERY,
+  OP_NOTUPTO,
+  OP_NOTMINUPTO,
+  OP_NOTEXACT,
 
-  OP_TYPESTAR,       /* 42 The maximizing and minimizing versions of */
-  OP_TYPEMINSTAR,    /* 43 all these opcodes must come in pairs, with */
-  OP_TYPEPLUS,       /* 44 the minimizing one second. These codes must */
-  OP_TYPEMINPLUS,    /* 45 be in exactly the same order as those above. */
-  OP_TYPEQUERY,      /* 46 This set applies to character types such as \d */
-  OP_TYPEMINQUERY,   /* 47 */
-  OP_TYPEUPTO,       /* 48 From 0 to n matches */
-  OP_TYPEMINUPTO,    /* 49 */
-  OP_TYPEEXACT,      /* 50 Exactly n matches */
+  OP_TYPESTAR,              /* This set applies to character types such as \d */
+  OP_TYPEMINSTAR,
+  OP_TYPEPLUS,
+  OP_TYPEMINPLUS,
+  OP_TYPEQUERY,
+  OP_TYPEMINQUERY,
+  OP_TYPEUPTO,
+  OP_TYPEMINUPTO,
+  OP_TYPEEXACT,
 
-  OP_CRSTAR,         /* 51 The maximizing and minimizing versions of */
-  OP_CRMINSTAR,      /* 52 all these opcodes must come in pairs, with */
-  OP_CRPLUS,         /* 53 the minimizing one second. These codes must */
-  OP_CRMINPLUS,      /* 54 be in exactly the same order as those above. */
-  OP_CRQUERY,        /* 55 These are for character classes and back refs */
-  OP_CRMINQUERY,     /* 56 */
-  OP_CRRANGE,        /* 57 These are different to the three sets above. */
-  OP_CRMINRANGE,     /* 58 */
+  OP_CRSTAR,                /* These are for character classes and back refs */
+  OP_CRMINSTAR,
+  OP_CRPLUS,
+  OP_CRMINPLUS,
+  OP_CRQUERY,
+  OP_CRMINQUERY,
+  OP_CRRANGE,               /* These are different to the three sets above. */
+  OP_CRMINRANGE,
 
-  OP_CLASS,          /* 59 Match a character class, chars < 256 only */
-  OP_NCLASS,         /* 60 Same, but the bitmap was created from a negative
-                           class - the difference is relevant only when a UTF-8
-                           character > 255 is encountered. */
+  OP_CLASS,                 /* Match a character class, chars < 256 only */
+  OP_NCLASS,                /* Same, but the bitmap was created from a negative
+                               class - the difference is relevant when a UTF-8
+                               character > 255 is encountered. */
 
-  OP_XCLASS,         /* 61 Extended class for handling UTF-8 chars within the
-                           class. This does both positive and negative. */
+  OP_XCLASS,                /* Extended class for handling UTF-8 chars within the
+                               class. This does both positive and negative. */
 
-  OP_REF,            /* 62 Match a back reference */
+  OP_REF,                   /* Match a back reference */
 
-  OP_ALT,            /* 65 Start of alternation */
-  OP_KET,            /* 66 End of group that doesn't have an unbounded repeat */
-  OP_KETRMAX,        /* 67 These two must remain together and in this */
-  OP_KETRMIN,        /* 68 order. They are for groups the repeat for ever. */
+  OP_ALT,                   /* Start of alternation */
+  OP_KET,                   /* End of group that doesn't have an unbounded repeat */
+  OP_KETRMAX,               /* These two must remain together and in this */
+  OP_KETRMIN,               /* order. They are for groups the repeat for ever. */
 
   /* The assertions must come before ONCE and COND */
 
-  OP_ASSERT,         /* 69 Positive lookahead */
-  OP_ASSERT_NOT,     /* 70 Negative lookahead */
+  OP_ASSERT,                /* Positive lookahead */
+  OP_ASSERT_NOT,            /* Negative lookahead */
 
   /* ONCE and COND must come after the assertions, with ONCE first, as there's
   a test for >= ONCE for a subpattern that isn't an assertion. */
 
-  OP_ONCE,           /* 74 Once matched, don't back up into the subpattern */
+  OP_ONCE,                  /* Once matched, don't back up into the subpattern */
 
-  OP_BRAZERO,        /* 77 These two must remain together and in this */
-  OP_BRAMINZERO,     /* 78 order. */
+  OP_BRAZERO,               /* These two must remain together and in this */
+  OP_BRAMINZERO,            /* order. */
 
-  OP_BRANUMBER,      /* 79 Used for extracting brackets whose number is greater
-                           than can fit into an opcode. */
+  OP_BRANUMBER,             /* Used for extracting brackets whose number is greater
+                               than can fit into an opcode. */
 
-  OP_BRA             /* 80 This and greater values are used for brackets that
-                           extract substrings up to EXTRACT_BASIC_MAX. After
-                           that, use is made of OP_BRANUMBER. */
+  OP_BRA                    /* This and greater values are used for brackets that
+                               extract substrings up to EXTRACT_BASIC_MAX. After
+                               that, use is made of OP_BRANUMBER. */
 };
 
 /* WARNING WARNING WARNING: There is an implicit assumption in pcre.c and
@@ -488,8 +490,8 @@ in UTF-8 mode. The code that uses this table must know about such things. */
   1, 1, 1, 1, 1, 1, 1, 1,        /* \B, \b, \D, \d, \S, \s, \W, \w         */ \
   1,                             /* Any                                    */ \
   1, 1,                          /* ^, $                                   */ \
-  2,                             /* Char  - the minimum length             */ \
-  2,                             /* Charnc  - the minimum length           */ \
+  2, 2,                          /* Char, Charnc - minimum lengths         */ \
+  2, 2,                          /* ASCII char or non-cased                */ \
   2,                             /* not                                    */ \
   /* Positive single-char repeats                            ** These are  */ \
   2, 2, 2, 2, 2, 2,              /* *, *?, +, +?, ?, ??      ** minima in  */ \
