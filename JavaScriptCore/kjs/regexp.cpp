@@ -33,27 +33,23 @@ namespace KJS {
 RegExp::RegExp(const UString &p, int flags)
   : m_flags(flags), m_constructionError(0), m_numSubPatterns(0)
 {
-#if USE(PCRE16)
+#if !USE(POSIX_REGEX)
 
-  int options = PCRE_UTF8;
+  int options = 0;
   if (flags & IgnoreCase)
-    options |= PCRE_CASELESS;
+    options |= JS_REGEXP_CASELESS;
   if (flags & Multiline)
-    options |= PCRE_MULTILINE;
+    options |= JS_REGEXP_MULTILINE;
 
   const char* errorMessage;
-  int errorOffset;
-  m_regex = pcre_compile2(reinterpret_cast<const uint16_t*>(p.data()), p.size(),
-                          options, NULL, &errorMessage, &errorOffset, NULL);
+  m_regex = jsRegExpCompile(reinterpret_cast<const JSRegExpChar*>(p.data()), p.size(), options,
+    &m_numSubPatterns, &errorMessage);
   if (!m_regex) {
     m_constructionError = strdup(errorMessage);
     return;
   }
 
-  // Get number of subpatterns that will be returned.
-  pcre_fullinfo(m_regex, NULL, PCRE_INFO_CAPTURECOUNT, &m_numSubPatterns);
-
-#else /* USE(PCRE16) */
+#else /* USE(POSIX_REGEX) */
 
   int regflags = 0;
 #ifdef REG_EXTENDED
@@ -83,8 +79,8 @@ RegExp::RegExp(const UString &p, int flags)
 
 RegExp::~RegExp()
 {
-#if USE(PCRE16)
-  pcre_free(m_regex);
+#if !USE(POSIX_REGEX)
+  jsRegExpFree(m_regex);
 #else
   /* TODO: is this really okay after an error ? */
   regfree(&m_regex);
@@ -102,7 +98,7 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
   if (i > s.size() || s.isNull())
     return -1;
 
-#if USE(PCRE16)
+#if !USE(POSIX_REGEX)
 
   if (!m_regex)
     return -1;
@@ -121,11 +117,11 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
     ovector->set(offsetVector);
   }
 
-  int numMatches = pcre_exec(m_regex, NULL, reinterpret_cast<const uint16_t *>(s.data()), s.size(), i, 0, offsetVector, offsetVectorSize);
+  int numMatches = jsRegExpExecute(m_regex, reinterpret_cast<const JSRegExpChar*>(s.data()), s.size(), i, offsetVector, offsetVectorSize);
 
   if (numMatches < 0) {
 #ifndef NDEBUG
-    if (numMatches != PCRE_ERROR_NOMATCH)
+    if (numMatches != JS_REGEXP_ERROR_NOMATCH)
       fprintf(stderr, "KJS: pcre_exec() failed with result %d\n", numMatches);
 #endif
     if (ovector)

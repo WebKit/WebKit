@@ -492,7 +492,7 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
 {
     DeprecatedString name = element->getAttribute(nameAttr).deprecatedString();
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    name.replace(RegularExpression("[[:digit:]]"), " ");
+    name.replace(RegularExpression("\\d"), " ");
     name.replace('_', ' ');
     
     RegularExpression* regExp = regExpForLabels(labels);

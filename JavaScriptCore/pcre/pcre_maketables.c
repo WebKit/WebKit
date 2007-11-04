@@ -38,17 +38,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_maketables(), which builds
-character tables for PCRE in the current locale. The file is compiled on its
-own as part of the PCRE library. However, it is also included in the
-compilation of dftables.c, in which case the macro DFTABLES is defined. */
-
-
-#ifndef DFTABLES
-#include "pcre_internal.h"
-#endif
-
-
 /*************************************************
 *           Create PCRE character tables         *
 *************************************************/
@@ -63,7 +52,7 @@ Arguments:   none
 Returns:     pointer to the contiguous block of data
 */
 
-const unsigned char *
+static const unsigned char *
 pcre_maketables(void)
 {
 unsigned char *yield, *p;
@@ -96,19 +85,12 @@ least under Debian Linux's locales as of 12/2005). So we must test for alnum
 specially. */
 
 memset(p, 0, cbit_length);
-for (i = 0; i < 256; i++)
+for (i = 0; i < 128; i++)
   {
   if (isdigit(i)) p[cbit_digit  + i/8] |= 1 << (i&7);
-  if (isupper(i)) p[cbit_upper  + i/8] |= 1 << (i&7);
-  if (islower(i)) p[cbit_lower  + i/8] |= 1 << (i&7);
   if (isalnum(i)) p[cbit_word   + i/8] |= 1 << (i&7);
   if (i == '_')   p[cbit_word   + i/8] |= 1 << (i&7);
   if (isspace(i)) p[cbit_space  + i/8] |= 1 << (i&7);
-  if (isxdigit(i))p[cbit_xdigit + i/8] |= 1 << (i&7);
-  if (isgraph(i)) p[cbit_graph  + i/8] |= 1 << (i&7);
-  if (isprint(i)) p[cbit_print  + i/8] |= 1 << (i&7);
-  if (ispunct(i)) p[cbit_punct  + i/8] |= 1 << (i&7);
-  if (iscntrl(i)) p[cbit_cntrl  + i/8] |= 1 << (i&7);
   }
 p += cbit_length;
 
@@ -116,25 +98,15 @@ p += cbit_length;
 space chars, because Perl doesn't recognize it as such for \s and for comments
 within regexes. */
 
-for (i = 0; i < 256; i++)
+for (i = 0; i < 128; i++)
   {
   int x = 0;
-  if (
-#if !JAVASCRIPT
-      *i != 0x0b &&
-#endif
-        isspace(i)) x += ctype_space;
-  if (isalpha(i)) x += ctype_letter;
+  if (isspace(i)) x += ctype_space;
   if (isdigit(i)) x += ctype_digit;
   if (isxdigit(i)) x += ctype_xdigit;
   if (isalnum(i) || i == '_') x += ctype_word;
-
-  /* Note: strchr includes the terminating zero in the characters it considers.
-  In this instance, that is ok because we want binary zero to be flagged as a
-  meta-character, which in this sense is any character that terminates a run
-  of data characters. */
-
-  if (strchr("*+?{^.$|()[", i) != 0) x += ctype_meta; *p++ = x; }
+  *p++ = x;
+  }
 
 return yield;
 }

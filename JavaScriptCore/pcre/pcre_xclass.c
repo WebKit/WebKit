@@ -96,48 +96,6 @@ while ((t = *data++) != XCL_END)
     GETUTF8CHARINC(y, data);
     if (c >= x && c <= y) return !negated;
     }
-
-#if !JAVASCRIPT
-#ifdef SUPPORT_UCP
-  else  /* XCL_PROP & XCL_NOTPROP */
-    {
-    int chartype, script;
-    int category = _pcre_ucp_findprop(c, &chartype, &script);
-
-    switch(*data)
-      {
-      case PT_ANY:
-      if (t == XCL_PROP) return !negated;
-      break;
-
-      case PT_LAMP:
-      if ((chartype == ucp_Lu || chartype == ucp_Ll || chartype == ucp_Lt) ==
-          (t == XCL_PROP)) return !negated;
-      break;
-
-      case PT_GC:
-      if ((data[1] == category) == (t == XCL_PROP)) return !negated;
-      break;
-
-      case PT_PC:
-      if ((data[1] == chartype) == (t == XCL_PROP)) return !negated;
-      break;
-
-      case PT_SC:
-      if ((data[1] == script) == (t == XCL_PROP)) return !negated;
-      break;
-
-      /* This should never occur, but compilers may mutter if there is no
-      default. */
-
-      default:
-      return FALSE;
-      }
-
-    data += 2;
-    }
-#endif  /* SUPPORT_UCP */
-#endif
   }
 
 return negated;   /* char did not match */

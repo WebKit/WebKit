@@ -283,12 +283,10 @@ __ZTVN3KJS14StringInstanceE
 __ZTVN3KJS15JSWrapperObjectE
 __ZTVN3KJS19InternalFunctionImpE
 __ZTVN3KJS8JSObjectE
+_jsRegExpCompile
+_jsRegExpExecute
+_jsRegExpFree
 _jscore_collector_introspection
 _jscore_fastmalloc_introspection
 _kJSClassDefinitionEmpty
-_kjs_pcre_compile
-_kjs_pcre_exec
-_kjs_pcre_free
-_kjs_pcre_free_substring
-_kjs_pcre_get_substring
 _kjs_strtod

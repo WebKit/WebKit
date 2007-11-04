@@ -49,8 +49,6 @@ public:
     int pos(int n = 0);
     int matchedLength() const;
     
-    DeprecatedString cap(int n = 0) const;
-    
 private:
     class Private;    
     RefPtr<Private> d;

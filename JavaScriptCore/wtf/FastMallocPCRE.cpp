@@ -24,6 +24,3 @@
 
 void* (*pcre_malloc)(size_t) = fastMalloc;
 void (*pcre_free)(void*) = fastFree;
-void* (*pcre_stack_malloc)(size_t) = fastMalloc;
-void (*pcre_stack_free)(void*) = fastFree;
-int (*pcre_callout)(pcre_callout_block*) = 0;

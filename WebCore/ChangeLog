@@ -1,3 +1,26 @@
+2007-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - WebCore part of http://bugs.webkit.org/show_bug.cgi?id=15821
+          remove unused PCRE features for speed
+
+        * page/Frame.cpp: (WebCore::Frame::matchLabelsAgainstElement):
+        * page/mac/FrameMac.mm: (WebCore::Frame::matchLabelsAgainstElement):
+        Remove use of "[[:digit:]]" syntax. This hasn't worked for some time.
+        Use "\d" instead.
+
+        * platform/RegularExpression.h: Remove the unused cap function. We can
+        add it back later if we find we need it.
+        * platform/RegularExpression.cpp:
+        (WebCore::RegularExpression::Private::compile): Update for JavaScriptCore
+        regular expression entry point changes.
+        (WebCore::RegularExpression::Private::~Private): Ditto.
+        (WebCore::RegularExpression::match): Remove the code to set PCRE_NOTBOL.
+        This means that regular expressions with metacharactesr like ^ in them
+        won't work any more with non-whole-string searches, but we don't use
+        any regular expressions like that.
+
 2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         Update the link stubs to match the current build,

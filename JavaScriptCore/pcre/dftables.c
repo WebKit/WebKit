@@ -133,13 +133,10 @@ fprintf(f, ",\n\n");
 fprintf(f,
   "/* This table identifies various classes of character by individual bits:\n"
   "  0x%02x   white space character\n"
-  "  0x%02x   letter\n"
   "  0x%02x   decimal digit\n"
   "  0x%02x   hexadecimal digit\n"
-  "  0x%02x   alphanumeric or '_'\n"
-  "  0x%02x   regular expression metacharacter or binary zero\n*/\n\n",
-  ctype_space, ctype_letter, ctype_digit, ctype_xdigit, ctype_word,
-  ctype_meta);
+  "  0x%02x   alphanumeric or '_'\n*/\n\n",
+  ctype_space, ctype_digit, ctype_xdigit, ctype_word);
 
 fprintf(f, "  ");
 for (i = 0; i < 256; i++)

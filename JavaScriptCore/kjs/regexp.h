@@ -24,7 +24,7 @@
 
 #include <sys/types.h>
 
-#if USE(PCRE16)
+#if !USE(POSIX_REGEX)
 #include <pcre.h>
 #else
 // POSIX regex - not so good.
@@ -53,8 +53,8 @@ namespace KJS {
     unsigned subPatterns() const { return m_numSubPatterns; }
 
   private:
-#if USE(PCRE16)
-    pcre* m_regex;
+#if !USE(POSIX_REGEX)
+    JSRegExp* m_regex;
 #else
     regex_t m_regex;
 #endif

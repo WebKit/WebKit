@@ -1,3 +1,115 @@
+2007-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15821
+          remove unused PCRE features for speed
+
+        A first step toward removing the PCRE features we don't use.
+        This gives a 0.8% speedup on SunSpider, and a 6.5% speedup on
+        the SunSpider regular expression test.
+
+        Replaced the public interface with one that doesn't use the
+        name PCRE. Removed code we don't need for JavaScript and various
+        configurations we don't use. This is in preparation for still
+        more changes in the future. We'll probably switch to C++ and
+        make some even more significant changes to the regexp engine
+        to get some additional speed.
+
+        There's probably additional unused stuff that I haven't
+        deleted yet.
+
+        This does mean that our PCRE is now a fork, but I think that's
+        not really a big deal.
+
+        * JavaScriptCore.exp: Remove the 5 old entry points and add
+        the 3 new entry points for WebCore's direct use of the regular
+        expression engine.
+
+        * kjs/config.h: Remove the USE(PCRE16) define. I decided to flip
+        its sense and now there's a USE(POSIX_REGEX) instead, which should
+        probably not be set by anyone. Maybe later we'll just get rid of it
+        altogether.
+
+        * kjs/regexp.h:
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp): Switch to new jsRegExp function names and
+        defines. Cut down on the number of functions used.
+        (KJS::RegExp::~RegExp): Ditto.
+        (KJS::RegExp::match): Ditto.
+
+        * pcre/dftables.c: (main): Get rid of ctype_letter and ctype_meta,
+        which are unused.
+
+        * pcre/pcre-config.h: Get rid of EBCIDIC, PCRE_DATA_SCOPE, const,
+        size_t, HAVE_STRERROR, HAVE_MEMMOVE, HAVE_BCOPY, NEWLINE,
+        POSIX_MALLOC_THRESHOLD, NO_RECURSE, SUPPORT_UCP, SUPPORT_UTF8,
+        and JAVASCRIPT. These are all no longer configurable in our copy
+        of the library.
+
+        * pcre/pcre.h: Remove the macro-based kjs prefix hack, the PCRE
+        version macros, PCRE_UTF16, the code to set up PCRE_DATA_SCOPE,
+        the include of <stdlib.h>, and most of the constants and
+        functions defined in this header. Changed the naming scheme to
+        use a JSRegExp prefix rather than a pcre prefix. In the future,
+        we'll probably change this to be a C++ header.
+
+        * pcre/pcre_compile.c: Removed all unused code branches,
+        including many whole functions and various byte codes.
+        Kept changes outside of removal to a minimum.
+        (check_escape):
+        (first_significant_code):
+        (find_fixedlength):
+        (find_recurse):
+        (could_be_empty_branch):
+        (compile_branch):
+        (compile_regex):
+        (is_anchored):
+        (is_startline):
+        (find_firstassertedchar):
+        (jsRegExpCompile): Renamed from pcre_compile2 and changed the
+        parameters around a bit.
+        (jsRegExpFree): Added.
+
+        * pcre/pcre_exec.c: Removed many unused opcodes and variables.
+        Also started tearing down the NO_RECURSE mechanism since it's
+        now the default. In some cases there were things in the explicit
+        frame that could be turned into plain old local variables and
+        other small like optimizations.
+        (pchars):
+        (match_ref):
+        (match): Changed parameters quite a bit since it's now not used
+        recursively.
+        (jsRegExpExecute): Renamed from pcre_exec.
+
+        * pcre/pcre_internal.h: Get rid of PCRE_DEFINITION, PCRE_SPTR,
+        PCRE_IMS, PCRE_ICHANGED, PCRE_NOPARTIAL, PCRE_STUDY_MAPPED,
+        PUBLIC_OPTIONS, PUBLIC_EXEC_OPTIONS, PUBLIC_DFA_EXEC_OPTIONS,
+        PUBLIC_STUDY_OPTIONS, MAGIC_NUMBER, 16 of the opcodes,
+        _pcre_utt, _pcre_utt_size, _pcre_try_flipped, _pcre_ucp_findprop,
+        and _pcre_valid_utf8. Also moved pcre_malloc and pcre_free here.
+
+        * pcre/pcre_maketables.c: Changed to only compile in dftables.
+        Also got rid of many of the tables that we don't use.
+
+        * pcre/pcre_tables.c: Removed the unused Unicode property tables.
+
+        * pcre/pcre_ucp_searchfuncs.c: Removed everything except for
+        _pcre_ucp_othercase.
+
+        * pcre/pcre_xclass.c: (_pcre_xclass): Removed uneeded support
+        for classes based on Unicode properties.
+
+        * wtf/FastMallocPCRE.cpp: Removed unused bits. It would be good
+        to eliminate this completely, but we need the regular expression
+        code to be C++ first.
+
+        * pcre/pcre_fullinfo.c:
+        * pcre/pcre_get.c:
+        * pcre/ucp.h:
+        Files that are no longer needed. I didn't remove them with this
+        check-in, because I didn't want to modify all the project files.
+
 2007-11-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam.
