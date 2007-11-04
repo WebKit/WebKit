@@ -1,3 +1,14 @@
+2007-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+        
+        - remove NaN check from JSImmediate::fromDouble for 0.5% SunSpider speedup
+
+        It turns out that doing this check costs more than it saves.
+        
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::fromDouble):
+
 2007-11-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver.

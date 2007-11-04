@@ -155,13 +155,14 @@ template<> struct JSImmediate::FPBitValues<true, false> {
         if ((floatUnion.asBits & TagMask) != 0)
             return 0;
 
-        // check for data loss from conversion to float
-        // The d == d check is to allow NaN - it does not
-        // compare equal to itself, but we do want to allow it
-        if (floatUnion.asFloat != d && d == d)
-            return 0;
+        // check for data loss from conversion to float. This
+        // unfortunately also rejects NaN, however, it costs more to
+        // do a check that will include NaN than is saved by letting
+        // NaN be an immediate.
+        if (floatUnion.asFloat == d)
+            return tag(floatUnion.asBits, NumberType);
 
-        return tag(floatUnion.asBits, NumberType);
+        return 0;
     }
 
     static ALWAYS_INLINE float toFloat(const JSValue* v)
