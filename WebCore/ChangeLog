@@ -1,5 +1,24 @@
 2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Update the link stubs to match the current build,
+        and fix coding style issues.
+
+        Reviewed by Mark Rowe.
+
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (loadResourceIntoArray):
+        (findNextSentenceFromIndex):
+        (findSentenceBoundary):
+        (Frame::dashboardRegionsChanged):
+        (WebCore::historyContains):
+        (CachedPage::close):
+        (Editor::showStylesPanel):
+        (EventHandler::passSubframeEventToSubframe):
+        (EventHandler::passWheelEventToWidget):
+        (WebCore::currentTextBreakLocaleID):
+
+2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx <-> WebKit conversions for IntPoint, IntRect and FloatRect
 
         Reviewed by Mark Rowe.

@@ -27,94 +27,81 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "Node.h"
-#include "Font.h"
-#include "IntPoint.h"
-#include "Widget.h"
-#include "GraphicsContext.h"
-#include "loader.h"
-#include "FrameView.h"
-#include "KURL.h"
-#include "Path.h"
-#include "PlatformMouseEvent.h"
-#include "CookieJar.h"
-#include "Screen.h"
-#include "GlobalHistory.h"
-#include "Language.h"
-#include "LocalizedStrings.h"
-#include "PlugInInfoStore.h"
-#include "RenderTheme.h"
-#include "TextBoundaries.h"
-#include "SharedTimer.h"
-#include "ScrollBar.h"
-#include "PlatformScrollBar.h"
-#include "IconLoader.h"
-#include "IconDatabase.h"
-//#include "ResourceLoaderClient.h"
-#include "CachedResource.h"
-//#include "Slider.h"
-//#include "TextField.h"
-//#include "ListBox.h"
-#include "FileChooser.h"
-#include "Cursor.h"
-#include "PopupMenu.h"
+
+#include "AffineTransform.h"
 #include "AXObjectCache.h"
-#include "Icon.h"
-//#include "LoaderFunctions.h"
-#include "EditCommand.h"
-#include "Pasteboard.h"
+#include "BitmapImage.h"
+#include "CachedPage.h"
+#include "CachedResource.h"
+#include "Clipboard.h"
 #include "ContextMenu.h"
 #include "ContextMenuItem.h"
-#include "PlatformMenuDescription.h"
+#include "CookieJar.h"
+#include "Cursor.h"
 #include "DocumentFragment.h"
-#include "Editor.h"
-#include "Clipboard.h"
-#include "AffineTransform.h"
-#include "FrameLoader.h"
-#include "EventHandler.h"
-#include "SearchPopupMenu.h"
-#include "ResourceHandle.h"
-#include "ResourceLoader.h"
-#include "ResourceHandleInternal.h"
 #include "DocumentLoader.h"
-#include "PageCache.h"
-#include "BitmapImage.h"
 #include "DragController.h"
+#include "Editor.h"
+#include "EditCommand.h"
+#include "EventHandler.h"
+#include "FileChooser.h"
+#include "Font.h"
+#include "FrameLoader.h"
+#include "FrameView.h"
+#include "Icon.h"
+#include "IconDatabase.h"
+#include "IconLoader.h"
+#include "IntPoint.h"
+#include "GraphicsContext.h"
+#include "History.h"
+#include "KURL.h"
+#include "Language.h"
+#include "loader.h"
+#include "Node.h"
 #include "NotImplemented.h"
+#include "Pasteboard.h"
+#include "Path.h"
+#include "PlatformMenuDescription.h"
+#include "PlatformMouseEvent.h"
+#include "PlatformScrollBar.h"
+#include "PlugInInfoStore.h"
+#include "PopupMenu.h"
+#include "RenderTheme.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleInternal.h"
+#include "ResourceLoader.h"
+#include "Screen.h"
+#include "SearchPopupMenu.h"
+#include "ScrollBar.h"
+#include "SharedTimer.h"
+#include "TextBoundaries.h"
+#include "Widget.h"
 
 using namespace WebCore;
 
 Vector<char> loadResourceIntoArray(const char* resourceName)
 {
     Vector<char> resource;
-    //if(strcmp(resourceName,"missingImage") == 0 ) {
-    //}
     return resource;
 }
 
 // FrameView functions
 void FrameView::updateBorder() { notImplemented(); }
 
-void Widget::enableFlushDrawing() { notImplemented(); }
-Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFocus; }
-void Widget::disableFlushDrawing() { notImplemented(); }
-GraphicsContext* Widget::lockDrawingFocus() { notImplemented(); return 0; }
-void Widget::unlockDrawingFocus(GraphicsContext*) { notImplemented(); }
 void Widget::removeFromParent() { notImplemented(); }
 
-int WebCore::findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
-void WebCore::findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
+
+int findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
+void findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
+
 int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
 
-void Frame::print() { notImplemented(); }
 void Frame::clearPlatformScriptObjects() { notImplemented(); }
-bool Frame::isCharacterSmartReplaceExempt(UChar, bool) { notImplemented(); return true; }
-//void Frame::respondToChangedSelection(WebCore::Selection const&,bool) { }
+
 void Frame::issueTransposeCommand() { notImplemented(); }
+void Frame::dashboardRegionsChanged() { notImplemented(); }
 DragImageRef Frame::dragImageForSelection() { notImplemented(); return 0; }
 
-void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
-    const IntSize& bottomLeft, const IntSize& bottomRight) { notImplemented(); }
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }
 
 // cookies (we'll need a place to store these
@@ -130,7 +117,9 @@ const WebCore::Cursor& WebCore::moveCursor() { return localCursor; }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 
-bool WebCore::historyContains(DeprecatedString const&) { return false; }
+namespace WebCore {
+    bool historyContains(DeprecatedString const&) { return false; }
+}
 
 void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start, int* end) { notImplemented(); *start=position; *end=position; }
 
@@ -168,15 +157,7 @@ void PlatformScrollbar::updateThumbPosition() { notImplemented(); }
 void PlatformScrollbar::updateThumbProportion() { notImplemented(); }
 void PlatformScrollbar::setRect(const IntRect&) { notImplemented(); }
 
-//bool IconDatabase::isIconExpiredForIconURL(const String& url) { return false; }
-//bool IconDatabase::hasEntryForIconURL(const String& url) { return false; }
-//IconDatabase* IconDatabase::sharedIconDatabase() { return 0; }
-//bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL) { return false; }
-
-
-//const PlatformMouseEvent::CurrentEventTag PlatformMouseEvent::currentEvent = {};
-//PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
-
+void CachedPage::close() { notImplemented(); }
 
 FileChooser::FileChooser(FileChooserClient*, const String& initialFilename) { notImplemented(); }
 //PassRefPtr<FileChooser> FileChooser::create(FileChooserClient*, const String& initialFilename) { notImplemented(); return PassRefPtr<FileChooser>(); }
@@ -218,100 +199,27 @@ void ContextMenuItem::setSubMenu(ContextMenu*) { notImplemented(); }
 void ContextMenuItem::setChecked(bool) { notImplemented(); }
 void ContextMenuItem::setEnabled(bool) { notImplemented(); }
 
-String WebCore::submitButtonDefaultLabel() { return "Submit"; }
-String WebCore::inputElementAltText() { return String(); }
-String WebCore::resetButtonDefaultLabel() { return "Reset"; }
-String WebCore::defaultLanguage() { return "en"; }
-String WebCore::searchableIndexIntroduction() { return "Searchable Index"; }
-String WebCore::fileButtonChooseFileLabel() { return "Choose File"; }
-String WebCore::fileButtonNoFileSelectedLabel() { return "No file selected"; }
-String WebCore::contextMenuItemTagOpenLinkInNewWindow() { return String(); }
-String WebCore::contextMenuItemTagDownloadLinkToDisk() { return String(); }
-String WebCore::contextMenuItemTagCopyLinkToClipboard() { return String(); }
-String WebCore::contextMenuItemTagOpenImageInNewWindow() { return String(); }
-String WebCore::contextMenuItemTagDownloadImageToDisk() { return String(); }
-String WebCore::contextMenuItemTagCopyImageToClipboard() { return String(); }
-String WebCore::contextMenuItemTagOpenFrameInNewWindow() { return String(); }
-String WebCore::contextMenuItemTagCopy() { return String(); }
-String WebCore::contextMenuItemTagGoBack() { return String(); }
-String WebCore::contextMenuItemTagGoForward() { return String(); }
-String WebCore::contextMenuItemTagStop() { return String(); }
-String WebCore::contextMenuItemTagReload() { return String(); }
-String WebCore::contextMenuItemTagCut() { return String(); }
-String WebCore::contextMenuItemTagPaste() { return String(); }
-String WebCore::contextMenuItemTagNoGuessesFound() { return String(); }
-String WebCore::contextMenuItemTagIgnoreSpelling() { return String(); }
-String WebCore::contextMenuItemTagLearnSpelling() { return String(); }
-String WebCore::contextMenuItemTagSearchWeb() { return String(); }
-String WebCore::contextMenuItemTagLookUpInDictionary() { return String(); }
-String WebCore::contextMenuItemTagOpenLink() { return String(); }
-String WebCore::contextMenuItemTagIgnoreGrammar() { return String(); }
-String WebCore::contextMenuItemTagSpellingMenu() { return String(); }
-String WebCore::contextMenuItemTagShowSpellingPanel(bool show) { return String(); }
-String WebCore::contextMenuItemTagCheckSpelling() { return String(); }
-String WebCore::contextMenuItemTagCheckSpellingWhileTyping() { return String(); }
-String WebCore::contextMenuItemTagCheckGrammarWithSpelling() { return String(); }
-String WebCore::contextMenuItemTagFontMenu() { return String(); }
-String WebCore::contextMenuItemTagBold() { return String(); }
-String WebCore::contextMenuItemTagItalic() { return String(); }
-String WebCore::contextMenuItemTagUnderline() { return String(); }
-String WebCore::contextMenuItemTagOutline() { return String(); }
-String WebCore::contextMenuItemTagWritingDirectionMenu() { return String(); }
-String WebCore::contextMenuItemTagDefaultDirection() { return String(); }
-String WebCore::contextMenuItemTagLeftToRight() { return String(); }
-String WebCore::contextMenuItemTagRightToLeft() { return String(); }
-String WebCore::searchMenuNoRecentSearchesText() { return String("No recent searches"); }
-String WebCore::searchMenuRecentSearchesText() { return String("Recent searches"); }
-String WebCore::searchMenuClearRecentSearchesText() { return String("Clear recent searches"); }
-
-void Editor::ignoreSpelling() { notImplemented(); }
-void Editor::learnSpelling() { notImplemented(); }
-bool Editor::isSelectionUngrammatical() { notImplemented(); return false; }
-bool Editor::isSelectionMisspelled() { notImplemented(); return false; }
-Vector<String> Editor::guessesForMisspelledSelection() { notImplemented(); return Vector<String>(); }
-Vector<String> Editor::guessesForUngrammaticalSelection() { notImplemented(); return Vector<String>(); }
-void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition&) { notImplemented(); }
 void Editor::showColorPanel() { notImplemented(); }
 void Editor::showFontPanel() { notImplemented(); }
 void Editor::showStylesPanel() { notImplemented(); }
-void Editor::showSpellingGuessPanel() { notImplemented(); }
-void Editor::advanceToNextMisspelling(bool) { notImplemented(); }
 
 String FrameLoader::overrideMediaType() const { notImplemented(); return String(); }
 
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const { notImplemented(); return false; }
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe) { notImplemented(); return false; }
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult*) { notImplemented(); return false; }
 bool EventHandler::passMouseDownEventToWidget(Widget*) { notImplemented(); return false; }
-bool EventHandler::passWheelEventToWidget(Widget*) { notImplemented(); return false; }
-
-// FIXME: All this IconDatabase stuff could go away if much of
-// WebCore/loader/icon was linked in.  Unfortunately that requires SQLite,
-// which isn't currently part of the build.
-//Image* IconDatabase::iconForPageURL(const String&, const IntSize&, bool cache) { notImplemented(); return 0; }
-//Image* IconDatabase::defaultIcon(const IntSize&) { notImplemented(); return 0; }
-//void IconDatabase::retainIconForPageURL(const String&) { notImplemented(); }
-//void IconDatabase::releaseIconForPageURL(const String&) { notImplemented(); }
-//void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&) { notImplemented(); }
+bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget*) { notImplemented(); return false; }
 
 void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems) { notImplemented(); }
 void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems) { notImplemented(); }
 SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client) : PopupMenu(client) { notImplemented(); }
 bool SearchPopupMenu::enabled() { return true; }
 
-// bool SharedBuffer::hasPlatformData() const { notImplemented(); return false; }
-// const char* SharedBuffer::platformData() const { notImplemented(); return NULL; }
-// unsigned SharedBuffer::platformDataSize() const { notImplemented(); return 0; }
-// void SharedBuffer::maybeTransferPlatformData() { notImplemented(); }
-// void SharedBuffer::clearPlatformData() { notImplemented(); }
-
-//const KURL DocumentLoader::unreachableURL() const { notImplemented(); return KURL(); }
 bool DocumentLoader::getResponseModifiedHeader(WebCore::String&) const { notImplemented(); return false; }
-
-void PageCache::close() { notImplemented(); }
-
 
 namespace WebCore {
 float userIdleTime() { notImplemented(); return 0; }
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
+const char* currentTextBreakLocaleID() { notImplemented(); return "en_us"; }
 }
