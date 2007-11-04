@@ -104,7 +104,7 @@
 
 - webView: (WebView *)wv identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
-    if (layoutTestController->dumpResourceLoadCallbacks() && !done)
+    if (!done && layoutTestController->dumpResourceLoadCallbacks())
         return [[request URL] _drt_descriptionSuitableForTestResult];
     
     return @"<unknown>";
@@ -112,7 +112,7 @@
 
 -(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
-    if (layoutTestController->dumpResourceLoadCallbacks() && !done) {
+    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - willSendRequest %@ redirectResponse %@", identifier, [newRequest _drt_descriptionSuitableForTestResult],
             [redirectResponse _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
@@ -134,7 +134,7 @@
 
 -(void)webView: (WebView *)wv resource:identifier didReceiveResponse: (NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource
 {
-    if (layoutTestController->dumpResourceLoadCallbacks() && !done) {
+    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didReceiveResponse %@", identifier, [response _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }    
@@ -146,7 +146,7 @@
 
 -(void)webView: (WebView *)wv resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource
 {
-    if (layoutTestController->dumpResourceLoadCallbacks() && !done) {
+    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishLoading", identifier];
         printf ("%s\n", [string UTF8String]);
     }
@@ -154,7 +154,7 @@
 
 -(void)webView: (WebView *)wv resource:identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource
 {
-    if (layoutTestController->dumpResourceLoadCallbacks() && !done) {
+    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailLoadingWithError: %@", identifier, [error _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -166,7 +166,7 @@
 
 -(NSCachedURLResponse *) webView: (WebView *)wv resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource
 {
-    if (layoutTestController->dumpResourceLoadCallbacks() && !done) {
+    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - willCacheResponse: called", identifier];
         printf ("%s\n", [string UTF8String]);
     }

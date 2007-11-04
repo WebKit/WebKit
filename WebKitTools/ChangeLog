@@ -1,3 +1,51 @@
+2007-11-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15832
+        fast/dom/gc-10.html crashes when run alone
+
+        Check for !done before using objects that can be already deallocated.
+
+        * DumpRenderTree/mac/EditingDelegate.mm:
+        (-[EditingDelegate webView:shouldBeginEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldEndEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldInsertNode:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldInsertText:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldDeleteDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[EditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeTypingStyle:toStyle:]):
+        (-[EditingDelegate webViewDidBeginEditing:]):
+        (-[EditingDelegate webViewDidChange:]):
+        (-[EditingDelegate webViewDidEndEditing:]):
+        (-[EditingDelegate webViewDidChangeTypingStyle:]):
+        (-[EditingDelegate webViewDidChangeSelection:]):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didCommitLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFailLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:windowScriptObjectAvailable:]):
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveTitle:forFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveServerRedirectForProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveIcon:forFrame:]):
+        (-[FrameLoadDelegate webView:didChangeLocationWithinPageForFrame:]):
+        (-[FrameLoadDelegate webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:]):
+        (-[FrameLoadDelegate webView:didCancelClientRedirectForFrame:]):
+        (-[FrameLoadDelegate webView:willCloseFrame:]):
+        (-[FrameLoadDelegate webView:didFinishDocumentLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didHandleOnloadEventsForFrame:]):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didReceiveResponse:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didFinishLoadingFromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didFailLoadingWithError:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:willCacheResponse:fromDataSource:]):
+
 2007-11-04  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Don't use Carbon.h as the prefix header as it triggers
