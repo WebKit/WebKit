@@ -141,16 +141,16 @@ namespace KJS {
 
 namespace KJS {
 
-const ClassInfo Plugins::info = { "PluginArray", 0, &PluginsTable, 0 };
-const ClassInfo MimeTypes::info = { "MimeTypeArray", 0, &MimeTypesTable, 0 };
-const ClassInfo Plugin::info = { "Plugin", 0, &PluginTable, 0 };
-const ClassInfo MimeType::info = { "MimeType", 0, &MimeTypeTable, 0 };
+const ClassInfo Plugins::info = { "PluginArray", 0, &PluginsTable };
+const ClassInfo MimeTypes::info = { "MimeTypeArray", 0, &MimeTypesTable };
+const ClassInfo Plugin::info = { "Plugin", 0, &PluginTable };
+const ClassInfo MimeType::info = { "MimeType", 0, &MimeTypeTable };
 
 Vector<PluginInfo*> *KJS::PluginBase::plugins = 0;
 Vector<MimeClassInfo*> *KJS::PluginBase::mimes = 0;
 int KJS::PluginBase::m_plugInCacheRefCount = 0;
 
-const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
+const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable };
 /*
 @begin NavigatorTable 13
   appCodeName   Navigator::AppCodeName  DontDelete|ReadOnly

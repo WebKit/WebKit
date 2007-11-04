@@ -34,7 +34,7 @@ namespace WebCore {
 
 using namespace KJS;
 
-const ClassInfo JSDOMExceptionConstructor::info = { "DOMExceptionConstructor", 0, 0, 0 };
+const ClassInfo JSDOMExceptionConstructor::info = { "DOMExceptionConstructor", 0, 0 };
 
 /* Source for DOMExceptionConstructorTable. Use "make hashtables" to regenerate.
 @begin JSDOMExceptionConstructorTable 15

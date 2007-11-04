@@ -36,7 +36,7 @@ namespace KJS {
 
 // ------------------------------ ArrayPrototype ----------------------------
 
-const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTable, 0};
+const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTable};
 
 /* Source for array_object.lut.h
 @begin arrayTable 16

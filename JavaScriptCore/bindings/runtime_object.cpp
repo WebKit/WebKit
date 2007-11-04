@@ -34,7 +34,7 @@
 using namespace KJS;
 using namespace Bindings;
 
-const ClassInfo RuntimeObjectImp::info = {"RuntimeObject", 0, 0, 0};
+const ClassInfo RuntimeObjectImp::info = { "RuntimeObject", 0, 0 };
 
 RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i)
 : instance(i)

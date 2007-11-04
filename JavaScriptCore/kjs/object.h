@@ -62,15 +62,11 @@ namespace KJS {
      * Pointer to the class information of the base class.
      * 0L if there is none.
      */
-    const ClassInfo *parentClass;
+    const ClassInfo* parentClass;
     /**
      * Static hash-table of properties.
      */
-    const HashTable *propHashTable;
-    /**
-     * Reserved for future extension.
-     */
-    void *dummy;
+    const HashTable* propHashTable;
   };
   
   // This is an internal value object which stores getter and setter functions
@@ -149,8 +145,8 @@ namespace KJS {
      * And in your source file:
      *
      * \code
-     *   const ClassInfo BarImp::info = {"Bar", 0, 0, 0}; // no parent class
-     *   const ClassInfo FooImp::info = {"Foo", &BarImp::info, 0, 0};
+     *   const ClassInfo BarImp::info = { "Bar", 0, 0 }; // no parent class
+     *   const ClassInfo FooImp::info = { "Foo", &BarImp::info, 0 };
      * \endcode
      *
      * @see inherits()

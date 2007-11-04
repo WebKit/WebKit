@@ -32,7 +32,7 @@ using namespace KJS;
 
 // ------------------------------ MathObjectImp --------------------------------
 
-const ClassInfo MathObjectImp::info = { "Math", 0, &mathTable, 0 };
+const ClassInfo MathObjectImp::info = { "Math", 0, &mathTable };
 
 /* Source for math_object.lut.h
 @begin mathTable 21

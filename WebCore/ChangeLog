@@ -1,3 +1,31 @@
+2007-11-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Remove dummy variable from ClassInfo reducing the size of the struct by 1 word.
+        The variable had been kept around for binary compatibility, but since nothing
+        else is there is no point in continuing to keep it around.
+
+        * bindings/js/JSDOMExceptionConstructor.cpp:
+        (WebCore::):
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::):
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::):
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::):
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::):
+        * bindings/js/kjs_css.cpp:
+        (WebCore::):
+        * bindings/js/kjs_events.cpp:
+        (WebCore::):
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::):
+        * bindings/js/kjs_window.cpp:
+        (KJS::):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fixes to get wx impls. building on trunk.

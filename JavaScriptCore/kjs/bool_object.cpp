@@ -31,7 +31,7 @@ using namespace KJS;
 
 // ------------------------------ BooleanInstance ---------------------------
 
-const ClassInfo BooleanInstance::info = {"Boolean", 0, 0, 0};
+const ClassInfo BooleanInstance::info = {"Boolean", 0, 0};
 
 BooleanInstance::BooleanInstance(JSObject *proto)
   : JSWrapperObject(proto)

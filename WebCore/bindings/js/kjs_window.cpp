@@ -146,7 +146,7 @@ namespace KJS {
 
 ////////////////////// Window Object ////////////////////////
 
-const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
+const ClassInfo Window::info = { "Window", 0, &WindowTable };
 
 /*
 @begin WindowTable 118
@@ -1682,7 +1682,7 @@ Window::UnprotectedListenersMap& Window::jsUnprotectedHTMLEventListeners()
 
 ////////////////////// Location Object ////////////////////////
 
-const ClassInfo Location::info = { "Location", 0, &LocationTable, 0 };
+const ClassInfo Location::info = { "Location", 0, &LocationTable };
 /*
 @begin LocationTable 12
   assign        Location::Assign        DontDelete|Function 1

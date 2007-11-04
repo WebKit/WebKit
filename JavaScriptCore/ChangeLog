@@ -1,3 +1,40 @@
+2007-11-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver.
+
+        Remove dummy variable from ClassInfo reducing the size of the struct by 1 word.
+        The variable had been kept around for binary compatibility, but since nothing
+        else is there is no point in continuing to keep it around.
+
+        * API/JSCallbackConstructor.cpp:
+        (KJS::):
+        * API/JSCallbackFunction.cpp:
+        (KJS::):
+        * API/JSCallbackObject.cpp:
+        (KJS::):
+        * bindings/objc/objc_runtime.mm:
+        * bindings/runtime_array.cpp:
+        * bindings/runtime_object.cpp:
+        * kjs/array_instance.cpp:
+        (KJS::):
+        * kjs/array_object.cpp:
+        (KJS::):
+        * kjs/bool_object.cpp:
+        * kjs/date_object.cpp:
+        (KJS::):
+        * kjs/error_object.cpp:
+        * kjs/function.cpp:
+        (KJS::):
+        * kjs/internal.cpp:
+        (KJS::):
+        * kjs/lookup.h:
+        * kjs/math_object.cpp:
+        * kjs/number_object.cpp:
+        * kjs/object.h:
+        * kjs/regexp_object.cpp:
+        * kjs/string_object.cpp:
+        (KJS::):
+
 2007-11-03  Kevin McCullough  <kmccullough@apple.com>
 
         - Updated testkjs results to make the build bots green until we

@@ -28,7 +28,7 @@
 
 using namespace KJS;
 
-const ClassInfo RuntimeArray::info = {"RuntimeArray", &ArrayInstance::info, 0, 0};
+const ClassInfo RuntimeArray::info = { "RuntimeArray", &ArrayInstance::info, 0 };
 
 RuntimeArray::RuntimeArray(ExecState *exec, Bindings::Array *a)
     : JSObject(exec->lexicalInterpreter()->builtinArrayPrototype())

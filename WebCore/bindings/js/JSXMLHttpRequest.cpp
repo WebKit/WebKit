@@ -76,7 +76,7 @@ JSObject* JSXMLHttpRequestConstructorImp::construct(ExecState* exec, const List&
     return new JSXMLHttpRequest(exec, doc.get());
 }
 
-const ClassInfo JSXMLHttpRequest::info = { "JSXMLHttpRequest", 0, &JSXMLHttpRequestTable, 0 };
+const ClassInfo JSXMLHttpRequest::info = { "JSXMLHttpRequest", 0, &JSXMLHttpRequestTable };
 
 /* Source for JSXMLHttpRequestTable.
 @begin JSXMLHttpRequestTable 7

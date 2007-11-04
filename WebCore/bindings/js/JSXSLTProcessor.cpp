@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace KJS {
 
-const ClassInfo JSXSLTProcessor::info = { "XSLTProcessor", 0, 0, 0 };
+const ClassInfo JSXSLTProcessor::info = { "XSLTProcessor", 0, 0 };
 
 /*
 @begin XSLTProcessorPrototypeTable 7

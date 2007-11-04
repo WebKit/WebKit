@@ -34,7 +34,7 @@ namespace WebCore {
 
 using namespace KJS;
 
-const ClassInfo JSRGBColor::info = { "RGBColor", 0, &JSRGBColorTable, 0 };
+const ClassInfo JSRGBColor::info = { "RGBColor", 0, &JSRGBColorTable };
 
 /*
 @begin JSRGBColorTable 3

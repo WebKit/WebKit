@@ -40,7 +40,7 @@ namespace KJS {
 
 // ECMA 15.10.5
 
-const ClassInfo RegExpPrototype::info = {"RegExpPrototype", 0, 0, 0};
+const ClassInfo RegExpPrototype::info = { "RegExpPrototype", 0, 0 };
 
 RegExpPrototype::RegExpPrototype(ExecState *exec,
                                        ObjectPrototype *objProto,
@@ -151,7 +151,7 @@ JSValue *RegExpProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
 
 // ------------------------------ RegExpImp ------------------------------------
 
-const ClassInfo RegExpImp::info = {"RegExp", 0, 0, 0};
+const ClassInfo RegExpImp::info = { "RegExp", 0, 0 };
 
 RegExpImp::RegExpImp(RegExpPrototype* regexpProto, RegExp* exp)
   : JSObject(regexpProto)
@@ -225,7 +225,7 @@ JSValue* RegExpImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
 
 // ------------------------------ RegExpObjectImp ------------------------------
 
-const ClassInfo RegExpObjectImp::info = {"Function", &InternalFunctionImp::info, &RegExpTable, 0};
+const ClassInfo RegExpObjectImp::info = { "Function", &InternalFunctionImp::info, &RegExpTable };
 
 /* Source for regexp_object.lut.h
 @begin RegExpTable 20
