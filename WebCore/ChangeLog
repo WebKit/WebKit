@@ -1,3 +1,16 @@
+2007-11-04  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Rename SecurityOrigin::allowsAccessFrom to SecurityOrigin::canAccess to 
+        clear up ambiguity.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccess):
+        * platform/SecurityOrigin.h:
+
 2007-11-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

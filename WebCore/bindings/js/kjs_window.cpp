@@ -933,7 +933,7 @@ bool Window::isSafeScript(ExecState *exec) const
   const SecurityOrigin& actSecurityOrigin = actDocument->securityOrigin();
   const SecurityOrigin& thisSecurityOrigin = thisDocument->securityOrigin();
 
-  if (actSecurityOrigin.allowsAccessFrom(thisSecurityOrigin))
+  if (actSecurityOrigin.canAccess(thisSecurityOrigin))
     return true;
 
   // FIXME: this error message should contain more specifics of why the same origin check has failed.

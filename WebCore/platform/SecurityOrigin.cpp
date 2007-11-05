@@ -107,7 +107,7 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
     m_host = newDomain.lower();
 }
 
-bool SecurityOrigin::allowsAccessFrom(const SecurityOrigin& other) const
+bool SecurityOrigin::canAccess(const SecurityOrigin& other) const
 {
     if (m_protocol == "file")
         return true;

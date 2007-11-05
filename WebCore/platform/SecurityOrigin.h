@@ -43,7 +43,7 @@ namespace WebCore {
         void setForFrame(Frame*);
         void setDomainFromDOM(const String& newDomain);
 
-        bool allowsAccessFrom(const SecurityOrigin&) const;
+        bool canAccess(const SecurityOrigin&) const;
         bool isSecureTransitionTo(const KURL&) const;
 
         String toString() const;
