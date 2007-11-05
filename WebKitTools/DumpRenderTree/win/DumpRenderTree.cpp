@@ -61,6 +61,7 @@ const LPWSTR TestPluginDir = L"TestNetscapePlugin_Debug";
 const LPWSTR TestPluginDir = L"TestNetscapePlugin";
 #endif
 
+static LPCWSTR fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
 #define USE_MAC_FONTS
 
 const LPCWSTR kDumpRenderTreeClassName = L"DumpRenderTreeWindow";
@@ -109,13 +110,54 @@ static LRESULT CALLBACK DumpRenderTreeWndProc(HWND hWnd, UINT msg, WPARAM wParam
     }
 }
 
+static const wstring& exePath()
+{
+    static wstring path;
+    static bool initialized;
+
+    if (initialized)
+        return path;
+    initialized = true;
+
+    TCHAR buffer[MAX_PATH];
+    GetModuleFileName(GetModuleHandle(0), buffer, ARRAYSIZE(buffer));
+    path = buffer;
+    int lastSlash = path.rfind('\\');
+    if (lastSlash != -1 && lastSlash + 1 < path.length())
+        path = path.substr(0, lastSlash + 1);
+
+    return path;
+}
+
+static const wstring& fontsPath()
+{
+    static wstring path;
+    static bool initialized;
+
+    if (initialized)
+        return path;
+    initialized = true;
+
+    DWORD size = GetEnvironmentVariable(fontsEnvironmentVariable, 0, 0);
+    Vector<TCHAR> buffer(size);
+    if (GetEnvironmentVariable(fontsEnvironmentVariable, buffer.data(), buffer.size())) {
+        path = buffer.data();
+        if (path[path.length() - 1] != '\\')
+            path.append(L"\\");
+        return path;
+    }
+
+    path = exePath() + TEXT("DumpRenderTree.resources\\");
+    return path;
+}
+
 #ifdef DEBUG_WEBKIT_HAS_SUFFIX
 #define WEBKITDLL TEXT("WebKit_debug.dll")
 #else
 #define WEBKITDLL TEXT("WebKit.dll")
 #endif
 
-static wstring initialize(HMODULE hModule)
+static void initialize(HMODULE hModule)
 {
     if (HMODULE webKitModule = LoadLibrary(WEBKITDLL))
         if (FARPROC dllRegisterServer = GetProcAddress(webKitModule, "DllRegisterServer"))
@@ -151,14 +193,7 @@ static wstring initialize(HMODULE hModule)
         TEXT("Times Roman.ttf")
     };
 
-    TCHAR buffer[MAX_PATH];
-    GetModuleFileName(hModule, buffer, ARRAYSIZE(buffer));
-    wstring exePath(buffer);
-    int lastSlash = exePath.rfind('\\');
-    if (lastSlash != -1 && lastSlash + 1< exePath.length())
-        exePath = exePath.substr(0, lastSlash + 1);
-    
-    wstring resourcesPath(exePath + TEXT("DumpRenderTree.resources\\"));
+    wstring resourcesPath = fontsPath();
 
     COMPtr<IWebTextRenderer> textRenderer;
     if (SUCCEEDED(CoCreateInstance(CLSID_WebTextRenderer, 0, CLSCTX_ALL, IID_IWebTextRenderer, (void**)&textRenderer)))
@@ -186,8 +221,6 @@ static wstring initialize(HMODULE hModule)
 
     hostWindow = CreateWindowEx(WS_EX_TOOLWINDOW, kDumpRenderTreeClassName, TEXT("DumpRenderTree"), WS_POPUP,
       -maxViewWidth, -maxViewHeight, maxViewWidth, maxViewHeight, 0, 0, hModule, 0);
-
-    return exePath;
 }
 
 void displayWebView()
@@ -765,7 +798,7 @@ int main(int argc, char* argv[])
 {
     leakChecking = false;
 
-    wstring exePath = initialize(GetModuleHandle(0));
+    initialize(GetModuleHandle(0));
 
     // FIXME: options
 
@@ -793,8 +826,8 @@ int main(int argc, char* argv[])
     webView->Release();
 
 
-    BSTR pluginPath = SysAllocStringLen(0, exePath.length() + _tcslen(TestPluginDir));
-    _tcscpy(pluginPath, exePath.c_str());
+    BSTR pluginPath = SysAllocStringLen(0, exePath().length() + _tcslen(TestPluginDir));
+    _tcscpy(pluginPath, exePath().c_str());
     _tcscat(pluginPath, TestPluginDir);
     failed = FAILED(viewPrivate->addAdditionalPluginPath(pluginPath));
     SysFreeString(pluginPath);

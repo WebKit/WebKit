@@ -1,3 +1,22 @@
+2007-11-05  Adam Roben  <aroben@apple.com>
+
+        Add support on Windows for WEBKIT_TESTFONTS
+
+        This environment variable lets you specify where the fonts to be used
+        by DumpRenderTree reside. The Qt port is already using this, so I'm
+        just following their lead.
+
+        Reviewed by Darin.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (exePath): Refactored code out of initialize().
+        (fontsPath): Returns either $WEBKIT_TESTFONTS or
+        DumpRenderTree.resources.
+        (initialize): Use the new fontsPath function.
+        (main): Use the new exePath function.
+        * Scripts/run-webkit-tests: Propagate the WEBKIT_TESTFONTS environment
+        variable to DRT, like Qt does.
+
 2007-11-05  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Alp Toker.

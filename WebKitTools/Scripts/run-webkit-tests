@@ -1157,6 +1157,7 @@ sub openDumpTool()
     if (isCygwin()) {
         $ENV{HOMEDRIVE} = $homeDrive;
         $ENV{HOMEPATH} = $homePath;
+        $ENV{WEBKIT_TESTFONTS} = $testfonts;
         setPathForRunningWebKitApp(\%ENV) if isCygwin();
     }
         
