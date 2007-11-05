@@ -63,4 +63,5 @@ interface IWebCache : IUnknown
     HRESULT statistics([in, out] int* count, [in] IPropertyBag** s);
     HRESULT empty();
     HRESULT setDisabled([in] BOOL disabled);
+    HRESULT disabled([out, retval] BOOL*);
 }

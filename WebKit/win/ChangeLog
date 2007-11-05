@@ -1,5 +1,18 @@
 2007-11-04  Adam Roben  <aroben@apple.com>
 
+        Add IWebCache::disabled
+
+        This matches the Mac WebCache class.
+
+        Reviewed by Sam.
+
+        * Interfaces/IWebCache.idl:
+        * WebCache.cpp:
+        (WebCache::disabled):
+        * WebCache.h:
+
+2007-11-04  Adam Roben  <aroben@apple.com>
+
         Add IWebInspector and a way to get one from a WebView
 
         This API matches the Mac one added in r27266.
