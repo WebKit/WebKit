@@ -21,6 +21,8 @@
 #include "config.h"
 #include "list.h"
 
+using std::min;
+
 namespace KJS {
 
 void List::getSlice(int startIndex, List& result) const
