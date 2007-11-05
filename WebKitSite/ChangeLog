@@ -1,3 +1,37 @@
+2007-11-04  Timothy Hatcher  <timothy@apple.com>
+
+        Land the HTML Editing Toolbar demo from WWDC 2007.
+
+        * demos: Added.
+        * demos/editingToolbar: Added.
+        * demos/editingToolbar/FancyToolbar.css: Added.
+        * demos/editingToolbar/FancyToolbar.js: Added.
+        * demos/editingToolbar/FancyToolbarImages: Added.
+        * demos/editingToolbar/FancyToolbarImages/button.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonMiddle.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressed.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedMiddle.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedRight.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonRight.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/camera.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/link.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/textAlign.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutline.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottom.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottomLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottomRight.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineRight.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTop.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTopLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTopRight.png: Added.
+        * demos/editingToolbar/content.html: Added.
+        * demos/editingToolbar/images: Added.
+        * demos/editingToolbar/images/safari.png: Added.
+        * demos/editingToolbar/index.html: Added.
+
 2007-11-04  David D. Kilzer  <ddkilzer@webkit.org>
 
         CIA has changed its hostname from cia.navi.cx to cia.vc
