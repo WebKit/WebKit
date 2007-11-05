@@ -65,8 +65,8 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
             return e->mimeType;
         ++e;
     }
-    // unknown, let's just assume plain text
-    return "text/plain";
+
+    return String();
 }
 
 }

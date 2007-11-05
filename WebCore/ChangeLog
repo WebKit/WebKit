@@ -1,3 +1,14 @@
+2007-11-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Have getMIMETypeForExtension return a null string when no MIME type is known
+        for the extension rather than returning "text/plain".  This prevents plugin data
+        being dumped into object elements when plugins are disabled.
+
+        * platform/gtk/MIMETypeRegistryGtk.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+
 2007-11-04  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.
