@@ -3911,9 +3911,8 @@ static WebFrameView *containingFrameView(NSView *view)
 - (void)_searchWithSpotlightFromMenu:(id)sender
 {
     id documentView = [[[self selectedFrame] frameView] documentView];
-    if (![documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+    if (![documentView conformsToProtocol:@protocol(WebDocumentText)])
         return;
-    }
     
     NSString *selectedString = [(id <WebDocumentText>)documentView selectedString];
     if ([selectedString length] == 0) {
