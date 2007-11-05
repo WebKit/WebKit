@@ -480,9 +480,9 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
       result = jsNaN();
     break;
   case Concat: {
-    ListIterator it = args.begin();
-    for ( ; it != args.end() ; ++it) {
-        s += it->toString(exec);
+    List::const_iterator end = args.end();
+    for (List::const_iterator it = args.begin(); it != end; ++it) {
+        s += (*it)->toString(exec);
     }
     result = jsString(s);
     break;
@@ -808,7 +808,7 @@ JSObject *StringObjectImp::construct(ExecState *exec, const List &args)
   JSObject *proto = exec->lexicalInterpreter()->builtinStringPrototype();
   if (args.size() == 0)
     return new StringInstance(proto);
-  return new StringInstance(proto, args.begin()->toString(exec));
+  return new StringInstance(proto, args[0]->toString(exec));
 }
 
 // ECMA 15.5.1
@@ -837,11 +837,10 @@ JSValue *StringObjectFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisOb
   if (args.size()) {
     UChar *buf = static_cast<UChar *>(fastMalloc(args.size() * sizeof(UChar)));
     UChar *p = buf;
-    ListIterator it = args.begin();
-    while (it != args.end()) {
-      unsigned short u = static_cast<unsigned short>(it->toUInt32(exec));
+    List::const_iterator end = args.end();
+    for (List::const_iterator it = args.begin(); it != end; ++it) {
+      unsigned short u = static_cast<unsigned short>((*it)->toUInt32(exec));
       *p++ = UChar(u);
-      it++;
     }
     s = UString(buf, args.size(), false);
   } else

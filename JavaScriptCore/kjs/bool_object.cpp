@@ -105,7 +105,7 @@ JSObject *BooleanObjectImp::construct(ExecState *exec, const List &args)
 
   bool b;
   if (args.size() > 0)
-    b = args.begin()->toBoolean(exec);
+    b = args[0]->toBoolean(exec);
   else
     b = false;
 

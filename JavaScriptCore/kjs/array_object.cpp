@@ -164,7 +164,8 @@ JSValue* ArrayProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, cons
     int n = 0;
     JSValue *curArg = thisObj;
     JSObject *curObj = static_cast<JSObject *>(thisObj);
-    ListIterator it = args.begin();
+    List::const_iterator it = args.begin();
+    List::const_iterator end = args.end();
     for (;;) {
       if (curArg->isObject() &&
           curObj->inherits(&ArrayInstance::info)) {
@@ -182,10 +183,11 @@ JSValue* ArrayProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, cons
         arr->put(exec, n, curArg);
         n++;
       }
-      if (it == args.end())
+      if (it == end)
         break;
       curArg = *it;
-      curObj = static_cast<JSObject *>(it++); // may be 0
+      curObj = static_cast<JSObject*>(curArg); // may be 0
+      ++it;
     }
     arr->put(exec, exec->propertyNames().length, jsNumber(n), DontEnum | DontDelete);
 

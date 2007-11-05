@@ -273,8 +273,8 @@ IndexToNameMap::IndexToNameMap(FunctionImp* func, const List& args)
   this->size = args.size();
   
   int i = 0;
-  ListIterator iterator = args.begin(); 
-  for (; iterator != args.end(); i++, iterator++)
+  List::const_iterator end = args.end();
+  for (List::const_iterator it = args.begin(); it != end; ++i, ++it)
     _map[i] = func->getParameterName(i); // null if there is no corresponding parameter
 }
 
@@ -338,10 +338,10 @@ indexToNameMap(func, args)
   putDirect(exec->propertyNames().length, args.size(), DontEnum);
   
   int i = 0;
-  ListIterator iterator = args.begin(); 
-  for (; iterator != args.end(); i++, iterator++) {
+  List::const_iterator end = args.end();
+  for (List::const_iterator it = args.begin(); it != end; ++it, ++i) {
     if (!indexToNameMap.isMapped(Identifier::from(i))) {
-      JSObject::put(exec, Identifier::from(i), *iterator, DontEnum);
+      JSObject::put(exec, Identifier::from(i), *it, DontEnum);
     }
   }
 }

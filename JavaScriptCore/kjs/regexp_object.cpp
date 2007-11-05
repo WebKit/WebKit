@@ -416,15 +416,18 @@ bool RegExpObjectImp::implementsConstruct() const
 // ECMA 15.10.4
 JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
 {
-  JSObject *o = args[0]->getObject();
+  JSValue* arg0 = args[0];
+  JSValue* arg1 = args[1];
+  
+  JSObject* o = arg0->getObject();
   if (o && o->inherits(&RegExpImp::info)) {
-    if (!args[1]->isUndefined())
+    if (!arg1->isUndefined())
       return throwError(exec, TypeError);
     return o;
   }
   
-  UString p = args[0]->isUndefined() ? UString("") : args[0]->toString(exec);
-  UString flags = args[1]->isUndefined() ? UString("") : args[1]->toString(exec);
+  UString p = arg0->isUndefined() ? UString("") : arg0->toString(exec);
+  UString flags = arg1->isUndefined() ? UString("") : arg1->toString(exec);
 
   RegExpPrototype* proto = static_cast<RegExpPrototype*>(exec->lexicalInterpreter()->builtinRegExpPrototype());
 

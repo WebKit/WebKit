@@ -1,3 +1,43 @@
+2007-11-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=15835
+
+        Switched List implementation from a custom heap allocator to an inline
+        Vector, for a disappointing .5% SunSpider speedup.
+        
+        Also renamed List::slice to List::getSlice because "get" is the 
+        conventional prefix for functions returning a value through an out 
+        parameter.
+
+        * kjs/array_object.cpp:
+        (KJS::ArrayProtoFunc::callAsFunction): Removed some redundant function
+        calls and memory accesses.
+
+        * kjs/bool_object.cpp:
+        (BooleanObjectImp::construct): Removed questionable use of iterator.
+
+        * kjs/list.cpp:
+        * kjs/list.h: New List class, implemented in terms of Vector. Two 
+        interesting differences:
+            1. The inline capacity is 8, not 5. Many of the Lists constructed 
+            during a SunSpider run are larger than 5; almost none are larger
+            than 8.
+
+            2. The growth factor is 4, not 2. Since we can guarantee that Lists
+            aren't long-lived, we can grow them more aggressively, to avoid
+            excessive copying.
+
+        * kjs/regexp_object.cpp:
+        (RegExpObjectImp::construct): Removed redundant function calls.
+
+        * kjs/string_object.cpp:
+        (KJS::StringObjectImp::construct): Removed questionable use of iterator.
+
+        * wtf/Vector.h:
+        (WTF::::uncheckedAppend): Added a fast, unchecked version of append.
+
 2007-11-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp Toker.

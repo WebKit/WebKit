@@ -1,3 +1,15 @@
+2007-11-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=15835
+
+        Small adaptations to new KJS::List class.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::ScheduledAction::ScheduledAction):
+
 2007-11-05  Adam Roben  <aroben@apple.com>
 
         Allow passing a base class pointer to COMPtr::copyRefTo

@@ -93,9 +93,10 @@ ArrayInstance::ArrayInstance(JSObject* prototype, const List& list)
     storage->m_numValuesInVector = length;
     storage->m_sparseValueMap = 0;
 
-    ListIterator it = list.begin();
-    for (unsigned i = 0; i < length; ++i)
-        storage->m_vector[i] = it++;
+    size_t i = 0;
+    List::const_iterator end = list.end();
+    for (List::const_iterator it = list.begin(); it != end; ++it, ++i)
+        storage->m_vector[i] = *it;
 
     m_storage = storage;
 
