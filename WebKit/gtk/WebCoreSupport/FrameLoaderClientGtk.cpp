@@ -346,7 +346,6 @@ void FrameLoaderClient::revertToProvisionalState(DocumentLoader*) { notImplement
 void FrameLoaderClient::clearUnarchivingState(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClient::willChangeTitle(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClient::didChangeTitle(DocumentLoader *l) { setTitle(l->title(), l->URL()); }
-void FrameLoaderClient::finishedLoading(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClient::finalSetupForReplace(DocumentLoader*) { notImplemented(); }
 void FrameLoaderClient::setDefersLoading(bool) { notImplemented(); }
 bool FrameLoaderClient::isArchiveLoadPending(ResourceLoader*) const { notImplemented(); return false; }
@@ -356,6 +355,19 @@ bool FrameLoaderClient::canHandleRequest(const ResourceRequest&) const { notImpl
 bool FrameLoaderClient::canShowMIMEType(const String&) const { notImplemented(); return true; }
 bool FrameLoaderClient::representationExistsForURLScheme(const String&) const { notImplemented(); return false; }
 String FrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const { notImplemented(); return String(); }
+
+void FrameLoaderClient::finishedLoading(DocumentLoader* documentLoader)
+{
+    ASSERT(documentLoader->frame());
+    // Setting the encoding on the frame loader is our way to get work done that is normally done
+    // when the first bit of data is received, even for the case of a document with no data (like about:blank).
+    String encoding = documentLoader->overrideEncoding();
+    bool userChosen = !encoding.isNull();
+    if (encoding.isNull())
+        encoding = documentLoader->response().textEncodingName();
+    documentLoader->frameLoader()->setEncoding(encoding, userChosen);
+}
+
 
 void FrameLoaderClient::provisionalLoadStarted()
 {

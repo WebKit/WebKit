@@ -1,3 +1,15 @@
+2007-11-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=15842
+        Bug 15842: [Gtk] about:blank doesn't work
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::finishedLoading): Set the encoding on the frame loader to
+        get work done that is normally done when the first bit of data is received, even in the
+        case of a document with no data (like about:blank).
+
 2007-11-03  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
