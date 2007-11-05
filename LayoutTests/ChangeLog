@@ -1,3 +1,13 @@
+2007-11-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15841
+        fast/dom/Document/early-document-access.html crashes under GuardMalloc
+
+        * fast/dom/Document/early-document-access.html: Don't check for open() timeout;
+        wait for popup window to close as long as it takes.
+
 2007-11-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

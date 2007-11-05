@@ -11,26 +11,30 @@
         newWindow = window.open('resources/early-document-access-popup.html');
         if (newWindow) {
             newWindow.document; // access the document
-            setTimeout(fail, 5000); // fail if we take longer than 5 seconds
         } else {
             document.body.innerText = 'FAIL: window.open failed to make a window.';
-            layoutTestController.notifyDone();
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         }
     }
 
     function done() {
-        newWindow.close();
         if (window.layoutTestController)
-            setTimeout("layoutTestController.notifyDone()", 100);
+            if (layoutTestController.windowCount() == 1)
+                layoutTestController.notifyDone();
+            else
+                setTimeout("done()", 100);
     }
 
     function pass() {
         document.body.innerText = 'PASS';
+        newWindow.close();
         done();
     }
 
     function fail() {
         document.body.innerText = 'FAIL';
+        newWindow.close();
         done();
     }
     </script>
