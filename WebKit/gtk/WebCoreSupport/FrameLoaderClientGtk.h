@@ -180,7 +180,6 @@ namespace WebKit {
     private:
         WebKitFrame* m_frame;
         WebCore::ResourceResponse m_response;
-        bool m_firstData;
     };
 
 }

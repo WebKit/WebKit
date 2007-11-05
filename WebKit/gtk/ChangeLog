@@ -1,5 +1,14 @@
 2007-11-05  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Alp Toker.
+
+        Remove unused m_firstData member from FrameLoaderClientGtk.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
+2007-11-05  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Alp Toker.
 
         Fix http://bugs.webkit.org/show_bug.cgi?id=15842

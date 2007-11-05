@@ -57,7 +57,6 @@ namespace WebKit {
 
 FrameLoaderClient::FrameLoaderClient(WebKitFrame* frame)
     : m_frame(frame)
-    , m_firstData(false)
 {
     ASSERT(m_frame);
 }
@@ -140,7 +139,6 @@ void FrameLoaderClient::frameLoaderDestroyed()
 void FrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse& response)
 {
     m_response = response;
-    m_firstData = true;
 }
 
 void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction policyFunction, const String&, const ResourceRequest&)
