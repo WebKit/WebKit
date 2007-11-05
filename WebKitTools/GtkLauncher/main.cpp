@@ -13,26 +13,13 @@ static gchar* gTitle;
 static gint gProgress;
 static guint gStatusbarContextId;
 
-static gchar* autocorrectURL(const gchar* url)
-{
-    if (strncmp("http://", url, 7) != 0 && strncmp("https://", url, 8) != 0 && strncmp("file://", url, 7) != 0 && strncmp("ftp://", url, 6) != 0) {
-        GString* string = g_string_new("http://");
-        g_string_append(string, url);
-        return g_string_free(string, FALSE);
-    }
-    
-    return g_strdup(url);
-}
-
 static void goToURLBarText(GtkWidget* urlBarEntry)
 {
     const gchar* url = gtk_entry_get_text(GTK_ENTRY(urlBarEntry));
     if (!url || strlen(url) == 0)
         return;
 
-    gchar* parsedURL = autocorrectURL(url);
-    webkit_page_open(gPage, parsedURL);
-    g_free(parsedURL);
+    webkit_page_open(gPage, url);
 }
 
 static void goButtonClickedCallback(GtkWidget*, GtkWidget* entry)
@@ -175,14 +162,12 @@ int main(int argc, char* argv[])
     gtk_init(&argc, &argv);
     webkit_init();
 
-    gchar* url = autocorrectURL((argc > 1) ? argv[1] : "http://www.google.com");
-    
     setupMainWindowUI();
 
+    const gchar* url = static_cast<const gchar*>(argc > 1 ? argv[1] : "http://www.google.com");
     webkit_page_open(gPage, url);
 
     gtk_widget_show_all(gTopLevelWindow);
-    g_free(url);
     gtk_main();
     return 0;
 }
