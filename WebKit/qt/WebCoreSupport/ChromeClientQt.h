@@ -60,8 +60,7 @@ namespace WebCore {
         virtual bool canTakeFocus(FocusDirection);
         virtual void takeFocus(FocusDirection);
 
-        virtual Page* createWindow(Frame*, const FrameLoadRequest&);
-        virtual Page* createModalDialog(Frame*, const FrameLoadRequest&);
+        virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&);
         virtual void show();
 
         virtual bool canRunModal();

@@ -1,3 +1,12 @@
+2007-11-05  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createWindow):
+        * WebCoreSupport/ChromeClientQt.h:
+        Revised to use new WebCore ChromeClient createWindow API.
+
 2007-10-31  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

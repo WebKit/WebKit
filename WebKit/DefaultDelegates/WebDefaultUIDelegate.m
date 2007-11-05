@@ -57,8 +57,12 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (WebView *)webView: (WebView *)wv createWebViewWithRequest:(NSURLRequest *)request
+- (WebView *)webView: (WebView *)wv createWebViewWithRequest:(NSURLRequest *)request windowFeatures:(NSDictionary *)features
 {
+    // If the new API method doesn't exist, fallback to the old version of createWebViewWithRequest
+    // for backwards compatability
+    if (![[wv UIDelegate] respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)] && [[wv UIDelegate] respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        return [[wv UIDelegate] webView:wv createWebViewWithRequest:request];
     return nil;
 }
 

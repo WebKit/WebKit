@@ -1,3 +1,27 @@
+2007-11-02  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Set WindowFeatures.h as a Private header.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        Revised to use a single createWindow function instead of
+        two createWindow functions and one createModalDialog function.
+        The logic for this is now addressed in WebKit in an effort
+        to make this easier to follow.
+        
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createWindow):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::createWindow):
+        Revised to take new additional windowFeatures parameter.
+
 2007-11-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

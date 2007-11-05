@@ -50,6 +50,7 @@
 #import "WebNullPluginView.h"
 #import "WebPreferences.h"
 #import "WebViewInternal.h"
+#import "WebUIDelegatePrivate.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/JSLock.h>
@@ -2131,7 +2132,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
         if (frame == nil) {
             WebView *currentWebView = [self webView];
-            WebView *newWebView = CallUIDelegate(currentWebView, @selector(webView:createWebViewWithRequest:), nil);
+            NSDictionary *features = [[NSDictionary alloc] init];
+            WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView
+                                                        createWebViewWithRequest:nil
+                                                                  windowFeatures:features];
+            [features release];
 
             if (!newWebView) {
                 if ([pluginRequest sendNotification]) {

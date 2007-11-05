@@ -43,6 +43,7 @@ namespace WebCore {
     class String;
     
     struct FrameLoadRequest;
+    struct WindowFeatures;
     
     enum MessageSource {
         HTMLMessageSource,
@@ -79,8 +80,7 @@ namespace WebCore {
         bool canTakeFocus(FocusDirection) const;
         void takeFocus(FocusDirection) const;
 
-        Page* createWindow(Frame*, const FrameLoadRequest&) const;
-        Page* createModalDialog(Frame*, const FrameLoadRequest&) const;
+        Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&) const;
         void show() const;
 
         bool canRunModal() const;

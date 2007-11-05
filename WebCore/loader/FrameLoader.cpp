@@ -319,12 +319,8 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
     requestWithReferrer.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
     
     Page* page = m_frame->page();
-    if (page) {
-        if (features.dialog)
-            page = page->chrome()->createModalDialog(m_frame, requestWithReferrer);
-        else
-            page = page->chrome()->createWindow(m_frame, requestWithReferrer);
-    }
+    if (page)
+        page = page->chrome()->createWindow(m_frame, requestWithReferrer, features);
     if (!page)
         return 0;
 

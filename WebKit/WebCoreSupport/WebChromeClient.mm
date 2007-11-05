@@ -48,6 +48,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
 
 @interface NSView (AppKitSecretsWebBridgeKnowsAbout)
@@ -131,27 +132,67 @@ void WebChromeClient::takeFocus(FocusDirection direction)
     }
 }
 
-Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& request)
+Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features)
 {
     NSURLRequest *URLRequest = nil;
     if (!request.isEmpty())
         URLRequest = request.resourceRequest().nsURLRequest();
-    WebView *newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), URLRequest);
-    return core(newWebView);
-}
-
-Page* WebChromeClient::createModalDialog(Frame*, const FrameLoadRequest& request)
-{
-    NSURLRequest *URLRequest = nil;
-    if (!request.isEmpty())
-        URLRequest = request.resourceRequest().nsURLRequest();
-
-    WebView *newWebView = nil;
+    
     id delegate = [m_webView UIDelegate];
-    if ([delegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)])
+    WebView *newWebView;
+    
+    if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)]) {
+        NSNumber *x = features.xSet ? [[NSNumber alloc] initWithFloat:features.x] : nil;
+        NSNumber *y = features.ySet ? [[NSNumber alloc] initWithFloat:features.y] : nil;
+        NSNumber *width = features.widthSet ? [[NSNumber alloc] initWithFloat:features.width] : nil;
+        NSNumber *height = features.heightSet ? [[NSNumber alloc] initWithFloat:features.height] : nil;
+        NSNumber *menuBarVisible = [[NSNumber alloc] initWithBool:features.menuBarVisible];
+        NSNumber *statusBarVisible = [[NSNumber alloc] initWithBool:features.statusBarVisible];
+        NSNumber *toolBarVisible = [[NSNumber alloc] initWithBool:features.toolBarVisible];
+        NSNumber *scrollbarsVisible = [[NSNumber alloc] initWithBool:features.scrollbarsVisible];
+        NSNumber *resizable = [[NSNumber alloc] initWithBool:features.resizable];
+        NSNumber *fullscreen = [[NSNumber alloc] initWithBool:features.fullscreen];
+        NSNumber *dialog = [[NSNumber alloc] initWithBool:features.dialog];
+        
+        NSMutableDictionary *dictFeatures = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                             menuBarVisible, @"menuBarVisible", 
+                                             statusBarVisible, @"statusBarVisible",
+                                             toolBarVisible, @"toolBarVisible",
+                                             scrollbarsVisible, @"scrollbarsVisible",
+                                             resizable, @"resizable",
+                                             fullscreen, @"fullscreen",
+                                             dialog, @"dialog",
+                                             nil];
+        
+        if (x)
+            [dictFeatures setObject:x forKey:@"x"];
+        if (y)
+            [dictFeatures setObject:y forKey:@"y"];
+        if (width)
+            [dictFeatures setObject:width forKey:@"width"];
+        if (height)
+            [dictFeatures setObject:height forKey:@"height"];
+        
+        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:windowFeatures:), URLRequest, dictFeatures);
+        
+        [dictFeatures release];
+        [x release];
+        [y release];
+        [width release];
+        [height release];
+        [menuBarVisible release];
+        [statusBarVisible release];
+        [toolBarVisible release];
+        [scrollbarsVisible release];
+        [resizable release];
+        [fullscreen release];
+        [dialog release];
+    } else if (features.dialog && [delegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)]) {
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewModalDialogWithRequest:), URLRequest);
-    else if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+    } else {
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), URLRequest);
+    }
+    
     return core(newWebView);
 }
 

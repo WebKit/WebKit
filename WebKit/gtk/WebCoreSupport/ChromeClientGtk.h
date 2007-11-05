@@ -56,8 +56,7 @@ namespace WebKit {
         virtual bool canTakeFocus(WebCore::FocusDirection);
         virtual void takeFocus(WebCore::FocusDirection);
 
-        virtual WebCore::Page* createWindow(WebCore::Frame*, const WebCore::FrameLoadRequest&);
-        virtual WebCore::Page* createModalDialog(WebCore::Frame*, const WebCore::FrameLoadRequest&);
+        virtual WebCore::Page* createWindow(WebCore::Frame*, const WebCore::FrameLoadRequest&, const WebCore::WindowFeatures&);
         virtual void show();
 
         virtual bool canRunModal();

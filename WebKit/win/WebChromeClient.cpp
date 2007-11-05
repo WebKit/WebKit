@@ -37,6 +37,7 @@
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/WindowFeatures.h>
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -131,34 +132,27 @@ void WebChromeClient::takeFocus(FocusDirection direction)
     }
 }
 
-Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& frameLoadRequest)
+Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& features)
 {
     Page* page = 0;
+    IWebUIDelegate* uiDelegate = 0;
     IWebMutableURLRequest* request = WebMutableURLRequest::createInstance(frameLoadRequest.resourceRequest());
 
-    IWebUIDelegate* uiDelegate = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        IWebView* webView = 0;
-        if (SUCCEEDED(uiDelegate->createWebViewWithRequest(m_webView, request, &webView))) {
-            page = core(webView);
-            webView->Release();
+        if (features.dialog) {
+            notImplemented();
+        } else {
+            IWebView* webView = 0;
+            if (SUCCEEDED(uiDelegate->createWebViewWithRequest(m_webView, request, &webView))) {
+                page = core(webView);
+                webView->Release();
+            }
         }
     
         uiDelegate->Release();
     }
 
     request->Release();
-    return page;
-}
-
-Page* WebChromeClient::createModalDialog(Frame*, const FrameLoadRequest&)
-{
-    Page* page = 0;
-    IWebUIDelegate* uiDelegate = 0;
-    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        notImplemented();
-        uiDelegate->Release();
-    }
     return page;
 }
 

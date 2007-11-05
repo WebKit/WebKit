@@ -1,3 +1,15 @@
+2007-11-05  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Part of the WebKit/WebCore API changes for
+        <rdar://problem/5368188>
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::createWindow):
+        Removed usage of createModalDialog and revised to use new createWindow
+        ChromeClient API.
+
 2007-11-04  Adam Roben  <aroben@apple.com>
 
         Add IWebCache::disabled

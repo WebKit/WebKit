@@ -1,3 +1,29 @@
+2007-11-02  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:createWebViewWithRequest:windowFeatures:]):
+        Forward the UI delegate to call webView:createWebViewWithRequest: if
+        this method doesn't exist.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchCreatePage):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        * WebView/WebView.mm:
+        (-[WebView _openNewWindowWithRequest:]):
+        Revised to use new webView:createWebViewWithRequest:windowFeatures: callback.
+        
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+        Added a new createWindow that accepts 3 parameters, so we can pass up windowFeatures to the chrome.
+        Removed createModalDialog to use new createWindow function.
+        
+        * WebView/WebUIDelegatePrivate.h:
+        Added new webView:createWebViewWithRequest:windowFeatures: method.
+
 2007-11-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

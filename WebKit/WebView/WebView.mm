@@ -771,7 +771,11 @@ static bool debugWidget = true;
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
-    WebView *newWindowWebView = CallUIDelegate(self, @selector(webView:createWebViewWithRequest:), request);
+    NSDictionary *features = [[NSDictionary alloc] init];
+    WebView *newWindowWebView = [[self _UIDelegateForwarder] webView:self
+                                            createWebViewWithRequest:nil
+                                                      windowFeatures:features];
+    [features release];
     if (!newWindowWebView)
         return nil;
 

@@ -33,6 +33,7 @@ namespace WebCore {
     class String;
     
     struct FrameLoadRequest;
+    struct WindowFeatures;
     
     class ChromeClient {
     public:
@@ -56,8 +57,7 @@ namespace WebCore {
         // Frame wants to create the new Page.  Also, the newly created window
         // should not be shown to the user until the ChromeClient of the newly
         // created Page has its show method called.
-        virtual Page* createWindow(Frame*, const FrameLoadRequest&) = 0;
-        virtual Page* createModalDialog(Frame*, const FrameLoadRequest&) = 0;
+        virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&) = 0;
         virtual void show() = 0;
 
         virtual bool canRunModal() = 0;

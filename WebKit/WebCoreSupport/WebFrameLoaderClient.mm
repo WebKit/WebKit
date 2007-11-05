@@ -65,6 +65,7 @@
 #import "WebResourcePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BlockExceptions.h>
@@ -589,7 +590,11 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
 Frame* WebFrameLoaderClient::dispatchCreatePage()
 {
     WebView *currentWebView = getWebView(m_webFrame.get());
-    WebView *newWebView = CallUIDelegate(currentWebView, @selector(webView:createWebViewWithRequest:), nil);
+    NSDictionary *features = [[NSDictionary alloc] init];
+    WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView 
+                                                createWebViewWithRequest:nil
+                                                          windowFeatures:features];
+    [features release];
     return core([newWebView mainFrame]);
 }
 

@@ -69,8 +69,7 @@ public:
     virtual bool canTakeFocus(FocusDirection) { return false; }
     virtual void takeFocus(FocusDirection) { }
     
-    virtual Page* createWindow(Frame*, const FrameLoadRequest&) { return 0; }
-    virtual Page* createModalDialog(Frame*, const FrameLoadRequest&) { return 0; }
+    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&) { return 0; }
     virtual void show() { }
     
     virtual bool canRunModal() { return false; }

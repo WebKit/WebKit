@@ -34,6 +34,7 @@
 #include "Page.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
+#include "WindowFeatures.h"
 #include "kjs_window.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -107,15 +108,10 @@ void Chrome::takeFocus(FocusDirection direction) const
 {
     m_client->takeFocus(direction);
 }
-
-Page* Chrome::createWindow(Frame* frame, const FrameLoadRequest& request) const
+    
+Page* Chrome::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features) const
 {
-    return m_client->createWindow(frame, request);
-}
-
-Page* Chrome::createModalDialog(Frame* frame, const FrameLoadRequest& request) const
-{
-    return m_client->createModalDialog(frame, request);
+    return m_client->createWindow(frame, request, features);
 }
 
 void Chrome::show() const

@@ -37,6 +37,7 @@
 #include "webkitgtkpage.h"
 #include "webkitgtkprivate.h"
 #include "NotImplemented.h"
+#include "WindowFeatures.h"
 
 using namespace WebCore;
 
@@ -84,21 +85,20 @@ void ChromeClient::unfocus()
     notImplemented();
 }
     
-Page* ChromeClient::createWindow(Frame*, const FrameLoadRequest&)
+Page* ChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& features)
 {
-    /* TODO: FrameLoadRequest is not used */
-    WebKitPage* page = WEBKIT_PAGE_GET_CLASS(m_webPage)->create_page(m_webPage);
-    if (!page)
+    if (features.dialog) {
+        notImplemented();
         return 0;
+    } else {
+        /* TODO: FrameLoadRequest is not used */
+        WebKitPage* page = WEBKIT_PAGE_GET_CLASS(m_webPage)->create_page(m_webPage);
+        if (!page)
+            return 0;
 
-    WebKitPagePrivate *privateData = WEBKIT_PAGE_GET_PRIVATE(WEBKIT_PAGE(page));
-    return privateData->page;
-}
-
-Page* ChromeClient::createModalDialog(Frame*, const FrameLoadRequest&)
-{
-    notImplemented();
-    return 0;
+        WebKitPagePrivate *privateData = WEBKIT_PAGE_GET_PRIVATE(WEBKIT_PAGE(page));
+        return privateData->page;
+    }
 }
 
 void ChromeClient::show()

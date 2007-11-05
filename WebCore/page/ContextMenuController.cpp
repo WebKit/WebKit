@@ -54,6 +54,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include "WindowFeatures.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -107,10 +108,12 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
 
 static void openNewWindow(const KURL& urlToLoad, Frame* frame)
 {
-    if (Page* oldPage = frame->page())
+    if (Page* oldPage = frame->page()) {
+        WindowFeatures features;
         if (Page* newPage = oldPage->chrome()->createWindow(frame,
-                FrameLoadRequest(ResourceRequest(urlToLoad, frame->loader()->outgoingReferrer()))))
+                FrameLoadRequest(ResourceRequest(urlToLoad, frame->loader()->outgoingReferrer())), features))
             newPage->chrome()->show();
+    }
 }
 
 void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
