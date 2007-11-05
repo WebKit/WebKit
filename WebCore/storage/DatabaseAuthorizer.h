@@ -58,6 +58,7 @@ public:
     virtual int allowDelete(const String& tableName);
     virtual int allowInsert(const String& tableName);
     virtual int allowUpdate(const String& tableName, const String& columnName);
+    virtual int allowTransaction();
 
     virtual int allowRead(const String& tableName, const String& columnName);
 

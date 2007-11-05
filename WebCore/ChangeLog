@@ -1,3 +1,14 @@
+2007-11-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        Add transaction blocking to the DatabaseAuthorizer in preparation for the new version
+        of the sql storage API
+
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::allowTransaction):
+        * storage/DatabaseAuthorizer.h:
+
 2007-11-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp Toker.
