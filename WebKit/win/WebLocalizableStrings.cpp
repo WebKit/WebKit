@@ -33,8 +33,9 @@
 #include <WebCore/StringHash.h>
 #pragma warning(pop)
 
-#include <WTF/Assertions.h>
-#include <WTF/HashMap.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
 #include <CoreFoundation/CoreFoundation.h>
 
 using namespace WebCore;
@@ -94,7 +95,7 @@ void SetWebLocalizedStringMainBundle(CFBundleRef bundle)
     localizedStringsMainBundle = bundle;
 }
 
-CFStringRef WebLocalizedString(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
+static CFStringRef copyLocalizedStringFromBundle(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
 {
     static CFStringRef notFound = CFSTR("localized string not found");
 
@@ -123,29 +124,70 @@ CFStringRef WebLocalizedString(WebLocalizableStringsBundle* stringsBundle, LPCTS
     return result;
 }
 
+static bool findCachedStringInMap(const HashMap<String, String>& map, const String& key, String& outString)
+{
+    HashMap<String, String>::const_iterator it = map.find(key);
+    if (it == map.end())
+        return false;
+
+    outString = it->second;
+    return true;
+}
+
+static bool findCachedString(WebLocalizableStringsBundle* stringsBundle, const String& key, String& outString)
+{
+    if (!stringsBundle && findCachedStringInMap(mainBundleLocStrings, key, outString))
+        return true;
+
+    return stringsBundle && stringsBundle->bundle == WebKitLocalizableStringsBundle.bundle && findCachedStringInMap(frameworkLocStrings, key, outString);
+}
+
+static void cacheString(WebLocalizableStringsBundle* stringsBundle, const String& key, const String& value)
+{
+    if (!stringsBundle)
+        mainBundleLocStrings.set(key, value);
+    else if (stringsBundle)
+        frameworkLocStrings.set(key, value);
+}
+
+CFStringRef WebLocalizedString(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
+{
+    if (!key)
+        return 0;
+
+    String keyString(key);
+
+    String found;
+    if (findCachedString(stringsBundle, keyString, found))
+        return found.createCFString();
+
+    RetainPtr<CFStringRef> cfStr(AdoptCF, copyLocalizedStringFromBundle(stringsBundle, key));
+
+    cacheString(stringsBundle, keyString, cfStr.get());
+
+    return cfStr.releaseRef();
+}
+
 LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
 {
     if (!key)
         return 0;
-    String keyString(key);
-    if (!stringsBundle && mainBundleLocStrings.contains(keyString))
-        return mainBundleLocStrings.get(keyString).charactersWithNullTermination();
-    if (stringsBundle && stringsBundle->bundle == WebKitLocalizableStringsBundle.bundle && frameworkLocStrings.contains(keyString))
-        return frameworkLocStrings.get(keyString).charactersWithNullTermination();
 
-    CFStringRef cfStr = WebLocalizedString(stringsBundle, key);
-    String str(cfStr);
-    if (cfStr)
-        CFRelease(cfStr);
+    String keyString(key);
+
+    String found;
+    if (findCachedString(stringsBundle, keyString, found))
+        return found.charactersWithNullTermination();
+
+    RetainPtr<CFStringRef> cfStr(AdoptCF, copyLocalizedStringFromBundle(stringsBundle, key));
+
+    String str(cfStr.get());
     for (unsigned int i=1; i<str.length(); i++)
         if (str[i] == '@' && (str[i - 1] == '%' || (i > 2 && str[i - 1] == '$' && str[i - 2] >= '1' && str[i - 2] <= '9' && str[i - 3] == '%')))
             str.replace(i, 1, "s");
     LPCTSTR lpszStr = str.charactersWithNullTermination();
 
-    if (!stringsBundle)
-        mainBundleLocStrings.set(keyString, str);
-    else if (stringsBundle)
-        frameworkLocStrings.set(keyString, str);
+    cacheString(stringsBundle, keyString, str);
 
     return lpszStr;
 }
