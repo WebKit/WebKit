@@ -1,3 +1,9 @@
+2007-11-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Touched a file to test my new HTTP access.
+
+        * kjs/scope_chain.cpp:
+
 2007-11-05  Alp Toker  <alp@atoker.com>
 
         Unreviewed build fix for qmake-based ports.
