@@ -1,3 +1,10 @@
+2007-11-05  John Sullivan  <sullivan@apple.com>
+
+        * WebView/WebView.mm:
+        (-[WebView computedStyleForElement:pseudoElement:]):
+        
+        Teeny style tweak to test svn access
+
 2007-11-02  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Darin Adler.

@@ -3185,9 +3185,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
 {
     // FIXME: is this the best level for this conversion?
-    if (pseudoElement == nil) {
+    if (pseudoElement == nil)
         pseudoElement = @"";
-    }
+
     return [[element ownerDocument] getComputedStyle:element pseudoElement:pseudoElement];
 }
 
