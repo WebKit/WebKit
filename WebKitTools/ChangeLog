@@ -1,3 +1,24 @@
+2007-11-04  David D. Kilzer  <ddkilzer@webkit.org>
+
+        bisect-builds doesn't work with nightly build r19992 or newer on Leopard
+        <http://bugs.webkit.org/show_bug.cgi?id=15830>
+
+        Reviewed by Timothy.
+
+        Restrict the range of nightly builds used by the bisect-builds script
+        based on the version of Safari and the version of Mac OS X being used.
+
+        Mac OS X 10.4: Safari 2.0: r11976 or newer
+        Mac OS X 10.4: Safari 3.0: r19992 or newer
+
+        Mac OS X 10.5: Safari 2.0: r19594 or newer
+        Mac OS X 10.5: Safari 3.0: r25124 or newer
+
+        * Scripts/bisect-builds:
+        (findMacOSXVersion): Added.
+        (makeNightlyList): Added argument to provide version of Mac OS X.
+        Restrict range of nightly builds based on Safari and Mac OS X versions.
+
 2007-11-04  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Maciej.

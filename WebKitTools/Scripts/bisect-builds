@@ -48,10 +48,11 @@ use Time::HiRes qw(usleep);
 
 sub createTempFile($);
 sub downloadNightly($$$);
+sub findMacOSXVersion();
 sub findNearestNightlyIndex(\@$$);
 sub findSafariVersion($);
 sub loadSettings();
-sub makeNightlyList($$$);
+sub makeNightlyList($$$$);
 sub mountAndRunNightly($$$$);
 sub parseRevisions($$;$);
 sub printStatus($$$);
@@ -123,7 +124,7 @@ if (! -d $nightlyDownloadDirectory) {
     mkpath($nightlyDownloadDirectory, 0, 0755) || die "Could not create $nightlyDownloadDirectory: $!";
 }
 
-@nightlies = makeNightlyList($localOnly, $nightlyDownloadDirectory, findSafariVersion($safariPath));
+@nightlies = makeNightlyList($localOnly, $nightlyDownloadDirectory, findMacOSXVersion(), findSafariVersion($safariPath));
 
 my $startIndex = $revisions[0] ? findNearestNightlyIndex(@nightlies, $revisions[0], 'ceil') : 0;
 my $endIndex = $revisions[1] ? findNearestNightlyIndex(@nightlies, $revisions[1], 'floor') : $#nightlies;
@@ -224,6 +225,17 @@ sub downloadNightly($$$)
     }
 }
 
+sub findMacOSXVersion()
+{
+    my $version;
+    open(SW_VERS, "-|", "/usr/bin/sw_vers") || die;
+    while (<SW_VERS>) {
+        $version = $1 if /^ProductVersion:\s+([^\s]+)/;
+    }
+    close(SW_VERS);
+    return $version;
+}
+
 sub findNearestNightlyIndex(\@$$)
 {
     my ($nightlies, $revision, $round) = @_;
@@ -279,9 +291,9 @@ sub loadSettings()
     die "Could not parse $rcfile: $@" if $@;
 }
 
-sub makeNightlyList($$$)
+sub makeNightlyList($$$$)
 {
-    my ($useLocalFiles, $localDirectory, $safariVersion) = @_;
+    my ($useLocalFiles, $localDirectory, $macOSXVersion, $safariVersion) = @_;
     my @files;
 
     if ($useLocalFiles) {
@@ -304,9 +316,24 @@ sub makeNightlyList($$$)
         close(NIGHTLIES);
     }
 
-    # Safari 3.0.x won't work with nightly builds older than r19992
-    if (eval "v$safariVersion" ge v3.0) {
-        @files = grep { $_->{rev} >= 19992 } @files;
+    if (eval "v$macOSXVersion" ge v10.5) {
+        if (eval "v$safariVersion" ge v3.0) {
+            @files = grep { $_->{rev} >= 25124 } @files;
+        } elsif (eval "v$safariVersion" ge v2.0) {
+            @files = grep { $_->{rev} >= 19594 } @files;
+        } else {
+            die "Requires Safari 2.0 or newer";
+        }
+    } elsif (eval "v$macOSXVersion" ge v10.4) {
+        if (eval "v$safariVersion" ge v3.0) {
+            @files = grep { $_->{rev} >= 19992 } @files;
+        } elsif (eval "v$safariVersion" ge v2.0) {
+            @files = grep { $_->{rev} >= 11976 } @files;
+        } else {
+            die "Requires Safari 2.0 or newer";
+        }
+    } else {
+        die "Requires Mac OS X 10.4 (Tiger) or 10.5 (Leopard)";
     }
 
     my $nightlycmp = sub { return $a->{rev} <=> $b->{rev}; };
