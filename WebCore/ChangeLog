@@ -1,3 +1,36 @@
+2007-11-04  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 15834: There are many subtle bugs in the Styles pane of the Web Inspector
+        http://bugs.webkit.org/show_bug.cgi?id=15834
+
+        - Broke up DocumentPanel and added three SidebarPane sub-classes.
+        - Fixed many Style pane bugs, including:
+          * Poor handling of duplicate properties in the same rule. Some of this can't be
+            fixed since we can't only get the "winning" value for duplicate properties.
+            So we should only show one entry per unique property name.
+          * Computed style does not show font shorthand sub-properties if 'font' was used.
+          * Property priority was broken, the wrong properties were crossed out.
+          * The 'border' shorthand shows null for the shorthand value.
+          * Shorthands didn't show their priority (e.g. !important).
+          * HSL and HTML hex colors didn't have preview swatch blocks.
+          * Code refactoring, making it easier to reuse for console.log later.
+
+        * page/inspector/DocumentPanel.js: Move sidebar pane code to three seperate
+          classes in new files.
+        * page/inspector/MetricsSidebarPane.js: Added.
+        * page/inspector/Panel.js: Remove an InspectorController.log() call.
+        * page/inspector/PropertiesSection.js: Add the section to the TreeOutline.
+          So TreeElements can access properties on their section.
+        * page/inspector/PropertiesSidebarPane.js: Added.
+        * page/inspector/SidebarPane.js: Remove the explicit asignment of the
+          onexpand and oncollapse to null. These were hiding prototypes.
+        * page/inspector/StylesSidebarPane.js: Added.
+        * page/inspector/inspector.html: Include the new script files.
+        * page/inspector/treeoutline.js: If a null representedObject is passed
+          in just use a empty object.
+
 2007-11-04  David D. Kilzer  <ddkilzer@webkit.org>
 
         Fix build when spaces appear in the WebKit source path.

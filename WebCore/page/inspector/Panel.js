@@ -134,7 +134,6 @@ WebInspector.Panel.prototype = {
 
     set currentView(x)
     {
-        InspectorController.log(x);
         if (typeof x === "string" || x instanceof String)
             x = this.views[x];
 

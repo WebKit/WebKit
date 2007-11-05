@@ -49,6 +49,7 @@ WebInspector.PropertiesSection = function(title, subtitle)
     this.propertiesElement = document.createElement("ol");
     this.propertiesElement.className = "properties";
     this.propertiesTreeOutline = new TreeOutline(this.propertiesElement);
+    this.propertiesTreeOutline.section = this;
 
     this.element.appendChild(this.headerElement);
     this.element.appendChild(this.propertiesElement);

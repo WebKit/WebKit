@@ -55,9 +55,9 @@ WebInspector.DocumentPanel = function(resource, views)
     domView.crumbsElement.appendChild(domView.innerCrumbsElement);
 
     domView.sidebarPanes = {};
-    domView.sidebarPanes.styles = new WebInspector.SidebarPane("Styles");
-    domView.sidebarPanes.metrics = new WebInspector.SidebarPane("Metrics");
-    domView.sidebarPanes.properties = new WebInspector.SidebarPane("Properties");
+    domView.sidebarPanes.styles = new WebInspector.StylesSidebarPane();
+    domView.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
+    domView.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
 
     var panel = this;
     domView.sidebarPanes.styles.onexpand = function() { panel.updateStyles() };
@@ -105,7 +105,7 @@ WebInspector.DocumentPanel.prototype = {
         if (!this.views.dom.treeOutline || !this.views.dom.treeOutline.selectedTreeElement)
             return;
         var element = this.views.dom.treeOutline.selectedTreeElement;
-        element.updateSelection(element);
+        element.updateSelection();
     },
 
     get rootDOMNode()
@@ -181,8 +181,7 @@ WebInspector.DocumentPanel.prototype = {
         // FIXME: this could use findTreeElement to reuse a tree element if it already exists
         var node = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(this.rootDOMNode) : this.rootDOMNode.firstChild);
         while (node) {
-            var item = new WebInspector.DOMNodeTreeElement(node);
-            this.views.dom.treeOutline.appendChild(item);
+            this.views.dom.treeOutline.appendChild(new WebInspector.DOMNodeTreeElement(node));
             node = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
         }
 
@@ -312,370 +311,32 @@ WebInspector.DocumentPanel.prototype = {
 
     updateStyles: function()
     {
-        if (!this.views.dom.sidebarPanes.styles.expanded)
-            return;
-        if (!this.views.dom.sidebarPanes.styles.needsUpdate)
-            return;
-
-        this.views.dom.sidebarPanes.styles.needsUpdate = false;
-
-        var stylesBody = this.views.dom.sidebarPanes.styles.bodyElement;
-
-        stylesBody.removeChildren();
-        this.views.dom.sidebarPanes.styles.sections = [];
-
-        if (!this.focusedDOMNode)
+        var stylesSidebarPane = this.views.dom.sidebarPanes.styles;
+        if (!stylesSidebarPane.expanded || !stylesSidebarPane.needsUpdate)
             return;
 
-        var styleNode = this.focusedDOMNode;
-        if (styleNode.nodeType === Node.TEXT_NODE && styleNode.parentNode)
-            styleNode = styleNode.parentNode;
-
-        var styleRules = [];
-        var styleProperties = [];
-
-        if (styleNode.nodeType === Node.ELEMENT_NODE) {
-            var propertyCount = [];
-
-            var computedStyle = styleNode.ownerDocument.defaultView.getComputedStyle(styleNode);
-            if (computedStyle && computedStyle.length)
-                styleRules.push({ isComputedStyle: true, selectorText: "Computed Style", style: computedStyle });
-
-            var styleNodeName = styleNode.nodeName.toLowerCase();
-            for (var i = 0; i < styleNode.attributes.length; ++i) {
-                var attr = styleNode.attributes[i];
-                if (attr.style) {
-                    var attrStyle = { attrName: attr.name, style: attr.style };
-                    attrStyle.subtitle = "element\u2019s \u201C" + attr.name + "\u201D attribute";
-                    attrStyle.selectorText = styleNodeName + "[" + attr.name;
-                    if (attr.value.length)
-                        attrStyle.selectorText += "=" + attr.value;
-                    attrStyle.selectorText += "]";
-                    styleRules.push(attrStyle);
-                }
-            }
-
-            if (styleNode.style && styleNode.style.length) {
-                var inlineStyle = { selectorText: "Inline Style Attribute", style: styleNode.style };
-                inlineStyle.subtitle = "element\u2019s \u201Cstyle\u201D attribute";
-                styleRules.push(inlineStyle);
-            }
-
-            var matchedStyleRules = styleNode.ownerDocument.defaultView.getMatchedCSSRules(styleNode, "", !Preferences.showUserAgentStyles);
-            if (matchedStyleRules) {
-                for (var i = matchedStyleRules.length - 1; i >= 0; --i)
-                    styleRules.push(matchedStyleRules[i]);
-            }
-
-            var priorityUsed = false;
-            var usedProperties = {};
-            var shorthandProperties = {};
-            for (var i = 0; i < styleRules.length; ++i) {
-                styleProperties[i] = [];
-
-                var style = styleRules[i].style;
-                var styleShorthandLookup = [];
-                for (var j = 0; j < style.length; ++j) {
-                    var prop = null;
-                    var name = style[j];
-                    var shorthand = style.getPropertyShorthand(name);
-                    if (!shorthand && styleRules[i].isComputedStyle)
-                        shorthand = shorthandProperties[name];
-
-                    if (shorthand) {
-                        prop = styleShorthandLookup[shorthand];
-                        shorthandProperties[name] = shorthand;
-                    }
-
-                    if (!priorityUsed && style.getPropertyPriority(name).length)
-                        priorityUsed = true;
-
-                    if (prop) {
-                        prop.subProperties.push(name);
-                    } else {
-                        prop = { style: style, subProperties: [name], unusedProperties: [], name: (shorthand ? shorthand : name) };
-                        styleProperties[i].push(prop);
-
-                        if (shorthand) {
-                            styleShorthandLookup[shorthand] = prop;
-                            if (!styleRules[i].isComputedStyle) {
-                                if (!propertyCount[shorthand]) {
-                                    propertyCount[shorthand] = 1;
-                                } else {
-                                    prop.unusedProperties[shorthand] = true;
-                                    propertyCount[shorthand]++;
-                                }
-                            }
-                        }
-                    }
-
-                    if (styleRules[i].isComputedStyle)
-                        continue;
-
-                    usedProperties[name] = true;
-                    if (shorthand)
-                        usedProperties[shorthand] = true;
-
-                    if (!propertyCount[name]) {
-                        propertyCount[name] = 1;
-                    } else {
-                        prop.unusedProperties[name] = true;
-                        propertyCount[name]++;
-                    }
-                }
-            }
-
-            if (priorityUsed) {
-                // walk the properties again and account for !important
-                var priorityCount = [];
-                for (var i = 0; i < styleRules.length; ++i) {
-                    if (styleRules[i].isComputedStyle)
-                        continue;
-                    var style = styleRules[i].style;
-                    for (var j = 0; j < styleProperties[i].length; ++j) {
-                        var prop = styleProperties[i][j];
-                        for (var k = 0; k < prop.subProperties.length; ++k) {
-                            var name = prop.subProperties[k];
-                            if (style.getPropertyPriority(name).length) {
-                                if (!priorityCount[name]) {
-                                    if (prop.unusedProperties[name])
-                                        prop.unusedProperties[name] = false;
-                                    priorityCount[name] = 1;
-                                } else {
-                                    priorityCount[name]++;
-                                }
-                            } else if (priorityCount[name]) {
-                                prop.unusedProperties[name] = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            var styleRulesLength = styleRules.length;
-            for (var i = 0; i < styleRulesLength; ++i) {
-                var selectorText = styleRules[i].selectorText;
-
-                var section = new WebInspector.PropertiesSection(selectorText);
-                section.expanded = true;
-
-                if (styleRules[i].isComputedStyle) {
-                    if (Preferences.showInheritedComputedStyleProperties)
-                        section.element.addStyleClass("show-inherited");
-
-                    var showInheritedLabel = document.createElement("label");
-                    var showInheritedInput = document.createElement("input");
-                    showInheritedInput.type = "checkbox";
-                    showInheritedInput.checked = Preferences.showInheritedComputedStyleProperties;
-
-                    var computedStyleSection = section;
-                    var showInheritedToggleFunction = function(event) {
-                        Preferences.showInheritedComputedStyleProperties = showInheritedInput.checked;
-                        if (Preferences.showInheritedComputedStyleProperties)
-                            computedStyleSection.element.addStyleClass("show-inherited");
-                        else
-                            computedStyleSection.element.removeStyleClass("show-inherited");
-                        event.stopPropagation();
-                    };
-
-                    showInheritedLabel.addEventListener("click", showInheritedToggleFunction, false);
-
-                    showInheritedLabel.appendChild(showInheritedInput);
-                    showInheritedLabel.appendChild(document.createTextNode("Show implicit properties"));
-                    section.subtitleElement.appendChild(showInheritedLabel);
-                } else {
-                    var sheet;
-                    var file = false;
-                    if (styleRules[i].subtitle)
-                        sheet = styleRules[i].subtitle;
-                    else if (styleRules[i].parentStyleSheet && styleRules[i].parentStyleSheet.href) {
-                        var url = styleRules[i].parentStyleSheet.href;
-                        sheet = WebInspector.linkifyURL(url, url.trimURL(WebInspector.mainResource.domain).escapeHTML());
-                        file = true;
-                    } else if (styleRules[i].parentStyleSheet && !styleRules[i].parentStyleSheet.ownerNode)
-                        sheet = "user agent stylesheet";
-                    else
-                        sheet = "inline stylesheet";
-
-                    if (file)
-                        section.subtitleElement.addStyleClass("file");
-
-                    section.subtitle = sheet;
-                }
-
-                stylesBody.appendChild(section.element);
-                this.views.dom.sidebarPanes.styles.sections.push(section);
-
-                var properties = styleProperties[i];
-                var isComputedStyle = styleRules[i].isComputedStyle;
-
-                for (var j = 0; j < properties.length; ++j) {
-                    var prop = properties[j];
-
-                    var propTreeElement = new WebInspector.StylePropertyTreeElement(prop, isComputedStyle, usedProperties);
-                    section.propertiesTreeOutline.appendChild(propTreeElement);
-                }
-            }
-        } else {
-            // can't style this node
-        }
+        stylesSidebarPane.update(this.focusedDOMNode);
+        stylesSidebarPane.needsUpdate = false;
     },
 
     updateMetrics: function()
     {
-        if (!this.views.dom.sidebarPanes.metrics.expanded)
-            return;
-        if (!this.views.dom.sidebarPanes.metrics.needsUpdate)
-            return;
-
-        this.views.dom.sidebarPanes.metrics.needsUpdate = false;
-
-        var metricsBody = this.views.dom.sidebarPanes.metrics.bodyElement;
-
-        metricsBody.removeChildren();
-
-        if (!this.focusedDOMNode)
+        var metricsSidebarPane = this.views.dom.sidebarPanes.metrics;
+        if (!metricsSidebarPane.expanded || !metricsSidebarPane.needsUpdate)
             return;
 
-        var style;
-        if (this.focusedDOMNode.nodeType === Node.ELEMENT_NODE)
-            style = this.focusedDOMNode.ownerDocument.defaultView.getComputedStyle(this.focusedDOMNode);
-        if (!style)
-            return;
-
-        var metricsElement = document.createElement("div");
-        metricsElement.className = "metrics";
-
-        function boxPartValue(style, name, suffix)
-        {
-            var value = style.getPropertyValue(name + suffix);
-            if (value === "" || value === "0px")
-                value = "\u2012";
-            return value.replace(/px$/, "");
-        }
-
-        // Display types for which margin is ignored.
-        var noMarginDisplayType = {
-            "table-cell": true,
-            "table-column": true,
-            "table-column-group": true,
-            "table-footer-group": true,
-            "table-header-group": true,
-            "table-row": true,
-            "table-row-group": true
-        };
-
-        // Display types for which padding is ignored.
-        var noPaddingDisplayType = {
-            "table-column": true,
-            "table-column-group": true,
-            "table-footer-group": true,
-            "table-header-group": true,
-            "table-row": true,
-            "table-row-group": true
-        };
-
-        var boxes = ["content", "padding", "border", "margin"];
-        var previousBox;
-        for (var i = 0; i < boxes.length; ++i) {
-            var name = boxes[i];
-
-            if (name === "margin" && noMarginDisplayType[style.display])
-                continue;
-            if (name === "padding" && noPaddingDisplayType[style.display])
-                continue;
-
-            var boxElement = document.createElement("div");
-            boxElement.className = name;
-
-            if (boxes[i] === "content") {
-                var width = style.width.replace(/px$/, "");
-                var height = style.height.replace(/px$/, "");
-                boxElement.textContent = width + " \u00D7 " + height;
-            } else {
-                var suffix = boxes[i] === "border" ? "-width" : "";
-
-                var labelElement = document.createElement("div");
-                labelElement.className = "label";
-                labelElement.textContent = name;
-                boxElement.appendChild(labelElement);
-
-                var topElement = document.createElement("div");
-                topElement.className = "top";
-                topElement.textContent = boxPartValue(style, name + "-top", suffix);
-                boxElement.appendChild(topElement);
-
-                var leftElement = document.createElement("div");
-                leftElement.className = "left";
-                leftElement.textContent = boxPartValue(style, name + "-left", suffix);
-                boxElement.appendChild(leftElement);
-
-                if (previousBox)
-                    boxElement.appendChild(previousBox);
-
-                var rightElement = document.createElement("div");
-                rightElement.className = "right";
-                rightElement.textContent = boxPartValue(style, name + "-right", suffix);
-                boxElement.appendChild(rightElement);
-
-                var bottomElement = document.createElement("div");
-                bottomElement.className = "bottom";
-                bottomElement.textContent = boxPartValue(style, name + "-bottom", suffix);
-                boxElement.appendChild(bottomElement);
-            }
-
-            previousBox = boxElement;
-        }
-
-        metricsElement.appendChild(previousBox);
-        metricsBody.appendChild(metricsElement);
+        metricsSidebarPane.update(this.focusedDOMNode);
+        metricsSidebarPane.needsUpdate = false;
     },
 
     updateProperties: function()
     {
-        if (!this.views.dom.sidebarPanes.properties.expanded)
-            return;
-        if (!this.views.dom.sidebarPanes.properties.needsUpdate)
-            return;
-
-        this.views.dom.sidebarPanes.properties.needsUpdate = false;
-
-        var propertiesBody = this.views.dom.sidebarPanes.properties.bodyElement;
-
-        propertiesBody.removeChildren();
-        this.views.dom.sidebarPanes.properties.sections = [];
-
-        if (!this.focusedDOMNode)
+        var propertiesSidebarPane = this.views.dom.sidebarPanes.properties;
+        if (!propertiesSidebarPane.expanded || !propertiesSidebarPane.needsUpdate)
             return;
 
-        for (var prototype = this.focusedDOMNode; prototype; prototype = prototype.__proto__) {
-            var hasChildren = false;
-            for (var prop in prototype) {
-                if (prop === "__treeElementIdentifier")
-                    continue;
-                if (!prototype.hasOwnProperty(prop))
-                    continue;
-
-                hasChildren = true;
-                break;
-            }
-
-            if (!hasChildren)
-                continue;
-
-            var title = Object.describe(prototype);
-            var subtitle;
-            if (title.match(/Prototype$/)) {
-                title = title.replace(/Prototype$/, "");
-                subtitle = "Prototype";
-            }
-
-            var section = new WebInspector.PropertiesSection(title, subtitle);
-            section.onpopulate = WebInspector.DOMPropertiesSection.onpopulate(prototype);
-
-            propertiesBody.appendChild(section.element);
-            this.views.dom.sidebarPanes.properties.sections.push(section);
-        }
+        propertiesSidebarPane.update(this.focusedDOMNode);
+        propertiesSidebarPane.needsUpdate = false;
     },
 
     handleKeyEvent: function(event)
@@ -721,258 +382,90 @@ WebInspector.DocumentPanel.prototype = {
 
 WebInspector.DocumentPanel.prototype.__proto__ = WebInspector.SourcePanel.prototype;
 
-WebInspector.DOMPropertiesSection = function()
-{
-    // FIXME: Perhaps this should be a real subclass someday
-}
-
-WebInspector.DOMPropertiesSection.onpopulate = function(prototype)
-{
-    return function(section) {
-        var properties = Object.sortedProperties(prototype);
-        for (var i = 0; i < properties.length; ++i) {
-            var name = properties[i];
-            if (!prototype.hasOwnProperty(name))
-                continue;
-            if (name === "__treeElementIdentifier")
-                continue;
-            var item = new WebInspector.DOMPropertyTreeElement(name, prototype);
-            section.propertiesTreeOutline.appendChild(item);
-        }
-    }
-}
-
 WebInspector.DOMNodeTreeElement = function(node)
 {
     var hasChildren = (Preferences.ignoreWhitespace ? (firstChildSkippingWhitespace.call(node) ? true : false) : node.hasChildNodes());
-
     var titleInfo = nodeTitleInfo.call(node, hasChildren, WebInspector.linkifyURL);
-    var title = titleInfo.title;
-    hasChildren = titleInfo.hasChildren;
 
-    var item = new TreeElement(title, node, hasChildren);
-    item.updateSelection = WebInspector.DOMNodeTreeElement.updateSelection;
-    item.onpopulate = WebInspector.DOMNodeTreeElement.populate;
-    item.onexpand = WebInspector.DOMNodeTreeElement.expanded;
-    item.oncollapse = WebInspector.DOMNodeTreeElement.collapsed;
-    item.onselect = WebInspector.DOMNodeTreeElement.selected;
-    item.onreveal = WebInspector.DOMNodeTreeElement.revealed;
-    item.ondblclick = WebInspector.DOMNodeTreeElement.doubleClicked;
-    if (hasChildren) 
-        item.whitespaceIgnored = Preferences.ignoreWhitespace;
-    return item;
+    if (titleInfo.hasChildren) 
+        this.whitespaceIgnored = Preferences.ignoreWhitespace;
+
+    TreeElement.call(this, titleInfo.title, node, titleInfo.hasChildren);
 }
 
-WebInspector.DOMNodeTreeElement.updateSelection = function(element)
-{
-    if (!element || !element._listItemNode)
-        return;
+WebInspector.DOMNodeTreeElement.prototype = {
+    updateSelection: function()
+    {
+        if (!this._listItemNode)
+            return;
 
-    if (!element.selectionElement) {
-        element.selectionElement = document.createElement("div");
-        element.selectionElement.className = "selection selected";
-        element._listItemNode.insertBefore(element.selectionElement, element._listItemNode.firstChild);
-    }
-
-    element.selectionElement.style.height = element._listItemNode.offsetHeight + "px";
-}
-
-WebInspector.DOMNodeTreeElement.populate = function(element)
-{
-    if (element.children.length || element.whitespaceIgnored !== Preferences.ignoreWhitespace)
-        return;
-
-    element.removeChildren();
-    element.whitespaceIgnored = Preferences.ignoreWhitespace;
-
-    var node = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(element.representedObject) : element.representedObject.firstChild);
-    while (node) {
-        var item = new WebInspector.DOMNodeTreeElement(node);
-        element.appendChild(item);
-        node = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
-    }
-
-    if (element.representedObject.nodeType == Node.ELEMENT_NODE) {
-        var title = "<span class=\"webkit-html-tag close\">&lt;/" + element.representedObject.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
-        var item = new TreeElement(title, element.representedObject, false);
-        item.selectable = false;
-        element.appendChild(item);
-    }
-}
-
-WebInspector.DOMNodeTreeElement.expanded = function(element)
-{
-    element.treeOutline.panel.updateTreeSelection();
-}
-
-WebInspector.DOMNodeTreeElement.collapsed = function(element)
-{
-    element.treeOutline.panel.updateTreeSelection();
-}
-
-WebInspector.DOMNodeTreeElement.revealed = function(element)
-{
-    if (!element._listItemNode || !element.treeOutline || !element.treeOutline._childrenListNode)
-        return;
-    var parent = element.treeOutline.panel.views.dom.treeContentElement;
-    parent.scrollToElement(element._listItemNode);
-}
-
-WebInspector.DOMNodeTreeElement.selected = function(element)
-{
-    var panel = element.treeOutline.panel;
-    panel.focusedDOMNode = element.representedObject;
-
-    // Call updateSelection twice to make sure the height is correct,
-    // the first time might have a bad height because we are in a weird tree state
-    element.updateSelection(element);
-    setTimeout(function() { element.updateSelection(element) }, 0);
-}
-
-WebInspector.DOMNodeTreeElement.doubleClicked = function(element)
-{
-    var panel = element.treeOutline.panel;
-    panel.rootDOMNode = element.representedObject.parentNode;
-    panel.focusedDOMNode = element.representedObject;
-}
-
-WebInspector.StylePropertyTreeElement = function(prop, computedStyle, usedProperties)
-{
-    var overloadCount = 0;
-    var priority;
-    if (prop.subProperties && prop.subProperties.length > 1) {
-        for (var i = 0; i < prop.subProperties.length; ++i) {
-            var name = prop.subProperties[i];
-            if (!priority)
-                priority = prop.style.getPropertyPriority(name);
-            if (prop.unusedProperties[name])
-                overloadCount++;
+        if (!this.selectionElement) {
+            this.selectionElement = document.createElement("div");
+            this.selectionElement.className = "selection selected";
+            this._listItemNode.insertBefore(this.selectionElement, this._listItemNode.firstChild);
         }
-    }
 
-    if (!priority)
-        priority = prop.style.getPropertyPriority(prop.name);
+        this.selectionElement.style.height = this._listItemNode.offsetHeight + "px";
+    },
 
-    var overloaded = (prop.unusedProperties[prop.name] || overloadCount === prop.subProperties.length);
-    var title = WebInspector.StylePropertyTreeElement.createTitle(prop.name, prop.style, overloaded, priority, computedStyle, usedProperties);
+    onpopulate: function()
+    {
+        if (this.children.length || this.whitespaceIgnored !== Preferences.ignoreWhitespace)
+            return;
 
-    var item = new TreeElement(title, prop, (prop.subProperties && prop.subProperties.length > 1));
-    item.computedStyle = computedStyle;
-    item.onpopulate = WebInspector.StylePropertyTreeElement.populate;
-    return item;
-}
+        this.removeChildren();
+        this.whitespaceIgnored = Preferences.ignoreWhitespace;
 
-WebInspector.StylePropertyTreeElement.createTitle = function(name, style, overloaded, priority, computed, usedProperties)
-{
-    // "Nicknames" for some common values that are easier to read.
-    var valueNickname = {
-        "rgb(0, 0, 0)": "black",
-        "rgb(255, 255, 255)": "white",
-        "rgba(0, 0, 0, 0)": "transparent"
-    };
-
-    var alwaysShowComputedProperties = { "display": true, "height": true, "width": true };
-
-    var value = style.getPropertyValue(name);
-
-    var textValue = value;
-    if (value) {
-        var urls = value.match(/url\([^)]+\)/);
-        if (urls) {
-            for (var i = 0; i < urls.length; ++i) {
-                var url = urls[i].substring(4, urls[i].length - 1);
-                textValue = textValue.replace(urls[i], "url(" + WebInspector.linkifyURL(url) + ")");
-            }
-        } else {
-            if (value in valueNickname)
-                textValue = valueNickname[value];
-            textValue = textValue.escapeHTML();
+        var node = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(this.representedObject) : this.representedObject.firstChild);
+        while (node) {
+            this.appendChild(new WebInspector.DOMNodeTreeElement(node));
+            node = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
         }
-    }
 
-    var classes = [];
-    if (!computed && (style.isPropertyImplicit(name) || value == "initial"))
-        classes.push("implicit");
-    if (computed && !usedProperties[name] && !alwaysShowComputedProperties[name])
-        classes.push("inherited");
-    if (overloaded)
-        classes.push("overloaded");
-
-    var title = "";
-    if (classes.length)
-        title += "<span class=\"" + classes.join(" ") + "\">";
-
-    title += "<span class=\"name\">" + name.escapeHTML() + "</span>: ";
-    title += "<span class=\"value\">" + textValue;
-    if (priority && priority.length)
-        title += " !" + priority;
-    title += "</span>;";
-
-    if (value) {
-        // FIXME: this dosen't catch keyword based colors like black and white
-        var colors = value.match(/(rgb\([0-9]+,\s?[0-9]+,\s?[0-9]+\))|(rgba\([0-9]+,\s?[0-9]+,\s?[0-9]+,\s?[0-9]+\))/g);
-        if (colors) {
-            var colorsLength = colors.length;
-            for (var i = 0; i < colorsLength; ++i)
-                title += "<span class=\"swatch\" style=\"background-color: " + colors[i] + "\"></span>";
+        if (this.representedObject.nodeType == Node.ELEMENT_NODE) {
+            var title = "<span class=\"webkit-html-tag close\">&lt;/" + this.representedObject.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
+            var item = new TreeElement(title, this.representedObject, false);
+            item.selectable = false;
+            this.appendChild(item);
         }
-    }
+    },
 
-    if (classes.length)
-        title += "</span>";
+    onexpand: function()
+    {
+        this.treeOutline.panel.updateTreeSelection();
+    },
 
-    return title;
-}
+    oncollapse: function()
+    {
+        this.treeOutline.panel.updateTreeSelection();
+    },
 
-WebInspector.StylePropertyTreeElement.populate = function(element)
-{
-    if (element.children.length)
-        return;
+    onreveal: function()
+    {
+        if (!this._listItemNode || !this.treeOutline || !this.treeOutline._childrenListNode)
+            return;
+        var parent = this.treeOutline.panel.views.dom.treeContentElement;
+        parent.scrollToElement(this._listItemNode);
+    },
 
-    var prop = element.representedObject;
-    if (prop.subProperties && prop.subProperties.length > 1) {
-        for (var i = 0; i < prop.subProperties.length; ++i) {
-            var name = prop.subProperties[i];
-            var overloaded = (prop.unusedProperties[prop.name] || prop.unusedProperties[name]);
-            var priority = prop.style.getPropertyPriority(name);
-            var title = WebInspector.StylePropertyTreeElement.createTitle(name, prop.style, overloaded, priority, element.computedStyle);
-            var subitem = new TreeElement(title, {}, false);
-            element.appendChild(subitem);
-        }
-    }
-}
+    onselect: function()
+    {
+        this.treeOutline.panel.focusedDOMNode = this.representedObject;
 
-WebInspector.DOMPropertyTreeElement = function(name, object)
-{
-    var title = "<span class=\"name\">" + name.escapeHTML() + "</span>: ";
-    title += "<span class=\"value\">" + Object.describe(object[name], true).escapeHTML() + "</span>";
+        // Call updateSelection twice to make sure the height is correct,
+        // the first time might have a bad height because we are in a weird tree state
+        this.updateSelection();
 
-    var hasChildren = false;
-    var type = typeof object[name];
-    if (object[name] && (type === "object" || type === "function")) {
-        for (value in object[name]) {
-            hasChildren = true;
-            break;
-        }
-    }
+        var element = this;
+        setTimeout(function() { element.updateSelection() }, 0);
+    },
 
-    var representedObj = { object: object, name: name };
-    var item = new TreeElement(title, representedObj, hasChildren);
-    item.onpopulate = WebInspector.DOMPropertyTreeElement.populate;
-    return item;
-}
-
-WebInspector.DOMPropertyTreeElement.populate = function(element)
-{
-    if (element.children.length)
-        return;
-
-    var parent = element.representedObject.object[element.representedObject.name];
-    var properties = Object.sortedProperties(parent);
-    for (var i = 0; i < properties.length; ++i) {
-        if (properties[i] === "__treeElementIdentifier")
-            continue;
-        var item = new WebInspector.DOMPropertyTreeElement(properties[i], parent);
-        element.appendChild(item);
+    ondblclick: function()
+    {
+        var panel = this.treeOutline.panel;
+        panel.rootDOMNode = this.representedObject.parentNode;
+        panel.focusedDOMNode = this.representedObject;
     }
 }
+
+WebInspector.DOMNodeTreeElement.prototype.__proto__ = TreeElement.prototype;

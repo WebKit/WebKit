@@ -46,8 +46,6 @@ WebInspector.SidebarPane = function(title)
     this.title = title;
     this.growbarVisible = false;
     this.expanded = false;
-    this.onexpand = null;
-    this.oncollapse = null;
 }
 
 WebInspector.SidebarPane.prototype = {

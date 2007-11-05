@@ -278,8 +278,8 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     }
 
     for (var i = 0; i < ancestors.length; ++i) {
-        item = this.findTreeElement(ancestors[i]);
-        if (ancestors[i] !== representedObject && item.onpopulate)
+        item = this.findTreeElement(ancestors[i], isAncestor, getParent);
+        if (ancestors[i] !== representedObject && item && item.onpopulate)
             item.onpopulate(item);
     }
 
@@ -378,7 +378,7 @@ TreeOutline.prototype.removeChildrenRecursive = TreeOutline._removeChildrenRecur
 function TreeElement(title, representedObject, hasChildren)
 {
     this._title = title;
-    this.representedObject = representedObject;
+    this.representedObject = (representedObject || {});
 
     if (this.representedObject.__treeElementIdentifier)
         this.identifier = this.representedObject.__treeElementIdentifier;
@@ -393,13 +393,6 @@ function TreeElement(title, representedObject, hasChildren)
     this.selectable = true;
     this.hasChildren = hasChildren;
     this.children = [];
-    this.onpopulate = null;
-    this.onexpand = null;
-    this.oncollapse = null;
-    this.onreveal = null;
-    this.onselect = null;
-    this.ondeselect = null;
-    this.ondblclick = null;
     this.treeOutline = null;
     this.parent = null;
     this.previousSibling = null;
