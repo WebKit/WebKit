@@ -52,6 +52,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "IWebFormDelegate.idl";
 import "IWebFrameLoadDelegatePrivate.idl";
+import "IWebInspector.idl";
 
 [
     object,
@@ -117,4 +118,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT removeCustomDropTarget();
 
     HRESULT setInitialFocus([in] BOOL forward);
+
+    HRESULT inspector([out, retval] IWebInspector**);
 }

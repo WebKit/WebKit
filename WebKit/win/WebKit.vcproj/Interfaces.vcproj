@@ -312,6 +312,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Interfaces\IWebInspector.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\IWebJavaScriptCollector.idl"
 			>
 		</File>

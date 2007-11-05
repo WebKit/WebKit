@@ -74,7 +74,7 @@ public:
     void query(IUnknown* ptr) { adoptRef(copyQueryInterfaceRef(ptr)); }
     template <typename U> inline void query(const COMPtr<U>& ptr) { query(ptr.get()); }
 
-    HRESULT copyRefTo(T**);
+    template <typename U> HRESULT copyRefTo(U**);
     void adoptRef(T*);
 
 private:
@@ -93,7 +93,7 @@ template <typename T> inline T* COMPtr<T>::copyQueryInterfaceRef(IUnknown* ptr)
     return result;
 }
 
-template <typename T> inline HRESULT COMPtr<T>::copyRefTo(T** ptr)
+template <typename T> template <typename U> inline HRESULT COMPtr<T>::copyRefTo(U** ptr)
 {
     if (!ptr)
         return E_POINTER;

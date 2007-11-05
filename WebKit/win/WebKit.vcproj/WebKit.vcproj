@@ -478,6 +478,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebInspector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebInspectorClient.h"
 				>
 			</File>
@@ -711,6 +715,10 @@
 			</File>
 			<File
 				RelativePath="..\WebIconDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebInspector.cpp"
 				>
 			</File>
 			<File

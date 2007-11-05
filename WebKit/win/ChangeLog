@@ -1,5 +1,39 @@
 2007-11-04  Adam Roben  <aroben@apple.com>
 
+        Add IWebInspector and a way to get one from a WebView
+
+        This API matches the Mac one added in r27266.
+
+        Reviewed by Sam.
+
+        * Interfaces/IWebInspector.idl: Added.
+        * Interfaces/IWebViewPrivate.idl: Added a new inspector method to
+        match Mac.
+        * WebInspector.cpp: Added.
+        (WebInspector::createInstance):
+        (WebInspector::WebInspector):
+        (WebInspector::~WebInspector):
+        (WebInspector::webViewClosed):
+        (WebInspector::QueryInterface):
+        (WebInspector::AddRef):
+        (WebInspector::Release):
+        (WebInspector::show):
+        (WebInspector::showConsole):
+        (WebInspector::showTimeline):
+        (WebInspector::close):
+        (WebInspector::attach):
+        (WebInspector::detach):
+        * WebInspector.h: Added.
+        * WebKit.vcproj/Interfaces.vcproj: Added IWebInspector.idl.
+        * WebKit.vcproj/WebKit.vcproj: Added WebInspector.{cpp,h}.
+        * WebKit.vcproj/WebKitGUID.vcproj: Added IWebInspector_i.c.
+        * WebView.cpp:
+        (WebView::close): Notify the WebInspector that we're closing.
+        (WebView::inspector): Added.
+        * WebView.h:
+
+2007-11-04  Adam Roben  <aroben@apple.com>
+
         Cache strings that come directly from WebLocalizedString
 
         Reviewed by Steve.

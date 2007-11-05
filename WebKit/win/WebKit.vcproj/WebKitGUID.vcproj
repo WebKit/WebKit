@@ -278,6 +278,10 @@
 			>
 		</File>
 		<File
+			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebInspector_i.c"
+			>
+		</File>
+		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebJavaScriptCollector_i.c"
 			>
 		</File>

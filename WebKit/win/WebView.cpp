@@ -40,6 +40,7 @@
 #include "WebContextMenuClient.h"
 #include "WebDragClient.h"
 #include "WebIconDatabase.h"
+#include "WebInspector.h"
 #include "WebInspectorClient.h"
 #include "WebKit.h"
 #include "WebKitStatisticsPrivate.h"
@@ -577,6 +578,9 @@ void WebView::close()
     setResourceLoadDelegate(0);
     setUIDelegate(0);
     setFormDelegate(0);
+
+    if (m_webInspector)
+        m_webInspector->webViewClosed();
 
     delete m_page;
     m_page = 0;
@@ -4424,6 +4428,14 @@ bool WebView::onIMESelect(WPARAM, LPARAM)
 bool WebView::onIMESetContext(WPARAM, LPARAM)
 {
     return false;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::inspector(IWebInspector** inspector)
+{
+    if (!m_webInspector)
+        m_webInspector.adoptRef(WebInspector::createInstance(this));
+
+    return m_webInspector.copyRefTo(inspector);
 }
 
 class EnumTextMatches : public IEnumTextMatches
