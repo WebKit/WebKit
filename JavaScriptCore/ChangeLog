@@ -1,3 +1,12 @@
+2007-11-05  Alp Toker  <alp@atoker.com>
+
+        Unreviewed build fix for qmake-based ports.
+
+        Someone with a better understanding of qmake still needs to sort out
+        the INCLUDEPATH/DEPENDPATH mess.
+
+        * JavaScriptCore.pri:
+
 2007-11-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
