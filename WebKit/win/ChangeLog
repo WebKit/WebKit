@@ -1,3 +1,12 @@
+2007-11-03  Adam Roben  <aroben@apple.com>
+
+        Only override the default user agent string if we're actually given a custom one
+
+        Reviewed by Sam.
+
+        * WebView.cpp:
+        (WebView::setCustomUserAgent):
+
 2007-11-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey.

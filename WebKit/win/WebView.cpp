@@ -2337,7 +2337,7 @@ HRESULT STDMETHODCALLTYPE WebView::applicationNameForUserAgent(
 HRESULT STDMETHODCALLTYPE WebView::setCustomUserAgent( 
     /* [in] */ BSTR userAgentString)
 {
-    m_userAgentOverridden = true;
+    m_userAgentOverridden = userAgentString;
     m_userAgentCustom = String(userAgentString, SysStringLen(userAgentString));
     return S_OK;
 }
