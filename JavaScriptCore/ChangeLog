@@ -1,3 +1,12 @@
+2007-11-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Add DEPENDPATH to JavaScriptCore and pcre to help qmake with dependencies.
+
+        * JavaScriptCore.pri:
+        * pcre/pcre.pri:
+
 2007-11-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
