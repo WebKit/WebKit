@@ -216,7 +216,18 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
         setChanged();
     } else if (attr->name() == classAttr) {
         // class
-        setHasClass(!attr->isEmpty());
+        bool hasClass = false;
+        if (!attr->isEmpty()) {
+            const AtomicString& value = attr->value();
+            unsigned len = value.length();
+            for (unsigned i = 0; i < len; ++i) {
+                if (!isClassWhitespace(value[i])) {
+                    hasClass = true;
+                    break;
+                }
+            }
+        }
+        setHasClass(hasClass);
         if (namedAttrMap)
             mappedAttributes()->parseClassAttribute(attr->value());
         setChanged();

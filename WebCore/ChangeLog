@@ -1,3 +1,15 @@
+2007-11-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) when a class attribute is all-whitespace
+
+        Test: fast/dom/class-all-whitespace.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseMappedAttribute): Check if there is any
+        non-whitespace character in the class attribute.
+
 2007-11-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam

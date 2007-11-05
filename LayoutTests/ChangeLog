@@ -1,3 +1,12 @@
+2007-11-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - test that an all-whitespace class attribute does not cause an assertion failure
+
+        * fast/dom/class-all-whitespace-expected.txt: Added.
+        * fast/dom/class-all-whitespace.html: Added.
+
 2007-11-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
