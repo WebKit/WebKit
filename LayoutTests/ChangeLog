@@ -1,5 +1,11 @@
 2007-11-06  Antti Koivisto  <antti@apple.com>
 
+        Correct test results.
+
+        * platform/mac/fast/layers/layer-visibility-expected.txt:
+
+2007-11-06  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Hyatt.
         
         Update test to cover

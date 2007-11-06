@@ -295,6 +295,6 @@ layer at (278,426) size 130x36
 layer at (278,462) size 130x34
   RenderBlock (positioned) zI: 1 {DIV} at (0,36) size 130x34 [border: (2px solid #FF0000)]
 layer at (282,466) size 122x26
-  RenderBlock (positioned) {DI} at (2,2) size 122x26 [border: (2px solid #008000)]
+  RenderBlock (positioned) {DIV} at (2,2) size 122x26 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18
       text run at (2,2) width 16: "ok"
