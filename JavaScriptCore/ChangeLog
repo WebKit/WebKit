@@ -1,5 +1,14 @@
 2007-11-06  Oliver Hunt  <oliver@apple.com>
 
+        RS=Darin.
+
+        Fix previous patch to use a 3 bit shift, a 16 bit shift causes a regression in sunspider.
+
+        * kjs/nodes.cpp:
+        (KJS::add):
+
+2007-11-06  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin.
 
         Replace boolean comparisons in AddNode with mask

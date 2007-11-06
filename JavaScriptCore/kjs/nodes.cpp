@@ -1707,11 +1707,11 @@ static inline JSValue* add(ExecState* exec, JSValue* v1, JSValue *v2)
 {
     JSType t1 = v1->type();
     JSType t2 = v2->type();
-    const unsigned bothTypes = (t1 << 16) | t2;
+    const unsigned bothTypes = (t1 << 3) | t2;
     
-    if (bothTypes == ((NumberType << 16) | NumberType))
+    if (bothTypes == ((NumberType << 3) | NumberType))
         return jsNumber(v1->toNumber(exec) + v2->toNumber(exec));
-    else if (bothTypes == ((StringType << 16) | StringType)) {
+    else if (bothTypes == ((StringType << 3) | StringType)) {
         UString value = static_cast<StringImp*>(v1)->value() + static_cast<StringImp*>(v2)->value();
         if (value.isNull())
             return throwOutOfMemoryError(exec);
