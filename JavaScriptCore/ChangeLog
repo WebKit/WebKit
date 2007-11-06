@@ -1,3 +1,21 @@
+2007-11-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15846
+          REGRESSION (r27387): Memory corruption when running fast/js/kde/delete.html
+
+        There was a mistake in the algorithm used to find an empty slot in the property
+        map entries vector; when we were putting in a new property value and not overwriting
+        an existing deleted sentinel, we would enlarge the entries vector, but would not
+        overwrite the stale data that's in the new part. It was easy to pin this down by
+        turning on property map consistency checks -- I never would have landed with this
+        bug if I had run the regression tests once with consistency checks on!
+
+        * kjs/property_map.cpp: (KJS::PropertyMap::put): Changed logic for the case where
+        foundDeletedElement is false to always use the item at the end of the entries vector.
+        Also allowed me to merge with the logic for the "no deleted sentinels at all" case.
+
 2007-11-06  Oliver Hunt  <oliver@apple.com>
 
         RS=Darin.

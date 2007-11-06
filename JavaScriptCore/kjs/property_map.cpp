@@ -413,16 +413,16 @@ void PropertyMap::put(const Identifier& name, JSValue* value, unsigned attribute
     }
 
     // Figure out which entry to use.
-    unsigned entryIndex;
-    if (!m_u.table->deletedSentinelCount)
-        entryIndex = m_u.table->keyCount + 2;
-    else {
-        if (foundDeletedElement) {
-            i = deletedElementIndex;
-            --m_u.table->deletedSentinelCount;
-        }
-        for (entryIndex = m_u.table->keyCount + m_u.table->deletedSentinelCount + 2;
-                m_u.table->entries()[entryIndex - 1].key; --entryIndex)
+    unsigned entryIndex = m_u.table->keyCount + m_u.table->deletedSentinelCount + 2;
+    if (foundDeletedElement) {
+        i = deletedElementIndex;
+        --m_u.table->deletedSentinelCount;
+
+        // Since we're not making the table bigger, we can't use the entry one past
+        // the end that we were planning on using, so search backwards for the empty
+        // slot that we can use. We know it will be there because we did at least one
+        // deletion in the past that left an entry empty.
+        while (m_u.table->entries()[--entryIndex].key)
             ;
     }
 
