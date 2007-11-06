@@ -1,3 +1,21 @@
+2007-11-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto and Dave Hyatt.
+
+        - fix <rdar://problem/5582961> Incorrect layout and floating object list corruption when CSS decreases a block's height
+
+        Test: fast/block/float/overhanging-after-height-decrease.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): If after calculating the height
+        it turns out that there are overhanging floats that were not overhanging
+        before, rescan children with overhanging floats and add them. 
+        (WebCore::RenderBlock::layoutBlockChildren): Added a parameter that
+        returns the lowest float bottom of any of the children.
+        (WebCore::RenderBlock::addOverhangingFloats): Changed to return the
+        lowest float bottom.
+        * rendering/RenderBlock.h:
+
 2007-11-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

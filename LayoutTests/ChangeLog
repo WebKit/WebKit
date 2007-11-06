@@ -1,3 +1,16 @@
+2007-11-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto and Dave Hyatt.
+
+        - test for <rdar://problem/5582961> Incorrect layout and floating object list corruption when CSS decreases a block's height
+
+        * fast/block/float/overhanging-after-height-decrease.html: Added.
+        * platform/mac-leopard/fast/block: Added.
+        * platform/mac-leopard/fast/block/float: Added.
+        * platform/mac-leopard/fast/block/float/overhanging-after-height-decrease-expected.checksum: Added.
+        * platform/mac-leopard/fast/block/float/overhanging-after-height-decrease-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-after-height-decrease-expected.txt: Added.
+
 2007-11-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

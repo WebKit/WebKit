@@ -577,10 +577,11 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     int repaintTop = 0;
     int repaintBottom = 0;
+    int maxFloatBottom = 0;
     if (childrenInline())
         layoutInlineChildren(relayoutChildren, repaintTop, repaintBottom);
     else
-        layoutBlockChildren(relayoutChildren);
+        layoutBlockChildren(relayoutChildren, maxFloatBottom);
 
     // Expand our intrinsic height to encompass floats.
     int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
@@ -596,6 +597,16 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     int oldHeight = m_height;
     calcHeight();
     if (oldHeight != m_height) {
+        if (oldHeight > m_height && maxFloatBottom > m_height && !childrenInline()) {
+            // One of our children's floats may have become an overhanging float for us. We need to look for it.
+            for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+                if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
+                    RenderBlock* block = static_cast<RenderBlock*>(child);
+                    if (block->floatBottom() + block->yPos() > m_height)
+                        addOverhangingFloats(block, block->xPos(), block->yPos());
+                }
+            }
+        }
         // We have to rebalance columns to the new height.
         layoutColumns(singleColumnBottom);
 
@@ -1132,7 +1143,7 @@ void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInf
     setCollapsedBottomMargin(marginInfo);
 }
 
-void RenderBlock::layoutBlockChildren(bool relayoutChildren)
+void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom)
 {
     int top = borderTop() + paddingTop();
     int bottom = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
@@ -1148,6 +1159,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
     RenderObject* legend = layoutLegend(relayoutChildren);
 
     int previousFloatBottom = 0;
+    maxFloatBottom = 0;
 
     RenderObject* child = firstChild();
     while (child) {
@@ -1235,7 +1247,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         }
         // If the child has overhanging floats that intrude into following siblings (or possibly out
         // of this block), then the parent gets notified of the floats now.
-        addOverhangingFloats(static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos());
+        maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos()));
 
         // Update our overflow in case the child spills out the block.
         m_overflowTop = min(m_overflowTop, child->yPos() + child->overflowTop(false));
@@ -2631,18 +2643,23 @@ RenderBlock::clearFloats()
         addIntrudingFloats(block, xoffset, offset);
 }
 
-void RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
+int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
 {
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
     if (child->hasOverflowClip() || !child->containsFloats() || child->isRoot())
-        return;
+        return 0;
+
+    int lowestFloatBottom = 0;
 
     // Floats that will remain the child's responsiblity to paint should factor into its
     // visual overflow.
     IntRect floatsOverflowRect;
     DeprecatedPtrListIterator<FloatingObject> it(*child->m_floatingObjects);
     for (FloatingObject* r; (r = it.current()); ++it) {
-        if (child->yPos() + r->endY > height()) {
+        int bottom = child->yPos() + r->endY;
+        lowestFloatBottom = max(lowestFloatBottom, bottom);
+
+        if (bottom > height()) {
             // If the object is not in the list, we add it now.
             if (!containsFloat(r->node)) {
                 FloatingObject *floatingObj = new FloatingObject(r->type());
@@ -2676,6 +2693,7 @@ void RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
         }
     }
     child->addVisualOverflow(floatsOverflowRect);
+    return lowestFloatBottom;
 }
 
 void RenderBlock::addIntrudingFloats(RenderBlock* prev, int xoff, int yoff)
