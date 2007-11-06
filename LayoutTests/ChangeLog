@@ -1,3 +1,17 @@
+2007-11-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Tests for media src attribute changes.
+
+        * media/video-src-change-expected.txt: Added.
+        * media/video-src-change.html: Added.
+        * media/video-src-remove-expected.txt: Added.
+        * media/video-src-remove.html: Added.
+        * media/video-src-set-expected.txt: Added.
+        * media/video-src-set.html: Added.
+        * media/video-test.js:
+
 2007-11-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

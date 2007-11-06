@@ -1,3 +1,17 @@
+2007-11-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Trigger media load on on src attribute changes as specified in new HTML5 draft.
+
+        Tests: media/video-src-change.html
+               media/video-src-remove.html
+               media/video-src-set.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged):
+        * html/HTMLMediaElement.h:
+
 2007-11-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

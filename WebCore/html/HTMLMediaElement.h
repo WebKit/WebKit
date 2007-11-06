@@ -49,6 +49,8 @@ public:
     virtual ~HTMLMediaElement();
 
     bool checkDTD(const Node* newChild);
+    
+    void attributeChanged(Attribute*, bool preserveDecls);
 
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     virtual void insertedIntoDocument();

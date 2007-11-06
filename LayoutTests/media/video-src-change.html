@@ -1,0 +1,19 @@
+<video src=bogus></video>
+<div>
+Test that changing src attribute triggers load when network state is empty.<br>
+Test that it does not trigger load when network state is non-empty.
+</div>
+<script src=video-test.js></script>
+<script>
+waitForEvent('emptied', function () {
+    test('video.networkState == HTMLMediaElement.EMPTY');
+    video.setAttribute('src', 'content/test.mp4')
+    waitForEventAndTest('begin', "relativeURL(video.currentSrc) == 'content/test.mp4'");
+    waitForEvent('load', function () {
+        test('video.networkState != HTMLMediaElement.EMPTY');
+        video.setAttribute('src', 'content/test.wav');
+        waitForEventAndFail('begin');
+        setTimeout(endTest, 500);
+    });
+});
+</script>

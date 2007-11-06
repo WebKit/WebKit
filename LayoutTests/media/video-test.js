@@ -60,6 +60,11 @@ function waitForEventTestAndEnd(eventName, testFuncString)
     waitForEventAndTest(eventName, testFuncString, true);
 }
 
+function waitForEventAndFail(eventName)
+{
+    waitForEventAndTest(eventName, "false", true);
+}
+
 function waitForEventAndTest(eventName, testFuncString, endit)
 {
     function _eventCallback(event)
