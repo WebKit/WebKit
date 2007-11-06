@@ -55,7 +55,6 @@ HTMLObjectElement::HTMLObjectElement(Document* doc)
     : HTMLPlugInElement(objectTag, doc)
     , m_needWidgetUpdate(false)
     , m_useFallbackContent(false)
-    , m_imageLoader(0)
     , m_complete(false)
     , m_docNamedItem(true)
 {
@@ -67,8 +66,6 @@ HTMLObjectElement::~HTMLObjectElement()
     // m_instance should have been cleaned up in detach().
     ASSERT(!m_instance);
 #endif
-    
-    delete m_imageLoader;
 }
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
@@ -104,17 +101,15 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
           m_serviceType = m_serviceType.left(pos);
         if (renderer())
           m_needWidgetUpdate = true;
-        if (!isImageType() && m_imageLoader) {
-          delete m_imageLoader;
-          m_imageLoader = 0;
-        }
+        if (!isImageType() && m_imageLoader)
+          m_imageLoader.clear();
     } else if (attr->name() == dataAttr) {
         m_url = parseURL(val);
         if (renderer())
           m_needWidgetUpdate = true;
         if (renderer() && isImageType()) {
           if (!m_imageLoader)
-              m_imageLoader = new HTMLImageLoader(this);
+              m_imageLoader.set(new HTMLImageLoader(this));
           m_imageLoader->updateFromElement();
         }
     } else if (attr->name() == classidAttr) {
@@ -175,7 +170,7 @@ void HTMLObjectElement::attach()
     if (renderer() && !m_useFallbackContent) {
         if (isImageType()) {
             if (!m_imageLoader)
-                m_imageLoader = new HTMLImageLoader(this);
+                m_imageLoader.set(new HTMLImageLoader(this));
             m_imageLoader->updateFromElement();
             if (renderer()) {
                 RenderImage* imageObj = static_cast<RenderImage*>(renderer());

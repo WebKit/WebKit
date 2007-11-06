@@ -25,6 +25,7 @@
 #define HTMLInputElement_h
 
 #include "HTMLGenericFormElement.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -205,7 +206,7 @@ private:
 
     short m_maxResults;
 
-    HTMLImageLoader* m_imageLoader;
+    OwnPtr<HTMLImageLoader> m_imageLoader;
 
     unsigned m_type : 4; // InputType 
     bool m_checked : 1;

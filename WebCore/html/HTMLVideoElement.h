@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -63,7 +64,7 @@ public:
     void updatePosterImage();
 
 private:
-    HTMLImageLoader* m_imageLoader;
+    OwnPtr<HTMLImageLoader> m_imageLoader;
     bool m_shouldShowPosterImage;
 };
 

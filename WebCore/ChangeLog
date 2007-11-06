@@ -1,3 +1,29 @@
+2007-11-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Switched all uses of HTMLImageLoader to use OwnPtrs.
+
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::init):
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::attach):
+        * html/HTMLObjectElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        (WebCore::HTMLObjectElement::~HTMLObjectElement):
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::attach):
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement):
+        (WebCore::HTMLVideoElement::attach):
+        (WebCore::HTMLVideoElement::detach):
+        (WebCore::HTMLVideoElement::parseMappedAttribute):
+
 2007-11-06  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

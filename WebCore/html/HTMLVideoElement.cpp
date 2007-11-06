@@ -42,7 +42,6 @@ using namespace HTMLNames;
 
 HTMLVideoElement::HTMLVideoElement(Document* doc)
     : HTMLMediaElement(HTMLNames::videoTag, doc)
-    , m_imageLoader(0)
     , m_shouldShowPosterImage(false)
 {
 }
@@ -65,7 +64,7 @@ void HTMLVideoElement::attach()
     
     if (m_shouldShowPosterImage) {
         if (!m_imageLoader)
-            m_imageLoader = new HTMLImageLoader(this);
+            m_imageLoader.set(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
         if (renderer() && renderer()->isImage()) {
             RenderImage* imageRenderer = static_cast<RenderImage*>(renderer());
@@ -80,10 +79,8 @@ void HTMLVideoElement::detach()
     HTMLMediaElement::detach();
     
     if (!m_shouldShowPosterImage)
-        if (m_imageLoader) {
-            delete m_imageLoader;
-            m_imageLoader = 0;
-        }
+        if (m_imageLoader)
+            m_imageLoader.clear();
 }
 
 void HTMLVideoElement::parseMappedAttribute(MappedAttribute *attr)
@@ -94,7 +91,7 @@ void HTMLVideoElement::parseMappedAttribute(MappedAttribute *attr)
         updatePosterImage();
         if (m_shouldShowPosterImage) {
             if (!m_imageLoader)
-                m_imageLoader = new HTMLImageLoader(this);
+                m_imageLoader.set(new HTMLImageLoader(this));
             m_imageLoader->updateFromElement();
         }
     } else if (attrName == widthAttr)

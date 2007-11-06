@@ -1,3 +1,14 @@
+2007-11-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Added test for poster attribute.
+
+        * media/content/abe.png: Added.
+        * media/content/greenbox.png: Added.
+        * media/video-poster-expected.txt: Added.
+        * media/video-poster.html: Added.
+
 2007-11-06  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

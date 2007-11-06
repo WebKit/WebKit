@@ -24,6 +24,7 @@
 #define HTMLObjectElement_h
 
 #include "HTMLPlugInElement.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -118,7 +119,7 @@ public:
     String m_classId;
     bool m_needWidgetUpdate : 1;
     bool m_useFallbackContent : 1;
-    HTMLImageLoader* m_imageLoader;
+    OwnPtr<HTMLImageLoader> m_imageLoader;
 
 private:
     void updateDocNamedItem();
