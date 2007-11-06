@@ -39,9 +39,7 @@
 #endif
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-#if PLATFORM(MAC) || PLATFORM(QT)
 #include "SVGImage.h"
-#endif
 #endif
 
 using std::max;
@@ -152,12 +150,10 @@ inline void CachedImage::createImage()
     }
 #endif
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
-#if PLATFORM(MAC) || PLATFORM(QT)
     if (m_response.mimeType() == "image/svg+xml") {
         m_image = new SVGImage(this);
         return;
     }
-#endif
 #endif
     m_image = new BitmapImage(this);
 }

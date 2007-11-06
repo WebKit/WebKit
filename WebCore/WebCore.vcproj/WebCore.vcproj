@@ -4076,6 +4076,14 @@
 					Name="svg"
 					>
 					<File
+						RelativePath="..\platform\graphics\svg\SVGImage.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\svg\SVGImage.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\svg\SVGPaintServer.cpp"
 						>
 					</File>

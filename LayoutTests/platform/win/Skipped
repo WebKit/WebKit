@@ -516,9 +516,6 @@ svg/custom/non-opaque-filters.svg
 svg/custom/text-filter.svg
 svg/custom/visibility-override-filter.svg
 
-# SVG image support is turned off <rdar://5563572>
-fast/images/svg-as-image.html
-
 # Window resize tests are failing <rdar://5563578>
 fast/dom/Window/window-resize-nan.html
 fast/dom/Window/window-resize.html

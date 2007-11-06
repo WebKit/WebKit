@@ -1,3 +1,16 @@
+2007-11-05  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5563572> SVG image support is turned off
+
+        Turned on SVG images for all platforms.
+
+        Reviewed by Eric.
+
+        * WebCore.vcproj/WebCore.vcproj: Added SVGImage.{cpp,h}
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage): Removed platform checks for
+        SVGImage.
+
 2007-11-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
