@@ -1,5 +1,18 @@
 2007-11-05  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Adding the rest of wx port's graphics impl. 
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        * platform/graphics/wx/AffineTransformWx.cpp: Added.
+        * platform/graphics/wx/GraphicsContextWx.cpp: Added.
+        * platform/graphics/wx/ImageBufferWx.cpp: Added.
+        * platform/graphics/wx/ImageSourceWx.cpp: Added.
+        * platform/graphics/wx/ImageWx.cpp: Added.
+        * platform/graphics/wx/PathWx.cpp: Added.
+
+2007-11-05  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx port bug fixes and new files to get platform/wx building on trunk.
 
         Rubber-stamped by Maciej Stachowiak.
