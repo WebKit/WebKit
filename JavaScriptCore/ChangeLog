@@ -2,6 +2,12 @@
 
         Gtk build fix.
 
+        * pcre/pcre.pri:
+
+2007-11-05  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix.
+
         * kjs/list.cpp:
 
 2007-11-05  Geoffrey Garen  <ggaren@apple.com>

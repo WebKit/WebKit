@@ -1,7 +1,7 @@
 # Perl Compatible Regular Expressions - Qt4 build info
 VPATH += $$PWD
 INCLUDEPATH += $$PWD $$OUTPUT_DIR/JavaScriptCore/kjs/tmp
-DEPENDPATH += $$PWD $$OUTPUT_DIR/JavaScriptCore/kjs/tmp
+DEPENDPATH += $$PWD
 
 SOURCES += \
     pcre_compile.c \
