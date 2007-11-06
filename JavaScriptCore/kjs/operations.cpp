@@ -23,6 +23,7 @@
 #include "config.h"
 #include "operations.h"
 
+#include "internal.h"
 #include "object.h"
 #include <math.h>
 #include <stdio.h>
