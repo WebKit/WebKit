@@ -1,3 +1,16 @@
+2007-11-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=15838
+          Incomplete repaint toggling "How you know this person" on Facebook
+
+        * fast/repaint/make-children-non-inline.html: Added.
+        * platform/mac/fast/repaint/make-children-non-inline-expected.txt: Added.
+        * platform/mac-leopard/fast/repaint: Added.
+        * platform/mac-leopard/fast/repaint/make-children-non-inline-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/make-children-non-inline-expected.png: Added.
+
 2007-11-05  Adam Roben  <aroben@apple.com>
 
         Remove a now-passing test from the Windows Skipped file

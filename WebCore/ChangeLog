@@ -1,3 +1,18 @@
+2007-11-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15838
+          Incomplete repaint toggling "How you know this person" on Facebook
+
+        Test: fast/repaint/make-children-non-inline.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::makeChildrenNonInline): Repaint the block. This
+        is needed because the inline children may be repositioned as they move
+        into new anonymous blocks, but those blocks have no knowledge of where
+        their children used to be, so they cannot invalidate those areas.
+
 2007-11-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
