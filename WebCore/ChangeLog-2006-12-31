@@ -681,7 +681,7 @@
         Reviewed by Eric Seidel <eric@webkit.org>
 
         - Fix font sizes
-        - Make Qt plattform build again:
+        - Make Qt platform build again:
           - Adjust Qt platform to the Image class split.
           - Introduce BitmapImage class
           - add stub PDFDocumentImage class

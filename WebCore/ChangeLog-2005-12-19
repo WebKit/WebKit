@@ -20297,7 +20297,7 @@ EW2005-10-06  Beth Dakin  <bdakin@apple.com>
         Reviewed by sullivan.
 
         * kwq/KWQSlot.mm: changed ksvg2/core to ksvg/misc
-        Build fix: issed one include from previous change.
+        Build fix: missed one include from previous change.
         http://bugs.webkit.org/show_bug.cgi?id=4790
 
 2005-09-01  David Harrison  <harrison@apple.com>
