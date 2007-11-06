@@ -1,3 +1,35 @@
+2007-11-05  Adam Roben  <aroben@apple.com>
+
+        Don't crash if SafariTheme can't be loaded
+
+        PlatformScrollBarSafari and RenderThemeSafari were not checking
+        whether SafariTheme was successfully loaded. All other uses of
+        SafariTheme already check this.
+
+        Reviewed by Steve.
+
+        * platform/win/PlatformScrollBarSafari.cpp: Don't paint if SafariTheme
+        couldn't be loaded.
+        (WebCore::PlatformScrollbar::paintButton):
+        (WebCore::PlatformScrollbar::paintTrack):
+        (WebCore::PlatformScrollbar::paintThumb):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::isControlStyled): Always return true if
+        we couldn't load SafariTheme. This way we should never try to paint
+        themed controls (and we assert as such in the paint functions).
+        (WebCore::RenderThemeSafari::paintCheckbox):
+        (WebCore::RenderThemeSafari::paintRadio):
+        (WebCore::RenderThemeSafari::paintButton):
+        (WebCore::RenderThemeSafari::paintTextField):
+        (WebCore::RenderThemeSafari::paintCapsLockIndicator):
+        (WebCore::RenderThemeSafari::paintTextArea):
+        (WebCore::RenderThemeSafari::paintMenuList):
+        (WebCore::RenderThemeSafari::paintSliderThumb):
+        (WebCore::RenderThemeSafari::paintSearchField):
+        (WebCore::RenderThemeSafari::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeSafari::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeSafari::paintSearchFieldResultsButton):
+
 2007-11-05  Kevin Ollivier  <kevino@theolliviers.com>
 
         Adding the rest of wx port's graphics impl. 

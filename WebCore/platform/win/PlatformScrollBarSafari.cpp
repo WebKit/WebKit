@@ -341,6 +341,9 @@ int PlatformScrollbar::trackLength() const
 
 void PlatformScrollbar::paintButton(GraphicsContext* context, const IntRect& rect, bool start, const IntRect& damageRect) const
 {
+    if (!paintThemePart)
+        return;
+
     IntRect paintRect = buttonRepaintRect(rect, m_orientation, controlSize(), start);
     
     if (!damageRect.intersects(paintRect))
@@ -364,6 +367,9 @@ void PlatformScrollbar::paintButton(GraphicsContext* context, const IntRect& rec
 
 void PlatformScrollbar::paintTrack(GraphicsContext* context, const IntRect& rect, bool start, const IntRect& damageRect) const
 {
+    if (!paintThemePart)
+        return;
+
     IntRect paintRect = trackRepaintRect(rect, m_orientation, controlSize());
     
     if (!damageRect.intersects(paintRect))
@@ -379,6 +385,9 @@ void PlatformScrollbar::paintTrack(GraphicsContext* context, const IntRect& rect
 
 void PlatformScrollbar::paintThumb(GraphicsContext* context, const IntRect& rect, const IntRect& damageRect) const
 {
+    if (!paintThemePart)
+        return;
+
     if (!damageRect.intersects(rect))
         return;
 
