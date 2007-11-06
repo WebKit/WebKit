@@ -1,5 +1,28 @@
 2007-11-05  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Darin.
+
+        QTMovieView can generate callbacks during paint. This can lead to crashes.
+        
+        Delay callbacks so they get handled after painting is completed. No test case,
+        I don't know how to reliably reproduce this.
+
+        * platform/graphics/mac/MoviePrivateQTKit.mm:
+        (WebCore::MoviePrivate::MoviePrivate):
+        (WebCore::MoviePrivate::~MoviePrivate):
+        (WebCore::MoviePrivate::paint):
+        (-[WebCoreMovieObserver initWithCallback:WebCore::]):
+        (-[WebCoreMovieObserver disconnect]):
+        (-[WebCoreMovieObserver loadStateChanged:]):
+        (-[WebCoreMovieObserver rateChanged:]):
+        (-[WebCoreMovieObserver sizeChanged:]):
+        (-[WebCoreMovieObserver timeChanged:]):
+        (-[WebCoreMovieObserver volumeChanged:]):
+        (-[WebCoreMovieObserver didEnd:]):
+        (-[WebCoreMovieObserver setDelayCallbacks:]):
+
+2007-11-05  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Adam.
 
         Add some missing WebCore* prefixes to ObjC classes

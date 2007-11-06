@@ -44,9 +44,12 @@
 
 @interface WebCoreMovieObserver : NSObject
 {
-    WebCore::MoviePrivate* callback;
+    WebCore::MoviePrivate* _callback;
+    BOOL _delayCallbacks;
 }
--(void)setCallback:(WebCore::MoviePrivate *)c;
+-(id)initWithCallback:(WebCore::MoviePrivate *)c;
+-(void)disconnect;
+-(void)setDelayCallbacks:(BOOL)b;
 -(void)loadStateChanged:(NSNotification *)notification;
 -(void)rateChanged:(NSNotification *)notification;
 -(void)sizeChanged:(NSNotification *)notification;
@@ -61,6 +64,7 @@ MoviePrivate::MoviePrivate(Movie* movie)
     : m_movie(movie)
     , m_qtMovie(nil)
     , m_qtMovieView(nil)
+    , m_objcObserver(AdoptNS, [[WebCoreMovieObserver alloc] initWithCallback:this])
     , m_seekTo(-1)
     , m_endTime(std::numeric_limits<float>::infinity())
     , m_seekTimer(this, &MoviePrivate::seekTimerFired)
@@ -73,8 +77,6 @@ MoviePrivate::MoviePrivate(Movie* movie)
     , m_blockStateUpdate(false)
     , m_isStreaming(false)
 {
-    m_objcObserver = [[[WebCoreMovieObserver alloc] init] autorelease];
-    [m_objcObserver.get() setCallback: this];
 }
 
 
@@ -83,6 +85,7 @@ MoviePrivate::~MoviePrivate()
     if (m_qtMovieView)
         [m_qtMovieView.get() removeFromSuperview];
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
+    [m_objcObserver.get() disconnect];
 }
 
 void MoviePrivate::createQTMovie(String url)
@@ -559,9 +562,11 @@ void MoviePrivate::paint(GraphicsContext* p, const IntRect& r)
     NSView *view = m_qtMovieView.get();
     if (view == nil)
         return;
+    [m_objcObserver.get() setDelayCallbacks:YES];
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
     END_BLOCK_OBJC_EXCEPTIONS;
+    [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
 void MoviePrivate::getSupportedTypes(HashSet<String>& types)
@@ -585,33 +590,61 @@ void MoviePrivate::getSupportedTypes(HashSet<String>& types)
 }
 
 @implementation WebCoreMovieObserver
+-(id)initWithCallback:(WebCore::MoviePrivate *)c
+{
+    _callback = c;
+    return [super init];
+}
+-(void)disconnect
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    _callback = 0;
+}
 -(void)loadStateChanged:(NSNotification *)notification
 {
-    callback->loadStateChanged();
+    if (_delayCallbacks)
+        [self performSelector:@selector(loadStateChanged:) withObject:nil afterDelay:0];
+    else
+        _callback->loadStateChanged();
 }
 -(void)rateChanged:(NSNotification *)notification
 {
-    callback->rateChanged();
+    if (_delayCallbacks)
+        [self performSelector:@selector(rateChanged:) withObject:nil afterDelay:0];
+    else
+        _callback->rateChanged();
 }
 -(void)sizeChanged:(NSNotification *)notification
 {
-    callback->sizeChanged();
+    if (_delayCallbacks)
+        [self performSelector:@selector(sizeChanged:) withObject:nil afterDelay:0];
+    else
+        _callback->sizeChanged();
 }
 -(void)timeChanged:(NSNotification *)notification
 {
-    callback->timeChanged();
+    if (_delayCallbacks)
+        [self performSelector:@selector(timeChanged:) withObject:nil afterDelay:0];
+    else
+        _callback->timeChanged();
 }
 -(void)volumeChanged:(NSNotification *)notification
 {
-    callback->volumeChanged();
+    if (_delayCallbacks)
+        [self performSelector:@selector(volumeChanged:) withObject:nil afterDelay:0];
+    else
+        _callback->volumeChanged();
 }
 -(void)didEnd:(NSNotification *)notification
 {
-    callback->didEnd();
+    if (_delayCallbacks)
+        [self performSelector:@selector(didEnd:) withObject:nil afterDelay:0];
+    else
+        _callback->didEnd();
 }
--(void)setCallback:(WebCore::MoviePrivate *)c
+-(void)setDelayCallbacks:(BOOL)b
 {
-    callback = c;
+    _delayCallbacks = b;
 }
 @end
 
