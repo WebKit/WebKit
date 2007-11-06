@@ -5,6 +5,7 @@
  * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *
  * All rights reserved.
  *
@@ -40,6 +41,7 @@
 #include "HTMLFrameElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
+#include "Language.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
@@ -50,6 +52,9 @@
 #include "webkitgtkframe.h"
 #include "webkitgtkprivate.h"
 #include <stdio.h>
+#if PLATFORM(UNIX)
+#include <sys/utsname.h>
+#endif
 
 using namespace WebCore;
 
@@ -61,9 +66,80 @@ FrameLoaderClient::FrameLoaderClient(WebKitFrame* frame)
     ASSERT(m_frame);
 }
 
+static String agentPlatform()
+{
+#ifdef GDK_WINDOWING_X11
+    return "X11";
+#elif defined(GTK_WINDOWING_WIN32)
+    return "Windows";
+#elif defined(GTK_WINDOWING_QUARTZ)
+    return "Macintosh";
+#elif defined(GTK_WINDOWING_DIRECTFB)
+    return "DirectFB";
+#else
+    notImplemented();
+    return "Unknown";
+#endif
+}
+
+static String agentOS()
+{
+#if PLATFORM(DARWIN)
+#if PLATFORM(X86)
+    return "Intel Mac OS X";
+#else
+    return "PPC Mac OS X";
+#endif
+#elif PLATFORM(UNIX)
+    struct utsname name;
+    if (uname(&name) != -1)
+        return String::format("%s %s", name.sysname, name.machine);
+    else
+        return "Unknown";
+#elif PLATFORM(WIN_OS)
+    // FIXME: Compute the Windows version
+    return "Windows";
+#else
+    notImplemented();
+    return "Unknown";
+#endif
+}
+
+static String composeUserAgent()
+{
+    // This is a liberal interpretation of http://www.mozilla.org/build/revised-user-agent-strings.html
+    // See also http://developer.apple.com/internet/safari/faq.html#anchor2
+
+    String ua;
+
+    // Product
+    ua += "Mozilla/5.0";
+
+    // Comment
+    ua += " (";
+    ua += agentPlatform(); // Platform
+    ua += "; U; "; // Security
+    ua += agentOS(); // OS-or-CPU
+    ua += "; ";
+    ua += defaultLanguage(); // Localization information
+    ua += ") ";
+
+    // WebKit Product
+    // FIXME: The WebKit version is hardcoded
+    ua += "AppleWebKit/523+ (KHTML, like Gecko) ";
+
+    // Vendor Product
+    ua += g_get_prgname();
+
+    return ua;
+}
+
 String FrameLoaderClient::userAgent(const KURL&)
 {
-    return "Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/420+ (KHTML, like Gecko)";
+    if (m_userAgent.isEmpty())
+        m_userAgent = composeUserAgent();
+
+    return m_userAgent;
 }
 
 WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClient::createDocumentLoader(const WebCore::ResourceRequest& request, const SubstituteData& substituteData)

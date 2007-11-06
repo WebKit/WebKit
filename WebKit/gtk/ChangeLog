@@ -1,3 +1,21 @@
+2007-11-05  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15409
+        FrameLoaderClientGtk hardcodes data, including platform to Linux i686
+
+        Compute a proper user agent string.
+
+        Patch includes fixes by Alp.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::agentPlatform):
+        (WebKit::agentOS):
+        (WebKit::composeUserAgent):
+        (WebKit::FrameLoaderClient::userAgent):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2007-11-05  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Alp Toker.
