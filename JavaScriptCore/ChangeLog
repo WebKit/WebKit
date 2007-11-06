@@ -1,5 +1,10 @@
 2007-11-05  Eric Seidel  <eric@webkit.org>
 
+        * kjs/operations.cpp:
+        (KJS::equal): correct broken change.
+
+2007-11-05  Eric Seidel  <eric@webkit.org>
+
         Reviewed by mjs.
 
         Remove one more call to toString(exec).
