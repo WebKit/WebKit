@@ -1,5 +1,16 @@
 2007-11-05  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by mjs.
+        
+        Remove another call to toString(exec)
+        
+        SunSpider claims this is a 0.5% speedup.
+
+        * kjs/operations.cpp:
+        (KJS::equal): remove another toString
+
+2007-11-05  Eric Seidel  <eric@webkit.org>
+
         * kjs/operations.cpp:
         (KJS::equal): correct broken change.
 
