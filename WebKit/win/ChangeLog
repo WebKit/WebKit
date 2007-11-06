@@ -1,3 +1,12 @@
+2007-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Windows build fix.
+
+        * WebFrame.cpp:
+        (WebFrame::string): plainText() returns a String now.
+
 2007-11-05  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5579772> Regression: AltGr does not work
