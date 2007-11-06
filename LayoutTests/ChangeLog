@@ -1,3 +1,19 @@
+2007-11-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Update test to cover
+        <rdar://problem/5521068>
+        Visibility not propagated correctly for children of a layer with z-index
+        
+        The fix for this was (accidentally) already checked in with r27277, 
+        with retroactive r=hyatt.
+
+        * fast/layers/layer-visibility.html:
+        * platform/mac/fast/layers/layer-visibility-expected.checksum:
+        * platform/mac/fast/layers/layer-visibility-expected.png:
+        * platform/mac/fast/layers/layer-visibility-expected.txt:
+
 2007-11-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

@@ -9,6 +9,7 @@
 //.invisible:hover { visibility: visible}
 .abstop { position: absolute; left:0; right:0; height:30px   }
 .abs { position: absolute; left:0; right:0; top:0; bottom:0 }
+.zindex { z-index: 1 }
 </style>
 
 <script>
@@ -387,6 +388,19 @@ ok
 <div id="22" class="invisible abstop red" >
 <div class="visible abs green">
 ok
+</div>
+</div>
+</div>
+</div>
+
+<div class=case>
+<div class=positioned-root>
+23 green box with word ok:
+<div class="invisible abstop red zindex" >
+<div class="abs red">
+<div class="visible abs green">
+ok
+</div>
 </div>
 </div>
 </div>

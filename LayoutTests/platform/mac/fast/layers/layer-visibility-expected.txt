@@ -25,6 +25,7 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (536,312) size 134x104 [border: (2px solid #0000FF)]
       RenderBlock (floating) {DIV} at (0,416) size 134x104 [border: (2px solid #0000FF)]
       RenderBlock (floating) {DIV} at (134,416) size 134x104 [border: (2px solid #0000FF)]
+      RenderBlock (floating) {DIV} at (268,416) size 134x104 [border: (2px solid #0000FF)]
 layer at (10,10) size 130x44
   RenderBlock (relative positioned) {DIV} at (2,2) size 130x44
     RenderBlock (anonymous) at (0,0) size 130x18
@@ -283,5 +284,17 @@ layer at (144,426) size 130x36
     RenderText {#text} at (0,0) size 0x0
 layer at (146,464) size 126x30
   RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #008000)]
+    RenderText {#text} at (2,2) size 16x18
+      text run at (2,2) width 16: "ok"
+layer at (278,426) size 130x36
+  RenderBlock (relative positioned) {DIV} at (2,2) size 130x36
+    RenderText {#text} at (0,0) size 115x36
+      text run at (0,0) width 115: "23 green box with"
+      text run at (0,18) width 61: "word ok: "
+    RenderText {#text} at (0,0) size 0x0
+layer at (278,462) size 130x34
+  RenderBlock (positioned) zI: 1 {DIV} at (0,36) size 130x34 [border: (2px solid #FF0000)]
+layer at (282,466) size 122x26
+  RenderBlock (positioned) {DI} at (2,2) size 122x26 [border: (2px solid #008000)]
     RenderText {#text} at (2,2) size 16x18
       text run at (2,2) width 16: "ok"
