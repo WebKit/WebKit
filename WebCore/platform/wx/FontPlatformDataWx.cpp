@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "FontPlatformData.h"
+
 #include "FontDescription.h"
 
 #include <wx/defs.h>

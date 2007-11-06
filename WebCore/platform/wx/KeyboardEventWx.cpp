@@ -24,8 +24,10 @@
  */
 
 #include "config.h"
-#include "KeyboardCodes.h"
 #include "PlatformKeyboardEvent.h"
+
+#include "KeyboardCodes.h"
+#include "NotImplemented.h"
 
 #include <wx/defs.h>
 #include <wx/event.h>
@@ -333,9 +335,15 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
     m_shiftKey = event.ShiftDown();
     m_ctrlKey = event.CmdDown();
     m_altKey = event.AltDown();
-    m_metaKey = event.MetaDown();    
+    m_metaKey = event.MetaDown();
+    m_isModifierKeyPress = false;
+    m_isWxCharEvent = event.GetEventType() == wxEVT_CHAR;
+}
+
+bool PlatformKeyboardEvent::currentCapsLockState()
+{
+    return wxGetKeyState(WXK_CAPITAL);
 }
 
 }
 
-// vim: ts=4 sw=4 et

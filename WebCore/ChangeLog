@@ -1,3 +1,24 @@
+2007-11-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx port bug fixes and new files to get platform/wx building on trunk.
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        * platform/wx/CursorWx.cpp:
+        * platform/wx/FileSystemWx.cpp: Added.
+        * platform/wx/FontCacheWx.cpp:
+        * platform/wx/FontPlatformDataWx.cpp:
+        * platform/wx/FontWx.cpp:
+        * platform/wx/KeyboardEventWx.cpp:
+        * platform/wx/LocalizedStringsWx.cpp: Added.
+        * platform/wx/LoggingWx.cpp: Added.
+        * platform/wx/RenderThemeWx.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+        * platform/wx/SharedTimerWx.cpp:
+        * platform/wx/StringWx.cpp:
+        * platform/wx/ThreadingWx.cpp: Added.
+        * platform/wx/WidgetWx.cpp:
+
 2007-11-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

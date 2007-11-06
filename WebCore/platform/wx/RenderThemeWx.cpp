@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
+#include "RenderTheme.h"
 
 #include "Document.h"
-#include "RenderTheme.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "RenderView.h"
-#include "FrameView.h"
 
 #include <wx/defs.h>
 #include <wx/renderer.h>
@@ -39,8 +39,7 @@
 
 namespace WebCore {
 
-class RenderThemeWx : public RenderTheme
-{
+class RenderThemeWx : public RenderTheme {
 public:
     RenderThemeWx() : RenderTheme() { }
 
@@ -190,8 +189,8 @@ void RenderThemeWx::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
 bool RenderThemeWx::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     wxScrolledWindow* window = o->view()->frameView()->nativeWindow();
-    wxPaintDC dc((wxWindow*)window);
-    window->DoPrepareDC(dc);
+    wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
+    wxASSERT(dc->IsOk());
 
     int flags = 0;
     
@@ -205,25 +204,26 @@ bool RenderThemeWx::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     if (isPressed(o))
         flags |= wxCONTROL_PRESSED;
     
-    if(appearance == PushButtonAppearance || appearance == ButtonAppearance)
-        wxRendererNative::Get().DrawPushButton(window, dc, r, flags);
+    if (appearance == PushButtonAppearance || appearance == ButtonAppearance)
+        wxRendererNative::Get().DrawPushButton(window, *dc, r, flags);
     // TODO: add a radio button rendering API to wx
     //else if(appearance == RadioAppearance)
-    //    wxRendererNative::Get().
-    else if(appearance == CheckboxAppearance)
-        wxRendererNative::Get().DrawCheckBox(window, dc, r, flags);
+    else if(appearance == CheckboxAppearance) {
+        if (isChecked(o))
+            flags |= wxCONTROL_CHECKED;
+        wxRendererNative::Get().DrawCheckBox(window, *dc, r, flags);
+    }
         
     return false;
 }
 
 void RenderThemeWx::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    addIntrinsicMargins(style);
+    
 }
 
 bool RenderThemeWx::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    //wxPaintDC* dc = (wxPaintDC*)i.context->platformContext();
     i.context->setStrokeThickness(1);
     i.context->setStrokeColor(Color(0, 0, 0));
     i.context->drawRect(r);
@@ -242,22 +242,22 @@ Color RenderThemeWx::platformInactiveSelectionBackgroundColor() const
 
 Color RenderThemeWx::platformActiveSelectionForegroundColor() const
 {
-#if __WXGTK__
-    return Color(255, 255, 255);
-#else
+    // FIXME: Get wx to return the correct value for each platform.
+#if __WXMAC__
     return Color();
+#else
+    return Color(255, 255, 255);
 #endif
 }
 
 Color RenderThemeWx::platformInactiveSelectionForegroundColor() const
 {
-#if __WXGTK__
-    return Color(255, 255, 255);
-#else
+#if __WXMAC__
     return Color();
+#else
+    return Color(255, 255, 255);
 #endif
 }
 
 }
 
-// vim: ts=4 sw=4 et

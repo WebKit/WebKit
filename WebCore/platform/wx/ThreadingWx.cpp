@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Kevin Ollivier
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,47 +27,12 @@
  */
 
 #include "config.h"
-#include "FontCache.h"
-#include "Font.h"
-#include "FontData.h"
-#include "FontPlatformData.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-void FontCache::platformInit()
-{
-}
-
-const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
-{
-    FontData* fontData = 0;
-    fontData = new FontData(FontPlatformData(font.fontDescription(), font.family().family()));
-    return fontData;
-}
-
-FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
-{
-    return new FontPlatformData(font.fontDescription(), font.family().family());
-}
-
-FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
-{
-    // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
-    // the default that the user would get without changing any prefs.
-    static AtomicString timesStr("systemfont");
-    return getCachedFontPlatformData(fontDescription, timesStr);
-}
-
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
-{
-    return new FontPlatformData(fontDescription,family);
-}
-
-bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
-{
+void callOnMainThread(void (*function)()) {
     notImplemented();
-    return true;
 }
 
 }

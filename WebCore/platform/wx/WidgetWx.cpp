@@ -150,7 +150,7 @@ void Widget::paint(GraphicsContext*,const IntRect& r)
 {
     invalidateRect(r);
     if (data->nativeWindow)
-        data->nativeWindow->Refresh();
+        data->nativeWindow->Update();
 }
 
 }
