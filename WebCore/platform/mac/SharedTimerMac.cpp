@@ -29,21 +29,21 @@
 #include <Foundation/Foundation.h>
 #include <wtf/Assertions.h>
 
-@class PowerNotifier;
+@class WebCorePowerNotifier;
 
 namespace WebCore {
 
-static PowerNotifier *powerNotifier;
+static WebCorePowerNotifier *powerNotifier;
 static CFRunLoopTimerRef sharedTimer;
 static void (*sharedTimerFiredFunction)();
 static void timerFired(CFRunLoopTimerRef, void*);
 
 }
 
-@interface PowerNotifier : NSObject
+@interface WebCorePowerNotifier : NSObject
 @end
 
-@implementation PowerNotifier
+@implementation WebCorePowerNotifier
 
 - (id)init
 {
@@ -99,7 +99,7 @@ void setSharedTimerFireTime(double fireTime)
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
     
     if (!powerNotifier) {
-        powerNotifier = [[PowerNotifier alloc] init];
+        powerNotifier = [[WebCorePowerNotifier alloc] init];
         CFRetain(powerNotifier);
         [powerNotifier release];
     }

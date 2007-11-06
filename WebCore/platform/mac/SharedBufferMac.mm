@@ -32,7 +32,7 @@
 
 using namespace WebCore;
 
-@interface SharedBufferData : NSData
+@interface WebCoreSharedBufferData : NSData
 {
     SharedBuffer* sharedBuffer;
 }
@@ -40,7 +40,7 @@ using namespace WebCore;
 - (id)initWithSharedBuffer:(SharedBuffer*)buffer;
 @end
 
-@implementation SharedBufferData
+@implementation WebCoreSharedBufferData
 
 #ifndef BUILDING_ON_TIGER
 + (void)initialize
@@ -101,12 +101,12 @@ SharedBuffer::SharedBuffer(NSData *nsData)
 
 NSData *SharedBuffer::createNSData()
 {    
-    return [[SharedBufferData alloc] initWithSharedBuffer:this];
+    return [[WebCoreSharedBufferData alloc] initWithSharedBuffer:this];
 }
 
 CFDataRef SharedBuffer::createCFData()
 {    
-    return (CFDataRef)HardRetainWithNSRelease([[SharedBufferData alloc] initWithSharedBuffer:this]);
+    return (CFDataRef)HardRetainWithNSRelease([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]);
 }
 
 bool SharedBuffer::hasPlatformData() const

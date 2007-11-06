@@ -40,7 +40,7 @@
 
 using namespace WebCore;
 
-@interface OpenPanelController : NSObject <WebCoreOpenPanelResultListener> {
+@interface WebCoreOpenPanelController : NSObject <WebCoreOpenPanelResultListener> {
     FileChooser *_fileChooser;
     WebCoreFrameBridge *_bridge;
 }
@@ -49,7 +49,7 @@ using namespace WebCore;
 - (void)beginSheetWithFrame:(Frame*)frame;
 @end
 
-@implementation OpenPanelController
+@implementation WebCoreOpenPanelController
 
 - (id)initWithFileChooser:(FileChooser *)fileChooser
 {
@@ -96,7 +96,7 @@ FileChooser::FileChooser(FileChooserClient* client, const String& filename)
     : m_client(client)
     , m_filename(filename)
     , m_icon(chooseIcon(filename))
-    , m_controller(AdoptNS, [[OpenPanelController alloc] initWithFileChooser:this])
+    , m_controller(AdoptNS, [[WebCoreOpenPanelController alloc] initWithFileChooser:this])
 {
 }
 

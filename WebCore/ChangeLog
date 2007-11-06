@@ -1,3 +1,17 @@
+2007-11-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+
+        Add some missing WebCore* prefixes to ObjC classes
+
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::FileChooser):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createNSData):
+        (WebCore::SharedBuffer::createCFData):
+        * platform/mac/SharedTimerMac.cpp:
+        (WebCore::setSharedTimerFireTime):
+
 2007-11-05  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5579772> Regression: AltGr does not work
