@@ -1,5 +1,16 @@
 2007-11-06  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by darin.
+        
+        SunSpider claims this is a 1.1% speedup.
+
+        * kjs/nodes.cpp:
+        (KJS::throwOutOfMemoryError): Added, non inline.
+        (KJS::addSlowCase): renamed from add(), non inline.
+        (KJS::add): add fast path for String + String, Number + Number and String + *
+
+2007-11-06  Eric Seidel  <eric@webkit.org>
+
         Reviewed by mjs.
         
         Avoid more UString creation.

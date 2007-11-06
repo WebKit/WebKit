@@ -1669,9 +1669,15 @@ JSValue *ModNode::evaluate(ExecState *exec)
 
 // ------------------------------ Additive Nodes --------------------------------------
 
+static JSValue* throwOutOfMemoryError(ExecState* exec)
+{
+    JSObject* error = Error::create(exec, GeneralError, "Out of memory");
+    exec->setException(error);
+    return error;
+}
 
 // ECMA 11.6
-static inline JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2)
+static JSValue* addSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
 {
     // exception for the Date exception in defaultValue()
     JSValue *p1 = v1->toPrimitive(exec, UnspecifiedType);
@@ -1679,15 +1685,45 @@ static inline JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2)
     
     if (p1->isString() || p2->isString()) {
         UString value = p1->toString(exec) + p2->toString(exec);
-        if (value.isNull()) {
-            JSObject *error = Error::create(exec, GeneralError, "Out of memory");
-            exec->setException(error);
-            return error;
-        } else
-            return jsString(value);
+        if (value.isNull())
+            return throwOutOfMemoryError(exec);
+        return jsString(value);
     }
     
     return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));
+}
+
+// Fast-path choices here are based on frequency data from SunSpider:
+//    <times> Add case: <t1> <t2>
+//    ---------------------------
+//    5627160 Add case: 1 1
+//    247427  Add case: 5 5
+//    20901   Add case: 5 6
+//    13978   Add case: 5 1
+//    4000    Add case: 1 5
+//    1       Add case: 3 5
+
+static inline JSValue* add(ExecState* exec, JSValue* v1, JSValue *v2)
+{
+    JSType t1 = v1->type();
+    JSType t2 = v2->type();
+        
+    if (t1 == NumberType && t2 == NumberType)
+        return jsNumber(v1->toNumber(exec) + v2->toNumber(exec));
+    else if (t1 == StringType && t2 == StringType) {
+        UString value = static_cast<StringImp*>(v1)->value() + static_cast<StringImp*>(v2)->value();
+        if (value.isNull())
+            return throwOutOfMemoryError(exec);
+        return jsString(value);
+    } else if (t1 == StringType) { // common js idiom "" + object
+        UString value = static_cast<StringImp*>(v1)->value() + v2->toString(exec);
+        if (value.isNull())
+            return throwOutOfMemoryError(exec);
+        return jsString(value);
+    }
+    
+    // All other cases are pretty uncommon
+    return addSlowCase(exec, v1, v2);
 }
 
 void AddNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
