@@ -83,7 +83,8 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(WIN)
-        PlatformKeyboardEvent(HWND, WPARAM, LPARAM, UChar);
+        PlatformKeyboardEvent(HWND, WPARAM, LPARAM, UChar, bool);
+        bool isSystemKey() const { return m_isSystemKey; }
 #endif
 
 #if PLATFORM(GTK)
@@ -120,6 +121,9 @@ namespace WebCore {
 #endif
 #if PLATFORM(MAC)
         RetainPtr<NSEvent> m_macEvent;
+#endif
+#if PLATFORM(WIN)
+        bool m_isSystemKey;
 #endif
     };
 

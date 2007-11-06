@@ -631,7 +631,7 @@ public:
     bool mouseWheel(WPARAM, LPARAM, bool isHorizontal);
     bool execCommand(WPARAM wParam, LPARAM lParam);
     bool keyDown(WPARAM, LPARAM, bool systemKeyDown = false);
-    bool keyUp(WPARAM, LPARAM);
+    bool keyUp(WPARAM, LPARAM, bool systemKeyDown = false);
     bool inResizer(LPARAM lParam);
     void paint(HDC, LPARAM);
     void paintIntoBackingStore(WebCore::FrameView*, HDC bitmapDC, LPRECT dirtyRect);

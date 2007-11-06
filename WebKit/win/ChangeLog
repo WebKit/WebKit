@@ -1,5 +1,21 @@
 2007-11-05  Ada Chan  <adachan@apple.com>
 
+        <rdar://problem/5579772> Regression: AltGr does not work
+        Testing whether alt-key is down is not the right test for system key event.
+        Added a m_isSystemKey flag in PlatformKeyboardEvent to keep track of whether
+        this is a system key event, check that flag instead in handleEditingKeyboardEvent().
+
+        Reviewed by Oliver.
+
+        * WebView.cpp:
+        (WebView::keyUp):
+        (WebView::handleEditingKeyboardEvent):
+        (WebView::keyDown):
+        (WebViewWndProc):
+        * WebView.h:
+
+2007-11-05  Ada Chan  <adachan@apple.com>
+
         Build fix.
 
         Reviewed by Tristan.

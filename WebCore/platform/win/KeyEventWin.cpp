@@ -148,7 +148,7 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
 
 static inline String singleCharacterString(UChar c) { return String(&c, 1); }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM virtualKeyCode, LPARAM keyData, UChar characterCode)
+PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM virtualKeyCode, LPARAM keyData, UChar characterCode, bool systemKey)
     : m_text(singleCharacterString(characterCode))
     , m_unmodifiedText(singleCharacterString(characterCode))
     , m_keyIdentifier(keyIdentifierForWindowsKeyCode(virtualKeyCode))
@@ -161,6 +161,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM virtualKeyCode, LPARAM
     , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
     , m_metaKey(m_altKey)
     , m_isModifierKeyPress(virtualKeyCode == VK_SHIFT || virtualKeyCode == VK_CONTROL || virtualKeyCode == VK_MENU || virtualKeyCode == VK_CAPITAL)
+    , m_isSystemKey(systemKey)
 {
 }
 

@@ -1,3 +1,15 @@
+2007-11-05  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5579772> Regression: AltGr does not work
+        We now store the system key event info in PlatforkKeyboardEvent().
+
+        Reviewed by Oliver.
+
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::isSystemKey):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2007-11-02  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Darin Adler.
