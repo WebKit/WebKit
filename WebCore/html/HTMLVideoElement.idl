@@ -29,5 +29,6 @@ module html {
         attribute long height;
         readonly attribute unsigned long videoWidth;
         readonly attribute unsigned long videoHeight;
+                 attribute [ConvertNullToNullString] DOMString poster;
     };
 }

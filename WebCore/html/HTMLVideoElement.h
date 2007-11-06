@@ -32,15 +32,23 @@
 
 namespace WebCore {
 
+class HTMLImageLoader;
+
 class HTMLVideoElement : public HTMLMediaElement
 {
 public:
     HTMLVideoElement(Document*);
     
     virtual int tagPriority() const { return 5; }
-    
-    void parseMappedAttribute(MappedAttribute* attr);
-    
+    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void attach();
+    virtual void detach();
+    virtual void parseMappedAttribute(MappedAttribute* attr);
+    virtual bool isVideo() const { return true; }
+    virtual bool isURLAttribute(Attribute*) const;
+    virtual const QualifiedName& imageSourceAttributeName() const;
+
     int width() const;
     void setWidth(int);
     int height() const;
@@ -49,8 +57,14 @@ public:
     int videoWidth() const;
     int videoHeight() const;
     
-    virtual bool isVideo() const { return true; }
+    String poster() const;
+    void setPoster(const String&);
 
+    void updatePosterImage();
+
+private:
+    HTMLImageLoader* m_imageLoader;
+    bool m_shouldShowPosterImage;
 };
 
 } //namespace

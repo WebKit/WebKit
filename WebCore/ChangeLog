@@ -1,3 +1,37 @@
+2007-11-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5579999> Add poster attribute for video element
+
+        * html/HTMLAttributeNames.in: Added poster attribute.
+
+        * html/HTMLImageLoader.cpp: (WebCore::HTMLImageLoader::updateFromElement):
+          Calls imageSourceAttributeName instead of having special cases for the different kinds of elements. 
+        * dom/Element.cpp: (WebCore::Element::imageSourceAttributeName): Added.
+        * dom/Element.h:
+        * html/HTMLObjectElement.cpp: (WebCore::HTMLObjectElement::imageSourceAttributeName): Added.
+        * html/HTMLObjectElement.h:
+
+        * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::movieNetworkStateChanged):
+          Calls updatePosterImage when the network state is empty and when the first frame has been loaded.
+        * html/HTMLMediaElement.h: (WebCore::HTMLMediaElement::rendererIsNeeded): Made this inline.  HTMLVideoElement now also implements this.
+
+        * html/HTMLVideoElement.idl: Added case for poster attribute.
+        * html/HTMLVideoElement.h: Added image loader and flag to keep track of whether or not the poster image should be shown.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement): Initialize m_imageLoader and m_shouldShowPosterImage.
+        (WebCore::HTMLVideoElement::rendererIsNeeded): Calls HTMLElement::rendererIsNeeded since HTMLMediaElements have renderer by default.
+        (WebCore::HTMLVideoElement::createRenderer): Create a RenderImage or RenderVideo depending on whether or not the poster image should be shown.
+        (WebCore::HTMLVideoElement::attach): Set up image loader and RenderImage if necessary.
+        (WebCore::HTMLVideoElement::detach): Delete image loader if its no longer needed.
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Added case to process poster attribute.
+        (WebCore::HTMLVideoElement::poster): Added getter for poster attribute.
+        (WebCore::HTMLVideoElement::setPoster): Added setter for poster attribute.
+        (WebCore::HTMLVideoElement::isURLAttribute): Added.
+        (WebCore::HTMLVideoElement::imageSourceAttributeName): Added.
+        (WebCore::HTMLVideoElement::updatePosterImage): Added.  Updates m_shouldShowPosterImage and if its changed, detaches and attaches so the renderer is correct.
+
 2007-11-05  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5563572> SVG image support is turned off

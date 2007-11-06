@@ -620,6 +620,11 @@ bool Element::isURLAttribute(Attribute *attr) const
     return false;
 }
 
+const QualifiedName& Element::imageSourceAttributeName() const
+{
+    return srcAttr;
+}
+
 RenderStyle* Element::styleForRenderer(RenderObject* parentRenderer)
 {
     return document()->styleSelector()->styleForElement(this);

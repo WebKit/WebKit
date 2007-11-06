@@ -36,6 +36,7 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
+#include "HTMLVideoElement.h"
 #include <limits>
 #include "MediaError.h"
 #include "MediaList.h"
@@ -91,20 +92,6 @@ HTMLMediaElement::~HTMLMediaElement()
 bool HTMLMediaElement::checkDTD(const Node* newChild)
 {
     return newChild->hasTagName(sourceTag) || HTMLElement::checkDTD(newChild);
-}
-
-bool HTMLMediaElement::rendererIsNeeded(RenderStyle* style) 
-{
-    if (isVideo())
-        return HTMLElement::rendererIsNeeded(style); 
-    return false;
-}
-
-RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle* style)
-{
-    if (isVideo())
-        return new (arena) RenderVideo(this);
-    return HTMLElement::createRenderer(arena, style);
 }
 
 void HTMLMediaElement::insertedIntoDocument()
@@ -340,6 +327,9 @@ void HTMLMediaElement::movieNetworkStateChanged(Movie*)
         
         m_networkState = EMPTY;
         
+        if (isVideo())
+            static_cast<HTMLVideoElement*>(this)->updatePosterImage();
+
         dispatchHTMLEvent(emptiedEvent, false, true);
         return;
     }
@@ -365,12 +355,18 @@ void HTMLMediaElement::movieNetworkStateChanged(Movie*)
         m_networkState = LOADED_FIRST_FRAME;
         
         setReadyState(CAN_SHOW_CURRENT_FRAME);
+        
+        if (isVideo())
+            static_cast<HTMLVideoElement*>(this)->updatePosterImage();
+        
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
             return;
         
         m_loadedFirstFrame = true;
-        if (renderer())
+        if (renderer()) {
+            ASSERT(!renderer()->isImage());
             static_cast<RenderVideo*>(renderer())->videoSizeChanged();
+        }
         
         dispatchHTMLEvent(loadedfirstframeEvent, false, true);
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)

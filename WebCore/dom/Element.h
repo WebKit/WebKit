@@ -156,6 +156,7 @@ public:
     virtual String toString() const;
 
     virtual bool isURLAttribute(Attribute*) const;
+    virtual const QualifiedName& imageSourceAttributeName() const;
     virtual String target() const { return String(); }
         
     virtual void focus(bool restorePreviousSelection = true);

@@ -273,6 +273,11 @@ bool HTMLObjectElement::isURLAttribute(Attribute *attr) const
     return (attr->name() == dataAttr || (attr->name() == usemapAttr && attr->value().domString()[0] != '#'));
 }
 
+const QualifiedName& HTMLObjectElement::imageSourceAttributeName() const
+{
+    return dataAttr;
+}
+
 bool HTMLObjectElement::isImageType()
 {
     if (m_serviceType.isEmpty() && m_url.startsWith("data:")) {

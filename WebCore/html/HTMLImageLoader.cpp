@@ -88,7 +88,7 @@ void HTMLImageLoader::updateFromElement()
     if (!doc->renderer())
         return;
 
-    AtomicString attr = elem->getAttribute(elem->hasLocalName(objectTag) ? dataAttr : srcAttr);
+    AtomicString attr = elem->getAttribute(elem->imageSourceAttributeName());
     
     // Treat a lack of src or empty string for src as no image at all.
     CachedImage *newImage = 0;
