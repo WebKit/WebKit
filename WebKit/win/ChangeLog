@@ -1,3 +1,11 @@
+2007-11-05  Ada Chan  <adachan@apple.com>
+
+        Build fix.
+
+        Reviewed by Tristan.
+
+        * WebChromeClient.h:
+
 2007-11-05  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Darin Adler.
