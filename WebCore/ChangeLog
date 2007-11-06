@@ -1,3 +1,15 @@
+2007-11-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/5576619> 
+        REGRESSION: Caret disappears after deleting the last character in inline hole (15714)
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteSelection): Like the other TypingCommands, including
+        both of the other deletion commands, call typingAddedToOpenCommand(), which takes 
+        the command's endingSelection and sets it as selection.
+
 2007-11-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Antti Koivisto and Dave Hyatt.
