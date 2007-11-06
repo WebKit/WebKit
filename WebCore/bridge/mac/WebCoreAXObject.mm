@@ -571,7 +571,7 @@ static int headingLevel(RenderObject* renderer)
             // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
             if (p->document() != d)
                 return nil;
-            return plainText(rangeOfContents(e).get()).getNSString();
+            return plainText(rangeOfContents(e).get());
         }
     }
 
@@ -604,7 +604,7 @@ static int headingLevel(RenderObject* renderer)
         if (startVisiblePosition.isNull() || endVisiblePosition.isNull())
             return nil;
             
-        return plainText(makeRange(startVisiblePosition, endVisiblePosition).get()).getNSString();
+        return plainText(makeRange(startVisiblePosition, endVisiblePosition).get());
     }
     
     if ([self isAttachment]) {
@@ -1449,7 +1449,7 @@ static NSString *nsStringForReplacedNode(Node* replacedNode)
     if (rect1.bottom() != rect2.bottom()) {
         RefPtr<Range> dataRange = makeRange(startVisiblePosition, endVisiblePosition);
         IntRect boundingBox = dataRange->boundingBox();
-        DeprecatedString rangeString = plainText(dataRange.get());
+        String rangeString = plainText(dataRange.get());
         if (rangeString.length() > 1 && !boundingBox.isEmpty()) 
             ourrect = boundingBox;
     }
@@ -2014,7 +2014,7 @@ static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition
     // an empty line is considered a sentence. If it's skipped, then the sentence parser will not
     // see this empty line.  Instead, return the end position of the empty line. 
     VisiblePosition endPosition;
-    DeprecatedString lineString = plainText(makeRange(startOfLine(visiblePos), endOfLine(visiblePos)).get());
+    String lineString = plainText(makeRange(startOfLine(visiblePos), endOfLine(visiblePos)).get());
     if (lineString.isEmpty())
         endPosition = nextVisiblePos;
     else
@@ -2038,7 +2038,7 @@ static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition
     
     // treat empty line as a separate sentence.  
     VisiblePosition startPosition;
-    DeprecatedString lineString = plainText(makeRange(startOfLine(previousVisiblePos), endOfLine(previousVisiblePos)).get());
+    String lineString = plainText(makeRange(startOfLine(previousVisiblePos), endOfLine(previousVisiblePos)).get());
     if (lineString.isEmpty())
         startPosition = previousVisiblePos;
     else

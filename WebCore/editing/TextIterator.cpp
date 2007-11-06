@@ -1318,13 +1318,13 @@ exit:
     return result;
 }
 
-DeprecatedString plainText(const Range* r)
+String plainText(const Range* r)
 {
     unsigned length;
     UChar* buf = plainTextToMallocAllocatedBuffer(r, length);
     if (!buf)
-        return DeprecatedString("");
-    DeprecatedString result(reinterpret_cast<const DeprecatedChar*>(buf), length);
+        return "";
+    String result(buf, length);
     free(buf);
     return result;
 }

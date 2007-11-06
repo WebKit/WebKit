@@ -1155,24 +1155,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return nil;
 }
 
-- (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(TextGranularity)granularity
-{
-    if (!m_frame || !m_frame->document())
-        return;
-    
-    TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, granularity);
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-}
-
-- (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete granularity:(TextGranularity)granularity
-{
-    if (!m_frame || !m_frame->document())
-        return;
-    
-    TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, granularity);
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-}
-
 - (DOMCSSStyleDeclaration *)typingStyle
 {
     if (!m_frame || !m_frame->typingStyle())

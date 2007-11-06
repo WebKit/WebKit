@@ -1,3 +1,43 @@
+2007-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15847
+        Some editing cleanup
+
+        No change in functionality.
+
+        * editing/TextIterator.cpp:
+        (WebCore::plainText):
+        * editing/TextIterator.h:
+        Made WebCore::plainText() return String instead of DeprecatedString.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject textUnderElement]):
+        (-[WebCoreAXObject value]):
+        (-[WebCoreAXObject doAXBoundsForTextMarkerRange:]):
+        (-[WebCoreAXObject doAXNextSentenceEndTextMarkerForTextMarker:]):
+        (-[WebCoreAXObject doAXPreviousSentenceStartTextMarkerForTextMarker:]):
+        Updated for the above change. There is no need to explicitly convert to NSString now.
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand): m_startingSelection and m_endingSelection are actually
+        initialized in constructor body, so the work done in initializer list was wasted.
+
+        (WebCore::EditCommand::apply): Moved some stars.
+        (WebCore::EditCommand::unapply): Ditto.
+        (WebCore::EditCommand::reapply): Ditto.
+        (WebCore::EditCommand::setStartingSelection): The loop exit condition was evaluated twice,
+        removed one of the checks.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::toString): plainText() result type now matches what we need here.
+
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        Removed unused -[WebCoreFrameBridge deleteKeyPressedWithSmartDelete:granularity:] and
+        -[WebCoreFrameBridge forwardDeleteKeyPressedWithSmartDelete:granularity:].
+
 2007-11-05  Mark Rowe  <mrowe@apple.com>
 
         Mac build fix.

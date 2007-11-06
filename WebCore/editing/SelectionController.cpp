@@ -771,7 +771,7 @@ int SelectionController::focusOffset() const
 
 String SelectionController::toString() const
 {
-    return String(plainText(m_sel.toRange().get()));
+    return plainText(m_sel.toRange().get());
 }
 
 PassRefPtr<Range> SelectionController::getRangeAt(int index, ExceptionCode& ec) const

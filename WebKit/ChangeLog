@@ -1,3 +1,18 @@
+2007-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15847
+        Some editing cleanup
+
+        No change in functionality.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView deleteToEndOfLine:]):
+        (-[WebHTMLView deleteToEndOfParagraph:]):
+        WebCore had a duplicate of the same logic already. We are passing a boundary value to
+        a function that expects granularity, this may need to be straightened out in the future.
+
 2007-11-05  John Sullivan  <sullivan@apple.com>
 
         * WebView/WebView.mm:

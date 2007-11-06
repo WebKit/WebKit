@@ -47,7 +47,7 @@ inline bool isCollapsibleWhitespace(UChar c)
     }
 }
 
-DeprecatedString plainText(const Range*);
+String plainText(const Range*);
 UChar* plainTextToMallocAllocatedBuffer(const Range*, unsigned& bufferLength);
 PassRefPtr<Range> findPlainText(const Range*, const String&, bool forward, bool caseSensitive);
 

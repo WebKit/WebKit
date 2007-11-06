@@ -4383,11 +4383,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // To match NSTextView, this command should delete the newline at the end of
     // a paragraph if you are at the end of a paragraph (like deleteToEndOfParagraph does below).
     Frame* coreFrame = core([self _frame]);
-    if (coreFrame) {
-        if (!coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, LineBoundary, true, false))
-            coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, true, false);
-    }
-    
+    if (coreFrame)
+        coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, LineBoundary, true, false);
 }
 
 - (void)deleteToBeginningOfParagraph:(id)sender
@@ -4404,12 +4401,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     COMMAND_PROLOGUE
 
     // Despite the name of the method, this should delete the newline if the caret is at the end of a paragraph.
-    // If deletion to the end of the paragraph fails, we delete one character forward, which will delete the newline.
     Frame* coreFrame = core([self _frame]);
-    if (coreFrame) {
-        if (!coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, ParagraphBoundary, true, false))
-            coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, true, false);
-    }
+    if (coreFrame)
+        coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, ParagraphBoundary, true, false);
 }
 
 - (void)complete:(id)sender
