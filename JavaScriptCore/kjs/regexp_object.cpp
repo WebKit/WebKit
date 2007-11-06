@@ -431,9 +431,9 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
 
   RegExpPrototype* proto = static_cast<RegExpPrototype*>(exec->lexicalInterpreter()->builtinRegExpPrototype());
 
-  bool global = (flags.find("g") >= 0);
-  bool ignoreCase = (flags.find("i") >= 0);
-  bool multiline = (flags.find("m") >= 0);
+  bool global = (flags.find('g') >= 0);
+  bool ignoreCase = (flags.find('i') >= 0);
+  bool multiline = (flags.find('m') >= 0);
 
   int reflags = RegExp::None;
   if (global)

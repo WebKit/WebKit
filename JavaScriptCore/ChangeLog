@@ -1,3 +1,14 @@
+2007-11-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+        
+        Avoid more UString creation.
+        
+        SunSpider claims this is a 0.4% speedup.
+
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpObjectImp::construct): use UString::find(UChar)
+
 2007-11-05  Mark Rowe  <mrowe@apple.com>
 
         Mac build fix.
