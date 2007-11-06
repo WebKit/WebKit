@@ -134,19 +134,26 @@ void WebChromeClient::takeFocus(FocusDirection direction)
 
 Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& features)
 {
+    if (features.dialog) {
+        COMPtr<IWebUIDelegate3> delegate = uiDelegate3();
+        if (!delegate)
+            return 0;
+        COMPtr<IWebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance(frameLoadRequest.resourceRequest()));
+        COMPtr<IWebView> dialog;
+        if (FAILED(delegate->createModalDialog(m_webView, request.get(), &dialog)))
+            return 0;
+        return core(dialog.get());
+    }
+
     Page* page = 0;
     IWebUIDelegate* uiDelegate = 0;
     IWebMutableURLRequest* request = WebMutableURLRequest::createInstance(frameLoadRequest.resourceRequest());
 
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        if (features.dialog) {
-            notImplemented();
-        } else {
-            IWebView* webView = 0;
-            if (SUCCEEDED(uiDelegate->createWebViewWithRequest(m_webView, request, &webView))) {
-                page = core(webView);
-                webView->Release();
-            }
+        IWebView* webView = 0;
+        if (SUCCEEDED(uiDelegate->createWebViewWithRequest(m_webView, request, &webView))) {
+            page = core(webView);
+            webView->Release();
         }
     
         uiDelegate->Release();
@@ -167,22 +174,16 @@ void WebChromeClient::show()
 
 bool WebChromeClient::canRunModal()
 {
-    bool result = false;
-    IWebUIDelegate* uiDelegate = 0;
-    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        notImplemented();
-        uiDelegate->Release();
-    }
+    BOOL result = FALSE;
+    if (COMPtr<IWebUIDelegate3> delegate = uiDelegate3())
+        delegate->canRunModal(m_webView, &result);
     return result;
 }
 
 void WebChromeClient::runModal()
 {
-    IWebUIDelegate* uiDelegate = 0;
-    if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        notImplemented();
-        uiDelegate->Release();
-    }
+    if (COMPtr<IWebUIDelegate3> delegate = uiDelegate3())
+        delegate->runModal(m_webView);
 }
 
 void WebChromeClient::setToolbarsVisible(bool visible)
@@ -462,4 +463,21 @@ bool WebChromeClient::runDatabaseSizeLimitPrompt(Frame*, const String&)
 {
     notImplemented();
     return false;
+}
+
+COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
+{
+    COMPtr<IWebUIDelegate> delegate;
+    m_webView->uiDelegate(&delegate);
+    return delegate;
+}
+
+COMPtr<IWebUIDelegate2> WebChromeClient::uiDelegate2()
+{
+    return COMPtr<IWebUIDelegate2>(Query, uiDelegate());
+}
+
+COMPtr<IWebUIDelegate3> WebChromeClient::uiDelegate3()
+{
+    return COMPtr<IWebUIDelegate3>(Query, uiDelegate());
 }

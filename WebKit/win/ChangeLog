@@ -1,3 +1,22 @@
+2007-11-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam and Steve.
+
+        - added hooks needed to implement showModalDialog on Windows
+
+        * Interfaces/IWebUIDelegate.idl: Added canRunModal, createModalDialog,
+        and runModal functions to the end of IWebUIDelegate3.
+
+        * WebChromeClient.h: Added uiDelegate and uiDelegate2 helper functions,
+        so it's easier to write client functions.
+        * WebChromeClient.cpp:
+        (WebChromeClient::createWindow): Implemented dialog case. Calls IWebUIDelegate3.
+        (WebChromeClient::canRunModal): Implemented. Calls IWebUIDelegate3.
+        (WebChromeClient::runModal): Ditto.
+        (WebChromeClient::uiDelegate): Added.
+        (WebChromeClient::uiDelegate2): Added.
+        (WebChromeClient::uiDelegate3): Added.
+
 2007-11-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Adam Roben.

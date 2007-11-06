@@ -24,10 +24,15 @@
  */
 
 #include <WebCore/ChromeClient.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/FocusDirection.h>
 #include <wtf/Forward.h>
 
 class WebView;
+
+interface IWebUIDelegate;
+interface IWebUIDelegate2;
+interface IWebUIDelegate3;
 
 class WebChromeClient : public WebCore::ChromeClient {
 public:
@@ -94,6 +99,11 @@ public:
     virtual void print(WebCore::Frame*);
 
     virtual bool runDatabaseSizeLimitPrompt(WebCore::Frame*, const WebCore::String& origin);
+
 private:
+    COMPtr<IWebUIDelegate> uiDelegate();
+    COMPtr<IWebUIDelegate2> uiDelegate2();
+    COMPtr<IWebUIDelegate3> uiDelegate3();
+
     WebView* m_webView;
 };

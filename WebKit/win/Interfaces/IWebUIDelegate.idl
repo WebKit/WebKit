@@ -781,3 +781,20 @@ interface IWebUIDelegate2 : IWebUIDelegate
 
     HRESULT webViewPrintingMarginRect([in] IWebView* webView, [out, retval] RECT* rect);
 }
+
+/*!
+    @category WebUIDelegate3
+    @discussion A class that supplements the IWebUIDelegate interface
+*/
+[
+    object,
+    oleautomation,
+    uuid(DD544D90-C233-4562-8EFD-A8D3A0DEBC19),
+    pointer_default(unique)
+]
+interface IWebUIDelegate3 : IWebUIDelegate2
+{
+    HRESULT canRunModal([in] IWebView* webView, [out, retval] BOOL* canRunBoolean);
+    HRESULT createModalDialog([in] IWebView* sender, [in] IWebURLRequest* request, [out, retval] IWebView** newWebView);
+    HRESULT runModal([in] IWebView* webView);
+}
