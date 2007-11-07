@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        Update the list of skipped tests.
+        
+        Three more tests are passing.
+
+        * platform/qt/Skipped:
+
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         add more passing test cases.
 
         * platform/qt/Skipped:
