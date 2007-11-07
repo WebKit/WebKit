@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Renamed QWebPage::webActionTriggered to QWebPage::triggerAction
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::_q_webActionTriggered):
+        (QWebPage::keyPressEvent):
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Changed the virtual QWebPage::setWindowGeometry to be a geometryChangeRequest signal instead.
 
         * Api/qwebpage.cpp:

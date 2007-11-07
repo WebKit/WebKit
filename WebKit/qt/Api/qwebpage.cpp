@@ -209,7 +209,7 @@ void QWebPagePrivate::_q_webActionTriggered(bool checked)
     if (!a)
         return;
     QWebPage::WebAction action = static_cast<QWebPage::WebAction>(a->data().toInt());
-    q->webActionTriggered(action, checked);
+    q->triggerAction(action, checked);
 }
 
 void QWebPagePrivate::updateAction(QWebPage::WebAction action)
@@ -350,7 +350,7 @@ QSize QWebPage::sizeHint() const
 
 void QWebPage::stop()
 {
-    webActionTriggered(Stop);
+    triggerAction(Stop);
 }
 
 QWebPageHistory *QWebPage::history() const
@@ -421,7 +421,7 @@ static void openNewWindow(const QUrl& url, WebCore::Frame* frame)
             newPage->chrome()->show();
 }
 
-void QWebPage::webActionTriggered(WebAction action, bool checked)
+void QWebPage::triggerAction(WebAction action, bool checked)
 {
     WebCore::Frame *frame = d->page->focusController()->focusedOrMainFrame();
     WebCore::Editor *editor = frame->editor();
@@ -881,101 +881,101 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
     WebCore::Editor *editor = frame->d->frame->editor();
     if (editor->canEdit()) {
         if (ev == QKeySequence::Cut) {
-            webActionTriggered(Cut);
+            triggerAction(Cut);
             handled = true;
         } else if (ev == QKeySequence::Copy) {
-            webActionTriggered(Copy);
+            triggerAction(Copy);
             handled = true;
         } else if (ev == QKeySequence::Paste) {
-            webActionTriggered(Paste);
+            triggerAction(Paste);
             handled = true;
         } else if (ev == QKeySequence::Undo) {
-            webActionTriggered(Undo);
+            triggerAction(Undo);
             handled = true;
         } else if (ev == QKeySequence::Redo) {
-            webActionTriggered(Redo);
+            triggerAction(Redo);
             handled = true;
         } else if(ev == QKeySequence::MoveToNextChar) {
-            webActionTriggered(MoveToNextChar);
+            triggerAction(MoveToNextChar);
             handled = true;
         } else if(ev == QKeySequence::MoveToPreviousChar) {
-            webActionTriggered(MoveToPreviousChar);
+            triggerAction(MoveToPreviousChar);
             handled = true;
         } else if(ev == QKeySequence::MoveToNextWord) {
-            webActionTriggered(MoveToNextWord);
+            triggerAction(MoveToNextWord);
             handled = true;
         } else if(ev == QKeySequence::MoveToPreviousWord) {
-            webActionTriggered(MoveToPreviousWord);
+            triggerAction(MoveToPreviousWord);
             handled = true;
         } else if(ev == QKeySequence::MoveToNextLine) {
-            webActionTriggered(MoveToNextLine);
+            triggerAction(MoveToNextLine);
             handled = true;
         } else if(ev == QKeySequence::MoveToPreviousLine) {
-            webActionTriggered(MoveToPreviousLine);
+            triggerAction(MoveToPreviousLine);
             handled = true;
 //             } else if(ev == QKeySequence::MoveToNextPage) {
 //             } else if(ev == QKeySequence::MoveToPreviousPage) {
         } else if(ev == QKeySequence::MoveToStartOfLine) {
-            webActionTriggered(MoveToStartOfLine);
+            triggerAction(MoveToStartOfLine);
             handled = true;
         } else if(ev == QKeySequence::MoveToEndOfLine) {
-            webActionTriggered(MoveToEndOfLine);
+            triggerAction(MoveToEndOfLine);
             handled = true;
         } else if(ev == QKeySequence::MoveToStartOfBlock) {
-            webActionTriggered(MoveToStartOfBlock);
+            triggerAction(MoveToStartOfBlock);
             handled = true;
         } else if(ev == QKeySequence::MoveToEndOfBlock) {
-            webActionTriggered(MoveToEndOfBlock);
+            triggerAction(MoveToEndOfBlock);
             handled = true;
         } else if(ev == QKeySequence::MoveToStartOfDocument) {
-            webActionTriggered(MoveToStartOfDocument);
+            triggerAction(MoveToStartOfDocument);
             handled = true;
         } else if(ev == QKeySequence::MoveToEndOfDocument) {
-            webActionTriggered(MoveToEndOfDocument);
+            triggerAction(MoveToEndOfDocument);
             handled = true;
         } else if(ev == QKeySequence::SelectNextChar) {
-            webActionTriggered(SelectNextChar);
+            triggerAction(SelectNextChar);
             handled = true;
         } else if(ev == QKeySequence::SelectPreviousChar) {
-            webActionTriggered(SelectPreviousChar);
+            triggerAction(SelectPreviousChar);
             handled = true;
         } else if(ev == QKeySequence::SelectNextWord) {
-            webActionTriggered(SelectNextWord);
+            triggerAction(SelectNextWord);
             handled = true;
         } else if(ev == QKeySequence::SelectPreviousWord) {
-            webActionTriggered(SelectPreviousWord);
+            triggerAction(SelectPreviousWord);
             handled = true;
         } else if(ev == QKeySequence::SelectNextLine) {
-            webActionTriggered(SelectNextLine);
+            triggerAction(SelectNextLine);
             handled = true;
         } else if(ev == QKeySequence::SelectPreviousLine) {
-            webActionTriggered(SelectPreviousLine);
+            triggerAction(SelectPreviousLine);
             handled = true;
 //             } else if(ev == QKeySequence::SelectNextPage) {
 //             } else if(ev == QKeySequence::SelectPreviousPage) {
         } else if(ev == QKeySequence::SelectStartOfLine) {
-            webActionTriggered(SelectStartOfLine);
+            triggerAction(SelectStartOfLine);
             handled = true;
         } else if(ev == QKeySequence::SelectEndOfLine) {
-            webActionTriggered(SelectEndOfLine);
+            triggerAction(SelectEndOfLine);
             handled = true;
         } else if(ev == QKeySequence::SelectStartOfBlock) {
-            webActionTriggered(SelectStartOfBlock);
+            triggerAction(SelectStartOfBlock);
             handled = true;
         } else if(ev == QKeySequence::SelectEndOfBlock) {
-            webActionTriggered(SelectEndOfBlock);
+            triggerAction(SelectEndOfBlock);
             handled = true;
         } else if(ev == QKeySequence::SelectStartOfDocument) {
-            webActionTriggered(SelectStartOfDocument);
+            triggerAction(SelectStartOfDocument);
             handled = true;
         } else if(ev == QKeySequence::SelectEndOfDocument) {
-            webActionTriggered(SelectEndOfDocument);
+            triggerAction(SelectEndOfDocument);
             handled = true;
         } else if(ev == QKeySequence::DeleteStartOfWord) {
-            webActionTriggered(DeleteStartOfWord);
+            triggerAction(DeleteStartOfWord);
             handled = true;
         } else if(ev == QKeySequence::DeleteEndOfWord) {
-            webActionTriggered(DeleteEndOfWord);
+            triggerAction(DeleteEndOfWord);
             handled = true;
 //             } else if(ev == QKeySequence::DeleteEndOfLine) {
         }

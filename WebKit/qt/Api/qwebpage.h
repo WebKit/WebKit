@@ -162,6 +162,7 @@ public:
     QString selectedText() const;
 
     QAction *action(WebAction action) const;
+    virtual void triggerAction(WebAction action, bool checked = false);
 
 public slots:
     /**
@@ -226,8 +227,6 @@ protected:
     virtual QWebPage *createWindow();
     virtual QWebPage *createModalDialog();
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
-
-    virtual void webActionTriggered(WebAction action, bool checked = false);
 
     virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
     // ### do we need the frame? maybe include "file dialog" in the name
