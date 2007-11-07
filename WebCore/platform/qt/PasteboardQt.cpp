@@ -74,7 +74,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                                                           bool allowPlainText, bool& chosePlainText)
 {
     const QMimeData *mimeData = QApplication::clipboard()->mimeData();
-    
+
     chosePlainText = false;
 
     if (mimeData->hasHtml()) {
@@ -85,14 +85,14 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                 return fragment.release();
         }
     }
-    
+
     if (allowPlainText && mimeData->hasText()) {
         chosePlainText = true;
         RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), mimeData->text());
         if (fragment)
             return fragment.release();
     }
-    
+
     return 0;
 }
 

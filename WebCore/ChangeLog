@@ -1,3 +1,15 @@
+2007-11-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Kill whitespace
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::documentFragment):
+
 2007-11-07  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
