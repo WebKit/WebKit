@@ -146,7 +146,7 @@ void QWebSettings::setIconDatabaseEnabled(bool enabled, const QString &location)
     }
 }
 
-bool QWebSettings::iconDatabaseEnabled() const
+bool QWebSettings::iconDatabaseEnabled()
 {
     return WebCore::iconDatabase()->isEnabled() && WebCore::iconDatabase()->isOpen();
 }
