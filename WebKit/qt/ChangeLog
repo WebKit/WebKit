@@ -2,6 +2,36 @@
 
         Reviewed by Lars.
 
+        Reworked the QWebSettings API.
+        QWebPage now returns a pointer to its mutable QWebSettings object and the settings of newly created QWebPageObjects are initialized from QWebSettings::defaultSettings().
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPage::QWebPage):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::QWebSettingsPrivate):
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::defaultSettings):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setMinimumFontSize):
+        (QWebSettings::setMinimumLogicalFontSize):
+        (QWebSettings::setDefaultFontSize):
+        (QWebSettings::setDefaultFixedFontSize):
+        (QWebSettings::setUserStyleSheetLocation):
+        (QWebSettings::setFontFamily):
+        (QWebSettings::fontFamily):
+        (QWebSettings::setAttribute):
+        * Api/qwebsettings.h:
+        * QtLauncher/main.cpp:
+        (main):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Made the QWebSettings::webGraphic functions static. The implementation was using QWebSettings::global() anyway.
 
         * Api/qwebsettings.cpp:

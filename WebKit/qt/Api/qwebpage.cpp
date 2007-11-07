@@ -86,6 +86,12 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     page = new Page(chromeClient, contextMenuClient, editorClient,
                     new DragClientQt(q), new InspectorClientQt());
 
+    // ### should be configurable
+    page->settings()->setDefaultTextEncodingName("iso-8859-1");
+    page->settings()->setDOMPasteAllowed(true);
+
+    settings = new QWebSettings(page->settings());
+
     undoStack = 0;
     mainFrame = 0;
     networkInterface = 0;
@@ -98,6 +104,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 QWebPagePrivate::~QWebPagePrivate()
 {
     delete undoStack;
+    delete settings;
     delete page;
 }
 
@@ -267,7 +274,7 @@ QWebPage::QWebPage(QWidget *parent)
     : QWidget(parent)
     , d(new QWebPagePrivate(this))
 {
-    setSettings(QWebSettings::global());
+
     QPalette pal = palette();
     pal.setBrush(QPalette::Background, Qt::white);
 
@@ -1168,88 +1175,9 @@ QPixmap QWebPage::icon() const
     return *icon;
 }
 
-void QWebPage::setSettings(const QWebSettings &settings)
+QWebSettings *QWebPage::settings()
 {
-    WebCore::Settings *wSettings = d->page->settings();
-
-    wSettings->setStandardFontFamily(
-        settings.fontFamily(QWebSettings::StandardFont));
-    wSettings->setFixedFontFamily(
-        settings.fontFamily(QWebSettings::FixedFont));
-    wSettings->setSerifFontFamily(
-        settings.fontFamily(QWebSettings::SerifFont));
-    wSettings->setSansSerifFontFamily(
-        settings.fontFamily(QWebSettings::SansSerifFont));
-    wSettings->setCursiveFontFamily(
-        settings.fontFamily(QWebSettings::CursiveFont));
-    wSettings->setFantasyFontFamily(
-        settings.fontFamily(QWebSettings::FantasyFont));
-
-    wSettings->setMinimumFontSize(settings.minimumFontSize());
-    wSettings->setMinimumLogicalFontSize(settings.minimumLogicalFontSize());
-    wSettings->setDefaultFontSize(settings.defaultFontSize());
-    wSettings->setDefaultFixedFontSize(settings.defaultFixedFontSize());
-
-    wSettings->setLoadsImagesAutomatically(
-        settings.testAttribute(QWebSettings::AutoLoadImages));
-    wSettings->setJavaScriptEnabled(
-        settings.testAttribute(QWebSettings::JavascriptEnabled));
-    wSettings->setJavaScriptCanOpenWindowsAutomatically(
-        settings.testAttribute(QWebSettings::JavascriptCanOpenWindows));
-    wSettings->setJavaEnabled(
-        settings.testAttribute(QWebSettings::JavaEnabled));
-    wSettings->setPluginsEnabled(
-        settings.testAttribute(QWebSettings::PluginsEnabled));
-    wSettings->setPrivateBrowsingEnabled(
-        settings.testAttribute(QWebSettings::PrivateBrowsingEnabled));
-
-    wSettings->setUserStyleSheetLocation(KURL(settings.userStyleSheetLocation()));
-
-    // ### should be configurable
-    wSettings->setDefaultTextEncodingName("iso-8859-1");
-    wSettings->setDOMPasteAllowed(true);
-}
-
-QWebSettings QWebPage::settings() const
-{
-    QWebSettings settings;
-    WebCore::Settings *wSettings = d->page->settings();
-
-    settings.setFontFamily(QWebSettings::StandardFont,
-                           wSettings->standardFontFamily());
-    settings.setFontFamily(QWebSettings::FixedFont,
-                           wSettings->fixedFontFamily());
-    settings.setFontFamily(QWebSettings::SerifFont,
-                           wSettings->serifFontFamily());
-    settings.setFontFamily(QWebSettings::SansSerifFont,
-                           wSettings->sansSerifFontFamily());
-    settings.setFontFamily(QWebSettings::CursiveFont,
-                           wSettings->cursiveFontFamily());
-    settings.setFontFamily(QWebSettings::FantasyFont,
-                           wSettings->fantasyFontFamily());
-
-    settings.setMinimumFontSize(wSettings->minimumFontSize());
-    settings.setMinimumLogicalFontSize(wSettings->minimumLogicalFontSize());
-    settings.setDefaultFontSize(wSettings->defaultFontSize());
-    settings.setDefaultFixedFontSize(wSettings->defaultFixedFontSize());
-
-    settings.setAttribute(QWebSettings::AutoLoadImages,
-                          wSettings->loadsImagesAutomatically());
-    settings.setAttribute(QWebSettings::JavascriptEnabled,
-                          wSettings->isJavaScriptEnabled());
-    settings.setAttribute(QWebSettings::JavascriptCanOpenWindows,
-                          wSettings->JavaScriptCanOpenWindowsAutomatically());
-    settings.setAttribute(QWebSettings::JavaEnabled,
-                          wSettings->isJavaEnabled());
-    settings.setAttribute(QWebSettings::PluginsEnabled,
-                          wSettings->arePluginsEnabled());
-    settings.setAttribute(QWebSettings::PrivateBrowsingEnabled,
-                          wSettings->privateBrowsingEnabled());
-
-    settings.setUserStyleSheetLocation(
-        wSettings->userStyleSheetLocation().url());
-
-    return settings;
+    return d->settings;
 }
 
 QString QWebPage::chooseFile(QWebFrame *parentFrame, const QString& oldFile)

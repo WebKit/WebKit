@@ -135,9 +135,7 @@ public:
 
     QWebPageHistory *history() const;
 
-    // ### owned by webpage, returns a pointer, no setter!
-    void setSettings(const QWebSettings &settings);
-    QWebSettings settings() const;
+    QWebSettings *settings();
 
     QSize sizeHint() const;
 

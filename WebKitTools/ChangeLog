@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Reworked the QWebSettings API.
+        QWebPage now returns a pointer to its mutable QWebSettings object and the settings of newly created QWebPageObjects are initialized from QWebSettings::defaultSettings().
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Make QWebHistory an explicitly shared object, returned as a pointer by QWebPage::history().
 
         * DumpRenderTree/qt/jsobjects.cpp:

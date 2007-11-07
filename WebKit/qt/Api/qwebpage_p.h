@@ -120,6 +120,7 @@ public:
 
     QWebPageHistory history;
     QWebPageContext currentContext;
+    QWebSettings *settings;
 
     QAction *actions[QWebPage::NumWebActions];
 };
