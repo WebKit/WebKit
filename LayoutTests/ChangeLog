@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        don't put nbsp's into the plan text paste
+        
+        Fix both ClipboardQt and PasteboardQt to replace
+        nbsp's with spaces before putting the text onto the
+        native clipboard. This is consistent with Mac and Win
+        and fixes at least editing/pasteboard/4076267-3.html
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/pasteboard/4076267-3-expected.txt: Added.
+
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         update test results after the last commit.
 
         * platform/qt/css1/box_properties/acid_test-expected.txt:

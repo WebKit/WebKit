@@ -273,7 +273,9 @@ void ClipboardQt::writeRange(Range* range, Frame* frame)
     
     if (!m_writableData)
         m_writableData = new QMimeData;
-    m_writableData->setText(frame->selectedText());
+    QString text = frame->selectedText();
+    text.replace(QChar(0xa0), QLatin1Char(' '));
+    m_writableData->setText(text);
     m_writableData->setHtml(createMarkup(range, 0, AnnotateForInterchange));
     if (!isForDragging())
         QApplication::clipboard()->setMimeData(m_writableData);

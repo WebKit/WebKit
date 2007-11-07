@@ -1,3 +1,19 @@
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        don't put nbsp's into the plan text paste
+        
+        Fix both ClipboardQt and PasteboardQt to replace
+        nbsp's with spaces before putting the text onto the
+        native clipboard. This is consistent with Mac and Win
+        and fixes at least editing/pasteboard/4076267-3.html
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::writeRange):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+
 2007-11-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Lars Knoll <lars@trolltech.com>.

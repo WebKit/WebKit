@@ -59,7 +59,9 @@ Pasteboard* Pasteboard::generalPasteboard()
 void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame)
 {
     QMimeData* md = new QMimeData;
-    md->setText(frame->selectedText());
+    QString text = frame->selectedText();
+    text.replace(QChar(0xa0), QLatin1Char(' '));
+    md->setText(text);
     md->setHtml(createMarkup(selectedRange, 0, AnnotateForInterchange));
     QApplication::clipboard()->setMimeData(md);
 }
