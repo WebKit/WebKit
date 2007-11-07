@@ -2,6 +2,18 @@
 
         Reviewed by Lars.
 
+        Initialize the undo/redo actions from QUndoStack. That automatically takes care of enabling/disabling them as well as the activation/trigger.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateAction):
+        (QWebPage::webAction):
+        (QWebPage::undoStack):
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added undo/redo toolbar buttons, moved the location line edit into a separate toolbar.
 
         * QtLauncher/main.cpp:

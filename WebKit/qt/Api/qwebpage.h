@@ -146,7 +146,7 @@ public:
     QPixmap icon() const;
 
     bool isModified() const;
-    QUndoStack *undoStack();
+    QUndoStack *undoStack() const;
     
     void setNetworkInterface(QWebNetworkInterface *interface);
     QWebNetworkInterface *networkInterface() const;
