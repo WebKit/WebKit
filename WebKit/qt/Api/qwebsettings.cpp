@@ -38,19 +38,12 @@ class QWebSettingsPrivate
 {
 public:
     QWebSettingsPrivate(WebCore::Settings *wcSettings = 0)
-        : minimumFontSize(-1),
-          minimumLogicalFontSize(-1),
-          defaultFontSize(-1),
-          defaultFixedFontSize(-1),
-          settings(wcSettings)
+        : settings(wcSettings)
     {
     }
 
     QHash<int, QString> fontFamilies;
-    int minimumFontSize;
-    int minimumLogicalFontSize;
-    int defaultFontSize;
-    int defaultFixedFontSize;
+    QHash<int, int> fontSizes;
     QHash<int, bool> attributes;
     QString userStyleSheetLocation;
 
@@ -92,16 +85,20 @@ void QWebSettingsPrivate::apply()
                                     global->fontFamilies.value(QWebSettings::FantasyFont));
         settings->setFantasyFontFamily(family);
 
-        int size = minimumFontSize >= 0 ? minimumFontSize : global->minimumFontSize;
+        int size = fontSizes.value(QWebSettings::MinimumFontSize,
+                                   global->fontSizes.value(QWebSettings::MinimumFontSize));
         settings->setMinimumFontSize(size);
 
-        size = minimumLogicalFontSize >= 0 ? minimumLogicalFontSize : global->minimumLogicalFontSize;
+        size = fontSizes.value(QWebSettings::MinimumLogicalFontSize,
+                                   global->fontSizes.value(QWebSettings::MinimumLogicalFontSize));
         settings->setMinimumLogicalFontSize(size);
 
-        size = defaultFontSize >= 0 ? defaultFontSize : global->defaultFontSize;
+        size = fontSizes.value(QWebSettings::DefaultFontSize,
+                                   global->fontSizes.value(QWebSettings::DefaultFontSize));
         settings->setDefaultFontSize(size);
 
-        size = defaultFixedFontSize >= 0 ? defaultFixedFontSize : global->defaultFixedFontSize;
+        size = fontSizes.value(QWebSettings::DefaultFixedFontSize,
+                                   global->fontSizes.value(QWebSettings::DefaultFixedFontSize));
         settings->setDefaultFixedFontSize(size);
 
         bool value = attributes.value(QWebSettings::AutoLoadImages,
@@ -150,10 +147,10 @@ QWebSettings::QWebSettings()
 {
     // Initialize our global defaults
     // changing any of those will likely break the LayoutTests
-    d->minimumFontSize = 5;
-    d->minimumLogicalFontSize = 5;
-    d->defaultFontSize = 14;
-    d->defaultFixedFontSize = 14;
+    d->fontSizes.insert(QWebSettings::MinimumFontSize, 5);
+    d->fontSizes.insert(QWebSettings::MinimumLogicalFontSize, 5);
+    d->fontSizes.insert(QWebSettings::DefaultFontSize, 14);
+    d->fontSizes.insert(QWebSettings::DefaultFixedFontSize, 14);
     d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
     d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
     d->fontFamilies.insert(QWebSettings::FixedFont, QLatin1String("Courier"));
@@ -178,55 +175,18 @@ QWebSettings::~QWebSettings()
         allSettings()->removeOne(d);
 }
 
-void QWebSettings::setMinimumFontSize(int size)
+void QWebSettings::setFontSize(FontSize type, int size)
 {
-    d->minimumFontSize = size;
+    if (size < 0)
+        d->fontSizes.remove(type);
+    else
+        d->fontSizes.insert(type, size);
     d->apply();
 }
 
-
-int QWebSettings::minimumFontSize() const
+int QWebSettings::fontSize(FontSize type) const
 {
-    return d->minimumFontSize;
-}
-
-
-void QWebSettings::setMinimumLogicalFontSize(int size)
-{
-    d->minimumLogicalFontSize = size;
-    d->apply();
-}
-
-
-int QWebSettings::minimumLogicalFontSize() const
-{
-    return d->minimumLogicalFontSize;
-}
-
-
-void QWebSettings::setDefaultFontSize(int size)
-{
-    d->defaultFontSize = size;
-    d->apply();
-}
-
-
-int QWebSettings::defaultFontSize() const
-{
-    return d->defaultFontSize;
-}
-
-
-void QWebSettings::setDefaultFixedFontSize(int size)
-{
-    d->defaultFixedFontSize = size;
-    d->apply();
-}
-
-
-int QWebSettings::defaultFixedFontSize() const
-{
-    return d->defaultFixedFontSize;
+    return d->fontSizes.value(type);
 }
 
 void QWebSettings::setUserStyleSheetLocation(const QString &location)

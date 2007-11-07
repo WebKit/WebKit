@@ -62,23 +62,20 @@ public:
         DefaultFaviconGraphic,
         TextAreaResizeCornerGraphic
     };
+    enum FontSize {
+        MinimumFontSize,
+        MinimumLogicalFontSize,
+        DefaultFontSize,
+        DefaultFixedFontSize
+    };
 
     static QWebSettings *defaultSettings();
 
     void setFontFamily(FontType type, const QString &family);
     QString fontFamily(FontType type) const;
 
-    void setMinimumFontSize(int);
-    int minimumFontSize() const;
-
-    void setMinimumLogicalFontSize(int);
-    int minimumLogicalFontSize() const;
-
-    void setDefaultFontSize(int);
-    int defaultFontSize() const;
-
-    void setDefaultFixedFontSize(int);
-    int defaultFixedFontSize() const;
+    void setFontSize(FontSize type, int size);
+    int fontSize(FontSize type) const;
 
     void setAttribute(WebAttribute attr, bool on = true);
     bool testAttribute(WebAttribute attr) const;
