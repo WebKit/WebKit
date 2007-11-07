@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        Changed the webAction() accessor to not be a slot but just a public function.
+
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Implemented createWindow() in QtLauncher.
 
         * QtLauncher/main.cpp:
