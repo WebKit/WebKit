@@ -358,21 +358,6 @@ QWebPageHistory *QWebPage::history() const
     return &d->history;
 }
 
-void QWebPage::goBack()
-{
-    webActionTriggered(GoBack);
-}
-
-void QWebPage::goForward()
-{
-    webActionTriggered(GoForward);
-}
-
-void QWebPage::goToHistoryItem(const QWebHistoryItem &item)
-{
-    d->page->goToItem(item.d->item, FrameLoadTypeIndexedBackForward);
-}
-
 void QWebPage::javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID)
 {
 }
@@ -596,36 +581,6 @@ QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *fra
 void QWebPage::setWindowGeometry(const QRect& geom)
 {
     Q_UNUSED(geom)
-}
-
-bool QWebPage::canCut() const
-{
-    return d->page->focusController()->focusedOrMainFrame()->editor()->canCut();
-}
-
-bool QWebPage::canCopy() const
-{
-    return d->page->focusController()->focusedOrMainFrame()->editor()->canCopy();
-}
-
-bool QWebPage::canPaste() const
-{
-    return d->page->focusController()->focusedOrMainFrame()->editor()->canPaste();
-}
-
-void QWebPage::cut()
-{
-    webActionTriggered(Cut);
-}
-
-void QWebPage::copy()
-{
-    webActionTriggered(Copy);
-}
-
-void QWebPage::paste()
-{
-    webActionTriggered(Paste);
 }
 
 QString QWebPage::selectedText() const

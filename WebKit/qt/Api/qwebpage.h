@@ -156,11 +156,6 @@ public:
     QNetworkProxy networkProxy() const;
 #endif
 
-    // #### remove after adding editor actions
-    bool canCut() const;
-    bool canCopy() const;
-    bool canPaste() const;
-
     quint64 totalBytes() const;
     quint64 bytesReceived() const;
 
@@ -174,17 +169,8 @@ public slots:
      */
     void stop();
 
-    // #### should these be actions?
-    void goBack();
-    void goForward();
-    void goToHistoryItem(const QWebHistoryItem &item);
-
     // ### should be a signal: void geometryChangeRequest(const QRect &geom);
     virtual void setWindowGeometry(const QRect& geom);
-
-    void cut();
-    void copy();
-    void paste();
 
 signals:
     /**
