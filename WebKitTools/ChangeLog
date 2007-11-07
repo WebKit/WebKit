@@ -1,5 +1,9 @@
 2007-11-06  Eric Seidel  <eric@webkit.org>
 
+        * Scripts/build-testkjs: build fix... too many $$
+
+2007-11-06  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Mark Rowe.
 
         * Scripts/build-testkjs: return xcodebuild's exit status, instead of grep's
