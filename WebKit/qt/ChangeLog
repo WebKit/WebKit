@@ -2,6 +2,18 @@
 
         Reviewed by Lars.
 
+        Make the setting of letting Javascript access the clipboard configurable through QWebSettings, turn it off by default and turn it on in DumpRenderTree.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * Api/qwebsettings.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Changed QWebPageHistory::goToItem to take a value instead of a pointer.
 
         * Api/qwebpagehistory.cpp:

@@ -125,6 +125,10 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
         settings->setPrivateBrowsingEnabled(value);
 
+        value = attributes.value(QWebSettings::JavascriptCanAccessClipboard,
+                                      global->attributes.value(QWebSettings::JavascriptCanAccessClipboard));
+        settings->setDOMPasteAllowed(value);
+
         QString location = (!userStyleSheetLocation.isEmpty()) ? userStyleSheetLocation : global->userStyleSheetLocation;
         settings->setUserStyleSheetLocation(WebCore::KURL(location));
     } else {

@@ -4,8 +4,6 @@
 
         Made the QWebSettings::webGraphic functions static. The implementation was using QWebSettings::global() anyway.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/graphics/qt/ImageQt.cpp:
         (loadResourcePixmap):
 
@@ -14,8 +12,6 @@
         Reviewed by Lars.
 
         Moved the WebCore::Image specific function loadResourcePixmap from qwebsettings.cpp to ImageQt.cpp and made it static.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/graphics/qt/ImageQt.cpp:
         (loadResourcePixmap):
@@ -29,8 +25,6 @@
         in ContextMenu::populate().
         For the actual Qt context menu we traverse this structure after sendContextMenuEvent and create a QMenu
         out of it. That menu is currently not functional anymore though.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/ContextMenu.h:
         * platform/ContextMenuItem.h:
@@ -66,8 +60,6 @@
         Instead now QWebPage::contextMenuEvent() retrieves the QMenu after calling sendContextMenuEvent and calls exec()
         on it.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/qt/ContextMenuQt.cpp:
 
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
@@ -76,8 +68,6 @@
 
         Changed to PlatformMouseEvent constructor to allow construction from a QContextMenuEvent.
         Call sendContextMenuEvent on the event handler from a QWidget::contextMenuEvent re-implementation instead of in mousePressEvent.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/PlatformMouseEvent.h:
         * platform/qt/PlatformMouseEventQt.cpp:
