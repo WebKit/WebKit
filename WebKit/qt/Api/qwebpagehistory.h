@@ -100,8 +100,6 @@ public:
     QWebHistoryItem &operator=(const QWebHistoryItem &other);
     ~QWebHistoryItem();
 
-    QList<QWebHistoryItem*> children() const;
-
     QUrl originalUrl() const;
     QUrl currentUrl() const;
 
