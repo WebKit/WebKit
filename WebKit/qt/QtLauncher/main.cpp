@@ -298,6 +298,7 @@ public:
 
         QToolBar *bar = addToolBar("Navigation");
         urlEdit = new SearchEdit(url.toString());
+        urlEdit->setSizePolicy(QSizePolicy::Expanding, urlEdit->sizePolicy().verticalPolicy());
         connect(urlEdit, SIGNAL(returnPressed()),
                 SLOT(changeLocation()));
         bar->addAction(page->webAction(QWebPage::GoBack));
@@ -308,6 +309,12 @@ public:
         bar->addAction(page->webAction(QWebPage::Copy));
         bar->addAction(page->webAction(QWebPage::Paste));
         bar->addSeparator();
+        bar->addAction(page->webAction(QWebPage::Undo));
+        bar->addAction(page->webAction(QWebPage::Redo));
+
+        addToolBarBreak();
+        bar = addToolBar("Location");
+        bar->addWidget(new QLabel(tr("Location:")));
         bar->addWidget(urlEdit);
 
         hoverLabel = new HoverLabel(this);
