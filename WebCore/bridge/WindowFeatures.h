@@ -29,6 +29,13 @@
 namespace WebCore {
 
 struct WindowFeatures {
+    inline WindowFeatures()
+        : xSet(false), ySet(false), widthSet(false), heightSet(false),
+          menuBarVisible(true), statusBarVisible(true), toolBarVisible(true),
+          locationBarVisible(true), scrollbarsVisible(true), resizable(true),
+          fullscreen(false), dialog(false)
+    {}
+
     float x;
     bool xSet;
     float y;

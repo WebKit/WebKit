@@ -1,3 +1,14 @@
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Maciej.
+
+        For safety provide a default constructor for WindowFeatures().
+        ContextMenuController.cpp: createNewWindow as well as QWebPage need to
+        create a default initialized WindowFeatures object on the fly.
+
+        * bridge/WindowFeatures.h:
+        (WebCore::WindowFeatures::WindowFeatures):
+
 2007-11-07  Simon Hausmann  <shausman@trolltech.com>
 
         Reviewed by Lars.
