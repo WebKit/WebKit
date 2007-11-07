@@ -1625,8 +1625,8 @@ qt-port {
 }
 
 gtk-port {
-    isEmpty(WEBKIT_LIB_DIR):WEBKIT_LIB_DIR=$$[QT_INSTALL_LIBS]
-    isEmpty(WEBKIT_INC_DIR):WEBKIT_INC_DIR=$$[QT_INSTALL_HEADERS]/WebKitGtk
+    isEmpty(WEBKIT_LIB_DIR):WEBKIT_LIB_DIR=/usr/local/lib
+    isEmpty(WEBKIT_INC_DIR):WEBKIT_INC_DIR=/usr/local/include/WebKitGtk
 
     target.path = $$WEBKIT_LIB_DIR
     include($$PWD/../WebKit/gtk/Api/headers.pri)
