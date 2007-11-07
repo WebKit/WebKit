@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        Added some more comments to the API after another round of API review with Lars.
+
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Moved QWebFrame::selectedText() to QWebPage::selectedText().
         
         The currently selected text is a property of the page as a whole.

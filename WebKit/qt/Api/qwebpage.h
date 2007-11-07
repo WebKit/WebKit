@@ -140,18 +140,17 @@ public:
 
     QSize sizeHint() const;
 
-    // ### should be windowTitle
     QString title() const;
     QUrl url() const;
-    // ### should be QWidget::icon
     QPixmap icon() const;
 
     bool isModified() const;
     QUndoStack *undoStack() const;
-    
+
     void setNetworkInterface(QWebNetworkInterface *interface);
     QWebNetworkInterface *networkInterface() const;
 
+    // #### why is this in the page itself?
 #ifndef QT_NO_NETWORKPROXY
     void setNetworkProxy(const QNetworkProxy& proxy);
     QNetworkProxy networkProxy() const;
@@ -186,7 +185,6 @@ public slots:
     void cut();
     void copy();
     void paste();
-    // ### should we have execCommand() or something similar?
 
 signals:
     /**
@@ -234,6 +232,7 @@ signals:
      */
     void initialLayoutComplete();
 
+    // ### call addedToHistory instead, something more signal'ish
     void addToHistory(const QUrl&);
 
     void frameCreated(QWebFrame *frame);
@@ -246,9 +245,9 @@ protected:
     virtual void webActionTriggered(WebAction action, bool checked = false);
 
     virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
-    // ### what does this do?
+    // ### do we need the frame? maybe include "file dialog" in the name
     virtual QString chooseFile(QWebFrame *frame, const QString& oldFile);
-    // ### can we unify the next 3 methods? 
+    // ### can we unify the next 3 methods? do we need the frame?
     virtual void javaScriptAlert(QWebFrame *frame, const QString& msg);
     virtual bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
     virtual bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
