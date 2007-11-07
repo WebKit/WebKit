@@ -1,5 +1,16 @@
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
+        Build fix, reviewed by nobody.
+
+        Fix the Qt build by setting up WindowFeatures before calling
+        createWindow on the Chrome. This is similar to openNewWindow in
+        page/ContextMenuController.cpp
+
+        * Api/qwebpage.cpp:
+        (openNewWindow):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Lars.
 
         Make the setting of letting Javascript access the clipboard configurable through QWebSettings, turn it off by default and turn it on in DumpRenderTree.
