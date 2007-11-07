@@ -1,3 +1,15 @@
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        remove two notImplemented() warnings, as I believe we don't
+        have to implement these methods. Add some (commented out)
+        debug code in one place.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        (WebCore::EditorClientQt::didWriteSelectionToPasteboard):
+
 2007-11-05  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Darin Adler.
