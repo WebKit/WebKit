@@ -1,3 +1,18 @@
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix a bug where CSS rules with :hover in the ancestor chain stopped
+          working after changing the inline style declaration of the ancestor
+
+        Test: fast/css/affected-by-hover-after-style-change.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): If we are not forcing style
+        recalculation for all descendants, preserve any "affected by
+        {hover|active|drag} bits that we may have acquired from them.
+        Also renamed _style to currentStyle.
+
 2007-11-06  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

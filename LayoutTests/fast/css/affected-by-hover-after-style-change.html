@@ -1,0 +1,15 @@
+<style>
+    .bar { width: 100px; height: 100px; background-color: red; }
+    .foo:hover .bar { background-color: green; }
+</style>
+<div class="foo" id="target">
+    <div class="bar"></div>
+</div>
+<script>
+    document.body.offsetLeft;
+    document.getElementById("target").style.left = "0";
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(200, 50);
+        eventSender.mouseMoveTo(210, 50);
+    }
+</script>

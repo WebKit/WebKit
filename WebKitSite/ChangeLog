@@ -1,3 +1,12 @@
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - removed a workaround for the bug fixed in the WebCore part of this
+          patch
+
+        * misc/DatabaseExample.html:
+
 2007-11-04  Timothy Hatcher  <timothy@apple.com>
 
         Land the HTML Editing Toolbar demo from WWDC 2007.

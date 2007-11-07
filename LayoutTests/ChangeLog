@@ -1,3 +1,15 @@
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test that CSS rules with :hover in the ancestor chain continue to work
+          after changing the inline style declaration of the ancestor
+
+        * fast/css/affected-by-hover-after-style-change.html: Added.
+        * platform/mac/fast/css/affected-by-hover-after-style-change-expected.checksum: Added.
+        * platform/mac/fast/css/affected-by-hover-after-style-change-expected.png: Added.
+        * platform/mac/fast/css/affected-by-hover-after-style-change-expected.txt: Added.
+
 2007-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
