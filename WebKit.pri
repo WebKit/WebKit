@@ -11,6 +11,7 @@ qt-port:DEFINES += BUILDING_QT__=1
 qt-port:!building-libs {
     QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
     LIBS += -lQtWebKit
+    DEPENDPATH += $$PWD/WebKit/qt/Api
 }
 gtk-port:CONFIG += link_pkgconfig
 gtk-port:PKGCONFIG += cairo cairo-ft gdk-2.0 gtk+-2.0 libcurl

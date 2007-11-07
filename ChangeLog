@@ -1,3 +1,12 @@
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Mark.
+
+        Add WebKit/qt/Api to the dependency path when building QtLauncher and DumpRenderTree.
+        That means that changes to the public API of the Qt port also trigger a rebuild of the tools.
+
+        * WebKit.pri:
+
 2007-10-03  Lars Knoll  <lars@trolltech.com>
 
         Signed off by olliej.
