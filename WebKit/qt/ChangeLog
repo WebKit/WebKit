@@ -2,6 +2,20 @@
 
         Reviewed by Lars.
 
+        Introduced a central virtual void webActionTriggered(WebAction action) method that is called from various
+        convenience methods such as cut()/copy()/paste().
+
+        * Api/qwebpage.cpp:
+        (QWebPage::goBack):
+        (QWebPage::webActionTriggered):
+        (QWebPage::cut):
+        (QWebPage::copy):
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Restructure the context menu classes for the Qt port. ContextMenu and ContextMenuItem don't store
         QActions/QMenus anymore but just store the action type, tag, title and optionally submenu as created
         in ContextMenu::populate().

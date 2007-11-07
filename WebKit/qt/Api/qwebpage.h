@@ -67,6 +67,32 @@ public:
         NavigationTypeOther
     };
 
+    enum WebAction {
+        NoWebAction = - 1,
+
+        OpenLinkInNewWindow,
+        OpenFrameInNewWindow,
+
+        DownloadLinkToDisk,
+        CopyLinkToClipboard,
+
+        OpenImageInNewWindow,
+        DownloadImageToDisk,
+        CopyImageToClipboard,
+
+        GoBack,
+        GoForward,
+        Stop,
+        Reload,
+
+        Cut,
+        Copy,
+        Paste,
+
+        NumWebActions = Paste
+    };
+
+
     QWebPage(QWidget *parent);
     ~QWebPage();
 
@@ -182,6 +208,8 @@ protected:
     virtual QWebPage *createWindow();
     virtual QWebPage *createModalDialog();
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
+
+    virtual void webActionTriggered(WebAction action, bool checked = false);
 
     virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
     // ### what does this do?
