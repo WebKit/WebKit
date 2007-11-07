@@ -1,3 +1,12 @@
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Mark.
+
+        Fix compilation on Windows with non-cygwin perl. open FILE, "|-" is
+        not supported due to implicit forks, use IPC::Open2 instead.
+
+        * bindings/scripts/IDLParser.pm:
+
 2007-11-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Brady Eidson.

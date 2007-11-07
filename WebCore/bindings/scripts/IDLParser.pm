@@ -23,6 +23,7 @@
 
 package IDLParser;
 
+use IPC::Open2;
 use IDLStructure;
 
 use constant MODE_UNDEF    => 0; # Default mode.
@@ -72,10 +73,10 @@ sub Parse
 
     print " | *** Starting to parse $fileName...\n |\n" unless $beQuiet;
 
-    open FILE, "-|", split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName
-        or die "Could not open $fileName: $!";
-    my @documentContent = <FILE>;
-    close FILE;
+    open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName);
+    close PP_IN;
+    my @documentContent = <PP_OUT>;
+    close PP_OUT;
 
     my $dataAvailable = 0;
 
