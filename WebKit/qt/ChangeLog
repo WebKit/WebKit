@@ -2,6 +2,33 @@
 
         Reviewed by Lars.
 
+        Store a bunch of QActions in QWebPagePrivate, corresponding to QWebPage::WebAction.
+        Added QWebPageContext to hold context sensitive information (for example used by the context menu).
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (webActionForContextMenuAction):
+        (QWebPagePrivate::createContextMenu):
+        (QWebPagePrivate::_q_webActionTriggered):
+        (QWebPage::webActionTriggered):
+        (QWebPage::webAction):
+        (QWebPage::contextMenuEvent):
+        (QWebPageContext::QWebPageContext):
+        (QWebPageContext::operator=):
+        (QWebPageContext::~QWebPageContext):
+        (QWebPageContext::pos):
+        (QWebPageContext::text):
+        (QWebPageContext::linkUrl):
+        (QWebPageContext::imageUrl):
+        (QWebPageContext::image):
+        (QWebPageContext::targetFrame):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Moved the editing actions implemented in keyPressEvent into webActionTriggered.
 
         * Api/qwebpage.cpp:

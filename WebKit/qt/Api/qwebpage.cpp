@@ -53,6 +53,7 @@
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
 #include "HitTestResult.h"
+#include "LocalizedStrings.h"
 
 #include <QDebug>
 #include <QDragEnterEvent>
@@ -88,6 +89,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     insideOpenCall = false;
 
     history.d = new QWebPageHistoryPrivate(page->backForwardList());
+    memset(actions, 0, sizeof(actions));
 }
 
 QWebPagePrivate::~QWebPagePrivate()
@@ -124,15 +126,41 @@ void QWebPagePrivate::createMainFrame()
     }
 }
 
+static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAction action)
+{
+    switch (action) {
+        case WebCore::ContextMenuItemTagOpenLinkInNewWindow: return QWebPage::OpenLinkInNewWindow;
+        case WebCore::ContextMenuItemTagDownloadLinkToDisk: return QWebPage::DownloadLinkToDisk;
+        case WebCore::ContextMenuItemTagCopyLinkToClipboard: return QWebPage::CopyLinkToClipboard;
+        case WebCore::ContextMenuItemTagOpenImageInNewWindow: return QWebPage::OpenImageInNewWindow;
+        case WebCore::ContextMenuItemTagDownloadImageToDisk: return QWebPage::DownloadImageToDisk;
+        case WebCore::ContextMenuItemTagCopyImageToClipboard: return QWebPage::CopyImageToClipboard;
+        case WebCore::ContextMenuItemTagOpenFrameInNewWindow: return QWebPage::OpenFrameInNewWindow;
+        case WebCore::ContextMenuItemTagCopy: return QWebPage::Copy;
+        case WebCore::ContextMenuItemTagGoBack: return QWebPage::GoBack;
+        case WebCore::ContextMenuItemTagGoForward: return QWebPage::GoForward;
+        case WebCore::ContextMenuItemTagStop: return QWebPage::Stop;
+        case WebCore::ContextMenuItemTagReload: return QWebPage::Reload;
+        case WebCore::ContextMenuItemTagCut: return QWebPage::Cut;
+        case WebCore::ContextMenuItemTagPaste: return QWebPage::Paste;
+        default: break;
+    }
+    return QWebPage::NoWebAction;
+}
+
 QMenu *QWebPagePrivate::createContextMenu(QList<WebCore::ContextMenuItem> *items)
 {
     QMenu *menu = new QMenu;
     for (int i = 0; i < items->count(); ++i) {
         const ContextMenuItem &item = items->at(i);
         switch (item.type()) {
-            case WebCore::ActionType:
-                menu->addAction(item.title());
+            case WebCore::ActionType: {
+                QWebPage::WebAction action = webActionForContextMenuAction(item.action());
+                QAction *a = q->webAction(action);
+                if (a)
+                    menu->addAction(a);
                 break;
+            }
             case WebCore::SeparatorType:
                 menu->addSeparator();
                 break;
@@ -162,6 +190,15 @@ redo:
     if (frame->geometry().contains(pos))
         return frame;
     return 0;
+}
+
+void QWebPagePrivate::_q_webActionTriggered(bool checked)
+{
+    QAction *a = qobject_cast<QAction *>(q->sender());
+    if (!a)
+        return;
+    QWebPage::WebAction action = static_cast<QWebPage::WebAction>(a->data().toInt());
+    q->webActionTriggered(action, checked);
 }
 
 QWebPage::QWebPage(QWidget *parent)
@@ -321,11 +358,13 @@ void QWebPage::webActionTriggered(WebAction action, bool checked)
     const char *command = 0;
 
     switch (action) {
-        // ### these need a context...
         case OpenLinkInNewWindow:
+            break;
         case OpenFrameInNewWindow:
         case DownloadLinkToDisk:
         case CopyLinkToClipboard:
+            editor->copyURL(WebCore::KURL(d->currentContext.linkUrl().toString()), d->currentContext.text());
+            break;
         case OpenImageInNewWindow:
         case DownloadImageToDisk:
         case CopyImageToClipboard:
@@ -486,6 +525,114 @@ void QWebPage::paste()
     webActionTriggered(Paste);
 }
 
+QAction *QWebPage::webAction(WebAction action) const
+{
+    if (action == QWebPage::NoWebAction) return 0;
+    if (d->actions[action])
+        return d->actions[action];
+
+    QString text;
+
+    switch (action) {
+        case OpenLinkInNewWindow:
+            text = contextMenuItemTagOpenLinkInNewWindow();
+            break;
+        case OpenFrameInNewWindow:
+            text = contextMenuItemTagOpenFrameInNewWindow();
+            break;
+
+        case DownloadLinkToDisk:
+            text = contextMenuItemTagDownloadLinkToDisk();
+            break;
+        case CopyLinkToClipboard:
+            text = contextMenuItemTagCopyLinkToClipboard();
+            break;
+
+        case OpenImageInNewWindow:
+            text = contextMenuItemTagOpenImageInNewWindow();
+            break;
+        case DownloadImageToDisk:
+            text = contextMenuItemTagDownloadImageToDisk();
+            break;
+        case CopyImageToClipboard:
+            text = contextMenuItemTagCopyImageToClipboard();
+            break;
+
+        case GoBack:
+            text = contextMenuItemTagGoBack();
+            break;
+        case GoForward:
+            text = contextMenuItemTagGoForward();
+            break;
+        case Stop:
+            text = contextMenuItemTagStop();
+            break;
+        case Reload:
+            text = contextMenuItemTagReload();
+            break;
+
+        case Cut:
+            text = contextMenuItemTagCut();
+            break;
+        case Copy:
+            text = contextMenuItemTagCopy();
+            break;
+        case Paste:
+            text = contextMenuItemTagPaste();
+            break;
+
+        case Undo:
+            text = tr("Undo");
+            break;
+        case Redo:
+            text = tr("Redo");
+            break;
+        case MoveToNextChar:
+        case MoveToPreviousChar:
+        case MoveToNextWord:
+        case MoveToPreviousWord:
+        case MoveToNextLine:
+        case MoveToPreviousLine:
+        case MoveToStartOfLine:
+        case MoveToEndOfLine:
+        case MoveToStartOfBlock:
+        case MoveToEndOfBlock:
+        case MoveToStartOfDocument:
+        case MoveToEndOfDocument:
+        case SelectNextChar:
+        case SelectPreviousChar:
+        case SelectNextWord:
+        case SelectPreviousWord:
+        case SelectNextLine:
+        case SelectPreviousLine:
+        case SelectStartOfLine:
+        case SelectEndOfLine:
+        case SelectStartOfBlock:
+        case SelectEndOfBlock:
+        case SelectStartOfDocument:
+        case SelectEndOfDocument:
+        case DeleteStartOfWord:
+        case DeleteEndOfWord:
+            break; // ####
+
+        case NoWebAction:
+            return 0;
+    }
+
+    if (text.isEmpty())
+        return 0;
+
+    QAction *a = new QAction(d->q);
+    a->setText(text);
+    a->setData(action);
+
+    connect(a, SIGNAL(triggered(bool)),
+            this, SLOT(_q_webActionTriggered(bool)));
+
+    d->actions[action] = a;
+    return a;
+}
+
 /*!
   Returns true if the page contains unsubmitted form data.
 */
@@ -627,12 +774,16 @@ void QWebPage::contextMenuEvent(QContextMenuEvent *ev)
     frame->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
     ContextMenu *menu = d->page->contextMenuController()->contextMenu();
 
+    QWebPageContext oldContext = d->currentContext;
+    d->currentContext = QWebPageContext(menu->hitTestResult());
+
     QList<ContextMenuItem> *items = menu->platformDescription();
     QMenu *qmenu = d->createContextMenu(items);
     if (qmenu) {
         qmenu->exec(ev->globalPos());
         delete qmenu;
     }
+    d->currentContext = oldContext;
 }
 
 void QWebPage::wheelEvent(QWheelEvent *ev)
@@ -1038,6 +1189,98 @@ quint64 QWebPage::totalBytes() const {
 
 quint64 QWebPage::bytesReceived() const {
     return d->m_totalBytes;
+}
+
+QWebPageContext::QWebPageContext(const WebCore::HitTestResult &hitTest)
+    : d(new QWebPageContextPrivate)
+{
+    d->pos = hitTest.point();
+    d->text = hitTest.textContent();
+    d->linkUrl = hitTest.absoluteLinkURL().url();
+    d->imageUrl = hitTest.absoluteImageURL().url();
+    WebCore::Image *img = hitTest.image();
+    if (img) {
+        QPixmap *pix = img->getPixmap();
+        if (pix)
+            d->image = *pix;
+    }
+    WebCore::Frame *frame = hitTest.targetFrame();
+    if (frame)
+        d->targetFrame = frame->view()->qwebframe();
+}
+
+QWebPageContext::QWebPageContext()
+    : d(0)
+{
+}
+
+QWebPageContext::QWebPageContext(const QWebPageContext &other)
+    : d(0)
+{
+    if (other.d)
+        d = new QWebPageContextPrivate(*other.d);
+}
+
+QWebPageContext &QWebPageContext::operator=(const QWebPageContext &other)
+{
+    if (this != &other) {
+        if (other.d) {
+            if (!d)
+                d = new QWebPageContextPrivate;
+            *d = *other.d;
+        } else {
+            delete d;
+            d = 0;
+        }
+    }
+    return *this;
+}
+
+QWebPageContext::~QWebPageContext()
+{
+    delete d;
+}
+
+QPoint QWebPageContext::pos() const
+{
+    if (!d)
+        return QPoint();
+    return d->pos;
+}
+
+QString QWebPageContext::text() const
+{
+    if (!d)
+        return QString();
+    return d->text;
+}
+
+QUrl QWebPageContext::linkUrl() const
+{
+    if (!d)
+        return QUrl();
+    return d->linkUrl;
+}
+
+QUrl QWebPageContext::imageUrl() const
+{
+    if (!d)
+        return QUrl();
+    return d->linkUrl;
+}
+
+QPixmap QWebPageContext::image() const
+{
+    if (!d)
+        return QPixmap();
+    return d->image;
+}
+
+QWebFrame *QWebPageContext::targetFrame() const
+{
+    if (!d)
+        return 0;
+    return d->targetFrame;
 }
 
 #include "moc_qwebpage.cpp"
