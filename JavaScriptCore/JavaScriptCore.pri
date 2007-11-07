@@ -125,5 +125,5 @@ kjsbison.input = KJSBISON
 kjsbison.variable_out = GENERATED_SOURCES
 kjsbison.dependency_type = TYPE_C
 kjsbison.CONFIG = target_predeps
-kjsbison.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+kjsbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
 QMAKE_EXTRA_COMPILERS += kjsbison

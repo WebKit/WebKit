@@ -1,3 +1,11 @@
+2007-11-07  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Lars.
+
+        Fix "nmake clean" for the Qt/Windows build by replacing tmp/ with a variable that ends with the correct type of slash/backslash depending on the choice of compiler/make tool.
+
+        * WebCore.pro:
+
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.

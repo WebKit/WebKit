@@ -1421,7 +1421,7 @@ gtk-port:SOURCES += \
         svgnames_a.dependency_type = TYPE_C
         svgnames_a.CONFIG = target_predeps
         svgnames_a.variable_out = GENERATED_SOURCES
-        svgnames_a.clean = ${QMAKE_FILE_OUT} tmp/SVGNames.h
+        svgnames_a.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}SVGNames.h
         QMAKE_EXTRA_COMPILERS += svgnames_a
         svgnames_b.output = tmp/SVGElementFactory.cpp
         svgnames_b.commands = @echo -n ''
@@ -1429,7 +1429,7 @@ gtk-port:SOURCES += \
         svgnames_b.depends = tmp/SVGNames.cpp
         svgnames_b.CONFIG = target_predeps
         svgnames_b.variable_out = GENERATED_SOURCES
-        svgnames_b.clean += tmp/SVGElementFactory.h ${QMAKE_FILE_OUT}
+        svgnames_b.clean += ${QMAKE_VAR_OBJECTS_DIR_WTR}SVGElementFactory.h ${QMAKE_FILE_OUT}
         QMAKE_EXTRA_COMPILERS += svgnames_b
 
         # GENERATOR 5-D:
@@ -1439,7 +1439,7 @@ gtk-port:SOURCES += \
         xlinknames.dependency_type = TYPE_C
         xlinknames.CONFIG = target_predeps
         xlinknames.variable_out = GENERATED_SOURCES
-        xlinknames.clean = ${QMAKE_FILE_OUT} tmp/XLinkNames.h
+        xlinknames.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}XLinkNames.h
         QMAKE_EXTRA_COMPILERS += xlinknames
 
     # GENERATOR 6-A:
@@ -1448,7 +1448,7 @@ gtk-port:SOURCES += \
     cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSPROPERTIES > tmp/${QMAKE_FILE_BASE}.in && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
     cssprops.depend = ${QMAKE_FILE_NAME} SVGCSSPROPERTIES
-    cssprops.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+    cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
     QMAKE_EXTRA_COMPILERS += cssprops
 
     # GENERATOR 6-B:
@@ -1457,7 +1457,7 @@ gtk-port:SOURCES += \
     cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSVALUES > tmp/${QMAKE_FILE_BASE}.in && cd tmp && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
     cssvalues.depend = ${QMAKE_FILE_NAME} SVGCSSVALUES
-    cssvalues.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+    cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
     QMAKE_EXTRA_COMPILERS += cssvalues
 } else {
     # GENERATOR 6-A:
@@ -1465,7 +1465,7 @@ gtk-port:SOURCES += \
     cssprops.input = WALDOCSSPROPS
     cssprops.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
-    cssprops.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+    cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
     QMAKE_EXTRA_COMPILERS += cssprops
 
     # GENERATOR 6-B:
@@ -1473,7 +1473,7 @@ gtk-port:SOURCES += \
     cssvalues.input = WALDOCSSVALUES
     cssvalues.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
-    cssvalues.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+    cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
     QMAKE_EXTRA_COMPILERS += cssvalues
 }
 
@@ -1484,7 +1484,7 @@ idl.variable_out = GENERATED_SOURCES
 idl.input = IDL_BINDINGS
 idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/ksvg2/svg --outputdir tmp --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 idl.CONFIG += target_predeps
-idl.clean = tmp/JS${QMAKE_FILE_BASE}.h ${QMAKE_FILE_OUT}
+idl.clean = ${QMAKE_VAR_OBJECTS_DIR_WTR}JS${QMAKE_FILE_BASE}.h ${QMAKE_FILE_OUT}
 QMAKE_EXTRA_COMPILERS += idl
 
 # GENERATOR 2-A: LUT creator
@@ -1520,7 +1520,7 @@ cssbison.input = CSSBISON
 cssbison.CONFIG = target_predeps
 cssbison.dependency_type = TYPE_C
 cssbison.variable_out = GENERATED_SOURCES
-cssbison.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+cssbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
 QMAKE_EXTRA_COMPILERS += cssbison
 #PRE_TARGETDEPS += tmp/CSSGrammar.cpp
 grammar_h_dep.target = tmp/CSSParser.o
@@ -1534,7 +1534,7 @@ htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
 htmlnames.variable_out = GENERATED_SOURCES
-htmlnames.clean = ${QMAKE_FILE_OUT} tmp/HTMLNames.h
+htmlnames.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}HTMLNames.h
 QMAKE_EXTRA_COMPILERS += htmlnames
 
 # GENERATOR 5-B:
@@ -1544,7 +1544,7 @@ xmlnames.input = XML_NAMES
 xmlnames.dependency_type = TYPE_C
 xmlnames.CONFIG = target_predeps
 xmlnames.variable_out = GENERATED_SOURCES
-xmlnames.clean = ${QMAKE_FILE_OUT} tmp/XMLNames.h
+xmlnames.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}XMLNames.h
 QMAKE_EXTRA_COMPILERS += xmlnames
 
 
@@ -1579,7 +1579,7 @@ stylesheets.commands = perl $$PWD/css/make-css-file-arrays.pl --preprocessor \"$
 stylesheets.input = STYLESHEETS_EMBED
 stylesheets.CONFIG = target_predeps
 stylesheets.variable_out = GENERATED_SOURCES
-stylesheets.clean = ${QMAKE_FILE_OUT} tmp/UserAgentStyleSheets.h
+stylesheets.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}UserAgentStyleSheets.h
 QMAKE_EXTRA_COMPILERS += stylesheets
 
 # GENERATOR 10: XPATH grammar
@@ -1590,7 +1590,7 @@ xpathbison.input = XPATHBISON
 xpathbison.CONFIG = target_predeps
 xpathbison.dependency_type = TYPE_C
 xpathbison.variable_out = GENERATED_SOURCES
-xpathbison.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
+xpathbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
 QMAKE_EXTRA_COMPILERS += xpathbison
 
 qt-port {
