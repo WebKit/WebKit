@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Added cut/copy/paste actions to the toolbar of QtLauncher
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Started working on keeping the state of the navigation actions up-to-date.
 
         * Api/qwebpage.cpp:

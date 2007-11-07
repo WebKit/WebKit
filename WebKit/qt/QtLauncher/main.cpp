@@ -303,6 +303,11 @@ public:
         bar->addAction(page->webAction(QWebPage::GoBack));
         bar->addAction(page->webAction(QWebPage::Stop));
         bar->addAction(page->webAction(QWebPage::GoForward));
+        bar->addSeparator();
+        bar->addAction(page->webAction(QWebPage::Cut));
+        bar->addAction(page->webAction(QWebPage::Copy));
+        bar->addAction(page->webAction(QWebPage::Paste));
+        bar->addSeparator();
         bar->addWidget(urlEdit);
 
         hoverLabel = new HoverLabel(this);
