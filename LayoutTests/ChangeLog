@@ -1,7 +1,7 @@
 2007-11-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Finished moving editing/pasteboard/5583362.html to platform/mac (this test was crashing in ObjC test plugin,
-        because it couldn't find its resources.
+        because it couldn't find its resources).
 
         * editing/resources/plaintext-pasteboard-data.dat: Removed.
         * platform/mac/editing/resources: Added.
