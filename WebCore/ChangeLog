@@ -2,6 +2,18 @@
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
+        Apple CodingStyle fixes
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::documentFragment):
+
+2007-11-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
         Implement Pasteboard::writeURL()
         * The URL currently gets written as text/plain and text/uri-list.
         The win and mac port have some more types which we currently do

@@ -55,9 +55,9 @@ Pasteboard* Pasteboard::generalPasteboard()
     return pasteboard;
 }
 
-void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame)
 {
-    QMimeData *md = new QMimeData;
+    QMimeData* md = new QMimeData;
     md->setText(frame->selectedText());
     md->setHtml(createMarkup(selectedRange, 0, AnnotateForInterchange));
     QApplication::clipboard()->setMimeData(md);
@@ -68,7 +68,7 @@ bool Pasteboard::canSmartReplace()
     return false;
 }
 
-String Pasteboard::plainText(Frame* frame)
+String Pasteboard::plainText(Frame*)
 {
     return QApplication::clipboard()->text();
 }
@@ -76,7 +76,7 @@ String Pasteboard::plainText(Frame* frame)
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
                                                           bool allowPlainText, bool& chosePlainText)
 {
-    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+    const QMimeData* mimeData = QApplication::clipboard()->mimeData();
 
     chosePlainText = false;
 
