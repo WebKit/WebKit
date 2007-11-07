@@ -201,6 +201,39 @@ void QWebPagePrivate::_q_webActionTriggered(bool checked)
     q->webActionTriggered(action, checked);
 }
 
+void QWebPagePrivate::updateAction(QWebPage::WebAction action)
+{
+    QAction *a = actions[action];
+    if (!a || !mainFrame)
+        return;
+
+    WebCore::FrameLoader *loader = mainFrame->d->frame->loader();
+
+    bool enabled = a->isEnabled();
+
+    switch (action) {
+        case QWebPage::GoBack:
+            enabled = loader->canGoBackOrForward(-1);
+            break;
+        case QWebPage::GoForward:
+            enabled = loader->canGoBackOrForward(1);
+            break;
+        case QWebPage::Stop:
+            enabled = loader->isLoading();
+            break;
+        default: break;
+    }
+
+    a->setEnabled(enabled);
+}
+
+void QWebPagePrivate::updateNavigationActions()
+{
+    updateAction(QWebPage::GoBack);
+    updateAction(QWebPage::GoForward);
+    updateAction(QWebPage::Stop);
+}
+
 QWebPage::QWebPage(QWidget *parent)
     : QWidget(parent)
     , d(new QWebPagePrivate(this))
@@ -630,6 +663,7 @@ QAction *QWebPage::webAction(WebAction action) const
             this, SLOT(_q_webActionTriggered(bool)));
 
     d->actions[action] = a;
+    d->updateAction(action);
     return a;
 }
 

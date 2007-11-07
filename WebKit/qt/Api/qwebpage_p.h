@@ -87,6 +87,8 @@ public:
 
     void _q_onLoadProgressChanged(int);
     void _q_webActionTriggered(bool checked);
+    void updateAction(QWebPage::WebAction action);
+    void updateNavigationActions();
 
     WebCore::ChromeClientQt *chromeClient;
     WebCore::ContextMenuClientQt *contextMenuClient;

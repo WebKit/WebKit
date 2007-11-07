@@ -2,6 +2,24 @@
 
         Reviewed by Lars.
 
+        Started working on keeping the state of the navigation actions up-to-date.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateAction):
+        (QWebPagePrivate::updateNavigationActions):
+        (QWebPage::webAction):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientQt::didPerformFirstNavigation):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Use the navigational web actions in the toolbar
 
         * QtLauncher/main.cpp:
