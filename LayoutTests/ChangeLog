@@ -1,3 +1,10 @@
+2007-11-06  Adam Roben  <aroben@apple.com>
+
+        Move a Mac-specific test to platform/mac
+
+        * editing/pasteboard/5583362.html: Removed.
+        * platform/mac/editing/pasteboard/5583362.html: Added.
+
 2007-11-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam.
