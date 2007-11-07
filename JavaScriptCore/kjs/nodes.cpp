@@ -1701,11 +1701,6 @@ static inline JSValue* add(ExecState* exec, JSValue* v1, JSValue *v2)
         if (value.isNull())
             return throwOutOfMemoryError(exec);
         return jsString(value);
-    } else if (t1 == StringType) { // common js idiom "" + object
-        UString value = static_cast<StringImp*>(v1)->value() + v2->toString(exec);
-        if (value.isNull())
-            return throwOutOfMemoryError(exec);
-        return jsString(value);
     }
     
     // All other cases are pretty uncommon

@@ -1,3 +1,14 @@
+2007-11-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        This fixes a regressed layout test for string + object
+        
+        SunSpider claims this was an overall 0.3% speedup, although some individual tests were slower.
+
+        * kjs/nodes.cpp:
+        (KJS::add): remove erroneous "fast path" for string + *
+
 2007-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.
