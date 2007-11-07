@@ -1,5 +1,13 @@
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Coding style fix, don't use inline explicitly.
+
+        * bridge/WindowFeatures.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Maciej.
 
         For safety provide a default constructor for WindowFeatures().
