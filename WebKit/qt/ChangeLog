@@ -1,3 +1,21 @@
+2007-11-07  Holger Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Use correct UserAgent string.
+        
+        * Only have one User Agent String and this place is QWebPage
+        * QWebPage::open -> QWebNetworkRequest -> QWebPage::open ->
+        ResourceRequest -> FrameLoader::load -> QWebNetworkRequest
+        * ResourceRequest is != 0 when getting called from WebCore, we
+        will only do requests when coming from WebCore and then we can
+        use the User-Agent set with the help of the FrameLoaderClient
+        * We might want to change QWebNetworkRequest a bit
+        
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkRequestPrivate::init):
+
 2007-11-07  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

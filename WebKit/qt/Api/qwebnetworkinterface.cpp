@@ -115,12 +115,11 @@ void QWebNetworkRequestPrivate::init(const WebCore::ResourceRequest &resourceReq
 void QWebNetworkRequestPrivate::init(const QString &method, const QUrl &url, const WebCore::ResourceRequest *resourceRequest)
 {
     httpHeader = QHttpRequestHeader(method, url.toString(QUrl::RemoveScheme|QUrl::RemoveAuthority));
-    httpHeader.setValue(QLatin1String("User-Agent"),
-                         QLatin1String("Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)"));
     httpHeader.setValue(QLatin1String("Connection"), QLatin1String("Keep-Alive"));
     setURL(url);
 
     if (resourceRequest) {
+        httpHeader.setValue(QLatin1String("User-Agent"), resourceRequest->httpUserAgent());
         const QString scheme = url.scheme().toLower();
         if (scheme == QLatin1String("http") || scheme == QLatin1String("https")) {
             QString cookies = WebCore::cookies(resourceRequest->url());
