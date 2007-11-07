@@ -724,7 +724,7 @@ void Element::recalcStyle(StyleChange change)
             return;
         }
 
-        if (newStyle && change != Force && styleChangeType() != FullStyleChange && document()->usesDescendantRules()) {
+        if (currentStyle && newStyle) {
             // Preserve "affected by" bits that were propagated to us from descendants
             if (currentStyle->affectedByHoverRules())
                 newStyle->setAffectedByHoverRules(true);

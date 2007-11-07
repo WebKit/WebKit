@@ -1,3 +1,17 @@
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15887
+          REGRESSION (r27576): Crash in RenderStyle::affectedByHoverRules clicking link on Digg
+
+        Test: fast/css/display-none-inline-style-change-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Fixed the crash by null-checking
+        the current style and removed other checks that are not strictly
+        necessary.
+
 2007-11-07  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Kevin Decker.

@@ -1,5 +1,15 @@
 2007-11-07  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15887
+          REGRESSION (r27576): Crash in RenderStyle::affectedByHoverRules clicking link on Digg
+
+        * fast/css/display-none-inline-style-change-crash-expected.txt: Added.
+        * fast/css/display-none-inline-style-change-crash.html: Added.
+
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - test that CSS rules with :hover in the ancestor chain continue to work
