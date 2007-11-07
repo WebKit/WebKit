@@ -16,7 +16,9 @@ QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 
 isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/../..
 include($$OUTPUT_DIR/config.pri)
-
+OBJECTS_DIR = tmp
+OBJECTS_DIR_WTR = $$OBJECTS_DIR/
+win32-*: OBJECTS_DIR_WTR ~= s|/|\|
 include($$PWD/../JavaScriptCore.pri)
 
 # Hack!  Fix this.

@@ -1,3 +1,12 @@
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by nobody, Qt/Windows build fix.
+
+        JavaScriptCore.pri expects OBJECTS_DIR to be set, so set it in
+        testkjs.pro, too, where it's included from.
+
+        * kjs/testkjs.pro:
+
 2007-11-07  Simon Hausmann  <shausman@trolltech.com>
 
         Reviewed by Lars.
