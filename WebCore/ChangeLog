@@ -2,6 +2,21 @@
 
         Reviewed by Simon.
 
+        Use the correct function calls to convert a selection to
+        HTML or plain text.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::writeRange):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Some more clipboard fixes.
         
         We have to set things immediately on the QClipBoard if the

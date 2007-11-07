@@ -38,6 +38,7 @@
 #include "Image.h"
 #include "IntPoint.h"
 #include "KURL.h"
+#include "markup.h"
 #include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
@@ -145,7 +146,7 @@ bool ClipboardQt::setData(const String& type, const String& data)
 {
     if (policy() != ClipboardWritable)
         return false;
-    
+
     if (!m_writableData)
         m_writableData = new QMimeData;
     QByteArray array(reinterpret_cast<const char*>(data.characters()),
@@ -272,8 +273,8 @@ void ClipboardQt::writeRange(Range* range, Frame* frame)
     
     if (!m_writableData)
         m_writableData = new QMimeData;
-    m_writableData->setText(range->text());
-    m_writableData->setHtml(range->toHTML());
+    m_writableData->setText(frame->selectedText());
+    m_writableData->setHtml(createMarkup(range, 0, AnnotateForInterchange));
     if (!isForDragging())
         QApplication::clipboard()->setMimeData(m_writableData);
 }
