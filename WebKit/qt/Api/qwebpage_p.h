@@ -47,6 +47,8 @@ public:
 
     QWebFrame *frameAt(const QPoint &pos) const;
 
+    void _q_onLoadProgressChanged(int);
+
     WebCore::ChromeClientQt *chromeClient;
     WebCore::ContextMenuClientQt *contextMenuClient;
     WebCore::EditorClientQt *editorClient;

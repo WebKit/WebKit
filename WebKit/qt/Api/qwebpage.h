@@ -178,10 +178,6 @@ signals:
 
     void frameCreated(QWebFrame *frame);
 
-private slots:
-    // ### should go!
-    void onLoadProgressChanged(int);
-
 protected:
     virtual QWebPage *createWindow();
     virtual QWebPage *createModalDialog();
@@ -218,6 +214,7 @@ protected:
     virtual void dropEvent(QDropEvent *);
 
 private:
+    Q_PRIVATE_SLOT(d, void _q_onLoadProgressChanged(int))
     friend class QWebFrame;
     friend class QWebPagePrivate;
     friend class WebCore::ChromeClientQt;

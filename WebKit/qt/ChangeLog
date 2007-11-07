@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Turned onLoadProgressChanged into a real private slot.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::QWebPage):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Make QWebHistory an explicitly shared object, returned as a pointer by QWebPage::history().
 
         * Api/qwebpage.cpp:
