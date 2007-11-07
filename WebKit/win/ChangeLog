@@ -1,3 +1,13 @@
+2007-11-07  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5569268> Crash when opening any FTP site in second tab/window
+
+        Reviewed by Sam.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Set the ftpDirectoryTemplatePath for every
+        Page, not just the first one.
+
 2007-11-06  Adam Roben  <aroben@apple.com>
 
         Change WebLocalizableStrings to take UTF-8 C strings

@@ -33,6 +33,9 @@ namespace WebCore {
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
 {
+    if (filePath.isEmpty())
+        return 0;
+
     String nullifiedPath = filePath;
     FILE* fileDescriptor = 0;
     if (_wfopen_s(&fileDescriptor, nullifiedPath.charactersWithNullTermination(), TEXT("r+b")) || !fileDescriptor) {

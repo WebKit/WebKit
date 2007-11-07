@@ -1,3 +1,15 @@
+2007-11-07  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5569268> Crash when opening any FTP site in second tab/window
+
+        Reviewed by Sam.
+
+        No test possible.
+
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile): Bail if we get an
+        empty path, because _wfopen_s will crash if we pass it a null pointer.
+
 2007-11-07  David Kilzer  <ddkilzer@apple.com>
 
         WebKit confuses width/height for Media Queries device-aspect-ratio evaluation
