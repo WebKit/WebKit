@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Renamed QWebPage::userAgentStringForUrl(url) to QWebPage::userAgentFor(url);
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::userAgent):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Renamed QWebPage::webActionTriggered to QWebPage::triggerAction
 
         * Api/qwebpage.cpp:

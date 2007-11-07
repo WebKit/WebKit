@@ -237,8 +237,7 @@ protected:
     virtual bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
     virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
 
-    // ### should the be here?
-    virtual QString userAgentStringForUrl(const QUrl& forUrl) const;
+    virtual QString userAgentFor(const QUrl& url) const;
 
     virtual void resizeEvent(QResizeEvent*);
     virtual void paintEvent(QPaintEvent*);
