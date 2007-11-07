@@ -1,3 +1,34 @@
+2007-11-06  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dave Kilzer.
+
+        Move Mac files from WebKit into WebKit/mac.
+
+        * Carbon: Copied from WebKit/Carbon.
+        * ChangeLog: Copied from WebKit/ChangeLog.
+        * ChangeLog-2002-12-03: Copied from WebKit/ChangeLog-2002-12-03.
+        * ChangeLog-2006-02-09: Copied from WebKit/ChangeLog-2006-02-09.
+        * ChangeLog-2007-10-14: Copied from WebKit/ChangeLog-2007-10-14.
+        * Configurations: Copied from WebKit/Configurations.
+        * DOM: Copied from WebKit/DOM.
+        * DefaultDelegates: Copied from WebKit/DefaultDelegates.
+        * ForwardingHeaders: Copied from WebKit/ForwardingHeaders.
+        * History: Copied from WebKit/History.
+        * Info.plist: Copied from WebKit/Info.plist.
+        * MigrateHeaders.make: Copied from WebKit/MigrateHeaders.make.
+        * Misc: Copied from WebKit/Misc.
+        * Panels: Copied from WebKit/Panels.
+        * Plugins: Copied from WebKit/Plugins.
+        * PublicHeaderChangesFromTiger.txt: Copied from WebKit/PublicHeaderChangesFromTiger.txt.
+        * Resources: Copied from WebKit/Resources.
+        * WebCoreSupport: Copied from WebKit/WebCoreSupport.
+        * WebInspector: Copied from WebKit/WebInspector.
+        * WebKit.exp: Copied from WebKit/WebKit.exp.
+        * WebKit.order: Copied from WebKit/WebKit.order.
+        * WebKitPrefix.h: Copied from WebKit/WebKitPrefix.h.
+        * WebView: Copied from WebKit/WebView.
+        * icu: Copied from WebKit/icu.
+
 2007-11-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

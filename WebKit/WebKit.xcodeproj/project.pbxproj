@@ -348,7 +348,7 @@
 		35081D9502B6D4D80ACA2ACA /* WebHTMLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHTMLView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081D9602B6D4D80ACA2ACA /* WebHTMLViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081DAE02B6D4F50ACA2ACA /* WebDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		35F3577F0198AAB80ACA1520 /* English */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		35F3577F0198AAB80ACA1520 /* English */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = text.plist.strings; name = English; path = ../English.lproj/Localizable.strings; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944606B020F50ED0ECA1767 /* WebDynamicScrollBarsView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDynamicScrollBarsView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944606C020F50ED0ECA1767 /* WebDynamicScrollBarsView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDynamicScrollBarsView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944606E020F50ED0ECA1767 /* WebPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferences.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -455,7 +455,7 @@
 		8467275D0367158500CA2ACA /* WebPluginController.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginController.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84723BE3056D719E0044BFEA /* WebKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84723BE4056D719E0044BFEA /* WebKeyGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebKeyGenerator.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		8476113306EF82DB00AB2914 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebViewEditingContextMenu.nib; sourceTree = "<group>"; };
+		8476113306EF82DB00AB2914 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = ../English.lproj/WebViewEditingContextMenu.nib; sourceTree = "<group>"; };
 		848DFF840365FE6A00CA2ACA /* WebPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPlugin.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		848DFF850365FE6A00CA2ACA /* WebPluginContainer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -477,7 +477,7 @@
 		933D659903413FF2008635CE /* WebClipView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebClipView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		933D659A03413FF2008635CE /* WebClipView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebClipView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D17C0365BF35008635CE /* English */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = wrapper.nib; name = English; path = Panels/English.lproj/WebAuthenticationPanel.nib; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9345D4E80365C58D008635CE /* English */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebJavaScriptTextInputPanel.nib; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		9345D4E80365C58D008635CE /* English */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = wrapper.nib; name = English; path = ../English.lproj/WebJavaScriptTextInputPanel.nib; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebJavaScriptTextInputPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebJavaScriptTextInputPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345DDAE0365FB27008635CE /* WebNSWindowExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSWindowExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -522,13 +522,13 @@
 		ED21B9810528F7AA003299AC /* WebDocumentInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED2B2474033A2DA800C1A526 /* WebNSPasteboardExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPasteboardExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED2B2475033A2DA800C1A526 /* WebNSPasteboardExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSPasteboardExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		ED3B48DE0CC51F7E00DFF1EB /* StringsNotToBeLocalized.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = StringsNotToBeLocalized.txt; sourceTree = "<group>"; };
+		ED3B48DE0CC51F7E00DFF1EB /* StringsNotToBeLocalized.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ../StringsNotToBeLocalized.txt; sourceTree = "<group>"; };
 		ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSAttributedStringExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSAttributedStringExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDataExtrasPrivate.h; sourceTree = "<group>"; };
 		EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPrintOperationExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		EDD6132B0AED9990000B75CA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebViewEditingContextMenuOld.nib; sourceTree = "<group>"; };
+		EDD6132B0AED9990000B75CA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = ../English.lproj/WebViewEditingContextMenuOld.nib; sourceTree = "<group>"; };
 		EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferenceKeysPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSArrayExtras.h; sourceTree = "<group>"; };
 		EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSArrayExtras.m; sourceTree = "<group>"; };
@@ -1331,7 +1331,7 @@
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
-			projectDirPath = "";
+			projectDirPath = mac;
 			projectRoot = "";
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
