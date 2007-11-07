@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Changed the getter functions in QWebSettings to transparently resolve against the default settings.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::fontSize):
+        (QWebSettings::fontFamily):
+        (QWebSettings::testAttribute):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added explicit functions for resetting the font sizes and font families.
 
         * Api/qwebsettings.cpp:

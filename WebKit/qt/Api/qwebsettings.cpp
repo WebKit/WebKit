@@ -183,7 +183,12 @@ void QWebSettings::setFontSize(FontSize type, int size)
 
 int QWebSettings::fontSize(FontSize type) const
 {
-    return d->fontSizes.value(type);
+    int defaultValue = 0;
+    if (d->settings) {
+        QWebSettingsPrivate *global = QWebSettings::defaultSettings()->d;
+        defaultValue = global->fontSizes.value(type);
+    }
+    return d->fontSizes.value(type, defaultValue);
 }
 
 void QWebSettings::resetFontSize(FontSize type)
@@ -244,7 +249,12 @@ void QWebSettings::setFontFamily(FontType type, const QString &family)
 
 QString QWebSettings::fontFamily(FontType type) const
 {
-    return d->fontFamilies.value(type);
+    QString defaultValue;
+    if (d->settings) {
+        QWebSettingsPrivate *global = QWebSettings::defaultSettings()->d;
+        defaultValue = global->fontFamilies.value(type);
+    }
+    return d->fontFamilies.value(type, defaultValue);
 }
 
 void QWebSettings::resetFontFamily(FontType type)
@@ -261,7 +271,12 @@ void QWebSettings::setAttribute(WebAttribute attr, bool on)
 
 bool QWebSettings::testAttribute(WebAttribute attr) const
 {
-    return d->attributes.value(attr);
+    bool defaultValue = false;
+    if (d->settings) {
+        QWebSettingsPrivate *global = QWebSettings::defaultSettings()->d;
+        defaultValue = global->attributes.value(attr);
+    }
+    return d->attributes.value(attr, defaultValue);
 }
 
 void QWebSettings::clearAttribute(WebAttribute attr)
