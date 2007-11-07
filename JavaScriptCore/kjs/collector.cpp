@@ -208,28 +208,27 @@ template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
   // don't spend any time debugging cases where we allocate inside an object's
   // deallocation code.
 
-  // collect if needed
   size_t numLiveObjects = heap.numLiveObjects;
-  size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
-  size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
-  const size_t newCost = heapType == PrimaryHeap ? numNewObjects + heap.extraCost : numNewObjects;
+  size_t usedBlocks = heap.usedBlocks;
+  size_t i = heap.firstBlockWithPossibleSpace;
 
-  if (newCost >= ALLOCATIONS_PER_COLLECTION && newCost >= numLiveObjectsAtLastCollect) {
-      collect();
-      numLiveObjects = heap.numLiveObjects;
+  // if we have a huge amount of extra cost, we'll try to collect even if we still have
+  // free cells left.
+  if (heapType == PrimaryHeap && heap.extraCost > ALLOCATIONS_PER_COLLECTION) {
+      size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
+      size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
+      const size_t newCost = heapType == PrimaryHeap ? numNewObjects + heap.extraCost : numNewObjects;
+      if (newCost >= ALLOCATIONS_PER_COLLECTION && newCost >= numLiveObjectsAtLastCollect)
+          goto collect;
   }
-  
+
   ASSERT(heap.operationInProgress == NoOperation);
 #ifndef NDEBUG
   // FIXME: Consider doing this in NDEBUG builds too (see comment above).
   heap.operationInProgress = Allocation;
 #endif
-  
-  // slab allocator
-  
-  size_t usedBlocks = heap.usedBlocks;
 
-  size_t i = heap.firstBlockWithPossibleSpace;
+scan:
   Block* targetBlock;
   size_t targetBlockUsedCells;
   if (i != usedBlocks) {
@@ -238,15 +237,35 @@ template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
     ASSERT(targetBlockUsedCells <= HeapConstants<heapType>::cellsPerBlock);
     while (targetBlockUsedCells == HeapConstants<heapType>::cellsPerBlock) {
       if (++i == usedBlocks)
-        goto allocateNewBlock;
+        goto collect;
       targetBlock = (Block*)heap.blocks[i];
       targetBlockUsedCells = targetBlock->usedCells;
       ASSERT(targetBlockUsedCells <= HeapConstants<heapType>::cellsPerBlock);
     }
     heap.firstBlockWithPossibleSpace = i;
   } else {
-allocateNewBlock:
-    // didn't find one, need to allocate a new block
+collect:
+    size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
+    size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
+    const size_t newCost = heapType == PrimaryHeap ? numNewObjects + heap.extraCost : numNewObjects;
+      
+    if (newCost >= ALLOCATIONS_PER_COLLECTION && newCost >= numLiveObjectsAtLastCollect) {
+#ifndef NDEBUG
+      heap.operationInProgress = NoOperation;
+#endif
+      bool collected = collect();
+#ifndef NDEBUG
+      heap.operationInProgress = Allocation;
+#endif
+      if (collected) {
+        numLiveObjects = heap.numLiveObjects;
+        usedBlocks = heap.usedBlocks;
+        i = heap.firstBlockWithPossibleSpace;
+        goto scan;
+      }
+    }
+  
+    // didn't find a block, and GC didn't reclaim anything, need to allocate a new block
     size_t numBlocks = heap.numBlocks;
     if (usedBlocks == numBlocks) {
       numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
@@ -968,7 +987,7 @@ bool Collector::collect()
       reportOutOfMemoryToAllInterpreters();
   memoryFull = newMemoryFull;
 
-  return originalLiveObjects < numLiveObjects;
+  return numLiveObjects < originalLiveObjects;
 }
 
 size_t Collector::size() 

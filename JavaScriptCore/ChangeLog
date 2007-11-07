@@ -1,3 +1,19 @@
+2007-11-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.        
+        
+        - only collect when the heap is full, unless we have lots of extra cost garbage
+        
+        1.1% SunSpider speedup.
+        
+        This shouldn't hit memory use much since the extra space in those
+        blocks hangs around either way.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::heapAllocate):
+        (KJS::Collector::collect): Fix logic error that reversed the sense of collect's 
+        return value.
+
 2007-11-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
