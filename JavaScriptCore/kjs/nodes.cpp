@@ -934,15 +934,25 @@ JSValue *PostIncResolveNode::evaluate(ExecState *exec)
   return throwUndefinedVariableError(exec, m_ident);
 }
 
+void PostIncResolveNode::optimizeForUnnecessaryResult()
+{
+    new (this) PreIncResolveNode(PlacementNewAdopt);
+}
+    
 JSValue* PostIncLocalVarNode::evaluate(ExecState* exec)
 {
     ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
     ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
 
-    JSValue** slot = &exec->localStorage()[index].value;
+    JSValue** slot = &exec->localStorage()[m_index].value;
     JSValue* v = (*slot)->toJSNumber(exec);
     *slot = jsNumber(v->toNumber(exec) + 1);
     return v;
+}
+
+void PostIncLocalVarNode::optimizeForUnnecessaryResult()
+{
+    new (this) PreIncLocalVarNode(m_index);
 }
 
 
@@ -981,18 +991,28 @@ JSValue *PostDecResolveNode::evaluate(ExecState *exec)
 
   return throwUndefinedVariableError(exec, m_ident);
 }
-
+    
+void PostDecResolveNode::optimizeForUnnecessaryResult()
+{
+    new (this) PreDecResolveNode(PlacementNewAdopt);
+}
+    
 JSValue* PostDecLocalVarNode::evaluate(ExecState* exec)
 {
     ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
     ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
 
-    JSValue** slot = &exec->localStorage()[index].value;
+    JSValue** slot = &exec->localStorage()[m_index].value;
     JSValue* v = (*slot)->toJSNumber(exec);
     *slot = jsNumber(v->toNumber(exec) - 1);
     return v;
 }
 
+void PostDecLocalVarNode::optimizeForUnnecessaryResult()
+{
+    new (this) PreDecLocalVarNode(m_index);
+}
+    
 // ------------------------------ PostfixBracketNode ----------------------------------
 
 void PostfixBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)

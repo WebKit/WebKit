@@ -1,3 +1,29 @@
+2007-11-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Avoid unnecessarily boxing the result from post inc/decrement for 0.3% gain in sunspider
+        
+        We now convert the common 'for (...; ...; <var>++) ...' to the semantically identical
+        'for (...; ...; ++<var>) ...'.
+
+        * kjs/nodes.cpp:
+        (KJS::PostIncResolveNode::optimizeForUnnecessaryResult):
+        (KJS::PostIncLocalVarNode::evaluate):
+        (KJS::PostIncLocalVarNode::optimizeForUnnecessaryResult):
+        (KJS::PostDecResolveNode::optimizeForUnnecessaryResult):
+        (KJS::PostDecLocalVarNode::evaluate):
+        (KJS::PostDecLocalVarNode::optimizeForUnnecessaryResult):
+        * kjs/nodes.h:
+        (KJS::PrePostResolveNode::):
+        (KJS::PostIncResolveNode::):
+        (KJS::PostIncLocalVarNode::):
+        (KJS::PostDecResolveNode::):
+        (KJS::PostDecLocalVarNode::):
+        (KJS::PreIncResolveNode::):
+        (KJS::PreDecResolveNode::):
+        (KJS::ForNode::ForNode):
+
 2007-11-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
