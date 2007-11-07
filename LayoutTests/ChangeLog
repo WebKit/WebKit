@@ -1,3 +1,16 @@
+2007-11-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/5583387> ASSERTION FAILED: !refChild->hasTagName(bodyTag) when pasting newline in plain text into rich text Mail
+        <rdar://problem/5583362> REGRESSION (5523.10.3-TOT): Newlines stripped when pasting plain text in Mail
+
+        * editing/pasteboard/5583362.html: Added.
+        * editing/resources/plaintext-pasteboard-data.dat: Added.
+        * platform/mac/editing/pasteboard/5583362-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/5583362-expected.png: Added.
+        * platform/mac/editing/pasteboard/5583362-expected.txt: Added.
+
 2007-11-06  Antti Koivisto  <antti@apple.com>
 
         Correct test results.

@@ -971,8 +971,6 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
 {
     if (!context)
         return 0;
-        
-    Node* block = enclosingBlock(context->startNode());
 
     Node* styleNode = context->startNode();
     if (!styleNode) {
@@ -1014,6 +1012,9 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     }
 
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
+    Node* block = enclosingBlock(context->startNode());
+    bool useClonesOfEnclosingBlock = !block->hasTagName(bodyTag);
+    
     DeprecatedStringList list = DeprecatedStringList::split('\n', string, true); // true gets us empty strings in the list
     while (!list.isEmpty()) {
         DeprecatedString s = list.first();
@@ -1026,7 +1027,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
             ASSERT(ec == 0);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
         } else {
-            element = static_cast<Element *>(block->cloneNode(false).get());
+            element = useClonesOfEnclosingBlock ? static_cast<Element*>(block->cloneNode(false).get()) : createDefaultParagraphElement(document);
             fillContainerFromString(element.get(), s);
         }
         fragment->appendChild(element.release(), ec);

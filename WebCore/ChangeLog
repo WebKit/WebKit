@@ -1,3 +1,15 @@
+2007-11-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        <rdar://problem/5583387> ASSERTION FAILED: !refChild->hasTagName(bodyTag) when pasting newline in plain text into rich text Mail
+        <rdar://problem/5583362> REGRESSION (5523.10.3-TOT): Newlines stripped when pasting plain text in Mail
+
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText): Put paragraphs of text into clones of the block
+        that encloses the input context, unless that block is the body, which shouldn't
+        be cloned.  In that case, use regular divs, as we did before r27369.
+
 2007-11-06  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Darin.
