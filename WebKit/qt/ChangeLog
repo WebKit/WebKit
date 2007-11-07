@@ -2,6 +2,20 @@
 
         Reviewed by Lars.
 
+        Changed ContextMenu::setPlatformDescription for the Qt port to not show the qmenu right away
+        but instead just behave as a normal setter that takes ownership of the platform menu description (the qmenu).
+        Instead now QWebPage::contextMenuEvent() retrieves the QMenu after calling sendContextMenuEvent and calls exec()
+        on it.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::contextMenuEvent):
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        (WebCore::ContextMenuClientQt::getCustomMenuFromDefaultItems):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Changed to PlatformMouseEvent constructor to allow construction from a QContextMenuEvent.
         Call sendContextMenuEvent on the event handler from a QWidget::contextMenuEvent re-implementation instead of in mousePressEvent.
 

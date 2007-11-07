@@ -119,11 +119,6 @@ void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 {
 #ifndef QT_NO_MENU
-    //qDebug("Switch menu(%p) %p to %p", this, (QMenu*)m_menu, menu);
-    if (menu == 0) {
-        FrameView *v = m_hitTestResult.innerNode()->document()->frame()->view();
-        m_menu->exec(v->containingWindow()->mapToGlobal(v->contentsToWindow(m_hitTestResult.point())));
-    }
     if (menu != m_menu) {
         delete m_menu;
         m_menu = menu;

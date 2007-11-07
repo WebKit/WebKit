@@ -33,6 +33,7 @@
 
 #include "Frame.h"
 #include "ChromeClientQt.h"
+#include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "DragClientQt.h"
 #include "DragController.h"
@@ -468,8 +469,16 @@ void QWebPage::mouseReleaseEvent(QMouseEvent *ev)
 void QWebPage::contextMenuEvent(QContextMenuEvent *ev)
 {
     QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
-    if (frame->eventHandler)
-        frame->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
+    if (!frame->eventHandler)
+        return;
+    d->page->contextMenuController()->clearContextMenu();
+    frame->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
+    ContextMenu *menu = d->page->contextMenuController()->contextMenu();
+    QMenu *qmenu = menu->releasePlatformDescription();
+    if (qmenu) {
+        qmenu->exec(ev->globalPos());
+        delete qmenu;
+    }
 }
 
 void QWebPage::wheelEvent(QWheelEvent *ev)
