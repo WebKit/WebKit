@@ -19,9 +19,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 281x19
           text run at (0,0) width 281: "The first slider\x{2019}s thumb should be on the left."
       RenderBlock {DIV} at (0,67) size 784x46
-        RenderSlider {INPUT} at (2,2) size 129x19 [bgcolor=#C0C0C0]
+        RenderSlider {INPUT} at (2,2) size 129x19 [bgcolor=#FFFFFF]
         RenderBR {BR} at (133,21) size 0x0
-        RenderSlider {INPUT} at (2,25) size 129x19 [bgcolor=#C0C0C0]
+        RenderSlider {INPUT} at (2,25) size 129x19 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
 layer at (10,86) size 129x19
   RenderBlock (relative positioned) {DIV} at (0,0) size 129x19

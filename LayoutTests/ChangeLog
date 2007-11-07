@@ -2,6 +2,44 @@
 
         Reviewed by Simon.
 
+        update test results after the last commit.
+
+        * platform/qt/css1/box_properties/acid_test-expected.txt:
+        * platform/qt/css2.1/t09-c5526c-display-00-e-expected.txt:
+        * platform/qt/fast/block/basic/011-expected.txt:
+        * platform/qt/fast/block/margin-collapse/103-expected.txt:
+        * platform/qt/fast/dom/HTMLInputElement/input-image-alt-text-expected.txt:
+        * platform/qt/fast/forms/002-expected.txt:
+        * platform/qt/fast/forms/005-expected.txt:
+        * platform/qt/fast/forms/checkbox-radio-onchange-expected.txt:
+        * platform/qt/fast/forms/formmove-expected.txt:
+        * platform/qt/fast/forms/formmove2-expected.txt:
+        * platform/qt/fast/forms/input-align-image-expected.txt:
+        * platform/qt/fast/forms/input-appearance-height-expected.txt:
+        * platform/qt/fast/forms/input-type-change-expected.txt:
+        * platform/qt/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/qt/fast/forms/radio-attr-order-expected.txt:
+        * platform/qt/fast/forms/radio-nested-labels-expected.txt:
+        * platform/qt/fast/forms/radio_checked-expected.txt:
+        * platform/qt/fast/forms/radio_checked_dynamic-expected.txt:
+        * platform/qt/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/qt/fast/forms/searchfield-heights-expected.txt:
+        * platform/qt/fast/forms/slider-thumb-shared-style-expected.txt:
+        * platform/qt/fast/forms/slider-thumb-stylability-expected.txt:
+        * platform/qt/fast/inline/positionedLifetime-expected.txt:
+        * platform/qt/fast/replaced/width100percent-radio-expected.txt:
+        * platform/qt/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug19599-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug24200-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/core/captions2-expected.txt:
+
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Update the list of skipped tests.
         
         Three more tests are passing.

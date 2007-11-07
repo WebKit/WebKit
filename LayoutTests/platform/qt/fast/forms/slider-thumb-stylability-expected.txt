@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 262x19
           text run at (0,0) width 262: "You should see a green 20\x{D7}20px square."
       RenderBlock (anonymous) at (0,66) size 784x24
-        RenderSlider {INPUT} at (2,2) size 129x20 [bgcolor=#C0C0C0]
+        RenderSlider {INPUT} at (2,2) size 129x20 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
