@@ -32,21 +32,22 @@ namespace WebCore {
 
 ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
 {
-    m_platformDescription = new PlatformMenuItemDescriptionType;
+    m_platformDescription.type = SubmenuType;
+    m_platformDescription.action = ContextMenuItemTagNoAction;
+    m_platformDescription.subMenu = subMenu;
 }
 
 ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action,
                                  const String& title, ContextMenu* subMenu)
 {
-    m_platformDescription = new PlatformMenuItemDescriptionType;
-    m_platformDescription->type = type;
-    m_platformDescription->action = action;
-    m_platformDescription->title = title;
+    m_platformDescription.type = type;
+    m_platformDescription.action = action;
+    m_platformDescription.title = title;
+    m_platformDescription.subMenu = subMenu;
 }
 
 ContextMenuItem::~ContextMenuItem()
 {
-    delete m_platformDescription;
 }
 
 PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription()
@@ -56,76 +57,58 @@ PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription()
 
 ContextMenuItemType ContextMenuItem::type() const
 {
-    return m_platformDescription->type;
+    return m_platformDescription.type;
 }
 
 void ContextMenuItem::setType(ContextMenuItemType type)
 {
-    m_platformDescription->type = type;
+    m_platformDescription.type = type;
 }
 
 ContextMenuAction ContextMenuItem::action() const
 { 
-    return m_platformDescription->action;
+    return m_platformDescription.action;
 }
 
 void ContextMenuItem::setAction(ContextMenuAction action)
 {
-    m_platformDescription->action = action;
+    m_platformDescription.action = action;
 }
 
 String ContextMenuItem::title() const 
 {
-    return m_platformDescription->title;
+    return m_platformDescription.title;
 }
 
 void ContextMenuItem::setTitle(const String& title)
 {
-#ifndef QT_NO_MENU
-    m_platformDescription->title = title;
-    if (m_platformDescription->qaction)
-        m_platformDescription->qaction->setText(title);
-#endif
+    m_platformDescription.title = title;
 }
 
 
 PlatformMenuDescription ContextMenuItem::platformSubMenu() const
 {
-    return m_platformDescription->subMenu;
+    return m_platformDescription.subMenu->platformDescription();
 }
 
 void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
-#ifndef QT_NO_MENU
-    m_platformDescription->subMenu = menu->platformDescription();
-#endif
+    m_platformDescription.subMenu = menu;
 }
 
 void ContextMenuItem::setChecked(bool on)
 {
-#ifndef QT_NO_MENU
-    if (m_platformDescription->qaction) {
-        m_platformDescription->qaction->setCheckable(true);
-        m_platformDescription->qaction->setChecked(on);
-    }
-#endif
+    m_platformDescription.checked = on;
 }
 
 void ContextMenuItem::setEnabled(bool on)
 {
-#ifndef QT_NO_MENU
-    if (m_platformDescription->qaction)
-        m_platformDescription->qaction->setEnabled(on);
-#endif
+    m_platformDescription.enabled = on;
 }
 
 bool ContextMenuItem::enabled() const
 {
-#ifndef QT_NO_MENU
-    if (m_platformDescription->qaction)
-        return m_platformDescription->qaction->isEnabled();
-#endif
-    return false;
+    return m_platformDescription.enabled;
 }
 
 }

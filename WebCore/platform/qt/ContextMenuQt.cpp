@@ -41,101 +41,42 @@ namespace WebCore {
 ContextMenu::ContextMenu(const HitTestResult& result)
     : m_hitTestResult(result)
 {
-#ifndef QT_NO_MENU
-    m_menu = new QMenu;
-    //qDebug("Create menu(%p) %p", this, (QMenu*)m_menu);
-    m_proxy = new MenuEventProxy(this);
-    QObject::connect(m_menu, SIGNAL(triggered(QAction *)), m_proxy, SLOT(trigger(QAction *)));
-#endif
+    m_items = new QList<ContextMenuItem>();
 }
 
 ContextMenu::~ContextMenu()
 {
-#ifndef QT_NO_MENU
-    //qDebug("Destroy menu(%p) %p", this, (QMenu*)m_menu);
-    delete m_menu;
-    m_menu = 0;
-    delete m_proxy;
-    m_proxy = 0;
-#endif
+    delete m_items;
 }
 
 void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    insertItem(999999, item); // yuck!  Fix this API!!
+    m_items->append(item);
 }
 
 unsigned ContextMenu::itemCount() const
 {
-#ifndef QT_NO_MENU
-    return m_menu->actions().count();
-#else
-    return 0;
-#endif
+    return m_items->count();
 }
 
 void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
 {
-#ifndef QT_NO_MENU
-    int id;
-    QAction *action;
-    QAction *before = 0;
-    int p = position;
-    if (p == 999999)
-        p = -1;
-    if (p >= 0)
-        before = m_menu->actions()[p];
-
-    switch (item.type()) {
-        case ActionType:
-            if (!item.title().isEmpty()) {
-                action = m_menu->addAction((QString)item.title());
-                m_menu->removeAction(action);
-                m_menu->insertAction(before, action);
-            }
-            break;
-        case SeparatorType:
-            action = m_menu->insertSeparator(before);
-            break;
-        case SubmenuType:
-            if (!item.title().isEmpty()) {
-                QMenu *m = item.platformSubMenu();
-                if (!m)
-                    return;
-                action = m_menu->insertMenu(before, m);
-                action->setText(item.title());
-            }
-            break;
-        default:
-            return;
-    }
-    if (action) {
-        m_proxy->map(action, item.action());
-        item.releasePlatformDescription()->qaction = action;
-    }
-#endif
+    m_items->insert(position, item);
 }
 
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 {
-#ifndef QT_NO_MENU
-    if (menu != m_menu) {
-        delete m_menu;
-        m_menu = menu;
-    }
-#endif
+    // doesn't make sense
 }
 
 PlatformMenuDescription ContextMenu::platformDescription() const
 {
-    return m_menu;
+    return m_items;
 }
 
 PlatformMenuDescription ContextMenu::releasePlatformDescription()
 {
-    QMenu* tmp = m_menu;
-    m_menu = 0;
-    return tmp;
+    return PlatformMenuDescription();
 }
 
 

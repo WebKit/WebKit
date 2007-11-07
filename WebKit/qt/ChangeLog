@@ -2,6 +2,21 @@
 
         Reviewed by Lars.
 
+        Restructure the context menu classes for the Qt port. ContextMenu and ContextMenuItem don't store
+        QActions/QMenus anymore but just store the action type, tag, title and optionally submenu as created
+        in ContextMenu::populate().
+        For the actual Qt context menu we traverse this structure after sendContextMenuEvent and create a QMenu
+        out of it. That menu is currently not functional anymore though.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createContextMenu):
+        (QWebPage::contextMenuEvent):
+        * Api/qwebpage_p.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Changed ContextMenu::setPlatformDescription for the Qt port to not show the qmenu right away
         but instead just behave as a normal setter that takes ownership of the platform menu description (the qmenu).
         Instead now QWebPage::contextMenuEvent() retrieves the QMenu after calling sendContextMenuEvent and calls exec()

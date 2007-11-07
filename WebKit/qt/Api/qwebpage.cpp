@@ -124,6 +124,29 @@ void QWebPagePrivate::createMainFrame()
     }
 }
 
+QMenu *QWebPagePrivate::createContextMenu(QList<WebCore::ContextMenuItem> *items)
+{
+    QMenu *menu = new QMenu;
+    for (int i = 0; i < items->count(); ++i) {
+        const ContextMenuItem &item = items->at(i);
+        switch (item.type()) {
+            case WebCore::ActionType:
+                menu->addAction(item.title());
+                break;
+            case WebCore::SeparatorType:
+                menu->addSeparator();
+                break;
+            case WebCore::SubmenuType: {
+                QMenu *subMenu = createContextMenu(item.platformSubMenu());
+                subMenu->setTitle(item.title());
+                menu->addAction(subMenu->menuAction());
+                break;
+            }
+        }
+    }
+    return menu;
+}
+
 QWebFrame *QWebPagePrivate::frameAt(const QPoint &pos) const
 {
     QWebFrame *frame = mainFrame;
@@ -474,7 +497,9 @@ void QWebPage::contextMenuEvent(QContextMenuEvent *ev)
     d->page->contextMenuController()->clearContextMenu();
     frame->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
     ContextMenu *menu = d->page->contextMenuController()->contextMenu();
-    QMenu *qmenu = menu->releasePlatformDescription();
+
+    QList<ContextMenuItem> *items = menu->platformDescription();
+    QMenu *qmenu = d->createContextMenu(items);
     if (qmenu) {
         qmenu->exec(ev->globalPos());
         delete qmenu;

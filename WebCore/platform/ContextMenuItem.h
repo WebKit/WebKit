@@ -128,16 +128,22 @@ namespace WebCore {
 #elif PLATFORM(WIN)
     typedef LPMENUITEMINFO PlatformMenuItemDescription;
 #elif PLATFORM(QT)
-    struct PlatformMenuItemDescriptionType {
-        PlatformMenuItemDescriptionType() : qaction(0), menu(0), action(ContextMenuItemTagNoAction), type(ActionType), subMenu(0) {}
-        QAction *qaction;
-        QMenu *menu;
-        ContextMenuAction action;
-        QString title;
+    struct PlatformMenuItemDescription {
+        PlatformMenuItemDescription()
+            : type(ActionType),
+              action(ContextMenuItemTagNoAction),
+              subMenu(0),
+              checked(false),
+              enabled(true)
+        {}
+
         ContextMenuItemType type;
-        PlatformMenuDescription subMenu;
+        ContextMenuAction action;
+        String title;
+        ContextMenu *subMenu;
+        bool checked;
+        bool enabled;
     };
-    typedef PlatformMenuItemDescriptionType* PlatformMenuItemDescription;
 #elif PLATFORM(GTK)
     typedef GtkMenuItem* PlatformMenuItemDescription;
 #elif PLATFORM(WX)
