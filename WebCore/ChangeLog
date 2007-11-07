@@ -1,3 +1,14 @@
+2007-11-07  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Build fix for Leopard.  Cast a size() as int to unsigned for proper
+        comparison.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::writeHelper):
+        Casted an int to unsigned for an unsigned to unsigned comparison.
+
 2007-11-07  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam
