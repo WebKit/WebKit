@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Changed the virtual QWebPage::setWindowGeometry to be a geometryChangeRequest signal instead.
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setWindowRect):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Renamed QWebPage::webAction() to QWebPage::action()
 
         * Api/qwebpage.cpp:

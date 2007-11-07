@@ -169,9 +169,6 @@ public slots:
      */
     void stop();
 
-    // ### should be a signal: void geometryChangeRequest(const QRect &geom);
-    virtual void setWindowGeometry(const QRect& geom);
-
 signals:
     /**
      * Signal is emitted when load is started on one of the child
@@ -222,6 +219,8 @@ signals:
     void addToHistory(const QUrl&);
 
     void frameCreated(QWebFrame *frame);
+
+    void geometryChangeRequest(const QRect& geom);
 
 protected:
     virtual QWebPage *createWindow();

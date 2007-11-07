@@ -578,11 +578,6 @@ QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *fra
     return AcceptNavigationRequest;
 }
 
-void QWebPage::setWindowGeometry(const QRect& geom)
-{
-    Q_UNUSED(geom)
-}
-
 QString QWebPage::selectedText() const
 {
     return d->page->focusController()->focusedOrMainFrame()->selectedText();
