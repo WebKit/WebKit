@@ -372,10 +372,10 @@ namespace WTF {
     {
       // handle surrogates correctly
       for (int i = 0; i < len; ++i) {
-        QChar c1 = QChar(a[i]).toCaseFolded();
-        QChar c2 = QChar(b[i]).toCaseFolded();
-        if (c1 != c2)
-          return c1 < c2;
+          uint c1 = QChar::toCaseFolded(a[i]);
+          uint c2 = QChar::toCaseFolded(b[i]);
+          if (c1 != c2)
+              return c1 - c2;
       }
       return 0;
     }
@@ -518,7 +518,7 @@ namespace WTF {
         QChar c1 = QChar(a[i]).toLower();
         QChar c2 = QChar(b[i]).toLower();
         if (c1 != c2)
-          return c1 < c2;
+          return c1.unicode() - c2.unicode();
       }
       return 0;
     }

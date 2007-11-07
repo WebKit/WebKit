@@ -1,3 +1,14 @@
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        fix umemcasecmp
+        
+        Pretty embarrassing bug. Has the potential to fix quite a few test failures.
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::umemcasecmp):
+
 2007-11-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.        
