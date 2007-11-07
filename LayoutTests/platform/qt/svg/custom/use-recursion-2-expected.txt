@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (20,92) size 280x38
+      RenderSVGText {text} at (10,60) size 800x19
+        RenderSVGInlineText {#text} at (0,-14) size 140x19
+          text run at (0,-14) width 140: "This should not crash."
+      RenderSVGContainer {use} at (0,0) size 0x0

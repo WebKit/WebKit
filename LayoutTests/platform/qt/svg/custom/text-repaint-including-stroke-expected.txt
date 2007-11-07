@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (111,8) size 592x145
+      RenderSVGText {text} at (35,35) size 800x135
+        RenderSVGInlineText {#text} at (0,-103) size 582x135
+          text run at (0,-103) width 582: "Repaint me!"
