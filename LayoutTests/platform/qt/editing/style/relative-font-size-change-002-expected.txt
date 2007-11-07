@@ -1,0 +1,47 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 8 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x92 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 738x63
+          text run at (14,14) width 738: "Size check should say: 30px. All text on the first line, and the first two "
+          text run at (14,46) width 544: "words of the second line, should appear to be 30px."
+      RenderBlock {DIV} at (0,116) size 784x32
+        RenderText {#text} at (0,0) size 129x31
+          text run at (0,0) width 129: "Size check: "
+        RenderInline {SPAN} at (0,0) size 51x31
+          RenderText {#text} at (129,0) size 51x31
+            text run at (129,0) width 51: "30px"
+      RenderBlock {DIV} at (0,164) size 784x166
+        RenderBlock {DIV} at (0,0) size 784x166 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x39
+            RenderInline {SPAN} at (0,0) size 191x39
+              RenderText {#text} at (0,0) size 191x39
+                text run at (0,0) width 191: "There is a tide"
+          RenderBlock {DIV} at (14,53) size 756x67 [border: (2px solid #FF0000)]
+            RenderInline {SPAN} at (0,0) size 75x39
+              RenderText {#text} at (14,14) size 75x39
+                text run at (14,14) width 75: "In the"
+            RenderText {#text} at (89,20) size 152x31
+              text run at (89,20) width 152: " affairs of men"
+          RenderBlock (anonymous) at (14,120) size 756x32
+            RenderText {#text} at (0,0) size 256x31
+              text run at (0,0) width 256: "Which taken at the flood"
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 7 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

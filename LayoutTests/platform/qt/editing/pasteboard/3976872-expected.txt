@@ -1,0 +1,39 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > B > DIV > DIV > BODY > HTML > #document to 28 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:this text should end up bold replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 28 of #text > B > DIV > DIV > BODY > HTML > #document to 28 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 388x19
+          text run at (0,0) width 388: "This tests paste and match style on an empty (but styled) line"
+      RenderBlock {P} at (0,33) size 784x38
+        RenderText {#text} at (0,0) size 760x38
+          text run at (0,0) width 760: "The first line is copied (unstyled), then it's bolded, then a paragraph separator is inserted and the original unstyled line is"
+          text run at (0,19) width 181: "pasted (with style matching)."
+      RenderBlock {HR} at (0,85) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,94) size 784x44
+        RenderBlock {DIV} at (0,0) size 784x22 [border: (1px solid #FF0000)]
+          RenderInline {B} at (0,0) size 195x20
+            RenderText {#text} at (1,1) size 195x20
+              text run at (1,1) width 195: "this text should end up bold"
+        RenderBlock {DIV} at (0,22) size 784x22 [border: (1px solid #FF0000)]
+          RenderInline {B} at (0,0) size 195x20
+            RenderText {#text} at (1,1) size 195x20
+              text run at (1,1) width 195: "this text should end up bold"
+caret: position 28 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
