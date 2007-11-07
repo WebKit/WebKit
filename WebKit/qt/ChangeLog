@@ -2,6 +2,19 @@
 
         Reviewed by Lars.
 
+        Update the editor actions when the selection changes.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateAction):
+        (QWebPagePrivate::updateEditorActions):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedSelection):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added cut/copy/paste actions to the toolbar of QtLauncher
 
         * QtLauncher/main.cpp:

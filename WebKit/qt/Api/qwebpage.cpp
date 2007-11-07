@@ -208,6 +208,7 @@ void QWebPagePrivate::updateAction(QWebPage::WebAction action)
         return;
 
     WebCore::FrameLoader *loader = mainFrame->d->frame->loader();
+    WebCore::Editor *editor = page->focusController()->focusedOrMainFrame()->editor();
 
     bool enabled = a->isEnabled();
 
@@ -221,6 +222,15 @@ void QWebPagePrivate::updateAction(QWebPage::WebAction action)
         case QWebPage::Stop:
             enabled = loader->isLoading();
             break;
+        case QWebPage::Cut:
+            enabled = editor->canCut();
+            break;
+        case QWebPage::Copy:
+            enabled = editor->canCopy();
+            break;
+        case QWebPage::Paste:
+            enabled = editor->canPaste();
+            break;
         default: break;
     }
 
@@ -232,6 +242,13 @@ void QWebPagePrivate::updateNavigationActions()
     updateAction(QWebPage::GoBack);
     updateAction(QWebPage::GoForward);
     updateAction(QWebPage::Stop);
+}
+
+void QWebPagePrivate::updateEditorActions()
+{
+    updateAction(QWebPage::Cut);
+    updateAction(QWebPage::Copy);
+    updateAction(QWebPage::Paste);
 }
 
 QWebPage::QWebPage(QWidget *parent)

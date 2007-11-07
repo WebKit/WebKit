@@ -216,6 +216,7 @@ void EditorClientQt::respondToChangedSelection()
 //     selection.formatForDebugger(buffer, sizeof(buffer));
 //     printf("%s\n", buffer);
 
+    m_page->d->updateEditorActions();
     emit m_page->selectionChanged();
 }
 
