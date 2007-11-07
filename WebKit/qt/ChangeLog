@@ -1,3 +1,11 @@
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        comments on API changes that we'd like to do.
+
+        * Api/qwebpage.h:
+
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars Knoll <lars@trolltech.com>.

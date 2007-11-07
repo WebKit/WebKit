@@ -75,31 +75,33 @@ public:
 
     QWebFrame *mainFrame() const;
 
+    // ### should return a pointer
     QWebPageHistory history() const;
 
+    // ### owned by webpage, returns a pointer, no setter!
     void setSettings(const QWebSettings &settings);
     QWebSettings settings() const;
 
     QSize sizeHint() const;
 
+    // ### should be windowTitle
     QString title() const;
-
     QUrl url() const;
+    // ### should be QWidget::icon
+    QPixmap icon() const;
 
     bool isModified() const;
-
     QUndoStack *undoStack();
     
     void setNetworkInterface(QWebNetworkInterface *interface);
     QWebNetworkInterface *networkInterface() const;
-
-    QPixmap icon() const;
 
 #ifndef QT_NO_NETWORKPROXY
     void setNetworkProxy(const QNetworkProxy& proxy);
     QNetworkProxy networkProxy() const;
 #endif
 
+    // #### remove after adding editor actions
     bool canCut() const;
     bool canCopy() const;
     bool canPaste() const;
@@ -113,15 +115,18 @@ public slots:
      */
     void stop();
 
+    // #### should these be actions?
     void goBack();
     void goForward();
     void goToHistoryItem(const QWebHistoryItem &item);
 
+    // ### should be a signal: void geometryChangeRequest(const QRect &geom);
     virtual void setWindowGeometry(const QRect& geom);
 
     void cut();
     void copy();
     void paste();
+    // ### should we have execCommand() or something similar?
 
 signals:
     /**
@@ -162,6 +167,7 @@ signals:
      */
     void iconLoaded();
 
+    // #### doesn't give you anything without a way to actually get the selection
     void selectionChanged();
 
     /**
@@ -174,6 +180,7 @@ signals:
     void frameCreated(QWebFrame *frame);
 
 private slots:
+    // ### should go!
     void onLoadProgressChanged(int);
 
 protected:
@@ -182,11 +189,15 @@ protected:
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
 
     virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
+    // ### what does this do?
     virtual QString chooseFile(QWebFrame *frame, const QString& oldFile);
+    // ### can we unify the next 3 methods? 
     virtual void javaScriptAlert(QWebFrame *frame, const QString& msg);
     virtual bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
     virtual bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
     virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
+
+    // ### should the be here?
     virtual QString userAgentStringForUrl(const QUrl& forUrl) const;
 
     virtual void resizeEvent(QResizeEvent*);
