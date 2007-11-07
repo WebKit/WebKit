@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Implemented opening links in new windows
+
+        * Api/qwebpage.cpp:
+        (frameLoadRequest):
+        (openNewWindow):
+        (QWebPage::webActionTriggered):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Added and implemented the "OpenLink" action.
 
         * Api/qwebpage.cpp:

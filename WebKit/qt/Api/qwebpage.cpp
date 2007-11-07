@@ -414,18 +414,32 @@ QObject *QWebPage::createPlugin(const QString &classid, const QUrl &url, const Q
     return 0;
 }
 
+static WebCore::FrameLoadRequest frameLoadRequest(const QUrl &url, WebCore::Frame *frame)
+{
+    WebCore::ResourceRequest rr(WebCore::KURL(url.toString()),
+                                frame->loader()->outgoingReferrer());
+    return WebCore::FrameLoadRequest(rr);
+}
+
+static void openNewWindow(const QUrl& url, WebCore::Frame* frame)
+{
+    if (Page* oldPage = frame->page())
+        if (Page* newPage = oldPage->chrome()->createWindow(frame,
+                frameLoadRequest(url, frame)))
+            newPage->chrome()->show();
+}
+
 void QWebPage::webActionTriggered(WebAction action, bool checked)
 {
-    WebCore::Editor *editor = d->page->focusController()->focusedOrMainFrame()->editor();
+    WebCore::Frame *frame = d->page->focusController()->focusedOrMainFrame();
+    WebCore::Editor *editor = frame->editor();
     const char *command = 0;
 
     switch (action) {
         case OpenLink:
             if (QWebFrame *targetFrame = d->currentContext.targetFrame()) {
                 WTF::RefPtr<WebCore::Frame> wcFrame = targetFrame->d->frame;
-                WebCore::ResourceRequest rr(WebCore::KURL(d->currentContext.linkUrl().toString()),
-                                            wcFrame->loader()->outgoingReferrer());
-                targetFrame->d->frame->loader()->load(WebCore::FrameLoadRequest(rr),
+                targetFrame->d->frame->loader()->load(frameLoadRequest(d->currentContext.linkUrl(), wcFrame.get()),
                                                       /*lockHistory*/ false,
                                                       /*userGesture*/ true,
                                                       /*event*/ 0,
@@ -437,6 +451,7 @@ void QWebPage::webActionTriggered(WebAction action, bool checked)
             }
             // fall through
         case OpenLinkInNewWindow:
+            openNewWindow(d->currentContext.linkUrl(), frame);
             break;
         case OpenFrameInNewWindow:
             break;
@@ -445,6 +460,7 @@ void QWebPage::webActionTriggered(WebAction action, bool checked)
             editor->copyURL(WebCore::KURL(d->currentContext.linkUrl().toString()), d->currentContext.text());
             break;
         case OpenImageInNewWindow:
+            openNewWindow(d->currentContext.imageUrl(), frame);
             break;
         case DownloadImageToDisk:
         case CopyImageToClipboard:
