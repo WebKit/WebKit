@@ -309,16 +309,16 @@ public:
         urlEdit->setSizePolicy(QSizePolicy::Expanding, urlEdit->sizePolicy().verticalPolicy());
         connect(urlEdit, SIGNAL(returnPressed()),
                 SLOT(changeLocation()));
-        bar->addAction(page->webAction(QWebPage::GoBack));
-        bar->addAction(page->webAction(QWebPage::Stop));
-        bar->addAction(page->webAction(QWebPage::GoForward));
+        bar->addAction(page->action(QWebPage::GoBack));
+        bar->addAction(page->action(QWebPage::Stop));
+        bar->addAction(page->action(QWebPage::GoForward));
         bar->addSeparator();
-        bar->addAction(page->webAction(QWebPage::Cut));
-        bar->addAction(page->webAction(QWebPage::Copy));
-        bar->addAction(page->webAction(QWebPage::Paste));
+        bar->addAction(page->action(QWebPage::Cut));
+        bar->addAction(page->action(QWebPage::Copy));
+        bar->addAction(page->action(QWebPage::Paste));
         bar->addSeparator();
-        bar->addAction(page->webAction(QWebPage::Undo));
-        bar->addAction(page->webAction(QWebPage::Redo));
+        bar->addAction(page->action(QWebPage::Undo));
+        bar->addAction(page->action(QWebPage::Redo));
 
         addToolBarBreak();
         bar = addToolBar("Location");

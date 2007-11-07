@@ -161,7 +161,7 @@ public:
 
     QString selectedText() const;
 
-    QAction *webAction(WebAction action) const;
+    QAction *action(WebAction action) const;
 
 public slots:
     /**
