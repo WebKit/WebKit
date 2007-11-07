@@ -2,6 +2,18 @@
 
         Reviewed by Lars.
 
+        Added and implemented the "OpenLink" action.
+
+        * Api/qwebpage.cpp:
+        (webActionForContextMenuAction):
+        (QWebPage::webActionTriggered):
+        (QWebPage::webAction):
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Adjust the state of the reload action correctly.
 
         * Api/qwebpage.cpp:

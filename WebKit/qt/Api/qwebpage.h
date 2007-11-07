@@ -71,6 +71,8 @@ public:
     enum WebAction {
         NoWebAction = - 1,
 
+        OpenLink,
+
         OpenLinkInNewWindow,
         OpenFrameInNewWindow,
 
