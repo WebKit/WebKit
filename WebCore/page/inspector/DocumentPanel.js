@@ -396,16 +396,17 @@ WebInspector.DOMNodeTreeElement = function(node)
 WebInspector.DOMNodeTreeElement.prototype = {
     updateSelection: function()
     {
-        if (!this._listItemNode)
+        var listItemElement = this.listItemElement;
+        if (!listItemElement)
             return;
 
         if (!this.selectionElement) {
             this.selectionElement = document.createElement("div");
             this.selectionElement.className = "selection selected";
-            this._listItemNode.insertBefore(this.selectionElement, this._listItemNode.firstChild);
+            listItemElement.insertBefore(this.selectionElement, listItemElement.firstChild);
         }
 
-        this.selectionElement.style.height = this._listItemNode.offsetHeight + "px";
+        this.selectionElement.style.height = listItemElement.offsetHeight + "px";
     },
 
     onpopulate: function()
@@ -442,10 +443,9 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     onreveal: function()
     {
-        if (!this._listItemNode || !this.treeOutline || !this.treeOutline._childrenListNode)
+        if (!this.listItemElement || !this.treeOutline)
             return;
-        var parent = this.treeOutline.panel.views.dom.treeContentElement;
-        parent.scrollToElement(this._listItemNode);
+        this.treeOutline.panel.views.dom.treeContentElement.scrollToElement(this.listItemElement);
     },
 
     onselect: function()
@@ -465,6 +465,9 @@ WebInspector.DOMNodeTreeElement.prototype = {
         var panel = this.treeOutline.panel;
         panel.rootDOMNode = this.representedObject.parentNode;
         panel.focusedDOMNode = this.representedObject;
+
+        if (this.hasChildren && !this.expanded)
+            this.expand();
     }
 }
 

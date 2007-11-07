@@ -1,3 +1,33 @@
+2007-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 11920: Web Inspector should have Firebug-like CSS editing
+        http://bugs.webkit.org/show_bug.cgi?id=11920
+
+        * css/CSSComputedStyleDeclaration.h:
+          (WebCore::CSSComputedStyleDeclaration::isPropertyImplicit): Return false. I'm not sure why
+          this was true, but computed style has no concept of implicit. So false makes more sense
+          and makes the code simpler in the inspector. This function was added for the inspector,
+          so this isn't a compatibility change.
+        * page/inspector/PropertiesSection.js: Add a getter/setter to reset populated status.
+        * page/inspector/StylesSidebarPane.js: Some refactoring along with the main support for
+          style editing.
+        * page/inspector/inspector.css: Style changes for propery editing and focus correctness.
+        * page/inspector/inspector.js: Look for a handleKeyEvent function of the focus element before
+          trying to call a function based on the element's id. Call focused and blurred on the focused
+          element when currentFocusElement is changed. Use the new listItemElement getter instead of
+          the private property.
+        * page/inspector/treeoutline.js: No longer expand on double click if ondblclick is implemented.
+          Shrink the toggle zone to 10px to better match the size of the arrow. Add an onattach call
+          to allow generation of the title using the DOM element. Add listItemElement and
+          childrenListElement getters.
+        * page/inspector/utilities.js: Add new helper prototype methods on CSSStyleDeclaration.
+        * page/inspector/DocumentPanel.js: Use the new listItemElement getter instead of the private
+          property. Also expand the DOM node on double click now that the TreeOutline dosen't do it.
+        * page/inspector/Resource.js: Use the new listItemElement and childrenListElement getters
+          instead of the private properties.
+
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -48,7 +48,7 @@ public:
     virtual String getPropertyValue(int propertyID) const;
     virtual bool getPropertyPriority(int propertyID) const;
     virtual int getPropertyShorthand(int propertyID) const { return -1; }
-    virtual bool isPropertyImplicit(int propertyID) const { return true; }
+    virtual bool isPropertyImplicit(int propertyID) const { return false; }
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> copy() const;
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();

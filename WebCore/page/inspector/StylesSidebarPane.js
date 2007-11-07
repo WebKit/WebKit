@@ -32,35 +32,52 @@ WebInspector.StylesSidebarPane = function()
 }
 
 WebInspector.StylesSidebarPane.prototype = {
-    update: function(node)
+    update: function(node, editedSection)
     {
+        var refresh = false;
+
+        if (!node || node === this.node)
+            refresh = true;
+
+        if (node && node.nodeType === Node.TEXT_NODE && node.parentNode)
+            node = node.parentNode;
+
+        if (node && node.nodeType !== Node.ELEMENT_NODE)
+            node = null;
+
+        if (node)
+            this.node = node;
+        else
+            node = this.node;
+
         var body = this.bodyElement;
-
-        body.removeChildren();
-
-        this.sections = [];
+        if (!refresh || !node) {
+            body.removeChildren();
+            this.sections = [];
+        }
 
         if (!node)
             return;
 
-        if (node.nodeType === Node.TEXT_NODE && node.parentNode)
-            node = node.parentNode;
-
         var styleRules = [];
-        var styleProperties = [];
 
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            var propertyCount = [];
-
+        if (refresh) {
+            for (var i = 0; i < this.sections.length; ++i) {
+                var section = this.sections[i];
+                if (section.computedStyle)
+                    section.styleRule.style = node.ownerDocument.defaultView.getComputedStyle(node);
+                var styleRule = { section: section, style: section.styleRule.style, computedStyle: section.computedStyle };
+                styleRules.push(styleRule);
+            }
+        } else {
             var computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
-            if (computedStyle && computedStyle.length)
-                styleRules.push({ computedStyle: true, selectorText: "Computed Style", style: computedStyle });
+            styleRules.push({ computedStyle: true, selectorText: "Computed Style", style: computedStyle, editable: false });
 
             var nodeName = node.nodeName.toLowerCase();
             for (var i = 0; i < node.attributes.length; ++i) {
                 var attr = node.attributes[i];
                 if (attr.style) {
-                    var attrStyle = { style: attr.style };
+                    var attrStyle = { style: attr.style, editable: false };
                     attrStyle.subtitle = "element\u2019s \u201C" + attr.name + "\u201D attribute";
                     attrStyle.selectorText = nodeName + "[" + attr.name;
                     if (attr.value.length)
@@ -82,89 +99,93 @@ WebInspector.StylesSidebarPane.prototype = {
                 for (var i = (matchedStyleRules.length - 1); i >= 0; --i)
                     styleRules.push(matchedStyleRules[i]);
             }
+        }
 
-            var usedProperties = {};
-            var priorityUsed = false;
+        var usedProperties = {};
+        var priorityUsed = false;
 
-            // Walk the style rules and make a list of all used and overloaded properties.
-            for (var i = 0; i < styleRules.length; ++i) {
+        // Walk the style rules and make a list of all used and overloaded properties.
+        for (var i = 0; i < styleRules.length; ++i) {
+            var styleRule = styleRules[i];
+            if (styleRule.computedStyle)
+                continue;
+
+            styleRule.usedProperties = {};
+
+            var style = styleRule.style;
+            for (var j = 0; j < style.length; ++j) {
+                var name = style[j];
+
+                if (!priorityUsed && style.getPropertyPriority(name).length)
+                    priorityUsed = true;
+
+                // If the property name is already used by another rule this is rule's
+                // property is overloaded, so don't add it to the rule's usedProperties.
+                if (!(name in usedProperties))
+                    styleRule.usedProperties[name] = true;
+
+                if (name === "font") {
+                    // The font property is not reported as a shorthand. Report finding the individual
+                    // properties so they are visible in computed style.
+                    // FIXME: remove this when http://bugs.webkit.org/show_bug.cgi?id=15598 is fixed.
+                    styleRule.usedProperties["font-family"] = true;
+                    styleRule.usedProperties["font-size"] = true;
+                    styleRule.usedProperties["font-style"] = true;
+                    styleRule.usedProperties["font-variant"] = true;
+                    styleRule.usedProperties["font-weight"] = true;
+                    styleRule.usedProperties["line-height"] = true;
+                }
+            }
+
+            // Add all the properties found in this style to the used properties list.
+            // Do this here so only future rules are affect by properties used in this rule.
+            for (var name in styleRules[i].usedProperties)
+                usedProperties[name] = true;
+        }
+
+        if (priorityUsed) {
+            // Walk the properties again and account for !important.
+            var foundPriorityProperties = [];
+
+            // Walk in reverse to match the order !important overrides.
+            for (var i = (styleRules.length - 1); i >= 0; --i) {
                 if (styleRules[i].computedStyle)
                     continue;
 
-                styleRules[i].overloadedProperties = {};
-
                 var foundProperties = {};
-
                 var style = styleRules[i].style;
                 for (var j = 0; j < style.length; ++j) {
                     var name = style[j];
-                    var shorthand = style.getPropertyShorthand(name);
-                    var overloaded = (name in usedProperties);
 
-                    if (!priorityUsed && style.getPropertyPriority(name).length)
-                        priorityUsed = true;
-
-                    if (overloaded)
-                        styleRules[i].overloadedProperties[name] = true;
-
-                    foundProperties[name] = true;
-                    if (shorthand)
-                        foundProperties[shorthand] = true;
-
-                    if (name === "font") {
-                        // The font property is not reported as a shorthand. Report finding the individual
-                        // properties so they are visible in computed style.
-                        // FIXME: remove this when http://bugs.webkit.org/show_bug.cgi?id=15598 is fixed.
-                        foundProperties["font-family"] = true;
-                        foundProperties["font-size"] = true;
-                        foundProperties["font-style"] = true;
-                        foundProperties["font-variant"] = true;
-                        foundProperties["font-weight"] = true;
-                        foundProperties["line-height"] = true;
-                    }
-                }
-
-                // Add all the properties found in this style to the used properties list.
-                // Do this here so only future rules are affect by properties used in this rule.
-                for (var name in foundProperties)
-                    usedProperties[name] = true;
-            }
-
-            if (priorityUsed) {
-                // Walk the properties again and account for !important.
-                var foundPriorityProperties = [];
-
-                // Walk in reverse to match the order !important overrides.
-                for (var i = (styleRules.length - 1); i >= 0; --i) {
-                    if (styleRules[i].computedStyle)
+                    // Skip duplicate properties in the same rule.
+                    if (name in foundProperties)
                         continue;
 
-                    var foundProperties = {};
-                    var style = styleRules[i].style;
-                    for (var j = 0; j < style.length; ++j) {
-                        var name = style[j];
+                    foundProperties[name] = true;
 
-                        // Skip duplicate properties in the same rule.
-                        if (name in foundProperties)
-                            continue;
-
-                        foundProperties[name] = true;
-
-                        if (style.getPropertyPriority(name).length) {
-                            if (!(name in foundPriorityProperties))
-                                delete styleRules[i].overloadedProperties[name];
-                            else
-                                styleRules[i].overloadedProperties[name] = true;
-                            foundPriorityProperties[name] = true;
-                        } else if (name in foundPriorityProperties)
-                            styleRules[i].overloadedProperties[name] = true;
-                    }
+                    if (style.getPropertyPriority(name).length) {
+                        if (!(name in foundPriorityProperties))
+                            styleRules[i].usedProperties[name] = true;
+                        else
+                            delete styleRules[i].usedProperties[name];
+                        foundPriorityProperties[name] = true;
+                    } else if (name in foundPriorityProperties)
+                        delete styleRules[i].usedProperties[name];
                 }
             }
+        }
 
+        if (refresh) {
+            // Walk the style rules and update the sections with new overloaded and used properties.
+            for (var i = 0; i < styleRules.length; ++i) {
+                var styleRule = styleRules[i];
+                var section = styleRule.section;
+                section._usedProperties = (styleRule.usedProperties || usedProperties);
+                section.update((section === editedSection) || styleRule.computedStyle);
+            }
+        } else {
             // Make a property section for each style rule.
-            var styleRulesLength = styleRules.length;
-            for (var i = 0; i < styleRulesLength; ++i) {
+            for (var i = 0; i < styleRules.length; ++i) {
                 var styleRule = styleRules[i];
                 var subtitle = styleRule.subtitle;
                 delete styleRule.subtitle;
@@ -172,34 +193,42 @@ WebInspector.StylesSidebarPane.prototype = {
                 var computedStyle = styleRule.computedStyle;
                 delete styleRule.computedStyle;
 
-                var overloadedProperties = styleRule.overloadedProperties;
-                delete styleRule.overloadedProperties;
+                var ruleUsedProperties = styleRule.usedProperties;
+                delete styleRule.usedProperties;
 
-                var section = new WebInspector.StylePropertiesSection(styleRule, subtitle, computedStyle, (overloadedProperties || usedProperties));
+                var editable = styleRule.editable;
+                delete styleRule.editable;
+
+                // Default editable to true if it was omitted.
+                if (typeof editable === "undefined")
+                    editable = true;
+
+                var section = new WebInspector.StylePropertiesSection(styleRule, subtitle, computedStyle, (ruleUsedProperties || usedProperties), editable);
                 section.expanded = true;
+                section.pane = this;
 
                 body.appendChild(section.element);
                 this.sections.push(section);
             }
-        } else {
-            // can't style this node
         }
     }
 }
 
 WebInspector.StylesSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
-WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyle, overloadedOrUsedProperties)
+WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyle, usedProperties, editable)
 {
     WebInspector.PropertiesSection.call(this, styleRule.selectorText);
 
     this.styleRule = styleRule;
     this.computedStyle = computedStyle;
+    this.editable = (editable && !computedStyle);
 
-    if (computedStyle)
-        this.usedProperties = overloadedOrUsedProperties;
-    else
-        this.overloadedProperties = overloadedOrUsedProperties || {};
+    // Prevent editing the user agent rules.
+    if (this.styleRule.parentStyleSheet && !this.styleRule.parentStyleSheet.ownerNode)
+        this.editable = false;
+
+    this._usedProperties = usedProperties;
 
     if (computedStyle) {
         if (Preferences.showInheritedComputedStyleProperties)
@@ -242,210 +271,391 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
 }
 
 WebInspector.StylePropertiesSection.prototype = {
+    get usedProperties()
+    {
+        return this._usedProperties || {};
+    },
+
+    set usedProperties(x)
+    {
+        this._usedProperties = x;
+        this.update();
+    },
+
+    isPropertyInherited: function(property)
+    {
+        if (!this.computedStyle || !this._usedProperties)
+            return false;
+        // These properties should always show for Computed Style.
+        var alwaysShowComputedProperties = { "display": true, "height": true, "width": true };
+        return !(property in this.usedProperties) && !(property in alwaysShowComputedProperties);
+    },
+
+    isPropertyOverloaded: function(property, shorthand)
+    {
+        if (this.computedStyle || !this._usedProperties)
+            return false;
+
+        var used = (property in this.usedProperties);
+        if (used || !shorthand)
+            return !used;
+
+        // Find out if any of the individual longhand properties of the shorthand
+        // are used, if none are then the shorthand is overloaded too.
+        var longhandProperties = this.styleRule.style.getLonghandProperties(property);
+        for (var j = 0; j < longhandProperties.length; ++j) {
+            var individualProperty = longhandProperties[j];
+            if (individualProperty in this.usedProperties)
+                return false;
+        }
+
+        return true;
+    },
+
+    update: function(full)
+    {
+        if (full || this.computedStyle) {
+            this.propertiesTreeOutline.removeChildren();
+            this.populated = false;
+        } else {
+            var child = this.propertiesTreeOutline.children[0];
+            while (child) {
+                child.overloaded = this.isPropertyOverloaded(child.name, child.shorthand);
+                child = child.traverseNextTreeElement(false, null, true);
+            }
+        }
+    },
+
     onpopulate: function()
     {
         var style = this.styleRule.style;
         if (!style.length)
             return;
 
-        var foundProperties = {};
+        var foundShorthands = {};
+        var uniqueProperties = style.getUniqueProperties();
+        uniqueProperties.sort();
 
-        // Add properties in reverse order to better match how the style
-        // system picks the winning value for duplicate properties.
-        for (var i = (style.length - 1); i >= 0; --i) {
-            var name = style[i];
+        for (var i = 0; i < uniqueProperties.length; ++i) {
+            var name = uniqueProperties[i];
             var shorthand = style.getPropertyShorthand(name);
 
-            if (name in foundProperties || (shorthand && shorthand in foundProperties))
+            if (shorthand && shorthand in foundShorthands)
                 continue;
 
-            foundProperties[name] = true;
-            if (shorthand)
-                foundProperties[shorthand] = true;
-
-            if (this.computedStyle)
-                var inherited = (this.usedProperties && !((shorthand || name) in this.usedProperties));
-            else {
-                var overloaded = ((shorthand || name) in this.overloadedProperties);
-
-                if (shorthand && !overloaded) {
-                    // Find out if all the individual properties of a shorthand
-                    // are overloaded and mark the shorthand as overloaded too.
-
-                    var count = 0;
-                    var overloadCount = 0;
-                    for (var j = 0; j < style.length; ++j) {
-                        var individualProperty = style[j];
-                        if (style.getPropertyShorthand(individualProperty) !== shorthand)
-                            continue;
-                        ++count;
-                        if (individualProperty in this.overloadedProperties)
-                            ++overloadCount;
-                    }
-
-                    overloaded = (overloadCount >= count);
-                }
+            if (shorthand) {
+                foundShorthands[shorthand] = true;
+                name = shorthand;
             }
 
-            var item = new WebInspector.StylePropertyTreeElement(style, (shorthand || name), this.computedStyle, (shorthand ? true : false), (overloaded || inherited));
-            this.propertiesTreeOutline.insertChild(item, 0);
+            var isShorthand = (shorthand ? true : false);
+            var inherited = this.isPropertyInherited(name);
+            var overloaded = this.isPropertyOverloaded(name, isShorthand);
+
+            var item = new WebInspector.StylePropertyTreeElement(style, name, isShorthand, inherited, overloaded);
+            this.propertiesTreeOutline.appendChild(item);
         }
     }
 }
 
 WebInspector.StylePropertiesSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
 
-WebInspector.StylePropertyTreeElement = function(style, name, computedStyle, shorthand, overloadedOrInherited)
+WebInspector.StylePropertyTreeElement = function(style, name, shorthand, inherited, overloaded)
 {
-    // These properties should always show for Computed Style
-    var alwaysShowComputedProperties = { "display": true, "height": true, "width": true };
-
-    // "Nicknames" for some common values that are easier to read.
-    var valueNicknames = {
-        "rgb(0, 0, 0)": "black",
-        "#000": "black",
-        "#000000": "black",
-        "rgb(255, 255, 255)": "white",
-        "#fff": "white",
-        "#ffffff": "white",
-        "#FFF": "white",
-        "#FFFFFF": "white",
-        "rgba(0, 0, 0, 0)": "transparent",
-        "rgb(255, 0, 0)": "red",
-        "rgb(0, 255, 0)": "lime",
-        "rgb(0, 0, 255)": "blue",
-        "rgb(255, 255, 0)": "yellow",
-        "rgb(255, 0, 255)": "magenta",
-        "rgb(0, 255, 255)": "cyan"
-    };
-
     this.style = style;
     this.name = name;
-    this.computedStyle = computedStyle;
     this.shorthand = shorthand;
-    this.overloaded = (!computedStyle && overloadedOrInherited);
-    this.inherited = (computedStyle && overloadedOrInherited && !(name in alwaysShowComputedProperties));
+    this._inherited = inherited;
+    this._overloaded = overloaded;
 
-    var priority = style.getPropertyPriority(name);
-    var value = style.getPropertyValue(name);
-    var htmlValue = value;
-
-    if (priority && !priority.length)
-        delete priority;
-
-    if (!priority && shorthand) {
-        // Priority is not returned for shorthands, find the priority from an individual property.
-        for (var i = 0; i < style.length; ++i) {
-            var individualProperty = style[i];
-            if (style.getPropertyShorthand(individualProperty) !== name)
-                continue;
-            priority = style.getPropertyPriority(individualProperty);
-            break;
-        }
-    }
-
-    if (value) {
-        var urls = value.match(/url\([^)]+\)/);
-        if (urls) {
-            for (var i = 0; i < urls.length; ++i) {
-                var url = urls[i].substring(4, urls[i].length - 1);
-                htmlValue = htmlValue.replace(urls[i], "url(" + WebInspector.linkifyURL(url) + ")");
-            }
-        } else {
-            if (value in valueNicknames)
-                htmlValue = valueNicknames[value];
-            htmlValue = htmlValue.escapeHTML();
-        }
-    } else if (shorthand) {
-        // Some shorthands (like border) return a null value, so compute a shorthand value.
-        // FIXME: remove this when http://bugs.webkit.org/show_bug.cgi?id=15823 is fixed.
-
-        value = "";
-
-        var foundProperties = {};
-        for (var i = 0; i < style.length; ++i) {
-            var individualProperty = style[i];
-            if (style.getPropertyShorthand(individualProperty) !== name || individualProperty in foundProperties)
-                continue;
-
-            var individualValue = style.getPropertyValue(individualProperty);
-            if (style.isPropertyImplicit(individualProperty) || individualValue === "initial")
-                continue;
-
-            foundProperties[individualProperty] = true;
-
-            if (value.length)
-                value += " ";
-            value += individualValue;
-        }
-
-        htmlValue = value.escapeHTML();
-    } else
-        htmlValue = value = "";
-
-    var classes = [];
-    if (!computedStyle && (style.isPropertyImplicit(name) || value === "initial"))
-        classes.push("implicit");
-    if (this.inherited)
-        classes.push("inherited");
-    if (this.overloaded)
-        classes.push("overloaded");
-
-    var title = "";
-    if (classes.length)
-        title += "<span class=\"" + classes.join(" ") + "\">";
-
-    title += "<span class=\"name\">" + name.escapeHTML() + "</span>: ";
-    title += "<span class=\"value\">" + htmlValue;
-    if (priority)
-        title += " !" + priority;
-    title += "</span>;";
-
-    if (value) {
-        // FIXME: this dosen't catch keyword based colors like black and white
-        var colors = value.match(/((rgb|hsl)a?\([^)]+\))|(#[0-9a-fA-F]{6})|(#[0-9a-fA-F]{3})/g);
-        if (colors) {
-            var colorsLength = colors.length;
-            for (var i = 0; i < colorsLength; ++i)
-                title += "<span class=\"swatch\" style=\"background-color: " + colors[i] + "\"></span>";
-        }
-    }
-
-    if (classes.length)
-        title += "</span>";
-
-    TreeElement.call(this, title, null, shorthand);
-
-    this.tooltip = name + ": " + (valueNicknames[value] || value) + (priority ? " !" + priority : "");
+    // Pass an empty title, the title gets made later in onattach.
+    TreeElement.call(this, "", null, shorthand);
 }
 
 WebInspector.StylePropertyTreeElement.prototype = {
+    get inherited()
+    {
+        return this._inherited;
+    },
+
+    set inherited(x)
+    {
+        if (x === this._inherited)
+            return;
+        this._inherited = x;
+        this.updateState();
+    },
+
+    get overloaded()
+    {
+        return this._overloaded;
+    },
+
+    set overloaded(x)
+    {
+        if (x === this._overloaded)
+            return;
+        this._overloaded = x;
+        this.updateState();
+    },
+
+    onattach: function()
+    {
+        this.updateTitle();
+    },
+
+    updateTitle: function()
+    {
+        // "Nicknames" for some common values that are easier to read.
+        var valueNicknames = {
+            "rgb(0, 0, 0)": "black",
+            "#000": "black",
+            "#000000": "black",
+            "rgb(255, 255, 255)": "white",
+            "#fff": "white",
+            "#ffffff": "white",
+            "#FFF": "white",
+            "#FFFFFF": "white",
+            "rgba(0, 0, 0, 0)": "transparent",
+            "rgb(255, 0, 0)": "red",
+            "rgb(0, 255, 0)": "lime",
+            "rgb(0, 0, 255)": "blue",
+            "rgb(255, 255, 0)": "yellow",
+            "rgb(255, 0, 255)": "magenta",
+            "rgb(0, 255, 255)": "cyan"
+        };
+
+        var priority = (this.shorthand ? this.style.getShorthandPriority(this.name) : this.style.getPropertyPriority(this.name));
+        var value = (this.shorthand ? this.style.getShorthandValue(this.name) : this.style.getPropertyValue(this.name));
+        var htmlValue = value;
+
+        if (priority && !priority.length)
+            delete priority;
+        if (priority)
+            priority = "!" + priority;
+
+        if (value) {
+            var urls = value.match(/url\([^)]+\)/);
+            if (urls) {
+                for (var i = 0; i < urls.length; ++i) {
+                    var url = urls[i].substring(4, urls[i].length - 1);
+                    htmlValue = htmlValue.replace(urls[i], "url(" + WebInspector.linkifyURL(url) + ")");
+                }
+            } else {
+                if (value in valueNicknames)
+                    htmlValue = valueNicknames[value];
+                htmlValue = htmlValue.escapeHTML();
+            }
+        } else
+            htmlValue = value = "";
+
+        this.updateState();
+
+        var nameElement = document.createElement("span");
+        nameElement.className = "name";
+        nameElement.textContent = this.name;
+
+        var valueElement = document.createElement("span");
+        valueElement.className = "value";
+        valueElement.innerHTML = htmlValue;
+
+        if (priority) {
+            var priorityElement = document.createElement("span");
+            priorityElement.className = "priority";
+            priorityElement.textContent = priority;
+        }
+
+        this.listItemElement.removeChildren();
+
+        this.listItemElement.appendChild(nameElement);
+        this.listItemElement.appendChild(document.createTextNode(": "));
+        this.listItemElement.appendChild(valueElement);
+
+        if (priorityElement) {
+            this.listItemElement.appendChild(document.createTextNode(" "));
+            this.listItemElement.appendChild(priorityElement);
+        }
+
+        this.listItemElement.appendChild(document.createTextNode(";"));
+
+        if (value) {
+            // FIXME: this dosen't catch keyword based colors like black and white
+            var colors = value.match(/((rgb|hsl)a?\([^)]+\))|(#[0-9a-fA-F]{6})|(#[0-9a-fA-F]{3})/g);
+            if (colors) {
+                var colorsLength = colors.length;
+                for (var i = 0; i < colorsLength; ++i) {
+                    var swatchElement = document.createElement("span");
+                    swatchElement.className = "swatch";
+                    swatchElement.style.setProperty("background-color", colors[i]);
+                    this.listItemElement.appendChild(swatchElement);
+                }
+            }
+        }
+
+        this.tooltip = this.name + ": " + (valueNicknames[value] || value) + (priority ? " " + priority : "");
+    },
+
+    updateState: function()
+    {
+        if (!this.listItemElement)
+            return;
+
+        var value = (this.shorthand ? this.style.getShorthandValue(this.name) : this.style.getPropertyValue(this.name));
+        if (this.style.isPropertyImplicit(this.name) || value === "initial")
+            this.listItemElement.addStyleClass("implicit");
+        else
+            this.listItemElement.removeStyleClass("implicit");
+
+        if (this.inherited)
+            this.listItemElement.addStyleClass("inherited");
+        else
+            this.listItemElement.removeStyleClass("inherited");
+
+        if (this.overloaded)
+            this.listItemElement.addStyleClass("overloaded");
+        else
+            this.listItemElement.removeStyleClass("overloaded");
+    },
+
     onpopulate: function()
     {
         // Only populate once and if this property is a shorthand.
         if (this.children.length || !this.shorthand)
             return;
 
-        var foundProperties = {};
+        var longhandProperties = this.style.getLonghandProperties(this.name);
+        for (var i = 0; i < longhandProperties.length; ++i) {
+            var name = longhandProperties[i];
 
-        // Add properties in reverse order to better match how the style
-        // system picks the winning value for duplicate properties.
-        for (var i = (this.style.length - 1); i >= 0; --i) {
-            var name = this.style[i];
-            var shorthand = this.style.getPropertyShorthand(name);
+            if (this.treeOutline.section) {
+                var inherited = this.treeOutline.section.isPropertyInherited(name);
+                var overloaded = this.treeOutline.section.isPropertyOverloaded(name);
+            }
 
-            if (shorthand !== this.name || name in foundProperties)
-                continue;
+            var item = new WebInspector.StylePropertyTreeElement(this.style, name, false, inherited, overloaded);
+            this.appendChild(item);
+        }
+    },
 
-            foundProperties[name] = true;
+    ondblclick: function(element, event)
+    {
+        this.startEditing(event.target);
+    },
 
-            if (this.computedStyle)
-                var inherited = (this.treeOutline.section.usedProperties && !(name in this.treeOutline.section.usedProperties));
+    startEditing: function(selectElement)
+    {
+        // FIXME: we don't allow editing of longhand properties under a shorthand right now.
+        if (this.parent.shorthand)
+            return;
+
+        if (this.editing || (this.treeOutline.section && !this.treeOutline.section.editable))
+            return;
+
+        this.editing = true;
+        this.previousTextContent = this.listItemElement.textContent;
+
+        this.listItemElement.addStyleClass("focusable");
+        this.listItemElement.addStyleClass("editing");
+        this.wasExpanded = this.expanded;
+        this.collapse();
+        // Lie about out children to prevent toggling on click.
+        this.hasChildren = false;
+
+        if (!selectElement)
+            selectElement = this.listItemElement;
+
+        window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
+
+        var treeElement = this;
+        this.listItemElement.blurred = function() { treeElement.endEditing() };
+        this.listItemElement.handleKeyEvent = function(event) {
+            if (event.keyIdentifier === "Enter") {
+                treeElement.endEditing();
+                event.preventDefault();
+            }
+        };
+
+        this.previousFocusElement = WebInspector.currentFocusElement;
+        WebInspector.currentFocusElement = this.listItemElement;
+    },
+
+    endEditing: function()
+    {
+        // Revert the changes done in startEditing().
+        delete this.listItemElement.blurred;
+        delete this.listItemElement.handleKeyEvent;
+
+        WebInspector.currentFocusElement = this.previousFocusElement;
+        delete this.previousFocusElement;
+
+        delete this.editing;
+
+        this.listItemElement.removeStyleClass("focusable");
+        this.listItemElement.removeStyleClass("editing");
+        this.hasChildren = (this.children.length ? true : false);
+        if (this.wasExpanded) {
+            delete this.wasExpanded;
+            this.expand();
+        }
+
+        var previousContent = this.previousTextContent;
+        delete this.previousTextContent;
+
+        var userInput = this.listItemElement.textContent;
+        if (userInput === previousContent)
+            return; // nothing changed, so do nothing else
+
+        // Remove the original property from the real style declaration, if this represents
+        // a shorthand remove all the longhand properties.
+        if (this.shorthand) {
+            var longhandProperties = this.style.getLonghandProperties(this.name);
+            for (var i = 0; i < longhandProperties.length; ++i)
+                this.style.removeProperty(longhandProperties[i]);
+        } else
+            this.style.removeProperty(this.name);
+
+        // Create a new element to parse the user input CSS.
+        var parseElement = document.createElement("span");
+        parseElement.setAttribute("style", userInput);
+
+        var userInputStyle = parseElement.style;
+        if (userInputStyle.length) {
+            // Iterate of the properties on the test element's style declaration and
+            // add them to the real style declaration. We take care to move shorthands.
+
+            var foundShorthands = {};
+            var uniqueProperties = userInputStyle.getUniqueProperties();
+
+            for (var i = 0; i < uniqueProperties.length; ++i) {
+                var name = uniqueProperties[i];
+                var shorthand = userInputStyle.getPropertyShorthand(name);
+
+                if (shorthand && shorthand in foundShorthands)
+                    continue;
+
+                if (shorthand) {
+                    var value = userInputStyle.getShorthandValue(shorthand);
+                    var priority = userInputStyle.getShorthandPriority(shorthand);
+                    foundShorthands[shorthand] = true;
+                } else {
+                    var value = userInputStyle.getPropertyValue(name);
+                    var priority = userInputStyle.getPropertyPriority(name);
+                }
+
+                // Set the property on the real style declaration.
+                this.style.setProperty((shorthand || name), value, priority);
+            }
+
+            if (this.treeOutline.section && this.treeOutline.section.pane)
+                this.treeOutline.section.pane.update(null, this.treeOutline.section);
+            else if (this.treeOutline.section)
+                this.treeOutline.section.update(true);
             else
-                var overloaded = (name in this.treeOutline.section.overloadedProperties);
-
-            var item = new WebInspector.StylePropertyTreeElement(this.style, name, this.computedStyle, false, (inherited || overloaded));
-            this.insertChild(item, 0);
+                this.updateTitle(); // FIXME: this will not show new properties. But we don't hit his case yet.
+        } else {
+            if (this.treeOutline.section && this.treeOutline.section.pane)
+                this.treeOutline.section.pane.update();
+            this.parent.removeChild(this);
         }
     }
 }

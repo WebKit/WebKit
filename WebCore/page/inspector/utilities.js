@@ -244,6 +244,82 @@ String.prototype.trimURL = function(baseURLDomain)
     return result;
 }
 
+CSSStyleDeclaration.prototype.getShorthandValue = function(shorthandProperty)
+{
+    var value = this.getPropertyValue(shorthandProperty);
+    if (!value) {
+        // Some shorthands (like border) return a null value, so compute a shorthand value.
+        // FIXME: remove this when http://bugs.webkit.org/show_bug.cgi?id=15823 is fixed.
+
+        var foundProperties = {};
+        for (var i = 0; i < this.length; ++i) {
+            var individualProperty = this[i];
+            if (individualProperty in foundProperties || this.getPropertyShorthand(individualProperty) !== shorthandProperty)
+                continue;
+
+            var individualValue = this.getPropertyValue(individualProperty);
+            if (this.isPropertyImplicit(individualProperty) || individualValue === "initial")
+                continue;
+
+            foundProperties[individualProperty] = true;
+
+            if (!value)
+                value = "";
+            else if (value.length)
+                value += " ";
+            value += individualValue;
+        }
+    }
+    return value;
+}
+
+CSSStyleDeclaration.prototype.getShorthandPriority = function(shorthandProperty)
+{
+    var priority = this.getPropertyPriority(shorthandProperty);
+    if (!priority) {
+        for (var i = 0; i < this.length; ++i) {
+            var individualProperty = this[i];
+            if (this.getPropertyShorthand(individualProperty) !== shorthandProperty)
+                continue;
+            priority = this.getPropertyPriority(individualProperty);
+            break;
+        }
+    }
+    return priority;
+}
+
+CSSStyleDeclaration.prototype.getLonghandProperties = function(shorthandProperty)
+{
+    var properties = [];
+    var foundProperties = {};
+
+    for (var i = 0; i < this.length; ++i) {
+        var individualProperty = this[i];
+        if (individualProperty in foundProperties || this.getPropertyShorthand(individualProperty) !== shorthandProperty)
+            continue;
+        foundProperties[individualProperty] = true;
+        properties.push(individualProperty);
+    }
+
+    return properties;
+}
+
+CSSStyleDeclaration.prototype.getUniqueProperties = function()
+{
+    var properties = [];
+    var foundProperties = {};
+
+    for (var i = 0; i < this.length; ++i) {
+        var property = this[i];
+        if (property in foundProperties)
+            continue;
+        foundProperties[property] = true;
+        properties.push(property);
+    }
+
+    return properties;
+}
+
 function isNodeWhitespace()
 {
     if (!this || this.nodeType !== Node.TEXT_NODE)

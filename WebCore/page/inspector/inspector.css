@@ -1021,7 +1021,7 @@ body.inactive #sidebar li.selected {
     text-decoration: underline;
 }
 
-.focused .content.tree li.selected * {
+body:not(.inactive) .focused .content.tree li.selected * {
     color: inherit;
 }
 
@@ -1103,6 +1103,7 @@ body.inactive #sidebar li.selected {
     text-overflow: ellipsis;
     overflow: hidden;
     -webkit-user-select: text;
+    outline: none;
 }
 
 .section .properties li.parent {
@@ -1139,21 +1140,38 @@ body.inactive #sidebar li.selected {
     margin-top: 1px;
 }
 
+.section .properties li.editing {
+    -webkit-box-shadow: rgba(0, 0, 0, .5) 3px 3px 4px;
+    outline: 1px solid rgb(66%, 66%, 66%);
+    background-color: white;
+    -webkit-user-modify: read-write-plaintext-only;
+    text-overflow: clip;
+    margin-left: 8px;
+    padding-left: 2px;
+    margin-bottom: -1px;
+    padding-bottom: 1px;
+    text-decoration: none !important;
+    opacity: 1.0 !important;
+}
+
+.section .properties li.editing.parent::before {
+    display: none;
+}
+
+.section .properties li.editing * {
+    color: black !important;
+}
+
 .section .properties .overloaded {
     text-decoration: line-through;
 }
 
-.section .properties .implicit {
+.section .properties .implicit, .section .properties .inherited {
     opacity: 0.5;
 }
 
-.section .properties .inherited {
+.section:not(.show-inherited) .properties .inherited {
     display: none;
-    opacity: 0.5;
-}
-
-.section.show-inherited .properties .inherited {
-    display: inline;
 }
 
 .section .properties .name {
@@ -1162,6 +1180,10 @@ body.inactive #sidebar li.selected {
 
 .section .properties .number {
     color: blue;
+}
+
+.section .properties .priority {
+    color: rgb(128, 0, 0);
 }
 
 .section .properties .keyword {

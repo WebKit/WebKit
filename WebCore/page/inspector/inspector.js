@@ -88,6 +88,8 @@ var WebInspector = {
         if (this._currentFocusElement) {
             this._currentFocusElement.removeStyleClass("focused");
             this._currentFocusElement.addStyleClass("blurred");
+            if (this._currentFocusElement.blurred)
+                this._currentFocusElement.blurred();
         }
 
         this._currentFocusElement = x;
@@ -95,6 +97,8 @@ var WebInspector = {
         if (x) {
             x.addStyleClass("focused");
             x.removeStyleClass("blurred");
+            if (this._currentFocusElement.focused)
+                this._currentFocusElement.focused();
         }
     },
 
@@ -319,9 +323,11 @@ WebInspector.documentClick = function(event)
 
 WebInspector.documentKeypress = function(event)
 {
-    if (!this.currentFocusElement || !this.currentFocusElement.id || !this.currentFocusElement.id.length)
+    if (!this.currentFocusElement)
         return;
-    if (this.currentFocusElement.id + "Keypress" in WebInspector)
+    if (this.currentFocusElement.handleKeyEvent)
+        this.currentFocusElement.handleKeyEvent(event);
+    else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "Keypress"])
         WebInspector[this.currentFocusElement.id + "Keypress"](event);
 }
 
@@ -391,7 +397,7 @@ WebInspector.animateStyle = function(animations, duration, callback, complete)
                 element = animation[key];
             else if (key === "start")
                 start = animation[key];
-            else if (key == "current")
+            else if (key === "current")
                 current = animation[key];
             else if (key === "end")
                 end = animation[key];
@@ -815,14 +821,14 @@ WebInspector.performSearch = function(query)
 
         WebInspector.navigateToPanel(element.representedObject.panel, "source");
         element.representedObject.line.scrollIntoView(true);
-        resultsContainer.scrollToElement(element._listItemNode);
+        resultsContainer.scrollToElement(element.listItemElement);
     }
 
     var domResultSelected = function(element)
     {
         WebInspector.navigateToPanel(element.representedObject.panel, "dom");
         element.representedObject.panel.focusedDOMNode = element.representedObject.node;
-        resultsContainer.scrollToElement(element._listItemNode);
+        resultsContainer.scrollToElement(element.listItemElement);
     }
 
     for (var i = 0; i < files.length; ++i) {

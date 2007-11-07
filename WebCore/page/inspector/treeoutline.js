@@ -401,6 +401,14 @@ function TreeElement(title, representedObject, hasChildren)
 }
 
 TreeElement.prototype = {
+    get listItemElement() {
+        return this._listItemNode;
+    },
+
+    get childrenListElement() {
+        return this._childrenListNode;
+    },
+
     get title() {
         return this._title;
     },
@@ -474,6 +482,9 @@ TreeElement.prototype._attach = function()
         this._listItemNode.addEventListener("mousedown", TreeElement.treeElementSelected, false);
         this._listItemNode.addEventListener("click", TreeElement.treeElementToggled, false);
         this._listItemNode.addEventListener("dblclick", TreeElement.treeElementDoubleClicked, false);
+
+        if (this.onattach)
+            this.onattach(this);
     }
 
     this.parent._childrenListNode.insertBefore(this._listItemNode, (this.nextSibling ? this.nextSibling._listItemNode : null));
@@ -499,7 +510,7 @@ TreeElement.treeElementSelected = function(event)
     if (!element || !element.treeElement || !element.treeElement.selectable)
         return;
 
-    if (event.offsetX > 20 || !element.treeElement.hasChildren)
+    if (event.offsetX > 10 || !element.treeElement.hasChildren)
         element.treeElement.select();
 }
 
@@ -509,7 +520,7 @@ TreeElement.treeElementToggled = function(event)
     if (!element || !element.treeElement)
         return;
 
-    if (event.offsetX <= 20 && element.treeElement.hasChildren) {
+    if (event.offsetX <= 10 && element.treeElement.hasChildren) {
         if (element.treeElement.expanded) {
             if (event.altKey)
                 element.treeElement.collapseRecursively();
@@ -530,11 +541,10 @@ TreeElement.treeElementDoubleClicked = function(event)
     if (!element || !element.treeElement)
         return;
 
-    if (element.treeElement.hasChildren && !element.treeElement.expanded)
-        element.treeElement.expand();
-
     if (element.treeElement.ondblclick)
-        element.treeElement.ondblclick(element.treeElement);
+        element.treeElement.ondblclick(element.treeElement, event);
+    else if (element.treeElement.hasChildren && !element.treeElement.expanded)
+        element.treeElement.expand();
 }
 
 TreeElement.prototype.collapse = function()
@@ -581,10 +591,8 @@ TreeElement.prototype.expand = function()
         if (this.onpopulate)
             this.onpopulate(this);
 
-        for (var i = 0; i < this.children.length; ++i) {
-            var child = this.children[i];
-            child._attach();
-        }
+        for (var i = 0; i < this.children.length; ++i)
+            this.children[i]._attach();
 
         delete this.refreshChildren;
     }

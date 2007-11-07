@@ -99,17 +99,31 @@ WebInspector.PropertiesSection.prototype = {
             this.collapse();
     },
 
+    get populated()
+    {
+        return this._populated;
+    },
+
+    set populated(x)
+    {
+        this._populated = x;
+        if (!x && this.onpopulate && this._expanded) {
+            this.onpopulate(this);
+            this._populated = true;
+        }
+    },
+
     expand: function()
     {
         if (this._expanded)
             return;
         this._expanded = true;
+        this.element.addStyleClass("expanded");
 
         if (!this._populated && this.onpopulate) {
             this.onpopulate(this);
             this._populated = true;
         }
-        this.element.addStyleClass("expanded");
     },
 
     collapse: function()

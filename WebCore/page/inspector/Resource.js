@@ -684,7 +684,7 @@ WebInspector.ResourceTreeElement.deselected = function(element)
 
 WebInspector.ResourceTreeElement.revealed = function(element)
 {
-    if (!element._listItemNode || !element.treeOutline || !element.treeOutline._childrenListNode)
+    if (!element.listItemElement || !element.treeOutline || !element.treeOutline.childrenListElement)
         return;
-    element.treeOutline._childrenListNode.scrollToElement(element._listItemNode);
+    element.treeOutline.childrenListElement.scrollToElement(element.listItemElement);
 }
