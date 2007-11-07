@@ -2,6 +2,14 @@
 
         Reviewed by Lars.
 
+        Moved the WebCore::Image specific function loadResourcePixmap from qwebsettings.cpp to ImageQt.cpp and made it static.
+
+        * Api/qwebsettings.cpp:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Changed the icondatabase accessor to be a static function because it doesn't change the QWebSettings object.
 
         * Api/qwebsettings.cpp:

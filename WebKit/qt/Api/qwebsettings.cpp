@@ -207,20 +207,3 @@ bool QWebSettings::testAttribute(WebAttribute attr) const
     return d->attributes[attr];
 }
 
-QPixmap loadResourcePixmap(const char *name)
-{
-    const QWebSettings settings = QWebSettings::global();
-    const QString resource = name;
-
-    QPixmap pixmap;
-    if (resource == "missingImage")
-        pixmap = settings.webGraphic(QWebSettings::MissingImageGraphic);
-    else if (resource == "nullPlugin")
-        pixmap = settings.webGraphic(QWebSettings::MissingPluginGraphic);
-    else if (resource == "urlIcon")
-        pixmap = settings.webGraphic(QWebSettings::DefaultFaviconGraphic);
-    else if (resource == "textAreaResizeCorner")
-        pixmap = settings.webGraphic(QWebSettings::TextAreaResizeCornerGraphic);
-
-    return pixmap;
-}
