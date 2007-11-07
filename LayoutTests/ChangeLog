@@ -1,3 +1,15 @@
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15877
+          REGRESSION: r27486 caused a layout regression at my bank's website
+
+        * fast/block/float/overhanging-after-height-decrease-offsets.html: Added.
+        * platform/mac-leopard/fast/block/float/overhanging-after-height-decrease-offsets-expected.checksum: Added.
+        * platform/mac-leopard/fast/block/float/overhanging-after-height-decrease-offsets-expected.png: Added.
+        * platform/mac/fast/block/float/overhanging-after-height-decrease-offsets-expected.txt: Added.
+
 2007-11-06  Adam Roben  <aroben@apple.com>
 
         Move a Mac-specific test to platform/mac

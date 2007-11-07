@@ -1,3 +1,15 @@
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15877
+          REGRESSION: r27486 caused a layout regression at my bank's website
+
+        Test: fast/block/float/overhanging-after-height-decrease-offsets.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+
 2007-11-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam.

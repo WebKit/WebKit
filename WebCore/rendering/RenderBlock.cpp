@@ -603,7 +603,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
                 if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
                     RenderBlock* block = static_cast<RenderBlock*>(child);
                     if (block->floatBottom() + block->yPos() > m_height)
-                        addOverhangingFloats(block, block->xPos(), block->yPos());
+                        addOverhangingFloats(block, -block->xPos(), -block->yPos());
                 }
             }
         }
