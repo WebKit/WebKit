@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +37,7 @@
 #include <qclipboard.h>
 #include <qmimedata.h>
 #include <qapplication.h>
+#include <qurl.h>
 
 #define methodDebug() qDebug() << "PasteboardQt: " << __FUNCTION__;
 
@@ -96,9 +99,15 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     return 0;
 }
 
-void Pasteboard::writeURL(const KURL&, const String&, Frame*)
+void Pasteboard::writeURL(const KURL& _url, const String&, Frame*)
 {
-    notImplemented();
+    ASSERT(!_url.isEmpty());
+
+    QMimeData* md = new QMimeData;
+    QString url = _url.url();
+    md->setText(url);
+    md->setUrls(QList<QUrl>() << QUrl(url));
+    QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
 }
 
 void Pasteboard::writeImage(Node*, const KURL&, const String&)

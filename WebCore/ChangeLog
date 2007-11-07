@@ -2,6 +2,24 @@
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
+        Implement Pasteboard::writeURL()
+        * The URL currently gets written as text/plain and text/uri-list.
+        The win and mac port have some more types which we currently do
+        not support. When supporting them we can use the 'titleString'
+        as well.
+        * As with writeSelection we only copy into the Clipboard. We could
+        consider copying into the Selection as well.
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeURL):
+
+2007-11-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
         Kill whitespace
         
 
