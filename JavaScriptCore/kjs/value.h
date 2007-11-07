@@ -85,6 +85,7 @@ public:
 
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
+    JSValue* toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
     UString toString(ExecState *exec) const;
     JSObject *toObject(ExecState *exec) const;
 
@@ -389,6 +390,11 @@ inline bool JSValue::toBoolean(ExecState *exec) const
 ALWAYS_INLINE double JSValue::toNumber(ExecState *exec) const
 {
     return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : asCell()->toNumber(exec);
+}
+
+ALWAYS_INLINE JSValue* JSValue::toJSNumber(ExecState* exec) const
+{
+    return JSImmediate::isNumber(this) ? const_cast<JSValue*>(this) : jsNumber(this->toNumber(exec));
 }
 
 inline UString JSValue::toString(ExecState *exec) const

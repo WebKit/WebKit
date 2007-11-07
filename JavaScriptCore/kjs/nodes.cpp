@@ -923,11 +923,9 @@ JSValue *PostIncResolveNode::evaluate(ExecState *exec)
   do { 
     base = *iter;
     if (base->getPropertySlot(exec, m_ident, slot)) {
-        JSValue *v = slot.getValue(exec, base, m_ident);
-
-        double n = v->toNumber(exec);
-        base->put(exec, m_ident, jsNumber(n + 1));
-        return jsNumber(n);
+        JSValue* v = slot.getValue(exec, base, m_ident)->toJSNumber(exec);
+        base->put(exec, m_ident, jsNumber(v->toNumber(exec) + 1));
+        return v;
     }
 
     ++iter;
@@ -942,9 +940,9 @@ JSValue* PostIncLocalVarNode::evaluate(ExecState* exec)
     ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
 
     JSValue** slot = &exec->localStorage()[index].value;
-    double n = (*slot)->toNumber(exec);
-    *slot = jsNumber(n + 1);
-    return jsNumber(n);
+    JSValue* v = (*slot)->toJSNumber(exec);
+    *slot = jsNumber(v->toNumber(exec) + 1);
+    return v;
 }
 
 
@@ -973,11 +971,9 @@ JSValue *PostDecResolveNode::evaluate(ExecState *exec)
   do { 
     base = *iter;
     if (base->getPropertySlot(exec, m_ident, slot)) {
-        JSValue *v = slot.getValue(exec, base, m_ident);
-
-        double n = v->toNumber(exec);
-        base->put(exec, m_ident, jsNumber(n - 1));
-        return jsNumber(n);
+        JSValue* v = slot.getValue(exec, base, m_ident)->toJSNumber(exec);
+        base->put(exec, m_ident, jsNumber(v->toNumber(exec) - 1));
+        return v;
     }
 
     ++iter;
@@ -992,9 +988,9 @@ JSValue* PostDecLocalVarNode::evaluate(ExecState* exec)
     ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
 
     JSValue** slot = &exec->localStorage()[index].value;
-    double n = (*slot)->toNumber(exec);
-    *slot = jsNumber(n - 1);
-    return jsNumber(n);
+    JSValue* v = (*slot)->toJSNumber(exec);
+    *slot = jsNumber(v->toNumber(exec) - 1);
+    return v;
 }
 
 // ------------------------------ PostfixBracketNode ----------------------------------
@@ -1020,11 +1016,10 @@ JSValue *PostIncBracketNode::evaluate(ExecState *exec)
     JSValue *v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, base, propertyIndex) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
 
-    double n = v->toNumber(exec);
-
-    base->put(exec, propertyIndex, jsNumber(n + 1));
+    JSValue* v2 = v->toJSNumber(exec);
+    base->put(exec, propertyIndex, jsNumber(v2->toNumber(exec) + 1));
         
-    return jsNumber(n);
+    return v2;
   }
 
   Identifier propertyName(subscript->toString(exec));
@@ -1032,11 +1027,9 @@ JSValue *PostIncBracketNode::evaluate(ExecState *exec)
   JSValue *v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, base, propertyName) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
-  double n = v->toNumber(exec);
-  
-  base->put(exec, propertyName, jsNumber(n + 1));
-        
-  return jsNumber(n);
+  JSValue* v2 = v->toJSNumber(exec);
+  base->put(exec, propertyName, jsNumber(v2->toNumber(exec) + 1));
+  return v2;
 }
 
 JSValue *PostDecBracketNode::evaluate(ExecState *exec)
@@ -1054,11 +1047,9 @@ JSValue *PostDecBracketNode::evaluate(ExecState *exec)
     JSValue *v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, base, propertyIndex) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
 
-    double n = v->toNumber(exec);
-
-    base->put(exec, propertyIndex, jsNumber(n - 1));
-        
-    return jsNumber(n);
+    JSValue* v2 = v->toJSNumber(exec);
+    base->put(exec, propertyIndex, jsNumber(v2->toNumber(exec) - 1));
+    return v2;
   }
 
   Identifier propertyName(subscript->toString(exec));
@@ -1066,11 +1057,9 @@ JSValue *PostDecBracketNode::evaluate(ExecState *exec)
   JSValue *v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, base, propertyName) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
-  double n = v->toNumber(exec);
-  
-  base->put(exec, propertyName, jsNumber(n - 1));
-        
-  return jsNumber(n);
+  JSValue* v2 = v->toJSNumber(exec);
+  base->put(exec, propertyName, jsNumber(v2->toNumber(exec) - 1));
+  return v2;
 }
 
 // ------------------------------ PostfixDotNode ----------------------------------
@@ -1090,11 +1079,9 @@ JSValue *PostIncDotNode::evaluate(ExecState *exec)
   JSValue *v = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, base, m_ident) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
-  double n = v->toNumber(exec);
-  
-  base->put(exec, m_ident, jsNumber(n + 1));
-        
-  return jsNumber(n);
+  JSValue* v2 = v->toJSNumber(exec);
+  base->put(exec, m_ident, jsNumber(v2->toNumber(exec) + 1));
+  return v2;
 }
 
 JSValue *PostDecDotNode::evaluate(ExecState *exec)
@@ -1107,11 +1094,9 @@ JSValue *PostDecDotNode::evaluate(ExecState *exec)
   JSValue *v = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, base, m_ident) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
 
-  double n = v->toNumber(exec);
-  
-  base->put(exec, m_ident, jsNumber(n - 1));
-        
-  return jsNumber(n);
+  JSValue* v2 = v->toJSNumber(exec);
+  base->put(exec, m_ident, jsNumber(v2->toNumber(exec) - 1));
+  return v2;
 }
 
 // ------------------------------ PostfixErrorNode -----------------------------------
@@ -1561,7 +1546,7 @@ JSValue *UnaryPlusNode::evaluate(ExecState *exec)
   JSValue *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  return jsNumber(v->toNumber(exec));
+  return v->toJSNumber(exec);
 }
 
 // ------------------------------ NegateNode -----------------------------------
