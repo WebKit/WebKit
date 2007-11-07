@@ -118,8 +118,7 @@ static String writeHelper(ExecState* exec, const List& args)
     // DOM only specifies single string argument, but NS & IE allow multiple
     // or no arguments.
     String str = "";
-    unsigned int size = (unsigned int)args.size();
-    for (unsigned int i = 0; i < size; ++i)
+    for (unsigned int i = 0; i < args.size(); ++i)
         str += args[i]->toString(exec);
     return str;
 }
