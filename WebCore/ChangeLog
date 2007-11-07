@@ -1,3 +1,16 @@
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Changed to PlatformMouseEvent constructor to allow construction from a QContextMenuEvent.
+        Call sendContextMenuEvent on the event handler from a QWidget::contextMenuEvent re-implementation instead of in mousePressEvent.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/PlatformMouseEvent.h:
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2007-11-07  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

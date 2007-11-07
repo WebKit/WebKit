@@ -2,6 +2,18 @@
 
         Reviewed by Lars.
 
+        Changed to PlatformMouseEvent constructor to allow construction from a QContextMenuEvent.
+        Call sendContextMenuEvent on the event handler from a QWidget::contextMenuEvent re-implementation instead of in mousePressEvent.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::mousePressEvent):
+        (QWebPage::contextMenuEvent):
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Turned onLoadProgressChanged into a real private slot.
 
         * Api/qwebpage.cpp:

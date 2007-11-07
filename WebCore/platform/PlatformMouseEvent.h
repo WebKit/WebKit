@@ -54,7 +54,7 @@ typedef struct _GdkEventMotion GdkEventMotion;
 #endif
 
 #if PLATFORM(QT)
-class QMouseEvent;
+class QInputEvent;
 #endif
 
 #if PLATFORM(WX)
@@ -127,7 +127,7 @@ namespace WebCore {
         PlatformMouseEvent(GdkEventMotion*);
 #endif
 #if PLATFORM(QT)
-        PlatformMouseEvent(QMouseEvent*, int clickCount);
+        PlatformMouseEvent(QInputEvent*, int clickCount);
 #endif
 
 #if PLATFORM(WX)
