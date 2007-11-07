@@ -30,8 +30,9 @@
 
 #include "DocumentFragment.h"
 #include "Editor.h"
+#include "Image.h"
 #include "markup.h"
-#include "NotImplemented.h"
+#include "RenderImage.h"
 
 #include <qdebug.h>
 #include <qclipboard.h>
@@ -110,9 +111,20 @@ void Pasteboard::writeURL(const KURL& _url, const String&, Frame*)
     QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
 }
 
-void Pasteboard::writeImage(Node*, const KURL&, const String&)
+void Pasteboard::writeImage(Node* node, const KURL&, const String&)
 {
-    notImplemented();
+    ASSERT(node && node->renderer() && node->renderer()->isImage());
+
+    CachedImage* cachedImage = static_cast<RenderImage*>(node->renderer())->cachedImage();
+    ASSERT(cachedImage);
+
+    Image* image = cachedImage->image();
+    ASSERT(image);
+
+    QPixmap* pixmap = image->getPixmap();
+    ASSERT(pixmap);
+
+    QApplication::clipboard()->setPixmap(*pixmap, QClipboard::Clipboard);
 }
 
 void Pasteboard::clear()

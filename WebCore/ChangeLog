@@ -2,6 +2,23 @@
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
+        Implement Pasteboard::writeImage()
+        
+        * Pasteboard is now fully implemented. Copying of Images into the Clipboard
+        is now supported.
+        * As with URLs we only copy into the Clipboard (and not additionally to the
+        Selection)
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage):
+
+2007-11-07  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
         Apple CodingStyle fixes
         
 
