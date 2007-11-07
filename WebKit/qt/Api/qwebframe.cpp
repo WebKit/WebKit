@@ -192,11 +192,6 @@ QWebPage * QWebFrame::page() const
     return d->page;
 }
 
-QString QWebFrame::selectedText() const
-{
-    return d->frame->selectedText();
-}
-
 QList<QWebFrame*> QWebFrame::childFrames() const
 {
     QList<QWebFrame*> rc;

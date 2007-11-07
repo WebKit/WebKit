@@ -628,6 +628,11 @@ void QWebPage::paste()
     webActionTriggered(Paste);
 }
 
+QString QWebPage::selectedText() const
+{
+    return d->page->focusController()->focusedOrMainFrame()->selectedText();
+}
+
 QAction *QWebPage::webAction(WebAction action) const
 {
     if (action == QWebPage::NoWebAction) return 0;

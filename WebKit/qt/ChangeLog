@@ -2,6 +2,20 @@
 
         Reviewed by Lars.
 
+        Moved QWebFrame::selectedText() to QWebPage::selectedText().
+        
+        The currently selected text is a property of the page as a whole.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::selectedText):
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Implemented support for settings propagation.
         
         If an individual setting is not set in a page's QWebSettings then it is inherited from the default settings.

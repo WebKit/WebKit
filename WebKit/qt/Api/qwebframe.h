@@ -59,7 +59,6 @@ public:
     QString markup() const;
     QString innerText() const;
     QString renderTreeDump() const;
-    QString selectedText() const;
     QString title() const;
     QString name() const;
 
