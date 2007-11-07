@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Implemented createWindow() in QtLauncher.
+
+        * QtLauncher/main.cpp:
+        (WebPage::WebPage):
+        (MainWindow::MainWindow):
+        (WebPage::createWindow):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Implemented opening links in new windows
 
         * Api/qwebpage.cpp:

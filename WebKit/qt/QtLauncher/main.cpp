@@ -270,13 +270,21 @@ protected:
     QPushButton *clearButton;
 };
 
+class WebPage : public QWebPage
+{
+public:
+    inline WebPage(QWidget *parent) : QWebPage(parent) {}
+
+    virtual QWebPage *createWindow();
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    MainWindow(const QUrl &url)
+    MainWindow(const QUrl &url = QUrl())
     {
-        page = new QWebPage(this);
+        page = new WebPage(this);
         InfoWidget *info = new InfoWidget(page);
         info->setGeometry(20, 20, info->sizeHint().width(),
                           info->sizeHint().height());
@@ -320,10 +328,12 @@ public:
         hoverLabel = new HoverLabel(this);
         hoverLabel->hide();
 
-        page->open(url);
+        if (url.isValid())
+            page->open(url);
 
         info->raise();
     }
+    inline QWebPage *webPage() const { return page; }
 protected slots:
     void changeLocation()
     {
@@ -354,6 +364,12 @@ private:
     QLineEdit *urlEdit;
     HoverLabel *hoverLabel;
 };
+
+QWebPage *WebPage::createWindow()
+{
+    MainWindow *mw = new MainWindow;
+    return mw->webPage();
+}
 
 #include "main.moc"
 
