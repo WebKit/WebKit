@@ -1365,14 +1365,14 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/WebKit.exp",
+				"$(PROJECT_DIR)/WebKit.exp",
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\n# exclude Carbon functions on 64-bit\nsed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// \"${SRCROOT}/WebKit.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\"\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\n# exclude Carbon functions on 64-bit\nsed -e s/^_HIWebViewCreate$// -e s/^_HIWebViewGetWebView$// -e s/^_WebConvertNSImageToCGImageRef$// -e s/^_WebInitForCarbon$// \"${PROJECT_DIR}/WebKit.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.LP64.exp\"\n";
 		};
 		1C5BFFFE0BAF8AEA004FF4F5 /* Check Bundle Version */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1380,7 +1380,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Configurations/Version.xcconfig",
+				"$(PROJECT_DIR)/Configurations/Version.xcconfig",
 			);
 			name = "Check Bundle Version";
 			outputPaths = (
@@ -1395,7 +1395,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/MigrateWebCoreHeaders.make",
+				"$(PROJECT_DIR)/MigrateWebCoreHeaders.make",
 			);
 			name = "Migrate Headers";
 			outputPaths = (
@@ -1410,15 +1410,15 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Configurations/Version.xcconfig",
+				"$(PROJECT_DIR)/Configurations/Version.xcconfig",
 			);
 			name = "Update Info.plist with version information";
 			outputPaths = (
-				"$(SRCROOT)/Info.plist",
+				"$(PROJECT_DIR)/Info.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$SRCROOT/Info.plist\"\n";
+			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$PROJECT_DIR/Info.plist\"\n";
 		};
 		939811300824BF01008DF038 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;

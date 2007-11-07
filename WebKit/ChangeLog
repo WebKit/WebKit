@@ -1,0 +1,11 @@
+2007-11-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Fix 64-bit Mac build.
+
+        * WebKit.xcodeproj/project.pbxproj: Change paths specified relative to SRCROOT
+        to be relative to PROJECT_DIR.  PROJECT_DIR takes into account the projectDirPath
+        setting of the project, which in this instance includes the necessary "mac"
+        subdirectory.
+
