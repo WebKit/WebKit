@@ -1,3 +1,19 @@
+2007-11-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam.
+
+        New test for <rdar://problem/5575812> REGRESSION:When using 
+        absolute positioning with overflow:auto div, WebKit seems to add an 
+        additional 15px
+        * fast/overflow/overflow-auto-position-absolute.html: Added.
+        * platform/mac/fast/overflow/overflow-auto-position-absolute-expected.checksum: Added.
+        * platform/mac/fast/overflow/overflow-auto-position-absolute-expected.png: Added.
+        * platform/mac/fast/overflow/overflow-auto-position-absolute-expected.txt: Added.
+        
+        Test with changed results. The measurements in the rtl example now 
+        more closely mirror the ltr example.
+        * platform/mac/fast/overflow/unreachable-overflow-rtl-bug-expected.txt:
+
 2007-11-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

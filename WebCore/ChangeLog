@@ -1,3 +1,14 @@
+2007-11-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5575812> REGRESSION:When using absolute positioning 
+        with overflow:auto div, WebKit seems to add an additional 15px
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidthForPositioned): We need to 
+        subtract off the vertical scrollbar width too.
+
 2007-11-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.
