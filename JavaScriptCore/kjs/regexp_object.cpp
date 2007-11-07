@@ -31,6 +31,7 @@
 #include "regexp.h"
 #include "types.h"
 #include "value.h"
+#include "UnusedParam.h"
 
 #include <stdio.h>
 
