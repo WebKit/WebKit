@@ -79,24 +79,14 @@ QWebHistoryItem::QWebHistoryItem(QWebHistoryItemPrivate *priv)
     d = priv;
 }
 
-QWebPageHistory::QWebPageHistory(QWebPageHistoryPrivate *priv)
+QWebPageHistory::QWebPageHistory()
+    : d(0)
 {
-    d = priv;
-}
-
-QWebPageHistory::QWebPageHistory(const QWebPageHistory &other)
-{
-    d = other.d;
-}
-
-QWebPageHistory &QWebPageHistory::operator=(const QWebPageHistory &other)
-{
-    d = other.d;
-    return *this;
 }
 
 QWebPageHistory::~QWebPageHistory()
 {
+    delete d;
 }
 
 void QWebPageHistory::clear()

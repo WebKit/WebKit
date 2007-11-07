@@ -98,7 +98,7 @@ int LayoutTestController::windowCount()
 
 void LayoutTestController::clearBackForwardList()
 {
-    m_drt->webPage()->history().clear();
+    m_drt->webPage()->history()->clear();
 }
 
 

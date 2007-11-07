@@ -85,6 +85,8 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     mainFrame = 0;
     networkInterface = 0;
     insideOpenCall = false;
+
+    history.d = new QWebPageHistoryPrivate(page->backForwardList());
 }
 
 QWebPagePrivate::~QWebPagePrivate()
@@ -222,11 +224,9 @@ void QWebPage::stop()
     f->stopForUserCancel();
 }
 
-QWebPageHistory QWebPage::history() const
+QWebPageHistory *QWebPage::history() const
 {
-    WebCore::BackForwardList *lst = d->page->backForwardList();
-    QWebPageHistoryPrivate *priv = new QWebPageHistoryPrivate(lst);
-    return QWebPageHistory(priv);
+    return &d->history;
 }
 
 void QWebPage::goBack()

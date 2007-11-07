@@ -121,12 +121,8 @@ class QWebPageHistoryPrivate;
 class QWEBKIT_EXPORT QWebPageHistory
 {
 public:
-    QWebPageHistory(const QWebPageHistory &other);
-    QWebPageHistory &operator=(const QWebPageHistory &other);
-    ~QWebPageHistory();
-
     void clear();
-    
+
     QList<QWebHistoryItem> items() const;
     QList<QWebHistoryItem> backItems(int maxItems) const;
     QList<QWebHistoryItem> forwardItems(int maxItems) const;
@@ -143,10 +139,16 @@ public:
     QWebHistoryItem forwardItem() const;
     QWebHistoryItem itemAtIndex(int i) const;
 
-    
-    QWebPageHistory(QWebPageHistoryPrivate *priv);
 private:
-    QExplicitlySharedDataPointer<QWebPageHistoryPrivate> d;
+    QWebPageHistory();
+    ~QWebPageHistory();
+
+    friend class QWebPage;
+    friend class QWebPagePrivate;
+
+    Q_DISABLE_COPY(QWebPageHistory)
+
+    QWebPageHistoryPrivate *d;
 };
 
 #endif

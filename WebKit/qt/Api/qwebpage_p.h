@@ -73,6 +73,8 @@ public:
 #ifndef QT_NO_NETWORKPROXY
     QNetworkProxy networkProxy;
 #endif
+
+    QWebPageHistory history;
 };
 
 #endif

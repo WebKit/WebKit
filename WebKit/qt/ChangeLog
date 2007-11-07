@@ -1,3 +1,17 @@
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
+        Make QWebHistory an explicitly shared object, returned as a pointer by QWebPage::history().
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebpagehistory.cpp:
+        (QWebPageHistory::QWebPageHistory):
+        * Api/qwebpagehistory.h:
+
 2007-11-07  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.
