@@ -1,3 +1,11 @@
+2007-11-07  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam
+
+        Remove FrameLoaderClient methods from SVG that were pruned awhile ago
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+
 2007-11-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

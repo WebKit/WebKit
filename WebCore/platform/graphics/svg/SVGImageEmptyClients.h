@@ -128,13 +128,6 @@ public:
     virtual bool hasWebView() const { return true; } // mainly for assertions
     virtual bool hasFrameView() const { return true; } // ditto
     
-    virtual bool hasBackForwardList() const { return false; }
-    virtual void resetBackForwardList() { }
-    
-    virtual bool provisionalItemIsTarget() const { return false; }
-    virtual bool loadProvisionalItemFromCachedPage() { return false; }
-    virtual void invalidateCurrentItemCachedPage() { }
-    
     virtual bool privateBrowsingEnabled() const { return false; }
     
     virtual void makeDocumentView() { }
@@ -198,8 +191,6 @@ public:
     virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) { }
     
     virtual void dispatchDidLoadMainResource(DocumentLoader*) { }
-    virtual void clearLoadingFromCachedPage(DocumentLoader*) { }
-    virtual bool isLoadingFromCachedPage(DocumentLoader*) { return 0; }
     virtual void revertToProvisionalState(DocumentLoader*) { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) { }
     virtual void clearUnarchivingState(DocumentLoader*) { }
