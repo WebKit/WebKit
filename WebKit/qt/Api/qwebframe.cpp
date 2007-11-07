@@ -262,7 +262,7 @@ void QWebFrame::layout()
 QPoint QWebFrame::pos() const
 {
     Q_ASSERT(d->frameView);
-    return d->frameView->frameGeometry().topLeft();
+    return d->pos();
 }
 
 QRect QWebFrame::geometry() const
@@ -282,73 +282,5 @@ QString QWebFrame::evaluateJavaScript(const QString& scriptSource)
         }
     }
     return rc;
-}
-
-void QWebFrame::mouseMoveEvent(QMouseEvent *ev)
-{
-    if (!d->frameView)
-        return;
-
-    d->eventHandler->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
-    const int xOffset =
-        d->horizontalScrollBar() ? d->horizontalScrollBar()->value() : 0;
-    const int yOffset =
-        d->verticalScrollBar() ? d->verticalScrollBar()->value() : 0;
-    IntPoint pt(ev->x() + xOffset, ev->y() + yOffset);
-    WebCore::HitTestResult result = d->eventHandler->hitTestResultAtPoint(pt, false);
-    WebCore::Element *link = result.URLElement();
-    if (link != d->lastHoverElement) {
-        d->lastHoverElement = link;
-        emit hoveringOverLink(result.absoluteLinkURL().prettyURL(), result.title());
-    }
-}
-
-void QWebFrame::mousePressEvent(QMouseEvent *ev)
-{
-    if (!d->eventHandler)
-        return;
-
-    if (ev->button() == Qt::RightButton)
-        d->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
-    else
-        d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
-
-    //FIXME need to keep track of subframe focus for key events!
-    d->page->setFocus();
-}
-
-void QWebFrame::mouseDoubleClickEvent(QMouseEvent *ev)
-{
-    if (!d->eventHandler)
-        return;
-
-    d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 2));
-
-    //FIXME need to keep track of subframe focus for key events!
-    d->page->setFocus();
-}
-
-void QWebFrame::mouseReleaseEvent(QMouseEvent *ev)
-{
-    if (!d->frameView)
-        return;
-
-    d->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
-
-    //FIXME need to keep track of subframe focus for key events!
-    d->page->setFocus();
-}
-
-void QWebFrame::wheelEvent(QWheelEvent *ev)
-{
-    PlatformWheelEvent wkEvent(ev);
-    bool accepted = false;
-    if (d->eventHandler)
-        accepted = d->eventHandler->handleWheelEvent(wkEvent);
-
-    ev->setAccepted(accepted);
-
-    //FIXME need to keep track of subframe focus for key events!
-    d->page->setFocus();
 }
 

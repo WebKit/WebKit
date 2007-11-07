@@ -1,3 +1,26 @@
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Moved all the event handlers from QWebFrame into QWebPage.
+        
+        This cleans up the public API and allows us to remove the
+        HackWebFrame hack in DumpRenderTree.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::pos):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::frameAt):
+        (QWebPage::mouseMoveEvent):
+        (QWebPage::mousePressEvent):
+        (QWebPage::mouseDoubleClickEvent):
+        (QWebPage::mouseReleaseEvent):
+        (QWebPage::wheelEvent):
+        * Api/qwebpage_p.h:
+
 2007-11-07  Holger Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Lars Knoll <lars@trolltech.com>.

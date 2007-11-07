@@ -49,7 +49,9 @@
 #include "Editor.h"
 #include "PlatformScrollBar.h"
 #include "PlatformKeyboardEvent.h"
+#include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
+#include "HitTestResult.h"
 
 #include <QDebug>
 #include <QDragEnterEvent>
@@ -117,6 +119,22 @@ void QWebPagePrivate::createMainFrame()
     }
 }
 
+QWebFrame *QWebPagePrivate::frameAt(const QPoint &pos) const
+{
+    QWebFrame *frame = mainFrame;
+
+redo:
+    QList<QWebFrame*> children = frame->childFrames();
+    for (int i = 0; i < children.size(); ++i) {
+        if (children.at(i)->geometry().contains(pos)) {
+            frame = children.at(i);
+            goto redo;
+        }
+    }
+    if (frame->geometry().contains(pos))
+        return frame;
+    return 0;
+}
 
 QWebPage::QWebPage(QWidget *parent)
     : QWidget(parent)
@@ -398,27 +416,79 @@ void QWebPage::paintEvent(QPaintEvent *ev)
 
 void QWebPage::mouseMoveEvent(QMouseEvent *ev)
 {
-    mainFrame()->mouseMoveEvent(ev);
+    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
+    if (!frame->frameView)
+        return;
+
+    frame->eventHandler->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
+    const int xOffset =
+        frame->horizontalScrollBar() ? frame->horizontalScrollBar()->value() : 0;
+    const int yOffset =
+        frame->verticalScrollBar() ? frame->verticalScrollBar()->value() : 0;
+    IntPoint pt(ev->x() + xOffset, ev->y() + yOffset);
+    WebCore::HitTestResult result = frame->eventHandler->hitTestResultAtPoint(pt, false);
+    WebCore::Element *link = result.URLElement();
+    if (link != frame->lastHoverElement) {
+        frame->lastHoverElement = link;
+        emit hoveringOverLink(result.absoluteLinkURL().prettyURL(), result.title());
+    }
 }
 
 void QWebPage::mousePressEvent(QMouseEvent *ev)
 {
-    mainFrame()->mousePressEvent(ev);
+    d->frameUnderMouse = d->frameAt(ev->pos());
+    QWebFramePrivate *frame = d->frameUnderMouse->d;
+    if (!frame->eventHandler)
+        return;
+
+    if (ev->button() == Qt::RightButton)
+        frame->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
+    else
+        frame->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+
+    //FIXME need to keep track of subframe focus for key events!
+    frame->page->setFocus();
 }
 
 void QWebPage::mouseDoubleClickEvent(QMouseEvent *ev)
 {
-    mainFrame()->mouseDoubleClickEvent(ev);
+    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
+    if (!frame->eventHandler)
+        return;
+
+    frame->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 2));
+
+    //FIXME need to keep track of subframe focus for key events!
+    frame->page->setFocus();
 }
 
 void QWebPage::mouseReleaseEvent(QMouseEvent *ev)
 {
-    mainFrame()->mouseReleaseEvent(ev);
+    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
+    if (frame->frameView) {
+        frame->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+
+        //FIXME need to keep track of subframe focus for key events!
+        frame->page->setFocus();
+    }
+    d->frameUnderMouse = 0;
 }
 
 void QWebPage::wheelEvent(QWheelEvent *ev)
 {
-    mainFrame()->wheelEvent(ev);
+    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
+
+    bool accepted = false;
+    if (frame->eventHandler) {
+        WebCore::PlatformWheelEvent pev(ev);
+        accepted = frame->eventHandler->handleWheelEvent(pev);
+    }
+
+    ev->setAccepted(accepted);
+
+    //FIXME need to keep track of subframe focus for key events!
+    frame->page->setFocus();
+
     if (!ev->isAccepted())
         QWidget::wheelEvent(ev);
 }

@@ -1,5 +1,20 @@
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Moved all the event handlers from QWebFrame into QWebPage.
+        
+        This cleans up the public API and allows us to remove the
+        HackWebFrame hack in DumpRenderTree.
+        
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (EventSender::mouseDown):
+        (EventSender::mouseUp):
+        (EventSender::mouseMoveTo):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Mark.
 
         Implemented the two Javascript prompt callbacks in qt/DumpRenderTree

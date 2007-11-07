@@ -35,25 +35,6 @@
 #include "DumpRenderTree.h"
 extern void qt_dump_editing_callbacks(bool b);
 
-class HackWebFrame : public QWebFrame
-{
-public:
-    void mousePressEvent(QMouseEvent *e) {
-        QWebFrame::mousePressEvent(e);
-    }
-    void mouseReleaseEvent(QMouseEvent *e) {
-        QWebFrame::mouseReleaseEvent(e);
-    }
-    void mouseMoveEvent(QMouseEvent *e) {
-        QWebFrame::mouseMoveEvent(e);
-    }
-
-protected:
-    HackWebFrame(QWebPage *parent, QWebFrameData *frameData) : QWebFrame(parent, frameData) {}
-    HackWebFrame(QWebFrame *parent, QWebFrameData *frameData) : QWebFrame(parent, frameData) {}
-    ~HackWebFrame() {}
-};
-
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree *drt)
     : QObject()
     , m_drt(drt)
@@ -168,31 +149,24 @@ EventSender::EventSender(QWebPage *parent)
 
 void EventSender::mouseDown()
 {
-    QWebFrame *frame = frameUnderMouse();
 //     qDebug() << "EventSender::mouseDown" << frame;
-    if (!frame)
-        return;
-    QMouseEvent event(QEvent::MouseButtonPress, m_mousePos - frame->pos(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-    static_cast<HackWebFrame *>(frame)->mousePressEvent(&event);
+    QMouseEvent event(QEvent::MouseButtonPress, m_mousePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(m_page, &event);
 }
 
 void EventSender::mouseUp()
 {
-    QWebFrame *frame = frameUnderMouse();
 //     qDebug() << "EventSender::mouseUp" << frame;
-    if (!frame)
-        return;
-    QMouseEvent event(QEvent::MouseButtonRelease, m_mousePos - frame->pos(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-    static_cast<HackWebFrame *>(frame)->mouseReleaseEvent(&event);
+    QMouseEvent event(QEvent::MouseButtonRelease, m_mousePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(m_page, &event);
 }
 
 void EventSender::mouseMoveTo(int x, int y)
 {
-    QWebFrame *frame = frameUnderMouse();
 //     qDebug() << "EventSender::mouseMoveTo" << x << y;
     m_mousePos = QPoint(x, y);
-    QMouseEvent event(QEvent::MouseMove, m_mousePos - frame->pos(), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
-    static_cast<HackWebFrame *>(frame)->mouseMoveEvent(&event);
+    QMouseEvent event(QEvent::MouseMove, m_mousePos, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    QApplication::sendEvent(m_page, &event);
 }
 
 void EventSender::leapForward(int ms)
