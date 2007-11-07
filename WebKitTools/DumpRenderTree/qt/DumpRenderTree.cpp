@@ -72,6 +72,8 @@ public:
 
     void javaScriptAlert(QWebFrame *frame, const QString& message);
     void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
+    bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
+    bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
 
 private:
     DumpRenderTree *m_drt;
@@ -118,6 +120,19 @@ void WebPage::javaScriptAlert(QWebFrame *frame, const QString& message)
 void WebPage::javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString&)
 {
     fprintf (stdout, "CONSOLE MESSAGE: line %d: %s\n", lineNumber, message.toUtf8().constData());
+}
+
+bool WebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
+{
+    fprintf(stdout, "CONFIRM: %s\n", msg.toUtf8().constData());
+    return true;
+}
+
+bool WebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result)
+{
+    fprintf(stdout, "PROMPT: %s, default text: %s\n", msg.toUtf8().constData(), defaultValue.toUtf8().constData());
+    *result = defaultValue;
+    return true;
 }
 
 DumpRenderTree::DumpRenderTree()
