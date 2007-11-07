@@ -60,9 +60,11 @@ public:
     int defaultFontSize;
     int defaultFixedFontSize;
     QHash<int, bool> attributes;
-    QHash<int, QPixmap> graphics;
     QString userStyleSheetLocation;
 };
+
+typedef QHash<int, QPixmap> WebGraphicHash;
+Q_GLOBAL_STATIC(WebGraphicHash, graphics)
 
 static QWebSettings globalSettings;
 
@@ -153,15 +155,16 @@ bool QWebSettings::iconDatabaseEnabled()
 
 void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
 {
-    d->graphics[type] = graphic;
+    WebGraphicHash *h = graphics();
+    if (graphic.isNull())
+        h->remove(type);
+    else
+        h->insert(type, graphic);
 }
 
-QPixmap QWebSettings::webGraphic(WebGraphic type) const
+QPixmap QWebSettings::webGraphic(WebGraphic type)
 {
-    if (d->graphics.contains(type))
-      return d->graphics[type];
-    else
-      return QPixmap();
+    return graphics()->value(type);
 }
 
 QWebSettings::QWebSettings(const QWebSettings &other)

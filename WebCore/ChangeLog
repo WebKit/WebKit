@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Made the QWebSettings::webGraphic functions static. The implementation was using QWebSettings::global() anyway.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (loadResourcePixmap):
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Moved the WebCore::Image specific function loadResourcePixmap from qwebsettings.cpp to ImageQt.cpp and made it static.
 
         WARNING: NO TEST CASES ADDED OR CHANGED

@@ -91,8 +91,8 @@ public:
     static void setIconDatabaseEnabled(bool enabled, const QString &location = QString());
     static bool iconDatabaseEnabled();
 
-    void setWebGraphic(WebGraphic type, const QPixmap &graphic);
-    QPixmap webGraphic(WebGraphic type) const;
+    static void setWebGraphic(WebGraphic type, const QPixmap &graphic);
+    static QPixmap webGraphic(WebGraphic type);
 
 private:
     QSharedDataPointer<QWebSettingsPrivate> d;
