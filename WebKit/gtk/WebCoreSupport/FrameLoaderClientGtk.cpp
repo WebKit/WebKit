@@ -300,14 +300,20 @@ Widget* FrameLoaderClient::createJavaAppletWidget(const IntSize&, Element*, cons
 
 ObjectContentType FrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
 {
-    if (url.isEmpty())
-        return ObjectContentType();
+    String type = mimeType;
+    if (type.isEmpty())
+        type = MIMETypeRegistry::getMIMETypeForExtension(url.path().mid(url.path().findRev('.') + 1));
 
-    // TODO: use more than just the extension to determine the content type?
-    String rtype = MIMETypeRegistry::getMIMETypeForPath(url.path());
-    if (!rtype.isEmpty())
-        return ObjectContentFrame;
-    return ObjectContentType();
+    if (type.isEmpty())
+        return WebCore::ObjectContentFrame;
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(type))
+        return WebCore::ObjectContentImage;
+
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(type))
+        return WebCore::ObjectContentFrame;
+
+    return WebCore::ObjectContentNone;
 }
 
 String FrameLoaderClient::overrideMediaType() const

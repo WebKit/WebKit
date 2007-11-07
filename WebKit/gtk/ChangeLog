@@ -1,3 +1,15 @@
+2007-11-06  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Fix http://bugs.webkit.org/attachment.cgi?id=17043&action=view
+        Bug 15766: [GTK] WebKit sometimes spews binary data as text/plain into iframes
+
+        FrameLoaderClient::objectContentType needs to check with the MIMETypeRegistry
+        to determine whether the given MIME type is displayable as an image or non-image.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (FrameLoaderClient::objectContentType): Change logic to match that in
+        the Windows and Mac ports.
+
 2007-11-05  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Maciej.
