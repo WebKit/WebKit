@@ -48,10 +48,12 @@ namespace KJS {
 
     class RegExpImp : public JSObject {
     public:
-        RegExpImp(RegExpPrototype*, RegExp*);
+        enum { Global, IgnoreCase, Multiline, Source, LastIndex };
+
+        RegExpImp(RegExpPrototype*, PassRefPtr<RegExp>);
         virtual ~RegExpImp();
 
-        void setRegExp(RegExp* r) { m_regExp.set(r); }
+        void setRegExp(PassRefPtr<RegExp> r) { m_regExp = r; }
         RegExp* regExp() const { return m_regExp.get(); }
 
         JSValue* test(ExecState*, const List& args);
@@ -59,13 +61,19 @@ namespace KJS {
 
         virtual bool implementsCall() const;
         virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
+        void put(ExecState*, const Identifier&, JSValue*, int attributes = None);
+        void putValueProperty(ExecState*, int token, JSValue*, int attributes);
+
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
     private:
         bool match(ExecState*, const List& args);
 
-        OwnPtr<RegExp> m_regExp;
+        RefPtr<RegExp> m_regExp;
+        double m_lastIndex;
     };
 
     class RegExpObjectImp : public InternalFunctionImp {

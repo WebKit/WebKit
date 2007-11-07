@@ -276,13 +276,13 @@ static inline UString substituteBackreferences(const UString &replacement, const
     } else if (ref >= '0' && ref <= '9') {
         // 1- and 2-digit back references are allowed
         unsigned backrefIndex = ref - '0';
-        if (backrefIndex > (unsigned)reg->subPatterns())
+        if (backrefIndex > reg->numSubpatterns())
             continue;
         if (substitutedReplacement.size() > i + 2) {
             ref = substitutedReplacement[i+2].unicode();
             if (ref >= '0' && ref <= '9') {
                 backrefIndex = 10 * backrefIndex + ref - '0';
-                if (backrefIndex > (unsigned)reg->subPatterns())
+                if (backrefIndex > reg->numSubpatterns())
                     backrefIndex = backrefIndex / 10;   // Fall back to the 1-digit reference
                 else
                     advance = 1;
@@ -334,7 +334,7 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
 
   if (pattern->isObject() && static_cast<JSObject *>(pattern)->inherits(&RegExpImp::info)) {
     RegExp *reg = static_cast<RegExpImp *>(pattern)->regExp();
-    bool global = reg->flags() & RegExp::Global;
+    bool global = reg->global();
 
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp());
 
@@ -364,7 +364,7 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
           int completeMatchStart = ovector[0];
           List args;
 
-          for (unsigned i = 0; i < reg->subPatterns() + 1; i++) {
+          for (unsigned i = 0; i < reg->numSubpatterns() + 1; i++) {
               int matchStart = ovector[i * 2];
               int matchLen = ovector[i * 2 + 1] - matchStart;
 
@@ -519,7 +519,7 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
        *  If regexp is not an object whose [[Class]] property is "RegExp", it is
        *  replaced with the result of the expression new RegExp(regexp).
        */
-      reg = tmpReg = new RegExp(a0->toString(exec), RegExp::None);
+      reg = tmpReg = new RegExp(a0->toString(exec));
     }
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp());
     int pos;
@@ -529,7 +529,7 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
       result = jsNumber(pos);
     } else {
       // Match
-      if ((reg->flags() & RegExp::Global) == 0) {
+      if (!(reg->global())) {
         // case without 'g' flag is handled like RegExp.prototype.exec
         if (pos < 0)
           result = jsNull();
@@ -546,7 +546,7 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
           regExpObj->performMatch(reg, u, pos, pos, matchLength);
         }
         if (imp)
-          imp->put(exec, "lastIndex", jsNumber(lastIndex), DontDelete|DontEnum);
+          imp->put(exec, exec->propertyNames().lastIndex, jsNumber(lastIndex), DontDelete|DontEnum);
         if (list.isEmpty()) {
           // if there are no matches at all, it's important to return
           // Null instead of an empty array, because this matches
@@ -613,7 +613,7 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
           p0 = mpos + mlen;
           i++;
         }
-        for (unsigned si = 1; si <= reg->subPatterns(); ++si) {
+        for (unsigned si = 1; si <= reg->numSubpatterns(); ++si) {
           int spos = ovector[si * 2];
           if (spos < 0)
             res->put(exec, i++, jsUndefined());

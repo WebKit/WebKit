@@ -22,45 +22,54 @@
 #ifndef KJS_REGEXP_H
 #define KJS_REGEXP_H
 
-#include <sys/types.h>
-
-#if !USE(POSIX_REGEX)
-#include <pcre.h>
-#else
-// POSIX regex - not so good.
-extern "C" { // bug with some libc5 distributions
-#include <regex.h>
-}
-#endif
-
 #include "ustring.h"
+#include <pcre.h>
+#include <sys/types.h>
 #include <wtf/OwnArrayPtr.h>
 
 namespace KJS {
 
   class RegExp : Noncopyable {
+  private:
+    enum { 
+        Global = 1, 
+        IgnoreCase = 2, 
+        Multiline = 4 
+    };
+
   public:
-    enum { None = 0, Global = 1, IgnoreCase = 2, Multiline = 4 };
-
-    RegExp(const UString& pattern, int flags = None);
+    RegExp(const UString& pattern);
+    RegExp(const UString& pattern, const UString& flags);
     ~RegExp();
+    
+    void ref() { ++m_refCount; }
+    void deref() { if (--m_refCount == 0) delete this; }
+    int refCount() { return m_refCount; }
 
-    int flags() const { return m_flags; }
+    bool global() const { return m_flags & Global; }
+    bool ignoreCase() const { return m_flags & IgnoreCase; }
+    bool multiline() const { return m_flags & Multiline; }
+    const UString& pattern() const { return m_pattern; }
+
     bool isValid() const { return !m_constructionError; }
     const char* errorMessage() const { return m_constructionError; }
 
     int match(const UString&, int offset, OwnArrayPtr<int>* ovector = 0);
-    unsigned subPatterns() const { return m_numSubPatterns; }
+    unsigned numSubpatterns() const { return m_numSubpatterns; }
 
   private:
-#if !USE(POSIX_REGEX)
-    JSRegExp* m_regex;
-#else
-    regex_t m_regex;
-#endif
+    void compile();
+    
+    int m_refCount;
+    
+    // Data supplied by caller.
+    UString m_pattern;
     int m_flags;
+
+    // Data supplied by PCRE.
+    JSRegExp* m_regExp;
     char* m_constructionError;
-    unsigned m_numSubPatterns;
+    unsigned m_numSubpatterns;
   };
 
 } // namespace

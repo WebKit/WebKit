@@ -1,3 +1,12 @@
+2007-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Beefed up the RegExp.compile testcase to cover a mistake in the 
+        original check-in and a mistake I made while developing my new patch.
+
+        * fast/js/resources/regexp-compile.js:
+
 2007-11-07  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

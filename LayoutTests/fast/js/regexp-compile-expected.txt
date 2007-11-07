@@ -14,12 +14,15 @@ PASS re.toString() is '/c/'
 PASS re.ignoreCase is true
 PASS re.test('C') is true
 PASS re.toString() is '/c/i'
-PASS re.compile(new RegExp('c'), 'i'); threw exception TypeError: cannot supply flags when constructing one RegExp from another..
+PASS re.compile(new RegExp('c'), 'i'); threw exception TypeError: Cannot supply flags when constructing one RegExp from another..
+PASS re.toString() is '/c/i'
 PASS re.compile(new RegExp('+')); threw exception SyntaxError: Invalid regular expression: nothing to repeat.
 PASS re.toString() is '/undefined/'
 PASS re.toString() is '/null/'
 PASS re.toString() is '//'
 PASS re.toString() is '/z/'
+PASS re.lastIndex is 0
+PASS re.lastIndex is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

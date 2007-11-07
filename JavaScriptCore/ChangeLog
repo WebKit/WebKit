@@ -1,3 +1,38 @@
+2007-11-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed part of http://bugs.webkit.org/show_bug.cgi?id=15861 
+        15% of string-validate-input.js is spent compiling the same regular expression.
+
+        Put RegExpImp properties into a static hashtable to avoid a slew of
+        PropertyMap churn when creating a RegExpImp.
+        
+        Factored important bits of regular expression implementation out of
+        RegExpImp (the JS object) and into RegExp (the PCRE wrapper class), 
+        making RegExp a ref-counted class. (This will help later.)
+
+        Removed PCRE_POSIX support because I didn't quite know how to test it 
+        and keep it working with these changes.
+        
+        1.1% SunSpider speedup. 5.8% speedup on string-validate-input.js.
+
+        * kjs/regexp.h: A few interface changes:
+        1. Renamed "subpatterns()" => "numSubpatterns()"
+        2. Made flag enumeration private and replaced it with public getters for
+        specific flags.
+        3. Made RegExp ref-counted so RegExps can be shared by RegExpImps.
+        4. Made RegExp take a string of flags instead of an int, eliminating 
+        duplicated flag parsing code elsewhere.
+
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpProtoFunc::callAsFunction): For RegExp.compile: 
+        - Fixed a bug where compile(undefined) would throw an exception. 
+        - Removed some now-redundant code.
+        - Used RegExp sharing to eliminate an allocation and a bunch of 
+        PropertyMap thrash. (Not a big win since compile is a deprecated 
+        function. I mainly did this to test the plubming.)
+
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by nobody, Qt/Windows build fix.

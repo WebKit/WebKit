@@ -25,6 +25,10 @@ shouldBe("re.toString()", "'/c/i'");
 
 shouldThrow("re.compile(new RegExp('c'), 'i');");
 
+// It's OK to supply a second argument, as long as the argument is "undefined".
+re.compile(re, undefined);
+shouldBe("re.toString()", "'/c/i'");
+
 shouldThrow("re.compile(new RegExp('+'));");
 
 re.compile(undefined);
@@ -38,5 +42,12 @@ shouldBe("re.toString()", "'//'"); // /(?:)/ in Firefox
 
 re.compile("z", undefined);
 shouldBe("re.toString()", "'/z/'");
+
+// Compiling should reset lastIndex.
+re.lastIndex = 100;
+re.compile(/a/g);
+shouldBe("re.lastIndex", "0");
+re.exec("aaa");
+shouldBe("re.lastIndex", "1");
 
 var successfullyParsed = true;

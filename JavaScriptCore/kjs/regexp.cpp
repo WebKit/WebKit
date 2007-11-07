@@ -30,61 +30,52 @@
 
 namespace KJS {
 
-RegExp::RegExp(const UString &p, int flags)
-  : m_flags(flags), m_constructionError(0), m_numSubPatterns(0)
+RegExp::RegExp(const UString& pattern)
+  : m_refCount(0)
+  , m_pattern(pattern)
+  , m_flags(0)
+  , m_constructionError(0)
+  , m_numSubpatterns(0)
 {
-#if !USE(POSIX_REGEX)
+    const char* errorMessage;
+    m_regExp = jsRegExpCompile(reinterpret_cast<const JSRegExpChar*>(m_pattern.data()), m_pattern.size(), 0, &m_numSubpatterns, &errorMessage);
+    if (!m_regExp)
+        m_constructionError = strdup(errorMessage);
+}
 
-  int options = 0;
-  if (flags & IgnoreCase)
-    options |= JS_REGEXP_CASELESS;
-  if (flags & Multiline)
-    options |= JS_REGEXP_MULTILINE;
+RegExp::RegExp(const UString& pattern, const UString& flags)
+  : m_refCount(0)
+  , m_pattern(pattern)
+  , m_flags(0)
+  , m_constructionError(0)
+  , m_numSubpatterns(0)
+{
+    // NOTE: The global flag is handled on a case-by-case basis by functions like
+    // String::match and RegExpImp::match.
+    if (flags.find('g') != -1)
+        m_flags |= Global;
 
-  const char* errorMessage;
-  m_regex = jsRegExpCompile(reinterpret_cast<const JSRegExpChar*>(p.data()), p.size(), options,
-    &m_numSubPatterns, &errorMessage);
-  if (!m_regex) {
-    m_constructionError = strdup(errorMessage);
-    return;
-  }
+    // FIXME: Eliminate duplication by adding a way ask a JSRegExp what its flags are.
+    int options = 0;
+    if (flags.find('i') != -1) {
+        m_flags |= IgnoreCase;
+        options |= JS_REGEXP_CASELESS;
+    }
 
-#else /* USE(POSIX_REGEX) */
-
-  int regflags = 0;
-#ifdef REG_EXTENDED
-  regflags |= REG_EXTENDED;
-#endif
-#ifdef REG_ICASE
-  if (flags & IgnoreCase)
-    regflags |= REG_ICASE;
-#endif
-
-  //NOTE: Multiline is not feasible with POSIX regex.
-  //if ( f & Multiline )
-  //    ;
-  // Note: the Global flag is already handled by RegExpProtoFunc::execute
-
-  // FIXME: support \u Unicode escapes.
-
-  int errorCode = regcomp(&m_regex, p.ascii(), regflags);
-  if (errorCode != 0) {
-    char errorMessage[80];
-    regerror(errorCode, &m_regex, errorMessage, sizeof errorMessage);
-    m_constructionError = strdup(errorMessage);
-  }
-
-#endif
+    if (flags.find('m') != -1) {
+        m_flags |= Multiline;
+        options |= JS_REGEXP_MULTILINE;
+    }
+    
+    const char* errorMessage;
+    m_regExp = jsRegExpCompile(reinterpret_cast<const JSRegExpChar*>(m_pattern.data()), m_pattern.size(), options, &m_numSubpatterns, &errorMessage);
+    if (!m_regExp)
+        m_constructionError = strdup(errorMessage);
 }
 
 RegExp::~RegExp()
 {
-#if !USE(POSIX_REGEX)
-  jsRegExpFree(m_regex);
-#else
-  /* TODO: is this really okay after an error ? */
-  regfree(&m_regex);
-#endif
+  jsRegExpFree(m_regExp);
   free(m_constructionError);
 }
 
@@ -98,9 +89,7 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
   if (i > s.size() || s.isNull())
     return -1;
 
-#if !USE(POSIX_REGEX)
-
-  if (!m_regex)
+  if (!m_regExp)
     return -1;
 
   // Set up the offset vector for the result.
@@ -112,12 +101,12 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
     offsetVectorSize = 3;
     offsetVector = fixedSizeOffsetVector;
   } else {
-    offsetVectorSize = (m_numSubPatterns + 1) * 3;
+    offsetVectorSize = (m_numSubpatterns + 1) * 3;
     offsetVector = new int [offsetVectorSize];
     ovector->set(offsetVector);
   }
 
-  int numMatches = jsRegExpExecute(m_regex, reinterpret_cast<const JSRegExpChar*>(s.data()), s.size(), i, offsetVector, offsetVectorSize);
+  int numMatches = jsRegExpExecute(m_regExp, reinterpret_cast<const JSRegExpChar*>(s.data()), s.size(), i, offsetVector, offsetVectorSize);
 
   if (numMatches < 0) {
 #ifndef NDEBUG
@@ -130,41 +119,6 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
   }
 
   return offsetVector[0];
-
-#else
-
-  const unsigned maxMatch = 10;
-  regmatch_t rmatch[maxMatch];
-
-  char *str = strdup(s.ascii()); // TODO: why ???
-  if (regexec(&m_regex, str + i, maxMatch, rmatch, 0)) {
-    free(str);
-    return UString::null();
-  }
-  free(str);
-
-  if (!ovector) {
-    *pos = rmatch[0].rm_so + i;
-    return s.substr(rmatch[0].rm_so + i, rmatch[0].rm_eo - rmatch[0].rm_so);
-  }
-
-  // map rmatch array to ovector used in PCRE case
-  m_numSubPatterns = 0;
-  for(unsigned j = 1; j < maxMatch && rmatch[j].rm_so >= 0 ; j++)
-      m_numSubPatterns++;
-  int ovecsize = (m_numSubPatterns+1)*3; // see above
-  *ovector = new int[ovecsize];
-  for (unsigned j = 0; j < m_numSubPatterns + 1; j++) {
-    if (j>maxMatch)
-      break;
-    (*ovector)[2*j] = rmatch[j].rm_so + i;
-    (*ovector)[2*j+1] = rmatch[j].rm_eo + i;
-  }
-
-  *pos = (*ovector)[0];
-  return s.substr((*ovector)[0], (*ovector)[1] - (*ovector)[0]);
-
-#endif
 }
 
 } // namespace KJS
