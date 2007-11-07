@@ -1,3 +1,38 @@
+2007-11-07  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit confuses width/height for Media Queries device-aspect-ratio evaluation
+        <http://bugs.webkit.org/show_bug.cgi?id=14893>
+        <rdar://problem/5380295>
+
+        Reviewed by Darin.
+
+        Each of the following tests creates a <link> element and dynamically sets its
+        media query based on the aspect ratio (width/height) of the current screen.
+        When the <link> element is attached to the <head> node, the test expects the
+        stylesheet to be loaded for the test to pass.
+
+        * fast/css/device-aspect-ratio-expected.txt: Added.
+        * fast/css/device-aspect-ratio.html: Added.
+
+        This test sets the device-aspect-ratio to the current size of the screen.
+        NOTE: This test passed before the fix.
+
+        * fast/css/max-device-aspect-ratio-expected.txt: Added.
+        * fast/css/max-device-aspect-ratio.html: Added.
+
+        This test sets the max-device-aspect ratio to 100/1 for landscape monitors or
+        1/1 for portrait (or square) monitors.
+        NOTE: This test failed before the fix.
+
+        * fast/css/min-device-aspect-ratio-expected.txt: Added.
+        * fast/css/min-device-aspect-ratio.html: Added.
+
+        This test sets the min-device-aspect ratio to 1/1 for landscape monitors or
+        1/100 for portrait (or square) monitors.
+        NOTE: This test failed before the fix.
+
+        * fast/css/resources/device-aspect-ratio.css: Added.
+
 2007-11-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

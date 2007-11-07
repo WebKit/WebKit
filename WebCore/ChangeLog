@@ -1,3 +1,21 @@
+2007-11-07  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit confuses width/height for Media Queries device-aspect-ratio evaluation
+        <http://bugs.webkit.org/show_bug.cgi?id=14893>
+        <rdar://problem/5380295>
+
+        Reviewed by Darin.
+
+        Tests: fast/css/device-aspect-ratio.html
+               fast/css/max-device-aspect-ratio.html
+               fast/css/min-device-aspect-ratio.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::parseAspectRatio): Renamed method parameters from a/b to h/v.
+        (WebCore::device_aspect_ratioMediaFeatureEval): Renamed local variables from
+        a/b to h/v.  Switched first two arguments of the call to cmpvalue() to fix
+        the bug.
+
 2007-11-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
