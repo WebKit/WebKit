@@ -82,6 +82,7 @@ public:
 
     void setAttribute(WebAttribute attr, bool on = true);
     bool testAttribute(WebAttribute attr) const;
+    void clearAttribute(WebAttribute attr);
 
     void setUserStyleSheetLocation(const QString &location);
     QString userStyleSheetLocation() const;
@@ -94,6 +95,7 @@ public:
 
 private:
     friend class QWebPagePrivate;
+    friend class QWebSettingsPrivate;
 
     Q_DISABLE_COPY(QWebSettings)
 

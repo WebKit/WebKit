@@ -2,6 +2,22 @@
 
         Reviewed by Lars.
 
+        Implemented support for settings propagation.
+        
+        If an individual setting is not set in a page's QWebSettings then it is inherited from the default settings.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::QWebSettingsPrivate):
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::~QWebSettings):
+        (QWebSettings::setFontFamily):
+        * Api/qwebsettings.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Reworked the QWebSettings API.
         QWebPage now returns a pointer to its mutable QWebSettings object and the settings of newly created QWebPageObjects are initialized from QWebSettings::defaultSettings().
 

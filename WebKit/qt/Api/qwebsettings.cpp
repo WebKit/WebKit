@@ -38,22 +38,12 @@ class QWebSettingsPrivate
 {
 public:
     QWebSettingsPrivate(WebCore::Settings *wcSettings = 0)
-        : minimumFontSize(5),
-          minimumLogicalFontSize(5),
-          defaultFontSize(14),
-          defaultFixedFontSize(14),
+        : minimumFontSize(-1),
+          minimumLogicalFontSize(-1),
+          defaultFontSize(-1),
+          defaultFixedFontSize(-1),
           settings(wcSettings)
     {
-        // Initialize our defaults
-        // changing any of those will likely break the LayoutTests
-        fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
-        fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
-        fontFamilies.insert(QWebSettings::FixedFont, QLatin1String("Courier"));
-        fontFamilies.insert(QWebSettings::SerifFont, QLatin1String("Times New Roman"));
-        fontFamilies.insert(QWebSettings::SansSerifFont, QLatin1String("Arial"));
-
-        attributes.insert(QWebSettings::AutoLoadImages, true);
-        attributes.insert(QWebSettings::JavascriptEnabled, true);
     }
 
     QHash<int, QString> fontFamilies;
@@ -71,31 +61,80 @@ public:
 typedef QHash<int, QPixmap> WebGraphicHash;
 Q_GLOBAL_STATIC(WebGraphicHash, graphics)
 
+Q_GLOBAL_STATIC(QList<QWebSettingsPrivate *>, allSettings);
+
 void QWebSettingsPrivate::apply()
 {
-    if (!settings)
-        return;
+    if (settings) {
+        QWebSettingsPrivate *global = QWebSettings::defaultSettings()->d;
 
-    settings->setStandardFontFamily(fontFamilies.value(QWebSettings::StandardFont));
-    settings->setFixedFontFamily(fontFamilies.value(QWebSettings::FixedFont));
-    settings->setSerifFontFamily(fontFamilies.value(QWebSettings::SerifFont));
-    settings->setSansSerifFontFamily(fontFamilies.value(QWebSettings::SansSerifFont));
-    settings->setCursiveFontFamily(fontFamilies.value(QWebSettings::CursiveFont));
-    settings->setFantasyFontFamily(fontFamilies.value(QWebSettings::FantasyFont));
+        QString family = fontFamilies.value(QWebSettings::StandardFont,
+                                            global->fontFamilies.value(QWebSettings::StandardFont));
+        settings->setStandardFontFamily(family);
 
-    settings->setMinimumFontSize(minimumFontSize);
-    settings->setMinimumLogicalFontSize(minimumLogicalFontSize);
-    settings->setDefaultFontSize(defaultFontSize);
-    settings->setDefaultFixedFontSize(defaultFixedFontSize);
+        family = fontFamilies.value(QWebSettings::FixedFont,
+                                    global->fontFamilies.value(QWebSettings::FixedFont));
+        settings->setFixedFontFamily(family);
 
-    settings->setLoadsImagesAutomatically(attributes.value(QWebSettings::AutoLoadImages));
-    settings->setJavaScriptEnabled(attributes.value(QWebSettings::JavascriptEnabled));
-    settings->setJavaScriptCanOpenWindowsAutomatically(attributes.value(QWebSettings::JavascriptCanOpenWindows));
-    settings->setJavaEnabled(attributes.value(QWebSettings::JavaEnabled));
-    settings->setPluginsEnabled(attributes.value(QWebSettings::PluginsEnabled));
-    settings->setPrivateBrowsingEnabled(attributes.value(QWebSettings::PrivateBrowsingEnabled));
+        family = fontFamilies.value(QWebSettings::SerifFont,
+                                    global->fontFamilies.value(QWebSettings::SerifFont));
+        settings->setSerifFontFamily(family);
 
-    settings->setUserStyleSheetLocation(WebCore::KURL(userStyleSheetLocation));
+        family = fontFamilies.value(QWebSettings::SansSerifFont,
+                                    global->fontFamilies.value(QWebSettings::SansSerifFont));
+        settings->setSansSerifFontFamily(family);
+
+        family = fontFamilies.value(QWebSettings::CursiveFont,
+                                    global->fontFamilies.value(QWebSettings::CursiveFont));
+        settings->setCursiveFontFamily(family);
+
+        family = fontFamilies.value(QWebSettings::FantasyFont,
+                                    global->fontFamilies.value(QWebSettings::FantasyFont));
+        settings->setFantasyFontFamily(family);
+
+        int size = minimumFontSize >= 0 ? minimumFontSize : global->minimumFontSize;
+        settings->setMinimumFontSize(size);
+
+        size = minimumLogicalFontSize >= 0 ? minimumLogicalFontSize : global->minimumLogicalFontSize;
+        settings->setMinimumLogicalFontSize(size);
+
+        size = defaultFontSize >= 0 ? defaultFontSize : global->defaultFontSize;
+        settings->setDefaultFontSize(size);
+
+        size = defaultFixedFontSize >= 0 ? defaultFixedFontSize : global->defaultFixedFontSize;
+        settings->setDefaultFixedFontSize(size);
+
+        bool value = attributes.value(QWebSettings::AutoLoadImages,
+                                      global->attributes.value(QWebSettings::AutoLoadImages));
+        settings->setLoadsImagesAutomatically(value);
+
+        value = attributes.value(QWebSettings::JavascriptEnabled,
+                                      global->attributes.value(QWebSettings::JavascriptEnabled));
+        settings->setJavaScriptEnabled(value);
+
+        value = attributes.value(QWebSettings::JavascriptCanOpenWindows,
+                                      global->attributes.value(QWebSettings::JavascriptCanOpenWindows));
+        settings->setJavaScriptCanOpenWindowsAutomatically(value);
+
+        value = attributes.value(QWebSettings::JavaEnabled,
+                                      global->attributes.value(QWebSettings::JavaEnabled));
+        settings->setJavaEnabled(value);
+
+        value = attributes.value(QWebSettings::PluginsEnabled,
+                                      global->attributes.value(QWebSettings::PluginsEnabled));
+        settings->setPluginsEnabled(value);
+
+        value = attributes.value(QWebSettings::PrivateBrowsingEnabled,
+                                      global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
+        settings->setPrivateBrowsingEnabled(value);
+
+        QString location = (!userStyleSheetLocation.isEmpty()) ? userStyleSheetLocation : global->userStyleSheetLocation;
+        settings->setUserStyleSheetLocation(WebCore::KURL(location));
+    } else {
+        QList<QWebSettingsPrivate *> settings = *::allSettings();
+        for (int i = 0; i < settings.count(); ++i)
+            settings[i]->apply();
+    }
 }
 
 QWebSettings *QWebSettings::defaultSettings()
@@ -109,19 +148,34 @@ QWebSettings *QWebSettings::defaultSettings()
 QWebSettings::QWebSettings()
     : d(new QWebSettingsPrivate)
 {
+    // Initialize our global defaults
+    // changing any of those will likely break the LayoutTests
+    d->minimumFontSize = 5;
+    d->minimumLogicalFontSize = 5;
+    d->defaultFontSize = 14;
+    d->defaultFixedFontSize = 14;
+    d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
+    d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
+    d->fontFamilies.insert(QWebSettings::FixedFont, QLatin1String("Courier"));
+    d->fontFamilies.insert(QWebSettings::SerifFont, QLatin1String("Times New Roman"));
+    d->fontFamilies.insert(QWebSettings::SansSerifFont, QLatin1String("Arial"));
+
+    d->attributes.insert(QWebSettings::AutoLoadImages, true);
+    d->attributes.insert(QWebSettings::JavascriptEnabled, true);
 }
 
 QWebSettings::QWebSettings(WebCore::Settings *settings)
     : d(new QWebSettingsPrivate(settings))
 {
-    // inherit the global default settings
-    *d = *defaultSettings()->d;
     d->settings = settings;
     d->apply();
+    allSettings()->append(d);
 }
 
 QWebSettings::~QWebSettings()
 {
+    if (d->settings)
+        allSettings()->removeOne(d);
 }
 
 void QWebSettings::setMinimumFontSize(int size)
@@ -221,7 +275,10 @@ QPixmap QWebSettings::webGraphic(WebGraphic type)
 
 void QWebSettings::setFontFamily(FontType type, const QString &family)
 {
-    d->fontFamilies.insert(type, family);
+    if (family.isEmpty())
+        d->fontFamilies.remove(type);
+    else
+        d->fontFamilies.insert(type, family);
     d->apply();
 }
 
@@ -239,5 +296,11 @@ void QWebSettings::setAttribute(WebAttribute attr, bool on)
 bool QWebSettings::testAttribute(WebAttribute attr) const
 {
     return d->attributes.value(attr);
+}
+
+void QWebSettings::clearAttribute(WebAttribute attr)
+{
+    d->attributes.remove(attr);
+    d->apply();
 }
 
