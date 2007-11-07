@@ -130,7 +130,7 @@ public:
 
     void goBack();
     void goForward();
-    void goToItem(QWebHistoryItem *item);
+    void goToItem(const QWebHistoryItem &item);
 
     QWebHistoryItem backItem() const;
     QWebHistoryItem currentItem() const;

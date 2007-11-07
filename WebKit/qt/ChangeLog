@@ -2,6 +2,15 @@
 
         Reviewed by Lars.
 
+        Changed QWebPageHistory::goToItem to take a value instead of a pointer.
+
+        * Api/qwebpagehistory.cpp:
+        * Api/qwebpagehistory.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Removed unimplemented QWebHistoryItem::children() function
 
         * Api/qwebpagehistory.h:
