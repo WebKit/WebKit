@@ -833,7 +833,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     frameData.marginWidth = marginWidth;
     frameData.marginHeight = marginHeight;
 
-    QWebFrame* webFrame = m_webFrame->page()->createFrame(m_webFrame, &frameData);
+    QWebFrame* webFrame = new QWebFrame(m_webFrame, &frameData);
 
     RefPtr<Frame> childFrame = webFrame->d->frame;
 

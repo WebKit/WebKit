@@ -109,7 +109,7 @@ void QWebPagePrivate::createMainFrame()
         frameData.allowsScrolling = true;
         frameData.marginWidth = 0;
         frameData.marginHeight = 0;
-        mainFrame = q->createFrame(0, &frameData);
+        mainFrame = new QWebFrame(q, &frameData);
         QObject::connect(mainFrame, SIGNAL(titleChanged(const QString&)),
                 q, SIGNAL(titleChanged(const QString&)));
         QObject::connect(mainFrame, SIGNAL(hoveringOverLink(const QString&, const QString&)),
@@ -157,14 +157,6 @@ QWebPage::~QWebPage()
     if (loader)
         loader->detachFromParent();
     delete d;
-}
-
-QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameData)
-{
-    if (parentFrame)
-        return new QWebFrame(parentFrame, frameData);
-    QWebFrame *f = new QWebFrame(this, frameData);
-    return f;
 }
 
 void QWebPage::open(const QUrl &url)
