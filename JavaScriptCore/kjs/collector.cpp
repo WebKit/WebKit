@@ -203,6 +203,7 @@ template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
   UNUSED_PARAM(s); // s is now only used for the above assert
 
   ASSERT(heap.operationInProgress == NoOperation);
+  ASSERT(heapType == PrimaryHeap || heap.extraCost == 0);
   // FIXME: If another global variable access here doesn't hurt performance
   // too much, we could abort() in NDEBUG builds, which could help ensure we
   // don't spend any time debugging cases where we allocate inside an object's
@@ -217,7 +218,7 @@ template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
   if (heapType == PrimaryHeap && heap.extraCost > ALLOCATIONS_PER_COLLECTION) {
       size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
       size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
-      const size_t newCost = heapType == numNewObjects + heap.extraCost;
+      const size_t newCost = numNewObjects + heap.extraCost;
       if (newCost >= ALLOCATIONS_PER_COLLECTION && newCost >= numLiveObjectsAtLastCollect)
           goto collect;
   }
@@ -248,8 +249,8 @@ scan:
 collect:
     size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
     size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
-    const size_t newCost = heapType == PrimaryHeap ? numNewObjects + heap.extraCost : numNewObjects;
-      
+    const size_t newCost = numNewObjects + heap.extraCost;
+
     if (newCost >= ALLOCATIONS_PER_COLLECTION && newCost >= numLiveObjectsAtLastCollect) {
 #ifndef NDEBUG
       heap.operationInProgress = NoOperation;

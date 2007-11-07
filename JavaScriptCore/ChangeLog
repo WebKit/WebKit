@@ -1,5 +1,16 @@
 2007-11-07  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Eric.
+
+        Fix up initialization after being mangled in r27572, and remove the
+        ternary expression as extraCost will always be zero for the numeric
+        heap.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::heapAllocate):
+
+2007-11-07  Mark Rowe  <mrowe@apple.com>
+
         Gtk build fix.
 
         * kjs/regexp_object.cpp:
