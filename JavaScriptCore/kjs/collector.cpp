@@ -217,7 +217,7 @@ template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
   if (heapType == PrimaryHeap && heap.extraCost > ALLOCATIONS_PER_COLLECTION) {
       size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
       size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;
-      const size_t newCost = heapType == PrimaryHeap ? numNewObjects + heap.extraCost : numNewObjects;
+      const size_t newCost = heapType == numNewObjects + heap.extraCost;
       if (newCost >= ALLOCATIONS_PER_COLLECTION && newCost >= numLiveObjectsAtLastCollect)
           goto collect;
   }
@@ -244,6 +244,7 @@ scan:
     }
     heap.firstBlockWithPossibleSpace = i;
   } else {
+
 collect:
     size_t numLiveObjectsAtLastCollect = heap.numLiveObjectsAtLastCollect;
     size_t numNewObjects = numLiveObjects - numLiveObjectsAtLastCollect;

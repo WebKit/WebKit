@@ -1,3 +1,12 @@
+2007-11-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Eliminated a bogus (though compiled-out) branch in the collector.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::heapAllocate):
+
 2007-11-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
