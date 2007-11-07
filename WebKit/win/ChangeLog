@@ -1,3 +1,29 @@
+2007-11-06  Adam Roben  <aroben@apple.com>
+
+        Change WebLocalizableStrings to take UTF-8 C strings
+
+        This matches the way things work on the Mac, and will allow source
+        files containing localizable strings to be shared between Mac and
+        Windows. The old functions have not been removed for compatibility
+        reasons, but are now just wrappers around the new UTF-8 functions.
+
+        Reviewed by Ada.
+
+        * WebKit.vcproj/WebKit.def: Added new functions.
+        * WebKit.vcproj/WebKit_debug.def: Ditto.
+        * WebLocalizableStrings.cpp:
+        (copyLocalizedStringFromBundle): Changed to take a WebCore::String
+        representing the key.
+        (localizedString): Refactored from WebLocalizedString. Takes a
+        WebCore::String representing the key.
+        (localizedLPCTSTR): Ditto for WebLocalizedLPCTSTR.
+        (WebLocalizedStringUTF8): Added. Takes a UTF-8 C string as the key.
+        (WebLocalizedLPCTSTRUTF8): Ditto.
+        (WebLocalizedString): Changed to call localizedString.
+        (WebLocalizedLPCTSTR): Changed to call localizedLPCTSTR.
+        * WebLocalizableStrings.h: Changed macros to use the new UTF-8
+        functions.
+
 2007-11-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam and Steve.

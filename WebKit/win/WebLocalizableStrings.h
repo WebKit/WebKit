@@ -37,9 +37,14 @@ typedef struct {
 extern "C" {
 #endif
 
+CFStringRef WebLocalizedStringUTF8(WebLocalizableStringsBundle*, LPCSTR key);
+LPCTSTR WebLocalizedLPCTSTRUTF8(WebLocalizableStringsBundle*, LPCSTR key);
+
+void SetWebLocalizedStringMainBundle(CFBundleRef bundle);
+
+// These functions are deprecated. Use the UTF-8 versions instead.
 CFStringRef WebLocalizedString(WebLocalizableStringsBundle *bundle, LPCTSTR key);
 LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle *bundle, LPCTSTR key);
-void SetWebLocalizedStringMainBundle(CFBundleRef bundle);
 
 #ifdef __cplusplus
 }
@@ -51,17 +56,17 @@ void SetWebLocalizedStringMainBundle(CFBundleRef bundle);
 #define LOCALIZABLE_STRINGS_BUNDLE_HELPER(F) F ## LocalizableStringsBundle
 extern WebLocalizableStringsBundle LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME);
 
-#define UI_STRING(string, comment) WebLocalizedString(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), L##string)
-#define UI_STRING_KEY(string, key, comment) WebLocalizedString(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), L##key)
-#define LPCTSTR_UI_STRING(string, comment) WebLocalizedLPCTSTR(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), L##string)
-#define LPCTSTR_UI_STRING_KEY(string, key, comment) WebLocalizedLPCTSTR(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), L##key)
+#define UI_STRING(string, comment) WebLocalizedStringUTF8(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), string)
+#define UI_STRING_KEY(string, key, comment) WebLocalizedStringUTF8(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), key)
+#define LPCTSTR_UI_STRING(string, comment) WebLocalizedLPCTSTRUTF8(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), string)
+#define LPCTSTR_UI_STRING_KEY(string, key, comment) WebLocalizedLPCTSTRUTF8(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), key)
 
 #else
 
-#define UI_STRING(string, comment) WebLocalizedString(0, L##string)
-#define UI_STRING_KEY(string, key, comment) WebLocalizedString(0, L##key)
-#define LPCTSTR_UI_STRING(string, comment) WebLocalizedLPCTSTR(0, L##string)
-#define LPCTSTR_UI_STRING_KEY(string, key, comment) WebLocalizedLPCTSTR(0, L##key)
+#define UI_STRING(string, comment) WebLocalizedStringUTF8(0, string)
+#define UI_STRING_KEY(string, key, comment) WebLocalizedStringUTF8(0, key)
+#define LPCTSTR_UI_STRING(string, comment) WebLocalizedLPCTSTRUTF8(0, string)
+#define LPCTSTR_UI_STRING_KEY(string, key, comment) WebLocalizedLPCTSTRUTF8(0, key)
 
 #endif
 

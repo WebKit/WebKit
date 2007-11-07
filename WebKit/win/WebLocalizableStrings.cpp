@@ -29,6 +29,7 @@
 #include "WebLocalizableStrings.h"
 
 #pragma warning(push, 0)
+#include <WebCore/CString.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringHash.h>
 #pragma warning(pop)
@@ -95,7 +96,7 @@ void SetWebLocalizedStringMainBundle(CFBundleRef bundle)
     localizedStringsMainBundle = bundle;
 }
 
-static CFStringRef copyLocalizedStringFromBundle(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
+static CFStringRef copyLocalizedStringFromBundle(WebLocalizableStringsBundle* stringsBundle, const String& key)
 {
     static CFStringRef notFound = CFSTR("localized string not found");
 
@@ -117,9 +118,10 @@ static CFStringRef copyLocalizedStringFromBundle(WebLocalizableStringsBundle* st
             stringsBundle->bundle = bundle;
         }
     }
-    CFStringRef keyString = CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(key), (CFIndex)wcslen(key));
-    CFStringRef result = CFCopyLocalizedStringWithDefaultValue(keyString, 0, bundle, notFound, 0);
-    CFRelease(keyString);
+
+    RetainPtr<CFStringRef> keyString(AdoptCF, key.createCFString());
+    CFStringRef result = CFCopyLocalizedStringWithDefaultValue(keyString.get(), 0, bundle, notFound, 0);
+
     ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key);
     return result;
 }
@@ -150,33 +152,23 @@ static void cacheString(WebLocalizableStringsBundle* stringsBundle, const String
         frameworkLocStrings.set(key, value);
 }
 
-CFStringRef WebLocalizedString(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
+static CFStringRef localizedString(WebLocalizableStringsBundle* stringsBundle, const String& key)
 {
-    if (!key)
-        return 0;
-
-    String keyString(key);
-
     String found;
-    if (findCachedString(stringsBundle, keyString, found))
+    if (findCachedString(stringsBundle, key, found))
         return found.createCFString();
 
     RetainPtr<CFStringRef> cfStr(AdoptCF, copyLocalizedStringFromBundle(stringsBundle, key));
 
-    cacheString(stringsBundle, keyString, cfStr.get());
+    cacheString(stringsBundle, key, cfStr.get());
 
     return cfStr.releaseRef();
 }
 
-LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
+static LPCTSTR localizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, const String& key)
 {
-    if (!key)
-        return 0;
-
-    String keyString(key);
-
     String found;
-    if (findCachedString(stringsBundle, keyString, found))
+    if (findCachedString(stringsBundle, key, found))
         return found.charactersWithNullTermination();
 
     RetainPtr<CFStringRef> cfStr(AdoptCF, copyLocalizedStringFromBundle(stringsBundle, key));
@@ -187,7 +179,41 @@ LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, LPCTSTR 
             str.replace(i, 1, "s");
     LPCTSTR lpszStr = str.charactersWithNullTermination();
 
-    cacheString(stringsBundle, keyString, str);
+    cacheString(stringsBundle, key, str);
 
     return lpszStr;
+}
+
+CFStringRef WebLocalizedStringUTF8(WebLocalizableStringsBundle* stringsBundle, LPCSTR key)
+{
+    if (!key)
+        return 0;
+
+    return localizedString(stringsBundle, String::fromUTF8(key));
+}
+
+LPCTSTR WebLocalizedLPCTSTRUTF8(WebLocalizableStringsBundle* stringsBundle, LPCSTR key)
+{
+    if (!key)
+        return 0;
+
+    return localizedLPCTSTR(stringsBundle, String::fromUTF8(key));
+}
+
+// These functions are deprecated.
+
+CFStringRef WebLocalizedString(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
+{
+    if (!key)
+        return 0;
+
+    return localizedString(stringsBundle, String(key));
+}
+
+LPCTSTR WebLocalizedLPCTSTR(WebLocalizableStringsBundle* stringsBundle, LPCTSTR key)
+{
+    if (!key)
+        return 0;
+
+    return localizedLPCTSTR(stringsBundle, String(key));
 }

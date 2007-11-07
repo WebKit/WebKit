@@ -87,8 +87,8 @@ EXPORTS
 ;       KJS_JSObject_JSObjectSetMember
 ;       KJS_JSObject_JSObjectSetSlot
 ;       KJS_JSObject_JSObjectToString
-        WebLocalizedString
-        WebLocalizedLPCTSTR
+        WebLocalizedStringUTF8
+        WebLocalizedLPCTSTRUTF8
         SetWebLocalizedStringMainBundle
         DrawTextAtPoint
         WebDrawText
@@ -102,3 +102,6 @@ EXPORTS
         WTFReportAssertionFailure
         WTFReportError
 
+        ; These functions are deprecated
+        WebLocalizedString
+        WebLocalizedLPCTSTR
