@@ -464,7 +464,6 @@
         method to take a MIME type instead of extracting it from the response,
         so that WebDataSource could pass the correct MIME type.
         * WebView/WebResourcePrivate.h:
->>>>>>> trunk:WebKit/ChangeLog
 
 2007-10-17  Darin Adler  <darin@apple.com>
 
