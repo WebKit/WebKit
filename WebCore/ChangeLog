@@ -1,3 +1,30 @@
+2007-11-07  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Some more clipboard fixes.
+        
+        We have to set things immediately on the QClipBoard if the
+        Clipboard object is not for dragging.
+        
+        This is due to the fact that the Clipboard object might be
+        rather long lived if accessed through javascript (it'll only
+        get deleted by JS garbage collection). We have to transfer
+        the data over to the QClipboard before that to make things work.
+        
+        Fixes editing/execCommand/copy-without-selection.html
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::~ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::getData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Mark.

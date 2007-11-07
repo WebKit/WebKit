@@ -48,12 +48,12 @@
 #include <QUrl>
 #include <QApplication>
 #include <QClipboard>
-
+#include <qdebug.h>
 
 #define methodDebug() qDebug("ClipboardQt: %s", __FUNCTION__)
 
 namespace WebCore {
-    
+
 ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readableClipboard)
     : Clipboard(policy, true)
     , m_readableData(readableClipboard)
@@ -69,9 +69,7 @@ ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, bool forDragging)
 {
     Q_ASSERT(policy == ClipboardReadable || policy == ClipboardWritable || policy == ClipboardNumb);
 
-    if (policy == ClipboardWritable) {
-        m_writableData = new QMimeData();
-    } else {
+    if (policy != ClipboardWritable) {
         Q_ASSERT(!forDragging);
         m_readableData = QApplication::clipboard()->mimeData();
     } 
@@ -80,7 +78,7 @@ ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, bool forDragging)
 ClipboardQt::~ClipboardQt()
 {
     if (m_writableData && !isForDragging())
-        QApplication::clipboard()->setMimeData(m_writableData);
+        m_writableData = 0;
     else
         delete m_writableData;
     m_readableData = 0;
@@ -91,22 +89,30 @@ void ClipboardQt::clearData(const String& type)
     if (policy() != ClipboardWritable)
         return;
 
-    ASSERT(m_writableData);
+    if (m_writableData) {
 #if QT_VERSION >= 0x040400
-    m_writableData->removeFormat(type);
+        m_writableData->removeFormat(type);
 #else
-    const QString toClearType = type;
-    QMap<QString, QByteArray> formats;
-    foreach (QString format, m_writableData->formats()) {
-        if (format != toClearType)
-            formats[format] = m_writableData->data(format);
-    }
-
-    m_writableData->clear();
-    QMap<QString, QByteArray>::const_iterator it, end = formats.constEnd();
-    for (it = formats.begin(); it != end; ++it)
-        m_writableData->setData(it.key(), it.value());
+        const QString toClearType = type;
+        QMap<QString, QByteArray> formats;
+        foreach (QString format, m_writableData->formats()) {
+            if (format != toClearType)
+                formats[format] = m_writableData->data(format);
+        }
+        
+        m_writableData->clear();
+        QMap<QString, QByteArray>::const_iterator it, end = formats.constEnd();
+        for (it = formats.begin(); it != end; ++it)
+            m_writableData->setData(it.key(), it.value());
 #endif
+        if (m_writableData->formats().isEmpty()) {
+            if (isForDragging())
+                delete m_writableData;
+            m_writableData = 0;
+        }
+    }
+    if (!isForDragging())
+        QApplication::clipboard()->setMimeData(m_writableData);
 }
 
 void ClipboardQt::clearAllData() 
@@ -114,18 +120,23 @@ void ClipboardQt::clearAllData()
     if (policy() != ClipboardWritable)
         return;
     
-    ASSERT(m_writableData);
-    m_writableData->clear();
+    if (!isForDragging())
+        QApplication::clipboard()->setMimeData(0);
+    else
+        delete m_writableData;
+    m_writableData = 0;
 }
 
 String ClipboardQt::getData(const String& type, bool& success) const 
 {
 
-    if (policy() != ClipboardReadable)
+    if (policy() != ClipboardReadable) {
+        success = false;
         return String();
+    }
     
     ASSERT(m_readableData);
-    QByteArray data = m_writableData->data(QString(type));
+    QByteArray data = m_readableData->data(QString(type));
     success = !data.isEmpty();
     return String(data.data(), data.size());
 }
@@ -135,10 +146,13 @@ bool ClipboardQt::setData(const String& type, const String& data)
     if (policy() != ClipboardWritable)
         return false;
     
-    ASSERT(m_writableData);
+    if (!m_writableData)
+        m_writableData = new QMimeData;
     QByteArray array(reinterpret_cast<const char*>(data.characters()),
-                     data.length());
+                     data.length()*2);
     m_writableData->setData(QString(type), array);
+    if (!isForDragging())
+        QApplication::clipboard()->setMimeData(m_writableData);
     return true;
 }
 
@@ -208,11 +222,12 @@ static CachedImage* getCachedImage(Element* element)
 void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame) 
 {
     ASSERT(frame);
-    ASSERT(m_writableData);
     Q_UNUSED(url);
     Q_UNUSED(title);
 
     //WebCore::writeURL(m_writableDataObject.get(), url, title, true, false);
+    if (!m_writableData)
+        m_writableData = new QMimeData;
 
     CachedImage* cachedImage = getCachedImage(element);
     if (!cachedImage || !cachedImage->image() || !cachedImage->isLoaded())
@@ -231,27 +246,36 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
 
     QList<QUrl> urls;
     urls.append(QUrl(fullURL));
+
     m_writableData->setUrls(urls);
+    if (!isForDragging())
+        QApplication::clipboard()->setMimeData(m_writableData);
 }
 
 void ClipboardQt::writeURL(const KURL& url, const String&, Frame* frame) 
 {
     ASSERT(frame);
-    ASSERT(m_writableData);
     
     QList<QUrl> urls;
     urls.append(QUrl(frame->document()->completeURL(url.url())));
+    if (!m_writableData)
+        m_writableData = new QMimeData;
     m_writableData->setUrls(urls);
+    if (!isForDragging())
+        QApplication::clipboard()->setMimeData(m_writableData);
 }
 
 void ClipboardQt::writeRange(Range* range, Frame* frame) 
 {
     ASSERT(range);
     ASSERT(frame);
-    ASSERT(m_writableData);
     
+    if (!m_writableData)
+        m_writableData = new QMimeData;
     m_writableData->setText(range->text());
     m_writableData->setHtml(range->toHTML());
+    if (!isForDragging())
+        QApplication::clipboard()->setMimeData(m_writableData);
 }
 
 bool ClipboardQt::hasData() 
