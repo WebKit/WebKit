@@ -300,9 +300,9 @@ public:
         urlEdit = new SearchEdit(url.toString());
         connect(urlEdit, SIGNAL(returnPressed()),
                 SLOT(changeLocation()));
-        bar->addAction("Go back", page, SLOT(goBack()));
-        bar->addAction("Stop", page, SLOT(stop()));
-        bar->addAction("Go forward", page, SLOT(goForward()));
+        bar->addAction(page->webAction(QWebPage::GoBack));
+        bar->addAction(page->webAction(QWebPage::Stop));
+        bar->addAction(page->webAction(QWebPage::GoForward));
         bar->addWidget(urlEdit);
 
         hoverLabel = new HoverLabel(this);
