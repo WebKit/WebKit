@@ -73,6 +73,7 @@ public Q_SLOTS:
     void readStdin(int);
     void dump();
     void titleChanged(const QString &s);
+    void connectFrame(QWebFrame *frame);
 
 Q_SIGNALS:
     void quit();

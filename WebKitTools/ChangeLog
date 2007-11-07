@@ -2,6 +2,23 @@
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
+        Add a QWebPage::frameCreated() signal and fix DRT
+        
+        The removal of createFrame in QWebPage broke the re-implementation
+        in DumpRenderTree. Instead emit a frameCreated() signal and
+        connect to it in DumpRenderTree.
+        
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::DumpRenderTree::dump):
+        (WebCore::DumpRenderTree::connectFrame):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
         Moved all the event handlers from QWebFrame into QWebPage.
         
         This cleans up the public API and allows us to remove the

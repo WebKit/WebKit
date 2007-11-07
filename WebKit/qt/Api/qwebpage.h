@@ -171,6 +171,8 @@ signals:
 
     void addToHistory(const QUrl&);
 
+    void frameCreated(QWebFrame *frame);
+
 private slots:
     void onLoadProgressChanged(int);
 

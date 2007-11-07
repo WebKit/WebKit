@@ -55,19 +55,10 @@ namespace WebCore {
 const unsigned int maxViewWidth = 800;
 const unsigned int maxViewHeight = 600;
 
-class WebFrame : public QWebFrame {
-public:
-    WebFrame(QWebPage *parent, QWebFrameData *frameData)
-        : QWebFrame(parent, frameData) {}
-    WebFrame(QWebFrame *parent, QWebFrameData *frameData)
-        : QWebFrame(parent, frameData) {}
-};
-
 class WebPage : public QWebPage {
 public:
     WebPage(QWidget *parent, DumpRenderTree *drt);
 
-    QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
     QWebPage *createWindow();
 
     void javaScriptAlert(QWebFrame *frame, const QString& message);
@@ -85,26 +76,6 @@ WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
     QWebSettings s = settings();
     s.setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
     setSettings(s);
-}
-
-QWebFrame *WebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameData)
-{
-    if (parentFrame) {
-        WebFrame *f = new WebFrame(parentFrame, frameData);
-        connect(f, SIGNAL(cleared()), m_drt, SLOT(initJSObjects()));
-        connect(f, SIGNAL(provisionalLoad()),
-                m_drt->layoutTestController(), SLOT(provisionalLoad()));
-        return f;
-    }
-    WebFrame *f = new WebFrame(this, frameData);
-
-    connect(f, SIGNAL(cleared()), m_drt, SLOT(initJSObjects()));
-    connect(f, SIGNAL(provisionalLoad()),
-            m_drt->layoutTestController(), SLOT(provisionalLoad()));
-    connect(f, SIGNAL(loadDone(bool)),
-            m_drt->layoutTestController(), SLOT(maybeDump(bool)));
-
-    return f;
 }
 
 QWebPage *WebPage::createWindow()
@@ -143,6 +114,7 @@ DumpRenderTree::DumpRenderTree()
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
 
     m_page = new WebPage(0, this);
+    connect(m_page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
     m_page->resize(maxViewWidth, maxViewHeight);
     m_page->mainFrame()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_page->mainFrame()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -282,6 +254,17 @@ void DumpRenderTree::titleChanged(const QString &s)
         printf("TITLE CHANGED: %s\n", s.toUtf8().data());
 }
 
+void DumpRenderTree::connectFrame(QWebFrame *frame)
+{
+    connect(frame, SIGNAL(cleared()), this, SLOT(initJSObjects()));
+    connect(frame, SIGNAL(provisionalLoad()),
+            layoutTestController(), SLOT(provisionalLoad()));
+
+    if (frame == m_page->mainFrame()) {
+        connect(frame, SIGNAL(loadDone(bool)),
+                layoutTestController(), SLOT(maybeDump(bool)));
+    }
+}
 
 QWebPage *DumpRenderTree::createWindow()
 {
@@ -292,6 +275,7 @@ QWebPage *DumpRenderTree::createWindow()
     container->move(-1, -1);
     container->hide();
     QWebPage *page = new WebPage(container, this);
+    connect(m_page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
     windows.append(container);
     return page;
 }
