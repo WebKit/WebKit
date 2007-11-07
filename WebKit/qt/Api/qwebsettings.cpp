@@ -177,16 +177,19 @@ QWebSettings::~QWebSettings()
 
 void QWebSettings::setFontSize(FontSize type, int size)
 {
-    if (size < 0)
-        d->fontSizes.remove(type);
-    else
-        d->fontSizes.insert(type, size);
+    d->fontSizes.insert(type, size);
     d->apply();
 }
 
 int QWebSettings::fontSize(FontSize type) const
 {
     return d->fontSizes.value(type);
+}
+
+void QWebSettings::resetFontSize(FontSize type)
+{
+    d->fontSizes.remove(type);
+    d->apply();
 }
 
 void QWebSettings::setUserStyleSheetLocation(const QString &location)
@@ -235,16 +238,19 @@ QPixmap QWebSettings::webGraphic(WebGraphic type)
 
 void QWebSettings::setFontFamily(FontType type, const QString &family)
 {
-    if (family.isEmpty())
-        d->fontFamilies.remove(type);
-    else
-        d->fontFamilies.insert(type, family);
+    d->fontFamilies.insert(type, family);
     d->apply();
 }
 
 QString QWebSettings::fontFamily(FontType type) const
 {
     return d->fontFamilies.value(type);
+}
+
+void QWebSettings::resetFontFamily(FontType type)
+{
+    d->fontFamilies.remove(type);
+    d->apply();
 }
 
 void QWebSettings::setAttribute(WebAttribute attr, bool on)

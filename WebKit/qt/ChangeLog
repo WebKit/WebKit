@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Added explicit functions for resetting the font sizes and font families.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::resetFontSize):
+        (QWebSettings::resetFontFamily):
+        * Api/qwebsettings.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Combined the font sizes accessors/setters under one setter/getter with an enum.
 
         * Api/qwebsettings.cpp:
