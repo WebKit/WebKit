@@ -317,6 +317,9 @@ QObject *QWebPage::createPlugin(const QString &classid, const QUrl &url, const Q
 
 void QWebPage::webActionTriggered(WebAction action, bool checked)
 {
+    WebCore::Editor *editor = d->page->focusController()->focusedOrMainFrame()->editor();
+    const char *command = 0;
+
     switch (action) {
         // ### these need a context...
         case OpenLinkInNewWindow:
@@ -340,16 +343,106 @@ void QWebPage::webActionTriggered(WebAction action, bool checked)
             mainFrame()->d->frame->loader()->reload();
             break;
         case Cut:
-            d->page->focusController()->focusedOrMainFrame()->editor()->cut();
+            editor->cut();
             break;
         case Copy:
-            d->page->focusController()->focusedOrMainFrame()->editor()->copy();
+            editor->copy();
             break;
         case Paste:
-            d->page->focusController()->focusedOrMainFrame()->editor()->paste();
+            editor->paste();
             break;
+
+        case Undo:
+            editor->undo();
+            break;
+        case Redo:
+            editor->redo();
+            break;
+
+        case MoveToNextChar:
+            command = "MoveForward";
+            break;
+        case MoveToPreviousChar:
+            command = "MoveBackward";
+            break;
+        case MoveToNextWord:
+            command = "MoveWordForward";
+            break;
+        case MoveToPreviousWord:
+            command = "MoveWordBackward";
+            break;
+        case MoveToNextLine:
+            command = "MoveDown";
+            break;
+        case MoveToPreviousLine:
+            command = "MoveUp";
+            break;
+        case MoveToStartOfLine:
+            command = "MoveToBeginningOfLine";
+            break;
+        case MoveToEndOfLine:
+            command = "MoveToEndOfLine";
+            break;
+        case MoveToStartOfBlock:
+            command = "MoveToBeginningOfParagraph";
+            break;
+        case MoveToEndOfBlock:
+            command = "MoveToEndOfParagraph";
+            break;
+        case MoveToStartOfDocument:
+            command = "MoveToBeginningOfDocument";
+            break;
+        case MoveToEndOfDocument:
+            command = "MoveToEndOfDocument";
+            break;
+        case SelectNextChar:
+            command = "MoveForwardAndModifySelection";
+            break;
+        case SelectPreviousChar:
+            command = "MoveBackwardAndModifySelection";
+            break;
+        case SelectNextWord:
+            command = "MoveWordForwardAndModifySelection";
+            break;
+        case SelectPreviousWord:
+            command = "MoveWordBackwardAndModifySelection";
+            break;
+        case SelectNextLine:
+            command = "MoveDownAndModifySelection";
+            break;
+        case SelectPreviousLine:
+            command = "MoveUpAndModifySelection";
+            break;
+        case SelectStartOfLine:
+            command = "MoveToBeginningOfLineAndModifySelection";
+            break;
+        case SelectEndOfLine:
+            command = "MoveToEndOfLineAndModifySelection";
+            break;
+        case SelectStartOfBlock:
+            command = "MoveToBeginningOfParagraphAndModifySelection";
+            break;
+        case SelectEndOfBlock:
+            command = "MoveToEndOfParagraphAndModifySelection";
+            break;
+        case SelectStartOfDocument:
+            command = "MoveToBeginningOfDocumentAndModifySelection";
+            break;
+        case SelectEndOfDocument:
+            command = "MoveToEndOfDocumentAndModifySelection";
+            break;
+        case DeleteStartOfWord:
+            command = "DeleteWordBackward";
+            break;
+        case DeleteEndOfWord:
+            command = "DeleteWordForward";
+            break;
+
         default: break;
     }
+
+    if (command)
+        editor->execCommand(command);
 }
 
 QWebPage::NavigationRequestResponse QWebPage::navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
@@ -570,83 +663,104 @@ void QWebPage::keyPressEvent(QKeyEvent *ev)
     QWebFrame *frame = mainFrame();
     WebCore::Editor *editor = frame->d->frame->editor();
     if (editor->canEdit()) {
-        const char *command = 0;
         if (ev == QKeySequence::Cut) {
-            editor->cut();
+            webActionTriggered(Cut);
             handled = true;
         } else if (ev == QKeySequence::Copy) {
-            editor->copy();
+            webActionTriggered(Copy);
             handled = true;
         } else if (ev == QKeySequence::Paste) {
-            editor->paste();
+            webActionTriggered(Paste);
             handled = true;
         } else if (ev == QKeySequence::Undo) {
-            editor->undo();
+            webActionTriggered(Undo);
             handled = true;
         } else if (ev == QKeySequence::Redo) {
-            editor->redo();
+            webActionTriggered(Redo);
             handled = true;
         } else if(ev == QKeySequence::MoveToNextChar) {
-            command = "MoveForward";
+            webActionTriggered(MoveToNextChar);
+            handled = true;
         } else if(ev == QKeySequence::MoveToPreviousChar) {
-            command = "MoveBackward";
+            webActionTriggered(MoveToPreviousChar);
+            handled = true;
         } else if(ev == QKeySequence::MoveToNextWord) {
-            command = "MoveWordForward";
+            webActionTriggered(MoveToNextWord);
+            handled = true;
         } else if(ev == QKeySequence::MoveToPreviousWord) {
-            command = "MoveWordBackward";
+            webActionTriggered(MoveToPreviousWord);
+            handled = true;
         } else if(ev == QKeySequence::MoveToNextLine) {
-            command = "MoveDown";
+            webActionTriggered(MoveToNextLine);
+            handled = true;
         } else if(ev == QKeySequence::MoveToPreviousLine) {
-            command = "MoveUp";
+            webActionTriggered(MoveToPreviousLine);
+            handled = true;
 //             } else if(ev == QKeySequence::MoveToNextPage) {
 //             } else if(ev == QKeySequence::MoveToPreviousPage) {
         } else if(ev == QKeySequence::MoveToStartOfLine) {
-            command = "MoveToBeginningOfLine";
+            webActionTriggered(MoveToStartOfLine);
+            handled = true;
         } else if(ev == QKeySequence::MoveToEndOfLine) {
-            command = "MoveToEndOfLine";
+            webActionTriggered(MoveToEndOfLine);
+            handled = true;
         } else if(ev == QKeySequence::MoveToStartOfBlock) {
-            command = "MoveToBeginningOfParagraph";
+            webActionTriggered(MoveToStartOfBlock);
+            handled = true;
         } else if(ev == QKeySequence::MoveToEndOfBlock) {
-            command = "MoveToEndOfParagraph";
+            webActionTriggered(MoveToEndOfBlock);
+            handled = true;
         } else if(ev == QKeySequence::MoveToStartOfDocument) {
-            command = "MoveToBeginningOfDocument";
+            webActionTriggered(MoveToStartOfDocument);
+            handled = true;
         } else if(ev == QKeySequence::MoveToEndOfDocument) {
-            command = "MoveToEndOfDocument";
+            webActionTriggered(MoveToEndOfDocument);
+            handled = true;
         } else if(ev == QKeySequence::SelectNextChar) {
-            command = "MoveForwardAndModifySelection";
+            webActionTriggered(SelectNextChar);
+            handled = true;
         } else if(ev == QKeySequence::SelectPreviousChar) {
-            command = "MoveBackwardAndModifySelection";
+            webActionTriggered(SelectPreviousChar);
+            handled = true;
         } else if(ev == QKeySequence::SelectNextWord) {
-            command = "MoveWordForwardAndModifySelection";
+            webActionTriggered(SelectNextWord);
+            handled = true;
         } else if(ev == QKeySequence::SelectPreviousWord) {
-            command = "MoveWordBackwardAndModifySelection";
+            webActionTriggered(SelectPreviousWord);
+            handled = true;
         } else if(ev == QKeySequence::SelectNextLine) {
-            command = "MoveDownAndModifySelection";
+            webActionTriggered(SelectNextLine);
+            handled = true;
         } else if(ev == QKeySequence::SelectPreviousLine) {
-            command = "MoveUpAndModifySelection";
+            webActionTriggered(SelectPreviousLine);
+            handled = true;
 //             } else if(ev == QKeySequence::SelectNextPage) {
 //             } else if(ev == QKeySequence::SelectPreviousPage) {
         } else if(ev == QKeySequence::SelectStartOfLine) {
-            command = "MoveToBeginningOfLineAndModifySelection";
-        } else if(ev == QKeySequence::SelectEndOfLine) {
-            command = "MoveToEndOfLineAndModifySelection";
-        } else if(ev == QKeySequence::SelectStartOfBlock) {
-            command = "MoveToBeginningOfParagraphAndModifySelection";
-        } else if(ev == QKeySequence::SelectEndOfBlock) {
-            command = "MoveToEndOfParagraphAndModifySelection";
-        } else if(ev == QKeySequence::SelectStartOfDocument) {
-            command = "MoveToBeginningOfDocumentAndModifySelection";
-        } else if(ev == QKeySequence::SelectEndOfDocument) {
-            command = "MoveToEndOfDocumentAndModifySelection";
-        } else if(ev == QKeySequence::DeleteStartOfWord) {
-            command = "DeleteWordBackward";
-        } else if(ev == QKeySequence::DeleteEndOfWord) {
-            command = "DeleteWordForward";
-//             } else if(ev == QKeySequence::DeleteEndOfLine) {
-        }
-        if (command) {
-            editor->execCommand(command);
+            webActionTriggered(SelectStartOfLine);
             handled = true;
+        } else if(ev == QKeySequence::SelectEndOfLine) {
+            webActionTriggered(SelectEndOfLine);
+            handled = true;
+        } else if(ev == QKeySequence::SelectStartOfBlock) {
+            webActionTriggered(SelectStartOfBlock);
+            handled = true;
+        } else if(ev == QKeySequence::SelectEndOfBlock) {
+            webActionTriggered(SelectEndOfBlock);
+            handled = true;
+        } else if(ev == QKeySequence::SelectStartOfDocument) {
+            webActionTriggered(SelectStartOfDocument);
+            handled = true;
+        } else if(ev == QKeySequence::SelectEndOfDocument) {
+            webActionTriggered(SelectEndOfDocument);
+            handled = true;
+        } else if(ev == QKeySequence::DeleteStartOfWord) {
+            webActionTriggered(DeleteStartOfWord);
+            handled = true;
+        } else if(ev == QKeySequence::DeleteEndOfWord) {
+            webActionTriggered(DeleteEndOfWord);
+            handled = true;
+//             } else if(ev == QKeySequence::DeleteEndOfLine) {
         }
     }
     if (!handled) 

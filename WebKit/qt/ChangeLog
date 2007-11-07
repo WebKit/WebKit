@@ -2,6 +2,17 @@
 
         Reviewed by Lars.
 
+        Moved the editing actions implemented in keyPressEvent into webActionTriggered.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::webActionTriggered):
+        (QWebPage::keyPressEvent):
+        * Api/qwebpage.h:
+
+2007-11-07  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Lars.
+
         Introduced a central virtual void webActionTriggered(WebAction action) method that is called from various
         convenience methods such as cut()/copy()/paste().
 
