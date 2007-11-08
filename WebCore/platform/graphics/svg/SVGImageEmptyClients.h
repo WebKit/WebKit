@@ -264,7 +264,7 @@ public:
     virtual String overrideMediaType() const { return String(); }
 
     virtual void redirectDataToPlugin(WebCore::Widget*) {}
-    virtual void windowObjectCleared() const {}
+    virtual void windowObjectCleared() {}
     virtual void didPerformFirstNavigation() const {}
 
     virtual void registerForIconNotification(bool listen) {}

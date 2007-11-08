@@ -26,16 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebKitDLL.h"
-
 #include "WebScriptScope.h"
 
 #include <wtf/Assertions.h>
 
 // WebScriptScope ------------------------------------------------------------
 
-WebScriptScope::WebScriptScope()
-: m_refCount(0)
+WebScriptScope::WebScriptScope(KJS::JSObject* scope)
+    : m_refCount(0)
+    , m_scope(scope)
 {
     gClassCount++;
 }
@@ -43,6 +44,13 @@ WebScriptScope::WebScriptScope()
 WebScriptScope::~WebScriptScope()
 {
     gClassCount--;
+}
+
+WebScriptScope* WebScriptScope::createInstance(KJS::JSObject* scope)
+{
+    WebScriptScope* instance = new WebScriptScope(scope);
+    instance->AddRef();
+    return instance;
 }
 
 // IUnknown -------------------------------------------------------------------

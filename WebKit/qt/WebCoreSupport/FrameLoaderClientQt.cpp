@@ -577,7 +577,7 @@ bool FrameLoaderClientQt::canHandleRequest(const WebCore::ResourceRequest&) cons
     return true;
 }
 
-void FrameLoaderClientQt::windowObjectCleared() const
+void FrameLoaderClientQt::windowObjectCleared()
 {
     if (m_webFrame)
         emit m_webFrame->cleared();

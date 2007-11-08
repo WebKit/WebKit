@@ -261,5 +261,5 @@ interface IWebFrame : IUnknown
         @result The frame's global JavaScript execution context.  Use this method to
         bridge between the WebKit and JavaScriptCore APIs.
     */
-   [local] HRESULT globalContext([out, retval] JSGlobalContextRef* context);
+   [local] JSGlobalContextRef globalContext();
 }

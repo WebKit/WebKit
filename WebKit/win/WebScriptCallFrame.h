@@ -31,13 +31,16 @@
 
 #include "IWebScriptCallFrame.h"
 
+#include <JavaScriptCore/ExecState.h>
+#include <WebCore/COMPtr.h>
+
 class WebScriptCallFrame : public IWebScriptCallFrame {
 public:
     static WebScriptCallFrame* createInstance();
 
 private:
     WebScriptCallFrame();
-    ~WebScriptCallFrame();
+    virtual ~WebScriptCallFrame();
 
 public:
     // IUnknown
@@ -45,9 +48,9 @@ public:
         /* [in] */ REFIID riid,
         /* [retval][out] */ void** ppvObject);
     
-    virtual ULONG STDMETHODCALLTYPE AddRef( void);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
 
-    virtual ULONG STDMETHODCALLTYPE Release( void);
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebScriptCallFrame
     virtual HRESULT STDMETHODCALLTYPE caller(
@@ -64,6 +67,9 @@ public:
         /* [out, retval] */ BSTR*);
 
 private:
+    KJS::ExecState* m_state;
+    COMPtr<WebScriptCallFrame> m_caller;
+
     ULONG m_refCount;
 };
 

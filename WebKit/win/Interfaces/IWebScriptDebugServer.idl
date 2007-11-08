@@ -69,8 +69,9 @@ interface IWebScriptDebugListener;
 ]
 interface IWebScriptDebugServer : IUnknown
 {
-    HRESULT addListener([in] const IWebScriptDebugListener*);
-    HRESULT removeListener([in] const IWebScriptDebugListener*);
+    HRESULT sharedWebScriptDebugServer([out, retval] IWebScriptDebugServer**);
+    HRESULT addListener([in] IWebScriptDebugListener*);
+    HRESULT removeListener([in] IWebScriptDebugListener*);
     HRESULT step();
     HRESULT pause();
     HRESULT resume();

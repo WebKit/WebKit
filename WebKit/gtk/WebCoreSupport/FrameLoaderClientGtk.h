@@ -118,7 +118,7 @@ namespace WebKit {
         virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);
         virtual WebCore::Widget* createJavaAppletWidget(const WebCore::IntSize&, WebCore::Element*, const WebCore::KURL& baseURL, const WTF::Vector<WebCore::String>& paramNames, const WTF::Vector<WebCore::String>& paramValues);
         virtual WebCore::String overrideMediaType() const;
-        virtual void windowObjectCleared() const;
+        virtual void windowObjectCleared();
         virtual void didPerformFirstNavigation() const;
 
         virtual void registerForIconNotification(bool); 

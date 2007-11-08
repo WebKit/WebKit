@@ -1,3 +1,91 @@
+2007-11-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - With this change Drosera can now get the source of a website and the
+        listings of the sources it gets.  This also lays the foundation for
+        letting Drosera show the scope chain of the JavaScript stack.
+
+        * Interfaces/IWebFrame.idl: Changed the signature of the local function,
+        globalContext(), because COM was unable to marshal this object with the
+        other signature.
+        * Interfaces/IWebScriptDebugServer.idl: Of course adding and removing
+        a listener cannot be done in a const function.
+        * WebChromeClient.h: Added accessor to the WebView for the new added
+        kit() function in WebFrame.
+        (WebChromeClient::webView):
+        * WebFrame.cpp: Added a script debugger object and the necessary
+        functions to attach and communicate with it. Also needed to change the
+        local function, globalContext(), because of a COM issue.
+        (kit):
+        (WebFrame::WebFrame):
+        (WebFrame::globalContext):
+        (WebFrame::loadData):
+        (WebFrame::attachScriptDebugger):
+        (WebFrame::detachScriptDebugger):
+        (WebFrame::dispatchDidLoadMainResource):
+        (WebFrame::windowObjectCleared):
+        * WebFrame.h: Ditto.
+        * WebHTMLRepresentation.cpp: Implemented documentSource so Drosera has
+        some source code to display.
+        (WebHTMLRepresentation::WebHTMLRepresentation):
+        (WebHTMLRepresentation::documentSource):
+        * WebKit.vcproj/WebKit.vcproj: Added the new WebScriptDebugger class.
+        * WebScriptCallFrame.cpp: Implemented much of this class' functionality.
+        (EnumScopes::EnumScopes): Made an EnumScopes class to create an
+        IEnumVARIANT to wrap a ScopeChain for Drosera.
+        (EnumScopes::QueryInterface):
+        (EnumScopes::AddRef):
+        (EnumScopes::Release):
+        (EnumScopes::Next):
+        (EnumScopes::Skip):
+        (EnumScopes::Reset):
+        (EnumScopes::Clone):
+        (WebScriptCallFrame::caller):
+        (WebScriptCallFrame::scopeChain):
+        (WebScriptCallFrame::functionName):
+        (WebScriptCallFrame::stringByEvaluatingJavaScriptFromString):
+        * WebScriptCallFrame.h: Added member data needed for the above functions
+        * WebScriptDebugServer.cpp: Began implementing. 
+        (WebScriptDebugServer::listenerCount):
+        (EnumViews::QueryInterface):
+        (EnumViews::AddRef):
+        (EnumViews::Release):
+        (EnumViews::Next):
+        (EnumViews::Skip):
+        (EnumViews::Reset):
+        (EnumViews::Clone):
+        (WebScriptDebugServer::WebScriptDebugServer):
+        (WebScriptDebugServer::createInstance):
+        (WebScriptDebugServer::sharedWebScriptDebugServer):
+        (WebScriptDebugServer::AddRef):
+        (WebScriptDebugServer::Release):
+        (WebScriptDebugServer::addListener):
+        (WebScriptDebugServer::removeListener):
+        (WebScriptDebugServer::step):
+        (WebScriptDebugServer::pause):
+        (WebScriptDebugServer::resume):
+        (WebScriptDebugServer::isPaused):
+        (WebScriptDebugServer::suspendProcessIfPaused):
+        (WebScriptDebugServer::didLoadMainResourceForDataSource):
+        (WebScriptDebugServer::didParseSource):
+        (WebScriptDebugServer::failedToParseSource):
+        (WebScriptDebugServer::didEnterCallFrame):
+        (WebScriptDebugServer::willExecuteStatement):
+        (WebScriptDebugServer::willLeaveCallFrame):
+        (WebScriptDebugServer::exceptionWasRaised):
+        * WebScriptDebugServer.h: Began implementing.
+        * WebScriptDebugger.cpp: Added.
+        (WebScriptDebugger::WebScriptDebugger):
+        (WebScriptDebugger::sourceParsed):
+        * WebScriptDebugger.h: Added.
+        * WebScriptScope.cpp: Make this class use createInstance which is more
+        in line with our guidelines.
+        (WebScriptScope::WebScriptScope):
+        (WebScriptScope::createInstance):
+        * WebScriptScope.h:
+
+
 2007-11-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Steve.

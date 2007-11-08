@@ -1,3 +1,14 @@
+2007-11-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - windowObjectCleared() is no longer const.  It needs to setup the
+        script debugger and cannot be const to do so.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::windowObjectCleared):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-11-08  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by nobody (well, Holger knows about it), build fix for Qt 4.3.

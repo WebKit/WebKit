@@ -322,7 +322,7 @@ String FrameLoaderClient::overrideMediaType() const
     return String();
 }
 
-void FrameLoaderClient::windowObjectCleared() const
+void FrameLoaderClient::windowObjectCleared()
 {
     g_signal_emit_by_name(m_frame, "cleared");
 }

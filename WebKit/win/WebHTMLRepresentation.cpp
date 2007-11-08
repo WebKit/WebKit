@@ -31,7 +31,9 @@
 #include "WebFrame.h"
 #include "WebKitStatisticsPrivate.h"
 #pragma warning(push, 0)
+#include <WebCore/BString.h>
 #include <WebCore/HTMLInputElement.h>
+#include <WebCore/TextResourceDecoder.h>
 #pragma warning(pop)
 
 using namespace WebCore;
@@ -39,8 +41,8 @@ using namespace WebCore;
 // WebHTMLRepresentation ------------------------------------------------------
 
 WebHTMLRepresentation::WebHTMLRepresentation()
-: m_refCount(0)
-, m_frame(0)
+    : m_refCount(0)
+    , m_frame(0)
 {
     WebHTMLRepresentationCount++;
     gClassCount++;
@@ -84,12 +86,12 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::QueryInterface(REFIID riid, voi
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebHTMLRepresentation::AddRef(void)
+ULONG STDMETHODCALLTYPE WebHTMLRepresentation::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebHTMLRepresentation::Release(void)
+ULONG STDMETHODCALLTYPE WebHTMLRepresentation::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -253,10 +255,54 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::canProvideDocumentSource(
 }
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::documentSource( 
-        /* [retval][out] */ BSTR* /*source*/)
+        /* [retval][out] */ BSTR* source)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!source)
+        return E_FAIL;
+
+    *source = 0;
+
+    HRESULT hr = S_OK;
+
+    COMPtr<IWebDataSource> dataSource;
+    hr = m_frame->dataSource(&dataSource);
+    if (FAILED(hr))
+        return hr;
+
+    COMPtr<IStream> data;
+    hr = dataSource->data(&data);
+    if (FAILED(hr))
+        return hr;
+
+    STATSTG stat;
+    hr = data->Stat(&stat, STATFLAG_NONAME);
+    if (FAILED(hr))
+        return hr;
+
+    if (stat.cbSize.HighPart || !stat.cbSize.LowPart)
+        return E_FAIL;
+
+    Vector<char> dataBuffer(stat.cbSize.LowPart);
+    ULONG read;
+    
+    hr = data->Read(dataBuffer.data(), static_cast<ULONG>(dataBuffer.size()), &read);
+    if (FAILED(hr))
+        return hr;
+
+    WebCore::Frame* frame = core(m_frame);
+    if (!frame)
+        return E_FAIL;
+
+    WebCore::Document* doc = frame->document();
+    if (!doc)
+        return E_FAIL;
+
+    WebCore::TextResourceDecoder* decoder = doc->decoder();
+    if (!decoder)
+        return E_FAIL;
+
+    *source = WebCore::BString(decoder->encoding().decode(dataBuffer.data(), dataBuffer.size())).release();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::title( 

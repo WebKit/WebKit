@@ -1,3 +1,14 @@
+2007-11-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - windowObjectCleared() is no longer const.  It needs to setup the
+        script debugger and cannot be const to do so.
+
+        * loader/FrameLoaderClient.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::windowObjectCleared):
+
 2007-11-08  Adam Roben  <aroben@apple.com>
 
         Hopeful Windows build fix

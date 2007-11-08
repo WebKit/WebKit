@@ -1,3 +1,14 @@
+2007-11-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - windowObjectCleared() is no longer const.  It needs to setup the
+        script debugger and cannot be const to do so.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::windowObjectCleared):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2007-11-06  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix http://bugs.webkit.org/attachment.cgi?id=17043&action=view

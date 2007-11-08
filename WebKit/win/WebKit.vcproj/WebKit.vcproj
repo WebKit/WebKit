@@ -554,6 +554,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebScriptDebugger.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebScriptDebugServer.h"
 				>
 			</File>
@@ -755,6 +759,10 @@
 			</File>
 			<File
 				RelativePath="..\WebScriptCallFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebScriptDebugger.cpp"
 				>
 			</File>
 			<File
