@@ -28,7 +28,7 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 
-#include "csshelper.h"
+#include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "EventNames.h"
@@ -47,6 +47,7 @@
 #include "SystemTime.h"
 #include "TimeRanges.h"
 #include "VoidCallback.h"
+#include <wtf/MathExtras.h>
 
 using namespace std;
 

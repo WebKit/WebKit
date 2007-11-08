@@ -1,3 +1,11 @@
+2007-11-08  Mark Rowe  <mrowe@apple.com>
+
+       Build fix for case-sensitive file systems.  Fix case of file names
+       in #include's.
+
+        * html/HTMLMediaElement.cpp:
+        * platform/graphics/Movie.cpp:
+
 2007-11-08  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Lars Knoll <lars@trolltech.com>.

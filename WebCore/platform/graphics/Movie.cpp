@@ -29,7 +29,7 @@
 #include "Movie.h"
 
 #include "IntRect.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 
 #if PLATFORM(MAC)
 #include "MoviePrivateQTKit.h"
