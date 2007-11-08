@@ -2673,12 +2673,13 @@ void Document::setDomainInternal(const String& newDomain)
 
 String Document::lastModified() const
 {
-    String modifiedHeader;
-    if (Frame* f = frame()) {
-        if (DocumentLoader* documentLoader = f->loader()->documentLoader())
-            documentLoader->getResponseModifiedHeader(modifiedHeader);
-    }
-    return modifiedHeader;
+    Frame* f = frame();
+    if (!f)
+        return String();
+    DocumentLoader* loader = f->loader()->documentLoader();
+    if (!loader)
+        return String();
+    return loader->response().httpHeaderField("Last-Modified");
 }
 
 bool Document::isValidName(const String &name)

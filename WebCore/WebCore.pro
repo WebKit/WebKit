@@ -812,7 +812,6 @@ qt-port {
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \
     page/qt/FrameQt.cpp \
-    loader/qt/DocumentLoaderQt.cpp \
     platform/graphics/qt/AffineTransformQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
     platform/graphics/qt/FloatPointQt.cpp \
@@ -912,7 +911,6 @@ gtk-port {
         page/gtk/EventHandlerGtk.cpp \
         page/gtk/FrameGtk.cpp \
         page/gtk/DragControllerGtk.cpp \
-        loader/gtk/DocumentLoaderGtk.cpp \
         platform/gtk/ClipboardGtk.cpp \
         platform/gtk/CookieJarGtk.cpp \
         platform/gtk/CursorGtk.cpp \

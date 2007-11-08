@@ -801,11 +801,6 @@ void Frame::clearTypingStyle()
     d->m_typingStyle = 0;
 }
 
-void Frame::transpose()
-{
-    issueTransposeCommand();
-}
-
 void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction editingAction)
 {
     if (!style || style->length() == 0) {

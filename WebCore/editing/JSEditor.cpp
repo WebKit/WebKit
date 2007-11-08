@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
@@ -452,7 +452,7 @@ bool execSuperscript(Frame* frame, bool, const String&)
 
 bool execTranspose(Frame* frame, bool, const String&)
 {
-    frame->transpose();
+    frame->editor()->transpose();
     return true;
 }
 

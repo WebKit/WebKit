@@ -98,7 +98,6 @@ int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented()
 
 void Frame::clearPlatformScriptObjects() { notImplemented(); }
 
-void Frame::issueTransposeCommand() { notImplemented(); }
 void Frame::dashboardRegionsChanged() { notImplemented(); }
 DragImageRef Frame::dragImageForSelection() { notImplemented(); return 0; }
 
@@ -114,8 +113,6 @@ bool WebCore::cookiesEnabled() { notImplemented(); return false; }
 /********************************************************/
 static WebCore::Cursor localCursor;
 const WebCore::Cursor& WebCore::moveCursor() { return localCursor; }
-
-bool AXObjectCache::gAccessibilityEnabled = false;
 
 namespace WebCore {
     bool historyContains(DeprecatedString const&) { return false; }
@@ -203,8 +200,6 @@ void Editor::showColorPanel() { notImplemented(); }
 void Editor::showFontPanel() { notImplemented(); }
 void Editor::showStylesPanel() { notImplemented(); }
 
-String FrameLoader::overrideMediaType() const { notImplemented(); return String(); }
-
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const { notImplemented(); return false; }
 bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult*) { notImplemented(); return false; }
 bool EventHandler::passMouseDownEventToWidget(Widget*) { notImplemented(); return false; }
@@ -214,8 +209,6 @@ void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<
 void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems) { notImplemented(); }
 SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client) : PopupMenu(client) { notImplemented(); }
 bool SearchPopupMenu::enabled() { return true; }
-
-bool DocumentLoader::getResponseModifiedHeader(WebCore::String&) const { notImplemented(); return false; }
 
 namespace WebCore {
 float userIdleTime() { notImplemented(); return 0; }

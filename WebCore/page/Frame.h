@@ -266,8 +266,6 @@ public:
     const Selection& mark() const; // Mark, to be used as emacs uses it.
     void setMark(const Selection&);
 
-    void transpose();
-
     void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction = EditActionUnspecified);
     enum TriState { falseTriState, trueTriState, mixedTriState };
     TriState selectionHasStyle(CSSStyleDeclaration*) const;
@@ -279,7 +277,6 @@ public:
 
     IntRect firstRectForRange(Range*) const;
     
-    void issueTransposeCommand();
     void respondToChangedSelection(const Selection& oldSelection, bool closeTyping);
     bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity, bool stillSelecting) const;
 

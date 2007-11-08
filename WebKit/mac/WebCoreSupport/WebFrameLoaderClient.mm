@@ -1225,7 +1225,7 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Elemen
 
 String WebFrameLoaderClient::overrideMediaType() const
 {
-    NSString* overrideType = [m_webFrame->_private->bridge overrideMediaType];
+    NSString* overrideType = [getWebView(m_webFrame.get()) mediaStyle];
     if (overrideType)
         return overrideType;
     return String();
@@ -1317,7 +1317,5 @@ void WebFrameLoaderClient::didPerformFirstNavigation() const
 {
     [self receivedPolicyDecision:PolicyUse];
 }
-
-
 
 @end

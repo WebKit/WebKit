@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2006 Justin Haygood <jhaygood@spsu.edu>.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,17 +29,16 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "FloatRect.h"
-
 #include "Frame.h"
 #include "FrameView.h"
-#include "RenderTheme.h" 
-
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformScrollBar.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
+#include "RenderTheme.h" 
 #include "ScrollBar.h"
 #include <algorithm>
 #include <winsock2.h>
@@ -768,6 +766,13 @@ void ScrollView::setAllowsScrolling(bool flag)
 bool ScrollView::allowsScrolling() const
 {
     return m_data->allowsScrolling();
+}
+
+bool ScrollView::inWindow() const
+{
+    // Needed for back/forward cache. 
+    notImplemented();
+    return true;
 }
 
 } // namespace WebCore

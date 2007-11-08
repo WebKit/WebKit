@@ -477,7 +477,6 @@
 		656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */; };
 		656D37360ADBA5DE00A4554D /* DocumentLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371E0ADBA5DE00A4554D /* DocumentLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		656D37370ADBA5DE00A4554D /* DocumentLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D371F0ADBA5DE00A4554D /* DocumentLoaderMac.mm */; };
 		656D373A0ADBA5DE00A4554D /* FormState.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37220ADBA5DE00A4554D /* FormState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656D37230ADBA5DE00A4554D /* FormState.cpp */; };
 		656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* FrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4670,7 +4669,6 @@
 		656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LoaderNSURLExtras.h; sourceTree = "<group>"; };
 		656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = LoaderNSURLExtras.m; sourceTree = "<group>"; };
 		656D371E0ADBA5DE00A4554D /* DocumentLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DocumentLoader.h; sourceTree = "<group>"; };
-		656D371F0ADBA5DE00A4554D /* DocumentLoaderMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = DocumentLoaderMac.mm; sourceTree = "<group>"; };
 		656D37220ADBA5DE00A4554D /* FormState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormState.h; sourceTree = "<group>"; };
 		656D37230ADBA5DE00A4554D /* FormState.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = FormState.cpp; sourceTree = "<group>"; };
 		656D37240ADBA5DE00A4554D /* FrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoader.h; sourceTree = "<group>"; };
@@ -9554,7 +9552,6 @@
 		93A1EAA20A5634D8006960A0 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				656D371F0ADBA5DE00A4554D /* DocumentLoaderMac.mm */,
 				93A1EAA70A563508006960A0 /* ImageDocumentMac.h */,
 				93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */,
 				656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */,
@@ -14495,7 +14492,6 @@
 				A8185F3C09765766005826D9 /* Document.cpp in Sources */,
 				A8185F3F09765766005826D9 /* DocumentFragment.cpp in Sources */,
 				93E227E00AF589AD00D48324 /* DocumentLoader.cpp in Sources */,
-				656D37370ADBA5DE00A4554D /* DocumentLoaderMac.mm in Sources */,
 				A8185F3A09765766005826D9 /* DocumentType.cpp in Sources */,
 				A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */,
 				A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */,

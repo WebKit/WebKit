@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include "HTMLTableCellElement.h"
 #include "KeyboardEvent.h"
 #include "NP_jsobject.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "Plugin.h"
 #include "PluginDatabaseWin.h"
@@ -191,6 +192,12 @@ DragImageRef Frame::dragImageForSelection()
 
 void Frame::dashboardRegionsChanged()
 {
+}
+
+void Frame::setNeedsReapplyStyles()
+{
+    // Will be needed for focus ring color change.
+    notImplemented();
 }
 
 } // namespace WebCore

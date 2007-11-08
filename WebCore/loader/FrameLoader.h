@@ -337,8 +337,6 @@ namespace WebCore {
         void dispatchWindowObjectAvailable();
         void restoreDocumentState();
 
-        String overrideMediaType() const;
-
         Frame* opener();
         void setOpener(Frame*);
         bool openedByDOM() const;

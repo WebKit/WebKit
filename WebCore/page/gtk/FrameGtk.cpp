@@ -33,11 +33,6 @@
 
 namespace WebCore {
 
-void Frame::issueTransposeCommand()
-{
-    notImplemented();
-}
-
 void Frame::clearPlatformScriptObjects()
 {
     notImplemented();

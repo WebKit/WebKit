@@ -1,3 +1,55 @@
+2007-11-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve.
+
+        - cut down on notImplemented() functions on Windows
+
+        * bridge/AXObjectCache.h: Put #if around the accessibility
+        global.
+
+        * bridge/win/FrameWin.cpp: (WebCore::Frame::setNeedsReapplyStyles):
+        Moved here from TemporaryLinkStubs.
+
+        * dom/Document.cpp: (WebCore::Document::lastModified): Re-implemented
+        using the ResourceResponse that's now available from the DocumentLoader.
+
+        * editing/JSEditor.cpp: (execTranspose): Changed to call transpose() on
+        the Editor instead of the obsolete one on the Frame.
+
+        * loader/DocumentLoader.h: Removed getResponseModifiedHeader.
+        * loader/FrameLoader.h: Removed overrideMediaType.
+
+        * loader/gtk/DocumentLoaderGtk.cpp: Removed.
+        * loader/mac/DocumentLoaderMac.mm: Removed.
+        * loader/qt/DocumentLoaderQt.cpp: Removed.
+
+        * page/Frame.cpp: Removed transpose.
+        * page/Frame.h: Ditto.
+        * page/FrameView.h: Removed updateBorder.
+        * page/gtk/FrameGtk.cpp: Removed issueTransposeCommand.
+        * page/mac/FrameMac.mm: Ditto.
+        * page/mac/WebCoreFrameBridge.h: Removed issueTransposeCommand and
+        overrideMediaType.
+        * page/qt/FrameQt.cpp: Removed issueTransposeCommand.
+
+        * platform/gtk/TemporaryLinkStubs.cpp: Removed gAccessibilityEnabled.
+        * platform/qt/TemporaryLinkStubs.cpp: Ditto.
+        * platform/win/TemporaryLinkStubs.cpp: Removed or moved all but 3 of the stubs.
+        * platform/wx/TemporaryLinkStubs.cpp: Removed gAccessibilityEnabled,
+        issueTransposeCommand, and overrideMediaType.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::loadsBlocked): Moved here from TemporaryLinkStubs.
+        (WebCore::ResourceHandle::willLoadFromCache): Ditto.
+        * platform/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::clip): Ditto.
+        * platform/win/ScrollViewWin.cpp: (WebCore::ScrollView::inWindow): Ditto.
+        * platform/win/SystemTimeWin.cpp: (WebCore::userIdleTime): Ditto.
+        * platform/win/WidgetWin.cpp: (WebCore::Widget::setIsSelected): Ditto.
+
+        * WebCore.pro: Updated for removed files.
+        * WebCore.xcodeproj/project.pbxproj: Updated for removed file.
+
 2007-11-08  Mark Rowe  <mrowe@apple.com>
 
        Build fix for case-sensitive file systems.  Fix case of file names

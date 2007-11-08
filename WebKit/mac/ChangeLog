@@ -1,3 +1,15 @@
+2007-11-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve.
+
+        - removed some unused WebCore bridge methods
+
+        * WebCoreSupport/WebFrameBridge.mm: Removed issueTransposeCommand and overrideMediaType.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::overrideMediaType): Changed to call WebView directly instead of
+        using the bridge object.
+
 2007-11-06  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dave Kilzer.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -695,24 +695,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [(WebHTMLView*)documentView paste:nil];
 }
 
-- (void)issueTransposeCommand
-{
-    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)view transpose:nil];
-}
-
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
     if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)])
         [view webPlugInSetIsSelected:isSelected];
     else if ([view respondsToSelector:@selector(setIsSelected:)])
         [view setIsSelected:isSelected];
-}
-
-- (NSString *)overrideMediaType
-{
-    return [[self webView] mediaStyle];
 }
 
 - (void)windowObjectCleared

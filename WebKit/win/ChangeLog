@@ -1,3 +1,14 @@
+2007-11-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Steve.
+
+        * Interfaces/IWebUIDelegate.idl: Added the functions needed below.
+        * WebChromeClient.cpp:
+        (WebChromeClient::setMenubarVisible): Eliminated the notImplemented()
+        here by calling through the UI delegate.
+        (WebChromeClient::menubarVisible): Ditto.
+        (WebChromeClient::runDatabaseSizeLimitPrompt): Ditto.
+
 2007-11-07  Steve Falkenburg  <sfalken@apple.com>
 
         Added IWebDocumentText available via QI from WebFrame.

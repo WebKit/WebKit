@@ -797,4 +797,7 @@ interface IWebUIDelegate3 : IWebUIDelegate2
     HRESULT canRunModal([in] IWebView* webView, [out, retval] BOOL* canRunBoolean);
     HRESULT createModalDialog([in] IWebView* sender, [in] IWebURLRequest* request, [out, retval] IWebView** newWebView);
     HRESULT runModal([in] IWebView* webView);
+    HRESULT isMenuBarVisible([in] IWebView* webView, [out, retval] BOOL* visible);
+    HRESULT setMenuBarVisible([in] IWebView* webView, [in] BOOL visible);
+    HRESULT runDatabaseSizeLimitPrompt([in] IWebView* webView, [in] BSTR displayName, [in] IWebFrame* initiatedByFrame, [out, retval] BOOL* allowed);
 }

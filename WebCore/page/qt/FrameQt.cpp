@@ -97,11 +97,6 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 }
 #endif
 
-void Frame::issueTransposeCommand()
-{
-    notImplemented();
-}
-
 KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
     return KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::QtLanguage,

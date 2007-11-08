@@ -497,11 +497,6 @@ void Frame::issuePasteCommand()
     [d->m_bridge issuePasteCommand];
 }
 
-void Frame::issueTransposeCommand()
-{
-    [d->m_bridge issueTransposeCommand];
-}
-
 const short enableRomanKeyboardsOnly = -23;
 void Frame::setUseSecureKeyboardEntry(bool enable)
 {

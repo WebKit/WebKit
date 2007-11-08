@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,11 +68,17 @@ namespace WebCore {
         void postNotificationToElement(RenderObject*, const String& message);
         void handleFocusedUIElementChanged();
         
+#if PLATFORM(MAC)
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static bool accessibilityEnabled() { return gAccessibilityEnabled; }
+#else
+        static bool accessibilityEnabled() { return false; }
+#endif
 
     private:
+#if PLATFORM(MAC)
         static bool gAccessibilityEnabled;
+#endif
 
         AXID getAXID(WebCoreAXObject*);
 

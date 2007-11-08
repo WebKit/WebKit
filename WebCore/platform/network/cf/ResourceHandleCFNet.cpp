@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -381,6 +381,19 @@ void ResourceHandle::setDefersLoading(bool defers)
         CFURLConnectionHalt(d->m_connection.get());
     else
         CFURLConnectionResume(d->m_connection.get());
+}
+
+bool ResourceHandle::loadsBlocked()
+{
+    return false;
+}
+
+bool ResourceHandle::willLoadFromCache(ResourceRequest&)
+{
+    // Not having this function means that we'll ask the user about re-posting a form
+    // even when we go back to a page that's still in the cache.
+    notImplemented();
+    return false;
 }
 
 } // namespace WebCore
