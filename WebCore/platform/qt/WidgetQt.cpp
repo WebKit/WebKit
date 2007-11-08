@@ -32,6 +32,7 @@
 
 #include "Cursor.h"
 #include "Font.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "RenderObject.h"
@@ -44,6 +45,7 @@
 #include "qwebframe.h"
 #include "qwebpage.h"
 #include <QPainter>
+#include <QPaintEngine>
 
 #include <QDebug>
 
@@ -209,9 +211,12 @@ void Widget::invalidateRect(const IntRect& r)
     if (!canvas)  // not visible anymore
         return;
 
-    bool painting = canvas->testAttribute(Qt::WA_WState_InPaintEvent);
-    if (painting) {
-        QWebPage *page = qobject_cast<QWebPage*>(canvas);
+    bool shouldPaint = canvas->testAttribute(Qt::WA_WState_InPaintEvent);
+    if (parent() && parent()->isFrameView() && static_cast<FrameView*>(parent())->needsLayout())
+        shouldPaint = false;
+
+    if (shouldPaint) {
+        QWebPage* page = qobject_cast<QWebPage*>(canvas);
         QPainter p(page);
         page->mainFrame()->render(&p, windowRect);
     } else {

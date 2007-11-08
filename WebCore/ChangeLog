@@ -1,3 +1,20 @@
+2007-11-08  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Avoid problems with calling QPainter::begin() on an already active paintdevice
+        
+        * Partial pick from 6200e04c3e0a77873c3b3f3969b65bc701020326 to avoid getting
+        crashes on Qt/Mac 4.4 with QPainter::begin to fail because we already draw.
+        * If we are in a layout or need one do not paint. This can happen for the PlatformScrollBar
+        used by the ScrollView on a layout triggered by QWebPage::paintEvent.
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::invalidateRect):
+
 2007-11-08  Eric Seidel  <eric@webkit.org>
 
         No review.
