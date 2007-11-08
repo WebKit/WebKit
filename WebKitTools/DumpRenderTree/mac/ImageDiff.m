@@ -30,18 +30,40 @@
 #import <AppKit/NSGraphicsContext.h>
 #import <AppKit/NSCIImageRep.h>
 
+#import <getopt.h>
+
 /* prototypes */
 int main(int argc, const char *argv[]);
 CGImageRef createImageFromStdin(int imageSize);
-void compareImages(CGImageRef actualBitmap, CGImageRef baselineImage);
+void compareImages(CGImageRef actualBitmap, CGImageRef baselineImage, unsigned threshold);
 NSBitmapImageRep *getDifferenceBitmap(CGImageRef actualBitmap, CGImageRef baselineImage);
-float computePercentageDifferent(NSBitmapImageRep *diffBitmap);
+float computePercentageDifferent(NSBitmapImageRep *diffBitmap, unsigned threshold);
 
 
 int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
+    unsigned threshold = 0;
+
+    struct option options[] = {
+        {"threshold", required_argument, NULL, 't'},
+        {NULL, 0, NULL, 0}
+    };
+
+    int option;
+    while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1) {
+        switch (option) {
+        case 't':
+            threshold = strtol(optarg, NULL, 0);
+            break;
+        case '?':   // unknown or ambiguous option
+        case ':':   // missing argument
+            exit(1);
+            break;
+        }
+    }
+    
     char buffer[2048];
     CGImageRef actualImage = nil;
     CGImageRef baselineImage = nil;
@@ -67,7 +89,7 @@ int main(int argc, const char *argv[])
         }
 
         if (actualImage != nil && baselineImage != nil) {
-            compareImages(actualImage, baselineImage);
+            compareImages(actualImage, baselineImage, threshold);
             CGImageRelease(actualImage);
             CGImageRelease(baselineImage);
             actualImage = nil;
@@ -104,12 +126,12 @@ CGImageRef createImageFromStdin(int bytesRemaining)
     return image; 
 }
 
-void compareImages(CGImageRef actualBitmap, CGImageRef baselineBitmap)
+void compareImages(CGImageRef actualBitmap, CGImageRef baselineBitmap, unsigned threshold)
 {
     // prepare the difference blend to check for pixel variations
     NSBitmapImageRep *diffBitmap = getDifferenceBitmap(actualBitmap, baselineBitmap);
             
-    float percentage = computePercentageDifferent(diffBitmap);
+    float percentage = computePercentageDifferent(diffBitmap, threshold);
     
     percentage = (float)((int)(percentage * 100.0f)) / 100.0f; // round to 2 decimal places
     
@@ -158,7 +180,7 @@ NSBitmapImageRep *getDifferenceBitmap(CGImageRef testBitmap, CGImageRef referenc
  * Counts the number of non-black pixels, and returns the percentage
  * of non-black pixels to total pixels in the image.
  */
-float computePercentageDifferent(NSBitmapImageRep *diffBitmap)
+float computePercentageDifferent(NSBitmapImageRep *diffBitmap, unsigned threshold)
 {
     // if diffBiatmap is nil, then there was an error, and it didn't match.
     if (diffBitmap == nil)
@@ -180,7 +202,8 @@ float computePercentageDifferent(NSBitmapImageRep *diffBitmap)
             unsigned char* red = pixelRowData + col;
             unsigned char* green = red + 1;
             unsigned char* blue = red + 2;
-            if (*red != 0 || *green != 0 || *blue != 0) {
+            unsigned distance = *red + *green + *blue;
+            if (distance > threshold) {
                 differences++;
                 // shift the pixels towards white to make them more visible
                 *red = MIN(UCHAR_MAX, *red + 100);

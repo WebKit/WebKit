@@ -111,6 +111,7 @@ my $testHTTP = 1;
 my $testMedia = 1;
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $threaded = 0;
+my $threshold = 0;
 my $treatSkipped = "default";
 my $verbose = 0;
 my $useValgrind = 0;
@@ -177,6 +178,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --strict                        Do a comparison with the output on Mac (Qt only)
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
   -t|--threaded                   Run a concurrent JavaScript thead with each test
+  --threshold t                   Ignore pixel value deviations less than or equal to t
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
 EOF
@@ -205,6 +207,7 @@ my $getOptionsResult = GetOptions(
     'skipped=s' => \&validateSkippedArg,
     'slowest' => \$report10Slowest,
     'threaded|t' => \$threaded,
+    'threshold=i' => \$threshold,
     'verbose|v' => \$verbose,
     'valgrind' => \$useValgrind,
     'strict' => \$strictTesting,
@@ -230,6 +233,7 @@ my $configurationOption = "--" . lc($configuration);
 $repaintTests = 1 if $repaintSweepHorizontally;
 
 $pixelTests = 1 if $repaintTests;
+$pixelTests = 1 if $threshold > 0;
 
 $verbose = 1 if $testsPerDumpTool == 1;
 
@@ -415,13 +419,16 @@ push @toolArgs, "--threaded" if $threaded;
 push @toolArgs, "--paint" if $shouldCheckLeaks; # Otherwise, DRT won't exercise painting leaks.
 push @toolArgs, "-";
 
+my @diffToolArgs = ();
+push @diffToolArgs, "--threshold", $threshold;
+
 $| = 1;
 
 my $imageDiffToolPID;
 if ($pixelTests) {
     local %ENV;
     $ENV{MallocStackLogging} = 1 if $shouldCheckLeaks;
-    $imageDiffToolPID = open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, "") or die "unable to open $imageDiffTool\n";
+    $imageDiffToolPID = open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, @diffToolArgs) or die "unable to open $imageDiffTool\n";
 }
 
 my $dumpToolPID;

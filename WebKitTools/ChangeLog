@@ -1,3 +1,16 @@
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - add an option to run-webkit-tests to ignore pixel test failures where
+          all pixels differ by no more than a specified threshold
+
+        * DumpRenderTree/mac/ImageDiff.m:
+        (main):
+        (compareImages):
+        (computePercentageDifferent):
+        * Scripts/run-webkit-tests:
+
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Lars.
@@ -1227,7 +1240,7 @@
 
         * DumpRenderTree/win/DumpRenderTree.vcproj:
 
-2007-10-18  Dan Bernstein  <dan.bernstein@apple.com>
+2007-10-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
 
