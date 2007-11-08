@@ -1,3 +1,9 @@
+2007-11-08  Eric Seidel  <eric@webkit.org>
+
+        No review.
+
+        * ksvg2/svg/SVGPathElement.h: remove old comment
+
 2007-11-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Ollie.

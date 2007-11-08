@@ -28,7 +28,6 @@
 #include "SVGAnimatedPathData.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
-//#include "SVGParserUtilities.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
