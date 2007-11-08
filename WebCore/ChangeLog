@@ -1,3 +1,12 @@
+2007-11-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Ollie.
+
+        Ensure video is visible when it should be.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updateMovie):
+
 2007-11-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

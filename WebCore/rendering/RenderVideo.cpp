@@ -167,7 +167,8 @@ void RenderVideo::updateMovie()
     
     if (Movie* m = movie()) {
         m->setParentWidget(document()->view());
-        m->setRect(newBounds);    
+        m->setRect(newBounds);
+        m->setVisible(true);
     }    
 }
 
