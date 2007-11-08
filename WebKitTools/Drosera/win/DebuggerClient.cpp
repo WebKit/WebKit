@@ -64,13 +64,13 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::QueryInterface(REFIID riid, void** ppv
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE DebuggerClient::AddRef(void)
+ULONG STDMETHODCALLTYPE DebuggerClient::AddRef()
 {
     // COM ref-counting isn't useful to us because we're in charge of the lifetime of the WebView.
     return 1;
 }
 
-ULONG STDMETHODCALLTYPE DebuggerClient::Release(void)
+ULONG STDMETHODCALLTYPE DebuggerClient::Release()
 {
     // COM ref-counting isn't useful to us because we're in charge of the lifetime of the WebView.
     return 1;
@@ -90,13 +90,13 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::didFinishLoadForFrame(
     if (FAILED(ret))
         return ret;
 
-    JSGlobalContextRef context;
-    ret = mainFrame->globalContext(&context);
-    if (FAILED(ret))
-        return ret;
+    if (!m_globalContext) {
+        JSGlobalContextRef context = mainFrame->globalContext();
+        if (!context)
+            return E_FAIL;
 
-    if (!m_globalContext)
         m_globalContext = JSGlobalContextRetain(context);
+    }
 
     if (serverConnected())
         m_debuggerDocument->server()->setGlobalContext(m_globalContext);

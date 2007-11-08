@@ -1,3 +1,15 @@
+2007-11-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - Use the new IWebFrame [local] function signature and get the shared
+        server correctly.
+
+        * Drosera/win/DebuggerClient.cpp:
+        (DebuggerClient::didFinishLoadForFrame):
+        * Drosera/win/ServerConnection.cpp:
+        (ServerConnection::attemptToCreateServerConnection):
+
 2007-11-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -61,10 +61,16 @@ ServerConnection::~ServerConnection()
 
 void ServerConnection::attemptToCreateServerConnection(JSGlobalContextRef globalContextRef)
 {
-    HRESULT serverCreated = CoCreateInstance(CLSID_WebScriptDebugServer, 0, CLSCTX_LOCAL_SERVER, IID_IWebScriptDebugServer, (void**)&m_server);
-    if (!FAILED(serverCreated)) {
-        m_server->addListener(this);
+    COMPtr<IWebScriptDebugServer> tempServer;
+    if (SUCCEEDED(CoCreateInstance(CLSID_WebScriptDebugServer, 0, CLSCTX_LOCAL_SERVER, IID_IWebScriptDebugServer, (void**)&tempServer))) {
+        if (FAILED(tempServer->sharedWebScriptDebugServer(&m_server)))
+            return;
+
+        if (FAILED(m_server->addListener(this)))
+            return;
+
         m_serverConnected = true;
+
         if (globalContextRef)
             m_globalContext = JSGlobalContextRetain(globalContextRef);
     }
