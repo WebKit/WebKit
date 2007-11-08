@@ -1,3 +1,17 @@
+2007-11-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Added IWebDocumentText available via QI from WebFrame.
+        
+        Reviewed by Sam.
+
+        * WebFrame.cpp:
+        (WebFrame::QueryInterface): Added IID_IWebDocumentText.
+        (WebFrame::supportsTextEncoding): Stubbed out.
+        (WebFrame::selectedString): Implemented.
+        (WebFrame::selectAll): Stubbed out.
+        (WebFrame::deselectAll): Stubbed out.
+        * WebFrame.h:
+
 2007-11-07  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5569268> Crash when opening any FTP site in second tab/window

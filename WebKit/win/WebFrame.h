@@ -70,7 +70,7 @@ WebCore::Frame* core(WebFrame*);
 
 extern const GUID IID_WebFrame;
 
-class WebFrame : public IWebFrame, IWebFramePrivate
+class WebFrame : public IWebFrame, IWebFramePrivate, IWebDocumentText
     , public WebCore::FrameLoaderClient
 {
 public:
@@ -205,6 +205,16 @@ public:
     virtual HRESULT STDMETHODCALLTYPE allowsScrolling(
         /* [retval][out] */ BOOL *flag);
 
+    // IWebDocumentText
+    virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
+        /* [retval][out] */ BOOL* result);
+    
+    virtual HRESULT STDMETHODCALLTYPE selectedString( 
+        /* [retval][out] */ BSTR* result);
+    
+    virtual HRESULT STDMETHODCALLTYPE selectAll();
+    
+    virtual HRESULT STDMETHODCALLTYPE deselectAll();
 
     // FrameWinClient
     virtual void ref();
