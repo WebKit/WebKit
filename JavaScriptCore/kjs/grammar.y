@@ -3,6 +3,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -1020,20 +1021,13 @@ static PropertyNode* makeGetterOrSetterPropertyNode(const Identifier& getOrSet, 
     return new PropertyNode(name, new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, body, params), type);
 }
 
-static Node* makeNegateNode(Node *n)
+static Node* makeNegateNode(Node* n)
 {
     if (n->isNumber()) {
         NumberNode* number = static_cast<NumberNode*>(n);
 
         if (number->value() > 0.0) {
             number->setValue(-number->value());
-            return number;
-        }
-    } else if (n->isImmediateValue()) {
-        ImmediateNumberNode* number = static_cast<ImmediateNumberNode*>(n);
-        double value = number->value();
-        if (value > 0.0) {
-            number->setValue(-value);
             return number;
         }
     }
@@ -1045,7 +1039,7 @@ static Node* makeNumberNode(double d)
 {
     JSValue* value = JSImmediate::fromDouble(d);
     if (value)
-        return new ImmediateNumberNode(value);
+        return new ImmediateNumberNode(value, d);
     return new NumberNode(d);
 }
 

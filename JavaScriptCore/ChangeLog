@@ -1,3 +1,60 @@
+2007-11-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin and Oliver.
+        
+        Add evaluateToNumber parallel evaluation tree to speed up number operations.
+        Make ImmediateNumberNode a subclass of NumberNode.
+        Share evaluate logic between evaluate and evaluateToNumber using inline functions
+        There is still a lot of improvement to be made here.
+        
+        SunSpider claims this is a 1.0% speedup overall (nbody 7.9%), base64 slowing 2.0%
+        Given the huge win that this prepares us for with simple type inferencing I see the small
+        regression in base64 being worth the substantial overall improvement.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::Node::evaluateToNumber):
+        (KJS::NumberNode::evaluate):
+        (KJS::NumberNode::evaluateToNumber):
+        (KJS::StringNode::evaluateToNumber):
+        (KJS::LocalVarAccessNode::inlineEvaluate):
+        (KJS::LocalVarAccessNode::evaluate):
+        (KJS::LocalVarAccessNode::evaluateToNumber):
+        (KJS::BracketAccessorNode::inlineEvaluate):
+        (KJS::BracketAccessorNode::evaluate):
+        (KJS::BracketAccessorNode::evaluateToNumber):
+        (KJS::NegateNode::evaluate):
+        (KJS::NegateNode::evaluateToNumber):
+        (KJS::MultNode::inlineEvaluateToNumber):
+        (KJS::MultNode::evaluate):
+        (KJS::MultNode::evaluateToNumber):
+        (KJS::DivNode::inlineEvaluateToNumber):
+        (KJS::DivNode::evaluate):
+        (KJS::DivNode::evaluateToNumber):
+        (KJS::ModNode::inlineEvaluateToNumber):
+        (KJS::ModNode::evaluate):
+        (KJS::ModNode::evaluateToNumber):
+        (KJS::throwOutOfMemoryErrorToNumber):
+        (KJS::addSlowCaseToNumber):
+        (KJS::add):
+        (KJS::addToNumber):
+        (KJS::AddNode::evaluateToNumber):
+        (KJS::SubNode::inlineEvaluateToNumber):
+        (KJS::SubNode::evaluate):
+        (KJS::SubNode::evaluateToNumber):
+        (KJS::valueForReadModifyAssignment):
+        (KJS::ReadModifyLocalVarNode::evaluate):
+        (KJS::ReadModifyResolveNode::evaluate):
+        (KJS::ReadModifyDotNode::evaluate):
+        (KJS::ReadModifyBracketNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::Node::):
+        (KJS::NumberNode::):
+        (KJS::ImmediateNumberNode::):
+        (KJS::AddNode::precedence):
+        * kjs/nodes2string.cpp:
+        (KJS::NumberNode::streamTo):
+
 2007-11-07  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Eric.

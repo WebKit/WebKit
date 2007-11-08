@@ -5,6 +5,7 @@
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
+ *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -116,7 +117,8 @@ namespace KJS {
     Node(PlacementNewAdoptType) KJS_FAST_CALL { }
     virtual ~Node();
 
-    virtual JSValue *evaluate(ExecState *exec) KJS_FAST_CALL = 0;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL = 0;
+    virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
     UString toString() const KJS_FAST_CALL;
     int lineNo() const KJS_FAST_CALL { return m_line; }
     void ref() KJS_FAST_CALL;
@@ -125,7 +127,6 @@ namespace KJS {
     static void clearNewNodes() KJS_FAST_CALL;
 
     virtual bool isNumber() const KJS_FAST_CALL { return false; }
-    virtual bool isImmediateValue() const KJS_FAST_CALL { return false; }
     virtual bool isLocation() const KJS_FAST_CALL { return false; }
     virtual bool isResolveNode() const KJS_FAST_CALL { return false; }
     virtual bool isBracketAccessorNode() const KJS_FAST_CALL { return false; }
@@ -209,28 +210,25 @@ namespace KJS {
 
   class NumberNode : public Node {
   public:
-    NumberNode(double v) KJS_FAST_CALL : val(v) {}
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    NumberNode(double v) KJS_FAST_CALL : m_double(v) {}
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecPrimary; }
 
     virtual bool isNumber() const KJS_FAST_CALL { return true; }
-    double value() const KJS_FAST_CALL { return val; }
-    void setValue(double v) KJS_FAST_CALL { val = v; }
-  private:
-    double val;
+    double value() const KJS_FAST_CALL { return m_double; }
+    virtual void setValue(double d) KJS_FAST_CALL { m_double = d; }
+  protected:
+    double m_double;
   };
   
-  class ImmediateNumberNode : public Node {
+  class ImmediateNumberNode : public NumberNode {
   public:
-      ImmediateNumberNode(JSValue* v) KJS_FAST_CALL : m_value(v) {}
-      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-      virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-      virtual Precedence precedence() const { return PrecPrimary; }
+      ImmediateNumberNode(JSValue* v, double d) KJS_FAST_CALL : NumberNode(d), m_value(v) { ASSERT(v == JSImmediate::fromDouble(d)); }
+      virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       
-      virtual bool isImmediateValue() const KJS_FAST_CALL { return true; }
-      double value() const KJS_FAST_CALL { return JSImmediate::toDouble(m_value); }
-      void setValue(double v) KJS_FAST_CALL { m_value = JSImmediate::fromDouble(v); ASSERT(m_value); }
+      virtual void setValue(double d) KJS_FAST_CALL { m_double = d; m_value = JSImmediate::fromDouble(d); ASSERT(m_value); }
   private:
       JSValue* m_value;
   };
@@ -238,7 +236,8 @@ namespace KJS {
   class StringNode : public Node {
   public:
     StringNode(const UString *v) KJS_FAST_CALL { value = *v; }
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecPrimary; }
   private:
@@ -303,6 +302,9 @@ namespace KJS {
         index = i;
     }
     virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
+  private:
+    ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
   };
 
   class ElementNode : public Node {
@@ -389,7 +391,8 @@ namespace KJS {
   public:
     BracketAccessorNode(Node *e1, Node *e2) KJS_FAST_CALL : expr1(e1), expr2(e2) {}
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecMember; }
 
@@ -399,6 +402,7 @@ namespace KJS {
     Node *subscript() KJS_FAST_CALL { return expr2.get(); }
 
   private:
+    ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
   };
@@ -949,7 +953,8 @@ namespace KJS {
   public:
     NegateNode(Node *e) KJS_FAST_CALL : expr(e) {}
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecUnary; }
   private:
@@ -982,10 +987,12 @@ namespace KJS {
   public:
       MultNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
       virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
       virtual Precedence precedence() const { return PrecMultiplicitave; }
   private:
+      ALWAYS_INLINE double inlineEvaluateToNumber(ExecState*);
       RefPtr<Node> term1;
       RefPtr<Node> term2;
   };
@@ -994,10 +1001,12 @@ namespace KJS {
   public:
       DivNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
       virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
       virtual Precedence precedence() const { return PrecMultiplicitave; }
   private:
+      ALWAYS_INLINE double inlineEvaluateToNumber(ExecState*);
       RefPtr<Node> term1;
       RefPtr<Node> term2;
   };
@@ -1006,10 +1015,12 @@ namespace KJS {
   public:
       ModNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
       virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
       virtual Precedence precedence() const { return PrecMultiplicitave; }
   private:
+      ALWAYS_INLINE double inlineEvaluateToNumber(ExecState*);
       RefPtr<Node> term1;
       RefPtr<Node> term2;
   };
@@ -1018,9 +1029,10 @@ namespace KJS {
   public:
     AddNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-      virtual Precedence precedence() const { return PrecAdditive; }
+    virtual Precedence precedence() const { return PrecAdditive; }
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
@@ -1030,10 +1042,12 @@ namespace KJS {
   public:
       SubNode(Node *t1, Node *t2) KJS_FAST_CALL : term1(t1), term2(t2) {}
       virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-      JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+      virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
       virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
       virtual Precedence precedence() const { return PrecAdditive; }
   private:
+      ALWAYS_INLINE double inlineEvaluateToNumber(ExecState*);
       RefPtr<Node> term1;
       RefPtr<Node> term2;
   };

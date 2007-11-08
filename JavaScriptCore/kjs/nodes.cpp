@@ -4,6 +4,7 @@
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
+ *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -53,6 +54,12 @@ namespace KJS {
   if (exec->hadException()) { \
     handleException(exec); \
     return jsUndefined(); \
+  }
+
+#define KJS_CHECKEXCEPTIONNUMBER \
+  if (exec->hadException()) { \
+    handleException(exec); \
+    return 0.0; \
   }
 
 #define KJS_CHECKEXCEPTIONLIST \
@@ -194,6 +201,14 @@ void Node::clearNewNodes()
     deleteAllValues(*newNodes);
     delete newNodes;
     newNodes = 0;
+}
+
+double Node::evaluateToNumber(ExecState* exec)
+{
+    JSValue* value = evaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    // No need to check exception after toNumber, caller will do so right after evaluateToNumber() call
+    return value->toNumber(exec);
 }
 
 static void substitute(UString &string, const UString &substring) KJS_FAST_CALL;
@@ -360,10 +375,15 @@ JSValue *BooleanNode::evaluate(ExecState *)
 
 // ------------------------------ NumberNode -----------------------------------
 
-JSValue *NumberNode::evaluate(ExecState *)
+JSValue* NumberNode::evaluate(ExecState*)
 {
     // Number nodes are only created when the number can't fit in a JSImmediate, so no need to check again.
-    return jsNumberCell(val);
+    return jsNumberCell(m_double);
+}
+    
+double NumberNode::evaluateToNumber(ExecState*)
+{
+    return m_double;
 }
 
 JSValue* ImmediateNumberNode::evaluate(ExecState*)
@@ -377,7 +397,12 @@ JSValue *StringNode::evaluate(ExecState *)
 {
   return jsOwnedString(value);
 }
-
+    
+double StringNode::evaluateToNumber(ExecState*)
+{
+    return value.toDouble();
+}
+    
 // ------------------------------ RegExpNode -----------------------------------
 
 JSValue *RegExpNode::evaluate(ExecState *exec)
@@ -433,11 +458,21 @@ void ResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, Declara
         new (this) LocalVarAccessNode(index);
 }
 
-JSValue* LocalVarAccessNode::evaluate(ExecState* exec)
+JSValue* LocalVarAccessNode::inlineEvaluate(ExecState* exec)
 {
     ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
     ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
     return exec->localStorage()[index].value;
+}
+
+JSValue* LocalVarAccessNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double LocalVarAccessNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluate(exec)->toNumber(exec);
 }
 
 // ------------------------------ ElementNode ----------------------------------
@@ -571,17 +606,27 @@ void BracketAccessorNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationS
 }
 
 // ECMA 11.2.1a
-JSValue *BracketAccessorNode::evaluate(ExecState *exec)
+JSValue* BracketAccessorNode::inlineEvaluate(ExecState* exec)
 {
-  JSValue *v1 = expr1->evaluate(exec);
+  JSValue* v1 = expr1->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = expr2->evaluate(exec);
+  JSValue* v2 = expr2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
-  JSObject *o = v1->toObject(exec);
+  JSObject* o = v1->toObject(exec);
   uint32_t i;
   if (v2->getUInt32(i))
     return o->get(exec, i);
   return o->get(exec, Identifier(v2->toString(exec)));
+}
+
+JSValue* BracketAccessorNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double BracketAccessorNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluate(exec)->toNumber(exec);
 }
 
 // ------------------------------ DotAccessorNode --------------------------------
@@ -1579,11 +1624,14 @@ void NegateNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::No
 // ECMA 11.4.7
 JSValue *NegateNode::evaluate(ExecState *exec)
 {
-  JSValue *v = expr->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
+    // No need to check exception, caller will do so right after evaluate()
+    return jsNumber(-expr->evaluateToNumber(exec));
+}
 
-  double n = v->toNumber(exec);
-  return jsNumber(-n);
+double NegateNode::evaluateToNumber(ExecState* exec)
+{
+    // No need to check exception, caller will do so right after evaluateToNumber()
+    return -expr->evaluateToNumber(exec);
 }
 
 // ------------------------------ BitwiseNotNode -------------------------------
@@ -1625,15 +1673,25 @@ void MultNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::Node
 }
 
 // ECMA 11.5.1
-JSValue *MultNode::evaluate(ExecState *exec)
+double MultNode::inlineEvaluateToNumber(ExecState* exec)
 {
-    JSValue *v1 = term1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-        
-    JSValue *v2 = term2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
+    double n1 = term1->evaluateToNumber(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    double n2 = term2->evaluateToNumber(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    return n1 * n2;
+}
 
-    return jsNumber(v1->toNumber(exec) * v2->toNumber(exec));
+JSValue *MultNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToNumber(exec));
+}
+    
+double MultNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
 }
 
 void DivNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -1643,15 +1701,25 @@ void DivNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeS
 }
 
 // ECMA 11.5.2
-JSValue *DivNode::evaluate(ExecState *exec)
+double DivNode::inlineEvaluateToNumber(ExecState* exec)
 {
-    JSValue *v1 = term1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-        
-    JSValue *v2 = term2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
+    double n1 = term1->evaluateToNumber(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    double n2 = term2->evaluateToNumber(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    return n1 / n2;
+}
 
-    return jsNumber(v1->toNumber(exec) / v2->toNumber(exec));
+JSValue* DivNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToNumber(exec));
+}
+
+double DivNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
 }
 
 void ModNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -1661,15 +1729,25 @@ void ModNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeS
 }
 
 // ECMA 11.5.3
-JSValue *ModNode::evaluate(ExecState *exec)
+double ModNode::inlineEvaluateToNumber(ExecState* exec)
 {
-    JSValue *v1 = term1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-        
-    JSValue *v2 = term2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
+    double n1 = term1->evaluateToNumber(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    double n2 = term2->evaluateToNumber(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    return fmod(n1, n2);
+}
 
-    return jsNumber(fmod(v1->toNumber(exec), v2->toNumber(exec)));
+JSValue* ModNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToNumber(exec));
+}
+
+double ModNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
 }
 
 // ------------------------------ Additive Nodes --------------------------------------
@@ -1680,6 +1758,13 @@ static JSValue* throwOutOfMemoryError(ExecState* exec)
     exec->setException(error);
     return error;
 }
+
+static double throwOutOfMemoryErrorToNumber(ExecState* exec)
+{
+    JSObject* error = Error::create(exec, GeneralError, "Out of memory");
+    exec->setException(error);
+    return 0.0;
+}    
 
 // ECMA 11.6
 static JSValue* addSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
@@ -1696,6 +1781,22 @@ static JSValue* addSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
     }
     
     return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));
+}
+
+static double addSlowCaseToNumber(ExecState* exec, JSValue* v1, JSValue* v2)
+{
+    // exception for the Date exception in defaultValue()
+    JSValue *p1 = v1->toPrimitive(exec, UnspecifiedType);
+    JSValue *p2 = v2->toPrimitive(exec, UnspecifiedType);
+    
+    if (p1->isString() || p2->isString()) {
+        UString value = p1->toString(exec) + p2->toString(exec);
+        if (value.isNull())
+            return throwOutOfMemoryErrorToNumber(exec);
+        return value.toDouble();
+    }
+    
+    return p1->toNumber(exec) + p2->toNumber(exec);
 }
 
 // Fast-path choices here are based on frequency data from SunSpider:
@@ -1716,7 +1817,7 @@ static inline JSValue* add(ExecState* exec, JSValue* v1, JSValue *v2)
     
     if (bothTypes == ((NumberType << 3) | NumberType))
         return jsNumber(v1->toNumber(exec) + v2->toNumber(exec));
-    else if (bothTypes == ((StringType << 3) | StringType)) {
+    if (bothTypes == ((StringType << 3) | StringType)) {
         UString value = static_cast<StringImp*>(v1)->value() + static_cast<StringImp*>(v2)->value();
         if (value.isNull())
             return throwOutOfMemoryError(exec);
@@ -1725,6 +1826,25 @@ static inline JSValue* add(ExecState* exec, JSValue* v1, JSValue *v2)
     
     // All other cases are pretty uncommon
     return addSlowCase(exec, v1, v2);
+}
+
+static inline double addToNumber(ExecState* exec, JSValue* v1, JSValue *v2)
+{
+    JSType t1 = v1->type();
+    JSType t2 = v2->type();
+    const unsigned bothTypes = (t1 << 3) | t2;
+    
+    if (bothTypes == ((NumberType << 3) | NumberType))
+        return v1->toNumber(exec) + v2->toNumber(exec);
+    if (bothTypes == ((StringType << 3) | StringType)) {
+        UString value = static_cast<StringImp*>(v1)->value() + static_cast<StringImp*>(v2)->value();
+        if (value.isNull())
+            return throwOutOfMemoryErrorToNumber(exec);
+        return value.toDouble();
+    }
+    
+    // All other cases are pretty uncommon
+    return addSlowCaseToNumber(exec, v1, v2);
 }
 
 void AddNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -1745,6 +1865,17 @@ JSValue *AddNode::evaluate(ExecState *exec)
   return add(exec, v1, v2);
 }
 
+double AddNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue *v1 = term1->evaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    JSValue *v2 = term2->evaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    return addToNumber(exec, v1, v2);
+}
+
 void SubNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
     nodeStack.append(term1.get());
@@ -1752,15 +1883,25 @@ void SubNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeS
 }
 
 // ECMA 11.6.2
-JSValue *SubNode::evaluate(ExecState *exec)
+double SubNode::inlineEvaluateToNumber(ExecState* exec)
 {
-    JSValue *v1 = term1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-        
-    JSValue *v2 = term2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-        
-    return jsNumber(v1->toNumber(exec) - v2->toNumber(exec));
+    double n1 = term1->evaluateToNumber(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    double n2 = term2->evaluateToNumber(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    
+    return n1 - n2;
+}
+
+JSValue* SubNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToNumber(exec));
+}
+
+double SubNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
 }
 
 // ------------------------------ Shift Nodes ------------------------------------
@@ -2155,8 +2296,8 @@ JSValue *ConditionalNode::evaluate(ExecState *exec)
 
 // ECMA 11.13
 
-static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSValue *v1, JSValue *v2, Operator oper) KJS_FAST_CALL;
-static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSValue *v1, JSValue *v2, Operator oper)
+static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSValue* current, Node* right, Operator oper) KJS_FAST_CALL;
+static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSValue* current, Node* right, Operator oper)
 {
   JSValue *v;
   int i1;
@@ -2164,55 +2305,55 @@ static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSV
   unsigned int ui;
   switch (oper) {
   case OpMultEq:
-    v = jsNumber(v1->toNumber(exec) * v2->toNumber(exec));
+    v = jsNumber(current->toNumber(exec) * right->evaluateToNumber(exec));
     break;
   case OpDivEq:
-    v = jsNumber(v1->toNumber(exec) / v2->toNumber(exec));
+    v = jsNumber(current->toNumber(exec) / right->evaluateToNumber(exec));
     break;
   case OpPlusEq:
-    v = add(exec, v1, v2);
+    v = add(exec, current, right->evaluate(exec));
     break;
   case OpMinusEq:
-    v = jsNumber(v1->toNumber(exec) - v2->toNumber(exec));
+    v = jsNumber(current->toNumber(exec) - right->evaluateToNumber(exec));
     break;
   case OpLShift:
-    i1 = v1->toInt32(exec);
-    i2 = v2->toInt32(exec);
+    i1 = current->toInt32(exec);
+    i2 = right->evaluate(exec)->toInt32(exec);
     v = jsNumber(i1 << i2);
     break;
   case OpRShift:
-    i1 = v1->toInt32(exec);
-    i2 = v2->toInt32(exec);
+    i1 = current->toInt32(exec);
+    i2 = right->evaluate(exec)->toInt32(exec);
     v = jsNumber(i1 >> i2);
     break;
   case OpURShift:
-    ui = v1->toUInt32(exec);
-    i2 = v2->toInt32(exec);
+    ui = current->toUInt32(exec);
+    i2 = right->evaluate(exec)->toInt32(exec);
     v = jsNumber(ui >> i2);
     break;
   case OpAndEq:
-    i1 = v1->toInt32(exec);
-    i2 = v2->toInt32(exec);
+    i1 = current->toInt32(exec);
+    i2 = right->evaluate(exec)->toInt32(exec);
     v = jsNumber(i1 & i2);
     break;
   case OpXOrEq:
-    i1 = v1->toInt32(exec);
-    i2 = v2->toInt32(exec);
+    i1 = current->toInt32(exec);
+    i2 = right->evaluate(exec)->toInt32(exec);
     v = jsNumber(i1 ^ i2);
     break;
   case OpOrEq:
-    i1 = v1->toInt32(exec);
-    i2 = v2->toInt32(exec);
+    i1 = current->toInt32(exec);
+    i2 = right->evaluate(exec)->toInt32(exec);
     v = jsNumber(i1 | i2);
     break;
   case OpModEq: {
-    double d1 = v1->toNumber(exec);
-    double d2 = v2->toNumber(exec);
+    double d1 = current->toNumber(exec);
+    double d2 = right->evaluateToNumber(exec);
     v = jsNumber(fmod(d1, d2));
   }
     break;
   default:
-    ASSERT(0);
+    ASSERT_NOT_REACHED();
     v = jsUndefined();
   }
   
@@ -2244,8 +2385,7 @@ JSValue* ReadModifyLocalVarNode::evaluate(ExecState* exec)
     JSValue** slot = &exec->localStorage()[m_index].value;
 
     ASSERT(m_oper != OpEqual);
-    JSValue* v2 = m_right->evaluate(exec);
-    JSValue* v = valueForReadModifyAssignment(exec, *slot, v2, m_oper);
+    JSValue* v = valueForReadModifyAssignment(exec, *slot, m_right.get(), m_oper);
 
     KJS_CHECKEXCEPTIONVALUE
 
@@ -2295,8 +2435,7 @@ JSValue *ReadModifyResolveNode::evaluate(ExecState *exec)
   ASSERT(m_oper != OpEqual);
   JSValue *v1 = slot.getValue(exec, base, m_ident);
   KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = m_right->evaluate(exec);
-  v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+  v = valueForReadModifyAssignment(exec, v1, m_right.get(), m_oper);
 
   KJS_CHECKEXCEPTIONVALUE
 
@@ -2372,8 +2511,7 @@ JSValue *ReadModifyDotNode::evaluate(ExecState *exec)
   PropertySlot slot;
   JSValue *v1 = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, base, m_ident) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = m_right->evaluate(exec);
-  v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+  v = valueForReadModifyAssignment(exec, v1, m_right.get(), m_oper);
 
   KJS_CHECKEXCEPTIONVALUE
 
@@ -2447,8 +2585,7 @@ JSValue *ReadModifyBracketNode::evaluate(ExecState *exec)
     PropertySlot slot;
     JSValue *v1 = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, base, propertyIndex) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
-    JSValue *v2 = m_right->evaluate(exec);
-    v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+    v = valueForReadModifyAssignment(exec, v1, m_right.get(), m_oper);
 
     KJS_CHECKEXCEPTIONVALUE
 
@@ -2463,8 +2600,7 @@ JSValue *ReadModifyBracketNode::evaluate(ExecState *exec)
   PropertySlot slot;
   JSValue *v1 = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, base, propertyName) : jsUndefined();
   KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = m_right->evaluate(exec);
-  v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+  v = valueForReadModifyAssignment(exec, v1, m_right.get(), m_oper);
 
   KJS_CHECKEXCEPTIONVALUE
 
