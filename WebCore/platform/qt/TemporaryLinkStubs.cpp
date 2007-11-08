@@ -68,8 +68,6 @@
 
 using namespace WebCore;
 
-void FrameView::updateBorder() { notImplemented(); }
-
 namespace WebCore {
 
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }

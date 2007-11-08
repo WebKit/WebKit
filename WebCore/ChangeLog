@@ -1,5 +1,13 @@
 2007-11-08  Mark Rowe  <mrowe@apple.com>
 
+        Fix the Gtk, Qt and Wx builds.
+
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+
+2007-11-08  Mark Rowe  <mrowe@apple.com>
+
         Not reviewed.  Fix two instances of includes using the wrong case in the filename.
 
         * platform/graphics/mac/MoviePrivateQTKit.mm:
