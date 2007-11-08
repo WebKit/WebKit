@@ -25,8 +25,8 @@
 #include "JSType.h"
 #include <wtf/Assertions.h>
 #include <wtf/AlwaysInline.h>
+#include <wtf/MathExtras.h>
 #include <limits>
-#include <math.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
