@@ -1,3 +1,12 @@
+2007-11-08  Sam Weinig  <sam@webkit.org>
+
+        Windows build fix.
+
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFuncToLocaleString::callAsFunction): Fix unused arg warning.
+        (KJS::DateProtoFuncToLocaleDateString::callAsFunction): ditto
+        (KJS::DateProtoFuncToLocaleTimeString::callAsFunction): ditto
+
 2007-11-08  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.
