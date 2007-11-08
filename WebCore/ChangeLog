@@ -1,3 +1,20 @@
+2007-11-08  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5524082> Allow images to be dragged out directly into other apps
+        
+        We weren't including CF_HDROP in our image drops.  This broke drag of
+        images out of the browser window directly into other apps (examples
+        include notepad, mspaint, msword).
+        
+        Reviewed by Oliver, Ada.
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::createGlobalImageFileContent): Removed unused variable.
+        (WebCore::createGlobalHDropContent): Added
+        (WebCore::writeFileToDataObject): Write HDROP data if available.
+        (WebCore::writeImageToDataObject): Write HDROP for dragged images.
+        (WebCore::ClipboardWin::writeURL): Don't write HDROP for dragged URLs.
+
 2007-11-08  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp.

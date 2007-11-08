@@ -204,7 +204,6 @@ static HGLOBAL createGlobalURLContent(const String& url, int estimatedFileSize)
 
 static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
 {
-    HRESULT hr = S_OK;
     HGLOBAL memObj = GlobalAlloc(GPTR, data->size());
     if (!memObj) 
         return 0;
@@ -213,6 +212,70 @@ static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
 
     CopyMemory(fileContents, data->data(), data->size());
     
+    GlobalUnlock(memObj);
+    
+    return memObj;
+}
+
+static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, SharedBuffer* data)
+{
+    if (fileName.isEmpty() || !data )
+        return 0;
+
+    WCHAR filePath[MAX_PATH];
+
+    if (url.isLocalFile()) {
+        DeprecatedString path = url.path();
+        // windows does not enjoy a leading slash on paths
+        if (path[0] == '/')
+            path = path.mid(1);
+        String localPath = path.ascii();
+        LPCTSTR localPathStr = localPath.charactersWithNullTermination();
+        if (wcslen(localPathStr) + 1 < MAX_PATH)
+            wcscpy_s(filePath, MAX_PATH, localPathStr);
+        else
+            return 0;
+    } else {
+        WCHAR tempPath[MAX_PATH];
+        WCHAR extension[MAX_PATH];
+        if (!::GetTempPath(ARRAYSIZE(tempPath), tempPath))
+            return 0;
+        if (!::PathAppend(tempPath, fileName.charactersWithNullTermination()))
+            return 0;
+        LPCWSTR foundExtension = ::PathFindExtension(tempPath);
+        if (foundExtension) {
+            if (wcscpy_s(extension, MAX_PATH, foundExtension))
+                return 0;
+        } else
+            *extension = 0;
+        ::PathRemoveExtension(tempPath);
+        for (int i = 1; i < 10000; i++) {
+            if (swprintf_s(filePath, MAX_PATH, TEXT("%s-%d%s"), tempPath, i, extension) == -1)
+                return 0;
+            if (!::PathFileExists(filePath))
+                break;
+        }
+        HANDLE tempFileHandle = CreateFile(filePath, GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+        if (tempFileHandle == INVALID_HANDLE_VALUE)
+            return 0;
+
+        // Write the data to this temp file.
+        DWORD written;
+        BOOL tempWriteSucceeded = WriteFile(tempFileHandle, data->data(), data->size(), &written, 0);
+        CloseHandle(tempFileHandle);
+        if (!tempWriteSucceeded)
+            return 0;
+    }
+
+    SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * (wcslen(filePath) + 2));
+    HGLOBAL memObj = GlobalAlloc(GHND | GMEM_SHARE, dropFilesSize);
+    if (!memObj) 
+        return 0;
+
+    DROPFILES* dropFiles = (DROPFILES*) GlobalLock(memObj);
+    dropFiles->pFiles = sizeof(DROPFILES);
+    dropFiles->fWide = TRUE;
+    wcscpy((LPWSTR)(dropFiles + 1), filePath);    
     GlobalUnlock(memObj);
     
     return memObj;
@@ -289,7 +352,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
 
 
 // writeFileToDataObject takes ownership of fileDescriptor and fileContent
-static HRESULT writeFileToDataObject(IDataObject* dataObject, HGLOBAL fileDescriptor, HGLOBAL fileContent)
+static HRESULT writeFileToDataObject(IDataObject* dataObject, HGLOBAL fileDescriptor, HGLOBAL fileContent, HGLOBAL hDropContent)
 {
     HRESULT hr = S_OK;
     FORMATETC* fe;
@@ -310,7 +373,14 @@ static HRESULT writeFileToDataObject(IDataObject* dataObject, HGLOBAL fileDescri
     // Contents
     fe = fileContentFormatZero();
     medium.hGlobal = fileContent;
-    hr = dataObject->SetData(fe, &medium, TRUE);
+    if (FAILED(hr = dataObject->SetData(fe, &medium, TRUE)))
+        goto exit;
+
+    // HDROP
+    if (hDropContent) {
+        medium.hGlobal = hDropContent;
+        hr = dataObject->SetData(cfHDropFormat(), &medium, TRUE);
+    }
 
 exit:
     if (FAILED(hr)) {
@@ -318,6 +388,8 @@ exit:
             GlobalFree(fileDescriptor);
         if (fileContent)
             GlobalFree(fileContent);
+        if (hDropContent)
+            GlobalFree(hDropContent);
     }
     return hr;
 }
@@ -381,7 +453,6 @@ static bool writeURL(WCDataObject *data, const KURL& url, String title, bool wit
 
     return success;
 }
-
 
 void ClipboardWin::clearData(const String& type)
 {
@@ -581,7 +652,14 @@ static void writeImageToDataObject(IDataObject* dataObject, Element* element, co
         return;
     }
 
-    writeFileToDataObject(dataObject, imageFileDescriptor, imageFileContent);
+    String fileName = cachedImage->response().suggestedFilename();
+    HGLOBAL hDropContent = createGlobalHDropContent(url, fileName, imageBuffer);
+    if (!hDropContent) {
+        GlobalFree(hDropContent);
+        return;
+    }
+
+    writeFileToDataObject(dataObject, imageFileDescriptor, imageFileContent, hDropContent);
 }
 
 void ClipboardWin::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
@@ -627,7 +705,7 @@ void ClipboardWin::writeURL(const KURL& kurl, const String& titleStr, Frame*)
         GlobalFree(urlFileDescriptor);
         return;
     }
-    writeFileToDataObject(m_writableDataObject.get(), urlFileDescriptor, urlFileContent);
+    writeFileToDataObject(m_writableDataObject.get(), urlFileDescriptor, urlFileContent, 0);
 }
 
 void ClipboardWin::writeRange(Range* selectedRange, Frame* frame)
