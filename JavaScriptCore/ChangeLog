@@ -341,7 +341,7 @@
         Reviewed by Darin Adler.
         
         Fixed part of http://bugs.webkit.org/show_bug.cgi?id=15861 
-        15% of string-validate-input.js is spent compiling the same regular expression.
+        5.8% of string-validate-input.js is spent creating RegExpImps
 
         Put RegExpImp properties into a static hashtable to avoid a slew of
         PropertyMap churn when creating a RegExpImp.
