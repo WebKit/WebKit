@@ -42,7 +42,6 @@
 #include "Page.h"
 #include "RenderLayer.h"
 
-#include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
 using namespace std;
@@ -279,10 +278,15 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
         m_data->setHasVerticalScrollbar(false);
         m_data->setHasHorizontalScrollbar(false);
 
+#if GLIB_CHECK_VERSION(2,10,0)
+        g_object_ref_sink(m_data->horizontalAdjustment);
+        g_object_ref_sink(m_data->verticalAdjustment);
+#else
         g_object_ref(m_data->horizontalAdjustment);
         gtk_object_sink(GTK_OBJECT(m_data->horizontalAdjustment));
         g_object_ref(m_data->verticalAdjustment);
         gtk_object_sink(GTK_OBJECT(m_data->verticalAdjustment));
+#endif
     }
 
     updateScrollbars(m_data->scrollOffset);

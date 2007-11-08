@@ -1,3 +1,15 @@
+2007-11-08  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15908
+        Use g_object_ref_sink when available
+
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::setGtkAdjustments):
+
 2007-11-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.
