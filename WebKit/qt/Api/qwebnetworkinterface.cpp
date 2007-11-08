@@ -462,7 +462,7 @@ bool QWebNetworkManager::add(ResourceHandle *handle, QWebNetworkInterface *inter
 
     DEBUG() << "QWebNetworkManager::add:" <<  job->d->request.httpHeader.toString();
 
-    if (jobMode == AsynchronousJob) {
+    if (jobMode == SynchronousJob) {
         Q_ASSERT(!m_synchronousJobs.contains(job));
         m_synchronousJobs[job] = 1;
     }
@@ -756,7 +756,7 @@ void QWebNetworkManager::queueStart(QWebNetworkJob* job)
 
     QMutexLocker locker(&m_queueMutex);
     job->ref();
-    m_startedJobs.append(job);
+    m_pendingWork.append(new JobWork(job));
     doScheduleWork();
 }
 
@@ -766,17 +766,17 @@ void QWebNetworkManager::queueData(QWebNetworkJob* job, const QByteArray& data)
 
     QMutexLocker locker(&m_queueMutex);
     job->ref();
-    m_receivedData.append(new JobData(job,data));
+    m_pendingWork.append(new JobWork(job, data));
     doScheduleWork();
 }
 
 void QWebNetworkManager::queueFinished(QWebNetworkJob* job, int errorCode)
 {
     Q_ASSERT(job->d);
-    
+
     QMutexLocker locker(&m_queueMutex);
     job->ref();
-    m_finishedJobs.append(new JobFinished(job, errorCode));
+    m_pendingWork.append(new JobWork(job, errorCode));
     doScheduleWork();
 }
 
@@ -790,9 +790,9 @@ void QWebNetworkManager::doScheduleWork()
 
 
 /*
- * WARNING: This is very fragile. doWork will dispatch jobs which then
- * can create new jobs in the meantime, which can fill the queue while
- * we are working on it.
+ * We will work on a copy of m_pendingWork. While dispatching m_pendingWork
+ * new work will be added that will be handled at a later doWork call. doWork
+ * will be called we set m_scheduledWork to false early in this method.
  */
 void QWebNetworkManager::doWork()
 {
@@ -802,51 +802,33 @@ void QWebNetworkManager::doWork()
     const QHash<QWebNetworkJob*, int> syncJobs = m_synchronousJobs;
     m_queueMutex.unlock();
 
-    foreach(QWebNetworkJob* job, m_startedJobs) {
-        if (hasSyncJobs && !syncJobs.contains(job))
+    foreach (JobWork* work, m_pendingWork) {
+        if (hasSyncJobs && !syncJobs.contains(work->job))
             continue;
+
+        if (work->workType == JobWork::JobStarted)
+            started(work->job);
+        else if (work->workType == JobWork::JobData) {
+            // This job was not yet started
+            if (static_cast<int>(work->job->status()) < QWebNetworkJob::JobStarted)
+                continue;
+
+            data(work->job, work->data);
+        } else if (work->workType == JobWork::JobFinished) {
+            // This job was not yet started... we have no idea if data comes by...
+            // and it won't start in case of errors
+            if (static_cast<int>(work->job->status()) < QWebNetworkJob::JobStarted && work->errorCode != 1)
+                continue;
+
+            finished(work->job, work->errorCode);
+        }
 
         m_queueMutex.lock();
-        m_startedJobs.removeAll(job);
+        m_pendingWork.removeAll(work);
         m_queueMutex.unlock();
 
-        started(job);
-        job->deref();
-    }
-
-    foreach(JobData* jobData, m_receivedData) {
-        if (hasSyncJobs && !syncJobs.contains(jobData->job))
-            continue;
-
-        // This job was not yet started
-        if (static_cast<int>(jobData->job->status()) < QWebNetworkJob::JobStarted)
-            continue;
-
-        m_queueMutex.lock();
-        m_receivedData.removeAll(jobData);
-        m_queueMutex.unlock();
-        
-        data(jobData->job, jobData->data);
-        jobData->job->deref();
-        delete jobData;
-    }
-
-    foreach(JobFinished* jobFinished, m_finishedJobs) {
-        if (hasSyncJobs && !syncJobs.contains(jobFinished->job))
-            continue;
-
-        // This job was not yet started... we have no idea if data comes by...
-        // and it won't start in case of errors
-        if (static_cast<int>(jobFinished->job->status()) < QWebNetworkJob::JobStarted && jobFinished->errorCode != 1)
-            continue;
-
-        m_queueMutex.lock();
-        m_finishedJobs.removeAll(jobFinished);
-        m_queueMutex.unlock();
-
-        finished(jobFinished->job, jobFinished->errorCode);
-        jobFinished->job->deref();
-        delete jobFinished;
+        work->job->deref();
+        delete work;
     }
 
     m_queueMutex.lock();

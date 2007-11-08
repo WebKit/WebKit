@@ -1,3 +1,37 @@
+2007-11-08  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
+        Fix bug in the implementation of synchronous network jobs.
+        
+        * George (pmax) reviewed the networking patches and found the following bug (thanks for reviewing)
+        -    if (jobMode == AsynchronousJob) {
+        +    if (jobMode == SynchronousJob) {
+        add job to synchronous list/hash
+        
+        * Just applying the above change will lead to crashes because we can finish
+        jobs before we started them.
+        
+        * Avoid these issues by saving all work (starting a job, sending data and
+        finishing it) inside one list. JobWork will contain any
+        of the above three work types and doWork will just work on this list
+        (m_pendingWork). As foreach takes a copy of the list calling started, data
+        and finished will not add new work and we gurantee that if we have JobStarted
+        it will be in the list before JobData and JobFinished.
+        
+        * Observation: We might just kill the code to handle sync jobs.
+        
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::queueStart):
+        (QWebNetworkManager::queueData):
+        (QWebNetworkManager::queueFinished):
+        (QWebNetworkManager::doWork):
+        * Api/qwebnetworkinterface_p.h:
+        (QWebNetworkManager::JobWork::):
+        (QWebNetworkManager::JobWork::JobWork):
+
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
         Build fix, reviewed by nobody.
