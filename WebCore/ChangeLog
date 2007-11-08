@@ -1,3 +1,16 @@
+2007-11-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        - fix <rdar://problem/5491922> REGRESSION (Safari 2-3): Flash-based "Cash Optimizer" on etrade.com does not draw completely
+
+        Test: fast/dom/length-attribute-mapping.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSLength): Changed the garbage-stripping
+        logic to stop after the first "%" or "*" in the string. This allows for
+        "100%25" to be mapped to "100%" like it is in Firefox and WinIE.
+
 2007-11-08  Kevin McCullough  <kmccullough@apple.com>
 
         - Build fix.

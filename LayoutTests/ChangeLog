@@ -1,3 +1,12 @@
+2007-11-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        - test for <rdar://problem/5491922> REGRESSION (Safari 2-3): Flash-based "Cash Optimizer" on etrade.com does not draw completely
+
+        * fast/dom/length-attribute-mapping-expected.txt: Added.
+        * fast/dom/length-attribute-mapping.html: Added.
+
 2007-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

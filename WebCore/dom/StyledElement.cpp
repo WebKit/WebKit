@@ -303,7 +303,8 @@ void StyledElement::addCSSLength(MappedAttribute* attr, int id, const String &va
 {
     // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
     // length unit and make the appropriate parsed value.
-    if (!attr->decl()) createMappedDecl(attr);
+    if (!attr->decl())
+        createMappedDecl(attr);
 
     // strip attribute garbage..
     StringImpl* v = value.impl();
@@ -315,8 +316,14 @@ void StyledElement::addCSSLength(MappedAttribute* attr, int id, const String &va
         
         for (; l < v->length(); l++) {
             UChar cc = (*v)[l];
-            if (cc > '9' || (cc < '0' && cc != '*' && cc != '%' && cc != '.'))
+            if (cc > '9')
                 break;
+            if (cc < '0') {
+                if (cc == '%' || cc == '*')
+                    l++;
+                if (cc != '.')
+                    break;
+            }
         }
 
         if (l != v->length()) {
