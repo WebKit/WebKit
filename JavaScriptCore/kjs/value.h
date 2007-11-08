@@ -204,6 +204,13 @@ ALWAYS_INLINE JSValue* jsNumber(double d)
     return v ? v : jsNumberCell(d);
 }
 
+ALWAYS_INLINE JSValue* jsNumberFromAnd(ExecState *exec, JSValue* v1, JSValue* v2)
+{
+    if (JSImmediate::areBothImmediateNumbers(v1, v2))
+        return JSImmediate::andImmediateNumbers(v1, v2);
+    return jsNumber(v1->toInt32(exec) & v2->toInt32(exec));
+}
+
 inline JSValue::JSValue()
 {
 }

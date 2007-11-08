@@ -1,3 +1,26 @@
+2007-11-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Add a fast path for bitwise-and of two immediate numbers for a 0.7% improvement in SunSpider (4% bitop improvement).
+
+        This only improves bitwise-and performance, as the additional logic required 
+        for similar code paths on or, xor, and shifting requires additional operations
+        and branches that negate (and in certain cases, regress) any advantage we might
+        otherwise receive.
+
+        This improves performance on all bitop tests, the cryptography tests, as well as 
+        the string-base64 and string-unpack-code tests.  No significant degradation on 
+        any other tests.
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::areBothImmediateNumbers):
+        (KJS::JSImmediate::andImmediateNumbers):
+        * kjs/nodes.cpp:
+        (KJS::BitAndNode::evaluate):
+        * kjs/value.h:
+        (KJS::jsNumberFromAnd):
+
 2007-11-08  Adam Roben  <aroben@apple.com>
 
         Stop using KJS inside of MathExtras.h

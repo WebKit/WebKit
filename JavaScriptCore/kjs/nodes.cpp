@@ -2185,13 +2185,13 @@ void BitAndNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::No
 
 // ECMA 11.10
 JSValue *BitAndNode::evaluate(ExecState *exec)
-{
+{    
   JSValue *v1 = expr1->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
   JSValue *v2 = expr2->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
   
-  return jsNumber(v1->toInt32(exec) & v2->toInt32(exec));
+  return jsNumberFromAnd(exec, v1, v2);
 }
 
 void BitXOrNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)

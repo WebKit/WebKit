@@ -82,6 +82,17 @@ public:
         return (getTag(v) == UndefinedType);
     }
 
+    static ALWAYS_INLINE bool areBothImmediateNumbers(const JSValue* v1, const JSValue* v2)
+    {
+        return (reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2) & TagMask) == NumberType;
+    }
+
+    static ALWAYS_INLINE JSValue* andImmediateNumbers(const JSValue* v1, const JSValue* v2)
+    {
+        ASSERT(areBothImmediateNumbers(v1, v2));
+        return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2));
+    }
+
     static JSValue* fromDouble(double d);
     static double toDouble(const JSValue*);
     static bool toBoolean(const JSValue*);
