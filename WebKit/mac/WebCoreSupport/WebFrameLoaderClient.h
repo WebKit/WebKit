@@ -194,7 +194,7 @@ private:
     virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WebCore::String& mimeType);
     virtual WebCore::String overrideMediaType() const;
     
-    virtual void windowObjectCleared() const;
+    virtual void windowObjectCleared();
     virtual void didPerformFirstNavigation() const;
 
     virtual void registerForIconNotification(bool listen);

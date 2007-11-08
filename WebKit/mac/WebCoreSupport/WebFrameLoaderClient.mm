@@ -1231,7 +1231,7 @@ String WebFrameLoaderClient::overrideMediaType() const
     return String();
 }
 
-void WebFrameLoaderClient::windowObjectCleared() const
+void WebFrameLoaderClient::windowObjectCleared()
 {
     [m_webFrame->_private->bridge windowObjectCleared];
 }
