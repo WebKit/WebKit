@@ -79,9 +79,13 @@ RenderListBox::RenderListBox(HTMLSelectElement* element)
 
 RenderListBox::~RenderListBox()
 {
-    if (m_vBar && m_vBar->isWidget())
-        if (FrameView* view = node()->document()->view())
-            view->removeChild(static_cast<PlatformScrollbar*>(m_vBar.get()));
+    if (m_vBar) {
+        if (m_vBar->isWidget()) {
+            if (FrameView* view = node()->document()->view())
+                view->removeChild(static_cast<PlatformScrollbar*>(m_vBar.get()));
+        }
+        m_vBar->setClient(0);
+    }
 }
 
 void RenderListBox::setStyle(RenderStyle* style)
