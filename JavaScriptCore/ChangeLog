@@ -1,3 +1,26 @@
+2007-11-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Replace the use of floats for immediate values with the use of integers for a 4.5% improvement in SunSpider.
+
+        Unfortunately this change results in NaN, +Inf, -Inf, and -0 being heap allocated now, but
+        we should now have faster array access, faster immediate to double conversion, and the 
+        potential to further improve bitwise operators in future.
+
+        This also removes the need for unions to avoid strict aliasing problems when extracting 
+        a value from immediates.
+
+        * kjs/JSImmediate.h:
+        (KJS::):
+        (KJS::JSImmediate::trueImmediate):
+        (KJS::JSImmediate::falseImmediate):
+        (KJS::JSImmediate::undefinedImmediate):
+        (KJS::JSImmediate::nullImmediate):
+        (KJS::JSImmediate::toBoolean):
+        * kjs/value.h:
+        (KJS::jsNaN):
+
 2007-11-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin and Oliver.

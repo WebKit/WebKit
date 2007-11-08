@@ -25,6 +25,8 @@
 #include "JSType.h"
 #include <wtf/Assertions.h>
 #include <wtf/AlwaysInline.h>
+#include <limits>
+#include <math.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -38,7 +40,7 @@ class UString;
 
 /*
  * A JSValue*  is either a pointer to a cell (a heap-allocated object) or an immediate (a type-tagged 
- * IEEE floating point bit pattern masquerading as a pointer). The low two bits in a JSValue* are available 
+ * signed int masquerading as a pointer). The low two bits in a JSValue* are available 
  * for type tagging because allocator alignment guarantees they will be 00 in cell pointers.
  *
  * For example, on a 32 bit system:
@@ -47,15 +49,14 @@ class UString;
  *               [ high 30 bits: pointer address ]  [ low 2 bits -- always 0 ]
  *
  * JSImmediate:   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                 TT
- *             [ high 30 bits: IEEE encoded float ] [ low 2 bits -- type tag ]
+ *               [ high 30 bits: signed int ]       [ low 2 bits -- type tag ]
  *
- * The bit "payload" (the hight 30 bits) of a non-numeric immediate is its numeric equivalent. For example, 
- * the payload of null is 0.0. This makes JSValue::toNumber() a simple bitmask for all immediates.
+ * The bit "payload" (the high 30 bits) is a 30 bit signed int for immediate numbers, a flag to distinguish true/false
+ * and undefined/null.
  *
  * Notice that the JSType value of NullType is 4, which requires 3 bits to encode. Since we only have 2 bits 
  * available for type tagging, we tag the null immediate with UndefinedType, and JSImmediate::type() has 
- * to sort them out. Null and Undefined don't otherwise get confused because the numeric value of Undefined is 
- * NaN, not 0.0.
+ * to sort them out.
  */
 
 class JSImmediate {
@@ -96,7 +97,6 @@ public:
     // turning into compile-time constants.
     static JSValue* trueImmediate();
     static JSValue* falseImmediate();
-    static JSValue* NaNImmediate();
     static JSValue* undefinedImmediate();
     static JSValue* nullImmediate();
     
@@ -118,18 +118,6 @@ private:
         return reinterpret_cast<uintptr_t>(v) & TagMask;
     }
     
-    // NOTE: With f-strict-aliasing enabled, unions are the only safe way to do type masquerading.
-
-    union FloatUnion {
-        uint32_t asBits;
-        float    asFloat;
-    };
-
-    union DoubleUnion {
-        uint64_t asBits;
-        double   asDouble;
-    };
-
     // we support 32-bit platforms with sizes like this
     static const bool is32bit = 
         sizeof(float) == sizeof(uint32_t) && sizeof(double) == sizeof(uint64_t) && sizeof(uintptr_t) == sizeof(uint32_t);
@@ -148,53 +136,42 @@ template<> struct JSImmediate::FPBitValues<true, false> {
 
     static ALWAYS_INLINE JSValue* fromDouble(double d)
     {
-        FloatUnion floatUnion;
-        floatUnion.asFloat = static_cast<float>(d);
-
-        // check for data loss from tagging
-        if ((floatUnion.asBits & TagMask) != 0)
+        const int32_t intVal = static_cast<int>(d);
+        
+        // On 32 bit systems immediate values are restricted to a 30 bit signed value
+        if ((intVal <= -(1 << 29)) | (intVal >= ((1 << 29) - 1)))
             return 0;
-
-        // check for data loss from conversion to float. This
-        // unfortunately also rejects NaN, however, it costs more to
-        // do a check that will include NaN than is saved by letting
-        // NaN be an immediate.
-        if (floatUnion.asFloat == d)
-            return tag(floatUnion.asBits, NumberType);
-
-        return 0;
-    }
-
-    static ALWAYS_INLINE float toFloat(const JSValue* v)
-    {
-        ASSERT(isImmediate(v));
-
-        FloatUnion floatUnion;
-        floatUnion.asBits = static_cast<uint32_t>(unTag(v));
-        return floatUnion.asFloat;
+        
+        // Check for data loss from conversion to int. This
+        // will reject NaN, +/-Inf, and -0.
+        // Happily none of these are as common as raw int values
+        if ((intVal != d) || (signbit(d) && !intVal))
+            return 0;
+        
+        return tag(intVal << 2, NumberType);
     }
 
     static ALWAYS_INLINE double toDouble(const JSValue* v)
     {
-        return toFloat(v);
+        ASSERT(isImmediate(v));
+        const int32_t i = static_cast<int32_t>(unTag(v)) >> 2;
+        if (JSImmediate::getTag(v) == UndefinedType && i)
+            return std::numeric_limits<double>::quiet_NaN();
+        return i;
     }
-
+    
     static ALWAYS_INLINE bool getTruncatedInt32(const JSValue* v, int32_t& i)
     {
-        float f = toFloat(v);
-        if (!(f >= -2147483648.0F && f < 2147483648.0F))
+        i = static_cast<int32_t>(unTag(v)) >> 2;
+        if (JSImmediate::getTag(v) == UndefinedType && i)
             return false;
-        i = static_cast<int32_t>(f);
         return isNumber(v);
     }
-
+    
     static ALWAYS_INLINE bool getTruncatedUInt32(const JSValue* v, uint32_t& i)
     {
-        float f = toFloat(v);
-        if (!(f >= 0.0F && f < 4294967296.0F))
-            return false;
-        i = static_cast<uint32_t>(f);
-        return isNumber(v);
+        int32_t& si = reinterpret_cast<int&>(i);
+        return getTruncatedInt32(v, si) & (si >= 0);
     }
 };
 
@@ -205,59 +182,56 @@ template<> struct JSImmediate::FPBitValues<false, true> {
 
     static ALWAYS_INLINE JSValue* fromDouble(double d)
     {
-        DoubleUnion doubleUnion;
-        doubleUnion.asDouble = d;
-
-        // check for data loss from tagging
-        if ((doubleUnion.asBits & TagMask) != 0)
+        const int64_t intVal = static_cast<int>(d);
+        
+        // Technically we could fit a 60 bit signed int here, however that would
+        // required more branches when extracting int values.
+        if ((intVal <= -(1L << 29)) | (intVal >= ((1 << 29) - 1)))
+            return 0;
+        
+        // Check for data loss from conversion to int. This
+        // will reject NaN, +/-Inf, and -0.
+        // Happily none of these are as common as raw int values
+        if ((intVal != d) || (signbit(d) && !intVal))
             return 0;
 
-        return tag(static_cast<uintptr_t>(doubleUnion.asBits), NumberType);
+        return tag(static_cast<uintptr_t>(intVal << 2), NumberType);
     }
 
     static ALWAYS_INLINE double toDouble(const JSValue* v)
     {
         ASSERT(isImmediate(v));
-
-        DoubleUnion doubleUnion;
-        doubleUnion.asBits = unTag(v);
-        return doubleUnion.asDouble;
+        const int32_t i = static_cast<int32_t>(unTag(v) >> 2);
+        if (JSImmediate::getTag(v) == UndefinedType && i)
+            return std::numeric_limits<double>::quiet_NaN();
+        return i;
     }
 
     static ALWAYS_INLINE bool getTruncatedInt32(const JSValue* v, int32_t& i)
     {
-        double d = toDouble(v);
-        if (!(d >= -2147483648.0 && d < 2147483648.0))
+        i = static_cast<int32_t>(unTag(v) >> 2);
+        if (JSImmediate::getTag(v) == UndefinedType && i)
             return false;
-        i = static_cast<int32_t>(d);
         return isNumber(v);
     }
 
     static ALWAYS_INLINE bool getTruncatedUInt32(const JSValue* v, uint32_t& i)
-    {
-        double d = toDouble(v);
-        if (!(d >= 0.0 && d < 4294967296.0))
-            return false;
-        i = static_cast<uint32_t>(d);
-        return isNumber(v);
+    {      
+        int& si = reinterpret_cast<int&>(i);
+        return getTruncatedInt32(v, si) & (si >= 0);
     }
 };
 
-ALWAYS_INLINE JSValue* JSImmediate::trueImmediate() { return tag(FPBitValues<is32bit, is64bit>::oneAsBits, BooleanType); }
-ALWAYS_INLINE JSValue* JSImmediate::falseImmediate() { return tag(FPBitValues<is32bit, is64bit>::zeroAsBits, BooleanType); }
-ALWAYS_INLINE JSValue* JSImmediate::NaNImmediate() { return tag(FPBitValues<is32bit, is64bit>::nanAsBits, NumberType); }
-ALWAYS_INLINE JSValue* JSImmediate::undefinedImmediate() { return tag(FPBitValues<is32bit, is64bit>::nanAsBits, UndefinedType); }
-ALWAYS_INLINE JSValue* JSImmediate::nullImmediate() { return tag(FPBitValues<is32bit, is64bit>::zeroAsBits, UndefinedType); }
+ALWAYS_INLINE JSValue* JSImmediate::trueImmediate() { return tag(1 << 2, BooleanType); }
+ALWAYS_INLINE JSValue* JSImmediate::falseImmediate() { return tag(0, BooleanType); }
+ALWAYS_INLINE JSValue* JSImmediate::undefinedImmediate() { return tag(1 << 2, UndefinedType); }
+ALWAYS_INLINE JSValue* JSImmediate::nullImmediate() { return tag(0, UndefinedType); }
 
 ALWAYS_INLINE bool JSImmediate::toBoolean(const JSValue* v)
 {
     ASSERT(isImmediate(v));
-
     uintptr_t bits = unTag(v);
-    if ((bits << 1) == 0) // -0.0 has the sign bit set
-        return false;
-
-    return bits != FPBitValues<is32bit, is64bit>::nanAsBits;
+    return bits != 0 & (JSImmediate::getTag(v) != UndefinedType);
 }
 
 ALWAYS_INLINE JSValue* JSImmediate::fromDouble(double d)
@@ -272,9 +246,7 @@ ALWAYS_INLINE double JSImmediate::toDouble(const JSValue* v)
 
 ALWAYS_INLINE bool JSImmediate::getUInt32(const JSValue* v, uint32_t& i)
 {
-    double d = toDouble(v);
-    i = static_cast<uint32_t>(d);
-    return isNumber(v) & (i == d);
+    return FPBitValues<is32bit, is64bit>::getTruncatedUInt32(v, i);
 }
 
 ALWAYS_INLINE bool JSImmediate::getTruncatedInt32(const JSValue* v, int32_t& i)
