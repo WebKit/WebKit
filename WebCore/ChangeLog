@@ -2,6 +2,26 @@
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
+        Cleanup checking for the request method.
+        
+        * Check the request method only in QWebNetworkManager::add.
+        * Currently HEAD, GET, POST are allowed and for everything else
+        QWebNetworkManager::add returns false.
+        * Returning false is compatible with ResourceHandle::start and it
+        can be used in ResourceHandle::loadResourceSynchronously to generate
+        a ResourceError
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
+2007-11-08  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
         Implement WebCore::callOnMainThread
         
         Implemented using a global QObject, that is moved to the main thread
