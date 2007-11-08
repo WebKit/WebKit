@@ -2,17 +2,30 @@
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
+        Remove some warnings about not implemented methods.
+
+        * ResourceHandle::loadsBlocked and ResourceHandle::supportsBufferedData are
+        specific to the NS API and won't be implemented on Qt.
+        * ResourceHandle::bufferedData can not be reached as we return false in
+        ResourceHandle::supportsBufferedData.
+
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::supportsBufferedData):
+
+2007-11-08  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
         Cleanup checking for the request method.
-        
+
         * Check the request method only in QWebNetworkManager::add.
         * Currently HEAD, GET, POST are allowed and for everything else
         QWebNetworkManager::add returns false.
         * Returning false is compatible with ResourceHandle::start and it
         can be used in ResourceHandle::loadResourceSynchronously to generate
         a ResourceError
-        
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/network/qt/ResourceHandleQt.cpp:
         (WebCore::ResourceHandle::start):
@@ -23,13 +36,11 @@
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
         Implement WebCore::callOnMainThread
-        
+
         Implemented using a global QObject, that is moved to the main thread
         and then sending a custom event to it.
         Picked a number below QEvent::User but above any other documented value.
-        
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/ThreadingQt.cpp:
         (WebCore::PerformFunctionEvent::PerformFunctionEvent):
@@ -42,14 +53,12 @@
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
         Avoid problems with calling QPainter::begin() on an already active paintdevice
-        
+
         * Partial pick from 6200e04c3e0a77873c3b3f3969b65bc701020326 to avoid getting
         crashes on Qt/Mac 4.4 with QPainter::begin to fail because we already draw.
         * If we are in a layout or need one do not paint. This can happen for the PlatformScrollBar
         used by the ScrollView on a layout triggered by QWebPage::paintEvent.
-        
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/WidgetQt.cpp:
         (WebCore::Widget::invalidateRect):

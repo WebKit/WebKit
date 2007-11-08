@@ -132,7 +132,6 @@ void ResourceHandle::cancel()
 
 bool ResourceHandle::loadsBlocked()
 {
-    notImplemented();
     return false;
 }
 
@@ -144,13 +143,12 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
 
 bool ResourceHandle::supportsBufferedData()
 {
-    notImplemented();
     return false;
 }
 
 PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
 {
-    notImplemented();
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
