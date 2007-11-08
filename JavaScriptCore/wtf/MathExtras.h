@@ -27,6 +27,7 @@
 #define WTF_MathExtras_h
 
 #include <math.h>
+#include <stdlib.h>
 #include <time.h>
 
 #if COMPILER(MSVC)

@@ -1,3 +1,9 @@
+2007-11-08  Mark Rowe  <mrowe@apple.com>
+
+        Build fix for JavaScriptGlue.
+
+        * wtf/MathExtras.h: Include stdlib.h for srand and RAND_MAX.
+
 2007-11-08  Darin Adler  <darin@apple.com>
 
         - Windows build fix
