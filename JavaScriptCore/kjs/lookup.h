@@ -23,6 +23,7 @@
 #define KJS_lookup_h
 
 #include "ExecState.h"
+#include "function.h"
 #include "identifier.h"
 #include "interpreter.h"
 #include "JSGlobalObject.h"
