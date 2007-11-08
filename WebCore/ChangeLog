@@ -2,6 +2,25 @@
 
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
+        Implement WebCore::callOnMainThread
+        
+        Implemented using a global QObject, that is moved to the main thread
+        and then sending a custom event to it.
+        Picked a number below QEvent::User but above any other documented value.
+        
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/qt/ThreadingQt.cpp:
+        (WebCore::PerformFunctionEvent::PerformFunctionEvent):
+        (WebCore::MainThreadInvoker::MainThreadInvoker):
+        (WebCore::MainThreadInvoker::event):
+        (WebCore::callOnMainThread):
+
+2007-11-08  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Lars Knoll <lars@trolltech.com>.
+
         Avoid problems with calling QPainter::begin() on an already active paintdevice
         
         * Partial pick from 6200e04c3e0a77873c3b3f3969b65bc701020326 to avoid getting

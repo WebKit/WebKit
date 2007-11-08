@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Staikos Computing Services Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +27,57 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "NotImplemented.h"
+#include <QtCore/QObject>
+#include <QtCore/QCoreApplication>
+
 
 namespace WebCore {
 
-void callOnMainThread(void (*f)()) {
-    notImplemented();
+class PerformFunctionEvent : public QEvent {
+public:
+    static const int EventType = 723;
+
+    PerformFunctionEvent(void (*_function)());
+    void (*function)();
+};
+
+class MainThreadInvoker : public QObject {
+    Q_OBJECT
+public:
+    MainThreadInvoker();
+
+protected:
+    bool event(QEvent*);
+};
+
+PerformFunctionEvent::PerformFunctionEvent(void (*_function)())
+    : QEvent(static_cast<QEvent::Type>(EventType))
+    , function(_function)
+{}
+
+MainThreadInvoker::MainThreadInvoker()
+{
+    moveToThread(QCoreApplication::instance()->thread());
 }
 
+bool MainThreadInvoker::event(QEvent* event)
+{
+    if (event->type() == PerformFunctionEvent::EventType)
+        static_cast<PerformFunctionEvent*>(event)->function();
+
+    return QObject::event(event);
+}
+
+Q_GLOBAL_STATIC(MainThreadInvoker, webkit_main_thread_invoker)
+
+
+void callOnMainThread(void (*functionToPerform)()) {
+    if (!functionToPerform)
+        return;
+
+    QCoreApplication::postEvent(webkit_main_thread_invoker(), new PerformFunctionEvent(functionToPerform));
+}
 
 }
 
+#include "ThreadingQt.moc"
