@@ -1,3 +1,13 @@
+2007-11-08  Adam Roben  <aroben@apple.com>
+
+        Stop using KJS inside of MathExtras.h
+
+        Reviewed by Darin.
+
+        * wtf/MathExtras.h: Removed an unused header, and a now-unused
+        forward-declaration.
+        (wtf_atan2): Use std::numeric_limits intead of KJS.
+
 2007-11-08  Sam Weinig  <sam@webkit.org>
 
         Windows build fix.

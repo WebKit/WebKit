@@ -32,17 +32,12 @@
 
 #if COMPILER(MSVC)
 
-#include "kjs/operations.h"
 #include <xmath.h>
 #include <limits>
 
 #if HAVE(FLOAT_H)
 #include <float.h>
 #endif
-
-namespace KJS {
-    extern const double NaN;
-}
 
 #endif
 
@@ -84,8 +79,9 @@ inline double wtf_atan2(double x, double y)
 {
     static double posInf = std::numeric_limits<double>::infinity();
     static double negInf = -std::numeric_limits<double>::infinity();
+    static double nan = std::numeric_limits<double>::quiet_NaN();
 
-    double result = KJS::NaN;
+    double result = nan;
 
     if (x == posInf && y == posInf)
         result = piOverFourDouble;
