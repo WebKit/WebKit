@@ -34,7 +34,7 @@
 #import "IntRect.h"
 #import "KURL.h"
 #import <limits>
-#import "MimeTypeRegistry.h"
+#import "MIMETypeRegistry.h"
 #import "Movie.h"
 #import <QTKit/QTKit.h>
 #import "ScrollView.h"

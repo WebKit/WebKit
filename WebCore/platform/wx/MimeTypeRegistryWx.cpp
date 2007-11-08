@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "MimeTypeRegistry.h"
+#include "MIMETypeRegistry.h"
 
 namespace WebCore {
 

@@ -1,3 +1,10 @@
+2007-11-08  Mark Rowe  <mrowe@apple.com>
+
+        Not reviewed.  Fix two instances of includes using the wrong case in the filename.
+
+        * platform/graphics/mac/MoviePrivateQTKit.mm:
+        * platform/wx/MimeTypeRegistryWx.cpp:
+
 2007-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
