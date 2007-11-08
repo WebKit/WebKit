@@ -1,3 +1,14 @@
+2007-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - fix <rdar://problem/5552943> accesskey does not focus <button> elements
+
+        Test: fast/forms/access-key.html
+
+        * html/HTMLButtonElement.cpp: (WebCore::HTMLButtonElement::accessKeyAction):
+        Added a call to focus.
+
 2007-11-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Steve.

@@ -138,6 +138,7 @@ bool HTMLButtonElement::appendFormData(FormDataList& formData, bool)
 
 void HTMLButtonElement::accessKeyAction(bool sendToAnyElement)
 {   
+    focus();
     // send the mouse button events iff the caller specified sendToAnyElement
     dispatchSimulatedClick(0, sendToAnyElement);
 }

@@ -1,3 +1,20 @@
+2007-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - test changes for <rdar://problem/5552943> accesskey does not focus <button> elements
+
+        * fast/forms/access-key.html: Check for both focus and click events on all elements, but
+        resisted the urge to switch to the American spelling for "focused".
+
+        * fast/forms/access-key-expected.txt: Updated to reflect the bug fix ("1 button focussed"),
+        the fact that <input type=button>, <input type=checkbox>, <input type=submit>, and
+        <input type=reset> are all both focused and clicked ("2 input type button clicked",
+        "3 input type checkbox clicked", "5 input type submit focussed", and
+        "6 input type reset focussed"). Unfortunately this now also demonstrates that we don't
+        send a click to <input type=text> and Gecko does. And there are still quite a few types
+        that are not covered.
+
 2007-11-07  David Kilzer  <ddkilzer@apple.com>
 
         WebKit confuses width/height for Media Queries device-aspect-ratio evaluation
