@@ -1,3 +1,14 @@
+2007-11-08  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by nobody (well, Holger knows about it), build fix for Qt 4.3.
+
+        The buildbots use Qt 4.4 which has the function in question, but Qt
+        4.3 doesn't have it. Use removeAll() as replacement instead, it
+        shouldn't make a difference in performance.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::~QWebSettings):
+
 2007-11-08  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Lars Knoll <lars@trolltech.com>.

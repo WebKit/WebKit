@@ -176,7 +176,7 @@ QWebSettings::QWebSettings(WebCore::Settings *settings)
 QWebSettings::~QWebSettings()
 {
     if (d->settings)
-        allSettings()->removeOne(d);
+        allSettings()->removeAll(d);
 }
 
 void QWebSettings::setFontSize(FontSize type, int size)
