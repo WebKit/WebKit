@@ -33,13 +33,16 @@
 #if COMPILER(MSVC)
 
 #include "kjs/operations.h"
-#include "kjs/value.h"
 #include <xmath.h>
 #include <limits>
 
 #if HAVE(FLOAT_H)
 #include <float.h>
 #endif
+
+namespace KJS {
+    extern const double NaN;
+}
 
 #endif
 

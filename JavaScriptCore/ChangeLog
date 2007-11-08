@@ -1,5 +1,14 @@
 2007-11-08  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        Reviewed by Sam and Ada.
+
+        * wtf/MathExtras.h: Get rid of a circular #include dependency to fix
+        the build.
+
+2007-11-08  Adam Roben  <aroben@apple.com>
+
         Fix a precedence warning on Windows
 
         * kjs/JSImmediate.h:
