@@ -2,6 +2,16 @@
 
         Reviewed by Ollie.
 
+        Ensure video renderer has correct size if video has already been loaded
+        when it is constructed.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::RenderVideo):
+
+2007-11-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Ollie.
+
         Ensure video is visible when it should be.
 
         * rendering/RenderVideo.cpp:
