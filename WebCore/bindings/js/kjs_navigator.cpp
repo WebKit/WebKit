@@ -89,11 +89,13 @@ namespace KJS {
         JSValue *getValueProperty(ExecState *, int token) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
-        enum { Length, Refresh };
+        enum { Length };
     private:
         static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
         static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
     };
+
+    KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE(PluginsFunctionRefresh)
 
     class MimeTypes : public PluginBase {
     public:
@@ -153,23 +155,22 @@ int KJS::PluginBase::m_plugInCacheRefCount = 0;
 const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable };
 /*
 @begin NavigatorTable 13
-  appCodeName   Navigator::AppCodeName  DontDelete|ReadOnly
-  appName       Navigator::AppName      DontDelete|ReadOnly
-  appVersion    Navigator::AppVersion   DontDelete|ReadOnly
-  language      Navigator::Language     DontDelete|ReadOnly
-  userAgent     Navigator::UserAgent    DontDelete|ReadOnly
-  platform      Navigator::Platform     DontDelete|ReadOnly
-  plugins       Navigator::_Plugins     DontDelete|ReadOnly
-  mimeTypes     Navigator::_MimeTypes   DontDelete|ReadOnly
-  product       Navigator::Product      DontDelete|ReadOnly
-  productSub    Navigator::ProductSub   DontDelete|ReadOnly
-  vendor        Navigator::Vendor       DontDelete|ReadOnly
-  vendorSub     Navigator::VendorSub    DontDelete|ReadOnly
-  cookieEnabled Navigator::CookieEnabled DontDelete|ReadOnly
-  javaEnabled   Navigator::JavaEnabled  DontDelete|Function 0
+  appCodeName   Navigator::AppCodeName                  DontDelete|ReadOnly
+  appName       Navigator::AppName                      DontDelete|ReadOnly
+  appVersion    Navigator::AppVersion                   DontDelete|ReadOnly
+  language      Navigator::Language                     DontDelete|ReadOnly
+  userAgent     Navigator::UserAgent                    DontDelete|ReadOnly
+  platform      Navigator::Platform                     DontDelete|ReadOnly
+  plugins       Navigator::_Plugins                     DontDelete|ReadOnly
+  mimeTypes     Navigator::_MimeTypes                   DontDelete|ReadOnly
+  product       Navigator::Product                      DontDelete|ReadOnly
+  productSub    Navigator::ProductSub                   DontDelete|ReadOnly
+  vendor        Navigator::Vendor                       DontDelete|ReadOnly
+  vendorSub     Navigator::VendorSub                    DontDelete|ReadOnly
+  cookieEnabled Navigator::CookieEnabled                DontDelete|ReadOnly
+  javaEnabled   &NavigatorProtoFuncJavaEnabled::create  DontDelete|Function 0
 @end
 */
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(NavigatorFunc)
 
 Navigator::Navigator(ExecState *exec, Frame *f) 
     : m_frame(f)
@@ -179,7 +180,7 @@ Navigator::Navigator(ExecState *exec, Frame *f)
 
 bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticPropertySlot<NavigatorFunc, Navigator, JSObject>(exec, &NavigatorTable, this, propertyName, slot);
+  return getStaticPropertySlot<Navigator, JSObject>(exec, &NavigatorTable, this, propertyName, slot);
 }
 
 JSValue* Navigator::getValueProperty(ExecState* exec, int token) const
@@ -292,11 +293,10 @@ void PluginBase::refresh(bool reload)
 
 /*
 @begin PluginsTable 2
-  length        Plugins::Length         DontDelete|ReadOnly
-  refresh       Plugins::Refresh        DontDelete|Function 0
+  length        Plugins::Length                        DontDelete|ReadOnly
+  refresh       &PluginsFunctionRefresh::create        DontDelete|Function 0
 @end
 */
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(PluginsFunc)
 
 JSValue *Plugins::getValueProperty(ExecState *exec, int token) const
 {
@@ -326,7 +326,7 @@ bool Plugins::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
     const HashEntry* entry = Lookup::findEntry(&PluginsTable, propertyName);
     if (entry) {
       if (entry->attr & Function)
-        slot.setStaticEntry(this, entry, staticFunctionGetter<PluginsFunc>);
+        slot.setStaticEntry(this, entry, staticFunctionGetter);
       else
         slot.setStaticEntry(this, entry, staticValueGetter<Plugins>);
       return true;
@@ -531,13 +531,13 @@ bool MimeType::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
     return getStaticValueSlot<MimeType, PluginBase>(exec, &MimeTypeTable, this, propertyName, slot);
 }
 
-JSValue *PluginsFunc::callAsFunction(ExecState *exec, JSObject *, const List &args)
+JSValue* PluginsFunctionRefresh::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
     PluginBase::refresh(args[0]->toBoolean(exec));
     return jsUndefined();
 }
 
-JSValue *NavigatorFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &)
+JSValue* NavigatorProtoFuncJavaEnabled::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
 {
   if (!thisObj->inherits(&KJS::Navigator::info))
     return throwError(exec, TypeError);

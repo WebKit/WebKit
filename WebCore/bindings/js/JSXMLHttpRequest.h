@@ -59,10 +59,26 @@ public:
     virtual bool toBoolean(ExecState*) const { return true; }
     virtual void mark();
 
+    WebCore::XMLHttpRequest* impl() const { return m_impl.get(); }
+
 private:
-    friend class JSXMLHttpRequestPrototypeFunction;
     RefPtr<WebCore::XMLHttpRequest> m_impl;
 };
+
+#define FOR_EACH_CLASS(macro) \
+    macro(JSXMLHttpRequestPrototypeFunctionAbort) \
+    macro(JSXMLHttpRequestPrototypeFunctionGetAllResponseHeaders) \
+    macro(JSXMLHttpRequestPrototypeFunctionGetResponseHeader) \
+    macro(JSXMLHttpRequestPrototypeFunctionOpen) \
+    macro(JSXMLHttpRequestPrototypeFunctionSend) \
+    macro(JSXMLHttpRequestPrototypeFunctionSetRequestHeader) \
+    macro(JSXMLHttpRequestPrototypeFunctionOverrideMIMEType) \
+    macro(JSXMLHttpRequestPrototypeFunctionAddEventListener) \
+    macro(JSXMLHttpRequestPrototypeFunctionRemoveEventListener) \
+    macro(JSXMLHttpRequestPrototypeFunctionDispatchEvent) \
+
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
+#undef FOR_EACH_CLASS
 
 } // namespace
 

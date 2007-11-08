@@ -129,42 +129,42 @@ void StringInstance::getPropertyNames(ExecState* exec, PropertyNameArray& proper
 const ClassInfo StringPrototype::info = { "String", &StringInstance::info, &stringTable };
 /* Source for string_object.lut.h
 @begin stringTable 26
-  toString              StringProtoFunc::ToString       DontEnum|Function       0
-  valueOf               StringProtoFunc::ValueOf        DontEnum|Function       0
-  charAt                StringProtoFunc::CharAt         DontEnum|Function       1
-  charCodeAt            StringProtoFunc::CharCodeAt     DontEnum|Function       1
-  concat                StringProtoFunc::Concat         DontEnum|Function       1
-  indexOf               StringProtoFunc::IndexOf        DontEnum|Function       1
-  lastIndexOf           StringProtoFunc::LastIndexOf    DontEnum|Function       1
-  match                 StringProtoFunc::Match          DontEnum|Function       1
-  replace               StringProtoFunc::Replace        DontEnum|Function       2
-  search                StringProtoFunc::Search         DontEnum|Function       1
-  slice                 StringProtoFunc::Slice          DontEnum|Function       2
-  split                 StringProtoFunc::Split          DontEnum|Function       2
-  substr                StringProtoFunc::Substr         DontEnum|Function       2
-  substring             StringProtoFunc::Substring      DontEnum|Function       2
-  toLowerCase           StringProtoFunc::ToLowerCase    DontEnum|Function       0
-  toUpperCase           StringProtoFunc::ToUpperCase    DontEnum|Function       0
-  toLocaleLowerCase     StringProtoFunc::ToLocaleLowerCase DontEnum|Function    0
-  toLocaleUpperCase     StringProtoFunc::ToLocaleUpperCase DontEnum|Function    0
-  localeCompare         StringProtoFunc::LocaleCompare  DontEnum|Function       1
+  toString              &StringProtoFuncToString::create          DontEnum|Function       0
+  valueOf               &StringProtoFuncValueOf::create           DontEnum|Function       0
+  charAt                &StringProtoFuncCharAt::create            DontEnum|Function       1
+  charCodeAt            &StringProtoFuncCharCodeAt::create        DontEnum|Function       1
+  concat                &StringProtoFuncConcat::create            DontEnum|Function       1
+  indexOf               &StringProtoFuncIndexOf::create           DontEnum|Function       1
+  lastIndexOf           &StringProtoFuncLastIndexOf::create       DontEnum|Function       1
+  match                 &StringProtoFuncMatch::create             DontEnum|Function       1
+  replace               &StringProtoFuncReplace::create           DontEnum|Function       2
+  search                &StringProtoFuncSearch::create            DontEnum|Function       1
+  slice                 &StringProtoFuncSlice::create             DontEnum|Function       2
+  split                 &StringProtoFuncSplit::create             DontEnum|Function       2
+  substr                &StringProtoFuncSubstr::create            DontEnum|Function       2
+  substring             &StringProtoFuncSubstring::create         DontEnum|Function       2
+  toLowerCase           &StringProtoFuncToLowerCase::create       DontEnum|Function       0
+  toUpperCase           &StringProtoFuncToUpperCase::create       DontEnum|Function       0
+  toLocaleLowerCase     &StringProtoFuncToLocaleLowerCase::create DontEnum|Function       0
+  toLocaleUpperCase     &StringProtoFuncToLocaleUpperCase::create DontEnum|Function       0
+  localeCompare         &StringProtoFuncLocaleCompare::create     DontEnum|Function       1
 #
 # Under here: html extension, should only exist if KJS_PURE_ECMA is not defined
 # I guess we need to generate two hashtables in the .lut.h file, and use #ifdef
 # to select the right one... TODO. #####
-  big                   StringProtoFunc::Big            DontEnum|Function       0
-  small                 StringProtoFunc::Small          DontEnum|Function       0
-  blink                 StringProtoFunc::Blink          DontEnum|Function       0
-  bold                  StringProtoFunc::Bold           DontEnum|Function       0
-  fixed                 StringProtoFunc::Fixed          DontEnum|Function       0
-  italics               StringProtoFunc::Italics        DontEnum|Function       0
-  strike                StringProtoFunc::Strike         DontEnum|Function       0
-  sub                   StringProtoFunc::Sub            DontEnum|Function       0
-  sup                   StringProtoFunc::Sup            DontEnum|Function       0
-  fontcolor             StringProtoFunc::Fontcolor      DontEnum|Function       1
-  fontsize              StringProtoFunc::Fontsize       DontEnum|Function       1
-  anchor                StringProtoFunc::Anchor         DontEnum|Function       1
-  link                  StringProtoFunc::Link           DontEnum|Function       1
+  big                   &StringProtoFuncBig::create               DontEnum|Function       0
+  small                 &StringProtoFuncSmall::create             DontEnum|Function       0
+  blink                 &StringProtoFuncBlink::create             DontEnum|Function       0
+  bold                  &StringProtoFuncBold::create              DontEnum|Function       0
+  fixed                 &StringProtoFuncFixed::create             DontEnum|Function       0
+  italics               &StringProtoFuncItalics::create           DontEnum|Function       0
+  strike                &StringProtoFuncStrike::create            DontEnum|Function       0
+  sub                   &StringProtoFuncSub::create               DontEnum|Function       0
+  sup                   &StringProtoFuncSup::create               DontEnum|Function       0
+  fontcolor             &StringProtoFuncFontcolor::create         DontEnum|Function       1
+  fontsize              &StringProtoFuncFontsize::create          DontEnum|Function       1
+  anchor                &StringProtoFuncAnchor::create            DontEnum|Function       1
+  link                  &StringProtoFuncLink::create              DontEnum|Function       1
 @end
 */
 // ECMA 15.5.4
@@ -177,17 +177,10 @@ StringPrototype::StringPrototype(ExecState* exec, ObjectPrototype* objProto)
 
 bool StringPrototype::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
 {
-  return getStaticFunctionSlot<StringProtoFunc, StringInstance>(exec, &stringTable, this, propertyName, slot);
+  return getStaticFunctionSlot<StringInstance>(exec, &stringTable, this, propertyName, slot);
 }
 
-// ------------------------------ StringProtoFunc ---------------------------
-
-StringProtoFunc::StringProtoFunc(ExecState* exec, int i, int len, const Identifier& name)
-  : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
-  , id(i)
-{
-  putDirect(exec->propertyNames().length, len, DontDelete | ReadOnly | DontEnum);
-}
+// ------------------------------ Functions --------------------------
 
 static inline void expandSourceRanges(UString::Range * & array, int& count, int& capacity)
 {
@@ -434,83 +427,113 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
   return jsString(source.substr(0, matchPos) + replacementString + source.substr(matchPos + matchLen));
 }
 
-// ECMA 15.5.4.2 - 15.5.4.20
-JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* StringProtoFuncToString::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
 {
-  JSValue* result = NULL;
-
-  // toString and valueOf are no generic function.
-  if (id == ToString || id == ValueOf) {
     if (!thisObj->inherits(&StringInstance::info))
-      return throwError(exec, TypeError);
+        return throwError(exec, TypeError);
 
     return static_cast<StringInstance*>(thisObj)->internalValue();
-  }
+}
 
-  UString u, u2, u3;
-  int pos, p0, i;
-  double dpos;
-  double d = 0.0;
+JSValue* StringProtoFuncValueOf::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&StringInstance::info))
+        return throwError(exec, TypeError);
 
-  // This optimizes the common case that thisObj is a StringInstance
-  UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return static_cast<StringInstance*>(thisObj)->internalValue();
+}
 
-  int len = s.size();
-  JSValue *a0 = args[0];
-  JSValue *a1 = args[1];
+JSValue* StringProtoFuncCharAt::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    int len = s.size();
 
-  switch (id) {
-  case ToString:
-  case ValueOf:
-    // handled above
-    break;
-  case CharAt:
-    dpos = a0->toInteger(exec);
+    UString u;
+    JSValue* a0 = args[0];
+    double dpos = a0->toInteger(exec);
     if (dpos >= 0 && dpos < len)
       u = s.substr(static_cast<int>(dpos), 1);
     else
       u = "";
-    result = jsString(u);
-    break;
-  case CharCodeAt:
-    dpos = a0->toInteger(exec);
+    return jsString(u);
+}
+
+JSValue* StringProtoFuncCharCodeAt::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    int len = s.size();
+
+    JSValue* result = 0;
+
+    JSValue* a0 = args[0];
+    double dpos = a0->toInteger(exec);
     if (dpos >= 0 && dpos < len)
       result = jsNumber(s[static_cast<int>(dpos)].unicode());
     else
       result = jsNaN();
-    break;
-  case Concat: {
+    return result;
+}
+
+JSValue* StringProtoFuncConcat::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+
     List::const_iterator end = args.end();
     for (List::const_iterator it = args.begin(); it != end; ++it) {
         s += (*it)->toString(exec);
     }
-    result = jsString(s);
-    break;
-  }
-  case IndexOf:
-    u2 = a0->toString(exec);
-    dpos = a1->toInteger(exec);
+    return jsString(s);
+}
+
+JSValue* StringProtoFuncIndexOf::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    int len = s.size();
+
+    JSValue* a0 = args[0];
+    JSValue* a1 = args[1];
+    UString u2 = a0->toString(exec);
+    double dpos = a1->toInteger(exec);
     if (dpos < 0)
-      dpos = 0;
+        dpos = 0;
     else if (dpos > len)
-      dpos = len;
-    result = jsNumber(s.find(u2, static_cast<int>(dpos)));
-    break;
-  case LastIndexOf:
-    u2 = a0->toString(exec);
-    d = a1->toNumber(exec);
-    dpos = a1->toIntegerPreserveNaN(exec);
+        dpos = len;
+    return jsNumber(s.find(u2, static_cast<int>(dpos)));
+}
+
+JSValue* StringProtoFuncLastIndexOf::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    int len = s.size();
+
+    JSValue* a0 = args[0];
+    JSValue* a1 = args[1];
+    
+    UString u2 = a0->toString(exec);
+    double dpos = a1->toIntegerPreserveNaN(exec);
     if (dpos < 0)
-      dpos = 0;
+        dpos = 0;
     else if (!(dpos <= len)) // true for NaN
-      dpos = len;
-    result = jsNumber(s.rfind(u2, static_cast<int>(dpos)));
-    break;
-  case Match:
-  case Search: {
-    u = s;
-    RegExp *reg, *tmpReg = 0;
-    RegExpImp *imp = 0;
+        dpos = len;
+    return jsNumber(s.rfind(u2, static_cast<int>(dpos)));
+}
+
+JSValue* StringProtoFuncMatch::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+
+    JSValue* a0 = args[0];
+
+    UString u = s;
+    RegExp* reg;
+    RegExp* tmpReg = 0;
+    RegExpImp* imp = 0;
     if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
       reg = static_cast<RegExpImp *>(a0)->regExp();
     } else { 
@@ -525,80 +548,128 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     int pos;
     int matchLength;
     regExpObj->performMatch(reg, u, 0, pos, matchLength);
-    if (id == Search) {
-      result = jsNumber(pos);
+    JSValue* result;
+    if (!(reg->global())) {
+      // case without 'g' flag is handled like RegExp.prototype.exec
+      if (pos < 0)
+        result = jsNull();
+      else
+        result = regExpObj->arrayOfMatches(exec);
     } else {
-      // Match
-      if (!(reg->global())) {
-        // case without 'g' flag is handled like RegExp.prototype.exec
-        if (pos < 0)
-          result = jsNull();
-        else
-          result = regExpObj->arrayOfMatches(exec);
+      // return array of matches
+      List list;
+      int lastIndex = 0;
+      while (pos >= 0) {
+        list.append(jsString(u.substr(pos, matchLength)));
+        lastIndex = pos;
+        pos += matchLength == 0 ? 1 : matchLength;
+        regExpObj->performMatch(reg, u, pos, pos, matchLength);
+      }
+      if (imp)
+        imp->put(exec, exec->propertyNames().lastIndex, jsNumber(lastIndex), DontDelete|DontEnum);
+      if (list.isEmpty()) {
+        // if there are no matches at all, it's important to return
+        // Null instead of an empty array, because this matches
+        // other browsers and because Null is a false value.
+        result = jsNull();
       } else {
-        // return array of matches
-        List list;
-        int lastIndex = 0;
-        while (pos >= 0) {
-          list.append(jsString(u.substr(pos, matchLength)));
-          lastIndex = pos;
-          pos += matchLength == 0 ? 1 : matchLength;
-          regExpObj->performMatch(reg, u, pos, pos, matchLength);
-        }
-        if (imp)
-          imp->put(exec, exec->propertyNames().lastIndex, jsNumber(lastIndex), DontDelete|DontEnum);
-        if (list.isEmpty()) {
-          // if there are no matches at all, it's important to return
-          // Null instead of an empty array, because this matches
-          // other browsers and because Null is a false value.
-          result = jsNull();
-        } else {
-          result = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
-        }
+        result = exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
       }
     }
     delete tmpReg;
-    break;
-  }
-  case Replace: {
+    return result;
+}
+
+JSValue* StringProtoFuncSearch::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+
+    JSValue* a0 = args[0];
+
+    UString u = s;
+    RegExp* reg;
+    RegExp* tmpReg = 0;
+    if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
+      reg = static_cast<RegExpImp *>(a0)->regExp();
+    } else { 
+      /*
+       *  ECMA 15.5.4.12 String.prototype.search (regexp)
+       *  If regexp is not an object whose [[Class]] property is "RegExp", it is
+       *  replaced with the result of the expression new RegExp(regexp).
+       */
+      reg = tmpReg = new RegExp(a0->toString(exec));
+    }
+    RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->lexicalInterpreter()->builtinRegExp());
+    int pos;
+    int matchLength;
+    regExpObj->performMatch(reg, u, 0, pos, matchLength);
+    delete tmpReg;
+    return jsNumber(pos);
+}
+
+JSValue* StringProtoFuncReplace::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+
     StringImp* sVal = thisObj->inherits(&StringInstance::info) ?
       static_cast<StringInstance*>(thisObj)->internalValue() :
       static_cast<StringImp*>(jsString(s));
 
-    result = replace(exec, sVal, a0, a1);
-    break;
-  }
-  case Slice:
-    {
-      // The arg processing is very much like ArrayProtoFunc::Slice
-      double start = a0->toInteger(exec);
-      double end = a1->isUndefined() ? len : a1->toInteger(exec);
-      double from = start < 0 ? len + start : start;
-      double to = end < 0 ? len + end : end;
-      if (to > from && to > 0 && from < len) {
+    JSValue* a0 = args[0];
+    JSValue* a1 = args[1];
+
+    return replace(exec, sVal, a0, a1);
+}
+
+JSValue* StringProtoFuncSlice::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    int len = s.size();
+
+    JSValue* a0 = args[0];
+    JSValue* a1 = args[1];
+
+    // The arg processing is very much like ArrayProtoFunc::Slice
+    double start = a0->toInteger(exec);
+    double end = a1->isUndefined() ? len : a1->toInteger(exec);
+    double from = start < 0 ? len + start : start;
+    double to = end < 0 ? len + end : end;
+    if (to > from && to > 0 && from < len) {
         if (from < 0)
-          from = 0;
+            from = 0;
         if (to > len)
-          to = len;
-        result = jsString(s.substr(static_cast<int>(from), static_cast<int>(to - from)));
-      } else {
-        result = jsString("");
-      }
-      break;
+            to = len;
+        return jsString(s.substr(static_cast<int>(from), static_cast<int>(to - from)));
     }
-    case Split: {
+
+    return jsString("");
+}
+
+JSValue* StringProtoFuncSplit::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+
+    JSValue* a0 = args[0];
+    JSValue* a1 = args[1];
+
     JSObject *constructor = exec->lexicalInterpreter()->builtinArray();
     JSObject *res = static_cast<JSObject *>(constructor->construct(exec,List::empty()));
-    result = res;
-    u = s;
-    i = p0 = 0;
+    JSValue* result = res;
+    UString u = s;
+    int pos;
+    int i = 0;
+    int p0 = 0;
     uint32_t limit = a1->isUndefined() ? 0xFFFFFFFFU : a1->toUInt32(exec);
     if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpImp::info)) {
       RegExp *reg = static_cast<RegExpImp *>(a0)->regExp();
       if (u.isEmpty() && reg->match(u, 0) >= 0) {
         // empty string matched by regexp -> empty array
         res->put(exec, exec->propertyNames().length, jsNumber(0));
-        break;
+        return result;
       }
       pos = 0;
       while (static_cast<uint32_t>(i) != limit && pos < u.size()) {
@@ -622,12 +693,12 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
         }
       }
     } else {
-      u2 = a0->toString(exec);
+      UString u2 = a0->toString(exec);
       if (u2.isEmpty()) {
         if (u.isEmpty()) {
           // empty separator matches empty string -> empty array
           put(exec, exec->propertyNames().length, jsNumber(0));
-          break;
+          return result;
         } else {
           while (static_cast<uint32_t>(i) != limit && i < u.size()-1)
             res->put(exec, i++, jsString(u.substr(p0++, 1)));
@@ -644,9 +715,20 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     if (static_cast<uint32_t>(i) != limit)
       res->put(exec, i++, jsString(u.substr(p0)));
     res->put(exec, exec->propertyNames().length, jsNumber(i));
-    }
-    break;
-  case Substr: {
+    return result;
+}
+
+JSValue* StringProtoFuncSubstr::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    int len = s.size();
+
+    JSValue* a0 = args[0];
+    JSValue* a1 = args[1];
+
+    double d = 0.0;
+
     double start = a0->toInteger(exec);
     double length = a1->isUndefined() ? len : a1->toInteger(exec);
     if (start >= len)
@@ -660,10 +742,18 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     }
     if (length > len - d)
       length = len - d;
-    result = jsString(s.substr(static_cast<int>(start), static_cast<int>(length)));
-    break;
-  }
-  case Substring: {
+    return jsString(s.substr(static_cast<int>(start), static_cast<int>(length)));
+}
+
+JSValue* StringProtoFuncSubstring::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    int len = s.size();
+
+    JSValue* a0 = args[0];
+    JSValue* a1 = args[1];
+
     double start = a0->toNumber(exec);
     double end = a1->toNumber(exec);
     if (isnan(start))
@@ -685,11 +775,14 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
       end = start;
       start = temp;
     }
-    result = jsString(s.substr((int)start, (int)end-(int)start));
-    }
-    break;
-  case ToLowerCase:
-  case ToLocaleLowerCase: { // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
+    return jsString(s.substr((int)start, (int)end-(int)start));
+}
+
+JSValue* StringProtoFuncToLowerCase::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    
     StringImp* sVal = thisObj->inherits(&StringInstance::info)
         ? static_cast<StringInstance*>(thisObj)->internalValue()
         : static_cast<StringImp*>(jsString(s));
@@ -708,9 +801,13 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
         return sVal;
     return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
-  }
-  case ToUpperCase:
-  case ToLocaleUpperCase: { // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
+}
+
+JSValue* StringProtoFuncToUpperCase::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+
     StringImp* sVal = thisObj->inherits(&StringInstance::info)
         ? static_cast<StringInstance*>(thisObj)->internalValue()
         : static_cast<StringImp*>(jsString(s));
@@ -729,56 +826,168 @@ JSValue* StringProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, con
     if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
         return sVal;
     return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
-  }
-  case LocaleCompare:
+}
+
+JSValue* StringProtoFuncToLocaleLowerCase::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    
+    // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
+    StringImp* sVal = thisObj->inherits(&StringInstance::info)
+        ? static_cast<StringInstance*>(thisObj)->internalValue()
+        : static_cast<StringImp*>(jsString(s));
+    int ssize = s.size();
+    if (!ssize)
+        return sVal;
+    Vector< ::UChar> buffer(ssize);
+    bool error;
+    int length = Unicode::toLower(buffer.data(), ssize, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+    if (error) {
+        buffer.resize(length);
+        length = Unicode::toLower(buffer.data(), length, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+        if (error)
+            return sVal;
+    }
+    if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
+        return sVal;
+    return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
+}
+
+JSValue* StringProtoFuncToLocaleUpperCase::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+
+    StringImp* sVal = thisObj->inherits(&StringInstance::info)
+        ? static_cast<StringInstance*>(thisObj)->internalValue()
+        : static_cast<StringImp*>(jsString(s));
+    int ssize = s.size();
+    if (!ssize)
+        return sVal;
+    Vector< ::UChar> buffer(ssize);
+    bool error;
+    int length = Unicode::toUpper(buffer.data(), ssize, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+    if (error) {
+        buffer.resize(length);
+        length = Unicode::toUpper(buffer.data(), length, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+        if (error)
+            return sVal;
+    }
+    if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
+        return sVal;
+    return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
+}
+
+JSValue* StringProtoFuncLocaleCompare::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
     if (args.size() < 1)
       return jsNumber(0);
-    return jsNumber(localeCompare(s, a0->toString(exec)));
-#ifndef KJS_PURE_ECMA
-  case Big:
-    result = jsString("<big>" + s + "</big>");
-    break;
-  case Small:
-    result = jsString("<small>" + s + "</small>");
-    break;
-  case Blink:
-    result = jsString("<blink>" + s + "</blink>");
-    break;
-  case Bold:
-    result = jsString("<b>" + s + "</b>");
-    break;
-  case Fixed:
-    result = jsString("<tt>" + s + "</tt>");
-    break;
-  case Italics:
-    result = jsString("<i>" + s + "</i>");
-    break;
-  case Strike:
-    result = jsString("<strike>" + s + "</strike>");
-    break;
-  case Sub:
-    result = jsString("<sub>" + s + "</sub>");
-    break;
-  case Sup:
-    result = jsString("<sup>" + s + "</sup>");
-    break;
-  case Fontcolor:
-    result = jsString("<font color=\"" + a0->toString(exec) + "\">" + s + "</font>");
-    break;
-  case Fontsize:
-    result = jsString("<font size=\"" + a0->toString(exec) + "\">" + s + "</font>");
-    break;
-  case Anchor:
-    result = jsString("<a name=\"" + a0->toString(exec) + "\">" + s + "</a>");
-    break;
-  case Link:
-    result = jsString("<a href=\"" + a0->toString(exec) + "\">" + s + "</a>");
-    break;
-#endif
-  }
 
-  return result;
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    JSValue* a0 = args[0];
+    return jsNumber(localeCompare(s, a0->toString(exec)));
 }
+
+#ifndef KJS_PURE_ECMA
+
+JSValue* StringProtoFuncBig::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<big>" + s + "</big>");
+}
+
+JSValue* StringProtoFuncSmall::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<small>" + s + "</small>");
+}
+
+JSValue* StringProtoFuncBlink::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<blink>" + s + "</blink>");
+}
+
+JSValue* StringProtoFuncBold::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<b>" + s + "</b>");
+}
+
+JSValue* StringProtoFuncFixed::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<tt>" + s + "</tt>");
+}
+
+JSValue* StringProtoFuncItalics::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<i>" + s + "</i>");
+}
+
+JSValue* StringProtoFuncStrike::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<strike>" + s + "</strike>");
+}
+
+JSValue* StringProtoFuncSub::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<sub>" + s + "</sub>");
+}
+
+JSValue* StringProtoFuncSup::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    return jsString("<sup>" + s + "</sup>");
+}
+
+JSValue* StringProtoFuncFontcolor::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    JSValue* a0 = args[0];
+    return jsString("<font color=\"" + a0->toString(exec) + "\">" + s + "</font>");
+}
+
+JSValue* StringProtoFuncFontsize::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    JSValue* a0 = args[0];
+    return jsString("<font size=\"" + a0->toString(exec) + "\">" + s + "</font>");
+}
+
+JSValue* StringProtoFuncAnchor::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    JSValue* a0 = args[0];
+    return jsString("<a name=\"" + a0->toString(exec) + "\">" + s + "</a>");
+}
+
+JSValue* StringProtoFuncLink::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    // This optimizes the common case that thisObj is a StringInstance
+    UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
+    JSValue* a0 = args[0];
+    return jsString("<a href=\"" + a0->toString(exec) + "\">" + s + "</a>");
+}
+
+#endif // KJS_PURE_ECMA
 
 // ------------------------------ StringObjectImp ------------------------------
 
@@ -849,4 +1058,4 @@ JSValue *StringObjectFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisOb
   return jsString(s);
 }
 
-}
+} // namespace KJS

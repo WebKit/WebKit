@@ -1,3 +1,159 @@
+2007-11-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Convert JavaScript internal function objects to use one class per
+        function.  This avoids a switch statement inside what used to be
+        the shared function classes and will allow Shark to better analyze
+        the code.
+
+        To make this switch, the value property of the HashEntry was changed
+        to a union of an intptr_t (which is used to continue handle valueGetters)
+        and function pointer which points to a static constructor for the
+        individual new function objects.
+
+        SunSpider claims this is a 0.5% speedup. 
+
+        * kjs/array_object.cpp:
+        (KJS::ArrayPrototype::getOwnPropertySlot):
+        (KJS::getProperty):
+        (KJS::ArrayProtoFuncToString::callAsFunction):
+        (KJS::ArrayProtoFuncToLocaleString::callAsFunction):
+        (KJS::ArrayProtoFuncJoin::callAsFunction):
+        (KJS::ArrayProtoFuncConcat::callAsFunction):
+        (KJS::ArrayProtoFuncPop::callAsFunction):
+        (KJS::ArrayProtoFuncPush::callAsFunction):
+        (KJS::ArrayProtoFuncReverse::callAsFunction):
+        (KJS::ArrayProtoFuncShift::callAsFunction):
+        (KJS::ArrayProtoFuncSlice::callAsFunction):
+        (KJS::ArrayProtoFuncSort::callAsFunction):
+        (KJS::ArrayProtoFuncSplice::callAsFunction):
+        (KJS::ArrayProtoFuncUnShift::callAsFunction):
+        (KJS::ArrayProtoFuncFilter::callAsFunction):
+        (KJS::ArrayProtoFuncMap::callAsFunction):
+        (KJS::ArrayProtoFuncEvery::callAsFunction):
+        (KJS::ArrayProtoFuncForEach::callAsFunction):
+        (KJS::ArrayProtoFuncSome::callAsFunction):
+        (KJS::ArrayProtoFuncIndexOf::callAsFunction):
+        (KJS::ArrayProtoFuncLastIndexOf::callAsFunction):
+        * kjs/array_object.h:
+        (KJS::ArrayPrototype::classInfo):
+        * kjs/create_hash_table:
+        * kjs/date_object.cpp:
+        (KJS::DatePrototype::getOwnPropertySlot):
+        (KJS::DateProtoFuncToString::callAsFunction):
+        (KJS::DateProtoFuncToUTCString::callAsFunction):
+        (KJS::DateProtoFuncToDateString::callAsFunction):
+        (KJS::DateProtoFuncToTimeString::callAsFunction):
+        (KJS::DateProtoFuncToLocaleString::callAsFunction):
+        (KJS::DateProtoFuncToLocaleDateString::callAsFunction):
+        (KJS::DateProtoFuncToLocaleTimeString::callAsFunction):
+        (KJS::DateProtoFuncValueOf::callAsFunction):
+        (KJS::DateProtoFuncGetTime::callAsFunction):
+        (KJS::DateProtoFuncGetFullYear::callAsFunction):
+        (KJS::DateProtoFuncGetUTCFullYear::callAsFunction):
+        (KJS::DateProtoFuncToGMTString::callAsFunction):
+        (KJS::DateProtoFuncGetMonth::callAsFunction):
+        (KJS::DateProtoFuncGetUTCMonth::callAsFunction):
+        (KJS::DateProtoFuncGetDate::callAsFunction):
+        (KJS::DateProtoFuncGetUTCDate::callAsFunction):
+        (KJS::DateProtoFuncGetDay::callAsFunction):
+        (KJS::DateProtoFuncGetUTCDay::callAsFunction):
+        (KJS::DateProtoFuncGetHours::callAsFunction):
+        (KJS::DateProtoFuncGetUTCHours::callAsFunction):
+        (KJS::DateProtoFuncGetMinutes::callAsFunction):
+        (KJS::DateProtoFuncGetUTCMinutes::callAsFunction):
+        (KJS::DateProtoFuncGetSeconds::callAsFunction):
+        (KJS::DateProtoFuncGetUTCSeconds::callAsFunction):
+        (KJS::DateProtoFuncGetMilliSeconds::callAsFunction):
+        (KJS::DateProtoFuncGetUTCMilliseconds::callAsFunction):
+        (KJS::DateProtoFuncGetTimezoneOffset::callAsFunction):
+        (KJS::DateProtoFuncSetTime::callAsFunction):
+        (KJS::DateProtoFuncSetMilliSeconds::callAsFunction):
+        (KJS::DateProtoFuncSetUTCMilliseconds::callAsFunction):
+        (KJS::DateProtoFuncSetSeconds::callAsFunction):
+        (KJS::DateProtoFuncSetUTCSeconds::callAsFunction):
+        (KJS::DateProtoFuncSetMinutes::callAsFunction):
+        (KJS::DateProtoFuncSetUTCMinutes::callAsFunction):
+        (KJS::DateProtoFuncSetHours::callAsFunction):
+        (KJS::DateProtoFuncSetUTCHours::callAsFunction):
+        (KJS::DateProtoFuncSetDate::callAsFunction):
+        (KJS::DateProtoFuncSetUTCDate::callAsFunction):
+        (KJS::DateProtoFuncSetMonth::callAsFunction):
+        (KJS::DateProtoFuncSetUTCMonth::callAsFunction):
+        (KJS::DateProtoFuncSetFullYear::callAsFunction):
+        (KJS::DateProtoFuncSetUTCFullYear::callAsFunction):
+        (KJS::DateProtoFuncSetYear::callAsFunction):
+        (KJS::DateProtoFuncGetYear::callAsFunction):
+        * kjs/date_object.h:
+        * kjs/lookup.cpp:
+        (KJS::Lookup::find):
+        * kjs/lookup.h:
+        (KJS::HashEntry::):
+        (KJS::staticFunctionGetter):
+        (KJS::staticValueGetter):
+        (KJS::getStaticPropertySlot):
+        (KJS::getStaticFunctionSlot):
+        (KJS::lookupPut):
+        * kjs/math_object.cpp:
+        (KJS::MathObjectImp::getOwnPropertySlot):
+        (KJS::MathProtoFuncAbs::callAsFunction):
+        (KJS::MathProtoFuncACos::callAsFunction):
+        (KJS::MathProtoFuncASin::callAsFunction):
+        (KJS::MathProtoFuncATan::callAsFunction):
+        (KJS::MathProtoFuncATan2::callAsFunction):
+        (KJS::MathProtoFuncCeil::callAsFunction):
+        (KJS::MathProtoFuncCos::callAsFunction):
+        (KJS::MathProtoFuncExp::callAsFunction):
+        (KJS::MathProtoFuncFloor::callAsFunction):
+        (KJS::MathProtoFuncLog::callAsFunction):
+        (KJS::MathProtoFuncMax::callAsFunction):
+        (KJS::MathProtoFuncMin::callAsFunction):
+        (KJS::MathProtoFuncPow::callAsFunction):
+        (KJS::MathProtoFuncRandom::callAsFunction):
+        (KJS::MathProtoFuncRound::callAsFunction):
+        (KJS::MathProtoFuncSin::callAsFunction):
+        (KJS::MathProtoFuncSqrt::callAsFunction):
+        (KJS::MathProtoFuncTan::callAsFunction):
+        * kjs/math_object.h:
+        (KJS::MathObjectImp::classInfo):
+        (KJS::MathObjectImp::):
+        * kjs/string_object.cpp:
+        (KJS::StringPrototype::getOwnPropertySlot):
+        (KJS::StringProtoFuncToString::callAsFunction):
+        (KJS::StringProtoFuncValueOf::callAsFunction):
+        (KJS::StringProtoFuncCharAt::callAsFunction):
+        (KJS::StringProtoFuncCharCodeAt::callAsFunction):
+        (KJS::StringProtoFuncConcat::callAsFunction):
+        (KJS::StringProtoFuncIndexOf::callAsFunction):
+        (KJS::StringProtoFuncLastIndexOf::callAsFunction):
+        (KJS::StringProtoFuncMatch::callAsFunction):
+        (KJS::StringProtoFuncSearch::callAsFunction):
+        (KJS::StringProtoFuncReplace::callAsFunction):
+        (KJS::StringProtoFuncSlice::callAsFunction):
+        (KJS::StringProtoFuncSplit::callAsFunction):
+        (KJS::StringProtoFuncSubstr::callAsFunction):
+        (KJS::StringProtoFuncSubstring::callAsFunction):
+        (KJS::StringProtoFuncToLowerCase::callAsFunction):
+        (KJS::StringProtoFuncToUpperCase::callAsFunction):
+        (KJS::StringProtoFuncToLocaleLowerCase::callAsFunction):
+        (KJS::StringProtoFuncToLocaleUpperCase::callAsFunction):
+        (KJS::StringProtoFuncLocaleCompare::callAsFunction):
+        (KJS::StringProtoFuncBig::callAsFunction):
+        (KJS::StringProtoFuncSmall::callAsFunction):
+        (KJS::StringProtoFuncBlink::callAsFunction):
+        (KJS::StringProtoFuncBold::callAsFunction):
+        (KJS::StringProtoFuncFixed::callAsFunction):
+        (KJS::StringProtoFuncItalics::callAsFunction):
+        (KJS::StringProtoFuncStrike::callAsFunction):
+        (KJS::StringProtoFuncSub::callAsFunction):
+        (KJS::StringProtoFuncSup::callAsFunction):
+        (KJS::StringProtoFuncFontcolor::callAsFunction):
+        (KJS::StringProtoFuncFontsize::callAsFunction):
+        (KJS::StringProtoFuncAnchor::callAsFunction):
+        (KJS::StringProtoFuncLink::callAsFunction):
+        * kjs/string_object.h:
+
 2007-11-08  Adam Roben  <aroben@apple.com>
 
         Windows build fix

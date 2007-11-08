@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,43 +25,53 @@
 
 #include "array_instance.h"
 #include "function_object.h"
+#include "lookup.h"
 
 namespace KJS {
 
  class ArrayPrototype : public ArrayInstance {
   public:
-    ArrayPrototype(ExecState *exec,
-                      ObjectPrototype *objProto);
-    bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual const ClassInfo *classInfo() const { return &info; }
+    ArrayPrototype(ExecState*, ObjectPrototype*);
+
+    bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-  };
-
-  class ArrayProtoFunc : public InternalFunctionImp {
-  public:
-    ArrayProtoFunc(ExecState *exec, int i, int len, const Identifier& name);
-
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
-
-    enum { ToString, ToLocaleString, Concat, Join, Pop, Push,
-          Reverse, Shift, Slice, Sort, Splice, UnShift, 
-          Every, ForEach, Some, IndexOf, Filter, Map, LastIndexOf };
-  private:
-    int id;
   };
 
   class ArrayObjectImp : public InternalFunctionImp {
   public:
-    ArrayObjectImp(ExecState *exec,
-                   FunctionPrototype *funcProto,
-                   ArrayPrototype *arrayProto);
+    ArrayObjectImp(ExecState*, FunctionPrototype*, ArrayPrototype*);
 
     virtual bool implementsConstruct() const;
-    virtual JSObject *construct(ExecState *exec, const List &args);
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+    virtual JSObject* construct(ExecState*, const List&);
+    virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
 
   };
 
-} // namespace
+#define FOR_EACH_CLASS(macro) \
+    macro(ArrayProtoFuncToString) \
+    macro(ArrayProtoFuncToLocaleString) \
+    macro(ArrayProtoFuncConcat) \
+    macro(ArrayProtoFuncJoin) \
+    macro(ArrayProtoFuncPop) \
+    macro(ArrayProtoFuncPush) \
+    macro(ArrayProtoFuncReverse) \
+    macro(ArrayProtoFuncShift) \
+    macro(ArrayProtoFuncSlice) \
+    macro(ArrayProtoFuncSort) \
+    macro(ArrayProtoFuncSplice) \
+    macro(ArrayProtoFuncUnShift) \
+    macro(ArrayProtoFuncEvery) \
+    macro(ArrayProtoFuncForEach) \
+    macro(ArrayProtoFuncSome) \
+    macro(ArrayProtoFuncIndexOf) \
+    macro(ArrayProtoFuncFilter) \
+    macro(ArrayProtoFuncMap) \
+    macro(ArrayProtoFuncLastIndexOf) \
 
-#endif
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
+#undef FOR_EACH_CLASS
+
+} // namespace KJS
+
+#endif // ARRAY_OBJECT_H_

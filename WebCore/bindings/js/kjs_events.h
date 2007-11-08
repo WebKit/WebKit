@@ -121,6 +121,16 @@ namespace WebCore {
     KJS::JSValue* toJS(KJS::ExecState*, Clipboard*);
     Clipboard* toClipboard(KJS::JSValue*);
 
+#define FOR_EACH_CLASS(macro) \
+    macro(JSClipboardPrototypeFunctionClearData) \
+    macro(JSClipboardPrototypeFunctionGetData) \
+    macro(JSClipboardPrototypeFunctionSetData) \
+    macro(JSClipboardPrototypeFunctionSetDragImage) \
+
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
+#undef FOR_EACH_CLASS
+
+
 } // namespace WebCore
 
 #endif // kjs_events_h

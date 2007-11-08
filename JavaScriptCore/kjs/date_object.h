@@ -23,6 +23,7 @@
 
 #include "function.h"
 #include "JSWrapperObject.h"
+#include "lookup.h"
 
 namespace KJS {
 
@@ -64,24 +65,59 @@ namespace KJS {
      * Class to implement all methods that are properties of the
      * Date.prototype object
      */
-    class DateProtoFunc : public InternalFunctionImp {
-    public:
-        DateProtoFunc(ExecState *, int i, int len, const Identifier& date);
+    
+    // Non-normative properties (Appendix B)
+    // GetYear, SetYear, ToGMTString
 
-        virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
+#define FOR_EACH_CLASS(macro) \
+    macro(DateProtoFuncToString) \
+    macro(DateProtoFuncToUTCString) \
+    macro(DateProtoFuncToDateString) \
+    macro(DateProtoFuncToTimeString) \
+    macro(DateProtoFuncToLocaleString) \
+    macro(DateProtoFuncToLocaleDateString) \
+    macro(DateProtoFuncToLocaleTimeString) \
+    macro(DateProtoFuncValueOf) \
+    macro(DateProtoFuncGetTime) \
+    macro(DateProtoFuncGetFullYear) \
+    macro(DateProtoFuncGetUTCFullYear) \
+    macro(DateProtoFuncToGMTString) \
+    macro(DateProtoFuncGetMonth) \
+    macro(DateProtoFuncGetUTCMonth) \
+    macro(DateProtoFuncGetDate) \
+    macro(DateProtoFuncGetUTCDate) \
+    macro(DateProtoFuncGetDay) \
+    macro(DateProtoFuncGetUTCDay) \
+    macro(DateProtoFuncGetHours) \
+    macro(DateProtoFuncGetUTCHours) \
+    macro(DateProtoFuncGetMinutes) \
+    macro(DateProtoFuncGetUTCMinutes) \
+    macro(DateProtoFuncGetSeconds) \
+    macro(DateProtoFuncGetUTCSeconds) \
+    macro(DateProtoFuncGetMilliSeconds) \
+    macro(DateProtoFuncGetUTCMilliseconds) \
+    macro(DateProtoFuncGetTimezoneOffset) \
+    macro(DateProtoFuncSetTime) \
+    macro(DateProtoFuncSetMilliSeconds) \
+    macro(DateProtoFuncSetUTCMilliseconds) \
+    macro(DateProtoFuncSetSeconds) \
+    macro(DateProtoFuncSetUTCSeconds) \
+    macro(DateProtoFuncSetMinutes) \
+    macro(DateProtoFuncSetUTCMinutes) \
+    macro(DateProtoFuncSetHours) \
+    macro(DateProtoFuncSetUTCHours) \
+    macro(DateProtoFuncSetDate) \
+    macro(DateProtoFuncSetUTCDate) \
+    macro(DateProtoFuncSetMonth) \
+    macro(DateProtoFuncSetUTCMonth) \
+    macro(DateProtoFuncSetFullYear) \
+    macro(DateProtoFuncSetUTCFullYear) \
+    macro(DateProtoFuncSetYear) \
+    macro(DateProtoFuncGetYear) \
 
-        enum { ToString, ToDateString, ToTimeString, ToLocaleString,
-            ToLocaleDateString, ToLocaleTimeString, ValueOf, GetTime,
-            GetFullYear, GetMonth, GetDate, GetDay, GetHours, GetMinutes,
-            GetSeconds, GetMilliSeconds, GetTimezoneOffset, SetTime,
-            SetMilliSeconds, SetSeconds, SetMinutes, SetHours, SetDate,
-            SetMonth, SetFullYear, ToUTCString,
-            // non-normative properties (Appendix B)
-            GetYear, SetYear, ToGMTString };
-    private:
-        int id;
-        bool utc;
-    };
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
+#undef FOR_EACH_CLASS
+
 
     /**
      * @internal

@@ -39,8 +39,12 @@ namespace WebCore {
         void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*, int attr);
         virtual const KJS::ClassInfo* classInfo() const { return &info; }
         static const KJS::ClassInfo info;
-        enum { SetSelectionRange, SelectionStart, SelectionEnd };
+        enum { SelectionStart, SelectionEnd };
     };
+
+    // SetSelectionRange is implemented on the class instead of on the prototype
+    // to make it easier to enable/disable lookup of the function based on input type.
+    KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE(JSHTMLInputElementBaseFunctionSetSelectionRange)
 
 } // namespace WebCore
 

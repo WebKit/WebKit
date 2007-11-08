@@ -36,15 +36,21 @@ namespace KJS {
    * An entry in a hash table.
    */
   struct HashEntry {
+    typedef InternalFunctionImp* (*ConstructFunctionObject)(ExecState*, int, const Identifier&);
+
     /**
      * s is the key (e.g. a property name)
      */
     const char* s;
 
     /**
-     * value is the result value (usually an enum value)
+     * value is the result value (enum value for properties and a function pointer to a constructor factory for functions)
      */
-    int value;
+    union {
+      intptr_t intValue;
+      ConstructFunctionObject functionValue;
+    } value;
+
     /**
      * attr is a set for flags (e.g. the property flags, see object.h)
      */
@@ -119,7 +125,6 @@ namespace KJS {
    * @internal
    * Helper for getStaticFunctionSlot and getStaticPropertySlot
    */
-  template <class FuncImp>
   inline JSValue* staticFunctionGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
   {
       // Look for cached value in dynamic map of properties (in JSObject)
@@ -129,7 +134,7 @@ namespace KJS {
         return cachedVal;
 
       const HashEntry* entry = slot.staticEntry();
-      JSValue* val = new FuncImp(exec, entry->value, entry->params, propertyName);
+      JSValue* val = entry->value.functionValue(exec, entry->params, propertyName); 
       thisObj->putDirect(propertyName, val, entry->attr);
       return val;
   }
@@ -143,7 +148,7 @@ namespace KJS {
   {
       ThisImp* thisObj = static_cast<ThisImp*>(slot.slotBase());
       const HashEntry* entry = slot.staticEntry();
-      return thisObj->getValueProperty(exec, entry->value);
+      return thisObj->getValueProperty(exec, entry->value.intValue);
   }
 
   /**
@@ -166,7 +171,7 @@ namespace KJS {
    * @param table the static hashtable for this class
    * @param thisObj "this"
    */
-  template <class FuncImp, class ThisImp, class ParentImp>
+  template <class ThisImp, class ParentImp>
   inline bool getStaticPropertySlot(ExecState* exec, const HashTable* table, 
                                     ThisImp* thisObj, const Identifier& propertyName, PropertySlot& slot)
   {
@@ -176,7 +181,7 @@ namespace KJS {
       return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
 
     if (entry->attr & Function)
-      slot.setStaticEntry(thisObj, entry, staticFunctionGetter<FuncImp>);
+      slot.setStaticEntry(thisObj, entry, staticFunctionGetter);
     else
       slot.setStaticEntry(thisObj, entry, staticValueGetter<ThisImp>);
 
@@ -188,7 +193,7 @@ namespace KJS {
    * Using this instead of getStaticPropertySlot allows 'this' to avoid implementing
    * a dummy getValueProperty.
    */
-  template <class FuncImp, class ParentImp>
+  template <class ParentImp>
   inline bool getStaticFunctionSlot(ExecState* exec, const HashTable* table,
                                     JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
   {
@@ -199,7 +204,7 @@ namespace KJS {
 
     ASSERT(entry->attr & Function);
 
-    slot.setStaticEntry(thisObj, entry, staticFunctionGetter<FuncImp>);
+    slot.setStaticEntry(thisObj, entry, staticFunctionGetter);
     return true;
   }
 
@@ -240,7 +245,7 @@ namespace KJS {
     if (entry->attr & Function) // function: put as override property
       thisObj->JSObject::put(exec, propertyName, value, attr);
     else if (!(entry->attr & ReadOnly))
-      thisObj->putValueProperty(exec, entry->value, value, attr);
+      thisObj->putValueProperty(exec, entry->value.intValue, value, attr);
 
     return true;
   }
@@ -325,7 +330,7 @@ namespace KJS {
     \
     };
 
-#define KJS_IMPLEMENT_PROTOTYPE(ClassName, ClassPrototype, ClassFunction) \
+#define KJS_IMPLEMENT_PROTOTYPE(ClassName, ClassPrototype) \
     const ClassInfo ClassPrototype::info = { ClassName"Prototype", 0, &ClassPrototype##Table  }; \
     JSObject* ClassPrototype::self(ExecState* exec) \
     { \
@@ -334,22 +339,24 @@ namespace KJS {
     } \
     bool ClassPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
-      return getStaticFunctionSlot<ClassFunction, JSObject>(exec, &ClassPrototype##Table, this, propertyName, slot); \
+      return getStaticFunctionSlot<JSObject>(exec, &ClassPrototype##Table, this, propertyName, slot); \
     }
 
-#define KJS_IMPLEMENT_PROTOTYPE_FUNCTION(ClassFunction) \
-  class ClassFunction : public InternalFunctionImp { \
-  public: \
-    ClassFunction(ExecState* exec, int i, int len, const Identifier& name) \
-      : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name) \
-      , id(i) \
-    { \
-       put(exec, exec->propertyNames().length, jsNumber(len), DontDelete|ReadOnly|DontEnum); \
-    } \
-    /* Macro user needs to implement the callAsFunction function. */ \
-    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args); \
-  private: \
-    int id; \
-  };
+#define KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE(ClassFunction) \
+    class ClassFunction : public KJS::InternalFunctionImp { \
+    public: \
+        static KJS::InternalFunctionImp* create(KJS::ExecState* exec, int len, const KJS::Identifier& name) \
+        { \
+            return new ClassFunction(exec, len, name); \
+        } \
+        ClassFunction(KJS::ExecState* exec, int len, const KJS::Identifier& name) \
+            : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name) \
+        { \
+            put(exec, exec->propertyNames().length, KJS::jsNumber(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum); \
+        } \
+        \
+        /* Macro user needs to implement the callAsFunction function. */ \
+        virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&); \
+    }; \
 
 #endif // KJS_lookup_h

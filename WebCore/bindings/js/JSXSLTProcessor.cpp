@@ -44,20 +44,19 @@ const ClassInfo JSXSLTProcessor::info = { "XSLTProcessor", 0, 0 };
 
 /*
 @begin XSLTProcessorPrototypeTable 7
-  importStylesheet      JSXSLTProcessor::ImportStylesheet     DontDelete|Function 1
-  transformToFragment   JSXSLTProcessor::TransformToFragment  DontDelete|Function 2
-  transformToDocument   JSXSLTProcessor::TransformToDocument  DontDelete|Function 2
-  setParameter          JSXSLTProcessor::SetParameter         DontDelete|Function 3
-  getParameter          JSXSLTProcessor::GetParameter         DontDelete|Function 2
-  removeParameter       JSXSLTProcessor::RemoveParameter      DontDelete|Function 2
-  clearParameters       JSXSLTProcessor::ClearParameters      DontDelete|Function 0
-  reset                 JSXSLTProcessor::Reset                DontDelete|Function 0
+  importStylesheet      &JSXSLTProcessorPrototypeFunctionImportStylesheet::create     DontDelete|Function 1
+  transformToFragment   &JSXSLTProcessorPrototypeFunctionTransformToFragment::create  DontDelete|Function 2
+  transformToDocument   &JSXSLTProcessorPrototypeFunctionTransformToDocument::create  DontDelete|Function 2
+  setParameter          &JSXSLTProcessorPrototypeFunctionSetParameter::create         DontDelete|Function 3
+  getParameter          &JSXSLTProcessorPrototypeFunctionGetParameter::create         DontDelete|Function 2
+  removeParameter       &JSXSLTProcessorPrototypeFunctionRemoveParameter::create      DontDelete|Function 2
+  clearParameters       &JSXSLTProcessorPrototypeFunctionClearParameters::create      DontDelete|Function 0
+  reset                 &JSXSLTProcessorPrototypeFunctionReset::create                DontDelete|Function 0
 @end
 */
 
 KJS_DEFINE_PROTOTYPE(XSLTProcessorPrototype)
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(XSLTProcessorPrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("XSLTProcessor", XSLTProcessorPrototype, XSLTProcessorPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("XSLTProcessor", XSLTProcessorPrototype)
 
 JSXSLTProcessor::JSXSLTProcessor(ExecState *exec) : m_impl(new XSLTProcessor())
 {
@@ -69,85 +68,119 @@ JSXSLTProcessor::~JSXSLTProcessor()
     ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *XSLTProcessorPrototypeFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* JSXSLTProcessorPrototypeFunctionImportStylesheet::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
         return throwError(exec, TypeError);
-    XSLTProcessor &processor = *static_cast<JSXSLTProcessor *>(thisObj)->impl();
-    switch (id) {
-        case JSXSLTProcessor::ImportStylesheet:
-        {
-            JSValue *nodeVal = args[0];
-            if (nodeVal->isObject(&JSNode::info)) {
-                JSNode* node = static_cast<JSNode*>(nodeVal);
-                processor.importStylesheet(node->impl());
-                return jsUndefined();
-            }
-            // Throw exception?
-            break;
-        }
-        case JSXSLTProcessor::TransformToFragment:
-        {
-            JSValue *nodeVal = args[0];
-            JSValue *docVal = args[1];
-            if (nodeVal->isObject(&JSNode::info) && docVal->isObject(&JSDocument::info)) {
-                Node* node = static_cast<JSNode*>(nodeVal)->impl();
-                Document* doc = static_cast<Document*>(static_cast<JSDocument *>(docVal)->impl());
-                return toJS(exec, processor.transformToFragment(node, doc).get());
-            }
-            // Throw exception?
-            break;
-        }
-        case JSXSLTProcessor::TransformToDocument:
-        {
-            JSValue *nodeVal = args[0];
-            if (nodeVal->isObject(&JSNode::info)) {
-                JSNode* node = static_cast<JSNode*>(nodeVal);
-                RefPtr<Document> resultDocument = processor.transformToDocument(node->impl());
-                if (resultDocument)
-                    return toJS(exec, resultDocument.get());
-                return jsUndefined();
-            }
-            // Throw exception?
-            break;
-        }
-        case JSXSLTProcessor::SetParameter:
-        {
-            if (args[1]->isUndefinedOrNull() || args[2]->isUndefinedOrNull())
-                return jsUndefined(); // Throw exception?
-            String namespaceURI = args[0]->toString(exec);
-            String localName = args[1]->toString(exec);
-            String value = args[2]->toString(exec);
-            processor.setParameter(namespaceURI, localName, value);
-            return jsUndefined();
-        }
-        case JSXSLTProcessor::GetParameter:
-        {
-            if (args[1]->isUndefinedOrNull())
-                return jsUndefined();
-            String namespaceURI = args[0]->toString(exec);
-            String localName = args[1]->toString(exec);
-            String value = processor.getParameter(namespaceURI, localName);
-            if (!value.isNull())
-                return jsString(value);
-            return jsUndefined();
-        }
-        case JSXSLTProcessor::RemoveParameter:
-        {
-            if (args[1]->isUndefinedOrNull())
-                return jsUndefined();
-            String namespaceURI = args[0]->toString(exec);
-            String localName = args[1]->toString(exec);
-            processor.removeParameter(namespaceURI, localName);
-            return jsUndefined();
-        }
-        case JSXSLTProcessor::ClearParameters:
-            processor.clearParameters();
-            return jsUndefined();
-        case JSXSLTProcessor::Reset:
-            processor.reset();
-            return jsUndefined();
+    XSLTProcessor& processor = *static_cast<JSXSLTProcessor*>(thisObj)->impl();
+
+    JSValue *nodeVal = args[0];
+    if (nodeVal->isObject(&JSNode::info)) {
+        JSNode* node = static_cast<JSNode*>(nodeVal);
+        processor.importStylesheet(node->impl());
+        return jsUndefined();
     }
+    // Throw exception?
+    return jsUndefined();
+}
+
+JSValue* JSXSLTProcessorPrototypeFunctionTransformToFragment::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
+        return throwError(exec, TypeError);
+    XSLTProcessor& processor = *static_cast<JSXSLTProcessor*>(thisObj)->impl();
+
+    JSValue *nodeVal = args[0];
+    JSValue *docVal = args[1];
+    if (nodeVal->isObject(&JSNode::info) && docVal->isObject(&JSDocument::info)) {
+        Node* node = static_cast<JSNode*>(nodeVal)->impl();
+        Document* doc = static_cast<Document*>(static_cast<JSDocument *>(docVal)->impl());
+        return toJS(exec, processor.transformToFragment(node, doc).get());
+    }
+    // Throw exception?
+    return jsUndefined();
+}
+
+JSValue* JSXSLTProcessorPrototypeFunctionTransformToDocument::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
+        return throwError(exec, TypeError);
+    XSLTProcessor& processor = *static_cast<JSXSLTProcessor*>(thisObj)->impl();
+
+    JSValue *nodeVal = args[0];
+    if (nodeVal->isObject(&JSNode::info)) {
+        JSNode* node = static_cast<JSNode*>(nodeVal);
+        RefPtr<Document> resultDocument = processor.transformToDocument(node->impl());
+        if (resultDocument)
+            return toJS(exec, resultDocument.get());
+        return jsUndefined();
+    }
+    // Throw exception?
+    return jsUndefined();
+}
+
+JSValue* JSXSLTProcessorPrototypeFunctionSetParameter::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
+        return throwError(exec, TypeError);
+    XSLTProcessor& processor = *static_cast<JSXSLTProcessor*>(thisObj)->impl();
+
+    if (args[1]->isUndefinedOrNull() || args[2]->isUndefinedOrNull())
+        return jsUndefined(); // Throw exception?
+    String namespaceURI = args[0]->toString(exec);
+    String localName = args[1]->toString(exec);
+    String value = args[2]->toString(exec);
+    processor.setParameter(namespaceURI, localName, value);
+    return jsUndefined();
+}
+
+JSValue* JSXSLTProcessorPrototypeFunctionGetParameter::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
+        return throwError(exec, TypeError);
+    XSLTProcessor& processor = *static_cast<JSXSLTProcessor*>(thisObj)->impl();
+
+    if (args[1]->isUndefinedOrNull())
+        return jsUndefined();
+    String namespaceURI = args[0]->toString(exec);
+    String localName = args[1]->toString(exec);
+    String value = processor.getParameter(namespaceURI, localName);
+    if (!value.isNull())
+        return jsString(value);
+    return jsUndefined();
+}
+
+JSValue* JSXSLTProcessorPrototypeFunctionRemoveParameter::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
+        return throwError(exec, TypeError);
+    XSLTProcessor& processor = *static_cast<JSXSLTProcessor*>(thisObj)->impl();
+
+    if (args[1]->isUndefinedOrNull())
+        return jsUndefined();
+    String namespaceURI = args[0]->toString(exec);
+    String localName = args[1]->toString(exec);
+    processor.removeParameter(namespaceURI, localName);
+    return jsUndefined();
+}
+
+JSValue* JSXSLTProcessorPrototypeFunctionClearParameters::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
+        return throwError(exec, TypeError);
+    XSLTProcessor& processor = *static_cast<JSXSLTProcessor*>(thisObj)->impl();
+
+    processor.clearParameters();
+    return jsUndefined();
+}
+
+JSValue* JSXSLTProcessorPrototypeFunctionReset::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
+        return throwError(exec, TypeError);
+    XSLTProcessor& processor = *static_cast<JSXSLTProcessor*>(thisObj)->impl();
+
+    processor.reset();
     return jsUndefined();
 }
 

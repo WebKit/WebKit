@@ -25,6 +25,7 @@
 #include "function_object.h"
 #include "JSWrapperObject.h"
 #include "internal.h"
+#include "lookup.h"
 
 namespace KJS {
 
@@ -80,27 +81,53 @@ namespace KJS {
   /**
    * @internal
    *
-   * Class to implement all methods that are properties of the
+   * Classes to implement all methods that are properties of the
    * String.prototype object
    */
-  class StringProtoFunc : public InternalFunctionImp {
-  public:
-    StringProtoFunc(ExecState *exec, int i, int len, const Identifier&);
+#define FOR_EACH_CLASS(macro) \
+    macro(StringProtoFuncToString) \
+    macro(StringProtoFuncValueOf) \
+    macro(StringProtoFuncCharAt) \
+    macro(StringProtoFuncCharCodeAt) \
+    macro(StringProtoFuncConcat) \
+    macro(StringProtoFuncIndexOf) \
+    macro(StringProtoFuncLastIndexOf) \
+    macro(StringProtoFuncMatch) \
+    macro(StringProtoFuncReplace) \
+    macro(StringProtoFuncSearch) \
+    macro(StringProtoFuncSlice) \
+    macro(StringProtoFuncSplit) \
+    macro(StringProtoFuncSubstr) \
+    macro(StringProtoFuncSubstring) \
+    macro(StringProtoFuncToLowerCase) \
+    macro(StringProtoFuncToUpperCase) \
+    macro(StringProtoFuncToLocaleLowerCase) \
+    macro(StringProtoFuncToLocaleUpperCase) \
+    macro(StringProtoFuncLocaleCompare) \
 
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+#define FOR_EACH_CLASS_NOT_PURE_ECMA(macro) \
+    macro(StringProtoFuncBig) \
+    macro(StringProtoFuncSmall) \
+    macro(StringProtoFuncBlink) \
+    macro(StringProtoFuncBold) \
+    macro(StringProtoFuncFixed) \
+    macro(StringProtoFuncItalics) \
+    macro(StringProtoFuncStrike) \
+    macro(StringProtoFuncSub) \
+    macro(StringProtoFuncSup) \
+    macro(StringProtoFuncFontcolor) \
+    macro(StringProtoFuncFontsize) \
+    macro(StringProtoFuncAnchor) \
+    macro(StringProtoFuncLink) \
 
-    enum { ToString, ValueOf, CharAt, CharCodeAt, Concat, IndexOf, LastIndexOf,
-           Match, Replace, Search, Slice, Split,
-           Substr, Substring, FromCharCode, ToLowerCase, ToUpperCase,
-           ToLocaleLowerCase, ToLocaleUpperCase, LocaleCompare
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
 #ifndef KJS_PURE_ECMA
-           , Big, Small, Blink, Bold, Fixed, Italics, Strike, Sub, Sup,
-           Fontcolor, Fontsize, Anchor, Link
+FOR_EACH_CLASS_NOT_PURE_ECMA(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
 #endif
-    };
-  private:
-    int id;
-  };
+
+#undef FOR_EACH_CLASS
+#undef FOR_EACH_CLASS_NOT_PURE_ECMA
+
 
   /**
    * @internal

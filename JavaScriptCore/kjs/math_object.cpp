@@ -28,7 +28,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
-using namespace KJS;
+namespace KJS {
 
 // ------------------------------ MathObjectImp --------------------------------
 
@@ -36,32 +36,32 @@ const ClassInfo MathObjectImp::info = { "Math", 0, &mathTable };
 
 /* Source for math_object.lut.h
 @begin mathTable 21
-  E             MathObjectImp::Euler    DontEnum|DontDelete|ReadOnly
-  LN2           MathObjectImp::Ln2      DontEnum|DontDelete|ReadOnly
-  LN10          MathObjectImp::Ln10     DontEnum|DontDelete|ReadOnly
-  LOG2E         MathObjectImp::Log2E    DontEnum|DontDelete|ReadOnly
-  LOG10E        MathObjectImp::Log10E   DontEnum|DontDelete|ReadOnly
-  PI            MathObjectImp::Pi       DontEnum|DontDelete|ReadOnly
-  SQRT1_2       MathObjectImp::Sqrt1_2  DontEnum|DontDelete|ReadOnly
-  SQRT2         MathObjectImp::Sqrt2    DontEnum|DontDelete|ReadOnly
-  abs           MathObjectImp::Abs      DontEnum|Function 1
-  acos          MathObjectImp::ACos     DontEnum|Function 1
-  asin          MathObjectImp::ASin     DontEnum|Function 1
-  atan          MathObjectImp::ATan     DontEnum|Function 1
-  atan2         MathObjectImp::ATan2    DontEnum|Function 2
-  ceil          MathObjectImp::Ceil     DontEnum|Function 1
-  cos           MathObjectImp::Cos      DontEnum|Function 1
-  exp           MathObjectImp::Exp      DontEnum|Function 1
-  floor         MathObjectImp::Floor    DontEnum|Function 1
-  log           MathObjectImp::Log      DontEnum|Function 1
-  max           MathObjectImp::Max      DontEnum|Function 2
-  min           MathObjectImp::Min      DontEnum|Function 2
-  pow           MathObjectImp::Pow      DontEnum|Function 2
-  random        MathObjectImp::Random   DontEnum|Function 0
-  round         MathObjectImp::Round    DontEnum|Function 1
-  sin           MathObjectImp::Sin      DontEnum|Function 1
-  sqrt          MathObjectImp::Sqrt     DontEnum|Function 1
-  tan           MathObjectImp::Tan      DontEnum|Function 1
+  E             MathObjectImp::Euler           DontEnum|DontDelete|ReadOnly
+  LN2           MathObjectImp::Ln2             DontEnum|DontDelete|ReadOnly
+  LN10          MathObjectImp::Ln10            DontEnum|DontDelete|ReadOnly
+  LOG2E         MathObjectImp::Log2E           DontEnum|DontDelete|ReadOnly
+  LOG10E        MathObjectImp::Log10E          DontEnum|DontDelete|ReadOnly
+  PI            MathObjectImp::Pi              DontEnum|DontDelete|ReadOnly
+  SQRT1_2       MathObjectImp::Sqrt1_2         DontEnum|DontDelete|ReadOnly
+  SQRT2         MathObjectImp::Sqrt2           DontEnum|DontDelete|ReadOnly
+  abs           &MathProtoFuncAbs::create      DontEnum|Function 1
+  acos          &MathProtoFuncACos::create     DontEnum|Function 1
+  asin          &MathProtoFuncASin::create     DontEnum|Function 1
+  atan          &MathProtoFuncATan::create     DontEnum|Function 1
+  atan2         &MathProtoFuncATan2::create    DontEnum|Function 2
+  ceil          &MathProtoFuncCeil::create     DontEnum|Function 1
+  cos           &MathProtoFuncCos::create      DontEnum|Function 1
+  exp           &MathProtoFuncExp::create      DontEnum|Function 1
+  floor         &MathProtoFuncFloor::create    DontEnum|Function 1
+  log           &MathProtoFuncLog::create      DontEnum|Function 1
+  max           &MathProtoFuncMax::create      DontEnum|Function 2
+  min           &MathProtoFuncMin::create      DontEnum|Function 2
+  pow           &MathProtoFuncPow::create      DontEnum|Function 2
+  random        &MathProtoFuncRandom::create   DontEnum|Function 0 
+  round         &MathProtoFuncRound::create    DontEnum|Function 1
+  sin           &MathProtoFuncSin::create      DontEnum|Function 1
+  sqrt          &MathProtoFuncSqrt::create     DontEnum|Function 1
+  tan           &MathProtoFuncTan::create      DontEnum|Function 1
 @end
 */
 
@@ -75,7 +75,7 @@ MathObjectImp::MathObjectImp(ExecState * /*exec*/,
 
 bool MathObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
 {
-  return getStaticPropertySlot<MathFuncImp, MathObjectImp, JSObject>(exec, &mathTable, this, propertyName, slot);
+  return getStaticPropertySlot<MathObjectImp, JSObject>(exec, &mathTable, this, propertyName, slot);
 }
 
 JSValue *MathObjectImp::getValueProperty(ExecState *, int token) const
@@ -113,126 +113,154 @@ JSValue *MathObjectImp::getValueProperty(ExecState *, int token) const
   return jsNumber(d);
 }
 
-// ------------------------------ MathObjectImp --------------------------------
+// ------------------------------ Functions --------------------------------
+
+JSValue* MathProtoFuncAbs::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return signbit(arg) ? jsNumber(-arg) : jsNumber(arg);
+}
+
+JSValue* MathProtoFuncACos::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(acos(arg));
+}
+
+JSValue* MathProtoFuncASin::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(asin(arg));
+}
+
+JSValue* MathProtoFuncATan::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(atan(arg));
+}
+
+JSValue* MathProtoFuncATan2::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    double arg2 = args[1]->toNumber(exec);
+    return jsNumber(atan2(arg, arg2));
+}
+
+JSValue* MathProtoFuncCeil::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    if (signbit(arg) && arg > -1.0)
+        return jsNumber(-0.0);
+    return jsNumber(ceil(arg));
+}
+
+JSValue* MathProtoFuncCos::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(cos(arg));
+}
+
+JSValue* MathProtoFuncExp::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(exp(arg));
+}
+
+JSValue* MathProtoFuncFloor::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    if (signbit(arg) && arg == 0.0)
+        return jsNumber(-0.0);
+    return jsNumber(floor(arg));
+}
+
+JSValue* MathProtoFuncLog::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(log(arg));
+}
+
+JSValue* MathProtoFuncMax::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    unsigned argsCount = args.size();
+    double result = -Inf;
+    for (unsigned k = 0; k < argsCount; ++k) {
+        double val = args[k]->toNumber(exec);
+        if (isnan(val)) {
+            result = NaN;
+            break;
+        }
+        if (val > result || (val == 0 && result == 0 && !signbit(val)))
+            result = val;
+    }
+    return jsNumber(result);
+}
+
+JSValue* MathProtoFuncMin::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    unsigned argsCount = args.size();
+    double result = +Inf;
+    for (unsigned k = 0; k < argsCount; ++k) {
+        double val = args[k]->toNumber(exec);
+        if (isnan(val)) {
+            result = NaN;
+            break;
+        }
+        if (val < result || (val == 0 && result == 0 && signbit(val)))
+            result = val;
+    }
+    return jsNumber(result);
+}
+
+JSValue* MathProtoFuncPow::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    // ECMA 15.8.2.1.13
+
+    double arg = args[0]->toNumber(exec);
+    double arg2 = args[1]->toNumber(exec);
+
+    if (isnan(arg2))
+        return jsNumber(NaN);
+    if (isinf(arg2) && fabs(arg) == 1)
+        return jsNumber(NaN);
+    return jsNumber(pow(arg, arg2));
+}
 
 static bool didInitRandom;
 
-MathFuncImp::MathFuncImp(ExecState* exec, int i, int l, const Identifier& name)
-  : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
-  , id(i)
+JSValue* MathProtoFuncRandom::callAsFunction(ExecState*, JSObject*, const List&)
 {
-  putDirect(exec->propertyNames().length, l, DontDelete|ReadOnly|DontEnum);
+    if (!didInitRandom) {
+        wtf_random_init();
+        didInitRandom = true;
+    }
+    return jsNumber(wtf_random());
 }
 
-JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, const List &args)
+JSValue* MathProtoFuncRound::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
-  double arg = args[0]->toNumber(exec);
-  double arg2 = args[1]->toNumber(exec);
-  double result;
-
-  switch (id) {
-  case MathObjectImp::Abs:
-    result = signbit(arg) ? -arg : arg;
-    break;
-  case MathObjectImp::ACos:
-    result = acos(arg);
-    break;
-  case MathObjectImp::ASin:
-    result = asin(arg);
-    break;
-  case MathObjectImp::ATan:
-    result = atan(arg);
-    break;
-  case MathObjectImp::ATan2:
-    result = atan2(arg, arg2);
-    break;
-  case MathObjectImp::Ceil:
-    if (signbit(arg) && arg > -1.0)
-      result = -0.0;
-    else
-      result = ceil(arg);
-    break;
-  case MathObjectImp::Cos:
-    result = cos(arg);
-    break;
-  case MathObjectImp::Exp:
-    result = exp(arg);
-    break;
-  case MathObjectImp::Floor:
-    if (signbit(arg) && arg == 0.0)
-      result = -0.0;
-    else
-      result = floor(arg);
-    break;
-  case MathObjectImp::Log:
-    result = log(arg);
-    break;
-  case MathObjectImp::Max: {
-    unsigned int argsCount = args.size();
-    result = -Inf;
-    for ( unsigned int k = 0 ; k < argsCount ; ++k ) {
-      double val = args[k]->toNumber(exec);
-      if ( isnan( val ) )
-      {
-        result = NaN;
-        break;
-      }
-      if ( val > result || (val == 0 && result == 0 && !signbit(val)) )
-        result = val;
-    }
-    break;
-  }
-  case MathObjectImp::Min: {
-    unsigned int argsCount = args.size();
-    result = +Inf;
-    for ( unsigned int k = 0 ; k < argsCount ; ++k ) {
-      double val = args[k]->toNumber(exec);
-      if ( isnan( val ) )
-      {
-        result = NaN;
-        break;
-      }
-      if ( val < result || (val == 0 && result == 0 && signbit(val)) )
-        result = val;
-    }
-    break;
-  }
-  case MathObjectImp::Pow:
-    // ECMA 15.8.2.1.13
-    if (isnan(arg2))
-      result = NaN;
-    else if (isinf(arg2) && fabs(arg) == 1)
-      result = NaN;
-    else
-      result = pow(arg, arg2);
-    break;
-  case MathObjectImp::Random:
-      if (!didInitRandom) {
-          wtf_random_init();
-          didInitRandom = true;
-      }
-      result = wtf_random();
-      break;
-  case MathObjectImp::Round:
+    double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg >= -0.5)
-        result = -0.0;
-    else
-        result = floor(arg + 0.5);
-    break;
-  case MathObjectImp::Sin:
-    result = sin(arg);
-    break;
-  case MathObjectImp::Sqrt:
-    result = sqrt(arg);
-    break;
-  case MathObjectImp::Tan:
-    result = tan(arg);
-    break;
-
-  default:
-    result = 0.0;
-    ASSERT(0);
-  }
-
-  return jsNumber(result);
+         return jsNumber(-0.0);
+    return jsNumber(floor(arg + 0.5));
 }
+
+JSValue* MathProtoFuncSin::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(sin(arg));
+}
+
+JSValue* MathProtoFuncSqrt::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(sqrt(arg));
+}
+
+JSValue* MathProtoFuncTan::callAsFunction(ExecState* exec, JSObject*, const List& args)
+{
+    double arg = args[0]->toNumber(exec);
+    return jsNumber(tan(arg));
+}
+
+} // namespace KJS

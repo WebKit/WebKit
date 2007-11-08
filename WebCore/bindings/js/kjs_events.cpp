@@ -354,21 +354,20 @@ const ClassInfo JSClipboard::info = { "Clipboard", 0, &JSClipboardTable };
 
 /* Source for JSClipboardTable. Use "make hashtables" to regenerate.
 @begin JSClipboardTable 3
-  dropEffect    WebCore::JSClipboard::DropEffect   DontDelete
-  effectAllowed WebCore::JSClipboard::EffectAllowed        DontDelete
-  types         WebCore::JSClipboard::Types        DontDelete|ReadOnly
+  dropEffect    WebCore::JSClipboard::DropEffect                           DontDelete
+  effectAllowed WebCore::JSClipboard::EffectAllowed                        DontDelete
+  types         WebCore::JSClipboard::Types                                DontDelete|ReadOnly
 @end
 @begin JSClipboardPrototypeTable 4
-  clearData     WebCore::JSClipboard::ClearData    DontDelete|Function 0
-  getData       WebCore::JSClipboard::GetData      DontDelete|Function 1
-  setData       WebCore::JSClipboard::SetData      DontDelete|Function 2
-  setDragImage  WebCore::JSClipboard::SetDragImage DontDelete|Function 3
+  clearData     &WebCore::JSClipboardPrototypeFunctionClearData::create    DontDelete|Function 0
+  getData       &WebCore::JSClipboardPrototypeFunctionGetData::create      DontDelete|Function 1
+  setData       &WebCore::JSClipboardPrototypeFunctionSetData::create      DontDelete|Function 2
+  setDragImage  &WebCore::JSClipboardPrototypeFunctionSetDragImage::create DontDelete|Function 3
 @end
 */
 
 KJS_DEFINE_PROTOTYPE(JSClipboardPrototype)
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSClipboardPrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("Clipboard", JSClipboardPrototype, JSClipboardPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("Clipboard", JSClipboardPrototype)
 
 JSClipboard::JSClipboard(ExecState* exec, Clipboard* clipboard)
     : m_impl(clipboard)
@@ -436,65 +435,82 @@ void JSClipboard::putValueProperty(ExecState* exec, int token, JSValue* value, i
     }
 }
 
-JSValue* JSClipboardPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* JSClipboardPrototypeFunctionClearData::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&JSClipboard::info))
         return throwError(exec, TypeError);
 
     Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
-    switch (id) {
-        case JSClipboard::ClearData:
-            if (args.size() == 0) {
-                clipboard->clearAllData();
-                return jsUndefined();
-            } else if (args.size() == 1) {
-                clipboard->clearData(args[0]->toString(exec));
-                return jsUndefined();
-            } else
-                return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
-        case JSClipboard::GetData:
-        {
-            if (args.size() == 1) {
-                bool success;
-                String result = clipboard->getData(args[0]->toString(exec), success);
-                if (success)
-                    return jsString(result);
-                return jsUndefined();
-            } else
-                return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
-        }
-        case JSClipboard::SetData:
-            if (args.size() == 2)
-                return jsBoolean(clipboard->setData(args[0]->toString(exec), args[1]->toString(exec)));
-            return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
-        case JSClipboard::SetDragImage:
-        {
-            if (!clipboard->isForDragging())
-                return jsUndefined();
 
-            if (args.size() != 3)
-                return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");
+    if (args.size() == 0) {
+        clipboard->clearAllData();
+        return jsUndefined();
+    } else if (args.size() == 1) {
+        clipboard->clearData(args[0]->toString(exec));
+        return jsUndefined();
+    } else
+        return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
+}
 
-            int x = args[1]->toInt32(exec);
-            int y = args[2]->toInt32(exec);
+JSValue* JSClipboardPrototypeFunctionGetData::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&JSClipboard::info))
+        return throwError(exec, TypeError);
 
-            // See if they passed us a node
-            Node* node = toNode(args[0]);
-            if (!node)
-                return throwError(exec, TypeError);
+    Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
 
-            if (!node->isElementNode())
-                return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
+    if (args.size() == 1) {
+        bool success;
+        String result = clipboard->getData(args[0]->toString(exec), success);
+        if (success)
+            return jsString(result);
+        return jsUndefined();
+    } else
+        return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
+}
 
-            if (static_cast<Element*>(node)->hasLocalName(imgTag) &&
-                !node->inDocument())
-                clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
-            else
-                clipboard->setDragImageElement(node, IntPoint(x, y));
+JSValue* JSClipboardPrototypeFunctionSetData::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&JSClipboard::info))
+        return throwError(exec, TypeError);
 
-            return jsUndefined();
-        }
-    }
+    Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
+
+    if (args.size() == 2)
+        return jsBoolean(clipboard->setData(args[0]->toString(exec), args[1]->toString(exec)));
+    return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
+}
+
+JSValue* JSClipboardPrototypeFunctionSetDragImage::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&JSClipboard::info))
+        return throwError(exec, TypeError);
+
+    Clipboard* clipboard = static_cast<JSClipboard*>(thisObj)->impl();
+
+    if (!clipboard->isForDragging())
+        return jsUndefined();
+
+    if (args.size() != 3)
+        return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");
+
+    int x = args[1]->toInt32(exec);
+    int y = args[2]->toInt32(exec);
+
+    // See if they passed us a node
+    Node* node = toNode(args[0]);
+    if (!node)
+        return throwError(exec, TypeError);
+
+    if (!node->isElementNode())
+        return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
+
+    if (static_cast<Element*>(node)->hasLocalName(imgTag) &&
+        !node->inDocument())
+        clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
+    else
+        clipboard->setDragImageElement(node, IntPoint(x, y));
+
     return jsUndefined();
 }
 

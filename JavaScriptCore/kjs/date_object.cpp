@@ -373,52 +373,52 @@ static inline bool isTime_tSigned()
 const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, &dateTable};
 
 /* Source for date_object.lut.h
-   We use a negative ID to denote the "UTC" variant.
+   FIXMEL We could use templates to simplify the UTC variants.
 @begin dateTable 61
-  toString              DateProtoFunc::ToString                 DontEnum|Function       0
-  toUTCString           -DateProtoFunc::ToUTCString             DontEnum|Function       0
-  toDateString          DateProtoFunc::ToDateString             DontEnum|Function       0
-  toTimeString          DateProtoFunc::ToTimeString             DontEnum|Function       0
-  toLocaleString        DateProtoFunc::ToLocaleString           DontEnum|Function       0
-  toLocaleDateString    DateProtoFunc::ToLocaleDateString       DontEnum|Function       0
-  toLocaleTimeString    DateProtoFunc::ToLocaleTimeString       DontEnum|Function       0
-  valueOf               DateProtoFunc::ValueOf                  DontEnum|Function       0
-  getTime               DateProtoFunc::GetTime                  DontEnum|Function       0
-  getFullYear           DateProtoFunc::GetFullYear              DontEnum|Function       0
-  getUTCFullYear        -DateProtoFunc::GetFullYear             DontEnum|Function       0
-  toGMTString           -DateProtoFunc::ToGMTString             DontEnum|Function       0
-  getMonth              DateProtoFunc::GetMonth                 DontEnum|Function       0
-  getUTCMonth           -DateProtoFunc::GetMonth                DontEnum|Function       0
-  getDate               DateProtoFunc::GetDate                  DontEnum|Function       0
-  getUTCDate            -DateProtoFunc::GetDate                 DontEnum|Function       0
-  getDay                DateProtoFunc::GetDay                   DontEnum|Function       0
-  getUTCDay             -DateProtoFunc::GetDay                  DontEnum|Function       0
-  getHours              DateProtoFunc::GetHours                 DontEnum|Function       0
-  getUTCHours           -DateProtoFunc::GetHours                DontEnum|Function       0
-  getMinutes            DateProtoFunc::GetMinutes               DontEnum|Function       0
-  getUTCMinutes         -DateProtoFunc::GetMinutes              DontEnum|Function       0
-  getSeconds            DateProtoFunc::GetSeconds               DontEnum|Function       0
-  getUTCSeconds         -DateProtoFunc::GetSeconds              DontEnum|Function       0
-  getMilliseconds       DateProtoFunc::GetMilliSeconds          DontEnum|Function       0
-  getUTCMilliseconds    -DateProtoFunc::GetMilliSeconds         DontEnum|Function       0
-  getTimezoneOffset     DateProtoFunc::GetTimezoneOffset        DontEnum|Function       0
-  setTime               DateProtoFunc::SetTime                  DontEnum|Function       1
-  setMilliseconds       DateProtoFunc::SetMilliSeconds          DontEnum|Function       1
-  setUTCMilliseconds    -DateProtoFunc::SetMilliSeconds         DontEnum|Function       1
-  setSeconds            DateProtoFunc::SetSeconds               DontEnum|Function       2
-  setUTCSeconds         -DateProtoFunc::SetSeconds              DontEnum|Function       2
-  setMinutes            DateProtoFunc::SetMinutes               DontEnum|Function       3
-  setUTCMinutes         -DateProtoFunc::SetMinutes              DontEnum|Function       3
-  setHours              DateProtoFunc::SetHours                 DontEnum|Function       4
-  setUTCHours           -DateProtoFunc::SetHours                DontEnum|Function       4
-  setDate               DateProtoFunc::SetDate                  DontEnum|Function       1
-  setUTCDate            -DateProtoFunc::SetDate                 DontEnum|Function       1
-  setMonth              DateProtoFunc::SetMonth                 DontEnum|Function       2
-  setUTCMonth           -DateProtoFunc::SetMonth                DontEnum|Function       2
-  setFullYear           DateProtoFunc::SetFullYear              DontEnum|Function       3
-  setUTCFullYear        -DateProtoFunc::SetFullYear             DontEnum|Function       3
-  setYear               DateProtoFunc::SetYear                  DontEnum|Function       1
-  getYear               DateProtoFunc::GetYear                  DontEnum|Function       0
+  toString              &DateProtoFuncToString::create                DontEnum|Function       0
+  toUTCString           &DateProtoFuncToUTCString::create             DontEnum|Function       0
+  toDateString          &DateProtoFuncToDateString::create            DontEnum|Function       0
+  toTimeString          &DateProtoFuncToTimeString::create            DontEnum|Function       0
+  toLocaleString        &DateProtoFuncToLocaleString::create          DontEnum|Function       0
+  toLocaleDateString    &DateProtoFuncToLocaleDateString::create      DontEnum|Function       0
+  toLocaleTimeString    &DateProtoFuncToLocaleTimeString::create      DontEnum|Function       0
+  valueOf               &DateProtoFuncValueOf::create                 DontEnum|Function       0
+  getTime               &DateProtoFuncGetTime::create                 DontEnum|Function       0
+  getFullYear           &DateProtoFuncGetFullYear::create             DontEnum|Function       0
+  getUTCFullYear        &DateProtoFuncGetUTCFullYear::create          DontEnum|Function       0
+  toGMTString           &DateProtoFuncToGMTString::create             DontEnum|Function       0
+  getMonth              &DateProtoFuncGetMonth::create                DontEnum|Function       0
+  getUTCMonth           &DateProtoFuncGetUTCMonth::create             DontEnum|Function       0
+  getDate               &DateProtoFuncGetDate::create                 DontEnum|Function       0
+  getUTCDate            &DateProtoFuncGetUTCDate::create              DontEnum|Function       0
+  getDay                &DateProtoFuncGetDay::create                  DontEnum|Function       0
+  getUTCDay             &DateProtoFuncGetUTCDay::create               DontEnum|Function       0
+  getHours              &DateProtoFuncGetHours::create                DontEnum|Function       0
+  getUTCHours           &DateProtoFuncGetUTCHours::create             DontEnum|Function       0
+  getMinutes            &DateProtoFuncGetMinutes::create              DontEnum|Function       0
+  getUTCMinutes         &DateProtoFuncGetUTCMinutes::create           DontEnum|Function       0
+  getSeconds            &DateProtoFuncGetSeconds::create              DontEnum|Function       0
+  getUTCSeconds         &DateProtoFuncGetUTCSeconds::create           DontEnum|Function       0
+  getMilliseconds       &DateProtoFuncGetMilliSeconds::create         DontEnum|Function       0
+  getUTCMilliseconds    &DateProtoFuncGetUTCMilliseconds::create      DontEnum|Function       0
+  getTimezoneOffset     &DateProtoFuncGetTimezoneOffset::create       DontEnum|Function       0
+  setTime               &DateProtoFuncSetTime::create                 DontEnum|Function       1
+  setMilliseconds       &DateProtoFuncSetMilliSeconds::create         DontEnum|Function       1
+  setUTCMilliseconds    &DateProtoFuncSetUTCMilliseconds::create      DontEnum|Function       1
+  setSeconds            &DateProtoFuncSetSeconds::create              DontEnum|Function       2
+  setUTCSeconds         &DateProtoFuncSetUTCSeconds::create           DontEnum|Function       2
+  setMinutes            &DateProtoFuncSetMinutes::create              DontEnum|Function       3
+  setUTCMinutes         &DateProtoFuncSetUTCMinutes::create           DontEnum|Function       3
+  setHours              &DateProtoFuncSetHours::create                DontEnum|Function       4
+  setUTCHours           &DateProtoFuncSetUTCHours::create             DontEnum|Function       4
+  setDate               &DateProtoFuncSetDate::create                 DontEnum|Function       1
+  setUTCDate            &DateProtoFuncSetUTCDate::create              DontEnum|Function       1
+  setMonth              &DateProtoFuncSetMonth::create                DontEnum|Function       2
+  setUTCMonth           &DateProtoFuncSetUTCMonth::create             DontEnum|Function       2
+  setFullYear           &DateProtoFuncSetFullYear::create             DontEnum|Function       3
+  setUTCFullYear        &DateProtoFuncSetUTCFullYear::create          DontEnum|Function       3
+  setYear               &DateProtoFuncSetYear::create                 DontEnum|Function       1
+  getYear               &DateProtoFuncGetYear::create                 DontEnum|Function       0
 @end
 */
 // ECMA 15.9.4
@@ -432,163 +432,7 @@ DatePrototype::DatePrototype(ExecState *, ObjectPrototype *objectProto)
 
 bool DatePrototype::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<DateProtoFunc, JSObject>(exec, &dateTable, this, propertyName, slot);
-}
-
-// ------------------------------ DateProtoFunc -----------------------------
-
-DateProtoFunc::DateProtoFunc(ExecState* exec, int i, int len, const Identifier& name)
-  : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
-  , id(abs(i))
-  , utc(i < 0)
-  // We use a negative ID to denote the "UTC" variant.
-{
-    putDirect(exec->propertyNames().length, len, DontDelete|ReadOnly|DontEnum);
-}
-
-JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&DateInstance::info))
-    return throwError(exec, TypeError);
-
-  DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
-
-  JSValue *result = 0;
-  UString s;
-  JSValue *v = thisDateObj->internalValue();
-  double milli = v->toNumber(exec);
-  if (isnan(milli)) {
-    switch (id) {
-      case ToString:
-      case ToDateString:
-      case ToTimeString:
-      case ToGMTString:
-      case ToUTCString:
-      case ToLocaleString:
-      case ToLocaleDateString:
-      case ToLocaleTimeString:
-        return jsString("Invalid Date");
-      case ValueOf:
-      case GetTime:
-      case GetYear:
-      case GetFullYear:
-      case GetMonth:
-      case GetDate:
-      case GetDay:
-      case GetHours:
-      case GetMinutes:
-      case GetSeconds:
-      case GetMilliSeconds:
-      case GetTimezoneOffset:
-        return jsNaN();
-    }
-  }
-  
-  double secs = floor(milli / msPerSecond);
-  double ms = milli - secs * msPerSecond;
-
-  GregorianDateTime t;
-  msToGregorianDateTime(milli, utc, t);
-
-  switch (id) {
-  case ToString:
-    return jsString(formatDate(t) + " " + formatTime(t, utc));
-  case ToDateString:
-    return jsString(formatDate(t));
-    break;
-  case ToTimeString:
-    return jsString(formatTime(t, utc));
-    break;
-  case ToGMTString:
-  case ToUTCString:
-    return jsString(formatDateUTCVariant(t) + " " + formatTime(t, utc));
-    break;
-#if PLATFORM(MAC)
-  case ToLocaleString:
-    return jsString(formatLocaleDate(exec, secs, true, true, args));
-    break;
-  case ToLocaleDateString:
-    return jsString(formatLocaleDate(exec, secs, true, false, args));
-    break;
-  case ToLocaleTimeString:
-    return jsString(formatLocaleDate(exec, secs, false, true, args));
-    break;
-#else
-  case ToLocaleString:
-    return formatLocaleDate(t, LocaleDateAndTime);
-    break;
-  case ToLocaleDateString:
-    return formatLocaleDate(t, LocaleDate);
-    break;
-  case ToLocaleTimeString:
-    return formatLocaleDate(t, LocaleTime);
-    break;
-#endif
-  case ValueOf:
-  case GetTime:
-    return jsNumber(milli);
-  case GetYear:
-    // IE returns the full year even in getYear.
-    if (exec->dynamicInterpreter()->compatMode() == Interpreter::IECompat)
-      return jsNumber(1900 + t.year);
-    return jsNumber(t.year);
-  case GetFullYear:
-    return jsNumber(1900 + t.year);
-  case GetMonth:
-    return jsNumber(t.month);
-  case GetDate:
-    return jsNumber(t.monthDay);
-  case GetDay:
-    return jsNumber(t.weekDay);
-  case GetHours:
-    return jsNumber(t.hour);
-  case GetMinutes:
-    return jsNumber(t.minute);
-  case GetSeconds:
-    return jsNumber(t.second);
-  case GetMilliSeconds:
-    return jsNumber(ms);
-  case GetTimezoneOffset:
-    return jsNumber(-gmtoffset(t) / minutesPerHour);
-  case SetTime:
-    milli = timeClip(args[0]->toNumber(exec));
-    result = jsNumber(milli);
-    thisDateObj->setInternalValue(result);
-    break;
-  case SetMilliSeconds:
-    fillStructuresUsingTimeArgs(exec, args, 1, &ms, &t);
-    break;
-  case SetSeconds:
-    fillStructuresUsingTimeArgs(exec, args, 2, &ms, &t);
-    break;
-  case SetMinutes:
-    fillStructuresUsingTimeArgs(exec, args, 3, &ms, &t);
-    break;
-  case SetHours:
-    fillStructuresUsingTimeArgs(exec, args, 4, &ms, &t);
-    break;
-  case SetDate:
-    fillStructuresUsingDateArgs(exec, args, 1, &ms, &t);
-    break;
-  case SetMonth:
-    fillStructuresUsingDateArgs(exec, args, 2, &ms, &t);    
-    break;
-  case SetFullYear:
-    fillStructuresUsingDateArgs(exec, args, 3, &ms, &t);
-    break;
-  case SetYear:
-    t.year = (args[0]->toInt32(exec) > 99 || args[0]->toInt32(exec) < 0) ? args[0]->toInt32(exec) - 1900 : args[0]->toInt32(exec);
-    break;
-  }
-
-  if (id == SetYear || id == SetMilliSeconds || id == SetSeconds ||
-      id == SetMinutes || id == SetHours || id == SetDate ||
-      id == SetMonth || id == SetFullYear ) {
-    result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
-    thisDateObj->setInternalValue(result);
-  }
-  
-  return result;
+    return getStaticFunctionSlot<JSObject>(exec, &dateTable, this, propertyName, slot);
 }
 
 // ------------------------------ DateObjectImp --------------------------------
@@ -1089,4 +933,875 @@ double timeClip(double t)
     return trunc(t);
 }
 
+// Functions
+
+JSValue* DateProtoFuncToString::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsString("Invalid Date");
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsString(formatDate(t) + " " + formatTime(t, utc));
 }
+
+JSValue* DateProtoFuncToUTCString::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsString("Invalid Date");
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsString(formatDateUTCVariant(t) + " " + formatTime(t, utc));
+}
+
+JSValue* DateProtoFuncToDateString::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsString("Invalid Date");
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsString(formatDate(t));
+}
+
+JSValue* DateProtoFuncToTimeString::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsString("Invalid Date");
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsString(formatTime(t, utc));
+}
+
+JSValue* DateProtoFuncToLocaleString::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsString("Invalid Date");
+
+#if PLATFORM(MAC)
+    double secs = floor(milli / msPerSecond);
+    return jsString(formatLocaleDate(exec, secs, true, true, args));
+#else
+    const bool utc = false;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return formatLocaleDate(t, LocaleDateAndTime);
+#endif
+}
+
+JSValue* DateProtoFuncToLocaleDateString::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsString("Invalid Date");
+
+#if PLATFORM(MAC)
+    double secs = floor(milli / msPerSecond);
+    return jsString(formatLocaleDate(exec, secs, true, false, args));
+#else
+    const bool utc = false;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return formatLocaleDate(t, LocaleDate);
+#endif
+}
+
+JSValue* DateProtoFuncToLocaleTimeString::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsString("Invalid Date");
+
+#if PLATFORM(MAC)
+    double secs = floor(milli / msPerSecond);
+    return jsString(formatLocaleDate(exec, secs, false, true, args));
+#else
+    const bool utc = false;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return formatLocaleDate(t, LocaleTime);
+#endif
+}
+
+JSValue* DateProtoFuncValueOf::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    return jsNumber(milli);
+}
+
+JSValue* DateProtoFuncGetTime::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    return jsNumber(milli);
+}
+
+JSValue* DateProtoFuncGetFullYear::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(1900 + t.year);
+}
+
+JSValue* DateProtoFuncGetUTCFullYear::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(1900 + t.year);
+}
+
+JSValue* DateProtoFuncToGMTString::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsString("Invalid Date");
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsString(formatDateUTCVariant(t) + " " + formatTime(t, utc));
+}
+
+JSValue* DateProtoFuncGetMonth::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.month);
+}
+
+JSValue* DateProtoFuncGetUTCMonth::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.month);
+}
+
+JSValue* DateProtoFuncGetDate::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.monthDay);
+}
+
+JSValue* DateProtoFuncGetUTCDate::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.monthDay);
+}
+
+JSValue* DateProtoFuncGetDay::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.weekDay);
+}
+
+JSValue* DateProtoFuncGetUTCDay::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.weekDay);
+}
+
+JSValue* DateProtoFuncGetHours::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.hour);
+}
+
+JSValue* DateProtoFuncGetUTCHours::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.hour);
+}
+
+JSValue* DateProtoFuncGetMinutes::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.minute);
+}
+
+JSValue* DateProtoFuncGetUTCMinutes::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.minute);
+}
+
+JSValue* DateProtoFuncGetSeconds::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.second);
+}
+
+JSValue* DateProtoFuncGetUTCSeconds::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(t.second);
+}
+
+JSValue* DateProtoFuncGetMilliSeconds::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+    return jsNumber(ms);
+}
+
+JSValue* DateProtoFuncGetUTCMilliseconds::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+    return jsNumber(ms);
+}
+
+JSValue* DateProtoFuncGetTimezoneOffset::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+    return jsNumber(-gmtoffset(t) / minutesPerHour);
+}
+
+JSValue* DateProtoFuncSetTime::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+
+    double milli = timeClip(args[0]->toNumber(exec));
+    JSValue* result = jsNumber(milli);
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetMilliSeconds::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingTimeArgs(exec, args, 1, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetUTCMilliseconds::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingTimeArgs(exec, args, 1, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetSeconds::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingTimeArgs(exec, args, 2, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetUTCSeconds::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingTimeArgs(exec, args, 2, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetMinutes::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingTimeArgs(exec, args, 3, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetUTCMinutes::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingTimeArgs(exec, args, 3, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetHours::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingTimeArgs(exec, args, 4, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetUTCHours::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingTimeArgs(exec, args, 4, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetDate::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingDateArgs(exec, args, 1, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetUTCDate::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingDateArgs(exec, args, 1, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetMonth::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingDateArgs(exec, args, 2, &ms, &t);    
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetUTCMonth::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingDateArgs(exec, args, 2, &ms, &t);    
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetFullYear::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingDateArgs(exec, args, 3, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetUTCFullYear::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = true;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    fillStructuresUsingDateArgs(exec, args, 3, &ms, &t);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncSetYear::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    double secs = floor(milli / msPerSecond);
+    double ms = milli - secs * msPerSecond;
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    t.year = (args[0]->toInt32(exec) > 99 || args[0]->toInt32(exec) < 0) ? args[0]->toInt32(exec) - 1900 : args[0]->toInt32(exec);
+
+    JSValue* result = jsNumber(gregorianDateTimeToMS(t, ms, utc));
+    thisDateObj->setInternalValue(result);
+    return result;
+}
+
+JSValue* DateProtoFuncGetYear::callAsFunction(ExecState* exec, JSObject* thisObj, const List&)
+{
+    if (!thisObj->inherits(&DateInstance::info))
+        return throwError(exec, TypeError);
+
+    const bool utc = false;
+
+    DateInstance* thisDateObj = static_cast<DateInstance*>(thisObj); 
+    JSValue* v = thisDateObj->internalValue();
+    double milli = v->toNumber(exec);
+    if (isnan(milli))
+        return jsNaN();
+
+    GregorianDateTime t;
+    msToGregorianDateTime(milli, utc, t);
+
+    // IE returns the full year even in getYear.
+    if (exec->dynamicInterpreter()->compatMode() == Interpreter::IECompat)
+        return jsNumber(1900 + t.year);
+    return jsNumber(t.year);
+}
+
+} // namespace KJS

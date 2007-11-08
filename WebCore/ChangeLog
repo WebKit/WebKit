@@ -1,3 +1,100 @@
+2007-11-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Convert JavaScript internal function objects to use one class per
+        function.  This avoids a switch statement inside what used to be
+        the shared function classes and will allow Shark to better analyze
+        the code.
+
+        To make this switch, the value property of the HashEntry was changed
+        to a union of an intptr_t (which is used to continue handle valueGetters)
+        and function pointer which points to a static constructor for the
+        individual new function objects.
+
+        SunSpider claims this is a 0.5% speedup.
+
+        - On the WebCore side, I updated CodeGeneratorJS.pm to generate the
+          new classes and hand updated the remain non-generated (groan) classes.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNodePrototypeFunctionAddEventListener::callAsFunction):
+        (WebCore::JSEventTargetNodePrototypeFunctionRemoveEventListener::callAsFunction):
+        (WebCore::JSEventTargetNodePrototypeFunctionDispatchEvent::callAsFunction):
+        * bindings/js/JSEventTargetNode.h:
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBaseFunctionSetSelectionRange::callAsFunction):
+        (WebCore::JSHTMLInputElementBase::getOwnPropertySlot):
+        * bindings/js/JSHTMLInputElementBase.h:
+        (WebCore::JSHTMLInputElementBase::):
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestPrototypeFunctionAbort::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionGetAllResponseHeaders::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionGetResponseHeader::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionOpen::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionSend::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionSetRequestHeader::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionOverrideMIMEType::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionAddEventListener::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionRemoveEventListener::callAsFunction):
+        (KJS::JSXMLHttpRequestPrototypeFunctionDispatchEvent::callAsFunction):
+        * bindings/js/JSXMLHttpRequest.h:
+        (KJS::JSXMLHttpRequest::impl):
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::JSXSLTProcessorPrototypeFunctionImportStylesheet::callAsFunction):
+        (KJS::JSXSLTProcessorPrototypeFunctionTransformToFragment::callAsFunction):
+        (KJS::JSXSLTProcessorPrototypeFunctionTransformToDocument::callAsFunction):
+        (KJS::JSXSLTProcessorPrototypeFunctionSetParameter::callAsFunction):
+        (KJS::JSXSLTProcessorPrototypeFunctionGetParameter::callAsFunction):
+        (KJS::JSXSLTProcessorPrototypeFunctionRemoveParameter::callAsFunction):
+        (KJS::JSXSLTProcessorPrototypeFunctionClearParameters::callAsFunction):
+        (KJS::JSXSLTProcessorPrototypeFunctionReset::callAsFunction):
+        * bindings/js/JSXSLTProcessor.h:
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSClipboardPrototypeFunctionClearData::callAsFunction):
+        (WebCore::JSClipboardPrototypeFunctionGetData::callAsFunction):
+        (WebCore::JSClipboardPrototypeFunctionSetData::callAsFunction):
+        (WebCore::JSClipboardPrototypeFunctionSetDragImage::callAsFunction):
+        * bindings/js/kjs_events.h:
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::Plugins::):
+        (KJS::Navigator::getOwnPropertySlot):
+        (KJS::Plugins::getOwnPropertySlot):
+        (KJS::PluginsFunctionRefresh::callAsFunction):
+        (KJS::NavigatorProtoFuncJavaEnabled::callAsFunction):
+        * bindings/js/kjs_navigator.h:
+        (KJS::Navigator::):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::put):
+        (KJS::WindowProtoFuncAToB::callAsFunction):
+        (KJS::WindowProtoFuncBToA::callAsFunction):
+        (KJS::WindowProtoFuncOpen::callAsFunction):
+        (KJS::WindowProtoFuncScrollBy::callAsFunction):
+        (KJS::WindowProtoFuncScrollTo::callAsFunction):
+        (KJS::WindowProtoFuncMoveBy::callAsFunction):
+        (KJS::WindowProtoFuncMoveTo::callAsFunction):
+        (KJS::WindowProtoFuncResizeBy::callAsFunction):
+        (KJS::WindowProtoFuncResizeTo::callAsFunction):
+        (KJS::WindowProtoFuncSetTimeout::callAsFunction):
+        (KJS::WindowProtoFuncClearTimeout::callAsFunction):
+        (KJS::WindowProtoFuncSetInterval::callAsFunction):
+        (KJS::WindowProtoFuncAddEventListener::callAsFunction):
+        (KJS::WindowProtoFuncRemoveEventListener::callAsFunction):
+        (KJS::WindowProtoFuncShowModalDialog::callAsFunction):
+        (KJS::WindowProtoFuncNotImplemented::callAsFunction):
+        (KJS::Location::getOwnPropertySlot):
+        (KJS::Location::put):
+        (KJS::LocationProtoFuncReplace::callAsFunction):
+        (KJS::LocationProtoFuncReload::callAsFunction):
+        (KJS::LocationProtoFuncAssign::callAsFunction):
+        (KJS::LocationProtoFuncToString::callAsFunction):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-11-08  Mark Rowe  <mrowe@apple.com>
 
         Fix the Gtk, Qt and Wx builds.

@@ -389,8 +389,8 @@ sub GenerateHeader
     my $numCustomAttributes = 0;
 
     # Attribute and function enums
-    my $hasAttrFunctionEnum = ($numAttributes + $numFunctions > 0) || $dataNode->extendedAttributes->{"GenerateConstructor"};
-    push(@headerContent, "    enum {\n") if ($hasAttrFunctionEnum);
+    my $hasAttrEnum = ($numAttributes > 0) || $dataNode->extendedAttributes->{"GenerateConstructor"};
+    push(@headerContent, "    enum {\n") if ($hasAttrEnum);
 
     if ($numAttributes > 0) {
         push(@headerContent, "        // Attributes\n        ");
@@ -419,29 +419,10 @@ sub GenerateHeader
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@headerContent, "\n\n") if $numAttributes > 0;
         push(@headerContent, "        // The Constructor Attribute\n");
-        push(@headerContent, "        ConstructorAttrNum" . ($numFunctions ? ", " : ""));
+        push(@headerContent, "        ConstructorAttrNum");
     }
 
-    if ($numFunctions > 0) {
-        push(@headerContent, "\n\n") if $numAttributes > 0 || $dataNode->extendedAttributes->{"GenerateConstructor"};
-        push(@headerContent,"        // Functions\n        ");
-
-        $i = -1;
-        foreach my $function (@{$dataNode->functions}) {
-            $i++;
-
-            push(@headerContent, "\n        ") if ((($i % 4) eq 0) and ($i ne 0));
-
-            $numCustomFunctions++ if $function->signature->extendedAttributes->{"Custom"};
-
-            my $value = WK_ucfirst($function->signature->name) . "FuncNum";
-            $value .= ", " if ($i < $numFunctions - 1);
-            push(@headerContent, $value);
-        }
-    }
-
-
-    push(@headerContent, "\n    };\n") if ($hasAttrFunctionEnum);
+    push(@headerContent, "\n    };\n") if ($hasAttrEnum);
 
     if ($numCustomAttributes > 0) {
         push(@headerContent, "\n    // Custom attributes\n");
@@ -460,6 +441,10 @@ sub GenerateHeader
                 }
             }
         }
+    }
+
+    foreach my $function (@{$dataNode->functions}) {
+        $numCustomFunctions++ if $function->signature->extendedAttributes->{"Custom"};
     }
 
     if ($numCustomFunctions > 0) {
@@ -562,7 +547,10 @@ sub GenerateHeader
     push(@headerContent, "};\n\n");
 
     if ($numFunctions > 0) {
-        push(@headerContent, prototypeFunctionFor($className));
+        push(@headerContent,"// Functions\n\n");
+        foreach my $function (@{$dataNode->functions}) {
+            push(@headerContent, prototypeFunctionFor($className, WK_ucfirst($function->signature->name)));
+        }        
     }
 
     push(@headerContent, "} // namespace WebCore\n\n");
@@ -724,7 +712,7 @@ sub GenerateImplementation
         my $name = $function->signature->name;
         push(@hashKeys, $name);
 
-        my $value = $className . "::" . WK_ucfirst($name) . "FuncNum";
+        my $value = "&" . $className . "PrototypeFunction" . WK_ucfirst($name) . "::create";
         push(@hashValues, $value);
 
         my @specials = ();
@@ -758,11 +746,11 @@ sub GenerateImplementation
         push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
         push(@implContent, "{\n");
         if ($numConstants eq 0) {
-            push(@implContent, "    return getStaticFunctionSlot<${className}PrototypeFunction, JSObject>(exec, &${className}PrototypeTable, this, propertyName, slot);\n");
+            push(@implContent, "    return getStaticFunctionSlot<JSObject>(exec, &${className}PrototypeTable, this, propertyName, slot);\n");
         } elsif ($numFunctions eq 0) {
             push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(exec, &${className}PrototypeTable, this, propertyName, slot);\n");
         } else {
-            push(@implContent, "    return getStaticPropertySlot<${className}PrototypeFunction, ${className}Prototype, JSObject>(exec, &${className}PrototypeTable, this, propertyName, slot);\n");
+            push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, &${className}PrototypeTable, this, propertyName, slot);\n");
         }
         push(@implContent, "}\n\n");
     }
@@ -1089,107 +1077,99 @@ sub GenerateImplementation
     }
 
     # Functions
-    if ($numFunctions ne 0) {
-        push(@implContent, "JSValue* ${className}PrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)\n{\n");
-        push(@implContent, "    if (!thisObj->inherits(&${className}::info))\n");
-        push(@implContent, "      return throwError(exec, TypeError);\n\n");
-
-        push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisObj);\n");
-        if ($podType) {
-            push(@implContent, "    JSSVGPODTypeWrapper<$podType>* wrapper = castedThisObj->impl();\n");
-            push(@implContent, "    $podType imp(*wrapper);\n\n");
-        } else {
-            push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThisObj->impl());\n\n");
-        }
-
-        push(@implContent, "    switch (id) {\n");
-
-        my $hasCustomFunctionsOnly = 1;
-
+    if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
-            push(@implContent, "    case ${className}::" . WK_ucfirst($function->signature->name) . "FuncNum: {\n");
+            my $functionClassName = $className . "PrototypeFunction" . WK_ucfirst($function->signature->name);
+            push(@implContent, "JSValue* ${functionClassName}::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    if (!thisObj->inherits(&${className}::info))\n");
+            push(@implContent, "      return throwError(exec, TypeError);\n\n");
 
-            if ($function->signature->extendedAttributes->{"Custom"}) {
-                push(@implContent, "        return castedThisObj->" . $function->signature->name . "(exec, args);\n    }\n");
-                next;
-            }
-
-            $hasCustomFunctionsOnly = 0;
             AddIncludesForType($function->signature->type);
 
-            if (@{$function->raisesExceptions}) {
-                push(@implContent, "        ExceptionCode ec = 0;\n");
-            }
+            push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisObj);\n");
 
-            if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
-                push(@implContent, "        if (!checkNodeSecurity(exec, imp->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
-                push(@implContent, "            return jsUndefined();\n");
-                $implIncludes{"kjs_dom.h"} = 1;
-            }
-
-            my $paramIndex = 0;
-            my $functionString = "imp" . ($podType ? "." : "->") . $function->signature->name . "(";
-
-            my $numParameters = @{$function->parameters};
-            my $hasOptionalArguments = 0;
-
-            foreach my $parameter (@{$function->parameters}) {
-                if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
-                    push(@implContent, "\n        int argsCount = args.size();\n");
-                    $hasOptionalArguments = 1;
-                }
-
-                if ($hasOptionalArguments) {
-                    push(@implContent, "        if (argsCount < " . ($paramIndex + 1) . ") {\n");
-                    GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 3, $podType, $implClassName);
-                    push(@implContent, "        }\n\n");
-                }
-
-                my $name = $parameter->name;
-                
-                if ($parameter->type eq "XPathNSResolver") {
-                    push(@implContent, "        RefPtr<XPathNSResolver> customResolver;\n");
-                    push(@implContent, "        XPathNSResolver* resolver = toXPathNSResolver(args[$paramIndex]);\n");
-                    push(@implContent, "        if (!resolver) {\n");
-                    push(@implContent, "            customResolver = JSCustomXPathNSResolver::create(exec, args[$paramIndex]);\n");
-                    push(@implContent, "            if (exec->hadException())\n");
-                    push(@implContent, "                return jsUndefined();\n");
-                    push(@implContent, "            resolver = customResolver.get();\n");
-                    push(@implContent, "        }\n");
+            if ($function->signature->extendedAttributes->{"Custom"}) {
+                push(@implContent, "        return castedThisObj->" . $function->signature->name . "(exec, args);\n");
+            } else {
+                if ($podType) {
+                    push(@implContent, "    JSSVGPODTypeWrapper<$podType>* wrapper = castedThisObj->impl();\n");
+                    push(@implContent, "    $podType imp(*wrapper);\n\n");
                 } else {
-                    push(@implContent, "        bool ${name}Ok;\n") if TypeCanFailConversion($parameter);
-                    push(@implContent, "        " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]", TypeCanFailConversion($parameter) ? "${name}Ok" : undef) . ";\n");
-                    if (TypeCanFailConversion($parameter)) {
-                        push(@implContent, "        if (!${name}Ok) {\n");
-                        push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
-                        push(@implContent, "            return jsUndefined();\n        }\n");
-                    }
-
-                    # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
-                    # exception
-                    if ($parameter->extendedAttributes->{"IsIndex"}) {
-                        $implIncludes{"ExceptionCode.h"} = 1;
-                        push(@implContent, "        if ($name < 0) {\n");
-                        push(@implContent, "            setDOMException(exec, INDEX_SIZE_ERR);\n");
-                        push(@implContent, "            return jsUndefined();\n        }\n");
-                    }
+                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThisObj->impl());\n\n");
                 }
 
-                $functionString .= ", " if $paramIndex;
-                $functionString .= $name;
 
-                $paramIndex++;
+                if (@{$function->raisesExceptions}) {
+                    push(@implContent, "    ExceptionCode ec = 0;\n");
+                }
+
+                if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
+                    push(@implContent, "    if (!checkNodeSecurity(exec, imp->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
+                    push(@implContent, "        return jsUndefined();\n");
+                    $implIncludes{"kjs_dom.h"} = 1;
+                }
+
+                my $paramIndex = 0;
+                my $functionString = "imp" . ($podType ? "." : "->") . $function->signature->name . "(";
+
+                my $numParameters = @{$function->parameters};
+                my $hasOptionalArguments = 0;
+
+                foreach my $parameter (@{$function->parameters}) {
+                    if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
+                        push(@implContent, "\n    int argsCount = args.size();\n");
+                        $hasOptionalArguments = 1;
+                    }
+
+                    if ($hasOptionalArguments) {
+                        push(@implContent, "    if (argsCount < " . ($paramIndex + 1) . ") {\n");
+                        GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $implClassName);
+                        push(@implContent, "    }\n\n");
+                    }
+
+                    my $name = $parameter->name;
+                    
+                    if ($parameter->type eq "XPathNSResolver") {
+                        push(@implContent, "    RefPtr<XPathNSResolver> customResolver;\n");
+                        push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(args[$paramIndex]);\n");
+                        push(@implContent, "    if (!resolver) {\n");
+                        push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, args[$paramIndex]);\n");
+                        push(@implContent, "        if (exec->hadException())\n");
+                        push(@implContent, "            return jsUndefined();\n");
+                        push(@implContent, "        resolver = customResolver.get();\n");
+                        push(@implContent, "    }\n");
+                    } else {
+                        push(@implContent, "    bool ${name}Ok;\n") if TypeCanFailConversion($parameter);
+                        push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]", TypeCanFailConversion($parameter) ? "${name}Ok" : undef) . ";\n");
+                        if (TypeCanFailConversion($parameter)) {
+                            push(@implContent, "    if (!${name}Ok) {\n");
+                            push(@implContent, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                            push(@implContent, "        return jsUndefined();\n        }\n");
+                        }
+
+                        # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
+                        # exception
+                        if ($parameter->extendedAttributes->{"IsIndex"}) {
+                            $implIncludes{"ExceptionCode.h"} = 1;
+                            push(@implContent, "    if ($name < 0) {\n");
+                            push(@implContent, "        setDOMException(exec, INDEX_SIZE_ERR);\n");
+                            push(@implContent, "        return jsUndefined();\n");
+                            push(@implContent, "    }\n");
+                        }
+                    }
+
+                    $functionString .= ", " if $paramIndex;
+                    $functionString .= $name;
+
+                    $paramIndex++;
+                }
+
+                push(@implContent, "\n");
+                GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    ", $podType, $implClassName);
             }
-
-            push(@implContent, "\n");
-            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $implClassName);
-
-            push(@implContent, "    }\n"); # end case
+            push(@implContent, "}\n\n");
         }
-        push(@implContent, "    }\n"); # end switch
-        push(@implContent, "    (void)imp;\n") if $hasCustomFunctionsOnly;
-        push(@implContent, "    return 0;\n");
-        push(@implContent, "}\n");
     }
 
     if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
@@ -1642,7 +1622,7 @@ sub GenerateHashTable
             my $key = @$keys[$entry];
 
             push(@implContent, "    \{ \"" . $key . "\"");
-            push(@implContent, ", " . @$values[$entry]);
+            push(@implContent, ", \{ (intptr_t)" . @$values[$entry] . " \}");
             push(@implContent, ", " . @$specials[$entry]);
             push(@implContent, ", " . @$parameters[$entry]);
             push(@implContent, ", ");
@@ -1653,7 +1633,7 @@ sub GenerateHashTable
                 push(@implContent, "0 \}");
             }
         } else {
-            push(@implContent, "    { 0, 0, 0, 0, 0 }");
+            push(@implContent, "    { 0, { 0 }, 0, 0, 0 }");
         }
 
         push(@implContent, ",") unless($i eq $size - 1);
@@ -1809,21 +1789,24 @@ EOF
 
 sub prototypeFunctionFor
 {
-    my $className = shift;
+    my ($className, $functionName) = @_;
+    my $name = $className . "PrototypeFunction" . $functionName;
 
 my $implContent = << "EOF";
-class ${className}PrototypeFunction : public KJS::InternalFunctionImp {
-public:
-    ${className}PrototypeFunction(KJS::ExecState* exec, int i, int len, const KJS::Identifier& name)
-        : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
-        , id(i)
+class ${name} : public KJS::InternalFunctionImp {
+public: \
+    static KJS::InternalFunctionImp* create(KJS::ExecState* exec, int len, const KJS::Identifier& name)
     {
-        put(exec, exec->propertyNames().length, KJS::jsNumber(len), KJS::DontDelete|KJS::ReadOnly|KJS::DontEnum);
+        return new ${name}(exec, len, name);
     }
-    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
 
-private:
-    int id;
+    ${name}(KJS::ExecState* exec, int len, const KJS::Identifier& name)
+        : KJS::InternalFunctionImp(static_cast<KJS::FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
+    {
+        put(exec, exec->propertyNames().length, KJS::jsNumber(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum);
+    }
+
+    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
 };
 
 EOF

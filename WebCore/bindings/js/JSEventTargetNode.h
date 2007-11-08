@@ -61,6 +61,14 @@ namespace WebCore {
 
     KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(JSEventTargetNodePrototype, JSNodePrototype)
 
+#define FOR_EACH_CLASS(macro) \
+    macro(JSEventTargetNodePrototypeFunctionAddEventListener) \
+    macro(JSEventTargetNodePrototypeFunctionRemoveEventListener) \
+    macro(JSEventTargetNodePrototypeFunctionDispatchEvent) \
+
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
+#undef FOR_EACH_CLASS
+
 } // namespace WebCore
 
 #endif // JSEventTargetNode_h

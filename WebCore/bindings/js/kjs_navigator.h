@@ -37,11 +37,14 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { AppCodeName, AppName, AppVersion, Language, UserAgent, Platform,
-           _Plugins, _MimeTypes, Product, ProductSub, Vendor, VendorSub, CookieEnabled, JavaEnabled };
+           _Plugins, _MimeTypes, Product, ProductSub, Vendor, VendorSub, CookieEnabled };
     WebCore::Frame *frame() const { return m_frame; }
   private:
     WebCore::Frame *m_frame;
   };
+
+  KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE(NavigatorProtoFuncJavaEnabled)
+
 } // namespace
 
 #endif

@@ -43,7 +43,7 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
                 const KJS::HashEntry* entry = KJS::Lookup::findEntry(static_cast<KJS::JSObject*>(proto)->classInfo()->propHashTable, propertyName);
                 ASSERT(entry);
                 if (entry) {
-                    slot.setStaticEntry(this, entry, KJS::staticFunctionGetter<JSDOMWindowPrototypeFunction>);
+                    slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
                     return true;
                 }
             }
@@ -76,19 +76,17 @@ bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Iden
         const KJS::HashEntry* entry = KJS::Lookup::findEntry(static_cast<KJS::JSObject*>(proto)->classInfo()->propHashTable, propertyName);
         if (entry) {
             if (entry->attr & KJS::Function) {
-                switch (entry->value) {
-                    case FocusFuncNum:
-                    case BlurFuncNum:
-                    case CloseFuncNum:
-                        slot.setStaticEntry(this, entry, KJS::staticFunctionGetter<JSDOMWindowPrototypeFunction>);
-                        return true;
-                    default:
-                        if (!isSafeScript(exec))
-                            slot.setUndefined(this);
-                        else
-                            slot.setStaticEntry(this, entry, KJS::staticFunctionGetter<JSDOMWindowPrototypeFunction>);
-                        return true;
+                if (entry->value.functionValue == &JSDOMWindowPrototypeFunctionFocus::create
+                    || entry->value.functionValue == &JSDOMWindowPrototypeFunctionBlur::create
+                    || entry->value.functionValue == &JSDOMWindowPrototypeFunctionClose::create)
+                        slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
+                else {
+                    if (!isSafeScript(exec))
+                        slot.setUndefined(this);
+                    else
+                        slot.setStaticEntry(this, entry, KJS::staticFunctionGetter);
                 }
+                return true;
             }
         }
     }

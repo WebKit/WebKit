@@ -225,7 +225,7 @@ sub output() {
       if (defined($entry)) {
         my $key = $keys[$entry];
         print "   \{ \"" . $key . "\"";
-        print ", " . $values[$entry];
+        print ", { (intptr_t)" . $values[$entry] . " }";
         print ", " . $attrs[$entry];
         print ", " . $params[$entry];
         print ", ";
@@ -236,7 +236,7 @@ sub output() {
         }
         print "/* " . $hashes[$entry] . " */ ";
       } else {
-        print "   { 0, 0, 0, 0, 0 }";
+        print "   { 0, { 0 }, 0, 0, 0 }";
       }    
       print "," unless ($i == $size - 1);
       print "\n";

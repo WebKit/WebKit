@@ -47,10 +47,7 @@ public:
     
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
-    
-    enum { ImportStylesheet, TransformToFragment, TransformToDocument, SetParameter,
-            GetParameter, RemoveParameter, ClearParameters, Reset };
-    
+
     WebCore::XSLTProcessor *impl() const { return m_impl.get(); }
 private:
     RefPtr<WebCore::XSLTProcessor> m_impl;
@@ -62,6 +59,19 @@ public:
     virtual bool implementsConstruct() const { return true; }
     virtual JSObject *construct(ExecState *exec, const List &args) { return new JSXSLTProcessor(exec); }
 };
+
+#define FOR_EACH_CLASS(macro) \
+    macro(JSXSLTProcessorPrototypeFunctionImportStylesheet) \
+    macro(JSXSLTProcessorPrototypeFunctionTransformToFragment) \
+    macro(JSXSLTProcessorPrototypeFunctionTransformToDocument) \
+    macro(JSXSLTProcessorPrototypeFunctionSetParameter) \
+    macro(JSXSLTProcessorPrototypeFunctionGetParameter) \
+    macro(JSXSLTProcessorPrototypeFunctionRemoveParameter) \
+    macro(JSXSLTProcessorPrototypeFunctionClearParameters) \
+    macro(JSXSLTProcessorPrototypeFunctionReset) \
+
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
+#undef FOR_EACH_CLASS
 
 } // namespace KJS
 

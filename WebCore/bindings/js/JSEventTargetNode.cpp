@@ -344,48 +344,58 @@ void JSEventTargetNode::pushEventHandlerScope(ExecState*, ScopeChain&) const
 /*
 @begin JSEventTargetNodePrototypeTable 5
 # from the EventTarget interface
-addEventListener        WebCore::JSEventTargetNode::AddEventListener   DontDelete|Function 3
-removeEventListener     WebCore::JSEventTargetNode::RemoveEventListener    DontDelete|Function 3
-dispatchEvent           WebCore::JSEventTargetNode::DispatchEvent  DontDelete|Function 1
+addEventListener        &WebCore::JSEventTargetNodePrototypeFunctionAddEventListener::create    DontDelete|Function 3
+removeEventListener     &WebCore::JSEventTargetNodePrototypeFunctionRemoveEventListener::create DontDelete|Function 3
+dispatchEvent           &WebCore::JSEventTargetNodePrototypeFunctionDispatchEvent::create       DontDelete|Function 1
 @end
 */
 
-KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSEventTargetNodePrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("EventTargetNode", JSEventTargetNodePrototype, JSEventTargetNodePrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("EventTargetNode", JSEventTargetNodePrototype)
 
-JSValue* JSEventTargetNodePrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* JSEventTargetNodePrototypeFunctionAddEventListener::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&JSEventTargetNode::info))
         return throwError(exec, TypeError);
     DOMExceptionTranslator exception(exec);
     JSEventTargetNode* jsNode = static_cast<JSEventTargetNode*>(thisObj);
     EventTargetNode* node = static_cast<EventTargetNode*>(jsNode->impl());
-    switch (id) {
-        case JSEventTargetNode::AddEventListener: {
-            Frame* frame = node->document()->frame();
-            if (!frame)
-                return jsUndefined();
-            JSEventListener* listener = KJS::Window::retrieveWindow(frame)->findOrCreateJSEventListener(args[1]);
-            if (listener)
-                node->addEventListener(args[0]->toString(exec), listener,args[2]->toBoolean(exec));
-            return jsUndefined();
-        }
-        case JSEventTargetNode::RemoveEventListener: {
-            Frame* frame = node->document()->frame();
-            if (!frame)
-                return jsUndefined();
-            JSEventListener* listener = KJS::Window::retrieveWindow(frame)->findJSEventListener(args[1]);
-            if (listener) 
-                node->removeEventListener(args[0]->toString(exec), listener,args[2]->toBoolean(exec));
-            return jsUndefined();
-        }
-        case JSEventTargetNode::DispatchEvent:
-            return jsBoolean(node->dispatchEvent(toEvent(args[0]), exception));
-    }
 
+    Frame* frame = node->document()->frame();
+    if (!frame)
+        return jsUndefined();
+    JSEventListener* listener = KJS::Window::retrieveWindow(frame)->findOrCreateJSEventListener(args[1]);
+    if (listener)
+        node->addEventListener(args[0]->toString(exec), listener,args[2]->toBoolean(exec));
     return jsUndefined();
 }
 
+JSValue* JSEventTargetNodePrototypeFunctionRemoveEventListener::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&JSEventTargetNode::info))
+        return throwError(exec, TypeError);
+    DOMExceptionTranslator exception(exec);
+    JSEventTargetNode* jsNode = static_cast<JSEventTargetNode*>(thisObj);
+    EventTargetNode* node = static_cast<EventTargetNode*>(jsNode->impl());
+
+    Frame* frame = node->document()->frame();
+    if (!frame)
+        return jsUndefined();
+    JSEventListener* listener = KJS::Window::retrieveWindow(frame)->findJSEventListener(args[1]);
+    if (listener) 
+        node->removeEventListener(args[0]->toString(exec), listener,args[2]->toBoolean(exec));
+    return jsUndefined();
+}
+
+JSValue* JSEventTargetNodePrototypeFunctionDispatchEvent::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    if (!thisObj->inherits(&JSEventTargetNode::info))
+        return throwError(exec, TypeError);
+    DOMExceptionTranslator exception(exec);
+    JSEventTargetNode* jsNode = static_cast<JSEventTargetNode*>(thisObj);
+    EventTargetNode* node = static_cast<EventTargetNode*>(jsNode->impl());
+    
+    return jsBoolean(node->dispatchEvent(toEvent(args[0]), exception));
+}
 
 EventTargetNode* toEventTargetNode(JSValue* val)
 {

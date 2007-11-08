@@ -68,7 +68,6 @@ namespace KJS {
   // This is the only WebCore JS binding which does not inherit from DOMObject
   class Window : public JSGlobalObject {
     friend class Location;
-    friend class WindowFunc;
     friend class ScheduledAction;
   protected:
     Window(WebCore::DOMWindow*);
@@ -143,13 +142,6 @@ namespace KJS {
     static const ClassInfo info;
 
     enum {
-        // Functions
-        AToB, BToA, Open, SetTimeout,
-        ClearTimeout, SetInterval, ClearInterval, CaptureEvents, 
-        ReleaseEvents, AddEventListener, RemoveEventListener, Scroll,
-        ScrollBy, ScrollTo, MoveBy, MoveTo,
-        ResizeBy, ResizeTo, ShowModalDialog,
-
         // Attributes
         Crypto, Event_, Location_, Navigator_,
         ClientInformation,
@@ -168,6 +160,8 @@ namespace KJS {
         XSLTProcessor_
     };
 
+    void updateLayout() const;
+
   private:
     JSValue* getListener(ExecState*, const WebCore::AtomicString& eventType) const;
     void setListener(ExecState*, const WebCore::AtomicString& eventType, JSValue* func);
@@ -177,8 +171,6 @@ namespace KJS {
     static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
     static JSValue *namedItemGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
-    void updateLayout() const;
-
     void clearHelperObjectProperties();
     void clearAllTimeouts();
     int installTimeout(ScheduledAction*, int interval, bool singleShot);
@@ -187,7 +179,27 @@ namespace KJS {
     OwnPtr<WindowPrivate> d;
   };
 
-  KJS_IMPLEMENT_PROTOTYPE_FUNCTION(WindowFunc)
+#define FOR_EACH_CLASS(macro) \
+    macro(WindowProtoFuncAToB) \
+    macro(WindowProtoFuncBToA) \
+    macro(WindowProtoFuncOpen) \
+    macro(WindowProtoFuncScrollBy) \
+    macro(WindowProtoFuncScrollTo) \
+    macro(WindowProtoFuncMoveBy) \
+    macro(WindowProtoFuncMoveTo) \
+    macro(WindowProtoFuncResizeBy) \
+    macro(WindowProtoFuncResizeTo) \
+    macro(WindowProtoFuncSetTimeout) \
+    macro(WindowProtoFuncClearTimeout) \
+    macro(WindowProtoFuncSetInterval) \
+    macro(WindowProtoFuncAddEventListener) \
+    macro(WindowProtoFuncRemoveEventListener) \
+    macro(WindowProtoFuncShowModalDialog) \
+    macro(WindowProtoFuncNotImplemented) \
+
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
+#undef FOR_EACH_CLASS
+
 
   /**
    * An action (either function or string) to be executed after a specified
@@ -223,7 +235,16 @@ namespace KJS {
     WebCore::Frame* m_frame;
   };
 
-} // namespace
+#define FOR_EACH_CLASS(macro) \
+    macro(LocationProtoFuncAssign) \
+    macro(LocationProtoFuncToString) \
+    macro(LocationProtoFuncReplace) \
+    macro(LocationProtoFuncReload) \
+
+FOR_EACH_CLASS(KJS_IMPLEMENT_PROTOTYPE_FUNCTION_WITH_CREATE)
+#undef FOR_EACH_CLASS
+
+} // namespace KJS
 
 namespace WebCore {
     KJS::JSValue* toJS(KJS::ExecState*, DOMWindow*);
