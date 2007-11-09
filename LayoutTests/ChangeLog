@@ -1,3 +1,12 @@
+2007-11-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Layout test to guard against bit operation regressions.
+
+        * fast/js/bitwise-and-on-undefined-expected.txt: Added.
+        * fast/js/bitwise-and-on-undefined.html: Added.
+
 2007-11-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

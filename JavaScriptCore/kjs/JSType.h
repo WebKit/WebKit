@@ -29,9 +29,9 @@ namespace KJS {
  */
 enum JSType {
     UnspecifiedType   = 0,
-    NumberType        = 1,
+    UndefinedType     = 1,
     BooleanType       = 2,
-    UndefinedType     = 3,
+    NumberType        = 3,
     NullType          = 4,
     StringType        = 5,
     ObjectType        = 6,

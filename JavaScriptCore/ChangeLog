@@ -1,3 +1,19 @@
+2007-11-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix regression caused by earlier bitwise and optimisation.  1 & undefined != 1.
+
+        The implementation of JSImmediate::areBothImmediateNumbers relies on 
+        (JSImmediate::getTag(immediate1) & JSImmediate::getTag(immediate2)) having 
+        a unique result when both immediate values are numbers.
+
+        The regression was due to UndefinedType & NumberType returning NumberType (3 & 1).
+        By swapping the value of NumberType and UndefinedType this ceases to be a problem.
+
+        * kjs/JSType.h:
+        (KJS::):
+
 2007-11-08  Darin Adler  <darin@apple.com>
 
         - fix build
