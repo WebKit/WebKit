@@ -8,6 +8,8 @@
 <p id="description"></p>
 <div id="console"></div>
 <script language="JavaScript" type="text/javascript">
+	// FIXME Disabled because of <rdar://problem/5569119>
+
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 

@@ -1,3 +1,12 @@
+2007-11-09  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/Window/window-resize-nan.html: Removed.
+        * fast/dom/Window/window-resize-nan.html-disabled: Copied from fast/dom/Window/window-resize-nan.html.
+        
+        Disabled nan test until window resize issues can be resolved.
+
 2007-11-08  Adam Roben  <aroben@apple.com>
 
         Add a test for <rdar://5483519> Pressing Enter on selected buttons should fire onclick
