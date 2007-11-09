@@ -73,7 +73,10 @@ namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 
+#if !defined(Q_OS_WIN)
+// defined in win/SystemTimeWin.cpp, which is compiled for the Qt/Windows port
 float userIdleTime() { notImplemented(); return 0.0; }
+#endif
 
 }
 

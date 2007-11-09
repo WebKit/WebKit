@@ -1,5 +1,14 @@
 2007-11-09  Simon Hausmann  <hausmann@kde.org>
 
+        Reviewed by nobody, build/link fix for Qt/Windows.
+
+        userIdleTime() is stubbed in win/SystemTimeWin.cpp, so don't
+        define it twice.
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+
+2007-11-09  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by Holger.
 
         Fix ContextMenu allocation in the Qt port.
