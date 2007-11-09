@@ -1,3 +1,9 @@
+2007-11-08  Darin Adler  <darin@apple.com>
+
+        - fix build
+
+        * kjs/nodes.h: Add missing parameter name.
+
 2007-11-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
