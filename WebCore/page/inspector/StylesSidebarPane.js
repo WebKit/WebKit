@@ -567,10 +567,13 @@ WebInspector.StylePropertyTreeElement.prototype = {
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
 
         var treeElement = this;
-        this.listItemElement.blurred = function() { treeElement.endEditing() };
+        this.listItemElement.blurred = function() { treeElement.commitEditing() };
         this.listItemElement.handleKeyEvent = function(event) {
             if (event.keyIdentifier === "Enter") {
-                treeElement.endEditing();
+                treeElement.commitEditing();
+                event.preventDefault();
+            } else if (event.keyCode === 27) { // Escape key
+                treeElement.cancelEditing();
                 event.preventDefault();
             }
         };
@@ -588,6 +591,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         WebInspector.currentFocusElement = this.previousFocusElement;
         delete this.previousFocusElement;
 
+        delete this.previousTextContent;
         delete this.editing;
 
         this.listItemElement.removeStyleClass("focusable");
@@ -597,66 +601,88 @@ WebInspector.StylePropertyTreeElement.prototype = {
             delete this.wasExpanded;
             this.expand();
         }
+    },
 
+    cancelEditing: function()
+    {
+        this.endEditing();
+        this.updateTitle();
+    },
+
+    commitEditing: function()
+    {
         var previousContent = this.previousTextContent;
-        delete this.previousTextContent;
+
+        this.endEditing();
 
         var userInput = this.listItemElement.textContent;
         if (userInput === previousContent)
             return; // nothing changed, so do nothing else
 
-        // Remove the original property from the real style declaration, if this represents
-        // a shorthand remove all the longhand properties.
-        if (this.shorthand) {
-            var longhandProperties = this.style.getLonghandProperties(this.name);
-            for (var i = 0; i < longhandProperties.length; ++i)
-                this.style.removeProperty(longhandProperties[i]);
-        } else
-            this.style.removeProperty(this.name);
+        var userInputLength = userInput.trimWhitespace().length;
 
         // Create a new element to parse the user input CSS.
         var parseElement = document.createElement("span");
         parseElement.setAttribute("style", userInput);
 
         var userInputStyle = parseElement.style;
-        if (userInputStyle.length) {
-            // Iterate of the properties on the test element's style declaration and
-            // add them to the real style declaration. We take care to move shorthands.
+        if (userInputStyle.length || !userInputLength) {
+            // The input was parsable or the user deleted everything, so remove the
+            // original property from the real style declaration. If this represents
+            // a shorthand remove all the longhand properties.
+            if (this.shorthand) {
+                var longhandProperties = this.style.getLonghandProperties(this.name);
+                for (var i = 0; i < longhandProperties.length; ++i)
+                    this.style.removeProperty(longhandProperties[i]);
+            } else
+                this.style.removeProperty(this.name);
+        }
 
-            var foundShorthands = {};
-            var uniqueProperties = userInputStyle.getUniqueProperties();
-
-            for (var i = 0; i < uniqueProperties.length; ++i) {
-                var name = uniqueProperties[i];
-                var shorthand = userInputStyle.getPropertyShorthand(name);
-
-                if (shorthand && shorthand in foundShorthands)
-                    continue;
-
-                if (shorthand) {
-                    var value = userInputStyle.getShorthandValue(shorthand);
-                    var priority = userInputStyle.getShorthandPriority(shorthand);
-                    foundShorthands[shorthand] = true;
-                } else {
-                    var value = userInputStyle.getPropertyValue(name);
-                    var priority = userInputStyle.getPropertyPriority(name);
-                }
-
-                // Set the property on the real style declaration.
-                this.style.setProperty((shorthand || name), value, priority);
-            }
-
-            if (this.treeOutline.section && this.treeOutline.section.pane)
-                this.treeOutline.section.pane.update(null, this.treeOutline.section);
-            else if (this.treeOutline.section)
-                this.treeOutline.section.update(true);
-            else
-                this.updateTitle(); // FIXME: this will not show new properties. But we don't hit his case yet.
-        } else {
+        if (!userInputLength) {
+            // The user deleted the everything, so remove the tree element and update.
             if (this.treeOutline.section && this.treeOutline.section.pane)
                 this.treeOutline.section.pane.update();
             this.parent.removeChild(this);
+            return;
         }
+
+        if (!userInputStyle.length) {
+            // The user typed something, but it didn't parse. Just abort and restore
+            // the original title for this property.
+            this.updateTitle();
+            return;
+        }
+
+        // Iterate of the properties on the test element's style declaration and
+        // add them to the real style declaration. We take care to move shorthands.
+        var foundShorthands = {};
+        var uniqueProperties = userInputStyle.getUniqueProperties();
+        for (var i = 0; i < uniqueProperties.length; ++i) {
+            var name = uniqueProperties[i];
+            var shorthand = userInputStyle.getPropertyShorthand(name);
+
+            if (shorthand && shorthand in foundShorthands)
+                continue;
+
+            if (shorthand) {
+                var value = userInputStyle.getShorthandValue(shorthand);
+                var priority = userInputStyle.getShorthandPriority(shorthand);
+                foundShorthands[shorthand] = true;
+            } else {
+                var value = userInputStyle.getPropertyValue(name);
+                var priority = userInputStyle.getPropertyPriority(name);
+            }
+
+            // Set the property on the real style declaration.
+            this.style.setProperty((shorthand || name), value, priority);
+        }
+
+        if (this.treeOutline.section && this.treeOutline.section.pane)
+            this.treeOutline.section.pane.update(null, this.treeOutline.section);
+        else if (this.treeOutline.section)
+            this.treeOutline.section.update(true);
+        else
+            this.updateTitle(); // FIXME: this will not show new properties. But we don't hit his case yet.
     }
 }
 

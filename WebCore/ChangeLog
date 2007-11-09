@@ -1,3 +1,14 @@
+2007-11-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Some Web Inspector CSS editing changes.
+        - Only delete the property if all the text is delete or the new user input correctly parses.
+          This prevents deleting the existing property if the new text is invalid.
+        - Intercept the Escape key and cancel editing, not saving any changes.
+
+        * page/inspector/StylesSidebarPane.js:
+
 2007-11-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         Bakefiles for building WebCore, needed by wx port.
