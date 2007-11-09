@@ -57,15 +57,15 @@ static bool allowAutomaticSemicolon();
 
 using namespace KJS;
 
-static Node* makeAssignNode(Node* loc, Operator, Node* expr);
-static Node* makePrefixNode(Node* expr, Operator);
-static Node* makePostfixNode(Node* expr, Operator);
+static ExpressionNode* makeAssignNode(ExpressionNode* loc, Operator, ExpressionNode* expr);
+static ExpressionNode* makePrefixNode(ExpressionNode* expr, Operator);
+static ExpressionNode* makePostfixNode(ExpressionNode* expr, Operator);
 static PropertyNode* makeGetterOrSetterPropertyNode(const Identifier &getOrSet, const Identifier& name, ParameterNode*, FunctionBodyNode*);
-static Node *makeFunctionCallNode(Node *func, ArgumentsNode *args);
-static Node *makeTypeOfNode(Node *expr);
-static Node *makeDeleteNode(Node *expr);
-static Node *makeNegateNode(Node *expr);
-static Node* makeNumberNode(double);
+static ExpressionNode* makeFunctionCallNode(ExpressionNode* func, ArgumentsNode*);
+static ExpressionNode* makeTypeOfNode(ExpressionNode*);
+static ExpressionNode* makeDeleteNode(ExpressionNode*);
+static ExpressionNode* makeNegateNode(ExpressionNode*);
+static NumberNode* makeNumberNode(double);
 
 #if COMPILER(MSVC)
 
@@ -88,7 +88,7 @@ static Node* makeNumberNode(double);
   double              dval;
   UString             *ustr;
   Identifier          *ident;
-  Node                *node;
+  ExpressionNode      *node;
   StatementNode       *stat;
   ParameterList       param;
   FunctionBodyNode    *body;
@@ -742,7 +742,7 @@ IterationStatement:
                                         { $$ = new ForNode($4.head, $6, $8, $10); DBG($$, @1, @9); }
   | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
                                         {
-                                            Node *n = $3;
+                                            ExpressionNode* n = $3;
                                             if (!n->isLocation())
                                                 YYABORT;
                                             $$ = new ForInNode(n, $5, $7);
@@ -887,7 +887,7 @@ SourceElement:
  
 %%
 
-static Node* makeAssignNode(Node* loc, Operator op, Node* expr)
+static ExpressionNode* makeAssignNode(ExpressionNode* loc, Operator op, ExpressionNode* expr)
 {
     if (!loc->isLocation())
         return new AssignErrorNode(loc, op, expr);
@@ -913,7 +913,7 @@ static Node* makeAssignNode(Node* loc, Operator op, Node* expr)
     return new ReadModifyDotNode(dot->base(), dot->identifier(), op, expr);
 }
 
-static Node* makePrefixNode(Node* expr, Operator op)
+static ExpressionNode* makePrefixNode(ExpressionNode* expr, Operator op)
 { 
     if (!expr->isLocation())
         return new PrefixErrorNode(expr, op);
@@ -939,7 +939,7 @@ static Node* makePrefixNode(Node* expr, Operator op)
     return new PreDecDotNode(dot->base(), dot->identifier());
 }
 
-static Node* makePostfixNode(Node* expr, Operator op)
+static ExpressionNode* makePostfixNode(ExpressionNode* expr, Operator op)
 { 
     if (!expr->isLocation())
         return new PostfixErrorNode(expr, op);
@@ -966,7 +966,7 @@ static Node* makePostfixNode(Node* expr, Operator op)
     return new PostDecDotNode(dot->base(), dot->identifier());
 }
 
-static Node* makeFunctionCallNode(Node* func, ArgumentsNode* args)
+static ExpressionNode* makeFunctionCallNode(ExpressionNode* func, ArgumentsNode* args)
 {
     if (!func->isLocation())
         return new FunctionCallValueNode(func, args);
@@ -983,7 +983,7 @@ static Node* makeFunctionCallNode(Node* func, ArgumentsNode* args)
     return new FunctionCallDotNode(dot->base(), dot->identifier(), args);
 }
 
-static Node* makeTypeOfNode(Node* expr)
+static ExpressionNode* makeTypeOfNode(ExpressionNode* expr)
 {
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
@@ -992,7 +992,7 @@ static Node* makeTypeOfNode(Node* expr)
     return new TypeOfValueNode(expr);
 }
 
-static Node* makeDeleteNode(Node* expr)
+static ExpressionNode* makeDeleteNode(ExpressionNode* expr)
 {
     if (!expr->isLocation())
         return new DeleteValueNode(expr);
@@ -1021,7 +1021,7 @@ static PropertyNode* makeGetterOrSetterPropertyNode(const Identifier& getOrSet, 
     return new PropertyNode(name, new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, body, params), type);
 }
 
-static Node* makeNegateNode(Node* n)
+static ExpressionNode* makeNegateNode(ExpressionNode* n)
 {
     if (n->isNumber()) {
         NumberNode* number = static_cast<NumberNode*>(n);
@@ -1035,7 +1035,7 @@ static Node* makeNegateNode(Node* n)
     return new NegateNode(n);
 }
 
-static Node* makeNumberNode(double d)
+static NumberNode* makeNumberNode(double d)
 {
     JSValue* value = JSImmediate::fromDouble(d);
     if (value)

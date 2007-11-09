@@ -203,7 +203,7 @@ void Node::clearNewNodes()
     newNodes = 0;
 }
 
-double Node::evaluateToNumber(ExecState* exec)
+double ExpressionNode::evaluateToNumber(ExecState* exec)
 {
     JSValue* value = evaluate(exec);
     KJS_CHECKEXCEPTIONNUMBER
@@ -2296,8 +2296,8 @@ JSValue *ConditionalNode::evaluate(ExecState *exec)
 
 // ECMA 11.13
 
-static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSValue* current, Node* right, Operator oper) KJS_FAST_CALL;
-static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSValue* current, Node* right, Operator oper)
+static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSValue* current, ExpressionNode* right, Operator oper) KJS_FAST_CALL;
+static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSValue* current, ExpressionNode* right, Operator oper)
 {
   JSValue *v;
   int i1;
@@ -3094,13 +3094,13 @@ void ForNode::getDeclarations(DeclarationStacks& stacks)
 
 // ------------------------------ ForInNode ------------------------------------
 
-ForInNode::ForInNode(Node *l, Node *e, StatementNode *s)
+ForInNode::ForInNode(ExpressionNode* l, ExpressionNode* e, StatementNode* s)
   : init(0L), lexpr(l), expr(e), varDecl(0L), statement(s)
 {
     m_mayHaveDeclarations = true; 
 }
 
-ForInNode::ForInNode(const Identifier &i, AssignExprNode *in, Node *e, StatementNode *s)
+ForInNode::ForInNode(const Identifier& i, AssignExprNode* in, ExpressionNode* e, StatementNode* s)
   : ident(i), init(in), expr(e), statement(s)
 {
   m_mayHaveDeclarations = true; 
