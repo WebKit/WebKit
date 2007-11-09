@@ -1,3 +1,15 @@
+2007-11-08  Justin Haygood  <jhaygood@reaktix.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15905
+
+        Fix builds with HTML 5 Storage support disabled.
+        ENABLE(DATABASE) needs to be added in a few places.
+
+        * page/InspectorController.cpp:
+        * storage/Database.h:
+
 2007-11-08  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5524082> Allow images to be dragged out directly into other apps

@@ -200,7 +200,7 @@ struct InspectorResource : public Shared<InspectorResource> {
     double endTime;
 };
 
-
+#if ENABLE(DATABASE)
 struct InspectorDatabaseResource : public Shared<InspectorDatabaseResource> {
     InspectorDatabaseResource(Database* database, String domain, String name, String version)
         : database(database)
@@ -237,6 +237,7 @@ struct InspectorDatabaseResource : public Shared<InspectorDatabaseResource> {
     JSContextRef scriptContext;
     JSObjectRef scriptObject;
 };
+#endif
 
 static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
 {
