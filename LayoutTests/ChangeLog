@@ -1,3 +1,15 @@
+2007-11-09  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Test for <rdar://problem/5586370> CSS Transform - incorrect matrix 
+        math leads to crazy problems
+
+        * fast/transforms/identity-matrix.html: Added.
+        * platform/mac/fast/transforms/identity-matrix-expected.checksum: Added.
+        * platform/mac/fast/transforms/identity-matrix-expected.png: Added.
+        * platform/mac/fast/transforms/identity-matrix-expected.txt: Added.
+
 2007-11-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

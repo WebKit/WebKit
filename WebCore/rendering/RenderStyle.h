@@ -786,7 +786,7 @@ public:
 
     virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
     {
-        AffineTransform matrix(m_a.value(), m_b.value(), m_c.value(), m_d.value(), m_e.calcValue(borderBoxSize.width()), m_f.calcValue(borderBoxSize.height()));
+        AffineTransform matrix(m_a.calcValue(1), m_b.calcValue(1), m_c.calcValue(1), m_d.calcValue(1), m_e.calcValue(borderBoxSize.width()), m_f.calcValue(borderBoxSize.height()));
         transform.multiply(matrix);
     }
 
