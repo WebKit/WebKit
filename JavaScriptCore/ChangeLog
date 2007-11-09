@@ -1,5 +1,33 @@
 2007-11-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15906
+          getting characters by indexing into a string is very slow
+
+        This fixes one source of the slowness -- the conversion to an unused
+        Identifier as we call the get function from the slot -- but doesn't
+        fix others, such as the fact that we have to allocate a new UString::Rep
+        for every single character.
+
+        Speeds up string-base64 30%, and at least 0.5% overall.
+        But does slow down access-fannkuch quite a bit. Might be worth
+        revisiting in the future to see what we can do about that (although
+        I did look at a profile for a while).
+
+        * kjs/property_slot.h: Add a new marker for "numeric" property slots;
+        slots where we don't need to pass the identifier to the get function.
+        (KJS::PropertySlot::getValue): Added code to call the numeric get function.
+        (KJS::PropertySlot::setCustomNumeric): Added.
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::indexGetter): Changed to use substr() instead
+        of constructing a wholly new UString each time.
+        (KJS::stringInstanceNumericPropertyGetter): Added. Like indexGetter, but
+        takes advantage of setCustomNumeric to avoid creating an Identifier.
+        (KJS::StringInstance::getOwnPropertySlot): Changed to use setCustomNumeric.
+
+2007-11-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver.
 
         - http://bugs.webkit.org/show_bug.cgi?id=15904

@@ -68,10 +68,14 @@ JSValue *StringInstance::lengthGetter(ExecState*, JSObject*, const Identifier&, 
     return jsNumber(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().size());
 }
 
-JSValue *StringInstance::indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot &slot)
+JSValue* StringInstance::indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
-    const UChar c = static_cast<StringInstance*>(slot.slotBase())->internalValue()->value()[slot.index()];
-    return jsString(UString(&c, 1));
+    return jsString(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().substr(slot.index(), 1));
+}
+
+static JSValue* stringInstanceNumericPropertyGetter(ExecState*, JSObject*, unsigned index, const PropertySlot& slot)
+{
+    return jsString(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().substr(index, 1));
 }
 
 bool StringInstance::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -96,7 +100,7 @@ bool StringInstance::getOwnPropertySlot(ExecState* exec, unsigned propertyName, 
 {
     unsigned length = internalValue()->value().size();
     if (propertyName < length) {
-        slot.setCustomIndex(this, propertyName, indexGetter);
+        slot.setCustomNumeric(this, stringInstanceNumericPropertyGetter);
         return true;
     }
     
