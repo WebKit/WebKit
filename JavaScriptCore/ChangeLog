@@ -1,5 +1,13 @@
 2007-11-08  Darin Adler  <darin@apple.com>
 
+        - fix build
+
+        * kjs/grammar.y:
+        * kjs/nodes.h:
+        * kjs/property_map.cpp:
+
+2007-11-08  Darin Adler  <darin@apple.com>
+
         - roll out accidentally-checked in changes
 
         * kjs/nodes.cpp: Back to previous version.

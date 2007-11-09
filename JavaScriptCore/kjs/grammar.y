@@ -1037,7 +1037,7 @@ static ExpressionNode* makeNegateNode(ExpressionNode* n)
 
 static NumberNode* makeNumberNode(double d)
 {
-    JSValue* value = JSImmediate::fromDouble(d);
+    JSValue* value = JSImmediate::from(d);
     if (value)
         return new ImmediateNumberNode(value, d);
     return new NumberNode(d);

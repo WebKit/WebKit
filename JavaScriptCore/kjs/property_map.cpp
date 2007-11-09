@@ -54,7 +54,7 @@ static const int smallMapThreshold = 1024;
 
 // The point at which the function call overhead of the qsort implementation
 // becomes small compared to the inefficiency of insertion sort.
-static const int tinyMapThreshold = 20;
+static const unsigned tinyMapThreshold = 20;
 
 #if DUMP_PROPERTYMAP_STATS
 

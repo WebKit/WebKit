@@ -239,10 +239,10 @@ namespace KJS {
   
   class ImmediateNumberNode : public NumberNode {
   public:
-      ImmediateNumberNode(JSValue* v, double d) KJS_FAST_CALL : NumberNode(d), m_value(v) { ASSERT(v == JSImmediate::fromDouble(d)); }
+      ImmediateNumberNode(JSValue* v, double d) KJS_FAST_CALL : NumberNode(d), m_value(v) { ASSERT(v == JSImmediate::from(d)); }
       virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       
-      virtual void setValue(double d) KJS_FAST_CALL { m_double = d; m_value = JSImmediate::fromDouble(d); ASSERT(m_value); }
+      virtual void setValue(double d) KJS_FAST_CALL { m_double = d; m_value = JSImmediate::from(d); ASSERT(m_value); }
   private:
       JSValue* m_value;
   };
