@@ -32,7 +32,9 @@
 #include "IWebScriptCallFrame.h"
 
 #include <JavaScriptCore/ExecState.h>
+#pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
+#pragma warning(pop)
 
 class WebScriptCallFrame : public IWebScriptCallFrame {
 public:

@@ -30,7 +30,9 @@
 
 #include "IWebScriptDebugListener.h"
 #include <wtf/HashSet.h>
+#pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
+#pragma warning(pop)
 
 interface IWebView;
 

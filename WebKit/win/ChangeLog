@@ -1,3 +1,27 @@
+2007-11-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - This patch does two main things.
+        1) It adds pragma warning guards around WebCore includes in WebKit files
+        that were previously overlooked.
+        2) It implements almost the entireity of WebScriptDebugger.  Only one
+        function remains and that implementation is dependent on finishing the
+        implementation of WebScriptScope.
+
+        * WebScriptCallFrame.h:
+        * WebScriptDebugServer.h:
+        * WebScriptDebugger.cpp:
+        (WebScriptDebugger::WebScriptDebugger):
+        (WebScriptDebugger::sourceParsed):
+        (WebScriptDebugger::callEvent):
+        (WebScriptDebugger::atStatement):
+        (WebScriptDebugger::returnEvent):
+        (WebScriptDebugger::exception):
+        (WebScriptDebugger::enterFrame):
+        (WebScriptDebugger::leaveFrame):
+        * WebScriptDebugger.h:
+
 2007-11-08  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5491463> Wrong dates shown in History menu.

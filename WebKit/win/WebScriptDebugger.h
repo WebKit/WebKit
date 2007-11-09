@@ -29,12 +29,22 @@
 #ifndef WebScriptDebugger_H
 #define WebScriptDebugger_H
 
+#include "IWebView.h"
+#include "IWebScriptCallFrame.h"
+
 #include <JavaScriptCore/debugger.h>
+#pragma warning(push, 0)
+#include <WebCore/COMPtr.h>
+#pragma warning(pop)
 
 class WebFrame;
+interface IWebScriptCallFrame;
 
 namespace KJS {
     class ExecState;
+    class JSObject;
+    class JSValue;
+    class List;
 }
 
 class WebScriptDebugger : public KJS::Debugger {
@@ -44,8 +54,18 @@ public:
     bool sourceParsed(KJS::ExecState*, int sourceId, const KJS::UString& sourceURL,
         const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
 
+    bool callEvent(KJS::ExecState*, int sourceId, int lineno, KJS::JSObject* function, const KJS::List& args);
+    bool atStatement(KJS::ExecState*, int sourceId, int firstLine, int lastLine);
+    bool returnEvent(KJS::ExecState*, int sourceId, int lineno, KJS::JSObject* function);
+    bool exception(KJS::ExecState*, int sourceId, int lineno, KJS::JSValue* exception);
+
 private:
+    void enterFrame(KJS::ExecState*);
+    void leaveFrame();
+
     WebFrame* m_frame;
+    COMPtr<IWebView> m_webView;
+    COMPtr<IWebScriptCallFrame> m_topStackFrame; 
 };
 
 #endif
