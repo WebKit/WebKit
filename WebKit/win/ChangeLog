@@ -1,3 +1,11 @@
+2007-11-09  Sam Weinig  <sam@webkit.org>
+
+        Rubber stamped by Oliver.
+
+        Make WebCore a dependency of Interfaces.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2007-11-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
