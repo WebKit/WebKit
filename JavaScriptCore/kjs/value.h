@@ -200,8 +200,44 @@ inline JSValue *jsBoolean(bool b)
 
 ALWAYS_INLINE JSValue* jsNumber(double d)
 {
-    JSValue *v = JSImmediate::fromDouble(d);
+    JSValue* v = JSImmediate::from(d);
     return v ? v : jsNumberCell(d);
+}
+
+ALWAYS_INLINE JSValue* jsNumber(int i)
+{
+    JSValue* v = JSImmediate::from(i);
+    return v ? v : jsNumberCell(i);
+}
+
+ALWAYS_INLINE JSValue* jsNumber(unsigned i)
+{
+    JSValue* v = JSImmediate::from(i);
+    return v ? v : jsNumberCell(i);
+}
+
+ALWAYS_INLINE JSValue* jsNumber(long i)
+{
+    JSValue* v = JSImmediate::from(i);
+    return v ? v : jsNumberCell(i);
+}
+
+ALWAYS_INLINE JSValue* jsNumber(unsigned long i)
+{
+    JSValue* v = JSImmediate::from(i);
+    return v ? v : jsNumberCell(i);
+}
+
+ALWAYS_INLINE JSValue* jsNumber(long long i)
+{
+    JSValue* v = JSImmediate::from(i);
+    return v ? v : jsNumberCell(i);
+}
+
+ALWAYS_INLINE JSValue* jsNumber(unsigned long long i)
+{
+    JSValue* v = JSImmediate::from(i);
+    return v ? v : jsNumberCell(i);
 }
 
 ALWAYS_INLINE JSValue* jsNumberFromAnd(ExecState *exec, JSValue* v1, JSValue* v2)

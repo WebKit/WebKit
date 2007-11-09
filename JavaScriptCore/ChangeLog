@@ -1,3 +1,25 @@
+2007-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15904
+          more speed-ups possible by tightening up int version of JSImmediate
+
+        1% improvement of SunSpider
+
+        * kjs/JSImmediate.h: Eliminate the now-unneeded FPBitValues struct template.
+        (KJS::JSImmediate::from): Overload for most numeric types; many types can
+        do fewer branches and checks.
+        (KJS::JSImmediate::getUInt32): Removed unneeded check for undefined.
+        (KJS::JSImmediate::getTruncatedInt32): Ditto.
+        (KJS::JSImmediate::getTruncatedUInt32): Ditto. There's no difference any more
+        between getUInt32 and getTruncatedUInt32, so that's worth a rename and merge later.
+
+        * kjs/grammar.y: Update since fromDouble is now just from.
+        * kjs/nodes.h: Ditto.
+
+        * kjs/value.h: (KJS::jsNumber): Overload for most numeric types.
+
 2007-11-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         Bakefiles for building JavaScriptCore, needed by wx port.

@@ -655,12 +655,6 @@ void ArgumentListNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStac
     nodeStack.append(expr.get());
 }
 
-JSValue *ArgumentListNode::evaluate(ExecState *)
-{
-  ASSERT(0);
-  return 0; // dummy, see evaluateList()
-}
-
 // ECMA 11.2.4
 void ArgumentListNode::evaluateList(ExecState* exec, List& list)
 {
@@ -677,12 +671,6 @@ void ArgumentsNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks:
 {
     if (listNode)
         nodeStack.append(listNode.get());
-}
-
-JSValue *ArgumentsNode::evaluate(ExecState *)
-{
-  ASSERT(0);
-  return 0; // dummy, see evaluateList()
 }
 
 // ------------------------------ NewExprNode ----------------------------------

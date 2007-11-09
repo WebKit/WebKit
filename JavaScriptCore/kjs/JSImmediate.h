@@ -82,6 +82,19 @@ public:
         return (getTag(v) == UndefinedType);
     }
 
+    static JSValue* from(char);
+    static JSValue* from(signed char);
+    static JSValue* from(unsigned char);
+    static JSValue* from(short);
+    static JSValue* from(unsigned short);
+    static JSValue* from(int);
+    static JSValue* from(unsigned);
+    static JSValue* from(long);
+    static JSValue* from(unsigned long);
+    static JSValue* from(long long);
+    static JSValue* from(unsigned long long);
+    static JSValue* from(double);
+
     static ALWAYS_INLINE bool areBothImmediateNumbers(const JSValue* v1, const JSValue* v2)
     {
         return (reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2) & TagMask) == NumberType;
@@ -93,7 +106,6 @@ public:
         return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2));
     }
 
-    static JSValue* fromDouble(double d);
     static double toDouble(const JSValue*);
     static bool toBoolean(const JSValue*);
     static JSObject* toObject(const JSValue*, ExecState*);
@@ -104,8 +116,6 @@ public:
     static bool getTruncatedInt32(const JSValue*, int32_t&);
     static bool getTruncatedUInt32(const JSValue*, uint32_t&);
 
-    // It would nice just to use fromDouble() to create these values, but that would prevent them from
-    // turning into compile-time constants.
     static JSValue* trueImmediate();
     static JSValue* falseImmediate();
     static JSValue* undefinedImmediate();
@@ -113,6 +123,11 @@ public:
     
 private:
     static const uintptr_t TagMask = 3; // type tags are 2 bits long
+
+    // Immediate values are restricted to a 30 bit signed value.
+    static const int minImmediateInt = -(1 << 29);
+    static const int maxImmediateInt = (1 << 29) - 1;
+    static const unsigned maxImmediateUInt = maxImmediateInt;
     
     static ALWAYS_INLINE JSValue* tag(uintptr_t bits, uintptr_t tag)
     {
@@ -128,109 +143,6 @@ private:
     {
         return reinterpret_cast<uintptr_t>(v) & TagMask;
     }
-    
-    // we support 32-bit platforms with sizes like this
-    static const bool is32bit = 
-        sizeof(float) == sizeof(uint32_t) && sizeof(double) == sizeof(uint64_t) && sizeof(uintptr_t) == sizeof(uint32_t);
-
-    // we support 64-bit platforms with sizes like this
-    static const bool is64bit =
-        sizeof(float) == sizeof(uint32_t) && sizeof(double) == sizeof(uint64_t) && sizeof(uintptr_t) == sizeof(uint64_t);
-
-    template<bool for32bit, bool for64bit> struct FPBitValues {};
-};
-
-template<> struct JSImmediate::FPBitValues<true, false> {
-    static const uint32_t nanAsBits = 0x7fc00000;
-    static const uint32_t oneAsBits = 0x3f800000;
-    static const uint32_t zeroAsBits = 0x0;
-
-    static ALWAYS_INLINE JSValue* fromDouble(double d)
-    {
-        const int32_t intVal = static_cast<int>(d);
-        
-        // On 32 bit systems immediate values are restricted to a 30 bit signed value
-        if ((intVal <= -(1 << 29)) | (intVal >= ((1 << 29) - 1)))
-            return 0;
-        
-        // Check for data loss from conversion to int. This
-        // will reject NaN, +/-Inf, and -0.
-        // Happily none of these are as common as raw int values
-        if ((intVal != d) || (signbit(d) && !intVal))
-            return 0;
-        
-        return tag(intVal << 2, NumberType);
-    }
-
-    static ALWAYS_INLINE double toDouble(const JSValue* v)
-    {
-        ASSERT(isImmediate(v));
-        const int32_t i = static_cast<int32_t>(unTag(v)) >> 2;
-        if (JSImmediate::getTag(v) == UndefinedType && i)
-            return std::numeric_limits<double>::quiet_NaN();
-        return i;
-    }
-    
-    static ALWAYS_INLINE bool getTruncatedInt32(const JSValue* v, int32_t& i)
-    {
-        i = static_cast<int32_t>(unTag(v)) >> 2;
-        if (JSImmediate::getTag(v) == UndefinedType && i)
-            return false;
-        return isNumber(v);
-    }
-    
-    static ALWAYS_INLINE bool getTruncatedUInt32(const JSValue* v, uint32_t& i)
-    {
-        int32_t& si = reinterpret_cast<int&>(i);
-        return getTruncatedInt32(v, si) & (si >= 0);
-    }
-};
-
-template<> struct JSImmediate::FPBitValues<false, true> {
-    static const uint64_t nanAsBits = 0x7ff80000ULL << 32;
-    static const uint64_t oneAsBits = 0x3ff00000ULL << 32;
-    static const uint64_t zeroAsBits = 0x0;
-
-    static ALWAYS_INLINE JSValue* fromDouble(double d)
-    {
-        const int64_t intVal = static_cast<int>(d);
-        
-        // Technically we could fit a 60 bit signed int here, however that would
-        // required more branches when extracting int values.
-        if ((intVal <= -(1L << 29)) | (intVal >= ((1 << 29) - 1)))
-            return 0;
-        
-        // Check for data loss from conversion to int. This
-        // will reject NaN, +/-Inf, and -0.
-        // Happily none of these are as common as raw int values
-        if ((intVal != d) || (signbit(d) && !intVal))
-            return 0;
-
-        return tag(static_cast<uintptr_t>(intVal << 2), NumberType);
-    }
-
-    static ALWAYS_INLINE double toDouble(const JSValue* v)
-    {
-        ASSERT(isImmediate(v));
-        const int32_t i = static_cast<int32_t>(unTag(v) >> 2);
-        if (JSImmediate::getTag(v) == UndefinedType && i)
-            return std::numeric_limits<double>::quiet_NaN();
-        return i;
-    }
-
-    static ALWAYS_INLINE bool getTruncatedInt32(const JSValue* v, int32_t& i)
-    {
-        i = static_cast<int32_t>(unTag(v) >> 2);
-        if (JSImmediate::getTag(v) == UndefinedType && i)
-            return false;
-        return isNumber(v);
-    }
-
-    static ALWAYS_INLINE bool getTruncatedUInt32(const JSValue* v, uint32_t& i)
-    {      
-        int& si = reinterpret_cast<int&>(i);
-        return getTruncatedInt32(v, si) & (si >= 0);
-    }
 };
 
 ALWAYS_INLINE JSValue* JSImmediate::trueImmediate() { return tag(1 << 2, BooleanType); }
@@ -245,29 +157,112 @@ ALWAYS_INLINE bool JSImmediate::toBoolean(const JSValue* v)
     return (bits != 0) & (JSImmediate::getTag(v) != UndefinedType);
 }
 
-ALWAYS_INLINE JSValue* JSImmediate::fromDouble(double d)
+ALWAYS_INLINE JSValue* JSImmediate::from(char i)
 {
-    return FPBitValues<is32bit, is64bit>::fromDouble(d);
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(signed char i)
+{
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(unsigned char i)
+{
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(short i)
+{
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(unsigned short i)
+{
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(int i)
+{
+    if ((i < minImmediateInt) | (i > maxImmediateInt))
+        return 0;
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(unsigned i)
+{
+    if (i > maxImmediateUInt)
+        return 0;
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(long i)
+{
+    if ((i < minImmediateInt) | (i > maxImmediateInt))
+        return 0;
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(unsigned long i)
+{
+    if (i > maxImmediateUInt)
+        return 0;
+    return tag(i << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(long long i)
+{
+    if ((i < minImmediateInt) | (i > maxImmediateInt))
+        return 0;
+    return tag(static_cast<uintptr_t>(i) << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(unsigned long long i)
+{
+    if (i > maxImmediateUInt)
+        return 0;
+    return tag(static_cast<uintptr_t>(i) << 2, NumberType);
+}
+
+ALWAYS_INLINE JSValue* JSImmediate::from(double d)
+{
+    const int intVal = static_cast<int>(d);
+
+    if ((intVal < minImmediateInt) | (intVal > maxImmediateInt))
+        return 0;
+
+    // Check for data loss from conversion to int.
+    if ((intVal != d) || (signbit(d) && !intVal))
+        return 0;
+
+    return tag(intVal << 2, NumberType);
 }
 
 ALWAYS_INLINE double JSImmediate::toDouble(const JSValue* v)
 {
-    return FPBitValues<is32bit, is64bit>::toDouble(v);
+    ASSERT(isImmediate(v));
+    const int32_t i = static_cast<int32_t>(unTag(v)) >> 2;
+    if (JSImmediate::getTag(v) == UndefinedType && i)
+        return std::numeric_limits<double>::quiet_NaN();
+    return i;
 }
 
 ALWAYS_INLINE bool JSImmediate::getUInt32(const JSValue* v, uint32_t& i)
 {
-    return FPBitValues<is32bit, is64bit>::getTruncatedUInt32(v, i);
+    const int32_t si = static_cast<int32_t>(unTag(v)) >> 2;
+    i = si;
+    return isNumber(v) & (si >= 0);
 }
 
 ALWAYS_INLINE bool JSImmediate::getTruncatedInt32(const JSValue* v, int32_t& i)
 {
-    return FPBitValues<is32bit, is64bit>::getTruncatedInt32(v, i);
+    i = static_cast<int32_t>(unTag(v)) >> 2;
+    return isNumber(v);
 }
 
 ALWAYS_INLINE bool JSImmediate::getTruncatedUInt32(const JSValue* v, uint32_t& i)
 {
-    return FPBitValues<is32bit, is64bit>::getTruncatedUInt32(v, i);
+    return getUInt32(v, i);
 }
 
 } // namespace KJS

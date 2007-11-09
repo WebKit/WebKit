@@ -206,9 +206,9 @@ static NumberNode* makeNumberNode(double);
 %%
 
 Literal:
-    NULLTOKEN                           { $$ = new NullNode(); }
-  | TRUETOKEN                           { $$ = new BooleanNode(true); }
-  | FALSETOKEN                          { $$ = new BooleanNode(false); }
+    NULLTOKEN                           { $$ = new NullNode; }
+  | TRUETOKEN                           { $$ = new TrueNode; }
+  | FALSETOKEN                          { $$ = new FalseNode; }
   | NUMBER                              { $$ = makeNumberNode($1); }
   | STRING                              { $$ = new StringNode($1); }
   | '/' /* regexp */                    {
@@ -1037,7 +1037,7 @@ static ExpressionNode* makeNegateNode(ExpressionNode* n)
 
 static NumberNode* makeNumberNode(double d)
 {
-    JSValue* value = JSImmediate::fromDouble(d);
+    JSValue* value = JSImmediate::from(d);
     if (value)
         return new ImmediateNumberNode(value, d);
     return new NumberNode(d);
