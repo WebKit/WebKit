@@ -4,6 +4,7 @@
 
         * kjs/nodes.cpp: Back to previous version.
         * kjs/nodes.h: Ditto.
+        * kjs/grammar.y: Ditto.
 
 2007-11-08  Darin Adler  <darin@apple.com>
 
