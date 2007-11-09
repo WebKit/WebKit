@@ -1,0 +1,160 @@
+# Copyright (C) 2007 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+.PHONY : all
+all : \
+    $(WEBKIT_OUTPUT)/Node.idl \
+    $(WEBKIT_OUTPUT)/Attr.idl \
+    $(WEBKIT_OUTPUT)/Element.idl \
+    $(WEBKIT_OUTPUT)/NodeList.idl \
+    $(WEBKIT_OUTPUT)/Document.idl \
+    $(WEBKIT_OUTPUT)/CharacterData.idl \
+    $(WEBKIT_OUTPUT)/CDATASection.idl \
+    $(WEBKIT_OUTPUT)/Comment.idl \
+    $(WEBKIT_OUTPUT)/Text.idl \
+    $(WEBKIT_OUTPUT)/DocumentFragment.idl \
+    $(WEBKIT_OUTPUT)/DocumentType.idl \
+    $(WEBKIT_OUTPUT)/DOMImplementation.idl \
+    $(WEBKIT_OUTPUT)/Entity.idl \
+    $(WEBKIT_OUTPUT)/EntityReference.idl \
+    $(WEBKIT_OUTPUT)/NamedNodeMap.idl \
+    $(WEBKIT_OUTPUT)/Notation.idl \
+    $(WEBKIT_OUTPUT)/ProcessingInstruction.idl \
+    \
+    $(WEBKIT_OUTPUT)/HTMLAnchorElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLAppletElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLAreaElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLBRElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLBaseElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLBaseFontElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLBlockquoteElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLBodyElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLButtonElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLCollection.idl \
+    $(WEBKIT_OUTPUT)/HTMLDListElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLDirectoryElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLDivElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLDocument.idl \
+    $(WEBKIT_OUTPUT)/HTMLElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLEmbedElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLFieldSetElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLFontElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLFormElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLFrameElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLFrameSetElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLHRElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLHeadElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLHeadingElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLHtmlElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLIFrameElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLImageElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLInputElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLIsIndexElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLLIElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLLabelElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLLegendElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLLinkElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLMapElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLMarqueeElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLMenuElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLMetaElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLModElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLOListElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLObjectElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLOptGroupElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLOptionElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLOptionsCollection.idl \
+    $(WEBKIT_OUTPUT)/HTMLParagraphElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLParamElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLPreElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLQuoteElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLScriptElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLSelectElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLStyleElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLTableCaptionElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLTableCellElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLTableColElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLTableElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLTableRowElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLTableSectionElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLTextAreaElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLTitleElement.idl \
+    $(WEBKIT_OUTPUT)/HTMLUListElement.idl \
+    \
+    $(WEBKIT_OUTPUT)/CSSCharsetRule.idl \
+    $(WEBKIT_OUTPUT)/CSSFontFaceRule.idl \
+    $(WEBKIT_OUTPUT)/CSSImportRule.idl \
+    $(WEBKIT_OUTPUT)/CSSMediaRule.idl \
+    $(WEBKIT_OUTPUT)/CSSPageRule.idl \
+    $(WEBKIT_OUTPUT)/CSSPrimitiveValue.idl \
+    $(WEBKIT_OUTPUT)/CSSRule.idl \
+    $(WEBKIT_OUTPUT)/CSSRuleList.idl \
+    $(WEBKIT_OUTPUT)/CSSStyleDeclaration.idl \
+    $(WEBKIT_OUTPUT)/CSSStyleRule.idl \
+    $(WEBKIT_OUTPUT)/CSSStyleSheet.idl \
+    $(WEBKIT_OUTPUT)/CSSUnknownRule.idl \
+    $(WEBKIT_OUTPUT)/CSSValue.idl \
+    $(WEBKIT_OUTPUT)/CSSValueList.idl \
+    $(WEBKIT_OUTPUT)/Counter.idl \
+    $(WEBKIT_OUTPUT)/MediaList.idl \
+    $(WEBKIT_OUTPUT)/Rect.idl \
+    $(WEBKIT_OUTPUT)/StyleSheet.idl \
+    $(WEBKIT_OUTPUT)/StyleSheetList.idl \
+    \
+    $(WEBKIT_OUTPUT)/Event.idl \
+    $(WEBKIT_OUTPUT)/EventTarget.idl \
+    $(WEBKIT_OUTPUT)/EventListener.idl \
+    \
+    $(WEBKIT_OUTPUT)/CodeGenerator.pm \
+    $(WEBKIT_OUTPUT)/CodeGeneratorCOM.pm \
+    $(WEBKIT_OUTPUT)/IDLParser.pm \
+    $(WEBKIT_OUTPUT)/IDLStructure.pm \
+    $(WEBKIT_OUTPUT)/generate-bindings.pl \
+#
+
+# $(WEBKIT_OUTPUT)/CanvasGradient.idl \
+# $(WEBKIT_OUTPUT)/CanvasPattern.idl \
+# $(WEBKIT_OUTPUT)/CanvasRenderingContext2D.idl \
+# $(WEBKIT_OUTPUT)/HTMLCanvasElement.idl \
+# $(WEBKIT_OUTPUT)/RGBColor.idl \
+
+MIGRATE_CMD = cp $< $@
+
+# Migrate core/event IDLs
+$(WEBKIT_OUTPUT)/% : $(WEBCORE)/dom/%
+	$(MIGRATE_CMD)
+
+# Migrate html IDLs
+$(WEBKIT_OUTPUT)/% : $(WEBCORE)/html/%
+	$(MIGRATE_CMD)
+
+# Migrate css IDLs
+$(WEBKIT_OUTPUT)/% : $(WEBCORE)/css/%
+	$(MIGRATE_CMD)
+
+# Migrate generation scripts
+$(WEBKIT_OUTPUT)/% : $(WEBCORE)/bindings/scripts/%
+	$(MIGRATE_CMD)
