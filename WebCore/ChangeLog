@@ -1,3 +1,17 @@
+2007-11-09  David Hyatt  <hyatt@apple.com>
+
+        Clean up matrix() parsing.  Make sure the first four arguments can be lengths or numbers.  The last two
+        args can be lengths or numbers or percents.
+
+        Reviewed by Beth
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::TransformOperationInfo::TransformOperationInfo):
+        (WebCore::CSSParser::parseTransform):
+        * rendering/RenderStyle.h:
+        (WebCore::MatrixTransformOperation::apply):
+
 2007-11-09  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.

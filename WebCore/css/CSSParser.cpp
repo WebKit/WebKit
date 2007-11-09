@@ -3325,7 +3325,7 @@ public:
         } else if (fname == "matrix(") {
             m_type = CSSTransformValue::MatrixTransformOperation;
             m_argCount = 11;
-            m_unit = CSSParser::FNumber;
+            m_unit = CSSParser::FLength;
         }
         
         if (fname == "scale(" || fname == "skew(" || fname == "translate(") {
@@ -3380,8 +3380,20 @@ PassRefPtr<CSSValue> CSSParser::parseTransform()
 
         // Snag our values.
         Value* a = args->current();
+        unsigned argNumber = 0;
         while (a) {
-            if (!validUnit(a, info.unit(), true)) // Always parse strictly, since this is a newer property, so there's no reason to be lax.
+            bool strictParsing = true;
+            CSSParser::Units unit = info.unit();
+            if (info.type() == CSSTransformValue::MatrixTransformOperation) {
+                // We use lax parsing for matrix(), since we want to allow raw numbers to be converted to fixed lengths.
+                strictParsing = false;
+                
+                // Allow percents in the last two spots of matrix().
+                if (argNumber >= 4)
+                    unit = (unit | CSSParser::FPercent);
+            }
+
+            if (!validUnit(a, unit, strictParsing))
                 return 0;
             
             // Add the value to the current transform operation.
@@ -3393,6 +3405,8 @@ PassRefPtr<CSSValue> CSSParser::parseTransform()
             if (a->unit != Value::Operator || a->iValue != ',')
                 return 0;
             a = args->next();
+            
+            argNumber++;
         }
     }
     
