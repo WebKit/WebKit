@@ -1,3 +1,22 @@
+2007-11-09  Tristan O'Tierney  <tristan@apple.com>
+
+        Reviewed by Timothy Hatcher.
+        
+        This patch is for the WebKit side of <rdar://problem/5591115>.
+        We need a way to tell context menu navigations, such as "Open in New Window"
+        to override any sort of browser preference for tab based navigation.
+
+        * bridge/WindowFeatures.h:
+        (WebCore::WindowFeatures::WindowFeatures):
+        Added a new struct member var, preferredType
+        and an accompanying enum type PreferredType
+        to send a window type recommendation up to the Chrome. 
+        
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        Set the window features to recommend a new Window for
+        "Open in New Window" context menu action.
+
 2007-11-08  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5483519> Pressing Enter on selected buttons should fire onclick
