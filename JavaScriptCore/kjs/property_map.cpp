@@ -50,7 +50,11 @@ namespace KJS {
 
 // Choose a number for the following so that most property maps are smaller,
 // but it's not going to blow out the stack to allocate this number of pointers.
-const int smallMapThreshold = 1024;
+static const int smallMapThreshold = 1024;
+
+// The point at which the function call overhead of the qsort implementation
+// becomes small compared to the inefficiency of insertion sort.
+static const int tinyMapThreshold = 20;
 
 #if DUMP_PROPERTYMAP_STATS
 
@@ -677,6 +681,25 @@ void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) c
         if (key && !(m_singleEntryAttributes & DontEnum))
             propertyNames.add(Identifier(key));
 #endif
+        return;
+    }
+
+    if (m_u.table->keyCount < tinyMapThreshold) {
+        Entry* a[tinyMapThreshold];
+        int i = 0;
+        unsigned entryCount = m_u.table->keyCount + m_u.table->deletedSentinelCount;
+        for (unsigned k = 1; k <= entryCount; k++) {
+            if (m_u.table->entries()[k].key && !(m_u.table->entries()[k].attributes & DontEnum)) {
+                Entry* value = &m_u.table->entries()[k];
+                int j;
+                for (j = i - 1; j >= 0 && a[j]->index > value->index; --j)
+                    a[j + 1] = a[j];
+                a[j + 1] = value;
+                ++i;
+            }
+        }
+        for (int k = 0; k < i; ++k)
+            propertyNames.add(Identifier(a[k]->key));
         return;
     }
 

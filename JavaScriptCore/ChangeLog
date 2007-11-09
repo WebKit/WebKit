@@ -2,6 +2,19 @@
 
         Reviewed by Maciej.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=15912
+          fasta spends a lot of time in qsort
+
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::getEnumerablePropertyNames):
+        Use insertion sort instead of qsort for small sets of property names.
+        We can probably do some even-better speedups of for/in, but this nets
+        0.6% overall and 6.7% on fasta.
+
+2007-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - http://bugs.webkit.org/show_bug.cgi?id=15906
           getting characters by indexing into a string is very slow
 
