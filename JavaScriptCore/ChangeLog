@@ -1,5 +1,12 @@
 2007-11-08  Darin Adler  <darin@apple.com>
 
+        - roll out accidentally-checked in changes
+
+        * kjs/nodes.cpp: Back to previous version.
+        * kjs/nodes.h: Ditto.
+
+2007-11-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - http://bugs.webkit.org/show_bug.cgi?id=15912

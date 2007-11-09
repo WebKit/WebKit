@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
@@ -110,7 +111,7 @@ namespace KJS {
       FunctionStack& functionStack;
   };
 
-  class Node : Noncopyable {
+  class Node {
   public:
     Node() KJS_FAST_CALL;
     Node(PlacementNewAdoptType) KJS_FAST_CALL { }
@@ -134,6 +135,9 @@ namespace KJS {
     // Used for iterative, depth-first traversal of the node tree. Does not cross function call boundaries.
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL { }
 
+    // Used to optimize those nodes that do extra work when returning a result, even if the result has no semantic relevance
+    virtual void optimizeForUnnecessaryResult() { }
+      
   protected:
     Completion createErrorCompletion(ExecState *, ErrorType, const char *msg) KJS_FAST_CALL;
     Completion createErrorCompletion(ExecState *, ErrorType, const char *msg, const Identifier &) KJS_FAST_CALL;
@@ -155,6 +159,10 @@ namespace KJS {
 
     int m_line : 31;
     bool m_mayHaveDeclarations : 1;
+  private:
+    // disallow assignment
+    Node& operator=(const Node&) KJS_FAST_CALL;
+    Node(const Node &other) KJS_FAST_CALL;
   };
     
     class ExpressionNode : public Node {
@@ -178,10 +186,7 @@ namespace KJS {
         
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL = 0;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
-
-        // Used to optimize those nodes that do extra work when returning a result, even if the result has no semantic relevance
-        virtual void optimizeForUnnecessaryResult() { }
-   };
+    };
 
   class StatementNode : public Node {
   public:
@@ -234,10 +239,10 @@ namespace KJS {
   
   class ImmediateNumberNode : public NumberNode {
   public:
-      ImmediateNumberNode(JSValue* v, double d) KJS_FAST_CALL : NumberNode(d), m_value(v) { ASSERT(v == JSImmediate::from(d)); }
+      ImmediateNumberNode(JSValue* v, double d) KJS_FAST_CALL : NumberNode(d), m_value(v) { ASSERT(v == JSImmediate::fromDouble(d)); }
       virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
       
-      virtual void setValue(double d) KJS_FAST_CALL { m_double = d; m_value = JSImmediate::from(d); ASSERT(m_value); }
+      virtual void setValue(double d) KJS_FAST_CALL { m_double = d; m_value = JSImmediate::fromDouble(d); ASSERT(m_value); }
   private:
       JSValue* m_value;
   };
@@ -316,19 +321,16 @@ namespace KJS {
     ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
   };
 
-  class ElementNode : public Node {
+  class ElementNode : public ExpressionNode {
   public:
     ElementNode(int e, ExpressionNode* n) KJS_FAST_CALL : elision(e), node(n) { }
     ElementNode(ElementNode* l, int e, ExpressionNode* n) KJS_FAST_CALL
       : elision(e), node(n) { l->next = this; }
-    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     PassRefPtr<ElementNode> releaseNext() KJS_FAST_CALL { return next.release(); }
-
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     friend class ArrayNode;
     ListRefPtr<ElementNode> next;
@@ -353,38 +355,34 @@ namespace KJS {
     bool opt;
   };
 
-  class PropertyNode : public Node {
+  class PropertyNode : public ExpressionNode {
   public:
     enum Type { Constant, Getter, Setter };
     PropertyNode(const Identifier& n, ExpressionNode* a, Type t) KJS_FAST_CALL
       : m_name(n), assign(a), type(t) { }
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
-    const Identifier& name() const { return m_name; }
-
-  private:
     friend class PropertyListNode;
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
+    const Identifier& name() const { return m_name; }
+  private:
     Identifier m_name;
     RefPtr<ExpressionNode> assign;
     Type type;
   };
   
-  class PropertyListNode : public Node {
+  class PropertyListNode : public ExpressionNode {
   public:
     PropertyListNode(PropertyNode* n) KJS_FAST_CALL
       : node(n) { }
     PropertyListNode(PropertyNode* n, PropertyListNode* l) KJS_FAST_CALL
       : node(n) { l->next = this; }
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-
-    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     PassRefPtr<PropertyListNode> releaseNext() KJS_FAST_CALL { return next.release(); }
-
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     friend class ObjectLiteralNode;
     RefPtr<PropertyNode> node;
@@ -441,35 +439,33 @@ namespace KJS {
     Identifier ident;
   };
 
-  class ArgumentListNode : public Node {
+  class ArgumentListNode : public ExpressionNode {
   public:
     ArgumentListNode(ExpressionNode* e) KJS_FAST_CALL : expr(e) { }
     ArgumentListNode(ArgumentListNode* l, ExpressionNode* e) KJS_FAST_CALL 
       : expr(e) { l->next = this; }
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
-    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     void evaluateList(ExecState*, List&) KJS_FAST_CALL;
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     PassRefPtr<ArgumentListNode> releaseNext() KJS_FAST_CALL { return next.release(); }
-
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
   private:
     friend class ArgumentsNode;
     ListRefPtr<ArgumentListNode> next;
     RefPtr<ExpressionNode> expr;
   };
 
-  class ArgumentsNode : public Node {
+  class ArgumentsNode : public ExpressionNode {
   public:
     ArgumentsNode() KJS_FAST_CALL { }
     ArgumentsNode(ArgumentListNode* l) KJS_FAST_CALL
       : listNode(l) { }
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
+    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+    void evaluateList(ExecState* exec, List& list) KJS_FAST_CALL { if (listNode) listNode->evaluateList(exec, list); }
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-
-    void evaluateList(ExecState* exec, List& list) KJS_FAST_CALL { if (listNode) listNode->evaluateList(exec, list); }
-
   private:
     RefPtr<ArgumentListNode> listNode;
   };
@@ -563,7 +559,7 @@ namespace KJS {
     RefPtr<ArgumentsNode> args;
   };
 
-  class PrePostResolveNode : public ExpressionNode {
+    class PrePostResolveNode : public ExpressionNode {
   public:
     PrePostResolveNode(const Identifier& i) KJS_FAST_CALL : m_ident(i) {}
       
@@ -637,7 +633,7 @@ namespace KJS {
     virtual void optimizeForUnnecessaryResult();
   };
 
-  class PostfixBracketNode : public ExpressionNode {
+    class PostfixBracketNode : public ExpressionNode {
   public:
     PostfixBracketNode(ExpressionNode* b, ExpressionNode* s) KJS_FAST_CALL : m_base(b), m_subscript(s) {}
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
