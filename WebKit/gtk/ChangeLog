@@ -1,3 +1,17 @@
+2007-11-08  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15653
+        [GTK] Text editor does not handle common keystrokes
+
+        Handle more keystrokes in EditorClientGtk. Note that this is a
+        temporary measure pending a proper solution using GtkBindingSet (see
+        http://bugs.webkit.org/show_bug.cgi?id=15911).
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeypress):
+
 2007-11-08  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.

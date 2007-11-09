@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org> 
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * All rights reserved.
  *
@@ -215,46 +216,142 @@ void EditorClient::toggleGrammarChecking()
 void EditorClient::handleKeypress(KeyboardEvent* event)
 {
     Frame* frame = core(m_page)->focusController()->focusedOrMainFrame();
-    if (!frame)
+    if (!frame || !frame->document()->focusedNode())
         return;
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (!kevent->isKeyUp()) {
-        Node* start = frame->selectionController()->start().node();
-        if (start && start->isContentEditable()) {
-            switch (kevent->WindowsKeyCode()) {
+    if (!kevent || kevent->isKeyUp())
+        return;
+
+    Node* start = frame->selectionController()->start().node();
+    if (!start)
+        return;
+
+    // FIXME: Use GtkBindingSet instead of this hard-coded switch
+    // http://bugs.webkit.org/show_bug.cgi?id=15911
+
+    if (start->isContentEditable()) {
+        switch(kevent->WindowsKeyCode()) {
             case VK_BACK:
                 frame->editor()->deleteWithDirection(SelectionController::BACKWARD,
-                                                     CharacterGranularity, false, true);
+                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity, false, true);
                 break;
             case VK_DELETE:
                 frame->editor()->deleteWithDirection(SelectionController::FORWARD,
-                                                     CharacterGranularity, false, true);
+                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity, false, true);
                 break;
             case VK_LEFT:
-                frame->editor()->execCommand("MoveLeft");
+                frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                        SelectionController::LEFT,
+                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
+                        true);
                 break;
             case VK_RIGHT:
-                frame->editor()->execCommand("MoveRight");
+                frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                        SelectionController::RIGHT,
+                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
+                        true);
                 break;
+            case VK_UP:
+                frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                        SelectionController::BACKWARD,
+                        kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
+                        true);
+            case VK_DOWN:
+                frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                        SelectionController::FORWARD,
+                        kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
+                        true);
+                break;
+            case VK_PRIOR:  // PageUp
+                frame->editor()->execCommand("MoveUpByPageAndModifyCaret");
+                break;
+            case VK_NEXT:  // PageDown
+                frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
+                break;
+            case VK_RETURN:
+                frame->editor()->execCommand("InsertLineBreak");
+                break;
+            case VK_TAB:
+                return;
+            default:
+                if (!kevent->ctrlKey() && !kevent->altKey() && !kevent->text().isEmpty()) {
+                    if (kevent->text().length() == 1) {
+                        UChar ch = kevent->text()[0];
+                        // Don't insert null or control characters as they can result in unexpected behaviour
+                        if (ch < ' ')
+                            break;
+                    }
+                    frame->editor()->insertText(kevent->text(), event);
+                } else if (kevent->ctrlKey()) {
+                    switch (kevent->WindowsKeyCode()) {
+                        case VK_A:
+                            frame->editor()->execCommand("SelectAll");
+                            break;
+                        case VK_B:
+                            frame->editor()->execCommand("ToggleBold");
+                            break;
+                        case VK_C:
+                            frame->editor()->execCommand("Copy");
+                            break;
+                        case VK_I:
+                            frame->editor()->execCommand("ToggleItalic");
+                            break;
+                        case VK_V:
+                            frame->editor()->execCommand("Paste");
+                            break;
+                        case VK_X:
+                            frame->editor()->execCommand("Cut");
+                            break;
+                        case VK_Y:
+                            frame->editor()->execCommand("Redo");
+                            break;
+                        case VK_Z:
+                            frame->editor()->execCommand("Undo");
+                            break;
+                        default:
+                            return;
+                    }
+                } else return;
+        }
+    } else {
+        switch (kevent->WindowsKeyCode()) {
             case VK_UP:
                 frame->editor()->execCommand("MoveUp");
                 break;
             case VK_DOWN:
                 frame->editor()->execCommand("MoveDown");
                 break;
+            case VK_PRIOR:  // PageUp
+                frame->editor()->execCommand("MoveUpByPageAndModifyCaret");
+                break;
+            case VK_NEXT:  // PageDown
+                frame->editor()->execCommand("MoveDownByPageAndModifyCaret");
+                break;
+            case VK_HOME:
+                if (kevent->ctrlKey())
+                    frame->editor()->execCommand("MoveToBeginningOfDocument");
+                break;
+            case VK_END:
+                if (kevent->ctrlKey())
+                    frame->editor()->execCommand("MoveToEndOfDocument");
+                break;
             default:
-                if (kevent->text().length() == 1) {
-                    UChar ch = kevent->text()[0];
-                    // Don't insert null or control characters as they can result in unexpected behaviour
-                    if (ch < ' ')
-                        break;
-                }
-                frame->editor()->insertText(kevent->text(), event);
-            }
-            event->setDefaultHandled();
+                if (kevent->ctrlKey()) {
+                    switch(kevent->WindowsKeyCode()) {
+                        case VK_A:
+                            frame->editor()->execCommand("SelectAll");
+                            break;
+                        case VK_C: case VK_X:
+                            frame->editor()->execCommand("Copy");
+                            break;
+                        default:
+                            return;
+                    }
+                } else return;
         }
     }
+    event->setDefaultHandled();
 }
 
 
