@@ -1,3 +1,13 @@
+2007-11-09  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Holger.
+
+        Renamed QWebPage::NumWebActions to QWebPage::WebActionCount (for consistency) and fixed its value.
+        
+
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
 2007-11-08  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.

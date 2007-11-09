@@ -122,7 +122,7 @@ public:
         DeleteStartOfWord,
         DeleteEndOfWord,
 
-        NumWebActions = DeleteEndOfWord
+        WebActionCount
     };
 
 
