@@ -1,3 +1,13 @@
+2007-11-09  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15909
+        Malformed GIFs should not result in memory corruption.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+
 2007-11-09  Steve Falkenburg  <sfalken@apple.com>
 
         Initialize WindowFeatures struct before using it.
