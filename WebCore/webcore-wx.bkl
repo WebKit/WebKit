@@ -1,0 +1,147 @@
+<?xml version="1.0" ?>
+<!-- 
+Copyright (C) 2007 Kevin Ollivier <kevino@theolliviers.com>
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1.  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer. 
+2.  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution. 
+3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission. 
+
+THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+wxWebCore port Bakefile project file.
+-->
+
+
+
+<makefile>
+    <!-- eventually we should make these options -->
+    <set var="WX_UNICODE">1</set>
+    <set var="WX_SHARED">1</set>
+
+    <include file="webcore-base.bkl"/>
+    
+    <!-- the WX_PYTHON option was added to presets/wx.bkl in 2.8.5, so define 
+         it in case the presets/wx.bkl doesn't define it for us. -->
+    <if cond="not isdefined('WX_PYTHON')">
+        <set var="WX_PYTHON">0</set>
+    </if>
+    
+    <action id="DerivedSources">
+        <is-phony/>
+        <command>cd $(SRCDIR);bash move-js-headers.sh; bash make-generated-sources.sh platform/wx/wx-encodings.txt;cd Projects/wx</command>
+    </action>
+      
+    <template id="webcore-wx" template="webcore_base,wxwk_build_settings,curl,gtk,pthreads">
+        <pic>on</pic>
+        <threading>multi</threading>
+
+        <define>WTF_USE_ICU_UNICODE=1</define>
+        <define>UNICODE=1</define>
+        
+        <dirname>.</dirname>
+        <include>$(SRCDIR)/platform/wx</include>
+        <include>$(SRCDIR)/platform/wx/wxcode</include>
+        <include>$(SRCDIR)/bridge/wx</include>
+        <include>$(SRCDIR)/page/wx</include>
+        <include>$(WK_ROOT)/libpng</include>
+        <include>$(WK_ROOT)/libjpeg</include>
+        
+        <sources>
+            editing/wx/EditorWx.cpp
+
+            page/wx/DragControllerWx.cpp
+            page/wx/EventHandlerWx.cpp
+           
+            platform/graphics/wx/AffineTransformWx.cpp
+            platform/graphics/wx/ColorWx.cpp
+            platform/graphics/wx/FloatRectWx.cpp
+            platform/graphics/wx/GraphicsContextWx.cpp
+            platform/graphics/wx/ImageBufferWx.cpp
+            platform/graphics/wx/ImageSourceWx.cpp
+            platform/graphics/wx/ImageWx.cpp
+            platform/graphics/wx/IntPointWx.cpp
+            platform/graphics/wx/IntRectWx.cpp
+            platform/graphics/wx/PathWx.cpp
+            platform/graphics/wx/PenWx.cpp
+            
+            platform/wx/TemporaryLinkStubs.cpp
+            platform/wx/ClipboardWx.cpp
+            platform/wx/CursorWx.cpp
+            platform/wx/DragDataWx.cpp
+            platform/wx/DragImageWx.cpp
+            platform/wx/FileSystemWx.cpp
+            platform/wx/FontCacheWx.cpp
+            platform/wx/FontDataWx.cpp
+            platform/wx/FontPlatformDataWx.cpp
+            platform/wx/FontWx.cpp             
+            platform/wx/GlyphMapWx.cpp
+            platform/wx/KeyboardEventWx.cpp
+            platform/wx/LocalizedStringsWx.cpp
+            platform/wx/LoggingWx.cpp
+            platform/wx/MimeTypeRegistryWx.cpp
+            platform/wx/MouseEventWx.cpp
+            platform/wx/MouseWheelEventWx.cpp
+            platform/wx/PasteboardWx.cpp
+            platform/wx/RenderThemeWx.cpp
+            platform/wx/ScreenWx.cpp
+            platform/wx/ScrollViewWx.cpp
+            platform/wx/SharedTimerWx.cpp
+            platform/wx/SoundWx.cpp
+            platform/wx/StringWx.cpp
+            platform/wx/SystemTimeWx.cpp
+            platform/wx/ThreadingWx.cpp
+            platform/wx/WidgetWx.cpp
+           
+            <!-- files from other ports we currently rely on -->
+            platform/network/curl/ResourceHandleCurl.cpp
+            platform/network/curl/ResourceHandleManager.cpp
+                      
+        </sources>
+        
+        <!-- extensions that hopefully will make it to wx -->
+        <set var="EXT_SOURCES">
+            <if cond="WX_PORT=='gtk2'">
+                platform/wx/wxcode/gtk/fontprops.cpp
+            </if>
+            <if cond="WX_PORT=='mac'">
+                platform/wx/wxcode/mac/carbon/fontprops.cpp
+            </if>
+            <if cond="WX_PORT=='msw'">
+                platform/wx/wxcode/win/fontprops.cpp
+            </if>
+        </set>
+        
+        <sources>
+            $(EXT_SOURCES)
+        </sources>
+
+    </template>
+
+    <lib id="wx-webcore-static" template="webcore-wx,wx-lib">
+        <libname>webcore-wx</libname>
+        <dirname>$(WKOUTPUTDIR)</dirname>
+        <if cond="PLATFORM_WIN32=='1'">
+            <define>WXUSINGDLL=1</define>
+    </if>
+    </lib>
+
+</makefile>
+

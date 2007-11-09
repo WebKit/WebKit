@@ -1,0 +1,104 @@
+<?xml version="1.0" ?>
+<!-- 
+
+Copyright (C) 2007 Kevin Ollivier.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1.  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer. 
+2.  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution. 
+3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission. 
+
+THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+This file builds the wxWebKit library.
+
+-->
+
+<makefile>
+    <set var="WX_UNICODE">1</set>
+    <set var="WX_SHARED">1</set>
+    <include file="wxwk-settings.bkl"/>
+    
+    <!-- the WX_PYTHON option was added to presets/wx.bkl in 2.8.5, so define 
+         it in case the presets/wx.bkl doesn't define it for us. -->
+    <if cond="not isdefined('WX_PYTHON')">
+        <set var="WX_PYTHON">0</set>
+    </if>
+    
+    <set var="BUILDDIR">obj-$(FORMAT)</set>
+    
+    <dll id="wxwebkit-dynamic" template="wxwk,jscore,webcore,xml2,iconv,xslt,icu,curl,sqlite3,gtk,pthreads">
+        <!-- make sure we relink wxwebkit if either webcore or jscore change -->
+        <if cond="FORMAT=='gnu'">
+            <depends-on-file>$(WKOUTPUTDIR)/libjscore.a</depends-on-file>
+            <depends-on-file>$(WKOUTPUTDIR)/libwebcore-wx.a</depends-on-file>
+        </if>
+        <if cond="FORMAT=='msvc'">
+            <depends-on-file>$(WKOUTPUTDIR)/jscore.lib</depends-on-file>
+            <depends-on-file>$(WKOUTPUTDIR)/webcore-wx.lib</depends-on-file>
+        </if>
+        <runtime-libs>dynamic</runtime-libs>
+        <dllname>wxwebkit</dllname>
+        <libname>wxwebkit</libname>
+        
+        <if cond="FORMAT=='gnu'">
+            <ldflags>$(WKOUTPUTDIR)/libjscore.a</ldflags>
+        </if>
+        <if cond="FORMAT in ['msvc','msvs2005prj']">
+            <sys-lib>jscore</sys-lib>
+            <sys-lib>winmm</sys-lib> <!-- for timeGetTime -->
+            <lib-path>$(WKOUTPUTDIR)</lib-path>
+        </if>
+        
+        <set var="BUILDDIR">obj-$(FORMAT)</set>
+        
+        <include>$(WK_ROOT)/WebCore/platform/wx</include>
+        <include>$(WK_ROOT)/WebCore/bridge/wx</include>
+        <include>$(WK_ROOT)/WebCore/page/wx</include>
+        <include>$(WK_ROOT)/WebKit/wx</include>
+        <include>$(WK_ROOT)/WebKit/wx/WebKitSupport</include>
+        
+        <if cond="FORMAT=='gnu'">
+            <sys-lib>png</sys-lib>
+            <ldflags>$(WKOUTPUTDIR)/libwebcore-wx.a</ldflags>
+        </if>
+        <if cond="FORMAT in ['msvc','msvs2005prj']">
+            <sys-lib>webcore-wx</sys-lib>
+            <sys-lib>libpng</sys-lib>
+            <sys-lib>libjpeg</sys-lib>
+            <lib-path>$(WKOUTPUTDIR)</lib-path>
+            <lib-path>$(WK_ROOT)/libpng</lib-path>
+            <lib-path>$(WK_ROOT)/libjpeg</lib-path>
+        </if>
+        
+        <sources>
+            WebKitSupport/ChromeClientWx.cpp
+            WebKitSupport/ContextMenuClientWx.cpp
+            WebKitSupport/DragClientWx.cpp
+            WebKitSupport/EditorClientWx.cpp
+            WebKitSupport/FrameLoaderClientWx.cpp
+            WebKitSupport/InspectorClientWx.cpp
+            
+            WebView.cpp
+            WebFrame.cpp
+        </sources>   
+    </dll>
+
+</makefile>

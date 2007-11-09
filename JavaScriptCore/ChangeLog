@@ -1,3 +1,12 @@
+2007-11-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Bakefiles for building JavaScriptCore, needed by wx port.
+
+        Reviewed by Mark Rowe.
+
+        * JavaScriptCoreSources.bkl: Added.
+        * jscore.bkl: Added.
+
 2007-11-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

@@ -1,0 +1,120 @@
+<?xml version="1.0" ?>
+<!-- 
+Copyright (C) 2007 Kevin Ollivier. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1.  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer. 
+2.  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution. 
+3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission. 
+
+THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+JavaScriptCore Bakefile project file.
+-->
+
+<makefile>
+    <set var="SRCDIR">.</set>
+
+    <include file="../WebKit/wx/wxwk-settings.bkl"/>
+    <include file="JavaScriptCoreSources.bkl"/>
+
+    <!-- the WX_PYTHON option was added to presets/wx.bkl in 2.8.5, so define 
+         it in case the presets/wx.bkl doesn't define it for us. -->
+    <if cond="not isdefined('WX_PYTHON')">
+        <set var="WX_PYTHON">0</set>
+    </if>
+    
+    <set var="BUILDDIR">obj-$(FORMAT)</set>
+
+    <template id="jscore_base" template="icu,pthreads,wxwk_build_settings">
+        <sources>
+            $(JSCORE_SOURCES_API)
+            $(JSCORE_SOURCES_BINDINGS)
+            $(JSCORE_SOURCES_KJS)
+            $(JSCORE_SOURCES_PCRE)
+            $(WTF_SOURCES)
+        </sources>
+        <install-to>$(WKOUTPUTDIR)</install-to>
+        <pic>on</pic>
+        <threading>multi</threading>
+
+        <include>$(SRCDIR)</include>
+        <include>$(SRCDIR)/..</include>
+        <include>$(SRCDIR)/DerivedSources/JavaScriptCore</include>
+        <include>$(SRCDIR)/ForwardingHeaders</include>
+        <include>$(SRCDIR)/bindings/c</include>
+        <include>$(SRCDIR)/bindings/jni</include>
+        <include>$(SRCDIR)/bindings</include>
+        <include>$(SRCDIR)/kjs</include>
+        <include>$(SRCDIR)/pcre</include>
+        <include>$(SRCDIR)/wtf</include>
+
+        <define>ENABLE_XSLT=1</define>
+
+        <if cond="FORMAT=='gnu'">
+            <!-- FIXME: we need proper configure checks -->
+            <define>HAVE_FUNC_ISNAN</define>
+            <!-- check for undefined symbols for debugging reasons -->
+            <ldflags>-Wl,--no-undefined</ldflags>
+        </if>
+
+        <if cond="PLATFORM_WIN32=='1'">
+            <include>$(SRCDIR)/os-win32</include>
+            <define>HAVE_SYS_TIMEB_H=1</define>
+            <define>HAVE_FLOAT_H=1</define>
+            <define>HAVE_FUNC__FINITE=1</define>
+        </if>
+
+    </template>
+    
+    <exe id="testkjs" template="icu,jscore,pthreads">
+        <cxx-rtti>off</cxx-rtti>
+        <cxx-exceptions>off</cxx-exceptions>
+        <debug-info>on</debug-info>
+        <depends>jscore</depends>
+        <include>$(SRCDIR)</include>
+        <dirname>$(WKOUTPUTDIR)</dirname>
+        <sources>$(SRCDIR)/kjs/testkjs.cpp</sources>
+        <if cond="FORMAT=='gnu'">
+            <ldflags>$(WKOUTPUTDIR)/libjscore.a</ldflags>
+        </if>
+        <if cond="FORMAT in ['msvc','msvs2005prj']">
+            <sys-lib>jscore</sys-lib>
+            <sys-lib>winmm</sys-lib> <!-- for timeGetTime -->
+            <lib-path>$(WKOUTPUTDIR)</lib-path>
+        </if>
+        
+    </exe>
+
+    <exe id="dftables">
+        <dirname>$(SRCDIR)</dirname>
+        <include>$(SRCDIR)/wtf</include>
+        <sources>$(SRCDIR)/pcre/dftables.c</sources>
+    </exe>
+
+    <action id="DerivedSources">
+        <is-phony />
+        <command>bash make-generated-sources.sh</command>
+    </action>
+
+    <lib id="jscore" template="jscore_base">
+
+    </lib>
+</makefile>

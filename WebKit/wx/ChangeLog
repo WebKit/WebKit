@@ -1,0 +1,42 @@
+2007-11-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Initial commit of wx implementation of WebKit. This includes
+        the wxWebFrame and wxWebView wx front end classes, the 
+        WebKitSupport directory containing implementations of interfaces
+        used by WebCore to talk with the wxWebKit front end, and the 
+        language bindings for wxWebKit (bindings dir), currently
+        only containing bindings and a sample app for wxPython.
+
+        Reviewed by Mark Rowe.
+
+        * Bakefiles.bkgen: Added.
+        * WebFrame.cpp: Added.
+        * WebFrame.h: Added.
+        * WebKitSupport: Added.
+        * WebKitSupport/ChromeClientWx.cpp: Added.
+        * WebKitSupport/ChromeClientWx.h: Added.
+        * WebKitSupport/ContextMenuClientWx.cpp: Added.
+        * WebKitSupport/ContextMenuClientWx.h: Added.
+        * WebKitSupport/DragClientWx.cpp: Added.
+        * WebKitSupport/DragClientWx.h: Added.
+        * WebKitSupport/EditorClientWx.cpp: Added.
+        * WebKitSupport/EditorClientWx.h: Added.
+        * WebKitSupport/FrameLoaderClientWx.cpp: Added.
+        * WebKitSupport/FrameLoaderClientWx.h: Added.
+        * WebKitSupport/InspectorClientWx.cpp: Added.
+        * WebKitSupport/InspectorClientWx.h: Added.
+        * WebView.cpp: Added.
+        * WebView.h: Added.
+        * WebViewPrivate.h: Added.
+        * bindings: Added.
+        * bindings/python: Added.
+        * bindings/python/samples: Added.
+        * bindings/python/samples/simple.py: Added.
+        * bindings/python/webview.i: Added.
+        * bindings/python/wxwebkit-py.bkl: Added.
+        * dependencies.bkl: Added.
+        * presets: Added.
+        * presets/wxwebkit.bkl: Added.
+        * wxwebkit.bkl: Added.
+        * wxwk-settings.bkl: Added.
+

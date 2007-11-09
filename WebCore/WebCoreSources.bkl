@@ -1,0 +1,739 @@
+<?xml version="1.0" ?>
+<!-- 
+
+Copyright (C) 2007 Kevin Ollivier.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1.  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer. 
+2.  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution. 
+3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission. 
+
+THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+This file contains the list of files needed to build WebCore.
+
+-->
+
+<makefile>
+    
+    <set append="1" var="WEBCORE_SOURCES_JS">
+        bindings/js/GCController.cpp
+        bindings/js/JSAttrCustom.cpp
+        bindings/js/JSCanvasRenderingContext2DCustom.cpp
+        bindings/js/JSCSSRuleCustom.cpp
+        bindings/js/JSCSSStyleDeclarationCustom.cpp
+        bindings/js/JSCSSValueCustom.cpp
+        bindings/js/JSCustomSQLCallback.cpp
+        bindings/js/JSCustomVersionChangeCallback.cpp
+        bindings/js/JSCustomXPathNSResolver.cpp
+        bindings/js/JSDatabaseCustom.cpp
+        bindings/js/JSDOMExceptionConstructor.cpp
+        bindings/js/JSDOMWindowCustom.cpp
+        bindings/js/JSDocumentCustom.cpp
+        bindings/js/JSElementCustom.cpp
+        bindings/js/JSEventCustom.cpp
+        bindings/js/JSEventTargetNode.cpp
+        bindings/js/JSHTMLAppletElementCustom.cpp
+        bindings/js/JSHTMLCollectionCustom.cpp
+        bindings/js/JSHTMLDocumentCustom.cpp
+        bindings/js/JSHTMLElementCustom.cpp
+        bindings/js/JSHTMLElementWrapperFactory.cpp
+        bindings/js/JSHTMLEmbedElementCustom.cpp
+        bindings/js/JSHTMLFormElementCustom.cpp
+        bindings/js/JSHTMLFrameElementCustom.cpp
+        bindings/js/JSHTMLFrameSetElementCustom.cpp
+        bindings/js/JSHTMLIFrameElementCustom.cpp
+        bindings/js/JSHTMLInputElementBase.cpp
+        bindings/js/JSHTMLObjectElementCustom.cpp
+        bindings/js/JSHTMLOptionElementConstructor.cpp
+        bindings/js/JSHTMLOptionsCollectionCustom.cpp
+        bindings/js/JSHTMLSelectElementCustom.cpp
+        bindings/js/JSNamedNodeMapCustom.cpp
+        bindings/js/JSNamedNodesCollection.cpp
+        bindings/js/JSNodeCustom.cpp
+        bindings/js/JSNodeFilterCondition.cpp
+        bindings/js/JSNodeFilterCustom.cpp
+        bindings/js/JSNodeIteratorCustom.cpp
+        bindings/js/JSNodeListCustom.cpp
+        bindings/js/JSSQLResultSetRowListCustom.cpp
+        bindings/js/JSStyleSheetCustom.cpp
+        bindings/js/JSStyleSheetListCustom.cpp
+        bindings/js/JSTreeWalkerCustom.cpp
+        bindings/js/JSXMLHttpRequest.cpp
+        bindings/js/JSXSLTProcessor.cpp
+        bindings/js/kjs_binding.cpp
+        bindings/js/kjs_css.cpp
+        bindings/js/kjs_dom.cpp
+        bindings/js/kjs_events.cpp
+        bindings/js/kjs_html.cpp
+        bindings/js/kjs_navigator.cpp
+        bindings/js/kjs_proxy.cpp
+        bindings/js/kjs_window.cpp
+    </set>
+    
+    <set append="1" var="WEBCORE_SOURCES_CSS">
+        css/CSSBorderImageValue.cpp
+        css/CSSCharsetRule.cpp
+        css/CSSComputedStyleDeclaration.cpp
+        css/CSSCursorImageValue.cpp
+        css/CSSFontFace.cpp
+        css/CSSFontFaceRule.cpp
+        css/CSSFontFaceSource.cpp
+        css/CSSFontFaceSrcValue.cpp
+        css/CSSFontSelector.cpp
+        css/CSSImageValue.cpp
+        css/CSSImportRule.cpp
+        css/CSSInheritedValue.cpp
+        css/CSSInitialValue.cpp
+        css/CSSMediaRule.cpp
+        css/CSSMutableStyleDeclaration.cpp
+        css/CSSPageRule.cpp
+        css/CSSPrimitiveValue.cpp
+        css/CSSProperty.cpp
+        css/CSSRule.cpp
+        css/CSSRuleList.cpp
+        css/CSSSelector.cpp
+        css/CSSStyleDeclaration.cpp
+        css/CSSStyleRule.cpp
+        css/CSSStyleSheet.cpp
+        css/CSSTransformValue.cpp
+        css/CSSTimingFunctionValue.cpp
+        css/CSSValueList.cpp
+        css/FontFamilyValue.cpp
+        css/FontValue.cpp
+        css/MediaFeatureNames.cpp
+        css/MediaList.cpp
+        css/MediaQuery.cpp
+        css/MediaQueryEvaluator.cpp
+        css/MediaQueryExp.cpp
+        css/ShadowValue.cpp
+        css/StyleBase.cpp
+        css/StyleList.cpp
+        css/StyleSheet.cpp
+        css/StyleSheetList.cpp
+        css/csshelper.cpp
+        css/cssparser.cpp
+        css/cssstyleselector.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
+        DerivedSources/WebCore/CSSGrammar.cpp
+        DerivedSources/WebCore/ColorData.c
+        DerivedSources/WebCore/HTMLEntityNames.c
+        DerivedSources/WebCore/HTMLNames.cpp
+        DerivedSources/WebCore/JSAttr.cpp
+        DerivedSources/WebCore/JSBarInfo.cpp
+        DerivedSources/WebCore/JSCDATASection.cpp
+        DerivedSources/WebCore/JSCSSCharsetRule.cpp
+        DerivedSources/WebCore/JSCSSFontFaceRule.cpp
+        DerivedSources/WebCore/JSCSSImportRule.cpp
+        DerivedSources/WebCore/JSCSSMediaRule.cpp
+        DerivedSources/WebCore/JSCSSPageRule.cpp
+        DerivedSources/WebCore/JSCSSPrimitiveValue.cpp
+        DerivedSources/WebCore/JSCSSRule.cpp
+        DerivedSources/WebCore/JSCSSRuleList.cpp
+        DerivedSources/WebCore/JSCSSStyleDeclaration.cpp
+        DerivedSources/WebCore/JSCSSStyleRule.cpp
+        DerivedSources/WebCore/JSCSSStyleSheet.cpp
+        DerivedSources/WebCore/JSCSSValue.cpp
+        DerivedSources/WebCore/JSCSSValueList.cpp
+        DerivedSources/WebCore/JSCanvasGradient.cpp
+        DerivedSources/WebCore/JSCanvasPattern.cpp
+        DerivedSources/WebCore/JSCanvasRenderingContext2D.cpp
+        DerivedSources/WebCore/JSCharacterData.cpp
+        DerivedSources/WebCore/JSComment.cpp
+        DerivedSources/WebCore/JSConsole.cpp
+        DerivedSources/WebCore/JSCounter.cpp
+        DerivedSources/WebCore/JSDatabase.cpp
+        DerivedSources/WebCore/JSDocument.cpp
+        DerivedSources/WebCore/JSDocumentFragment.cpp
+        DerivedSources/WebCore/JSDocumentType.cpp
+        DerivedSources/WebCore/JSDOMImplementation.cpp
+        DerivedSources/WebCore/JSDOMParser.cpp
+        DerivedSources/WebCore/JSDOMSelection.cpp
+        DerivedSources/WebCore/JSDOMWindow.cpp
+        DerivedSources/WebCore/JSElement.cpp
+        DerivedSources/WebCore/JSEntity.cpp
+        DerivedSources/WebCore/JSEntityReference.cpp
+        DerivedSources/WebCore/JSEvent.cpp
+        DerivedSources/WebCore/JSHTMLAnchorElement.cpp
+        DerivedSources/WebCore/JSHTMLAppletElement.cpp
+        DerivedSources/WebCore/JSHTMLAreaElement.cpp
+        DerivedSources/WebCore/JSHTMLBRElement.cpp
+        DerivedSources/WebCore/JSHTMLBaseElement.cpp
+        DerivedSources/WebCore/JSHTMLBaseFontElement.cpp
+        DerivedSources/WebCore/JSHTMLBlockquoteElement.cpp
+        DerivedSources/WebCore/JSHTMLBodyElement.cpp
+        DerivedSources/WebCore/JSHTMLButtonElement.cpp
+        DerivedSources/WebCore/JSHTMLCanvasElement.cpp
+        DerivedSources/WebCore/JSHTMLCollection.cpp
+        DerivedSources/WebCore/JSHTMLDListElement.cpp
+        DerivedSources/WebCore/JSHTMLDirectoryElement.cpp
+        DerivedSources/WebCore/JSHTMLDivElement.cpp
+        DerivedSources/WebCore/JSHTMLDocument.cpp
+        DerivedSources/WebCore/JSHTMLElement.cpp
+        DerivedSources/WebCore/JSHTMLEmbedElement.cpp
+        DerivedSources/WebCore/JSHTMLFieldSetElement.cpp
+        DerivedSources/WebCore/JSHTMLFontElement.cpp
+        DerivedSources/WebCore/JSHTMLFormElement.cpp
+        DerivedSources/WebCore/JSHTMLFrameElement.cpp
+        DerivedSources/WebCore/JSHTMLFrameSetElement.cpp
+        DerivedSources/WebCore/JSHTMLHRElement.cpp
+        DerivedSources/WebCore/JSHTMLHeadElement.cpp
+        DerivedSources/WebCore/JSHTMLHeadingElement.cpp
+        DerivedSources/WebCore/JSHTMLHtmlElement.cpp
+        DerivedSources/WebCore/JSHTMLIFrameElement.cpp
+        DerivedSources/WebCore/JSHTMLImageElement.cpp
+        DerivedSources/WebCore/JSHTMLInputElement.cpp
+        DerivedSources/WebCore/JSHTMLIsIndexElement.cpp
+        DerivedSources/WebCore/JSHTMLLIElement.cpp
+        DerivedSources/WebCore/JSHTMLLabelElement.cpp
+        DerivedSources/WebCore/JSHTMLLegendElement.cpp
+        DerivedSources/WebCore/JSHTMLLinkElement.cpp
+        DerivedSources/WebCore/JSHTMLMapElement.cpp
+        DerivedSources/WebCore/JSHTMLMarqueeElement.cpp
+        DerivedSources/WebCore/JSHTMLMenuElement.cpp
+        DerivedSources/WebCore/JSHTMLMetaElement.cpp
+        DerivedSources/WebCore/JSHTMLModElement.cpp
+        DerivedSources/WebCore/JSHTMLObjectElement.cpp
+        DerivedSources/WebCore/JSHTMLOListElement.cpp
+        DerivedSources/WebCore/JSHTMLOptGroupElement.cpp
+        DerivedSources/WebCore/JSHTMLOptionElement.cpp
+        DerivedSources/WebCore/JSHTMLOptionsCollection.cpp
+        DerivedSources/WebCore/JSHTMLParagraphElement.cpp
+        DerivedSources/WebCore/JSHTMLParamElement.cpp
+        DerivedSources/WebCore/JSHTMLPreElement.cpp
+        DerivedSources/WebCore/JSHTMLQuoteElement.cpp
+        DerivedSources/WebCore/JSHTMLScriptElement.cpp
+        DerivedSources/WebCore/JSHTMLSelectElement.cpp
+        DerivedSources/WebCore/JSHTMLStyleElement.cpp
+        DerivedSources/WebCore/JSHTMLTableCaptionElement.cpp
+        DerivedSources/WebCore/JSHTMLTableCellElement.cpp
+        DerivedSources/WebCore/JSHTMLTableColElement.cpp
+        DerivedSources/WebCore/JSHTMLTableElement.cpp
+        DerivedSources/WebCore/JSHTMLTableRowElement.cpp
+        DerivedSources/WebCore/JSHTMLTableSectionElement.cpp
+        DerivedSources/WebCore/JSHTMLTextAreaElement.cpp
+        DerivedSources/WebCore/JSHTMLTitleElement.cpp
+        DerivedSources/WebCore/JSHTMLUListElement.cpp
+        DerivedSources/WebCore/JSHistory.cpp
+        DerivedSources/WebCore/JSKeyboardEvent.cpp
+        DerivedSources/WebCore/JSMediaList.cpp
+        DerivedSources/WebCore/JSMouseEvent.cpp
+        DerivedSources/WebCore/JSMutationEvent.cpp
+        DerivedSources/WebCore/JSNamedNodeMap.cpp
+        DerivedSources/WebCore/JSNode.cpp
+        DerivedSources/WebCore/JSNodeFilter.cpp
+        DerivedSources/WebCore/JSNodeIterator.cpp
+        DerivedSources/WebCore/JSNodeList.cpp
+        DerivedSources/WebCore/JSNotation.cpp
+        DerivedSources/WebCore/JSOverflowEvent.cpp
+        DerivedSources/WebCore/JSProcessingInstruction.cpp
+        DerivedSources/WebCore/JSProgressEvent.cpp
+        DerivedSources/WebCore/JSRange.cpp
+        DerivedSources/WebCore/JSRangeException.cpp
+        DerivedSources/WebCore/JSRect.cpp
+        DerivedSources/WebCore/JSScreen.cpp
+        DerivedSources/WebCore/JSSQLCallback.cpp
+        DerivedSources/WebCore/JSSQLResultSet.cpp
+        DerivedSources/WebCore/JSSQLResultSetRowList.cpp
+        DerivedSources/WebCore/JSStyleSheet.cpp
+        DerivedSources/WebCore/JSStyleSheetList.cpp
+        DerivedSources/WebCore/JSText.cpp
+        DerivedSources/WebCore/JSTextEvent.cpp
+        DerivedSources/WebCore/JSTreeWalker.cpp
+        DerivedSources/WebCore/JSUIEvent.cpp
+        DerivedSources/WebCore/JSWheelEvent.cpp
+        DerivedSources/WebCore/JSXMLSerializer.cpp
+        DerivedSources/WebCore/JSXPathEvaluator.cpp
+        DerivedSources/WebCore/JSXPathExpression.cpp
+        DerivedSources/WebCore/JSXPathNSResolver.cpp
+        DerivedSources/WebCore/JSXPathResult.cpp
+        DerivedSources/WebCore/UserAgentStyleSheetsData.cpp
+        DerivedSources/WebCore/XLinkNames.cpp
+        DerivedSources/WebCore/XMLNames.cpp
+        DerivedSources/WebCore/XPathGrammar.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_DOM">
+        dom/Attr.cpp
+        dom/Attribute.cpp
+        dom/BeforeTextInsertedEvent.cpp
+        dom/BeforeUnloadEvent.cpp
+        dom/CDATASection.cpp
+        dom/CSSMappedAttributeDeclaration.cpp
+        dom/CharacterData.cpp
+        dom/ChildNodeList.cpp
+        dom/Clipboard.cpp
+        dom/ClipboardEvent.cpp
+        dom/Comment.cpp
+        dom/ContainerNode.cpp
+        dom/DOMImplementation.cpp
+        dom/Document.cpp
+        dom/DocumentFragment.cpp
+        dom/DocumentType.cpp
+        dom/EditingText.cpp
+        dom/Element.cpp
+        dom/Entity.cpp
+        dom/EntityReference.cpp
+        dom/Event.cpp
+        dom/EventNames.cpp
+        dom/EventTarget.cpp
+        dom/EventTargetNode.cpp
+        dom/KeyboardEvent.cpp
+        dom/MappedAttribute.cpp
+        dom/MouseEvent.cpp
+        dom/MouseRelatedEvent.cpp
+        dom/MutationEvent.cpp
+        dom/NameNodeList.cpp
+        dom/NamedAttrMap.cpp
+        dom/NamedMappedAttrMap.cpp
+        dom/Node.cpp
+        dom/NodeFilter.cpp
+        dom/NodeFilterCondition.cpp
+        dom/NodeIterator.cpp
+        dom/NodeList.cpp
+        dom/Notation.cpp
+        dom/OverflowEvent.cpp
+        dom/Position.cpp
+        dom/PositionIterator.cpp
+        dom/ProcessingInstruction.cpp
+        dom/ProgressEvent.cpp
+        dom/QualifiedName.cpp
+        dom/Range.cpp
+        dom/RegisteredEventListener.cpp
+        dom/StyleElement.cpp
+        dom/StyledElement.cpp
+        dom/Text.cpp
+        dom/TextEvent.cpp
+        dom/Traversal.cpp
+        dom/TreeWalker.cpp
+        dom/UIEvent.cpp
+        dom/UIEventWithKeyState.cpp
+        dom/WheelEvent.cpp
+        dom/XMLTokenizer.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_EDITING">
+        editing/AppendNodeCommand.cpp
+        editing/ApplyStyleCommand.cpp
+        editing/BreakBlockquoteCommand.cpp
+        editing/CompositeEditCommand.cpp
+        editing/CreateLinkCommand.cpp
+        editing/DeleteButton.cpp
+        editing/DeleteButtonController.cpp
+        editing/DeleteFromTextNodeCommand.cpp
+        editing/DeleteSelectionCommand.cpp
+        editing/EditCommand.cpp
+        editing/Editor.cpp
+        editing/FormatBlockCommand.cpp
+        editing/HTMLInterchange.cpp
+        editing/IndentOutdentCommand.cpp
+        editing/InsertIntoTextNodeCommand.cpp
+        editing/InsertLineBreakCommand.cpp
+        editing/InsertListCommand.cpp
+        editing/InsertNodeBeforeCommand.cpp
+        editing/InsertParagraphSeparatorCommand.cpp
+        editing/InsertTextCommand.cpp
+        editing/JSEditor.cpp
+        editing/JoinTextNodesCommand.cpp
+        editing/MergeIdenticalElementsCommand.cpp
+        editing/ModifySelectionListLevel.cpp
+        editing/MoveSelectionCommand.cpp
+        editing/RemoveCSSPropertyCommand.cpp
+        editing/RemoveNodeAttributeCommand.cpp
+        editing/RemoveNodeCommand.cpp
+        editing/RemoveNodePreservingChildrenCommand.cpp
+        editing/ReplaceSelectionCommand.cpp
+        editing/Selection.cpp
+        editing/SelectionController.cpp
+        editing/SmartReplace.cpp
+        editing/SetNodeAttributeCommand.cpp
+        editing/SplitElementCommand.cpp
+        editing/SplitTextNodeCommand.cpp
+        editing/SplitTextNodeContainingElementCommand.cpp
+        editing/TextIterator.cpp
+        editing/TypingCommand.cpp
+        editing/UnlinkCommand.cpp
+        editing/VisiblePosition.cpp
+        editing/WrapContentsInDummySpanCommand.cpp
+        editing/htmlediting.cpp
+        editing/markup.cpp
+        editing/visible_units.cpp
+    </set>
+    
+    <set append="1" var="WEBCORE_SOURCES_HISTORY">
+        history/BackForwardList.cpp
+        history/CachedPage.cpp
+        history/PageCache.cpp
+        history/HistoryItem.cpp
+    </set>
+    
+    <set append="1" var="WEBCORE_SOURCES_HTML">
+        html/CanvasGradient.cpp
+        html/CanvasPattern.cpp
+        html/CanvasRenderingContext2D.cpp
+        html/CanvasStyle.cpp
+        html/FormDataList.cpp
+        html/HTMLAnchorElement.cpp
+        html/HTMLAppletElement.cpp
+        html/HTMLAreaElement.cpp
+        html/HTMLBRElement.cpp
+        html/HTMLBaseElement.cpp
+        html/HTMLBaseFontElement.cpp
+        html/HTMLBlockquoteElement.cpp
+        html/HTMLBodyElement.cpp
+        html/HTMLButtonElement.cpp
+        html/HTMLCanvasElement.cpp
+        html/HTMLCollection.cpp
+        html/HTMLDListElement.cpp
+        html/HTMLDirectoryElement.cpp
+        html/HTMLDivElement.cpp
+        html/HTMLDocument.cpp
+        html/HTMLElement.cpp
+        html/HTMLElementFactory.cpp
+        html/HTMLEmbedElement.cpp
+        html/HTMLFieldSetElement.cpp
+        html/HTMLFontElement.cpp
+        html/HTMLFormCollection.cpp
+        html/HTMLFormElement.cpp
+        html/HTMLFrameElement.cpp
+        html/HTMLFrameElementBase.cpp
+        html/HTMLFrameOwnerElement.cpp
+        html/HTMLFrameSetElement.cpp
+        html/HTMLGenericFormElement.cpp
+        html/HTMLHRElement.cpp
+        html/HTMLHeadElement.cpp
+        html/HTMLHeadingElement.cpp
+        html/HTMLHtmlElement.cpp
+        html/HTMLIFrameElement.cpp
+        html/HTMLImageElement.cpp
+        html/HTMLImageLoader.cpp
+        html/HTMLInputElement.cpp
+        html/HTMLIsIndexElement.cpp
+        html/HTMLKeygenElement.cpp
+        html/HTMLLIElement.cpp
+        html/HTMLLabelElement.cpp
+        html/HTMLLegendElement.cpp
+        html/HTMLLinkElement.cpp
+        html/HTMLMapElement.cpp
+        html/HTMLMarqueeElement.cpp
+        html/HTMLMenuElement.cpp
+        html/HTMLMetaElement.cpp
+        html/HTMLModElement.cpp
+        html/HTMLNameCollection.cpp
+        html/HTMLOListElement.cpp
+        html/HTMLObjectElement.cpp
+        html/HTMLOptGroupElement.cpp
+        html/HTMLOptionElement.cpp
+        html/HTMLOptionsCollection.cpp
+        html/HTMLParagraphElement.cpp
+        html/HTMLParamElement.cpp
+        html/HTMLParser.cpp
+        html/HTMLParserErrorCodes.cpp
+        html/HTMLPlugInElement.cpp
+        html/HTMLPreElement.cpp
+        html/HTMLQuoteElement.cpp
+        html/HTMLScriptElement.cpp
+        html/HTMLSelectElement.cpp
+        html/HTMLStyleElement.cpp
+        html/HTMLTableCaptionElement.cpp
+        html/HTMLTableCellElement.cpp
+        html/HTMLTableColElement.cpp
+        html/HTMLTableElement.cpp
+        html/HTMLTablePartElement.cpp
+        html/HTMLTableRowElement.cpp
+        html/HTMLTableSectionElement.cpp
+        html/HTMLTextAreaElement.cpp
+        html/HTMLTextFieldInnerElement.cpp
+        html/HTMLTitleElement.cpp
+        html/HTMLTokenizer.cpp
+        html/HTMLUListElement.cpp
+        html/HTMLViewSourceDocument.cpp
+    </set>
+    
+    <set append="1" var="WEBCORE_SOURCES_LOADER">
+        loader/Cache.cpp
+        loader/CachedCSSStyleSheet.cpp
+        loader/CachedFont.cpp
+        loader/CachedImage.cpp
+        loader/CachedResource.cpp
+        loader/CachedResourceClientWalker.cpp
+        loader/CachedScript.cpp
+        loader/CachedXSLStyleSheet.cpp
+        loader/DocLoader.cpp
+        loader/DocumentLoader.cpp
+        loader/FormState.cpp
+        loader/FrameLoader.cpp
+        loader/FTPDirectoryDocument.cpp
+        loader/FTPDirectoryParser.cpp
+        loader/ImageDocument.cpp
+        loader/MainResourceLoader.cpp
+        loader/NavigationAction.cpp
+        loader/NetscapePlugInStreamLoader.cpp
+        loader/PluginDocument.cpp
+        loader/ProgressTracker.cpp
+        loader/Request.cpp
+        loader/ResourceLoader.cpp
+        loader/SubresourceLoader.cpp
+        loader/TextDocument.cpp
+        loader/TextResourceDecoder.cpp
+        loader/loader.cpp
+    </set>
+    
+    <set append="1" var="WEBCORE_SOURCES_ICON">
+        loader/icon/IconDatabase.cpp
+        loader/icon/IconLoader.cpp
+        loader/icon/IconRecord.cpp
+        loader/icon/PageURLRecord.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_PAGE">
+        page/AnimationController.cpp
+        page/BarInfo.cpp
+        page/Chrome.cpp
+        page/Console.cpp
+        page/ContextMenuController.cpp
+        page/DOMSelection.cpp
+        page/DOMWindow.cpp
+        page/DragController.cpp
+        page/EventHandler.cpp
+        page/FocusController.cpp
+        page/Frame.cpp
+        page/FrameTree.cpp
+        page/FrameView.cpp
+        page/History.cpp
+        page/InspectorController.cpp
+        page/MouseEventWithHitTestResults.cpp
+        page/Page.cpp
+        page/Screen.cpp
+        page/Settings.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_PLATFORM">
+        platform/Arena.cpp
+        platform/ArrayImpl.cpp
+        platform/AtomicString.cpp
+        platform/Base64.cpp
+        platform/BidiContext.cpp
+        platform/CString.cpp
+        platform/ContextMenu.cpp
+        platform/DeprecatedCString.cpp
+        platform/DeprecatedPtrListImpl.cpp
+        platform/DeprecatedString.cpp
+        platform/DeprecatedStringList.cpp
+        platform/DeprecatedValueListImpl.cpp
+        platform/DragImage.cpp
+        platform/FileChooser.cpp
+        platform/Font.cpp
+        platform/FontCache.cpp
+        platform/FontData.cpp
+        platform/FontFallbackList.cpp
+        platform/FontFamily.cpp
+        platform/GlyphPageTreeNode.cpp
+        platform/GlyphWidthMap.cpp
+        platform/KURL.cpp
+        platform/Logging.cpp
+        platform/MimeTypeRegistry.cpp
+        platform/RegularExpression.cpp
+        platform/ScrollBar.cpp
+        platform/SecurityOrigin.cpp
+        platform/SegmentedString.cpp
+        platform/SharedBuffer.cpp
+        platform/String.cpp
+        platform/StringImpl.cpp
+        platform/TextBreakIteratorICU.cpp
+        platform/TextCodec.cpp
+        platform/TextCodecICU.cpp
+        platform/TextCodecLatin1.cpp
+        platform/TextCodecUTF16.cpp
+        platform/TextCodecUserDefined.cpp
+        platform/TextDecoder.cpp
+        platform/TextEncoding.cpp
+        platform/TextEncodingRegistry.cpp
+        platform/TextStream.cpp
+        platform/ThreadingNone.cpp
+        platform/Timer.cpp
+        platform/Widget.cpp
+        platform/graphics/AffineTransform.cpp
+        platform/graphics/BitmapImage.cpp
+        platform/graphics/Color.cpp
+        platform/graphics/FloatPoint.cpp
+        platform/graphics/FloatRect.cpp
+        platform/graphics/FloatSize.cpp
+        platform/graphics/GraphicsContext.cpp
+        platform/graphics/GraphicsTypes.cpp
+        platform/graphics/Image.cpp
+        platform/graphics/IntRect.cpp
+        platform/graphics/Path.cpp
+        platform/graphics/PathTraversalState.cpp
+        platform/graphics/Pen.cpp
+        platform/network/AuthenticationChallenge.cpp
+        platform/network/Credential.cpp
+        platform/network/HTTPParsers.cpp
+        platform/network/FormData.cpp
+        platform/network/ProtectionSpace.cpp
+        platform/network/ResourceHandle.cpp
+        platform/network/ResourceRequestBase.cpp
+        platform/network/ResourceResponse.cpp
+        platform/sql/SQLiteAuthorizer.cpp
+        platform/sql/SQLiteDatabase.cpp
+        platform/sql/SQLiteStatement.cpp
+        platform/sql/SQLiteTransaction.cpp
+        platform/sql/SQLValue.cpp
+    </set>
+    
+    <set append="1" var="WEBCORE_SOURCES_STORAGE">
+        storage/Database.cpp
+        storage/DatabaseAuthorizer.cpp
+        storage/DatabaseCallback.cpp
+        storage/DatabaseTask.cpp
+        storage/DatabaseThread.cpp
+        storage/DatabaseTracker.cpp
+        storage/SQLResultSet.cpp
+        storage/SQLResultSetRowList.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_GIF">
+        platform/image-decoders/gif/GIFImageDecoder.cpp
+        platform/image-decoders/gif/GIFImageReader.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_PNG">
+        platform/image-decoders/png/PNGImageDecoder.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_ZLIB">
+        platform/image-decoders/zlib/adler32.c
+        platform/image-decoders/zlib/compress.c
+        platform/image-decoders/zlib/crc32.c
+        platform/image-decoders/zlib/deflate.c
+        platform/image-decoders/zlib/gzio.c
+        platform/image-decoders/zlib/infback.c
+        platform/image-decoders/zlib/inffast.c
+        platform/image-decoders/zlib/inflate.c
+        platform/image-decoders/zlib/inftrees.c
+        platform/image-decoders/zlib/trees.c
+        platform/image-decoders/zlib/uncompr.c
+        platform/image-decoders/zlib/zutil.c
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_JPEG">
+        platform/image-decoders/jpeg/JPEGImageDecoder.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_BMP">
+        platform/image-decoders/bmp/BMPImageDecoder.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_ICO">
+        platform/image-decoders/ico/ICOImageDecoder.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_XBM">
+        platform/image-decoders/xbm/XBMImageDecoder.cpp
+    </set>
+
+
+    <set append="1" var="WEBCORE_SOURCES_RENDERING">
+        rendering/AutoTableLayout.cpp
+        rendering/CounterNode.cpp
+        rendering/EllipsisBox.cpp
+        rendering/FixedTableLayout.cpp
+        rendering/HitTestResult.cpp
+        rendering/InlineBox.cpp
+        rendering/InlineFlowBox.cpp
+        rendering/InlineTextBox.cpp
+        rendering/LayoutState.cpp
+        rendering/ListMarkerBox.cpp
+        rendering/RenderApplet.cpp
+        rendering/RenderArena.cpp
+        rendering/RenderBR.cpp
+        rendering/RenderBlock.cpp
+        rendering/RenderBox.cpp
+        rendering/RenderButton.cpp
+        rendering/RenderContainer.cpp
+        rendering/RenderCounter.cpp
+        rendering/RenderFieldset.cpp
+        rendering/RenderFileUploadControl.cpp
+        rendering/RenderFlexibleBox.cpp
+        rendering/RenderFlow.cpp
+        rendering/RenderFrame.cpp
+        rendering/RenderFrameSet.cpp
+        rendering/RenderHTMLCanvas.cpp
+        rendering/RenderImage.cpp
+        rendering/RenderInline.cpp
+        rendering/RenderLayer.cpp
+        rendering/RenderLegend.cpp
+        rendering/RenderListBox.cpp
+        rendering/RenderListItem.cpp
+        rendering/RenderListMarker.cpp
+        rendering/RenderMenuList.cpp
+        rendering/RenderObject.cpp
+        rendering/RenderPart.cpp
+        rendering/RenderPartObject.cpp
+        rendering/RenderReplaced.cpp
+        rendering/RenderSlider.cpp
+        rendering/RenderStyle.cpp
+        rendering/RenderTable.cpp
+        rendering/RenderTableCell.cpp
+        rendering/RenderTableCol.cpp
+        rendering/RenderTableRow.cpp
+        rendering/RenderTableSection.cpp
+        rendering/RenderText.cpp
+        rendering/RenderTextControl.cpp
+        rendering/RenderTextFragment.cpp
+        rendering/RenderTheme.cpp
+        rendering/RenderTreeAsText.cpp
+        rendering/RenderView.cpp
+        rendering/RenderWidget.cpp
+        rendering/RenderWordBreak.cpp
+        rendering/RootInlineBox.cpp
+        rendering/bidi.cpp
+        rendering/break_lines.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_XML">
+        xml/DOMParser.cpp
+        xml/NativeXPathNSResolver.cpp
+        xml/XMLSerializer.cpp
+        xml/XPathEvaluator.cpp
+        xml/XPathExpression.cpp
+        xml/XPathExpressionNode.cpp
+        xml/XPathFunctions.cpp
+        xml/XPathNamespace.cpp
+        xml/XPathNodeSet.cpp
+        xml/XPathNSResolver.cpp
+        xml/XPathParser.cpp
+        xml/XPathPath.cpp
+        xml/XPathPredicate.cpp
+        xml/XPathResult.cpp
+        xml/XPathStep.cpp
+        xml/XPathUtil.cpp
+        xml/XPathValue.cpp
+        xml/XPathVariableReference.cpp
+        xml/XSLImportRule.cpp
+        xml/XSLStyleSheet.cpp
+        xml/XSLTExtensions.cpp
+        xml/XSLTProcessor.cpp
+        xml/xmlhttprequest.cpp
+    </set>
+
+</makefile>

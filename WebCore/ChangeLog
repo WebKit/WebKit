@@ -1,3 +1,13 @@
+2007-11-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Bakefiles for building WebCore, needed by wx port.
+
+        Reviewed by Mark Rowe.
+
+        * WebCoreSources.bkl: Added.
+        * webcore-base.bkl: Added.
+        * webcore-wx.bkl: Added.
+
 2007-11-08  Justin Haygood  <jhaygood@reaktix.com>
 
         Reviewed by Mark Rowe.
