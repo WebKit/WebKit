@@ -1,3 +1,21 @@
+2007-11-09  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5103720> REGRESSION: [WebView stringByEvaluatingJavaScriptFromString:] fails if "return" is used
+
+        Extend the linked on or after check to every application when a script passed to
+        stringByEvaluatingJavaScriptFromString: has a return statement. Before the check
+        was limited to VitalSource Bookshelf, but other developers are running into this.
+
+        * Misc/WebKitVersionChecks.h: Add the WEBKIT_FIRST_VERSION_WITHOUT_JAVASCRIPT_RETURN_QUIRK define.
+        * WebView/WebDocumentLoaderMac.mm:
+        (needsDataLoadWorkaround): Use WEBKIT_FIRST_VERSION_WITHOUT_ADOBE_INSTALLER_QUIRK sicne the
+          WebKitLinkedOnOrAfter check here was about the Adobe installer, not VitalSource.
+        * WebView/WebView.mm:
+        (-[WebView stringByEvaluatingJavaScriptFromString:]): Remove the bundle ID check and use
+          WEBKIT_FIRST_VERSION_WITHOUT_JAVASCRIPT_RETURN_QUIRK for the WebKitLinkedOnOrAfter call.
+
 2007-11-08  Kevin McCullough  <kmccullough@apple.com>
 
         Build Fix.

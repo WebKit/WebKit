@@ -2263,20 +2263,21 @@ WebFrameLoadDelegateImplementationCache WebViewGetFrameLoadDelegateImplementatio
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script
 {
-    // FIXME: We can remove this workaround for VitalSource Bookshelf when they update
-    // their code so that it no longer calls stringByEvaluatingJavaScriptFromString with a return statement.
-    // Return statements are only valid in a function.  See <rdar://problem/5095515> for the evangelism bug.
-    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_VITALSOURCE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.vitalsource.bookshelf"]) {
+    // Return statements are only valid in a function but some applications pass in scripts
+    // prefixed with return (<rdar://problems/5103720&4616860>) since older WebKit versions
+    // silently ignored the return. If the application is linked against an earlier version
+    // of WebKit we will strip the return so the script wont fail.
+    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_JAVASCRIPT_RETURN_QUIRK)) {
         NSRange returnStringRange = [script rangeOfString:@"return "];
-        if (returnStringRange.length != 0 && returnStringRange.location == 0)
-            script = [script substringFromIndex: returnStringRange.location + returnStringRange.length];
+        if (returnStringRange.length && !returnStringRange.location)
+            script = [script substringFromIndex:returnStringRange.location + returnStringRange.length];
     }
-    
+
     NSString *result = [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
     // The only way stringByEvaluatingJavaScriptFromString can return nil is if the frame was removed by the script
     // Since there's no way to get rid of the main frame, result will never ever be nil here.
     ASSERT(result);
-    
+
     return result;
 }
 

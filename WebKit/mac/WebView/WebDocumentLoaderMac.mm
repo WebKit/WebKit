@@ -56,7 +56,7 @@ static inline bool needsDataLoadWorkaround(WebView *webView)
         return true;
     return false;
 #else
-    static bool needsWorkaround = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_VITALSOURCE_QUIRK) 
+    static bool needsWorkaround = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_ADOBE_INSTALLER_QUIRK) 
                                   && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Installers.Setup"];
     return needsWorkaround;
 #endif
