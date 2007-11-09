@@ -1,3 +1,15 @@
+2007-11-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        - test that dynamically changing a descendant of an invisible layer to
+          be visible works
+
+        * fast/layers/layer-content-visibility-change.html: Added.
+        * platform/mac/fast/layers/layer-content-visibility-change-expected.checksum: Added.
+        * platform/mac/fast/layers/layer-content-visibility-change-expected.png: Added.
+        * platform/mac/fast/layers/layer-content-visibility-change-expected.txt: Added.
+
 2007-11-09  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.

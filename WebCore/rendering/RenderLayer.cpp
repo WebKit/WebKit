@@ -245,7 +245,7 @@ void RenderLayer::updateTransform()
     }
 }
 
-void RenderLayer::setHasVisibleContent(bool b) 
+void RenderLayer::setHasVisibleContent(bool b)
 { 
     if (m_hasVisibleContent == b && !m_visibleContentStatusDirty)
         return;
@@ -254,6 +254,10 @@ void RenderLayer::setHasVisibleContent(bool b)
     if (m_hasVisibleContent) {
         m_repaintRect = renderer()->absoluteClippedOverflowRect();
         m_outlineBox = renderer()->absoluteOutlineBox();
+        if (!isOverflowOnly()) {
+            if (RenderLayer* sc = stackingContext())
+                sc->dirtyZOrderLists();
+        }
     }
     if (parent())
         parent()->childVisibilityChanged(m_hasVisibleContent);

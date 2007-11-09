@@ -1,3 +1,17 @@
+2007-11-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        - fix a bug in invisible layer culling: dynamically changing a 
+          descendant of an invisible layer to be visible did not work
+
+        Test: fast/layers/layer-content-visibility-change.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasVisibleContent): If we got visible content,
+        make sure that our stacking context rebuilds its z-order lists to
+        include us.
+
 2007-11-09  David Hyatt  <hyatt@apple.com>
 
         Clean up matrix() parsing.  Make sure the first four arguments can be lengths or numbers.  The last two
