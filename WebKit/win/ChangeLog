@@ -1,3 +1,17 @@
+2007-11-08  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5491463> Wrong dates shown in History menu.
+        
+        Fix off-by-one error in Windows epoch.
+        
+        For the Windows DATE type, 1/1/1900 should be 2.0, not 1.0.
+        DATE is the number of dates since 12/30/1899.
+        
+        Reviewed by Ada.
+
+        * MarshallingHelpers.cpp:
+        (MarshallingHelpers::windowsEpochAbsoluteTime):
+
 2007-11-08  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.

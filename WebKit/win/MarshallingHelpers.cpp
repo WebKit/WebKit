@@ -123,7 +123,7 @@ CFAbsoluteTime MarshallingHelpers::windowsEpochAbsoluteTime()
 {
     static CFAbsoluteTime windowsEpochAbsoluteTime = 0;
     if (!windowsEpochAbsoluteTime) {
-        CFGregorianDate windowsEpochDate = {1899, 12, 31, 0, 0, 0.0};
+        CFGregorianDate windowsEpochDate = {1899, 12, 30, 0, 0, 0.0};
         windowsEpochAbsoluteTime = CFGregorianDateGetAbsoluteTime(windowsEpochDate, 0) / secondsPerDay;
     }
     return windowsEpochAbsoluteTime;
