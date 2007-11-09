@@ -60,7 +60,7 @@
         and function pointer which points to a static constructor for the
         individual new function objects.
 
-        SunSpider claims this is a 0.5% speedup. 
+        SunSpider claims this is a 1.0% speedup.
 
         * kjs/array_object.cpp:
         (KJS::ArrayPrototype::getOwnPropertySlot):
