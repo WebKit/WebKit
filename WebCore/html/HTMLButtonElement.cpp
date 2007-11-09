@@ -94,13 +94,6 @@ void HTMLButtonElement::defaultEventHandler(Event* evt)
     if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
         String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
 
-        // Do the same things <input type=button/reset/submit> would do.
-        if (key == "Enter" && m_type == BUTTON) {
-            if (form())
-                form()->submitClick(evt);
-            evt->setDefaultHandled();
-            return;
-        }
         if (key == "Enter" || key == "U+0020") {
             dispatchSimulatedClick(evt);
             evt->setDefaultHandled();

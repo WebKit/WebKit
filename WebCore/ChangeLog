@@ -1,3 +1,24 @@
+2007-11-08  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5483519> Pressing Enter on selected buttons should fire onclick
+
+        We now match the behavior of Firefox and IE, which is to always just
+        send a click event to the focused button when the Enter key is pressed
+        (previously we were submitting forms directly in some cases).
+
+        Reviewed by Adele.
+
+        Test: fast/forms/enter-clicks-buttons.html
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler): Don't do anything
+        fancy when Enter is pressed on a <button type=button> -- just send a
+        click event like we do for other button types.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Treat type=button
+        the same way we treat type=submit and type=reset: just send a click
+        event when Enter is pressed.
+
 2007-11-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Antti Koivisto.

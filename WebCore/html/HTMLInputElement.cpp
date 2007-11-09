@@ -1202,7 +1202,6 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
         if (key == "Enter") {
             switch (inputType()) {
-                case BUTTON:
                 case CHECKBOX:
                 case HIDDEN:
                 case ISINDEX:
@@ -1213,6 +1212,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
                     // Simulate mouse click on the default form button for enter for these types of elements.
                     clickDefaultFormButton = true;
                     break;
+                case BUTTON:
                 case FILE:
                 case IMAGE:
                 case RESET:
