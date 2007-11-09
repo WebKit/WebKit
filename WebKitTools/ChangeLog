@@ -1,5 +1,20 @@
 2007-11-08  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Adam.
+
+        - Changed the vcproj file to use Drosera's ForwardingHeaders and not
+        WebCore's!
+
+        * Drosera/ForwardingHeaders/wtf/Assertions.h: Added.
+        * Drosera/ForwardingHeaders/wtf/HashTraits.h: Added.
+        * Drosera/ForwardingHeaders/wtf/Noncopyable.h: Added.
+        * Drosera/ForwardingHeaders/wtf/OwnPtr.h: Added.
+        * Drosera/ForwardingHeaders/wtf/RetainPtr.h: Added.
+        * Drosera/win/Drosera.cpp:
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+
+2007-11-08  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Sam.
 
         - Use the new IWebFrame [local] function signature and get the shared

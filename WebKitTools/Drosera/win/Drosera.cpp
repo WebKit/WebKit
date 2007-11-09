@@ -35,7 +35,6 @@
 #include "ServerConnection.h"
 
 #include <JavaScriptCore/JSStringRef.h>
-#include <WebCore/IntRect.h>
 #include <WebKit/IWebMutableURLRequest.h>
 #include <WebKit/IWebView.h>
 #include <WebKit/WebKit.h>
