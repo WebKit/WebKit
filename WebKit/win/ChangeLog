@@ -5,7 +5,7 @@
         Fix off-by-one error in Windows epoch.
         
         For the Windows DATE type, 1/1/1900 should be 2.0, not 1.0.
-        DATE is the number of dates since 12/30/1899.
+        DATE is the number of days since 12/30/1899.
         
         Reviewed by Ada.
 
