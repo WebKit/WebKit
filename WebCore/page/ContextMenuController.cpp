@@ -110,7 +110,6 @@ static void openNewWindow(const KURL& urlToLoad, Frame* frame)
 {
     if (Page* oldPage = frame->page()) {
         WindowFeatures features;
-        memset(&features, 0, sizeof(WindowFeatures));
         if (Page* newPage = oldPage->chrome()->createWindow(frame,
                 FrameLoadRequest(ResourceRequest(urlToLoad, frame->loader()->outgoingReferrer())), features))
             newPage->chrome()->show();
