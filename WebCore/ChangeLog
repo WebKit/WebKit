@@ -1,3 +1,31 @@
+2007-11-09  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Holger.
+
+        Fix ContextMenu allocation in the Qt port.
+
+        Store all items and submenus value based in ContextMenu and ContextMenuItem.
+        That fixes the crashes when the context menu was populated with sub-menus because
+        of the use of temporary ContextMenu objects like this:
+
+        ContextMenu subMenu(...);
+        subMenu.appendItem(...);
+        subMenu.appendItem(...);
+
+        subMenuItem.setSubMenu(&subMenu); // temporary pointer, need to _copy_ contents
+
+        * platform/ContextMenu.h:
+        * platform/ContextMenuItem.h:
+        * platform/PlatformMenuDescription.h:
+        * platform/qt/ContextMenuItemQt.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        * platform/qt/ContextMenuQt.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemCount):
+
 2007-11-09  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Mark Rowe.

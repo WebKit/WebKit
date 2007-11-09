@@ -159,7 +159,7 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
     return QWebPage::NoWebAction;
 }
 
-QMenu *QWebPagePrivate::createContextMenu(QList<WebCore::ContextMenuItem> *items)
+QMenu *QWebPagePrivate::createContextMenu(const QList<WebCore::ContextMenuItem> *items)
 {
     QMenu *menu = new QMenu;
     for (int i = 0; i < items->count(); ++i) {
@@ -845,7 +845,7 @@ void QWebPage::contextMenuEvent(QContextMenuEvent *ev)
     QWebPageContext oldContext = d->currentContext;
     d->currentContext = QWebPageContext(menu->hitTestResult());
 
-    QList<ContextMenuItem> *items = menu->platformDescription();
+    const QList<ContextMenuItem> *items = menu->platformDescription();
     QMenu *qmenu = d->createContextMenu(items);
     if (qmenu) {
         qmenu->exec(ev->globalPos());

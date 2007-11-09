@@ -132,7 +132,6 @@ namespace WebCore {
         PlatformMenuItemDescription()
             : type(ActionType),
               action(ContextMenuItemTagNoAction),
-              subMenu(0),
               checked(false),
               enabled(true)
         {}
@@ -140,7 +139,7 @@ namespace WebCore {
         ContextMenuItemType type;
         ContextMenuAction action;
         String title;
-        ContextMenu *subMenu;
+        QList<ContextMenuItem> subMenuItems;
         bool checked;
         bool enabled;
     };

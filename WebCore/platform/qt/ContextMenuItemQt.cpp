@@ -34,7 +34,8 @@ ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
 {
     m_platformDescription.type = SubmenuType;
     m_platformDescription.action = ContextMenuItemTagNoAction;
-    m_platformDescription.subMenu = subMenu;
+    if (subMenu)
+        setSubMenu(subMenu);
 }
 
 ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action,
@@ -43,7 +44,8 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
     m_platformDescription.type = type;
     m_platformDescription.action = action;
     m_platformDescription.title = title;
-    m_platformDescription.subMenu = subMenu;
+    if (subMenu)
+        setSubMenu(subMenu);
 }
 
 ContextMenuItem::~ContextMenuItem()
@@ -88,12 +90,12 @@ void ContextMenuItem::setTitle(const String& title)
 
 PlatformMenuDescription ContextMenuItem::platformSubMenu() const
 {
-    return m_platformDescription.subMenu->platformDescription();
+    return &m_platformDescription.subMenuItems;
 }
 
 void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
-    m_platformDescription.subMenu = menu;
+    m_platformDescription.subMenuItems = *menu->platformDescription();
 }
 
 void ContextMenuItem::setChecked(bool on)

@@ -77,7 +77,7 @@ class MenuEventProxy;
         // Keep this in sync with the PlatformMenuDescription typedef
         RetainPtr<NSMutableArray> m_platformDescription;
 #elif PLATFORM(QT)
-        PlatformMenuDescription m_items;
+        QList<ContextMenuItem> m_items;
 #else
         PlatformMenuDescription m_platformDescription;
 #endif

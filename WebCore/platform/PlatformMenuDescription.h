@@ -50,7 +50,7 @@ namespace WebCore {
     typedef HMENU PlatformMenuDescription;
 #elif PLATFORM(QT)
     class ContextMenuItem;
-    typedef QList<ContextMenuItem>* PlatformMenuDescription;
+    typedef const QList<ContextMenuItem>* PlatformMenuDescription;
 #elif PLATFORM(GTK)
     typedef GtkMenu* PlatformMenuDescription;
 #elif PLATFORM(WX)

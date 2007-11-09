@@ -41,27 +41,25 @@ namespace WebCore {
 ContextMenu::ContextMenu(const HitTestResult& result)
     : m_hitTestResult(result)
 {
-    m_items = new QList<ContextMenuItem>();
 }
 
 ContextMenu::~ContextMenu()
 {
-    delete m_items;
 }
 
 void ContextMenu::appendItem(ContextMenuItem& item)
 {
-    m_items->append(item);
+    m_items.append(item);
 }
 
 unsigned ContextMenu::itemCount() const
 {
-    return m_items->count();
+    return m_items.count();
 }
 
 void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
 {
-    m_items->insert(position, item);
+    m_items.insert(position, item);
 }
 
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
@@ -71,7 +69,7 @@ void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 
 PlatformMenuDescription ContextMenu::platformDescription() const
 {
-    return m_items;
+    return &m_items;
 }
 
 PlatformMenuDescription ContextMenu::releasePlatformDescription()
