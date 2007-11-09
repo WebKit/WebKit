@@ -154,6 +154,9 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
         case WebCore::ContextMenuItemTagReload: return QWebPage::Reload;
         case WebCore::ContextMenuItemTagCut: return QWebPage::Cut;
         case WebCore::ContextMenuItemTagPaste: return QWebPage::Paste;
+        case WebCore::ContextMenuItemTagDefaultDirection: return QWebPage::SetTextDirectionDefault;
+        case WebCore::ContextMenuItemTagLeftToRight: return QWebPage::SetTextDirectionLeftToRight;
+        case WebCore::ContextMenuItemTagRightToLeft: return QWebPage::SetTextDirectionRightToLeft;
         default: break;
     }
     return QWebPage::NoWebAction;
@@ -567,6 +570,16 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             command = "DeleteWordForward";
             break;
 
+        case SetTextDirectionDefault:
+            editor->setBaseWritingDirection("inherit");
+            break;
+        case SetTextDirectionLeftToRight:
+            editor->setBaseWritingDirection("ltr");
+            break;
+        case SetTextDirectionRightToLeft:
+            editor->setBaseWritingDirection("rtl");
+            break;
+
         default: break;
     }
 
@@ -681,6 +694,16 @@ QAction *QWebPage::action(WebAction action) const
         case DeleteStartOfWord:
         case DeleteEndOfWord:
             break; // ####
+
+        case SetTextDirectionDefault:
+            text = contextMenuItemTagDefaultDirection();
+            break;
+        case SetTextDirectionLeftToRight:
+            text = contextMenuItemTagLeftToRight();
+            break;
+        case SetTextDirectionRightToLeft:
+            text = contextMenuItemTagRightToLeft();
+            break;
 
         case NoWebAction:
             return 0;

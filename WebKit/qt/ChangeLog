@@ -2,6 +2,19 @@
 
         Reviewed by Holger.
 
+        Implemented the webcore actions for changing the text direction.
+        
+
+        * Api/qwebpage.cpp:
+        (webActionForContextMenuAction):
+        (QWebPage::triggerAction):
+        (QWebPage::action):
+        * Api/qwebpage.h:
+
+2007-11-09  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Holger.
+
         Fix ContextMenu allocation in the Qt port.
         
         Store all items and submenus value based in ContextMenu and ContextMenuItem.

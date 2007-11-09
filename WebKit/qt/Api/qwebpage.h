@@ -122,6 +122,10 @@ public:
         DeleteStartOfWord,
         DeleteEndOfWord,
 
+        SetTextDirectionDefault,
+        SetTextDirectionLeftToRight,
+        SetTextDirectionRightToLeft,
+
         WebActionCount
     };
 
