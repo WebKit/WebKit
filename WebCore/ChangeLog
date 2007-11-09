@@ -1,3 +1,12 @@
+2007-11-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Initialize WindowFeatures struct before using it.
+        
+        Reviewed by Oliver.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+
 2007-11-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam Weinig.
