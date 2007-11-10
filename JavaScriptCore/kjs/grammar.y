@@ -206,9 +206,9 @@ static NumberNode* makeNumberNode(double);
 %%
 
 Literal:
-    NULLTOKEN                           { $$ = new NullNode(); }
-  | TRUETOKEN                           { $$ = new BooleanNode(true); }
-  | FALSETOKEN                          { $$ = new BooleanNode(false); }
+    NULLTOKEN                           { $$ = new NullNode; }
+  | TRUETOKEN                           { $$ = new TrueNode; }
+  | FALSETOKEN                          { $$ = new FalseNode; }
   | NUMBER                              { $$ = makeNumberNode($1); }
   | STRING                              { $$ = new StringNode($1); }
   | '/' /* regexp */                    {

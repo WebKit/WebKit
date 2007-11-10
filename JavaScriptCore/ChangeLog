@@ -1,3 +1,55 @@
+2007-11-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15915
+          add an evaluation path for booleans like the one we have for numbers
+
+        Gives 1.1% on SunSpider.
+
+        * kjs/grammar.y: Create TrueNode and FalseNode instead of BooleanNode.
+
+        * kjs/nodes.h: Changed to use Noncopyable. Moved optimizeForUnnecessaryResult
+        down from Node to ExpressionNode. Changed some classes to not inherit from
+        ExpressionNode where not necessary, and removed unnneeded evaluate functions
+        as well as evaluate functions that need not be virtual. Call the
+        optimizeForUnnecessaryResult function on the start of a for loop too.
+        * kjs/nodes.cpp:
+        (KJS::ExpressionNode::evaluateToBoolean): Added.
+        (KJS::FalseNode::evaluate): Added.
+        (KJS::TrueNode::evaluate): Added.
+        (KJS::NumberNode::evaluateToBoolean): Added.
+        (KJS::StringNode::evaluateToBoolean): Added.
+        (KJS::LocalVarAccessNode::evaluateToBoolean): Added.
+        (KJS::BracketAccessorNode::evaluateToBoolean): Added.
+        (KJS::LogicalNotNode::evaluate): Changed to call evaluateToBoolean.
+        (KJS::LogicalNotNode::evaluateToBoolean): Added.
+        (KJS::lessThan): Changed to return bool.
+        (KJS::lessThanEq): Ditto.
+        (KJS::LessNode::evaluate): Changed since lessThan returns bool.
+        (KJS::LessNode::evaluateToBoolean): Added.
+        (KJS::GreaterNode::evaluate): Changed since lessThanEq returns bool.
+        (KJS::GreaterNode::evaluateToBoolean): Added.
+        (KJS::LessEqNode::evaluate): Changed since lessThanEq returns bool.
+        (KJS::LessEqNode::evaluateToBoolean): Added.
+        (KJS::GreaterEqNode::evaluate): Changed since lessThan returns bool.
+        (KJS::GreaterEqNode::evaluateToBoolean): Added.
+        (KJS::InstanceOfNode::evaluateToBoolean): Added.
+        (KJS::InNode::evaluateToBoolean): Added.
+        (KJS::EqualNode::evaluateToBoolean): Added.
+        (KJS::NotEqualNode::evaluateToBoolean): Added.
+        (KJS::StrictEqualNode::evaluateToBoolean): Added.
+        (KJS::NotStrictEqualNode::evaluateToBoolean): Added.
+        (KJS::ConditionalNode::evaluate): Changed to call evaluateToBoolean.
+        (KJS::IfNode::execute): Ditto.
+        (KJS::DoWhileNode::execute): Ditto.
+        (KJS::WhileNode::execute): Ditto.
+        (KJS::ForNode::execute): Ditto.
+
+        * kjs/nodes2string.cpp:
+        (KJS::FalseNode::streamTo): Added.
+        (KJS::TrueNode::streamTo): Added.
+
 2007-11-09  Adam Roben  <aroben@apple.com>
 
         Windows build fix

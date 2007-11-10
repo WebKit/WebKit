@@ -567,23 +567,15 @@
 			Name="PCRE"
 			>
 			<File
-				RelativePath="..\..\wtf\FastMallocPCRE.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre-config.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pcre\pcre.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_compile.c"
+				RelativePath="..\..\pcre\pcre_compile.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_exec.c"
+				RelativePath="..\..\pcre\pcre_exec.cpp"
 				>
 			</File>
 			<File
@@ -591,19 +583,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_ord2utf8.c"
+				RelativePath="..\..\pcre\pcre_ord2utf8.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_tables.c"
+				RelativePath="..\..\pcre\pcre_tables.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_ucp_searchfuncs.c"
+				RelativePath="..\..\pcre\pcre_ucp_searchfuncs.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_xclass.c"
+				RelativePath="..\..\pcre\pcre_xclass.cpp"
 				>
 			</File>
 			<File

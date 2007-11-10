@@ -99,7 +99,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\pcre\dftables.c"
+			RelativePath="..\..\pcre\dftables.cpp"
 			>
 		</File>
 	</Files>
