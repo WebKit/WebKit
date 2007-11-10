@@ -298,10 +298,8 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
         goto end;
     
-    if (renderer()) {
+    if (renderer())
         renderer()->updateFromElement();
-        m_movie->setVisible(true);
-    }
     
     // 14
     m_previousProgressTime = WebCore::currentTime();
@@ -996,7 +994,7 @@ void HTMLMediaElement::didRestoreFromCache()
     if (m_wasPlayingBeforeMovingToPageCache)
         play(ec);
     if (renderer())
-        m_movie->setVisible(true);
+        renderer()->updateFromElement();
 }
 
 }

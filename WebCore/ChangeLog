@@ -1,3 +1,15 @@
+2007-11-09  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+
+        Fix occasional blank video with poster attribute.
+
+        * ChangeLog:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::didRestoreFromCache):
+        Just calling updateFromElement() does the right thing for both poster image and video.
+
 2007-11-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
