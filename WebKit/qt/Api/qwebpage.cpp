@@ -605,6 +605,7 @@ QAction *QWebPage::action(WebAction action) const
         return d->actions[action];
 
     QString text;
+    bool checkable = false;
 
     switch (action) {
         case OpenLink:
@@ -700,9 +701,11 @@ QAction *QWebPage::action(WebAction action) const
             break;
         case SetTextDirectionLeftToRight:
             text = contextMenuItemTagLeftToRight();
+            checkable = true;
             break;
         case SetTextDirectionRightToLeft:
             text = contextMenuItemTagRightToLeft();
+            checkable = true;
             break;
 
         case NoWebAction:
@@ -715,6 +718,7 @@ QAction *QWebPage::action(WebAction action) const
     QAction *a = new QAction(d->q);
     a->setText(text);
     a->setData(action);
+    a->setCheckable(checkable);
 
     connect(a, SIGNAL(triggered(bool)),
             this, SLOT(_q_webActionTriggered(bool)));
