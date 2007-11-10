@@ -1,3 +1,13 @@
+2007-11-10  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15892
+        DOM Range operations are not implemented for ProcessingInstruction nodes
+
+        * fast/dom/Range/range-processing-instructions-expected.txt: Added.
+        * fast/dom/Range/range-processing-instructions.html: Added.
+
 2007-11-09  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,3 +1,17 @@
+2007-11-10  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15892
+        DOM Range operations are not implemented for ProcessingInstruction nodes
+
+        Test: fast/dom/Range/range-processing-instructions.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContents): Implemented ProcessingInstruction cases.
+        (WebCore::Range::checkNodeWOffset): Removed a FIXME - yes, I think that we are supposed
+        to use ProcessingInstruction.data.
+
 2007-11-09  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
