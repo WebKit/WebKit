@@ -1,3 +1,12 @@
+2007-11-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fix function name difference - header said 'unicodeRangeForCharacter', actually
+        implemented function is 'findCharUnicodeRange'. They are not compiled yet.
+
+        * platform/UnicodeRange.h:
+
 2007-11-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
