@@ -893,17 +893,18 @@ bool Window::isSafeScript(const ScriptInterpreter *origin, const ScriptInterpret
             originDomain = ancestorFrame->document()->domain();
     }
 
-    if ( targetDomain == originDomain )
+    if (targetDomain == originDomain)
         return true;
 
-    if (Interpreter::shouldPrintExceptions()) {
-        printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
-             targetDocument->URL().latin1(), originDocument->URL().latin1());
+    if (!originFrame->settings()->privateBrowsingEnabled()) {
+        if (Interpreter::shouldPrintExceptions())
+            printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+                   targetDocument->URL().latin1(), originDocument->URL().latin1());
+        String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+                                        targetDocument->URL().latin1(), originDocument->URL().latin1());
+        if (Page* page = targetFrame->page())
+            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
     }
-    String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
-                  targetDocument->URL().latin1(), originDocument->URL().latin1());
-    if (Page* page = targetFrame->page())
-        page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
 
     return false;
 }
