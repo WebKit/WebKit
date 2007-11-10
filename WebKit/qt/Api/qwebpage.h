@@ -126,6 +126,10 @@ public:
         SetTextDirectionLeftToRight,
         SetTextDirectionRightToLeft,
 
+        ToggleBold,
+        ToggleItalic,
+        ToggleUnderline,
+
         WebActionCount
     };
 

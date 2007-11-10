@@ -157,6 +157,9 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
         case WebCore::ContextMenuItemTagDefaultDirection: return QWebPage::SetTextDirectionDefault;
         case WebCore::ContextMenuItemTagLeftToRight: return QWebPage::SetTextDirectionLeftToRight;
         case WebCore::ContextMenuItemTagRightToLeft: return QWebPage::SetTextDirectionRightToLeft;
+        case WebCore::ContextMenuItemTagBold: return QWebPage::ToggleBold;
+        case WebCore::ContextMenuItemTagItalic: return QWebPage::ToggleItalic;
+        case WebCore::ContextMenuItemTagUnderline: return QWebPage::ToggleUnderline;
         default: break;
     }
     return QWebPage::NoWebAction;
@@ -587,6 +590,16 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             editor->setBaseWritingDirection("rtl");
             break;
 
+        case ToggleBold:
+            command = "ToggleBold";
+            break;
+        case ToggleItalic:
+            command = "ToggleItalic";
+            break;
+        case ToggleUnderline:
+            editor->toggleUnderline();
+            break;
+
         default: break;
     }
 
@@ -712,6 +725,19 @@ QAction *QWebPage::action(WebAction action) const
             break;
         case SetTextDirectionRightToLeft:
             text = contextMenuItemTagRightToLeft();
+            checkable = true;
+            break;
+
+        case ToggleBold:
+            text = contextMenuItemTagBold();
+            checkable = true;
+            break;
+        case ToggleItalic:
+            text = contextMenuItemTagItalic();
+            checkable = true;
+            break;
+        case ToggleUnderline:
+            text = contextMenuItemTagUnderline();
             checkable = true;
             break;
 

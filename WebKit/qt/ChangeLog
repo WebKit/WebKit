@@ -2,6 +2,19 @@
 
         Reviewed by Nikolas.
 
+        Added support for the Bold/Italic/Underline toggle actions.
+        
+
+        * Api/qwebpage.cpp:
+        (webActionForContextMenuAction):
+        (QWebPage::triggerAction):
+        (QWebPage::action):
+        * Api/qwebpage.h:
+
+2007-11-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Nikolas.
+
         Before adding an action to the context menu call checkOrEnableIfNeeded for each action
         to update the enable/checked state correctly.
         
