@@ -1,3 +1,12 @@
+2007-11-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15925
+        SunSpider should check for Shark being installed
+
+        * sunspider: Explicitly test that shark command line tool is installed.
+
 2007-11-04  Darin Adler  <darin@apple.com>
 
         * hosted/sunspider.html: Tweaked formatting a bit.

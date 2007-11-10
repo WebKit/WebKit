@@ -61,6 +61,9 @@ GetOptions('runs=i' => \$testRuns,
 
 $runShark = 20 if $runShark20;
 $testRuns = 1 if $runShark;
+if ($runShark && ! -x "/usr/bin/shark") {
+    die "Please install CHUD tools from http://developer.apple.com/tools/download/\n";
+}
 
 if (!$jsShellPath || $showHelp) {
    print STDERR $usage;
