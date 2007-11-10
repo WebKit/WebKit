@@ -182,6 +182,7 @@ private:
     
     bool eventActivatedView(const PlatformMouseEvent&) const;
     void selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& event);
+    void selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults& event);
 
     bool handleMouseDoubleClickEvent(const PlatformMouseEvent&);
 

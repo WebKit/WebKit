@@ -1,3 +1,19 @@
+2007-11-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5450655> Control-clicking text in a link can surprisingly select only part of the link, should select entire link
+
+        No test because context menu events cannot be tested in DumpRenderTree.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent): Added.
+        If the click occurred in an active link, selects the entire link
+        element. Otherwise selects the closest word.
+        (WebCore::EventHandler::sendContextMenuEvent): Call
+        selectClosestWordOrLinkFromMouseEvent().
+        * page/EventHandler.h:
+
 2007-11-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher

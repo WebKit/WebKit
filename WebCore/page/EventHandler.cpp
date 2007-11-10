@@ -169,6 +169,30 @@ void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestRe
     }
 }
 
+void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults& result)
+{
+    if (!result.hitTestResult().isLiveLink())
+        return selectClosestWordFromMouseEvent(result);
+
+    Node* innerNode = result.targetNode();
+
+    if (innerNode && innerNode->renderer() && m_mouseDownMayStartSelect) {
+        Selection newSelection;
+        Element* URLElement = result.hitTestResult().URLElement();
+        VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
+        if (pos.isNotNull() && pos.deepEquivalent().node()->isDescendantOf(URLElement))
+            newSelection = Selection::selectionFromContentsOfNode(URLElement);
+    
+        if (newSelection.isRange()) {
+            m_frame->setSelectionGranularity(WordGranularity);
+            m_beganSelectingText = true;
+        }
+
+        if (m_frame->shouldChangeSelection(newSelection))
+            m_frame->selectionController()->setSelection(newSelection);
+    }
+}
+
 bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestResults& event)
 {
     if (event.event().button() != LeftButton)
@@ -1348,7 +1372,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         // available for text selections.  But only if we're above text.
         (m_frame->selectionController()->isContentEditable() || mev.targetNode() && mev.targetNode()->isTextNode())) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
-        selectClosestWordFromMouseEvent(mev);
+        selectClosestWordOrLinkFromMouseEvent(mev);
     }
 
     swallowEvent = dispatchMouseEvent(contextmenuEvent, mev.targetNode(), true, 0, event, true);
