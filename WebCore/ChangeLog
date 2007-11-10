@@ -1,4 +1,36 @@
-2007-11-10  Alexey Proskuryakov  <ap@nypop.com>
+2007-11-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15922
+        Implement more of Mozilla Selection API
+
+        Tests: editing/selection/containsNode.html
+               editing/selection/deleteFromDocument.html
+               editing/selection/extend.html
+               editing/selection/selectAllChildren.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::deleteFromDocument):
+        (WebCore::SelectionController::containsNode):
+        (WebCore::SelectionController::selectAllChildren):
+        (WebCore::SelectionController::extend):
+        * editing/SelectionController.h:
+        Added deleteFromDocument(), containsNode(), and selectAllChildren(). Reimplemented extend(),
+        which existed, but didn't match Firefox behavior and wasn't exposed via bindings.
+        Removed a comment mentioning removeRange(), as this method makes no sense without multiple
+        selection range support.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::extend):
+        (WebCore::DOMSelection::deleteFromDocument):
+        (WebCore::DOMSelection::containsNode):
+        (WebCore::DOMSelection::selectAllChildren):
+        * page/DOMSelection.h:
+        * page/DOMSelection.idl:
+        Exposed the new methods.
+
+2007-11-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
 

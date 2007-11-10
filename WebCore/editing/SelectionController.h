@@ -115,7 +115,7 @@ public:
     bool modify(const String& alterString, const String& directionString, const String& granularityString, bool userTriggered = false);
     
     // Mozilla Selection Object API
-    // In FireFox, anchor/focus are the equal to the start/end of the selection,
+    // In Firefox, anchor/focus are the equal to the start/end of the selection,
     // but reflect the direction in which the selection was made by the user.  That does
     // not mean that they are base/extent, since the base/extent don't reflect
     // expansion.
@@ -134,10 +134,9 @@ public:
     int rangeCount() const { return !isNone() ? 1 : 0; }
     void removeAllRanges();
     void addRange(const Range*);
-    //void deleteFromDocument();
-    //bool containsNode(Node *node, bool entirelyContained);
-    //void selectAllChildren(const Node *);
-    //void removeRange(const Range *);
+    void deleteFromDocument();
+    bool containsNode(const Node*, bool allowPartial) const;
+    void selectAllChildren(Node*, ExceptionCode&);
     
     // Microsoft Selection Object API
     void empty();

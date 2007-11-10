@@ -70,9 +70,13 @@ namespace WebCore {
         void setPosition(Node*, int offset, ExceptionCode&);
         void setPosition(Node*, ExceptionCode&);
         void modify(const String& alter, const String& direction, const String& granularity);
+        void extend(Node*, int offset, ExceptionCode&);
         PassRefPtr<Range> getRangeAt(int, ExceptionCode&);
         void removeAllRanges();
         void addRange(Range*);
+        void deleteFromDocument();
+        bool containsNode(const Node*, bool partlyContained) const;
+        void selectAllChildren(Node*, ExceptionCode&);
 
         String toString();
 

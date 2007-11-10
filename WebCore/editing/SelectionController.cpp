@@ -824,6 +824,61 @@ void SelectionController::addRange(const Range* r)
     }
 }
 
+void SelectionController::deleteFromDocument()
+{
+    if (isNone())
+        return;
+
+    if (isCollapsed())
+        modify(EXTEND, BACKWARD, CharacterGranularity);
+
+    RefPtr<Range> selectedRange = m_sel.toRange();
+
+    ExceptionCode ec = 0;
+    selectedRange->deleteContents(ec);
+    ASSERT(!ec);
+    
+    setBaseAndExtent(selectedRange->startContainer(ec), selectedRange->startOffset(ec), selectedRange->startContainer(ec), selectedRange->startOffset(ec), ec);
+    ASSERT(!ec);
+}
+
+bool SelectionController::containsNode(const Node* n, bool allowPartial) const
+{
+    if (!n || isNone())
+        return false;
+
+    Node* parentNode = n->parentNode();
+    unsigned nodeIndex = n->nodeIndex();
+    RefPtr<Range> selectedRange = m_sel.toRange();
+
+    if (!parentNode)
+        return false;
+
+    ExceptionCode ec = 0;
+    bool nodeFullySelected = Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->startContainer(ec), selectedRange->startOffset(ec)) >= 0
+        && Range::compareBoundaryPoints(parentNode, nodeIndex + 1, selectedRange->endContainer(ec), selectedRange->endOffset(ec)) <= 0;
+    ASSERT(!ec);
+    if (nodeFullySelected)
+        return true;
+
+    bool nodeFullyUnselected = Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->endContainer(ec), selectedRange->endOffset(ec)) > 0
+        || Range::compareBoundaryPoints(parentNode, nodeIndex + 1, selectedRange->startContainer(ec), selectedRange->startOffset(ec)) < 0;
+    ASSERT(!ec);
+    if (nodeFullyUnselected)
+        return false;
+
+    return allowPartial || n->isTextNode();
+}
+
+void SelectionController::selectAllChildren(Node* n, ExceptionCode& ec)
+{
+    if (!n)
+        return;
+
+    // This doesn't (and shouldn't) select text node characters.
+    setBaseAndExtent(n, 0, n, n->childNodeCount(), ec);
+}
+
 void SelectionController::setBaseAndExtent(Node *baseNode, int baseOffset, Node *extentNode, int extentOffset, ExceptionCode& ec)
 {
     if (baseOffset < 0 || extentOffset < 0) {
@@ -869,13 +924,20 @@ void SelectionController::empty()
     moveTo(VisiblePosition());
 }
 
-void SelectionController::extend(Node *node, int offset, ExceptionCode& ec)
+void SelectionController::extend(Node* node, int offset, ExceptionCode& ec)
 {
-    if (offset < 0) {
+    if (!node) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+    if (offset < 0
+        || node->offsetInCharacters() && offset > node->caretMaxOffset()
+        || !node->offsetInCharacters() && offset > (int)node->childNodeCount()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
-    moveTo(VisiblePosition(node, offset, DOWNSTREAM));
+    m_sel.expandUsingGranularity(CharacterGranularity);
+    setExtent(VisiblePosition(node, offset, DOWNSTREAM));
 }
 
 void SelectionController::layout()

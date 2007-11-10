@@ -186,6 +186,13 @@ void DOMSelection::modify(const String& alter, const String& direction, const St
     m_frame->selectionController()->modify(alter, direction, granularity);
 }
 
+void DOMSelection::extend(Node* n, int offset, ExceptionCode& ec)
+{
+    if (!m_frame)
+        return;
+    m_frame->selectionController()->extend(n, offset, ec);
+}
+
 PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
 {
     if (!m_frame)
@@ -205,6 +212,27 @@ void DOMSelection::addRange(Range* range)
     if (!m_frame)
         return;
     m_frame->selectionController()->addRange(range);
+}
+
+void DOMSelection::deleteFromDocument()
+{
+    if (!m_frame)
+        return;
+    m_frame->selectionController()->deleteFromDocument();
+}
+
+bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
+{
+    if (!m_frame)
+        return false;
+    return m_frame->selectionController()->containsNode(n, allowPartial);
+}
+
+void DOMSelection::selectAllChildren(Node* n, ExceptionCode& ec)
+{
+    if (!m_frame)
+        return;
+    m_frame->selectionController()->selectAllChildren(n, ec);
 }
 
 String DOMSelection::toString()

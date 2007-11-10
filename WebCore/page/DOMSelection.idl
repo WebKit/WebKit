@@ -45,12 +45,18 @@ module window {
             raises(DOMException);
         void collapseToEnd();
         void collapseToStart();
+        void deleteFromDocument();
+        boolean containsNode(in Node node, in boolean allowPartial);
+        void selectAllChildren(in Node node)
+            raises(DOMException);
         void empty();
         void setBaseAndExtent(in Node baseNode, in long baseOffset, in Node extentNode, in long extentOffset)
             raises(DOMException);
         void setPosition(in Node node, in [Optional] long offset)
             raises(DOMException);
         void modify(in DOMString alter, in DOMString direction, in DOMString granularity);
+        void extend(in Node node, in long offset)
+            raises(DOMException);
         Range getRangeAt(in long index)
             raises(DOMException);
         void removeAllRanges();

@@ -1,4 +1,21 @@
-2007-11-10  Alexey Proskuryakov  <ap@nypop.com>
+2007-11-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15922
+        Implement more of Mozilla Selection API
+
+        * editing/selection/containsNode-expected.txt: Added.
+        * editing/selection/containsNode.html: Added.
+        * editing/selection/deleteFromDocument-expected.txt: Added.
+        * editing/selection/deleteFromDocument.html: Added.
+        * editing/selection/extend-expected.txt: Added.
+        * editing/selection/extend.html: Added.
+        * editing/selection/selectAllChildren-expected.txt: Added.
+        * editing/selection/selectAllChildren.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+
+2007-11-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
 
