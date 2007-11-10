@@ -345,6 +345,36 @@ WebInspector.DocumentPanel.prototype = {
             this.views.dom.treeOutline.handleKeyEvent(event);
     },
 
+    handleCopyEvent: function(event)
+    {
+        if (this.currentView !== this.views.dom)
+            return;
+
+        // Don't prevent the normal copy if the user has a selection.
+        if (!window.getSelection().isCollapsed)
+            return;
+
+        switch (this.focusedDOMNode.nodeType) {
+            case Node.ELEMENT_NODE:
+                var data = this.focusedDOMNode.outerHTML;
+                break;
+
+            case Node.COMMENT_NODE:
+                var data = "<!--" + this.focusedDOMNode.nodeValue + "-->";
+                break;
+
+            default:
+            case Node.TEXT_NODE:
+                var data = this.focusedDOMNode.nodeValue;
+        }
+
+        event.clipboardData.clearData();
+        event.preventDefault();
+
+        if (data)
+            event.clipboardData.setData("text/plain", data);
+    },
+
     rightSidebarResizerDragStart: function(event)
     {
         var panel = this; 

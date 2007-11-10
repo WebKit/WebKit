@@ -245,6 +245,8 @@ WebInspector.loaded = function(event)
     document.addEventListener("mousedown", function(event) { WebInspector.changeFocus(event) }, true);
     document.addEventListener("focus", function(event) { WebInspector.changeFocus(event) }, true);
     document.addEventListener("keypress", function(event) { WebInspector.documentKeypress(event) }, true);
+    document.addEventListener("beforecopy", function(event) { WebInspector.documentCanCopy(event) }, true);
+    document.addEventListener("copy", function(event) { WebInspector.documentCopy(event) }, true);
 
     document.getElementById("back").title = "Show previous panel.";
     document.getElementById("forward").title = "Show next panel.";
@@ -331,6 +333,27 @@ WebInspector.documentKeypress = function(event)
         WebInspector[this.currentFocusElement.id + "Keypress"](event);
 }
 
+WebInspector.documentCanCopy = function(event)
+{
+    if (!this.currentFocusElement)
+        return;
+    // Calling preventDefault() will say "we support copying, so enable the Copy menu".
+    if (this.currentFocusElement.handleCopyEvent)
+        event.preventDefault();
+    else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "Copy"])
+        event.preventDefault();
+}
+
+WebInspector.documentCopy = function(event)
+{
+    if (!this.currentFocusElement)
+        return;
+    if (this.currentFocusElement.handleCopyEvent)
+        this.currentFocusElement.handleCopyEvent(event);
+    else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "Copy"])
+        WebInspector[this.currentFocusElement.id + "Copy"](event);
+}
+
 WebInspector.sidebarKeypress = function(event)
 {
     var nextSelectedElement;
@@ -365,10 +388,28 @@ WebInspector.sidebarKeypress = function(event)
     }
 }
 
+WebInspector.sidebarCopy = function(event)
+{
+    event.clipboardData.clearData();
+    event.preventDefault();
+
+    var selectedElement = this.fileOutline.selectedTreeElement;
+    if (!selectedElement || !selectedElement.representedObject || !selectedElement.representedObject.url)
+        return;
+
+    event.clipboardData.setData("URL", this.fileOutline.selectedTreeElement.representedObject.url);
+}
+
 WebInspector.mainKeypress = function(event)
 {
     if (this.currentPanel && this.currentPanel.handleKeyEvent)
         this.currentPanel.handleKeyEvent(event);
+}
+
+WebInspector.mainCopy = function(event)
+{
+    if (this.currentPanel && this.currentPanel.handleCopyEvent)
+        this.currentPanel.handleCopyEvent(event);
 }
 
 WebInspector.searchResultsKeypress = function(event)

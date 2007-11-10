@@ -1,3 +1,20 @@
+2007-11-09  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 12054: Ability to serialize an element subtree (into clipboard?) from the DOM inspector
+        http://bugs.webkit.org/show_bug.cgi?id=12054
+
+        - Add support code for routing copy events to the focused element.
+        - Implement copying the currently selected DOM node. The node
+          and it's subtree is copied to the clipboard. If the node has no
+          outerHTML, the nodeValue is copied (text nodes, etc.)
+        - Implement copy for the resource sidebar. The URL is copied for the
+          currently selected resource.
+
+        * page/inspector/DocumentPanel.js:
+        * page/inspector/inspector.js:
+
 2007-11-09  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
