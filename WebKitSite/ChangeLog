@@ -1,3 +1,12 @@
+2007-11-09  Antti Koivisto  <antti@apple.com>
+
+        Rubber stamped by bdash.
+        
+        Add directory for blog resources (and one image).
+
+        * blog-files: Added.
+        * blog-files/touch-poster.png: Added.
+
 2007-11-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
