@@ -1728,7 +1728,8 @@ void WebFrame::finishedLoading(DocumentLoader* loader)
     if (!d->m_pluginView)
         committedLoad(loader, 0, 0);
     else {
-        d->m_pluginView->didFinishLoading();
+        if (d->m_pluginView->status() == PluginStatusLoadedSuccessfully)
+            d->m_pluginView->didFinishLoading();
         d->m_pluginView = 0;
         d->m_hasSentResponseToPlugin = false;
     }
@@ -1926,7 +1927,8 @@ PassRefPtr<DocumentLoader> WebFrame::createDocumentLoader(const ResourceRequest&
 void WebFrame::setMainDocumentError(DocumentLoader*, const ResourceError& error)
 {
     if (d->m_pluginView) {
-        d->m_pluginView->didFail(error);
+        if (d->m_pluginView->status() == PluginStatusLoadedSuccessfully)
+            d->m_pluginView->didFail(error);
         d->m_pluginView = 0;
         d->m_hasSentResponseToPlugin = false;
     }
@@ -2028,7 +2030,7 @@ void WebFrame::committedLoad(DocumentLoader* loader, const char* data, int lengt
     if (!d->m_pluginView)
         receivedData(data, length, textEncoding);
 
-    if (d->m_pluginView) {
+    if (d->m_pluginView && d->m_pluginView->status() == PluginStatusLoadedSuccessfully) {
         if (!d->m_hasSentResponseToPlugin) {
             d->m_pluginView->didReceiveResponse(d->frame->loader()->documentLoader()->response());
             // didReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
@@ -2366,7 +2368,7 @@ Widget* WebFrame::createPlugin(const IntSize& pluginSize, Element* element, cons
         pluginName = pluginView->plugin()->name();
     if (!pluginName.isNull()) {
         static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
-        RetainPtr<CFStringRef> str(AdoptCF, mimeType.createCFString());
+        RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
         CFDictionarySetValue(userInfo.get(), key, str.get());
     }
 

@@ -1,3 +1,20 @@
+2007-11-09  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://5585900>: Safari crashes when selected in context menu to open
+        audio format files (au, aif) with QT 7.3
+
+        The crash occurred on a machine where QT 7.3 was failing to initialize.
+        The fix is to avoid sending streams to full-page plugins that've failed 
+        to load
+
+        * WebFrame.cpp:
+        (WebFrame::finishedLoading): Check plugin status before calling manual
+        stream methods
+        (WebFrame::setMainDocumentError): Same
+        (WebFrame::committedLoad): Same
+
 2007-11-09  Sam Weinig  <sam@webkit.org>
 
         Rubber stamped by Oliver.
