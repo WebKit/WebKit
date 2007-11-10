@@ -2,6 +2,19 @@
 
         Reviewed by Nikolas.
 
+        Before adding an action to the context menu call checkOrEnableIfNeeded for each action
+        to update the enable/checked state correctly.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createContextMenu):
+        (QWebPage::contextMenuEvent):
+        * Api/qwebpage_p.h:
+
+2007-11-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Nikolas.
+
         Mark the text direction actions as checkable actions.
         
 
