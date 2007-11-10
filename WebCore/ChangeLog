@@ -1,3 +1,14 @@
+2007-11-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Rest of fix for 5394877
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        Don't log unsafe JavaScript attempts in the other version of isSafeScript() if in
+        private browsing mode either.
+
 2007-11-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

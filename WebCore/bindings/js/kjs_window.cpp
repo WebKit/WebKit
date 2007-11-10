@@ -936,15 +936,17 @@ bool Window::isSafeScript(ExecState *exec) const
   if (actSecurityOrigin.canAccess(thisSecurityOrigin))
     return true;
 
-  // FIXME: this error message should contain more specifics of why the same origin check has failed.
-  String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
-                                  thisDocument->URL().utf8().data(), actDocument->URL().utf8().data());
-
-  if (Interpreter::shouldPrintExceptions())
-    printf("%s", message.utf8().data());
-
-  if (Page* page = frame->page())
-    page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String());
+    if (!frame->settings()->privateBrowsingEnabled()) {
+        // FIXME: this error message should contain more specifics of why the same origin check has failed.
+        String message = String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
+                                        thisDocument->URL().utf8().data(), actDocument->URL().utf8().data());
+        
+        if (Interpreter::shouldPrintExceptions())
+            printf("%s", message.utf8().data());
+        
+        if (Page* page = frame->page())
+            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String());
+    }
 
   return false;
 }
