@@ -2,6 +2,16 @@
 
         Reviewed by Nikolas.
 
+        When populating the context menu with sub-menus don't add sub-menus if they're empty.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createContextMenu):
+
+2007-11-10  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Nikolas.
+
         Added support for the Bold/Italic/Underline toggle actions.
         
 

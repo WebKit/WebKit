@@ -190,8 +190,12 @@ QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMen
                 break;
             case WebCore::SubmenuType: {
                 QMenu *subMenu = createContextMenu(webcoreMenu, item.platformSubMenu());
-                subMenu->setTitle(item.title());
-                menu->addAction(subMenu->menuAction());
+                if (!subMenu->actions().isEmpty()) {
+                    subMenu->setTitle(item.title());
+                    menu->addAction(subMenu->menuAction());
+                } else {
+                    delete subMenu;
+                }
                 break;
             }
         }
