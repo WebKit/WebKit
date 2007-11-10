@@ -160,19 +160,6 @@ static void webkit_page_realize(GtkWidget* widget)
     gdk_window_set_user_data(widget->window, widget);
 }
 
-static void webkit_page_map(GtkWidget* widget)
-{
-    GTK_WIDGET_SET_FLAGS(widget, GTK_MAPPED);
-    WebKitPagePrivate* private_data = WEBKIT_PAGE_GET_PRIVATE(WEBKIT_PAGE(widget));
-
-    HashSet<GtkWidget*>::const_iterator end = private_data->children.end();
-    for (HashSet<GtkWidget*>::const_iterator current = private_data->children.begin(); current != end; ++current)
-        if (GTK_WIDGET_VISIBLE(*current) && !GTK_WIDGET_MAPPED(*current))
-            gtk_widget_map((*current));
-
-    gdk_window_show(widget->window);
-}
-
 static void webkit_page_set_scroll_adjustments(WebKitPage* page, GtkAdjustment* hadj, GtkAdjustment* vadj)
 {
     FrameView* view = core(getFrameFromPage(page))->view();
@@ -383,7 +370,6 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
 
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(pageClass);
     widgetClass->realize = webkit_page_realize;
-    widgetClass->map = webkit_page_map;
     widgetClass->expose_event = webkit_page_expose_event;
     widgetClass->key_press_event = webkit_page_key_event;
     widgetClass->key_release_event = webkit_page_key_event;

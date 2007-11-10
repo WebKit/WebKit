@@ -1,3 +1,14 @@
+2007-11-09  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=15926
+        [GTK] WebKitPage map handler is redundant.
+
+        * Api/webkitgtkpage.cpp:
+        The map handler for WebKitPage is redundant, GtkContainer does
+        the same (and more correctly).
+
 2007-11-08  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
