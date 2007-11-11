@@ -40,6 +40,7 @@
 #include "SVGURIReference.h"
 #include "Text.h"
 #include "TextStyle.h"
+#include "UnicodeRange.h"
 
 #include <float.h>
 
@@ -52,6 +53,99 @@ namespace WebCore {
 static inline bool isVerticalWritingMode(const SVGRenderStyle* style)
 {
     return style->writingMode() == WM_TBRL || style->writingMode() == WM_TB; 
+}
+
+static inline float glyphOrientationToAngle(const SVGRenderStyle* svgStyle, bool isVerticalText, const UChar& character)
+{
+    switch (isVerticalText ? svgStyle->glyphOrientationVertical() : svgStyle->glyphOrientationHorizontal()) {
+    case GO_AUTO:
+    {
+        // Spec: Fullwidth ideographic and fullwidth Latin text will be set with a glyph-orientation of 0-degrees.
+        //       Text which is not fullwidth will be set with a glyph-orientation of 90-degrees.
+        unsigned int unicodeRange = findCharUnicodeRange(character);
+        if (unicodeRange == cRangeSetLatin || unicodeRange == cRangeArabic)
+            return 90.0f;
+
+        return 0.0f;
+    }
+    case GO_90DEG:
+        return 90.0f;
+    case GO_180DEG:
+        return 180.0f;
+    case GO_270DEG:
+        return 270.0f;
+    case GO_0DEG:
+    default:
+        return 0.0f;
+    }
+}
+
+static inline bool glyphOrientationIsMultiplyOf180Degrees(float orientationAngle)
+{
+    return fabsf(fmodf(orientationAngle, 180.0f)) == 0.0f;
+}
+
+static inline float calculateGlyphAdvanceAndShiftRespectingOrientation(bool isVerticalText, float orientationAngle, float glyphWidth, float glyphHeight, const Font& font, SVGChar& svgChar, float& xOrientationShift, float& yOrientationShift)
+{
+    bool orientationIsMultiplyOf180Degrees = glyphOrientationIsMultiplyOf180Degrees(orientationAngle);
+
+    // The function is based on spec requirements:
+    //
+    // Spec: If the 'glyph-orientation-horizontal' results in an orientation angle that is not a multiple of
+    // of 180 degrees, then the current text position is incremented according to the vertical metrics of the glyph.
+    //
+    // Spec: If if the 'glyph-orientation-vertical' results in an orientation angle that is not a multiple of
+    // 180 degrees,then the current text position is incremented according to the horizontal metrics of the glyph.
+
+    // vertical orientation handling
+    if (isVerticalText) {
+        if (orientationAngle == 0.0f) {
+            xOrientationShift = -glyphWidth / 2.0f;
+            yOrientationShift = font.ascent();
+        } else if (orientationAngle == 90.0f) {
+            xOrientationShift = -glyphHeight;
+            yOrientationShift = font.descent();
+            svgChar.orientationShiftY = -font.ascent();
+        } else if (orientationAngle == 270.0f) {
+            xOrientationShift = glyphHeight;
+            yOrientationShift = font.descent();
+            svgChar.orientationShiftX = -glyphWidth;
+            svgChar.orientationShiftY = -font.ascent();
+        } else if (orientationAngle == 180.0f) {
+            yOrientationShift = font.ascent();
+            svgChar.orientationShiftX = -glyphWidth / 2.0f;
+            svgChar.orientationShiftY = font.ascent() - font.descent();
+        }
+
+        // vertical advance calculation
+        if (orientationAngle != 0.0f && !orientationIsMultiplyOf180Degrees)
+            return glyphWidth;
+
+        return glyphHeight; 
+    }
+
+    // horizontal orientation handling
+    if (orientationAngle == 90.0f) {
+        xOrientationShift = glyphWidth / 2.0f;
+        yOrientationShift = -font.descent();
+        svgChar.orientationShiftX = -glyphWidth / 2.0f - font.descent(); 
+        svgChar.orientationShiftY = font.descent();
+    } else if (orientationAngle == 270.0f) {
+        xOrientationShift = -glyphWidth / 2.0f;
+        yOrientationShift = -font.descent();
+        svgChar.orientationShiftX = -glyphWidth / 2.0f + font.descent();
+        svgChar.orientationShiftY = glyphHeight;
+    } else if (orientationAngle == 180.0f) {
+        xOrientationShift = glyphWidth / 2.0f;
+        svgChar.orientationShiftX = -glyphWidth / 2.0f;
+        svgChar.orientationShiftY = font.ascent() - font.descent();
+    }
+
+    // horizontal advance calculation
+    if (orientationAngle != 0.0f && !orientationIsMultiplyOf180Degrees)
+        return glyphHeight;
+
+    return glyphWidth;
 }
 
 static inline void startTextChunk(SVGTextChunkLayoutInfo& info)
@@ -424,7 +518,6 @@ float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& rang
     RenderText* text = textBox->textObject();
     const Font& font = text->style()->font();
 
-    // FIXME: Wild guess - works for the W3C 1.1 vertical text examples - not really heavily tested so far.
     return (range.endOffset - range.startOffset) * (font.ascent() + font.descent());
 }
 
@@ -489,7 +582,7 @@ static float cummulatedWidthOrHeightOfTextChunk(SVGTextChunk& chunk, bool calcWi
                 SVGChar& lastCharacter = *(itSearch - 1);
                 SVGChar& currentCharacter = *itSearch;
 
-                int offset = box->m_reversed ? box->end() - i - positionOffset + 1: box->start() + i + positionOffset - 1;
+                int offset = box->m_reversed ? box->end() - i - positionOffset + 1 : box->start() + i + positionOffset - 1;
 
                 if (calcWidthOnly) {
                     float lastGlyphWidth = box->calculateGlyphWidth(style, offset);
@@ -876,7 +969,9 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
     SVGInlineTextBox* svgTextBox = static_cast<SVGInlineTextBox*>(textBox);
 
     unsigned length = textBox->len();
-    bool isVerticalText = isVerticalWritingMode(style->svgStyle());
+
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    bool isVerticalText = isVerticalWritingMode(svgStyle);
 
     for (unsigned i = 0; i < length; ++i) {
         SVGChar svgChar;
@@ -967,11 +1062,16 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
                 info.nextDrawnSeperated = true;
         }
 
+        float orientationAngle = glyphOrientationToAngle(svgStyle, isVerticalText, *currentCharacter);
+
+        float xOrientationShift = 0.0f;
+        float yOrientationShift = 0.0f;
+        float glyphAdvance = calculateGlyphAdvanceAndShiftRespectingOrientation(isVerticalText, orientationAngle, glyphWidth, glyphHeight,
+                                                                                font, svgChar, xOrientationShift, yOrientationShift);
+
         // Handle textPath layout mode
         if (info.inPathLayout()) {
-            float glyphAdvance = isVerticalText ? glyphHeight : glyphWidth;
             float extraAdvance = isVerticalText ? dy : dx;
-
             float newOffset = FLT_MIN;
 
             if (assignedX && !isVerticalText)
@@ -979,16 +1079,18 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             else if (assignedY && isVerticalText)
                 newOffset = info.cury;
 
+            float correctedGlyphAdvance = glyphAdvance;
+
             // Handle lengthAdjust="spacingAndGlyphs" by specifying per-character scale operations
             if (info.pathTextLength > 0.0f && info.pathChunkLength > 0.0f) { 
                 if (isVerticalText) {
                     svgChar.pathData->yScale = info.pathChunkLength / info.pathTextLength;
                     spacing *= svgChar.pathData->yScale;
-                    glyphAdvance *= svgChar.pathData->yScale;
+                    correctedGlyphAdvance *= svgChar.pathData->yScale;
                 } else {
                     svgChar.pathData->xScale = info.pathChunkLength / info.pathTextLength;
                     spacing *= svgChar.pathData->xScale;
-                    glyphAdvance *= svgChar.pathData->xScale;
+                    correctedGlyphAdvance *= svgChar.pathData->xScale;
                 }
             }
 
@@ -996,7 +1098,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             float pathExtraAdvance = info.pathExtraAdvance;
             info.pathExtraAdvance += spacing;
 
-            svgChar.pathData->visible = info.nextPathLayoutPointAndAngle(glyphAdvance, extraAdvance, newOffset);
+            svgChar.pathData->visible = info.nextPathLayoutPointAndAngle(correctedGlyphAdvance, extraAdvance, newOffset);
             svgChar.drawnSeperated = true;
 
             info.pathExtraAdvance = pathExtraAdvance;
@@ -1019,42 +1121,43 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
 
         svgChar.x = info.curx;
         svgChar.y = info.cury;
+        svgChar.angle = info.angle;
 
         // For text paths any shift (dx/dy/baseline-shift) has to be applied after the rotation
         if (!info.inPathLayout()) {
-            svgChar.x += info.shiftx;
-            svgChar.y += info.shifty;
+            svgChar.x += info.shiftx + xOrientationShift;
+            svgChar.y += info.shifty + yOrientationShift;
+
+            if (orientationAngle != 0.0f)
+                svgChar.angle += orientationAngle;
+
+            if (svgChar.angle != 0.0f)
+                svgChar.drawnSeperated = true;
         } else {
-            svgChar.pathData->xShift = info.shiftx;
-            svgChar.pathData->yShift = info.shifty;
+            svgChar.pathData->orientationAngle = orientationAngle;
+
+            if (isVerticalText)
+                svgChar.angle -= 90.0f;
+
+            svgChar.pathData->xShift = info.shiftx + xOrientationShift;
+            svgChar.pathData->yShift = info.shifty + yOrientationShift;
 
             // Translate to glyph midpoint
             if (isVerticalText) {
                 svgChar.pathData->xShift += info.dx;
-                svgChar.pathData->yShift -= glyphHeight / 2.0f;
+                svgChar.pathData->yShift -= glyphAdvance / 2.0f;
             } else {
-                svgChar.pathData->xShift -= glyphWidth / 2.0f;
+                svgChar.pathData->xShift -= glyphAdvance / 2.0f;
                 svgChar.pathData->yShift += info.dy;
             }
         }
- 
-        // Correct character position for vertical text layout
-        if (isVerticalText) {
-            svgChar.drawnSeperated = true;
-            svgChar.x -= glyphWidth / 2.0f;
-            svgChar.y += glyphHeight;
-        }
-
-        // Record angle if specified
-        svgChar.angle = info.angle;
-        if (svgChar.angle != 0.0f)
-            svgChar.drawnSeperated = true;
 
         // Advance to new position
-        if (isVerticalText)
-            info.cury += glyphHeight + spacing;
-        else
-            info.curx += glyphWidth + spacing;
+        if (isVerticalText) {
+            svgChar.drawnSeperated = true;
+            info.cury += glyphAdvance + spacing;
+        } else
+            info.curx += glyphAdvance + spacing;
 
         // Advance to next character
         info.svgChars.append(svgChar);

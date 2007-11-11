@@ -1,5 +1,29 @@
 2007-11-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Eric.
+
+        Update SVG layout test results after landing the vertical text support fixes.
+
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * svg/batik/text/verticalText-expected.checksum:
+        * svg/batik/text/verticalText-expected.png:
+        * svg/batik/text/verticalText-expected.txt:
+        * svg/batik/text/verticalTextOnPath-expected.checksum:
+        * svg/batik/text/verticalTextOnPath-expected.png:
+        * svg/batik/text/verticalTextOnPath-expected.txt:
+        * svg/text/text-align-05-b-expected.txt:
+        * svg/text/text-align-06-b-expected.txt:
+        * svg/text/text-path-01-b-expected.checksum:
+        * svg/text/text-path-01-b-expected.png:
+
+2007-11-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubberstamped by Eric.
 
         Update some SVG pixel test results - which show changes lately -> repainting fixes.

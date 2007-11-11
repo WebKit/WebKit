@@ -515,16 +515,13 @@ AffineTransform SVGChar::characterTransform() const
     ctm.translate(x, y);
     ctm.rotate(angle);
 
-    if (pathData)
+    if (pathData) {
         ctm.scale(pathData->xScale, pathData->yScale);
-
-    ctm.translate(-x, -y);
-
-    // Apply transformations which have to be applied orthogonal to the path
-    // Only happens in textPath layouts.
-    if (pathData)
         ctm.translate(pathData->xShift, pathData->yShift);
+        ctm.rotate(pathData->orientationAngle);
+    }
 
+    ctm.translate(orientationShiftX - x, orientationShiftY - y);
     return ctm;
 }
 

@@ -1,3 +1,28 @@
+2007-11-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15937 (Add glyph-orientation-horizontal/vertical support)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=13971 (text-anchor support on vertical text seems slightly off)
+
+        Add glyph-orientation-* support for text & textPath. (90/180/270 and 'auto')
+        Also fix all vertical text handling - for text & textPath! (especially latin1 characters auto orientation in vertical writing modes)
+
+        * WebCore.pro: Add platform/UnicodeRange.cpp to build
+        * WebCore.xcodeproj/project.pbxproj: Dito.
+        * rendering/SVGCharacterLayoutInfo.cpp: Respect orientationShiftX/Y & angle in characterTransform()
+        (WebCore::SVGChar::characterTransform):
+        * rendering/SVGCharacterLayoutInfo.h: New variables.
+        (WebCore::SVGCharOnPath::SVGCharOnPath):
+        (WebCore::SVGChar::SVGChar):
+        * rendering/SVGRootInlineBox.cpp: Added glyph-orientation-* handling.
+        (WebCore::glyphOrientationToAngle):
+        (WebCore::glyphOrientationIsMultiplyOf180Degrees):
+        (WebCore::calculateGlyphAdvanceAndShiftRespectingOrientation):
+        (WebCore::cummulatedHeightOfInlineBoxCharacterRange):
+        (WebCore::cummulatedWidthOrHeightOfTextChunk):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+
 2007-11-10  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam Weinig.

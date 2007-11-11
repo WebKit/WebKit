@@ -700,6 +700,7 @@ SOURCES += \
     platform/TextEncodingRegistry.cpp \
     platform/TextStream.cpp \
     platform/Timer.cpp \
+    platform/UnicodeRange.cpp \
     platform/Widget.cpp \
     rendering/AutoTableLayout.cpp \
     rendering/bidi.cpp \
