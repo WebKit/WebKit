@@ -1,3 +1,25 @@
+2007-11-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Add KJS_CHECKEXCEPTIONBOOLEAN to match rest of nodes.cpp
+
+        * kjs/nodes.cpp:
+        (KJS::ExpressionNode::evaluateToBoolean):
+        (KJS::LessNode::evaluateToBoolean):
+        (KJS::GreaterNode::evaluateToBoolean):
+        (KJS::LessEqNode::evaluateToBoolean):
+        (KJS::GreaterEqNode::evaluateToBoolean):
+        (KJS::InstanceOfNode::evaluateToBoolean):
+        (KJS::InNode::evaluateToBoolean):
+        (KJS::EqualNode::evaluateToBoolean):
+        (KJS::NotEqualNode::evaluateToBoolean):
+        (KJS::StrictEqualNode::evaluateToBoolean):
+        (KJS::NotStrictEqualNode::evaluateToBoolean):
+        (KJS::LogicalAndNode::evaluateToBoolean):
+        (KJS::LogicalOrNode::evaluateToBoolean):
+        (KJS::ConditionalNode::evaluateToBoolean):
+
 2007-11-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

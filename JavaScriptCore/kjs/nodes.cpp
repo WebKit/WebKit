@@ -62,6 +62,12 @@ namespace KJS {
     return 0.0; \
   }
 
+#define KJS_CHECKEXCEPTIONBOOLEAN \
+  if (exec->hadException()) { \
+    handleException(exec); \
+    return false; \
+  }
+
 #define KJS_CHECKEXCEPTIONLIST \
   if (exec->hadException()) { \
     handleException(exec); \
@@ -214,10 +220,7 @@ double ExpressionNode::evaluateToNumber(ExecState* exec)
 bool ExpressionNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* value = evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     return value->toBoolean(exec);
 }
 
@@ -2040,15 +2043,9 @@ JSValue* LessNode::evaluate(ExecState* exec)
 bool LessNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     return lessThan(exec, v1, v2);
 }
 
@@ -2071,15 +2068,9 @@ JSValue* GreaterNode::evaluate(ExecState* exec)
 bool GreaterNode::evaluateToBoolean(ExecState *exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     return lessThan(exec, v2, v1);
 }
 
@@ -2102,15 +2093,9 @@ JSValue* LessEqNode::evaluate(ExecState* exec)
 bool LessEqNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     return lessThanEq(exec, v1, v2);
 }
 
@@ -2133,15 +2118,9 @@ JSValue* GreaterEqNode::evaluate(ExecState* exec)
 bool GreaterEqNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     return lessThanEq(exec, v2, v1);
 }
 
@@ -2177,15 +2156,9 @@ JSValue* InstanceOfNode::evaluate(ExecState* exec)
 bool InstanceOfNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
 
     if (!v2->isObject()) {
         throwError(exec, TypeError, "Value %s (result of expression %s) is not an object. Cannot be used with 'instanceof' operator.", v2, expr2.get());
@@ -2227,15 +2200,9 @@ JSValue* InNode::evaluate(ExecState *exec)
 bool InNode::evaluateToBoolean(ExecState *exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
 
     if (!v2->isObject())
         return throwError(exec, TypeError, "Value %s (result of expression %s) is not an object. Cannot be used with 'in' operator.", v2, expr2.get());
@@ -2265,15 +2232,9 @@ JSValue* EqualNode::evaluate(ExecState* exec)
 bool EqualNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
 
     return equal(exec, v1, v2);
 }
@@ -2298,15 +2259,9 @@ JSValue* NotEqualNode::evaluate(ExecState* exec)
 bool NotEqualNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
 
     return !equal(exec,v1, v2);
 }
@@ -2331,15 +2286,9 @@ JSValue* StrictEqualNode::evaluate(ExecState* exec)
 bool StrictEqualNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
 
     return strictEqual(exec,v1, v2);
 }
@@ -2364,15 +2313,9 @@ JSValue* NotStrictEqualNode::evaluate(ExecState* exec)
 bool NotStrictEqualNode::evaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
 
     return !strictEqual(exec,v1, v2);
 }
@@ -2453,10 +2396,7 @@ JSValue* LogicalAndNode::evaluate(ExecState* exec)
 bool LogicalAndNode::evaluateToBoolean(ExecState* exec)
 {
     bool b = expr1->evaluateToBoolean(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     return b && expr2->evaluateToBoolean(exec);
 }
 
@@ -2478,10 +2418,7 @@ JSValue* LogicalOrNode::evaluate(ExecState* exec)
 bool LogicalOrNode::evaluateToBoolean(ExecState* exec)
 {
     bool b = expr1->evaluateToBoolean(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     return b || expr2->evaluateToBoolean(exec);
 }
 
@@ -2505,10 +2442,7 @@ JSValue* ConditionalNode::evaluate(ExecState* exec)
 bool ConditionalNode::evaluateToBoolean(ExecState* exec)
 {
     bool b = logical->evaluateToBoolean(exec);
-    if (exec->hadException()) {
-        handleException(exec);
-        return false;
-    }
+    KJS_CHECKEXCEPTIONBOOLEAN
     return b ? expr1->evaluateToBoolean(exec) : expr2->evaluateToBoolean(exec);
 }
 
