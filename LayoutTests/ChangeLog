@@ -1,3 +1,18 @@
+2007-11-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubberstamped by Eric.
+
+        Update some SVG pixel test results - which show changes lately -> repainting fixes.
+
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+        * platform/mac/svg/custom/junk-data-expected.checksum:
+        * platform/mac/svg/custom/junk-data-expected.png:
+        * platform/mac/svg/custom/missing-xlink-expected.checksum:
+        * platform/mac/svg/custom/missing-xlink-expected.png:
+        * platform/mac/svg/hixie/error/012-expected.checksum:
+        * platform/mac/svg/hixie/error/012-expected.png:
+
 2007-11-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
