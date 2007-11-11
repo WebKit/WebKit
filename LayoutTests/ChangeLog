@@ -1,3 +1,8 @@
+2007-11-10  Darin Adler  <darin@apple.com>
+
+        * platform/win/fast/dom/Window/window-properties-expected.txt: Update for
+        fix for http://bugs.webkit.org/show_bug.cgi?id=15922.
+
 2007-11-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
