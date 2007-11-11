@@ -119,7 +119,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 if (!priorityUsed && style.getPropertyPriority(name).length)
                     priorityUsed = true;
 
-                // If the property name is already used by another rule this is rule's
+                // If the property name is already used by another rule then this rule's
                 // property is overloaded, so don't add it to the rule's usedProperties.
                 if (!(name in usedProperties))
                     styleRule.usedProperties[name] = true;
@@ -152,17 +152,10 @@ WebInspector.StylesSidebarPane.prototype = {
                 if (styleRules[i].computedStyle)
                     continue;
 
-                var foundProperties = {};
                 var style = styleRules[i].style;
-                for (var j = 0; j < style.length; ++j) {
-                    var name = style[j];
-
-                    // Skip duplicate properties in the same rule.
-                    if (name in foundProperties)
-                        continue;
-
-                    foundProperties[name] = true;
-
+                var uniqueProperties = style.getUniqueProperties();
+                for (var j = 0; j < uniqueProperties.length; ++j) {
+                    var name = uniqueProperties[j];
                     if (style.getPropertyPriority(name).length) {
                         if (!(name in foundPriorityProperties))
                             styleRules[i].usedProperties[name] = true;

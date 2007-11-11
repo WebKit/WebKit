@@ -1,3 +1,10 @@
+2007-11-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * page/inspector/StylesSidebarPane.js: Fix the wording of a comment
+          and switch over to use getUniqueProperties in another place.
+
 2007-11-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Sam Weinig
