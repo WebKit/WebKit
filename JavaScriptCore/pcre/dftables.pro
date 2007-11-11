@@ -5,7 +5,7 @@ SOURCES = dftables.cpp
 TARGET = dftables
 DESTDIR = tmp
 
-INCLUDEPATH += $$PWD/../wtf
+INCLUDEPATH += $$PWD/.. $$PWD/../wtf
 
 gtk-port {
   DEFINES += BUILDING_GTK__ BUILDING_CAIRO__
