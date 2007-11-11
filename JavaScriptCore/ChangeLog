@@ -1,5 +1,17 @@
 2007-11-11  Darin Adler  <darin@apple.com>
 
+        - try another way of fixing dftables builds -- refactor pcre_internal.h a bit
+
+        * pcre/pcre_internal.h: Make most of this header do nothing when DFTABLES is set.
+        Later we can break it into two files.
+
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj: Take out now-unneeded include paths.
+        * pcre/dftables.cpp: Set DFTABLES. Use delete instead of free.
+        * pcre/dftables.pro: Take out now-unneeded include paths.
+        * pcre/pcre_maketables.cpp: Use new instead of malloc.
+
+2007-11-11  Darin Adler  <darin@apple.com>
+
         * pcre/dftables.pro: Try fixing Qt builds (I looked at qt-win) by adding
         another include path.
 

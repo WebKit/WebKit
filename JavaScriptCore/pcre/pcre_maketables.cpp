@@ -58,7 +58,7 @@ pcre_maketables(void)
 unsigned char *yield, *p;
 int i;
 
-yield = (unsigned char*)malloc(tables_length);
+yield = new unsigned char[tables_length];
 
 if (yield == NULL) return NULL;
 p = yield;

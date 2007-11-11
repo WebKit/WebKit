@@ -44,6 +44,8 @@ functions whose names all begin with "_pcre_". */
 #ifndef PCRE_INTERNAL_H
 #define PCRE_INTERNAL_H
 
+#ifndef DFTABLES
+
 #include "Assertions.h"
 
 #if COMPILER(MSVC)
@@ -537,29 +539,6 @@ typedef struct compile_data {
   int  req_varyopt;             /* "After variable item" flag for reqbyte */
 } compile_data;
 
-/* Bit definitions for entries in the pcre_ctypes table. */
-
-#define ctype_space   0x01
-#define ctype_xdigit  0x08
-#define ctype_word    0x10   /* alphameric or '_' */
-
-/* Offsets for the bitmap tables in pcre_cbits. Each table contains a set
-of bits for a class map. Some classes are built by combining these tables. */
-
-#define cbit_space     0      /* \s */
-#define cbit_digit    32      /* \d */
-#define cbit_word     64      /* \w */
-#define cbit_length   96      /* Length of the cbits table */
-
-/* Offsets of the various tables from the base tables pointer, and
-total length. */
-
-#define lcc_offset      0
-#define fcc_offset    256
-#define cbits_offset  512
-#define ctypes_offset (cbits_offset + cbit_length)
-#define tables_length (ctypes_offset + 128)
-
 /* Layout of the UCP type table that translates property names into types and
 codes. */
 
@@ -594,6 +573,31 @@ extern int         _pcre_ucp_othercase(const int);
 extern BOOL        _pcre_xclass(int, const uschar *);
 
 #define IS_NEWLINE(nl) ((nl) == 0xA || (nl) == 0xD || (nl) == 0x2028 || (nl) == 0x2029)
+
+#endif
+
+/* Bit definitions for entries in the pcre_ctypes table. */
+
+#define ctype_space   0x01
+#define ctype_xdigit  0x08
+#define ctype_word    0x10   /* alphameric or '_' */
+
+/* Offsets for the bitmap tables in pcre_cbits. Each table contains a set
+of bits for a class map. Some classes are built by combining these tables. */
+
+#define cbit_space     0      /* \s */
+#define cbit_digit    32      /* \d */
+#define cbit_word     64      /* \w */
+#define cbit_length   96      /* Length of the cbits table */
+
+/* Offsets of the various tables from the base tables pointer, and
+total length. */
+
+#define lcc_offset      0
+#define fcc_offset    256
+#define cbits_offset  512
+#define ctypes_offset (cbits_offset + cbit_length)
+#define tables_length (ctypes_offset + 128)
 
 #endif
 

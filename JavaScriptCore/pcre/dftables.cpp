@@ -39,9 +39,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 /* This is a freestanding support program to generate a file containing default
-character tables for PCRE. The tables are built according to the default C
-locale. Now that pcre_maketables is a function visible to the outside world, we
-make use of its code from here in order to be consistent. */
+character tables. The tables are built according to the default C
+locale. */
+
+#define DFTABLES
 
 #include <ctype.h>
 #include <stdio.h>
@@ -159,6 +160,6 @@ if (isprint(i-1)) fprintf(f, " %c ", i-1);
 fprintf(f, " */\n\n/* End of chartables.c */\n");
 
 fclose(f);
-free((void *)base_of_tables);
+delete []base_of_tables;
 return 0;
 }
