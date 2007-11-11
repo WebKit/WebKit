@@ -1,3 +1,23 @@
+2007-11-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15927
+          REGRESSION(r27487): delete a.c followed by __defineGetter__("c", ...) incorrectly deletes another property
+          and <rdar://problem/5586384> REGRESSION (r27487): Can't switch out of Edit HTML Source mode on Leopard Wiki
+
+        Test: fast/js/delete-then-put.html
+
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::put): Added a missing "- 1"; code to find an empty slot was not working.
+        (KJS::PropertyMap::checkConsistency): Added a missing range check that would have caught this
+        problem before.
+
+        - roll out a last-minute change to my evaluateToBoolean patch that was incorrect.
+
+        * kjs/nodes.h: (KJS::ExprStatementNode::ExprStatementNode): Take out call to
+        optimizeForUnnecessaryResult, since the result is used in some cases.
+
 2007-11-10  Adam Roben  <aroben@apple.com>
 
         Windows build fix

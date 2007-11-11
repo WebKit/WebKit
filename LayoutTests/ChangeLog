@@ -1,3 +1,14 @@
+2007-11-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15927
+          delete a.c followed by __defineGetter__("c", ...) incorrectly deletes another property
+
+        * fast/js/delete-then-put-expected.txt: Added.
+        * fast/js/delete-then-put.html: Added.
+        * fast/js/resources/delete-then-put.js: Added.
+
 2007-11-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.

@@ -426,7 +426,7 @@ void PropertyMap::put(const Identifier& name, JSValue* value, unsigned attribute
         // the end that we were planning on using, so search backwards for the empty
         // slot that we can use. We know it will be there because we did at least one
         // deletion in the past that left an entry empty.
-        while (m_u.table->entries()[--entryIndex].key)
+        while (m_u.table->entries()[--entryIndex - 1].key)
             ;
     }
 
@@ -819,20 +819,20 @@ void PropertyMap::checkConsistency()
             ++deletedIndexCount;
             continue;
         }
+        ASSERT(entryIndex > deletedSentinelIndex);
+        ASSERT(entryIndex - 1 <= m_u.table->keyCount + m_u.table->deletedSentinelCount);
         ++indexCount;
 
         for (unsigned b = a + 1; b != m_u.table->size; ++b)
             ASSERT(m_u.table->entryIndicies[b] != entryIndex);
-
     }
     ASSERT(indexCount == m_u.table->keyCount);
     ASSERT(deletedIndexCount == m_u.table->deletedSentinelCount);
 
     ASSERT(m_u.table->entries()[0].key == 0);
 
-    unsigned entryCount = m_u.table->keyCount + m_u.table->deletedSentinelCount;
     unsigned nonEmptyEntryCount = 0;
-    for (unsigned c = 1; c <= entryCount; ++c) {
+    for (unsigned c = 1; c <= m_u.table->keyCount + m_u.table->deletedSentinelCount; ++c) {
         UString::Rep* rep = m_u.table->entries()[c].key;
         if (!rep) {
             ASSERT(m_u.table->entries()[c].value->isUndefined());

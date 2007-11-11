@@ -1576,10 +1576,7 @@ namespace KJS {
 
   class ExprStatementNode : public StatementNode {
   public:
-    ExprStatementNode(ExpressionNode* e) KJS_FAST_CALL : expr(e)
-    {
-        e->optimizeForUnnecessaryResult();
-    }
+    ExprStatementNode(ExpressionNode* e) KJS_FAST_CALL : expr(e) { }
     virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL;
     virtual Completion execute(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
