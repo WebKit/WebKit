@@ -1,3 +1,18 @@
+2007-11-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=6424 (<text>, <tspan> dominant-baseline attribute is not respected)
+
+        Add (basic) support for dominant-baseline / alignment-baseline text properties.
+        Note: there are no official testcases, and no-one implemented it before. Only ASV3
+              supported dominant-baseline, but not correct it seems.
+
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::dominantBaselineToShift):
+        (WebCore::alignmentBaselineToShift):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+
 2007-11-11  Adam Roben  <aroben@apple.com>
 
         Add wrappers around CoCreateInstance to COMPtr
