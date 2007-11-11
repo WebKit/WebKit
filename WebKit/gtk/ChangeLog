@@ -1,3 +1,14 @@
+2007-11-11  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Mention Safari in the UserAgent string to improve site compatibility.
+
+        Also bump the hard-coded AppleWebKit version number.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::composeUserAgent):
+
 2007-11-09  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp.

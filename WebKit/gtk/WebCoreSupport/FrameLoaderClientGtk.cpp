@@ -126,7 +126,13 @@ static String composeUserAgent()
 
     // WebKit Product
     // FIXME: The WebKit version is hardcoded
-    ua += "AppleWebKit/523+ (KHTML, like Gecko) ";
+    static const String webKitVersion = "525.1+";
+    ua += "AppleWebKit/" + webKitVersion;
+    ua += " (KHTML, like Gecko, ";
+    // We mention Safari since many broken sites check for it (OmniWeb does this too)
+    // We re-use the WebKit version, though it doesn't seem to matter much in practice
+    ua += "Safari/" + webKitVersion;
+    ua += ") ";
 
     // Vendor Product
     ua += g_get_prgname();
