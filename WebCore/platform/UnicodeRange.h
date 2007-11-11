@@ -35,9 +35,7 @@
 #ifndef UnicodeRange_H
 #define UnicodeRange_H
 
-#include <stdint.h>
-
-typedef int32_t UChar32;
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

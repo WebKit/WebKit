@@ -1,5 +1,11 @@
 2007-11-10  Mark Rowe  <mrowe@apple.com>
 
+        Qt Linux build fix.
+
+        * platform/UnicodeRange.h:
+
+2007-11-10  Mark Rowe  <mrowe@apple.com>
+
         Qt Windows build fix.
 
         * platform/UnicodeRange.h:
