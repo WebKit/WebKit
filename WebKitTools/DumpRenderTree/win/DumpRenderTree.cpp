@@ -602,6 +602,10 @@ static void runTest(const char* pathOrURL)
     topLoadingFrame = 0;
     timedOut = false;
 
+    COMPtr<IWebHistory> history(Create, CLSID_WebHistory);
+    if (history)
+        history->setOptionalSharedHistory(0);
+
     prevTestBFItem = 0;
     COMPtr<IWebView> webView;
     if (SUCCEEDED(frame->webView(&webView))) {

@@ -1,3 +1,18 @@
+2007-11-11  Adam Roben  <aroben@apple.com>
+
+        Add wrappers around CoCreateInstance to COMPtr
+
+        I followed the example of the Query constructor and query method by
+        adding a Create constructor and create method.
+
+        Reviewed by Darin.
+
+        * platform/win/COMPtr.h:
+        (COMPtr::COMPtr): Added a new constructor that calls
+        CoCreateInstance.
+        (COMPtr::create): Added.
+        (COMPtr::createInstance): Added.
+
 2007-11-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

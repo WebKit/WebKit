@@ -336,9 +336,6 @@ fast/frames/iframe-window-focus.html
 # fast/frames/frame-src-attribute.html fails on boomer <rdar://problem/5134044>
 fast/frames/frame-src-attribute.html
 
-# keepWebHistory is not implemented in DRT in boomer <rdar://problem/5133816>
-fast/history/clicked-link-is-visited.html
-
 # fast/html/keygen.html is failing on boomer <rdar://problem/5133799>
 fast/html/keygen.html
 fast/invalid/residual-style.html

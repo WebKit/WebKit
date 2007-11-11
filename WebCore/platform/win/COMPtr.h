@@ -40,6 +40,7 @@ typedef long HRESULT;
 
 enum AdoptCOMTag { AdoptCOM };
 enum QueryTag { Query };
+enum CreateTag { Create };
 
 template <typename T> class COMPtr {
 public:
@@ -50,6 +51,8 @@ public:
 
     inline COMPtr(QueryTag, IUnknown* ptr) : m_ptr(copyQueryInterfaceRef(ptr)) { }
     template <typename U> inline COMPtr(QueryTag, const COMPtr<U>& ptr) : m_ptr(copyQueryInterfaceRef(ptr.get())) { }
+
+    inline COMPtr(CreateTag, const IID& clsid) : m_ptr(createInstance(clsid)) { }
 
     ~COMPtr() { if (m_ptr) m_ptr->Release(); }
 
@@ -70,18 +73,29 @@ public:
     COMPtr& operator=(const COMPtr&);
     COMPtr& operator=(T*);
     template <typename U> COMPtr& operator=(const COMPtr<U>&);
-  
+
     void query(IUnknown* ptr) { adoptRef(copyQueryInterfaceRef(ptr)); }
     template <typename U> inline void query(const COMPtr<U>& ptr) { query(ptr.get()); }
+
+    void create(const IID& clsid) { adoptRef(createInstance(clsid)); }
 
     template <typename U> HRESULT copyRefTo(U**);
     void adoptRef(T*);
 
 private:
     static T* copyQueryInterfaceRef(IUnknown*);
+    static T* createInstance(const IID& clsid);
 
     T* m_ptr;
 };
+
+template <typename T> inline T* COMPtr<T>::createInstance(const IID& clsid)
+{
+    T* result;
+    if (FAILED(CoCreateInstance(clsid, 0, CLSCTX_ALL, __uuidof(result), reinterpret_cast<void**>(&result))))
+        return 0;
+    return result;
+}
 
 template <typename T> inline T* COMPtr<T>::copyQueryInterfaceRef(IUnknown* ptr)
 {

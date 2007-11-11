@@ -40,7 +40,9 @@
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <WebKit/IWebHistory.h>
 #include <WebKit/IWebViewPrivate.h>
+#include <WebKit/WebKit.h>
 #include <string>
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -120,7 +122,15 @@ void LayoutTestController::display()
 
 void LayoutTestController::keepWebHistory()
 {
-    // FIXME: Implement!
+    COMPtr<IWebHistory> history(Create, CLSID_WebHistory);
+    if (!history)
+        return;
+
+    COMPtr<IWebHistory> sharedHistory(Create, CLSID_WebHistory);
+    if (!sharedHistory)
+        return;
+
+    history->setOptionalSharedHistory(sharedHistory.get());
 }
 
 void LayoutTestController::notifyDone()

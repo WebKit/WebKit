@@ -1,3 +1,16 @@
+2007-11-11  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5133816> keepWebHistory is not implemented
+
+        Fixes fast/history/clicked-link-is-visited.html.
+
+        Reviewed by Darin.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Clear the optionalSharedHistory.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::keepWebHistory): Set the optionalSharedHistory.
+
 2007-11-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.
