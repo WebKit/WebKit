@@ -1,3 +1,26 @@
+2007-11-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Follow up to <rdar://problem/5394877> Safari should not log unsafe JavaScript 
+        attempts when in private browsing mode (only an issue if Log JavaScript Exceptions 
+        is turned on)
+
+        - Add LayoutTestController.setPrivateBrowsingEnabled(bool) (stub out implementation for windows)
+
+        Added test: http/tests/security/cross-frame-access-private-browsing.html
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setPrivateBrowsingEnabledCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest): Default to private browsing disabled.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setPrivateBrowsingEnabled):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setPrivateBrowsingEnabled):
+
 2007-11-08  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

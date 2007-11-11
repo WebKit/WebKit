@@ -226,6 +226,11 @@ void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
     // FIXME: Implement!
 }
 
+void LayoutTestController::setPrivateBrowsingEnabled(bool /*privateBrowsingEnabled*/)
+{
+    // FIXME: Implement!
+}
+
 void LayoutTestController::setTabKeyCyclesThroughElements(bool shouldCycle)
 {
     COMPtr<IWebView> webView;

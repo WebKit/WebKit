@@ -1017,6 +1017,7 @@ static void runTest(const char *pathOrURL)
     [[mainFrame webView] setTabKeyCyclesThroughElements: YES];
     [[mainFrame webView] setPolicyDelegate:nil];
     [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
+    [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:NO];
     [WebView _setUsesTestModeFocusRingColor:YES];
 
     topLoadingFrame = nil;

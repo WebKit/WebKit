@@ -613,3 +613,6 @@ svg/custom/gradient-stop-style-change.svg
 
 # <video> support
 media
+
+# add support for layoutTestController.setPrivateBrowsingEnabled(bool)
+http/tests/security/cross-frame-access-private-browsing.html

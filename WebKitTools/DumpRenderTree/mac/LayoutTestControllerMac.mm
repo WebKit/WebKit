@@ -170,6 +170,11 @@ void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
         [(WebHTMLView *)documentView _updateActiveState];
 }
 
+void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
+{
+    [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:privateBrowsingEnabled];
+}
+
 void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
 {
     [[mainFrame webView] setTabKeyCyclesThroughElements:cycles];
