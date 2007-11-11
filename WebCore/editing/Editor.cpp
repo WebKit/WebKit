@@ -2018,7 +2018,8 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         if (position.isNull())
             return;
         
-        spellingSearchRange->setStart(position.node(), position.offset(), ec);
+        Position rangeCompliantPosition = rangeCompliantEquivalent(position);
+        spellingSearchRange->setStart(rangeCompliantPosition.node(), rangeCompliantPosition.offset(), ec);
         startedWithSelection = false;   // won't need to wrap
     }
     

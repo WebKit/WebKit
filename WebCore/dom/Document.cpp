@@ -1297,38 +1297,6 @@ void Document::setVisuallyOrdered()
         renderer()->style()->setVisuallyOrdered(true);
 }
 
-void Document::updateSelection()
-{
-    if (!renderer())
-        return;
-    
-    RenderView *canvas = static_cast<RenderView*>(renderer());
-    Selection selection = frame()->selectionController()->selection();
-        
-    if (!selection.isRange())
-        canvas->clearSelection();
-    else {
-        // Use the rightmost candidate for the start of the selection, and the leftmost candidate for the end of the selection.
-        // Example: foo <a>bar</a>.  Imagine that a line wrap occurs after 'foo', and that 'bar' is selected.   If we pass [foo, 3]
-        // as the start of the selection, the selection painting code will think that content on the line containing 'foo' is selected
-        // and will fill the gap before 'bar'.
-        Position startPos = selection.visibleStart().deepEquivalent();
-        if (startPos.downstream().isCandidate())
-            startPos = startPos.downstream();
-        Position endPos = selection.visibleEnd().deepEquivalent();
-        if (endPos.upstream().isCandidate())
-            endPos = endPos.upstream();
-        
-        // We can get into a state where the selection endpoints map to the same VisiblePosition when a selection is deleted
-        // because we don't yet notify the SelectionController of text removal.
-        if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
-            RenderObject *startRenderer = startPos.node()->renderer();
-            RenderObject *endRenderer = endPos.node()->renderer();
-            static_cast<RenderView*>(renderer())->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
-        }
-    }
-}
-
 Tokenizer* Document::createTokenizer()
 {
     // FIXME: this should probably pass the frame instead

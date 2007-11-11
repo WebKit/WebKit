@@ -74,9 +74,4 @@ String Comment::toString() const
     return "<!--" + nodeValue() + "-->";
 }
 
-bool Comment::offsetInCharacters() const
-{
-    return true;
-}
-
 } // namespace WebCore

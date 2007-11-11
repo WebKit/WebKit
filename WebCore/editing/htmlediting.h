@@ -94,6 +94,8 @@ PassRefPtr<Element> createTabSpanElement(Document*, const String& tabText);
 bool isNodeRendered(const Node*);
 bool isMailBlockquote(const Node*);
 Node* nearestMailBlockquote(const Node*);
+int caretMinOffset(const Node*);
+int caretMaxOffset(const Node*);
 
 //------------------------------------------------------------------------------------------
 

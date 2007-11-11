@@ -259,27 +259,9 @@ void CharacterData::checkCharDataOperation( const unsigned offset, ExceptionCode
     }
 }
 
-int CharacterData::maxOffset() const 
+int CharacterData::maxCharacterOffset() const 
 {
     return (int)length();
-}
-
-int CharacterData::caretMinOffset() const 
-{
-    RenderText *r = static_cast<RenderText *>(renderer());
-    return r && r->isText() ? r->caretMinOffset() : 0;
-}
-
-int CharacterData::caretMaxOffset() const 
-{
-    RenderText *r = static_cast<RenderText *>(renderer());
-    return r && r->isText() ? r->caretMaxOffset() : (int)length();
-}
-
-unsigned CharacterData::caretMaxRenderedOffset() const 
-{
-    RenderText *r = static_cast<RenderText *>(renderer());
-    return r ? r->caretMaxRenderedOffset() : length();
 }
 
 bool CharacterData::rendererIsNeeded(RenderStyle *style)

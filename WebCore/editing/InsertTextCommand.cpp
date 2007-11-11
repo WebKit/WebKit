@@ -192,7 +192,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     }
     
     // return the position following the new tab
-    return Position(spanNode->lastChild(), spanNode->lastChild()->caretMaxOffset());
+    return Position(spanNode->lastChild(), caretMaxOffset(spanNode->lastChild()));
 }
 
 bool InsertTextCommand::isInsertTextCommand() const

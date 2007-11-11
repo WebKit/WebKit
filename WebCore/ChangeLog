@@ -1,3 +1,104 @@
+2007-11-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15896
+        More editing cleanup
+
+        No functionality changes.
+
+        * dom/Node.h: Moved several editing-related methods elsewhere.
+        * dom/Node.cpp: (WebCore::Node::maxCharacterOffset): Renamed from maxOffset()
+        to highlight that it is a match to offsetInCharacters(), and much different from other
+        offset-related methods. Added ASSERT_NOT_REACHED(), as callers are supposed to check
+        offsetInCharacters() before calling this.
+
+        * dom/CharacterData.cpp: (WebCore::CharacterData::maxCharacterOffset):
+        * dom/CharacterData.h: (WebCore::CharacterData::isCharacterDataNode):
+        Updated for above renamings.
+
+        * dom/Comment.{h,cpp}: Removed an override for offsetInCharacters(), which is already present in CharacterData.
+
+        * dom/Document.{h,cpp}: Folded updateSelection() into Frame::selectionLayoutChanged().
+
+        * dom/Position.h:
+        * dom/Position.cpp:
+        (WebCore::Position::uncheckedPreviousOffset): Moved from Node::previousOffset().
+        (WebCore::Position::uncheckedNextOffset): Moved from Node::NextOffset().
+        (WebCore::Position::previous): Adapted to the above move.
+        (WebCore::Position::next): Ditto.
+        (WebCore::Position::upstream): Removed an isBR() check, since a non-BR element cannot have a BR renderer (I think),
+        and BR elements are covered by editingIgnoresContent().
+        (WebCore::Position::downstream): Ditto.
+        (WebCore::caretMaxRenderedOffset): Moved from Node::caretMaxRenderedOffset().
+        (WebCore::Position::rendersInDifferentPosition): Updated for the above moves.
+
+        * dom/PositionIterator.h: Added a comment describing this class from the original check-in.
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::increment): Updated for the above moves.
+        (WebCore::PositionIterator::decrement): Ditto.
+
+        * dom/ProcessingInstruction.h:
+        * dom/ProcessingInstruction.cpp: (WebCore::ProcessingInstruction::maxCharacterOffset):
+        ProcessingInstruction was already returning true from offsetInCharacters(), but didn't override maxCharacterOffset().
+        I think that implementing it has no actual effect, as PIs are not rendered, but it looks cleaner this way.
+
+        * dom/Range.cpp:
+        (WebCore::Range::selectNodeContents):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        (WebCore::maxRangeOffset):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::splitTextAtStartIfNeeded):
+        (WebCore::ApplyStyleCommand::splitTextAtEndIfNeeded):
+        (WebCore::ApplyStyleCommand::splitTextElementAtStartIfNeeded):
+        (WebCore::ApplyStyleCommand::splitTextElementAtEndIfNeeded):
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        Updated for the above moves.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling): Added a missing rangeCompliantEquivalent() call.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator): Changed the condition to obviously
+        match a maxCharacterOffset() call made after it; hopefully, this doesn't break any border cases.
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Updated for the above moves.
+
+        * editing/htmlediting.h:
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing): Removed a bogus comment: I don't thin BRs have a special ability to accept
+        child nodes, other than via DOM manipulation, which is not specific to BRs.
+        (WebCore::rangeCompliantEquivalent): Removed a check for BR, which is already covered by editingIgnoresContent().
+        (WebCore::maxDeepOffset): Ditto.
+        (WebCore::caretMinOffset): Moved from Node. Changed some runtime checks that seemingly cannot fail into assertions.
+        (WebCore::caretMaxOffset): Ditto.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Pass 0 to VisiblePosition constructor instead of
+        caretMinOffset. I didn't want to include htmlediting.h here, and I think that VisiblePosition constructor
+        will take care of adjusting the offset.
+
+        * page/Frame.cpp: (WebCore::Frame::selectionLayoutChanged): Folded Document::updateSelection() here.
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge smartDeleteRangeForProposedRange:]): Added missing rangeCompliantEquivalent() calls.
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::positionForRenderer): Changed to not round-trip via editing.
+        Changed some runtime checks that seemingly cannot fail into assertions.
+
 2007-11-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

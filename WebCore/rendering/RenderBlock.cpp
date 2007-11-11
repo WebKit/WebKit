@@ -2982,16 +2982,22 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     return Position(box->object()->element(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
-Position RenderBlock::positionForRenderer(RenderObject *renderer, bool start) const
+Position RenderBlock::positionForRenderer(RenderObject* renderer, bool start) const
 {
     if (!renderer)
         return Position(element(), 0);
 
-    Node *node = renderer->element() ? renderer->element() : element();
+    Node* node = renderer->element() ? renderer->element() : element();
     if (!node)
         return Position();
 
-    int offset = start ? node->caretMinOffset() : node->caretMaxOffset();
+    ASSERT(renderer == node->renderer());
+
+    int offset = start ? renderer->caretMinOffset() : renderer->caretMaxOffset();
+
+    // FIXME: This was a runtime check that seemingly couldn't fail; changed it to an assertion for now.
+    ASSERT(!node->isCharacterDataNode() || renderer->isText());
+
     return Position(node, offset);
 }
 

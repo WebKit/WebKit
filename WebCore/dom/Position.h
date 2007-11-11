@@ -57,12 +57,17 @@ public:
     Element* element() const;
     PassRefPtr<CSSComputedStyleDeclaration> computedStyle() const;
 
-    // Move up or down the DOM by one position
+    // Move up or down the DOM by one position.
+    // Offsets are computed using render text for nodes that have renderers - but note that even when
+    // using composed characters, the result may be inside a single user-visible character if a ligature is formed.
     Position previous(EUsingComposedCharacters usingComposedCharacters=NotUsingComposedCharacters) const;
     Position next(EUsingComposedCharacters usingComposedCharacters=NotUsingComposedCharacters) const;
+    static int uncheckedPreviousOffset(const Node*, int current);
+    static int uncheckedNextOffset(const Node*, int current);
+
     bool atStart() const;
     bool atEnd() const;
-    
+
     // FIXME: Make these non-member functions and put them somewhere in the editing directory.
     // These aren't really basic "position" operations. More high level editing helper functions.
     Position leadingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;

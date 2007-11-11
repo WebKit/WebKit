@@ -371,10 +371,10 @@ void DeleteSelectionCommand::handleGeneralDelete()
         startNode = startNode->traverseNextNode();
     }
 
-    if (startOffset >= startNode->caretMaxOffset() && startNode->isTextNode()) {
+    if (startOffset >= caretMaxOffset(startNode) && startNode->isTextNode()) {
         Text *text = static_cast<Text *>(startNode);
-        if (text->length() > (unsigned)startNode->caretMaxOffset())
-            deleteTextFromNode(text, startNode->caretMaxOffset(), text->length() - startNode->caretMaxOffset());
+        if (text->length() > (unsigned)caretMaxOffset(startNode))
+            deleteTextFromNode(text, caretMaxOffset(startNode), text->length() - caretMaxOffset(startNode));
     }
 
     if (startOffset >= maxDeepOffset(startNode)) {
@@ -436,7 +436,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 node = nextNode.get();
             } else {
                 Node* n = node->lastDescendant();
-                if (m_downstreamEnd.node() == n && m_downstreamEnd.offset() >= n->caretMaxOffset()) {
+                if (m_downstreamEnd.node() == n && m_downstreamEnd.offset() >= caretMaxOffset(n)) {
                     removeNode(node.get());
                     node = 0;
                 } else
@@ -444,7 +444,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
             }
         }
         
-        if (m_downstreamEnd.node() != startNode && !m_upstreamStart.node()->isDescendantOf(m_downstreamEnd.node()) && m_downstreamEnd.node()->inDocument() && m_downstreamEnd.offset() >= m_downstreamEnd.node()->caretMinOffset()) {
+        if (m_downstreamEnd.node() != startNode && !m_upstreamStart.node()->isDescendantOf(m_downstreamEnd.node()) && m_downstreamEnd.node()->inDocument() && m_downstreamEnd.offset() >= caretMinOffset(m_downstreamEnd.node())) {
             if (m_downstreamEnd.offset() >= maxDeepOffset(m_downstreamEnd.node()) && !canHaveChildrenForEditing(m_downstreamEnd.node())) {
                 // FIXME: Shouldn't remove m_downstreamEnd.node() if its offsets refer to children. 
                 // The node itself is fully selected, not just its contents.  Delete it.

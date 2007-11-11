@@ -260,7 +260,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // Move the start node and the siblings of the start node.
     if (startNode != startBlock) {
         Node *n = startNode;
-        if (pos.offset() >= startNode->caretMaxOffset())
+        if (pos.offset() >= caretMaxOffset(startNode))
             n = startNode->nextSibling();
 
         while (n && n != blockToInsert) {

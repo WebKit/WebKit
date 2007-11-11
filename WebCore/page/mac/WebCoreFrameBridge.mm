@@ -964,6 +964,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (newEnd.isNull())
         newEnd = end;
 
+    newStart = rangeCompliantEquivalent(newStart);
+    newEnd = rangeCompliantEquivalent(newEnd);
+
     RefPtr<Range> range = m_frame->document()->createRange();
     int exception = 0;
     range->setStart(newStart.node(), newStart.offset(), exception);

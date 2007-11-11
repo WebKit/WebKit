@@ -133,7 +133,7 @@ Position Position::previous(EUsingComposedCharacters usingComposedCharacters) co
         //      Going backward one character at a time is correct.
         //   2) The old offset was a bogus offset like (<br>, 1), and there is no child.
         //      Going from 1 to 0 is correct.
-        return Position(n, usingComposedCharacters ? n->previousOffset(o) : o - 1);
+        return Position(n, usingComposedCharacters ? uncheckedPreviousOffset(n, o) : o - 1);
     }
 
     Node *parent = n->parentNode();
@@ -163,7 +163,7 @@ Position Position::next(EUsingComposedCharacters usingComposedCharacters) const
         //      Going forward one character at a time is correct.
         //   2) The new offset is a bogus offset like (<br>, 1), and there is no child.
         //      Going from 0 to 1 is correct.
-        return Position(n, usingComposedCharacters ? n->nextOffset(o) : o + 1);
+        return Position(n, usingComposedCharacters ? uncheckedNextOffset(n, o) : o + 1);
     }
 
     Node *parent = n->parentNode();
@@ -171,6 +171,16 @@ Position Position::next(EUsingComposedCharacters usingComposedCharacters) const
         return *this;
 
     return Position(parent, n->nodeIndex() + 1);
+}
+
+int Position::uncheckedPreviousOffset(const Node* n, int current)
+{
+    return n->renderer() ? n->renderer()->previousOffset(current) : current - 1;
+}
+
+int Position::uncheckedNextOffset(const Node* n, int current)
+{
+    return n->renderer() ? n->renderer()->nextOffset(current) : current + 1;
 }
 
 bool Position::atStart() const
@@ -320,9 +330,9 @@ Position Position::upstream() const
         // return lastVisible on the next iteration, but we terminate early.
         if (currentNode == enclosingBlock(currentNode) && currentPos.atStartOfNode())
             return lastVisible;
-            
-        // Return position after brs, tables, and nodes which have content that can be ignored.
-        if (editingIgnoresContent(currentNode) || renderer->isBR() || isTableElement(currentNode)) {
+
+        // Return position after tables and nodes which have content that can be ignored.
+        if (editingIgnoresContent(currentNode) || isTableElement(currentNode)) {
             if (currentPos.atEndOfNode())
                 return Position(currentNode, maxDeepOffset(currentNode));
             continue;
@@ -392,8 +402,8 @@ Position Position::downstream() const
         if (isStreamer(currentPos))
             lastVisible = currentPos;
 
-        // Return position before brs, tables, and nodes which have content that can be ignored.
-        if (editingIgnoresContent(currentNode) || renderer->isBR() || isTableElement(currentNode)) {
+        // Return position before tables and nodes which have content that can be ignored.
+        if (editingIgnoresContent(currentNode) || isTableElement(currentNode)) {
             if (currentPos.offsetInLeafNode() <= renderer->caretMinOffset())
                 return Position(currentNode, renderer->caretMinOffset());
             continue;
@@ -493,6 +503,17 @@ bool Position::inRenderedText() const
     return false;
 }
 
+static unsigned caretMaxRenderedOffset(const Node* n)
+{
+    RenderObject* r = n->renderer();
+    if (r)
+        return r->caretMaxRenderedOffset();
+    
+    if (n->isCharacterDataNode())
+        return static_cast<const CharacterData*>(n)->length();
+    return 1;
+}
+
 bool Position::isRenderedCharacter() const
 {
     if (isNull() || !node()->isTextNode())
@@ -572,8 +593,8 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     LOG(Editing, "thisRenderedOffset:         %d\n", thisRenderedOffset);
     LOG(Editing, "posRenderer:            %p [%p]\n", posRenderer, posRenderer ? posRenderer->inlineBox(offset()) : 0);
     LOG(Editing, "posRenderedOffset:      %d\n", posRenderedOffset);
-    LOG(Editing, "node min/max:           %d:%d\n", node()->caretMinOffset(), node()->caretMaxRenderedOffset());
-    LOG(Editing, "pos node min/max:       %d:%d\n", pos.node()->caretMinOffset(), pos.node()->caretMaxRenderedOffset());
+    LOG(Editing, "node min/max:           %d:%d\n", caretMinOffset(node()), caretMaxRenderedOffset(node()));
+    LOG(Editing, "pos node min/max:       %d:%d\n", caretMinOffset(pos.node()), caretMaxRenderedOffset(pos.node()));
     LOG(Editing, "----------------------------------------------------------------------\n");
 
     InlineBox *b1 = renderer ? renderer->inlineBox(offset()) : 0;
@@ -588,19 +609,19 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     }
 
     if (nextRenderedEditable(node()) == pos.node() && 
-        thisRenderedOffset == (int)node()->caretMaxRenderedOffset() && posRenderedOffset == 0) {
+        thisRenderedOffset == (int)caretMaxRenderedOffset(node()) && posRenderedOffset == 0) {
         return false;
     }
     
     if (previousRenderedEditable(node()) == pos.node() && 
-        thisRenderedOffset == 0 && posRenderedOffset == (int)pos.node()->caretMaxRenderedOffset()) {
+        thisRenderedOffset == 0 && posRenderedOffset == (int)caretMaxRenderedOffset(pos.node())) {
         return false;
     }
 
     return true;
 }
 
-// This is only called from DeleteSelectionCommand and assumes that it starts in editable content.
+// This assumes that it starts in editable content.
 Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNonCollapsibleWhitespace) const
 {
     ASSERT(isEditablePosition(*this));
@@ -622,7 +643,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     return Position();
 }
 
-// This is only called from DeleteSelectionCommand and assumes that it starts in editable content.
+// This assumes that it starts in editable content.
 Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerNonCollapsibleWhitespace) const
 {
     ASSERT(isEditablePosition(*this));

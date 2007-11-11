@@ -248,4 +248,9 @@ bool ProcessingInstruction::offsetInCharacters() const
     return true;
 }
 
+int ProcessingInstruction::maxCharacterOffset() const 
+{
+    return static_cast<int>(m_data.length());
+}
+
 } // namespace

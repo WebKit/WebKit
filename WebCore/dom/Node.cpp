@@ -1067,38 +1067,14 @@ RenderStyle* Node::computedStyle()
     return parent() ? parent()->computedStyle() : 0;
 }
 
-int Node::maxOffset() const
+int Node::maxCharacterOffset() const
 {
-    return 1;
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 // FIXME: Shouldn't these functions be in the editing code?  Code that asks questions about HTML in the core DOM class
 // is obviously misplaced.
-int Node::caretMinOffset() const
-{
-    return renderer() ? renderer()->caretMinOffset() : 0;
-}
-
-int Node::caretMaxOffset() const
-{
-    return renderer() ? renderer()->caretMaxOffset() : 1;
-}
-
-unsigned Node::caretMaxRenderedOffset() const
-{
-    return renderer() ? renderer()->caretMaxRenderedOffset() : 1;
-}
-
-int Node::previousOffset (int current) const
-{
-    return renderer() ? renderer()->previousOffset(current) : current - 1;
-}
-
-int Node::nextOffset (int current) const
-{
-    return renderer() ? renderer()->nextOffset(current) : current + 1;
-}
-
 bool Node::canStartSelection() const
 {
     if (isContentEditable())

@@ -156,9 +156,9 @@ void CompositeEditCommand::insertNodeAt(Node* insertChild, const Position& editi
             insertNodeBefore(insertChild, child);
         else
             appendNode(insertChild, refChild);
-    } else if (refChild->caretMinOffset() >= offset) {
+    } else if (caretMinOffset(refChild) >= offset) {
         insertNodeBefore(insertChild, refChild);
-    } else if (refChild->isTextNode() && refChild->caretMaxOffset() > offset) {
+    } else if (refChild->isTextNode() && caretMaxOffset(refChild) > offset) {
         splitTextNode(static_cast<Text *>(refChild), offset);
         insertNodeBefore(insertChild, refChild);
     } else {
@@ -290,10 +290,10 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
     
     Node* tabSpan = tabSpanNode(pos.node());
     
-    if (pos.offset() <= pos.node()->caretMinOffset())
+    if (pos.offset() <= caretMinOffset(pos.node()))
         return positionBeforeNode(tabSpan);
         
-    if (pos.offset() >= pos.node()->caretMaxOffset())
+    if (pos.offset() >= caretMaxOffset(pos.node()))
         return positionAfterNode(tabSpan);
 
     splitTextNodeContainingElement(static_cast<Text *>(pos.node()), pos.offset());

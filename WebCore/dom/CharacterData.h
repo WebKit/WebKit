@@ -53,17 +53,14 @@ public:
 
     virtual String nodeValue() const;
     virtual void setNodeValue(const String&, ExceptionCode&);
-    virtual bool isCharacterDataNode() const { return true; }
     
     // Other methods (not part of DOM)
 
+    virtual bool isCharacterDataNode() const { return true; }
+    virtual int maxCharacterOffset() const;
     StringImpl* string() { return str; }
     virtual void checkCharDataOperation(unsigned offset, ExceptionCode&);
 
-    virtual int maxOffset() const;
-    virtual int caretMinOffset() const;
-    virtual int caretMaxOffset() const;
-    virtual unsigned caretMaxRenderedOffset() const;
     virtual bool offsetInCharacters() const;
     virtual bool rendererIsNeeded(RenderStyle*);
     

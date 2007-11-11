@@ -47,7 +47,7 @@ void PositionIterator::increment()
     }
 
     if (!m_parent->hasChildNodes() && m_offset < maxDeepOffset(m_parent))
-        m_offset = m_parent->nextOffset(m_offset);
+        m_offset = Position::uncheckedNextOffset(m_parent, m_offset);
     else {
         m_child = m_parent;
         m_parent = m_child->parentNode();
@@ -75,7 +75,7 @@ void PositionIterator::decrement()
     }
 
     if (m_offset) {
-        m_offset = m_parent->previousOffset(m_offset);
+        m_offset = Position::uncheckedPreviousOffset(m_parent, m_offset);
     } else {
         if (m_parent->hasChildNodes()) {
             m_parent = m_parent->lastChild();

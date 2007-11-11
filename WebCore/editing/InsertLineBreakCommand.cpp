@@ -115,7 +115,7 @@ void InsertLineBreakCommand::doApply()
         
         VisiblePosition endingPosition(Position(nodeToInsert.get(), 0));
         setEndingSelection(Selection(endingPosition));
-    } else if (pos.offset() <= pos.node()->caretMinOffset()) {
+    } else if (pos.offset() <= caretMinOffset(pos.node())) {
         insertNodeAt(nodeToInsert.get(), pos);
         
         // Insert an extra br or '\n' if the just inserted one collapsed.
@@ -123,7 +123,7 @@ void InsertLineBreakCommand::doApply()
             insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
         
         setEndingSelection(Selection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
-    } else if (pos.offset() >= pos.node()->caretMaxOffset()) {
+    } else if (pos.offset() >= caretMaxOffset(pos.node())) {
         insertNodeAt(nodeToInsert.get(), pos);
         setEndingSelection(Selection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
     } else {

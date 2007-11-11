@@ -349,14 +349,9 @@ public:
     
     // Used to determine whether range offsets use characters or node indices.
     virtual bool offsetInCharacters() const;
-
-    // FIXME: These next 7 functions are mostly editing-specific and should be moved out.
-    virtual int maxOffset() const;
-    virtual int caretMinOffset() const;
-    virtual int caretMaxOffset() const;
-    virtual unsigned caretMaxRenderedOffset() const;
-    virtual int previousOffset(int current) const;
-    virtual int nextOffset(int current) const;
+    // Number of DOM 16-bit units contained in node. Note that rendered text length can be different - e.g. because of
+    // css-transform:capitalize breaking up precomposed characters and ligatures.
+    virtual int maxCharacterOffset() const;
     
     // FIXME: We should try to find a better location for these methods.
     virtual bool canSelectAll() const { return false; }

@@ -931,7 +931,7 @@ void SelectionController::extend(Node* node, int offset, ExceptionCode& ec)
         return;
     }
     if (offset < 0
-        || node->offsetInCharacters() && offset > node->caretMaxOffset()
+        || node->offsetInCharacters() && offset > caretMaxOffset(node)
         || !node->offsetInCharacters() && offset > (int)node->childNodeCount()) {
         ec = INDEX_SIZE_ERR;
         return;
