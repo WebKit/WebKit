@@ -1,12 +1,12 @@
-/*************************************************
-*      Perl-Compatible Regular Expressions       *
-*************************************************/
+/* This is JavaScriptCore's variant of the PCRE library. While this library
+started out as a copy of PCRE, many of the features of PCRE have been
+removed. This library now supports only the regular expression features
+required by the JavaScript language specification, and has only the functions
+needed by JavaScriptCore and the rest of WebKit.
 
-/* PCRE is a library of functions to support regular expressions whose syntax
-and semantics are as close as possible to those of the Perl 5 language.
-
-                       Written by Philip Hazel
+                 Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
+    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -58,11 +58,7 @@ pcre_maketables(void)
 unsigned char *yield, *p;
 int i;
 
-#ifndef DFTABLES
-yield = (unsigned char*)(pcre_malloc)(tables_length);
-#else
 yield = (unsigned char*)malloc(tables_length);
-#endif
 
 if (yield == NULL) return NULL;
 p = yield;
@@ -85,12 +81,13 @@ least under Debian Linux's locales as of 12/2005). So we must test for alnum
 specially. */
 
 memset(p, 0, cbit_length);
+for (i = '0'; i <= '9'; i++)
+  p[cbit_digit + i / 8] |= 1 << (i & 7);
+p[cbit_word + '_' / 8] |= 1 << ('_' & 7);
 for (i = 0; i < 128; i++)
   {
-  if (isdigit(i)) p[cbit_digit  + i/8] |= 1 << (i&7);
-  if (isalnum(i)) p[cbit_word   + i/8] |= 1 << (i&7);
-  if (i == '_')   p[cbit_word   + i/8] |= 1 << (i&7);
-  if (isspace(i)) p[cbit_space  + i/8] |= 1 << (i&7);
+  if (isalnum(i)) p[cbit_word + i/8] |= 1 << (i & 7);
+  if (isspace(i)) p[cbit_space + i/8] |= 1 << (i & 7);
   }
 p += cbit_length;
 
@@ -102,7 +99,6 @@ for (i = 0; i < 128; i++)
   {
   int x = 0;
   if (isspace(i)) x += ctype_space;
-  if (isdigit(i)) x += ctype_digit;
   if (isxdigit(i)) x += ctype_xdigit;
   if (isalnum(i) || i == '_') x += ctype_word;
   *p++ = x;

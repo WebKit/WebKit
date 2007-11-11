@@ -1,12 +1,12 @@
-/*************************************************
-*      Perl-Compatible Regular Expressions       *
-*************************************************/
+/* This is JavaScriptCore's variant of the PCRE library. While this library
+started out as a copy of PCRE, many of the features of PCRE have been
+removed. This library now supports only the regular expression features
+required by the JavaScript language specification, and has only the functions
+needed by JavaScriptCore and the rest of WebKit.
 
-/* PCRE is a library of functions to support regular expressions whose syntax
-and semantics are as close as possible to those of the Perl 5 language.
-
-                       Written by Philip Hazel
+                 Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
+    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -37,14 +37,10 @@ POSSIBILITY OF SUCH DAMAGE.
 -----------------------------------------------------------------------------
 */
 
-
 /* This module contains an internal function that is used to match an extended
-class (one that contains characters whose values are > 255). It is used by both
-pcre_exec() and pcre_def_exec(). */
-
+class (one that contains characters whose values are > 255). */
 
 #include "pcre_internal.h"
-
 
 /*************************************************
 *       Match character against an XCLASS        *
@@ -100,5 +96,3 @@ while ((t = *data++) != XCL_END)
 
 return negated;   /* char did not match */
 }
-
-/* End of pcre_xclass.c */

@@ -1,13 +1,12 @@
-/*************************************************
-*      Perl-Compatible Regular Expressions       *
-*************************************************/
+/* This is JavaScriptCore's variant of the PCRE library. While this library
+started out as a copy of PCRE, many of the features of PCRE have been
+removed. This library now supports only the regular expression features
+required by the JavaScript language specification, and has only the functions
+needed by JavaScriptCore and the rest of WebKit.
 
-/* PCRE is a library of functions to support regular expressions whose syntax
-and semantics are as close as possible to those of the Perl 5 language.
-
-                       Written by Philip Hazel
+                 Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
-           Copyright (c) 2004, 2005 Apple Computer, Inc.
+    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -38,26 +37,18 @@ POSSIBILITY OF SUCH DAMAGE.
 -----------------------------------------------------------------------------
 */
 
-
-/* This module contains the external function pcre_compile(), along with
+/* This module contains the external function jsRegExpExecute(), along with
 supporting internal functions that are not used by other modules. */
-
 
 #include "pcre_internal.h"
 
+#include <wtf/ASCIICType.h>
+#include <wtf/FastMalloc.h>
 
-/* WARNING: These macros evaluate their parameters more than once. */
+using namespace WTF;
+
+/* WARNING: This macro evaluates its parameters more than once. */
 #define DIGITAB(x) ((x) < 128 ? digitab[(x)] : 0)
-
-
-/* When DEBUG is defined, we need the pcre_printint() function, which is also
-used by pcretest. DEBUG is not defined when building a production library. */
-
-#ifdef DEBUG
-#include "pcre_printint.src"
-#endif
-
-
 
 /*************************************************
 *      Code parameters and static tables         *
@@ -76,7 +67,7 @@ are simple data values; negative values are for special things like \d and so
 on. Zero means further processing is needed (for things like \x), or the escape
 is invalid. */
 
-static const short int escapes[] = {
+static const short escapes[] = {
      0,      0,      0,      0,      0,      0,      0,      0,   /* 0 - 7 */
      0,      0,    ':',    ';',    '<',    '=',    '>',    '?',   /* 8 - ? */
    '@',      0, -ESC_B,      0, -ESC_D,      0,      0,      0,   /* @ - G */
@@ -89,72 +80,56 @@ static const short int escapes[] = {
      0,      0,      0                                            /* x - z */
 };
 
+/* Error code numbers. They are given names so that they can more easily be
+tracked. */
+
+typedef enum {
+    ERR0, ERR1, ERR2, ERR3, ERR4, ERR5, ERR6, ERR7, ERR8, ERR9,
+    ERR10, ERR11, ERR12, ERR13, ERR14, ERR15, ERR16, ERR17
+} ErrorCode;
+
+/* Table of sizes for the fixed-length opcodes. It's defined in a macro so that
+the definition is next to the definition of the opcodes in pcre_internal.h. */
+
+static const uschar OP_lengths[] = { OP_LENGTHS };
 
 /* The texts of compile-time error messages. These are "char *" because they
 are passed to the outside world. */
 
-static const char * const error_texts[] = {
-  "no error",
-  "\\ at end of pattern",
-  "\\c at end of pattern",
-  "unrecognized character follows \\",
-  "numbers out of order in {} quantifier",
-  /* 5 */
-  "number too big in {} quantifier",
-  "missing terminating ] for character class",
-  "invalid escape sequence in character class",
-  "range out of order in character class",
-  "nothing to repeat",
-  /* 10 */
-  "operand of unlimited repeat could match the empty string",
-  "internal error: unexpected repeat",
-  "unrecognized character after (?",
-  "POSIX named classes are supported only within a class",
-  "missing )",
-  /* 15 */
-  "reference to non-existent subpattern",
-  "erroffset passed as NULL",
-  "unknown option bit(s) set",
-  "missing ) after comment",
-  "parentheses nested too deeply",
-  /* 20 */
-  "regular expression too large",
-  "failed to get memory",
-  "unmatched parentheses",
-  "internal error: code overflow",
-  "unrecognized character after (?<",
-  /* 25 */
-  "lookbehind assertion is not fixed length",
-  "malformed number after (?(",
-  "conditional group contains more than two branches",
-  "assertion expected after (?(",
-  "(?R or (?digits must be followed by )",
-  /* 30 */
-  "unknown POSIX class name",
-  "POSIX collating elements are not supported",
-  "this version of PCRE is not compiled with PCRE_UTF8 support",
-  "spare error",
-  "character value in \\x{...} sequence is too large",
-  /* 35 */
-  "invalid condition (?(0)",
-  "\\C not allowed in lookbehind assertion",
-  "PCRE does not support \\L, \\l, \\N, \\U, or \\u",
-  "number after (?C is > 255",
-  "closing ) for (?C expected",
-  /* 40 */
-  "recursive call could loop indefinitely",
-  "unrecognized character after (?P",
-  "syntax error after (?P",
-  "two named groups have the same name",
-  "invalid UTF-16 string",
-  /* 45 */
-  "support for \\P, \\p, and \\X has not been compiled",
-  "malformed \\P or \\p sequence",
-  "unknown property name after \\P or \\p"
-};
+static const char* error_text(ErrorCode code)
+{
+    static const char error_texts[] =
+      /* 1 */
+      "\\ at end of pattern\0"
+      "\\c at end of pattern\0"
+      "character value in \\x{...} sequence is too large\0"
+      "numbers out of order in {} quantifier\0"
+      /* 5 */
+      "number too big in {} quantifier\0"
+      "missing terminating ] for character class\0"
+      "internal error: code overflow\0"
+      "range out of order in character class\0"
+      "nothing to repeat\0"
+      /* 10 */
+      "unmatched parentheses\0"
+      "internal error: unexpected repeat\0"
+      "unrecognized character after (?\0"
+      "failed to get memory\0"
+      "missing )\0"
+      /* 15 */
+      "reference to non-existent subpattern\0"
+      "regular expression too large\0"
+      "parentheses nested too deeply"
+    ;
 
+    int i = code;
+    const char* text = error_texts;
+    while (i > 1)
+        i -= !*text++;
+    return text;
+}
 
-/* Table to identify digits and hex digits. This is used when compiling
+/* Table to hex digits. This is used when compiling
 patterns. Note that the tables in chartables are dependent on the locale, and
 may mark arbitrary characters as digits - but the PCRE compiling code expects
 to handle only 0-9, a-z, and A-Z as digits when compiling. That is why we have
@@ -163,12 +138,11 @@ character value tests (at least in some simple cases I timed), and in some
 applications one wants PCRE to compile efficiently as well as match
 efficiently.
 
-For convenience, we use the same bit definitions as in chartables:
+For convenience, we use the same bit definition as in chartables:
 
-  0x04   decimal digit
   0x08   hexadecimal digit
 
-Then we can use ctype_digit and ctype_xdigit in the code. */
+Then we can use ctype_xdigit in the code. */
 
 static const unsigned char digitab[] =
   {
@@ -205,14 +179,11 @@ static const unsigned char digitab[] =
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, /* 240-247 */
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};/* 248-255 */
 
-
 /* Definition to allow mutual recursion */
 
 static BOOL
-  compile_regex(int, int *, uschar **, const pcre_uchar **, const pcre_uchar *, int *, int,
+  compile_regex(int, int *, uschar **, const pcre_uchar **, const pcre_uchar *, ErrorCode*, int,
     int *, int *, compile_data *);
-
-
 
 /*************************************************
 *            Handle escapes                      *
@@ -237,7 +208,7 @@ Returns:         zero or positive => a data character
 */
 
 static int
-check_escape(const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, int *errorcodeptr, int bracount,
+check_escape(const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, ErrorCode* errorcodeptr, int bracount,
   BOOL isclass)
 {
 const pcre_uchar *ptr = *ptrptr + 1;
@@ -252,13 +223,11 @@ if (ptr == patternEnd) {
 
 c = *ptr;
 
-if (0) { } /* Matches with else below; to make merging easier. */
-
 /* Non-alphamerics are literals. For digits or letters, do an initial lookup in
 a table. A non-zero result is something that can be returned immediately.
 Otherwise further processing may be required. */
 
-else if (c < '0' || c > 'z') {}                           /* Not alphameric */
+if (c < '0' || c > 'z') {}                           /* Not alphameric */
 else if ((i = escapes[c - '0']) != 0) c = i;
 
 /* Escapes that need further processing, or are illegal. */
@@ -290,7 +259,7 @@ else
       {
       oldptr = ptr;
       c -= '0';
-      while (ptr + 1 < patternEnd && (DIGITAB(ptr[1]) & ctype_digit) != 0)
+      while (ptr + 1 < patternEnd && isASCIIDigit(ptr[1]))
         c = c * 10 + *(++ptr) - '0';
       if (c < 10 || c <= bracount)
         {
@@ -344,12 +313,12 @@ else
 
       if (pt < patternEnd && *pt == '}')
         {
-        if (c < 0 || count > 8) *errorcodeptr = ERR34;
-        else if (c >= 0xD800 && c <= 0xDFFF) *errorcodeptr = ERR34; // half of surrogate pair
-        else if (c >= 0xFDD0 && c <= 0xFDEF) *errorcodeptr = ERR34; // ?
-        else if (c == 0xFFFE) *errorcodeptr = ERR34; // not a character
-        else if (c == 0xFFFF)  *errorcodeptr = ERR34; // not a character
-        else if (c > 0x10FFFF) *errorcodeptr = ERR34; // out of Unicode character range
+        if (c < 0 || count > 8) *errorcodeptr = ERR3;
+        else if (c >= 0xD800 && c <= 0xDFFF) *errorcodeptr = ERR3; // half of surrogate pair
+        else if (c >= 0xFDD0 && c <= 0xFDEF) *errorcodeptr = ERR3; // ?
+        else if (c == 0xFFFE) *errorcodeptr = ERR3; // not a character
+        else if (c == 0xFFFF)  *errorcodeptr = ERR3; // not a character
+        else if (c > 0x10FFFF) *errorcodeptr = ERR3; // out of Unicode character range
         ptr = pt;
         break;
         }
@@ -440,10 +409,10 @@ Returns:    TRUE or FALSE
 static BOOL
 is_counted_repeat(const pcre_uchar *p, const pcre_uchar *patternEnd)
 {
-if (p >= patternEnd || (DIGITAB(*p) & ctype_digit) == 0)
+if (p >= patternEnd || !isASCIIDigit(*p))
     return FALSE;
 p++;
-while (p < patternEnd && (DIGITAB(*p) & ctype_digit) != 0)
+while (p < patternEnd && isASCIIDigit(*p))
     p++;
 if (p < patternEnd && *p == '}')
     return TRUE;
@@ -453,10 +422,10 @@ if (p >= patternEnd || *p++ != ',')
 if (p < patternEnd && *p == '}')
     return TRUE;
 
-if (p >= patternEnd || (DIGITAB(*p) & ctype_digit) == 0)
+if (p >= patternEnd || !isASCIIDigit(*p))
     return FALSE;
 p++;
-while (p < patternEnd && (DIGITAB(*p) & ctype_digit) != 0)
+while (p < patternEnd && isASCIIDigit(*p))
     p++;
 
 return (p < patternEnd && *p == '}');
@@ -484,7 +453,7 @@ Returns:         pointer to '}' on success;
 */
 
 static const pcre_uchar *
-read_repeat_counts(const pcre_uchar *p, int *minp, int *maxp, int *errorcodeptr)
+read_repeat_counts(const pcre_uchar *p, int *minp, int *maxp, ErrorCode* errorcodeptr)
 {
 int min = 0;
 int max = -1;
@@ -492,7 +461,7 @@ int max = -1;
 /* Read the minimum value and do a paranoid check: a negative value indicates
 an integer overflow. */
 
-while ((DIGITAB(*p) & ctype_digit) != 0) min = min * 10 + *p++ - '0';
+while (isASCIIDigit(*p)) min = min * 10 + *p++ - '0';
 if (min < 0 || min > 65535)
   {
   *errorcodeptr = ERR5;
@@ -507,7 +476,7 @@ if (*p == '}') max = min; else
   if (*(++p) != '}')
     {
     max = 0;
-    while((DIGITAB(*p) & ctype_digit) != 0) max = max * 10 + *p++ - '0';
+    while (isASCIIDigit(*p)) max = max * 10 + *p++ - '0';
     if (max < 0 || max > 65535)
       {
       *errorcodeptr = ERR5;
@@ -558,7 +527,7 @@ for (;;)
     case OP_ASSERT_NOT:
     if (!skipassert) return code;
     do code += GET(code, 1); while (*code == OP_ALT);
-    code += _pcre_OP_lengths[*code];
+    code += OP_lengths[*code];
     break;
 
     case OP_WORD_BOUNDARY:
@@ -567,7 +536,7 @@ for (;;)
     /* Fall through */
 
     case OP_BRANUMBER:
-    code += _pcre_OP_lengths[*code];
+    code += OP_lengths[*code];
     break;
 
     default:
@@ -654,7 +623,7 @@ for (;;)
     case OP_DOLL:
     case OP_NOT_WORD_BOUNDARY:
     case OP_WORD_BOUNDARY:
-    cc += _pcre_OP_lengths[*cc];
+    cc += OP_lengths[*cc];
     break;
 
     /* Handle literal characters */
@@ -765,7 +734,7 @@ could_be_empty_branch(const uschar *code, const uschar *endcode)
 register int c;
 for (code = first_significant_code(code + 1 + LINK_SIZE, TRUE);
      code < endcode;
-     code = first_significant_code(code + _pcre_OP_lengths[c], TRUE))
+     code = first_significant_code(code + OP_lengths[c], TRUE))
   {
   const uschar *ccode;
 
@@ -955,7 +924,7 @@ changed during the branch, the pointer is used to change the external options
 bits.
 
 Arguments:
-  optionsptr     pointer to the option bits
+  options        the option bits
   brackets       points to number of extracting brackets used
   codeptr        points to the pointer to the current code point
   ptrptr         points to the current pattern pointer
@@ -969,8 +938,8 @@ Returns:         TRUE on success
 */
 
 static BOOL
-compile_branch(int *optionsptr, int *brackets, uschar **codeptr,
-  const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, int *errorcodeptr, int *firstbyteptr,
+compile_branch(int options, int *brackets, uschar **codeptr,
+  const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, ErrorCode* errorcodeptr, int *firstbyteptr,
   int *reqbyteptr, compile_data *cd)
 {
 int repeat_type, op_type;
@@ -979,7 +948,6 @@ int bravalue = 0;
 int firstbyte, reqbyte;
 int zeroreqbyte, zerofirstbyte;
 int req_caseopt, reqvary, tempreqvary;
-int options = *optionsptr;
 int after_manual_callout = 0;
 register int c;
 register uschar *code = *codeptr;
@@ -1024,7 +992,6 @@ for (;; ptr++)
   BOOL is_quantifier;
   int class_charcount;
   int class_lastchar;
-  int newoptions;
   int skipbytes;
   int subreqbyte;
   int subfirstbyte;
@@ -1954,7 +1921,6 @@ for (;; ptr++)
     check for syntax errors here.  */
 
     case '(':
-    newoptions = options;
     skipbytes = 0;
 
     if (*(++ptr) == '?')
@@ -2011,7 +1977,7 @@ for (;; ptr++)
     tempreqvary = cd->req_varyopt;     /* Save value before bracket */
 
     if (!compile_regex(
-         newoptions,                   /* The complete new option state */
+         options,
          brackets,                     /* Extracting bracket count */
          &tempcode,                    /* Where to put code (updated) */
          &ptr,                         /* Input pointer (updated) */
@@ -2253,7 +2219,7 @@ Returns:      TRUE on success
 
 static BOOL
 compile_regex(int options, int *brackets, uschar **codeptr,
-  const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, int *errorcodeptr, int skipbytes,
+  const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, ErrorCode* errorcodeptr, int skipbytes,
   int *firstbyteptr, int *reqbyteptr, compile_data *cd)
 {
 const pcre_uchar *ptr = *ptrptr;
@@ -2276,7 +2242,7 @@ for (;;)
   {
   /* Now compile the branch */
 
-  if (!compile_branch(&options, brackets, &code, &ptr, patternEnd, errorcodeptr,
+  if (!compile_branch(options, brackets, &code, &ptr, patternEnd, errorcodeptr,
         &branchfirstbyte, &branchreqbyte, cd))
     {
     *ptrptr = ptr;
@@ -2414,7 +2380,7 @@ Returns:     TRUE or FALSE
 */
 
 static BOOL
-is_anchored(register const uschar *code, int *options, unsigned int bracket_map,
+is_anchored(register const uschar *code, int options, unsigned int bracket_map,
   unsigned int backref_map)
 {
 do {
@@ -2442,7 +2408,7 @@ do {
 
    /* Check for explicit anchoring */
 
-   else if (((*options & PCRE_MULTILINE) != 0 || op != OP_CIRC))
+   else if (((options & PCRE_MULTILINE) != 0 || op != OP_CIRC))
      return FALSE;
    code += GET(code, 1);
    }
@@ -2540,7 +2506,7 @@ Returns:     -1 or the fixed first char
 */
 
 static int
-find_firstassertedchar(const uschar *code, int *options, BOOL inassert)
+find_firstassertedchar(const uschar *code, int options, BOOL inassert)
 {
 register int c = -1;
 do {
@@ -2577,7 +2543,7 @@ do {
      if (c < 0)
        {
        c = scode[1];
-       if ((*options & PCRE_CASELESS) != 0) c |= REQ_CASELESS;
+       if ((options & PCRE_CASELESS) != 0) c |= REQ_CASELESS;
        }
      else if (c != scode[1]) return -1;
      break;
@@ -2614,7 +2580,9 @@ Returns:        pointer to compiled data block, or NULL on error,
 */
 
 pcre *
-jsRegExpCompile(const pcre_char* pattern, int patternLength, int options, unsigned* numSubpatterns, const char** errorptr)
+jsRegExpCompile(const pcre_char* pattern, int patternLength,
+    JSRegExpIgnoreCaseOption ignoreCase, JSRegExpMultilineOption multiline,
+    unsigned* numSubpatterns, const char** errorptr)
 {
 real_pcre *re;
 int length = 1 + LINK_SIZE;      /* For initial BRA plus length */
@@ -2626,7 +2594,7 @@ int item_count = -1;
 int name_count = 0;
 int max_name_size = 0;
 int lastitemlength = 0;
-int errorcode = 0;
+ErrorCode errorcode = ERR0;
 BOOL class_utf8;
 BOOL capturing;
 unsigned int brastackptr = 0;
@@ -2908,7 +2876,7 @@ while (++ptr < patternEnd)
             goto PCRE_ERROR_RETURN;
             }
 
-          if ((d > 255 || ((options & PCRE_CASELESS) != 0 && d > 127)))
+          if ((d > 255 || (ignoreCase && d > 127)))
             {
             uschar buffer[6];
             if (!class_utf8)         /* Allow for XCLASS overhead */
@@ -2923,7 +2891,7 @@ while (++ptr < patternEnd)
             range upwards might push d over a boundary that makes is use
             another byte in the UTF-8 representation. */
 
-            if ((options & PCRE_CASELESS) != 0)
+            if (ignoreCase)
               {
               int occ, ocd;
               int cc = c;
@@ -2964,7 +2932,7 @@ while (++ptr < patternEnd)
 
         else
           {
-          if ((c > 255 || ((options & PCRE_CASELESS) != 0 && c > 127)))
+          if ((c > 255 || (ignoreCase && c > 127)))
             {
             uschar buffer[6];
             class_optcount = 10;     /* Ensure > 1 */
@@ -2973,8 +2941,7 @@ while (++ptr < patternEnd)
               class_utf8 = TRUE;
               length += LINK_SIZE + 2;
               }
-            length += (((options & PCRE_CASELESS) != 0)? 2 : 1) *
-              (1 + _pcre_ord2utf8(c, buffer));
+            length += (ignoreCase ? 2 : 1) * (1 + _pcre_ord2utf8(c, buffer));
             }
           }
         }
@@ -3070,7 +3037,7 @@ while (++ptr < patternEnd)
 
     if (brastackptr >= sizeof(brastack)/sizeof(int))
       {
-      errorcode = ERR19;
+      errorcode = ERR17;
       goto PCRE_ERROR_RETURN;
       }
 
@@ -3180,20 +3147,19 @@ length += 2 + LINK_SIZE;    /* For final KET and END */
 
 if (length > MAX_PATTERN_SIZE)
   {
-  errorcode = ERR20;
-  goto PCRE_EARLY_ERROR_RETURN;
+  errorcode = ERR16;
+  goto PCRE_ERROR_RETURN;
   }
 
-/* Compute the size of data block needed and get it, either from malloc or
-externally provided function. */
+/* Compute the size of data block needed and get it. */
 
 size = length + sizeof(real_pcre) + name_count * (max_name_size + 3);
-re = (real_pcre *)(pcre_malloc)(size);
+re = reinterpret_cast<real_pcre*>(new char[size]);
 
 if (re == NULL)
   {
-  errorcode = ERR21;
-  goto PCRE_EARLY_ERROR_RETURN;
+  errorcode = ERR13;
+  goto PCRE_ERROR_RETURN;
   }
 
 /* Put in the magic number, and save the sizes, options, and character table
@@ -3202,7 +3168,7 @@ the end; it's there to help in the case when a regex compiled on a system with
 4-byte pointers is run on another with 8-byte pointers. */
 
 re->size = (pcre_uint32)size;
-re->options = options;
+re->options = (ignoreCase ? PCRE_CASELESS : 0) | (multiline ? PCRE_MULTILINE : 0);
 
 /* The starting points of the name/number translation table and of the code are
 passed around in the compile data block. */
@@ -3220,7 +3186,7 @@ ptr = (const pcre_uchar *)pattern;
 code = (uschar *)codestart;
 *code = OP_BRA;
 bracount = 0;
-(void)compile_regex(options, &bracount, &code, &ptr,
+(void)compile_regex(re->options, &bracount, &code, &ptr,
   patternEnd,
   &errorcode, 0, &firstbyte, &reqbyte, &compile_block);
 re->top_bracket = bracount;
@@ -3228,7 +3194,7 @@ re->top_backref = compile_block.top_backref;
 
 /* If not reached end of pattern on success, there's an excess bracket. */
 
-if (errorcode == 0 && ptr < patternEnd) errorcode = ERR22;
+if (errorcode == 0 && ptr < patternEnd) errorcode = ERR10;
 
 /* Fill in the terminating state and check for disastrous overflow, but
 if debugging, leave the test till after things are printed out. */
@@ -3236,7 +3202,7 @@ if debugging, leave the test till after things are printed out. */
 *code++ = OP_END;
 
 #ifndef DEBUG
-if (code - codestart > length) errorcode = ERR23;
+if (code - codestart > length) errorcode = ERR7;
 #endif
 
 /* Give an error if there's back reference to a non-existent capturing
@@ -3246,12 +3212,11 @@ if (re->top_backref > re->top_bracket) errorcode = ERR15;
 
 /* Failed to compile, or error while post-processing */
 
-if (errorcode != 0)
+if (errorcode != ERR0)
   {
-  (pcre_free)(re);
+  delete [] reinterpret_cast<char*>(re);
   PCRE_ERROR_RETURN:
-  PCRE_EARLY_ERROR_RETURN:
-  *errorptr = error_texts[errorcode];
+  *errorptr = error_text(errorcode);
   return NULL;
   }
 
@@ -3266,13 +3231,12 @@ start with ^. and also when all branches start with .* for non-DOTALL matches.
 */
 
   {
-  int temp_options = options;
-  if (is_anchored(codestart, &temp_options, 0, compile_block.backref_map))
+  if (is_anchored(codestart, re->options, 0, compile_block.backref_map))
     re->options |= PCRE_ANCHORED;
   else
     {
     if (firstbyte < 0)
-      firstbyte = find_firstassertedchar(codestart, &temp_options, FALSE);
+      firstbyte = find_firstassertedchar(codestart, re->options, FALSE);
     if (firstbyte >= 0)   /* Remove caseless flag for non-caseable chars */
       {
       int ch = firstbyte & 255;
@@ -3346,9 +3310,10 @@ was compiled can be seen. */
 if (code - codestart > length)
   {
   (pcre_free)(re);
-  *errorptr = error_texts[ERR23];
+  *errorptr = error_text(ERR7);
   return NULL;
   }
+
 #endif
 
 if (numSubpatterns)
@@ -3358,7 +3323,5 @@ return (pcre *)re;
 
 void jsRegExpFree(JSRegExp* re)
 {
-    pcre_free(re);
+    delete [] reinterpret_cast<char*>(re);
 }
-
-/* End of pcre_compile.c */

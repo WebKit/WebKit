@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle qt
-SOURCES = dftables.c
+SOURCES = dftables.cpp
 TARGET = dftables
 DESTDIR = tmp
 
@@ -12,4 +12,3 @@ gtk-port {
 } else {
   DEFINES += BUILDING_QT__
 }
-

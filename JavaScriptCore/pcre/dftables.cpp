@@ -1,12 +1,12 @@
-/*************************************************
-*      Perl-Compatible Regular Expressions       *
-*************************************************/
+/* This is JavaScriptCore's variant of the PCRE library. While this library
+started out as a copy of PCRE, many of the features of PCRE have been
+removed. This library now supports only the regular expression features
+required by the JavaScript language specification, and has only the functions
+needed by JavaScriptCore and the rest of WebKit.
 
-/* PCRE is a library of functions to support regular expressions whose syntax
-and semantics are as close as possible to those of the Perl 5 language.
-
-                       Written by Philip Hazel
+                 Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
+    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -49,9 +49,7 @@ make use of its code from here in order to be consistent. */
 
 #include "pcre_internal.h"
 
-#define DFTABLES          /* pcre_maketables.c notices this */
-#include "pcre_maketables.c"
-
+#include "pcre_maketables.cpp"
 
 int main(int argc, char **argv)
 {
@@ -133,10 +131,9 @@ fprintf(f, ",\n\n");
 fprintf(f,
   "/* This table identifies various classes of character by individual bits:\n"
   "  0x%02x   white space character\n"
-  "  0x%02x   decimal digit\n"
   "  0x%02x   hexadecimal digit\n"
   "  0x%02x   alphanumeric or '_'\n*/\n\n",
-  ctype_space, ctype_digit, ctype_xdigit, ctype_word);
+  ctype_space, ctype_xdigit, ctype_word);
 
 fprintf(f, "  ");
 for (i = 0; i < 256; i++)
@@ -165,5 +162,3 @@ fclose(f);
 free((void *)base_of_tables);
 return 0;
 }
-
-/* End of dftables.c */

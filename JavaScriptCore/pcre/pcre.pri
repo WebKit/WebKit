@@ -4,15 +4,15 @@ INCLUDEPATH += $$PWD $$OUTPUT_DIR/JavaScriptCore/kjs/tmp
 DEPENDPATH += $$PWD
 
 SOURCES += \
-    pcre_compile.c \
-    pcre_exec.c \
-    pcre_ord2utf8.c \
-    pcre_tables.c \
-    pcre_ucp_searchfuncs.c \
-    pcre_xclass.c
+    pcre_compile.cpp \
+    pcre_exec.cpp \
+    pcre_ord2utf8.cpp \
+    pcre_tables.cpp \
+    pcre_ucp_searchfuncs.cpp \
+    pcre_xclass.cpp
 
 CTGENFILE += \
-    dftables.c
+    dftables.cpp
 
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
 ctgen.output = tmp/chartables.c

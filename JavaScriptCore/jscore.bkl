@@ -106,7 +106,7 @@ JavaScriptCore Bakefile project file.
     <exe id="dftables">
         <dirname>$(SRCDIR)</dirname>
         <include>$(SRCDIR)/wtf</include>
-        <sources>$(SRCDIR)/pcre/dftables.c</sources>
+        <sources>$(SRCDIR)/pcre/dftables.cpp</sources>
     </exe>
 
     <action id="DerivedSources">

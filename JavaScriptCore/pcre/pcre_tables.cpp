@@ -1,12 +1,12 @@
-/*************************************************
-*      Perl-Compatible Regular Expressions       *
-*************************************************/
+/* This is JavaScriptCore's variant of the PCRE library. While this library
+started out as a copy of PCRE, many of the features of PCRE have been
+removed. This library now supports only the regular expression features
+required by the JavaScript language specification, and has only the functions
+needed by JavaScriptCore and the rest of WebKit.
 
-/* PCRE is a library of functions to support regular expressions whose syntax
-and semantics are as close as possible to those of the Perl 5 language.
-
-                       Written by Philip Hazel
+                 Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
+    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -37,22 +37,10 @@ POSSIBILITY OF SUCH DAMAGE.
 -----------------------------------------------------------------------------
 */
 
-
 /* This module contains some fixed tables that are used by more than one of the
-PCRE code modules. The tables are also #included by the pcretest program, which
-uses macros to change their names from _pcre_xxx to xxxx, thereby avoiding name
-clashes with the library. */
-
+PCRE code modules. */
 
 #include "pcre_internal.h"
-
-
-/* Table of sizes for the fixed-length opcodes. It's defined in a macro so that
-the definition is next to the definition of the opcodes in pcre_internal.h. */
-
-const uschar _pcre_OP_lengths[] = { OP_LENGTHS };
-
-
 
 /*************************************************
 *           Tables for UTF-8 support             *
@@ -83,5 +71,3 @@ const uschar _pcre_utf8_table4[] = {
   3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5 };
 
 #include "chartables.c"
-
-/* End of pcre_tables.c */

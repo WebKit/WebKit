@@ -1,28 +1,12 @@
-THE MAIN PCRE LIBRARY
----------------------
-
-Written by:       Philip Hazel
-Email local part: ph10
-Email domain:     cam.ac.uk
+Originally written by:  Philip Hazel
+Email local part:       ph10
+Email domain:           cam.ac.uk
 
 University of Cambridge Computing Service,
 Cambridge, England. Phone: +44 1223 334714.
 
-Copyright (c) 1997-2005 University of Cambridge
-All rights reserved
+Copyright (c) 1997-2005 University of Cambridge. All rights reserved.
 
+Adapted for JavaScriptCore and WebKit by Apple Inc.
 
-UTF-16 changes by Darin Adler and Geoff Garen
-Copyright (c) 2005, 2006, 2007 Apple Inc.
-All rights reserved
-
-
-THE C++ WRAPPER LIBRARY
------------------------
-
-Written by:       Google Inc.
-
-Copyright (c) 2005 Google Inc
-All rights reserved
-
-####
+Copyright (c) 2005, 2006, 2007 Apple Inc. All rights reserved.

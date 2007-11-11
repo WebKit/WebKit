@@ -1,14 +1,12 @@
-/*************************************************
-*      Perl-Compatible Regular Expressions       *
-*************************************************/
+/* This is JavaScriptCore's variant of the PCRE library. While this library
+started out as a copy of PCRE, many of the features of PCRE have been
+removed. This library now supports only the regular expression features
+required by the JavaScript language specification, and has only the functions
+needed by JavaScriptCore and the rest of WebKit.
 
-
-/* PCRE is a library of functions to support regular expressions whose syntax
-and semantics are as close as possible to those of the Perl 5 language.
-
-                       Written by Philip Hazel
+                 Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
-           Copyright (c) 2004, 2005 Apple Computer, Inc.
+    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -53,20 +51,43 @@ functions whose names all begin with "_pcre_". */
 #pragma warning(disable: 4244)
 #endif
 
-#define _pcre_OP_lengths kjs_pcre_OP_lengths
+/* The value of LINK_SIZE determines the number of bytes used to store links as
+offsets within the compiled regex. The default is 2, which allows for compiled
+patterns up to 64K long. This covers the vast majority of cases. However, PCRE
+can also be compiled to use 3 or 4 bytes instead. This allows for longer
+patterns in extreme cases. On systems that support it, "configure" can be used
+to override this default. */
+
+#define LINK_SIZE   2
+
+/* The value of MATCH_LIMIT determines the default number of times the internal
+match() function can be called during a single execution of pcre_exec(). There
+is a runtime interface for setting a different limit. The limit exists in order
+to catch runaway regular expressions that take for ever to determine that they
+do not match. The default is set very large so that it does not accidentally
+catch legitimate cases. On systems that support it, "configure" can be used to
+override this default default. */
+
+#define MATCH_LIMIT 10000000
+
+/* The above limit applies to all calls of match(), whether or not they
+increase the recursion depth. In some environments it is desirable to limit the
+depth of recursive calls of match() more strictly, in order to restrict the
+maximum amount of stack (or heap, if NO_RECURSE is defined) that is used. The
+value of MATCH_LIMIT_RECURSION applies only to recursive calls of match(). To
+have any useful effect, it must be less than the value of MATCH_LIMIT. There is
+a runtime method for setting a different limit. On systems that support it,
+"configure" can be used to override this default default. */
+
+#define MATCH_LIMIT_RECURSION MATCH_LIMIT
+
 #define _pcre_default_tables kjs_pcre_default_tables
 #define _pcre_ord2utf8 kjs_pcre_ord2utf8
-#define _pcre_printint kjs_pcre_printint
-#define _pcre_try_flipped kjs_pcre_try_flipped
-#define _pcre_ucp_findchar kjs_pcre_ucp_findchar
 #define _pcre_utf8_table1 kjs_pcre_utf8_table1
 #define _pcre_utf8_table1_size  kjs_pcre_utf8_table1_size
 #define _pcre_utf8_table2 kjs_pcre_utf8_table2
 #define _pcre_utf8_table3 kjs_pcre_utf8_table3
 #define _pcre_utf8_table4 kjs_pcre_utf8_table4
-#define _pcre_utt kjs_pcre_utt
-#define _pcre_utt_size kjs_pcre_utt_size
-#define _pcre_valid_utf8 kjs_pcre_valid_utf8
 #define _pcre_xclass kjs_pcre_xclass
 
 /* Define DEBUG to get debugging output on stdout. */
@@ -85,11 +106,6 @@ all, it had only been about 10 years then... */
 #else
 #define DPRINTF(p) /*nothing*/
 #endif
-
-
-/* Get the definitions provided by running "configure" */
-
-#include "pcre-config.h"
 
 /* Standard C headers plus the external interface definition. The only time
 setjmp and stdarg are used is when NO_RECURSE is set. */
@@ -114,19 +130,9 @@ typedef unsigned char uschar;
 
 typedef JSRegExp pcre;
 
-typedef JSRegExpChar pcre_char;
-typedef JSRegExpChar pcre_uchar;
-typedef const JSRegExpChar* USPTR;
-
-/* Temporary fastMalloc/fastFree until we port to C++. */
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern void* (*pcre_malloc)(size_t);
-extern void (*pcre_free)(void*);
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
+typedef UChar pcre_char;
+typedef UChar pcre_uchar;
+typedef const UChar* USPTR;
 
 /* PCRE keeps offsets in its compiled code as 2-byte quantities (always stored
 in big-endian order) by default. These are used, for example, to link from the
@@ -286,31 +292,14 @@ if ((c & 0xc0) == 0xc0) \
 
 #define ISMIDCHAR(c) IS_TRAILING_SURROGATE(c)
 
-/* If the pointer is not at the start of a character, move it back until
-it is. Called only in UTF-8 mode. */
-
 #define BACKCHAR(eptr) while(ISMIDCHAR(*eptr)) eptr--;
-
-
-/* In case there is no definition of offsetof() provided - though any proper
-Standard C system should have one. */
-
-#ifndef offsetof
-#define offsetof(p_type,field) ((size_t)&(((p_type *)0)->field))
-#endif
-
-
-/* Private options flags start at the most significant end of the four bytes,
-but skip the top bit so we can use ints for convenience without getting tangled
-with negative values. The public options defined in pcre.h start at the least
-significant end. Make sure they don't overlap! */
 
 #define PCRE_FIRSTSET      0x40000000  /* first_byte is set */
 #define PCRE_REQCHSET      0x20000000  /* req_byte is set */
 #define PCRE_STARTLINE     0x10000000  /* start after \n for multiline */
 #define PCRE_ANCHORED      0x02000000  /* can't use partial with this regex */
-#define PCRE_CASELESS      JS_REGEXP_CASELESS
-#define PCRE_MULTILINE     JS_REGEXP_MULTILINE
+#define PCRE_CASELESS      0x00000001
+#define PCRE_MULTILINE     0x00000002
 
 /* Negative values for the firstchar and reqchar variables */
 
@@ -364,104 +353,90 @@ OP_EOD must correspond in order to the list of escapes immediately above.
 Note that whenever this list is updated, the two macro definitions that follow
 must also be updated to match. */
 
-enum {
-  OP_END,                   /* End of pattern */
+#define FOR_EACH_OPCODE(macro) \
+    macro(END) \
+    \
+    macro(NOT_WORD_BOUNDARY) \
+    macro(WORD_BOUNDARY) \
+    macro(NOT_DIGIT) \
+    macro(DIGIT) \
+    macro(NOT_WHITESPACE) \
+    macro(WHITESPACE) \
+    macro(NOT_WORDCHAR) \
+    macro(WORDCHAR) \
+    \
+    macro(ANY) \
+    \
+    macro(CIRC) \
+    macro(DOLL) \
+    macro(CHAR) \
+    macro(CHARNC) \
+    macro(ASCII_CHAR) \
+    macro(ASCII_LETTER_NC) \
+    macro(NOT) \
+    \
+    macro(STAR) \
+    macro(MINSTAR) \
+    macro(PLUS) \
+    macro(MINPLUS) \
+    macro(QUERY) \
+    macro(MINQUERY) \
+    macro(UPTO) \
+    macro(MINUPTO) \
+    macro(EXACT) \
+    \
+    macro(NOTSTAR) \
+    macro(NOTMINSTAR) \
+    macro(NOTPLUS) \
+    macro(NOTMINPLUS) \
+    macro(NOTQUERY) \
+    macro(NOTMINQUERY) \
+    macro(NOTUPTO) \
+    macro(NOTMINUPTO) \
+    macro(NOTEXACT) \
+    \
+    macro(TYPESTAR) \
+    macro(TYPEMINSTAR) \
+    macro(TYPEPLUS) \
+    macro(TYPEMINPLUS) \
+    macro(TYPEQUERY) \
+    macro(TYPEMINQUERY) \
+    macro(TYPEUPTO) \
+    macro(TYPEMINUPTO) \
+    macro(TYPEEXACT) \
+    \
+    macro(CRSTAR) \
+    macro(CRMINSTAR) \
+    macro(CRPLUS) \
+    macro(CRMINPLUS) \
+    macro(CRQUERY) \
+    macro(CRMINQUERY) \
+    macro(CRRANGE) \
+    macro(CRMINRANGE) \
+    \
+    macro(CLASS) \
+    macro(NCLASS) \
+    macro(XCLASS) \
+    \
+    macro(REF) \
+    \
+    macro(ALT) \
+    macro(KET) \
+    macro(KETRMAX) \
+    macro(KETRMIN) \
+    \
+    macro(ASSERT) \
+    macro(ASSERT_NOT) \
+    \
+    macro(ONCE) \
+    \
+    macro(BRAZERO) \
+    macro(BRAMINZERO) \
+    macro(BRANUMBER) \
+    macro(BRA)
 
-  /* Values corresponding to backslashed metacharacters */
-
-  OP_NOT_WORD_BOUNDARY,     /* \B */
-  OP_WORD_BOUNDARY,         /* \b */
-  OP_NOT_DIGIT,             /* \D */
-  OP_DIGIT,                 /* \d */
-  OP_NOT_WHITESPACE,        /* \S */
-  OP_WHITESPACE,            /* \s */
-  OP_NOT_WORDCHAR,          /* \W */
-  OP_WORDCHAR,              /* \w */
-
-  OP_ANY,                   /* . -- Match any character */
-
-  OP_CIRC,                  /* ^ */
-  OP_DOLL,                  /* $ */
-  OP_CHAR,                  /* Match one character, casefully */
-  OP_CHARNC,                /* Match one character, caselessly */
-  OP_ASCII_CHAR,            /* Match one ASCII (0-127) character. */
-  OP_ASCII_LETTER_NC,       /* Match one ASCII letter, caselessly. */
-  OP_NOT,                   /* Match anything but the following char */
-
-  OP_STAR,                  /* The maximizing and minimizing versions of */
-  OP_MINSTAR,               /* all these opcodes must come in pairs, with */
-  OP_PLUS,                  /* the minimizing one second. */
-  OP_MINPLUS,               /* This first set applies to single characters */
-  OP_QUERY,
-  OP_MINQUERY,
-  OP_UPTO,                  /* From 0 to n matches */
-  OP_MINUPTO,
-  OP_EXACT,                 /* Exactly n matches */
-
-  OP_NOTSTAR,               /* This set applies to "not" single characters */
-  OP_NOTMINSTAR,
-  OP_NOTPLUS,
-  OP_NOTMINPLUS,
-  OP_NOTQUERY,
-  OP_NOTMINQUERY,
-  OP_NOTUPTO,
-  OP_NOTMINUPTO,
-  OP_NOTEXACT,
-
-  OP_TYPESTAR,              /* This set applies to character types such as \d */
-  OP_TYPEMINSTAR,
-  OP_TYPEPLUS,
-  OP_TYPEMINPLUS,
-  OP_TYPEQUERY,
-  OP_TYPEMINQUERY,
-  OP_TYPEUPTO,
-  OP_TYPEMINUPTO,
-  OP_TYPEEXACT,
-
-  OP_CRSTAR,                /* These are for character classes and back refs */
-  OP_CRMINSTAR,
-  OP_CRPLUS,
-  OP_CRMINPLUS,
-  OP_CRQUERY,
-  OP_CRMINQUERY,
-  OP_CRRANGE,               /* These are different to the three sets above. */
-  OP_CRMINRANGE,
-
-  OP_CLASS,                 /* Match a character class, chars < 256 only */
-  OP_NCLASS,                /* Same, but the bitmap was created from a negative
-                               class - the difference is relevant when a UTF-8
-                               character > 255 is encountered. */
-
-  OP_XCLASS,                /* Extended class for handling UTF-8 chars within the
-                               class. This does both positive and negative. */
-
-  OP_REF,                   /* Match a back reference */
-
-  OP_ALT,                   /* Start of alternation */
-  OP_KET,                   /* End of group that doesn't have an unbounded repeat */
-  OP_KETRMAX,               /* These two must remain together and in this */
-  OP_KETRMIN,               /* order. They are for groups the repeat for ever. */
-
-  /* The assertions must come before ONCE and COND */
-
-  OP_ASSERT,                /* Positive lookahead */
-  OP_ASSERT_NOT,            /* Negative lookahead */
-
-  /* ONCE and COND must come after the assertions, with ONCE first, as there's
-  a test for >= ONCE for a subpattern that isn't an assertion. */
-
-  OP_ONCE,                  /* Once matched, don't back up into the subpattern */
-
-  OP_BRAZERO,               /* These two must remain together and in this */
-  OP_BRAMINZERO,            /* order. */
-
-  OP_BRANUMBER,             /* Used for extracting brackets whose number is greater
-                               than can fit into an opcode. */
-
-  OP_BRA                    /* This and greater values are used for brackets that
-                               extract substrings up to EXTRACT_BASIC_MAX. After
-                               that, use is made of OP_BRANUMBER. */
-};
+#define OPCODE_ENUM_VALUE(opcode) OP_##opcode,
+enum { FOR_EACH_OPCODE(OPCODE_ENUM_VALUE) };
 
 /* WARNING WARNING WARNING: There is an implicit assumption in pcre.c and
 study.c that all opcodes are less than 128 in value. This makes handling UTF-8
@@ -474,7 +449,6 @@ i.e. 255 - OP_BRA. We actually set it a bit lower to leave room for additional
 opcodes. */
 
 #define EXTRACT_BASIC_MAX  100
-
 
 /* This macro defines the length of fixed length operations in the compiled
 regex. The lengths are used when searching for specific things, and also in the
@@ -521,15 +495,6 @@ in UTF-8 mode. The code that uses this table must know about such things. */
   1+LINK_SIZE                    /* BRA                                    */ \
 
 
-/* Error code numbers. They are given names so that they can more easily be
-tracked. */
-
-enum { ERR0,  ERR1,  ERR2,  ERR3,  ERR4,  ERR5,  ERR6,  ERR7,  ERR8,  ERR9,
-       ERR10, ERR11, ERR12, ERR13, ERR14, ERR15, ERR16, ERR17, ERR18, ERR19,
-       ERR20, ERR21, ERR22, ERR23, ERR24, ERR25, ERR26, ERR27, ERR28, ERR29,
-       ERR30, ERR31, ERR32, ERR33, ERR34, ERR35, ERR36, ERR37, ERR38, ERR39,
-       ERR40, ERR41, ERR42, ERR43, ERR44, ERR45, ERR46, ERR47 };
-
 /* The real format of the start of the pcre block; the index of names and the
 code vector run on as long as necessary after the end. We store an explicit
 offset to the name table so that if a regex is compiled on one host, saved, and
@@ -572,40 +537,9 @@ typedef struct compile_data {
   int  req_varyopt;             /* "After variable item" flag for reqbyte */
 } compile_data;
 
-/* When compiling in a mode that doesn't use recursive calls to match(),
-a structure is used to remember local variables on the heap. It is defined in
-pcre.c, close to the match() function, so that it is easy to keep it in step
-with any changes of local variable. However, the pointer to the current frame
-must be saved in some "static" place over a longjmp(). We declare the
-structure here so that we can put a pointer in the match_data structure.
-NOTE: This isn't used for a "normal" compilation of pcre. */
-
-struct heapframe;
-
-/* Structure for passing "static" information around between the functions
-doing traditional NFA matching, so that they are thread-safe. */
-
-typedef struct match_data {
-  unsigned long int match_call_count;      /* As it says */
-  int   *offset_vector;         /* Offset vector */
-  int    offset_end;            /* One past the end */
-  int    offset_max;            /* The maximum usable for return data */
-  const uschar *lcc;            /* Points to lower casing table */
-  const uschar *ctypes;         /* Points to table of type maps */
-  BOOL   offset_overflow;       /* Set if too many extractions */
-  USPTR  start_subject;         /* Start of the subject string */
-  USPTR  end_subject;           /* End of the subject string */
-  USPTR  start_match;           /* Start of this match attempt */
-  USPTR  end_match_ptr;         /* Subject position at end match */
-  int    end_offset_top;        /* Highwater mark at end of match */
-  BOOL   multiline;
-  BOOL   caseless;
-} match_data;
-
 /* Bit definitions for entries in the pcre_ctypes table. */
 
 #define ctype_space   0x01
-#define ctype_digit   0x04
 #define ctype_xdigit  0x08
 #define ctype_word    0x10   /* alphameric or '_' */
 
@@ -649,8 +583,6 @@ extern const uschar _pcre_utf8_table4[];
 extern const int    _pcre_utf8_table1_size;
 
 extern const uschar _pcre_default_tables[];
-
-extern const uschar _pcre_OP_lengths[];
 
 
 /* Internal shared functions. These are functions that are used by more than

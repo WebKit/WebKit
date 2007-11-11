@@ -1,3 +1,130 @@
+2007-11-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15924
+          next round of changes to JSRegExp (formerly PCRE)
+
+        This is a combination of converting to C++, tweaking the API, and adding
+        some additional optimizations.
+
+        Future steps will involve getting rid of the use of UTF-8 completely
+        (we'll use UTF-16 exclusively instead), eliminating more source files,
+        and some more speed-ups.
+
+        SunSpider says the current round is an 0.9% speed-up overall, and a
+        5.3% speed-up for regexp.
+
+        * JavaScriptCore.exp: Updated for new entry points.
+
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/dftables/dftables.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * jscore.bkl:
+        Updated for new source file names and ForwardingHeaders.
+
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp): Changed to use the error message without calling
+        strdup on it and to pass the new types and options.
+        (KJS::RegExp::~RegExp): Removed the now-unneeded free of the error message.
+        (KJS::RegExp::match): Pass the new types and options.
+        * kjs/regexp.h: Update type of m_constructionError.
+
+        * pcre/AUTHORS: Update to reflect the status of the project -- we don't include
+        the Google parts, and this isn't the PCRE library, per se.
+        * pcre/COPYING: Ditto.
+
+        * pcre/dftables.cpp: Copied from JavaScriptCore/pcre/dftables.c.
+        (main): Removed unneeded ctype_digit.
+
+        * pcre/pcre.h: Convert to C++, tweak API a bit. Use UChar instead of JSRegExpChar.
+
+        * pcre/pcre_compile.cpp: Copied from JavaScriptCore/pcre/pcre_compile.c.
+        Moved a lot of private stuff used only within this file here from pcre_internal.h.
+        Renumbered the error codes.
+        (error_text): Use a single string with embedded nulls for the error text (I got
+        this idea from newer versions of PCRE).
+        (check_escape): Changed return type to be enum instead of int. Replaced ctype_digit
+        uses with isASCIIDigit.
+        (is_counted_repeat): Ditto.
+        (read_repeat_counts): Ditto.
+        (first_significant_code): Ditto.
+        (find_fixedlength): Ditto.
+        (could_be_empty_branch): Ditto.
+        (compile_branch): Ditto. Also removed some code that handles changing options.
+        JavaScript doesn't have any of the features that allow options to change.
+        (compile_regex): Updated for change to options parameter.
+        (is_anchored): Ditto.
+        (find_firstassertedchar): Ditto.
+        (jsRegExpCompile): Changed to take separate flags instead of an options int.
+        Also changed to call new/delete instead of pcre_malloc/free.
+        (jsRegExpFree): Ditto.
+
+        * pcre/pcre_exec.cpp: Copied from JavaScriptCore/pcre/pcre_exec.c.
+        Added a case that uses computed goto for the opcode loop, but did not turn it on.
+        Changed the RMATCH macro to handle returns more efficiently by putting the where
+        pointer in the new frame instead of the old one, allowing us to branch to the
+        return with a single statement. Switched to new/delete from pcre_malloc/free.
+        Changed many RRETURN callers to not set the return value since it's already
+        set correctly. Replaced the rrc variable with an is_match variable. Values other
+        than "match" and "no match" are now handled differently. This allows us to remove
+        the code to check for those cases in various rules.
+        (match): All the case statements use a macro BEGIN_OPCODE instead. And all the
+        continue statements, or break statements that break out of the outer case use
+        a macro NEXT_OPCODE instead. Replaced a few if statements with assertions.
+        (jsRegExpExecute): Use new/delete instead of pcre_malloc/free. Removed unused
+        start_match field from the match block.
+
+        * pcre/pcre_internal.h: Moved the last few configuration macros from pcre-config.h
+        in here. Removed various unused types. Converted from JSRegExpChar to UChar.
+        Eliminated pcre_malloc/free. Replaced the opcode enum with a macro that can be
+        used in multiple places. Unfortunately we lose the comments for each opcode; we
+        should find a place to put those back. Removed ctype_digit.
+
+        * pcre/pcre_maketables.cpp: Copied from JavaScriptCore/pcre/pcre_maketables.c.
+        (pcre_maketables): Got rid of the conditional code that allows this to be compiled
+        in -- it's only used for dftables now (and soon may be obsolete entirely).
+        Changed code for cbit_digit to not use isdigit, and took the "_" case out of the
+        loop. Removed ctype_digit.
+
+        * pcre/pcre_ord2utf8.cpp: Copied from JavaScriptCore/pcre/pcre_ord2utf8.c.
+
+        * pcre/pcre_tables.cpp: Copied from JavaScriptCore/pcre/pcre_tables.c.
+        Moved _pcre_OP_lengths out of here into pcre_exec.cpp.
+
+        * pcre/pcre_ucp_searchfuncs.cpp: Copied from JavaScriptCore/pcre/pcre_ucp_searchfuncs.c.
+        Updated for other file name changes.
+
+        * pcre/pcre_xclass.cpp: Copied from JavaScriptCore/pcre/pcre_xclass.c.
+
+        * pcre/ucpinternal.h: Updated header.
+
+        * pcre/ucptable.cpp: Copied from JavaScriptCore/pcre/ucptable.c.
+
+        * wtf/ASCIICType.h: (WTF::isASCIIDigit): Removed a branch by changing from && to
+        & for this operation. Also added an overload that takes an int because that's
+        useful for PCRE. Later we could optimize for int and overload other functions in
+        this file; stuck to this simple one for now.
+
+        * wtf/unicode/icu/UnicodeIcu.h: Removed unused isUpper.
+        * wtf/unicode/qt4/UnicodeQt4.h: Ditto.
+
+        * pcre/LICENCE: Removed.
+        * pcre/pcre-config.h: Removed.
+        * wtf/FastMallocPCRE.cpp: Removed.
+
+        * pcre/dftables.c: Renamed to cpp.
+        * pcre/pcre_compile.c: Ditto.
+        * pcre/pcre_exec.c: Ditto.
+        * pcre/pcre_maketables.c: Ditto.
+        * pcre/pcre_ord2utf8.c: Ditto.
+        * pcre/pcre_tables.c: Ditto.
+        * pcre/pcre_ucp_searchfuncs.c: Ditto.
+        * pcre/pcre_xclass.c: Ditto.
+        * pcre/ucptable.c: Ditto.
+
 2007-11-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.

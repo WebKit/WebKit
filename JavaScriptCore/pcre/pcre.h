@@ -1,11 +1,12 @@
 /* This is the public header file for JavaScriptCore's variant of the PCRE
 library. While this library started out as a copy of PCRE, many of the
 features of PCRE have been removed. This library now supports only the
-regular expression features required by the JavaScript language specification,
-and has only the functions needed by JavaScriptCore and the rest of WebKit.
+regular expression features required by the JavaScript language
+specification, and has only the functions needed by JavaScriptCore and the
+rest of WebKit.
 
            Copyright (c) 1997-2005 University of Cambridge
-           Copyright (c) 2004, 2005, 2006, 2007 Apple Inc.
+    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -36,41 +37,33 @@ POSSIBILITY OF SUCH DAMAGE.
 -----------------------------------------------------------------------------
 */
 
-// FIXME: Header needs to be renamed.
+// FIXME: This file needs to be renamed to JSRegExp.h; it's no longer PCRE.
 
-#ifndef PCRE_H
-#define PCRE_H
+#ifndef JSRegExp_h
+#define JSRegExp_h
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <wtf/unicode/Unicode.h>
 
-/* jsRegExpCompile options */
-/* FIXME: Use two booleans instead? */
+struct JSRegExp;
 
-#define JS_REGEXP_CASELESS      0x00000001
-#define JS_REGEXP_MULTILINE     0x00000002
+enum JSRegExpIgnoreCaseOption { JSRegExpDoNotIgnoreCase, JSRegExpIgnoreCase };
+enum JSRegExpMultilineOption { JSRegExpSingleLine, JSRegExpMultiline };
 
 /* jsRegExpExecute error codes */
-/* FIXME: Use const after changing this to C++? */
+const int JSRegExpErrorNoMatch = -1;
+const int JSRegExpErrorInternal = -2;
+const int JSRegExpErrorNoMemory = -3;
+const int JSRegExpErrorMatchLimit = -4;
+const int JSRegExpErrorRecursionLimit = -5;
 
-#define JS_REGEXP_ERROR_NOMATCH         (-1)
-#define JS_REGEXP_ERROR_NOMEMORY        (-6)
-#define JS_REGEXP_ERROR_MATCHLIMIT      (-8)
-#define JS_REGEXP_ERROR_INTERNAL       (-14)
-#define JS_REGEXP_ERROR_RECURSIONLIMIT (-21)
+JSRegExp* jsRegExpCompile(const ::UChar* pattern, int patternLength,
+    JSRegExpIgnoreCaseOption, JSRegExpMultilineOption,
+    unsigned* numSubpatterns, const char** errorMessage);
 
-/* FIXME: Merge with WTF's UChar? */
-typedef unsigned short JSRegExpChar;
+int jsRegExpExecute(const JSRegExp*,
+    const ::UChar* subject, int subjectLength, int startOffset,
+    int* offsetsVector, int offsetsVectorLength);
 
-typedef struct JSRegExp JSRegExp;
-
-JSRegExp* jsRegExpCompile(const JSRegExpChar* pattern, int patternLength, int options, unsigned* numSubpatterns, const char** errorMessage);
-int jsRegExpExecute(const JSRegExp*, const JSRegExpChar*, int, int, int*, int);
 void jsRegExpFree(JSRegExp*);
-
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
 
 #endif

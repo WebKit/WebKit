@@ -68,7 +68,7 @@ namespace KJS {
 
     // Data supplied by PCRE.
     JSRegExp* m_regExp;
-    char* m_constructionError;
+    const char* m_constructionError;
     unsigned m_numSubpatterns;
   };
 

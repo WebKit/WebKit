@@ -102,7 +102,9 @@ void RegularExpression::Private::compile(bool caseSensitive, bool glob)
     // on the regex syntax (see FrameMac.mm for a couple examples).
     
     const char* errorMessage;
-    regex = jsRegExpCompile(reinterpret_cast<const uint16_t *>(p.unicode()), p.length(), caseSensitive ? 0 : JS_REGEXP_CASELESS, 0, &errorMessage);
+    regex = jsRegExpCompile(reinterpret_cast<const UChar*>(p.unicode()), p.length(),
+        caseSensitive ? JSRegExpDoNotIgnoreCase : JSRegExpIgnoreCase, JSRegExpSingleLine,
+        0, &errorMessage);
     if (!regex)
         LOG_ERROR("RegularExpression: pcre_compile failed with '%s'", errorMessage);
 }
@@ -154,9 +156,9 @@ int RegularExpression::match(const DeprecatedString &str, int startFrom, int *ma
 {
     d->lastMatchString = str;
     // First 2 offsets are start and end offsets; 3rd entry is used internally by pcre
-    d->lastMatchCount = jsRegExpExecute(d->regex, reinterpret_cast<const JSRegExpChar*>(d->lastMatchString.unicode()), d->lastMatchString.length(), startFrom, d->lastMatchOffsets, maxOffsets);
+    d->lastMatchCount = jsRegExpExecute(d->regex, reinterpret_cast<const UChar*>(d->lastMatchString.unicode()), d->lastMatchString.length(), startFrom, d->lastMatchOffsets, maxOffsets);
     if (d->lastMatchCount < 0) {
-        if (d->lastMatchCount != JS_REGEXP_ERROR_NOMATCH)
+        if (d->lastMatchCount != JSRegExpErrorNoMatch)
             LOG_ERROR("RegularExpression: pcre_exec() failed with result %d", d->lastMatchCount);
         d->lastMatchPos = -1;
         d->lastMatchLength = -1;
