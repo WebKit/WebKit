@@ -1,3 +1,19 @@
+2007-11-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Add some basic tests to check alignment-baseline / dominant-baseline functionality.
+
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.checksum: Added.
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.png: Added.
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.txt: Added.
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.checksum: Added.
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.png: Added.
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.txt: Added.
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.checksum: Added.
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.png: Added.
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.txt: Added.
+
 2007-11-11  Adam Roben  <aroben@apple.com>
 
         Remove a now-passing test from the Windows Skipped file

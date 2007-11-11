@@ -34,6 +34,7 @@
 #include "SVGInlineFlowBox.h"
 #include "SVGInlineTextBox.h"
 #include "SVGPaintServer.h"
+#include "SVGRenderStyleDefs.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourceFilter.h"
 #include "SVGTextPositioningElement.h"
@@ -53,6 +54,119 @@ namespace WebCore {
 static inline bool isVerticalWritingMode(const SVGRenderStyle* style)
 {
     return style->writingMode() == WM_TBRL || style->writingMode() == WM_TB; 
+}
+
+static inline EAlignmentBaseline dominantBaselineToShift(bool isVerticalText, const RenderObject* text, const Font& font)
+{
+    ASSERT(text);
+
+    const SVGRenderStyle* style = text->style() ? text->style()->svgStyle() : 0;
+    ASSERT(style);
+
+    const SVGRenderStyle* parentStyle = text->parent() && text->parent()->style() ? text->parent()->style()->svgStyle() : 0;
+
+    EDominantBaseline baseline = style->dominantBaseline();
+    if (baseline == DB_AUTO) {
+        if (isVerticalText)
+            baseline = DB_CENTRAL;
+        else
+            baseline = DB_ALPHABETIC;
+    }
+
+    switch (baseline) {
+    case DB_USE_SCRIPT:
+        // TODO: The dominant-baseline and the baseline-table components are set by
+        //       determining the predominant script of the character data content.
+        return AB_ALPHABETIC;
+    case DB_NO_CHANGE:
+    {
+        if (parentStyle)
+            return dominantBaselineToShift(isVerticalText, text->parent(), font);
+
+        ASSERT_NOT_REACHED();
+        return AB_AUTO;
+    }
+    case DB_RESET_SIZE:
+    {
+        if (parentStyle)
+            return dominantBaselineToShift(isVerticalText, text->parent(), font);
+
+        ASSERT_NOT_REACHED();
+        return AB_AUTO;    
+    }
+    case DB_IDEOGRAPHIC:
+        return AB_IDEOGRAPHIC;
+    case DB_ALPHABETIC:
+        return AB_ALPHABETIC;
+    case DB_HANGING:
+        return AB_HANGING;
+    case DB_MATHEMATICAL:
+        return AB_MATHEMATICAL;
+    case DB_CENTRAL:
+        return AB_CENTRAL;
+    case DB_MIDDLE:
+        return AB_MIDDLE;
+    case DB_TEXT_AFTER_EDGE:
+        return AB_TEXT_AFTER_EDGE;
+    case DB_TEXT_BEFORE_EDGE:
+        return AB_TEXT_BEFORE_EDGE;
+    default:
+        ASSERT_NOT_REACHED();
+        return AB_AUTO;
+    }
+}
+
+static inline float alignmentBaselineToShift(bool isVerticalText, const RenderObject* text, const Font& font)
+{
+    ASSERT(text);
+
+    const SVGRenderStyle* style = text->style() ? text->style()->svgStyle() : 0;
+    ASSERT(style);
+
+    const SVGRenderStyle* parentStyle = text->parent() && text->parent()->style() ? text->parent()->style()->svgStyle() : 0;
+
+    EAlignmentBaseline baseline = style->alignmentBaseline();
+    if (baseline == AB_AUTO) {
+        if (parentStyle && style->dominantBaseline() == DB_AUTO)
+            baseline = dominantBaselineToShift(isVerticalText, text->parent(), font);
+        else
+            baseline = dominantBaselineToShift(isVerticalText, text, font);
+
+        ASSERT(baseline != AB_AUTO);    
+    }
+
+    // Note: http://wiki.apache.org/xmlgraphics-fop/LineLayout/AlignmentHandling
+    switch (baseline) {
+    case AB_BASELINE:
+    {
+        if (parentStyle)
+            return dominantBaselineToShift(isVerticalText, text->parent(), font);
+
+        return 0.0f;
+    }
+    case AB_BEFORE_EDGE:
+    case AB_TEXT_BEFORE_EDGE:
+        return font.ascent();
+    case AB_MIDDLE:
+        return font.xHeight() / 2.0f;
+    case AB_CENTRAL:
+        // Not needed, we're taking this into account already for vertical text!
+        // return (font.ascent() - font.descent()) / 2.0f;
+        return 0.0f;
+    case AB_AFTER_EDGE:
+    case AB_TEXT_AFTER_EDGE:
+    case AB_IDEOGRAPHIC:
+        return font.descent();
+    case AB_ALPHABETIC:
+        return 0.0f;
+    case AB_HANGING:
+        return font.ascent() * 8.0f / 10.0f;
+    case AB_MATHEMATICAL:
+        return font.ascent() / 2.0f;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0.0f;
+    }
 }
 
 static inline float glyphOrientationToAngle(const SVGRenderStyle* svgStyle, bool isVerticalText, const UChar& character)
@@ -1118,6 +1232,9 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             else
                 info.shifty -= shift;
         }
+
+        // Take dominant-baseline / alignment-baseline into account
+        yOrientationShift += alignmentBaselineToShift(isVerticalText, text, font);
 
         svgChar.x = info.curx;
         svgChar.y = info.cury;
