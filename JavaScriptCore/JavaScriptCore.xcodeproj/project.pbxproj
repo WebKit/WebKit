@@ -1738,7 +1738,10 @@
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = .;
+				HEADER_SEARCH_PATHS = (
+					icu,
+					.,
+				);
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
@@ -1747,7 +1750,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
+				HEADER_SEARCH_PATHS = (
+					icu,
+					.,
+				);
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
@@ -1756,7 +1762,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051450BA9E8A70081E9D0 /* Base.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
+				HEADER_SEARCH_PATHS = (
+					icu,
+					.,
+				);
 			};
 			name = Production;
 		};

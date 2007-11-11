@@ -1,5 +1,10 @@
 2007-11-11  Darin Adler  <darin@apple.com>
 
+        * JavaScriptCore.xcodeproj/project.pbxproj: Try fixing Mac Tiger builds
+        by adding another include path.
+
+2007-11-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         - http://bugs.webkit.org/show_bug.cgi?id=15924
