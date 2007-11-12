@@ -1,3 +1,40 @@
+2007-11-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15944
+          streamline SegmentedString to speed up parsing
+
+        I measured a speed-up of the page load test while developing this patch. I don't
+        have a precise figure, though.
+
+        * html/HTMLTokenizer.h: Removed unneeded lineNumberPtr() function. Also renamed
+        lineno to m_lineNumber.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processListing): Don't pass 0 to the advance function
+        since we don't want to update a line number.
+        (WebCore::HTMLTokenizer::parseSpecial): Ditto.
+        (WebCore::HTMLTokenizer::parseComment): Pass the line number data member directly
+        instead of lineNumberPtr() since the advance function now takes a reference.
+        (WebCore::HTMLTokenizer::parseServer): Ditto.
+        (WebCore::HTMLTokenizer::parseProcessingInstruction): Ditto.
+        (WebCore::HTMLTokenizer::parseText): Ditto.
+        (WebCore::HTMLTokenizer::parseEntity): Ditto.
+        (WebCore::HTMLTokenizer::parseTag): Ditto.
+        (WebCore::HTMLTokenizer::write): Ditto.
+
+        * loader/FTPDirectoryDocument.cpp: (WebCore::FTPDirectoryTokenizer::write):
+        * loader/TextDocument.cpp: (WebCore::TextTokenizer::write):
+        Don't pass 0 to the advance function.
+
+        * platform/SegmentedString.h: (WebCore::SegmentedString::advance): Streamlined
+        the most common case, and pushed less common cases into a separate function
+        that is not inlined. Also got rid of a branch by separating the case with a
+        line number from the case without one.
+
+        * platform/SegmentedString.cpp: (WebCore::SegmentedString::advanceSlowCase):
+        Added. The aforementioned less common cases are here.
+
 2007-11-11  Antti Koivisto  <antti@apple.com>
 
         Forgot to do this review change (and test HTTP commit).

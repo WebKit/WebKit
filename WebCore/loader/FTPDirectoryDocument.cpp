@@ -402,7 +402,7 @@ bool FTPDirectoryTokenizer::write(const SegmentedString& s, bool appendData)
             m_skipLF = false;
         }
         
-        str.advance(0);
+        str.advance();
         
         // Maybe enlarge the buffer
         checkBuffer();

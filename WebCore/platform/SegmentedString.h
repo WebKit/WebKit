@@ -1,7 +1,5 @@
 /*
-    This file is part of the KDE libraries
-
-    Copyright (C) 2004, 2005, 2006 Apple Computer
+    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -83,7 +81,8 @@ public:
     bool excludeLineNumbers() const { return m_currentString.excludeLineNumbers(); }
     void setExcludeLineNumbers();
 
-    void push(UChar c) {
+    void push(UChar c)
+    {
         if (!m_pushedChar1) {
             m_pushedChar1 = c;
             m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
@@ -96,17 +95,25 @@ public:
     bool isEmpty() const { return !current(); }
     unsigned length() const;
 
-    void advance(int* lineNumber = 0) {
-        if (m_pushedChar1) {
-            m_pushedChar1 = m_pushedChar2;
-            m_pushedChar2 = 0;
-        } else if (m_currentString.m_current) {
-            if (*m_currentString.m_current++ == '\n' && lineNumber && !m_currentString.excludeLineNumbers())
-                *lineNumber = *lineNumber + 1;
-            if (--m_currentString.m_length == 0)
-                advanceSubstring();
+    void advance()
+    {
+        if (!m_pushedChar1 && m_currentString.m_length > 1) {
+            --m_currentString.m_length;
+            m_currentChar = ++m_currentString.m_current;
+            return;
         }
-        m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
+        advanceSlowCase();
+    }
+    
+    void advance(int& lineNumber)
+    {
+        if (!m_pushedChar1 && m_currentString.m_length > 1) {
+            lineNumber += (*m_currentString.m_current == '\n') & m_currentString.excludeLineNumbers();
+            --m_currentString.m_length;
+            m_currentChar = ++m_currentString.m_current;
+            return;
+        }
+        advanceSlowCase(lineNumber);
     }
     
     bool escaped() const { return m_pushedChar1; }
@@ -120,6 +127,8 @@ private:
     void append(const SegmentedSubstring &);
     void prepend(const SegmentedSubstring &);
 
+    void advanceSlowCase();
+    void advanceSlowCase(int& lineNumber);
     void advanceSubstring();
     const UChar* current() const { return m_currentChar; }
 

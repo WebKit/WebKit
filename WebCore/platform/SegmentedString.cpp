@@ -1,7 +1,5 @@
 /*
-    This file is part of the KDE libraries
-
-    Copyright (C) 2004-6 Apple Computer
+    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -172,6 +170,33 @@ String SegmentedString::toString() const
             (*i).appendTo(result);
     }
     return result;
+}
+
+void SegmentedString::advanceSlowCase()
+{
+    if (m_pushedChar1) {
+        m_pushedChar1 = m_pushedChar2;
+        m_pushedChar2 = 0;
+    } else if (m_currentString.m_current) {
+        ++m_currentString.m_current;
+        if (--m_currentString.m_length == 0)
+            advanceSubstring();
+    }
+    m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
+}
+
+void SegmentedString::advanceSlowCase(int& lineNumber)
+{
+    if (m_pushedChar1) {
+        m_pushedChar1 = m_pushedChar2;
+        m_pushedChar2 = 0;
+    } else if (m_currentString.m_current) {
+        if (*m_currentString.m_current++ == '\n' && !m_currentString.excludeLineNumbers())
+            ++lineNumber;
+        if (--m_currentString.m_length == 0)
+            advanceSubstring();
+    }
+    m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
 }
 
 }
