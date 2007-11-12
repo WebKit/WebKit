@@ -1,5 +1,12 @@
 2007-11-11  Antti Koivisto  <antti@apple.com>
 
+        Forgot to do this review change (and test HTTP commit).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::play):
+
+2007-11-11  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin.
         
         - Update play() and pause() to match current HTML5 draft

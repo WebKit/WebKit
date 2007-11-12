@@ -609,7 +609,6 @@ void HTMLMediaElement::play(ExceptionCode& ec)
     if (endedPlayback()) {
         m_currentLoop = 0;
         seek(effectiveStart(), unused);
-        unused = 0;
     }
     setPlaybackRate(defaultPlaybackRate(), unused);
     
