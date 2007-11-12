@@ -28,7 +28,7 @@
 
 #include "Parser.h"
 #include "internal.h"
-#include "RegExp.h"
+#include "regexp.h"
 #include "SymbolTable.h"
 #include <wtf/ListRefPtr.h>
 #include <wtf/OwnPtr.h>
