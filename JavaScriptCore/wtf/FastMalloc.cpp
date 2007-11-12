@@ -2292,12 +2292,18 @@ void free(void* ptr) {
 extern "C" 
 #endif
 void* calloc(size_t n, size_t elem_size) {
-  void* result = do_malloc(n * elem_size);
+  const size_t totalBytes = n * elem_size;
+    
+  // Protect against overflow
+  if (n > 1 && elem_size && (totalBytes / elem_size) != n)
+    return 0;
+    
+  void* result = do_malloc(totalBytes);
   if (result != NULL) {
-    memset(result, 0, n * elem_size);
+    memset(result, 0, totalBytes);
   }
 #ifndef WTF_CHANGES
-  MallocHook::InvokeNewHook(result, n * elem_size);
+  MallocHook::InvokeNewHook(result, totalBytes);
 #endif
   return result;
 }

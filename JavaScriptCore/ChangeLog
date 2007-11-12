@@ -1,3 +1,13 @@
+2007-11-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric.
+
+        Partial fix for <rdar://problem/5585334> numfuzz: integer overflows opening malformed SVG file in WebCore::ImageBuffer::create
+
+        Unfortunately this is a very slight regression, but is unavoidable.
+
+        * wtf/FastMalloc.cpp:
+
 2007-11-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
