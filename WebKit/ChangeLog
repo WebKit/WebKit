@@ -1,3 +1,7 @@
+2007-11-12  Adam Roben  <aroben@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated.
+
 2007-11-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         Adding the wx WebKit implementation.

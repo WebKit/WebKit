@@ -34,7 +34,7 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my @directoriesToScan = ("WebKit", "WebKit/win", "-WebKit/gtk");
+my @directoriesToScan = ("WebKit/mac", "WebKit/win");
 my $exceptionsFile = "WebKit/StringsNotToBeLocalized.txt";
 
 @ARGV == 0 or die "Usage: " . basename($0) . "\n";
