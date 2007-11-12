@@ -1,3 +1,14 @@
+2007-11-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin and Antti.
+
+        Return behaviour for 0 sized pattern back to what it was prior to r27704
+
+        This change in behaviour broke two layout tests in DRT, so correcting it
+        corrects existing tests.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+
 2007-11-12  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.
