@@ -5,6 +5,20 @@
         Landing a few layout tests from http://bugs.webkit.org/show_bug.cgi?id=14868
         Import variable lookup optimizations from KJS
 
+        * fast/js/rehash-assign-expected.txt: Added.
+        * fast/js/rehash-assign.html: Added.
+        * fast/js/resize-array-assign-expected.txt: Added.
+        * fast/js/resize-array-assign.html: Added.
+        * fast/js/resources/rehash-assign.js: Added.
+        * fast/js/resources/resize-array-assign.js: Added.
+
+2007-11-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+        
+        Landing a few layout tests from http://bugs.webkit.org/show_bug.cgi?id=14868
+        Import variable lookup optimizations from KJS
+
         * fast/js/kde/arguments-scope-expected.txt: Added.
         * fast/js/kde/arguments-scope.html: Added.
         * fast/js/kde/resources/arguments-scope.js: Added.
