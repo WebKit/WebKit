@@ -81,7 +81,7 @@ public:
 
     // Basic conversions.
     JSValue* toPrimitive(ExecState* exec, JSType preferredType = UnspecifiedType) const;
-    bool getPrimitiveNumber(ExecState* exec, double& number) const;
+    bool getPrimitiveNumber(ExecState* exec, double& number, JSValue*& value);
 
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
@@ -149,7 +149,7 @@ public:
 
     // Basic conversions.
     virtual JSValue *toPrimitive(ExecState *exec, JSType preferredType = UnspecifiedType) const = 0;
-    virtual bool getPrimitiveNumber(ExecState* exec, double& number) const = 0;
+    virtual bool getPrimitiveNumber(ExecState* exec, double& number, JSValue*& value) = 0;
     virtual bool toBoolean(ExecState *exec) const = 0;
     virtual double toNumber(ExecState *exec) const = 0;
     virtual UString toString(ExecState *exec) const = 0;
@@ -420,13 +420,14 @@ inline JSValue* JSValue::toPrimitive(ExecState* exec, JSType preferredType) cons
     return JSImmediate::isImmediate(this) ? const_cast<JSValue*>(this) : asCell()->toPrimitive(exec, preferredType);
 }
 
-inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number) const
+inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number, JSValue*& value)
 {
     if (JSImmediate::isImmediate(this)) {
         number = JSImmediate::toDouble(this);
+        value = this;
         return true;
     }
-    return asCell()->getPrimitiveNumber(exec, number);
+    return asCell()->getPrimitiveNumber(exec, number, value);
 }
 
 inline bool JSValue::toBoolean(ExecState *exec) const

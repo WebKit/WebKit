@@ -1,3 +1,65 @@
+2007-11-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Add simple type inferencing to the parser, and create custom
+        AddNode and LessNode subclasses based on inferred types.
+        http://bugs.webkit.org/show_bug.cgi?id=15884
+        
+        SunSpider claims this is at least a 0.5% speedup.
+
+        * JavaScriptCore.exp:
+        * kjs/grammar.y:
+        * kjs/internal.cpp:
+        (KJS::NumberImp::getPrimitiveNumber):
+        (KJS::GetterSetterImp::getPrimitiveNumber):
+        * kjs/internal.h:
+        * kjs/lexer.cpp:
+        (KJS::Lexer::lex):
+        * kjs/nodes.cpp:
+        (KJS::Node::Node):
+        (KJS::StringNode::evaluate):
+        (KJS::StringNode::evaluateToNumber):
+        (KJS::StringNode::evaluateToBoolean):
+        (KJS::RegExpNode::evaluate):
+        (KJS::UnaryPlusNode::optimizeVariableAccess):
+        (KJS::AddNode::evaluate):
+        (KJS::AddNode::evaluateToNumber):
+        (KJS::AddNumbersNode::inlineEvaluateToNumber):
+        (KJS::AddNumbersNode::evaluate):
+        (KJS::AddNumbersNode::evaluateToNumber):
+        (KJS::AddStringsNode::evaluate):
+        (KJS::AddStringLeftNode::evaluate):
+        (KJS::AddStringRightNode::evaluate):
+        (KJS::lessThan):
+        (KJS::lessThanEq):
+        (KJS::LessNumbersNode::evaluate):
+        (KJS::LessStringsNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::ExpressionNode::):
+        (KJS::RegExpNode::):
+        (KJS::RegExpNode::precedence):
+        (KJS::TypeOfResolveNode::):
+        (KJS::LocalVarTypeOfNode::):
+        (KJS::UnaryPlusNode::):
+        (KJS::UnaryPlusNode::precedence):
+        (KJS::AddNode::):
+        (KJS::AddNode::precedence):
+        (KJS::AddNumbersNode::):
+        (KJS::AddStringLeftNode::):
+        (KJS::AddStringRightNode::):
+        (KJS::AddStringsNode::):
+        (KJS::LessNode::):
+        (KJS::LessNode::precedence):
+        (KJS::LessNumbersNode::):
+        (KJS::LessStringsNode::):
+        * kjs/nodes2string.cpp:
+        (KJS::StringNode::streamTo):
+        * kjs/object.cpp:
+        * kjs/object.h:
+        * kjs/value.h:
+        (KJS::JSValue::getPrimitiveNumber):
+
 2007-11-11  Darin Adler  <darin@apple.com>
 
         - try another way of fixing dftables builds -- refactor pcre_internal.h a bit

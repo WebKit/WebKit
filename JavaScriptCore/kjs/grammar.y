@@ -57,6 +57,8 @@ static bool allowAutomaticSemicolon();
 
 using namespace KJS;
 
+static AddNode* makeAddNode(ExpressionNode*, ExpressionNode*);
+static LessNode* makeLessNode(ExpressionNode*, ExpressionNode*);
 static ExpressionNode* makeAssignNode(ExpressionNode* loc, Operator, ExpressionNode* expr);
 static ExpressionNode* makePrefixNode(ExpressionNode* expr, Operator);
 static ExpressionNode* makePostfixNode(ExpressionNode* expr, Operator);
@@ -84,30 +86,36 @@ static NumberNode* makeNumberNode(double);
 %}
 
 %union {
-  int                 ival;
-  double              dval;
-  UString             *ustr;
-  Identifier          *ident;
-  ExpressionNode      *node;
-  StatementNode       *stat;
-  ParameterList       param;
-  FunctionBodyNode    *body;
-  FuncDeclNode        *func;
-  FuncExprNode        *funcExpr;
-  ProgramNode         *prog;
-  AssignExprNode      *init;
-  SourceElements      *srcs;
-  ArgumentsNode       *args;
-  ArgumentList        alist;
-  VarDeclNode         *decl;
-  VarDeclList         vlist;
-  CaseBlockNode       *cblk;
-  ClauseList          clist;
-  CaseClauseNode      *ccl;
-  ElementList         elm;
-  Operator            op;
-  PropertyList        plist;
-  PropertyNode       *pnode;
+    int                 intValue;
+    double              doubleValue;
+    UString*            string;
+    Identifier*         ident;
+
+    // expression subtrees
+    ExpressionNode*     expressionNode;
+    FuncDeclNode*       funcDeclNode;
+    PropertyNode*       propertyNode;
+    ArgumentsNode*      argumentsNode;
+    VarDeclNode*        varDeclNode;
+    CaseBlockNode*      caseBlockNode;
+    CaseClauseNode*     caseClauseNode;
+    FuncExprNode*       funcExprNode;
+    AssignExprNode*     assignExprNode;
+
+    // statement nodes
+    StatementNode*      statementNode;
+    FunctionBodyNode*   functionBodyNode;
+    ProgramNode*        programNode;
+
+    SourceElements*     sourceElements;
+    PropertyList        propertyList;
+    ArgumentList        argumentList;
+    VarDeclList         varDeclList;
+    ClauseList          clauseList;
+    ElementList         elementList;
+    ParameterList       parameterList;
+
+    Operator            op;
 }
 
 %start Program
@@ -143,66 +151,66 @@ static NumberNode* makeNumberNode(double);
 %token XOREQUAL OREQUAL            /* ^= and |= */
 
 /* terminal types */
-%token <dval> NUMBER
-%token <ustr> STRING
+%token <doubleValue> NUMBER
+%token <string> STRING
 %token <ident> IDENT
 
 /* automatically inserted semicolon */
 %token AUTOPLUSPLUS AUTOMINUSMINUS
 
 /* non-terminal types */
-%type <node>  Literal ArrayLiteral
+%type <expressionNode>  Literal ArrayLiteral
 
-%type <node>  PrimaryExpr PrimaryExprNoBrace
-%type <node>  MemberExpr MemberExprNoBF /* BF => brace or function */
-%type <node>  NewExpr NewExprNoBF
-%type <node>  CallExpr CallExprNoBF
-%type <node>  LeftHandSideExpr LeftHandSideExprNoBF
-%type <node>  PostfixExpr PostfixExprNoBF
-%type <node>  UnaryExpr UnaryExprNoBF UnaryExprCommon
-%type <node>  MultiplicativeExpr MultiplicativeExprNoBF
-%type <node>  AdditiveExpr AdditiveExprNoBF
-%type <node>  ShiftExpr ShiftExprNoBF
-%type <node>  RelationalExpr RelationalExprNoIn RelationalExprNoBF
-%type <node>  EqualityExpr EqualityExprNoIn EqualityExprNoBF
-%type <node>  BitwiseANDExpr BitwiseANDExprNoIn BitwiseANDExprNoBF
-%type <node>  BitwiseXORExpr BitwiseXORExprNoIn BitwiseXORExprNoBF
-%type <node>  BitwiseORExpr BitwiseORExprNoIn BitwiseORExprNoBF
-%type <node>  LogicalANDExpr LogicalANDExprNoIn LogicalANDExprNoBF
-%type <node>  LogicalORExpr LogicalORExprNoIn LogicalORExprNoBF
-%type <node>  ConditionalExpr ConditionalExprNoIn ConditionalExprNoBF
-%type <node>  AssignmentExpr AssignmentExprNoIn AssignmentExprNoBF
-%type <node>  Expr ExprNoIn ExprNoBF
+%type <expressionNode>  PrimaryExpr PrimaryExprNoBrace
+%type <expressionNode>  MemberExpr MemberExprNoBF /* BF => brace or function */
+%type <expressionNode>  NewExpr NewExprNoBF
+%type <expressionNode>  CallExpr CallExprNoBF
+%type <expressionNode>  LeftHandSideExpr LeftHandSideExprNoBF
+%type <expressionNode>  PostfixExpr PostfixExprNoBF
+%type <expressionNode>  UnaryExpr UnaryExprNoBF UnaryExprCommon
+%type <expressionNode>  MultiplicativeExpr MultiplicativeExprNoBF
+%type <expressionNode>  AdditiveExpr AdditiveExprNoBF
+%type <expressionNode>  ShiftExpr ShiftExprNoBF
+%type <expressionNode>  RelationalExpr RelationalExprNoIn RelationalExprNoBF
+%type <expressionNode>  EqualityExpr EqualityExprNoIn EqualityExprNoBF
+%type <expressionNode>  BitwiseANDExpr BitwiseANDExprNoIn BitwiseANDExprNoBF
+%type <expressionNode>  BitwiseXORExpr BitwiseXORExprNoIn BitwiseXORExprNoBF
+%type <expressionNode>  BitwiseORExpr BitwiseORExprNoIn BitwiseORExprNoBF
+%type <expressionNode>  LogicalANDExpr LogicalANDExprNoIn LogicalANDExprNoBF
+%type <expressionNode>  LogicalORExpr LogicalORExprNoIn LogicalORExprNoBF
+%type <expressionNode>  ConditionalExpr ConditionalExprNoIn ConditionalExprNoBF
+%type <expressionNode>  AssignmentExpr AssignmentExprNoIn AssignmentExprNoBF
+%type <expressionNode>  Expr ExprNoIn ExprNoBF
 
-%type <node>  ExprOpt ExprNoInOpt
+%type <expressionNode>  ExprOpt ExprNoInOpt
 
-%type <stat>  Statement Block
-%type <stat>  VariableStatement ConstStatement EmptyStatement ExprStatement
-%type <stat>  IfStatement IterationStatement ContinueStatement
-%type <stat>  BreakStatement ReturnStatement WithStatement
-%type <stat>  SwitchStatement LabelledStatement
-%type <stat>  ThrowStatement TryStatement
-%type <stat>  DebuggerStatement
-%type <stat>  SourceElement
+%type <statementNode>   Statement Block
+%type <statementNode>   VariableStatement ConstStatement EmptyStatement ExprStatement
+%type <statementNode>   IfStatement IterationStatement ContinueStatement
+%type <statementNode>   BreakStatement ReturnStatement WithStatement
+%type <statementNode>   SwitchStatement LabelledStatement
+%type <statementNode>   ThrowStatement TryStatement
+%type <statementNode>   DebuggerStatement
+%type <statementNode>   SourceElement
 
-%type <init>  Initializer InitializerNoIn
-%type <func>  FunctionDeclaration
-%type <funcExpr>  FunctionExpr
-%type <body>  FunctionBody
-%type <srcs>  SourceElements
-%type <param> FormalParameterList
-%type <op>    AssignmentOperator
-%type <args>  Arguments
-%type <alist> ArgumentList
-%type <vlist> VariableDeclarationList VariableDeclarationListNoIn ConstDeclarationList
-%type <decl>  VariableDeclaration VariableDeclarationNoIn ConstDeclaration
-%type <cblk>  CaseBlock
-%type <ccl>   CaseClause DefaultClause
-%type <clist> CaseClauses CaseClausesOpt
-%type <ival>  Elision ElisionOpt
-%type <elm>   ElementList
-%type <pnode> Property
-%type <plist> PropertyList
+%type <assignExprNode>  Initializer InitializerNoIn
+%type <funcDeclNode>    FunctionDeclaration
+%type <funcExprNode>    FunctionExpr
+%type <functionBodyNode>  FunctionBody
+%type <sourceElements>  SourceElements
+%type <parameterList>   FormalParameterList
+%type <op>              AssignmentOperator
+%type <argumentsNode>   Arguments
+%type <argumentList>    ArgumentList
+%type <varDeclList>     VariableDeclarationList VariableDeclarationListNoIn ConstDeclarationList
+%type <varDeclNode>     VariableDeclaration VariableDeclarationNoIn ConstDeclaration
+%type <caseBlockNode>   CaseBlock
+%type <caseClauseNode>  CaseClause DefaultClause
+%type <clauseList>      CaseClauses CaseClausesOpt
+%type <intValue>        Elision ElisionOpt
+%type <elementList>     ElementList
+%type <propertyNode>    Property
+%type <propertyList>    PropertyList
 %%
 
 Literal:
@@ -262,7 +270,7 @@ ArrayLiteral:
 ;
 
 ElementList:
-    ElisionOpt AssignmentExpr           { $$.head = new ElementNode($1, $2); 
+    ElisionOpt AssignmentExpr           { $$.head = new ElementNode($1, $2);
                                           $$.tail = $$.head; }
   | ElementList ',' ElisionOpt AssignmentExpr
                                         { $$.head = $1.head;
@@ -394,14 +402,14 @@ MultiplicativeExprNoBF:
 
 AdditiveExpr:
     MultiplicativeExpr
-  | AdditiveExpr '+' MultiplicativeExpr { $$ = new AddNode($1, $3); }
+  | AdditiveExpr '+' MultiplicativeExpr { $$ = makeAddNode($1, $3); }
   | AdditiveExpr '-' MultiplicativeExpr { $$ = new SubNode($1, $3); }
 ;
 
 AdditiveExprNoBF:
     MultiplicativeExprNoBF
   | AdditiveExprNoBF '+' MultiplicativeExpr
-                                        { $$ = new AddNode($1, $3); }
+                                        { $$ = makeAddNode($1, $3); }
   | AdditiveExprNoBF '-' MultiplicativeExpr
                                         { $$ = new SubNode($1, $3); }
 ;
@@ -422,7 +430,7 @@ ShiftExprNoBF:
 
 RelationalExpr:
     ShiftExpr
-  | RelationalExpr '<' ShiftExpr        { $$ = new LessNode($1, $3); }
+  | RelationalExpr '<' ShiftExpr        { $$ = makeLessNode($1, $3); }
   | RelationalExpr '>' ShiftExpr        { $$ = new GreaterNode($1, $3); }
   | RelationalExpr LE ShiftExpr         { $$ = new LessEqNode($1, $3); }
   | RelationalExpr GE ShiftExpr         { $$ = new GreaterEqNode($1, $3); }
@@ -432,7 +440,7 @@ RelationalExpr:
 
 RelationalExprNoIn:
     ShiftExpr
-  | RelationalExprNoIn '<' ShiftExpr    { $$ = new LessNode($1, $3); }
+  | RelationalExprNoIn '<' ShiftExpr    { $$ = makeLessNode($1, $3); }
   | RelationalExprNoIn '>' ShiftExpr    { $$ = new GreaterNode($1, $3); }
   | RelationalExprNoIn LE ShiftExpr     { $$ = new LessEqNode($1, $3); }
   | RelationalExprNoIn GE ShiftExpr     { $$ = new GreaterEqNode($1, $3); }
@@ -442,7 +450,7 @@ RelationalExprNoIn:
 
 RelationalExprNoBF:
     ShiftExprNoBF
-  | RelationalExprNoBF '<' ShiftExpr    { $$ = new LessNode($1, $3); }
+  | RelationalExprNoBF '<' ShiftExpr    { $$ = makeLessNode($1, $3); }
   | RelationalExprNoBF '>' ShiftExpr    { $$ = new GreaterNode($1, $3); }
   | RelationalExprNoBF LE ShiftExpr     { $$ = new LessEqNode($1, $3); }
   | RelationalExprNoBF GE ShiftExpr     { $$ = new GreaterEqNode($1, $3); }
@@ -886,6 +894,39 @@ SourceElement:
 ;
  
 %%
+
+static AddNode* makeAddNode(ExpressionNode* left, ExpressionNode* right)
+{
+    JSType t1 = left->expectedReturnType();
+    JSType t2 = right->expectedReturnType();
+
+    if (t1 == NumberType && t2 == NumberType)
+        return new AddNumbersNode(left, right);
+    if (t1 == StringType && t2 == StringType)
+        return new AddStringsNode(left, right);
+    if (t1 == StringType)
+        return new AddStringLeftNode(left, right);
+    if (t2 == StringType)
+        return new AddStringRightNode(left, right);
+    return new AddNode(left, right);
+}
+
+static LessNode* makeLessNode(ExpressionNode* left, ExpressionNode* right)
+{
+    JSType t1 = left->expectedReturnType();
+    JSType t2 = right->expectedReturnType();
+    
+    if (t1 == StringType && t2 == StringType)
+        return new LessStringsNode(left, right);
+
+    // There are certainly more efficient ways to do this type check if necessary
+    if (t1 == NumberType || t1 == BooleanType || t1 == UndefinedType || t1 == NullType ||
+        t2 == NumberType || t2 == BooleanType || t2 == UndefinedType || t2 == NullType)
+        return new LessNumbersNode(left, right);
+
+    // Neither is certain to be a number, nor were both certain to be strings, so we use the default (slow) implementation.
+    return new LessNode(left, right);
+}
 
 static ExpressionNode* makeAssignNode(ExpressionNode* loc, Operator op, ExpressionNode* expr)
 {

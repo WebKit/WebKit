@@ -285,12 +285,12 @@ void NumberNode::streamTo(SourceStream& s) const
 
 void StringNode::streamTo(SourceStream& s) const
 {
-    s << '"' << escapeStringForPrettyPrinting(value) << '"';
+    s << '"' << escapeStringForPrettyPrinting(m_value) << '"';
 }
 
 void RegExpNode::streamTo(SourceStream& s) const
 { 
-    s << '/' <<  pattern << '/' << flags; 
+    s << '/' <<  m_pattern << '/' << m_flags; 
 }
 
 void ThisNode::streamTo(SourceStream& s) const
@@ -524,7 +524,7 @@ void PrefixErrorNode::streamTo(SourceStream& s) const
 
 void UnaryPlusNode::streamTo(SourceStream& s) const
 {
-    s << "+ " << PrecUnary << expr;
+    s << "+ " << PrecUnary << m_expr;
 }
 
 void NegateNode::streamTo(SourceStream& s) const

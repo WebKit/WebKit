@@ -354,9 +354,9 @@ static ALWAYS_INLINE JSValue *tryGetAndCallProperty(ExecState *exec, const JSObj
   return NULL;
 }
 
-bool JSObject::getPrimitiveNumber(ExecState* exec, double& number) const
+bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue*& result)
 {
-    JSValue* result = defaultValue(exec, NumberType);
+    result = defaultValue(exec, NumberType);
     number = result->toNumber(exec);
     return !result->isString();
 }

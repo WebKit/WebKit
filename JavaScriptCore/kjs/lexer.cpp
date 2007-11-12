@@ -556,11 +556,11 @@ int Lexer::lex()
       restrKeyword = true;
     break;
   case String:
-    kjsyylval.ustr = makeUString(buffer16, pos16);
+    kjsyylval.string = makeUString(buffer16, pos16);
     token = STRING;
     break;
   case Number:
-    kjsyylval.dval = dval;
+    kjsyylval.doubleValue = dval;
     token = NUMBER;
     break;
   case Bad:
