@@ -1,3 +1,21 @@
+2007-11-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Add special fastZeroedMalloc function to replace a 
+        number of fastCalloc calls where one argument was 1.
+        
+        This results in a 0.4% progression in SunSpider, more
+        than making up for the earlier regression caused by 
+        additional overflow checks.
+
+        * JavaScriptCore.exp:
+        * kjs/array_instance.cpp:
+        * kjs/property_map.cpp:
+        * wtf/FastMalloc.cpp:
+        * wtf/FastMalloc.h:
+        * wtf/HashTable.h:
+
 2007-11-11  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5578982> ASSERT in HashTable::checkTableConsistencyExceptSize beneath WebNotificationCenter

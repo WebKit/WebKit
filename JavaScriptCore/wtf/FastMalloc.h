@@ -30,6 +30,7 @@
 namespace WTF {
 
     void *fastMalloc(size_t n);
+    void *fastZeroedMalloc(size_t n);
     void *fastCalloc(size_t n_elements, size_t element_size);
     void fastFree(void* p);
     void *fastRealloc(void* p, size_t n);

@@ -230,6 +230,7 @@ __ZN3KJSeqERKNS_7UStringEPKc
 __ZN3WTF10fastCallocEmm
 __ZN3WTF10fastMallocEm
 __ZN3WTF11fastReallocEPvm
+__ZN3WTF16fastZeroedMallocEm
 __ZN3WTF8fastFreeEPv
 __ZNK3KJS11Interpreter12builtinArrayEv
 __ZNK3KJS11Interpreter12globalObjectEv

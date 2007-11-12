@@ -75,7 +75,7 @@ ArrayInstance::ArrayInstance(JSObject* prototype, unsigned initialLength)
 
     m_length = initialLength;
     m_vectorLength = initialCapacity;
-    m_storage = static_cast<ArrayStorage*>(fastCalloc(storageSize(initialCapacity), 1));
+    m_storage = static_cast<ArrayStorage*>(fastZeroedMalloc(storageSize(initialCapacity)));
 
     Collector::reportExtraMemoryCost(initialCapacity * sizeof(JSValue*));
 }

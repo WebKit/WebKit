@@ -127,6 +127,23 @@ void fastMallocAllow()
 } // namespace WTF
 #endif // NDEBUG
 
+#include <string.h>
+
+namespace WTF {
+void *fastZeroedMalloc(size_t n) 
+{
+    void *result = fastMalloc(n);
+    if (!result)
+        return 0;
+    memset(result, 0, n);
+#ifndef WTF_CHANGES
+    MallocHook::InvokeNewHook(result, n);
+#endif
+    return result;
+}
+    
+}
+
 #if FORCE_SYSTEM_MALLOC
 
 #include <stdlib.h>
@@ -189,7 +206,6 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <string.h>
 #if COMPILER(MSVC)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
