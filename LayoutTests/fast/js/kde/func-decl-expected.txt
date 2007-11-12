@@ -1,0 +1,22 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Function declaration takes effect at entry
+PASS Decl not yet overwritten
+PASS After assign (0)
+PASS function decls have no execution content
+PASS After assign #2 (0)
+PASS Decl already overwritten
+PASS After assign (1)
+PASS function decls have no execution content
+PASS After assign #2 (1)
+PASS Decl already overwritten
+PASS After assign (2)
+PASS function decls have no execution content
+PASS After assign #2 (2)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

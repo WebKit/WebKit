@@ -5,6 +5,17 @@
         Landing a few layout tests from http://bugs.webkit.org/show_bug.cgi?id=14868
         Import variable lookup optimizations from KJS
 
+        * fast/js/kde/func-decl-expected.txt: Added.
+        * fast/js/kde/func-decl.html: Added.
+        * fast/js/kde/resources/func-decl.js: Added.
+
+2007-11-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+        
+        Landing a few layout tests from http://bugs.webkit.org/show_bug.cgi?id=14868
+        Import variable lookup optimizations from KJS
+
         * fast/js/rehash-assign-expected.txt: Added.
         * fast/js/rehash-assign.html: Added.
         * fast/js/resize-array-assign-expected.txt: Added.
