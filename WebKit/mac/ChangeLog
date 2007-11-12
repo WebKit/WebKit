@@ -1,3 +1,18 @@
+2007-11-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5522011> The content of the password field of 
+        Safari is displayed by reconversion.
+
+        Some input methods (notably Kotoeri) can incorrectly provide 
+        access to the raw text of a password field.  To work around 
+        this we forcefully override the inputContext whenever a password
+        field is active.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView inputContext]):
+
 2007-11-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher
