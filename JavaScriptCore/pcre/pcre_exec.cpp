@@ -41,6 +41,8 @@ POSSIBILITY OF SUCH DAMAGE.
 that does pattern matching using an NFA algorithm, following the rules from
 the JavaScript specification. There are also some supporting functions. */
 
+#include "config.h"
+
 #include "pcre_internal.h"
 
 #include <wtf/ASCIICType.h>
@@ -128,7 +130,7 @@ typedef struct match_data {
   BOOL   caseless;
 } match_data;
 
-#define match_isgroup      TRUE    /* Set if start of bracketed group */
+#define match_isgroup      true    /* Set if start of bracketed group */
 
 /* Non-error returns from the match() function. Error returns are externally
 defined PCRE_ERROR_xxx codes, which are all negative. */
@@ -154,8 +156,8 @@ subject if the requested.
 Arguments:
   p           points to characters
   length      number to print
-  is_subject  TRUE if printing from within md->start_subject
-  md          pointer to matching data block, if is_subject is TRUE
+  is_subject  true if printing from within md->start_subject
+  md          pointer to matching data block, if is_subject is true
 
 Returns:     nothing
 */
@@ -187,7 +189,7 @@ Arguments:
   length      length to be matched
   md          points to match data block
 
-Returns:      TRUE if matched
+Returns:      true if matched
 */
 
 static BOOL
@@ -201,16 +203,16 @@ if (eptr >= md->end_subject)
 else
   {
   printf("matching subject ");
-  pchars(eptr, length, TRUE, md);
+  pchars(eptr, length, true, md);
   }
 printf(" against backref ");
-pchars(p, length, FALSE, md);
+pchars(p, length, false, md);
 printf("\n");
 #endif
 
 /* Always fail if not enough characters left */
 
-if (length > md->end_subject - eptr) return FALSE;
+if (length > md->end_subject - eptr) return false;
 
 /* Separate the caselesss case for speed */
 
@@ -221,13 +223,13 @@ if (md->caseless)
     pcre_uchar c = *p++;
     int othercase = _pcre_ucp_othercase(c);
     pcre_uchar d = *eptr++;
-    if (c != d && othercase != d) return FALSE;
+    if (c != d && othercase != d) return false;
     }
   }
 else
-  { while (length-- > 0) if (*p++ != *eptr++) return FALSE; }
+  { while (length-- > 0) if (*p++ != *eptr++) return false; }
 
-return TRUE;
+return true;
 }
 
 
@@ -297,7 +299,7 @@ RRETURN_##num:\
 
 #define RRETURN_NO_MATCH \
   {\
-    is_match = FALSE;\
+    is_match = false;\
     RRETURN;\
   }
 
@@ -332,7 +334,7 @@ Returns:       MATCH_MATCH if matched            )  these values are >= 0
 
 static int match(USPTR eptr, const uschar *ecode, int offset_top, match_data *md)
 {
-register int is_match = FALSE;
+register int is_match = false;
 register int i;
 register int c;
 
@@ -340,9 +342,9 @@ unsigned rdepth = 0;
 
 BOOL cur_is_word;
 BOOL prev_is_word;
-BOOL is_group_start = TRUE;
+BOOL is_group_start = true;
 int min;
-BOOL minimize = FALSE; /* Initialization not really needed, but some compilers think so. */
+BOOL minimize = false; /* Initialization not really needed, but some compilers think so. */
 
 /* The value 16 here is large enough that most regular expressions don't require
 any calls to pcre_stack_malloc, yet the amount of stack used for the array is
@@ -449,7 +451,7 @@ for (;;)
     BEGIN_OPCODE(END):
     md->end_match_ptr = frame->eptr;          /* Record where we ended */
     md->end_offset_top = frame->offset_top;   /* and how many extracts were taken */
-    is_match = TRUE;
+    is_match = true;
     RRETURN;
 
     /* Assertion brackets. Check the alternative branches in turn - the
@@ -498,7 +500,6 @@ for (;;)
     the end of a normal bracket, leaving the subject pointer. */
 
     BEGIN_OPCODE(ONCE):
-      {
       frame->prev = frame->ecode;
       frame->saved_eptr = frame->eptr;
 
@@ -553,7 +554,6 @@ for (;;)
         RMATCH(13, frame->ecode + 1+LINK_SIZE, frame->eptrb, 0);
         if (is_match) RRETURN;
         }
-      }
     RRETURN;
 
     /* An alternation is the end of a branch; scan along to find the end of the
@@ -609,7 +609,7 @@ for (;;)
         {
         md->end_match_ptr = frame->eptr;      /* For ONCE */
         md->end_offset_top = frame->offset_top;
-        is_match = TRUE;
+        is_match = true;
         RRETURN;
         }
 
@@ -617,7 +617,6 @@ for (;;)
       group number back at the start and if necessary complete handling an
       extraction by setting the offsets and bumping the high water mark. */
 
-        {
         frame->number = *frame->prev - OP_BRA;
 
         /* For extended extraction brackets (large number), we have to fish out
@@ -638,7 +637,7 @@ for (;;)
 
         if (frame->number > 0)
           {
-          if (frame->offset >= md->offset_max) md->offset_overflow = TRUE; else
+          if (frame->offset >= md->offset_max) md->offset_overflow = true; else
             {
             md->offset_vector[frame->offset] =
               md->offset_vector[md->offset_end - frame->number];
@@ -646,7 +645,6 @@ for (;;)
             if (frame->offset_top <= frame->offset) frame->offset_top = frame->offset + 2;
             }
           }
-        }
 
       /* For a non-repeating ket, just continue at this level. This also
       happens for a repeating ket if no characters were matched in the group.
@@ -723,14 +721,14 @@ for (;;)
       be "non-word" characters. */
 
         {
-        if (frame->eptr == md->start_subject) prev_is_word = FALSE; else
+        if (frame->eptr == md->start_subject) prev_is_word = false; else
           {
           const pcre_uchar *lastptr = frame->eptr - 1;
           while(ISMIDCHAR(*lastptr)) lastptr--;
           GETCHAR(c, lastptr);
           prev_is_word = c < 128 && (md->ctypes[c] & ctype_word) != 0;
           }
-        if (frame->eptr >= md->end_subject) cur_is_word = FALSE; else
+        if (frame->eptr >= md->end_subject) cur_is_word = false; else
           {
           GETCHAR(c, frame->eptr);
           cur_is_word = c < 128 && (md->ctypes[c] & ctype_word) != 0;
@@ -812,7 +810,6 @@ for (;;)
     loops). */
 
     BEGIN_OPCODE(REF):
-      {
       frame->offset = GET2(frame->ecode, 1) << 1;               /* Doubled ref number */
       frame->ecode += 3;                                 /* Advance past item */
 
@@ -910,7 +907,6 @@ for (;;)
           }
         RRETURN_NO_MATCH;
         }
-      }
     /* Control never gets here */
 
     /* Match a bit-mapped character class, possibly repeatedly. This op code is
@@ -926,7 +922,6 @@ for (;;)
 
     BEGIN_OPCODE(NCLASS):
     BEGIN_OPCODE(CLASS):
-      {
       frame->data = frame->ecode + 1;                /* Save for matching */
       frame->ecode += 33;                     /* Advance past the item */
 
@@ -1036,14 +1031,12 @@ for (;;)
 
         RRETURN;
         }
-      }
     /* Control never gets here */
 
     /* Match an extended character class. This opcode is encountered only
     in UTF-8 mode, because that's the only time it is compiled. */
 
     BEGIN_OPCODE(XCLASS):
-      {
       frame->data = frame->ecode + 1 + LINK_SIZE;                /* Save for matching */
       frame->ecode += GET(frame->ecode, 1);                      /* Advance past the item */
 
@@ -1129,13 +1122,11 @@ for (;;)
         RRETURN;
         }
 
-      /* Control never gets here */
-      }
+    /* Control never gets here */
 
     /* Match a single character, casefully */
 
     BEGIN_OPCODE(CHAR):
-      {
       frame->length = 1;
       frame->ecode++;
       GETUTF8CHARLEN(frame->fc, frame->ecode, frame->length);
@@ -1156,13 +1147,11 @@ for (;;)
         }
         if (frame->fc != dc) RRETURN_NO_MATCH;
       }
-      }
     NEXT_OPCODE;
 
     /* Match a single character, caselessly */
 
     BEGIN_OPCODE(CHARNC):
-      {
       frame->length = 1;
       frame->ecode++;
       GETUTF8CHARLEN(frame->fc, frame->ecode, frame->length);
@@ -1188,7 +1177,6 @@ for (;;)
             RRETURN_NO_MATCH;
           }
         }
-      }
     NEXT_OPCODE;
 
     /* Match a single ASCII character. */
@@ -1217,7 +1205,7 @@ for (;;)
 
     BEGIN_OPCODE(EXACT):
     min = frame->max = GET2(frame->ecode, 1);
-    minimize = FALSE;
+    minimize = false;
     frame->ecode += 3;
     goto REPEATCHAR;
 
@@ -1249,7 +1237,6 @@ for (;;)
 
       frame->length = 1;
       GETUTF8CHARLEN(frame->fc, frame->ecode, frame->length);
-      {
       if (min * (frame->fc > 0xFFFF ? 2 : 1) > md->end_subject - frame->eptr) RRETURN_NO_MATCH;
       frame->ecode += frame->length;
 
@@ -1348,8 +1335,7 @@ for (;;)
           }
           /* Control never gets here */
         }
-        /* Control never gets here */
-        }
+    /* Control never gets here */
 
     /* Match a negated single one-byte character. The character we are
     checking can be multibyte. */
@@ -1379,7 +1365,7 @@ for (;;)
 
     BEGIN_OPCODE(NOTEXACT):
     min = frame->max = GET2(frame->ecode, 1);
-    minimize = FALSE;
+    minimize = false;
     frame->ecode += 3;
     goto REPEATNOTCHAR;
 
@@ -1555,7 +1541,7 @@ for (;;)
 
     BEGIN_OPCODE(TYPEEXACT):
     min = frame->max = GET2(frame->ecode, 1);
-    minimize = TRUE;
+    minimize = true;
     frame->ecode += 3;
     goto REPEATTYPE;
 
@@ -1910,7 +1896,7 @@ for (;;)
 
 #ifdef DEBUG
         printf("start bracket %d subject=", frame->number);
-        pchars(frame->eptr, 16, TRUE, md);
+        pchars(frame->eptr, 16, true, md);
         printf("\n");
 #endif
 
@@ -2043,10 +2029,10 @@ int rc, resetcount, ocount;
 int first_byte = -1;
 int req_byte = -1;
 int req_byte2 = -1;
-BOOL using_temporary_offsets = FALSE;
-BOOL first_byte_caseless = FALSE;
+BOOL using_temporary_offsets = false;
+BOOL first_byte_caseless = false;
 BOOL startline;
-BOOL req_byte_caseless = FALSE;
+BOOL req_byte_caseless = false;
 match_data match_block;
 USPTR start_match = (USPTR)subject + start_offset;
 USPTR end_subject;
@@ -2093,14 +2079,14 @@ if (re->top_backref > 0 && re->top_backref >= ocount/3)
   ocount = re->top_backref * 3 + 3;
   match_block.offset_vector = new int[ocount];
   if (match_block.offset_vector == NULL) return JSRegExpErrorNoMemory;
-  using_temporary_offsets = TRUE;
+  using_temporary_offsets = true;
   DPRINTF(("Got memory to hold back references\n"));
   }
 else match_block.offset_vector = offsets;
 
 match_block.offset_end = ocount;
 match_block.offset_max = (2*ocount)/3;
-match_block.offset_overflow = FALSE;
+match_block.offset_overflow = false;
 
 /* Compute the minimum number of offsets that we need to reset each time. Doing
 this makes a huge difference to execution time when there aren't many brackets
@@ -2129,7 +2115,7 @@ studied, there may be a bitmap of possible first characters. */
   if ((re->options & PCRE_FIRSTSET) != 0)
     {
     first_byte = re->first_byte & 255;
-    if ((first_byte_caseless = ((re->first_byte & REQ_CASELESS) != 0)) == TRUE)
+    if ((first_byte_caseless = ((re->first_byte & REQ_CASELESS) != 0)) == true)
       first_byte = match_block.lcc[first_byte];
     }
 
@@ -2159,7 +2145,7 @@ do
     while (iptr < iend) *iptr++ = -1;
     }
 
-  /* Advance to a unique first char if possible. If firstline is TRUE, the
+  /* Advance to a unique first char if possible. If firstline is true, the
   start of the match is constrained to the first line of a multiline string.
   Implement this by temporarily adjusting end_subject so that we stop scanning
   at a newline. If the match fails at the newline, later code breaks this loop.
@@ -2202,7 +2188,7 @@ do
 
 #ifdef DEBUG  /* Sigh. Some compilers never learn. */
   printf(">>>> Match against: ");
-  pchars(start_match, end_subject - start_match, TRUE, &match_block);
+  pchars(start_match, end_subject - start_match, true, &match_block);
   printf("\n");
 #endif
 
@@ -2304,7 +2290,7 @@ do
       DPRINTF(("Copied offsets from temporary memory\n"));
       }
     if (match_block.end_offset_top > offsetcount)
-      match_block.offset_overflow = TRUE;
+      match_block.offset_overflow = true;
 
     DPRINTF(("Freeing temporary memory\n"));
     delete [] match_block.offset_vector;

@@ -37,8 +37,7 @@ POSSIBILITY OF SUCH DAMAGE.
 -----------------------------------------------------------------------------
 */
 
-
-/* This is a freestanding support program to generate a file containing default
+/* This is a freestanding support program to generate a file containing
 character tables. The tables are built according to the default C
 locale. */
 
@@ -46,34 +45,27 @@ locale. */
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "pcre_internal.h"
 
-#include "pcre_maketables.cpp"
-
 int main(int argc, char **argv)
 {
-int i;
-FILE *f;
-const unsigned char *tables = pcre_maketables();
-const unsigned char *base_of_tables = tables;
-
 if (argc != 2)
   {
   fprintf(stderr, "dftables: one filename argument is required\n");
   return 1;
   }
 
-f = fopen(argv[1], "wb");
+FILE* f = fopen(argv[1], "wb");
 if (f == NULL)
   {
   fprintf(stderr, "dftables: failed to open %s for writing\n", argv[1]);
   return 1;
   }
 
-/* There are two fprintf() calls here, because gcc in pedantic mode complains
-about the very long string otherwise. */
+int i;
 
 fprintf(f,
   "/*************************************************\n"
@@ -86,35 +78,53 @@ fprintf(f,
   "This file contains the default tables for characters with codes less than\n"
   "128 (ASCII characters). These tables are used when no external tables are\n"
   "passed to PCRE. */\n\n"
-  "const unsigned char _pcre_default_tables[] = {\n\n"
-  "/* This table is a lower casing table. */\n\n");
+  "const unsigned char _pcre_default_tables[%d] = {\n\n"
+  "/* This table is a lower casing table. */\n\n", tables_length);
+
+if (lcc_offset != 0)
+  abort();
 
 fprintf(f, "  ");
-for (i = 0; i < 256; i++)
+for (i = 0; i < 128; i++)
   {
   if ((i & 7) == 0 && i != 0) fprintf(f, "\n  ");
-  fprintf(f, "%3d", *tables++);
-  if (i != 255) fprintf(f, ",");
+  fprintf(f, "0x%02X", tolower(i));
+  if (i != 127) fprintf(f, ", ");
   }
 fprintf(f, ",\n\n");
 
 fprintf(f, "/* This table is a case flipping table. */\n\n");
 
+if (fcc_offset != 128)
+  abort();
+
 fprintf(f, "  ");
-for (i = 0; i < 256; i++)
+for (i = 0; i < 128; i++)
   {
   if ((i & 7) == 0 && i != 0) fprintf(f, "\n  ");
-  fprintf(f, "%3d", *tables++);
-  if (i != 255) fprintf(f, ",");
+  fprintf(f, "0x%02X", islower(i) ? toupper(i) : tolower(i));
+  if (i != 127) fprintf(f, ", ");
   }
 fprintf(f, ",\n\n");
 
 fprintf(f,
   "/* This table contains bit maps for various character classes.\n"
   "Each map is 32 bytes long and the bits run from the least\n"
-  "significant end of each byte. The classes that have their own\n"
-  "maps are: space, xdigit, digit, upper, lower, word, graph\n"
-  "print, punct, and cntrl. Other classes are built from combinations. */\n\n");
+  "significant end of each byte. The classes are: space, digit, word. */\n\n");
+
+if (cbits_offset != fcc_offset + 128)
+  abort();
+
+unsigned char cbit_table[cbit_length];
+memset(cbit_table, 0, cbit_length);
+for (i = '0'; i <= '9'; i++)
+  cbit_table[cbit_digit + i / 8] |= 1 << (i & 7);
+cbit_table[cbit_word + '_' / 8] |= 1 << ('_' & 7);
+for (i = 0; i < 128; i++)
+  {
+  if (isalnum(i)) cbit_table[cbit_word + i/8] |= 1 << (i & 7);
+  if (isspace(i)) cbit_table[cbit_space + i/8] |= 1 << (i & 7);
+  }
 
 fprintf(f, "  ");
 for (i = 0; i < cbit_length; i++)
@@ -124,8 +134,8 @@ for (i = 0; i < cbit_length; i++)
     if ((i & 31) == 0) fprintf(f, "\n");
     fprintf(f, "\n  ");
     }
-  fprintf(f, "0x%02x", *tables++);
-  if (i != cbit_length - 1) fprintf(f, ",");
+  fprintf(f, "0x%02X", cbit_table[i]);
+  if (i != cbit_length - 1) fprintf(f, ", ");
   }
 fprintf(f, ",\n\n");
 
@@ -136,30 +146,39 @@ fprintf(f,
   "  0x%02x   alphanumeric or '_'\n*/\n\n",
   ctype_space, ctype_xdigit, ctype_word);
 
+if (ctypes_offset != cbits_offset + cbit_length)
+    abort();
+
 fprintf(f, "  ");
-for (i = 0; i < 256; i++)
+for (i = 0; i < 128; i++)
   {
-  if ((i & 7) == 0 && i != 0)
+  int x = 0;
+  if (isspace(i)) x += ctype_space;
+  if (isxdigit(i)) x += ctype_xdigit;
+  if (isalnum(i) || i == '_') x += ctype_word;
+  fprintf(f, "0x%02X", x);
+  if (i != 127)
+    fprintf(f, ", ");
+  else
+    fprintf(f, "};");
+  if ((i & 7) == 7)
     {
     fprintf(f, " /* ");
-    if (isprint(i-8)) fprintf(f, " %c -", i-8);
-      else fprintf(f, "%3d-", i-8);
-    if (isprint(i-1)) fprintf(f, " %c ", i-1);
-      else fprintf(f, "%3d", i-1);
-    fprintf(f, " */\n  ");
+    if (isprint(i - 7)) fprintf(f, " %c -", i - 7);
+      else fprintf(f, "%3d-", i - 7);
+    if (isprint(i)) fprintf(f, " %c ", i);
+      else fprintf(f, "%3d", i);
+    fprintf(f, " */\n");
+    if (i != 127)
+      fprintf(f, "  ");
     }
-  fprintf(f, "0x%02x", *tables++);
-  if (i != 255) fprintf(f, ",");
   }
 
-fprintf(f, "};/* ");
-if (isprint(i-8)) fprintf(f, " %c -", i-8);
-  else fprintf(f, "%3d-", i-8);
-if (isprint(i-1)) fprintf(f, " %c ", i-1);
-  else fprintf(f, "%3d", i-1);
-fprintf(f, " */\n\n/* End of chartables.c */\n");
+if (tables_length != ctypes_offset + 128)
+    abort();
+
+fprintf(f, "\n\n/* End of chartables.c */\n");
 
 fclose(f);
-delete []base_of_tables;
 return 0;
 }

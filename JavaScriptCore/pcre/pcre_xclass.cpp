@@ -53,7 +53,7 @@ Arguments:
   c           the character
   data        points to the flag byte of the XCLASS data
 
-Returns:      TRUE if character matches, else FALSE
+Returns:      true if character matches, else false
 */
 
 BOOL

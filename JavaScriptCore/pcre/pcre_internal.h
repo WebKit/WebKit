@@ -44,6 +44,29 @@ functions whose names all begin with "_pcre_". */
 #ifndef PCRE_INTERNAL_H
 #define PCRE_INTERNAL_H
 
+/* Bit definitions for entries in the pcre_ctypes table. */
+
+#define ctype_space   0x01
+#define ctype_xdigit  0x08
+#define ctype_word    0x10   /* alphameric or '_' */
+
+/* Offsets for the bitmap tables in pcre_cbits. Each table contains a set
+of bits for a class map. Some classes are built by combining these tables. */
+
+#define cbit_space     0      /* \s */
+#define cbit_digit    32      /* \d */
+#define cbit_word     64      /* \w */
+#define cbit_length   96      /* Length of the cbits table */
+
+/* Offsets of the various tables from the base tables pointer, and
+total length. */
+
+#define lcc_offset      0
+#define fcc_offset    128
+#define cbits_offset  256
+#define ctypes_offset (cbits_offset + cbit_length)
+#define tables_length (ctypes_offset + 128)
+
 #ifndef DFTABLES
 
 #include "Assertions.h"
@@ -86,7 +109,6 @@ a runtime method for setting a different limit. On systems that support it,
 #define _pcre_default_tables kjs_pcre_default_tables
 #define _pcre_ord2utf8 kjs_pcre_ord2utf8
 #define _pcre_utf8_table1 kjs_pcre_utf8_table1
-#define _pcre_utf8_table1_size  kjs_pcre_utf8_table1_size
 #define _pcre_utf8_table2 kjs_pcre_utf8_table2
 #define _pcre_utf8_table3 kjs_pcre_utf8_table3
 #define _pcre_utf8_table4 kjs_pcre_utf8_table4
@@ -323,9 +345,6 @@ variable-length repeat, or a anything other than literal characters. */
 
 typedef int BOOL;
 
-#define FALSE   0
-#define TRUE    1
-
 /* Flag bits and data types for the extended class (OP_XCLASS) for classes that
 contain UTF-8 characters with values greater than 255. */
 
@@ -548,21 +567,19 @@ typedef struct {
   pcre_uint16 value;
 } ucp_type_table;
 
-
 /* Internal shared data tables. These are tables that are used by more than one
 of the exported public functions. They have to be "external" in the C sense,
 but are not part of the PCRE public API. The data for these tables is in the
 pcre_tables.c module. */
 
-extern const int    _pcre_utf8_table1[];
-extern const int    _pcre_utf8_table2[];
-extern const int    _pcre_utf8_table3[];
-extern const uschar _pcre_utf8_table4[];
+#define _pcre_utf8_table1_size 6
 
-extern const int    _pcre_utf8_table1_size;
+extern const int    _pcre_utf8_table1[6];
+extern const int    _pcre_utf8_table2[6];
+extern const int    _pcre_utf8_table3[6];
+extern const uschar _pcre_utf8_table4[0x40];
 
-extern const uschar _pcre_default_tables[];
-
+extern const uschar _pcre_default_tables[tables_length];
 
 /* Internal shared functions. These are functions that are used by more than
 one of the exported public functions. They have to be "external" in the C
@@ -575,29 +592,6 @@ extern BOOL        _pcre_xclass(int, const uschar *);
 #define IS_NEWLINE(nl) ((nl) == 0xA || (nl) == 0xD || (nl) == 0x2028 || (nl) == 0x2029)
 
 #endif
-
-/* Bit definitions for entries in the pcre_ctypes table. */
-
-#define ctype_space   0x01
-#define ctype_xdigit  0x08
-#define ctype_word    0x10   /* alphameric or '_' */
-
-/* Offsets for the bitmap tables in pcre_cbits. Each table contains a set
-of bits for a class map. Some classes are built by combining these tables. */
-
-#define cbit_space     0      /* \s */
-#define cbit_digit    32      /* \d */
-#define cbit_word     64      /* \w */
-#define cbit_length   96      /* Length of the cbits table */
-
-/* Offsets of the various tables from the base tables pointer, and
-total length. */
-
-#define lcc_offset      0
-#define fcc_offset    256
-#define cbits_offset  512
-#define ctypes_offset (cbits_offset + cbit_length)
-#define tables_length (ctypes_offset + 128)
 
 #endif
 

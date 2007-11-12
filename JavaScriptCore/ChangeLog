@@ -1,3 +1,61 @@
+2007-11-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix use of prefix and config.h, got rid of a few unneeded things in
+          the PCRE code; no behavior changes
+
+        * API/JSBase.cpp: Added include of config.h.
+        * API/JSCallbackConstructor.cpp: Ditto.
+        * API/JSCallbackFunction.cpp: Ditto.
+        * API/JSCallbackObject.cpp: Ditto.
+        * API/JSClassRef.cpp: Ditto.
+        * API/JSContextRef.cpp: Ditto.
+        * API/JSObjectRef.cpp: Ditto.
+        * API/JSStringRef.cpp: Ditto.
+        * API/JSValueRef.cpp: Ditto.
+
+        * JavaScriptCorePrefix.h: Removed obsolete <ctype.h> workaround.
+        Moved new/delete macros after includes, as they are in WebCore's prefix.
+        Removed "config.h".
+
+        * pcre/dftables.cpp: (main): Changed back to not use a separate maketables
+        function. This is needed for PCRE, but not helpful for our use. Also changed
+        the tables to all be 128 entries long instead of 256, since only the first
+        128 are ever used.
+
+        * pcre/pcre_compile.cpp: Added include of config.h. Eliminated digitab,
+        which was only being used to check hex digits. Changed all uses of TRUE and
+        FALSE to use the C++ true and false instead.
+        (check_escape): Just the TRUE/FALSE thing.
+        (is_counted_repeat): Ditto.
+        (could_be_empty_branch): Ditto.
+        (get_othercase_range): Ditto.
+        (compile_branch): Ditto.
+        (compile_regex): Ditto.
+        (is_anchored): Ditto.
+        (is_startline): Ditto.
+        (find_firstassertedchar): Ditto.
+        (jsRegExpCompile): Ditto.
+
+        * pcre/pcre_exec.cpp: Added include of config.h. Changed all uses of TRUE and
+        FALSE to use the C++ true and false instead.
+        (match_ref): Just the TRUE/FALSE thing.
+        (match): Ditto. Removed some unneeded braces.
+        (jsRegExpExecute): Just the TRUE/FALSE thing.
+
+        * pcre/pcre_internal.h: Moved the constants needed by dftables.cpp to the top
+        of the file instead of the bottom, so they can be used. Also changed the table
+        sizes to 128 instead of 256. Removed macro definitions of FALSE and TRUE.
+        Set array sizes for all the const arrays. Changed _pcre_utf8_table1_size to
+        be a macro instead of a extern int.
+
+        * pcre/pcre_maketables.cpp: Removed. It's all in dftables.cpp now.
+
+        * pcre/pcre_tables.cpp: Made table sizes explicit.
+
+        * pcre/pcre_xclass.cpp: Just the TRUE/FALSE thing.
+
 2007-11-12  Adam Roben  <aroben@apple.com>
 
         Build fix
