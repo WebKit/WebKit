@@ -1,3 +1,16 @@
+2007-11-12  George Staikos  <staikos@kde.org>
+
+        Reviewed by Tim.
+
+        Extract the text match marker highlight color into RenderTheme instead
+        of the hardcoded yellow.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformTextSearchHighlightColor):
+        * rendering/RenderTheme.h:
+
 2007-11-12  Mark Rowe  <mrowe@apple.com>
 
         Fix deadlock on launch on the Mac.
