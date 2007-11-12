@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +59,19 @@ static ThreadIdentifier establishIdentifierForPthreadHandle(pthread_t& pthreadHa
     return identifierCount++;
 }
 
+static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle)
+{
+    MutexLocker locker(threadMapMutex());
+
+    HashMap<ThreadIdentifier, pthread_t>::iterator i = threadMap().begin();
+    for (; i != threadMap().end(); ++i) {
+        if (pthread_equal(i->second, pthreadHandle))
+            return i->first;
+    }
+
+    return 0;
+}
+
 static pthread_t pthreadHandleForIdentifier(ThreadIdentifier id)
 {
     MutexLocker locker(threadMapMutex());
@@ -110,6 +124,14 @@ void detachThread(ThreadIdentifier threadID)
     pthread_detach(pthreadHandle);
     
     clearPthreadHandleForIdentifier(threadID);
+}
+
+ThreadIdentifier currentThread()
+{
+    pthread_t currentThread = pthread_self();
+    if (ThreadIdentifier id = identifierByPthreadHandle(currentThread))
+        return id;
+    return establishIdentifierForPthreadHandle(currentThread);
 }
 
 Mutex::Mutex()

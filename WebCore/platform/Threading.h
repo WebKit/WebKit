@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +42,11 @@ typedef struct _GMutex GMutex;
 typedef struct _GCond GCond;
 #endif
 
+#if PLATFORM(QT)
+class QMutex;
+class QWaitCondition;
+#endif
+
 #include <stdint.h>
 
 namespace WebCore {
@@ -50,6 +56,7 @@ typedef void* (*ThreadFunction)(void* argument);
 
 // Returns 0 if thread creation failed
 ThreadIdentifier createThread(ThreadFunction, void*);
+ThreadIdentifier currentThread();
 int waitForThreadCompletion(ThreadIdentifier, void**);
 void detachThread(ThreadIdentifier);
 
@@ -59,6 +66,9 @@ typedef pthread_cond_t PlatformCondition;
 #elif PLATFORM(GTK)
 typedef GMutex* PlatformMutex;
 typedef GCond* PlatformCondition;
+#elif PLATFORM(QT)
+typedef QMutex* PlatformMutex;
+typedef QWaitCondition* PlatformCondition;
 #else
 typedef void* PlatformMutex;
 typedef void* PlatformCondition;

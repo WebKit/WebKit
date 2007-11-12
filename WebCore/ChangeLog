@@ -1,3 +1,20 @@
+2007-11-11  Justin Haygood  <jhaygood@reaktix.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15939
+        Adds a currentThread API for use by SQLiteDatabase, etc.
+
+        * platform/Threading.h:
+        * platform/ThreadingNone.cpp:
+        (WebCore::currentThread):
+        * platform/gtk/ThreadingGtk.cpp:
+        (WebCore::identifierByGthreadHandle):
+        (WebCore::):
+        * platform/pthreads/ThreadingPthreads.cpp:
+        (WebCore::identifierByPthreadHandle):
+        (WebCore::currentThread):
+
 2007-11-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

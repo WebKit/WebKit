@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +34,7 @@ namespace WebCore {
 ThreadIdentifier createThread(ThreadFunction, void*) { return 0; }
 int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
 void detachThread(ThreadIdentifier) { }
+ThreadIdentifier currentThread() { return 0; }
 
 Mutex::Mutex() {}
 Mutex::~Mutex() {}

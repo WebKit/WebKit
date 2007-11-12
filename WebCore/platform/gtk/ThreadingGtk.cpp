@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +80,19 @@ static ThreadIdentifier establishIdentifierForThread(GThread*& thread)
     return identifierCount++;
 }
 
+static ThreadIdentifier identifierByGthreadHandle(GThread*& thread)
+{
+    MutexLocker locker(threadMapMutex());
+
+    HashMap<ThreadIdentifier, GThread*>::iterator i = threadMap().begin();
+    for (; i != threadMap().end(); ++i) {
+        if (i->second == thread)
+            return i->first;
+    }
+
+    return 0;
+}
+
 static GThread* threadForIdentifier(ThreadIdentifier id)
 {
     MutexLocker locker(threadMapMutex());
@@ -122,6 +136,14 @@ int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 
 void detachThread(ThreadIdentifier)
 {
+}
+
+ThreadIdentifier currentThread()
+{
+    GThread* currentThread = g_thread_self();
+    if (ThreadIdentifier id = identifierByGthreadHandle(currentThread))
+        return id;
+    return establishIdentifierForThread(currentThread);
 }
 
 Mutex::Mutex()
