@@ -550,6 +550,7 @@ String Element::nodeNamePreservingCase() const
 
 void Element::setPrefix(const AtomicString &_prefix, ExceptionCode& ec)
 {
+    ec = 0;
     checkSetPrefix(_prefix, ec);
     if (ec)
         return;

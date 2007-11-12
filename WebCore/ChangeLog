@@ -1,3 +1,46 @@
+2007-11-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Fix a bunch of cases where the exception code is checked by the function but is not zeroed first.
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::setDOMException):
+        * dom/Attr.cpp:
+        (WebCore::Attr::setPrefix):
+        * dom/Document.cpp:
+        (WebCore::Document::createElement):
+        * dom/Element.cpp:
+        (WebCore::Element::setPrefix):
+        * dom/Range.cpp:
+        (WebCore::Range::setStart):
+        (WebCore::Range::setEnd):
+        (WebCore::Range::isPointInRange):
+        (WebCore::Range::comparePoint):
+        (WebCore::Range::compareBoundaryPoints):
+        (WebCore::Range::deleteContents):
+        (WebCore::Range::processContents):
+        (WebCore::Range::extractContents):
+        (WebCore::Range::insertNode):
+        (WebCore::Range::setStartAfter):
+        (WebCore::Range::setEndBefore):
+        (WebCore::Range::setEndAfter):
+        (WebCore::Range::selectNode):
+        (WebCore::Range::surroundContents):
+        (WebCore::Range::setStartBefore):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::add):
+        (WebCore::HTMLSelectElement::setOption):
+        * xml/XPathEvaluator.cpp:
+        (WebCore::XPathEvaluator::evaluate):
+
 2007-11-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

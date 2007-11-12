@@ -213,7 +213,8 @@ void Range::setStart( Node *refNode, int offset, ExceptionCode& ec)
         return;
     }
 
-    checkNodeWOffset( refNode, offset, ec );
+    ec = 0;
+    checkNodeWOffset(refNode, offset, ec);
     if (ec)
         return;
 
@@ -251,7 +252,8 @@ void Range::setEnd( Node *refNode, int offset, ExceptionCode& ec)
         return;
     }
 
-    checkNodeWOffset( refNode, offset, ec );
+    ec = 0;
+    checkNodeWOffset(refNode, offset, ec);
     if (ec)
         return;
 
@@ -310,10 +312,10 @@ bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
         return false;
     }
 
+    ec = 0;
     checkNodeWOffset(refNode, offset, ec);
     if (ec)
         return false;
-
 
     // point is not before the start and not after the end
     if ((compareBoundaryPoints(refNode, offset, m_startContainer.get(), m_startOffset) != -1) && 
@@ -349,6 +351,7 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec)
         return 0;
     }
 
+    ec = 0;
     checkNodeWOffset(refNode, offset, ec);
     if (ec)
         return 0;
@@ -426,7 +429,10 @@ short Range::compareBoundaryPoints(CompareHow how, const Range *sourceRange, Exc
         return 0;
     }
 
+    ec = 0;
     Node *thisCont = commonAncestorContainer(ec);
+    if (ec)
+        return 0;
     Node *sourceCont = sourceRange->commonAncestorContainer(ec);
     if (ec)
         return 0;
@@ -575,6 +581,7 @@ void Range::deleteContents(ExceptionCode& ec) {
         return;
     }
 
+    ec = 0;
     checkDeleteExtract(ec);
     if (ec)
         return;
@@ -626,6 +633,7 @@ PassRefPtr<DocumentFragment> Range::processContents ( ActionType action, Excepti
 
     // ### perhaps disable node deletion notification for this range while we do this?
 
+    ec = 0;
     if (collapsed(ec))
         return 0;
     if (ec)
@@ -951,6 +959,7 @@ PassRefPtr<DocumentFragment> Range::extractContents(ExceptionCode& ec)
         return 0;
     }
 
+    ec = 0;
     checkDeleteExtract(ec);
     if (ec)
         return 0;
@@ -1045,16 +1054,15 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
         return;
     }
 
-    if( m_startContainer->nodeType() == Node::TEXT_NODE ||
-        m_startContainer->nodeType() == Node::CDATA_SECTION_NODE )
-    {
-        Text *newText = static_cast<Text*>(m_startContainer.get())->splitText(m_startOffset,ec);
+    if(m_startContainer->nodeType() == Node::TEXT_NODE ||
+       m_startContainer->nodeType() == Node::CDATA_SECTION_NODE) {
+        ec = 0;
+        Text *newText = static_cast<Text*>(m_startContainer.get())->splitText(m_startOffset, ec);
         if (ec)
             return;
-        m_startContainer->parentNode()->insertBefore( newNode, newText, ec );
-    }
-    else {
-        m_startContainer->insertBefore( newNode, m_startContainer->childNode( m_startOffset ), ec );
+        m_startContainer->parentNode()->insertBefore(newNode, newText, ec);
+    } else {
+        m_startContainer->insertBefore(newNode, m_startContainer->childNode(m_startOffset), ec);
     }
 }
 
@@ -1221,11 +1229,12 @@ void Range::setStartAfter( Node *refNode, ExceptionCode& ec)
         return;
     }
 
+    ec = 0;
     checkNodeBA( refNode, ec );
     if (ec)
         return;
 
-    setStart( refNode->parentNode(), refNode->nodeIndex()+1, ec );
+    setStart(refNode->parentNode(), refNode->nodeIndex() + 1, ec);
 }
 
 void Range::setEndBefore( Node *refNode, ExceptionCode& ec)
@@ -1245,11 +1254,12 @@ void Range::setEndBefore( Node *refNode, ExceptionCode& ec)
         return;
     }
 
-    checkNodeBA( refNode, ec );
+    ec = 0;
+    checkNodeBA(refNode, ec);
     if (ec)
         return;
 
-    setEnd( refNode->parentNode(), refNode->nodeIndex(), ec );
+    setEnd(refNode->parentNode(), refNode->nodeIndex(), ec);
 }
 
 void Range::setEndAfter( Node *refNode, ExceptionCode& ec)
@@ -1269,11 +1279,12 @@ void Range::setEndAfter( Node *refNode, ExceptionCode& ec)
         return;
     }
 
-    checkNodeBA( refNode, ec );
+    ec = 0;
+    checkNodeBA(refNode, ec);
     if (ec)
         return;
 
-    setEnd( refNode->parentNode(), refNode->nodeIndex()+1, ec );
+    setEnd(refNode->parentNode(), refNode->nodeIndex() + 1, ec);
 
 }
 
@@ -1313,6 +1324,7 @@ void Range::selectNode( Node *refNode, ExceptionCode& ec)
         return;
     }
 
+    ec = 0;
     setStartBefore( refNode, ec );
     if (ec)
         return;
@@ -1422,6 +1434,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         }
     }
 
+    ec = 0;
     while (Node* n = newParent->firstChild()) {
         newParent->removeChild(n, ec);
         if (ec)
@@ -1456,11 +1469,12 @@ void Range::setStartBefore( Node *refNode, ExceptionCode& ec)
         return;
     }
 
-    checkNodeBA( refNode, ec );
+    ec = 0;
+    checkNodeBA(refNode, ec);
     if (ec)
         return;
 
-    setStart( refNode->parentNode(), refNode->nodeIndex(), ec );
+    setStart(refNode->parentNode(), refNode->nodeIndex(), ec);
 }
 
 void Range::checkDeleteExtract(ExceptionCode& ec)

@@ -1047,6 +1047,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     const String& repetitionType, ExceptionCode& ec)
 {
     bool repeatX, repeatY;
+    ec = 0;
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
         return 0;
@@ -1057,6 +1058,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     const String& repetitionType, ExceptionCode& ec)
 {
     bool repeatX, repeatY;
+    ec = 0;
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
         return 0;

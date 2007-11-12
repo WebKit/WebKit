@@ -711,6 +711,7 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
         e = new Element(qName, document());
     
     if (e && !qName.prefix().isNull()) {
+        ec = 0;
         e->setPrefix(qName.prefix(), ec);
         if (ec)
             return 0;

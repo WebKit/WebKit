@@ -64,6 +64,7 @@ PassRefPtr<XPathResult> XPathEvaluator::evaluate(const String& expression,
         return 0;
     }
 
+    ec = 0;
     RefPtr<XPathExpression> expr = createExpression(expression, resolver, ec);
     if (ec)
         return 0;

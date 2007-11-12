@@ -402,7 +402,7 @@ static const char* const svgExceptionNames[] = {
 
 void setDOMException(ExecState* exec, ExceptionCode ec)
 {
-    if (ec == 0 || exec->hadException())
+    if (!ec || exec->hadException())
         return;
 
     const char* type = "DOM";
