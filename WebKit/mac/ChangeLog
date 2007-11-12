@@ -1,3 +1,19 @@
+2007-11-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+        
+        - speculative fix for <rdar://problem/5509989> CrashTracer: [USER] 1 crash in Safari at com.apple.WebKit: 
+        -[WebPDFView(FileInternal) _updatePreferencesSoon] + 56
+        
+        The crash is probably due to messaging a dealloc'ed dataSource ivar. The dataSource ivar isn't retained
+        by this class, but should be. (It is retained by WebHTMLView, e.g.).
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView dealloc]):
+        release dataSource ivar
+        (-[WebPDFView setDataSource:]):
+        retain dataSource ivar
+
 2007-11-09  Tristan O'Tierney  <tristan@apple.com>
 
         Reviewed by Timothy Hatcher.

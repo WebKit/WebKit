@@ -183,6 +183,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (void)dealloc
 {
     ASSERT(!trackedFirstResponder);
+    [dataSource release];
     [previewView release];
     [PDFSubview release];
     [path release];
@@ -528,7 +529,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)setDataSource:(WebDataSource *)ds
 {
-    dataSource = ds;
+    if (dataSource == ds)
+        return;
+
+    dataSource = [ds retain];
+    
+    // FIXME: There must be some better place to put this. There is no comment in ChangeLog
+    // explaining why it's in this method.
     [self setFrame:[[self superview] frame]];
 }
 
