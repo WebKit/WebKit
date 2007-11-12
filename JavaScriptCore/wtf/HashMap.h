@@ -307,8 +307,9 @@ namespace WTF {
     {
         if (it.m_impl == m_impl.end())
             return;
+        m_impl.checkTableConsistency();
         RefCounter<ValueTraits, ValueStorageTraits>::deref(*it.m_impl);
-        m_impl.remove(it.m_impl);
+        m_impl.removeWithoutEntryConsistencyCheck(it.m_impl);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>

@@ -1,3 +1,34 @@
+2007-11-11  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5578982> ASSERT in HashTable::checkTableConsistencyExceptSize beneath WebNotificationCenter
+
+        The bug was due to a mismatch between HashMap::remove and
+        HashTable::checkTableConsistency. HashMap::remove can delete the value
+        stored in the HashTable (by derefing it), which is not normally
+        allowed by HashTable. It's OK in this case because the value is about
+        to be removed from the table, but HashTable wasn't aware of this.
+
+        HashMap::remove now performs the consistency check itself before
+        derefing the value.
+
+        Darin noticed that the same bug would occur in HashSet, so I've fixed
+        it there as well.
+
+        Reviewed by Darin.
+
+        * wtf/HashMap.h:
+        (WTF::HashMap::remove): Perform the HashTable consistency check
+        manually before calling deref.
+        * wtf/HashSet.h:
+        (WTF::HashSet::remove): Ditto.
+        * wtf/HashTable.h: Made checkTableConsistency public so that HashMap
+        and HashSet can call it.
+        (WTF::HashTable::removeAndInvalidateWithoutEntryConsistencyCheck):
+        Added.
+        (WTF::HashTable::removeAndInvalidate): Added.
+        (WTF::HashTable::remove):
+        (WTF::HashTable::removeWithoutEntryConsistencyCheck): Added.
+
 2007-11-11  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Use the correct filename case.
