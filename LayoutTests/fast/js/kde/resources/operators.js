@@ -8,6 +8,14 @@ shouldBeTrue("!0");
 shouldBeTrue("!!'a'");
 shouldBeTrue("!''");
 
+// unary plus
+shouldBe("+9", "9");
+shouldBe("var i = 10; +i", "10");
+
+// negation
+shouldBe("-11", "-11");
+shouldBe("var i = 12; -i", "-12");
+
 // increment
 shouldBe("var i = 0; ++i;", "1");
 shouldBe("var i = 0; ++i; i", "1");
@@ -27,6 +35,8 @@ shouldBe("var i = true; i--; i", "0");
 // bitwise operators
 shouldBe("~0", "-1");
 shouldBe("~1", "-2");
+shouldBe("~NaN", "-1");
+shouldBe("~Infinity", "-1");
 shouldBe("~Math.pow(2, 33)", "-1"); // 32 bit overflow
 shouldBe("~(Math.pow(2, 32) + Math.pow(2, 31) + 2)",
          "2147483645"); // a signedness issue
@@ -44,6 +54,21 @@ shouldBe("-8 >> 24", "-1");
 shouldBe("8 >>> 2", "2");
 shouldBe("-8 >>> 24", "255");
 shouldBe("(-2200000000 >> 1) << 1", "2094967296");
+shouldBe("Infinity >> 1", "0");
+shouldBe("Infinity << 1", "0");
+shouldBe("Infinity >>> 1", "0");
+shouldBe("NaN >> 1", "0");
+shouldBe("NaN << 1", "0");
+shouldBe("NaN >>> 1", "0");
+shouldBe("8.1 >> 1", "4");
+shouldBe("8.1 << 1", "16");
+shouldBe("8.1 >>> 1", "4");
+shouldBe("8.9 >> 1", "4");
+shouldBe("8.9 << 1", "16");
+shouldBe("8.9 >>> 1", "4");
+shouldBe("Math.pow(2, 32) >> 1", "0");
+shouldBe("Math.pow(2, 32) << 1", "0");
+shouldBe("Math.pow(2, 32) >>> 1", "0");
 
 // addition
 shouldBe("1+2", "3");
@@ -180,6 +205,8 @@ shouldBe("NaN === NaN", "false");
 shouldBe("0.0 === 0", "true");
 shouldBe("'abc' === 'abc'", "true");
 shouldBe("'a' === 'x'", "false");
+shouldBe("1 === '1'", "false");
+shouldBe("'1' === 1", "false");
 shouldBe("true === true", "true");
 shouldBe("false === false", "true");
 shouldBe("true === false", "false");
@@ -216,4 +243,4 @@ shouldBeTrue("'a' in { a:1, b:2 }");
 shouldBe("(new Boolean()) instanceof Boolean", "true");
 shouldBe("(new Boolean()) instanceof Number", "false");
 
-successfullyParsed = true
+var successfullyParsed = true;

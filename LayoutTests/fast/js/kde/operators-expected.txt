@@ -11,6 +11,10 @@ PASS !!1 is true
 PASS !0 is true
 PASS !!'a' is true
 PASS !'' is true
+PASS +9 is 9
+PASS var i = 10; +i is 10
+PASS -11 is -11
+PASS var i = 12; -i is -12
 PASS var i = 0; ++i; is 1
 PASS var i = 0; ++i; i is 1
 PASS var i = 0; i++; is 0
@@ -25,6 +29,8 @@ PASS var i = true; i-- is 1
 PASS var i = true; i--; i is 0
 PASS ~0 is -1
 PASS ~1 is -2
+PASS ~NaN is -1
+PASS ~Infinity is -1
 PASS ~Math.pow(2, 33) is -1
 PASS ~(Math.pow(2, 32) + Math.pow(2, 31) + 2) is 2147483645
 PASS ~null is -1
@@ -40,6 +46,21 @@ PASS -8 >> 24 is -1
 PASS 8 >>> 2 is 2
 PASS -8 >>> 24 is 255
 PASS (-2200000000 >> 1) << 1 is 2094967296
+PASS Infinity >> 1 is 0
+PASS Infinity << 1 is 0
+PASS Infinity >>> 1 is 0
+PASS NaN >> 1 is 0
+PASS NaN << 1 is 0
+PASS NaN >>> 1 is 0
+PASS 8.1 >> 1 is 4
+PASS 8.1 << 1 is 16
+PASS 8.1 >>> 1 is 4
+PASS 8.9 >> 1 is 4
+PASS 8.9 << 1 is 16
+PASS 8.9 >>> 1 is 4
+PASS Math.pow(2, 32) >> 1 is 0
+PASS Math.pow(2, 32) << 1 is 0
+PASS Math.pow(2, 32) >>> 1 is 0
 PASS 1+2 is 3
 PASS 'a'+'b' is 'ab'
 PASS 'a'+2 is 'a2'
@@ -152,6 +173,8 @@ PASS NaN === NaN is false
 PASS 0.0 === 0 is true
 PASS 'abc' === 'abc' is true
 PASS 'a' === 'x' is false
+PASS 1 === '1' is false
+PASS '1' === 1 is false
 PASS true === true is true
 PASS false === false is true
 PASS true === false is false

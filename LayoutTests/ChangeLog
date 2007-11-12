@@ -5,6 +5,19 @@
         Landing a few layout tests from http://bugs.webkit.org/show_bug.cgi?id=14868
         Import variable lookup optimizations from KJS
 
+        * fast/js/kde/lval-exceptions-expected.txt: Added.
+        * fast/js/kde/lval-exceptions.html: Added.
+        * fast/js/kde/operators-expected.txt:
+        * fast/js/kde/resources/lval-exceptions.js: Added.
+        * fast/js/kde/resources/operators.js:
+
+2007-11-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+        
+        Landing a few layout tests from http://bugs.webkit.org/show_bug.cgi?id=14868
+        Import variable lookup optimizations from KJS
+
         * fast/js/kde/func-decl-expected.txt: Added.
         * fast/js/kde/func-decl.html: Added.
         * fast/js/kde/resources/func-decl.js: Added.
