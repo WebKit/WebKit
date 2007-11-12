@@ -97,6 +97,7 @@ EXPORTS
         CenterTruncateStringToWidth
         RightTruncateStringToWidth
         ?fastMalloc@WTF@@YAPAXI@Z
+        ?fastZeroedMalloc@WTF@@YAPAXI@Z
         ?fastFree@WTF@@YAXPAX@Z
         ?fastCalloc@WTF@@YAPAXII@Z
 

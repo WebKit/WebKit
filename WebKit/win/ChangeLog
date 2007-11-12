@@ -1,3 +1,10 @@
+2007-11-12  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebKit.vcproj/WebKit.def: Export fastZeroedMalloc.
+        * WebKit.vcproj/WebKit_debug.def: Ditto.
+
 2007-11-09  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Sam.
