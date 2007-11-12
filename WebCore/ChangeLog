@@ -2,6 +2,32 @@
 
         Reviewed by Mitz.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=15945
+          speed up GraphicsContextCG typical case by skipping roundToDevicePixels
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::restorePlatformState): Clear the flag since we no
+        longer know if the transform is identity or not.
+        (WebCore::GraphicsContext::strokeArc): Removed an extra set of redundant
+        CGContextSave/RestoreGState.
+        (WebCore::GraphicsContext::beginTransparencyLayer): Clear the flag since we no
+        longer know if the transform is identity or not.
+        (WebCore::GraphicsContext::endTransparencyLayer): Ditto.
+        (WebCore::GraphicsContext::scale): Ditto.
+        (WebCore::GraphicsContext::rotate): Ditto.
+        (WebCore::GraphicsContext::translate): Ditto.
+        (WebCore::GraphicsContext::concatCTM): Ditto.
+        (WebCore::GraphicsContext::roundToDevicePixels): Return quickly if the transform
+        is known to be identity, and record that fact when we discover it otherwise.
+
+        * platform/graphics/cg/GraphicsContextPlatformPrivate.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        Added a m_userToDeviceTransformKnownToBeIdentity flag, initialized to false.
+
+2007-11-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
         - http://bugs.webkit.org/show_bug.cgi?id=15944
           streamline SegmentedString to speed up parsing
 

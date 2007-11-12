@@ -30,12 +30,11 @@
 #if PLATFORM(CG)
 
 #include "AffineTransform.h"
+#include "GraphicsContextPlatformPrivate.h"
 #include "KURL.h"
 #include "Path.h"
 #include <CoreGraphics/CGPDFContext.h>
 #include <wtf/MathExtras.h>
-
-#include <GraphicsContextPlatformPrivate.h> // FIXME: Temporary.
 
 using namespace std;
 
@@ -106,6 +105,7 @@ void GraphicsContext::restorePlatformState()
     // restore of the secondary context (in GraphicsContextPlatformPrivate.h).
     CGContextRestoreGState(platformContext());
     m_data->restore();
+    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -321,8 +321,6 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
         default:
             break;
     }
-
-    CGContextSaveGState(context);
     
     if (patWidth) {
         // Example: 80 pixels with a width of 30 pixels.
@@ -363,7 +361,6 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     }
 
     CGContextStrokePath(context);
-    CGContextRestoreGState(context);
     
     CGContextRestoreGState(context);
 }
@@ -503,6 +500,7 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
     CGContextSetAlpha(context, opacity);
     CGContextBeginTransparencyLayer(context, 0);
     m_data->beginTransparencyLayer();
+    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContext::endTransparencyLayer()
@@ -513,6 +511,7 @@ void GraphicsContext::endTransparencyLayer()
     CGContextEndTransparencyLayer(context);
     CGContextRestoreGState(context);
     m_data->endTransparencyLayer();
+    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContext::setShadow(const IntSize& size, int blur, const Color& color)
@@ -644,6 +643,7 @@ void GraphicsContext::scale(const FloatSize& size)
         return;
     CGContextScaleCTM(platformContext(), size.width(), size.height());
     m_data->scale(size);
+    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContext::rotate(float angle)
@@ -652,6 +652,7 @@ void GraphicsContext::rotate(float angle)
         return;
     CGContextRotateCTM(platformContext(), angle);
     m_data->rotate(angle);
+    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContext::translate(float x, float y)
@@ -660,6 +661,7 @@ void GraphicsContext::translate(float x, float y)
         return;
     CGContextTranslateCTM(platformContext(), x, y);
     m_data->translate(x, y);
+    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContext::concatCTM(const AffineTransform& transform)
@@ -668,6 +670,7 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
         return;
     CGContextConcatCTM(platformContext(), transform);
     m_data->concatCTM(transform);
+    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
@@ -676,9 +679,15 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
     // affine transform matrix to device space can mess with this conversion if we have a
     // rotating image like the hands of the world clock widget. We just need the scale, so 
     // we get the affine transform matrix and extract the scale.
-    CGAffineTransform deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
-    if (CGAffineTransformIsIdentity(deviceMatrix))
+
+    if (m_data->m_userToDeviceTransformKnownToBeIdentity)
         return rect;
+
+    CGAffineTransform deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
+    if (CGAffineTransformIsIdentity(deviceMatrix)) {
+        m_data->m_userToDeviceTransformKnownToBeIdentity = true;
+        return rect;
+    }
 
     float deviceScaleX = sqrtf(deviceMatrix.a * deviceMatrix.a + deviceMatrix.b * deviceMatrix.b);
     float deviceScaleY = sqrtf(deviceMatrix.c * deviceMatrix.c + deviceMatrix.d * deviceMatrix.d);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if PLATFORM(WIN)
 #include <CoreGraphics/CGContext.h>
-#endif
 
-namespace WebCore
-{
+namespace WebCore {
 
 class GraphicsContextPlatformPrivate {
 public:
     GraphicsContextPlatformPrivate(CGContextRef cgContext)
-    : m_cgContext(cgContext)
+        : m_cgContext(cgContext)
 #if PLATFORM(WIN)
-    , m_hdc(0)
-    , m_transparencyCount(0)
+        , m_hdc(0)
+        , m_transparencyCount(0)
 #endif
+        , m_userToDeviceTransformKnownToBeIdentity(false)
     {
         CGContextRetain(m_cgContext);
     }
@@ -59,7 +57,9 @@ public:
     void concatCTM(const AffineTransform&) {}
     void beginTransparencyLayer() {}
     void endTransparencyLayer() {}
-#else
+#endif
+
+#if PLATFORM(WIN)
     // On Windows, we need to update the HDC for form controls to draw in the right place.
     void save();
     void restore();
@@ -71,13 +71,16 @@ public:
     void concatCTM(const AffineTransform&);
     void beginTransparencyLayer() { m_transparencyCount++; }
     void endTransparencyLayer() { m_transparencyCount--; }
+#endif
 
+#if PLATFORM(WIN)
     HDC m_hdc;
     unsigned m_transparencyCount;
-
 #endif
+
     CGContextRef m_cgContext;
     IntRect m_focusRingClip; // Work around CG bug in focus ring clipping.
+    bool m_userToDeviceTransformKnownToBeIdentity;
 };
 
 }
