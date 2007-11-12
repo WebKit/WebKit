@@ -1,3 +1,13 @@
+2007-11-12  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5268311> REGRESSION (Safari 2-3): Exception thrown when calling -[WebDataSource subresources]
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        If the SharedBuffer is null insert an empty NSData instead of nil.
+
 2007-11-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim.

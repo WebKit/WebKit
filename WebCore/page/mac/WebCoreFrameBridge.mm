@@ -975,7 +975,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 }
 
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
-// punctuation when itÕs inserted into the receiverÕs text over charRange. Returns by reference
+// punctuation when itâ€™s inserted into the receiverâ€™s text over charRange. Returns by reference
 // in beforeString and afterString any whitespace that should be added, unless either or both are
 // nil. Both are returned as nil if aString is nil or if smart insertion and deletion are disabled.
 - (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
@@ -1266,15 +1266,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     for (HashMap<String, CachedResource*>::const_iterator it = allResources.begin(); it != end; ++it) {
         SharedBuffer* buffer = it->second->data();
         NSData *data;
-        
         if (buffer)
             data = buffer->createNSData();
         else
-            data = nil;
-        
-        // It's clearly a bug to pass a nil value for data here, and doing so is part of the problem in
-        // <rdar://problem/5268311>. However, fixing this in the obvious ways makes the symptom in 5268311
-        // worse, so don't just fix this without investigating that bug further.
+            data = [[NSData alloc] init];
         [d addObject:data];
         [data release];
         [r addObject:it->second->response().nsURLResponse()];
