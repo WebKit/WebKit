@@ -106,7 +106,7 @@ struct TCMalloc_SpinLock {
       ("isync\n\t"
        "eieio\n\t"
        "stw %1, %0"
-       : "=m" (private_lockword_)
+       : "=o" (private_lockword_) 
        : "r" (0)
        : "memory");
 #endif
