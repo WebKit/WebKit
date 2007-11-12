@@ -448,11 +448,15 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
   
   UString pattern = arg0->isUndefined() ? UString("") : arg0->toString(exec);
   UString flags = arg1->isUndefined() ? UString("") : arg1->toString(exec);
-  RefPtr<RegExp> regExp = new RegExp(pattern, flags);
+  
+  return createRegExpImp(exec, new RegExp(pattern, flags));
+}
 
-  return regExp->isValid()
-    ? new RegExpImp(static_cast<RegExpPrototype*>(exec->lexicalInterpreter()->builtinRegExpPrototype()), regExp.release())
-    : throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(regExp->errorMessage()));
+JSObject* RegExpObjectImp::createRegExpImp(ExecState* exec, PassRefPtr<RegExp> regExp)
+{
+    return regExp->isValid()
+        ? new RegExpImp(static_cast<RegExpPrototype*>(exec->lexicalInterpreter()->builtinRegExpPrototype()), regExp)
+        : throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(regExp->errorMessage()));
 }
 
 // ECMA 15.10.3

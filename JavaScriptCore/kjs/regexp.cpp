@@ -1,7 +1,8 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001,2004 Harri Porten (porten@kde.org)
+ *  Copyright (C) 1999-2001, 2004 Harri Porten (porten@kde.org)
+ *  Copyright (c) 2007, Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -33,40 +34,41 @@ namespace KJS {
 RegExp::RegExp(const UString& pattern)
   : m_refCount(0)
   , m_pattern(pattern)
-  , m_flags(0)
+  , m_flagBits(0)
   , m_constructionError(0)
   , m_numSubpatterns(0)
 {
-    m_regExp = jsRegExpCompile(reinterpret_cast<const ::UChar*>(m_pattern.data()), m_pattern.size(),
+    m_regExp = jsRegExpCompile(reinterpret_cast<const ::UChar*>(pattern.data()), pattern.size(),
         JSRegExpDoNotIgnoreCase, JSRegExpSingleLine, &m_numSubpatterns, &m_constructionError);
 }
 
 RegExp::RegExp(const UString& pattern, const UString& flags)
   : m_refCount(0)
   , m_pattern(pattern)
-  , m_flags(0)
+  , m_flags(flags)
+  , m_flagBits(0)
   , m_constructionError(0)
   , m_numSubpatterns(0)
 {
     // NOTE: The global flag is handled on a case-by-case basis by functions like
     // String::match and RegExpImp::match.
     if (flags.find('g') != -1)
-        m_flags |= Global;
+        m_flagBits |= Global;
 
     // FIXME: Eliminate duplication by adding a way ask a JSRegExp what its flags are?
     JSRegExpIgnoreCaseOption ignoreCaseOption = JSRegExpDoNotIgnoreCase;
     if (flags.find('i') != -1) {
-        m_flags |= IgnoreCase;
+        m_flagBits |= IgnoreCase;
         ignoreCaseOption = JSRegExpIgnoreCase;
     }
 
     JSRegExpMultilineOption multilineOption = JSRegExpSingleLine;
     if (flags.find('m') != -1) {
-        m_flags |= Multiline;
+        m_flagBits |= Multiline;
         multilineOption = JSRegExpMultiline;
     }
     
-    m_regExp = jsRegExpCompile(reinterpret_cast<const ::UChar*>(m_pattern.data()), m_pattern.size(),
+    m_regExp = jsRegExpCompile(reinterpret_cast<const ::UChar*>(pattern.data()), pattern.size(),
         ignoreCaseOption, multilineOption, &m_numSubpatterns, &m_constructionError);
 }
 

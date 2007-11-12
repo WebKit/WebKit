@@ -46,10 +46,12 @@ namespace KJS {
     void deref() { if (--m_refCount == 0) delete this; }
     int refCount() { return m_refCount; }
 
-    bool global() const { return m_flags & Global; }
-    bool ignoreCase() const { return m_flags & IgnoreCase; }
-    bool multiline() const { return m_flags & Multiline; }
+    bool global() const { return m_flagBits & Global; }
+    bool ignoreCase() const { return m_flagBits & IgnoreCase; }
+    bool multiline() const { return m_flagBits & Multiline; }
+
     const UString& pattern() const { return m_pattern; }
+    const UString& flags() const { return m_flags; }
 
     bool isValid() const { return !m_constructionError; }
     const char* errorMessage() const { return m_constructionError; }
@@ -63,8 +65,9 @@ namespace KJS {
     int m_refCount;
     
     // Data supplied by caller.
-    UString m_pattern;
-    int m_flags;
+    UString m_pattern; // FIXME: Just decompile m_regExp instead of storing this.
+    UString m_flags; // FIXME: Just decompile m_regExp instead of storing this.
+    int m_flagBits;
 
     // Data supplied by PCRE.
     JSRegExp* m_regExp;

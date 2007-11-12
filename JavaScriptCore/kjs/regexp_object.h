@@ -85,6 +85,7 @@ namespace KJS {
 
         virtual bool implementsConstruct() const;
         virtual JSObject* construct(ExecState*, const List&);
+        JSObject* createRegExpImp(ExecState*, PassRefPtr<RegExp>);
         virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
         virtual void put(ExecState*, const Identifier&, JSValue*, int attributes = None);
         void putValueProperty(ExecState*, int token, JSValue*, int attributes);

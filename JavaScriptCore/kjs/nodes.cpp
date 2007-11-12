@@ -453,12 +453,7 @@ bool StringNode::evaluateToBoolean(ExecState*)
 
 JSValue* RegExpNode::evaluate(ExecState* exec)
 {
-  List list;
-  list.append(jsOwnedString(m_pattern));
-  list.append(jsOwnedString(m_flags));
-
-  JSObject* reg = exec->lexicalInterpreter()->builtinRegExp();
-  return reg->construct(exec, list);
+    return exec->lexicalInterpreter()->builtinRegExp()->createRegExpImp(exec, m_regExp);
 }
 
 // ------------------------------ ThisNode -------------------------------------

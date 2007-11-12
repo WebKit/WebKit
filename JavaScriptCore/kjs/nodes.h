@@ -28,6 +28,7 @@
 
 #include "Parser.h"
 #include "internal.h"
+#include "RegExp.h"
 #include "SymbolTable.h"
 #include <wtf/ListRefPtr.h>
 #include <wtf/OwnPtr.h>
@@ -270,13 +271,14 @@ namespace KJS {
   class RegExpNode : public ExpressionNode {
   public:
     RegExpNode(const UString& pattern, const UString& flags) KJS_FAST_CALL 
-      : m_pattern(pattern), m_flags(flags) { }
-    virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+        : m_regExp(new RegExp(pattern, flags))
+    {
+    }
+    JSValue* evaluate(ExecState*) KJS_FAST_CALL;
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecPrimary; }
   private:
-    UString m_pattern;
-    UString m_flags;
+    RefPtr<RegExp> m_regExp;
   };
 
   class ThisNode : public ExpressionNode {

@@ -1,3 +1,30 @@
+2007-11-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15902
+        15% of string-validate-input.js is spent compiling the same regular expression
+        
+        Store a compiled representation of the regular expression in the AST.
+        
+        Only a .2% SunSpider speedup overall, but a 10.6% speedup on 
+        string-validate-input.js.
+
+        * kjs/nodes.cpp:
+        (KJS::RegExpNode::evaluate):
+        * kjs/nodes.h:
+        (KJS::RegExpNode::):
+        * kjs/nodes2string.cpp:
+        (KJS::RegExpNode::streamTo):
+        * kjs/regexp.cpp:
+        (KJS::RegExp::flags):
+        * kjs/regexp.h:
+        (KJS::RegExp::pattern):
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpObjectImp::construct):
+        (KJS::RegExpObjectImp::createRegExpImp):
+        * kjs/regexp_object.h:
+
 2007-11-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric.
