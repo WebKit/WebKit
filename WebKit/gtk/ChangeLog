@@ -1,5 +1,17 @@
 2007-11-11  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Anders.
+
+        Initialize m_userAgent.
+
+        Fix typos in GDK_WINDOWING conditionals.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::FrameLoaderClient):
+        (WebKit::agentPlatform):
+
+2007-11-11  Alp Toker  <alp@atoker.com>
+
         Reviewed by Mark Rowe.
 
         Mention Safari in the UserAgent string to improve site compatibility.
