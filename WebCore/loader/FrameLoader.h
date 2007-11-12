@@ -298,7 +298,7 @@ namespace WebCore {
         String baseTarget() const;
         KURL dataURLBaseFromRequest(const ResourceRequest& request) const;
 
-        bool isScheduledLocationChangePending() const;
+        bool isScheduledLocationChangePending() const { return m_scheduledRedirection && isLocationChange(*m_scheduledRedirection); }
         void scheduleHTTPRedirection(double delay, const String& URL);
         void scheduleLocationChange(const String& URL, const String& referrer, bool lockHistory = true, bool userGesture = false);
         void scheduleRefresh(bool userGesture = false);
@@ -559,6 +559,8 @@ namespace WebCore {
         void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int length);
         void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
         bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length);
+
+        static bool isLocationChange(const ScheduledRedirection&);
 
         Frame* m_frame;
         FrameLoaderClient* m_client;

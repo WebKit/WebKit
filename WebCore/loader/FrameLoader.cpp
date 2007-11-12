@@ -1376,11 +1376,9 @@ void FrameLoader::scheduleRefresh(bool wasUserGesture)
     m_cachePolicy = CachePolicyRefresh;
 }
 
-bool FrameLoader::isScheduledLocationChangePending() const
+bool FrameLoader::isLocationChange(const ScheduledRedirection& redirection)
 {
-    if (!m_scheduledRedirection)
-        return false;
-    switch (m_scheduledRedirection->type) {
+    switch (redirection.type) {
         case ScheduledRedirection::redirection:
             return false;
         case ScheduledRedirection::historyNavigation:

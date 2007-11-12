@@ -1,3 +1,18 @@
+2007-11-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15947
+          speed up page loading a bit by inlining
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::isLocationChange):
+        Factored out the slow case of isScheduledLocationChangePending into this.
+
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::isScheduledLocationChangePending): Added an
+        inline check of the far and away most common case, where m_scheduledRedirection
+        is 0; the rest is in the isLocationChange function.
+
 2007-11-12  George Staikos  <staikos@kde.org>
 
         Reviewed by Tim.
