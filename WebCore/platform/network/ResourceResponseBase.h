@@ -24,54 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
+#ifndef ResourceResponseBase_h
+#define ResourceResponseBase_h
 
 #include "HTTPHeaderMap.h"
 #include "KURL.h"
 
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class NSURLResponse;
-#else
-class NSURLResponse;
-#endif
-#elif USE(CFNETWORK)
-#include <wtf/RetainPtr.h>
-typedef struct _CFURLResponse* CFURLResponseRef;
-#endif
-
 namespace WebCore {
 
-class ResourceResponse {
-public:
+class ResourceResponse;
 
-    ResourceResponse() 
-        : m_expectedContentLength(0)
-        , m_httpStatusCode(0)
-        , m_expirationDate(0)
-        , m_isUpToDate(true)
-        , m_isNull(true)
-    {
-    }
+// Do not use this class directly, use the class ResponseResponse instead
+class ResourceResponseBase {
+ public:
 
-    ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-        : m_url(url)
-        , m_mimeType(mimeType)
-        , m_expectedContentLength(expectedLength)
-        , m_textEncodingName(textEncodingName)
-        , m_suggestedFilename(filename)
-        , m_httpStatusCode(0)
-        , m_expirationDate(0)
-        , m_isUpToDate(true)
-        , m_isNull(false)
-    {
-    }
- 
     bool isNull() const { return m_isNull; }
     bool isHTTP() const;
-    
+
     const KURL& url() const;
     void setUrl(const KURL& url);
 
@@ -108,47 +77,53 @@ public:
     void setLastModifiedDate(time_t);
     time_t lastModifiedDate() const;
 
-#if PLATFORM(MAC)
-    ResourceResponse(NSURLResponse* nsResponse)
+    inline const ResourceResponse& asResourceResponse() const;
+
+ protected:
+    // Used when response is initialized from a platform representation
+    ResourceResponseBase(bool isNull)
         : m_isUpToDate(false)
-        , m_isNull(!nsResponse)
-        , m_nsResponse(nsResponse) { }
-    
-    NSURLResponse *nsURLResponse() const;
-#elif USE(CFNETWORK)
-    ResourceResponse(CFURLResponseRef cfResponse)
-        : m_isUpToDate(false)
-        , m_isNull(!cfResponse)
-        , m_cfResponse(cfResponse) { }
-    
-    CFURLResponseRef cfURLResponse() const;
-#endif
-    
- private:
-    void updateResourceResponse() const; 
-    
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    void doUpdateResourceResponse();
-#endif
-    
+        , m_isNull(isNull)
+    {
+    }
+
+    ResourceResponseBase()  
+        : m_expectedContentLength(0)
+        , m_httpStatusCode(0)
+        , m_expirationDate(0)
+        , m_isUpToDate(true)
+        , m_isNull(true)
+    {
+    }
+
+    ResourceResponseBase(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
+        : m_url(url)
+        , m_mimeType(mimeType)
+        , m_expectedContentLength(expectedLength)
+        , m_textEncodingName(textEncodingName)
+        , m_suggestedFilename(filename)
+        , m_httpStatusCode(0)
+        , m_expirationDate(0)
+        , m_isUpToDate(true)
+        , m_isNull(false)
+    {
+    }
+
+    void updateResourceResponse() const;
+
     KURL m_url;
     String m_mimeType;
     long long m_expectedContentLength;
     String m_textEncodingName;
     String m_suggestedFilename;
-    int m_httpStatusCode;
+    mutable int m_httpStatusCode;
     String m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
     time_t m_expirationDate;
     time_t m_lastModifiedDate;
     mutable bool m_isUpToDate;
     bool m_isNull;
-#if PLATFORM(MAC)
-    RetainPtr<NSURLResponse> m_nsResponse;
-#elif USE(CFNETWORK)
-    RetainPtr<CFURLResponseRef> m_cfResponse;      
-#endif
-    
+
 };
 
 bool operator==(const ResourceResponse& a, const ResourceResponse& b);
@@ -156,4 +131,4 @@ inline bool operator!=(const ResourceResponse& a, const ResourceResponse& b) { r
 
 } // namespace WebCore
 
-#endif // ResourceResponse_h
+#endif // ResourceResponseBase_h

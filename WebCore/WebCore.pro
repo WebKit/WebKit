@@ -682,7 +682,7 @@ SOURCES += \
     platform/network/ProtectionSpace.cpp \
     platform/network/ResourceHandle.cpp \
     platform/network/ResourceRequestBase.cpp \
-    platform/network/ResourceResponse.cpp \
+    platform/network/ResourceResponseBase.cpp \
     platform/RegularExpression.cpp \
     platform/ScrollBar.cpp \
 #    platform/SearchPopupMenu.cpp \

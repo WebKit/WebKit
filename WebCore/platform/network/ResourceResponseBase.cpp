@@ -25,27 +25,33 @@
  */
 
 #include "config.h"
+#include "ResourceResponseBase.h"
 #include "ResourceResponse.h"
 
 namespace WebCore {
 
-bool ResourceResponse::isHTTP() const
+inline const ResourceResponse& ResourceResponseBase::asResourceResponse() const
+{
+    return *static_cast<const ResourceResponse*>(this);
+}
+
+bool ResourceResponseBase::isHTTP() const
 {
     updateResourceResponse();
-    
+
     String protocol = m_url.protocol();
-    
+
     return equalIgnoringCase(protocol, "http")  || equalIgnoringCase(protocol, "https");
 }
 
-const KURL& ResourceResponse::url() const
+const KURL& ResourceResponseBase::url() const
 {
     updateResourceResponse();
     
     return m_url; 
 }
 
-void ResourceResponse::setUrl(const KURL& url)
+void ResourceResponseBase::setUrl(const KURL& url)
 {
     updateResourceResponse();
     m_isNull = false;
@@ -53,14 +59,14 @@ void ResourceResponse::setUrl(const KURL& url)
     m_url = url; 
 }
 
-const String& ResourceResponse::mimeType() const
+const String& ResourceResponseBase::mimeType() const
 {
     updateResourceResponse();
 
     return m_mimeType; 
 }
 
-void ResourceResponse::setMimeType(const String& mimeType)
+void ResourceResponseBase::setMimeType(const String& mimeType)
 {
     updateResourceResponse();
     m_isNull = false;
@@ -68,14 +74,14 @@ void ResourceResponse::setMimeType(const String& mimeType)
     m_mimeType = mimeType; 
 }
 
-long long ResourceResponse::expectedContentLength() const 
+long long ResourceResponseBase::expectedContentLength() const 
 {
     updateResourceResponse();
 
     return m_expectedContentLength;
 }
 
-void ResourceResponse::setExpectedContentLength(long long expectedContentLength)
+void ResourceResponseBase::setExpectedContentLength(long long expectedContentLength)
 {
     updateResourceResponse();
     m_isNull = false;
@@ -83,14 +89,14 @@ void ResourceResponse::setExpectedContentLength(long long expectedContentLength)
     m_expectedContentLength = expectedContentLength; 
 }
 
-const String& ResourceResponse::textEncodingName() const
+const String& ResourceResponseBase::textEncodingName() const
 {
     updateResourceResponse();
 
     return m_textEncodingName;
 }
 
-void ResourceResponse::setTextEncodingName(const String& encodingName)
+void ResourceResponseBase::setTextEncodingName(const String& encodingName)
 {
     updateResourceResponse();
     m_isNull = false;
@@ -99,14 +105,14 @@ void ResourceResponse::setTextEncodingName(const String& encodingName)
 }
 
 // FIXME should compute this on the fly
-const String& ResourceResponse::suggestedFilename() const
+const String& ResourceResponseBase::suggestedFilename() const
 {
     updateResourceResponse();
 
     return m_suggestedFilename;
 }
 
-void ResourceResponse::setSuggestedFilename(const String& suggestedName)
+void ResourceResponseBase::setSuggestedFilename(const String& suggestedName)
 {
     updateResourceResponse();
     m_isNull = false;
@@ -114,56 +120,56 @@ void ResourceResponse::setSuggestedFilename(const String& suggestedName)
     m_suggestedFilename = suggestedName; 
 }
 
-int ResourceResponse::httpStatusCode() const
+int ResourceResponseBase::httpStatusCode() const
 {
     updateResourceResponse();
 
-    return m_httpStatusCode; 
+    return m_httpStatusCode;
 }
 
-void ResourceResponse::setHTTPStatusCode(int statusCode)
+void ResourceResponseBase::setHTTPStatusCode(int statusCode)
 {
     updateResourceResponse();
 
     m_httpStatusCode = statusCode;
 }
 
-const String& ResourceResponse::httpStatusText() const 
+const String& ResourceResponseBase::httpStatusText() const 
 {
     updateResourceResponse();
 
     return m_httpStatusText; 
 }
 
-void ResourceResponse::setHTTPStatusText(const String& statusText) 
+void ResourceResponseBase::setHTTPStatusText(const String& statusText) 
 {
     updateResourceResponse();
 
     m_httpStatusText = statusText; 
 }
 
-String ResourceResponse::httpHeaderField(const String& name) const
+String ResourceResponseBase::httpHeaderField(const String& name) const
 {
     updateResourceResponse();
 
     return m_httpHeaderFields.get(name); 
 }
 
-void ResourceResponse::setHTTPHeaderField(const String& name, const String& value)
+void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& value)
 {
     updateResourceResponse();
 
     m_httpHeaderFields.set(name, value);
 }
 
-const HTTPHeaderMap& ResourceResponse::httpHeaderFields() const
+const HTTPHeaderMap& ResourceResponseBase::httpHeaderFields() const
 {
     updateResourceResponse();
 
     return m_httpHeaderFields; 
 }
 
-bool ResourceResponse::isAttachment() const
+bool ResourceResponseBase::isAttachment() const
 {
     updateResourceResponse();
 
@@ -175,43 +181,42 @@ bool ResourceResponse::isAttachment() const
     return equalIgnoringCase(value, "attachment");
 }
 
-void ResourceResponse::setExpirationDate(time_t expirationDate)
+void ResourceResponseBase::setExpirationDate(time_t expirationDate)
 {
     updateResourceResponse();
 
     m_expirationDate = expirationDate;
 }
 
-time_t ResourceResponse::expirationDate() const
+time_t ResourceResponseBase::expirationDate() const
 {
     updateResourceResponse();
 
     return m_expirationDate; 
 }
 
-void ResourceResponse::setLastModifiedDate(time_t lastModifiedDate) 
+void ResourceResponseBase::setLastModifiedDate(time_t lastModifiedDate) 
 {
     updateResourceResponse();
 
-    m_lastModifiedDate = lastModifiedDate; 
+    m_lastModifiedDate = lastModifiedDate;
 }
 
-time_t ResourceResponse::lastModifiedDate() const
+time_t ResourceResponseBase::lastModifiedDate() const
 {
     updateResourceResponse();
 
-    return m_lastModifiedDate; 
+    return m_lastModifiedDate;
 }
 
-void ResourceResponse::updateResourceResponse() const
+void ResourceResponseBase::updateResourceResponse() const
 {
-#if PLATFORM(MAC) || USE(CFNETWORK)
     if (m_isUpToDate)
         return;
-    
-    const_cast<ResourceResponse*>(this)->doUpdateResourceResponse();
+
+    const_cast<ResourceResponse&>(asResourceResponse()).doUpdateResourceResponse();
+
     m_isUpToDate = true;
-#endif
 }
 
 bool operator==(const ResourceResponse& a, const ResourceResponse& b)

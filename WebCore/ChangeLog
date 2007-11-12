@@ -1,3 +1,55 @@
+2007-11-12  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15334
+        Split ResourceResponse into platform specific files
+
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/ResourceResponse.cpp: Removed.
+        * platform/network/ResourceResponse.h: Removed.
+        * platform/network/ResourceResponseBase.cpp: Copied from platform/network/ResourceResponse.cpp.
+        (WebCore::ResourceResponseBase::asResourceResponse):
+        (WebCore::ResourceResponseBase::isHTTP):
+        (WebCore::ResourceResponseBase::url):
+        (WebCore::ResourceResponseBase::setUrl):
+        (WebCore::ResourceResponseBase::mimeType):
+        (WebCore::ResourceResponseBase::setMimeType):
+        (WebCore::ResourceResponseBase::expectedContentLength):
+        (WebCore::ResourceResponseBase::setExpectedContentLength):
+        (WebCore::ResourceResponseBase::textEncodingName):
+        (WebCore::ResourceResponseBase::setTextEncodingName):
+        (WebCore::ResourceResponseBase::suggestedFilename):
+        (WebCore::ResourceResponseBase::setSuggestedFilename):
+        (WebCore::ResourceResponseBase::httpStatusCode):
+        (WebCore::ResourceResponseBase::setHTTPStatusCode):
+        (WebCore::ResourceResponseBase::httpStatusText):
+        (WebCore::ResourceResponseBase::setHTTPStatusText):
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::httpHeaderFields):
+        (WebCore::ResourceResponseBase::isAttachment):
+        (WebCore::ResourceResponseBase::setExpirationDate):
+        (WebCore::ResourceResponseBase::expirationDate):
+        (WebCore::ResourceResponseBase::setLastModifiedDate):
+        (WebCore::ResourceResponseBase::lastModifiedDate):
+        (WebCore::ResourceResponseBase::updateResourceResponse):
+        * platform/network/ResourceResponseBase.h: Copied from platform/network/ResourceResponse.h.
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        * platform/network/cf/ResourceResponse.h: Added.
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/curl/ResourceResponse.h: Added.
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+        * platform/network/mac/ResourceResponse.h: Added.
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/qt/ResourceResponse.h: Added.
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+
 2007-11-11  Justin Haygood  <jhaygood@reaktix.com>
 
         Reviewed by Adam Roben.
