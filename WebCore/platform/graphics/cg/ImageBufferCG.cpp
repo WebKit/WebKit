@@ -37,10 +37,16 @@ namespace WebCore {
 
 auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool grayScale)
 {
+    if (size.width() <= 0 || size.height() <= 0)
+        return auto_ptr<ImageBuffer>();        
     unsigned int bytesPerRow = size.width();
-    if (!grayScale)
+    if (!grayScale) {
+        // Protect against overflow
+        if (bytesPerRow > 0x3FFFFFFF)
+            return auto_ptr<ImageBuffer>();            
         bytesPerRow *= 4;
-    
+    }
+
     void* imageBuffer = fastCalloc(size.height(), bytesPerRow);
     if (!imageBuffer)
         return auto_ptr<ImageBuffer>();

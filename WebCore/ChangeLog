@@ -1,3 +1,13 @@
+2007-11-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5585334> numfuzz: integer overflows opening
+        malformed SVG file in WebCore::ImageBuffer::create. Add protection
+        against a potential overflow.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+
 2007-11-11  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
