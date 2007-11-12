@@ -191,7 +191,7 @@ void SegmentedString::advanceSlowCase(int& lineNumber)
         m_pushedChar1 = m_pushedChar2;
         m_pushedChar2 = 0;
     } else if (m_currentString.m_current) {
-        if (*m_currentString.m_current++ == '\n' && !m_currentString.excludeLineNumbers())
+        if (*m_currentString.m_current++ == '\n' && m_currentString.doNotExcludeLineNumbers())
             ++lineNumber;
         if (--m_currentString.m_length == 0)
             advanceSubstring();

@@ -31,17 +31,19 @@ class SegmentedSubstring {
 private:
     friend class SegmentedString;
     
-    SegmentedSubstring() : m_length(0), m_current(0), m_excludeLineNumbers(false) {}
-    SegmentedSubstring(const String& str) : m_string(str), m_length(str.length()), m_excludeLineNumbers(false) {
+    SegmentedSubstring() : m_length(0), m_current(0), m_doNotExcludeLineNumbers(true) {}
+    SegmentedSubstring(const String& str) : m_string(str), m_length(str.length()), m_doNotExcludeLineNumbers(true) {
         m_current = m_length == 0 ? 0 : m_string.characters();
     }
 
-    SegmentedSubstring(const UChar* str, int length) : m_length(length), m_current(length == 0 ? 0 : str), m_excludeLineNumbers(false) {}
+    SegmentedSubstring(const UChar* str, int length) : m_length(length), m_current(length == 0 ? 0 : str), m_doNotExcludeLineNumbers(true) {}
 
     void clear() { m_length = 0; m_current = 0; }
     
-    bool excludeLineNumbers() const { return m_excludeLineNumbers; }
-    void setExcludeLineNumbers() { m_excludeLineNumbers = true; }
+    bool excludeLineNumbers() const { return !m_doNotExcludeLineNumbers; }
+    bool doNotExcludeLineNumbers() const { return m_doNotExcludeLineNumbers; }
+
+    void setExcludeLineNumbers() { m_doNotExcludeLineNumbers = false; }
 
     void appendTo(String& str) const {
         if (m_string.characters() == m_current) {
@@ -57,7 +59,7 @@ private:
     String m_string;
     int m_length;
     const UChar* m_current;
-    bool m_excludeLineNumbers;
+    bool m_doNotExcludeLineNumbers;
 };
 
 class SegmentedString {
@@ -108,7 +110,7 @@ public:
     void advance(int& lineNumber)
     {
         if (!m_pushedChar1 && m_currentString.m_length > 1) {
-            lineNumber += (*m_currentString.m_current == '\n') & m_currentString.excludeLineNumbers();
+            lineNumber += (*m_currentString.m_current == '\n') & m_currentString.doNotExcludeLineNumbers();
             --m_currentString.m_length;
             m_currentChar = ++m_currentString.m_current;
             return;

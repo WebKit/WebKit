@@ -1,3 +1,21 @@
+2007-11-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix line numbers that were off since my recent patch
+
+        * platform/SegmentedString.h:
+        (WebCore::SegmentedSubstring::SegmentedSubstring): Reversed the sense of m_excludeLineNumbers
+        and rename it to m_doNotExcludeLineNumbers.
+        (WebCore::SegmentedSubstring::excludeLineNumbers): Updated.
+        (WebCore::SegmentedSubstring::doNotExcludeLineNumbers): Added.
+        (WebCore::SegmentedSubstring::setExcludeLineNumbers): Updated.
+        (WebCore::SegmentedString::advance): Use doNotExcludeLineNumbers to reverse the sense and fix
+        the regression, but keep the speediness. I accidentally had removed a ! here.
+
+        * platform/SegmentedString.cpp:
+        (WebCore::SegmentedString::advanceSlowCase): Use doNotExcludeLineNumbers.
+
 2007-11-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.
