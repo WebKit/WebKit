@@ -1,3 +1,25 @@
+2007-11-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        - Update play() and pause() to match current HTML5 draft
+            - send events asynchronously
+            - add timeupdate event to pause
+            - rethrow load() exception, not others
+        - Use list for async events to get ordering right
+
+        Tests: media/video-pause-empty-events.html
+               media/video-play-empty-events.html
+               media/video-play-pause-events.html
+               media/video-play-pause-exception.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::dispatchEventAsync): 
+        (WebCore::HTMLMediaElement::asyncEventTimerFired):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        * html/HTMLMediaElement.h:
+
 2007-11-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

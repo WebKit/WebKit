@@ -1,3 +1,22 @@
+2007-11-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Add tests for play() and pause() events. 
+        Update one test to match new behavior.
+
+        * media/video-currentTime-expected.txt:
+        * media/video-currentTime.html:
+        * media/video-pause-empty-events-expected.txt: Added.
+        * media/video-pause-empty-events.html: Added.
+        * media/video-play-empty-events-expected.txt: Added.
+        * media/video-play-empty-events.html: Added.
+        * media/video-play-pause-events-expected.txt: Added.
+        * media/video-play-pause-events.html: Added.
+        * media/video-play-pause-exception-expected.txt: Added
+        * media/video-play-pause-exception.html: Added
+        * media/video-test.js:
+
 2007-11-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

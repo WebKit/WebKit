@@ -163,7 +163,7 @@ protected:
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_asyncEventTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
-    HashSet<String> m_asyncEventsToDispatch;
+    Vector<AtomicString> m_asyncEventsToDispatch;
     
     float m_defaultPlaybackRate;
     NetworkState m_networkState;

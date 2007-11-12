@@ -137,7 +137,7 @@ void HTMLMediaElement::initAndDispatchProgressEvent(const AtomicString& eventNam
 
 void HTMLMediaElement::dispatchEventAsync(const AtomicString& eventName)
 {
-    m_asyncEventsToDispatch.add(eventName);
+    m_asyncEventsToDispatch.append(eventName);
     if (!m_asyncEventTimer.isActive())                            
         m_asyncEventTimer.startOneShot(0);
 }
@@ -150,10 +150,11 @@ void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
 
 void HTMLMediaElement::asyncEventTimerFired(Timer<HTMLMediaElement>*)
 {
-    HashSet<String>::const_iterator end = m_asyncEventsToDispatch.end();
-    for (HashSet<String>::const_iterator it = m_asyncEventsToDispatch.begin(); it != end; ++it)
-        dispatchHTMLEvent(*it, false, true);
-    m_asyncEventsToDispatch.clear();
+    Vector<AtomicString> asyncEventsToDispatch;
+    m_asyncEventsToDispatch.swap(asyncEventsToDispatch);
+    unsigned count = asyncEventsToDispatch.size();
+    for (unsigned n = 0; n < count; ++n)
+        dispatchHTMLEvent(asyncEventsToDispatch[n], false, true);
 }
 
 String serializeTimeOffset(float time)
@@ -604,22 +605,20 @@ void HTMLMediaElement::play(ExceptionCode& ec)
         if (ec)
             return;
     }
+    ExceptionCode unused;
     if (endedPlayback()) {
         m_currentLoop = 0;
-        seek(effectiveStart(), ec);
-        if (ec)
-            return;
+        seek(effectiveStart(), unused);
+        unused = 0;
     }
-    setPlaybackRate(defaultPlaybackRate(), ec);
-    if (ec)
-        return;
-    
-    m_autoplaying = false;
+    setPlaybackRate(defaultPlaybackRate(), unused);
     
     if (m_movie->paused()) {
-        dispatchHTMLEvent(playEvent, false, true);
         m_movie->play();
+        dispatchEventAsync(playEvent);
     }
+
+    m_autoplaying = false;
 }
 
 void HTMLMediaElement::pause(ExceptionCode& ec)
@@ -627,14 +626,17 @@ void HTMLMediaElement::pause(ExceptionCode& ec)
     // 3.14.9.7. Playing the media resource
     if (!m_movie || networkState() == EMPTY) {
         load(ec);
+        if (ec)
+            return;
+    }
+
+    if (!m_movie->paused()) {
+        m_movie->pause();
+        dispatchEventAsync(timeupdateEvent);
+        dispatchEventAsync(pauseEvent);
     }
 
     m_autoplaying = false;
-
-    if (!m_movie->paused()) {
-        dispatchHTMLEvent(pauseEvent, false, true);
-        m_movie->pause();
-    }
 }
 
 unsigned HTMLMediaElement::loopCount() const

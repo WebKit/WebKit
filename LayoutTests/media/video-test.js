@@ -34,6 +34,16 @@ function test(testFuncString, endit)
         endTest();  
 }
 
+function run(testFuncString)
+{
+    consoleWrite("RUN(" + testFuncString + ")");
+    try {
+        eval(testFuncString);
+    } catch (ex) {
+        consoleWrite(ex);
+    }
+}
+
 function waitForEventAndEnd(eventName, funcString)
 {
     waitForEvent(eventName, funcString, true)
@@ -101,6 +111,11 @@ function endTest()
     testEnded = true;
     if (window.layoutTestController)
         layoutTestController.notifyDone();     
+}
+
+function endTestLater()
+{
+    setTimeout(endTest, 250);
 }
 
 function consoleWrite(text)
