@@ -129,6 +129,10 @@ PassRefPtr<Range> Selection::toRange() const
     // incorrect results.
     m_start.node()->document()->updateLayout();
 
+    // Check again, because updating layout can clear the selection.
+    if (isNone())
+        return 0;
+
     Position s, e;
     if (isCaret()) {
         // If the selection is a caret, move the range start upstream. This helps us match

@@ -1,3 +1,13 @@
+2007-11-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15942
+          REGRESSION: Selecting "Edit Html" tab in Blogger causes crash (Assertion failed: isRange())
+
+        * editing/selection/cleared-by-relayout-expected.txt: Added.
+        * editing/selection/cleared-by-relayout.html: Added.
+
 2007-11-11  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
