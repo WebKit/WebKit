@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,13 +50,17 @@
 #include <sys/stat.h>
 #endif
 
+#if PLATFORM(DARWIN)
+#include <pthread.h>
+#endif
+
 #include <errno.h>
 
 // For methods that are meant to support API from the main thread - should not be called internally
 #define ASSERT_NOT_SYNC_THREAD() ASSERT(!m_syncThreadRunning || !IS_ICON_SYNC_THREAD())
 
 // For methods that are meant to support the sync thread ONLY
-#define IS_ICON_SYNC_THREAD() pthread_equal(pthread_self(), m_syncThread)
+#define IS_ICON_SYNC_THREAD() m_syncThread == currentThread()
 #define ASSERT_ICON_SYNC_THREAD() ASSERT(IS_ICON_SYNC_THREAD())
 
 namespace WebCore {
@@ -136,13 +141,13 @@ bool IconDatabase::open(const String& databasePath)
     // Formulate the full path for the database file
     m_completeDatabasePath = pathByAppendingComponent(m_databaseDirectory, defaultDatabaseFilename());
 
-    // Lock here as well as first thing in the thread so the tread doesn't actually commence until the pthread_create() call 
+    // Lock here as well as first thing in the thread so the thread doesn't actually commence until the createThread() call 
     // completes and m_syncThreadRunning is properly set
     m_syncLock.lock();
-    m_syncThreadRunning = !pthread_create(&m_syncThread, NULL, IconDatabase::iconDatabaseSyncThreadStart, this);
-    m_syncLock.unlock();
-
-    return m_syncThreadRunning;
+    m_syncThread = createThread(IconDatabase::iconDatabaseSyncThreadStart, this);
+    if (!m_syncThread)
+        return false;
+    return true;
 }
 
 void IconDatabase::close()
@@ -157,8 +162,7 @@ void IconDatabase::close()
         wakeSyncThread();
         
         // Wait for the sync thread to terminate
-        if (pthread_join(m_syncThread, NULL) == EDEADLK)
-            LOG_ERROR("m_syncThread was found to be deadlocked trying to quit");
+        waitForThreadCompletion(m_syncThread, 0);
     }
 
     m_syncThreadRunning = false;    

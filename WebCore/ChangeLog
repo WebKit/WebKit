@@ -1,3 +1,20 @@
+2007-11-12  Justin Haygood  <jhaygood@reaktix.com>
+
+        Reviewed by Brady.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15955
+        Reimplement threading functions in IconDatabase and SQLiteDatabase in terms of the threading abstractions
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::close):
+        * loader/icon/IconDatabase.h:
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::open):
+        (WebCore::SQLiteDatabase::close):
+        * platform/sql/SQLiteDatabase.h:
+
 2007-11-12  Adam Roben  <aroben@apple.com>
 
         Windows build fix

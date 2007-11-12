@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,10 +45,8 @@ const int SQLResultSchema = SQLITE_SCHEMA;
 SQLiteDatabase::SQLiteDatabase()
     : m_db(0)
     , m_transactionInProgress(false)
+    , m_openingThread(0)
 {
-#ifndef NDEBUG
-    memset(&m_openingThread, 0, sizeof(pthread_t));
-#endif
 }
 
 SQLiteDatabase::~SQLiteDatabase()
@@ -71,10 +70,8 @@ bool SQLiteDatabase::open(const String& filename)
         return false;
     }
 
-#ifndef NDEBUG
     if (isOpen())
-        m_openingThread = pthread_self();
-#endif
+        m_openingThread = currentThread();
     
     if (!SQLiteStatement(*this, "PRAGMA temp_store = MEMORY;").executeCommand())
         LOG_ERROR("SQLite database could not set temp_store to memory");
@@ -89,9 +86,8 @@ void SQLiteDatabase::close()
         m_path.truncate(0);
         m_db = 0;
     }
-#ifndef NDEBUG
-    memset(&m_openingThread, 0, sizeof(pthread_t));
-#endif
+
+    m_openingThread = 0;
 }
 
 void SQLiteDatabase::setFullsync(bool fsync) 
@@ -296,5 +292,3 @@ void SQLiteDatabase::unlock()
 }
 
 } // namespace WebCore
-
-
