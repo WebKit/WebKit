@@ -1,3 +1,10 @@
+2007-11-12  Mark Rowe  <mrowe@apple.com>
+
+        Fix deadlock on launch on the Mac.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open): Restore unlock that was mistakenly removed in r27717.
+
 2007-11-12  Justin Haygood  <jhaygood@reaktix.com>
 
         Reviewed by Brady.
