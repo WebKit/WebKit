@@ -4525,11 +4525,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceResponse.cpp"
+					RelativePath="..\platform\network\ResourceResponseBase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceResponse.h"
+					RelativePath="..\platform\network\ResourceResponseBase.h"
 					>
 				</File>
 				<Filter
@@ -4569,6 +4569,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\network\cf\ResourceRequestCFNet.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\network\cf\ResourceResponse.h"
 						>
 					</File>
 					<File

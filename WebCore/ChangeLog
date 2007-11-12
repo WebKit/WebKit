@@ -1,3 +1,12 @@
+2007-11-12  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * config.h: Touch because VS apparently can't figure out which files
+        depend on ResourceResponse.h.
+        * WebCore.vcproj/WebCore.vcproj: Add ResourceResponseBase files to
+        project and remove old ResourceResponse files.
+
 2007-11-12  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Darin.
