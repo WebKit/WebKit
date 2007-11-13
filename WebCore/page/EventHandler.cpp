@@ -1014,7 +1014,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     bool swallowEvent = false;
     Node* targetNode = m_capturingMouseEventsNode ? m_capturingMouseEventsNode.get() : mev.targetNode();
     RefPtr<Frame> newSubframe = subframeForTargetNode(targetNode);
-    
+
     // We want mouseouts to happen first, from the inside out.  First send a move event to the last subframe so that it will fire mouseouts.
     if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree()->isDescendantOf(m_frame) && m_lastMouseMoveEventSubframe != newSubframe)
         passMouseMoveEventToSubframe(mev, m_lastMouseMoveEventSubframe.get());
@@ -1177,7 +1177,7 @@ void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         else
             dispatchDragEvent(dragleaveEvent, m_dragTarget.get(), event, clipboard);
     }
-    m_dragTarget = 0;
+    clearDragState();
 }
 
 bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
@@ -1191,8 +1191,17 @@ bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard
         else
             accept = dispatchDragEvent(dropEvent, m_dragTarget.get(), event, clipboard);
     }
-    m_dragTarget = 0;
+    clearDragState();
     return accept;
+}
+
+void EventHandler::clearDragState()
+{
+    m_dragTarget = 0;
+    m_capturingMouseEventsNode = 0;
+#if PLATFORM(MAC)
+    m_sendingEventToSubview = false;
+#endif
 }
 
 Node* EventHandler::nodeUnderMouse() const

@@ -11,6 +11,22 @@
 
 2007-11-12  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by John S.
+
+        <rdar://problem/5537289> REGRESSION: Dragging a link or an image from an IFrame causes the page to not respond to clicks afterwards (15460)
+        
+        EventHandler needs to reset these fields when a drag terminates, otherwise
+        EventHandler is left in an inconsistent state when a drag is initiated on a
+        page with multiple frames.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::cancelDragAndDrop):
+        (WebCore::EventHandler::performDragAndDrop):
+        (WebCore::EventHandler::clearDragState):
+        * page/EventHandler.h:
+
+2007-11-12  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin and Antti.
 
         Return behaviour for 0 sized pattern back to what it was prior to r27704
