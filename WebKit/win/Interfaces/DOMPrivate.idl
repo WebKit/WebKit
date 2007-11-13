@@ -52,6 +52,8 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "DOMCore.idl";
 
+typedef struct WebFontDescription WebFontDescription;
+
 [
     object,
     oleautomation,
@@ -64,6 +66,7 @@ interface IDOMElementPrivate : IUnknown
     HRESULT isEqual([in] IDOMElement* other, [out, retval] BOOL* result);
     HRESULT isFocused([out, retval] BOOL* result);
     HRESULT innerText([out, retval] BSTR* result);
+    [local] HRESULT font(WebFontDescription* webFontDescription);
 }
 
 /*

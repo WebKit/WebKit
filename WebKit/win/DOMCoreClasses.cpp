@@ -31,11 +31,14 @@
 #include "DOMCSSClasses.h"
 #include "DOMEventsClasses.h"
 #include "DOMHTMLClasses.h"
+#include "WebKitGraphics.h"
+
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
+#include <WebCore/FontData.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
@@ -1033,6 +1036,30 @@ HRESULT STDMETHODCALLTYPE DOMElement::innerText(
     }
 
     *result = BString(m_element->innerText()).release();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE DOMElement::font(WebFontDescription* webFontDescription)
+{
+    if (!webFontDescription) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+
+    ASSERT(m_element);
+
+    WebCore::RenderObject* renderer = m_element->renderer();
+    if (!renderer)
+        return E_FAIL;
+
+    FontDescription fontDescription = renderer->style()->font().fontDescription();
+    AtomicString family = fontDescription.family().family();
+    webFontDescription->family = family.characters();
+    webFontDescription->familyLength = family.length();
+    webFontDescription->size = fontDescription.computedSize();
+    webFontDescription->bold = fontDescription.bold();
+    webFontDescription->italic = fontDescription.italic();
+
     return S_OK;
 }
 
