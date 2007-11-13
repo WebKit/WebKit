@@ -1,3 +1,21 @@
+2007-11-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        - fix <rdar://problem/5516272> Reproducible crash in RenderObject::setStyle involving going Back from a non-HTML document (Bookmarks view, PDF view)
+
+        The root cause for the crash is that when a non-HTML view enters the
+        frame, the frame's document pointer keeps pointing at the last HTML-type
+        document it contained. This patch does not address the root cause, but
+        makes changes to account for that condition.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedMainResourceError): Do not change the
+        frame's current document's page cache state here.
+        (WebCore::FrameLoader::invalidateCurrentItemCachedPage): If the frame's
+        current document is in fact the history item being invalidated, then
+        set its page cache state here.
+
 2007-11-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

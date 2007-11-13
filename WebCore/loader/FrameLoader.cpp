@@ -3365,7 +3365,6 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error, bool isC
         // We might have made a page cache item, but now we're bailing out due to an error before we ever
         // transitioned to the new page (before WebFrameState == commit).  The goal here is to restore any state
         // so that the existing view (that wenever got far enough to replace) can continue being used.
-        m_frame->document()->setInPageCache(false);
         invalidateCurrentItemCachedPage();
         
         // Call clientRedirectCancelledOrFinished here so that the frame load delegate is notified that the redirect's
@@ -3918,8 +3917,10 @@ void FrameLoader::invalidateCurrentItemCachedPage()
     // Both Xcode and FileMaker see this crash, Safari does not.
     
     ASSERT(!cachedPage || cachedPage->document() == m_frame->document());
-    if (cachedPage && cachedPage->document() == m_frame->document())
+    if (cachedPage && cachedPage->document() == m_frame->document()) {
+        cachedPage->document()->setInPageCache(false);
         cachedPage->clear();
+    }
     
     if (cachedPage)
         pageCache()->remove(m_currentHistoryItem.get());
