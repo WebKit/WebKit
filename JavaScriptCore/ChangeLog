@@ -1,3 +1,11 @@
+2007-11-13  Darin Adler  <darin@apple.com>
+
+        * kjs/JSImmediate.h: (KJS::JSImmediate::getTruncatedInt32):
+        Remove too-strong assert that was firing constantly and preventing even basic
+        web browsing from working in a debug build. This function is used in many
+        cases where the immediate value is not a number; the assertion could perhaps
+        be added back later with a bit of reorganization.
+
 2007-11-13  Alp Toker  <alp@atoker.com>
 
         Build fix for breakage to non-Mac builds introduced in r27746.
