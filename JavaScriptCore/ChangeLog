@@ -1,3 +1,15 @@
+2007-11-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        Add an ASSERT to getTruncatedInt32 to enforce proper usage.
+        Best part about this patch?  It doesn't break the web!
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::getTruncatedInt32):
+        (KJS::JSImmediate::toDouble):
+        (KJS::JSImmediate::getUInt32):
+
 2007-11-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
