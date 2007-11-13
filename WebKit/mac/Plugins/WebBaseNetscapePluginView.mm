@@ -2561,7 +2561,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             return NPERR_NO_ERROR;
         }
         
-        case NPNVpluginDrawingModel:
+        case NPPVpluginDrawingModel:
         {
             // Can only set drawing model inside NPP_New()
             if (self != [[self class] currentPluginView])

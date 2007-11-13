@@ -330,7 +330,11 @@ typedef enum {
      * form submission if the plugin is part of a form. Use
      * NPN_MemAlloc() to allocate memory for the string data.
      */
-    NPPVformValue = 16    /* Not implemented in WebKit */
+    NPPVformValue = 16,    /* Not implemented in WebKit */
+#ifdef XP_MACOSX
+    /* Used for negotiating drawing models */
+    NPPVpluginDrawingModel = 1000
+#endif
 } NPPVariable;
 
 /*
