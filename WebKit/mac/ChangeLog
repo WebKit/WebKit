@@ -1,3 +1,15 @@
+2007-11-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        - fixed <rdar://problem/5567954> REGRESSION (Safari 2-3): Autofill no longer automatically fills in 
+        form fields other than the one you're typing into
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (selectorForKeyEvent):
+        correct the key identifier strings for Tab and Esc; these were updated in WebCore as part of r21445
+        but didn't get updated here.
+
 2007-11-12  Josh Aas  <joshmoz@gmail.com>
 
         Reviewed by Darin.
