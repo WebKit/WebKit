@@ -29,17 +29,11 @@
 namespace WebCore {
 
 struct WindowFeatures {
-    typedef enum {
-        PreferUnspecified,
-        PreferNewWindow,
-        PreferNewTab
-    } PreferredType;
-    
     WindowFeatures()
         : xSet(false), ySet(false), widthSet(false), heightSet(false),
           menuBarVisible(true), statusBarVisible(true), toolBarVisible(true),
           locationBarVisible(true), scrollbarsVisible(true), resizable(true),
-          fullscreen(false), dialog(false), preferredType(PreferUnspecified)
+          fullscreen(false), dialog(false)
     {}
 
     float x;
@@ -60,7 +54,6 @@ struct WindowFeatures {
 
     bool fullscreen;
     bool dialog;
-    PreferredType preferredType;
 };
 
 } // namespace WebCore

@@ -173,19 +173,6 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& reques
         if (height)
             [dictFeatures setObject:height forKey:@"height"];
         
-        switch (features.preferredType) {
-            case WindowFeatures::PreferNewWindow:
-                [dictFeatures setObject:@"window" forKey:@"preferredType"];
-                break;
-            case WindowFeatures::PreferNewTab:
-                [dictFeatures setObject:@"tab" forKey:@"preferredType"];
-                break;
-            case WindowFeatures::PreferUnspecified:
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-        }
-                    
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:windowFeatures:), URLRequest, dictFeatures);
         
         [dictFeatures release];

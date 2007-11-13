@@ -1,5 +1,16 @@
 2007-11-13  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin.
+
+        removed recently-added PreferredType concept; we found a better way to do what
+        ths was accomplishing
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+        removed use of PreferredType
+
+2007-11-13  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Dan Bernstein.
         
         - fixed <rdar://problem/5567954> REGRESSION (Safari 2-3): Autofill no longer automatically fills in 
