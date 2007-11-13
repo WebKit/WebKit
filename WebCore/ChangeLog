@@ -1,3 +1,20 @@
+2007-11-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - <http://bugs.webkit.org/show_bug.cgi?id=15890>
+          Most of www.aol.com still redraws unnecessarily when headline/photo section changes
+
+        Test: fast/repaint/invisible-objects.html
+
+        Avoid repainting invisible blocks if they are enclosed in a layer that
+        contains no visible objects.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteClippedOverflowRect):
+
 2007-11-12  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

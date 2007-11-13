@@ -1,3 +1,15 @@
+2007-11-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - no-repaint test for <http://bugs.webkit.org/show_bug.cgi?id=15890>
+          Most of www.aol.com still redraws unnecessarily when headline/photo section changes
+
+        * fast/repaint/invisible-objects.html: Added.
+        * platform/mac/fast/repaint/invisible-objects-expected.checksum: Added.
+        * platform/mac/fast/repaint/invisible-objects-expected.png: Added.
+        * platform/mac/fast/repaint/invisible-objects-expected.txt: Added.
+
 2007-11-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
