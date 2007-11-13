@@ -1,3 +1,14 @@
+2007-11-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=15951
+          REGRESSION: assertion failure in regexp match() when running JS tests
+
+        * fast/js/regexp-many-brackets-expected.txt: Added.
+        * fast/js/regexp-many-brackets.html: Added.
+        * fast/js/resources/regexp-many-brackets.js: Added.
+
 2007-11-12  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber-stamped by Oliver Hunt.

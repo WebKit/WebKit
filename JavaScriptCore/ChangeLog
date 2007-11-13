@@ -1,5 +1,17 @@
 2007-11-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15951
+          REGRESSION: assertion failure in regexp match() when running JS tests
+
+        Test: fast/js/regexp-many-brackets.html
+
+        * pcre/pcre_exec.cpp: (match): Added back accidentally-removed case for
+        the BRANUMBER opcode.
+
+2007-11-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - fix use of prefix and config.h, got rid of a few unneeded things in

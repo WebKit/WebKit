@@ -446,6 +446,12 @@ for (;;)
     DPRINTF(("bracket 0 failed\n"));
     RRETURN;
 
+    /* Skip over large extraction number data if encountered. */
+
+    BEGIN_OPCODE(BRANUMBER):
+    frame->ecode += 3;
+    NEXT_OPCODE;
+
     /* End of the pattern. */
 
     BEGIN_OPCODE(END):
@@ -1852,7 +1858,6 @@ for (;;)
       }
     /* Control never gets here */
 
-    BEGIN_OPCODE(BRANUMBER):
     BEGIN_OPCODE(CRMINPLUS):
     BEGIN_OPCODE(CRMINQUERY):
     BEGIN_OPCODE(CRMINRANGE):
