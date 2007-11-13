@@ -40,6 +40,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/unicode/UTF8.h>
 
 #if HAVE(STRING_H)
 #include <string.h>
@@ -49,6 +50,7 @@
 #endif
 
 using namespace WTF;
+using namespace WTF::Unicode;
 using namespace std;
 
 namespace KJS {
