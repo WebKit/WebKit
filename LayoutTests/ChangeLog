@@ -1,3 +1,22 @@
+2007-11-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        - add HTTP media test for stalling load
+        - update tests that don't specifically test autoplay feature to not use autoplay 
+          attribute since playback may start before event listeners are registered
+
+        * http/tests/media: Added.
+        * http/tests/media/video-load-and-stall.cgi: Added.
+        * http/tests/media/video-play-stall-expected.txt: Added.
+        * http/tests/media/video-play-stall.html: Added.
+        * media/video-autoplay.html:
+        * media/video-dom-loopstart.html:
+        * media/video-end.html:
+        * media/video-loopcount.html:
+        * media/video-loopend.html:
+        * media/video-loopstart.html:
+
 2007-11-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

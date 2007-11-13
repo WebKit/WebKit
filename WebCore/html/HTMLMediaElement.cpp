@@ -71,6 +71,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_currentLoop(0)
     , m_volume(0.5f)
     , m_muted(false)
+    , m_paused(true)
     , m_previousProgress(0)
     , m_previousProgressTime(numeric_limits<double>::max())
     , m_sentStalledEvent(false)
@@ -259,6 +260,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     if (networkState() != EMPTY) {
         m_networkState = EMPTY;
         m_readyState = DATA_UNAVAILABLE;
+        m_paused = true;
         if (m_movie) {
             m_movie->pause();
             m_movie->seek(0);
@@ -435,11 +437,12 @@ void HTMLMediaElement::setReadyState(ReadyState state)
         dispatchHTMLEvent(canplayEvent, false, true);
     } else if (state == CAN_PLAY_THROUGH) {
         dispatchHTMLEvent(canplaythroughEvent, false, true);
-        if (m_autoplaying && paused() && autoplay()) {
-            m_movie->play();
+        if (m_autoplaying && m_paused && autoplay()) {
+            m_paused = false;
             dispatchHTMLEvent(playEvent, false, true);
         }
     }
+    updatePlayState();
 }
 
 void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
@@ -545,7 +548,7 @@ float HTMLMediaElement::duration() const
 
 bool HTMLMediaElement::paused() const
 {
-    return m_movie ? m_movie->paused() : true;
+    return m_paused;
 }
 
 float HTMLMediaElement::defaultPlaybackRate() const
@@ -613,8 +616,9 @@ void HTMLMediaElement::play(ExceptionCode& ec)
     }
     setPlaybackRate(defaultPlaybackRate(), unused);
     
-    if (m_movie->paused()) {
-        m_movie->play();
+    if (m_paused) {
+        m_paused = false;
+        updatePlayState();
         dispatchEventAsync(playEvent);
     }
 
@@ -631,8 +635,9 @@ void HTMLMediaElement::pause(ExceptionCode& ec)
             return;
     }
 
-    if (!m_movie->paused()) {
-        m_movie->pause();
+    if (!m_paused) {
+        m_paused = true;
+        updatePlayState();
         dispatchEventAsync(timeupdateEvent);
         dispatchEventAsync(pauseEvent);
     }
@@ -818,6 +823,8 @@ void HTMLMediaElement::checkIfSeekNeeded()
     // 6
     if (m_currentLoop == loopCount() - 1 && time > effectiveEnd())
         seek(effectiveEnd(), ec);
+
+    updatePlayState();
 }
 
 void HTMLMediaElement::movieVolumeChanged(Movie*)
@@ -837,8 +844,7 @@ void HTMLMediaElement::movieDidEnd(Movie*)
         m_movie->seek(effectiveLoopStart());
         m_currentLoop++;
         m_movie->setEndTime(m_currentLoop == loopCount() - 1 ? effectiveEnd() : effectiveLoopEnd());
-        if (m_movie)
-            m_movie->play();
+        updatePlayState();
         dispatchHTMLEvent(timeupdateEvent, false, true);
     }
     
@@ -967,6 +973,17 @@ bool HTMLMediaElement::endedPlayback() const
     return networkState() >= LOADED_METADATA && currentTime() >= effectiveEnd() && currentLoop() == loopCount() - 1;
 }
 
+void HTMLMediaElement::updatePlayState()
+{
+    if (!m_movie)
+        return;
+    bool shouldBePlaying = activelyPlaying();
+    if (shouldBePlaying && m_movie->paused())
+        m_movie->play();
+    else if (!shouldBePlaying && !m_movie->paused())
+        m_movie->pause();
+}
+    
 void HTMLMediaElement::willSaveToCache()
 {
     // 3.14.9.4. Loading the media resource

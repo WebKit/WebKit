@@ -1,7 +1,8 @@
-<video src=content/test.mp4 loopcount=2 loopend=0.2s end=0.2s autoplay></video>
+<video src=content/test.mp4 loopcount=2 loopend=0.2s end=0.2s></video>
 <script src=video-test.js></script>
 <script>
 test("video.loopCount == 2");
 test("video.currentLoop == 0");
 waitForEventTestAndEnd('ended', "video.currentLoop == 1");
+video.play();
 </script>

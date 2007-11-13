@@ -1,3 +1,27 @@
+2007-11-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+
+        Fix that 'timeupdate' and 'waiting' events were never dispatched.
+        
+        Add explicit m_paused attribute instead of trying to derive paused state from
+        underlying media. Call updatePlayState() to start/stop media playback
+        when any attribute that affects active playback state changes. This matches 
+        specification text.
+        
+        Test: http/tests/media/video-play-stall.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::paused):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::checkIfSeekNeeded):
+        (WebCore::HTMLMediaElement::movieDidEnd):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        * html/HTMLMediaElement.h:
+
 2007-11-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

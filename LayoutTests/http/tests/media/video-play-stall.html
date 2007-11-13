@@ -1,0 +1,15 @@
+<video src="http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=80000"></video>
+<p>Test that dataunavailable, timeupdate and waiting events are sent when media load stalls in the middle.</p>
+<script src=../../../media/video-test.js></script>
+<script>
+waitForEvent('durationchange');
+waitForEvent('loadedmetadata');
+waitForEvent('loadedfirstframe');
+waitForEvent('canshowcurrentframe');
+waitForEvent('canplay', function () {
+    waitForEvent('dataunavailable');
+    waitForEvent('timeupdate');
+    waitForEventAndEnd('waiting');
+} );
+video.play();
+</script>
