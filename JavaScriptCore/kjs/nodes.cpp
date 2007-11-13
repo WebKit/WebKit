@@ -2601,22 +2601,23 @@ void GreaterNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::N
 }
 
 // ECMA 11.8.2
-JSValue* GreaterNode::evaluate(ExecState* exec)
-{
-    JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    return jsBoolean(lessThan(exec, v2, v1));
-}
-
-bool GreaterNode::evaluateToBoolean(ExecState *exec)
+bool GreaterNode::inlineEvaluateToBoolean(ExecState *exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
     return lessThan(exec, v2, v1);
+}
+
+JSValue* GreaterNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool GreaterNode::evaluateToBoolean(ExecState *exec)
+{
+    return inlineEvaluateToBoolean(exec);
 }
 
 void LessEqNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2626,22 +2627,23 @@ void LessEqNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::No
 }
 
 // ECMA 11.8.3
-JSValue* LessEqNode::evaluate(ExecState* exec)
-{
-    JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    return jsBoolean(lessThanEq(exec, v1, v2));
-}
-
-bool LessEqNode::evaluateToBoolean(ExecState* exec)
+bool LessEqNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
     return lessThanEq(exec, v1, v2);
+}
+
+JSValue* LessEqNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool LessEqNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToBoolean(exec);
 }
 
 void GreaterEqNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2651,22 +2653,23 @@ void GreaterEqNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks:
 }
 
 // ECMA 11.8.4
-JSValue* GreaterEqNode::evaluate(ExecState* exec)
-{
-    JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    return jsBoolean(lessThanEq(exec, v2, v1));
-}
-
-bool GreaterEqNode::evaluateToBoolean(ExecState* exec)
+bool GreaterEqNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
     return lessThanEq(exec, v2, v1);
+}
+
+JSValue* GreaterEqNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool GreaterEqNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToBoolean(exec);
 }
 
 void InstanceOfNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2749,8 +2752,10 @@ bool InNode::evaluateToBoolean(ExecState *exec)
     JSValue* v2 = expr2->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
 
-    if (!v2->isObject())
-        return throwError(exec, TypeError, "Value %s (result of expression %s) is not an object. Cannot be used with 'in' operator.", v2, expr2.get());
+    if (!v2->isObject()) {
+        throwError(exec, TypeError, "Value %s (result of expression %s) is not an object. Cannot be used with 'in' operator.", v2, expr2.get());
+        return false;
+    }
 
     return static_cast<JSObject*>(v2)->hasProperty(exec, Identifier(v1->toString(exec)));
 }
@@ -2764,24 +2769,24 @@ void EqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::Nod
 }
 
 // ECMA 11.9.1
-JSValue* EqualNode::evaluate(ExecState* exec)
+bool EqualNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
+    KJS_CHECKEXCEPTIONBOOLEAN
     JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
+    KJS_CHECKEXCEPTIONBOOLEAN
+    
+    return equal(exec, v1, v2);
+}
 
-    return jsBoolean(equal(exec, v1, v2));
+JSValue* EqualNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
 }
 
 bool EqualNode::evaluateToBoolean(ExecState* exec)
 {
-    JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONBOOLEAN
-    JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONBOOLEAN
-
-    return equal(exec, v1, v2);
+    return inlineEvaluateToBoolean(exec);
 }
 
 void NotEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2791,17 +2796,7 @@ void NotEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::
 }
 
 // ECMA 11.9.2
-JSValue* NotEqualNode::evaluate(ExecState* exec)
-{
-    JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-
-    return jsBoolean(!equal(exec,v1, v2));
-}
-
-bool NotEqualNode::evaluateToBoolean(ExecState* exec)
+bool NotEqualNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
@@ -2811,6 +2806,16 @@ bool NotEqualNode::evaluateToBoolean(ExecState* exec)
     return !equal(exec,v1, v2);
 }
 
+JSValue* NotEqualNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool NotEqualNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToBoolean(exec);
+}
+
 void StrictEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
     nodeStack.append(expr2.get());
@@ -2818,17 +2823,7 @@ void StrictEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStack
 }
 
 // ECMA 11.9.4
-JSValue* StrictEqualNode::evaluate(ExecState* exec)
-{
-    JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-
-    return jsBoolean(strictEqual(exec,v1, v2));
-}
-
-bool StrictEqualNode::evaluateToBoolean(ExecState* exec)
+bool StrictEqualNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
@@ -2838,6 +2833,16 @@ bool StrictEqualNode::evaluateToBoolean(ExecState* exec)
     return strictEqual(exec,v1, v2);
 }
 
+JSValue* StrictEqualNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool StrictEqualNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToBoolean(exec);
+}
+
 void NotStrictEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
     nodeStack.append(expr2.get());
@@ -2845,17 +2850,7 @@ void NotStrictEqualNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationSt
 }
 
 // ECMA 11.9.5
-JSValue* NotStrictEqualNode::evaluate(ExecState* exec)
-{
-    JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-
-    return jsBoolean(!strictEqual(exec,v1, v2));
-}
-
-bool NotStrictEqualNode::evaluateToBoolean(ExecState* exec)
+bool NotStrictEqualNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
@@ -2863,6 +2858,16 @@ bool NotStrictEqualNode::evaluateToBoolean(ExecState* exec)
     KJS_CHECKEXCEPTIONBOOLEAN
 
     return !strictEqual(exec,v1, v2);
+}
+
+JSValue* NotStrictEqualNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool NotStrictEqualNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToBoolean(exec);
 }
 
 // ------------------------------ Bit Operation Nodes ----------------------------------

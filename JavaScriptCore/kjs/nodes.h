@@ -1287,6 +1287,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecRelational; }
   private:
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };
@@ -1301,6 +1302,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecRelational; }
   private:
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };
@@ -1315,6 +1317,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecRelational; }
   private:
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };
@@ -1357,6 +1360,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecEquality; }
   private:
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };
@@ -1371,6 +1375,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecEquality; }
   private:
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };
@@ -1385,6 +1390,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecEquality; }
   private:
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };
@@ -1399,6 +1405,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecEquality; }
   private:
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };
@@ -1470,7 +1477,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecLogicalAnd; }
   private:
-        ALWAYS_INLINE int32_t inlineEvaluateToInt32(ExecState*);
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };
@@ -1485,7 +1492,7 @@ namespace KJS {
     virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
     virtual Precedence precedence() const { return PrecLogicalOr; }
   private:
-        ALWAYS_INLINE int32_t inlineEvaluateToInt32(ExecState*);
+    ALWAYS_INLINE bool inlineEvaluateToBoolean(ExecState*);
     RefPtr<ExpressionNode> expr1;
     RefPtr<ExpressionNode> expr2;
   };

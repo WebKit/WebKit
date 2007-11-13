@@ -1,3 +1,28 @@
+2007-11-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        Clean up evaluateToBoolean functions to use inlines instead of copy/paste code
+
+        * kjs/JSImmediate.h:
+        * kjs/nodes.cpp:
+        (KJS::GreaterNode::inlineEvaluateToBoolean):
+        (KJS::GreaterNode::evaluate):
+        (KJS::LessEqNode::inlineEvaluateToBoolean):
+        (KJS::LessEqNode::evaluate):
+        (KJS::GreaterEqNode::inlineEvaluateToBoolean):
+        (KJS::GreaterEqNode::evaluate):
+        (KJS::InNode::evaluateToBoolean):
+        (KJS::EqualNode::inlineEvaluateToBoolean):
+        (KJS::EqualNode::evaluate):
+        (KJS::NotEqualNode::inlineEvaluateToBoolean):
+        (KJS::NotEqualNode::evaluate):
+        (KJS::StrictEqualNode::inlineEvaluateToBoolean):
+        (KJS::StrictEqualNode::evaluate):
+        (KJS::NotStrictEqualNode::inlineEvaluateToBoolean):
+        (KJS::NotStrictEqualNode::evaluate):
+        * kjs/nodes.h:
+
 2007-11-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

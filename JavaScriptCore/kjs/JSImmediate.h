@@ -242,6 +242,7 @@ ALWAYS_INLINE JSValue* JSImmediate::from(double d)
 
 ALWAYS_INLINE int32_t JSImmediate::getTruncatedInt32(const JSValue* v)
 {
+    ASSERT(isNumber(v));
     return static_cast<int32_t>(unTag(v)) >> 2;
 }
 
