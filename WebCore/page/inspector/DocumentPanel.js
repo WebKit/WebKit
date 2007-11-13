@@ -439,6 +439,12 @@ WebInspector.DOMNodeTreeElement.prototype = {
         this.selectionElement.style.height = listItemElement.offsetHeight + "px";
     },
 
+    onattach: function()
+    {
+        var element = this;
+        this.listItemElement.addEventListener("mousedown", function(event) { element.onmousedown(event) }, false);
+    },
+
     onpopulate: function()
     {
         if (this.children.length || this.whitespaceIgnored !== Preferences.ignoreWhitespace)
@@ -488,6 +494,13 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
         var element = this;
         setTimeout(function() { element.updateSelection() }, 0);
+    },
+
+    onmousedown: function(event)
+    {
+        // Prevent selecting the nearest word on double click.
+        if (event.detail >= 2)
+            event.preventDefault();
     },
 
     ondblclick: function()

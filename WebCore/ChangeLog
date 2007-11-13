@@ -1,3 +1,14 @@
+2007-11-12  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Prevent selecting a word in the breadcrumb or the styles section when double
+        clicking on a DOM node in the outline tree.
+
+        * page/inspector/DocumentPanel.js: Call preventDefault() when a mousedown event
+          with a detail of 2 or higher comes in. This prevents the selection.
+        * page/inspector/inspector.css: Mark the breadcrumb as user-select: none.
+
 2007-11-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin and Antti.

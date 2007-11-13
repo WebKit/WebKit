@@ -818,6 +818,7 @@ body.inactive #sidebar li.selected {
 }
 
 .crumbs {
+    -webkit-user-select: none;
     -webkit-box-sizing: border-box;
     position: absolute;
     left: 0;
