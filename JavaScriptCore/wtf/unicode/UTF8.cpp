@@ -117,7 +117,7 @@ int decodeUTF8Sequence(const char* sequence)
 // as many entries in this table as there are UTF-8 sequence types.
 // (I.e., one byte sequence, two byte... etc.). Remember that sequencs
 // for *legal* UTF-8 will be 4 or fewer bytes total.
-static const char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
 ConversionResult ConvertUTF16ToUTF8(
     const UChar** sourceStart, const UChar* sourceEnd, 
@@ -239,7 +239,7 @@ ConversionResult ConvertUTF8ToUTF16(
     UChar* target = *targetStart;
     while (source < sourceEnd) {
         UChar32 ch = 0;
-        unsigned short extraBytesToRead = UTF8SequenceLength(*source) - 1;
+        int extraBytesToRead = UTF8SequenceLength(*source) - 1;
         if (source + extraBytesToRead >= sourceEnd) {
             result = sourceExhausted;
             break;

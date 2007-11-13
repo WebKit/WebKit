@@ -1,3 +1,14 @@
+2007-11-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Windows build fix.
+
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertUTF8ToUTF16):
+        * kjs/ustring.cpp:
+        (KJS::UString::UTF8String):
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::ConvertUTF8ToUTF16):
+
 2007-11-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

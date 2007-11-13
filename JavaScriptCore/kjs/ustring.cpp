@@ -1281,7 +1281,7 @@ CString UString::UTF8String(bool strict) const
 
   // Convert to runs of 8-bit characters.
   char* p = buffer.data();
-  const ::UChar* d = &data()->uc;
+  const ::UChar* d = reinterpret_cast<const ::UChar*>(&data()->uc);
   ConversionResult result = ConvertUTF16ToUTF8(&d, d + length, &p, p + buffer.size(), strict);
   if (result != conversionOK)
     return CString();
