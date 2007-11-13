@@ -1001,7 +1001,7 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
       // converts the string "inf" with any capitalization to infinity,
       // whereas the ECMA spec requires that it be converted to NaN.
 
-      if (strncmp(c, "Infinity", 8) == 0) {
+      if (c[0] == 'I' && c[1] == 'n' && c[2] == 'f' && c[3] == 'i' && c[4] == 'n' && c[5] == 'i' && c[6] == 't' && c[7] == 'y') {
         d = sign * Inf;
         c += 8;
       } else if ((d == Inf || d == -Inf) && *c != 'I' && *c != 'i')

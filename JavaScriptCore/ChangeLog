@@ -1,3 +1,18 @@
+2007-11-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=15958
+        base64 spends 1.1% of total time checking for special Infinity case
+        
+        Use a fast character test instead of calling strncmp.
+        
+        1.1% speedup on string-base64. SunSpider reports a .4% speedup overall;
+        Sharks reports only .1%. Who are you going to believe? Huh?
+
+        * kjs/ustring.cpp:
+        (KJS::UString::toDouble):
+
 2007-11-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
