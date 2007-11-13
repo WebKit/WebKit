@@ -53,6 +53,7 @@
 #include "SelectionController.h"
 #include "TextBreakIterator.h"
 #include "TextEvent.h"
+#include "TextIterator.h"
 
 using namespace std;
 
@@ -1292,7 +1293,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         // Make sure that the text to be inserted will not violate the maxLength.
         int oldLen = numGraphemeClusters(value().impl());
         ASSERT(oldLen <= maxLength());
-        int selectionLen = numGraphemeClusters(document()->frame()->selectionController()->toString().impl());
+        int selectionLen = numGraphemeClusters(plainText(document()->frame()->selectionController()->selection().toRange().get()).impl());
         ASSERT(oldLen >= selectionLen);
         int maxNewLen = maxLength() - (oldLen - selectionLen);
 

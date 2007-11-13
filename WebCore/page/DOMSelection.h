@@ -50,26 +50,33 @@ namespace WebCore {
         Frame* frame() const;
         void disconnectFrame();
 
-        Node* anchorNode() const;
+        // Safari Selection Object API
+        // These methods return the valid equivalents of internal editing positions.
         Node* baseNode() const;
-        int anchorOffset() const;
-        int baseOffset() const;
-        Node* focusNode() const;
         Node* extentNode() const;
-        int focusOffset() const;
+        int baseOffset() const;
         int extentOffset() const;
-        bool isCollapsed() const;
         String type() const;
-        int rangeCount() const;
-
-        void collapse(Node*, int offset, ExceptionCode&);
-        void collapseToEnd();
-        void collapseToStart();
-        void empty();
         void setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset, ExceptionCode&);
         void setPosition(Node*, int offset, ExceptionCode&);
         void setPosition(Node*, ExceptionCode&);
         void modify(const String& alter, const String& direction, const String& granularity);
+
+        // Mozilla Selection Object API
+        // In Firefox, anchor/focus are the equal to the start/end of the selection,
+        // but reflect the direction in which the selection was made by the user.  That does
+        // not mean that they are base/extent, since the base/extent don't reflect
+        // expansion.
+        // These methods return the valid equivalents of internal editing positions.
+        Node* anchorNode() const;
+        int anchorOffset() const;
+        Node* focusNode() const;
+        int focusOffset() const;
+        bool isCollapsed() const;
+        int rangeCount() const;
+        void collapse(Node*, int offset, ExceptionCode&);
+        void collapseToEnd();
+        void collapseToStart();
         void extend(Node*, int offset, ExceptionCode&);
         PassRefPtr<Range> getRangeAt(int, ExceptionCode&);
         void removeAllRanges();
@@ -79,6 +86,11 @@ namespace WebCore {
         void selectAllChildren(Node*, ExceptionCode&);
 
         String toString();
+
+        // Microsoft Selection Object API
+        void empty();
+        //void clear();
+        //TextRange *createRange();
 
     private:
         Frame* m_frame;

@@ -237,20 +237,16 @@ void Editor::deleteRange(Range* range, bool killRing, bool prepend, bool smartDe
     if (killRing)
         addToKillRing(range, prepend);
 
-    ExceptionCode ec = 0;
-
     SelectionController* selectionController = m_frame->selectionController();
     bool smartDelete = smartDeleteOK && canSmartCopyOrDelete();
     switch (deletionAction) {
         case deleteSelectionAction:
-            selectionController->setSelectedRange(range, DOWNSTREAM, true, ec);
-            if (ec)
+            if (!selectionController->setSelectedRange(range, DOWNSTREAM, true))
                 return;
             deleteSelectionWithSmartDelete(smartDelete);
             break;
         case deleteKeyAction:
-            selectionController->setSelectedRange(range, DOWNSTREAM, (granularity != CharacterGranularity), ec);
-            if (ec)
+            if (!selectionController->setSelectedRange(range, DOWNSTREAM, (granularity != CharacterGranularity)))
                 return;
             if (m_frame->document()) {
                 TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, granularity);
@@ -258,8 +254,7 @@ void Editor::deleteRange(Range* range, bool killRing, bool prepend, bool smartDe
             }
             break;
         case forwardDeleteKeyAction:
-            selectionController->setSelectedRange(range, DOWNSTREAM, (granularity != CharacterGranularity), ec);
-            if (ec)
+            if (!selectionController->setSelectedRange(range, DOWNSTREAM, (granularity != CharacterGranularity)))
                 return;
             if (m_frame->document()) {
                 TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, granularity);
@@ -617,8 +612,8 @@ void Editor::removeFormattingAndStyle()
     Document* document = m_frame->document();
     
     // Make a plain text string from the selection to remove formatting like tables and lists.
-    String string = m_frame->selectionController()->toString();
-    
+    String string = plainText(m_frame->selectionController()->selection().toRange().get());
+
     // Get the default style for this editable root, it's the style that we'll give the
     // content that we're operating on.
     Node* root = m_frame->selectionController()->rootEditableElement();
@@ -1670,8 +1665,7 @@ void Editor::selectComposition()
     RefPtr<Range> range = compositionRange();
     if (!range)
         return;
-    ExceptionCode ec = 0;
-    m_frame->selectionController()->setSelectedRange(range.get(), DOWNSTREAM, false, ec);
+    m_frame->selectionController()->setSelectedRange(range.get(), DOWNSTREAM, false);
 }
 
 void Editor::confirmComposition()
@@ -1742,9 +1736,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     if (!text.isEmpty()) {
         TypingCommand::insertText(m_frame->document(), text, true, true);
 
-        Node* baseNode = m_frame->selectionController()->baseNode();
+        Node* baseNode = m_frame->selectionController()->base().node();
         unsigned baseOffset = m_frame->selectionController()->base().offset();
-        Node* extentNode = m_frame->selectionController()->extentNode();
+        Node* extentNode = m_frame->selectionController()->extent().node();
         unsigned extentOffset = m_frame->selectionController()->extent().offset();
 
         if (baseNode && baseNode == extentNode && baseNode->isTextNode() && baseOffset + text.length() == extentOffset) {
@@ -1763,8 +1757,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             unsigned start = min(baseOffset + selectionStart, extentOffset);
             unsigned end = min(max(start, baseOffset + selectionEnd), extentOffset);
             RefPtr<Range> selectedRange = new Range(baseNode->document(), baseNode, start, baseNode, end);                
-            ExceptionCode ec = 0;
-            m_frame->selectionController()->setSelectedRange(selectedRange.get(), DOWNSTREAM, false, ec);
+            m_frame->selectionController()->setSelectedRange(selectedRange.get(), DOWNSTREAM, false);
         }
     }
 

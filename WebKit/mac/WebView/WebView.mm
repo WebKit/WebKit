@@ -3233,8 +3233,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         if (!coreFrame)
             return;
 
-        ExceptionCode ec = 0;
-        coreFrame->selectionController()->setSelectedRange([range _range], core(selectionAffinity), true, ec);
+        coreFrame->selectionController()->setSelectedRange([range _range], core(selectionAffinity), true);
     }
 }
 

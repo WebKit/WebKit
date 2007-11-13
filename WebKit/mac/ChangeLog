@@ -1,3 +1,18 @@
+2007-11-12  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15954
+        Move DOM Selection operations out of SelectionController
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _expandSelectionToGranularity:]):
+        (-[WebHTMLView selectToMark:]):
+        (-[WebHTMLView swapWithMark:]):
+        * WebView/WebView.mm:
+        (-[WebView setSelectedDOMRange:affinity:]):
+        Adapted for SelectionController::setSelectedRange() now returning a bool.
+
 2007-11-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin and Geoff.

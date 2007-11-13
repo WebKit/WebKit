@@ -3717,8 +3717,7 @@ noPromisedData:
     EAffinity affinity = coreFrame->selectionController()->affinity();
     WebView *webView = [self _webView];
     if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:domRange affinity:kit(affinity) stillSelecting:NO]) {
-        ExceptionCode ec = 0;
-        coreFrame->selectionController()->setSelectedRange(range.get(), affinity, true, ec);
+        coreFrame->selectionController()->setSelectedRange(range.get(), affinity, true);
     }
 }
 
@@ -4676,8 +4675,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         NSBeep();
         return;
     }
-    ExceptionCode ec = 0;
-    coreFrame->selectionController()->setSelectedRange(core(unionDOMRanges(mark, [self _selectedRange])), DOWNSTREAM, true, ec);
+    coreFrame->selectionController()->setSelectedRange(core(unionDOMRanges(mark, [self _selectedRange])), DOWNSTREAM, true);
 }
 
 - (void)swapWithMark:(id)sender
@@ -4693,9 +4691,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         return;
     }
 
-    ExceptionCode ec = 0;
-    coreFrame->selectionController()->setSelectedRange(core(mark), DOWNSTREAM, true, ec);
-    if (ec == 0)
+    if (coreFrame->selectionController()->setSelectedRange(core(mark), DOWNSTREAM, true))
         [bridge setMarkDOMRange:selection];
 }
 

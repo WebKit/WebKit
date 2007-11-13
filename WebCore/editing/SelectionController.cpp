@@ -407,56 +407,6 @@ VisiblePosition SelectionController::modifyMovingLeftBackward(TextGranularity gr
     return pos;
 }
 
-bool SelectionController::modify(const String &alterString, const String &directionString, const String &granularityString, bool userTriggered)
-{
-    String alterStringLower = alterString.lower();
-    EAlteration alter;
-    if (alterStringLower == "extend")
-        alter = EXTEND;
-    else if (alterStringLower == "move")
-        alter = MOVE;
-    else 
-        return false;
-    
-    String directionStringLower = directionString.lower();
-    EDirection direction;
-    if (directionStringLower == "forward")
-        direction = FORWARD;
-    else if (directionStringLower == "backward")
-        direction = BACKWARD;
-    else if (directionStringLower == "left")
-        direction = LEFT;
-    else if (directionStringLower == "right")
-        direction = RIGHT;
-    else
-        return false;
-        
-    String granularityStringLower = granularityString.lower();
-    TextGranularity granularity;
-    if (granularityStringLower == "character")
-        granularity = CharacterGranularity;
-    else if (granularityStringLower == "word")
-        granularity = WordGranularity;
-    else if (granularityStringLower == "sentence")
-        granularity = SentenceGranularity;
-    else if (granularityStringLower == "line")
-        granularity = LineGranularity;
-    else if (granularityStringLower == "paragraph")
-        granularity = ParagraphGranularity;
-    else if (granularityStringLower == "lineboundary")
-        granularity = LineBoundary;
-    else if (granularityStringLower == "sentenceboundary")
-        granularity = SentenceBoundary;
-    else if (granularityStringLower == "paragraphboundary")
-        granularity = ParagraphBoundary;
-    else if (granularityStringLower == "documentboundary")
-        granularity = DocumentBoundary;
-    else
-        return false;
-                
-    return modify(alter, direction, granularity, userTriggered);
-}
-
 bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranularity granularity, bool userTriggered)
 {
     if (userTriggered) {
@@ -704,240 +654,6 @@ void SelectionController::setExtent(const Position &pos, EAffinity affinity, boo
 void SelectionController::setNeedsLayout(bool flag)
 {
     m_needsLayout = flag;
-}
-
-String SelectionController::type() const
-{
-    if (isNone())
-        return "None";
-    else if (isCaret())
-        return "Caret";
-    else
-        return "Range";
-}
-
-// These methods are accessible via JS (and are not used internally), so they must return valid DOM positions.
-Node* SelectionController::baseNode() const
-{
-    Position base = rangeCompliantEquivalent(m_sel.base());
-    return base.node();
-}
-
-int SelectionController::baseOffset() const
-{
-    Position base = rangeCompliantEquivalent(m_sel.base());
-    return base.offset();
-}
-
-Node* SelectionController::extentNode() const
-{
-    Position extent = rangeCompliantEquivalent(m_sel.extent());
-    return extent.node();
-}
-
-int SelectionController::extentOffset() const
-{
-    Position extent = rangeCompliantEquivalent(m_sel.extent());
-    return extent.offset();
-}
-
-Node* SelectionController::anchorNode() const
-{
-    Position anchor = m_sel.isBaseFirst() ? m_sel.start() : m_sel.end();
-    anchor = rangeCompliantEquivalent(anchor);
-    return anchor.node();
-}
-
-int SelectionController::anchorOffset() const
-{
-    Position anchor = m_sel.isBaseFirst() ? m_sel.start() : m_sel.end();
-    anchor = rangeCompliantEquivalent(anchor);
-    return anchor.offset();
-}
-
-Node* SelectionController::focusNode() const
-{
-    Position focus = m_sel.isBaseFirst() ? m_sel.end() : m_sel.start();
-    focus = rangeCompliantEquivalent(focus);
-    return focus.node();
-}
-
-int SelectionController::focusOffset() const
-{
-    Position focus = m_sel.isBaseFirst() ? m_sel.end() : m_sel.start();
-    focus = rangeCompliantEquivalent(focus);
-    return focus.offset();
-}
-
-String SelectionController::toString() const
-{
-    return plainText(m_sel.toRange().get());
-}
-
-PassRefPtr<Range> SelectionController::getRangeAt(int index, ExceptionCode& ec) const
-{
-    if (index < 0 || index >= rangeCount()) {
-        ec = INDEX_SIZE_ERR;
-        return 0;
-    }   
-    return m_sel.toRange();
-}
-
-void SelectionController::removeAllRanges()
-{
-    clear();
-}
-
-// Adds r to the currently selected range.
-void SelectionController::addRange(const Range* r)
-{
-    if (!r)
-        return;
-    
-    if (isNone()) {
-        setSelection(Selection(r));
-        return;
-    }
-
-    RefPtr<Range> range = m_sel.toRange();
-    ExceptionCode ec = 0;
-    if (r->compareBoundaryPoints(Range::START_TO_START, range.get(), ec) == -1) {
-        // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
-        if (r->compareBoundaryPoints(Range::END_TO_START, range.get(), ec) > -1) {
-            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), ec) == -1)
-                // The original range and r intersect.
-                setSelection(Selection(r->startPosition(), range->endPosition(), DOWNSTREAM));
-            else
-                // r contains the original range.
-                setSelection(Selection(r));
-        }
-    } else {
-        // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
-        if (r->compareBoundaryPoints(Range::START_TO_END, range.get(), ec) < 1) {
-            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), ec) == -1)
-                // The original range contains r.
-                setSelection(Selection(range.get()));
-            else
-                // The original range and r intersect.
-                setSelection(Selection(range->startPosition(), r->endPosition(), DOWNSTREAM));
-        }
-    }
-}
-
-void SelectionController::deleteFromDocument()
-{
-    if (isNone())
-        return;
-
-    if (isCollapsed())
-        modify(EXTEND, BACKWARD, CharacterGranularity);
-
-    RefPtr<Range> selectedRange = m_sel.toRange();
-
-    ExceptionCode ec = 0;
-    selectedRange->deleteContents(ec);
-    ASSERT(!ec);
-    
-    setBaseAndExtent(selectedRange->startContainer(ec), selectedRange->startOffset(ec), selectedRange->startContainer(ec), selectedRange->startOffset(ec), ec);
-    ASSERT(!ec);
-}
-
-bool SelectionController::containsNode(const Node* n, bool allowPartial) const
-{
-    if (!n || isNone())
-        return false;
-
-    Node* parentNode = n->parentNode();
-    unsigned nodeIndex = n->nodeIndex();
-    RefPtr<Range> selectedRange = m_sel.toRange();
-
-    if (!parentNode)
-        return false;
-
-    ExceptionCode ec = 0;
-    bool nodeFullySelected = Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->startContainer(ec), selectedRange->startOffset(ec)) >= 0
-        && Range::compareBoundaryPoints(parentNode, nodeIndex + 1, selectedRange->endContainer(ec), selectedRange->endOffset(ec)) <= 0;
-    ASSERT(!ec);
-    if (nodeFullySelected)
-        return true;
-
-    bool nodeFullyUnselected = Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->endContainer(ec), selectedRange->endOffset(ec)) > 0
-        || Range::compareBoundaryPoints(parentNode, nodeIndex + 1, selectedRange->startContainer(ec), selectedRange->startOffset(ec)) < 0;
-    ASSERT(!ec);
-    if (nodeFullyUnselected)
-        return false;
-
-    return allowPartial || n->isTextNode();
-}
-
-void SelectionController::selectAllChildren(Node* n, ExceptionCode& ec)
-{
-    if (!n)
-        return;
-
-    // This doesn't (and shouldn't) select text node characters.
-    setBaseAndExtent(n, 0, n, n->childNodeCount(), ec);
-}
-
-void SelectionController::setBaseAndExtent(Node *baseNode, int baseOffset, Node *extentNode, int extentOffset, ExceptionCode& ec)
-{
-    if (baseOffset < 0 || extentOffset < 0) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-    VisiblePosition visibleBase = VisiblePosition(baseNode, baseOffset, DOWNSTREAM);
-    VisiblePosition visibleExtent = VisiblePosition(extentNode, extentOffset, DOWNSTREAM);
-    
-    moveTo(visibleBase, visibleExtent);
-}
-
-void SelectionController::setPosition(Node *node, int offset, ExceptionCode& ec)
-{
-    if (offset < 0) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-    moveTo(VisiblePosition(node, offset, DOWNSTREAM));
-}
-
-void SelectionController::collapse(Node *node, int offset, ExceptionCode& ec)
-{
-    if (offset < 0) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-    moveTo(VisiblePosition(node, offset, DOWNSTREAM));
-}
-
-void SelectionController::collapseToEnd()
-{
-    moveTo(VisiblePosition(m_sel.end(), DOWNSTREAM));
-}
-
-void SelectionController::collapseToStart()
-{
-    moveTo(VisiblePosition(m_sel.start(), DOWNSTREAM));
-}
-
-void SelectionController::empty()
-{
-    moveTo(VisiblePosition());
-}
-
-void SelectionController::extend(Node* node, int offset, ExceptionCode& ec)
-{
-    if (!node) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-    if (offset < 0
-        || node->offsetInCharacters() && offset > caretMaxOffset(node)
-        || !node->offsetInCharacters() && offset > (int)node->childNodeCount()) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-    m_sel.expandUsingGranularity(CharacterGranularity);
-    setExtent(VisiblePosition(node, offset, DOWNSTREAM));
 }
 
 void SelectionController::layout()
@@ -1244,22 +960,19 @@ void SelectionController::selectAll()
     m_frame->notifyRendererOfSelectionChange(true);
 }
 
-void SelectionController::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping, ExceptionCode& ec)
+bool SelectionController::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
 {
-    ec = 0;
-    
-    if (!range) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-    
+    if (!range)
+        return false;
+
+    ExceptionCode ec = 0;
     Node* startContainer = range->startContainer(ec);
     if (ec)
-        return;
+        return false;
 
     Node* endContainer = range->endContainer(ec);
     if (ec)
-        return;
+        return false;
     
     ASSERT(startContainer);
     ASSERT(endContainer);
@@ -1271,20 +984,21 @@ void SelectionController::setSelectedRange(Range* range, EAffinity affinity, boo
     // they start at the beginning of the next line instead
     bool collapsed = range->collapsed(ec);
     if (ec)
-        return;
+        return false;
     
     int startOffset = range->startOffset(ec);
     if (ec)
-        return;
+        return false;
 
     int endOffset = range->endOffset(ec);
     if (ec)
-        return;
+        return false;
     
     // FIXME: Can we provide extentAffinity?
     VisiblePosition visibleStart(startContainer, startOffset, collapsed ? affinity : DOWNSTREAM);
     VisiblePosition visibleEnd(endContainer, endOffset, SEL_DEFAULT_AFFINITY);
     setSelection(Selection(visibleStart, visibleEnd), closeTyping);
+    return true;
 }
 
 bool SelectionController::isInPasswordField() const
