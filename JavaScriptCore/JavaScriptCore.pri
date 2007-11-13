@@ -33,6 +33,7 @@ SOURCES += \
     wtf/Assertions.cpp \
     wtf/HashTable.cpp \
     wtf/FastMalloc.cpp \
+    wtf/unicode/UTF8.cpp \
     bindings/NP_jsobject.cpp \
     bindings/npruntime.cpp \
     bindings/runtime_array.cpp \

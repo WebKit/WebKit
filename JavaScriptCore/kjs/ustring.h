@@ -265,6 +265,8 @@ namespace KJS {
 
     /**
      * @return The string converted to the 8-bit string type CString().
+     * This method is not Unicode safe and shouldn't be used unless the string
+     * is known to be ASCII.
      */
     CString cstring() const;
     /**
@@ -278,13 +280,13 @@ namespace KJS {
 
     /**
      * Convert the string to UTF-8, assuming it is UTF-16 encoded.
-     * Since this function is tolerant of badly formed UTF-16, it can create UTF-8
-     * strings that are invalid because they have characters in the range
-     * U+D800-U+DDFF, U+FFFE, or U+FFFF, but the UTF-8 string is guaranteed to
-     * be otherwise valid.
+     * In non-strict mode, this function is tolerant of badly formed UTF-16, it
+     * can create UTF-8 strings that are invalid because they have characters in
+     * the range U+D800-U+DDFF, U+FFFE, or U+FFFF, but the UTF-8 string is
+     * guaranteed to be otherwise valid.
+     * In strict mode, error is returned as null CString.
      */
-    CString UTF8String() const;
-    CString UTF8String(bool* utf16WasGood) const;
+    CString UTF8String(bool strict = false) const;
 
     /**
      * @see UString(const DOM::DOMString&).
@@ -426,16 +428,6 @@ namespace KJS {
   }
   
   int compare(const UString &, const UString &);
-
-  // Given a first byte, gives the length of the UTF-8 sequence it begins.
-  // Returns 0 for bytes that are not legal starts of UTF-8 sequences.
-  // Only allows sequences of up to 4 bytes, since that works for all Unicode characters (U-00000000 to U-0010FFFF).
-  int UTF8SequenceLength(char);
-
-  // Takes a null-terminated C-style string with a UTF-8 sequence in it and converts it to a character.
-  // Only allows Unicode characters (U-00000000 to U-0010FFFF).
-  // Returns -1 if the sequence is not valid (including presence of extra bytes).
-  int decodeUTF8Sequence(const char *);
 
 inline UString::UString()
   : m_rep(&Rep::null)

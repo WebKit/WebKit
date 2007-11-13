@@ -42,7 +42,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-#include <wtf/unicode/Unicode.h>
+#include <wtf/unicode/UTF8.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -514,9 +514,8 @@ GlobalFuncImp::GlobalFuncImp(ExecState* exec, FunctionPrototype* funcProto, int 
 static JSValue* encode(ExecState* exec, const List& args, const char* do_not_escape)
 {
   UString r = "", s, str = args[0]->toString(exec);
-  bool wasGoodUTF16;
-  CString cstr = str.UTF8String(&wasGoodUTF16);
-  if (!wasGoodUTF16)
+  CString cstr = str.UTF8String(true);
+  if (!cstr.c_str())
     return throwError(exec, URIError, "String contained an illegal UTF-16 sequence.");
   const char* p = cstr.c_str();
   for (size_t k = 0; k < cstr.size(); k++, p++) {

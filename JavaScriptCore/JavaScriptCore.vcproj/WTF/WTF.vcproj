@@ -311,6 +311,14 @@
 			RelativePath="..\..\wtf\VectorTraits.h"
 			>
 		</File>
+		<File
+			RelativePath="..\..\wtf\unicode\UTF8.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\unicode\UTF8.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

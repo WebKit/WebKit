@@ -36,20 +36,27 @@
 #include <kjs/operations.h>
 #include <kjs/ustring.h>
 #include <kjs/value.h>
+#include <wtf/unicode/UTF8.h>
 
 using namespace KJS;
+using namespace WTF::Unicode;
 
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
     JSLock lock;
-    return toRef(UString(reinterpret_cast<const UChar*>(chars), static_cast<int>(numChars)).rep()->ref());
+    return toRef(UString(reinterpret_cast<const KJS::UChar*>(chars), static_cast<int>(numChars)).rep()->ref());
 }
 
 JSStringRef JSStringCreateWithUTF8CString(const char* string)
 {
     JSLock lock;
-    // FIXME: <rdar://problem/4949018>
-    return toRef(UString(string).rep()->ref());
+
+    size_t length = strlen(string);
+    Vector< ::UChar, 1024> buffer(length);
+    ::UChar* p = buffer.data();
+    ConvertUTF8ToUTF16(&string, string + length, &p, p + length, false);
+
+    return toRef(UString(reinterpret_cast<KJS::UChar*>(buffer.data()), p - buffer.data()).rep()->ref());
 }
 
 JSStringRef JSStringRetain(JSStringRef string)

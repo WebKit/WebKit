@@ -1,3 +1,43 @@
+2007-11-12  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15953
+        Add UTF-8 encoding/decoding to WTF
+
+        * kjs/ustring.h: Moved UTF8SequenceLength() and decodeUTF8Sequence() to wtf/unicode.
+        * kjs/ustring.cpp: (KJS::UString::UTF8String): Changed this function to take a strict/lenient
+        parameter. Callers are not interested in getting decoding results in strict mode, so 
+        this allows for bailing out as soon as an error is seen.
+
+        * kjs/function.cpp:
+        (KJS::encode): Updated for new UString::UTF8String() signature.
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharacters): Disambiguate UChar.
+        (JSStringCreateWithUTF8CString): Actually use UTF-8 when creating the string!
+        * bindings/c/c_utility.cpp: (KJS::Bindings::convertUTF8ToUTF16): Use ConvertUTF8ToUTF16().
+
+        * wtf/unicode/UTF8.cpp: Added.
+        (WTF::Unicode::inlineUTF8SequenceLengthNonASCII):
+        (WTF::Unicode::inlineUTF8SequenceLength):
+        (WTF::Unicode::UTF8SequenceLength):
+        (WTF::Unicode::decodeUTF8Sequence):
+        (WTF::Unicode::):
+        (WTF::Unicode::ConvertUTF16ToUTF8):
+        (WTF::Unicode::isLegalUTF8):
+        (WTF::Unicode::ConvertUTF8ToUTF16):
+        * wtf/unicode/UTF8.h: Added.
+        (WTF::Unicode::):
+        Some code moved from ustring.h, some adapted from unicode.org sources.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        Added UTF8.{h,cpp}
+
 2007-11-12  Josh Aas  <joshmoz@gmail.com>
 
         Reviewed by Darin.
