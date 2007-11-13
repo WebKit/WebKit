@@ -59,7 +59,7 @@ namespace KJS {
 #define KJS_CHECKEXCEPTIONNUMBER \
   if (exec->hadException()) { \
     handleException(exec); \
-    return 0.0; \
+    return 0; \
   }
 
 #define KJS_CHECKEXCEPTIONBOOLEAN \
@@ -227,7 +227,6 @@ double ExpressionNode::evaluateToNumber(ExecState* exec)
 {
     JSValue* value = evaluate(exec);
     KJS_CHECKEXCEPTIONNUMBER
-    // No need to check exception after toNumber, caller will do so right after evaluateToNumber() call
     return value->toNumber(exec);
 }
 
@@ -236,6 +235,20 @@ bool ExpressionNode::evaluateToBoolean(ExecState* exec)
     JSValue* value = evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
     return value->toBoolean(exec);
+}
+
+int32_t ExpressionNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* value = evaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return value->toInt32(exec);
+}
+
+uint32_t ExpressionNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* value = evaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return value->toUInt32(exec);
 }
 
 static void substitute(UString &string, const UString &substring) KJS_FAST_CALL;
@@ -425,11 +438,35 @@ bool NumberNode::evaluateToBoolean(ExecState*)
     return m_double < 0.0 || m_double > 0.0; // false for NaN as well as 0
 }
 
+int32_t NumberNode::evaluateToInt32(ExecState*)
+{
+    return JSValue::toInt32(m_double);
+}
+
+uint32_t NumberNode::evaluateToUInt32(ExecState*)
+{
+    return JSValue::toUInt32(m_double);
+}
+
 // ------------------------------ ImmediateNumberNode -----------------------------------
 
 JSValue* ImmediateNumberNode::evaluate(ExecState*)
 {
     return m_value;
+}
+
+int32_t ImmediateNumberNode::evaluateToInt32(ExecState*)
+{
+    return JSImmediate::getTruncatedInt32(m_value);
+}
+
+uint32_t ImmediateNumberNode::evaluateToUInt32(ExecState*)
+{
+    uint32_t i;
+    if (JSImmediate::getTruncatedUInt32(m_value, i))
+        return i;
+    bool ok;
+    return JSValue::toUInt32SlowCase(m_double, ok);
 }
 
 // ------------------------------ StringNode -----------------------------------
@@ -467,7 +504,7 @@ JSValue *ThisNode::evaluate(ExecState *exec)
 // ------------------------------ ResolveNode ----------------------------------
 
 // ECMA 11.1.2 & 10.1.4
-JSValue *ResolveNode::evaluate(ExecState *exec)
+JSValue* ResolveNode::inlineEvaluate(ExecState* exec)
 {
   // Check for missed optimization opportunity.
   ASSERT(!canSkipLookup(exec, ident));
@@ -490,6 +527,39 @@ JSValue *ResolveNode::evaluate(ExecState *exec)
   } while (iter != end);
 
   return throwUndefinedVariableError(exec, ident);
+}
+
+JSValue* ResolveNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double ResolveNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
+}
+
+bool ResolveNode::evaluateToBoolean(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
+}
+
+int32_t ResolveNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t ResolveNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
 }
 
 void ResolveNode::optimizeVariableAccess(FunctionBodyNode* functionBody, DeclarationStacks::NodeStack&)
@@ -519,6 +589,16 @@ double LocalVarAccessNode::evaluateToNumber(ExecState* exec)
 bool LocalVarAccessNode::evaluateToBoolean(ExecState* exec)
 {
     return inlineEvaluate(exec)->toBoolean(exec);
+}
+
+int32_t LocalVarAccessNode::evaluateToInt32(ExecState* exec)
+{
+    return inlineEvaluate(exec)->toInt32(exec);
+}
+
+uint32_t LocalVarAccessNode::evaluateToUInt32(ExecState* exec)
+{
+    return inlineEvaluate(exec)->toUInt32(exec);
 }
 
 // ------------------------------ ElementNode ----------------------------------
@@ -672,13 +752,31 @@ JSValue* BracketAccessorNode::evaluate(ExecState* exec)
 
 double BracketAccessorNode::evaluateToNumber(ExecState* exec)
 {
-    return inlineEvaluate(exec)->toNumber(exec);
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
 }
 
 bool BracketAccessorNode::evaluateToBoolean(ExecState* exec)
 {
-    return inlineEvaluate(exec)->toBoolean(exec);
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
 }
+
+int32_t BracketAccessorNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t BracketAccessorNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
+}    
 
 // ------------------------------ DotAccessorNode --------------------------------
 
@@ -688,13 +786,45 @@ void DotAccessorNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStack
 }
 
 // ECMA 11.2.1b
-JSValue *DotAccessorNode::evaluate(ExecState *exec)
+JSValue* DotAccessorNode::inlineEvaluate(ExecState* exec)
 {
-  JSValue *v = expr->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  return v->toObject(exec)->get(exec, ident);
-
+    JSValue* v = expr->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+    return v->toObject(exec)->get(exec, ident);
 }
+
+JSValue* DotAccessorNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double DotAccessorNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
+}
+
+bool DotAccessorNode::evaluateToBoolean(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
+}
+
+int32_t DotAccessorNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t DotAccessorNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
+}    
 
 // ------------------------------ ArgumentListNode -----------------------------
 
@@ -735,9 +865,9 @@ void NewExprNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::N
 
 // ECMA 11.2.2
 
-JSValue *NewExprNode::evaluate(ExecState *exec)
+JSValue* NewExprNode::inlineEvaluate(ExecState* exec)
 {
-  JSValue *v = expr->evaluate(exec);
+  JSValue* v = expr->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
   List argList;
@@ -746,17 +876,48 @@ JSValue *NewExprNode::evaluate(ExecState *exec)
     KJS_CHECKEXCEPTIONVALUE
   }
 
-  if (!v->isObject()) {
+  if (!v->isObject())
     return throwError(exec, TypeError, "Value %s (result of expression %s) is not an object. Cannot be used with new.", v, expr.get());
-  }
 
   JSObject *constr = static_cast<JSObject*>(v);
-  if (!constr->implementsConstruct()) {
+  if (!constr->implementsConstruct())
     return throwError(exec, TypeError, "Value %s (result of expression %s) is not a constructor. Cannot be used with new.", v, expr.get());
-  }
 
   return constr->construct(exec, argList);
 }
+
+JSValue* NewExprNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double NewExprNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
+}
+
+bool NewExprNode::evaluateToBoolean(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
+}
+
+int32_t NewExprNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t NewExprNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
+}    
 
 void FunctionCallValueNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
@@ -799,7 +960,7 @@ void FunctionCallResolveNode::optimizeVariableAccess(FunctionBodyNode* functionB
 }
 
 // ECMA 11.2.3
-JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
+JSValue* FunctionCallResolveNode::inlineEvaluate(ExecState* exec)
 {
   // Check for missed optimization opportunity.
   ASSERT(!canSkipLookup(exec, ident));
@@ -819,15 +980,13 @@ JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
       JSValue *v = slot.getValue(exec, base, ident);
       KJS_CHECKEXCEPTIONVALUE
         
-      if (!v->isObject()) {
+      if (!v->isObject())
         return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, ident);
-      }
       
       JSObject *func = static_cast<JSObject*>(v);
       
-      if (!func->implementsCall()) {
+      if (!func->implementsCall())
         return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, ident);
-      }
       
       List argList;
       args->evaluateList(exec, argList);
@@ -851,7 +1010,40 @@ JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
   return throwUndefinedVariableError(exec, ident);
 }
 
-JSValue* LocalVarFunctionCallNode::evaluate(ExecState* exec)
+JSValue* FunctionCallResolveNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double FunctionCallResolveNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
+}
+
+bool FunctionCallResolveNode::evaluateToBoolean(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
+}
+
+int32_t FunctionCallResolveNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t FunctionCallResolveNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
+}
+
+JSValue* LocalVarFunctionCallNode::inlineEvaluate(ExecState* exec)
 {
     ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
     ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
@@ -870,6 +1062,39 @@ JSValue* LocalVarFunctionCallNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     return func->call(exec, exec->dynamicInterpreter()->globalObject(), argList);
+}
+
+JSValue* LocalVarFunctionCallNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double LocalVarFunctionCallNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
+}
+
+bool LocalVarFunctionCallNode::evaluateToBoolean(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
+}
+
+int32_t LocalVarFunctionCallNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t LocalVarFunctionCallNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
 }
 
 void FunctionCallBracketNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -948,7 +1173,7 @@ void FunctionCallDotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationS
 }
 
 // ECMA 11.2.3
-JSValue *FunctionCallDotNode::evaluate(ExecState *exec)
+JSValue* FunctionCallDotNode::inlineEvaluate(ExecState* exec)
 {
   JSValue *baseVal = base->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
@@ -976,6 +1201,39 @@ JSValue *FunctionCallDotNode::evaluate(ExecState *exec)
   ASSERT(!thisObj->isActivation());
 
   return func->call(exec, thisObj, argList);
+}
+
+JSValue* FunctionCallDotNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double FunctionCallDotNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
+}
+
+bool FunctionCallDotNode::evaluateToBoolean(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
+}
+
+int32_t FunctionCallDotNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t FunctionCallDotNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
 }
 
 // ECMA 11.3
@@ -1090,6 +1348,37 @@ JSValue* PostDecLocalVarNode::evaluate(ExecState* exec)
     JSValue* v = (*slot)->toJSNumber(exec);
     *slot = jsNumber(v->toNumber(exec) - 1);
     return v;
+}
+
+double PostDecLocalVarNode::inlineEvaluateToNumber(ExecState* exec)
+{
+    ASSERT(static_cast<ActivationImp*>(exec->variableObject())->isActivation());
+    ASSERT(static_cast<ActivationImp*>(exec->variableObject()) == exec->scopeChain().top());
+    
+    JSValue** slot = &exec->localStorage()[m_index].value;
+    double n = (*slot)->toNumber(exec);
+    *slot = jsNumber(n - 1);
+    return n;
+}
+
+double PostDecLocalVarNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
+}
+
+bool PostDecLocalVarNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
+}
+
+int32_t PostDecLocalVarNode::evaluateToInt32(ExecState* exec)
+{
+    return JSValue::toInt32(inlineEvaluateToNumber(exec));
+}
+
+uint32_t PostDecLocalVarNode::evaluateToUInt32(ExecState* exec)
+{
+    return JSValue::toUInt32(inlineEvaluateToNumber(exec));
 }
 
 void PostDecLocalVarNode::optimizeForUnnecessaryResult()
@@ -1356,7 +1645,7 @@ static JSValue *typeStringForValue(JSValue *v)
             // Return "undefined" for objects that should be treated
             // as null when doing comparisons.
             if (static_cast<JSObject*>(v)->masqueradeAsUndefined())
-                return jsString("undefined");            
+                return jsString("undefined");
             else if (static_cast<JSObject*>(v)->implementsCall())
                 return jsString("function");
         }
@@ -1647,10 +1936,29 @@ void UnaryPlusNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks:
 // ECMA 11.4.6
 JSValue* UnaryPlusNode::evaluate(ExecState* exec)
 {
-  JSValue *v = m_expr->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
+    JSValue *v = m_expr->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+    return v->toJSNumber(exec);
+}
 
-  return v->toJSNumber(exec);
+bool UnaryPlusNode::evaluateToBoolean(ExecState* exec)
+{
+    return m_expr->evaluateToBoolean(exec);
+}
+
+double UnaryPlusNode::evaluateToNumber(ExecState* exec)
+{
+    return m_expr->evaluateToNumber(exec);
+}
+
+int32_t UnaryPlusNode::evaluateToInt32(ExecState* exec)
+{
+    return m_expr->evaluateToInt32(exec);
+}
+
+uint32_t UnaryPlusNode::evaluateToUInt32(ExecState* exec)
+{
+    return m_expr->evaluateToInt32(exec);
 }
 
 // ------------------------------ NegateNode -----------------------------------
@@ -1681,11 +1989,34 @@ void BitwiseNotNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks
 }
 
 // ECMA 11.4.8
-JSValue *BitwiseNotNode::evaluate(ExecState *exec)
+int32_t BitwiseNotNode::inlineEvaluateToInt32(ExecState* exec)
 {
-  JSValue *v = expr->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  return jsNumber(~v->toInt32(exec));
+    return ~expr->evaluateToInt32(exec);
+}
+
+JSValue* BitwiseNotNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToInt32(exec));
+}
+
+double BitwiseNotNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+bool BitwiseNotNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+int32_t BitwiseNotNode::evaluateToInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+uint32_t BitwiseNotNode::evaluateToUInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
 }
 
 // ------------------------------ LogicalNotNode -------------------------------
@@ -1733,6 +2064,21 @@ double MultNode::evaluateToNumber(ExecState* exec)
     return inlineEvaluateToNumber(exec);
 }
 
+bool MultNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
+}
+
+int32_t MultNode::evaluateToInt32(ExecState* exec)
+{
+    return JSValue::toInt32(inlineEvaluateToNumber(exec));
+}
+
+uint32_t MultNode::evaluateToUInt32(ExecState* exec)
+{
+    return JSValue::toUInt32(inlineEvaluateToNumber(exec));
+}
+
 void DivNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
     nodeStack.append(term1.get());
@@ -1758,6 +2104,16 @@ double DivNode::evaluateToNumber(ExecState* exec)
     return inlineEvaluateToNumber(exec);
 }
 
+int32_t DivNode::evaluateToInt32(ExecState* exec)
+{
+    return JSValue::toInt32(inlineEvaluateToNumber(exec));
+}
+
+uint32_t DivNode::evaluateToUInt32(ExecState* exec)
+{
+    return JSValue::toUInt32(inlineEvaluateToNumber(exec));
+}
+
 void ModNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
 {
     nodeStack.append(term1.get());
@@ -1781,6 +2137,21 @@ JSValue* ModNode::evaluate(ExecState* exec)
 double ModNode::evaluateToNumber(ExecState* exec)
 {
     return inlineEvaluateToNumber(exec);
+}
+
+bool ModNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
+}
+
+int32_t ModNode::evaluateToInt32(ExecState* exec)
+{
+    return JSValue::toInt32(inlineEvaluateToNumber(exec));
+}
+
+uint32_t ModNode::evaluateToUInt32(ExecState* exec)
+{
+    return JSValue::toUInt32(inlineEvaluateToNumber(exec));
 }
 
 // ------------------------------ Additive Nodes --------------------------------------
@@ -1898,7 +2269,7 @@ JSValue* AddNode::evaluate(ExecState* exec)
   return add(exec, v1, v2);
 }
 
-double AddNode::evaluateToNumber(ExecState* exec)
+double AddNode::inlineEvaluateToNumber(ExecState* exec)
 {
     JSValue* v1 = term1->evaluate(exec);
     KJS_CHECKEXCEPTIONNUMBER
@@ -1908,6 +2279,21 @@ double AddNode::evaluateToNumber(ExecState* exec)
     
     return addToNumber(exec, v1, v2);
 }
+
+double AddNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToNumber(exec);
+}
+
+int32_t AddNode::evaluateToInt32(ExecState* exec)
+{
+    return JSValue::toInt32(inlineEvaluateToNumber(exec));
+}
+
+uint32_t AddNode::evaluateToUInt32(ExecState* exec)
+{
+    return JSValue::toUInt32(inlineEvaluateToNumber(exec));
+}    
 
 double AddNumbersNode::inlineEvaluateToNumber(ExecState* exec)
 {
@@ -1925,6 +2311,16 @@ JSValue* AddNumbersNode::evaluate(ExecState* exec)
 double AddNumbersNode::evaluateToNumber(ExecState* exec)
 {
     return inlineEvaluateToNumber(exec);
+}
+
+int32_t AddNumbersNode::evaluateToInt32(ExecState* exec)
+{
+    return JSValue::toInt32(inlineEvaluateToNumber(exec));
+}
+
+uint32_t AddNumbersNode::evaluateToUInt32(ExecState* exec)
+{
+    return JSValue::toUInt32(inlineEvaluateToNumber(exec));
 }
 
 JSValue* AddStringsNode::evaluate(ExecState* exec)
@@ -1987,6 +2383,16 @@ double SubNode::evaluateToNumber(ExecState* exec)
     return inlineEvaluateToNumber(exec);
 }
 
+int32_t SubNode::evaluateToInt32(ExecState* exec)
+{
+    return JSValue::toInt32(inlineEvaluateToNumber(exec));
+}
+
+uint32_t SubNode::evaluateToUInt32(ExecState* exec)
+{
+    return JSValue::toUInt32(inlineEvaluateToNumber(exec));
+}    
+
 // ------------------------------ Shift Nodes ------------------------------------
 
 void LeftShiftNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -1996,16 +2402,32 @@ void LeftShiftNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks:
 }
 
 // ECMA 11.7.1
-JSValue *LeftShiftNode::evaluate(ExecState *exec)
+int32_t LeftShiftNode::inlineEvaluateToInt32(ExecState* exec)
 {
-  JSValue *v1 = term1->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = term2->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  unsigned int i2 = v2->toUInt32(exec);
-  i2 &= 0x1f;
+    int i1 = term1->evaluateToInt32(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    unsigned int i2 = term2->evaluateToUInt32(exec) & 0x1f;
+    return (i1 << i2);
+}
 
-  return jsNumber(v1->toInt32(exec) << i2);
+JSValue* LeftShiftNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToInt32(exec));
+}
+
+double LeftShiftNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+int32_t LeftShiftNode::evaluateToInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+uint32_t LeftShiftNode::evaluateToUInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
 }
 
 void RightShiftNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2015,16 +2437,32 @@ void RightShiftNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks
 }
 
 // ECMA 11.7.2
-JSValue *RightShiftNode::evaluate(ExecState *exec)
+int32_t RightShiftNode::inlineEvaluateToInt32(ExecState* exec)
 {
-  JSValue *v1 = term1->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = term2->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  unsigned int i2 = v2->toUInt32(exec);
-  i2 &= 0x1f;
+    int i1 = term1->evaluateToInt32(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    unsigned int i2 = term2->evaluateToUInt32(exec) & 0x1f;
+    return (i1 >> i2);
+}
 
-  return jsNumber(v1->toInt32(exec) >> i2);
+JSValue* RightShiftNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToInt32(exec));
+}
+
+double RightShiftNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+int32_t RightShiftNode::evaluateToInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+uint32_t RightShiftNode::evaluateToUInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
 }
 
 void UnsignedRightShiftNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2034,16 +2472,32 @@ void UnsignedRightShiftNode::optimizeVariableAccess(FunctionBodyNode*, Declarati
 }
 
 // ECMA 11.7.3
-JSValue *UnsignedRightShiftNode::evaluate(ExecState *exec)
+uint32_t UnsignedRightShiftNode::inlineEvaluateToUInt32(ExecState* exec)
 {
-  JSValue *v1 = term1->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = term2->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  unsigned int i2 = v2->toUInt32(exec);
-  i2 &= 0x1f;
+    unsigned int i1 = term1->evaluateToUInt32(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    unsigned int i2 = term2->evaluateToUInt32(exec) & 0x1f;
+    return (i1 >> i2);
+}
 
-  return jsNumber(v1->toUInt32(exec) >> i2);
+JSValue* UnsignedRightShiftNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToUInt32(exec));
+}
+
+double UnsignedRightShiftNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToUInt32(exec);
+}
+
+int32_t UnsignedRightShiftNode::evaluateToInt32(ExecState* exec)
+{
+    return inlineEvaluateToUInt32(exec);
+}
+
+uint32_t UnsignedRightShiftNode::evaluateToUInt32(ExecState* exec)
+{
+    return inlineEvaluateToUInt32(exec);
 }
 
 // ------------------------------ Relational Nodes -------------------------------
@@ -2085,16 +2539,7 @@ void LessNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::Node
 }
 
 // ECMA 11.8.1
-JSValue* LessNode::evaluate(ExecState* exec)
-{
-    JSValue* v1 = expr1->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    JSValue* v2 = expr2->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
-    return jsBoolean(lessThan(exec, v1, v2));
-}
-
-bool LessNode::evaluateToBoolean(ExecState* exec)
+bool LessNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
     KJS_CHECKEXCEPTIONBOOLEAN
@@ -2103,20 +2548,50 @@ bool LessNode::evaluateToBoolean(ExecState* exec)
     return lessThan(exec, v1, v2);
 }
 
-JSValue* LessNumbersNode::evaluate(ExecState* exec)
+JSValue* LessNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool LessNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToBoolean(exec);
+}
+
+bool LessNumbersNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     double n1 = expr1->evaluateToNumber(exec);
     KJS_CHECKEXCEPTIONVALUE
     double n2 = expr2->evaluateToNumber(exec);
-    return jsBoolean(n1 < n2);
+    return n1 < n2;
 }
 
-JSValue* LessStringsNode::evaluate(ExecState* exec)
+JSValue* LessNumbersNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool LessNumbersNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToBoolean(exec);
+}
+
+bool LessStringsNode::inlineEvaluateToBoolean(ExecState* exec)
 {
     JSValue* v1 = expr1->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
     JSValue* v2 = expr2->evaluate(exec);
-    return jsBoolean(static_cast<StringImp*>(v1)->value() < static_cast<StringImp*>(v2)->value());
+    return static_cast<StringImp*>(v1)->value() < static_cast<StringImp*>(v2)->value();
+}
+
+JSValue* LessStringsNode::evaluate(ExecState* exec)
+{
+    return jsBoolean(inlineEvaluateToBoolean(exec));
+}
+
+bool LessStringsNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToBoolean(exec);
 }
 
 void GreaterNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2399,14 +2874,42 @@ void BitAndNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::No
 }
 
 // ECMA 11.10
-JSValue *BitAndNode::evaluate(ExecState *exec)
+JSValue* BitAndNode::evaluate(ExecState* exec)
 {    
-  JSValue *v1 = expr1->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = expr2->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  
-  return jsNumberFromAnd(exec, v1, v2);
+    JSValue *v1 = expr1->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+    JSValue *v2 = expr2->evaluate(exec);
+    KJS_CHECKEXCEPTIONVALUE
+
+    return jsNumberFromAnd(exec, v1, v2);
+}
+
+int32_t BitAndNode::inlineEvaluateToInt32(ExecState* exec)
+{
+    int32_t i1 = expr1->evaluateToInt32(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    int32_t i2 = expr2->evaluateToInt32(exec);
+    return (i1 & i2);
+}
+
+double BitAndNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+bool BitAndNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+int32_t BitAndNode::evaluateToInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+uint32_t BitAndNode::evaluateToUInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
 }
 
 void BitXOrNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2415,14 +2918,37 @@ void BitXOrNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::No
     nodeStack.append(expr1.get());
 }
 
-JSValue *BitXOrNode::evaluate(ExecState *exec)
+int32_t BitXOrNode::inlineEvaluateToInt32(ExecState* exec)
 {
-  JSValue *v1 = expr1->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = expr2->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  
-  return jsNumber(v1->toInt32(exec) ^ v2->toInt32(exec));
+    int i1 = expr1->evaluateToInt32(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    int i2 = expr2->evaluateToInt32(exec);
+    return (i1 ^ i2);
+}
+
+JSValue* BitXOrNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToInt32(exec));
+}
+
+double BitXOrNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+bool BitXOrNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+int32_t BitXOrNode::evaluateToInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+uint32_t BitXOrNode::evaluateToUInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
 }
 
 void BitOrNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack& nodeStack)
@@ -2431,14 +2957,37 @@ void BitOrNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::Nod
     nodeStack.append(expr1.get());
 }
 
-JSValue *BitOrNode::evaluate(ExecState *exec)
+int32_t BitOrNode::inlineEvaluateToInt32(ExecState* exec)
 {
-  JSValue *v1 = expr1->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  JSValue *v2 = expr2->evaluate(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  
-  return jsNumber(v1->toInt32(exec) | v2->toInt32(exec));
+    int i1 = expr1->evaluateToInt32(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    int i2 = expr2->evaluateToInt32(exec);
+    return (i1 | i2);
+}
+
+JSValue* BitOrNode::evaluate(ExecState* exec)
+{
+    return jsNumber(inlineEvaluateToInt32(exec));
+}
+
+double BitOrNode::evaluateToNumber(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+bool BitOrNode::evaluateToBoolean(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+int32_t BitOrNode::evaluateToInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
+}
+
+uint32_t BitOrNode::evaluateToUInt32(ExecState* exec)
+{
+    return inlineEvaluateToInt32(exec);
 }
 
 // ------------------------------ Binary Logical Nodes ----------------------------
@@ -2516,6 +3065,27 @@ bool ConditionalNode::evaluateToBoolean(ExecState* exec)
     return b ? expr1->evaluateToBoolean(exec) : expr2->evaluateToBoolean(exec);
 }
 
+double ConditionalNode::evaluateToNumber(ExecState* exec)
+{
+    bool b = logical->evaluateToBoolean(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return b ? expr1->evaluateToNumber(exec) : expr2->evaluateToNumber(exec);
+}
+
+int32_t ConditionalNode::evaluateToInt32(ExecState* exec)
+{
+    bool b = logical->evaluateToBoolean(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return b ? expr1->evaluateToInt32(exec) : expr2->evaluateToInt32(exec);
+}
+
+uint32_t ConditionalNode::evaluateToUInt32(ExecState* exec)
+{
+    bool b = logical->evaluateToBoolean(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return b ? expr1->evaluateToUInt32(exec) : expr2->evaluateToUInt32(exec);
+}
+
 // ECMA 11.13
 
 static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSValue* current, ExpressionNode* right, Operator oper) KJS_FAST_CALL;
@@ -2540,32 +3110,32 @@ static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSVa
     break;
   case OpLShift:
     i1 = current->toInt32(exec);
-    i2 = right->evaluate(exec)->toInt32(exec);
+    i2 = right->evaluateToInt32(exec);
     v = jsNumber(i1 << i2);
     break;
   case OpRShift:
     i1 = current->toInt32(exec);
-    i2 = right->evaluate(exec)->toInt32(exec);
+    i2 = right->evaluateToInt32(exec);
     v = jsNumber(i1 >> i2);
     break;
   case OpURShift:
     ui = current->toUInt32(exec);
-    i2 = right->evaluate(exec)->toInt32(exec);
+    i2 = right->evaluateToInt32(exec);
     v = jsNumber(ui >> i2);
     break;
   case OpAndEq:
     i1 = current->toInt32(exec);
-    i2 = right->evaluate(exec)->toInt32(exec);
+    i2 = right->evaluateToInt32(exec);
     v = jsNumber(i1 & i2);
     break;
   case OpXOrEq:
     i1 = current->toInt32(exec);
-    i2 = right->evaluate(exec)->toInt32(exec);
+    i2 = right->evaluateToInt32(exec);
     v = jsNumber(i1 ^ i2);
     break;
   case OpOrEq:
     i1 = current->toInt32(exec);
-    i2 = right->evaluate(exec)->toInt32(exec);
+    i2 = right->evaluateToInt32(exec);
     v = jsNumber(i1 | i2);
     break;
   case OpModEq: {
@@ -2854,9 +3424,29 @@ void AssignExprNode::optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks
 }
 
 // ECMA 12.2
-JSValue *AssignExprNode::evaluate(ExecState *exec)
+JSValue* AssignExprNode::evaluate(ExecState* exec)
 {
-  return expr->evaluate(exec);
+    return expr->evaluate(exec);
+}
+
+bool AssignExprNode::evaluateToBoolean(ExecState* exec)
+{
+    return expr->evaluateToBoolean(exec);
+}
+
+double AssignExprNode::evaluateToNumber(ExecState* exec)
+{
+    return expr->evaluateToNumber(exec);
+}
+
+int32_t AssignExprNode::evaluateToInt32(ExecState* exec)
+{
+    return expr->evaluateToInt32(exec);
+}
+
+uint32_t AssignExprNode::evaluateToUInt32(ExecState* exec)
+{
+    return expr->evaluateToInt32(exec);
 }
 
 // ------------------------------ VarDeclNode ----------------------------------
@@ -2896,7 +3486,7 @@ void VarDeclNode::getDeclarations(DeclarationStacks& stacks)
 void VarDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSValue* val)
 {
     ScopeChainIterator iter = chain.begin();
-    ScopeChainIterator end = chain.end();        
+    ScopeChainIterator end = chain.end();
     
     // we must always have something in the scope chain
     ASSERT(iter != end);

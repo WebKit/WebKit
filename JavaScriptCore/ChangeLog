@@ -1,3 +1,153 @@
+2007-11-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Add evaluateToInt32 and evaluateUInt32 methods and deploy them.
+        Fix a few missing evaluateToBoolean methods
+        Deploy all evaluateTo* functions to more nodes to avoid slowdowns
+        http://bugs.webkit.org/show_bug.cgi?id=15950
+        
+        SunSpider claims this is at least a 1.4% speedup.
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::getTruncatedInt32):
+        (KJS::JSImmediate::toDouble):
+        (KJS::JSImmediate::getUInt32):
+        * kjs/nodes.cpp:
+        (KJS::ExpressionNode::evaluateToNumber):
+        (KJS::ExpressionNode::evaluateToInt32):
+        (KJS::ExpressionNode::evaluateToUInt32):
+        (KJS::NumberNode::evaluateToInt32):
+        (KJS::NumberNode::evaluateToUInt32):
+        (KJS::ImmediateNumberNode::evaluateToInt32):
+        (KJS::ImmediateNumberNode::evaluateToUInt32):
+        (KJS::ResolveNode::evaluate):
+        (KJS::ResolveNode::evaluateToNumber):
+        (KJS::ResolveNode::evaluateToBoolean):
+        (KJS::ResolveNode::evaluateToInt32):
+        (KJS::ResolveNode::evaluateToUInt32):
+        (KJS::LocalVarAccessNode::evaluateToInt32):
+        (KJS::LocalVarAccessNode::evaluateToUInt32):
+        (KJS::BracketAccessorNode::evaluateToNumber):
+        (KJS::BracketAccessorNode::evaluateToBoolean):
+        (KJS::BracketAccessorNode::evaluateToInt32):
+        (KJS::BracketAccessorNode::evaluateToUInt32):
+        (KJS::DotAccessorNode::inlineEvaluate):
+        (KJS::DotAccessorNode::evaluate):
+        (KJS::DotAccessorNode::evaluateToNumber):
+        (KJS::DotAccessorNode::evaluateToBoolean):
+        (KJS::DotAccessorNode::evaluateToInt32):
+        (KJS::DotAccessorNode::evaluateToUInt32):
+        (KJS::NewExprNode::inlineEvaluate):
+        (KJS::NewExprNode::evaluate):
+        (KJS::NewExprNode::evaluateToNumber):
+        (KJS::NewExprNode::evaluateToBoolean):
+        (KJS::NewExprNode::evaluateToInt32):
+        (KJS::NewExprNode::evaluateToUInt32):
+        (KJS::FunctionCallResolveNode::inlineEvaluate):
+        (KJS::FunctionCallResolveNode::evaluate):
+        (KJS::FunctionCallResolveNode::evaluateToNumber):
+        (KJS::FunctionCallResolveNode::evaluateToBoolean):
+        (KJS::FunctionCallResolveNode::evaluateToInt32):
+        (KJS::FunctionCallResolveNode::evaluateToUInt32):
+        (KJS::LocalVarFunctionCallNode::evaluate):
+        (KJS::LocalVarFunctionCallNode::evaluateToNumber):
+        (KJS::LocalVarFunctionCallNode::evaluateToBoolean):
+        (KJS::LocalVarFunctionCallNode::evaluateToInt32):
+        (KJS::LocalVarFunctionCallNode::evaluateToUInt32):
+        (KJS::FunctionCallDotNode::evaluate):
+        (KJS::FunctionCallDotNode::evaluateToNumber):
+        (KJS::FunctionCallDotNode::evaluateToBoolean):
+        (KJS::FunctionCallDotNode::evaluateToInt32):
+        (KJS::FunctionCallDotNode::evaluateToUInt32):
+        (KJS::PostDecLocalVarNode::inlineEvaluateToNumber):
+        (KJS::PostDecLocalVarNode::evaluateToNumber):
+        (KJS::PostDecLocalVarNode::evaluateToBoolean):
+        (KJS::PostDecLocalVarNode::evaluateToInt32):
+        (KJS::PostDecLocalVarNode::evaluateToUInt32):
+        (KJS::typeStringForValue):
+        (KJS::UnaryPlusNode::evaluate):
+        (KJS::UnaryPlusNode::evaluateToBoolean):
+        (KJS::UnaryPlusNode::evaluateToNumber):
+        (KJS::UnaryPlusNode::evaluateToInt32):
+        (KJS::BitwiseNotNode::inlineEvaluateToInt32):
+        (KJS::BitwiseNotNode::evaluate):
+        (KJS::BitwiseNotNode::evaluateToNumber):
+        (KJS::BitwiseNotNode::evaluateToBoolean):
+        (KJS::BitwiseNotNode::evaluateToInt32):
+        (KJS::MultNode::evaluateToBoolean):
+        (KJS::MultNode::evaluateToInt32):
+        (KJS::MultNode::evaluateToUInt32):
+        (KJS::DivNode::evaluateToInt32):
+        (KJS::DivNode::evaluateToUInt32):
+        (KJS::ModNode::evaluateToBoolean):
+        (KJS::ModNode::evaluateToInt32):
+        (KJS::ModNode::evaluateToUInt32):
+        (KJS::AddNode::evaluateToNumber):
+        (KJS::AddNode::evaluateToInt32):
+        (KJS::AddNode::evaluateToUInt32):
+        (KJS::AddNumbersNode::evaluateToInt32):
+        (KJS::AddNumbersNode::evaluateToUInt32):
+        (KJS::SubNode::evaluateToInt32):
+        (KJS::SubNode::evaluateToUInt32):
+        (KJS::LeftShiftNode::inlineEvaluateToInt32):
+        (KJS::LeftShiftNode::evaluate):
+        (KJS::LeftShiftNode::evaluateToNumber):
+        (KJS::LeftShiftNode::evaluateToInt32):
+        (KJS::RightShiftNode::inlineEvaluateToInt32):
+        (KJS::RightShiftNode::evaluate):
+        (KJS::RightShiftNode::evaluateToNumber):
+        (KJS::RightShiftNode::evaluateToInt32):
+        (KJS::UnsignedRightShiftNode::inlineEvaluateToUInt32):
+        (KJS::UnsignedRightShiftNode::evaluate):
+        (KJS::UnsignedRightShiftNode::evaluateToNumber):
+        (KJS::UnsignedRightShiftNode::evaluateToInt32):
+        (KJS::LessNode::inlineEvaluateToBoolean):
+        (KJS::LessNode::evaluate):
+        (KJS::LessNode::evaluateToBoolean):
+        (KJS::LessNumbersNode::inlineEvaluateToBoolean):
+        (KJS::LessNumbersNode::evaluate):
+        (KJS::LessNumbersNode::evaluateToBoolean):
+        (KJS::LessStringsNode::inlineEvaluateToBoolean):
+        (KJS::LessStringsNode::evaluate):
+        (KJS::BitAndNode::evaluate):
+        (KJS::BitAndNode::inlineEvaluateToInt32):
+        (KJS::BitAndNode::evaluateToNumber):
+        (KJS::BitAndNode::evaluateToBoolean):
+        (KJS::BitAndNode::evaluateToInt32):
+        (KJS::BitXOrNode::inlineEvaluateToInt32):
+        (KJS::BitXOrNode::evaluate):
+        (KJS::BitXOrNode::evaluateToNumber):
+        (KJS::BitXOrNode::evaluateToBoolean):
+        (KJS::BitXOrNode::evaluateToInt32):
+        (KJS::BitOrNode::inlineEvaluateToInt32):
+        (KJS::BitOrNode::evaluate):
+        (KJS::BitOrNode::evaluateToNumber):
+        (KJS::BitOrNode::evaluateToBoolean):
+        (KJS::BitOrNode::evaluateToInt32):
+        (KJS::ConditionalNode::evaluateToNumber):
+        (KJS::ConditionalNode::evaluateToInt32):
+        (KJS::ConditionalNode::evaluateToUInt32):
+        (KJS::valueForReadModifyAssignment):
+        (KJS::AssignExprNode::evaluate):
+        (KJS::AssignExprNode::evaluateToBoolean):
+        (KJS::AssignExprNode::evaluateToNumber):
+        (KJS::AssignExprNode::evaluateToInt32):
+        (KJS::VarDeclNode::handleSlowCase):
+        * kjs/nodes.h:
+        (KJS::FunctionCallResolveNode::precedence):
+        (KJS::AddNode::precedence):
+        (KJS::AddNode::):
+        (KJS::LessNumbersNode::):
+        (KJS::LessStringsNode::):
+        * kjs/value.cpp:
+        (KJS::JSValue::toInt32SlowCase):
+        (KJS::JSValue::toUInt32SlowCase):
+        * kjs/value.h:
+        (KJS::JSValue::asCell):
+        (KJS::JSValue::toInt32):
+        (KJS::JSValue::toUInt32):
+
 2007-11-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

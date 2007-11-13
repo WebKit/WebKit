@@ -116,6 +116,8 @@ public:
     static bool getTruncatedInt32(const JSValue*, int32_t&);
     static bool getTruncatedUInt32(const JSValue*, uint32_t&);
 
+    static int32_t getTruncatedInt32(const JSValue*);
+
     static JSValue* trueImmediate();
     static JSValue* falseImmediate();
     static JSValue* undefinedImmediate();
@@ -238,10 +240,15 @@ ALWAYS_INLINE JSValue* JSImmediate::from(double d)
     return tag(intVal << 2, NumberType);
 }
 
+ALWAYS_INLINE int32_t JSImmediate::getTruncatedInt32(const JSValue* v)
+{
+    return static_cast<int32_t>(unTag(v)) >> 2;
+}
+
 ALWAYS_INLINE double JSImmediate::toDouble(const JSValue* v)
 {
     ASSERT(isImmediate(v));
-    const int32_t i = static_cast<int32_t>(unTag(v)) >> 2;
+    const int32_t i = getTruncatedInt32(v);
     if (JSImmediate::getTag(v) == UndefinedType && i)
         return std::numeric_limits<double>::quiet_NaN();
     return i;
@@ -249,14 +256,14 @@ ALWAYS_INLINE double JSImmediate::toDouble(const JSValue* v)
 
 ALWAYS_INLINE bool JSImmediate::getUInt32(const JSValue* v, uint32_t& i)
 {
-    const int32_t si = static_cast<int32_t>(unTag(v)) >> 2;
+    const int32_t si = getTruncatedInt32(v);
     i = si;
     return isNumber(v) & (si >= 0);
 }
 
 ALWAYS_INLINE bool JSImmediate::getTruncatedInt32(const JSValue* v, int32_t& i)
 {
-    i = static_cast<int32_t>(unTag(v)) >> 2;
+    i = getTruncatedInt32(v);
     return isNumber(v);
 }
 

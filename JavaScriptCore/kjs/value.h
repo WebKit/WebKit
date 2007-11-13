@@ -97,12 +97,19 @@ public:
     uint32_t toUInt32(ExecState*) const;
     uint32_t toUInt32(ExecState*, bool& ok) const;
 
+    // These are identical logic to above, and faster than jsNumber(number)->toInt32(exec)
+    static int32_t toInt32(double);
+    static int32_t toUInt32(double);
+
     // Floating point conversions.
     float toFloat(ExecState*) const;
 
     // Garbage collection.
     void mark();
     bool marked() const;
+
+    static int32_t toInt32SlowCase(double, bool& ok);
+    static uint32_t toUInt32SlowCase(double, bool& ok);
 
 private:
     int32_t toInt32SlowCase(ExecState*, bool& ok) const;
@@ -288,16 +295,16 @@ inline void JSCell::mark()
     return Collector::markCell(this);
 }
 
-inline JSCell *JSValue::asCell()
+ALWAYS_INLINE JSCell* JSValue::asCell()
 {
     ASSERT(!JSImmediate::isImmediate(this));
-    return static_cast<JSCell *>(this);
+    return static_cast<JSCell*>(this);
 }
 
-inline const JSCell *JSValue::asCell() const
+ALWAYS_INLINE const JSCell* JSValue::asCell() const
 {
     ASSERT(!JSImmediate::isImmediate(this));
-    return static_cast<const JSCell *>(this);
+    return static_cast<const JSCell*>(this);
 }
 
 inline bool JSValue::isUndefined() const
@@ -471,6 +478,24 @@ inline uint32_t JSValue::toUInt32(ExecState* exec) const
         return i;
     bool ok;
     return toUInt32SlowCase(exec, ok);
+}
+
+inline int32_t JSValue::toInt32(double val)
+{
+    if (!(val >= -2147483648.0 && val < 2147483648.0)) {
+        bool ignored;
+        return toInt32SlowCase(val, ignored);
+    }
+    return static_cast<int32_t>(val);
+}
+
+inline int32_t JSValue::toUInt32(double val)
+{
+    if (!(val >= 0.0 && val < 4294967296.0)) {
+        bool ignored;
+        return toUInt32SlowCase(val, ignored);
+    }
+    return static_cast<uint32_t>(val);
 }
 
 inline int32_t JSValue::toInt32(ExecState* exec, bool& ok) const

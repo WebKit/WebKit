@@ -72,11 +72,10 @@ double JSValue::toIntegerPreserveNaN(ExecState *exec) const
     return trunc(toNumber(exec));
 }
 
-int32_t JSValue::toInt32SlowCase(ExecState* exec, bool& ok) const
+int32_t JSValue::toInt32SlowCase(double d, bool& ok)
 {
     ok = true;
 
-    double d = toNumber(exec);
     if (d >= -D32 / 2 && d < D32 / 2)
         return static_cast<int32_t>(d);
 
@@ -93,11 +92,15 @@ int32_t JSValue::toInt32SlowCase(ExecState* exec, bool& ok) const
     return static_cast<int32_t>(d32);
 }
 
-uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
+int32_t JSValue::toInt32SlowCase(ExecState* exec, bool& ok) const
+{
+    return JSValue::toInt32SlowCase(toNumber(exec), ok);
+}
+
+uint32_t JSValue::toUInt32SlowCase(double d, bool& ok)
 {
     ok = true;
 
-    double d = toNumber(exec);
     if (d >= 0.0 && d < D32)
         return static_cast<uint32_t>(d);
 
@@ -110,6 +113,11 @@ uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
     if (d32 < 0)
         d32 += D32;
     return static_cast<uint32_t>(d32);
+}
+
+uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
+{
+    return JSValue::toUInt32SlowCase(toNumber(exec), ok);
 }
 
 float JSValue::toFloat(ExecState* exec) const
