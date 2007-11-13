@@ -564,6 +564,7 @@ input[type="file"]:focus::-webkit-file-upload-button {
 a:-webkit-any-link {
     color: -webkit-link;
     text-decoration: underline;
+    cursor: auto;
 }
 
 a:-webkit-any-link:active {
