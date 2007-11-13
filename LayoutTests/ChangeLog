@@ -1,3 +1,11 @@
+2007-11-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        * platform/win/Skipped: Remove http/tests/security/cross-frame-acdcess-private-browsing.html 
+        from the windows skipped list now that LayoutTestController.setPrivateBrowsingEnabled has 
+        been implmented.
+
 2007-11-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

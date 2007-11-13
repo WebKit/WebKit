@@ -1,3 +1,14 @@
+2007-11-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Implement LayoutTestController.setPrivateBrowsingEnabled(bool) for windows.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setPrivateBrowsingEnabled):
+
 2007-11-12  Adam Roben  <aroben@apple.com>
 
         * Scripts/update-webkit-localizable-strings: Changed to only scan the
