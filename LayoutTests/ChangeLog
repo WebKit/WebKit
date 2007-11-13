@@ -1,3 +1,15 @@
+2007-11-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11231
+          RegExp bug when handling newline characters and other regular expression
+          behavior that is different for JavaScript and PCRE
+
+        * fast/js/regexp-no-extensions-expected.txt: Added.
+        * fast/js/regexp-no-extensions.html: Added.
+        * fast/js/resources/regexp-no-extensions.js: Added.
+
 2007-11-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

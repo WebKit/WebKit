@@ -603,7 +603,6 @@ for (;;)
     BEGIN_OPCODE(KET):
     BEGIN_OPCODE(KETRMIN):
     BEGIN_OPCODE(KETRMAX):
-      {
       frame->prev = frame->ecode - GET(frame->ecode, 1);
       frame->saved_eptr = frame->eptrb->epb_saved_eptr;
 
@@ -681,52 +680,32 @@ for (;;)
         RMATCH(19, frame->ecode + 1+LINK_SIZE, frame->eptrb, 0);
         if (is_match) RRETURN;
         }
-      }
     RRETURN;
 
-    /* Start of subject unless notbol, or after internal newline if multiline */
+    /* Start of subject, or after internal newline if multiline. */
 
     BEGIN_OPCODE(CIRC):
-    if (md->multiline)
-      {
-      if (frame->eptr != md->start_subject && !IS_NEWLINE(frame->eptr[-1]))
-        RRETURN_NO_MATCH;
-      frame->ecode++;
-      NEXT_OPCODE;
-      }
-    if (frame->eptr != md->start_subject) RRETURN_NO_MATCH;
+    if (frame->eptr != md->start_subject && (!md->multiline || !IS_NEWLINE(frame->eptr[-1])))
+      RRETURN_NO_MATCH;
     frame->ecode++;
     NEXT_OPCODE;
 
-    /* Assert before internal newline if multiline, or before a terminating
-    newline unless endonly is set, else end of subject unless noteol is set. */
+    /* End of subject, or before internal newline if multiline. */
 
     BEGIN_OPCODE(DOLL):
-    if (md->multiline)
-      {
-      if (frame->eptr < md->end_subject)
-        { if (!IS_NEWLINE(*frame->eptr)) RRETURN_NO_MATCH; }
-      frame->ecode++;
-      }
-    else
-      {
-      if (frame->eptr < md->end_subject - 1 ||
-         (frame->eptr == md->end_subject - 1 && !IS_NEWLINE(*frame->eptr)))
-        RRETURN_NO_MATCH;
-      frame->ecode++;
-      }
+    if (frame->eptr < md->end_subject && (!md->multiline || !IS_NEWLINE(*frame->eptr)))
+      RRETURN_NO_MATCH;
+    frame->ecode++;
     NEXT_OPCODE;
 
     /* Word boundary assertions */
 
     BEGIN_OPCODE(NOT_WORD_BOUNDARY):
     BEGIN_OPCODE(WORD_BOUNDARY):
-      {
       /* Find out if the previous and current characters are "word" characters.
       It takes a bit more work in UTF-8 mode. Characters > 128 are assumed to
       be "non-word" characters. */
 
-        {
         if (frame->eptr == md->start_subject) prev_is_word = false; else
           {
           const pcre_uchar *lastptr = frame->eptr - 1;
@@ -739,14 +718,12 @@ for (;;)
           GETCHAR(c, frame->eptr);
           cur_is_word = c < 128 && (md->ctypes[c] & ctype_word) != 0;
           }
-        }
 
       /* Now see if the situation is what we want */
 
       if ((*frame->ecode++ == OP_WORD_BOUNDARY)?
            cur_is_word == prev_is_word : cur_is_word != prev_is_word)
         RRETURN_NO_MATCH;
-      }
     NEXT_OPCODE;
 
     /* Match a single character type; inline for speed */

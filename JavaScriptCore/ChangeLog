@@ -1,5 +1,67 @@
 2007-11-13  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11231
+          RegExp bug when handling newline characters
+          and a number of other differences between PCRE behvior
+          and JavaScript regular expressions:
+
+          + single-digit sequences like \4 should be treated as octal
+            character constants, unless there is a sufficient number
+            of brackets for them to be treated as backreferences
+
+          + \8 turns into the character "8", not a binary zero character
+            followed by "8" (same for 9)
+
+          + only the first 3 digits should be considered part of an
+            octal character constant (the old behavior was to decode
+            an arbitrarily long sequence and then mask with 0xFF)
+
+          + if \x is followed by anything other than two valid hex digits,
+            then it should simply be treated a the letter "x"; that includes
+            not supporting the \x{41} syntax
+
+          + if \u is followed by anything less than four valid hex digits,
+            then it should simply be treated a the letter "u"
+
+          + an extra "+" should be a syntax error, rather than being treated
+            as the "possessive quantifier"
+
+          + if a "]" character appears immediately after a "[" character that
+            starts a character class, then that's an empty character class,
+            rather than being the start of a character class that includes a
+            "]" character
+
+          + a "$" should not match a terminating newline; we could have gotten
+            PCRE to handle this the way we wanted by passing an appropriate option
+
+        Test: fast/js/regexp-no-extensions.html
+
+        * pcre/pcre_compile.cpp:
+        (check_escape): Check backreferences against bracount to catch both
+        overflows and things that should be treated as octal. Rewrite octal
+        loop to not go on indefinitely. Rewrite both hex loops to match and
+        remove \x{} support.
+        (compile_branch): Restructure loops so that we don't special-case a "]"
+        at the beginning of a character class. Remove code that treated "+" as
+        the possessive quantifier.
+        (jsRegExpCompile): Change the "]" handling here too.
+
+        * pcre/pcre_exec.cpp: (match): Changed CIRC to match the DOLL implementation.
+        Changed DOLL to remove handling of "terminating newline", a Perl concept
+        which we don't need.
+
+        * tests/mozilla/expected.html: Two tests are fixed now:
+        ecma_3/RegExp/regress-100199.js and ecma_3/RegExp/regress-188206.js.
+        One test fails now: ecma_3/RegExp/perlstress-002.js -- our success before
+        was due to a bug (we treated all 1-character numeric escapes as backreferences).
+        The date tests also now both expect success -- whatever was making them fail
+        before was probably due to the time being close to a DST shift; maybe we need
+        to get rid of those tests.
+
+2007-11-13  Darin Adler  <darin@apple.com>
+
         * kjs/JSImmediate.h: (KJS::JSImmediate::getTruncatedInt32):
         Remove too-strong assert that was firing constantly and preventing even basic
         web browsing from working in a debug build. This function is used in many
