@@ -1,3 +1,11 @@
+2007-11-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Add support for http media tests
+
+        * Scripts/run-webkit-tests:
+
 2007-11-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

@@ -314,6 +314,7 @@ if (!$testHTTP) {
 
 if (!$testMedia) {
     $ignoredDirectories{'media'} = 1;
+    $ignoredDirectories{'http/tests/media'} = 1;
 }
 
 if ($ignoreTests) {
@@ -484,7 +485,7 @@ for my $test (@tests) {
         print OUT "$testPath\n";
     } else {
         openHTTPDIfNeeded();
-        if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\//) {
+        if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/media\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
             print OUT "http://127.0.0.1:$httpdPort/$path\n";
