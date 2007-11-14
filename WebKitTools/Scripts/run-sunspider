@@ -40,6 +40,7 @@ my $root;
 my $testRuns = 5; # This number may be different from what sunspider defaults to (that's OK)
 my $runShark = 0;
 my $runShark20 = 0;
+my $runSharkCache = 0;
 my $setBaseline = 0;
 my $showHelp = 0;
 my $testsPattern;
@@ -54,6 +55,7 @@ Usage: $programName [options] [options to pass to build system]
   --tests           Only run tests matching provided pattern
   --shark           Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
   --shark20         Like --shark, but with a 20 microsecond sampling interval
+  --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
 EOF
 
 GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(Cwd::abs_path($value)); },
@@ -61,6 +63,7 @@ GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(C
            'set-baseline' => \$setBaseline,
            'shark' => \$runShark,
            'shark20' => \$runShark20,
+           'shark-cache' => \$runSharkCache,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
@@ -114,6 +117,7 @@ my @args = ("--shell", testKJSPath($productDir), "--runs", $testRuns);
 push @args, "--set-baseline" if $setBaseline;
 push @args, "--shark" if $runShark;
 push @args, "--shark20" if $runShark20;
+push @args, "--shark-cache" if $runSharkCache;
 push @args, "--tests", $testsPattern if $testsPattern;
 
 exec "./sunspider", @args;

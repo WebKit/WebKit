@@ -1,3 +1,9 @@
+2007-11-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        * Scripts/run-sunspider: add --shark-cache for L2 Cache Miss profiling
+
 2007-11-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

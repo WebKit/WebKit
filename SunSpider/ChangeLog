@@ -1,3 +1,9 @@
+2007-11-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        * sunspider: add --shark-cache for L2 Cache Miss profiling
+
 2007-11-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

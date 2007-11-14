@@ -34,6 +34,7 @@ use POSIX qw(strftime);
 my $showHelp = 0;
 my $runShark = 0;
 my $runShark20 = 0;
+my $runSharkCache = 0;
 my $jsShellPath;
 my $setBaseline = 0;
 my $testsPattern;
@@ -47,8 +48,9 @@ Usage: $programName --shell=[path] [options]
   --shell           Path to JavaScript shell
   --runs            Number of times to run tests (default: $testRuns)
   --tests           Only run tests matching provided pattern
-  --shark           Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
+  --shark           Sample execution time with the Mac OS X "Shark" performance testing tool (implies --runs=1)
   --shark20         Like --shark, but with a 20 microsecond sampling interval
+  --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
 EOF
 
 GetOptions('runs=i' => \$testRuns,
@@ -56,13 +58,32 @@ GetOptions('runs=i' => \$testRuns,
            'shell=s' => \$jsShellPath,
            'shark' => \$runShark,
            'shark20' => \$runShark20,
+           'shark-cache' => \$runSharkCache,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
+$runShark = 1 if $runSharkCache;
 $runShark = 20 if $runShark20;
 $testRuns = 1 if $runShark;
 if ($runShark && ! -x "/usr/bin/shark") {
     die "Please install CHUD tools from http://developer.apple.com/tools/download/\n";
+}
+
+my $sharkCacheProfileIndex = 0;
+if ($runSharkCache) {
+    my $sharkProfileList = `shark -l 2>&1`;
+    for my $profile (split(/\n/, $sharkProfileList)) {
+        $profile =~ /(\d+) - (.+)/;
+        next  unless (defined $1);
+        my $profileIndex = $1;
+        my $profileName = $2;
+        if ($profileName =~ /L2 Cache/) {
+            $sharkCacheProfileIndex = $profileIndex;
+            print "Using Shark L2 Cache Miss Profile: " . $profile . "\n";
+            last;
+        }
+    }
+    die "Failed to find L2 Cache Miss Profile for --shark-cache\n"  unless ($sharkCacheProfileIndex);
 }
 
 if (!$jsShellPath || $showHelp) {
@@ -120,7 +141,8 @@ sub runTestsOnce($)
     my $output;
     if ($useShark) {
         my $intervalArg = $useShark == 20 ? "-I 20u" : "";
-        $output = `shark $intervalArg -i -1-q "$jsShellPath" $shellArgs`;
+        my $cacheArg = $runSharkCache ? "-c $sharkCacheProfileIndex" : "";
+        $output = `shark $intervalArg $cacheArg -i -1-q "$jsShellPath" $shellArgs`;
     } else {
         $output = `"$jsShellPath" $shellArgs | grep -v break`;
     }
