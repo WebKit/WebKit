@@ -1,3 +1,10 @@
+2007-11-14  Adam Roben  <aroben@apple.com>
+
+        Another build fix for systems without Cygwin in their PATH
+
+        * WebKit.vcproj/Interfaces.vcproj: Add Cygwin to the PATH in the
+        Post-Build Event.
+
 2007-11-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
