@@ -32,6 +32,9 @@
 #include "Color.h"
 #include "SVGPaintServer.h"
 
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
 #if PLATFORM(QT)
 class QGradient;
 #endif
@@ -110,9 +113,12 @@ namespace WebCore {
             CGFloat offset;
             CGFloat previousDeltaInverse;
         } QuartzGradientStop;
+        
+        struct SharedStopCache : public RefCounted<SharedStopCache> {
+            Vector<QuartzGradientStop> m_stops;
+        };
 
-        QuartzGradientStop* m_stopsCache;
-        int m_stopsCount;
+        RefPtr<SharedStopCache> m_stopsCache;
 
         CGShadingRef m_shadingCache;
         mutable GraphicsContext* m_savedContext;

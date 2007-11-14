@@ -1,3 +1,24 @@
+2007-11-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5365030> calling dataWithPDFInsideRect on an SVG with a gradient crashes (14780)
+
+        When drawing directly to PDF CG may delay the use of the gradient function until outside our
+        standard drawing path, which in turn could let us invalidate the caches before they were used.
+
+        To work around this we now store the cached stops in a RefCounted object, so that we can ensure
+        that cache exists as long as required.
+        
+        * platform/graphics/svg/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::SVGPaintServerGradient):
+        * platform/graphics/svg/SVGPaintServerGradient.h:
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::cgGradientCallback):
+        (WebCore::CGShadingRefForLinearGradient):
+        (WebCore::CGShadingRefForRadialGradient):
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientStopsCache):
+
 2007-11-13  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.

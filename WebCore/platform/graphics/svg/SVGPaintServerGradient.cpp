@@ -66,7 +66,6 @@ SVGPaintServerGradient::SVGPaintServerGradient(const SVGGradientElement* owner)
 
 #if PLATFORM(CG)
     , m_stopsCache(0)
-    , m_stopsCount(0)
     , m_shadingCache(0)
     , m_savedContext(0)
     , m_imageBuffer(0)
@@ -78,7 +77,6 @@ SVGPaintServerGradient::SVGPaintServerGradient(const SVGGradientElement* owner)
 SVGPaintServerGradient::~SVGPaintServerGradient()
 {
 #if PLATFORM(CG)
-    delete m_stopsCache;
     CGShadingRelease(m_shadingCache);
 #endif
 }

@@ -40,11 +40,18 @@ using namespace std;
 
 namespace WebCore {
 
+static void releaseCachedStops(void* info)
+{
+    reinterpret_cast<SVGPaintServerGradient::SharedStopCache*>(info)->deref();
+}
+
 static void cgGradientCallback(void* info, const CGFloat* inValues, CGFloat* outColor)
 {
-    const SVGPaintServerGradient* server = reinterpret_cast<const SVGPaintServerGradient*>(info);
-    SVGPaintServerGradient::QuartzGradientStop* stops = server->m_stopsCache;
-    int stopsCount = server->m_stopsCount;
+    SVGPaintServerGradient::SharedStopCache* stopsCache = reinterpret_cast<SVGPaintServerGradient::SharedStopCache*>(info);
+    
+    SVGPaintServerGradient::QuartzGradientStop* stops = stopsCache->m_stops.data();
+        
+    int stopsCount = stopsCache->m_stops.size();
 
     CGFloat inValue = inValues[0];
 
@@ -86,10 +93,11 @@ static CGShadingRef CGShadingRefForLinearGradient(const SVGPaintServerLinearGrad
     CGPoint start = CGPoint(server->gradientStart());
     CGPoint end = CGPoint(server->gradientEnd());
 
-    CGFunctionCallbacks callbacks = {0, cgGradientCallback, NULL};
+    CGFunctionCallbacks callbacks = {0, cgGradientCallback, releaseCachedStops};
     CGFloat domainLimits[2] = {0, 1};
     CGFloat rangeLimits[8] = {0, 1, 0, 1, 0, 1, 0, 1};
-    CGFunctionRef shadingFunction = CGFunctionCreate((void *)server, 1, domainLimits, 4, rangeLimits, &callbacks);
+    server->m_stopsCache->ref();
+    CGFunctionRef shadingFunction = CGFunctionCreate(server->m_stopsCache.get(), 1, domainLimits, 4, rangeLimits, &callbacks);
 
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGShadingRef shading = CGShadingCreateAxial(colorSpace, start, end, shadingFunction, true, true);
@@ -115,10 +123,11 @@ static CGShadingRef CGShadingRefForRadialGradient(const SVGPaintServerRadialGrad
         focus.y = narrowPrecisionToCGFloat(sin(angle) * radius);
     }
 
-    CGFunctionCallbacks callbacks = {0, cgGradientCallback, NULL};
+    CGFunctionCallbacks callbacks = {0, cgGradientCallback, releaseCachedStops};
     CGFloat domainLimits[2] = {0, 1};
     CGFloat rangeLimits[8] = {0, 1, 0, 1, 0, 1, 0, 1};
-    CGFunctionRef shadingFunction = CGFunctionCreate((void *)server, 1, domainLimits, 4, rangeLimits, &callbacks);
+    server->m_stopsCache->ref();
+    CGFunctionRef shadingFunction = CGFunctionCreate(server->m_stopsCache.get(), 1, domainLimits, 4, rangeLimits, &callbacks);
 
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGShadingRef shading = CGShadingCreateRadial(colorSpace, focus, 0, center, narrowPrecisionToCGFloat(radius), shadingFunction, true, true);
@@ -129,18 +138,16 @@ static CGShadingRef CGShadingRefForRadialGradient(const SVGPaintServerRadialGrad
 
 void SVGPaintServerGradient::updateQuartzGradientStopsCache(const Vector<SVGGradientStop>& stops)
 {
-    delete m_stopsCache;
-
-    m_stopsCount = stops.size();
-    m_stopsCache = new SVGPaintServerGradient::QuartzGradientStop[m_stopsCount];
-
+    m_stopsCache = new SharedStopCache;
+    Vector<QuartzGradientStop>& stopsCache = m_stopsCache->m_stops;
+    stopsCache.resize(stops.size());
     CGFloat previousOffset = 0.0f;
     for (unsigned i = 0; i < stops.size(); ++i) {
         CGFloat currOffset = min(max(stops[i].first, previousOffset), static_cast<CGFloat>(1.0));
-        m_stopsCache[i].offset = currOffset;
-        m_stopsCache[i].previousDeltaInverse = 1.0f / (currOffset - previousOffset);
+        stopsCache[i].offset = currOffset;
+        stopsCache[i].previousDeltaInverse = 1.0f / (currOffset - previousOffset);
         previousOffset = currOffset;
-        CGFloat* ca = m_stopsCache[i].colorArray;
+        CGFloat* ca = stopsCache[i].colorArray;
         stops[i].second.getRGBA(ca[0], ca[1], ca[2], ca[3]);
     }
 }
@@ -321,7 +328,6 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
 void SVGPaintServerGradient::invalidate()
 {
     // Invalidate caches
-    delete m_stopsCache;
     CGShadingRelease(m_shadingCache);
 
     m_stopsCache = 0;
