@@ -1,3 +1,13 @@
+2007-11-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix for <rdar://problem/5382579>
+        http/tests/security/cross-frame-access-put.html reports large 
+        negative numbers for screenLeft and screenTop (Mac reports "0")
+
+        * platform/win/Skipped: remove http/tests/security/cross-frame-access-put.html
+
 2007-11-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

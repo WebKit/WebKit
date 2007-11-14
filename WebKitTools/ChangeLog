@@ -1,3 +1,17 @@
+2007-11-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix for <rdar://problem/5382579>
+        http/tests/security/cross-frame-access-put.html reports large 
+        negative numbers for screenLeft and screenTop (Mac reports "0")
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::UIDelegate): Initialize the RECT.
+        (UIDelegate::setFrame): copy the contents of the rect, not the pointer.
+        (UIDelegate::webViewFrame): ditto.
+        * DumpRenderTree/win/UIDelegate.h: Use a RECT not a RECT*
+
 2007-11-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

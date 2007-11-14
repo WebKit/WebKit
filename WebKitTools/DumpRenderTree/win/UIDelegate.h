@@ -31,10 +31,11 @@
 
 #include <WebKit/IWebUIDelegate.h>
 #include <WebKit/IWebUIDelegatePrivate.h>
+#include <windef.h>
 
 class UIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate {
 public:
-    UIDelegate() : m_refCount(1), m_frame(0) { }
+    UIDelegate();
 
     void processWork();
 
@@ -293,7 +294,7 @@ protected:
     ULONG                   m_refCount;
 
 private:
-    RECT* m_frame;
+    RECT m_frame;
 };
 
 #endif
