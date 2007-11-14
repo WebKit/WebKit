@@ -1,3 +1,36 @@
+2007-11-13  Adam Roben  <aroben@apple.com>
+
+        Add WindowMessageBroadcaster
+
+        This class is used to listen in on messages sent to HWNDs. Multiple
+        WindowMessageListeners can be notified about messages sent to a single
+        HWND, and one WindowMessageListener can listen to messages from
+        multiple HWNDs.
+
+        Reviewed by Ada.
+
+        * WebCore.vcproj/WebCore.vcproj: Added new files to project.
+        * platform/win/WindowMessageBroadcaster.cpp: Added.
+        (WebCore::instancesMap): Static helper.
+        (WebCore::WindowMessageBroadcaster::addListener): Registers a listener
+        for a particular HWND.
+        (WebCore::WindowMessageBroadcaster::removeListener): Removes a
+        listener for a particular HWND.
+        (WebCore::WindowMessageBroadcaster::WindowMessageBroadcaster):
+        (WebCore::WindowMessageBroadcaster::~WindowMessageBroadcaster):
+        (WebCore::WindowMessageBroadcaster::destroy): Removes this broadcaster
+        from the instancesMap, removes all of its listeners, unsubclasses the
+        window, and deletes the broadcaster.
+        (WebCore::WindowMessageBroadcaster::unsubclassWindow): Unsubclasses
+        the window (which means that SubclassedWndProc won't be called again
+        for this window).
+        (WebCore::WindowMessageBroadcaster::SubclassedWndProc): Notifies all
+        the listeners about every message sent to the HWND
+        * platform/win/WindowMessageBroadcaster.h: Added.
+        (WebCore::WindowMessageBroadcaster::listeners):
+        (WebCore::WindowMessageBroadcaster::originalWndProc):
+        * platform/win/WindowMessageListener.h: Added.
+
 2007-11-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

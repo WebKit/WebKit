@@ -1,5 +1,29 @@
 2007-11-13  Adam Roben  <aroben@apple.com>
 
+        Fix <rdar://5346832> Infinite recursion when opening Web Inspector on more than one tab
+
+        The bug was that multiple WebNodeHighlights would subclass the same
+        browser window, leading to infinite recursion within
+        SubclassedWndProc.
+
+        WebNodeHighlight is now a WindowMessageListener, and lets
+        WindowMessageBroadcaster handle subclassing the window.
+
+        Reviewed by Ada.
+
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::WebNodeHighlight): Initialize m_observedWindow
+        member.
+        (WebNodeHighlight::~WebNodeHighlight): Unregister as a listener for
+        m_observedWindow.
+        (WebNodeHighlight::highlight): Register as a listener.
+        (WebNodeHighlight::windowReceivedMessage): Do the work that used to be
+        done in SubclassedWndProc.
+        * WebNodeHighlight.h: Made WebNodeHighlight a WindowMessageListener,
+        and renamed m_subclassedWindow to m_observedWindow.
+
+2007-11-13  Adam Roben  <aroben@apple.com>
+
         Build fix for systems that don't have Cygwin in their PATH
 
         * WebKit.vcproj/Interfaces.vcproj: Put Cygwin in the PATH before

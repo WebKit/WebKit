@@ -1,18 +1,18 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,37 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNodeHighlight_h
-#define WebNodeHighlight_h
+#ifndef WindowMessageListener_h
+#define WindowMessageListener_h
 
-#pragma warning(push, 0)
-#include <WebCore/IntRect.h>
-#include <WebCore/WindowMessageListener.h>
-#pragma warning(pop)
+typedef struct HWND__* HWND;
+typedef long LPARAM;
+typedef unsigned UINT;
+typedef unsigned WPARAM;
 
-#include <windows.h>
+namespace WebCore {
 
-class WebNodeHighlight : WebCore::WindowMessageListener {
-public:
-    WebNodeHighlight(HWND webView);
-    ~WebNodeHighlight();
+    class WindowMessageListener {
+    public:
+        virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM) = 0;
+    };
 
-    void highlight(const WebCore::IntRect&);
-    void hide();
+} // namespace WebCore
 
-    void updateWindow();
-    bool visible() const;
-
-private:
-    virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
-
-    HWND m_webView;
-    HWND m_overlay;
-    HWND m_observedWindow;
-
-    WebCore::IntRect m_rect;
-
-    friend static LRESULT CALLBACK OverlayWndProc(HWND, UINT, WPARAM, LPARAM);
-};
-
-#endif // !defined(WebNodeHighlight_h)
+#endif // WindowMessageListener_h

@@ -29,12 +29,13 @@
 #include "config.h"
 #include "WebNodeHighlight.h"
 
-#include <wtf/OwnPtr.h>
-
 #pragma warning(push, 0)
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/WindowMessageBroadcaster.h>
 #pragma warning(pop)
+#include <wtf/OwnPtr.h>
+#include <wtf/HashSet.h>
 
 using namespace WebCore;
 
@@ -45,17 +46,17 @@ static LPCTSTR kWebNodeHighlightPointerProp = TEXT("WebNodeHighlightPointer");
 WebNodeHighlight::WebNodeHighlight(HWND webView)
     : m_webView(webView)
     , m_overlay(0)
+    , m_observedWindow(0)
 {
 }
 
 WebNodeHighlight::~WebNodeHighlight()
 {
-    if (m_overlay) {
-        ::RemoveProp(m_overlay, kWebNodeHighlightPointerProp);
-        ::DestroyWindow(m_overlay);
-    }
+    if (m_observedWindow)
+        WindowMessageBroadcaster::removeListener(m_observedWindow, this);
 
-    removeSubclass();
+    if (m_overlay)
+        ::DestroyWindow(m_overlay);
 }
 
 void WebNodeHighlight::highlight(const IntRect& rect)
@@ -72,10 +73,8 @@ void WebNodeHighlight::highlight(const IntRect& rect)
         ::SetProp(m_overlay, kWebNodeHighlightPointerProp, reinterpret_cast<HANDLE>(this));
         ::SetWindowPos(m_overlay, m_webView, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
-        m_subclassedWindow = ::GetAncestor(m_webView, GA_ROOT);
-        ::SetProp(m_subclassedWindow, kWebNodeHighlightPointerProp, reinterpret_cast<HANDLE>(this));
-#pragma warning(disable: 4244 4312)
-        m_originalWndProc = (WNDPROC)::SetWindowLongPtr(m_subclassedWindow, GWLP_WNDPROC, (LONG_PTR)SubclassedWndProc);
+        m_observedWindow = GetAncestor(m_webView, GA_ROOT);
+        WindowMessageBroadcaster::addListener(m_observedWindow, this);
     }
 
     m_rect = rect;
@@ -163,19 +162,6 @@ void WebNodeHighlight::updateWindow()
     ::DeleteDC(hdc);
 }
 
-void WebNodeHighlight::removeSubclass()
-{
-    if (!m_subclassedWindow)
-        return;
-
-    ::RemoveProp(m_subclassedWindow, kWebNodeHighlightPointerProp);
-#pragma warning(disable: 4244 4312)
-    ::SetWindowLongPtr(m_subclassedWindow, GWLP_WNDPROC, (LONG_PTR)m_originalWndProc);
-
-    m_subclassedWindow = 0;
-    m_originalWndProc = 0;
-}
-
 static ATOM registerOverlayClass()
 {
     static bool haveRegisteredWindowClass = false;
@@ -213,22 +199,14 @@ LRESULT CALLBACK OverlayWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     return ::DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-LRESULT CALLBACK SubclassedWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+void WebNodeHighlight::windowReceivedMessage(HWND, UINT msg, WPARAM, LPARAM)
 {
-    WebNodeHighlight* highlight = reinterpret_cast<WebNodeHighlight*>(::GetProp(hwnd, kWebNodeHighlightPointerProp));
-    ASSERT(highlight);
-
     switch (msg) {
         case WM_WINDOWPOSCHANGED:
-            if (highlight->visible())
-                highlight->updateWindow();
-            break;
-        case WM_DESTROY:
-            highlight->removeSubclass();
+            if (visible())
+                updateWindow();
             break;
         default:
             break;
     }
-
-    return ::CallWindowProc(highlight->m_originalWndProc, hwnd, msg, wParam, lParam);
 }
