@@ -1,3 +1,10 @@
+2007-11-13  Brady Eidson  <beidson@apple.com>
+
+        Release build fix
+
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+
 2007-11-13  Adam Roben  <aroben@apple.com>
 
         Add WindowMessageBroadcaster
