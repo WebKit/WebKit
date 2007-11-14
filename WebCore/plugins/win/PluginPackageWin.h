@@ -29,12 +29,12 @@
 #include <winsock2.h>
 #include <windows.h>
 
-#include "RefCounted.h"
 #include "Timer.h"
 #include "StringHash.h"
 #include "PlatformString.h"
 #include "npfunctions.h"
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
     typedef HashMap<String, String> MIMEToDescriptionsMap;

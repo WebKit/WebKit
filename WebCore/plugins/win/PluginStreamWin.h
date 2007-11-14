@@ -31,12 +31,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 #include "CString.h"
 #include "KURL.h"
 #include "npfunctions.h"
 #include "NetscapePlugInStreamLoader.h"
 #include "PlatformString.h"
-#include "RefCounted.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "StringHash.h"

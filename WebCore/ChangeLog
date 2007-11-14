@@ -1,3 +1,11 @@
+2007-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Use the correct include path.
+        
+        * platform/Cursor.h:
+        * plugins/win/PluginPackageWin.h:
+        * plugins/win/PluginStreamWin.h:
+
 2007-11-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam
