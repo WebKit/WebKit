@@ -42,6 +42,10 @@ APPLET: <applet><font></applet>All of this should be green.</font>
 
 <hr>
 
+AREA: <map><area><font></area></map>All of this should be green.</font>
+
+<hr>
+
 B: <b><font></b>All of this should be green.</font>
 
 <hr>
@@ -198,6 +202,10 @@ LISTING: <listing><font></listing>All of this should be green.</font>
 
 <hr>
 
+MAP: <map><font></map>All of this should be green.</font>
+
+<hr>
+
 MARQUEE: <marquee><font></marquee>All of this should be green.</font>
 
 <hr>
@@ -315,16 +323,3 @@ UL: <ul><font></ul>All of this should be green.</font>
 <hr>
 
 VAR: <var><font></var>All of this should be green.</font>
-
-<h2>Failing Tags</h2>
-
-These are "failures" in the sense that they are green in Firefox but fail for us.
-
-<hr>
-
-MAP: <map><font></map>All of this should be green.</font> (MAP allows FONT inside it in Firefox, not clear if this is right.)
-
-<hr>
-
-AREA: <map><area><font></area></map>All of this should be green.</font> (Firefox shunts the FONT up to the MAP, and then it fails for the same reason as MAP.)
-

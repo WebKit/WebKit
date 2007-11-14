@@ -46,8 +46,8 @@ HTMLMapElement::~HTMLMapElement()
 
 bool HTMLMapElement::checkDTD(const Node* newChild)
 {
-    return inBlockTagList(newChild) || newChild->hasTagName(areaTag) // HTML 4 DTD
-        || newChild->hasTagName(scriptTag) || newChild->hasTagName(imgTag); // extensions
+    return inEitherTagList(newChild) || newChild->hasTagName(areaTag) // HTML 4 DTD
+        || newChild->hasTagName(scriptTag); // extensions
 }
 
 bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)

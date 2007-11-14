@@ -1,3 +1,15 @@
+2007-11-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5540855> REGRESSION: Combination of client-
+        side image map and <a> tag is not working properly (15522)
+
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::checkDTD): Allow <map> to have both block 
+        and inline children rather than just block children. This matches 
+        Firefox. 
+
 2007-11-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Alexey Proskuryakov.

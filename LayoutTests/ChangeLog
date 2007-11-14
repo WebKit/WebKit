@@ -1,3 +1,28 @@
+2007-11-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Tests for <rdar://problem/5540855> REGRESSION: Combination of 
+        client-side image map and <a> tag is not working properly (15522)
+
+        New test:
+        * fast/images/image-map-anchor-children.html: Added.
+        * fast/images/resources/boston.gif: Added.
+        * platform/mac/fast/images/image-map-anchor-children-
+        expected.checksum: Added.
+        * platform/mac/fast/images/image-map-anchor-children-expected.png: 
+        Added.
+        * platform/mac/fast/images/image-map-anchor-children-expected.txt: 
+        Added.
+        
+        This test was broken and is fixed now! I had to edit the test 
+        itself because it was written in the html that the two <map> 
+        examples were failing, but now they succeed. 
+        * fast/invalid/residual-style.html:
+        * platform/mac/fast/invalid/residual-style-expected.checksum:
+        * platform/mac/fast/invalid/residual-style-expected.png:
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+
 2007-11-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Alexey Proskuryakov.
