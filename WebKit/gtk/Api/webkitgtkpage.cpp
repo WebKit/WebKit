@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +65,10 @@ enum {
     STATUS_BAR_TEXT_CHANGED,
     ICOND_LOADED,
     SELECTION_CHANGED,
+    CONSOLE_MESSAGE,
+    SCRIPT_ALERT,
+    SCRIPT_CONFIRM,
+    SCRIPT_PROMPT,
     LAST_SIGNAL
 };
 
@@ -215,31 +220,103 @@ static gchar* webkit_page_real_choose_file(WebKitPage*, WebKitFrame*, const gcha
     return g_strdup(old_name);
 }
 
-static void webkit_page_real_java_script_alert(WebKitPage*, WebKitFrame*, const gchar*)
+typedef enum {
+    WEBKIT_SCRIPT_DIALOG_ALERT,
+    WEBKIT_SCRIPT_DIALOG_CONFIRM,
+    WEBKIT_SCRIPT_DIALOG_PROMPT
+ } WebKitScriptDialogType;
+
+static gboolean webkit_page_script_dialog(WebKitPage* page, WebKitFrame* frame, const gchar* message, WebKitScriptDialogType type, const gchar* defaultValue, gchar** value)
 {
-    notImplemented();
+    GtkMessageType messageType;
+    GtkButtonsType buttons;
+    gint defaultResponse;
+    GtkWidget* window;
+    GtkWidget* dialog;
+    GtkWidget* entry;
+    gboolean didConfirm;
+
+    switch (type) {
+
+    case WEBKIT_SCRIPT_DIALOG_ALERT:
+        messageType = GTK_MESSAGE_WARNING;
+        buttons = GTK_BUTTONS_CLOSE;
+        defaultResponse = GTK_RESPONSE_CLOSE;
+        break;
+
+    case WEBKIT_SCRIPT_DIALOG_CONFIRM:
+        messageType = GTK_MESSAGE_QUESTION;
+        buttons = GTK_BUTTONS_YES_NO;
+        defaultResponse = GTK_RESPONSE_YES;
+        break;
+
+    case WEBKIT_SCRIPT_DIALOG_PROMPT:
+        messageType = GTK_MESSAGE_QUESTION;
+        buttons = GTK_BUTTONS_OK_CANCEL;
+        defaultResponse = GTK_RESPONSE_OK;
+    }
+
+    window = gtk_widget_get_toplevel(GTK_WIDGET(page));
+    dialog = gtk_message_dialog_new(
+     GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0
+     , GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, message);
+    gchar* title = g_strconcat("JavaScript - ", webkit_frame_get_location(frame), 0);
+    gtk_window_set_title(GTK_WINDOW(dialog), title);
+    g_free(title);
+
+    if (type == WEBKIT_SCRIPT_DIALOG_PROMPT) {
+        entry = gtk_entry_new();
+        gtk_entry_set_text(GTK_ENTRY(entry), defaultValue);
+        gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), entry);
+        gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+        gtk_widget_show(entry);
+    }
+
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
+    gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+
+    switch (response) {
+
+    case GTK_RESPONSE_YES:
+        didConfirm = TRUE;
+        break;
+
+    case GTK_RESPONSE_NO:
+    case GTK_RESPONSE_CANCEL:
+        didConfirm = FALSE;
+        break;
+
+    case GTK_RESPONSE_OK:
+        didConfirm = TRUE;
+        *value = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
+    }
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+    return didConfirm;
 }
 
-static gboolean webkit_page_real_java_script_confirm(WebKitPage*, WebKitFrame*, const gchar*)
+static gboolean webkit_page_real_script_alert(WebKitPage* page, WebKitFrame* frame, const gchar* message)
 {
-    notImplemented();
-    return FALSE;
+    webkit_page_script_dialog(page, frame, message, WEBKIT_SCRIPT_DIALOG_ALERT, 0, 0);
+    return TRUE;
 }
 
-/**
- * WebKitPage::java_script_prompt
- *
- * @return: NULL to cancel the prompt
- */
-static gchar* webkit_page_real_java_script_prompt(WebKitPage*, WebKitFrame*, const gchar*, const gchar* defaultValue)
+static gboolean webkit_page_real_script_confirm(WebKitPage* page, WebKitFrame* frame, const gchar* message, gboolean* didConfirm)
 {
-    notImplemented();
-    return g_strdup(defaultValue);
+    *didConfirm = webkit_page_script_dialog(page, frame, message, WEBKIT_SCRIPT_DIALOG_CONFIRM, 0, 0);
+    return TRUE;
 }
 
-static void webkit_page_real_java_script_console_message(WebKitPage*, const gchar*, unsigned int, const gchar*)
+static gboolean webkit_page_real_script_prompt(WebKitPage* page, WebKitFrame* frame, const gchar* message, const gchar* defaultValue, gchar** value)
 {
-    notImplemented();
+    if (!webkit_page_script_dialog(page, frame, message, WEBKIT_SCRIPT_DIALOG_PROMPT, defaultValue, value))
+        *value = g_strdup(defaultValue);
+    return TRUE;
+}
+
+static gboolean webkit_page_real_console_message(WebKitPage* page, const gchar* message, unsigned int line, const gchar* sourceId)
+{
+    LOG("console-message: %s@%d: %s\n", sourceId, line, message);
+    return TRUE;
 }
 
 static void webkit_page_finalize(GObject* object)
@@ -354,6 +431,86 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
 
+    /**
+     * WebKitPage::console-message
+     * @page: the object on which the signal is emitted
+     * @message: the message text
+     * @line: the line where the error occured
+     * @source_id: the source id
+     * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
+     *
+     * A JavaScript console message was created.
+     */
+    webkit_page_signals[CONSOLE_MESSAGE] = g_signal_new("console_message",
+            G_TYPE_FROM_CLASS(pageClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitPageClass, console_message),
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__STRING_INT_STRING,
+            G_TYPE_BOOLEAN, 3,
+            G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+
+    /**
+     * WebKitPage::script-alert
+     * @page: the object on which the signal is emitted
+     * @frame: the relevant frame
+     * @message: the message text
+     * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
+     *
+     * A JavaScript alert dialog was created.
+     */
+    webkit_page_signals[SCRIPT_ALERT] = g_signal_new("script-alert",
+            G_TYPE_FROM_CLASS(pageClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitPageClass, script_alert),
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__OBJECT_STRING,
+            G_TYPE_BOOLEAN, 2,
+            G_TYPE_OBJECT, G_TYPE_STRING);
+
+    /**
+     * WebKitPage::script-confirm
+     * @page: the object on which the signal is emitted
+     * @frame: the relevant frame
+     * @message: the message text
+     * @confirmed: Has the dialog been confirmed?
+     * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
+     *
+     * A JavaScript confirm dialog was created, providing Yes and No buttons.
+     */
+    webkit_page_signals[SCRIPT_CONFIRM] = g_signal_new("script_confirm",
+            G_TYPE_FROM_CLASS(pageClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitPageClass, script_confirm),
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__OBJECT_STRING_BOOLEAN,
+            G_TYPE_BOOLEAN, 3,
+            G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_BOOLEAN);
+
+    /**
+     * WebKitPage::script-prompt
+     * @page: the object on which the signal is emitted
+     * @frame: the relevant frame
+     * @message: the message text
+     * @default: the default value
+     * @text: To be filled with the return value or NULL if the dialog was cancelled.
+     * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
+     *
+     * A JavaScript prompt dialog was created, providing an entry to input text.
+     */
+    webkit_page_signals[SCRIPT_PROMPT] = g_signal_new("script_prompt",
+            G_TYPE_FROM_CLASS(pageClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET(WebKitPageClass, script_prompt),
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__OBJECT_STRING_STRING_STRING,
+            G_TYPE_BOOLEAN, 4,
+            G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+
 
     /*
      * implementations of virtual methods
@@ -361,10 +518,10 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
     pageClass->create_page = webkit_page_real_create_page;
     pageClass->navigation_requested = webkit_page_real_navigation_requested;
     pageClass->choose_file = webkit_page_real_choose_file;
-    pageClass->java_script_alert = webkit_page_real_java_script_alert;
-    pageClass->java_script_confirm = webkit_page_real_java_script_confirm;
-    pageClass->java_script_prompt = webkit_page_real_java_script_prompt;
-    pageClass->java_script_console_message = webkit_page_real_java_script_console_message;
+    pageClass->script_alert = webkit_page_real_script_alert;
+    pageClass->script_confirm = webkit_page_real_script_confirm;
+    pageClass->script_prompt = webkit_page_real_script_prompt;
+    pageClass->console_message = webkit_page_real_console_message;
 
     G_OBJECT_CLASS(pageClass)->finalize = webkit_page_finalize;
 

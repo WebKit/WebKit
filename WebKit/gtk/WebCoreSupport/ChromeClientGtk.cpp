@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -195,40 +196,35 @@ bool ChromeClient::runBeforeUnloadConfirmPanel(const WebCore::String&, WebCore::
 
 void ChromeClient::addMessageToConsole(const WebCore::String& message, unsigned int lineNumber, const WebCore::String& sourceId)
 {
-    CString messageString = message.utf8();
-    CString sourceIdString = sourceId.utf8();
-
-    WEBKIT_PAGE_GET_CLASS(m_webPage)->java_script_console_message(m_webPage, messageString.data(), lineNumber, sourceIdString.data());
+    gboolean retval;
+    g_signal_emit_by_name(m_webPage, "console-message", message.utf8().data(), lineNumber, sourceId.utf8().data(), &retval);
 }
 
 void ChromeClient::runJavaScriptAlert(Frame* frame, const String& message)
 {
-    CString messageString = message.utf8();
-    WEBKIT_PAGE_GET_CLASS(m_webPage)->java_script_alert(m_webPage, kit(frame), messageString.data());
+    gboolean retval;
+    g_signal_emit_by_name(m_webPage, "script-alert", kit(frame), message.utf8().data(), &retval);
 }
 
 bool ChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 {
-    CString messageString = message.utf8();
-    return WEBKIT_PAGE_GET_CLASS(m_webPage)->java_script_confirm(m_webPage, kit(frame), messageString.data());
+    gboolean retval;
+    gboolean didConfirm;
+    g_signal_emit_by_name(m_webPage, "script-confirm", kit(frame), message.utf8().data(), &didConfirm, &retval);
+    return didConfirm == TRUE;
 }
 
 bool ChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
-    CString messageString = message.utf8();
-    CString defaultValueString = defaultValue.utf8(); 
-
-    gchar* cresult = WEBKIT_PAGE_GET_CLASS(m_webPage)->java_script_prompt(m_webPage,
-                                                                              kit(frame),
-                                                                              messageString.data(),
-                                                                              defaultValueString.data());
-    if (!cresult)
-        return false;
-    else {
-        result = String::fromUTF8(cresult);
-        g_free(cresult);
+    gboolean retval;
+    gchar* value = 0;
+    g_signal_emit_by_name(m_webPage, "script-prompt", kit(frame), message.utf8().data(), defaultValue.utf8().data(), &value, &retval);
+    if (value) {
+        result = String::fromUTF8(value);
+        g_free(value);
         return true;
     }
+    return false;
 }
 
 void ChromeClient::setStatusbarText(const String& string)

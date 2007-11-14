@@ -72,14 +72,11 @@ struct _WebKitPageClass {
      */
     WEBKIT_NAVIGATION_REQUEST_RESPONSE (*navigation_requested) (WebKitPage* page, WebKitFrame* frame, WebKitNetworkRequest* request);
 
-    /*
-     * TODO: DISCUSS: Should these be signals as well?
-     */
-    gchar* (*choose_file) (WebKitPage* page, WebKitFrame* frame, const gchar* old_file);
-    void   (*java_script_alert) (WebKitPage* page, WebKitFrame* frame, const gchar* alert_message);
-    gboolean   (*java_script_confirm) (WebKitPage* page, WebKitFrame* frame, const gchar* confirm_message);
-    gchar* (*java_script_prompt) (WebKitPage* page, WebKitFrame* frame, const gchar* message, const gchar* default_value);
-    void   (*java_script_console_message) (WebKitPage*, const gchar* message, unsigned int line_number, const gchar* source_id);
+    gchar*   (*choose_file) (WebKitPage* page, WebKitFrame* frame, const gchar* old_file);
+    gboolean (*script_alert) (WebKitPage* page, WebKitFrame* frame, const gchar* alert_message);
+    gboolean (*script_confirm) (WebKitPage* page, WebKitFrame* frame, const gchar* confirm_message, gboolean* did_confirm);
+    gboolean (*script_prompt) (WebKitPage* page, WebKitFrame* frame, const gchar* message, const gchar* default_value, gchar** value);
+    gboolean (*console_message) (WebKitPage* page, const gchar* message, unsigned int line_number, const gchar* source_id);
 
     /*
      * internal

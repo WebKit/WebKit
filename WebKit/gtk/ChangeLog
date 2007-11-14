@@ -1,3 +1,21 @@
+2007-11-13  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15891
+        [GTK] Javascript console and dialogs are not implemented
+
+        Implement signals for script dialogs and console messages.
+
+        * Api/webkitgtk-marshal.list:
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::addMessageToConsole):
+        (WebKit::ChromeClient::runJavaScriptAlert):
+        (WebKit::ChromeClient::runJavaScriptConfirm):
+        (WebKit::ChromeClient::runJavaScriptPrompt):
+
 2007-11-11  Alp Toker  <alp@atoker.com>
 
         Reviewed by Anders.
