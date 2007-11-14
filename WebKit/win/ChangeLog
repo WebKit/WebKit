@@ -1,5 +1,17 @@
 2007-11-14  Adam Roben  <aroben@apple.com>
 
+        Change Interfaces to be a "Static Library" project
+
+        Being a Utility project meant that Interfaces was rebuilding every
+        time (Utility projects are supposed to handle their own dependencies).
+        Interfaces isn't really a static library, but it means that VS will
+        handle dependencies for us (and not complain about missing manifests
+        like it did when the project was an Application).
+
+        * WebKit.vcproj/Interfaces.vcproj:
+
+2007-11-14  Adam Roben  <aroben@apple.com>
+
         Shut up FixMIDLHeaders.pl
 
         * WebKit.vcproj/FixMIDLHeaders.pl:
