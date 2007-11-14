@@ -125,10 +125,8 @@ static ResourceLoadDelegate *resourceLoadDelegate;
 PolicyDelegate *policyDelegate;
 
 static int dumpPixels;
-static int paint;
 static int dumpAllPixels;
 static int threaded;
-static BOOL readFromWindow;
 static int testRepaintDefault;
 static int repaintSweepHorizontallyDefault;
 static int dumpTree = YES;
@@ -441,7 +439,6 @@ void dumpRenderTree(int argc, const char *argv[])
         {"horizontal-sweep", no_argument, &repaintSweepHorizontallyDefault, YES},
         {"notree", no_argument, &dumpTree, NO},
         {"pixel-tests", no_argument, &dumpPixels, YES},
-        {"paint", no_argument, &paint, YES},
         {"repaint", no_argument, &testRepaintDefault, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"threaded", no_argument, &threaded, YES},
@@ -902,7 +899,7 @@ void dump()
             NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
             [NSGraphicsContext setCurrentContext:nsContext];
 
-            if (readFromWindow) {
+            if (!layoutTestController->testRepaint()) {
                 NSBitmapImageRep *imageRep;
                 [view displayIfNeeded];
                 [view lockFocus];
@@ -910,9 +907,7 @@ void dump()
                 [view unlockFocus];
                 [imageRep draw];
                 [imageRep release];
-            } else if (!layoutTestController->testRepaint())
-                [view displayRectIgnoringOpacity:NSMakeRect(0, 0, webViewSize.width, webViewSize.height) inContext:nsContext];
-            else if (!layoutTestController->testRepaintSweepHorizontally()) {
+            } else if (!layoutTestController->testRepaintSweepHorizontally()) {
                 NSRect line = NSMakeRect(0, 0, webViewSize.width, 1);
                 while (line.origin.y < webViewSize.height) {
                     [view displayRectIgnoringOpacity:line inContext:nsContext];
@@ -976,12 +971,9 @@ void dump()
 
         printf("#EOF\n");
     }
-    
+
     fflush(stdout);
 
-    if (paint)
-        displayWebView();
-    
     done = YES;
 }
 
@@ -1023,7 +1015,6 @@ static void runTest(const char *pathOrURL)
     topLoadingFrame = nil;
 
     done = NO;
-    readFromWindow = NO;
 
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs);
@@ -1132,7 +1123,6 @@ void displayWebView()
     [[[NSColor blackColor] colorWithAlphaComponent:0.66] set];
     NSRectFillUsingOperation([webView frame], NSCompositeSourceOver);
     [webView unlockFocus];
-    readFromWindow = YES;
 }
 
 @implementation DumpRenderTreePasteboard

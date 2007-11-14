@@ -417,7 +417,6 @@ push @toolArgs, "--pixel-tests" if $pixelTests;
 push @toolArgs, "--repaint" if $repaintTests;
 push @toolArgs, "--horizontal-sweep" if $repaintSweepHorizontally;
 push @toolArgs, "--threaded" if $threaded;
-push @toolArgs, "--paint" if $shouldCheckLeaks; # Otherwise, DRT won't exercise painting leaks.
 push @toolArgs, "-";
 
 my @diffToolArgs = ();

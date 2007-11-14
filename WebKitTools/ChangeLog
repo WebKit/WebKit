@@ -1,3 +1,22 @@
+2007-11-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <http://bugs.webkit.org/show_bug.cgi?id=13371>
+          DumpRenderTree --pixel-tests renders each test twice
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree): Removed the --paint option because the painting code
+        is always exercised as a result of
+        -[FrameLoadDelegate webView:didFinishLoadFromFrame:]
+        calling -displayIfNeeded.
+        (dump): Changed to always grab the image from the window since the view
+        is always displayed.
+        (runTest):
+        (displayWebView):
+        * Scripts/run-webkit-tests: No need to pass --paint to DumpRenderTree
+        because it always paints.
+
 2007-11-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
