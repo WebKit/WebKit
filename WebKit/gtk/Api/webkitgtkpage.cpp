@@ -315,7 +315,7 @@ static gboolean webkit_page_real_script_prompt(WebKitPage* page, WebKitFrame* fr
 
 static gboolean webkit_page_real_console_message(WebKitPage* page, const gchar* message, unsigned int line, const gchar* sourceId)
 {
-    LOG("console-message: %s@%d: %s\n", sourceId, line, message);
+    g_print("console-message: %s:%d: %s\n", sourceId, line, message);
     return TRUE;
 }
 

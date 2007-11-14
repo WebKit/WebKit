@@ -1,3 +1,9 @@
+2007-11-13  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix. Replace incorrect use of the LOG macro with g_print.
+
+        * Api/webkitgtkpage.cpp:
+
 2007-11-13  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp.
