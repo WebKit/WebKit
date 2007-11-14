@@ -1,3 +1,14 @@
+2007-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5309081>
+        In DRT, "plugin.logDestroy = true" not working on Windows.
+
+        Remove now succeeding test from the skipped list.
+        
+        * platform/win/Skipped:
+
 2007-11-14  Antti Koivisto  <antti@apple.com>
 
         Try to make this test less timing dependent.

@@ -416,9 +416,6 @@ http/tests/loading
 fast/dom/frame-loading-via-document-write.html
 http/tests/security/frame-loading-via-document-write.html
 
-# <rdar://problem/5309081> "plugin.logDestroy = true" not working on Windows
-plugins/netscape-destroy-plugin-script-objects.html
-
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html
 
