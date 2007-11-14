@@ -1,3 +1,9 @@
+2007-11-13  Adam Roben  <aroben@apple.com>
+
+        Add the http/tests/media directory to the Windows Skipped file
+
+        * platform/win/Skipped:
+
 2007-11-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
