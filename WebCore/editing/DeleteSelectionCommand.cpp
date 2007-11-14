@@ -446,7 +446,6 @@ void DeleteSelectionCommand::handleGeneralDelete()
         
         if (m_downstreamEnd.node() != startNode && !m_upstreamStart.node()->isDescendantOf(m_downstreamEnd.node()) && m_downstreamEnd.node()->inDocument() && m_downstreamEnd.offset() >= caretMinOffset(m_downstreamEnd.node())) {
             if (m_downstreamEnd.offset() >= maxDeepOffset(m_downstreamEnd.node()) && !canHaveChildrenForEditing(m_downstreamEnd.node())) {
-                // FIXME: Shouldn't remove m_downstreamEnd.node() if its offsets refer to children. 
                 // The node itself is fully selected, not just its contents.  Delete it.
                 removeNode(m_downstreamEnd.node());
             } else {
@@ -519,6 +518,14 @@ void DeleteSelectionCommand::mergeParagraphs()
     VisiblePosition startOfParagraphToMove(m_downstreamEnd);
     VisiblePosition mergeDestination(m_upstreamStart);
     
+    // m_downstreamEnd's block has been emptied out by deletion.  There is no content inside of it to
+    // move, so just remove it.
+    Element* endBlock = static_cast<Element*>(enclosingBlock(m_downstreamEnd.node()));
+    if (!startOfParagraphToMove.deepEquivalent().node() || !endBlock->contains(startOfParagraphToMove.deepEquivalent().node())) {
+        removeNode(enclosingBlock(m_downstreamEnd.node()));
+        return;
+    }
+    
     // We need to merge into m_upstreamStart's block, but it's been emptied out and collapsed by deletion.
     if (!mergeDestination.deepEquivalent().node() || !mergeDestination.deepEquivalent().node()->isDescendantOf(m_upstreamStart.node()->enclosingBlockFlowElement())) {
         insertNodeAt(createBreakElement(document()).get(), m_upstreamStart);
@@ -550,7 +557,11 @@ void DeleteSelectionCommand::mergeParagraphs()
     if (!document()->frame()->editor()->client()->shouldMoveRangeAfterDelete(range.get(), rangeToBeReplaced.get()))
         return;
     
+    // moveParagraphs will insert placeholders if it removes blocks that would require their use, don't let block
+    // removals that it does cause the insertion of *another* placeholder.
+    bool needPlaceholder = m_needPlaceholder;
     moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination);
+    m_needPlaceholder = needPlaceholder;
     // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).
     m_endingPosition = endingSelection().start();
 }
@@ -718,12 +729,12 @@ void DeleteSelectionCommand::doApply()
     handleGeneralDelete();
     
     fixupWhitespace();
-
-    RefPtr<Node> placeholder = m_needPlaceholder ? createBreakElement(document()) : 0;
     
     mergeParagraphs();
     
     removePreviouslySelectedEmptyTableRows();
+    
+    RefPtr<Node> placeholder = m_needPlaceholder ? createBreakElement(document()).get() : 0;
     
     if (placeholder)
         insertNodeAt(placeholder.get(), m_endingPosition);

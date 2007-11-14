@@ -1,3 +1,21 @@
+2007-11-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/5546763> CrashTracer: [USER] 362 crashes at WebCore::DeleteSelectionCommand::mergeParagraphs
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): 
+        Removed an irrelevant FIXME.
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): If the block that contained the end of the selection
+        hasn't been removed but has been emptied by deletion, we would to try and fail to create a VisiblePosition
+        inside that block, which could lead to a crash.  If that happens, there's no content in the block to move,
+        so just remove the block and return.
+        Preserve m_needPlaceholder during the call to moveParagraphs, since it may change it and since it does
+        its own placeholder insertion when necessary.
+        (WebCore::DeleteSelectionCommand::doApply): No need to check m_needPlaceholder before calling mergeParagraphs,
+        because it handles preserving m_needPlaceholder when it calls moveParagraphs.
+        
 2007-11-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

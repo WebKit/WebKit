@@ -1,3 +1,12 @@
+2007-11-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        <rdar://problem/5546763> CrashTracer: [USER] 362 crashes at WebCore::DeleteSelectionCommand::mergeParagraphs
+
+        * editing/deleting/5546763-expected.txt: Added.
+        * editing/deleting/5546763.html: Added.
+
 2007-11-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
