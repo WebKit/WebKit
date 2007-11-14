@@ -267,8 +267,6 @@ WebView::WebView()
     if (SUCCEEDED(sharedPreferences->grammarCheckingEnabled(&enabled)))
         grammarCheckingEnabled = !!enabled;
 
-    WebScriptDebugServer::viewAdded(this);
-
     WebViewCount++;
     gClassCount++;
 }
@@ -286,7 +284,6 @@ WebView::~WebView()
     ASSERT(!m_page);
     ASSERT(!m_preferences);
 
-    WebScriptDebugServer::viewRemoved(this);
     WebViewCount--;
     gClassCount--;
 }

@@ -86,8 +86,16 @@ public:
 
     bool webViewLoaded() const { return m_webViewLoaded; }
 
-    // Server Connection Functions
+    // Pause & Step
+    void resume();
+    void pause();
+    void stepInto();
+    void stepOver();
+    void stepOut();
+    void showConsole();
+    void closeCurrentFile();
 
+    // Server Connection Functions
     bool serverConnected() const;
     void attemptToCreateServerConnection();
 

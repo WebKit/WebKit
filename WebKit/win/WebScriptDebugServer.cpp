@@ -32,99 +32,13 @@
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
-static Vector<IWebView*> sViews;
-static WebScriptDebugServer* sSharedWebScriptDebugServer;
-static unsigned sListenerCount = 0;
+typedef HashSet<COMPtr<IWebScriptDebugListener> > ListenerSet;
 
-unsigned WebScriptDebugServer::listenerCount() { return sListenerCount; };
+static ListenerSet s_Listeners;
+static unsigned s_ListenerCount = 0;
+static OwnPtr<WebScriptDebugServer> s_SharedWebScriptDebugServer;
 
-// EnumViews ------------------------------------------------------------------
-
-class EnumViews : public IEnumVARIANT
-{
-public:
-    EnumViews() : m_refCount(1), m_current(sViews.begin()) { }
-
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef();
-    virtual ULONG STDMETHODCALLTYPE Release();
-
-    virtual HRESULT STDMETHODCALLTYPE Next(ULONG celt, VARIANT *rgVar, ULONG *pCeltFetched);
-    virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
-    virtual HRESULT STDMETHODCALLTYPE Reset(void);
-    virtual HRESULT STDMETHODCALLTYPE Clone(IEnumVARIANT**);
-
-private:
-    ULONG m_refCount;
-    Vector<IWebView*>::iterator m_current;
-};
-
-HRESULT STDMETHODCALLTYPE EnumViews::QueryInterface(REFIID riid, void** ppvObject)
-{
-    *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IUnknown) || IsEqualGUID(riid, IID_IEnumVARIANT))
-        *ppvObject = this;
-    else
-        return E_NOINTERFACE;
-
-    AddRef();
-    return S_OK;
-}
-
-ULONG STDMETHODCALLTYPE EnumViews::AddRef()
-{
-    return ++m_refCount;
-}
-
-ULONG STDMETHODCALLTYPE EnumViews::Release()
-{
-    ULONG newRef = --m_refCount;
-    if (!newRef)
-        delete(this);
-    return newRef;
-}
-
-HRESULT STDMETHODCALLTYPE EnumViews::Next(ULONG celt, VARIANT *rgVar, ULONG *pCeltFetched)
-{
-    if (pCeltFetched)
-        *pCeltFetched = 0;
-    if (!rgVar)
-        return E_POINTER;
-    VariantInit(rgVar);
-    if (!celt || celt > 1)
-        return S_FALSE;
-    if (m_current == sViews.end())
-        return S_FALSE;
-
-    IUnknown* unknown;
-    HRESULT hr = (*m_current++)->QueryInterface(IID_IUnknown, (void**)&unknown);
-    if (FAILED(hr))
-        return hr;
-
-    V_VT(rgVar) = VT_UNKNOWN;
-    V_UNKNOWN(rgVar) = unknown;
-
-    if (pCeltFetched)
-        *pCeltFetched = 1;
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE EnumViews::Skip(ULONG celt)
-{
-    m_current += celt;
-    return (m_current != sViews.end()) ? S_OK : S_FALSE;
-}
-
-HRESULT STDMETHODCALLTYPE EnumViews::Reset(void)
-{
-    m_current = sViews.begin();
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE EnumViews::Clone(IEnumVARIANT**)
-{
-    return E_NOTIMPL;
-}
+unsigned WebScriptDebugServer::listenerCount() { return s_ListenerCount; };
 
 // WebScriptDebugServer ------------------------------------------------------------
 
@@ -132,6 +46,7 @@ WebScriptDebugServer::WebScriptDebugServer()
     : m_refCount(0)
     , m_paused(false)
     , m_step(false)
+    , m_sharedInstance(false)
 {
     gClassCount++;
 }
@@ -150,10 +65,12 @@ WebScriptDebugServer* WebScriptDebugServer::createInstance()
 
 WebScriptDebugServer* WebScriptDebugServer::sharedWebScriptDebugServer()
 {
-    if (!sSharedWebScriptDebugServer)
-        sSharedWebScriptDebugServer = WebScriptDebugServer::createInstance();
+    if (!s_SharedWebScriptDebugServer) {
+        s_SharedWebScriptDebugServer.set(WebScriptDebugServer::createInstance());
+        s_SharedWebScriptDebugServer->m_sharedInstance = true;
+    }
 
-    return sSharedWebScriptDebugServer;
+    return s_SharedWebScriptDebugServer.get();
 }
 
 
@@ -187,23 +104,6 @@ ULONG STDMETHODCALLTYPE WebScriptDebugServer::Release()
     return newRef;
 }
 
-void WebScriptDebugServer::viewAdded(IWebView* view)
-{
-    sViews.append(view);
-}
-
-void WebScriptDebugServer::viewRemoved(IWebView* view)
-{
-    Vector<IWebView*>::iterator end = sViews.end();
-    int i=0;
-    for (Vector<IWebView*>::iterator it = sViews.begin(); it != end; ++it, ++i) {
-        if (*it == view) {
-            sViews.remove(i);
-            break;
-        }
-    }
-}
-
 // IWebScriptDebugServer -----------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebScriptDebugServer::sharedWebScriptDebugServer( 
@@ -224,8 +124,8 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::addListener(
     if (!listener)
         return E_POINTER;
 
-    sListenerCount++;
-    m_listeners.add(listener);
+    ++s_ListenerCount;
+    s_Listeners.add(listener);
 
     return S_OK;
 }
@@ -236,12 +136,14 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::removeListener(
     if (!listener)
         return E_POINTER;
 
-    if (!m_listeners.contains(listener))
+    if (!s_Listeners.contains(listener))
         return S_OK;
 
-    ASSERT(sListenerCount >= 1);
-    sListenerCount--;
-    m_listeners.remove(listener);
+    s_Listeners.remove(listener);
+
+    ASSERT(s_ListenerCount >= 1);
+    if (--s_ListenerCount == 0)
+        resume();
 
     return S_OK;
 }
@@ -283,7 +185,12 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::isPaused(
 
 void WebScriptDebugServer::suspendProcessIfPaused()
 {
-    // FIXME: There needs to be some sort of busy wait here.
+    MSG msg;
+    while (m_paused && GetMessage(&msg, 0, 0, 0)) {
+        // FIXME: Listen for Drosera dying. You will get removeListener calls but what if it crashes?
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 
     if (m_step) {
         m_step = false;
@@ -299,7 +206,7 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didLoadMainResourceForDataSource
     if (!webView || !dataSource)
         return E_FAIL;
 
-    ListenerSet listenersCopy = m_listeners;
+    ListenerSet listenersCopy = s_Listeners;
     for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
         (**it).didLoadMainResourceForDataSource(webView, dataSource);
 
@@ -317,7 +224,7 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didParseSource(
     if (!webView || !sourceCode || !url || !webFrame)
         return E_FAIL;
 
-    ListenerSet listenersCopy = m_listeners;
+    ListenerSet listenersCopy = s_Listeners;
     for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
         (**it).didParseSource(webView, sourceCode, baseLineNumber, url, sourceID, webFrame);
 
@@ -335,7 +242,7 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::failedToParseSource(
     if (!webView || !sourceCode || !url || !error || !webFrame)
         return E_FAIL;
 
-    ListenerSet listenersCopy = m_listeners;
+    ListenerSet listenersCopy = s_Listeners;
     for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
         (**it).failedToParseSource(webView, sourceCode, baseLineNumber, url, error, webFrame);
 
@@ -352,9 +259,11 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::didEnterCallFrame(
     if (!webView || !frame || !webFrame)
         return E_FAIL;
 
-    ListenerSet listenersCopy = m_listeners;
+    ListenerSet listenersCopy = s_Listeners;
     for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
         (**it).didEnterCallFrame(webView, frame, sourceID, lineNumber, webFrame);
+
+    suspendProcessIfPaused();
 
     return S_OK;
 }
@@ -369,9 +278,11 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::willExecuteStatement(
     if (!webView || !frame || !webFrame)
         return E_FAIL;
 
-    ListenerSet listenersCopy = m_listeners;
+    ListenerSet listenersCopy = s_Listeners;
     for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
         (**it).willExecuteStatement(webView, frame, sourceID, lineNumber, webFrame);
+
+    suspendProcessIfPaused();
 
     return S_OK;
 }
@@ -386,9 +297,11 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::willLeaveCallFrame(
     if (!webView || !frame || !webFrame)
         return E_FAIL;
 
-    ListenerSet listenersCopy = m_listeners;
+    ListenerSet listenersCopy = s_Listeners;
     for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
         (**it).willLeaveCallFrame(webView, frame, sourceID, lineNumber, webFrame);
+
+    suspendProcessIfPaused();
 
     return S_OK;
 }
@@ -403,11 +316,12 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::exceptionWasRaised(
     if (!webView || !frame || !webFrame)
         return E_FAIL;
 
-    ListenerSet listenersCopy = m_listeners;
+    ListenerSet listenersCopy = s_Listeners;
     for (ListenerSet::iterator it = listenersCopy.begin(); it != listenersCopy.end(); ++it)
         (**it).exceptionWasRaised(webView, frame, sourceID, lineNumber, webFrame);
 
+    suspendProcessIfPaused();
+
     return S_OK;
 }
-
 

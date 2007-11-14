@@ -1,3 +1,46 @@
+2007-11-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Make Drosera show source, source URLs, and function stack on Windows,
+        and some minor fixes.
+
+        * Drosera/DebuggerDocument.cpp: Force source to always update display.
+        (DebuggerDocument::updateFileSource):
+        * Drosera/debugger.js: Force source to always update display.
+        * Drosera/win/DebuggerClient.cpp: Create the needed functions for the
+        menu controls.
+        (DebuggerClient::resume):
+        (DebuggerClient::pause):
+        (DebuggerClient::stepInto):
+        (DebuggerClient::stepOver):
+        (DebuggerClient::stepOut):
+        (DebuggerClient::showConsole):
+        (DebuggerClient::closeCurrentFile):
+        * Drosera/win/DebuggerClient.h: Ditto.
+        * Drosera/win/DebuggerDocumentPlatform.cpp: Changed
+        getPlatformCurrentFunctionStack to not use an unecessary HRESULT and
+        removed two bugs.  1) caller could be in a bad state when asked to
+        assign into it. 2) BSTRs were not created correctly.
+        (DebuggerDocument::getPlatformCurrentFunctionStack):
+        * Drosera/win/Drosera.cpp: Hook up the menu controls.
+        (droseraWndProc):
+        (handleCommand):
+        (Drosera::resume):
+        (Drosera::pause):
+        (Drosera::stepInto):
+        (Drosera::stepOver):
+        (Drosera::stepOut):
+        (Drosera::showConsole):
+        (Drosera::closeCurrentFile):
+        * Drosera/win/Drosera.h: Hook up the menu controls.
+        * Drosera/win/ServerConnection.cpp: Removed unncessary server connection
+        functions, added a null check, and fixed another bug where caller could
+        be in a bad state when asked to assign into it.
+        (ServerConnection::didLoadMainResourceForDataSource):
+        (ServerConnection::getCallerFrame):
+        * Drosera/win/ServerConnection.h: Safety first.
+
 2007-11-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

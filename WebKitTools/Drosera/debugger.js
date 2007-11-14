@@ -1085,7 +1085,7 @@ function updateFileSource(source, url, force)
             file.element = null;
         }
 
-        if (currentFile == fileIndex)
+        if (currentFile == fileIndex || force)
             loadFile(fileIndex, false);
     }
 }

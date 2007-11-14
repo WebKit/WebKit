@@ -151,6 +151,44 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::runJavaScriptAlertPanelWithMessage(  /
     return S_OK;
 }
 
+// Pause & Step -------------------------------
+void DebuggerClient::resume()
+{
+    DebuggerDocument::callGlobalFunction(m_globalContext, "resume", 0, 0);
+}
+
+void DebuggerClient::pause()
+{
+    DebuggerDocument::callGlobalFunction(m_globalContext, "pause", 0, 0);
+}
+
+void DebuggerClient::stepInto()
+{
+    DebuggerDocument::callGlobalFunction(m_globalContext, "stepInto", 0, 0);
+}
+
+void DebuggerClient::stepOver()
+{
+    DebuggerDocument::callGlobalFunction(m_globalContext, "stepOver", 0, 0);
+}
+
+void DebuggerClient::stepOut()
+{
+    DebuggerDocument::callGlobalFunction(m_globalContext, "stepOut", 0, 0);
+}
+
+void DebuggerClient::showConsole()
+{
+    DebuggerDocument::callGlobalFunction(m_globalContext, "showConsoleWindow", 0, 0);
+}
+
+void DebuggerClient::closeCurrentFile()
+{
+    DebuggerDocument::callGlobalFunction(m_globalContext, "closeCurrentFile", 0, 0);
+}
+
+
+// Server Connection Functions ----------------
 bool DebuggerClient::serverConnected() const
 {
     return m_debuggerDocument->server()->serverConnected();

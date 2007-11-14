@@ -63,7 +63,7 @@ private:
     }
 
 public:
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
     virtual HRESULT STDMETHODCALLTYPE Next(ULONG celt, VARIANT* rgVar, ULONG* pCeltFetched);
@@ -153,13 +153,15 @@ HRESULT STDMETHODCALLTYPE EnumScopes::Clone(IEnumVARIANT**)
 {
     return E_NOTIMPL;
 }
+
 // WebScriptCallFrame -----------------------------------------------------------
 
-
-
-WebScriptCallFrame::WebScriptCallFrame()
+WebScriptCallFrame::WebScriptCallFrame(ExecState* state, IWebScriptCallFrame* caller)
     : m_refCount(0)
 {
+    m_state = state;
+    m_caller = caller;
+
     gClassCount++;
 }
 
@@ -168,9 +170,9 @@ WebScriptCallFrame::~WebScriptCallFrame()
     gClassCount--;
 }
 
-WebScriptCallFrame* WebScriptCallFrame::createInstance()
+WebScriptCallFrame* WebScriptCallFrame::createInstance(ExecState* state, IWebScriptCallFrame* caller)
 {
-    WebScriptCallFrame* instance = new WebScriptCallFrame();
+    WebScriptCallFrame* instance = new WebScriptCallFrame(state, caller);
     instance->AddRef();
     return instance;
 }
@@ -210,11 +212,7 @@ ULONG STDMETHODCALLTYPE WebScriptCallFrame::Release()
 HRESULT STDMETHODCALLTYPE WebScriptCallFrame::caller(
     /* [out, retval] */ IWebScriptCallFrame** callFrame)
 {
-    if (!callFrame)
-        return E_POINTER;
-
-    *callFrame = m_caller.get();
-    return S_OK;
+    return m_caller.copyRefTo(callFrame);
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptCallFrame::scopeChain(
@@ -236,16 +234,22 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::functionName(
     if (!funcName)
         return E_POINTER;
 
-    if (m_state->currentBody()) {
-        FunctionImp* func = m_state->function();
-        if (!func)
-            return E_FAIL;
+    *funcName = 0;
 
-        *funcName = WebCore::BString(func->functionName()).release();
-    }
+    if (!m_state->currentBody())
+        return S_OK;
+
+    FunctionImp* func = m_state->function();
+    if (!func)
+        return E_FAIL;
+
+    const Identifier& funcIdent = func->functionName();
+    if (!funcIdent.isEmpty())
+        *funcName = WebCore::BString(funcIdent).release();
 
     return S_OK;
 }
+
 
 HRESULT STDMETHODCALLTYPE WebScriptCallFrame::stringByEvaluatingJavaScriptFromString(
     /* [in] */ BSTR script,
@@ -303,3 +307,4 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::stringByEvaluatingJavaScriptFromSt
 
     return S_OK;
 }
+

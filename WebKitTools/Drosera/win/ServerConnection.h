@@ -54,10 +54,6 @@ public:
     void resume();
     void stepInto();
 
-    // Connection Handling
-    void applicationTerminating();
-    void serverConnectionDidDie();
-
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(
         /* [in] */ REFIID riid,
@@ -117,7 +113,7 @@ public:
 
     // Stack & Variables
     IWebScriptCallFrame* currentFrame() const;
-    IWebScriptCallFrame* getCallerFrame(int callFrame) const;
+    COMPtr<IWebScriptCallFrame> getCallerFrame(int callFrame) const;
 
 private:
     bool m_serverConnected;

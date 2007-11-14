@@ -203,7 +203,7 @@ void DebuggerDocument::updateFileSource(JSContextRef context, JSStringRef docume
 {
     JSValueRef documentSourceValue = JSValueMakeString(context, documentSource);
     JSValueRef urlValue = JSValueMakeString(context, url);
-    JSValueRef forceValue = JSValueMakeBoolean(context, false);
+    JSValueRef forceValue = JSValueMakeBoolean(context, true);
 
     JSValueRef arguments[] = { documentSourceValue, urlValue, forceValue };
     int argumentsSize = sizeof(arguments)/sizeof(arguments[0]);

@@ -36,22 +36,18 @@
 
 interface IWebView;
 
-typedef HashSet<COMPtr<IWebScriptDebugListener> > ListenerSet;
-
 class WebScriptDebugServer : public IWebScriptDebugServer, public IWebScriptDebugListener
 {
 public:
     static WebScriptDebugServer* createInstance();
     static WebScriptDebugServer* sharedWebScriptDebugServer();
 
-    static void viewAdded(IWebView* view);
-    static void viewRemoved(IWebView* view);
-
 private:
     WebScriptDebugServer();
-    virtual ~WebScriptDebugServer();
 
 public:
+    virtual ~WebScriptDebugServer();
+
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
         /* [in] */ REFIID riid,
@@ -133,10 +129,9 @@ public:
     static unsigned listenerCount();
 
 private:
-    ListenerSet m_listeners;
-
     bool m_paused;
     bool m_step;
+    bool m_sharedInstance;
 
     ULONG m_refCount;
 };

@@ -38,16 +38,16 @@
 
 class WebScriptCallFrame : public IWebScriptCallFrame {
 public:
-    static WebScriptCallFrame* createInstance();
+    static WebScriptCallFrame* createInstance(KJS::ExecState*, IWebScriptCallFrame* caller);
 
 private:
-    WebScriptCallFrame();
+    WebScriptCallFrame(KJS::ExecState*, IWebScriptCallFrame* caller);
     virtual ~WebScriptCallFrame();
 
 public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
-        /* [in] */ REFIID riid,
+        /* [in] */ REFIID,
         /* [retval][out] */ void** ppvObject);
     
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -70,7 +70,7 @@ public:
 
 private:
     KJS::ExecState* m_state;
-    COMPtr<WebScriptCallFrame> m_caller;
+    COMPtr<IWebScriptCallFrame> m_caller;
 
     ULONG m_refCount;
 };

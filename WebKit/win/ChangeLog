@@ -1,3 +1,53 @@
+2007-11-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Make Drosera show source, source URLs, and function stack on Windows
+        and some minor fixes.
+
+        * WebScriptCallFrame.cpp: Fixed a bug where the callFrame was not reffed
+        properly before being returned, and changed functionName() to check for
+        Null or if the name is empty.
+        (EnumScopes::Clone):
+        (WebScriptCallFrame::WebScriptCallFrame):
+        (WebScriptCallFrame::createInstance):
+        (WebScriptCallFrame::caller):
+        (WebScriptCallFrame::functionName):
+        * WebScriptCallFrame.h: Ditto
+        * WebScriptDebugServer.cpp: Made the listenerSet static since we were
+        already treating it as if it were. Removed the EnumViews stuff.  This
+        was added by Steve to demonstrate DCOM and he thought it would be needed
+        by Drosera, but I don't believe it will be.
+        Implemented suspendProcessIfPaused() also added calls to it at the end
+        of several functions to ensure we pause if Drosera has told WebKit to.
+        (WebScriptDebugServer::WebScriptDebugServer):
+        (WebScriptDebugServer::sharedWebScriptDebugServer):
+        (WebScriptDebugServer::addListener):
+        (WebScriptDebugServer::removeListener):
+        (WebScriptDebugServer::suspendProcessIfPaused):
+        (WebScriptDebugServer::didLoadMainResourceForDataSource):
+        (WebScriptDebugServer::didParseSource):
+        (WebScriptDebugServer::failedToParseSource):
+        (WebScriptDebugServer::didEnterCallFrame):
+        (WebScriptDebugServer::willExecuteStatement):
+        (WebScriptDebugServer::willLeaveCallFrame):
+        (WebScriptDebugServer::exceptionWasRaised):
+        * WebScriptDebugServer.h: Ditto.
+        * WebScriptDebugger.cpp: The important change here is that leaveFrame()
+        is called before willLeaveCallFrame().  I think there is some EOL stuff
+        going on too.
+        - It was the implementing of these functions that allows source, the
+        source URLs and function stack to be displayed.
+        (WebScriptDebugger::callEvent):
+        (WebScriptDebugger::atStatement):
+        (WebScriptDebugger::returnEvent):
+        (WebScriptDebugger::exception):
+        (WebScriptDebugger::enterFrame):
+        (WebScriptDebugger::leaveFrame):
+        * WebView.cpp: Removed the EnumView functions.
+        (WebView::WebView):
+        (WebView::~WebView):
+
 2007-11-13  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5346832> Infinite recursion when opening Web Inspector on more than one tab

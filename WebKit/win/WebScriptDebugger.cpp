@@ -32,6 +32,7 @@
 
 #include "IWebView.h"
 #include "WebFrame.h"
+#include "WebScriptCallFrame.h"
 #include "WebScriptDebugServer.h"
 
 #pragma warning(push, 0)
@@ -97,34 +98,31 @@ bool WebScriptDebugger::callEvent(ExecState* state, int sourceId, int lineno, JS
 {
     enterFrame(state);
     WebScriptDebugServer::sharedWebScriptDebugServer()->didEnterCallFrame(m_webView.get(), m_topStackFrame.get(), sourceId, lineno, m_frame);
-
     return true;
 }
 
 bool WebScriptDebugger::atStatement(ExecState*, int sourceId, int firstLine, int /*lastLine*/)
 {
     WebScriptDebugServer::sharedWebScriptDebugServer()->willExecuteStatement(m_webView.get(), m_topStackFrame.get(), sourceId, firstLine, m_frame);
-
     return true;
 }
 
 bool WebScriptDebugger::returnEvent(ExecState*, int sourceId, int lineno, JSObject* /*function*/)
 {
-    WebScriptDebugServer::sharedWebScriptDebugServer()->willLeaveCallFrame(m_webView.get(), m_topStackFrame.get(), sourceId, lineno, m_frame);
     leaveFrame();
+    WebScriptDebugServer::sharedWebScriptDebugServer()->willLeaveCallFrame(m_webView.get(), m_topStackFrame.get(), sourceId, lineno, m_frame);
     return true;
 }
 
 bool WebScriptDebugger::exception(ExecState*, int sourceId, int lineno, JSValue* /*exception */)
 {
     WebScriptDebugServer::sharedWebScriptDebugServer()->exceptionWasRaised(m_webView.get(), m_topStackFrame.get(), sourceId, lineno, m_frame);
-
     return true;
 }
 
-void WebScriptDebugger::enterFrame(ExecState*)
+void WebScriptDebugger::enterFrame(ExecState* state)
 {
-    // FIXME: the implementation of this is dependent on finishing the implementation of WebScriptScope.
+    m_topStackFrame = WebScriptCallFrame::createInstance(state, m_topStackFrame.get()); // Set the top as the caller
 }
 
 void WebScriptDebugger::leaveFrame()
@@ -136,5 +134,6 @@ void WebScriptDebugger::leaveFrame()
     if (FAILED(m_topStackFrame->caller(&caller)))
         return;
 
-    m_topStackFrame = caller;
+    if (caller)
+        m_topStackFrame = caller;
 }

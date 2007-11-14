@@ -47,12 +47,14 @@ public:
 
     HRESULT init(HINSTANCE hInstance, int nCmdShow);
     LRESULT onSize(WPARAM, LPARAM);
+    LRESULT CALLBACK handleCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     bool webViewLoaded() const;
 
     // Server connection functions
     bool serverConnected() const;
     void attemptToCreateServerConnection();
+
 private:
     HRESULT initUI(HINSTANCE hInstance, int nCmdShow);
     HRESULT attach();

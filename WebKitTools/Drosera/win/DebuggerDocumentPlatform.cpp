@@ -85,33 +85,29 @@ JSValueRef DebuggerDocument::platformEvaluateScript(JSContextRef context, JSStri
 
 void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vector<JSValueRef>& currentStack)
 {
-    HRESULT ret = S_OK;
-
-    COMPtr<IWebScriptCallFrame> caller;
-    for (COMPtr<IWebScriptCallFrame> frame = m_server->currentFrame(); frame; frame = caller) {
+    COMPtr<IWebScriptCallFrame> frame = m_server->currentFrame();
+    while (frame) {
+        COMPtr<IWebScriptCallFrame> caller;
         BSTR function = 0;
-        ret = frame->functionName(&function);
-        if (FAILED(ret)) {
+        if (FAILED(frame->functionName(&function))) {
             SysFreeString(function);
             return;
         }
 
-        ret = frame->caller(&caller);
-        if (FAILED(ret))
+        if (FAILED(frame->caller(&caller)))
             return;
 
-        bool needToFree = true;
         if (!function) {
-            needToFree = false;
             if (caller)
-                function = L"(anonymous function)";
+                function = SysAllocString(L"(anonymous function)");
             else
-                function = L"(global scope)";
+                function = SysAllocString(L"(global scope)");
         }
 
         currentStack.append(JSValueRefCreateWithBSTR(context, function));
-        if (needToFree)
-            SysFreeString(function);
+        SysFreeString(function);
+
+        frame = caller;
     }
 }
 

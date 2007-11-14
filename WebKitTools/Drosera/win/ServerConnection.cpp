@@ -101,20 +101,6 @@ void ServerConnection::stepInto()
         m_server->step();
 }
 
-// Connection Handling
-
-void ServerConnection::applicationTerminating()
-{
-    if (m_server)
-        m_server->removeListener(this);
-}
-
-void ServerConnection::serverConnectionDidDie()
-{
-    if (m_server)
-        m_server->removeListener(this);
-}
-
 // IUnknown --------------------------------------------------
 HRESULT STDMETHODCALLTYPE ServerConnection::QueryInterface(REFIID riid, void** ppvObject)
 {
@@ -146,9 +132,13 @@ HRESULT STDMETHODCALLTYPE ServerConnection::didLoadMainResourceForDataSource(
     /* [in] */ IWebView*,
     /* [in] */ IWebDataSource* dataSource)
 {
+    HRESULT ret = S_OK;
+    if (!m_globalContext || !dataSource)
+        return ret;
+
     // Get document source
     COMPtr<IWebDocumentRepresentation> rep;
-    HRESULT ret = dataSource->representation(&rep);
+    ret = dataSource->representation(&rep);
     if (FAILED(ret))
         return ret;
 
@@ -348,16 +338,16 @@ IWebScriptCallFrame* ServerConnection::currentFrame() const
     return m_currentFrame.get();
 }
 
-IWebScriptCallFrame* ServerConnection::getCallerFrame(int callFrame) const
+COMPtr<IWebScriptCallFrame> ServerConnection::getCallerFrame(int callFrame) const
 {
     COMPtr<IWebScriptCallFrame> cframe = currentFrame();
-    COMPtr<IWebScriptCallFrame> callerFrame;
     for (int count = 0; count < callFrame; count++) {
+        COMPtr<IWebScriptCallFrame> callerFrame;
         if (FAILED(cframe->caller(&callerFrame)))
             return 0;
 
         cframe = callerFrame;
     }
 
-    return cframe.get();
+    return cframe;
 }
