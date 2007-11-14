@@ -27,7 +27,7 @@
 #define CanvasPattern_h
 
 #include "CachedResourceClient.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 #if PLATFORM(CG)
 #include <wtf/RetainPtr.h>

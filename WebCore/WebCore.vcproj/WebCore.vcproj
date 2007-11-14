@@ -3383,10 +3383,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\Shared.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\SharedBuffer.cpp"
 				>
 			</File>
@@ -3572,6 +3568,10 @@
 			</File>
 			<File
 				RelativePath="..\platform\Timer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\TreeShared.h"
 				>
 			</File>
 			<File

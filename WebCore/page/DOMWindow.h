@@ -27,7 +27,7 @@
 #define DOMWindow_h
 
 #include "PlatformString.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 

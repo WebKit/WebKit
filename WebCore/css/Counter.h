@@ -25,7 +25,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "PlatformString.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

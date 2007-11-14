@@ -27,7 +27,7 @@
 #ifndef RangeException_h
 #define RangeException_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

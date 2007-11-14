@@ -53,6 +53,7 @@
 		14115B5209F84B7100CA4FC1 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B5109F84B7100CA4FC1 /* Node.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */; };
 		14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */; };
+		1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1419D2C40CEA6F6100FF507A /* TreeShared.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */; };
 		142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */; };
 		1432E8470C51493800B1500F /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1432E8460C51493800B1500F /* GCController.h */; };
@@ -3580,7 +3581,6 @@
 		BCF7C0B80A1687CC0032F75B /* FontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF7C0B70A1687CC0032F75B /* FontCache.h */; };
 		BCF7C2340A16B5F80032F75B /* FontCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */; };
 		BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCFB2E840979FD4F00BA703D /* Shared.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E830979FD4F00BA703D /* Shared.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFB2F41097A24B500BA703D /* SegmentedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */; };
 		BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F40097A24B500BA703D /* SegmentedString.h */; };
 		BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F74097A2E1A00BA703D /* Arena.cpp */; };
@@ -4176,6 +4176,7 @@
 		14115B5109F84B7100CA4FC1 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilter.cpp; sourceTree = "<group>"; };
 		14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilter.h; sourceTree = "<group>"; };
+		1419D2C40CEA6F6100FF507A /* TreeShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeShared.h; sourceTree = "<group>"; };
 		141B94E509EC4223000E9413 /* MouseEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = MouseEvent.idl; sourceTree = "<group>"; };
 		141B94EE09EC425A000E9413 /* UIEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = UIEvent.idl; sourceTree = "<group>"; };
 		142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSStyleDeclaration.idl; sourceTree = "<group>"; };
@@ -7569,7 +7570,6 @@
 		BCF7C0B70A1687CC0032F75B /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontCacheMac.mm; sourceTree = "<group>"; };
 		BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceClient.h; sourceTree = "<group>"; };
-		BCFB2E830979FD4F00BA703D /* Shared.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Shared.h; sourceTree = "<group>"; };
 		BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SegmentedString.cpp; sourceTree = "<group>"; };
 		BCFB2F40097A24B500BA703D /* SegmentedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SegmentedString.h; sourceTree = "<group>"; };
 		BCFB2F74097A2E1A00BA703D /* Arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Arena.cpp; sourceTree = "<group>"; };
@@ -11478,7 +11478,6 @@
 				BC014C730CC5579D009C4B20 /* SecurityOrigin.h */,
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
-				BCFB2E830979FD4F00BA703D /* Shared.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
@@ -11521,6 +11520,7 @@
 				51E1ECB20C91C55600DC255B /* Threading.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
+				1419D2C40CEA6F6100FF507A /* TreeShared.h */,
 				514C762C0CE921F4007EF3CD /* UnicodeRange.cpp */,
 				514C762D0CE921F4007EF3CD /* UnicodeRange.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
@@ -13749,7 +13749,6 @@
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
 				37919C1D0BF3762800956998 /* ShapeArabic.h in Headers */,
-				BCFB2E840979FD4F00BA703D /* Shared.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */,
@@ -13892,6 +13891,7 @@
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

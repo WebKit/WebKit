@@ -29,7 +29,7 @@
 
 #if ENABLE(XPATH)
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

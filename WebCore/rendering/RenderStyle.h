@@ -50,7 +50,7 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "Pair.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "TextDirection.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

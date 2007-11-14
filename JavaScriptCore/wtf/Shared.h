@@ -18,57 +18,61 @@
  *
  */
 
-#ifndef Icon_h
-#define Icon_h
+#ifndef Shared_h
+#define Shared_h
 
-#include <wtf/Shared.h>
-#include <wtf/Forward.h>
+#include <wtf/Assertions.h>
+#include <wtf/Noncopyable.h>
 
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class NSImage;
-#else
-class NSImage;
-#endif
-#elif PLATFORM(WIN)
-typedef struct HICON__* HICON;
-#elif PLATFORM(QT)
-#include <QIcon>
-#endif
+namespace WTF {
 
-namespace WebCore {
-
-class GraphicsContext;
-class IntRect;
-class String;
-    
-class Icon : public Shared<Icon> {
+template<class T> class Shared : Noncopyable {
 public:
-    Icon();
-    ~Icon();
-    
-    static PassRefPtr<Icon> newIconForFile(const String& filename);
-
-    void paint(GraphicsContext*, const IntRect&);
-
-#if PLATFORM(WIN)
-    Icon(HICON);
+    Shared()
+        : m_refCount(0)
+#ifndef NDEBUG
+        , m_deletionHasBegun(false)
 #endif
+    {
+    }
+
+    void ref()
+    {
+        ASSERT(!m_deletionHasBegun);
+        ++m_refCount;
+    }
+
+    void deref()
+    {
+        ASSERT(!m_deletionHasBegun);
+        if (--m_refCount <= 0) {
+#ifndef NDEBUG
+            m_deletionHasBegun = true;
+#endif
+            delete static_cast<T*>(this);
+        }
+    }
+
+    bool hasOneRef()
+    {
+        ASSERT(!m_deletionHasBegun);
+        return m_refCount == 1;
+    }
+
+    int refCount() const
+    {
+        return m_refCount;
+    }
 
 private:
-#if PLATFORM(MAC)
-    Icon(NSImage*);
-#endif
-#if PLATFORM(MAC)
-    RetainPtr<NSImage> m_nsImage;
-#elif PLATFORM(WIN)
-    HICON m_hIcon;
-#elif PLATFORM(QT)
-    QIcon m_icon;
+    int m_refCount;
+#ifndef NDEBUG
+    bool m_deletionHasBegun;
 #endif
 };
 
-}
+} // namespace WTF
+
+using WTF::Shared;
 
 #endif

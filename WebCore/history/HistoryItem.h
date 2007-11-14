@@ -31,7 +31,7 @@
 #include "IntPoint.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>

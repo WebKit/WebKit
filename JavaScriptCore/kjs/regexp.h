@@ -29,7 +29,7 @@
 
 namespace KJS {
 
-  class RegExp : Noncopyable {
+  class RegExp : public Shared<RegExp> {
   private:
     enum { 
         Global = 1, 
@@ -42,10 +42,6 @@ namespace KJS {
     RegExp(const UString& pattern, const UString& flags);
     ~RegExp();
     
-    void ref() { ++m_refCount; }
-    void deref() { if (--m_refCount == 0) delete this; }
-    int refCount() { return m_refCount; }
-
     bool global() const { return m_flagBits & Global; }
     bool ignoreCase() const { return m_flagBits & IgnoreCase; }
     bool multiline() const { return m_flagBits & Multiline; }
@@ -61,8 +57,6 @@ namespace KJS {
 
   private:
     void compile();
-    
-    int m_refCount;
     
     // Data supplied by caller.
     UString m_pattern; // FIXME: Just decompile m_regExp instead of storing this.

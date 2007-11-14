@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DeprecatedValueListImpl.h"
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <stdlib.h>
 
 namespace WebCore {

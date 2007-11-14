@@ -26,7 +26,7 @@
 #define TextResourceDecoder_h
 
 #include "PlatformString.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "TextDecoder.h"
 #include <wtf/Vector.h>
 

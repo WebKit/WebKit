@@ -20,7 +20,7 @@
 #ifndef DOMParser_h
 #define DOMParser_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "Document.h"
 
 namespace WebCore {

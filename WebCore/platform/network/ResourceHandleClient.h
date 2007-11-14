@@ -26,7 +26,7 @@
 #ifndef ResourceHandleClient_h
 #define ResourceHandleClient_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 

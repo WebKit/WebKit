@@ -27,7 +27,7 @@
 #define CachedPage_h
 
 #include "DocumentLoader.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/OwnPtr.h>

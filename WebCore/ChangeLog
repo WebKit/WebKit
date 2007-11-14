@@ -1,3 +1,89 @@
+2007-11-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Moved Shared.h into wtf so it could be used in more places. Retained 
+        TreeShared, but moved it to its own file, TreeShared.h.
+
+        * ForwardingHeaders/wtf/Shared.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        * css/CSSFontFace.h:
+        * css/CSSRuleList.h:
+        * css/Counter.h:
+        * css/Pair.h:
+        * css/Rect.h:
+        * css/StyleBase.h:
+        * css/StyleSheetList.h:
+        * dom/Clipboard.h:
+        * dom/DOMImplementation.h:
+        * dom/Event.h:
+        * dom/EventListener.h:
+        * dom/NamedNodeMap.h:
+        * dom/NodeFilterCondition.h:
+        * dom/NodeList.h:
+        * dom/Range.h:
+        * dom/RangeException.h:
+        * dom/RegisteredEventListener.h:
+        * dom/Traversal.h:
+        * history/BackForwardList.h:
+        * history/CachedPage.h:
+        * history/HistoryItem.h:
+        * html/CanvasGradient.h:
+        * html/CanvasPattern.h:
+        * html/HTMLCollection.h:
+        * html/MediaError.h:
+        * html/TimeRanges.h:
+        * html/VoidCallback.h:
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        * ksvg2/svg/SVGElementInstanceList.h:
+        * ksvg2/svg/SVGList.h:
+        * ksvg2/svg/SVGPathSeg.h:
+        * ksvg2/svg/SVGPreserveAspectRatio.h:
+        * ksvg2/svg/SVGRenderingIntent.h:
+        * ksvg2/svg/SVGTransform.h:
+        * ksvg2/svg/SVGUnitTypes.h:
+        * loader/DocumentLoader.h:
+        * loader/FormState.h:
+        * loader/ResourceLoader.h:
+        * loader/TextResourceDecoder.h:
+        * loader/icon/IconRecord.h:
+        * page/BarInfo.h:
+        * page/Console.h:
+        * page/DOMSelection.h:
+        * page/DOMWindow.h:
+        * page/History.h:
+        * page/InspectorController.cpp:
+        * page/Plugin.h:
+        * page/Screen.h:
+        * platform/ArrayImpl.h:
+        * platform/CString.h:
+        * platform/DeprecatedValueListImpl.cpp:
+        * platform/FontFallbackList.h:
+        * platform/FontFamily.h:
+        * platform/FontSelector.h:
+        * platform/GlyphPageTreeNode.h:
+        * platform/PopupMenu.h:
+        * platform/RegularExpression.cpp:
+        * platform/ScrollBar.h:
+        * platform/Shared.h: Removed.
+        * platform/SharedBuffer.h:
+        * platform/StringImpl.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/svg/SVGResource.h:
+        * platform/network/FormData.h:
+        * platform/network/ResourceHandleClient.h:
+        * rendering/RenderStyle.h:
+        * rendering/SVGCharacterLayoutInfo.h:
+        * storage/SQLResultSetRowList.h:
+        * xml/DOMParser.h:
+        * xml/XMLSerializer.h:
+        * xml/XPathEvaluator.h:
+        * xml/XPathExpression.h:
+        * xml/XPathNSResolver.h:
+        * xml/XPathResult.h:
+
 2007-11-13  Brady Eidson  <beidson@apple.com>
 
         JS bindings by Anders, reviewed by Brady

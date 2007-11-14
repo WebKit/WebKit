@@ -21,7 +21,7 @@
 #ifndef XMLSerializer_h
 #define XMLSerializer_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "PlatformString.h"
 
 namespace WebCore {

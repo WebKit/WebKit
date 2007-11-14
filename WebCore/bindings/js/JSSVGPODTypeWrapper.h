@@ -29,7 +29,7 @@
 #if ENABLE(SVG)
 
 #include "Frame.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "SVGElement.h"
 
 #include <wtf/Assertions.h>

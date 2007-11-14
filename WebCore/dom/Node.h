@@ -25,8 +25,9 @@
 #define Node_h
 
 #include "DocPtr.h"
-#include "PlatformString.h"
 #include "DeprecatedString.h"
+#include "PlatformString.h"
+#include "TreeShared.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>

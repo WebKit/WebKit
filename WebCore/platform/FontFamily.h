@@ -27,7 +27,7 @@
 #define FontFamily_h
 
 #include "AtomicString.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

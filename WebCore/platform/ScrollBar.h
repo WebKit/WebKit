@@ -26,7 +26,7 @@
 #ifndef ScrollBar_h
 #define ScrollBar_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "ScrollTypes.h"
 #include <wtf/MathExtras.h>
 

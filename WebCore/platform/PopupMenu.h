@@ -21,7 +21,7 @@
 #ifndef PopupMenu_h
 #define PopupMenu_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 #include "IntRect.h"
 #include "PopupMenuClient.h"

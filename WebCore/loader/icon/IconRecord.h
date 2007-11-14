@@ -30,7 +30,7 @@
 #define IconRecord_h
 
 #include "PageURLRecord.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "SharedBuffer.h"
 
 #include <wtf/HashSet.h>

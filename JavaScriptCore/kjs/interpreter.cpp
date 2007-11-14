@@ -101,7 +101,6 @@ void Interpreter::init()
 {
     JSLock lock;
 
-    m_refCount = 0;
     m_timeoutTime = 0;
     m_recursion = 0;
     m_debugger= 0;

@@ -30,7 +30,7 @@
 #include <wtf/Vector.h>
 
 #include "AffineTransform.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "SVGRenderStyle.h"
 #include "SVGTextContentElement.h"
 

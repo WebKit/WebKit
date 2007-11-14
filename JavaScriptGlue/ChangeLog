@@ -1,3 +1,11 @@
+2007-11-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Moved Shared.h into wtf so it could be used in more places.
+
+        * ForwardingHeaders/wtf/Shared.h: Added.
+
 2007-11-08  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

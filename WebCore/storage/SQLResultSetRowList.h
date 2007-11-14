@@ -30,7 +30,7 @@
 #define SQLResultSetRowList_h
 
 #include "PlatformString.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "SQLValue.h"
 #include <wtf/Vector.h>
 

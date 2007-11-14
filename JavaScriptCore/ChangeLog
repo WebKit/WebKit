@@ -1,3 +1,27 @@
+2007-11-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Moved Shared.h into wtf so it could be used in more places. Deployed
+        Shared in places where JSCore previously had hand-rolled ref-counting
+        classes.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        * API/JSClassRef.h:
+        * API/JSObjectRef.cpp:
+        (JSClassRetain):
+        (JSClassRelease):
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::init):
+        * kjs/interpreter.h:
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        * kjs/regexp.h:
+        * wtf/Shared.h: Copied from WebCore/platform/Shared.h.
+
 2007-11-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.

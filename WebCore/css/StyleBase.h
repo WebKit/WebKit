@@ -25,7 +25,7 @@
 #ifndef StyleBase_h
 #define StyleBase_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

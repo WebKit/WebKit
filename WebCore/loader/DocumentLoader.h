@@ -31,7 +31,7 @@
 
 #include "IconDatabase.h"
 #include "NavigationAction.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"

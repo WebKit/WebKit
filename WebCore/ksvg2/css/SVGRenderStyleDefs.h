@@ -33,7 +33,7 @@
 #include "Color.h"
 #include "Path.h"
 #include "PlatformString.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/RefPtr.h>
 
 // Helper macros for 'SVGRenderStyle'

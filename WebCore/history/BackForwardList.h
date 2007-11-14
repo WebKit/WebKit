@@ -26,7 +26,7 @@
 #ifndef BackForwardList_h
 #define BackForwardList_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>

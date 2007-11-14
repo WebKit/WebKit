@@ -21,7 +21,7 @@
 #ifndef EventListener_h
 #define EventListener_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

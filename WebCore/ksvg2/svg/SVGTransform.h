@@ -26,7 +26,7 @@
 
 #include "AffineTransform.h"
 #include "FloatPoint.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

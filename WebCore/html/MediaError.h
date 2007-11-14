@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

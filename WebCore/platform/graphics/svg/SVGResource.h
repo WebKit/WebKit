@@ -29,7 +29,7 @@
 #if ENABLE(SVG)
 
 #include "PlatformString.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "StringHash.h"
 
 #include <wtf/HashMap.h>

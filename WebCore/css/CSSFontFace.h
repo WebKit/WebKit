@@ -27,7 +27,7 @@
 #define CSSFontFace_h
 
 #include <wtf/Vector.h>
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

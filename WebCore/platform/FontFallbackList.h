@@ -25,7 +25,7 @@
 // and so this should catch anyone trying to include this file in public cpp files.
 
 #include "FontData.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "FontSelector.h"
 #include <wtf/Vector.h>
 

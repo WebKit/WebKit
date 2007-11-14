@@ -24,7 +24,7 @@
 
 #if ENABLE(SVG)
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "SVGElementInstance.h"
 
 namespace WebCore {

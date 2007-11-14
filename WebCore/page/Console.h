@@ -29,7 +29,7 @@
 #ifndef Console_h
 #define Console_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "PlatformString.h"
 
 namespace WebCore {

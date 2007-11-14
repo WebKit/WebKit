@@ -18,58 +18,13 @@
  *
  */
 
-#ifndef Shared_h
-#define Shared_h
+#ifndef TreeShared_h
+#define TreeShared_h
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
-
-template<class T> class Shared : Noncopyable {
-public:
-    Shared()
-        : m_refCount(0)
-#ifndef NDEBUG
-        , m_deletionHasBegun(false)
-#endif
-    {
-    }
-
-    void ref()
-    {
-        ASSERT(!m_deletionHasBegun);
-        ++m_refCount;
-    }
-
-    void deref()
-    {
-        ASSERT(!m_deletionHasBegun);
-        if (--m_refCount <= 0) {
-#ifndef NDEBUG
-            m_deletionHasBegun = true;
-#endif
-            delete static_cast<T*>(this);
-        }
-    }
-
-    bool hasOneRef()
-    {
-        ASSERT(!m_deletionHasBegun);
-        return m_refCount == 1;
-    }
-
-    int refCount() const
-    {
-        return m_refCount;
-    }
-
-private:
-    int m_refCount;
-#ifndef NDEBUG
-    bool m_deletionHasBegun;
-#endif
-};
 
 template<class T> class TreeShared : Noncopyable {
 public:
@@ -150,4 +105,4 @@ private:
 
 }
 
-#endif
+#endif // TreeShared.h

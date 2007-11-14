@@ -33,7 +33,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ResourceLoader.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "AuthenticationChallenge.h"
 #include "KURL.h"
 

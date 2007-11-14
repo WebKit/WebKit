@@ -27,7 +27,7 @@
 #include "RegularExpression.h"
 
 #include "Logging.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <pcre/pcre.h>
 #include <sys/types.h>
 

@@ -29,7 +29,7 @@
 #ifndef GlyphPageTreeNode_h
 #define GlyphPageTreeNode_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/unicode/Unicode.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>

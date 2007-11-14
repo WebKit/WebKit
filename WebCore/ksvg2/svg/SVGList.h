@@ -27,7 +27,7 @@
 
 #include <wtf/Vector.h>
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include "SVGListTraits.h"
 #include "ExceptionCode.h"
 

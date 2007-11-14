@@ -57,15 +57,14 @@ JSClassRef JSClassCreate(const JSClassDefinition* definition)
 JSClassRef JSClassRetain(JSClassRef jsClass)
 {
     JSLock lock;
-    ++jsClass->refCount;
+    jsClass->ref();
     return jsClass;
 }
 
 void JSClassRelease(JSClassRef jsClass)
 {
     JSLock lock;
-    if (--jsClass->refCount == 0)
-        delete jsClass;
+    jsClass->deref();
 }
 
 JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)

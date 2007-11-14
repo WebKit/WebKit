@@ -26,7 +26,7 @@
 #ifndef NamedNodeMap_h
 #define NamedNodeMap_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

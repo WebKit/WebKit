@@ -27,7 +27,7 @@
 #ifndef NodeFilterCondition_h
 #define NodeFilterCondition_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

@@ -22,7 +22,7 @@
 #define Rect_h
 
 #include "CSSPrimitiveValue.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

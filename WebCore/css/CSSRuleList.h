@@ -25,7 +25,7 @@
 #define CSSRuleList_h
 
 #include "DeprecatedPtrList.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

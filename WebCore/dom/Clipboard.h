@@ -33,7 +33,7 @@
 #include "DragImage.h"
 #include "IntPoint.h"
 #include "Node.h"
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

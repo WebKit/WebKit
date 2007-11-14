@@ -29,7 +29,7 @@
 #ifndef BarInfo_h
 #define BarInfo_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 

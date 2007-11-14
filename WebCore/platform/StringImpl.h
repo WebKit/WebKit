@@ -24,7 +24,7 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 #include <wtf/unicode/Unicode.h>
 #include <kjs/identifier.h>
 #include <wtf/Forward.h>

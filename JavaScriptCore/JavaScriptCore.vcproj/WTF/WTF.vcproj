@@ -272,6 +272,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\Shared.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\StringExtras.h"
 			>
 		</File>

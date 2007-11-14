@@ -30,7 +30,7 @@
 #ifndef Screen_h
 #define Screen_h
 
-#include "Shared.h"
+#include <wtf/Shared.h>
 
 namespace WebCore {
 
