@@ -1,3 +1,13 @@
+2007-11-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=15976
+
+        * storage: Added - There will soon be an entire suite in here!
+        * storage/transaction_callback_exception_crash-expected.txt: Added.
+        * storage/transaction_callback_exception_crash.html: Added.
+
 2007-11-13  Adam Roben  <aroben@apple.com>
 
         Add the http/tests/media directory to the Windows Skipped file

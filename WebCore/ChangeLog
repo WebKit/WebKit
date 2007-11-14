@@ -1,3 +1,15 @@
+2007-11-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        http://bugs.webkit.org/show_bug.cgi?id=15976 - ASSERT/crash when SQLTransactionCallback throws an exception
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::deliverTransactionCallback): Make a transaction error for the case where the 
+          SQLTransactionCallback fails
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback): Don't assert on the error callback, but null check it
+          and make the commit/rollback decision accordingly
+
 2007-11-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders.

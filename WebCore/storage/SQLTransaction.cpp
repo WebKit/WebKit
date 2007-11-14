@@ -145,9 +145,10 @@ void SQLTransaction::deliverTransactionCallback()
         shouldDeliverErrorCallback = true;
 
     // Transaction Step 5 - If the transaction callback was null or raised an exception, jump to the error callback
-    if (shouldDeliverErrorCallback)
+    if (shouldDeliverErrorCallback) {
+        m_transactionError = new SQLError(0, "the SQLTransactionCallback was null or threw an exception");
         deliverTransactionErrorCallback();
-    else
+    } else
         scheduleToRunStatements();
 }
 
@@ -289,11 +290,11 @@ void SQLTransaction::handleTransactionError(bool inCallback)
 
 void SQLTransaction::deliverTransactionErrorCallback()
 {
-    ASSERT(m_errorCallback);
     ASSERT(m_transactionError);
     
     // Transaction Step 11 - If the callback didn't return false, then rollback the transaction.
-    if (m_errorCallback->handleEvent(m_transactionError.get()))
+    // This includes the callback not existing, returning true, or throwing an exception
+    if (!m_errorCallback || m_errorCallback->handleEvent(m_transactionError.get()))
         m_shouldCommitAfterErrorCallback = false;
 
     m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;

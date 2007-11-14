@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 0: undefined
+If WebKit doesn't crash, this test has passed
