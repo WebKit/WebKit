@@ -1,3 +1,10 @@
+2007-11-14  Antti Koivisto  <antti@apple.com>
+
+        Try to make this test less timing dependent.
+
+        * media/video-currentTime-set-expected.txt:
+        * media/video-currentTime-set.html:
+
 2007-11-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

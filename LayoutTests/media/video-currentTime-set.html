@@ -5,11 +5,10 @@ waitForEvent('load',
 function () { 
     video.currentTime = video.duration - 0.2; 
     video.play(); 
+    waitForEvent('timeupdate',
+    function () {
+        setTimeout(function () { test("false") }, 800);
+    });
+    waitForEventAndEnd('ended');
 });
-waitForEvent('play',
-function () {
-    setTimeout(function () { test("false") }, 400);
-});
-waitForEventAndEnd('ended');
-
 </script>
