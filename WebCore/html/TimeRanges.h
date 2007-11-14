@@ -27,12 +27,12 @@
 #define TimeRanges_h
 
 #include "ExceptionCode.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "wtf/Vector.h"
 
 namespace WebCore {
 
-class TimeRanges : public Shared<TimeRanges> {
+class TimeRanges : public RefCounted<TimeRanges> {
 public:
     TimeRanges() { }
     TimeRanges(float start, float end);

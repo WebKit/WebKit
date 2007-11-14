@@ -84,7 +84,7 @@ class SubresourceLoaderClient;
 
 template <typename T> class Timer;
 
-class ResourceHandle : public Shared<ResourceHandle> {
+class ResourceHandle : public RefCounted<ResourceHandle> {
 private:
     ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle);
 

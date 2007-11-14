@@ -25,7 +25,7 @@
 
 #if ENABLE(SVG)
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "AtomicString.h"
 
 namespace WebCore {
@@ -101,7 +101,7 @@ namespace WebCore {
     };
     
     template<typename BareType>
-    class SVGAnimatedTemplate : public Shared<SVGAnimatedTemplate<BareType> >
+    class SVGAnimatedTemplate : public RefCounted<SVGAnimatedTemplate<BareType> >
     {
     public:        
         virtual ~SVGAnimatedTemplate() { forgetWrapper(this); }

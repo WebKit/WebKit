@@ -31,7 +31,7 @@ namespace WebCore {
 
     class SVGStyledElement;
 
-    class SVGAngle : public Shared<SVGAngle> {
+    class SVGAngle : public RefCounted<SVGAngle> {
     public:
         SVGAngle();
         virtual ~SVGAngle();

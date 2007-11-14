@@ -1,5 +1,15 @@
 2007-11-13  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Anders Carlsson.
+        
+        Renamed Shared to RefCounted.
+
+        * ForwardingHeaders/wtf/RefCounted.h: Copied from WebKit/mac/ForwardingHeaders/wtf/Shared.h.
+        * ForwardingHeaders/wtf/Shared.h: Removed.
+        * WebCoreSupport/WebContextMenuClient.h:
+
+2007-11-13  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Moved Shared.h into wtf so it could be used in more places.

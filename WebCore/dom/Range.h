@@ -27,7 +27,7 @@
 #ifndef Range_h
 #define Range_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -43,7 +43,7 @@ class Node;
 class Position;
 class String;
 
-class Range : public Shared<Range>
+class Range : public RefCounted<Range>
 {
 public:
     Range(Document*);

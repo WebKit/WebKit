@@ -26,13 +26,13 @@
 #define TextResourceDecoder_h
 
 #include "PlatformString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "TextDecoder.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class TextResourceDecoder : public Shared<TextResourceDecoder> {
+class TextResourceDecoder : public RefCounted<TextResourceDecoder> {
 public:
     enum EncodingSource {
         DefaultEncoding,

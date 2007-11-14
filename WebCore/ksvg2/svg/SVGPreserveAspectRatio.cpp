@@ -30,7 +30,7 @@
 namespace WebCore {
 
 SVGPreserveAspectRatio::SVGPreserveAspectRatio()
-    : Shared<SVGPreserveAspectRatio>()
+    : RefCounted<SVGPreserveAspectRatio>()
     , m_align(SVG_PRESERVEASPECTRATIO_XMIDYMID)
     , m_meetOrSlice(SVG_MEETORSLICE_MEET)
 {

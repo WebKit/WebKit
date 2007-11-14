@@ -30,7 +30,7 @@
 #ifndef DOMSelection_h
 #define DOMSelection_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
@@ -43,7 +43,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class DOMSelection : public Shared<DOMSelection> {
+    class DOMSelection : public RefCounted<DOMSelection> {
     public:
         DOMSelection(Frame*);
 

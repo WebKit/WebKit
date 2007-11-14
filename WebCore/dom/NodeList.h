@@ -26,7 +26,7 @@
 #ifndef NodeList_h
 #define NodeList_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -35,7 +35,7 @@ namespace WebCore {
 class AtomicString;
 class Node;
 
-class NodeList : public Shared<NodeList> {
+class NodeList : public RefCounted<NodeList> {
 public:
 
     struct Caches {

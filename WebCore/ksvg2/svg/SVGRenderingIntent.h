@@ -24,11 +24,11 @@
 
 #if ENABLE(SVG)
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class SVGRenderingIntent : public Shared<SVGRenderingIntent>
+class SVGRenderingIntent : public RefCounted<SVGRenderingIntent>
 {
 public:
     enum SVGRenderingIntentType {

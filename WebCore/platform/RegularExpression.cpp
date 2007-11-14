@@ -27,7 +27,7 @@
 #include "RegularExpression.h"
 
 #include "Logging.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <pcre/pcre.h>
 #include <sys/types.h>
 
@@ -36,7 +36,7 @@ namespace WebCore {
 const size_t maxSubstrings = 10;
 const size_t maxOffsets = 3 * maxSubstrings;
 
-class RegularExpression::Private : public Shared<RegularExpression::Private>
+class RegularExpression::Private : public RefCounted<RegularExpression::Private>
 {
 public:
     Private();

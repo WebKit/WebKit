@@ -35,7 +35,7 @@ namespace WebCore {
     };
 
     // This class is NEVER used inside ksvg2. It only inherits from Shared for IDL generation.
-    class SVGException : public Shared<SVGException> {
+    class SVGException : public RefCounted<SVGException> {
     public:
         // Forward declare these enums in the w3c naming scheme, for IDL generation
         // We do NOT match the W3C here - we can't return 0/1/2 as JS values - we have to match ours!

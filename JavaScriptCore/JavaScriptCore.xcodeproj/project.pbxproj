@@ -38,7 +38,7 @@
 /* Begin PBXBuildFile section */
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		141211340A48795800480255 /* minidom.c in Sources */ = {isa = PBXBuildFile; fileRef = 141211020A48780900480255 /* minidom.c */; };
-		1419D2010CEA4D0D00FF507A /* Shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1419D1030CEA472C00FF507A /* Shared.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1419D32D0CEA7CDE00FF507A /* RefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 1419D32C0CEA7CDE00FF507A /* RefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1421359A0A677F4F00A8195E /* JSBase.cpp */; };
 		142711390A460BBB0080EEEA /* JSBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 142711380A460BBB0080EEEA /* JSBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		143A97E60A4A06E200456B66 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
@@ -393,7 +393,7 @@
 		141211020A48780900480255 /* minidom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = minidom.c; sourceTree = "<group>"; };
 		1412110D0A48788700480255 /* minidom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = minidom.js; sourceTree = "<group>"; };
 		141211200A48793C00480255 /* minidom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = minidom; sourceTree = BUILT_PRODUCTS_DIR; };
-		1419D1030CEA472C00FF507A /* Shared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shared.h; sourceTree = "<group>"; };
+		1419D32C0CEA7CDE00FF507A /* RefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCounted.h; sourceTree = "<group>"; };
 		1421359A0A677F4F00A8195E /* JSBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBase.cpp; sourceTree = "<group>"; };
 		142711380A460BBB0080EEEA /* JSBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSBase.h; path = ../API/JSBase.h; sourceTree = "<group>"; };
 		1440051F0A531D3B0005F061 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
@@ -855,15 +855,13 @@
 			isa = PBXGroup;
 			children = (
 				E195678D09E7CF1200B89D13 /* unicode */,
-				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
-				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
-				65DFC92D08EA173A00F7300B /* HashTable.cpp */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				1482B78A0A4305AB00517CFC /* APICast.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
 				F692A84E0255597D01FF60F7 /* array_object.h */,
 				65B1749909D0FEB700820339 /* array_object.lut.h */,
 				938C4F690CA06BC700D9310A /* ASCIICType.h */,
+				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
 				704FD35305697E6D003DBED9 /* bool_object.h */,
 				5182A53B06012C3000CBD2F2 /* c_class.h */,
@@ -885,6 +883,7 @@
 				651F6413039D5B5F0078395C /* dtoa.h */,
 				F692A85B0255597D01FF60F7 /* error_object.h */,
 				14BD53F30A3E12D800BAF59C /* ExecState.h */,
+				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
 				935AF46909E9D9DB00ACD1D8 /* Forward.h */,
 				F692A85F0255597D01FF60F7 /* function.h */,
@@ -896,6 +895,7 @@
 				652246A40C8D7A0E007BDAF7 /* HashIterators.h */,
 				65DFC92B08EA173A00F7300B /* HashMap.h */,
 				65DFC92C08EA173A00F7300B /* HashSet.h */,
+				65DFC92D08EA173A00F7300B /* HashTable.cpp */,
 				65DFC92E08EA173A00F7300B /* HashTable.h */,
 				65DFC92F08EA173A00F7300B /* HashTraits.h */,
 				933A349A038AE7C6008635CE /* identifier.h */,
@@ -965,6 +965,7 @@
 				65621E6C089E859700760F35 /* property_slot.h */,
 				65400C100A69BAF200509887 /* PropertyNameArray.h */,
 				65C02FBB0637462A003E7EE6 /* protect.h */,
+				1419D32C0CEA7CDE00FF507A /* RefCounted.h */,
 				65C647B3093EF8D60022C380 /* RefPtr.h */,
 				F692A87E0255597D01FF60F7 /* regexp.h */,
 				F692A87C0255597D01FF60F7 /* regexp_object.h */,
@@ -977,13 +978,13 @@
 				5114F47C05E4426200D1BBBD /* runtime_root.h */,
 				14BD534A0A3E0AEA00BAF59C /* SavedBuiltins.h */,
 				9374D3A7038D9D74008635CE /* scope_chain.h */,
-				1419D1030CEA472C00FF507A /* Shared.h */,
 				F692A8800255597D01FF60F7 /* string_object.h */,
 				65B174F409D100FA00820339 /* string_object.lut.h */,
 				E11D51750B2E798D0056C188 /* StringExtras.h */,
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				6541BD6E08E80A17002CBEE7 /* TCPageMap.h */,
 				6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */,
+				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
 				F692A8840255597D01FF60F7 /* types.h */,
 				93E26BFC08B151D400F85226 /* ucpinternal.h */,
@@ -996,7 +997,6 @@
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
 				1CAF34880A6C421700ABE06E /* WebScriptObject.h */,
-				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 			);
 			path = wtf;
 			sourceTree = "<group>";
@@ -1126,7 +1126,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1419D2010CEA4D0D00FF507A /* Shared.h in Headers */,
 				1482B78B0A4305AB00517CFC /* APICast.h in Headers */,
 				938C4F6A0CA06BC700D9310A /* ASCIICType.h in Headers */,
 				93AA4F780957251F0084B3A7 /* AlwaysInline.h in Headers */,
@@ -1264,6 +1263,7 @@
 				932F5B5C0822A1C700736975 /* ustring.h in Headers */,
 				14ABB36F099C076400E2A24F /* value.h in Headers */,
 				E1EF79AB0CE97BA60088D500 /* UTF8.h in Headers */,
+				1419D32D0CEA7CDE00FF507A /* RefCounted.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -50,7 +50,7 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "Pair.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "TextDirection.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -315,7 +315,7 @@ public:
 
 enum EMarginCollapse { MCOLLAPSE, MSEPARATE, MDISCARD };
 
-class StyleSurroundData : public Shared<StyleSurroundData> {
+class StyleSurroundData : public RefCounted<StyleSurroundData> {
 public:
     StyleSurroundData();
     StyleSurroundData(const StyleSurroundData& o);
@@ -337,7 +337,7 @@ public:
 
 enum EBoxSizing { CONTENT_BOX, BORDER_BOX };
 
-class StyleBoxData : public Shared<StyleBoxData> {
+class StyleBoxData : public RefCounted<StyleBoxData> {
 public:
     StyleBoxData();
     StyleBoxData(const StyleBoxData& o);
@@ -416,7 +416,7 @@ enum EUnicodeBidi {
     UBNormal, Embed, Override
 };
 
-class StyleVisualData : public Shared<StyleVisualData> {
+class StyleVisualData : public RefCounted<StyleVisualData> {
 public:
     StyleVisualData();
     ~StyleVisualData();
@@ -554,7 +554,7 @@ public:
     BackgroundLayer* m_next;
 };
 
-class StyleBackgroundData : public Shared<StyleBackgroundData> {
+class StyleBackgroundData : public RefCounted<StyleBackgroundData> {
 public:
     StyleBackgroundData();
     ~StyleBackgroundData() {}
@@ -576,7 +576,7 @@ public:
 enum EMarqueeBehavior { MNONE, MSCROLL, MSLIDE, MALTERNATE };
 enum EMarqueeDirection { MAUTO = 0, MLEFT = 1, MRIGHT = -1, MUP = 2, MDOWN = -2, MFORWARD = 3, MBACKWARD = -3 };
 
-class StyleMarqueeData : public Shared<StyleMarqueeData> {
+class StyleMarqueeData : public RefCounted<StyleMarqueeData> {
 public:
     StyleMarqueeData();
     StyleMarqueeData(const StyleMarqueeData& o);
@@ -597,7 +597,7 @@ public:
   
 // CSS3 Multi Column Layout
 
-class StyleMultiColData : public Shared<StyleMultiColData> {
+class StyleMultiColData : public RefCounted<StyleMultiColData> {
 public:
     StyleMultiColData();
     StyleMultiColData(const StyleMultiColData& o);
@@ -628,7 +628,7 @@ public:
 
 // CSS Transforms (may become part of CSS3)
 
-class TransformOperation : public Shared<TransformOperation>
+class TransformOperation : public RefCounted<TransformOperation>
 {
 public:
     virtual ~TransformOperation() {}
@@ -819,7 +819,7 @@ private:
     Vector<RefPtr<TransformOperation> > m_operations;
 };
 
-class StyleTransformData : public Shared<StyleTransformData> {
+class StyleTransformData : public RefCounted<StyleTransformData> {
 public:
     StyleTransformData();
     StyleTransformData(const StyleTransformData&);
@@ -842,7 +842,7 @@ enum EBoxOrient { HORIZONTAL, VERTICAL };
 enum EBoxLines { SINGLE, MULTIPLE };
 enum EBoxDirection { BNORMAL, BREVERSE };
 
-class StyleFlexibleBoxData : public Shared<StyleFlexibleBoxData> {
+class StyleFlexibleBoxData : public RefCounted<StyleFlexibleBoxData> {
 public:
     StyleFlexibleBoxData();
     StyleFlexibleBoxData(const StyleFlexibleBoxData& o);
@@ -1125,7 +1125,7 @@ public:
 // This struct is for rarely used non-inherited CSS3, CSS2, and WebKit-specific properties.
 // By grouping them together, we save space, and only allocate this object when someone
 // actually uses one of these properties.
-class StyleRareNonInheritedData : public Shared<StyleRareNonInheritedData> {
+class StyleRareNonInheritedData : public RefCounted<StyleRareNonInheritedData> {
 public:
     StyleRareNonInheritedData();
     ~StyleRareNonInheritedData();
@@ -1172,7 +1172,7 @@ public:
 // This struct is for rarely used inherited CSS3, CSS2, and WebKit-specific properties.
 // By grouping them together, we save space, and only allocate this object when someone
 // actually uses one of these properties.
-class StyleRareInheritedData : public Shared<StyleRareInheritedData> {
+class StyleRareInheritedData : public RefCounted<StyleRareInheritedData> {
 public:
     StyleRareInheritedData();
     ~StyleRareInheritedData();
@@ -1225,7 +1225,7 @@ enum EPageBreak {
     PBAUTO, PBALWAYS, PBAVOID
 };
 
-class StyleInheritedData : public Shared<StyleInheritedData> {
+class StyleInheritedData : public RefCounted<StyleInheritedData> {
 public:
     StyleInheritedData();
     ~StyleInheritedData();
@@ -1293,7 +1293,7 @@ struct CursorData {
     String cursorFragmentId; // only used for SVGCursorElement, a direct pointer would get stale
 };
 
-class CursorList : public Shared<CursorList> {
+class CursorList : public RefCounted<CursorList> {
 public:
     const CursorData& operator[](int i) const {
         return m_vector[i];

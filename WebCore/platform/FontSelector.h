@@ -26,7 +26,7 @@
 #ifndef FontSelector_h
 #define FontSelector_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -34,7 +34,7 @@ class AtomicString;
 class FontData;
 class FontDescription;
 
-class FontSelector : public Shared<FontSelector> {
+class FontSelector : public RefCounted<FontSelector> {
 public:
     virtual ~FontSelector() {};
     virtual FontData* getFontData(const FontDescription& fontDescription, const AtomicString& familyName) = 0;

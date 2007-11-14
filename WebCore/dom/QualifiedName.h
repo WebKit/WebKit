@@ -28,7 +28,7 @@ namespace WebCore {
 
 class QualifiedName {
 public:
-    class QualifiedNameImpl : public Shared<QualifiedNameImpl> {
+    class QualifiedNameImpl : public RefCounted<QualifiedNameImpl> {
     public:
         QualifiedNameImpl(const AtomicString& p, const AtomicString& l, const AtomicString& n) :m_prefix(p), m_localName(l), m_namespace(n) {}
 

@@ -27,13 +27,13 @@
 #ifndef NodeFilterCondition_h
 #define NodeFilterCondition_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class Node;
 
-    class NodeFilterCondition : public Shared<NodeFilterCondition> {
+    class NodeFilterCondition : public RefCounted<NodeFilterCondition> {
     public:
         virtual ~NodeFilterCondition() { }
         virtual short acceptNode(Node*) const;

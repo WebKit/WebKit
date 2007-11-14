@@ -31,7 +31,7 @@
 
 #include "IconDatabase.h"
 #include "NavigationAction.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -56,7 +56,7 @@ namespace WebCore {
     typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
     typedef Vector<ResourceResponse> ResponseVector;
 
-    class DocumentLoader : public Shared<DocumentLoader> {
+    class DocumentLoader : public RefCounted<DocumentLoader> {
     public:
         DocumentLoader(const ResourceRequest&, const SubstituteData&);
         virtual ~DocumentLoader();

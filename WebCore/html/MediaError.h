@@ -28,11 +28,11 @@
 
 #if ENABLE(VIDEO)
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class MediaError : public Shared<MediaError> {
+class MediaError : public RefCounted<MediaError> {
 public:
     enum Code { MEDIA_ERR_ABORTED = 1, MEDIA_ERR_NETWORK, MEDIA_ERR_DECODE };
 

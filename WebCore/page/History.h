@@ -26,13 +26,13 @@
 #ifndef History_h
 #define History_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class Frame;
 
-    class History : public Shared<History> {
+    class History : public RefCounted<History> {
     public:
         History(Frame*);
 

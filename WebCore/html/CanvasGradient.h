@@ -28,7 +28,7 @@
 #define CanvasGradient_h
 
 #include "FloatPoint.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)
@@ -43,7 +43,7 @@ namespace WebCore {
 
     class String;
 
-    class CanvasGradient : public Shared<CanvasGradient> {
+    class CanvasGradient : public RefCounted<CanvasGradient> {
     public:
         CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
         CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);

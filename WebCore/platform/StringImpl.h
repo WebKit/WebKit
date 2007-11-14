@@ -24,7 +24,7 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/unicode/Unicode.h>
 #include <kjs/identifier.h>
 #include <wtf/Forward.h>
@@ -47,7 +47,7 @@ struct UCharBufferTranslator;
 struct CStringTranslator;
 struct Length;
 
-class StringImpl : public Shared<StringImpl> {
+class StringImpl : public RefCounted<StringImpl> {
 private:
     struct WithOneRef { };
     StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false) { ref(); }

@@ -35,7 +35,7 @@ namespace WebCore {
 class CompositeEditCommand;
 class CSSMutableStyleDeclaration;
 
-class EditCommand : public Shared<EditCommand> {
+class EditCommand : public RefCounted<EditCommand> {
 public:
     EditCommand(Document*);
     virtual ~EditCommand();

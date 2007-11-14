@@ -26,12 +26,12 @@
 #include "config.h"
 #include "DeprecatedValueListImpl.h"
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <stdlib.h>
 
 namespace WebCore {
 
-class DeprecatedValueListImpl::Private : public Shared<DeprecatedValueListImpl::Private>
+class DeprecatedValueListImpl::Private : public RefCounted<DeprecatedValueListImpl::Private>
 {
 public:
     Private(void (*deleteFunc)(DeprecatedValueListImplNode *), DeprecatedValueListImplNode *(*copyFunc)(DeprecatedValueListImplNode *));
@@ -60,11 +60,11 @@ inline DeprecatedValueListImpl::Private::Private(void (*deleteFunc)(DeprecatedVa
 {
 }
 
-inline DeprecatedValueListImpl::Private::Private(const Private &other) :
-    Shared<DeprecatedValueListImpl::Private>(),
-    deleteNode(other.deleteNode),
-    copyNode(other.copyNode),
-    count(other.count)
+inline DeprecatedValueListImpl::Private::Private(const Private &other)
+    : RefCounted<DeprecatedValueListImpl::Private>()
+    , deleteNode(other.deleteNode)
+    , copyNode(other.copyNode)
+    , count(other.count)
 {
     other.copyList(other.head, head, tail);
 }

@@ -57,7 +57,7 @@ namespace WebCore {
     class IntPoint;
 
 #if PLATFORM(WIN)
-    class SharedCursor : public Shared<SharedCursor> {
+    class SharedCursor : public RefCounted<SharedCursor> {
     public:
         SharedCursor(HCURSOR nativeCursor) : m_nativeCursor(nativeCursor) {}
         ~SharedCursor() {

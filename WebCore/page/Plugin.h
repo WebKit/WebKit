@@ -21,13 +21,13 @@
 #ifndef Plugin_h
 #define Plugin_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class Widget;
 
-    class Plugin : public Shared<Plugin> {
+    class Plugin : public RefCounted<Plugin> {
     public:
         Plugin(Widget* view) : m_view(view) { }
         Widget* view() const { return m_view; }

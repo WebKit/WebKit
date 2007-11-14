@@ -34,7 +34,7 @@ namespace WebCore {
     class CanvasPattern;
     class GraphicsContext;
 
-    class CanvasStyle : public Shared<CanvasStyle> {
+    class CanvasStyle : public RefCounted<CanvasStyle> {
     public:
         CanvasStyle(const String& color);
         CanvasStyle(float grayLevel);

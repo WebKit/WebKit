@@ -48,7 +48,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class CanvasRenderingContext2D : public Shared<CanvasRenderingContext2D> {
+    class CanvasRenderingContext2D : public RefCounted<CanvasRenderingContext2D> {
     public:
         CanvasRenderingContext2D(HTMLCanvasElement*);
 

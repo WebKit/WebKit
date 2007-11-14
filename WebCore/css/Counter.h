@@ -25,12 +25,12 @@
 
 #include "CSSPrimitiveValue.h"
 #include "PlatformString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class Counter : public Shared<Counter> {
+class Counter : public RefCounted<Counter> {
 public:
     Counter(PassRefPtr<CSSPrimitiveValue> identifier, PassRefPtr<CSSPrimitiveValue> listStyle, PassRefPtr<CSSPrimitiveValue> separator)
         : m_identifier(identifier)

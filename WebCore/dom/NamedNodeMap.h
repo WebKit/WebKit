@@ -26,7 +26,7 @@
 #ifndef NamedNodeMap_h
 #define NamedNodeMap_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -39,7 +39,7 @@ typedef int ExceptionCode;
 
 // Generic NamedNodeMap interface
 // Other classes implement this for more specific situations e.g. attributes of an element.
-class NamedNodeMap : public Shared<NamedNodeMap> {
+class NamedNodeMap : public RefCounted<NamedNodeMap> {
 public:
     NamedNodeMap() { }
     virtual ~NamedNodeMap() { }

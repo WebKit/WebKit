@@ -27,12 +27,12 @@
 #define FontFamily_h
 
 #include "AtomicString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class FontFamily : public Shared<FontFamily> {
+class FontFamily : public RefCounted<FontFamily> {
 public:
     FontFamily() { }
     

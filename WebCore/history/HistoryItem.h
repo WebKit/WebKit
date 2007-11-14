@@ -31,7 +31,7 @@
 #include "IntPoint.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -55,7 +55,7 @@ typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 
 extern void (*notifyHistoryItemChanged)();
 
-class HistoryItem : public Shared<HistoryItem> {
+class HistoryItem : public RefCounted<HistoryItem> {
     friend class PageCache;
 
 public: 

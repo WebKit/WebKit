@@ -27,14 +27,14 @@
 #define VoidCallback_h
 
 #include <kjs/protect.h>
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "wtf/PassRefPtr.h"
 
 namespace WebCore {
 
 class Frame;
     
-class VoidCallback : public Shared<VoidCallback> {
+class VoidCallback : public RefCounted<VoidCallback> {
 public:
     VoidCallback(KJS::JSValue* func);
     virtual ~VoidCallback();

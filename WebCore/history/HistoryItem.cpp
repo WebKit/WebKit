@@ -106,7 +106,7 @@ HistoryItem::~HistoryItem()
 }
 
 HistoryItem::HistoryItem(const HistoryItem& item)
-    : Shared<HistoryItem>()
+    : RefCounted<HistoryItem>()
     , m_urlString(item.m_urlString)
     , m_originalURLString(item.m_originalURLString)
     , m_target(item.m_target)

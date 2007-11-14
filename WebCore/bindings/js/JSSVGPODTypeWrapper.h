@@ -29,7 +29,7 @@
 #if ENABLE(SVG)
 
 #include "Frame.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "SVGElement.h"
 
 #include <wtf/Assertions.h>
@@ -38,7 +38,7 @@
 namespace WebCore {
 
 template<typename PODType>
-class JSSVGPODTypeWrapper : public Shared<JSSVGPODTypeWrapper<PODType> >
+class JSSVGPODTypeWrapper : public RefCounted<JSSVGPODTypeWrapper<PODType> >
 {
 public:
     virtual ~JSSVGPODTypeWrapper() { }

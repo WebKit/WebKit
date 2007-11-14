@@ -27,7 +27,7 @@
 #define CachedPage_h
 
 #include "DocumentLoader.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/OwnPtr.h>
@@ -51,7 +51,7 @@ namespace WebCore {
     class Node;
     class Page;
 
-class CachedPage : public Shared<CachedPage> {
+class CachedPage : public RefCounted<CachedPage> {
 public:
     static PassRefPtr<CachedPage> create(Page*);
     ~CachedPage();

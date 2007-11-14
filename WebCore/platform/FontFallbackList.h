@@ -25,7 +25,7 @@
 // and so this should catch anyone trying to include this file in public cpp files.
 
 #include "FontData.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "FontSelector.h"
 #include <wtf/Vector.h>
 
@@ -40,7 +40,7 @@ class FontSelector;
 
 const int cAllFamiliesScanned = -1;
 
-class FontFallbackList : public Shared<FontFallbackList> {
+class FontFallbackList : public RefCounted<FontFallbackList> {
 public:
     FontFallbackList();
 

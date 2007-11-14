@@ -25,7 +25,7 @@
 
 #if ENABLE(SVG)
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <PlatformString.h>
 
 namespace WebCore {
@@ -34,7 +34,7 @@ namespace WebCore {
     class AffineTransform;
     class SVGStyledElement;
 
-    class SVGPreserveAspectRatio : public Shared<SVGPreserveAspectRatio> { 
+    class SVGPreserveAspectRatio : public RefCounted<SVGPreserveAspectRatio> { 
     public:
         enum SVGPreserveAspectRatioType {
             SVG_PRESERVEASPECTRATIO_UNKNOWN     = 0,

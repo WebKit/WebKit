@@ -24,11 +24,11 @@
 
 #if ENABLE(SVG)
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "SVGElementInstance.h"
 
 namespace WebCore {
-    class SVGElementInstanceList : public Shared<SVGElementInstanceList> {
+    class SVGElementInstanceList : public RefCounted<SVGElementInstanceList> {
     public:
         SVGElementInstanceList(PassRefPtr<SVGElementInstance> rootInstance);
         virtual ~SVGElementInstanceList();

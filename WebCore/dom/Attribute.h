@@ -41,7 +41,7 @@ class NamedAttrMap;
 // the actual Attr (Attr) with its value as textchild
 // is only allocated on demand by the DOM bindings.
 // Any use of Attr inside khtml should be avoided.
-class Attribute : public Shared<Attribute> {
+class Attribute : public RefCounted<Attribute> {
     friend class Attr;
     friend class Element;
     friend class NamedAttrMap;

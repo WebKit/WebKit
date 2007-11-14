@@ -21,7 +21,7 @@
 #ifndef XMLSerializer_h
 #define XMLSerializer_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -30,7 +30,7 @@ namespace WebCore {
 
     class Node;
 
-    class XMLSerializer : public Shared<XMLSerializer> {
+    class XMLSerializer : public RefCounted<XMLSerializer> {
     public:
         String serializeToString(Node*, ExceptionCode&);
     };

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-    class NodeFilter : public Shared<NodeFilter> {
+    class NodeFilter : public RefCounted<NodeFilter> {
     public:
         /**
          * The following constants are returned by the acceptNode()

@@ -22,13 +22,13 @@
 #define Rect_h
 
 #include "CSSPrimitiveValue.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class Rect : public Shared<Rect> {
+    class Rect : public RefCounted<Rect> {
     public:
         virtual ~Rect() { }
 

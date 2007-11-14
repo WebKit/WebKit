@@ -55,7 +55,7 @@ struct StaticFunctionEntry {
     JSPropertyAttributes attributes;
 };
 
-struct OpaqueJSClass : public Shared<OpaqueJSClass> {
+struct OpaqueJSClass : public RefCounted<OpaqueJSClass> {
     static OpaqueJSClass* create(const JSClassDefinition*);
     static OpaqueJSClass* createNoAutomaticPrototype(const JSClassDefinition*);
     ~OpaqueJSClass();

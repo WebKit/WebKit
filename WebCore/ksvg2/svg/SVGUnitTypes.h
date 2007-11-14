@@ -24,11 +24,11 @@
 
 #if ENABLE(SVG)
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class SVGUnitTypes : public Shared<SVGUnitTypes>
+class SVGUnitTypes : public RefCounted<SVGUnitTypes>
 {
 public:
     enum SVGUnitType {

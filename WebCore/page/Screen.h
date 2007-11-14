@@ -30,13 +30,13 @@
 #ifndef Screen_h
 #define Screen_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class Frame;
 
-    class Screen : public Shared<Screen> {
+    class Screen : public RefCounted<Screen> {
     public:
         Screen(Frame*);
         void disconnectFrame();

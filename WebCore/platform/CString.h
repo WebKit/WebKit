@@ -26,7 +26,7 @@
 #ifndef CString_h
 #define CString_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 using std::min;
@@ -35,7 +35,7 @@ namespace WebCore {
 
     class DeprecatedCString;
     
-    class CStringBuffer : public Shared<CStringBuffer> {
+    class CStringBuffer : public RefCounted<CStringBuffer> {
     public:
         CStringBuffer(unsigned length) : m_vector(length) { }
 

@@ -30,7 +30,7 @@
 #define IconRecord_h
 
 #include "PageURLRecord.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "SharedBuffer.h"
 
 #include <wtf/HashSet.h>
@@ -64,7 +64,7 @@ public:
     RefPtr<SharedBuffer> data;
 };
     
-class IconRecord : public Shared<IconRecord> {
+class IconRecord : public RefCounted<IconRecord> {
     friend class PageURLRecord;
 public:
     IconRecord(const String& url); 

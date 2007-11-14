@@ -27,7 +27,7 @@
 #define CanvasPattern_h
 
 #include "CachedResourceClient.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 #if PLATFORM(CG)
 #include <wtf/RetainPtr.h>
@@ -41,7 +41,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class CanvasPattern : public Shared<CanvasPattern>, CachedResourceClient {
+    class CanvasPattern : public RefCounted<CanvasPattern>, CachedResourceClient {
     public:
         static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 

@@ -106,7 +106,7 @@ struct FrameLoadRequest;
 
 template <typename T> class Timer;
 
-class Frame : public Shared<Frame> {
+class Frame : public RefCounted<Frame> {
 public:
     Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
     virtual void setView(FrameView*);

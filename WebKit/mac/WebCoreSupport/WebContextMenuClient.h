@@ -27,8 +27,6 @@
  */
 
 #import <WebCore/ContextMenuClient.h>
-#import <wtf/Forward.h>
-#import <wtf/Shared.h>
 
 @class WebView;
 

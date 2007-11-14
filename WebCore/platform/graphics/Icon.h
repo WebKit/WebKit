@@ -21,7 +21,7 @@
 #ifndef Icon_h
 #define Icon_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
@@ -43,7 +43,7 @@ class GraphicsContext;
 class IntRect;
 class String;
     
-class Icon : public Shared<Icon> {
+class Icon : public RefCounted<Icon> {
 public:
     Icon();
     ~Icon();

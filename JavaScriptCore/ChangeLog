@@ -1,3 +1,17 @@
+2007-11-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Renamed Shared to RefCounted.
+
+        * API/JSClassRef.h:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/interpreter.h:
+        * kjs/regexp.h:
+        * wtf/RefCounted.h: Copied from JavaScriptCore/wtf/Shared.h.
+        (WTF::RefCounted::RefCounted):
+        * wtf/Shared.h: Removed.
+
 2007-11-13  Adam Roben  <aroben@apple.com>
 
         Build fix

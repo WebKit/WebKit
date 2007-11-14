@@ -71,7 +71,7 @@ SVGRenderStyle::SVGRenderStyle(bool)
     markers.init();
 }
 
-SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other) : Shared<SVGRenderStyle>()
+SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle &other) : RefCounted<SVGRenderStyle>()
 {
     fill = other.fill;
     stroke = other.stroke;

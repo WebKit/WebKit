@@ -29,13 +29,13 @@
 #ifndef BarInfo_h
 #define BarInfo_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class Frame;
 
-    class BarInfo : public Shared<BarInfo> {
+    class BarInfo : public RefCounted<BarInfo> {
     public:
         enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
     

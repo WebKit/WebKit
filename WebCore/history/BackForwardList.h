@@ -26,7 +26,7 @@
 #ifndef BackForwardList_h
 #define BackForwardList_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -39,7 +39,7 @@ class Page;
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
-class BackForwardList : public Shared<BackForwardList> {
+class BackForwardList : public RefCounted<BackForwardList> {
 public: 
     BackForwardList(Page*);
     ~BackForwardList();

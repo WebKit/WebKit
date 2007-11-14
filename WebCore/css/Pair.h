@@ -23,7 +23,7 @@
 #ifndef Pair_h
 #define Pair_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "CSSPrimitiveValue.h"
 #include <wtf/PassRefPtr.h>
 
@@ -33,7 +33,7 @@ namespace WebCore {
 // and border-spacing (all of which are space-separated sets of two values).  At the moment we are only using it for
 // border-radius and background-size, but (FIXME) border-spacing and background-position could be converted over to use
 // it (eliminating some extra -webkit- internal properties).
-class Pair : public Shared<Pair> {
+class Pair : public RefCounted<Pair> {
 public:
     Pair() : m_first(0), m_second(0) { }
     Pair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)

@@ -21,13 +21,13 @@
 #ifndef EventListener_h
 #define EventListener_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class Event;
 
-    class EventListener : public Shared<EventListener> {
+    class EventListener : public RefCounted<EventListener> {
     public:
         virtual ~EventListener() { }
         virtual void handleEvent(Event*, bool isWindowEvent = false) = 0;

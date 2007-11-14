@@ -26,7 +26,7 @@
 #ifndef ScrollBar_h
 #define ScrollBar_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "ScrollTypes.h"
 #include <wtf/MathExtras.h>
 
@@ -52,7 +52,7 @@ public:
     virtual IntRect windowClipRect() const = 0;
 };
 
-class Scrollbar : public Shared<Scrollbar> {
+class Scrollbar : public RefCounted<Scrollbar> {
 protected:
     Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 

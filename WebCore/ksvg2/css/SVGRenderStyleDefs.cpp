@@ -35,13 +35,13 @@
 
 using namespace WebCore;
 
-StyleFillData::StyleFillData() : Shared<StyleFillData>()
+StyleFillData::StyleFillData() : RefCounted<StyleFillData>()
 {
     paint = SVGRenderStyle::initialFillPaint();
     opacity = SVGRenderStyle::initialFillOpacity();
 }
 
-StyleFillData::StyleFillData(const StyleFillData &other) : Shared<StyleFillData>()
+StyleFillData::StyleFillData(const StyleFillData &other) : RefCounted<StyleFillData>()
 {
     paint = other.paint;
     opacity = other.opacity;
@@ -67,7 +67,7 @@ bool StyleFillData::operator==(const StyleFillData &other) const
     return paint == other.paint;
 }
 
-StyleStrokeData::StyleStrokeData() : Shared<StyleStrokeData>()
+StyleStrokeData::StyleStrokeData() : RefCounted<StyleStrokeData>()
 {
     width = SVGRenderStyle::initialStrokeWidth();
     paint = SVGRenderStyle::initialStrokePaint();
@@ -77,7 +77,7 @@ StyleStrokeData::StyleStrokeData() : Shared<StyleStrokeData>()
     dashArray = SVGRenderStyle::initialStrokeDashArray();
 }
 
-StyleStrokeData::StyleStrokeData(const StyleStrokeData &other) : Shared<StyleStrokeData>()
+StyleStrokeData::StyleStrokeData(const StyleStrokeData &other) : RefCounted<StyleStrokeData>()
 {
     width = other.width;
     paint = other.paint;
@@ -97,13 +97,13 @@ bool StyleStrokeData::operator==(const StyleStrokeData &other) const
            (dashArray == other.dashArray);
 }
 
-StyleStopData::StyleStopData() : Shared<StyleStopData>()
+StyleStopData::StyleStopData() : RefCounted<StyleStopData>()
 {
     color = SVGRenderStyle::initialStopColor();
     opacity = SVGRenderStyle::initialStopOpacity();
 }
 
-StyleStopData::StyleStopData(const StyleStopData &other) : Shared<StyleStopData>()
+StyleStopData::StyleStopData(const StyleStopData &other) : RefCounted<StyleStopData>()
 {
     color = other.color;
     opacity = other.opacity;
@@ -115,12 +115,12 @@ bool StyleStopData::operator==(const StyleStopData &other) const
            (opacity == other.opacity);
 }
 
-StyleTextData::StyleTextData() : Shared<StyleTextData>()
+StyleTextData::StyleTextData() : RefCounted<StyleTextData>()
 {
     kerning = SVGRenderStyle::initialKerning();
 }
 
-StyleTextData::StyleTextData(const StyleTextData& other) : Shared<StyleTextData>()
+StyleTextData::StyleTextData(const StyleTextData& other) : RefCounted<StyleTextData>()
 {
     kerning = other.kerning;
 }
@@ -130,12 +130,12 @@ bool StyleTextData::operator==(const StyleTextData& other) const
     return kerning == other.kerning;
 }
 
-StyleClipData::StyleClipData() : Shared<StyleClipData>()
+StyleClipData::StyleClipData() : RefCounted<StyleClipData>()
 {
     clipPath = SVGRenderStyle::initialClipPath();
 }
 
-StyleClipData::StyleClipData(const StyleClipData &other) : Shared<StyleClipData>()
+StyleClipData::StyleClipData(const StyleClipData &other) : RefCounted<StyleClipData>()
 {
     clipPath = other.clipPath;
 }
@@ -145,12 +145,12 @@ bool StyleClipData::operator==(const StyleClipData &other) const
     return (clipPath == other.clipPath);
 }
 
-StyleMaskData::StyleMaskData() : Shared<StyleMaskData>()
+StyleMaskData::StyleMaskData() : RefCounted<StyleMaskData>()
 {
     maskElement = SVGRenderStyle::initialMaskElement();
 }
 
-StyleMaskData::StyleMaskData(const StyleMaskData &other) : Shared<StyleMaskData>()
+StyleMaskData::StyleMaskData(const StyleMaskData &other) : RefCounted<StyleMaskData>()
 {
     maskElement = other.maskElement;
 }
@@ -160,14 +160,14 @@ bool StyleMaskData::operator==(const StyleMaskData &other) const
     return (maskElement == other.maskElement);
 }
 
-StyleMarkerData::StyleMarkerData() : Shared<StyleMarkerData>()
+StyleMarkerData::StyleMarkerData() : RefCounted<StyleMarkerData>()
 {
     startMarker = SVGRenderStyle::initialStartMarker();
     midMarker = SVGRenderStyle::initialMidMarker();
     endMarker = SVGRenderStyle::initialEndMarker();
 }
 
-StyleMarkerData::StyleMarkerData(const StyleMarkerData &other) : Shared<StyleMarkerData>()
+StyleMarkerData::StyleMarkerData(const StyleMarkerData &other) : RefCounted<StyleMarkerData>()
 {
     startMarker = other.startMarker;
     midMarker = other.midMarker;
@@ -179,7 +179,7 @@ bool StyleMarkerData::operator==(const StyleMarkerData &other) const
     return (startMarker == other.startMarker && midMarker == other.midMarker && endMarker == other.endMarker);
 }
 
-StyleMiscData::StyleMiscData() : Shared<StyleMiscData>()
+StyleMiscData::StyleMiscData() : RefCounted<StyleMiscData>()
 {
     floodColor = SVGRenderStyle::initialFloodColor();
     floodOpacity = SVGRenderStyle::initialFloodOpacity();
@@ -187,7 +187,7 @@ StyleMiscData::StyleMiscData() : Shared<StyleMiscData>()
     baselineShiftValue = SVGRenderStyle::initialBaselineShiftValue();
 }
 
-StyleMiscData::StyleMiscData(const StyleMiscData &other) : Shared<StyleMiscData>()
+StyleMiscData::StyleMiscData(const StyleMiscData &other) : RefCounted<StyleMiscData>()
 {
     filter = other.filter;
     floodColor = other.floodColor;

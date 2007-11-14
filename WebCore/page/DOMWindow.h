@@ -27,7 +27,7 @@
 #define DOMWindow_h
 
 #include "PlatformString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -47,7 +47,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class DOMWindow : public Shared<DOMWindow> {
+    class DOMWindow : public RefCounted<DOMWindow> {
     public:
         DOMWindow(Frame*);
         virtual ~DOMWindow();

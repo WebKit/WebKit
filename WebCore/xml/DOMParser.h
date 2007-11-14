@@ -20,13 +20,13 @@
 #ifndef DOMParser_h
 #define DOMParser_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "Document.h"
 
 namespace WebCore {
     class String;
     
-    class DOMParser : public Shared<DOMParser> {
+    class DOMParser : public RefCounted<DOMParser> {
     public:
         PassRefPtr<Document> parseFromString(const String& str, const String& contentType);
     };

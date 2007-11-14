@@ -38,7 +38,7 @@ class Node;
 class Document;
 class DocumentFragment;
 
-class XSLTProcessor : public Shared<XSLTProcessor>
+class XSLTProcessor : public RefCounted<XSLTProcessor>
 {
 public:
     void setXSLStylesheet(XSLStyleSheet* styleSheet) { m_stylesheet = styleSheet; }

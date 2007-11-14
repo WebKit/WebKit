@@ -33,7 +33,7 @@
 #include "DragImage.h"
 #include "IntPoint.h"
 #include "Node.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ namespace WebCore {
     class String;
 
     // State available during IE's events for drag and drop and copy/paste
-    class Clipboard : public Shared<Clipboard> {
+    class Clipboard : public RefCounted<Clipboard> {
     public:
         Clipboard(ClipboardAccessPolicy policy, bool isForDragging);
         virtual ~Clipboard() { }

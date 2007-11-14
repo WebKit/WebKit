@@ -1,3 +1,138 @@
+2007-11-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Renamed Shared to RefCounted.
+
+        * ForwardingHeaders/wtf/RefCounted.h: Copied from WebCore/ForwardingHeaders/wtf/Shared.h.
+        * ForwardingHeaders/wtf/Shared.h: Removed.
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        * css/CSSFontFace.h:
+        * css/CSSRuleList.h:
+        * css/Counter.h:
+        * css/Pair.h:
+        * css/Rect.h:
+        * css/StyleBase.h:
+        * css/StyleSheetList.h:
+        * dom/Attribute.h:
+        * dom/Clipboard.h:
+        * dom/DOMImplementation.h:
+        * dom/Event.h:
+        * dom/EventListener.h:
+        * dom/NamedNodeMap.h:
+        * dom/NodeFilter.h:
+        * dom/NodeFilterCondition.h:
+        * dom/NodeList.h:
+        * dom/QualifiedName.h:
+        * dom/Range.h:
+        * dom/RangeException.h:
+        * dom/RegisteredEventListener.h:
+        * dom/Traversal.h:
+        * editing/EditCommand.h:
+        * history/BackForwardList.h:
+        * history/CachedPage.h:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+        * html/CanvasGradient.h:
+        * html/CanvasPattern.h:
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasStyle.h:
+        * html/HTMLCollection.h:
+        * html/MediaError.h:
+        * html/TimeRanges.h:
+        * html/VoidCallback.h:
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        (StyleFillData::StyleFillData):
+        (StyleStrokeData::StyleStrokeData):
+        (StyleStopData::StyleStopData):
+        (StyleTextData::StyleTextData):
+        (StyleClipData::StyleClipData):
+        (StyleMaskData::StyleMaskData):
+        (StyleMarkerData::StyleMarkerData):
+        (StyleMiscData::StyleMiscData):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::SVGAngle):
+        * ksvg2/svg/SVGAngle.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        * ksvg2/svg/SVGElementInstanceList.h:
+        * ksvg2/svg/SVGException.h:
+        * ksvg2/svg/SVGList.h:
+        * ksvg2/svg/SVGPathSeg.h:
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio):
+        * ksvg2/svg/SVGPreserveAspectRatio.h:
+        * ksvg2/svg/SVGRenderingIntent.h:
+        * ksvg2/svg/SVGTransform.h:
+        * ksvg2/svg/SVGUnitTypes.h:
+        * loader/DocumentLoader.h:
+        * loader/FormState.h:
+        * loader/ResourceLoader.h:
+        * loader/TextResourceDecoder.h:
+        * loader/icon/IconRecord.h:
+        * page/BarInfo.h:
+        * page/Console.h:
+        * page/DOMSelection.h:
+        * page/DOMWindow.h:
+        * page/Frame.h:
+        * page/History.h:
+        * page/InspectorController.cpp:
+        * page/Plugin.h:
+        * page/Screen.h:
+        * platform/ArrayImpl.h:
+        * platform/CString.h:
+        * platform/Cursor.h:
+        * platform/DeprecatedValueListImpl.cpp:
+        (WebCore::DeprecatedValueListImpl::Private::Private):
+        * platform/FileChooser.h:
+        * platform/FontFallbackList.h:
+        * platform/FontFamily.cpp:
+        (WebCore::FontFamily::FontFamily):
+        * platform/FontFamily.h:
+        * platform/FontSelector.h:
+        * platform/GlyphPageTreeNode.h:
+        * platform/PopupMenu.h:
+        * platform/RegularExpression.cpp:
+        * platform/ScrollBar.h:
+        * platform/SharedBuffer.h:
+        * platform/StringImpl.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/svg/SVGResource.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData):
+        * platform/network/FormData.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleSurroundData::StyleSurroundData):
+        (WebCore::StyleBoxData::StyleBoxData):
+        (WebCore::StyleVisualData::StyleVisualData):
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        (WebCore::StyleMarqueeData::StyleMarqueeData):
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleTransformData::StyleTransformData):
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        * rendering/RenderStyle.h:
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGCharOnPath::SVGCharOnPath):
+        * storage/SQLResultSetRowList.h:
+        * xml/DOMParser.h:
+        * xml/XMLHttpRequest.h:
+        * xml/XMLSerializer.h:
+        * xml/XPathEvaluator.h:
+        * xml/XPathExpression.h:
+        * xml/XPathNSResolver.h:
+        * xml/XPathResult.h:
+        * xml/XPathValue.h:
+        * xml/XSLTProcessor.h:
+
 2007-11-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe

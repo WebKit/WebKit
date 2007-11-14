@@ -29,7 +29,7 @@
 
 #if ENABLE(XPATH)
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "XPathValue.h"
 
 namespace WebCore {
@@ -41,7 +41,7 @@ namespace WebCore {
     class Node;
     class String;
 
-    class XPathResult : public Shared<XPathResult> {
+    class XPathResult : public RefCounted<XPathResult> {
     public:
         enum XPathResultType {
             ANY_TYPE = 0,

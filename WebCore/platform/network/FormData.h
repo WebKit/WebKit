@@ -21,7 +21,7 @@
 #define FormData_h
 
 #include "PlatformString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -57,7 +57,7 @@ inline bool operator!=(const FormDataElement& a, const FormDataElement& b)
     return !(a == b);
 }
  
-class FormData : public Shared<FormData> {
+class FormData : public RefCounted<FormData> {
 public:
     FormData() { } 
     FormData(const void* data, size_t);

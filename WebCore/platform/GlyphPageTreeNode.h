@@ -29,7 +29,7 @@
 #ifndef GlyphPageTreeNode_h
 #define GlyphPageTreeNode_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/unicode/Unicode.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
@@ -56,7 +56,7 @@ struct GlyphData {
 // missing in the parimary font. It is owned by exactly one GlyphPageTreeNode,
 // although multiple nodes may reference it as their "page" if they are supposed
 // to be overriding the parent's node, but provide no additional information.
-struct GlyphPage : public Shared<GlyphPage> {
+struct GlyphPage : public RefCounted<GlyphPage> {
     GlyphPage()
         : m_owner(0)
     {

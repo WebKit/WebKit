@@ -25,7 +25,7 @@
 #ifndef HTMLCollection_h
 #define HTMLCollection_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -38,7 +38,7 @@ class Node;
 class NodeList;
 class String;
 
-class HTMLCollection : public Shared<HTMLCollection> {
+class HTMLCollection : public RefCounted<HTMLCollection> {
 public:
     enum Type {
         // from JSHTMLDocument

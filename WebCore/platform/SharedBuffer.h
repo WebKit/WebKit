@@ -26,7 +26,7 @@
 #define SharedBuffer_h
 
 #include "PlatformString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -43,7 +43,7 @@ class NSData;
 
 namespace WebCore {
 
-class SharedBuffer : public Shared<SharedBuffer> {
+class SharedBuffer : public RefCounted<SharedBuffer> {
 public:
     SharedBuffer();
     SharedBuffer(const char*, int);

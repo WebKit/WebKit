@@ -27,7 +27,7 @@
 
 #include <wtf/Vector.h>
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "SVGListTraits.h"
 #include "ExceptionCode.h"
 
@@ -43,7 +43,7 @@ namespace WebCore {
     };
 
     template<typename Item>
-    class SVGList : public Shared<SVGList<Item> >
+    class SVGList : public RefCounted<SVGList<Item> >
     {
     private:
         typedef SVGListTypeOperations<Item> TypeOperations;
@@ -133,7 +133,7 @@ namespace WebCore {
     };
 
     template<typename Item>
-    class SVGPODListItem : public Shared<SVGPODListItem<Item> >
+    class SVGPODListItem : public RefCounted<SVGPODListItem<Item> >
     {
     public:
         SVGPODListItem() : m_item() { }

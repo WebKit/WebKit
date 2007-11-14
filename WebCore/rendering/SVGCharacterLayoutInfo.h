@@ -30,7 +30,7 @@
 #include <wtf/Vector.h>
 
 #include "AffineTransform.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "SVGRenderStyle.h"
 #include "SVGTextContentElement.h"
 
@@ -176,9 +176,9 @@ private:
 };
 
 // Holds extra data, when the character is laid out on a path
-struct SVGCharOnPath : Shared<SVGCharOnPath> {
+struct SVGCharOnPath : RefCounted<SVGCharOnPath> {
     SVGCharOnPath()
-        : Shared<SVGCharOnPath>()
+        : RefCounted<SVGCharOnPath>()
         , xScale(1.0f)
         , yScale(1.0f)
         , xShift(0.0f)

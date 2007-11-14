@@ -30,7 +30,7 @@
 
 namespace KJS {
 
-  class RegExp : public Shared<RegExp> {
+  class RegExp : public RefCounted<RegExp> {
   private:
     enum { 
         Global = 1, 

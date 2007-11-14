@@ -27,7 +27,7 @@
 #ifndef Traversal_h
 #define Traversal_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -36,7 +36,7 @@ namespace WebCore {
     class Node;
     class NodeFilter;
 
-    class Traversal : public Shared<Traversal> {
+    class Traversal : public RefCounted<Traversal> {
     public:
         Traversal(Node*, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
         virtual ~Traversal();

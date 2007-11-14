@@ -21,7 +21,7 @@
 #ifndef StyleSheetList_h
 #define StyleSheetList_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "DeprecatedPtrList.h"
 
 namespace WebCore {
@@ -31,7 +31,7 @@ class HTMLStyleElement;
 class StyleSheet;
 class String;
 
-class StyleSheetList : public Shared<StyleSheetList> {
+class StyleSheetList : public RefCounted<StyleSheetList> {
 public:
     StyleSheetList(Document*);
     ~StyleSheetList();

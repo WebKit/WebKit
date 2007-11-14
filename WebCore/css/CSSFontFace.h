@@ -27,7 +27,7 @@
 #define CSSFontFace_h
 
 #include <wtf/Vector.h>
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ class CSSFontSelector;
 class FontData;
 class FontDescription;
 
-class CSSFontFace : public Shared<CSSFontFace> {
+class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
     CSSFontFace(CSSFontSelector*);
     ~CSSFontFace();

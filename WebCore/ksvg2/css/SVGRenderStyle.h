@@ -38,7 +38,7 @@ namespace WebCore {
     class RenderObject;
     class RenderStyle;
 
-    class SVGRenderStyle : public Shared<SVGRenderStyle> {    
+    class SVGRenderStyle : public RefCounted<SVGRenderStyle> {    
     public:
         SVGRenderStyle();
         SVGRenderStyle(bool); // Used to create the default style.

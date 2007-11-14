@@ -29,13 +29,13 @@
 
 #if ENABLE(XPATH)
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class String;
 
-    class XPathNSResolver : public Shared<XPathNSResolver> {
+    class XPathNSResolver : public RefCounted<XPathNSResolver> {
     public:
         virtual ~XPathNSResolver();
         virtual String lookupNamespaceURI(const String& prefix) = 0;

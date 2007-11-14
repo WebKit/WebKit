@@ -27,13 +27,13 @@
 #define RegisteredEventListener_h
 
 #include "AtomicString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class EventListener;
 
-    class RegisteredEventListener : public Shared<RegisteredEventListener> {
+    class RegisteredEventListener : public RefCounted<RegisteredEventListener> {
     public:
         RegisteredEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
 

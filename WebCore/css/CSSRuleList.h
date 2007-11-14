@@ -25,14 +25,14 @@
 #define CSSRuleList_h
 
 #include "DeprecatedPtrList.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class CSSRule;
 class StyleList;
 
-class CSSRuleList : public Shared<CSSRuleList> {
+class CSSRuleList : public RefCounted<CSSRuleList> {
 public:
     CSSRuleList();
     CSSRuleList(StyleList*, bool omitCharsetRules = false);

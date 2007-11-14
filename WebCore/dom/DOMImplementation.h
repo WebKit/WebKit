@@ -26,7 +26,7 @@
 #ifndef DOMImplementation_h
 #define DOMImplementation_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ class String;
 
 typedef int ExceptionCode;
 
-class DOMImplementation : public Shared<DOMImplementation> {
+class DOMImplementation : public RefCounted<DOMImplementation> {
 public:
     virtual ~DOMImplementation(); 
 

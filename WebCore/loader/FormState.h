@@ -29,7 +29,7 @@
 #ifndef FormState_h
 #define FormState_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 
@@ -38,7 +38,7 @@ namespace WebCore {
     class Frame;
     class HTMLFormElement;
 
-    class FormState : public Shared<FormState> {
+    class FormState : public RefCounted<FormState> {
     public:
         static PassRefPtr<FormState> create(PassRefPtr<HTMLFormElement> form, const HashMap<String, String>& values, PassRefPtr<Frame> sourceFrame);
 

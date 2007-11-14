@@ -26,14 +26,14 @@
 #if ENABLE(SVG)
 
 #include "PlatformString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore
 {
     class SVGPathElement;
     class SVGStyledElement;
 
-    class SVGPathSeg : public Shared<SVGPathSeg>
+    class SVGPathSeg : public RefCounted<SVGPathSeg>
     {
     public:
         SVGPathSeg() { }

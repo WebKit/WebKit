@@ -18,17 +18,17 @@
  *
  */
 
-#ifndef Shared_h
-#define Shared_h
+#ifndef RefCounted_h
+#define RefCounted_h
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 
 namespace WTF {
 
-template<class T> class Shared : Noncopyable {
+template<class T> class RefCounted : Noncopyable {
 public:
-    Shared()
+    RefCounted()
         : m_refCount(0)
 #ifndef NDEBUG
         , m_deletionHasBegun(false)
@@ -73,6 +73,6 @@ private:
 
 } // namespace WTF
 
-using WTF::Shared;
+using WTF::RefCounted;
 
-#endif
+#endif // RefCounted_h

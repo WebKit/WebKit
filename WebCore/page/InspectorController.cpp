@@ -51,7 +51,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "Settings.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "SharedBuffer.h"
 #include "SystemTime.h"
 #include "TextEncoding.h"
@@ -94,7 +94,7 @@ struct ConsoleMessage {
     String url;
 };
 
-struct InspectorResource : public Shared<InspectorResource> {
+struct InspectorResource : public RefCounted<InspectorResource> {
     // Keep these in sync with WebInspector.Resource.Type
     enum Type {
         Doc,
@@ -201,7 +201,7 @@ struct InspectorResource : public Shared<InspectorResource> {
 };
 
 #if ENABLE(DATABASE)
-struct InspectorDatabaseResource : public Shared<InspectorDatabaseResource> {
+struct InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
     InspectorDatabaseResource(Database* database, String domain, String name, String version)
         : database(database)
         , domain(domain)

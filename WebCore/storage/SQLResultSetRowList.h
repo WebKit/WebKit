@@ -30,13 +30,13 @@
 #define SQLResultSetRowList_h
 
 #include "PlatformString.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "SQLValue.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class SQLResultSetRowList : public Shared<SQLResultSetRowList> {
+class SQLResultSetRowList : public RefCounted<SQLResultSetRowList> {
 public:
     const Vector<String>& columnNames() const { return m_columns; }
     const Vector<SQLValue>& values() const { return m_result; }

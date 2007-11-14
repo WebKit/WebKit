@@ -25,7 +25,7 @@
 #ifndef StyleBase_h
 #define StyleBase_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -33,7 +33,7 @@ namespace WebCore {
     class StyleSheet;
 
     // a style class which has a parent (almost all have)
-    class StyleBase : public Shared<StyleBase> {
+    class StyleBase : public RefCounted<StyleBase> {
     public:
         StyleBase(StyleBase* parent)
             : m_parent(parent)

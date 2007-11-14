@@ -29,14 +29,14 @@
 #ifndef Console_h
 #define Console_h
 
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "PlatformString.h"
 
 namespace WebCore {
 
     class Frame;
 
-    class Console : public Shared<Console> {
+    class Console : public RefCounted<Console> {
     public:
         Console(Frame*);
         void disconnectFrame();

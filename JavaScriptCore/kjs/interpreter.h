@@ -28,7 +28,7 @@
 #include "protect.h"
 #include "types.h"
 #include "value.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 
 namespace KJS {
 
@@ -76,7 +76,7 @@ namespace KJS {
    * evaluation, and also provides access to built-in properties such as
    * " Object" and "Number".
    */
-  class Interpreter : public Shared<Interpreter> {
+  class Interpreter : public RefCounted<Interpreter> {
       friend class Collector;
   public:
     /**

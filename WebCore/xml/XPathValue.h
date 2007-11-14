@@ -36,7 +36,7 @@ namespace WebCore {
 
     namespace XPath {
     
-        class ValueData : public Shared<ValueData> {
+        class ValueData : public RefCounted<ValueData> {
         public:
             ValueData() {}
             ValueData(const NodeSet& nodeSet) : m_nodeSet(nodeSet) {}

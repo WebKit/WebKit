@@ -37,7 +37,7 @@ FormData::FormData(const CString& s)
 }
 
 FormData::FormData(const FormData& data)
-    : Shared<FormData>()
+    : RefCounted<FormData>()
     , m_elements(data.m_elements)
 {
 }

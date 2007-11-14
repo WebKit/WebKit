@@ -33,7 +33,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ResourceLoader.h"
-#include <wtf/Shared.h>
+#include <wtf/RefCounted.h>
 #include "AuthenticationChallenge.h"
 #include "KURL.h"
 
@@ -47,7 +47,7 @@ namespace WebCore {
     class ResourceHandle;
     class SharedBuffer;
     
-    class ResourceLoader : public Shared<ResourceLoader>, protected ResourceHandleClient {
+    class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
     public:
         virtual ~ResourceLoader();
 
