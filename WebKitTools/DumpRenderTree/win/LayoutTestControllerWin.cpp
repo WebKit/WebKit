@@ -279,7 +279,19 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
 
 void LayoutTestController::setWindowIsKey(bool flag)
 {
-    // FIXME: Implement!
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
+    HWND webViewWindow;
+    if (FAILED(viewPrivate->viewWindow((OLE_HANDLE*)&webViewWindow)))
+        return;
+
+    ::SendMessage(webViewWindow, flag ? WM_SETFOCUS : WM_KILLFOCUS, (WPARAM)::GetDesktopWindow(), 0);
 }
 
 static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;

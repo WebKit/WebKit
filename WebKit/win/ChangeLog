@@ -1,3 +1,13 @@
+2007-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Get the new focus window from the wParam instead of calling GetFocus().
+        Also, send blur even if there is no focused frame.
+               
+        * WebView.cpp:
+        (WebViewWndProc):
+
 2007-11-14  Adam Roben  <aroben@apple.com>
 
         Another build fix for systems without Cygwin in their PATH

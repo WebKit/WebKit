@@ -582,7 +582,6 @@ http/tests/xmlhttprequest/basic-auth.html
 http/tests/multipart/invalid-image-data.html
 
 # Random sizing issues (Renderblock, RenderTableCells)
-fast/dom/Window/window-onFocus.html
 fast/forms/searchfield-heights.html
 fast/table/frame-and-rules.html
 fast/table/giantCellspacing.html

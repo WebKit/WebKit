@@ -1,3 +1,10 @@
+2007-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        * platform/win/Skipped:
+        Remove fast/dom/Window/window-onFocus.html since it succeeds now.
+
 2007-11-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

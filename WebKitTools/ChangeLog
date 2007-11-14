@@ -1,3 +1,15 @@
+2007-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5141186>
+        window.layoutTestController.setWindowIsKey is not implemented in DRT.
+        
+        Implement setWindowIsKey.
+        
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setWindowIsKey):
+
 2007-11-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

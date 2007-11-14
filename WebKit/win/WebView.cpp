@@ -1621,9 +1621,10 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_KILLFOCUS: {
             COMPtr<IWebUIDelegate> uiDelegate;
             COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate;
+            HWND newFocusWnd = reinterpret_cast<HWND>(wParam);
             if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
-                uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)wParam);
+                uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)newFocusWnd);
             // FIXME: Merge this logic with updateActiveState, and switch this over to use updateActiveState
 
             // However here we have to be careful.  If we are losing focus because of a deactivate,
@@ -1632,12 +1633,12 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             // and we need to clear out the focused target.
             FocusController* focusController = webView->page()->focusController();
             webView->resetIME(focusController->focusedOrMainFrame());
-            if (GetAncestor(hWnd, GA_ROOT) != GetFocus()) {
-                if (Frame* frame = focusController->focusedFrame()) {
+            if (GetAncestor(hWnd, GA_ROOT) != newFocusWnd) {
+                if (Frame* frame = focusController->focusedOrMainFrame()) {
                     frame->setIsActive(false);
 
                     // If we're losing focus to a child of ours, don't send blur events.
-                    if (!IsChild(hWnd, reinterpret_cast<HWND>(wParam)))
+                    if (!IsChild(hWnd, newFocusWnd))
                         frame->setWindowHasFocus(false);
                 }
             } else
