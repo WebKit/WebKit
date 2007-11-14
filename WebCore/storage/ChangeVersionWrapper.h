@@ -25,30 +25,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef ChangeVersionWrapper_h
+#define ChangeVersionWrapper_h
 
-#include "VersionChangeCallback.h"
-
-#include <kjs/object.h>
-#include <kjs/protect.h>
-#include <wtf/Forward.h>
-
-namespace KJS {
-    class JSObject;
-}
+#include "PlatformString.h"
+#include "SQLTransaction.h"
 
 namespace WebCore {
 
-    class Frame;
-    class SQLResultSet;
+class ChangeVersionWrapper : public SQLTransactionWrapper {
+public:
+    ChangeVersionWrapper(const String& oldVersion, const String& newVersion);
 
-    class JSCustomVersionChangeCallback : public VersionChangeCallback {
-    public:
-        JSCustomVersionChangeCallback(KJS::JSObject* callback, Frame*);
+    virtual bool performPreflight(SQLTransaction*);
+    virtual bool performPostflight(SQLTransaction*);
 
-        virtual void handleEvent(bool versionChanges);
-    private:
-        KJS::ProtectedPtr<KJS::JSObject> m_callback;
-        RefPtr<Frame> m_frame;
-    };
+    virtual SQLError* sqlError() const { return m_sqlError.get(); }
+private:
+    String m_oldVersion;
+    String m_newVersion;
+    RefPtr<SQLError> m_sqlError;
+};
 
-}
+} // namespace WebCore
+
+#endif // ChangeVersionWrapper_h

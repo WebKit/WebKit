@@ -25,18 +25,89 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #ifndef SQLTransaction_h
 #define SQLTransaction_h
 
 #include "Threading.h"
 
+#include "SQLiteTransaction.h"
+#include "SQLStatement.h"
+#include "SQLTransactionCallback.h"
+#include "SQLTransactionErrorCallback.h"
+#include <wtf/Deque.h>
+#include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
+typedef int ExceptionCode;
+
+class Database;
+class SQLError;
+class SQLStatementCallback;
+class SQLStatementErrorCallback;
+class SQLTransaction;
+class SQLValue;
+class String;
+
+class SQLTransactionWrapper : public ThreadSafeShared<SQLTransactionWrapper> {
+public:
+    virtual ~SQLTransactionWrapper() { }
+    virtual bool performPreflight(SQLTransaction*) = 0;
+    virtual bool performPostflight(SQLTransaction*) = 0;
+    
+    virtual SQLError* sqlError() const = 0;
+};
+
 class SQLTransaction : public ThreadSafeShared<SQLTransaction> {
+public:
+    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<SQLTransactionWrapper>);
+    
+    void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, 
+                    PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e);
+                                        
+    bool performNextStep();
+    void performPendingCallback();
+    
+    Database* database() { return m_database; }
+    
+private:
+    typedef void (SQLTransaction::*TransactionStepMethod)();
+    TransactionStepMethod m_nextStep;
+    
+    void enqueueStatement(PassRefPtr<SQLStatement>);
+    
+    void openTransactionAndPreflight();
+    void deliverTransactionCallback();
+    void scheduleToRunStatements();
+    void runStatements();
+    void getNextStatement();
+    bool runCurrentStatement();
+    void deliverStatementCallback();
+    void postflightAndCommit();
+    void handleTransactionError(bool inCallback);
+    void deliverTransactionErrorCallback();
+    void cleanupAfterTransactionErrorCallback();
+
+    RefPtr<SQLStatement> m_currentStatement;
+    
+    bool m_executeSqlAllowed;
+    
+    Database* m_database;
+    RefPtr<SQLTransactionWrapper> m_wrapper;
+    RefPtr<SQLTransactionCallback> m_callback;
+    RefPtr<SQLTransactionErrorCallback> m_errorCallback;
+    RefPtr<SQLError> m_transactionError;
+    bool m_shouldCommitAfterErrorCallback;
+    
+    Mutex m_statementMutex;
+    Deque<RefPtr<SQLStatement> > m_statementQueue;
+
+    OwnPtr<SQLiteTransaction> m_sqliteTransaction;
 };
     
 } // namespace WebCore
 
 #endif // SQLTransaction_h
-

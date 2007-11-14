@@ -29,5 +29,6 @@
 module storage {
 
     interface SQLTransaction {
+        [Custom] void executeSql(in DOMString sqlStatement, in ObjectArray arguments, in SQLStatementCallback callback, in SQLStatementErrorCallback errorCallback);
     };
 }

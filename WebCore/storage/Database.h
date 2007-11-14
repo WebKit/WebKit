@@ -34,10 +34,10 @@
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "SQLiteDatabase.h"
+#include "SQLTransaction.h"
 #include "StringHash.h"
 #include "Threading.h"
 #include "Timer.h"
-#include "VersionChangeCallback.h"
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -48,28 +48,28 @@
 namespace WebCore {
 
 class DatabaseAuthorizer;
-class DatabaseCallback;
 class DatabaseThread;
 class Document;
-class SQLCallback;
 class SQLResultSet;
+class SQLTransactionCallback;
+class SQLTransactionErrorCallback;
 class SQLValue;
-
+    
 typedef int ExceptionCode;
 
 class Database : public ThreadSafeShared<Database> {
+    friend class SQLStatement;
+    friend class SQLTransaction;
 public:
     ~Database();
 
 // Direct support for the DOM API
-    static PassRefPtr<Database> openDatabase(Document* document, const String& name, const String& expectedVersion, ExceptionCode&);
-
+    static PassRefPtr<Database> openDatabase(Document* document, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, ExceptionCode&);
     String version() const;
-    void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<VersionChangeCallback> callback);
-
-    void executeSql(const String& sqlStatement, const Vector<SQLValue>& arguments, PassRefPtr<SQLCallback> callback, ExceptionCode&);
-    void closeTransaction();
-
+    void changeVersion(const String& oldVersion, const String& newVersion, 
+                       PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback);
+    void transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback);
+    
 // Internal engine support
     void databaseThreadGoingAway();
     static const String& databaseInfoTableName();
@@ -81,23 +81,34 @@ public:
 
     Document* document() const { return m_document; }
     
+    bool getVersionFromDatabase(String&);
+    bool setVersionInDatabase(const String&);
+    void setExpectedVersion(const String&);
+    bool versionMatchesExpected() const;
+    
 // Called from DatabaseThread, must be prepared to work on the background thread
     void resetAuthorizer();
     void performPolicyChecks();
 
     bool performOpenAndVerify(ExceptionCode&);
-    void performChangeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<VersionChangeCallback> callback);
-    void performExecuteSql(const String& sqlStatement, const Vector<SQLValue>& arguments, PassRefPtr<SQLCallback> callback);
-    void performCloseTransaction();
+
+    void performTransactionStep();
+
     Vector<String> performGetTableNames();
 
 private:
     Database(Document* document, const String& name, const String& expectedVersion);
 
     bool openAndVerifyVersion(ExceptionCode&);
-    bool getVersionFromDatabase(String&);
-    bool setVersionInDatabase(const String&);
 
+    void scheduleTransaction(PassRefPtr<SQLTransaction>);
+    void scheduleTransactionCallback(SQLTransaction*);
+    void scheduleTransactionStep();
+    
+    Mutex m_transactionMutex;
+    Deque<RefPtr<SQLTransaction> > m_transactionQueue;
+    RefPtr<SQLTransaction> m_currentTransaction;
+    
     static void scheduleFileSizeTimerOnMainThread(Database*);
     static void performScheduleFileSizeTimers();
     void scheduleFileSizeTimer();
@@ -105,12 +116,8 @@ private:
     OwnPtr<Timer<Database> > m_sizeTimer;
 
     static void deliverAllPendingCallbacks();
-    void deliverPendingCallbacks();
+    void deliverPendingCallback();
 
-    void scheduleDatabaseCallback(DatabaseCallback*);
-
-    // FIXME: Is it okay to reconcile hanging on to the raw pointer?  We definitely have to rely on
-    // Document telling DatabaseThread it's going away, and DatabaseThread telling Database its going away
     Document* m_document;
     SecurityOrigin m_securityOrigin;
     String m_name;
@@ -118,15 +125,13 @@ private:
     String m_expectedVersion;
     String m_filename;
 
-    SQLiteDatabase m_mainSQLDatabase;
-    SQLiteDatabase m_threadSQLDatabase;
+    SQLiteDatabase m_sqliteDatabase;
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
 
-    Mutex m_databaseThreadMutex;
     DatabaseThread* m_databaseThread;
 
     Mutex m_callbackMutex;
-    Vector<RefPtr<DatabaseCallback> > m_pendingCallbacks;
+    RefPtr<SQLTransaction> m_transactionPendingCallback;
 
 #ifndef NDEBUG
     String databaseDebugName() const { return m_securityOrigin.toString() + "::" + m_name; }

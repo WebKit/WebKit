@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "Threading.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -40,6 +41,7 @@ class Database;
 class DatabaseThread;
 class SQLValue;
 class SQLCallback;
+class SQLTransaction;
 class VersionChangeCallback;
 
 class DatabaseTask : public ThreadSafeShared<DatabaseTask>
@@ -61,9 +63,8 @@ private:
 
     bool m_complete;
 
-    Mutex m_synchronousMutex;
-    bool m_synchronous;
-    ThreadCondition m_synchronousCondition;
+    OwnPtr<Mutex> m_synchronousMutex;
+    OwnPtr<ThreadCondition> m_synchronousCondition;
 };
 
 class DatabaseOpenTask : public DatabaseTask
@@ -82,38 +83,10 @@ private:
     bool m_success;
 };
 
-class DatabaseChangeVersionTask : public DatabaseTask
+class DatabaseTransactionTask : public DatabaseTask
 {
 public:
-    DatabaseChangeVersionTask(const String& oldVersion, const String& newVersion, PassRefPtr<VersionChangeCallback>);
-
-protected:
-    virtual void doPerformTask(Database* db);
-
-private:
-    String m_oldVersion;
-    String m_newVersion;
-    RefPtr<VersionChangeCallback> m_callback;
-};
-
-class DatabaseExecuteSqlTask : public DatabaseTask
-{
-public:
-    DatabaseExecuteSqlTask(const String& query, const Vector<SQLValue>& arguments, PassRefPtr<SQLCallback> callback);
-
-protected:
-    virtual void doPerformTask(Database* db);
-
-private:
-    String m_query;
-    Vector<SQLValue> m_arguments;
-    RefPtr<SQLCallback> m_callback;
-};
-
-class DatabaseCloseTransactionTask: public DatabaseTask
-{
-public:
-    DatabaseCloseTransactionTask();
+    DatabaseTransactionTask();
 
 protected:
     virtual void doPerformTask(Database* db);

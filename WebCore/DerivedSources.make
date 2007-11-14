@@ -426,7 +426,6 @@ all : \
     JSRange.h \
     JSRangeException.h \
     JSRect.h \
-    JSSQLCallback.h \
     JSSQLError.h \
     JSSQLResultSet.h \
     JSSQLResultSetRowList.h \
@@ -569,7 +568,6 @@ all : \
     JSTimeRanges.h \
     JSTreeWalker.h \
     JSUIEvent.h \
-    JSVersionChangeCallback.h \
     JSVoidCallback.h \
     JSXPathEvaluator.h \
     JSXPathExpression.h \

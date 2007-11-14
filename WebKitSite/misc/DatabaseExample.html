@@ -54,7 +54,7 @@ body {
 <script>
 var db;
 try {
-    db = openDatabase("NoteTest", "1.0");
+    db = openDatabase("NoteTest", "1.0", "HTML5 Database API example", 200000);
 } catch(err) { }
 
 if (!db) {
@@ -172,8 +172,12 @@ Note.prototype = {
     {
         this.cancelPendingSave();
 
-        db.executeSql("DELETE FROM WebKitStickyNotes WHERE id = ?", [this.id], function(result) {});
-
+        var note = this;
+        db.transaction(function(tx)
+        {
+            tx.executeSql("DELETE FROM WebKitStickyNotes WHERE id = ?", [note.id]);
+        });
+        
         var duration = event.shiftKey ? 2 : .25;
         this.note.style.webkitTransition = '-webkit-transform ' + duration + 's ease-in, opacity ' + duration + 's ease-in';
         this.note.offsetTop; // Force style recalc
@@ -209,13 +213,22 @@ Note.prototype = {
             delete this.dirty;
         }
 
-        db.executeSql("UPDATE WebKitStickyNotes SET note = ?, timestamp = ?, left = ?, top = ?, zindex = ? WHERE id = ?", [this.text, this.timestamp, this.left, this.top, this.zIndex, this.id], function(result) {});
+        var note = this;
+        db.transaction(function (tx)
+        {
+            tx.executeSql("UPDATE WebKitStickyNotes SET note = ?, timestamp = ?, left = ?, top = ?, zindex = ? WHERE id = ?", [note.text, note.timestamp, note.left, note.top, note.zIndex, note.id]);
+        });
     },
 
     saveAsNew: function()
     {
         this.timestamp = new Date().getTime();
-        db.executeSql("INSERT INTO WebKitStickyNotes (id, note, timestamp, left, top, zindex) VALUES (?, ?, ?, ?, ?, ?)", [this.id, this.text, this.timestamp, this.left, this.top, this.zIndex], function(result) {});
+        
+        var note = this;
+        db.transaction(function (tx) 
+        {
+            tx.executeSql("INSERT INTO WebKitStickyNotes (id, note, timestamp, left, top, zindex) VALUES (?, ?, ?, ?, ?, ?)", [note.id, note.text, note.timestamp, note.left, note.top, note.zIndex]);
+        }); 
     },
 
     onMouseDown: function(e)
@@ -271,39 +284,43 @@ Note.prototype = {
 
 function loaded()
 {
-    try {
-        db.executeSql("SELECT COUNT(*) FROM WebKitStickyNotes", [], function(result) { loadNotes(); });
-    } catch(err) {
-        db.executeSql("CREATE TABLE WebKitStickyNotes (id REAL UNIQUE, note TEXT, timestamp REAL, left TEXT, top TEXT, zindex REAL)", [], function(result) { loadNotes(); });
-    }
+    db.transaction(function(tx) {
+        tx.executeSql("SELECT COUNT(*) FROM WebkitStickyNotes", [], function(result) {
+            loadNotes();
+        }, function(tx, error) {
+            tx.executeSql("CREATE TABLE WebKitStickyNotes (id REAL UNIQUE, note TEXT, timestamp REAL, left TEXT, top TEXT, zindex REAL)", [], function(result) { 
+                loadNotes(); 
+            });
+        });
+    });
 }
 
 function loadNotes()
 {
-    db.executeSql("SELECT id, note, timestamp, left, top, zindex FROM WebKitStickyNotes", [], function(result) {
-        if (result.errorCode) {
-            alert('Failed to retrieve notes from database');
+    db.transaction(function(tx) {
+        tx.executeSql("SELECT id, note, timestamp, left, top, zindex FROM WebKitStickyNotes", [], function(tx, result) {
+            for (var i = 0; i < result.rows.length; ++i) {
+                var row = result.rows.item(i);
+                var note = new Note();
+                note.id = row['id'];
+                note.text = row['note'];
+                note.timestamp = row['timestamp'];
+                note.left = row['left'];
+                note.top = row['top'];
+                note.zIndex = row['zindex'];
+
+                if (row['id'] > highestId)
+                    highestId = row['id'];
+                if (row['zindex'] > highestZ)
+                    highestZ = row['zindex'];
+            }
+
+            if (!result.rows.length)
+                newNote();
+        }, function(tx, error) {
+            alert('Failed to retrieve notes from database - ' + error.message);
             return;
-        }
-
-        for (var i = 0; i < result.rows.length; ++i) {
-            var row = result.rows.item(i);
-            var note = new Note();
-            note.id = row['id'];
-            note.text = row['note'];
-            note.timestamp = row['timestamp'];
-            note.left = row['left'];
-            note.top = row['top'];
-            note.zIndex = row['zindex'];
-
-            if (row['id'] > highestId)
-                highestId = row['id'];
-            if (row['zindex'] > highestZ)
-                highestZ = row['zindex'];
-        }
-
-        if (!result.rows.length)
-            newNote();
+        });
     });
 }
 

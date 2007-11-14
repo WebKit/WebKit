@@ -1253,14 +1253,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLCallback.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLCallback.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLError.cpp"
 				>
 			</File>
@@ -1282,6 +1274,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSQLResultSetRowList.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSSQLTransaction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSSQLTransaction.h"
 				>
 			</File>
 			<File
@@ -7504,19 +7504,35 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSCustomSQLCallback.cpp"
+					RelativePath="..\bindings\js\JSCustomSQLStatementCallback.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSCustomSQLCallback.h"
+					RelativePath="..\bindings\js\JSCustomSQLStatementCallback.h"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSCustomVersionChangeCallback.cpp"
+					RelativePath="..\bindings\js\JSCustomSQLStatementErrorCallback.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSCustomVersionChangeCallback.h"
+					RelativePath="..\bindings\js\JSCustomSQLStatementErrorCallback.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomSQLTransactionCallback.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomSQLTransactionCallback.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomSQLTransactionErrorCallback.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomSQLTransactionErrorCallback.h"
 					>
 				</File>
 				<File
@@ -7681,6 +7697,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSSQLResultSetRowListCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSSQLTransactionCustom.cpp"
 					>
 				</File>
 				<File
@@ -9229,6 +9249,14 @@
 			Name="storage"
 			>
 			<File
+				RelativePath="..\storage\ChangeVersionWrapper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\ChangeVersionWrapper.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\Database.cpp"
 				>
 			</File>
@@ -9242,14 +9270,6 @@
 			</File>
 			<File
 				RelativePath="..\storage\DatabaseAuthorizer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DatabaseCallback.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DatabaseCallback.h"
 				>
 			</File>
 			<File
@@ -9298,6 +9318,38 @@
 			</File>
 			<File
 				RelativePath="..\storage\SQLResultSetRowList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLStatement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLStatement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLStatementCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLStatementErrorCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLTransaction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLTransaction.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLTransactionCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLTransactionErrorCallback.h"
 				>
 			</File>
 			<File

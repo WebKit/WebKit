@@ -25,86 +25,80 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #include "config.h"
-#include "JSDatabase.h"
+#include "JSSQLTransaction.h"
 
-#include "Database.h"
-#include "Document.h"
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
+#include "JSCustomSQLStatementCallback.h"
+#include "JSCustomSQLStatementErrorCallback.h"
 #include "kjs_window.h"
-#include "JSCustomSQLTransactionCallback.h"
-#include "JSCustomSQLTransactionErrorCallback.h"
 #include "PlatformString.h"
+#include "SQLTransaction.h"
 #include "SQLValue.h"
 #include <kjs/array_instance.h>
 
-namespace WebCore {
-
 using namespace KJS;
 
-JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
-{
-    String oldVersion = args[0]->toString(exec);
-    String newVersion = args[1]->toString(exec);
-
-    Frame* frame = Window::retrieveActive(exec)->impl()->frame();
-    if (!frame)
-        return jsUndefined();
+namespace WebCore {
     
-    JSObject *object;
-    if (!(object = args[2]->getObject())) {
+JSValue* JSSQLTransaction::executeSql(ExecState* exec, const List& args)
+{
+    String sqlStatement = args[0]->toString(exec);
+    
+    // Now assemble the list of SQL arguments
+    Vector<SQLValue> sqlValues;
+    
+    if (!args[1]->isObject() ||
+        !static_cast<JSObject*>(args[1])->inherits(&ArrayInstance::info)) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
     }
     
-    RefPtr<SQLTransactionCallback> callback(new JSCustomSQLTransactionCallback(object, frame));
-    RefPtr<SQLTransactionErrorCallback> errorCallback;
+    ArrayInstance* array = static_cast<ArrayInstance*>(args[1]);
+    
+    for (unsigned i = 0 ; i < array->getLength(); i++) {
+        JSValue* value = array->getItem(i);
         
-    if (!args[3]->isNull()) {
-        if (!(object = args[3]->getObject())) {
+        if (value->isNull()) {
+            sqlValues.append(SQLValue());
+        } else if (value->isNumber()) {
+            sqlValues.append(value->getNumber());
+        } else {
+            // Convert the argument to a string and append it
+            sqlValues.append(value->toString(exec));
+        }
+    }
+
+    RefPtr<SQLStatementCallback> callback;
+    if (args.size() > 2) {
+        JSObject* object;
+        if (!args[2]->isNull() && !(object = args[2]->getObject())) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
         
-        errorCallback = new JSCustomSQLTransactionErrorCallback(object, frame);
+        if (Frame* frame = Window::retrieveActive(exec)->impl()->frame())
+            callback = new JSCustomSQLStatementCallback(object, frame);
     }
     
-    m_impl->changeVersion(oldVersion, newVersion, callback.release(), errorCallback.release());
-    
-    return jsUndefined();
-}
-
-JSValue* JSDatabase::transaction(ExecState* exec, const List& args)
-{
-    JSObject* object;
-    
-    if (!(object = args[0]->getObject())) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return jsUndefined();
-    }        
- 
-    Frame* frame = Window::retrieveActive(exec)->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-    
-    RefPtr<SQLTransactionCallback> callback(new JSCustomSQLTransactionCallback(object, frame));
-    RefPtr<SQLTransactionErrorCallback> errorCallback;
-    
-    if (args.size() > 1 && !args[1]->isNull()) {
-        if (!(object = args[1]->getObject())) {
+    RefPtr<SQLStatementErrorCallback> errorCallback;
+    if (args.size() > 3) {
+        JSObject* object;
+        if (!args[3]->isNull() && !(object = args[3]->getObject())) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
-
-        errorCallback = new JSCustomSQLTransactionErrorCallback(object, frame);
+        
+        if (Frame* frame = Window::retrieveActive(exec)->impl()->frame())
+            errorCallback = new JSCustomSQLStatementErrorCallback(object, frame);
     }
-
     
-    m_impl->transaction(callback.release(), errorCallback.release());
-
+    ExceptionCode ec = 0;
+    m_impl->executeSQL(sqlStatement, sqlValues, callback.release(), errorCallback.release(), ec);
+    setDOMException(exec, ec);
+    
     return jsUndefined();
 }
-    
+
 }

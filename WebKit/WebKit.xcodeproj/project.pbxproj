@@ -278,7 +278,7 @@
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
-		ED3B48DF0CC51F7E00DFF1EB /* StringsNotToBeLocalized.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED3B48DE0CC51F7E00DFF1EB /* StringsNotToBeLocalized.txt */; };
+		ED3B48DF0CC51F7E00DFF1EB /* ../StringsNotToBeLocalized.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED3B48DE0CC51F7E00DFF1EB /* ../StringsNotToBeLocalized.txt */; };
 		ED6BE2E7088C32B50044DEDC /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */; };
 		ED6BE2E8088C32B50044DEDC /* WebNSAttributedStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.mm */; };
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -522,7 +522,7 @@
 		ED21B9810528F7AA003299AC /* WebDocumentInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED2B2474033A2DA800C1A526 /* WebNSPasteboardExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPasteboardExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED2B2475033A2DA800C1A526 /* WebNSPasteboardExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSPasteboardExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		ED3B48DE0CC51F7E00DFF1EB /* StringsNotToBeLocalized.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ../StringsNotToBeLocalized.txt; sourceTree = "<group>"; };
+		ED3B48DE0CC51F7E00DFF1EB /* ../StringsNotToBeLocalized.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ../StringsNotToBeLocalized.txt; sourceTree = "<group>"; };
 		ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSAttributedStringExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSAttributedStringExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDataExtrasPrivate.h; sourceTree = "<group>"; };
@@ -666,7 +666,7 @@
 			isa = PBXGroup;
 			children = (
 				939811320824BF01008DF038 /* Info.plist */,
-				ED3B48DE0CC51F7E00DFF1EB /* StringsNotToBeLocalized.txt */,
+				ED3B48DE0CC51F7E00DFF1EB /* ../StringsNotToBeLocalized.txt */,
 				35F3577E0198AAB80ACA1520 /* Localizable.strings */,
 				F5883BDE025E5C6A01000102 /* nullplugin.tiff */,
 				F5B67130023EDF8901C1A525 /* url_icon.tiff */,
@@ -1346,7 +1346,7 @@
 			files = (
 				939810BA0824BF01008DF038 /* IDNScriptWhiteList.txt in Resources */,
 				939810B30824BF01008DF038 /* Localizable.strings in Resources */,
-				ED3B48DF0CC51F7E00DFF1EB /* StringsNotToBeLocalized.txt in Resources */,
+				ED3B48DF0CC51F7E00DFF1EB /* ../StringsNotToBeLocalized.txt in Resources */,
 				939810B50824BF01008DF038 /* WebAuthenticationPanel.nib in Resources */,
 				939810B40824BF01008DF038 /* WebJavaScriptTextInputPanel.nib in Resources */,
 				939810B90824BF01008DF038 /* WebViewEditingContextMenu.nib in Resources */,

@@ -41,8 +41,6 @@ SQLResultSet::SQLResultSet()
     , m_insertId(0)
     , m_insertIdSet(false)
     , m_rowsAffected(0)
-    , m_errorCode(0)
-    , m_error("")
 {
 }
 
@@ -62,21 +60,8 @@ int SQLResultSet::rowsAffected() const
     return m_rowsAffected;
 }
 
-unsigned SQLResultSet::errorCode() const
-{
-    return m_errorCode;
-}
-
-String SQLResultSet::error() const
-{
-    return m_error;
-}
-
 SQLResultSetRowList* SQLResultSet::rows() const
 {
-    if (m_errorCode != 0)
-        return 0;
-
     return m_rows.get();
 }
 
@@ -91,23 +76,6 @@ void SQLResultSet::setInsertId(int64_t id)
 void SQLResultSet::setRowsAffected(int count)
 {
     m_rowsAffected = count;
-}
-
-void SQLResultSet::setErrorCode(unsigned code)
-{
-    ASSERT(code <= MaxErrorCode);
-    m_errorCode = code;
-}
-
-void SQLResultSet::setErrorMessage(const String& message)
-{
-    // 4.11.4 - The error DOM attribute must return an error message...describing the error encountered by the last statement.
-    // If there was no error, the attribute's value must be the empty string (not the null string)
-
-    if (message.isNull())
-        m_error = "";
-    else
-        m_error = message.copy();
 }
 
 }

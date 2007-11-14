@@ -25,47 +25,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef SQLStatment_h
+#define SQLStatment_h
 
-#ifndef DatabaseCallback_h
-#define DatabaseCallback_h
-
+#include "PlatformString.h"
 #include "Threading.h"
+
+#include "SQLError.h"
+#include "SQLResultSet.h"
+#include "SQLStatementCallback.h"
+#include "SQLStatementErrorCallback.h"
+#include "SQLValue.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class SQLCallback;
-class SQLResultSet;
-class VersionChangeCallback;
+class Database;
+class SQLTransaction;
+class String;
 
-class DatabaseCallback : public ThreadSafeShared<DatabaseCallback> {
+class SQLStatement : public ThreadSafeShared<SQLStatement> {
 public:
-    virtual ~DatabaseCallback() { }
-    virtual void performCallback() = 0;
-};
+    SQLStatement(const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback);
+    
+    bool execute(Database*);
+    bool hasStatementCallback() const { return m_statementCallback; }
+    bool hasStatementErrorCallback() const { return m_statementErrorCallback; }
+    void setVersionMismatchedError();
 
-class DatabaseChangeVersionCallback : public DatabaseCallback {
-public:
-    DatabaseChangeVersionCallback(PassRefPtr<VersionChangeCallback>, bool versionChanged);
-    virtual ~DatabaseChangeVersionCallback() { }
-    virtual void performCallback();
-
+    bool performCallback(SQLTransaction*);
+    
+    SQLError* sqlError() const { return m_error.get(); }
 private:
-    RefPtr<VersionChangeCallback> m_callback;
-    bool m_versionChanged;
-};
-
-class DatabaseExecuteSqlCallback : public DatabaseCallback {
-public:
-    DatabaseExecuteSqlCallback(PassRefPtr<SQLCallback>, PassRefPtr<SQLResultSet>);
-    virtual ~DatabaseExecuteSqlCallback() { }
-    virtual void performCallback();
-private:
-    RefPtr<SQLCallback> m_callback;
+    String m_statement;
+    Vector<SQLValue> m_arguments;
+    RefPtr<SQLStatementCallback> m_statementCallback;
+    RefPtr<SQLStatementErrorCallback> m_statementErrorCallback;
+    
+    RefPtr<SQLError> m_error;
     RefPtr<SQLResultSet> m_resultSet;
 };
 
 } // namespace WebCore
 
-#endif // DatabaseCallback_h
+#endif // SQLStatment_h

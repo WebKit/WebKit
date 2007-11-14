@@ -1,3 +1,133 @@
+2007-11-13  Brady Eidson  <beidson@apple.com>
+
+        JS bindings by Anders, reviewed by Brady
+        WebCore changes by Brady, reviewed by Anders and Tim
+
+        Adapt to the new iteration of the HTML5 client-side storage spec.
+
+        Based largely on implementation feedback we generated in landing our first version of this API and also
+        on the input of others in the community, the database spec went through a large overhaul that addresses
+        many concerns.  Amongst other changes/improvements:
+        - SQLTransaction object is added and all transactions are explicit.  In addition, since the API manages
+          transactions explicitly, transaction-related language in SQL statements is disallowed
+        - executeSql() is now on a transaction object instead of the database object.
+        - Database.changeVersion() now takes place within the context of a transaction.  Therefore the version 
+          change can be atomic along with the statements that modify the DB schema
+
+        Most of the logic now takes place during the "transaction steps," which the specification clearly lays out
+        as a chain of events on the SQLTransaction object where processing is handed off between being processed 
+        asynchronously and calling back up to javascript.  To accomplish this voodoo, SQLTransaction has a series of 
+        methods that roughly match up with the "transaction steps" and it keeps a pointer to the next step.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion): Adapt to the new API
+        (WebCore::JSDatabase::transaction): Added
+
+        * bindings/js/JSSQLTransactionCustom.cpp: Added.
+        (WebCore::JSSQLTransaction::executeSql): Added
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::openDatabase): Add the new arguments
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
+        * page/inspector/DatabasePanel.js: Use the new API
+
+        * storage/ChangeVersionWrapper.cpp: Added.  Implementation of "SQLTransactionWrapper" that enforces
+          changing the version of the database
+        (WebCore::ChangeVersionWrapper::ChangeVersionWrapper):
+        (WebCore::ChangeVersionWrapper::performPreflight):
+        (WebCore::ChangeVersionWrapper::performPostflight):
+        * storage/ChangeVersionWrapper.h: Added.
+        (WebCore::ChangeVersionWrapper::sqlError):
+
+        * storage/Database.cpp: Removed the "main thread" and "background thread" sqlite handles as all sqlite operations can now
+          happen solely on the background thread - most of these changes result from that change
+        (WebCore::Database::Database): Removed an obsolete FIXME
+        (WebCore::Database::openAndVerifyVersion): 
+        (WebCore::Database::getVersionFromDatabase):
+        (WebCore::Database::setVersionInDatabase):
+        (WebCore::Database::versionMatchesExpected): Atomically guarantee that the current version and expected version are the same
+        (WebCore::Database::performOpenAndVerify):
+        (WebCore::Database::performTransactionStep): Added, as a hook for the DatabaseTransactionTask on the DatabaseThread
+        (WebCore::Database::changeVersion): Changed for the new API from JS
+        (WebCore::Database::transaction): Added, for the new API from JS
+        (WebCore::Database::scheduleTransaction): Add a transaction to this Database's transaction queue
+        (WebCore::Database::scheduleTransactionStep): Schedule the current transaction to be called on the background thread
+        (WebCore::Database::scheduleTransactionCallback): Schedule the current transaction to perform a callback on the main thread
+        (WebCore::Database::performGetTableNames):
+        (WebCore::Database::deliverAllPendingCallbacks):
+        (WebCore::Database::deliverPendingCallback):
+        (WebCore::Database::setExpectedVersion):
+        * storage/Database.h: 
+        * storage/Database.idl:
+
+        * storage/DatabaseTask.cpp:  Changed DatabaseTask to create a mutex on demand, and use the existence of that mutex
+          to replace the m_synchronous flag
+        (WebCore::DatabaseTask::performTask):
+        (WebCore::DatabaseTask::lockForSynchronousScheduling):
+        (WebCore::DatabaseTask::waitForSynchronousCompletion):
+        (WebCore::DatabaseTransactionTask::DatabaseTransactionTask):
+        * storage/DatabaseTask.h:
+
+        * storage/SQLError.h: New API object
+
+        * storage/SQLResultSet.cpp:
+        (WebCore::SQLResultSet::SQLResultSet): Small changes to the API object
+        * storage/SQLResultSet.h:
+        * storage/SQLResultSet.idl:
+
+        * storage/SQLStatement.cpp: Added.
+        (WebCore::SQLStatement::SQLStatement):
+        (WebCore::SQLStatement::execute): Actually execute the sql statement on the SQLiteDatabase if it's still valid
+        (WebCore::SQLStatement::setVersionMismatchedError): Flag this statement as bad before it even starts in case
+          of an actual version vs. expected version mismatch
+        (WebCore::SQLStatement::performCallback): Call the right callback (SQLStatement or SQLStatementError) for this statement
+        * storage/SQLStatement.h: Added.
+        (WebCore::SQLStatement::hasStatementCallback):
+        (WebCore::SQLStatement::hasStatementErrorCallback):
+        (WebCore::SQLStatement::sqlError): Get the error for this statement, if any
+
+        * storage/SQLTransaction.cpp: Added.
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::executeSQL): Entry point for the API from JS
+        (WebCore::SQLTransaction::enqueueStatement): Add a new statement onto the queue
+        (WebCore::SQLTransaction::performNextStep): Call the method for the next step
+        (WebCore::SQLTransaction::performPendingCallback): Call the method for the pending callback
+        (WebCore::SQLTransaction::openTransactionAndPreflight): Open a transaction to the database and preflight 
+          using the SQLTransactionWrapper, if any
+        (WebCore::SQLTransaction::deliverTransactionCallback): Deliver the transaction callback to the javascript thread
+        (WebCore::SQLTransaction::scheduleToRunStatements): Convinience to schedule this transaction on the database thread 
+          and make runStatements() the next step
+        (WebCore::SQLTransaction::runStatements): Start running the sql statements queued up for this transaction 
+        (WebCore::SQLTransaction::getNextStatement): Bring the next statement off the queue
+        (WebCore::SQLTransaction::runCurrentStatement): Execute the current statement
+        (WebCore::SQLTransaction::deliverStatementCallback): Deliver the SQLStatementCallback for this statement
+        (WebCore::SQLTransaction::postflightAndCommit): Postflight the transaction using SQLTransactionWrapper and commit it
+        (WebCore::SQLTransaction::handleTransactionError): Make the right call for any error that occurred on the Transaction
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback): Deliver the SQLTransactionErrorCallback
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback): Either do a final commit or rollback to cleanup the
+          transaction after it error'ed out
+        * storage/SQLTransaction.h:
+        (WebCore::SQLTransactionWrapper::~SQLTransactionWrapper): 
+        (WebCore::SQLTransaction::database):
+        * storage/SQLTransaction.idl:
+
+        The following were made obsolete by the new version of the API:
+        * bindings/js/JSCustomSQLCallback.cpp: Removed.
+        * bindings/js/JSCustomSQLCallback.h: Removed.
+        * bindings/js/JSCustomVersionChangeCallback.cpp: Removed.
+        * bindings/js/JSCustomVersionChangeCallback.h: Removed.
+        * storage/DatabaseCallback.cpp: Removed.
+        * storage/DatabaseCallback.h: Removed.
+        * storage/SQLCallback.h: Removed.
+        * storage/SQLCallback.idl: Removed.
+        * storage/VersionChangeCallback.h: Removed.
+        * storage/VersionChangeCallback.idl: Removed.
+
 2007-11-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

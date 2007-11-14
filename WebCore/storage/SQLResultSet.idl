@@ -34,7 +34,5 @@ module storage {
         readonly attribute int insertId
             getter raises(DOMException);
         readonly attribute int rowsAffected;
-        readonly attribute unsigned int errorCode;
-        readonly attribute DOMString error;
     };
 }

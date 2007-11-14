@@ -183,14 +183,12 @@ return {
             return;
         }
 
-        try {
-            var panel = this;
-            var query = "SELECT * FROM " + this.currentTable;
-            this.resource.database.executeSql(query, [], function(result) { panel.browseQueryFinished(result) });
-        } catch(e) {
-            // FIXME: handle this error a better way.
-            this.views.browse.contentElement.removeChildren();
-        }
+        var panel = this;
+        var query = "SELECT * FROM " + this.currentTable;
+        this.resource.database.transaction(function(tx)
+        {
+            tx.executeSql(query, [], function(tx, result) { panel.browseQueryFinished(result) }, function(tx,err){ alert(err.message); });
+        });
     },
 
     browseQueryFinished: function(result)
@@ -293,27 +291,26 @@ return {
         if (!query.length)
             return;
 
-        try {
-            var panel = this;
-            this.resource.database.executeSql(query, [], function(result) { panel.queryFinished(query, result) });
+        var panel = this;
+        this.resource.database.transaction(function(tx) 
+        {
+            tx.executeSql(query, [], function(tx, result) { panel.queryFinished(query, result) }, function(tx,err){ alert(err.message); });
+        });
 
-            this.queryPromptHistory.push(query);
-            this.queryPromptHistoryOffset = 0;
+        this.queryPromptHistory.push(query);
+        this.queryPromptHistoryOffset = 0;
 
-            this.queryPromptElement.value = "";
+        this.queryPromptElement.value = "";
 
-            if (query.match(/^select /i)) {
-                if (this.currentView !== this.views.query)
-                    this.currentView = this.views.query;
-            } else {
-                if (query.match(/^create /i) || query.match(/^drop table /i))
-                    this.updateTableList();
+        if (query.match(/^select /i)) {
+            if (this.currentView !== this.views.query)
+                this.currentView = this.views.query;
+        } else {
+            if (query.match(/^create /i) || query.match(/^drop table /i))
+                this.updateTableList();
 
-                // FIXME: we should only call updateTableBrowser() is we know the current table was modified
-                this.updateTableBrowser();
-            }
-        } catch(e) {
-            // FIXME: handle this error some way.
+            // FIXME: we should only call updateTableBrowser() is we know the current table was modified
+            this.updateTableBrowser();
         }
     },
 
@@ -356,7 +353,7 @@ return {
 
     _tableForResult: function(result)
     {
-        if (result.errorCode || !result.rows.length)
+        if (!result.rows.length)
             return null;
 
         var rows = result.rows;

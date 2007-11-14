@@ -17,7 +17,7 @@ INCLUDEPATH += tmp $$OUTPUT_DIR/WebCore/tmp
 
 DESTDIR = $$OUTPUT_DIR/lib
 DEPENDPATH += css dom loader editing history html \
-	loader page platform platform/graphics rendering xml
+    loader page platform platform/graphics rendering xml
 
 include($$OUTPUT_DIR/config.pri)
 
@@ -85,7 +85,7 @@ INCLUDEPATH += \
                 $$PWD/../WebKit/qt/Api
 
 DEPENDPATH += editing/qt history/qt loader/qt page/qt \
-	platform/graphics/qt ../WebKit/qt/Api ../WebKit/qt/WebCoreSupport
+    platform/graphics/qt ../WebKit/qt/Api ../WebKit/qt/WebCoreSupport
 
     DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
 }
@@ -993,24 +993,34 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         platform/sql/SQLiteStatement.cpp \
         platform/sql/SQLiteTransaction.cpp \
         platform/sql/SQLValue.cpp \
+        storage/ChangeVersionWrapper.cpp \
         storage/DatabaseAuthorizer.cpp \
-        storage/DatabaseCallback.cpp \
         storage/Database.cpp \
         storage/DatabaseTask.cpp \
         storage/DatabaseThread.cpp \
         storage/DatabaseTracker.cpp \
         storage/SQLResultSet.cpp \
         storage/SQLResultSetRowList.cpp \
-        bindings/js/JSCustomSQLCallback.cpp \
+        storage/SQLStatement.cpp \
+        storage/SQLTransaction.cpp \
+        bindings/js/JSCustomSQLStatementCallback.cpp \
+        bindings/js/JSCustomSQLStatementErrorCallback.cpp \
+        bindings/js/JSCustomSQLTransactionCallback.cpp \
+        bindings/js/JSCustomSQLTransactionErrorCallback.cpp \
         bindings/js/JSDatabaseCustom.cpp \
-        bindings/js/JSSQLResultSetRowListCustom.cpp
+        bindings/js/JSSQLResultSetRowListCustom.cpp \
+        bindings/js/JSSQLTransactionCustom.cpp
 
     IDL_BINDINGS += \
         storage/Database.idl \
+        storage/SQLError.idl \
+        storage/SQLResultSet.idl \
         storage/SQLResultSetRowList.idl \
-        storage/VersionChangeCallback.idl \
-        storage/SQLCallback.idl \
-        storage/SQLResultSet.idl
+        storage/SQLStatementCallback.idl \
+        storage/SQLStatementErrorCallback.idl \
+        storage/SQLTransaction.idl \
+        storage/SQLTransactionCallback.idl \
+        storage/SQLTransactionErrorCallback.idl
 
 }
 
@@ -1061,11 +1071,11 @@ contains(DEFINES, ENABLE_SVG=1) {
 
     DEPENDPATH += ksvg2/css ksvg2/events ksvg2/misc ksvg2/svg platform/graphics/svg
     qt-port {
-	DEPENDPATH += platform/graphics/svg/qt
+    DEPENDPATH += platform/graphics/svg/qt
     }
 
     gtk-port {
-	DEPENDPATH += platform/graphics/svg/cairo
+    DEPENDPATH += platform/graphics/svg/cairo
     }
 
     SVG_NAMES = $$PWD/ksvg2/svg/svgtags.in

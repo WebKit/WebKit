@@ -49,22 +49,15 @@ public:
     int64_t insertId(ExceptionCode&) const;
     int rowsAffected() const;
 
-    unsigned errorCode() const;
-    String error() const;
-
 // For internal (non-JS) use
     void setInsertId(int64_t);
     void setRowsAffected(int);
-    void setErrorCode(unsigned);
-    void setErrorMessage(const String&);
 
 private:
     RefPtr<SQLResultSetRowList> m_rows;
     int64_t m_insertId;
     bool m_insertIdSet;
     int m_rowsAffected;
-    unsigned m_errorCode;
-    String m_error;
 };
 
 } // namespace WebCore

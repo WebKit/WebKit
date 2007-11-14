@@ -25,22 +25,53 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "config.h"
+#include "ChangeVersionWrapper.h"
 
-#ifndef VersionChangeCallback_h
-#define VersionChangeCallback_h
-
-#include "Threading.h"
+#include "Database.h"
 
 namespace WebCore {
 
-    class SQLResultSet;
+ChangeVersionWrapper::ChangeVersionWrapper(const String& oldVersion, const String& newVersion)
+    : m_oldVersion(oldVersion.copy())
+    , m_newVersion(newVersion.copy())
+{
+}
 
-    class VersionChangeCallback : public ThreadSafeShared<VersionChangeCallback> {
-    public:
-        virtual ~VersionChangeCallback() { }
-        virtual void handleEvent(bool) = 0;
-    };
+bool ChangeVersionWrapper::performPreflight(SQLTransaction* transaction)
+{
+    ASSERT(transaction && transaction->database());
+    
+    String actualVersion;
+    
+    if (!transaction->database()->getVersionFromDatabase(actualVersion)) {
+        LOG_ERROR("Unable to retrieve actual current version from database");
+        m_sqlError = new SQLError(0, "unable to verify current version of database");
+        return false;
+    }
+    
+    if (actualVersion != m_oldVersion) {
+        LOG_ERROR("Old version doesn't match actual version");
+        m_sqlError = new SQLError(2, "current version of the database and `oldVersion` argument do not match");
+        return false;
+    }
+    
+    return true;
+}
 
+bool ChangeVersionWrapper::performPostflight(SQLTransaction* transaction)
+{
+    ASSERT(transaction && transaction->database());
+
+    if (!transaction->database()->setVersionInDatabase(m_newVersion)) {
+        LOG_ERROR("Unable to set new version in database");
+        m_sqlError = new SQLError(0, "unable to set new version in database");
+        return false;
+    }
+
+    transaction->database()->setExpectedVersion(m_newVersion);
+    
+    return true;
+}
+    
 } // namespace WebCore
-
-#endif // VersionChangeCallback_h

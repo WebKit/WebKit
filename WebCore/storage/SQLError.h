@@ -36,9 +36,9 @@ namespace WebCore {
 
 class SQLError : public ThreadSafeShared<SQLError> {
 public:
-    SQLError(unsigned code, const String& message) : m_code(code), m_message(message) { }
+    SQLError(unsigned code, const String& message) : m_code(code), m_message(message.copy()) { }
     unsigned code() const { return m_code; }
-    const String& message() const { return m_message; }
+    String message() const { return m_message.copy(); }
     
 private:
     unsigned m_code;

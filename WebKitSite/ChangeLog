@@ -1,3 +1,11 @@
+2007-11-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        Update the DatabaseExample to use the new API
+
+        * misc/DatabaseExample.html:
+
 2007-11-12  Mark Rowe  <mrowe@apple.com>
 
         * building/tools.html: Remove extra >.
@@ -17,8 +25,6 @@
 
         - removed a workaround for the bug fixed in the WebCore part of this
           patch
-
-        * misc/DatabaseExample.html:
 
 2007-11-04  Timothy Hatcher  <timothy@apple.com>
 
