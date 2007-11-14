@@ -327,7 +327,6 @@ SOURCES += \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
     bindings/js/JSCSSValueCustom.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
-    bindings/js/JSCustomVersionChangeCallback.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDOMExceptionConstructor.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
