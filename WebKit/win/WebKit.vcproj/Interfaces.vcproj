@@ -19,7 +19,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(WebKitOutputDir)\include\WebKit"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\WebKit\$(ConfigurationName)\$(ProjectName)"
-			ConfigurationType="1"
+			ConfigurationType="10"
 			InheritedPropertySheets=".\debug.vsprops"
 			CharacterSet="1"
 			>
@@ -29,12 +29,6 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
 			/>
 			<Tool
 				Name="VCMIDLTool"
@@ -48,64 +42,15 @@
 				HeaderFileName="$(OutDir)\$(InputName).h"
 			/>
 			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(WebKitOutputDir)\include\WebKit"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\WebKit\$(ConfigurationName)\$(ProjectName)"
-			ConfigurationType="1"
+			ConfigurationType="10"
 			InheritedPropertySheets=".\release.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -118,12 +63,6 @@
 				Name="VCCustomBuildTool"
 			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="__BUILDBOT__=0$(BuildBot)"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces"
@@ -135,56 +74,8 @@
 				HeaderFileName="$(OutDir)\$(InputName).h"
 			/>
 			<Tool
-				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

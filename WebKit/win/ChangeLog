@@ -10,6 +10,17 @@
 
 2007-11-14  Adam Roben  <aroben@apple.com>
 
+        Change Interfaces to use a Utility configuration
+
+        It had previously been marked as an "Application (.exe)", which is
+        wrong but worked with most versions of Visual Studio.
+
+        Rubberstamped by Steve.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+
+2007-11-14  Adam Roben  <aroben@apple.com>
+
         Another build fix for systems without Cygwin in their PATH
 
         * WebKit.vcproj/Interfaces.vcproj: Add Cygwin to the PATH in the
