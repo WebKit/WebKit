@@ -30,7 +30,7 @@
 
 #include "ChromeClient.h"
 #include "FloatRect.h"
-#include "Shared.h"
+#include "RefCounted.h"
 
 class QWebPage;
 

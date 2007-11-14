@@ -1,3 +1,13 @@
+2007-11-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: changed Shared to RefCounted.
+
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        * WebCoreSupport/ContextMenuClientQt.h:
+        * WebCoreSupport/EditorClientQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-11-10  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Nikolas.

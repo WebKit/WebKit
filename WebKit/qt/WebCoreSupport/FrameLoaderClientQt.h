@@ -35,7 +35,7 @@
 #include "KURL.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "Shared.h"
+#include "RefCounted.h"
 #include "ResourceResponse.h"
 class QWebFrame;
 

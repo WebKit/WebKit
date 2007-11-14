@@ -29,7 +29,7 @@
 #include "ContextMenu.h"
 #include "HitTestResult.h"
 #include "KURL.h"
-#include "Shared.h"
+#include "RefCounted.h"
 #include "NotImplemented.h"
 
 #include <stdio.h>

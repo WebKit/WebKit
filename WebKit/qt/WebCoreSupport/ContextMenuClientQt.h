@@ -28,7 +28,7 @@
 
 #include "ContextMenuClient.h"
 
-#include <Shared.h>
+#include <RefCounted.h>
 
 namespace WebCore {
     class ContextMenu;

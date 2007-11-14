@@ -31,7 +31,7 @@
 #define EditorClientQt_H
 
 #include "EditorClient.h"
-#include "Shared.h"
+#include "RefCounted.h"
 
 #include <wtf/Forward.h>
 
