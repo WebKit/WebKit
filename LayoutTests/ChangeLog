@@ -1,3 +1,15 @@
+2007-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+        
+        Make this a text-only test.
+        
+        * fast/dom/Window/window-onFocus-expected.txt: Added.
+        * fast/dom/Window/window-onFocus.html:
+        * platform/mac/fast/dom/Window/window-onFocus-expected.checksum: Removed.
+        * platform/mac/fast/dom/Window/window-onFocus-expected.png: Removed.
+        * platform/mac/fast/dom/Window/window-onFocus-expected.txt: Removed.
+
 2007-11-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

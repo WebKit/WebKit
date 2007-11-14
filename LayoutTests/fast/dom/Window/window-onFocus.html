@@ -6,6 +6,7 @@ function runTest() {
     window.onblur = windowBlurred;
     
     if (window.layoutTestController) {
+        window.layoutTestController.dumpAsText();
         window.layoutTestController.setMainFrameIsFirstResponder(false);
         
         window.layoutTestController.setWindowIsKey(false);
