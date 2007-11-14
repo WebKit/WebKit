@@ -71,9 +71,9 @@ JSValue* JSSQLTransaction::executeSql(ExecState* exec, const List& args)
     }
 
     RefPtr<SQLStatementCallback> callback;
-    if (args.size() > 2) {
-        JSObject* object = 0;
-        if (!args[2]->isNull() && !(object = args[2]->getObject())) {
+    if (args.size() > 2 && !args[2]->isNull()) {
+        JSObject* object = args[2]->getObject();
+        if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
@@ -83,9 +83,9 @@ JSValue* JSSQLTransaction::executeSql(ExecState* exec, const List& args)
     }
     
     RefPtr<SQLStatementErrorCallback> errorCallback;
-    if (args.size() > 3) {
-        JSObject* object = 0;
-        if (!args[3]->isNull() && !(object = args[3]->getObject())) {
+    if (args.size() > 3 && !args[3]->isNull()) {
+        JSObject* object = args[3]->getObject();
+        if (!object) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }

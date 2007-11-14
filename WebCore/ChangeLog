@@ -1,3 +1,16 @@
+2007-11-13  Adam Roben  <aroben@apple.com>
+
+        Fix a bug and improve upon Brady's fix
+
+        Reviewed by Anders.
+
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql): Made the code a little
+        clearer and more correct.
+        * loader/icon/IconDatabase.cpp: Put parentheses around the expansion
+        of IS_ICON_SYNC_THREAD() so that ASSERT_NOT_SYNC_THREAD() does the
+        comparison it meant to.
+
 2007-11-13  Sam Weinig  <sam@webkit.org>
 
         Fix Qt and Gtk builds.
