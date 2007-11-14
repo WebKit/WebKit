@@ -1,5 +1,11 @@
 2007-11-13  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        * kjs/regexp.h:
+
+2007-11-13  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Renamed Shared to RefCounted.
