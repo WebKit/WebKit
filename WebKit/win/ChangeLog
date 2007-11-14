@@ -1,13 +1,3 @@
-2007-11-14  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by Adam.
-
-        Get the new focus window from the wParam instead of calling GetFocus().
-        Also, send blur even if there is no focused frame.
-               
-        * WebView.cpp:
-        (WebViewWndProc):
-
 2007-11-14  Adam Roben  <aroben@apple.com>
 
         Change Interfaces to use a Utility configuration
@@ -18,6 +8,16 @@
         Rubberstamped by Steve.
 
         * WebKit.vcproj/Interfaces.vcproj:
+
+2007-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Get the new focus window from the wParam instead of calling GetFocus().
+        Also, send blur even if there is no focused frame.
+               
+        * WebView.cpp:
+        (WebViewWndProc):
 
 2007-11-14  Adam Roben  <aroben@apple.com>
 
