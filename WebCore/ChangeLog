@@ -1,3 +1,15 @@
+2007-11-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Remove errantly added files, and fix the idl (for reference's sake)
+
+        * storage/JSCustomSQLStatementCallback.h: Removed.
+        * storage/JSCustomSQLStatementErrorCallback.h: Removed.
+        * storage/JSCustomSQLTransactionCallback.h: Removed.
+        * storage/JSCustomSQLTransactionErrorCallback.h: Removed.
+        * storage/SQLStatementCallback.idl:
+
 2007-11-13  Adam Roben  <aroben@apple.com>
 
         Fix a bug and improve upon Brady's fix
