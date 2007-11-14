@@ -26,6 +26,7 @@
 #include <pcre.h>
 #include <sys/types.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/Shared.h>
 
 namespace KJS {
 
