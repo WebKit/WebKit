@@ -1,3 +1,10 @@
+2007-11-13  Adam Roben  <aroben@apple.com>
+
+        Build fix for systems that don't have Cygwin in their PATH
+
+        * WebKit.vcproj/Interfaces.vcproj: Put Cygwin in the PATH before
+        trying to run bash.
+
 2007-11-13  Steve Falkenburg  <sfalken@apple.com>
 
         Add IDOMElementPrivate::font() to get an element's font

@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\obj\WebKit\$(ProjectName)&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\obj\WebKit\$(ProjectName)&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -112,7 +112,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\obj\WebKit\$(ProjectName)&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;bash build-generated-files.sh &quot;$(WebKitOutputDir)&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\obj\WebKit\$(ProjectName)&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
