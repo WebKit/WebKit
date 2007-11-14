@@ -1,5 +1,11 @@
 2007-11-14  Adam Roben  <aroben@apple.com>
 
+        Shut up FixMIDLHeaders.pl
+
+        * WebKit.vcproj/FixMIDLHeaders.pl:
+
+2007-11-14  Adam Roben  <aroben@apple.com>
+
         Change Interfaces to use a Utility configuration
 
         It had previously been marked as an "Application (.exe)", which is

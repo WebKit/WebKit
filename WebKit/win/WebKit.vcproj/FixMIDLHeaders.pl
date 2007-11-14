@@ -47,8 +47,6 @@ sub finder
 
     return unless ($fileName =~ /IGEN_DOM(.*)\.h/);
 
-    print "Processing $fileName\n";
-
     open(IN, "<", $fileName);
     my @contents = <IN>;
     close(IN);
@@ -59,20 +57,15 @@ sub finder
     foreach my $line (@contents) {
         if ($line =~ /^\/\* header files for imported files \*\//) {
             $state = 1;
-            print "Found start comment.\n";
         } elsif ($line =~ /^#include "oaidl\.h"/) {
             die "#include \"oaidl.h\" did not come second" if $state != 1;
             $state = 2;
-            print "Found oaidl.h include.\n";
         } elsif ($line =~ /^#include "ocidl\.h"/) {
             die "#include \"ocidl.h\" did not come third" if $state != 2;
             $state = 3;
-            print "Found ocidl.h include.\n";
         } elsif ($line =~ /^#include "IGEN_DOM/ && $state == 3) {
             $state = 4;
-            print "Found parent include.\n";
         } elsif ($line =~ /^#include "(IGEN_DOM.*)\.h"/ && $state == 4) {
-            print "Removing include.\n";
             next;
         }
 
