@@ -36,7 +36,7 @@
 #include "npfunctions.h"
 #include "NetscapePlugInStreamLoader.h"
 #include "PlatformString.h"
-#include "Shared.h"
+#include "RefCounted.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "StringHash.h"
@@ -48,7 +48,7 @@ namespace WebCore {
 
     enum PluginStreamState { StreamBeforeStarted, StreamStarted, StreamStopped };
 
-    class PluginStreamWin : public Shared<PluginStreamWin>, private NetscapePlugInStreamLoaderClient {
+    class PluginStreamWin : public RefCounted<PluginStreamWin>, private NetscapePlugInStreamLoaderClient {
     public:
         PluginStreamWin(PluginViewWin*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData);
         ~PluginStreamWin();

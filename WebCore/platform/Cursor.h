@@ -31,7 +31,7 @@
 #if PLATFORM(WIN)
 typedef struct HICON__* HICON;
 typedef HICON HCURSOR;
-#include <Shared.h>
+#include <RefCounted.h>
 #include <wtf/RefPtr.h>
 #elif PLATFORM(GTK)
 #include <gdk/gdk.h>

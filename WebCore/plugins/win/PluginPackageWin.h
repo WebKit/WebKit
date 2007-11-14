@@ -29,7 +29,7 @@
 #include <winsock2.h>
 #include <windows.h>
 
-#include "Shared.h"
+#include "RefCounted.h"
 #include "Timer.h"
 #include "StringHash.h"
 #include "PlatformString.h"
@@ -40,7 +40,7 @@ namespace WebCore {
     typedef HashMap<String, String> MIMEToDescriptionsMap;
     typedef HashMap<String, Vector<String> > MIMEToExtensionsMap;
 
-    class PluginPackageWin : public Shared<PluginPackageWin> {
+    class PluginPackageWin : public RefCounted<PluginPackageWin> {
     public:
         ~PluginPackageWin();
         static PluginPackageWin* createPackage(const String& path, const FILETIME& lastModified);
