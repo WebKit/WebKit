@@ -264,15 +264,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\RefCounted.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\RefPtr.h"
 			>
 		</File>
 		<File
 			RelativePath="..\..\wtf\RetainPtr.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\wtf\Shared.h"
 			>
 		</File>
 		<File
@@ -308,11 +308,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\Vector.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\wtf\VectorTraits.h"
+			RelativePath="..\..\wtf\unicode\UTF8.cpp"
 			>
 		</File>
 		<File
@@ -320,7 +316,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\unicode\UTF8.cpp"
+			RelativePath="..\..\wtf\Vector.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\VectorTraits.h"
 			>
 		</File>
 	</Files>

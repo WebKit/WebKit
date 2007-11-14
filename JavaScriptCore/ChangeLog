@@ -1,3 +1,9 @@
+2007-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Add RefCounted.h (And remove Shared.h)
+        
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+
 2007-11-13  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
