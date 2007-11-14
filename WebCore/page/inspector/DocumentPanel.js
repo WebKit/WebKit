@@ -34,9 +34,14 @@ WebInspector.DocumentPanel = function(resource, views)
 
     WebInspector.SourcePanel.call(this, resource, allViews);
 
+    var panel = this;
     var domView = this.views.dom;
-    domView.show = function() { InspectorController.highlightDOMNode(panel.focusedDOMNode) };
     domView.hide = function() { InspectorController.hideDOMNodeHighlight() };
+    domView.show = function() {
+        InspectorController.highlightDOMNode(panel.focusedDOMNode);
+        panel.updateBreadcrumbSizes();
+        panel.updateTreeSelection();
+    };
 
     domView.sideContentElement = document.createElement("div");
     domView.sideContentElement.className = "content side";
@@ -59,7 +64,6 @@ WebInspector.DocumentPanel = function(resource, views)
     domView.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     domView.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
 
-    var panel = this;
     domView.sidebarPanes.styles.onexpand = function() { panel.updateStyles() };
     domView.sidebarPanes.metrics.onexpand = function() { panel.updateMetrics() };
     domView.sidebarPanes.properties.onexpand = function() { panel.updateProperties() };
@@ -89,15 +93,10 @@ WebInspector.DocumentPanel = function(resource, views)
 }
 
 WebInspector.DocumentPanel.prototype = {
-    show: function()
-    {
-        WebInspector.SourcePanel.prototype.show.call(this);
-        this.updateTreeSelection();
-    },
-
     resize: function()
     {
         this.updateTreeSelection();
+        this.updateBreadcrumbSizes();
     },
 
     updateTreeSelection: function()
@@ -190,11 +189,7 @@ WebInspector.DocumentPanel.prototype = {
 
     updateBreadcrumb: function()
     {
-        if (!this.views || !this.views.dom.contentElement)
-            return;
         var crumbs = this.views.dom.innerCrumbsElement;
-        if (!crumbs)
-            return;
 
         var handled = false;
         var foundRoot = false;
@@ -204,9 +199,9 @@ WebInspector.DocumentPanel.prototype = {
                 foundRoot = true;
 
             if (foundRoot)
-                crumb.addStyleClass("hidden");
+                crumb.addStyleClass("dimmed");
             else
-                crumb.removeStyleClass("hidden");
+                crumb.removeStyleClass("dimmed");
 
             if (crumb.representedObject === this.focusedDOMNode) {
                 crumb.addStyleClass("selected");
@@ -218,28 +213,51 @@ WebInspector.DocumentPanel.prototype = {
             crumb = crumb.nextSibling;
         }
 
-        if (handled)
+        if (handled) {
+            // We don't need to rebuild the crumbs, but we need to adjust sizes
+            // to reflect the new focused or root node.
+            this.updateBreadcrumbSizes();
             return;
+        }
 
         crumbs.removeChildren();
 
         var panel = this;
-        var selectCrumbFunction = function(event)
-        {
-            if (event.currentTarget.hasStyleClass("hidden"))
+        var selectCrumbFunction = function(event) {
+            // Clicking a dimmed crumb or double clicking (event.detail >= 2)
+            // will change the root node in addition to the focused node.
+            if (event.detail >= 2 || event.currentTarget.hasStyleClass("dimmed"))
                 panel.rootDOMNode = event.currentTarget.representedObject.parentNode;
             panel.focusedDOMNode = event.currentTarget.representedObject;
             event.preventDefault();
-            event.stopPropagation();
-        }
+        };
 
-        var selectCrumbRootFunction = function(event)
-        {
-            panel.rootDOMNode = event.currentTarget.representedObject.parentNode;
-            panel.focusedDOMNode = event.currentTarget.representedObject;
-            event.preventDefault();
-            event.stopPropagation();
-        }
+        var mouseOverCrumbFunction = function(event) {
+            panel.mouseOverCrumb = true;
+
+            if ("mouseOutTimeout" in panel) {
+                clearTimeout(panel.mouseOutTimeout);
+                delete panel.mouseOutTimeout;
+            }
+
+            panel.updateBreadcrumbSizes(event.currentTarget);
+        };
+
+        var mouseOutCrumbFunction = function(event) {
+            delete panel.mouseOverCrumb;
+
+            if ("mouseOutTimeout" in panel) {
+                clearTimeout(panel.mouseOutTimeout);
+                delete panel.mouseOutTimeout;
+            }
+
+            var timeoutFunction = function() {
+                if (!panel.mouseOverCrumb)
+                    panel.updateBreadcrumbSizes();
+            };
+
+            panel.mouseOutTimeout = setTimeout(timeoutFunction, 250);
+        };
 
         foundRoot = false;
         var current = this.focusedDOMNode;
@@ -254,25 +272,41 @@ WebInspector.DocumentPanel.prototype = {
             crumb.className = "crumb";
             crumb.representedObject = current;
             crumb.addEventListener("mousedown", selectCrumbFunction, false);
-            crumb.addEventListener("dblclick", selectCrumbRootFunction, false);
+            crumb.addEventListener("mouseover", mouseOverCrumbFunction, false);
+            crumb.addEventListener("mouseout", mouseOutCrumbFunction, false);
 
             var crumbTitle;
             switch (current.nodeType) {
                 case Node.ELEMENT_NODE:
                     crumbTitle = current.nodeName.toLowerCase();
-    
+
+                    var nameElement = document.createElement("span");
+                    nameElement.textContent = crumbTitle;
+                    crumb.appendChild(nameElement);
+
+                    var selectorElement = document.createElement("span");
+                    selectorElement.className = "extra";
+                    crumb.appendChild(selectorElement);
+
                     var value = current.getAttribute("id");
-                    if (value && value.length)
-                        crumbTitle += "#" + value;
+                    if (value) {
+                        var part = "#" + value;
+                        crumbTitle += part;
+                        selectorElement.appendChild(document.createTextNode(part));
+                    }
 
                     value = current.getAttribute("class");
-                    if (value && value.length) {
+                    if (value) {
                         var classes = value.split(/\s+/);
-                        var classesLength = classes.length;
-                        for (var i = 0; i < classesLength; ++i) {
+                        var foundClasses = {};
+                        for (var i = 0; i < classes.length; ++i) {
                             value = classes[i];
-                            if (value && value.length)
-                                crumbTitle += "." + value;
+                            if (value && !(value in foundClasses)) {
+                                var part = "." + value;
+                                crumbTitle += part;
+                                selectorElement.appendChild(document.createTextNode(part));
+                                foundClasses[value] = true;
+                            }
                         }
                     }
 
@@ -293,10 +327,16 @@ WebInspector.DocumentPanel.prototype = {
                     crumbTitle = current.nodeName.toLowerCase();
             }
 
-            crumb.textContent = crumbTitle;
+            if (!crumb.childNodes.length) {
+                var nameElement = document.createElement("span");
+                nameElement.textContent = crumbTitle;
+                crumb.appendChild(nameElement);
+            }
+
+            crumb.title = crumbTitle;
 
             if (foundRoot)
-                crumb.addStyleClass("hidden");
+                crumb.addStyleClass("dimmed");
             if (current === this.focusedDOMNode)
                 crumb.addStyleClass("selected");
             if (!crumbs.childNodes.length)
@@ -307,6 +347,177 @@ WebInspector.DocumentPanel.prototype = {
             crumbs.appendChild(crumb);
             current = current.parentNode;
         }
+
+        this.updateBreadcrumbSizes();
+    },
+
+    updateBreadcrumbSizes: function(hoveredCrumb)
+    {
+        var crumbs = this.views.dom.innerCrumbsElement;
+        if (!crumbs.childNodes.length)
+            return; // No crumbs, do nothing.
+
+        var crumbsContainer = this.views.dom.crumbsElement;
+        if (crumbsContainer.offsetWidth <= 0 || crumbs.offsetWidth <= 0)
+            return; // The cumbs are not visible yet, do nothing.
+
+        var selectedCrumb;
+
+        // Remove any styles that affect size before deciding to shorten any crumbs.
+        var crumb = crumbs.firstChild;
+        while (crumb) {
+            if (!selectedCrumb && crumb.hasStyleClass("selected"))
+                selectedCrumb = crumb;
+            if (crumb !== crumbs.lastChild)
+                crumb.removeStyleClass("start");
+            if (crumb !== crumbs.firstChild)
+                crumb.removeStyleClass("end");
+            crumb.removeStyleClass("compact");
+            crumb.removeStyleClass("collapsed");
+            crumb.removeStyleClass("hidden");
+            crumb = crumb.nextSibling;
+        }
+
+        // Restore the start and end crumb classes in case they got removed in coalesceCollapsedCrumbs().
+        // The order of the crumbs in the document is opposite of the visual order.
+        crumbs.firstChild.addStyleClass("end");
+        crumbs.lastChild.addStyleClass("start");
+
+        function crumbsAreSmallerThanContainer()
+        {
+            // There is some fixed extra space that is not returned in the crumbs' offsetWidth.
+            // This padding is added to the crumbs' offsetWidth when comparing to the crumbsContainer.
+            var rightPadding = 9;
+            return ((crumbs.offsetWidth + rightPadding) < crumbsContainer.offsetWidth);
+        }
+
+        if (crumbsAreSmallerThanContainer())
+            return; // No need to compact the crumbs, they all fit at full size.
+
+        function makeCrumbsSmaller(shrinkingFunction, significantCrumb)
+        {
+            if (!significantCrumb)
+                significantCrumb = (hoveredCrumb || selectedCrumb);
+
+            // Look for the significant crumb in reverse order, so if we don't find it the index will be Zero.
+            // A Zero index is the right most visual position in the breadcrumb.
+            for (var significantIndex = (crumbs.childNodes.length - 1); significantIndex >= 0; --significantIndex)
+                if (crumbs.childNodes[significantIndex] === significantCrumb)
+                    break;
+
+            // Shrink crumbs one at a time by applying the shrinkingFunction until the crumbs
+            // fit in the crumbsContainer or we run out of crumbs to shrink. Crumbs are shrunk
+            // in order of descending distance from the signifcant crumb, with a tie going
+            // to crumbs on the left.
+
+            var startIndex = 0;
+            var endIndex = crumbs.childNodes.length - 1;
+            while (startIndex != significantIndex || endIndex != significantIndex) {
+                var startDistance = significantIndex - startIndex;
+                var endDistance = endIndex - significantIndex;
+                if (startDistance > endDistance) {
+                    var shrinkCrumb = crumbs.childNodes[startIndex];
+                    ++startIndex;
+                } else {
+                    var shrinkCrumb = crumbs.childNodes[endIndex];
+                    --endIndex;
+                }
+
+                if (shrinkCrumb && shrinkCrumb !== significantCrumb)
+                    shrinkingFunction(shrinkCrumb);
+
+                if (crumbsAreSmallerThanContainer())
+                    return true; // No need to compact the crumbs more.
+            }
+
+            // We are not small enough yet, return false so the caller knows.
+            return false;
+        }
+
+        function coalesceCollapsedCrumbs()
+        {
+            var crumb = crumbs.firstChild;
+            var collapsedRun = false;
+            var newStartNeeded = false;
+            var newEndNeeded = false;
+            while (crumb) {
+                var hidden = crumb.hasStyleClass("hidden");
+                if (!hidden) {
+                    var collapsed = crumb.hasStyleClass("collapsed"); 
+                    if (collapsedRun && collapsed) {
+                        crumb.addStyleClass("hidden");
+                        crumb.removeStyleClass("compact");
+                        crumb.removeStyleClass("collapsed");
+
+                        if (crumb.hasStyleClass("start")) {
+                            crumb.removeStyleClass("start");
+                            newStartNeeded = true;
+                        }
+
+                        if (crumb.hasStyleClass("end")) {
+                            crumb.removeStyleClass("end");
+                            newEndNeeded = true;
+                        }
+
+                        continue;
+                    }
+
+                    collapsedRun = collapsed;
+
+                    if (newEndNeeded) {
+                        newEndNeeded = false;
+                        crumb.addStyleClass("end");
+                    }
+                } else
+                    collapsedRun = true;
+                crumb = crumb.nextSibling;
+            }
+
+            if (newStartNeeded) {
+                crumb = crumbs.lastChild;
+                while (crumb) {
+                    if (!crumb.hasStyleClass("hidden")) {
+                        crumb.addStyleClass("start");
+                        break;
+                    }
+                    crumb = crumb.previousSibling;
+                }
+            }
+        }
+
+        function collapseDimmed(crumb)
+        {
+            if (crumb.hasStyleClass("dimmed")) {
+                crumb.addStyleClass("collapsed");
+                coalesceCollapsedCrumbs();
+            }
+        }
+
+        // Prefer collapsing the dimmed crumbs first, only if we don't have a hovered crumb.
+        if (!hoveredCrumb && makeCrumbsSmaller(collapseDimmed))
+            return; // No need to compact the crumbs more.
+
+        // Try compacting long crumbs next. Using the selected crumb as the significant crumbs makes
+        // hovering more predicable and less jumpy.
+        if (makeCrumbsSmaller(function(crumb) { crumb.addStyleClass("compact") }, selectedCrumb))
+            return; // No need to compact the crumbs more.
+
+        // Since we are still too large and we avoided compacting the selected crumb in the last step,
+        // try compacting the selected crumb now.
+        if (selectedCrumb) {
+            selectedCrumb.addStyleClass("compact");            
+            if (crumbsAreSmallerThanContainer())
+                return; // No need to compact the crumbs more.
+        }
+
+        // Nothing else has worked, try collapsing crumbs.
+        if (makeCrumbsSmaller(function(crumb) { crumb.addStyleClass("collapsed"); coalesceCollapsedCrumbs(); }))
+            return; // No need to compact the crumbs more.
+
+        if (!selectedCrumb)
+            return;
+
+        selectedCrumb.addStyleClass("collapsed");
     },
 
     updateStyles: function()

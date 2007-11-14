@@ -1,3 +1,17 @@
+2007-11-14  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 14380: Long DOM ancestry breadcrumb lists get cut off
+        http://bugs.webkit.org/show_bug.cgi?id=14380
+
+        The breadcumbs will now be compacted and collapsed if there isn't enough room
+        to show everything. The collapsing algorithm always affects the crumbs that
+        are farthest away from the selected or hovered crumb first.
+
+        * page/inspector/DocumentPanel.js:
+        * page/inspector/inspector.css:
+
 2007-11-14  Anders Carlsson  <andersca@apple.com>
 
         Use the correct include path.

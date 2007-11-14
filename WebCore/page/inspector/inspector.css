@@ -832,6 +832,7 @@ body.inactive #sidebar li.selected {
     line-height: 19px;
     text-shadow: rgba(255, 255, 255, 0.75) 0 1px 0;
     color: rgb(20, 20, 20);
+    overflow: hidden;
 }
 
 .crumbs > div {
@@ -839,6 +840,7 @@ body.inactive #sidebar li.selected {
 }
 
 .crumbs .crumb {
+    -webkit-box-sizing: border-box;
     height: 20px;
     border-width: 0 11px 0 0;
     -webkit-border-image: url(Images/segment.png) 0 11 0 0;
@@ -850,8 +852,20 @@ body.inactive #sidebar li.selected {
     cursor: default;
 }
 
-.crumbs .crumb.hidden {
-    display: block;
+.crumbs .crumb.collapsed > * {
+    display: none;
+}
+
+.crumbs .crumb.collapsed::before {
+    content: "\2026"; /* ellipses */
+    font-weight: bold;
+}
+
+.crumbs .crumb.compact .extra {
+    display: none;
+}
+
+.crumbs .crumb.dimmed {
     color: rgba(0, 0, 0, 0.45);
 }
 
@@ -867,8 +881,8 @@ body.inactive #sidebar li.selected {
 
 .crumbs .crumb.selected {
     -webkit-border-image: url(Images/segmentSelected.png) 0 11 0 0;
-    color: black;
     background-color: transparent !important;
+    color: black;
 }
 
 .crumbs .crumb.selected:hover {
@@ -884,7 +898,7 @@ body.inactive #sidebar li.selected {
     color: black;
 }
 
-.crumbs .crumb.hidden:hover {
+.crumbs .crumb.dimmed:hover {
     -webkit-border-image: url(Images/segmentHover.png) 0 11 0 0;
     color: rgba(0, 0, 0, 0.75);
 }
