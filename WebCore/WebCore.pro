@@ -1015,12 +1015,7 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/SQLError.idl \
         storage/SQLResultSet.idl \
         storage/SQLResultSetRowList.idl \
-        storage/SQLStatementCallback.idl \
-        storage/SQLStatementErrorCallback.idl \
-        storage/SQLTransaction.idl \
-        storage/SQLTransactionCallback.idl \
-        storage/SQLTransactionErrorCallback.idl
-
+        storage/SQLTransaction.idl
 }
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {
