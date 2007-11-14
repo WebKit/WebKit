@@ -235,9 +235,9 @@ Property:
     IDENT ':' AssignmentExpr            { $$ = new PropertyNode(*$1, $3, PropertyNode::Constant); }
   | STRING ':' AssignmentExpr           { $$ = new PropertyNode(Identifier(*$1), $3, PropertyNode::Constant); }
   | NUMBER ':' AssignmentExpr           { $$ = new PropertyNode(Identifier(UString::from($1)), $3, PropertyNode::Constant); }
-  | IDENT IDENT '(' ')' FunctionBody    { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, 0, $5); if (!$$) YYABORT; }
-  | IDENT IDENT '(' FormalParameterList ')' FunctionBody
-                                        { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, $4.head, $6); if (!$$) YYABORT; }
+  | IDENT IDENT '(' ')' '{' FunctionBody '}'    { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, 0, $6); DBG($6, @5, @7); if (!$$) YYABORT; }
+  | IDENT IDENT '(' FormalParameterList ')' '{' FunctionBody '}'
+                                        { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, $4.head, $7); DBG($7, @6, @8); if (!$$) YYABORT; }
 ;
 
 PropertyList:
@@ -659,8 +659,8 @@ Statement:
 ;
 
 Block:
-    '{' '}'                             { $$ = new BlockNode(0); DBG($$, @2, @2); }
-  | '{' SourceElements '}'              { $$ = new BlockNode($2); DBG($$, @3, @3); }
+    '{' '}'                             { $$ = new BlockNode(new SourceElements); DBG($$, @1, @2); }
+  | '{' SourceElements '}'              { $$ = new BlockNode($2); DBG($$, @1, @3); }
 ;
 
 VariableStatement:
@@ -851,18 +851,16 @@ DebuggerStatement:
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' FunctionBody { $$ = new FuncDeclNode(*$2, $5); }
-  | FUNCTION IDENT '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncDeclNode(*$2, $4.head, $6); }
+    FUNCTION IDENT '(' ')' '{' FunctionBody '}' { $$ = new FuncDeclNode(*$2, $6); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' FormalParameterList ')' '{' FunctionBody '}'
+                                        { $$ = new FuncDeclNode(*$2, $4.head, $7); DBG($7, @6, @8); }
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' FunctionBody       { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $4); }
-  | FUNCTION '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $5, $3.head); }
-  | FUNCTION IDENT '(' ')' FunctionBody { $$ = new FuncExprNode(*$2, $5); }
-  | FUNCTION IDENT '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncExprNode(*$2, $6, $4.head); }
+    FUNCTION '(' ')' '{' FunctionBody '}' { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $5); DBG($5, @4, @6); }
+  | FUNCTION '(' FormalParameterList ')' '{' FunctionBody '}' { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $6, $3.head); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' ')' '{' FunctionBody '}' { $$ = new FuncExprNode(*$2, $6); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' FormalParameterList ')' '{' FunctionBody '}' { $$ = new FuncExprNode(*$2, $7, $4.head); DBG($7, @6, @8); }
 ;
 
 FormalParameterList:
@@ -873,18 +871,17 @@ FormalParameterList:
 ;
 
 FunctionBody:
-    '{' '}' /* not in spec */           { $$ = new FunctionBodyNode(0); DBG($$, @1, @2); }
-  | '{' SourceElements '}'              { $$ = new FunctionBodyNode($2); DBG($$, @1, @3); }
+    /* not in spec */           { $$ = new FunctionBodyNode(new SourceElements); }
+  | SourceElements              { $$ = new FunctionBodyNode($1); }
 ;
 
 Program:
-    /* not in spec */                   { Parser::accept(new ProgramNode(0)); }
+    /* not in spec */                   { Parser::accept(new ProgramNode(new SourceElements)); }
     | SourceElements                    { Parser::accept(new ProgramNode($1)); }
 ;
 
 SourceElements:
-    SourceElement                       { $$ = new Vector<RefPtr<StatementNode> >();
-                                          $$->append($1); }
+    SourceElement                       { $$ = new SourceElements; $$->append($1); }
   | SourceElements SourceElement        { $$->append($2); }
 ;
 

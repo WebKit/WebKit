@@ -1,3 +1,40 @@
+2007-11-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+        
+        Cleaned up the JavaScript grammar a bit.
+        
+        1. Changed BlockNode to always hold a child vector (which may be empty),
+        eliminating a few NULL-check branches in the common execution case.
+        
+        2. Changed the Block production to correctly report its starting and 
+        ending line numbers to the debugger. (It used to report its ending line
+        as its starting line.) Also, removed duplicate line-reporting code
+        inside the BlockNode constructor.
+        
+        3. Moved curly braces up from FunctionBody production into parent
+        productions. (I had to move the line number reporting code, too, since
+        it depends on the location of the curly braces.) This matches the ECMA
+        spec more closely, and makes some future changes I plan easier.
+        
+        4. Fixed statementList* convenience functions to deal appropriately with
+        empty Vectors.
+
+        SunSpider reports a small and statistically insignificant speedup.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::statementListPushFIFO):
+        (KJS::statementListGetDeclarations):
+        (KJS::statementListInitializeDeclarationStack):
+        (KJS::statementListInitializeVariableAccessStack):
+        (KJS::BlockNode::BlockNode):
+        (KJS::BlockNode::optimizeVariableAccess):
+        (KJS::BlockNode::getDeclarations):
+        (KJS::BlockNode::execute):
+        (KJS::FunctionBodyNode::initializeDeclarationStacks):
+        (KJS::FunctionBodyNode::optimizeVariableAccess):
+
 2007-11-13  Anders Carlsson  <andersca@apple.com>
 
         Add RefCounted.h (And remove Shared.h)
