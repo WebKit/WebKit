@@ -1,3 +1,11 @@
+2007-11-14  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Anders.
+
+        Fix the Xcode project file after it was messed up in r27402.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2007-11-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
