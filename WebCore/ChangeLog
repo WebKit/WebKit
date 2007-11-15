@@ -1,3 +1,9 @@
+2007-11-14  Brady Eidson <beidson@apple.com>
+
+        Rubberstamped by Sam
+
+        * platform/SecurityOrigin.h: Lets make this an unsigned short and *not* rule out half the possible ports?
+
 2007-11-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Justin Garcia.

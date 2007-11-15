@@ -54,7 +54,7 @@ namespace WebCore {
 
         String m_protocol;
         String m_host;
-        short m_port;
+        unsigned short m_port;
         bool m_portSet;
         bool m_noAccess;
         bool m_domainWasSetInDOM;
