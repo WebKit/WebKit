@@ -1,3 +1,11 @@
+2007-11-14  Adam Roben  <aroben@apple.com>
+
+        Clean up the bison conflict checking script
+
+        Reviewed by Geoff.
+
+        * DerivedSources.make:
+
 2007-11-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Geoff.
