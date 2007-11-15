@@ -35,6 +35,8 @@
         * storage/DatabaseTrackerClient.h: Added.  For dispatching notifications up to WebKit
         (WebCore::DatabaseTrackerClient::~DatabaseTrackerClient):2007-11-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
+2007-11-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Anders.
 
         NP_ASFILEONLY streams should not buffer data in m_deliveryData.
