@@ -1,3 +1,13 @@
+2007-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        <rdar://problem/5562470>
+        openDatabase does not work when the version string is empty
+
+        * storage/open-database-empty-version-expected.txt: Added.
+        * storage/open-database-empty-version.html: Added.
+
 2007-11-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Justin Garcia.

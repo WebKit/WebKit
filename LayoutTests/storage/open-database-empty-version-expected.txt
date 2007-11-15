@@ -1,0 +1,2 @@
+This tests that calling openDatabase with an empty version string does not cause an exception to be thrown.
+SUCCESS! Did not throw an exception.

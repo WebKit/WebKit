@@ -2,6 +2,18 @@
 
         Reviewed by Brady.
 
+        <rdar://problem/5562470>
+        openDatabase does not work when the version string is empty
+
+        If the string is empty, pass a real empty string to sqlite3_bind_text16.
+        
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::bindText):
+
+2007-11-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
         Get rid of SQLiteStatement::bindText and rename bindText16 to bindText.
         Remove the copy parameter from bindText and bindBlob and always copy passed in data instead.
 

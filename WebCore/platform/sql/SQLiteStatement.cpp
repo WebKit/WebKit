@@ -133,7 +133,18 @@ int SQLiteStatement::bindBlob(int index, const void* blob, int size)
 
 int SQLiteStatement::bindText(int index, const String& text)
 {
-    sqlite3_bind_text16(m_statement, index, text.characters(), sizeof(UChar) * text.length(), SQLITE_TRANSIENT);
+    static const UChar emptyString[1] = { 0 };
+    const UChar* characters;
+    
+    // String::characters() returns 0 for the empty string
+    // which SQLite treats as a null string so we translate it to a
+    // "real" empty string here.
+    if (!text.isNull() && text.isEmpty())
+        characters = emptyString;
+    else
+        characters = text.characters();
+    
+    sqlite3_bind_text16(m_statement, index, characters, sizeof(UChar) * text.length(), SQLITE_TRANSIENT);
     return lastError();
 }
 
