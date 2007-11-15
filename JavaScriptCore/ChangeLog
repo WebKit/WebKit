@@ -1,3 +1,28 @@
+2007-11-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15982
+        Improve JSString UTF-8 decoding
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithUTF8CString): Use strict decoding, return 0 on error.
+
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::convertUTF16ToUTF8):
+        (WTF::Unicode::convertUTF8ToUTF16):
+        * wtf/unicode/UTF8.h:
+        Made these function names start with a lower case letter.
+
+        * kjs/ustring.cpp: (KJS::UString::UTF8String): Updated for the above renaming.
+
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertUTF8ToUTF16WithLatin1Fallback): Renamed to highlight the difference
+        from convertUTF8ToUTF16 in wtf/unicode.
+        (KJS::Bindings::convertNPStringToUTF16): Updated for the above renaming.
+        (KJS::Bindings::identifierFromNPIdentifier): Ditto.
+        * bindings/c/c_utility.h: Made convertUTF8ToUTF16WithLatin1Fallback() a file static.
+
 2007-11-14  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Anders.

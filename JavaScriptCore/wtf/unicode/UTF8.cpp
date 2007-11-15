@@ -119,7 +119,7 @@ int decodeUTF8Sequence(const char* sequence)
 // for *legal* UTF-8 will be 4 or fewer bytes total.
 static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
-ConversionResult ConvertUTF16ToUTF8(
+ConversionResult convertUTF16ToUTF8(
     const UChar** sourceStart, const UChar* sourceEnd, 
     char** targetStart, char* targetEnd, bool strict)
 {
@@ -230,7 +230,7 @@ static bool isLegalUTF8(const unsigned char* source, int length)
 static const UChar32 offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL, 
             0x03C82080UL, 0xFA082080UL, 0x82082080UL };
 
-ConversionResult ConvertUTF8ToUTF16(
+ConversionResult convertUTF8ToUTF16(
     const char** sourceStart, const char* sourceEnd, 
     UChar** targetStart, UChar* targetEnd, bool strict)
 {

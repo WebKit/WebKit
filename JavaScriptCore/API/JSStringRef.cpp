@@ -54,7 +54,8 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
     size_t length = strlen(string);
     Vector< ::UChar, 1024> buffer(length);
     ::UChar* p = buffer.data();
-    ConvertUTF8ToUTF16(&string, string + length, &p, p + length, false);
+    if (conversionOK != convertUTF8ToUTF16(&string, string + length, &p, p + length))
+        return 0;
 
     return toRef(UString(reinterpret_cast<KJS::UChar*>(buffer.data()), p - buffer.data()).rep()->ref());
 }

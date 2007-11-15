@@ -62,11 +62,11 @@ namespace WTF {
     // to the replacement character; otherwise (when the flag is set to strict)
     // they constitute an error.
 
-    ConversionResult ConvertUTF8ToUTF16(
+    ConversionResult convertUTF8ToUTF16(
                     const char** sourceStart, const char* sourceEnd, 
                     UChar** targetStart, UChar* targetEnd, bool strict = true);
 
-    ConversionResult ConvertUTF16ToUTF8(
+    ConversionResult convertUTF16ToUTF8(
                     const UChar** sourceStart, const UChar* sourceEnd, 
                     char** targetStart, char* targetEnd, bool strict = true);
   }
