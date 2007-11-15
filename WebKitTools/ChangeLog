@@ -1,3 +1,10 @@
+2007-11-15  Adam Roben  <aroben@apple.com>
+
+        Make run-safari actually work on Windows
+
+        * Scripts/run-safari: Fixed the order of arguments to cp, and added a
+        chdir call.
+
 2007-11-14  Adam Roben  <aroben@apple.com>
 
         Updates to Safari launching now that 3.0.4 is released

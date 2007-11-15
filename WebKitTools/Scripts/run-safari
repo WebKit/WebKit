@@ -50,13 +50,14 @@ if (isOSX()) {
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
     @args = @ARGV;
 } elsif (isCygwin()) {
-    my $result = system "cp", $productDir, "$FindBin::Bin/run-webkit-nightly.cmd";
+    my $script = "run-webkit-nightly.cmd";
+    my $result = system "cp", "$FindBin::Bin/$script", $productDir;
     die if $result;
 
-    chomp(my $path = `cygpath -w '$productDir/run-webkit-nightly.cmd'`);
+    chdir $productDir;
 
     $safariPath = "cmd";
-    @args = ("/c", "call $path");
+    @args = ("/c", "call $script");
 }
 exec $safariPath, @args or die;
 
