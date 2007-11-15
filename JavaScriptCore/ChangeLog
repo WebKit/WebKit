@@ -1,3 +1,19 @@
+2007-11-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+        
+        Give PCRE a (small) bath.
+        Fix some formating and break things off into separate functions
+        http://bugs.webkit.org/show_bug.cgi?id=15993
+
+        * pcre/pcre_compile.cpp:
+        (calculateCompiledPatternLengthAndFlags):
+        (printCompiledRegExp):
+        (returnError):
+        (jsRegExpCompile):
+        * pcre/pcre_internal.h:
+        (compile_data::compile_data):
+
 2007-11-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.

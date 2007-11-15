@@ -543,10 +543,36 @@ typedef struct real_pcre {
   pcre_uint16 req_byte;
 } real_pcre;
 
+/* Internal shared data tables. These are tables that are used by more than one
+ of the exported public functions. They have to be "external" in the C sense,
+ but are not part of the PCRE public API. The data for these tables is in the
+ pcre_tables.c module. */
+
+#define _pcre_utf8_table1_size 6
+
+extern const int    _pcre_utf8_table1[6];
+extern const int    _pcre_utf8_table2[6];
+extern const int    _pcre_utf8_table3[6];
+extern const uschar _pcre_utf8_table4[0x40];
+
+extern const uschar _pcre_default_tables[tables_length];
+
 /* Structure for passing "static" information around between the functions
 doing the compiling, so that they are thread-safe. */
 
 typedef struct compile_data {
+    compile_data() {
+        lcc = _pcre_default_tables + lcc_offset;
+        fcc = _pcre_default_tables + fcc_offset;
+        cbits = _pcre_default_tables + cbits_offset;
+        ctypes = _pcre_default_tables + ctypes_offset;
+        start_code = 0;
+        start_pattern = 0;
+        top_backref = 0;
+        backref_map = 0;
+        req_varyopt = 0;
+    }
+    
   const uschar *lcc;            /* Points to lower casing table */
   const uschar *fcc;            /* Points to case-flipping table */
   const uschar *cbits;          /* Points to character type table */
@@ -557,29 +583,6 @@ typedef struct compile_data {
   unsigned int backref_map;     /* Bitmap of low back refs */
   int  req_varyopt;             /* "After variable item" flag for reqbyte */
 } compile_data;
-
-/* Layout of the UCP type table that translates property names into types and
-codes. */
-
-typedef struct {
-  const char *name;
-  pcre_uint16 type;
-  pcre_uint16 value;
-} ucp_type_table;
-
-/* Internal shared data tables. These are tables that are used by more than one
-of the exported public functions. They have to be "external" in the C sense,
-but are not part of the PCRE public API. The data for these tables is in the
-pcre_tables.c module. */
-
-#define _pcre_utf8_table1_size 6
-
-extern const int    _pcre_utf8_table1[6];
-extern const int    _pcre_utf8_table2[6];
-extern const int    _pcre_utf8_table3[6];
-extern const uschar _pcre_utf8_table4[0x40];
-
-extern const uschar _pcre_default_tables[tables_length];
 
 /* Internal shared functions. These are functions that are used by more than
 one of the exported public functions. They have to be "external" in the C
