@@ -1,3 +1,23 @@
+2007-11-15  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5485108> Type-select while a <select> menu is open doesn't work
+
+        There were two things broken here:
+           - WebView now requires a WM_CHAR message to be sent before it will
+             create a keyboard event with a charCode, but we were only sending
+             a WM_KEYDOWN event.
+           - The popup menu was not updating its focused index when the
+             <select> element's selectedIndex changed.
+
+        Reviewed by Adele.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::updateFromElement): Update the focused index from
+        the client's selected index.
+        (WebCore::PopupWndProc): When we receive a WM_CHAR message for a
+        printable character, manufacture a WM_KEYDOWN message for it and post
+        both that and the current WM_CHAR message to the WebView.
+
 2007-11-15  Brady Eidson  <beidson@apple.com>
 
         Build fix

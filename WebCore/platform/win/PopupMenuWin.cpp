@@ -412,6 +412,8 @@ void PopupMenu::updateFromElement()
     if (!m_popup)
         return;
 
+    m_focusedIndex = client()->selectedIndex();
+
     ::InvalidateRect(m_popup, 0, TRUE);
     if (!scrollToRevealSelection())
         ::UpdateWindow(m_popup);
@@ -679,11 +681,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         popup->client()->hidePopup();
                         break;
                     default:
-                        if (isASCIIPrintable(::MapVirtualKey(LOWORD(wParam), 2)))
-                            // Send the keydown to the WebView so it can be used for type-ahead find
-                            ::SendMessage(popup->client()->clientDocument()->view()->containingWindow(), message, wParam, lParam);
-                        else
-                            lResult = 1;
+                        lResult = 1;
                         break;
                 }
             }
@@ -706,7 +704,14 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                     case 0x08:   // Backspace
                     case 0x0A:   // Linefeed
                     default:     // Character
-                        lResult = 1;
+                        if (isASCIIPrintable(wParam)) {
+                            // Send a WM_KEYDOWN event and the current WM_CHAR event to the WebView
+                            // so that it can perform type-to-select.
+                            HWND webView = popup->client()->clientDocument()->view()->containingWindow();
+                            ::PostMessage(webView, WM_KEYDOWN, LOWORD(wParam), lParam);
+                            ::PostMessage(webView, message, wParam, lParam);
+                        } else
+                            lResult = 1;
                         break;
                 }
             }
