@@ -150,11 +150,14 @@ static bool removingNodeRemovesPosition(Node* node, const Position& position)
     if (!position.node())
         return false;
         
-    if (position.node() == node || position.node()->isDescendantOf(node))
+    if (position.node() == node)
         return true;
     
-    Node* shadowAncestorNode = position.node()->shadowAncestorNode();
-    return shadowAncestorNode && shadowAncestorNode->isDescendantOf(node);
+    if (!node->isElementNode())
+        return false;
+    
+    Element* element = static_cast<Element*>(node);
+    return element->contains(position.node()) || element->contains(position.node()->shadowAncestorNode());
 }
 
 void SelectionController::nodeWillBeRemoved(Node *node)

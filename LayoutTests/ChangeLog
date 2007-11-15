@@ -1,3 +1,12 @@
+2007-11-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/5497643> Crash at Node::isDescendantOf when switching out of Edit HTML Source mode
+
+        * editing/selection/5497643-expected.txt: Added.
+        * editing/selection/5497643.html: Added.
+
 2007-11-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

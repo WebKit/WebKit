@@ -1,3 +1,17 @@
+2007-11-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/5497643> Crash at Node::isDescendantOf when switching out of Edit HTML Source mode
+        
+        A textarea that contained the selection was removed but the selection wasn't cleared,
+        and we'd crash in code that assumed a valid, in-document selection.
+
+        * editing/SelectionController.cpp:
+        (WebCore::removingNodeRemovesPosition): Clear the selection if the node being removed is the
+        shadowAncestorNode of the node that contains the position, not just if the node being removed
+        contains that shadowAncestorNode.
+
 2007-11-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.
