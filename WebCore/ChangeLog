@@ -1,3 +1,13 @@
+2007-11-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Fix logic error: calculateGlyphBoundaries takes RTL text into account itself, no need to adjust offsets before.
+
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBoxSelectionRectWalker::chunkPortionCallback):
+
 2007-11-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

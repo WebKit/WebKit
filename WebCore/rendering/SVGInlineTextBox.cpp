@@ -135,12 +135,12 @@ struct SVGInlineTextBoxClosestCharacterToPositionWalker {
 
         for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
             unsigned int newOffset = textBox->start() + (it - start) + startOffset;
+            FloatRect glyphRect = chunkCtm.mapRect(textBox->calculateGlyphBoundaries(style, newOffset, *it));
 
             // Take RTL text into account and pick right glyph width/height.
+            // NOTE: This offset has to be corrected _after_ calling calculateGlyphBoundaries
             if (textBox->m_reversed)
                 newOffset = textBox->start() + textBox->end() - newOffset;
-
-            FloatRect glyphRect = chunkCtm.mapRect(textBox->calculateGlyphBoundaries(style, newOffset, *it));
 
             // Calculate distances relative to the glyph mid-point. I hope this is accurate enough.
             float xDistance = glyphRect.x() + glyphRect.width() / 2.0f - m_x;
@@ -196,11 +196,6 @@ struct SVGInlineTextBoxSelectionRectWalker {
 
         for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
             unsigned int newOffset = textBox->start() + (it - start) + startOffset;
-
-            // Take RTL text into account and pick right glyph width/height.
-            if (textBox->m_reversed)
-                newOffset = textBox->start() + textBox->end() - newOffset;
-
             m_selectionRect.unite(textBox->calculateGlyphBoundaries(style, newOffset, *it));
         }
 
