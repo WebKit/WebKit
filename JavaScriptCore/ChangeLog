@@ -1,3 +1,9 @@
+2007-11-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+
 2007-11-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
