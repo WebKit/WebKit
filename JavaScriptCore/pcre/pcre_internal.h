@@ -173,42 +173,51 @@ is automated on Unix systems via the "configure" command. */
 
 #if LINK_SIZE == 2
 
-#define PUT(a,n,d)   \
-  (a[n] = (d) >> 8), \
-  (a[(n)+1] = (d) & 255)
+static inline void PUT(uschar* a, size_t n, unsigned short d)
+{
+    a[n] = d >> 8;
+    a[n+1] = d & 255;
+}
 
-#define GET(a,n) \
-  (((a)[n] << 8) | (a)[(n)+1])
+static inline short GET(const uschar* a, size_t n)
+{
+    return ((a[n] << 8) | a[n + 1]);
+}
 
 #define MAX_PATTERN_SIZE (1 << 16)
 
-
 #elif LINK_SIZE == 3
 
-#define PUT(a,n,d)       \
-  (a[n] = (d) >> 16),    \
-  (a[(n)+1] = (d) >> 8), \
-  (a[(n)+2] = (d) & 255)
+static inline void PUT(uschar* a, size_t n, unsigned d)
+{
+    a[n] = d >> 16;
+    a[n+1] = d >> 8;
+    a[n+2] = d & 255;
+}
 
-#define GET(a,n) \
-  (((a)[n] << 16) | ((a)[(n)+1] << 8) | (a)[(n)+2])
+static inline int GET(const uschar* a, size_t n)
+{
+    return ((a[n] << 16) | (a[n+1] << 8) | a[n+2]);
+}
 
 #define MAX_PATTERN_SIZE (1 << 24)
 
-
 #elif LINK_SIZE == 4
 
-#define PUT(a,n,d)        \
-  (a[n] = (d) >> 24),     \
-  (a[(n)+1] = (d) >> 16), \
-  (a[(n)+2] = (d) >> 8),  \
-  (a[(n)+3] = (d) & 255)
+static inline void PUT(uschar* a, size_t n, unsigned d)
+{
+    a[n] = d >> 24;
+    a[n+1] = d >> 16;
+    a[n+2] = d >> 8;
+    a[n+3] = d & 255;
+}
 
-#define GET(a,n) \
-  (((a)[n] << 24) | ((a)[(n)+1] << 16) | ((a)[(n)+2] << 8) | (a)[(n)+3])
+static inline int GET(const uschar* a, size_t n)
+{
+    return ((a[n] << 24) | (a[n+1] << 16) | (a[n+2] << 8) | a[n+3]);
+}
 
 #define MAX_PATTERN_SIZE (1 << 30)   /* Keep it positive */
-
 
 #else
 #error LINK_SIZE must be either 2, 3, or 4
@@ -224,15 +233,20 @@ is automated on Unix systems via the "configure" command. */
 offsets changes. There are used for repeat counts and for other things such as
 capturing parenthesis numbers in back references. */
 
-#define PUT2(a,n,d)   \
-  a[n] = (d) >> 8; \
-  a[(n)+1] = (d) & 255
+static inline void PUT2(uschar* a, size_t n, unsigned short d)
+{
+    a[n] = d >> 8;
+    a[n+1] = d & 255;
+}
 
-#define GET2(a,n) \
-  (((a)[n] << 8) | (a)[(n)+1])
+static inline short GET2(const uschar* a, size_t n)
+{
+    return ((a[n] << 8) | a[n + 1]);
+}
 
+// FIXME: This can't be a static inline yet, because it's passed register values by some callers
+// you can't take the address of a register
 #define PUT2INC(a,n,d)  PUT2(a,n,d), a += 2
-
 
 /* When UTF-8 encoding is being used, a character is no longer just a single
 byte. The macros for character handling generate simple sequences when used in
@@ -592,7 +606,10 @@ extern int         _pcre_ord2utf8(int, uschar *);
 extern int         _pcre_ucp_othercase(const int);
 extern BOOL        _pcre_xclass(int, const uschar *);
 
-#define IS_NEWLINE(nl) ((nl) == 0xA || (nl) == 0xD || (nl) == 0x2028 || (nl) == 0x2029)
+static inline bool isNewline(pcre_uchar nl)
+{
+    return (nl == 0xA || nl == 0xD || nl == 0x2028 || nl == 0x2029);
+}
 
 #endif
 

@@ -1,5 +1,25 @@
 2007-11-14  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Geoff.
+
+        Another round of PCRE cleanups: inlines
+        
+        SunSpider claims that this, combined with my previous PCRE cleanup were a 0.7% speedup, go figure.
+
+        * pcre/pcre_compile.cpp:
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (match):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+        (PUT):
+        (GET):
+        (PUT2):
+        (GET2):
+        (isNewline):
+
+2007-11-14  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
         
         Give PCRE a (small) bath.

@@ -3005,20 +3005,15 @@ static pcre* returnError(ErrorCode errorcode, const char** errorptr)
     return 0;
 }
 
-pcre *
-jsRegExpCompile(const pcre_char* pattern, int patternLength,
+pcre* jsRegExpCompile(const pcre_char* pattern, int patternLength,
                 JSRegExpIgnoreCaseOption ignoreCase, JSRegExpMultilineOption multiline,
                 unsigned* numSubpatterns, const char** errorptr)
 {
     /* We can't pass back an error message if errorptr is NULL; I guess the best we
-     can do is just return NULL, but we can set a code value if there is a code
-     pointer. */
+     can do is just return NULL, but we can set a code value if there is a code pointer. */
     if (!errorptr)
         return 0;
-    
     *errorptr = NULL;
-    
-    /* Set up pointers to the individual character tables */
     
     compile_data compile_block;
     
@@ -3029,8 +3024,6 @@ jsRegExpCompile(const pcre_char* pattern, int patternLength,
     
     if (length > MAX_PATTERN_SIZE)
         return returnError(ERR16, errorptr);
-    
-    /* Compute the size of data block needed and get it. */
     
     size_t size = length + sizeof(real_pcre);
     real_pcre* re = reinterpret_cast<real_pcre*>(new char[size]);

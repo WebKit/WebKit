@@ -685,7 +685,7 @@ for (;;)
     /* Start of subject, or after internal newline if multiline. */
 
     BEGIN_OPCODE(CIRC):
-    if (frame->eptr != md->start_subject && (!md->multiline || !IS_NEWLINE(frame->eptr[-1])))
+    if (frame->eptr != md->start_subject && (!md->multiline || !isNewline(frame->eptr[-1])))
       RRETURN_NO_MATCH;
     frame->ecode++;
     NEXT_OPCODE;
@@ -693,7 +693,7 @@ for (;;)
     /* End of subject, or before internal newline if multiline. */
 
     BEGIN_OPCODE(DOLL):
-    if (frame->eptr < md->end_subject && (!md->multiline || !IS_NEWLINE(*frame->eptr)))
+    if (frame->eptr < md->end_subject && (!md->multiline || !isNewline(*frame->eptr)))
       RRETURN_NO_MATCH;
     frame->ecode++;
     NEXT_OPCODE;
@@ -729,7 +729,7 @@ for (;;)
     /* Match a single character type; inline for speed */
 
     BEGIN_OPCODE(ANY):
-    if (frame->eptr < md->end_subject && IS_NEWLINE(*frame->eptr))
+    if (frame->eptr < md->end_subject && isNewline(*frame->eptr))
       RRETURN_NO_MATCH;
     if (frame->eptr++ >= md->end_subject) RRETURN_NO_MATCH;
       while (frame->eptr < md->end_subject && ISMIDCHAR(*frame->eptr)) frame->eptr++;
@@ -1571,7 +1571,7 @@ for (;;)
         case OP_ANY:
         for (i = 1; i <= min; i++)
           {
-          if (frame->eptr >= md->end_subject || IS_NEWLINE(*frame->eptr))
+          if (frame->eptr >= md->end_subject || isNewline(*frame->eptr))
             RRETURN_NO_MATCH;
           ++frame->eptr;
           while (frame->eptr < md->end_subject && ISMIDCHAR(*frame->eptr)) frame->eptr++;
@@ -1664,7 +1664,7 @@ for (;;)
           switch(frame->ctype)
             {
             case OP_ANY:
-            if (IS_NEWLINE(c)) RRETURN;
+            if (isNewline(c)) RRETURN;
             break;
 
             case OP_NOT_DIGIT:
@@ -1726,7 +1726,7 @@ for (;;)
               {
               for (i = min; i < frame->max; i++)
                 {
-                if (frame->eptr >= md->end_subject || IS_NEWLINE(*frame->eptr)) break;
+                if (frame->eptr >= md->end_subject || isNewline(*frame->eptr)) break;
                 frame->eptr++;
                 while (frame->eptr < md->end_subject && (*frame->eptr & 0xc0) == 0x80) frame->eptr++;
                 }
@@ -1740,7 +1740,7 @@ for (;;)
               {
               for (i = min; i < frame->max; i++)
                 {
-                if (frame->eptr >= md->end_subject || IS_NEWLINE(*frame->eptr)) break;
+                if (frame->eptr >= md->end_subject || isNewline(*frame->eptr)) break;
                 frame->eptr++;
                 }
               break;
@@ -2159,7 +2159,7 @@ do
     {
     if (start_match > match_block.start_subject + start_offset)
       {
-      while (start_match < end_subject && !IS_NEWLINE(start_match[-1]))
+      while (start_match < end_subject && !isNewline(start_match[-1]))
         start_match++;
       }
     }
