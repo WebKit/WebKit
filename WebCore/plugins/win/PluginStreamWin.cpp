@@ -366,20 +366,21 @@ void PluginStreamWin::didReceiveData(NetscapePlugInStreamLoader* loader, const c
     ASSERT(loader == m_loader);
     ASSERT(length > 0);
     ASSERT(m_streamState == StreamStarted);
-    
-    if (!m_deliveryData)
-        m_deliveryData.set(new Vector<char>);
-
-    int oldSize = m_deliveryData->size();
-    m_deliveryData->resize(oldSize + length);
-    memcpy(m_deliveryData->data() + oldSize, data, length);
 
     // If the plug-in cancels the stream in deliverData it could be deleted, 
     // so protect it here.
     RefPtr<PluginStreamWin> protect(this);
 
-    if (m_transferMode != NP_ASFILEONLY)
+    if (m_transferMode != NP_ASFILEONLY) {
+        if (!m_deliveryData)
+            m_deliveryData.set(new Vector<char>);
+
+        int oldSize = m_deliveryData->size();
+        m_deliveryData->resize(oldSize + length);
+        memcpy(m_deliveryData->data() + oldSize, data, length);
+
         deliverData();
+    }
 
     if (m_streamState != StreamStopped && m_tempFileHandle != INVALID_HANDLE_VALUE) {
         DWORD written;
