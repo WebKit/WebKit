@@ -1,3 +1,16 @@
+2007-11-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15781
+        REGRESSION: Ligatures fail to form when typing in Devanagari (because WebKit can't handle
+        a marked range that covers half of a composed character sequence)
+
+        * platform/mac/editing/input/devanagari-ligature-expected.checksum: Added.
+        * platform/mac/editing/input/devanagari-ligature-expected.png: Added.
+        * platform/mac/editing/input/devanagari-ligature-expected.txt: Added.
+        * platform/mac/editing/input/devanagari-ligature.html: Added.
+
 2007-11-14  Antti Koivisto  <antti@apple.com>
 
         Try to make this test less timing dependent.

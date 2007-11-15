@@ -1,3 +1,23 @@
+2007-11-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15781
+        REGRESSION: Ligatures fail to form when typing in Devanagari (because WebKit can't handle
+        a marked range that covers half of a composed character sequence)
+
+        Test: platform/mac/editing/input/devanagari-ligature.html
+
+        This fix is somewhat of a hack, as it asks editing commands to work with invalid selections.
+        However, this is not entirely new for them, as Roman accents are typed in a similar manner.
+
+        In the future, we probably want to make commands work with ranges (or Positions explicitly).
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectComposition): Force selection to composition range.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Force ending selection to inserted text range.
+
 2007-11-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

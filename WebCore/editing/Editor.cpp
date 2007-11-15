@@ -1665,7 +1665,12 @@ void Editor::selectComposition()
     RefPtr<Range> range = compositionRange();
     if (!range)
         return;
-    m_frame->selectionController()->setSelectedRange(range.get(), DOWNSTREAM, false);
+    
+    // The composition can start inside a composed character sequence, so we have to override checks.
+    // See <http://bugs.webkit.org/show_bug.cgi?id=15781>
+    Selection selection;
+    selection.setWithoutValidation(range->startPosition(), range->endPosition());
+    m_frame->selectionController()->setSelection(selection, false, false);
 }
 
 void Editor::confirmComposition()

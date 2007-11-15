@@ -142,7 +142,12 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
         m_charactersAdded += text.length();
     }
 
-    setEndingSelection(Selection(startPosition, endPosition, DOWNSTREAM));
+    // We could have inserted a part of composed character sequence,
+    // so we are basically treating ending selection as a range to avoid validation.
+    // <http://bugs.webkit.org/show_bug.cgi?id=15781>
+    Selection forcedEndingSelection;
+    forcedEndingSelection.setWithoutValidation(startPosition, endPosition);
+    setEndingSelection(forcedEndingSelection);
 
     // Handle the case where there is a typing style.
     // FIXME: Improve typing style.
