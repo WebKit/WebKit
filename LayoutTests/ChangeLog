@@ -1,3 +1,9 @@
+2007-11-14  Antti Koivisto  <antti@apple.com>
+
+        Try to make this test less timing dependent.
+
+        * http/tests/media/video-play-stall.html:
+
 2007-11-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
