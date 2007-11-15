@@ -1,5 +1,13 @@
 2007-11-15  Brady Eidson  <beidson@apple.com>
 
+        Build fix
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+
+2007-11-15  Brady Eidson  <beidson@apple.com>
+
         Reviewed by John and Sam
 
         Stubbing out everything required for a WebKit API for databases
