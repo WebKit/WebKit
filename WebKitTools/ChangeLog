@@ -1,3 +1,13 @@
+2007-11-14  Adam Roben  <aroben@apple.com>
+
+        Updates to Safari launching now that 3.0.4 is released
+
+        Reviewed by Sam.
+
+        * FindSafari/FindSafari.cpp:
+        (getWebViewCLSID): Use version-independent ProgID.
+        * Scripts/run-safari: Use run-webkit-nightly.cmd.
+
 2007-11-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

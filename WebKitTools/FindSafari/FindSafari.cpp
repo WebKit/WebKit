@@ -57,9 +57,7 @@ static TCHAR* getStringValue(HKEY key, LPCTSTR valueName)
 
 static LPOLESTR getWebViewCLSID()
 {
-    // FIXME <rdar://5505062>: Once WebKit switches to truly version-independent
-    // ProgIDs, this should just become "WebKit.WebView".
-    LPCTSTR webViewProgID = TEXT("WebKit.WebView.3");
+    LPCTSTR webViewProgID = TEXT("WebKit.WebView");
 
     CLSID clsid = CLSID_NULL;
     HRESULT hr = CLSIDFromProgID(webViewProgID, &clsid);
