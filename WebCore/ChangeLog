@@ -1,3 +1,27 @@
+2007-11-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Get rid of SQLiteStatement::bindText and rename bindText16 to bindText.
+        Remove the copy parameter from bindText and bindBlob and always copy passed in data instead.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::setIconIDForPageURLInSQLDatabase):
+        (WebCore::IconDatabase::removePageURLFromSQLDatabase):
+        (WebCore::IconDatabase::getIconIDForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::addIconURLToSQLDatabase):
+        (WebCore::IconDatabase::getImageDataForIconURLFromSQLDatabase):
+        (WebCore::IconDatabase::writeIconSnapshotToSQLDatabase):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+        * platform/sql/SQLiteStatement.h:
+        * storage/Database.cpp:
+        (WebCore::setTextValueInDatabase):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::addDatabase):
+
 2007-11-14  Brady Eidson <beidson@apple.com>
 
         Rubberstamped by Sam

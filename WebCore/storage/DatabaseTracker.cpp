@@ -88,8 +88,8 @@ String DatabaseTracker::fullPathForDatabase(const String& origin, const String& 
     if (statement.prepare() != SQLResultOk)
         return "";
 
-    statement.bindText16(1, origin, false);
-    statement.bindText16(2, name, false);
+    statement.bindText(1, origin);
+    statement.bindText(2, name);
 
     int result = statement.step();
 
@@ -172,7 +172,7 @@ bool DatabaseTracker::databaseNamesForOrigin(const String& origin, Vector<String
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText16(1, origin, false);
+    statement.bindText(1, origin);
 
     int result;
     while ((result = statement.step()) == SQLResultRow)
@@ -196,9 +196,9 @@ bool DatabaseTracker::addDatabase(const String& origin, const String& name, cons
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText16(1, origin, true);
-    statement.bindText16(2, name, true);
-    statement.bindText16(3, path, true);
+    statement.bindText(1, origin);
+    statement.bindText(2, name);
+    statement.bindText(3, path);
 
     if (!statement.executeCommand()) {
         LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), origin.ascii().data(), statement.lastErrorMsg());
