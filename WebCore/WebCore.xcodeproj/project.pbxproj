@@ -361,6 +361,7 @@
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		512F2F450CEC3516006537E3 /* SecurityOriginData.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F2F440CEC3516006537E3 /* SecurityOriginData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513F14530AB634C400094DDF /* IconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513F14510AB634C400094DDF /* IconLoader.cpp */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		514185EE0CD65F0400763C99 /* ChangeVersionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 514185EC0CD65F0400763C99 /* ChangeVersionWrapper.h */; };
@@ -451,6 +452,7 @@
 		51EC92680CE90DD400F90308 /* JSCustomSQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EC92600CE90DD400F90308 /* JSCustomSQLTransactionCallback.h */; };
 		51EC92690CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC92610CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.cpp */; };
 		51EC926A0CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EC92620CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h */; };
+		51FAFE340CECBF2D00BB3F24 /* DatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
@@ -4521,6 +4523,7 @@
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
+		512F2F440CEC3516006537E3 /* SecurityOriginData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginData.h; sourceTree = "<group>"; };
 		513F14510AB634C400094DDF /* IconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconLoader.cpp; sourceTree = "<group>"; };
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		514185EC0CD65F0400763C99 /* ChangeVersionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeVersionWrapper.h; sourceTree = "<group>"; };
@@ -4618,6 +4621,7 @@
 		51EC92620CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomSQLTransactionErrorCallback.h; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTrackerClient.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreAXObject.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -7909,6 +7913,7 @@
 				519611620CAC56570010A80C /* DatabaseThread.h */,
 				1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */,
 				1AD51A120CB59CD300953D11 /* DatabaseTracker.h */,
+				51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */,
 				51EC92570CE90DB400F90308 /* SQLError.h */,
 				51EC92580CE90DB400F90308 /* SQLError.idl */,
 				519611670CAC56570010A80C /* SQLResultSet.cpp */,
@@ -11476,6 +11481,7 @@
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
 				BC014C720CC5579D009C4B20 /* SecurityOrigin.cpp */,
 				BC014C730CC5579D009C4B20 /* SecurityOrigin.h */,
+				512F2F440CEC3516006537E3 /* SecurityOriginData.h */,
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
@@ -12896,6 +12902,7 @@
 				519611EA0CAC749C0010A80C /* DatabaseTask.h in Headers */,
 				519611780CAC56A80010A80C /* DatabaseThread.h in Headers */,
 				1AD51A140CB59CD300953D11 /* DatabaseTracker.h in Headers */,
+				51FAFE340CECBF2D00BB3F24 /* DatabaseTrackerClient.h in Headers */,
 				1C4C8F660AD8655D009475CE /* DeleteButton.h in Headers */,
 				1C4C8F020AD85D87009475CE /* DeleteButtonController.h in Headers */,
 				93309DDF099E64920056E581 /* DeleteFromTextNodeCommand.h in Headers */,
@@ -13742,6 +13749,7 @@
 				BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */,
 				AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */,
 				BC014C750CC5579D009C4B20 /* SecurityOrigin.h in Headers */,
+				512F2F450CEC3516006537E3 /* SecurityOriginData.h in Headers */,
 				BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */,
 				93309E0C099E64920056E581 /* Selection.h in Headers */,
 				93309E0E099E64920056E581 /* SelectionController.h in Headers */,
@@ -13800,6 +13808,7 @@
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
 				BCCFBAE80B5152ED0001F1D7 /* Tokenizer.h in Headers */,
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
+				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
 				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
 				93309E1A099E64920056E581 /* TypingCommand.h in Headers */,
 				85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */,
@@ -13891,7 +13900,6 @@
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

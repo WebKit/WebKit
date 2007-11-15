@@ -42,6 +42,7 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "SecurityOriginData.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SQLResultSet.h"
@@ -139,7 +140,7 @@ Database::Database(Document* document, const String& name, const String& expecte
     m_databaseThread = document->databaseThread();
     ASSERT(m_databaseThread);
 
-    m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin.toString(), m_name);
+    m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_securityOrigin.securityOriginData(), m_name);
 }
 
 Database::~Database()

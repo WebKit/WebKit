@@ -26,77 +26,101 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebDatabaseManager.h"
 #import "WebDatabaseManagerPrivate.h"
+#import "WebDatabaseManagerInternal.h"
+
+#import "WebDatabaseTrackerClient.h"
+#import "WebSecurityOriginPrivate.h"
 
 #import <WebCore/DatabaseTracker.h>
+#import <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
 
 const NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
+
+const NSString *WebDatabaseOriginKey = @"WebDatabaseOriginKey";
+const NSString *WebDatabaseOriginQuotaKey = @"WebDatabaseOriginQuotaKey";
+const NSString *WebDatabaseOriginUsageKey = @"WebDatabaseOriginUsageKey";
+
 const NSString *WebDatabaseNameKey = @"WebDatabaseNameKey";
-const NSString *WebDatabaseSizeKey = @"WebDatabaseSizeKey";
+const NSString *WebDatabaseDisplayNameKey = @"WebDatabaseDisplayNameKey";
+const NSString *WebDatabaseExpectedSizeKey = @"WebDatabaseExpectedSizeKey";
+const NSString *WebDatabaseUsageKey = @"WebDatabaseUsageKey";
+
+const NSString *WebDatabaseDidModifyOriginNotification = @"WebDatabaseDidModifyOriginNotification";
+const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModifyDatabaseNotification";
 
 @implementation WebDatabaseManager
 
-+ (NSArray *)origins
++ (WebDatabaseManager *) sharedWebDatabaseManager
 {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
-
-    const HashSet<String>& origins = DatabaseTracker::tracker().origins();
-    HashSet<String>::const_iterator iter = origins.begin();
-    HashSet<String>::const_iterator end = origins.end();
-
-    for (; iter != end; ++iter)
-        [array addObject:(NSString *)(*iter)];
-
-    return [array autorelease];
+    static WebDatabaseManager *sharedManager = [[WebDatabaseManager alloc] init];
+    return sharedManager;
 }
 
-+ (NSArray *)databasesWithOrigin:(NSString *)origin
+- (NSArray *)origins
 {
-    Vector<String> result;
-    if (!DatabaseTracker::tracker().databaseNamesForOrigin(origin, result))
-        return nil;
-
-    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:result.size()];
-
-    for (unsigned i = 0; i < result.size(); ++i)
-        [array addObject:(NSString *)result[i]];
-
-    return array;
+    return nil;
 }
 
-+ (void)deleteAllDatabases
+- (NSDictionary *)detailsForOrigin:(WebSecurityOrigin *)origin
+{
+    return nil;
+}
+
+- (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin
+{
+    return nil;
+}
+
+- (NSDictionary *)detailsForDatabase:(NSString *)databaseName withOrigin:(WebSecurityOrigin *)origin
+{
+    return nil;
+}
+
+- (void)setQuota:(unsigned long long)quota forOrigin:(WebSecurityOrigin *)origin
+{
+
+}
+
+- (void)deleteAllDatabases
 {
     DatabaseTracker::tracker().deleteAllDatabases();
 }
 
-+ (void)deleteAllDatabasesWithOrigin:(NSString *)origin
+- (void)deleteDatabasesWithOrigin:(WebSecurityOrigin *)origin
 {
-    DatabaseTracker::tracker().deleteAllDatabasesForOrigin(origin);
+    SecurityOriginData coreOrigin([origin protocol], [origin domain], [origin port]);
+
+    DatabaseTracker::tracker().deleteDatabasesWithOrigin(coreOrigin);
 }
 
-+ (void)deleteDatabaseWithOrigin:(NSString *)origin named:(NSString *)name
+- (void)deleteDatabase:(NSString *)databaseName withOrigin:(WebSecurityOrigin *)origin
 {
-    DatabaseTracker::tracker().deleteDatabase(origin, name);
+    SecurityOriginData coreOrigin([origin protocol], [origin domain], [origin port]);
+    
+    DatabaseTracker::tracker().deleteDatabase(coreOrigin, databaseName);
 }
-
 @end
 
-void WebKitSetWebDatabasesPathIfNecessary()
+void WebKitInitializeDatabasesIfNecessary()
 {
-    static BOOL pathSet = NO;
-    if (pathSet)
+    static BOOL initialized = NO;
+    if (initialized)
         return;
 
+    // Set the database root path in WebCore
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     NSString *databasesDirectory = [defaults objectForKey:WebDatabaseDirectoryDefaultsKey];
-    if (!databasesDirectory)
+    if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/WebKit/Databases";
 
     DatabaseTracker::tracker().setDatabasePath([databasesDirectory stringByStandardizingPath]);
 
-    pathSet = YES;
+    // Set the DatabaseTrackerClient
+    DatabaseTracker::tracker().setClient(WebDatabaseTrackerClient::sharedWebDatabaseTrackerClient());
+    
+    initialized = YES;
 }

@@ -26,6 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebDatabaseManager.h"
+namespace WebCore {
+    class SecurityOriginData;
+}
 
-void WebKitSetWebDatabasesPathIfNecessary();
+@interface WebSecurityOrigin (WebInternal)
+
+- (id)_initWithWebCoreSecurityOriginData:(WebCore::SecurityOriginData *)securityOriginData;
+
+@end

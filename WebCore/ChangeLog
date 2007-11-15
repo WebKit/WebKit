@@ -1,4 +1,39 @@
-2007-11-15  Jon Honeycutt  <jhoneycutt@apple.com>
+2007-11-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John and Sam
+
+        Stubbing out everything required for a WebKit API for databases
+
+        Biggest change in WebCore is that we passed around SecurityOriginData as the representation
+        of a SecurityOrigin, instead of a String or a SecurityOrigin itself (which is an opaque object
+        that has a different purpose besides just hanging on to the data)
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/SecurityOrigin.cpp:
+        * platform/SecurityOrigin.h:
+        * platform/SecurityOriginData.h: Added.  Simple object to encapsulate the 3
+          pieces of data in the SecurityOrigin tuple
+        (WebCore::SecurityOriginData::SecurityOriginData):
+        (WebCore::SecurityOriginData::protocol):
+        (WebCore::SecurityOriginData::host):
+        (WebCore::SecurityOriginData::port):
+        (WebCore::SecurityOriginData::toString): Simple concatenation of the 3 components,
+          colon separated
+
+        * storage/Database.cpp:
+        (WebCore::Database::Database): Use SecurityOriginData instead
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::deleteDatabasesWithOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        * storage/DatabaseTracker.h:
+
+        * storage/DatabaseTrackerClient.h: Added.  For dispatching notifications up to WebKit
+        (WebCore::DatabaseTrackerClient::~DatabaseTrackerClient):2007-11-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.
 

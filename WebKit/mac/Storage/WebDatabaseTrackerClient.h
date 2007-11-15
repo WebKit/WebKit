@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,54 +25,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DatabaseTracker_h
-#define DatabaseTracker_h
 
-#include "PlatformString.h"
-#include "SQLiteDatabase.h"
-#include "StringHash.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
+#import <WebCore/DatabaseTrackerClient.h>
+#import <WebCore/SecurityOriginData.h>
 
-namespace WebCore {
-
-class DatabaseTrackerClient;
-class SecurityOriginData;
-
-class DatabaseTracker {
+class WebDatabaseTrackerClient : public WebCore::DatabaseTrackerClient {
 public:
-    void setDatabasePath(const String&);
-    const String& databasePath();
-
-    String fullPathForDatabase(const SecurityOriginData& origin, const String& name);
-
-    const HashSet<String>& origins();
-    bool databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& result);
-
-    void deleteAllDatabases();
-    void deleteDatabasesWithOrigin(const SecurityOriginData& origin);
-    void deleteDatabase(const SecurityOriginData& origin, const String& name);
-
-    void setClient(DatabaseTrackerClient*);
+    static WebDatabaseTrackerClient* sharedWebDatabaseTrackerClient();
     
-    static DatabaseTracker& tracker();
+    virtual ~WebDatabaseTrackerClient();
+    virtual void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&);
+    virtual void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WebCore::String& databaseName);
 private:
-    DatabaseTracker();
-
-    void openTrackerDatabase();
-    
-    bool addDatabase(const String& origin, const String& name, const String& path);
-    void populateOrigins();
-
-    SQLiteDatabase m_database;
-    mutable OwnPtr<HashSet<String> > m_origins;
-
-    String m_databasePath;
-    
-    DatabaseTrackerClient* m_client;
+    WebDatabaseTrackerClient();
 };
-
-} // namespace WebCore
-
-#endif // DatabaseTracker_h

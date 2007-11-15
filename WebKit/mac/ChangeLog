@@ -1,3 +1,55 @@
+2007-11-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        Stubbing out everything required for a WebKit API for databases
+
+        These interfaces seem to provide everything we need for UI and management at the browser level
+
+        * Misc/WebDatabaseManager.h: Removed.
+        * Misc/WebDatabaseManager.mm: Removed.
+        * Misc/WebDatabaseManagerPrivate.h: Removed.
+
+        * Misc/WebSecurityOrigin.mm: Added. Object that acts as a container for the "SecurityOrigin tuple"
+          (protocol, domain, and port)
+        (-[WebSecurityOriginPrivate initWithProtocol:domain:port:]):
+        (-[WebSecurityOriginPrivate dealloc]):
+        (-[WebSecurityOrigin initWithProtocol:domain:]):
+        (-[WebSecurityOrigin initWithProtocol:domain:port:]):
+        (-[WebSecurityOrigin protocol]):
+        (-[WebSecurityOrigin domain]):
+        (-[WebSecurityOrigin port]):
+        (-[WebSecurityOrigin dealloc]):
+        (-[WebSecurityOrigin _initWithWebCoreSecurityOriginData:WebCore::]):
+        * Misc/WebSecurityOriginInternal.h: Added.
+        * Misc/WebSecurityOriginPrivate.h: Added.
+
+        * Storage/WebDatabaseManager.mm: Added.
+        (+[WebDatabaseManager sharedWebDatabaseManager]):
+        (-[WebDatabaseManager origins]):  Get a list of all origins currently tracked
+        (-[WebDatabaseManager detailsForOrigin:]): Get the current usage and current quota for the given origin
+        (-[WebDatabaseManager databasesWithOrigin:]): Get all databases for a certain origin
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]): Get all details about a specific database
+        (-[WebDatabaseManager setQuota:forOrigin:]): Change origin-wide quota
+        (-[WebDatabaseManager deleteAllDatabases]):
+        (-[WebDatabaseManager deleteAllDatabasesWithOrigin:]):
+        (-[WebDatabaseManager deleteDatabase:withOrigin:]):
+        * Storage/WebDatabaseManagerPrivate.h: Added.
+        * Storage/WebDatabaseManagerInternal.h: Added.
+        (WebKitInitializeDatabasesIfNecessary): One-time initialization of database-related things
+
+        * Storage/WebDatabaseTrackerClient.h: Added. Stubbed out client for notifications
+        * Storage/WebDatabaseTrackerClient.mm: Added.
+        (WebDatabaseTrackerClient::sharedWebDatabaseTrackerClient):
+        (WebDatabaseTrackerClient::WebDatabaseTrackerClient):
+        (WebDatabaseTrackerClient::~WebDatabaseTrackerClient):
+        (WebDatabaseTrackerClient::dispatchDidModifyOrigin):
+        (WebDatabaseTrackerClient::dispatchDidModifyDatabase):
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Do one-time initialization of
+          Database-related things here
+
 2007-11-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders Carlsson.

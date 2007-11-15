@@ -25,54 +25,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DatabaseTracker_h
-#define DatabaseTracker_h
-
-#include "PlatformString.h"
-#include "SQLiteDatabase.h"
-#include "StringHash.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
+#ifndef DatabaseTrackerClient_h
+#define DatabaseTrackerClient_h
 
 namespace WebCore {
 
-class DatabaseTrackerClient;
 class SecurityOriginData;
+class String;
 
-class DatabaseTracker {
+class DatabaseTrackerClient {
 public:
-    void setDatabasePath(const String&);
-    const String& databasePath();
-
-    String fullPathForDatabase(const SecurityOriginData& origin, const String& name);
-
-    const HashSet<String>& origins();
-    bool databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& result);
-
-    void deleteAllDatabases();
-    void deleteDatabasesWithOrigin(const SecurityOriginData& origin);
-    void deleteDatabase(const SecurityOriginData& origin, const String& name);
-
-    void setClient(DatabaseTrackerClient*);
-    
-    static DatabaseTracker& tracker();
-private:
-    DatabaseTracker();
-
-    void openTrackerDatabase();
-    
-    bool addDatabase(const String& origin, const String& name, const String& path);
-    void populateOrigins();
-
-    SQLiteDatabase m_database;
-    mutable OwnPtr<HashSet<String> > m_origins;
-
-    String m_databasePath;
-    
-    DatabaseTrackerClient* m_client;
+    virtual ~DatabaseTrackerClient() { }
+    virtual void dispatchDidModifyOrigin(const SecurityOriginData&) = 0;
+    virtual void dispatchDidModifyDatabase(const SecurityOriginData&, const String& databaseName) = 0;
 };
 
 } // namespace WebCore
 
-#endif // DatabaseTracker_h
+#endif // DatabaseTrackerClient_h

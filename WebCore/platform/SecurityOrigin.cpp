@@ -35,6 +35,7 @@
 #include "FrameTree.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include "SecurityOriginData.h"
 
 namespace WebCore {
 
@@ -136,6 +137,11 @@ bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
 String SecurityOrigin::toString() const
 {
     return m_protocol + ":" + m_host + ":" + String::number(m_port);
+}
+
+SecurityOriginData SecurityOrigin::securityOriginData() const
+{
+    return SecurityOriginData(m_protocol, m_host, m_port);
 }
 
 } // namespace WebCore

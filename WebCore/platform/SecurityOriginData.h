@@ -25,54 +25,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DatabaseTracker_h
-#define DatabaseTracker_h
+ 
+#ifndef SecurityOriginData_h
+#define SecurityOriginData_h
 
 #include "PlatformString.h"
-#include "SQLiteDatabase.h"
-#include "StringHash.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class DatabaseTrackerClient;
-class SecurityOriginData;
-
-class DatabaseTracker {
+class SecurityOriginData {
 public:
-    void setDatabasePath(const String&);
-    const String& databasePath();
-
-    String fullPathForDatabase(const SecurityOriginData& origin, const String& name);
-
-    const HashSet<String>& origins();
-    bool databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& result);
-
-    void deleteAllDatabases();
-    void deleteDatabasesWithOrigin(const SecurityOriginData& origin);
-    void deleteDatabase(const SecurityOriginData& origin, const String& name);
-
-    void setClient(DatabaseTrackerClient*);
+    SecurityOriginData(const String& protocol, const String& host, unsigned short port)
+        : m_protocol(protocol)
+        , m_host(host)
+        , m_port(port)
+    { }
     
-    static DatabaseTracker& tracker();
+    const String& protocol() const { return m_protocol; }
+    const String& host() const { return m_host; }
+    unsigned short port() const { return m_port; }
+    
+    String stringIdentifier() const { return m_protocol + ":" + m_host + ":" + String::number(m_port); }
 private:
-    DatabaseTracker();
-
-    void openTrackerDatabase();
-    
-    bool addDatabase(const String& origin, const String& name, const String& path);
-    void populateOrigins();
-
-    SQLiteDatabase m_database;
-    mutable OwnPtr<HashSet<String> > m_origins;
-
-    String m_databasePath;
-    
-    DatabaseTrackerClient* m_client;
+    String m_protocol;
+    String m_host;
+    unsigned short m_port;
 };
-
+    
 } // namespace WebCore
 
-#endif // DatabaseTracker_h
+#endif // SecurityOriginData_h

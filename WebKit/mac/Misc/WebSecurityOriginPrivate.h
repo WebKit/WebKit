@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,54 +25,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DatabaseTracker_h
-#define DatabaseTracker_h
 
-#include "PlatformString.h"
-#include "SQLiteDatabase.h"
-#include "StringHash.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
+@class WebSecurityOriginPrivate;
 
-namespace WebCore {
+@interface WebSecurityOrigin : NSObject {
+    WebSecurityOriginPrivate *_private;
+}
 
-class DatabaseTrackerClient;
-class SecurityOriginData;
+- (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain;
+- (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain port:(unsigned short)port;
 
-class DatabaseTracker {
-public:
-    void setDatabasePath(const String&);
-    const String& databasePath();
+- (NSString*)protocol;
+- (NSString*)domain;
 
-    String fullPathForDatabase(const SecurityOriginData& origin, const String& name);
-
-    const HashSet<String>& origins();
-    bool databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& result);
-
-    void deleteAllDatabases();
-    void deleteDatabasesWithOrigin(const SecurityOriginData& origin);
-    void deleteDatabase(const SecurityOriginData& origin, const String& name);
-
-    void setClient(DatabaseTrackerClient*);
-    
-    static DatabaseTracker& tracker();
-private:
-    DatabaseTracker();
-
-    void openTrackerDatabase();
-    
-    bool addDatabase(const String& origin, const String& name, const String& path);
-    void populateOrigins();
-
-    SQLiteDatabase m_database;
-    mutable OwnPtr<HashSet<String> > m_origins;
-
-    String m_databasePath;
-    
-    DatabaseTrackerClient* m_client;
-};
-
-} // namespace WebCore
-
-#endif // DatabaseTracker_h
+// Returns zero if the port is the default port for the protocol, non-zero otherwise
+- (unsigned short)port;
+@end

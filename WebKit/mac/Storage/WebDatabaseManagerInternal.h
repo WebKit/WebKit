@@ -26,18 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern const NSString *WebDatabaseDirectoryDefaultsKey;
-extern const NSString *WebDatabaseNameKey;
-extern const NSString *WebDatabaseSizeKey;
-
-@interface WebDatabaseManager : NSObject
-{
-}
-
-+ (NSArray *)origins;
-+ (NSArray *)databasesWithOrigin:(NSString *)origin;
-+ (void)deleteAllDatabases;
-+ (void)deleteAllDatabasesWithOrigin:(NSString *)origin;
-+ (void)deleteDatabaseWithOrigin:(NSString *)origin named:(NSString *)name;
-
-@end
+void WebKitInitializeDatabasesIfNecessary();

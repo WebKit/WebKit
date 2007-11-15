@@ -31,6 +31,7 @@
 #include "Database.h"
 #include "FileSystem.h"
 #include "NotImplemented.h"
+#include "SecurityOriginData.h"
 #include "SQLiteStatement.h"
 
 namespace WebCore {
@@ -81,7 +82,7 @@ void DatabaseTracker::openTrackerDatabase()
     }
 }
     
-String DatabaseTracker::fullPathForDatabase(const String& origin, const String& name)
+String DatabaseTracker::fullPathForDatabase(const SecurityOriginData& origin, const String& name)
 {
     SQLiteStatement statement(m_database, "SELECT path FROM Databases WHERE origin=? AND name=?;");
 
@@ -96,7 +97,7 @@ String DatabaseTracker::fullPathForDatabase(const String& origin, const String& 
     if (result == SQLResultRow)
         return pathByAppendingComponent(m_databasePath, statement.getColumnText16(0));
     if (result != SQLResultDone) {
-        LOG_ERROR("Failed to retrieve filename from Database Tracker for origin %s, name %s", origin.ascii().data(), name.ascii().data());
+        LOG_ERROR("Failed to retrieve filename from Database Tracker for origin %s, name %s", origin.stringIdentifier().ascii().data(), name.ascii().data());
         return "";
     }
 
@@ -123,7 +124,7 @@ String DatabaseTracker::fullPathForDatabase(const String& origin, const String& 
 
     sequenceStatement.finalize();
 
-    if (!addDatabase(origin, name, String::format("%016llx.db", seq)))
+    if (!addDatabase(origin.stringIdentifier(), name, String::format("%016llx.db", seq)))
         return "";
 
     return filename;
@@ -162,7 +163,7 @@ const HashSet<String>& DatabaseTracker::origins()
     return *(m_origins.get());
 }
 
-bool DatabaseTracker::databaseNamesForOrigin(const String& origin, Vector<String>& resultVector)
+bool DatabaseTracker::databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& resultVector)
 {
     if (!m_database.isOpen())
         return false;
@@ -179,7 +180,7 @@ bool DatabaseTracker::databaseNamesForOrigin(const String& origin, Vector<String
         resultVector.append(statement.getColumnText16(0));
 
     if (result != SQLResultDone) {
-        LOG_ERROR("Failed to retrieve all database names for origin %s", origin.ascii().data());
+        LOG_ERROR("Failed to retrieve all database names for origin %s", origin.stringIdentifier().ascii().data());
         return false;
     }
 
@@ -215,14 +216,19 @@ void DatabaseTracker::deleteAllDatabases()
     notImplemented();
 }
 
-void DatabaseTracker::deleteAllDatabasesForOrigin(const String& origin)
+void DatabaseTracker::deleteDatabasesWithOrigin(const SecurityOriginData& origin)
 {
     notImplemented();
 }
 
-void DatabaseTracker::deleteDatabase(const String& origin, const String& name)
+void DatabaseTracker::deleteDatabase(const SecurityOriginData& origin, const String& name)
 {
     notImplemented();
+}
+
+void DatabaseTracker::setClient(DatabaseTrackerClient* client)
+{
+    m_client = client;
 }
 
 } // namespace WebCore
