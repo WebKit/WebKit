@@ -102,6 +102,8 @@
 		1A2E6E7B0CC556D5004A2062 /* SQLiteAuthorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */; };
 		1A2E6FA40CC5795D004A2062 /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6FA30CC5795D004A2062 /* ThreadingPthreads.cpp */; };
 		1A3178930B20A81600316987 /* SubresourceLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3178920B20A81600316987 /* SubresourceLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */; };
+		1A3417CA0CECFF250049CBDE /* JSCustomVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */; };
 		1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */; };
 		1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */; };
 		1A494E340A12358B00FDAFC1 /* JSHTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */; };
@@ -3647,7 +3649,6 @@
 		E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = E446139E0CD6331000FADA75 /* TimeRanges.h */; };
 		E44613B10CD6331000FADA75 /* TimeRanges.idl in Resources */ = {isa = PBXBuildFile; fileRef = E446139F0CD6331000FADA75 /* TimeRanges.idl */; };
 		E44613B20CD6331000FADA75 /* VoidCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = E44613A00CD6331000FADA75 /* VoidCallback.idl */; };
-		E44613B50CD6344E00FADA75 /* VoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44613B30CD6344E00FADA75 /* VoidCallback.cpp */; };
 		E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613B40CD6344E00FADA75 /* VoidCallback.h */; };
 		E44613E30CD6819F00FADA75 /* Movie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E0C0CBF90BD00AF2ECE /* Movie.cpp */; };
 		E44613E40CD681A200FADA75 /* Movie.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E0D0CBF90BD00AF2ECE /* Movie.h */; };
@@ -3663,8 +3664,6 @@
 		E44614190CD6826900FADA75 /* JSMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = E44614110CD6826900FADA75 /* JSMediaError.h */; };
 		E446141A0CD6826900FADA75 /* JSTimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44614120CD6826900FADA75 /* JSTimeRanges.cpp */; };
 		E446141B0CD6826900FADA75 /* JSTimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = E44614130CD6826900FADA75 /* JSTimeRanges.h */; };
-		E446141C0CD6826900FADA75 /* JSVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44614140CD6826900FADA75 /* JSVoidCallback.cpp */; };
-		E446141D0CD6826900FADA75 /* JSVoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = E44614150CD6826900FADA75 /* JSVoidCallback.h */; };
 		E44614370CD689C400FADA75 /* JSHTMLAudioElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B4237D0CBFB73C00AF2ECE /* JSHTMLAudioElement.cpp */; };
 		E44614380CD689C500FADA75 /* JSHTMLAudioElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B4237E0CBFB73C00AF2ECE /* JSHTMLAudioElement.h */; };
 		E44614390CD689C700FADA75 /* JSHTMLMediaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B4237F0CBFB73C00AF2ECE /* JSHTMLMediaElement.cpp */; };
@@ -4237,6 +4236,8 @@
 		1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteAuthorizer.h; path = sql/SQLiteAuthorizer.h; sourceTree = "<group>"; };
 		1A2E6FA30CC5795D004A2062 /* ThreadingPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadingPthreads.cpp; path = pthreads/ThreadingPthreads.cpp; sourceTree = "<group>"; };
 		1A3178920B20A81600316987 /* SubresourceLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubresourceLoaderClient.h; sourceTree = "<group>"; };
+		1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomVoidCallback.h; sourceTree = "<group>"; };
+		1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomVoidCallback.cpp; sourceTree = "<group>"; };
 		1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLElement.idl; sourceTree = "<group>"; };
 		1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElement.cpp; sourceTree = "<group>"; };
 		1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElement.h; sourceTree = "<group>"; };
@@ -7647,7 +7648,6 @@
 		E446139E0CD6331000FADA75 /* TimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeRanges.h; sourceTree = "<group>"; };
 		E446139F0CD6331000FADA75 /* TimeRanges.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeRanges.idl; sourceTree = "<group>"; };
 		E44613A00CD6331000FADA75 /* VoidCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VoidCallback.idl; sourceTree = "<group>"; };
-		E44613B30CD6344E00FADA75 /* VoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VoidCallback.cpp; sourceTree = "<group>"; };
 		E44613B40CD6344E00FADA75 /* VoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoidCallback.h; sourceTree = "<group>"; };
 		E446140E0CD6826900FADA75 /* JSHTMLVideoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLVideoElement.cpp; sourceTree = "<group>"; };
 		E446140F0CD6826900FADA75 /* JSHTMLVideoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLVideoElement.h; sourceTree = "<group>"; };
@@ -7655,8 +7655,6 @@
 		E44614110CD6826900FADA75 /* JSMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaError.h; sourceTree = "<group>"; };
 		E44614120CD6826900FADA75 /* JSTimeRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTimeRanges.cpp; sourceTree = "<group>"; };
 		E44614130CD6826900FADA75 /* JSTimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTimeRanges.h; sourceTree = "<group>"; };
-		E44614140CD6826900FADA75 /* JSVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVoidCallback.cpp; sourceTree = "<group>"; };
-		E44614150CD6826900FADA75 /* JSVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVoidCallback.h; sourceTree = "<group>"; };
 		E4B41E010CBF8EAA00AF2ECE /* ProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressEvent.cpp; sourceTree = "<group>"; };
 		E4B41E020CBF8EAA00AF2ECE /* ProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressEvent.h; sourceTree = "<group>"; };
 		E4B41E030CBF8EAA00AF2ECE /* ProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProgressEvent.idl; sourceTree = "<group>"; };
@@ -9810,7 +9808,6 @@
 				E446139D0CD6331000FADA75 /* TimeRanges.cpp */,
 				E446139E0CD6331000FADA75 /* TimeRanges.h */,
 				E446139F0CD6331000FADA75 /* TimeRanges.idl */,
-				E44613B30CD6344E00FADA75 /* VoidCallback.cpp */,
 				E44613B40CD6344E00FADA75 /* VoidCallback.h */,
 				E44613A00CD6331000FADA75 /* VoidCallback.idl */,
 			);
@@ -9961,8 +9958,6 @@
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
 				E44614120CD6826900FADA75 /* JSTimeRanges.cpp */,
 				E44614130CD6826900FADA75 /* JSTimeRanges.h */,
-				E44614140CD6826900FADA75 /* JSVoidCallback.cpp */,
-				E44614150CD6826900FADA75 /* JSVoidCallback.h */,
 			);
 			name = HTML;
 			sourceTree = "<group>";
@@ -11228,6 +11223,8 @@
 				51EC92600CE90DD400F90308 /* JSCustomSQLTransactionCallback.h */,
 				51EC92610CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.cpp */,
 				51EC92620CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h */,
+				1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */,
+				1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */,
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
@@ -13383,7 +13380,6 @@
 				E446141B0CD6826900FADA75 /* JSTimeRanges.h in Headers */,
 				1A750D5D0A90DEE1000FF215 /* JSTreeWalker.h in Headers */,
 				A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */,
-				E446141D0CD6826900FADA75 /* JSVoidCallback.h in Headers */,
 				65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */,
 				93B70D5E09EB0C7C009D8468 /* JSXMLHttpRequest.h in Headers */,
 				656581EE09D1508D000E61D7 /* JSXMLHttpRequest.lut.h in Headers */,
@@ -13900,6 +13896,7 @@
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14961,7 +14958,6 @@
 				1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */,
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,
 				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
-				E446141C0CD6826900FADA75 /* JSVoidCallback.cpp in Sources */,
 				65DF320509D1CC60000BE325 /* JSWheelEvent.cpp in Sources */,
 				93B70D5D09EB0C7C009D8468 /* JSXMLHttpRequest.cpp in Sources */,
 				1ACE53F60A8D19470022947D /* JSXMLSerializer.cpp in Sources */,
@@ -15389,7 +15385,6 @@
 				D086FE9909D53AAB005BC74D /* UnlinkCommand.cpp in Sources */,
 				65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
-				E44613B50CD6344E00FADA75 /* VoidCallback.cpp in Sources */,
 				B2E27C500B0F2AE600F17C7B /* WKArithmeticFilter.m in Sources */,
 				B2E27C530B0F2AE600F17C7B /* WKComponentMergeFilter.m in Sources */,
 				B2E27C560B0F2AE600F17C7B /* WKDiffuseLightingFilter.m in Sources */,
@@ -15462,6 +15457,7 @@
 				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				1A3417CA0CECFF250049CBDE /* JSCustomVoidCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

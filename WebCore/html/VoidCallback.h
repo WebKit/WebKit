@@ -36,20 +36,11 @@ class Frame;
     
 class VoidCallback : public RefCounted<VoidCallback> {
 public:
-    VoidCallback(KJS::JSValue* func);
-    virtual ~VoidCallback();
+    VoidCallback() { }
+    virtual ~VoidCallback() { }
     
-    void handleEvent();
-    
-    void execute(Frame* frame);
-    
-    bool operator==(const VoidCallback&) const;
-    
-private:
-    KJS::JSValue* m_func;
+    virtual void handleEvent() = 0;
 };
-
-VoidCallback* toVoidCallback(KJS::JSValue*);
 
 } // namespace WebCore
 

@@ -873,7 +873,7 @@ void HTMLMediaElement::movieCuePointReached(Movie*, float cueTime)
     for (unsigned n = 0; n < callbackVector->size(); n++) {
         CallbackEntry ce = (*callbackVector)[n];
         if (ce.m_voidCallback) 
-            ce.m_voidCallback->execute(document()->frame());
+            ce.m_voidCallback->handleEvent();
     }      
 }
 
@@ -894,23 +894,9 @@ void HTMLMediaElement::addCuePoint(float time, VoidCallback* voidCallback, bool 
 
 void HTMLMediaElement::removeCuePoint(float time, VoidCallback* callback)
 {
-    if (time < 0 || !isfinite(time))
-        return;
-    CallbackVector* callbackVector = m_cuePoints.get(time);
-    if (callbackVector) {
-        for (unsigned n = 0; n < callbackVector->size(); n++) {
-            if (*(*callbackVector)[n].m_voidCallback == *callback) {
-                callbackVector->remove(n);
-                break;
-            }
-        }
-        if (!callbackVector->size()) {
-            delete callbackVector;
-            m_cuePoints.remove(time);
-            if (m_movie)
-                m_movie->removeCuePoint(time);
-        }
-    }
+    // FIXME: This method be removed entirely. The body has been removed
+    // because it used to contain code that compared VoidCallbacks for equality
+    // and the new VoidCallback interface doesn't allow that.
 }
 
 PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const

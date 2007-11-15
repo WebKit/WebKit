@@ -1,3 +1,36 @@
+2007-11-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Make the VoidCallback DOM interface behave more like our other DOM interfaces.
+        
+        * bindings/js/JSCustomVoidCallback.h: Added.
+        * bindings/js/JSCustomVoidCallback.cpp: Added.
+        (WebCore::JSCustomVoidCallback::JSCustomVoidCallback):
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        VoidCallback implementation that wraps a JS object.
+        
+        (WebCore::toVoidCallback):
+        New method that creates a VoidCallback implementation given a JS object.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Specify that VoidCallback can fail conversion and add a custom conversion function.
+        
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::movieCuePointReached):
+        Call handleEvent on the callback.
+        
+        (WebCore::HTMLMediaElement::removeCuePoint):
+        Comment out parts of this method, it has already been removed in the HTML5 spec and it relies
+        on overriding VoidCallback equality.
+        
+        * html/VoidCallback.cpp: Removed.
+        
+        * html/VoidCallback.h:
+        (WebCore::VoidCallback::VoidCallback):
+        (WebCore::VoidCallback::~VoidCallback):
+        Make this an abstract class with a pure virtual handleEvent method.
+        
 2007-11-15  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5485108> Type-select while a <select> menu is open doesn't work
