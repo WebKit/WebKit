@@ -29,21 +29,14 @@
 #include "CString.h"
 #include "PlatformString.h"
 
+#include <gtk/gtk.h>
 #include <pango/pango.h>
 
 namespace WebCore {
 
 String defaultLanguage()
 {
-    static String defaultLanguage;
-
-    if (!defaultLanguage.isEmpty())
-        return defaultLanguage;
-
-    PangoLanguage* pangoLanguage = pango_language_get_default();
-    defaultLanguage = String(pango_language_to_string(pangoLanguage));
-
-    return defaultLanguage;
+    return pango_language_to_string(gtk_get_default_language());
 }
 
 }

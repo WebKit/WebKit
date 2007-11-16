@@ -1,3 +1,17 @@
+2007-11-16  Doug Turner  <dougt@meer.net>
+
+        Reviewed by Alp.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16018
+        build bustage when building on debian 4.0
+
+        Fix build bustage on GTK+ with older versions of Pango.
+
+        Don't cache the return value since the docs say it can change.
+
+        * platform/gtk/Language.cpp:
+        (WebCore::defaultLanguage):
+
 2007-11-16  Brady Eidson  <beidson@apple.com>
 
         Build fix
