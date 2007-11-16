@@ -1,3 +1,9 @@
+2007-11-15  Mark Rowe  <mrowe@apple.com>
+
+        Qt build fix.
+
+        * kjs/Parser.h:
+
 2007-11-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric Seidel.

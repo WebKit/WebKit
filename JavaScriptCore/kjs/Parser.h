@@ -26,6 +26,7 @@
 #define Parser_h
 
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 namespace KJS {
