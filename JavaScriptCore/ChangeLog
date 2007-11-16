@@ -2,6 +2,18 @@
 
         Reviewed by Sam.
 
+        Remove RETURN_ERROR, add MatchStack
+
+        * pcre/pcre_exec.cpp:
+        (MatchStack::MatchStack):
+        (MatchStack::unrollAnyHeapAllocatedFrames):
+        (matchError):
+        (match):
+
+2007-11-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Clean up match function to match WebKit style
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
