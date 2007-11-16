@@ -2,6 +2,20 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=15989
+        XPath queries with predicates incorrectly retains the current node across unions
+
+        Test: fast/xpath/union-context-node.xhtml
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::LocationPath::evaluate): Restore context after evaluation.
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::evaluate): Do not backup context, as we can easily re-create it.
+
+2007-11-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=15988
         REGRESSION: XPath preceding-axis query misses nested elements
 

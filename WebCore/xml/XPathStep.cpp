@@ -65,18 +65,14 @@ void Step::evaluate(Node* context, NodeSet& nodes) const
         if (!nodes.isSorted())
             newNodes.markSorted(false);
 
-        evaluationContext.size = nodes.size();
-        evaluationContext.position = 1;
         for (unsigned j = 0; j < nodes.size(); j++) {
             Node* node = nodes[j];
 
             Expression::evaluationContext().node = node;
-            EvaluationContext backupCtx = evaluationContext;
+            evaluationContext.size = nodes.size();
+            evaluationContext.position = j + 1;
             if (predicate->evaluate())
                 newNodes.append(node);
-
-            evaluationContext = backupCtx;
-            ++evaluationContext.position;
         }
 
         nodes.swap(newNodes);
