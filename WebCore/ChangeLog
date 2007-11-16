@@ -1,5 +1,12 @@
 2007-11-16  Brady Eidson  <beidson@apple.com>
 
+        Build fix
+
+        * platform/SecurityOriginData.h:
+        (WebCore::operator!=): Whoops!
+
+2007-11-16  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam
 
         Further purify DatabaseTracker to use SecurityOriginData instead of "a String"

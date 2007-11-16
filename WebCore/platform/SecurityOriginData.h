@@ -51,7 +51,7 @@ private:
 };
     
 inline bool operator==(const SecurityOriginData& a, const SecurityOriginData& b) { return a.protocol() == b.protocol() && a.host() == b.host() && a.port() == b.port(); }
-inline bool operator==(const SecurityOriginData& a, const SecurityOriginData& b) { return !(a == b); }
+inline bool operator!=(const SecurityOriginData& a, const SecurityOriginData& b) { return !(a == b); }
 
 } // namespace WebCore
 
