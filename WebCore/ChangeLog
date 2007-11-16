@@ -1,3 +1,15 @@
+2007-11-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15988
+        REGRESSION: XPath preceding-axis query misses nested elements
+
+        Test: fast/xpath/preceding-axis.xhtml
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Hopefully correct this time.
+
 2007-11-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe and Sam.

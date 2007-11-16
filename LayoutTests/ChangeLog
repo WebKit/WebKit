@@ -1,3 +1,13 @@
+2007-11-15  Khoo Yit Phang  <khooyp@cs.umd.edu>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15988
+        REGRESSION: XPath preceding-axis query misses nested elements
+
+        * fast/xpath/preceding-axis-expected.txt: Added.
+        * fast/xpath/preceding-axis.xhtml: Added.
+
 2007-11-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele Peterson.

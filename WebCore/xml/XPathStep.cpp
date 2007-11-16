@@ -169,14 +169,12 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
             if (context->isAttributeNode())
                 context = static_cast<Attr*>(context)->ownerElement();
 
-            for (Node* p = context; !isRootDomNode(p); p = p->parentNode()) {
-                for (Node* n = p->previousSibling(); n ; n = n->previousSibling()) {
-                    for (Node* c = n->lastChild(); c && c != n; c = c->traversePreviousNode(n))
-                        if (nodeMatches(c))
-                            nodes.append(c);
+            Node* n = context;
+            while (Node* parent = n->parent()) {
+                for (n = n->traversePreviousNode(); n != parent; n = n->traversePreviousNode())
                     if (nodeMatches(n))
                         nodes.append(n);
-                }
+                n = parent;
             }
             nodes.markSorted(false);
             return;
