@@ -263,6 +263,10 @@ body.inactive #toolbar .split-button-divider {
     color: rgba(255, 255, 255, 0.8);
 }
 
+body.inactive .focused .selected .search-results-section {
+    color: rgba(0, 0, 0, 0.5);
+}
+
 .blurred .selected .search-results-section {
     color: rgba(0, 0, 0, 0.5);
 }
@@ -1036,7 +1040,7 @@ body.inactive #sidebar li.selected {
     text-decoration: underline;
 }
 
-body:not(.inactive) .focused .content.tree li.selected * {
+body:not(.inactive) .focused .outline-disclosure li.selected * {
     color: inherit;
 }
 

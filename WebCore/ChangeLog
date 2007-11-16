@@ -1,5 +1,14 @@
 2007-11-15  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Mark Rowe and Sam.
+
+        This corrects a couple of issues in the Web Inspector where selected search results
+        would not have the right text color when the window is inactive or the results are focused.
+
+        * page/inspector/inspector.css:
+
+2007-11-15  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Sam.
 
         Bug 16007: REGRESSION: Disclosure triangle click zone for resource categories is off by 10 pixels
