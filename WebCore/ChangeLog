@@ -1,3 +1,16 @@
+2007-11-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam.
+
+        Bug 16005: Hovering in the breadcrumbs causes jumpy behavior
+        http://bugs.webkit.org/show_bug.cgi?id=16005
+
+        Hovering over cumbs no longer exposes new crumbs. Clicking on a collapsed
+        crumb will expose as many hidden crumbs as possible to the user. Also crumbs
+        that have ID attributes will compact to the ID over the tag name.
+
+        * page/inspector/DocumentPanel.js:
+
 2007-11-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
