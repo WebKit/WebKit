@@ -1,3 +1,19 @@
+2007-11-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5601548> REGRESSION: All SourceElements and their children leak after a syntax error
+        
+        Add a stub node to maintain the Vector of SourceElements until assignment.
+
+        * kjs/grammar.y:
+        * kjs/nodes.h:
+        (KJS::SourceElementsStub::SourceElementsStub):
+        (KJS::SourceElementsStub::append):
+        (KJS::SourceElementsStub::release):
+        (KJS::SourceElementsStub::):
+        (KJS::SourceElementsStub::precedence):
+
 2007-11-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.

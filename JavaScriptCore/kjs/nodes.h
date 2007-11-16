@@ -1728,6 +1728,25 @@ namespace KJS {
 
   typedef Vector<RefPtr<StatementNode> > SourceElements;
 
+  class SourceElementsStub : public Node {
+  public:
+    SourceElementsStub()
+      : m_sourceElements(new SourceElements)
+      {}
+    void append(StatementNode* element) { m_sourceElements->append(element); }
+    SourceElements* release() { 
+        SourceElements* elems = m_sourceElements.release(); 
+        return elems;
+    }
+    virtual void optimizeVariableAccess(FunctionBodyNode*, DeclarationStacks::NodeStack&) KJS_FAST_CALL { ASSERT_NOT_REACHED(); }
+    virtual Completion execute(ExecState*) KJS_FAST_CALL  { ASSERT_NOT_REACHED(); return Completion(); }
+    virtual void streamTo(SourceStream&) const KJS_FAST_CALL  { ASSERT_NOT_REACHED(); }
+    virtual void getDeclarations(DeclarationStacks&) KJS_FAST_CALL  { ASSERT_NOT_REACHED(); }
+    virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
+  private:
+    OwnPtr<SourceElements> m_sourceElements;
+  };
+    
   class BlockNode : public StatementNode {
   public:
     BlockNode(SourceElements* children) KJS_FAST_CALL;

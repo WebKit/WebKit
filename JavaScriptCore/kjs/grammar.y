@@ -107,7 +107,7 @@ static NumberNode* makeNumberNode(double);
     FunctionBodyNode*   functionBodyNode;
     ProgramNode*        programNode;
 
-    SourceElements*     sourceElements;
+    SourceElementsStub* sourceElements;
     PropertyList        propertyList;
     ArgumentList        argumentList;
     VarDeclList         varDeclList;
@@ -660,7 +660,7 @@ Statement:
 
 Block:
     '{' '}'                             { $$ = new BlockNode(new SourceElements); DBG($$, @1, @2); }
-  | '{' SourceElements '}'              { $$ = new BlockNode($2); DBG($$, @1, @3); }
+  | '{' SourceElements '}'              { $$ = new BlockNode($2->release()); DBG($$, @1, @3); }
 ;
 
 VariableStatement:
@@ -821,12 +821,12 @@ CaseClauses:
 
 CaseClause:
     CASE Expr ':'                       { $$ = new CaseClauseNode($2); }
-  | CASE Expr ':' SourceElements        { $$ = new CaseClauseNode($2, $4); }
+  | CASE Expr ':' SourceElements        { $$ = new CaseClauseNode($2, $4->release()); }
 ;
 
 DefaultClause:
     DEFAULT ':'                         { $$ = new CaseClauseNode(0); }
-  | DEFAULT ':' SourceElements          { $$ = new CaseClauseNode(0, $3); }
+  | DEFAULT ':' SourceElements          { $$ = new CaseClauseNode(0, $3->release()); }
 ;
 
 LabelledStatement:
@@ -872,16 +872,16 @@ FormalParameterList:
 
 FunctionBody:
     /* not in spec */           { $$ = new FunctionBodyNode(new SourceElements); }
-  | SourceElements              { $$ = new FunctionBodyNode($1); }
+  | SourceElements              { $$ = new FunctionBodyNode($1->release()); }
 ;
 
 Program:
     /* not in spec */                   { Parser::accept(new ProgramNode(new SourceElements)); }
-    | SourceElements                    { Parser::accept(new ProgramNode($1)); }
+    | SourceElements                    { Parser::accept(new ProgramNode($1->release())); }
 ;
 
 SourceElements:
-    SourceElement                       { $$ = new SourceElements; $$->append($1); }
+    SourceElement                       { $$ = new SourceElementsStub; $$->append($1); }
   | SourceElements SourceElement        { $$->append($2); }
 ;
 
