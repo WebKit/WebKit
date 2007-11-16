@@ -33,17 +33,11 @@
 #import "WebSecurityOriginPrivate.h"
 
 #import <WebCore/DatabaseTracker.h>
-#import <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
 
 const NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 
-const NSString *WebDatabaseOriginKey = @"WebDatabaseOriginKey";
-const NSString *WebDatabaseOriginQuotaKey = @"WebDatabaseOriginQuotaKey";
-const NSString *WebDatabaseOriginUsageKey = @"WebDatabaseOriginUsageKey";
-
-const NSString *WebDatabaseNameKey = @"WebDatabaseNameKey";
 const NSString *WebDatabaseDisplayNameKey = @"WebDatabaseDisplayNameKey";
 const NSString *WebDatabaseExpectedSizeKey = @"WebDatabaseExpectedSizeKey";
 const NSString *WebDatabaseUsageKey = @"WebDatabaseUsageKey";
@@ -64,11 +58,6 @@ const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModif
     return nil;
 }
 
-- (NSDictionary *)detailsForOrigin:(WebSecurityOrigin *)origin
-{
-    return nil;
-}
-
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin
 {
     return nil;
@@ -77,11 +66,6 @@ const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModif
 - (NSDictionary *)detailsForDatabase:(NSString *)databaseName withOrigin:(WebSecurityOrigin *)origin
 {
     return nil;
-}
-
-- (void)setQuota:(unsigned long long)quota forOrigin:(WebSecurityOrigin *)origin
-{
-
 }
 
 - (void)deleteAllDatabases

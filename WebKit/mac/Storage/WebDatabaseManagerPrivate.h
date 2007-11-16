@@ -26,11 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern const NSString *WebDatabaseOriginQuotaKey;
-extern const NSString *WebDatabaseOriginUsageKey;
-
-extern const NSString *WebDatabaseNameKey;
-extern const NSString *WebDatabaseOriginKey;
 extern const NSString *WebDatabaseDisplayNameKey;
 extern const NSString *WebDatabaseExpectedSizeKey;
 extern const NSString *WebDatabaseUsageKey;
@@ -52,19 +47,11 @@ extern const NSString *WebDatabaseDidModifyDatabaseNotification;
 // Will return an array of WebSecurityOrigins
 - (NSArray *)origins;
 
-// Will return the dictionary describing the current size and quota of the passed origin
-- (NSDictionary *)detailsForOrigin:(WebSecurityOrigin *)origin;
-
-// Will return an array of dictionaries, 1 dictionary per database in the requested origin
+// Will return an array of strings, the names of each database in the given origin
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin;
 
 // Will return the dictionary describing everything about the database for the passed origin and name
 - (NSDictionary *)detailsForDatabase:(NSString *)databaseName withOrigin:(WebSecurityOrigin *)origin;
-
-// Sets the storage quota (in bytes) of the specified origin
-// If the quota is set to a value lower than the current usage, that quota will "stick" but no data will be purged to meet the new quota.  
-// This will simply prevent new data from being added to the origin
-- (void)setQuota:(unsigned long long)quota forOrigin:(WebSecurityOrigin *)origin;
 
 - (void)deleteAllDatabases;
 - (void)deleteDatabasesWithOrigin:(WebSecurityOrigin *)origin;

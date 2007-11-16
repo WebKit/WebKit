@@ -28,15 +28,14 @@
 #import "WebSecurityOriginPrivate.h"
 
 #import "WebSecurityOriginInternal.h"
-#import <WebCore/SecurityOriginData.h>
+#include <WebCore/SecurityOriginData.h>
 
 @interface WebSecurityOriginPrivate : NSObject {
 @public
-    NSString *protocol;
-    NSString *domain;
-    unsigned short port;
+    WebCoreSecurityOriginData* securityOriginData;
 }
 - (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain port:(unsigned short)port;
+- (id)initWithWebCoreSecurityOrigin:(WebCoreSecurityOriginData *)coreOrigin;
 @end
 
 @implementation WebSecurityOriginPrivate
@@ -47,24 +46,36 @@
     if (!self)
         return nil;
     
-    protocol = [theProtocol copy];
-    domain = [theDomain copy];
-    port = thePort;
-
+    securityOriginData = new WebCoreSecurityOriginData(theProtocol, theDomain, thePort);
     return self;
+}
+
+- (id)initWithWebCoreSecurityOrigin:(WebCoreSecurityOriginData *)coreOrigin
+{
+    ASSERT(coreOrigin);
+    self = [super init];
+    if (!self)
+        return nil;
+        
+    securityOriginData = new WebCoreSecurityOriginData(*coreOrigin);
+    return self;
+}
+
+- (void)finalize
+{
+    delete securityOriginData;
+    [super finalize];
 }
 
 - (void)dealloc
 {
-    [protocol release];
-    [domain release];
+    delete securityOriginData;
     [super dealloc];
 }
 
 @end
 
 @implementation WebSecurityOrigin
-
 
 - (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain
 {
@@ -84,17 +95,35 @@
 
 - (NSString*)protocol
 {
-    return [[_private->protocol retain] autorelease];
+    return [[(NSString *)(_private->securityOriginData->protocol()) retain] autorelease];
 }
 
 - (NSString*)domain
 {
-    return [[_private->domain retain] autorelease];
+    return [[(NSString *)(_private->securityOriginData->host()) retain] autorelease];
 }
 
 - (unsigned short)port
 {
-    return _private->port;
+    return _private->securityOriginData->port();
+}
+
+- (unsigned long long)usage
+{
+    return 0;
+}
+
+- (unsigned long long)quota
+{
+    return 0;
+}
+
+// Sets the storage quota (in bytes)
+// If the quota is set to a value lower than the current usage, that quota will "stick" but no data will be purged to meet the new quota.  
+// This will simply prevent new data from being added to databases in that origin
+- (void)setQuota:(unsigned long long)quota
+{
+
 }
 
 - (void)dealloc
@@ -107,10 +136,15 @@
 
 @implementation WebSecurityOrigin (WebInternal)
 
-- (id)_initWithWebCoreSecurityOriginData:(WebCore::SecurityOriginData *)securityOriginData
+- (id)_initWithWebCoreSecurityOriginData:(WebCoreSecurityOriginData *)securityOriginData
 {
     ASSERT(securityOriginData);
-    return [self initWithProtocol:securityOriginData->protocol() domain:securityOriginData->host() port:securityOriginData->port()];
+    self = [super init];
+    if (!self)
+        return nil;
+        
+    _private = [[WebSecurityOriginPrivate alloc] initWithWebCoreSecurityOrigin:securityOriginData];
+    return self;
 }
 
 @end

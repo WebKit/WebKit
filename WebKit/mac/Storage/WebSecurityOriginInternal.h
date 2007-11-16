@@ -26,18 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WebSecurityOriginPrivate;
-
-@interface WebSecurityOrigin : NSObject {
-    WebSecurityOriginPrivate *_private;
+namespace WebCore {
+    class SecurityOriginData;
 }
 
-- (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain;
-- (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain port:(unsigned short)port;
+typedef WebCore::SecurityOriginData WebCoreSecurityOriginData;
 
-- (NSString*)protocol;
-- (NSString*)domain;
+@interface WebSecurityOrigin (WebInternal)
 
-// Returns zero if the port is the default port for the protocol, non-zero otherwise
-- (unsigned short)port;
+- (id)_initWithWebCoreSecurityOriginData:(WebCoreSecurityOriginData *)securityOriginData;
+
 @end

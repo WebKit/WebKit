@@ -1,3 +1,40 @@
+2007-11-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        Database management API tweaks
+
+        Fleshed out "WebSecurityOrigin" to be the API object representing an origin.  This relieves some
+        burden off WebDatabaseManager and allows usage/quota operations on the SecurityOrigin object itself
+
+        Also added a new subdirectory for Storage related API - Why are we afraid to add new directories to
+        the WebKit tree?
+
+        * Misc/WebSecurityOrigin.mm: Removed.
+        * Misc/WebSecurityOriginInternal.h: Removed.
+        * Misc/WebSecurityOriginPrivate.h: Removed.
+
+        * Storage/WebDatabaseManager.mm: Work in terms of WebSecurityOrigin
+        * Storage/WebDatabaseManagerPrivate.h:
+
+        * Storage/WebSecurityOrigin.mm: Added.
+        (-[WebSecurityOriginPrivate initWithProtocol:domain:port:]):
+        (-[WebSecurityOriginPrivate initWithWebCoreSecurityOrigin:]):
+        (-[WebSecurityOriginPrivate finalize]):
+        (-[WebSecurityOriginPrivate dealloc]):
+        (-[WebSecurityOrigin initWithProtocol:domain:]):
+        (-[WebSecurityOrigin initWithProtocol:domain:port:]):
+        (-[WebSecurityOrigin protocol]):
+        (-[WebSecurityOrigin domain]):
+        (-[WebSecurityOrigin port]):
+        (-[WebSecurityOrigin usage]): 
+        (-[WebSecurityOrigin quota]):
+        (-[WebSecurityOrigin setQuota:]): Clients will set quotas on the WebSecurityOrigin object itself
+        (-[WebSecurityOrigin dealloc]):
+        (-[WebSecurityOrigin _initWithWebCoreSecurityOriginData:]):
+        * Storage/WebSecurityOriginInternal.h: Added.
+        * Storage/WebSecurityOriginPrivate.h: Added.
+
 2007-11-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John
