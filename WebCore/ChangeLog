@@ -1,3 +1,18 @@
+2007-11-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 14761: Web Inspector leaks JS objects and DOM nodes
+        http://bugs.webkit.org/show_bug.cgi?id=14761
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController):
+        Change the tear down order so that inspectorDestroyed() is called before
+        InspectorController private data is set to Zero. The inspectorDestroyed()
+        call ends up closing the WebView and triggering InspectorController::close()
+        which unprotects m_scriptObject. This didn't happen when the private data
+        was cleared before calling inspectorDestroyed().
+
 2007-11-15  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.

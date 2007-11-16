@@ -561,6 +561,8 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
 
 InspectorController::~InspectorController()
 {
+    m_client->inspectorDestroyed();
+
     if (m_scriptContext) {
         JSObjectRef global = JSContextGetGlobalObject(m_scriptContext);
         JSStringRef controllerProperty = JSStringCreateWithUTF8CString("InspectorController");
@@ -568,9 +570,6 @@ InspectorController::~InspectorController()
         JSStringRelease(controllerProperty);
         JSObjectSetPrivate(controller, 0);
     }
-
-    m_client->closeWindow();
-    m_client->inspectorDestroyed();
 
     if (m_page)
         m_page->setParentInspectorController(0);
