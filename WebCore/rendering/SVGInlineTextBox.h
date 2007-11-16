@@ -62,13 +62,11 @@ namespace WebCore {
         float calculateGlyphHeight(RenderStyle*, int offset) const;
 
         FloatRect calculateGlyphBoundaries(RenderStyle*, int offset, const SVGChar&) const;
+        SVGChar* closestCharacterToPosition(int x, int y, int& offset) const;
 
     private:
         friend class RenderSVGInlineText;
         bool svgCharacterHitsPosition(int x, int y, int& offset) const;
-
-    private:
-        SVGChar* closestCharacterToPosition(int x, int y, int& offset) const;
     };
 
 } // namespace WebCore

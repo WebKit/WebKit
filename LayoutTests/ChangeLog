@@ -1,3 +1,20 @@
+2007-11-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Update layout test results after the addition of the SVGTextContentElement DOM methods.
+
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * platform/mac/svg/custom/text-dom-01-f-expected.checksum: Added.
+        * platform/mac/svg/custom/text-dom-01-f-expected.png: Added.
+        * platform/mac/svg/custom/text-dom-01-f-expected.txt: Added.
+        * svg/custom/text-dom-01-f.svg: Added.
+        * svg/text/text-tselect-02-f-expected.checksum:
+        * svg/text/text-tselect-02-f-expected.png:
+        * svg/text/text-tselect-02-f-expected.txt:
+
 2007-11-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

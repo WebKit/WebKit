@@ -1,3 +1,40 @@
+2007-11-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12290
+
+        Implement all SVGTextContentElement DOM methods.
+        This is the last missing SVG text feature. SVG fonts is next.
+
+        Added testcase: svg/custom/text-dom-01-f.svg (tests all new methods)
+
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (WebCore::cummulatedCharacterRangeLength):
+        (WebCore::SVGInlineTextBoxQueryWalker::):
+        (WebCore::SVGInlineTextBoxQueryWalker::SVGInlineTextBoxQueryWalker):
+        (WebCore::SVGInlineTextBoxQueryWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBoxQueryWalker::setQueryInputParameters):
+        (WebCore::SVGInlineTextBoxQueryWalker::longResult):
+        (WebCore::SVGInlineTextBoxQueryWalker::floatResult):
+        (WebCore::SVGInlineTextBoxQueryWalker::pointResult):
+        (WebCore::SVGInlineTextBoxQueryWalker::rectResult):
+        (WebCore::SVGInlineTextBoxQueryWalker::stopProcessing):
+        (WebCore::findInlineTextBoxInTextChunks):
+        (WebCore::rootInlineBoxForTextContentElement):
+        (WebCore::executeTextQuery):
+        (WebCore::SVGTextContentElement::getNumberOfChars):
+        (WebCore::SVGTextContentElement::getComputedTextLength):
+        (WebCore::SVGTextContentElement::getSubStringLength):
+        (WebCore::SVGTextContentElement::getStartPositionOfChar):
+        (WebCore::SVGTextContentElement::getEndPositionOfChar):
+        (WebCore::SVGTextContentElement::getExtentOfChar):
+        (WebCore::SVGTextContentElement::getRotationOfChar):
+        (WebCore::SVGTextContentElement::getCharNumAtPosition):
+        (WebCore::SVGTextContentElement::selectSubString):
+        * ksvg2/svg/SVGTextContentElement.h:
+        * rendering/SVGInlineTextBox.h:
+
 2007-11-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.
