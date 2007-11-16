@@ -1,3 +1,15 @@
+2007-11-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://problem/5566652> CrashTracer: [USER] 3 crashes in Safari at HTMLSelectElement::menuListDefaultEventHandler (reproducible on mactc30.com)
+
+        Test: fast/forms/menulist-no-renderer-onmousedown.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::defaultEventHandler): Nil check the renderer here.  None of the default behavior makes sense if there's no renderer.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Moved the nil check to the main defaultEventHandler.
+
 2007-11-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

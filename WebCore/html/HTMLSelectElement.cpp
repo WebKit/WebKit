@@ -592,6 +592,9 @@ void HTMLSelectElement::dispatchBlurEvent()
 
 void HTMLSelectElement::defaultEventHandler(Event* evt)
 {
+    if (!renderer())
+        return;
+    
     if (usesMenuList())
         menuListDefaultEventHandler(evt);
     else 
@@ -686,9 +689,6 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
 
 void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 {
-    if (!renderer())
-        return;
-
     if (evt->type() == mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         focus();
         

@@ -1,3 +1,12 @@
+2007-11-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Test for <rdar://problem/5566652> CrashTracer: [USER] 3 crashes in Safari at HTMLSelectElement::menuListDefaultEventHandler (reproducible on mactc30.com)
+
+        * fast/forms/menulist-no-renderer-onmousedown-expected.txt: Added.
+        * fast/forms/menulist-no-renderer-onmousedown.html: Added.
+
 2007-11-15  Khoo Yit Phang  <khooyp@cs.umd.edu>
 
         Reviewed by Darin.
