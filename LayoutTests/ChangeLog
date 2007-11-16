@@ -1,3 +1,15 @@
+2007-11-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15448
+        Import XPath test suite from amachang.art-code.org
+
+        Test by Hitoshi Amano <seijro@gmail.com>.
+
+        * fast/xpath/xpath-functional-test-expected.txt: Added.
+        * fast/xpath/xpath-functional-test.html: Added.
+
 2007-11-15  Khoo Yit Phang  <khooyp@cs.umd.edu>
 
         Reviewed by Darin.
