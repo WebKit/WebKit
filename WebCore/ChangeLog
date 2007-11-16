@@ -1,3 +1,9 @@
+2007-11-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Windows build fix.
+
+        * WebCore.vcproj/WebCore.vcproj: Removed VoidCallback.cpp, added JSCustomVoidCallback.{h,cpp}.
+
 2007-11-16  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
