@@ -1,3 +1,13 @@
+2007-11-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Clean up match function to match WebKit style
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * pcre/pcre_exec.cpp:
+        (match):
+
 2007-11-15  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
