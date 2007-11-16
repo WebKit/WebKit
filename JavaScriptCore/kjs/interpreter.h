@@ -291,13 +291,6 @@ namespace KJS {
      */
     virtual void mark();
 
-#ifdef KJS_DEBUG_MEM
-    /**
-     * @internal
-     */
-    static void finalCheck();
-#endif
-
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
 

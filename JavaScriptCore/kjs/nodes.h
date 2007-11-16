@@ -49,6 +49,7 @@
 namespace KJS {
 
     class FuncDeclNode;
+    class Node;
     class PropertyListNode;
     class SourceStream;
     class VarDeclNode;

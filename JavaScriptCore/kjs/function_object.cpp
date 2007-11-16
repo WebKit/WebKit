@@ -185,16 +185,16 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
   }
 
   // parse the source code
-  int sid;
+  int sourceId;
   int errLine;
   UString errMsg;
-  RefPtr<ProgramNode> progNode = Parser::parse(sourceURL, lineNumber, body.data(),body.size(),&sid,&errLine,&errMsg);
+  RefPtr<FunctionBodyNode> functionBody = parser().parseFunctionBody(sourceURL, lineNumber, body.data(), body.size(), &sourceId, &errLine, &errMsg);
 
   // notify debugger that source has been parsed
   Debugger *dbg = exec->dynamicInterpreter()->debugger();
   if (dbg) {
     // send empty sourceURL to indicate constructed code
-    bool cont = dbg->sourceParsed(exec, sid, UString(), body, lineNumber, errLine, errMsg);
+    bool cont = dbg->sourceParsed(exec, sourceId, UString(), body, lineNumber, errLine, errMsg);
     if (!cont) {
       dbg->imp()->abort();
       return new JSObject();
@@ -202,16 +202,15 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
   }
 
   // no program node == syntax error - throw a syntax error
-  if (!progNode)
+  if (!functionBody)
     // we can't return a Completion(Throw) here, so just set the exception
     // and return it
-    return throwError(exec, SyntaxError, errMsg, errLine, sid, sourceURL);
+    return throwError(exec, SyntaxError, errMsg, errLine, sourceId, sourceURL);
 
   ScopeChain scopeChain;
   scopeChain.push(exec->lexicalInterpreter()->globalObject());
-  FunctionBodyNode *bodyNode = progNode.get();
 
-  FunctionImp* fimp = new FunctionImp(exec, functionName, bodyNode, scopeChain);
+  FunctionImp* fimp = new FunctionImp(exec, functionName, functionBody.get(), scopeChain);
   
   // parse parameter list. throw syntax error on illegal identifiers
   int len = p.size();
@@ -231,11 +230,11 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
           while (i < len && *c == ' ')
               c++, i++;
           if (i == len) {
-              bodyNode->addParam(Identifier(param));
+              functionBody->addParam(Identifier(param));
               params++;
               break;
           } else if (*c == ',') {
-              bodyNode->addParam(Identifier(param));
+              functionBody->addParam(Identifier(param));
               params++;
               c++, i++;
               continue;

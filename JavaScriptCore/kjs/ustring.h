@@ -382,12 +382,6 @@ namespace KJS {
      * Static instance of a null string.
      */
     static const UString &null();
-#ifdef KJS_DEBUG_MEM
-    /**
-     * Clear statically allocated resources.
-     */
-    static void globalClear();
-#endif
 
     Rep* rep() const { return m_rep.get(); }
     UString(PassRefPtr<Rep> r) : m_rep(r) { ASSERT(m_rep); }

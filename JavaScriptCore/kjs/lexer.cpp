@@ -51,14 +51,23 @@ extern YYLTYPE kjsyylloc; // global bison variable holding token info
 // a bridge for yacc from the C world to C++
 int kjsyylex()
 {
-  return Lexer::curr()->lex();
+  return lexer().lex();
 }
 
 namespace KJS {
 
-static Lexer* currLexer = 0;
-
 static bool isDecimalDigit(int);
+
+Lexer& lexer()
+{
+    ASSERT(JSLock::currentThreadIsHoldingLock());
+
+    // FIXME: We'd like to avoid calling new here, but we don't currently 
+    // support tearing down the Lexer at app quit time, since that would involve
+    // tearing down its UString data members without holding the JSLock.
+    static Lexer* staticLexer = new Lexer;
+    return *staticLexer;
+}
 
 Lexer::Lexer()
   : yylineno(1),
@@ -75,32 +84,13 @@ Lexer::Lexer()
   // allocate space for read buffers
   buffer8 = new char[size8];
   buffer16 = new KJS::UChar[size16];
-  currLexer = this;
 }
 
 Lexer::~Lexer()
 {
-  doneParsing();
   delete [] buffer8;
   delete [] buffer16;
 }
-
-Lexer *Lexer::curr()
-{
-  if (!currLexer) {
-    // create singleton instance
-    currLexer = new Lexer();
-  }
-  return currLexer;
-}
-
-#ifdef KJS_DEBUG_MEM
-void Lexer::globalClear()
-{
-  delete currLexer;
-  currLexer = 0L;
-}
-#endif
 
 void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const KJS::UChar *c, unsigned int len)
 {
@@ -785,6 +775,7 @@ unsigned char Lexer::convertHex(int c1, int c2)
 
 KJS::UChar Lexer::convertUnicode(int c1, int c2, int c3, int c4)
 {
+  // FIXME: This conversion is lossy. See http://bugs.webkit.org/show_bug.cgi?id=4920.
   return KJS::UChar((convertHex(c1) << 4) + convertHex(c2),
                (convertHex(c3) << 4) + convertHex(c4));
 }
@@ -850,7 +841,7 @@ bool Lexer::scanRegExp()
             !lastWasEscape && (current == '\\');
     }
     else { // end of regexp
-      pattern = UString(buffer16, pos16);
+      m_pattern = UString(buffer16, pos16);
       pos16 = 0;
       shift(1);
       break;
@@ -862,58 +853,57 @@ bool Lexer::scanRegExp()
     record16(current);
     shift(1);
   }
-  flags = UString(buffer16, pos16);
+  m_flags = UString(buffer16, pos16);
 
   return true;
 }
 
-
-void Lexer::doneParsing()
+void Lexer::clear()
 {
-  for (unsigned i = 0; i < numIdentifiers; i++) {
+  for (unsigned i = 0; i < numIdentifiers; i++)
     delete identifiers[i];
-  }
   fastFree(identifiers);
   identifiers = 0;
   numIdentifiers = 0;
   identifiersCapacity = 0;
 
-  for (unsigned i = 0; i < numStrings; i++) {
+  for (unsigned i = 0; i < numStrings; i++)
     delete strings[i];
-  }
   fastFree(strings);
   strings = 0;
   numStrings = 0;
   stringsCapacity = 0;
+  
+  m_pattern = 0;
+  m_flags = 0;
+  m_sourceURL = 0;
 }
 
 const int initialCapacity = 64;
 const int growthFactor = 2;
 
-// FIXME: this completely ignores its parameters, instead using buffer16 and pos16 - wtf?
-Identifier *Lexer::makeIdentifier(KJS::UChar*, unsigned int)
+Identifier* Lexer::makeIdentifier(KJS::UChar* buffer, unsigned int pos)
 {
   if (numIdentifiers == identifiersCapacity) {
     identifiersCapacity = (identifiersCapacity == 0) ? initialCapacity : identifiersCapacity *growthFactor;
     identifiers = (KJS::Identifier **)fastRealloc(identifiers, sizeof(KJS::Identifier *) * identifiersCapacity);
   }
 
-  KJS::Identifier *identifier = new KJS::Identifier(buffer16, pos16);
+  KJS::Identifier *identifier = new KJS::Identifier(buffer, pos);
   identifiers[numIdentifiers++] = identifier;
   return identifier;
 }
  
-// FIXME: this completely ignores its parameters, instead using buffer16 and pos16 - wtf?
-UString *Lexer::makeUString(KJS::UChar*, unsigned int)
+UString* Lexer::makeUString(KJS::UChar* buffer, unsigned int pos)
 {
   if (numStrings == stringsCapacity) {
     stringsCapacity = (stringsCapacity == 0) ? initialCapacity : stringsCapacity *growthFactor;
     strings = (UString **)fastRealloc(strings, sizeof(UString *) * stringsCapacity);
   }
 
-  UString *string = new UString(buffer16, pos16);
+  UString *string = new UString(buffer, pos);
   strings[numStrings++] = string;
   return string;
 }
 
-}
+} // namespace KJS

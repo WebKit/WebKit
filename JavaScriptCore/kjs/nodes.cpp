@@ -132,7 +132,7 @@ Node::Node()
 #ifndef NDEBUG
     ++NodeCounter::count;
 #endif
-  m_line = Lexer::curr()->lineNo();
+  m_line = lexer().lineNo();
   if (!newNodes)
       newNodes = new HashSet<Node*>;
   newNodes->add(this);
@@ -145,7 +145,7 @@ Node::Node(JSType expectedReturn)
 #ifndef NDEBUG
     ++NodeCounter::count;
 #endif
-    m_line = Lexer::curr()->lineNo();
+    m_line = lexer().lineNo();
     if (!newNodes)
         newNodes = new HashSet<Node*>;
     newNodes->add(this);
@@ -4412,8 +4412,8 @@ Completion TryNode::execute(ExecState *exec)
 
 FunctionBodyNode::FunctionBodyNode(SourceElements* children)
     : BlockNode(children)
-    , m_sourceURL(Lexer::curr()->sourceURL())
-    , m_sourceId(Parser::sid)
+    , m_sourceURL(lexer().sourceURL())
+    , m_sourceId(parser().sourceId())
     , m_initializedDeclarationStacks(false)
     , m_initializedSymbolTable(false)
     , m_optimizedResolveNodes(false)

@@ -42,7 +42,8 @@
 #define YYENABLE_NLS 0
 
 /* default values for bison */
-#define YYDEBUG 0
+#define YYDEBUG 0 // Set to 1 to debug a parse error.
+#define kjsyydebug 0 // Set to 1 to debug a parse error.
 #if !PLATFORM(DARWIN)
     // avoid triggering warnings in older bison
 #define YYERROR_VERBOSE
@@ -220,14 +221,16 @@ Literal:
   | NUMBER                              { $$ = makeNumberNode($1); }
   | STRING                              { $$ = new StringNode($1); }
   | '/' /* regexp */                    {
-                                            Lexer *l = Lexer::curr();
-                                            if (!l->scanRegExp()) YYABORT;
-                                            $$ = new RegExpNode(l->pattern, l->flags);
+                                            Lexer& l = lexer();
+                                            if (!l.scanRegExp())
+                                                YYABORT;
+                                            $$ = new RegExpNode(l.pattern(), l.flags());
                                         }
   | DIVEQUAL /* regexp with /= */       {
-                                            Lexer *l = Lexer::curr();
-                                            if (!l->scanRegExp()) YYABORT;
-                                            $$ = new RegExpNode("=" + l->pattern, l->flags);
+                                            Lexer& l = lexer();
+                                            if (!l.scanRegExp())
+                                                YYABORT;
+                                            $$ = new RegExpNode("=" + l.pattern(), l.flags());
                                         }
 ;
 
@@ -876,8 +879,8 @@ FunctionBody:
 ;
 
 Program:
-    /* not in spec */                   { Parser::accept(new ProgramNode(new SourceElements)); }
-    | SourceElements                    { Parser::accept(new ProgramNode($1->release())); }
+    /* not in spec */                   { parser().didFinishParsing(new ProgramNode(new SourceElements)); }
+    | SourceElements                    { parser().didFinishParsing(new ProgramNode($1->release())); }
 ;
 
 SourceElements:
@@ -1090,5 +1093,5 @@ int yyerror(const char *)
 /* may we automatically insert a semicolon ? */
 static bool allowAutomaticSemicolon()
 {
-    return yychar == '}' || yychar == 0 || Lexer::curr()->prevTerminator();
+    return yychar == '}' || yychar == 0 || lexer().prevTerminator();
 }

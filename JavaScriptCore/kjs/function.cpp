@@ -77,13 +77,13 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
     newExec.setException(exec->exception());
 
   Debugger* dbg = exec->dynamicInterpreter()->debugger();
-  int sid = -1;
-  int lineno = -1;
+  int sourceId = -1;
+  int lineNo = -1;
   if (dbg) {
-    sid = body->sourceId();
-    lineno = body->firstLine();
+    sourceId = body->sourceId();
+    lineNo = body->firstLine();
 
-    bool cont = dbg->callEvent(&newExec,sid,lineno,this,args);
+    bool cont = dbg->callEvent(&newExec, sourceId, lineNo, this, args);
     if (!cont) {
       dbg->imp()->abort();
       return jsUndefined();
@@ -102,12 +102,12 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
   dbg = exec->dynamicInterpreter()->debugger();
 
   if (dbg) {
-    lineno = body->lastLine();
+    lineNo = body->lastLine();
 
     if (comp.complType() == Throw)
         newExec.setException(comp.value());
 
-    int cont = dbg->returnEvent(&newExec,sid,lineno,this);
+    int cont = dbg->returnEvent(&newExec, sourceId, lineNo, this);
     if (!cont) {
       dbg->imp()->abort();
       return jsUndefined();
@@ -761,21 +761,21 @@ JSValue* GlobalFuncImp::callAsFunction(ExecState* exec, JSObject* thisObj, const
       else {
         UString s = x->toString(exec);
         
-        int sid;
+        int sourceId;
         int errLine;
         UString errMsg;
-        RefPtr<ProgramNode> progNode(Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg));
+        RefPtr<ProgramNode> progNode(parser().parseProgram(UString(), 0, s.data(), s.size(), &sourceId, &errLine, &errMsg));
 
         Debugger* dbg = exec->dynamicInterpreter()->debugger();
         if (dbg) {
-          bool cont = dbg->sourceParsed(exec, sid, UString(), s, 0, errLine, errMsg);
+          bool cont = dbg->sourceParsed(exec, sourceId, UString(), s, 0, errLine, errMsg);
           if (!cont)
             return jsUndefined();
         }
 
         // no program node means a syntax occurred
         if (!progNode)
-          return throwError(exec, SyntaxError, errMsg, errLine, sid, NULL);
+          return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
 
         bool switchGlobal = thisObj && thisObj != exec->dynamicInterpreter()->globalObject();
           

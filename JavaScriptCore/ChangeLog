@@ -1,3 +1,78 @@
+2007-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Another round of grammar / parsing cleanup.
+        
+        1. Created distinct parser calls for parsing function bodies vs
+        programs. This will help later with optimizing global variable access.
+        
+        2. Turned Parser into a singleton. Cleaned up Lexer's singleton 
+        interface.
+        
+        3. Modified Lexer to free a little more memory when done lexing. (Added
+        FIXMEs for similar issues that I didn't fix.)
+        
+        4. Changed Lexer::makeIdentifier and Lexer::makeUString to start 
+        respecting the arguments passed to them. (No behavior change, but this
+        problem could have caused serious problems for an unsuspecting user of
+        these functions.)
+        
+        5. Removed KJS_DEBUG_MEM because it was bit-rotted.
+        
+        6. Removed Parser::prettyPrint because the same work was simpler to do
+        at the call site.
+        
+        7. Some renames:
+        
+            "Parser::accept" => "Parser::didFinishParsing"
+            "Parser::sid" => "Parser::m_sourceID"
+            "Lexer::doneParsing" => "Lexer::clear"
+            "sid" => "sourceId"
+            "lineno" => "lineNo"
+        
+        * JavaScriptCore.exp:
+        * kjs/Parser.cpp:
+        (KJS::Parser::Parser):
+        (KJS::Parser::parseProgram):
+        (KJS::Parser::parseFunctionBody):
+        (KJS::Parser::parse):
+        (KJS::Parser::didFinishParsing):
+        (KJS::parser):
+        * kjs/Parser.h:
+        (KJS::Parser::sourceId):
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/grammar.y:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::checkSyntax):
+        (KJS::Interpreter::evaluate):
+        * kjs/interpreter.h:
+        * kjs/lexer.cpp:
+        (kjsyylex):
+        (KJS::lexer):
+        (KJS::Lexer::Lexer):
+        (KJS::Lexer::~Lexer):
+        (KJS::Lexer::scanRegExp):
+        (KJS::Lexer::doneParsing):
+        (KJS::Lexer::makeIdentifier):
+        (KJS::Lexer::makeUString):
+        * kjs/lexer.h:
+        (KJS::Lexer::pattern):
+        (KJS::Lexer::flags):
+        (KJS::Lexer::sawError):
+        * kjs/nodes.cpp:
+        (KJS::Node::Node):
+        (KJS::FunctionBodyNode::FunctionBodyNode):
+        * kjs/nodes.h:
+        * kjs/testkjs.cpp:
+        (prettyPrintScript):
+        (kjsmain):
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+
 2007-11-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.

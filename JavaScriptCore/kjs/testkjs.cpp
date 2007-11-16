@@ -23,10 +23,11 @@
 
 #include "config.h"
 
+#include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "Parser.h"
 #include "collector.h"
-#include "JSGlobalObject.h"
+#include "nodes.h"
 #include "object.h"
 #include "protect.h"
 #include <math.h>
@@ -245,13 +246,14 @@ static bool prettyPrintScript(const UString& fileName, const Vector<char>& scrip
 {
   int errLine = 0;
   UString errMsg;
-  UString s = Parser::prettyPrint(script.data(), &errLine, &errMsg);
-  if (s.isNull()) {
+  UString scriptUString(script.data());
+  RefPtr<ProgramNode> programNode = parser().parseProgram(fileName, 0, scriptUString.data(), scriptUString.size(), 0, &errLine, &errMsg);
+  if (!programNode) {
     fprintf(stderr, "%s:%d: %s.\n", fileName.UTF8String().c_str(), errLine, errMsg.UTF8String().c_str());
     return false;
   }
   
-  printf("%s\n", s.UTF8String().c_str());
+  printf("%s\n", programNode->toString().UTF8String().c_str());
   return true;
 }
 
@@ -313,9 +315,6 @@ int kjsmain(int argc, char** argv)
   Collector::collect();
 #endif
 
-#ifdef KJS_DEBUG_MEM
-  Interpreter::finalCheck();
-#endif
   return success ? 0 : 3;
 }
 
