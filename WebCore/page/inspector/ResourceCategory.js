@@ -93,7 +93,12 @@ WebInspector.ResourceCategory.prototype = {
 
 WebInspector.ResourceCategoryTreeElement = function(category)
 {
-    var item = new TreeElement(category.title, category, true);
-    item.selectable = false;
-    return item;
+    TreeElement.call(this, category.title, category, true);
 }
+
+WebInspector.ResourceCategoryTreeElement.prototype = {
+    selectable: false,
+    arrowToggleWidth: 20
+}
+
+WebInspector.ResourceCategoryTreeElement.prototype.__proto__ = TreeElement.prototype;

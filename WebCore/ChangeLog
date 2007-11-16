@@ -1,3 +1,17 @@
+2007-11-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam.
+
+        Bug 16007: REGRESSION: Disclosure triangle click zone for resource categories is off by 10 pixels
+        http://bugs.webkit.org/show_bug.cgi?id=16007
+
+        Makes the click width an option on TreeElement and make ResourceCategoryTreeElement
+        a true subclass of TreeElement. The click width for ResourceCategoryTreeElement is 
+        20 pixels, and the default is 10 pixels.
+
+        * page/inspector/ResourceCategory.js:
+        * page/inspector/treeoutline.js:
+
 2007-11-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

@@ -390,7 +390,6 @@ function TreeElement(title, representedObject, hasChildren)
     this._hidden = false;
     this.expanded = false;
     this.selected = false;
-    this.selectable = true;
     this.hasChildren = hasChildren;
     this.children = [];
     this.treeOutline = null;
@@ -401,6 +400,9 @@ function TreeElement(title, representedObject, hasChildren)
 }
 
 TreeElement.prototype = {
+    selectable: true,
+    arrowToggleWidth: 10,
+
     get listItemElement() {
         return this._listItemNode;
     },
@@ -510,7 +512,7 @@ TreeElement.treeElementSelected = function(event)
     if (!element || !element.treeElement || !element.treeElement.selectable)
         return;
 
-    if (event.offsetX > 10 || !element.treeElement.hasChildren)
+    if (event.offsetX > element.treeElement.arrowToggleWidth || !element.treeElement.hasChildren)
         element.treeElement.select();
 }
 
@@ -520,7 +522,7 @@ TreeElement.treeElementToggled = function(event)
     if (!element || !element.treeElement)
         return;
 
-    if (event.offsetX <= 10 && element.treeElement.hasChildren) {
+    if (event.offsetX <= element.treeElement.arrowToggleWidth && element.treeElement.hasChildren) {
         if (element.treeElement.expanded) {
             if (event.altKey)
                 element.treeElement.collapseRecursively();
