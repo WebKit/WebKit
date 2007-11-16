@@ -1626,7 +1626,6 @@
 		1412113A0A48798400480255 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = minidom;
 			};
 			name = Debug;
@@ -1634,7 +1633,6 @@
 		1412113B0A48798400480255 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = minidom;
 			};
 			name = Release;
@@ -1642,7 +1640,6 @@
 		1412113C0A48798400480255 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = minidom;
 			};
 			name = Production;
@@ -1703,7 +1700,6 @@
 		149C276808902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testkjs;
 			};
 			name = Debug;
@@ -1711,7 +1707,6 @@
 		149C276908902AFE008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testkjs;
 			};
 			name = Release;
@@ -1719,7 +1714,6 @@
 		149C276B08902AFE008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testkjs;
 			};
 			name = Production;
@@ -1750,10 +1744,6 @@
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					icu,
-					.,
-				);
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
@@ -1762,10 +1752,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					icu,
-					.,
-				);
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
@@ -1774,17 +1760,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051450BA9E8A70081E9D0 /* Base.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					icu,
-					.,
-				);
 			};
 			name = Production;
 		};
 		14BD59D70A3E8FC900BAF59C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testapi;
 			};
 			name = Debug;
@@ -1792,7 +1773,6 @@
 		14BD59D80A3E8FC900BAF59C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testapi;
 			};
 			name = Release;
@@ -1800,7 +1780,6 @@
 		14BD59D90A3E8FC900BAF59C /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testapi;
 			};
 			name = Production;

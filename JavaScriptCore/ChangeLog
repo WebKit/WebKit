@@ -1,5 +1,19 @@
 2007-11-15  Mark Rowe  <mrowe@apple.com>
 
+        Mac build and header search path sanity fix.
+
+        Reviewed by Sam Weinig and Tim Hatcher.
+
+        Move base setting for HEADER_SEARCH_PATHS into Base.xcconfig, and extend
+        it in JavaScriptCore.xcconfig.  This removes the need to override it on a
+        per-target basis inside the .xcodeproj file.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2007-11-15  Mark Rowe  <mrowe@apple.com>
+
         Qt build fix.
 
         * kjs/Parser.h:
