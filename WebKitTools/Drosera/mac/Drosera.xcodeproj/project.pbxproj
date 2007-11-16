@@ -575,12 +575,6 @@
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = ../ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					JavaScriptCore,
-					"-weak_framework",
-					WebCore,
-				);
 				PRODUCT_NAME = Drosera;
 				USER_HEADER_SEARCH_PATHS = ../ForwardingHeaders/;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
@@ -599,12 +593,6 @@
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = ../ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					JavaScriptCore,
-					"-weak_framework",
-					WebCore,
-				);
 				PRODUCT_NAME = Drosera;
 				USER_HEADER_SEARCH_PATHS = ../ForwardingHeaders/;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";

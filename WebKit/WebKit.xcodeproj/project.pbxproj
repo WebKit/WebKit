@@ -1647,9 +1647,7 @@
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = (
-					"-lobjc",
-					"-sub_library",
-					libobjc,
+					"$(OTHER_LDFLAGS)",
 					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
@@ -1664,9 +1662,7 @@
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = (
-					"-lobjc",
-					"-sub_library",
-					libobjc,
+					"$(OTHER_LDFLAGS)",
 					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
@@ -1679,8 +1675,7 @@
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
 				OTHER_LDFLAGS = (
-					"-sub_umbrella",
-					WebCore,
+					"$(OTHER_LDFLAGS)",
 					"-lWebKitSystemInterface",
 				);
 				SECTORDER_FLAGS = (

@@ -13,3 +13,4 @@ HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/li
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 PRODUCT_NAME = WebCore;
+OTHER_LDFLAGS = -lobjc -sub_library libobjc -umbrella WebKit;

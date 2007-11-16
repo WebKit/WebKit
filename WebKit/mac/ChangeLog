@@ -1,3 +1,11 @@
+2007-11-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Build WebCore as a sub-framework of WebKit in all configurations.
+
+        * Configurations/WebKit.xcconfig:
+
 2007-11-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Brady

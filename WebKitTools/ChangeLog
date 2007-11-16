@@ -1,3 +1,12 @@
+2007-11-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Don't weak link against WebCore now that it is a sub-framework of WebKit in all configurations.
+
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2007-11-15  Adam Roben  <aroben@apple.com>
 
         Make run-safari actually work on Windows

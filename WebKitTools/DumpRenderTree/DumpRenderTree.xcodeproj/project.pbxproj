@@ -524,12 +524,6 @@
 				LIBRARY_STYLE = BUNDLE;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-					"-weak_framework",
-					WebCore,
-				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = TestNetscapePlugIn;
@@ -555,12 +549,6 @@
 				LIBRARY_STYLE = BUNDLE;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-					"-weak_framework",
-					WebCore,
-				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = TestNetscapePlugIn;
@@ -585,8 +573,6 @@
 					__DATA,
 					Ahem,
 					"qt/fonts/AHEM____.TTF",
-					"-weak_framework",
-					WebCore,
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
@@ -603,8 +589,6 @@
 					__DATA,
 					Ahem,
 					"qt/fonts/AHEM____.TTF",
-					"-weak_framework",
-					WebCore,
 				);
 				PRODUCT_NAME = DumpRenderTree;
 				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
@@ -626,10 +610,6 @@
 				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					WebCore,
-				);
 				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -653,10 +633,6 @@
 				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					WebCore,
-				);
 				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -673,10 +649,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					WebCore,
-				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
 				SECTORDER_FLAGS = "";
@@ -695,10 +667,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					WebCore,
-				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
 				SECTORDER_FLAGS = "";

@@ -15482,11 +15482,6 @@
 			buildSettings = {
 				DEBUG_DEFINES = DISABLE_THREAD_CHECK;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = (
-					"-lobjc",
-					"-sub_library",
-					libobjc,
-				);
 			};
 			name = Debug;
 		};
@@ -15496,11 +15491,6 @@
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = (
-					"-lobjc",
-					"-sub_library",
-					libobjc,
-				);
 			};
 			name = Release;
 		};
@@ -15509,13 +15499,6 @@
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
-				OTHER_LDFLAGS = (
-					"-lobjc",
-					"-sub_library",
-					libobjc,
-					"-umbrella",
-					WebKit,
-				);
 				SECTORDER_FLAGS = (
 					"-sectorder",
 					__TEXT,

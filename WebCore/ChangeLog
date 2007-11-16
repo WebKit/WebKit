@@ -1,3 +1,12 @@
+2007-11-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Build WebCore as a sub-framework of WebKit in all configurations.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2007-11-16  Doug Turner  <dougt@meer.net>
 
         Reviewed by Alp.

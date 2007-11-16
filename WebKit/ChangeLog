@@ -1,3 +1,11 @@
+2007-11-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Build WebCore as a sub-framework of WebKit in all configurations.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-11-16  Brady Eidson  <beidson@apple.com>
 
         * WebKit.xcodeproj/project.pbxproj: WebDatabaseManagerPrivate.h, also!
