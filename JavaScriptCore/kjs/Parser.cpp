@@ -30,6 +30,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
+extern int kjsyyparse();
+
 namespace KJS {
 
 Parser::Parser()
