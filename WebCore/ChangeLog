@@ -1,3 +1,18 @@
+2007-11-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+
+        Fix <rdar://problem/5601598>
+        The movie tag should do initialization on need and not during startup.
+        
+        Initialize Movie MIME type hash on demand
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initialiseSupportedMovieMIMETypes):
+        (WebCore::initialiseMIMETypeRegistry):
+        (WebCore::MIMETypeRegistry::isSupportedMovieMIMEType):
+        (WebCore::MIMETypeRegistry::getSupportedMovieMIMETypes):
+
 2007-11-15  Mark Rowe  <mrowe@apple.com>
 
         Build fix for Qt on Windows.

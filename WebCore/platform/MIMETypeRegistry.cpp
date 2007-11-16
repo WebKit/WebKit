@@ -149,6 +149,7 @@ static void initialiseSupportedNonImageMimeTypes()
     
 static void initialiseSupportedMovieMIMETypes()
 {
+    supportedMovieMIMETypes = new WTF::HashSet<String>();
 #if ENABLE(VIDEO)
     Movie::getSupportedTypes(*supportedMovieMIMETypes);
 #endif
@@ -159,11 +160,9 @@ static void initialiseMIMETypeRegistry()
     supportedImageResourceMIMETypes = new WTF::HashSet<String>();
     supportedImageMIMETypes = new WTF::HashSet<String>();
     supportedNonImageMIMETypes = new WTF::HashSet<String>();
-    supportedMovieMIMETypes = new WTF::HashSet<String>();
     
     initialiseSupportedNonImageMimeTypes();
     initialiseSupportedImageMIMETypes();
-    initialiseSupportedMovieMIMETypes();
 }
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
@@ -200,7 +199,7 @@ bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
 bool MIMETypeRegistry::isSupportedMovieMIMEType(const String& mimeType)
 {
     if (!supportedMovieMIMETypes)
-        initialiseMIMETypeRegistry();
+        initialiseSupportedMovieMIMETypes();
     return !mimeType.isEmpty() && supportedMovieMIMETypes->contains(mimeType);     
 }
     
@@ -240,7 +239,7 @@ HashSet<String> &MIMETypeRegistry::getSupportedNonImageMIMETypes()
 HashSet<String> &MIMETypeRegistry::getSupportedMovieMIMETypes()
 {
     if (!supportedMovieMIMETypes)
-        initialiseMIMETypeRegistry();
+        initialiseSupportedMovieMIMETypes();
     return *supportedMovieMIMETypes;
 }
     
