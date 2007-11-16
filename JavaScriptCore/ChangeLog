@@ -2,14 +2,31 @@
 
         Reviewed by Sam.
 
-        Remove RETURN_ERROR, add MatchStack
+        Abstract most of RMATCH into MatchStack functions.
+        
+        SunSpider claims this, combined with the last 2 patches was a 1% speedup, 10% for dna-regexp.
 
+        * pcre/pcre_exec.cpp:
+        (MatchStack::canUseStackBufferForNextFrame):
+        (MatchStack::allocateNextFrame):
+        (MatchStack::pushNewFrame):
+        (MatchStack::frameIsStackAllocated):
+        (MatchStack::popCurrentFrame):
+        (MatchStack::unrollAnyHeapAllocatedFrames):
+        (match):
+
+2007-11-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Remove RETURN_ERROR, add MatchStack
+        
         * pcre/pcre_exec.cpp:
         (MatchStack::MatchStack):
         (MatchStack::unrollAnyHeapAllocatedFrames):
         (matchError):
         (match):
-
+        
 2007-11-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.

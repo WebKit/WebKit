@@ -72,20 +72,23 @@ typedef struct eptrblock {
 
 /* Structure for remembering the local variables in a private frame */
 
-typedef struct matchframe {
-  /* Where to jump back to */
+
+
 #ifndef USE_COMPUTED_GOTO_FOR_MATCH_RECURSION
-  int where;
+typedef int ReturnLocation;
 #else
-  void *where;
+typedef void* ReturnLocation;
 #endif
 
-  struct matchframe *prevframe;
+typedef struct matchframe {
+  ReturnLocation returnLocation;
+
+  struct matchframe* prevframe;
 
   /* Function arguments that may change */
 
   const pcre_uchar *eptr;
-  const uschar *ecode;
+  const uschar* ecode;
   int offset_top;
   eptrblock *eptrb;
 
@@ -265,34 +268,21 @@ but using it for the GCC case as well as the non-GCC case allows us to share
 a bit more code and notice if we use conflicting numbers.*/
 
 #define RMATCH_WHERE(num) &&RRETURN_##num
-#define RRETURN_LABEL *stack.currentFrame->where
+#define RRETURN_LABEL *stack.currentFrame->returnLocation
 
 #endif
 
 #define RMATCH(num, ra, rb, rc)\
   {\
-  if (stack.currentFrame >= stack.frames && stack.currentFrame + 1 < stack.framesEnd)\
-    newframe = stack.currentFrame + 1;\
-  else\
-    newframe = new matchframe;\
-  newframe->eptr = stack.currentFrame->eptr;\
-  newframe->ecode = (ra);\
-  newframe->offset_top = stack.currentFrame->offset_top;\
-  newframe->eptrb = (rb);\
-  is_group_start = (rc);\
-  ++rdepth;\
-  newframe->prevframe = stack.currentFrame;\
-  stack.currentFrame = newframe;\
-  stack.currentFrame->where = RMATCH_WHERE(num);\
-  DPRINTF(("restarting from line %d\n", __LINE__));\
-  goto RECURSE;\
+    stack.pushNewFrame((ra), (rb), RMATCH_WHERE(num)); \
+    is_group_start = (rc);\
+    ++rdepth;\
+    DPRINTF(("restarting from line %d\n", __LINE__));\
+    goto RECURSE;\
 RRETURN_##num:\
-  newframe = stack.currentFrame;\
-  stack.currentFrame = stack.currentFrame->prevframe;\
-  if (!(newframe >= stack.frames && newframe < stack.framesEnd))\
-    delete newframe;\
-  --rdepth;\
-  DPRINTF(("did a goto back to line %d\n", __LINE__));\
+    stack.popCurrentFrame(); \
+    --rdepth;\
+    DPRINTF(("did a goto back to line %d\n", __LINE__));\
   }
  
 #define RRETURN goto RRETURN_LABEL
@@ -302,9 +292,6 @@ RRETURN_##num:\
     is_match = false;\
     RRETURN;\
   }
-
-#define RRETURN_ERROR(error) \
-    return matchError(error, stack);
 
 /*************************************************
 *         Match from current position            *
@@ -335,16 +322,59 @@ struct MatchStack {
         framesEnd = frames + sizeof(frames) / sizeof(frames[0]);
         currentFrame = frames;
     }
+    
+    /* The value 16 here is large enough that most regular expressions don't require
+     any calls to pcre_stack_malloc, yet the amount of stack used for the array is
+     modest enough that we don't run out of stack. */
     matchframe frames[16];
     matchframe* framesEnd;
     matchframe* currentFrame;
+    
+    inline bool canUseStackBufferForNextFrame()
+    {
+        return (currentFrame >= frames && currentFrame + 1 < framesEnd);
+    }
+    
+    inline matchframe* allocateNextFrame()
+    {
+        if (canUseStackBufferForNextFrame())
+            return currentFrame + 1;
+        return new matchframe;
+    }
+    
+    inline void pushNewFrame(const uschar* ecode, eptrblock* eptrb, ReturnLocation returnLocation)
+    {
+        matchframe* newframe = allocateNextFrame();
+        newframe->prevframe = currentFrame;
+
+        newframe->eptr = currentFrame->eptr;
+        newframe->offset_top = currentFrame->offset_top;
+        newframe->ecode = ecode;
+        newframe->eptrb = eptrb;
+        newframe->returnLocation = returnLocation;
+
+        currentFrame = newframe;
+    }
+    
+    inline bool frameIsStackAllocated(matchframe* frame)
+    {
+        return (frame >= frames && frame < framesEnd);
+    }
+    
+    inline void popCurrentFrame()
+    {
+        matchframe* oldFrame = currentFrame;
+        currentFrame = currentFrame->prevframe;
+        if (!frameIsStackAllocated(oldFrame))
+            delete oldFrame;
+    }
 
     void unrollAnyHeapAllocatedFrames()
     {
-        while (!(currentFrame >= frames && currentFrame < framesEnd)) {
-            matchframe* parentFrame = currentFrame->prevframe;
-            delete currentFrame;
-            currentFrame = parentFrame;
+        while (!frameIsStackAllocated(currentFrame)) {
+            matchframe* oldFrame = currentFrame;
+            currentFrame = currentFrame->prevframe;
+            delete oldFrame;
         }
     }
 };
@@ -369,12 +399,8 @@ static int match(USPTR eptr, const uschar* ecode, int offset_top, match_data* md
     int min;
     BOOL minimize = false; /* Initialization not really needed, but some compilers think so. */
     
-    /* The value 16 here is large enough that most regular expressions don't require
-     any calls to pcre_stack_malloc, yet the amount of stack used for the array is
-     modest enough that we don't run out of stack. */
     MatchStack stack;
-    matchframe* newframe;
-    
+
     /* The opcode jump table. */
 #ifdef USE_COMPUTED_GOTO_FOR_MATCH_OPCODE_LOOP
 #define EMIT_JUMP_TABLE_ENTRY(opcode) &&LABEL_OP_##opcode,
@@ -390,9 +416,9 @@ static int match(USPTR eptr, const uschar* ecode, int offset_top, match_data* md
 #endif
     
 #ifdef USE_COMPUTED_GOTO_FOR_MATCH_RECURSION
-    stack.currentFrame->where = &&RETURN;
+    stack.currentFrame->returnLocation = &&RETURN;
 #else
-    stack.currentFrame->where = 0;
+    stack.currentFrame->returnLocation = 0;
 #endif
     
     stack.currentFrame->eptr = eptr;
@@ -416,9 +442,9 @@ RECURSE:
      haven't exceeded the recursive call limit. */
     
     if (md->match_call_count++ >= MATCH_LIMIT)
-        RRETURN_ERROR(JSRegExpErrorMatchLimit);
+        return matchError(JSRegExpErrorMatchLimit, stack);
     if (rdepth >= MATCH_LIMIT_RECURSION)
-        RRETURN_ERROR(JSRegExpErrorRecursionLimit);
+        return matchError(JSRegExpErrorRecursionLimit, stack);
     
     /* At the start of a bracketed group, add the current subject pointer to the
      stack of such pointers, to be re-instated at the end of the group when we hit
@@ -489,7 +515,8 @@ RECURSE:
                 BEGIN_OPCODE(ASSERT):
                 do {
                     RMATCH(6, stack.currentFrame->ecode + 1 + LINK_SIZE, NULL, match_isgroup);
-                    if (is_match) break;
+                    if (is_match)
+                        break;
                     stack.currentFrame->ecode += GET(stack.currentFrame->ecode, 1);
                 } while (*stack.currentFrame->ecode == OP_ALT);
                 if (*stack.currentFrame->ecode == OP_KET)
@@ -1663,7 +1690,7 @@ RECURSE:
                             
                             default:
                             ASSERT_NOT_REACHED();
-                            RRETURN_ERROR(JSRegExpErrorInternal);
+                            return matchError(JSRegExpErrorInternal, stack);
                     }  /* End switch(stack.currentFrame->ctype) */
                 }
                 
@@ -1722,7 +1749,7 @@ RECURSE:
                             
                         default:
                             ASSERT_NOT_REACHED();
-                            RRETURN_ERROR(JSRegExpErrorInternal);
+                            return matchError(JSRegExpErrorInternal, stack);
                         }
                     }
                     ASSERT_NOT_REACHED();
@@ -1837,7 +1864,7 @@ RECURSE:
                             
                             default:
                             ASSERT_NOT_REACHED();
-                            RRETURN_ERROR(JSRegExpErrorInternal);
+                            return matchError(JSRegExpErrorInternal, stack);
                     }
                     
                     /* stack.currentFrame->eptr is now past the end of the maximum run */
@@ -1866,7 +1893,7 @@ RECURSE:
                 BEGIN_OPCODE(CRRANGE):
                 BEGIN_OPCODE(CRSTAR):
                 ASSERT_NOT_REACHED();
-                RRETURN_ERROR(JSRegExpErrorInternal);
+                return matchError(JSRegExpErrorInternal, stack);
                 
 #ifdef USE_COMPUTED_GOTO_FOR_MATCH_OPCODE_LOOP
             CAPTURING_BRACKET:
@@ -1943,7 +1970,7 @@ RECURSE:
 #ifndef USE_COMPUTED_GOTO_FOR_MATCH_RECURSION
     
 RRETURN_SWITCH:
-    switch (stack.currentFrame->where)
+    switch (stack.currentFrame->returnLocation)
     {
         case 0: goto RETURN;
         case 1: goto RRETURN_1;
@@ -1979,8 +2006,8 @@ RRETURN_SWITCH:
         case 52: goto RRETURN_52;
     }
     
-    abort();
-    RRETURN_ERROR(JSRegExpErrorInternal);
+    ASSERT_NOT_REACHED();
+    return matchError(JSRegExpErrorInternal, stack);
     
 #endif
     
