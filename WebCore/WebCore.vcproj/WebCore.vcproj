@@ -7480,6 +7480,14 @@
 				RelativePath="..\html\HTMLViewSourceDocument.h"
 				>
 			</File>
+			<File
+				RelativePath="..\html\VoidCallback.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\VoidCallback.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="bindings"

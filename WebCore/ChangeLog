@@ -1,3 +1,19 @@
+2007-11-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Pass a VoidCallback to Database::transaction and Database::changeVersion.
+        This is not yet hooked up to the database machinery.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::JSDatabase::transaction):
+        * storage/Database.cpp:
+        (WebCore::Database::changeVersion):
+        (WebCore::Database::transaction):
+        * storage/Database.h:
+
 2007-11-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam.

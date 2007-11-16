@@ -38,6 +38,7 @@
 #include "StringHash.h"
 #include "Threading.h"
 #include "Timer.h"
+#include "VoidCallback.h"
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -67,8 +68,10 @@ public:
     static PassRefPtr<Database> openDatabase(Document* document, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, ExceptionCode&);
     String version() const;
     void changeVersion(const String& oldVersion, const String& newVersion, 
-                       PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback);
-    void transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback);
+                       PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
+                       PassRefPtr<VoidCallback> successCallback);
+    void transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
+                     PassRefPtr<VoidCallback> successCallback);
     
 // Internal engine support
     void databaseThreadGoingAway();

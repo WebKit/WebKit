@@ -36,6 +36,7 @@
 #include "kjs_window.h"
 #include "JSCustomSQLTransactionCallback.h"
 #include "JSCustomSQLTransactionErrorCallback.h"
+#include "JSCustomVoidCallback.h"
 #include "PlatformString.h"
 #include "SQLValue.h"
 #include <kjs/array_instance.h>
@@ -60,8 +61,8 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
     }
     
     RefPtr<SQLTransactionCallback> callback(new JSCustomSQLTransactionCallback(object, frame));
+    
     RefPtr<SQLTransactionErrorCallback> errorCallback;
-        
     if (!args[3]->isNull()) {
         if (!(object = args[3]->getObject())) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
@@ -71,7 +72,17 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
         errorCallback = new JSCustomSQLTransactionErrorCallback(object, frame);
     }
     
-    m_impl->changeVersion(oldVersion, newVersion, callback.release(), errorCallback.release());
+    RefPtr<VoidCallback> successCallback;
+    if (!args[4]->isNull()) {
+        bool ok;
+        successCallback = toVoidCallback(exec, args[4], ok);
+        if (!ok) {
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return jsUndefined();
+        }
+    }
+    
+    m_impl->changeVersion(oldVersion, newVersion, callback.release(), errorCallback.release(), successCallback.release());
     
     return jsUndefined();
 }
@@ -101,8 +112,17 @@ JSValue* JSDatabase::transaction(ExecState* exec, const List& args)
         errorCallback = new JSCustomSQLTransactionErrorCallback(object, frame);
     }
 
+    RefPtr<VoidCallback> successCallback;
+    if (args.size() > 2 && !args[2]->isNull()) {
+        bool ok;
+        successCallback = toVoidCallback(exec, args[2], ok);
+        if (!ok) {
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return jsUndefined();
+        }
+    }
     
-    m_impl->transaction(callback.release(), errorCallback.release());
+    m_impl->transaction(callback.release(), errorCallback.release(), successCallback.release());
 
     return jsUndefined();
 }
