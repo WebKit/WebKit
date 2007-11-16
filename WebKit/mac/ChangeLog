@@ -1,3 +1,10 @@
+2007-11-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady
+
+        * WebKit.exp:
+        Exported some new database-related symbols
+
 2007-11-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John

@@ -4,6 +4,7 @@
 .objc_class_name_WebCache
 .objc_class_name_WebCoreScrollView
 .objc_class_name_WebCoreStatistics
+.objc_class_name_WebDatabaseManager
 .objc_class_name_WebDataSource
 .objc_class_name_WebDefaultPolicyDelegate
 .objc_class_name_WebDownload
@@ -38,6 +39,8 @@ _WebActionNavigationTypeKey
 _WebActionOriginalURLKey
 _WebArchivePboardType
 _WebConvertNSImageToCGImageRef
+_WebDatabaseDisplayNameKey
+_WebDatabaseUsageKey
 _WebElementDOMNodeKey
 _WebElementFrameKey
 _WebElementImageAltStringKey
