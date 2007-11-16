@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -53,7 +53,7 @@
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
+				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4800;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -129,7 +129,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -138,7 +138,7 @@
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
+				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4800;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -216,7 +216,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; WIN32"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -227,7 +227,7 @@
 				WarnAsError="true"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4996"
+				DisableSpecificWarnings="4127;4355;4510;4512;4610;4706;4800;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
