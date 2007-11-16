@@ -31,7 +31,6 @@
 #include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include "StringHash.h"
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -39,6 +38,8 @@ namespace WebCore {
 
 class DatabaseTrackerClient;
 class SecurityOriginData;
+struct SecurityOriginDataHash;
+struct SecurityOriginDataTraits;
 
 class DatabaseTracker {
 public:
@@ -47,7 +48,7 @@ public:
 
     String fullPathForDatabase(const SecurityOriginData& origin, const String& name);
 
-    const HashSet<String>& origins();
+    void origins(Vector<SecurityOriginData>& result);
     bool databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& result);
 
     void deleteAllDatabases();
@@ -62,11 +63,11 @@ private:
 
     void openTrackerDatabase();
     
-    bool addDatabase(const String& origin, const String& name, const String& path);
+    bool addDatabase(const SecurityOriginData& origin, const String& name, const String& path);
     void populateOrigins();
 
     SQLiteDatabase m_database;
-    mutable OwnPtr<HashSet<String> > m_origins;
+    mutable OwnPtr<HashSet<SecurityOriginData, SecurityOriginDataHash, SecurityOriginDataTraits> > m_origins;
 
     String m_databasePath;
     

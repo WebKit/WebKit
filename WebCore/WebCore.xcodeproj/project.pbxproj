@@ -361,6 +361,7 @@
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
+		51079DD50CED2A820077247D /* SecurityOriginData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51079DD40CED2A820077247D /* SecurityOriginData.cpp */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512F2F450CEC3516006537E3 /* SecurityOriginData.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F2F440CEC3516006537E3 /* SecurityOriginData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4522,6 +4523,7 @@
 		4E1959280A39DACC00220FE5 /* MediaQueryExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryExp.h; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
+		51079DD40CED2A820077247D /* SecurityOriginData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOriginData.cpp; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		512F2F440CEC3516006537E3 /* SecurityOriginData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginData.h; sourceTree = "<group>"; };
@@ -11478,6 +11480,7 @@
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
 				BC014C720CC5579D009C4B20 /* SecurityOrigin.cpp */,
 				BC014C730CC5579D009C4B20 /* SecurityOrigin.h */,
+				51079DD40CED2A820077247D /* SecurityOriginData.cpp */,
 				512F2F440CEC3516006537E3 /* SecurityOriginData.h */,
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
@@ -13132,6 +13135,7 @@
 				51EC92660CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.h in Headers */,
 				51EC92680CE90DD400F90308 /* JSCustomSQLTransactionCallback.h in Headers */,
 				51EC926A0CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h in Headers */,
+				1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */,
 				E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */,
 				BCD9C26F0C17AA81005C90A2 /* JSDOMExceptionConstructor.h in Headers */,
 				BCD9C2C60C17B6EC005C90A2 /* JSDOMExceptionConstructor.lut.h in Headers */,
@@ -13896,7 +13900,6 @@
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14680,6 +14683,7 @@
 				51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */,
 				51EC92670CE90DD400F90308 /* JSCustomSQLTransactionCallback.cpp in Sources */,
 				51EC92690CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.cpp in Sources */,
+				1A3417CA0CECFF250049CBDE /* JSCustomVoidCallback.cpp in Sources */,
 				E10B93C30B73C291003ED890 /* JSCustomXPathNSResolver.cpp in Sources */,
 				BCD9C26E0C17AA81005C90A2 /* JSDOMExceptionConstructor.cpp in Sources */,
 				65DF31F709D1CC60000BE325 /* JSDOMImplementation.cpp in Sources */,
@@ -15320,6 +15324,7 @@
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
 				AB7170A00B31193B0017123E /* SearchPopupMenuMac.mm in Sources */,
 				BC014C740CC5579D009C4B20 /* SecurityOrigin.cpp in Sources */,
+				51079DD50CED2A820077247D /* SecurityOriginData.cpp in Sources */,
 				BCFB2F41097A24B500BA703D /* SegmentedString.cpp in Sources */,
 				93309E0B099E64920056E581 /* Selection.cpp in Sources */,
 				93309E0D099E64920056E581 /* SelectionController.cpp in Sources */,
@@ -15457,7 +15462,6 @@
 				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				1A3417CA0CECFF250049CBDE /* JSCustomVoidCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

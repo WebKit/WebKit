@@ -25,34 +25,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef SecurityOriginData_h
-#define SecurityOriginData_h
-
-#include "PlatformString.h"
+#include "config.h"
+#include "SecurityOriginData.h"
 
 namespace WebCore {
 
-class SecurityOriginData {
-public:
-    SecurityOriginData();
-    SecurityOriginData(const String& protocol, const String& host, unsigned short port);
-    SecurityOriginData(const String& stringIdentifier);
-    
-    const String& protocol() const { return m_protocol; }
-    const String& host() const { return m_host; }
-    unsigned short port() const { return m_port; }
-    
-    String stringIdentifier() const;
-private:
-    String m_protocol;
-    String m_host;
-    unsigned short m_port;
-};
-    
-inline bool operator==(const SecurityOriginData& a, const SecurityOriginData& b) { return a.protocol() == b.protocol() && a.host() == b.host() && a.port() == b.port(); }
-inline bool operator==(const SecurityOriginData& a, const SecurityOriginData& b) { return !(a == b); }
+SecurityOriginData::SecurityOriginData()
+    : m_port(0)
+{
+}
+
+SecurityOriginData::SecurityOriginData(const String& protocol, const String& host, unsigned short port)
+    : m_protocol(protocol)
+    , m_host(host)
+    , m_port(port)
+{
+}    
+
+SecurityOriginData::SecurityOriginData(const String& stringIdentifier)
+    : m_port(0)
+{ 
+    // Make sure there's a first colon
+    int colon1 = stringIdentifier.find(':');
+    if (colon1 == -1)
+        return;
+            
+    // Make sure there's a second colon
+    int colon2 = stringIdentifier.find(':', colon1 + 1);
+    if (colon2 == -1)
+        return;
+        
+    // Make sure there's not a third colon
+    if (stringIdentifier.reverseFind(':') != colon2)
+        return;
+        
+    // Make sure the port section is a valid port number or doesn't exist
+    bool portOkay;
+    int port = stringIdentifier.right(stringIdentifier.length() - colon2 - 1).toInt(&portOkay);
+    if (!portOkay && colon2 + 1 == static_cast<int>(stringIdentifier.length()))
+        return;
+
+    if (port < 0 || port > 65535)
+        return;
+            
+    // Split out the 3 sections of data
+    m_protocol = stringIdentifier.substring(0, colon1);
+    m_host = stringIdentifier.substring(colon1 + 1, colon2 - colon1 - 1);
+    m_port = port;
+}
+
+String SecurityOriginData::stringIdentifier() const 
+{
+    return m_protocol + ":" + m_host + ":" + String::number(m_port); 
+}
+
 
 } // namespace WebCore
-
-#endif // SecurityOriginData_h

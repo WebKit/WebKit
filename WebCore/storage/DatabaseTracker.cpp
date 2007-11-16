@@ -36,6 +36,40 @@
 
 namespace WebCore {
 
+struct SecurityOriginDataHash {
+    static unsigned hash(const SecurityOriginData& data)
+    {
+        unsigned hashCodes[3] = {
+            data.protocol().impl()->hash(),
+            data.host().impl()->hash(),
+            data.port()
+        };
+        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 3 * sizeof(unsigned) / sizeof(UChar));
+    }
+         
+    static bool equal(const SecurityOriginData& a, const SecurityOriginData& b)
+    {
+        return a == b;
+    }
+
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+struct SecurityOriginDataTraits : WTF::GenericHashTraits<SecurityOriginData> {
+    static const SecurityOriginData& deletedValue()
+    {
+        // Okay deleted value because file: protocols should always have port 0
+        static SecurityOriginData key("file", "", 1);
+        return key;
+    }
+    static const SecurityOriginData& emptyValue()
+    {
+        // Okay empty value because file: protocols should always have port 0
+        static SecurityOriginData key("file", "", 2);
+        return key;
+    }
+};
+
 DatabaseTracker& DatabaseTracker::tracker()
 {
     static DatabaseTracker tracker;
@@ -124,7 +158,7 @@ String DatabaseTracker::fullPathForDatabase(const SecurityOriginData& origin, co
 
     sequenceStatement.finalize();
 
-    if (!addDatabase(origin.stringIdentifier(), name, String::format("%016llx.db", seq)))
+    if (!addDatabase(origin, name, String::format("%016llx.db", seq)))
         return "";
 
     return filename;
@@ -135,7 +169,7 @@ void DatabaseTracker::populateOrigins()
     if (m_origins)
         return;
 
-    m_origins.set(new HashSet<String>);
+    m_origins.set(new HashSet<SecurityOriginData, SecurityOriginDataHash, SecurityOriginDataTraits>);
 
     if (!m_database.isOpen())
         return;
@@ -155,12 +189,12 @@ void DatabaseTracker::populateOrigins()
     return;
 }
 
-const HashSet<String>& DatabaseTracker::origins()
+void DatabaseTracker::origins(Vector<SecurityOriginData>& result)
 {
     if (!m_origins)
         populateOrigins();
 
-    return *(m_origins.get());
+    copyToVector(*(m_origins.get()), result);
 }
 
 bool DatabaseTracker::databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& resultVector)
@@ -187,7 +221,7 @@ bool DatabaseTracker::databaseNamesForOrigin(const SecurityOriginData& origin, V
     return true;
 }
 
-bool DatabaseTracker::addDatabase(const String& origin, const String& name, const String& path)
+bool DatabaseTracker::addDatabase(const SecurityOriginData& origin, const String& name, const String& path)
 {
     if (!m_database.isOpen())
         return false;
@@ -197,12 +231,12 @@ bool DatabaseTracker::addDatabase(const String& origin, const String& name, cons
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText(1, origin);
+    statement.bindText(1, origin.stringIdentifier());
     statement.bindText(2, name);
     statement.bindText(3, path);
 
     if (!statement.executeCommand()) {
-        LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), origin.ascii().data(), statement.lastErrorMsg());
+        LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), origin.stringIdentifier().ascii().data(), statement.lastErrorMsg());
         return false;
     }
 

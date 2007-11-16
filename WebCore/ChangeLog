@@ -1,3 +1,35 @@
+2007-11-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        Further purify DatabaseTracker to use SecurityOriginData instead of "a String"
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj
+        * WebCore.pro
+
+        * platform/SecurityOriginData.cpp: Added.
+        (WebCore::SecurityOriginData::SecurityOriginData): Add a constructor that takes a "stringIdentifier"-style string,
+          since that form is what will be stored in the Databases.db on disk
+        (WebCore::SecurityOriginData::stringIdentifier):
+        * platform/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::protocol):
+        (WebCore::SecurityOriginData::host):
+        (WebCore::SecurityOriginData::port):
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::SecurityOriginDataHash::hash): Follow the pattern Darin set in FontCache.cpp to make a decent hash for 
+          a SecurityOriginData object
+        (WebCore::SecurityOriginDataHash::equal):
+        (WebCore::SecurityOriginDataTraits::deletedValue): "file::1" will never exist in normal operation
+        (WebCore::SecurityOriginDataTraits::emptyValue): "file::2" will never exist in normal operation
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::addDatabase):
+        * storage/DatabaseTracker.h:
+
 2007-11-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
