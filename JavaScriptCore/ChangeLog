@@ -1,3 +1,24 @@
+2007-11-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric.
+
+        Replace strings, identifier, buffer8 and buffer16 members of Lexer with vectors.
+        SunSpider claims this is a 0.7% speedup.
+
+        * kjs/lexer.cpp:
+        (KJS::Lexer::Lexer):
+        (KJS::Lexer::lex):
+        (KJS::Lexer::record8):
+        (KJS::Lexer::record16):
+        (KJS::Lexer::scanRegExp):
+        (KJS::Lexer::clear):
+        (KJS::Lexer::makeIdentifier):
+        (KJS::Lexer::makeUString):
+        * kjs/lexer.h:
+        * kjs/ustring.cpp:
+        (KJS::UString::UString): Add a convenience constructor that takes a const Vector<UChar>&.
+        * kjs/ustring.h:
+
 2007-11-16  Adam Roben  <aroben@apple.com>
 
         Windows build fix
