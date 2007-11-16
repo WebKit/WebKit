@@ -1,5 +1,9 @@
 2007-11-16  Brady Eidson  <beidson@apple.com>
 
+        * WebKit.xcodeproj/project.pbxproj: WebDatabaseManagerPrivate.h, also!
+
+2007-11-16  Brady Eidson  <beidson@apple.com>
+
         * WebKit.xcodeproj/project.pbxproj: Mark WebSecurityOriginPrivate.h private so
           it is exported
 

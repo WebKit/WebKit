@@ -39,7 +39,7 @@
 		51079D180CED11B00077247D /* WebSecurityOriginInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51079D150CED11B00077247D /* WebSecurityOriginInternal.h */; };
 		51079D190CED11B00077247D /* WebSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51079D160CED11B00077247D /* WebSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511F3FD50CECC88F00852565 /* WebDatabaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */; };
-		511F3FD60CECC88F00852565 /* WebDatabaseManagerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F3FD20CECC88F00852565 /* WebDatabaseManagerPrivate.h */; };
+		511F3FD60CECC88F00852565 /* WebDatabaseManagerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F3FD20CECC88F00852565 /* WebDatabaseManagerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511F3FD70CECC88F00852565 /* WebDatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F3FD30CECC88F00852565 /* WebDatabaseTrackerClient.h */; };
 		511F3FD80CECC88F00852565 /* WebDatabaseTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F3FD40CECC88F00852565 /* WebDatabaseTrackerClient.mm */; };
 		51494CD60C7EBDE0004178C5 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */; };
