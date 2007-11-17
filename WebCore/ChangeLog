@@ -1,3 +1,42 @@
+2007-11-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15969
+        Eliminate Editor::deleteRange()
+
+        No change in functionality.
+
+        * editing/CompositeEditCommand.h: Removed unimplemented deleteKeyPressed().
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection):
+        (WebCore::Editor::cut):
+        (WebCore::Editor::performDelete):
+        * editing/Editor.h:
+        Moved relevant Editor::deleteRange() functionality to its callers.
+        Removed deleteSelectionWithSmartDelete(void), which was more confusing than helpful
+        in my opinion.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::initializeKillRingIfNeeded):
+        (WebCore::Editor::addToKillRing):
+        (WebCore::Editor::yank):
+        (WebCore::Editor::yankAndSelect):
+        (WebCore::Editor::setMark):
+        (WebCore::unionDOMRanges):
+        (WebCore::Editor::deleteToMark):
+        (WebCore::Editor::selectToMark):
+        (WebCore::Editor::swapWithMark):
+        Pushed kill ring handling down from WebCore.
+
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        Removed setMarkDOMRange (the corresponding getter is still needed).
+
+        * WebCore.base.exp: No longer need to export Editor::deleteRange() and Editor::insertTextWithoutSendingTextEvent().
+        Export the new kill ring functions.
+
 2007-11-16  Ryan Leavengood  <leavengood@gmail.com>
 
         Reviewed by David Kilzer.

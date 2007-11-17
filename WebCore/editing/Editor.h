@@ -137,9 +137,7 @@ public:
     void setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand);
 
     bool deleteWithDirection(SelectionController::EDirection, TextGranularity, bool killRing, bool isTypingAction);
-    void deleteRange(Range*, bool killRing, bool prepend, bool smartDeleteOK, EditorDeleteAction, TextGranularity);
     void deleteSelectionWithSmartDelete(bool smartDelete);
-    void deleteSelectionWithSmartDelete();
     bool dispatchCPPEvent(const AtomicString&, ClipboardAccessPolicy);
     
     Node* removedAnchor() const { return m_removedAnchor.get(); }
@@ -227,6 +225,14 @@ public:
 
 #if PLATFORM(MAC)
     NSString* userVisibleString(NSURL*);
+
+    void yank();
+    void yankAndSelect();
+    void setMark();
+    void deleteToMark();
+    void selectToMark();
+    void swapWithMark();
+
 #endif
 
     PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);

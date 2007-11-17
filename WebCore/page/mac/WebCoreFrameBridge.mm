@@ -925,12 +925,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return [self convertToNSRange:m_frame->selectionController()->toRange().get()];
 }
 
-- (void)setMarkDOMRange:(DOMRange *)range
-{
-    Range* r = [range _range];
-    m_frame->setMark(Selection(startPosition(r), endPosition(r), SEL_DEFAULT_AFFINITY));
-}
-
 - (DOMRange *)markDOMRange
 {
     return [DOMRange _wrapRange:m_frame->mark().toRange().get()];

@@ -165,7 +165,6 @@ enum WebScrollGranularity {
 - (void)scrollDOMRangeToVisible:(DOMRange *)range;
 
 // Emacs-style-editing "mark"
-- (void)setMarkDOMRange:(DOMRange *)range;
 - (DOMRange *)markDOMRange;
 
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts;

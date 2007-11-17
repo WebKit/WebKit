@@ -177,17 +177,6 @@ extern "C" {
 extern NSString *NSMarkedClauseSegmentAttributeName; 
 extern NSString *NSTextInputReplacementRangeAttributeName; 
 
-// Kill ring calls. Would be better to use NSKillRing.h, but that's not available as API or SPI.
-
-void _NSInitializeKillRing(void);
-void _NSAppendToKillRing(NSString *);
-void _NSPrependToKillRing(NSString *);
-NSString *_NSYankFromKillRing(void);
-NSString *_NSYankPreviousFromKillRing(void);
-void _NSNewKillRingSequence(void);
-void _NSSetKillRingToYankedState(void);
-void _NSResetKillRingOperationFlag(void);
-
 }
 
 @interface NSView (AppKitSecretsIKnowAbout)
@@ -2000,7 +1989,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] 
                              returnTypes:[[self class] _insertablePasteboardTypes]];
-    _NSInitializeKillRing();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif
@@ -4591,108 +4579,48 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     COMMAND_PROLOGUE
 
-    if (![self _canEdit])
-        return;
-        
-    NSString* yankee = _NSYankFromKillRing();
-
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->insertTextWithoutSendingTextEvent(yankee, false);
-
-    _NSSetKillRingToYankedState();
+        coreFrame->editor()->yank();
 }
 
 - (void)yankAndSelect:(id)sender
 {
     COMMAND_PROLOGUE
 
-    if (![self _canEdit])
-        return;
-
-    NSString* yankee = _NSYankFromKillRing();
-    
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->insertTextWithoutSendingTextEvent(yankee, true);
-        
-    _NSSetKillRingToYankedState();
+        coreFrame->editor()->yankAndSelect();
 }
 
 - (void)setMark:(id)sender
 {
     COMMAND_PROLOGUE
 
-    [[self _bridge] setMarkDOMRange:[self _selectedRange]];
-}
-
-static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
-{
-    ASSERT(a);
-    ASSERT(b);
-    DOMRange *s = [a compareBoundaryPoints:DOM_START_TO_START sourceRange:b] <= 0 ? a : b;
-    DOMRange *e = [a compareBoundaryPoints:DOM_END_TO_END sourceRange:b] <= 0 ? b : a;
-    DOMRange *r = [[[a startContainer] ownerDocument] createRange];
-    [r setStart:[s startContainer] offset:[s startOffset]];
-    [r setEnd:[e endContainer] offset:[e endOffset]];
-    return r;
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->setMark();
 }
 
 - (void)deleteToMark:(id)sender
 {
     COMMAND_PROLOGUE
 
-    if (![self _canEdit])
-        return;
-
-    DOMRange *mark = [[self _bridge] markDOMRange];
-    if (mark == nil) {
-        if (Frame* coreFrame = core([self _frame]))
-            coreFrame->editor()->performDelete();
-    } else {
-        DOMRange *selection = [self _selectedRange];
-        DOMRange *r;
-        @try {
-            r = unionDOMRanges(mark, selection);
-        } @catch (NSException *localException) {
-            r = selection;
-        }
-        Frame* coreFrame = core([self _frame]);
-        if (coreFrame)
-            coreFrame->editor()->deleteRange([r _range], true, true, false, deleteSelectionAction, CharacterGranularity);
-
-    }
-    [[self _bridge] setMarkDOMRange:[self _selectedRange]];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->deleteToMark();
 }
 
 - (void)selectToMark:(id)sender
 {
     COMMAND_PROLOGUE
 
-    WebFrameBridge *bridge = [self _bridge];
-    DOMRange *mark = [bridge markDOMRange];
-    DOMRange *selection = [self _selectedRange];
-    Frame* coreFrame = core([self _frame]);
-    if (!mark || !selection || !coreFrame) {
-        NSBeep();
-        return;
-    }
-    coreFrame->selectionController()->setSelectedRange(core(unionDOMRanges(mark, [self _selectedRange])), DOWNSTREAM, true);
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->selectToMark();
 }
 
 - (void)swapWithMark:(id)sender
 {
     COMMAND_PROLOGUE
 
-    WebFrameBridge *bridge = [self _bridge];
-    DOMRange *mark = [bridge markDOMRange];
-    DOMRange *selection = [self _selectedRange];
-    Frame* coreFrame = core([self _frame]);
-    if (!mark || !selection || !coreFrame) {
-        NSBeep();
-        return;
-    }
-
-    if (coreFrame->selectionController()->setSelectedRange(core(mark), DOWNSTREAM, true))
-        [bridge setMarkDOMRange:selection];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->swapWithMark();
 }
 
 - (void)toggleBaseWritingDirection:(id)sender
