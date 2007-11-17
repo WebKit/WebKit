@@ -788,7 +788,7 @@ void Lexer::record8(int c)
 {
     ASSERT(c >= 0);
     ASSERT(c <= 0xff);
-    m_buffer8.append(c);
+    m_buffer8.append(static_cast<char>(c));
 }
 
 void Lexer::record16(int c)

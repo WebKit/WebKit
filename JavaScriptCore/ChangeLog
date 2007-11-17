@@ -1,5 +1,12 @@
 2007-11-16  Mark Rowe  <mrowe@apple.com>
 
+        Windows build fix.
+
+        * kjs/lexer.cpp:
+        (KJS::Lexer::record8):
+
+2007-11-16  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Eric.
 
         Replace strings, identifier, buffer8 and buffer16 members of Lexer with vectors.
