@@ -252,10 +252,11 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     JSStringRef character = JSValueToStringCopy(context, arguments[0], exception);
     ASSERT(!*exception);
     int virtualKeyCode;
+    int charCode = 0;
     if (JSStringIsEqualToUTF8CString(character, "rightArrow")) {
         virtualKeyCode = VK_RIGHT;
     } else {
-        int charCode = JSStringGetCharactersPtr(character)[0];
+        charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = toupper(LOBYTE(VkKeyScan(charCode)));
     }
     JSStringRelease(character);
@@ -290,8 +291,15 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     }
 
     MSG msg = makeMsg(webViewWindow, WM_KEYDOWN, virtualKeyCode, 0);
-    dispatchMessage(&msg);
-    
+    if (virtualKeyCode != 255)
+        dispatchMessage(&msg);
+    else {
+        // For characters that do not exist in the active keyboard layout,
+        // ::Translate will not work, so we post an WM_CHAR event ourselves.
+        ::PostMessage(webViewWindow, WM_CHAR, charCode, 0);
+        ::DispatchMessage(&msg);
+    }
+
     if (argumentCount > 1)
         ::SetKeyboardState(keyState);
 

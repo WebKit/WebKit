@@ -1,3 +1,14 @@
+2007-11-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        - fix <rdar://problem/5134075> fast/forms/select-type-ahead-non-latin.html fails on boomer
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback): For characters that cannot be entered on the active
+        keyboard layout, send a WM_CHAR message with the character along with
+        a WM_KEYDOWN message with a virtual key code of 255.
+
 2007-11-16  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -1,3 +1,11 @@
+2007-11-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        - remove fast/forms/select-type-ahead-non-latin.html after fixing <rdar://problem/5134075>
+
+        * platform/win/Skipped:
+
 2007-11-16  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubberstamped by Eric.

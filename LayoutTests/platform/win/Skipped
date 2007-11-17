@@ -293,9 +293,6 @@ fast/forms/drag-into-textarea.html
 # This test uses Mac-specific key codes <rdar://problem/5076426>
 fast/events/arrow-navigation.html
 
-# fast/forms/select-type-ahead-non-latin.html fails on boomer <rdar://problem/5134075>
-fast/forms/select-type-ahead-non-latin.html
-
 # Selection seems to fail for some LayoutTests <rdar://problem/5130762>
 editing/selection/4402375.html
 editing/selection/image-before-linebreak.html
