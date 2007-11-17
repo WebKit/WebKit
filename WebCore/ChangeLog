@@ -1,3 +1,16 @@
+2007-11-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix the common case of <http://bugs.webkit.org/show_bug.cgi?id=15994>
+          REGRESSION: Incomplete repaint of CSS image substitution
+
+        Test: fast/repaint/clip-with-layout-delta.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState): Account for layout delta when
+        pushing additional clip.
+
 2007-11-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.

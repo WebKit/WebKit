@@ -1,3 +1,15 @@
+2007-11-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - repaint test for <http://bugs.webkit.org/show_bug.cgi?id=15994>
+          REGRESSION: Incomplete repaint of CSS image substitution
+
+        * fast/repaint/clip-with-layout-delta.html: Added.
+        * platform/mac/fast/repaint/clip-with-layout-delta-expected.checksum: Added.
+        * platform/mac/fast/repaint/clip-with-layout-delta-expected.png: Added.
+        * platform/mac/fast/repaint/clip-with-layout-delta-expected.txt: Added.
+
 2007-11-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
