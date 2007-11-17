@@ -1,3 +1,13 @@
+2007-11-16  Ryan Leavengood  <leavengood@gmail.com>
+
+        Reviewed by David Kilzer.
+
+        The git config command was renamed to repo-config at some point. This
+        change tries git config and then git repo-config if the first fails.
+
+        * Scripts/prepare-ChangeLog:
+        (gitConfig):
+
 2007-11-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.
