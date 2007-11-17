@@ -1,3 +1,16 @@
+2007-11-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Ollie.
+
+        <rdar://problem/5605175> Crash closing or leaving window with ViewPoint 
+        Media player plugin
+
+        ViewPoint plugin requires that we pass a valid NPSavedData* to
+        NPP_Destroy.
+
+        * plugins/win/PluginViewWin.cpp: Pass a valid NPSavedData* to
+        NPP_Destroy. If the plugin allocates data, discard it
+
 2007-11-16  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

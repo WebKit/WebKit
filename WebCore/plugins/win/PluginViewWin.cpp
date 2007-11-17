@@ -685,8 +685,15 @@ void PluginViewWin::stop()
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
 
     // Destroy the plugin
-    NPError npErr = m_plugin->pluginFuncs()->destroy(m_instance, 0);
+    NPSavedData* savedData = 0;
+    NPError npErr = m_plugin->pluginFuncs()->destroy(m_instance, &savedData);
     LOG_NPERROR(npErr);
+
+    if (savedData) {
+        if (savedData->buf)
+            NPN_MemFree(savedData->buf);
+        NPN_MemFree(savedData);
+    }
 
     m_instance->pdata = 0;
 }
