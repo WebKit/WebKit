@@ -221,10 +221,13 @@ CFRunLoopRef ResourceHandle::loaderRunLoop()
     return loaderRL;
 }
 
-static CFURLRequestRef makeFinalRequest(const ResourceRequest& request)
+static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool shouldContentSniff)
 {
     CFMutableURLRequestRef newRequest = CFURLRequestCreateMutableCopy(kCFAllocatorDefault, request.cfURLRequest());
     
+    if (!shouldContentSniff)
+        wkSetCFURLRequestShouldContentSniff(newRequest, false);
+
     if (allowsAnyHTTPSCertificateHosts().contains(request.url().host().lower())) {
         CFTypeRef keys[] = { kCFStreamSSLAllowsAnyRoot, kCFStreamSSLAllowsExpiredRoots };  
         CFTypeRef values[] = { kCFBooleanTrue, kCFBooleanTrue };
@@ -245,7 +248,7 @@ bool ResourceHandle::start(Frame* frame)
     if (!frame->page())
         return false;
 
-    RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(d->m_request));
+    RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(d->m_request, d->m_shouldContentSniff));
 
     // CFURLConnection Callback API currently at version 1
     const int CFURLConnectionClientVersion = 1;
@@ -351,7 +354,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     ASSERT(!request.isEmpty());
     CFURLResponseRef cfResponse = 0;
     CFErrorRef cfError = 0;
-    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(request));
+    RetainPtr<CFURLRequestRef> cfRequest(AdoptCF, makeFinalRequest(request, true));
 
     CFDataRef data = CFURLConnectionSendSynchronousRequest(cfRequest.get(), &cfResponse, &cfError, request.timeoutInterval());
 

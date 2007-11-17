@@ -1,3 +1,22 @@
+2007-11-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5603832>
+        XMLHttpRequest readyState 3 & responseText buffer issues.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::makeFinalRequest):
+        Add new parameter which controls whether content sniffing should be turned off.
+        
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        Always content sniff sync loads.
+        
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        If the ResourceRequest already has a backing CFURLRequest, make a copy of it. This preserves
+        any properties set on the CFURLRequest.
+
 2007-11-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Ollie.

@@ -57,10 +57,16 @@ static inline void addHeadersFromHashMap(CFMutableURLRequestRef request, const H
 
 void ResourceRequest::doUpdatePlatformRequest()
 {
-    RetainPtr<CFURLRef> url(AdoptCF, ResourceRequest::url().createCFURL());
-    RetainPtr<CFURLRef> mainDocumentURL(AdoptCF, ResourceRequest::mainDocumentURL().createCFURL());
+    CFMutableURLRequestRef cfRequest;
 
-    CFMutableURLRequestRef cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), mainDocumentURL.get());
+    if (m_cfRequest) 
+        cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
+    else {
+        RetainPtr<CFURLRef> url(AdoptCF, ResourceRequest::url().createCFURL());
+        RetainPtr<CFURLRef> mainDocumentURL(AdoptCF, ResourceRequest::mainDocumentURL().createCFURL());
+
+        cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), mainDocumentURL.get());
+    }
 
     RetainPtr<CFStringRef> requestMethod(AdoptCF, httpMethod().createCFString());
     CFURLRequestSetHTTPRequestMethod(cfRequest, requestMethod.get());

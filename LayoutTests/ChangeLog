@@ -1,3 +1,14 @@
+2007-11-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5603832>
+        XMLHttpRequest readyState 3 & responseText buffer issues.
+
+        Remove http/tests/xmlhttprequest/small-chunks-response-text.html from the Skipped list.
+        
+        * platform/win/Skipped:
+    
 2007-11-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.
@@ -1052,6 +1063,7 @@
         * fast/xpath/preceding-axis-expected.txt: Added.
         * fast/xpath/preceding-axis.xhtml: Added.
 
+>>>>>>> .r27862
 2007-11-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele Peterson.
