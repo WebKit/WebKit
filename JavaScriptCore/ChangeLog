@@ -1,3 +1,18 @@
+2007-11-17  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16032
+        JS minidom is not portable
+
+        Use a plain UTF-8 string instead of a CFString.
+
+        Print to stdout, not stderr like CFShow() would have done, since that
+        behaviour seems unintentional.
+
+        * API/minidom.c:
+        (main):
+
 2007-11-17  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

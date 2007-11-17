@@ -1,6 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +26,8 @@
  */
 
 #include "JSNode.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
 
@@ -56,9 +59,11 @@ int main(int argc, char* argv[])
     else {
         printf("FAIL: Test script threw exception:\n");
         JSStringRef exceptionIString = JSValueToStringCopy(context, exception, NULL);
-        CFStringRef exceptionCF = JSStringCopyCFString(kCFAllocatorDefault, exceptionIString);
-        CFShow(exceptionCF);
-        CFRelease(exceptionCF);
+        size_t exceptionUTF8Size = JSStringGetMaximumUTF8CStringSize(exceptionIString);
+        char* exceptionUTF8 = (char*)malloc(exceptionUTF8Size);
+        JSStringGetUTF8CString(exceptionIString, exceptionUTF8, exceptionUTF8Size);
+        printf("%s\n", exceptionUTF8);
+        free(exceptionUTF8);
         JSStringRelease(exceptionIString);
     }
     JSStringRelease(script);
