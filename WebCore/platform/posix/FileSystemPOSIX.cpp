@@ -31,6 +31,9 @@
 #include "CString.h"
 #include "PlatformString.h"
 
+#include <sys/stat.h>
+#include <unistd.h>
+
 namespace WebCore {
 
 bool fileExists(const String& path)
