@@ -39,6 +39,7 @@ typedef CGFontIndex CGGlyph;
 typedef wchar_t UChar;
 typedef struct _CFURLResponse* CFURLResponseRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
+typedef struct _CFURLRequest* CFMutableURLRequestRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
@@ -59,7 +60,7 @@ void wkDrawFocusRing(CGContextRef, CGColorRef, float radius);
 CFDictionaryRef wkGetSSLCertificateInfo(CFURLResponseRef);
 void* wkGetSSLPeerCertificateData(CFDictionaryRef);
 CFHTTPCookieStorageRef wkGetDefaultHTTPCookieStorage();
-
+void wkSetCFURLRequestShouldContentSniff(CFMutableURLRequestRef, bool);
 CFStringRef wkCopyFoundationCacheDirectory();
 
 #endif // WebKitSystemInterface_h
