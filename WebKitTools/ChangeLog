@@ -2,7 +2,7 @@
 
         Reviewed by Darin Adler and Sam Weinig.
 
-        - fix <rdar://problem/5134075> fast/forms/select-type-ahead-non-latin.html fails on boomer
+        - fix <rdar://problem/5134075> fast/forms/select-type-ahead-non-latin.html fails on Windows
 
         * DumpRenderTree/win/EventSender.cpp:
         (keyDownCallback): For characters that cannot be entered on the active
