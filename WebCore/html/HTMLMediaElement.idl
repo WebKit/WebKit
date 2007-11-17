@@ -75,7 +75,7 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
     attribute float end;
     attribute float loopStart;
     attribute float loopEnd;
-    attribute unsigned long loopCount
+    attribute unsigned long playCount
         setter raises (DOMException);
     attribute unsigned long currentLoop;
 

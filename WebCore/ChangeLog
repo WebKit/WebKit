@@ -1,3 +1,64 @@
+2007-11-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Seeking related fixes, updates match to the latest specification
+        - rename loopCount of HTMLMediaElement to playCount
+        - add explicit seeking attribute to HTMLMediaElement to get semantics right
+        - implement the specification behavior that currentTime must immediately return seeked position in HTMLMediaElement 
+          instead of MoviePrivateQTKit 
+        - fix broken behavior when seeking past end of the media, add tests
+        - replace Movie didEnd callback with broader timeChanged callback (which gets called in didEnd case too)
+        - use setDelayCallbacks: in various MoviePrivateQTKit methods to avoid bug prone synchronous callbacks from QT, make
+          HTMLMediaElement not depend on synchronous callbacks
+        - do some cleanups and simplifications in MoviePrivateQTKit, get rid of m_rateBeforeSeek and m_blockStateUpdate variables
+
+        Tests: http/tests/media/video-seekable-stall.html
+               media/video-seeking.html
+               media/video-seek-past-end-paused.html
+               media/video-seek-past-end-playing.html
+
+        * html/HTMLAttributeNames.in: 
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::movieNetworkStateChanged):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::seeking):
+        (WebCore::HTMLMediaElement::currentTime):
+        (WebCore::HTMLMediaElement::ended):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::playCount):
+        (WebCore::HTMLMediaElement::setPlayCount):
+        (WebCore::HTMLMediaElement::checkIfSeekNeeded):
+        (WebCore::HTMLMediaElement::movieTimeChanged):
+        (WebCore::HTMLMediaElement::endedPlayback):
+        (WebCore::HTMLMediaElement::updateMovie):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * platform/graphics/Movie.cpp:
+        (WebCore::Movie::timeChanged):
+        * platform/graphics/Movie.h:
+        (WebCore::MovieClient::movieTimeChanged):
+        * platform/graphics/mac/MoviePrivateQTKit.h:
+        * platform/graphics/mac/MoviePrivateQTKit.mm:
+        (WebCore::MoviePrivate::MoviePrivate):
+        (WebCore::MoviePrivate::load):
+        (WebCore::MoviePrivate::play):
+        (WebCore::MoviePrivate::pause):
+        (WebCore::MoviePrivate::currentTime):
+        (WebCore::MoviePrivate::seek):
+        (WebCore::MoviePrivate::doSeek):
+        (WebCore::MoviePrivate::cancelSeek):
+        (WebCore::MoviePrivate::seekTimerFired):
+        (WebCore::MoviePrivate::startCuePointTimerIfNeeded):
+        (WebCore::MoviePrivate::paused):
+        (WebCore::MoviePrivate::updateStates):
+        (WebCore::MoviePrivate::timeChanged):
+        (WebCore::MoviePrivate::didEnd):
+
 2007-11-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

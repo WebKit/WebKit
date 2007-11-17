@@ -1,3 +1,44 @@
+2007-11-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele.
+        
+        Seeking related test updates
+        - update to match specificiation
+            - rename loopCount to playCount everywhere
+            - timeupdate events during seek
+        - fix that some tests (like audio ones) depended on timing sensitive ordering of play and load events
+        - add text about what is being tested
+        
+        Add new tests for seeking past end, seeking past loaded position and 'seeking' DOM attribute.
+
+        * http/tests/media/video-seekable-stall-expected.txt: Added.
+        * http/tests/media/video-seekable-stall.html: Added.
+        * media/audio-constructor-expected.txt: 
+        * media/audio-constructor-src-expected.txt:
+        * media/audio-constructor-src.html: 
+        * media/audio-constructor.html:
+        * media/video-dom-loopcount-expected.txt:
+        * media/video-dom-loopcount.html:
+        * media/video-dom-loopend-expected.txt:
+        * media/video-dom-loopend.html:
+        * media/video-dom-loopstart-expected.txt:
+        * media/video-dom-loopstart.html:
+        * media/video-dom-start-expected.txt:
+        * media/video-dom-start.html:
+        * media/video-loopcount-expected.txt:
+        * media/video-loopcount.html:
+        * media/video-loopend-expected.txt:
+        * media/video-loopend.html:
+        * media/video-loopstart-expected.txt:
+        * media/video-loopstart.html:
+        * media/video-seek-past-end-paused-expected.txt: Added.
+        * media/video-seek-past-end-paused.html: Added.
+        * media/video-seek-past-end-playing-expected.txt: Added.
+        * media/video-seek-past-end-playing.html: Added.
+        * media/video-seeking-expected.txt: Added.
+        * media/video-seeking.html: Added.
+        * media/video-test.js:
+
 2007-11-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

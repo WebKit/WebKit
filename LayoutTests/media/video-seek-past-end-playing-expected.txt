@@ -1,0 +1,10 @@
+Test that seeking video with remaining loops past it's end rewinds to the beginning and continues playback.
+
+RUN(video.play())
+EVENT(load)
+EVENT(timeupdate)
+EVENT(timeupdate)
+EVENT(timeupdate)
+TEST(video.currentLoop == 1) OK
+END OF TEST
+

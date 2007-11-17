@@ -1,0 +1,12 @@
+<video></video>
+<p>Test that seeking paused video past it's duration time sets currentTime to duration and leaves video paused.</p>
+<script src=video-test.js></script>
+<script>
+waitForEvent('load', function () { 
+    waitForEventAndTest('timeupdate', "video.currentTime == video.duration");
+    run("video.currentTime = 500");
+    endTestLater();
+});
+video.src = "content/test.mp4";
+run("video.load()");
+</script>

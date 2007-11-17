@@ -118,6 +118,14 @@ function endTestLater()
     setTimeout(endTest, 250);
 }
 
+function failTestIn(ms)
+{
+    setTimeout(function () {
+        consoleWrite("FAIL: did not end fast enough");
+        endTest();
+    }, ms);
+}
+
 function consoleWrite(text)
 {
     if (testEnded)

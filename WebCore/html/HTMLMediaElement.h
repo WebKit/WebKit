@@ -108,8 +108,8 @@ public:
     void setLoopStart(float time);
     float loopEnd() const;
     void setLoopEnd(float time);
-    unsigned loopCount() const;
-    void setLoopCount(unsigned, ExceptionCode&);
+    unsigned playCount() const;
+    void setPlayCount(unsigned, ExceptionCode&);
     unsigned currentLoop() const;
     void setCurrentLoop(unsigned);
  
@@ -140,8 +140,8 @@ protected:
 private: // MovieObserver
     virtual void movieNetworkStateChanged(Movie*);
     virtual void movieReadyStateChanged(Movie*);
+    virtual void movieTimeChanged(Movie*);
     virtual void movieVolumeChanged(Movie*);
-    virtual void movieDidEnd(Movie*);
     virtual void movieCuePointReached(Movie*, float cueTime);
         
 private:
@@ -152,7 +152,7 @@ private:
     void checkIfSeekNeeded();
     
     String pickMedia();
-    void updatePlayState();
+    void updateMovie();
     float effectiveStart() const;
     float effectiveEnd() const;
     float effectiveLoopStart() const;
@@ -185,6 +185,8 @@ protected:
     
     bool m_paused;
     bool m_seeking;
+    
+    float m_currentTimeDuringSeek;
     
     unsigned m_previousProgress;
     double m_previousProgressTime;

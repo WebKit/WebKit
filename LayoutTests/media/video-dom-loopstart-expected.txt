@@ -1,6 +1,13 @@
+Test that playing video rewinds to time specified by the loopStart DOM attribute when it loops.
+
 TEST(video.loopStart==1.0) OK
 TEST(video.getAttribute('loopstart') == '1s') OK
-EVENT(play)
-EVENT(timeupdate) TEST(video.currentTime.toFixed(1) && video.currentLoop==1) OK
+RUN(video.play())
+EVENT(load)
+EVENT(timeupdate)
+EVENT(timeupdate)
+EVENT(timeupdate)
+TEST(video.currentLoop == 1) OK
+TEST(video.currentTime.toFixed(1) == 1.0) OK
 END OF TEST
 

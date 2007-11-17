@@ -113,8 +113,8 @@ public:
     static void getSupportedTypes(HashSet<String>& types);
     
 private:
-    
     void updateStates();
+    void doSeek();
     void cancelSeek();
     void seekTimerFired(Timer<MoviePrivate>*);
     void cuePointTimerFired(Timer<MoviePrivate>*);
@@ -131,11 +131,9 @@ private:
     Timer<MoviePrivate> m_seekTimer;
     Timer<MoviePrivate> m_cuePointTimer;
     float m_previousTimeCueTimerFired;
-    float m_rateBeforeSeek;
     Movie::NetworkState m_networkState;
     Movie::ReadyState m_readyState;
     bool m_startedPlaying;
-    bool m_blockStateUpdate;
     bool m_isStreaming;
 };
 

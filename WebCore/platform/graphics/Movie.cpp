@@ -263,10 +263,10 @@ void Movie::volumeChanged()
         m_movieClient->movieVolumeChanged(this);
 }
 
-void Movie::didEnd()
+void Movie::timeChanged()
 {
     if (m_movieClient)
-        m_movieClient->movieDidEnd(this);
+        m_movieClient->movieTimeChanged(this);
 }
 
 void Movie::cuePointReached(float cueTime)

@@ -70,11 +70,9 @@ MoviePrivate::MoviePrivate(Movie* movie)
     , m_seekTimer(this, &MoviePrivate::seekTimerFired)
     , m_cuePointTimer(this, &MoviePrivate::cuePointTimerFired)
     , m_previousTimeCueTimerFired(0)
-    , m_rateBeforeSeek(0)
     , m_networkState(Movie::Empty)
     , m_readyState(Movie::DataUnavailable)
     , m_startedPlaying(false)
-    , m_blockStateUpdate(false)
     , m_isStreaming(false)
 {
 }
@@ -169,30 +167,36 @@ void MoviePrivate::load(String url)
     }
     cancelSeek();
     m_cuePointTimer.stop();
+    
+    [m_objcObserver.get() setDelayCallbacks:YES];
+
     createQTMovie(url);
     if (m_movie->visible())
         createQTMovieView();
-    
-    updateStates();
+
+    [m_objcObserver.get() loadStateChanged:nil];
+    [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
 void MoviePrivate::play()
 {
-    cancelSeek();
     if (!m_qtMovie)
         return;
     m_startedPlaying = true;
+    [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() setRate: m_movie->rate()];
+    [m_objcObserver.get() setDelayCallbacks:NO];
     startCuePointTimerIfNeeded();
 }
 
 void MoviePrivate::pause()
 {
-    cancelSeek();
     if (!m_qtMovie)
         return;
     m_startedPlaying = false;
+    [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() stop];
+    [m_objcObserver.get() setDelayCallbacks:NO];
     m_cuePointTimer.stop();
 }
 
@@ -210,8 +214,6 @@ float MoviePrivate::currentTime() const
 {
     if (!m_qtMovie)
         return 0;
-    if (seeking())
-        return m_seekTo;
     QTTime time = [m_qtMovie.get() currentTime];
     float current = (float)time.timeValue / time.timeScale;    
     current = std::min(current, m_endTime);
@@ -228,19 +230,53 @@ void MoviePrivate::seek(float time)
     if (time > duration())
         time = duration();
     
-    if (maxTimeLoaded() < time) {
-        m_seekTo = time;
-        m_seekTimer.startRepeating(0.5f);
-        m_rateBeforeSeek = [m_qtMovie.get() rate];
-        [m_qtMovie.get() setRate:0.0f];
+    m_seekTo = time;
+    if (maxTimeLoaded() >= m_seekTo)
+        doSeek();
+    else 
+        m_seekTimer.start(0, 0.5f);
+}
+    
+void MoviePrivate::doSeek() 
+{
+    QTTime qttime = createQTTime(m_seekTo);
+    // setCurrentTime generates several event callbacks, update afterwards
+    [m_objcObserver.get() setDelayCallbacks:YES];
+    float oldRate = [m_qtMovie.get() rate];
+    [m_qtMovie.get() setRate:0];
+    [m_qtMovie.get() setCurrentTime: qttime];
+    float timeAfterSeek = currentTime();
+    // restore playback only if not at end, othewise QTMovie will loop
+    if (timeAfterSeek < duration() && timeAfterSeek < m_endTime)
+        [m_qtMovie.get() setRate:oldRate];
+    cancelSeek();
+    [m_objcObserver.get() setDelayCallbacks:NO];
+}
+
+void MoviePrivate::cancelSeek()
+{
+    m_seekTo = -1;
+    m_seekTimer.stop();
+}
+
+void MoviePrivate::seekTimerFired(Timer<MoviePrivate>*)
+{        
+    if (!m_qtMovie || !seeking() || currentTime() == m_seekTo) {
+        cancelSeek();
         updateStates();
-    } else {
-        QTTime qttime = createQTTime(time);
-        // setCurrentTime generates several event callbacks, update afterwards
-        m_blockStateUpdate = true;
-        [m_qtMovie.get() setCurrentTime: qttime];
-        m_blockStateUpdate = false;
-        updateStates();
+        m_movie->timeChanged(); 
+        return;
+    } 
+    
+    if (maxTimeLoaded() >= m_seekTo)
+        doSeek();
+    else {
+        Movie::NetworkState state = networkState();
+        if (state == Movie::Empty || state == Movie::Loaded) {
+            cancelSeek();
+            updateStates();
+            m_movie->timeChanged();
+        }
     }
 }
 
@@ -266,50 +302,10 @@ void MoviePrivate::clearCuePoints()
 
 void MoviePrivate::startCuePointTimerIfNeeded()
 {
-    
     if ((m_endTime < duration() || !m_movie->m_cuePoints.isEmpty())
         && m_startedPlaying && !m_cuePointTimer.isActive()) {
         m_previousTimeCueTimerFired = currentTime();
         m_cuePointTimer.startRepeating(0.020f);
-    }
-}
-
-void MoviePrivate::cancelSeek()
-{
-    if (m_seekTo > -1) {
-        m_seekTo = -1;
-        if (m_qtMovie)
-            [m_qtMovie.get() setRate:m_rateBeforeSeek];
-    }
-    m_rateBeforeSeek = 0.0f;
-    m_seekTimer.stop();
-}
-
-void MoviePrivate::seekTimerFired(Timer<MoviePrivate>*)
-{        
-    if (!m_qtMovie) {
-        cancelSeek();
-        return;
-    }
-    if (!seeking()) {
-        updateStates();
-        return;
-    }
-    
-    if (maxTimeLoaded() > m_seekTo) {
-        QTTime qttime = createQTTime(m_seekTo);
-        // setCurrentTime generates several event callbacks, update afterwards
-        m_blockStateUpdate = true;
-        [m_qtMovie.get() setCurrentTime: qttime];
-        m_blockStateUpdate = false;
-        cancelSeek();
-        updateStates();
-    }
-
-    Movie::NetworkState state = networkState();
-    if (state == Movie::Empty || state == Movie::Loaded) {
-        cancelSeek();
-        updateStates();
     }
 }
 
@@ -336,7 +332,7 @@ bool MoviePrivate::paused() const
 {
     if (!m_qtMovie)
         return true;
-    return [m_qtMovie.get() rate] == 0.0f && (!seeking() || m_rateBeforeSeek == 0.0f);
+    return [m_qtMovie.get() rate] == 0.0f;
 }
 
 bool MoviePrivate::seeking() const
@@ -461,9 +457,6 @@ void MoviePrivate::cancelLoad()
 
 void MoviePrivate::updateStates()
 {
-    if (m_blockStateUpdate)
-        return;
-    
     Movie::NetworkState oldNetworkState = m_networkState;
     Movie::ReadyState oldReadyState = m_readyState;
     
@@ -473,7 +466,7 @@ void MoviePrivate::updateStates()
         // 100000 is kMovieLoadStateComplete
         if (m_networkState < Movie::Loaded)
             m_networkState = Movie::Loaded;
-            m_readyState = Movie::CanPlayThrough;
+        m_readyState = Movie::CanPlayThrough;
     } else if (loadState >= 20000) {
         // 20000 is kMovieLoadStatePlaythroughOK
         if (m_networkState < Movie::LoadedFirstFrame && !seeking())
@@ -497,7 +490,7 @@ void MoviePrivate::updateStates()
         m_networkState = Movie::LoadFailed;
         m_readyState = Movie::DataUnavailable; 
     }
-    
+
     if (seeking())
         m_readyState = Movie::DataUnavailable;
     
@@ -525,6 +518,7 @@ void MoviePrivate::timeChanged()
 {
     m_previousTimeCueTimerFired = -1;
     updateStates();
+    m_movie->timeChanged();
 }
 
 void MoviePrivate::volumeChanged()
@@ -536,7 +530,8 @@ void MoviePrivate::didEnd()
 {
     m_cuePointTimer.stop();
     m_startedPlaying = false;
-    m_movie->didEnd();
+    updateStates();
+    m_movie->timeChanged();
 }
 
 void MoviePrivate::setRect(const IntRect& r) 
