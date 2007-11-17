@@ -1,5 +1,11 @@
 2007-11-17  Alexey Proskuryakov  <ap@webkit.org>
 
+        Windows build fix.
+
+        * editing/Editor.h: Made canSmartCopyOrDelete public, as Windows WebView still needs it.
+
+2007-11-17  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         http://bugs.webkit.org/show_bug.cgi?id=15969

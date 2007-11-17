@@ -94,7 +94,8 @@ public:
     bool canCopy() const;
     bool canPaste() const;
     bool canDelete() const;
-    
+    bool canSmartCopyOrDelete();
+
     void cut();
     void copy();
     void paste();
@@ -252,7 +253,6 @@ private:
     bool m_ignoreCompositionSelectionChange;
 
     bool canDeleteRange(Range*) const;
-    bool canSmartCopyOrDelete();
     bool canSmartReplaceWithPasteboard(Pasteboard*);
     PassRefPtr<Clipboard> newGeneralClipboard(ClipboardAccessPolicy);
     PassRefPtr<Range> selectedRange();

@@ -3395,7 +3395,8 @@ HRESULT STDMETHODCALLTYPE WebView::replaceSelectionWithArchive(
     
 HRESULT STDMETHODCALLTYPE WebView::deleteSelection( void)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor()->deleteSelectionWithSmartDelete();
+    Editor* editor = m_page->focusController()->focusedOrMainFrame()->editor();
+    editor->deleteSelectionWithSmartDelete(editor->canSmartCopyOrDelete());
     return S_OK;
 }
 

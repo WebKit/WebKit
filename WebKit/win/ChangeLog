@@ -1,3 +1,10 @@
+2007-11-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Windows build fix.
+
+        * WebView.cpp:
+        (WebView::deleteSelection): Use canSmartCopyOrDelete() directly.
+
 2007-11-14  Adam Roben  <aroben@apple.com>
 
         Change Interfaces to be a "Static Library" project
