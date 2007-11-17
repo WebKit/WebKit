@@ -2,7 +2,7 @@
 
         Reviewed by Adele.
         
-        Seeking related fixes, updates match to the latest specification
+        Seeking related fixes, updates to match the latest specification
         - rename loopCount of HTMLMediaElement to playCount
         - add explicit seeking attribute to HTMLMediaElement to get semantics right
         - implement the specification behavior that currentTime must immediately return seeked position in HTMLMediaElement 
