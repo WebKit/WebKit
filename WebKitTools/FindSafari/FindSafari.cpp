@@ -128,23 +128,56 @@ int _tmain(int argc, TCHAR* argv[])
         return 1;
     }
 
-    if (argc < 2 || _tcscmp(argv[1], TEXT("/printSafariLauncher"))) {
-        _tprintf(TEXT("%s"), path);
+    bool printLauncher = false;
+    bool debugger = false;
+
+    for (int i = 1; i < argc; ++i) {
+        if (!_tcscmp(argv[i], TEXT("/printSafariLauncher"))) {
+            printLauncher = true;
+            continue;
+        }
+        if (!_tcscmp(argv[i], TEXT("/debugger"))) {
+            debugger = true;
+            continue;
+        }
+    }
+
+    if (!printLauncher) {
+        _tprintf(TEXT("%s\n"), path);
         free(path);
         return 0;
     }
 
-    TCHAR* lines[] = {
+    LPCTSTR lines[] = {
         TEXT("@echo off"),
         TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
         TEXT("xcopy /y /i /d \"%sSafari.exe\" \"%%TMP%%\\WebKitNightly\""),
         TEXT("xcopy /y /i /d /e \"%sSafari.resources\" \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
         TEXT("set PATH=\"%%CD%%;%s;%%PATH%%\""),
-        TEXT("\"%%TMP%%\\WebKitNightly\\Safari.exe\" /customWebKit"),
+    };
+
+    LPCTSTR command = TEXT("\"%TMP%\\WebKitNightly\\Safari.exe\" /customWebKit");
+
+    LPCTSTR launchLines[] = {
+        TEXT("%s"),
+    };
+
+    LPCTSTR debuggerLines[] = {
+        TEXT("if exist \"%%DevEnvDir%%\\VCExpress.exe\" ("),
+        TEXT("\"%%DevEnvDir%%\\VCExpress.exe\" /debugExe %s"),
+        TEXT(") else ("),
+        TEXT("\"%%DevEnvDir%%\\devenv.exe\" /debugExe %s"),
+        TEXT(")"),
     };
 
     for (int i = 0; i < ARRAYSIZE(lines); ++i) {
         _tprintf(lines[i], path);
+        _tprintf(TEXT("\n"));
+    }
+
+    LPCTSTR* endLines = debugger ? debuggerLines : launchLines;
+    for (unsigned i = 0; i < (debugger ? ARRAYSIZE(debuggerLines) : ARRAYSIZE(launchLines)); ++i) {
+        _tprintf(endLines[i], command);
         _tprintf(TEXT("\n"));
     }
 

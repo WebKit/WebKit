@@ -766,4 +766,35 @@ sub exitStatus($)
     return WEXITSTATUS($returnvalue);
 }
 
+sub runSafari
+{
+    my ($debugger) = @_;
+
+    if (isOSX()) {
+        return system "$FindBin::Bin/gdb-safari", @ARGV if $debugger;
+
+        my $productDir = productDir();
+        print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+        return system safariPath(), @ARGV;
+    }
+
+    if (isCygwin()) {
+        my $script = "run-webkit-nightly.cmd";
+        my $result = system "cp", "$FindBin::Bin/$script", productDir();
+        return $result if $result;
+
+        my $cwd = getcwd();
+        chdir productDir();
+
+        my $debuggerFlag = $debugger ? "/debugger" : "";
+        $result = system "cmd", "/c", "call $script $debuggerFlag";
+        chdir $cwd;
+        return $result;
+    }
+
+    return 1;
+}
+
 1;

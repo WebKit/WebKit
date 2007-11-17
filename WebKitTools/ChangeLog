@@ -1,3 +1,24 @@
+2007-11-17  Adam Roben  <aroben@apple.com>
+
+        Make it easy to run Safari in the debugger on Windows
+
+        I've added a new script, debug-safari, which launches Safari in the
+        debugger. On OS X it just calls gdb-safari.
+
+        Reviewed by Mark Rowe.
+
+        * FindSafari/FindSafari.cpp:
+        (_tmain): Added a /debugger flag, which in combination with
+        /printSafariLauncher will print a script that launches Safari in the
+        debugger.
+        * Scripts/debug-safari: Added.
+        * Scripts/run-safari: Changed to call runSafari().
+        * Scripts/run-webkit-nightly.cmd: Prepends the launcher script with
+        vsvars32.bat, which will let us find VS/VC++ Express, and passes the
+        first argument along to FindSafari.
+        * Scripts/webkitdirs.pm:
+        (sub runSafari): Added.
+
 2007-11-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
