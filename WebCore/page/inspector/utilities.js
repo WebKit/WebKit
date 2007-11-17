@@ -577,7 +577,7 @@ function onlyTextChild(ignoreWhitespace)
 
 function nodeTitleInfo(hasChildren, linkify)
 {
-    var info = {title: '', hasChildren: hasChildren};
+    var info = {title: "", hasChildren: hasChildren};
 
     switch (this.nodeType) {
         case Node.DOCUMENT_NODE:
@@ -683,57 +683,90 @@ HTMLTextAreaElement.prototype.moveCursorToEnd = function()
     this.setSelectionRange(length, length);
 }
 
-// This code is in the public domain. Feel free to link back to http://jan.moesen.nu/
-String.sprintf = function()
+String.sprintf = function(format)
 {
-        if (!arguments || arguments.length < 1 || !RegExp)
-        {
-                return;
-        }
-        var str = arguments[0];
-        var re = /([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X)(.*)/;
-        var a = b = [], numSubstitutions = 0, numMatches = 0;
-        while (a = re.exec(str))
-        {
-                var leftpart = a[1], pPad = a[2], pJustify = a[3], pMinLength = a[4];
-                var pPrecision = a[5], pType = a[6], rightPart = a[7];
+    return String.vsprintf(format, Array.prototype.slice.call(arguments, 1));
+}
 
-                //alert(a + '\n' + [a[0], leftpart, pPad, pJustify, pMinLength, pPrecision);
+String.vsprintf = function(format, substitutions)
+{
+    if (!format || !substitutions || !substitutions.length)
+        return format;
 
-                numMatches++;
-                if (pType == '%')
-                {
-                        subst = '%';
-                }
-                else
-                {
-                        numSubstitutions++;
-                        if (numSubstitutions >= arguments.length)
-                        {
-                                alert('Error! Not enough function arguments (' + (arguments.length - 1) + ', excluding the string)\nfor the number of substitution parameters in string (' + numSubstitutions + ' so far).');
-                        }
-                        var param = arguments[numSubstitutions];
-                        var pad = '';
-                               if (pPad && pPad.substr(0,1) == "'") pad = leftpart.substr(1,1);
-                          else if (pPad) pad = pPad;
-                        var justifyRight = true;
-                               if (pJustify && pJustify === "-") justifyRight = false;
-                        var minLength = -1;
-                               if (pMinLength) minLength = parseInt(pMinLength);
-                        var precision = -1;
-                               if (pPrecision && pType == 'f') precision = parseInt(pPrecision.substring(1));
-                        var subst = param;
-                               if (pType == 'b') subst = parseInt(param).toString(2);
-                          else if (pType == 'c') subst = String.fromCharCode(parseInt(param));
-                          else if (pType == 'd') subst = parseInt(param) ? parseInt(param) : 0;
-                          else if (pType == 'u') subst = Math.abs(param);
-                          else if (pType == 'f') subst = (precision > -1) ? Math.round(parseFloat(param) * Math.pow(10, precision)) / Math.pow(10, precision): parseFloat(param);
-                          else if (pType == 'o') subst = parseInt(param).toString(8);
-                          else if (pType == 's') subst = param;
-                          else if (pType == 'x') subst = ('' + parseInt(param).toString(16)).toLowerCase();
-                          else if (pType == 'X') subst = ('' + parseInt(param).toString(16)).toUpperCase();
-                }
-                str = leftpart + subst + rightPart;
+    var result = "";
+    var substitutionIndex = 0;
+
+    var index = 0;
+    for (var precentIndex = format.indexOf("%", index); precentIndex !== -1; precentIndex = format.indexOf("%", index)) {
+        result += format.substring(index, precentIndex);
+        index = precentIndex + 1;
+
+        if (format[index] === "%") {
+            result += "%";
+            ++index;
+            continue;
         }
-        return str;
+
+        if (!isNaN(format[index])) {
+            // The first character is a number, it might be a substitution index.
+            var number = parseInt(format.substring(index));
+            while (!isNaN(format[index]))
+                ++index;
+            // If the number is greater than zero and ends with a "$",
+            // then this is a substitution index.
+            if (number > 0 && format[index] === "$") {
+                substitutionIndex = (number - 1);
+                ++index;
+            }
+        }
+
+        var precision = -1;
+        if (format[index] === ".") {
+            // This is a precision specifier. If no digit follows the ".",
+            // then the precision should be zero.
+            ++index;
+            precision = parseInt(format.substring(index));
+            if (isNaN(precision))
+                precision = 0;
+            while (!isNaN(format[index]))
+                ++index;
+        }
+
+        if (substitutionIndex >= substitutions.length) {
+            // If there are not enough substitutions for the current substitutionIndex
+            // just output the format specifier literally and move on.
+            console.error("String.vsprintf(\"" + format + "\", \"" + substitutions.join("\", \"") + "\"): not enough substitution arguments. Had " + substitutions.length + " but needed " + (substitutionIndex + 1) + ", so substitution was skipped.");
+            index = precentIndex + 1;
+            result += "%";
+            continue;
+        }
+
+        switch (format[index]) {
+        case "d":
+            var substitution = parseInt(substitutions[substitutionIndex]);
+            result += (!isNaN(substitution) ? substitution : 0);
+            break;
+        case "f":
+            var substitution = parseFloat(substitutions[substitutionIndex]);
+            if (substitution && precision > -1)
+                substitution = substitution.toFixed(precision);
+            result += (!isNaN(substitution) ? substitution : (precision > -1 ? Number(0).toFixed(precision) : 0));
+            break;
+        default:
+            // Encountered an unsupported format character, treat as a string.
+            console.warn("String.vsprintf(\"" + format + "\", \"" + substitutions.join("\", \"") + "\"): unsupported format character \u201C" + format[index] + "\u201D. Treating as a string.");
+            // Fall through to treat this like a string.
+        case "@":
+        case "s":
+            result += substitutions[substitutionIndex];
+            break;
+        }
+
+        ++substitutionIndex;
+        ++index;
+    }
+
+    result += format.substring(index);
+
+    return result;
 }
