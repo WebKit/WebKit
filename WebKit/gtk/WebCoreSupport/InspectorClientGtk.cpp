@@ -46,6 +46,12 @@ Page* InspectorClient::createPage()
     return 0;
 }
 
+String InspectorClient::localizedStringsURL()
+{
+    notImplemented();
+    return String();
+}
+
 void InspectorClient::showWindow()
 {
     notImplemented();

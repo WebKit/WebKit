@@ -1,3 +1,20 @@
+2007-11-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 13470: i18n: The Web Inspector is not localizable
+        http://bugs.webkit.org/show_bug.cgi?id=13470
+
+        Implement the localizedStringsURL() client method to return the
+        localized URL of InspectorLocalizedStrings.js in WebCore.
+
+        * WebCoreSupport/WebInspectorClient.h: Added localizedStringsURL.
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::localizedStringsURL): Added.
+        (WebInspectorClient::updateWindowTitle): Localized the window title.
+        (-[WebInspectorWindowController init]): Remove a FIXME that dosen't make sense anymore.
+        (-[WebInspectorWindowController initWithInspectedWebView:]): Code style cleanup.
+
 2007-11-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

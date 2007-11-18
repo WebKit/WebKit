@@ -29,7 +29,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Web Inspector</title>
     <script type="text/javascript" src="utilities.js"></script>
     <script type="text/javascript" src="treeoutline.js"></script>
     <script type="text/javascript" src="inspector.js"></script>
@@ -56,7 +55,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <div id="toolbar">
         <button id="back" class="split-button first"><img></button><img class="split-button-divider"><button id="forward" class="split-button last"><img></button>
         <span id="toolbarButtons"></span>
-        <input id="search" type="search" autosave="inspectorSearch" results="20" placeholder="Search" incremental="incremental" onsearch="WebInspector.performSearch(this.value)">
+        <input id="search" type="search" autosave="inspectorSearch" results="20" incremental="incremental" onsearch="WebInspector.performSearch(this.value)">
     </div>
     <div id="sidebar" class="focusable focused">
         <ol id="list"></ol>

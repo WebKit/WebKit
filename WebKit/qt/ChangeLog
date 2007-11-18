@@ -1,3 +1,14 @@
+2007-11-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 13470: i18n: The Web Inspector is not localizable
+        http://bugs.webkit.org/show_bug.cgi?id=13470
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::localizedStringsURL): Empty stub.
+        * WebCoreSupport/InspectorClientQt.h: Added localizedStringsURL.
+
 2007-11-13  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: changed Shared to RefCounted.

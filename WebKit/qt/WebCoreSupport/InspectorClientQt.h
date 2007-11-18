@@ -42,6 +42,8 @@ namespace WebCore {
 
         virtual Page* createPage();
 
+        virtual String localizedStringsURL();
+
         virtual void showWindow();
         virtual void closeWindow();
 

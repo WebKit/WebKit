@@ -65,13 +65,13 @@ WebInspector.NetworkPanel = function()
     this.graphLabelElement.appendChild(document.createElement("br"));
 
     var sizeOptionElement = document.createElement("option");
-    sizeOptionElement.textContent = "Transfer Size";
     sizeOptionElement.calculator = new WebInspector.TransferSizeCalculator();
+    sizeOptionElement.textContent = sizeOptionElement.calculator.title;
     this.graphModeSelectElement.appendChild(sizeOptionElement);
 
     var timeOptionElement = document.createElement("option");
-    timeOptionElement.textContent = "Transfer Time";
     timeOptionElement.calculator = new WebInspector.TransferTimeCalculator();
+    timeOptionElement.textContent = timeOptionElement.calculator.title;
     this.graphModeSelectElement.appendChild(timeOptionElement);
 
     var graphSideElement = document.createElement("div");
@@ -413,8 +413,8 @@ WebInspector.NetworkPanel.prototype = {
 
         var graphInfo = this.calculator.computeValues(this.timelineEntries);
 
-        var categoryOrder = ["documents", "stylesheets", "images", "scripts", "other"];
-        var categoryColors = {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, scripts: {r: 255, g: 121, b: 0}, other: {r: 186, g: 186, b: 186}};
+        var categoryOrder = ["documents", "stylesheets", "images", "fonts", "scripts", "other"];
+        var categoryColors = {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, fonts: {r: 255, g: 10, b: 10}, scripts: {r: 255, g: 121, b: 0}, other: {r: 186, g: 186, b: 186}};
         var fillSegments = [];
 
         this.legendElement.removeChildren();
@@ -422,7 +422,7 @@ WebInspector.NetworkPanel.prototype = {
         if (this.totalLegendLabel)
             this.totalLegendLabel.parentNode.removeChild(this.totalLegendLabel);
 
-        this.totalLegendLabel = this.makeLegendElement(this.calculator.title, this.calculator.formatValue(graphInfo.total));
+        this.totalLegendLabel = this.makeLegendElement(this.calculator.totalTitle, this.calculator.formatValue(graphInfo.total));
         this.totalLegendLabel.addStyleClass("network-graph-legend-total");
         this.graphLabelElement.appendChild(this.totalLegendLabel);
 
@@ -438,7 +438,7 @@ WebInspector.NetworkPanel.prototype = {
             var fillSegment = {color: colorString, value: size};
             fillSegments.push(fillSegment);
 
-            var legendLabel = this.makeLegendElement(category, this.calculator.formatValue(size), colorString);
+            var legendLabel = this.makeLegendElement(WebInspector.resourceCategories[category].title, this.calculator.formatValue(size), colorString);
             this.legendElement.appendChild(legendLabel);
         }
 
@@ -562,7 +562,7 @@ WebInspector.NetworkTimelineEntry.prototype = {
             this.barElement.style.right = "0px";
         }
 
-        this.barElement.className = "network-bar network-category-" + this.resource.category.title;
+        this.barElement.className = "network-bar network-category-" + this.resource.category.name;
 
         if (this.infoNeedsRefresh)
             this.refreshInfo();
@@ -586,8 +586,8 @@ WebInspector.NetworkTimelineEntry.prototype = {
         this.infoElement.removeChildren();
 
         var sections = [
-            {title: "Request", info: this.resource.sortedRequestHeaders},
-            {title: "Response", info: this.resource.sortedResponseHeaders}
+            {title: WebInspector.UIString("Request"), info: this.resource.sortedRequestHeaders},
+            {title: WebInspector.UIString("Response"), info: this.resource.sortedResponseHeaders}
         ];
 
         function createSectionTable(section) {
@@ -598,7 +598,8 @@ WebInspector.NetworkTimelineEntry.prototype = {
             this.infoElement.appendChild(table);
 
             var heading = document.createElement("th");
-            heading.innerText = section.title;
+            heading.textContent = section.title;
+
             var row = table.createTHead().insertRow(-1).appendChild(heading);
             var body = document.createElement("tbody");
             table.appendChild(body);
@@ -606,9 +607,9 @@ WebInspector.NetworkTimelineEntry.prototype = {
             section.info.forEach(function(header) {
                 var row = body.insertRow(-1);
                 var th = document.createElement("th");
-                th.innerText = header.header;
+                th.textContent = header.header;
                 row.appendChild(th);
-                row.insertCell(-1).innerText = header.value;
+                row.insertCell(-1).textContent = header.value;
             });
         }
         sections.forEach(createSectionTable, this);
@@ -722,9 +723,9 @@ WebInspector.TimelineValueCalculator.prototype = {
             if (value === undefined)
                 return;
 
-            if (!(entry.resource.category in categoryValues))
-                categoryValues[entry.resource.category] = 0;
-            categoryValues[entry.resource.category] += value;
+            if (!(entry.resource.category.name in categoryValues))
+                categoryValues[entry.resource.category.name] = 0;
+            categoryValues[entry.resource.category.name] += value;
             total += value;
         }
         entries.forEach(compute, this);
@@ -758,9 +759,9 @@ WebInspector.TransferTimeCalculator.prototype = {
     {
         var entriesByCategory = {};
         entries.forEach(function(entry) {
-            if (!(entry.resource.category in entriesByCategory))
-                entriesByCategory[entry.resource.category] = [];
-            entriesByCategory[entry.resource.category].push(entry);
+            if (!(entry.resource.category.name in entriesByCategory))
+                entriesByCategory[entry.resource.category.name] = [];
+            entriesByCategory[entry.resource.category.name].push(entry);
         });
 
         var earliestStart;
@@ -805,7 +806,12 @@ WebInspector.TransferTimeCalculator.prototype = {
 
     get title()
     {
-        return "Transfer Time";
+        return WebInspector.UIString("Transfer Time");
+    },
+
+    get totalTitle()
+    {
+        return WebInspector.UIString("Total Time");
     },
 
     formatValue: function(value)
@@ -829,7 +835,12 @@ WebInspector.TransferSizeCalculator.prototype = {
 
     get title()
     {
-        return "Transfer Size";
+        return WebInspector.UIString("Transfer Size");
+    },
+
+    get totalTitle()
+    {
+        return WebInspector.UIString("Total Size");
     },
 
     formatValue: function(value)

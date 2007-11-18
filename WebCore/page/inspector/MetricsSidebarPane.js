@@ -28,7 +28,7 @@
 
 WebInspector.MetricsSidebarPane = function()
 {
-    WebInspector.SidebarPane.call(this, "Metrics");
+    WebInspector.SidebarPane.call(this, WebInspector.UIString("Metrics"));
 }
 
 WebInspector.MetricsSidebarPane.prototype = {
@@ -80,6 +80,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         };
 
         var boxes = ["content", "padding", "border", "margin"];
+        var boxLabels = [WebInspector.UIString("content"), WebInspector.UIString("padding"), WebInspector.UIString("border"), WebInspector.UIString("margin")];
         var previousBox;
         for (var i = 0; i < boxes.length; ++i) {
             var name = boxes[i];
@@ -101,7 +102,7 @@ WebInspector.MetricsSidebarPane.prototype = {
 
                 var labelElement = document.createElement("div");
                 labelElement.className = "label";
-                labelElement.textContent = name;
+                labelElement.textContent = boxLabels[i];
                 boxElement.appendChild(labelElement);
 
                 var topElement = document.createElement("div");

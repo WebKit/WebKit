@@ -30,14 +30,18 @@
 
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
+#import "WebLocalizableStrings.h"
 #import "WebNodeHighlight.h"
 #import "WebPreferences.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
+
 #import <AppKit/NSWindowController.h>
+
 #import <WebCore/InspectorController.h>
 #import <WebCore/Page.h>
+
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
 
@@ -85,6 +89,14 @@ Page* WebInspectorClient::createPage()
     return core([m_windowController.get() webView]);
 }
 
+String WebInspectorClient::localizedStringsURL()
+{
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"InspectorLocalizedStrings" ofType:@"js"];
+    if (path)
+        return [[NSURL fileURLWithPath:path] absoluteString];
+    return String();
+}
+
 void WebInspectorClient::showWindow()
 {
     updateWindowTitle();
@@ -124,7 +136,8 @@ void WebInspectorClient::inspectedURLChanged(const String& newURL)
 
 void WebInspectorClient::updateWindowTitle() const
 {
-    [[m_windowController.get() window] setTitle:[NSString stringWithFormat:@"Web Inspector %C %@", 0x2014, (NSString *)m_inspectedURL]];
+    NSString *title = [NSString stringWithFormat:UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_inspectedURL];
+    [[m_windowController.get() window] setTitle:title];
 }
 
 #pragma mark -
@@ -161,7 +174,6 @@ void WebInspectorClient::updateWindowTitle() const
 
     [preferences release];
 
-    // FIXME: The InspectorController should give us the URL to inspector.html
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]];
     [[_webView mainFrame] loadRequest:request];
@@ -171,7 +183,7 @@ void WebInspectorClient::updateWindowTitle() const
     return self;
 }
 
--(id)initWithInspectedWebView:(WebView *)webView
+- (id)initWithInspectedWebView:(WebView *)webView
 {
     if (![self init])
         return nil;

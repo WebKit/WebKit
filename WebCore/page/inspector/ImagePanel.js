@@ -54,9 +54,9 @@ WebInspector.ImagePanel = function(resource)
     infoListElement.className = "infoList";
 
     var imageProperties = [
-        { name: "Dimensions", value: this.imagePreviewElement.naturalWidth + " \u00D7 " + this.imagePreviewElement.height },
-        { name: "File size", value: (this.resource.contentLength / 1024).toPrecision(2) + "KB" },
-        { name: "MIME type", value: this.resource.mimeType }
+        { name: WebInspector.UIString("Dimensions"), value: WebInspector.UIString("%d × %d", this.imagePreviewElement.naturalWidth, this.imagePreviewElement.height) },
+        { name: WebInspector.UIString("File size"), value: WebInspector.UIString("%.2fKB", (this.resource.contentLength / 1024)) },
+        { name: WebInspector.UIString("MIME type"), value: this.resource.mimeType }
     ];
 
     var listHTML = '';

@@ -48,15 +48,15 @@ WebInspector.Panel = function(views)
             view.panel = this;
 
             view.buttonElement = document.createElement("button");
-            view.buttonElement.setAttribute("title", view.title);
+            view.buttonElement.title = view.title;
             view.buttonElement.addEventListener("click", selectViewFunction, false);
             view.buttonElement.appendChild(document.createElement("img"));
             view.buttonElement.view = view;
 
             view.contentElement = document.createElement("div");
-            view.contentElement.className = "content " + view.title.toLowerCase();
+            view.contentElement.className = "content " + view.name;
 
-            this.views[view.title.toLowerCase()] = view;
+            this.views[view.name] = view;
             this.viewButtons.push(view.buttonElement);
             this.element.appendChild(view.contentElement);
         }

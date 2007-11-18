@@ -28,7 +28,7 @@
 
 WebInspector.DatabasePanel = function(database, views)
 {
-    var allViews = [{ title: "Query" }, { title: "Browse" }];
+    var allViews = [{ title: WebInspector.UIString("Query"), name: "query" }, { title: WebInspector.UIString("Browse"), name: "browse" }];
     if (views)
         allViews = allViews.concat(views);
 
@@ -68,7 +68,7 @@ WebInspector.DatabasePanel = function(database, views)
     browseView.reloadTableElement = document.createElement("button");
     browseView.reloadTableElement.appendChild(document.createElement("img"));
     browseView.reloadTableElement.className = "database-table-reload";
-    browseView.reloadTableElement.title = "Reload";
+    browseView.reloadTableElement.title = WebInspector.UIString("Reload");
     browseView.reloadTableElement.addEventListener("click", function() { panel.updateTableList(); panel.updateTableBrowser() }, false);
 
     browseView.show = function()
@@ -218,12 +218,12 @@ return {
             if (!result.errorCode) {
                 var emptyMsgElement = document.createElement("div");
                 emptyMsgElement.className = "database-table-empty";
-                emptyMsgElement.innerHTML = "The <q>" + this.currentTable + "</q><br>table is empty.";
+                emptyMsgElement.textContent = WebInspector.UIString("The “%@”\ntable is empty.", this.currentTable);
                 this.views.browse.contentElement.appendChild(emptyMsgElement);
             } else {
                 var errorMsgElement = document.createElement("div");
                 errorMsgElement.className = "database-table-error";
-                errorMsgElement.innerHTML = "An error occurred trying to<br>read the <q>" + this.currentTable + "</q> table.";
+                errorMsgElement.textContent = WebInspector.UIString("An error occurred trying to\nread the “%@” table.", this.currentTable);
                 this.views.browse.contentElement.appendChild(errorMsgElement);
             }
         }
@@ -271,10 +271,10 @@ return {
                 resultDiv.textContent = result.error;
             } else if (result.errorCode == 2) {
                 resultDiv.className += " error";
-                resultDiv.textContent = "Database no longer has expected version.";
+                resultDiv.textContent = WebInspector.UIString("Database no longer has expected version.");
             } else {
                 resultDiv.className += " error";
-                resultDiv.textContent = "An unexpected error " + result.errorCode + " occured.";
+                resultDiv.textContent = WebInspector.UIString("An unexpected error %@ occured.", result.errorCode);
             }
         }
 

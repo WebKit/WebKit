@@ -33,6 +33,7 @@ var Preferences = {
     maxInlineTextChildLength: 80,
     maxTextSearchResultLength: 80,
     showInheritedComputedStyleProperties: false,
+    showMissingLocalizedStrings: false,
     toolbarHeight: 28
 }
 
@@ -41,6 +42,8 @@ var WebInspector = {
     resourceURLMap: {},
     backForwardList: [],
     searchResultsHeight: 100,
+    localizedStrings: {},
+    missingLocalizedStrings: {},
 
     get consolePanel()
     {
@@ -205,7 +208,18 @@ var WebInspector = {
     }
 }
 
-WebInspector.loaded = function(event)
+WebInspector.setupLocalizedString = function(event)
+{
+    var localizedStringsURL = InspectorController.localizedStringsURL();
+    if (localizedStringsURL) {
+        var localizedStringsScriptElement = document.createElement("script");
+        localizedStringsScriptElement.type = "text/javascript";
+        localizedStringsScriptElement.src = localizedStringsURL;
+        document.getElementsByTagName("head").item(0).appendChild(localizedStringsScriptElement);
+    }
+}
+
+WebInspector.loaded = function()
 {
     this.fileOutline = new TreeOutline(document.getElementById("list"));
     this.fileOutline.expandTreeElementsWhenArrowing = true;
@@ -214,23 +228,27 @@ WebInspector.loaded = function(event)
     this.statusOutline.expandTreeElementsWhenArrowing = true;
 
     this.resourceCategories = {
-        documents: new WebInspector.ResourceCategory("documents"),
-        stylesheets: new WebInspector.ResourceCategory("stylesheets"),
-        images: new WebInspector.ResourceCategory("images"),
-        scripts: new WebInspector.ResourceCategory("scripts"),
-        fonts: new WebInspector.ResourceCategory("fonts"),
-        databases: new WebInspector.ResourceCategory("databases"),
-        other: new WebInspector.ResourceCategory("other")
+        documents: new WebInspector.ResourceCategory(WebInspector.UIString("documents"), "documents"),
+        stylesheets: new WebInspector.ResourceCategory(WebInspector.UIString("stylesheets"), "stylesheets"),
+        images: new WebInspector.ResourceCategory(WebInspector.UIString("images"), "images"),
+        scripts: new WebInspector.ResourceCategory(WebInspector.UIString("scripts"), "scripts"),
+        fonts: new WebInspector.ResourceCategory(WebInspector.UIString("fonts"), "fonts"),
+        databases: new WebInspector.ResourceCategory(WebInspector.UIString("databases"), "databases"),
+        other: new WebInspector.ResourceCategory(WebInspector.UIString("other"), "other")
     };
 
-    this.consoleListItem = new WebInspector.ConsoleStatusTreeElement();
-    this.consoleListItem.item.onselect = function(element) { WebInspector.StatusTreeElement.selected(element); WebInspector.navigateToPanel(WebInspector.consolePanel) };
-    this.consoleListItem.item.ondeselect = function(element) { WebInspector.consolePanel.hide() };
-    this.statusOutline.appendChild(this.consoleListItem.item);
+    this.Tips = {
+        ResourceNotCompressed: {id: 0, message: WebInspector.UIString("You could save bandwidth by having your web server compress this transfer with gzip or zlib.")}
+    };
 
-    this.networkListItem = new WebInspector.StatusTreeElement("Network");
-    this.networkListItem.onselect = function(element) { WebInspector.StatusTreeElement.selected(element); WebInspector.navigateToPanel(WebInspector.networkPanel); };
-    this.networkListItem.ondeselect = function(element) { WebInspector.networkPanel.hide() };
+    this.Warnings = {
+        IncorrectMIMEType: {id: 0, message: WebInspector.UIString("Resource interpreted as %@ but transferred with MIME type %@.")}
+    };
+
+    this.consoleListItem = new WebInspector.ConsoleStatusTreeElement(WebInspector.consolePanel);
+    this.statusOutline.appendChild(this.consoleListItem);
+
+    this.networkListItem = new WebInspector.StatusTreeElement(WebInspector.UIString("Network"), "network", WebInspector.networkPanel);
     this.statusOutline.appendChild(this.networkListItem);
 
     this.resourceCategories.documents.listItem.expand();
@@ -248,8 +266,10 @@ WebInspector.loaded = function(event)
     document.addEventListener("beforecopy", function(event) { WebInspector.documentCanCopy(event) }, true);
     document.addEventListener("copy", function(event) { WebInspector.documentCopy(event) }, true);
 
-    document.getElementById("back").title = "Show previous panel.";
-    document.getElementById("forward").title = "Show next panel.";
+    document.getElementById("back").title = WebInspector.UIString("Show previous panel.");
+    document.getElementById("forward").title = WebInspector.UIString("Show next panel.");
+
+    document.getElementById("search").setAttribute("placeholder", WebInspector.UIString("Search"));
 
     document.getElementById("back").addEventListener("click", function(event) { WebInspector.back() }, true);
     document.getElementById("forward").addEventListener("click", function(event) { WebInspector.forward() }, true);
@@ -263,13 +283,22 @@ WebInspector.loaded = function(event)
 
     document.body.addStyleClass("detached");
 
-    window.removeEventListener("load", this.loaded, false);
-    delete this.loaded;
-
     InspectorController.loaded();
 }
 
-window.addEventListener("load", function(event) { WebInspector.loaded(event) }, false);
+var windowLoaded = function()
+{
+    WebInspector.setupLocalizedString(event);
+
+    // Delay calling loaded to give time for the localized strings file to load.
+    // Calling it too early will cause localized string lookups to fail.
+    setTimeout(function() { WebInspector.loaded() }, 0);
+
+    delete windowLoaded;
+    window.removeEventListener("load", windowLoaded, false);
+};
+
+window.addEventListener("load", windowLoaded, false);
 
 WebInspector.windowUnload = function(event)
 {
@@ -589,7 +618,7 @@ WebInspector.dividerDragEnd = function(element, dividerDrag, dividerDragEnd, eve
 WebInspector.back = function()
 {
     if (this.currentBackForwardIndex <= 0) {
-        alert("Can't go back from index " + this.currentBackForwardIndex);
+        console.error("Can't go back from index " + this.currentBackForwardIndex);
         return;
     }
 
@@ -599,7 +628,7 @@ WebInspector.back = function()
 WebInspector.forward = function()
 {
     if (this.currentBackForwardIndex >= this.backForwardList.length - 1) {
-        alert("Can't go forward from index " + this.currentBackForwardIndex);
+        console.error("Can't go forward from index " + this.currentBackForwardIndex);
         return;
     }
 
@@ -921,7 +950,7 @@ WebInspector.performSearch = function(query)
 
                 var title = "<div class=\"selection selected\"></div>";
                 if (j == 0)
-                    title += "<div class=\"search-results-section\">Source</div>";
+                    title += "<div class=\"search-results-section\">" + WebInspector.UIString("Source") + "</div>";
                 title += beforeText.escapeHTML() + "<span class=\"search-matched-string\">" + text.escapeHTML() + "</span>" + afterText.escapeHTML();
                 var item = new TreeElement(title, {panel: file.resource.panel, line: line, range: range}, false);
                 item.onselect = sourceResultSelected;
@@ -934,7 +963,7 @@ WebInspector.performSearch = function(query)
                 var node = file.domResults[j];
                 var title = "<div class=\"selection selected\"></div>";
                 if (j == 0)
-                    title += "<div class=\"search-results-section\">DOM</div>";
+                    title += "<div class=\"search-results-section\">" + WebInspector.UIString("DOM") + "</div>";
                 title += nodeTitleInfo.call(node).title;
                 var item = new TreeElement(title, {panel: file.resource.panel, node: node}, false);
                 item.onselect = domResultSelected;
@@ -970,23 +999,51 @@ WebInspector.navigateToPanel = function(panel, view, fromBackForwardAction)
         panel.currentView = view;
 }
 
-WebInspector.StatusTreeElement = function(title)
+WebInspector.UIString = function(string)
 {
-    var item = new TreeElement("<span class=\"title only\">" + title + "</span><span class=\"icon " + title.toLowerCase() + "\"></span>", {}, false);
-    item.onselect = WebInspector.StatusTreeElement.selected;
-    return item;
+    if (string in this.localizedStrings)
+        string = this.localizedStrings[string];
+    else {
+        if (!(string in this.missingLocalizedStrings)) {
+            console.error("Localized string \"" + string + "\" not found.");
+            this.missingLocalizedStrings[string] = true;
+        }
+
+        if (Preferences.showMissingLocalizedStrings)
+            string += " (not localized)";
+    }
+
+    return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
 }
 
-WebInspector.StatusTreeElement.selected = function(element)
+WebInspector.StatusTreeElement = function(title, iconClass, panel)
 {
-    var selectedElement = WebInspector.fileOutline.selectedTreeElement;
-    if (selectedElement)
-        selectedElement.deselect();
+    TreeElement.call(this, "<span class=\"title only\">" + title + "</span><span class=\"icon " + iconClass + "\"></span>", null, false);
+    this.panel = panel;
 }
 
-WebInspector.ConsoleStatusTreeElement = function()
+WebInspector.StatusTreeElement.prototype = {
+    onselect: function()
+    {
+        var selectedElement = WebInspector.fileOutline.selectedTreeElement;
+        if (selectedElement)
+            selectedElement.deselect();
+        if (this.panel)
+            WebInspector.navigateToPanel(this.panel);
+    },
+
+    ondeselect: function()
+    {
+        if (this.panel)
+            this.panel.hide();
+    }
+}
+
+WebInspector.StatusTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+WebInspector.ConsoleStatusTreeElement = function(panel)
 {
-    this.item = WebInspector.StatusTreeElement.call(this, "Console");
+    WebInspector.StatusTreeElement.call(this, WebInspector.UIString("Console"), "console", panel);
 }
 
 WebInspector.ConsoleStatusTreeElement.prototype = {
@@ -1031,7 +1088,7 @@ WebInspector.ConsoleStatusTreeElement.prototype = {
         var title = "<span class=\"title";
         if (!this.warnings && !this.errors)
             title += " only";
-        title += "\">Console</span><span class=\"icon console\"></span>";
+        title += "\">" + WebInspector.UIString("Console") + "</span><span class=\"icon console\"></span>";
 
         if (this.warnings || this.errors) {
             title += "<span class=\"info\">";
@@ -1050,19 +1107,11 @@ WebInspector.ConsoleStatusTreeElement.prototype = {
             title += "</span>";
         }
 
-        this.item.title = title;
+        this.title = title;
     }
 }
 
 WebInspector.ConsoleStatusTreeElement.prototype.__proto__ = WebInspector.StatusTreeElement.prototype;
-
-WebInspector.Tips = {
-    ResourceNotCompressed: {id: 0, message: "You could save bandwidth by having your web server compress this transfer with gzip or zlib."}
-}
-
-WebInspector.Warnings = {
-    IncorrectMIMEType: {id: 0, message: "Resource interpreted as %s but transferred with MIME type %s."}
-}
 
 // This table maps MIME types to the Resource.Types which are valid for them.
 // The following line:

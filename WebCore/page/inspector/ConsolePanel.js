@@ -53,13 +53,13 @@ WebInspector.ConsolePanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        WebInspector.consoleListItem.item.select();
+        WebInspector.consoleListItem.select();
     },
 
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
-        WebInspector.consoleListItem.item.deselect();
+        WebInspector.consoleListItem.deselect();
     },
 
     addMessage: function(msg)
@@ -275,18 +275,18 @@ WebInspector.ConsoleMessage.prototype = {
 
         var messageDiv = document.createElement("div");
         messageDiv.className = "console-message-message";
-        messageDiv.innerText = this.message;
+        messageDiv.textContent = this.message;
         item.appendChild(messageDiv);
 
         var urlDiv = document.createElement("div");
         urlDiv.className = "console-message-url";
-        urlDiv.innerText = this.url;
+        urlDiv.textContent = this.url;
         item.appendChild(urlDiv);
 
         if (this.line) {
             var lineDiv = document.createElement("div");
             lineDiv.className = "console-message-line";
-            lineDiv.innerText = this.line;
+            lineDiv.textContent = this.line;
             item.appendChild(lineDiv);
         }
 
@@ -364,7 +364,7 @@ WebInspector.ConsoleCommand.prototype = {
 
         var inputDiv = document.createElement("div");
         inputDiv.className = "console-command-input";
-        inputDiv.innerText = this.input;
+        inputDiv.textContent = this.input;
         item.appendChild(inputDiv);
 
         var outputDiv = document.createElement("div");

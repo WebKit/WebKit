@@ -44,6 +44,12 @@ Page* InspectorClientQt::createPage()
     return 0;
 }
 
+String InspectorClientQt::localizedStringsURL()
+{
+    notImplemented();
+    return String();
+}
+
 void InspectorClientQt::showWindow()
 {
     notImplemented();

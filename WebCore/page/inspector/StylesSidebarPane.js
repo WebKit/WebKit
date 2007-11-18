@@ -28,7 +28,7 @@
 
 WebInspector.StylesSidebarPane = function()
 {
-    WebInspector.SidebarPane.call(this, "Styles");
+    WebInspector.SidebarPane.call(this, WebInspector.UIString("Styles"));
 }
 
 WebInspector.StylesSidebarPane.prototype = {
@@ -71,14 +71,14 @@ WebInspector.StylesSidebarPane.prototype = {
             }
         } else {
             var computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
-            styleRules.push({ computedStyle: true, selectorText: "Computed Style", style: computedStyle, editable: false });
+            styleRules.push({ computedStyle: true, selectorText: WebInspector.UIString("Computed Style"), style: computedStyle, editable: false });
 
             var nodeName = node.nodeName.toLowerCase();
             for (var i = 0; i < node.attributes.length; ++i) {
                 var attr = node.attributes[i];
                 if (attr.style) {
                     var attrStyle = { style: attr.style, editable: false };
-                    attrStyle.subtitle = "element\u2019s \u201C" + attr.name + "\u201D attribute";
+                    attrStyle.subtitle = WebInspector.UIString("element’s “%@” attribute", attr.name);
                     attrStyle.selectorText = nodeName + "[" + attr.name;
                     if (attr.value.length)
                         attrStyle.selectorText += "=" + attr.value;
@@ -88,8 +88,8 @@ WebInspector.StylesSidebarPane.prototype = {
             }
 
             if (node.style && node.style.length) {
-                var inlineStyle = { selectorText: "Inline Style Attribute", style: node.style };
-                inlineStyle.subtitle = "element\u2019s \u201Cstyle\u201D attribute";
+                var inlineStyle = { selectorText: WebInspector.UIString("Inline Style Attribute"), style: node.style };
+                inlineStyle.subtitle = WebInspector.UIString("element’s “%@” attribute", "style");
                 styleRules.push(inlineStyle);
             }
 
@@ -245,7 +245,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         showInheritedLabel.addEventListener("click", showInheritedToggleFunction, false);
 
         showInheritedLabel.appendChild(showInheritedInput);
-        showInheritedLabel.appendChild(document.createTextNode("Show inherited properties"));
+        showInheritedLabel.appendChild(document.createTextNode(WebInspector.UIString("Show inherited properties")));
         this.subtitleElement.appendChild(showInheritedLabel);
     } else {
         if (!subtitle) {
@@ -254,9 +254,9 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
                 subtitle = WebInspector.linkifyURL(url, url.trimURL(WebInspector.mainResource.domain).escapeHTML());
                 this.subtitleElement.addStyleClass("file");
             } else if (this.styleRule.parentStyleSheet && !this.styleRule.parentStyleSheet.ownerNode)
-                subtitle = "user agent stylesheet";
+                subtitle = WebInspector.UIString("user agent stylesheet");
             else
-                subtitle = "inline stylesheet";
+                subtitle = WebInspector.UIString("inline stylesheet");
         }
 
         this.subtitle = subtitle;

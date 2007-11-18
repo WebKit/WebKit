@@ -26,8 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceCategory = function(title)
+WebInspector.ResourceCategory = function(title, name)
 {
+    this.name = name;
     this.title = title;
     this.resources = [];
     this.listItem = new WebInspector.ResourceCategoryTreeElement(this);

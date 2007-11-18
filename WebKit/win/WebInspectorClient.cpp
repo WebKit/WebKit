@@ -41,6 +41,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
 #pragma warning(pop)
@@ -130,6 +131,13 @@ Page* WebInspectorClient::createPage()
         return 0;
 
     return core(m_webView.get());
+}
+
+
+String WebInspectorClient::localizedStringsURL()
+{
+    notImplemented();
+    return String();
 }
 
 void WebInspectorClient::showWindow()

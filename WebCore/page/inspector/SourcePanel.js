@@ -28,7 +28,7 @@
 
 WebInspector.SourcePanel = function(resource, views)
 {
-    var allViews = [{ title: "Source" }];
+    var allViews = [{ title: WebInspector.UIString("Source"), name: "source" }];
     if (views)
         allViews = allViews.concat(views);
 

@@ -64,20 +64,20 @@ WebInspector.Resource.Type = {
     {
         switch (type) {
             case this.Document:
-                return "document";
+                return WebInspector.UIString("document");
             case this.Stylesheet:
-                return "stylesheet";
+                return WebInspector.UIString("stylesheet");
             case this.Image:
-                return "image";
+                return WebInspector.UIString("image");
             case this.Font:
-                return "font";
+                return WebInspector.UIString("font");
             case this.Script:
-                return "script";
+                return WebInspector.UIString("script");
             case this.Other:
             default:
-                return "other";
+                return WebInspector.UIString("other");
         }
-    },
+    }
 }
 
 WebInspector.Resource.prototype = {

@@ -28,7 +28,7 @@
 
 WebInspector.DocumentPanel = function(resource, views)
 {
-    var allViews = [{ title: "DOM" }];
+    var allViews = [{ title: WebInspector.UIString("DOM"), name: "dom" }];
     if (views)
         allViews = allViews.concat(views);
 
@@ -342,9 +342,9 @@ WebInspector.DocumentPanel.prototype = {
 
                 case Node.TEXT_NODE:
                     if (isNodeWhitespace.call(current))
-                        crumbTitle = "(whitespace)";
+                        crumbTitle = WebInspector.UIString("(whitespace)");
                     else
-                        crumbTitle = "(text)";
+                        crumbTitle = WebInspector.UIString("(text)");
                     break
 
                 case Node.COMMENT_NODE:

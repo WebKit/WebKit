@@ -1508,7 +1508,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     border: none;
 }
 
-.browse.content .database-table-empty {
+.browse.content .database-table-empty, .browse.content .database-table-error {
     position: absolute;
     top: 0;
     bottom: 25%;
@@ -1523,22 +1523,11 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     text-align: center;
     font-weight: bold;
     padding: 10px;
+    white-space: pre-wrap;
 }
 
 .browse.content .database-table-error {
-    position: absolute;
-    top: 0;
-    bottom: 25%;
-    left: 0;
-    right: 0;
-    font-size: 24px;
     color: rgb(66%, 33%, 33%);
-    margin-top: auto;
-    margin-bottom: auto;
-    height: 50px;
-    line-height: 26px;
-    text-align: center;
-    padding: 10px;
 }
 
 .database-browse-table {

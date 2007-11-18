@@ -28,7 +28,7 @@
 
 WebInspector.PropertiesSidebarPane = function()
 {
-    WebInspector.SidebarPane.call(this, "Properties");
+    WebInspector.SidebarPane.call(this, WebInspector.UIString("Properties"));
 }
 
 WebInspector.PropertiesSidebarPane.prototype = {
@@ -59,7 +59,7 @@ WebInspector.ObjectPropertiesSection = function(object)
     var subtitle;
     if (title.match(/Prototype$/)) {
         title = title.replace(/Prototype$/, "");
-        subtitle = "Prototype";
+        subtitle = WebInspector.UIString("Prototype");
     }
 
     this.object = object;

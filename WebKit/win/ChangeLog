@@ -1,3 +1,15 @@
+2007-11-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 13470: i18n: The Web Inspector is not localizable
+        http://bugs.webkit.org/show_bug.cgi?id=13470
+
+        * English.lproj/Localizable.strings: Updated.
+        * WebInspectorClient.cpp:
+        (WebInspectorClient::localizedStringsURL): Empty stub.
+        * WebInspectorClient.h: Added localizedStringsURL.
+
 2007-11-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.

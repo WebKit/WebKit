@@ -544,6 +544,23 @@ static JSValueRef inspectedWindow(JSContextRef ctx, JSObjectRef /*function*/, JS
     return toRef(KJS::Window::retrieve(controller->inspectedPage()->mainFrame()));
 }
 
+static JSValueRef localizedStrings(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    String url = controller->localizedStringsURL();
+    if (url.isNull())
+        return JSValueMakeNull(ctx);
+
+    JSStringRef urlString = JSStringCreateWithCharacters(url.characters(), url.length());
+    JSValueRef urlValue = JSValueMakeString(ctx, urlString);
+    JSStringRelease(urlString);
+
+    return urlValue;
+}
+
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
@@ -581,6 +598,13 @@ InspectorController::~InspectorController()
 bool InspectorController::enabled() const
 {
     return m_inspectedPage->settings()->developerExtrasEnabled();
+}
+
+String InspectorController::localizedStringsURL()
+{
+    if (!enabled())
+        return String();
+    return m_client->localizedStringsURL();
 }
 
 void InspectorController::inspect(Node* node)
@@ -728,6 +752,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "databaseTableNames", databaseTableNames, kJSPropertyAttributeNone },
 #endif
         { "inspectedWindow", inspectedWindow, kJSPropertyAttributeNone },
+        { "localizedStringsURL", localizedStrings, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 

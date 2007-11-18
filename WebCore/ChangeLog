@@ -1,5 +1,49 @@
 2007-11-17  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Bug 13470: i18n: The Web Inspector is not localizable
+        http://bugs.webkit.org/show_bug.cgi?id=13470
+
+        Add support for localization to the Web Inspector. Clients need to
+        implement localizedStringsURL() to return the URL of the
+        InspectorLocalizedStrings.js that best matches the user's language.
+
+        * English.lproj: Added.
+        * English.lproj/InspectorLocalizedStrings.js: Added.
+        * WebCore.xcodeproj/project.pbxproj: Add InspectorLocalizedStrings.js.
+        * page/InspectorClient.h: Add localizedStringsURL.
+        * page/InspectorController.cpp: Add localizedStringsURL that calls
+          the client. Also added a version exposed to JavaScript.
+        * page/InspectorController.h: Add localizedStringsURL.
+        * page/inspector/ConsolePanel.js: Call WebInspector.UIString
+          for user visible strings.
+        * page/inspector/DatabasePanel.js: Ditto.
+        * page/inspector/DocumentPanel.js: Ditto.
+        * page/inspector/ImagePanel.js: Ditto.
+        * page/inspector/MetricsSidebarPane.js: Ditto.
+        * page/inspector/NetworkPanel.js: Ditto.
+        * page/inspector/Panel.js: Ditto.
+        * page/inspector/PropertiesSidebarPane.js: Ditto.
+        * page/inspector/Resource.js: Ditto.
+        * page/inspector/ResourceCategory.js: Ditto.
+        * page/inspector/SourcePanel.js: Ditto.
+        * page/inspector/StylesSidebarPane.js: Ditto.
+        * page/inspector/inspector.css: Use pre-wrap so database errors can use \n.
+        * page/inspector/inspector.html: Remove some user visible strings.
+        * page/inspector/inspector.js: Added WebInspector.UIString and call
+          WebInspector.UIString for user visible strings. Some code needed to be 
+          moved to WebInspector.loaded to use UIString after the localized strings
+          get loaded.
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::redirectDataToPlugin): Remove WebCore:: prefix.
+        (WebCore::SVGEmptyInspectorClient::createPage): Ditto.
+        (WebCore::SVGEmptyInspectorClient::localizedStringsURL): Add empty stub.
+        (WebCore::SVGEmptyInspectorClient::highlight): Remove WebCore:: prefix.
+        (WebCore::SVGEmptyInspectorClient::inspectedURLChanged): Ditto.
+
+2007-11-17  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Adam.
 
         Reworte String.sprintf to fix many bad bugs and to not use RegExp. Also added
