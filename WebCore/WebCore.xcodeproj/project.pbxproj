@@ -134,16 +134,11 @@
 		1A762C780A074F2600989F5B /* JSXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A762C700A074F2600989F5B /* JSXPathNSResolver.h */; };
 		1A762C790A074F2600989F5B /* JSXPathResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A762C710A074F2600989F5B /* JSXPathResult.cpp */; };
 		1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A762C720A074F2600989F5B /* JSXPathResult.h */; };
-		1A7CCB100CD9462C00B7B64E /* SQLStatementCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB0C0CD9462C00B7B64E /* SQLStatementCallback.idl */; };
-		1A7CCB110CD9462C00B7B64E /* SQLStatementErrorCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB0D0CD9462C00B7B64E /* SQLStatementErrorCallback.idl */; };
-		1A7CCB120CD9462C00B7B64E /* SQLTransactionCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB0E0CD9462C00B7B64E /* SQLTransactionCallback.idl */; };
-		1A7CCB130CD9462C00B7B64E /* SQLTransactionErrorCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB0F0CD9462C00B7B64E /* SQLTransactionErrorCallback.idl */; };
 		1A7CCB190CD9469A00B7B64E /* SQLStatementCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB150CD9469A00B7B64E /* SQLStatementCallback.h */; };
 		1A7CCB1A0CD9469A00B7B64E /* SQLStatementErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB160CD9469A00B7B64E /* SQLStatementErrorCallback.h */; };
 		1A7CCB1B0CD9469A00B7B64E /* SQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB170CD9469A00B7B64E /* SQLTransactionCallback.h */; };
 		1A7CCB1C0CD9469A00B7B64E /* SQLTransactionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB180CD9469A00B7B64E /* SQLTransactionErrorCallback.h */; };
 		1A7CCB240CD946FD00B7B64E /* SQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB220CD946FD00B7B64E /* SQLTransaction.h */; };
-		1A7CCB250CD946FD00B7B64E /* SQLTransaction.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A7CCB230CD946FD00B7B64E /* SQLTransaction.idl */; };
 		1A820D910A13EBA600AF843C /* ImageDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */; };
 		1A820D920A13EBA600AF843C /* ImageDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A820D900A13EBA600AF843C /* ImageDocument.h */; };
 		1A85B18F0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */; };
@@ -446,7 +441,6 @@
 		51E4ADB60C42B4CF0042BC55 /* FTPDirectoryDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E4ADB20C42B4CF0042BC55 /* FTPDirectoryDocument.cpp */; };
 		51E4ADB70C42B4CF0042BC55 /* FTPDirectoryDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4ADB30C42B4CF0042BC55 /* FTPDirectoryDocument.h */; };
 		51EC92590CE90DB400F90308 /* SQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EC92570CE90DB400F90308 /* SQLError.h */; };
-		51EC925A0CE90DB400F90308 /* SQLError.idl in Resources */ = {isa = PBXBuildFile; fileRef = 51EC92580CE90DB400F90308 /* SQLError.idl */; };
 		51EC92630CE90DD400F90308 /* JSCustomSQLStatementCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925B0CE90DD400F90308 /* JSCustomSQLStatementCallback.cpp */; };
 		51EC92640CE90DD400F90308 /* JSCustomSQLStatementCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EC925C0CE90DD400F90308 /* JSCustomSQLStatementCallback.h */; };
 		51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */; };
@@ -3648,8 +3642,6 @@
 		E44613AD0CD6331000FADA75 /* MediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = E446139B0CD6331000FADA75 /* MediaError.h */; };
 		E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446139D0CD6331000FADA75 /* TimeRanges.cpp */; };
 		E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = E446139E0CD6331000FADA75 /* TimeRanges.h */; };
-		E44613B10CD6331000FADA75 /* TimeRanges.idl in Resources */ = {isa = PBXBuildFile; fileRef = E446139F0CD6331000FADA75 /* TimeRanges.idl */; };
-		E44613B20CD6331000FADA75 /* VoidCallback.idl in Resources */ = {isa = PBXBuildFile; fileRef = E44613A00CD6331000FADA75 /* VoidCallback.idl */; };
 		E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613B40CD6344E00FADA75 /* VoidCallback.h */; };
 		E44613E30CD6819F00FADA75 /* Movie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E0C0CBF90BD00AF2ECE /* Movie.cpp */; };
 		E44613E40CD681A200FADA75 /* Movie.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E0D0CBF90BD00AF2ECE /* Movie.h */; };
@@ -13965,14 +13957,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51EC925A0CE90DB400F90308 /* SQLError.idl in Resources */,
-				1A7CCB100CD9462C00B7B64E /* SQLStatementCallback.idl in Resources */,
-				1A7CCB110CD9462C00B7B64E /* SQLStatementErrorCallback.idl in Resources */,
-				1A7CCB250CD946FD00B7B64E /* SQLTransaction.idl in Resources */,
-				1A7CCB120CD9462C00B7B64E /* SQLTransactionCallback.idl in Resources */,
-				1A7CCB130CD9462C00B7B64E /* SQLTransactionErrorCallback.idl in Resources */,
-				E44613B10CD6331000FADA75 /* TimeRanges.idl in Resources */,
-				E44613B20CD6331000FADA75 /* VoidCallback.idl in Resources */,
 				B2E27C4E0B0F2AE600F17C7B /* WKArithmeticFilter.cikernel in Resources */,
 				B2E27C510B0F2AE600F17C7B /* WKComponentMergeFilter.cikernel in Resources */,
 				B2E27C540B0F2AE600F17C7B /* WKDiffuseLightingFilter.cikernel in Resources */,
