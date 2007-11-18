@@ -886,9 +886,11 @@ int main(int argc, char* argv[])
     if (FAILED(webView->mainFrame(&frame)))
         return -1;
 
+#ifdef _DEBUG
     _CrtMemState entryToMainMemCheckpoint;
     if (leakChecking)
         _CrtMemCheckpoint(&entryToMainMemCheckpoint);
+#endif
 
     for (int i = 0; i < argc; ++i)
         if (!stricmp(argv[i], "--threaded")) {
@@ -927,12 +929,14 @@ int main(int argc, char* argv[])
     delete policyDelegate;
     frame->Release();
 
+#ifdef _DEBUG
     if (leakChecking) {
         // dump leaks to stderr
         _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
         _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
         _CrtMemDumpAllObjectsSince(&entryToMainMemCheckpoint);
     }
+#endif
 
     return 0;
 }

@@ -1,3 +1,15 @@
+2007-11-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Make run-webkit-tests work with Windows debug build.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp: (main): Only use memory checks with debug CRT.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Switched Debug configuration to release CRT,
+        as it is supposed to run with release Apple libraries. Removed _DEBUG preprocessor
+        symbol, as it goes with debug CRT (AFAIK, it is supposed to be added automatically,
+        and shouldn't be needed in Debug_internal configuration, but I didn't dare to change that).
+
 2007-11-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         Add wxWebKit sample and build script, and integrate it with 
