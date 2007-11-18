@@ -809,20 +809,24 @@ int main(int argc, char* argv[])
     ASSERT(JSValueIsEqual(context, v, o, NULL));
     
     char* scriptUTF8 = createStringWithContentsOfFile("testapi.js");
-    JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
-    result = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
-    if (JSValueIsUndefined(context, result))
-        printf("PASS: Test script executed successfully.\n");
+    if (!scriptUTF8)
+        printf("FAIL: Test script could not be loaded.\n");
     else {
-        printf("FAIL: Test script returned unexcpected value:\n");
-        JSStringRef exceptionIString = JSValueToStringCopy(context, exception, NULL);
-        CFStringRef exceptionCF = JSStringCopyCFString(kCFAllocatorDefault, exceptionIString);
-        CFShow(exceptionCF);
-        CFRelease(exceptionCF);
-        JSStringRelease(exceptionIString);
+        JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
+        result = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
+        if (JSValueIsUndefined(context, result))
+            printf("PASS: Test script executed successfully.\n");
+        else {
+            printf("FAIL: Test script returned unexpected value:\n");
+            JSStringRef exceptionIString = JSValueToStringCopy(context, exception, NULL);
+            CFStringRef exceptionCF = JSStringCopyCFString(kCFAllocatorDefault, exceptionIString);
+            CFShow(exceptionCF);
+            CFRelease(exceptionCF);
+            JSStringRelease(exceptionIString);
+        }
+        JSStringRelease(script);
+        free(scriptUTF8);
     }
-    JSStringRelease(script);
-    free(scriptUTF8);
 
     JSStringRelease(jsEmptyIString);
     JSStringRelease(jsOneIString);
