@@ -1,5 +1,21 @@
 2007-11-18  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Bug 16043: Remove InspectorController.log now that console.log works
+        http://bugs.webkit.org/show_bug.cgi?id=16043
+
+        Remove the last uses of InspectorController.log. Once use was no longer needed,
+        checking an erro case that can't happen anymore. The other case now uses console.error.
+
+        * page/InspectorController.cpp: Remove the log function.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Remove the log function from
+        InspectorController script class.
+        * page/inspector/DocumentPanel.js: Remove a use of InspectorController.log that isn't needed.
+        * page/inspector/Panel.js: Change InspectorController.log to console.log and early return.
+
+2007-11-18  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Brady.
 
         Bug 16041: REGRESSION: the Database panel in the Inspector stopped showing errors

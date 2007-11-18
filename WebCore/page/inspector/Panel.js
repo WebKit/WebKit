@@ -140,6 +140,11 @@ WebInspector.Panel.prototype = {
         if (this._currentView === x)
             return;
 
+        if (this !== x.panel) {
+            console.error("Set currentView to a view " + x.title + " whose panel is not this panel");
+            return;
+        }
+
         if (this._currentView) {
             this._currentView.buttonElement.removeStyleClass("selected");
             this._currentView.contentElement.removeStyleClass("selected");
@@ -154,8 +159,6 @@ WebInspector.Panel.prototype = {
             x.contentElement.addStyleClass("selected");
             if (x.show)
                 x.show();
-            if (x.panel !== this)
-                InspectorController.log("Set currentView to a view " + x.title + " whose panel is not this panel");
         }
     },
 

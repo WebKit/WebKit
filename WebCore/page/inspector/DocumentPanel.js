@@ -130,11 +130,6 @@ WebInspector.DocumentPanel.prototype = {
 
     set focusedDOMNode(x)
     {
-        if (this.resource.category !== WebInspector.resourceCategories.documents) {
-            InspectorController.log("Called set focusedDOMNode on a non-document resource " + this.resource.displayName + " which is not a document");
-            return;
-        }
-
         if (this._focusedDOMNode === x) {
             var nodeItem = this.revealNode(x);
             if (nodeItem)
