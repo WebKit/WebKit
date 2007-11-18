@@ -233,34 +233,33 @@ static gboolean webkit_page_script_dialog(WebKitPage* page, WebKitFrame* frame, 
     gint defaultResponse;
     GtkWidget* window;
     GtkWidget* dialog;
-    GtkWidget* entry;
-    gboolean didConfirm;
+    GtkWidget* entry = 0;
+    gboolean didConfirm = FALSE;
 
     switch (type) {
-
     case WEBKIT_SCRIPT_DIALOG_ALERT:
         messageType = GTK_MESSAGE_WARNING;
         buttons = GTK_BUTTONS_CLOSE;
         defaultResponse = GTK_RESPONSE_CLOSE;
         break;
-
     case WEBKIT_SCRIPT_DIALOG_CONFIRM:
         messageType = GTK_MESSAGE_QUESTION;
         buttons = GTK_BUTTONS_YES_NO;
         defaultResponse = GTK_RESPONSE_YES;
         break;
-
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
         messageType = GTK_MESSAGE_QUESTION;
         buttons = GTK_BUTTONS_OK_CANCEL;
         defaultResponse = GTK_RESPONSE_OK;
+        break;
+    default:
+        g_warning("Unknown value for WebKitScriptDialogType.");
+        return FALSE;
     }
 
     window = gtk_widget_get_toplevel(GTK_WIDGET(page));
-    dialog = gtk_message_dialog_new(
-     GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0
-     , GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, message);
-    gchar* title = g_strconcat("JavaScript - ", webkit_frame_get_location(frame), 0);
+    dialog = gtk_message_dialog_new(GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0, GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, message);
+    gchar* title = g_strconcat("JavaScript - ", webkit_frame_get_location(frame), NULL);
     gtk_window_set_title(GTK_WINDOW(dialog), title);
     g_free(title);
 
@@ -276,19 +275,21 @@ static gboolean webkit_page_script_dialog(WebKitPage* page, WebKitFrame* frame, 
     gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 
     switch (response) {
-
     case GTK_RESPONSE_YES:
         didConfirm = TRUE;
         break;
-
+    case GTK_RESPONSE_OK:
+        didConfirm = TRUE;
+        if (entry)
+            *value = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
+        else
+            *value = 0;
+        break;
     case GTK_RESPONSE_NO:
     case GTK_RESPONSE_CANCEL:
         didConfirm = FALSE;
         break;
 
-    case GTK_RESPONSE_OK:
-        didConfirm = TRUE;
-        *value = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
     }
     gtk_widget_destroy(GTK_WIDGET(dialog));
     return didConfirm;
@@ -309,13 +310,13 @@ static gboolean webkit_page_real_script_confirm(WebKitPage* page, WebKitFrame* f
 static gboolean webkit_page_real_script_prompt(WebKitPage* page, WebKitFrame* frame, const gchar* message, const gchar* defaultValue, gchar** value)
 {
     if (!webkit_page_script_dialog(page, frame, message, WEBKIT_SCRIPT_DIALOG_PROMPT, defaultValue, value))
-        *value = g_strdup(defaultValue);
+        *value = NULL;
     return TRUE;
 }
 
 static gboolean webkit_page_real_console_message(WebKitPage* page, const gchar* message, unsigned int line, const gchar* sourceId)
 {
-    g_print("console-message: %s:%d: %s\n", sourceId, line, message);
+    g_print("console message: %s @%d: %s\n", sourceId, line, message);
     return TRUE;
 }
 
