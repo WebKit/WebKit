@@ -1,3 +1,20 @@
+2007-11-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5546393> Whitespace handling doesn't match HTML5.
+
+        HTML5 definition is the same as MSIE's, with the exception that the latter strips null
+        characters. Firefox also treats U+0008 as whitespace, but not U+000B or U+000C.
+
+        Test: fast/parser/html-whitespace.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial):
+        (WebCore::HTMLTokenizer::parseTag):
+        Use isASCIISpace, which matches HTML5 definition of whitespace, and also what we use to
+        check for whitespace almost everywhere.
+
 2007-11-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
