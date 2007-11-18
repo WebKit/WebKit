@@ -170,3 +170,4 @@ print "s" if $numOldFailures != 1;
 print " fixed.\n";
 
 print "OK.\n" if $numNewFailures == 0;
+exit(1)  if $numNewFailures;
