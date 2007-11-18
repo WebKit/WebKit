@@ -1,3 +1,19 @@
+2007-11-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Add wxWebKit sample and build script, and integrate it with 
+        build-webkit. Also make build-webkit --clean work for all
+        ports.
+
+        Reviewed by Darin Adler.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        * wx: Added.
+        * wx/browser: Added.
+        * wx/browser/browser.bkl: Added.
+        * wx/browser/browser.cpp: Added.
+        * wx/build-wxwebkit: Added.
+
 2007-11-17  Adam Roben  <aroben@apple.com>
 
         Make it easy to run Safari in the debugger on Windows

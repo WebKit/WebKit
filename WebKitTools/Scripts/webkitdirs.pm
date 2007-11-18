@@ -54,6 +54,7 @@ my $currentSVNRevision;
 my $osXVersion;
 my $isQt;
 my $isGtk;
+my $isWx;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -472,6 +473,23 @@ sub determineIsGtk()
     }
 }
 
+sub isWx()
+{
+    determineIsWx();
+    return $isWx;
+}
+
+sub determineIsWx()
+{
+    return if defined($isWx);
+
+    if (checkArgv("--wx")) {
+        $isWx = 1;
+    } else {
+        $isWx = 0;
+    }
+}
+
 sub isCygwin()
 {
     return ($^O eq "cygwin");
@@ -484,7 +502,7 @@ sub isDarwin()
 
 sub isOSX()
 {
-    return isDarwin() unless (isQt() or isGtk());
+    return isDarwin() unless (isQt() or isGtk() or isWx());
     return 0;
 }
 
@@ -572,7 +590,7 @@ sub checkRequiredSystemConfig
             print "http://developer.apple.com/tools/xcode\n";
             print "*************************************************************\n";
         }
-    } elsif (isGtk() or isQt()) {
+    } elsif (isGtk() or isQt() or isWx()) {
         my @cmds = qw(flex bison gperf);
         my @missing = ();
         foreach my $cmd (@cmds) {
@@ -628,17 +646,22 @@ sub setupCygwinEnv()
     print "WEBKITLIBRARIESDIR is set to: ", $ENV{"WEBKITLIBRARIESDIR"}, "\n";
 }
 
-sub buildVisualStudioProject($)
+sub buildVisualStudioProject
 {
-    my ($project) = @_;
+    my ($project, $clean) = @_;
     setupCygwinEnv();
 
     my $config = configurationForVisualStudio();
 
     chomp(my $winProjectPath = `cygpath -w "$project"`);
+    
+    my $command = "/build";
+    if ($clean) {
+        $command = "/clean";
+    }
 
     print "$vcBuildPath $winProjectPath /build $config\n";
-    return system $vcBuildPath, $winProjectPath, "/build", $config;
+    return system $vcBuildPath, $winProjectPath, $command, $config;
 }
 
 sub qtMakeCommand($)
@@ -669,6 +692,7 @@ sub qtMakeCommand($)
 sub buildQMakeProject(@)
 {
     my @buildArgs = @_;
+    my $clean = 0;
 
     push @buildArgs, "-r";
 
@@ -679,6 +703,8 @@ sub buildQMakeProject(@)
             $qmakebin = $1;
         } elsif ($opt =~ /^--qmakearg=(.*)/i ) {
             push @buildArgs, $1;
+        } elsif ($opt eq "--clean") {
+            $clean = 1; 
         }
     }
 
@@ -715,13 +741,16 @@ sub buildQMakeProject(@)
        die "Failed to setup build environment using $qmakebin!\n";
     }
 
-    my $clean = $ENV{"WEBKIT_FULLBUILD"};
-
-    if (defined $clean) {
+    if ($clean) {
       system "$make clean";
     }
 
-    $result = system "$make";
+    # There is now a --clean option for build-webkit, but it doesn't build
+    # after cleaning, as WEBKIT_FULLBUILD does. For now, have WEBKIT_FULLBUILD
+    # continue to behave after before.
+    if (!$clean || defined($ENV{"WEBKIT_FULLBUILD"})) {
+        $result = system "$make";
+    }
     chdir ".." or die;
     return $result;
 }
