@@ -30,6 +30,7 @@
 #include "InspectorClientQt.h"
 
 #include "NotImplemented.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 

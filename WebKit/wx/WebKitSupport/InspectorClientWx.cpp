@@ -28,6 +28,7 @@
 
 #include "NotImplemented.h"
 #include "Page.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 

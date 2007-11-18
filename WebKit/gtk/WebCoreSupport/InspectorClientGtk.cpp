@@ -30,6 +30,7 @@
 #include "InspectorClientGtk.h"
 
 #include "NotImplemented.h"
+#include "PlatformString.h"
 
 using namespace WebCore;
 
