@@ -2,6 +2,16 @@
 
         Reviewed by Sam Weinig.
 
+        Prevent testapi from reporting false leaks.  Clear out local variables pointing at
+        JSObjectRefs to allow their values to be collected.
+
+        * API/testapi.c:
+        (main):
+
+2007-11-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Prevent testapi from crashing if testapi.js can not be found by nil-checking the result of createStringWithContentsOfFile.
 
         * API/testapi.c:

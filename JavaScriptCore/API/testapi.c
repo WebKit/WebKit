@@ -828,6 +828,12 @@ int main(int argc, char* argv[])
         free(scriptUTF8);
     }
 
+    // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
+    function = NULL;
+    v = NULL;
+    o = NULL;
+    globalObject = NULL;
+
     JSStringRelease(jsEmptyIString);
     JSStringRelease(jsOneIString);
     JSStringRelease(jsCFIString);
@@ -836,7 +842,7 @@ int main(int argc, char* argv[])
     JSStringRelease(jsCFEmptyIStringWithCharacters);
     JSStringRelease(goodSyntax);
     JSStringRelease(badSyntax);
-    
+
     JSGlobalContextRelease(context);
     JSGarbageCollect(context);
     JSClassRelease(globalObjectClass);
