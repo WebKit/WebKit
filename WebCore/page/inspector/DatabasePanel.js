@@ -187,8 +187,8 @@ return {
         var query = "SELECT * FROM " + this.currentTable;
         this.resource.database.transaction(function(tx)
         {
-            tx.executeSql(query, [], function(tx, result) { panel.browseQueryFinished(result) }, function(tx,err){ alert(err.message); });
-        });
+            tx.executeSql(query, [], function(tx, result) { panel.browseQueryFinished(result) }, function(tx, error) { panel.browseQueryError(error) });
+        }, function(tx, error) { panel.browseQueryError(error) });
     },
 
     browseQueryFinished: function(result)
@@ -196,37 +196,41 @@ return {
         this.views.browse.contentElement.removeChildren();
 
         var table = this._tableForResult(result);
-        if (table) {
-            var rowCount = table.getElementsByTagName("tr").length;
-            var columnCount = table.getElementsByTagName("tr").item(0).getElementsByTagName("th").length;
-
-            var tr = document.createElement("tr");
-            tr.className = "database-result-filler-row";
-            table.appendChild(tr);
-
-            if (!(rowCount % 2))
-                tr.addStyleClass("alternate");
-
-            for (var i = 0; i < columnCount; ++i) {
-                var td = document.createElement("td");
-                tr.appendChild(td);
-            }
-
-            table.addStyleClass("database-browse-table");
-            this.views.browse.contentElement.appendChild(table);
-        } else {
-            if (!result.errorCode) {
-                var emptyMsgElement = document.createElement("div");
-                emptyMsgElement.className = "database-table-empty";
-                emptyMsgElement.textContent = WebInspector.UIString("The “%@”\ntable is empty.", this.currentTable);
-                this.views.browse.contentElement.appendChild(emptyMsgElement);
-            } else {
-                var errorMsgElement = document.createElement("div");
-                errorMsgElement.className = "database-table-error";
-                errorMsgElement.textContent = WebInspector.UIString("An error occurred trying to\nread the “%@” table.", this.currentTable);
-                this.views.browse.contentElement.appendChild(errorMsgElement);
-            }
+        if (!table) {
+            var emptyMsgElement = document.createElement("div");
+            emptyMsgElement.className = "database-table-empty";
+            emptyMsgElement.textContent = WebInspector.UIString("The “%@”\ntable is empty.", this.currentTable);
+            this.views.browse.contentElement.appendChild(emptyMsgElement);
+            return;
         }
+
+        var rowCount = table.getElementsByTagName("tr").length;
+        var columnCount = table.getElementsByTagName("tr").item(0).getElementsByTagName("th").length;
+
+        var tr = document.createElement("tr");
+        tr.className = "database-result-filler-row";
+        table.appendChild(tr);
+
+        if (!(rowCount % 2))
+            tr.addStyleClass("alternate");
+
+        for (var i = 0; i < columnCount; ++i) {
+            var td = document.createElement("td");
+            tr.appendChild(td);
+        }
+
+        table.addStyleClass("database-browse-table");
+        this.views.browse.contentElement.appendChild(table);
+    },
+
+    browseQueryError: function(error)
+    {
+        this.views.browse.contentElement.removeChildren();
+
+        var errorMsgElement = document.createElement("div");
+        errorMsgElement.className = "database-table-error";
+        errorMsgElement.textContent = WebInspector.UIString("An error occurred trying to\nread the “%@” table.", this.currentTable);
+        this.views.browse.contentElement.appendChild(errorMsgElement);
     },
 
     queryInputKeypress: function(event)
@@ -244,7 +248,7 @@ return {
         }
     },
 
-    queryFinished: function(query, result)
+    appendQueryResult: function(query, result, resultClassName)
     {
         var commandItem = document.createElement("li");
         commandItem.className = "database-command";
@@ -258,28 +262,36 @@ return {
         resultDiv.className = "database-command-result";
         commandItem.appendChild(resultDiv);
 
-        if (!result.errorCode) {
-            var table = this._tableForResult(result);
-            if (table)
-                resultDiv.appendChild(table);
-        } else {
-            if (this.currentView !== this.views.query)
-                this.currentView = this.views.query;
+        if (resultClassName)
+            resultDiv.addStyleClass(resultClassName);
 
-            if (result.errorCode == 1) {
-                resultDiv.className += " error";
-                resultDiv.textContent = result.error;
-            } else if (result.errorCode == 2) {
-                resultDiv.className += " error";
-                resultDiv.textContent = WebInspector.UIString("Database no longer has expected version.");
-            } else {
-                resultDiv.className += " error";
-                resultDiv.textContent = WebInspector.UIString("An unexpected error %@ occured.", result.errorCode);
-            }
-        }
+        if (typeof result === "string" || result instanceof String)
+            resultDiv.textContent = result;
+        else if (result && result.nodeName)
+            resultDiv.appendChild(result);
 
         this.views.query.commandListElement.appendChild(commandItem);
         commandItem.scrollIntoView(false);
+    },
+
+    queryFinished: function(query, result)
+    {
+        this.appendQueryResult(query, this._tableForResult(result));
+    },
+
+    queryError: function(query, error)
+    {
+        if (this.currentView !== this.views.query)
+            this.currentView = this.views.query;
+
+        if (error.code == 1)
+            var message = error.message;
+        else if (error.code == 2)
+            var message = WebInspector.UIString("Database no longer has expected version.");
+        else
+            var message = WebInspector.UIString("An unexpected error %@ occured.", error.code);
+
+        this.appendQueryResult(query, message, "error");
     },
 
     _onQueryInputEnterPressed: function(event)
@@ -294,8 +306,8 @@ return {
         var panel = this;
         this.resource.database.transaction(function(tx) 
         {
-            tx.executeSql(query, [], function(tx, result) { panel.queryFinished(query, result) }, function(tx,err){ alert(err.message); });
-        });
+            tx.executeSql(query, [], function(tx, result) { panel.queryFinished(query, result) }, function(tx, error) { panel.queryError(query, error) });
+        }, function(tx, error) { panel.queryError(query, error) });
 
         this.queryPromptHistory.push(query);
         this.queryPromptHistoryOffset = 0;
