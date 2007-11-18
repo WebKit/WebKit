@@ -1,3 +1,18 @@
+2007-11-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix: <rdar://problem/5607032> REGRESSION: testapi exits with assertion failure in debug build
+             <rdar://problem/5440659> JSGlobalContextCreate throws away globalObjectClass's prototype
+             http://bugs.webkit.org/show_bug.cgi?id=16033
+
+        Update for changes in Interpreter method signatures.
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::ScriptInterpreter):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::clear):
+
 2007-11-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

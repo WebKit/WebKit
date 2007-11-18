@@ -34,9 +34,9 @@
 
 class JSInterpreter : public Interpreter {
     public:
-        JSInterpreter(JSGlobalObject *global, JSFlags flags) : Interpreter(global), fJSFlags(flags) { }
-        JSInterpreter(JSGlobalObject *global) : Interpreter(global), fJSFlags(kJSFlagNone) { }
-        JSInterpreter() : Interpreter(), fJSFlags(kJSFlagNone) { }
+        JSInterpreter(JSGlobalObject *global, JSFlags flags) : fJSFlags(flags) { setGlobalObject(global); }
+        JSInterpreter(JSGlobalObject *global) : fJSFlags(kJSFlagNone) { setGlobalObject(global); }
+        JSInterpreter() : fJSFlags(kJSFlagNone) { }
         JSFlags Flags() const { return fJSFlags; }
 
     protected:

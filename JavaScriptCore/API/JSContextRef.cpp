@@ -31,6 +31,7 @@
 #include "APICast.h"
 
 #include "JSCallbackObject.h"
+#include "JSClassRef.h"
 #include "JSGlobalObject.h"
 #include "completion.h"
 #include "interpreter.h"
@@ -42,17 +43,18 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 {
     JSLock lock;
 
-    JSGlobalObject* globalObject;
-    if (globalObjectClass)
-        // Specify jsNull() as the prototype.  Interpreter will fix it up to point at builtinObjectPrototype() in its constructor
-        globalObject = new JSCallbackObject<JSGlobalObject>(0, globalObjectClass, jsNull(), 0);
-    else
-        globalObject = new JSGlobalObject();
+    Interpreter* interpreter = new Interpreter();
+    ExecState* globalExec = interpreter->globalExec();
+    JSGlobalContextRef ctx = toGlobalRef(globalExec);
 
-    Interpreter* interpreter = new Interpreter(globalObject); // adds the built-in object prototype to the global object
-    if (globalObjectClass)
-        static_cast<JSCallbackObject<JSGlobalObject>*>(globalObject)->initializeIfNeeded(interpreter->globalExec());
-    JSGlobalContextRef ctx = reinterpret_cast<JSGlobalContextRef>(interpreter->globalExec());
+    if (globalObjectClass) {
+        JSObject* prototype = globalObjectClass->prototype(ctx);
+        JSCallbackObject<JSGlobalObject>* globalObject = new JSCallbackObject<JSGlobalObject>(globalObjectClass, prototype ? prototype : jsNull(), 0);
+        interpreter->setGlobalObject(globalObject);
+        globalObject->init(globalExec);
+    } else
+        interpreter->setGlobalObject(new JSGlobalObject());
+
     return JSGlobalContextRetain(ctx);
 }
 

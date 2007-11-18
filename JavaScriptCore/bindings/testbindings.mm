@@ -244,7 +244,8 @@ int main(int argc, char **argv)
         
         // create interpreter w/ global object
         Object global(new GlobalImp());
-        Interpreter interp(global);
+        Interpreter interp;
+        interp.setGlobalObject(global);
         ExecState *exec = interp.globalExec();
         
         MyFirstInterface *myInterface = [[MyFirstInterface alloc] init];

@@ -39,8 +39,11 @@ class JSCallbackObject : public Base
 {
 public:
     JSCallbackObject(ExecState*, JSClassRef, JSValue* prototype, void* data);
+    JSCallbackObject(JSClassRef, JSValue* prototype, void* data);
     virtual ~JSCallbackObject();
-        
+
+    void init(ExecState*);
+
     virtual UString className() const;
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
@@ -73,14 +76,11 @@ public:
     static const ClassInfo info;
 
     bool inherits(JSClassRef) const;
-    
-    void initializeIfNeeded(ExecState*);
-    
+
 private:
     JSCallbackObject(); // prevent default construction
     JSCallbackObject(const JSCallbackObject&);
 
-    void init(ExecState*, JSClassRef jsClass, void*);
     
     static JSValue* cachedValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* staticValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
@@ -89,7 +89,6 @@ private:
     
     void* m_privateData;
     JSClassRef m_class;
-    bool m_isInitialized;
 };
 
 } // namespace KJS

@@ -224,7 +224,8 @@ int main(int argc, char** argv)
 static PassRefPtr<Interpreter> setupInterpreter()
 {
   GlobalImp* global = new GlobalImp();
-  RefPtr<Interpreter> interp = new Interpreter(global);
+  RefPtr<Interpreter> interp = new Interpreter();
+  interp->setGlobalObject(global);
   // add debug() function
   global->put(interp->globalExec(), "debug", new TestFunctionImp(TestFunctionImp::Debug, 1));
   // add "print" for compatibility with the mozilla js shell

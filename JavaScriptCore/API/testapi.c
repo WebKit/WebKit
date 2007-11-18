@@ -466,11 +466,49 @@ static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjec
     return result;
 }
 
-static void testInitializeOfGlobalObjectClassHasNonNullContext(JSContextRef context, JSObjectRef object)
+
+static void globalObject_initialize(JSContextRef context, JSObjectRef object)
 {
     UNUSED_PARAM(object);
+    // Ensure that an execution context is passed in
     ASSERT(context);
+
+    // Ensure that the global object is set to the object that we were passed
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+    ASSERT(globalObject);
+    ASSERT(object == globalObject);
+
+    // Ensure that the standard global properties have been set on the global object
+    JSStringRef array = JSStringCreateWithUTF8CString("Array");
+    JSObjectRef arrayConstructor = JSValueToObject(context, JSObjectGetProperty(context, globalObject, array, NULL), NULL);
+    JSStringRelease(array);
+    ASSERT(arrayConstructor);
 }
+
+static JSValueRef globalObject_get(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(exception);
+
+    return JSValueMakeNumber(ctx, 3);
+}
+
+static bool globalObject_set(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(value);
+
+    *exception = JSValueMakeNumber(ctx, 3);
+    return true;
+}
+
+
+static JSStaticValue globalObject_staticValues[] = {
+    { "globalStaticValue", globalObject_get, globalObject_set, kJSPropertyAttributeNone },
+    { 0, 0, 0, 0 }
+};
 
 static char* createStringWithContentsOfFile(const char* fileName);
 
@@ -496,7 +534,8 @@ int main(int argc, char* argv[])
     ASSERT(Base_didFinalize);
 
     JSClassDefinition globalObjectClassDefinition = kJSClassDefinitionEmpty;
-    globalObjectClassDefinition.initialize = testInitializeOfGlobalObjectClassHasNonNullContext;
+    globalObjectClassDefinition.initialize = globalObject_initialize;
+    globalObjectClassDefinition.staticValues = globalObject_staticValues;
     JSClassRef globalObjectClass = JSClassCreate(&globalObjectClassDefinition);
     context = JSGlobalContextCreate(globalObjectClass);
     

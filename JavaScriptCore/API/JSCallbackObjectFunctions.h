@@ -41,25 +41,27 @@ namespace KJS {
 template <class Base>
 JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, JSClassRef jsClass, JSValue* prototype, void* data)
     : Base(prototype)
-    , m_class(0)
-    , m_isInitialized(false)
+    , m_privateData(data)
+    , m_class(JSClassRetain(jsClass))
 {
-    init(exec, jsClass, data);
+    init(exec);
 }
 
 template <class Base>
-void JSCallbackObject<Base>::init(ExecState* exec, JSClassRef jsClass, void* data)
+JSCallbackObject<Base>::JSCallbackObject(JSClassRef jsClass, JSValue* prototype, void* data)
+    : Base(prototype)
+    , m_privateData(data)
+    , m_class(JSClassRetain(jsClass))
 {
-    m_privateData = data;
-    JSClassRef oldClass = m_class;
-    m_class = JSClassRetain(jsClass);
-    if (oldClass)
-        JSClassRelease(oldClass);
-    
-    if (!exec)
-        return;
+}
+
+template <class Base>
+void JSCallbackObject<Base>::init(ExecState* exec)
+{
+    ASSERT(exec);
     
     Vector<JSObjectInitializeCallback, 16> initRoutines;
+    JSClassRef jsClass = m_class;
     do {
         if (JSObjectInitializeCallback initialize = jsClass->initialize)
             initRoutines.append(initialize);
@@ -71,7 +73,6 @@ void JSCallbackObject<Base>::init(ExecState* exec, JSClassRef jsClass, void* dat
         JSObjectInitializeCallback initialize = initRoutines[i];
         initialize(toRef(exec), toRef(this));
     }
-    m_isInitialized = true;
 }
 
 template <class Base>
@@ -85,14 +86,6 @@ JSCallbackObject<Base>::~JSCallbackObject()
         }
             
     JSClassRelease(m_class);
-}
-
-template <class Base>
-void JSCallbackObject<Base>::initializeIfNeeded(ExecState* exec)
-{
-    if (m_isInitialized)
-        return;
-    init(exec, m_class, m_privateData);
 }
 
 template <class Base>

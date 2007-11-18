@@ -53,6 +53,8 @@ function shouldThrow(a)
     print(result);
 }
 
+shouldBe("globalStaticValue", 3);
+
 shouldBe("typeof MyObject", "function"); // our object implements 'call'
 MyObject.cantFind = 1;
 shouldBe("MyObject.cantFind", undefined);

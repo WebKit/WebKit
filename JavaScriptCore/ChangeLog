@@ -1,5 +1,56 @@
 2007-11-17  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Fix: <rdar://problem/5607032> REGRESSION: testapi exits with assertion failure in debug build
+             <rdar://problem/5440659> JSGlobalContextCreate throws away globalObjectClass's prototype
+             http://bugs.webkit.org/show_bug.cgi?id=16033
+
+        Split Interpreter's initialization into two distinct steps:  the creation of the global prototypes
+        and constructors, and storing them on the global object.  This allows JSClassRef's passed to
+        JSGlobalContextCreate to be instantiated with the correct prototype.
+
+        * API/JSCallbackObject.cpp: Assert at compile-time that the custom global object will fit in a collector cell.
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::JSCallbackObject):
+        (KJS::::init):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate): Construct and set the interpreter's global object separately.  When globalObjectClass
+        is passed we need to set the interpreter's global object before doing the JSCallbackObject's initialization to
+        prevent any JSObjectInitializeCallback's being invoked before a global object is set.
+        * API/testapi.c:
+        (globalObject_initialize): Test the object passed in is correct and that it has the expected global properties.
+        (globalObject_get):
+        (globalObject_set):
+        (main):
+        * API/testapi.js: Test that any static properties exposed by the global object's custom class are found.
+        * JavaScriptCore.exp:
+        * bindings/testbindings.cpp:
+        (main): Update for changes in Interpreter method signatures.
+        * bindings/testbindings.mm:
+        (main): Ditto.
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        (KJS::ExecState::mark):
+        (KJS::ExecState::setGlobalObject):
+        * kjs/ExecState.h: Rename scope to m_scopeChain.
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::Interpreter):
+        (KJS::Interpreter::init):
+        (KJS::Interpreter::globalObject):
+        (KJS::Interpreter::setGlobalObject):
+        (KJS::Interpreter::resetGlobalObjectProperties):
+        (KJS::Interpreter::createObjectsForGlobalObjectProperties):
+        (KJS::Interpreter::setGlobalObjectProperties): Switch to using putDirect to ensure that the global object's put method
+        cannot interfere with setting of the global properties.  This prevents a user-written JSClassRef from attempting to
+        call back into JavaScript from the initialization of the global object's members.
+        * kjs/interpreter.h:
+        * kjs/testkjs.cpp:
+        (setupInterpreter): Update for changes in Interpreter method signatures.
+
+2007-11-17  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Prevent testapi from reporting false leaks.  Clear out local variables pointing at

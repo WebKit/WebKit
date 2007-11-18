@@ -33,7 +33,7 @@ namespace KJS {
 
 
 // ECMA 10.2
-ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* glob, JSObject* thisV, 
+ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* globalObject, JSObject* thisV, 
                      FunctionBodyNode* currentBody, CodeType type, ExecState* callingExec, 
                      FunctionImp* func, const List* args)
     : m_interpreter(interpreter)
@@ -55,26 +55,25 @@ ExecState::ExecState(Interpreter* interpreter, JSGlobalObject* glob, JSObject* t
         m_variable = m_activation;
     } else {
         m_activation = 0;
-        m_variable = glob;
+        m_variable = globalObject;
     }
     
     // ECMA 10.2
     switch(type) {
     case EvalCode:
         if (m_callingExecState) {
-            scope = m_callingExecState->scopeChain();
+            m_scopeChain = m_callingExecState->scopeChain();
             m_variable = m_callingExecState->variableObject();
             m_thisVal = m_callingExecState->thisValue();
             break;
         } // else same as GlobalCode
     case GlobalCode:
-        scope.clear();
-        scope.push(glob);
-        m_thisVal = static_cast<JSObject*>(glob);
+        if (globalObject)
+            setGlobalObject(globalObject);
         break;
     case FunctionCode:
-        scope = func->scope();
-        scope.push(m_activation);
+        m_scopeChain = func->scope();
+        m_scopeChain.push(m_activation);
         m_variable = m_activation; // TODO: DontDelete ? (ECMA 10.2.3)
         m_thisVal = thisV;
         break;
@@ -92,7 +91,14 @@ ExecState::~ExecState()
 void ExecState::mark()
 {
     for (ExecState* exec = this; exec; exec = exec->m_callingExecState)
-        exec->scope.mark();
+        exec->m_scopeChain.mark();
+}
+
+void ExecState::setGlobalObject(JSGlobalObject* globalObject)
+{
+    m_scopeChain.clear();
+    m_scopeChain.push(globalObject);
+    m_thisVal = static_cast<JSObject*>(globalObject);
 }
 
 Interpreter* ExecState::lexicalInterpreter() const

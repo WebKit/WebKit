@@ -81,18 +81,10 @@ static inline InterpreterMap &interpreterMap()
     return* map;
 }
 
-Interpreter::Interpreter(JSGlobalObject* globalObject)
-    : m_currentExec(0)
-    , m_globalObject(globalObject)
-    , m_globalExec(this, globalObject, globalObject, 0)
-{
-    init();
-}
-
 Interpreter::Interpreter()
     : m_currentExec(0)
-    , m_globalObject(new JSGlobalObject())
-    , m_globalExec(this, m_globalObject, m_globalObject, 0)
+    , m_globalObject(0)
+    , m_globalExec(this, 0, 0, 0)
 {
     init();
 }
@@ -120,7 +112,7 @@ void Interpreter::init()
         s_hook = next = prev = this;
     }
 
-    initGlobalObject();
+    createObjectsForGlobalObjectProperties();
 }
 
 Interpreter::~Interpreter()
@@ -141,13 +133,30 @@ Interpreter::~Interpreter()
 
 JSGlobalObject* Interpreter::globalObject() const
 {
+    // Now that we delay setting of the global object, people retrieving it before it is set may be in for a nasty surprise
+    ASSERT(m_globalObject);
     return m_globalObject;
 }
 
-void Interpreter::initGlobalObject()
+void Interpreter::setGlobalObject(JSGlobalObject* globalObject)
 {
-    m_globalObject->setInterpreter(this);
+    ASSERT(!m_globalObject);
+    ASSERT(globalObject);
+    m_globalObject = globalObject;
+    m_globalExec.setGlobalObject(globalObject);
 
+    setGlobalObjectProperties();
+}
+
+void Interpreter::resetGlobalObjectProperties()
+{
+    ASSERT(m_globalObject);
+    createObjectsForGlobalObjectProperties();
+    setGlobalObjectProperties();
+}
+
+void Interpreter::createObjectsForGlobalObjectProperties()
+{
     // Clear before inititalizing, to avoid marking uninitialized (dangerous) or 
     // stale (wasteful) pointers during initialization.
     
@@ -242,6 +251,12 @@ void Interpreter::initGlobalObject()
     m_SyntaxErrorPrototype->put(&m_globalExec, m_globalExec.propertyNames().constructor, m_SyntaxError, DontEnum | DontDelete | ReadOnly);
     m_TypeErrorPrototype->put(&m_globalExec, m_globalExec.propertyNames().constructor, m_TypeError, DontEnum | DontDelete | ReadOnly);
     m_UriErrorPrototype->put(&m_globalExec, m_globalExec.propertyNames().constructor, m_UriError, DontEnum | DontDelete | ReadOnly);
+}
+
+void Interpreter::setGlobalObjectProperties()
+{
+    ASSERT(m_globalObject);
+    m_globalObject->setInterpreter(this);
 
     // Set global object prototype
     JSObject* o = m_globalObject;
@@ -252,28 +267,29 @@ void Interpreter::initGlobalObject()
     // Set global constructors
     // FIXME: kjs_window.cpp checks Internal/DontEnum as a performance hack, to
     // see that these values can be put directly without a check for override
-    // properties. Maybe we should call putDirect instead, for better encapsulation.
-    m_globalObject->put(&m_globalExec, "Object", m_Object, DontEnum);
-    m_globalObject->put(&m_globalExec, "Function", m_Function, DontEnum);
-    m_globalObject->put(&m_globalExec, "Array", m_Array, DontEnum);
-    m_globalObject->put(&m_globalExec, "Boolean", m_Boolean, DontEnum);
-    m_globalObject->put(&m_globalExec, "String", m_String, DontEnum);
-    m_globalObject->put(&m_globalExec, "Number", m_Number, DontEnum);
-    m_globalObject->put(&m_globalExec, "Date", m_Date, DontEnum);
-    m_globalObject->put(&m_globalExec, "RegExp", m_RegExp, DontEnum);
-    m_globalObject->put(&m_globalExec, "Error", m_Error, DontEnum);
-    m_globalObject->put(&m_globalExec, "EvalError",m_EvalError, Internal);
-    m_globalObject->put(&m_globalExec, "RangeError",m_RangeError, Internal);
-    m_globalObject->put(&m_globalExec, "ReferenceError",m_ReferenceError, Internal);
-    m_globalObject->put(&m_globalExec, "SyntaxError",m_SyntaxError, Internal);
-    m_globalObject->put(&m_globalExec, "TypeError",m_TypeError, Internal);
-    m_globalObject->put(&m_globalExec, "URIError",m_UriError, Internal);
+    // properties.
+    // FIXME: These properties should be handled by JSGlobalObject
+    m_globalObject->putDirect("Object", m_Object, DontEnum);
+    m_globalObject->putDirect("Function", m_Function, DontEnum);
+    m_globalObject->putDirect("Array", m_Array, DontEnum);
+    m_globalObject->putDirect("Boolean", m_Boolean, DontEnum);
+    m_globalObject->putDirect("String", m_String, DontEnum);
+    m_globalObject->putDirect("Number", m_Number, DontEnum);
+    m_globalObject->putDirect("Date", m_Date, DontEnum);
+    m_globalObject->putDirect("RegExp", m_RegExp, DontEnum);
+    m_globalObject->putDirect("Error", m_Error, DontEnum);
+    m_globalObject->putDirect("EvalError",m_EvalError, Internal);
+    m_globalObject->putDirect("RangeError",m_RangeError, Internal);
+    m_globalObject->putDirect("ReferenceError",m_ReferenceError, Internal);
+    m_globalObject->putDirect("SyntaxError",m_SyntaxError, Internal);
+    m_globalObject->putDirect("TypeError",m_TypeError, Internal);
+    m_globalObject->putDirect("URIError",m_UriError, Internal);
 
     // Set global values
-    m_globalObject->put(&m_globalExec, "Math", new MathObjectImp(&m_globalExec, m_ObjectPrototype), DontEnum);
-    m_globalObject->put(&m_globalExec, "NaN", jsNaN(), DontEnum|DontDelete);
-    m_globalObject->put(&m_globalExec, "Infinity", jsNumber(Inf), DontEnum|DontDelete);
-    m_globalObject->put(&m_globalExec, "undefined", jsUndefined(), DontEnum|DontDelete);
+    m_globalObject->putDirect("Math", new MathObjectImp(&m_globalExec, m_ObjectPrototype), DontEnum);
+    m_globalObject->putDirect("NaN", jsNaN(), DontEnum|DontDelete);
+    m_globalObject->putDirect("Infinity", jsNumber(Inf), DontEnum|DontDelete);
+    m_globalObject->putDirect("undefined", jsUndefined(), DontEnum|DontDelete);
     
     // Set global functions
     m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::Eval, 1, "eval"), DontEnum);

@@ -138,12 +138,12 @@ static NodePerDocMap& domNodesPerDocument()
 }
 
 ScriptInterpreter::ScriptInterpreter(JSGlobalObject* global, Frame* frame)
-    : Interpreter(global)
-    , m_frame(frame)
+    : m_frame(frame)
     , m_currentEvent(0)
     , m_inlineCode(false)
     , m_timerCallback(false)
 {
+    setGlobalObject(global);
     // Time in milliseconds before the script timeout handler kicks in.
     setTimeoutTime(10000);
 }

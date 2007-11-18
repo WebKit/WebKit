@@ -71,7 +71,7 @@ namespace KJS  {
         JSValue** exceptionSlot() { return &m_exception; }
         bool hadException() const { return !!m_exception; }
         
-        const ScopeChain& scopeChain() const { return scope; }
+        const ScopeChain& scopeChain() const { return m_scopeChain; }
         
         JSObject* variableObject() const { return m_variable; }
         void setVariableObject(JSObject* v) { m_variable = v; }
@@ -86,8 +86,8 @@ namespace KJS  {
         FunctionImp* function() const { return m_function; }
         const List* arguments() const { return m_arguments; }
         
-        void pushScope(JSObject* s) { scope.push(s); }
-        void popScope() { scope.pop(); }
+        void pushScope(JSObject* s) { m_scopeChain.push(s); }
+        void popScope() { m_scopeChain.pop(); }
         LabelStack* seenLabels() { return &ls; }
         
         void pushIteration() { m_iterationDepth++; }
@@ -97,6 +97,8 @@ namespace KJS  {
         void pushSwitch() { m_switchDepth++; }
         void popSwitch() { m_switchDepth--; }
         bool inSwitch() const { return (m_switchDepth > 0); }
+
+        void setGlobalObject(JSGlobalObject*);
         
         void mark();
         
@@ -129,7 +131,7 @@ namespace KJS  {
         JSObject* m_activation;
         LocalStorageEntry* m_localStorageBuffer;
 
-        ScopeChain scope;
+        ScopeChain m_scopeChain;
         JSObject* m_variable;
         JSObject* m_thisVal;
         
