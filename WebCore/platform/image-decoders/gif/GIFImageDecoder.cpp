@@ -246,7 +246,6 @@ void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
             } else {
               // Copy the whole previous buffer, then clear just its frame.
               buffer->bytes() = prevBuffer->bytes();
-              SkBitmap& bitmap = buffer->bitmap();
               for (int y = prevRect.y(); y < prevRect.bottom(); ++y) {
                   unsigned* const currentRow =
                       buffer.bytes().data() + (y * m_size.width());
