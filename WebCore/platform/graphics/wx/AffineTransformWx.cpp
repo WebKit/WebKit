@@ -123,8 +123,9 @@ AffineTransform& AffineTransform::operator*=(const AffineTransform& other)
 
 bool AffineTransform::operator== (const AffineTransform &other) const
 {
+#if USE(WXGC)
     return m_transform.IsEqual((wxGraphicsMatrix)other);
-
+#endif
 }
 
 AffineTransform AffineTransform::operator* (const AffineTransform &other)
