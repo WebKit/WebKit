@@ -3,6 +3,13 @@
         Build fix.
 
         * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+
+2007-11-19  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
         (WebCore::GIFImageDecoder::initFrameBuffer): Remove reference to SkBitmap type that doesn't belong.
 
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
