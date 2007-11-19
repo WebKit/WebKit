@@ -1,3 +1,21 @@
+2007-11-19  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12194
+        Bug 12194: Trying to access XMLHttpRequest.responseText or responseXML when they 
+        are not available should raise an exception
+
+        Tests: http/tests/xmlhttprequest/xmlhttprequest-responseText-exception.html
+               http/tests/xmlhttprequest/xmlhttprequest-responseXML-exception.html
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::getValueProperty):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseText):
+        (WebCore::XMLHttpRequest::getResponseXML):
+        * xml/XMLHttpRequest.h:
+
 2007-11-19  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Darin Adler.

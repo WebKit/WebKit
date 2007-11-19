@@ -101,12 +101,19 @@ JSValue* JSXMLHttpRequest::getValueProperty(ExecState* exec, int token) const
     switch (token) {
         case ReadyState:
             return jsNumber(m_impl->getReadyState());
-        case ResponseText:
-            return jsOwnedStringOrNull(m_impl->getResponseText());
-        case ResponseXML:
-            if (Document* responseXML = m_impl->getResponseXML())
+        case ResponseText: {
+            JSValue* result = jsOwnedStringOrNull(m_impl->getResponseText(ec));
+            setDOMException(exec, ec);
+            return result;
+        }
+        case ResponseXML: {
+            Document* responseXML = m_impl->getResponseXML(ec);
+            setDOMException(exec, ec);
+            if (responseXML)
                 return toJS(exec, responseXML);
+
             return jsNull();
+        }
         case Status: {
             JSValue* result = jsNumber(m_impl->getStatus(ec));
             setDOMException(exec, ec);

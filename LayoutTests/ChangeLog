@@ -1,3 +1,20 @@
+2007-11-19  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12194
+        Bug 12194: Trying to access XMLHttpRequest.responseText or responseXML when they are not 
+        available should raise an exception
+
+        * http/tests/xmlhttprequest/xmlhttprequest-responseText-exception-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-responseText-exception.html: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-responseXML-exception-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-responseXML-exception.html: Added.
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt: Updated result
+        * http/tests/xmlhttprequest/zero-length-response-sync-expected.txt: Updated result
+        * http/tests/xmlhttprequest/zero-length-response-sync.html: Corrected URL & added
+        exception handling to test case
+
 2007-11-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
@@ -1125,7 +1142,6 @@
         * fast/xpath/preceding-axis-expected.txt: Added.
         * fast/xpath/preceding-axis.xhtml: Added.
 
->>>>>>> .r27862
 2007-11-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Adele Peterson.

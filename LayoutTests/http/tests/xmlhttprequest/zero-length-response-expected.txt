@@ -3,30 +3,30 @@ Test for bug 5924 - zero-length responses to XMLHTTPRequest mishandled.
 after creation: Uninitialized
   Status: 0
   StatusText: ""
-  ResponseText: ""
-  ResponseXML: null
-  ResponseXML serialized: n/a
+  Exception getting ResponseText: INVALID_STATE_ERR: DOM Exception 11
+  Exception getting ResponseXML: INVALID_STATE_ERR: DOM Exception 11
+  Exception serializing ResponseXML: INVALID_STATE_ERR: DOM Exception 11
 after setting onreadystatechange: Uninitialized
 onreadystatechange: Open
   Exception getting status: INVALID_STATE_ERR: DOM Exception 11
   Exception getting StatusText: INVALID_STATE_ERR: DOM Exception 11
-  ResponseText: ""
-  ResponseXML: null
-  ResponseXML serialized: n/a
+  Exception getting ResponseText: INVALID_STATE_ERR: DOM Exception 11
+  Exception getting ResponseXML: INVALID_STATE_ERR: DOM Exception 11
+  Exception serializing ResponseXML: INVALID_STATE_ERR: DOM Exception 11
 after open(): Open
   Exception getting status: INVALID_STATE_ERR: DOM Exception 11
   Exception getting StatusText: INVALID_STATE_ERR: DOM Exception 11
-  ResponseText: ""
-  ResponseXML: null
-  ResponseXML serialized: n/a
+  Exception getting ResponseText: INVALID_STATE_ERR: DOM Exception 11
+  Exception getting ResponseXML: INVALID_STATE_ERR: DOM Exception 11
+  Exception serializing ResponseXML: INVALID_STATE_ERR: DOM Exception 11
 after overrideMimeType(): Open
 after send(): Open
 onreadystatechange: Sent
   Status: 200
   StatusText: "OK"
-  ResponseText: ""
-  ResponseXML: null
-  ResponseXML serialized: n/a
+  Exception getting ResponseText: INVALID_STATE_ERR: DOM Exception 11
+  Exception getting ResponseXML: INVALID_STATE_ERR: DOM Exception 11
+  Exception serializing ResponseXML: INVALID_STATE_ERR: DOM Exception 11
 onreadystatechange: Loaded
   Status: 200
   StatusText: "OK"

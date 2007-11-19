@@ -3,7 +3,7 @@
 <title>Test XMLHttpRequest zero-length response handling (sync)</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8">
 <body>
-<p>Test for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=5924">bug 5924</a>
+<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=5924">bug 5924</a>
 - zero-length responses to XMLHTTPRequest mishandled.</p>
 <script>
 
@@ -34,7 +34,11 @@
         
         log("after creation: " + stateName(req.readyState));
         
-        log("ResponseText: " + prettyPrintText(req.responseText));
+        try {
+            log("ResponseText: " + prettyPrintText(req.responseText));
+        } catch (ex) {
+            log("Exception getting StatusText: " + ex.message);
+        }
 
         if (async)
             req.onreadystatechange = processStateChange;
