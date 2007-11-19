@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        http://bugs.webkit.org/show_bug.cgi?id=15971
+        The GIF decoder should not fail decoding if the caller asks it to
+        decode again when no new data has arrived since the last call.
+
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::read):
+
+2007-11-19  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Darin Adler.
+
         http://bugs.webkit.org/show_bug.cgi?id=15974
         GIF decoding should respect frames' specified disposal methods.
 

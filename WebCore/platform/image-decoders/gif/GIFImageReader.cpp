@@ -378,8 +378,10 @@ int GIFImageReader::do_lzw(const unsigned char *q)
 bool GIFImageReader::read(const unsigned char *buf, unsigned len, 
                      GIFImageDecoder::GIFQuery query, unsigned haltAtFrame)
 {
-  if (!len)
-    return false;
+  if (!len) {
+    // No new data has come in since the last call, just ignore this call.
+    return true;
+  }
 
   const unsigned char *q = buf;
 
