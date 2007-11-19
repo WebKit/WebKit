@@ -867,6 +867,9 @@ GdkEventExpose* GraphicsContext::gdkExposeEvent() const
 
 GdkDrawable* GraphicsContext::gdkDrawable() const
 {
+    if (!m_data->expose)
+        return 0;
+
     return GDK_DRAWABLE(m_data->expose->window);
 }
 
