@@ -31,6 +31,7 @@
 
 #import "WebDatabaseTrackerClient.h"
 #import "WebSecurityOriginPrivate.h"
+#import "WebSecurityOriginInternal.h"
 
 #import <WebCore/DatabaseTracker.h>
 
@@ -55,17 +56,47 @@ const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModif
 
 - (NSArray *)origins
 {
-    return nil;
+    Vector<WebCoreSecurityOriginData> coreOrigins;
+    DatabaseTracker::tracker().origins(coreOrigins);
+    NSMutableArray *webOrigins = [[NSMutableArray alloc] initWithCapacity:coreOrigins.size()];
+
+    for (unsigned i = 0; i < coreOrigins.size(); ++i) {
+        WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:&coreOrigins[i]];
+        [webOrigins addObject:webOrigin];
+        [webOrigin release];
+    }
+
+    return [webOrigins autorelease];
 }
 
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin
 {
-    return nil;
+    Vector<String> nameVector;
+    if (!DatabaseTracker::tracker().databaseNamesForOrigin([origin _core], nameVector))
+        return nil;
+    
+    NSMutableArray *names = [[NSMutableArray alloc] initWithCapacity:nameVector.size()];
+
+    for (unsigned i = 0; i < nameVector.size(); ++i)
+        [names addObject:(NSString *)nameVector[i]];
+
+    return [names autorelease];
 }
 
 - (NSDictionary *)detailsForDatabase:(NSString *)databaseName withOrigin:(WebSecurityOrigin *)origin
 {
-    return nil;
+    static id keys[3] = {WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey};
+    
+    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, [origin _core]);
+    if (!details.isValid())
+        return nil;
+        
+    id objects[3];
+    objects[0] = details.displayName().isEmpty() ? databaseName : (NSString *)details.displayName();
+    objects[1] = [NSNumber numberWithUnsignedLongLong:details.expectedUsage()];
+    objects[2] = [NSNumber numberWithUnsignedLongLong:details.currentUsage()];
+    
+    return [[[NSDictionary alloc] initWithObjects:objects forKeys:keys count:3] autorelease];
 }
 
 - (void)deleteAllDatabases

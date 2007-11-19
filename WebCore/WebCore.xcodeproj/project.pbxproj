@@ -358,6 +358,7 @@
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
 		51079DD50CED2A820077247D /* SecurityOriginData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51079DD40CED2A820077247D /* SecurityOriginData.cpp */; };
+		5116D9770CF177BD00C2B84D /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5116D9750CF177BD00C2B84D /* DatabaseDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512F2F450CEC3516006537E3 /* SecurityOriginData.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F2F440CEC3516006537E3 /* SecurityOriginData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4518,6 +4519,7 @@
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
 		51079DD40CED2A820077247D /* SecurityOriginData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOriginData.cpp; sourceTree = "<group>"; };
+		5116D9750CF177BD00C2B84D /* DatabaseDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseDetails.h; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		512F2F440CEC3516006537E3 /* SecurityOriginData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginData.h; sourceTree = "<group>"; };
@@ -7902,6 +7904,7 @@
 				519611600CAC56570010A80C /* Database.idl */,
 				51A45B550CAD7FD7000D2BE9 /* DatabaseAuthorizer.cpp */,
 				51A45B540CAD7FD7000D2BE9 /* DatabaseAuthorizer.h */,
+				5116D9750CF177BD00C2B84D /* DatabaseDetails.h */,
 				519611E90CAC749C0010A80C /* DatabaseTask.cpp */,
 				519611E80CAC749C0010A80C /* DatabaseTask.h */,
 				519611610CAC56570010A80C /* DatabaseThread.cpp */,
@@ -12894,6 +12897,7 @@
 				BCEA4856097D93020094C9E4 /* DataRef.h in Headers */,
 				5196116B0CAC56570010A80C /* Database.h in Headers */,
 				51A45B560CAD7FD7000D2BE9 /* DatabaseAuthorizer.h in Headers */,
+				5116D9770CF177BD00C2B84D /* DatabaseDetails.h in Headers */,
 				519611EA0CAC749C0010A80C /* DatabaseTask.h in Headers */,
 				519611780CAC56A80010A80C /* DatabaseThread.h in Headers */,
 				1AD51A140CB59CD300953D11 /* DatabaseTracker.h in Headers */,

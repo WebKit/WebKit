@@ -1,3 +1,9 @@
+2007-11-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        * WebKit.xcodeproj/project.pbxproj: Sorted!
+
 2007-11-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

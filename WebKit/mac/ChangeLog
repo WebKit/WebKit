@@ -1,3 +1,23 @@
+2007-11-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Finished hooking up the WebKit API for database management.
+        Most of the API is actually implemented in WebCore and some of those methods might
+        only be stubs for now.
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager origins]): Call through to the WebCore tracker and construct an API result
+        (-[WebDatabaseManager databasesWithOrigin:]): Ditto
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]): Ditto
+
+        * Storage/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin usage]): Call through to WebCore
+        (-[WebSecurityOrigin quota]): Ditto
+        (-[WebSecurityOrigin setQuota:]): Ditto
+        (-[WebSecurityOrigin _core]): Get WebCore version of this object
+        * Storage/WebSecurityOriginInternal.h:
+
 2007-11-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

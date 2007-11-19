@@ -25,62 +25,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DatabaseTracker_h
-#define DatabaseTracker_h
+#ifndef DatabaseDetails_h
+#define DatabaseDetails_h
 
-#include "DatabaseDetails.h"
 #include "PlatformString.h"
-#include "SQLiteDatabase.h"
-#include "StringHash.h"
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class DatabaseTrackerClient;
-class SecurityOriginData;
-struct SecurityOriginDataHash;
-struct SecurityOriginDataTraits;
-
-class DatabaseTracker {
+class DatabaseDetails {
 public:
-    void setDatabasePath(const String&);
-    const String& databasePath();
-
-    String fullPathForDatabase(const SecurityOriginData& origin, const String& name);
-
-    void origins(Vector<SecurityOriginData>& result);
-    bool databaseNamesForOrigin(const SecurityOriginData& origin, Vector<String>& result);
-
-    DatabaseDetails detailsForNameAndOrigin(const String&, const SecurityOriginData&);
+    DatabaseDetails::DatabaseDetails()
+        : m_expectedUsage(0)
+        , m_currentUsage(0)
+    { }
     
-    unsigned long long usageForOrigin(const SecurityOriginData&);
-    unsigned long long quotaForOrigin(const SecurityOriginData&);
-    void setQuota(const SecurityOriginData&, unsigned long long);
+    DatabaseDetails(const String& databaseName, const String& databaseVersion, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage)
+        : m_name(databaseName)
+        , m_version(databaseVersion)
+        , m_displayName(displayName)
+        , m_expectedUsage(expectedUsage)
+        , m_currentUsage(currentUsage)
+    { }
     
-    void deleteAllDatabases();
-    void deleteDatabasesWithOrigin(const SecurityOriginData& origin);
-    void deleteDatabase(const SecurityOriginData& origin, const String& name);
-
-    void setClient(DatabaseTrackerClient*);
+    bool isValid() const { return !(m_name.isEmpty() && m_version.isEmpty() && m_displayName.isEmpty() && !m_expectedUsage && !m_currentUsage); }
     
-    static DatabaseTracker& tracker();
+    const String& name() { return m_name; }
+    const String& version() { return m_version; }
+    const String& displayName() { return m_displayName; }
+    unsigned long long expectedUsage() { return m_expectedUsage; }
+    unsigned long long currentUsage() { return m_currentUsage; }
+    
 private:
-    DatabaseTracker();
+    String m_name;
+    String m_version;
+    String m_displayName;
+    unsigned long long m_expectedUsage;
+    unsigned long long m_currentUsage; 
 
-    void openTrackerDatabase();
-    
-    bool addDatabase(const SecurityOriginData& origin, const String& name, const String& path);
-    void populateOrigins();
-
-    SQLiteDatabase m_database;
-    mutable OwnPtr<HashSet<SecurityOriginData, SecurityOriginDataHash, SecurityOriginDataTraits> > m_origins;
-
-    String m_databasePath;
-    
-    DatabaseTrackerClient* m_client;
 };
 
 } // namespace WebCore
 
-#endif // DatabaseTracker_h
+#endif // DatabaseDetails_h

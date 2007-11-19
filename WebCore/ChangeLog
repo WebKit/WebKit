@@ -1,3 +1,29 @@
+2007-11-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Stub out the WebCore parts of the WebKit API
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * storage/DatabaseDetails.h: Added.  Simple container for vitals on a specific database
+        (WebCore::DatabaseDetails::DatabaseDetails::DatabaseDetails):
+        (WebCore::DatabaseDetails::DatabaseDetails):
+        (WebCore::DatabaseDetails::isValid):
+        (WebCore::DatabaseDetails::name):
+        (WebCore::DatabaseDetails::version):
+        (WebCore::DatabaseDetails::displayName):
+        (WebCore::DatabaseDetails::expectedUsage):
+        (WebCore::DatabaseDetails::currentUsage):
+
+        * storage/DatabaseTracker.cpp:  Added various methods for API usage
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::usageForOrigin):
+        (WebCore::DatabaseTracker::quotaForOrigin):
+        (WebCore::DatabaseTracker::setQuota):
+        * storage/DatabaseTracker.h:
+
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx port build fix.

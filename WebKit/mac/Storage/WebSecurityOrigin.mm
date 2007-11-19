@@ -28,7 +28,11 @@
 #import "WebSecurityOriginPrivate.h"
 
 #import "WebSecurityOriginInternal.h"
-#include <WebCore/SecurityOriginData.h>
+
+#import <WebCore/DatabaseTracker.h>
+#import <WebCore/SecurityOriginData.h>
+
+using namespace WebCore;
 
 @interface WebSecurityOriginPrivate : NSObject {
 @public
@@ -110,12 +114,12 @@
 
 - (unsigned long long)usage
 {
-    return 0;
+    return DatabaseTracker::tracker().usageForOrigin(*_private->securityOriginData);
 }
 
 - (unsigned long long)quota
 {
-    return 0;
+    return DatabaseTracker::tracker().quotaForOrigin(*_private->securityOriginData);
 }
 
 // Sets the storage quota (in bytes)
@@ -123,7 +127,7 @@
 // This will simply prevent new data from being added to databases in that origin
 - (void)setQuota:(unsigned long long)quota
 {
-
+    DatabaseTracker::tracker().setQuota(*_private->securityOriginData, quota);
 }
 
 - (void)dealloc
@@ -145,6 +149,11 @@
         
     _private = [[WebSecurityOriginPrivate alloc] initWithWebCoreSecurityOrigin:securityOriginData];
     return self;
+}
+
+- (WebCoreSecurityOriginData)_core
+{
+    return WebCoreSecurityOriginData(*_private->securityOriginData);
 }
 
 @end

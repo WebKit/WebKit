@@ -1172,6 +1172,7 @@
 				9398104B0824BF01008DF038 /* WebDataSource.h in Headers */,
 				658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */,
 				9398104C0824BF01008DF038 /* WebDataSourcePrivate.h in Headers */,
+				51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */,
 				511F3FD60CECC88F00852565 /* WebDatabaseManagerPrivate.h in Headers */,
 				511F3FD70CECC88F00852565 /* WebDatabaseTrackerClient.h in Headers */,
 				9398104E0824BF01008DF038 /* WebDefaultContextMenuDelegate.h in Headers */,
@@ -1290,6 +1291,8 @@
 				1C0706630A431E01001078F6 /* WebScriptDebugServer.h in Headers */,
 				1C07079A0A433E22001078F6 /* WebScriptDebugServerPrivate.h in Headers */,
 				939810260824BF01008DF038 /* WebSearchableTextView.h in Headers */,
+				51079D180CED11B00077247D /* WebSecurityOriginInternal.h in Headers */,
+				51079D190CED11B00077247D /* WebSecurityOriginPrivate.h in Headers */,
 				939810270824BF01008DF038 /* WebStringTruncator.h in Headers */,
 				93EB178F09F88D510091F8FF /* WebSystemInterface.h in Headers */,
 				DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */,
@@ -1302,9 +1305,6 @@
 				9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */,
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
 				939810970824BF01008DF038 /* npfunctions.h in Headers */,
-				51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */,
-				51079D180CED11B00077247D /* WebSecurityOriginInternal.h in Headers */,
-				51079D190CED11B00077247D /* WebSecurityOriginPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1581,6 +1581,7 @@
 				7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.mm in Sources */,
 				1C07073D0A433BD8001078F6 /* WebScriptDebugServer.m in Sources */,
 				939810CB0824BF01008DF038 /* WebSearchableTextView.m in Sources */,
+				51079D170CED11B00077247D /* WebSecurityOrigin.mm in Sources */,
 				939810CC0824BF01008DF038 /* WebStringTruncator.m in Sources */,
 				93EB178D09F88D460091F8FF /* WebSystemInterface.m in Sources */,
 				939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */,
@@ -1588,7 +1589,6 @@
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */,
 				939810DD0824BF01008DF038 /* npapi.m in Sources */,
-				51079D170CED11B00077247D /* WebSecurityOrigin.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

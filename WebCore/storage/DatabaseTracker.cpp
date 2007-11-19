@@ -221,6 +221,30 @@ bool DatabaseTracker::databaseNamesForOrigin(const SecurityOriginData& origin, V
     return true;
 }
 
+DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, const SecurityOriginData& origin)
+{
+    notImplemented();
+    return DatabaseDetails();
+}
+
+
+unsigned long long DatabaseTracker::usageForOrigin(const SecurityOriginData& origin)
+{
+    notImplemented();
+    return 0;
+}
+
+unsigned long long DatabaseTracker::quotaForOrigin(const SecurityOriginData& origin)
+{
+    notImplemented();
+    return 5 * 1024 * 1024;
+}
+
+void DatabaseTracker::setQuota(const SecurityOriginData& origin, unsigned long long quota)
+{
+    notImplemented();
+}
+    
 bool DatabaseTracker::addDatabase(const SecurityOriginData& origin, const String& name, const String& path)
 {
     if (!m_database.isOpen())
