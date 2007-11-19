@@ -1,17 +1,3 @@
-2007-11-19  Mark Rowe  <mrowe@apple.com>
-
-        Build fix.
-
-        * platform/image-decoders/gif/GIFImageDecoder.cpp:
-        (WebCore::GIFImageDecoder::initFrameBuffer):
-
-2007-11-19  Mark Rowe  <mrowe@apple.com>
-
-        Build fix.
-
-        * platform/image-decoders/gif/GIFImageDecoder.cpp:
-        (WebCore::GIFImageDecoder::initFrameBuffer): Remove reference to SkBitmap type that doesn't belong.
-
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         Update wx port build sources with recent changes, update
@@ -52,30 +38,6 @@
 
         * platform/image-decoders/gif/GIFImageReader.cpp:
         (GIFImageReader::read):
-
-2007-11-19  Peter Kasting  <zerodpx@gmail.com>
-
-        Reviewed by Darin Adler.
-
-        http://bugs.webkit.org/show_bug.cgi?id=15974
-        GIF decoding should respect frames' specified disposal methods.
-
-        * platform/image-decoders/ImageDecoder.h:
-        (WebCore::RGBA32Buffer::):
-        (WebCore::RGBA32Buffer::RGBA32Buffer):
-        (WebCore::RGBA32Buffer::disposalMethod):
-        (WebCore::RGBA32Buffer::setDisposalMethod):
-        * platform/image-decoders/gif/GIFImageDecoder.cpp:
-        (WebCore::GIFImageDecoder::frameBufferAtIndex):
-        (WebCore::GIFImageDecoder::initFrameBuffer):
-        (WebCore::GIFImageDecoder::prepEmptyFrameBuffer):
-        (WebCore::GIFImageDecoder::haveDecodedRow):
-        (WebCore::GIFImageDecoder::frameComplete):
-        * platform/image-decoders/gif/GIFImageDecoder.h:
-        * platform/image-decoders/gif/GIFImageReader.cpp:
-        (GIFImageReader::read):
-        * platform/image-decoders/gif/GIFImageReader.h:
-        (GIFFrameReader::GIFFrameReader):
 
 2007-11-18  Brady Eidson <beidson@apple.com>
 

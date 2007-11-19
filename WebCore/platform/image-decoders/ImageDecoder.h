@@ -41,17 +41,9 @@ class RGBA32Buffer
 {
 public:
     enum FrameStatus { FrameEmpty, FramePartial, FrameComplete };
-    enum FrameDisposalMethod {
-        // If you change the numeric values of these, make sure you audit all
-        // users, as some users may cast raw values to/from these constants.
-        DisposeNotSpecified = 0,       // Leave frame in framebuffer
-        DisposeKeep = 1,               // Leave frame in framebuffer
-        DisposeOverwriteBgcolor = 2,   // Clear frame to transparent
-        DisposeOverwritePrevious = 3,  // Clear frame to previous framebuffer contents
-    };
 
     RGBA32Buffer() : m_height(0), m_status(FrameEmpty), m_duration(0),
-                     m_disposalMethod(DisposeNotSpecified), m_hasAlpha(false)
+                     m_includeInNextFrame(false), m_hasAlpha(false)
     {} 
 
     const RGBA32Array& bytes() const { return m_bytes; }
@@ -60,14 +52,14 @@ public:
     unsigned height() const { return m_height; }
     FrameStatus status() const { return m_status; }
     unsigned duration() const { return m_duration; }
-    FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
+    bool includeInNextFrame() const { return m_includeInNextFrame; }
     bool hasAlpha() const { return m_hasAlpha; }
 
     void setRect(const IntRect& r) { m_rect = r; }
     void ensureHeight(unsigned rowIndex) { if (rowIndex > m_height) m_height = rowIndex; }
     void setStatus(FrameStatus s) { m_status = s; }
     void setDuration(unsigned duration) { m_duration = duration; }
-    void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
+    void setIncludeInNextFrame(bool n) { m_includeInNextFrame = n; }
     void setHasAlpha(bool alpha) { m_hasAlpha = alpha; }
 
     static void setRGBA(unsigned& pos, unsigned r, unsigned g, unsigned b, unsigned a)
@@ -94,7 +86,7 @@ private:
     unsigned m_height; // The height (the number of rows we've fully decoded).
     FrameStatus m_status; // Whether or not this frame is completely finished decoding.
     unsigned m_duration; // The animation delay.
-    FrameDisposalMethod m_disposalMethod; // What to do with this frame's data when initializing the next frame.
+    bool m_includeInNextFrame; // Whether or not the next buffer should be initially populated with our data.
     bool m_hasAlpha; // Whether or not any of the pixels in the buffer have transparency.
 };
 
