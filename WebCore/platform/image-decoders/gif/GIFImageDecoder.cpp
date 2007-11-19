@@ -158,7 +158,7 @@ int GIFImageDecoder::repetitionCount() const
 
 RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (index < 0 || index >= frameCount())
+    if (index >= frameCount())
         return 0;
 
     RGBA32Buffer& frame = m_frameBufferCache[index];
@@ -194,9 +194,7 @@ void GIFImageDecoder::decodingHalted(unsigned bytesLeft)
     m_reader->setReadOffset(m_data->size() - bytesLeft);
 }
 
-void GIFImageDecoder::initFrameBuffer(RGBA32Buffer& buffer, 
-                                      RGBA32Buffer* previousBuffer,
-                                      bool compositeWithPreviousFrame)
+void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 {
     // Initialize the frame rect in our buffer.
     IntRect frameRect(m_reader->frameXOffset(), m_reader->frameYOffset(),
@@ -208,80 +206,71 @@ void GIFImageDecoder::initFrameBuffer(RGBA32Buffer& buffer,
     if (frameRect.bottom() > m_size.height())
         frameRect.setHeight(m_size.height() - m_reader->frameYOffset());
 
-    buffer.setRect(frameRect);
-
-    bool isSubRect = (frameRect.x() > 0 || frameRect.y() > 0 ||
-                      frameRect.width() < m_size.width() ||
-                      frameRect.height() < m_size.height());
+    RGBA32Buffer* const buffer = &m_frameBufferCache[frameIndex];
+    buffer->setRect(frameRect);
     
-    // Let's resize our buffer now to the correct width/height and then
-    // initialize portions of it if needed.
-    RGBA32Array& bytes = buffer.bytes();
-        
-    // If the disposal method of the previous frame said to stick around, then we need     
-    // to copy that frame into our frame.  We also dont want to have any impact on
-    // anything outside our frame's rect, so if we don't overlay the entire image,
-    // then also composite with the previous frame.
-    if (previousBuffer && (compositeWithPreviousFrame || isSubRect)) {
-        bytes = previousBuffer->bytes();
-        buffer.ensureHeight(m_size.height());
-        buffer.setHasAlpha(previousBuffer->hasAlpha());
-    }
-    else // Resize to the width and height of the image.
-        bytes.resize(m_size.width() * m_size.height());
+    if (frameIndex == 0) {
+        // This is the first frame, so we're not relying on any previous data.
+        prepEmptyFrameBuffer(buffer);
+    } else {
+        // The starting state for this frame depends on the previous frame's
+        // disposal method.
+        //
+        // Frames that use the DisposeOverwritePrevious method are effectively
+        // no-ops in terms of changing the starting state of a frame compared to
+        // the starting state of the previous frame, so skip over them.  (If the
+        // first frame specifies this method, it will get treated like
+        // DisposeOverwriteBgcolor below and reset to a completely empty image.)
+        const RGBA32Buffer* prevBuffer = &m_frameBufferCache[--frameIndex];
+        RGBA32Buffer::FrameDisposalMethod prevMethod =
+            prevBuffer->disposalMethod();
+        while ((frameIndex > 0) &&
+                (prevMethod == RGBA32Buffer::DisposeOverwritePrevious)) {
+            prevBuffer = &m_frameBufferCache[--frameIndex];
+            prevMethod = prevBuffer->disposalMethod();
+        }
 
-    if (isSubRect) {
-        // We need to go ahead and initialize the first frame to make sure
-        // that areas outside the subrect start off transparent.
-        if (!previousBuffer) {
-            bytes.fill(0);
-            buffer.setHasAlpha(true);
-        } else if (!compositeWithPreviousFrame) {
-            // Now this is an interesting case.  In the case where we fill 
-            // the entire image, we effectively do a full clear of the image (and thus
-            // don't have to initialize anything in our buffer).
-            // 
-            // However in the case where we only fill a piece of the image, two problems occur:
-            // (1) We need to wipe out the area occupied by the previous frame, which
-            // could also have been a subrect.
-            // (2) Anything outside the previous frame's rect *and* outside our current
-            // frame's rect should be left alone.
-            // We have handled (2) by just initializing our buffer from the previous frame.
-            // Our subrect will correctly overwrite the previous frame's contents as we
-            // decode rows.  However that still leaves the problem of having to wipe out
-            // the area occupied by the previous frame that does not overlap with
-            // the new frame.
-            if (previousBuffer->rect() != frameRect) {
-                // We have to restore the entire previous subframe with the first frame's contents.
-                RGBA32Buffer* firstBuffer = &m_frameBufferCache[0];
-                bool sawAlpha = buffer.hasAlpha();
-                IntRect prevRect = previousBuffer->rect();
-                unsigned end = prevRect.y() + prevRect.height();
-
-                // Given that we allocate buffers to be the same size as previous buffers,
-                // I think this assert should be valid.
-                ASSERT(IntRect(IntPoint(0,0), m_size).contains(firstBuffer->rect()));
-
-                for (unsigned i = prevRect.y(); i < end; i++) {
-                    unsigned* curr = buffer.bytes().data() + (i * m_size.width() + prevRect.x());
-                    unsigned* orig = firstBuffer->bytes().data() + (i * m_size.width() + prevRect.x());
-                    unsigned* end = curr + prevRect.width();
-                    unsigned* origEnd = orig + firstBuffer->rect().width();
-
-                    while (curr != end && orig != origEnd) {
-                        if (!sawAlpha) {
-                            sawAlpha = true;
-                            buffer.setHasAlpha(true);
-                        }
-                        *curr++ = *orig++;
-                    }
-                }
+        if ((prevMethod == RGBA32Buffer::DisposeNotSpecified) ||
+                (prevMethod == RGBA32Buffer::DisposeKeep)) {
+            // Preserve the last frame as the starting state for this frame.
+            buffer->bytes() = prevBuffer->bytes();
+        } else {
+            // We want to clear the previous frame to transparent, without
+            // affecting pixels in the image outside of the frame.
+            const IntRect& prevRect = prevBuffer->rect();
+            if ((frameIndex == 0) ||
+                    prevRect.contains(IntRect(IntPoint(0, 0), m_size))) {
+                // Clearing the first frame, or a frame the size of the whole
+                // image, results in a completely empty image.
+                prepEmptyFrameBuffer(buffer);
+            } else {
+              // Copy the whole previous buffer, then clear just its frame.
+              buffer->bytes() = prevBuffer->bytes();
+              SkBitmap& bitmap = buffer->bitmap();
+              for (int y = prevRect.y(); y < prevRect.bottom(); ++y) {
+                  unsigned* const currentRow =
+                      buffer.bytes().data() + (y * m_size.width());
+                  for (int x = prevRect.x(); x < prevRect.right(); ++x)
+                      buffer->setRGBA(currentRow + x, 0, 0, 0, 0);
+              }
+              if ((prevRect.width() > 0) && (prevRect.height() > 0))
+                buffer->setHasAlpha(true);
             }
         }
     }
 
     // Update our status to be partially complete.
-    buffer.setStatus(RGBA32Buffer::FramePartial);
+    buffer->setStatus(RGBA32Buffer::FramePartial);
+
+    // Reset the alpha pixel tracker for this frame.
+    m_currentBufferSawAlpha = false;
+}
+
+void GIFImageDecoder::prepEmptyFrameBuffer(RGBA32Buffer* buffer) const
+{
+    buffer->bytes().resize(m_size.width() * m_size.height());
+    buffer->bytes().fill(0);
+    buffer->setHasAlpha(true);
 }
 
 void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
@@ -290,13 +279,10 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
                                      unsigned rowNumber,  // The row index
                                      unsigned repeatCount) // How many times to repeat the row
 {
-    // Resize to the width and height of the image.
+    // Initialize the frame if necessary.
     RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
-    RGBA32Buffer* previousBuffer = (frameIndex > 0) ? &m_frameBufferCache[frameIndex-1] : 0;
-    bool compositeWithPreviousFrame = previousBuffer && previousBuffer->includeInNextFrame();
-
     if (buffer.status() == RGBA32Buffer::FrameEmpty)
-        initFrameBuffer(buffer, previousBuffer, compositeWithPreviousFrame);
+        initFrameBuffer(frameIndex);
 
     // Do nothing for bogus data.
     if (rowBuffer == 0 || static_cast<int>(m_reader->frameYOffset() + rowNumber) >= m_size.height())
@@ -321,23 +307,15 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
     unsigned* currDst = dst;
     unsigned char* currentRowByte = rowBuffer;
     
-    bool hasAlpha = m_reader->isTransparent(); 
-    bool sawAlpha = false;
     while (currentRowByte != rowEnd && currDst < dstEnd) {
-        if ((!hasAlpha || *currentRowByte != m_reader->transparentPixel()) && *currentRowByte < colorMapSize) {
+        if ((!m_reader->isTransparent() || *currentRowByte != m_reader->transparentPixel()) && *currentRowByte < colorMapSize) {
             unsigned colorIndex = *currentRowByte * 3;
             unsigned red = colorMap[colorIndex];
             unsigned green = colorMap[colorIndex + 1];
             unsigned blue = colorMap[colorIndex + 2];
             RGBA32Buffer::setRGBA(*currDst, red, green, blue, 255);
         } else {
-            if (!sawAlpha) {
-                sawAlpha = true;
-                buffer.setHasAlpha(true);
-            }
-            
-            if (!compositeWithPreviousFrame)
-                RGBA32Buffer::setRGBA(*currDst, 0, 0, 0, 0);
+            m_currentBufferSawAlpha = true;
         }
         currDst++;
         currentRowByte++;
@@ -363,13 +341,49 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
     buffer.ensureHeight(rowNumber + repeatCount);
 }
 
-void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, bool includeInNextFrame)
+void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod)
 {
     RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
+    buffer.ensureHeight(m_size.height());
     buffer.setStatus(RGBA32Buffer::FrameComplete);
     buffer.setDuration(frameDuration);
-    buffer.setIncludeInNextFrame(includeInNextFrame);
-    buffer.ensureHeight(m_size.height());
+    buffer.setDisposalMethod(disposalMethod);
+
+    if (!m_currentBufferSawAlpha) {
+        // The whole frame was non-transparent, so it's possible that the entire
+        // resulting buffer was non-transparent, and we can setHasAlpha(false).
+        if (buffer.rect().contains(IntRect(IntPoint(0, 0), m_size))) {
+            buffer.setHasAlpha(false);
+        } else if (frameIndex > 0) {
+            // Tricky case.  This frame does not have alpha only if everywhere
+            // outside its rect doesn't have alpha.  To know whether this is
+            // true, we check the start state of the frame -- if it doesn't have
+            // alpha, we're safe.
+            //
+            // First skip over prior DisposeOverwritePrevious frames (since they
+            // don't affect the start state of this frame) the same way we do in
+            // initFrameBuffer().
+            const RGBA32Buffer* prevBuffer = &m_frameBufferCache[--frameIndex];
+            while ((frameIndex > 0) &&
+                    (prevBuffer->disposalMethod() ==
+                        RGBA32Buffer::DisposeOverwritePrevious))
+                prevBuffer = &m_frameBufferCache[--frameIndex];
+
+            // Now, if we're at a DisposeNotSpecified or DisposeKeep frame, then
+            // we can say we have no alpha if that frame had no alpha.  But
+            // since in initFrameBuffer() we already copied that frame's alpha
+            // state into the current frame's, we need do nothing at all here.
+            //
+            // The only remaining case is a DisposeOverwriteBgcolor frame.  If
+            // it had no alpha, and its rect is contained in the current frame's
+            // rect, we know the current frame has no alpha.
+            if ((prevBuffer->disposalMethod() ==
+                    RGBA32Buffer::DisposeOverwriteBgcolor) &&
+                    !prevBuffer->hasAlpha() &&
+                    buffer.rect().contains(prevBuffer->rect()))
+                buffer.setHasAlpha(false);
+        }
+    }
 }
 
 void GIFImageDecoder::gifComplete()
