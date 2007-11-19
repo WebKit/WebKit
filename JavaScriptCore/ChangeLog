@@ -1,3 +1,12 @@
+2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Remove outdated and unused Windows port files.
+
+        Reviewed by Adam Roben.
+
+        * Makefile.vc: Removed.
+        * README-Win32.txt: Removed.
+
 2007-11-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
