@@ -1,3 +1,15 @@
+2007-11-13  Rahul Abrol  <ra5ul@comcast.net>
+
+        Reviewed by Tim Hatcher.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15977
+        Resizing images preference now toggles default image state.
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        (WebCore::ImageDocument::createDocumentStructure):
+        (WebCore::ImageDocument::imageChanged):
+
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         Update wx port build sources with recent changes, update

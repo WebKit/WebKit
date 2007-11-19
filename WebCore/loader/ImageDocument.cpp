@@ -128,7 +128,7 @@ ImageDocument::ImageDocument(DOMImplementation* implementation, Frame* frame)
     , m_imageElement(0)
     , m_imageSizeIsKnown(false)
     , m_didShrinkImage(false)
-    , m_shouldShrinkImage(true)
+    , m_shouldShrinkImage(shouldShrinkToFit())
 {
     setParseMode(Compat);
 }
@@ -158,9 +158,6 @@ void ImageDocument::createDocumentStructure()
     m_imageElement->setSrc(URL());
     
     body->appendChild(imageElement, ec);
-    
-    if (!shouldShrinkToFit())
-        return;
     
     // Add event listeners
     RefPtr<EventListener> listener = new ImageEventListener(this);
@@ -225,9 +222,6 @@ void ImageDocument::imageChanged()
         return;
     
     m_imageSizeIsKnown = true;
-    
-    if (!shouldShrinkToFit())
-        return;
     
     // Force resizing of the image
     windowSizeChanged();
