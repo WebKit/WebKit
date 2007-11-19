@@ -842,7 +842,11 @@ void QWebPage::paintEvent(QPaintEvent *ev)
 
 void QWebPage::mouseMoveEvent(QMouseEvent *ev)
 {
-    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
+    QWebFrame *f = d->currentFrame(ev->pos());
+    if (!f)
+        return;
+
+    QWebFramePrivate *frame = f->d;
     if (!frame->frameView)
         return;
 
@@ -863,6 +867,9 @@ void QWebPage::mouseMoveEvent(QMouseEvent *ev)
 void QWebPage::mousePressEvent(QMouseEvent *ev)
 {
     d->frameUnderMouse = d->frameAt(ev->pos());
+    if (!d->frameUnderMouse)
+        return;
+
     QWebFramePrivate *frame = d->frameUnderMouse->d;
     if (!frame->eventHandler)
         return;
@@ -875,7 +882,11 @@ void QWebPage::mousePressEvent(QMouseEvent *ev)
 
 void QWebPage::mouseDoubleClickEvent(QMouseEvent *ev)
 {
-    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
+    QWebFrame *f = d->currentFrame(ev->pos());
+    if (!f)
+        return;
+
+    QWebFramePrivate *frame = f->d;
     if (!frame->eventHandler)
         return;
 
@@ -887,21 +898,31 @@ void QWebPage::mouseDoubleClickEvent(QMouseEvent *ev)
 
 void QWebPage::mouseReleaseEvent(QMouseEvent *ev)
 {
-    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
-    if (frame->frameView) {
-        frame->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+    QWebFrame *f = d->currentFrame(ev->pos());
+    if (!f)
+        return;
 
-        //FIXME need to keep track of subframe focus for key events!
-        frame->page->setFocus();
-    }
+    QWebFramePrivate *frame = f->d;
+    if (!frame->frameView)
+        return;
+
+    frame->eventHandler->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+
+    //FIXME need to keep track of subframe focus for key events!
+    frame->page->setFocus();
     d->frameUnderMouse = 0;
 }
 
 void QWebPage::contextMenuEvent(QContextMenuEvent *ev)
 {
-    QWebFramePrivate *frame = d->currentFrame(ev->pos())->d;
+    QWebFrame *f = d->currentFrame(ev->pos());
+    if (!f)
+        return;
+
+    QWebFramePrivate *frame = f->d;
     if (!frame->eventHandler)
         return;
+
     d->page->contextMenuController()->clearContextMenu();
     frame->eventHandler->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
     ContextMenu *menu = d->page->contextMenuController()->contextMenu();
