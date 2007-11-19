@@ -171,7 +171,7 @@ sub determineConfigurationProductDir
 {
     return if defined $configurationProductDir;
     determineBaseProductDir();
-    if(isCygwin()) {
+    if(isCygwin() && !isWx()) {
         $configurationProductDir = "$baseProductDir/bin";
     } else {
         determineConfiguration();

@@ -37,9 +37,8 @@ WK_ROOTDIR=$WK_ROOT
 
 cd $scriptDir
 
-export WXWEBKIT=1
 if [ -z $WEBKITOUTPUTDIR ]; then
-    WEBKITOUTPUTDIR=`cd $WK_ROOT/WebKitTools/Scripts; perl -e "use webkitdirs; print baseProductDir()"`
+    WEBKITOUTPUTDIR=`cd $WK_ROOT/WebKitTools/Scripts; perl -e "use webkitdirs; print productDir()"`
 fi
 
 WINDEPS="pthreads/lib/pthreadVC2.dll icu/bin/icuuc34.dll icu/bin/icudt34.dll libcurl/*.dll sqlite3/sqlite3.dll"
@@ -145,6 +144,9 @@ function do_make {
         cd $olddir
     else
         make -C $dir -f GNUmakefile $MAKE_ARGS CXXFLAGS="$cxxflags" $@
+    fi
+    if [ $? != 0 ]; then
+        exit $? 
     fi
 }
 
@@ -308,13 +310,11 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         echo ""
         echo "Next steps:"
         echo ""
-        echo "-- Add WXWEBKIT=1 to your environment variables. This will let WebKit scripts know you're using the wx build."
-        echo ""
         if [ "${OSTYPE:0:5}" = "linux" ]; then
             echo "-- Add /usr/local/lib and $WEBKITOUTPUTDIR to your LD_LIBRARY_PATH environment variable."
             echo ""
         fi
-        echo "-- Run the 'run-javascriptcore-tests' script to ensure JSCore tests pass."
+        echo "-- Run '$WK_ROOT/WebKitTools/Scripts/run-javascriptcore-tests --wx' to ensure JSCore tests pass."
         echo ""
         echo "-- Run $WEBKITOUTPUTDIR/$BROWSERAPP to test your wxWebKit build."
         echo ""

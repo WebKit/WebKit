@@ -45,7 +45,7 @@ if (isOSX()) {
     $result = system "sh", "-c", 'xcodebuild -project JavaScriptCore.xcodeproj -target testkjs "$@" | grep -v setenv && exit ${PIPESTATUS[0]}', "xcodebuild",  @options, @ARGV;
 } elsif (isCygwin()) {
     $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
-} elsif (isQt() or isGtk()) {
+} elsif (isQt() or isGtk() or isWx()) {
     # Qt and Gtk build everything in one-shot. No need to build anything here.
     $result = 0;
 } else {

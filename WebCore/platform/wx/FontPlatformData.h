@@ -33,11 +33,13 @@
 #include "AtomicString.h"
 #include "StringImpl.h"
 
-class wxFont;
+#include <wx/defs.h>
+#include <wx/font.h>
 
 namespace WebCore {
 
-struct FontPlatformData {
+class FontPlatformData {
+public:
     class Deleted {};
 
     FontPlatformData(Deleted)
@@ -61,8 +63,9 @@ struct FontPlatformData {
     wxFont* font() const { return m_font; }
     
     unsigned hash() const
-    { 
-        return StringImpl::computeHash((UChar*)0, 0);
+    {
+        uintptr_t hashCodes[1] = { reinterpret_cast<uintptr_t>(m_font) };
+        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
     }
 
     bool operator==(const FontPlatformData& other) const

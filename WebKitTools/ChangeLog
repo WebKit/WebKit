@@ -1,3 +1,17 @@
+2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build script fixes to ensure they do the right thing for the 
+        wx port, and update build-wxwebkit to reflect the way the
+        build scripts now work.
+
+        Reviewed by Adam.
+
+        * Scripts/build-testkjs:
+        * Scripts/build-webkit:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/webkitdirs.pm:
+        * wx/build-wxwebkit:
+
 2007-11-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Anders.

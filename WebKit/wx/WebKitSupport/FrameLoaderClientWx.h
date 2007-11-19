@@ -31,8 +31,8 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoader.h"
 #include "KURL.h"
+#include "RefCounted.h"
 #include "ResourceResponse.h"
-#include "Shared.h"
 
 
 namespace WebCore {
@@ -47,7 +47,7 @@ namespace WebCore {
 
     struct LoadErrorResetToken;
 
-    class FrameLoaderClientWx : public FrameLoaderClient, public Shared<FrameLoaderClientWx> {
+    class FrameLoaderClientWx : public FrameLoaderClient, public RefCounted<FrameLoaderClientWx> {
     public:
         FrameLoaderClientWx();
         ~FrameLoaderClientWx();

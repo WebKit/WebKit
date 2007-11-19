@@ -1,3 +1,15 @@
+2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Update wx port build sources with recent changes, update
+        wx FontPlatformData to be a class (MSVC7 gets confused
+        otherwise...) and implement its hash() method.
+
+        Reviewed by Adam.
+
+        * WebCoreSources.bkl:
+        * platform/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+
 2007-11-19  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Darin.

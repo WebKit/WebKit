@@ -40,8 +40,11 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSCSSRuleCustom.cpp
         bindings/js/JSCSSStyleDeclarationCustom.cpp
         bindings/js/JSCSSValueCustom.cpp
-        bindings/js/JSCustomSQLCallback.cpp
-        bindings/js/JSCustomVersionChangeCallback.cpp
+        bindings/js/JSCustomSQLStatementCallback.cpp
+        bindings/js/JSCustomSQLStatementErrorCallback.cpp
+        bindings/js/JSCustomSQLTransactionCallback.cpp
+        bindings/js/JSCustomSQLTransactionErrorCallback.cpp
+        bindings/js/JSCustomVoidCallback.cpp
         bindings/js/JSCustomXPathNSResolver.cpp
         bindings/js/JSDatabaseCustom.cpp
         bindings/js/JSDOMExceptionConstructor.cpp
@@ -51,6 +54,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSEventCustom.cpp
         bindings/js/JSEventTargetNode.cpp
         bindings/js/JSHTMLAppletElementCustom.cpp
+        bindings/js/JSHTMLAudioElementConstructor.cpp
         bindings/js/JSHTMLCollectionCustom.cpp
         bindings/js/JSHTMLDocumentCustom.cpp
         bindings/js/JSHTMLElementCustom.cpp
@@ -73,6 +77,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSNodeIteratorCustom.cpp
         bindings/js/JSNodeListCustom.cpp
         bindings/js/JSSQLResultSetRowListCustom.cpp
+        bindings/js/JSSQLTransactionCustom.cpp
         bindings/js/JSStyleSheetCustom.cpp
         bindings/js/JSStyleSheetListCustom.cpp
         bindings/js/JSTreeWalkerCustom.cpp
@@ -251,9 +256,10 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSRangeException.cpp
         DerivedSources/WebCore/JSRect.cpp
         DerivedSources/WebCore/JSScreen.cpp
-        DerivedSources/WebCore/JSSQLCallback.cpp
+        DerivedSources/WebCore/JSSQLError.cpp
         DerivedSources/WebCore/JSSQLResultSet.cpp
         DerivedSources/WebCore/JSSQLResultSetRowList.cpp
+        DerivedSources/WebCore/JSSQLTransaction.cpp
         DerivedSources/WebCore/JSStyleSheet.cpp
         DerivedSources/WebCore/JSStyleSheetList.cpp
         DerivedSources/WebCore/JSText.cpp
@@ -555,6 +561,7 @@ This file contains the list of files needed to build WebCore.
         platform/RegularExpression.cpp
         platform/ScrollBar.cpp
         platform/SecurityOrigin.cpp
+        platform/SecurityOriginData.cpp
         platform/SegmentedString.cpp
         platform/SharedBuffer.cpp
         platform/String.cpp
@@ -592,23 +599,12 @@ This file contains the list of files needed to build WebCore.
         platform/network/ProtectionSpace.cpp
         platform/network/ResourceHandle.cpp
         platform/network/ResourceRequestBase.cpp
-        platform/network/ResourceResponse.cpp
+        platform/network/ResourceResponseBase.cpp
         platform/sql/SQLiteAuthorizer.cpp
         platform/sql/SQLiteDatabase.cpp
         platform/sql/SQLiteStatement.cpp
         platform/sql/SQLiteTransaction.cpp
         platform/sql/SQLValue.cpp
-    </set>
-    
-    <set append="1" var="WEBCORE_SOURCES_STORAGE">
-        storage/Database.cpp
-        storage/DatabaseAuthorizer.cpp
-        storage/DatabaseCallback.cpp
-        storage/DatabaseTask.cpp
-        storage/DatabaseThread.cpp
-        storage/DatabaseTracker.cpp
-        storage/SQLResultSet.cpp
-        storage/SQLResultSetRowList.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_GIF">
@@ -650,7 +646,6 @@ This file contains the list of files needed to build WebCore.
     <set append="1" var="WEBCORE_SOURCES_XBM">
         platform/image-decoders/xbm/XBMImageDecoder.cpp
     </set>
-
 
     <set append="1" var="WEBCORE_SOURCES_RENDERING">
         rendering/AutoTableLayout.cpp
@@ -708,6 +703,19 @@ This file contains the list of files needed to build WebCore.
         rendering/RootInlineBox.cpp
         rendering/bidi.cpp
         rendering/break_lines.cpp
+    </set>
+
+    <set append="1" var="WEBCORE_SOURCES_STORAGE">
+        storage/ChangeVersionWrapper.cpp
+        storage/Database.cpp
+        storage/DatabaseAuthorizer.cpp
+        storage/DatabaseTask.cpp
+        storage/DatabaseThread.cpp
+        storage/DatabaseTracker.cpp
+        storage/SQLResultSet.cpp
+        storage/SQLResultSetRowList.cpp
+        storage/SQLStatement.cpp
+        storage/SQLTransaction.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_XML">

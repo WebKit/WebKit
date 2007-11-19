@@ -1,3 +1,20 @@
+2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Add pcre directory to JSCore includes, and update the wx port
+        to reflect the Shared -> RefCounted name change. Also, fix
+        WebFrame.cpp to re-enable code that should never have been 
+        committed disabled. 
+
+        Reviewed by Adam.
+
+        * WebFrame.cpp:
+        (wxWebFrame::wxWebFrame):
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::ref):
+        (WebCore::FrameLoaderClientWx::deref):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        * presets/wxwebkit.bkl:
+
 2007-11-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

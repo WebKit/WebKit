@@ -83,6 +83,7 @@ chdirWebKit();
 # FIXME: Migrate build-wxwebkit commands into build-webkit.
 if (isWx()) {
     my @opts = ();
+    $ENV{"WEBKITOUTPUTDIR"} = productDir();
     foreach (@ARGV) {
         if ($_ eq "wxgc" || $_ eq "wxpython") {
             push(@opts, $_);
@@ -92,7 +93,7 @@ if (isWx()) {
         push(@opts, "clean");
     }
     system "WebKitTools/wx/build-wxwebkit @opts";
-    exit 0;
+    exit exitStatus($?);
 }
 
 

@@ -65,7 +65,7 @@ foreach my $arg(@ARGV) {
     print $arg."\n";
     if( $arg =~ /root=(.*)/ ){
         $root = $1;
-    } elsif( $arg =~ /^--gtk$/i || $arg =~ /^--qt$/i ){
+    } elsif( $arg =~ /^--gtk$/i || $arg =~ /^--qt$/i || $arg =~ /^--wx$/i ){
     } elsif( $arg =~ /^-/ or !($arg =~/=/)){
         push( @jsArgs, $arg );
     } else {
@@ -83,6 +83,7 @@ if(!defined($root)){
     # FIXME: These should be stored per-config and ignored here
     push(@xcodeArgs, "--qt")  if isQt();
     push(@xcodeArgs, "--gtk")  if isGtk();
+    push(@xcodeArgs, "--wx")  if isWx();
 
     my $buildResult = system "perl", "WebKitTools/Scripts/build-testkjs", @xcodeArgs;
     if ($buildResult) {

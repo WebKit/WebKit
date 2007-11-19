@@ -131,7 +131,7 @@ wxWebFrame::wxWebFrame(const wxString& title) :
 
     // ... and attach this menu bar to the frame
     SetMenuBar(menuBar);
-/*
+    
     wxToolBar* toolbar = CreateToolBar();
     toolbar->SetToolBitmapSize(wxSize(32, 32));
     
@@ -149,7 +149,7 @@ wxWebFrame::wxWebFrame(const wxString& title) :
     toolbar->Realize();
     
     SetToolBar(toolbar);
-*/
+
     // Create the wxWebView Window
     webview = new wxWebView((wxWindow*)this, 1001, wxDefaultPosition, wxSize(200, 200));
     webview->SetBackgroundColour(*wxWHITE);
