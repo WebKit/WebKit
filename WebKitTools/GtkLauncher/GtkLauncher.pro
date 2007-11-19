@@ -1,5 +1,5 @@
 TEMPLATE = app
-SOURCES += main.cpp
+SOURCES += main.c
 CONFIG -= app_bundle
 
 BASE_DIR = $$PWD/../..

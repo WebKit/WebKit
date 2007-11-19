@@ -1,3 +1,38 @@
+2007-11-19  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16040
+        [GTK] GtkLauncher should be written in C
+
+        Port GtkLauncher to plain C.
+
+        Use a more conventional GTK+ coding style.
+
+        Use a toolbar instead of menus.
+
+        Various signature fixes and cleanups.
+
+        Add a license header. Assume all previous modifications were copyright
+        assigned to Apple Inc. by default.
+
+        * GtkLauncher/GtkLauncher.pro:
+        * GtkLauncher/main.c: Added.
+        (activate_url_entry_cb):
+        (update_title):
+        (link_hover_cb):
+        (title_change_cb):
+        (progress_change_cb):
+        (destroy_cb):
+        (go_back_cb):
+        (go_forward_cb):
+        (create_browser):
+        (create_statusbar):
+        (create_toolbar):
+        (create_window):
+        (main):
+        * GtkLauncher/main.cpp: Removed.
+
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build script fixes to ensure they do the right thing for the 
