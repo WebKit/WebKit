@@ -1,3 +1,9 @@
+2007-11-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        * tests/mozilla/jsDriver.pl: exit non-0 when user aborts test run
+
 2007-11-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

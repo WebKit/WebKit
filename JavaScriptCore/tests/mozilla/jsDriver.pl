@@ -1180,8 +1180,8 @@ sub numericcmp($$)
     my @b = split /(\d+)/, $bb;
 
     while (@a && @b) {
-	my $a = shift @a;
-	my $b = shift @b;
+    my $a = shift @a;
+    my $b = shift @b;
         return $a <=> $b if $a =~ /^\d/ && $b =~ /^\d/ && $a != $b;
         return $a cmp $b if $a ne $b;
     }
@@ -1315,7 +1315,7 @@ sub int_handler {
     
     if ($resp =~ /[Qq]/) {
         print ("User Exit.  No results were generated.\n");
-        exit;
+        exit 1;
     } elsif ($resp =~ /[Rr]/) {
         $user_exit = 1;
     }
