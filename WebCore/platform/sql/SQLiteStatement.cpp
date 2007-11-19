@@ -50,7 +50,7 @@ int SQLiteStatement::prepare()
 {    
     const void* tail;
     LOG(SQLDatabase, "SQL - prepare - %s", m_query.ascii().data());
-#if SQLITE_VERSION_NUMBER > 3003000 
+#if SQLITE_VERSION_NUMBER >= 3003009
     if (sqlite3_prepare16_v2(m_database.sqlite3Handle(), m_query.characters(), -1, &m_statement, &tail) != SQLITE_OK) {
 #else
     if (sqlite3_prepare16(m_database.sqlite3Handle(), m_query.characters(), -1, &m_statement, &tail) != SQLITE_OK) {
