@@ -34,7 +34,7 @@ namespace WebCore {
 
 class DatabaseDetails {
 public:
-    DatabaseDetails::DatabaseDetails()
+    DatabaseDetails()
         : m_expectedUsage(0)
         , m_currentUsage(0)
     { }
