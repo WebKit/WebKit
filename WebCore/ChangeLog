@@ -1,3 +1,13 @@
+2007-11-18  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Eric
+
+        Fix a crash hashing a default SecurityOriginData object 
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::SecurityOriginDataHash::hash): The default object has some default strings with NULL
+          StringImpls - don't try to hash those!
+
 2007-11-18  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam Weinig.
