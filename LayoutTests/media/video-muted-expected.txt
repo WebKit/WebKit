@@ -1,5 +1,12 @@
+Test 'muted' attribute
+
 TEST(!video.muted) OK
+RUN(video.muted = true)
 TEST(video.muted) OK
+RUN(video.load())
+EVENT(load)
+TEST(video.muted) OK
+RUN(video.muted = false)
 TEST(!video.muted) OK
 END OF TEST
 

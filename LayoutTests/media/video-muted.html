@@ -1,10 +1,16 @@
 <video></video>
+<p>Test 'muted' attribute<p>
 <script src=video-test.js></script>
 <script>
 test("!video.muted");
-video.muted = true;
+run("video.muted = true");
 test("video.muted");
-video.muted = false;
-test("!video.muted");
-endTest();
+video.src = "content/test.mp4";
+run("video.load()");
+waitForEvent("load", function () {
+    test("video.muted");
+    run("video.muted = false");
+    test("!video.muted");
+    endTest();
+});
 </script>

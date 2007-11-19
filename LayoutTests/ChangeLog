@@ -1,3 +1,14 @@
+2007-11-19  Antti Koivisto  <antti@apple.com>
+
+        Rubber-stamped by bdash.
+        
+        Improve coverage of these tests.
+
+        * media/video-muted-expected.txt:
+        * media/video-muted.html:
+        * media/video-volume-expected.txt:
+        * media/video-volume.html:
+
 2007-11-19  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Darin.
