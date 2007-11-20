@@ -66,8 +66,8 @@
                 // Test with 4 arguments. (should ignore the fourth argument silently)
                 test('document.execCommand("InsertHorizontalRule", false, "foo", "bar")', '<hr id="foo"></hr>');
 
-                // Test empty String 3rd parameter. (adds emprty id value)
-                test('document.execCommand("InsertHorizontalRule", false, "")', '<hr id=""></hr>');
+                // Test empty String 3rd parameter. (should not add an empty id value)
+                test('document.execCommand("InsertHorizontalRule", false, "")', '<hr></hr>');
 
                 // Test null 3rd parameter. (should treat as if only two arguments were passed, same as undefined)
                 test('document.execCommand("InsertHorizontalRule", false, null)', '<hr></hr>');

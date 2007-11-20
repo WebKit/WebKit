@@ -6,7 +6,7 @@ PASS <hr></hr> is <hr></hr>
 PASS <hr></hr> is <hr></hr>
 PASS <hr id="foo"></hr> is <hr id="foo"></hr>
 PASS <hr id="foo"></hr> is <hr id="foo"></hr>
-PASS <hr id=""></hr> is <hr id=""></hr>
+PASS <hr></hr> is <hr></hr>
 PASS <hr></hr> is <hr></hr>
 PASS <hr></hr> is <hr></hr>
 PASS <hr id="0"></hr> is <hr id="0"></hr>

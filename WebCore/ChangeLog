@@ -1,3 +1,15 @@
+2007-11-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=16074
+        Bug 16074: execCommand("InsertHorizontalRule", false, "") results in id="" being inserted
+
+        For consistency with InsertOrderedList and InsertUnorderedList a value parameter of "" should
+        not result in an id being set.
+
+        * editing/JSEditor.cpp: Don't set the id attribute if value is empty.
+
 2007-11-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
