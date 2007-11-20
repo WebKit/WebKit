@@ -1,5 +1,11 @@
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx port build fix (wx headers include ctype functions).
+
+        * kjs/config.h:
+
+2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
+
         Remove outdated and unused Windows port files.
 
         Reviewed by Adam Roben.
