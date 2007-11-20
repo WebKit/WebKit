@@ -689,10 +689,9 @@ sub qtMakeCommand($)
     return "make";
 }
 
-sub buildQMakeProject(@)
+sub buildQMakeProject($@)
 {
-    my @buildArgs = @_;
-    my $clean = 0;
+    my ($clean, @buildArgs) = @_;
 
     push @buildArgs, "-r";
 
@@ -703,8 +702,6 @@ sub buildQMakeProject(@)
             $qmakebin = $1;
         } elsif ($opt =~ /^--qmakearg=(.*)/i ) {
             push @buildArgs, $1;
-        } elsif ($opt eq "--clean") {
-            $clean = 1; 
         }
     }
 
@@ -742,30 +739,26 @@ sub buildQMakeProject(@)
     }
 
     if ($clean) {
-      system "$make clean";
+      system "$make distclean";
+    } else {
+      system "$make";
     }
 
-    # There is now a --clean option for build-webkit, but it doesn't build
-    # after cleaning, as WEBKIT_FULLBUILD does. For now, have WEBKIT_FULLBUILD
-    # continue to behave after before.
-    if (!$clean || defined($ENV{"WEBKIT_FULLBUILD"})) {
-        $result = system "$make";
-    }
     chdir ".." or die;
     return $result;
 }
 
-sub buildQMakeQtProject($)
+sub buildQMakeQtProject($$)
 {
-    my ($project) = @_;
+    my ($project, $clean) = @_;
 
     my @buildArgs = ("CONFIG+=qt-port");
-    return buildQMakeProject(@buildArgs);
+    return buildQMakeProject($clean, @buildArgs);
 }
 
-sub buildQMakeGtkProject($)
+sub buildQMakeGtkProject($$)
 {
-    my ($project) = @_;
+    my ($project, $clean) = @_;
 
     if ($project ne "WebKit") {
         die "The Gtk portbuilds JavaScriptCore/WebCore/WebKitQt in one shot! Only call it for 'WebKit'.\n";
@@ -774,7 +767,7 @@ sub buildQMakeGtkProject($)
     my @buildArgs = ("CONFIG+=gtk-port");
     push @buildArgs, "CONFIG-=qt";
 
-    return buildQMakeProject(@buildArgs);
+    return buildQMakeProject($clean, @buildArgs);
 }
 
 sub setPathForRunningWebKitApp

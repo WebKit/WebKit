@@ -1,3 +1,12 @@
+2007-11-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/build-webkit:  Pass "clean" flag down into buildQMakeProject.
+        * Scripts/webkitdirs.pm: Respect the "clean" flag passed down from build-webkit.
+        Have it trigger a "make distclean" rather than "make clean" to ensure that the
+        built product and generated Makefile's are removed.
+
 2007-11-19  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
