@@ -1,3 +1,9 @@
+2007-11-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        * config.h: Change #if to #ifdef to silence warnings on non-Apple platforms.
+
 2007-11-20  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Adam Treat <treat@kde.org>.

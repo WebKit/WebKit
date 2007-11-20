@@ -34,7 +34,7 @@ gtk-port {
     QMAKE_LIBS += $$system(icu-config --ldflags)
 
     # This set of warnings is borrowed from the Mac build
-    QMAKE_CXXFLAGS += -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wundef
+    QMAKE_CXXFLAGS += -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wundef
 }
 
 DEFINES += USE_SYSTEM_MALLOC

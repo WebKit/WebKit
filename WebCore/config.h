@@ -22,7 +22,7 @@
 
 #define MOBILE 0
 
-#if __APPLE__
+#ifdef __APPLE__
 #define HAVE_FUNC_USLEEP 1
 #endif /* __APPLE__ */
 

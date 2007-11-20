@@ -1,3 +1,9 @@
+2007-11-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        * WebKit.pri: Add in -Wno-unused-parameter to silence warnings in WebCore.
+
 2007-11-20  Alp Toker  <alp@atoker.com>
 
         Reviewed by Simon Hausmann.
