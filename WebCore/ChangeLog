@@ -1,3 +1,13 @@
+2007-11-20  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon and George.
+
+        * Be quiet and allow suppression of NotImplemented calls at runtime.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/NotImplemented.h:
+
 2007-11-19  Doug Turner  <dougt@meer.net>
 
         Reviewed by Alp Toker.

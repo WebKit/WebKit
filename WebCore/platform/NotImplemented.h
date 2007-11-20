@@ -38,7 +38,9 @@
 #if PLATFORM(QT)
 
     #include <qglobal.h>
-    #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, WTF_PRETTY_FUNCTION)
+    #define notImplemented() \
+        if (qgetenv("DISABLE_NI_WARNING").isEmpty()) \
+            qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, WTF_PRETTY_FUNCTION)
 
 #elif defined(NDEBUG)
 

@@ -1,3 +1,12 @@
+2007-11-20  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon and George.
+
+        * Be quiet and allow suppression of NotImplemented calls at runtime.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::representationExistsForURLScheme):
+
 2007-11-19  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.

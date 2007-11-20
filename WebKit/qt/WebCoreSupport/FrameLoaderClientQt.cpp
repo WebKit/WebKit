@@ -51,9 +51,7 @@
 
 #include <qfileinfo.h>
 
-#include "qdebug.h"
-
-#define methodDebug() qDebug("FrameLoaderClientQt: %s loader=%p", __FUNCTION__, (m_frame ? m_frame->loader() : 0))
+#include <QDebug>
 
 namespace WebCore
 {
@@ -170,7 +168,7 @@ bool FrameLoaderClientQt::privateBrowsingEnabled() const
 
 void FrameLoaderClientQt::makeDocumentView()
 {
-    qDebug() << "FrameLoaderClientQt::makeDocumentView" << m_frame->document();
+//    qDebug() << "FrameLoaderClientQt::makeDocumentView" << m_frame->document();
 
 //     if (!m_frame->document())
 //         m_frame->loader()->createEmptyDocument();
@@ -347,7 +345,7 @@ void FrameLoaderClientQt::dispatchShow()
 
 void FrameLoaderClientQt::cancelPolicyCheck()
 {
-    qDebug() << "FrameLoaderClientQt::cancelPolicyCheck";
+//    qDebug() << "FrameLoaderClientQt::cancelPolicyCheck";
     m_policyFunction = 0;
 }
 
@@ -487,7 +485,7 @@ bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
 bool FrameLoaderClientQt::representationExistsForURLScheme(const String& URLScheme) const
 {
     notImplemented();
-    qDebug() << "    scheme is" << URLScheme;
+//    qDebug() << "    scheme is" << URLScheme;
     return false;
 }
 
@@ -871,7 +869,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
 
 ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& _mimeType)
 {
-    qDebug()<<" ++++++++++++++++ url is "<<url.prettyURL()<<", mime = "<<_mimeType;
+//    qDebug()<<" ++++++++++++++++ url is "<<url.prettyURL()<<", mime = "<<_mimeType;
     if (_mimeType == "application/x-qt-plugin" || _mimeType == "application/x-qt-styled-widget")
         return ObjectContentOtherPlugin;
 
