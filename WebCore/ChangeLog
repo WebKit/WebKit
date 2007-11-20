@@ -1,3 +1,16 @@
+2007-11-20  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
+        * Don't use so much heap memory.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+
 2007-11-20  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Simon.

@@ -58,7 +58,7 @@ public:
 
     virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
-    const QPixmap* imageAtIndex(size_t index) const;
+    QPixmap* imageAtIndex(size_t index) const;
 
     virtual bool supportsAlpha() const;
 

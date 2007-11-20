@@ -157,12 +157,7 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
     if (!m_decoder)
         return 0;
 
-    
-    const QPixmap* source = m_decoder->imageAtIndex(index);
-    if (!source)
-        return 0;
-
-    return new QPixmap(*source);
+    return m_decoder->imageAtIndex(index);
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)

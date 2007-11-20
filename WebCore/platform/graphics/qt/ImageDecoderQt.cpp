@@ -285,7 +285,7 @@ RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
     return 0;
 }
 
-const QPixmap* ImageDecoderQt::imageAtIndex(size_t index) const
+QPixmap* ImageDecoderQt::imageAtIndex(size_t index) const
 {
     if (debugImageDecoderQt)
         qDebug() << "ImageDecoderQt::imageAtIndex(" << index << ')';
