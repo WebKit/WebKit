@@ -1,3 +1,16 @@
+2007-11-20  George Staikos  <staikos@kde.org>
+
+        Reviewed by Simon Hausmann <hausmann@kde.org>.
+
+        Add an argument to pass the link text in the hovering signal
+        
+
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createMainFrame):
+        (QWebPage::mouseMoveEvent):
+        * Api/qwebpage.h:
+
 2007-11-20  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon and George.
