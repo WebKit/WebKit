@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        Adjust some test result after fixing a bug related to computation
+        of QFont::xHeight() in Qt.
+
+        * platform/qt/css2.1/t040302-c61-ex-len-00-b-a-expected.txt:
+        * platform/qt/css2.1/t1008-c44-ln-box-02-d-ag-expected.txt:
+        * platform/qt/css2.1/t100801-c544-valgn-01-d-ag-expected.txt:
+        * platform/qt/css2.1/t100801-c548-ln-ht-02-b-ag-expected.txt:
+        * platform/qt/css2.1/t1507-c526-font-sz-02-b-a-expected.txt:
+
+2007-11-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
         Fix text break interators.
         
         The break iterators where trying to be smart about the input
