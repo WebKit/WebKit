@@ -887,7 +887,7 @@ sub GenerateHeader
         push(@headerContent, "\@end\n");
     }
 
-    my %alwaysGenerateForNoSVGBuid = map { $_ => 1 } qw(DOMHTMLEmbedElement DOMHTMLObjectElement);
+    my %alwaysGenerateForNoSVGBuild = map { $_ => 1 } qw(DOMHTMLEmbedElement DOMHTMLObjectElement);
 
     if (@privateHeaderAttributes > 0 or @privateHeaderFunctions > 0
             or exists $alwaysGenerateForNoSVGBuild{$className}) {
