@@ -1,3 +1,21 @@
+2007-11-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix text break interators.
+        
+        The break iterators where trying to be smart about the input
+        string and caching their results. Unfortunately a pointer/string length
+        comparison is not good enough in all cases (since some input is stack based
+        temp strings). Removed the caching but at the same time started to use a more
+        efficient constructor of QTextBoundaryFinder that doesn't need to malloc for
+        most strings.
+        
+        Fixes two test cases that test "text-transform: capitalize".
+
+        * platform/qt/css1/text_properties/text-transCapitalize-expected.txt:
+        * platform/qt/fast/css/textCapitalizeEdgeCases-expected.txt:
+
 2007-11-19  Antti Koivisto  <antti@apple.com>
 
         Rubber-stamped by bdash.

@@ -1,3 +1,24 @@
+2007-11-20  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix text break interators.
+        
+        The break iterators where trying to be smart about the input
+        string and caching their results. Unfortunately a pointer/string length
+        comparison is not good enough in all cases (since some input is stack based
+        temp strings). Removed the caching but at the same time started to use a more
+        efficient constructor of QTextBoundaryFinder that doesn't need to malloc for
+        most strings.
+        
+        Fixes two test cases that test "text-transform: capitalize".
+
+        * platform/qt/TextBreakIteratorQt.cpp:
+        (WebCore::wordBreakIterator):
+        (WebCore::characterBreakIterator):
+        (WebCore::lineBreakIterator):
+        (WebCore::sentenceBreakIterator):
+
 2007-11-20  Adam Treat  <treat@kde.org>
 
         * Build in release mode
