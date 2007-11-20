@@ -59,6 +59,7 @@ static String keyIdentifierForGdkKeyCode(guint keyCode)
             // "Enter"
         case GDK_ISO_Enter:
         case GDK_KP_Enter:
+        case GDK_Return:
             return "Enter";
         case GDK_Execute:
             return "Execute";
@@ -135,6 +136,8 @@ static String keyIdentifierForGdkKeyCode(guint keyCode)
             // Standard says that DEL becomes U+007F.
         case GDK_Delete:
             return "U+007F";
+        case GDK_ISO_Left_Tab:
+        case GDK_3270_BackTab:
         case GDK_Tab:
             return "U+0009";
         default:
@@ -178,6 +181,8 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
         case GDK_BackSpace:
             return VK_BACK; // (08) BACKSPACE key
+        case GDK_ISO_Left_Tab:
+        case GDK_3270_BackTab:
         case GDK_Tab:
             return VK_TAB; // (09) TAB key
         case GDK_Clear:
@@ -476,7 +481,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     , m_autoRepeat(false)
     , m_WindowsKeyCode(windowsKeyCodeForKeyEvent(event->keyval))
     , m_isKeypad(false)
-    , m_shiftKey(event->state & GDK_SHIFT_MASK)
+    , m_shiftKey((event->state & GDK_SHIFT_MASK) || (event->keyval == GDK_3270_BackTab))
     , m_ctrlKey(event->state & GDK_CONTROL_MASK)
     , m_altKey(event->state & GDK_MOD1_MASK)
     , m_metaKey(event->state & GDK_MOD2_MASK)

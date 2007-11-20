@@ -1,3 +1,17 @@
+2007-11-20  Naiem Shaik  <naiem.shaik@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15763
+        [GTK] Enter key does not take to the link highlighted.
+
+        Add missing keycode cases.
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::keyIdentifierForGdkKeyCode):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2007-11-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
