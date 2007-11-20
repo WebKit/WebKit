@@ -1,5 +1,29 @@
 2007-11-19  Doug Turner  <dougt@meer.net>
 
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16054
+        Crash when GlyphPage::fill is called with more than 256 bytes of data
+
+        http://bugs.webkit.org/show_bug.cgi?id=14446
+        [GDK] Crash on http://www.wikipedia.org/
+
+        setGlyphDataForIndex() uses a fixed array of size 256 which we can't
+        exceed. We need to return failure if the buffer has Unicode
+        supplementary characters for now.
+
+        This strategy matches the Win port, which also doesn't support this
+        case yet.
+
+        Add an assertion so nobody makes this mistake again.
+
+        * platform/GlyphPageTreeNode.h:
+        (WebCore::GlyphPage::setGlyphDataForIndex):
+        * platform/gtk/GlyphPageTreeNodeGtk.cpp:
+        (WebCore::GlyphPage::fill):
+
+2007-11-19  Doug Turner  <dougt@meer.net>
+
         Reviewed by Timothy Hatcher.
 
         http://bugs.webkit.org/show_bug.cgi?id=16050

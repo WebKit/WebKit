@@ -78,6 +78,7 @@ struct GlyphPage : public RefCounted<GlyphPage> {
     }
     void setGlyphDataForIndex(unsigned index, Glyph g, const FontData* f)
     {
+        ASSERT(index < size);
         m_glyphs[index].glyph = g;
         m_glyphs[index].fontData = f;
     }

@@ -37,12 +37,17 @@ namespace WebCore {
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
+    // The bufferLength will be greater than the glyph page size if the buffer has Unicode supplementary characters.
+    // We won't support this for now.
+    if (bufferLength > GlyphPage::size)
+        return false;
+
     FT_Face face = cairo_ft_scaled_font_lock_face(fontData->m_font.m_scaledFont);
     if (!face)
         return false;
 
     bool haveGlyphs = false;
-    for (unsigned i = 0; i < bufferLength; i++) {
+    for (unsigned i = 0; i < GlyphPage::size; i++) {
         Glyph glyph = FcFreeTypeCharIndex(face, buffer[i]);
         if (!glyph)
             setGlyphDataForIndex(i, 0, 0);
