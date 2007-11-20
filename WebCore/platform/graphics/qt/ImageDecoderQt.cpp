@@ -35,10 +35,6 @@
 #include <QtGui/QImageReader>
 #include <qdebug.h>
 
-#if !defined(Q_OS_WIN)
-Q_IMPORT_PLUGIN(qtwebico) //For ico format...
-#endif
-
 namespace {
     const  QImage::Format DesiredFormat = QImage::Format_ARGB32;
     const  bool debugImageDecoderQt = false;

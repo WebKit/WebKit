@@ -69,10 +69,6 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 #LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
 qt-port {
-!win32-* {
-    LIBS += -L$$OUTPUT_DIR/WebKit/qt/Plugins
-    LIBS += -lqtwebico
-}
 
 INCLUDEPATH += \
                 $$PWD/platform/qt \

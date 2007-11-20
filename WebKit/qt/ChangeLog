@@ -1,5 +1,16 @@
 2007-11-20  Simon Hausmann  <hausmann@kde.org>
 
+        Reviewed by Adam Treat <treat@kde.org>.
+
+        Remove static linkage of QtWebKit against the ICO image format plugin.
+        
+        Instead build the support for the ICO image format as a proper standalone qt image format plugin and install it.
+        
+
+        * Plugins/Plugins.pro:
+
+2007-11-20  Simon Hausmann  <hausmann@kde.org>
+
         Reviewed by George Staikos <staikos@kde.org>.
 
         Added a default argument to textContent for the hoveringOverLink signal to keep existing two-argument connections working
