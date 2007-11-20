@@ -207,7 +207,7 @@ signals:
      * if any, and third is the text content. Method is emitter with both
      * empty parameters when the mouse isn't hovering over any link element.
      */
-    void hoveringOverLink(const QString &link, const QString &title, const QString &textContent);
+    void hoveringOverLink(const QString &link, const QString &title, const QString &textContent = QString());
     /**
      * Signal is emitted when the statusbar text is changed by the page.
      */
