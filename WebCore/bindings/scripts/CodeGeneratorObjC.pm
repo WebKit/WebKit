@@ -887,7 +887,10 @@ sub GenerateHeader
         push(@headerContent, "\@end\n");
     }
 
-    if (@privateHeaderAttributes > 0 or @privateHeaderFunctions > 0) {
+    my %alwaysGenerateForNoSVGBuid = map { $_ => 1 } qw(DOMHTMLEmbedElement DOMHTMLObjectElement);
+
+    if (@privateHeaderAttributes > 0 or @privateHeaderFunctions > 0
+            or exists $alwaysGenerateForNoSVGBuild{$className}) {
         # - Private category @interface
         @privateHeaderContentHeader = split("\r", $headerLicenceTemplate);
         push(@headerContentHeader, "\n");

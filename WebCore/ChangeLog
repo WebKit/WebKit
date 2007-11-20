@@ -1,3 +1,13 @@
+2007-11-20  David D. Kilzer  <ddkilzer@webkit.org>
+
+        no-svg build broken after r27278
+        <http://bugs.webkit.org/show_bug.cgi?id=16061>
+
+        Reviewed by Eric.
+
+        * bindings/scripts/CodeGeneratorObjC.pm: Always generate DOMHTMLEmbedElementPrivate.h
+        and DOMHTMLObjectElementPrivate.h for no-svg build.
+
 2007-11-20  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.
