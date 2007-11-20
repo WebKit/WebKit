@@ -21,6 +21,21 @@
 
 2007-11-20  Adam Treat  <treat@kde.org>
 
+        Reviewed by George.
+
+        * Make gif animations work for instance.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::reset):
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::frameCount):
+        (WebCore::ImageDecoderQt::repetitionCount):
+        * platform/graphics/qt/ImageDecoderQt.h:
+
+2007-11-20  Adam Treat  <treat@kde.org>
+
         * Build in release mode
 
         WARNING: NO TEST CASES ADDED OR CHANGED

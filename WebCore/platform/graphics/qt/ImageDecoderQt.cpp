@@ -72,6 +72,8 @@ public:
     // a few images might have been read.
     ReadResult read(bool allDataReceived);
 
+    QImageReader *reader() { return &m_reader; }
+
 private:
     enum IncrementalReadResult { IncrementalReadFailed, IncrementalReadPartial, IncrementalReadComplete };
     // Incrementally read an image
@@ -201,6 +203,7 @@ void ImageDecoderQt::reset()
     m_imageList.clear();
     m_pixmapCache.clear();
     m_sizeAvailable = false;
+    m_loopCount = cAnimationNone;
     m_size = IntSize(-1, -1);
 }
 
@@ -228,6 +231,13 @@ void ImageDecoderQt::setData(const IncomingData &data, bool allDataReceived)
         if (hasFirstImageHeader()) {
             m_sizeAvailable = true;
             m_size = m_imageList[0].m_image.size();
+
+            if (readContext.reader()->supportsAnimation()) {
+                if (readContext.reader()->loopCount() != -1)
+                    m_loopCount = readContext.reader()->loopCount();
+                else
+                    m_loopCount = 0; //loop forever
+            }
         }
         break;
     }
@@ -243,14 +253,17 @@ bool ImageDecoderQt::isSizeAvailable() const
 
 int ImageDecoderQt::frameCount() const
 {
+    if (debugImageDecoderQt)
+        qDebug() << " ImageDecoderQt::frameCount() returns" << m_imageList.size();
     return m_imageList.size();
 }
 
 
 int ImageDecoderQt::repetitionCount() const
 {
-    // TODO: Am I Moses?!
-    return cAnimationNone;
+    if (debugImageDecoderQt)
+        qDebug() << " ImageDecoderQt::repetitionCount() returns" << m_loopCount;
+    return m_loopCount;
 }
 
 
