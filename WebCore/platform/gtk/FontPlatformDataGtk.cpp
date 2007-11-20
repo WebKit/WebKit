@@ -60,7 +60,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     FcPattern* pattern = FcPatternCreate();
     cairo_font_face_t* fontFace;
     cairo_font_options_t* options;
-    cairo_matrix_t* fontMatrix;
+    cairo_matrix_t fontMatrix;
 
     if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
         goto freePattern;
@@ -99,15 +99,13 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     if (!m_pattern)
         goto freePattern;
     fontFace = cairo_ft_font_face_create_for_pattern(m_pattern);
-    fontMatrix = reinterpret_cast<cairo_matrix_t*>(malloc(sizeof(cairo_matrix_t)));
     cairo_matrix_t ctm;
-    cairo_matrix_init_scale(fontMatrix, m_fontDescription.computedSize(), m_fontDescription.computedSize());
+    cairo_matrix_init_scale(&fontMatrix, m_fontDescription.computedSize(), m_fontDescription.computedSize());
     cairo_matrix_init_identity(&ctm);
     options = cairo_font_options_create();
-    m_scaledFont = cairo_scaled_font_create(fontFace, fontMatrix, &ctm, options);
+    m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
     cairo_font_face_destroy(fontFace);
     cairo_font_options_destroy(options);
-    free(fontMatrix);
 
 freePattern:
     FcPatternDestroy(pattern);
