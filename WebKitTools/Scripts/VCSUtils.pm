@@ -29,6 +29,7 @@
 use strict;
 use warnings;
 use File::Spec;
+use webkitdirs;
 
 BEGIN {
    use Exporter   ();
@@ -44,6 +45,8 @@ our @EXPORT_OK;
 
 my $isGit;
 my $isSVN;
+my $gitBranch;
+my $isGitBranchBuild;
 
 sub isGitDirectory($)
 {
@@ -57,6 +60,33 @@ sub isGit()
 
     $isGit = isGitDirectory(".");
     return $isGit;
+}
+
+sub gitBranch()
+{
+    unless (defined $gitBranch) {
+        chomp($gitBranch = `git symbolic-ref -q HEAD`);
+        $gitBranch = "" if exitStatus($?);
+        $gitBranch =~ s#^refs/heads/##;
+        $gitBranch = "" if $gitBranch eq "master";
+    }
+
+    return $gitBranch;
+}
+
+sub isGitBranchBuild()
+{
+    my $branch = gitBranch();
+    chomp(my $override = `git config --bool branch.$branch.webKitBranchBuild`);
+    return 1 if $override eq "true";
+    return 0 if $override eq "false";
+
+    unless (defined $isGitBranchBuild) {
+        chomp(my $gitBranchBuild = `git config --bool core.webKitBranchBuild`);
+        $isGitBranchBuild = $gitBranchBuild eq "true";
+    }
+
+    return $isGitBranchBuild;
 }
 
 sub isSVNDirectory($)

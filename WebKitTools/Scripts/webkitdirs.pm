@@ -31,6 +31,7 @@ use warnings;
 use FindBin;
 use File::Basename;
 use POSIX;
+use VCSUtils;
 
 BEGIN {
    use Exporter   ();
@@ -124,6 +125,12 @@ sub determineBaseProductDir
 
     if (!defined($baseProductDir)) {
         $baseProductDir = "$sourceDir/WebKitBuild";
+
+        if (isGit() && isGitBranchBuild()) {
+            my $branch = gitBranch();
+            $baseProductDir = "$baseProductDir/$branch";
+        }
+
         @baseProductDirOption = ("SYMROOT=$baseProductDir", "OBJROOT=$baseProductDir") if (isOSX());
         if (isCygwin()) {
             my $dosBuildPath = `cygpath --windows \"$baseProductDir\"`;
@@ -721,11 +728,17 @@ sub buildQMakeProject($@)
 
     my $dir = baseProductDir();
     if (! -d $dir) {
-        mkdir $dir or die "Failed to create product directory " . $dir;
+        system "mkdir", "-p", "$dir";
+        if (! -d $dir) {
+            die "Failed to create product directory " . $dir;
+        }
     }
     $dir = $dir . "/$config";
     if (! -d $dir) {
-        mkdir $dir or die "Failed to create build directory " . $dir;
+        system "mkdir", "-p", "$dir";
+        if (! -d $dir) {
+            die "Failed to create build directory " . $dir;
+        }
     }
 
     chdir $dir or die "Failed to cd into " . $dir . "\n";
