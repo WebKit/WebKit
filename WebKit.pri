@@ -13,11 +13,29 @@ qt-port:!building-libs {
     LIBS += -lQtWebKit
     DEPENDPATH += $$PWD/WebKit/qt/Api
 }
-gtk-port:CONFIG += link_pkgconfig
-gtk-port:PKGCONFIG += cairo cairo-ft gdk-2.0 gtk+-2.0 libcurl
-gtk-port:DEFINES += BUILDING_GTK__=1 BUILDING_CAIRO__
-gtk-port:LIBS += -L$$OUTPUT_DIR/lib -lWebKitGtk $$system(icu-config --ldflags) -ljpeg -lpng
-gtk-port:QMAKE_CXXFLAGS += $$system(icu-config --cppflags)
+
+gtk-port {
+    CONFIG += link_pkgconfig
+
+    DEFINES += BUILDING_CAIRO__=1 BUILDING_GTK__=1
+
+    # We use FreeType directly with Cairo
+    PKGCONFIG += cairo-ft
+
+    directfb: PKGCONFIG += cairo-directfb gtk+-directfb-2.0
+    else: PKGCONFIG += cairo gtk+-2.0
+
+    # We use the curl http backend on all platforms
+    PKGCONFIG += libcurl
+
+    LIBS += -lWebKitGtk -ljpeg -lpng
+
+    QMAKE_CXXFLAGS += $$system(icu-config --cppflags)
+    QMAKE_LIBS += $$system(icu-config --ldflags)
+
+    # This set of warnings is borrowed from the Mac build
+    QMAKE_CXXFLAGS += -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wundef
+}
 
 DEFINES += USE_SYSTEM_MALLOC
 CONFIG(release) {

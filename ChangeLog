@@ -1,3 +1,15 @@
+2007-11-20  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Simon Hausmann.
+
+        Clean up GTK+ port configuration.
+
+        Use similar compiler warning flags to the Mac build.
+
+        Add the qmake changes needed for DirectFB support.
+
+        * WebKit.pri:
+
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Mark.
