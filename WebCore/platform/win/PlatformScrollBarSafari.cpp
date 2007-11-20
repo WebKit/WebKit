@@ -54,6 +54,7 @@ static int cVerticalWidth[] = { 15, 11 };
 static int cVerticalHeight[] = { 15, 11 };
 static int cRealButtonLength[] = { 28, 21 };
 static int cButtonInset[] = { 14, 11 };
+static int cButtonHitInset[] = { 3, 2 };
 // cRealButtonLength - cButtonInset
 static int cButtonLength[] = { 14, 10 };
 static int cThumbWidth[] = { 15, 11 };
@@ -238,16 +239,26 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     IntRect track = trackRect();
     paintTrack(graphicsContext, track, true, damageRect);
 
-    if (isEnabled()) {
+    if (hasButtons()) {
         paintButton(graphicsContext, backButtonRect(), true, damageRect);
         paintButton(graphicsContext, forwardButtonRect(), false, damageRect);
     }
 
-    if (damageRect.intersects(track) && isEnabled()) {
+    if (hasThumb() && damageRect.intersects(track)) {
         IntRect startTrackRect, thumbRect, endTrackRect;
         splitTrack(track, startTrackRect, thumbRect, endTrackRect);
         paintThumb(graphicsContext, thumbRect, damageRect);
     }
+}
+
+bool PlatformScrollbar::hasButtons() const
+{
+    return isEnabled() && (m_orientation == HorizontalScrollbar ? width() : height()) >= 2 * (cRealButtonLength[controlSize()] - cButtonHitInset[controlSize()]);
+}
+
+bool PlatformScrollbar::hasThumb() const
+{
+    return isEnabled() && (m_orientation == HorizontalScrollbar ? width() : height()) >= 2 * cButtonInset[controlSize()] + cThumbMinLength[controlSize()] + 1;
 }
 
 IntRect PlatformScrollbar::backButtonRect() const
@@ -272,20 +283,19 @@ IntRect PlatformScrollbar::forwardButtonRect() const
 
     if (m_orientation == HorizontalScrollbar)
         return IntRect(x() + width() - cButtonLength[controlSize()], y(), cButtonLength[controlSize()], cHorizontalHeight[controlSize()]);
-    
     return IntRect(x(), y() + height() - cButtonLength[controlSize()], cVerticalWidth[controlSize()], cButtonLength[controlSize()]);
 }
 
 IntRect PlatformScrollbar::trackRect() const
 {
     if (m_orientation == HorizontalScrollbar) {
-        if (width() < 2 * cHorizontalWidth[controlSize()])
-            return IntRect();
+        if (!hasButtons())
+            return IntRect(x(), y(), width(), cHorizontalHeight[controlSize()]);
         return IntRect(x() + cButtonLength[controlSize()], y(), width() - 2 * cButtonLength[controlSize()], cHorizontalHeight[controlSize()]);
     }
 
-    if (height() < 2 * cVerticalHeight[controlSize()])
-        return IntRect();
+    if (!hasButtons())
+        return IntRect(x(), y(), cVerticalWidth[controlSize()], height());
     return IntRect(x(), y() + cButtonLength[controlSize()], cVerticalWidth[controlSize()], height() - 2 * cButtonLength[controlSize()]);
 }
 
@@ -370,14 +380,14 @@ void PlatformScrollbar::paintTrack(GraphicsContext* context, const IntRect& rect
     if (!paintThemePart)
         return;
 
-    IntRect paintRect = trackRepaintRect(rect, m_orientation, controlSize());
+    IntRect paintRect = hasButtons() ? trackRepaintRect(rect, m_orientation, controlSize()) : rect;
     
     if (!damageRect.intersects(paintRect))
         return;
 
     ThemePart part = m_orientation == HorizontalScrollbar ? HScrollTrackPart : VScrollTrackPart;
     ThemeControlState state = 0;
-    if (isEnabled())
+    if (hasButtons())
         state |= EnabledState;
 
     paintThemePart(part, context->platformContext(), paintRect, controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize, state);
@@ -401,30 +411,34 @@ void PlatformScrollbar::paintThumb(GraphicsContext* context, const IntRect& rect
 
 ScrollbarPart PlatformScrollbar::hitTest(const PlatformMouseEvent& evt)
 {
-    ScrollbarPart result = NoPart;
     if (!isEnabled())
-        return result;
+        return NoPart;
 
     IntPoint mousePosition = convertFromContainingWindow(evt.pos());
     mousePosition.move(x(), y());
-    if (backButtonRect().contains(mousePosition))
-        result = BackButtonPart;
-    else if (forwardButtonRect().contains(mousePosition))
-        result = ForwardButtonPart;
-    else {
-        IntRect track = trackRect();
-        if (track.contains(mousePosition)) {
-            IntRect beforeThumbRect, thumbRect, afterThumbRect;
-            splitTrack(track, beforeThumbRect, thumbRect, afterThumbRect);
-            if (beforeThumbRect.contains(mousePosition))
-                result = BackTrackPart;
-            else if (thumbRect.contains(mousePosition))
-                result = ThumbPart;
-            else
-                result = ForwardTrackPart;
-        }
+
+    if (hasButtons()) {
+        if (backButtonRect().contains(mousePosition))
+            return BackButtonPart;
+
+        if (forwardButtonRect().contains(mousePosition))
+            return ForwardButtonPart;
     }
-    return result;
+
+    if (!hasThumb())
+        return NoPart;
+
+    IntRect track = trackRect();
+    if (track.contains(mousePosition)) {
+        IntRect beforeThumbRect, thumbRect, afterThumbRect;
+        splitTrack(track, beforeThumbRect, thumbRect, afterThumbRect);
+        if (beforeThumbRect.contains(mousePosition))
+            return BackTrackPart;
+        if (thumbRect.contains(mousePosition))
+            return ThumbPart;
+        return ForwardTrackPart;
+    }
+    return NoPart;
 }
 
 bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)

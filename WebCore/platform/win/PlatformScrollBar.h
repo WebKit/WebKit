@@ -70,6 +70,8 @@ protected:
     virtual void updateThumbProportion();
 
 private:
+    bool hasButtons() const;
+    bool hasThumb() const;
     IntRect backButtonRect() const;
     IntRect forwardButtonRect() const;
     IntRect trackRect() const;

@@ -1,3 +1,27 @@
+2007-11-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix <rdar://problem/5090708> Textareas render broken-looking scrollbars when too short to show full scrollbar
+
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBarSafari.cpp:
+        Added the "hit inset" constants (representing how far the track eats
+        into the button).
+        (WebCore::PlatformScrollbar::paint): Changed to paint the buttons and
+        the thumb only if they should be showing.
+        (WebCore::PlatformScrollbar::hasButtons): Added. Returns whether the
+        arrows should be drawn.
+        (WebCore::PlatformScrollbar::hasThumb): Added. Returns whether the thumb
+        should be drawn.
+        (WebCore::PlatformScrollbar::forwardButtonRect):
+        (WebCore::PlatformScrollbar::trackRect): Changed to return the entire
+        bounds of the scrollbar if the scrollbar has no buttons.
+        (WebCore::PlatformScrollbar::paintTrack): Changed to paint a disabled
+        track along the entire scrollbar if it has not buttons.
+        (WebCore::PlatformScrollbar::hitTest): Changed to hit test only the
+        parts that the scrollbar has in its current dimensions.
+
 2007-11-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp Toker.
