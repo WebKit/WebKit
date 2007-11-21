@@ -2,6 +2,24 @@
 
         Reviewed by Tim Hatcher.
 
+        Abstract more of DRT into static methods
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+        (setupSignalHandlers):
+        (allocateGlobalControllers):
+        (releaseAndZero):
+        (releaseGlobalControllers):
+        (dumpRenderTree):
+        (shouldLogFrameLoadDelegates):
+        (createCFURLFromPathOrURL):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (runTest):
+
+2007-11-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
         Pull DumpRenderTreeWindow and DumpRenderTreePasteboard out into their own files
 
         * DumpRenderTree/DumpRenderTree.h:

@@ -411,6 +411,81 @@ void testStringByEvaluatingJavaScriptFromString()
     [pool release];
 }
 
+static void setDefaultsToConsistentValuesForTesting()
+{
+    // Give some clear to undocumented defaults values
+    static const int MediumFontSmoothing = 2;
+    static const int BlueTintedAppearance = 1;
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
+    [defaults setInteger:4 forKey:@"AppleAntiAliasingThreshold"]; // smallest font size to CG should perform antialiasing on
+    [defaults setInteger:MediumFontSmoothing forKey:@"AppleFontSmoothing"];
+    [defaults setInteger:BlueTintedAppearance forKey:@"AppleAquaColorVariant"];
+    [defaults setObject:@"0.709800 0.835300 1.000000" forKey:@"AppleHighlightColor"];
+    [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
+    [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
+
+    WebPreferences *preferences = [WebPreferences standardPreferences];
+
+    [preferences setStandardFontFamily:@"Times"];
+    [preferences setFixedFontFamily:@"Courier"];
+    [preferences setSerifFontFamily:@"Times"];
+    [preferences setSansSerifFontFamily:@"Helvetica"];
+    [preferences setCursiveFontFamily:@"Apple Chancery"];
+    [preferences setFantasyFontFamily:@"Papyrus"];
+    [preferences setDefaultFontSize:16];
+    [preferences setDefaultFixedFontSize:13];
+    [preferences setMinimumFontSize:1];
+    [preferences setJavaEnabled:NO];
+    [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
+    [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
+    [preferences setTabsToLinks:NO];
+    [preferences setDOMPasteAllowed:YES];
+}
+
+static void setupSignalHandlers()
+{
+    signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
+    signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */
+    signal(SIGEMT, crashHandler);    /* 7:   EMT instruction */
+    signal(SIGFPE, crashHandler);    /* 8:   floating point exception */
+    signal(SIGBUS, crashHandler);    /* 10:  bus error */
+    signal(SIGSEGV, crashHandler);   /* 11:  segmentation violation */
+    signal(SIGSYS, crashHandler);    /* 12:  bad argument to system call */
+    signal(SIGPIPE, crashHandler);   /* 13:  write on a pipe with no reader */
+    signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
+    signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
+}
+
+static void allocateGlobalControllers()
+{
+    // FIXME: We should remove these and move to the ObjC standard [Foo sharedInstance] model
+    navigationController = [[NavigationController alloc] init];
+    frameLoadDelegate = [[FrameLoadDelegate alloc] init];
+    uiDelegate = [[UIDelegate alloc] init];
+    editingDelegate = [[EditingDelegate alloc] init];
+    resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
+    policyDelegate = [[PolicyDelegate alloc] init];
+}
+
+// ObjC++ doens't seem to let me pass NSObject*& sadly.
+static inline void releaseAndZero(NSObject** object)
+{
+    [*object release];
+    *object = nil;
+}
+
+static void releaseGlobalControllers()
+{
+    releaseAndZero(&navigationController);
+    releaseAndZero(&frameLoadDelegate);
+    releaseAndZero(&editingDelegate);
+    releaseAndZero(&resourceLoadDelegate);
+    releaseAndZero(&uiDelegate);
+    releaseAndZero(&policyDelegate);
+}
+
 void dumpRenderTree(int argc, const char *argv[])
 {    
     [NSApplication sharedApplication];
@@ -429,34 +504,7 @@ void dumpRenderTree(int argc, const char *argv[])
         {NULL, 0, NULL, 0}
     };
 
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
-    [defaults setInteger:4 forKey:@"AppleAntiAliasingThreshold"];
-    // 2 is the "Medium" font smoothing mode
-    [defaults setInteger:2 forKey:@"AppleFontSmoothing"];
-
-    [defaults setInteger:1 forKey:@"AppleAquaColorVariant"];
-    [defaults setObject:@"0.709800 0.835300 1.000000" forKey:@"AppleHighlightColor"];
-    [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
-    
-    [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
-    
-    WebPreferences *preferences = [WebPreferences standardPreferences];
-    
-    [preferences setStandardFontFamily:@"Times"];
-    [preferences setFixedFontFamily:@"Courier"];
-    [preferences setSerifFontFamily:@"Times"];
-    [preferences setSansSerifFontFamily:@"Helvetica"];
-    [preferences setCursiveFontFamily:@"Apple Chancery"];
-    [preferences setFantasyFontFamily:@"Papyrus"];
-    [preferences setDefaultFontSize:16];
-    [preferences setDefaultFixedFontSize:13];
-    [preferences setMinimumFontSize:1];
-    [preferences setJavaEnabled:NO];
-    [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
-    [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
-    [preferences setTabsToLinks:NO];
-    [preferences setDOMPasteAllowed:YES];
+    setDefaultsToConsistentValuesForTesting();
     
     int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)
@@ -475,12 +523,7 @@ void dumpRenderTree(int argc, const char *argv[])
         sharedColorSpace = CGColorSpaceCreateDeviceRGB();
     }
     
-    navigationController = [[NavigationController alloc] init];
-    frameLoadDelegate = [[FrameLoadDelegate alloc] init];
-    uiDelegate = [[UIDelegate alloc] init];
-    editingDelegate = [[EditingDelegate alloc] init];    
-    resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
-    policyDelegate = [[PolicyDelegate alloc] init];
+    allocateGlobalControllers();
     
     NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
@@ -492,16 +535,7 @@ void dumpRenderTree(int argc, const char *argv[])
 
     makeLargeMallocFailSilently();
 
-    signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
-    signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */
-    signal(SIGEMT, crashHandler);    /* 7:   EMT instruction */
-    signal(SIGFPE, crashHandler);    /* 8:   floating point exception */
-    signal(SIGBUS, crashHandler);    /* 10:  bus error */
-    signal(SIGSEGV, crashHandler);   /* 11:  segmentation violation */
-    signal(SIGSYS, crashHandler);    /* 12:  bad argument to system call */
-    signal(SIGPIPE, crashHandler);   /* 13:  write on a pipe with no reader */
-    signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
-    signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
+    setupSignalHandlers();
     
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     
@@ -545,16 +579,10 @@ void dumpRenderTree(int argc, const char *argv[])
     
     [window close]; // releases when closed
     [webView release];
-    [frameLoadDelegate release];
-    [editingDelegate release];
-    [resourceLoadDelegate release];
-    [uiDelegate release];
-    [policyDelegate release];
+    
+    releaseGlobalControllers();
     
     [DumpRenderTreePasteboard releaseLocalPasteboards];
-    
-    [navigationController release];
-    navigationController = nil;
 
     if (disallowedURLs) {
         CFRelease(disallowedURLs);
@@ -963,30 +991,20 @@ void dump()
 static bool shouldLogFrameLoadDelegates(const char *pathOrURL)
 {
     return strstr(pathOrURL, "loading/");
-}    
+}
 
-static void runTest(const char *pathOrURL)
+static CFURLRef createCFURLFromPathOrURL(CFStringRef pathOrURLString)
 {
-    CFStringRef pathOrURLString = CFStringCreateWithCString(NULL, pathOrURL, kCFStringEncodingUTF8);
-    if (!pathOrURLString) {
-        fprintf(stderr, "can't parse filename as UTF-8\n");
-        return;
-    }
-    
     CFURLRef URL;
     if (CFStringHasPrefix(pathOrURLString, CFSTR("http://")) || CFStringHasPrefix(pathOrURLString, CFSTR("https://")))
         URL = CFURLCreateWithString(NULL, pathOrURLString, NULL);
     else
         URL = CFURLCreateWithFileSystemPath(NULL, pathOrURLString, kCFURLPOSIXPathStyle, FALSE);
-    
-    if (!URL) {
-        CFRelease(pathOrURLString);
-        fprintf(stderr, "can't turn %s into a CFURL\n", pathOrURL);
-        return;
-    }
+    return URL;
+}
 
-    layoutTestController = new LayoutTestController(testRepaintDefault, repaintSweepHorizontallyDefault);
-
+static void resetWebViewToConsistentStateBeforeTesting()
+{
     [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:YES];
     [[mainFrame webView] makeTextStandardSize:nil];
     [[mainFrame webView] setTabKeyCyclesThroughElements: YES];
@@ -994,9 +1012,27 @@ static void runTest(const char *pathOrURL)
     [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
     [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:NO];
     [WebView _setUsesTestModeFocusRingColor:YES];
+}
 
+static void runTest(const char *pathOrURL)
+{
+    CFStringRef pathOrURLString = CFStringCreateWithCString(NULL, pathOrURL, kCFStringEncodingUTF8);
+    if (!pathOrURLString) {
+        fprintf(stderr, "Failed to parse filename as UTF-8: %s\n", pathOrURL);
+        return;
+    }
+
+    CFURLRef URL = createCFURLFromPathOrURL(pathOrURLString);
+    if (!URL) {
+        CFRelease(pathOrURLString);
+        fprintf(stderr, "Can't turn %s into a CFURL\n", pathOrURL);
+        return;
+    }
+
+    resetWebViewToConsistentStateBeforeTesting();
+
+    layoutTestController = new LayoutTestController(testRepaintDefault, repaintSweepHorizontallyDefault);
     topLoadingFrame = nil;
-
     done = NO;
 
     if (disallowedURLs)
