@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple, Inc.  All rights reserved.
+ *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,29 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DumpRenderTree_h
-#define DumpRenderTree_h
+#import <AppKit/AppKit.h>
 
-#include <JavaScriptCore/Platform.h>
+@interface DumpRenderTreePasteboard : NSPasteboard
+- (int)declareType:(NSString *)type owner:(id)newOwner;
++ (void)releaseLocalPasteboards;
+@end
 
-#if PLATFORM(MAC)
-#include "DumpRenderTreeMac.h"
-#else if PLATFORM(WIN)
-#include "DumpRenderTreeWin.h"
-#endif
-
-#include <CoreFoundation/CoreFoundation.h>
-
-class LayoutTestController;
-
-extern volatile bool done;
-
-extern CFRunLoopTimerRef waitToDumpWatchdog;
-
-// FIXME: This is a bad abstraction.  We should insted pass this to other controller objects which need access to it.
-extern LayoutTestController* layoutTestController;
-
-void dump();
-void displayWebView();
-
-#endif // DumpRenderTree_h

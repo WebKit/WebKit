@@ -1,3 +1,42 @@
+2007-11-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Pull DumpRenderTreeWindow and DumpRenderTreePasteboard out into their own files
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        (dump):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.h: Added.
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m: Added.
+        (+[DumpRenderTreePasteboard _pasteboardWithName:]):
+        (+[DumpRenderTreePasteboard releaseLocalPasteboards]):
+        (-[DumpRenderTreePasteboard declareType:owner:]):
+        (+[LocalPasteboard alloc]):
+        (-[LocalPasteboard init]):
+        (-[LocalPasteboard dealloc]):
+        (-[LocalPasteboard name]):
+        (-[LocalPasteboard releaseGlobally]):
+        (-[LocalPasteboard declareTypes:owner:]):
+        (-[LocalPasteboard addTypes:owner:]):
+        (-[LocalPasteboard changeCount]):
+        (-[LocalPasteboard types]):
+        (-[LocalPasteboard availableTypeFromArray:]):
+        (-[LocalPasteboard setData:forType:]):
+        (-[LocalPasteboard dataForType:]):
+        (-[LocalPasteboard setPropertyList:forType:]):
+        (-[LocalPasteboard setString:forType:]):
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h: Added.
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm: Added.
+        (+[DumpRenderTreeWindow allWindows]):
+        (-[DumpRenderTreeWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[DumpRenderTreeWindow dealloc]):
+        (-[DumpRenderTreeWindow isKeyWindow]):
+        (-[DumpRenderTreeWindow keyDown:]):
+
 2007-11-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for Windows. Don't use WebCore/move-js-headers.sh as

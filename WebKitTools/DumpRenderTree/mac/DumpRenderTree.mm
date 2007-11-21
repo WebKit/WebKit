@@ -29,6 +29,8 @@
  
 #import "DumpRenderTree.h"
 
+#import "DumpRenderTreePasteboard.h"
+#import "DumpRenderTreeWindow.h"
 #import "EditingDelegate.h"
 #import "EventSendingController.h"
 #import "FrameLoadDelegate.h"
@@ -71,23 +73,7 @@
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>               // for MD5 functions
 
-@interface DumpRenderTreeWindow : NSWindow
-@end
-
-@interface DumpRenderTreePasteboard : NSPasteboard
-- (int)declareType:(NSString *)type owner:(id)newOwner;
-@end
-
 @interface DumpRenderTreeEvent : NSEvent
-@end
-
-@interface LocalPasteboard : NSPasteboard
-{
-    NSMutableArray *typesArray;
-    NSMutableSet *typesSet;
-    NSMutableDictionary *dataByType;
-    int changeCount;
-}
 @end
 
 static void runTest(const char *pathOrURL);
@@ -113,7 +99,6 @@ WebFrame *mainFrame = 0;
 WebFrame *topLoadingFrame = nil;     // !nil iff a load is in progress
 
 
-CFMutableArrayRef allWindowsRef = 0;
 CFMutableSetRef disallowedURLs = 0;
 CFRunLoopTimerRef waitToDumpWatchdog = 0;
 
@@ -133,7 +118,6 @@ static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
 
-static NSMutableDictionary *localPasteboards;
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
 static unsigned char* screenCaptureBuffer;
 static CGColorSpaceRef sharedColorSpace;
@@ -491,7 +475,6 @@ void dumpRenderTree(int argc, const char *argv[])
         sharedColorSpace = CGColorSpaceCreateDeviceRGB();
     }
     
-    localPasteboards = [[NSMutableDictionary alloc] init];
     navigationController = [[NavigationController alloc] init];
     frameLoadDelegate = [[FrameLoadDelegate alloc] init];
     uiDelegate = [[UIDelegate alloc] init];
@@ -568,8 +551,7 @@ void dumpRenderTree(int argc, const char *argv[])
     [uiDelegate release];
     [policyDelegate release];
     
-    [localPasteboards release];
-    localPasteboards = nil;
+    [DumpRenderTreePasteboard releaseLocalPasteboards];
     
     [navigationController release];
     navigationController = nil;
@@ -875,9 +857,10 @@ void dump()
         }
 
         if (layoutTestController->dumpBackForwardList()) {
-            unsigned count = CFArrayGetCount(allWindowsRef);
+            CFArrayRef allWindows = (CFArrayRef)[DumpRenderTreeWindow allWindows];
+            unsigned count = CFArrayGetCount(allWindows);
             for (unsigned i = 0; i < count; i++) {
-                NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(allWindowsRef, i);
+                NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(allWindows, i);
                 WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
                 dumpBackForwardListForWebView(webView);
             }
@@ -1054,7 +1037,7 @@ static void runTest(const char *pathOrURL)
     WorkQueue::shared()->clear();
 
     if (layoutTestController->closeRemainingWindowsWhenComplete()) {
-        NSArray* array = [(NSArray *)allWindowsRef copy];
+        NSArray* array = [DumpRenderTreeWindow allWindows];
         
         unsigned count = [array count];
         for (unsigned i = 0; i < count; i++) {
@@ -1069,7 +1052,6 @@ static void runTest(const char *pathOrURL)
             [webView close];
             [window close];
         }
-        [array release];
     }
     
     [pool release];
@@ -1124,201 +1106,6 @@ void displayWebView()
     NSRectFillUsingOperation([webView frame], NSCompositeSourceOver);
     [webView unlockFocus];
 }
-
-@implementation DumpRenderTreePasteboard
-
-// Return a local pasteboard so we don't disturb the real pasteboards when running tests.
-+ (NSPasteboard *)_pasteboardWithName:(NSString *)name
-{
-    static int number = 0;
-    if (!name)
-        name = [NSString stringWithFormat:@"LocalPasteboard%d", ++number];
-    LocalPasteboard *pasteboard = [localPasteboards objectForKey:name];
-    if (pasteboard)
-        return pasteboard;
-    pasteboard = [[LocalPasteboard alloc] init];
-    [localPasteboards setObject:pasteboard forKey:name];
-    [pasteboard release];
-    return pasteboard;
-}
-
-// Convenience method for JS so that it doesn't have to try and create a NSArray on the objc side instead
-// of the usual WebScriptObject that is passed around
-- (int)declareType:(NSString *)type owner:(id)newOwner
-{
-    return [self declareTypes:[NSArray arrayWithObject:type] owner:newOwner];
-}
-
-@end
-
-@implementation LocalPasteboard
-
-+ (id)alloc
-{
-    return NSAllocateObject(self, 0, 0);
-}
-
-- (id)init
-{
-    typesArray = [[NSMutableArray alloc] init];
-    typesSet = [[NSMutableSet alloc] init];
-    dataByType = [[NSMutableDictionary alloc] init];
-    return self;
-}
-
-- (void)dealloc
-{
-    [typesArray release];
-    [typesSet release];
-    [dataByType release];
-    [super dealloc];
-}
-
-- (NSString *)name
-{
-    return nil;
-}
-
-- (void)releaseGlobally
-{
-}
-
-- (int)declareTypes:(NSArray *)newTypes owner:(id)newOwner
-{
-    [typesArray removeAllObjects];
-    [typesSet removeAllObjects];
-    [dataByType removeAllObjects];
-    return [self addTypes:newTypes owner:newOwner];
-}
-
-- (int)addTypes:(NSArray *)newTypes owner:(id)newOwner
-{
-    unsigned count = [newTypes count];
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        NSString *type = [newTypes objectAtIndex:i];
-        NSString *setType = [typesSet member:type];
-        if (!setType) {
-            setType = [type copy];
-            [typesArray addObject:setType];
-            [typesSet addObject:setType];
-            [setType release];
-        }
-        if (newOwner && [newOwner respondsToSelector:@selector(pasteboard:provideDataForType:)])
-            [newOwner pasteboard:self provideDataForType:setType];
-    }
-    return ++changeCount;
-}
-
-- (int)changeCount
-{
-    return changeCount;
-}
-
-- (NSArray *)types
-{
-    return typesArray;
-}
-
-- (NSString *)availableTypeFromArray:(NSArray *)types
-{
-    unsigned count = [types count];
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        NSString *type = [types objectAtIndex:i];
-        NSString *setType = [typesSet member:type];
-        if (setType)
-            return setType;
-    }
-    return nil;
-}
-
-- (BOOL)setData:(NSData *)data forType:(NSString *)dataType
-{
-    if (data == nil)
-        data = [NSData data];
-    if (![typesSet containsObject:dataType])
-        return NO;
-    [dataByType setObject:data forKey:dataType];
-    ++changeCount;
-    return YES;
-}
-
-- (NSData *)dataForType:(NSString *)dataType
-{
-    return [dataByType objectForKey:dataType];
-}
-
-- (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType;
-{
-    CFDataRef data = NULL;
-    if (propertyList)
-        data = CFPropertyListCreateXMLData(NULL, propertyList);
-    BOOL result = [self setData:(NSData *)data forType:dataType];
-    if (data)
-        CFRelease(data);
-    return result;
-}
-
-- (BOOL)setString:(NSString *)string forType:(NSString *)dataType
-{
-    CFDataRef data = NULL;
-    if (string) {
-        if ([string length] == 0)
-            data = CFDataCreate(NULL, NULL, 0);
-        else
-            data = CFStringCreateExternalRepresentation(NULL, (CFStringRef)string, kCFStringEncodingUTF8, 0);
-    }
-    BOOL result = [self setData:(NSData *)data forType:dataType];
-    if (data)
-        CFRelease(data);
-    return result;
-}
-
-@end
-
-static CFArrayCallBacks NonRetainingArrayCallbacks = {
-    0,
-    NULL,
-    NULL,
-    CFCopyDescription,
-    CFEqual
-};
-
-@implementation DumpRenderTreeWindow
-
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
-{
-    if (!allWindowsRef)
-        allWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
-
-    CFArrayAppendValue(allWindowsRef, self);
-            
-    return [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation];
-}
-
-- (void)dealloc
-{
-    CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(allWindowsRef));
-    CFIndex i = CFArrayGetFirstIndexOfValue(allWindowsRef, arrayRange, self);
-    assert(i != -1);
-
-    CFArrayRemoveValueAtIndex(allWindowsRef, i);
-    [super dealloc];
-}
-
-- (BOOL)isKeyWindow
-{
-    return layoutTestController ? layoutTestController->windowIsKey() : YES;
-}
-
-- (void)keyDown:(id)sender
-{
-    // Do nothing, avoiding the beep we'd otherwise get from NSResponder,
-    // once we get to the end of the responder chain.
-}
-
-@end
 
 @implementation DumpRenderTreeEvent
 
