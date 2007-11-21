@@ -86,6 +86,9 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *page, QWebFrameDat
     frame->setView(frameView.get());
     frame->init();
     eventHandler = frame->eventHandler();
+
+    QObject::connect(q, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)),
+                     page, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)));
 }
 
 QWebFrame *QWebFramePrivate::parentFrame()

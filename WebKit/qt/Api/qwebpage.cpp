@@ -127,9 +127,6 @@ void QWebPagePrivate::createMainFrame()
         mainFrame = new QWebFrame(q, &frameData);
         QObject::connect(mainFrame, SIGNAL(titleChanged(const QString&)),
                 q, SIGNAL(titleChanged(const QString&)));
-        QObject::connect(mainFrame, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)),
-                q, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)));
-        
         mainFrame->d->frameView->setFrameGeometry(q->geometry());
 
         emit q->frameCreated(mainFrame);

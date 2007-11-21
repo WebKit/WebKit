@@ -1,3 +1,14 @@
+2007-11-21  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
+        * Connect up the signal for all subframes too.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createMainFrame):
+
 2007-11-20  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Adam Treat <treat@kde.org>.
