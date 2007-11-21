@@ -70,6 +70,11 @@ void CachedScript::setEncoding(const String& chs)
         m_encoding = encoding;
 }
 
+String CachedScript::encoding() const
+{
+    return m_encoding.name();
+}
+
 void CachedScript::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     if (!allDataReceived)

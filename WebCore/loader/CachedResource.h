@@ -69,6 +69,7 @@ public:
     virtual ~CachedResource();
 
     virtual void setEncoding(const String&) { }
+    virtual String encoding() const { return String(); }
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived) = 0;
     virtual void error() = 0;
 

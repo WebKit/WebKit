@@ -1,3 +1,33 @@
+2007-11-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16056
+        Unicode not being interpreted correctly in Web Inspector source view
+
+        Cannot be tested automatically.
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::encoding):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::encoding):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::encoding):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::encoding):
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::encoding):
+        * loader/CachedXSLStyleSheet.h:
+        Teach textual CachedResources to report their encodings.
+
+        * page/InspectorController.cpp:
+        (WebCore::addSourceToFrame):
+        (WebCore::updateResourceResponse):
+        Use the actual encoding - the network layer has little idea about it.
+
 2007-11-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej Stachowiak.

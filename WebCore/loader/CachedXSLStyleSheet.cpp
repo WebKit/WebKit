@@ -66,6 +66,11 @@ void CachedXSLStyleSheet::setEncoding(const String& chs)
     m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
+String CachedXSLStyleSheet::encoding() const
+{
+    return m_decoder->encoding().name();
+}
+
 void CachedXSLStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     if (!allDataReceived)

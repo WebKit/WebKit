@@ -70,6 +70,11 @@ void CachedXBLDocument::setEncoding(const String& chs)
     m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
+String CachedXBLDocument::encoding() const
+{
+    return m_decoder->encoding().name();
+}
+
 void CachedXBLDocument::data(Vector<char>& data, bool )
 {
     if (!allDataReceived)
