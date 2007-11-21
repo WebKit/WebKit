@@ -198,10 +198,6 @@ else
         fi
     
         cd $WK_ROOT/WebCore
-        ./move-js-headers.sh
-        if [ $? != 0 ]; then
-            exit $? 
-        fi
         ./make-generated-sources.sh platform/wx/wx-encodings.txt
         if [ $? != 0 ]; then
             exit $? 

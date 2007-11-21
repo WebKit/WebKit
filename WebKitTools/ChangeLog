@@ -1,3 +1,12 @@
+2007-11-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for Windows. Don't use WebCore/move-js-headers.sh as
+        it indiscriminately copies any headers inside JavaScriptCore,
+        which includes Tiger ICU headers. 
+
+        * wx/build-wxwebkit:
+        Don't run WebCore/move-js-headers.sh any longer.
+
 2007-11-20  Adam Treat  <treat@kde.org>
 
         Reviewed by David Kilzer.

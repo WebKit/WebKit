@@ -1,3 +1,13 @@
+2007-11-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for Windows. Don't use WebCore/move-js-headers.sh as
+        it indiscriminately copies any headers inside JavaScriptCore,
+        which includes Tiger ICU headers. 
+
+        * presets/wxwebkit.bkl:
+        Remove WebCore/include reference and add JSCore header dirs needed
+        instead.
+
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         Add pcre directory to JSCore includes, and update the wx port

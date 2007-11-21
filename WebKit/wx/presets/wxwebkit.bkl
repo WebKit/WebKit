@@ -74,6 +74,8 @@ and WebCore. Include this file to use these settings.
     <template id="jscore">
         <include>$(WK_ROOT)</include>
         <include>$(WK_ROOT)/JavaScriptCore</include>
+        <include>$(WK_ROOT)/JavaScriptCore/bindings</include>
+        <include>$(WK_ROOT)/JavaScriptCore/ForwardingHeaders</include>
         <include>$(WK_ROOT)/JavaScriptCore/kjs</include>
         <include>$(WK_ROOT)/JavaScriptCore/pcre</include>
         <include>$(WK_ROOT)/JavaScriptCore/wtf</include>
@@ -97,8 +99,7 @@ and WebCore. Include this file to use these settings.
             <define>HAVE_FUNC__FINITE=1</define>
         </if>
     
-        <include>$(WK_ROOT)/WebCore/.</include>
-        <include>$(WK_ROOT)/WebCore/include</include>
+        <include>$(WK_ROOT)/WebCore</include>
         <include>$(WK_ROOT)/WebCore/DerivedSources/WebCore</include>
         <include>$(WK_ROOT)/WebCore/bindings/js</include>
         <include>$(WK_ROOT)/WebCore/bridge</include>

@@ -67,14 +67,8 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/DerivedSources/WebCore</include>
         <include>$(SRCDIR)/dom</include>
         <include>$(SRCDIR)/editing</include>
-        <include>$(SRCDIR)/ForwardingHeaders/kjs</include>
         <include>$(SRCDIR)/history</include>
         <include>$(SRCDIR)/html</include>
-        <include>$(SRCDIR)/ForwardingHeaders/wtf</include>
-        <include>$(SRCDIR)/ForwardingHeaders/kjs</include>
-        <include>$(SRCDIR)/ForwardingHeaders/bindings</include>
-        <include>$(SRCDIR)/ForwardingHeaders/pcre</include>
-        <include>$(SRCDIR)/include</include>
         <include>$(SRCDIR)/loader</include>
         <include>$(SRCDIR)/loader/gdk</include>
         <include>$(SRCDIR)/loader/icon</include>
