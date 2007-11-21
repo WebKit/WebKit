@@ -340,59 +340,238 @@ WebInspector.NetworkPanel.prototype = {
             this.timelineEntries[i].refresh(skipBoundryUpdate, skipTimelineSort, immediate);
     },
 
-    drawSwatch: function(canvas, color) {
-        var ctx = canvas.getContext('2d');
-
+    fadeOutRect: function(ctx, x, y, w, h, a1, a2)
+    {
         ctx.save();
 
-        drawSwatchSquare(ctx, color);
+        var gradient = ctx.createLinearGradient(x, y, x, y + h);
+        gradient.addColorStop(0.0, "rgba(0, 0, 0, " + (1.0 - a1) + ")");
+        gradient.addColorStop(0.8, "rgba(0, 0, 0, " + (1.0 - a2) + ")");
+        gradient.addColorStop(1.0, "rgba(0, 0, 0, 1.0)");
 
-        ctx.save();
+        ctx.globalCompositeOperation = "destination-out";
 
-        ctx.translate(0, (13 * 2) - 1);
-        ctx.scale(1, -1);
-
-        drawSwatchSquare(ctx, color);
-
-        ctx.restore();
-
-        fadeOutRect(ctx, 0, 0 + 13, 13, 13, 0.5, 0.0);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x, y, w, h);
 
         ctx.restore();
     },
 
-    drawSummaryGraph: function(segments) {
+    drawSwatch: function(canvas, color)
+    {
+        var ctx = canvas.getContext("2d");
+
+        function drawSwatchSquare() {
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, 13, 13);
+
+            var gradient = ctx.createLinearGradient(0, 0, 13, 13);
+            gradient.addColorStop(0.0, "rgba(255, 255, 255, 0.2)");
+            gradient.addColorStop(1.0, "rgba(255, 255, 255, 0.0)");
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 13, 13);
+
+            gradient = ctx.createLinearGradient(13, 13, 0, 0);
+            gradient.addColorStop(0.0, "rgba(0, 0, 0, 0.2)");
+            gradient.addColorStop(1.0, "rgba(0, 0, 0, 0.0)");
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 13, 13);
+
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.6)";
+            ctx.strokeRect(0.5, 0.5, 12, 12);
+        }
+
+        ctx.clearRect(0, 0, 13, 24);
+
+        drawSwatchSquare();
+
+        ctx.save();
+
+        ctx.translate(0, 25);
+        ctx.scale(1, -1);
+
+        drawSwatchSquare();
+
+        ctx.restore();
+
+        this.fadeOutRect(ctx, 0, 13, 13, 13, 0.5, 0.0);
+    },
+
+    drawSummaryGraph: function(segments)
+    {
         if (!this.summaryGraphElement)
             return;
-
-        var ctx = this.summaryGraphElement.getContext('2d');
-        var x = 0;
-        var y = 0;
-        var width = 450;
-        var height = 19;
 
         if (!segments || !segments.length)
             segments = [{color: "white", value: 1}];
 
+        // Calculate the total of all segments.
+        var total = 0;
+        for (var i = 0; i < segments.length; ++i)
+            total += segments[i].value;
+
+        // Calculate the percentage of each segment, rounded to the nearest percent.
+        var percents = segments.map(function(s) { return Math.max(Math.round(100 * s.value / total), 1) });
+
+        // Calculate the total percentage.
+        var percentTotal = 0;
+        for (var i = 0; i < percents.length; ++i)
+            percentTotal += percents[i];
+
+        // Make sure our percentage total is not greater-than 100, it can be greater
+        // if we rounded up for a few segments.
+        while (percentTotal > 100) {
+            for (var i = 0; i < percents.length && percentTotal > 100; ++i) {
+                if (percents[i] > 1) {
+                    --percents[i];
+                    --percentTotal;
+                }
+            }
+        }
+
+        // Make sure our percentage total is not less-than 100, it can be less
+        // if we rounded down for a few segments.
+        while (percentTotal < 100) {
+            for (var i = 0; i < percents.length && percentTotal < 100; ++i) {
+                ++percents[i];
+                ++percentTotal;
+            }
+        }
+
+        var ctx = this.summaryGraphElement.getContext("2d");
+
+        var x = 0;
+        var y = 0;
+        var w = 450;
+        var h = 19;
+        var r = (h / 2);
+
+        function drawPillShadow()
+        {
+            // This draws a line with a shadow that is offset away from the line. The line is stroked
+            // twice with different X shadow offsets to give more feathered edges. Later we erase the
+            // line with destination-out 100% transparent black, leaving only the shadow. This only
+            // works if nothing has been drawn into the canvas yet.
+
+            ctx.beginPath();
+            ctx.moveTo(x + 4, y + h - 3 - 0.5);
+            ctx.lineTo(x + w - 4, y + h - 3 - 0.5);
+            ctx.closePath();
+
+            ctx.save();
+
+            ctx.shadowBlur = 2;
+            ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 5;
+
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1;
+
+            ctx.stroke();
+
+            ctx.shadowOffsetX = -3;
+
+            ctx.stroke();
+
+            ctx.restore();
+
+            ctx.save();
+
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.strokeStyle = "rgba(0, 0, 0, 1)";
+            ctx.lineWidth = 1;
+
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawPill()
+        {
+            // Make a rounded rect path.
+            ctx.beginPath();
+            ctx.moveTo(x, y + r);
+            ctx.lineTo(x, y + h - r);
+            ctx.quadraticCurveTo(x, y + h, x + r, y + h);
+            ctx.lineTo(x + w - r, y + h);
+            ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - r);
+            ctx.lineTo(x + w, y + r);
+            ctx.quadraticCurveTo(x + w, y, x + w - r, y);
+            ctx.lineTo(x + r, y);
+            ctx.quadraticCurveTo(x, y, x, y + r);
+            ctx.closePath();
+
+            // Clip to the rounded rect path.
+            ctx.save();
+            ctx.clip();
+
+            // Fill the segments with the associated color.
+            var previousSegmentsWidth = 0;
+            for (var i = 0; i < segments.length; ++i) {
+                var segmentWidth = Math.round(w * percents[i] / 100);
+                ctx.fillStyle = segments[i].color;
+                ctx.fillRect(x + previousSegmentsWidth, y, segmentWidth, h);
+                previousSegmentsWidth += segmentWidth;
+            }
+
+            // Draw the segment divider lines.
+            ctx.lineWidth = 1;
+            for (var i = 1; i < 20; ++i) {
+                ctx.beginPath();
+                ctx.moveTo(x + (i * Math.round(w / 20)) + 0.5, y);
+                ctx.lineTo(x + (i * Math.round(w / 20)) + 0.5, y + h);
+                ctx.closePath();
+
+                ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x + (i * Math.round(w / 20)) + 1.5, y);
+                ctx.lineTo(x + (i * Math.round(w / 20)) + 1.5, y + h);
+                ctx.closePath();
+
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+                ctx.stroke();
+            }
+
+            // Draw the pill shading.
+            var lightGradient = ctx.createLinearGradient(x, y, x, y + (h / 1.5));
+            lightGradient.addColorStop(0.0, "rgba(220, 220, 220, 0.6)");
+            lightGradient.addColorStop(0.4, "rgba(220, 220, 220, 0.2)");
+            lightGradient.addColorStop(1.0, "rgba(255, 255, 255, 0.0)");
+
+            var darkGradient = ctx.createLinearGradient(x, y + (h / 3), x, y + h);
+            darkGradient.addColorStop(0.0, "rgba(0, 0, 0, 0.0)");
+            darkGradient.addColorStop(0.8, "rgba(0, 0, 0, 0.2)");
+            darkGradient.addColorStop(1.0, "rgba(0, 0, 0, 0.5)");
+
+            ctx.fillStyle = darkGradient;
+            ctx.fillRect(x, y, w, h);
+
+            ctx.fillStyle = lightGradient;
+            ctx.fillRect(x, y, w, h);
+
+            ctx.restore();
+        }
+
+        ctx.clearRect(x, y, w, (h * 2));
+
+        drawPillShadow();
+        drawPill();
+
         ctx.save();
 
-        ctx.clearRect(x, y, width, (height * 2));
-
-        drawShadowLine(ctx, x, y + height, width, 2);
-        drawPill(ctx, x, y, width, height, height / 2, segments);
-
-        ctx.save();
-
-        ctx.translate(0, (height * 2) + 1);
+        ctx.translate(0, (h * 2) + 1);
         ctx.scale(1, -1);
 
-        drawPill(ctx, x, y, width, height, height / 2, segments);
+        drawPill();
 
         ctx.restore();
 
-        fadeOutRect(ctx, x, y + height + 2, width, height, 0.5, 0.0);
-
-        ctx.restore();
+        this.fadeOutRect(ctx, x, y + h + 1, w, h, 0.5, 0.0);
     },
 
     updateSummaryGraphSoon: function()
@@ -590,7 +769,8 @@ WebInspector.NetworkTimelineEntry.prototype = {
             {title: WebInspector.UIString("Response"), info: this.resource.sortedResponseHeaders}
         ];
 
-        function createSectionTable(section) {
+        function createSectionTable(section)
+        {
             if (!section.info.length)
                 return;
 
@@ -612,6 +792,7 @@ WebInspector.NetworkTimelineEntry.prototype = {
                 row.insertCell(-1).textContent = header.value;
             });
         }
+
         sections.forEach(createSectionTable, this);
     },
 
@@ -692,7 +873,7 @@ WebInspector.NetworkTimelineEntry.prototype = {
                 this.tipBalloonContentElement = document.createElement("div");
                 this.tipBalloonContentElement.className = "tip-balloon-content";
                 this.tipBalloonElement.appendChild(this.tipBalloonContentElement);
-                var tipText = '';
+                var tipText = "";
                 for (var id in this.resource.tips)
                     tipText += this.resource.tips[id].message + "\n";
                 this.tipBalloonContentElement.textContent = tipText;
@@ -847,156 +1028,3 @@ WebInspector.TransferSizeCalculator.prototype = {
 }
 
 WebInspector.TransferSizeCalculator.prototype.__proto__ = WebInspector.TimelineValueCalculator.prototype;
-
-function makeRoundedRectPath(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x, y + r);
-    ctx.lineTo(x, y + h - r);
-    ctx.quadraticCurveTo(x, y + h, x + r, y + h);
-    ctx.lineTo(x + w - r, y + h);
-    ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - r);
-    ctx.lineTo(x + w, y + r);
-    ctx.quadraticCurveTo(x + w, y, x + w - r, y);
-    ctx.lineTo(x + r, y);
-    ctx.quadraticCurveTo(x, y, x, y + r);
-    ctx.closePath();
-}
-
-function drawPillShading(ctx, x, y, w, h) {
-    var lightGradient = ctx.createLinearGradient(x, y, x, y + (h / 1.5));
-    lightGradient.addColorStop(0.0, 'rgba(220, 220, 220, 0.6)');
-    lightGradient.addColorStop(0.4, 'rgba(220, 220, 220, 0.2)');
-    lightGradient.addColorStop(1.0, 'rgba(255, 255, 255, 0.0)');
-
-    var darkGradient = ctx.createLinearGradient(x, y + (h / 3), x, y + h);
-    darkGradient.addColorStop(0.0, 'rgba(0, 0, 0, 0.0)');
-    darkGradient.addColorStop(0.8, 'rgba(0, 0, 0, 0.2)');
-    darkGradient.addColorStop(1.0, 'rgba(0, 0, 0, 0.5)');
-
-    ctx.fillStyle = darkGradient;
-    ctx.fillRect(x, y, w, h);
-
-    ctx.fillStyle = lightGradient;
-    ctx.fillRect(x, y, w, h);
-}
-
-function drawDividerLines(ctx, x, y, w, h) {
-    ctx.save();
-
-    ctx.lineWidth = 1;
-
-    for (var i = 1; i < 20; ++i) {
-        ctx.beginPath();
-        ctx.moveTo(x + (i * Math.round(w / 20)) + 0.5, y);
-        ctx.lineTo(x + (i * Math.round(w / 20)) + 0.5, y + h);
-        ctx.closePath();
-
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(x + (i * Math.round(w / 20)) + 1.5, y);
-        ctx.lineTo(x + (i * Math.round(w / 20)) + 1.5, y + h);
-        ctx.closePath();
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.stroke();
-    }
-
-    ctx.restore();
-}
-
-function fadeOutRect(ctx, x, y, w, h, a1, a2) {
-    ctx.save();
-
-    var gradient = ctx.createLinearGradient(x, y, x, y + h);
-    gradient.addColorStop(0.0, 'rgba(0, 0, 0, ' + (1.0 - a1) + ')');
-    gradient.addColorStop(0.8, 'rgba(0, 0, 0, ' + (1.0 - a2) + ')');
-    gradient.addColorStop(1.0, 'rgba(0, 0, 0, 1.0)');
-
-    ctx.globalCompositeOperation = 'destination-out';
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(x, y, w, h);
-
-    ctx.restore();
-}
-
-function drawPillSegments(ctx, x, y, w, h, segments) {
-    var total = 0;
-    for (var i = 0; i < segments.length; ++i)
-        total += segments[i].value;
-
-    var percents = segments.map(function(s) { return Math.max(Math.round(100 * s.value / total), 1) });
-    var percentTotal = 0;
-    for (var i = 0; i < percents.length; ++i)
-        percentTotal += percents[i];
-
-    while (percentTotal > 100) {
-        var difference = percentTotal - 100;
-        for (var i = 0; i < percents.length && percentTotal > 100; ++i) {
-            if (percents[i] > 1) {
-                --percents[i];
-                --percentTotal;
-            }
-        }
-    }
-
-    var previousWidth = 0;
-    for (var i = 0; i < segments.length; ++i) {
-        var width = Math.round(w * percents[i] / 100);
-        ctx.fillStyle = segments[i].color;
-        ctx.fillRect(x + previousWidth, y, width, h);
-        previousWidth += width;
-    }
-}
-
-function drawPill(ctx, x, y, w, h, r, segments) {
-    ctx.save();
-
-    makeRoundedRectPath(ctx, x, y, w, h, r);
-    ctx.clip();
-
-    drawPillSegments(ctx, x, y, w, h, segments);
-    drawDividerLines(ctx, x, y, w, h);
-    drawPillShading(ctx, x, y, w, h);
-
-    ctx.restore();
-}
-
-function drawShadowLine(ctx, x, y, w, h) {
-    ctx.beginPath();
-    ctx.moveTo(x + 1.5, y + 0.5);
-    ctx.lineTo(x + w - 1.5, y + 0.5);
-    ctx.closePath();
-
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
-    ctx.lineWidth = h;
-    ctx.stroke();
-}
-
-function drawSwatchSquare(ctx, color) {
-    ctx.save();
-
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, 13, 13);
-
-    var gradient = ctx.createLinearGradient(0, 0, 13, 13);
-    gradient.addColorStop(0.0, 'rgba(255, 255, 255, 0.2)');
-    gradient.addColorStop(1.0, 'rgba(255, 255, 255, 0.0)');
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 13, 13);
-
-    gradient = ctx.createLinearGradient(13, 13, 0, 0);
-    gradient.addColorStop(0.0, 'rgba(0, 0, 0, 0.2)');
-    gradient.addColorStop(1.0, 'rgba(0, 0, 0, 0.0)');
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 13, 13);
-
-    ctx.strokeStyle = "rgba(0, 0, 0, 0.6)";
-    ctx.strokeRect(0.5, 0.5, 12, 12);
-
-    ctx.restore();
-}

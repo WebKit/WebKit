@@ -1,3 +1,19 @@
+2007-11-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 16085: Web Inspector's Network Timeline graph code clean up and misc. fixes
+        http://bugs.webkit.org/show_bug.cgi?id=16085
+        
+        Changes include:
+        - Refactor the drawing code as nested functions instead of global functions.
+        - Compute the segment percentages only once per call to drawSummaryGraph.
+        - Account for percentages that rounded down to total less-than 100%.
+        - Draw the pill shadow better using the canvas shadow drawing properties.
+        - Removes a couple canvas context saves and restores.
+
+        * page/inspector/NetworkPanel.js:
+
 2007-11-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
