@@ -1,3 +1,26 @@
+2007-11-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix <rdar://problem/5609579> (DOMParser().parseFromString() freezes Safari when parsing large nodes with XML entities)
+        http://bugs.webkit.org/show_bug.cgi?id=16076
+
+        XMLTokenizer was calling CharacterData::appendData twice per entity in the fragment of XML being
+        parsed (once for text before the entity, once for the entity itself).  This triggered O(n^2) copying
+        of the CharacterData's string due to resizing.  We now prevent this happening by buffering all the
+        content for a given Text node in the XMLTokenizer before sending it out to the node in a single go.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::characters): Append the characters to the buffer.
+        (WebCore::XMLTokenizer::endDocument): Ensure the buffer is flushed when the document has ended.
+        (WebCore::endDocumentHandler):
+        (WebCore::XMLTokenizer::enterText):
+        (WebCore::XMLTokenizer::exitText): Append the contents of the buffer to the node.
+        (WebCore::XMLTokenizer::initializeParserContext): Add the endDocument handler.
+        (WebCore::parseXMLDocumentFragment): Force endDocument to be called when parsing a fragment to ensure
+        that the buffer gets flushed to the node.
+        * dom/XMLTokenizer.h:
+
 2007-11-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

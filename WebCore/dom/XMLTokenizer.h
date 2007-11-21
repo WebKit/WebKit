@@ -94,6 +94,7 @@ namespace WebCore {
         void comment(const xmlChar* s);
         void startDocument(const xmlChar* version, const xmlChar* encoding, int standalone);
         void internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID);
+        void endDocument();
 #else
         void parse();
         void startDocument();
@@ -163,6 +164,7 @@ namespace WebCore {
         PrefixForNamespaceMap m_prefixToNamespaceMap;
 #ifndef USE_QXMLSTREAM
         OwnPtr<PendingCallbacks> m_pendingCallbacks;
+        Vector<xmlChar> m_bufferedText;
 #endif
         SegmentedString m_pendingSrc;
     };

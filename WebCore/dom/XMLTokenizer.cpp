@@ -864,10 +864,8 @@ void XMLTokenizer::characters(const xmlChar* s, int len)
         return;
     }
     
-    if (m_currentNode->isTextNode() || enterText()) {
-        ExceptionCode ec = 0;
-        static_cast<Text*>(m_currentNode)->appendData(toString(s, len), ec);
-    }
+    if (m_currentNode->isTextNode() || enterText())
+        m_bufferedText.append(s, len);
 }
 
 void XMLTokenizer::error(ErrorType type, const char* message, va_list args)
@@ -977,6 +975,11 @@ void XMLTokenizer::startDocument(const xmlChar* version, const xmlChar* encoding
     m_doc->setXMLStandalone(standalone == 1, ec); // possible values are 0, 1, and -1
     if (encoding)
         m_doc->setXMLEncoding(toString(encoding));
+}
+
+void XMLTokenizer::endDocument()
+{
+    exitText();
 }
 
 void XMLTokenizer::internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
@@ -1137,6 +1140,12 @@ static void startDocumentHandler(void* closure)
     xmlSAX2StartDocument(closure);
 }
 
+static void endDocumentHandler(void* closure)
+{
+    getTokenizer(closure)->endDocument();
+    xmlSAX2EndDocument(closure);
+}
+
 static void internalSubsetHandler(void* closure, const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
 {
     getTokenizer(closure)->internalSubset(name, externalID, systemID);
@@ -1191,6 +1200,9 @@ void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, in
 
 bool XMLTokenizer::enterText()
 {
+#ifndef USE_QXMLSTREAM
+    ASSERT(m_bufferedText.size() == 0);
+#endif
     RefPtr<Node> newNode = new Text(m_doc, "");
     if (!m_currentNode->addChild(newNode.get()))
         return false;
@@ -1205,6 +1217,13 @@ void XMLTokenizer::exitText()
 
     if (!m_currentNode || !m_currentNode->isTextNode())
         return;
+
+#ifndef USE_QXMLSTREAM
+    ExceptionCode ec = 0;
+    static_cast<Text*>(m_currentNode)->appendData(toString(m_bufferedText.data(), m_bufferedText.size()), ec);
+    Vector<xmlChar> empty;
+    m_bufferedText.swap(empty);
+#endif
 
     if (m_view && m_currentNode && !m_currentNode->attached())
         m_currentNode->attach();
@@ -1231,6 +1250,7 @@ void XMLTokenizer::initializeParserContext()
     sax.endElementNs = endElementNsHandler;
     sax.getEntity = getEntityHandler;
     sax.startDocument = startDocumentHandler;
+    sax.endDocument = endDocumentHandler;
     sax.internalSubset = internalSubsetHandler;
     sax.externalSubset = externalSubsetHandler;
     sax.ignorableWhitespace = ignorableWhitespaceHandler;
@@ -1560,6 +1580,7 @@ bool parseXMLDocumentFragment(const String& string, DocumentFragment* fragment, 
     sax.initialized = XML_SAX2_MAGIC;
     
     int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, (const xmlChar*)string.utf8().data(), 0);
+    tokenizer.endDocument();
     return result == 0;
 #else
     tokenizer.write(String("<qxmlstreamdummyelement>"), false);
