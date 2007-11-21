@@ -1,3 +1,12 @@
+2007-11-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix a copy/paste error in the test (introduced in bug 12194).
+
+        * http/tests/xmlhttprequest/zero-length-response-sync-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-sync.html:
+
 2007-11-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
