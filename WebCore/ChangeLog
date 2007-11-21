@@ -1,3 +1,14 @@
+2007-11-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Animate the status area and tip balloons in the Web Inspector
+        with CSS animations.
+
+        * page/inspector/NetworkPanel.js:
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.js:
+
 2007-11-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for Windows. Don't use WebCore/move-js-headers.sh as

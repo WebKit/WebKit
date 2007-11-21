@@ -698,12 +698,9 @@ WebInspector.NetworkTimelineEntry.prototype = {
                 this.tipBalloonContentElement.textContent = tipText;
             }
 
-            this.tipBalloonElement.removeStyleClass("hidden");
-            WebInspector.animateStyle([{element: this.tipBalloonElement, start: {left: 160, opacity: 0}, end: {left: 145, opacity: 1}}], 250);
-        } else {
-            var element = this.tipBalloonElement;
-            WebInspector.animateStyle([{element: this.tipBalloonElement, start: {left: 145, opacity: 1}, end: {left: 160, opacity: 0}}], 250, function() { element.addStyleClass("hidden") });
-        }
+            this.tipBalloonElement.addStyleClass("visible");
+        } else
+            this.tipBalloonElement.removeStyleClass("visible");
     }
 }
 

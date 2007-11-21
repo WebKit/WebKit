@@ -166,10 +166,12 @@ var WebInspector = {
 
         if (x) {
             statusButton.addStyleClass("hide");
-            WebInspector.animateStyle([{element: list, end: {bottom: 99}}, {element: status, end: {bottom: 21}}], 250);
+            list.addStyleClass("status-visible");
+            status.addStyleClass("visible");
         } else {
             statusButton.removeStyleClass("hide");
-            WebInspector.animateStyle([{element: list, end: {bottom: 21}}, {element: status, end: {bottom: -57}}], 250);
+            list.removeStyleClass("status-visible");
+            status.removeStyleClass("visible");
         }
     },
 
