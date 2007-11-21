@@ -394,9 +394,6 @@ webarchive
 svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
 
-# Image document in frame has no size <rdar://problem/5230233>
-dom/xhtml/level2/html/frame.xhtml
-
 # Some text tests are missing a trailing newline <rdar://problem/5230362>
 fast/inspector/cssURLQuotes.html
 

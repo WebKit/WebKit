@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        <rdar://problem/5230233> dom/xhtml/level2/html/frame.xhtml is failing on Windows
+
+        This isn't actually a test, but an unused resource - we should re-work the W3C test rig to
+        support subresource loading from (X)HTML.
+        Anyway, it doesn't fail for me, I suppose this problem was fixed since the bug was filed.
+
+        * platform/win/Skipped:
+
+2007-11-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
         Fix a copy/paste error in the test (introduced in bug 12194).
 
         * http/tests/xmlhttprequest/zero-length-response-sync-expected.txt:
