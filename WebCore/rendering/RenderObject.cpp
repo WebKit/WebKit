@@ -201,6 +201,7 @@ RenderObject::RenderObject(Node* node)
 
 RenderObject::~RenderObject()
 {
+    ASSERT(!node() || !document()->frame()->view() || document()->frame()->view()->layoutRoot() != this);
 #ifndef NDEBUG
     --RenderObjectCounter::count;
 #endif
@@ -2733,7 +2734,7 @@ void RenderObject::scheduleRelayout()
     } else if (parent()) {
         FrameView* v = view() ? view()->frameView() : 0;
         if (v)
-            v->scheduleRelayoutOfSubtree(node());
+            v->scheduleRelayoutOfSubtree(this);
     }
 }
 

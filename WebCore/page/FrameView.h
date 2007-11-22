@@ -72,11 +72,11 @@ public:
     bool didFirstLayout() const;
     void layoutTimerFired(Timer<FrameView>*);
     void scheduleRelayout();
-    void scheduleRelayoutOfSubtree(Node*);
+    void scheduleRelayoutOfSubtree(RenderObject*);
     void unscheduleRelayout();
     bool layoutPending() const;
 
-    Node* layoutRoot() const;
+    RenderObject* layoutRoot() const;
     int layoutCount() const;
 
     // These two helper functions just pass through to the RenderView.

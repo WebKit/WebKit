@@ -1,3 +1,41 @@
+2007-11-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix <rdar://problem/5607037> REGRESSION (r27351): Departure date does not repaint when changed on Google Maps public transit planner (16034)
+
+        Test: fast/repaint/subtree-root-skipped.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate): Initialize the layout
+        root to 0.
+        (WebCore::FrameView::layoutRoot): Changed to return a RenderObject
+        instead of a Node.
+        (WebCore::FrameView::layout): Changed for layout root being a renderer
+        rather than a DOM node. Also replaced clearing the repaint rects
+        set with asserting that it is empty if this is the top-level call to
+        layout(). If it is not, the set may contain rects from enclosing
+        layout() and those should not be removed.
+        (WebCore::FrameView::scheduleRelayout): Changed for layout root being
+        a renderer rather than a DOM node.
+        (WebCore::isObjectAncestorContainerOf): Added this helper function that
+        tests whether one object will be marked by calling
+        markContainingBlocksForLayout() on the other.
+        (WebCore::FrameView::scheduleRelayoutOfSubtree): Changed for layout
+        root being a renderer rather than a DOM node. Changed the check if new
+        and current layout roots are on the same path from the root to use
+        the subgraph of the render tree defined by container()hood instead of
+        the DOM tree and parenthood.
+        * page/FrameView.h:
+        * rendering/RenderBox.cpp: 
+        (WebCore::RenderBox::calcWidth): Changed for layout root being a
+        renderer rather than a DOM node.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::~RenderObject): Added an assertion that the
+        object being deleted is not currently the layout root.
+        (WebCore::RenderObject::scheduleRelayout): Changed for layout root being
+        a renderer rather than a DOM node.
+
 2007-11-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Eric.

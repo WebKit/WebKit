@@ -1,3 +1,14 @@
+2007-11-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - repaint test for <rdar://problem/5607037> REGRESSION (r27351): Departure date does not repaint when changed on Google Maps public transit planner (16034)
+
+        * fast/repaint/subtree-root-skipped.html: Added.
+        * platform/mac-leopard/fast/repaint/subtree-root-skipped-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/subtree-root-skipped-expected.png: Added.
+        * platform/mac/fast/repaint/subtree-root-skipped-expected.txt: Added.
+
 2007-11-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

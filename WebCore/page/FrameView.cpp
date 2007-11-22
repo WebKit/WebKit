@@ -57,6 +57,7 @@ public:
     FrameViewPrivate(FrameView* view)
         : m_slowRepaintObjectCount(0)
         , layoutTimer(view, &FrameView::layoutTimerFired)
+        , layoutRoot(0)
         , m_mediaType("screen")
         , m_enqueueEvents(0)
         , m_overflowStatusDirty(true)
@@ -99,7 +100,7 @@ public:
 
     Timer<FrameView> layoutTimer;
     bool delayedLayout;
-    RefPtr<Node> layoutRoot;
+    RenderObject* layoutRoot;
     
     bool layoutSchedulingEnabled;
     bool midLayout;
@@ -283,9 +284,9 @@ void FrameView::addRepaintInfo(RenderObject* o, const IntRect& r)
     d->repaintRects.append(RenderObject::RepaintInfo(o, r));
 }
 
-Node* FrameView::layoutRoot() const
+RenderObject* FrameView::layoutRoot() const
 {
-    return layoutPending() ? 0 : d->layoutRoot.get();
+    return layoutPending() ? 0 : d->layoutRoot;
 }
 
 void FrameView::layout(bool allowSubtree)
@@ -312,8 +313,7 @@ void FrameView::layout(bool allowSubtree)
         return;
 
     if (!allowSubtree && d->layoutRoot) {
-        if (d->layoutRoot->renderer())
-            d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
+        d->layoutRoot->markContainingBlocksForLayout(false);
         d->layoutRoot = 0;
     }
 
@@ -335,14 +335,13 @@ void FrameView::layout(bool allowSubtree)
         document->recalcStyle();
     
     bool subtree = d->layoutRoot;
-    Node* rootNode = subtree ? d->layoutRoot.get() : document;
 
     // If there is only one ref to this view left, then its going to be destroyed as soon as we exit, 
     // so there's no point to continuiing to layout
     if (protector->hasOneRef())
         return;
 
-    RenderObject* root = rootNode->renderer();
+    RenderObject* root = subtree ? d->layoutRoot : document->renderer();
     if (!root) {
         // FIXME: Do we need to set m_size here?
         d->layoutSchedulingEnabled = true;
@@ -355,7 +354,6 @@ void FrameView::layout(bool allowSubtree)
     ScrollbarMode vMode = d->vmode;
     
     if (!subtree) {
-        Document* document = static_cast<Document*>(rootNode);
         RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
         if (document->isHTMLDocument()) {
             Node* body = static_cast<HTMLDocument*>(document)->body();
@@ -384,7 +382,7 @@ void FrameView::layout(bool allowSubtree)
     }
 
     d->doFullRepaint = !subtree && (d->firstLayout || static_cast<RenderView*>(root)->printing());
-    d->repaintRects.clear();
+    ASSERT(d->nestedLayoutCount > 1 || d->repaintRects.isEmpty());
 
     bool didFirstLayout = false;
     if (!subtree) {
@@ -689,8 +687,7 @@ void FrameView::scheduleRelayout()
     ASSERT(m_frame->view() == this);
 
     if (d->layoutRoot) {
-        if (d->layoutRoot->renderer())
-            d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
+        d->layoutRoot->markContainingBlocksForLayout(false);
         d->layoutRoot = 0;
     }
     if (!d->layoutSchedulingEnabled)
@@ -715,41 +712,47 @@ void FrameView::scheduleRelayout()
     d->layoutTimer.startOneShot(delay * 0.001);
 }
 
-void FrameView::scheduleRelayoutOfSubtree(Node* n)
+static bool isObjectAncestorContainerOf(RenderObject* ancestor, RenderObject* descendant)
+{
+    for (RenderObject* r = descendant; r; r = r->container()) {
+        if (r == ancestor)
+            return true;
+    }
+    return false;
+}
+
+void FrameView::scheduleRelayoutOfSubtree(RenderObject* o)
 {
     ASSERT(m_frame->view() == this);
 
     if (!d->layoutSchedulingEnabled || (m_frame->document()
             && m_frame->document()->renderer()
             && m_frame->document()->renderer()->needsLayout())) {
-        if (n->renderer())
-            n->renderer()->markContainingBlocksForLayout(false);
+        if (o)
+            o->markContainingBlocksForLayout(false);
         return;
     }
 
     if (layoutPending()) {
-        if (d->layoutRoot != n) {
-            if (n->isDescendantOf(d->layoutRoot.get())) {
+        if (d->layoutRoot != o) {
+            if (isObjectAncestorContainerOf(d->layoutRoot, o)) {
                 // Keep the current root
-                if (n->renderer())
-                    n->renderer()->markContainingBlocksForLayout(false);
-            } else if (d->layoutRoot && d->layoutRoot->isDescendantOf(n)) {
-                // Re-root at n
-                if (d->layoutRoot->renderer())
-                    d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
-                d->layoutRoot = n;
+                o->markContainingBlocksForLayout(false);
+            } else if (d->layoutRoot && isObjectAncestorContainerOf(o, d->layoutRoot)) {
+                // Re-root at o
+                d->layoutRoot->markContainingBlocksForLayout(false);
+                d->layoutRoot = o;
             } else {
                 // Just do a full relayout
-                if (d->layoutRoot && d->layoutRoot->renderer())
-                    d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
+                if (d->layoutRoot)
+                    d->layoutRoot->markContainingBlocksForLayout(false);
                 d->layoutRoot = 0;
-                if (n->renderer())
-                    n->renderer()->markContainingBlocksForLayout(false);
+                o->markContainingBlocksForLayout(false);
             }
         }
     } else {
         int delay = m_frame->document()->minimumLayoutDelay();
-        d->layoutRoot = n;
+        d->layoutRoot = o;
         d->delayedLayout = delay != 0;
         d->layoutTimer.startOneShot(delay * 0.001);
     }
