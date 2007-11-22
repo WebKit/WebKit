@@ -30,66 +30,6 @@
 
 #include <qwebkitglobal.h>
 
-#if QT_VERSION < 0x040300
-template <class T> class QExplicitlySharedDataPointer
-{
-public:
-    typedef T Type;
-
-    inline T &operator*() { return *d; }
-    inline const T &operator*() const { return *d; }
-    inline T *operator->() { return d; }
-    inline const T *operator->() const { return d; }
-    inline operator T *() { return d; }
-    inline operator const T *() const { return d; }
-    inline T *data() { return d; }
-    inline const T *data() const { return d; }
-    inline const T *constData() const { return d; }
-
-    //inline operator bool () const { return d != 0; }
-
-    inline bool operator==(const QExplicitlySharedDataPointer<T> &other) const { return d == other.d; }
-    inline bool operator!=(const QExplicitlySharedDataPointer<T> &other) const { return d != other.d; }
-    inline bool operator==(const T *ptr) const { return d == ptr; }
-    inline bool operator!=(const T *ptr) const { return d != ptr; }
-
-    inline QExplicitlySharedDataPointer() { d = 0; }
-    inline ~QExplicitlySharedDataPointer() { if (d && !d->ref.deref()) delete d; }
-
-    explicit QExplicitlySharedDataPointer(T *data);
-    inline QExplicitlySharedDataPointer(const QExplicitlySharedDataPointer<T> &o) : d(o.d) { if (d) d->ref.ref(); }
-    inline QExplicitlySharedDataPointer<T> & operator=(const QExplicitlySharedDataPointer<T> &o) {
-        if (o.d != d) {
-            T *x = o.d;
-            if (x) x->ref.ref();
-            x = qAtomicSetPtr(&d, x);
-            if (x && !x->ref.deref())
-                delete x;
-        }
-        return *this;
-    }
-    inline QExplicitlySharedDataPointer &operator=(T *o) {
-        if (o != d) {
-            T *x = o;
-            if (x) x->ref.ref();
-            x = qAtomicSetPtr(&d, x);
-            if (x && !x->ref.deref())
-                delete x;
-        }
-        return *this;
-    }
-
-    inline bool operator!() const { return !d; }
-
-private:
-
-    T *d;
-};
-template <class T>
-Q_INLINE_TEMPLATE QExplicitlySharedDataPointer<T>::QExplicitlySharedDataPointer(T *adata) : d(adata)
-{ if (d) d->ref.ref(); }
-#endif
-
 class QWebPage;
 
 class QWebHistoryItemPrivate;

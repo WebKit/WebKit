@@ -1,3 +1,11 @@
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
+        Removed inline copy of QExplicitlySharedDataPointer. This is not needed anymore since we require Qt >= 4.3.0.
+
+        * Api/qwebpagehistory.h:
+
 2007-11-22  George Staikos  <staikos@kde.org>
 
         Reviewed by Simon Hausmann <hausmann@kde.org>.
