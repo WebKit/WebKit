@@ -1,3 +1,15 @@
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George Staikos <staikos@kde.org>.
+
+        Fix shadowing of "page" variable that is passed as argument as well as a member variable.
+        
+        This also fixes compilation with gcc 4.3.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+
 2007-11-21  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.
