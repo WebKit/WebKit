@@ -39,6 +39,9 @@ using namespace WebCore;
 
 static gboolean gtkScrollEventCallback(GtkWidget* widget, GdkEventScroll* event, PlatformScrollbar*)
 {
+    /* Scroll only if our parent rejects the scroll event. The rationale for
+     * this is that we want the main frame to scroll when we move the mouse
+     * wheel over a child scrollbar in most cases. */
     return gtk_widget_event(gtk_widget_get_parent(widget), reinterpret_cast<GdkEvent*>(event));
 }
 
