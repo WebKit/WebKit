@@ -383,8 +383,8 @@ static void prepareConsistentTestingEnvironment()
 
 void dumpRenderTree(int argc, const char *argv[])
 {
-    prepareConsistentTestingEnvironment();
     initializeGlobalsFromCommandLineOptions(argc, argv);
+    prepareConsistentTestingEnvironment();
     addTestPluginsToPluginSearchPath(argv[0]);
     installSignalHandlers();
     

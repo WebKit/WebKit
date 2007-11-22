@@ -1,3 +1,14 @@
+2007-11-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix crash when running pixel tests
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree): Parse the command line options before setting up the
+        environment so that we know if we need to set up the pixel dump
+        machinery.
+
 2007-11-21  Eric Seidel  <eric@webkit.org>
 
         Speculative build fix for Tiger.
