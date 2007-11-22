@@ -1,6 +1,6 @@
 2007-11-22  Simon Hausmann  <hausmann@webkit.org>
 
-        Reviewed by Adam.
+        Reviewed by Adam Treat.
 
         Fix compilation (don't define notImplemented twice)
 
