@@ -2,6 +2,16 @@
 
         Reviewed by George.
 
+        Use ../generated as path for the generated sources for builds inside Qt
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * WebCore.pro:
+
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
         Make the directory of where to put the generated sources configurable through the GENERATED_SOURCE_DIR variable
 
         WARNING: NO TEST CASES ADDED OR CHANGED
