@@ -1,3 +1,16 @@
+2007-11-22  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        GTK+ drawing fix.
+
+        Add a check to avoid crashing when the GraphicsContext is not
+        associated with a GdkEventExpose. This was noticed when adding
+        printing support but might be triggered in other situations too.
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::paint):
+
 2007-11-22  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Alexey.
