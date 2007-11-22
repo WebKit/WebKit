@@ -1,3 +1,14 @@
+2007-11-22  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Alexey.
+
+        Bug 15530: XMLHttpRequest should not support certain methods
+
+        Test: http/tests/xmlhttprequest/xmlhttprequest-forbidden-methods-exception.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+
 2007-11-22  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by George.

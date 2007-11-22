@@ -2,6 +2,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 2004, 2006 Apple Computer, Inc.
  *  Copyright (C) 2005-2007 Alexey Proskuryakov <ap@webkit.org>
+ *  Copyright (C) 2007 Julien Chaffraix <julien.chaffraix@gmail.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -351,14 +352,20 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
         return;
     }
     
-    m_url = url;
-
     // Method names are case sensitive. But since Firefox uppercases method names it knows, we'll do the same.
     String methodUpper(method.upper());
-    if (methodUpper == "CONNECT" || methodUpper == "COPY" || methodUpper == "DELETE" || methodUpper == "GET" || methodUpper == "HEAD"
-        || methodUpper == "INDEX" || methodUpper == "LOCK" || methodUpper == "M-POST" || methodUpper == "MKCOL" || methodUpper == "MOVE" 
+    
+    if (methodUpper == "TRACE" || methodUpper == "TRACK" || methodUpper == "CONNECT") {
+        ec = PERMISSION_DENIED;
+        return;
+    }
+
+    m_url = url;
+
+    if (methodUpper == "COPY" || methodUpper == "DELETE" || methodUpper == "GET" || methodUpper == "HEAD"
+        || methodUpper == "INDEX" || methodUpper == "LOCK" || methodUpper == "M-POST" || methodUpper == "MKCOL" || methodUpper == "MOVE"
         || methodUpper == "OPTIONS" || methodUpper == "POST" || methodUpper == "PROPFIND" || methodUpper == "PROPPATCH" || methodUpper == "PUT" 
-        || methodUpper == "TRACE" || methodUpper == "UNLOCK")
+        || methodUpper == "UNLOCK")
         m_method = methodUpper.deprecatedString();
     else
         m_method = method.deprecatedString();
