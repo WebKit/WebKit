@@ -1,5 +1,11 @@
 2007-11-21  Eric Seidel  <eric@webkit.org>
 
+        Speculative build fix for Tiger.
+
+        * DumpRenderTree/mac/PixelDumpSupport.mm: include unistd.h
+
+2007-11-21  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Tim Hatcher.
 
         Break out more of DumpRenderTree.mm into individual files

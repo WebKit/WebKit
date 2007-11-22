@@ -38,6 +38,8 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WebDocumentPrivate.h>
 
+#import <unistd.h> // Tiger seems to need this for F_OK
+
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>               // for MD5 functions
 
