@@ -106,7 +106,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     // Make sure that waitUntilDone has been called.
     ASSERT(layoutTestController->waitToDump());
 
-    WebView *webView = createWebView();
+    WebView *webView = createWebViewAndOffscreenWindow();
     
     return [webView autorelease];
 }

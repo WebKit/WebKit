@@ -43,6 +43,6 @@ extern DumpRenderTreeDraggingInfo *draggingInfo;
 extern NavigationController* navigationController;
 extern PolicyDelegate* policyDelegate;
 
-WebView* createWebView();
+WebView* createWebViewAndOffscreenWindow();
 
 #endif // DumpRenderTreeMac_h 

@@ -335,7 +335,7 @@ static void makeLargeMallocFailSilently()
     zone->realloc = checkedRealloc;
 }
 
-WebView *createWebView()
+WebView *createWebViewAndOffscreenWindow()
 {
     NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
     WebView *webView = [[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"];
@@ -444,7 +444,7 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setDOMPasteAllowed:YES];
 }
 
-static void setupSignalHandlers()
+static void installSignalHandlers()
 {
     signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
     signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */
@@ -486,13 +486,8 @@ static void releaseGlobalControllers()
     releaseAndZero(&policyDelegate);
 }
 
-void dumpRenderTree(int argc, const char *argv[])
-{    
-    [NSApplication sharedApplication];
-
-    class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
-    class_poseAs(objc_getClass("DumpRenderTreeEvent"), objc_getClass("NSEvent"));
-
+static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[])
+{
     struct option options[] = {
         {"dump-all-pixels", no_argument, &dumpAllPixels, YES},
         {"horizontal-sweep", no_argument, &repaintSweepHorizontallyDefault, YES},
@@ -503,61 +498,91 @@ void dumpRenderTree(int argc, const char *argv[])
         {"threaded", no_argument, &threaded, YES},
         {NULL, 0, NULL, 0}
     };
-
-    setDefaultsToConsistentValuesForTesting();
     
     int option;
-    while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)
+    while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1) {
         switch (option) {
             case '?':   // unknown or ambiguous option
             case ':':   // missing argument
                 exit(1);
                 break;
         }
-
-    activateAhemFont();
-
-    if (dumpPixels) {
-        setDefaultColorProfileToRGB();
-        screenCaptureBuffer = (unsigned char *)malloc(maxViewHeight * maxViewWidth * 4);
-        sharedColorSpace = CGColorSpaceCreateDeviceRGB();
     }
-    
-    allocateGlobalControllers();
-    
-    NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
+}
+
+static void initializeColorSpaceAndScreeBufferForPixelTests()
+{
+    setDefaultColorProfileToRGB();
+    screenCaptureBuffer = (unsigned char *)malloc(maxViewHeight * maxViewWidth * 4);
+    sharedColorSpace = CGColorSpaceCreateDeviceRGB();
+}
+
+static void addTestPluginsToPluginSearchPath(const char* executablePath)
+{
+    NSString *pwd = [[NSString stringWithUTF8String:executablePath] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
     [[WebPluginDatabase sharedDatabase] refresh];
-    
-    WebView *webView = createWebView();    
-    mainFrame = [webView mainFrame];
-    NSWindow *window = [webView window];
+}
 
+static bool useLongRunningServerMode(int argc, const char *argv[])
+{
+    // This assumes you've already called getopt_long
+    return (argc == optind+1 && strcmp(argv[optind], "-") == 0);
+}
+
+static void runTestingServerLoop()
+{
+    // When DumpRenderTree run in server mode, we just wait around for file names
+    // to be passed to us and read each in turn, passing the results back to the client
+    char filenameBuffer[2048];
+    while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
+        char *newLineCharacter = strchr(filenameBuffer, '\n');
+        if (newLineCharacter)
+            *newLineCharacter = '\0';
+
+        if (strlen(filenameBuffer) == 0)
+            continue;
+
+        runTest(filenameBuffer);
+    }
+}
+
+static void prepareConsistentTestingEnvironment()
+{
+    class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
+    class_poseAs(objc_getClass("DumpRenderTreeEvent"), objc_getClass("NSEvent"));
+
+    setDefaultsToConsistentValuesForTesting();
+    activateAhemFont();
+    
+    if (dumpPixels)
+        initializeColorSpaceAndScreeBufferForPixelTests();
+    allocateGlobalControllers();
+    
     makeLargeMallocFailSilently();
+}
 
-    setupSignalHandlers();
+void dumpRenderTree(int argc, const char *argv[])
+{
+    prepareConsistentTestingEnvironment();
+    initializeGlobalsFromCommandLineOptions(argc, argv);
+    addTestPluginsToPluginSearchPath(argv[0]);
+    installSignalHandlers();
     
+    WebView *webView = createWebViewAndOffscreenWindow();
+    mainFrame = [webView mainFrame];
+
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
-    
+
     // <rdar://problem/5222911>
     testStringByEvaluatingJavaScriptFromString();
 
     if (threaded)
         startJavaScriptThreads();
-    
-    if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
-        char filenameBuffer[2048];
+
+    if (useLongRunningServerMode(argc, argv)) {
         printSeparators = YES;
-        while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
-            char *newLineCharacter = strchr(filenameBuffer, '\n');
-            if (newLineCharacter)
-                *newLineCharacter = '\0';
-            
-            if (strlen(filenameBuffer) == 0)
-                continue;
-                
-            runTest(filenameBuffer);
-        }
+        runTestingServerLoop();
     } else {
         printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
         for (int i = optind; i != argc; ++i)
@@ -575,6 +600,7 @@ void dumpRenderTree(int argc, const char *argv[])
     // "perform selector" on the window, which retains the window. It's a bit
     // inelegant and perhaps dangerous to just blow them all away, but in practice
     // it probably won't cause any trouble (and this is just a test tool, after all).
+    NSWindow *window = [webView window];
     [NSObject cancelPreviousPerformRequestsWithTarget:window];
     
     [window close]; // releases when closed
@@ -584,6 +610,7 @@ void dumpRenderTree(int argc, const char *argv[])
     
     [DumpRenderTreePasteboard releaseLocalPasteboards];
 
+    // FIXME: This should be moved onto LayoutTestController and made into a HashSet
     if (disallowedURLs) {
         CFRelease(disallowedURLs);
         disallowedURLs = 0;
@@ -596,6 +623,7 @@ void dumpRenderTree(int argc, const char *argv[])
 int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    [NSApplication sharedApplication]; // Force AppKit to init itself
     dumpRenderTree(argc, argv);
     [WebCoreStatistics garbageCollectJavaScriptObjects];
     [pool release];
@@ -651,14 +679,9 @@ static void dumpFrameScrollPosition(WebFrame *f)
 
 static NSString *dumpFramesAsText(WebFrame *frame)
 {
-    if (!frame)
-        return @"";
-
     DOMDocument *document = [frame DOMDocument];
-    if (!document)
-        return @"";
-
     DOMElement *documentElement = [document documentElement];
+
     if (!documentElement)
         return @"";
 
@@ -828,160 +851,189 @@ static void dumpBackForwardListForWebView(WebView *view)
         [itemsToPrint addObject:item];
     }
 
-    for (int i = [itemsToPrint count]-1; i >= 0; i--) {
+    for (int i = [itemsToPrint count]-1; i >= 0; i--)
         dumpHistoryItem([itemsToPrint objectAtIndex:i], 8, i == currentItemIndex);
-    }
+
     [itemsToPrint release];
     printf("===============================================\n");
 }
 
-void dump()
+static void sizeWebViewForCurrentTest()
+{
+    // W3C SVG tests expect to be 480x360
+    bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
+    if (isSVGW3CTest)
+        [[mainFrame webView] setFrameSize:NSMakeSize(480, 360)];
+    else
+        [[mainFrame webView] setFrameSize:NSMakeSize(maxViewWidth, maxViewHeight)];
+}
+
+static const char *methodNameStringForFailedTest()
+{
+    const char *errorMessage;
+    if (layoutTestController->dumpAsText())
+        errorMessage = "[documentElement innerText]";
+    else if (layoutTestController->dumpDOMAsWebArchive())
+        errorMessage = "[[mainFrame DOMDocument] webArchive]";
+    else if (layoutTestController->dumpSourceAsWebArchive())
+        errorMessage = "[[mainFrame dataSource] webArchive]";
+    else
+        errorMessage = "[mainFrame renderTreeAsExternalRepresentation]";
+
+    return errorMessage;
+}
+
+static void dumpBackForwardListForAllWindows()
+{
+    CFArrayRef allWindows = (CFArrayRef)[DumpRenderTreeWindow allWindows];
+    unsigned count = CFArrayGetCount(allWindows);
+    for (unsigned i = 0; i < count; i++) {
+        NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(allWindows, i);
+        WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
+        dumpBackForwardListForWebView(webView);
+    }
+}
+
+static void dumpWebViewAsPixelsAndCompareWithExpected()
+{
+    if (!layoutTestController->dumpAsText() && !layoutTestController->dumpDOMAsWebArchive() && !layoutTestController->dumpSourceAsWebArchive()) {
+        // grab a bitmap from the view
+        WebView* view = [mainFrame webView];
+        NSSize webViewSize = [view frame].size;
+        
+        CGContextRef cgContext = CGBitmapContextCreate(screenCaptureBuffer, static_cast<size_t>(webViewSize.width), static_cast<size_t>(webViewSize.height), 8, static_cast<size_t>(webViewSize.width) * 4, sharedColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast);
+        
+        NSGraphicsContext* savedContext = [[[NSGraphicsContext currentContext] retain] autorelease];
+        NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
+        [NSGraphicsContext setCurrentContext:nsContext];
+        
+        if (!layoutTestController->testRepaint()) {
+            NSBitmapImageRep *imageRep;
+            [view displayIfNeeded];
+            [view lockFocus];
+            imageRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:[view frame]];
+            [view unlockFocus];
+            [imageRep draw];
+            [imageRep release];
+        } else if (!layoutTestController->testRepaintSweepHorizontally()) {
+            NSRect line = NSMakeRect(0, 0, webViewSize.width, 1);
+            while (line.origin.y < webViewSize.height) {
+                [view displayRectIgnoringOpacity:line inContext:nsContext];
+                line.origin.y++;
+            }
+        } else {
+            NSRect column = NSMakeRect(0, 0, 1, webViewSize.height);
+            while (column.origin.x < webViewSize.width) {
+                [view displayRectIgnoringOpacity:column inContext:nsContext];
+                column.origin.x++;
+            }
+        }
+        if (layoutTestController->dumpSelectionRect()) {
+            NSView *documentView = [[mainFrame frameView] documentView];
+            if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
+                [[NSColor redColor] set];
+                [NSBezierPath strokeRect:[documentView convertRect:[(id <WebDocumentSelection>)documentView selectionRect] fromView:nil]];
+            }
+        }
+        
+        [NSGraphicsContext setCurrentContext:savedContext];
+        
+        CGImageRef bitmapImage = CGBitmapContextCreateImage(cgContext);
+        CGContextRelease(cgContext);
+        
+        // compute the actual hash to compare to the expected image's hash
+        NSString *actualHash = md5HashStringForBitmap(bitmapImage);
+        printf("\nActualHash: %s\n", [actualHash UTF8String]);
+        
+        BOOL dumpImage;
+        if (dumpAllPixels)
+            dumpImage = YES;
+        else {
+            // FIXME: It's unfortunate that we hardcode the file naming scheme here.
+            // At one time, the perl script had all the knowledge about file layout.
+            // Some day we should restore that setup by passing in more parameters to this tool
+            // or returning more information from the tool to the perl script
+            NSString *baseTestPath = [currentTest stringByDeletingPathExtension];
+            NSString *baselineHashPath = [baseTestPath stringByAppendingString:@"-expected.checksum"];
+            NSString *baselineHash = [NSString stringWithContentsOfFile:baselineHashPath encoding:NSUTF8StringEncoding error:nil];
+            NSString *baselineImagePath = [baseTestPath stringByAppendingString:@"-expected.png"];
+            
+            printf("BaselineHash: %s\n", [baselineHash UTF8String]);
+            
+            /// send the image to stdout if the hash mismatches or if there's no file in the file system
+            dumpImage = ![baselineHash isEqualToString:actualHash] || access([baselineImagePath fileSystemRepresentation], F_OK) != 0;
+        }
+        
+        if (dumpImage) {
+            CFMutableDataRef imageData = CFDataCreateMutable(0, 0);
+            CGImageDestinationRef imageDest = CGImageDestinationCreateWithData(imageData, CFSTR("public.png"), 1, 0);
+            CGImageDestinationAddImage(imageDest, bitmapImage, 0);
+            CGImageDestinationFinalize(imageDest);
+            CFRelease(imageDest);
+            printf("Content-length: %lu\n", CFDataGetLength(imageData));
+            fwrite(CFDataGetBytePtr(imageData), 1, CFDataGetLength(imageData), stdout);
+            CFRelease(imageData);
+        }
+        
+        CGImageRelease(bitmapImage);
+    }
+    
+    printf("#EOF\n");
+}
+
+static void invalidateAnyPreviousWaitToDumpWatchdog()
 {
     if (waitToDumpWatchdog) {
         CFRunLoopTimerInvalidate(waitToDumpWatchdog);
         CFRelease(waitToDumpWatchdog);
         waitToDumpWatchdog = 0;
     }
+}
+
+void dump()
+{
+    invalidateAnyPreviousWaitToDumpWatchdog();
 
     if (dumpTree) {
-        NSString *result = nil;
-        
+        NSString *resultString = nil;
+        NSData *resultData = nil;
+
         bool dumpAsText = layoutTestController->dumpAsText();
         dumpAsText |= [[[mainFrame dataSource] _responseMIMEType] isEqualToString:@"text/plain"];
         layoutTestController->setDumpAsText(dumpAsText);
         if (layoutTestController->dumpAsText()) {
-            result = dumpFramesAsText(mainFrame);
+            resultString = dumpFramesAsText(mainFrame);
         } else if (layoutTestController->dumpDOMAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
-            result = serializeWebArchiveToXML(webArchive);
+            resultString = serializeWebArchiveToXML(webArchive);
         } else if (layoutTestController->dumpSourceAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
-            result = serializeWebArchiveToXML(webArchive);
+            resultString = serializeWebArchiveToXML(webArchive);
         } else {
-            bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
-            if (isSVGW3CTest)
-                [[mainFrame webView] setFrameSize:NSMakeSize(480, 360)];
-            else 
-                [[mainFrame webView] setFrameSize:NSMakeSize(maxViewWidth, maxViewHeight)];
-            result = [mainFrame renderTreeAsExternalRepresentation];
+            sizeWebViewForCurrentTest();
+            resultString = [mainFrame renderTreeAsExternalRepresentation];
         }
 
-        if (!result) {
-            const char *errorMessage;
-            if (layoutTestController->dumpAsText())
-                errorMessage = "[documentElement innerText]";
-            else if (layoutTestController->dumpDOMAsWebArchive())
-                errorMessage = "[[mainFrame DOMDocument] webArchive]";
-            else if (layoutTestController->dumpSourceAsWebArchive())
-                errorMessage = "[[mainFrame dataSource] webArchive]";
-            else
-                errorMessage = "[mainFrame renderTreeAsExternalRepresentation]";
-            printf("ERROR: nil result from %s", errorMessage);
-        } else {
-            NSData *data = [result dataUsingEncoding:NSUTF8StringEncoding];
-            fwrite([data bytes], 1, [data length], stdout);
+        if (resultString && !resultData)
+            resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
+
+        if (resultData) {
+            fwrite([resultData bytes], 1, [resultData length], stdout);
+
             if (!layoutTestController->dumpAsText() && !layoutTestController->dumpDOMAsWebArchive() && !layoutTestController->dumpSourceAsWebArchive())
                 dumpFrameScrollPosition(mainFrame);
-        }
 
-        if (layoutTestController->dumpBackForwardList()) {
-            CFArrayRef allWindows = (CFArrayRef)[DumpRenderTreeWindow allWindows];
-            unsigned count = CFArrayGetCount(allWindows);
-            for (unsigned i = 0; i < count; i++) {
-                NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(allWindows, i);
-                WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
-                dumpBackForwardListForWebView(webView);
-            }
-        }
+            if (layoutTestController->dumpBackForwardList())
+                dumpBackForwardListForAllWindows();
+        } else
+            printf("ERROR: nil result from %s", methodNameStringForFailedTest());
 
         if (printSeparators)
             puts("#EOF");
     }
     
-    if (dumpPixels) {
-        if (!layoutTestController->dumpAsText() && !layoutTestController->dumpDOMAsWebArchive() && !layoutTestController->dumpSourceAsWebArchive()) {
-            // grab a bitmap from the view
-            WebView* view = [mainFrame webView];
-            NSSize webViewSize = [view frame].size;
-
-            CGContextRef cgContext = CGBitmapContextCreate(screenCaptureBuffer, static_cast<size_t>(webViewSize.width), static_cast<size_t>(webViewSize.height), 8, static_cast<size_t>(webViewSize.width) * 4, sharedColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast);
-
-            NSGraphicsContext* savedContext = [[[NSGraphicsContext currentContext] retain] autorelease];
-            NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
-            [NSGraphicsContext setCurrentContext:nsContext];
-
-            if (!layoutTestController->testRepaint()) {
-                NSBitmapImageRep *imageRep;
-                [view displayIfNeeded];
-                [view lockFocus];
-                imageRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:[view frame]];
-                [view unlockFocus];
-                [imageRep draw];
-                [imageRep release];
-            } else if (!layoutTestController->testRepaintSweepHorizontally()) {
-                NSRect line = NSMakeRect(0, 0, webViewSize.width, 1);
-                while (line.origin.y < webViewSize.height) {
-                    [view displayRectIgnoringOpacity:line inContext:nsContext];
-                    line.origin.y++;
-                }
-            } else {
-                NSRect column = NSMakeRect(0, 0, 1, webViewSize.height);
-                while (column.origin.x < webViewSize.width) {
-                    [view displayRectIgnoringOpacity:column inContext:nsContext];
-                    column.origin.x++;
-                }
-            }
-            if (layoutTestController->dumpSelectionRect()) {
-                NSView *documentView = [[mainFrame frameView] documentView];
-                if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
-                    [[NSColor redColor] set];
-                    [NSBezierPath strokeRect:[documentView convertRect:[(id <WebDocumentSelection>)documentView selectionRect] fromView:nil]];
-                }
-            }
-
-            [NSGraphicsContext setCurrentContext:savedContext];
-            
-            CGImageRef bitmapImage = CGBitmapContextCreateImage(cgContext);
-            CGContextRelease(cgContext);
-
-            // compute the actual hash to compare to the expected image's hash
-            NSString *actualHash = md5HashStringForBitmap(bitmapImage);
-            printf("\nActualHash: %s\n", [actualHash UTF8String]);
-
-            BOOL dumpImage;
-            if (dumpAllPixels)
-                dumpImage = YES;
-            else {
-                // FIXME: It's unfortunate that we hardcode the file naming scheme here.
-                // At one time, the perl script had all the knowledge about file layout.
-                // Some day we should restore that setup by passing in more parameters to this tool.
-                NSString *baseTestPath = [currentTest stringByDeletingPathExtension];
-                NSString *baselineHashPath = [baseTestPath stringByAppendingString:@"-expected.checksum"];
-                NSString *baselineHash = [NSString stringWithContentsOfFile:baselineHashPath encoding:NSUTF8StringEncoding error:nil];
-                NSString *baselineImagePath = [baseTestPath stringByAppendingString:@"-expected.png"];
-
-                printf("BaselineHash: %s\n", [baselineHash UTF8String]);
-
-                /// send the image to stdout if the hash mismatches or if there's no file in the file system
-                dumpImage = ![baselineHash isEqualToString:actualHash] || access([baselineImagePath fileSystemRepresentation], F_OK) != 0;
-            }
-            
-            if (dumpImage) {
-                CFMutableDataRef imageData = CFDataCreateMutable(0, 0);
-                CGImageDestinationRef imageDest = CGImageDestinationCreateWithData(imageData, CFSTR("public.png"), 1, 0);
-                CGImageDestinationAddImage(imageDest, bitmapImage, 0);
-                CGImageDestinationFinalize(imageDest);
-                CFRelease(imageDest);
-                printf("Content-length: %lu\n", CFDataGetLength(imageData));
-                fwrite(CFDataGetBytePtr(imageData), 1, CFDataGetLength(imageData), stdout);
-                CFRelease(imageData);
-            }
-
-            CGImageRelease(bitmapImage);
-        }
-
-        printf("#EOF\n");
-    }
+    if (dumpPixels)
+        dumpWebViewAsPixelsAndCompareWithExpected();
 
     fflush(stdout);
 

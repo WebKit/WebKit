@@ -1,5 +1,32 @@
 2007-11-21  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam.
+
+        More refactoring for greater code readability
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (initializeColorSpaceAndScreeBufferForPixelTests):
+        (addTestPluginsToPluginSearchPath):
+        (useLongRunningServerMode):
+        (runTestingServerLoop):
+        (prepareConsistentTestingEnvironment):
+        (dumpRenderTree):
+        (main):
+        (dumpFramesAsText):
+        (dumpBackForwardListForWebView):
+        (sizeWebViewForCurrentTest):
+        (methodNameStringForFailedTest):
+        (dumpBackForwardListForAllWindows):
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        (invalidateAnyPreviousWaitToDumpWatchdog):
+        (dump):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+
+2007-11-21  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Tim Hatcher.
 
         Abstract more of DRT into static methods
