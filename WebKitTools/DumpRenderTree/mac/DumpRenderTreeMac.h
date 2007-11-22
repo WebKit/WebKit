@@ -43,6 +43,9 @@ extern DumpRenderTreeDraggingInfo *draggingInfo;
 extern NavigationController* navigationController;
 extern PolicyDelegate* policyDelegate;
 
+extern const unsigned maxViewHeight;
+extern const unsigned maxViewWidth;
+
 WebView* createWebViewAndOffscreenWindow();
 
 #endif // DumpRenderTreeMac_h 

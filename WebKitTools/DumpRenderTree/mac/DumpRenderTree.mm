@@ -29,25 +29,26 @@
  
 #import "DumpRenderTree.h"
 
+#import "CheckedMalloc.h"
 #import "DumpRenderTreePasteboard.h"
 #import "DumpRenderTreeWindow.h"
 #import "EditingDelegate.h"
 #import "EventSendingController.h"
 #import "FrameLoadDelegate.h"
+#import "JavaScriptThreading.h"
 #import "LayoutTestController.h"
 #import "NavigationController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
+#import "PixelDumpSupport.h"
 #import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
 #import "UIDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 
-#import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
 #import <CoreFoundation/CoreFoundation.h>
 #import <JavaScriptCore/Assertions.h>
-#import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/DOMElementPrivate.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
@@ -66,18 +67,12 @@
 #import <WebKit/WebViewPrivate.h>
 #import <getopt.h>
 #import <mach-o/getsect.h>
-#import <malloc/malloc.h>
 #import <objc/objc-runtime.h>                       // for class_poseAs
-#import <pthread.h>
-
-#define COMMON_DIGEST_FOR_OPENSSL
-#import <CommonCrypto/CommonDigest.h>               // for MD5 functions
 
 @interface DumpRenderTreeEvent : NSEvent
 @end
 
 static void runTest(const char *pathOrURL);
-static NSString *md5HashStringForBitmap(CGImageRef bitmap);
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
@@ -119,105 +114,10 @@ static BOOL printSeparators;
 static NSString *currentTest = nil;
 
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
-static unsigned char* screenCaptureBuffer;
-static CGColorSpaceRef sharedColorSpace;
 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
-static pthread_mutex_t javaScriptThreadsMutex = PTHREAD_MUTEX_INITIALIZER;
-static BOOL javaScriptThreadsShouldTerminate;
-
-static const int javaScriptThreadsCount = 4;
-static CFMutableDictionaryRef javaScriptThreads()
-{
-    assert(pthread_mutex_trylock(&javaScriptThreadsMutex) == EBUSY);
-    static CFMutableDictionaryRef staticJavaScriptThreads;
-    if (!staticJavaScriptThreads)
-        staticJavaScriptThreads = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-    return staticJavaScriptThreads;
-}
-
-// Loops forever, running a script and randomly respawning, until 
-// javaScriptThreadsShouldTerminate becomes true.
-void* runJavaScriptThread(void* arg)
-{
-    const char* const script =
-        "var array = [];"
-        "for (var i = 0; i < 10; i++) {"
-        "    array.push(String(i));"
-        "}";
-
-    while(1) {
-        JSGlobalContextRef ctx = JSGlobalContextCreate(NULL);
-        JSStringRef scriptRef = JSStringCreateWithUTF8CString(script);
-
-        JSValueRef exception = NULL;
-        JSEvaluateScript(ctx, scriptRef, NULL, NULL, 0, &exception);
-        assert(!exception);
-        
-        JSGlobalContextRelease(ctx);
-        JSStringRelease(scriptRef);
-        
-        JSGarbageCollect(ctx);
-
-        pthread_mutex_lock(&javaScriptThreadsMutex);
-
-        // Check for cancellation.
-        if (javaScriptThreadsShouldTerminate) {
-            pthread_mutex_unlock(&javaScriptThreadsMutex);
-            return 0;
-        }
-
-        // Respawn probabilistically.
-        if (random() % 5 == 0) {
-            pthread_t pthread;
-            pthread_create(&pthread, NULL, &runJavaScriptThread, NULL);
-            pthread_detach(pthread);
-
-            CFDictionaryRemoveValue(javaScriptThreads(), pthread_self());
-            CFDictionaryAddValue(javaScriptThreads(), pthread, NULL);
-
-            pthread_mutex_unlock(&javaScriptThreadsMutex);
-            return 0;
-        }
-
-        pthread_mutex_unlock(&javaScriptThreadsMutex);
-    }
-}
-
-static void startJavaScriptThreads()
-{
-    pthread_mutex_lock(&javaScriptThreadsMutex);
-
-    for (int i = 0; i < javaScriptThreadsCount; i++) {
-        pthread_t pthread;
-        pthread_create(&pthread, NULL, &runJavaScriptThread, NULL);
-        pthread_detach(pthread);
-        CFDictionaryAddValue(javaScriptThreads(), pthread, NULL);
-    }
-
-    pthread_mutex_unlock(&javaScriptThreadsMutex);
-}
-
-static void stopJavaScriptThreads()
-{
-    pthread_mutex_lock(&javaScriptThreadsMutex);
-
-    javaScriptThreadsShouldTerminate = true;
-
-    pthread_t* pthreads[javaScriptThreadsCount] = { 0 };
-    ASSERT(CFDictionaryGetCount(javaScriptThreads()) == javaScriptThreadsCount);
-    CFDictionaryGetKeysAndValues(javaScriptThreads(), (const void**)pthreads, 0);
-
-    pthread_mutex_unlock(&javaScriptThreadsMutex);
-
-    for (int i = 0; i < javaScriptThreadsCount; i++) {
-        pthread_t* pthread = pthreads[i];
-        pthread_join(*pthread, 0);
-        free(pthread);
-    }
-}
 
 static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
 {
@@ -236,24 +136,6 @@ static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
     return NO;
 }
 
-static CMProfileRef currentColorProfile = 0;
-static void restoreColorSpace(int ignored)
-{
-    if (currentColorProfile) {
-        int error = CMSetDefaultProfileByUse(cmDisplayUse, currentColorProfile);
-        if (error)
-            fprintf(stderr, "Failed to retore previous color profile!  You may need to open System Preferences : Displays : Color and manually restore your color settings.  (Error: %i)", error);
-        currentColorProfile = 0;
-    }
-}
-
-static void crashHandler(int sig)
-{
-    fprintf(stderr, "%s\n", strsignal(sig));
-    restoreColorSpace(0);
-    exit(128 + sig);
-}
-
 static void activateAhemFont()
 {    
     unsigned long fontDataLength;
@@ -270,69 +152,6 @@ static void activateAhemFont()
         fprintf(stderr, "Failed to activate the Ahem font.\n");
         exit(1);
     }
-}
-
-static void setDefaultColorProfileToRGB()
-{
-    CMProfileRef genericProfile = (CMProfileRef)[[NSColorSpace genericRGBColorSpace] colorSyncProfile];
-    CMProfileRef previousProfile;
-    int error = CMGetDefaultProfileByUse(cmDisplayUse, &previousProfile);
-    if (error) {
-        fprintf(stderr, "Failed to get current color profile.  I will not be able to restore your current profile, thus I'm not changing it.  Many pixel tests may fail as a result.  (Error: %i)\n", error);
-        return;
-    }
-    if (previousProfile == genericProfile)
-        return;
-    CFStringRef previousProfileName;
-    CFStringRef genericProfileName;
-    char previousProfileNameString[1024];
-    char genericProfileNameString[1024];
-    CMCopyProfileDescriptionString(previousProfile, &previousProfileName);
-    CMCopyProfileDescriptionString(genericProfile, &genericProfileName);
-    CFStringGetCString(previousProfileName, previousProfileNameString, sizeof(previousProfileNameString), kCFStringEncodingUTF8);
-    CFStringGetCString(genericProfileName, genericProfileNameString, sizeof(previousProfileNameString), kCFStringEncodingUTF8);
-    CFRelease(genericProfileName);
-    CFRelease(previousProfileName);
-    
-    fprintf(stderr, "\n\nWARNING: Temporarily changing your system color profile from \"%s\" to \"%s\".\n", previousProfileNameString, genericProfileNameString);
-    fprintf(stderr, "This allows the WebKit pixel-based regression tests to have consistent color values across all machines.\n");
-    fprintf(stderr, "The colors on your screen will change for the duration of the testing.\n\n");
-    
-    if ((error = CMSetDefaultProfileByUse(cmDisplayUse, genericProfile)))
-        fprintf(stderr, "Failed to set color profile to \"%s\"! Many pixel tests will fail as a result.  (Error: %i)",
-            genericProfileNameString, error);
-    else {
-        currentColorProfile = previousProfile;
-        signal(SIGINT, restoreColorSpace);
-        signal(SIGHUP, restoreColorSpace);
-        signal(SIGTERM, restoreColorSpace);
-    }
-}
-
-static void* (*savedMalloc)(malloc_zone_t*, size_t);
-static void* (*savedRealloc)(malloc_zone_t*, void*, size_t);
-
-static void* checkedMalloc(malloc_zone_t* zone, size_t size)
-{
-    if (size >= 0x10000000)
-        return 0;
-    return savedMalloc(zone, size);
-}
-
-static void* checkedRealloc(malloc_zone_t* zone, void* ptr, size_t size)
-{
-    if (size >= 0x10000000)
-        return 0;
-    return savedRealloc(zone, ptr, size);
-}
-
-static void makeLargeMallocFailSilently()
-{
-    malloc_zone_t* zone = malloc_default_zone();
-    savedMalloc = zone->malloc;
-    savedRealloc = zone->realloc;
-    zone->malloc = checkedMalloc;
-    zone->realloc = checkedRealloc;
 }
 
 WebView *createWebViewAndOffscreenWindow()
@@ -444,6 +263,13 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setDOMPasteAllowed:YES];
 }
 
+static void crashHandler(int sig)
+{
+    fprintf(stderr, "%s\n", strsignal(sig));
+    restoreColorSpace(0);
+    exit(128 + sig);
+}
+
 static void installSignalHandlers()
 {
     signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
@@ -508,13 +334,6 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
                 break;
         }
     }
-}
-
-static void initializeColorSpaceAndScreeBufferForPixelTests()
-{
-    setDefaultColorProfileToRGB();
-    screenCaptureBuffer = (unsigned char *)malloc(maxViewHeight * maxViewWidth * 4);
-    sharedColorSpace = CGColorSpaceCreateDeviceRGB();
 }
 
 static void addTestPluginsToPluginSearchPath(const char* executablePath)
@@ -894,93 +713,6 @@ static void dumpBackForwardListForAllWindows()
     }
 }
 
-static void dumpWebViewAsPixelsAndCompareWithExpected()
-{
-    if (!layoutTestController->dumpAsText() && !layoutTestController->dumpDOMAsWebArchive() && !layoutTestController->dumpSourceAsWebArchive()) {
-        // grab a bitmap from the view
-        WebView* view = [mainFrame webView];
-        NSSize webViewSize = [view frame].size;
-        
-        CGContextRef cgContext = CGBitmapContextCreate(screenCaptureBuffer, static_cast<size_t>(webViewSize.width), static_cast<size_t>(webViewSize.height), 8, static_cast<size_t>(webViewSize.width) * 4, sharedColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast);
-        
-        NSGraphicsContext* savedContext = [[[NSGraphicsContext currentContext] retain] autorelease];
-        NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
-        [NSGraphicsContext setCurrentContext:nsContext];
-        
-        if (!layoutTestController->testRepaint()) {
-            NSBitmapImageRep *imageRep;
-            [view displayIfNeeded];
-            [view lockFocus];
-            imageRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:[view frame]];
-            [view unlockFocus];
-            [imageRep draw];
-            [imageRep release];
-        } else if (!layoutTestController->testRepaintSweepHorizontally()) {
-            NSRect line = NSMakeRect(0, 0, webViewSize.width, 1);
-            while (line.origin.y < webViewSize.height) {
-                [view displayRectIgnoringOpacity:line inContext:nsContext];
-                line.origin.y++;
-            }
-        } else {
-            NSRect column = NSMakeRect(0, 0, 1, webViewSize.height);
-            while (column.origin.x < webViewSize.width) {
-                [view displayRectIgnoringOpacity:column inContext:nsContext];
-                column.origin.x++;
-            }
-        }
-        if (layoutTestController->dumpSelectionRect()) {
-            NSView *documentView = [[mainFrame frameView] documentView];
-            if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
-                [[NSColor redColor] set];
-                [NSBezierPath strokeRect:[documentView convertRect:[(id <WebDocumentSelection>)documentView selectionRect] fromView:nil]];
-            }
-        }
-        
-        [NSGraphicsContext setCurrentContext:savedContext];
-        
-        CGImageRef bitmapImage = CGBitmapContextCreateImage(cgContext);
-        CGContextRelease(cgContext);
-        
-        // compute the actual hash to compare to the expected image's hash
-        NSString *actualHash = md5HashStringForBitmap(bitmapImage);
-        printf("\nActualHash: %s\n", [actualHash UTF8String]);
-        
-        BOOL dumpImage;
-        if (dumpAllPixels)
-            dumpImage = YES;
-        else {
-            // FIXME: It's unfortunate that we hardcode the file naming scheme here.
-            // At one time, the perl script had all the knowledge about file layout.
-            // Some day we should restore that setup by passing in more parameters to this tool
-            // or returning more information from the tool to the perl script
-            NSString *baseTestPath = [currentTest stringByDeletingPathExtension];
-            NSString *baselineHashPath = [baseTestPath stringByAppendingString:@"-expected.checksum"];
-            NSString *baselineHash = [NSString stringWithContentsOfFile:baselineHashPath encoding:NSUTF8StringEncoding error:nil];
-            NSString *baselineImagePath = [baseTestPath stringByAppendingString:@"-expected.png"];
-            
-            printf("BaselineHash: %s\n", [baselineHash UTF8String]);
-            
-            /// send the image to stdout if the hash mismatches or if there's no file in the file system
-            dumpImage = ![baselineHash isEqualToString:actualHash] || access([baselineImagePath fileSystemRepresentation], F_OK) != 0;
-        }
-        
-        if (dumpImage) {
-            CFMutableDataRef imageData = CFDataCreateMutable(0, 0);
-            CGImageDestinationRef imageDest = CGImageDestinationCreateWithData(imageData, CFSTR("public.png"), 1, 0);
-            CGImageDestinationAddImage(imageDest, bitmapImage, 0);
-            CGImageDestinationFinalize(imageDest);
-            CFRelease(imageDest);
-            printf("Content-length: %lu\n", CFDataGetLength(imageData));
-            fwrite(CFDataGetBytePtr(imageData), 1, CFDataGetLength(imageData), stdout);
-            CFRelease(imageData);
-        }
-        
-        CGImageRelease(bitmapImage);
-    }
-    
-    printf("#EOF\n");
-}
-
 static void invalidateAnyPreviousWaitToDumpWatchdog()
 {
     if (waitToDumpWatchdog) {
@@ -1033,7 +765,7 @@ void dump()
     }
     
     if (dumpPixels)
-        dumpWebViewAsPixelsAndCompareWithExpected();
+        dumpWebViewAsPixelsAndCompareWithExpected(currentTest, dumpAllPixels);
 
     fflush(stdout);
 
@@ -1153,36 +885,6 @@ static void runTest(const char *pathOrURL)
 
     if (_shouldIgnoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
-}
-
-/* Hashes a bitmap and returns a text string for comparison and saving to a file */
-static NSString *md5HashStringForBitmap(CGImageRef bitmap)
-{
-    MD5_CTX md5Context;
-    unsigned char hash[16];
-    
-    unsigned bitsPerPixel = CGImageGetBitsPerPixel(bitmap);
-    assert(bitsPerPixel == 32); // ImageDiff assumes 32 bit RGBA, we must as well.
-    unsigned bytesPerPixel = bitsPerPixel / 8;
-    unsigned pixelsHigh = CGImageGetHeight(bitmap);
-    unsigned pixelsWide = CGImageGetWidth(bitmap);
-    unsigned bytesPerRow = CGImageGetBytesPerRow(bitmap);
-    assert(bytesPerRow >= (pixelsWide * bytesPerPixel));
-    
-    MD5_Init(&md5Context);
-    unsigned char *bitmapData = screenCaptureBuffer;
-    for (unsigned row = 0; row < pixelsHigh; row++) {
-        MD5_Update(&md5Context, bitmapData, pixelsWide * bytesPerPixel);
-        bitmapData += bytesPerRow;
-    }
-    MD5_Final(hash, &md5Context);
-    
-    char hex[33] = "";
-    for (int i = 0; i < 16; i++) {
-       snprintf(hex, 33, "%s%02x", hex, hash[i]);
-    }
-
-    return [NSString stringWithUTF8String:hex];
 }
 
 void displayWebView()

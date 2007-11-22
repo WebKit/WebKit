@@ -28,59 +28,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#import "DumpRenderTreeWindow.h"
+#import "CheckedMalloc.h"
 
-#import "DumpRenderTree.h"
+#import <malloc/malloc.h>
 
-// FIXME: This file is ObjC++ only because of this include. :(
-#import "LayoutTestController.h"
+static void* (*savedMalloc)(malloc_zone_t*, size_t);
+static void* (*savedRealloc)(malloc_zone_t*, void*, size_t);
 
-CFMutableArrayRef allWindowsRef = 0;
-
-static CFArrayCallBacks NonRetainingArrayCallbacks = {
-    0,
-    NULL,
-    NULL,
-    CFCopyDescription,
-    CFEqual
-};
-
-@implementation DumpRenderTreeWindow
-
-+ (NSArray *)allWindows
+static void* checkedMalloc(malloc_zone_t* zone, size_t size)
 {
-    return [[(NSArray *)allWindowsRef copy] autorelease];
+    if (size >= 0x10000000)
+        return 0;
+    return savedMalloc(zone, size);
 }
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+static void* checkedRealloc(malloc_zone_t* zone, void* ptr, size_t size)
 {
-    if (!allWindowsRef)
-        allWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
-
-    CFArrayAppendValue(allWindowsRef, self);
-            
-    return [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation];
+    if (size >= 0x10000000)
+        return 0;
+    return savedRealloc(zone, ptr, size);
 }
 
-- (void)dealloc
+void makeLargeMallocFailSilently()
 {
-    CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(allWindowsRef));
-    CFIndex i = CFArrayGetFirstIndexOfValue(allWindowsRef, arrayRange, self);
-    assert(i != -1);
-
-    CFArrayRemoveValueAtIndex(allWindowsRef, i);
-    [super dealloc];
+    malloc_zone_t* zone = malloc_default_zone();
+    savedMalloc = zone->malloc;
+    savedRealloc = zone->realloc;
+    zone->malloc = checkedMalloc;
+    zone->realloc = checkedRealloc;
 }
-
-- (BOOL)isKeyWindow
-{
-    return layoutTestController ? layoutTestController->windowIsKey() : YES;
-}
-
-- (void)keyDown:(id)sender
-{
-    // Do nothing, avoiding the beep we'd otherwise get from NSResponder,
-    // once we get to the end of the responder chain.
-}
-
-@end

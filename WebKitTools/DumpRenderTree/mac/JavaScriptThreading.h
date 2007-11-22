@@ -27,60 +27,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import "DumpRenderTreeWindow.h"
 
-#import "DumpRenderTree.h"
+/* These functions start/stop threads used to abuse the JavaScript interpreter
+ and assure that our JS implementation remains threadsafe */
 
-// FIXME: This file is ObjC++ only because of this include. :(
-#import "LayoutTestController.h"
-
-CFMutableArrayRef allWindowsRef = 0;
-
-static CFArrayCallBacks NonRetainingArrayCallbacks = {
-    0,
-    NULL,
-    NULL,
-    CFCopyDescription,
-    CFEqual
-};
-
-@implementation DumpRenderTreeWindow
-
-+ (NSArray *)allWindows
-{
-    return [[(NSArray *)allWindowsRef copy] autorelease];
-}
-
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
-{
-    if (!allWindowsRef)
-        allWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
-
-    CFArrayAppendValue(allWindowsRef, self);
-            
-    return [super initWithContentRect:contentRect styleMask:styleMask backing:bufferingType defer:deferCreation];
-}
-
-- (void)dealloc
-{
-    CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(allWindowsRef));
-    CFIndex i = CFArrayGetFirstIndexOfValue(allWindowsRef, arrayRange, self);
-    assert(i != -1);
-
-    CFArrayRemoveValueAtIndex(allWindowsRef, i);
-    [super dealloc];
-}
-
-- (BOOL)isKeyWindow
-{
-    return layoutTestController ? layoutTestController->windowIsKey() : YES;
-}
-
-- (void)keyDown:(id)sender
-{
-    // Do nothing, avoiding the beep we'd otherwise get from NSResponder,
-    // once we get to the end of the responder chain.
-}
-
-@end
+void startJavaScriptThreads();
+void stopJavaScriptThreads();

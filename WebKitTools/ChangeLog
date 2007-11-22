@@ -1,3 +1,37 @@
+2007-11-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Break out more of DumpRenderTree.mm into individual files
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/CheckedMalloc.cpp: Added.
+        (checkedMalloc):
+        (checkedRealloc):
+        (makeLargeMallocFailSilently):
+        * DumpRenderTree/mac/CheckedMalloc.h: Added.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (crashHandler):
+        (dump):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/JavaScriptThreading.cpp: Added.
+        (javaScriptThreads):
+        (runJavaScriptThread):
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+        * DumpRenderTree/mac/JavaScriptThreading.h: Added.
+        * DumpRenderTree/mac/PixelDumpSupport.h: Added.
+        * DumpRenderTree/mac/PixelDumpSupport.mm: Added.
+        (restoreColorSpace):
+        (setDefaultColorProfileToRGB):
+        (initializeColorSpaceAndScreeBufferForPixelTests):
+        (md5HashStringForBitmap):
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+
 2007-11-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         Move install-unix-extras to wx directory as it seems only to be used by that 

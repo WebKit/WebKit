@@ -43,6 +43,12 @@
 		A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */; };
 		A8B91AE00CF3B372008F91FF /* DumpRenderTreeWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = A8B91ADD0CF3B372008F91FF /* DumpRenderTreeWindow.h */; };
 		A8B91AE20CF3B372008F91FF /* DumpRenderTreePasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = A8B91ADF0CF3B372008F91FF /* DumpRenderTreePasteboard.h */; };
+		A8B91BFA0CF522B4008F91FF /* PixelDumpSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8B91BF40CF522B4008F91FF /* PixelDumpSupport.h */; };
+		A8B91BFB0CF522B4008F91FF /* JavaScriptThreading.h in Headers */ = {isa = PBXBuildFile; fileRef = A8B91BF50CF522B4008F91FF /* JavaScriptThreading.h */; };
+		A8B91BFC0CF522B4008F91FF /* PixelDumpSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8B91BF60CF522B4008F91FF /* PixelDumpSupport.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		A8B91BFD0CF522B4008F91FF /* CheckedMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8B91BF70CF522B4008F91FF /* CheckedMalloc.cpp */; };
+		A8B91BFE0CF522B4008F91FF /* JavaScriptThreading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8B91BF80CF522B4008F91FF /* JavaScriptThreading.cpp */; };
+		A8B91BFF0CF522B4008F91FF /* CheckedMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A8B91BF90CF522B4008F91FF /* CheckedMalloc.h */; };
 		AE8259F308D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		AE8259F408D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
@@ -129,6 +135,12 @@
 		A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeWindow.mm; path = mac/DumpRenderTreeWindow.mm; sourceTree = "<group>"; };
 		A8B91ADD0CF3B372008F91FF /* DumpRenderTreeWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeWindow.h; path = mac/DumpRenderTreeWindow.h; sourceTree = "<group>"; };
 		A8B91ADF0CF3B372008F91FF /* DumpRenderTreePasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreePasteboard.h; path = mac/DumpRenderTreePasteboard.h; sourceTree = "<group>"; };
+		A8B91BF40CF522B4008F91FF /* PixelDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixelDumpSupport.h; path = mac/PixelDumpSupport.h; sourceTree = "<group>"; };
+		A8B91BF50CF522B4008F91FF /* JavaScriptThreading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaScriptThreading.h; path = mac/JavaScriptThreading.h; sourceTree = "<group>"; };
+		A8B91BF60CF522B4008F91FF /* PixelDumpSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PixelDumpSupport.mm; path = mac/PixelDumpSupport.mm; sourceTree = "<group>"; };
+		A8B91BF70CF522B4008F91FF /* CheckedMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CheckedMalloc.cpp; path = mac/CheckedMalloc.cpp; sourceTree = "<group>"; };
+		A8B91BF80CF522B4008F91FF /* JavaScriptThreading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaScriptThreading.cpp; path = mac/JavaScriptThreading.cpp; sourceTree = "<group>"; };
+		A8B91BF90CF522B4008F91FF /* CheckedMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CheckedMalloc.h; path = mac/CheckedMalloc.h; sourceTree = "<group>"; };
 		AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "qt/fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		AE8257EF08D22389000507AB /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -219,6 +231,12 @@
 				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
 				A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */,
 				BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */,
+				A8B91BF70CF522B4008F91FF /* CheckedMalloc.cpp */,
+				A8B91BF90CF522B4008F91FF /* CheckedMalloc.h */,
+				A8B91BF80CF522B4008F91FF /* JavaScriptThreading.cpp */,
+				A8B91BF50CF522B4008F91FF /* JavaScriptThreading.h */,
+				A8B91BF40CF522B4008F91FF /* PixelDumpSupport.h */,
+				A8B91BF60CF522B4008F91FF /* PixelDumpSupport.mm */,
 				BCA18C0A0C9B59EF00114369 /* DumpRenderTreeMac.h */,
 				A8B91AD20CF3B305008F91FF /* AppKit Overrides */,
 				BCA18B730C9B08F100114369 /* DumpRenderTreeDraggingInfo.h */,
@@ -377,6 +395,9 @@
 				BC9D90260C97472E0099A4A3 /* WorkQueueItem.h in Headers */,
 				A8B91AE00CF3B372008F91FF /* DumpRenderTreeWindow.h in Headers */,
 				A8B91AE20CF3B372008F91FF /* DumpRenderTreePasteboard.h in Headers */,
+				A8B91BFA0CF522B4008F91FF /* PixelDumpSupport.h in Headers */,
+				A8B91BFB0CF522B4008F91FF /* JavaScriptThreading.h in Headers */,
+				A8B91BFF0CF522B4008F91FF /* CheckedMalloc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -513,6 +534,9 @@
 				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
 				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.m in Sources */,
 				A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */,
+				A8B91BFC0CF522B4008F91FF /* PixelDumpSupport.mm in Sources */,
+				A8B91BFD0CF522B4008F91FF /* CheckedMalloc.cpp in Sources */,
+				A8B91BFE0CF522B4008F91FF /* JavaScriptThreading.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
