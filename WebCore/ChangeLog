@@ -2,6 +2,16 @@
 
         Reviewed by George.
 
+        For the build inside Qt include qbase.pri and don't duplicate what qbase.pri otherwise does (install targets, etc.)
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * WebCore.pro:
+
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
         Don't set OBJECTS_DIR when building inside Qt
 
         WARNING: NO TEST CASES ADDED OR CHANGED

@@ -13,6 +13,7 @@ gtk-port:TARGET = WebKitGtk
 
 CONFIG(QTDIR_build) {
     GENERATED_SOURCES_DIR = $$PWD/generated
+    include($$QT_SOURCE_TREE/src/qbase.pri)
 }
 
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
@@ -21,9 +22,11 @@ win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
 
 INCLUDEPATH += $$GENERATED_SOURCES_DIR
 
-!CONFIG(QTDIR_build):OBJECTS_DIR = tmp
+!CONFIG(QTDIR_build) {
+     OBJECTS_DIR = tmp
+     DESTDIR = $$OUTPUT_DIR/lib
+}
 
-DESTDIR = $$OUTPUT_DIR/lib
 DEPENDPATH += css dom loader editing history html \
     loader page platform platform/graphics rendering xml
 
@@ -1635,7 +1638,7 @@ xpathbison.variable_out = GENERATED_SOURCES
 xpathbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
 addExtraCompiler(xpathbison)
 
-qt-port {
+qt-port:!CONFIG(QTDIR_build) {
     target.path = $$[QT_INSTALL_LIBS]
     include($$PWD/../WebKit/qt/Api/headers.pri)
     headers.files = $$WEBKIT_API_HEADERS
