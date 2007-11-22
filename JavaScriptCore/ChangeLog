@@ -8,7 +8,7 @@
         -Werror to succeed.  At present they will crash when executed due to code that is not safe
         under strict aliasing (<rdar://problem/5536806>).
 
-        * Configurations/Base.xcconfig: Exclude the -Wno-long-double flag when building with GCC 4.2.
+        * Configurations/Base.xcconfig: Remove the -Wno-long-double flag.
         * kjs/date_object.cpp:
         (KJS::formatTime): Test whether the stack-allocated string is empty rather than at a non-null address.
         * kjs/dtoa.cpp:
