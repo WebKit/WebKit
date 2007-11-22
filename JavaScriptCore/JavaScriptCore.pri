@@ -100,6 +100,15 @@ qt-port:SOURCES += \
     bindings/qt/qt_instance.cpp \
     bindings/qt/qt_runtime.cpp
 
+!CONFIG(QTDIR_build) {
+    defineTest(addExtraCompiler) {
+        QMAKE_EXTRA_COMPILERS += $$1
+        generated_files.depends += compiler_$${1}_make_all
+        export(QMAKE_EXTRA_COMPILERS)
+        export(generated_files.depends)
+        return(true)
+    }
+}
 
 # GENERATOR 1-A: LUT creator
 lut.output = tmp/${QMAKE_FILE_BASE}.lut.h
@@ -107,7 +116,7 @@ lut.commands = perl $$PWD/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_
 lut.depend = ${QMAKE_FILE_NAME}
 lut.input = LUT_FILES
 lut.CONFIG += no_link
-QMAKE_EXTRA_COMPILERS += lut
+addExtraCompiler(lut)
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
 keywordlut.output = tmp/lexer.lut.h
@@ -115,7 +124,7 @@ keywordlut.commands = perl $$PWD/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > $
 keywordlut.depend = ${QMAKE_FILE_NAME}
 keywordlut.input = KEYWORDLUT_FILES
 keywordlut.CONFIG += no_link
-QMAKE_EXTRA_COMPILERS += keywordlut
+addExtraCompiler(keywordlut)
 
 # GENERATOR 2: bison grammar
 kjsbison.output = tmp/${QMAKE_FILE_BASE}.cpp
@@ -126,4 +135,4 @@ kjsbison.variable_out = GENERATED_SOURCES
 kjsbison.dependency_type = TYPE_C
 kjsbison.CONFIG = target_predeps
 kjsbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
-QMAKE_EXTRA_COMPILERS += kjsbison
+addExtraCompiler(kjsbison)

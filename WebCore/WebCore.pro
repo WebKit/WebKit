@@ -63,6 +63,38 @@ gtk-port:DEFINES += ENABLE_SVG=1
 
 DEFINES += WTF_CHANGES=1
 
+#
+# For builds inside Qt we interpret the output rule and the input of each extra compiler manually
+# and add the resulting sources to the SOURCES variable, because the build inside Qt contains already
+# all the generated files. We do not need to generate any extra compiler rules in that case.
+#
+# In addition this function adds a new target called 'generated_files' that allows manually calling
+# all the extra compilers to generate all the necessary files for the build using 'make generated_files'
+#
+defineTest(addExtraCompiler) {
+    CONFIG(QTDIR_build) {
+        outputRule = $$eval($${1}.output)
+
+        input = $$eval($${1}.input)
+        input = $$eval($$input)
+
+        for(file,input) {
+            base = $$basename(file)
+            base ~= s/\..+//
+            newfile=$$replace(outputRule,\\$\\{QMAKE_FILE_BASE\\},$$base)
+            SOURCES += $$newfile
+        }
+
+        export(SOURCES)
+    } else {
+        QMAKE_EXTRA_COMPILERS += $$1
+        generated_files.depends += compiler_$${1}_make_all
+        export(QMAKE_EXTRA_COMPILERS)
+        export(generated_files.depends)
+    }
+    return(true)
+}
+
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 #INCLUDEPATH += $$PWD/../JavaScriptCore
@@ -150,6 +182,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform/image-decoders
 
 QT += network xml
+
+QMAKE_EXTRA_TARGETS += generated_files
 
 FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1
 
@@ -1423,7 +1457,7 @@ gtk-port:SOURCES += \
         svgnames_a.CONFIG = target_predeps
         svgnames_a.variable_out = GENERATED_SOURCES
         svgnames_a.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}SVGNames.h
-        QMAKE_EXTRA_COMPILERS += svgnames_a
+        addExtraCompiler(svgnames_a)
         svgnames_b.output = tmp/SVGElementFactory.cpp
         svgnames_b.commands = @echo -n ''
         svgnames_b.input = SVG_NAMES
@@ -1431,7 +1465,7 @@ gtk-port:SOURCES += \
         svgnames_b.CONFIG = target_predeps
         svgnames_b.variable_out = GENERATED_SOURCES
         svgnames_b.clean += ${QMAKE_VAR_OBJECTS_DIR_WTR}SVGElementFactory.h ${QMAKE_FILE_OUT}
-        QMAKE_EXTRA_COMPILERS += svgnames_b
+        addExtraCompiler(svgnames_b)
 
         # GENERATOR 5-D:
         xlinknames.output = tmp/XLinkNames.cpp
@@ -1441,7 +1475,7 @@ gtk-port:SOURCES += \
         xlinknames.CONFIG = target_predeps
         xlinknames.variable_out = GENERATED_SOURCES
         xlinknames.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}XLinkNames.h
-        QMAKE_EXTRA_COMPILERS += xlinknames
+        addExtraCompiler(xlinknames)
 
     # GENERATOR 6-A:
     cssprops.output = tmp/${QMAKE_FILE_BASE}.c
@@ -1450,7 +1484,7 @@ gtk-port:SOURCES += \
     cssprops.CONFIG = target_predeps no_link
     cssprops.depend = ${QMAKE_FILE_NAME} SVGCSSPROPERTIES
     cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
-    QMAKE_EXTRA_COMPILERS += cssprops
+    addExtraCompiler(cssprops)
 
     # GENERATOR 6-B:
     cssvalues.output = tmp/${QMAKE_FILE_BASE}.c
@@ -1459,7 +1493,7 @@ gtk-port:SOURCES += \
     cssvalues.CONFIG = target_predeps no_link
     cssvalues.depend = ${QMAKE_FILE_NAME} SVGCSSVALUES
     cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
-    QMAKE_EXTRA_COMPILERS += cssvalues
+    addExtraCompiler(cssvalues)
 } else {
     # GENERATOR 6-A:
     cssprops.output = tmp/${QMAKE_FILE_BASE}.c
@@ -1467,7 +1501,7 @@ gtk-port:SOURCES += \
     cssprops.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
     cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
-    QMAKE_EXTRA_COMPILERS += cssprops
+    addExtraCompiler(cssprops)
 
     # GENERATOR 6-B:
     cssvalues.output = tmp/${QMAKE_FILE_BASE}.c
@@ -1475,7 +1509,7 @@ gtk-port:SOURCES += \
     cssvalues.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} tmp && cd tmp && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
     cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
-    QMAKE_EXTRA_COMPILERS += cssvalues
+    addExtraCompiler(cssvalues)
 }
 
 
@@ -1486,7 +1520,7 @@ idl.input = IDL_BINDINGS
 idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/ksvg2/svg --outputdir tmp --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 idl.CONFIG += target_predeps
 idl.clean = ${QMAKE_VAR_OBJECTS_DIR_WTR}JS${QMAKE_FILE_BASE}.h ${QMAKE_FILE_OUT}
-QMAKE_EXTRA_COMPILERS += idl
+addExtraCompiler(idl)
 
 # GENERATOR 2-A: LUT creator
 #lut.output = tmp/${QMAKE_FILE_BASE}.lut.h
@@ -1503,7 +1537,7 @@ luttable.depend = ${QMAKE_FILE_NAME}
 luttable.input = LUT_TABLE_FILES
 luttable.CONFIG += no_link
 luttable.dependency_type = TYPE_C
-QMAKE_EXTRA_COMPILERS += luttable
+addExtraCompiler(luttable)
 
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = tmp/${QMAKE_FILE_BASE}.cpp
@@ -1511,7 +1545,7 @@ tokenizer.commands = flex -t < ${QMAKE_FILE_NAME} | perl $$PWD/css/maketokenizer
 tokenizer.dependency_type = TYPE_C
 tokenizer.input = TOKENIZER
 tokenizer.CONFIG += target_predeps no_link
-QMAKE_EXTRA_COMPILERS += tokenizer
+addExtraCompiler(tokenizer)
 
 # GENERATOR 4: CSS grammar
 cssbison.output = tmp/${QMAKE_FILE_BASE}.cpp
@@ -1522,7 +1556,7 @@ cssbison.CONFIG = target_predeps
 cssbison.dependency_type = TYPE_C
 cssbison.variable_out = GENERATED_SOURCES
 cssbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
-QMAKE_EXTRA_COMPILERS += cssbison
+addExtraCompiler(cssbison)
 #PRE_TARGETDEPS += tmp/CSSGrammar.cpp
 grammar_h_dep.target = tmp/CSSParser.o
 grammar_h_dep.depends = tmp/CSSGrammar.cpp tmp/HTMLNames.cpp
@@ -1536,7 +1570,7 @@ htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
 htmlnames.variable_out = GENERATED_SOURCES
 htmlnames.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}HTMLNames.h
-QMAKE_EXTRA_COMPILERS += htmlnames
+addExtraCompiler(htmlnames)
 
 # GENERATOR 5-B:
 xmlnames.output = tmp/XMLNames.cpp
@@ -1546,8 +1580,7 @@ xmlnames.dependency_type = TYPE_C
 xmlnames.CONFIG = target_predeps
 xmlnames.variable_out = GENERATED_SOURCES
 xmlnames.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}XMLNames.h
-QMAKE_EXTRA_COMPILERS += xmlnames
-
+addExtraCompiler(xmlnames)
 
 # GENERATOR 8-A:
 entities.output = tmp/HTMLEntityNames.c
@@ -1556,7 +1589,7 @@ entities.input = ENTITIES_GPERF
 entities.dependency_type = TYPE_C
 entities.CONFIG = target_predeps no_link
 entities.clean = ${QMAKE_FILE_OUT}
-QMAKE_EXTRA_COMPILERS += entities
+addExtraCompiler(entities)
 
 # GENERATOR 8-B:
 doctypestrings.output = tmp/${QMAKE_FILE_BASE}.cpp
@@ -1565,14 +1598,14 @@ doctypestrings.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\'
 doctypestrings.dependency_type = TYPE_C
 doctypestrings.CONFIG += target_predeps no_link
 doctypestrings.clean = ${QMAKE_FILE_OUT}
-QMAKE_EXTRA_COMPILERS += doctypestrings
+addExtraCompiler(doctypestrings)
 
 # GENERATOR 8-C:
 colordata.output = tmp/ColorData.c
 colordata.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > ${QMAKE_FILE_OUT} && echo // bogus >> ${QMAKE_FILE_OUT} && gperf -CDEot -L ANSI-C --key-positions="*" -N findColor -D -s 2 < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
 colordata.input = COLORDAT_GPERF
 colordata.CONFIG = target_predeps no_link
-QMAKE_EXTRA_COMPILERS += colordata
+addExtraCompiler(colordata)
 
 # GENERATOR 9:
 stylesheets.output = tmp/UserAgentStyleSheetsData.cpp
@@ -1581,7 +1614,7 @@ stylesheets.input = STYLESHEETS_EMBED
 stylesheets.CONFIG = target_predeps
 stylesheets.variable_out = GENERATED_SOURCES
 stylesheets.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}UserAgentStyleSheets.h
-QMAKE_EXTRA_COMPILERS += stylesheets
+addExtraCompiler(stylesheets)
 
 # GENERATOR 10: XPATH grammar
 xpathbison.output = tmp/${QMAKE_FILE_BASE}.cpp
@@ -1592,7 +1625,7 @@ xpathbison.CONFIG = target_predeps
 xpathbison.dependency_type = TYPE_C
 xpathbison.variable_out = GENERATED_SOURCES
 xpathbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
-QMAKE_EXTRA_COMPILERS += xpathbison
+addExtraCompiler(xpathbison)
 
 qt-port {
     target.path = $$[QT_INSTALL_LIBS]

@@ -1,3 +1,16 @@
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
+        Centralize the setup for all the extra compilers in a addExtraCompiler function.
+        
+        This allows adding a "generated_files" target that builds all generated files using "make generated_files".
+        For the build inside Qt we do not generate actual rules for the extra compilers but instead
+        do the variable substitution of compiler.output manually and add the generated sources to SOURCES.
+
+        * JavaScriptCore.pri:
+        * pcre/pcre.pri:
+
 2007-11-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
