@@ -1,3 +1,11 @@
+2007-11-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric.
+
+        Update coding style to cover control statements with no body.
+
+        * coding/coding-style.html:
+
 2007-11-17  Adam Roben  <aroben@apple.com>
 
         Update Windows debugging instructions

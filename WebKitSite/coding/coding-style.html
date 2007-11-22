@@ -280,6 +280,18 @@ if (condition) {
 }
 </pre>
 </li>
+
+<li>Control clauses without a body should use empty braces:
+<h4 class="right">Right:</h4>
+<pre class="code">
+for ( ; current; current = current->next) { }
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+for ( ; current; current = current->next);
+</pre>
+</li>
 </ol>
 
 <h3>Null, false and 0</h3>
