@@ -134,7 +134,7 @@ public:
     };
 
 
-    QWebPage(QWidget *parent);
+    explicit QWebPage(QWidget *parent = 0);
     ~QWebPage();
 
     void open(const QUrl &url);

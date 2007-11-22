@@ -2,6 +2,14 @@
 
         Reviewed by George.
 
+        Fixed the signature of the QWebPage constructor to follow Qt guidelines.
+
+        * Api/qwebpage.h:
+
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
         Use <QtModule/headerfile.h> instead of <Classname> in public HEADER files, to not require the include paths for the other modules to be present
 
         * Api/qcookiejar.h:
