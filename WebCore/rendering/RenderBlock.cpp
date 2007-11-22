@@ -1851,7 +1851,7 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
 
     RootInlineBox* lastSelectedLine = 0;
     RootInlineBox* curr;
-    for (curr = firstRootBox(); curr && !curr->hasSelectedChildren(); curr = curr->nextRootBox());
+    for (curr = firstRootBox(); curr && !curr->hasSelectedChildren(); curr = curr->nextRootBox()) { }
 
     // Now paint the gaps for the lines.
     for (; curr && curr->hasSelectedChildren(); curr = curr->nextRootBox()) {
@@ -1889,7 +1889,7 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
 
     // Go ahead and jump right to the first block child that contains some selected objects.
     RenderObject* curr;
-    for (curr = firstChild(); curr && curr->selectionState() == SelectionNone; curr = curr->nextSibling());
+    for (curr = firstChild(); curr && curr->selectionState() == SelectionNone; curr = curr->nextSibling()) { }
 
     for (bool sawSelectionEnd = false; curr && !sawSelectionEnd; curr = curr->nextSibling()) {
         SelectionState childState = curr->selectionState();

@@ -1,3 +1,12 @@
+2007-11-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric.
+
+        Fix JavaScriptGlue to build without warnings using GCC 4.2.
+
+        * Configurations/Base.xcconfig:
+        * JSRun.h:
+
 2007-11-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

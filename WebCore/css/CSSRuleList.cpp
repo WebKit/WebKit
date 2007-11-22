@@ -57,8 +57,7 @@ void CSSRuleList::deleteRule(unsigned index)
     CSSRule* rule = m_lstCSSRules.take(index);
     if (rule)
         rule->deref();
-    else
-        ; // FIXME: Throw INDEX_SIZE_ERR exception here
+    // FIXME: Throw INDEX_SIZE_ERR exception here if !rule
 }
 
 void CSSRuleList::append(CSSRule* rule)

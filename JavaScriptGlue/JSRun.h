@@ -40,7 +40,7 @@ class JSInterpreter : public Interpreter {
         JSFlags Flags() const { return fJSFlags; }
 
     protected:
-        virtual JSInterpreter::~JSInterpreter() { } // only deref on the base class should delete us
+        virtual ~JSInterpreter() { } // only deref on the base class should delete us
 
     private:
         JSFlags fJSFlags;

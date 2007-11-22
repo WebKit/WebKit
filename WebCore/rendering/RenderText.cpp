@@ -702,7 +702,7 @@ bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
     unsigned currPos;
     for (currPos = from;
          currPos < from + len && ((*m_text)[currPos] == '\n' || (*m_text)[currPos] == ' ' || (*m_text)[currPos] == '\t');
-         currPos++);
+         currPos++) { }
     return currPos >= (from + len);
 }
 

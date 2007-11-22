@@ -1,3 +1,31 @@
+2007-11-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric.
+
+        Fix WebCore to build without warnings under GCC 4.2.
+
+        * Configurations/Base.xcconfig:
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::deleteRule):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::allowNestedRedundantTag):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::fillInlineSelectionGaps):
+        (WebCore::RenderBlock::fillBlockSelectionGaps):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::stackingContext):
+        (WebCore::RenderLayer::enclosingPositionedAncestor):
+        (WebCore::RenderLayer::transparentAncestor):
+        * rendering/RenderStyle.cpp:
+        (WebCore::BackgroundLayer::fillUnsetProperties):
+        (WebCore::Transition::fillUnsetProperties):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::containsOnlyWhitespace):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::determineStartPosition):
+
 2007-11-21  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

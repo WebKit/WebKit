@@ -200,7 +200,7 @@ bool BackgroundLayer::operator==(const BackgroundLayer& o) const
 void BackgroundLayer::fillUnsetProperties()
 {
     BackgroundLayer* curr;
-    for (curr = this; curr && curr->isBackgroundImageSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundImageSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -211,7 +211,7 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundXPositionSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundXPositionSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -222,7 +222,7 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundYPositionSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundYPositionSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -233,7 +233,7 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundAttachmentSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundAttachmentSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -244,7 +244,7 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundClipSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundClipSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -255,7 +255,7 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
 
-    for (curr = this; curr && curr->isBackgroundCompositeSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundCompositeSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -266,7 +266,7 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
 
-    for (curr = this; curr && curr->isBackgroundOriginSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundOriginSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -277,7 +277,7 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
 
-    for (curr = this; curr && curr->isBackgroundRepeatSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundRepeatSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -288,7 +288,7 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundSizeSet(); curr = curr->next());
+    for (curr = this; curr && curr->isBackgroundSizeSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
@@ -598,7 +598,7 @@ bool Transition::operator==(const Transition& o) const
 void Transition::fillUnsetProperties()
 {
     Transition* curr;
-    for (curr = this; curr && curr->isTransitionDurationSet(); curr = curr->next());
+    for (curr = this; curr && curr->isTransitionDurationSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (Transition* pattern = this; curr; curr = curr->next()) {
@@ -609,7 +609,7 @@ void Transition::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isTransitionRepeatCountSet(); curr = curr->next());
+    for (curr = this; curr && curr->isTransitionRepeatCountSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (Transition* pattern = this; curr; curr = curr->next()) {
@@ -620,7 +620,7 @@ void Transition::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isTransitionTimingFunctionSet(); curr = curr->next());
+    for (curr = this; curr && curr->isTransitionTimingFunctionSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (Transition* pattern = this; curr; curr = curr->next()) {
@@ -631,7 +631,7 @@ void Transition::fillUnsetProperties()
         }
     }
 
-    for (curr = this; curr && curr->isTransitionPropertySet(); curr = curr->next());
+    for (curr = this; curr && curr->isTransitionPropertySet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (Transition* pattern = this; curr; curr = curr->next()) {

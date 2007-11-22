@@ -838,7 +838,7 @@ bool HTMLParser::allowNestedRedundantTag(const AtomicString& tagName)
     unsigned i = 0;
     for (HTMLStackElem* curr = blockStack;
          i < cMaxRedundantTagDepth && curr && curr->tagName == tagName;
-         curr = curr->next, i++);
+         curr = curr->next, i++) { }
     return i != cMaxRedundantTagDepth;
 }
 
