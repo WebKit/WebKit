@@ -1,3 +1,12 @@
+2007-11-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Show Fonts as Yellow in the network timeline.
+
+        * page/inspector/NetworkPanel.js:
+        * page/inspector/inspector.css:
+
 2007-11-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.

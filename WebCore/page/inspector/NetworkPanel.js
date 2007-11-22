@@ -592,8 +592,8 @@ WebInspector.NetworkPanel.prototype = {
 
         var graphInfo = this.calculator.computeValues(this.timelineEntries);
 
-        var categoryOrder = ["documents", "stylesheets", "images", "fonts", "scripts", "other"];
-        var categoryColors = {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, fonts: {r: 255, g: 10, b: 10}, scripts: {r: 255, g: 121, b: 0}, other: {r: 186, g: 186, b: 186}};
+        var categoryOrder = ["documents", "stylesheets", "images", "scripts", "fonts", "other"];
+        var categoryColors = {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, scripts: {r: 255, g: 121, b: 0}, fonts: {r: 231, g: 231, b: 10}, other: {r: 186, g: 186, b: 186}};
         var fillSegments = [];
 
         this.legendElement.removeChildren();

@@ -1809,6 +1809,10 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     -webkit-border-image: url(Images/timelinePillPurple.png) 6 7 6 7;
 }
 
+.network-bar.network-category-fonts {
+    -webkit-border-image: url(Images/timelinePillYellow.png) 6 7 6 7;
+}
+
 .network-bar.network-category-scripts {
     -webkit-border-image: url(Images/timelinePillOrange.png) 6 7 6 7;
 }
