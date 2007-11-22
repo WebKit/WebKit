@@ -49,7 +49,7 @@ unsigned WebConvertBGRAToARGB(unsigned char *offscreenBuffer, int rowBytes, int 
     uint8_t vImagePermuteMap[4] = { 3, 2, 1, 0 }; // Where { 0, 1, 2, 3 } would leave the channels unchanged; this map converts BGRA to ARGB
     vImage_Error vImageError = softLink_vImagePermuteChannels_ARGB8888(&vImage, &vImage, vImagePermuteMap, 0);
     if (vImageError) {
-        LOG_ERROR("Could not convert BGRA image to ARGB: %d", vImageError);
+        LOG_ERROR("Could not convert BGRA image to ARGB: %zd", vImageError);
         return FALSE;
     }
     

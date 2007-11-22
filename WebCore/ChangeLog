@@ -1,3 +1,19 @@
+2007-11-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Changes due to <rdar://problem/5602936> Need to resolve new GCC 4.2 warnings
+
+        Update format strings to use format specifiers that match the argument types.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::performURLImport):
+        (WebCore::IconDatabase::writeToDatabase):
+        * platform/mac/TextCodecMac.cpp:
+        (WebCore::TextCodecMac::decode):
+        * storage/Database.cpp:
+        (WebCore::Database::deliverAllPendingCallbacks):
+
 2007-11-21  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

@@ -229,7 +229,7 @@ static UString formatTime(const GregorianDateTime &t, bool utc)
         struct tm gtm = t;
         strftime(tzname, sizeof(tzname), "%Z", &gtm);
 
-        if (tzname) {
+        if (tzname[0]) {
             snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d (%s)",
                 t.hour, t.minute, t.second,
                 gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, tzname);

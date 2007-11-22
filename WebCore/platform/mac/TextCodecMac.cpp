@@ -146,7 +146,7 @@ OSStatus TextCodecMac::decode(const unsigned char* inputBuffer, int inputBufferL
         if (status == kTECPartialCharErr && bytesRead == 0) {
             // Handle the case where the partial character was not converted.
             if (bytesToPutInBuffer >= spaceInBuffer) {
-                LOG_ERROR("TECConvertText gave a kTECPartialCharErr but read none of the %u bytes in the buffer", sizeof(m_bufferedBytes));
+                LOG_ERROR("TECConvertText gave a kTECPartialCharErr but read none of the %zu bytes in the buffer", sizeof(m_bufferedBytes));
                 m_numBufferedBytes = 0;
                 status = kTECUnmappableElementErr; // should never happen, but use this error code
             } else {
@@ -236,7 +236,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
                 break;
             }
             default:
-                LOG_ERROR("text decoding failed with error %d", status);
+                LOG_ERROR("text decoding failed with error %zu", status);
                 m_error = true;
                 return String();
         }

@@ -83,6 +83,15 @@
 #define WTF_PRETTY_FUNCTION __FUNCTION__
 #endif
 
+// WTF logging functions can process %@ in the format string to log a NSObject* but the printf format attribute
+// emits a warning when %@ is used in the format string.  Until <rdar://problem/5195437> is resolved we can't include
+// the attribute when being used from Objective-C code in case it decides to use %@.
+#if COMPILER(GCC) && !defined(__OBJC__)
+#define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
+#else
+#define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments) 
+#endif
+
 /* These helper functions are always declared, but not necessarily always defined if the corresponding function is disabled. */
 
 #ifdef __cplusplus
@@ -98,12 +107,12 @@ typedef struct {
 } WTFLogChannel;
 
 void WTFReportAssertionFailure(const char* file, int line, const char* function, const char* assertion);
-void WTFReportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* assertion, const char* format, ...);
+void WTFReportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* assertion, const char* format, ...) WTF_ATTRIBUTE_PRINTF(5, 6);
 void WTFReportArgumentAssertionFailure(const char* file, int line, const char* function, const char* argName, const char* assertion);
-void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...) ;
-void WTFReportError(const char* file, int line, const char* function, const char* format, ...);
-void WTFLog(WTFLogChannel* channel, const char* format, ...);
-void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChannel* channel, const char* format, ...);
+void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
+void WTFReportError(const char* file, int line, const char* function, const char* format, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
+void WTFLog(WTFLogChannel* channel, const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChannel* channel, const char* format, ...) WTF_ATTRIBUTE_PRINTF(5, 6);
 
 #ifdef __cplusplus
 }

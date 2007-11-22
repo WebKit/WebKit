@@ -505,7 +505,7 @@ void Database::deliverAllPendingCallbacks()
         s_globalCallbackScheduled = false;
     }
 
-    LOG(StorageAPI, "Having %u databases deliver their pending callbacks", databases.size());
+    LOG(StorageAPI, "Having %zu databases deliver their pending callbacks", databases.size());
     for (unsigned i = 0; i < databases.size(); ++i)
         databases[i]->deliverPendingCallback();
 }

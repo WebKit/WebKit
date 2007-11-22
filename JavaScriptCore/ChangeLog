@@ -1,3 +1,23 @@
+2007-11-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/5602936> Need to resolve new GCC 4.2 warnings
+
+        Fix all warnings emitted by GCC 4.2 when building JavaScriptCore.  This allows builds with
+        -Werror to succeed.  At present they will crash when executed due to code that is not safe
+        under strict aliasing (<rdar://problem/5536806>).
+
+        * Configurations/Base.xcconfig: Exclude the -Wno-long-double flag when building with GCC 4.2.
+        * kjs/date_object.cpp:
+        (KJS::formatTime): Test whether the stack-allocated string is empty rather than at a non-null address.
+        * kjs/dtoa.cpp:
+        (Bigint::): Tweak formatting to silence warnings.
+        * pcre/pcre_exec.cpp:
+        (match): Tweak formatting to silence warnings
+        * wtf/Assertions.cpp: Add printf format attribute to functions that warrant it.
+        * wtf/Assertions.h: Ditto.
+
 2007-11-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx port build fix (wx headers include ctype functions).

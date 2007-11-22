@@ -1287,7 +1287,7 @@ void IconDatabase::performURLImport()
         }
     }
 
-    LOG(IconDatabase, "Notifying %i interested page URLs that their icon URL is known due to the import", urlsToNotify.size());
+    LOG(IconDatabase, "Notifying %zu interested page URLs that their icon URL is known due to the import", urlsToNotify.size());
     // Now that we don't hold any locks, perform the actual notifications
     for (unsigned i = 0; i < urlsToNotify.size(); ++i) {
         LOG(IconDatabase, "Notifying icon info known for pageURL %s", urlsToNotify[i].ascii().data());
@@ -1527,7 +1527,7 @@ bool IconDatabase::writeToDatabase()
     
     for (unsigned i = 0; i < iconSnapshots.size(); ++i) {
         writeIconSnapshotToSQLDatabase(iconSnapshots[i]);
-        LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %li to the DB", urlForLogging(iconSnapshots[i].iconURL).ascii().data(), iconSnapshots[i].timestamp);
+        LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %i to the DB", urlForLogging(iconSnapshots[i].iconURL).ascii().data(), iconSnapshots[i].timestamp);
     }
     
     for (unsigned i = 0; i < pageSnapshots.size(); ++i) {

@@ -1657,7 +1657,7 @@ RECURSE:
                                 if (stack.currentFrame->eptr >= md->end_subject ||
                                     (*stack.currentFrame->eptr < 128 && (md->ctypes[*stack.currentFrame->eptr] & ctype_space) != 0))
                                     RRETURN_NO_MATCH;
-                                while (++stack.currentFrame->eptr < md->end_subject && ISMIDCHAR(*stack.currentFrame->eptr));
+                                while (++stack.currentFrame->eptr < md->end_subject && ISMIDCHAR(*stack.currentFrame->eptr)) { }
                             }
                             break;
                             
@@ -1675,7 +1675,7 @@ RECURSE:
                                 if (stack.currentFrame->eptr >= md->end_subject ||
                                     (*stack.currentFrame->eptr < 128 && (md->ctypes[*stack.currentFrame->eptr] & ctype_word) != 0))
                                     RRETURN_NO_MATCH;
-                                while (++stack.currentFrame->eptr < md->end_subject && ISMIDCHAR(*stack.currentFrame->eptr));
+                                while (++stack.currentFrame->eptr < md->end_subject && ISMIDCHAR(*stack.currentFrame->eptr)) { }
                             }
                             break;
                             
