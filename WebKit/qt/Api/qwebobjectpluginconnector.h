@@ -20,9 +20,9 @@
 #ifndef QWEBOBJECTPLUGINCONNECTOR_H
 #define QWEBOBJECTPLUGINCONNECTOR_H
 
-#include <qwebkitglobal.h>
-#include <qobject.h>
-#include <qwebnetworkinterface.h>
+#include "qwebkitglobal.h"
+#include <QtCore/qobject.h>
+#include "qwebnetworkinterface.h"
 
 class QWebFrame;
 class QWebPage;

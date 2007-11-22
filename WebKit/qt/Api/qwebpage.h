@@ -26,9 +26,9 @@
 
 #include "qwebpagehistory.h"
 #include "qwebsettings.h"
-#include <qwebkitglobal.h>
+#include "qwebkitglobal.h"
 
-#include <qwidget.h>
+#include <QtGui/qwidget.h>
 class QNetworkProxy;
 class QUndoStack;
 class QUrl;

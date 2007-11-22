@@ -20,7 +20,7 @@
 #ifndef QWEBOBJECTPLUGIN_H
 #define QWEBOBJECTPLUGIN_H
 
-#include <qwebkitglobal.h>
+#include "qwebkitglobal.h"
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
 class QWebObjectPluginConnector;

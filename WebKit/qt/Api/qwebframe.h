@@ -24,9 +24,9 @@
 #ifndef QWEBFRAME_H
 #define QWEBFRAME_H
 
-#include <qobject.h>
+#include <QtCore/qobject.h>
 
-#include <qwebkitglobal.h>
+#include "qwebkitglobal.h"
 
 class QRect;
 class QPoint;

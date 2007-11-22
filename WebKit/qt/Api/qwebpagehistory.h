@@ -22,13 +22,13 @@
 #ifndef QWEBPAGEHISTORY_H
 #define QWEBPAGEHISTORY_H
 
-#include <QUrl>
-#include <QString>
-#include <QIcon>
-#include <QDateTime>
-#include <QSharedData>
+#include <QtCore/qurl.h>
+#include <QtCore/qstring.h>
+#include <QtGui/qicon.h>
+#include <QtCore/qdatetime.h>
+#include <QtCore/qshareddata.h>
 
-#include <qwebkitglobal.h>
+#include "qwebkitglobal.h"
 
 class QWebPage;
 

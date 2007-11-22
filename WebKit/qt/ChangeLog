@@ -2,6 +2,23 @@
 
         Reviewed by George.
 
+        Use <QtModule/headerfile.h> instead of <Classname> in public HEADER files, to not require the include paths for the other modules to be present
+
+        * Api/qcookiejar.h:
+        * Api/qwebframe.h:
+        * Api/qwebhistoryinterface.h:
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebobjectplugin.h:
+        * Api/qwebobjectplugin_p.h:
+        * Api/qwebobjectpluginconnector.h:
+        * Api/qwebpage.h:
+        * Api/qwebpagehistory.h:
+        * Api/qwebsettings.h:
+
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
         Removed inline copy of QExplicitlySharedDataPointer. This is not needed anymore since we require Qt >= 4.3.0.
 
         * Api/qwebpagehistory.h:

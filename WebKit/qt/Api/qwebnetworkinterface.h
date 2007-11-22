@@ -22,12 +22,12 @@
 #ifndef QWEBNETWORKINTERFACE_H
 #define QWEBNETWORKINTERFACE_H
 
-#include <qobject.h>
-#include <qurl.h>
-#include <qhttp.h>
-#include <qbytearray.h>
+#include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
+#include <QtNetwork/qhttp.h>
+#include <QtCore/qbytearray.h>
 
-#include <qwebkitglobal.h>
+#include "qwebkitglobal.h"
 
 class QAuthenticator;
 class QNetworkProxy;

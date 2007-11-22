@@ -20,9 +20,9 @@
 #ifndef QCOOKIEJAR_H
 #define QCOOKIEJAR_H
 
-#include <QObject>
-#include <QUrl>
-#include <qwebkitglobal.h>
+#include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
+#include "qwebkitglobal.h"
 
 class QCookieJarPrivate;
 

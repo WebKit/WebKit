@@ -1,8 +1,8 @@
 #ifndef QWEBOBJECTPLUGIN_P_H
 #define QWEBOBJECTPLUGIN_P_H
 
-#include <qglobal.h>
-#include <qwebobjectplugin.h>
+#include <QtCore/qglobal.h>
+#include "qwebobjectplugin.h"
 
 /*
   FIXME: This is copied from qfactoryloader_p.h.

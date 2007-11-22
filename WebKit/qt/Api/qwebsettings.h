@@ -25,9 +25,9 @@
 
 #include <qwebkitglobal.h>
 
-#include <QString>
-#include <QPixmap>
-#include <QSharedDataPointer>
+#include <QtCore/qstring.h>
+#include <QtGui/qpixmap.h>
+#include <QtCore/qshareddata.h>
 
 namespace WebCore
 {

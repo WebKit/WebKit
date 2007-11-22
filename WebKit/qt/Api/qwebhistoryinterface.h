@@ -22,9 +22,9 @@
 #ifndef QWEBHISTORYINTERFACE_H
 #define QWEBHISTORYINTERFACE_H
 
-#include <qobject.h>
+#include <QtCore/qobject.h>
 
-#include <qwebkitglobal.h>
+#include "qwebkitglobal.h"
 
 class QWEBKIT_EXPORT QWebHistoryInterface : public QObject
 {
