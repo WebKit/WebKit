@@ -1,3 +1,11 @@
+2007-11-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Adam.
+
+        Fix compilation (don't define notImplemented twice)
+
+        * Api/qwebnetworkinterface.cpp:
+
 2007-11-22  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by George.

@@ -41,8 +41,6 @@
 #include "MIMETypeRegistry.h"
 #include "CookieJar.h"
 
-#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
-
 #if 0
 #define DEBUG qDebug
 #else
