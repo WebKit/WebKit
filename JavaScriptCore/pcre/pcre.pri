@@ -3,6 +3,8 @@ VPATH += $$PWD
 INCLUDEPATH += $$PWD $$OUTPUT_DIR/JavaScriptCore/kjs/tmp
 DEPENDPATH += $$PWD
 
+isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
+
 SOURCES += \
     pcre_compile.cpp \
     pcre_exec.cpp \
@@ -25,7 +27,7 @@ CTGENFILE += \
 }
 
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
-ctgen.output = tmp/chartables.c
+ctgen.output = $$GENERATED_SOURCES_DIR/chartables.c
 ctgen.commands = $$OUTPUT_DIR/JavaScriptCore/pcre/tmp/dftables ${QMAKE_FILE_OUT}
 ctgen.input = CTGENFILE
 ctgen.CONFIG += target_predeps no_link

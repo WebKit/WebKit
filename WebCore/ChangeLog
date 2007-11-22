@@ -2,6 +2,16 @@
 
         Reviewed by George.
 
+        Make the directory of where to put the generated sources configurable through the GENERATED_SOURCE_DIR variable
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * WebCore.pro:
+
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
         Centralize the setup for all the extra compilers in a addExtraCompiler function.
         
         This allows adding a "generated_files" target that builds all generated files using "make generated_files".

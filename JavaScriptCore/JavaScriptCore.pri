@@ -11,6 +11,8 @@ gtk-port:DEFINES += BUILDING_GTK__
 
 win32-msvc*: INCLUDEPATH += $$PWD/os-win32
 
+isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
+
 include(pcre/pcre.pri)
 
 LUT_FILES += \
@@ -111,7 +113,7 @@ qt-port:SOURCES += \
 }
 
 # GENERATOR 1-A: LUT creator
-lut.output = tmp/${QMAKE_FILE_BASE}.lut.h
+lut.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.lut.h
 lut.commands = perl $$PWD/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 lut.depend = ${QMAKE_FILE_NAME}
 lut.input = LUT_FILES
@@ -119,7 +121,7 @@ lut.CONFIG += no_link
 addExtraCompiler(lut)
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
-keywordlut.output = tmp/lexer.lut.h
+keywordlut.output = $$GENERATED_SOURCES_DIR/lexer.lut.h
 keywordlut.commands = perl $$PWD/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 keywordlut.depend = ${QMAKE_FILE_NAME}
 keywordlut.input = KEYWORDLUT_FILES
@@ -127,8 +129,8 @@ keywordlut.CONFIG += no_link
 addExtraCompiler(keywordlut)
 
 # GENERATOR 2: bison grammar
-kjsbison.output = tmp/${QMAKE_FILE_BASE}.cpp
-kjsbison.commands = bison -d -p kjsyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && $(MOVE) ${QMAKE_FILE_BASE}.tab.h tmp/${QMAKE_FILE_BASE}.h
+kjsbison.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
+kjsbison.commands = bison -d -p kjsyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && $(MOVE) ${QMAKE_FILE_BASE}.tab.h $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
 kjsbison.depend = ${QMAKE_FILE_NAME}
 kjsbison.input = KJSBISON
 kjsbison.variable_out = GENERATED_SOURCES
