@@ -2,6 +2,15 @@
 
         Reviewed by George.
 
+        Use Q_SIGNALS/Q_SLOTS in the public API
+
+        * Api/qwebframe.h:
+        * Api/qwebpage.h:
+
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
         Fixed the signature of the QWebPage constructor to follow Qt guidelines.
 
         * Api/qwebpage.h:

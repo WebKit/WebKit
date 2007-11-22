@@ -4,8 +4,6 @@
 
         For the build inside Qt include qbase.pri and don't duplicate what qbase.pri otherwise does (install targets, etc.)
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * WebCore.pro:
 
 2007-11-22  Simon Hausmann  <hausmann@kde.org>
@@ -13,8 +11,6 @@
         Reviewed by George.
 
         Don't set OBJECTS_DIR when building inside Qt
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * WebCore.pro:
 
@@ -24,8 +20,6 @@
 
         Use ../generated as path for the generated sources for builds inside Qt
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * WebCore.pro:
 
 2007-11-22  Simon Hausmann  <hausmann@kde.org>
@@ -33,8 +27,6 @@
         Reviewed by George.
 
         Make the directory of where to put the generated sources configurable through the GENERATED_SOURCE_DIR variable
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * WebCore.pro:
 
@@ -47,8 +39,6 @@
         This allows adding a "generated_files" target that builds all generated files using "make generated_files".
         For the build inside Qt we do not generate actual rules for the extra compilers but instead
         do the variable substitution of compiler.output manually and add the generated sources to SOURCES.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * WebCore.pro:
 

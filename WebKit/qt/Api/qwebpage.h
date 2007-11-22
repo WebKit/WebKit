@@ -172,13 +172,13 @@ public:
     QAction *action(WebAction action) const;
     virtual void triggerAction(WebAction action, bool checked = false);
 
-public slots:
+public Q_SLOTS:
     /**
      * Stops loading of the page, if loading.
      */
     void stop();
 
-signals:
+Q_SIGNALS:
     /**
      * Signal is emitted when load is started on one of the child
      * frames of the page. The frame on which the load started

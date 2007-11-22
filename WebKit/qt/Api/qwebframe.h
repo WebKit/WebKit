@@ -78,7 +78,7 @@ public:
 public Q_SLOTS:
     QString evaluateJavaScript(const QString& scriptSource);
 
-signals:
+Q_SIGNALS:
     void cleared();
     void loadDone(bool ok);
     void provisionalLoad();
