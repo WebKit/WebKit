@@ -336,8 +336,6 @@
 
         * Don't use so much heap memory.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/graphics/qt/ImageDecoderQt.cpp:
         * platform/graphics/qt/ImageDecoderQt.h:
         * platform/graphics/qt/ImageSourceQt.cpp:
@@ -370,8 +368,6 @@
 
         * Make gif animations work for instance.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/graphics/qt/ImageDecoderQt.cpp:
         (WebCore::ImageDecoderQt::reset):
         (WebCore::ImageDecoderQt::setData):
@@ -383,8 +379,6 @@
 
         * Build in release mode
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/NotImplemented.h:
 
 2007-11-20  Adam Treat  <treat@kde.org>
@@ -392,8 +386,6 @@
         Reviewed by Simon and George.
 
         * Be quiet and allow suppression of NotImplemented calls at runtime.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/NotImplemented.h:
 
@@ -3360,9 +3352,6 @@
         is now supported.
         * As with URLs we only copy into the Clipboard (and not additionally to the
         Selection)
-        
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/PasteboardQt.cpp:
         (WebCore::Pasteboard::writeImage):
@@ -3372,9 +3361,6 @@
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
         Apple CodingStyle fixes
-        
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/PasteboardQt.cpp:
         (WebCore::Pasteboard::documentFragment):
@@ -3390,9 +3376,6 @@
         as well.
         * As with writeSelection we only copy into the Clipboard. We could
         consider copying into the Selection as well.
-        
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/PasteboardQt.cpp:
         (WebCore::Pasteboard::writeURL):
@@ -3402,9 +3385,6 @@
         Reviewed by Lars Knoll <lars@trolltech.com>.
 
         Kill whitespace
-        
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/PasteboardQt.cpp:
         (WebCore::Pasteboard::documentFragment):
@@ -3415,8 +3395,6 @@
 
         Use the correct function calls to convert a selection to
         HTML or plain text.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/ClipboardQt.cpp:
         (WebCore::ClipboardQt::setData):
@@ -7064,9 +7042,6 @@
 
         * fast/dom/onerror-img.html regressed due checking the JobStates because in case of error (e.g. not being able to connect) the job will no be started.
         * Use the error message from Qt. It might or might not be translated.
-        
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/network/qt/ResourceHandleQt.cpp:
         (WebCore::WebCoreSynchronousLoader::didFail):
@@ -7376,8 +7351,6 @@
 
         implement most of DragData.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/qt/DragDataQt.cpp:
         (WebCore::DragData::containsColor):
         (WebCore::DragData::containsFiles):
@@ -7394,8 +7367,6 @@
 
         remove a stupid notImplemented() warning and implement PasteBoad::clear().
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/qt/PasteboardQt.cpp:
 
 2007-10-24  Lars Knoll  <lars@trolltech.com>
@@ -7403,8 +7374,6 @@
         Reviewed by Simon.
 
         implement Pasteboard::documentFragment(), and fix a mem leak.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/PasteboardQt.cpp:
         (WebCore::Pasteboard::generalPasteboard):
@@ -7416,8 +7385,6 @@
 
         Simplify the PlatformKeyEvent constructor. No need to have an extra boolean for isKeyUp in there, as the QKeyEvent has the information.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/PlatformKeyboardEvent.h:
         * platform/qt/PlatformKeyboardEventQt.cpp:
         (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
@@ -7427,8 +7394,6 @@
         Reviewed by Simon.
 
         use the new QTextBoundaryFinder class in Qt.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * platform/qt/TextBoundaries.cpp:
         (WebCore::findNextWordFromIndex):
