@@ -32,9 +32,18 @@
 
 DL_CMD="curl -L"
 
+scriptDir="$(cd $(dirname $0);pwd)"
+WK_ROOT=$scriptDir/../..
+WK_ROOTDIR=$WK_ROOT
+
 DL_DIR=/tmp/webkit-deps
 # NOTE: If you change this, make sure the dir is on the path.
-DEPS_PREFIX=/usr/local
+DEPS_PREFIX=$WK_ROOT/WebKitLibraries/unix
+DLLEXT=so
+
+if [ "${OSTYPE:0:6}" == "darwin" ]; then
+    DLLEXT=dylib
+fi
 
 mkdir -p $DL_DIR
 mkdir -p $DEPS_PREFIX
@@ -42,6 +51,8 @@ mkdir -p $DEPS_PREFIX
 ICU_VERSION="3.4.1"
 ICU_TARBALL="icu-$ICU_VERSION.tgz"
 ICU_URL="ftp://ftp.software.ibm.com/software/globalization/icu/$ICU_VERSION/$ICU_TARBALL"
+
+# dependent app, not lib, what should we do for these?
 
 GPERF_VERSION="3.0.1"
 GPERF_TARBALL="gperf-$GPERF_VERSION.tar.gz"
@@ -55,6 +66,14 @@ ICONV_VERSION="1.9.2"
 ICONV_TARBALL="libiconv-$ICONV_VERSION.tar.gz"
 ICONV_URL="http://ftp.gnu.org/pub/gnu/libiconv/$ICONV_TARBALL"
 
+LIBJPEG_VERSION="6b"
+LIBJPEG_TARBALL="jpegsrc.v$LIBJPEG_VERSION.tar.gz"
+LIBJPEG_URL="http://www.ijg.org/files/$LIBJPEG_TARBALL"
+
+LIBPNG_VERSION="1.2.23"
+LIBPNG_TARBALL="libpng-$LIBPNG_VERSION.tar.gz"
+LIBPNG_URL="ftp://ftp.simplesystems.org/pub/libpng/png/src/$LIBPNG_TARBALL"
+
 cd $DL_DIR
 # build ICU
 if [ `which icu-config >/dev/null 2>&1` ]; then
@@ -64,43 +83,90 @@ if [ `which icu-config >/dev/null 2>&1` ]; then
   cd $DL_DIR/icu/source
   
   chmod +x configure install-sh
-  ./configure --prefix=$DEPS_PREFIX
+
+  if [ "${OSTYPE:0:6}" == "darwin" ]; then  
+    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
+    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
+    LDFLAGS="-arch i386 -arch ppc"
+    make install
+  else
+    ./configure --prefix=$DEPS_PREFIX
   
-  make
-  #make check
-  make install
-  
+    make
+    #make check
+    make install
+  fi
   cd $DL_DIR
   rm -rf icu
 fi
 
-if [ `which gperf >/dev/null 2>&1` ]; then
-  $DL_CMD -o $DL_DIR/$GPERF_TARBALL $GPERF_URL
-
-  tar xzvf $DL_DIR/$GPERF_TARBALL
-  cd $DL_DIR/gperf-$GPERF_VERSION
-  
-  ./configure --prefix=$DEPS_PREFIX
-  
-  make
-  make install
-  
-  cd $DL_DIR
-  rm -rf $DL_DIR/gperf-$GPERF_VERSION
-fi
-
 # TODO: What would be a good way to test for this?
-if [ ! -f $DEPS_PREFIX/lib/libiconv.dylib ]; then
+if [ ! -f $DEPS_PREFIX/lib/libiconv.$DLLEXT ]; then
   $DL_CMD -o $DL_DIR/$ICONV_TARBALL $ICONV_URL
 
   tar xzvf $DL_DIR/$ICONV_TARBALL
   cd $DL_DIR/libiconv-$ICONV_VERSION
+
+  if [ "${OSTYPE:0:6}" == "darwin" ]; then  
+    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
+    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
+    LDFLAGS="-arch i386 -arch ppc"
+    make install
+  else
+    ./configure --prefix=$DEPS_PREFIX
   
-  ./configure --prefix=$DEPS_PREFIX
-  
-  make
-  make install
-  
+    make
+    make install
+  fi
   cd $DL_DIR
   rm -rf $DL_DIR/libiconv-$ICONV_VERSION
+fi
+
+if [ ! -f $DEPS_PREFIX/lib/libjpeg.a ]; then
+  $DL_CMD -o $DL_DIR/$LIBJPEG_TARBALL $LIBJPEG_URL
+
+  tar xzvf $DL_DIR/$LIBJPEG_TARBALL
+  cd $DL_DIR/jpeg-$LIBJPEG_VERSION
+
+  # jpeg install command expects this to exist.
+  mkdir -p $DEPS_PREFIX/man/man1
+
+  if [ "${OSTYPE:0:6}" == "darwin" ]; then
+    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
+    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
+    LDFLAGS="-arch i386 -arch ppc"
+    make install
+  else
+    ./configure --prefix=$DEPS_PREFIX
+  
+    make
+  fi
+  
+  cp libjpeg.a $DEPS_PREFIX/lib
+  cp *.h $DEPS_PREFIX/include
+  
+  cd $DL_DIR
+  rm -rf $DL_DIR/jpeg-$LIBJPEG_VERSION
+fi
+
+if [ ! -f $DEPS_PREFIX/lib/libpng.a ]; then
+  $DL_CMD -o $DL_DIR/$LIBPNG_TARBALL $LIBPNG_URL
+
+  tar xzvf $DL_DIR/$LIBPNG_TARBALL
+  cd $DL_DIR/libpng-$LIBPNG_VERSION
+
+  if [ "${OSTYPE:0:6}" == "darwin" ]; then
+    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
+    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
+    LDFLAGS="-arch i386 -arch ppc"
+    make install
+  else
+    ./configure --prefix=$DEPS_PREFIX
+  
+    make
+    make install
+  fi
+  
+  cd $DL_DIR
+  rm -rf $DL_DIR/libpng-$LIBPNG_VERSION
 fi

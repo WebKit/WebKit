@@ -1,3 +1,17 @@
+2007-11-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Move install-unix-extras to wx directory as it seems only to be used by that 
+        port now. It now supports universal binaries on Mac and adds libpng and libjpeg. 
+        Also, have build-wxwebkit run it in order to fix the Mac buildbot, and
+        have install-unix-extras install into WebKitLibraries as per
+        convention.
+        
+        Reviewed by Mark Rowe.
+
+        * Scripts/install-unix-extras: Removed.
+        * wx/build-wxwebkit:
+        * wx/install-unix-extras: Copied from WebKitTools/Scripts/install-unix-extras.
+
 2007-11-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam.

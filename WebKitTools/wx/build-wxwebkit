@@ -185,6 +185,13 @@ else
 
     if [ $do_prep == 1 ]; then
         # Other preparation steps
+        
+        # since the buildbot will wipe the build tree clean sometimes, we need to reinstall
+        # the dependencies if they aren't installed.
+        if [ ! "${OSTYPE:0:6}" == "cygwin" ]; then
+            $WK_ROOT/WebKitTools/wx/install-unix-extras
+        fi
+        
         cd $WK_ROOT/JavaScriptCore
         # FIXME: The below is needed because Bakefile doesn't yet properly set dependencies on 
         # creating the build dir. Everything works when you do make all, but not when you
