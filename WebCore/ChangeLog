@@ -2,6 +2,16 @@
 
         Reviewed by George.
 
+        Don't set OBJECTS_DIR when building inside Qt
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * WebCore.pro:
+
+2007-11-22  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by George.
+
         Use ../generated as path for the generated sources for builds inside Qt
 
         WARNING: NO TEST CASES ADDED OR CHANGED

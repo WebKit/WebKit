@@ -21,7 +21,7 @@ win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
 
 INCLUDEPATH += $$GENERATED_SOURCES_DIR
 
-OBJECTS_DIR = tmp
+!CONFIG(QTDIR_build):OBJECTS_DIR = tmp
 
 DESTDIR = $$OUTPUT_DIR/lib
 DEPENDPATH += css dom loader editing history html \
