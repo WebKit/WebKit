@@ -2,7 +2,7 @@
 
         Revert part of my r27935 change that made the Tip balloons
         animate with CSS transitions. The balloon was only opacity 0,
-        so it would cause it's row to highlight when hovering over
+        so it would cause its row to highlight when hovering over
         another row.
 
         * page/inspector/NetworkPanel.js:
