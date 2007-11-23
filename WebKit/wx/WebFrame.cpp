@@ -26,16 +26,18 @@
  * who don't want/need to roll their own browser frame UI.
  */
  
+#include "config.h"
+
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
 #endif
 
+#include "wx/artprov.h"
+
 #include "WebView.h"
 #include "WebFrame.h"
 #include "WebViewPrivate.h"
-
-#include "wx/artprov.h"
 
 wxPageSourceViewFrame::wxPageSourceViewFrame(const wxString& source)
         : wxFrame(NULL, wxID_ANY, _("Page Source View"), wxDefaultPosition, wxSize(600, 500))

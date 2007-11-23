@@ -90,6 +90,12 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/rendering</include>
         <include>$(SRCDIR)/storage</include>
         <include>$(SRCDIR)/xml</include>
+        <include>$(WK_ROOT)</include>
+        <include>$(WK_ROOT)/JavaScriptCore</include>
+        <include>$(WK_ROOT)/JavaScriptCore/ForwardingHeaders</include>
+        <include>$(WK_ROOT)/JavaScriptCore/kjs</include>
+        <include>$(WK_ROOT)/JavaScriptCore/pcre</include>
+        <include>$(WK_ROOT)/JavaScriptCore/wtf</include>
 
         <sources>$(WEBCORE_BASE_SOURCES)</sources>
 

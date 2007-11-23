@@ -1,3 +1,19 @@
+2007-11-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Include config.h in WebFrame/WebView to ensure
+        WebCore headers are properly configured, fix unicode/utf8.h and
+        config.h include ordering issues, centralize wx project options to 
+        ensure proper configuration, and fix wxwebkit-python target so that
+        it links against wx libs.
+
+        * WebFrame.cpp:
+        * WebView.cpp:
+        * bindings/python/wxwebkit-py.bkl:
+        * dependencies.bkl:
+        * presets/wxwebkit.bkl:
+        * wxwebkit.bkl:
+        * wxwk-settings.bkl:
+
 2007-11-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for Windows. Don't use WebCore/move-js-headers.sh as

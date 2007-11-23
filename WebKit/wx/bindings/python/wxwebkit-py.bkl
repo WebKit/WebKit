@@ -59,7 +59,7 @@ Bakefile for wxWebKit Python bindings.
         </option>
     </if>
     
-    <module id="wxwebkit-python" template="wx,webcore,wxwk_build_settings,xml2,iconv,xslt,icu,jscore,curl,sqlite3,gtk,pthreads">
+    <module id="wxwebkit-python" template="wxwk,webcore,xml2,iconv,xslt,icu,jscore,curl,sqlite3,gtk,pthreads">
         <!-- make sure we relink wxwebkit if either webcore or jscore change -->
         <if cond="FORMAT=='gnu'">
             <depends-on-file>$(WKOUTPUTDIR)/libjscore.a</depends-on-file>
@@ -106,7 +106,6 @@ Bakefile for wxWebKit Python bindings.
         <sys-lib>wxwebkit</sys-lib>
         <lib-path>$(WKOUTPUTDIR)</lib-path>
         
-        <define>BUILDING_WX__=1</define>
         <define>SWIG_TYPE_TABLE=_wxPython_table</define>
         <define>WXP_USE_THREAD=1</define>
         <define>SWIG_PYTHON_OUTPUT_TUPLE</define>

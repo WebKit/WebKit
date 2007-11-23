@@ -30,9 +30,19 @@ JavaScriptCore Bakefile project file.
 -->
 
 <makefile>
+    <set var="WX_UNICODE">1</set>
+    <set var="WX_SHARED">1</set>
+
     <include file="presets/wx.bkl"/>
     <include file="presets/wxwebkit.bkl"/>
     <include file="dependencies.bkl"/>
+
+    <!-- the WX_PYTHON option was added to presets/wx.bkl in 2.8.5, so define
+         it in case the presets/wx.bkl doesn't define it for us. -->
+    
+    <if cond="not isdefined('WX_PYTHON')">
+        <set var="WX_PYTHON">0</set>
+    </if>
     
     <template id="wxwk_build_settings">
         <dirname>$(WKOUTPUTDIR)</dirname>

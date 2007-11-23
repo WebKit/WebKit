@@ -32,31 +32,12 @@ wxWebCore port Bakefile project file.
 
 
 <makefile>
-    <!-- eventually we should make these options -->
-    <set var="WX_UNICODE">1</set>
-    <set var="WX_SHARED">1</set>
-
     <include file="webcore-base.bkl"/>
-    
-    <!-- the WX_PYTHON option was added to presets/wx.bkl in 2.8.5, so define 
-         it in case the presets/wx.bkl doesn't define it for us. -->
-    <if cond="not isdefined('WX_PYTHON')">
-        <set var="WX_PYTHON">0</set>
-    </if>
-    
-    <action id="DerivedSources">
-        <is-phony/>
-        <command>cd $(SRCDIR);bash move-js-headers.sh; bash make-generated-sources.sh platform/wx/wx-encodings.txt;cd Projects/wx</command>
-    </action>
-      
-    <template id="webcore-wx" template="webcore_base,wxwk_build_settings,curl,gtk,pthreads">
+
+    <template id="webcore-wx" template="wxwk_build_settings,webcore_base,curl,gtk,pthreads">
         <pic>on</pic>
         <threading>multi</threading>
-
-        <define>WTF_USE_ICU_UNICODE=1</define>
-        <define>UNICODE=1</define>
         
-        <dirname>.</dirname>
         <include>$(SRCDIR)/platform/wx</include>
         <include>$(SRCDIR)/platform/wx/wxcode</include>
         <include>$(SRCDIR)/bridge/wx</include>

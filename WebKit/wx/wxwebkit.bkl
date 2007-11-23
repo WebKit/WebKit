@@ -32,15 +32,7 @@ This file builds the wxWebKit library.
 -->
 
 <makefile>
-    <set var="WX_UNICODE">1</set>
-    <set var="WX_SHARED">1</set>
     <include file="wxwk-settings.bkl"/>
-    
-    <!-- the WX_PYTHON option was added to presets/wx.bkl in 2.8.5, so define 
-         it in case the presets/wx.bkl doesn't define it for us. -->
-    <if cond="not isdefined('WX_PYTHON')">
-        <set var="WX_PYTHON">0</set>
-    </if>
     
     <set var="BUILDDIR">obj-$(FORMAT)</set>
     
@@ -82,10 +74,8 @@ This file builds the wxWebKit library.
         <if cond="FORMAT in ['msvc','msvs2005prj']">
             <sys-lib>webcore-wx</sys-lib>
             <sys-lib>libpng</sys-lib>
-            <sys-lib>libjpeg</sys-lib>
+            <!-- we use wx's libjpeg so no need to link to an external one. -->
             <lib-path>$(WKOUTPUTDIR)</lib-path>
-            <lib-path>$(WK_ROOT)/libpng</lib-path>
-            <lib-path>$(WK_ROOT)/libjpeg</lib-path>
         </if>
         
         <sources>

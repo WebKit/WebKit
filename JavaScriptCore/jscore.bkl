@@ -34,12 +34,6 @@ JavaScriptCore Bakefile project file.
 
     <include file="../WebKit/wx/wxwk-settings.bkl"/>
     <include file="JavaScriptCoreSources.bkl"/>
-
-    <!-- the WX_PYTHON option was added to presets/wx.bkl in 2.8.5, so define 
-         it in case the presets/wx.bkl doesn't define it for us. -->
-    <if cond="not isdefined('WX_PYTHON')">
-        <set var="WX_PYTHON">0</set>
-    </if>
     
     <set var="BUILDDIR">obj-$(FORMAT)</set>
 
@@ -90,15 +84,21 @@ JavaScriptCore Bakefile project file.
         <debug-info>on</debug-info>
         <depends>jscore</depends>
         <include>$(SRCDIR)</include>
+        <include>$(WK_ROOT)/JavaScriptCore</include>
+        <include>$(WK_ROOT)/JavaScriptCore/kjs</include>
+        <include>$(WK_ROOT)/JavaScriptCore/pcre</include>
+        <include>$(WK_ROOT)/JavaScriptCore/wtf</include>
         <dirname>$(WKOUTPUTDIR)</dirname>
         <sources>$(SRCDIR)/kjs/testkjs.cpp</sources>
         <if cond="FORMAT=='gnu'">
             <ldflags>$(WKOUTPUTDIR)/libjscore.a</ldflags>
         </if>
         <if cond="FORMAT in ['msvc','msvs2005prj']">
+            <include>$(WK_ROOT)/WebKitLibraries/win/include</include>
             <sys-lib>jscore</sys-lib>
             <sys-lib>winmm</sys-lib> <!-- for timeGetTime -->
             <lib-path>$(WKOUTPUTDIR)</lib-path>
+            <lib-path>$(WK_ROOT)/WebKitLibraries/win/lib</lib-path>
         </if>
         
     </exe>
