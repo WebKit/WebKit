@@ -1,3 +1,15 @@
+2007-11-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - apply matrix transforms on the correct side of the transformation
+          matrix (not on the side where the vector is multiplied).
+
+        Test: fast/transforms/matrix-02.html
+
+        * rendering/RenderStyle.h:
+        (WebCore::MatrixTransformOperation::apply):
+
 2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
