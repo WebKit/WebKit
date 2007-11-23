@@ -1,4 +1,4 @@
-<video src=content/test.mp4></video>
+<video></video>
 <script src=video-test.js></script>
 <script>
 test("video.buffered.length == 0");
@@ -19,4 +19,5 @@ waitForEvent('load',
         endTest();
     }
 );
+video.src = "content/test.mp4";
 </script>

@@ -1,3 +1,27 @@
+2007-11-23  Antti Koivisto  <antti@apple.com>
+
+        Set video src from script, not from the element attribute. This
+        guarantees load events do not fire before event listeners are registered. 
+        This change does not affect test results.
+
+        * media/progress-event.html:
+        * media/video-autoplay.html:
+        * media/video-buffered.html:
+        * media/video-currentTime-set.html:
+        * media/video-currentTime-set2.html:
+        * media/video-currentTime.html:
+        * media/video-dom-autoplay.html:
+        * media/video-error-abort.html:
+        * media/video-error-does-not-exist.html:
+        * media/video-load-networkState.html:
+        * media/video-load-readyState.html:
+        * media/video-no-autoplay.html:
+        * media/video-seekable.html:
+        * media/video-seeking.html:
+        * media/video-size.html:
+        * media/video-src.html:
+        * media/video-start.html:
+
 2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

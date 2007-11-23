@@ -1,4 +1,4 @@
-<video src=content/test.mp4></video>
+<video></video>
 <script src=video-test.js></script>
 <script>
 test("video.networkState == HTMLMediaElement.EMPTY");
@@ -6,4 +6,5 @@ waitForEventAndTest("begin", "video.networkState == HTMLMediaElement.LOADING");
 waitForEventAndTest("loadedmetadata", "video.networkState == HTMLMediaElement.LOADED_METADATA");
 waitForEventAndTest("loadedfirstframe", "video.networkState == HTMLMediaElement.LOADED_FIRST_FRAME");
 waitForEventTestAndEnd("load", "video.networkState == HTMLMediaElement.LOADED");
+video.src = "content/test.mp4";
 </script>

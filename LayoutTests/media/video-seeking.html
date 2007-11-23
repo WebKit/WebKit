@@ -1,4 +1,4 @@
-<video src=content/test.mp4></video>
+<video></video>
 <p>Test that seeking attribute is true in timeupdate event after seek and goes back to false when seeking completes </p>
 <script src=video-test.js></script>
 <script>
@@ -16,4 +16,5 @@ waitForEvent('load',
         run("video.currentTime = 2");
     }
 );
+video.src = "content/test.mp4";
 </script>

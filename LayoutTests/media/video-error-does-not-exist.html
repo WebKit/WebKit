@@ -1,7 +1,8 @@
-<video src=content/does-not-exist.mpeg></video>
+<video></video>
 <script src=video-test.js></script>
 <script>
 test("!video.error");
 waitForEventAndTest("load", "false");
 waitForEventTestAndEnd("emptied", "video.error.code == MediaError.MEDIA_ERR_NETWORK");
+video.src = "content/does-not-exist.mpeg";
 </script>

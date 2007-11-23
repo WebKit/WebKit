@@ -1,4 +1,4 @@
-<video src=content/test.mp4></video>
+<video></video>
 <script src=video-test.js></script>
 <script>
 test("video.currentTime == 0")
@@ -10,4 +10,5 @@ function testCurrentTime()
     test("video.currentTime > 0")
     endTest();
 }
+video.src = "content/test.mp4";
 </script>

@@ -1,4 +1,4 @@
-<video src=content/test.mp4></video>
+<video></video>
 <script src=video-test.js></script>
 <script>
 test("!video.autoplay");
@@ -6,4 +6,5 @@ video.autoplay = true;
 test("video.autoplay");
 test("video.getAttribute('autoplay') != null");
 waitForEventTestAndEnd('play', "!video.paused");
+video.src = "content/test.mp4";
 </script>
