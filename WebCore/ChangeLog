@@ -1,5 +1,15 @@
 2007-11-22  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Fix the Element.hasStyleClass and Element.removeStyleClass helpers
+        to not find and replace substrings, but whole class names at the
+        beginning or end of the string or surrounded by whitespace.
+
+        * page/inspector/utilities.js:
+
+2007-11-22  Timothy Hatcher  <timothy@apple.com>
+
         Revert part of my r27935 change that made the Tip balloons
         animate with CSS transitions. The balloon was only opacity 0,
         so it would cause its row to highlight when hovering over

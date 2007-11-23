@@ -89,19 +89,32 @@ Object.sortedProperties = function(obj)
 
 Element.prototype.removeStyleClass = function(className) 
 {
-    if (this.hasStyleClass(className))
-        this.className = this.className.replace(className, "");
+    // Test for the simple case before using a RegExp.
+    if (this.className === className) {
+        this.className = "";
+        return;
+    }
+
+    var regex = new RegExp("(^|\\s+)" + className.escapeForRegExp() + "($|\\s+)");
+    if (regex.test(this.className))
+        this.className = this.className.replace(regex, " ");
 }
 
 Element.prototype.addStyleClass = function(className) 
 {
-    if (!this.hasStyleClass(className))
+    if (className && !this.hasStyleClass(className))
         this.className += (this.className.length ? " " + className : className);
 }
 
 Element.prototype.hasStyleClass = function(className) 
 {
-    return this.className.indexOf(className) !== -1;
+    if (!className)
+        return false;
+    // Test for the simple case before using a RegExp.
+    if (this.className === className)
+        return true;
+    var regex = new RegExp("(^|\\s)" + className.escapeForRegExp() + "($|\\s)");
+    return regex.test(this.className);
 }
 
 Element.prototype.scrollToElement = function(element)
