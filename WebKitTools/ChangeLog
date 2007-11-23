@@ -1,3 +1,15 @@
+2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5539306> REGRESSION: redirect fails when subframe's document is opened but
+        not closed (affects digg.com)
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (runTest): Replace the current document with a blank
+        one after finishing with a test to avoid having its delayed onload handler firing when
+        replaced with the next one. This is ugly and still unreliable (see LayoutTests ChangeLog),
+        but it helps somewhat.
+
 2007-11-22  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp Toker.

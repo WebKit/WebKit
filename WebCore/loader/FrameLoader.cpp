@@ -1808,7 +1808,9 @@ void FrameLoader::scheduleRedirection(ScheduledRedirection* redirection)
 {
     stopRedirectionTimer();
     m_scheduledRedirection.set(redirection);
-    if (m_isComplete)
+    if (!m_isComplete && redirection->type != ScheduledRedirection::redirection)
+        completed();
+    if (m_isComplete || redirection->type != ScheduledRedirection::redirection)
         startRedirectionTimer();
 }
 

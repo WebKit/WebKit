@@ -1,0 +1,15 @@
+<html>
+<script>
+function test() {
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+    }
+    document.open();
+    var newDoc = "SUCCESS<script>if (window.layoutTestController) layoutTestController.notifyDone();</scr" + "ipt>";
+    setTimeout("window.location='data:text/html," + newDoc + "'", 500);
+}
+</script>
+<body onload="test()">
+</body>
+</html>

@@ -874,6 +874,9 @@ static void runTest(const char *pathOrURL)
         }
     }
     
+    [mainFrame loadHTMLString:@"<html></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
+    [mainFrame stopLoading];
+    
     [pool release];
 
     // We should only have our main window left when we're done

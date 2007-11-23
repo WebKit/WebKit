@@ -1,3 +1,19 @@
+2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5539306> REGRESSION: redirect fails when subframe's document is opened but
+        not closed (affects digg.com)
+
+        Tests: fast/loader/meta-refresh-vs-open.html
+               fast/loader/redirect-with-open-subframe-2.html
+               fast/loader/redirect-with-open-subframe.html
+               http/tests/loading/onload-vs-immediate-refresh.pl
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::scheduleRedirection): Only check whether the load is complete for
+        HTTP redirects - JavaScript-initiated ones are effective immediately.
+
 2007-11-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
