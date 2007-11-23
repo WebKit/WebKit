@@ -1,5 +1,18 @@
 2007-11-22  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Mark Rowe.
+
+        Implement and document several WebKitFrame functions, some of which
+        are necessary to support DRT.
+
+        Correct NULL handling and improve run-time checks.
+
+        * Api/webkitgtkframe.cpp:
+        * Api/webkitgtkframe.h:
+        * Api/webkitgtkprivate.cpp:
+
+2007-11-22  Alp Toker  <alp@atoker.com>
+
         Whitespace fixes only.
 
         * Api/webkitgtkframe.cpp:

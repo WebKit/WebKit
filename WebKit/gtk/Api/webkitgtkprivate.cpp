@@ -60,25 +60,39 @@ WebKitPage* getPageFromFrame(WebKitFrame* frame)
 
 WebCore::Frame* core(WebKitFrame* frame)
 {
+    if (!frame)
+        return 0;
+
     WebKitFramePrivate* frame_data = WEBKIT_FRAME_GET_PRIVATE(frame);
-    return frame_data->frame;
+    return frame_data ? frame_data->frame : 0;
 }
 
 WebKitFrame* kit(WebCore::Frame* coreFrame)
 {
+    if (!coreFrame)
+        return 0;
+
+    ASSERT(coreFrame->loader());
     WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(coreFrame->loader()->client());
-    return client->webFrame();
+    return client ? client->webFrame() : 0;
 }
 
 WebCore::Page* core(WebKitPage* page)
 {
+    if (!page)
+        return 0;
+
     WebKitPagePrivate* page_data = WEBKIT_PAGE_GET_PRIVATE(page);
-    return page_data->page;
+    return page_data ? page_data->page : 0;
 }
 
 WebKitPage* kit(WebCore::Page* page)
 {
+    if (!page)
+        return 0;
+
+    ASSERT(page->chrome());
     WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
-    return client->webPage();
+    return client ? client->webPage() : 0;
 }
 }

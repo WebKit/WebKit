@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +34,10 @@
 #include <gdk/gdk.h>
 
 #include "webkitgtkdefines.h"
+
+typedef struct OpaqueJSContext* JSGlobalContextRef;
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef struct OpaqueJSValue* JSObjectRef;
 
 G_BEGIN_DECLS
 
@@ -98,6 +103,24 @@ webkit_frame_get_rectangle (WebKitFrame* frame);
 
 WEBKIT_API WebKitPage*
 webkit_frame_get_page (WebKitFrame* frame);
+
+WEBKIT_API WebKitFrame*
+webkit_frame_get_parent (WebKitFrame* frame);
+
+WEBKIT_API void
+webkit_frame_load_request (WebKitFrame* frame, WebKitNetworkRequest* request);
+
+WEBKIT_API void
+webkit_frame_stop_loading (WebKitFrame* frame);
+
+WEBKIT_API void
+webkit_frame_reload (WebKitFrame* frame);
+
+WEBKIT_API WebKitFrame*
+webkit_frame_find_frame (WebKitFrame* frame, const gchar* name);
+
+WEBKIT_API JSGlobalContextRef
+webkit_frame_get_global_context (WebKitFrame* frame);
 
 G_END_DECLS
 
