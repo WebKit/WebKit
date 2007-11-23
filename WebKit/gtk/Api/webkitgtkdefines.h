@@ -35,10 +35,12 @@ typedef struct _WebKitFrame WebKitFrame;
 typedef struct _WebKitFrameClass WebKitFrameClass;
 
 typedef struct _WebKitFrameData WebKitFrameData;
-typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
 
 typedef struct _WebKitPage WebKitPage;
 typedef struct _WebKitPageClass WebKitPageClass;
+
+typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
+typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
 
 #ifdef G_OS_WIN32
     #ifdef BUILDING_WEBKIT

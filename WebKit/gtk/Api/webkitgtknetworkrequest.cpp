@@ -26,4 +26,69 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "webkitgtknetworkrequest.h"
+#include "webkitgtkprivate.h"
+
+using namespace WebKit;
+using namespace WebCore;
+
+extern "C" {
+
+G_DEFINE_TYPE(WebKitNetworkRequest, webkit_network_request, G_TYPE_OBJECT);
+
+static void webkit_network_request_finalize(GObject* object)
+{
+    WebKitNetworkRequestPrivate* requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(object);
+
+    g_free(requestPrivate->url);
+
+    G_OBJECT_CLASS(webkit_network_request_parent_class)->finalize(object);
+}
+
+static void webkit_network_request_class_init(WebKitNetworkRequestClass* requestClass)
+{
+    g_type_class_add_private(requestClass, sizeof(WebKitNetworkRequestPrivate));
+
+    G_OBJECT_CLASS(requestClass)->finalize = webkit_network_request_finalize;
+}
+
+static void webkit_network_request_init(WebKitNetworkRequest* request)
+{
+}
+
+WebKitNetworkRequest* webkit_network_request_new(const gchar* url)
+{
+    WebKitNetworkRequest* request = WEBKIT_NETWORK_REQUEST(g_object_new(WEBKIT_TYPE_NETWORK_REQUEST, NULL));
+    WebKitNetworkRequestPrivate* requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
+
+    requestPrivate->url = g_strdup(url);
+
+    return request;
+}
+
+void webkit_network_request_set_url(WebKitNetworkRequest* request, const gchar* url)
+{
+    WebKitNetworkRequestPrivate* requestPrivate;
+
+    g_return_if_fail(WEBKIT_IS_NETWORK_REQUEST(request));
+
+    requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
+
+    g_free(requestPrivate->url);
+    requestPrivate->url = g_strdup(url);
+}
+
+const gchar* webkit_network_request_get_url(WebKitNetworkRequest* request)
+{
+    WebKitNetworkRequestPrivate* requestPrivate;
+
+    g_return_val_if_fail(WEBKIT_IS_NETWORK_REQUEST(request), NULL);
+
+    requestPrivate = WEBKIT_NETWORK_REQUEST_GET_PRIVATE(request);
+
+    return requestPrivate->url;
+}
+
+}

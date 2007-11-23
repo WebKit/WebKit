@@ -57,6 +57,7 @@ extern "C" {
 
 enum {
     /* normal signals */
+    NAVIGATION_REQUESTED,
     LOAD_STARTED,
     LOAD_PROGRESS_CHANGED,
     LOAD_FINISHED,
@@ -208,10 +209,10 @@ static WebKitPage* webkit_page_real_create_page(WebKitPage*)
     return 0;
 }
 
-static WEBKIT_NAVIGATION_REQUEST_RESPONSE webkit_page_real_navigation_requested(WebKitPage*, WebKitFrame* frame, WebKitNetworkRequest*)
+static WebKitNavigationResponse webkit_page_real_navigation_requested(WebKitPage*, WebKitFrame* frame, WebKitNetworkRequest*)
 {
     notImplemented();
-    return WEBKIT_ACCEPT_NAVIGATION_REQUEST;
+    return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 }
 
 static gchar* webkit_page_real_choose_file(WebKitPage*, WebKitFrame*, const gchar* old_name)
@@ -336,6 +337,17 @@ static void webkit_page_finalize(GObject* object)
 static void webkit_page_class_init(WebKitPageClass* pageClass)
 {
     g_type_class_add_private(pageClass, sizeof(WebKitPagePrivate));
+
+    webkit_page_signals[NAVIGATION_REQUESTED] = g_signal_new("navigation_requested",
+            G_TYPE_FROM_CLASS(pageClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET (WebKitPageClass, navigation_requested),
+            NULL,
+            NULL,
+            webkit_marshal_INT__OBJECT_OBJECT,
+            G_TYPE_INT, 2,
+            G_TYPE_OBJECT,
+            G_TYPE_OBJECT);
 
 
     /*

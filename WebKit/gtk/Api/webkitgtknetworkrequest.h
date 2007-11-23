@@ -43,22 +43,25 @@ G_BEGIN_DECLS
 #define WEBKIT_NETWORK_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_NETWORK_REQUEST, WebKitNetworkRequestClass))
 
 
-typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
-typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
-
 struct _WebKitNetworkRequest {
     GObject parent;
 };
 
 struct _WebKitNetworkRequestClass {
-    GObject parent;
+    GObjectClass parent;
 };
 
 WEBKIT_API GType
 webkit_network_request_get_type (void);
 
-WEBKIT_API GObject*
-webkit_network_request_new (void);
+WEBKIT_API WebKitNetworkRequest*
+webkit_network_request_new (const gchar* url);
+
+WEBKIT_API void
+webkit_network_request_set_url (WebKitNetworkRequest* request, const gchar* url);
+
+WEBKIT_API const gchar*
+webkit_network_request_get_url (WebKitNetworkRequest* request);
 
 G_END_DECLS
 

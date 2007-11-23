@@ -243,11 +243,25 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
     (core(m_frame)->loader()->*policyFunction)(PolicyIgnore);
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction&, const ResourceRequest&)
+void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest)
 {
     ASSERT(policyFunction);
     if (!policyFunction)
         return;
+
+    WebKitPage* page = getPageFromFrame(m_frame);
+    WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().url().utf8().data());
+    WebKitNavigationResponse response;
+
+    g_signal_emit_by_name(page, "navigation_requested", m_frame, request, &response);
+
+    g_object_unref(request);
+
+    if (response == WEBKIT_NAVIGATION_RESPONSE_IGNORE) {
+        (core(m_frame)->loader()->*policyFunction)(PolicyIgnore);
+        return;
+    }
+
     (core(m_frame)->loader()->*policyFunction)(PolicyUse);
 }
 

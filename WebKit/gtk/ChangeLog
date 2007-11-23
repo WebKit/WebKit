@@ -1,3 +1,29 @@
+2007-11-22  Michael Natterer  <mitch@imendio.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15984
+        Implement "navigation-requested" signal for WebKit Gtk
+
+        * Api/webkitgtknetworkrequest.h: fix parent class member.
+
+        * Api/webkitgtknetworkrequest.cpp
+        * Api/webkitgtkprivate.h: basic implementation featuring an
+        "url" member and API.
+
+        * Api/webkitgtkdefines.h: added network request typedefs.
+
+        * Api/webkitgtkpage.h: fix enum name:
+        s/WEBKIT_NAVIGATION_REQUEST_RESPONSE/WebKitNavigationRequestResponse/
+        and sanitized enum values.
+
+        * Api/webkitgtkpage.cpp: made "navigation-requested" a signal.
+
+        * Api/webkitgtk-marshal.list: added INT:OBJECT,OBJECT
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: emit the new signal in
+        dispatchDecidePolicyForNavigationAction().
+
 2007-11-18  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp.

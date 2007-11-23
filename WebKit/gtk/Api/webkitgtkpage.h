@@ -45,10 +45,10 @@ G_BEGIN_DECLS
 
 
 typedef enum {
-    WEBKIT_ACCEPT_NAVIGATION_REQUEST,
-    WEBKIT_IGNORE_NAVIGATION_REQUEST,
-    WEBKIT_DOWNLOAD_NAVIGATION_REQUEST
-} WEBKIT_NAVIGATION_REQUEST_RESPONSE;
+    WEBKIT_NAVIGATION_RESPONSE_ACCEPT,
+    WEBKIT_NAVIGATION_RESPONSE_IGNORE,
+    WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD
+} WebKitNavigationResponse;
 
 
 
@@ -70,7 +70,7 @@ struct _WebKitPageClass {
     /*
      * TODO: FIXME: Create something like WebPolicyDecisionListener_Protocol instead
      */
-    WEBKIT_NAVIGATION_REQUEST_RESPONSE (*navigation_requested) (WebKitPage* page, WebKitFrame* frame, WebKitNetworkRequest* request);
+    WebKitNavigationResponse (*navigation_requested) (WebKitPage* page, WebKitFrame* frame, WebKitNetworkRequest* request);
 
     gchar*   (*choose_file) (WebKitPage* page, WebKitFrame* frame, const gchar* old_file);
     gboolean (*script_alert) (WebKitPage* page, WebKitFrame* frame, const gchar* alert_message);
