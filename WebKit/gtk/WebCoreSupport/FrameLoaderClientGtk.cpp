@@ -30,7 +30,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include "config.h"
 #include "FrameLoaderClientGtk.h"
 #include "DocumentLoader.h"
@@ -182,14 +182,14 @@ void FrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader*
     notImplemented();
 }
 
-void FrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned long , ResourceRequest&, const ResourceResponse&)
+void FrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&)
 {
     notImplemented();
 }
 
 void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&)
 {
-    notImplemented();   
+    notImplemented();
 }
 
 void FrameLoaderClient::postProgressStartedNotification()
@@ -203,7 +203,7 @@ void FrameLoaderClient::postProgressEstimateChangedNotification()
     WebKitPage* kitPage = getPageFromFrame(m_frame);
     Page* corePage = core(kitPage);
 
-    g_signal_emit_by_name(kitPage, "load_progress_changed", lround(corePage->progress()->estimatedProgress()*100)); 
+    g_signal_emit_by_name(kitPage, "load_progress_changed", lround(corePage->progress()->estimatedProgress()*100));
 }
 
 void FrameLoaderClient::postProgressFinishedNotification()
@@ -272,7 +272,7 @@ Widget* FrameLoaderClient::createPlugin(const IntSize&, Element*, const KURL&, c
 }
 
 PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
-                                        const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
+                                                 const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
     Frame* coreFrame = core(webFrame());
 
@@ -313,7 +313,7 @@ void FrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 }
 
 Widget* FrameLoaderClient::createJavaAppletWidget(const IntSize&, Element*, const KURL& baseURL,
-                                                    const Vector<String>& paramNames, const Vector<String>& paramValues)
+                                                  const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     notImplemented();
     return 0;
@@ -352,13 +352,12 @@ void FrameLoaderClient::didPerformFirstNavigation() const
 {
 }
 
-void FrameLoaderClient::registerForIconNotification(bool) 
-{ 
-    notImplemented(); 
-} 
-    
+void FrameLoaderClient::registerForIconNotification(bool)
+{
+    notImplemented();
+}
 
-void FrameLoaderClient::setMainFrameDocumentReady(bool) 
+void FrameLoaderClient::setMainFrameDocumentReady(bool)
 {
     // this is only interesting once we provide an external API for the DOM
 }
@@ -375,27 +374,27 @@ bool FrameLoaderClient::hasFrameView() const
     return true;
 }
 
-void FrameLoaderClient::dispatchDidFinishLoad() 
-{ 
+void FrameLoaderClient::dispatchDidFinishLoad()
+{
     g_signal_emit_by_name(m_frame, "load_done", true);
 }
 
-void FrameLoaderClient::frameLoadCompleted() 
+void FrameLoaderClient::frameLoadCompleted()
 {
-    notImplemented(); 
+    notImplemented();
 }
 
 void FrameLoaderClient::saveViewStateToItem(HistoryItem*)
 {
-    notImplemented(); 
+    notImplemented();
 }
 
 void FrameLoaderClient::restoreViewState()
 {
-    notImplemented(); 
+    notImplemented();
 }
 
-bool FrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const 
+bool FrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
 {
     // FIXME: This is a very simple implementation. More sophisticated
     // implementation would delegate the decision to a PolicyDelegate.
@@ -485,7 +484,7 @@ void FrameLoaderClient::setTitle(const String& title, const KURL& url)
 {
     WebKitPage* page = getPageFromFrame(m_frame);
 
-    CString titleString = title.utf8(); 
+    CString titleString = title.utf8();
     DeprecatedCString urlString = url.prettyURL().utf8();
     g_signal_emit_by_name(m_frame, "title_changed", titleString.data(), urlString.data());
 

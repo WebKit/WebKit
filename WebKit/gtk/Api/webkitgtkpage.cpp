@@ -384,7 +384,7 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             g_cclosure_marshal_VOID__INT,
             G_TYPE_NONE, 1,
             G_TYPE_INT);
-    
+
     webkit_page_signals[LOAD_FINISHED] = g_signal_new("load_finished",
             G_TYPE_FROM_CLASS(pageClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
@@ -656,9 +656,9 @@ void webkit_page_load_string(WebKitPage* page, const gchar* content, const gchar
 {
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
-    
+
     KURL url(DeprecatedString::fromUtf8(baseUrl));
-    RefPtr<SharedBuffer> sharedBuffer = new SharedBuffer(strdup(content), strlen(content));    
+    RefPtr<SharedBuffer> sharedBuffer = new SharedBuffer(strdup(content), strlen(content));
     SubstituteData substituteData(sharedBuffer.release(), String(contentMimeType), String(contentEncoding), KURL("about:blank"), url);
 
     frameData->frame->loader()->load(ResourceRequest(url), substituteData);
@@ -673,10 +673,9 @@ void webkit_page_stop_loading(WebKitPage* page)
 {
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
-    
+
     if (FrameLoader* loader = frameData->frame->loader())
         loader->stopAllLoaders();
-        
 }
 
 WebKitFrame* webkit_page_get_main_frame(WebKitPage* page)

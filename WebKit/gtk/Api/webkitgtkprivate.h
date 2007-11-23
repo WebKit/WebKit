@@ -40,7 +40,6 @@
 #include "webkitgtkframe.h"
 #include "webkitgtknetworkrequest.h"
 
-
 #include "Settings.h"
 #include "Page.h"
 #include "Frame.h"
@@ -71,7 +70,7 @@ extern "C" {
 
         HashSet<GtkWidget*> children;
     };
-    
+
     #define WEBKIT_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_FRAME, WebKitFramePrivate))
     typedef struct _WebKitFramePrivate WebKitFramePrivate;
     struct _WebKitFramePrivate {
@@ -88,7 +87,6 @@ extern "C" {
     struct _WebKitNetworkRequestPrivate {
         gchar* url;
     };
-
 
     GObject* webkit_frame_init_with_page(WebKitPage*, WebCore::HTMLFrameOwnerElement*);
 }

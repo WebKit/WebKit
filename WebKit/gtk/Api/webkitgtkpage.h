@@ -145,7 +145,7 @@ WEBKIT_API WebKitFrame*
 webkit_page_get_main_frame (WebKitPage* page);
 
 WEBKIT_API void
-webkit_page_execute_script(WebKitPage* page, const gchar* script);
+webkit_page_execute_script (WebKitPage* page, const gchar* script);
 G_END_DECLS
 
 #endif

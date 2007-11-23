@@ -42,23 +42,22 @@ namespace WebCore {
 
 namespace WebKit {
 
-
     class EditorClient : public WebCore::EditorClient {
     public:
         EditorClient(WebKitPage*);
 
         // from EditorClient
         virtual void pageDestroyed();
-    
+
         virtual bool shouldDeleteRange(WebCore::Range*);
         virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
-        virtual bool smartInsertDeleteEnabled(); 
+        virtual bool smartInsertDeleteEnabled();
         virtual bool isContinuousSpellCheckingEnabled();
         virtual void toggleContinuousSpellChecking();
         virtual bool isGrammarCheckingEnabled();
         virtual void toggleGrammarChecking();
         virtual int spellCheckerDocumentTag();
-    
+
         virtual bool isEditable();
 
         virtual bool shouldBeginEditing(WebCore::Range*);
@@ -77,14 +76,14 @@ namespace WebKit {
         virtual void didEndEditing();
         virtual void didWriteSelectionToPasteboard();
         virtual void didSetSelectionTypesForPasteboard();
-    
+
         virtual void registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>);
         virtual void registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand>);
         virtual void clearUndoRedoOperations();
 
         virtual bool canUndo() const;
         virtual bool canRedo() const;
-    
+
         virtual void undo();
         virtual void redo();
 

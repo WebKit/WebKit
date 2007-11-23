@@ -41,11 +41,11 @@ using namespace WebCore;
 extern "C" {
 
 extern void webkit_marshal_VOID__STRING_STRING (GClosure*     closure,
-                                                    GValue*       return_value,
-                                                    guint         n_param_values,
-                                                    const GValue* param_values,
-                                                    gpointer      invocation_hint,
-                                                    gpointer      marshal_data);
+                                                GValue*       return_value,
+                                                guint         n_param_values,
+                                                const GValue* param_values,
+                                                gpointer      invocation_hint,
+                                                gpointer      marshal_data);
 
 enum {
     CLEARED,
@@ -178,7 +178,7 @@ GObject* webkit_frame_init_with_page(WebKitPage* page, HTMLFrameOwnerElement* el
     frameData->page = page;
 
     return G_OBJECT(frame);
-} 
+}
 
 WebKitPage*
 webkit_frame_get_page(WebKitFrame* frame)

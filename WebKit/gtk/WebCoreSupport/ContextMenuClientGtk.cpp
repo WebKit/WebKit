@@ -35,7 +35,7 @@
 using namespace WebCore;
 
 namespace WebKit {
-    
+
 void ContextMenuClient::contextMenuDestroyed()
 {
     notImplemented();

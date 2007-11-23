@@ -38,7 +38,7 @@ namespace WebKit {
     {
     public:
         virtual void contextMenuDestroyed();
-        
+
         virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*);
         virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
 

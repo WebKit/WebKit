@@ -85,7 +85,7 @@ void ChromeClient::unfocus()
 {
     notImplemented();
 }
-    
+
 Page* ChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& features)
 {
     if (features.dialog) {

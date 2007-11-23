@@ -1,3 +1,32 @@
+2007-11-22  Alp Toker  <alp@atoker.com>
+
+        Whitespace fixes only.
+
+        * Api/webkitgtkframe.cpp:
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+        * Api/webkitgtkprivate.h:
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        * WebCoreSupport/ContextMenuClientGtk.h:
+        * WebCoreSupport/DragClientGtk.h:
+        * WebCoreSupport/EditorClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::FrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebKit::FrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebKit::FrameLoaderClient::createFrame):
+        (WebKit::FrameLoaderClient::createJavaAppletWidget):
+        (WebKit::FrameLoaderClient::registerForIconNotification):
+        (WebKit::FrameLoaderClient::setMainFrameDocumentReady):
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::FrameLoaderClient::frameLoadCompleted):
+        (WebKit::FrameLoaderClient::saveViewStateToItem):
+        (WebKit::FrameLoaderClient::restoreViewState):
+        (WebKit::FrameLoaderClient::shouldGoToHistoryItem):
+        (WebKit::FrameLoaderClient::setTitle):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2007-11-22  Michael Natterer  <mitch@imendio.com>
 
         Reviewed by Alp Toker.

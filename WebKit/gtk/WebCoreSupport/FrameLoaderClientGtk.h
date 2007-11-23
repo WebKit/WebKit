@@ -121,8 +121,8 @@ namespace WebKit {
         virtual void windowObjectCleared();
         virtual void didPerformFirstNavigation() const;
 
-        virtual void registerForIconNotification(bool); 
-        
+        virtual void registerForIconNotification(bool);
+
         virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WebCore::String& mimeType);
 
         virtual void setMainFrameDocumentReady(bool);
