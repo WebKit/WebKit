@@ -49,7 +49,9 @@ CachedFont::CachedFont(DocLoader* dl, const String &url)
 
 CachedFont::~CachedFont()
 {
+#if PLATFORM(CG) || PLATFORM(QT)
     delete m_fontData;
+#endif
 }
 
 void CachedFont::ref(CachedResourceClient *c)
@@ -103,10 +105,12 @@ FontPlatformData CachedFont::platformDataFromCustomData(int size, bool bold, boo
 
 void CachedFont::allReferencesRemoved()
 {
+#if PLATFORM(CG) || PLATFORM(QT)
     if (m_fontData) {
         delete m_fontData;
         m_fontData = 0;
     }
+#endif
 }
 
 void CachedFont::checkNotify()

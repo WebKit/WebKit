@@ -1,3 +1,13 @@
+2007-11-22  Laszlo Gombos  <laszlo.gombos@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        Fix some compilation warnings.  Do not reference undefined (platform) specific type (WebCore::CachedFont::m_fontData)
+
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::~CachedFont):
+        (WebCore::CachedFont::allReferencesRemoved):
+
 2007-11-22  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
