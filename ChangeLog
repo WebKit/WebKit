@@ -1,3 +1,9 @@
+2007-11-22  Alp Toker  <alp@atoker.com>
+
+        GTK+ build fix. Pass a correct LIBDIR value.
+
+        * WebKit.pri:
+
 2007-11-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alp Toker.

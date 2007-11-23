@@ -14,6 +14,12 @@ qt-port:!building-libs {
     DEPENDPATH += $$PWD/WebKit/qt/Api
 }
 
+gtk-port:!building-libs {
+    QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
+    LIBS += -lWebKitGtk
+    DEPENDPATH += $$PWD/WebKit/gtk/Api $$PWD/WebKit/gtk/WebCoreSupport
+}
+
 gtk-port {
     CONFIG += link_pkgconfig
 
