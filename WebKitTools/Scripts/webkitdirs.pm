@@ -752,9 +752,9 @@ sub buildQMakeProject($@)
     }
 
     if ($clean) {
-      system "$make distclean";
+      $result = system "$make distclean";
     } else {
-      system "$make";
+      $result = system "$make";
     }
 
     chdir ".." or die;

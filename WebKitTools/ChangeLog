@@ -1,3 +1,11 @@
+2007-11-22  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alp Toker.
+
+        Fix build-webkit to propagate make's exit status if it fails.
+
+        * Scripts/webkitdirs.pm:
+
 2007-11-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
