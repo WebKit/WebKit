@@ -90,9 +90,8 @@
     if (!error)
         return;
 
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reportFailure) object:nil];
     if ([self window])
-        [self performSelector:@selector(reportFailure) withObject:nil afterDelay:0.0];
+        [self reportFailure];
 }
 
 @end

@@ -68,11 +68,15 @@ public:
 
 protected:
     static void queuePostAttachCallback(NodeCallback, Node*);
+    static void suspendPostAttachCallbacks();
+    static void resumePostAttachCallbacks();
 
     void setFirstChild(Node* child) { m_firstChild = child; }
     void setLastChild(Node* child) { m_lastChild = child; }
     
 private:
+    static void dispatchPostAttachCallbacks();
+
     virtual Node* virtualFirstChild() const;
     virtual Node* virtualLastChild() const;
     

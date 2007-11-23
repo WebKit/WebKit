@@ -56,6 +56,9 @@ public:
     
     virtual bool isURLAttribute(Attribute*) const;
 
+    virtual void updateWidget();
+    void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
+
 #if USE(JAVASCRIPTCORE_BINDINGS)
     virtual KJS::Bindings::Instance* getInstance() const;
 #endif
@@ -73,6 +76,7 @@ public:
     DeprecatedString url;
     String m_pluginPage;
     String m_serviceType;
+    bool m_needWidgetUpdate;
 };
 
 }

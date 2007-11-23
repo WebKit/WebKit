@@ -45,7 +45,7 @@ using namespace EventNames;
 static void dispatchChildInsertionEvents(Node*, ExceptionCode&);
 static void dispatchChildRemovalEvents(Node*, ExceptionCode&);
 
-typedef Vector<std::pair<NodeCallback, Node*> > NodeCallbackQueue;
+typedef Vector<std::pair<NodeCallback, RefPtr<Node> > > NodeCallbackQueue;
 static NodeCallbackQueue* s_postAttachCallbackQueue = 0;
 
 static size_t s_attachDepth = 0;
@@ -584,12 +584,38 @@ ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
     return this;
 }
 
+void ContainerNode::suspendPostAttachCallbacks()
+{
+    ++s_attachDepth;
+}
+
+void ContainerNode::resumePostAttachCallbacks()
+{
+    if (s_attachDepth == 1 && s_postAttachCallbackQueue)
+        dispatchPostAttachCallbacks();
+    --s_attachDepth;
+}
+
 void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node* node)
 {
     if (!s_postAttachCallbackQueue)
         s_postAttachCallbackQueue = new NodeCallbackQueue;
     
-    s_postAttachCallbackQueue->append(std::pair<NodeCallback, Node*>(callback, node));
+    s_postAttachCallbackQueue->append(std::pair<NodeCallback, RefPtr<Node> >(callback, node));
+}
+
+void ContainerNode::dispatchPostAttachCallbacks()
+{
+    // We recalculate size() each time through the loop because a callback
+    // can add more callbacks to the end of the queue.
+    for (size_t i = 0; i < s_postAttachCallbackQueue->size(); ++i) {
+        std::pair<NodeCallback, RefPtr<Node> >& pair = (*s_postAttachCallbackQueue)[i];
+        NodeCallback callback = pair.first;
+        Node* node = pair.second.get();
+
+        callback(node);
+    }
+    s_postAttachCallbackQueue->clear();
 }
 
 void ContainerNode::attach()
@@ -600,20 +626,8 @@ void ContainerNode::attach()
         child->attach();
     EventTargetNode::attach();
 
-    if (s_attachDepth == 1) {
-        if (s_postAttachCallbackQueue) {
-            // We recalculate size() each time through the loop because a callback
-            // can add more callbacks to the end of the queue.
-            for (size_t i = 0; i < s_postAttachCallbackQueue->size(); ++i) {
-                std::pair<NodeCallback, Node*>& pair = (*s_postAttachCallbackQueue)[i];
-                NodeCallback callback = pair.first;
-                Node* node = pair.second;
-                
-                callback(node);
-            }
-            s_postAttachCallbackQueue->clear();
-        }
-    }    
+    if (s_attachDepth == 1 && s_postAttachCallbackQueue)
+        dispatchPostAttachCallbacks();
     --s_attachDepth;
 }
 

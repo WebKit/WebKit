@@ -165,29 +165,28 @@ RenderObject *HTMLObjectElement::createRenderer(RenderArena* arena, RenderStyle*
 
 void HTMLObjectElement::attach()
 {
+    bool isImage = isImageType();
+
+    if (!isImage)
+        queuePostAttachCallback(&HTMLPlugInElement::updateWidgetCallback, this);
+
     HTMLPlugInElement::attach();
 
-    if (renderer() && !m_useFallbackContent) {
-        if (isImageType()) {
-            if (!m_imageLoader)
-                m_imageLoader.set(new HTMLImageLoader(this));
-            m_imageLoader->updateFromElement();
-            if (renderer()) {
-                RenderImage* imageObj = static_cast<RenderImage*>(renderer());
-                imageObj->setCachedImage(m_imageLoader->image());
-            }
-        } else {
-            if (m_needWidgetUpdate) {
-                // Set m_needWidgetUpdate to false before calling updateWidget because updateWidget may cause
-                // this method or recalcStyle (which also calls updateWidget) to be called.
-                m_needWidgetUpdate = false;
-                static_cast<RenderPartObject*>(renderer())->updateWidget(true);
-            } else {
-                m_needWidgetUpdate = true;
-                setChanged();
-            }
+    if (isImage && renderer() && !m_useFallbackContent) {
+        if (!m_imageLoader)
+            m_imageLoader.set(new HTMLImageLoader(this));
+        m_imageLoader->updateFromElement();
+        if (renderer()) {
+            RenderImage* imageObj = static_cast<RenderImage*>(renderer());
+            imageObj->setCachedImage(m_imageLoader->image());
         }
     }
+}
+
+void HTMLObjectElement::updateWidget()
+{
+    if (m_needWidgetUpdate && renderer() && !m_useFallbackContent && !isImageType())
+        static_cast<RenderPartObject*>(renderer())->updateWidget(true);
 }
 
 void HTMLObjectElement::finishedParsing()

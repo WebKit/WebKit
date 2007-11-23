@@ -1,3 +1,16 @@
+2007-11-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=15811
+          WebKit plug-ins can re-enter WebKit under attach()
+          <rdar://problem/5577978>
+
+        * Plugins/WebNullPluginView.mm:
+        (-[WebNullPluginView viewDidMoveToWindow]): Removed workaround for the
+        above bug that added as part of fixing
+        <http://bugs.webkit.org/show_bug.cgi?id=15804>.
+
 2007-11-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Eric.

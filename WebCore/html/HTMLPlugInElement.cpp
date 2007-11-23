@@ -204,4 +204,9 @@ NPObject* HTMLPlugInElement::getNPObject()
 
 #endif /* USE(NPOBJECT) */
 
+void HTMLPlugInElement::updateWidgetCallback(Node* n)
+{
+    static_cast<HTMLPlugInElement*>(n)->updateWidget();
+}
+
 }

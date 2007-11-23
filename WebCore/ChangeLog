@@ -1,3 +1,62 @@
+2007-11-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15811
+          WebKit plug-ins can re-enter WebKit under attach()
+          <rdar://problem/5577978>
+
+        Defer plug-in loading until after attach and recalcStyle using the
+        post-attach callback mechanism. Netscape plug-ins are still loaded only
+        after layout.
+
+        * dom/ContainerNode.cpp:
+        Made NodeCallbackQueue elements retain the Node because callbacks might
+        delete nodes that are in the callback queue.
+        (WebCore::ContainerNode::suspendPostAttachCallbacks): Added. Needed to
+        prevent post-attach callbacks from being dispatched under recalcStyle().
+        (WebCore::ContainerNode::resumePostAttachCallbacks): Ditto.
+        (WebCore::ContainerNode::dispatchPostAttachCallbacks): Factored out from
+        attach().
+        (WebCore::ContainerNode::attach):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Added calls to
+        suspendPostAttachCallbacks() and resumePostAttachCallbacks().
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::HTMLEmbedElement):
+        (WebCore::HTMLEmbedElement::attach): Changed to queue the widget update
+        for post-attach.
+        (WebCore::HTMLEmbedElement::updateWidget): Added. Called by the
+        post-attach callback.
+        * html/HTMLEmbedElement.h: Added an m_needWidgetUpdate member needed to
+        prevent a double update if another plug-in's post-attach updateWidget()
+        triggers a layout which updates the widget before this plug-in's
+        post-attach callback is invoked.
+        (WebCore::HTMLEmbedElement::setNeedWidgetUpdate): Added a setter for
+        m_needWidgetUpdate.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::attach): Changed to queue the widget update
+        for post-attach.
+        (WebCore::HTMLObjectElement::updateWidget): Added. Called by the
+        post-attach callback.
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::setNeedWidgetUpdate): Added a setter for
+        m_needWidgetUpdate.
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::updateWidgetCallback): Added.
+        * html/HTMLPlugInElement.h:
+        (WebCore::HTMLPlugInElement::updateWidget):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget): Added calls to
+        setNeedWidgetUpdate(false) so that if this method is called from
+        FrameView::layout() during post-attach dispatch of another plug-in,
+        it will not be called again when this plug-in's post-attach callback
+        is dispatched.
+        * rendering/RenderPartObject.h:
+        (WebCore::RenderPartObject::updateWidget) Renamed argument to match
+        the method definition.
+
 2007-11-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dan Bernstein.

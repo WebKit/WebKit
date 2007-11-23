@@ -48,6 +48,8 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual bool checkDTD(const Node* newChild);
 
+    virtual void updateWidget() { }
+
     String align() const;
     void setAlign(const String&);
     
@@ -74,6 +76,8 @@ private:
 #endif
 
 protected:
+    static void updateWidgetCallback(Node*);
+
     String oldNameAttr;
 #if USE(JAVASCRIPTCORE_BINDINGS)
     mutable RefPtr<KJS::Bindings::Instance> m_instance;
