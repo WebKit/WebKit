@@ -1,3 +1,24 @@
+2007-11-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14977
+        Hixie's DOM Core performance test shows insert >10x slower than append
+
+        Each invocation of Element.childNodes[n] was creating and registering a new ChildNodeList,
+        which persisted and listened to notifications until GC.
+
+        A fix is to avoid registering child node lists for notifications - they don't need them, as
+        they share a common cache in Node.
+
+        * dom/Node.cpp:
+        (WebCore::Node::registerNodeList):
+        (WebCore::Node::unregisterNodeList):
+        (WebCore::Node::notifyLocalNodeListsAttributeChanged):
+        (WebCore::Node::notifyLocalNodeListsChildrenChanged):
+        * dom/NodeList.h:
+        (WebCore::NodeList::needsNotifications):
+
 2007-11-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Antti Koivisto.

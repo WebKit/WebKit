@@ -48,7 +48,7 @@ using namespace HTMLNames;
 
 typedef HashSet<NodeList*> NodeListSet;
 struct NodeListsNodeData {
-    NodeListSet m_registeredLists;
+    NodeListSet m_listsToNotify;
     NodeList::Caches m_childNodeListCaches;
 };
 
@@ -439,10 +439,12 @@ void Node::registerNodeList(NodeList* list)
 {
     if (!m_nodeLists)
         m_nodeLists = new NodeListsNodeData;
-    else if (m_nodeLists->m_registeredLists.isEmpty()) 
+    else if (!m_document->hasNodeLists())
+        // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
         m_nodeLists->m_childNodeListCaches.reset();
 
-    m_nodeLists->m_registeredLists.add(list);
+    if (list->needsNotifications())
+        m_nodeLists->m_listsToNotify.add(list);
     m_document->addNodeList();
 }
 
@@ -450,7 +452,8 @@ void Node::unregisterNodeList(NodeList* list)
 {
     ASSERT(m_nodeLists);
     m_document->removeNodeList();
-    m_nodeLists->m_registeredLists.remove(list);
+    if (list->needsNotifications())
+        m_nodeLists->m_listsToNotify.remove(list);
 }
 
 void Node::notifyLocalNodeListsAttributeChanged()
@@ -458,8 +461,8 @@ void Node::notifyLocalNodeListsAttributeChanged()
     if (!m_nodeLists)
         return;
 
-    NodeListSet::iterator end = m_nodeLists->m_registeredLists.end();
-    for (NodeListSet::iterator i = m_nodeLists->m_registeredLists.begin(); i != end; ++i)
+    NodeListSet::iterator end = m_nodeLists->m_listsToNotify.end();
+    for (NodeListSet::iterator i = m_nodeLists->m_listsToNotify.begin(); i != end; ++i)
         (*i)->rootNodeAttributeChanged();
 }
 
@@ -476,8 +479,8 @@ void Node::notifyLocalNodeListsChildrenChanged()
 
     m_nodeLists->m_childNodeListCaches.reset();
 
-    NodeListSet::iterator end = m_nodeLists->m_registeredLists.end();
-    for (NodeListSet::iterator i = m_nodeLists->m_registeredLists.begin(); i != end; ++i)
+    NodeListSet::iterator end = m_nodeLists->m_listsToNotify.end();
+    for (NodeListSet::iterator i = m_nodeLists->m_listsToNotify.begin(); i != end; ++i)
         (*i)->rootNodeChildrenChanged();
 }
 

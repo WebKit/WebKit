@@ -53,6 +53,8 @@ public:
     NodeList(PassRefPtr<Node> rootNode, Caches*);
     virtual ~NodeList();
 
+    bool needsNotifications() const { return m_ownsCaches; }
+
     // DOM methods & attributes for NodeList
     virtual unsigned length() const = 0;
     virtual Node* item(unsigned index) const = 0;
