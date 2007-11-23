@@ -257,6 +257,8 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                         targetlen = ucnv_toUChars(conv, target, targetlen, (const char*)results[j]->stringval, -1, &status);
                         target2len = ucnv_toUChars(conv, target2, target2len, (const char*)results[j+incr]->stringval, -1, &status);
                         tst = ucol_strcoll(coll, target, u_strlen(target), target2, u_strlen(target2));
+                        xmlFree(target);
+                        xmlFree(target2);
                         /* End ICU change */
                     }
                     if (descending)
@@ -318,6 +320,8 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                                 targetlen = ucnv_toUChars(conv, target, targetlen, (const char*)res[j]->stringval, -1, &status);
                                 target2len = ucnv_toUChars(conv, target2, target2len, (const char*)res[j+incr]->stringval, -1, &status);
                                 tst = ucol_strcoll(coll, target, u_strlen(target), target2, u_strlen(target2));
+                                xmlFree(target);
+                                xmlFree(target2);
                                 /* End ICU change */
                             }
                             if (desc)

@@ -1,5 +1,14 @@
 2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
 
+        Not reviewed, trivial leak fix.
+
+        Fix xsltUnicodeSortFunction() memory leaks.
+
+        * xml/XSLTUnicodeSort.cpp:
+        (WebCore::xsltUnicodeSortFunction):
+
+2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Maciej.
 
         <rdar://problem/5539306> REGRESSION: redirect fails when subframe's document is opened but
