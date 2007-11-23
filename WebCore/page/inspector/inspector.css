@@ -1950,19 +1950,12 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 
 .tip-balloon {
     position: absolute;
-    left: 160px;
+    left: 145px;
     top: -5px;
     z-index: 1000;
     border-width: 51px 15px 18px 37px;
     -webkit-border-image: url(Images/tipBalloon.png) 51 15 18 37;
     width: 265px;
-    opacity: 0;
-    -webkit-transition: left 250ms ease-in-out, opacity 250ms ease-in-out; 
-}
-
-.tip-balloon.visible {
-    left: 145px;
-    opacity: 1;
 }
 
 .tip-balloon.bottom {
