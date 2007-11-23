@@ -33,5 +33,5 @@ ctgen.input = CTGENFILE
 ctgen.CONFIG += target_predeps no_link
 ctgen.variable_out = GENERATED_SOURCES
 ctgen.dependency_type = TYPE_C
-ctgen.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}
+ctgen.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR}${QMAKE_FILE_BASE}
 addExtraCompiler(ctgen)
