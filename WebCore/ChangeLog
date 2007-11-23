@@ -1,3 +1,25 @@
+2007-11-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15943
+          -webkit-transform matrix does not work
+
+        Test: fast/transforms/matrix-01.html
+
+        Parse all six matrix entries as numbers.
+
+        * css/CSSParser.cpp:
+        (WebCore::TransformOperationInfo::TransformOperationInfo):
+        (WebCore::CSSParser::parseTransform):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderStyle.cpp:
+        (WebCore::MatrixTransformOperation::blend):
+        * rendering/RenderStyle.h:
+        (WebCore::MatrixTransformOperation::MatrixTransformOperation):
+        (WebCore::MatrixTransformOperation::apply):
+
 2007-11-22  Laszlo Gombos  <laszlo.gombos@gmail.com>
 
         Reviewed by Alp Toker.

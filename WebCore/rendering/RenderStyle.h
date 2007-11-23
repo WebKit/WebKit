@@ -769,7 +769,7 @@ private:
 class MatrixTransformOperation : public TransformOperation
 {
 public:
-    MatrixTransformOperation(const Length& a, const Length& b, const Length& c, const Length& d, const Length& e, const Length& f)
+    MatrixTransformOperation(double a, double b, double c, double d, double e, double f)
     : m_a(a), m_b(b), m_c(c), m_d(d), m_e(e), m_f(f)
     {}
     
@@ -786,19 +786,19 @@ public:
 
     virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
     {
-        AffineTransform matrix(m_a.value(), m_b.value(), m_c.value(), m_d.value(), m_e.calcValue(borderBoxSize.width()), m_f.calcValue(borderBoxSize.height()));
+        AffineTransform matrix(m_a, m_b, m_c, m_d, m_e, m_f);
         transform.multiply(matrix);
     }
 
     virtual TransformOperation* blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
     
 private:
-    Length m_a;
-    Length m_b;
-    Length m_c;
-    Length m_d;
-    Length m_e;
-    Length m_f;
+    double m_a;
+    double m_b;
+    double m_c;
+    double m_d;
+    double m_e;
+    double m_f;
 };
 
 class TransformOperations

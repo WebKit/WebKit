@@ -513,27 +513,27 @@ TransformOperation* MatrixTransformOperation::blend(const TransformOperation* fr
         return this;
     
     if (blendToIdentity)
-        return new MatrixTransformOperation(Length(1, m_a.type()).blend(m_a, progress),
-                                            Length(0, m_b.type()).blend(m_b, progress),
-                                            Length(0, m_c.type()).blend(m_c, progress),
-                                            Length(1, m_d.type()).blend(m_d, progress),
-                                            Length(0, m_e.type()).blend(m_e, progress),
-                                            Length(0, m_f.type()).blend(m_f, progress));
+        return new MatrixTransformOperation(m_a * (1. - progress) + progress,
+                                            m_b * (1. - progress),
+                                            m_c * (1. - progress),
+                                            m_d * (1. - progress) + progress,
+                                            m_e * (1. - progress),
+                                            m_f * (1. - progress));
 
     const MatrixTransformOperation* fromOp = static_cast<const MatrixTransformOperation*>(from);
-    Length fromA = fromOp ? fromOp->m_a : Length(1, m_a.type());
-    Length fromB = fromOp ? fromOp->m_b : Length(0, m_b.type());
-    Length fromC = fromOp ? fromOp->m_c : Length(0, m_c.type());
-    Length fromD = fromOp ? fromOp->m_d : Length(1, m_d.type());
-    Length fromE = fromOp ? fromOp->m_e : Length(0, m_e.type());
-    Length fromF = fromOp ? fromOp->m_f : Length(0, m_f.type());
+    double fromA = fromOp ? fromOp->m_a : 1.;
+    double fromB = fromOp ? fromOp->m_b : 0;
+    double fromC = fromOp ? fromOp->m_c : 0;
+    double fromD = fromOp ? fromOp->m_d : 1.;
+    double fromE = fromOp ? fromOp->m_e : 0;
+    double fromF = fromOp ? fromOp->m_f : 0;
     
-    return new MatrixTransformOperation(m_a.blend(fromA, progress),
-                                        m_b.blend(fromB, progress),
-                                        m_c.blend(fromC, progress),
-                                        m_d.blend(fromD, progress),
-                                        m_e.blend(fromE, progress),
-                                        m_f.blend(fromF, progress));
+    return new MatrixTransformOperation(fromA + (m_a - fromA) * progress,
+                                        fromB + (m_b - fromB) * progress,
+                                        fromC + (m_c - fromC) * progress,
+                                        fromD + (m_d - fromD) * progress,
+                                        fromE + (m_e - fromE) * progress,
+                                        fromF + (m_f - fromF) * progress);
 }
 
 Transition::Transition()

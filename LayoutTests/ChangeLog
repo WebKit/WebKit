@@ -1,3 +1,15 @@
+2007-11-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=15943
+          -webkit-transform matrix does not work
+
+        * fast/transforms/matrix-01.html: Added.
+        * platform/mac/fast/transforms/matrix-01-expected.checksum: Added.
+        * platform/mac/fast/transforms/matrix-01-expected.png: Added.
+        * platform/mac/fast/transforms/matrix-01-expected.txt: Added.
+
 2007-11-22  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Alexey.
