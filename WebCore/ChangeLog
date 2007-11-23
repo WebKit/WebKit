@@ -1,3 +1,11 @@
+2007-11-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by George Staikos <staikos@kde.org>.
+
+        Another build fix specific to trunk (instead of the stable branch) to fix make clean (which the buildbots call).
+
+        * WebCore.pro:
+
 2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Not reviewed, trivial leak fix.

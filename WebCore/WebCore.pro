@@ -1495,7 +1495,7 @@ gtk-port:SOURCES += \
     cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSPROPERTIES > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
     cssprops.depend = ${QMAKE_FILE_NAME} SVGCSSPROPERTIES
-    cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
+    cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssprops)
 
     # GENERATOR 6-B:
@@ -1504,7 +1504,7 @@ gtk-port:SOURCES += \
     cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSVALUES > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
     cssvalues.depend = ${QMAKE_FILE_NAME} SVGCSSVALUES
-    cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
+    cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssvalues)
 } else {
     # GENERATOR 6-A:
@@ -1512,7 +1512,7 @@ gtk-port:SOURCES += \
     cssprops.input = WALDOCSSPROPS
     cssprops.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} $$GENERATED_SOURCES_DIR && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
-    cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
+    cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssprops)
 
     # GENERATOR 6-B:
@@ -1520,7 +1520,7 @@ gtk-port:SOURCES += \
     cssvalues.input = WALDOCSSVALUES
     cssvalues.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} $$GENERATED_SOURCES_DIR && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
-    cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_OBJECTS_DIR_WTR}${QMAKE_FILE_BASE}.h
+    cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssvalues)
 }
 
