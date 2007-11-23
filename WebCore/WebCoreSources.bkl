@@ -740,6 +740,7 @@ This file contains the list of files needed to build WebCore.
         xml/XSLImportRule.cpp
         xml/XSLStyleSheet.cpp
         xml/XSLTExtensions.cpp
+        xml/XSLTUnicodeSort.cpp
         xml/XSLTProcessor.cpp
         xml/xmlhttprequest.cpp
     </set>

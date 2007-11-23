@@ -5916,6 +5916,14 @@
 				RelativePath="..\xml\XSLTProcessor.h"
 				>
 			</File>
+			<File
+				RelativePath="..\xml\XSLTUnicodeSort.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XSLTUnicodeSort.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="dom"

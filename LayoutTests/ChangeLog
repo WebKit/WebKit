@@ -1,3 +1,15 @@
+2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16077
+        <rdar://problem/5609785> XSLT processor <xsl:sort> algorithm is incompatible with other
+        browser implementations
+
+        * fast/xsl/sort-unicode-expected.txt: Added.
+        * fast/xsl/sort-unicode.xml: Added.
+        * fast/xsl/sort-unicode.xsl: Added.
+
 2007-11-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

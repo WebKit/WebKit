@@ -3625,6 +3625,8 @@
 		E14843D60A6754A6007E4D39 /* TextCodecMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14843910A6752BF007E4D39 /* TextCodecMac.cpp */; };
 		E15863990CD10B730066E2C9 /* TextCodecUserDefined.h in Headers */ = {isa = PBXBuildFile; fileRef = E15863970CD10B730066E2C9 /* TextCodecUserDefined.h */; };
 		E158639A0CD10B730066E2C9 /* TextCodecUserDefined.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15863980CD10B730066E2C9 /* TextCodecUserDefined.cpp */; };
+		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
+		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
 		E1EBBBD40AAC9B87001FE8E2 /* CSSCharsetRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */; };
@@ -7620,6 +7622,8 @@
 		E14843910A6752BF007E4D39 /* TextCodecMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = TextCodecMac.cpp; path = mac/TextCodecMac.cpp; sourceTree = "<group>"; };
 		E15863970CD10B730066E2C9 /* TextCodecUserDefined.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecUserDefined.h; sourceTree = "<group>"; };
 		E15863980CD10B730066E2C9 /* TextCodecUserDefined.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUserDefined.cpp; sourceTree = "<group>"; };
+		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
+		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
 		E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSHTMLSelectElement.h; sourceTree = "<group>"; };
 		E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCharsetRule.cpp; sourceTree = "<group>"; };
@@ -11593,6 +11597,8 @@
 				E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */,
 				BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */,
 				BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */,
+				E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */,
+				E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */,
 			);
 			path = xml;
 			sourceTree = "<group>";
@@ -13899,6 +13905,7 @@
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13937,7 +13944,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -15454,6 +15460,7 @@
 				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

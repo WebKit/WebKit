@@ -822,6 +822,7 @@ SOURCES += \
     xml/XSLImportRule.cpp \
     xml/XSLStyleSheet.cpp \
     xml/XSLTExtensions.cpp \
+    xml/XSLTUnicodeSort.cpp \
     xml/XSLTProcessor.cpp
 
 gtk-port {
