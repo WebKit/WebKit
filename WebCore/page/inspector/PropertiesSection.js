@@ -42,9 +42,7 @@ WebInspector.PropertiesSection = function(title, subtitle)
 
     this.headerElement.appendChild(this.titleElement);
     this.headerElement.appendChild(this.subtitleElement);
-
-    var section = this;
-    this.headerElement.addEventListener("click", function() { section.expanded = !section.expanded; }, false);
+    this.headerElement.addEventListener("click", this.toggleExpanded.bind(this), false);
 
     this.propertiesElement = document.createElement("ol");
     this.propertiesElement.className = "properties";
@@ -132,5 +130,10 @@ WebInspector.PropertiesSection.prototype = {
             return;
         this._expanded = false;
         this.element.removeStyleClass("expanded");
+    },
+
+    toggleExpanded: function()
+    {
+        this.expanded = !this.expanded;
     }
 }

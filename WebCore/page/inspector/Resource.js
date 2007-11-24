@@ -496,8 +496,7 @@ WebInspector.Resource.prototype = {
     {
         if (this.updateTitleTimeout)
             return;
-        var _self = this;
-        this.updateTitleTimeout = setTimeout(function () { _self.updateTitle() }, 0);
+        this.updateTitleTimeout = setTimeout(this.updateTitle.bind(this), 0);
     },
 
     updateTitle: function()

@@ -33,9 +33,7 @@ WebInspector.SidebarPane = function(title)
 
     this.titleElement = document.createElement("div");
     this.titleElement.className = "title";
-
-    var pane = this;
-    this.titleElement.addEventListener("click", function() { pane.expanded = !pane.expanded; }, false);
+    this.titleElement.addEventListener("click", this.toggleExpanded.bind(this), false);
 
     this.bodyElement = document.createElement("div");
     this.bodyElement.className = "body";
@@ -116,5 +114,10 @@ WebInspector.SidebarPane.prototype = {
         this.element.removeStyleClass("expanded");
         if (this.oncollapse)
             this.oncollapse(this);
+    },
+
+    toggleExpanded: function()
+    {
+        this.expanded = !this.expanded;
     }
 }

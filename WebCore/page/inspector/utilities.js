@@ -79,12 +79,17 @@ Object.describe = function(obj, abbreviated)
 Object.sortedProperties = function(obj)
 {
     var properties = [];
-    for (var prop in obj) {
+    for (var prop in obj)
         properties.push(prop);
-    }
-
     properties.sort();
     return properties;
+}
+
+Function.prototype.bind = function(thisObject)
+{
+    var func = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))) };
 }
 
 Element.prototype.removeStyleClass = function(className) 
@@ -140,7 +145,6 @@ Node.prototype.firstParentOrSelfWithNodeName = function(nodeName)
     for (var node = this; node && (node !== document); node = node.parentNode)
         if (node.nodeName.toLowerCase() === nodeName.toLowerCase())
             return node;
-
     return null;
 }
 
@@ -149,7 +153,6 @@ Node.prototype.firstParentOrSelfWithClass = function(className)
     for (var node = this; node && (node !== document); node = node.parentNode)
         if (node.nodeType === Node.ELEMENT_NODE && node.hasStyleClass(className))
             return node;
-
     return null;
 }
 
@@ -157,7 +160,6 @@ Node.prototype.firstParentWithClass = function(className)
 {
     if (!this.parentNode)
         return null;
-
     return this.parentNode.firstParentOrSelfWithClass(className);
 }
 

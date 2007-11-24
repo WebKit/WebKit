@@ -39,14 +39,13 @@ WebInspector.ConsolePanel = function()
     this.messageList.className = "console-message-list";
     this.element.appendChild(this.messageList);
 
-    var console = this;
-    this.messageList.addEventListener("click", function(event) { console.messageListClicked(event) }, true);
+    this.messageList.addEventListener("click", this.messageListClicked.bind(this), true);
 
     this.consolePrompt = document.createElement("textarea");
     this.consolePrompt.className = "console-prompt";
     this.element.appendChild(this.consolePrompt);
 
-    this.consolePrompt.addEventListener("keydown", function(event) { console.promptKeypress(event) }, false);
+    this.consolePrompt.addEventListener("keydown", this.promptKeypress.bind(this), false);
 }
 
 WebInspector.ConsolePanel.prototype = {

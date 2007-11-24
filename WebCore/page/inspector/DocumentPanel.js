@@ -83,7 +83,7 @@ WebInspector.DocumentPanel = function(resource, views)
 
     domView.sidebarResizeElement = document.createElement("div");
     domView.sidebarResizeElement.className = "sidebar-resizer-vertical sidebar-resizer-vertical-right";
-    domView.sidebarResizeElement.addEventListener("mousedown", function(event) { panel.rightSidebarResizerDragStart(event) }, false);
+    domView.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
 
     domView.contentElement.appendChild(domView.sideContentElement);
     domView.contentElement.appendChild(domView.sidebarElement);
@@ -384,8 +384,7 @@ WebInspector.DocumentPanel.prototype = {
 
         if (document.body.offsetWidth <= 0) {
             // The stylesheet hasn't loaded yet, so we need to update later.
-            var panel = this;
-            setTimeout(function() { panel.updateBreadcrumbSizes() }, 0);
+            setTimeout(this.updateBreadcrumbSizes.bind(this), 0);
             return;
         }
 
@@ -755,8 +754,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
         if (document.body.offsetWidth <= 0) {
             // The stylesheet hasn't loaded yet, so we need to update later.
-            var element = this;
-            setTimeout(function() { element.updateSelection() }, 0);
+            setTimeout(this.updateSelection.bind(this), 0);
             return;
         }
 
@@ -771,8 +769,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     onattach: function()
     {
-        var element = this;
-        this.listItemElement.addEventListener("mousedown", function(event) { element.onmousedown(event) }, false);
+        this.listItemElement.addEventListener("mousedown", this.onmousedown.bind(this), false);
     },
 
     onpopulate: function()

@@ -46,8 +46,7 @@ WebInspector.NetworkPanel = function()
 
     this.resourcesElement = document.createElement("div");
     this.resourcesElement.className = "network-resources";
-    var panel = this;
-    this.resourcesElement.addEventListener("click", function(event) { return panel.onClick(event) }, false);
+    this.resourcesElement.addEventListener("click", this.resourcesClicked.bind(this), false);
     this.timelineElement.appendChild(this.resourcesElement);
 
     var graphArea = document.createElement("div");
@@ -60,7 +59,7 @@ WebInspector.NetworkPanel = function()
 
     this.graphModeSelectElement = document.createElement("select");
     this.graphModeSelectElement.className = "network-graph-mode";
-    this.graphModeSelectElement.addEventListener("change", function(event) { return panel.onModeChange(event) }, false);
+    this.graphModeSelectElement.addEventListener("change", this.changeGraphMode.bind(this), false);
     this.graphLabelElement.appendChild(this.graphModeSelectElement);
     this.graphLabelElement.appendChild(document.createElement("br"));
 
@@ -112,7 +111,7 @@ WebInspector.NetworkPanel.prototype = {
         this.updateTimelineDividersIfNeeded();
     },
 
-    onClick: function(event)
+    resourcesClicked: function(event)
     {
         // If the click wasn't inside a network resource row, ignore it.
         var resourceElement = event.target.firstParentOrSelfWithClass("network-resource");
@@ -134,7 +133,7 @@ WebInspector.NetworkPanel.prototype = {
         resourceElement.timelineEntry.toggleShowingInfo();
     },
 
-    onModeChange: function(event)
+    changeGraphMode: function(event)
     {
         this.updateSummaryGraph();
     },
@@ -230,9 +229,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         if ("sortTimelineEntriesTimeout" in this)
             return;
-
-        var _self = this;
-        this.sortTimelineEntriesTimeout = setTimeout(function () { _self.sortTimelineEntriesIfNeeded() }, 500);
+        this.sortTimelineEntriesTimeout = setTimeout(this.sortTimelineEntriesIfNeeded.bind(this), 500);
     },
 
     sortTimelineEntriesIfNeeded: function()
@@ -283,9 +280,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         if ("updateTimelineDividersTimeout" in this)
             return;
-
-        var _self = this;
-        this.updateTimelineDividersTimeout = setTimeout(function () { _self.updateTimelineDividersIfNeeded() }, 500);
+        this.updateTimelineDividersTimeout = setTimeout(this.updateTimelineDividersIfNeeded.bind(this), 500);
     },
 
     updateTimelineDividersIfNeeded: function()
@@ -302,8 +297,7 @@ WebInspector.NetworkPanel.prototype = {
 
         if (document.body.offsetWidth <= 0) {
             // The stylesheet hasn't loaded yet, so we need to update later.
-            var panel = this;
-            setTimeout(function () { panel.updateTimelineDividersIfNeeded() }, 0);
+            setTimeout(this.updateTimelineDividersIfNeeded.bind(this), 0);
             return;
         }
 
@@ -337,9 +331,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         if ("refreshAllTimelineEntriesTimeout" in this)
             return;
-
-        var _self = this;
-        this.refreshAllTimelineEntriesTimeout = setTimeout(function () { _self.refreshAllTimelineEntries() }, 500, skipBoundryUpdate, skipTimelineSort, immediate);
+        this.refreshAllTimelineEntriesTimeout = setTimeout(this.refreshAllTimelineEntries.bind(this), 500, skipBoundryUpdate, skipTimelineSort, immediate);
     },
 
     refreshAllTimelineEntries: function(skipBoundryUpdate, skipTimelineSort, immediate)
@@ -592,9 +584,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         if ("updateSummaryGraphTimeout" in this)
             return;
-
-        var _self = this;
-        this.updateSummaryGraphTimeout = setTimeout(function () { _self.updateSummaryGraph() }, 500);
+        this.updateSummaryGraphTimeout = setTimeout(this.updateSummaryGraph.bind(this), 500);
     },
 
     updateSummaryGraph: function()
@@ -703,8 +693,7 @@ WebInspector.NetworkTimelineEntry = function(panel, resource)
     this.showingTipButton = this.resource.tips.length;
     this.fileElement.insertBefore(this.tipButtonElement, this.fileElement.firstChild);
 
-    var entry = this;
-    this.tipButtonElement.addEventListener("click", function(event) { entry.toggleTipBalloon(event) }, false );
+    this.tipButtonElement.addEventListener("click", this.toggleTipBalloon.bind(this), false );
 
     this.areaElement = document.createElement("div");
     this.areaElement.className = "network-area";

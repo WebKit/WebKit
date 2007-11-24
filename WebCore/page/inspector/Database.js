@@ -95,14 +95,6 @@ WebInspector.Database.prototype = {
         return WebInspector.resourceCategories.databases;
     },
 
-    updateTitleSoon: function()
-    {
-        if (this.updateTitleTimeout)
-            return;
-        var _self = this;
-        this.updateTitleTimeout = setTimeout(function () { _self.updateTitle() }, 0);
-    },
-
     updateTitle: function()
     {
         delete this.updateTitleTimeout;
@@ -128,26 +120,10 @@ WebInspector.Database.prototype = {
         return this._panel;
     },
 
-    select: function()
-    {
-        WebInspector.navigateToResource(this);
-    },
-
-    deselect: function()
-    {
-        this.listItem.deselect(true);
-        if (WebInspector.currentPanel === this._panel)
-            WebInspector.currentPanel = null;
-    },
-
-    attach: function()
-    {
-        this.panel.attach();
-    },
-
-    detach: function()
-    {
-        if (this._panel)
-            this.panel.detach();
-    }
+    // Inherit the other functions from the Resource prototype.
+    updateTitleSoon: WebInspector.Resource.prototype.updateTitleSoon,
+    select: WebInspector.Resource.prototype.select,
+    deselect: WebInspector.Resource.prototype.deselect,
+    attach: WebInspector.Resource.prototype.attach,
+    detach: WebInspector.Resource.prototype.detach
 }

@@ -2,6 +2,35 @@
 
         Reviewed by Adam Roben.
 
+        Bug 16121: Web Inspector needs helper functions that pass a 'this' object to
+        addEventListener and setTimeout
+        http://bugs.webkit.org/show_bug.cgi?id=16121
+
+        Add Function.prototype.bind. This helper will return a wrapper function
+        that will call the original function with the supplied arguments
+        and using the supplied 'this' object.
+
+        * page/inspector/Database.js: Remove a use of setTimeout by
+          inheriting some common functions from Resource.
+        * page/inspector/DatabasePanel.js: Use the new bind function.
+        * page/inspector/ConsolePanel.js: Ditto.
+        * page/inspector/DocumentPanel.js: Ditto.
+        * page/inspector/NetworkPanel.js: Ditto.
+        * page/inspector/PropertiesSection.js: Ditto.
+        * page/inspector/Resource.js: Ditto.
+        * page/inspector/SidebarPane.js: Ditto.
+        * page/inspector/inspector.html: Moved Database.js after Resource.js,
+          now that Database.js uses it.
+        * page/inspector/inspector.js: Use the new bind function. Also
+          removed a setTimeout used for the localized strings code. There is
+          now a load event listener added to the localized strings script
+          element that will call WebInspector.loaded.
+        * page/inspector/utilities.js: Add Function.prototype.bind.
+
+2007-11-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
         Bug 16112: Some Web Inspector UI elements use offsetWidth and offsetHeight before the stylesheet loads
         http://bugs.webkit.org/show_bug.cgi?id=16112
 

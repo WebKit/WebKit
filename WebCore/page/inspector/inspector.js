@@ -210,17 +210,6 @@ var WebInspector = {
     }
 }
 
-WebInspector.setupLocalizedString = function(event)
-{
-    var localizedStringsURL = InspectorController.localizedStringsURL();
-    if (localizedStringsURL) {
-        var localizedStringsScriptElement = document.createElement("script");
-        localizedStringsScriptElement.type = "text/javascript";
-        localizedStringsScriptElement.src = localizedStringsURL;
-        document.getElementsByTagName("head").item(0).appendChild(localizedStringsScriptElement);
-    }
-}
-
 WebInspector.loaded = function()
 {
     this.fileOutline = new TreeOutline(document.getElementById("list"));
@@ -259,29 +248,30 @@ WebInspector.loaded = function()
 
     this.addMainEventListeners(document);
 
-    window.addEventListener("unload", function(event) { WebInspector.windowUnload(event) }, true);
-    window.addEventListener("resize", function(event) { WebInspector.windowResize(event) }, true);
+    window.addEventListener("unload", this.windowUnload.bind(this), true);
+    window.addEventListener("resize", this.windowResize.bind(this), true);
 
-    document.addEventListener("mousedown", function(event) { WebInspector.changeFocus(event) }, true);
-    document.addEventListener("focus", function(event) { WebInspector.changeFocus(event) }, true);
-    document.addEventListener("keypress", function(event) { WebInspector.documentKeypress(event) }, true);
-    document.addEventListener("beforecopy", function(event) { WebInspector.documentCanCopy(event) }, true);
-    document.addEventListener("copy", function(event) { WebInspector.documentCopy(event) }, true);
+    document.addEventListener("mousedown", this.changeFocus.bind(this), true);
+    document.addEventListener("focus", this.changeFocus.bind(this), true);
+    document.addEventListener("keypress", this.documentKeypress.bind(this), true);
+    document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
+    document.addEventListener("copy", this.documentCopy.bind(this), true);
 
     document.getElementById("back").title = WebInspector.UIString("Show previous panel.");
     document.getElementById("forward").title = WebInspector.UIString("Show next panel.");
 
     document.getElementById("search").setAttribute("placeholder", WebInspector.UIString("Search"));
 
-    document.getElementById("back").addEventListener("click", function(event) { WebInspector.back() }, true);
-    document.getElementById("forward").addEventListener("click", function(event) { WebInspector.forward() }, true);
+    document.getElementById("back").addEventListener("click", this.back.bind(this), true);
+    document.getElementById("forward").addEventListener("click", this.forward.bind(this), true);
     this.updateBackForwardButtons();
 
-    document.getElementById("attachToggle").addEventListener("click", function(event) { WebInspector.toggleAttach() }, true);
-    document.getElementById("statusToggle").addEventListener("click", function(event) { WebInspector.toggleStatusArea() }, true);
-    document.getElementById("sidebarResizeWidget").addEventListener("mousedown", WebInspector.sidebarResizerDragStart, true);
-    document.getElementById("sidebarResizer").addEventListener("mousedown", WebInspector.sidebarResizerDragStart, true);
-    document.getElementById("searchResultsResizer").addEventListener("mousedown", WebInspector.searchResultsResizerDragStart, false);
+    document.getElementById("attachToggle").addEventListener("click", this.toggleAttach.bind(this), true);
+    document.getElementById("statusToggle").addEventListener("click", this.toggleStatusArea.bind(this), true);
+
+    document.getElementById("sidebarResizeWidget").addEventListener("mousedown", this.sidebarResizerDragStart, true);
+    document.getElementById("sidebarResizer").addEventListener("mousedown", this.sidebarResizerDragStart, true);
+    document.getElementById("searchResultsResizer").addEventListener("mousedown", this.searchResultsResizerDragStart, true);
 
     document.body.addStyleClass("detached");
 
@@ -290,11 +280,15 @@ WebInspector.loaded = function()
 
 var windowLoaded = function()
 {
-    WebInspector.setupLocalizedString(event);
-
-    // Delay calling loaded to give time for the localized strings file to load.
-    // Calling it too early will cause localized string lookups to fail.
-    setTimeout(function() { WebInspector.loaded() }, 0);
+    var localizedStringsURL = InspectorController.localizedStringsURL();
+    if (localizedStringsURL) {
+        var localizedStringsScriptElement = document.createElement("script");
+        localizedStringsScriptElement.addEventListener("load", WebInspector.loaded.bind(WebInspector), false);
+        localizedStringsScriptElement.type = "text/javascript";
+        localizedStringsScriptElement.src = localizedStringsURL;
+        document.getElementsByTagName("head").item(0).appendChild(localizedStringsScriptElement);
+    } else
+        WebInspector.loaded();
 
     delete windowLoaded;
     window.removeEventListener("load", windowLoaded, false);

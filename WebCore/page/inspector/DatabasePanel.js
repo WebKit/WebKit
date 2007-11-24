@@ -40,8 +40,7 @@ WebInspector.DatabasePanel = function(database, views)
     this.queryPromptElement.className = "database-prompt";
     this.element.appendChild(this.queryPromptElement);
 
-    var panel = this;
-    this.queryPromptElement.addEventListener("keydown", function(event) { panel.queryInputKeypress(event) }, false);
+    this.queryPromptElement.addEventListener("keydown", this.queryInputKeypress.bind(this), false);
 
     this.queryPromptHistory = [];
     this.queryPromptHistoryOffset = 0;
@@ -52,6 +51,7 @@ WebInspector.DatabasePanel = function(database, views)
     queryView.commandListElement.className = "database-command-list";
     queryView.contentElement.appendChild(queryView.commandListElement);
 
+    var panel = this;
     queryView.show = function()
     {
         panel.queryPromptElement.focus();
@@ -69,7 +69,7 @@ WebInspector.DatabasePanel = function(database, views)
     browseView.reloadTableElement.appendChild(document.createElement("img"));
     browseView.reloadTableElement.className = "database-table-reload";
     browseView.reloadTableElement.title = WebInspector.UIString("Reload");
-    browseView.reloadTableElement.addEventListener("click", function() { panel.updateTableList(); panel.updateTableBrowser() }, false);
+    browseView.reloadTableElement.addEventListener("click", this.reloadClicked.bind(this), false);
 
     browseView.show = function()
     {
@@ -135,6 +135,12 @@ return {
         }
     },
 
+    reloadClicked: function()
+    {
+        this.updateTableList();
+        this.updateTableBrowser();
+    },
+
     updateTableList: function()
     {
         var browseView = this.views.browse;
@@ -145,7 +151,6 @@ return {
             var panel = this;
             var changeTableFunction = function()
             {
-                var browseView = panel.views.browse;
                 var index = browseView.tableSelectElement.selectedIndex;
                 if (index != -1)
                     panel.currentTable = browseView.tableSelectElement.options[index].value;
