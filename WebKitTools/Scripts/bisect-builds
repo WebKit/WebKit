@@ -366,8 +366,16 @@ sub mountAndRunNightly($$$$)
         die "Could not mount $diskImage at $mountPath" if $i > 100;
     }
 
+    my $frameworkPath;
+    if (-d "/Volumes/WebKit/WebKit.app/Contents/Frameworks") {
+        my $osXVersion = join('.', (split(/\./, findMacOSXVersion()))[0..1]);
+        $frameworkPath = "/Volumes/WebKit/WebKit.app/Contents/Frameworks/$osXVersion";
+    } else {
+        $frameworkPath = "/Volumes/WebKit/WebKit.app/Contents/Resources";
+    }
+
     $tempFile ||= "";
-    `DYLD_FRAMEWORK_PATH=/Volumes/WebKit/WebKit.app/Contents/Resources WEBKIT_UNSET_DYLD_FRAMEWORK_PATH=YES $safari $tempFile`;
+    `DYLD_FRAMEWORK_PATH=$frameworkPath WEBKIT_UNSET_DYLD_FRAMEWORK_PATH=YES $safari $tempFile`;
 
     `hdiutil detach '$mountPath' 2> /dev/null`;
 }

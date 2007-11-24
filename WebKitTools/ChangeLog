@@ -1,3 +1,14 @@
+2007-11-23  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Fix bisect-builds to work with recent WebKit nightly builds.
+
+        Reviewed by Dan.
+
+        * Scripts/bisect-builds: Check for the 
+        WebKit.app/Contents/Frameworks/10.[45] directory. If it exists, use
+        it for the DYLD_FRAMEWORK_PATH environment variable, else fallback
+        to WebKit.app/Contents/Resources.
+
 2007-11-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
