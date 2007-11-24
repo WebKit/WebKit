@@ -46,6 +46,11 @@
 #include <QtCore/QFileInfo>
 #endif
 
+#if PLATFORM(WX)
+#include <wx/defs.h>
+#include <wx/filename.h>
+#endif
+
 #if PLATFORM(WIN_OS)
 #include <shlwapi.h>
 #endif
@@ -224,6 +229,8 @@ static String pathGetFilename(String path)
 {
 #if PLATFORM(QT)
     return QFileInfo(path).fileName();
+#elif PLATFORM(WX)
+    return wxFileName(path).GetFullName();
 #elif PLATFORM(WIN_OS)
     return String(PathFindFileName(path.charactersWithNullTermination()));
 #else
