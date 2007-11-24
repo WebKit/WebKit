@@ -1,3 +1,17 @@
+2007-11-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix <rdar://problem/5432686> 333MB RPRVT seems to leak @ www.43folders.com (1hr plug-in stream).
+        http://bugs.webkit.org/show_bug.cgi?id=13705
+
+        Don't buffer the entire stream contents in memory in the ResourceLoader.
+
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        * loader/mac/WebPlugInStreamLoaderDelegate.h:
+
 2007-11-23  Adam Roben  <aroben@apple.com>
 
         Get rid of WebCoreSystemInterface on Windows

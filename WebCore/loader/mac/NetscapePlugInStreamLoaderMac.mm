@@ -42,6 +42,7 @@ NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame* frame, id <WebPlug
     : ResourceLoader(frame, true, true)
     , m_stream(stream)
 {
+    setShouldBufferData(false);
 }
 
 NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader()
@@ -106,9 +107,7 @@ void NetscapePlugInStreamLoader::didFinishLoading()
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
     m_documentLoader->removePlugInStreamLoader(this);
-    NSData *data = resourceData()->createNSData();
-    [m_stream.get() finishedLoadingWithData:data];
-    [data release];
+    [m_stream.get() finishedLoading];
     ResourceLoader::didFinishLoading();
 }
 

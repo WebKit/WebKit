@@ -2009,7 +2009,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ASSERT(_manualStream);
     
     if ([self isStarted])
-        [_manualStream finishedLoadingWithData:[[self dataSource] data]];    
+        [_manualStream finishedLoading];
 }
 
 @end
@@ -2081,7 +2081,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                               MIMEType:@"text/plain"
                                headers:nil];
         [stream receivedData:JSData];
-        [stream finishedLoadingWithData:JSData];
+        [stream finishedLoading];
         [stream release];
     }
 }

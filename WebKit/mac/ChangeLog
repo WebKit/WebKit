@@ -1,3 +1,37 @@
+2007-11-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix <rdar://problem/5432686> 333MB RPRVT seems to leak @ www.43folders.com (1hr plug-in stream).
+        http://bugs.webkit.org/show_bug.cgi?id=13705
+
+        Have NP_ASFILE and NP_ASFILEONLY streams write the data to disk as they receive it rather than
+        dumping the data to disk in a single go when the stream has completed loading.  On a test case
+        involving a 150MB Flash movie being streamed from a local web server this reduces memory consumption
+        on page load from around 400MB to 22MB.
+
+        The only plugin I have found that uses NP_ASFILE or NP_ASFILEONLY on the Mac is our NetscapeMoviePlugin
+        example code so the NP_ASFILE portion of this change has not had any testing with a real-world plugin.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithRequestURL:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]):
+        (-[WebBaseNetscapePluginStream _destroyStream]): Update to work with paths as NSStrings.
+        (-[WebBaseNetscapePluginStream _deliverDataToFile:]): Open the file if it is not already open, and write any data
+        to disk.
+        (-[WebBaseNetscapePluginStream finishedLoading]): If the stream is NP_ASFILE or NP_ASFILEONLY we need to ensure
+        that the file exists before _destroyStream passes it to the plugin.  Simulating the arrival of an empty data block
+        ensure that the file will be created if it has not already.
+        (-[WebBaseNetscapePluginStream receivedData:]):
+        (CarbonPathFromPOSIXPath):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView pluginViewFinishedLoading:]): Data is dealt with incrementally so there's no need to pass
+        it to finishedLoading.
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]): Ditto.
+
 2007-11-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

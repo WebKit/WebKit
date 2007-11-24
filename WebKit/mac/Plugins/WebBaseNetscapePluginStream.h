@@ -45,7 +45,8 @@
     uint16 transferMode;
     int32 offset;
     NPStream stream;
-    char *path;
+    NSString *path;
+    int fileDescriptor;
     BOOL sendNotification;
     void *notifyData;
     char *headers;

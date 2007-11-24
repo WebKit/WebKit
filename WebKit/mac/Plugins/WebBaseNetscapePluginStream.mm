@@ -42,7 +42,7 @@
 
 #define WEB_REASON_NONE -1
 
-static char *CarbonPathFromPOSIXPath(const char *posixPath);
+static NSString *CarbonPathFromPOSIXPath(NSString *posixPath);
 
 typedef HashMap<NPStream*, NPP> StreamMap;
 static StreamMap& streams()
@@ -117,6 +117,7 @@ static StreamMap& streams()
     [self setPlugin:thePlugin];
     notifyData = theNotifyData;
     sendNotification = flag;
+    fileDescriptor = -1;
 
     streams().add(&stream, thePlugin);
     
@@ -133,6 +134,7 @@ static StreamMap& streams()
 
     // The stream file should have been deleted, and the path freed, in -_destroyStream
     ASSERT(!path);
+    ASSERT(fileDescriptor == -1);
 
     [requestURL release];
     [responseURL release];
@@ -157,6 +159,7 @@ static StreamMap& streams()
 
     // The stream file should have been deleted, and the path freed, in -_destroyStream
     ASSERT(!path);
+    ASSERT(fileDescriptor == -1);
 
     free((void *)stream.url);
     free(path);
@@ -257,6 +260,8 @@ static StreamMap& streams()
     transferMode = NP_NORMAL;
     offset = 0;
     reason = WEB_REASON_NONE;
+    // FIXME: If WebNetscapePluginStream called our initializer we wouldn't have to do this here.
+    fileDescriptor = -1;
 
     // FIXME: Need a way to check if stream is seekable
 
@@ -364,23 +369,23 @@ static StreamMap& streams()
 
     if (stream.ndata != nil) {
         if (reason == NPRES_DONE && (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)) {
+            ASSERT(fileDescriptor == -1);
             ASSERT(path != NULL);
-            char *carbonPath = CarbonPathFromPOSIXPath(path);
+            NSString *carbonPath = CarbonPathFromPOSIXPath(path);
             ASSERT(carbonPath != NULL);
             WebBaseNetscapePluginView *pv = pluginView;
             [pv willCallPlugInFunction];
-            NPP_StreamAsFile(plugin, &stream, carbonPath);
+            NPP_StreamAsFile(plugin, &stream, [carbonPath fileSystemRepresentation]);
             [pv didCallPlugInFunction];
 
             // Delete the file after calling NPP_StreamAsFile(), instead of in -dealloc/-finalize.  It should be OK
             // to delete the file here -- NPP_StreamAsFile() is always called immediately before NPP_DestroyStream()
             // (the stream destruction function), so there can be no expectation that a plugin will read the stream
             // file asynchronously after NPP_StreamAsFile() is called.
-            unlink(path);
-            free(path);
-            path = NULL;
+            unlink([path fileSystemRepresentation]);
+            [path release];
+            path = nil;
             LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", responseURL, carbonPath);
-            free(carbonPath);
 
             if (isTerminated)
                 goto exit;
@@ -454,43 +459,6 @@ exit:
     [self release];
 }
 
-- (void)finishedLoadingWithData:(NSData *)data
-{
-    if (!stream.ndata)
-        return;
-    
-    if ((transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) && !path) {
-        path = strdup("/tmp/WebKitPlugInStreamXXXXXX");
-        int fd = mkstemp(path);
-        if (fd == -1) {
-            // This should almost never happen.
-            LOG_ERROR("can't make temporary file, almost certainly a problem with /tmp");
-            // This is not a network error, but the only error codes are "network error" and "user break".
-            [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
-            free(path);
-            path = NULL;
-            return;
-        }
-        int dataLength = [data length];
-        if (dataLength > 0) {
-            int byteCount = write(fd, [data bytes], dataLength);
-            if (byteCount != dataLength) {
-                // This happens only rarely, when we are out of disk space or have a disk I/O error.
-                LOG_ERROR("error writing to temporary file, errno %d", errno);
-                close(fd);
-                // This is not a network error, but the only error codes are "network error" and "user break".
-                [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
-                free(path);
-                path = NULL;
-                return;
-            }
-        }
-        close(fd);
-    }
-
-    [self _destroyStreamWithReason:NPRES_DONE];
-}
-
 - (void)_deliverData
 {
     if (!stream.ndata || [deliveryData length] == 0)
@@ -552,6 +520,58 @@ exit:
     [self release];
 }
 
+- (void)_deliverDataToFile:(NSData *)data
+{
+    if (fileDescriptor == -1 && !path) {
+        NSString *temporaryFileMask = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPlugInStreamXXXXXX"];
+        char *temporaryFileName = strdup([temporaryFileMask fileSystemRepresentation]);
+        fileDescriptor = mkstemp(temporaryFileName);
+        if (fileDescriptor == -1) {
+            LOG_ERROR("Can't create a temporary file.");
+            // This is not a network error, but the only error codes are "network error" and "user break".
+            [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
+            free(temporaryFileName);
+            return;
+        }
+
+        path = [[NSString stringWithUTF8String:temporaryFileName] retain];
+        free(temporaryFileName);
+    }
+
+    int dataLength = [data length];
+    if (!dataLength)
+        return;
+
+    int byteCount = write(fileDescriptor, [data bytes], dataLength);
+    if (byteCount != dataLength) {
+        // This happens only rarely, when we are out of disk space or have a disk I/O error.
+        LOG_ERROR("error writing to temporary file, errno %d", errno);
+        close(fileDescriptor);
+        fileDescriptor = -1;
+
+        // This is not a network error, but the only error codes are "network error" and "user break".
+        [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
+        [path release];
+        path = nil;
+    }
+}
+
+- (void)finishedLoading
+{
+    if (!stream.ndata)
+        return;
+
+    if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
+        // Fake the delivery of an empty data to ensure that the file has been created
+        [self _deliverDataToFile:[NSData data]];
+        if (fileDescriptor != -1)
+            close(fileDescriptor);
+        fileDescriptor = -1;
+    }
+
+    [self _destroyStreamWithReason:NPRES_DONE];
+}
+
 - (void)receivedData:(NSData *)data
 {
     ASSERT([data length] > 0);
@@ -563,29 +583,24 @@ exit:
         [deliveryData appendData:data];
         [self _deliverData];
     }
+    if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)
+        [self _deliverDataToFile:data];
+
 }
 
 @end
 
-static char *CarbonPathFromPOSIXPath(const char *posixPath)
+static NSString *CarbonPathFromPOSIXPath(NSString *posixPath)
 {
     // Doesn't add a trailing colon for directories; this is a problem for paths to a volume,
     // so this function would need to be revised if we ever wanted to call it with that.
 
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8 *)posixPath, strlen(posixPath), false);
-    if (url) {
-        CFStringRef hfsPath = CFURLCopyFileSystemPath(url, kCFURLHFSPathStyle);
-        CFRelease(url);
-        if (hfsPath) {
-            CFIndex bufSize = CFStringGetMaximumSizeOfFileSystemRepresentation(hfsPath);
-            char* filename = static_cast<char*>(malloc(bufSize));
-            CFStringGetFileSystemRepresentation(hfsPath, filename, bufSize);
-            CFRelease(hfsPath);
-            return filename;
-        }
-    }
+    CFURLRef url = (CFURLRef)[NSURL fileURLWithPath:posixPath];
+    if (!url)
+        return nil;
 
-    return NULL;
+    NSString *hfsPath = NSMakeCollectable(CFURLCopyFileSystemPath(url, kCFURLHFSPathStyle));
+    return [hfsPath autorelease];
 }
 
 #endif
