@@ -78,7 +78,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 var attr = node.attributes[i];
                 if (attr.style) {
                     var attrStyle = { style: attr.style, editable: false };
-                    attrStyle.subtitle = WebInspector.UIString("element’s “%@” attribute", attr.name);
+                    attrStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", attr.name);
                     attrStyle.selectorText = nodeName + "[" + attr.name;
                     if (attr.value.length)
                         attrStyle.selectorText += "=" + attr.value;
@@ -89,7 +89,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
             if (node.style && node.style.length) {
                 var inlineStyle = { selectorText: WebInspector.UIString("Inline Style Attribute"), style: node.style };
-                inlineStyle.subtitle = WebInspector.UIString("element’s “%@” attribute", "style");
+                inlineStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", "style");
                 styleRules.push(inlineStyle);
             }
 

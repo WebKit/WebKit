@@ -1,5 +1,18 @@
 2007-11-24  Adam Roben  <aroben@apple.com>
 
+        Replace uses of %@ with %s in the inspector
+
+        Rubberstamped by Tim.
+
+        * English.lproj/InspectorLocalizedStrings.js: Changed %@ to %s.
+        * page/inspector/DatabasePanel.js: Ditto.
+        * page/inspector/StylesSidebarPane.js: Ditto.
+        * page/inspector/inspector.js: Ditto.
+        * page/inspector/utilities.js:
+        (String.vsprintf): Removed @ as a format specifier.
+
+2007-11-24  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         Turn off the change made in r27984 on Windows for now.

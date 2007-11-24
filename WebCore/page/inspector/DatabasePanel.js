@@ -204,7 +204,7 @@ return {
         if (!table) {
             var emptyMsgElement = document.createElement("div");
             emptyMsgElement.className = "database-table-empty";
-            emptyMsgElement.textContent = WebInspector.UIString("The “%@”\ntable is empty.", this.currentTable);
+            emptyMsgElement.textContent = WebInspector.UIString("The “%s”\ntable is empty.", this.currentTable);
             this.views.browse.contentElement.appendChild(emptyMsgElement);
             return;
         }
@@ -234,7 +234,7 @@ return {
 
         var errorMsgElement = document.createElement("div");
         errorMsgElement.className = "database-table-error";
-        errorMsgElement.textContent = WebInspector.UIString("An error occurred trying to\nread the “%@” table.", this.currentTable);
+        errorMsgElement.textContent = WebInspector.UIString("An error occurred trying to\nread the “%s” table.", this.currentTable);
         this.views.browse.contentElement.appendChild(errorMsgElement);
     },
 
@@ -294,7 +294,7 @@ return {
         else if (error.code == 2)
             var message = WebInspector.UIString("Database no longer has expected version.");
         else
-            var message = WebInspector.UIString("An unexpected error %@ occured.", error.code);
+            var message = WebInspector.UIString("An unexpected error %s occured.", error.code);
 
         this.appendQueryResult(query, message, "error");
     },

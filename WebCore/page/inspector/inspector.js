@@ -233,7 +233,7 @@ WebInspector.loaded = function()
     };
 
     this.Warnings = {
-        IncorrectMIMEType: {id: 0, message: WebInspector.UIString("Resource interpreted as %@ but transferred with MIME type %@.")}
+        IncorrectMIMEType: {id: 0, message: WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.")}
     };
 
     this.consoleListItem = new WebInspector.ConsoleStatusTreeElement(WebInspector.consolePanel);

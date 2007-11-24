@@ -771,7 +771,6 @@ String.vsprintf = function(format, substitutions)
             // Encountered an unsupported format character, treat as a string.
             console.warn("String.vsprintf(\"" + format + "\", \"" + substitutions.join("\", \"") + "\"): unsupported format character \u201C" + format[index] + "\u201D. Treating as a string.");
             // Fall through to treat this like a string.
-        case "@":
         case "s":
             result += substitutions[substitutionIndex];
             break;
