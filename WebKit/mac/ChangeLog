@@ -1,5 +1,12 @@
 2007-11-24  Mark Rowe  <mrowe@apple.com>
 
+        Tiger build fix.
+
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (CarbonPathFromPOSIXPath): Use WebCFAutorelease as this also works on Tiger.
+
+2007-11-24  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Tim Hatcher.
 
         Fix <rdar://problem/5432686> 333MB RPRVT seems to leak @ www.43folders.com (1hr plug-in stream).

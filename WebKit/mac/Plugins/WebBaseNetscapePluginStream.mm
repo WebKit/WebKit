@@ -599,8 +599,7 @@ static NSString *CarbonPathFromPOSIXPath(NSString *posixPath)
     if (!url)
         return nil;
 
-    NSString *hfsPath = NSMakeCollectable(CFURLCopyFileSystemPath(url, kCFURLHFSPathStyle));
-    return [hfsPath autorelease];
+    return WebCFAutorelease(CFURLCopyFileSystemPath(url, kCFURLHFSPathStyle));
 }
 
 #endif
