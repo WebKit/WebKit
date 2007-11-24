@@ -114,13 +114,20 @@ WebInspector.NetworkPanel.prototype = {
 
     onClick: function(event)
     {
+        // If the click wasn't inside a network resource row, ignore it.
         var resourceElement = event.target.firstParentOrSelfWithClass("network-resource");
         if (!resourceElement)
             return;
 
+        // If the click was within the network info element, ignore it.
+        var networkInfo = event.target.firstParentOrSelfWithClass("network-info");
+        if (networkInfo)
+            return;
+
+        // If the click was within the tip balloon element, hide it.
         var balloon = event.target.firstParentOrSelfWithClass("tip-balloon");
         if (balloon) {
-            resourceElement.timelineEntry.toggleTipBalloon(event);
+            resourceElement.timelineEntry.showingTipBalloon = false;
             return;
         }
 

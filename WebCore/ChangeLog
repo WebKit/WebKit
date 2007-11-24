@@ -1,3 +1,16 @@
+2007-11-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 16110: Clicking inside the resource headers in the network timeline collapses them
+        http://bugs.webkit.org/show_bug.cgi?id=16110
+
+        Toggle the resource headers only if the click happens on the
+        resource row, not within the headers area.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/inspector/NetworkPanel.js:
+
 2007-11-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         Win build fixes. CURL needs winsock, so don't disable it, and
