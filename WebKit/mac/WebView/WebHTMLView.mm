@@ -3029,7 +3029,9 @@ static void _updateActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 - (void)mouseDown:(NSEvent *)event
 {
-    [self retain];
+    RetainPtr<WebHTMLView> protector = self;
+    if ([[self inputContext] wantsToHandleMouseEvents] && [[self inputContext] handleMouseEvent:event])
+        return;
 
     _private->handlingMouseDownEvent = YES;
 
@@ -3061,8 +3063,6 @@ done:
     _private->firstResponderTextViewAtMouseDownTime = nil;
 
     _private->handlingMouseDownEvent = NO;
-    
-    [self release];
 }
 
 - (void)dragImage:(NSImage *)dragImage

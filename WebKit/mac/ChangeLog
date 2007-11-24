@@ -1,3 +1,12 @@
+2007-11-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Fixed <rdar://problem/3759190> allow input methods the option of processing mouse events themselves
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView mouseDown:]):
+
 2007-11-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Antti Koivisto.
