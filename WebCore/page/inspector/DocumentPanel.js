@@ -39,7 +39,7 @@ WebInspector.DocumentPanel = function(resource, views)
     domView.hide = function() { InspectorController.hideDOMNodeHighlight() };
     domView.show = function() {
         InspectorController.highlightDOMNode(panel.focusedDOMNode);
-        panel.updateBreadcrumbSizes();
+        panel.updateBreadcrumb();
         panel.updateTreeSelection();
     };
 
@@ -184,6 +184,9 @@ WebInspector.DocumentPanel.prototype = {
 
     updateBreadcrumb: function()
     {
+        if (!this.visible)
+            return;
+
         var crumbs = this.views.dom.innerCrumbsElement;
 
         var handled = false;
@@ -376,13 +379,23 @@ WebInspector.DocumentPanel.prototype = {
 
     updateBreadcrumbSizes: function(focusedCrumb)
     {
+        if (!this.visible)
+            return;
+
+        if (document.body.offsetWidth <= 0) {
+            // The stylesheet hasn't loaded yet, so we need to update later.
+            var panel = this;
+            setTimeout(function() { panel.updateBreadcrumbSizes() }, 0);
+            return;
+        }
+
         var crumbs = this.views.dom.innerCrumbsElement;
         if (!crumbs.childNodes.length)
             return; // No crumbs, do nothing.
 
         var crumbsContainer = this.views.dom.crumbsElement;
         if (crumbsContainer.offsetWidth <= 0 || crumbs.offsetWidth <= 0)
-            return; // The cumbs are not visible yet, do nothing.
+            return;
 
         // A Zero index is the right most child crumb in the breadcrumb.
         var selectedIndex = 0;
@@ -740,6 +753,13 @@ WebInspector.DOMNodeTreeElement.prototype = {
         if (!listItemElement)
             return;
 
+        if (document.body.offsetWidth <= 0) {
+            // The stylesheet hasn't loaded yet, so we need to update later.
+            var element = this;
+            setTimeout(function() { element.updateSelection() }, 0);
+            return;
+        }
+
         if (!this.selectionElement) {
             this.selectionElement = document.createElement("div");
             this.selectionElement.className = "selection selected";
@@ -797,13 +817,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
     onselect: function()
     {
         this.treeOutline.panel.focusedDOMNode = this.representedObject;
-
-        // Call updateSelection twice to make sure the height is correct,
-        // the first time might have a bad height because we are in a weird tree state
         this.updateSelection();
-
-        var element = this;
-        setTimeout(function() { element.updateSelection() }, 0);
     },
 
     onmousedown: function(event)

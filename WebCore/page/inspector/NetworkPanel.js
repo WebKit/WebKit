@@ -300,9 +300,16 @@ WebInspector.NetworkPanel.prototype = {
             return;
         }
 
+        if (document.body.offsetWidth <= 0) {
+            // The stylesheet hasn't loaded yet, so we need to update later.
+            var panel = this;
+            setTimeout(function () { panel.updateTimelineDividersIfNeeded() }, 0);
+            return;
+        }
+
         var dividerCount = Math.round(this.dividersElement.offsetWidth / 64);
         var timeSlice = this.totalDuration / dividerCount;
-        
+
         if (this.lastDividerTimeSlice === timeSlice)
             return;
 

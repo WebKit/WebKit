@@ -1,3 +1,28 @@
+2007-11-24  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 16112: Some Web Inspector UI elements use offsetWidth and offsetHeight before the stylesheet loads
+        http://bugs.webkit.org/show_bug.cgi?id=16112
+
+        In the places where we use offsetWidth and offsetHeight before
+        the stylesheet loads there is now a check. If the body's
+        offsetWidth is not greater than zero, then set a timeout
+        to do the updates requiring the stylesheet later.
+
+        The three places this happened:
+        - DOM tree selection highlight would show up at the wrong height
+          when using Inspect Element to open the inspector.
+        - DOM tree breadcrumbs would not collapse when using Inspect Element
+          to open the inspector.
+        - Network Timeline divider lines would not show when opening directly
+          into the timeline.
+
+        * page/inspector/DocumentPanel.js: Check if the stylesheet loaded.
+        * page/inspector/NetworkPanel.js: Ditto.
+        * page/inspector/inspector.html: Include the stylesheet before
+          any scripts, this will help get it loaded sooner.
+
 2007-11-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         Add wx implementation for pathGetFilename
