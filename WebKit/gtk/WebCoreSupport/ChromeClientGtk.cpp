@@ -283,9 +283,18 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
     }
 }
 
-void ChromeClient::setToolTip(const String&)
+void ChromeClient::setToolTip(const String& toolTip)
 {
+#if GTK_CHECK_VERSION(2,12,0)
+    if (toolTip.isEmpty())
+        g_object_set(G_OBJECT(m_webPage), "has-tooltip", FALSE, NULL);
+    else
+        gtk_widget_set_tooltip_text(GTK_WIDGET(m_webPage), toolTip.utf8().data());
+#else
+    // TODO: Support older GTK+ versions
+    // See http://bugs.webkit.org/show_bug.cgi?id=15793
     notImplemented();
+#endif
 }
 
 void ChromeClient::print(Frame*)

@@ -1,3 +1,17 @@
+2007-11-24  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15793
+        [GTK] Webkit doesn't show title attribute tooltip when hovering over an image
+
+        Implement tooltip support using the new Tooltip API.
+
+        Support for older versions of GTK+ is still lacking.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::setToolTip):
+
 2007-11-22  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
