@@ -27,6 +27,7 @@
 #define WebKitSystemInterface_h
 
 struct CGAffineTransform;
+struct CGPoint;
 struct CGSize;
 
 typedef const struct __CFData* CFDataRef;
@@ -54,6 +55,7 @@ void wkAddFontsFromPlistRepresentation(CFDataRef);
 CFDataRef wkCreateFontsPlistRepresentation();
 
 void wkSetPatternBaseCTM(CGContextRef, CGAffineTransform);
+void wkSetPatternPhaseInUserSpace(CGContextRef, CGPoint phasePoint);
 
 void wkDrawFocusRing(CGContextRef, CGColorRef, float radius);
 

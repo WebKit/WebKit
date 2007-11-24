@@ -1,3 +1,19 @@
+2007-11-23  Adam Roben  <aroben@apple.com>
+
+        Get rid of WebCoreSystemInterface on Windows
+
+        The one function defined in that file is now in WebKitSystemInterface.
+
+        Reviewed by Tim.
+
+        * WebCore.vcproj/WebCore.vcproj: Removed
+        WebCoreSystemInterface.{cpp,h}.
+        * platform/graphics/cg/ImageCG.cpp: Made #include of
+        WebCoreSystemInterface.h Mac-only.
+        * platform/win/GraphicsContextWin.cpp: Ditto.
+        * platform/win/WebCoreSystemInterface.cpp: Removed.
+        * platform/win/WebCoreSystemInterface.h: Removed.
+
 2007-11-24  Adam Roben  <aroben@apple.com>
 
         Replace uses of %@ with %s in the inspector

@@ -29,11 +29,11 @@
 #include "AffineTransform.h"
 #include "NotImplemented.h"
 #include "Path.h"
+#include <CoreGraphics/CGBitmapContext.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/MathExtras.h>
 
 #include "GraphicsContextPlatformPrivate.h"
-#include "WebCoreSystemInterface.h"
 
 using namespace std;
 

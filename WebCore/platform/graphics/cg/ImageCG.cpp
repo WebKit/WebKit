@@ -36,7 +36,10 @@
 #include "PDFDocumentImage.h"
 #include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
+
+#if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
+#endif
 
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
