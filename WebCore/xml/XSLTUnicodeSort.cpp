@@ -29,7 +29,8 @@
 #include "config.h"
 #include "XSLTUnicodeSort.h"
 
-#if ENABLE(XSLT) && USE(ICU_UNICODE)
+// FIXME: <rdar://5611712> Remove the PLATFORM(WIN) check once ICU on Windows has collation support.
+#if ENABLE(XSLT) && USE(ICU_UNICODE) && !PLATFORM(WIN)
 
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>

@@ -1,3 +1,13 @@
+2007-11-24  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        Turn off the change made in r27984 on Windows for now.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::transformToString):
+        * xml/XSLTUnicodeSort.cpp:
+
 2007-11-24  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.
