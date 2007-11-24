@@ -124,7 +124,9 @@ inline double wtf_random()
 }
 #endif // _CRT_RAND_S
 
-#else
+#endif // COMPILER(MSVC)
+
+#if !COMPILER(MSVC) || !defined(_CRT_RAND_S)
 
 // Initializes the random number generator.
 inline void wtf_random_init()

@@ -1,5 +1,16 @@
 2007-11-23  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Win build fixes. CURL needs winsock, so don't disable it, and
+        include pthreads.h to get the threadsafe *_r functions.
+
+        Reviewed by Adam Roben.
+
+        * config.h:
+        * loader/FTPDirectoryDocument.cpp:
+        * loader/FTPDirectoryParser.cpp:
+
+2007-11-23  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix. Move wx settings to project build settings,
         remove some old settings that were masking a build problem,
         and fix include ordering to ensure proper config.h and

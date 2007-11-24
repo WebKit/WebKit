@@ -45,8 +45,11 @@
 #define min min
 #endif
 
+// CURL needs winsock, so don't prevent inclusion of it
+#if !USE(CURL)
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+#endif
 #endif
 
 #endif /* PLATFORM(WIN_OS) */

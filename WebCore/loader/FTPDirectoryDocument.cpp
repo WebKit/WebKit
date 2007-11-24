@@ -43,6 +43,11 @@
 #include "Text.h"
 #include "XMLTokenizer.h"
 
+// On Win, the threadsafe *_r functions need to be gotten from pthreads. 
+#if COMPILER(MSVC) && USE(PTHREADS)
+#include <pthread.h>
+#endif
+
 using namespace std;
 
 namespace WebCore {

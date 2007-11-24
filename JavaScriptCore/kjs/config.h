@@ -43,8 +43,10 @@
 #define max max
 #define min min
 
+#if !COMPILER(MSVC7)
 // We need to define this before the first #include of stdlib.h or it won't contain rand_s.
 #define _CRT_RAND_S
+#endif
 
 #define HAVE_FLOAT_H 1
 #define HAVE_SYS_TIMEB_H 1

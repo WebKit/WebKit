@@ -1,5 +1,14 @@
 2007-11-23  Kevin Ollivier  <kevino@theolliviers.com>
 
+        MSVC7 build fix. (rand_s doesn't exist there)
+
+        Reviewed by Adam Roben.
+
+        * kjs/config.h:
+        * wtf/MathExtras.h:
+
+2007-11-23  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix. Move WX_PYTHON logic into project build settings,
         add WebKitLibraries dirs on Win, and explicitly include JSCore 
         headers in testkjs rather than getting them from a template.
