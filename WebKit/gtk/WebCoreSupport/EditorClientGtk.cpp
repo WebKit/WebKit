@@ -146,8 +146,7 @@ void EditorClient::didSetSelectionTypesForPasteboard()
 
 bool EditorClient::isEditable()
 {
-    notImplemented();
-    return false;
+    return webkit_page_get_editable(m_page);
 }
 
 void EditorClient::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>)

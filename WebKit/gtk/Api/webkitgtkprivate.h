@@ -69,6 +69,7 @@ extern "C" {
         WebCore::String* userAgent;
 
         HashSet<GtkWidget*> children;
+        bool editable;
     };
 
     #define WEBKIT_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_FRAME, WebKitFramePrivate))
@@ -78,6 +79,7 @@ extern "C" {
         WebCore::FrameLoaderClient* client;
         WebKitPage* page;
 
+        gchar* name;
         gchar* title;
         gchar* location;
     };
@@ -88,7 +90,7 @@ extern "C" {
         gchar* url;
     };
 
-    GObject* webkit_frame_init_with_page(WebKitPage*, WebCore::HTMLFrameOwnerElement*);
+    WebKitFrame* webkit_frame_init_with_page(WebKitPage*, WebCore::HTMLFrameOwnerElement*);
 }
 
 #endif

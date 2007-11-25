@@ -32,6 +32,7 @@
 #include "webkitgtkpage.h"
 #include "webkitgtkprivate.h"
 
+#include "CString.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
 #include "FrameTree.h"
@@ -73,6 +74,7 @@ static void webkit_frame_finalize(GObject* object)
 {
     WebKitFramePrivate* privateData = WEBKIT_FRAME_GET_PRIVATE(WEBKIT_FRAME(object));
     privateData->frame->loader()->cancelAndClear();
+    g_free(privateData->name);
     g_free(privateData->title);
     g_free(privateData->location);
     delete privateData->frame;
@@ -145,10 +147,21 @@ static void webkit_frame_real_title_changed(WebKitFrame* frame, gchar* title, gc
 
 static void webkit_frame_init(WebKitFrame* frame)
 {
+    // TODO: Move constructor code here.
 }
 
-GObject* webkit_frame_new(WebKitPage* page)
+/**
+ * webkit_frame_new:
+ * @page: the controlling #WebKitPage
+ *
+ * Creates a new #WebKitFrame initialized with a controlling #WebKitPage.
+ *
+ * Returns: a new #WebKitFrame
+ **/
+WebKitFrame* webkit_frame_new(WebKitPage* page)
 {
+    g_return_val_if_fail(WEBKIT_IS_PAGE(page), NULL);
+
     WebKitFrame* frame = WEBKIT_FRAME(g_object_new(WEBKIT_TYPE_FRAME, NULL));
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(frame);
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
@@ -163,13 +176,14 @@ GObject* webkit_frame_new(WebKitPage* page)
     frameData->frame->setView(frameView);
     frameData->frame->init();
     frameData->page = page;
+    frameData->name = 0;
     frameData->title = 0;
     frameData->location = 0;
 
-    return G_OBJECT(frame);
+    return frame;
 }
 
-GObject* webkit_frame_init_with_page(WebKitPage* page, HTMLFrameOwnerElement* element)
+WebKitFrame* webkit_frame_init_with_page(WebKitPage* page, HTMLFrameOwnerElement* element)
 {
     WebKitFrame* frame = WEBKIT_FRAME(g_object_new(WEBKIT_TYPE_FRAME, NULL));
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(frame);
@@ -185,26 +199,68 @@ GObject* webkit_frame_init_with_page(WebKitPage* page, HTMLFrameOwnerElement* el
     frameData->frame->init();
     frameData->page = page;
 
-    return G_OBJECT(frame);
+    return frame;
 }
 
-WebKitPage*
-webkit_frame_get_page(WebKitFrame* frame)
+const gchar* webkit_frame_get_title(WebKitFrame* frame)
 {
-    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(frame);
-    return frameData->page;
-}
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), NULL);
 
-gchar* webkit_frame_get_title(WebKitFrame* frame)
-{
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(frame);
     return frameData->title;
 }
 
-gchar* webkit_frame_get_location(WebKitFrame* frame)
+const gchar* webkit_frame_get_location(WebKitFrame* frame)
 {
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), NULL);
+
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(frame);
     return frameData->location;
+}
+
+/**
+ * webkit_frame_get_page:
+ * @frame: a #WebKitFrame
+ *
+ * Returns the #WebKitPage that manages this #WebKitFrame.
+ *
+ * The #WebKitPage returned manages the entire hierarchy of #WebKitFrame
+ * objects that contains @frame.
+ *
+ * Return value: the #WebKitPage that manages @frame
+ */
+WebKitPage* webkit_frame_get_page(WebKitFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), NULL);
+
+    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(frame);
+    return frameData->page;
+}
+
+/**
+ * webkit_frame_get_name:
+ * @frame: a #WebKitFrame
+ *
+ * Returns the @frame's name
+ *
+ * Return value: the name of @frame
+ */
+const gchar* webkit_frame_get_name(WebKitFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), NULL);
+
+    WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(frame);
+
+    if (frameData->name)
+        return frameData->name;
+
+    Frame* coreFrame = core(frame);
+    g_return_val_if_fail(coreFrame, NULL);
+
+    String string = coreFrame->tree()->name();
+    frameData->name = g_strdup(string.utf8().data());
+
+    return frameData->name;
 }
 
 /**

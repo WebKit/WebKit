@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  * Copyright (C) 2007 Xan Lopez <xan@gnome.org>
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -387,11 +388,12 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
      * signals
      */
     /**
-     * WebKitPage::load-started
+     * WebKitPage::load-started:
+     *
      * @page: the object on which the signal is emitted
      * @frame: the frame going to do the load
      *
-     * When a WebKitFrame begins to load this signal is emitted.
+     * When a #WebKitFrame begins to load this signal is emitted.
      */
     webkit_page_signals[LOAD_STARTED] = g_signal_new("load_started",
             G_TYPE_FROM_CLASS(pageClass),
@@ -404,9 +406,10 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             WEBKIT_TYPE_FRAME);
 
     /**
-     * WebKitPage::load-progress-changed
-     * @page: The WebKitPage
-     * @progress: Global progress
+     * WebKitPage::load-progress-changed:
+     *
+     * @page: the #WebKitPage
+     * @progress: the global progress
      */
     webkit_page_signals[LOAD_PROGRESS_CHANGED] = g_signal_new("load_progress_changed",
             G_TYPE_FROM_CLASS(pageClass),
@@ -478,7 +481,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_NONE, 0);
 
     /**
-     * WebKitPage::console-message
+     * WebKitPage::console-message:
+     *
      * @page: the object on which the signal is emitted
      * @message: the message text
      * @line: the line where the error occured
@@ -498,7 +502,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
 
     /**
-     * WebKitPage::script-alert
+     * WebKitPage::script-alert:
+     *
      * @page: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
@@ -517,11 +522,12 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_OBJECT, G_TYPE_STRING);
 
     /**
-     * WebKitPage::script-confirm
+     * WebKitPage::script-confirm:
+     *
      * @page: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
-     * @confirmed: Has the dialog been confirmed?
+     * @confirmed: whether the dialog has been confirmed
      * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
      *
      * A JavaScript confirm dialog was created, providing Yes and No buttons.
@@ -537,7 +543,8 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
     /**
-     * WebKitPage::script-prompt
+     * WebKitPage::script-prompt:
+     *
      * @page: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
@@ -616,11 +623,12 @@ static void webkit_page_init(WebKitPage* page)
     settings->setDefaultFontSize(14);
     settings->setSerifFontFamily("Times New Roman");
     settings->setSansSerifFontFamily("Arial");
-    settings->setFixedFontFamily("Courier");
+    settings->setFixedFontFamily("Courier New");
     settings->setStandardFontFamily("Arial");
 
     GTK_WIDGET_SET_FLAGS(page, GTK_CAN_FOCUS);
     pageData->mainFrame = WEBKIT_FRAME(webkit_frame_new(page));
+    pageData->editable = false;
 }
 
 GtkWidget* webkit_page_new(void)
@@ -632,17 +640,24 @@ GtkWidget* webkit_page_new(void)
 
 void webkit_page_set_settings(WebKitPage* page, WebKitSettings* settings)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(settings);
+
     notImplemented();
 }
 
 WebKitSettings* webkit_page_get_settings(WebKitPage* page)
 {
+    g_return_val_if_fail(WEBKIT_IS_PAGE(page), NULL);
+
     notImplemented();
-    return 0;
+    return NULL;
 }
 
 void webkit_page_go_backward(WebKitPage* page)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
     frameData->frame->loader()->goBackOrForward(-1);
@@ -650,6 +665,8 @@ void webkit_page_go_backward(WebKitPage* page)
 
 void webkit_page_go_forward(WebKitPage* page)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
     frameData->frame->loader()->goBackOrForward(1);
@@ -657,6 +674,8 @@ void webkit_page_go_forward(WebKitPage* page)
 
 gboolean webkit_page_can_go_backward(WebKitPage* page)
 {
+    g_return_val_if_fail(WEBKIT_IS_PAGE(page), FALSE);
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
     return frameData->frame->loader()->canGoBackOrForward(-1);
@@ -664,6 +683,8 @@ gboolean webkit_page_can_go_backward(WebKitPage* page)
 
 gboolean webkit_page_can_go_forward(WebKitPage* page)
 {
+    g_return_val_if_fail(WEBKIT_IS_PAGE(page), FALSE);
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
     return frameData->frame->loader()->canGoBackOrForward(1);
@@ -671,6 +692,8 @@ gboolean webkit_page_can_go_forward(WebKitPage* page)
 
 void webkit_page_open(WebKitPage* page, const gchar* url)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
 
@@ -680,6 +703,8 @@ void webkit_page_open(WebKitPage* page, const gchar* url)
 
 void webkit_page_reload(WebKitPage* page)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
     frameData->frame->loader()->reload();
@@ -687,6 +712,8 @@ void webkit_page_reload(WebKitPage* page)
 
 void webkit_page_load_string(WebKitPage* page, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUrl)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
 
@@ -699,11 +726,15 @@ void webkit_page_load_string(WebKitPage* page, const gchar* content, const gchar
 
 void webkit_page_load_html_string(WebKitPage* page, const gchar* content, const gchar* baseUrl)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+
     webkit_page_load_string(page, content, "text/html", "UTF-8", baseUrl);
 }
 
 void webkit_page_stop_loading(WebKitPage* page)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
 
@@ -713,16 +744,88 @@ void webkit_page_stop_loading(WebKitPage* page)
 
 WebKitFrame* webkit_page_get_main_frame(WebKitPage* page)
 {
+    g_return_val_if_fail(WEBKIT_IS_PAGE(page), NULL);
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     return pageData->mainFrame;
 }
 
 void webkit_page_execute_script(WebKitPage* page, const gchar* script)
 {
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    g_return_if_fail(script);
+
     WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
     WebKitFramePrivate* frameData = WEBKIT_FRAME_GET_PRIVATE(pageData->mainFrame);
 
     if (FrameLoader* loader = frameData->frame->loader())
         loader->executeScript(String::fromUTF8(script), true);
 }
+
+/**
+ * webkit_page_get_editable:
+ * @page: a #WebKitPage
+ *
+ * Returns whether the user is allowed to edit the document.
+ *
+ * Returns %TRUE if @page allows the user to edit the HTML document, %FALSE if
+ * it doesn't. You can change @page's document programmatically regardless of
+ * this setting.
+ *
+ * Return value: a #gboolean indicating the editable state
+ */
+gboolean webkit_page_get_editable(WebKitPage* page)
+{
+    g_return_val_if_fail(WEBKIT_IS_PAGE(page), FALSE);
+
+    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
+    ASSERT(pageData);
+
+    return pageData->editable;
+}
+
+/**
+ * webkit_page_set_editable:
+ * @page: a #WebKitPage
+ * @flag: a #gboolean indicating the editable state
+ *
+ * Sets whether @page allows the user to edit its HTML document.
+ *
+ * If @flag is %TRUE, @page allows the user to edit the document. If @flag is
+ * %FALSE, an element in @page's document can only be edited if the
+ * CONTENTEDITABLE attribute has been set on the element or one of its parent
+ * elements. You can change @page's document programmatically regardless of
+ * this setting. By default a #WebKitPage is not editable.
+
+ * Normally, an HTML document is not editable unless the elements within the
+ * document are editable. This function provides a low-level way to make the
+ * contents of a #WebKitPage editable without altering the document or DOM
+ * structure.
+ */
+void webkit_page_set_editable(WebKitPage* page, gboolean flag)
+{
+    g_return_if_fail(WEBKIT_IS_PAGE(page));
+    flag = flag != FALSE;
+
+    WebKitPagePrivate* pageData = WEBKIT_PAGE_GET_PRIVATE(page);
+    ASSERT(pageData);
+
+    Frame* mainFrame = core(pageData->mainFrame);
+    g_return_if_fail(mainFrame);
+
+    // TODO: What happens when the frame is replaced?
+    if (flag == pageData->editable)
+        return;
+
+    pageData->editable = flag;
+
+    if (flag) {
+        mainFrame->applyEditingStyleToBodyElement();
+        // TODO: If the WebKitPage is made editable and the selection is empty, set it to something.
+        //if (!webkit_page_get_selected_dom_range(page))
+        //    mainFrame->setSelectionFromNone();
+    } else
+        mainFrame->removeEditingStyleFromBodyElement();
+}
+
 }

@@ -71,38 +71,20 @@ struct _WebKitFrameClass {
 WEBKIT_API GType
 webkit_frame_get_type (void);
 
-WEBKIT_API GObject*
-webkit_frame_new (WebKitPage *page);
+WEBKIT_API WebKitFrame*
+webkit_frame_new (WebKitPage* page);
 
 WEBKIT_API WebKitPage*
 webkit_frame_get_page (WebKitFrame* frame);
 
-WEBKIT_API gchar*
-webkit_frame_get_markup (WebKitFrame* frame);
+WEBKIT_API const gchar*
+webkit_frame_get_name (WebKitFrame* frame);
 
-WEBKIT_API gchar*
-webkit_frame_get_inner_text (WebKitFrame* frame);
-
-WEBKIT_API gchar*
-webkit_frame_get_selected_text (WebKitFrame* frame);
-
-WEBKIT_API gchar*
+WEBKIT_API const gchar*
 webkit_frame_get_title (WebKitFrame* frame);
 
-WEBKIT_API gchar*
+WEBKIT_API const gchar*
 webkit_frame_get_location (WebKitFrame* frame);
-
-WEBKIT_API GSList*
-webkit_frame_get_child_frames (WebKitFrame* frame);
-
-WEBKIT_API GdkPoint*
-webkit_frame_get_position (WebKitFrame* frame);
-
-WEBKIT_API GdkRectangle*
-webkit_frame_get_rectangle (WebKitFrame* frame);
-
-WEBKIT_API WebKitPage*
-webkit_frame_get_page (WebKitFrame* frame);
 
 WEBKIT_API WebKitFrame*
 webkit_frame_get_parent (WebKitFrame* frame);

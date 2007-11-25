@@ -90,30 +90,6 @@ webkit_page_get_type (void);
 WEBKIT_API GtkWidget*
 webkit_page_new (void);
 
-WEBKIT_API void
-webkit_page_set_settings (WebKitPage* page, WebKitSettings* settings);
-
-WEBKIT_API WebKitSettings*
-webkit_page_get_settings (WebKitPage* page);
-
-WEBKIT_API gboolean
-webkit_page_can_cut (WebKitPage* page);
-
-WEBKIT_API gboolean
-webkit_page_can_copy (WebKitPage* page);
-
-WEBKIT_API gboolean
-webkit_page_can_paste (WebKitPage* page);
-
-WEBKIT_API void
-webkit_page_cut (WebKitPage* page);
-
-WEBKIT_API void
-webkit_page_copy (WebKitPage* page);
-
-WEBKIT_API void
-webkit_page_paste (WebKitPage* page);
-
 WEBKIT_API gboolean
 webkit_page_can_go_backward (WebKitPage* page);
 
@@ -146,6 +122,13 @@ webkit_page_get_main_frame (WebKitPage* page);
 
 WEBKIT_API void
 webkit_page_execute_script (WebKitPage* page, const gchar* script);
+
+WEBKIT_API gboolean
+webkit_page_get_editable (WebKitPage* page);
+
+WEBKIT_API void
+webkit_page_set_editable (WebKitPage* page, gboolean flag);
+
 G_END_DECLS
 
 #endif

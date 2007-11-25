@@ -2,6 +2,39 @@
 
         Reviewed by Mark Rowe.
 
+        http://bugs.webkit.org/show_bug.cgi?id=15691
+        [GTK] Public API does not follow GTK+ conventions
+
+        Public API enhancements:
+
+        Implement webkit_page_get_editable() and webkit_page_set_editable().
+
+        Implement webkit_frame_get_name().
+
+        Remove definitions for functions that are unusable or not implemented.
+        This has caused much confusion for application developers.
+
+        Improve documentation.
+
+        Correct/constify some return types.
+
+        Add parameter checks.
+
+        Make the default fixed font "Courier New" to match the other Web
+        font names.
+
+        * Api/webkitgtkframe.cpp:
+        * Api/webkitgtkframe.h:
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+        * Api/webkitgtkprivate.h:
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::isEditable):
+
+2007-11-24  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
         http://bugs.webkit.org/show_bug.cgi?id=16125
         [GTK] Up key doesn't work properly when content is editable
 
