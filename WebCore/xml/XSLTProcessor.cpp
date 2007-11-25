@@ -151,10 +151,11 @@ static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor* pr
     globalDocLoader = loader;
 }
 
-static int writeToString(void* context, const char* buffer, int len)
+static int writeToVector(void* context, const char* buffer, int len)
 {
-    String& resultOutput = *static_cast<String*>(context);
-    resultOutput += String::fromUTF8(buffer, len);
+    Vector<UChar>& resultOutput = *static_cast<Vector<UChar>*>(context);
+    String decodedChunk = String::fromUTF8(buffer, len);
+    resultOutput.append(decodedChunk.characters(), decodedChunk.length());
     return len;
 }
 
@@ -163,13 +164,23 @@ static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, Str
     xmlOutputBufferPtr outputBuf = xmlAllocOutputBuffer(0);
     if (!outputBuf)
         return false;
-    outputBuf->context = &resultString;
-    outputBuf->writecallback = writeToString;
+
+    Vector<UChar> resultVector;
+    outputBuf->context = &resultVector;
+    outputBuf->writecallback = writeToVector;
     
     int retval = xsltSaveResultTo(outputBuf, resultDoc, sheet);
     xmlOutputBufferClose(outputBuf);
-    
-    return (retval >= 0);
+    if (retval < 0)
+        return false;
+
+    // Workaround for <http://bugzilla.gnome.org/show_bug.cgi?id=495668>: libxslt appends an extra line feed to the result.
+    if (resultVector.size() > 0 && resultVector[resultVector.size() - 1] == '\n')
+        resultVector.removeLast();
+
+    resultString = String::adopt(resultVector);
+
+    return true;
 }
 
 static inline void transformTextStringToXHTMLDocumentString(String& text)

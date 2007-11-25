@@ -8,4 +8,3 @@ layer at (0,0) size 800x56
           text run at (0,0) width 256: "CHARACTERS IN XSLT: <<<&\x{442}\x{435}\x{441}\x{442}&>>>"
           text run at (256,0) width 0: " "
           text run at (0,15) width 192: "SOURCE XML: <<<&\x{442}\x{435}\x{441}\x{442}&>>>"
-          text run at (192,15) width 0: " "

@@ -1,3 +1,19 @@
+2007-11-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15919
+        XSLTProcessor.transformToFragment creates an extra not defined TEXT_NODE at the end
+
+        * fast/xsl/extra-lf-at-end-expected.txt: Added.
+        * fast/xsl/extra-lf-at-end.html: Added.
+        * fast/xsl/xslt-processor-expected.txt:
+        * platform/mac/fast/xsl/xslt-enc-cyr-expected.txt:
+        * platform/mac/fast/xsl/xslt-enc-expected.txt:
+        * platform/mac/fast/xsl/xslt-enc16-expected.txt:
+        * platform/mac/fast/xsl/xslt-enc16to16-expected.txt:
+        * platform/mac/fast/xsl/xslt-text-expected.txt:
+
 2007-11-24  David D. Kilzer  <ddkilzer@webkit.org>
 
         Added tests for select.options.remove(boolean).

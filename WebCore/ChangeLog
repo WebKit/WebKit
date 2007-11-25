@@ -1,3 +1,16 @@
+2007-11-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15919
+        XSLTProcessor.transformToFragment creates an extra not defined TEXT_NODE at the end
+
+        Test: fast/xsl/extra-lf-at-end.html
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::writeToVector): Changed to use Vector to avoid slow String::apend().
+        (WebCore::saveResultToString): Remove trailing line feed if present.
+
 2007-11-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
