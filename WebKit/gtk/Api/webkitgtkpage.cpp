@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
+ * Copyright (C) 2007 Xan Lopez <xan@gnome.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +50,7 @@
 #include "PlatformWheelEvent.h"
 #include "SubstituteData.h"
 
+#include <gdk/gdkkeysyms.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -97,7 +99,38 @@ static gboolean webkit_page_expose_event(GtkWidget* widget, GdkEventExpose* even
 static gboolean webkit_page_key_event(GtkWidget* widget, GdkEventKey* event)
 {
     Frame* frame = core(getFrameFromPage(WEBKIT_PAGE(widget)));
-    return frame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
+    PlatformKeyboardEvent keyboardEvent(event);
+
+    if (frame->eventHandler()->keyEvent(keyboardEvent))
+        return TRUE;
+
+    if (event->type != GDK_KEY_PRESS)
+        return FALSE;
+
+    FrameView* view = frame->view();
+
+    /* FIXME: at the very least we should be using the same code than the
+       Windows port here, but our ScrollView file diverges enough to make
+       that impossible. A short term solution would be to unify ScrollViewWin
+       and ScrollViewGtk. Long-term ScrollView and FrameView should be
+       unified and used everywhere for scrollbars */
+
+    switch (event->keyval) {
+    case (GDK_Down):
+        view->scrollBy(0, LINE_STEP);
+        return TRUE;
+    case (GDK_Up):
+        view->scrollBy(0, -LINE_STEP);
+        return TRUE;
+    case (GDK_Right):
+        view->scrollBy(LINE_STEP, 0);
+        return TRUE;
+    case (GDK_Left):
+        view->scrollBy(-LINE_STEP, 0);
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 static gboolean webkit_page_button_event(GtkWidget* widget, GdkEventButton* event)
