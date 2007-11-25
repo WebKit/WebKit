@@ -2413,7 +2413,7 @@ while (*code == OP_ALT);
 return c;
 }
 
-static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int patternLength, JSRegExpIgnoreCaseOption ignoreCase, compile_data& compile_block, ErrorCode errorcode)
+static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int patternLength, JSRegExpIgnoreCaseOption ignoreCase, compile_data& compile_block, ErrorCode& errorcode)
 {
     /* Make a pass over the pattern to compute the
      amount of store required to hold the compiled code. This does not have to be

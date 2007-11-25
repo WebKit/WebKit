@@ -1,3 +1,14 @@
+2007-11-25  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=16129
+        Bug 16129: REGRESSION (r27761-r27811): malloc error while visiting http://mysit.es (crashes release build)
+
+        * fast/js/regexp-range-out-of-order-expected.txt: Added.
+        * fast/js/regexp-range-out-of-order.html: Added.
+        * fast/js/resources/regexp-range-out-of-order.js: Added.
+
 2007-11-25  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Adam Roben.
