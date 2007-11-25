@@ -2,6 +2,17 @@
 
         Reviewed by Alp Toker.
 
+        http://bugs.webkit.org/show_bug.cgi?id=15891
+        [GTK] Javascript console and dialogs are not implemented
+
+        Fix call to gtk_message_dialog_new() which expects a format string.
+
+        * Api/webkitgtkpage.cpp:
+
+2007-11-24  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
         http://bugs.webkit.org/show_bug.cgi?id=15793
         [GTK] Webkit doesn't show title attribute tooltip when hovering over an image
 

@@ -259,7 +259,7 @@ static gboolean webkit_page_script_dialog(WebKitPage* page, WebKitFrame* frame, 
     }
 
     window = gtk_widget_get_toplevel(GTK_WIDGET(page));
-    dialog = gtk_message_dialog_new(GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0, GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, message);
+    dialog = gtk_message_dialog_new(GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0, GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, "%s", message);
     gchar* title = g_strconcat("JavaScript - ", webkit_frame_get_location(frame), NULL);
     gtk_window_set_title(GTK_WINDOW(dialog), title);
     g_free(title);
