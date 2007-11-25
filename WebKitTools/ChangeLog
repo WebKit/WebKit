@@ -1,3 +1,9 @@
+2007-11-24  David Kilzer  <ddkilzer@webkit.org>
+
+        Removed empty directory.
+
+        * Scripts/resources: Removed.
+
 2007-11-23  David D. Kilzer  <ddkilzer@webkit.org>
 
         Fix bisect-builds to work with recent WebKit nightly builds.
