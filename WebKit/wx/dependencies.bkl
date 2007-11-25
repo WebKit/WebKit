@@ -114,11 +114,11 @@ and WebCore. Include this file to use these settings.
 
 
     <option name="XSLT_LIBS">
-        <default-value>$(os.popen("xslt-config --libs").read())</default-value>
+        <default-value>$(DOLLAR)(shell xslt-config --libs)</default-value>
     </option>
 
     <option name="XSLT_CFLAGS">
-        <default-value>$(os.popen("xslt-config --cflags").read())</default-value>
+        <default-value>$(DOLLAR)(shell xslt-config --cflags)</default-value>
     </option>
 
     <!-- XSLT library settings -->

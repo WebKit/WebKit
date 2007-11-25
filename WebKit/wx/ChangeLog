@@ -1,3 +1,10 @@
+2007-11-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Don't get xslt-config options at bake time, do it
+        at make time.
+
+        * dependencies.bkl:
+
 2007-11-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Include config.h in WebFrame/WebView to ensure

@@ -1,3 +1,9 @@
+2007-11-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Fix filename case for case-sensitive filesystems.
+
+        * WebCoreSources.bkl:
+
 2007-11-22  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Adam Roben.

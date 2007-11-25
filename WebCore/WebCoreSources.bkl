@@ -103,6 +103,7 @@ This file contains the list of files needed to build WebCore.
         css/CSSFontFaceSource.cpp
         css/CSSFontFaceSrcValue.cpp
         css/CSSFontSelector.cpp
+        css/CSSHelper.cpp
         css/CSSImageValue.cpp
         css/CSSImportRule.cpp
         css/CSSInheritedValue.cpp
@@ -110,6 +111,7 @@ This file contains the list of files needed to build WebCore.
         css/CSSMediaRule.cpp
         css/CSSMutableStyleDeclaration.cpp
         css/CSSPageRule.cpp
+        css/CSSParser.cpp
         css/CSSPrimitiveValue.cpp
         css/CSSProperty.cpp
         css/CSSRule.cpp
@@ -117,6 +119,7 @@ This file contains the list of files needed to build WebCore.
         css/CSSSelector.cpp
         css/CSSStyleDeclaration.cpp
         css/CSSStyleRule.cpp
+        css/CSSStyleSelector.cpp
         css/CSSStyleSheet.cpp
         css/CSSTransformValue.cpp
         css/CSSTimingFunctionValue.cpp
@@ -133,9 +136,6 @@ This file contains the list of files needed to build WebCore.
         css/StyleList.cpp
         css/StyleSheet.cpp
         css/StyleSheetList.cpp
-        css/csshelper.cpp
-        css/cssparser.cpp
-        css/cssstyleselector.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
@@ -557,7 +557,7 @@ This file contains the list of files needed to build WebCore.
         platform/GlyphWidthMap.cpp
         platform/KURL.cpp
         platform/Logging.cpp
-        platform/MimeTypeRegistry.cpp
+        platform/MIMETypeRegistry.cpp
         platform/RegularExpression.cpp
         platform/ScrollBar.cpp
         platform/SecurityOrigin.cpp
@@ -721,6 +721,7 @@ This file contains the list of files needed to build WebCore.
     <set append="1" var="WEBCORE_SOURCES_XML">
         xml/DOMParser.cpp
         xml/NativeXPathNSResolver.cpp
+        xml/XMLHttpRequest.cpp
         xml/XMLSerializer.cpp
         xml/XPathEvaluator.cpp
         xml/XPathExpression.cpp
@@ -742,7 +743,6 @@ This file contains the list of files needed to build WebCore.
         xml/XSLTExtensions.cpp
         xml/XSLTUnicodeSort.cpp
         xml/XSLTProcessor.cpp
-        xml/xmlhttprequest.cpp
     </set>
 
 </makefile>
