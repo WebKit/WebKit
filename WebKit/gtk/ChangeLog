@@ -1,3 +1,19 @@
+2007-11-24  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16125
+        [GTK] Up key doesn't work properly when content is editable
+
+        Add a missing 'break' to avoid falling through to the next case when
+        handling VK_UP keystrokes. This was noticed when working on editing
+        support in the GTK+ port.
+
+        I've checked the other cases for similar typos and they seem fine.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeypress):
+
 2007-11-24  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

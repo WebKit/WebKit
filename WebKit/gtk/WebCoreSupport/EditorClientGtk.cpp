@@ -257,6 +257,7 @@ void EditorClient::handleKeypress(KeyboardEvent* event)
                         SelectionController::BACKWARD,
                         kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                         true);
+                break;
             case VK_DOWN:
                 frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::FORWARD,
