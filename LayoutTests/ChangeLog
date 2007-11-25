@@ -1,3 +1,12 @@
+2007-11-24  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Added tests for select.options.remove(boolean).
+
+        Reviewed by Maciej.
+
+        * fast/js/resources/select-options-add.js: Added two tests.
+        * fast/js/select-options-add-expected.txt: Updated results.
+
 2007-11-23  Antti Koivisto  <antti@apple.com>
 
         Set video src from script, not from the element attribute. This

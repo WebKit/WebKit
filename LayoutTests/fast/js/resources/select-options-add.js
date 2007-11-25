@@ -73,35 +73,42 @@ shouldBe("select1.options.length", "3");
 shouldBe("select1.selectedIndex", "0");
 debug("");
 
-debug("1.7 Add undefined");
+debug("1.7 Add a non-element (boolean)");
+option1 = true;
+shouldThrow("select1.options.add(option1)");
+shouldBe("select1.options.length", "3");
+shouldBe("select1.selectedIndex", "0");
+debug("");
+
+debug("1.8 Add undefined");
 option1 = undefined;
 shouldThrow("select1.options.add(option1)");
 shouldBe("select1.options.length", "3");
 shouldBe("select1.selectedIndex", "0");
 debug("");
 
-debug("1.8 Add null");
+debug("1.9 Add null");
 option1 = null;
 shouldThrow("select1.options.add(option1)");
 shouldBe("select1.options.length", "3");
 shouldBe("select1.selectedIndex", "0");
 debug("");
 
-debug("1.9 Add negative infinity");
+debug("1.10 Add negative infinity");
 option1 = -1/0;
 shouldThrow("select1.options.add(option1)");
 shouldBe("select1.options.length", "3");
 shouldBe("select1.selectedIndex", "0");
 debug("");
 
-debug("1.10 Add NaN");
+debug("1.11 Add NaN");
 option1 = 0/0;
 shouldThrow("select1.options.add(option1)");
 shouldBe("select1.options.length", "3");
 shouldBe("select1.selectedIndex", "0");
 debug("");
 
-debug("1.11 Add positive infinity");
+debug("1.12 Add positive infinity");
 option1 = 1/0;
 shouldThrow("select1.options.add(option1)");
 shouldBe("select1.options.length", "3");
@@ -277,35 +284,42 @@ shouldBe("select2.options.length", "7");
 shouldBe("select2.selectedIndex", "1");
 debug("");
 
-debug("2.15 Add undefined");
+debug("2.15 Add a non-element (boolean)");
+option2 = true;
+shouldThrow("select2.options.add(option2, 1)");
+shouldBe("select2.options.length", "7");
+shouldBe("select2.selectedIndex", "1");
+debug("");
+
+debug("2.16 Add undefined");
 option2 = undefined;
 shouldThrow("select2.options.add(option2, 1)");
 shouldBe("select2.options.length", "7");
 shouldBe("select2.selectedIndex", "1");
 debug("");
 
-debug("2.16 Add null");
+debug("2.17 Add null");
 option2 = null;
 shouldThrow("select2.options.add(option2, 1)");
 shouldBe("select2.options.length", "7");
 shouldBe("select2.selectedIndex", "1");
 debug("");
 
-debug("2.17 Add negative infinity");
+debug("2.18 Add negative infinity");
 option2 = -1/0;
 shouldThrow("select2.options.add(option2, 1)");
 shouldBe("select2.options.length", "7");
 shouldBe("select2.selectedIndex", "1");
 debug("");
 
-debug("2.18 Add NaN");
+debug("2.19 Add NaN");
 option2 = 0/0;
 shouldThrow("select2.options.add(option2, 1)");
 shouldBe("select2.options.length", "7");
 shouldBe("select2.selectedIndex", "1");
 debug("");
 
-debug("2.19 Add positive infinity");
+debug("2.20 Add positive infinity");
 option2 = 1/0;
 shouldThrow("select2.options.add(option2, 1)");
 shouldBe("select2.options.length", "7");
