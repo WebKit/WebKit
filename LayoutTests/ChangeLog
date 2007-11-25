@@ -1,3 +1,22 @@
+2007-11-25  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Adam Roben.
+
+        Update layout test results after fixing text path boundaries if text-anchor is not set to 'start'.
+
+        * platform/mac/svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * platform/mac/svg/text/textPathBoundsBug-expected.checksum: Added.
+        * platform/mac/svg/text/textPathBoundsBug-expected.png: Added.
+        * platform/mac/svg/text/textPathBoundsBug-expected.txt: Added.
+        * svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * svg/batik/text/textOnPath-expected.txt:
+        * svg/batik/text/textOnPath3-expected.txt:
+        * svg/batik/text/verticalTextOnPath-expected.txt:
+        * svg/text/text-align-04-b-expected.checksum:
+        * svg/text/text-align-04-b-expected.png:
+        * svg/text/text-align-04-b-expected.txt:
+        * svg/text/textPathBoundsBug.svg: Added.
+
 2007-11-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

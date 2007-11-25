@@ -303,6 +303,9 @@ FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator it, Vector<
 {
     float lowX = FLT_MAX, lowY = FLT_MAX;
     for (; it != end; ++it) {
+        if (it->isHidden())
+            continue;
+
         float x = (*it).x;
         float y = (*it).y;
 
@@ -499,13 +502,13 @@ struct SVGRootInlineBoxPaintWalker {
             m_paintInfo.context->concatCTM(chunkCtm);
 
         for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
-            if ((*it).pathData && !(*it).pathData->visible)
+            if (it->isHidden())
                 continue;
 
             // Determine how many characters - starting from the current - can be drawn at once.
             Vector<SVGChar>::iterator itSearch = it + 1;
             while (itSearch != end) {
-                if ((*itSearch).drawnSeperated)
+                if (itSearch->drawnSeperated || itSearch->isHidden())
                     break;
 
                 itSearch++;
@@ -670,7 +673,8 @@ static float cummulatedWidthOrHeightOfTextChunk(SVGTextChunk& chunk, bool calcWi
             Vector<SVGChar>::iterator itSearch = charIt + 1;
             Vector<SVGChar>::iterator endSearch = charIt + range.endOffset - i;
             while (itSearch != endSearch) {
-                if ((*itSearch).drawnSeperated)
+                // No need to check for 'isHidden()' here as this function is not called for text paths.
+                if (itSearch->drawnSeperated)
                     break;
 
                 itSearch++;
@@ -746,6 +750,9 @@ static float calculateTextAnchorShiftForTextChunk(SVGTextChunk& chunk, ETextAnch
 
 static void applyTextAnchorToTextChunk(SVGTextChunk& chunk)
 {
+    // This method is not called for chunks containing chars aligned on a path.
+    // -> all characters are visible, no need to check for "isHidden()" anywhere.
+
     if (chunk.anchor == TA_START)
         return;
 
@@ -812,6 +819,9 @@ static float calculateTextLengthCorrectionForTextChunk(SVGTextChunk& chunk, ELen
 
 static void applyTextLengthCorrectionToTextChunk(SVGTextChunk& chunk)
 {
+    // This method is not called for chunks containing chars aligned on a path.
+    // -> all characters are visible, no need to check for "isHidden()" anywhere.
+
     // lengthAdjust="spacingAndGlyphs" is handled by modifying chunk.ctm
     float computedLength = 0.0f;
     float spacingToApply = calculateTextLengthCorrectionForTextChunk(chunk, chunk.lengthAdjust, computedLength);
@@ -994,8 +1004,13 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
             for (unsigned i = 0; i < length; ++i) {
                 ASSERT(it != m_svgChars.end());
 
+                if (it->isHidden()) {
+                    ++it;
+                    continue;
+                }
+
                 stringRect.unite(textBox->calculateGlyphBoundaries(style, textBox->start() + i, *it));
-                it++;
+                ++it;
             }
 
             IntRect enclosedStringRect = enclosingIntRect(stringRect);
@@ -1212,7 +1227,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             float pathExtraAdvance = info.pathExtraAdvance;
             info.pathExtraAdvance += spacing;
 
-            svgChar.pathData->visible = info.nextPathLayoutPointAndAngle(correctedGlyphAdvance, extraAdvance, newOffset);
+            svgChar.pathData->hidden = !info.nextPathLayoutPointAndAngle(correctedGlyphAdvance, extraAdvance, newOffset);
             svgChar.drawnSeperated = true;
 
             info.pathExtraAdvance = pathExtraAdvance;
@@ -1399,7 +1414,7 @@ void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox*
                 if (isFirstCharacter)
                     isFirstCharacter = false;
     
-                info.it++;
+                ++info.it;
             }
 
 #if DEBUG_CHUNK_BUILDING > 1    

@@ -1,3 +1,42 @@
+2007-11-22  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Adam Roben.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15393
+
+        Fix problems with hidden glyphs. They were taken into account for quite
+        some operations (hit testing, length calulcations etc..) except painting.
+        Especially fixes boundaries of <textPath> (see using Web Inspector) if
+        text-anchor isn't equal to 'start'.
+
+        Added testcase:
+        svg/text/textPathBoundsBug.svg
+
+        Fixed testcase: (all showed text selection problems on text paths)
+        svg/batik/text/textGlyphOrientationHorizontal.svg
+        svg/batik/text/textOnPath.svg
+        svg/batik/text/textOnPath3.svg
+        svg/batik/text/verticalTextOnPath.svg
+        svg/text/text-align-04-b.svg
+        svg/W3C-SVG-1.1/text-align-04-b.svg
+
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGChar::isHidden):
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGCharOnPath::SVGCharOnPath):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBoxSelectionRectWalker::chunkPortionCallback):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::topLeftPositionOfCharacterRange):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        (WebCore::cummulatedWidthOrHeightOfTextChunk):
+        (WebCore::applyTextAnchorToTextChunk):
+        (WebCore::applyTextLengthCorrectionToTextChunk):
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+
 2007-11-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

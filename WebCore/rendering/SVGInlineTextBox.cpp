@@ -134,6 +134,9 @@ struct SVGInlineTextBoxClosestCharacterToPositionWalker {
         unsigned int closestOffset = UINT_MAX;
 
         for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
+            if (it->isHidden())
+                continue;
+
             unsigned int newOffset = textBox->start() + (it - start) + startOffset;
             FloatRect glyphRect = chunkCtm.mapRect(textBox->calculateGlyphBoundaries(style, newOffset, *it));
 
@@ -195,6 +198,9 @@ struct SVGInlineTextBoxSelectionRectWalker {
         RenderStyle* style = textBox->textObject()->style();
 
         for (Vector<SVGChar>::iterator it = start; it != end; ++it) {
+            if (it->isHidden())
+                continue;
+
             unsigned int newOffset = textBox->start() + (it - start) + startOffset;
             m_selectionRect.unite(textBox->calculateGlyphBoundaries(style, newOffset, *it));
         }
