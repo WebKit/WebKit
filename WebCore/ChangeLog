@@ -2,7 +2,7 @@
 
         Reviewed by Adam Roben.
 
-        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15393
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=15564
 
         Fix problems with hidden glyphs. They were taken into account for quite
         some operations (hit testing, length calulcations etc..) except painting.
