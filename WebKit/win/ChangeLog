@@ -1,5 +1,13 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        Fix a leak pointed out by Alexey
+
+        * WebView.cpp:
+        (getUpdateRects): Use a Vector<unsigned char>, since OwnPtr doesn't
+        know to call delete[].
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         Fix Bug 16138: Reduce code duplication in WebView.cpp
 
         http://bugs.webkit.org/show_bug.cgi?id=16138

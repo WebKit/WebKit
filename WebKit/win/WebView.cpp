@@ -721,8 +721,8 @@ static void getUpdateRects(HRGN region, const IntRect& dirtyRect, Vector<IntRect
         return;
     }
 
-    OwnPtr<unsigned char> buffer(new unsigned char[regionDataSize]);
-    RGNDATA* regionData = reinterpret_cast<RGNDATA*>(buffer.get());
+    Vector<unsigned char> buffer(regionDataSize);
+    RGNDATA* regionData = reinterpret_cast<RGNDATA*>(buffer.data());
     GetRegionData(region, regionDataSize, regionData);
     if (regionData->rdh.nCount > cRectThreshold) {
         rects.append(dirtyRect);
