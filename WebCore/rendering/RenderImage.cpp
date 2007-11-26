@@ -245,8 +245,8 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
                 int centerY = (usableHeight - image()->height()) / 2;
                 if (centerY < 0)
                     centerY = 0;
-                imageX = leftBorder + leftPad + centerX;
-                imageY = topBorder + topPad + centerY;
+                imageX = leftBorder + leftPad + centerX + 1;
+                imageY = topBorder + topPad + centerY + 1;
                 context->drawImage(image(), IntPoint(tx + imageX, ty + imageY));
                 errorPictureDrawn = true;
             }

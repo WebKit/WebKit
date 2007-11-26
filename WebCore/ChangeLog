@@ -1,3 +1,15 @@
+2007-11-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - fix off-center error images
+
+        Covered by many pixel tests with missing images
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint): Account for the 1 pixel outline when
+        positioning the error image.
+
 2007-11-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Fix filename case for case-sensitive filesystems.
