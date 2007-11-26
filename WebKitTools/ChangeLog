@@ -1,3 +1,13 @@
+2007-11-25  Adam Roben  <aroben@apple.com>
+
+        Make Windows DRT stop changing LF into CRLF
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main): Put stdout in binary mode.
+        * Scripts/run-webkit-tests: Remove the CRLF hack.
+
 2007-11-24  David Kilzer  <ddkilzer@webkit.org>
 
         Removed empty directory.

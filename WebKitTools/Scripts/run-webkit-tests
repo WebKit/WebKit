@@ -508,7 +508,6 @@ for my $test (@tests) {
         last if /#EOF/;
         $actual .= $_;
     }
-    $actual =~ s/\r//g if isCygwin();
 
     my $isText = isTextOnlyTest($actual);
 
