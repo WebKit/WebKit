@@ -1,5 +1,16 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        Set the font smoothing preference in DRT
+
+        This makes the pixel results on Windows closer to the Mac results.
+
+        Reviewed by Mitz.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initializePreferences):
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         Port ImageDiff to CG and C++
 
         Final part of http://bugs.webkit.org/show_bug.cgi?id=16133
