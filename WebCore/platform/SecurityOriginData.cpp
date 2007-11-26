@@ -28,6 +28,8 @@
 #include "config.h"
 #include "SecurityOriginData.h"
 
+static const char SeparatorCharacter = '_';
+
 namespace WebCore {
 
 SecurityOriginData::SecurityOriginData()
@@ -45,39 +47,39 @@ SecurityOriginData::SecurityOriginData(const String& protocol, const String& hos
 SecurityOriginData::SecurityOriginData(const String& stringIdentifier)
     : m_port(0)
 { 
-    // Make sure there's a first colon
-    int colon1 = stringIdentifier.find(':');
-    if (colon1 == -1)
+    // Make sure there's a first separator
+    int separator1 = stringIdentifier.find(SeparatorCharacter);
+    if (separator1 == -1)
         return;
             
-    // Make sure there's a second colon
-    int colon2 = stringIdentifier.find(':', colon1 + 1);
-    if (colon2 == -1)
+    // Make sure there's a second separator
+    int separator2 = stringIdentifier.find(SeparatorCharacter, separator1 + 1);
+    if (separator2 == -1)
         return;
         
-    // Make sure there's not a third colon
-    if (stringIdentifier.reverseFind(':') != colon2)
+    // Make sure there's not a third separator
+    if (stringIdentifier.reverseFind(SeparatorCharacter) != separator2)
         return;
         
     // Make sure the port section is a valid port number or doesn't exist
     bool portOkay;
-    int port = stringIdentifier.right(stringIdentifier.length() - colon2 - 1).toInt(&portOkay);
-    if (!portOkay && colon2 + 1 == static_cast<int>(stringIdentifier.length()))
+    int port = stringIdentifier.right(stringIdentifier.length() - separator2 - 1).toInt(&portOkay);
+    if (!portOkay && separator2 + 1 == static_cast<int>(stringIdentifier.length()))
         return;
 
     if (port < 0 || port > 65535)
         return;
             
     // Split out the 3 sections of data
-    m_protocol = stringIdentifier.substring(0, colon1);
-    m_host = stringIdentifier.substring(colon1 + 1, colon2 - colon1 - 1);
+    m_protocol = stringIdentifier.substring(0, separator1);
+    m_host = stringIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
     m_port = port;
 }
 
 String SecurityOriginData::stringIdentifier() const 
 {
-    return m_protocol + ":" + m_host + ":" + String::number(m_port); 
+    static String separatorString = String(&SeparatorCharacter, 1);
+    return m_protocol + separatorString + m_host + separatorString + String::number(m_port); 
 }
-
 
 } // namespace WebCore

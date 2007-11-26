@@ -1,3 +1,20 @@
+2007-11-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders (and typo lovingly found by Adam)
+
+        Change Databases to be stored in a per-origin directory hierarchy - this will make
+        storage quotas much easier to enforce
+
+        * platform/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::SecurityOriginData): Parse string based on '_' instead of ':'
+        (WebCore::SecurityOriginData::stringIdentifier): Change to use '_' as a separator instead of ':'.  
+          '_' still works due to not being allowed in domain names, but also is a valid filename character '
+          on all filesystems we care about
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase): Create a per-origin directory hierarchy to categorize
+          databases by origin
+
 2007-11-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.
