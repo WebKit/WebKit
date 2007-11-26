@@ -1,5 +1,22 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 16138: Reduce code duplication in WebView.cpp
+
+        http://bugs.webkit.org/show_bug.cgi?id=16138
+
+        Reviewed by Sam.
+
+        * WebView.cpp:
+        (getUpdateRects): Factored code out of updateBackingStore and paint
+        into this new helper function.
+        (WebView::updateBackingStore): Use getUpdateRects.
+        (WebView::paint): Ditto.
+        (WebView::paintIntoBackingStore): Changed to take a const IntRect&.
+        (WebView::paintIntoWindow): Ditto.
+        * WebView.h:
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         Add ImageDiff.vcproj to WebKit.sln
 
         Reviewed by Sam.

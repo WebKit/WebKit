@@ -704,6 +704,48 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
 
 }
 
+// This emulates the Mac smarts for painting rects intelligently.  This is very
+// important for us, since we double buffer based off dirty rects.
+static void getUpdateRects(HRGN region, const IntRect& dirtyRect, Vector<IntRect>& rects)
+{
+    ASSERT_ARG(region, region);
+
+    const int cRectThreshold = 10;
+    const float cWastedSpaceThreshold = 0.75f;
+
+    rects.clear();
+
+    DWORD regionDataSize = GetRegionData(region, sizeof(RGNDATA), NULL);
+    if (!regionDataSize) {
+        rects.append(dirtyRect);
+        return;
+    }
+
+    OwnPtr<unsigned char> buffer(new unsigned char[regionDataSize]);
+    RGNDATA* regionData = reinterpret_cast<RGNDATA*>(buffer.get());
+    GetRegionData(region, regionDataSize, regionData);
+    if (regionData->rdh.nCount > cRectThreshold) {
+        rects.append(dirtyRect);
+        return;
+    }
+
+    double singlePixels = 0.0;
+    unsigned i;
+    RECT* rect;
+    for (i = 0, rect = reinterpret_cast<RECT*>(regionData->Buffer); i < regionData->rdh.nCount; i++, rect++)
+        singlePixels += (rect->right - rect->left) * (rect->bottom - rect->top);
+
+    double unionPixels = dirtyRect.width() * dirtyRect.height();
+    double wastedSpace = 1.0 - (singlePixels / unionPixels);
+    if (wastedSpace <= cWastedSpaceThreshold) {
+        rects.append(dirtyRect);
+        return;
+    }
+
+    for (i = 0, rect = reinterpret_cast<RECT*>(regionData->Buffer); i < regionData->rdh.nCount; i++, rect++)
+        rects.append(*rect);
+}
+
 void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStoreCompletelyDirty)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
@@ -722,41 +764,19 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
             if (FrameView* view = coreFrame->view())
                 view->layoutIfNeededRecursive();
 
-        // This emulates the Mac smarts for painting rects intelligently.  This is
-        // very important for us, since we double buffer based off dirty rects.
-        bool useRegionBox = true;
-        const int cRectThreshold = 10;
-        const float cWastedSpaceThreshold = 0.75f;
-        RECT regionBox;
+        Vector<IntRect> paintRects;
         if (!backingStoreCompletelyDirty) {
+            RECT regionBox;
             ::GetRgnBox(m_backingStoreDirtyRegion.get(), &regionBox);
-            DWORD regionDataSize = GetRegionData(m_backingStoreDirtyRegion.get(), sizeof(RGNDATA), NULL);
-            if (regionDataSize) {
-                RGNDATA* regionData = (RGNDATA*)malloc(regionDataSize);
-                GetRegionData(m_backingStoreDirtyRegion.get(), regionDataSize, regionData);
-                if (regionData->rdh.nCount <= cRectThreshold) {
-                    double unionPixels = (regionBox.right - regionBox.left) * (regionBox.bottom - regionBox.top);
-                    double singlePixels = 0;
-                    
-                    unsigned i;
-                    RECT* rect;
-                    for (i = 0, rect = (RECT*)regionData->Buffer; i < regionData->rdh.nCount; i++, rect++)
-                        singlePixels += (rect->right - rect->left) * (rect->bottom - rect->top);
-                    double wastedSpace = 1.0 - (singlePixels / unionPixels);
-                    if (wastedSpace > cWastedSpaceThreshold) {
-                        // Paint individual rects.
-                        useRegionBox = false;
-                        for (i = 0, rect = (RECT*)regionData->Buffer; i < regionData->rdh.nCount; i++, rect++)
-                            paintIntoBackingStore(frameView, bitmapDC, rect);
-                    }
-                }
-                free(regionData);
-            }
-        } else
-            ::GetClientRect(m_viewWindow, &regionBox);
+            getUpdateRects(m_backingStoreDirtyRegion.get(), regionBox, paintRects);
+        } else {
+            RECT clientRect;
+            ::GetClientRect(m_viewWindow, &clientRect);
+            paintRects.append(clientRect);
+        }
 
-        if (useRegionBox)
-            paintIntoBackingStore(frameView, bitmapDC, &regionBox);
+        for (unsigned i = 0; i < paintRects.size(); ++i)
+            paintIntoBackingStore(frameView, bitmapDC, paintRects[i]);
 
         if (m_uiDelegatePrivate) {
             COMPtr<IWebUIDelegatePrivate2> uiDelegatePrivate2(Query, m_uiDelegatePrivate);
@@ -814,38 +834,14 @@ void WebView::paint(HDC dc, LPARAM options)
     IntRect windowDirtyRect = rcPaint;
     
     // Apply the same heuristic for this update region too.
-    bool useWindowDirtyRect = true;
-    if (region && regionType == COMPLEXREGION) {
-        LOCAL_GDI_COUNTER(1, __FUNCTION__" (COMPLEXREGION)");
+    Vector<IntRect> blitRects;
+    if (region && regionType == COMPLEXREGION)
+        getUpdateRects(region.get(), windowDirtyRect, blitRects);
+    else
+        blitRects.append(windowDirtyRect);
 
-        const int cRectThreshold = 10;
-        const float cWastedSpaceThreshold = 0.75f;
-        DWORD regionDataSize = GetRegionData(region.get(), sizeof(RGNDATA), NULL);
-        if (regionDataSize) {
-            RGNDATA* regionData = (RGNDATA*)malloc(regionDataSize);
-            GetRegionData(region.get(), regionDataSize, regionData);
-            if (regionData->rdh.nCount <= cRectThreshold) {
-                double unionPixels = windowDirtyRect.width() * windowDirtyRect.height();
-                double singlePixels = 0;
-                
-                unsigned i;
-                RECT* rect;
-                for (i = 0, rect = (RECT*)regionData->Buffer; i < regionData->rdh.nCount; i++, rect++)
-                    singlePixels += (rect->right - rect->left) * (rect->bottom - rect->top);
-                double wastedSpace = 1.0 - (singlePixels / unionPixels);
-                if (wastedSpace > cWastedSpaceThreshold) {
-                    // Paint individual rects.
-                    useWindowDirtyRect = false;
-                    for (i = 0, rect = (RECT*)regionData->Buffer; i < regionData->rdh.nCount; i++, rect++)
-                        paintIntoWindow(bitmapDC, hdc, rect);
-                }
-            }
-            free(regionData);
-        }
-    }
-
-    if (useWindowDirtyRect)
-        paintIntoWindow(bitmapDC, hdc, &rcPaint);
+    for (unsigned i = 0; i < blitRects.size(); ++i)
+        paintIntoWindow(bitmapDC, hdc, blitRects[i]);
 
     ::DeleteDC(bitmapDC);
 
@@ -868,44 +864,47 @@ void WebView::paint(HDC dc, LPARAM options)
     m_paintCount--;
 }
 
-void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, LPRECT dirtyRect)
+void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const IntRect& dirtyRect)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
+
+    RECT rect = dirtyRect;
 
 #if FLASH_BACKING_STORE_REDRAW
     HDC dc = ::GetDC(m_viewWindow);
     OwnPtr<HBRUSH> yellowBrush = CreateSolidBrush(RGB(255, 255, 0));
-    FillRect(dc, dirtyRect, yellowBrush.get());
+    FillRect(dc, &rect, yellowBrush.get());
     GdiFlush();
     Sleep(50);
     paintIntoWindow(bitmapDC, dc, dirtyRect);
     ::ReleaseDC(m_viewWindow, dc);
 #endif
 
-    FillRect(bitmapDC, dirtyRect, (HBRUSH)GetStockObject(WHITE_BRUSH));
+    FillRect(bitmapDC, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
     if (frameView && frameView->frame() && frameView->frame()->renderer()) {
         GraphicsContext gc(bitmapDC);
         gc.save();
-        gc.clip(IntRect(*dirtyRect));
-        frameView->paint(&gc, IntRect(*dirtyRect));
+        gc.clip(dirtyRect);
+        frameView->paint(&gc, dirtyRect);
         gc.restore();
     }
 }
 
-void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, LPRECT dirtyRect)
+void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, const IntRect& dirtyRect)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 #if FLASH_WINDOW_REDRAW
     OwnPtr<HBRUSH> greenBrush = CreateSolidBrush(RGB(0, 255, 0));
-    FillRect(windowDC, dirtyRect, greenBrush.get());
+    RECT rect = dirtyRect;
+    FillRect(windowDC, &rect, greenBrush.get());
     GdiFlush();
     Sleep(50);
 #endif
 
     // Blit the dirty rect from the backing store into the same position
     // in the destination DC.
-    BitBlt(windowDC, dirtyRect->left, dirtyRect->top, dirtyRect->right - dirtyRect->left, dirtyRect->bottom - dirtyRect->top, bitmapDC,
-           dirtyRect->left, dirtyRect->top, SRCCOPY);
+    BitBlt(windowDC, dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height(), bitmapDC,
+           dirtyRect.x(), dirtyRect.y(), SRCCOPY);
 }
 
 void WebView::frameRect(RECT* rect)
