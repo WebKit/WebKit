@@ -812,7 +812,16 @@ int main(int argc, char* argv[])
 
     initialize(GetModuleHandle(0));
 
-    // FIXME: options
+    Vector<const char*> tests;
+
+    for (int i = 1; i < argc; ++i) {
+        if (!stricmp(argv[i], "--threaded")) {
+            threaded = true;
+            continue;
+        }
+
+        tests.append(argv[i]);
+    }
 
     COMPtr<IWebView> webView;
     HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&webView);
@@ -896,18 +905,10 @@ int main(int argc, char* argv[])
         _CrtMemCheckpoint(&entryToMainMemCheckpoint);
 #endif
 
-    for (int i = 0; i < argc; ++i)
-        if (!stricmp(argv[i], "--threaded")) {
-            argv[i] = argv[argc - 1];
-            argc--;
-            threaded = true;
-            break;
-        }
-
     if (threaded)
         startJavaScriptThreads();
 
-    if (argc == 2 && strcmp(argv[1], "-") == 0) {
+    if (tests.size() == 1 && !strcmp(tests[0], "-")) {
         char filenameBuffer[2048];
         printSeparators = true;
         while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
@@ -922,9 +923,9 @@ int main(int argc, char* argv[])
             fflush(stdout);
         }
     } else {
-        printSeparators = argc > 2;
-        for (int i = 1; i != argc; i++)
-            runTest(argv[i]);
+        printSeparators = tests.size() > 1;
+        for (int i = 0; i < tests.size(); i++)
+            runTest(tests[i]);
     }
 
     if (threaded)

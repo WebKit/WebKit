@@ -1,5 +1,14 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        Clean up Windows DRT's option parsing a little bit
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main): Put non-option arguments into a Vector.
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         Make Windows DRT stop changing LF into CRLF
 
         Reviewed by Sam.
