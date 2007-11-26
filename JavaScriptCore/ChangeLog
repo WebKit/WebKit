@@ -1,3 +1,9 @@
+2007-11-26  Alp Toker  <alp@atoker.com>
+
+        GTK+/Qt/Wx build fix for breakage introduced in r28039.
+
+        * ForwardingHeaders/JavaScriptCore/JSRetainPtr.h: Added.
+
 2007-11-24  Laszlo Gombos  <laszlo.gombos@gmail.com>
 
         Reviewed by Maciej Stachowiak.
