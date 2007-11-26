@@ -1,3 +1,11 @@
+2007-11-25  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove the unneeded CFNETWORK #ifdefs.
+
+        * loader/NetscapePlugInStreamLoader.h:
+
 2007-11-24  Laszlo Gombos  <laszlo.gombos@gmail.com>
 
         Reviewed by Sam Weinig.
