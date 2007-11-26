@@ -1,3 +1,45 @@
+2007-11-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add an implementation of IWebSecurityOrigin and a partially stubbed out
+        implementation of IWebDatabaseManager.
+        
+        * ForEachCoClass.h:
+        * Interfaces/IWebDatabaseManager.idl:
+        * Interfaces/WebKit.idl:
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::createInstance):
+        (WebDatabaseManager::WebDatabaseManager):
+        (WebDatabaseManager::~WebDatabaseManager):
+        (WebDatabaseManager::QueryInterface):
+        (WebDatabaseManager::AddRef):
+        (WebDatabaseManager::Release):
+        (WebDatabaseManager::sharedWebDatabaseManager):
+        (WebDatabaseManager::origins):
+        (WebDatabaseManager::databasesWithOrigin):
+        (WebDatabaseManager::detailsForDatabaseWithOrigin):
+        (WebDatabaseManager::deleteAllDatabases):
+        (WebDatabaseManager::deleteDatabasesWithOrigin):
+        (WebDatabaseManager::deleteDatabaseWithOrigin):
+        * WebDatabaseManager.h:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKitClassFactory.cpp:
+        * WebSecurityOrigin.cpp: Added.
+        (WebSecurityOrigin::createInstance):
+        (WebSecurityOrigin::WebSecurityOrigin):
+        (WebSecurityOrigin::~WebSecurityOrigin):
+        (WebSecurityOrigin::QueryInterface):
+        (WebSecurityOrigin::AddRef):
+        (WebSecurityOrigin::Release):
+        (WebSecurityOrigin::protocol):
+        (WebSecurityOrigin::domain):
+        (WebSecurityOrigin::port):
+        (WebSecurityOrigin::usage):
+        (WebSecurityOrigin::quota):
+        (WebSecurityOrigin::setQuota):
+        * WebSecurityOrigin.h: Added.
+
 2007-11-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Maciej.

@@ -25,14 +25,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WebDatabaseManager_h
-#define WebDatabaseManager_h
 
-#include "IWebDatabaseManager.h"
+#ifndef WebSecurityOrigin_h
+#define WebSecurityOrigin_h
 
-class WebDatabaseManager : public IWebDatabaseManager {
+#include "IWebSecurityOrigin.h"
+#include <WebCore/SecurityOriginData.h>
+
+class WebSecurityOrigin : public IWebSecurityOrigin {
 public:
-    static WebDatabaseManager* createInstance();
+    static WebSecurityOrigin* createInstance(const WebCore::SecurityOriginData& securityOriginData);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
@@ -43,37 +45,30 @@ public:
 
     virtual ULONG STDMETHODCALLTYPE Release();
 
-    // IWebDatabaseManager
-    virtual HRESULT STDMETHODCALLTYPE sharedWebDatabaseManager( 
-        /* [retval][out] */ IWebDatabaseManager** result);
+    // IWebSecurityOrigin
+    virtual HRESULT STDMETHODCALLTYPE protocol( 
+        /* [retval][out] */ BSTR* result);
         
-    virtual HRESULT STDMETHODCALLTYPE origins( 
-        /* [retval][out] */ IEnumVARIANT** result);
+    virtual HRESULT STDMETHODCALLTYPE domain( 
+        /* [retval][out] */ BSTR* result);
         
-    virtual HRESULT STDMETHODCALLTYPE databasesWithOrigin( 
-        /* [in] */ IWebSecurityOrigin* origin,
-        /* [retval][out] */ IEnumVARIANT** result);
+    virtual HRESULT STDMETHODCALLTYPE port( 
+        /* [retval][out] */ unsigned short* result);
         
-    virtual HRESULT STDMETHODCALLTYPE detailsForDatabaseWithOrigin( 
-        /* [in] */ BSTR* database,
-        /* [in] */ IWebSecurityOrigin* origin,
-        /* [retval][out] */ IPropertyBag** result);
+    virtual HRESULT STDMETHODCALLTYPE usage( 
+        /* [retval][out] */ unsigned long long* result);
         
-    virtual HRESULT STDMETHODCALLTYPE deleteAllDatabases();
+    virtual HRESULT STDMETHODCALLTYPE quota( 
+        /* [retval][out] */ unsigned long long* result);
         
-    virtual HRESULT STDMETHODCALLTYPE deleteDatabasesWithOrigin( 
-        /* [in] */ IWebSecurityOrigin* origin);
-        
-    virtual HRESULT STDMETHODCALLTYPE deleteDatabaseWithOrigin( 
-        /* [in] */ BSTR* databaseName,
-        /* [in] */ IWebSecurityOrigin* origin);
+    virtual HRESULT STDMETHODCALLTYPE setQuota( 
+        /* [in] */ unsigned long long quota);
 private:
-    WebDatabaseManager();
-    ~WebDatabaseManager();
+    WebSecurityOrigin(const WebCore::SecurityOriginData&);
+    ~WebSecurityOrigin();
 
     ULONG m_refCount;
+    WebCore::SecurityOriginData m_securityOriginData;
 };
 
-void WebKitSetWebDatabasesPathIfNecessary();
-
-#endif
+#endif // WebSecurityOrigin_h

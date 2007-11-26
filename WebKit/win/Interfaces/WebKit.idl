@@ -56,6 +56,7 @@ import "IWebView.idl";
 import "IWebViewPrivate.idl";
 import "IWebUIDelegate.idl";
 import "IWebResourceLoadDelegate.idl";
+import "IWebDatabaseManager.idl";
 import "IWebDownload.idl";
 import "IWebFrameLoadDelegate.idl";
 import "IWebPolicyDelegate.idl";
@@ -299,5 +300,14 @@ library OpenSourceWebKit
 #endif
     coclass WebScriptScope {
         [default] interface IWebScriptScope;
+    }
+
+#if __BUILDBOT__
+    [uuid(C2A1BFC2-1E7C-49fe-8592-D0C7FB440BC0)]
+#else
+    [uuid(1F7B8CEE-5D74-4974-8A47-C5733B422644)]
+#endif
+    coclass WebDatabaseManager {
+        [default] interface IWebDatabaseManager;
     }
 }

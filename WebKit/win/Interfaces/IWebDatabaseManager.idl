@@ -74,7 +74,7 @@ interface IWebDatabaseManager : IUnknown
     HRESULT databasesWithOrigin([in] IWebSecurityOrigin* origin, [out, retval] IEnumVARIANT** result);
     HRESULT detailsForDatabaseWithOrigin([in] BSTR* database, [in] IWebSecurityOrigin* origin, [out, retval] IPropertyBag **result);
 
-    HRESULT deleteAlldatabases();
+    HRESULT deleteAllDatabases();
     HRESULT deleteDatabasesWithOrigin([in] IWebSecurityOrigin* origin);
     HRESULT deleteDatabaseWithOrigin([in] BSTR* databaseName, [in] IWebSecurityOrigin* origin);
 }

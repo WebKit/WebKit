@@ -30,6 +30,7 @@
 #include "ForEachCoClass.h"
 #include "CFDictionaryPropertyBag.h"
 #include "WebCache.h"
+#include "WebDatabaseManager.h"
 #include "WebDownload.h"
 #include "WebError.h"
 #include "WebFrame.h"

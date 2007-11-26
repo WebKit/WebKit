@@ -27,9 +27,151 @@
  */
 #include "config.h"
 #include "WebDatabaseManager.h"
+#include "WebKitDLL.h"
 
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileSystem.h>
+#include <WebCore/COMPtr.h>
+
+using namespace WebCore;
+
+static COMPtr<WebDatabaseManager> s_sharedWebDatabaseManager;
+
+// WebDatabaseManager --------------------------------------------------------------
+WebDatabaseManager* WebDatabaseManager::createInstance()
+{
+    WebDatabaseManager* manager = new WebDatabaseManager();
+    manager->AddRef();
+    return manager;    
+}
+
+WebDatabaseManager::WebDatabaseManager()
+    : m_refCount(0)
+{
+    gClassCount++;
+}
+
+WebDatabaseManager::~WebDatabaseManager()
+{
+    gClassCount--;
+}
+
+// IUnknown ------------------------------------------------------------------------
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<WebDatabaseManager*>(this);
+    else if (IsEqualGUID(riid, IID_IWebDatabaseManager))
+        *ppvObject = static_cast<WebDatabaseManager*>(this);
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE WebDatabaseManager::AddRef()
+{
+    return ++m_refCount;
+}
+
+ULONG STDMETHODCALLTYPE WebDatabaseManager::Release()
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete this;
+
+    return newRef;
+}
+
+// IWebDatabaseManager -------------------------------------------------------------
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::sharedWebDatabaseManager( 
+    /* [retval][out] */ IWebDatabaseManager** result)
+{
+    if (!s_sharedWebDatabaseManager)
+        s_sharedWebDatabaseManager.adoptRef(WebDatabaseManager::createInstance());
+
+    return s_sharedWebDatabaseManager.copyRefTo(result);
+}
+
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::origins( 
+    /* [retval][out] */ IEnumVARIANT** result)
+{
+    if (!result)
+        return E_POINTER;
+
+    *result = 0;
+
+    if (this != s_sharedWebDatabaseManager)
+        return E_FAIL;
+
+    return E_NOTIMPL;
+}
+    
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin( 
+    /* [in] */ IWebSecurityOrigin* origin,
+    /* [retval][out] */ IEnumVARIANT** result)
+{
+    if (!origin || !result)
+        return E_POINTER;
+
+    *result = 0;
+
+    if (this != s_sharedWebDatabaseManager)
+        return E_FAIL;
+
+    return E_NOTIMPL;
+}
+    
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabaseWithOrigin( 
+    /* [in] */ BSTR* database,
+    /* [in] */ IWebSecurityOrigin* origin,
+    /* [retval][out] */ IPropertyBag** result)
+{
+    if (!database || !origin || !result)
+        return E_POINTER;
+
+    *result = 0;
+
+    if (this != s_sharedWebDatabaseManager)
+        return E_FAIL;
+
+    return E_NOTIMPL;
+}
+    
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteAllDatabases()
+{
+    if (this != s_sharedWebDatabaseManager)
+        return E_FAIL;
+
+    return E_NOTIMPL;
+}
+   
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabasesWithOrigin( 
+    /* [in] */ IWebSecurityOrigin* origin)
+{
+    if (!origin)
+        return E_POINTER;
+
+    if (this != s_sharedWebDatabaseManager)
+        return E_FAIL;
+
+    return E_NOTIMPL;
+}
+    
+HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabaseWithOrigin( 
+    /* [in] */ BSTR* databaseName,
+    /* [in] */ IWebSecurityOrigin* origin)
+{
+    if (!databaseName || !origin)
+        return E_POINTER;
+
+    if (this != s_sharedWebDatabaseManager)
+        return E_FAIL;
+
+    return E_NOTIMPL;
+}
 
 void WebKitSetWebDatabasesPathIfNecessary()
 {
