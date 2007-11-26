@@ -1,5 +1,14 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        Fix image diff link generation on Windows
+
+        Reviewed by Sam.
+
+        * Scripts/run-webkit-tests: Removed unnecessary and incorrect calls
+        to toURL.
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         Implement pixel dumping in Windows DRT
 
         Part of http://bugs.webkit.org/show_bug.cgi?id=16133
