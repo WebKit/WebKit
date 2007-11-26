@@ -27,11 +27,12 @@
 #include "function.h"
 
 #include "ExecState.h"
+#include "JSGlobalObject.h"
+#include "PropertyNameArray.h"
 #include "debugger.h"
 #include "dtoa.h"
 #include "function_object.h"
 #include "internal.h"
-#include "JSGlobalObject.h"
 #include "lexer.h"
 #include "nodes.h"
 #include "operations.h"
@@ -453,6 +454,15 @@ bool ActivationImp::deleteProperty(ExecState* exec, const Identifier& propertyNa
         return false;
 
     return JSObject::deleteProperty(exec, propertyName);
+}
+
+void ActivationImp::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+{
+    SymbolTable::const_iterator::Keys end = m_symbolTable->end().keys();
+    for (SymbolTable::const_iterator::Keys it = m_symbolTable->begin().keys(); it != end; ++it)
+        propertyNames.add(Identifier(*it));
+
+    JSObject::getPropertyNames(exec, propertyNames);
 }
 
 void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* value, int attr)

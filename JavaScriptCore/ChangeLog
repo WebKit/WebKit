@@ -1,3 +1,18 @@
+2007-11-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Kevin McCullough.
+        
+        Fixed <rdar://problem/5597937> REGRESSION (r27126): Drosera does not 
+        show variables (can't enumerate ActivationImp properties)
+        
+        Implemented a custome ActivationImp::getPropertyNames, since 
+        ActivationImp now uses a custom property storage mechanism for local
+        variables.
+
+        * kjs/function.cpp:
+        (KJS::ActivationImp::getPropertyNames):
+        * kjs/function.h:
+
 2007-11-26  Alp Toker  <alp@atoker.com>
 
         GTK+/Qt/Wx build fix for breakage introduced in r28039.
