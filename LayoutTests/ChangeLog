@@ -1,5 +1,9 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        * platform/win/Skipped: Add a known failure.
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         * platform/win/Skipped: Remove an unnecessary entry.
 
 2007-11-25  Mark Rowe  <mrowe@apple.com>
