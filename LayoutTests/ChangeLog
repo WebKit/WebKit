@@ -1,3 +1,14 @@
+2007-11-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/5609337> Making a float shorter does not remove it from the floating object list of a nested block it intruded into
+
+        * fast/dynamic/float-withdrawal-2.html: Added.
+        * platform/mac/fast/dynamic/float-withdrawal-2-expected.checksum: Added.
+        * platform/mac/fast/dynamic/float-withdrawal-2-expected.png: Added.
+        * platform/mac/fast/dynamic/float-withdrawal-2-expected.txt: Added.
+
 2007-11-25  Adam Roben  <aroben@apple.com>
 
         * platform/win/Skipped: Add a known failure.

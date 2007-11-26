@@ -1,3 +1,16 @@
+2007-11-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5609337> Making a float shorter does not remove it from the floating object list of a nested block it intruded into
+
+        Test: fast/dynamic/float-withdrawal-2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren): When a float may have
+        been withdrawn from a child, mark all descendants if necessary and not
+        just the child.
+
 2007-11-26  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
