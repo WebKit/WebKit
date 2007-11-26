@@ -110,7 +110,7 @@ RetainPtr<CGContextRef> getBitmapContextFromWebView()
     return RetainPtr<CGContextRef>(AdoptCF, CGBitmapContextCreate(screenCaptureBuffer, static_cast<size_t>(webViewSize.width), static_cast<size_t>(webViewSize.height), 8, static_cast<size_t>(webViewSize.width) * 4, sharedColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast));
 }
 
-void drawWebViewIntoContext(CGContextRef context)
+void paintWebView(CGContextRef context)
 {
     RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
 
@@ -128,7 +128,7 @@ void drawWebViewIntoContext(CGContextRef context)
     [NSGraphicsContext setCurrentContext:savedContext.get()];
 }
 
-void repaintWithVerticalSweep(CGContextRef context)
+void repaintWebView(CGContextRef context, bool horizontal)
 {
     RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
 
@@ -137,23 +137,14 @@ void repaintWithVerticalSweep(CGContextRef context)
 
     WebView *view = [mainFrame webView];
     NSSize webViewSize = [view frame].size;
-    for (NSRect line = NSMakeRect(0, 0, webViewSize.width, 1); line.origin.y < webViewSize.height; line.origin.y++)
-        [view displayRectIgnoringOpacity:line inContext:nsContext];
 
-    [NSGraphicsContext setCurrentContext:savedContext.get()];
-}
-
-void repaintWithHorizontalSweep(CGContextRef context)
-{
-    RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
-
-    NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO];
-    [NSGraphicsContext setCurrentContext:nsContext];
-
-    WebView *view = [mainFrame webView];
-    NSSize webViewSize = [view frame].size;
-    for (NSRect column = NSMakeRect(0, 0, 1, webViewSize.height); column.origin.x < webViewSize.width; column.origin.x++)
-        [view displayRectIgnoringOpacity:column inContext:nsContext];
+    if (horizontal) {
+        for (NSRect column = NSMakeRect(0, 0, 1, webViewSize.height); column.origin.x < webViewSize.width; column.origin.x++)
+            [view displayRectIgnoringOpacity:column inContext:nsContext];
+    } else {
+        for (NSRect line = NSMakeRect(0, 0, webViewSize.width, 1); line.origin.y < webViewSize.height; line.origin.y++)
+            [view displayRectIgnoringOpacity:line inContext:nsContext];
+    }
 
     [NSGraphicsContext setCurrentContext:savedContext.get()];
 }

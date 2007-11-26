@@ -1,5 +1,19 @@
 2007-11-26  Sam Weinig  <sam@webkit.org>
 
+        Cleanup names of painting and repainting functions.
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (drawSelectionRect): was drawSelectionRectIntoContext.
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        * DumpRenderTree/cg/PixelDumpSupportCG.h:
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (paintWebView): was drawWebViewIntoContext.
+        (repaintWebView): was repaintWithVerticalSweep and repaintWithHorizontalSweep.
+
+2007-11-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         - Leopard build fix

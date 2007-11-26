@@ -48,9 +48,8 @@ struct CGRect;
 RetainPtr<CGContextRef> getBitmapContextFromWebView();
 CGRect getSelectionRect();
 
-void drawWebViewIntoContext(CGContextRef);
-void repaintWithVerticalSweep(CGContextRef);
-void repaintWithHorizontalSweep(CGContextRef);
-void drawSelectionRectIntoContext(CGContextRef, CGRect);
+void paintWebView(CGContextRef);
+void repaintWebView(CGContextRef context, bool horizontal);
+void drawSelectionRect(CGContextRef, const CGRect&);
 
 #endif // PixelDumpSupportCG_h
