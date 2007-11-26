@@ -1,3 +1,14 @@
+2007-11-24  Laszlo Gombos  <laszlo.gombos@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Add printf format attribute to several functions. Use the the new WTF_ATTRIBUTE_PRINTF define.
+
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizer.h:
+        * platform/DeprecatedString.h:
+        * platform/PlatformString.h:
+
 2007-11-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

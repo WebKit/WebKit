@@ -385,11 +385,7 @@ public:
     DeprecatedString &setNum(unsigned long);
     DeprecatedString &setNum(double);
 
-    DeprecatedString& format(const char *, ...) 
-#if __GNUC__
-    __attribute__ ((format (printf, 2, 3)))
-#endif
-    ;
+    DeprecatedString& format(const char *, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
 
     DeprecatedString &append(const DeprecatedString &);
     DeprecatedString &append(DeprecatedChar);
