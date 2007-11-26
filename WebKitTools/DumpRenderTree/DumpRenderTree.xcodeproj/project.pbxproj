@@ -182,6 +182,9 @@
 		BCA18B790C9B08F100114369 /* ObjCPluginFunction.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ObjCPluginFunction.m; path = mac/ObjCPluginFunction.m; sourceTree = "<group>"; };
 		BCA18C0A0C9B59EF00114369 /* DumpRenderTreeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeMac.h; path = mac/DumpRenderTreeMac.h; sourceTree = "<group>"; };
 		BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTree.mm; path = mac/DumpRenderTree.mm; sourceTree = "<group>"; };
+		BCB281EE0CFA713D007E533E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = mac/Configurations/Base.xcconfig; sourceTree = "<group>"; };
+		BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DumpRenderTree.xcconfig; path = mac/Configurations/DumpRenderTree.xcconfig; sourceTree = "<group>"; };
+		BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DebugRelease.xcconfig; path = mac/Configurations/DebugRelease.xcconfig; sourceTree = "<group>"; };
 		BCF6C64F0C98E9C000AC063E /* GCController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = GCController.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -224,11 +227,9 @@
 		08FB7794FE84155DC02AAC07 /* DumpRenderTree */ = {
 			isa = PBXGroup;
 			children = (
-				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				1422A2750AF6F4BD00E1A883 /* Delegates */,
 				1422A2690AF6F45200E1A883 /* Controllers */,
-				9345229B0BD12B2C0086EDA0 /* Resources */,
-				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
+				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */,
 				BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */,
 				A8B91BF70CF522B4008F91FF /* CheckedMalloc.cpp */,
@@ -238,15 +239,17 @@
 				A8B91BF40CF522B4008F91FF /* PixelDumpSupport.h */,
 				A8B91BF60CF522B4008F91FF /* PixelDumpSupport.mm */,
 				BCA18C0A0C9B59EF00114369 /* DumpRenderTreeMac.h */,
-				A8B91AD20CF3B305008F91FF /* AppKit Overrides */,
 				BCA18B730C9B08F100114369 /* DumpRenderTreeDraggingInfo.h */,
 				BCA18B740C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm */,
 				BCA18B750C9B08F100114369 /* ImageDiff.m */,
-				A8B91AC40CF3B170008F91FF /* ObjCPlugin */,
 				BC9D90210C97472D0099A4A3 /* WorkQueue.cpp */,
 				BC9D90220C97472E0099A4A3 /* WorkQueue.h */,
 				BC9D90230C97472E0099A4A3 /* WorkQueueItem.h */,
-				BCA18B250C9B015C00114369 /* WorkQueueItemMac.mm */,
+				A8B91AD20CF3B305008F91FF /* AppKit Overrides */,
+				A8B91AC40CF3B170008F91FF /* ObjCPlugin */,
+				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
+				9345229B0BD12B2C0086EDA0 /* Resources */,
+				BCB281ED0CFA711D007E533E /* Configurations */,
 				A803FF6409CAACC1009B2A37 /* Frameworks */,
 				9340995508540CAF007F3BC8 /* Products */,
 			);
@@ -339,6 +342,7 @@
 		A8B91AC40CF3B170008F91FF /* ObjCPlugin */ = {
 			isa = PBXGroup;
 			children = (
+				BCA18B250C9B015C00114369 /* WorkQueueItemMac.mm */,
 				BCA18B760C9B08F100114369 /* ObjCPlugin.h */,
 				BCA18B770C9B08F100114369 /* ObjCPlugin.m */,
 				BCA18B780C9B08F100114369 /* ObjCPluginFunction.h */,
@@ -356,6 +360,16 @@
 				A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */,
 			);
 			name = "AppKit Overrides";
+			sourceTree = "<group>";
+		};
+		BCB281ED0CFA711D007E533E /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				BCB281EE0CFA713D007E533E /* Base.xcconfig */,
+				BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */,
+				BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */,
+			);
+			name = Configurations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -620,82 +634,30 @@
 		};
 		149C29C008902C6D008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
-				OTHER_LDFLAGS = (
-					"-sectcreate",
-					__DATA,
-					Ahem,
-					qt/fonts/AHEM____.TTF,
-				);
-				PRODUCT_NAME = DumpRenderTree;
-				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 			};
 			name = Debug;
 		};
 		149C29C108902C6D008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
-				OTHER_LDFLAGS = (
-					"-sectcreate",
-					__DATA,
-					Ahem,
-					qt/fonts/AHEM____.TTF,
-				);
-				PRODUCT_NAME = DumpRenderTree;
-				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 			};
 			name = Release;
 		};
 		149C29C408902C6D008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/Quartz.framework/Frameworks;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ForwardingHeaders;
-				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_$(MAC_OS_X_VERSION_MAJOR))";
-				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
-				PREBINDING = NO;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wno-unused-parameter",
-				);
 			};
 			name = Debug;
 		};
 		149C29C508902C6D008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/Quartz.framework/Frameworks;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ForwardingHeaders;
-				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_$(MAC_OS_X_VERSION_MAJOR))";
-				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
-				PREBINDING = NO;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wno-unused-parameter",
-				);
 			};
 			name = Release;
 		};

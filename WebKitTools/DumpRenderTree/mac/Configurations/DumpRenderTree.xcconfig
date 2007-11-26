@@ -1,0 +1,5 @@
+OTHER_LDFLAGS = -sectcreate __DATA Ahem qt/fonts/AHEM____.TTF
+PRODUCT_NAME = DumpRenderTree
+GCC_ENABLE_OBJC_EXCEPTIONS = YES
+GCC_PREFIX_HEADER = DumpRenderTreePrefix.h
+VALID_ARCHS = ppc7400 ppc970 i386 ppc

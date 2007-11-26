@@ -1,5 +1,17 @@
 2007-11-25  Sam Weinig  <sam@webkit.org>
 
+        Convert DumpRenderTree to ues .xcconfig files.
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations: Added.
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Added.
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig: Added.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig: Added.
+
+2007-11-25  Sam Weinig  <sam@webkit.org>
+
         Add ForwardingHeaders to wtf for DumpRenderTree.
 
         Reviewed by Mark Rowe.
