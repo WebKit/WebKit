@@ -1,3 +1,19 @@
+2007-11-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Bug 15864: Replace merge-changelog with resolve-ChangeLogs
+        <http://bugs.webkit.org/show_bug.cgi?id=15864>
+
+        Reviewed by Adam.
+
+        Roll functionality of merge-changelog into resolve-ChangeLogs
+        script.  The script now checks for ChangeLog.rej and
+        ChangeLog.orig files first.  If it finds them, it uses the
+        ChangeLog.rej file as a patch (in old contextual diff format) to
+        apply with --fuzz=3.
+
+        * Scripts/merge-changelog: Removed.
+        * Scripts/resolve-ChangeLogs: Handle traditional rejected patches.
+
 2007-11-25  Sam Weinig  <sam@webkit.org>
 
         Add .xcconfig files for the ImageDiff and TestNetscapePlugIn targets of the DumpRenderTree.

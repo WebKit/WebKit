@@ -79,8 +79,10 @@ for my $file (@changeLogFiles) {
         next;
     }
     if (mergeChanges($fileMine, $fileOlder, $fileNewer)) {
-        unlink($file);
-        rename($fileNewer, $file) || die;
+        if ($file ne $fileNewer) {
+            unlink($file);
+            rename($fileNewer, $file) || die;
+        }
         unlink($fileMine, $fileOlder);
         resolveConflict($file);
         showStatus($file, 1);
@@ -99,6 +101,10 @@ sub conflictFiles($)
     my $fileMine;
     my $fileOlder;
     my $fileNewer;
+
+    if (-e $file && -e "$file.orig" && -e "$file.rej") {
+        return ("$file.rej", "$file.orig", $file);
+    }
 
     if (isSVN()) {
         open STAT, "-|", $SVN, "status", $file || die;
@@ -215,11 +221,22 @@ sub mergeChanges($$$)
 {
     my ($fileMine, $fileOlder, $fileNewer) = @_;
 
+    my $traditionalReject = $fileMine =~ /\.rej$/ ? 1 : 0;
+
     local $/ = undef;
 
-    open(DIFF, "diff -u $fileOlder $fileMine |") || die;
-    my $patch = <DIFF>;
-    close(DIFF);
+    my $patch;
+    if ($traditionalReject) {
+        open(DIFF, "<", $fileMine);
+        $patch = <DIFF>;
+        close(DIFF);
+        rename($fileMine, "$fileMine.save");
+        rename($fileOlder, "$fileOlder.save");
+    } else {
+        open(DIFF, "-|", qw(diff -u), $fileOlder, $fileMine) || die;
+        $patch = <DIFF>;
+        close(DIFF);
+    }
 
     unlink("${fileNewer}.orig");
     unlink("${fileNewer}.rej");
@@ -228,17 +245,25 @@ sub mergeChanges($$$)
     print PATCH fixChangeLogPatch($patch);
     close(PATCH);
 
+    my $result;
+
     # Refuse to merge the patch if it did not apply cleanly
     if (-e "${fileNewer}.rej") {
         unlink("${fileNewer}.rej");
         unlink($fileNewer);
         rename("${fileNewer}.orig", $fileNewer);
-        return 0;
+        $result = 0;
+    } else {
+        unlink("${fileNewer}.orig");
+        $result = 1;
     }
 
-    unlink("${fileNewer}.orig");
+    if ($traditionalReject) {
+        rename("$fileMine.save", $fileMine);
+        rename("$fileOlder.save", $fileOlder);
+    }
 
-    return 1;
+    return $result;
 }
 
 sub resolveConflict($)
