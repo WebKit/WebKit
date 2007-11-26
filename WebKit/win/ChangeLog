@@ -1,3 +1,14 @@
+2007-11-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Add IWebDatabaseManager and IWebSecurityOrigin interfaces.
+        
+        * Interfaces/IWebDatabaseManager.idl: Added.
+        * Interfaces/IWebSecurityOrigin.idl: Added.
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj:
+
 2007-11-26  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Jon Honeycutt.

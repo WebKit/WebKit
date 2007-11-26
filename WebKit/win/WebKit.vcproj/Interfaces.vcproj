@@ -628,6 +628,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Interfaces\IWebDatabaseManager.idl"
+			>
+		</File>
+		<File
 			RelativePath="..\Interfaces\IWebDataSource.idl"
 			>
 		</File>
@@ -777,6 +781,10 @@
 		</File>
 		<File
 			RelativePath="..\Interfaces\IWebScrollBarPrivate.idl"
+			>
+		</File>
+		<File
+			RelativePath="..\Interfaces\IWebSecurityOrigin.idl"
 			>
 		</File>
 		<File

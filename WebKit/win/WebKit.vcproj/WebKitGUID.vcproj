@@ -602,6 +602,10 @@
 			>
 		</File>
 		<File
+			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebDatabaseManager_i.c"
+			>
+		</File>
+		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebDataSource_i.c"
 			>
 		</File>
@@ -751,6 +755,10 @@
 		</File>
 		<File
 			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebScrollBarPrivate_i.c"
+			>
+		</File>
+		<File
+			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\IWebSecurityOrigin_i.c"
 			>
 		</File>
 		<File
