@@ -2046,23 +2046,19 @@ void WebFrame::committedLoad(DocumentLoader* loader, const char* data, int lengt
 
 void WebFrame::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& mimeType, const ResourceRequest& request)
 {
-    COMPtr<IWebPolicyDelegate> policyDelegate;
-    if (SUCCEEDED(d->webView->policyDelegate(&policyDelegate))) {
-        COMPtr<IWebURLRequest> urlRequest;
-        urlRequest.adoptRef(WebMutableURLRequest::createInstance(request));
-        if (SUCCEEDED(policyDelegate->decidePolicyForMIMEType(d->webView, BString(mimeType), urlRequest.get(), this, setUpPolicyListener(function).get())))
-            return;
-    }
-
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
 
-    // FIXME: This is a stopgap default implementation to tide us over until
-    // <rdar://4911042/> is taken care of
-    if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        (coreFrame->loader()->*function)(PolicyUse);
-    else
-        (coreFrame->loader()->*function)(PolicyDownload);
+    COMPtr<IWebPolicyDelegate> policyDelegate;
+    if (FAILED(d->webView->policyDelegate(&policyDelegate)))
+        policyDelegate = DefaultPolicyDelegate::sharedInstance();
+
+    COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
+
+    if (SUCCEEDED(policyDelegate->decidePolicyForMIMEType(d->webView, BString(mimeType), urlRequest.get(), this, setUpPolicyListener(function).get())))
+        return;
+
+    (coreFrame->loader()->*function)(PolicyUse);
 }
 
 void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, const String& frameName)
@@ -2071,17 +2067,15 @@ void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction functi
     ASSERT(coreFrame);
 
     COMPtr<IWebPolicyDelegate> policyDelegate;
-    if (SUCCEEDED(d->webView->policyDelegate(&policyDelegate))) {
-        COMPtr<IWebURLRequest> urlRequest;
-        urlRequest.adoptRef(WebMutableURLRequest::createInstance(request));
-        COMPtr<WebActionPropertyBag> actionInformation;
-        actionInformation.adoptRef(WebActionPropertyBag::createInstance(action, coreFrame));
+    if (FAILED(d->webView->policyDelegate(&policyDelegate)))
+        policyDelegate = DefaultPolicyDelegate::sharedInstance();
 
-        if (SUCCEEDED(policyDelegate->decidePolicyForNewWindowAction(d->webView, actionInformation.get(), urlRequest.get(), BString(frameName), setUpPolicyListener(function).get())))
-            return;
-    }
+    COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
+    COMPtr<WebActionPropertyBag> actionInformation(AdoptCOM, WebActionPropertyBag::createInstance(action, coreFrame));
 
-    // FIXME: Add a sane default implementation
+    if (SUCCEEDED(policyDelegate->decidePolicyForNewWindowAction(d->webView, actionInformation.get(), urlRequest.get(), BString(frameName), setUpPolicyListener(function).get())))
+        return;
+
     (coreFrame->loader()->*function)(PolicyUse);
 }
 
@@ -2106,11 +2100,11 @@ void WebFrame::dispatchDecidePolicyForNavigationAction(FramePolicyFunction funct
 void WebFrame::dispatchUnableToImplementPolicy(const ResourceError& error)
 {
     COMPtr<IWebPolicyDelegate> policyDelegate;
-    if (SUCCEEDED(d->webView->policyDelegate(&policyDelegate))) {
-        COMPtr<IWebError> webError;
-        webError.adoptRef(WebError::createInstance(error));
-        policyDelegate->unableToImplementPolicyWithError(d->webView, webError.get(), this);
-    }
+    if (FAILED(d->webView->policyDelegate(&policyDelegate)))
+        policyDelegate = DefaultPolicyDelegate::sharedInstance();
+
+    COMPtr<IWebError> webError(AdoptCOM, WebError::createInstance(error));
+    policyDelegate->unableToImplementPolicyWithError(d->webView, webError.get(), this);
 }
 
 void WebFrame::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest&, const ResourceResponse& response)

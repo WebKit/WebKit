@@ -1,3 +1,15 @@
+2007-11-26  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fall back to the default Policy Delegate in these functions, 
+        as is already done in dispatchDecidePolicyForNavigationAction
+
+        * WebFrame.cpp:
+        (WebFrame::dispatchDecidePolicyForMIMEType):
+        (WebFrame::dispatchDecidePolicyForNewWindowAction):
+        (WebFrame::dispatchUnableToImplementPolicy):
+
 2007-11-25  Adam Roben  <aroben@apple.com>
 
         Fix a leak pointed out by Alexey
