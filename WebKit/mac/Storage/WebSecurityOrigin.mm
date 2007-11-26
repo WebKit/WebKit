@@ -34,51 +34,6 @@
 
 using namespace WebCore;
 
-@interface WebSecurityOriginPrivate : NSObject {
-@public
-    WebCoreSecurityOriginData* securityOriginData;
-}
-- (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain port:(unsigned short)port;
-- (id)initWithWebCoreSecurityOrigin:(WebCoreSecurityOriginData *)coreOrigin;
-@end
-
-@implementation WebSecurityOriginPrivate
-
-- (id)initWithProtocol:(NSString *)theProtocol domain:(NSString *)theDomain port:(unsigned short)thePort
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    
-    securityOriginData = new WebCoreSecurityOriginData(theProtocol, theDomain, thePort);
-    return self;
-}
-
-- (id)initWithWebCoreSecurityOrigin:(WebCoreSecurityOriginData *)coreOrigin
-{
-    ASSERT(coreOrigin);
-    self = [super init];
-    if (!self)
-        return nil;
-        
-    securityOriginData = new WebCoreSecurityOriginData(*coreOrigin);
-    return self;
-}
-
-- (void)finalize
-{
-    delete securityOriginData;
-    [super finalize];
-}
-
-- (void)dealloc
-{
-    delete securityOriginData;
-    [super dealloc];
-}
-
-@end
-
 @implementation WebSecurityOrigin
 
 - (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain
@@ -92,34 +47,35 @@ using namespace WebCore;
     if (!self)
         return nil;
     
-    _private = [[WebSecurityOriginPrivate alloc] initWithProtocol:protocol domain:domain port:port];
+    WebCoreSecurityOriginData *originData = new WebCoreSecurityOriginData(protocol, domain, port);  
+    _private = reinterpret_cast<WebSecurityOriginPrivate*>(originData);
 
     return self;
 }
 
 - (NSString*)protocol
 {
-    return [[(NSString *)(_private->securityOriginData->protocol()) retain] autorelease];
+    return reinterpret_cast<WebCoreSecurityOriginData*>(_private)->protocol();
 }
 
 - (NSString*)domain
 {
-    return [[(NSString *)(_private->securityOriginData->host()) retain] autorelease];
+    return reinterpret_cast<WebCoreSecurityOriginData*>(_private)->host();
 }
 
 - (unsigned short)port
 {
-    return _private->securityOriginData->port();
+    return reinterpret_cast<WebCoreSecurityOriginData*>(_private)->port();
 }
 
 - (unsigned long long)usage
 {
-    return DatabaseTracker::tracker().usageForOrigin(*_private->securityOriginData);
+    return DatabaseTracker::tracker().usageForOrigin(*reinterpret_cast<WebCoreSecurityOriginData*>(_private));
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseTracker::tracker().quotaForOrigin(*_private->securityOriginData);
+    return DatabaseTracker::tracker().quotaForOrigin(*reinterpret_cast<WebCoreSecurityOriginData*>(_private));
 }
 
 // Sets the storage quota (in bytes)
@@ -127,13 +83,19 @@ using namespace WebCore;
 // This will simply prevent new data from being added to databases in that origin
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseTracker::tracker().setQuota(*_private->securityOriginData, quota);
+    DatabaseTracker::tracker().setQuota(*reinterpret_cast<WebCoreSecurityOriginData*>(_private), quota);
 }
 
 - (void)dealloc
 {
-    [_private release];
+    delete reinterpret_cast<WebCoreSecurityOriginData*>(_private);
     [super dealloc];
+}
+
+- (void)finalize
+{
+    delete reinterpret_cast<WebCoreSecurityOriginData*>(_private);
+    [super finalize];
 }
 
 @end
@@ -146,14 +108,16 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-        
-    _private = [[WebSecurityOriginPrivate alloc] initWithWebCoreSecurityOrigin:securityOriginData];
+
+    WebCoreSecurityOriginData *originData = new WebCoreSecurityOriginData(*securityOriginData);  
+    _private = reinterpret_cast<WebSecurityOriginPrivate*>(originData);
+
     return self;
 }
 
-- (WebCoreSecurityOriginData)_core
+- (WebCoreSecurityOriginData *)_core
 {
-    return WebCoreSecurityOriginData(*_private->securityOriginData);
+    return reinterpret_cast<WebCoreSecurityOriginData*>(_private);
 }
 
 @end

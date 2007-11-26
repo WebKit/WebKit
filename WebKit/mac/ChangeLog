@@ -1,3 +1,30 @@
+2007-11-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Get rid of the WebSecurityOriginPrivate object and store 
+        the WebCore::SecurityOriginData pointer in the _private field of
+        the WebSecurityOrigin object instead.
+        
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager databasesWithOrigin:]):
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]):
+        (-[WebDatabaseManager deleteDatabasesWithOrigin:]):
+        (-[WebDatabaseManager deleteDatabase:withOrigin:]):
+        * Storage/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin initWithProtocol:domain:port:]):
+        (-[WebSecurityOrigin protocol]):
+        (-[WebSecurityOrigin domain]):
+        (-[WebSecurityOrigin port]):
+        (-[WebSecurityOrigin usage]):
+        (-[WebSecurityOrigin quota]):
+        (-[WebSecurityOrigin setQuota:]):
+        (-[WebSecurityOrigin dealloc]):
+        (-[WebSecurityOrigin finalize]):
+        (-[WebSecurityOrigin _initWithWebCoreSecurityOriginData:]):
+        (-[WebSecurityOrigin _core]):
+        * Storage/WebSecurityOriginInternal.h:
+
 2007-11-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.

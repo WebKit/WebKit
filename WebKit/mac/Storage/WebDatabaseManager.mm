@@ -72,7 +72,7 @@ const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModif
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin
 {
     Vector<String> nameVector;
-    if (!DatabaseTracker::tracker().databaseNamesForOrigin([origin _core], nameVector))
+    if (!DatabaseTracker::tracker().databaseNamesForOrigin(*[origin _core], nameVector))
         return nil;
     
     NSMutableArray *names = [[NSMutableArray alloc] initWithCapacity:nameVector.size()];
@@ -87,7 +87,7 @@ const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModif
 {
     static id keys[3] = {WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey};
     
-    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, [origin _core]);
+    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, *[origin _core]);
     if (!details.isValid())
         return nil;
         
@@ -106,17 +106,14 @@ const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModif
 
 - (void)deleteDatabasesWithOrigin:(WebSecurityOrigin *)origin
 {
-    SecurityOriginData coreOrigin([origin protocol], [origin domain], [origin port]);
-
-    DatabaseTracker::tracker().deleteDatabasesWithOrigin(coreOrigin);
+    DatabaseTracker::tracker().deleteDatabasesWithOrigin(*[origin _core]);
 }
 
 - (void)deleteDatabase:(NSString *)databaseName withOrigin:(WebSecurityOrigin *)origin
 {
-    SecurityOriginData coreOrigin([origin protocol], [origin domain], [origin port]);
-    
-    DatabaseTracker::tracker().deleteDatabase(coreOrigin, databaseName);
+    DatabaseTracker::tracker().deleteDatabase(*[origin _core], databaseName);
 }
+
 @end
 
 void WebKitInitializeDatabasesIfNecessary()
