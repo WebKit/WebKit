@@ -137,7 +137,7 @@ my $didChangeRegressionTests = 0;
 
 generateFileList(@changed_files, @conflict_files, %function_lists);
 
-if (!@changed_files && !@conflict_files || !%function_lists) {
+if (!@changed_files && !@conflict_files && !keys %function_lists) {
     print STDERR "  No changes found.\n";
     exit 1;
 }

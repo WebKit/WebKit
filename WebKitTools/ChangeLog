@@ -1,3 +1,12 @@
+2007-11-25  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Bug 16052: prepare-ChangeLog doesn't report deleted files
+        <http://bugs.webkit.org/show_bug.cgi?id=16052>
+
+        Reviewed by Sam.
+
+        * Scripts/prepare-ChangeLog: Fixed logic that checks for removed files.
+
 2007-11-25  David Kilzer  <ddkilzer@webkit.org>
 
         Bug 15864: Replace merge-changelog with resolve-ChangeLogs
