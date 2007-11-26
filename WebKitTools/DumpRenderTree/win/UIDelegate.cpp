@@ -107,7 +107,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptAlertPanelWithMessage(
         /* [in] */ IWebView* /*sender*/,
         /* [in] */ BSTR message)
 {
-    wprintf(L"ALERT: %s\n", message ? message : L"");
+    printf("ALERT: %S\n", message ? message : L"");
 
     return S_OK;
 }
@@ -117,7 +117,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptConfirmPanelWithMessage(
     /* [in] */ BSTR message,
     /* [retval][out] */ BOOL* result)
 {
-    wprintf(L"CONFIRM: %s\n", message ? message : L"");
+    printf("CONFIRM: %S\n", message ? message : L"");
     *result = TRUE;
 
     return S_OK;
@@ -129,7 +129,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptTextInputPanelWithPrompt(
     /* [in] */ BSTR defaultText,
     /* [retval][out] */ BSTR *result)
 {
-    wprintf(L"PROMPT: %s, default text: %s\n", message ? message : L"", defaultText ? defaultText : L"");
+    printf("PROMPT: %S, default text: %S\n", message ? message : L"", defaultText ? defaultText : L"");
     *result = SysAllocString(defaultText);
 
     return S_OK;
@@ -142,7 +142,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewAddMessageToConsole(
     /* [in] */ BSTR url,
     /* [in] */ BOOL isError)
 {
-    wprintf(L"CONSOLE MESSAGE: line %d: %s\n", lineNumber, message ? message : L"");
+    printf("CONSOLE MESSAGE: line %d: %S\n", lineNumber, message ? message : L"");
 
     return S_OK;
 }

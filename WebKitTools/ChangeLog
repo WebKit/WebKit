@@ -1,5 +1,22 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        Fix some test failures caused by r28019
+
+        Now that stdout is in binary mode, we need to always use printf
+        instead of wprintf. Otherwise we'll end up with UTF-16 characters in
+        the output.
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/win/UIDelegate.cpp: Replaced uses of wprintf with
+        printf.
+        (UIDelegate::runJavaScriptAlertPanelWithMessage):
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage):
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt):
+        (UIDelegate::webViewAddMessageToConsole):
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         Set the font smoothing preference in DRT
 
         This makes the pixel results on Windows closer to the Mac results.
