@@ -50,4 +50,4 @@ export XDSTROOT
 export WEBCORE=$XSRCROOT
 export WEBKIT_OUTPUT=$XDSTROOT
 
-make -f "$WEBCORE/WebCore.vcproj/MigrateIDLandScripts.make" -j ${NUMCPUS} || exit 1
+make -f "$WEBCORE/WebCore.vcproj/MigrateIDLandScripts" -j ${NUMCPUS} || exit 1

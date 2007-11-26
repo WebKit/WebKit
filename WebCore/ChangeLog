@@ -1,3 +1,11 @@
+2007-11-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * WebCore.vcproj/MigrateIDLAndScripts: Copied from WebCore.vcproj/MigrateIDLAndScripts.make.
+        * WebCore.vcproj/MigrateIDLAndScripts.make: Removed.
+        * WebCore.vcproj/migrate-idls.sh:
+
 2007-11-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders (and typo lovingly found by Adam)
