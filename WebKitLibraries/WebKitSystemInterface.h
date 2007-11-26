@@ -148,6 +148,8 @@ NSEvent *WKCreateNSEventWithCarbonClickEvent(EventRef inEvent, WindowRef windowR
 CGContextRef WKNSWindowOverrideCGContext(NSWindow *, CGContextRef);
 void WKNSWindowRestoreCGContext(NSWindow *, CGContextRef);
 
+void WKNSWindowMakeBottomCornersSquare(NSWindow *);
+
 BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
 NSString* WKPathFromFont(NSFont *font);
 

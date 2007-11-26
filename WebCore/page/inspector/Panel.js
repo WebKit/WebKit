@@ -116,7 +116,7 @@ WebInspector.Panel.prototype = {
 
     attach: function()
     {
-        document.getElementById("main").appendChild(this.element);
+        document.getElementById("panels").appendChild(this.element);
     },
 
     detach: function()

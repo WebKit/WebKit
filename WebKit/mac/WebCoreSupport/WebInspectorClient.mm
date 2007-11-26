@@ -33,6 +33,7 @@
 #import "WebLocalizableStrings.h"
 #import "WebNodeHighlight.h"
 #import "WebPreferences.h"
+#import "WebTypesInternal.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
@@ -44,6 +45,8 @@
 
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
+
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -218,10 +221,22 @@ void WebInspectorClient::updateWindowTitle() const
     if (window)
         return window;
 
-    window = [[NSWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0)
-        styleMask:(NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask) backing:NSBackingStoreBuffered defer:YES];
+    NSUInteger styleMask = (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask);
+
+#ifndef BUILDING_ON_TIGER
+    styleMask |= NSTexturedBackgroundWindowMask;
+#endif
+
+    window = [[NSWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:YES];
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(400.0, 400.0)];
+
+#ifndef BUILDING_ON_TIGER
+    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
+    [window setContentBorderThickness:40. forEdge:NSMaxYEdge];
+
+    WKNSWindowMakeBottomCornersSquare(window);
+#endif
 
     [self setWindow:window];
     [window release];

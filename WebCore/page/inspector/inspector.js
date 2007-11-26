@@ -33,8 +33,7 @@ var Preferences = {
     maxInlineTextChildLength: 80,
     maxTextSearchResultLength: 80,
     showInheritedComputedStyleProperties: false,
-    showMissingLocalizedStrings: false,
-    toolbarHeight: 28
+    showMissingLocalizedStrings: false
 }
 
 var WebInspector = {
@@ -191,27 +190,41 @@ var WebInspector = {
         var searchResultsResizer = document.getElementById("searchResultsResizer");
 
         if (x) {
-            searchResultsResizer.style.display = null;
+            resultsContainer.removeStyleClass("hidden");
+            searchResultsResizer.removeStyleClass("hidden");
+
             var animations = [
-                {element: resultsContainer, end: {top: Preferences.toolbarHeight}},
-                {element: searchResultsResizer, end: {top: WebInspector.searchResultsHeight + Preferences.toolbarHeight - 2}},
-                {element: document.getElementById("main"), end: {top: WebInspector.searchResultsHeight + Preferences.toolbarHeight + 1}}
+                {element: resultsContainer, end: {top: 0}},
+                {element: searchResultsResizer, end: {top: WebInspector.searchResultsHeight - 3}},
+                {element: document.getElementById("panels"), end: {top: WebInspector.searchResultsHeight}}
             ];
+
             WebInspector.animateStyle(animations, 250);
         } else {
-            searchResultsResizer.style.display = "none";
+            searchResultsResizer.addStyleClass("hidden");
+
             var animations = [
-                {element: resultsContainer, end: {top: Preferences.toolbarHeight - WebInspector.searchResultsHeight - 1}},
+                {element: resultsContainer, end: {top: -WebInspector.searchResultsHeight}},
                 {element: searchResultsResizer, end: {top: 0}},
-                {element: document.getElementById("main"), end: {top: Preferences.toolbarHeight}}
+                {element: document.getElementById("panels"), end: {top: 0}}
             ];
-            WebInspector.animateStyle(animations, 250, function() { resultsContainer.removeChildren(); delete this.searchResultsTree; });
+
+            var animationFinished = function()
+            {
+                resultsContainer.addStyleClass("hidden");
+                resultsContainer.removeChildren();
+                delete this.searchResultsTree;
+            };
+
+            WebInspector.animateStyle(animations, 250, animationFinished);
         }
     }
 }
 
 WebInspector.loaded = function()
 {
+    document.body.addStyleClass("platform-" + InspectorController.platform());
+
     this.fileOutline = new TreeOutline(document.getElementById("list"));
     this.fileOutline.expandTreeElementsWhenArrowing = true;
 
@@ -554,8 +567,6 @@ WebInspector.sidebarResizerDrag = function(event)
         document.getElementById("sidebarResizer").style.left = (newWidth - 3) + "px";
         document.getElementById("main").style.left = newWidth + "px";
         document.getElementById("toolbarButtons").style.left = newWidth + "px";
-        document.getElementById("searchResults").style.left = newWidth + "px";
-        document.getElementById("searchResultsResizer").style.left = newWidth + "px";
 
         if (WebInspector.currentPanel && WebInspector.currentPanel.resize)
             WebInspector.currentPanel.resize();
@@ -578,16 +589,16 @@ WebInspector.searchResultsResizerDrag = function(event)
 {
     var searchResults = document.getElementById("searchResults");
     if (searchResults.dragging == true) {
-        var y = event.clientY;
+        var y = event.clientY - document.getElementById("main").offsetTop;
         var newHeight = Number.constrain(y, 100, window.innerHeight - 100);
 
         if (y == newHeight)
             searchResults.dragLastY = y;
 
-        WebInspector.searchResultsHeight = newHeight - Preferences.toolbarHeight;
+        WebInspector.searchResultsHeight = newHeight;
         searchResults.style.height = WebInspector.searchResultsHeight + "px";
-        document.getElementById("main").style.top = (newHeight + 1) + "px";
-        document.getElementById("searchResultsResizer").style.top = (newHeight - 2) + "px";
+        document.getElementById("panels").style.top = newHeight + "px";
+        document.getElementById("searchResultsResizer").style.top = (newHeight - 3) + "px";
         event.preventDefault();
     }
 }

@@ -1,3 +1,16 @@
+2007-11-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 16137: Web Inspector window on Leopard should have a unified toolbar and window title
+        http://bugs.webkit.org/show_bug.cgi?id=16137
+
+        Add a new function to make bottom window corners square for textured windows.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceTiger.a:
+        * libWebKitSystemInterfaceLeopard.a:
+
 2007-11-23  Adam Roben  <aroben@apple.com>
 
         Add wkSetPatternPhaseInUserSpace to WebKitSystemInterface on Windows

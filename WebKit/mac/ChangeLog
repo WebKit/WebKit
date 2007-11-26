@@ -1,3 +1,18 @@
+2007-11-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 16137: Web Inspector window on Leopard should have a unified toolbar and window title
+        http://bugs.webkit.org/show_bug.cgi?id=16137
+
+        Create the Web Inspector window with the textured style. Set the content border
+        thickness for the top of the window or the height of the toolbar. Also make the
+        window's bottom corners square, since a normal textured window normally has
+        rounded bottom corners.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController window]):
+
 2007-11-24  Mark Rowe  <mrowe@apple.com>
 
         Tiger build fix.

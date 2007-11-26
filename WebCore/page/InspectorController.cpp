@@ -61,6 +61,7 @@
 #include "kjs_window.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 
 namespace WebCore {
@@ -543,6 +544,32 @@ static JSValueRef localizedStrings(JSContextRef ctx, JSObjectRef /*function*/, J
     return urlValue;
 }
 
+static JSValueRef platform(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
+{
+#if PLATFORM(MAC)
+#ifdef BUILDING_ON_TIGER
+    static const String platform = "mac-tiger";
+#else
+    static const String platform = "mac-leopard";
+#endif
+#elif PLATFORM(WIN_OS)
+    static const String platform = "windows";
+#elif PLATFORM(QT)
+    static const String platform = "qt";
+#elif PLATFORM(GTK)
+    static const String platform = "gtk";
+#elif PLATFORM(WX)
+    static const String platform = "wx";
+#else
+    static const String platform = "unknown";
+#endif
+
+    JSRetainPtr<JSStringRef> platformString(Adopt, JSStringCreateWithCharacters(platform.characters(), platform.length()));
+    JSValueRef platformValue = JSValueMakeString(ctx, platformString.get());
+
+    return platformValue;
+}
+
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
@@ -734,6 +761,7 @@ void InspectorController::windowScriptObjectAvailable()
 #endif
         { "inspectedWindow", inspectedWindow, kJSPropertyAttributeNone },
         { "localizedStringsURL", localizedStrings, kJSPropertyAttributeNone },
+        { "platform", platform, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 

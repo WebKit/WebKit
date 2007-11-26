@@ -1,3 +1,27 @@
+2007-11-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 16137: Web Inspector window on Leopard should have a unified toolbar and window title
+        http://bugs.webkit.org/show_bug.cgi?id=16137
+
+        On Leopard the toolbar background will be transparent, to allow the
+        window background to show through the transparent WebView. The 
+        search results divs needed to move inside the "main" div, so they
+        would be clipped and not show where the toolbar is.
+
+        * page/InspectorController.cpp:
+        (WebCore::platform): Return a string for which platform we are.
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        Define the platform function on the JavaScript class.
+        * page/inspector/Panel.js: Add panels to the panels div.
+        * page/inspector/inspector.css: On the Leopard platform make
+        the toolbar background transparent so the window background shows.
+        * page/inspector/inspector.html: Add a panels div and move search
+        result divs inside the main div.
+        * page/inspector/inspector.js: Tweak the resize code to acount for
+        the search results divs moving inside the main div.
+
 2007-11-25  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Maciej Stachowiak.

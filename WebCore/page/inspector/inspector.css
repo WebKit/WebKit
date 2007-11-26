@@ -58,7 +58,7 @@ iframe, a img {
     left: 0;
     right: 0;
     height: 28px;
-    background: rgb(245, 245, 250);
+    background-color: rgb(245, 245, 250);
     background-image: url(Images/toolbarBackground.png);
     background-repeat: repeat-x;
     background-position: top;
@@ -66,6 +66,10 @@ iframe, a img {
     padding: 2px 8px;
     -webkit-box-sizing: border-box;
     -webkit-background-size: auto 135%;
+}
+
+.platform-mac-leopard #toolbar {
+    background: transparent !important;
 }
 
 body.inactive #toolbar {
@@ -237,8 +241,8 @@ body.inactive #toolbar .split-button-divider {
 
 #searchResults {
     position: absolute;
-    top: -73px;
-    left: 200px;
+    top: -100px;
+    left: 0;
     right: 0;
     height: 100px;
     z-index: -1;
@@ -246,6 +250,7 @@ body.inactive #toolbar .split-button-divider {
     border-bottom: 1px solid rgb(180, 180, 180);
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-box-sizing: border-box;
 }
 
 .search-results-section {
@@ -665,6 +670,16 @@ body.inactive #sidebar li.selected {
     bottom: 0;
     overflow: hidden;
     background-color: white;
+    z-index: -100;
+}
+
+#panels {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
     z-index: -100;
 }
 
@@ -1999,7 +2014,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 #searchResultsResizer {
     position: absolute;
     height: 5px;
-    left: 200px;
+    left: 0;
     right: 0;
     cursor: row-resize;
 }
