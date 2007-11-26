@@ -1,5 +1,23 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        Port ImageDiff to CG and C++
+
+        Final part of http://bugs.webkit.org/show_bug.cgi?id=16133
+        <rdar://5071708>
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/DumpRenderTree.sln: Added ImageDiff.vcproj.
+        * DumpRenderTree/cg/ImageDiffCG.cpp: Added.
+        (main):
+        (createImageFromStdin):
+        (compareImages):
+        (getDifferenceBitmap):
+        (computePercentageDifferent):
+        * DumpRenderTree/win/ImageDiff.vcproj: Added.
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         Fix image diff link generation on Windows
 
         Reviewed by Sam.

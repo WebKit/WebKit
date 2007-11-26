@@ -1,3 +1,11 @@
+2007-11-25  Adam Roben  <aroben@apple.com>
+
+        Add ImageDiff.vcproj to WebKit.sln
+
+        Reviewed by Sam.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2007-11-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
