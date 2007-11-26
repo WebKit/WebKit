@@ -1,5 +1,42 @@
 2007-11-25  Adam Roben  <aroben@apple.com>
 
+        Implement pixel dumping in Windows DRT
+
+        Part of http://bugs.webkit.org/show_bug.cgi?id=16133
+        <rdar://5071708>
+
+        Reviewed by Sam.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp: Added.
+        (printPNG): Dumps a CGImageRef as a PNG to stdout, along with a
+        Content-Length header.
+        (getMD5HashStringForBitmap):
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        * DumpRenderTree/cg/PixelDumpSupportCG.h: Copied from WebKitTools/DumpRenderTree/mac/DumpRenderTreePasteboard.h.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump): Do a pixel dump if requested.
+        (main): Parse pixel test options.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Added new files and added
+        the cg/ subdirectory to the include path.
+        * DumpRenderTree/win/MD5.cpp: Added. Windows MD5 functions aren't
+        available in a header or import library, so we have to go through this
+        LoadLibrary/GetProcAddress dance to use them.
+        (cryptDLL):
+        (init):
+        (update):
+        (final):
+        (MD5_Init):
+        (MD5_Update):
+        (MD5_Final):
+        * DumpRenderTree/win/MD5.h: Added.
+        * DumpRenderTree/win/PixelDumpSupport.h: Added. This file should be
+        moved up to the top level to share it with Mac eventually.
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp: Added.
+        (getBitmapContextFromWebView): Forces the WebView to paint using a
+        WM_PRINTCLIENT message, and puts the result in a CGBitmapContext.
+
+2007-11-25  Adam Roben  <aroben@apple.com>
+
         Clean up Windows DRT's option parsing a little bit
 
         Reviewed by Sam.

@@ -31,6 +31,7 @@
 #include "EditingDelegate.h"
 #include "FrameLoaderDelegate.h"
 #include "LayoutTestController.h"
+#include "PixelDumpSupport.h"
 #include "PolicyDelegate.h"
 #include "UIDelegate.h"
 #include "WorkQueueItem.h"
@@ -69,6 +70,8 @@ static LPCWSTR fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
 const LPCWSTR kDumpRenderTreeClassName = L"DumpRenderTreeWindow";
 
 static bool dumpTree = true;
+static bool dumpPixels;
+static bool dumpAllPixels;
 static bool printSeparators;
 static bool leakChecking = false;
 static bool timedOut = false;
@@ -565,6 +568,14 @@ void dump()
 
     if (printSeparators)
         puts("#EOF");
+
+    if (dumpPixels) {
+        if (layoutTestController->dumpAsText() || layoutTestController->dumpDOMAsWebArchive() || layoutTestController->dumpSourceAsWebArchive())
+            printf("#EOF\n");
+        else
+            dumpWebViewAsPixelsAndCompareWithExpected(currentTest, dumpAllPixels);
+    }
+
 fail:
     SysFreeString(resultString);
     // This will exit from our message loop
@@ -817,6 +828,16 @@ int main(int argc, char* argv[])
     for (int i = 1; i < argc; ++i) {
         if (!stricmp(argv[i], "--threaded")) {
             threaded = true;
+            continue;
+        }
+
+        if (!stricmp(argv[i], "--dump-all-pixels")) {
+            dumpAllPixels = true;
+            continue;
+        }
+
+        if (!stricmp(argv[i], "--pixel-tests")) {
+            dumpPixels = true;
             continue;
         }
 
