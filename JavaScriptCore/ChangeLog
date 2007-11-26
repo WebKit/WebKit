@@ -1,3 +1,13 @@
+2007-11-24  Laszlo Gombos  <laszlo.gombos@gmail.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix minor compiler warning (GCC 4.1.3)
+
+        * pcre/pcre_internal.h:
+        * pcre/pcre_ucp_searchfuncs.cpp:
+        (_pcre_ucp_othercase):
+
 2007-11-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

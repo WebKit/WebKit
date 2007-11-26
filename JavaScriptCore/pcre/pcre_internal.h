@@ -603,7 +603,7 @@ one of the exported public functions. They have to be "external" in the C
 sense, but are not part of the PCRE public API. */
 
 extern int         _pcre_ord2utf8(int, uschar *);
-extern int         _pcre_ucp_othercase(const int);
+extern int         _pcre_ucp_othercase(const unsigned int);
 extern BOOL        _pcre_xclass(int, const uschar *);
 
 static inline bool isNewline(pcre_uchar nl)
