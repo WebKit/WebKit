@@ -57,6 +57,13 @@ cpp_quote(" */")
 import "oaidl.idl";
 import "ocidl.idl";
 
+cpp_quote("// this is done to get midl to treat the WebScriptCallFrame type as a pointer type")
+cpp_quote("#if 0")
+typedef void* WebScriptCallFrame;
+cpp_quote("#else")
+cpp_quote("class WebScriptCallFrame;")
+cpp_quote("#endif")
+
 [
     object,
     oleautomation,
@@ -69,4 +76,6 @@ interface IWebScriptCallFrame : IUnknown
     HRESULT scopeChain([out, retval] IEnumVARIANT**);
     HRESULT functionName([out, retval] BSTR*);
     HRESULT stringByEvaluatingJavaScriptFromString([in] BSTR script, [out, retval] BSTR*);
+
+    [local] WebScriptCallFrame* impl();
 }

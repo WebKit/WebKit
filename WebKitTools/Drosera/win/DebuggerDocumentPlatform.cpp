@@ -113,21 +113,18 @@ void DebuggerDocument::getPlatformCurrentFunctionStack(JSContextRef context, Vec
 
 void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextRef context, int callFrame, Vector<JSValueRef>& variableNames)
 {
-    HRESULT ret = S_OK;
-
+    // FIXME: Move the retrieval of local variables into IWebScriptCallFrame to reduce the number of RPCs and simplify the code.
     COMPtr<IWebScriptCallFrame> cframe = m_server->getCallerFrame(callFrame);
     if (!cframe)
         return;
 
     COMPtr<IEnumVARIANT> scopeChain;
-    ret = cframe->scopeChain(&scopeChain);
-    if (FAILED(ret))
+    if (FAILED(cframe->scopeChain(&scopeChain)))
         return;
 
     VARIANT var;
     VariantInit(&var);
-    ret = scopeChain->Next(1, &var, 0); // local is always first
-    if (FAILED(ret)) {
+    if (FAILED(scopeChain->Next(1, &var, 0))) { // local is always first
         VariantClear(&var);
         return;
     }
@@ -140,8 +137,7 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
         return;
 
     COMPtr<IEnumVARIANT> localScopeVariableNames;
-    ret = scope->variableNames(&localScopeVariableNames);
-    if (FAILED(ret))
+    if (FAILED(scope->variableNames(cframe.get(), &localScopeVariableNames)))
         return;
 
     while (localScopeVariableNames->Next(1, &var, 0) == S_OK) {
@@ -158,15 +154,12 @@ void DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame(JSContextR
 
 JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef context, JSStringRef key, int callFrame)
 {
-    HRESULT ret = S_OK;
-
     COMPtr<IWebScriptCallFrame> cframe = m_server->getCallerFrame(callFrame);
     if (!cframe)
         return JSValueMakeUndefined(context);
 
     COMPtr<IEnumVARIANT> scopeChain;
-    ret = cframe->scopeChain(&scopeChain);
-    if (FAILED(ret))
+    if (FAILED(cframe->scopeChain(&scopeChain)))
         return JSValueMakeUndefined(context);
 
     VARIANT var;
@@ -182,14 +175,13 @@ JSValueRef DebuggerDocument::platformValueForScopeVariableNamed(JSContextRef con
         if (!scope)
             return JSValueMakeUndefined(context);
 
-        ret = scope->valueForVariable(bstrKey, &resultString);
-        VariantClear(&var);
-
-        if (FAILED(ret)) {
+        if (FAILED(scope->valueForVariable(cframe.get(), bstrKey, &resultString))) {
+            VariantClear(&var);
             SysFreeString(bstrKey);
             SysFreeString(resultString);
             return JSValueMakeUndefined(context);
         }
+        VariantClear(&var);
     }
     SysFreeString(bstrKey);
 

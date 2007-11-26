@@ -82,6 +82,7 @@ import "IWebHistory.idl";
 import "IWebCache.idl";
 import "IWebJavaScriptCollector.idl";
 import "IWebKitStatistics.idl";
+import "IWebScriptScope.idl";
 import "IWebScrollBarPrivate.idl";
 import "IWebScriptDebugServer.idl";
 
@@ -289,5 +290,14 @@ library OpenSourceWebKit
 #endif
     coclass WebTextRenderer {
         [default] interface IWebTextRenderer;
+    }
+
+#if __BUILDBOT__
+    [uuid(C7A0B00C-5869-4b48-BB69-B5B1C4079031)]
+#else
+    [uuid(77F0CC68-5AA1-452d-996D-FA78C28E7020)]
+#endif
+    coclass WebScriptScope {
+        [default] interface IWebScriptScope;
     }
 }

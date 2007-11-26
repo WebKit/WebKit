@@ -1,3 +1,41 @@
+2007-11-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej.
+
+        - Implemented displaying variables for Drosera on Win.
+
+        * Interfaces/IWebScriptCallFrame.idl: Added a local function to be
+        able to access the WebScriptCallFrame.
+        * Interfaces/IWebScriptScope.idl: Implemented.
+        * Interfaces/WebKit.idl: Added WebScriptScope to the tlb.
+        * WebKit.vcproj/Interfaces.vcproj: 
+        * WebScriptCallFrame.cpp: Implemented the helper and accessor methods.
+        (EnumScopes::Next): Fixed a bug where we did not release correctly and
+        would accidentally destroy scopes.
+        (WebScriptCallFrame::stringByEvaluatingJavaScriptFromString):
+        Implemented.
+        (WebScriptCallFrame::valueByEvaluatingJavaScriptFromString): Implemented
+        * WebScriptCallFrame.h: Implemented the helper and accessor methods.
+        (WebScriptCallFrame::impl):
+        (WebScriptCallFrame::state):
+        * WebScriptScope.cpp: Implmented.
+        (EnumVariables::EnumVariables): Created an IEnumVariant over the
+        variables to be able to pass a DCOM acceptable structure back to
+        Drosera.
+        (EnumVariables::createInstance):
+        (EnumVariables::QueryInterface):
+        (EnumVariables::AddRef):
+        (EnumVariables::Release):
+        (EnumVariables::Next):
+        (EnumVariables::Skip):
+        (EnumVariables::Reset):
+        (EnumVariables::Clone):
+        (WebScriptScope::WebScriptScope):
+        (WebScriptScope::createInstance): Implemented.
+        (WebScriptScope::variableNames): Implemented.
+        (WebScriptScope::valueForVariable):
+        * WebScriptScope.h: Implmeneted.
+
 2007-11-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

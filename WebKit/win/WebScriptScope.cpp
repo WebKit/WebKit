@@ -30,11 +30,124 @@
 #include "WebKitDLL.h"
 #include "WebScriptScope.h"
 
+#include "WebScriptCallFrame.h"
+
+#include <memory>
+#include <JavaScriptCore/PropertyNameArray.h>
 #include <wtf/Assertions.h>
+#include <wtf/OwnPtr.h>
+
+#pragma warning(push, 0)
+#include <WebCore/BString.h>
+#include <WebCore/PlatformString.h>
+#pragma warning(pop)
+
+using namespace KJS;
+using namespace std;
+
+// EnumVariables -----------------------------------------------------------------
+
+class EnumVariables : public IEnumVARIANT {
+public:
+    static EnumVariables* createInstance(auto_ptr<PropertyNameArray>);
+
+private:
+    EnumVariables(auto_ptr<PropertyNameArray> variableNames)
+        : m_refCount(0)
+        , m_names(variableNames.release())
+        , m_current(m_names->begin())
+    {
+    }
+
+public:
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
+    virtual HRESULT STDMETHODCALLTYPE Next(ULONG celt, VARIANT* rgVar, ULONG* pCeltFetched);
+    virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
+    virtual HRESULT STDMETHODCALLTYPE Reset(void);
+    virtual HRESULT STDMETHODCALLTYPE Clone(IEnumVARIANT**);
+
+private:
+    ULONG m_refCount;
+    OwnPtr<PropertyNameArray> m_names;
+    PropertyNameArrayIterator m_current;
+};
+
+EnumVariables* EnumVariables::createInstance(auto_ptr<PropertyNameArray> variableNames)
+{
+    EnumVariables* instance = new EnumVariables(variableNames);
+    instance->AddRef();
+    return instance;
+}
+
+HRESULT STDMETHODCALLTYPE EnumVariables::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown) || IsEqualGUID(riid, IID_IEnumVARIANT))
+        *ppvObject = this;
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE EnumVariables::AddRef()
+{
+    return ++m_refCount;
+}
+
+ULONG STDMETHODCALLTYPE EnumVariables::Release()
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete(this);
+    return newRef;
+}
+
+HRESULT STDMETHODCALLTYPE EnumVariables::Next(ULONG celt, VARIANT* rgVar, ULONG* pCeltFetched)
+{
+    if (pCeltFetched)
+        *pCeltFetched = 0;
+    if (!rgVar)
+        return E_POINTER;
+    VariantInit(rgVar);
+    if (!celt || celt > 1)
+        return S_FALSE;
+    if (m_current == m_names->end())
+        return S_FALSE;
+
+    V_VT(rgVar) = VT_BSTR;
+    V_BSTR(rgVar) = WebCore::BString(*m_current).release();
+    ++m_current;
+
+    if (pCeltFetched)
+        *pCeltFetched = 1;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE EnumVariables::Skip(ULONG celt)
+{
+    for (ULONG i = 0; i < celt; ++i)
+        ++m_current;
+    return (m_current != m_names->end()) ? S_OK : S_FALSE;
+}
+
+HRESULT STDMETHODCALLTYPE EnumVariables::Reset(void)
+{
+    m_current = 0;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE EnumVariables::Clone(IEnumVARIANT**)
+{
+    return E_NOTIMPL;
+}
 
 // WebScriptScope ------------------------------------------------------------
 
-WebScriptScope::WebScriptScope(KJS::JSObject* scope)
+WebScriptScope::WebScriptScope(JSObject* scope)
     : m_refCount(0)
     , m_scope(scope)
 {
@@ -46,7 +159,7 @@ WebScriptScope::~WebScriptScope()
     gClassCount--;
 }
 
-WebScriptScope* WebScriptScope::createInstance(KJS::JSObject* scope)
+WebScriptScope* WebScriptScope::createInstance(JSObject* scope)
 {
     WebScriptScope* instance = new WebScriptScope(scope);
     instance->AddRef();
@@ -86,16 +199,67 @@ ULONG STDMETHODCALLTYPE WebScriptScope::Release(void)
 // WebScriptScope ------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebScriptScope::variableNames(
-    /* [out, retval] */ IEnumVARIANT**)
+    /* [in] */ IWebScriptCallFrame* frame,
+    /* [out, retval] */ IEnumVARIANT** variableNames)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!frame)
+        return E_FAIL;
+
+    if (!variableNames)
+        return E_POINTER;
+
+    *variableNames = 0;
+
+    auto_ptr<PropertyNameArray> props(new PropertyNameArray);
+    m_scope->getPropertyNames(frame->impl()->state(), *(props.get()));
+
+    *variableNames = EnumVariables::createInstance(props);
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebScriptScope::valueForVariable(
-    /* [in] */ BSTR /*key*/,
-    /* [out, retval] */ BSTR* /*value*/)
+    /* [in] */ IWebScriptCallFrame* frame,
+    /* [in] */ BSTR key,
+    /* [out, retval] */ BSTR* value)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!frame || !key)
+        return E_FAIL;
+
+    if (!value)
+        return E_POINTER;
+
+    *value = 0;
+
+    Identifier identKey(reinterpret_cast<KJS::UChar*>(key), SysStringLen(key));
+
+    JSValue* jsvalue = m_scope->get(frame->impl()->state(), identKey);
+
+    UString string;
+    const JSType type = jsvalue->type();
+    switch (type) {
+        case NullType:
+        case UndefinedType:
+        case UnspecifiedType:
+        case GetterSetterType:
+            break;
+        case StringType:
+            string = jsvalue->getString();
+            break;
+        case NumberType:
+            string = UString::from(jsvalue->getNumber());
+            break;
+        case BooleanType:
+            string = jsvalue->getBoolean() ? "True" : "False";
+            break;
+        case ObjectType: {
+            JSObject* jsobject = jsvalue->getObject();
+            jsvalue = jsobject->defaultValue(frame->impl()->state(), StringType);
+            string = jsvalue->getString();
+            break;
+        }
+    }
+
+    *value = WebCore::BString(string).release();
+    return S_OK;
 }

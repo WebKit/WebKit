@@ -36,6 +36,11 @@
 #include <WebCore/COMPtr.h>
 #pragma warning(pop)
 
+namespace KJS {
+    class ExecState;
+    class JSValue;
+}
+
 class WebScriptCallFrame : public IWebScriptCallFrame {
 public:
     static WebScriptCallFrame* createInstance(KJS::ExecState*, IWebScriptCallFrame* caller);
@@ -67,6 +72,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE stringByEvaluatingJavaScriptFromString(
         /* [in] */ BSTR script,
         /* [out, retval] */ BSTR*);
+
+    virtual /* [local] */ WebScriptCallFrame *STDMETHODCALLTYPE impl() { return this; }
+
+    // Helper and accessors
+    virtual KJS::JSValue* valueByEvaluatingJavaScriptFromString(BSTR script);
+    virtual KJS::ExecState* state() const { return m_state; }
 
 private:
     KJS::ExecState* m_state;

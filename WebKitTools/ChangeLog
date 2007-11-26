@@ -1,3 +1,18 @@
+2007-11-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej.
+
+        - Implemented displaying variables for Drosera on Win.
+
+        * Drosera/win/DebuggerDocumentPlatform.cpp: Changed Drosera functions
+        that retrieve variables to not hold onto the return value since it's
+        not returned.  Also changed to use the new signatures of the retrieval
+        functions.
+        (DebuggerDocument::getPlatformLocalScopeVariableNamesForCallFrame):
+        (DebuggerDocument::platformValueForScopeVariableNamed):
+        * Drosera/win/Drosera.cpp: Removed a needless TODO.
+        (droseraWndProc):
+
 2007-11-26  Sam Weinig  <sam@webkit.org>
 
         Cleanup names of painting and repainting functions.

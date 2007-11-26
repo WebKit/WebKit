@@ -154,7 +154,6 @@ LRESULT CALLBACK droseraWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
             return drosera->webViewLoaded() ? drosera->onSize(wParam, lParam) : 0;
         case WM_PAINT:
             hdc = BeginPaint(hWnd, &ps);
-            // TODO: Add any drawing code here...
             EndPaint(hWnd, &ps);
             break;
         case WM_DESTROY:
