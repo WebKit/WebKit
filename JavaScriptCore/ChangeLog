@@ -5,7 +5,7 @@
         Fixed <rdar://problem/5597937> REGRESSION (r27126): Drosera does not 
         show variables (can't enumerate ActivationImp properties)
         
-        Implemented a custome ActivationImp::getPropertyNames, since 
+        Implemented a custom ActivationImp::getPropertyNames, since 
         ActivationImp now uses a custom property storage mechanism for local
         variables.
 
