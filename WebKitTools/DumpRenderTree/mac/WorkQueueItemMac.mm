@@ -26,16 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "DumpRenderTree.h"
 #import "WorkQueueItem.h"
 
-#import "DumpRenderTree.h"
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
-#import <JavaScriptCore/RetainPtr.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebScriptObject.h>
 #import <WebKit/WebView.h>
+#import <wtf/RetainPtr.h>
 
 void LoadItem::invoke() const
 {

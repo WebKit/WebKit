@@ -30,12 +30,10 @@
  
 #import "JavaScriptThreading.h"
 
-#import <JavaScriptCore/Assertions.h>
-#import <JavaScriptCore/JavaScriptCore.h>
-
 #import <CoreFoundation/CoreFoundation.h>
-
+#import <JavaScriptCore/JavaScriptCore.h>
 #import <pthread.h>
+#import <wtf/Assertions.h>
 
 static pthread_mutex_t javaScriptThreadsMutex = PTHREAD_MUTEX_INITIALIZER;
 static bool javaScriptThreadsShouldTerminate;

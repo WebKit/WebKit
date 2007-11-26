@@ -28,10 +28,10 @@
 
 #import "ObjCController.h"
 
-#import <JavaScriptCore/Assertions.h>
+#import <WebKit/DOMAbstractView.h>
 #import <WebKit/WebScriptObject.h>
 #import <WebKit/WebView.h>
-#import <WebKit/DOMAbstractView.h>
+#import <wtf/Assertions.h>
 
 @implementation ObjCController
 

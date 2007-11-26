@@ -29,7 +29,7 @@
 #ifndef DumpRenderTree_h
 #define DumpRenderTree_h
 
-#include <JavaScriptCore/Platform.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 #include "DumpRenderTreeMac.h"

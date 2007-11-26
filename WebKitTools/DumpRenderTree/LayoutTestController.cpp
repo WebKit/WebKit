@@ -29,9 +29,9 @@
 #include "DumpRenderTree.h"
 #include "LayoutTestController.h"
 
-#include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <wtf/Assertions.h>
 
 LayoutTestController::LayoutTestController(bool testRepaintDefault, bool testRepaintSweepHorizontallyDefault)
     : m_dumpAsText(false)

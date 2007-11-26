@@ -26,16 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "DumpRenderTree.h"
 #import "LayoutTestController.h"
 
-#import "DumpRenderTree.h"
 #import "EditingDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
+#import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
-#import <JavaScriptCore/RetainPtr.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebHTMLViewPrivate.h>
@@ -44,7 +44,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
-#import <Foundation/Foundation.h>
+#import <wtf/RetainPtr.h>
 
 LayoutTestController::~LayoutTestController()
 {

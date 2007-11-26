@@ -40,12 +40,12 @@
 #import "TextInputController.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
-#import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <wtf/Assertions.h>
 
 @interface NSURLRequest (PrivateThingsWeShouldntReallyUse)
 +(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;

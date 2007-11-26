@@ -46,9 +46,7 @@
 #import "UIDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
-
 #import <CoreFoundation/CoreFoundation.h>
-#import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOMElementPrivate.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
@@ -67,7 +65,8 @@
 #import <WebKit/WebViewPrivate.h>
 #import <getopt.h>
 #import <mach-o/getsect.h>
-#import <objc/objc-runtime.h>                       // for class_poseAs
+#import <objc/objc-runtime.h>
+#import <wtf/Assertions.h>
 
 @interface DumpRenderTreeEvent : NSEvent
 @end

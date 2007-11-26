@@ -1,3 +1,29 @@
+2007-11-25  Sam Weinig  <sam@webkit.org>
+
+        Add ForwardingHeaders to wtf for DumpRenderTree.
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/ForwardingHeaders: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/Assertions.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/Noncopyable.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/OwnPtr.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/Platform.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/RetainPtr.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/StringExtras.h: Added.
+        * DumpRenderTree/LayoutTestController.cpp:
+        * DumpRenderTree/WorkQueue.cpp:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        * DumpRenderTree/mac/JavaScriptThreading.cpp:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        * DumpRenderTree/mac/ObjCController.m:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        * DumpRenderTree/mac/WorkQueueItemMac.mm:
+
 2007-11-25  Adam Roben  <aroben@apple.com>
 
         Fix some test failures caused by r28019

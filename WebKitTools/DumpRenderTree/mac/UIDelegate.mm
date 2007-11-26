@@ -26,16 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "DumpRenderTree.h"
 #import "UIDelegate.h"
 
-#import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
-#import "LayoutTestController.h"
 #import "EventSendingController.h"
+#import "LayoutTestController.h"
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebView.h>
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 DumpRenderTreeDraggingInfo *draggingInfo = nil;
 

@@ -30,8 +30,7 @@
 #include "WorkQueue.h"
 
 #include "WorkQueueItem.h"
-
-#include <JavaScriptCore/Assertions.h>
+#include <wtf/Assertions.h>
 
 static const unsigned queueLength = 1024;
 
