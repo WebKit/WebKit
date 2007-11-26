@@ -1,20 +1,18 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple, Inc.  All rights reserved.
- *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
- *           (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -28,11 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// can be used as a signal handler
+#ifndef PixelDumpSupport_h
+#define PixelDumpSupport_h
+
+void dumpWebViewAsPixelsAndCompareWithExpected(const char* currentTest, bool forceAllTestsToDumpPixels);
+
+// Can be used as a signal handler
 void restoreColorSpace(int ignored);
 
-// may change your color space, requiring a call to restoreColorSpace
+// May change your color space, requiring a call to restoreColorSpace
 void initializeColorSpaceAndScreeBufferForPixelTests();
 
-// a poor abstraction, parts of this should be in this file, and parts should not
-void dumpWebViewAsPixelsAndCompareWithExpected(NSString *currentTest, bool forceAllTestsToDumpPixels);
+#endif // PixelDumpSupport_h

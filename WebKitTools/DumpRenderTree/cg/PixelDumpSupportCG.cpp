@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple, Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2007 Eric Seidel <eric@webkit.org>
  *
@@ -28,8 +28,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "DumpRenderTree.h"
 #include "PixelDumpSupportCG.h"
 
+#include "LayoutTestController.h"
 #include <ImageIO/CGImageDestination.h>
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
@@ -38,11 +40,14 @@
 #if PLATFORM(WIN)
 #include "MD5.h"
 #elif PLATFORM(MAC)
+#include <LaunchServices/UTCoreTypes.h>
 #define COMMON_DIGEST_FOR_OPENSSL
 #include <CommonCrypto/CommonDigest.h>
 #endif
 
+#if PLATFORM(WIN)
 static const CFStringRef kUTTypePNG = CFSTR("public.png");
+#endif
 
 static void printPNG(CGImageRef image)
 {
@@ -80,9 +85,31 @@ static void getMD5HashStringForBitmap(CGContextRef bitmap, char string[33])
         snprintf(string, 33, "%s%02x", string, hash[i]);
 }
 
+void drawSelectionRectIntoContext(CGContextRef context, CGRect rect)
+{
+    const CGFloat redColor[4] = { 1.0, 0.0, 0.0, 0.0 };
+
+    CGContextSaveGState(context);
+    CGContextSetStrokeColor(context, redColor);
+    CGContextStrokeRect(context, rect);
+    CGContextRestoreGState(context);
+}
+
 void dumpWebViewAsPixelsAndCompareWithExpected(const char* /*currentTest*/, bool /*forceAllTestsToDumpPixels*/)
 {
     RetainPtr<CGContextRef> context = getBitmapContextFromWebView();
+
+#if PLATFORM(MAC)
+    if (!layoutTestController->testRepaint())
+        drawWebViewIntoContext(context.get());
+    else if (!layoutTestController->testRepaintSweepHorizontally())
+        repaintWithVerticalSweep(context.get());
+    else
+        repaintWithHorizontalSweep(context.get());
+
+    if (layoutTestController->dumpSelectionRect())
+        drawSelectionRectIntoContext(context.get(), getSelectionRect());
+#endif
 
     // Compute the actual hash to compare to the expected image's hash.
     char actualHash[33];

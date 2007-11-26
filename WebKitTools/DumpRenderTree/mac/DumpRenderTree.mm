@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -764,7 +764,7 @@ void dump()
     }
     
     if (dumpPixels)
-        dumpWebViewAsPixelsAndCompareWithExpected(currentTest, dumpAllPixels);
+        dumpWebViewAsPixelsAndCompareWithExpected([currentTest UTF8String], dumpAllPixels);
 
     fflush(stdout);
 

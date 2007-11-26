@@ -38,9 +38,24 @@
 #include <io.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <LaunchServices/UTCoreTypes.h>
+#endif
+
+#ifndef CGFLOAT_DEFINED
+#ifdef __LP64__
+typedef double CGFloat;
+#else
+typedef float CGFloat;
+#endif
+#define CGFLOAT_DEFINED 1
+#endif
+
 using namespace std;
 
+#if PLATFORM(WIN)
 static const CFStringRef kUTTypePNG = CFSTR("public.png");
+#endif
 
 static RetainPtr<CGImageRef> createImageFromStdin(int bytesRemaining)
 {

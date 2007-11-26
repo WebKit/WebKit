@@ -1,5 +1,5 @@
 HEADER_SEARCH_PATHS = ForwardingHeaders
-FRAMEWORK_SEARCH_PATHS = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks
+FRAMEWORK_SEARCH_PATHS = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks
 DEBUG_INFORMATION_FORMAT = dwarf
 PREBINDING = NO
 GCC_C_LANGUAGE_STANDARD = gnu99

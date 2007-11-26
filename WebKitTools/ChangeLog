@@ -1,3 +1,32 @@
+2007-11-26  Sam Weinig  <sam@webkit.org>
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16136
+        Use shared PixelDumpSupport for Mac DRT
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/PixelDumpSupport.h: Copied from DumpRenderTree/win/PixelDumpSupport.h.
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (drawSelectionRectIntoContext):
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        * DumpRenderTree/cg/PixelDumpSupportCG.h:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump):
+        * DumpRenderTree/mac/ImageDiff.m: Removed.
+        * DumpRenderTree/mac/PixelDumpSupport.h: Removed.
+        * DumpRenderTree/mac/PixelDumpSupport.mm: Removed.
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm: Copied from DumpRenderTree/mac/PixelDumpSupport.mm.
+        (setDefaultColorProfileToRGB):
+        (getBitmapContextFromWebView):
+        (drawWebViewIntoContext):
+        (repaintWithVerticalSweep):
+        (repaintWithHorizontalSweep):
+        (getSelectionRect):
+        * DumpRenderTree/win/PixelDumpSupport.h: Removed.
+
 2007-11-25  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 16052: prepare-ChangeLog doesn't report deleted files

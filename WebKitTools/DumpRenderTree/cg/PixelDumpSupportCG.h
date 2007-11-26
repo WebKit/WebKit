@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple, Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2007 Eric Seidel <eric@webkit.org>
  *
@@ -31,11 +31,26 @@
 #ifndef PixelDumpSupportCG_h
 #define PixelDumpSupportCG_h
 
-#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
+#ifndef CGFLOAT_DEFINED
+#ifdef __LP64__
+typedef double CGFloat;
+#else
+typedef float CGFloat;
+#endif
+#define CGFLOAT_DEFINED 1
+#endif
+
 typedef struct CGContext* CGContextRef;
+struct CGRect;
 
 RetainPtr<CGContextRef> getBitmapContextFromWebView();
+CGRect getSelectionRect();
+
+void drawWebViewIntoContext(CGContextRef);
+void repaintWithVerticalSweep(CGContextRef);
+void repaintWithHorizontalSweep(CGContextRef);
+void drawSelectionRectIntoContext(CGContextRef, CGRect);
 
 #endif // PixelDumpSupportCG_h
