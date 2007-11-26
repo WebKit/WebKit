@@ -1,5 +1,7 @@
 HEADER_SEARCH_PATHS = ForwardingHeaders
-FRAMEWORK_SEARCH_PATHS = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks
+FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(MAC_OS_X_VERSION_MAJOR));
+FRAMEWORK_SEARCH_PATHS_1040 = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks
+FRAMEWORK_SEARCH_PATHS_1050 = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks
 DEBUG_INFORMATION_FORMAT = dwarf
 PREBINDING = NO
 GCC_C_LANGUAGE_STANDARD = gnu99
@@ -7,5 +9,6 @@ GCC_PRECOMPILE_PREFIX_HEADER = YES
 GCC_TREAT_WARNINGS_AS_ERRORS = YES
 GCC_WARN_UNUSED_FUNCTION = YES
 GCC_WARN_UNUSED_VARIABLE = YES
+GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO
 WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
 VALID_ARCHS = ppc7400 ppc970 i386 ppc
