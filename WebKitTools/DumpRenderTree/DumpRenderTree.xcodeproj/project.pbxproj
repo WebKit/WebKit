@@ -185,6 +185,8 @@
 		BCB281EE0CFA713D007E533E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = mac/Configurations/Base.xcconfig; sourceTree = "<group>"; };
 		BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DumpRenderTree.xcconfig; path = mac/Configurations/DumpRenderTree.xcconfig; sourceTree = "<group>"; };
 		BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DebugRelease.xcconfig; path = mac/Configurations/DebugRelease.xcconfig; sourceTree = "<group>"; };
+		BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = ImageDiff.xcconfig; path = mac/Configurations/ImageDiff.xcconfig; sourceTree = "<group>"; };
+		BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = TestNetscapePlugIn.xcconfig; path = mac/Configurations/TestNetscapePlugIn.xcconfig; sourceTree = "<group>"; };
 		BCF6C64F0C98E9C000AC063E /* GCController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = GCController.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -249,9 +251,9 @@
 				A8B91AC40CF3B170008F91FF /* ObjCPlugin */,
 				141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */,
 				9345229B0BD12B2C0086EDA0 /* Resources */,
-				BCB281ED0CFA711D007E533E /* Configurations */,
 				A803FF6409CAACC1009B2A37 /* Frameworks */,
 				9340995508540CAF007F3BC8 /* Products */,
+				BCB281ED0CFA711D007E533E /* Configurations */,
 			);
 			name = DumpRenderTree;
 			sourceTree = "<group>";
@@ -368,6 +370,8 @@
 				BCB281EE0CFA713D007E533E /* Base.xcconfig */,
 				BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */,
 				BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */,
+				BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */,
+				BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */,
 			);
 			name = Configurations;
 			sourceTree = "<group>";
@@ -584,51 +588,15 @@
 /* Begin XCBuildConfiguration section */
 		141BF222096A441E00E0753C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				INFOPLIST_FILE = TestNetscapePlugIn.subproj/Info.plist;
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins";
-				LIBRARY_STYLE = BUNDLE;
-				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = TestNetscapePlugIn;
-				SECTORDER_FLAGS = "";
-				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = plugin;
 			};
 			name = Debug;
 		};
 		141BF223096A441E00E0753C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				INFOPLIST_FILE = TestNetscapePlugIn.subproj/Info.plist;
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins";
-				LIBRARY_STYLE = BUNDLE;
-				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = TestNetscapePlugIn;
-				SECTORDER_FLAGS = "";
-				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = plugin;
 			};
 			name = Release;
 		};
@@ -699,21 +667,15 @@
 		};
 		B5A7526508AF4A4A00138E45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */;
 			buildSettings = {
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREFIX_HEADER = "";
-				PRODUCT_NAME = ImageDiff;
-				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 			};
 			name = Debug;
 		};
 		B5A7526608AF4A4A00138E45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */;
 			buildSettings = {
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREFIX_HEADER = "";
-				PRODUCT_NAME = ImageDiff;
-				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 			};
 			name = Release;
 		};

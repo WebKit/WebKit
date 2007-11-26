@@ -1,5 +1,17 @@
 2007-11-25  Sam Weinig  <sam@webkit.org>
 
+        Add .xcconfig files for the ImageDiff and TestNetscapePlugIn targets of the DumpRenderTree.
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        * DumpRenderTree/mac/Configurations/ImageDiff.xcconfig: Added.
+        * DumpRenderTree/mac/Configurations/TestNetscapePlugIn.xcconfig: Added.
+
+2007-11-25  Sam Weinig  <sam@webkit.org>
+
         Convert DumpRenderTree to ues .xcconfig files.
 
         Reviewed by Mark Rowe.

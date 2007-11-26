@@ -1,0 +1,6 @@
+PRODUCT_NAME = TestNetscapePlugIn
+WRAPPER_EXTENSION = plugin
+INFOPLIST_FILE = TestNetscapePlugIn.subproj/Info.plist
+INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins"
+WARNING_CFLAGS = -Wmost -Wno-four-char-constants -Wno-unknown-pragmas
+LIBRARY_STYLE = BUNDLE
