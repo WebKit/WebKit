@@ -1,3 +1,13 @@
+2007-11-27  John Sullivan  <sullivan@apple.com>
+
+        Fixed 5614525, caused by a recent bug in WKGetExtensionsForMIMEType
+        that affects Safari.
+        
+        reviewed by Kevin Decker
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2007-11-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.
