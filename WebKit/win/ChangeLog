@@ -4,6 +4,12 @@
 
         * WebKit.vcproj/build-generated-files.sh:
 
+2007-11-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * WebKit.vcproj/build-generated-files.sh:
+
 2007-11-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

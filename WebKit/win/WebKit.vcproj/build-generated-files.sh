@@ -27,7 +27,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 NUMCPUPATH="../../../WebKitTools/Scripts/num-cpus"
-if [ -x $NUMCPUPATH ]
+if [ -x $NUMCPUPATH ]; then
     NUMCPUS=`$NUMCPUPATH`
 else
     NUMCPUS=1

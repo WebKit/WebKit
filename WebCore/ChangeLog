@@ -1,3 +1,10 @@
+2007-11-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * WebCore.vcproj/WebCore.make:
+        * WebCore.vcproj/migrate-idls.sh:
+
 2007-11-26  Sam Weinig  <sam@webkit.org>
 
         Fix potential null-dereference.
