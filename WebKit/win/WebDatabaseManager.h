@@ -55,7 +55,7 @@ public:
         /* [retval][out] */ IEnumVARIANT** result);
         
     virtual HRESULT STDMETHODCALLTYPE detailsForDatabaseWithOrigin( 
-        /* [in] */ BSTR* database,
+        /* [in] */ BSTR databaseName,
         /* [in] */ IWebSecurityOrigin* origin,
         /* [retval][out] */ IPropertyBag** result);
         
@@ -65,7 +65,7 @@ public:
         /* [in] */ IWebSecurityOrigin* origin);
         
     virtual HRESULT STDMETHODCALLTYPE deleteDatabaseWithOrigin( 
-        /* [in] */ BSTR* databaseName,
+        /* [in] */ BSTR databaseName,
         /* [in] */ IWebSecurityOrigin* origin);
 private:
     WebDatabaseManager();

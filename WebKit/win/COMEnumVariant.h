@@ -53,6 +53,17 @@ template<> struct COMVariantSetter<WebCore::String>
     }
 };
 
+template<> struct COMVariantSetter<unsigned long long>
+{
+    static void setVariant(VARIANT* variant, unsigned long long value)
+    {
+        ASSERT(V_VT(variant) == VT_EMPTY);
+
+        V_VT(variant) = VT_UI8;
+        V_UI8(variant) = value;
+    }
+};
+
 template<typename COMType, typename UnderlyingType>
 struct COMIUnknownVariantSetter
 {

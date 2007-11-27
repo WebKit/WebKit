@@ -40,6 +40,100 @@
 
 using namespace WebCore;
 
+static inline bool isEqual(LPCWSTR s1, LPCWSTR s2)
+{
+    return !wcscmp(s1, s2);
+}
+
+class DatabaseDetailsPropertyBag : public IPropertyBag, Noncopyable {
+public:
+    static DatabaseDetailsPropertyBag* createInstance(const DatabaseDetails&);
+
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
+
+    // IPropertyBag
+    virtual HRESULT STDMETHODCALLTYPE Read(LPCOLESTR pszPropName, VARIANT* pVar, IErrorLog* pErrorLog);
+    virtual HRESULT STDMETHODCALLTYPE Write(LPCOLESTR pszPropName, VARIANT* pVar);
+private:
+    DatabaseDetailsPropertyBag(const DatabaseDetails& details) 
+        : m_refCount(0)
+        , m_details(details) { }
+    ~DatabaseDetailsPropertyBag() { }
+
+    ULONG m_refCount;
+    DatabaseDetails m_details;
+};
+
+// DatabaseDetailsPropertyBag ------------------------------------------------------
+DatabaseDetailsPropertyBag* DatabaseDetailsPropertyBag::createInstance(const DatabaseDetails& details)
+{
+    DatabaseDetailsPropertyBag* instance = new DatabaseDetailsPropertyBag(details);
+    instance->AddRef();
+    return instance;
+}
+
+// IUnknown ------------------------------------------------------------------------
+ULONG STDMETHODCALLTYPE DatabaseDetailsPropertyBag::AddRef()
+{
+    return ++m_refCount;
+}
+
+ULONG STDMETHODCALLTYPE DatabaseDetailsPropertyBag::Release()
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete this;
+
+    return newRef;
+}
+
+HRESULT STDMETHODCALLTYPE DatabaseDetailsPropertyBag::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<DatabaseDetailsPropertyBag*>(this);
+    else if (IsEqualGUID(riid, IID_IPropertyBag))
+        *ppvObject = static_cast<DatabaseDetailsPropertyBag*>(this);
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+// IPropertyBag --------------------------------------------------------------------
+HRESULT STDMETHODCALLTYPE DatabaseDetailsPropertyBag::Read(LPCOLESTR pszPropName, VARIANT* pVar, IErrorLog*)
+{
+    if (!pszPropName || !pVar)
+        return E_POINTER;
+
+    VariantInit(pVar);
+
+    if (isEqual(pszPropName, WebDatabaseDisplayNameKey)) {
+        COMVariantSetter<String>::setVariant(pVar, m_details.displayName());
+        return S_OK;
+    } else if (isEqual(pszPropName, WebDatabaseExpectedSizeKey)) {
+        COMVariantSetter<unsigned long long>::setVariant(pVar, m_details.expectedUsage());
+        return S_OK;
+    } else if (isEqual(pszPropName, WebDatabaseUsageKey)) {
+        COMVariantSetter<unsigned long long>::setVariant(pVar, m_details.currentUsage());
+        return S_OK;
+    }
+
+    return E_INVALIDARG;
+}
+
+HRESULT STDMETHODCALLTYPE DatabaseDetailsPropertyBag::Write(LPCOLESTR pszPropName, VARIANT* pVar)
+{
+    if (!pszPropName || !pVar)
+        return E_POINTER;
+
+    return E_FAIL;
+}
+
 static COMPtr<WebDatabaseManager> s_sharedWebDatabaseManager;
 
 // WebDatabaseManager --------------------------------------------------------------
@@ -147,11 +241,11 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin(
 }
 
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabaseWithOrigin( 
-    /* [in] */ BSTR* database,
+    /* [in] */ BSTR databaseName,
     /* [in] */ IWebSecurityOrigin* origin,
     /* [retval][out] */ IPropertyBag** result)
 {
-    if (!database || !origin || !result)
+    if (!databaseName || !origin || !result)
         return E_POINTER;
 
     *result = 0;
@@ -159,7 +253,18 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabaseWithOrigin(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    return E_NOTIMPL;
+    COMPtr<WebSecurityOrigin> webSecurityOrigin(Query, origin);
+    if (!webSecurityOrigin)
+        return E_FAIL;
+
+    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
+        webSecurityOrigin->securityOriginData());
+
+    if (!details.isValid())
+        return E_INVALIDARG;
+
+    *result = DatabaseDetailsPropertyBag::createInstance(details);
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteAllDatabases()
@@ -167,7 +272,9 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteAllDatabases()
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    return E_NOTIMPL;
+    DatabaseTracker::tracker().deleteAllDatabases();
+
+    return S_OK;
 }
    
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabasesWithOrigin( 
@@ -179,11 +286,17 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabasesWithOrigin(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    return E_NOTIMPL;
+    COMPtr<WebSecurityOrigin> webSecurityOrigin(Query, origin);
+    if (!webSecurityOrigin)
+        return E_FAIL;
+
+    DatabaseTracker::tracker().deleteDatabasesWithOrigin(webSecurityOrigin->securityOriginData());
+
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabaseWithOrigin( 
-    /* [in] */ BSTR* databaseName,
+    /* [in] */ BSTR databaseName,
     /* [in] */ IWebSecurityOrigin* origin)
 {
     if (!databaseName || !origin)
@@ -192,7 +305,13 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabaseWithOrigin(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    return E_NOTIMPL;
+    COMPtr<WebSecurityOrigin> webSecurityOrigin(Query, origin);
+    if (!webSecurityOrigin)
+        return E_FAIL;
+
+    DatabaseTracker::tracker().deleteDatabase(webSecurityOrigin->securityOriginData(), String(databaseName, SysStringLen(databaseName)));
+
+    return S_OK;
 }
 
 void WebKitSetWebDatabasesPathIfNecessary()

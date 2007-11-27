@@ -1,3 +1,27 @@
+2007-11-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Implement the rest of the WebDatabaseManager API.
+
+        * COMEnumVariant.h:
+        * Interfaces/IWebDatabaseManager.idl:
+        * WebDatabaseManager.cpp:
+        (isEqual):
+        (DatabaseDetailsPropertyBag::DatabaseDetailsPropertyBag):
+        (DatabaseDetailsPropertyBag::~DatabaseDetailsPropertyBag):
+        (DatabaseDetailsPropertyBag::createInstance):
+        (DatabaseDetailsPropertyBag::AddRef):
+        (DatabaseDetailsPropertyBag::Release):
+        (DatabaseDetailsPropertyBag::QueryInterface):
+        (DatabaseDetailsPropertyBag::Read):
+        (DatabaseDetailsPropertyBag::Write):
+        (WebDatabaseManager::detailsForDatabaseWithOrigin):
+        (WebDatabaseManager::deleteAllDatabases):
+        (WebDatabaseManager::deleteDatabasesWithOrigin):
+        (WebDatabaseManager::deleteDatabaseWithOrigin):
+        * WebDatabaseManager.h:
+
 2007-11-27  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5616098> The BSTR returned by WebHistoryItem::alternateTitle
