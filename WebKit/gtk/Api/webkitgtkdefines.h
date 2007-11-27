@@ -42,6 +42,9 @@ typedef struct _WebKitPageClass WebKitPageClass;
 typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
 typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
 
+typedef struct OpaqueJSContext* JSGlobalContextRef;
+typedef struct OpaqueJSValue* JSObjectRef;
+
 #ifdef G_OS_WIN32
     #ifdef BUILDING_WEBKIT
         #define WEBKIT_API __declspec(dllexport)

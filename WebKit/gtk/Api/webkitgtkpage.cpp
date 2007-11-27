@@ -61,6 +61,7 @@ extern "C" {
 enum {
     /* normal signals */
     NAVIGATION_REQUESTED,
+    WINDOW_OBJECT_CLEARED,
     LOAD_STARTED,
     LOAD_PROGRESS_CHANGED,
     LOAD_FINISHED,
@@ -249,6 +250,11 @@ static WebKitNavigationResponse webkit_page_real_navigation_requested(WebKitPage
     return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 }
 
+static void webkit_page_real_window_object_cleared(WebKitPage*, WebKitFrame*, JSGlobalContextRef context, JSObjectRef window_object)
+{
+    notImplemented();
+}
+
 static gchar* webkit_page_real_choose_file(WebKitPage*, WebKitFrame*, const gchar* old_name)
 {
     notImplemented();
@@ -372,6 +378,10 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
 {
     g_type_class_add_private(pageClass, sizeof(WebKitPagePrivate));
 
+    /*
+     * Signals
+     */
+
     webkit_page_signals[NAVIGATION_REQUESTED] = g_signal_new("navigation_requested",
             G_TYPE_FROM_CLASS(pageClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
@@ -383,10 +393,33 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
             G_TYPE_OBJECT,
             G_TYPE_OBJECT);
 
-
-    /*
-     * signals
+    /**
+     * WebKitPage::window-object-cleared:
+     * @page: the object on which the signal is emitted
+     * @frame: the #WebKitFrame to which @window_object belongs
+     * @context: the #JSGlobalContextRef holding the global object and other
+     * execution state; equivalent to the return value of
+     * webkit_frame_get_global_context(@frame)
+     *
+     * @window_object: the #JSObjectRef representing the frame's JavaScript
+     * window object
+     *
+     * Emitted when the JavaScript window object in a #WebKitFrame has been
+     * cleared in preparation for a new load. This is the preferred place to
+     * set custom properties on the window object using the JavaScriptCore API.
      */
+    webkit_page_signals[WINDOW_OBJECT_CLEARED] = g_signal_new("window_object_cleared",
+            G_TYPE_FROM_CLASS(pageClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET (WebKitPageClass, window_object_cleared),
+            NULL,
+            NULL,
+            webkit_marshal_VOID__OBJECT_POINTER_POINTER,
+            G_TYPE_NONE, 3,
+            WEBKIT_TYPE_FRAME,
+            G_TYPE_POINTER,
+            G_TYPE_POINTER);
+
     /**
      * WebKitPage::load-started:
      *
@@ -570,6 +603,7 @@ static void webkit_page_class_init(WebKitPageClass* pageClass)
      */
     pageClass->create_page = webkit_page_real_create_page;
     pageClass->navigation_requested = webkit_page_real_navigation_requested;
+    pageClass->window_object_cleared = webkit_page_real_window_object_cleared;
     pageClass->choose_file = webkit_page_real_choose_file;
     pageClass->script_alert = webkit_page_real_script_alert;
     pageClass->script_confirm = webkit_page_real_script_confirm;

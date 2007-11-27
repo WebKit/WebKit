@@ -48,9 +48,14 @@
 #include "ResourceRequest.h"
 #include "CString.h"
 #include "ProgressTracker.h"
+#include "kjs_binding.h"
+#include "kjs_proxy.h"
+#include "kjs_window.h"
 #include "webkitgtkpage.h"
 #include "webkitgtkframe.h"
 #include "webkitgtkprivate.h"
+
+#include <JavaScriptCore/APICast.h>
 #include <stdio.h>
 #if PLATFORM(UNIX)
 #include <sys/utsname.h>
@@ -345,7 +350,27 @@ String FrameLoaderClient::overrideMediaType() const
 
 void FrameLoaderClient::windowObjectCleared()
 {
+    // Is this obsolete now?
     g_signal_emit_by_name(m_frame, "cleared");
+
+    Frame* coreFrame = core(webFrame());
+    ASSERT(coreFrame);
+
+    Settings* settings = coreFrame->settings();
+    if (!settings || !settings->isJavaScriptEnabled())
+        return;
+
+    // TODO: Consider using g_signal_has_handler_pending() to avoid the overhead
+    // when there are no handlers.
+    JSGlobalContextRef context = toGlobalRef(coreFrame->scriptProxy()->interpreter()->globalExec());
+    JSObjectRef windowObject = toRef(KJS::Window::retrieve(coreFrame)->getObject());
+    ASSERT(windowObject);
+
+    WebKitPage* page = getPageFromFrame(m_frame);
+    g_signal_emit_by_name(page, "window_object_cleared", m_frame, context, windowObject);
+
+    // TODO: Re-attach debug clients if present.
+    // The Win port has an example of how we might do this.
 }
 
 void FrameLoaderClient::didPerformFirstNavigation() const

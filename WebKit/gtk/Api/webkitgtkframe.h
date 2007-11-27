@@ -35,10 +35,6 @@
 
 #include "webkitgtkdefines.h"
 
-typedef struct OpaqueJSContext* JSGlobalContextRef;
-typedef const struct OpaqueJSContext* JSContextRef;
-typedef struct OpaqueJSValue* JSObjectRef;
-
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_FRAME            (webkit_frame_get_type())

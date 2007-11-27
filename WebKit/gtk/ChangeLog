@@ -1,3 +1,21 @@
+2007-11-26  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Adam Roben.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16149
+        Implement the window-object-cleared signal
+
+        This implementation provides the JSGlobalContextRef and JSObjectRef
+        directly rather than using an intermediate JS wrapper object, similar
+        to the approach taken by the Win port.
+
+        * Api/webkitgtk-marshal.list:
+        * Api/webkitgtkframe.h:
+        * Api/webkitgtkpage.cpp:
+        * Api/webkitgtkpage.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::windowObjectCleared):
+
 2007-11-24  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
