@@ -1,3 +1,27 @@
+2007-11-26  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15974
+        GIF decoding should respect frames' specified disposal methods.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::):
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::disposalMethod):
+        (WebCore::RGBA32Buffer::setDisposalMethod):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        (WebCore::GIFImageDecoder::prepEmptyFrameBuffer):
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        (WebCore::GIFImageDecoder::frameComplete):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::read):
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFFrameReader::GIFFrameReader):
+
 2007-11-26  Adam Roben  <aroben@apple.com>
 
         Add a Color(CGColorRef) constructor

@@ -65,18 +65,20 @@ public:
     void decodingHalted(unsigned bytesLeft);
     void haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, 
                         unsigned repeatCount);
-    void frameComplete(unsigned frameIndex, unsigned frameDuration, bool includeInNextFrame);
+    void frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod);
     void gifComplete();
 
 private:
-    // Called to initialize a new frame buffer (potentially compositing it
-    // with the previous frame and/or clearing bits in our image based off
-    // the previous frame as well).
-    void initFrameBuffer(RGBA32Buffer& buffer,
-                         RGBA32Buffer* previousBuffer,
-                         bool compositeWithPreviousFrame);
+    // Called to initialize the frame buffer with the given index, based on the
+    // previous frame's disposal method.
+    void initFrameBuffer(unsigned frameIndex);
+
+    // A helper for initFrameBuffer(), this sets the size of the buffer, and
+    // fills it with transparent pixels.
+    void prepEmptyFrameBuffer(RGBA32Buffer* buffer) const;
 
     bool m_frameCountValid;
+    bool m_currentBufferSawAlpha;
     mutable GIFImageDecoderPrivate* m_reader;
 };
 
