@@ -1,3 +1,13 @@
+2007-11-26  Feng Qian <ian.eng.webkit@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=16073
+
+        * http/tests/security/resources/iframe-invalid-domain-change.html: Added.
+        * http/tests/security/xss-DENIED-invalid-domain-change-expected.txt: Added.
+        * http/tests/security/xss-DENIED-invalid-domain-change.html: Added.
+
 2007-11-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

@@ -1,3 +1,15 @@
+2007-11-26  Feng Qian <ian.eng.webkit@gmail.com>
+
+        Reviewed and touched up by Sam Weinig.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16073
+
+        Test: http/tests/security/xss-DENIED-invalid-domain-change.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain): Don't set the securityOrigin policy unless
+        the set succeeds.  Adds some early returns as well.
+
 2007-11-26  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

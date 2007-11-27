@@ -2617,23 +2617,37 @@ void Document::setDomain(const String& newDomain)
     // Both NS and IE specify that changing the domain is only allowed when
     // the new domain is a suffix of the old domain.
 
-    // FIXME: We should add logging indicating why a domain was not allowed. 
+    // FIXME: We should add logging indicating why a domain was not allowed.
+
+    // If the new domain is the same as the old domain, still call
+    // m_securityOrigin.setDomainForDOM. This will change the
+    // security check behavior. For example, if a page loaded on port 8000
+    // assigns its current domain using document.domain, the page will
+    // allow other pages loaded on different ports in the same domain that
+    // have also assigned to access this page.
+    if (equalIgnoringCase(m_domain, newDomain)) {
+        m_securityOrigin.setDomainFromDOM(newDomain);
+        return;
+    }
 
     int oldLength = m_domain.length();
     int newLength = newDomain.length();
-    // e.g. newDomain=kde.org (7) and m_domain=www.kde.org (11)
-    if (newLength < oldLength) {
-        String test = m_domain.copy();
-        // Check that it's a subdomain, not e.g. "de.org"
-        if (test[oldLength - newLength - 1] == '.') {
-            // Now test is "kde.org" from m_domain
-            // and we check that it's the same thing as newDomain
-            test.remove(0, oldLength - newLength);
-            if (test == newDomain)
-                m_domain = newDomain;
-        }
-    }
+    // e.g. newDomain = webkit.org (10) and m_domain = www.webkit.org (14)
+    if (newLength >= oldLength)
+        return;
 
+    String test = m_domain.copy();
+    // Check that it's a subdomain, not e.g. "ebkit.org"
+    if (test[oldLength - newLength - 1] != '.')
+        return;
+
+    // Now test is "webkit.org" from m_domain
+    // and we check that it's the same thing as newDomain
+    test.remove(0, oldLength - newLength);
+    if (test != newDomain)
+        return;
+
+    m_domain = newDomain;
     m_securityOrigin.setDomainFromDOM(newDomain);
 }
 
