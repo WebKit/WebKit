@@ -1,3 +1,9 @@
+2007-11-27  Alp Toker  <alp@atoker.com>
+
+        Fix potential broken build due to a missing DEPENDPATH.
+
+        * WebCore.pro:
+
 2007-11-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Hyatt.

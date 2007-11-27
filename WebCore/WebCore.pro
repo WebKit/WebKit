@@ -136,6 +136,7 @@ gtk-port {
     $$PWD/platform/graphics/cairo \
     $$PWD/platform/graphics/svg/cairo \
     $$PWD/platform/network/curl \
+    $$PWD/platform/image-decoders \
     $$PWD/platform/image-decoders/bmp \
     $$PWD/platform/image-decoders/gif \
     $$PWD/platform/image-decoders/ico \
@@ -153,6 +154,7 @@ gtk-port {
     platform/graphics/cairo \
     platform/graphics/svg/cairo \
     platform/network/curl \
+    platform/image-decoders \
     platform/image-decoders/bmp \
     platform/image-decoders/gif \
     platform/image-decoders/ico \
