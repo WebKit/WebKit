@@ -1,3 +1,28 @@
+2007-11-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/5569233> Add the ability to disable author and user CSS styles
+
+        * WebCore.base.exp: Add the Settings::setAuthorAndUserStylesEnabled symbol.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector): Add a new matchAuthorAndUserStyles parameter.
+        (WebCore::CSSStyleSelector::styleForElement): Check m_matchAuthorAndUserStyles before
+        matching user and author rules.
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): Ditto.
+        (WebCore::CSSStyleSelector::styleRulesForElement): Ditto.
+        * css/CSSStyleSelector.h: Add m_matchAuthorAndUserStyles and new constructor parameter.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Pass Settings::authorAndUserStylesEnabled to the CSSStyleSelector.
+        (WebCore::Document::recalcStyleSelector): Skip collecting the author stylesheets if
+        Settings::authorAndUserStylesEnabled is false, and pass that to the CSSStyleSelector.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize m_authorAndUserStylesEnabled to true.
+        (WebCore::Settings::setAuthorAndUserStylesEnabled): Recalc style in all the frames
+        when the setting changes.
+        * page/Settings.h: Add m_authorAndUserStylesEnabled.
+        (WebCore::Settings::authorAndUserStylesEnabled): Return m_authorAndUserStylesEnabled.
+
 2007-11-27  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

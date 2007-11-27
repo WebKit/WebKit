@@ -940,6 +940,7 @@ static bool debugWidget = true;
     settings->setUsesPageCache([self usesPageCache]);
     settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
     settings->setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
+    settings->setAuthorAndUserStylesEnabled([preferences authorAndUserStylesEnabled]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);

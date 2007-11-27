@@ -219,6 +219,11 @@ void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
     editingDelegate->setAcceptsEditing(acceptsEditing);
 }
 
+void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
+{
+    // FIXME: Implement!
+}
+
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)
 {
     COMPtr<IWebView> webView;

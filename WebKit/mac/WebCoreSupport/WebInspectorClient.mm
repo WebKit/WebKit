@@ -160,6 +160,7 @@ void WebInspectorClient::updateWindowTitle() const
     [preferences setAutosaves:NO];
     [preferences setPrivateBrowsingEnabled:YES];
     [preferences setLoadsImagesAutomatically:YES];
+    [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptEnabled:YES];
     [preferences setAllowsAnimatedImages:YES];
     [preferences setLoadsImagesAutomatically:YES];

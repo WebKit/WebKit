@@ -317,7 +317,11 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     m_usesFirstLetterRules = false;
     m_gotoAnchorNeededAfterStylesheetsLoad = false;
 
-    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode());
+    bool matchAuthorAndUserStyles = true;
+    if (Settings* settings = this->settings())
+        matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
+    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
+
     m_didCalculateStyleSelector = false;
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
@@ -2053,12 +2057,16 @@ void Document::recalcStyleSelector()
 
     DeprecatedPtrList<StyleSheet> oldStyleSheets = m_styleSheets->styleSheets;
     m_styleSheets->styleSheets.clear();
-    Node *n;
-    for (n = this; n; n = n->traverseNextNode()) {
-        StyleSheet *sheet = 0;
 
-        if (n->nodeType() == PROCESSING_INSTRUCTION_NODE)
-        {
+    bool matchAuthorAndUserStyles = true;
+    if (Settings* settings = this->settings())
+        matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
+
+    Node* n = matchAuthorAndUserStyles ? this : 0;
+    for ( ; n; n = n->traverseNextNode()) {
+        StyleSheet* sheet = 0;
+
+        if (n->nodeType() == PROCESSING_INSTRUCTION_NODE) {
             // Processing instruction (XML documents only)
             ProcessingInstruction* pi = static_cast<ProcessingInstruction*>(n);
             sheet = pi->sheet();
@@ -2071,8 +2079,7 @@ void Document::recalcStyleSelector()
                 return;
             }
 #endif
-            if (!sheet && !pi->localHref().isEmpty())
-            {
+            if (!sheet && !pi->localHref().isEmpty()) {
                 // Processing instruction with reference to an element in this document - e.g.
                 // <?xml-stylesheet href="#mystyle">, with the element
                 // <foo id="mystyle">heading { color: red; }</foo> at some location in
@@ -2080,19 +2087,17 @@ void Document::recalcStyleSelector()
                 Element* elem = getElementById(pi->localHref().impl());
                 if (elem) {
                     String sheetText("");
-                    Node *c;
-                    for (c = elem->firstChild(); c; c = c->nextSibling()) {
+                    for (Node* c = elem->firstChild(); c; c = c->nextSibling()) {
                         if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE)
                             sheetText += c->nodeValue();
                     }
 
-                    CSSStyleSheet *cssSheet = new CSSStyleSheet(this);
+                    CSSStyleSheet* cssSheet = new CSSStyleSheet(this);
                     cssSheet->parseString(sheetText);
                     pi->setCSSStyleSheet(cssSheet);
                     sheet = cssSheet;
                 }
             }
-
         } else if (n->isHTMLElement() && (n->hasTagName(linkTag) || n->hasTagName(styleTag))
 #if ENABLE(SVG)
             ||  (n->isSVGElement() && n->hasTagName(SVGNames::styleTag))
@@ -2149,7 +2154,7 @@ void Document::recalcStyleSelector()
                     if (e->hasLocalName(styleTag) || !rel.contains("alternate"))
                         m_preferredStylesheetSet = m_selectedStylesheetSet = title;
                 }
-                
+
                 if (title != m_preferredStylesheetSet)
                     sheet = 0;
 
@@ -2164,7 +2169,7 @@ void Document::recalcStyleSelector()
             sheet->ref();
             m_styleSheets->styleSheets.append(sheet);
         }
-    
+
         // For HTML documents, stylesheets are not allowed within/after the <BODY> tag. So we
         // can stop searching here.
         if (isHTMLDocument() && n->hasTagName(bodyTag))
@@ -2181,7 +2186,7 @@ void Document::recalcStyleSelector()
     String usersheet = m_usersheet;
     if (view() && view()->mediaType() == "print")
         usersheet += m_printSheet;
-    m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode());
+    m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), m_mappedElementSheet.get(), !inCompatMode(), matchAuthorAndUserStyles);
     m_styleSelector->setEncodedURL(m_url);
     m_didCalculateStyleSelector = true;
 }

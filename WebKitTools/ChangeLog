@@ -1,3 +1,21 @@
+2007-11-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/5569233> Add the ability to disable author and user CSS styles
+        
+        Add support for disabling author and user styles for testing.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setAuthorAndUserStylesEnabledCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+
 2007-11-26  Dan Bernstein  <mitz@apple.com>
 
         - Tiger build fix.

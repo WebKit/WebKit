@@ -52,6 +52,7 @@ public:
     void queueReload();
     void queueScript(JSStringRef url);
     void setAcceptsEditing(bool acceptsEditing);
+    void setAuthorAndUserStylesEnabled(bool);
     void setCustomPolicyDelegate(bool setDelegate);
     void setMainFrameIsFirstResponder(bool flag);
     void setPrivateBrowsingEnabled(bool flag);

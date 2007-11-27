@@ -141,7 +141,7 @@
 		A8B91BF70CF522B4008F91FF /* CheckedMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CheckedMalloc.cpp; path = mac/CheckedMalloc.cpp; sourceTree = "<group>"; };
 		A8B91BF80CF522B4008F91FF /* JavaScriptThreading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaScriptThreading.cpp; path = mac/JavaScriptThreading.cpp; sourceTree = "<group>"; };
 		A8B91BF90CF522B4008F91FF /* CheckedMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CheckedMalloc.h; path = mac/CheckedMalloc.h; sourceTree = "<group>"; };
-		AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = AHEM____.TTF; path = qt/fonts/AHEM____.TTF; sourceTree = "<group>"; };
+		AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "qt/fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		AE8257EF08D22389000507AB /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5A752A108AF5D1F00138E45 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -506,6 +506,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* DumpRenderTree */;
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;

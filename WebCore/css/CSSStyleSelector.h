@@ -82,7 +82,7 @@ class StyledElement;
     class CSSStyleSelector : public StyleSelector
     {
     public:
-        CSSStyleSelector(Document*, const String& userStyleSheet, StyleSheetList *styleSheets, CSSStyleSheet* mappedElementsSheet, bool strictParsing);
+        CSSStyleSelector(Document*, const String& userStyleSheet, StyleSheetList *styleSheets, CSSStyleSheet* mappedElementsSheet, bool strictParsing, bool matchAuthorAndUserStyles);
         ~CSSStyleSelector();
 
         static void loadDefaultStyle();
@@ -231,7 +231,8 @@ class StyledElement;
         CSSValue* m_lineHeightValue;
         bool fontDirty;
         bool isXMLDoc;
-        
+        bool m_matchAuthorAndUserStyles;
+
         RefPtr<CSSFontSelector> m_fontSelector;
 
         HashSet<AtomicStringImpl*> m_selectorAttrs;

@@ -235,11 +235,13 @@ CSSStyleSheet *CSSStyleSelector::svgSheet = 0;
 static CSSStyleSelector::Encodedurl *currentEncodedURL = 0;
 static PseudoState pseudoState;
 
-CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList *styleSheets, CSSStyleSheet* mappedElementSheet, bool _strictParsing)
+CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList *styleSheets, CSSStyleSheet* mappedElementSheet, bool _strictParsing, bool matchAuthorAndUserStyles)
 {
     init();
     
     m_document = doc;
+
+    m_matchAuthorAndUserStyles = matchAuthorAndUserStyles;
 
     strictParsing = _strictParsing;
     if (!defaultStyle)
@@ -831,7 +833,8 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
 
     if (!resolveForRootDefault) {
         // 4. Now we check user sheet rules.
-        matchRules(m_userStyle, firstUserRule, lastUserRule);
+        if (m_matchAuthorAndUserStyles)
+            matchRules(m_userStyle, firstUserRule, lastUserRule);
 
         // 5. Now check author rules, beginning first with presentational attributes
         // mapped from HTML.
@@ -864,10 +867,11 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
         }
     
         // 6. Check the rules in author sheets next.
-        matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
-    
+        if (m_matchAuthorAndUserStyles)
+            matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
+
         // 7. Now check our inline style attribute.
-        if (styledElement) {
+        if (m_matchAuthorAndUserStyles && styledElement) {
             CSSMutableStyleDeclaration* inlineDecl = styledElement->inlineStyleDecl();
             if (inlineDecl) {
                 lastAuthorRule = m_matchedDecls.size();
@@ -947,9 +951,12 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     // Check UA, user and author rules.
     int firstUARule = -1, lastUARule = -1, firstUserRule = -1, lastUserRule = -1, firstAuthorRule = -1, lastAuthorRule = -1;
     matchUARules(firstUARule, lastUARule);
-    matchRules(m_userStyle, firstUserRule, lastUserRule);
-    matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
-    
+
+    if (m_matchAuthorAndUserStyles) {
+        matchRules(m_userStyle, firstUserRule, lastUserRule);
+        matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
+    }
+
     if (m_matchedDecls.isEmpty())
         return 0;
     
@@ -1204,14 +1211,18 @@ RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool auth
         matchUARules(firstUARule, lastUARule);
 
         // Now we check user sheet rules.
-        int firstUserRule = -1, lastUserRule = -1;
-        matchRules(m_userStyle, firstUserRule, lastUserRule);
+        if (m_matchAuthorAndUserStyles) {
+            int firstUserRule = -1, lastUserRule = -1;
+            matchRules(m_userStyle, firstUserRule, lastUserRule);
+        }
     }
 
-    // Check the rules in author sheets.
-    int firstAuthorRule = -1, lastAuthorRule = -1;
-    matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
-    
+    if (m_matchAuthorAndUserStyles) {
+        // Check the rules in author sheets.
+        int firstAuthorRule = -1, lastAuthorRule = -1;
+        matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
+    }
+
     m_collectRulesOnly = false;
     
     return m_ruleList;

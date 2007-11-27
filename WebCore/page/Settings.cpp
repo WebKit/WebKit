@@ -64,6 +64,7 @@ Settings::Settings(Page* page)
     , m_showsURLsInToolTips(false)
     , m_forceFTPDirectoryListings(false)
     , m_developerExtrasEnabled(false)
+    , m_authorAndUserStylesEnabled(true)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -279,6 +280,12 @@ void Settings::setDeveloperExtrasEnabled(bool developerExtrasEnabled)
     m_developerExtrasEnabled = developerExtrasEnabled;
 }
 
+void Settings::setAuthorAndUserStylesEnabled(bool authorAndUserStylesEnabled)
+{
+    m_authorAndUserStylesEnabled = authorAndUserStylesEnabled;
+    setNeedsReapplyStylesInAllFrames(m_page);
+}
+
 void Settings::setDefaultDatabaseOriginQuota(unsigned long long quota)
 {
     DatabaseTracker::tracker().setDefaultOriginQuota(quota);
@@ -288,6 +295,5 @@ unsigned long long Settings::defaultDatabaseOriginQuota() const
 {
     return DatabaseTracker::tracker().defaultOriginQuota();
 }
-
 
 } // namespace WebCore

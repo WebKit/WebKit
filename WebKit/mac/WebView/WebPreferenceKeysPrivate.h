@@ -63,6 +63,7 @@
 #define WebKitFTPDirectoryTemplatePath @"WebKitFTPDirectoryTemplatePath"
 #define WebKitForceFTPDirectoryListings @"WebKitForceFTPDirectoryListings"
 #define WebKitDeveloperExtrasEnabledPreferenceKey @"WebKitDeveloperExtrasEnabledPreferenceKey"
+#define WebKitAuthorAndUserStylesEnabledPreferenceKey @"WebKitAuthorAndUserStylesEnabledPreferenceKey"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

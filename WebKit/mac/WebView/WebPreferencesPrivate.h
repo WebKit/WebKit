@@ -48,6 +48,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)developerExtrasEnabled;
 - (void)setDeveloperExtrasEnabled:(BOOL)flag;
 
+- (BOOL)authorAndUserStylesEnabled;
+- (void)setAuthorAndUserStylesEnabled:(BOOL)flag;
+
 - (BOOL)respectStandardStyleKeyEquivalents;
 - (void)setRespectStandardStyleKeyEquivalents:(BOOL)flag;
 

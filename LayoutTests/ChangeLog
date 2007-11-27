@@ -1,3 +1,12 @@
+2007-11-26  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test for: <rdar://problem/5569233> Add the ability to disable author and user CSS styles
+
+        * fast/css/disabled-author-styles.html: Added.
+        * platform/mac/fast/css/disabled-author-styles-expected.txt: Added.
+
 2007-11-26  Feng Qian <ian.eng.webkit@gmail.com>
 
         Reviewed by Sam Weinig.

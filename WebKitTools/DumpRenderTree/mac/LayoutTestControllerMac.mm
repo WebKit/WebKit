@@ -42,6 +42,7 @@
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -149,6 +150,11 @@ void LayoutTestController::queueScript(JSStringRef script)
 void LayoutTestController::setAcceptsEditing(bool newAcceptsEditing)
 {
     [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
+}
+
+void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
+{
+    [[[mainFrame webView] preferences] setAuthorAndUserStylesEnabled:flag];
 }
 
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)

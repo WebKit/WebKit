@@ -331,6 +331,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitUsesPageCachePreferenceKey,
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitDeveloperExtrasEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -742,6 +743,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setDeveloperExtrasEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitDeveloperExtrasEnabledPreferenceKey];
+}
+
+- (BOOL)authorAndUserStylesEnabled
+{
+    return [self _boolValueForKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
+}
+
+- (void)setAuthorAndUserStylesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
 }
 
 - (BOOL)respectStandardStyleKeyEquivalents
