@@ -1,3 +1,13 @@
+2007-11-26  Adam Roben  <aroben@apple.com>
+
+        Add a Color(CGColorRef) constructor
+
+        Reviewed by Darin.
+
+        * platform/graphics/Color.h:
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::Color::Color): Added.
+
 2007-11-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

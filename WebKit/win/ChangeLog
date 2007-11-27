@@ -1,3 +1,14 @@
+2007-11-26  Adam Roben  <aroben@apple.com>
+
+        Take advantage of the new Color constructor that takes a CGColorRef
+
+        This lets us handle grayscale colors (which only have 2 components).
+
+        Reviewed by Darin.
+
+        * WebKitGraphics.cpp:
+        (DrawTextAtPoint):
+
 2007-11-26  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

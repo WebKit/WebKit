@@ -74,14 +74,10 @@ void DrawTextAtPoint(CGContextRef cgContext, LPCTSTR text, int length, POINT poi
 {
     GraphicsContext context(cgContext);
 
-    ASSERT(CGColorGetNumberOfComponents(color) == 4);   // this code assumes the CGColorRef has 4 components
-    const CGFloat* components = CGColorGetComponents(color);
-    Color textColor((int)(components[0] * 255), (int)(components[1] * 255), (int)(components[2] * 255), (int)(components[3] * 255));
-
     String drawString(text, length);
     if (drawAsPassword)
         drawString = drawString.impl()->secure(WebCore::bullet);
-    WebCoreDrawTextAtPoint(context, drawString, point, makeFont(description), textColor, underlinedIndex);
+    WebCoreDrawTextAtPoint(context, drawString, point, makeFont(description), color, underlinedIndex);
 }
 
 void WebDrawText(WebTextRenderInfo* info)

@@ -105,6 +105,10 @@ public:
     operator wxColour() const;
 #endif
 
+#if PLATFORM(CG)
+    Color(CGColorRef);
+#endif
+
     static bool parseHexColor(const String& name, RGBA32& rgb);
 
     static const RGBA32 black = 0xFF000000;

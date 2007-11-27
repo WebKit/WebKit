@@ -33,6 +33,40 @@
 
 namespace WebCore {
 
+Color::Color(CGColorRef color)
+{
+    if (!color) {
+        m_color = 0;
+        m_valid = false;
+        return;
+    }
+
+    size_t numComponents = CGColorGetNumberOfComponents(color);
+    const CGFloat* components = CGColorGetComponents(color);
+
+    float r = 0;
+    float g = 0;
+    float b = 0;
+    float a = 0;
+
+    switch (numComponents) {
+    case 2:
+        r = g = b = components[0];
+        a = components[1];
+        break;
+    case 4:
+        r = components[0];
+        g = components[1];
+        b = components[2];
+        a = components[3];
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    m_color = makeRGBA(r * 255, g * 255, b * 255, a * 255);
+}
+
 #if !PLATFORM(MAC)
 
 CGColorRef cgColor(const Color& c)
