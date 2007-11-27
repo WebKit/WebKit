@@ -2,6 +2,13 @@
 
         Reviewed by Adam Roben.
 
+        * page/inspector/inspector.css: Make the text in the Network
+        panel legend more readable.
+
+2007-11-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
         Don't call setNeedsReapplyStylesInAllFrames if the
         authorAndUserStylesEnabled setting didn't change.
 

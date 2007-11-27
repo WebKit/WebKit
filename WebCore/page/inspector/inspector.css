@@ -1899,6 +1899,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     background-repeat: no-repeat;
     color: inherit;
     border: 1px solid transparent;
+    text-shadow: black 0px 2px 2px;
 }
 
 .network-graph-mode:focus {
@@ -1935,7 +1936,6 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 }
 
 .network-graph-legend-value {
-    font-weight: normal;
     font-size: 10px;
 }
 
