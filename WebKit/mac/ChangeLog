@@ -1,3 +1,22 @@
+2007-11-27  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin, landed by Anders.
+
+        Fixed: <rdar://problem/4610818> CrashTracer: 1533 crashes in Safari at com.macromedia.Flash Player.plugin: native_ShockwaveFlash_TCallLabel + 271131
+
+        The problem was that some Leopard users were still inadvertently using the old Flash 8 plug-in, even though Leopard
+        shipped with Flash 9. To avoid loading an older version of a plug-in when a newer version is installed, the plug-in
+        database will compare bundle versions and always load the latest version.
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage versionNumber]): New method. CFBundleGetVersionNumber doesn't work with all possible versioning schemes,
+        but we think for now it's good enough for us.
+        * Plugins/WebPluginDatabase.m:
+        (considerCandidate): Added a C utility function which compares the current plug-in against a candidate plug-in's version number.
+        If both plug-ins have the same bundle ID and the candiate is newer, the current plug-in becomes the candidate.
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]): Calls the new considerCandidate() function.
+
 2007-11-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Hyatt.

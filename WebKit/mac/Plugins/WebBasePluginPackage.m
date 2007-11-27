@@ -409,6 +409,12 @@
     return YES;
 }
 
+- (UInt32)versionNumber
+{
+    // CFBundleGetVersionNumber doesn't work with all possible versioning schemes, but we think for now it's good enough for us.
+    return CFBundleGetVersionNumber(cfBundle);
+}
+
 - (void)wasAddedToPluginDatabase:(WebPluginDatabase *)database
 {    
     if (!pluginDatabases)

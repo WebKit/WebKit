@@ -41,6 +41,8 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKitSystemInterface.h>
 
+static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPackage **candidatePlugin);
+
 @interface WebPluginDatabase (Internal)
 + (NSArray *)_defaultPlugInPaths;
 - (NSArray *)_plugInPaths;
@@ -69,32 +71,40 @@ static WebPluginDatabase *sharedDatabase = nil;
     [sharedDatabase close];
 }
 
+static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPackage **candidatePlugin)
+{
+    if (!*currentPlugin) {
+        *currentPlugin = *candidatePlugin;
+        return;
+    }
+
+    if ([[[*currentPlugin bundle] bundleIdentifier] isEqualToString:[[*candidatePlugin bundle] bundleIdentifier]] && [*candidatePlugin versionNumber] > [*currentPlugin versionNumber]) 
+        *currentPlugin = *candidatePlugin;
+}
+
 - (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
     WebBasePluginPackage *plugin = nil;
     WebBasePluginPackage *webPlugin = nil;
 #ifndef __LP64__
     WebBasePluginPackage *CFMPlugin = nil;
-    WebBasePluginPackage *machoPlugin = nil;
+    WebBasePluginPackage *machoPlugin = nil;    
 #endif
+
     NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
     key = [key lowercaseString];
 
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
         if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]) {
-            if ([plugin isKindOfClass:[WebPluginPackage class]]) {
-                if (!webPlugin)
-                    webPlugin = plugin;
-            } 
+            if ([plugin isKindOfClass:[WebPluginPackage class]]) 
+                checkCandidate(&webPlugin, &plugin);
 #ifndef __LP64__
             else if([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
                 WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
                 if (executableType == WebCFMExecutableType) {
-                    if (!CFMPlugin)
-                        CFMPlugin = plugin;
+                    checkCandidate(&CFMPlugin, &plugin);
                 } else if (executableType == WebMachOExecutableType) {
-                    if (!machoPlugin)
-                        machoPlugin = plugin;
+                    checkCandidate(&machoPlugin, &plugin);
                 } else {
                     ASSERT_NOT_REACHED();
                 }

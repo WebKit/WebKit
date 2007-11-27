@@ -99,7 +99,7 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (BOOL)isJavaPlugIn;
 
 - (BOOL)isNativeLibraryData:(NSData *)data;
-
+- (UInt32)versionNumber;
 - (void)wasAddedToPluginDatabase:(WebPluginDatabase *)database;
 - (void)wasRemovedFromPluginDatabase:(WebPluginDatabase *)database;
 
