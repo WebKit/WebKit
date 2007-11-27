@@ -1,3 +1,19 @@
+2007-11-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - some middle-mouse-button-related fixes
+
+        These don't affect Safari since it maps the middle mouse button to the command key,
+        but that might not always be the case for future versions.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView otherMouseDown:]): Pass through middle mouse down events to WebCore.
+        (-[WebHTMLView otherMouseDragged:]): Ditto, for drag events.
+        (-[WebHTMLView otherMouseUp:]): Ditto, for up events.
+
+        * WebView/WebPolicyDelegate.h: Fixed inaccurate documentation of WebActionButtonKey.
+
 2007-11-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

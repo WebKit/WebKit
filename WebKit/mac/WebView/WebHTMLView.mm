@@ -4783,6 +4783,30 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [super _windowChangedKeyState];
 }
 
+- (void)otherMouseDown:(NSEvent *)event
+{
+    if ([event buttonNumber] == 2)
+        [self mouseDown:event];
+    else
+        [super otherMouseDown:event];
+}
+
+- (void)otherMouseDragged:(NSEvent *)event
+{
+    if ([event buttonNumber] == 2)
+        [self mouseDragged:event];
+    else
+        [super otherMouseDragged:event];
+}
+
+- (void)otherMouseUp:(NSEvent *)event
+{
+    if ([event buttonNumber] == 2)
+        [self mouseUp:event];
+    else
+        [super otherMouseUp:event];
+}
+
 @end
 
 @implementation WebHTMLView (WebTextSizing)

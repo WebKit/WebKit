@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,6 @@
 @class WebFrame;
 @class WebPolicyPrivate;
 
-
 /*!
     @enum WebNavigationType
     @abstract The type of action that triggered a possible navigation.
@@ -56,13 +55,11 @@ typedef enum {
     WebNavigationTypeOther
 } WebNavigationType;
 
-
 extern NSString *WebActionNavigationTypeKey; // NSNumber (WebNavigationType)
 extern NSString *WebActionElementKey; // NSDictionary of element info
-extern NSString *WebActionButtonKey;  // NSEventType
+extern NSString *WebActionButtonKey; // NSNumber (0 for left button, 1 for middle button, 2 for right button)
 extern NSString *WebActionModifierFlagsKey; // NSNumber (unsigned)
 extern NSString *WebActionOriginalURLKey; // NSURL
-
 
 /*!
     @protocol WebPolicyDecisionListener
