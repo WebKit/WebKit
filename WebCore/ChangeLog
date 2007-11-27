@@ -1,5 +1,20 @@
 2007-11-27  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Mitz.
+
+        Small changes to make RenderSlider a bit more generic so it can be used in video controls.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Fix coordinates with forwarded events.
+        * rendering/RenderSlider.cpp:
+        (WebCore::HTMLSliderThumbElement::defaultEventHandler): Fix coordinates with forwarded events.
+        (WebCore::RenderSlider::setStyle):
+        (WebCore::RenderSlider::createThumbStyle): Copy thumb left and top from the orginal style so position does not reset.
+        (WebCore::RenderSlider::mouseEventIsInThumb): Make this work with forwarded events.
+        * rendering/RenderSlider.h:
+
+2007-11-27  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin.
 
         - Don't use hasPseudoId() optimization for pseudo styles used in shadow trees. These styles

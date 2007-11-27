@@ -1310,7 +1310,13 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         if (evt->isMouseEvent() && evt->type() == mousedownEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
             MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
             if (!slider->mouseEventIsInThumb(mEvt)) {
-                slider->setValueForPosition(slider->positionForOffset(IntPoint(mEvt->offsetX(), mEvt->offsetY())));
+                IntPoint eventOffset(mEvt->offsetX(), mEvt->offsetY());
+                if (mEvt->target() != this) {
+                    IntRect rect = renderer()->absoluteBoundingBoxRect();
+                    eventOffset.setX(mEvt->pageX() - rect.x());
+                    eventOffset.setY(mEvt->pageY() - rect.y());
+                }
+                slider->setValueForPosition(slider->positionForOffset(eventOffset));
             }
         }
         if (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent())

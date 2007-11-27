@@ -77,7 +77,7 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
         if (document()->frame() && renderer() && renderer()->parent()
                 && static_cast<RenderSlider*>(renderer()->parent())->mouseEventIsInThumb(mouseEvent)) {
             // Cache the initial point where the mouse down occurred.
-            m_initialClickPoint = IntPoint(mouseEvent->x(), mouseEvent->y());
+            m_initialClickPoint = IntPoint(mouseEvent->pageX(), mouseEvent->pageY());
             // Cache the initial position of the thumb.
             m_initialPosition = static_cast<RenderSlider*>(renderer()->parent())->currentPosition();
             m_inDragMode = true;
@@ -101,9 +101,9 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
             MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
             RenderSlider* slider = static_cast<RenderSlider*>(renderer()->parent());
             int newPosition = slider->positionForOffset(
-                IntPoint(m_initialPosition + mouseEvent->x() - m_initialClickPoint.x()
+                IntPoint(m_initialPosition + mouseEvent->pageX() - m_initialClickPoint.x()
                         + (renderer()->absoluteBoundingBoxRect().width() / 2), 
-                    m_initialPosition + mouseEvent->y() - m_initialClickPoint.y()
+                    m_initialPosition + mouseEvent->pageY() - m_initialClickPoint.y()
                         + (renderer()->absoluteBoundingBoxRect().height() / 2)));
             if (slider->currentPosition() != newPosition) {
                 slider->setCurrentPosition(newPosition);
@@ -167,14 +167,14 @@ void RenderSlider::setStyle(RenderStyle* newStyle)
     RenderBlock::setStyle(newStyle);
     
     if (m_thumb) {
-        RenderStyle* thumbStyle = createThumbStyle(newStyle);
+        RenderStyle* thumbStyle = createThumbStyle(newStyle, m_thumb->renderer()->style());
         m_thumb->renderer()->setStyle(thumbStyle);
     }
         
     setReplaced(isInline());
 }
 
-RenderStyle* RenderSlider::createThumbStyle(RenderStyle* parentStyle)
+RenderStyle* RenderSlider::createThumbStyle(RenderStyle* parentStyle, RenderStyle* oldStyle)
 {
     RenderStyle* style;
 
@@ -190,6 +190,10 @@ RenderStyle* RenderSlider::createThumbStyle(RenderStyle* parentStyle)
 
     style->setDisplay(BLOCK);
     style->setPosition(RelativePosition);
+    if (oldStyle) {
+        style->setLeft(oldStyle->left());
+        style->setTop(oldStyle->top());
+    }
 
     if (parentStyle->appearance() == SliderVerticalAppearance)
        style->setAppearance(SliderThumbVerticalAppearance);
@@ -252,13 +256,8 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
     if (!m_thumb || !m_thumb->renderer())
         return false;
  
-    ASSERT(evt->target()->toNode() == node());
-    
     IntRect thumbBounds = m_thumb->renderer()->absoluteBoundingBoxRect();
-    thumbBounds.setX(m_thumb->renderer()->style()->left().value());
-    thumbBounds.setY(m_thumb->renderer()->style()->top().value());
-    
-    return thumbBounds.contains(evt->offsetX(), evt->offsetY());
+    return thumbBounds.contains(evt->pageX(), evt->pageY());
 }
 
 void RenderSlider::setValueForPosition(int position)
