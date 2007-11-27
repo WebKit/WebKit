@@ -48,7 +48,7 @@ SOFT_LINK(libxslt, xsltComputeSortResult, xmlXPathObjectPtr*, (xsltTransformCont
 SOFT_LINK(libxslt, xsltEvalAttrValueTemplate, xmlChar*, (xsltTransformContextPtr ctxt, xmlNodePtr node, const xmlChar *name, const xmlChar *ns), (ctxt, node, name, ns))
 
 static void init_xsltTransformError(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char *, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
-static void (*softLink_xsltTransformError)(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char *, ...) = init_xsltTransformError;
+static void (*softLink_xsltTransformError)(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char *, ...) WTF_ATTRIBUTE_PRINTF(4, 5) = init_xsltTransformError;
 
 static void init_xsltTransformError(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char* msg, ...)
 {

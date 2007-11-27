@@ -1,3 +1,9 @@
+2007-11-26  Mark Rowe  <mrowe@apple.com>
+
+        GCC 4.2 build fix.
+
+        * xml/XSLTUnicodeSort.cpp: Add another WTF_ATTRIBUTE_PRINTF.
+
 2007-11-26  Feng Qian <ian.eng.webkit@gmail.com>
 
         Reviewed and touched up by Sam Weinig.
