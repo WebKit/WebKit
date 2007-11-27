@@ -63,6 +63,8 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::QueryInterface(REFIID riid, void** 
         *ppvObject = static_cast<IWebSecurityOrigin*>(this);
     else if (IsEqualGUID(riid, IID_IWebSecurityOrigin))
         *ppvObject = static_cast<IWebSecurityOrigin*>(this);
+    else if (IsEqualGUID(riid, __uuidof(this)))
+        *ppvObject = this;
     else
         return E_NOINTERFACE;
 

@@ -1,3 +1,23 @@
+2007-11-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+   
+        Add COMEnumVariant, a templatized class with implements IEnumVARIANT and lets
+        you enumerate over a C++ container, be it WTF or STL.
+        
+        * COMEnumVariant.h: Added.
+        
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::origins):
+        (WebDatabaseManager::databasesWithOrigin):
+        Implement these using COMEnumVariant.
+        
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::QueryInterface):
+        * WebSecurityOrigin.h:
+        Add a UUID for the implementation so that other parts of WebKit can access
+        the WebCore::SecurityOriginData object.
+        
 2007-11-26  Adam Roben  <aroben@apple.com>
 
         Take advantage of the new Color constructor that takes a CGColorRef

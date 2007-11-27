@@ -29,9 +29,14 @@
 #include "WebDatabaseManager.h"
 #include "WebKitDLL.h"
 
+#include "COMEnumVariant.h"
+#include "WebSecurityOrigin.h"
+
+#include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/COMPtr.h>
+#include <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
 
@@ -85,6 +90,8 @@ ULONG STDMETHODCALLTYPE WebDatabaseManager::Release()
     return newRef;
 }
 
+template<> struct COMVariantSetter<SecurityOriginData> : COMIUnknownVariantSetter<WebSecurityOrigin, SecurityOriginData> {};
+
 // IWebDatabaseManager -------------------------------------------------------------
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::sharedWebDatabaseManager( 
     /* [retval][out] */ IWebDatabaseManager** result)
@@ -106,7 +113,12 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::origins(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    return E_NOTIMPL;
+    Vector<SecurityOriginData> origins;
+    DatabaseTracker::tracker().origins(origins);
+    COMPtr<COMEnumVariant<Vector<SecurityOriginData> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<SecurityOriginData> >::adopt(origins));
+
+    *result = enumVariant.releaseRef();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin( 
@@ -121,9 +133,19 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    return E_NOTIMPL;
+    COMPtr<WebSecurityOrigin> webSecurityOrigin(Query, origin);
+    if (!webSecurityOrigin)
+        return E_FAIL;
+
+    Vector<String> databaseNames;
+    DatabaseTracker::tracker().databaseNamesForOrigin(webSecurityOrigin->securityOriginData(), databaseNames);
+
+    COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::adopt(databaseNames));
+
+    *result = enumVariant.releaseRef();
+    return S_OK;
 }
-    
+
 HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabaseWithOrigin( 
     /* [in] */ BSTR* database,
     /* [in] */ IWebSecurityOrigin* origin,

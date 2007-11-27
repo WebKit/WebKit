@@ -32,9 +32,11 @@
 #include "IWebSecurityOrigin.h"
 #include <WebCore/SecurityOriginData.h>
 
-class WebSecurityOrigin : public IWebSecurityOrigin {
+class DECLSPEC_UUID("6EB8D98F-2723-4472-88D3-5936F9D6E631") WebSecurityOrigin : public IWebSecurityOrigin {
 public:
+    // WebSecurityOrigin
     static WebSecurityOrigin* createInstance(const WebCore::SecurityOriginData& securityOriginData);
+    const WebCore::SecurityOriginData& securityOriginData() const { return m_securityOriginData; }
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
