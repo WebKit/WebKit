@@ -436,6 +436,9 @@ namespace WebCore {
         bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
 
         void iconLoadDecisionAvailable();
+
+        bool shouldAllowNavigation(Frame* targetFrame) const;
+
     private:
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
         PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);
@@ -535,8 +538,6 @@ namespace WebCore {
         void handleUnimplementablePolicy(const ResourceError&);
 
         void applyUserAgent(ResourceRequest& request);
-
-        bool canTarget(Frame*) const;
 
         void scheduleRedirection(ScheduledRedirection*);
         void startRedirectionTimer();

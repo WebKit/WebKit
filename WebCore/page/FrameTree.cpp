@@ -200,6 +200,9 @@ Frame* FrameTree::find(const AtomicString& name) const
 
 bool FrameTree::isDescendantOf(const Frame* ancestor) const
 {
+    if (m_thisFrame->page() != ancestor->page())
+        return false;
+
     for (Frame* frame = m_thisFrame; frame; frame = frame->tree()->parent())
         if (frame == ancestor)
             return true;

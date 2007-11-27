@@ -306,6 +306,8 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
 
     if (!request.frameName().isEmpty() && request.frameName() != "_blank")
         if (Frame* frame = m_frame->tree()->find(request.frameName())) {
+            if (!shouldAllowNavigation(frame))
+                return 0;
             if (!request.resourceRequest().url().isEmpty())
                 frame->loader()->load(request, false, true, 0, 0, HashMap<String, String>());
             if (Page* page = frame->page())
@@ -1935,7 +1937,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool lockHistory, bool u
         referrer = String();
     
     Frame* targetFrame = m_frame->tree()->find(request.frameName());
-    if (!canTarget(targetFrame))
+    if (!shouldAllowNavigation(targetFrame))
         return;
         
     if (request.resourceRequest().httpMethod() != "POST") {
@@ -2304,35 +2306,56 @@ void FrameLoader::reload()
     load(loader.get(), FrameLoadTypeReload, 0);
 }
 
-bool FrameLoader::canTarget(Frame* target) const
+bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
 {
-    // This function prevents this exploit:
+    // This function prevents these exploits:
     // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
+    // http://bugs.webkit.org/show_bug.cgi?id=15936 Overly permissive frame navigation allows password theft
 
     // Allow if there is no specific target.
-    if (!target)
+    if (!targetFrame)
+        return true;
+    if (m_frame == targetFrame)
         return true;
 
-    // Allow navigation within the same page/frameset.
-    if (m_frame->page() == target->page())
+    // The navigation change is safe if the active frame is:
+    //   - in the same security domain (satisfies same-origin policy)
+    //   - the opener frame
+    //   - an ancestor or a descendant in frame tree hierarchy
+
+    // Same security domain case.
+    Document* activeDocument = m_frame->document();
+    ASSERT(activeDocument);
+    Document* targetDocument = targetFrame->document();
+    if (!targetDocument)
+        return true;
+    const SecurityOrigin& activeSecurityOrigin = activeDocument->securityOrigin();
+    const SecurityOrigin& targetSecurityOrigin = targetDocument->securityOrigin();
+    if (activeSecurityOrigin.canAccess(targetSecurityOrigin))
         return true;
 
-    // Allow if the request is made from a local file.
-    ASSERT(m_frame->document());
-    String domain = m_frame->document()->domain();
-    if (domain.isEmpty())
+    // Opener case.
+    if (m_frame == targetFrame->loader()->opener())
         return true;
-    
-    // Allow if target is an entire window (top level frame of a window).
-    Frame* parent = target->tree()->parent();
-    if (!parent)
+
+    // Ancestor or descendant case.
+    if (targetFrame->tree()->isDescendantOf(m_frame) || m_frame->tree()->isDescendantOf(targetFrame))
         return true;
+
+    if (!targetFrame->settings()->privateBrowsingEnabled()) {
+        // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
+        String message = String::format("Unsafe JavaScript attempt to initiate a navigation change for frame with URL %s from frame with URL %s.\n",
+                                        targetDocument->URL().utf8().data(), activeDocument->URL().utf8().data());
+
+        if (KJS::Interpreter::shouldPrintExceptions())
+            printf("%s", message.utf8().data());
+
+        // FIXME: should we print to the console of the activeFrame as well?
+        if (Page* page = targetFrame->page())
+            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String());
+    }
     
-    // Allow if the domain of the parent of the targeted frame equals this domain.
-    String parentDomain;
-    if (Document* parentDocument = parent->document())
-        parentDomain = parentDocument->domain();
-    return equalIgnoringCase(parentDomain, domain);
+    return false;
 }
 
 void FrameLoader::stopLoadingSubframes()

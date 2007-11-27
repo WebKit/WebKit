@@ -1,3 +1,28 @@
+2007-11-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5592988>
+        - Enforce tighter restrictions on what frames in other domains
+          can be navigated.
+
+        Tests: http/tests/security/frameNavigation/xss-ALLOWED-parent-navigation-change.html
+               http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put):
+        (KJS::Location::put):
+        (KJS::LocationProtoFuncReplace::callAsFunction):
+        (KJS::LocationProtoFuncAssign::callAsFunction):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::shouldAllowNavigation): Move and update logic from canTarget().
+        * loader/FrameLoader.h:
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::isDescendantOf): Make this O(1) in the case when both frames are not
+        in the same page.
+
 2007-11-26  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
