@@ -64,6 +64,9 @@ public:
 
     void setClient(DatabaseTrackerClient*);
     
+    void setDefaultOriginQuota(unsigned long long);
+    unsigned long long defaultOriginQuota() const;
+    
     static DatabaseTracker& tracker();
 private:
     DatabaseTracker();
@@ -78,6 +81,7 @@ private:
 
     String m_databasePath;
     
+    unsigned long long m_defaultQuota;
     DatabaseTrackerClient* m_client;
 };
 

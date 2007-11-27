@@ -946,6 +946,7 @@ static bool debugWidget = true;
     } else
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
+    settings->setDefaultDatabaseOriginQuota([preferences defaultDatabaseQuota]); 
 }
 
 static inline IMP getMethod(id o, SEL s)

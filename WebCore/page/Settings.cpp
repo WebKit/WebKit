@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Settings.h"
 
+#include "DatabaseTracker.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "Page.h"
@@ -277,5 +278,16 @@ void Settings::setDeveloperExtrasEnabled(bool developerExtrasEnabled)
 {
     m_developerExtrasEnabled = developerExtrasEnabled;
 }
+
+void Settings::setDefaultDatabaseOriginQuota(unsigned long long quota)
+{
+    DatabaseTracker::tracker().setDefaultOriginQuota(quota);
+}
+
+unsigned long long Settings::defaultDatabaseOriginQuota() const
+{
+    return DatabaseTracker::tracker().defaultOriginQuota();
+}
+
 
 } // namespace WebCore

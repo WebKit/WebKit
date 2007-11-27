@@ -170,6 +170,8 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)_setIntegerValue:(int)value forKey:(NSString *)key;
 - (float)_floatValueForKey:(NSString *)key;
 - (void)_setFloatValue:(float)value forKey:(NSString *)key;
+- (void)_setUnsignedLongLongValue:(unsigned long long)value forKey:(NSString *)key;
+- (unsigned long long)_unsignedLongLongValueForKey:(NSString *)key;
 @end
 
 @implementation WebPreferences
@@ -423,6 +425,23 @@ static WebCacheModel cacheModelForMainBundle(void)
     [_private->values _webkit_setBool:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
+    [self _postPreferencesChangesNotification];
+}
+
+- (unsigned long long)_unsignedLongLongValueForKey:(NSString *)key
+{
+    id o = [self _valueForKey:key];
+    return [o respondsToSelector:@selector(unsignedLongLongValue)] ? [o unsignedLongLongValue] : 0;
+}
+
+- (void)_setUnsignedLongLongValue:(unsigned long long)value forKey:(NSString *)key
+{
+    if ([self _unsignedLongLongValueForKey:key] == value)
+        return;
+    NSString *_key = KEY(key);
+    [_private->values _webkit_setUnsignedLongLong:value forKey:_key];
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedLongLong:value] forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
@@ -944,6 +963,16 @@ static NSString *classIBCreatorID = nil;
 - (void)willAddToWebView
 {
     ++_private->numWebViews;
+}
+
+- (unsigned long long)defaultDatabaseQuota
+{
+    return [self _unsignedLongLongValueForKey:WebKitDefaultDatabaseQuotaKey];
+}
+
+- (void)setDefaultDatabaseQuota:(unsigned long long)quota
+{
+    [self _setUnsignedLongLongValue:quota forKey:WebKitDefaultDatabaseQuotaKey];
 }
 
 @end

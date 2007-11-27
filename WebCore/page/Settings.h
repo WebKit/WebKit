@@ -137,6 +137,9 @@ namespace WebCore {
         void setDeveloperExtrasEnabled(bool);
         bool developerExtrasEnabled() const { return m_developerExtrasEnabled; }
         
+        void setDefaultDatabaseOriginQuota(unsigned long long);
+        unsigned long long defaultDatabaseOriginQuota() const;
+        
     private:
         Page* m_page;
         

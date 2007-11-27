@@ -36,6 +36,9 @@
 
 namespace WebCore {
 
+// HTML5 SQL Storage spec suggests 5MB as the default quota per origin
+static const unsigned DefaultOriginQuota = 5242880;
+
 struct SecurityOriginDataHash {
     static unsigned hash(const SecurityOriginData& data)
     {
@@ -78,6 +81,8 @@ DatabaseTracker& DatabaseTracker::tracker()
 }
 
 DatabaseTracker::DatabaseTracker()
+    : m_defaultQuota(DefaultOriginQuota)
+    , m_client(0)
 {
 }
 
@@ -295,6 +300,16 @@ void DatabaseTracker::deleteDatabase(const SecurityOriginData& origin, const Str
 void DatabaseTracker::setClient(DatabaseTrackerClient* client)
 {
     m_client = client;
+}
+
+void DatabaseTracker::setDefaultOriginQuota(unsigned long long quota)
+{
+    m_defaultQuota = quota;
+}
+
+unsigned long long DatabaseTracker::defaultOriginQuota() const
+{
+    return m_defaultQuota;
 }
 
 } // namespace WebCore

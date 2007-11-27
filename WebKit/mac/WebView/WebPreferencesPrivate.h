@@ -102,4 +102,6 @@ extern NSString *WebPreferencesRemovedNotification;
 - (void)willAddToWebView;
 - (void)didRemoveFromWebView;
 
+- (unsigned long long)defaultDatabaseQuota;
+- (void)setDefaultDatabaseQuota:(unsigned long long)quota;
 @end

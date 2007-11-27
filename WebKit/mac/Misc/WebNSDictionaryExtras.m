@@ -96,5 +96,12 @@
     [object release];
 }
 
+- (void)_webkit_setUnsignedLongLong:(unsigned long long)value forKey:(id)key
+{
+    NSNumber *object = [[NSNumber alloc] initWithUnsignedLongLong:value];
+    [self setObject:object forKey:key];
+    [object release];
+}
+
 @end
 

@@ -1,3 +1,22 @@
+2007-11-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Allow setting the default storage quota per database origin
+
+        * WebCore.base.exp:
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setDefaultDatabaseOriginQuota):
+        (WebCore::Settings::defaultDatabaseOriginQuota):
+        * page/Settings.h:
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::DatabaseTracker):
+        (WebCore::DatabaseTracker::setDefaultOriginQuota):
+        (WebCore::DatabaseTracker::defaultOriginQuota):
+        * storage/DatabaseTracker.h:
+
 2007-11-26  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Alp Toker.

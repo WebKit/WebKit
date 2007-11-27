@@ -1,3 +1,24 @@
+2007-11-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Provide API for setting the default storage quota per database origin
+
+        * Misc/WebNSDictionaryExtras.h:
+        * Misc/WebNSDictionaryExtras.m:
+        (-[NSMutableDictionary _webkit_setUnsignedLongLong:forKey:]): Helper for UINT64 preferences
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.m:
+        (-[WebPreferences _unsignedLongLongValueForKey:]): Helper for UINT64 prefs
+        (-[WebPreferences _setUnsignedLongLongValue:forKey:]): Ditto
+        (-[WebPreferences defaultDatabaseQuota]):
+        (-[WebPreferences setDefaultDatabaseQuota:]):
+        * WebView/WebPreferencesPrivate.h:
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Set the WebCore Settings version of the default storage pref
+
 2007-11-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
