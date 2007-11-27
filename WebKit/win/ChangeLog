@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        Use COMEnumVariant in WebScriptCallFrame and WebScriptScope.
+        
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::scopeChain):
+        * WebScriptScope.cpp:
+        (WebScriptScope::variableNames):
+
+2007-11-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
         Use the correct include paths.
         
         * COMEnumVariant.h:

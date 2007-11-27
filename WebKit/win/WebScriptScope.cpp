@@ -30,6 +30,7 @@
 #include "WebKitDLL.h"
 #include "WebScriptScope.h"
 
+#include "COMEnumVariant.h"
 #include "WebScriptCallFrame.h"
 
 #include <memory>
@@ -44,106 +45,6 @@
 
 using namespace KJS;
 using namespace std;
-
-// EnumVariables -----------------------------------------------------------------
-
-class EnumVariables : public IEnumVARIANT {
-public:
-    static EnumVariables* createInstance(auto_ptr<PropertyNameArray>);
-
-private:
-    EnumVariables(auto_ptr<PropertyNameArray> variableNames)
-        : m_refCount(0)
-        , m_names(variableNames.release())
-        , m_current(m_names->begin())
-    {
-    }
-
-public:
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef();
-    virtual ULONG STDMETHODCALLTYPE Release();
-    virtual HRESULT STDMETHODCALLTYPE Next(ULONG celt, VARIANT* rgVar, ULONG* pCeltFetched);
-    virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
-    virtual HRESULT STDMETHODCALLTYPE Reset(void);
-    virtual HRESULT STDMETHODCALLTYPE Clone(IEnumVARIANT**);
-
-private:
-    ULONG m_refCount;
-    OwnPtr<PropertyNameArray> m_names;
-    PropertyNameArrayIterator m_current;
-};
-
-EnumVariables* EnumVariables::createInstance(auto_ptr<PropertyNameArray> variableNames)
-{
-    EnumVariables* instance = new EnumVariables(variableNames);
-    instance->AddRef();
-    return instance;
-}
-
-HRESULT STDMETHODCALLTYPE EnumVariables::QueryInterface(REFIID riid, void** ppvObject)
-{
-    *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IUnknown) || IsEqualGUID(riid, IID_IEnumVARIANT))
-        *ppvObject = this;
-    else
-        return E_NOINTERFACE;
-
-    AddRef();
-    return S_OK;
-}
-
-ULONG STDMETHODCALLTYPE EnumVariables::AddRef()
-{
-    return ++m_refCount;
-}
-
-ULONG STDMETHODCALLTYPE EnumVariables::Release()
-{
-    ULONG newRef = --m_refCount;
-    if (!newRef)
-        delete(this);
-    return newRef;
-}
-
-HRESULT STDMETHODCALLTYPE EnumVariables::Next(ULONG celt, VARIANT* rgVar, ULONG* pCeltFetched)
-{
-    if (pCeltFetched)
-        *pCeltFetched = 0;
-    if (!rgVar)
-        return E_POINTER;
-    VariantInit(rgVar);
-    if (!celt || celt > 1)
-        return S_FALSE;
-    if (m_current == m_names->end())
-        return S_FALSE;
-
-    V_VT(rgVar) = VT_BSTR;
-    V_BSTR(rgVar) = WebCore::BString(*m_current).release();
-    ++m_current;
-
-    if (pCeltFetched)
-        *pCeltFetched = 1;
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE EnumVariables::Skip(ULONG celt)
-{
-    for (ULONG i = 0; i < celt; ++i)
-        ++m_current;
-    return (m_current != m_names->end()) ? S_OK : S_FALSE;
-}
-
-HRESULT STDMETHODCALLTYPE EnumVariables::Reset(void)
-{
-    m_current = 0;
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE EnumVariables::Clone(IEnumVARIANT**)
-{
-    return E_NOTIMPL;
-}
 
 // WebScriptScope ------------------------------------------------------------
 
@@ -196,24 +97,35 @@ ULONG STDMETHODCALLTYPE WebScriptScope::Release(void)
     return newRef;
 }
 
+template<> struct COMVariantSetter<Identifier>
+{
+    static void setVariant(VARIANT* variant, const Identifier& value)
+    {
+        ASSERT(V_VT(variant) == VT_EMPTY);
+
+        V_VT(variant) = VT_BSTR;
+        V_BSTR(variant) = WebCore::BString(reinterpret_cast<const wchar_t*>(value.data()), value.size()).release();
+    }
+};
+
 // WebScriptScope ------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebScriptScope::variableNames(
     /* [in] */ IWebScriptCallFrame* frame,
     /* [out, retval] */ IEnumVARIANT** variableNames)
 {
-    if (!frame)
-        return E_FAIL;
-
     if (!variableNames)
         return E_POINTER;
 
     *variableNames = 0;
 
-    auto_ptr<PropertyNameArray> props(new PropertyNameArray);
-    m_scope->getPropertyNames(frame->impl()->state(), *(props.get()));
+    if (!frame)
+        return E_FAIL;
 
-    *variableNames = EnumVariables::createInstance(props);
+    PropertyNameArray propertyNames;
+    m_scope->getPropertyNames(frame->impl()->state(), propertyNames);
+
+    *variableNames = COMEnumVariant<PropertyNameArray>::adopt(propertyNames);
 
     return S_OK;
 }

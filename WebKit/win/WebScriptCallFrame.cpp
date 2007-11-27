@@ -30,6 +30,7 @@
 #include "WebKitDLL.h"
 #include "WebScriptCallFrame.h"
 
+#include "COMEnumVariant.h"
 #include "IWebScriptScope.h"
 #include "Function.h"
 #include "WebScriptScope.h"
@@ -46,111 +47,6 @@
 #include <wtf/Assertions.h>
 
 using namespace KJS;
-
-// EnumScopes -----------------------------------------------------------------
-
-class EnumScopes : public IEnumVARIANT {
-public:
-    static EnumScopes* createInstance(ScopeChain chain);
-
-private:
-    EnumScopes(ScopeChain chain)
-        : m_refCount(0)
-        , m_chain(chain)
-        , m_current(chain.begin())
-    {
-    }
-
-public:
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef();
-    virtual ULONG STDMETHODCALLTYPE Release();
-    virtual HRESULT STDMETHODCALLTYPE Next(ULONG celt, VARIANT* rgVar, ULONG* pCeltFetched);
-    virtual HRESULT STDMETHODCALLTYPE Skip(ULONG celt);
-    virtual HRESULT STDMETHODCALLTYPE Reset(void);
-    virtual HRESULT STDMETHODCALLTYPE Clone(IEnumVARIANT**);
-
-private:
-    ULONG m_refCount;
-    ScopeChain m_chain;
-    ScopeChainIterator m_current;
-};
-
-EnumScopes* EnumScopes::createInstance(ScopeChain chain)
-{
-    EnumScopes* instance = new EnumScopes(chain);
-    instance->AddRef();
-    return instance;
-}
-
-HRESULT STDMETHODCALLTYPE EnumScopes::QueryInterface(REFIID riid, void** ppvObject)
-{
-    *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IUnknown) || IsEqualGUID(riid, IID_IEnumVARIANT))
-        *ppvObject = this;
-    else
-        return E_NOINTERFACE;
-
-    AddRef();
-    return S_OK;
-}
-
-ULONG STDMETHODCALLTYPE EnumScopes::AddRef()
-{
-    return ++m_refCount;
-}
-
-ULONG STDMETHODCALLTYPE EnumScopes::Release()
-{
-    ULONG newRef = --m_refCount;
-    if (!newRef)
-        delete(this);
-    return newRef;
-}
-
-HRESULT STDMETHODCALLTYPE EnumScopes::Next(ULONG celt, VARIANT* rgVar, ULONG* pCeltFetched)
-{
-    if (pCeltFetched)
-        *pCeltFetched = 0;
-    if (!rgVar)
-        return E_POINTER;
-    VariantInit(rgVar);
-    if (!celt || celt > 1)
-        return S_FALSE;
-    if (m_current == m_chain.end())
-        return S_FALSE;
-
-    // Create a WebScriptScope from the m_current then put it in an IUnknown.
-    COMPtr<IWebScriptScope> scope(AdoptCOM, WebScriptScope::createInstance(*m_current));
-    ++m_current;
-    if (!scope)
-        return E_FAIL;
-
-    V_VT(rgVar) = VT_UNKNOWN;
-    V_UNKNOWN(rgVar) = scope.releaseRef();
-
-    if (pCeltFetched)
-        *pCeltFetched = 1;
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE EnumScopes::Skip(ULONG celt)
-{
-    for (ULONG i = 0; i < celt; ++i)
-        ++m_current;
-    return (m_current != m_chain.end()) ? S_OK : S_FALSE;
-}
-
-HRESULT STDMETHODCALLTYPE EnumScopes::Reset(void)
-{
-    m_current = m_chain.begin();
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE EnumScopes::Clone(IEnumVARIANT**)
-{
-    return E_NOTIMPL;
-}
 
 // WebScriptCallFrame -----------------------------------------------------------
 
@@ -213,6 +109,8 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::caller(
     return m_caller.copyRefTo(callFrame);
 }
 
+template<> struct COMVariantSetter<JSObject*> : COMIUnknownVariantSetter<WebScriptScope, JSObject*> {};
+
 HRESULT STDMETHODCALLTYPE WebScriptCallFrame::scopeChain(
     /* [out, retval] */ IEnumVARIANT** result)
 {
@@ -220,8 +118,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::scopeChain(
         return E_POINTER;
 
     // FIXME: If there is no current body do we need to make scope chain from the global object?
-
-    *result = EnumScopes::createInstance(m_state->scopeChain());
+    *result = COMEnumVariant<ScopeChain>::createInstance(m_state->scopeChain());
 
     return S_OK;
 }
