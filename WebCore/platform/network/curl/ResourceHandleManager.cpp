@@ -31,6 +31,7 @@
 #include "ResourceHandleManager.h"
 
 #include "CString.h"
+#include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
@@ -405,6 +406,16 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
 
     ResourceHandleInternal* d = job->getInternal();
     DeprecatedString url = kurl.url();
+
+    if (kurl.isLocalFile()) {
+        DeprecatedString query = kurl.query();
+        // Remove any query part sent to a local file.
+        if (!query.isEmpty())
+            url = url.left(url.find(query));
+        // Determine the MIME type based on the path.
+        d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(String(url)));
+    }
+
     d->m_handle = curl_easy_init();
 #ifndef NDEBUG
     if (getenv("DEBUG_CURL"))
