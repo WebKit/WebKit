@@ -66,6 +66,18 @@ PASS window.screenX is screen.availLeft
 
 window.moveBy Tests
 
+Testing - moveBy: Zero Zero
+PASS window.screenY is 416
+PASS window.screenX is 630
+
+Testing - moveBy: One Zero
+PASS window.screenY is 416
+PASS window.screenX is 631
+
+Testing - moveBy: Zero One
+PASS window.screenY is 417
+PASS window.screenX is 631
+
 Testing - moveBy: Top Left
 PASS window.screenY is screen.availTop
 PASS window.screenX is screen.availLeft
