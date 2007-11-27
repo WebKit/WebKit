@@ -1,3 +1,13 @@
+2007-11-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Don't call setNeedsReapplyStylesInAllFrames if the
+        authorAndUserStylesEnabled setting didn't change.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setAuthorAndUserStylesEnabled):
+
 2007-11-27  Alp Toker  <alp@atoker.com>
 
         Fix potential broken build due to a missing DEPENDPATH.
