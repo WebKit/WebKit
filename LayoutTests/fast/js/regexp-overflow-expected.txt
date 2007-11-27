@@ -1,0 +1,13 @@
+Tests some regular expressions with braces in them that used to overflow the regular expression compilation preflight computation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS /(\d)(\1{1})/.exec("11").toString() is "11,1,1"
+PASS /^(\d{1,2})([ -:\/\.]{1})(\d{1,2})(\2{1})?(\d{2,4})?$/.exec("1:1").toString() is "1:1,1,:,1,,"
+PASS /^(\d{4})([ -:\/\.]{1})(\d{1,2})(\2{1})(\d{1,2})T(\d{1,2})([ -:\/\.]{1})(\d{1,2})(\7{1})(\d{1,2})Z$/.exec("1234:5:6T7/8/9Z").toString() is "1234:5:6T7/8/9Z,1234,:,5,:,6,7,/,8,/,9"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

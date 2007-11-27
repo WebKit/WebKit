@@ -1,3 +1,14 @@
+2007-11-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=16096
+          REGRESSION (r26653-r26699): Plaxo.com addressbook does not load in webkit nightlies
+
+        * fast/js/regexp-overflow-expected.txt: Added.
+        * fast/js/regexp-overflow.html: Added.
+        * fast/js/resources/regexp-overflow.js: Added.
+
 2007-11-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

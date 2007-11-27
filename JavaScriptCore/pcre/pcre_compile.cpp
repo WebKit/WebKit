@@ -2499,8 +2499,8 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                             (min == 1 && max == -1))
                             length++;
                         else length += 5;
-                        if (ptr[1] == '?') ptr++;
-                        ptr++;
+                        if (ptr[1] == '?')
+                            ptr++;
                     }
                 }
                 continue;

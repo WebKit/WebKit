@@ -1,3 +1,16 @@
+2007-11-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=16096
+          REGRESSION (r26653-r26699): Plaxo.com addressbook does not load in webkit nightlies
+
+        Test: fast/js/regexp-overflow.html
+
+        * pcre/pcre_compile.cpp: (calculateCompiledPatternLengthAndFlags):
+        Removed a stray "ptr++" that I added by accident when merging the
+        changes between PCRE 6.4 and 6.5. 
+
 2007-11-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Kevin McCullough.
