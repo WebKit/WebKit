@@ -1,5 +1,13 @@
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam.
+
+        Use the correct include paths.
+        
+        * COMEnumVariant.h:
+
+2007-11-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
    
         Add COMEnumVariant, a templatized class with implements IEnumVARIANT and lets

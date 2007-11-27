@@ -33,8 +33,8 @@
 #include <unknwn.h>
 
 #include <WebCore/BString.h>
-#include <WTF/Assertions.h>
-#include <WTF/Noncopyable.h>
+#include <wtf/Assertions.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
     class String;
