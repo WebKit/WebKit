@@ -439,7 +439,8 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
             if (dynamicPseudo != RenderStyle::NOPSEUDO && pseudoStyle == RenderStyle::NOPSEUDO) {
                 if (m_collectRulesOnly)
                     return;
-                style->setHasPseudoStyle(dynamicPseudo);
+                if (dynamicPseudo < RenderStyle::FIRST_INTERNAL_PSEUDOID)
+                    style->setHasPseudoStyle(dynamicPseudo);
             } else {
                 // Update our first/last rule indices in the matched rules array.
                 lastRuleIndex = m_matchedDecls.size() + m_matchedRules.size();
@@ -1608,6 +1609,21 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 return true;
             case CSSSelector::PseudoSearchResultsButton:
                 dynamicPseudo = RenderStyle::SEARCH_RESULTS_BUTTON;
+                return true;
+            case CSSSelector::PseudoMediaControlsPanel:
+                dynamicPseudo = RenderStyle::MEDIA_CONTROLS_PANEL;
+                return true;
+            case CSSSelector::PseudoMediaControlsMuteButton:
+                dynamicPseudo = RenderStyle::MEDIA_CONTROLS_MUTE_BUTTON;
+                return true;
+            case CSSSelector::PseudoMediaControlsPlayButton:
+                dynamicPseudo = RenderStyle::MEDIA_CONTROLS_PLAY_BUTTON;
+                return true;
+            case CSSSelector::PseudoMediaControlsTimeDisplay:
+                dynamicPseudo = RenderStyle::MEDIA_CONTROLS_TIME_DISPLAY;
+                return true;
+            case CSSSelector::PseudoMediaControlsTimeline:
+                dynamicPseudo = RenderStyle::MEDIA_CONTROLS_TIMELINE;
                 return true;
             case CSSSelector::PseudoUnknown:
             case CSSSelector::PseudoNotParsed:

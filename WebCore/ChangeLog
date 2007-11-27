@@ -1,3 +1,28 @@
+2007-11-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        - Don't use hasPseudoId() optimization for pseudo styles used in shadow trees. These styles
+          generally exist when asked for so the optimization does not do much. This reverses the continuing
+          growth of the _pseudoBits bitfield in RenderStyle.
+        - Add some pseudo elements for media controls
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getPseudoStyle):
+        * rendering/RenderStyle.cpp:
+        (WebCore::pseudoBit):
+        (WebCore::RenderStyle::hasPseudoStyle):
+        (WebCore::RenderStyle::setHasPseudoStyle):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::):
+
 2007-11-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin McCullough.

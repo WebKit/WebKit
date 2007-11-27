@@ -1038,50 +1038,22 @@ bool RenderStyle::isStyleAvailable() const
     return this != CSSStyleSelector::styleNotYetAvailable;
 }
 
-enum EPseudoBit { NO_BIT = 0x0, BEFORE_BIT = 0x1, AFTER_BIT = 0x2, FIRST_LINE_BIT = 0x4,
-                  FIRST_LETTER_BIT = 0x8, SELECTION_BIT = 0x10, FIRST_LINE_INHERITED_BIT = 0x20,
-                  FILE_UPLOAD_BUTTON_BIT = 0x40, SLIDER_THUMB_BIT = 0x80, SEARCH_CANCEL_BUTTON_BIT = 0x100, SEARCH_DECORATION_BIT = 0x200, 
-                  SEARCH_RESULTS_DECORATION_BIT = 0x400, SEARCH_RESULTS_BUTTON_BIT = 0x800 };
-
 static inline int pseudoBit(RenderStyle::PseudoId pseudo)
 {
-    switch (pseudo) {
-        case RenderStyle::BEFORE:
-            return BEFORE_BIT;
-        case RenderStyle::AFTER:
-            return AFTER_BIT;
-        case RenderStyle::FIRST_LINE:
-            return FIRST_LINE_BIT;
-        case RenderStyle::FIRST_LETTER:
-            return FIRST_LETTER_BIT;
-        case RenderStyle::SELECTION:
-            return SELECTION_BIT;
-        case RenderStyle::FIRST_LINE_INHERITED:
-            return FIRST_LINE_INHERITED_BIT;
-        case RenderStyle::FILE_UPLOAD_BUTTON:
-            return FILE_UPLOAD_BUTTON_BIT;
-        case RenderStyle::SLIDER_THUMB:
-            return SLIDER_THUMB_BIT;
-        case RenderStyle::SEARCH_CANCEL_BUTTON:
-            return SEARCH_CANCEL_BUTTON_BIT;        
-        case RenderStyle::SEARCH_DECORATION:
-            return SEARCH_DECORATION_BIT;
-        case RenderStyle::SEARCH_RESULTS_DECORATION:
-            return SEARCH_RESULTS_DECORATION_BIT;
-        case RenderStyle::SEARCH_RESULTS_BUTTON:
-            return SEARCH_RESULTS_BUTTON_BIT;
-        default:
-            return NO_BIT;
-    }
+    return 1 << (pseudo - 1);
 }
 
 bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const
 {
+    ASSERT(pseudo > NOPSEUDO);
+    ASSERT(pseudo < FIRST_INTERNAL_PSEUDOID);
     return pseudoBit(pseudo) & noninherited_flags._pseudoBits;
 }
 
 void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
 {
+    ASSERT(pseudo > NOPSEUDO);
+    ASSERT(pseudo < FIRST_INTERNAL_PSEUDOID);
     noninherited_flags._pseudoBits |= pseudoBit(pseudo);
 }
 

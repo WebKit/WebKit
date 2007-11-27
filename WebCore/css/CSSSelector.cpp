@@ -89,6 +89,11 @@ void CSSSelector::extractPseudoType() const
     static AtomicString indeterminate("indeterminate");
     static AtomicString link("link");
     static AtomicString lang("lang(");
+    static AtomicString mediaControlsPanel("-webkit-media-controls-panel");
+    static AtomicString mediaControlsMuteButton("-webkit-media-controls-mute-button");
+    static AtomicString mediaControlsPlayButton("-webkit-media-controls-play-button");
+    static AtomicString mediaControlsTimeDisplay("-webkit-media-controls-time-display");
+    static AtomicString mediaControlsTimeline("-webkit-media-controls-timeline");
     static AtomicString notStr("not(");
     static AtomicString root("root");
     static AtomicString searchCancelButton("-webkit-search-cancel-button");
@@ -153,7 +158,22 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoLink;
     else if (m_value == lang)
         m_pseudoType = PseudoLang;
-    else if (m_value == notStr)
+    else if (m_value == mediaControlsPanel) {
+        m_pseudoType = PseudoMediaControlsPanel;
+        element = true;
+    } else if (m_value == mediaControlsMuteButton) {
+        m_pseudoType = PseudoMediaControlsMuteButton;
+        element = true;
+    } else if (m_value == mediaControlsPlayButton) {
+        m_pseudoType = PseudoMediaControlsPlayButton;
+        element = true;
+    } else if (m_value == mediaControlsTimeDisplay) {
+        m_pseudoType = PseudoMediaControlsTimeDisplay;
+        element = true;
+    } else if (m_value == mediaControlsTimeline) {
+        m_pseudoType = PseudoMediaControlsTimeline;
+        element = true;
+    } else if (m_value == notStr)
         m_pseudoType = PseudoNot;
     else if (m_value == root)
         m_pseudoType = PseudoRoot;

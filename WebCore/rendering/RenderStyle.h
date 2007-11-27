@@ -1325,7 +1325,9 @@ class RenderStyle {
 public:
     // static pseudo styles. Dynamic ones are produced on the fly.
     enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, FIRST_LINE_INHERITED, FILE_UPLOAD_BUTTON, SLIDER_THUMB, 
-                    SEARCH_CANCEL_BUTTON, SEARCH_DECORATION, SEARCH_RESULTS_DECORATION, SEARCH_RESULTS_BUTTON };
+                    SEARCH_CANCEL_BUTTON, SEARCH_DECORATION, SEARCH_RESULTS_DECORATION, SEARCH_RESULTS_BUTTON, MEDIA_CONTROLS_PANEL,
+                    MEDIA_CONTROLS_PLAY_BUTTON, MEDIA_CONTROLS_MUTE_BUTTON, MEDIA_CONTROLS_TIMELINE, MEDIA_CONTROLS_TIME_DISPLAY };
+    static const int FIRST_INTERNAL_PSEUDOID = FILE_UPLOAD_BUTTON;
 
     void ref() { m_ref++;  }
     void deref(RenderArena* arena) { 
@@ -1437,11 +1439,11 @@ protected:
         unsigned _page_break_before : 2; // EPageBreak
         unsigned _page_break_after : 2; // EPageBreak
 
-        unsigned _styleType : 4; // PseudoId
+        unsigned _styleType : 5; // PseudoId
         bool _affectedByHover : 1;
         bool _affectedByActive : 1;
         bool _affectedByDrag : 1;
-        unsigned _pseudoBits : 12;
+        unsigned _pseudoBits : 6;
         unsigned _unicodeBidi : 2; // EUnicodeBidi
     } noninherited_flags;
 

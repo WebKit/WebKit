@@ -2790,7 +2790,7 @@ RenderStyle* RenderObject::firstLineStyle() const
 
 RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderStyle* parentStyle) const
 {
-    if (!style()->hasPseudoStyle(pseudo))
+    if (pseudo < RenderStyle::FIRST_INTERNAL_PSEUDOID && !style()->hasPseudoStyle(pseudo))
         return 0;
 
     if (!parentStyle)
