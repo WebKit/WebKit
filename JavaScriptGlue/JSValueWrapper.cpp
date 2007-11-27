@@ -120,7 +120,7 @@ CFArrayRef JSValueWrapper::JSObjectCopyPropertyNames(void *data)
         JSObject *object = ptr->GetValue()->toObject(exec);
         PropertyNameArray propNames;
         object->getPropertyNames(exec, propNames);
-        PropertyNameArrayIterator iterator = propNames.begin();
+        PropertyNameArray::const_iterator iterator = propNames.begin();
 
         while (iterator != propNames.end()) {
             Identifier name = *iterator;
