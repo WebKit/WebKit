@@ -98,9 +98,10 @@ public:
         : m_document(document)
         , m_cachedSheet(m_document->docLoader()->requestUserCSSStyleSheet(url, ""))
     {
-        m_document->addPendingSheet();
-        if (m_cachedSheet)
+        if (m_cachedSheet) {
+            m_document->addPendingSheet();
             m_cachedSheet->ref(this);
+        }
     }
     ~UserStyleSheetLoader()
     {

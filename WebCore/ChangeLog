@@ -2,6 +2,15 @@
 
         Reviewed by Darin.
 
+        Update to last change.  Moved addPendingSheet call to within nil check for m_cachedSheet.
+
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::UserStyleSheetLoader):
+
+2007-11-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
         Fix for <rdar://problem/5591583> CrashTracer: [USER] 157 in Mail crashes at -[WebCoreFrameBridge reapplyStylesForDeviceType:]
 
         * page/Frame.cpp: Add nil checks since every other caller of requestCSSStyleSheet checks for nil.
