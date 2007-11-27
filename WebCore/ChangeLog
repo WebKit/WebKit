@@ -1,5 +1,22 @@
 2007-11-27  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Kevin McCullough.
+
+        Bug 16161: window.moveBy(0, 0) moves the window by -22px vertically
+        http://bugs.webkit.org/show_bug.cgi?id=16161
+
+        Removed the "Adjust the window rect to be in the coordinate space of
+        the screen rect" step which was always adding (0,22) to the window
+        position (on the main screen). Instead, account for screen X and Y
+        in the bottom and right constrain step.
+
+        Added more test cases to: fast/dom/Window/window-resize.html
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::adjustWindowRect):
+
+2007-11-27  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Adam Roben.
 
         * page/inspector/inspector.css: Make the text in the Network

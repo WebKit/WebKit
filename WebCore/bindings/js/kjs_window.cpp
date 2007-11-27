@@ -1229,12 +1229,8 @@ static void adjustWindowRect(const FloatRect& screen, FloatRect& window, const F
 
     // Constrain the window to the bottom and right of the screen if it's past
     // the right or below it.
-    window.setX(window.x() - max(0.0f, window.right() - screen.width()));
-    window.setY(window.y() - max(0.0f, window.bottom() - screen.height()));
-    
-    // Adjust the window rect to be in the coordinate space of the screen rect
-    window.setX(window.x() + screen.x());
-    window.setY(window.y() + screen.y());
+    window.setX(window.x() - max(0.0f, window.right() - screen.width() - screen.x()));
+    window.setY(window.y() - max(0.0f, window.bottom() - screen.height() - screen.y()));
 }
 
 JSValue* WindowProtoFuncAToB::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)

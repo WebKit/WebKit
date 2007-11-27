@@ -1,3 +1,14 @@
+2007-11-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Kevin McCullough.
+
+        Bug 16161: window.moveBy(0, 0) moves the window by -22px vertically
+        http://bugs.webkit.org/show_bug.cgi?id=16161
+
+        Added test cases for moveBy(0, 0), moveBy(0, 1) and  moveBy(1, 0).
+
+        * fast/dom/Window/window-resize.html:
+
 2007-11-26  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Hyatt.

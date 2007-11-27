@@ -177,6 +177,51 @@
     debug('window.moveBy Tests');
     debug('');
 
+    x = screen.width / 4;
+    y = screen.height / 4;
+    window.resizeTo(x, y);
+
+    x = screen.width / 2;
+    y = screen.height / 2;
+    window.moveTo(x - (window.outerWidth / 2), y - (window.outerHeight / 2));
+
+    var previousScreenX = window.screenX;
+    var previousScreenY = window.screenY;
+
+    x = 0;
+    y = 0;
+    window.moveBy(x, y);
+    debug("Testing - moveBy: Zero Zero");
+    shouldBe('window.screenY', previousScreenY.toString());
+    shouldBe('window.screenX', previousScreenX.toString());
+
+    debug('');
+
+    previousScreenX += 1;
+
+    x = 1;
+    y = 0;
+    window.moveBy(x, y);
+    debug("Testing - moveBy: One Zero");
+    shouldBe('window.screenY', previousScreenY.toString());
+    shouldBe('window.screenX', previousScreenX.toString());
+
+    debug('');
+
+    previousScreenY += 1;
+
+    x = 0;
+    y = 1;
+    window.moveBy(x, y);
+    debug("Testing - moveBy: Zero One");
+    shouldBe('window.screenY', previousScreenY.toString());
+    shouldBe('window.screenX', previousScreenX.toString());
+
+    debug('');
+
+    window.moveTo(0,0);
+    window.resizeTo(screen.width, screen.height);
+
     x = -100;
     y = -100;
     window.moveBy(x, y);
