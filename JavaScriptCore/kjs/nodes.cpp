@@ -3984,8 +3984,8 @@ Completion ForInNode::execute(ExecState *exec)
   v = e->toObject(exec);
   v->getPropertyNames(exec, propertyNames);
   
-  PropertyNameArrayIterator end = propertyNames.end();
-  for (PropertyNameArrayIterator it = propertyNames.begin(); it != end; ++it) {
+  PropertyNameArray::const_iterator end = propertyNames.end();
+  for (PropertyNameArray::const_iterator it = propertyNames.begin(); it != end; ++it) {
       const Identifier &name = *it;
       if (!v->hasProperty(exec, name))
           continue;

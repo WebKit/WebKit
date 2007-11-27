@@ -47,10 +47,10 @@ void ScopeChain::print()
         PropertyNameArray propertyNames;
         // FIXME: should pass ExecState here!
         o->getPropertyNames(0, propertyNames);
-        PropertyNameArrayIterator propEnd = propertyNames.end();
+        PropertyNameArray::const_iterator propEnd = propertyNames.end();
 
         fprintf(stderr, "----- [scope %p] -----\n", o);
-        for (PropertyNameArrayIterator propIter = propertyNames.begin(); propIter != propEnd; propIter++) {
+        for (PropertyNameArray::const_iterator propIter = propertyNames.begin(); propIter != propEnd; propIter++) {
             Identifier name = *propIter;
             fprintf(stderr, "%s, ", name.ascii());
         }

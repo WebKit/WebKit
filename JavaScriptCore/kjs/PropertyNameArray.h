@@ -29,22 +29,20 @@
 
 namespace KJS {
 
-    class PropertyNameArray;
-
-    typedef Vector<Identifier>::const_iterator PropertyNameArrayIterator;
-
     class PropertyNameArray {
     public:
-        typedef PropertyNameArrayIterator iterator;
+        typedef Identifier ValueType;
+        typedef Vector<Identifier>::const_iterator const_iterator;
 
         void add(const Identifier&);
-        iterator begin() const { return m_vector.begin(); }
-        iterator end() const { return m_vector.end(); }
+        const_iterator begin() const { return m_vector.begin(); }
+        const_iterator end() const { return m_vector.end(); }
         size_t size() const { return m_vector.size(); }
 
         Identifier& operator[](unsigned i) { return m_vector[i]; }
         const Identifier& operator[](unsigned i) const { return m_vector[i]; }
-            
+
+        void swap(PropertyNameArray&);
     private:
         typedef HashSet<UString::Rep*, PtrHash<UString::Rep*> > IdentifierSet;
         IdentifierSet m_set;

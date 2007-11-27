@@ -1,5 +1,28 @@
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam.
+
+        Make PropertyNameArray and ScopeChain COMEnumVariant friendly.
+        
+        * kjs/PropertyNameArray.cpp:
+        (KJS::PropertyNameArray::swap):
+        Implement PropertyNameArray::swap.
+        
+        * kjs/PropertyNameArray.h:
+        Add ValueType typedef. Replace PropertyNameArrayIterator with 
+        PropertyNameArray::const_iterator.
+        
+        * kjs/nodes.cpp:
+        (KJS::ForInNode::execute):
+        * kjs/scope_chain.cpp:
+        (KJS::ScopeChain::print):
+        Update for changes to PropertyNameArray.
+        
+        * kjs/scope_chain.h:
+        Add const_iterator and ValueType typedef.
+        
+2007-11-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         Add a ValueType typedef.

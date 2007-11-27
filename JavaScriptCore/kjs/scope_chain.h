@@ -59,6 +59,9 @@ namespace KJS {
 
     class ScopeChain {
     public:
+        typedef ScopeChainIterator const_iterator;
+        typedef JSObject* ValueType;
+
         ScopeChain() : _node(0) { }
         ~ScopeChain() { deref(); }
 
