@@ -422,7 +422,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitedTimeInterval(
 HRESULT STDMETHODCALLTYPE WebHistoryItem::setAlternateTitle( 
     /* [in] */ BSTR title)
 {
-    m_alternateTitle = title;
+    m_alternateTitle = String(title, SysStringLen(title));
     return S_OK;
 }
 
@@ -434,7 +434,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::alternateTitle(
         return E_POINTER;
     }
 
-    *title = m_alternateTitle;
+    *title = BString(m_alternateTitle).release();
     return S_OK;
 }
 

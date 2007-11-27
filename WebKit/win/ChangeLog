@@ -1,3 +1,15 @@
+2007-11-27  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5616098> The BSTR returned by WebHistoryItem::alternateTitle
+        was not allocated correctly.
+
+        Reviewed by Anders.
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::setAlternateTitle):
+        (WebHistoryItem::alternateTitle):
+        * WebHistoryItem.h:
+
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
