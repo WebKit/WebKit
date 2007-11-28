@@ -234,6 +234,7 @@ void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
                 (prevMethod == RGBA32Buffer::DisposeKeep)) {
             // Preserve the last frame as the starting state for this frame.
             buffer->bytes() = prevBuffer->bytes();
+            buffer->setHasAlpha(prevBuffer->hasAlpha());
         } else {
             // We want to clear the previous frame to transparent, without
             // affecting pixels in the image outside of the frame.
@@ -246,6 +247,7 @@ void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
             } else {
               // Copy the whole previous buffer, then clear just its frame.
               buffer->bytes() = prevBuffer->bytes();
+              buffer->setHasAlpha(prevBuffer->hasAlpha());
               for (int y = prevRect.y(); y < prevRect.bottom(); ++y) {
                   unsigned* const currentRow =
                       buffer->bytes().data() + (y * m_size.width());

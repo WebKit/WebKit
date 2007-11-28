@@ -193,36 +193,15 @@ float ImageSource::frameDurationAtIndex(size_t index)
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
-    // We almost always want to support alpha, especially for images that are
-    // only partially loaded.
-    //
-    // There is one exception:
-    //
-    // As an optimization we can allow the image renderer to blit the image
-    // (implemented as CompositeCopy in ImageCairo) by returning false if and
-    // only if:
-    //
-    //   * The image has been fully loaded
-    //   * The buffer is marked as not having alpha transparency
-
+    // When a frame has not finished decoding, always mark it as having alpha,
+    // so we don't get a black background for the undecoded sections.
+    // TODO: A better solution is probably to have the underlying buffer's
+    // hasAlpha() return true in these cases, since it is, in fact, technically
+    // true.
     if (!frameIsCompleteAtIndex(index))
         return true;
 
-    ASSERT(m_decoder);
-    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
-    ASSERT(buffer);
-
-    // FIXME: This is a hack that makes the whole optimization useless in
-    // many cases. It is necessary because buffer->hasAlpha() incorrectly
-    // returns false when it should return true for certain GIF images.
-    //
-    // We should ideally never have to check if the decoder supports alpha.
-    //
-    // See http://bugs.webkit.org/show_bug.cgi?id=16169
-    if (m_decoder->supportsAlpha())
-        return true;
-
-    return buffer->hasAlpha();
+    return m_decoder->frameBufferAtIndex(index)->hasAlpha();
 }
 
 }
