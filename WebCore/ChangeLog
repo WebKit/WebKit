@@ -1,3 +1,27 @@
+2007-11-28  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15689
+        [GTK] Background of loading images is always black
+
+        frameHasAlphaAtIndex() exists only to allow optimization for cases we
+        are certain the image can be blitted rather than composited.
+
+        Thus we need to be conservative, returning false only when we are
+        absolutely certain there is no need for composited copying, and true
+        otherwise.
+
+        CG doesn't even bother with this optimization at all and always
+        returns true.
+
+        Patch includes a workaround for
+          http://bugs.webkit.org/show_bug.cgi?id=16169
+          GIF ImageDecoder hasAlpha() return value incorrect
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+
 2007-11-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Geoff.
