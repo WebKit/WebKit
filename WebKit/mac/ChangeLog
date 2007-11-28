@@ -1,3 +1,28 @@
+2007-11-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5524216> CrashTracer: [USER] 496 crashes in Safari at com.apple.WebCore: WebCore::Frame::eventHandler const + 6
+
+        The CrashTracer shows a variety of crashes in different methods (including keyDown and keyUp). This change adds nil checks for the frame in 
+        WebHTMLView to prevent future problems in other methods as well.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView keyUp:]):
+        (-[WebHTMLView flagsChanged:]):
+        (-[WebHTMLView _selectionStartFontAttributesAsRTF]):
+        (-[WebHTMLView _changeCSSColorUsingSelector:inRange:]):
+        (-[WebHTMLView checkSpelling:]):
+        (-[WebHTMLView showGuessPanel:]):
+        (-[WebHTMLView indent:]):
+        (-[WebHTMLView outdent:]):
+        (-[WebHTMLView paste:]):
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[WebHTMLView insertText:]):
+        (-[WebHTMLView selectionTextRects]):
+
 2007-11-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

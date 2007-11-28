@@ -2189,8 +2189,11 @@ WEBCORE_COMMAND(transpose)
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
-    Frame* frame = core([self _frame]);
+    RefPtr<Frame> frame = core([self _frame]);
 
+    if (!frame)
+        return NO;
+    
     if (Document* doc = frame->document()) {
         if (doc->isPluginDocument())
             return NO;
@@ -2337,13 +2340,13 @@ WEBCORE_COMMAND(transpose)
         return [[self _webView] isEditable] && [self _canEditRichly];
     
     if (action == @selector(copy:))
-        return (frame && frame->editor()->canDHTMLCopy()) || frame->editor()->canCopy();
+        return frame && (frame->editor()->canDHTMLCopy() || frame->editor()->canCopy());
     
     if (action == @selector(cut:))
-        return (frame && frame->editor()->canDHTMLCut()) || frame->editor()->canCut();
+        return frame && (frame->editor()->canDHTMLCut() || frame->editor()->canCut());
     
     if (action == @selector(delete:))
-        return (frame && frame->editor()->canDelete());
+        return frame && frame->editor()->canDelete();
     
     if (action == @selector(_ignoreSpellingFromMenu:)
             || action == @selector(_learnSpellingFromMenu:)
@@ -2351,7 +2354,7 @@ WEBCORE_COMMAND(transpose)
         return [self _hasSelection];
     
     if (action == @selector(paste:) || action == @selector(pasteAsPlainText:))
-        return (frame && frame->editor()->canDHTMLPaste()) || frame->editor()->canPaste();
+        return frame && (frame->editor()->canDHTMLPaste() || frame->editor()->canPaste());
     
     if (action == @selector(pasteAsRichText:))
         return frame && (frame->editor()->canDHTMLPaste()
@@ -3553,7 +3556,8 @@ noPromisedData:
     _private->keyDownEvent = [event retain];
 
     BOOL completionPopupWasOpen = _private->compController && [_private->compController popupWindowIsOpen];
-    if (!eventWasSentToWebCore && core([self _frame])->eventHandler()->keyEvent(event)) {
+    Frame* coreFrame = core([self _frame]);
+    if (!eventWasSentToWebCore && coreFrame && coreFrame->eventHandler()->keyEvent(event)) {
         // WebCore processed a key event, bail on any preexisting complete: UI
         if (completionPopupWasOpen)
             [_private->compController endRevertingChange:YES moveLeft:NO];
@@ -3573,21 +3577,23 @@ noPromisedData:
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
 
     [self retain];
-    if (eventWasSentToWebCore || !core([self _frame])->eventHandler()->keyEvent(event))
+    Frame* coreFrame = core([self _frame]);
+    if (eventWasSentToWebCore || !coreFrame || !coreFrame->eventHandler()->keyEvent(event))
         [super keyUp:event];    
     [self release];
 }
 
 - (void)flagsChanged:(NSEvent *)event
 {
-    if (Frame* frame = core([self _frame]))
-        frame->eventHandler()->capsLockStateMayHaveChanged();
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        coreFrame->eventHandler()->capsLockStateMayHaveChanged();
     
     RetainPtr<WebHTMLView> selfProtector = self;
     
     //Don't make an event from the function key
-    if ([event keyCode] != 0 && [event keyCode] != 63)
-        core([self _frame])->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
+    if (coreFrame && [event keyCode] != 0 && [event keyCode] != 63)
+        coreFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
         
     [super flagsChanged:event];
 }
@@ -3751,8 +3757,9 @@ noPromisedData:
 
 - (NSData *)_selectionStartFontAttributesAsRTF
 {
+    Frame* coreFrame = core([self _frame]);
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x"
-        attributes:core([self _frame])->fontAttributesForSelectionStart()];
+        attributes:coreFrame ? coreFrame->fontAttributesForSelectionStart() : nil];
     NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
     [string release];
     return data;
@@ -4214,7 +4221,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     DOMCSSStyleDeclaration *style = [self _styleFromColorPanelWithSelector:selector];
     WebView *webView = [self _webView];
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range])
-        core([self _frame])->editor()->applyStyle(core(style), [self _undoActionFromColorPanelWithSelector:selector]);
+        if (Frame* coreFrame = core([self _frame]))
+            coreFrame->editor()->applyStyle(core(style), [self _undoActionFromColorPanelWithSelector:selector]);
 }
 
 - (void)changeDocumentBackgroundColor:(id)sender
@@ -4423,7 +4431,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
     }
     
-    core([self _frame])->editor()->advanceToNextMisspelling();
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->advanceToNextMisspelling();
 }
 
 - (void)showGuessPanel:(id)sender
@@ -4446,7 +4455,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 #endif
     
-    core([self _frame])->editor()->advanceToNextMisspelling(true);
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->advanceToNextMisspelling(true);
     [spellingPanel orderFront:sender];
 }
 
@@ -4675,14 +4685,16 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     COMMAND_PROLOGUE
 
-    core([self _frame])->editor()->indent();
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->indent();
 }
 
 - (void)outdent:(id)sender
 {
     COMMAND_PROLOGUE
-
-    core([self _frame])->editor()->outdent();
+    
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->outdent();
 }
 
 #if 0
@@ -5018,12 +5030,15 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     COMMAND_PROLOGUE
 
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame && coreFrame->editor()->tryDHTMLPaste())
+    RetainPtr<WebHTMLView> selfProtector = self;
+    RefPtr<Frame> coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+    if (coreFrame->editor()->tryDHTMLPaste())
         return; // DHTML did the whole operation
     if (!coreFrame->editor()->canPaste())
         return;
-    if (coreFrame && coreFrame->selectionController()->isContentRichlyEditable())
+    if (coreFrame->selectionController()->isContentRichlyEditable())
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
         coreFrame->editor()->pasteAsPlainText();
@@ -5129,6 +5144,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
     NSAttributedString *attrString = [self selectedAttributedString];
 
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+    
 #ifdef BUILDING_ON_TIGER
     // FIXME: must check for right-to-left here
     NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
@@ -5136,7 +5155,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // FIXME: the dictionary API expects the rect for the first line of selection. Passing
     // the rect for the entire selection, as we do here, positions the pop-up window near
     // the bottom of the selection rather than at the selected word.
-    NSRect rect = [self convertRect:core([self _frame])->selectionRect() toView:nil];
+    NSRect rect = [self convertRect:coreFrame->selectionRect() toView:nil];
     rect.origin = [[self window] convertBaseToScreen:rect.origin];
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
     dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
@@ -5144,7 +5163,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // The HIDictionaryWindowShow function requires the origin, in CG screen coordinates, of the first character of text in the selection.
     // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
     // (but no worse than we did in Tiger)
-    NSRect rect = core([self _frame])->selectionRect();
+    NSRect rect = coreFrame->selectionRect();
 
     NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
     NSFont *font = [attributes objectForKey:NSFontAttributeName];
@@ -5572,9 +5591,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         parameters->consumedByIM = NO;
 
     // We don't support inserting an attributed string but input methods don't appear to require this.
-    Frame* coreFrame = core([self _frame]);
+    RefPtr<Frame> coreFrame = core([self _frame]);
     NSString *text;
-    bool isFromInputMethod = coreFrame->editor()->hasComposition();
+    bool isFromInputMethod = coreFrame && coreFrame->editor()->hasComposition();
     if (isAttributedString) {
         text = [string string];
         // We deal with the NSTextInputReplacementRangeAttributeName attribute from NSAttributedString here
@@ -5958,7 +5977,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return nil;
     
     Vector<FloatRect> list;
-    core([self _frame])->selectionTextRects(list);
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->selectionTextRects(list);
 
     unsigned size = list.size();
     NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
