@@ -25,8 +25,7 @@
 
 #include "config.h"
 #include "WebKitDLL.h"
-#include <initguid.h>
-#include "WebURLResponse.h"
+#include "WebKit.h"
 
 #include "HTTPHeaderPropertyBag.h"
 #include "MarshallingHelpers.h"
@@ -247,8 +246,8 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::QueryInterface(REFIID riid, void** ppv
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IWebURLResponse*>(this);
-    else if (IsEqualGUID(riid, IID_WebURLResponse))
-        *ppvObject = static_cast<WebURLResponse*>(this);
+    else if (IsEqualGUID(riid, __uuidof(this)))
+        *ppvObject = this;
     else if (IsEqualGUID(riid, IID_IWebURLResponse))
         *ppvObject = static_cast<IWebURLResponse*>(this);
     else if (IsEqualGUID(riid, IID_IWebURLResponsePrivate))

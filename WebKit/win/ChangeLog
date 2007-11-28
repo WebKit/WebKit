@@ -1,3 +1,39 @@
+2007-11-27  Anders Carlsson <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Some COM cleanup.
+        
+        * CFDictionaryPropertyBag.cpp:
+        (CFDictionaryPropertyBag::QueryInterface):
+        * CFDictionaryPropertyBag.h:
+        * WebBackForwardList.cpp:
+        (WebBackForwardList::addItem):
+        (WebBackForwardList::removeItem):
+        * WebDownload.cpp:
+        (WebDownload::initWithRequest):
+        * WebFrame.cpp:
+        (WebFrame::loadRequest):
+        (WebFrame::initWithWebFrameView):
+        (WebFrame::webHistory):
+        (WebFrame::dispatchWillSendRequest):
+        * WebURLAuthenticationChallenge.cpp:
+        (WebURLAuthenticationChallenge::QueryInterface):
+        (WebURLAuthenticationChallenge::initWithProtectionSpace):
+        * WebURLAuthenticationChallenge.h:
+        * WebURLAuthenticationChallengeSender.cpp:
+        (WebURLAuthenticationChallengeSender::QueryInterface):
+        * WebURLAuthenticationChallengeSender.h:
+        * WebURLResponse.cpp:
+        (WebURLResponse::QueryInterface):
+        * WebURLResponse.h:
+        * WebView.cpp:
+        (WebView::notifyDidAddIcon):
+        (WebView::goToBackForwardItem):
+        (WebView::canHandleRequest):
+        (WebView::loadBackForwardListFromOtherView):
+        (core):
+
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
         Add COMEnumVariant.h to the project.

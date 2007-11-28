@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "WebKitDLL.h"
-#include <initguid.h>
 #include "WebURLAuthenticationChallenge.h"
 
 #include "COMPtr.h"
@@ -82,7 +81,7 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::QueryInterface(REFIID r
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
         *ppvObject = static_cast<IUnknown*>(this);
-    else if (IsEqualGUID(riid, __uuidof(WebURLAuthenticationChallenge)))
+    else if (IsEqualGUID(riid, __uuidof(this)))
         *ppvObject = static_cast<WebURLAuthenticationChallenge*>(this);
     else if (IsEqualGUID(riid, IID_IWebURLAuthenticationChallenge))
         *ppvObject = static_cast<IWebURLAuthenticationChallenge*>(this);
@@ -124,7 +123,7 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::initWithProtectionSpace
 
     HRESULT hr = S_OK;
     COMPtr<WebURLProtectionSpace> webSpace;
-    hr = space->QueryInterface(CLSID_WebURLProtectionSpace, (void**)&webSpace);
+    hr = space->QueryInterface(&webSpace);
     if (FAILED(hr))
         return hr;
 
@@ -133,7 +132,7 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::initWithProtectionSpace
         return E_NOINTERFACE;
 
     COMPtr<WebURLResponse> webResponse;
-    hr = failureResponse->QueryInterface(IID_WebURLResponse, (void**)&webResponse);
+    hr = failureResponse->QueryInterface(&webResponse);
     if (FAILED(hr))
         return hr;
 

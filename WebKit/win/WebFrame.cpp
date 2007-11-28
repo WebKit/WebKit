@@ -617,7 +617,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadRequest(
 {
     COMPtr<WebMutableURLRequest> requestImpl;
 
-    HRESULT hr = request->QueryInterface(CLSID_WebMutableURLRequest, (void**)&requestImpl);
+    HRESULT hr = request->QueryInterface(&requestImpl);
     if (FAILED(hr))
         return hr;
  
@@ -1058,7 +1058,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::deselectAll()
 
 void WebFrame::initWithWebFrameView(IWebFrameView* /*view*/, IWebView* webView, Page* page, HTMLFrameOwnerElement* ownerElement)
 {
-    if (FAILED(webView->QueryInterface(CLSID_WebView, (void**)&d->webView)))
+    if (FAILED(webView->QueryInterface(&d->webView)))
         return;
     d->webView->Release(); // don't hold the extra ref
 
@@ -1477,7 +1477,7 @@ WebHistory* WebFrame::webHistory()
         return 0;
 
     WebHistory* webHistory;
-    if (FAILED(historyInternal->QueryInterface(CLSID_WebHistory, (void**)&webHistory)))
+    if (FAILED(historyInternal->QueryInterface(&webHistory)))
         return 0;
 
     return webHistory;
@@ -2160,7 +2160,7 @@ void WebFrame::dispatchWillSendRequest(DocumentLoader* loader, unsigned long ide
             return;
 
         COMPtr<WebMutableURLRequest> newWebURLRequestImpl;
-        if (FAILED(newWebURLRequest->QueryInterface(CLSID_WebMutableURLRequest, (void**)&newWebURLRequestImpl)))
+        if (FAILED(newWebURLRequest->QueryInterface(&newWebURLRequestImpl)))
             return;
 
         request = newWebURLRequestImpl->resourceRequest();

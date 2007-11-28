@@ -29,9 +29,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
 
-// {675E712B-8253-4121-A1F0-6A804D095668}
-DEFINE_GUID(IID_CFDictionaryPropertyBag, 0x675e712b, 0x8253, 0x4121, 0xa1, 0xf0, 0x6a, 0x80, 0x4d, 0x9, 0x56, 0x68);
-
 class CFDictionaryPropertyBag : public IPropertyBag
 {
 public:

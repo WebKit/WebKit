@@ -118,7 +118,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::addItem(
 {
     COMPtr<WebHistoryItem> webHistoryItem;
  
-    if (!item || FAILED(item->QueryInterface(CLSID_WebHistoryItem, (void**)&webHistoryItem)))
+    if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
  
     m_backForwardList->addItem(webHistoryItem->historyItem());
@@ -295,7 +295,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::removeItem(
 {
     COMPtr<WebHistoryItem> webHistoryItem;
  
-    if (!item || FAILED(item->QueryInterface(CLSID_WebHistoryItem, (void**)&webHistoryItem)))
+    if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
  
     m_backForwardList->removeItem(webHistoryItem->historyItem());

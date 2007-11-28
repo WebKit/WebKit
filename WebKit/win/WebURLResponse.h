@@ -34,9 +34,6 @@
 #include <WebCore/ResourceResponse.h>
 #pragma warning(pop)
 
-// {4E309D61-8458-49ed-A629-464E64D85505}
-DEFINE_GUID(IID_WebURLResponse, 0x4e309d61, 0x8458, 0x49ed, 0xa6, 0x29, 0x46, 0x4e, 0x64, 0xd8, 0x55, 0x5);
-
 class WebURLResponse : public IWebHTTPURLResponse, IWebURLResponsePrivate
 {
 public:
