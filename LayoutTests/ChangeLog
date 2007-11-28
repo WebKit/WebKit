@@ -1,3 +1,27 @@
+2007-11-28  Alice Liu  <alice.liu@apple.com>
+
+        Rubberstamped by Sam.
+
+        Fixing a typo in some filenames
+
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-subframe-expected.txt: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-subframe.html: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-window-open-expected.txt: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-window-open.html: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-subframe-expected.txt: Copied from http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-subframe-expected.txt.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-subframe.html: Copied from http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-subframe.html.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open-expected.txt: Copied from http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-window-open-expected.txt.
+        * http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html: Copied from http/tests/security/javascriptURL/xss-DENIED-from-javascipt-url-in-foreign-domain-window-open.html.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-subframe-expected.txt: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-subframe.html: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-window-open-expected.txt: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-window-open.html: Removed.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe-expected.txt: Copied from http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-subframe-expected.txt.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html: Copied from http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-subframe.html.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open-expected.txt: Copied from http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-window-open-expected.txt.
+        * http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html: Copied from http/tests/security/javascriptURL/xss-DENIED-to-javascipt-url-in-foreign-domain-window-open.html.
+        * platform/win/Skipped:
+
 2007-11-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
