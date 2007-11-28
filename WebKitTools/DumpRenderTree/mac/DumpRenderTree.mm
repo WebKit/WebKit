@@ -788,12 +788,17 @@ static CFURLRef createCFURLFromPathOrURL(CFStringRef pathOrURLString)
 
 static void resetWebViewToConsistentStateBeforeTesting()
 {
-    [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:YES];
-    [[mainFrame webView] makeTextStandardSize:nil];
-    [[mainFrame webView] setTabKeyCyclesThroughElements: YES];
-    [[mainFrame webView] setPolicyDelegate:nil];
-    [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
-    [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:NO];
+    WebView *webView = [mainFrame webView];
+    [(EditingDelegate *)[webView editingDelegate] setAcceptsEditing:YES];
+    [webView makeTextStandardSize:nil];
+    [webView setTabKeyCyclesThroughElements: YES];
+    [webView setPolicyDelegate:nil];
+    [webView _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
+
+    WebPreferences *preferences = [webView preferences];
+    [preferences setPrivateBrowsingEnabled:NO];
+    [preferences setAuthorAndUserStylesEnabled:YES];
+
     [WebView _setUsesTestModeFocusRingColor:YES];
 }
 
