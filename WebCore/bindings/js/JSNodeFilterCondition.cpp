@@ -34,9 +34,9 @@ JSNodeFilterCondition::JSNodeFilterCondition(KJS::JSObject* filter)
 {
 }
 
-void JSNodeFilterCondition::markChildren(KJS::MarkStack& stack)
+void JSNodeFilterCondition::mark()
 {
-    stack.push(m_filter);
+    m_filter->mark();
 }
 
 short JSNodeFilterCondition::acceptNode(Node* filterNode) const

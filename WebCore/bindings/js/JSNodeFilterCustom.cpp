@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-    void JSNodeFilter::markChildren(KJS::MarkStack& stack)
+void JSNodeFilter::mark()
 {
-    impl()->markChildren(stack);
-    DOMObject::markChildren(stack);
+    impl()->mark();
+    DOMObject::mark();
 }
 
 NodeFilter* toNodeFilter(KJS::JSValue* val)

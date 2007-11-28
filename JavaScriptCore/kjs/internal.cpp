@@ -144,12 +144,14 @@ bool NumberImp::getTruncatedUInt32(uint32_t& uint32) const
 }
 
 // --------------------------- GetterSetterImp ---------------------------------
-void GetterSetterImp::markChildren(MarkStack& stack)
+void GetterSetterImp::mark()
 {
-    if (getter)
-        stack.push(getter);
-    if (setter)
-        stack.push(setter);
+    JSCell::mark();
+    
+    if (getter && !getter->marked())
+        getter->mark();
+    if (setter && !setter->marked())
+        setter->mark();
 }
 
 JSValue* GetterSetterImp::toPrimitive(ExecState*, JSType) const

@@ -51,7 +51,7 @@ private:
     static void JSObjectSetProperty(void *data, CFStringRef propertyName, JSObjectRef jsValue);
     static JSObjectRef JSObjectCallFunction(void *data, JSObjectRef thisObj, CFArrayRef args);
     static CFTypeRef JSObjectCopyCFValue(void *data);
-    static void JSObjectMark(KJS::MarkStack&, void *data);
+    static void JSObjectMark(void *data);
 };
 
 #endif

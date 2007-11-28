@@ -31,7 +31,7 @@ namespace WebCore {
     public:
         JSNodeFilterCondition(KJS::JSObject* filter);
         virtual short acceptNode(Node*) const;
-        virtual void markChildren(KJS::MarkStack&);
+        virtual void mark();
 
     protected:
         KJS::JSObject* m_filter;

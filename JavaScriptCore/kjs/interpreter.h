@@ -290,7 +290,7 @@ namespace KJS {
      * Called during the mark phase of the garbage collector. Subclasses 
      * implementing custom mark methods must make sure to chain to this one.
      */
-    virtual void markRoots(MarkStack&);
+    virtual void mark();
 
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);

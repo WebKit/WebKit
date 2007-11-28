@@ -406,9 +406,9 @@ UString UserObjectImp::toString(ExecState *exec) const
     return result;
 }
 
-void UserObjectImp::markChildren(MarkStack& stack)
+void UserObjectImp::mark()
 {
-    JSObject::markChildren(stack);
+    JSObject::mark();
     if (fJSUserObject)
-        fJSUserObject->Mark(stack);
+        fJSUserObject->Mark();
 }

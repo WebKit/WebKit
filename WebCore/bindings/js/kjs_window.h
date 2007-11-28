@@ -90,7 +90,7 @@ namespace KJS {
      * was called from.
      */
     static Window* retrieveActive(ExecState*);
-    virtual void markChildren(MarkStack&);
+    virtual void mark();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);

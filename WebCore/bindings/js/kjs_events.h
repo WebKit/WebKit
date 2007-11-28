@@ -57,7 +57,7 @@ namespace WebCore {
         virtual KJS::JSObject* listenerObj() const;
         virtual KJS::Window* windowObj() const;
         void clearWindowObj();
-        virtual void markChildren(KJS::MarkStack&);
+        virtual void mark();
     private:
         KJS::JSObject* m_listener;
         KJS::Window* m_win;

@@ -95,7 +95,7 @@ namespace KJS {
     void setScope(const ScopeChain& s) { _scope = s; }
     const ScopeChain& scope() const { return _scope; }
 
-    virtual void markChildren(MarkStack&);
+    virtual void mark();
 
   private:
     ScopeChain _scope;
@@ -124,7 +124,7 @@ namespace KJS {
   class Arguments : public JSObject {
   public:
     Arguments(ExecState*, FunctionImp* func, const List& args, ActivationImp* act);
-    virtual void markChildren(MarkStack&);
+    virtual void mark();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
@@ -164,7 +164,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
-    virtual void markChildren(MarkStack&);
+    virtual void mark();
 
     bool isActivation() { return true; }
 

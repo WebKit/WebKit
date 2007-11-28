@@ -26,7 +26,6 @@
 #include "ExecState.h"
 #include "internal.h"
 #include "list.h"
-#include "MarkStack.h"
 #include "value.h"
 #include <algorithm>
 #include <setjmp.h>
@@ -278,8 +277,6 @@ collect:
 
     targetBlock = (Block*)allocateBlock();
     targetBlock->freeList = targetBlock->cells;
-    if (heapType == PrimaryHeap)
-        targetBlock->mayHaveRefs = 1;
     targetBlockUsedCells = 0;
     heap.blocks[usedBlocks] = (CollectorBlock*)targetBlock;
     heap.usedBlocks = usedBlocks + 1;
@@ -482,14 +479,7 @@ void Collector::registerThread()
 // cell size needs to be a power of two for this to be valid
 #define IS_HALF_CELL_ALIGNED(p) (((intptr_t)(p) & (CELL_MASK >> 1)) == 0)
 
-static inline void drainMarkStack(MarkStack& stack)
-{
-    while (!stack.isEmpty())
-        stack.pop()->markChildren(stack);
-}
-
-
-void Collector::markStackObjectsConservatively(MarkStack& stack, void *start, void *end)
+void Collector::markStackObjectsConservatively(void *start, void *end)
 {
   if (start > end) {
     void* tmp = start;
@@ -531,8 +521,8 @@ void Collector::markStackObjectsConservatively(MarkStack& stack, void *start, vo
               if ((primaryBlocks[block] == blockAddr) & (offset <= lastCellOffset)) {
                   if (((CollectorCell*)xAsBits)->u.freeCell.zeroIfFree != 0) {
                       JSCell* imp = reinterpret_cast<JSCell*>(xAsBits);
-                      stack.push(imp);
-                      drainMarkStack(stack);
+                      if (!imp->marked())
+                          imp->mark();
                   }
                   break;
               }
@@ -543,7 +533,7 @@ void Collector::markStackObjectsConservatively(MarkStack& stack, void *start, vo
   }
 }
 
-void Collector::markCurrentThreadConservatively(MarkStack& stack)
+void Collector::markCurrentThreadConservatively()
 {
     // setjmp forces volatile registers onto the stack
     jmp_buf registers;
@@ -560,7 +550,7 @@ void Collector::markCurrentThreadConservatively(MarkStack& stack)
     void* stackPointer = &dummy;
     void* stackBase = currentThreadStackBase();
 
-    markStackObjectsConservatively(stack, stackPointer, stackBase);
+    markStackObjectsConservatively(stackPointer, stackBase);
 }
 
 #if USE(MULTIPLE_THREADS)
@@ -703,7 +693,7 @@ static inline void* otherThreadStackBase(const PlatformThreadRegisters& regs, Co
 #endif
 }
 
-void Collector::markOtherThreadConservatively(MarkStack& stack, Thread* thread)
+void Collector::markOtherThreadConservatively(Thread* thread)
 {
   suspendThread(thread->platformThread);
 
@@ -711,25 +701,25 @@ void Collector::markOtherThreadConservatively(MarkStack& stack, Thread* thread)
   size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
 
   // mark the thread's registers
-  markStackObjectsConservatively(stack, (void*)&regs, (void*)((char*)&regs + regSize));
+  markStackObjectsConservatively((void*)&regs, (void*)((char*)&regs + regSize));
  
   void* stackPointer = otherThreadStackPointer(regs);
   void* stackBase = otherThreadStackBase(regs, thread);
-  markStackObjectsConservatively(stack, stackPointer, stackBase);
+  markStackObjectsConservatively(stackPointer, stackBase);
 
   resumeThread(thread->platformThread);
 }
 
 #endif
 
-void Collector::markStackObjectsConservatively(MarkStack& stack)
+void Collector::markStackObjectsConservatively()
 {
-  markCurrentThreadConservatively(stack);
+  markCurrentThreadConservatively();
 
 #if USE(MULTIPLE_THREADS)
   for (Thread *thread = registeredThreads; thread != NULL; thread = thread->next) {
     if (!pthread_equal(thread->posixThread, pthread_self())) {
-        markOtherThreadConservatively(stack, thread);
+      markOtherThreadConservatively(thread);
     }
   }
 #endif
@@ -781,17 +771,18 @@ void Collector::collectOnMainThreadOnly(JSValue* value)
     ++mainThreadOnlyObjectCount;
 }
 
-void Collector::markProtectedObjects(MarkStack& stack)
+void Collector::markProtectedObjects()
 {
   ProtectCountSet& protectedValues = KJS::protectedValues();
   ProtectCountSet::iterator end = protectedValues.end();
   for (ProtectCountSet::iterator it = protectedValues.begin(); it != end; ++it) {
-    stack.push(it->first);
-    drainMarkStack(stack);
+    JSCell *val = it->first;
+    if (!val->marked())
+      val->mark();
   }
 }
 
-void Collector::markMainThreadOnlyObjects(MarkStack& stack)
+void Collector::markMainThreadOnlyObjects()
 {
 #if USE(MULTIPLE_THREADS)
     ASSERT(!onMainThread());
@@ -823,8 +814,7 @@ void Collector::markMainThreadOnlyObjects(MarkStack& stack)
                 if (curBlock->collectOnMainThreadOnly.get(i)) {
                     if (!curBlock->marked.get(i)) {
                         JSCell* imp = reinterpret_cast<JSCell*>(cell);
-                        stack.push(imp);
-                        drainMarkStack(stack);
+                        imp->mark();
                     }
                     if (++count == mainThreadOnlyObjectCount)
                         return;
@@ -960,14 +950,9 @@ bool Collector::collect()
 
   // MARK: first mark all referenced objects recursively starting out from the set of root objects
 
-  size_t originalLiveObjects = primaryHeap.numLiveObjects + numberHeap.numLiveObjects;
-
-  MarkStack stack;
-  stack.reserveCapacity(primaryHeap.numLiveObjects);
-
 #ifndef NDEBUG
   // Forbid malloc during the mark phase. Marking a thread suspends it, so 
-  // a malloc inside markChildren() would risk a deadlock with a thread that had been 
+  // a malloc inside mark() would risk a deadlock with a thread that had been 
   // suspended while holding the malloc lock.
   fastMallocForbid();
 #endif
@@ -975,25 +960,24 @@ bool Collector::collect()
   if (Interpreter::s_hook) {
     Interpreter* scr = Interpreter::s_hook;
     do {
-      scr->markRoots(stack);
-      drainMarkStack(stack);
+      scr->mark();
       scr = scr->next;
     } while (scr != Interpreter::s_hook);
   }
 
-  markStackObjectsConservatively(stack);
-  markProtectedObjects(stack);
-  List::markProtectedLists(stack);
-  drainMarkStack(stack);
+  markStackObjectsConservatively();
+  markProtectedObjects();
+  List::markProtectedLists();
 #if USE(MULTIPLE_THREADS)
   if (!currentThreadIsMainThread)
-    markMainThreadOnlyObjects(stack);
+    markMainThreadOnlyObjects();
 #endif
 
 #ifndef NDEBUG
   fastMallocAllow();
 #endif
     
+  size_t originalLiveObjects = primaryHeap.numLiveObjects + numberHeap.numLiveObjects;
   size_t numLiveObjects = sweep<PrimaryHeap>(currentThreadIsMainThread);
   numLiveObjects += sweep<NumberHeap>(currentThreadIsMainThread);
   

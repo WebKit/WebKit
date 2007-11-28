@@ -46,7 +46,6 @@ namespace KJS {
     static const ClassInfo info;
 
     StringImp* internalValue() const { return static_cast<StringImp*>(JSWrapperObject::internalValue());}
-    virtual void markChildren(MarkStack& stack);
 
   private:
     bool inlineGetOwnPropertySlot(ExecState*, unsigned, PropertySlot&);

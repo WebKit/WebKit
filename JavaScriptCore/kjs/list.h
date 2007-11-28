@@ -85,18 +85,18 @@ namespace KJS {
         const_iterator begin() const { return m_vector.begin(); }
         const_iterator end() const { return m_vector.end(); }
 
-        static void markProtectedLists(MarkStack& stack)
+        static void markProtectedLists()
         {
             if (!markSet().size())
                 return;
-            markProtectedListsSlowCase(stack);
+            markProtectedListsSlowCase();
         }
 
         static const List& empty(); // Fast path for an empty list.
 
     private:
         static ListSet& markSet();
-        static void markProtectedListsSlowCase(MarkStack&);
+        static void markProtectedListsSlowCase();
 
         void expandAndAppend(JSValue*);
 

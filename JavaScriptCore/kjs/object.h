@@ -27,7 +27,6 @@
 
 #include "JSType.h"
 #include "CommonIdentifiers.h"
-#include "MarkStack.h"
 #include "interpreter.h"
 #include "property_map.h"
 #include "property_slot.h"
@@ -85,7 +84,7 @@ namespace KJS {
     virtual UString toString(ExecState *exec) const;
     virtual JSObject *toObject(ExecState *exec) const;
       
-    virtual void markChildren(MarkStack&);
+    virtual void mark();
       
     JSObject *getGetter() { return getter; }
     void setGetter(JSObject *g) { getter = g; }
@@ -112,7 +111,7 @@ namespace KJS {
      */
     JSObject();
 
-    virtual void markChildren(MarkStack&);
+    virtual void mark();
     virtual JSType type() const;
 
     /**
@@ -587,11 +586,12 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifie
 
 // FIXME: Put this function in a separate file named something like scope_chain_mark.h -- can't put it in scope_chain.h since it depends on JSObject.
 
-inline void ScopeChain::markChildren(MarkStack& stack)
+inline void ScopeChain::mark()
 {
-    for (ScopeChainNode* n = _node; n; n = n->next) {
-        JSObject* o = n->object;
-        stack.push(o);
+    for (ScopeChainNode *n = _node; n; n = n->next) {
+        JSObject *o = n->object;
+        if (!o->marked())
+            o->mark();
     }
 }
 

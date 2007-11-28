@@ -1,18 +1,3 @@
-2007-11-28  Maciej Stachowiak  <mjs@apple.com>
-
-        Reviewed by Darin and Geoff.
-
-        Fixups for JavaScriptCore mark stack.
-
-        * JSObject.cpp:
-        (JSUserObject::Mark):
-        * JSObject.h:
-        * JSValueWrapper.cpp:
-        (JSValueWrapper::JSObjectMark):
-        * JSValueWrapper.h:
-        * UserObjectImp.cpp:
-        * UserObjectImp.h:
-
 2007-11-27  Anders Carlsson  <andersca@apple.com>
         
         Build fix.

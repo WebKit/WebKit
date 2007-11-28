@@ -22,51 +22,6 @@
         * platform/graphics/cairo/ImageSourceCairo.cpp:
         (WebCore::ImageSource::frameHasAlphaAtIndex):
 
-2007-11-28  Maciej Stachowiak  <mjs@apple.com>
-
-        Reviewed by Darin and Geoff.
-
-        Implement mark stack. This version is not suitable for prime time because it makes a
-        huge allocation on every collect, and potentially makes marking of detached subtrees
-        slow. But it is a .2% - .4% speedup even without much tweaking.
-
-        I replaced mark() methods with markChildren() as usual. One
-        optimization that is lost is avoiding walking detached DOM
-        subtrees more than once to mark them; since marking is not
-        recursive there's no obvious way to bracket operation on the tree
-        any more.
-
-        * bindings/js/JSDocumentCustom.cpp:
-        (WebCore::JSDocument::markChildren):
-        * bindings/js/JSNodeCustom.cpp:
-        (WebCore::JSNode::markChildren):
-        * bindings/js/JSNodeFilterCondition.cpp:
-        * bindings/js/JSNodeFilterCondition.h:
-        * bindings/js/JSNodeFilterCustom.cpp:
-        (WebCore::JSNodeFilter::markChildren):
-        * bindings/js/JSNodeIteratorCustom.cpp:
-        (WebCore::JSNodeIterator::markChildren):
-        * bindings/js/JSTreeWalkerCustom.cpp:
-        (WebCore::JSTreeWalker::markChildren):
-        * bindings/js/JSXMLHttpRequest.cpp:
-        (KJS::JSXMLHttpRequest::markChildren):
-        * bindings/js/JSXMLHttpRequest.h:
-        * bindings/js/kjs_binding.cpp:
-        (KJS::ScriptInterpreter::markDOMNodesForDocument):
-        * bindings/js/kjs_binding.h:
-        * bindings/js/kjs_events.cpp:
-        (WebCore::JSUnprotectedEventListener::markChildren):
-        * bindings/js/kjs_events.h:
-        * bindings/js/kjs_window.cpp:
-        (KJS::Window::markChildren):
-        * bindings/js/kjs_window.h:
-        * bindings/scripts/CodeGeneratorJS.pm:
-        * dom/Node.cpp:
-        (WebCore::Node::Node):
-        * dom/Node.h:
-        * dom/NodeFilter.h:
-        * dom/NodeFilterCondition.h:
-
 2007-11-27  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

@@ -29,7 +29,6 @@ namespace KJS {
 
     class JSObject;
     class JSValue;
-    class MarkStack;
     class PropertyNameArray;
     
     struct PropertyMapEntry;
@@ -60,7 +59,7 @@ namespace KJS {
         JSValue* get(const Identifier&, unsigned& attributes) const;
         JSValue** getLocation(const Identifier& name);
 
-        void markChildren(MarkStack&) const;
+        void mark() const;
         void getEnumerablePropertyNames(PropertyNameArray&) const;
 
         void save(SavedProperties&) const;

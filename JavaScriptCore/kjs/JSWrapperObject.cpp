@@ -24,10 +24,11 @@
 
 namespace KJS {
 
-void JSWrapperObject::markChildren(MarkStack& stack) 
+void JSWrapperObject::mark() 
 {
-    JSObject::markChildren(stack);
-    stack.pushAtom(m_internalValue);
+    JSObject::mark();
+    if (m_internalValue && !m_internalValue->marked())
+        m_internalValue->mark();
 }
 
 } // namespace KJS

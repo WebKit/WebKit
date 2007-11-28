@@ -622,19 +622,25 @@ void PropertyMap::remove(const Identifier& name)
     checkConsistency();
 }
 
-void PropertyMap::markChildren(MarkStack& stack) const
+void PropertyMap::mark() const
 {
     if (!m_usingTable) {
 #if USE_SINGLE_ENTRY
-        if (m_singleEntryKey)
-            stack.push(m_u.singleEntryValue);
+        if (m_singleEntryKey) {
+            JSValue* v = m_u.singleEntryValue;
+            if (!v->marked())
+                v->mark();
+        }
 #endif
         return;
     }
 
     unsigned entryCount = m_u.table->keyCount + m_u.table->deletedSentinelCount;
-    for (unsigned i = 1; i <= entryCount; i++)
-        stack.push(m_u.table->entries()[i].value);
+    for (unsigned i = 1; i <= entryCount; i++) {
+        JSValue* v = m_u.table->entries()[i].value;
+        if (!v->marked())
+            v->mark();
+    }
 }
 
 static int comparePropertyMapEntryIndices(const void* a, const void* b)

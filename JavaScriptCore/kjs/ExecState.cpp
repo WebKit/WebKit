@@ -88,10 +88,10 @@ ExecState::~ExecState()
     m_interpreter->setCurrentExec(m_savedExecState);
 }
 
-void ExecState::markChildren(MarkStack& stack)
+void ExecState::mark()
 {
     for (ExecState* exec = this; exec; exec = exec->m_callingExecState)
-        exec->m_scopeChain.markChildren(stack);
+        exec->m_scopeChain.mark();
 }
 
 void ExecState::setGlobalObject(JSGlobalObject* globalObject)

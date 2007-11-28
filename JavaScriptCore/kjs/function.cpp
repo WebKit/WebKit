@@ -61,10 +61,10 @@ FunctionImp::FunctionImp(ExecState* exec, const Identifier& name, FunctionBodyNo
 {
 }
 
-void FunctionImp::markChildren(MarkStack& stack)
+void FunctionImp::mark()
 {
-    InternalFunctionImp::markChildren(stack);
-    _scope.markChildren(stack);
+    InternalFunctionImp::mark();
+    _scope.mark();
 }
 
 JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
@@ -331,9 +331,9 @@ const ClassInfo Arguments::info = { "Arguments", 0, 0 };
 
 // ECMA 10.1.8
 Arguments::Arguments(ExecState* exec, FunctionImp* func, const List& args, ActivationImp* act)
-  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()) 
-  , _activationObject(act)
-  , indexToNameMap(func, args)
+: JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()), 
+_activationObject(act),
+indexToNameMap(func, args)
 {
   putDirect(exec->propertyNames().callee, func, DontEnum);
   putDirect(exec->propertyNames().length, args.size(), DontEnum);
@@ -347,10 +347,11 @@ Arguments::Arguments(ExecState* exec, FunctionImp* func, const List& args, Activ
   }
 }
 
-void Arguments::markChildren(MarkStack& stack) 
+void Arguments::mark() 
 {
-  JSObject::markChildren(stack);
-  stack.push(_activationObject);
+  JSObject::mark();
+  if (_activationObject && !_activationObject->marked())
+    _activationObject->mark();
 }
 
 JSValue* Arguments::mappedIndexGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
@@ -483,17 +484,23 @@ void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* val
   _prop.put(propertyName, value, attr, (attr == None || attr == DontDelete));
 }
 
-void ActivationImp::markChildren(MarkStack& stack)
+void ActivationImp::mark()
 {
-    JSObject::markChildren(stack);
+    JSObject::mark();
 
     size_t size = d->localStorage.size();
-    for (size_t i = 0; i < size; ++i)
-        stack.push(d->localStorage[i].value);
+    for (size_t i = 0; i < size; ++i) {
+        JSValue* value = d->localStorage[i].value;
+        if (!value->marked())
+            value->mark();
+    }
     
-    stack.push(d->function);
-    if (d->argumentsObject)
-      stack.push(d->argumentsObject);
+    ASSERT(d->function);
+    if (!d->function->marked())
+        d->function->mark();
+
+    if (d->argumentsObject && !d->argumentsObject->marked())
+        d->argumentsObject->mark();
 }
 
 void ActivationImp::createArgumentsObject(ExecState* exec)
