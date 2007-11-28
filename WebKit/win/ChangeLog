@@ -1,3 +1,11 @@
+2007-11-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej and Adam.
+
+        - Added Drosera to the WebKit project.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2007-11-27  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Adam.
