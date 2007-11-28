@@ -1,6 +1,6 @@
 2007-11-27  Maciej Stachowiak  <mjs@apple.com>
 
-        Not reviewed.
+        Reviewed by Darin.
 
         Fix DumpRenderTree ObjC bug comparing strings.
 
