@@ -1,3 +1,13 @@
+2007-11-28  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        - Added guards to the wait loop so execution would not hang and now the
+        console window can process JavaScript.
+
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::suspendProcessIfPaused):
+
 2007-11-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

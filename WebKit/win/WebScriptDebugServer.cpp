@@ -185,6 +185,13 @@ HRESULT STDMETHODCALLTYPE WebScriptDebugServer::isPaused(
 
 void WebScriptDebugServer::suspendProcessIfPaused()
 {
+    static bool alreadyHere = false;
+
+    if (alreadyHere)
+        return;
+
+    alreadyHere = true;
+
     MSG msg;
     while (m_paused && GetMessage(&msg, 0, 0, 0)) {
         // FIXME: Listen for Drosera dying. You will get removeListener calls but what if it crashes?
@@ -196,6 +203,8 @@ void WebScriptDebugServer::suspendProcessIfPaused()
         m_step = false;
         m_paused = true;
     }
+
+    alreadyHere = false;
 }
 
 // IWebScriptDebugListener
