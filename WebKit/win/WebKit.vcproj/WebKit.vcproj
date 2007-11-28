@@ -350,6 +350,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\COMEnumVariant.h"
+				>
+			</File>
+			<File
 				RelativePath="..\DefaultDownloadDelegate.h"
 				>
 			</File>

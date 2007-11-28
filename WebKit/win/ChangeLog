@@ -1,8 +1,14 @@
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
+        Add COMEnumVariant.h to the project.
+        
+        * WebKit.vcproj/WebKit.vcproj:
+
+2007-11-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
-        Return E_INVALIDARG if the databaseName BSTR is null;
+        Return E_INVALIDARG if the databaseName BSTR is null.
         
         * WebDatabaseManager.cpp:
         (WebDatabaseManager::detailsForDatabaseWithOrigin):
