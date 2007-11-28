@@ -1,3 +1,16 @@
+2007-11-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix <rdar://problem/5596160> fast/events/objc-event-api.html fails when run alone (or first)
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setDataSource:]): This method calls addMouseMovedObserver
+        because addMouseMovedObserver returns early if the dataSource
+        is not nil. But if the dataSource is already set (which happens when
+        a WebHTMLView is being reused) then addMouseMovedObserver must not
+        be called again.
+
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.
