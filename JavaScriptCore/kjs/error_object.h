@@ -75,8 +75,6 @@ namespace KJS {
     virtual JSObject *construct(ExecState *exec, const List &args);
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
-    virtual void mark();
-
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   private:

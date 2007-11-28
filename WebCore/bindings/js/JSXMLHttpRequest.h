@@ -57,7 +57,7 @@ public:
     virtual void put(ExecState*, const Identifier& propertyName, JSValue* value, int attr = None);
     void putValueProperty(ExecState*, int token, JSValue* value, int /*attr*/);
     virtual bool toBoolean(ExecState*) const { return true; }
-    virtual void mark();
+    virtual void markChildren(MarkStack&);
 
     WebCore::XMLHttpRequest* impl() const { return m_impl.get(); }
 

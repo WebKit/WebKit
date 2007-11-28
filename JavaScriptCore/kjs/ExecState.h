@@ -100,7 +100,7 @@ namespace KJS  {
 
         void setGlobalObject(JSGlobalObject*);
         
-        void mark();
+        void markChildren(MarkStack&);
         
         // This is a workaround to avoid accessing the global variables for these identifiers in
         // important property lookup functions, to avoid taking PIC branches in Mach-O binaries

@@ -55,7 +55,7 @@ public:
     virtual double toNumber(ExecState *exec) const;
     virtual UString toString(ExecState *exec) const;
 
-    virtual void mark();
+    virtual void markChildren(MarkStack& stack);
 
     JSUserObject *GetJSUserObject() const;
 private:

@@ -32,7 +32,7 @@
 #include "JSBase.h"
 #include "JSUtils.h"
 
-typedef void (*JSObjectMarkProcPtr)(void *data);
+typedef void (*JSObjectMarkProcPtr)(MarkStack&, void *data);
 JSObjectRef JSObjectCreateInternal(void *data, JSObjectCallBacksPtr callBacks, JSObjectMarkProcPtr markProc, int dataType);
 
 class JSUserObject : public JSBase {
@@ -48,7 +48,7 @@ class JSUserObject : public JSBase {
         CFTypeRef CopyCFValue() const;
         virtual UInt8 Equal(JSBase* other);
         void *GetData();
-        void Mark();
+        void Mark(KJS::MarkStack&);
 
                 int DataType() const { return fDataType; }
     private:

@@ -56,7 +56,7 @@ namespace KJS {
          */
         void setInternalValue(JSValue* v);
         
-        virtual void mark();
+        virtual void markChildren(MarkStack& stack);
         
     private:
         JSValue* m_internalValue;
@@ -64,7 +64,7 @@ namespace KJS {
     
     inline JSWrapperObject::JSWrapperObject(JSValue* proto)
         : JSObject(proto)
-        , m_internalValue(0)
+        , m_internalValue(jsNull())
     {
     }
     

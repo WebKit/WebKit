@@ -402,26 +402,23 @@ void ArrayInstance::setLength(unsigned newLength)
     m_length = newLength;
 }
 
-void ArrayInstance::mark()
+void ArrayInstance::markChildren(MarkStack& stack)
 {
-    JSObject::mark();
+    JSObject::markChildren(stack);
 
     ArrayStorage* storage = m_storage;
 
     unsigned usedVectorLength = min(m_length, m_vectorLength);
     for (unsigned i = 0; i < usedVectorLength; ++i) {
         JSValue* value = storage->m_vector[i];
-        if (value && !value->marked())
-            value->mark();
+        if (value)
+            stack.push(value);
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         SparseArrayValueMap::iterator end = map->end();
-        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it) {
-            JSValue* value = it->second;
-            if (!value->marked())
-                value->mark();
-        }
+        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
+            stack.push(it->second);
     }
 }
 

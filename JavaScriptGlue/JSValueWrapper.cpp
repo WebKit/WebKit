@@ -230,11 +230,11 @@ CFTypeRef JSValueWrapper::JSObjectCopyCFValue(void *data)
     return result;
 }
 
-void JSValueWrapper::JSObjectMark(void *data)
+void JSValueWrapper::JSObjectMark(MarkStack& stack, void *data)
 {
     JSValueWrapper* ptr = (JSValueWrapper*)data;
     if (ptr)
     {
-        ptr->fValue->mark();
+        ptr->fValue->markChildren(stack);
     }
 }

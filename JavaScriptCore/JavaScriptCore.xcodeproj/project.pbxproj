@@ -99,6 +99,7 @@
 		6592C318098B7DE10003D4F6 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 6592C316098B7DE10003D4F6 /* Vector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6592C319098B7DE10003D4F6 /* VectorTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 6592C317098B7DE10003D4F6 /* VectorTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65A7A5E00CD1D50E00061F8E /* LabelStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B813A80CD1D01900DF59D6 /* LabelStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65A8B8DB0CF408F400DC7C27 /* MarkStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A8B8D80CF408E900DC7C27 /* MarkStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65B1749A09D0FEB700820339 /* array_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B1749909D0FEB700820339 /* array_object.lut.h */; };
 		65B174F509D100FA00820339 /* math_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F109D100FA00820339 /* math_object.lut.h */; };
 		65B174F609D100FA00820339 /* number_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F209D100FA00820339 /* number_object.lut.h */; };
@@ -510,6 +511,7 @@
 		659126BC0BDD1728001921FB /* AllInOneFile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AllInOneFile.cpp; sourceTree = "<group>"; };
 		6592C316098B7DE10003D4F6 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		6592C317098B7DE10003D4F6 /* VectorTraits.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VectorTraits.h; sourceTree = "<group>"; };
+		65A8B8D80CF408E900DC7C27 /* MarkStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStack.h; sourceTree = "<group>"; };
 		65B1749909D0FEB700820339 /* array_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = file; name = array_object.lut.h; path = ../../../../../symroots/Debug/DerivedSources/JavaScriptCore/array_object.lut.h; sourceTree = "<group>"; };
 		65B174BE09D1000200820339 /* chartables.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 30; path = chartables.c; sourceTree = "<group>"; };
 		65B174F109D100FA00820339 /* math_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = file; name = math_object.lut.h; path = ../../../../../symroots/Debug/DerivedSources/JavaScriptCore/math_object.lut.h; sourceTree = "<group>"; };
@@ -1008,6 +1010,7 @@
 				F692A8680255597D01FF60F7 /* lookup.cpp */,
 				F692A8690255597D01FF60F7 /* lookup.h */,
 				F692A86A0255597D01FF60F7 /* math_object.cpp */,
+				65A8B8D80CF408E900DC7C27 /* MarkStack.h */,
 				F692A86B0255597D01FF60F7 /* math_object.h */,
 				F692A86D0255597D01FF60F7 /* nodes.cpp */,
 				F692A86E0255597D01FF60F7 /* nodes.h */,
@@ -1170,6 +1173,7 @@
 				148A1627095D16BB00666D0D /* ListRefPtr.h in Headers */,
 				65F340940CD6C1C000C0CA8B /* LocalStorage.h in Headers */,
 				5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */,
+				65A8B8DB0CF408F400DC7C27 /* MarkStack.h in Headers */,
 				BCF655590A2049710038A194 /* MathExtras.h in Headers */,
 				932F5B840822A1C700736975 /* NP_jsobject.h in Headers */,
 				9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */,

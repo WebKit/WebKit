@@ -43,18 +43,15 @@ List::ListSet& List::markSet()
     return staticMarkSet;
 }
 
-void List::markProtectedListsSlowCase()
+void List::markProtectedListsSlowCase(MarkStack& stack)
 {
     ListSet::iterator end = markSet().end();
     for (ListSet::iterator it = markSet().begin(); it != end; ++it) {
         List* list = *it;
 
         iterator end2 = list->end();
-        for (iterator it2 = list->begin(); it2 != end2; ++it2) {
-            JSValue* v = *it2;
-            if (!v->marked())
-                v->mark();
-        }
+        for (iterator it2 = list->begin(); it2 != end2; ++it2)
+            stack.push(*it2);
     }
 }
 

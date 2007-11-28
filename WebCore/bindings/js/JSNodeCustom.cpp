@@ -104,7 +104,7 @@ KJS::JSValue* JSNode::appendChild(KJS::ExecState* exec, const KJS::List& args)
     return KJS::jsNull();
 }
 
-void JSNode::mark()
+void JSNode::markChildren(KJS::MarkStack& stack)
 {
     ASSERT(!marked());
 
@@ -113,7 +113,7 @@ void JSNode::mark()
     // Nodes in the document are kept alive by ScriptInterpreter::mark,
     // so we have no special responsibilities and can just call the base class here.
     if (node->inDocument()) {
-        DOMObject::mark();
+        DOMObject::markChildren(stack);
         return;
     }
 
@@ -123,31 +123,12 @@ void JSNode::mark()
     for (Node* current = m_impl.get(); current; current = current->parentNode())
         root = current;
 
-    // If we're already marking this tree, then we can simply mark this wrapper
-    // by calling the base class; our caller is iterating the tree.
-    if (root->m_inSubtreeMark) {
-        DOMObject::mark();
-        return;
-    }
+    // Mark the whole tree
+    for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode())
+        if (JSNode* wrapper = KJS::ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark))
+            stack.push(wrapper);
 
-    // Mark the whole tree; use the global set of roots to avoid reentering.
-    root->m_inSubtreeMark = true;
-    for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
-        JSNode* wrapper = KJS::ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark);
-        if (wrapper) {
-            if (!wrapper->marked())
-                wrapper->mark();
-        } else if (nodeToMark == node) {
-            // This is the case where the map from the document to wrappers has
-            // been cleared out, but a wrapper is being marked. For now, we'll
-            // let the rest of the tree of wrappers get collected, because we have
-            // no good way of finding them. Later we should test behavior of other
-            // browsers and see if we need to preserve other wrappers in this case.
-            if (!marked())
-                mark();
-        }
-    }
-    root->m_inSubtreeMark = false;
+    DOMObject::markChildren(stack);
 
     // Double check that we actually ended up marked. This assert caught problems in the past.
     ASSERT(marked());

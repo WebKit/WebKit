@@ -484,9 +484,7 @@ protected:
     bool m_inDetach : 1;
     bool m_dispatchingSimulatedEvent : 1;
 
-public:
-    bool m_inSubtreeMark : 1;
-    // 0 bits left
+    // 1 bit left
 
 private:
     Element* ancestorElement() const;

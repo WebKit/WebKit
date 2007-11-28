@@ -366,7 +366,7 @@ sub GenerateHeader
 
     # Custom mark function
     if ($dataNode->extendedAttributes->{"CustomMarkFunction"}) {
-        push(@headerContent, "    virtual void mark();\n\n");
+        push(@headerContent, "    virtual void markChildren(KJS::MarkStack&);\n\n");
     }
 
     # Custom pushEventHandlerScope function

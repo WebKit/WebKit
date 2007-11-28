@@ -33,6 +33,7 @@ namespace KJS {
 class ExecState;
 class JSObject;
 class JSCell;
+class MarkStack;
 
 struct ClassInfo;
 
@@ -47,6 +48,7 @@ struct ClassInfo;
 class JSValue : Noncopyable {
     friend class JSCell; // so it can derive from this class
     friend class Collector; // so it can call asCell()
+    friend class MarkStack; // so it can call asCell()
 
 private:
     JSValue();
@@ -105,7 +107,7 @@ public:
     float toFloat(ExecState*) const;
 
     // Garbage collection.
-    void mark();
+    void markChildren(MarkStack&);
     bool marked() const;
 
     static int32_t toInt32SlowCase(double, bool& ok);
@@ -164,7 +166,7 @@ public:
 
     // Garbage collection.
     void *operator new(size_t);
-    virtual void mark();
+    virtual void markChildren(MarkStack&);
     bool marked() const;
 };
 
@@ -290,9 +292,8 @@ inline bool JSCell::marked() const
     return Collector::isCellMarked(this);
 }
 
-inline void JSCell::mark()
+inline void JSCell::markChildren(MarkStack&)
 {
-    return Collector::markCell(this);
 }
 
 ALWAYS_INLINE JSCell* JSValue::asCell()
@@ -406,10 +407,10 @@ inline bool JSValue::getTruncatedUInt32(uint32_t& v) const
     return JSImmediate::isImmediate(this) ? JSImmediate::getTruncatedUInt32(this, v) : asCell()->getTruncatedUInt32(v);
 }
 
-inline void JSValue::mark()
+inline void JSValue::markChildren(MarkStack& stack)
 {
-    ASSERT(!JSImmediate::isImmediate(this)); // callers should check !marked() before calling mark()
-    asCell()->mark();
+    ASSERT(!JSImmediate::isImmediate(this)); // callers should check !marked() before calling markChildren()
+    asCell()->markChildren(stack);
 }
 
 inline bool JSValue::marked() const

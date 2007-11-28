@@ -24,12 +24,12 @@
 
 namespace WebCore {
 
-void JSNodeIterator::mark()
+void JSNodeIterator::markChildren(KJS::MarkStack& stack)
 {
     if (NodeFilter* filter = m_impl->filter())
-        filter->mark();
+        filter->markChildren(stack);
     
-    DOMObject::mark();
+    DOMObject::markChildren(stack);
 }
 
 }

@@ -1,3 +1,22 @@
+2007-11-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+        
+        - Test cases for "Stack overflow crash in JavaScript garbage collector mark pass"
+        http://bugs.webkit.org/show_bug.cgi?id=12216
+
+        I have fixed this with the mark stack work.
+        
+        * fast/js/gc-breadth-2-expected.txt: Added.
+        * fast/js/gc-breadth-2.html: Added.
+        * fast/js/gc-breadth-expected.txt: Added.
+        * fast/js/gc-breadth.html: Added.
+        * fast/js/gc-depth-expected.txt: Added.
+        * fast/js/gc-depth.html: Added.
+        * fast/js/resources/gc-breadth-2.js: Added.
+        * fast/js/resources/gc-breadth.js: Added.
+        * fast/js/resources/gc-depth.js: Added.
+
 2007-11-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.
