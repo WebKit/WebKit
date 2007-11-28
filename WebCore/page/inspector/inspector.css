@@ -68,7 +68,7 @@ iframe, a img {
     -webkit-background-size: auto 135%;
 }
 
-.platform-mac-leopard #toolbar {
+body.detached.platform-mac-leopard #toolbar {
     background: transparent !important;
 }
 

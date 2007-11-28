@@ -223,7 +223,8 @@ var WebInspector = {
 
 WebInspector.loaded = function()
 {
-    document.body.addStyleClass("platform-" + InspectorController.platform());
+    var platform = InspectorController.platform();
+    document.body.addStyleClass("platform-" + platform);
 
     this.fileOutline = new TreeOutline(document.getElementById("list"));
     this.fileOutline.expandTreeElementsWhenArrowing = true;
@@ -285,6 +286,9 @@ WebInspector.loaded = function()
     document.getElementById("sidebarResizeWidget").addEventListener("mousedown", this.sidebarResizerDragStart, true);
     document.getElementById("sidebarResizer").addEventListener("mousedown", this.sidebarResizerDragStart, true);
     document.getElementById("searchResultsResizer").addEventListener("mousedown", this.searchResultsResizerDragStart, true);
+
+    if (platform === "mac-leopard")
+        document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
 
     document.body.addStyleClass("detached");
 
@@ -540,86 +544,125 @@ WebInspector.toggleStatusArea = function()
     this.showingStatusArea = !this.showingStatusArea;
 }
 
+WebInspector.toolbarDragStart = function(event)
+{
+    var toolbar = document.getElementById("toolbar");
+    if (event.target !== toolbar || WebInspector.attached)
+        return;
+
+    toolbar.lastScreenX = event.screenX;
+    toolbar.lastScreenY = event.screenY;
+
+    document.addEventListener("mousemove", WebInspector.toolbarDrag, true);
+    document.addEventListener("mouseup", WebInspector.toolbarDragEnd, true);
+    document.body.style.cursor = "default";
+
+    event.preventDefault();
+}
+
+WebInspector.toolbarDragEnd = function(event)
+{
+    var toolbar = document.getElementById("toolbar");
+    delete toolbar.lastScreenX;
+    delete toolbar.lastScreenY;
+
+    document.removeEventListener("mousemove", WebInspector.toolbarDrag, true);
+    document.removeEventListener("mouseup", WebInspector.toolbarDragEnd, true);
+    document.body.style.removeProperty("cursor");
+
+    event.preventDefault();
+}
+
+WebInspector.toolbarDrag = function(event)
+{
+    var toolbar = document.getElementById("toolbar");
+
+    var x = event.screenX - toolbar.lastScreenX;
+    var y = event.screenY - toolbar.lastScreenY;
+
+    toolbar.lastScreenX = event.screenX;
+    toolbar.lastScreenY = event.screenY;
+
+    window.moveBy(x, y);
+
+    event.preventDefault();
+}
+
 WebInspector.sidebarResizerDragStart = function(event)
 {
-    WebInspector.dividerDragStart(document.getElementById("sidebar"), WebInspector.sidebarResizerDrag, WebInspector.sidebarResizerDragEnd, event, "col-resize");
+    WebInspector.elementDragStart(document.getElementById("sidebar"), WebInspector.sidebarResizerDrag, WebInspector.sidebarResizerDragEnd, event, "col-resize");
 }
 
 WebInspector.sidebarResizerDragEnd = function(event)
 {
-    WebInspector.dividerDragEnd(document.getElementById("sidebar"), WebInspector.sidebarResizerDrag, WebInspector.sidebarResizerDragEnd, event);
+    WebInspector.elementDragEnd(document.getElementById("sidebar"), WebInspector.sidebarResizerDrag, WebInspector.sidebarResizerDragEnd, event);
 }
 
 WebInspector.sidebarResizerDrag = function(event)
 {
-    var sidebar = document.getElementById("sidebar");
-    if (sidebar.dragging == true) {
-        var x = event.clientX + window.scrollX;
+    var x = event.pageX;
 
-        // FIXME: We can should come up with a better hueristic for constraining the size
-        // of the sidebar.
-        var newWidth = Number.constrain(x, 100, window.innerWidth - 100);
+    // FIXME: We can should come up with a better hueristic for constraining the size of the sidebar.
+    var newWidth = Number.constrain(x, 100, window.innerWidth - 100);
 
-        if (x == newWidth)
-            sidebar.dragLastX = x;
+    document.getElementById("sidebar").style.width = newWidth + "px";
+    document.getElementById("sidebarResizer").style.left = (newWidth - 3) + "px";
+    document.getElementById("main").style.left = newWidth + "px";
+    document.getElementById("toolbarButtons").style.left = newWidth + "px";
 
-        sidebar.style.width = newWidth + "px";
-        document.getElementById("sidebarResizer").style.left = (newWidth - 3) + "px";
-        document.getElementById("main").style.left = newWidth + "px";
-        document.getElementById("toolbarButtons").style.left = newWidth + "px";
+    if (WebInspector.currentPanel && WebInspector.currentPanel.resize)
+        WebInspector.currentPanel.resize();
 
-        if (WebInspector.currentPanel && WebInspector.currentPanel.resize)
-            WebInspector.currentPanel.resize();
-
-        event.preventDefault();
-    }
+    event.preventDefault();
 }
 
 WebInspector.searchResultsResizerDragStart = function(event)
 {
-    WebInspector.dividerDragStart(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event, "row-resize");
+    WebInspector.elementDragStart(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event, "row-resize");
 }
 
 WebInspector.searchResultsResizerDragEnd = function(event)
 {
-    WebInspector.dividerDragEnd(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event);
+    WebInspector.elementDragEnd(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event);
 }
 
 WebInspector.searchResultsResizerDrag = function(event)
 {
-    var searchResults = document.getElementById("searchResults");
-    if (searchResults.dragging == true) {
-        var y = event.clientY - document.getElementById("main").offsetTop;
-        var newHeight = Number.constrain(y, 100, window.innerHeight - 100);
+    var y = event.pageY - document.getElementById("main").offsetTop;
+    var newHeight = Number.constrain(y, 100, window.innerHeight - 100);
 
-        if (y == newHeight)
-            searchResults.dragLastY = y;
+    WebInspector.searchResultsHeight = newHeight;
 
-        WebInspector.searchResultsHeight = newHeight;
-        searchResults.style.height = WebInspector.searchResultsHeight + "px";
-        document.getElementById("panels").style.top = newHeight + "px";
-        document.getElementById("searchResultsResizer").style.top = (newHeight - 3) + "px";
-        event.preventDefault();
-    }
-}
+    document.getElementById("searchResults").style.height = WebInspector.searchResultsHeight + "px";
+    document.getElementById("panels").style.top = newHeight + "px";
+    document.getElementById("searchResultsResizer").style.top = (newHeight - 3) + "px";
 
-WebInspector.dividerDragStart = function(element, dividerDrag, dividerDragEnd, event, cursor) 
-{
-    element.dragging = true;
-    element.dragLastY = event.clientY + window.scrollY;
-    element.dragLastX = event.clientX + window.scrollX;
-    document.addEventListener("mousemove", dividerDrag, true);
-    document.addEventListener("mouseup", dividerDragEnd, true);
-    document.body.style.cursor = cursor;
     event.preventDefault();
 }
 
-WebInspector.dividerDragEnd = function(element, dividerDrag, dividerDragEnd, event) 
+WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor) 
 {
-    element.dragging = false;
+    if (WebInspector.draggingElement)
+        return elementDragEnd(event);
+
+    WebInspector.draggingElement = true;
+
+    document.addEventListener("mousemove", dividerDrag, true);
+    document.addEventListener("mouseup", elementDragEnd, true);
+    document.body.style.cursor = cursor;
+
+    event.preventDefault();
+}
+
+WebInspector.elementDragEnd = function(element, dividerDrag, elementDragEnd, event) 
+{
     document.removeEventListener("mousemove", dividerDrag, true);
-    document.removeEventListener("mouseup", dividerDragEnd, true);
+    document.removeEventListener("mouseup", elementDragEnd, true);
     document.body.style.removeProperty("cursor");
+
+    delete WebInspector.draggingElement;
+
+    event.preventDefault();
 }
 
 WebInspector.back = function()

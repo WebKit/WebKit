@@ -698,37 +698,36 @@ WebInspector.DocumentPanel.prototype = {
 
     rightSidebarResizerDragStart: function(event)
     {
-        var panel = this; 
-        WebInspector.dividerDragStart(this.views.dom.sidebarElement, function(event) { panel.rightSidebarResizerDrag(event) }, function(event) { panel.rightSidebarResizerDragEnd(event) }, event, "col-resize");
+        if (this.sidebarDragEventListener || this.sidebarDragEndEventListener)
+            return this.rightSidebarResizerDragEnd(event);
+
+        this.sidebarDragEventListener = this.rightSidebarResizerDrag.bind(this);
+        this.sidebarDragEndEventListener = this.rightSidebarResizerDragEnd.bind(this);
+        WebInspector.elementDragStart(this.views.dom.sidebarElement, this.sidebarDragEventListener, this.sidebarDragEndEventListener, event, "col-resize");
     },
 
     rightSidebarResizerDragEnd: function(event)
     {
-        var panel = this;
-        WebInspector.dividerDragEnd(this.views.dom.sidebarElement, function(event) { panel.rightSidebarResizerDrag(event) }, function(event) { panel.rightSidebarResizerDragEnd(event) }, event);
+        WebInspector.elementDragEnd(this.views.dom.sidebarElement, this.sidebarDragEventListener, this.sidebarDragEndEventListener, event);
+        delete this.sidebarDragEventListener;
+        delete this.sidebarDragEndEventListener;
     },
 
     rightSidebarResizerDrag: function(event)
     {
-        var rightSidebar = this.views.dom.sidebarElement;
-        if (rightSidebar.dragging == true) {
-            var x = event.clientX + window.scrollX;
+        var x = event.pageX;
 
-            var leftSidebarWidth = window.getComputedStyle(document.getElementById("sidebar")).getPropertyCSSValue("width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-            var newWidth = Number.constrain(window.innerWidth - x, 100, window.innerWidth - leftSidebarWidth - 100);
+        var leftSidebarWidth = document.getElementById("sidebar").offsetWidth;
+        var newWidth = Number.constrain(window.innerWidth - x, 100, window.innerWidth - leftSidebarWidth - 100);
 
-            if (x == newWidth)
-                rightSidebar.dragLastX = x;
+        this.views.dom.sidebarElement.style.width = newWidth + "px";
+        this.views.dom.sideContentElement.style.right = newWidth + "px";
+        this.views.dom.sidebarResizeElement.style.right = (newWidth - 3) + "px";
 
-            rightSidebar.style.width = newWidth + "px";
-            this.views.dom.sideContentElement.style.right = newWidth + "px";
-            this.views.dom.sidebarResizeElement.style.right = (newWidth - 3) + "px";
+        this.updateTreeSelection();
+        this.updateBreadcrumbSizes();
 
-            this.updateTreeSelection();
-            this.updateBreadcrumbSizes();
-
-            event.preventDefault();
-        }
+        event.preventDefault();
     }
 }
 

@@ -1,3 +1,15 @@
+2007-11-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 16165: Dragging the inspector toolbar should move the window
+        http://bugs.webkit.org/show_bug.cgi?id=16165
+
+        * page/inspector/DocumentPanel.js: Call the new drag functions, and cleanup code.
+        * page/inspector/inspector.css: Only make the toolbar transparent in detached mode.
+        * page/inspector/inspector.js: Call the new drag functions, and cleanup code. Add
+          toolbar drag functions that move the window.
+
 2007-11-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.
