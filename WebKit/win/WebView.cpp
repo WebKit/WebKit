@@ -1475,11 +1475,13 @@ bool WebView::inResizer(LPARAM lParam)
     return !!PtInRect(&r, pt);
 }
 
-static ATOM registerWebViewWindowClass()
+static bool registerWebViewWindowClass()
 {
     static bool haveRegisteredWindowClass = false;
     if (haveRegisteredWindowClass)
         return true;
+
+    haveRegisteredWindowClass = true;
 
     WNDCLASSEX wcex;
 
@@ -1497,7 +1499,7 @@ static ATOM registerWebViewWindowClass()
     wcex.lpszClassName  = kWebViewWindowClassName;
     wcex.hIconSm        = 0;
 
-    return RegisterClassEx(&wcex);
+    return !!RegisterClassEx(&wcex);
 }
 
 namespace WebCore {

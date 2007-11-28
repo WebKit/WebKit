@@ -1,3 +1,13 @@
+2007-11-27  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Adam.
+
+        Return bool from registerWebViewWindowClass, as nothing uses the ATOM.
+        Set haveRegisteredWindowClass to true
+
+        * WebView.cpp:
+        (registerWebViewWindowClass):
+
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
         Speculative fix to get Drosera working.
