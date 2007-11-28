@@ -1,5 +1,15 @@
 2007-11-27  Alp Toker  <alp@atoker.com>
 
+        Reviewed by Mark Rowe.
+
+        Add a list of public JavaScriptCore headers for installation.
+
+        This follows the convention used for the Qt and GTK+ header lists.
+
+        * headers.pri: Added.
+
+2007-11-27  Alp Toker  <alp@atoker.com>
+
         Prospective MSVC build fix.
 
         Roll back dllexport/dllimport support for now.

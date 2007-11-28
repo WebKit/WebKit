@@ -1,3 +1,11 @@
+2007-11-27  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Install the JavaScriptCore headers as part of the GTK+ port.
+
+        * WebCore.pro:
+
 2007-11-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.

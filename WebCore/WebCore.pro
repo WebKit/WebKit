@@ -1677,10 +1677,17 @@ gtk-port {
     isEmpty(WEBKIT_INC_DIR):WEBKIT_INC_DIR=/usr/local/include/WebKitGtk
 
     target.path = $$WEBKIT_LIB_DIR
+    INSTALLS += target
+
     include($$PWD/../WebKit/gtk/Api/headers.pri)
     headers.files = $$WEBKIT_API_HEADERS
     headers.path = $$WEBKIT_INC_DIR
-    INSTALLS += target headers
+    INSTALLS += headers
+
+    include($$PWD/../JavaScriptCore/headers.pri)
+    jsheaders.files = $$JS_API_HEADERS
+    jsheaders.path = $$WEBKIT_INC_DIR/JavaScriptCore
+    INSTALLS += jsheaders
 
     unix {
         CONFIG += create_pc create_prl
