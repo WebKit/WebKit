@@ -102,7 +102,7 @@ using namespace WebCore;
 
 @implementation WebSecurityOrigin (WebInternal)
 
-- (id)_initWithWebCoreSecurityOriginData:(WebCoreSecurityOriginData *)securityOriginData
+- (id)_initWithWebCoreSecurityOriginData:(const WebCoreSecurityOriginData *)securityOriginData
 {
     ASSERT(securityOriginData);
     self = [super init];

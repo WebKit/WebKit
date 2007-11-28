@@ -1,3 +1,16 @@
+2007-11-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        * Storage/WebDatabaseManager.mm:
+        * Storage/WebDatabaseManagerPrivate.h:
+        * Storage/WebDatabaseTrackerClient.mm:
+        (WebDatabaseTrackerClient::dispatchDidModifyOrigin):
+        (WebDatabaseTrackerClient::dispatchDidModifyDatabase):
+        * Storage/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin _initWithWebCoreSecurityOriginData:]):
+        * Storage/WebSecurityOriginInternal.h:
+
 2007-11-27  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin, landed by Anders.

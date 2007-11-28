@@ -45,6 +45,7 @@ const NSString *WebDatabaseUsageKey = @"WebDatabaseUsageKey";
 
 const NSString *WebDatabaseDidModifyOriginNotification = @"WebDatabaseDidModifyOriginNotification";
 const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModifyDatabaseNotification";
+const NSString *WebDatabaseNameKey = @"WebDatabaseNameKey";
 
 @implementation WebDatabaseManager
 

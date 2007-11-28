@@ -31,10 +31,14 @@ extern const NSString *WebDatabaseExpectedSizeKey;
 extern const NSString *WebDatabaseUsageKey;
 
 // Posted with an origin is created from scratch, gets a new database, has a database deleted, has a quota change, etc
+// The notification object will be a WebSecurityOrigin object corresponding to the origin.
 extern const NSString *WebDatabaseDidModifyOriginNotification;
 
 // Posted when a database is created, its size increases, its display name changes, or its estimated size changes, or the database is removed
+// The notification object will be a WebSecurityOrigin object corresponding to the origin.
+// The notification userInfo will have a WebDatabaseNameKey whose value is the database name.
 extern const NSString *WebDatabaseDidModifyDatabaseNotification;
+extern const NSString *WebDatabaseNameKey;
 
 @class WebSecurityOrigin;
 
