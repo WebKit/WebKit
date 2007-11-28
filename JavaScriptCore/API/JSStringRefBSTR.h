@@ -46,7 +46,7 @@ extern "C" {
 @param string     The BSTR to copy into the new JSString.
 @result           A JSString containing string. Ownership follows the Create Rule.
 */
-JSStringRef JSStringCreateWithBSTR(const BSTR string);
+JS_EXPORT JSStringRef JSStringCreateWithBSTR(const BSTR string);
 
 /*!
 @function
@@ -54,7 +54,7 @@ JSStringRef JSStringCreateWithBSTR(const BSTR string);
 @param string     The JSString to copy into the new BSTR.
 @result           A BSTR containing string. Ownership follows the Create Rule.
 */
-BSTR JSStringCopyBSTR(const JSStringRef string);
+JS_EXPORT BSTR JSStringCopyBSTR(const JSStringRef string);
     
 #ifdef __cplusplus
 }

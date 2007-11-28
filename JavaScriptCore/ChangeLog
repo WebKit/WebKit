@@ -1,3 +1,25 @@
+2007-11-27  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15569
+        [gtk] GTK JavaScriptCore needs to export symbols for JSC API and WTF
+
+        Introduce JS_EXPORT to mark symbols to be exported as public API.
+
+        Export all public symbols in the JavaScriptCore C API.
+
+        This matches conventions for exporting symbols set by the CF and CG
+        frameworks.
+
+        * API/JSBase.h:
+        * API/JSContextRef.h:
+        * API/JSObjectRef.h:
+        * API/JSStringRef.h:
+        * API/JSStringRefBSTR.h:
+        * API/JSStringRefCF.h:
+        * API/JSValueRef.h:
+
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
