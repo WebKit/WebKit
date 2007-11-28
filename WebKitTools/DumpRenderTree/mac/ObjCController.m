@@ -100,6 +100,8 @@
 
 - (BOOL)identityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b
 {
+    if ([a isKindOfClass:[NSString class]] && [b isKindOfClass:[NSString class]])
+        return [(NSString *)a isEqualToString:(NSString *)b];
     return a == b;
 }
 

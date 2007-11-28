@@ -1,3 +1,13 @@
+2007-11-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+
+        Fix DumpRenderTree ObjC bug comparing strings.
+
+        * DumpRenderTree/mac/ObjCController.m:
+        (-[ObjCController identityIsEqual::]): Compare strings with string
+        equality instead of identiy equality.
+
 2007-11-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Sam.
