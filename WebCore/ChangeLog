@@ -1,3 +1,16 @@
+2007-11-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Adam Roben.
+
+        - <rdar://problem/5057218> Reenable "recent searches" search field menu when menu is fully implemented
+
+        * platform/win/SearchPopupMenuWin.cpp:
+        (WebCore::SearchPopupMenu::enabled): Changed to return true.
+        (WebCore::autosaveKey): Added. Returns a preferences key for the
+        autosave name by prefixing it with "com.apple.WebKit.searchField:".
+        (WebCore::SearchPopupMenu::saveRecentSearches): Implemented.
+        (WebCore::SearchPopupMenu::loadRecentSearches): Implemented.
+
 2007-11-28  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.
