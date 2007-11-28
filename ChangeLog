@@ -1,3 +1,11 @@
+2007-11-26  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Mark Rowe.
+
+        Set CONFIG option for the window system GTK+ is using
+
+        * WebKit.pri:
+
 2007-11-22  Alp Toker  <alp@atoker.com>
 
         GTK+ build fix. Pass a correct LIBDIR value.

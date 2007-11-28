@@ -31,6 +31,9 @@ gtk-port {
     directfb: PKGCONFIG += cairo-directfb gtk+-directfb-2.0
     else: PKGCONFIG += cairo gtk+-2.0
 
+    # Set a CONFIG flag for the GTK+ target (x11, quartz, win32, directfb)
+    CONFIG += $$system(pkg-config --variable=target $$PKGCONFIG)
+
     # We use the curl http backend on all platforms
     PKGCONFIG += libcurl
 
