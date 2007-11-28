@@ -187,6 +187,7 @@ LRESULT CALLBACK Drosera::handleCommand(HWND hWnd, UINT message, WPARAM wParam, 
             break;
         case ID_DEBUG_SHOWCONSOLE:
             m_debuggerClient->showConsole();
+            break;
         case ID_HELP_ABOUT:
             DialogBox(Drosera::getInst(), MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, ::aboutWndProc);
             break;
@@ -263,7 +264,7 @@ HRESULT Drosera::initUI(HINSTANCE hInstance, int nCmdShow)
         return ret;
 
     m_webViewPrivate.query(m_webView.get());
-    if (!m_webView)
+    if (!m_webViewPrivate)
         return E_FAIL;
 
     ret = m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_hWnd));
@@ -299,11 +300,10 @@ LRESULT Drosera::onSize(WPARAM, LPARAM)
     ::GetClientRect(m_hWnd, &clientRect);
 
     HWND viewWindow;
-    if (FAILED(m_webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
-        return 0;
+    if (SUCCEEDED(m_webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        // FIXME should this be the height-command bars height?
+        ::SetWindowPos(viewWindow, 0, clientRect.left, clientRect.top, clientRect.right - clientRect.left, clientRect.bottom - clientRect.top, SWP_NOZORDER);
 
-    // FIXME should this be the height-command bars height?
-    ::SetWindowPos(viewWindow, 0, clientRect.left, clientRect.top, clientRect.right - clientRect.left, clientRect.bottom - clientRect.top, SWP_NOZORDER);
     return 0;
 }
 
@@ -322,9 +322,6 @@ HRESULT Drosera::attach()
         return ret;
 
     ret = m_webView->setUIDelegate(m_debuggerClient.get());
-
-    COMPtr<IWebFrame> mainFrame;
-    ret = m_webView->mainFrame(&mainFrame);
     if (FAILED(ret))
         return ret;
 
@@ -341,6 +338,11 @@ HRESULT Drosera::attach()
     BSTR tempStr = cfStringToBSTR(urlStringRef);    // Both initWithRUL and SysFreeString can handle 0.
     ret = request->initWithURL(tempStr, WebURLRequestUseProtocolCachePolicy, 60);
     SysFreeString(tempStr);
+    if (FAILED(ret))
+        return ret;
+
+    COMPtr<IWebFrame> mainFrame;
+    ret = m_webView->mainFrame(&mainFrame);
     if (FAILED(ret))
         return ret;
 

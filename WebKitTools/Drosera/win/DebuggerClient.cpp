@@ -29,10 +29,85 @@
 #include "DebuggerClient.h"
 
 #include "DebuggerDocument.h"
+#include "Drosera.h"
 #include "ServerConnection.h"
 
 #include <WebKit/IWebView.h>
+#include <WebKit/IWebViewPrivate.h>
+#include <WebKit/WebKit.h>
 #include <JavaScriptCore/JSContextRef.h>
+
+static LPCTSTR kConsoleTitle = _T("Console");
+static LPCTSTR kConsoleClassName = _T("DroseraConsoleWindowClass");
+
+static LRESULT CALLBACK consoleWndProc(HWND, UINT, WPARAM, LPARAM);
+
+ATOM registerConsoleClass(HINSTANCE hInstance)
+{
+    static bool haveRegisteredWindowClass = false;
+
+    if (haveRegisteredWindowClass) {
+        haveRegisteredWindowClass = true;
+        return true;
+    }
+
+    WNDCLASSEX wcex;
+
+    wcex.cbSize = sizeof(WNDCLASSEX);
+
+    wcex.style         = 0;
+    wcex.lpfnWndProc   = consoleWndProc;
+    wcex.cbClsExtra    = 0;
+    wcex.cbWndExtra    = sizeof(DebuggerClient*);
+    wcex.hInstance     = hInstance;
+    wcex.hIcon         = 0;
+    wcex.hCursor       = LoadCursor(0, IDC_ARROW);
+    wcex.hbrBackground = 0;
+    wcex.lpszMenuName  = 0;
+    wcex.lpszClassName = kConsoleClassName;
+    wcex.hIconSm       = 0;
+
+    return RegisterClassEx(&wcex);
+}
+
+static LRESULT CALLBACK consoleWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
+    DebuggerClient* client = reinterpret_cast<DebuggerClient*>(longPtr);
+
+    switch (message) {
+        case WM_SIZE:
+            if (!client)
+                return 0;
+            return client->onSize(wParam, lParam);
+        case WM_PAINT: {
+            PAINTSTRUCT ps;
+            BeginPaint(hWnd, &ps);
+            EndPaint(hWnd, &ps);
+            break;
+        }
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+
+    return 0;
+}
+
+LRESULT DebuggerClient::onSize(WPARAM, LPARAM)
+{
+    if (!m_webViewPrivate)
+        return 0;
+
+    RECT clientRect = {0};
+    if (!GetClientRect(m_consoleWindow, &clientRect))
+        return 0;
+
+    HWND viewWindow;
+    if (SUCCEEDED(m_webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        SetWindowPos(viewWindow, 0, clientRect.left, clientRect.top, clientRect.right - clientRect.left, clientRect.bottom - clientRect.top, SWP_NOZORDER);
+
+    return 0;
+}
 
 DebuggerClient::DebuggerClient()
     : m_webViewLoaded(false)
@@ -130,13 +205,84 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::didReceiveTitle(
 
 HRESULT STDMETHODCALLTYPE DebuggerClient::createWebViewWithRequest( 
         /* [in] */ IWebView*,
-        /* [in] */ IWebURLRequest*,
-        /* [retval][out] */ IWebView**)
+        /* [in] */ IWebURLRequest* request,
+        /* [retval][out] */ IWebView** newWebView)
 {
-    // FIXME: Opens the console window, this might get replaced by some Windows Fu
+    HRESULT ret = S_OK;
+
+    if (!newWebView)
+        return E_POINTER;
+
+    *newWebView = 0;
+
+    HINSTANCE instance = Drosera::getInst();
+
+    registerConsoleClass(instance);
+
+    m_consoleWindow = CreateWindow(kConsoleClassName, kConsoleTitle, WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, 0, 500, 350, 0, 0, instance, 0);
+
+    if (!m_consoleWindow)
+        return HRESULT_FROM_WIN32(GetLastError());
+
+    SetLastError(0);
+    SetWindowLongPtr(m_consoleWindow, 0, reinterpret_cast<LONG_PTR>(this));
+    ret = HRESULT_FROM_WIN32(GetLastError());
+    if (FAILED(ret))
+        return ret;
+
+    COMPtr<IWebView> view;
+    ret = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&view);
+    if (FAILED(ret))
+        return ret;
+
+    m_webViewPrivate.query(view);
+    if (!m_webViewPrivate)
+        return E_FAIL;
+
+    ret = view->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_consoleWindow));
+    if (FAILED(ret))
+        return ret;
+
+    RECT clientRect = {0};
+    GetClientRect(m_consoleWindow, &clientRect);
+    ret = view->initWithFrame(clientRect, 0, 0);
+    if (FAILED(ret))
+        return ret;
+
+    ret = view->setUIDelegate(this);
+    if (FAILED(ret))
+        return ret;
+
+    ret = view->setFrameLoadDelegate(this);
+    if (FAILED(ret))
+        return ret;
+
+    if (request) {
+        BOOL requestIsEmpty = FALSE;
+        ret = request->isEmpty(&requestIsEmpty);
+        if (FAILED(ret))
+            return ret;
+
+        if (!requestIsEmpty) {
+            COMPtr<IWebFrame> mainFrame;
+            ret = view->mainFrame(&mainFrame);
+            if (FAILED(ret))
+                return ret;
+
+            ret = mainFrame->loadRequest(request);
+            if (FAILED(ret))
+                return ret;
+        }
+    }
+
+    ShowWindow(m_consoleWindow, SW_SHOW);
+    UpdateWindow(m_consoleWindow);
+
+    *newWebView = view.releaseRef();
+
     return S_OK;
 }
-
 
 // IWebUIDelegate ------------------------------
 HRESULT STDMETHODCALLTYPE DebuggerClient::runJavaScriptAlertPanelWithMessage(  // For debugging purposes

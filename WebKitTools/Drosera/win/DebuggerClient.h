@@ -32,11 +32,13 @@
 #include "BaseDelegate.h"
 
 #include <string>
+#include <WebCore/COMPtr.h>
 #include <wtf/OwnPtr.h>
 
 class DebuggerDocument;
-struct IWebView;
-struct IWebFrame;
+interface IWebView;
+interface IWebFrame;
+interface IWebViewPrivate;
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
@@ -46,6 +48,8 @@ public:
     DebuggerClient();
     ~DebuggerClient();
     explicit DebuggerClient(const std::wstring& serverName);
+
+    LRESULT DebuggerClient::onSize(WPARAM, LPARAM);
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(
@@ -102,6 +106,9 @@ public:
 private:
     bool m_webViewLoaded;
     JSGlobalContextRef m_globalContext;
+
+    HWND m_consoleWindow;
+    COMPtr<IWebViewPrivate> m_webViewPrivate;
 
     OwnPtr<DebuggerDocument> m_debuggerDocument;
 };

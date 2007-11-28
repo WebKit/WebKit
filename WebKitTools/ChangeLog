@@ -1,3 +1,25 @@
+2007-11-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Drosera now displays the console window, although it cannot currently
+        process JavaScript.
+
+        * Drosera/win/DebuggerClient.cpp: Shows the console window.
+        (registerConsoleClass): Implemented.
+        (consoleWndProc): Implemented.
+        (DebuggerClient::onSize): Implemented.
+        (DebuggerClient::createWebViewWithRequest): Implemented, now creates a
+        new window.
+        * Drosera/win/DebuggerClient.h: Added needed method and members for 
+        creating and maintaining a new window.
+        * Drosera/win/Drosera.cpp: Fixed some minor bugs, and moved a couple of
+        lines of code to more appropriate places.
+        (Drosera::handleCommand):
+        (Drosera::initUI):
+        (Drosera::onSize):
+        (Drosera::attach):
+
 2007-11-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Hyatt.
