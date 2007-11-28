@@ -1,3 +1,12 @@
+2007-11-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/5612459> CrashTracer: [REGRESSION] 61 crashes in Safari at com.apple.WebCore: WebCore::AutoTableLayout::layout + 2046
+
+        * fast/table/empty-auto-column-zero-divide-expected.txt: Added.
+        * fast/table/empty-auto-column-zero-divide.html: Added.
+
 2007-11-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Dan.
