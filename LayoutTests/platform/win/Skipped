@@ -376,10 +376,6 @@ plugins/undefined-property-crash.html
 # Debug C Runtime assertion <rdar://problem/5079945>
 svg/custom/mask-excessive-malloc.svg
 
-# SVG is painting on Windows when it appears not to be doing so on X. <rdar://problem/5128229>
-svg/custom/text-repaint-including-stroke.svg
-svg/custom/use-elementInstance-event-target.svg
-
 # String::Number prints floating point numbers differently on Win than X. <rdar://problem/5127993>
 svg/custom/path-bad-data.svg
 svg/dom/length-list-parser.html

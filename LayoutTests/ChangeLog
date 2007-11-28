@@ -1,5 +1,11 @@
 2007-11-28  Alice Liu  <alice.liu@apple.com>
 
+        Removing fixed tests tracked by <rdar://5128229>
+
+        * platform/win/Skipped:
+
+2007-11-28  Alice Liu  <alice.liu@apple.com>
+
         Rubberstamped by Sam.
 
         Fixing a typo in some filenames
