@@ -459,9 +459,6 @@ http/tests/navigation/javascriptlink-frames.html
 # <rdar://5507350> embed.Play is undefined
 plugins/embed-attributes-setting.html
 
-# <rdar://5507360> Crash
-plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html 
-
 # <rdar://5508270> Intermittently time out
 editing/selection/5057506-2.html
 editing/selection/5057506.html

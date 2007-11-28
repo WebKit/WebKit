@@ -1,3 +1,14 @@
+2007-11-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Dan.
+
+        <rdar://problem/5507360> plugins/return-error-from-new-stream-callback-
+        in-full-frame-plugin.html is crashing
+
+        Alice fixed this in r28046
+
+        * platform/win/Skipped:
+
 2007-11-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.
