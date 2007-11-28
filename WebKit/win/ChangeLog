@@ -1,5 +1,19 @@
 2007-11-28  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam.
+
+        Implement the last bits of the WebDatabaseManager API.
+        
+        * Interfaces/IWebDatabaseManager.idl:
+        * WebDatabaseManager.cpp:
+        (isEqual):
+        (WebDatabaseManager::sharedWebDatabaseManager):
+        (WebDatabaseManager::dispatchDidModifyOrigin):
+        (WebDatabaseManager::dispatchDidModifyDatabase):
+        * WebDatabaseManager.h:
+
+2007-11-28  Anders Carlsson  <andersca@apple.com>
+
         Get Drosera working again for real.
         
         * COMEnumVariant.h:

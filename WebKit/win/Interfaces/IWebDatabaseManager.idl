@@ -57,6 +57,7 @@ cpp_quote("#define WebDatabaseUsageKey TEXT(\"WebDatabaseUsageKey\")")
 
 cpp_quote("#define WebDatabaseDidModifyOriginNotification TEXT(\"WebDatabaseDidModifyOriginNotification\")")
 cpp_quote("#define WebDatabaseDidModifyDatabaseNotification TEXT(\"WebDatabaseDidModifyDatabaseNotification\")")
+cpp_quote("#define WebDatabaseNameKey TEXT(\"WebDatabaseNameKey\")")
 
 import "IWebSecurityOrigin.idl";
 
