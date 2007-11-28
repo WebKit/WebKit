@@ -81,11 +81,11 @@ IntSize SVGImage::size() const
     
     IntSize svgSize;
     if (width.unitType() == LengthTypePercentage)
-        svgSize.setWidth(static_cast<int>(width.valueInSpecifiedUnits() * destSize.width()));
+        svgSize.setWidth(static_cast<int>(width.valueAsPercentage() * destSize.width()));
     else
         svgSize.setWidth(static_cast<int>(width.value()));
     if (height.unitType() == LengthTypePercentage)
-        svgSize.setHeight(static_cast<int>(height.valueInSpecifiedUnits() * destSize.height()));
+        svgSize.setHeight(static_cast<int>(height.valueAsPercentage() * destSize.height()));
     else
         svgSize.setHeight(static_cast<int>(height.value()));
     

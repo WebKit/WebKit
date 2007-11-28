@@ -1,3 +1,17 @@
+2007-11-27  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://problem/5616052> SVGs with width or height of 100% 
+        hang when used as a background-image (16164)
+
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::size): Use valueAsPercentage() for percents 
+        instead of valueInSpecifiedUnits(). valueInSpecifiedUnits() 
+        returns, for example, 50 for 50%, so multiplying percentages by the 
+        default size of 300 x 150 led to ridiculously huge dimensions for 
+        SVG images, and the subsequent hang. 
+
 2007-11-27  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Adam.

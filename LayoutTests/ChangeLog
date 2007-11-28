@@ -1,3 +1,16 @@
+2007-11-27  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Test for <rdar://problem/5616052> SVGs with width or height of 100% 
+        hang when used as a background-image (16164)
+
+        * fast/images/resources/width-100-percent.svg: Added.
+        * fast/images/svg-width-100p-as-background.html: Added.
+        * platform/mac/fast/images/svg-width-100p-as-background-expected.checksum: Added.
+        * platform/mac/fast/images/svg-width-100p-as-background-expected.png: Added.
+        * platform/mac/fast/images/svg-width-100p-as-background-expected.txt: Added.
+
 2007-11-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin McCullough.
