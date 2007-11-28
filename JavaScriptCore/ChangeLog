@@ -1,5 +1,13 @@
 2007-11-27  Alp Toker  <alp@atoker.com>
 
+        Prospective MSVC build fix.
+
+        Roll back dllexport/dllimport support for now.
+
+        * API/JSBase.h:
+
+2007-11-27  Alp Toker  <alp@atoker.com>
+
         Reviewed by Maciej.
 
         http://bugs.webkit.org/show_bug.cgi?id=15569
