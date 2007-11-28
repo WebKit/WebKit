@@ -1,3 +1,11 @@
+2007-11-27  Anders Carlsson  <andersca@apple.com>
+
+        Speculative fix to get Drosera working.
+        
+        * COMEnumVariant.h:
+        (::Next):
+        Update the number of elements fetched correctly.
+        
 2007-11-27  Anders Carlsson <andersca@apple.com>
 
         Reviewed by Adam.

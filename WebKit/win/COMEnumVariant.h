@@ -182,6 +182,8 @@ HRESULT STDMETHODCALLTYPE COMEnumVariant<ContainerType>::Next(ULONG celt, VARIAN
 
         COMVariantSetter<ContainerType::ValueType>::setVariant(&rgVar[i], *m_currentPos);
         ++m_currentPos;
+        if (pCeltFetched)
+            *pCeltFetched++;
     }
 
     return S_OK;
