@@ -9,6 +9,15 @@
 
 2007-11-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        Make i locally scoped for better code clarity
+
+        * pcre/pcre_exec.cpp:
+        (match):
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         Give subjectPtr and instructionPtr sane names, reduce size of MatchFrame for a 0.2% speedup.
