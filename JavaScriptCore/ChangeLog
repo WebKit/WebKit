@@ -2,6 +2,18 @@
 
         Reviewed by Sam.
 
+        Abstract frame variables into locals and args
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        * pcre/pcre_exec.cpp:
+        (match):
+        * pcre/pcre_internal.h:
+
+2007-11-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Section off MatchData arguments into args struct
 
         * pcre/pcre_exec.cpp:

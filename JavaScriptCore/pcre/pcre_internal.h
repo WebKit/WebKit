@@ -479,16 +479,16 @@ in UTF-8 mode. The code that uses this table must know about such things. */
  33,                             /* NCLASS                                 */ \
   0,                             /* XCLASS - variable length               */ \
   3,                             /* REF                                    */ \
-  1+LINK_SIZE,                   /* Alt                                    */ \
-  1+LINK_SIZE,                   /* Ket                                    */ \
-  1+LINK_SIZE,                   /* KetRmax                                */ \
-  1+LINK_SIZE,                   /* KetRmin                                */ \
-  1+LINK_SIZE,                   /* Assert                                 */ \
-  1+LINK_SIZE,                   /* Assert not                             */ \
-  1+LINK_SIZE,                   /* Once                                   */ \
+  1 + LINK_SIZE,                   /* Alt                                    */ \
+  1 + LINK_SIZE,                   /* Ket                                    */ \
+  1 + LINK_SIZE,                   /* KetRmax                                */ \
+  1 + LINK_SIZE,                   /* KetRmin                                */ \
+  1 + LINK_SIZE,                   /* Assert                                 */ \
+  1 + LINK_SIZE,                   /* Assert not                             */ \
+  1 + LINK_SIZE,                   /* Once                                   */ \
   1, 1,                          /* BRAZERO, BRAMINZERO                    */ \
   3,                             /* BRANUMBER                              */ \
-  1+LINK_SIZE                    /* BRA                                    */ \
+  1 + LINK_SIZE                    /* BRA                                    */ \
 
 
 /* The real format of the start of the pcre block; the index of names and the

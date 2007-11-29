@@ -82,11 +82,9 @@ typedef void* ReturnLocation;
 
 struct MatchFrame {
     ReturnLocation returnLocation;
-    
     struct MatchFrame* previousFrame;
     
     /* Function arguments that may change */
-    
     struct {
         UChar* eptr;
         const uschar* ecode;
@@ -95,31 +93,31 @@ struct MatchFrame {
     } args;
     
     
-    /* Because PCRE uses "fake" recursion built off of gotos,
-     stack-based local variables are not safe to use, we have to instead
-     store variables off of the current MatchFrame.
-     The rest of this structure consists of such variables: */
-    
-    const uschar* data;
-    const uschar* next;
-    const UChar* pp;
-    const uschar* prev;
-    const UChar* saved_eptr;
-    
-    int repeat_othercase;
-    
-    int ctype;
-    int fc;
-    int fi;
-    int length;
-    int max;
-    int number;
-    int offset;
-    int save_offset1;
-    int save_offset2;
-    int save_offset3;
-    
-    eptrblock newptrb;
+    /* PCRE uses "fake" recursion built off of gotos, thus
+     stack-based local variables are not safe to use.  Instead we have to
+     store local variables on the current MatchFrame. */
+    struct {
+        const uschar* data;
+        const uschar* next;
+        const UChar* pp;
+        const uschar* prev;
+        const UChar* saved_eptr;
+        
+        int repeat_othercase;
+        
+        int ctype;
+        int fc;
+        int fi;
+        int length;
+        int max;
+        int number;
+        int offset;
+        int save_offset1;
+        int save_offset2;
+        int save_offset3;
+        
+        eptrblock newptrb;
+    } locals;
 };
 
 /* Structure for passing "static" information around between the functions
@@ -482,9 +480,9 @@ RECURSE:
      this stack. */
     
     if (is_group_start) {
-        stack.currentFrame->newptrb.epb_prev = stack.currentFrame->args.eptrb;
-        stack.currentFrame->newptrb.epb_saved_eptr = stack.currentFrame->args.eptr;
-        stack.currentFrame->args.eptrb = &stack.currentFrame->newptrb;
+        stack.currentFrame->locals.newptrb.epb_prev = stack.currentFrame->args.eptrb;
+        stack.currentFrame->locals.newptrb.epb_saved_eptr = stack.currentFrame->args.eptr;
+        stack.currentFrame->args.eptrb = &stack.currentFrame->locals.newptrb;
     }
     
     /* Now start processing the operations. */
@@ -581,8 +579,8 @@ RECURSE:
                  the end of a normal bracket, leaving the subject pointer. */
                 
                 BEGIN_OPCODE(ONCE):
-                stack.currentFrame->prev = stack.currentFrame->args.ecode;
-                stack.currentFrame->saved_eptr = stack.currentFrame->args.eptr;
+                stack.currentFrame->locals.prev = stack.currentFrame->args.ecode;
+                stack.currentFrame->locals.saved_eptr = stack.currentFrame->args.eptr;
                 
                 do {
                     RMATCH(9, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.eptrb, match_isgroup);
@@ -599,7 +597,9 @@ RECURSE:
                 /* Continue as from after the assertion, updating the offsets high water
                  mark, since extracts may have been taken. */
                 
-                do stack.currentFrame->args.ecode += GET(stack.currentFrame->args.ecode,1); while (*stack.currentFrame->args.ecode == OP_ALT);
+                do {
+                    stack.currentFrame->args.ecode += GET(stack.currentFrame->args.ecode,1);
+                } while (*stack.currentFrame->args.ecode == OP_ALT);
                 
                 stack.currentFrame->args.offset_top = md.end_offset_top;
                 stack.currentFrame->args.eptr = md.end_match_ptr;
@@ -610,8 +610,8 @@ RECURSE:
                  5.005. If there is an options reset, it will get obeyed in the normal
                  course of events. */
                 
-                if (*stack.currentFrame->args.ecode == OP_KET || stack.currentFrame->args.eptr == stack.currentFrame->saved_eptr) {
-                    stack.currentFrame->args.ecode += 1+LINK_SIZE;
+                if (*stack.currentFrame->args.ecode == OP_KET || stack.currentFrame->args.eptr == stack.currentFrame->locals.saved_eptr) {
+                    stack.currentFrame->args.ecode += 1 + LINK_SIZE;
                     NEXT_OPCODE;
                 }
                 
@@ -624,14 +624,14 @@ RECURSE:
                     RMATCH(10, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.eptrb, 0);
                     if (is_match)
                         RRETURN;
-                    RMATCH(11, stack.currentFrame->prev, stack.currentFrame->args.eptrb, match_isgroup);
+                    RMATCH(11, stack.currentFrame->locals.prev, stack.currentFrame->args.eptrb, match_isgroup);
                     if (is_match)
                         RRETURN;
                 } else { /* OP_KETRMAX */
-                    RMATCH(12, stack.currentFrame->prev, stack.currentFrame->args.eptrb, match_isgroup);
+                    RMATCH(12, stack.currentFrame->locals.prev, stack.currentFrame->args.eptrb, match_isgroup);
                     if (is_match)
                         RRETURN;
-                    RMATCH(13, stack.currentFrame->args.ecode + 1+LINK_SIZE, stack.currentFrame->args.eptrb, 0);
+                    RMATCH(13, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.eptrb, 0);
                     if (is_match)
                         RRETURN;
                 }
@@ -652,20 +652,24 @@ RECURSE:
                 
                 BEGIN_OPCODE(BRAZERO):
                 {
-                    stack.currentFrame->next = stack.currentFrame->args.ecode+1;
-                    RMATCH(14, stack.currentFrame->next, stack.currentFrame->args.eptrb, match_isgroup);
+                    stack.currentFrame->locals.next = stack.currentFrame->args.ecode + 1;
+                    RMATCH(14, stack.currentFrame->locals.next, stack.currentFrame->args.eptrb, match_isgroup);
                     if (is_match)
                         RRETURN;
-                    do stack.currentFrame->next += GET(stack.currentFrame->next,1); while (*stack.currentFrame->next == OP_ALT);
-                    stack.currentFrame->args.ecode = stack.currentFrame->next + 1+LINK_SIZE;
+                    do {
+                        stack.currentFrame->locals.next += GET(stack.currentFrame->locals.next, 1);
+                    } while (*stack.currentFrame->locals.next == OP_ALT);
+                    stack.currentFrame->args.ecode = stack.currentFrame->locals.next + 1 + LINK_SIZE;
                 }
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(BRAMINZERO):
                 {
-                    stack.currentFrame->next = stack.currentFrame->args.ecode+1;
-                    do stack.currentFrame->next += GET(stack.currentFrame->next,1); while (*stack.currentFrame->next == OP_ALT);
-                    RMATCH(15, stack.currentFrame->next + 1+LINK_SIZE, stack.currentFrame->args.eptrb, match_isgroup);
+                    stack.currentFrame->locals.next = stack.currentFrame->args.ecode + 1;
+                    do {
+                        stack.currentFrame->locals.next += GET(stack.currentFrame->locals.next, 1);
+                    } while (*stack.currentFrame->locals.next == OP_ALT);
+                    RMATCH(15, stack.currentFrame->locals.next + 1 + LINK_SIZE, stack.currentFrame->args.eptrb, match_isgroup);
                     if (is_match)
                         RRETURN;
                     stack.currentFrame->args.ecode++;
@@ -680,14 +684,14 @@ RECURSE:
                 BEGIN_OPCODE(KET):
                 BEGIN_OPCODE(KETRMIN):
                 BEGIN_OPCODE(KETRMAX):
-                stack.currentFrame->prev = stack.currentFrame->args.ecode - GET(stack.currentFrame->args.ecode, 1);
-                stack.currentFrame->saved_eptr = stack.currentFrame->args.eptrb->epb_saved_eptr;
+                stack.currentFrame->locals.prev = stack.currentFrame->args.ecode - GET(stack.currentFrame->args.ecode, 1);
+                stack.currentFrame->locals.saved_eptr = stack.currentFrame->args.eptrb->epb_saved_eptr;
                 
                 /* Back up the stack of bracket start pointers. */
                 
                 stack.currentFrame->args.eptrb = stack.currentFrame->args.eptrb->epb_prev;
                 
-                if (*stack.currentFrame->prev == OP_ASSERT || *stack.currentFrame->prev == OP_ASSERT_NOT || *stack.currentFrame->prev == OP_ONCE) {
+                if (*stack.currentFrame->locals.prev == OP_ASSERT || *stack.currentFrame->locals.prev == OP_ASSERT_NOT || *stack.currentFrame->locals.prev == OP_ONCE) {
                     md.end_match_ptr = stack.currentFrame->args.eptr;      /* For ONCE */
                     md.end_offset_top = stack.currentFrame->args.offset_top;
                     is_match = true;
@@ -698,17 +702,17 @@ RECURSE:
                  group number back at the start and if necessary complete handling an
                  extraction by setting the offsets and bumping the high water mark. */
                 
-                stack.currentFrame->number = *stack.currentFrame->prev - OP_BRA;
+                stack.currentFrame->locals.number = *stack.currentFrame->locals.prev - OP_BRA;
                 
                 /* For extended extraction brackets (large number), we have to fish out
                  the number from a dummy opcode at the start. */
                 
-                if (stack.currentFrame->number > EXTRACT_BASIC_MAX)
-                    stack.currentFrame->number = GET2(stack.currentFrame->prev, 2+LINK_SIZE);
-                stack.currentFrame->offset = stack.currentFrame->number << 1;
+                if (stack.currentFrame->locals.number > EXTRACT_BASIC_MAX)
+                    stack.currentFrame->locals.number = GET2(stack.currentFrame->locals.prev, 2+LINK_SIZE);
+                stack.currentFrame->locals.offset = stack.currentFrame->locals.number << 1;
                 
 #ifdef DEBUG
-                printf("end bracket %d", stack.currentFrame->number);
+                printf("end bracket %d", stack.currentFrame->locals.number);
                 printf("\n");
 #endif
                 
@@ -717,15 +721,15 @@ RECURSE:
                  into group 0, so it won't be picked up here. Instead, we catch it when
                  the OP_END is reached. */
                 
-                if (stack.currentFrame->number > 0) {
-                    if (stack.currentFrame->offset >= md.offset_max)
+                if (stack.currentFrame->locals.number > 0) {
+                    if (stack.currentFrame->locals.offset >= md.offset_max)
                         md.offset_overflow = true;
                     else {
-                        md.offset_vector[stack.currentFrame->offset] =
-                        md.offset_vector[md.offset_end - stack.currentFrame->number];
-                        md.offset_vector[stack.currentFrame->offset+1] = stack.currentFrame->args.eptr - md.start_subject;
-                        if (stack.currentFrame->args.offset_top <= stack.currentFrame->offset)
-                            stack.currentFrame->args.offset_top = stack.currentFrame->offset + 2;
+                        md.offset_vector[stack.currentFrame->locals.offset] =
+                        md.offset_vector[md.offset_end - stack.currentFrame->locals.number];
+                        md.offset_vector[stack.currentFrame->locals.offset+1] = stack.currentFrame->args.eptr - md.start_subject;
+                        if (stack.currentFrame->args.offset_top <= stack.currentFrame->locals.offset)
+                            stack.currentFrame->args.offset_top = stack.currentFrame->locals.offset + 2;
                     }
                 }
                 
@@ -735,7 +739,7 @@ RECURSE:
                  5.005. If there is an options reset, it will get obeyed in the normal
                  course of events. */
                 
-                if (*stack.currentFrame->args.ecode == OP_KET || stack.currentFrame->args.eptr == stack.currentFrame->saved_eptr) {
+                if (*stack.currentFrame->args.ecode == OP_KET || stack.currentFrame->args.eptr == stack.currentFrame->locals.saved_eptr) {
                     stack.currentFrame->args.ecode += 1 + LINK_SIZE;
                     NEXT_OPCODE;
                 }
@@ -744,17 +748,17 @@ RECURSE:
                  preceding bracket, in the appropriate order. */
                 
                 if (*stack.currentFrame->args.ecode == OP_KETRMIN) {
-                    RMATCH(16, stack.currentFrame->args.ecode + 1+LINK_SIZE, stack.currentFrame->args.eptrb, 0);
+                    RMATCH(16, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.eptrb, 0);
                     if (is_match)
                         RRETURN;
-                    RMATCH(17, stack.currentFrame->prev, stack.currentFrame->args.eptrb, match_isgroup);
+                    RMATCH(17, stack.currentFrame->locals.prev, stack.currentFrame->args.eptrb, match_isgroup);
                     if (is_match)
                         RRETURN;
                 } else { /* OP_KETRMAX */
-                    RMATCH(18, stack.currentFrame->prev, stack.currentFrame->args.eptrb, match_isgroup);
+                    RMATCH(18, stack.currentFrame->locals.prev, stack.currentFrame->args.eptrb, match_isgroup);
                     if (is_match)
                         RRETURN;
-                    RMATCH(19, stack.currentFrame->args.ecode + 1+LINK_SIZE, stack.currentFrame->args.eptrb, 0);
+                    RMATCH(19, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.eptrb, 0);
                     if (is_match)
                         RRETURN;
                 }
@@ -881,7 +885,7 @@ RECURSE:
                  loops). */
                 
                 BEGIN_OPCODE(REF):
-                stack.currentFrame->offset = GET2(stack.currentFrame->args.ecode, 1) << 1;               /* Doubled ref number */
+                stack.currentFrame->locals.offset = GET2(stack.currentFrame->args.ecode, 1) << 1;               /* Doubled ref number */
                 stack.currentFrame->args.ecode += 3;                                 /* Advance past item */
                 
                 /* If the reference is unset, set the length to be longer than the amount
@@ -889,10 +893,10 @@ RECURSE:
                  can't just fail here, because of the possibility of quantifiers with zero
                  minima. */
                 
-                if (stack.currentFrame->offset >= stack.currentFrame->args.offset_top || md.offset_vector[stack.currentFrame->offset] < 0)
-                    stack.currentFrame->length = 0;
+                if (stack.currentFrame->locals.offset >= stack.currentFrame->args.offset_top || md.offset_vector[stack.currentFrame->locals.offset] < 0)
+                    stack.currentFrame->locals.length = 0;
                 else
-                    stack.currentFrame->length = md.offset_vector[stack.currentFrame->offset+1] - md.offset_vector[stack.currentFrame->offset];
+                    stack.currentFrame->locals.length = md.offset_vector[stack.currentFrame->locals.offset+1] - md.offset_vector[stack.currentFrame->locals.offset];
                 
                 /* Set up for repetition, or handle the non-repeated case */
                 
@@ -906,58 +910,58 @@ RECURSE:
                     c = *stack.currentFrame->args.ecode++ - OP_CRSTAR;
                     minimize = (c & 1) != 0;
                     min = rep_min[c];                 /* Pick up values from tables; */
-                    stack.currentFrame->max = rep_max[c];                 /* zero for max => infinity */
-                    if (stack.currentFrame->max == 0)
-                        stack.currentFrame->max = INT_MAX;
+                    stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
+                    if (stack.currentFrame->locals.max == 0)
+                        stack.currentFrame->locals.max = INT_MAX;
                     break;
                     
                 case OP_CRRANGE:
                 case OP_CRMINRANGE:
                     minimize = (*stack.currentFrame->args.ecode == OP_CRMINRANGE);
                     min = GET2(stack.currentFrame->args.ecode, 1);
-                    stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 3);
-                    if (stack.currentFrame->max == 0)
-                        stack.currentFrame->max = INT_MAX;
+                    stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 3);
+                    if (stack.currentFrame->locals.max == 0)
+                        stack.currentFrame->locals.max = INT_MAX;
                     stack.currentFrame->args.ecode += 5;
                     break;
                 
                 default:               /* No repeat follows */
-                    if (!match_ref(stack.currentFrame->offset, stack.currentFrame->args.eptr, stack.currentFrame->length, md))
+                    if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.eptr, stack.currentFrame->locals.length, md))
                         RRETURN_NO_MATCH;
-                    stack.currentFrame->args.eptr += stack.currentFrame->length;
+                    stack.currentFrame->args.eptr += stack.currentFrame->locals.length;
                     NEXT_OPCODE;
                 }
                 
                 /* If the length of the reference is zero, just continue with the
                  main loop. */
                 
-                if (stack.currentFrame->length == 0)
+                if (stack.currentFrame->locals.length == 0)
                     NEXT_OPCODE;
                 
                 /* First, ensure the minimum number of matches are present. */
                 
                 for (i = 1; i <= min; i++) {
-                    if (!match_ref(stack.currentFrame->offset, stack.currentFrame->args.eptr, stack.currentFrame->length, md))
+                    if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.eptr, stack.currentFrame->locals.length, md))
                         RRETURN_NO_MATCH;
-                    stack.currentFrame->args.eptr += stack.currentFrame->length;
+                    stack.currentFrame->args.eptr += stack.currentFrame->locals.length;
                 }
                 
                 /* If min = max, continue at the same level without recursion.
                  They are not both allowed to be zero. */
                 
-                if (min == stack.currentFrame->max)
+                if (min == stack.currentFrame->locals.max)
                     NEXT_OPCODE;
                 
                 /* If minimizing, keep trying and advancing the pointer */
                 
                 if (minimize) {
-                    for (stack.currentFrame->fi = min;; stack.currentFrame->fi++) {
+                    for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                         RMATCH(20, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->fi >= stack.currentFrame->max || !match_ref(stack.currentFrame->offset, stack.currentFrame->args.eptr, stack.currentFrame->length, md))
+                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || !match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.eptr, stack.currentFrame->locals.length, md))
                             RRETURN;
-                        stack.currentFrame->args.eptr += stack.currentFrame->length;
+                        stack.currentFrame->args.eptr += stack.currentFrame->locals.length;
                     }
                     /* Control never reaches here */
                 }
@@ -965,17 +969,17 @@ RECURSE:
                 /* If maximizing, find the longest string and work backwards */
                 
                 else {
-                    stack.currentFrame->pp = stack.currentFrame->args.eptr;
-                    for (i = min; i < stack.currentFrame->max; i++) {
-                        if (!match_ref(stack.currentFrame->offset, stack.currentFrame->args.eptr, stack.currentFrame->length, md))
+                    stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                    for (i = min; i < stack.currentFrame->locals.max; i++) {
+                        if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.eptr, stack.currentFrame->locals.length, md))
                             break;
-                        stack.currentFrame->args.eptr += stack.currentFrame->length;
+                        stack.currentFrame->args.eptr += stack.currentFrame->locals.length;
                     }
-                    while (stack.currentFrame->args.eptr >= stack.currentFrame->pp) {
+                    while (stack.currentFrame->args.eptr >= stack.currentFrame->locals.pp) {
                         RMATCH(21, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                         if (is_match)
                             RRETURN;
-                        stack.currentFrame->args.eptr -= stack.currentFrame->length;
+                        stack.currentFrame->args.eptr -= stack.currentFrame->locals.length;
                     }
                     RRETURN_NO_MATCH;
                 }
@@ -994,7 +998,7 @@ RECURSE:
                 
                 BEGIN_OPCODE(NCLASS):
                 BEGIN_OPCODE(CLASS):
-                stack.currentFrame->data = stack.currentFrame->args.ecode + 1;                /* Save for matching */
+                stack.currentFrame->locals.data = stack.currentFrame->args.ecode + 1;                /* Save for matching */
                 stack.currentFrame->args.ecode += 33;                     /* Advance past the item */
                 
                 switch (*stack.currentFrame->args.ecode) {
@@ -1007,23 +1011,23 @@ RECURSE:
                     c = *stack.currentFrame->args.ecode++ - OP_CRSTAR;
                     minimize = (c & 1) != 0;
                     min = rep_min[c];                 /* Pick up values from tables; */
-                    stack.currentFrame->max = rep_max[c];                 /* zero for max => infinity */
-                    if (stack.currentFrame->max == 0)
-                        stack.currentFrame->max = INT_MAX;
+                    stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
+                    if (stack.currentFrame->locals.max == 0)
+                        stack.currentFrame->locals.max = INT_MAX;
                     break;
                     
                 case OP_CRRANGE:
                 case OP_CRMINRANGE:
                     minimize = (*stack.currentFrame->args.ecode == OP_CRMINRANGE);
                     min = GET2(stack.currentFrame->args.ecode, 1);
-                    stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 3);
-                    if (stack.currentFrame->max == 0)
-                        stack.currentFrame->max = INT_MAX;
+                    stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 3);
+                    if (stack.currentFrame->locals.max == 0)
+                        stack.currentFrame->locals.max = INT_MAX;
                     stack.currentFrame->args.ecode += 5;
                     break;
                     
                 default:               /* No repeat follows */
-                    min = stack.currentFrame->max = 1;
+                    min = stack.currentFrame->locals.max = 1;
                     break;
                 }
                 
@@ -1034,10 +1038,10 @@ RECURSE:
                         RRETURN_NO_MATCH;
                     GETCHARINC(c, stack.currentFrame->args.eptr);
                     if (c > 255) {
-                        if (stack.currentFrame->data[-1] == OP_CLASS)
+                        if (stack.currentFrame->locals.data[-1] == OP_CLASS)
                             RRETURN_NO_MATCH;
                     } else {
-                        if ((stack.currentFrame->data[c/8] & (1 << (c&7))) == 0)
+                        if ((stack.currentFrame->locals.data[c/8] & (1 << (c&7))) == 0)
                             RRETURN_NO_MATCH;
                     }
                 }
@@ -1045,24 +1049,24 @@ RECURSE:
                 /* If max == min we can continue with the main loop without the
                  need to recurse. */
                 
-                if (min == stack.currentFrame->max)
+                if (min == stack.currentFrame->locals.max)
                     NEXT_OPCODE;      
                 
                 /* If minimizing, keep testing the rest of the expression and advancing
                  the pointer while it matches the class. */
                 if (minimize) {
-                    for (stack.currentFrame->fi = min;; stack.currentFrame->fi++) {
+                    for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                         RMATCH(22, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->fi >= stack.currentFrame->max || stack.currentFrame->args.eptr >= md.end_subject)
+                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
                             RRETURN;
                         GETCHARINC(c, stack.currentFrame->args.eptr);
                         if (c > 255) {
-                            if (stack.currentFrame->data[-1] == OP_CLASS)
+                            if (stack.currentFrame->locals.data[-1] == OP_CLASS)
                                 RRETURN;
                         } else {
-                            if ((stack.currentFrame->data[c/8] & (1 << (c&7))) == 0)
+                            if ((stack.currentFrame->locals.data[c/8] & (1 << (c&7))) == 0)
                                 RRETURN;
                         }
                     }
@@ -1070,18 +1074,18 @@ RECURSE:
                 }
                 /* If maximizing, find the longest possible run, then work backwards. */
                 else {
-                    stack.currentFrame->pp = stack.currentFrame->args.eptr;
+                    stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
                     
-                    for (i = min; i < stack.currentFrame->max; i++) {
+                    for (i = min; i < stack.currentFrame->locals.max; i++) {
                         int len = 1;
                         if (stack.currentFrame->args.eptr >= md.end_subject)
                             break;
                         GETCHARLEN(c, stack.currentFrame->args.eptr, len);
                         if (c > 255) {
-                            if (stack.currentFrame->data[-1] == OP_CLASS)
+                            if (stack.currentFrame->locals.data[-1] == OP_CLASS)
                                 break;
                         } else {
-                            if ((stack.currentFrame->data[c/8] & (1 << (c&7))) == 0)
+                            if ((stack.currentFrame->locals.data[c/8] & (1 << (c&7))) == 0)
                                 break;
                         }
                         stack.currentFrame->args.eptr += len;
@@ -1090,7 +1094,7 @@ RECURSE:
                         RMATCH(24, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->pp)
+                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
                             break;        /* Stop if tried at original pos */
                         BACKCHAR(stack.currentFrame->args.eptr);
                     }
@@ -1103,7 +1107,7 @@ RECURSE:
                  in UTF-8 mode, because that's the only time it is compiled. */
                 
                 BEGIN_OPCODE(XCLASS):
-                stack.currentFrame->data = stack.currentFrame->args.ecode + 1 + LINK_SIZE;                /* Save for matching */
+                stack.currentFrame->locals.data = stack.currentFrame->args.ecode + 1 + LINK_SIZE;                /* Save for matching */
                 stack.currentFrame->args.ecode += GET(stack.currentFrame->args.ecode, 1);                      /* Advance past the item */
                 
                 switch (*stack.currentFrame->args.ecode) {
@@ -1116,23 +1120,23 @@ RECURSE:
                     c = *stack.currentFrame->args.ecode++ - OP_CRSTAR;
                     minimize = (c & 1) != 0;
                     min = rep_min[c];                 /* Pick up values from tables; */
-                    stack.currentFrame->max = rep_max[c];                 /* zero for max => infinity */
-                    if (stack.currentFrame->max == 0)
-                        stack.currentFrame->max = INT_MAX;
+                    stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
+                    if (stack.currentFrame->locals.max == 0)
+                        stack.currentFrame->locals.max = INT_MAX;
                     break;
                     
                 case OP_CRRANGE:
                 case OP_CRMINRANGE:
                     minimize = (*stack.currentFrame->args.ecode == OP_CRMINRANGE);
                     min = GET2(stack.currentFrame->args.ecode, 1);
-                    stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 3);
-                    if (stack.currentFrame->max == 0)
-                        stack.currentFrame->max = INT_MAX;
+                    stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 3);
+                    if (stack.currentFrame->locals.max == 0)
+                        stack.currentFrame->locals.max = INT_MAX;
                     stack.currentFrame->args.ecode += 5;
                     break;
                     
                 default:               /* No repeat follows */
-                    min = stack.currentFrame->max = 1;
+                    min = stack.currentFrame->locals.max = 1;
             }
                 
                 /* First, ensure the minimum number of matches are present. */
@@ -1141,28 +1145,28 @@ RECURSE:
                     if (stack.currentFrame->args.eptr >= md.end_subject)
                         RRETURN_NO_MATCH;
                     GETCHARINC(c, stack.currentFrame->args.eptr);
-                    if (!_pcre_xclass(c, stack.currentFrame->data))
+                    if (!_pcre_xclass(c, stack.currentFrame->locals.data))
                         RRETURN_NO_MATCH;
                 }
                 
                 /* If max == min we can continue with the main loop without the
                  need to recurse. */
                 
-                if (min == stack.currentFrame->max)
+                if (min == stack.currentFrame->locals.max)
                     NEXT_OPCODE;
                 
                 /* If minimizing, keep testing the rest of the expression and advancing
                  the pointer while it matches the class. */
                 
                 if (minimize) {
-                    for (stack.currentFrame->fi = min;; stack.currentFrame->fi++) {
+                    for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                         RMATCH(26, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->fi >= stack.currentFrame->max || stack.currentFrame->args.eptr >= md.end_subject)
+                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
                             RRETURN;
                         GETCHARINC(c, stack.currentFrame->args.eptr);
-                        if (!_pcre_xclass(c, stack.currentFrame->data))
+                        if (!_pcre_xclass(c, stack.currentFrame->locals.data))
                             RRETURN;
                     }
                     /* Control never reaches here */
@@ -1171,13 +1175,13 @@ RECURSE:
                 /* If maximizing, find the longest possible run, then work backwards. */
                 
                 else {
-                    stack.currentFrame->pp = stack.currentFrame->args.eptr;
-                    for (i = min; i < stack.currentFrame->max; i++) {
+                    stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                    for (i = min; i < stack.currentFrame->locals.max; i++) {
                         int len = 1;
                         if (stack.currentFrame->args.eptr >= md.end_subject)
                             break;
                         GETCHARLEN(c, stack.currentFrame->args.eptr, len);
-                        if (!_pcre_xclass(c, stack.currentFrame->data))
+                        if (!_pcre_xclass(c, stack.currentFrame->locals.data))
                             break;
                         stack.currentFrame->args.eptr += len;
                     }
@@ -1185,7 +1189,7 @@ RECURSE:
                         RMATCH(27, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->pp)
+                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
                             break;        /* Stop if tried at original pos */
                         BACKCHAR(stack.currentFrame->args.eptr)
                     }
@@ -1197,12 +1201,12 @@ RECURSE:
                 /* Match a single character, casefully */
                 
                 BEGIN_OPCODE(CHAR):
-                stack.currentFrame->length = 1;
+                stack.currentFrame->locals.length = 1;
                 stack.currentFrame->args.ecode++;
-                getUTF8CharAndIncrementLength(stack.currentFrame->fc, stack.currentFrame->args.ecode, stack.currentFrame->length);
+                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.ecode, stack.currentFrame->locals.length);
             {
                 int dc;
-                stack.currentFrame->args.ecode += stack.currentFrame->length;
+                stack.currentFrame->args.ecode += stack.currentFrame->locals.length;
                 switch (md.end_subject - stack.currentFrame->args.eptr) {
                 case 0:
                     RRETURN_NO_MATCH;
@@ -1214,7 +1218,7 @@ RECURSE:
                     default:
                     GETCHARINC(dc, stack.currentFrame->args.eptr);
                 }
-                if (stack.currentFrame->fc != dc)
+                if (stack.currentFrame->locals.fc != dc)
                     RRETURN_NO_MATCH;
             }
                 NEXT_OPCODE;
@@ -1222,9 +1226,9 @@ RECURSE:
                 /* Match a single character, caselessly */
                 
                 BEGIN_OPCODE(CHARNC):
-                stack.currentFrame->length = 1;
+                stack.currentFrame->locals.length = 1;
                 stack.currentFrame->args.ecode++;
-                getUTF8CharAndIncrementLength(stack.currentFrame->fc, stack.currentFrame->args.ecode, stack.currentFrame->length);
+                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.ecode, stack.currentFrame->locals.length);
                 
                 if (md.end_subject - stack.currentFrame->args.eptr == 0)
                     RRETURN_NO_MATCH;
@@ -1237,13 +1241,13 @@ RECURSE:
                         RRETURN_NO_MATCH;
                 } else
                     GETCHARINC(dc, stack.currentFrame->args.eptr);
-                stack.currentFrame->args.ecode += stack.currentFrame->length;
+                stack.currentFrame->args.ecode += stack.currentFrame->locals.length;
                 
                 /* If we have Unicode property support, we can use it to test the other
                  case of the character, if there is one. */
                 
-                if (stack.currentFrame->fc != dc) {
-                    if (dc != _pcre_ucp_othercase(stack.currentFrame->fc))
+                if (stack.currentFrame->locals.fc != dc) {
+                    if (dc != _pcre_ucp_othercase(stack.currentFrame->locals.fc))
                         RRETURN_NO_MATCH;
                 }
             }
@@ -1274,7 +1278,7 @@ RECURSE:
                 /* Match a single character repeatedly; different opcodes share code. */
                 
                 BEGIN_OPCODE(EXACT):
-                min = stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 1);
+                min = stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 1);
                 minimize = false;
                 stack.currentFrame->args.ecode += 3;
                 goto REPEATCHAR;
@@ -1282,7 +1286,7 @@ RECURSE:
                 BEGIN_OPCODE(UPTO):
                 BEGIN_OPCODE(MINUPTO):
                 min = 0;
-                stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 1);
+                stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 1);
                 minimize = *stack.currentFrame->args.ecode == OP_MINUPTO;
                 stack.currentFrame->args.ecode += 3;
                 goto REPEATCHAR;
@@ -1296,9 +1300,9 @@ RECURSE:
                 c = *stack.currentFrame->args.ecode++ - OP_STAR;
                 minimize = (c & 1) != 0;
                 min = rep_min[c];                 /* Pick up values from tables; */
-                stack.currentFrame->max = rep_max[c];                 /* zero for max => infinity */
-                if (stack.currentFrame->max == 0)
-                    stack.currentFrame->max = INT_MAX;
+                stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
+                if (stack.currentFrame->locals.max == 0)
+                    stack.currentFrame->locals.max = INT_MAX;
                 
                 /* Common code for all repeated single-character matches. We can give
                  up quickly if there are fewer than the minimum number of characters left in
@@ -1306,47 +1310,47 @@ RECURSE:
                 
             REPEATCHAR:
                 
-                stack.currentFrame->length = 1;
-                getUTF8CharAndIncrementLength(stack.currentFrame->fc, stack.currentFrame->args.ecode, stack.currentFrame->length);
-                if (min * (stack.currentFrame->fc > 0xFFFF ? 2 : 1) > md.end_subject - stack.currentFrame->args.eptr)
+                stack.currentFrame->locals.length = 1;
+                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.ecode, stack.currentFrame->locals.length);
+                if (min * (stack.currentFrame->locals.fc > 0xFFFF ? 2 : 1) > md.end_subject - stack.currentFrame->args.eptr)
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode += stack.currentFrame->length;
+                stack.currentFrame->args.ecode += stack.currentFrame->locals.length;
                 
-                if (stack.currentFrame->fc <= 0xFFFF) {
-                    int othercase = md.ignoreCase ? _pcre_ucp_othercase(stack.currentFrame->fc) : -1;
+                if (stack.currentFrame->locals.fc <= 0xFFFF) {
+                    int othercase = md.ignoreCase ? _pcre_ucp_othercase(stack.currentFrame->locals.fc) : -1;
                     
                     for (i = 1; i <= min; i++) {
-                        if (*stack.currentFrame->args.eptr != stack.currentFrame->fc && *stack.currentFrame->args.eptr != othercase)
+                        if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc && *stack.currentFrame->args.eptr != othercase)
                             RRETURN_NO_MATCH;
                         ++stack.currentFrame->args.eptr;
                     }
                     
-                    if (min == stack.currentFrame->max)
+                    if (min == stack.currentFrame->locals.max)
                         NEXT_OPCODE;
                     
                     if (minimize) {
-                        stack.currentFrame->repeat_othercase = othercase;
-                        for (stack.currentFrame->fi = min;; stack.currentFrame->fi++) {
+                        stack.currentFrame->locals.repeat_othercase = othercase;
+                        for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                             RMATCH(28, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                             if (is_match)
                                 RRETURN;
-                            if (stack.currentFrame->fi >= stack.currentFrame->max || stack.currentFrame->args.eptr >= md.end_subject)
+                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
                                 RRETURN;
-                            if (*stack.currentFrame->args.eptr != stack.currentFrame->fc && *stack.currentFrame->args.eptr != stack.currentFrame->repeat_othercase)
+                            if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc && *stack.currentFrame->args.eptr != stack.currentFrame->locals.repeat_othercase)
                                 RRETURN;
                             ++stack.currentFrame->args.eptr;
                         }
                         /* Control never reaches here */
                     } else {
-                        stack.currentFrame->pp = stack.currentFrame->args.eptr;
-                        for (i = min; i < stack.currentFrame->max; i++) {
+                        stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                        for (i = min; i < stack.currentFrame->locals.max; i++) {
                             if (stack.currentFrame->args.eptr >= md.end_subject)
                                 break;
-                            if (*stack.currentFrame->args.eptr != stack.currentFrame->fc && *stack.currentFrame->args.eptr != othercase)
+                            if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc && *stack.currentFrame->args.eptr != othercase)
                                 break;
                             ++stack.currentFrame->args.eptr;
                         }
-                        while (stack.currentFrame->args.eptr >= stack.currentFrame->pp) {
+                        while (stack.currentFrame->args.eptr >= stack.currentFrame->locals.pp) {
                             RMATCH(29, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                             if (is_match)
                                 RRETURN;
@@ -1361,40 +1365,40 @@ RECURSE:
                     for (i = 1; i <= min; i++) {
                         int nc;
                         getChar(nc, stack.currentFrame->args.eptr);
-                        if (nc != stack.currentFrame->fc)
+                        if (nc != stack.currentFrame->locals.fc)
                             RRETURN_NO_MATCH;
                         stack.currentFrame->args.eptr += 2;
                     }
                     
-                    if (min == stack.currentFrame->max)
+                    if (min == stack.currentFrame->locals.max)
                         NEXT_OPCODE;
                     
                     if (minimize) {
-                        for (stack.currentFrame->fi = min;; stack.currentFrame->fi++) {
+                        for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                             int nc;
                             RMATCH(30, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                             if (is_match)
                                 RRETURN;
-                            if (stack.currentFrame->fi >= stack.currentFrame->max || stack.currentFrame->args.eptr >= md.end_subject)
+                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
                                 RRETURN;
                             getChar(nc, stack.currentFrame->args.eptr);
-                            if (*stack.currentFrame->args.eptr != stack.currentFrame->fc)
+                            if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc)
                                 RRETURN;
                             stack.currentFrame->args.eptr += 2;
                         }
                         /* Control never reaches here */
                     } else {
-                        stack.currentFrame->pp = stack.currentFrame->args.eptr;
-                        for (i = min; i < stack.currentFrame->max; i++) {
+                        stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                        for (i = min; i < stack.currentFrame->locals.max; i++) {
                             int nc;
                             if (stack.currentFrame->args.eptr > md.end_subject - 2)
                                 break;
                             getChar(nc, stack.currentFrame->args.eptr);
-                            if (*stack.currentFrame->args.eptr != stack.currentFrame->fc)
+                            if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc)
                                 break;
                             stack.currentFrame->args.eptr += 2;
                         }
-                        while (stack.currentFrame->args.eptr >= stack.currentFrame->pp) {
+                        while (stack.currentFrame->args.eptr >= stack.currentFrame->locals.pp) {
                             RMATCH(31, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                             if (is_match)
                                 RRETURN;
@@ -1433,7 +1437,7 @@ RECURSE:
                  about... */
                 
                 BEGIN_OPCODE(NOTEXACT):
-                min = stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 1);
+                min = stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 1);
                 minimize = false;
                 stack.currentFrame->args.ecode += 3;
                 goto REPEATNOTCHAR;
@@ -1441,7 +1445,7 @@ RECURSE:
                 BEGIN_OPCODE(NOTUPTO):
                 BEGIN_OPCODE(NOTMINUPTO):
                 min = 0;
-                stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 1);
+                stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 1);
                 minimize = *stack.currentFrame->args.ecode == OP_NOTMINUPTO;
                 stack.currentFrame->args.ecode += 3;
                 goto REPEATNOTCHAR;
@@ -1455,8 +1459,8 @@ RECURSE:
                 c = *stack.currentFrame->args.ecode++ - OP_NOTSTAR;
                 minimize = (c & 1) != 0;
                 min = rep_min[c];                 /* Pick up values from tables; */
-                stack.currentFrame->max = rep_max[c];                 /* zero for max => infinity */
-                if (stack.currentFrame->max == 0) stack.currentFrame->max = INT_MAX;
+                stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
+                if (stack.currentFrame->locals.max == 0) stack.currentFrame->locals.max = INT_MAX;
                 
                 /* Common code for all repeated single-byte matches. We can give up quickly
                  if there are fewer than the minimum number of bytes left in the
@@ -1465,7 +1469,7 @@ RECURSE:
             REPEATNOTCHAR:
                 if (min > md.end_subject - stack.currentFrame->args.eptr)
                     RRETURN_NO_MATCH;
-                stack.currentFrame->fc = *stack.currentFrame->args.ecode++;
+                stack.currentFrame->locals.fc = *stack.currentFrame->args.ecode++;
                 
                 /* The code is duplicated for the caseless and caseful cases, for speed,
                  since matching characters is likely to be quite common. First, ensure the
@@ -1475,11 +1479,11 @@ RECURSE:
                  maximum. Alternatively, if maximizing, find the maximum number of
                  characters and work backwards. */
                 
-                DPRINTF(("negative matching %c{%d,%d}\n", stack.currentFrame->fc, min, stack.currentFrame->max));
+                DPRINTF(("negative matching %c{%d,%d}\n", stack.currentFrame->locals.fc, min, stack.currentFrame->locals.max));
                 
                 if (md.ignoreCase) {
-                    if (stack.currentFrame->fc < 128)
-                        stack.currentFrame->fc = md.lowerCaseChars[stack.currentFrame->fc];
+                    if (stack.currentFrame->locals.fc < 128)
+                        stack.currentFrame->locals.fc = md.lowerCaseChars[stack.currentFrame->locals.fc];
                     
                     {
                         int d;
@@ -1487,24 +1491,24 @@ RECURSE:
                             GETCHARINC(d, stack.currentFrame->args.eptr);
                             if (d < 128)
                                 d = md.lowerCaseChars[d];
-                            if (stack.currentFrame->fc == d)
+                            if (stack.currentFrame->locals.fc == d)
                                 RRETURN_NO_MATCH;
                         }
                     }
                     
-                    if (min == stack.currentFrame->max)
+                    if (min == stack.currentFrame->locals.max)
                         NEXT_OPCODE;      
                     
                     if (minimize) {
                         int d;
-                        for (stack.currentFrame->fi = min;; stack.currentFrame->fi++) {
+                        for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                             RMATCH(38, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                             if (is_match)
                                 RRETURN;
                             GETCHARINC(d, stack.currentFrame->args.eptr);
                             if (d < 128)
                                 d = md.lowerCaseChars[d];
-                            if (stack.currentFrame->fi >= stack.currentFrame->max || stack.currentFrame->args.eptr >= md.end_subject || stack.currentFrame->fc == d)
+                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject || stack.currentFrame->locals.fc == d)
                                 RRETURN;
                         }
                         /* Control never reaches here */
@@ -1513,18 +1517,18 @@ RECURSE:
                     /* Maximize case */
                     
                     else {
-                        stack.currentFrame->pp = stack.currentFrame->args.eptr;
+                        stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
                         
                         {
                             int d;
-                            for (i = min; i < stack.currentFrame->max; i++) {
+                            for (i = min; i < stack.currentFrame->locals.max; i++) {
                                 int len = 1;
                                 if (stack.currentFrame->args.eptr >= md.end_subject)
                                     break;
                                 GETCHARLEN(d, stack.currentFrame->args.eptr, len);
                                 if (d < 128)
                                     d = md.lowerCaseChars[d];
-                                if (stack.currentFrame->fc == d)
+                                if (stack.currentFrame->locals.fc == d)
                                     break;
                                 stack.currentFrame->args.eptr += len;
                             }
@@ -1532,7 +1536,7 @@ RECURSE:
                                 RMATCH(40, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                                 if (is_match)
                                     RRETURN;
-                                if (stack.currentFrame->args.eptr-- == stack.currentFrame->pp)
+                                if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
                                     break;        /* Stop if tried at original pos */
                                 BACKCHAR(stack.currentFrame->args.eptr);
                             }
@@ -1550,22 +1554,22 @@ RECURSE:
                         int d;
                         for (i = 1; i <= min; i++) {
                             GETCHARINC(d, stack.currentFrame->args.eptr);
-                            if (stack.currentFrame->fc == d)
+                            if (stack.currentFrame->locals.fc == d)
                                 RRETURN_NO_MATCH;
                         }
                     }
                     
-                    if (min == stack.currentFrame->max)
+                    if (min == stack.currentFrame->locals.max)
                         NEXT_OPCODE;
                     
                     if (minimize) {
                         int d;
-                        for (stack.currentFrame->fi = min;; stack.currentFrame->fi++) {
+                        for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                             RMATCH(42, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                             if (is_match)
                                 RRETURN;
                             GETCHARINC(d, stack.currentFrame->args.eptr);
-                            if (stack.currentFrame->fi >= stack.currentFrame->max || stack.currentFrame->args.eptr >= md.end_subject || stack.currentFrame->fc == d)
+                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject || stack.currentFrame->locals.fc == d)
                                 RRETURN;
                         }
                         /* Control never reaches here */
@@ -1574,16 +1578,16 @@ RECURSE:
                     /* Maximize case */
                     
                     else {
-                        stack.currentFrame->pp = stack.currentFrame->args.eptr;
+                        stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
                         
                         {
                             int d;
-                            for (i = min; i < stack.currentFrame->max; i++) {
+                            for (i = min; i < stack.currentFrame->locals.max; i++) {
                                 int len = 1;
                                 if (stack.currentFrame->args.eptr >= md.end_subject)
                                     break;
                                 GETCHARLEN(d, stack.currentFrame->args.eptr, len);
-                                if (stack.currentFrame->fc == d)
+                                if (stack.currentFrame->locals.fc == d)
                                     break;
                                 stack.currentFrame->args.eptr += len;
                             }
@@ -1591,7 +1595,7 @@ RECURSE:
                                 RMATCH(44, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                                 if (is_match)
                                     RRETURN;
-                                if (stack.currentFrame->args.eptr-- == stack.currentFrame->pp)
+                                if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
                                     break;        /* Stop if tried at original pos */
                                 BACKCHAR(stack.currentFrame->args.eptr);
                             }
@@ -1607,7 +1611,7 @@ RECURSE:
                  repeat it in the interests of efficiency. */
                 
                 BEGIN_OPCODE(TYPEEXACT):
-                min = stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 1);
+                min = stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 1);
                 minimize = true;
                 stack.currentFrame->args.ecode += 3;
                 goto REPEATTYPE;
@@ -1615,7 +1619,7 @@ RECURSE:
                 BEGIN_OPCODE(TYPEUPTO):
                 BEGIN_OPCODE(TYPEMINUPTO):
                 min = 0;
-                stack.currentFrame->max = GET2(stack.currentFrame->args.ecode, 1);
+                stack.currentFrame->locals.max = GET2(stack.currentFrame->args.ecode, 1);
                 minimize = *stack.currentFrame->args.ecode == OP_TYPEMINUPTO;
                 stack.currentFrame->args.ecode += 3;
                 goto REPEATTYPE;
@@ -1629,16 +1633,16 @@ RECURSE:
                 c = *stack.currentFrame->args.ecode++ - OP_TYPESTAR;
                 minimize = (c & 1) != 0;
                 min = rep_min[c];                 /* Pick up values from tables; */
-                stack.currentFrame->max = rep_max[c];                 /* zero for max => infinity */
-                if (stack.currentFrame->max == 0)
-                    stack.currentFrame->max = INT_MAX;
+                stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
+                if (stack.currentFrame->locals.max == 0)
+                    stack.currentFrame->locals.max = INT_MAX;
                 
                 /* Common code for all repeated single character type matches. Note that
                  in UTF-8 mode, '.' matches a character of any length, but for the other
                  character types, the valid characters are all one-byte long. */
                 
             REPEATTYPE:
-                stack.currentFrame->ctype = *stack.currentFrame->args.ecode++;      /* Code for the character type */
+                stack.currentFrame->locals.ctype = *stack.currentFrame->args.ecode++;      /* Code for the character type */
                 
                 /* First, ensure the minimum number of matches are present. Use inline
                  code for maximizing the speed, and do the type test once at the start
@@ -1651,7 +1655,7 @@ RECURSE:
                 if (min > md.end_subject - stack.currentFrame->args.eptr)
                     RRETURN_NO_MATCH;
                 if (min > 0) {
-                    switch(stack.currentFrame->ctype) {
+                    switch(stack.currentFrame->locals.ctype) {
                         case OP_ANY:
                             for (i = 1; i <= min; i++) {
                                 if (stack.currentFrame->args.eptr >= md.end_subject || isNewline(*stack.currentFrame->args.eptr))
@@ -1719,27 +1723,27 @@ RECURSE:
                             default:
                             ASSERT_NOT_REACHED();
                             return matchError(JSRegExpErrorInternal, stack);
-                    }  /* End switch(stack.currentFrame->ctype) */
+                    }  /* End switch(stack.currentFrame->locals.ctype) */
                 }
                 
                 /* If min = max, continue at the same level without recursing */
                 
-                if (min == stack.currentFrame->max)
+                if (min == stack.currentFrame->locals.max)
                     NEXT_OPCODE;    
                 
                 /* If minimizing, we have to test the rest of the pattern before each
                  subsequent match. */
                 
                 if (minimize) {
-                    for (stack.currentFrame->fi = min;; stack.currentFrame->fi++) {
+                    for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                         RMATCH(48, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->fi >= stack.currentFrame->max || stack.currentFrame->args.eptr >= md.end_subject)
+                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
                             RRETURN;
                         
                         GETCHARINC(c, stack.currentFrame->args.eptr);
-                        switch(stack.currentFrame->ctype) {
+                        switch(stack.currentFrame->locals.ctype) {
                         case OP_ANY:
                             if (isNewline(c))
                                 RRETURN;
@@ -1787,17 +1791,17 @@ RECURSE:
                  test once at the start (i.e. keep it out of the loop). */
                 
                 else {
-                    stack.currentFrame->pp = stack.currentFrame->args.eptr;  /* Remember where we started */
+                    stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;  /* Remember where we started */
                     
-                    switch(stack.currentFrame->ctype) {
+                    switch(stack.currentFrame->locals.ctype) {
                         case OP_ANY:
                             
                             /* Special code is required for UTF8, but when the maximum is unlimited
                              we don't need it, so we repeat the non-UTF8 code. This is probably
                              worth it, because .* is quite a common idiom. */
                             
-                            if (stack.currentFrame->max < INT_MAX) {
-                                for (i = min; i < stack.currentFrame->max; i++) {
+                            if (stack.currentFrame->locals.max < INT_MAX) {
+                                for (i = min; i < stack.currentFrame->locals.max; i++) {
                                     if (stack.currentFrame->args.eptr >= md.end_subject || isNewline(*stack.currentFrame->args.eptr))
                                         break;
                                     stack.currentFrame->args.eptr++;
@@ -1809,7 +1813,7 @@ RECURSE:
                             /* Handle unlimited UTF-8 repeat */
                             
                             else {
-                                for (i = min; i < stack.currentFrame->max; i++) {
+                                for (i = min; i < stack.currentFrame->locals.max; i++) {
                                     if (stack.currentFrame->args.eptr >= md.end_subject || isNewline(*stack.currentFrame->args.eptr))
                                         break;
                                     stack.currentFrame->args.eptr++;
@@ -1819,7 +1823,7 @@ RECURSE:
                             break;
                             
                             case OP_NOT_DIGIT:
-                            for (i = min; i < stack.currentFrame->max; i++) {
+                            for (i = min; i < stack.currentFrame->locals.max; i++) {
                                 int len = 1;
                                 if (stack.currentFrame->args.eptr >= md.end_subject)
                                     break;
@@ -1831,7 +1835,7 @@ RECURSE:
                             break;
                             
                             case OP_DIGIT:
-                            for (i = min; i < stack.currentFrame->max; i++) {
+                            for (i = min; i < stack.currentFrame->locals.max; i++) {
                                 int len = 1;
                                 if (stack.currentFrame->args.eptr >= md.end_subject)
                                     break;
@@ -1843,7 +1847,7 @@ RECURSE:
                             break;
                             
                             case OP_NOT_WHITESPACE:
-                            for (i = min; i < stack.currentFrame->max; i++) {
+                            for (i = min; i < stack.currentFrame->locals.max; i++) {
                                 int len = 1;
                                 if (stack.currentFrame->args.eptr >= md.end_subject)
                                     break;
@@ -1855,7 +1859,7 @@ RECURSE:
                             break;
                             
                             case OP_WHITESPACE:
-                            for (i = min; i < stack.currentFrame->max; i++) {
+                            for (i = min; i < stack.currentFrame->locals.max; i++) {
                                 int len = 1;
                                 if (stack.currentFrame->args.eptr >= md.end_subject)
                                     break;
@@ -1867,7 +1871,7 @@ RECURSE:
                             break;
                             
                             case OP_NOT_WORDCHAR:
-                            for (i = min; i < stack.currentFrame->max; i++) {
+                            for (i = min; i < stack.currentFrame->locals.max; i++) {
                                 int len = 1;
                                 if (stack.currentFrame->args.eptr >= md.end_subject)
                                     break;
@@ -1879,7 +1883,7 @@ RECURSE:
                             break;
                             
                             case OP_WORDCHAR:
-                            for (i = min; i < stack.currentFrame->max; i++) {
+                            for (i = min; i < stack.currentFrame->locals.max; i++) {
                                 int len = 1;
                                 if (stack.currentFrame->args.eptr >= md.end_subject)
                                     break;
@@ -1901,7 +1905,7 @@ RECURSE:
                         RMATCH(52, stack.currentFrame->args.ecode, stack.currentFrame->args.eptrb, 0);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->pp)
+                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
                             break;        /* Stop if tried at original pos */
                         BACKCHAR(stack.currentFrame->args.eptr);
                     }
@@ -1944,40 +1948,41 @@ RECURSE:
                 
                 ASSERT(*stack.currentFrame->args.ecode > OP_BRA);
                 
-                stack.currentFrame->number = *stack.currentFrame->args.ecode - OP_BRA;
+                stack.currentFrame->locals.number = *stack.currentFrame->args.ecode - OP_BRA;
                 
                 /* For extended extraction brackets (large number), we have to fish out the
                  number from a dummy opcode at the start. */
                 
-                if (stack.currentFrame->number > EXTRACT_BASIC_MAX)
-                    stack.currentFrame->number = GET2(stack.currentFrame->args.ecode, 2+LINK_SIZE);
-                stack.currentFrame->offset = stack.currentFrame->number << 1;
+                if (stack.currentFrame->locals.number > EXTRACT_BASIC_MAX)
+                    stack.currentFrame->locals.number = GET2(stack.currentFrame->args.ecode, 2+LINK_SIZE);
+                stack.currentFrame->locals.offset = stack.currentFrame->locals.number << 1;
                 
 #ifdef DEBUG
-                printf("start bracket %d subject=", stack.currentFrame->number);
+                printf("start bracket %d subject=", stack.currentFrame->locals.number);
                 pchars(stack.currentFrame->args.eptr, 16, true, md);
                 printf("\n");
 #endif
                 
-                if (stack.currentFrame->offset < md.offset_max) {
-                    stack.currentFrame->save_offset1 = md.offset_vector[stack.currentFrame->offset];
-                    stack.currentFrame->save_offset2 = md.offset_vector[stack.currentFrame->offset + 1];
-                    stack.currentFrame->save_offset3 = md.offset_vector[md.offset_end - stack.currentFrame->number];
+                if (stack.currentFrame->locals.offset < md.offset_max) {
+                    stack.currentFrame->locals.save_offset1 = md.offset_vector[stack.currentFrame->locals.offset];
+                    stack.currentFrame->locals.save_offset2 = md.offset_vector[stack.currentFrame->locals.offset + 1];
+                    stack.currentFrame->locals.save_offset3 = md.offset_vector[md.offset_end - stack.currentFrame->locals.number];
                     
-                    DPRINTF(("saving %d %d %d\n", stack.currentFrame->save_offset1, stack.currentFrame->save_offset2, stack.currentFrame->save_offset3));
-                    md.offset_vector[md.offset_end - stack.currentFrame->number] = stack.currentFrame->args.eptr - md.start_subject;
+                    DPRINTF(("saving %d %d %d\n", stack.currentFrame->locals.save_offset1, stack.currentFrame->locals.save_offset2, stack.currentFrame->locals.save_offset3));
+                    md.offset_vector[md.offset_end - stack.currentFrame->locals.number] = stack.currentFrame->args.eptr - md.start_subject;
                     
                     do {
                         RMATCH(1, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.eptrb, match_isgroup);
-                        if (is_match) RRETURN;
+                        if (is_match)
+                            RRETURN;
                         stack.currentFrame->args.ecode += GET(stack.currentFrame->args.ecode, 1);
                     } while (*stack.currentFrame->args.ecode == OP_ALT);
                     
-                    DPRINTF(("bracket %d failed\n", stack.currentFrame->number));
+                    DPRINTF(("bracket %d failed\n", stack.currentFrame->locals.number));
                     
-                    md.offset_vector[stack.currentFrame->offset] = stack.currentFrame->save_offset1;
-                    md.offset_vector[stack.currentFrame->offset + 1] = stack.currentFrame->save_offset2;
-                    md.offset_vector[md.offset_end - stack.currentFrame->number] = stack.currentFrame->save_offset3;
+                    md.offset_vector[stack.currentFrame->locals.offset] = stack.currentFrame->locals.save_offset1;
+                    md.offset_vector[stack.currentFrame->locals.offset + 1] = stack.currentFrame->locals.save_offset2;
+                    md.offset_vector[md.offset_end - stack.currentFrame->locals.number] = stack.currentFrame->locals.save_offset3;
                     
                     RRETURN;
                 }

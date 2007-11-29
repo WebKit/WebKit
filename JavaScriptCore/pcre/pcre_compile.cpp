@@ -1653,7 +1653,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                 else {
                     if (++(*brackets) > EXTRACT_BASIC_MAX) {
                         bravalue = OP_BRA + EXTRACT_BASIC_MAX + 1;
-                        code[1+LINK_SIZE] = OP_BRANUMBER;
+                        code[1 + LINK_SIZE] = OP_BRANUMBER;
                         PUT2(code, 2+LINK_SIZE, *brackets);
                         skipbytes = 3;
                     }
