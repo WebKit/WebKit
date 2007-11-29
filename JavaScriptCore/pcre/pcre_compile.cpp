@@ -130,9 +130,7 @@ static const char* error_text(ErrorCode code)
 
 /* Definition to allow mutual recursion */
 
-static bool
-  compile_regex(int, int *, uschar **, const UChar**, const UChar*, ErrorCode*, int,
-    int *, int *, compile_data *);
+static bool compile_regex(int, int*, uschar**, const UChar**, const UChar*, ErrorCode*, int, int*, int*, CompileData*);
 
 /*************************************************
 *            Handle escapes                      *
@@ -757,7 +755,7 @@ Arguments:
 Returns:             nothing
 */
 
-static void complete_callout(uschar* previous_callout, const UChar* ptr, compile_data* cd)
+static void complete_callout(uschar* previous_callout, const UChar* ptr, CompileData* cd)
 {
     int length = ptr - cd->start_pattern - GET(previous_callout, 2);
     PUT(previous_callout, 2 + LINK_SIZE, length);
@@ -810,6 +808,35 @@ static bool get_othercase_range(int *cptr, int d, int *ocptr, int *odptr)
     return true;
 }
 
+/*************************************************
+ *       Convert character value to UTF-8         *
+ *************************************************/
+
+/* This function takes an integer value in the range 0 - 0x7fffffff
+ and encodes it as a UTF-8 character in 0 to 6 bytes.
+ 
+ Arguments:
+ cvalue     the character value
+ buffer     pointer to buffer for result - at least 6 bytes long
+ 
+ Returns:     number of characters placed in the buffer
+ */
+
+// FIXME: This should be removed as soon as all UTF8 uses are removed from PCRE
+int _pcre_ord2utf8(int cvalue, uschar *buffer)
+{
+    int i;
+    for (i = 0; i < _pcre_utf8_table1_size; i++)
+        if (cvalue <= _pcre_utf8_table1[i])
+            break;
+    buffer += i;
+    for (int j = i; j > 0; j--) {
+        *buffer-- = 0x80 | (cvalue & 0x3f);
+        cvalue >>= 6;
+    }
+    *buffer = _pcre_utf8_table2[i] | cvalue;
+    return i + 1;
+}
 
 /*************************************************
 *           Compile one branch                   *
@@ -836,7 +863,7 @@ Returns:         true on success
 static bool
 compile_branch(int options, int *brackets, uschar **codeptr,
                const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int *firstbyteptr,
-               int *reqbyteptr, compile_data *cd)
+               int *reqbyteptr, CompileData* cd)
 {
     int repeat_type, op_type;
     int repeat_min = 0, repeat_max = 0;      /* To please picky compilers */
@@ -2024,7 +2051,7 @@ Returns:      true on success
 static bool
 compile_regex(int options, int* brackets, uschar** codeptr,
               const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int skipbytes,
-              int* firstbyteptr, int* reqbyteptr, compile_data* cd)
+              int* firstbyteptr, int* reqbyteptr, CompileData* cd)
 {
     const UChar* ptr = *ptrptr;
     uschar* code = *codeptr;
@@ -2351,7 +2378,7 @@ while (*code == OP_ALT);
 return c;
 }
 
-static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patternLength, JSRegExpIgnoreCaseOption ignoreCase, compile_data& compile_block, ErrorCode& errorcode)
+static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patternLength, JSRegExpIgnoreCaseOption ignoreCase, CompileData& compile_block, ErrorCode& errorcode)
 {
     /* Make a pass over the pattern to compute the
      amount of store required to hold the compiled code. This does not have to be
@@ -2398,12 +2425,10 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                 
                 lastitemlength = 1;     /* Default length of last item for repeats */
                 
-                if (c >= 0)             /* Data character */
-                {
+                if (c >= 0) {            /* Data character */
                     length += 2;          /* For a one-byte character */
                     
-                    if (c > 127)
-                    {
+                    if (c > 127) {
                         int i;
                         for (i = 0; i < _pcre_utf8_table1_size; i++)
                             if (c <= _pcre_utf8_table1[i]) break;
@@ -2422,21 +2447,21 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                  bytes for a repeat. We also need to keep the value of the highest
                  back reference. */
                 
-                if (c <= -ESC_REF)
-                {
+                if (c <= -ESC_REF) {
                     int refnum = -c - ESC_REF;
                     compile_block.backref_map |= (refnum < 32)? (1 << refnum) : 1;
                     if (refnum > compile_block.top_backref)
                         compile_block.top_backref = refnum;
                     length += 2;   /* For single back reference */
-                    if (ptr[1] == '{' && is_counted_repeat(ptr+2, patternEnd))
-                    {
+                    if (ptr[1] == '{' && is_counted_repeat(ptr+2, patternEnd)) {
                         ptr = read_repeat_counts(ptr+2, &min, &max, &errorcode);
-                        if (errorcode != 0) return -1;;
+                        if (errorcode)
+                            return -1;
                         if ((min == 0 && (max == 1 || max == -1)) ||
                             (min == 1 && max == -1))
                             length++;
-                        else length += 5;
+                        else
+                            length += 5;
                         if (ptr[1] == '?')
                             ptr++;
                     }
@@ -2460,9 +2485,11 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                  class, or back reference. */
                 
                 case '{':
-                if (!is_counted_repeat(ptr+1, patternEnd)) goto NORMAL_CHAR;
+                if (!is_counted_repeat(ptr+1, patternEnd))
+                    goto NORMAL_CHAR;
                 ptr = read_repeat_counts(ptr+1, &min, &max, &errorcode);
-                if (errorcode != 0) return -1;;
+                if (errorcode != 0)
+                    return -1;;
                 
                 /* These special cases just insert one extra opcode */
                 
@@ -2472,21 +2499,20 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                 
                 /* These cases might insert additional copies of a preceding character. */
                 
-                else
-                {
-                    if (min != 1)
-                    {
+                else {
+                    if (min != 1) {
                         length -= lastitemlength;   /* Uncount the original char or metachar */
-                        if (min > 0) length += 3 + lastitemlength;
+                        if (min > 0)
+                            length += 3 + lastitemlength;
                     }
                     length += lastitemlength + ((max > 0)? 3 : 1);
                 }
                 
-                if (ptr[1] == '?') ptr++;      /* Needs no extra length */
+                if (ptr[1] == '?')
+                    ptr++;      /* Needs no extra length */
                 
             POSESSIVE:                     /* Test for possessive quantifier */
-                if (ptr[1] == '+')
-                {
+                if (ptr[1] == '+') {
                     ptr++;
                     length += 2 + 2*LINK_SIZE;   /* Allow for atomic brackets */
                 }
@@ -2510,39 +2536,38 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                  where we can. (In UTF-8 mode we can do this only for chars < 128.) */
                 
                 case '[':
-                if (*(++ptr) == '^')
-                {
+                if (*(++ptr) == '^') {
                     class_optcount = 10;  /* Greater than one */
                     ptr++;
                 }
-                else class_optcount = 0;
+                else
+                    class_optcount = 0;
                 
                 class_utf8 = false;
                 
-                for (; ptr < patternEnd && *ptr != ']'; ++ptr)
-                {
+                for (; ptr < patternEnd && *ptr != ']'; ++ptr) {
                     /* Check for escapes */
                     
-                    if (*ptr == '\\')
-                    {
+                    if (*ptr == '\\') {
                         c = check_escape(&ptr, patternEnd, &errorcode, bracount, true);
-                        if (errorcode != 0) return -1;;
+                        if (errorcode != 0)
+                            return -1;;
                         
                         /* \b is backspace inside a class; \X is literal */
                         
-                        if (-c == ESC_b) c = '\b';
+                        if (-c == ESC_b)
+                            c = '\b';
                         
                         /* Handle escapes that turn into characters */
                         
-                        if (c >= 0) goto NON_SPECIAL_CHARACTER;
+                        if (c >= 0)
+                            goto NON_SPECIAL_CHARACTER;
                         
                         /* Escapes that are meta-things. The normal ones just affect the
                          bit map, but Unicode properties require an XCLASS extended item. */
                         
                         else
-                        {
                             class_optcount = 10;         /* \d, \s etc; make sure > 1 */
-                        }
                     }
                     
                     /* Anything else increments the possible optimization count. We have to
@@ -2551,8 +2576,7 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                      characters, we are going to have to use an XCLASS, even for single
                      characters. */
                     
-                    else
-                    {
+                    else {
                         int d;
                         
                         {
@@ -2700,7 +2724,7 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                 
                 /* Brackets may be genuine groups or special things */
                 
-                case '(':
+            case '(':
                 branch_newextra = 0;
                 bracket_length = 1 + LINK_SIZE;
                 capturing = false;
@@ -2928,7 +2952,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
         return 0;
     *errorptr = NULL;
     
-    compile_data compile_block;
+    CompileData compile_block;
     
     ErrorCode errorcode = ERR0;
     int length = calculateCompiledPatternLengthAndFlags(pattern, patternLength, ignoreCase, compile_block, errorcode);

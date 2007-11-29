@@ -534,8 +534,8 @@ extern const uschar _pcre_default_tables[tables_length];
 /* Structure for passing "static" information around between the functions
 doing the compiling, so that they are thread-safe. */
 
-typedef struct compile_data {
-    compile_data() {
+struct CompileData {
+    CompileData() {
         lcc = _pcre_default_tables + lcc_offset;
         fcc = _pcre_default_tables + fcc_offset;
         cbits = _pcre_default_tables + cbits_offset;
@@ -547,22 +547,21 @@ typedef struct compile_data {
         req_varyopt = 0;
     }
     
-  const uschar *lcc;            /* Points to lower casing table */
-  const uschar *fcc;            /* Points to case-flipping table */
-  const uschar *cbits;          /* Points to character type table */
-  const uschar *ctypes;         /* Points to table of type maps */
-  const uschar *start_code;     /* The start of the compiled code */
+  const uschar* lcc;            /* Points to lower casing table */
+  const uschar* fcc;            /* Points to case-flipping table */
+  const uschar* cbits;          /* Points to character type table */
+  const uschar* ctypes;         /* Points to table of type maps */
+  const uschar* start_code;     /* The start of the compiled code */
   const UChar* start_pattern;   /* The start of the pattern */
   int  top_backref;             /* Maximum back reference */
   unsigned int backref_map;     /* Bitmap of low back refs */
   int  req_varyopt;             /* "After variable item" flag for reqbyte */
-} compile_data;
+};
 
 /* Internal shared functions. These are functions that are used by more than
 one of the exported public functions. They have to be "external" in the C
 sense, but are not part of the PCRE public API. */
 
-extern int         _pcre_ord2utf8(int, uschar*);
 extern int         _pcre_ucp_othercase(const unsigned int);
 extern bool        _pcre_xclass(int, const uschar*);
 

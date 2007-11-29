@@ -223,7 +223,6 @@
 		938C4F6C0CA06BCE00D9310A /* DisallowCType.h in Headers */ = {isa = PBXBuildFile; fileRef = 938C4F6B0CA06BCE00D9310A /* DisallowCType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93AA4F780957251F0084B3A7 /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AA4F770957251F0084B3A7 /* AlwaysInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B6A0DF0AA64DA40076DE27 /* GetPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B6A0DE0AA64DA40076DE27 /* GetPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93E26BCA08B1511900F85226 /* pcre_ord2utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BC908B1511900F85226 /* pcre_ord2utf8.cpp */; };
 		93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BD308B1514100F85226 /* pcre_xclass.cpp */; };
 		93E26BE608B1517100F85226 /* pcre_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BE508B1517100F85226 /* pcre_internal.h */; };
 		93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFC08B151D400F85226 /* ucpinternal.h */; };
@@ -577,7 +576,6 @@
 		93AA4F770957251F0084B3A7 /* AlwaysInline.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AlwaysInline.h; sourceTree = "<group>"; tabWidth = 8; };
 		93ADFCE60CCBD7AC00D30B08 /* array_instance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = array_instance.cpp; sourceTree = "<group>"; };
 		93B6A0DE0AA64DA40076DE27 /* GetPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GetPtr.h; sourceTree = "<group>"; };
-		93E26BC908B1511900F85226 /* pcre_ord2utf8.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_ord2utf8.cpp; path = pcre/pcre_ord2utf8.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		93E26BD308B1514100F85226 /* pcre_xclass.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_xclass.cpp; path = pcre/pcre_xclass.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		93E26BE508B1517100F85226 /* pcre_internal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = pcre_internal.h; path = pcre/pcre_internal.h; sourceTree = "<group>"; tabWidth = 8; };
 		93E26BFC08B151D400F85226 /* ucpinternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = ucpinternal.h; path = pcre/ucpinternal.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -1058,7 +1056,6 @@
 				930754BF08B0F68000AB3056 /* pcre_compile.cpp */,
 				930754E908B0F78500AB3056 /* pcre_exec.cpp */,
 				93E26BE508B1517100F85226 /* pcre_internal.h */,
-				93E26BC908B1511900F85226 /* pcre_ord2utf8.cpp */,
 				930754CE08B0F74500AB3056 /* pcre_tables.cpp */,
 				937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */,
 				93E26BD308B1514100F85226 /* pcre_xclass.cpp */,
@@ -1543,7 +1540,6 @@
 				932F5BC30822A1C700736975 /* objc_utility.mm in Sources */,
 				930754C108B0F68000AB3056 /* pcre_compile.cpp in Sources */,
 				930754EB08B0F78500AB3056 /* pcre_exec.cpp in Sources */,
-				93E26BCA08B1511900F85226 /* pcre_ord2utf8.cpp in Sources */,
 				930754D008B0F74600AB3056 /* pcre_tables.cpp in Sources */,
 				937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */,
 				93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */,

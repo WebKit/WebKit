@@ -2,6 +2,20 @@
 
         Reviewed by Sam.
 
+        Clean up compile_branch, move _pcre_ord2utf8, and rename CompileData
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * pcre/pcre_compile.cpp:
+        (_pcre_ord2utf8):
+        (calculateCompiledPatternLengthAndFlags):
+        (jsRegExpCompile):
+        * pcre/pcre_internal.h:
+        * pcre/pcre_ord2utf8.cpp: Removed.
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         removing more macros
 
         * pcre/pcre_compile.cpp:
