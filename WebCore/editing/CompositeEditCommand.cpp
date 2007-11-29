@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "InsertIntoTextNodeCommand.h"
+#include "InsertLineBreakCommand.h"
 #include "InsertNodeBeforeCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
@@ -120,6 +121,11 @@ void CompositeEditCommand::removeStyledElement(Element* element)
 void CompositeEditCommand::insertParagraphSeparator(bool useDefaultParagraphElement)
 {
     applyCommandToComposite(new InsertParagraphSeparatorCommand(document(), useDefaultParagraphElement));
+}
+
+void CompositeEditCommand::insertLineBreak()
+{
+    applyCommandToComposite(new InsertLineBreakCommand(document()));
 }
 
 void CompositeEditCommand::insertNodeBefore(Node* insertChild, Node* refChild)
@@ -262,9 +268,29 @@ void CompositeEditCommand::joinTextNodes(Text *text1, Text *text2)
 
 void CompositeEditCommand::inputText(const String &text, bool selectInsertedText)
 {
-    RefPtr<InsertTextCommand> command = new InsertTextCommand(document());
-    applyCommandToComposite(command);
-    command->input(text, selectInsertedText);
+    int offset = 0;
+    int length = text.length();
+    RefPtr<Range> startRange = new Range(document(), Position(document()->documentElement(), 0), endingSelection().start());
+    int startIndex = TextIterator::rangeLength(startRange.get());
+    int newline;
+    do {
+        newline = text.find('\n', offset);
+        if (newline != offset) {
+            RefPtr<InsertTextCommand> command = new InsertTextCommand(document());
+            applyCommandToComposite(command);
+            int substringLength = newline == -1 ? length - offset : newline - offset;
+            command->input(text.substring(offset, substringLength), false);
+        }
+        if (newline != -1)
+            insertLineBreak();
+            
+        offset = newline + 1;
+    } while (newline != -1 && offset != length);
+    
+    if (selectInsertedText) {
+        RefPtr<Range> selectedRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), startIndex, length);
+        setEndingSelection(Selection(selectedRange.get()));
+    }
 }
 
 void CompositeEditCommand::insertTextIntoNode(Text *node, int offset, const String &text)

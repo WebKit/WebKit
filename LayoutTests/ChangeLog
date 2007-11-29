@@ -1,3 +1,26 @@
+2007-11-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/5573879> GMail Beta: Crash in when undoing Remove Formating
+
+        Added to demonstrate fixes:
+        * editing/execCommand/5573879.html: Added.
+        * platform/mac/editing/execCommand/5573879-expected.checksum: Added.
+        * platform/mac/editing/execCommand/5573879-expected.png: Added.
+        * platform/mac/editing/execCommand/5573879-expected.txt: Added.
+        
+        Fixes (RemoveFormat now preserves the selection correctly):
+        * platform/mac/editing/execCommand/4920742-1-expected.checksum:
+        * platform/mac/editing/execCommand/4920742-1-expected.png:
+        * platform/mac/editing/execCommand/4920742-1-expected.txt:
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.checksum:
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.png:
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.txt:
+        * platform/mac/editing/execCommand/remove-formatting-expected.checksum:
+        * platform/mac/editing/execCommand/remove-formatting-expected.png:
+        * platform/mac/editing/execCommand/remove-formatting-expected.txt:
+
 2007-11-28  Timothy Hatcher  <timothy@apple.com>
 
         Make this test not depend on the screen size.

@@ -61,6 +61,7 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "Range.h"
+#include "RemoveFormatCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
 #include "Sound.h"
@@ -581,27 +582,7 @@ void Editor::decreaseSelectionListLevel()
 
 void Editor::removeFormattingAndStyle()
 {
-    Document* document = m_frame->document();
-    
-    // Make a plain text string from the selection to remove formatting like tables and lists.
-    String string = plainText(m_frame->selectionController()->selection().toRange().get());
-
-    // Get the default style for this editable root, it's the style that we'll give the
-    // content that we're operating on.
-    Node* root = m_frame->selectionController()->rootEditableElement();
-    RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(root);
-    RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
-    
-    // Delete the selected content.
-    // FIXME: We should be able to leave this to insertText, but its delete operation
-    // doesn't preserve the style we're about to set.
-    deleteSelectionWithSmartDelete(false);
-    // Normally, deleting a fully selected anchor and then inserting text will re-create
-    // the removed anchor, but we don't want that behavior here. 
-    setRemovedAnchor(0);
-    // Insert the content with the default style.
-    m_frame->setTypingStyle(defaultStyle.get());
-    TypingCommand::insertText(document, string, true);
+    applyCommand(new RemoveFormatCommand(m_frame->document()));
 }
 
 void Editor::setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand) 

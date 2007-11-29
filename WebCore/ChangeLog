@@ -1,3 +1,29 @@
+2007-11-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5573879> GMail Beta: Crash in when undoing Remove Formating
+        
+        In the new beta, Google has added some custom code on top of our RemoveFormat
+        to work around a bug where fully selected lists aren't removed.  This code corrupts
+        the undo stack and causes crashes.  This change fixes two problems with RemoveFormat
+        so that Google doesn't have to have any custom code. After checking this in I'll 
+        work on bulletproofing the undo stack
+
+        * WebCore.xcodeproj/project.pbxproj: 
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertLineBreak): Added this convenience method.
+        (WebCore::CompositeEditCommand::inputText): Added code to select all inserted text, not
+        just the last paragraph.  Added code to support an input string with '\n's.
+        * editing/CompositeEditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::removeFormattingAndStyle): Moved code to its own EditCommand.
+        * editing/RemoveFormatCommand.cpp: Added. Moved code from removeFormattingAndStyle here.
+        (WebCore::RemoveFormatCommand::RemoveFormatCommand):
+        (WebCore::RemoveFormatCommand::doApply): Added code to remove fully selected lists.
+        * editing/RemoveFormatCommand.h: Added.
+        (WebCore::RemoveFormatCommand::editingAction):
+
 2007-11-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
