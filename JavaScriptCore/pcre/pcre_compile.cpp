@@ -154,135 +154,135 @@ Returns:         zero or positive => a data character
                  on error, errorptr is set
 */
 
-static int
-check_escape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int bracount,
-  bool isclass)
+static int check_escape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int bracount, bool isclass)
 {
-const UChar* ptr = *ptrptr + 1;
-int i;
+    const UChar* ptr = *ptrptr + 1;
 
-/* If backslash is at the end of the pattern, it's an error. */
-if (ptr == patternEnd) {
-    *errorcodeptr = ERR1;
-    *ptrptr = ptr;
-    return 0;
-}
-
-int c = *ptr;
-
-/* Non-alphamerics are literals. For digits or letters, do an initial lookup in
-a table. A non-zero result is something that can be returned immediately.
-Otherwise further processing may be required. */
-
-if (c < '0' || c > 'z') {}                           /* Not alphameric */
-else if ((i = escapes[c - '0']) != 0) c = i;
-
-/* Escapes that need further processing, or are illegal. */
-
-else
-  {
-  switch (c)
-    {
-    /* Escape sequences starting with a non-zero digit are backreferences,
-    unless there are insufficient brackets, in which case they are octal
-    escape sequences. Those sequences end on the first non-octal character
-    or when we overflow 0-255, whichever comes first. */
-
-    case '1': case '2': case '3': case '4': case '5':
-    case '6': case '7': case '8': case '9':
-
-    if (!isclass)
-      {
-      const UChar* oldptr = ptr;
-      c -= '0';
-      while (ptr + 1 < patternEnd && isASCIIDigit(ptr[1]) && c <= bracount)
-        c = c * 10 + *(++ptr) - '0';
-      if (c <= bracount)
-        {
-        c = -(ESC_REF + c);
-        break;
-        }
-      ptr = oldptr;      /* Put the pointer back and fall through */
-      }
-
-    /* Handle an octal number following \. If the first digit is 8 or 9,
-    this is not octal. */
-
-    if ((c = *ptr) >= '8')
-      break;
-
-    /* \0 always starts an octal number, but we may drop through to here with a
-    larger first octal digit. */
-
-    case '0':
-    c -= '0';
-    for (i = 1; i <= 2; ++i)
-      {
-      if (ptr + i >= patternEnd || ptr[i] < '0' || ptr[i] > '7')
-        break;
-      int cc = c * 8 + ptr[i] - '0';
-      if (cc > 255)
-        break;
-      c = cc;
-      }
-    ptr += i - 1;
-    break;
-
-    case 'x':
-    c = 0;
-    for (i = 1; i <= 2; ++i)
-      {
-      if (ptr + i >= patternEnd || !isASCIIHexDigit(ptr[i]))
-        {
-        c = 'x';
-        i = 1;
-        break;
-        }
-      int cc = ptr[i];
-      if (cc >= 'a') cc -= 32;             /* Convert to upper case */
-      c = c * 16 + cc - ((cc < 'A') ? '0' : ('A' - 10));
-      }
-    ptr += i - 1;
-    break;
-
-    case 'u':
-    c = 0;
-    for (i = 1; i <= 4; ++i)
-      {
-      if (ptr + i >= patternEnd || !isASCIIHexDigit(ptr[i]))
-        {
-        c = 'u';
-        i = 1;
-        break;
-        }
-      int cc = ptr[i];
-      if (cc >= 'a') cc -= 32;             /* Convert to upper case */
-      c = c * 16 + cc - ((cc < 'A')? '0' : ('A' - 10));
-      }
-    ptr += i - 1;
-    break;
-
-    /* Other special escapes not starting with a digit are straightforward */
-
-    case 'c':
-    if (++ptr == patternEnd)
-      {
-      *errorcodeptr = ERR2;
-      return 0;
-      }
-    c = *ptr;
-
-    /* A letter is upper-cased; then the 0x40 bit is flipped. This coding
-    is ASCII-specific, but then the whole concept of \cx is ASCII-specific. */
-
-    if (c >= 'a' && c <= 'z') c -= 32;
-    c ^= 0x40;
-    break;
+    /* If backslash is at the end of the pattern, it's an error. */
+    if (ptr == patternEnd) {
+        *errorcodeptr = ERR1;
+        *ptrptr = ptr;
+        return 0;
     }
-  }
-
-*ptrptr = ptr;
-return c;
+    
+    int c = *ptr;
+    
+    /* Non-alphamerics are literals. For digits or letters, do an initial lookup in
+     a table. A non-zero result is something that can be returned immediately.
+     Otherwise further processing may be required. */
+    
+    if (c < '0' || c > 'z') { /* Not alphameric */
+    } else if (int escapeValue = escapes[c - '0'])
+        c = escapeValue;
+    
+    /* Escapes that need further processing, or are illegal. */
+    
+    else {
+        switch (c) {
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            /* Escape sequences starting with a non-zero digit are backreferences,
+             unless there are insufficient brackets, in which case they are octal
+             escape sequences. Those sequences end on the first non-octal character
+             or when we overflow 0-255, whichever comes first. */
+            
+            if (!isclass) {
+                const UChar* oldptr = ptr;
+                c -= '0';
+                while (ptr + 1 < patternEnd && isASCIIDigit(ptr[1]) && c <= bracount)
+                    c = c * 10 + *(++ptr) - '0';
+                if (c <= bracount) {
+                    c = -(ESC_REF + c);
+                    break;
+                }
+                ptr = oldptr;      /* Put the pointer back and fall through */
+            }
+            
+            /* Handle an octal number following \. If the first digit is 8 or 9,
+             this is not octal. */
+            
+            if ((c = *ptr) >= '8')
+                break;
+            
+            /* \0 always starts an octal number, but we may drop through to here with a
+             larger first octal digit. */
+        
+        case '0': {
+            c -= '0';
+            int i;
+            for (i = 1; i <= 2; ++i) {
+                if (ptr + i >= patternEnd || ptr[i] < '0' || ptr[i] > '7')
+                    break;
+                int cc = c * 8 + ptr[i] - '0';
+                if (cc > 255)
+                    break;
+                c = cc;
+            }
+            ptr += i - 1;
+            break;
+        }
+        case 'x': {
+            c = 0;
+            int i;
+            for (i = 1; i <= 2; ++i) {
+                if (ptr + i >= patternEnd || !isASCIIHexDigit(ptr[i])) {
+                    c = 'x';
+                    i = 1;
+                    break;
+                }
+                int cc = ptr[i];
+                if (cc >= 'a')
+                    cc -= 32;             /* Convert to upper case */
+                c = c * 16 + cc - ((cc < 'A') ? '0' : ('A' - 10));
+            }
+            ptr += i - 1;
+            break;
+        }
+        case 'u': {
+            c = 0;
+            int i;
+            for (i = 1; i <= 4; ++i) {
+                if (ptr + i >= patternEnd || !isASCIIHexDigit(ptr[i])) {
+                    c = 'u';
+                    i = 1;
+                    break;
+                }
+                int cc = ptr[i];
+                if (cc >= 'a')
+                    cc -= 32;             /* Convert to upper case */
+                c = c * 16 + cc - ((cc < 'A')? '0' : ('A' - 10));
+            }
+            ptr += i - 1;
+            break;
+            
+            /* Other special escapes not starting with a digit are straightforward */
+        }
+        case 'c':
+            if (++ptr == patternEnd) {
+                *errorcodeptr = ERR2;
+                return 0;
+            }
+            c = *ptr;
+            
+            /* A letter is upper-cased; then the 0x40 bit is flipped. This coding
+             is ASCII-specific, but then the whole concept of \cx is ASCII-specific. */
+            
+            if (c >= 'a' && c <= 'z')
+                c -= 32;
+            c ^= 0x40;
+            break;
+        }
+    }
+    
+    *ptrptr = ptr;
+    return c;
 }
 
 
@@ -458,7 +458,7 @@ Returns:   the fixed length, or -1 if there is no fixed length,
              or -2 if \C was encountered
 */
 
-static int find_fixedlength(uschar *code, int options)
+static int find_fixedlength(uschar* code, int options)
 {
     int length = -1;
     
