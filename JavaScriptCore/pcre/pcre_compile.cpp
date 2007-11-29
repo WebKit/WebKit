@@ -130,7 +130,7 @@ static const char* error_text(ErrorCode code)
 
 /* Definition to allow mutual recursion */
 
-static bool compile_regex(int, int*, uschar**, const UChar**, const UChar*, ErrorCode*, int, int*, int*, CompileData*);
+static bool compile_regex(int, int*, uschar**, const UChar**, const UChar*, ErrorCode*, int, int*, int*, CompileData&);
 
 /*************************************************
 *            Handle escapes                      *
@@ -755,9 +755,9 @@ Arguments:
 Returns:             nothing
 */
 
-static void complete_callout(uschar* previous_callout, const UChar* ptr, CompileData* cd)
+static void complete_callout(uschar* previous_callout, const UChar* ptr, const CompileData& cd)
 {
-    int length = ptr - cd->start_pattern - GET(previous_callout, 2);
+    int length = ptr - cd.start_pattern - GET(previous_callout, 2);
     PUT(previous_callout, 2 + LINK_SIZE, length);
 }
 
@@ -863,7 +863,7 @@ Returns:         true on success
 static bool
 compile_branch(int options, int *brackets, uschar **codeptr,
                const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int *firstbyteptr,
-               int *reqbyteptr, CompileData* cd)
+               int *reqbyteptr, CompileData& cd)
 {
     int repeat_type, op_type;
     int repeat_min = 0, repeat_max = 0;      /* To please picky compilers */
@@ -871,17 +871,17 @@ compile_branch(int options, int *brackets, uschar **codeptr,
     int reqvary, tempreqvary;
     int after_manual_callout = 0;
     int c;
-    uschar *code = *codeptr;
-    uschar *tempcode;
+    uschar* code = *codeptr;
+    uschar* tempcode;
     bool groupsetfirstbyte = false;
     const UChar* ptr = *ptrptr;
     const UChar* tempptr;
-    uschar *previous = NULL;
-    uschar *previous_callout = NULL;
+    uschar* previous = NULL;
+    uschar* previous_callout = NULL;
     uschar classbits[32];
     
     bool class_utf8;
-    uschar *class_utf8data;
+    uschar* class_utf8data;
     uschar utf8_char[6];
     
     /* Initialize no first byte, no required byte. REQ_UNSET means "no char
@@ -1048,7 +1048,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                             c = '\b';       /* \b is backslash in a class */
                         
                         if (c < 0) {
-                            const uschar* cbits = cd->cbits;
+                            const uschar* cbits = cd.cbits;
                             class_charcount += 2;     /* Greater than 1 is what matters */
                             switch (-c) {
                                 case ESC_d:
@@ -1198,7 +1198,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                         for (; c <= d; c++) {
                             classbits[c/8] |= (1 << (c&7));
                             if (options & PCRE_CASELESS) {
-                                int uc = cd->fcc[c];           /* flip case */
+                                int uc = cd.fcc[c];           /* flip case */
                                 classbits[uc/8] |= (1 << (uc&7));
                             }
                             class_charcount++;                /* in case a one-char range */
@@ -1235,7 +1235,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                     {
                         classbits[c/8] |= (1 << (c&7));
                         if (options & PCRE_CASELESS) {
-                            c = cd->fcc[c];   /* flip case */
+                            c = cd.fcc[c];   /* flip case */
                             classbits[c/8] |= (1 << (c&7));
                         }
                         class_charcount++;
@@ -1257,16 +1257,14 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                  this item is first, whatever repeat count may follow. In the case of
                  reqbyte, save the previous value for reinstating. */
                 
-                if (class_charcount == 1 &&
-                    (!class_utf8 && (!negate_class || class_lastchar < 128)))
-                {
+                if (class_charcount == 1 && (!class_utf8 && (!negate_class || class_lastchar < 128))) {
                     zeroreqbyte = reqbyte;
                     
                     /* The OP_NOT opcode works on one-byte characters only. */
                     
-                    if (negate_class)
-                    {
-                        if (firstbyte == REQ_UNSET) firstbyte = REQ_NONE;
+                    if (negate_class) {
+                        if (firstbyte == REQ_UNSET)
+                            firstbyte = REQ_NONE;
                         zerofirstbyte = firstbyte;
                         *code++ = OP_NOT;
                         *code++ = class_lastchar;
@@ -1293,8 +1291,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                  extended class, with its own opcode. If there are no characters < 256,
                  we can omit the bitmap. */
                 
-                if (class_utf8 && !should_flip_negation)
-                {
+                if (class_utf8 && !should_flip_negation) {
                     *class_utf8data++ = XCL_END;    /* Marks the end of extra data */
                     *code++ = OP_XCLASS;
                     code += LINK_SIZE;
@@ -1303,8 +1300,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                     /* If the map is required, install it, and move on to the end of
                      the extra data */
                     
-                    if (class_charcount > 0)
-                    {
+                    if (class_charcount > 0) {
                         *code++ |= XCL_MAP;
                         memcpy(code, classbits, 32);
                         code = class_utf8data;
@@ -1312,8 +1308,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                     
                     /* If the map is not required, slide down the extra data. */
                     
-                    else
-                    {
+                    else {
                         int len = class_utf8data - (code + 33);
                         memmove(code + 1, code + 33, len);
                         code += len + 1;
@@ -1332,13 +1327,10 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                 
                 *code++ = (negate_class == should_flip_negation) ? OP_CLASS : OP_NCLASS;
                 if (negate_class)
-                {
-                    for (c = 0; c < 32; c++) code[c] = ~classbits[c];
-                }
+                    for (c = 0; c < 32; c++)
+                        code[c] = ~classbits[c];
                 else
-                {
                     memcpy(code, classbits, 32);
-                }
                 code += 32;
                 break;
                 
@@ -1349,7 +1341,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                 if (!is_quantifier)
                     goto NORMAL_CHAR;
                 ptr = read_repeat_counts(ptr+1, &repeat_min, &repeat_max, errorcodeptr);
-                if (*errorcodeptr != 0)
+                if (*errorcodeptr)
                     goto FAILED;
                 goto REPEAT;
                 
@@ -1426,7 +1418,8 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                     else
                     {
                         c = code[-1];
-                        if (repeat_min > 1) reqbyte = c | req_caseopt | cd->req_varyopt;
+                        if (repeat_min > 1)
+                            reqbyte = c | req_caseopt | cd.req_varyopt;
                     }
                     
                     goto OUTPUT_SINGLE_REPEAT;   /* Code shared with single character types */
@@ -1435,7 +1428,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                 else if (*previous == OP_ASCII_CHAR || *previous == OP_ASCII_LETTER_NC)
                 {
                     c = previous[1];
-                    if (repeat_min > 1) reqbyte = c | req_caseopt | cd->req_varyopt;
+                    if (repeat_min > 1) reqbyte = c | req_caseopt | cd.req_varyopt;
                     goto OUTPUT_SINGLE_REPEAT;
                 }
                 
@@ -1753,7 +1746,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                 
             END_REPEAT:
                 previous = NULL;
-                cd->req_varyopt |= reqvary;
+                cd.req_varyopt |= reqvary;
                 break;
                 
                 
@@ -1815,7 +1808,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                 previous = (bravalue >= OP_ONCE)? code : NULL;
                 *code = bravalue;
                 tempcode = code;
-                tempreqvary = cd->req_varyopt;     /* Save value before bracket */
+                tempreqvary = cd.req_varyopt;     /* Save value before bracket */
                 
                 if (!compile_regex(
                                    options,
@@ -1990,7 +1983,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                     if (mclength == 1 || req_caseopt == 0) {
                         firstbyte = mcbuffer[0] | req_caseopt;
                         if (mclength != 1)
-                            reqbyte = code[-1] | cd->req_varyopt;
+                            reqbyte = code[-1] | cd.req_varyopt;
                     }
                     else
                         firstbyte = reqbyte = REQ_NONE;
@@ -2003,7 +1996,7 @@ compile_branch(int options, int *brackets, uschar **codeptr,
                     zerofirstbyte = firstbyte;
                     zeroreqbyte = reqbyte;
                     if (mclength == 1 || req_caseopt == 0)
-                        reqbyte = code[-1] | req_caseopt | cd->req_varyopt;
+                        reqbyte = code[-1] | req_caseopt | cd.req_varyopt;
                 }
                 
                 break;            /* End of literal character handling */
@@ -2051,7 +2044,7 @@ Returns:      true on success
 static bool
 compile_regex(int options, int* brackets, uschar** codeptr,
               const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int skipbytes,
-              int* firstbyteptr, int* reqbyteptr, CompileData* cd)
+              int* firstbyteptr, int* reqbyteptr, CompileData& cd)
 {
     const UChar* ptr = *ptrptr;
     uschar* code = *codeptr;
@@ -2995,7 +2988,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     int bracketCount = 0;
     (void)compile_regex(re->options, &bracketCount, &code, &ptr,
                         patternEnd,
-                        &errorcode, 0, &firstbyte, &reqbyte, &compile_block);
+                        &errorcode, 0, &firstbyte, &reqbyte, compile_block);
     re->top_bracket = bracketCount;
     re->top_backref = compile_block.top_backref;
     

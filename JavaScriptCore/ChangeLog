@@ -1,5 +1,15 @@
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Tim Hatcher.
+
+        Pass around CompileData& instead of CompileData*
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (jsRegExpCompile):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Clean up compile_branch, move _pcre_ord2utf8, and rename CompileData
