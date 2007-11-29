@@ -377,7 +377,10 @@ static StreamMap& streams()
             [pv willCallPlugInFunction];
             NPP_StreamAsFile(plugin, &stream, [carbonPath fileSystemRepresentation]);
             [pv didCallPlugInFunction];
+            LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", responseURL, carbonPath);
+        }
 
+        if (path) {
             // Delete the file after calling NPP_StreamAsFile(), instead of in -dealloc/-finalize.  It should be OK
             // to delete the file here -- NPP_StreamAsFile() is always called immediately before NPP_DestroyStream()
             // (the stream destruction function), so there can be no expectation that a plugin will read the stream
@@ -385,10 +388,15 @@ static StreamMap& streams()
             unlink([path fileSystemRepresentation]);
             [path release];
             path = nil;
-            LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", responseURL, carbonPath);
 
             if (isTerminated)
                 goto exit;
+        }
+
+        if (fileDescriptor != -1) {
+            // The file may still be open if we are destroying the stream before it completed loading.
+            close(fileDescriptor);
+            fileDescriptor = -1;
         }
 
         NPError npErr;

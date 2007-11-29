@@ -1,3 +1,15 @@
+2007-11-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix an assertion failure seen on the layout tests, and when closing the window after
+        visiting <http://www.coudal.com/losalamos/>.
+
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream _destroyStream]): Unlink the file and close the file
+        descriptor even when the stream is being destroyed without the load completing. This
+        avoids leaking the path and file descriptor, and leaving the temporary file on disk.
+
 2007-11-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
