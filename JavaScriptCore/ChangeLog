@@ -2,6 +2,19 @@
 
         Reviewed by Sam.
 
+        split first_significant_code into two simpler functions
+
+        * pcre/pcre_compile.cpp:
+        (firstSignificantOpCode):
+        (firstSignificantOpCodeSkippingAssertions):
+        (is_anchored):
+        (canApplyFirstCharOptimization):
+        (find_firstassertedchar):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         clean up is_counted_repeat
 
         * pcre/pcre_compile.cpp:
