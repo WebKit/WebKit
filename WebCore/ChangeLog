@@ -1,5 +1,15 @@
 2007-11-28  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Oliver.
+
+        Make QTMovieView fill color transparent. This behavior matches the specification
+        (and allows nice alpha blended video).
+
+        * platform/graphics/mac/MoviePrivateQTKit.mm:
+        (WebCore::MoviePrivate::createQTMovieView):
+
+2007-11-28  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin.
 
         Test: media/video-controls.html
