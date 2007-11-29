@@ -28,6 +28,16 @@
 
         Reviewed by Maciej.
 
+        Add repeatInformationFromInstructionOffset inline
+
+        * pcre/pcre_exec.cpp:
+        (repeatInformationFromInstructionOffset):
+        (match):
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
         Remove no longer used error code JSRegExpErrorMatchLimit
 
         * kjs/regexp.cpp:

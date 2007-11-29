@@ -127,13 +127,6 @@ defined PCRE_ERROR_xxx codes, which are all negative. */
 #define MATCH_MATCH        1
 #define MATCH_NOMATCH      0
 
-/* Min and max values for the common repeats; for the maxima, 0 => infinity */
-
-static const char rep_min[] = { 0, 0, 1, 1, 0, 0 };
-static const char rep_max[] = { 0, 0, 0, 0, 1, 1 };
-
-
-
 #ifdef DEBUG
 /*************************************************
 *        Debugging function to print chars       *
@@ -391,6 +384,21 @@ static inline void startNewGroup(MatchFrame* currentFrame)
      this stack. */
     
     currentFrame->locals.subpatternStart = currentFrame->args.subpatternStart;
+}
+
+// FIXME: "minimize" means "not greedy", we should invert the callers to ask for "greedy" to be less confusing
+static inline void repeatInformationFromInstructionOffset(short instructionOffset, bool& minimize, int& minimumRepeats, int& maximumRepeats)
+{
+    // Instruction offsets are based off of OP_CRSTAR, OP_STAR, OP_TYPESTAR, OP_NOTSTAR
+    static const char minimumRepeatsFromInstructionOffset[] = { 0, 0, 1, 1, 0, 0 };
+    static const int maximumRepeatsFromInstructionOffset[] = { INT_MAX, INT_MAX, INT_MAX, INT_MAX, 1, 1 };
+
+    ASSERT(instructionOffset >= 0);
+    ASSERT(instructionOffset <= (OP_CRMINQUERY - OP_CRSTAR));
+
+    minimize = (instructionOffset & 1); // this assumes ordering: Instruction, MinimizeInstruction, Instruction2, MinimizeInstruction2
+    minimumRepeats = minimumRepeatsFromInstructionOffset[instructionOffset];
+    maximumRepeats = maximumRepeatsFromInstructionOffset[instructionOffset];
 }
 
 static int match(UChar* subjectPtr, const uschar* instructionPtr, int offset_top, MatchData& md)
@@ -856,12 +864,7 @@ RECURSE:
                 case OP_CRMINPLUS:
                 case OP_CRQUERY:
                 case OP_CRMINQUERY:
-                    c = *stack.currentFrame->args.instructionPtr++ - OP_CRSTAR;
-                    minimize = (c & 1);
-                    min = rep_min[c];                 /* Pick up values from tables; */
-                    stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
-                    if (stack.currentFrame->locals.max == 0)
-                        stack.currentFrame->locals.max = INT_MAX;
+                    repeatInformationFromInstructionOffset(*stack.currentFrame->args.instructionPtr++ - OP_CRSTAR, minimize, min, stack.currentFrame->locals.max);
                     break;
                     
                 case OP_CRRANGE:
@@ -957,12 +960,7 @@ RECURSE:
                 case OP_CRMINPLUS:
                 case OP_CRQUERY:
                 case OP_CRMINQUERY:
-                    c = *stack.currentFrame->args.instructionPtr++ - OP_CRSTAR;
-                    minimize = (c & 1);
-                    min = rep_min[c];                 /* Pick up values from tables; */
-                    stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
-                    if (stack.currentFrame->locals.max == 0)
-                        stack.currentFrame->locals.max = INT_MAX;
+                    repeatInformationFromInstructionOffset(*stack.currentFrame->args.instructionPtr++ - OP_CRSTAR, minimize, min, stack.currentFrame->locals.max);
                     break;
                     
                 case OP_CRRANGE:
@@ -1066,12 +1064,7 @@ RECURSE:
                 case OP_CRMINPLUS:
                 case OP_CRQUERY:
                 case OP_CRMINQUERY:
-                    c = *stack.currentFrame->args.instructionPtr++ - OP_CRSTAR;
-                    minimize = (c & 1);
-                    min = rep_min[c];                 /* Pick up values from tables; */
-                    stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
-                    if (stack.currentFrame->locals.max == 0)
-                        stack.currentFrame->locals.max = INT_MAX;
+                    repeatInformationFromInstructionOffset(*stack.currentFrame->args.instructionPtr++ - OP_CRSTAR, minimize, min, stack.currentFrame->locals.max);
                     break;
                     
                 case OP_CRRANGE:
@@ -1246,12 +1239,7 @@ RECURSE:
                 BEGIN_OPCODE(MINPLUS):
                 BEGIN_OPCODE(QUERY):
                 BEGIN_OPCODE(MINQUERY):
-                c = *stack.currentFrame->args.instructionPtr++ - OP_STAR;
-                minimize = (c & 1);
-                min = rep_min[c];                 /* Pick up values from tables; */
-                stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
-                if (stack.currentFrame->locals.max == 0)
-                    stack.currentFrame->locals.max = INT_MAX;
+                repeatInformationFromInstructionOffset(*stack.currentFrame->args.instructionPtr++ - OP_STAR, minimize, min, stack.currentFrame->locals.max);
                 
                 /* Common code for all repeated single-character matches. We can give
                  up quickly if there are fewer than the minimum number of characters left in
@@ -1401,11 +1389,7 @@ RECURSE:
                 BEGIN_OPCODE(NOTMINPLUS):
                 BEGIN_OPCODE(NOTQUERY):
                 BEGIN_OPCODE(NOTMINQUERY):
-                c = *stack.currentFrame->args.instructionPtr++ - OP_NOTSTAR;
-                minimize = (c & 1);
-                min = rep_min[c];                 /* Pick up values from tables; */
-                stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
-                if (stack.currentFrame->locals.max == 0) stack.currentFrame->locals.max = INT_MAX;
+                repeatInformationFromInstructionOffset(*stack.currentFrame->args.instructionPtr++ - OP_NOTSTAR, minimize, min, stack.currentFrame->locals.max);
                 
                 /* Common code for all repeated single-byte matches. We can give up quickly
                  if there are fewer than the minimum number of bytes left in the
@@ -1565,12 +1549,7 @@ RECURSE:
                 BEGIN_OPCODE(TYPEMINPLUS):
                 BEGIN_OPCODE(TYPEQUERY):
                 BEGIN_OPCODE(TYPEMINQUERY):
-                c = *stack.currentFrame->args.instructionPtr++ - OP_TYPESTAR;
-                minimize = (c & 1);
-                min = rep_min[c];                 /* Pick up values from tables; */
-                stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
-                if (stack.currentFrame->locals.max == 0)
-                    stack.currentFrame->locals.max = INT_MAX;
+                repeatInformationFromInstructionOffset(*stack.currentFrame->args.instructionPtr++ - OP_TYPESTAR, minimize, min, stack.currentFrame->locals.max);
                 
                 /* Common code for all repeated single character type matches. Note that
                  in UTF-8 mode, '.' matches a character of any length, but for the other
