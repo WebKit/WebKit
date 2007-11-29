@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
@@ -355,30 +355,38 @@ BOOL replayingSavedEvents;
         eventCharacter = [NSString stringWithCharacters:&rightArrowCharacter length:1];
     }
 
-    int mask = 0;
+    NSString *charactersIgnoringModifiers = eventCharacter;
+
+    int modifierFlags = 0;
+
+    if ([character length] == 1 && [character characterAtIndex:0] >= 'A' && [character characterAtIndex:0] <= 'Z') {
+        modifierFlags |= NSShiftKeyMask;
+        charactersIgnoringModifiers = [character lowercaseString];
+    }
+
     if ([modifiers isKindOfClass:[WebScriptObject class]])
         for (unsigned i = 0; [[modifiers webScriptValueAtIndex:i] isKindOfClass:[NSString class]]; i++) {
             NSString *modifier = (NSString *)[modifiers webScriptValueAtIndex:i];
             if ([modifier isEqual:@"ctrlKey"])
-                mask |= NSControlKeyMask;
+                modifierFlags |= NSControlKeyMask;
             else if ([modifier isEqual:@"shiftKey"])
-                mask |= NSShiftKeyMask;
+                modifierFlags |= NSShiftKeyMask;
             else if ([modifier isEqual:@"altKey"])
-                mask |= NSAlternateKeyMask;
+                modifierFlags |= NSAlternateKeyMask;
             else if ([modifier isEqual:@"metaKey"])
-                mask |= NSCommandKeyMask;
+                modifierFlags |= NSCommandKeyMask;
         }
 
     [[[mainFrame frameView] documentView] layout];
 
     NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
                         location:NSMakePoint(5, 5)
-                        modifierFlags:mask
+                        modifierFlags:modifierFlags
                         timestamp:[self currentEventTime]
                         windowNumber:[[[mainFrame webView] window] windowNumber]
                         context:[NSGraphicsContext currentContext]
                         characters:eventCharacter
-                        charactersIgnoringModifiers:eventCharacter
+                        charactersIgnoringModifiers:charactersIgnoringModifiers
                         isARepeat:NO
                         keyCode:0];
 

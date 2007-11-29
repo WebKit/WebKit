@@ -1,3 +1,15 @@
+2007-11-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:]):
+        Send capital letters through as lowercase letters with the shift key down
+        rather than sending them as if they were highly unusual "capital letter keys".
+
+        * Scripts/update-javascriptcore-test-results: Add a "--force" option for cases
+        where you need to update results and more tests are failing than before.
+
 2007-11-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
