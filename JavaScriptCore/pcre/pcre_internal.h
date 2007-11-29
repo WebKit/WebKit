@@ -341,14 +341,14 @@ static inline void movePtrToStartOfCurrentChar(const UChar*& subjectPtr)
         subjectPtr--;
 }
 
-// FIXME: These are really more of a "regexp state" than "regexp options"
-enum PCREOptions {
-    PCRE_FIRSTSET = 0x40000000,  /* first_byte is set */
-    PCRE_REQCHSET = 0x20000000,  /* req_byte is set */
-    OptionUseMultiLineFirstCharOptimization = 0x10000000,  /* start after \n for multiline */
-    PCRE_ANCHORED = 0x02000000,  /* can't use partial with this regex */
-    OptionIgnoreCase = 0x00000001,
-    OptionMatchAcrossMultipleLines = 0x00000002
+// FIXME: These are really more of a "compiled regexp state" than "regexp options"
+enum RegExpOptions {
+    UseFirstByteOptimizationOption = 0x40000000,  /* first_byte is set */
+    UseRequiredByteOptimizationOption = 0x20000000,  /* req_byte is set */
+    UseMultiLineFirstByteOptimizationOption = 0x10000000,  /* start after \n for multiline */
+    IsAnchoredOption = 0x02000000,  /* can't use partial with this regex */
+    IgnoreCaseOption = 0x00000001,
+    MatchAcrossMultipleLinesOption = 0x00000002
 };
 
 /* Negative values for the firstchar and reqchar variables */

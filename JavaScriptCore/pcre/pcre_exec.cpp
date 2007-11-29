@@ -2069,8 +2069,8 @@ int jsRegExpExecute(const JSRegExp* re,
     match_block.end_subject = match_block.start_subject + length;
     const UChar* end_subject = match_block.end_subject;
     
-    match_block.multiline = (re->options & OptionMatchAcrossMultipleLines);
-    match_block.ignoreCase = (re->options & OptionIgnoreCase);
+    match_block.multiline = (re->options & MatchAcrossMultipleLinesOption);
+    match_block.ignoreCase = (re->options & IgnoreCaseOption);
     
     /* If the expression has got more back references than the offsets supplied can
      hold, we get a temporary chunk of working store to use during the matching.
@@ -2124,7 +2124,7 @@ int jsRegExpExecute(const JSRegExp* re,
     
     bool first_byte_caseless = false;
     int first_byte = -1;
-    if (re->options & PCRE_FIRSTSET) {
+    if (re->options & UseFirstByteOptimizationOption) {
         first_byte = re->first_byte & 255;
         if ((first_byte_caseless = (re->first_byte & REQ_IGNORE_CASE)))
             first_byte = toLowerCase(first_byte);
@@ -2136,7 +2136,7 @@ int jsRegExpExecute(const JSRegExp* re,
     bool req_byte_caseless = false;
     int req_byte = -1;
     int req_byte2 = -1;
-    if (re->options & PCRE_REQCHSET) {
+    if (re->options & UseRequiredByteOptimizationOption) {
         req_byte = re->req_byte & 255; // FIXME: This optimization could be made to work for UTF16 chars as well...
         req_byte_caseless = (re->req_byte & REQ_IGNORE_CASE);
         req_byte2 = flipCase(req_byte);
@@ -2147,7 +2147,7 @@ int jsRegExpExecute(const JSRegExp* re,
     
     const UChar* start_match = subject + start_offset;
     const UChar* req_byte_ptr = start_match - 1;
-    bool useMultiLineFirstCharOptimization = re->options & OptionUseMultiLineFirstCharOptimization;
+    bool useMultiLineFirstCharOptimization = re->options & UseMultiLineFirstByteOptimizationOption;
     
     do {
         /* Reset the maximum number of extractions we might see. */

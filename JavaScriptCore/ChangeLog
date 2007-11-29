@@ -43,6 +43,22 @@
 
         Reviewed by Sam.
 
+        Give consistent naming to the RegExp options/compile flags
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (is_anchored):
+        (find_firstassertedchar):
+        (printCompiledRegExp):
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Pull first_byte and req_byte optimizations out into separate static funtions, SunSpider reported this as a win.
 
         * pcre/pcre_exec.cpp:
