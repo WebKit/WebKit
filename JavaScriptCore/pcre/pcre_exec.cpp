@@ -1995,6 +1995,9 @@ int jsRegExpExecute(const JSRegExp* re,
     
     int ocount = offsetcount - (offsetcount % 3);
     
+    // FIXME: This is lame that we have to second-guess our caller here.
+    // The API should change to either fail-hard when we don't have enough offset space
+    // or that we shouldn't ask our callers to pre-allocate in the first place.
     bool using_temporary_offsets = false;
     if (re->top_backref > 0 && re->top_backref >= ocount/3) {
         ocount = re->top_backref * 3 + 3;
@@ -2002,6 +2005,7 @@ int jsRegExpExecute(const JSRegExp* re,
         if (!match_block.offset_vector)
             return JSRegExpErrorNoMemory;
         using_temporary_offsets = true;
+        ASSERT_NOT_REACHED(); // Fail debug builds -- No one should be hitting this vestigal (slow!) code, see comment above.
     } else
         match_block.offset_vector = offsets;
     
