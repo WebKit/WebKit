@@ -1,3 +1,12 @@
+2007-11-28  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        - Added recursive runloop guards.
+
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer suspendProcessIfPaused]):
+
 2007-11-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

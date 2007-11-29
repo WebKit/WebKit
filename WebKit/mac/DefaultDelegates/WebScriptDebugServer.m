@@ -203,6 +203,13 @@ static unsigned listenerCount = 0;
 
 - (void)suspendProcessIfPaused
 {
+    static BOOL alreadyHere = NO;
+    
+    if (alreadyHere)
+        return;
+
+    alreadyHere = YES;
+
     // this method will suspend this process when called during the dubugging callbacks
     // we need to do this to implement breakpoints and pausing of JavaScript
 
@@ -213,6 +220,8 @@ static unsigned listenerCount = 0;
         step = NO;
         paused = YES;
     }
+    
+    alreadyHere = NO;
 }
 
 - (void)webView:(WebView *)webView didLoadMainResourceForDataSource:(WebDataSource *)dataSource
