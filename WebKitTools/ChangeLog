@@ -1,3 +1,32 @@
+2007-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5132005>
+        setUserStyleSheetEnabled is not fully implemented in Windows DRT.
+        
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        Add shlwapi.lib
+        
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setUserStyleSheetEnabled):
+        Implement this.
+        
+        (appendComponentToPath):
+        New method which wraps the Win32 API PathAppend.
+        
+        (followShortcuts):
+        New method which checks if a file points to a shortcut and
+        follows the shortcut.
+        
+        (resolveCygwinPath):
+        New method that takes a cygwin unix-style path and returns the Win32 path.
+        
+        (cfStringRefToWString):
+        
+        (LayoutTestController::setUserStyleSheetLocation):
+        Implement this.
+
 2007-11-29  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam.

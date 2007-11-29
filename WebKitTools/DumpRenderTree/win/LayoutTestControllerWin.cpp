@@ -45,6 +45,9 @@
 #include <WebKit/WebKit.h>
 #include <string>
 #include <CoreFoundation/CoreFoundation.h>
+#include <shlwapi.h>
+#include <shlguid.h>
+#include <shobjidl.h>
 
 using std::string;
 using std::wstring;
@@ -274,12 +277,161 @@ void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
 
 void LayoutTestController::setUserStyleSheetEnabled(bool flag)
 {
-    // FIXME: Implement!
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+   preferences->setUserStyleSheetEnabled(flag);
 }
 
-void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
+bool appendComponentToPath(wstring& path, const wstring& component)
 {
-    // FIXME: Implement!
+    WCHAR buffer[MAX_PATH];
+
+    if (path.size() + 1 > MAX_PATH)
+        return false;
+
+    memcpy(buffer, path.data(), path.size() * sizeof(WCHAR));
+    buffer[path.size()] = '\0';
+
+    if (!PathAppendW(buffer, component.c_str()))
+        return false;
+
+    path = wstring(buffer);
+    return true;
+}
+
+static bool followShortcuts(wstring& path)
+{
+    if (PathFileExists(path.c_str()))
+        return true;
+
+    // Do we have a shortcut?
+    path.append(TEXT(".lnk"));
+    if (!PathFileExists(path.c_str()))
+       return false;
+
+    // We have a shortcut, find its target.
+    COMPtr<IShellLink> shortcut(Create, CLSID_ShellLink);
+    if (!shortcut)
+       return false;
+    COMPtr<IPersistFile> persistFile(Query, shortcut);
+    if (!shortcut)
+        return false;
+    if (FAILED(persistFile->Load(path.c_str(), STGM_READ)))
+        return false;
+    if (FAILED(shortcut->Resolve(0, 0)))
+        return false;
+    WCHAR targetPath[MAX_PATH];
+    DWORD targetPathLen = _countof(targetPath);
+    if (FAILED(shortcut->GetPath(targetPath, targetPathLen, 0, 0)))
+        return false;
+    if (!PathFileExists(targetPath))
+        return false;
+    // Use the target path as the result path instead.
+    path = wstring(targetPath);
+
+    return true;
+}
+
+static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath)
+{
+    if (cygwinPath[0] != '/')
+        return false;
+
+    // Get the Root path.
+    WCHAR rootPath[MAX_PATH];
+    DWORD rootPathSize = _countof(rootPath);
+    DWORD keyType;
+    DWORD result = ::SHGetValueW(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Cygnus Solutions\\Cygwin\\mounts v2\\/"), TEXT("native"), &keyType, &rootPath, &rootPathSize);
+    
+    if (result != ERROR_SUCCESS || keyType != REG_SZ)
+        return false;
+
+    windowsPath = wstring(rootPath, rootPathSize);
+
+    int oldPos = 1;
+    while (1) {
+        int newPos = cygwinPath.find('/', oldPos);
+
+        if (newPos == -1) {
+            wstring pathComponent = cygwinPath.substr(oldPos);
+
+            if (!appendComponentToPath(windowsPath, pathComponent))
+               return false;
+
+            if (!followShortcuts(windowsPath))
+                return false;
+
+            break;
+        }
+
+        wstring pathComponent = cygwinPath.substr(oldPos, newPos - oldPos);
+        if (!appendComponentToPath(windowsPath, pathComponent))
+            return false;
+
+        if (!followShortcuts(windowsPath))
+            return false;
+
+        oldPos = newPos + 1;
+    }
+    return true;
+}
+
+static wstring cfStringRefToWString(CFStringRef cfStr)
+{
+    Vector<wchar_t> v(CFStringGetLength(cfStr));
+    CFStringGetCharacters(cfStr, CFRangeMake(0, CFStringGetLength(cfStr)), (UniChar *)v.data());
+
+    return wstring(v.data(), v.size());
+}
+
+void LayoutTestController::setUserStyleSheetLocation(JSStringRef jsURL)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));
+    RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(0, urlString.get(), 0));
+    if (!url)
+        return;
+
+    // Now copy the file system path, POSIX style.
+    RetainPtr<CFStringRef> pathCF(AdoptCF, CFURLCopyFileSystemPath(url.get(), kCFURLPOSIXPathStyle));
+    if (!pathCF)
+        return;
+
+    wstring path = cfStringRefToWString(pathCF.get());
+
+    wstring resultPath;
+    if (!resolveCygwinPath(path, resultPath))
+        return;
+
+    // The path has been resolved, now convert it back to a CFURL.
+    int result = WideCharToMultiByte(CP_UTF8, 0, resultPath.c_str(), resultPath.size() + 1, 0, 0, 0, 0);
+    Vector<char> utf8Vector(result);
+    result = WideCharToMultiByte(CP_UTF8, 0, resultPath.c_str(), resultPath.size() + 1, utf8Vector.data(), result, 0, 0);
+    if (!result)
+        return;
+
+    url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)utf8Vector.data(), utf8Vector.size() - 1, false);
+    if (!url)
+        return;
+
+    resultPath = cfStringRefToWString(CFURLGetString(url.get()));
+
+    BSTR resultPathBSTR = SysAllocStringLen(resultPath.data(), resultPath.size());
+    preferences->setUserStyleSheetLocation(resultPathBSTR);
+    SysFreeString(resultPathBSTR);
 }
 
 void LayoutTestController::setWindowIsKey(bool flag)
