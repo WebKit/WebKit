@@ -787,29 +787,31 @@ Arguments:
 Yield:        true when range returned; false when no more
 */
 
-static BOOL
-get_othercase_range(int *cptr, int d, int *ocptr, int *odptr)
+static bool get_othercase_range(int *cptr, int d, int *ocptr, int *odptr)
 {
-int c, othercase = 0, next;
-
-for (c = *cptr; c <= d; c++)
-  { if ((othercase = _pcre_ucp_othercase(c)) >= 0) break; }
-
-if (c > d) return false;
-
-*ocptr = othercase;
-next = othercase + 1;
-
-for (++c; c <= d; c++)
-  {
-  if (_pcre_ucp_othercase(c) != next) break;
-  next++;
-  }
-
-*odptr = next - 1;
-*cptr = c;
-
-return true;
+    int c, othercase = 0, next;
+    
+    for (c = *cptr; c <= d; c++) {
+        if ((othercase = _pcre_ucp_othercase(c)) >= 0)
+            break;
+    }
+    
+    if (c > d)
+        return false;
+    
+    *ocptr = othercase;
+    next = othercase + 1;
+    
+    for (++c; c <= d; c++) {
+        if (_pcre_ucp_othercase(c) != next)
+            break;
+        next++;
+    }
+    
+    *odptr = next - 1;
+    *cptr = c;
+    
+    return true;
 }
 
 

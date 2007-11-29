@@ -1,5 +1,14 @@
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        reformat get_othercase_range
+
+        * pcre/pcre_compile.cpp:
+        (get_othercase_range):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         Remove register keyword and more cleanup
