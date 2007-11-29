@@ -1,5 +1,17 @@
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+
+        Remove unused function could_be_empty_branch
+
+        * pcre/pcre_compile.cpp:
+        (first_significant_code):
+        (find_fixedlength):
+        (compile_branch):
+        (canApplyFirstCharOptimization):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Pass around MatchData objects by reference

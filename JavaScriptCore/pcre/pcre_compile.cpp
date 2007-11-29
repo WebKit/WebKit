@@ -436,7 +436,7 @@ for (;;)
     return code;
     }
   }
-/* Control never reaches here */
+    ASSERT_NOT_REACHED();
 }
 
 
@@ -598,145 +598,8 @@ for (;;)
     return -1;
     }
   }
-/* Control never gets here */
+    ASSERT_NOT_REACHED();
 }
-
-
-
-
-/*************************************************
-*    Scan compiled branch for non-emptiness      *
-*************************************************/
-
-/* This function scans through a branch of a compiled pattern to see whether it
-can match the empty string or not. It is called only from could_be_empty()
-below. Note that first_significant_code() skips over assertions. If we hit an
-unclosed bracket, we return "empty" - this means we've struck an inner bracket
-whose current branch will already have been scanned.
-
-Arguments:
-  code        points to start of search
-  endcode     points to where to stop
-
-Returns:      true if what is matched could be empty
-*/
-
-static bool
-could_be_empty_branch(const uschar *code, const uschar *endcode)
-{
-int c;
-for (code = first_significant_code(code + 1 + LINK_SIZE, true);
-     code < endcode;
-     code = first_significant_code(code + OP_lengths[c], true))
-  {
-  const uschar *ccode;
-
-  c = *code;
-
-  if (c >= OP_BRA)
-    {
-    bool empty_branch;
-    if (GET(code, 1) == 0) return true;    /* Hit unclosed bracket */
-
-    /* Scan a closed bracket */
-
-    empty_branch = false;
-    do
-      {
-      if (!empty_branch && could_be_empty_branch(code, endcode))
-        empty_branch = true;
-      code += GET(code, 1);
-      }
-    while (*code == OP_ALT);
-    if (!empty_branch) return false;   /* All branches are non-empty */
-    code += 1 + LINK_SIZE;
-    c = *code;
-    }
-
-  else switch (c)
-    {
-    /* Check for quantifiers after a class */
-
-    case OP_XCLASS:
-    ccode = code + GET(code, 1);
-    goto CHECK_CLASS_REPEAT;
-
-    case OP_CLASS:
-    case OP_NCLASS:
-    ccode = code + 33;
-
-    CHECK_CLASS_REPEAT:
-
-    switch (*ccode)
-      {
-      case OP_CRSTAR:            /* These could be empty; continue */
-      case OP_CRMINSTAR:
-      case OP_CRQUERY:
-      case OP_CRMINQUERY:
-      break;
-
-      default:                   /* Non-repeat => class must match */
-      case OP_CRPLUS:            /* These repeats aren't empty */
-      case OP_CRMINPLUS:
-      return false;
-
-      case OP_CRRANGE:
-      case OP_CRMINRANGE:
-      if (GET2(ccode, 1) > 0) return false;  /* Minimum > 0 */
-      break;
-      }
-    break;
-
-    /* Opcodes that must match a character */
-
-    case OP_NOT_DIGIT:
-    case OP_DIGIT:
-    case OP_NOT_WHITESPACE:
-    case OP_WHITESPACE:
-    case OP_NOT_WORDCHAR:
-    case OP_WORDCHAR:
-    case OP_ANY:
-    case OP_CHAR:
-    case OP_CHARNC:
-    case OP_ASCII_CHAR:
-    case OP_ASCII_LETTER_NC:
-    case OP_NOT:
-    case OP_PLUS:
-    case OP_MINPLUS:
-    case OP_EXACT:
-    case OP_NOTPLUS:
-    case OP_NOTMINPLUS:
-    case OP_NOTEXACT:
-    case OP_TYPEPLUS:
-    case OP_TYPEMINPLUS:
-    case OP_TYPEEXACT:
-    return false;
-
-    /* End of branch */
-
-    case OP_KET:
-    case OP_KETRMAX:
-    case OP_KETRMIN:
-    case OP_ALT:
-    return true;
-
-    /* In UTF-8 mode, STAR, MINSTAR, QUERY, MINQUERY, UPTO, and MINUPTO  may be
-    followed by a multibyte character */
-
-    case OP_STAR:
-    case OP_MINSTAR:
-    case OP_QUERY:
-    case OP_MINQUERY:
-    case OP_UPTO:
-    case OP_MINUPTO:
-    while ((code[2] & 0xc0) == 0x80) code++;
-    break;
-    }
-  }
-
-return true;
-}
-
 
 
 /*************************************************
@@ -751,8 +614,6 @@ Arguments:
   previous_callout   points to previous callout item
   ptr                current pattern pointer
   cd                 pointers to tables etc
-
-Returns:             nothing
 */
 
 static void complete_callout(uschar* previous_callout, const UChar* ptr, const CompileData& cd)
@@ -2006,6 +1867,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
     /* Control never reaches here by falling through, only by a goto for all the
      error states. Pass back the position in the pattern so that it can be displayed
      to the user for diagnosing the error. */
+    ASSERT_NOT_REACHED();
     
 FAILED:
     *ptrptr = ptr;
@@ -2251,8 +2113,6 @@ Arguments:
                   handles up to substring 31; after that we just have to take
                   the less precise approach
   backref_map    the back reference bitmap
-
-Returns:         true or false
 */
 
 static bool canApplyFirstCharOptimization(const uschar* code, unsigned int bracket_map, unsigned int backref_map)
@@ -2288,8 +2148,7 @@ static bool canApplyFirstCharOptimization(const uschar* code, unsigned int brack
         /* Move on to the next alternative */
         
         code += GET(code, 1);
-    }
-    while (*code == OP_ALT);  /* Loop for each alternative */
+    } while (*code == OP_ALT);  /* Loop for each alternative */
     return true;
 }
 
