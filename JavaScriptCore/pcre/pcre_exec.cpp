@@ -113,8 +113,8 @@ struct MatchData {
   int    offset_end;            /* One past the end */
   int    offset_max;            /* The maximum usable for return data */
   bool   offset_overflow;       /* Set if too many extractions */
-  UChar*  start_subject;         /* Start of the subject string */
-  UChar*  end_subject;           /* End of the subject string */
+  const UChar*  start_subject;         /* Start of the subject string */
+  const UChar*  end_subject;           /* End of the subject string */
   const UChar*  end_match_ptr;         /* Subject position at end match */
   int    end_offset_top;        /* Highwater mark at end of match */
   bool   multiline;
@@ -178,7 +178,7 @@ Returns:      true if matched
 
 static bool match_ref(int offset, const UChar* subjectPtr, int length, const MatchData& md)
 {
-    UChar* p = md.start_subject + md.offset_vector[offset];
+    const UChar* p = md.start_subject + md.offset_vector[offset];
     
 #ifdef DEBUG
     if (subjectPtr >= md.end_subject)
@@ -401,7 +401,7 @@ static inline void repeatInformationFromInstructionOffset(short instructionOffse
     maximumRepeats = maximumRepeatsFromInstructionOffset[instructionOffset];
 }
 
-static int match(UChar* subjectPtr, const uschar* instructionPtr, int offset_top, MatchData& md)
+static int match(const UChar* subjectPtr, const uschar* instructionPtr, int offset_top, MatchData& md)
 {
     int is_match = false;
     int min;
@@ -730,32 +730,17 @@ RECURSE:
                 BEGIN_OPCODE(NOT_WORD_BOUNDARY):
                 BEGIN_OPCODE(WORD_BOUNDARY):
             {
-                /* Find out if the previous and current characters are "word" characters.
-                 It takes a bit more work in UTF-8 mode. Characters > 128 are assumed to
-                 be "non-word" characters. */
+                bool currentCharIsWordChar = false;
+                bool previousCharIsWordChar = false;
                 
-                bool cur_is_word;
-                bool prev_is_word;
-                
-                if (stack.currentFrame->args.subjectPtr == md.start_subject)
-                    prev_is_word = false;
-                else {
-                    const UChar* lastptr = stack.currentFrame->args.subjectPtr - 1;
-                    while(isTrailingSurrogate(*lastptr))
-                        lastptr--;
-                    int c = getChar(lastptr);
-                    prev_is_word = isWordChar(c);
-                }
-                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
-                    cur_is_word = false;
-                else {
-                    int c = getChar(stack.currentFrame->args.subjectPtr);
-                    cur_is_word = isWordChar(c);
-                }
+                if (stack.currentFrame->args.subjectPtr > md.start_subject)
+                    previousCharIsWordChar = isWordChar(getPreviousChar(stack.currentFrame->args.subjectPtr));
+                if (stack.currentFrame->args.subjectPtr < md.end_subject)
+                    currentCharIsWordChar = isWordChar(getChar(stack.currentFrame->args.subjectPtr));
                 
                 /* Now see if the situation is what we want */
-                
-                if ((*stack.currentFrame->args.instructionPtr++ == OP_WORD_BOUNDARY) ? cur_is_word == prev_is_word : cur_is_word != prev_is_word)
+                bool wordBoundaryDesired = (*stack.currentFrame->args.instructionPtr++ == OP_WORD_BOUNDARY);
+                if (wordBoundaryDesired ? currentCharIsWordChar == previousCharIsWordChar : currentCharIsWordChar != previousCharIsWordChar)
                     RRETURN_NO_MATCH;
                 NEXT_OPCODE;
             }
@@ -765,10 +750,8 @@ RECURSE:
                 BEGIN_OPCODE(ANY_CHAR):
                 if (stack.currentFrame->args.subjectPtr < md.end_subject && isNewline(*stack.currentFrame->args.subjectPtr))
                     RRETURN_NO_MATCH;
-                if (stack.currentFrame->args.subjectPtr++ >= md.end_subject)
+                if (!movePtrToNextChar(stack.currentFrame->args.subjectPtr, md.end_subject))
                     RRETURN_NO_MATCH;
-                while (stack.currentFrame->args.subjectPtr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.subjectPtr))
-                    stack.currentFrame->args.subjectPtr++;
                 stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
@@ -1046,7 +1029,7 @@ RECURSE:
                             RRETURN;
                         if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                             break;        /* Stop if tried at original pos */
-                        BACKCHAR(stack.currentFrame->args.subjectPtr);
+                        movePtrToStartOfCurrentChar(stack.currentFrame->args.subjectPtr);
                     }
                     
                     RRETURN;
@@ -1136,7 +1119,7 @@ RECURSE:
                             RRETURN;
                         if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                             break;        /* Stop if tried at original pos */
-                        BACKCHAR(stack.currentFrame->args.subjectPtr)
+                        movePtrToStartOfCurrentChar(stack.currentFrame->args.subjectPtr);
                     }
                     RRETURN;
                 }
@@ -1466,7 +1449,7 @@ RECURSE:
                                 RRETURN;
                             if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                                 break;        /* Stop if tried at original pos */
-                            BACKCHAR(stack.currentFrame->args.subjectPtr);
+                            movePtrToStartOfCurrentChar(stack.currentFrame->args.subjectPtr);
                         }
                         
                         RRETURN;
@@ -1519,7 +1502,7 @@ RECURSE:
                                     RRETURN;
                                 if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                                     break;        /* Stop if tried at original pos */
-                                BACKCHAR(stack.currentFrame->args.subjectPtr);
+                                movePtrToStartOfCurrentChar(stack.currentFrame->args.subjectPtr);
                             }
                         }
                         
@@ -1575,26 +1558,25 @@ RECURSE:
                     switch(stack.currentFrame->locals.ctype) {
                         case OP_ANY_CHAR:
                             for (int i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || isNewline(*stack.currentFrame->args.subjectPtr))
+                                if (isNewline(*stack.currentFrame->args.subjectPtr))
                                     RRETURN_NO_MATCH;
-                                ++stack.currentFrame->args.subjectPtr;
-                                while (stack.currentFrame->args.subjectPtr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.subjectPtr))
-                                    stack.currentFrame->args.subjectPtr++;
+                                if (!movePtrToNextChar(stack.currentFrame->args.subjectPtr, md.end_subject))
+                                    RRETURN_NO_MATCH;
                             }
                             break;
                             
                             case OP_NOT_DIGIT:
                             for (int i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
+                                if (isASCIIDigit(*stack.currentFrame->args.subjectPtr))
                                     RRETURN_NO_MATCH;
-                                int c = getCharAndAdvance(stack.currentFrame->args.subjectPtr);
-                                if (isASCIIDigit(c))
+                                if (!movePtrToNextChar(stack.currentFrame->args.subjectPtr, md.end_subject))
                                     RRETURN_NO_MATCH;
                             }
                             break;
                             
                             case OP_DIGIT:
                             for (int i = 1; i <= min; i++) {
+                                // FIXME: Why do we advance the subjectPtr here but not in OP_WHITESPACE or OP_WORDCHAR ?
                                 if (stack.currentFrame->args.subjectPtr >= md.end_subject || !isASCIIDigit(*stack.currentFrame->args.subjectPtr++))
                                     RRETURN_NO_MATCH;
                                 /* No need to skip more bytes - we know it's a 1-byte character */
@@ -1603,9 +1585,10 @@ RECURSE:
                             
                             case OP_NOT_WHITESPACE:
                             for (int i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || isSpaceChar(*stack.currentFrame->args.subjectPtr))
+                                if (isSpaceChar(*stack.currentFrame->args.subjectPtr))
                                     RRETURN_NO_MATCH;
-                                while (++stack.currentFrame->args.subjectPtr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.subjectPtr)) { }
+                                if (!movePtrToNextChar(stack.currentFrame->args.subjectPtr, md.end_subject))
+                                    RRETURN_NO_MATCH;
                             }
                             break;
                             
@@ -1619,9 +1602,10 @@ RECURSE:
                             
                             case OP_NOT_WORDCHAR:
                             for (int i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || isWordChar(*stack.currentFrame->args.subjectPtr))
+                                if (isWordChar(*stack.currentFrame->args.subjectPtr))
                                     RRETURN_NO_MATCH;
-                                while (++stack.currentFrame->args.subjectPtr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.subjectPtr)) { }
+                                if (!movePtrToNextChar(stack.currentFrame->args.subjectPtr, md.end_subject))
+                                    RRETURN_NO_MATCH;
                             }
                             break;
                             
@@ -1820,7 +1804,7 @@ RECURSE:
                             RRETURN;
                         if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                             break;        /* Stop if tried at original pos */
-                        BACKCHAR(stack.currentFrame->args.subjectPtr);
+                        movePtrToStartOfCurrentChar(stack.currentFrame->args.subjectPtr);
                     }
                     
                     /* Get here if we can't make it match with any permitted repetitions */
@@ -1997,9 +1981,9 @@ int jsRegExpExecute(const JSRegExp* re,
     ASSERT(offsets || offsetcount == 0);
     
     MatchData match_block;
-    match_block.start_subject = (UChar*)subject;
+    match_block.start_subject = subject;
     match_block.end_subject = match_block.start_subject + length;
-    UChar* end_subject = match_block.end_subject;
+    const UChar* end_subject = match_block.end_subject;
     
     match_block.multiline = (re->options & PCRE_MULTILINE);
     match_block.ignoreCase = (re->options & OptionIgnoreCase);
@@ -2073,12 +2057,12 @@ int jsRegExpExecute(const JSRegExp* re,
     /* Loop for handling unanchored repeated matching attempts; for anchored regexs
      the loop runs just once. */
     
-    UChar* start_match = (UChar*)subject + start_offset;
-    UChar* req_byte_ptr = start_match - 1;
+    const UChar* start_match = subject + start_offset;
+    const UChar* req_byte_ptr = start_match - 1;
     bool useMultiLineFirstCharOptimization = re->options & OptionUseMultiLineFirstCharOptimization;
     
     do {
-        UChar* save_end_subject = end_subject;
+        const UChar* save_end_subject = end_subject;
         
         /* Reset the maximum number of extractions we might see. */
         
@@ -2148,7 +2132,7 @@ int jsRegExpExecute(const JSRegExp* re,
          */
         
         if (req_byte >= 0 && end_subject - start_match < REQ_BYTE_MAX) {
-            UChar* p = start_match + ((first_byte >= 0)? 1 : 0);
+            const UChar* p = start_match + ((first_byte >= 0) ? 1 : 0);
             
             /* We don't need to repeat the search if we haven't yet reached the
              place we found it at last time. */
@@ -2205,7 +2189,7 @@ int jsRegExpExecute(const JSRegExp* re,
         
         if (returnCode == MATCH_NOMATCH) {
             start_match++;
-            while(start_match < end_subject && isTrailingSurrogate(*start_match))
+            if (start_match < end_subject && isTrailingSurrogate(*start_match))
                 start_match++;
             continue;
         }
@@ -2230,7 +2214,7 @@ int jsRegExpExecute(const JSRegExp* re,
             delete [] match_block.offset_vector;
         }
         
-        returnCode = match_block.offset_overflow? 0 : match_block.end_offset_top/2;
+        returnCode = match_block.offset_overflow ? 0 : match_block.end_offset_top / 2;
         
         if (offsetcount < 2)
             returnCode = 0;

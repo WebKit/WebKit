@@ -2,6 +2,21 @@
 
         Reviewed by Maciej.
 
+        Centralize code for subjectPtr adjustments using inlines, only ever check for a single trailing surrogate (as UTF16 only allows one), possibly fix PCRE bugs involving char classes and garbled UTF16 strings.
+
+        * pcre/pcre_exec.cpp:
+        (match):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+        (getPreviousChar):
+        (movePtrToPreviousChar):
+        (movePtrToNextChar):
+        (movePtrToStartOfCurrentChar):
+
+2007-11-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
         change getChar* functions to return result and push 'c' into local scopes for clarity
 
         * pcre/pcre_compile.cpp:

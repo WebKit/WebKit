@@ -307,7 +307,39 @@ static inline int getCharAndAdvanceIfSurrogate(const UChar*& subjectPtr, const U
     return c;
 }
 
-#define BACKCHAR(subjectPtr) while(isTrailingSurrogate(*subjectPtr)) subjectPtr--;
+static inline int getPreviousChar(const UChar* subjectPtr)
+{
+    int valueAtSubjectMinusOne = subjectPtr[-1];
+    if (isTrailingSurrogate(valueAtSubjectMinusOne))
+        return decodeSurrogatePair(subjectPtr[-2], valueAtSubjectMinusOne);
+    return valueAtSubjectMinusOne;
+}
+
+static inline void movePtrToPreviousChar(const UChar*& subjectPtr)
+{
+    subjectPtr--;
+    if (isTrailingSurrogate(*subjectPtr))
+        subjectPtr--;
+}
+
+static inline bool movePtrToNextChar(const UChar*& subjectPtr, const UChar* endSubject)
+{
+    if (subjectPtr < endSubject) {
+        subjectPtr++;
+        if (subjectPtr < endSubject && isTrailingSurrogate(*subjectPtr)) {
+            subjectPtr++;
+            return subjectPtr < endSubject;
+        }
+        return true;
+    }
+    return false;
+}
+
+static inline void movePtrToStartOfCurrentChar(const UChar*& subjectPtr)
+{
+    if (isTrailingSurrogate(*subjectPtr))
+        subjectPtr--;
+}
 
 // FIXME: These are really more of a "regexp state" than "regexp options"
 enum PCREOptions {
@@ -566,6 +598,7 @@ static inline uschar charTypeForChar(uschar c)
 
 static inline bool isWordChar(UChar c)
 {
+    /* UTF8 Characters > 128 are assumed to be "non-word" characters. */
     return (c < 128 && (charTypeForChar(c) & ctype_word));
 }
 
