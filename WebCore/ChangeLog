@@ -1,3 +1,14 @@
+2007-11-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5620151> Disable JavaScript for SVG as 
+        image for <img> and CSS images
+
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): When we create the empty clients, 
+        explicitly disable JavaScript in the settings.
+
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
