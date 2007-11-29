@@ -26,6 +26,20 @@
 
 2007-11-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Mitz & Maciej.
+
+        Change _NC operators to use _IGNORING_CASE for clarity
+
+        * pcre/pcre_compile.cpp:
+        (find_fixedlength):
+        (compile_branch):
+        (find_firstassertedchar):
+        * pcre/pcre_exec.cpp:
+        (match):
+        * pcre/pcre_internal.h:
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Mitz.
 
         Remove branch from return

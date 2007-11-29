@@ -525,7 +525,7 @@ static int find_fixedlength(uschar* code, int options)
                 /* Handle literal characters */
                 
             case OP_CHAR:
-            case OP_CHARNC:
+            case OP_CHAR_IGNORING_CASE:
             case OP_NOT:
                 branchlength++;
                 cc += 2;
@@ -534,7 +534,7 @@ static int find_fixedlength(uschar* code, int options)
                 break;
                 
             case OP_ASCII_CHAR:
-            case OP_ASCII_LETTER_NC:
+            case OP_ASCII_LETTER_IGNORING_CASE:
                 branchlength++;
                 cc += 2;
                 break;
@@ -1261,7 +1261,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  the first thing in a branch because the x will have gone into firstbyte
                  instead.  */
                 
-                if (*previous == OP_CHAR || *previous == OP_CHARNC) {
+                if (*previous == OP_CHAR || *previous == OP_CHAR_IGNORING_CASE) {
                     /* Deal with UTF-8 characters that take up more than one byte. It's
                      easier to write this out separately than try to macrify it. Use c to
                      hold the length of the character in bytes, plus 0x80 to flag that it's a
@@ -1284,7 +1284,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     goto OUTPUT_SINGLE_REPEAT;   /* Code shared with single character types */
                 }
                 
-                else if (*previous == OP_ASCII_CHAR || *previous == OP_ASCII_LETTER_NC) {
+                else if (*previous == OP_ASCII_CHAR || *previous == OP_ASCII_LETTER_IGNORING_CASE) {
                     c = previous[1];
                     if (repeat_min > 1)
                         reqbyte = c | req_caseopt | cd.req_varyopt;
@@ -1812,7 +1812,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     mcbuffer[0] = c;
                     
                     if ((options & OptionIgnoreCase) && (c | 0x20) >= 'a' && (c | 0x20) <= 'z') {
-                        *code++ = OP_ASCII_LETTER_NC;
+                        *code++ = OP_ASCII_LETTER_IGNORING_CASE;
                         *code++ = c | 0x20;
                     } else {
                         *code++ = OP_ASCII_CHAR;
@@ -1821,7 +1821,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                 } else {
                     mclength = _pcre_ord2utf8(c, mcbuffer);
                     
-                    *code++ = ((options & OptionIgnoreCase) != 0)? OP_CHARNC : OP_CHAR;
+                    *code++ = (options & OptionIgnoreCase) ? OP_CHAR_IGNORING_CASE : OP_CHAR;
                     for (c = 0; c < mclength; c++)
                         *code++ = mcbuffer[c];
                 }
@@ -2193,9 +2193,9 @@ static int find_firstassertedchar(const uschar* code, int options, bool inassert
             scode += 2;
             
         case OP_CHAR:
-        case OP_CHARNC:
+        case OP_CHAR_IGNORING_CASE:
         case OP_ASCII_CHAR:
-        case OP_ASCII_LETTER_NC:
+        case OP_ASCII_LETTER_IGNORING_CASE:
         case OP_PLUS:
         case OP_MINPLUS:
             if (!inassert)

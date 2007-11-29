@@ -1167,7 +1167,7 @@ RECURSE:
                 
                 /* Match a single character, caselessly */
                 
-                BEGIN_OPCODE(CHARNC):
+                BEGIN_OPCODE(CHAR_IGNORING_CASE):
                 stack.currentFrame->locals.length = 1;
                 stack.currentFrame->args.instructionPtr++;
                 getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.instructionPtr, stack.currentFrame->locals.length);
@@ -1208,7 +1208,7 @@ RECURSE:
                 
                 /* Match one of two cases of an ASCII character. */
                 
-                BEGIN_OPCODE(ASCII_LETTER_NC):
+                BEGIN_OPCODE(ASCII_LETTER_IGNORING_CASE):
                 if (md.end_subject == stack.currentFrame->args.subjectPtr)
                     RRETURN_NO_MATCH;
                 if ((*stack.currentFrame->args.subjectPtr | 0x20) != stack.currentFrame->args.instructionPtr[1])

@@ -383,9 +383,9 @@ must also be updated to match. */
     macro(CIRC) \
     macro(DOLL) \
     macro(CHAR) \
-    macro(CHARNC) \
+    macro(CHAR_IGNORING_CASE) \
     macro(ASCII_CHAR) \
-    macro(ASCII_LETTER_NC) \
+    macro(ASCII_LETTER_IGNORING_CASE) \
     macro(NOT) \
     \
     macro(STAR) \
