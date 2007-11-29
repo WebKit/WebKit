@@ -2,6 +2,23 @@
 
         Reviewed by Sam.
 
+        give PCRE_STARTLINE a better name and rename match_data to MatchData
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (canApplyFirstCharOptimization):
+        (find_firstassertedchar):
+        (printCompiledRegExp):
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (pchars):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Clean up find_firstassertedchar
 
         * pcre/pcre_compile.cpp:
