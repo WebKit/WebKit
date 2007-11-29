@@ -1,4 +1,4 @@
-This tests that a javascript: URL loaded in an iframe inside another javascipt: URL loaded iframe has access to it's parent, the first javascript: URL loaded iframe.
+This tests that a javascript: URL loaded in an iframe inside another javascript: URL loaded iframe has access to it's parent, the first javascript: URL loaded iframe.
 
 
 

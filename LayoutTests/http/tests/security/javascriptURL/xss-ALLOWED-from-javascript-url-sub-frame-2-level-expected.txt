@@ -1,4 +1,4 @@
-This tests that a javascript: URL loaded in an iframe inside another javascipt: URL loaded iframe has access to the main frame.
+This tests that a javascript: URL loaded in an iframe inside another javascript: URL loaded iframe has access to the main frame.
 
 
 PASS: Cross frame access from a javascript: URL inside another javascript: URL was allowed!
