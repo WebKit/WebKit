@@ -1,3 +1,14 @@
+2007-11-28  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Geoff
+
+        Add copyKeysToVector utility, mirroring copyValuesToVector
+        Also change the copyValuesToVector implementation to be a little more attractive
+
+        * wtf/HashMap.h:
+        (WTF::copyKeysToVector):
+        (WTF::copyValuesToVector):
+
 2007-11-27  Alp Toker  <alp@atoker.com>
 
         Reviewed by Mark Rowe.

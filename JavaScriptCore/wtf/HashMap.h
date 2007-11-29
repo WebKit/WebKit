@@ -394,16 +394,29 @@ namespace WTF {
     }
     
     template<typename T, typename U, typename V, typename W, typename X>
-    inline void copyValuesToVector(const HashMap<T, U, V, W, X>& collection, Vector<U>& vector)
+    inline void copyKeysToVector(const HashMap<T, U, V, W, X>& collection, Vector<T>& vector)
     {
-        typedef typename HashMap<T, U, V, W, X>::const_iterator iterator;
+        typedef typename HashMap<T, U, V, W, X>::const_iterator::Keys iterator;
         
         vector.resize(collection.size());
         
-        iterator it = collection.begin();
-        iterator end = collection.end();
+        iterator it = collection.begin().keys();
+        iterator end = collection.end().keys();
         for (unsigned i = 0; it != end; ++it, ++i)
-            vector[i] = (*it).second;
+            vector[i] = *it;
+    }  
+
+    template<typename T, typename U, typename V, typename W, typename X>
+    inline void copyValuesToVector(const HashMap<T, U, V, W, X>& collection, Vector<U>& vector)
+    {
+        typedef typename HashMap<T, U, V, W, X>::const_iterator::Values iterator;
+        
+        vector.resize(collection.size());
+        
+        iterator it = collection.begin().values();
+        iterator end = collection.end().values();
+        for (unsigned i = 0; it != end; ++it, ++i)
+            vector[i] = *it;
     }   
 
 } // namespace WTF
