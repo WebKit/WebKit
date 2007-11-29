@@ -124,13 +124,13 @@ typedef struct match_data {
   int    offset_max;            /* The maximum usable for return data */
   const uschar *lcc;            /* Points to lower casing table */
   const uschar *ctypes;         /* Points to table of type maps */
-  BOOL   offset_overflow;       /* Set if too many extractions */
+  bool   offset_overflow;       /* Set if too many extractions */
   UChar*  start_subject;         /* Start of the subject string */
   UChar*  end_subject;           /* End of the subject string */
   UChar*  end_match_ptr;         /* Subject position at end match */
   int    end_offset_top;        /* Highwater mark at end of match */
-  BOOL   multiline;
-  BOOL   caseless;
+  bool   multiline;
+  bool   caseless;
 } match_data;
 
 #define match_isgroup      true    /* Set if start of bracketed group */
@@ -166,7 +166,7 @@ Returns:     nothing
 */
 
 static void
-pchars(const UChar* p, int length, BOOL is_subject, match_data *md)
+pchars(const UChar* p, int length, bool is_subject, match_data *md)
 {
 int c;
 if (is_subject && length > md->end_subject - p) length = md->end_subject - p;
@@ -195,7 +195,7 @@ Arguments:
 Returns:      true if matched
 */
 
-static BOOL
+static bool
 match_ref(int offset, UChar* eptr, int length, match_data *md)
 {
 UChar* p = md->start_subject + md->offset_vector[offset];
@@ -411,11 +411,11 @@ static int match(UChar* eptr, const uschar* ecode, int offset_top, match_data* m
     
     unsigned rdepth = 0;
     
-    BOOL cur_is_word;
-    BOOL prev_is_word;
-    BOOL is_group_start = true;
+    bool cur_is_word;
+    bool prev_is_word;
+    bool is_group_start = true;
     int min;
-    BOOL minimize = false; /* Initialization not really needed, but some compilers think so. */
+    bool minimize = false; /* Initialization not really needed, but some compilers think so. */
     
     MatchStack stack;
 
@@ -2085,7 +2085,7 @@ int jsRegExpExecute(const JSRegExp* re,
     
     int ocount = offsetcount - (offsetcount % 3);
     
-    BOOL using_temporary_offsets = false;
+    bool using_temporary_offsets = false;
     if (re->top_backref > 0 && re->top_backref >= ocount/3) {
         ocount = re->top_backref * 3 + 3;
         match_block.offset_vector = new int[ocount];
@@ -2124,7 +2124,7 @@ int jsRegExpExecute(const JSRegExp* re,
      an unanchored pattern, of course. If there's no first char and the pattern was
      studied, there may be a bitmap of possible first characters. */
     
-    BOOL first_byte_caseless = false;
+    bool first_byte_caseless = false;
     int first_byte = -1;
     if (re->options & PCRE_FIRSTSET) {
         first_byte = re->first_byte & 255;
@@ -2135,7 +2135,7 @@ int jsRegExpExecute(const JSRegExp* re,
     /* For anchored or unanchored matches, there may be a "last known required
      character" set. */
     
-    BOOL req_byte_caseless = false;
+    bool req_byte_caseless = false;
     int req_byte = -1;
     int req_byte2 = -1;
     if (re->options & PCRE_REQCHSET) {

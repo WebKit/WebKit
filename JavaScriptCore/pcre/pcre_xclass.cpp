@@ -73,9 +73,9 @@ static inline void getUTF8CharAndAdvancePointer(int& c, const uschar*& eptr)
     }
 }
 
-BOOL _pcre_xclass(int c, const uschar* data)
+bool _pcre_xclass(int c, const uschar* data)
 {
-    BOOL negated = (*data & XCL_NOT);
+    bool negated = (*data & XCL_NOT);
     
     /* Character values < 256 are matched against a bitmap, if one is present. If
      not, we still carry on, because there may be ranges that start below 256 in the

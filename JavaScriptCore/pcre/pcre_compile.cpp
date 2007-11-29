@@ -130,7 +130,7 @@ static const char* error_text(ErrorCode code)
 
 /* Definition to allow mutual recursion */
 
-static BOOL
+static bool
   compile_regex(int, int *, uschar **, const UChar**, const UChar*, ErrorCode*, int,
     int *, int *, compile_data *);
 
@@ -158,7 +158,7 @@ Returns:         zero or positive => a data character
 
 static int
 check_escape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int bracount,
-  BOOL isclass)
+  bool isclass)
 {
 const UChar* ptr = *ptrptr + 1;
 int i;
@@ -304,7 +304,7 @@ Arguments:
 Returns:    true or false
 */
 
-static BOOL
+static bool
 is_counted_repeat(const UChar* p, const UChar* patternEnd)
 {
 if (p >= patternEnd || !isASCIIDigit(*p))
@@ -413,7 +413,7 @@ Returns:       pointer to the first significant opcode
 */
 
 static const uschar*
-first_significant_code(const uschar *code, BOOL skipassert)
+first_significant_code(const uschar *code, bool skipassert)
 {
 for (;;)
   {
@@ -623,7 +623,7 @@ Arguments:
 Returns:      true if what is matched could be empty
 */
 
-static BOOL
+static bool
 could_be_empty_branch(const uschar *code, const uschar *endcode)
 {
 int c;
@@ -637,7 +637,7 @@ for (code = first_significant_code(code + 1 + LINK_SIZE, true);
 
   if (c >= OP_BRA)
     {
-    BOOL empty_branch;
+    bool empty_branch;
     if (GET(code, 1) == 0) return true;    /* Hit unclosed bracket */
 
     /* Scan a closed bracket */
@@ -833,7 +833,7 @@ Returns:         true on success
                  false, with *errorcodeptr set non-zero on error
 */
 
-static BOOL
+static bool
 compile_branch(int options, int *brackets, uschar **codeptr,
                const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int *firstbyteptr,
                int *reqbyteptr, compile_data *cd)
@@ -846,14 +846,14 @@ compile_branch(int options, int *brackets, uschar **codeptr,
     int c;
     uschar *code = *codeptr;
     uschar *tempcode;
-    BOOL groupsetfirstbyte = false;
+    bool groupsetfirstbyte = false;
     const UChar* ptr = *ptrptr;
     const UChar* tempptr;
     uschar *previous = NULL;
     uschar *previous_callout = NULL;
     uschar classbits[32];
     
-    BOOL class_utf8;
+    bool class_utf8;
     uschar *class_utf8data;
     uschar utf8_char[6];
     
@@ -883,9 +883,9 @@ compile_branch(int options, int *brackets, uschar **codeptr,
     
     for (;; ptr++)
     {
-        BOOL negate_class;
-        BOOL should_flip_negation; /* If a negative special such as \S is used, we should negate the whole class to properly support Unicode. */
-        BOOL is_quantifier;
+        bool negate_class;
+        bool should_flip_negation; /* If a negative special such as \S is used, we should negate the whole class to properly support Unicode. */
+        bool is_quantifier;
         int class_charcount;
         int class_lastchar;
         int skipbytes;
@@ -2021,7 +2021,7 @@ Argument:
 Returns:      true on success
 */
 
-static BOOL
+static bool
 compile_regex(int options, int* brackets, uschar** codeptr,
               const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int skipbytes,
               int* firstbyteptr, int* reqbyteptr, compile_data* cd)
@@ -2175,7 +2175,7 @@ Arguments:
 Returns:     true or false
 */
 
-static BOOL
+static bool
 is_anchored(const uschar *code, int options, unsigned int bracket_map,
   unsigned int backref_map)
 {
@@ -2235,7 +2235,7 @@ Arguments:
 Returns:         true or false
 */
 
-static BOOL
+static bool
 is_startline(const uschar *code, unsigned int bracket_map,
   unsigned int backref_map)
 {
@@ -2302,7 +2302,7 @@ Returns:     -1 or the fixed first char
 */
 
 static int
-find_firstassertedchar(const uschar *code, int options, BOOL inassert)
+find_firstassertedchar(const uschar *code, int options, bool inassert)
 {
 int c = -1;
 do {
@@ -2364,8 +2364,8 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
     int branch_extra = 0;
     int branch_newextra;
     int lastitemlength = 0;
-    BOOL class_utf8;
-    BOOL capturing;
+    bool class_utf8;
+    bool capturing;
     unsigned int brastackptr = 0;
     int brastack[BRASTACK_SIZE];
     uschar bralenstack[BRASTACK_SIZE];

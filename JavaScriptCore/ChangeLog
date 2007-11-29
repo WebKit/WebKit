@@ -1,5 +1,21 @@
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        removing more macros
+
+        * pcre/pcre_compile.cpp:
+        (could_be_empty_branch):
+        (compile_branch):
+        (calculateCompiledPatternLengthAndFlags):
+        * pcre/pcre_exec.cpp:
+        (match):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+        * pcre/pcre_xclass.cpp:
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         clean up formating in compile_branch

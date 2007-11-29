@@ -292,12 +292,14 @@ static inline void getChar(int& c, const UChar* eptr)
 
 #define BACKCHAR(eptr) while(isTrailingSurrogate(*eptr)) eptr--;
 
-#define PCRE_FIRSTSET      0x40000000  /* first_byte is set */
-#define PCRE_REQCHSET      0x20000000  /* req_byte is set */
-#define PCRE_STARTLINE     0x10000000  /* start after \n for multiline */
-#define PCRE_ANCHORED      0x02000000  /* can't use partial with this regex */
-#define PCRE_CASELESS      0x00000001
-#define PCRE_MULTILINE     0x00000002
+enum PCREOptions {
+    PCRE_FIRSTSET = 0x40000000,  /* first_byte is set */
+    PCRE_REQCHSET = 0x20000000,  /* req_byte is set */
+    PCRE_STARTLINE = 0x10000000,  /* start after \n for multiline */
+    PCRE_ANCHORED = 0x02000000,  /* can't use partial with this regex */
+    PCRE_CASELESS = 0x00000001,
+    PCRE_MULTILINE = 0x00000002
+};
 
 /* Negative values for the firstchar and reqchar variables */
 
@@ -316,8 +318,6 @@ variable-length repeat, or a anything other than literal characters. */
 #define REQ_VARY     0x0200    /* reqbyte followed non-literal item */
 
 /* Miscellaneous definitions */
-
-typedef int BOOL;
 
 /* Flag bits and data types for the extended class (OP_XCLASS) for classes that
 contain UTF-8 characters with values greater than 255. */
@@ -562,9 +562,9 @@ typedef struct compile_data {
 one of the exported public functions. They have to be "external" in the C
 sense, but are not part of the PCRE public API. */
 
-extern int         _pcre_ord2utf8(int, uschar *);
+extern int         _pcre_ord2utf8(int, uschar*);
 extern int         _pcre_ucp_othercase(const unsigned int);
-extern BOOL        _pcre_xclass(int, const uschar *);
+extern bool        _pcre_xclass(int, const uschar*);
 
 static inline bool isNewline(UChar nl)
 {
