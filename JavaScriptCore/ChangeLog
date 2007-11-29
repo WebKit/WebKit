@@ -1,3 +1,14 @@
+2007-11-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        Remove match_is_group variable for another 5% speedup
+
+        * pcre/pcre_compile.cpp:
+        * pcre/pcre_exec.cpp:
+        (startNewGroup):
+        (match):
+
 2007-11-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.

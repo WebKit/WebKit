@@ -7,6 +7,7 @@ needed by JavaScriptCore and the rest of WebKit.
                  Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
     Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
