@@ -1,3 +1,13 @@
+2007-11-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Section off MatchData arguments into args struct
+
+        * pcre/pcre_exec.cpp:
+        (MatchStack::pushNewFrame):
+        (match):
+
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.
