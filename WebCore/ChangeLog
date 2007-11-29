@@ -1,3 +1,58 @@
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Support for <rdar://problem/5556381> and <rdar://problem/5556379>
+
+        The Database feature in the engine needs to support delegate calls for policy decisions and
+        also provide notifications when origins and databases change their state.
+
+        This patch also polishes off the missing features of the management API
+
+        * page/Chrome.cpp: Implement the two UIDelegate methods
+        (WebCore::Chrome::requestQuotaIncreaseForNewDatabase): Ask for more space to create a new database if it won't fit
+        (WebCore::Chrome::requestQuotaIncreaseForDatabaseOperation): Ask for more space to complete an in-progress operation
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebCore::SVGEmptyChromeClient::requestQuotaIncreaseForDatabaseOperation):
+
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase): Check to see if this database can be opened - the quota must be high 
+          enough and if it isn't, the UIDelegate should have a change to bump the quota.
+          Also update the UI-relevant details (display name and estimated size) upon successful opening of the database
+
+        * storage/DatabaseDetails.h: Remove the version parameter as it is a programatic detail of a
+          site database and is not important to API clients
+        (WebCore::DatabaseDetails::DatabaseDetails):
+        (WebCore::DatabaseDetails::isValid):
+        (WebCore::DatabaseDetails::name):
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::openTrackerDatabase): Tweaked the schema here - there was a horrible bug with the old schema that would
+          prevent you from having two databases of the same name from two different origins.  Also simplify the origin-management schema
+        (WebCore::DatabaseTracker::canEstablishDatabase): Added.  Does some estimated size vs quota checks, and asks the UI delegate for 
+          more space if necessary
+        (WebCore::DatabaseTracker::hasEntryForOrigin):
+        (WebCore::DatabaseTracker::establishEntryForOrigin): Establishes a tracker entry for the given origin with the current default quota
+          Also notifies the client of the new origin
+        (WebCore::DatabaseTracker::setDatabaseDetails): Update the display name and estimated size for the given database
+        (WebCore::DatabaseTracker::fullPathForDatabase): Tweak to add the ability to get the path without creating it - for management purposes
+        (WebCore::DatabaseTracker::populateOrigins): Populate origins from the Origins table instead of the Databases table
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin): For API management
+        (WebCore::DatabaseTracker::usageForDatabase):
+        (WebCore::DatabaseTracker::usageForOrigin):
+        (WebCore::DatabaseTracker::quotaForOrigin):
+        (WebCore::DatabaseTracker::setQuota): Notify the client
+        (WebCore::DatabaseTracker::addDatabase): Notify the client 
+        (WebCore::DatabaseTracker::deleteAllDatabases):
+        (WebCore::DatabaseTracker::deleteDatabasesWithOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        * storage/DatabaseTracker.h:
+
 2007-11-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin and Darin Adler.

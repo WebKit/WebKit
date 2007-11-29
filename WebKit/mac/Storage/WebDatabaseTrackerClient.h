@@ -35,7 +35,7 @@ public:
     
     virtual ~WebDatabaseTrackerClient();
     virtual void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&);
-    virtual void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WebCore::String& databaseName);
+    virtual void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WebCore::String& databaseIdentifier);
 private:
     WebDatabaseTrackerClient();
 };

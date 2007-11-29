@@ -1,3 +1,12 @@
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
+        Keep it building with new client method
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebKit::ChromeClient::requestQuotaIncreaseForDatabaseOperation):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2007-11-26  Alp Toker  <alp@atoker.com>
 
         Reviewed by Adam Roben.

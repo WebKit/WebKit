@@ -45,7 +45,7 @@ const NSString *WebDatabaseUsageKey = @"WebDatabaseUsageKey";
 
 const NSString *WebDatabaseDidModifyOriginNotification = @"WebDatabaseDidModifyOriginNotification";
 const NSString *WebDatabaseDidModifyDatabaseNotification = @"WebDatabaseDidModifyDatabaseNotification";
-const NSString *WebDatabaseNameKey = @"WebDatabaseNameKey";
+const NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
 @implementation WebDatabaseManager
 
@@ -84,16 +84,16 @@ const NSString *WebDatabaseNameKey = @"WebDatabaseNameKey";
     return [names autorelease];
 }
 
-- (NSDictionary *)detailsForDatabase:(NSString *)databaseName withOrigin:(WebSecurityOrigin *)origin
+- (NSDictionary *)detailsForDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
     static id keys[3] = {WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey};
     
-    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, *[origin _core]);
+    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
     if (!details.isValid())
         return nil;
         
     id objects[3];
-    objects[0] = details.displayName().isEmpty() ? databaseName : (NSString *)details.displayName();
+    objects[0] = details.displayName().isEmpty() ? databaseIdentifier : (NSString *)details.displayName();
     objects[1] = [NSNumber numberWithUnsignedLongLong:details.expectedUsage()];
     objects[2] = [NSNumber numberWithUnsignedLongLong:details.currentUsage()];
     
@@ -110,9 +110,9 @@ const NSString *WebDatabaseNameKey = @"WebDatabaseNameKey";
     DatabaseTracker::tracker().deleteDatabasesWithOrigin(*[origin _core]);
 }
 
-- (void)deleteDatabase:(NSString *)databaseName withOrigin:(WebSecurityOrigin *)origin
+- (void)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    DatabaseTracker::tracker().deleteDatabase(*[origin _core], databaseName);
+    DatabaseTracker::tracker().deleteDatabase(*[origin _core], databaseIdentifier);
 }
 
 @end

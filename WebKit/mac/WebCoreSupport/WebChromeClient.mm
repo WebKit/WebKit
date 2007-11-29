@@ -36,6 +36,8 @@
 #import "WebHTMLView.h"
 #import "WebHTMLViewPrivate.h"
 #import "WebNSURLRequestExtras.h"
+#import "WebSecurityOriginPrivate.h"
+#import "WebSecurityOriginInternal.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
@@ -410,12 +412,19 @@ void WebChromeClient::print(Frame* frame)
     CallUIDelegate(m_webView, @selector(webView:printFrameView:), frameView);
 }
 
-bool WebChromeClient::runDatabaseSizeLimitPrompt(Frame* frame, const String& origin)
+unsigned long long WebChromeClient::requestQuotaIncreaseForNewDatabase(WebCore::Frame*, const WebCore::SecurityOriginData& origin, const WebCore::String& databaseDisplayName, unsigned long long estimatedSize)
 {
-    id delegate = [m_webView UIDelegate];
-    SEL selector = @selector(webView:runDatabaseSizeLimitPromptForOrigin:initiatedByFrame:);
-    if ([delegate respondsToSelector:selector])
-        return CallUIDelegateReturningBoolean(NO, m_webView, selector, (NSString *)origin, kit(frame));
-
-    return NO;
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:reinterpret_cast<const WebCoreSecurityOriginData*>(&origin)];
+    unsigned long long result = CallUIDelegateReturningUnsignedLongLong(m_webView, @selector(webView:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:), webOrigin, (NSString *)databaseDisplayName, estimatedSize);
+    [webOrigin release];
+    return result;
 }
+
+unsigned long long WebChromeClient::requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, const WebCore::SecurityOriginData& origin, const WebCore::String& databaseIdentifier, unsigned long long proposedNewQuota)
+{
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:reinterpret_cast<const WebCoreSecurityOriginData*>(&origin)];
+    unsigned long long result = CallUIDelegateReturningUnsignedLongLong(m_webView, @selector(webView:quotaForSecurityOrigin:toCreateDatabase:withEstimatedSize:), webOrigin, proposedNewQuota, (NSString *)databaseIdentifier);
+    [webOrigin release];
+    return result;
+}
+    

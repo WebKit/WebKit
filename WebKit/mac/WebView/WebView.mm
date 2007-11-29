@@ -4245,6 +4245,34 @@ static inline float CallDelegateReturningFloat(WebView *self, id delegate, SEL s
     return 0.0f;
 }
 
+static inline unsigned long long CallDelegateReturningUnsignedLongLong(WebView *self, id delegate, SEL selector, id object1, id object2, unsigned long long integer)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return 0;
+    if (!self->_private->catchesDelegateExceptions)
+        return static_cast<unsigned long long>(objc_msgSend_fpret(delegate, selector, self, object1, object2, integer));
+    @try {
+        return static_cast<unsigned long long>(objc_msgSend_fpret(delegate, selector, self, object1, object2, integer));
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return 0;
+}
+
+static inline unsigned long long CallDelegateReturningUnsignedLongLong(WebView *self, id delegate, SEL selector, id object1, unsigned long long integer, id object2)
+{
+    if (!delegate || ![delegate respondsToSelector:selector])
+        return 0;
+    if (!self->_private->catchesDelegateExceptions)
+        return static_cast<unsigned long long>(objc_msgSend_fpret(delegate, selector, self, object1, integer, object2));
+    @try {
+        return static_cast<unsigned long long>(objc_msgSend_fpret(delegate, selector, self, object1, integer, object2));
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return 0;
+}
+
 static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id delegate, SEL selector)
 {
     if (!delegate || ![delegate respondsToSelector:selector])
@@ -4451,6 +4479,16 @@ id CallUIDelegate(WebView *self, SEL selector, id object, NSUInteger integer)
 float CallUIDelegateReturningFloat(WebView *self, SEL selector)
 {
     return CallDelegateReturningFloat(self, self->_private->UIDelegate, selector);
+}
+
+unsigned long long CallUIDelegateReturningUnsignedLongLong(WebView *self, SEL selector, id object1, id object2, unsigned long long integer)
+{
+    return CallDelegateReturningUnsignedLongLong(self, self->_private->UIDelegate, selector, object1, object2, integer);
+}
+
+unsigned long long CallUIDelegateReturningUnsignedLongLong(WebView *self, SEL selector, id object1, unsigned long long integer, id object2)
+{
+    return CallDelegateReturningUnsignedLongLong(self, self->_private->UIDelegate, selector, object1, integer, object2);
 }
 
 BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector)

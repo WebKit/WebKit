@@ -342,11 +342,15 @@ void Chrome::print(Frame* frame)
     m_client->print(frame);
 }
 
-bool Chrome::runDatabaseSizeLimitPrompt(Frame* f, const String& origin)
+unsigned long long Chrome::requestQuotaIncreaseForNewDatabase(Frame* frame, const SecurityOriginData& origin, const String& databaseDisplayName, unsigned long long estimatedSize)
 {
-    return m_client->runDatabaseSizeLimitPrompt(f, origin);
+    return m_client->requestQuotaIncreaseForNewDatabase(frame, origin, databaseDisplayName, estimatedSize);
 }
 
+unsigned long long Chrome::requestQuotaIncreaseForDatabaseOperation(Frame* frame, const SecurityOriginData& origin, const String& databaseIdentifier, unsigned long long proposedNewQuota)
+{
+    return m_client->requestQuotaIncreaseForDatabaseOperation(frame, origin, databaseIdentifier, proposedNewQuota);
+}
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 {

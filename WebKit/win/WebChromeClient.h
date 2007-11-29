@@ -98,7 +98,8 @@ public:
 
     virtual void print(WebCore::Frame*);
 
-    virtual bool runDatabaseSizeLimitPrompt(WebCore::Frame*, const WebCore::String& origin);
+    virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData&, const String&, unsigned long long);
+    virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData&, const String&, unsigned long long);
 
     virtual WebView* webView() const { return m_webView; }
 

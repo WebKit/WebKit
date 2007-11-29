@@ -57,11 +57,11 @@ void WebDatabaseTrackerClient::dispatchDidModifyOrigin(const SecurityOriginData&
                                                         object:webSecurityOrigin.get()];
 }
 
-void WebDatabaseTrackerClient::dispatchDidModifyDatabase(const SecurityOriginData& origin, const String& databaseName)
+void WebDatabaseTrackerClient::dispatchDidModifyDatabase(const SecurityOriginData& origin, const String& databaseIdentifier)
 {
     RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOriginData:&origin]);
     RetainPtr<NSDictionary> userInfo(AdoptNS, [[NSDictionary alloc] 
-                                               initWithObjectsAndKeys:(NSString *)databaseName, WebDatabaseNameKey, nil]);
+                                               initWithObjectsAndKeys:(NSString *)databaseIdentifier, WebDatabaseIdentifierKey, nil]);
     
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyDatabaseNotification
                                                         object:webSecurityOrigin.get()

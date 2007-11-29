@@ -1,3 +1,12 @@
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
+        Keep it building with new client method
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebCore::ChromeClient::requestQuotaIncreaseForDatabaseOperation):
+        * WebKitSupport/ChromeClientWx.h:
+
 2007-11-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Don't get xslt-config options at bake time, do it

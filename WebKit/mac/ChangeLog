@@ -1,3 +1,32 @@
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Support for <rdar://problem/5556381> and <rdar://problem/5556379>
+
+        Hook up UI Delegate calls for the database engine feature and other small tweaks
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]): Renamed databaseName parameter to databaseIdentifier for clarity
+        (-[WebDatabaseManager deleteDatabase:withOrigin:]): Renamed databaseName parameter to databaseIdentifier for clarity
+        * Storage/WebDatabaseManagerPrivate.h:
+
+        * Storage/WebDatabaseTrackerClient.h:
+        * Storage/WebDatabaseTrackerClient.mm:
+        (WebDatabaseTrackerClient::dispatchDidModifyDatabase): Renamed databaseName parameter to databaseIdentifier for clarity
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::requestQuotaIncreaseForNewDatabase): Call through to the UI Delegate
+        (WebChromeClient::requestQuotaIncreaseForDatabaseOperation): Ditto
+
+        * WebView/WebUIDelegatePrivate.h: Added the two UI Delegate methods
+
+        * WebView/WebView.mm:
+        (CallDelegateReturningUnsignedLongLong):
+        (CallUIDelegateReturningUnsignedLongLong):
+        * WebView/WebViewInternal.h:
+
 2007-11-28  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.

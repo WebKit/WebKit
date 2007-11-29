@@ -1,3 +1,12 @@
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
+        Keep it building with new client method
+
+        * WebChromeClient.cpp:
+        (ChromeClient::requestQuotaIncreaseForNewDatabase):
+        (ChromeClient::requestQuotaIncreaseForDatabaseOperation):
+        * WebChromeClient.h:
+
 2007-11-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin and Darin Adler.

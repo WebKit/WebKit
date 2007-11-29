@@ -307,10 +307,16 @@ void ChromeClientQt::print(Frame*)
     notImplemented();
 }
 
-bool ChromeClientQt::runDatabaseSizeLimitPrompt(Frame*, const String& origin)
+unsigned long long ChromeClientQt::requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData&, const String&, unsigned long long)
 {
     notImplemented();
-    return false;
+    return 0;
+}
+
+unsigned long long ChromeClientQt::requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData&, const String&, unsigned long long)
+{
+    notImplemented();
+    return 0;
 }
 
 }

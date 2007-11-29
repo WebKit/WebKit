@@ -456,14 +456,14 @@ void WebChromeClient::print(Frame* frame)
             uiDelegate2->printFrame(m_webView, kit(frame));
 }
 
-bool WebChromeClient::runDatabaseSizeLimitPrompt(Frame* frame, const String& prompt)
+unsigned long long ChromeClient::requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData&, const String&, unsigned long long)
 {
-    COMPtr<IWebUIDelegate3> delegate = uiDelegate3();
-    if (!delegate)
-        return false;
-    BOOL result = FALSE;
-    delegate->runDatabaseSizeLimitPrompt(m_webView, BString(prompt), kit(frame), &result);
-    return result;
+    return 0;
+}
+
+unsigned long long ChromeClient::requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData&, const String&, unsigned long long)
+{
+    return 0;
 }
 
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()

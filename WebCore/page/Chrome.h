@@ -40,6 +40,7 @@ namespace WebCore {
     class HitTestResult;
     class IntRect;
     class Page;
+    class SecurityOriginData;
     class String;
     
     struct FrameLoadRequest;
@@ -125,9 +126,9 @@ namespace WebCore {
 
         void print(Frame*);
 
-        bool runDatabaseSizeLimitPrompt(Frame*, const String& origin);
-
-
+        unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData& origin, const String& databaseDisplayName, unsigned long long estimatedSize);
+        unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData& origin, const String& databaseIdentifier, unsigned long long proposedNewQuota);
+        
 #if PLATFORM(MAC)
         void focusNSView(NSView*);
 #endif

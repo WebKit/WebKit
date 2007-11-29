@@ -39,25 +39,22 @@ public:
         , m_currentUsage(0)
     { }
     
-    DatabaseDetails(const String& databaseName, const String& databaseVersion, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage)
+    DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage)
         : m_name(databaseName)
-        , m_version(databaseVersion)
         , m_displayName(displayName)
         , m_expectedUsage(expectedUsage)
         , m_currentUsage(currentUsage)
     { }
     
-    bool isValid() const { return !(m_name.isEmpty() && m_version.isEmpty() && m_displayName.isEmpty() && !m_expectedUsage && !m_currentUsage); }
+    bool isValid() const { return !(m_name.isEmpty() && m_displayName.isEmpty() && !m_expectedUsage && !m_currentUsage); }
     
     const String& name() { return m_name; }
-    const String& version() { return m_version; }
     const String& displayName() { return m_displayName; }
     unsigned long long expectedUsage() { return m_expectedUsage; }
     unsigned long long currentUsage() { return m_currentUsage; }
     
 private:
     String m_name;
-    String m_version;
     String m_displayName;
     unsigned long long m_expectedUsage;
     unsigned long long m_currentUsage; 

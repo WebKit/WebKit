@@ -30,6 +30,7 @@ namespace WebCore {
     class HitTestResult;
     class IntRect;
     class Page;
+    class SecurityOriginData;
     class String;
     
     struct FrameLoadRequest;
@@ -103,15 +104,8 @@ namespace WebCore {
 
         virtual void print(Frame*) = 0;
 
-//  Possible permission levels -
-//  -Allow just this database to be created
-//  -Allow this domain to create whatever it wants
-//  -Don't allow this database
-//  -Don't allow this domain to ever create any
-//  -Don't allow any databases
-//        virtual bool runDatabaseCreationPrompt(Frame*, const String& origin, const String& name) = 0;
-
-        virtual bool runDatabaseSizeLimitPrompt(Frame*, const String& origin) = 0;
+        virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData& origin, const String& databaseDisplayName, unsigned long long estimatedSize) = 0;
+        virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData& origin, const String& databaseIdentifier, unsigned long long proposedNewQuota) = 0;
 };
 
 }
