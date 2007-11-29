@@ -167,29 +167,29 @@ is automated on Unix systems via the "configure" command. */
 
 #if LINK_SIZE == 2
 
-static inline void PUT(uschar* a, size_t n, unsigned short d)
+static inline void putOpcodeValueAtOffset(uschar* opcodePtr, size_t offset, unsigned short value)
 {
-    a[n] = d >> 8;
-    a[n+1] = d & 255;
+    opcodePtr[offset] = value >> 8;
+    opcodePtr[offset + 1] = value & 255;
 }
 
-static inline short GET(const uschar* a, size_t n)
+static inline short getOpcodeValueAtOffset(const uschar* opcodePtr, size_t offset)
 {
-    return ((a[n] << 8) | a[n + 1]);
+    return ((opcodePtr[offset] << 8) | opcodePtr[offset + 1]);
 }
 
 #define MAX_PATTERN_SIZE (1 << 16)
 
 #elif LINK_SIZE == 3
 
-static inline void PUT(uschar* a, size_t n, unsigned d)
+static inline void putOpcodeValueAtOffset(uschar* a, size_t n, unsigned d)
 {
     a[n] = d >> 16;
     a[n+1] = d >> 8;
     a[n+2] = d & 255;
 }
 
-static inline int GET(const uschar* a, size_t n)
+static inline int getOpcodeValueAtOffset(const uschar* a, size_t n)
 {
     return ((a[n] << 16) | (a[n+1] << 8) | a[n+2]);
 }
@@ -198,7 +198,7 @@ static inline int GET(const uschar* a, size_t n)
 
 #elif LINK_SIZE == 4
 
-static inline void PUT(uschar* a, size_t n, unsigned d)
+static inline void putOpcodeValueAtOffset(uschar* a, size_t n, unsigned d)
 {
     a[n] = d >> 24;
     a[n+1] = d >> 16;
@@ -206,7 +206,7 @@ static inline void PUT(uschar* a, size_t n, unsigned d)
     a[n+3] = d & 255;
 }
 
-static inline int GET(const uschar* a, size_t n)
+static inline int getOpcodeValueAtOffset(const uschar* a, size_t n)
 {
     return ((a[n] << 24) | (a[n+1] << 16) | (a[n+2] << 8) | a[n+3]);
 }
@@ -217,30 +217,30 @@ static inline int GET(const uschar* a, size_t n)
 #error LINK_SIZE must be either 2, 3, or 4
 #endif
 
-
-/* Convenience macro defined in terms of the others */
-
-#define PUTINC(a,n,d)   PUT(a,n,d), a += LINK_SIZE
-
+static inline void putOpcodeValueAtOffsetAndAdvance(uschar*& a, size_t n, unsigned short d)
+{
+    putOpcodeValueAtOffset(a, n, d);
+    a += LINK_SIZE;
+}
 
 /* PCRE uses some other 2-byte quantities that do not change when the size of
 offsets changes. There are used for repeat counts and for other things such as
 capturing parenthesis numbers in back references. */
 
-static inline void PUT2(uschar* a, size_t n, unsigned short d)
+static inline void put2ByteOpcodeValueAtOffset(uschar* a, size_t n, unsigned short d)
 {
     a[n] = d >> 8;
     a[n+1] = d & 255;
 }
 
-static inline short GET2(const uschar* a, size_t n)
+static inline short get2ByteOpcodeValueAtOffset(const uschar* a, size_t n)
 {
     return ((a[n] << 8) | a[n + 1]);
 }
 
-static inline void PUT2INC(uschar*& a, size_t n, unsigned short d)
+static inline void put2ByteOpcodeValueAtOffsetAndAdvance(uschar*& a, size_t n, unsigned short d)
 {
-    PUT2(a,n,d);
+    put2ByteOpcodeValueAtOffset(a, n, d);
     a += 2;
 }
 
@@ -585,6 +585,17 @@ extern bool        _pcre_xclass(int, const uschar*);
 static inline bool isNewline(UChar nl)
 {
     return (nl == 0xA || nl == 0xD || nl == 0x2028 || nl == 0x2029);
+}
+
+// FIXME: It's unclear to me if this moves the opcode ptr to the start of all branches
+// or to the end of all branches -- ecs
+// FIXME: This abstraction is poor since it assumes that you want to jump based on whatever
+// the next value in the stream is, and *then* follow any OP_ALT branches.
+static inline void moveOpcodePtrPastAnyAlternateBranches(const uschar*& opcodePtr)
+{
+    do {
+        opcodePtr += getOpcodeValueAtOffset(opcodePtr, 1);
+    } while (*opcodePtr == OP_ALT);
 }
 
 #endif

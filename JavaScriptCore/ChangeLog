@@ -24,6 +24,33 @@
 
         Reviewed by Sam.
 
+        Give GET, PUT better names, and add (poor) moveOpcodePtrPastAnyAlternateBranches
+
+        * pcre/pcre_compile.cpp:
+        (firstSignificantOpCodeSkippingAssertions):
+        (find_fixedlength):
+        (complete_callout):
+        (compile_branch):
+        (compile_regex):
+        (is_anchored):
+        (canApplyFirstCharOptimization):
+        (find_firstassertedchar):
+        * pcre/pcre_exec.cpp:
+        (match):
+        * pcre/pcre_internal.h:
+        (putOpcodeValueAtOffset):
+        (getOpcodeValueAtOffset):
+        (putOpcodeValueAtOffsetAndAdvance):
+        (put2ByteOpcodeValueAtOffset):
+        (get2ByteOpcodeValueAtOffset):
+        (moveOpcodePtrPastAnyAlternateBranches):
+        * pcre/pcre_ucp_searchfuncs.cpp:
+        (_pcre_ucp_othercase):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Add inlines for toLowerCase, isWordChar, isSpaceChar for further regexp speedup
 
         * pcre/pcre_compile.cpp:

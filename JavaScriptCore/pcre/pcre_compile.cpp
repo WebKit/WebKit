@@ -421,7 +421,7 @@ static const uschar* firstSignificantOpCodeSkippingAssertions(const uschar* code
         switch (*code) {
         case OP_ASSERT_NOT:
             do {
-                code += GET(code, 1);
+                code += getOpcodeValueAtOffset(code, 1);
             } while (*code == OP_ALT);
             code += OP_lengths[*code];
             break;
@@ -477,7 +477,9 @@ static int find_fixedlength(uschar* code, int options)
                 if (d < 0)
                     return d;
                 branchlength += d;
-                do cc += GET(cc, 1); while (*cc == OP_ALT);
+                do {
+                    cc += getOpcodeValueAtOffset(cc, 1);
+                } while (*cc == OP_ALT);
                 cc += 1 + LINK_SIZE;
                 break;
                 
@@ -504,7 +506,9 @@ static int find_fixedlength(uschar* code, int options)
                 
             case OP_ASSERT:
             case OP_ASSERT_NOT:
-                do cc += GET(cc, 1); while (*cc == OP_ALT);
+                do {
+                    cc += getOpcodeValueAtOffset(cc, 1);
+                } while (*cc == OP_ALT);
                 /* Fall through */
                 
                 /* Skip over things that don't match chars */
@@ -538,14 +542,14 @@ static int find_fixedlength(uschar* code, int options)
                  need to skip over a multibyte character in UTF8 mode.  */
                 
             case OP_EXACT:
-                branchlength += GET2(cc,1);
+                branchlength += get2ByteOpcodeValueAtOffset(cc,1);
                 cc += 4;
                 while((*cc & 0x80) == 0x80)
                     cc++;
                 break;
                 
             case OP_TYPEEXACT:
-                branchlength += GET2(cc,1);
+                branchlength += get2ByteOpcodeValueAtOffset(cc,1);
                 cc += 4;
                 break;
                 
@@ -565,7 +569,7 @@ static int find_fixedlength(uschar* code, int options)
                 /* Check a class for variable quantification */
                 
             case OP_XCLASS:
-                cc += GET(cc, 1) - 33;
+                cc += getOpcodeValueAtOffset(cc, 1) - 33;
                 /* Fall through */
                 
             case OP_CLASS:
@@ -581,9 +585,9 @@ static int find_fixedlength(uschar* code, int options)
                     
                 case OP_CRRANGE:
                 case OP_CRMINRANGE:
-                    if (GET2(cc, 1) != GET2(cc, 3))
+                    if (get2ByteOpcodeValueAtOffset(cc, 1) != get2ByteOpcodeValueAtOffset(cc, 3))
                         return -1;
-                    branchlength += GET2(cc, 1);
+                    branchlength += get2ByteOpcodeValueAtOffset(cc, 1);
                     cc += 5;
                     break;
                     
@@ -618,8 +622,8 @@ Arguments:
 
 static void complete_callout(uschar* previous_callout, const UChar* ptr, const CompileData& cd)
 {
-    int length = ptr - cd.start_pattern - GET(previous_callout, 2);
-    PUT(previous_callout, 2 + LINK_SIZE, length);
+    int length = ptr - cd.start_pattern - getOpcodeValueAtOffset(previous_callout, 2);
+    putOpcodeValueAtOffset(previous_callout, 2 + LINK_SIZE, length);
 }
 
 
@@ -1176,7 +1180,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     
                     /* Now fill in the complete length of the item */
                     
-                    PUT(previous, 1, code - previous);
+                    putOpcodeValueAtOffset(previous, 1, code - previous);
                     break;   /* End of class handling */
                 }
                 
@@ -1247,12 +1251,11 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  but if PCRE_UNGREEDY is set, it works the other way round. We change the
                  repeat type to the non-default. */
                 
-                if (ptr + 1 < patternEnd && ptr[1] == '?')
-                {
+                if (ptr + 1 < patternEnd && ptr[1] == '?') {
                     repeat_type = 1;
                     ptr++;
-                }
-                else repeat_type = 0;
+                } else
+                    repeat_type = 0;
                 
                 /* If previous was a character match, abolish the item and generate a
                  repeat item instead. If a char item has a minumum of more than one, ensure
@@ -1260,23 +1263,20 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  the first thing in a branch because the x will have gone into firstbyte
                  instead.  */
                 
-                if (*previous == OP_CHAR || *previous == OP_CHARNC)
-                {
+                if (*previous == OP_CHAR || *previous == OP_CHARNC) {
                     /* Deal with UTF-8 characters that take up more than one byte. It's
                      easier to write this out separately than try to macrify it. Use c to
                      hold the length of the character in bytes, plus 0x80 to flag that it's a
                      length rather than a small character. */
                     
-                    if ((code[-1] & 0x80) != 0)
-                    {
+                    if (code[-1] & 0x80) {
                         uschar *lastchar = code - 1;
                         while((*lastchar & 0xc0) == 0x80) lastchar--;
                         c = code - lastchar;            /* Length of UTF-8 character */
                         memcpy(utf8_char, lastchar, c); /* Save the char */
                         c |= 0x80;                      /* Flag c as a length */
                     }
-                    else
-                    {
+                    else {
                         c = code[-1];
                         if (repeat_min > 1)
                             reqbyte = c | req_caseopt | cd.req_varyopt;
@@ -1285,8 +1285,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     goto OUTPUT_SINGLE_REPEAT;   /* Code shared with single character types */
                 }
                 
-                else if (*previous == OP_ASCII_CHAR || *previous == OP_ASCII_LETTER_NC)
-                {
+                else if (*previous == OP_ASCII_CHAR || *previous == OP_ASCII_LETTER_NC) {
                     c = previous[1];
                     if (repeat_min > 1) reqbyte = c | req_caseopt | cd.req_varyopt;
                     goto OUTPUT_SINGLE_REPEAT;
@@ -1297,8 +1296,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  character repeats by setting opt_type to add a suitable offset into
                  repeat_type. OP_NOT is currently used only for single-byte chars. */
                 
-                else if (*previous == OP_NOT)
-                {
+                else if (*previous == OP_NOT) {
                     op_type = OP_NOTSTAR - OP_STAR;  /* Use "not" opcodes */
                     c = previous[1];
                     goto OUTPUT_SINGLE_REPEAT;
@@ -1308,17 +1306,15 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  create a suitable repeat item. The code is shared with single-character
                  repeats by setting op_type to add a suitable offset into repeat_type. */
                 
-                else if (*previous <= OP_ANY)
-                {
-                    uschar *oldcode;
-                    int prop_type, prop_value;
+                else if (*previous <= OP_ANY) {
                     op_type = OP_TYPESTAR - OP_STAR;  /* Use type opcodes */
                     c = *previous;
                     
                 OUTPUT_SINGLE_REPEAT:
-                    prop_type = prop_value = -1;
+                    int prop_type = -1;
+                    int prop_value = -1;
                     
-                    oldcode = code;
+                    uschar* oldcode = code;
                     code = previous;                  /* Usually overwrite previous item */
                     
                     /* If the maximum is zero then the minimum must also be zero; Perl allows
@@ -1341,7 +1337,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                             *code++ = OP_QUERY + repeat_type;
                         else {
                             *code++ = OP_UPTO + repeat_type;
-                            PUT2INC(code, 0, repeat_max);
+                            put2ByteOpcodeValueAtOffsetAndAdvance(code, 0, repeat_max);
                         }
                     }
                     
@@ -1358,17 +1354,16 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                             if (repeat_max == 1)
                                 goto END_REPEAT;
                             *code++ = OP_UPTO + repeat_type;
-                            PUT2INC(code, 0, repeat_max - 1);
+                            put2ByteOpcodeValueAtOffsetAndAdvance(code, 0, repeat_max - 1);
                         }
                     }
                     
                     /* The case {n,n} is just an EXACT, while the general case {n,m} is
                      handled as an EXACT followed by an UPTO. */
                     
-                    else
-                    {
+                    else {
                         *code++ = OP_EXACT + op_type;  /* NB EXACT doesn't have repeat_type */
-                        PUT2INC(code, 0, repeat_min);
+                        put2ByteOpcodeValueAtOffsetAndAdvance(code, 0, repeat_min);
                         
                         /* If the maximum is unlimited, insert an OP_STAR. Before doing so,
                          we have to insert the character for the previous code. For a repeated
@@ -1405,7 +1400,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                             }
                             repeat_max -= repeat_min;
                             *code++ = OP_UPTO + repeat_type;
-                            PUT2INC(code, 0, repeat_max);
+                            put2ByteOpcodeValueAtOffsetAndAdvance(code, 0, repeat_max);
                         }
                     }
                     
@@ -1447,9 +1442,10 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                         *code++ = OP_CRQUERY + repeat_type;
                     else {
                         *code++ = OP_CRRANGE + repeat_type;
-                        PUT2INC(code, 0, repeat_min);
-                        if (repeat_max == -1) repeat_max = 0;  /* 2-byte encoding for max */
-                        PUT2INC(code, 0, repeat_max);
+                        put2ByteOpcodeValueAtOffsetAndAdvance(code, 0, repeat_min);
+                        if (repeat_max == -1)
+                            repeat_max = 0;  /* 2-byte encoding for max */
+                        put2ByteOpcodeValueAtOffsetAndAdvance(code, 0, repeat_max);
                     }
                 }
                 
@@ -1469,7 +1465,9 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     
                     if (repeat_max == -1) {
                         uschar* ket = previous;
-                        do ket += GET(ket, 1); while (*ket != OP_KET);
+                        do {
+                            ket += getOpcodeValueAtOffset(ket, 1);
+                        } while (*ket != OP_KET);
                         ketoffset = code - ket;
                     }
                     
@@ -1520,9 +1518,9 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                             /* We chain together the bracket offset fields that have to be
                              filled in later when the ends of the brackets are reached. */
                             
-                            int offset = (bralink == NULL)? 0 : previous - bralink;
+                            int offset = (!bralink) ? 0 : previous - bralink;
                             bralink = previous;
-                            PUTINC(previous, 0, offset);
+                            putOpcodeValueAtOffsetAndAdvance(previous, 0, offset);
                         }
                         
                         repeat_max--;
@@ -1563,7 +1561,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                                 *code++ = OP_BRA;
                                 int offset = (!bralink) ? 0 : code - bralink;
                                 bralink = code;
-                                PUTINC(code, 0, offset);
+                                putOpcodeValueAtOffsetAndAdvance(code, 0, offset);
                             }
                             
                             memcpy(code, previous, len);
@@ -1576,11 +1574,11 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                         while (bralink) {
                             int offset = code - bralink + 1;
                             uschar* bra = code - offset;
-                            int oldlinkoffset = GET(bra, 1);
-                            bralink = (oldlinkoffset == 0)? NULL : bralink - oldlinkoffset;
+                            int oldlinkoffset = getOpcodeValueAtOffset(bra, 1);
+                            bralink = oldlinkoffset ? 0 : bralink - oldlinkoffset;
                             *code++ = OP_KET;
-                            PUTINC(code, 0, offset);
-                            PUT(bra, 1, offset);
+                            putOpcodeValueAtOffsetAndAdvance(code, 0, offset);
+                            putOpcodeValueAtOffset(bra, 1, offset);
                         }
                     }
                     
@@ -1653,7 +1651,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     if (++(*brackets) > EXTRACT_BASIC_MAX) {
                         bravalue = OP_BRA + EXTRACT_BASIC_MAX + 1;
                         code[1 + LINK_SIZE] = OP_BRANUMBER;
-                        PUT2(code, 2+LINK_SIZE, *brackets);
+                        put2ByteOpcodeValueAtOffset(code, 2+LINK_SIZE, *brackets);
                         skipbytes = 3;
                     }
                     else
@@ -1665,7 +1663,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  to pass its address because some compilers complain otherwise. Pass in a
                  new setting for the ims options if they have changed. */
                 
-                previous = (bravalue >= OP_ONCE)? code : NULL;
+                previous = (bravalue >= OP_ONCE) ? code : 0;
                 *code = bravalue;
                 tempcode = code;
                 tempreqvary = cd.req_varyopt;     /* Save value before bracket */
@@ -1785,7 +1783,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                         int number = -c - ESC_REF;
                         previous = code;
                         *code++ = OP_REF;
-                        PUT2INC(code, 0, number);
+                        put2ByteOpcodeValueAtOffsetAndAdvance(code, 0, number);
                     }
                     
                     /* For the rest, we can obtain the OP value by negating the escape
@@ -1918,7 +1916,7 @@ compile_regex(int options, int* brackets, uschar** codeptr,
     
     /* Offset is set zero to mark that this bracket is still open */
     
-    PUT(code, 1, 0);
+    putOpcodeValueAtOffset(code, 1, 0);
     code += 1 + LINK_SIZE + skipbytes;
     
     /* Loop for each alternative branch */
@@ -1982,8 +1980,8 @@ compile_regex(int options, int* brackets, uschar** codeptr,
         if (ptr >= patternEnd || *ptr != '|') {
             int length = code - last_branch;
             do {
-                int prev_length = GET(last_branch, 1);
-                PUT(last_branch, 1, length);
+                int prev_length = getOpcodeValueAtOffset(last_branch, 1);
+                putOpcodeValueAtOffset(last_branch, 1, length);
                 length = prev_length;
                 last_branch -= length;
             } while (length > 0);
@@ -1991,7 +1989,7 @@ compile_regex(int options, int* brackets, uschar** codeptr,
             /* Fill in the ket */
             
             *code = OP_KET;
-            PUT(code, 1, code - start_bracket);
+            putOpcodeValueAtOffset(code, 1, code - start_bracket);
             code += 1 + LINK_SIZE;
             
             /* Set values to pass back */
@@ -2009,7 +2007,7 @@ compile_regex(int options, int* brackets, uschar** codeptr,
          zero offset until it is closed, making it possible to detect recursion. */
         
         *code = OP_ALT;
-        PUT(code, 1, code - last_branch);
+        putOpcodeValueAtOffset(code, 1, code - last_branch);
         last_branch = code;
         code += 1 + LINK_SIZE;
         ptr++;
@@ -2066,7 +2064,7 @@ static bool is_anchored(const uschar* code, int options, unsigned int bracket_ma
         if (op > OP_BRA) {
             op -= OP_BRA;
             if (op > EXTRACT_BASIC_MAX)
-                op = GET2(scode, 2 + LINK_SIZE);
+                op = get2ByteOpcodeValueAtOffset(scode, 2 + LINK_SIZE);
             int new_map = bracket_map | ((op < 32)? (1 << op) : 1);
             if (!is_anchored(scode, options, new_map, backref_map))
                 return false;
@@ -2081,7 +2079,7 @@ static bool is_anchored(const uschar* code, int options, unsigned int bracket_ma
         
         else if ((options & PCRE_MULTILINE) || op != OP_CIRC)
             return false;
-        code += GET(code, 1);
+        code += getOpcodeValueAtOffset(code, 1);
     } while (*code == OP_ALT);   /* Loop for each alternative */
     return true;
 }
@@ -2117,7 +2115,7 @@ static bool canApplyFirstCharOptimization(const uschar* code, unsigned int brack
         if (op > OP_BRA) {
             op -= OP_BRA;
             if (op > EXTRACT_BASIC_MAX)
-                op = GET2(scode, 2+LINK_SIZE);
+                op = get2ByteOpcodeValueAtOffset(scode, 2+LINK_SIZE);
             int new_map = bracket_map | ((op < 32)? (1 << op) : 1);
             if (!canApplyFirstCharOptimization(scode, new_map, backref_map))
                 return false;
@@ -2139,7 +2137,7 @@ static bool canApplyFirstCharOptimization(const uschar* code, unsigned int brack
         
         /* Move on to the next alternative */
         
-        code += GET(code, 1);
+        code += getOpcodeValueAtOffset(code, 1);
     } while (*code == OP_ALT);  /* Loop for each alternative */
     return true;
 }
@@ -2212,7 +2210,7 @@ static int find_firstassertedchar(const uschar* code, int options, bool inassert
             break;
         }
         
-        code += GET(code, 1);
+        code += getOpcodeValueAtOffset(code, 1);
     } while (*code == OP_ALT);
     return c;
 }
