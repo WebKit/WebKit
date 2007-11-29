@@ -1,3 +1,13 @@
+2007-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Don't install event handlers or set the zoom cursor if auto-shrink has been disabled.
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        (WebCore::ImageDocument::imageChanged):
+
 2007-11-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

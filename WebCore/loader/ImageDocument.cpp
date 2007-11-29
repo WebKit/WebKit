@@ -159,10 +159,12 @@ void ImageDocument::createDocumentStructure()
     
     body->appendChild(imageElement, ec);
     
-    // Add event listeners
-    RefPtr<EventListener> listener = new ImageEventListener(this);
-    addWindowEventListener("resize", listener, false);
-    m_imageElement->addEventListener("click", listener.release(), false);
+    if (shouldShrinkToFit()) {
+        // Add event listeners
+        RefPtr<EventListener> listener = new ImageEventListener(this);
+        addWindowEventListener("resize", listener, false);
+        m_imageElement->addEventListener("click", listener.release(), false);
+    }
 }
 
 float ImageDocument::scale() const
@@ -223,8 +225,10 @@ void ImageDocument::imageChanged()
     
     m_imageSizeIsKnown = true;
     
-    // Force resizing of the image
-    windowSizeChanged();
+    if (shouldShrinkToFit()) {
+        // Force resizing of the image
+        windowSizeChanged();
+    }
 }
 
 void ImageDocument::restoreImageSize()
