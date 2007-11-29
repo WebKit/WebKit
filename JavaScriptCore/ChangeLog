@@ -1,3 +1,27 @@
+2007-11-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Merging updated system alloc and spinlock code from r38 of TCMalloc.
+
+        This is needed as a precursor to the merge of TCMalloc proper.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::GrowHeap):
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::TCMalloc_SpinLock):
+        (TCMalloc_SpinLock::):
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SpinLock::IsHeld):
+        * wtf/TCSystemAlloc.cpp:
+        (TrySbrk):
+        (TryMmap):
+        (TryVirtualAlloc):
+        (TryDevMem):
+        (TCMalloc_SystemAlloc):
+        * wtf/TCSystemAlloc.h:
+
 2007-11-28  Brady Eidson <beidson@apple.com>
 
         Reviewed by Geoff

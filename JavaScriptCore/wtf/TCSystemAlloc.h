@@ -38,9 +38,28 @@
 
 // REQUIRES: "alignment" is a power of two or "0" to indicate default alignment
 //
-// Allocate and return "N" bytes of zeroed memory.  The returned
-// pointer is a multiple of "alignment" if non-zero.  Returns NULL
-// when out of memory.
-extern void* TCMalloc_SystemAlloc(size_t bytes, size_t alignment = 0);
+// Allocate and return "N" bytes of zeroed memory.
+//
+// If actual_bytes is NULL then the returned memory is exactly the
+// requested size.  If actual bytes is non-NULL then the allocator
+// may optionally return more bytes than asked for (i.e. return an
+// entire "huge" page if a huge page allocator is in use).
+//
+// The returned pointer is a multiple of "alignment" if non-zero.
+//
+// Returns NULL when out of memory.
+extern void* TCMalloc_SystemAlloc(size_t bytes, size_t *actual_bytes,
+                                  size_t alignment = 0);
+
+// This call is a hint to the operating system that the pages
+// contained in the specified range of memory will not be used for a
+// while, and can be released for use by other processes or the OS.
+// Pages which are released in this way may be destroyed (zeroed) by
+// the OS.  The benefit of this function is that it frees memory for
+// use by the system, the cost is that the pages are faulted back into
+// the address space next time they are touched, which can impact
+// performance.  (Only pages fully covered by the memory region will
+// be released, partial pages will not.)
+extern void TCMalloc_SystemRelease(void* start, size_t length);
 
 #endif /* TCMALLOC_SYSTEM_ALLOC_H__ */

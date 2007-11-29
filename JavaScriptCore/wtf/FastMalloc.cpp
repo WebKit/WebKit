@@ -497,7 +497,7 @@ static void InitSizeClasses() {
 // Metadata allocator -- keeps stats about how many bytes allocated
 static uint64_t metadata_system_bytes = 0;
 static void* MetaDataAlloc(size_t bytes) {
-  void* result = TCMalloc_SystemAlloc(bytes);
+  void* result = TCMalloc_SystemAlloc(bytes, 0);
   if (result != NULL) {
     metadata_system_bytes += bytes;
   }
@@ -1039,12 +1039,12 @@ void TCMalloc_PageHeap::Dump(TCMalloc_Printer* out) {
 bool TCMalloc_PageHeap::GrowHeap(Length n) {
   ASSERT(kMaxPages >= kMinSystemAlloc);
   Length ask = (n>kMinSystemAlloc) ? n : static_cast<Length>(kMinSystemAlloc);
-  void* ptr = TCMalloc_SystemAlloc(ask << kPageShift, kPageSize);
+  void* ptr = TCMalloc_SystemAlloc(ask << kPageShift, 0, kPageSize);
   if (ptr == NULL) {
     if (n < ask) {
       // Try growing just "n" pages
       ask = n;
-      ptr = TCMalloc_SystemAlloc(ask << kPageShift, kPageSize);
+      ptr = TCMalloc_SystemAlloc(ask << kPageShift, 0, kPageSize);
     }
     if (ptr == NULL) return false;
   }
@@ -1361,7 +1361,6 @@ static volatile size_t per_thread_cache_size = kMaxThreadCacheSize;
 //-------------------------------------------------------------------
 
 void TCMalloc_Central_FreeList::Init(size_t cl) {
-  lock_.Init();
   size_class_ = cl;
   DLL_Init(&empty_);
   DLL_Init(&nonempty_);

@@ -1,4 +1,4 @@
-// Copyright (c) 2005, Google Inc.
+// Copyright (c) 2005, 2006, Google Inc.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -57,22 +57,18 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword);
 
 // The following is a struct so that it can be initialized at compile time
 struct TCMalloc_SpinLock {
-  volatile unsigned int private_lockword_;
 
-  inline void Init() { private_lockword_ = 0; }
-  inline void Finalize() { }
-    
   inline void Lock() {
     int r;
 #if COMPILER(GCC)
 #if PLATFORM(X86)
     __asm__ __volatile__
       ("xchgl %0, %1"
-       : "=r"(r), "=m"(private_lockword_)
-       : "0"(1), "m"(private_lockword_)
+       : "=r"(r), "=m"(lockword_)
+       : "0"(1), "m"(lockword_)
        : "memory");
 #else
-    volatile unsigned int *lockword_ptr = &private_lockword_;
+    volatile unsigned int *lockword_ptr = &lockword_;
     __asm__ __volatile__
         ("1: lwarx %0, 0, %1\n\t"
          "stwcx. %2, 0, %1\n\t"
@@ -84,13 +80,13 @@ struct TCMalloc_SpinLock {
 #endif
 #elif COMPILER(MSVC)
     __asm {
-        mov eax, this    ; store &private_lockword_ (which is this+0) in eax
+        mov eax, this    ; store &lockword_ (which is this+0) in eax
         mov ebx, 1       ; store 1 in ebx
-        xchg [eax], ebx  ; exchange private_lockword_ and 1
-        mov r, ebx       ; store old value of private_lockword_ in r
+        xchg [eax], ebx  ; exchange lockword_ and 1
+        mov r, ebx       ; store old value of lockword_ in r
     }
 #endif
-    if (r) TCMalloc_SlowLock(&private_lockword_);
+    if (r) TCMalloc_SlowLock(&lockword_);
   }
 
   inline void Unlock() {
@@ -98,31 +94,34 @@ struct TCMalloc_SpinLock {
 #if PLATFORM(X86)
     __asm__ __volatile__
       ("movl $0, %0"
-       : "=m"(private_lockword_)
-       : "m" (private_lockword_)
+       : "=m"(lockword_)
+       : "m" (lockword_)
        : "memory");
 #else
     __asm__ __volatile__
       ("isync\n\t"
        "eieio\n\t"
        "stw %1, %0"
-       : "=o" (private_lockword_) 
+       : "=o" (lockword_) 
        : "r" (0)
        : "memory");
 #endif
 #elif COMPILER(MSVC)
       __asm {
-          mov eax, this  ; store &private_lockword_ (which is this+0) in eax
-          mov [eax], 0   ; set private_lockword_ to 0
+          mov eax, this  ; store &lockword_ (which is this+0) in eax
+          mov [eax], 0   ; set lockword_ to 0
       }
 #endif
   }
+    // Report if we think the lock can be held by this thread.
+    // When the lock is truly held by the invoking thread
+    // we will always return true.
+    // Indended to be used as CHECK(lock.IsHeld());
+    inline bool IsHeld() const {
+        return lockword_ != 0;
+    }
 
-#ifdef WTF_CHANGES  
-  inline bool IsLocked() {
-    return private_lockword_ != 0;
-  }
-#endif
+    volatile unsigned int lockword_;
 };
 
 #define SPINLOCK_INITIALIZER { 0 }
