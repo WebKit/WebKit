@@ -124,7 +124,6 @@ struct MatchFrame {
 doing traditional NFA matching, so that they are thread-safe. */
 
 struct MatchData {
-  unsigned long int match_call_count;
   int*   offset_vector;         /* Offset vector */
   int    offset_end;            /* One past the end */
   int    offset_max;            /* The maximum usable for return data */
@@ -284,12 +283,12 @@ a bit more code and notice if we use conflicting numbers.*/
   {\
     stack.pushNewFrame((ra), (rb), RMATCH_WHERE(num)); \
     is_group_start = (rc);\
-    ++rdepth;\
+    if (stack.size >= MATCH_LIMIT_RECURSION) \
+        return matchError(JSRegExpErrorRecursionLimit, stack); \
     DPRINTF(("restarting from line %d\n", __LINE__));\
     goto RECURSE;\
 RRETURN_##num:\
     stack.popCurrentFrame(); \
-    --rdepth;\
     DPRINTF(("did a goto back to line %d\n", __LINE__));\
   }
  
@@ -329,6 +328,7 @@ struct MatchStack {
     {
         framesEnd = frames + sizeof(frames) / sizeof(frames[0]);
         currentFrame = frames;
+        size = 0;
     }
     
     /* The value 16 here is large enough that most regular expressions don't require
@@ -337,6 +337,7 @@ struct MatchStack {
     MatchFrame frames[16];
     MatchFrame* framesEnd;
     MatchFrame* currentFrame;
+    unsigned size;
     
     inline bool canUseStackBufferForNextFrame()
     {
@@ -360,6 +361,7 @@ struct MatchStack {
         newframe->args.ecode = ecode;
         newframe->args.eptrb = eptrb;
         newframe->returnLocation = returnLocation;
+        size++;
 
         currentFrame = newframe;
     }
@@ -375,21 +377,19 @@ struct MatchStack {
         currentFrame = currentFrame->previousFrame;
         if (!frameIsStackAllocated(oldFrame))
             delete oldFrame;
+        size--;
     }
 
-    void unrollAnyHeapAllocatedFrames()
+    void popAllFrames()
     {
-        while (!frameIsStackAllocated(currentFrame)) {
-            MatchFrame* oldFrame = currentFrame;
-            currentFrame = currentFrame->previousFrame;
-            delete oldFrame;
-        }
+        while (size)
+            popCurrentFrame();
     }
 };
 
 static int matchError(int errorCode, MatchStack& stack)
 {
-    stack.unrollAnyHeapAllocatedFrames();
+    stack.popAllFrames();
     return errorCode;
 }
 
@@ -416,8 +416,6 @@ static int match(UChar* eptr, const uschar* ecode, int offset_top, MatchData& md
     int is_match = false;
     int i;
     int c;
-    
-    unsigned rdepth = 0;
     
     bool cur_is_word;
     bool prev_is_word;
@@ -463,14 +461,6 @@ RECURSE:
      defined). However, RMATCH isn't like a function call because it's quite a
      complicated macro. It has to be used in one particular way. This shouldn't,
      however, impact performance when true recursion is being used. */
-    
-    /* First check that we haven't called match() too many times, or that we
-     haven't exceeded the recursive call limit. */
-    
-    if (md.match_call_count++ >= MATCH_LIMIT)
-        return matchError(JSRegExpErrorMatchLimit, stack);
-    if (rdepth >= MATCH_LIMIT_RECURSION)
-        return matchError(JSRegExpErrorRecursionLimit, stack);
     
     /* At the start of a bracketed group, add the current subject pointer to the
      stack of such pointers, to be re-instated at the end of the group when we hit
@@ -2264,9 +2254,6 @@ int jsRegExpExecute(const JSRegExp* re,
          where we had to get some local store to hold offsets for backreferences, copy
          those back references that we can. In this case there need not be overflow
          if certain parts of the pattern were not used. */
-        
-        match_block.match_call_count = 0;
-        
         
         /* The code starts after the JSRegExp block and the capture name table. */
         const uschar* start_code = (const uschar*)(re + 1);

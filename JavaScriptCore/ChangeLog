@@ -22,6 +22,22 @@
 
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+
+        Remove redundant match_call_count and move recursion check out of super-hot code path
+        SunSpider says this is at least an 8% speedup for regexp.
+
+        * pcre/pcre_exec.cpp:
+        (MatchStack::MatchStack):
+        (MatchStack::pushNewFrame):
+        (MatchStack::popCurrentFrame):
+        (MatchStack::popAllFrames):
+        (match):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Get rid of GETCHAR* macros, replacing them with better named inlines
