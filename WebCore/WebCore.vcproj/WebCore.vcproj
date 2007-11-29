@@ -6697,6 +6697,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\editing\RemoveFormatCommand.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\RemoveNodeAttributeCommand.cpp"
 				>
 			</File>
