@@ -182,33 +182,34 @@ static inline short getOpcodeValueAtOffset(const uschar* opcodePtr, size_t offse
 
 #elif LINK_SIZE == 3
 
-static inline void putOpcodeValueAtOffset(uschar* a, size_t n, unsigned d)
+static inline void putOpcodeValueAtOffset(uschar* opcodePtr, size_t offset, unsigned value)
 {
-    a[n] = d >> 16;
-    a[n+1] = d >> 8;
-    a[n+2] = d & 255;
+    ASSERT(!(value & 0xFF000000)); // This function only allows values < 2^24
+    opcodePtr[offset] = value >> 16;
+    opcodePtr[offset + 1] = value >> 8;
+    opcodePtr[offset + 2] = value & 255;
 }
 
-static inline int getOpcodeValueAtOffset(const uschar* a, size_t n)
+static inline int getOpcodeValueAtOffset(const uschar* opcodePtr, size_t offset)
 {
-    return ((a[n] << 16) | (a[n+1] << 8) | a[n+2]);
+    return ((opcodePtr[offset] << 16) | (opcodePtr[offset + 1] << 8) | opcodePtr[offset + 2]);
 }
 
 #define MAX_PATTERN_SIZE (1 << 24)
 
 #elif LINK_SIZE == 4
 
-static inline void putOpcodeValueAtOffset(uschar* a, size_t n, unsigned d)
+static inline void putOpcodeValueAtOffset(uschar* opcodePtr, size_t offset, unsigned value)
 {
-    a[n] = d >> 24;
-    a[n+1] = d >> 16;
-    a[n+2] = d >> 8;
-    a[n+3] = d & 255;
+    opcodePtr[offset] = value >> 24;
+    opcodePtr[offset + 1] = value >> 16;
+    opcodePtr[offset + 2] = value >> 8;
+    opcodePtr[offset + 3] = value & 255;
 }
 
-static inline int getOpcodeValueAtOffset(const uschar* a, size_t n)
+static inline int getOpcodeValueAtOffset(const uschar* opcodePtr, size_t offset)
 {
-    return ((a[n] << 24) | (a[n+1] << 16) | (a[n+2] << 8) | a[n+3]);
+    return ((opcodePtr[offset] << 24) | (opcodePtr[offset + 1] << 16) | (opcodePtr[offset + 2] << 8) | opcodePtr[offset + 3]);
 }
 
 #define MAX_PATTERN_SIZE (1 << 30)   /* Keep it positive */
@@ -217,31 +218,31 @@ static inline int getOpcodeValueAtOffset(const uschar* a, size_t n)
 #error LINK_SIZE must be either 2, 3, or 4
 #endif
 
-static inline void putOpcodeValueAtOffsetAndAdvance(uschar*& a, size_t n, unsigned short d)
+static inline void putOpcodeValueAtOffsetAndAdvance(uschar*& opcodePtr, size_t offset, unsigned short value)
 {
-    putOpcodeValueAtOffset(a, n, d);
-    a += LINK_SIZE;
+    putOpcodeValueAtOffset(opcodePtr, offset, value);
+    opcodePtr += LINK_SIZE;
 }
 
 /* PCRE uses some other 2-byte quantities that do not change when the size of
 offsets changes. There are used for repeat counts and for other things such as
 capturing parenthesis numbers in back references. */
 
-static inline void put2ByteOpcodeValueAtOffset(uschar* a, size_t n, unsigned short d)
+static inline void put2ByteOpcodeValueAtOffset(uschar* opcodePtr, size_t offset, unsigned short value)
 {
-    a[n] = d >> 8;
-    a[n+1] = d & 255;
+    opcodePtr[offset] = value >> 8;
+    opcodePtr[offset + 1] = value & 255;
 }
 
-static inline short get2ByteOpcodeValueAtOffset(const uschar* a, size_t n)
+static inline short get2ByteOpcodeValueAtOffset(const uschar* opcodePtr, size_t offset)
 {
-    return ((a[n] << 8) | a[n + 1]);
+    return ((opcodePtr[offset] << 8) | opcodePtr[offset + 1]);
 }
 
-static inline void put2ByteOpcodeValueAtOffsetAndAdvance(uschar*& a, size_t n, unsigned short d)
+static inline void put2ByteOpcodeValueAtOffsetAndAdvance(uschar*& opcodePtr, size_t offset, unsigned short value)
 {
-    put2ByteOpcodeValueAtOffset(a, n, d);
-    a += 2;
+    put2ByteOpcodeValueAtOffset(opcodePtr, offset, value);
+    opcodePtr += 2;
 }
 
 #define LEAD_OFFSET (0xd800 - (0x10000 >> 10))

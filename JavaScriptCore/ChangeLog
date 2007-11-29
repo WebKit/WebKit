@@ -24,6 +24,20 @@
 
         Reviewed by Sam.
 
+        Further cleanup GET/PUT inlines
+
+        * pcre/pcre_internal.h:
+        (putOpcodeValueAtOffset):
+        (getOpcodeValueAtOffset):
+        (putOpcodeValueAtOffsetAndAdvance):
+        (put2ByteOpcodeValueAtOffset):
+        (get2ByteOpcodeValueAtOffset):
+        (put2ByteOpcodeValueAtOffsetAndAdvance):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Give GET, PUT better names, and add (poor) moveOpcodePtrPastAnyAlternateBranches
 
         * pcre/pcre_compile.cpp:
