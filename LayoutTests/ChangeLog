@@ -1,3 +1,12 @@
+2007-11-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff.
+        
+        Test that fallback content inside media elements is not be rendered.
+
+        * media/fallback-expected.txt: Added.
+        * media/fallback.html: Added.
+
 2007-11-28  Alice Liu  <alice.liu@apple.com>
 
         just some more typo fixes

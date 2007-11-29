@@ -1,3 +1,14 @@
+2007-11-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff.
+        
+        Fallback content inside media elements should not be rendered.
+
+        Test: media/fallback.html
+
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::canHaveChildren):
+
 2007-11-28  Mark Rowe  <mrowe@apple.com>
 
         Windows build fix.
