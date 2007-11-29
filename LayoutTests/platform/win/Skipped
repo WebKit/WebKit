@@ -321,12 +321,6 @@ fast/forms/focus2.html
 fast/events/ondragenter.html
 fast/forms/focus-control-to-page.html
 
-# fast/frames/001.html is failing on boomer <rdar://problem/5133885>
-fast/frames/001.html
-
-# fast/frames/iframe-window-focus.html out is lowercase <rdar://problem/5133828>
-fast/frames/iframe-window-focus.html
-
 # fast/frames/frame-src-attribute.html fails on boomer <rdar://problem/5134044>
 fast/frames/frame-src-attribute.html
 
