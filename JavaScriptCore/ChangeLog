@@ -2,6 +2,15 @@
 
         Reviewed by Sam.
 
+        clean up is_counted_repeat
+
+        * pcre/pcre_compile.cpp:
+        (is_counted_repeat):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         clean up check_escape
 
         * pcre/pcre_compile.cpp:

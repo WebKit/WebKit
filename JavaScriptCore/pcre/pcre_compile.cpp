@@ -82,10 +82,10 @@ static const short escapes[] = {
 /* Error code numbers. They are given names so that they can more easily be
 tracked. */
 
-typedef enum {
+enum ErrorCode {
     ERR0, ERR1, ERR2, ERR3, ERR4, ERR5, ERR6, ERR7, ERR8, ERR9,
     ERR10, ERR11, ERR12, ERR13, ERR14, ERR15, ERR16, ERR17
-} ErrorCode;
+};
 
 /* Table of sizes for the fixed-length opcodes. It's defined in a macro so that
 the definition is next to the definition of the opcodes in pcre_internal.h. */
@@ -302,31 +302,29 @@ Arguments:
 Returns:    true or false
 */
 
-static bool
-is_counted_repeat(const UChar* p, const UChar* patternEnd)
+static bool is_counted_repeat(const UChar* p, const UChar* patternEnd)
 {
-if (p >= patternEnd || !isASCIIDigit(*p))
-    return false;
-p++;
-while (p < patternEnd && isASCIIDigit(*p))
+    if (p >= patternEnd || !isASCIIDigit(*p))
+        return false;
     p++;
-if (p < patternEnd && *p == '}')
-    return true;
-
-if (p >= patternEnd || *p++ != ',')
-    return false;
-if (p < patternEnd && *p == '}')
-    return true;
-
-if (p >= patternEnd || !isASCIIDigit(*p))
-    return false;
-p++;
-while (p < patternEnd && isASCIIDigit(*p))
+    while (p < patternEnd && isASCIIDigit(*p))
+        p++;
+    if (p < patternEnd && *p == '}')
+        return true;
+    
+    if (p >= patternEnd || *p++ != ',')
+        return false;
+    if (p < patternEnd && *p == '}')
+        return true;
+    
+    if (p >= patternEnd || !isASCIIDigit(*p))
+        return false;
     p++;
-
-return (p < patternEnd && *p == '}');
+    while (p < patternEnd && isASCIIDigit(*p))
+        p++;
+    
+    return (p < patternEnd && *p == '}');
 }
-
 
 
 /*************************************************
