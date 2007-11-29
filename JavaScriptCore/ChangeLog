@@ -26,6 +26,17 @@
 
 2007-11-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+
+        Remove no longer used error code JSRegExpErrorMatchLimit
+
+        * kjs/regexp.cpp:
+        (KJS::RegExp::match):
+        * pcre/pcre.h:
+        * pcre/pcre_internal.h:
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Make i locally scoped for better code clarity

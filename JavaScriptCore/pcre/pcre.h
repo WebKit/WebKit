@@ -53,7 +53,6 @@ enum JSRegExpMultilineOption { JSRegExpSingleLine, JSRegExpMultiline };
 const int JSRegExpErrorNoMatch = -1;
 const int JSRegExpErrorInternal = -2;
 const int JSRegExpErrorNoMemory = -3;
-const int JSRegExpErrorMatchLimit = -4;
 const int JSRegExpErrorRecursionLimit = -5;
 
 JSRegExp* jsRegExpCompile(const ::UChar* pattern, int patternLength,

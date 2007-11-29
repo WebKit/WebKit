@@ -107,7 +107,7 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
   if (numMatches < 0) {
 #ifndef NDEBUG
     if (numMatches != JSRegExpErrorNoMatch)
-      fprintf(stderr, "KJS: pcre_exec() failed with result %d\n", numMatches);
+      fprintf(stderr, "jsRegExpExecute failed with result %d\n", numMatches);
 #endif
     if (ovector)
       ovector->clear();

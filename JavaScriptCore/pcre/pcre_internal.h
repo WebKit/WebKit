@@ -91,7 +91,7 @@ value of MATCH_LIMIT_RECURSION applies only to recursive calls of match().
  
  This limit is tied to the size of MatchFrame.  Right now we allow PCRE to allocate up
  to MATCH_LIMIT_RECURSION - 16 * sizeof(MatchFrame) bytes of "stack" space before we give up.
- Currently that's 100000 - 16 * (23 * 4)  ~ 9MB
+ Currently that's 100000 - 16 * (23 * 4)  ~ 90MB
  */
 
 #define MATCH_LIMIT_RECURSION 100000
