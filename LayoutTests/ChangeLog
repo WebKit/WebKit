@@ -1,3 +1,10 @@
+2007-11-28  Timothy Hatcher  <timothy@apple.com>
+
+        Make this test not depend on the screen size.
+
+        * fast/dom/Window/window-resize-expected.txt:
+        * fast/dom/Window/window-resize.html:
+
 2007-11-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

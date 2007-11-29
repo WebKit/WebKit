@@ -177,13 +177,13 @@
     debug('window.moveBy Tests');
     debug('');
 
-    x = screen.width / 4;
-    y = screen.height / 4;
+    x = 100;
+    y = 100;
     window.resizeTo(x, y);
 
-    x = screen.width / 2;
-    y = screen.height / 2;
-    window.moveTo(x - (window.outerWidth / 2), y - (window.outerHeight / 2));
+    x = 200;
+    y = 200;
+    window.moveTo(x, y);
 
     var previousScreenX = window.screenX;
     var previousScreenY = window.screenY;
