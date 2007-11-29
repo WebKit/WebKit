@@ -1,3 +1,9 @@
+2007-11-28  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix.
+
+        * WebCore.pro:
+
 2007-11-28  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.
