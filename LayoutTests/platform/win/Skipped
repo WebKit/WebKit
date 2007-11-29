@@ -434,9 +434,6 @@ http/tests/incremental/frame-focus-before-load.html
 # <rdar://5507285> Back/forward list is missing entries
 http/tests/navigation/javascriptlink-frames.html
 
-# <rdar://5507350> embed.Play is undefined
-plugins/embed-attributes-setting.html
-
 # <rdar://5508270> Intermittently time out
 editing/selection/5057506-2.html
 editing/selection/5057506.html
