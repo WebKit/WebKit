@@ -152,8 +152,6 @@ typedef unsigned short pcre_uint16;
 typedef unsigned pcre_uint32;
 typedef unsigned char uschar;
 
-typedef JSRegExp pcre;
-
 typedef UChar pcre_char;
 typedef UChar pcre_uchar;
 typedef const UChar* USPTR;
@@ -547,7 +545,7 @@ fields are present. Currently PCRE always sets the dummy fields to zero.
 NOTE NOTE NOTE:
 */
 
-typedef struct real_pcre {
+struct JSRegExp {
   pcre_uint32 size;               /* Total that was malloced */
   pcre_uint32 options;
 
@@ -555,7 +553,7 @@ typedef struct real_pcre {
   pcre_uint16 top_backref;
   pcre_uint16 first_byte;
   pcre_uint16 req_byte;
-} real_pcre;
+};
 
 /* Internal shared data tables. These are tables that are used by more than one
  of the exported public functions. They have to be "external" in the C sense,

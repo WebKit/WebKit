@@ -1,3 +1,16 @@
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
+        Clean up jsRegExpExecute
+
+        * pcre/pcre_compile.cpp:
+        (returnError):
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
 2007-11-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.

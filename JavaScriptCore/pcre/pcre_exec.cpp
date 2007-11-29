@@ -2025,7 +2025,7 @@ portions of the string if it matches. Two elements in the vector are set for
 each substring: the offsets to the start and end of the substring.
 
 Arguments:
-  argument_re     points to the compiled expression
+  re              points to the compiled expression
   extra_data      points to extra data or is NULL
   subject         points to the subject string
   length          length of subject string (may contain binary zeros)
@@ -2040,304 +2040,273 @@ Returns:          > 0 => success; value is the number of elements filled in
                  < -1 => some kind of unexpected problem
 */
 
-int
-jsRegExpExecute(const pcre *argument_re,
-  const UChar* subject, int length, int start_offset, int *offsets,
-  int offsetcount)
+int jsRegExpExecute(const JSRegExp* re,
+                    const UChar* subject, int length, int start_offset, int* offsets,
+                    int offsetcount)
 {
-int rc, resetcount, ocount;
-int first_byte = -1;
-int req_byte = -1;
-int req_byte2 = -1;
-BOOL using_temporary_offsets = false;
-BOOL first_byte_caseless = false;
-BOOL startline;
-BOOL req_byte_caseless = false;
-match_data match_block;
-USPTR start_match = (USPTR)subject + start_offset;
-USPTR end_subject;
-USPTR req_byte_ptr = start_match - 1;
-const uschar *start_code;
-
-const real_pcre *external_re = (const real_pcre *)argument_re;
-const real_pcre *re = external_re;
-
-/* Plausibility checks */
-
-ASSERT(re);
-ASSERT(subject);
-ASSERT(offsetcount >= 0);
-ASSERT(offsets || offsetcount == 0);
-
-/* Set up other data */
-
-startline = (re->options & PCRE_STARTLINE) != 0;
-
-/* The code starts after the real_pcre block and the capture name table. */
-
-start_code = (const uschar *)(external_re + 1);
-
-match_block.start_subject = (USPTR)subject;
-match_block.end_subject = match_block.start_subject + length;
-end_subject = match_block.end_subject;
-
-match_block.lcc = _pcre_default_tables + lcc_offset;
-match_block.ctypes = _pcre_default_tables + ctypes_offset;
-
-match_block.multiline = (re->options & PCRE_MULTILINE) != 0;
-match_block.caseless = (re->options & PCRE_CASELESS) != 0;
-
-/* If the expression has got more back references than the offsets supplied can
-hold, we get a temporary chunk of working store to use during the matching.
-Otherwise, we can use the vector supplied, rounding down its size to a multiple
-of 3. */
-
-ocount = offsetcount - (offsetcount % 3);
-
-if (re->top_backref > 0 && re->top_backref >= ocount/3)
-  {
-  ocount = re->top_backref * 3 + 3;
-  match_block.offset_vector = new int[ocount];
-  if (match_block.offset_vector == NULL) return JSRegExpErrorNoMemory;
-  using_temporary_offsets = true;
-  DPRINTF(("Got memory to hold back references\n"));
-  }
-else match_block.offset_vector = offsets;
-
-match_block.offset_end = ocount;
-match_block.offset_max = (2*ocount)/3;
-match_block.offset_overflow = false;
-
-/* Compute the minimum number of offsets that we need to reset each time. Doing
-this makes a huge difference to execution time when there aren't many brackets
-in the pattern. */
-
-resetcount = 2 + re->top_bracket * 2;
-if (resetcount > offsetcount) resetcount = ocount;
-
-/* Reset the working variable associated with each extraction. These should
-never be used unless previously set, but they get saved and restored, and so we
-initialize them to avoid reading uninitialized locations. */
-
-if (match_block.offset_vector != NULL)
-  {
-  register int *iptr = match_block.offset_vector + ocount;
-  register int *iend = iptr - resetcount/2 + 1;
-  while (--iptr >= iend) *iptr = -1;
-  }
-
-/* Set up the first character to match, if available. The first_byte value is
-never set for an anchored regular expression, but the anchoring may be forced
-at run time, so we have to test for anchoring. The first char may be unset for
-an unanchored pattern, of course. If there's no first char and the pattern was
-studied, there may be a bitmap of possible first characters. */
-
-  if ((re->options & PCRE_FIRSTSET) != 0)
-    {
-    first_byte = re->first_byte & 255;
-    if ((first_byte_caseless = ((re->first_byte & REQ_CASELESS) != 0)) == true)
-      first_byte = match_block.lcc[first_byte];
+    ASSERT(re);
+    ASSERT(subject);
+    ASSERT(offsetcount >= 0);
+    ASSERT(offsets || offsetcount == 0);
+    
+    match_data match_block;
+    match_block.start_subject = (USPTR)subject;
+    match_block.end_subject = match_block.start_subject + length;
+    USPTR end_subject = match_block.end_subject;
+    
+    match_block.lcc = _pcre_default_tables + lcc_offset;
+    match_block.ctypes = _pcre_default_tables + ctypes_offset;
+    
+    match_block.multiline = (re->options & PCRE_MULTILINE) != 0;
+    match_block.caseless = (re->options & PCRE_CASELESS) != 0;
+    
+    /* If the expression has got more back references than the offsets supplied can
+     hold, we get a temporary chunk of working store to use during the matching.
+     Otherwise, we can use the vector supplied, rounding down its size to a multiple
+     of 3. */
+    
+    int ocount = offsetcount - (offsetcount % 3);
+    
+    BOOL using_temporary_offsets = false;
+    if (re->top_backref > 0 && re->top_backref >= ocount/3) {
+        ocount = re->top_backref * 3 + 3;
+        match_block.offset_vector = new int[ocount];
+        if (!match_block.offset_vector)
+            return JSRegExpErrorNoMemory;
+        using_temporary_offsets = true;
+    } else
+        match_block.offset_vector = offsets;
+    
+    match_block.offset_end = ocount;
+    match_block.offset_max = (2*ocount)/3;
+    match_block.offset_overflow = false;
+    
+    /* Compute the minimum number of offsets that we need to reset each time. Doing
+     this makes a huge difference to execution time when there aren't many brackets
+     in the pattern. */
+    
+    int resetcount = 2 + re->top_bracket * 2;
+    if (resetcount > offsetcount)
+        resetcount = ocount;
+    
+    /* Reset the working variable associated with each extraction. These should
+     never be used unless previously set, but they get saved and restored, and so we
+     initialize them to avoid reading uninitialized locations. */
+    
+    if (match_block.offset_vector) {
+        int* iptr = match_block.offset_vector + ocount;
+        int* iend = iptr - resetcount/2 + 1;
+        while (--iptr >= iend)
+            *iptr = -1;
     }
-
-/* For anchored or unanchored matches, there may be a "last known required
-character" set. */
-
-if ((re->options & PCRE_REQCHSET) != 0)
-  {
-  req_byte = re->req_byte & 255;
-  req_byte_caseless = (re->req_byte & REQ_CASELESS) != 0;
-  req_byte2 = (_pcre_default_tables + fcc_offset)[req_byte];  /* case flipped */
-  }
-
-/* Loop for handling unanchored repeated matching attempts; for anchored regexs
-the loop runs just once. */
-
-do
-  {
-  USPTR save_end_subject = end_subject;
-
-  /* Reset the maximum number of extractions we might see. */
-
-  if (match_block.offset_vector != NULL)
-    {
-    register int *iptr = match_block.offset_vector;
-    register int *iend = iptr + resetcount;
-    while (iptr < iend) *iptr++ = -1;
+    
+    /* Set up the first character to match, if available. The first_byte value is
+     never set for an anchored regular expression, but the anchoring may be forced
+     at run time, so we have to test for anchoring. The first char may be unset for
+     an unanchored pattern, of course. If there's no first char and the pattern was
+     studied, there may be a bitmap of possible first characters. */
+    
+    BOOL first_byte_caseless = false;
+    int first_byte = -1;
+    if (re->options & PCRE_FIRSTSET) {
+        first_byte = re->first_byte & 255;
+        if ((first_byte_caseless = (re->first_byte & REQ_CASELESS)))
+            first_byte = match_block.lcc[first_byte];
     }
-
-  /* Advance to a unique first char if possible. If firstline is true, the
-  start of the match is constrained to the first line of a multiline string.
-  Implement this by temporarily adjusting end_subject so that we stop scanning
-  at a newline. If the match fails at the newline, later code breaks this loop.
-  */
-
-  /* Now test for a unique first byte */
-
-  if (first_byte >= 0)
-    {
-    pcre_uchar first_char = first_byte;
-    if (first_byte_caseless)
-      while (start_match < end_subject)
-        {
-        int sm = *start_match;
-        if (sm > 127)
-          break;
-        if (match_block.lcc[sm] == first_char)
-          break;
-        start_match++;
+    
+    /* For anchored or unanchored matches, there may be a "last known required
+     character" set. */
+    
+    BOOL req_byte_caseless = false;
+    int req_byte = -1;
+    int req_byte2 = -1;
+    if (re->options & PCRE_REQCHSET) {
+        req_byte = re->req_byte & 255;
+        req_byte_caseless = (re->req_byte & REQ_CASELESS) != 0;
+        req_byte2 = (_pcre_default_tables + fcc_offset)[req_byte];  /* case flipped */
+    }
+    
+    /* Loop for handling unanchored repeated matching attempts; for anchored regexs
+     the loop runs just once. */
+    
+    USPTR start_match = (USPTR)subject + start_offset;
+    USPTR req_byte_ptr = start_match - 1;
+    
+    do {
+        USPTR save_end_subject = end_subject;
+        
+        /* Reset the maximum number of extractions we might see. */
+        
+        if (match_block.offset_vector != NULL) {
+            int* iptr = match_block.offset_vector;
+            int* iend = iptr + resetcount;
+            while (iptr < iend)
+                *iptr++ = -1;
         }
-    else
-      while (start_match < end_subject && *start_match != first_char)
-        start_match++;
-    }
-
-  /* Or to just after \n for a multiline match if possible */
-
-  else if (startline)
-    {
-    if (start_match > match_block.start_subject + start_offset)
-      {
-      while (start_match < end_subject && !isNewline(start_match[-1]))
-        start_match++;
-      }
-    }
-
-  /* Restore fudged end_subject */
-
-  end_subject = save_end_subject;
-
+        
+        /* Advance to a unique first char if possible. If firstline is true, the
+         start of the match is constrained to the first line of a multiline string.
+         Implement this by temporarily adjusting end_subject so that we stop scanning
+         at a newline. If the match fails at the newline, later code breaks this loop.
+         */
+        
+        /* Now test for a unique first byte */
+        
+        if (first_byte >= 0) {
+            pcre_uchar first_char = first_byte;
+            if (first_byte_caseless)
+                while (start_match < end_subject) {
+                    int sm = *start_match;
+                    if (sm > 127)
+                        break;
+                    if (match_block.lcc[sm] == first_char)
+                        break;
+                    start_match++;
+                }
+            else
+                while (start_match < end_subject && *start_match != first_char)
+                    start_match++;
+        }
+        
+        /* Or to just after \n for a multiline match if possible */
+        
+        else if (re->options & PCRE_STARTLINE) {
+            if (start_match > match_block.start_subject + start_offset) {
+                while (start_match < end_subject && !isNewline(start_match[-1]))
+                    start_match++;
+            }
+        }
+        
+        /* Restore fudged end_subject */
+        
+        end_subject = save_end_subject;
+        
 #ifdef DEBUG  /* Sigh. Some compilers never learn. */
-  printf(">>>> Match against: ");
-  pchars(start_match, end_subject - start_match, true, &match_block);
-  printf("\n");
+        printf(">>>> Match against: ");
+        pchars(start_match, end_subject - start_match, true, &match_block);
+        printf("\n");
 #endif
-
-  /* If req_byte is set, we know that that character must appear in the subject
-  for the match to succeed. If the first character is set, req_byte must be
-  later in the subject; otherwise the test starts at the match point. This
-  optimization can save a huge amount of backtracking in patterns with nested
-  unlimited repeats that aren't going to match. Writing separate code for
-  cased/caseless versions makes it go faster, as does using an autoincrement
-  and backing off on a match.
-
-  HOWEVER: when the subject string is very, very long, searching to its end can
-  take a long time, and give bad performance on quite ordinary patterns. This
-  showed up when somebody was matching /^C/ on a 32-megabyte string... so we
-  don't do this when the string is sufficiently long.
-
-  ALSO: this processing is disabled when partial matching is requested.
-  */
-
-  if (req_byte >= 0 &&
-      end_subject - start_match < REQ_BYTE_MAX)
-    {
-    register USPTR p = start_match + ((first_byte >= 0)? 1 : 0);
-
-    /* We don't need to repeat the search if we haven't yet reached the
-    place we found it at last time. */
-
-    if (p > req_byte_ptr)
-      {
-      if (req_byte_caseless)
-        {
-        while (p < end_subject)
-          {
-          register int pp = *p++;
-          if (pp == req_byte || pp == req_byte2) { p--; break; }
-          }
+        
+        /* If req_byte is set, we know that that character must appear in the subject
+         for the match to succeed. If the first character is set, req_byte must be
+         later in the subject; otherwise the test starts at the match point. This
+         optimization can save a huge amount of backtracking in patterns with nested
+         unlimited repeats that aren't going to match. Writing separate code for
+         cased/caseless versions makes it go faster, as does using an autoincrement
+         and backing off on a match.
+         
+         HOWEVER: when the subject string is very, very long, searching to its end can
+         take a long time, and give bad performance on quite ordinary patterns. This
+         showed up when somebody was matching /^C/ on a 32-megabyte string... so we
+         don't do this when the string is sufficiently long.
+         
+         ALSO: this processing is disabled when partial matching is requested.
+         */
+        
+        if (req_byte >= 0 && end_subject - start_match < REQ_BYTE_MAX) {
+            USPTR p = start_match + ((first_byte >= 0)? 1 : 0);
+            
+            /* We don't need to repeat the search if we haven't yet reached the
+             place we found it at last time. */
+            
+            if (p > req_byte_ptr) {
+                if (req_byte_caseless) {
+                    while (p < end_subject) {
+                        int pp = *p++;
+                        if (pp == req_byte || pp == req_byte2) {
+                            p--;
+                            break;
+                        }
+                    }
+                } else {
+                    while (p < end_subject) {
+                        if (*p++ == req_byte) {
+                            p--;
+                            break;
+                        }
+                    }
+                }
+                
+                /* If we can't find the required character, break the matching loop */
+                
+                if (p >= end_subject)
+                    break;
+                
+                /* If we have found the required character, save the point where we
+                 found it, so that we don't search again next time round the loop if
+                 the start hasn't passed this character yet. */
+                
+                req_byte_ptr = p;
+            }
         }
-      else
-        {
-        while (p < end_subject)
-          {
-          if (*p++ == req_byte) { p--; break; }
-          }
+        
+        /* When a match occurs, substrings will be set for all internal extractions;
+         we just need to set up the whole thing as substring 0 before returning. If
+         there were too many extractions, set the return code to zero. In the case
+         where we had to get some local store to hold offsets for backreferences, copy
+         those back references that we can. In this case there need not be overflow
+         if certain parts of the pattern were not used. */
+        
+        match_block.match_call_count = 0;
+        
+        
+        /* The code starts after the JSRegExp block and the capture name table. */
+        const uschar* start_code = (const uschar*)(re + 1);
+        
+        int returnCode = match(start_match, start_code, 2, &match_block);
+        
+        /* When the result is no match, if the subject's first character was a
+         newline and the PCRE_FIRSTLINE option is set, break (which will return
+         PCRE_ERROR_NOMATCH). The option requests that a match occur before the first
+         newline in the subject. Otherwise, advance the pointer to the next character
+         and continue - but the continuation will actually happen only when the
+         pattern is not anchored. */
+        
+        if (returnCode == MATCH_NOMATCH) {
+            start_match++;
+            while(start_match < end_subject && ISMIDCHAR(*start_match))
+                start_match++;
+            continue;
         }
-
-      /* If we can't find the required character, break the matching loop */
-
-      if (p >= end_subject) break;
-
-      /* If we have found the required character, save the point where we
-      found it, so that we don't search again next time round the loop if
-      the start hasn't passed this character yet. */
-
-      req_byte_ptr = p;
-      }
+        
+        if (returnCode != MATCH_MATCH) {
+            DPRINTF((">>>> error: returning %d\n", rc));
+            return returnCode;
+        }
+        
+        /* We have a match! Copy the offset information from temporary store if
+         necessary */
+        
+        if (using_temporary_offsets) {
+            if (offsetcount >= 4) {
+                memcpy(offsets + 2, match_block.offset_vector + 2, (offsetcount - 2) * sizeof(int));
+                DPRINTF(("Copied offsets from temporary memory\n"));
+            }
+            if (match_block.end_offset_top > offsetcount)
+                match_block.offset_overflow = true;
+            
+            DPRINTF(("Freeing temporary memory\n"));
+            delete [] match_block.offset_vector;
+        }
+        
+        returnCode = match_block.offset_overflow? 0 : match_block.end_offset_top/2;
+        
+        if (offsetcount < 2)
+            returnCode = 0;
+        else {
+            offsets[0] = start_match - match_block.start_subject;
+            offsets[1] = match_block.end_match_ptr - match_block.start_subject;
+        }
+        
+        DPRINTF((">>>> returning %d\n", rc));
+        return returnCode;
+    } while (start_match <= end_subject);
+    
+    if (using_temporary_offsets) {
+        DPRINTF(("Freeing temporary memory\n"));
+        delete [] match_block.offset_vector;
     }
-
-  /* When a match occurs, substrings will be set for all internal extractions;
-  we just need to set up the whole thing as substring 0 before returning. If
-  there were too many extractions, set the return code to zero. In the case
-  where we had to get some local store to hold offsets for backreferences, copy
-  those back references that we can. In this case there need not be overflow
-  if certain parts of the pattern were not used. */
-
-  match_block.match_call_count = 0;
-
-  rc = match(start_match, start_code, 2, &match_block);
-
-  /* When the result is no match, if the subject's first character was a
-  newline and the PCRE_FIRSTLINE option is set, break (which will return
-  PCRE_ERROR_NOMATCH). The option requests that a match occur before the first
-  newline in the subject. Otherwise, advance the pointer to the next character
-  and continue - but the continuation will actually happen only when the
-  pattern is not anchored. */
-
-  if (rc == MATCH_NOMATCH)
-    {
-    start_match++;
-      while(start_match < end_subject && ISMIDCHAR(*start_match))
-        start_match++;
-    continue;
-    }
-
-  if (rc != MATCH_MATCH)
-    {
-    DPRINTF((">>>> error: returning %d\n", rc));
-    return rc;
-    }
-
-  /* We have a match! Copy the offset information from temporary store if
-  necessary */
-
-  if (using_temporary_offsets)
-    {
-    if (offsetcount >= 4)
-      {
-      memcpy(offsets + 2, match_block.offset_vector + 2,
-        (offsetcount - 2) * sizeof(int));
-      DPRINTF(("Copied offsets from temporary memory\n"));
-      }
-    if (match_block.end_offset_top > offsetcount)
-      match_block.offset_overflow = true;
-
-    DPRINTF(("Freeing temporary memory\n"));
-    delete [] match_block.offset_vector;
-    }
-
-  rc = match_block.offset_overflow? 0 : match_block.end_offset_top/2;
-
-  if (offsetcount < 2) rc = 0; else
-    {
-    offsets[0] = start_match - match_block.start_subject;
-    offsets[1] = match_block.end_match_ptr - match_block.start_subject;
-    }
-
-  DPRINTF((">>>> returning %d\n", rc));
-  return rc;
-  }
-
-/* This "while" is the end of the "do" above */
-
-while (start_match <= end_subject);
-
-if (using_temporary_offsets)
-  {
-  DPRINTF(("Freeing temporary memory\n"));
-  delete [] match_block.offset_vector;
-  }
-
-  DPRINTF((">>>> returning PCRE_ERROR_NOMATCH\n"));
-  return JSRegExpErrorNoMatch;
+    
+    DPRINTF((">>>> returning PCRE_ERROR_NOMATCH\n"));
+    return JSRegExpErrorNoMatch;
 }
