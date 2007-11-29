@@ -1,5 +1,13 @@
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
+        Build fix
+
+        * WebChromeClient.cpp:
+        (WebChromeClient::requestQuotaIncreaseForNewDatabase):
+        (WebChromeClient::requestQuotaIncreaseForDatabaseOperation):
+
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
         Keep it building with new client method
 
         * WebChromeClient.cpp:
