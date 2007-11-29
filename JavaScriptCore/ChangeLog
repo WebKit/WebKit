@@ -2,6 +2,15 @@
 
         Reviewed by Sam.
 
+        Fix spacing for read_repeat_counts
+
+        * pcre/pcre_compile.cpp:
+        (read_repeat_counts):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Get rid of PCRE custom char types
 
         * pcre/pcre_compile.cpp:
