@@ -79,6 +79,7 @@ static ExecState* getThreadGlobalExecState()
     Interpreter* interpreter = static_cast<Interpreter*>(pthread_getspecific(interpreterKey));
     if (!interpreter) {
         interpreter = new Interpreter();
+        interpreter->setGlobalObject(new JSGlobalObject());
         interpreter->ref();
         pthread_setspecific(interpreterKey, interpreter);
     }
