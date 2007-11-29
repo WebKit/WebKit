@@ -2071,13 +2071,13 @@ static bool is_anchored(const uschar* code, int options, unsigned bracket_map, u
         }
         
         /* Other brackets */
-        else if (op == OP_BRA || op == OP_ASSERT || op == OP_ONCE)
+        else if (op == OP_BRA || op == OP_ASSERT || op == OP_ONCE) {
             if (!is_anchored(scode, options, bracket_map, backref_map))
                 return false;
         
         /* Check for explicit anchoring */
         
-        else if ((options & MatchAcrossMultipleLinesOption) || op != OP_CIRC)
+        } else if ((options & MatchAcrossMultipleLinesOption) || op != OP_CIRC)
             return false;
         code += getOpcodeValueAtOffset(code, 1);
     } while (*code == OP_ALT);   /* Loop for each alternative */

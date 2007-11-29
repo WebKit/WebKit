@@ -1,3 +1,12 @@
+2007-11-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+        
+        Fix for --guard crash of fast/js/regexp-charclass-crash introduced by r28151.
+
+        * pcre/pcre_compile.cpp:
+        (is_anchored):
+
 2007-11-28  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.  Rubber-stamped by Eric.
