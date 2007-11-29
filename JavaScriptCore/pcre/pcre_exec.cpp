@@ -301,25 +301,28 @@ Returns:       MATCH_MATCH if matched            )  these values are >= 0
                  (e.g. stopped by repeated call or recursion limit)
 */
 
+static const unsigned FRAMES_ON_STACK = 16;
+
 struct MatchStack {
     MatchStack()
+        : framesEnd(frames + FRAMES_ON_STACK)
+        , currentFrame(frames)
+        , size(1) // match() creates accesses the first frame w/o calling pushNewFrame
     {
-        framesEnd = frames + sizeof(frames) / sizeof(frames[0]);
-        currentFrame = frames;
-        size = 0;
+        ASSERT((sizeof(frames) / sizeof(frames[0])) == FRAMES_ON_STACK);
     }
     
     /* The value 16 here is large enough that most regular expressions don't require
      any calls to pcre_stack_malloc, yet the amount of stack used for the array is
      modest enough that we don't run out of stack. */
-    MatchFrame frames[16];
+    MatchFrame frames[FRAMES_ON_STACK];
     MatchFrame* framesEnd;
     MatchFrame* currentFrame;
     unsigned size;
     
     inline bool canUseStackBufferForNextFrame()
     {
-        return (currentFrame >= frames && currentFrame + 1 < framesEnd);
+        return size < FRAMES_ON_STACK;
     }
     
     inline MatchFrame* allocateNextFrame()
@@ -344,16 +347,11 @@ struct MatchStack {
         currentFrame = newframe;
     }
     
-    inline bool frameIsStackAllocated(MatchFrame* frame)
-    {
-        return (frame >= frames && frame < framesEnd);
-    }
-    
     inline void popCurrentFrame()
     {
         MatchFrame* oldFrame = currentFrame;
         currentFrame = currentFrame->previousFrame;
-        if (!frameIsStackAllocated(oldFrame))
+        if (size > FRAMES_ON_STACK)
             delete oldFrame;
         size--;
     }

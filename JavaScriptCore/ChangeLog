@@ -1,3 +1,13 @@
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Small speedup (0.7%) by simplifying canUseStackBufferForNextFrame() check
+
+        * pcre/pcre_exec.cpp:
+        (MatchStack::MatchStack):
+        (MatchStack::popCurrentFrame):
+
 2007-11-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.
