@@ -625,7 +625,7 @@ struct CompileData {
   const uschar* start_code;     /* The start of the compiled code */
   const UChar* start_pattern;   /* The start of the pattern */
   int  top_backref;             /* Maximum back reference */
-  unsigned int backref_map;     /* Bitmap of low back refs */
+  unsigned backref_map;     /* Bitmap of low back refs */
   int  req_varyopt;             /* "After variable item" flag for reqbyte */
 };
 

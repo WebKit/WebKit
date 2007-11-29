@@ -43,6 +43,16 @@
 
         Reviewed by Sam.
 
+        Further cleanups to calculateCompiledPatternLengthAndFlags
+
+        * pcre/pcre_compile.cpp:
+        (calculateCompiledPatternLengthAndFlags):
+        * pcre/pcre_internal.h:
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Give consistent naming to the RegExp options/compile flags
 
         * pcre/pcre_compile.cpp:
