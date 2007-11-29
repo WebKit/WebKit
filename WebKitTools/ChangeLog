@@ -1,3 +1,9 @@
+2007-11-29  Kevin McCullough  <kmccullough@apple.com>
+
+        - Windows build fix. VS express needs some love.
+
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+
 2007-11-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.
