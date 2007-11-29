@@ -1,3 +1,10 @@
+2007-11-29  Kevin McCullough  <kmccullough@apple.com>
+
+        - Build fix.  Added additional includes for VS Express to the Release
+        project.
+
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj:
+
 2007-11-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

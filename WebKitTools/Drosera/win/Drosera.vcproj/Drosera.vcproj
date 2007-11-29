@@ -169,7 +169,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="CoreFoundation$(ConfigSuffix).lib CoreGraphics$(ConfigSuffix).lib WebKit$(ConfigSuffix).lib WebKitGUID$(ConfigSuffix).lib"
+				AdditionalDependencies="CoreFoundation$(ConfigSuffix).lib CoreGraphics$(ConfigSuffix).lib WebKit$(ConfigSuffix).lib WebKitGUID$(ConfigSuffix).lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(ConfigSuffix).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
