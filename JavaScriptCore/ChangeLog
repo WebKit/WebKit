@@ -22,6 +22,16 @@
 
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        Remove redundant eptrblock struct
+
+        * pcre/pcre_exec.cpp:
+        (MatchStack::pushNewFrame):
+        (match):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         Remove redundant match_call_count and move recursion check out of super-hot code path
