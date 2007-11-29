@@ -22,6 +22,15 @@
 
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        cleanup _pcre_ucp_othercase
+
+        * pcre/pcre_ucp_searchfuncs.cpp:
+        (_pcre_ucp_othercase):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         Use better variable names for case ignoring options
