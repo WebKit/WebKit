@@ -152,10 +152,6 @@ typedef unsigned short pcre_uint16;
 typedef unsigned pcre_uint32;
 typedef unsigned char uschar;
 
-typedef UChar pcre_char;
-typedef UChar pcre_uchar;
-typedef const UChar* USPTR;
-
 /* PCRE keeps offsets in its compiled code as 2-byte quantities (always stored
 in big-endian order) by default. These are used, for example, to link from the
 start of a subpattern to its alternatives and its end. The use of 2 bytes per
@@ -266,7 +262,7 @@ static inline int decodeSurrogatePair(int l, int t)
     return ((l << 10) + t + SURROGATE_OFFSET);
 }
 
-static inline void getChar(int& c, const pcre_uchar* eptr)
+static inline void getChar(int& c, const UChar* eptr)
 {
     c = eptr[0];
     if (isLeadingSurrogate(c))
@@ -556,7 +552,7 @@ typedef struct compile_data {
   const uschar *cbits;          /* Points to character type table */
   const uschar *ctypes;         /* Points to table of type maps */
   const uschar *start_code;     /* The start of the compiled code */
-  const pcre_uchar *start_pattern;   /* The start of the pattern */
+  const UChar* start_pattern;   /* The start of the pattern */
   int  top_backref;             /* Maximum back reference */
   unsigned int backref_map;     /* Bitmap of low back refs */
   int  req_varyopt;             /* "After variable item" flag for reqbyte */
@@ -570,7 +566,7 @@ extern int         _pcre_ord2utf8(int, uschar *);
 extern int         _pcre_ucp_othercase(const unsigned int);
 extern BOOL        _pcre_xclass(int, const uschar *);
 
-static inline bool isNewline(pcre_uchar nl)
+static inline bool isNewline(UChar nl)
 {
     return (nl == 0xA || nl == 0xD || nl == 0x2028 || nl == 0x2029);
 }

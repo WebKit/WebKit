@@ -65,10 +65,10 @@ subpattern, so as to detect when an empty string has been matched by a
 subpattern - to break infinite loops. When NO_RECURSE is set, these blocks
 are on the heap, not on the stack. */
 
-typedef struct eptrblock {
-  struct eptrblock *epb_prev;
-  USPTR epb_saved_eptr;
-} eptrblock;
+struct eptrblock {
+  struct eptrblock* epb_prev;
+  UChar* epb_saved_eptr;
+};
 
 /* Structure for remembering the local variables in a private frame */
 
@@ -87,7 +87,7 @@ struct MatchFrame {
 
   /* Function arguments that may change */
 
-  const pcre_uchar* eptr;
+  UChar* eptr;
   const uschar* ecode;
   int offset_top;
   eptrblock* eptrb;
@@ -96,9 +96,9 @@ struct MatchFrame {
 
   const uschar* data;
   const uschar* next;
-  const pcre_uchar* pp;
+  const UChar* pp;
   const uschar* prev;
-  const pcre_uchar* saved_eptr;
+  const UChar* saved_eptr;
 
   int repeat_othercase;
 
@@ -125,9 +125,9 @@ typedef struct match_data {
   const uschar *lcc;            /* Points to lower casing table */
   const uschar *ctypes;         /* Points to table of type maps */
   BOOL   offset_overflow;       /* Set if too many extractions */
-  USPTR  start_subject;         /* Start of the subject string */
-  USPTR  end_subject;           /* End of the subject string */
-  USPTR  end_match_ptr;         /* Subject position at end match */
+  UChar*  start_subject;         /* Start of the subject string */
+  UChar*  end_subject;           /* End of the subject string */
+  UChar*  end_match_ptr;         /* Subject position at end match */
   int    end_offset_top;        /* Highwater mark at end of match */
   BOOL   multiline;
   BOOL   caseless;
@@ -166,7 +166,7 @@ Returns:     nothing
 */
 
 static void
-pchars(const pcre_uchar *p, int length, BOOL is_subject, match_data *md)
+pchars(const UChar* p, int length, BOOL is_subject, match_data *md)
 {
 int c;
 if (is_subject && length > md->end_subject - p) length = md->end_subject - p;
@@ -196,9 +196,9 @@ Returns:      true if matched
 */
 
 static BOOL
-match_ref(int offset, USPTR eptr, int length, match_data *md)
+match_ref(int offset, UChar* eptr, int length, match_data *md)
 {
-USPTR p = md->start_subject + md->offset_vector[offset];
+UChar* p = md->start_subject + md->offset_vector[offset];
 
 #ifdef DEBUG
 if (eptr >= md->end_subject)
@@ -223,9 +223,9 @@ if (md->caseless)
   {
   while (length-- > 0)
     {
-    pcre_uchar c = *p++;
+    UChar c = *p++;
     int othercase = _pcre_ucp_othercase(c);
-    pcre_uchar d = *eptr++;
+    UChar d = *eptr++;
     if (c != d && othercase != d) return false;
     }
   }
@@ -403,7 +403,7 @@ static inline void getUTF8CharAndIncrementLength(int& c, const uschar* eptr, int
     }
 }
 
-static int match(USPTR eptr, const uschar* ecode, int offset_top, match_data* md)
+static int match(UChar* eptr, const uschar* ecode, int offset_top, match_data* md)
 {
     int is_match = false;
     int i;
@@ -775,7 +775,7 @@ RECURSE:
                 if (stack.currentFrame->eptr == md->start_subject)
                     prev_is_word = false;
                 else {
-                    const pcre_uchar *lastptr = stack.currentFrame->eptr - 1;
+                    const UChar* lastptr = stack.currentFrame->eptr - 1;
                     while(isTrailingSurrogate(*lastptr))
                         lastptr--;
                     getChar(c, lastptr);
@@ -2068,9 +2068,9 @@ int jsRegExpExecute(const JSRegExp* re,
     ASSERT(offsets || offsetcount == 0);
     
     match_data match_block;
-    match_block.start_subject = (USPTR)subject;
+    match_block.start_subject = (UChar*)subject;
     match_block.end_subject = match_block.start_subject + length;
-    USPTR end_subject = match_block.end_subject;
+    UChar* end_subject = match_block.end_subject;
     
     match_block.lcc = _pcre_default_tables + lcc_offset;
     match_block.ctypes = _pcre_default_tables + ctypes_offset;
@@ -2147,12 +2147,12 @@ int jsRegExpExecute(const JSRegExp* re,
     /* Loop for handling unanchored repeated matching attempts; for anchored regexs
      the loop runs just once. */
     
-    USPTR start_match = (USPTR)subject + start_offset;
-    USPTR req_byte_ptr = start_match - 1;
+    UChar* start_match = (UChar*)subject + start_offset;
+    UChar* req_byte_ptr = start_match - 1;
     bool startline = re->options & PCRE_STARTLINE;
     
     do {
-        USPTR save_end_subject = end_subject;
+        UChar* save_end_subject = end_subject;
         
         /* Reset the maximum number of extractions we might see. */
         
@@ -2172,7 +2172,7 @@ int jsRegExpExecute(const JSRegExp* re,
         /* Now test for a unique first byte */
         
         if (first_byte >= 0) {
-            pcre_uchar first_char = first_byte;
+            UChar first_char = first_byte;
             if (first_byte_caseless)
                 while (start_match < end_subject) {
                     int sm = *start_match;
@@ -2223,7 +2223,7 @@ int jsRegExpExecute(const JSRegExp* re,
          */
         
         if (req_byte >= 0 && end_subject - start_match < REQ_BYTE_MAX) {
-            USPTR p = start_match + ((first_byte >= 0)? 1 : 0);
+            UChar* p = start_match + ((first_byte >= 0)? 1 : 0);
             
             /* We don't need to repeat the search if we haven't yet reached the
              place we found it at last time. */

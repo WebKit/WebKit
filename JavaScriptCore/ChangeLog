@@ -2,6 +2,25 @@
 
         Reviewed by Sam.
 
+        Get rid of PCRE custom char types
+
+        * pcre/pcre_compile.cpp:
+        (check_escape):
+        (complete_callout):
+        (compile_branch):
+        (compile_regex):
+        (calculateCompiledPatternLengthAndFlags):
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (match_ref):
+        (match):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         reformat get_othercase_range
 
         * pcre/pcre_compile.cpp:

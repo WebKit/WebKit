@@ -131,7 +131,7 @@ static const char* error_text(ErrorCode code)
 /* Definition to allow mutual recursion */
 
 static BOOL
-  compile_regex(int, int *, uschar **, const pcre_uchar **, const pcre_uchar *, ErrorCode*, int,
+  compile_regex(int, int *, uschar **, const UChar**, const UChar*, ErrorCode*, int,
     int *, int *, compile_data *);
 
 /*************************************************
@@ -157,10 +157,10 @@ Returns:         zero or positive => a data character
 */
 
 static int
-check_escape(const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, ErrorCode* errorcodeptr, int bracount,
+check_escape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int bracount,
   BOOL isclass)
 {
-const pcre_uchar *ptr = *ptrptr + 1;
+const UChar* ptr = *ptrptr + 1;
 int i;
 
 /* If backslash is at the end of the pattern, it's an error. */
@@ -195,7 +195,7 @@ else
 
     if (!isclass)
       {
-      const pcre_uchar *oldptr = ptr;
+      const UChar* oldptr = ptr;
       c -= '0';
       while (ptr + 1 < patternEnd && isASCIIDigit(ptr[1]) && c <= bracount)
         c = c * 10 + *(++ptr) - '0';
@@ -305,7 +305,7 @@ Returns:    true or false
 */
 
 static BOOL
-is_counted_repeat(const pcre_uchar *p, const pcre_uchar *patternEnd)
+is_counted_repeat(const UChar* p, const UChar* patternEnd)
 {
 if (p >= patternEnd || !isASCIIDigit(*p))
     return false;
@@ -350,8 +350,7 @@ Returns:         pointer to '}' on success;
                  current ptr on error, with errorcodeptr set non-zero
 */
 
-static const pcre_uchar *
-read_repeat_counts(const pcre_uchar *p, int *minp, int *maxp, ErrorCode* errorcodeptr)
+static const UChar* read_repeat_counts(const UChar* p, int* minp, int* maxp, ErrorCode* errorcodeptr)
 {
 int min = 0;
 int max = -1;
@@ -395,7 +394,6 @@ if (*p == '}') max = min; else
 *maxp = max;
 return p;
 }
-
 
 
 /*************************************************
@@ -760,11 +758,10 @@ Arguments:
 Returns:             nothing
 */
 
-static void
-complete_callout(uschar *previous_callout, const pcre_uchar *ptr, compile_data *cd)
+static void complete_callout(uschar* previous_callout, const UChar* ptr, compile_data* cd)
 {
-int length = ptr - cd->start_pattern - GET(previous_callout, 2);
-PUT(previous_callout, 2 + LINK_SIZE, length);
+    int length = ptr - cd->start_pattern - GET(previous_callout, 2);
+    PUT(previous_callout, 2 + LINK_SIZE, length);
 }
 
 
@@ -839,7 +836,7 @@ Returns:         true on success
 
 static BOOL
 compile_branch(int options, int *brackets, uschar **codeptr,
-  const pcre_uchar **ptrptr, const pcre_uchar *patternEnd, ErrorCode* errorcodeptr, int *firstbyteptr,
+  const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int *firstbyteptr,
   int *reqbyteptr, compile_data *cd)
 {
 int repeat_type, op_type;
@@ -853,8 +850,8 @@ int c;
 uschar *code = *codeptr;
 uschar *tempcode;
 BOOL groupsetfirstbyte = false;
-const pcre_uchar *ptr = *ptrptr;
-const pcre_uchar *tempptr;
+const UChar* ptr = *ptrptr;
+const UChar* tempptr;
 uschar *previous = NULL;
 uschar *previous_callout = NULL;
 uschar classbits[32];
@@ -1097,7 +1094,7 @@ for (;; ptr++)
 
         if (d == '\\')
           {
-          const pcre_uchar *oldptr = ptr;
+          const UChar* oldptr = ptr;
           d = check_escape(&ptr, patternEnd, errorcodeptr, *brackets, true);
 
           /* \b is backslash; \X is literal X; any other special means the '-'
@@ -2088,10 +2085,10 @@ Returns:      true on success
 
 static BOOL
 compile_regex(int options, int* brackets, uschar** codeptr,
-              const pcre_uchar** ptrptr, const pcre_uchar* patternEnd, ErrorCode* errorcodeptr, int skipbytes,
+              const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int skipbytes,
               int* firstbyteptr, int* reqbyteptr, compile_data* cd)
 {
-    const pcre_uchar* ptr = *ptrptr;
+    const UChar* ptr = *ptrptr;
     uschar* code = *codeptr;
     uschar* last_branch = code;
     uschar* start_bracket = code;
@@ -2416,7 +2413,7 @@ while (*code == OP_ALT);
 return c;
 }
 
-static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int patternLength, JSRegExpIgnoreCaseOption ignoreCase, compile_data& compile_block, ErrorCode& errorcode)
+static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patternLength, JSRegExpIgnoreCaseOption ignoreCase, compile_data& compile_block, ErrorCode& errorcode)
 {
     /* Make a pass over the pattern to compute the
      amount of store required to hold the compiled code. This does not have to be
@@ -2437,8 +2434,8 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
     int item_count = -1;
     int bracount = 0;
     
-    const pcre_uchar* ptr = (const pcre_uchar*)(pattern - 1);
-    const pcre_uchar* patternEnd = (const pcre_uchar*)(pattern + patternLength);
+    const UChar* ptr = (const UChar*)(pattern - 1);
+    const UChar* patternEnd = (const UChar*)(pattern + patternLength);
     
     while (++ptr < patternEnd)
     {
@@ -2632,42 +2629,37 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                         class_optcount++;
                         
                         d = -1;
-                        if (ptr + 1 < patternEnd && ptr[1] == '-')
-                        {
-                            pcre_uchar const *hyptr = ptr++;
-                            if (ptr + 1 < patternEnd && ptr[1] == '\\')
-                            {
+                        if (ptr + 1 < patternEnd && ptr[1] == '-') {
+                            UChar const *hyptr = ptr++;
+                            if (ptr + 1 < patternEnd && ptr[1] == '\\') {
                                 ptr++;
                                 d = check_escape(&ptr, patternEnd, &errorcode, bracount, true);
-                                if (errorcode != 0) return -1;;
-                                if (-d == ESC_b) d = '\b';        /* backspace */
+                                if (errorcode != 0)
+                                    return -1;;
+                                if (-d == ESC_b)
+                                    d = '\b';        /* backspace */
                             }
-                            else if (ptr + 1 < patternEnd && ptr[1] != ']')
-                            {
+                            else if (ptr + 1 < patternEnd && ptr[1] != ']') {
                                 ptr++;
-                                {
-                                    int extra = 0;
-                                    GETCHARLENEND(d, ptr, patternEnd, extra);
-                                    ptr += extra;
-                                }
+                                int extra = 0;
+                                GETCHARLENEND(d, ptr, patternEnd, extra);
+                                ptr += extra;
                             }
-                            if (d < 0) ptr = hyptr;      /* go back to hyphen as data */
+                            if (d < 0)
+                                ptr = hyptr;      /* go back to hyphen as data */
                         }
                         
                         /* If d >= 0 we have a range. In UTF-8 mode, if the end is > 255, or >
                          127 for caseless matching, we will need to use an XCLASS. */
                         
-                        if (d >= 0)
-                        {
+                        if (d >= 0) {
                             class_optcount = 10;     /* Ensure > 1 */
-                            if (d < c)
-                            {
+                            if (d < c) {
                                 errorcode = ERR8;
                                 return -1;;
                             }
                             
-                            if ((d > 255 || (ignoreCase && d > 127)))
-                            {
+                            if ((d > 255 || (ignoreCase && d > 127))) {
                                 uschar buffer[6];
                                 if (!class_utf8)         /* Allow for XCLASS overhead */
                                 {
@@ -2988,7 +2980,7 @@ static JSRegExp* returnError(ErrorCode errorcode, const char** errorptr)
     return 0;
 }
 
-JSRegExp* jsRegExpCompile(const pcre_char* pattern, int patternLength,
+JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
                 JSRegExpIgnoreCaseOption ignoreCase, JSRegExpMultilineOption multiline,
                 unsigned* numSubpatterns, const char** errorptr)
 {
@@ -3027,14 +3019,14 @@ JSRegExp* jsRegExpCompile(const pcre_char* pattern, int patternLength,
     
     const uschar* codestart = (const uschar*)(re + 1);
     compile_block.start_code = codestart;
-    compile_block.start_pattern = (const pcre_uchar*)pattern;
+    compile_block.start_pattern = (const UChar*)pattern;
     
     /* Set up a starting, non-extracting bracket, then compile the expression. On
      error, errorcode will be set non-zero, so we don't need to look at the result
      of the function here. */
     
-    const pcre_uchar* ptr = (const pcre_uchar*)pattern;
-    const pcre_uchar* patternEnd = pattern + patternLength;
+    const UChar* ptr = (const UChar*)pattern;
+    const UChar* patternEnd = pattern + patternLength;
     uschar* code = (uschar*)codestart;
     *code = OP_BRA;
     int firstbyte, reqbyte;
