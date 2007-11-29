@@ -8,7 +8,6 @@ isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
 SOURCES += \
     pcre_compile.cpp \
     pcre_exec.cpp \
-    pcre_ord2utf8.cpp \
     pcre_tables.cpp \
     pcre_ucp_searchfuncs.cpp \
     pcre_xclass.cpp

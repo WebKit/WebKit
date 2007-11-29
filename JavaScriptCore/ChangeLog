@@ -1,3 +1,13 @@
+2007-11-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+        
+        Attempt to fix non-mac builds after PCRE cleanup.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCoreSources.bkl:
+        * pcre/pcre.pri:
+
 2007-11-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej.

@@ -102,7 +102,6 @@ Source files for JSCore.
     <set append="1" var="JSCORE_SOURCES_PCRE">
         pcre/pcre_compile.cpp
         pcre/pcre_exec.cpp
-        pcre/pcre_ord2utf8.cpp
         pcre/pcre_tables.cpp
         pcre/pcre_ucp_searchfuncs.cpp
         pcre/pcre_xclass.cpp
