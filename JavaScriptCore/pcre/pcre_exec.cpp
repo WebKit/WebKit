@@ -1971,6 +1971,90 @@ Returns:          > 0 => success; value is the number of elements filled in
                  < -1 => some kind of unexpected problem
 */
 
+static void tryFirstByteOptimization(const UChar*& subjectPtr, const UChar* endSubject, int first_byte, bool first_byte_caseless, bool useMultiLineFirstCharOptimization, const UChar* originalSubjectStart)
+{
+    // If first_byte is set, try scanning to the first instance of that byte
+    // no need to try and match against any earlier part of the subject string.
+    if (first_byte >= 0) {
+        UChar first_char = first_byte;
+        if (first_byte_caseless)
+            while (subjectPtr < endSubject) {
+                int c = *subjectPtr;
+                if (c > 127)
+                    break;
+                if (toLowerCase(c) == first_char)
+                    break;
+                subjectPtr++;
+            }
+        else {
+            while (subjectPtr < endSubject && *subjectPtr != first_char)
+                subjectPtr++;
+        }
+    } else if (useMultiLineFirstCharOptimization) {
+        /* Or to just after \n for a multiline match if possible */
+        // I'm not sure why this != originalSubjectStart check is necessary -- ecs 11/18/07
+        if (subjectPtr > originalSubjectStart) {
+            while (subjectPtr < endSubject && !isNewline(subjectPtr[-1]))
+                subjectPtr++;
+        }
+    }
+}
+
+static bool tryRequiredByteOptimization(const UChar*& subjectPtr, const UChar* endSubject, int req_byte, int req_byte2, bool req_byte_caseless, bool hasFirstByte, const UChar*& req_byte_ptr)
+{
+    /* If req_byte is set, we know that that character must appear in the subject
+     for the match to succeed. If the first character is set, req_byte must be
+     later in the subject; otherwise the test starts at the match point. This
+     optimization can save a huge amount of backtracking in patterns with nested
+     unlimited repeats that aren't going to match. Writing separate code for
+     cased/caseless versions makes it go faster, as does using an autoincrement
+     and backing off on a match.
+     
+     HOWEVER: when the subject string is very, very long, searching to its end can
+     take a long time, and give bad performance on quite ordinary patterns. This
+     showed up when somebody was matching /^C/ on a 32-megabyte string... so we
+     don't do this when the string is sufficiently long.
+    */
+
+    if (req_byte >= 0 && endSubject - subjectPtr < REQ_BYTE_MAX) {
+        const UChar* p = subjectPtr + (hasFirstByte ? 1 : 0);
+
+        /* We don't need to repeat the search if we haven't yet reached the
+         place we found it at last time. */
+
+        if (p > req_byte_ptr) {
+            if (req_byte_caseless) {
+                while (p < endSubject) {
+                    int pp = *p++;
+                    if (pp == req_byte || pp == req_byte2) {
+                        p--;
+                        break;
+                    }
+                }
+            } else {
+                while (p < endSubject) {
+                    if (*p++ == req_byte) {
+                        p--;
+                        break;
+                    }
+                }
+            }
+
+            /* If we can't find the required character, break the matching loop */
+
+            if (p >= endSubject)
+                return true;
+
+            /* If we have found the required character, save the point where we
+             found it, so that we don't search again next time round the loop if
+             the start hasn't passed this character yet. */
+
+            req_byte_ptr = p;
+        }
+    }
+    return false;
+}
+
 int jsRegExpExecute(const JSRegExp* re,
                     const UChar* subject, int length, int start_offset, int* offsets,
                     int offsetcount)
@@ -2053,7 +2137,7 @@ int jsRegExpExecute(const JSRegExp* re,
     int req_byte = -1;
     int req_byte2 = -1;
     if (re->options & PCRE_REQCHSET) {
-        req_byte = re->req_byte & 255;
+        req_byte = re->req_byte & 255; // FIXME: This optimization could be made to work for UTF16 chars as well...
         req_byte_caseless = (re->req_byte & REQ_IGNORE_CASE);
         req_byte2 = flipCase(req_byte);
     }
@@ -2066,10 +2150,7 @@ int jsRegExpExecute(const JSRegExp* re,
     bool useMultiLineFirstCharOptimization = re->options & OptionUseMultiLineFirstCharOptimization;
     
     do {
-        const UChar* save_end_subject = end_subject;
-        
         /* Reset the maximum number of extractions we might see. */
-        
         if (match_block.offset_vector) {
             int* iptr = match_block.offset_vector;
             int* iend = iptr + resetcount;
@@ -2077,101 +2158,10 @@ int jsRegExpExecute(const JSRegExp* re,
                 *iptr++ = -1;
         }
         
-        /* Advance to a unique first char if possible. If firstline is true, the
-         start of the match is constrained to the first line of a multiline string.
-         Implement this by temporarily adjusting end_subject so that we stop scanning
-         at a newline. If the match fails at the newline, later code breaks this loop.
-         */
-        
-        /* Now test for a unique first byte */
-        
-        if (first_byte >= 0) {
-            UChar first_char = first_byte;
-            if (first_byte_caseless)
-                while (start_match < end_subject) {
-                    int sm = *start_match;
-                    if (sm > 127)
-                        break;
-                    if (toLowerCase(sm) == first_char)
-                        break;
-                    start_match++;
-                }
-            else
-                while (start_match < end_subject && *start_match != first_char)
-                    start_match++;
-        }
-        
-        /* Or to just after \n for a multiline match if possible */
-        else if (useMultiLineFirstCharOptimization) {
-            if (start_match > match_block.start_subject + start_offset) {
-                while (start_match < end_subject && !isNewline(start_match[-1]))
-                    start_match++;
-            }
-        }
-        
-        /* Restore fudged end_subject */
-        
-        end_subject = save_end_subject;
-        
-#ifdef DEBUG  /* Sigh. Some compilers never learn. */
-        printf(">>>> Match against: ");
-        pchars(start_match, end_subject - start_match, true, &match_block);
-        printf("\n");
-#endif
-        
-        /* If req_byte is set, we know that that character must appear in the subject
-         for the match to succeed. If the first character is set, req_byte must be
-         later in the subject; otherwise the test starts at the match point. This
-         optimization can save a huge amount of backtracking in patterns with nested
-         unlimited repeats that aren't going to match. Writing separate code for
-         cased/caseless versions makes it go faster, as does using an autoincrement
-         and backing off on a match.
-         
-         HOWEVER: when the subject string is very, very long, searching to its end can
-         take a long time, and give bad performance on quite ordinary patterns. This
-         showed up when somebody was matching /^C/ on a 32-megabyte string... so we
-         don't do this when the string is sufficiently long.
-         
-         ALSO: this processing is disabled when partial matching is requested.
-         */
-        
-        if (req_byte >= 0 && end_subject - start_match < REQ_BYTE_MAX) {
-            const UChar* p = start_match + ((first_byte >= 0) ? 1 : 0);
-            
-            /* We don't need to repeat the search if we haven't yet reached the
-             place we found it at last time. */
-            
-            if (p > req_byte_ptr) {
-                if (req_byte_caseless) {
-                    while (p < end_subject) {
-                        int pp = *p++;
-                        if (pp == req_byte || pp == req_byte2) {
-                            p--;
-                            break;
-                        }
-                    }
-                } else {
-                    while (p < end_subject) {
-                        if (*p++ == req_byte) {
-                            p--;
-                            break;
-                        }
-                    }
-                }
+        tryFirstByteOptimization(start_match, end_subject, first_byte, first_byte_caseless, useMultiLineFirstCharOptimization, match_block.start_subject + start_offset);
+        if (tryRequiredByteOptimization(start_match, end_subject, req_byte, req_byte2, req_byte_caseless, first_byte >= 0, req_byte_ptr))
+            break;
                 
-                /* If we can't find the required character, break the matching loop */
-                
-                if (p >= end_subject)
-                    break;
-                
-                /* If we have found the required character, save the point where we
-                 found it, so that we don't search again next time round the loop if
-                 the start hasn't passed this character yet. */
-                
-                req_byte_ptr = p;
-            }
-        }
-        
         /* When a match occurs, substrings will be set for all internal extractions;
          we just need to set up the whole thing as substring 0 before returning. If
          there were too many extractions, set the return code to zero. In the case

@@ -41,6 +41,18 @@
 
 2007-11-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        Pull first_byte and req_byte optimizations out into separate static funtions, SunSpider reported this as a win.
+
+        * pcre/pcre_exec.cpp:
+        (tryFirstByteOptimization):
+        (tryRequiredByteOptimization):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         give PCRE_MULTILINE a better name: OptionMatchAcrossMultipleLines
