@@ -1,5 +1,22 @@
 2007-11-28  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+
+        change getChar* functions to return result and push 'c' into local scopes for clarity
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (calculateCompiledPatternLengthAndFlags):
+        * pcre/pcre_exec.cpp:
+        (match):
+        * pcre/pcre_internal.h:
+        (getChar):
+        (getCharAndAdvance):
+        (getCharAndLength):
+        (getCharAndAdvanceIfSurrogate):
+
+2007-11-28  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Comment cleanup

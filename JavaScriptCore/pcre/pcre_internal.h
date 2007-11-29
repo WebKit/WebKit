@@ -253,46 +253,50 @@ static inline int decodeSurrogatePair(int leadingSurrogate, int trailingSurrogat
     return ((leadingSurrogate << 10) + trailingSurrogate + SURROGATE_OFFSET);
 }
 
-static inline void getChar(int& c, const UChar* subjectPtr)
+static inline int getChar(const UChar* subjectPtr)
 {
-    c = subjectPtr[0];
+    int c = subjectPtr[0];
     if (isLeadingSurrogate(c))
         c = decodeSurrogatePair(c, subjectPtr[1]);
+    return c;
 }
 
-static inline void getCharAndAdvance(int& c, const UChar*& subjectPtr)
+static inline int getCharAndAdvance(const UChar*& subjectPtr)
 {
-    c = *subjectPtr++;
+    int c = *subjectPtr++;
     if (isLeadingSurrogate(c))
         c = decodeSurrogatePair(c, *subjectPtr++);
+    return c;
 }
 
-static inline void getCharAndLength(int& c, const UChar*& subjectPtr, int& length)
+static inline int getCharAndLength(const UChar*& subjectPtr, int& length)
 {
-    c = subjectPtr[0];
+    int c = subjectPtr[0];
     if (isLeadingSurrogate(c)) {
         c = decodeSurrogatePair(c, subjectPtr[1]);
         length = 2;
     } else
         length = 1;
+    return c;
 }
 
 // FIXME: All (2) calls to this funtion should be removed and replaced with
 // calls to getCharAndAdvance
-static inline void getCharAndAdvanceIfSurrogate(int& c, const UChar*& subjectPtr)
+static inline int getCharAndAdvanceIfSurrogate(const UChar*& subjectPtr)
 {
-    c = subjectPtr[0];
+    int c = subjectPtr[0];
     if (isLeadingSurrogate(c)) {
         c = decodeSurrogatePair(c, subjectPtr[1]);
         subjectPtr++;
     }
+    return c;
 }
 
 // This flavor checks to make sure we don't walk off the end
 // FIXME: This could also be removed and an end-aware getCharAndAdvance added instead.
-static inline void getCharAndAdvanceIfSurrogate(int& c, const UChar*& subjectPtr, const UChar* end)
+static inline int getCharAndAdvanceIfSurrogate(const UChar*& subjectPtr, const UChar* end)
 {
-    c = subjectPtr[0];
+    int c = subjectPtr[0];
     if (isLeadingSurrogate(c)) {
         if (subjectPtr + 1 < end)
             c = decodeSurrogatePair(c, subjectPtr[1]);
@@ -300,6 +304,7 @@ static inline void getCharAndAdvanceIfSurrogate(int& c, const UChar*& subjectPtr
             c = decodeSurrogatePair(c, 0);
         subjectPtr++;
     }
+    return c;
 }
 
 #define BACKCHAR(subjectPtr) while(isTrailingSurrogate(*subjectPtr)) subjectPtr--;
