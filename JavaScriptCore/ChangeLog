@@ -1,5 +1,13 @@
 2007-11-25  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        Lower MATCH_LIMIT_RECURSION to more sane levels to prevent hangs on run-javascriptcore-tests
+
+        * pcre/pcre_internal.h:
+
+2007-11-25  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         Remove match_is_group variable for another 5% speedup

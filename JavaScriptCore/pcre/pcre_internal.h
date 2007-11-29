@@ -87,9 +87,14 @@ to override this default. */
 
 /* The below limit restricts the number of recursive match calls in order to
 limit the maximum amount of stack (or heap, if NO_RECURSE is defined) that is used. The
-value of MATCH_LIMIT_RECURSION applies only to recursive calls of match(). */
+value of MATCH_LIMIT_RECURSION applies only to recursive calls of match().
+ 
+ This limit is tied to the size of MatchFrame.  Right now we allow PCRE to allocate up
+ to MATCH_LIMIT_RECURSION - 16 * sizeof(MatchFrame) bytes of "stack" space before we give up.
+ Currently that's 100000 - 16 * (23 * 4)  ~ 9MB
+ */
 
-#define MATCH_LIMIT_RECURSION 10000000
+#define MATCH_LIMIT_RECURSION 100000
 
 #define _pcre_default_tables kjs_pcre_default_tables
 #define _pcre_ord2utf8 kjs_pcre_ord2utf8
