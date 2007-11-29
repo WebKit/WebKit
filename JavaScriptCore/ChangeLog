@@ -2,6 +2,42 @@
 
         Reviewed by Maciej.
 
+        Remove register keyword and more cleanup
+
+        * pcre/pcre_compile.cpp:
+        (find_fixedlength):
+        (compile_branch):
+        (is_anchored):
+        (is_startline):
+        (find_firstassertedchar):
+        (calculateCompiledPatternLengthAndFlags):
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (MatchStack::canUseStackBufferForNextFrame):
+        (MatchStack::allocateNextFrame):
+        (MatchStack::pushNewFrame):
+        (MatchStack::frameIsStackAllocated):
+        (MatchStack::popCurrentFrame):
+        (MatchStack::unrollAnyHeapAllocatedFrames):
+        (getUTF8CharAndIncrementLength):
+        (match):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+        (PUT2INC):
+        (isLeadingSurrogate):
+        (isTrailingSurrogate):
+        (decodeSurrogatePair):
+        (getChar):
+        * pcre/pcre_ord2utf8.cpp:
+        (_pcre_ord2utf8):
+        * pcre/pcre_xclass.cpp:
+        (getUTF8CharAndAdvancePointer):
+        (_pcre_xclass):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej.
+
         Clean up jsRegExpExecute
 
         * pcre/pcre_compile.cpp:

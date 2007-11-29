@@ -242,93 +242,59 @@ static inline short GET2(const uschar* a, size_t n)
     return ((a[n] << 8) | a[n + 1]);
 }
 
-// FIXME: This can't be a static inline yet, because it's passed register values by some callers
-// you can't take the address of a register
-#define PUT2INC(a,n,d)  PUT2(a,n,d), a += 2
-
-/* When UTF-8 encoding is being used, a character is no longer just a single
-byte. The macros for character handling generate simple sequences when used in
-byte-mode, and more complicated ones for UTF-8 characters. */
-
-/* Get the next UTF-8 character, not advancing the pointer, incrementing length
-if there are extra bytes. This is called when we know we are in UTF-8 mode. */
-
-#define GETUTF8CHARLEN(c, eptr, len) \
-  c = *eptr; \
-  if ((c & 0xc0) == 0xc0) \
-    { \
-    int gcii; \
-    int gcaa = _pcre_utf8_table4[c & 0x3f];  /* Number of additional bytes */ \
-    int gcss = 6*gcaa; \
-    c = (c & _pcre_utf8_table3[gcaa]) << gcss; \
-    for (gcii = 1; gcii <= gcaa; gcii++) \
-      { \
-      gcss -= 6; \
-      c |= (eptr[gcii] & 0x3f) << gcss; \
-      } \
-    len += gcaa; \
-    }
-
-/* Get the next UTF-8 character, advancing the pointer. This is called when we
-know we are in UTF-8 mode. */
-
-#define GETUTF8CHARINC(c, eptr) \
-c = *eptr++; \
-if ((c & 0xc0) == 0xc0) \
-{ \
-  int gcaa = _pcre_utf8_table4[c & 0x3f];  /* Number of additional bytes */ \
-    int gcss = 6*gcaa; \
-      c = (c & _pcre_utf8_table3[gcaa]) << gcss; \
-        while (gcaa-- > 0) \
-        { \
-          gcss -= 6; \
-            c |= (*eptr++ & 0x3f) << gcss; \
-        } \
+static inline void PUT2INC(uschar*& a, size_t n, unsigned short d)
+{
+    PUT2(a,n,d);
+    a += 2;
 }
 
 #define LEAD_OFFSET (0xd800 - (0x10000 >> 10))
 #define SURROGATE_OFFSET (0x10000 - (0xd800 << 10) - 0xdc00)
 
-#define IS_LEADING_SURROGATE(c) (((c) & ~0x3ff) == 0xd800)
-#define IS_TRAILING_SURROGATE(c) (((c) & ~0x3ff) == 0xdc00)
+static inline bool isLeadingSurrogate(int c)
+{
+    return ((c & ~0x3ff) == 0xd800);
+}
 
-#define DECODE_SURROGATE_PAIR(l, t) (((l) << 10) + (t) + SURROGATE_OFFSET)
-#define LEADING_SURROGATE(c) (LEAD_OFFSET + ((c) >> 10))
-#define TRAILING_SURROGATE(c) (0xdc00 + ((c) & 0x3FF))
+static inline bool isTrailingSurrogate(int c)
+{
+    return ((c & ~0x3ff) == 0xdc00);
+}
 
-#define GETCHAR(c, eptr) \
-  c = eptr[0]; \
-  if (IS_LEADING_SURROGATE(c)) \
-    c = DECODE_SURROGATE_PAIR(c, eptr[1])
+static inline int decodeSurrogatePair(int l, int t)
+{
+    return ((l << 10) + t + SURROGATE_OFFSET);
+}
 
-#define GETCHARTEST(c, eptr) GETCHAR(c, eptr)
+static inline void getChar(int& c, const pcre_uchar* eptr)
+{
+    c = eptr[0];
+    if (isLeadingSurrogate(c))
+        c = decodeSurrogatePair(c, eptr[1]);
+}
 
 #define GETCHARINC(c, eptr) \
   c = *eptr++; \
-  if (IS_LEADING_SURROGATE(c)) \
-    c = DECODE_SURROGATE_PAIR(c, *eptr++)
+  if (isLeadingSurrogate(c)) \
+    c = decodeSurrogatePair(c, *eptr++)
 
 #define GETCHARINCTEST(c, eptr) GETCHARINC(c, eptr)
 
 #define GETCHARLEN(c, eptr, len) \
   c = eptr[0]; \
-  if (IS_LEADING_SURROGATE(c)) \
-    { \
-    c = DECODE_SURROGATE_PAIR(c, eptr[1]); \
+  if (isLeadingSurrogate(c)) { \
+    c = decodeSurrogatePair(c, eptr[1]); \
     ++len; \
     }
 
 #define GETCHARLENEND(c, eptr, end, len) \
   c = eptr[0]; \
-  if (IS_LEADING_SURROGATE(c)) \
-    { \
-    c = DECODE_SURROGATE_PAIR(c, eptr + 1 < end ? eptr[1] : 0); \
+  if (isLeadingSurrogate(c)) { \
+    c = decodeSurrogatePair(c, eptr + 1 < end ? eptr[1] : 0); \
     ++len; \
     }
 
-#define ISMIDCHAR(c) IS_TRAILING_SURROGATE(c)
-
-#define BACKCHAR(eptr) while(ISMIDCHAR(*eptr)) eptr--;
+#define BACKCHAR(eptr) while(isTrailingSurrogate(*eptr)) eptr--;
 
 #define PCRE_FIRSTSET      0x40000000  /* first_byte is set */
 #define PCRE_REQCHSET      0x20000000  /* req_byte is set */

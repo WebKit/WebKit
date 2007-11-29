@@ -468,8 +468,8 @@ find_fixedlength(uschar *code, int options)
 {
 int length = -1;
 
-register int branchlength = 0;
-register uschar *cc = code + 1 + LINK_SIZE;
+int branchlength = 0;
+uschar *cc = code + 1 + LINK_SIZE;
 
 /* Scan along the opcodes for this branch. If we get to the end of the
 branch, check the length against that of the other branches. */
@@ -477,7 +477,7 @@ branch, check the length against that of the other branches. */
 for (;;)
   {
   int d;
-  register int op = *cc;
+  int op = *cc;
   if (op >= OP_BRA) op = OP_BRA;
 
   switch (op)
@@ -629,7 +629,7 @@ Returns:      true if what is matched could be empty
 static BOOL
 could_be_empty_branch(const uschar *code, const uschar *endcode)
 {
-register int c;
+int c;
 for (code = first_significant_code(code + 1 + LINK_SIZE, true);
      code < endcode;
      code = first_significant_code(code + OP_lengths[c], true))
@@ -847,8 +847,8 @@ int firstbyte, reqbyte;
 int zeroreqbyte, zerofirstbyte;
 int req_caseopt, reqvary, tempreqvary;
 int after_manual_callout = 0;
-register int c;
-register uschar *code = *codeptr;
+int c;
+uschar *code = *codeptr;
 uschar *tempcode;
 BOOL groupsetfirstbyte = false;
 const pcre_uchar *ptr = *ptrptr;
@@ -1032,7 +1032,7 @@ for (;; ptr++)
 
         if (c < 0)
           {
-          register const uschar *cbits = cd->cbits;
+          const uschar *cbits = cd->cbits;
           class_charcount += 2;     /* Greater than 1 is what matters */
           switch (-c)
             {
@@ -1115,7 +1115,8 @@ for (;; ptr++)
         /* The check that the two values are in the correct order happens in
         the pre-pass. Optimize one-character ranges */
 
-        if (d == c) goto LONE_SINGLE_CHARACTER;  /* A few lines below */
+        if (d == c)
+            goto LONE_SINGLE_CHARACTER;  /* A few lines below */
 
         /* In UTF-8 mode, if the upper limit is > 255, or > 127 for caseless
         matching, we have to use an XCLASS with extra data items. Caseless
@@ -1612,7 +1613,7 @@ for (;; ptr++)
 
     else if (*previous >= OP_BRA || *previous == OP_ONCE)
       {
-      register int i;
+      int i;
       int ketoffset = 0;
       int len = code - previous;
       uschar *bralink = NULL;
@@ -1625,7 +1626,7 @@ for (;; ptr++)
 
       if (repeat_max == -1)
         {
-        register uschar *ket = previous;
+        uschar *ket = previous;
         do ket += GET(ket, 1); while (*ket != OP_KET);
         ketoffset = code - ket;
         }
@@ -1833,7 +1834,7 @@ for (;; ptr++)
       }
 
     /* Process nested bracketed re. Assertions may not be repeated, but other
-    kinds can be. We copy code into a non-register variable in order to be able
+    kinds can be. We copy code into a non-variable in order to be able
     to pass its address because some compilers complain otherwise. Pass in a
     new setting for the ims options if they have changed. */
 
@@ -2238,13 +2239,13 @@ Returns:     true or false
 */
 
 static BOOL
-is_anchored(register const uschar *code, int options, unsigned int bracket_map,
+is_anchored(const uschar *code, int options, unsigned int bracket_map,
   unsigned int backref_map)
 {
 do {
    const uschar *scode =
      first_significant_code(code + 1+LINK_SIZE, false);
-   register int op = *scode;
+   int op = *scode;
 
    /* Capturing brackets */
 
@@ -2303,7 +2304,7 @@ is_startline(const uschar *code, unsigned int bracket_map,
 {
 do {
    const uschar *scode = first_significant_code(code + 1+LINK_SIZE, false);
-   register int op = *scode;
+   int op = *scode;
 
    /* Capturing brackets */
 
@@ -2366,12 +2367,12 @@ Returns:     -1 or the fixed first char
 static int
 find_firstassertedchar(const uschar *code, int options, BOOL inassert)
 {
-register int c = -1;
+int c = -1;
 do {
    int d;
    const uschar *scode =
      first_significant_code(code + 1+LINK_SIZE, true);
-   register int op = *scode;
+   int op = *scode;
 
    if (op >= OP_BRA) op = OP_BRA;
 
@@ -2678,13 +2679,11 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                                  range upwards might push d over a boundary that makes is use
                                  another byte in the UTF-8 representation. */
                                 
-                                if (ignoreCase)
-                                {
+                                if (ignoreCase) {
                                     int occ, ocd;
                                     int cc = c;
                                     int origd = d;
-                                    while (get_othercase_range(&cc, origd, &occ, &ocd))
-                                    {
+                                    while (get_othercase_range(&cc, origd, &occ, &ocd)) {
                                         if (occ >= c && ocd <= d) continue;   /* Skip embedded */
                                         
                                         if (occ < c  && ocd >= c - 1)  /* Extend the basic range */
@@ -2717,10 +2716,8 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                          allow for an XCL_SINGLE item, doubled for caselessness if there is UCP
                          support. */
                         
-                        else
-                        {
-                            if ((c > 255 || (ignoreCase && c > 127)))
-                            {
+                        else {
+                            if ((c > 255 || (ignoreCase && c > 127))) {
                                 uschar buffer[6];
                                 class_optcount = 10;     /* Ensure > 1 */
                                 if (!class_utf8)         /* Allow for XCLASS overhead */
@@ -2744,27 +2741,27 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                  for positive and negated single one-byte chars are handled by the general
                  code. Here, we handle repeats for the class opcodes. */
                 
-                if (class_optcount == 1) length += 3; else
-                {
+                if (class_optcount == 1)
+                    length += 3;
+                else {
                     length += 33;
                     
                     /* A repeat needs either 1 or 5 bytes. If it is a possessive quantifier,
                      we also need extra for wrapping the whole thing in a sub-pattern. */
                     
-                    if (ptr + 1 < patternEnd && ptr[1] == '{' && is_counted_repeat(ptr+2, patternEnd))
-                    {
+                    if (ptr + 1 < patternEnd && ptr[1] == '{' && is_counted_repeat(ptr+2, patternEnd)) {
                         ptr = read_repeat_counts(ptr+2, &min, &max, &errorcode);
                         if (errorcode != 0) return -1;;
                         if ((min == 0 && (max == 1 || max == -1)) ||
                             (min == 1 && max == -1))
                             length++;
-                        else length += 5;
-                        if (ptr + 1 < patternEnd && ptr[1] == '+')
-                        {
+                        else
+                            length += 5;
+                        if (ptr + 1 < patternEnd && ptr[1] == '+') {
                             ptr++;
                             length += 2 + 2*LINK_SIZE;
-                        }
-                        else if (ptr + 1 < patternEnd && ptr[1] == '?') ptr++;
+                        } else if (ptr + 1 < patternEnd && ptr[1] == '?')
+                            ptr++;
                     }
                 }
                 continue;
@@ -2778,10 +2775,8 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                 
                 /* Handle special forms of bracket, which all start (? */
                 
-                if (ptr + 1 < patternEnd && ptr[1] == '?')
-                {
-                    switch (c = (ptr + 2 < patternEnd ? ptr[2] : 0))
-                    {
+                if (ptr + 1 < patternEnd && ptr[1] == '?') {
+                    switch (c = (ptr + 2 < patternEnd ? ptr[2] : 0)) {
                             /* Non-referencing groups and lookaheads just move the pointer on, and
                              then behave like a non-special bracket, except that they don't increment
                              the count of extracting brackets. Ditto for the "once only" bracket,
@@ -2842,18 +2837,17 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                 
                 case ')':
                 length += 1 + LINK_SIZE;
-                if (brastackptr > 0)
-                {
+                if (brastackptr > 0) {
                     duplength = length - brastack[--brastackptr];
                     branch_extra = bralenstack[brastackptr];
                 }
-                else duplength = 0;
+                else
+                    duplength = 0;
                 
                 /* Leave ptr at the final char; for read_repeat_counts this happens
                  automatically; for the others we need an increment. */
                 
-                if (ptr + 1 < patternEnd && (c = ptr[1]) == '{' && is_counted_repeat(ptr+2, patternEnd))
-                {
+                if (ptr + 1 < patternEnd && (c = ptr[1]) == '{' && is_counted_repeat(ptr+2, patternEnd)) {
                     ptr = read_repeat_counts(ptr+2, &min, &max, &errorcode);
                     if (errorcode != 0) return -1;;
                 }
@@ -2867,8 +2861,7 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                  maxval-1 times; each replication acquires an OP_BRAZERO plus a nesting
                  bracket set. */
                 
-                if (min == 0)
-                {
+                if (min == 0) {
                     length++;
                     if (max > 0) length += (max - 1) * (duplength + 3 + 2*LINK_SIZE);
                 }
@@ -2879,8 +2872,7 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                  for a BRAZERO item before each optional copy and nesting brackets for all
                  but one of the optional copies. */
                 
-                else
-                {
+                else {
                     length += (min - 1) * duplength;
                     if (max > min)   /* Need this test as max=-1 means no limit */
                         length += (max - min) * (duplength + 3 + 2*LINK_SIZE)
@@ -2889,8 +2881,7 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                 
                 /* Allow space for once brackets for "possessive quantifier" */
                 
-                if (ptr + 1 < patternEnd && ptr[1] == '+')
-                {
+                if (ptr + 1 < patternEnd && ptr[1] == '+') {
                     ptr++;
                     length += 2 + 2*LINK_SIZE;
                 }
@@ -2908,11 +2899,9 @@ static int calculateCompiledPatternLengthAndFlags(const pcre_char* pattern, int 
                 
                 /* In UTF-8 mode, check for additional bytes. */
                 
-                if (c > 127)
-                {
-                    if (IS_LEADING_SURROGATE(c))
-                    {
-                        c = DECODE_SURROGATE_PAIR(c, ptr < patternEnd ? *ptr : 0);
+                if (c > 127) {
+                    if (isLeadingSurrogate(c)) {
+                        c = decodeSurrogatePair(c, ptr < patternEnd ? *ptr : 0);
                         ++ptr;
                     }
                     
@@ -3138,7 +3127,7 @@ JSRegExp* jsRegExpCompile(const pcre_char* pattern, int patternLength,
     
     if (numSubpatterns)
         *numSubpatterns = re->top_bracket;
-    return static_cast<JSRegExp*>(re);
+    return re;
 }
 
 void jsRegExpFree(JSRegExp* re)
