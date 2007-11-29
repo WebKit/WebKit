@@ -1,3 +1,19 @@
+2007-11-28  Mark Rowe  <mrowe@apple.com>
+
+        Unreviewed layout test fix.  Fix typos in the name of four files used by HTTP layout tests.
+
+        In r28120 and r28128 the references to these files had the typo fixed, but the files themselves did not.
+        This caused four layout tests to fail.
+
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessee-iframe.html: Removed.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessee-opened-frame.html: Removed.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessor-iframe.html: Removed.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessor-opened-frame.html: Removed.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascript-url-accessee-iframe.html: Copied from LayoutTests/http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessee-iframe.html.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascript-url-accessee-opened-frame.html: Copied from LayoutTests/http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessee-opened-frame.html.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascript-url-accessor-iframe.html: Copied from LayoutTests/http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessor-iframe.html.
+        * http/tests/security/javascriptURL/resources/foreign-domain-javascript-url-accessor-opened-frame.html: Copied from LayoutTests/http/tests/security/javascriptURL/resources/foreign-domain-javascipt-url-accessor-opened-frame.html.
+
 2007-11-28  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff.
