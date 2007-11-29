@@ -2,6 +2,18 @@
 
         Reviewed by Sam.
 
+        Pass around MatchData objects by reference
+
+        * pcre/pcre_exec.cpp:
+        (pchars):
+        (match_ref):
+        (match):
+        (jsRegExpExecute):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         give PCRE_STARTLINE a better name and rename match_data to MatchData
 
         * pcre/pcre_compile.cpp:
