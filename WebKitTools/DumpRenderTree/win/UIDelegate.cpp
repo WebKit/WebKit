@@ -82,8 +82,17 @@ ULONG STDMETHODCALLTYPE UIDelegate::Release()
 HRESULT STDMETHODCALLTYPE UIDelegate::hasCustomMenuImplementation( 
         /* [retval][out] */ BOOL *hasCustomMenus)
 {
-    *hasCustomMenus = FALSE;
+    *hasCustomMenus = TRUE;
 
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::trackCustomPopupMenu( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ OLE_HANDLE menu,
+        /* [in] */ LPPOINT point)
+{
+    // Do nothing
     return S_OK;
 }
 

@@ -99,6 +99,22 @@ static LRESULT dispatchMessage(const MSG* msg)
     return ::DispatchMessage(msg);
 }
 
+static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    COMPtr<IWebFramePrivate> framePrivate;
+    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+        framePrivate->layout();
+
+    down = true;
+    MSG msg = makeMsg(webViewWindow, WM_RBUTTONDOWN, 0, MAKELPARAM(lastMousePosition.x, lastMousePosition.y));
+    dispatchMessage(&msg);
+    down = false;
+    msg = makeMsg(webViewWindow, WM_RBUTTONUP, 0, MAKELPARAM(lastMousePosition.x, lastMousePosition.y));
+    dispatchMessage(&msg);
+    
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebFramePrivate> framePrivate;
@@ -335,6 +351,7 @@ static JSValueRef textZoomOutCallback(JSContextRef context, JSObjectRef function
 }
 
 static JSStaticFunction staticFunctions[] = {
+    { "contextClick", contextClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseDown", mouseDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseUp", mouseUpCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseMoveTo", mouseMoveToCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

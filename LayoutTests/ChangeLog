@@ -1,3 +1,14 @@
+2007-11-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5132001>
+        contextClick is not implemented in DRT on Windows.
+
+        Remove tests that pass now that we have contextClick.
+        
+        * platform/win/Skipped:
+
 2007-11-28  Alice Liu  <alice.liu@apple.com>
 
         Removing some tests tracked by <rdar://5130762> because they don't fail.

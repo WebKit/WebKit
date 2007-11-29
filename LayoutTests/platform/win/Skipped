@@ -410,11 +410,6 @@ editing/pasteboard/emacs-ctrl-a-k-y.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/emacs-cntl-y-001.html
 
-# eventSender.contextClick is unimplemented <rdar://problem/5132001>
-editing/selection/5109817.html
-editing/selection/5354455-1.html
-editing/selection/5354455-2.html
-
 # These tests time out <rdar://problem/5382558>
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html

@@ -1,3 +1,22 @@
+2007-11-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5132001>
+        contextClick is not implemented in DRT on Windows.
+        
+        * DumpRenderTree/win/EventSender.cpp:
+        (contextClickCallback):
+        Add a callback for contextClick, which sends a WM_RBUTTONDOWN message followed
+        by a WM_RBUTTONUP message.
+        
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::hasCustomMenuImplementation):
+        (UIDelegate::trackCustomPopupMenu):
+        * DumpRenderTree/win/UIDelegate.h:
+        Add a no-op implementation of trackCustomPopupMenu, to prevent the default popup
+        menu from being shown (and causing the DRT to hang).
+
 2007-11-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
