@@ -1,5 +1,16 @@
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        Clean up find_firstassertedchar
+
+        * pcre/pcre_compile.cpp:
+        (get_othercase_range):
+        (find_firstassertedchar):
+        (calculateCompiledPatternLengthAndFlags):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Tim Hatcher.
 
         Pass around CompileData& instead of CompileData*

@@ -781,9 +781,9 @@ Arguments:
 Yield:        true when range returned; false when no more
 */
 
-static bool get_othercase_range(int *cptr, int d, int *ocptr, int *odptr)
+static bool get_othercase_range(int* cptr, int d, int* ocptr, int* odptr)
 {
-    int c, othercase = 0, next;
+    int c, othercase = 0;
     
     for (c = *cptr; c <= d; c++) {
         if ((othercase = _pcre_ucp_othercase(c)) >= 0)
@@ -794,7 +794,7 @@ static bool get_othercase_range(int *cptr, int d, int *ocptr, int *odptr)
         return false;
     
     *ocptr = othercase;
-    next = othercase + 1;
+    int next = othercase + 1;
     
     for (++c; c <= d; c++) {
         if (_pcre_ucp_othercase(c) != next)
@@ -861,9 +861,9 @@ Returns:         true on success
 */
 
 static bool
-compile_branch(int options, int *brackets, uschar **codeptr,
+compile_branch(int options, int* brackets, uschar** codeptr,
                const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int *firstbyteptr,
-               int *reqbyteptr, CompileData& cd)
+               int* reqbyteptr, CompileData& cd)
 {
     int repeat_type, op_type;
     int repeat_min = 0, repeat_max = 0;      /* To please picky compilers */
@@ -2321,54 +2321,56 @@ Arguments:
 Returns:     -1 or the fixed first char
 */
 
-static int
-find_firstassertedchar(const uschar *code, int options, bool inassert)
+static int find_firstassertedchar(const uschar* code, int options, bool inassert)
 {
-int c = -1;
-do {
-   int d;
-   const uschar *scode =
-     first_significant_code(code + 1+LINK_SIZE, true);
-   int op = *scode;
-
-   if (op >= OP_BRA) op = OP_BRA;
-
-   switch(op)
-     {
-     default:
-     return -1;
-
-     case OP_BRA:
-     case OP_ASSERT:
-     case OP_ONCE:
-     if ((d = find_firstassertedchar(scode, options, op == OP_ASSERT)) < 0)
-       return -1;
-     if (c < 0) c = d; else if (c != d) return -1;
-     break;
-
-     case OP_EXACT:       /* Fall through */
-     scode += 2;
-
-     case OP_CHAR:
-     case OP_CHARNC:
-     case OP_ASCII_CHAR:
-     case OP_ASCII_LETTER_NC:
-     case OP_PLUS:
-     case OP_MINPLUS:
-     if (!inassert) return -1;
-     if (c < 0)
-       {
-       c = scode[1];
-       if ((options & PCRE_CASELESS) != 0) c |= REQ_CASELESS;
-       }
-     else if (c != scode[1]) return -1;
-     break;
-     }
-
-   code += GET(code, 1);
-   }
-while (*code == OP_ALT);
-return c;
+    int c = -1;
+    do {
+        const uschar *scode = first_significant_code(code + 1 + LINK_SIZE, true);
+        int op = *scode;
+        
+        if (op >= OP_BRA)
+            op = OP_BRA;
+        
+        switch(op) {
+            default:
+                return -1;
+                
+            case OP_BRA:
+            case OP_ASSERT:
+            case OP_ONCE: {
+                int d;
+                if ((d = find_firstassertedchar(scode, options, op == OP_ASSERT)) < 0)
+                    return -1;
+                if (c < 0)
+                    c = d;
+                else if (c != d)
+                    return -1;
+                break;
+            }
+            case OP_EXACT:       /* Fall through */
+                scode += 2;
+                
+            case OP_CHAR:
+            case OP_CHARNC:
+            case OP_ASCII_CHAR:
+            case OP_ASCII_LETTER_NC:
+            case OP_PLUS:
+            case OP_MINPLUS:
+                if (!inassert)
+                    return -1;
+                if (c < 0) {
+                    c = scode[1];
+                    if (options & PCRE_CASELESS)
+                        c |= REQ_CASELESS;
+                }
+                else if (c != scode[1])
+                    return -1;
+                break;
+        }
+        
+        code += GET(code, 1);
+    } while (*code == OP_ALT);
+    return c;
 }
 
 static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patternLength, JSRegExpIgnoreCaseOption ignoreCase, CompileData& compile_block, ErrorCode& errorcode)
@@ -2625,7 +2627,7 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                                 /* If we have UCP support, find out how many extra ranges are
                                  needed to map the other case of characters within this range. We
                                  have to mimic the range optimization here, because extending the
-                                 range upwards might push d over a boundary that makes is use
+                                 range upwards might push d over a boundary that makes it use
                                  another byte in the UTF-8 representation. */
                                 
                                 if (ignoreCase) {
@@ -2633,7 +2635,8 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                                     int cc = c;
                                     int origd = d;
                                     while (get_othercase_range(&cc, origd, &occ, &ocd)) {
-                                        if (occ >= c && ocd <= d) continue;   /* Skip embedded */
+                                        if (occ >= c && ocd <= d)
+                                            continue;   /* Skip embedded */
                                         
                                         if (occ < c  && ocd >= c - 1)  /* Extend the basic range */
                                         {                            /* if there is overlap,   */
