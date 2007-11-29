@@ -1,5 +1,11 @@
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
+        Build fix that works...?
+
+        * WebChromeClient.h:
+
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
         Build fix
 
         * WebChromeClient.cpp:
