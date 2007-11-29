@@ -258,9 +258,9 @@ static inline bool isTrailingSurrogate(int c)
     return ((c & ~0x3ff) == 0xdc00);
 }
 
-static inline int decodeSurrogatePair(int l, int t)
+static inline int decodeSurrogatePair(int leadingSurrogate, int trailingSurrogate)
 {
-    return ((l << 10) + t + SURROGATE_OFFSET);
+    return ((leadingSurrogate << 10) + trailingSurrogate + SURROGATE_OFFSET);
 }
 
 static inline void getChar(int& c, const UChar* eptr)
@@ -270,26 +270,47 @@ static inline void getChar(int& c, const UChar* eptr)
         c = decodeSurrogatePair(c, eptr[1]);
 }
 
-#define GETCHARINC(c, eptr) \
-  c = *eptr++; \
-  if (isLeadingSurrogate(c)) \
-    c = decodeSurrogatePair(c, *eptr++)
+static inline void getCharAndAdvance(int& c, const UChar*& eptr)
+{
+    c = *eptr++;
+    if (isLeadingSurrogate(c))
+        c = decodeSurrogatePair(c, *eptr++);
+}
 
-#define GETCHARINCTEST(c, eptr) GETCHARINC(c, eptr)
+static inline void getCharAndLength(int& c, const UChar*& eptr, int& length)
+{
+    c = eptr[0];
+    if (isLeadingSurrogate(c)) {
+        c = decodeSurrogatePair(c, eptr[1]);
+        length = 2;
+    } else
+        length = 1;
+}
 
-#define GETCHARLEN(c, eptr, len) \
-  c = eptr[0]; \
-  if (isLeadingSurrogate(c)) { \
-    c = decodeSurrogatePair(c, eptr[1]); \
-    ++len; \
+// FIXME: All (2) calls to this funtion should be removed and replaced with
+// calls to getCharAndAdvance
+static inline void getCharAndAdvanceIfSurrogate(int& c, const UChar*& eptr)
+{
+    c = eptr[0];
+    if (isLeadingSurrogate(c)) {
+        c = decodeSurrogatePair(c, eptr[1]);
+        eptr++;
     }
+}
 
-#define GETCHARLENEND(c, eptr, end, len) \
-  c = eptr[0]; \
-  if (isLeadingSurrogate(c)) { \
-    c = decodeSurrogatePair(c, eptr + 1 < end ? eptr[1] : 0); \
-    ++len; \
+// This flavor checks to make sure we don't walk off the end
+// FIXME: This could also be removed and an end-aware getCharAndAdvance added instead.
+static inline void getCharAndAdvanceIfSurrogate(int& c, const UChar*& eptr, const UChar* end)
+{
+    c = eptr[0];
+    if (isLeadingSurrogate(c)) {
+        if (eptr + 1 < end)
+            c = decodeSurrogatePair(c, eptr[1]);
+        else
+            c = decodeSurrogatePair(c, 0);
+        eptr++;
     }
+}
 
 #define BACKCHAR(eptr) while(isTrailingSurrogate(*eptr)) eptr--;
 

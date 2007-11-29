@@ -793,8 +793,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
         /* Fill in length of a previous callout, except when the next thing is
          a quantifier. */
         
-        is_quantifier = c == '*' || c == '+' || c == '?' ||
-        (c == '{' && is_counted_repeat(ptr+1, patternEnd));
+        is_quantifier = c == '*' || c == '+' || c == '?' || (c == '{' && is_counted_repeat(ptr+1, patternEnd));
         
         if (!is_quantifier && previous_callout && after_manual_callout-- <= 0) {
             complete_callout(previous_callout, ptr, cd);
@@ -820,8 +819,9 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  the setting of any following char as a first character. */
                 
             case '^':
-                if ((options & PCRE_MULTILINE) != 0) {
-                    if (firstbyte == REQ_UNSET) firstbyte = REQ_NONE;
+                if (options & PCRE_MULTILINE) {
+                    if (firstbyte == REQ_UNSET)
+                        firstbyte = REQ_NONE;
                 }
                 previous = NULL;
                 *code++ = OP_CIRC;
@@ -894,9 +894,8 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  character. */
                 
                 while ((c = *(++ptr)) != ']') {
-                    if (c > 127) {                  /* Braces are required because the */
-                        GETCHARLEN(c, ptr, ptr);    /* macro generates multiple statements */
-                    }
+                    if (c > 127)
+                        getCharAndAdvanceIfSurrogate(c, ptr);
                     
                     /* Backslash may introduce a single character, or it may introduce one
                      of the specials, which just set a flag. Escaped items are checked for
@@ -968,10 +967,10 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                      here is treated as a literal. */
                     
                     if (ptr[1] == '-' && ptr[2] != ']') {
-                        int d;
                         ptr += 2;
                         
-                        GETCHARLEN(d, ptr, ptr);
+                        int d;
+                        getCharAndAdvanceIfSurrogate(d, ptr);
                         
                         /* The second part of a range can be a single-character escape, but
                          not any of the other escapes. Perl 5.6 treats a hyphen as a literal
@@ -986,7 +985,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                             
                             if (d < 0) {
                                 if (d == -ESC_b)
-                                         d = '\b';
+                                    d = '\b';
                                 else {
                                     ptr = oldptr - 2;
                                     goto LONE_SINGLE_CHARACTER;  /* A few lines below */
@@ -2414,20 +2413,14 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                      characters. */
                     
                     else {
-                        int d;
-                        
-                        {
-                            int extra = 0;
-                            GETCHARLENEND(c, ptr, patternEnd, extra);
-                            ptr += extra;
-                        }
+                        getCharAndAdvanceIfSurrogate(c, ptr, patternEnd);
                         
                         /* Come here from handling \ above when it escapes to a char value */
                         
                     NON_SPECIAL_CHARACTER:
                         class_optcount++;
                         
-                        d = -1;
+                        int d = -1;
                         if (ptr + 1 < patternEnd && ptr[1] == '-') {
                             UChar const *hyptr = ptr++;
                             if (ptr + 1 < patternEnd && ptr[1] == '\\') {
@@ -2440,9 +2433,7 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                             }
                             else if (ptr + 1 < patternEnd && ptr[1] != ']') {
                                 ptr++;
-                                int extra = 0;
-                                GETCHARLENEND(d, ptr, patternEnd, extra);
-                                ptr += extra;
+                                getCharAndAdvanceIfSurrogate(d, ptr, patternEnd);
                             }
                             if (d < 0)
                                 ptr = hyptr;      /* go back to hyphen as data */

@@ -24,6 +24,22 @@
 
         Reviewed by Sam.
 
+        Get rid of GETCHAR* macros, replacing them with better named inlines
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (calculateCompiledPatternLengthAndFlags):
+        * pcre/pcre_exec.cpp:
+        (match):
+        * pcre/pcre_internal.h:
+        (getCharAndAdvance):
+        (getCharAndLength):
+        (getCharAndAdvanceIfSurrogate):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         Further cleanup GET/PUT inlines
 
         * pcre/pcre_internal.h:
