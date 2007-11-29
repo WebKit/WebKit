@@ -1955,7 +1955,8 @@ RRETURN_SWITCH:
 #endif
     
 RETURN:
-    return is_match ? MATCH_MATCH : MATCH_NOMATCH;
+    ASSERT(is_match == MATCH_MATCH || is_match == MATCH_NOMATCH);
+    return is_match;
 }
 
 

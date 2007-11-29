@@ -26,6 +26,17 @@
 
 2007-11-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Mitz.
+
+        Remove branch from return
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        * pcre/pcre_exec.cpp:
+        (match):
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         Add repeatInformationFromInstructionOffset inline

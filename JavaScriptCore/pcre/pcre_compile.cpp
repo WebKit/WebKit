@@ -1269,7 +1269,8 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     
                     if (code[-1] & 0x80) {
                         uschar *lastchar = code - 1;
-                        while((*lastchar & 0xc0) == 0x80) lastchar--;
+                        while((*lastchar & 0xc0) == 0x80)
+                            lastchar--;
                         c = code - lastchar;            /* Length of UTF-8 character */
                         memcpy(utf8_char, lastchar, c); /* Save the char */
                         c |= 0x80;                      /* Flag c as a length */
@@ -1285,7 +1286,8 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                 
                 else if (*previous == OP_ASCII_CHAR || *previous == OP_ASCII_LETTER_NC) {
                     c = previous[1];
-                    if (repeat_min > 1) reqbyte = c | req_caseopt | cd.req_varyopt;
+                    if (repeat_min > 1)
+                        reqbyte = c | req_caseopt | cd.req_varyopt;
                     goto OUTPUT_SINGLE_REPEAT;
                 }
                 
