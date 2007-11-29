@@ -348,7 +348,7 @@ enum PCREOptions {
     OptionUseMultiLineFirstCharOptimization = 0x10000000,  /* start after \n for multiline */
     PCRE_ANCHORED = 0x02000000,  /* can't use partial with this regex */
     OptionIgnoreCase = 0x00000001,
-    PCRE_MULTILINE = 0x00000002
+    OptionMatchAcrossMultipleLines = 0x00000002
 };
 
 /* Negative values for the firstchar and reqchar variables */

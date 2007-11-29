@@ -1985,7 +1985,7 @@ int jsRegExpExecute(const JSRegExp* re,
     match_block.end_subject = match_block.start_subject + length;
     const UChar* end_subject = match_block.end_subject;
     
-    match_block.multiline = (re->options & PCRE_MULTILINE);
+    match_block.multiline = (re->options & OptionMatchAcrossMultipleLines);
     match_block.ignoreCase = (re->options & OptionIgnoreCase);
     
     /* If the expression has got more back references than the offsets supplied can

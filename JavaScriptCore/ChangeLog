@@ -41,6 +41,21 @@
 
 2007-11-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+
+        give PCRE_MULTILINE a better name: OptionMatchAcrossMultipleLines
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (is_anchored):
+        (printCompiledRegExp):
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Oliver.
 
         Deprecate jsRegExpExecute's offset-vector fallback code

@@ -819,7 +819,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  the setting of any following char as a first character. */
                 
             case '^':
-                if (options & PCRE_MULTILINE) {
+                if (options & OptionMatchAcrossMultipleLines) {
                     if (firstbyte == REQ_UNSET)
                         firstbyte = REQ_NONE;
                 }
@@ -2077,7 +2077,7 @@ static bool is_anchored(const uschar* code, int options, unsigned int bracket_ma
         
         /* Check for explicit anchoring */
         
-        else if ((options & PCRE_MULTILINE) || op != OP_CIRC)
+        else if ((options & OptionMatchAcrossMultipleLines) || op != OP_CIRC)
             return false;
         code += getOpcodeValueAtOffset(code, 1);
     } while (*code == OP_ALT);   /* Loop for each alternative */
@@ -2718,7 +2718,7 @@ static void printCompiledRegExp(JSRegExp* re, int length)
         printf("%s%s%s\n",
                ((re->options & PCRE_ANCHORED) != 0)? "anchored " : "",
                ((re->options & OptionIgnoreCase) != 0)? "ignores case " : "",
-               ((re->options & PCRE_MULTILINE) != 0)? "multiline " : "");
+               ((re->options & OptionMatchAcrossMultipleLines) != 0)? "multiline " : "");
     }
     
     if (re->options & PCRE_FIRSTSET) {
@@ -2804,7 +2804,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
      4-byte pointers is run on another with 8-byte pointers. */
     
     re->size = (pcre_uint32)size;
-    re->options = (ignoreCase ? OptionIgnoreCase : 0) | (multiline ? PCRE_MULTILINE : 0);
+    re->options = (ignoreCase ? OptionIgnoreCase : 0) | (multiline ? OptionMatchAcrossMultipleLines : 0);
     
     /* The starting points of the name/number translation table and of the code are
      passed around in the compile data block. */
