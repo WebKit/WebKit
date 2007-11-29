@@ -31,8 +31,8 @@
 #include "Document.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "HTMLVideoElement.h"
 #include "Movie.h"
 
 using namespace std;
@@ -42,9 +42,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderVideo::RenderVideo(HTMLMediaElement* video)
-    : RenderReplaced(video)
+    : RenderMedia(video, video->movie() ? video->movie()->naturalSize() : IntSize(300, 150))
 {
-    setIntrinsicSize(movie() ? movie()->naturalSize() : IntSize(0, 0));
 }
 
 RenderVideo::~RenderVideo()
@@ -54,12 +53,7 @@ RenderVideo::~RenderVideo()
         m->setParentWidget(0);
     }
 }
-
-Movie* RenderVideo::movie() const
-{
-    return static_cast<HTMLMediaElement*>(element())->movie();
-}
-
+    
 void RenderVideo::videoSizeChanged()
 {
     if (!movie())
@@ -81,74 +75,32 @@ void RenderVideo::videoSizeChanged()
     }
 }
 
-void RenderVideo::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderVideo::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaint(paintInfo, tx, ty))
+    if (style()->visibility() != VISIBLE)
         return;
 
-    tx += m_x;
-    ty += m_y;
-        
-    if (hasBoxDecorations() && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline) 
-        paintBoxDecorations(paintInfo, tx, ty);
-
-    GraphicsContext* context = paintInfo.context;
-
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(context, tx, ty, width(), height(), style());
-
-    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
-        return;
-
-    if (!shouldPaintWithinRoot(paintInfo))
-        return;
-        
-    bool isPrinting = document()->printing();
-    if (isPrinting)
-        return;
+    if (paintInfo.phase == PaintPhaseForeground && movie() && !document()->printing()) {
+        updateMovie();
+            
+        IntRect rect = contentBox();
+        rect.move(tx, ty);
+        movie()->paint(paintInfo.context, rect);
+    }
     
-    if (!movie())
-        return;
-           
-    updateMovie();
-        
-    int cWidth = contentWidth();
-    int cHeight = contentHeight();
-    int leftBorder = borderLeft();
-    int topBorder = borderTop();
-    int leftPad = paddingLeft();
-    int topPad = paddingTop();
-
-    IntRect rect(IntPoint(tx + leftBorder + leftPad, ty + topBorder + topPad), IntSize(cWidth, cHeight));
-
-    movie()->paint(context, rect);
+    // Paint the children.
+    RenderBlock::paintObject(paintInfo, tx, ty);
 }
 
 void RenderVideo::layout()
 {
-    ASSERT(needsLayout());
-
-    IntRect oldBounds;
-    IntRect oldOutlineBox;
-    bool checkForRepaint = checkForRepaintDuringLayout();
-    if (checkForRepaint) {
-        oldBounds = absoluteClippedOverflowRect();
-        oldOutlineBox = absoluteOutlineBox();
-    }
-
-    calcWidth();
-    calcHeight();
-    
+    RenderBlock::layout();
     updateMovie();
-        
-    if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
-    
-    setNeedsLayout(false);
 }
-
+    
 void RenderVideo::updateFromElement()
 {
+    RenderMedia::updateFromElement();
     updateMovie();
 }
 
@@ -232,9 +184,7 @@ int RenderVideo::calcAspectRatioWidth() const
     int intrinsicHeight = intrinsicSize().height();
     if (!intrinsicHeight)
         return 0;
-    //if (!m_cachedImage || m_cachedImage->errorOccurred())
-   //     return intrinsicWidth(); // Don't bother scaling.
-    return RenderReplaced::calcReplacedHeight() * intrinsicWidth / intrinsicHeight;
+    return RenderBox::calcReplacedHeight() * intrinsicWidth / intrinsicHeight;
 }
 
 int RenderVideo::calcAspectRatioHeight() const
@@ -243,9 +193,7 @@ int RenderVideo::calcAspectRatioHeight() const
     int intrinsicHeight = intrinsicSize().height();
     if (!intrinsicWidth)
         return 0;
-    //if (!m_cachedImage || m_cachedImage->errorOccurred())
-    //    return intrinsicHeight(); // Don't bother scaling.
-    return RenderReplaced::calcReplacedWidth() * intrinsicHeight / intrinsicWidth;
+    return RenderBox::calcReplacedWidth() * intrinsicHeight / intrinsicWidth;
 }
 
 void RenderVideo::calcPrefWidths()

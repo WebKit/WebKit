@@ -62,6 +62,8 @@ public:
     
     void scheduleLoad();
     
+    virtual void defaultEventHandler(Event*);
+    
 // DOM API
 // error state
     PassRefPtr<MediaError> error() const;

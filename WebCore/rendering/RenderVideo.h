@@ -28,21 +28,20 @@
 
 #if ENABLE(VIDEO)
 
-#include "RenderReplaced.h"
+#include "RenderMedia.h"
 
 namespace WebCore {
     
 class HTMLMediaElement;
-class Movie;
 
-class RenderVideo : public RenderReplaced {
+class RenderVideo : public RenderMedia {
 public:
     RenderVideo(HTMLMediaElement*);
     virtual ~RenderVideo();
 
     virtual const char* renderName() const { return "RenderVideo"; }
-    
-    virtual void paint(PaintInfo&, int tx, int ty);
+
+    virtual void paintObject(PaintInfo&, int tx, int ty);
 
     virtual void layout();
 
@@ -53,10 +52,7 @@ public:
     
     void videoSizeChanged();
     
-    Movie* movie() const;
-    
     void updateFromElement();
-    void updateMovie();
 
 private:
     int calcAspectRatioWidth() const;
@@ -64,6 +60,8 @@ private:
 
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;
+
+    void updateMovie();
 };
 
 } // namespace WebCore

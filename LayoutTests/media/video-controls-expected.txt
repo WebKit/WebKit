@@ -1,0 +1,15 @@
+Test 'controls' attribute
+
+TEST(video.controls) OK
+EVENT(load)
+TEST(video.controls) OK
+RUN(video.removeAttribute('controls'))
+TEST(!video.controls) OK
+RUN(video.controls = true)
+TEST(video.getAttribute('controls') == 'controls') OK
+RUN(video.controls = false)
+TEST(!video.getAttribute('controls')) OK
+RUN(video.setAttribute('controls','controls'))
+TEST(video.controls) OK
+END OF TEST
+

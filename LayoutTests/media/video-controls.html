@@ -1,0 +1,24 @@
+<video controls></video>
+<p>Test 'controls' attribute<p>
+<script src=video-test.js></script>
+<script>
+test("video.controls");
+waitForEvent('load', function () {
+    document.body.offsetTop;
+    test("video.controls");
+    run("video.removeAttribute('controls')");
+    document.body.offsetTop;
+    test("!video.controls");
+    run("video.controls = true");
+    document.body.offsetTop;
+    test("video.getAttribute('controls') == 'controls'");
+    run("video.controls = false");
+    document.body.offsetTop;
+    test("!video.getAttribute('controls')");
+    run("video.setAttribute('controls','controls')");
+    document.body.offsetTop;
+    test("video.controls");
+    endTest();
+} );
+video.src = 'content/test.mp4';
+</script>

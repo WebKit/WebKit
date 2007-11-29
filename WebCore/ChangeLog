@@ -1,3 +1,76 @@
+2007-11-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Test: media/video-controls.html
+        
+        <rdar://problem/5605668>
+        Implement controls attribute for video element
+        
+        - Add RenderMedia and make RenderVideo its subclass. Controls code goes to RenderMedia while
+          video specific (painting etc) code stays in RenderVideo. For example audio controls can be implemented
+          later by just instantiating RenderMedia as renderer.
+        - Make media renderer hierarchy inherit from RenderBlock instead of RenderReplaced so it can 
+          have child nodes (for controls).
+        - Controls are implemented as a shadow DOM.
+        - Current look is a placeholder. It is defined purely in CSS.
+        - Some things like volume controls are not yet implemented.
+        - Fade-in/out is done manually, CSS animations don't work well in shadow trees.
+          
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/html4.css:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged):
+        (WebCore::HTMLMediaElement::updateMovie):
+        (WebCore::HTMLMediaElement::defaultEventHandler):
+        * html/HTMLMediaElement.h:
+        * rendering/RenderMedia.cpp: Added.
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+        (WebCore::MediaControlShadowRootElement::isShadowNode):
+        (WebCore::MediaControlShadowRootElement::shadowParentNode):
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        (WebCore::MediaControlInputElement::attachToParent):
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement):
+        (WebCore::MediaControlPlayButtonElement::inPausedState):
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler):
+        (WebCore::MediaControlPlayButtonElement::update):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        (WebCore::MediaControlTimelineElement::update):
+        (WebCore::RenderMedia::RenderMedia):
+        (WebCore::RenderMedia::~RenderMedia):
+        (WebCore::RenderMedia::mediaElement):
+        (WebCore::RenderMedia::movie):
+        (WebCore::RenderMedia::setStyle):
+        (WebCore::RenderMedia::createControlsShadowRoot):
+        (WebCore::RenderMedia::createPanel):
+        (WebCore::RenderMedia::createPlayButton):
+        (WebCore::RenderMedia::createTimeline):
+        (WebCore::RenderMedia::createTimeDisplay):
+        (WebCore::RenderMedia::updateFromElement):
+        (WebCore::RenderMedia::updateControls):
+        (WebCore::RenderMedia::timeUpdateTimerFired):
+        (WebCore::RenderMedia::updateTimeDisplay):
+        (WebCore::RenderMedia::updateControlVisibility):
+        (WebCore::RenderMedia::changeOpacity):
+        (WebCore::RenderMedia::opacityAnimationTimerFired):
+        (WebCore::RenderMedia::forwardEvent):
+        * rendering/RenderMedia.h: Added.
+        (WebCore::RenderMedia::renderName):
+        (WebCore::RenderMedia::isMedia):
+        (WebCore::RenderMedia::intrinsicSize):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isMedia):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::RenderVideo):
+        (WebCore::RenderVideo::videoSizeChanged):
+        (WebCore::RenderVideo::paintObject):
+        (WebCore::RenderVideo::layout):
+        (WebCore::RenderVideo::updateFromElement):
+        (WebCore::RenderVideo::calcAspectRatioWidth):
+        (WebCore::RenderVideo::calcAspectRatioHeight):
+        * rendering/RenderVideo.h:
+
 2007-11-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

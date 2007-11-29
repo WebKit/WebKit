@@ -1,3 +1,62 @@
+2007-11-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5605668>
+        Implement controls attribute for video element
+        
+        - A new test for the controls attribute.
+        - Add the controls attibute to all existing video tests. This will give the code
+          some additional exercise without affecting test results.
+
+        * media/progress-event.html:
+        * media/video-append-source.html:
+        * media/video-autoplay.html:
+        * media/video-buffered.html:
+        * media/video-controls-expected.txt: Added.
+        * media/video-controls.html: Added.
+        * media/video-currentTime-set.html:
+        * media/video-currentTime-set2.html:
+        * media/video-currentTime.html:
+        * media/video-dom-autoplay.html:
+        * media/video-dom-end.html:
+        * media/video-dom-loopcount.html:
+        * media/video-dom-loopend.html:
+        * media/video-dom-loopstart.html:
+        * media/video-dom-src.html:
+        * media/video-dom-start.html:
+        * media/video-end.html:
+        * media/video-error-abort.html:
+        * media/video-error-does-not-exist.html:
+        * media/video-load-networkState.html:
+        * media/video-load-readyState.html:
+        * media/video-loopcount.html:
+        * media/video-loopend.html:
+        * media/video-loopstart.html:
+        * media/video-muted.html:
+        * media/video-no-autoplay.html:
+        * media/video-pause-empty-events.html:
+        * media/video-play-empty-events.html:
+        * media/video-play-pause-events.html:
+        * media/video-play-pause-exception.html:
+        * media/video-poster.html:
+        * media/video-seek-past-end-paused.html:
+        * media/video-seek-past-end-playing.html:
+        * media/video-seekable.html:
+        * media/video-seeking.html:
+        * media/video-size.html:
+        * media/video-source-media.html:
+        * media/video-source-type.html:
+        * media/video-source.html:
+        * media/video-src-change.html:
+        * media/video-src-remove.html:
+        * media/video-src-set.html:
+        * media/video-src-source.html:
+        * media/video-src.html:
+        * media/video-start.html:
+        * media/video-volume.html:
+        * media/video-width-height.html:
+
 2007-11-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

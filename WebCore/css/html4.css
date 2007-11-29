@@ -589,4 +589,62 @@ iframe {
     border: 2px inset
 }
 
+/* media controls */
+/* FIXME this is not the final styling */
+
+video::-webkit-media-controls-panel {
+    display: inline-block;
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    margin: auto auto 10% auto;
+    width: 230px;
+    height: 65px;
+    border: 2px solid #eee;
+    background: rgba(0,0,0,0.6);
+    -webkit-border-radius: 10px;
+    -webkit-user-select: none;
+}
+
+video::-webkit-media-controls-play-button {
+    -webkit-appearance: none;
+    display: inline-block;
+    position: absolute;
+    margin: 5px auto auto auto;
+    left: 0; right: 0; top: 0; bottom: 0;
+    border: 0;
+    color: white;
+    background: transparent;
+    cursor: pointer;
+    text-align: center; 
+    font-size: 25pt;
+    width: 2em;
+    height: 1.2em;
+}
+
+video::-webkit-media-controls-timeline {
+    -webkit-appearance: slider-horizontal;
+    position: absolute;
+    margin: auto auto 5px 10px;
+    left: 0; right: 0; top: 0; bottom: 1px;
+    width: 60%;
+    height: 12px;
+    border: 2px solid white;
+    -webkit-border-radius: 6px;
+    z-index: 1;
+}
+
+video::-webkit-media-controls-time-display {
+    display: inline-block;
+    position: absolute;
+    margin: auto 5px 5px 5px;
+    left: 0; right: 0; top: 0; bottom: 0px;
+    height: 1.2em;
+    text-align: right;
+    padding-right: 5px;
+    -webkit-border-radius: 7px;
+    background-color: #eee;
+    color: black;
+    font-size: 10pt;
+}
+
 /* noscript is handled internally, as it depends on settings */
