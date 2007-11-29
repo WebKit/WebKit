@@ -1,5 +1,27 @@
 2007-11-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+
+        Give subjectPtr and instructionPtr sane names, reduce size of MatchFrame for a 0.2% speedup.
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (calculateCompiledPatternLengthAndFlags):
+        * pcre/pcre_exec.cpp:
+        (match_ref):
+        (MatchStack::pushNewFrame):
+        (getUTF8CharAndIncrementLength):
+        (match):
+        * pcre/pcre_internal.h:
+        (getChar):
+        (getCharAndAdvance):
+        (getCharAndLength):
+        (getCharAndAdvanceIfSurrogate):
+        * pcre/pcre_xclass.cpp:
+        (getUTF8CharAndAdvancePointer):
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Small speedup (0.7%) by simplifying canUseStackBufferForNextFrame() check

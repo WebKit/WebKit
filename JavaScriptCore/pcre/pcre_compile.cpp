@@ -778,7 +778,6 @@ compile_branch(int options, int* brackets, uschar** codeptr,
     {
         bool negate_class;
         bool should_flip_negation; /* If a negative special such as \S is used, we should negate the whole class to properly support Unicode. */
-        bool is_quantifier;
         int class_charcount;
         int class_lastchar;
         int skipbytes;
@@ -794,7 +793,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
         /* Fill in length of a previous callout, except when the next thing is
          a quantifier. */
         
-        is_quantifier = c == '*' || c == '+' || c == '?' || (c == '{' && is_counted_repeat(ptr+1, patternEnd));
+        bool is_quantifier = c == '*' || c == '+' || c == '?' || (c == '{' && is_counted_repeat(ptr + 1, patternEnd));
         
         if (!is_quantifier && previous_callout && after_manual_callout-- <= 0) {
             complete_callout(previous_callout, ptr, cd);
@@ -2351,7 +2350,7 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
             POSESSIVE:                     /* Test for possessive quantifier */
                 if (ptr[1] == '+') {
                     ptr++;
-                    length += 2 + 2*LINK_SIZE;   /* Allow for atomic brackets */
+                    length += 2 + 2 * LINK_SIZE;   /* Allow for atomic brackets */
                 }
                 continue;
                 
@@ -2545,7 +2544,7 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                             length += 5;
                         if (ptr + 1 < patternEnd && ptr[1] == '+') {
                             ptr++;
-                            length += 2 + 2*LINK_SIZE;
+                            length += 2 + 2 * LINK_SIZE;
                         } else if (ptr + 1 < patternEnd && ptr[1] == '?')
                             ptr++;
                     }
@@ -2649,7 +2648,7 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                 
                 if (min == 0) {
                     length++;
-                    if (max > 0) length += (max - 1) * (duplength + 3 + 2*LINK_SIZE);
+                    if (max > 0) length += (max - 1) * (duplength + 3 + 2 * LINK_SIZE);
                 }
                 
                 /* When the minimum is greater than zero, we have to replicate up to
@@ -2661,15 +2660,15 @@ static int calculateCompiledPatternLengthAndFlags(const UChar* pattern, int patt
                 else {
                     length += (min - 1) * duplength;
                     if (max > min)   /* Need this test as max=-1 means no limit */
-                        length += (max - min) * (duplength + 3 + 2*LINK_SIZE)
-                        - (2 + 2*LINK_SIZE);
+                        length += (max - min) * (duplength + 3 + 2 * LINK_SIZE)
+                        - (2 + 2 * LINK_SIZE);
                 }
                 
                 /* Allow space for once brackets for "possessive quantifier" */
                 
                 if (ptr + 1 < patternEnd && ptr[1] == '+') {
                     ptr++;
-                    length += 2 + 2*LINK_SIZE;
+                    length += 2 + 2 * LINK_SIZE;
                 }
                 continue;
                 

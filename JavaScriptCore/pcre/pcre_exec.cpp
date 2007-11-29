@@ -72,8 +72,8 @@ struct MatchFrame {
     
     /* Function arguments that may change */
     struct {
-        const UChar* eptr;
-        const uschar* ecode;
+        const UChar* subjectPtr;
+        const uschar* instructionPtr;
         int offset_top;
         const UChar* subpatternStart;
     } args;
@@ -84,10 +84,9 @@ struct MatchFrame {
      store local variables on the current MatchFrame. */
     struct {
         const uschar* data;
-        const uschar* next;
-        const UChar* pp;
-        const uschar* prev;
-        const UChar* saved_eptr;
+        const uschar* startOfRepeatingBracket;
+        const UChar* subjectPtrAtStartOfInstruction; // Several instrutions stash away a subjectPtr here for later compare
+        const uschar* instructionPtrAtStartOfOnce;
         
         int repeat_othercase;
         
@@ -177,23 +176,23 @@ than the number of characters left in the string, so the match fails.
 
 Arguments:
   offset      index into the offset vector
-  eptr        points into the subject
+  subjectPtr        points into the subject
   length      length to be matched
   md          points to match data block
 
 Returns:      true if matched
 */
 
-static bool match_ref(int offset, const UChar* eptr, int length, const MatchData& md)
+static bool match_ref(int offset, const UChar* subjectPtr, int length, const MatchData& md)
 {
     UChar* p = md.start_subject + md.offset_vector[offset];
     
 #ifdef DEBUG
-    if (eptr >= md.end_subject)
+    if (subjectPtr >= md.end_subject)
         printf("matching subject <null>");
     else {
         printf("matching subject ");
-        pchars(eptr, length, true, md);
+        pchars(subjectPtr, length, true, md);
     }
     printf(" against backref ");
     pchars(p, length, false, md);
@@ -202,7 +201,7 @@ static bool match_ref(int offset, const UChar* eptr, int length, const MatchData
     
     /* Always fail if not enough characters left */
     
-    if (length > md.end_subject - eptr)
+    if (length > md.end_subject - subjectPtr)
         return false;
     
     /* Separate the caselesss case for speed */
@@ -211,14 +210,14 @@ static bool match_ref(int offset, const UChar* eptr, int length, const MatchData
         while (length-- > 0) {
             UChar c = *p++;
             int othercase = _pcre_ucp_othercase(c);
-            UChar d = *eptr++;
+            UChar d = *subjectPtr++;
             if (c != d && othercase != d)
                 return false;
         }
     }
     else {
         while (length-- > 0)
-            if (*p++ != *eptr++)
+            if (*p++ != *subjectPtr++)
                 return false;
     }
     
@@ -282,16 +281,16 @@ a bit more code and notice if we use conflicting numbers.*/
 *         Match from current position            *
 *************************************************/
 
-/* On entry ecode points to the first opcode, and eptr to the first character
-in the subject string, while eptrb holds the value of eptr at the start of the
+/* On entry instructionPtr points to the first opcode, and subjectPtr to the first character
+in the subject string, while subjectPtrb holds the value of subjectPtr at the start of the
 last bracketed group - used for breaking infinite loops matching zero-length
 strings. This function is called recursively in many circumstances. Whenever it
 returns a negative (error) response, the outer incarnation must also return the
 same response.
 
 Arguments:
-   eptr        pointer in subject
-   ecode       position in code
+   subjectPtr        pointer in subject
+   instructionPtr       position in code
    offset_top  current top pointer
    md          pointer to "static" info for the match
 
@@ -332,14 +331,14 @@ struct MatchStack {
         return new MatchFrame;
     }
     
-    inline void pushNewFrame(const uschar* ecode, const UChar* subpatternStart, ReturnLocation returnLocation)
+    inline void pushNewFrame(const uschar* instructionPtr, const UChar* subpatternStart, ReturnLocation returnLocation)
     {
         MatchFrame* newframe = allocateNextFrame();
         newframe->previousFrame = currentFrame;
 
-        newframe->args.eptr = currentFrame->args.eptr;
+        newframe->args.subjectPtr = currentFrame->args.subjectPtr;
         newframe->args.offset_top = currentFrame->args.offset_top;
-        newframe->args.ecode = ecode;
+        newframe->args.instructionPtr = instructionPtr;
         newframe->args.subpatternStart = subpatternStart;
         newframe->returnLocation = returnLocation;
         size++;
@@ -372,16 +371,16 @@ static int matchError(int errorCode, MatchStack& stack)
 /* Get the next UTF-8 character, not advancing the pointer, incrementing length
  if there are extra bytes. This is called when we know we are in UTF-8 mode. */
 
-static inline void getUTF8CharAndIncrementLength(int& c, const uschar* eptr, int& len)
+static inline void getUTF8CharAndIncrementLength(int& c, const uschar* subjectPtr, int& len)
 {
-    c = *eptr;
+    c = *subjectPtr;
     if ((c & 0xc0) == 0xc0) {
         int gcaa = _pcre_utf8_table4[c & 0x3f];  /* Number of additional bytes */
         int gcss = 6 * gcaa;
         c = (c & _pcre_utf8_table3[gcaa]) << gcss;
         for (int gcii = 1; gcii <= gcaa; gcii++) {
             gcss -= 6;
-            c |= (eptr[gcii] & 0x3f) << gcss;
+            c |= (subjectPtr[gcii] & 0x3f) << gcss;
         }
         len += gcaa;
     }
@@ -397,7 +396,7 @@ static inline void startNewGroup(MatchFrame* currentFrame)
     currentFrame->locals.subpatternStart = currentFrame->args.subpatternStart;
 }
 
-static int match(UChar* eptr, const uschar* ecode, int offset_top, MatchData& md)
+static int match(UChar* subjectPtr, const uschar* instructionPtr, int offset_top, MatchData& md)
 {
     int is_match = false;
     int i;
@@ -430,8 +429,8 @@ static int match(UChar* eptr, const uschar* ecode, int offset_top, MatchData& md
     stack.currentFrame->returnLocation = 0;
 #endif
     
-    stack.currentFrame->args.eptr = eptr;
-    stack.currentFrame->args.ecode = ecode;
+    stack.currentFrame->args.subjectPtr = subjectPtr;
+    stack.currentFrame->args.instructionPtr = instructionPtr;
     stack.currentFrame->args.offset_top = offset_top;
     stack.currentFrame->args.subpatternStart = 0;
     startNewGroup(stack.currentFrame);
@@ -449,7 +448,7 @@ RECURSE:
         
 #ifdef USE_COMPUTED_GOTO_FOR_MATCH_OPCODE_LOOP
 #define BEGIN_OPCODE(opcode) LABEL_OP_##opcode
-#define NEXT_OPCODE goto *opcode_jump_table[*stack.currentFrame->args.ecode]
+#define NEXT_OPCODE goto *opcode_jump_table[*stack.currentFrame->args.instructionPtr]
 #else
 #define BEGIN_OPCODE(opcode) case OP_##opcode
 #define NEXT_OPCODE continue
@@ -458,7 +457,7 @@ RECURSE:
 #ifdef USE_COMPUTED_GOTO_FOR_MATCH_OPCODE_LOOP
         NEXT_OPCODE;
 #else
-        switch (*stack.currentFrame->args.ecode)
+        switch (*stack.currentFrame->args.instructionPtr)
 #endif
         {
                 /* Non-capturing bracket: optimized */
@@ -467,24 +466,24 @@ RECURSE:
             NON_CAPTURING_BRACKET:
                 DPRINTF(("start bracket 0\n"));
                 do {
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(2, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(2, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
-                    stack.currentFrame->args.ecode += getOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                } while (*stack.currentFrame->args.ecode == OP_ALT);
+                    stack.currentFrame->args.instructionPtr += getOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                } while (*stack.currentFrame->args.instructionPtr == OP_ALT);
                 DPRINTF(("bracket 0 failed\n"));
                 RRETURN;
                 
                 /* Skip over large extraction number data if encountered. */
                 
                 BEGIN_OPCODE(BRANUMBER):
-                stack.currentFrame->args.ecode += 3;
+                stack.currentFrame->args.instructionPtr += 3;
                 NEXT_OPCODE;
                 
                 /* End of the pattern. */
                 
                 BEGIN_OPCODE(END):
-                md.end_match_ptr = stack.currentFrame->args.eptr;          /* Record where we ended */
+                md.end_match_ptr = stack.currentFrame->args.subjectPtr;          /* Record where we ended */
                 md.end_offset_top = stack.currentFrame->args.offset_top;   /* and how many extracts were taken */
                 is_match = true;
                 RRETURN;
@@ -497,19 +496,19 @@ RECURSE:
                 
                 BEGIN_OPCODE(ASSERT):
                 do {
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(6, stack.currentFrame->args.ecode + 1 + LINK_SIZE, NULL);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(6, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, NULL);
                     if (is_match)
                         break;
-                    stack.currentFrame->args.ecode += getOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                } while (*stack.currentFrame->args.ecode == OP_ALT);
-                if (*stack.currentFrame->args.ecode == OP_KET)
+                    stack.currentFrame->args.instructionPtr += getOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                } while (*stack.currentFrame->args.instructionPtr == OP_ALT);
+                if (*stack.currentFrame->args.instructionPtr == OP_KET)
                     RRETURN_NO_MATCH;
                 
                 /* Continue from after the assertion, updating the offsets high water
                  mark, since extracts may have been taken during the assertion. */
                 
-                moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->args.ecode);
-                stack.currentFrame->args.ecode += 1 + LINK_SIZE;
+                moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->args.instructionPtr);
+                stack.currentFrame->args.instructionPtr += 1 + LINK_SIZE;
                 stack.currentFrame->args.offset_top = md.end_offset_top;
                 NEXT_OPCODE;
                 
@@ -517,13 +516,13 @@ RECURSE:
                 
                 BEGIN_OPCODE(ASSERT_NOT):
                 do {
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(7, stack.currentFrame->args.ecode + 1 + LINK_SIZE, NULL);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(7, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, NULL);
                     if (is_match)
                         RRETURN_NO_MATCH;
-                    stack.currentFrame->args.ecode += getOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                } while (*stack.currentFrame->args.ecode == OP_ALT);
+                    stack.currentFrame->args.instructionPtr += getOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                } while (*stack.currentFrame->args.instructionPtr == OP_ALT);
                 
-                stack.currentFrame->args.ecode += 1 + LINK_SIZE;
+                stack.currentFrame->args.instructionPtr += 1 + LINK_SIZE;
                 NEXT_OPCODE;
                 
                 /* "Once" brackets are like assertion brackets except that after a match,
@@ -534,28 +533,28 @@ RECURSE:
                  the end of a normal bracket, leaving the subject pointer. */
                 
                 BEGIN_OPCODE(ONCE):
-                stack.currentFrame->locals.prev = stack.currentFrame->args.ecode;
-                stack.currentFrame->locals.saved_eptr = stack.currentFrame->args.eptr;
+                stack.currentFrame->locals.instructionPtrAtStartOfOnce = stack.currentFrame->args.instructionPtr;
+                stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;
                 
                 do {
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(9, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(9, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         break;
-                    stack.currentFrame->args.ecode += getOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                } while (*stack.currentFrame->args.ecode == OP_ALT);
+                    stack.currentFrame->args.instructionPtr += getOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                } while (*stack.currentFrame->args.instructionPtr == OP_ALT);
                 
                 /* If hit the end of the group (which could be repeated), fail */
                 
-                if (*stack.currentFrame->args.ecode != OP_ONCE && *stack.currentFrame->args.ecode != OP_ALT)
+                if (*stack.currentFrame->args.instructionPtr != OP_ONCE && *stack.currentFrame->args.instructionPtr != OP_ALT)
                     RRETURN;
                 
                 /* Continue as from after the assertion, updating the offsets high water
                  mark, since extracts may have been taken. */
                 
-                moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->args.ecode);
+                moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->args.instructionPtr);
                 
                 stack.currentFrame->args.offset_top = md.end_offset_top;
-                stack.currentFrame->args.eptr = md.end_match_ptr;
+                stack.currentFrame->args.subjectPtr = md.end_match_ptr;
                 
                 /* For a non-repeating ket, just continue at this level. This also
                  happens for a repeating ket if no characters were matched in the group.
@@ -563,8 +562,8 @@ RECURSE:
                  5.005. If there is an options reset, it will get obeyed in the normal
                  course of events. */
                 
-                if (*stack.currentFrame->args.ecode == OP_KET || stack.currentFrame->args.eptr == stack.currentFrame->locals.saved_eptr) {
-                    stack.currentFrame->args.ecode += 1 + LINK_SIZE;
+                if (*stack.currentFrame->args.instructionPtr == OP_KET || stack.currentFrame->args.subjectPtr == stack.currentFrame->locals.subjectPtrAtStartOfInstruction) {
+                    stack.currentFrame->args.instructionPtr += 1 + LINK_SIZE;
                     NEXT_OPCODE;
                 }
                 
@@ -573,18 +572,18 @@ RECURSE:
                  that changed within the bracket before re-running it, so check the next
                  opcode. */
                 
-                if (*stack.currentFrame->args.ecode == OP_KETRMIN) {
-                    RECURSIVE_MATCH(10, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
+                if (*stack.currentFrame->args.instructionPtr == OP_KETRMIN) {
+                    RECURSIVE_MATCH(10, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(11, stack.currentFrame->locals.prev, stack.currentFrame->args.subpatternStart);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(11, stack.currentFrame->locals.instructionPtrAtStartOfOnce, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
                 } else { /* OP_KETRMAX */
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(12, stack.currentFrame->locals.prev, stack.currentFrame->args.subpatternStart);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(12, stack.currentFrame->locals.instructionPtrAtStartOfOnce, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
-                    RECURSIVE_MATCH(13, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
+                    RECURSIVE_MATCH(13, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
                 }
@@ -594,7 +593,7 @@ RECURSE:
                  bracketed group and go to there. */
                 
                 BEGIN_OPCODE(ALT):
-                moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->args.ecode);
+                moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->args.instructionPtr);
                 NEXT_OPCODE;
                 
                 /* BRAZERO and BRAMINZERO occur just before a bracket group, indicating
@@ -605,23 +604,23 @@ RECURSE:
                 
                 BEGIN_OPCODE(BRAZERO):
                 {
-                    stack.currentFrame->locals.next = stack.currentFrame->args.ecode + 1;
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(14, stack.currentFrame->locals.next, stack.currentFrame->args.subpatternStart);
+                    stack.currentFrame->locals.startOfRepeatingBracket = stack.currentFrame->args.instructionPtr + 1;
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(14, stack.currentFrame->locals.startOfRepeatingBracket, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
-                    moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->locals.next);
-                    stack.currentFrame->args.ecode = stack.currentFrame->locals.next + 1 + LINK_SIZE;
+                    moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->locals.startOfRepeatingBracket);
+                    stack.currentFrame->args.instructionPtr = stack.currentFrame->locals.startOfRepeatingBracket + 1 + LINK_SIZE;
                 }
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(BRAMINZERO):
                 {
-                    stack.currentFrame->locals.next = stack.currentFrame->args.ecode + 1;
-                    moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->locals.next);
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(15, stack.currentFrame->locals.next + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
+                    stack.currentFrame->locals.startOfRepeatingBracket = stack.currentFrame->args.instructionPtr + 1;
+                    moveOpcodePtrPastAnyAlternateBranches(stack.currentFrame->locals.startOfRepeatingBracket);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(15, stack.currentFrame->locals.startOfRepeatingBracket + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
-                    stack.currentFrame->args.ecode++;
+                    stack.currentFrame->args.instructionPtr++;
                 }
                 NEXT_OPCODE;
                 
@@ -633,12 +632,12 @@ RECURSE:
                 BEGIN_OPCODE(KET):
                 BEGIN_OPCODE(KETRMIN):
                 BEGIN_OPCODE(KETRMAX):
-                stack.currentFrame->locals.prev = stack.currentFrame->args.ecode - getOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
+                stack.currentFrame->locals.instructionPtrAtStartOfOnce = stack.currentFrame->args.instructionPtr - getOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
                 stack.currentFrame->args.subpatternStart = stack.currentFrame->locals.subpatternStart;
                 stack.currentFrame->locals.subpatternStart = stack.currentFrame->previousFrame->args.subpatternStart;
 
-                if (*stack.currentFrame->locals.prev == OP_ASSERT || *stack.currentFrame->locals.prev == OP_ASSERT_NOT || *stack.currentFrame->locals.prev == OP_ONCE) {
-                    md.end_match_ptr = stack.currentFrame->args.eptr;      /* For ONCE */
+                if (*stack.currentFrame->locals.instructionPtrAtStartOfOnce == OP_ASSERT || *stack.currentFrame->locals.instructionPtrAtStartOfOnce == OP_ASSERT_NOT || *stack.currentFrame->locals.instructionPtrAtStartOfOnce == OP_ONCE) {
+                    md.end_match_ptr = stack.currentFrame->args.subjectPtr;      /* For ONCE */
                     md.end_offset_top = stack.currentFrame->args.offset_top;
                     is_match = true;
                     RRETURN;
@@ -648,13 +647,13 @@ RECURSE:
                  group number back at the start and if necessary complete handling an
                  extraction by setting the offsets and bumping the high water mark. */
                 
-                stack.currentFrame->locals.number = *stack.currentFrame->locals.prev - OP_BRA;
+                stack.currentFrame->locals.number = *stack.currentFrame->locals.instructionPtrAtStartOfOnce - OP_BRA;
                 
                 /* For extended extraction brackets (large number), we have to fish out
                  the number from a dummy opcode at the start. */
                 
                 if (stack.currentFrame->locals.number > EXTRACT_BASIC_MAX)
-                    stack.currentFrame->locals.number = get2ByteOpcodeValueAtOffset(stack.currentFrame->locals.prev, 2+LINK_SIZE);
+                    stack.currentFrame->locals.number = get2ByteOpcodeValueAtOffset(stack.currentFrame->locals.instructionPtrAtStartOfOnce, 2+LINK_SIZE);
                 stack.currentFrame->locals.offset = stack.currentFrame->locals.number << 1;
                 
 #ifdef DEBUG
@@ -673,7 +672,7 @@ RECURSE:
                     else {
                         md.offset_vector[stack.currentFrame->locals.offset] =
                         md.offset_vector[md.offset_end - stack.currentFrame->locals.number];
-                        md.offset_vector[stack.currentFrame->locals.offset+1] = stack.currentFrame->args.eptr - md.start_subject;
+                        md.offset_vector[stack.currentFrame->locals.offset+1] = stack.currentFrame->args.subjectPtr - md.start_subject;
                         if (stack.currentFrame->args.offset_top <= stack.currentFrame->locals.offset)
                             stack.currentFrame->args.offset_top = stack.currentFrame->locals.offset + 2;
                     }
@@ -685,26 +684,26 @@ RECURSE:
                  5.005. If there is an options reset, it will get obeyed in the normal
                  course of events. */
                 
-                if (*stack.currentFrame->args.ecode == OP_KET || stack.currentFrame->args.eptr == stack.currentFrame->locals.saved_eptr) {
-                    stack.currentFrame->args.ecode += 1 + LINK_SIZE;
+                if (*stack.currentFrame->args.instructionPtr == OP_KET || stack.currentFrame->args.subjectPtr == stack.currentFrame->locals.subjectPtrAtStartOfInstruction) {
+                    stack.currentFrame->args.instructionPtr += 1 + LINK_SIZE;
                     NEXT_OPCODE;
                 }
                 
                 /* The repeating kets try the rest of the pattern or restart from the
                  preceding bracket, in the appropriate order. */
                 
-                if (*stack.currentFrame->args.ecode == OP_KETRMIN) {
-                    RECURSIVE_MATCH(16, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
+                if (*stack.currentFrame->args.instructionPtr == OP_KETRMIN) {
+                    RECURSIVE_MATCH(16, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(17, stack.currentFrame->locals.prev, stack.currentFrame->args.subpatternStart);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(17, stack.currentFrame->locals.instructionPtrAtStartOfOnce, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
                 } else { /* OP_KETRMAX */
-                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(18, stack.currentFrame->locals.prev, stack.currentFrame->args.subpatternStart);
+                    RECURSIVE_MATCH_STARTNG_NEW_GROUP(18, stack.currentFrame->locals.instructionPtrAtStartOfOnce, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
-                    RECURSIVE_MATCH(19, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
+                    RECURSIVE_MATCH(19, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
                     if (is_match)
                         RRETURN;
                 }
@@ -713,17 +712,17 @@ RECURSE:
                 /* Start of subject, or after internal newline if multiline. */
                 
                 BEGIN_OPCODE(CIRC):
-                if (stack.currentFrame->args.eptr != md.start_subject && (!md.multiline || !isNewline(stack.currentFrame->args.eptr[-1])))
+                if (stack.currentFrame->args.subjectPtr != md.start_subject && (!md.multiline || !isNewline(stack.currentFrame->args.subjectPtr[-1])))
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 /* End of subject, or before internal newline if multiline. */
                 
                 BEGIN_OPCODE(DOLL):
-                if (stack.currentFrame->args.eptr < md.end_subject && (!md.multiline || !isNewline(*stack.currentFrame->args.eptr)))
+                if (stack.currentFrame->args.subjectPtr < md.end_subject && (!md.multiline || !isNewline(*stack.currentFrame->args.subjectPtr)))
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 /* Word boundary assertions */
@@ -734,92 +733,92 @@ RECURSE:
                  It takes a bit more work in UTF-8 mode. Characters > 128 are assumed to
                  be "non-word" characters. */
                 
-                if (stack.currentFrame->args.eptr == md.start_subject)
+                if (stack.currentFrame->args.subjectPtr == md.start_subject)
                     prev_is_word = false;
                 else {
-                    const UChar* lastptr = stack.currentFrame->args.eptr - 1;
+                    const UChar* lastptr = stack.currentFrame->args.subjectPtr - 1;
                     while(isTrailingSurrogate(*lastptr))
                         lastptr--;
                     getChar(c, lastptr);
                     prev_is_word = isWordChar(c);
                 }
-                if (stack.currentFrame->args.eptr >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     cur_is_word = false;
                 else {
-                    getChar(c, stack.currentFrame->args.eptr);
+                    getChar(c, stack.currentFrame->args.subjectPtr);
                     cur_is_word = isWordChar(c);
                 }
                 
                 /* Now see if the situation is what we want */
                 
-                if ((*stack.currentFrame->args.ecode++ == OP_WORD_BOUNDARY) ? cur_is_word == prev_is_word : cur_is_word != prev_is_word)
+                if ((*stack.currentFrame->args.instructionPtr++ == OP_WORD_BOUNDARY) ? cur_is_word == prev_is_word : cur_is_word != prev_is_word)
                     RRETURN_NO_MATCH;
                 NEXT_OPCODE;
                 
                 /* Match a single character type; inline for speed */
                 
                 BEGIN_OPCODE(ANY):
-                if (stack.currentFrame->args.eptr < md.end_subject && isNewline(*stack.currentFrame->args.eptr))
+                if (stack.currentFrame->args.subjectPtr < md.end_subject && isNewline(*stack.currentFrame->args.subjectPtr))
                     RRETURN_NO_MATCH;
-                if (stack.currentFrame->args.eptr++ >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr++ >= md.end_subject)
                     RRETURN_NO_MATCH;
-                while (stack.currentFrame->args.eptr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.eptr))
-                    stack.currentFrame->args.eptr++;
-                stack.currentFrame->args.ecode++;
+                while (stack.currentFrame->args.subjectPtr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.subjectPtr))
+                    stack.currentFrame->args.subjectPtr++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(NOT_DIGIT):
-                if (stack.currentFrame->args.eptr >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     RRETURN_NO_MATCH;
-                getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                 if (isASCIIDigit(c))
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(DIGIT):
-                if (stack.currentFrame->args.eptr >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     RRETURN_NO_MATCH;
-                getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                 if (!isASCIIDigit(c))
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(NOT_WHITESPACE):
-                if (stack.currentFrame->args.eptr >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     RRETURN_NO_MATCH;
-                getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                 if (isSpaceChar(c))
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(WHITESPACE):
-                if (stack.currentFrame->args.eptr >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     RRETURN_NO_MATCH;
-                getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                 if (!isSpaceChar(c))
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(NOT_WORDCHAR):
-                if (stack.currentFrame->args.eptr >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     RRETURN_NO_MATCH;
-                getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                 if (isWordChar(c))
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(WORDCHAR):
-                if (stack.currentFrame->args.eptr >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     RRETURN_NO_MATCH;
-                getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                 if (!isWordChar(c))
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
+                stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
                 
                 /* Match a back reference, possibly repeatedly. Look past the end of the
@@ -831,8 +830,8 @@ RECURSE:
                  loops). */
                 
                 BEGIN_OPCODE(REF):
-                stack.currentFrame->locals.offset = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1) << 1;               /* Doubled ref number */
-                stack.currentFrame->args.ecode += 3;                                 /* Advance past item */
+                stack.currentFrame->locals.offset = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1) << 1;               /* Doubled ref number */
+                stack.currentFrame->args.instructionPtr += 3;                                 /* Advance past item */
                 
                 /* If the reference is unset, set the length to be longer than the amount
                  of subject left; this ensures that every attempt at a match fails. We
@@ -846,14 +845,14 @@ RECURSE:
                 
                 /* Set up for repetition, or handle the non-repeated case */
                 
-                switch (*stack.currentFrame->args.ecode) {
+                switch (*stack.currentFrame->args.instructionPtr) {
                 case OP_CRSTAR:
                 case OP_CRMINSTAR:
                 case OP_CRPLUS:
                 case OP_CRMINPLUS:
                 case OP_CRQUERY:
                 case OP_CRMINQUERY:
-                    c = *stack.currentFrame->args.ecode++ - OP_CRSTAR;
+                    c = *stack.currentFrame->args.instructionPtr++ - OP_CRSTAR;
                     minimize = (c & 1);
                     min = rep_min[c];                 /* Pick up values from tables; */
                     stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
@@ -863,18 +862,18 @@ RECURSE:
                     
                 case OP_CRRANGE:
                 case OP_CRMINRANGE:
-                    minimize = (*stack.currentFrame->args.ecode == OP_CRMINRANGE);
-                    min = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                    stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 3);
+                    minimize = (*stack.currentFrame->args.instructionPtr == OP_CRMINRANGE);
+                    min = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                    stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 3);
                     if (stack.currentFrame->locals.max == 0)
                         stack.currentFrame->locals.max = INT_MAX;
-                    stack.currentFrame->args.ecode += 5;
+                    stack.currentFrame->args.instructionPtr += 5;
                     break;
                 
                 default:               /* No repeat follows */
-                    if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.eptr, stack.currentFrame->locals.length, md))
+                    if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.subjectPtr, stack.currentFrame->locals.length, md))
                         RRETURN_NO_MATCH;
-                    stack.currentFrame->args.eptr += stack.currentFrame->locals.length;
+                    stack.currentFrame->args.subjectPtr += stack.currentFrame->locals.length;
                     NEXT_OPCODE;
                 }
                 
@@ -887,9 +886,9 @@ RECURSE:
                 /* First, ensure the minimum number of matches are present. */
                 
                 for (i = 1; i <= min; i++) {
-                    if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.eptr, stack.currentFrame->locals.length, md))
+                    if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.subjectPtr, stack.currentFrame->locals.length, md))
                         RRETURN_NO_MATCH;
-                    stack.currentFrame->args.eptr += stack.currentFrame->locals.length;
+                    stack.currentFrame->args.subjectPtr += stack.currentFrame->locals.length;
                 }
                 
                 /* If min = max, continue at the same level without recursion.
@@ -902,12 +901,12 @@ RECURSE:
                 
                 if (minimize) {
                     for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
-                        RECURSIVE_MATCH(20, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        RECURSIVE_MATCH(20, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || !match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.eptr, stack.currentFrame->locals.length, md))
+                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || !match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.subjectPtr, stack.currentFrame->locals.length, md))
                             RRETURN;
-                        stack.currentFrame->args.eptr += stack.currentFrame->locals.length;
+                        stack.currentFrame->args.subjectPtr += stack.currentFrame->locals.length;
                     }
                     /* Control never reaches here */
                 }
@@ -915,17 +914,17 @@ RECURSE:
                 /* If maximizing, find the longest string and work backwards */
                 
                 else {
-                    stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                    stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;
                     for (i = min; i < stack.currentFrame->locals.max; i++) {
-                        if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.eptr, stack.currentFrame->locals.length, md))
+                        if (!match_ref(stack.currentFrame->locals.offset, stack.currentFrame->args.subjectPtr, stack.currentFrame->locals.length, md))
                             break;
-                        stack.currentFrame->args.eptr += stack.currentFrame->locals.length;
+                        stack.currentFrame->args.subjectPtr += stack.currentFrame->locals.length;
                     }
-                    while (stack.currentFrame->args.eptr >= stack.currentFrame->locals.pp) {
-                        RECURSIVE_MATCH(21, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                    while (stack.currentFrame->args.subjectPtr >= stack.currentFrame->locals.subjectPtrAtStartOfInstruction) {
+                        RECURSIVE_MATCH(21, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        stack.currentFrame->args.eptr -= stack.currentFrame->locals.length;
+                        stack.currentFrame->args.subjectPtr -= stack.currentFrame->locals.length;
                     }
                     RRETURN_NO_MATCH;
                 }
@@ -944,17 +943,17 @@ RECURSE:
                 
                 BEGIN_OPCODE(NCLASS):
                 BEGIN_OPCODE(CLASS):
-                stack.currentFrame->locals.data = stack.currentFrame->args.ecode + 1;                /* Save for matching */
-                stack.currentFrame->args.ecode += 33;                     /* Advance past the item */
+                stack.currentFrame->locals.data = stack.currentFrame->args.instructionPtr + 1;                /* Save for matching */
+                stack.currentFrame->args.instructionPtr += 33;                     /* Advance past the item */
                 
-                switch (*stack.currentFrame->args.ecode) {
+                switch (*stack.currentFrame->args.instructionPtr) {
                 case OP_CRSTAR:
                 case OP_CRMINSTAR:
                 case OP_CRPLUS:
                 case OP_CRMINPLUS:
                 case OP_CRQUERY:
                 case OP_CRMINQUERY:
-                    c = *stack.currentFrame->args.ecode++ - OP_CRSTAR;
+                    c = *stack.currentFrame->args.instructionPtr++ - OP_CRSTAR;
                     minimize = (c & 1);
                     min = rep_min[c];                 /* Pick up values from tables; */
                     stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
@@ -964,12 +963,12 @@ RECURSE:
                     
                 case OP_CRRANGE:
                 case OP_CRMINRANGE:
-                    minimize = (*stack.currentFrame->args.ecode == OP_CRMINRANGE);
-                    min = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                    stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 3);
+                    minimize = (*stack.currentFrame->args.instructionPtr == OP_CRMINRANGE);
+                    min = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                    stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 3);
                     if (stack.currentFrame->locals.max == 0)
                         stack.currentFrame->locals.max = INT_MAX;
-                    stack.currentFrame->args.ecode += 5;
+                    stack.currentFrame->args.instructionPtr += 5;
                     break;
                     
                 default:               /* No repeat follows */
@@ -980,9 +979,9 @@ RECURSE:
                 /* First, ensure the minimum number of matches are present. */
                 
                 for (i = 1; i <= min; i++) {
-                    if (stack.currentFrame->args.eptr >= md.end_subject)
+                    if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                         RRETURN_NO_MATCH;
-                    getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                    getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                     if (c > 255) {
                         if (stack.currentFrame->locals.data[-1] == OP_CLASS)
                             RRETURN_NO_MATCH;
@@ -1002,12 +1001,12 @@ RECURSE:
                  the pointer while it matches the class. */
                 if (minimize) {
                     for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
-                        RECURSIVE_MATCH(22, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        RECURSIVE_MATCH(22, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
+                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.subjectPtr >= md.end_subject)
                             RRETURN;
-                        getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                        getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                         if (c > 255) {
                             if (stack.currentFrame->locals.data[-1] == OP_CLASS)
                                 RRETURN;
@@ -1020,13 +1019,13 @@ RECURSE:
                 }
                 /* If maximizing, find the longest possible run, then work backwards. */
                 else {
-                    stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                    stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;
                     
                     for (i = min; i < stack.currentFrame->locals.max; i++) {
-                        if (stack.currentFrame->args.eptr >= md.end_subject)
+                        if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                             break;
                         int length;
-                        getCharAndLength(c, stack.currentFrame->args.eptr, length);
+                        getCharAndLength(c, stack.currentFrame->args.subjectPtr, length);
                         if (c > 255) {
                             if (stack.currentFrame->locals.data[-1] == OP_CLASS)
                                 break;
@@ -1034,15 +1033,15 @@ RECURSE:
                             if (!(stack.currentFrame->locals.data[c / 8] & (1 << (c & 7))))
                                 break;
                         }
-                        stack.currentFrame->args.eptr += length;
+                        stack.currentFrame->args.subjectPtr += length;
                     }
                     for (;;) {
-                        RECURSIVE_MATCH(24, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        RECURSIVE_MATCH(24, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
+                        if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                             break;        /* Stop if tried at original pos */
-                        BACKCHAR(stack.currentFrame->args.eptr);
+                        BACKCHAR(stack.currentFrame->args.subjectPtr);
                     }
                     
                     RRETURN;
@@ -1053,17 +1052,17 @@ RECURSE:
                  in UTF-8 mode, because that's the only time it is compiled. */
                 
                 BEGIN_OPCODE(XCLASS):
-                stack.currentFrame->locals.data = stack.currentFrame->args.ecode + 1 + LINK_SIZE;                /* Save for matching */
-                stack.currentFrame->args.ecode += getOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);                      /* Advance past the item */
+                stack.currentFrame->locals.data = stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE;                /* Save for matching */
+                stack.currentFrame->args.instructionPtr += getOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);                      /* Advance past the item */
                 
-                switch (*stack.currentFrame->args.ecode) {
+                switch (*stack.currentFrame->args.instructionPtr) {
                 case OP_CRSTAR:
                 case OP_CRMINSTAR:
                 case OP_CRPLUS:
                 case OP_CRMINPLUS:
                 case OP_CRQUERY:
                 case OP_CRMINQUERY:
-                    c = *stack.currentFrame->args.ecode++ - OP_CRSTAR;
+                    c = *stack.currentFrame->args.instructionPtr++ - OP_CRSTAR;
                     minimize = (c & 1);
                     min = rep_min[c];                 /* Pick up values from tables; */
                     stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
@@ -1073,12 +1072,12 @@ RECURSE:
                     
                 case OP_CRRANGE:
                 case OP_CRMINRANGE:
-                    minimize = (*stack.currentFrame->args.ecode == OP_CRMINRANGE);
-                    min = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                    stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 3);
+                    minimize = (*stack.currentFrame->args.instructionPtr == OP_CRMINRANGE);
+                    min = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                    stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 3);
                     if (stack.currentFrame->locals.max == 0)
                         stack.currentFrame->locals.max = INT_MAX;
-                    stack.currentFrame->args.ecode += 5;
+                    stack.currentFrame->args.instructionPtr += 5;
                     break;
                     
                 default:               /* No repeat follows */
@@ -1088,9 +1087,9 @@ RECURSE:
                 /* First, ensure the minimum number of matches are present. */
                 
                 for (i = 1; i <= min; i++) {
-                    if (stack.currentFrame->args.eptr >= md.end_subject)
+                    if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                         RRETURN_NO_MATCH;
-                    getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                    getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                     if (!_pcre_xclass(c, stack.currentFrame->locals.data))
                         RRETURN_NO_MATCH;
                 }
@@ -1106,12 +1105,12 @@ RECURSE:
                 
                 if (minimize) {
                     for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
-                        RECURSIVE_MATCH(26, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        RECURSIVE_MATCH(26, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
+                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.subjectPtr >= md.end_subject)
                             RRETURN;
-                        getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                        getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                         if (!_pcre_xclass(c, stack.currentFrame->locals.data))
                             RRETURN;
                     }
@@ -1121,23 +1120,23 @@ RECURSE:
                 /* If maximizing, find the longest possible run, then work backwards. */
                 
                 else {
-                    stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                    stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;
                     for (i = min; i < stack.currentFrame->locals.max; i++) {
-                        if (stack.currentFrame->args.eptr >= md.end_subject)
+                        if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                             break;
                         int length;
-                        getCharAndLength(c, stack.currentFrame->args.eptr, length);
+                        getCharAndLength(c, stack.currentFrame->args.subjectPtr, length);
                         if (!_pcre_xclass(c, stack.currentFrame->locals.data))
                             break;
-                        stack.currentFrame->args.eptr += length;
+                        stack.currentFrame->args.subjectPtr += length;
                     }
                     for(;;) {
-                        RECURSIVE_MATCH(27, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        RECURSIVE_MATCH(27, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
+                        if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                             break;        /* Stop if tried at original pos */
-                        BACKCHAR(stack.currentFrame->args.eptr)
+                        BACKCHAR(stack.currentFrame->args.subjectPtr)
                     }
                     RRETURN;
                 }
@@ -1148,21 +1147,21 @@ RECURSE:
                 
                 BEGIN_OPCODE(CHAR):
                 stack.currentFrame->locals.length = 1;
-                stack.currentFrame->args.ecode++;
-                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.ecode, stack.currentFrame->locals.length);
+                stack.currentFrame->args.instructionPtr++;
+                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.instructionPtr, stack.currentFrame->locals.length);
             {
                 int dc;
-                stack.currentFrame->args.ecode += stack.currentFrame->locals.length;
-                switch (md.end_subject - stack.currentFrame->args.eptr) {
+                stack.currentFrame->args.instructionPtr += stack.currentFrame->locals.length;
+                switch (md.end_subject - stack.currentFrame->args.subjectPtr) {
                 case 0:
                     RRETURN_NO_MATCH;
                 case 1:
-                    dc = *stack.currentFrame->args.eptr++;
+                    dc = *stack.currentFrame->args.subjectPtr++;
                     if (isLeadingSurrogate(dc))
                         RRETURN_NO_MATCH;
                     break;
                     default:
-                    getCharAndAdvance(dc, stack.currentFrame->args.eptr);
+                    getCharAndAdvance(dc, stack.currentFrame->args.subjectPtr);
                 }
                 if (stack.currentFrame->locals.fc != dc)
                     RRETURN_NO_MATCH;
@@ -1173,21 +1172,21 @@ RECURSE:
                 
                 BEGIN_OPCODE(CHARNC):
                 stack.currentFrame->locals.length = 1;
-                stack.currentFrame->args.ecode++;
-                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.ecode, stack.currentFrame->locals.length);
+                stack.currentFrame->args.instructionPtr++;
+                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.instructionPtr, stack.currentFrame->locals.length);
                 
-                if (md.end_subject - stack.currentFrame->args.eptr == 0)
+                if (md.end_subject - stack.currentFrame->args.subjectPtr == 0)
                     RRETURN_NO_MATCH;
                 
             {
                 int dc;
-                if (md.end_subject - stack.currentFrame->args.eptr == 1) {
-                    dc = *stack.currentFrame->args.eptr++;
+                if (md.end_subject - stack.currentFrame->args.subjectPtr == 1) {
+                    dc = *stack.currentFrame->args.subjectPtr++;
                     if (isLeadingSurrogate(dc))
                         RRETURN_NO_MATCH;
                 } else
-                    getCharAndAdvance(dc, stack.currentFrame->args.eptr);
-                stack.currentFrame->args.ecode += stack.currentFrame->locals.length;
+                    getCharAndAdvance(dc, stack.currentFrame->args.subjectPtr);
+                stack.currentFrame->args.instructionPtr += stack.currentFrame->locals.length;
                 
                 /* If we have Unicode property support, we can use it to test the other
                  case of the character, if there is one. */
@@ -1202,39 +1201,39 @@ RECURSE:
                 /* Match a single ASCII character. */
                 
                 BEGIN_OPCODE(ASCII_CHAR):
-                if (md.end_subject == stack.currentFrame->args.eptr)
+                if (md.end_subject == stack.currentFrame->args.subjectPtr)
                     RRETURN_NO_MATCH;
-                if (*stack.currentFrame->args.eptr != stack.currentFrame->args.ecode[1])
+                if (*stack.currentFrame->args.subjectPtr != stack.currentFrame->args.instructionPtr[1])
                     RRETURN_NO_MATCH;
-                ++stack.currentFrame->args.eptr;
-                stack.currentFrame->args.ecode += 2;
+                ++stack.currentFrame->args.subjectPtr;
+                stack.currentFrame->args.instructionPtr += 2;
                 NEXT_OPCODE;
                 
                 /* Match one of two cases of an ASCII character. */
                 
                 BEGIN_OPCODE(ASCII_LETTER_NC):
-                if (md.end_subject == stack.currentFrame->args.eptr)
+                if (md.end_subject == stack.currentFrame->args.subjectPtr)
                     RRETURN_NO_MATCH;
-                if ((*stack.currentFrame->args.eptr | 0x20) != stack.currentFrame->args.ecode[1])
+                if ((*stack.currentFrame->args.subjectPtr | 0x20) != stack.currentFrame->args.instructionPtr[1])
                     RRETURN_NO_MATCH;
-                ++stack.currentFrame->args.eptr;
-                stack.currentFrame->args.ecode += 2;
+                ++stack.currentFrame->args.subjectPtr;
+                stack.currentFrame->args.instructionPtr += 2;
                 NEXT_OPCODE;
                 
                 /* Match a single character repeatedly; different opcodes share code. */
                 
                 BEGIN_OPCODE(EXACT):
-                min = stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
+                min = stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
                 minimize = false;
-                stack.currentFrame->args.ecode += 3;
+                stack.currentFrame->args.instructionPtr += 3;
                 goto REPEATCHAR;
                 
                 BEGIN_OPCODE(UPTO):
                 BEGIN_OPCODE(MINUPTO):
                 min = 0;
-                stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                minimize = *stack.currentFrame->args.ecode == OP_MINUPTO;
-                stack.currentFrame->args.ecode += 3;
+                stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                minimize = *stack.currentFrame->args.instructionPtr == OP_MINUPTO;
+                stack.currentFrame->args.instructionPtr += 3;
                 goto REPEATCHAR;
                 
                 BEGIN_OPCODE(STAR):
@@ -1243,7 +1242,7 @@ RECURSE:
                 BEGIN_OPCODE(MINPLUS):
                 BEGIN_OPCODE(QUERY):
                 BEGIN_OPCODE(MINQUERY):
-                c = *stack.currentFrame->args.ecode++ - OP_STAR;
+                c = *stack.currentFrame->args.instructionPtr++ - OP_STAR;
                 minimize = (c & 1);
                 min = rep_min[c];                 /* Pick up values from tables; */
                 stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
@@ -1257,18 +1256,18 @@ RECURSE:
             REPEATCHAR:
                 
                 stack.currentFrame->locals.length = 1;
-                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.ecode, stack.currentFrame->locals.length);
-                if (min * (stack.currentFrame->locals.fc > 0xFFFF ? 2 : 1) > md.end_subject - stack.currentFrame->args.eptr)
+                getUTF8CharAndIncrementLength(stack.currentFrame->locals.fc, stack.currentFrame->args.instructionPtr, stack.currentFrame->locals.length);
+                if (min * (stack.currentFrame->locals.fc > 0xFFFF ? 2 : 1) > md.end_subject - stack.currentFrame->args.subjectPtr)
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode += stack.currentFrame->locals.length;
+                stack.currentFrame->args.instructionPtr += stack.currentFrame->locals.length;
                 
                 if (stack.currentFrame->locals.fc <= 0xFFFF) {
                     int othercase = md.ignoreCase ? _pcre_ucp_othercase(stack.currentFrame->locals.fc) : -1;
                     
                     for (i = 1; i <= min; i++) {
-                        if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc && *stack.currentFrame->args.eptr != othercase)
+                        if (*stack.currentFrame->args.subjectPtr != stack.currentFrame->locals.fc && *stack.currentFrame->args.subjectPtr != othercase)
                             RRETURN_NO_MATCH;
-                        ++stack.currentFrame->args.eptr;
+                        ++stack.currentFrame->args.subjectPtr;
                     }
                     
                     if (min == stack.currentFrame->locals.max)
@@ -1277,30 +1276,30 @@ RECURSE:
                     if (minimize) {
                         stack.currentFrame->locals.repeat_othercase = othercase;
                         for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
-                            RECURSIVE_MATCH(28, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                            RECURSIVE_MATCH(28, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                             if (is_match)
                                 RRETURN;
-                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
+                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.subjectPtr >= md.end_subject)
                                 RRETURN;
-                            if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc && *stack.currentFrame->args.eptr != stack.currentFrame->locals.repeat_othercase)
+                            if (*stack.currentFrame->args.subjectPtr != stack.currentFrame->locals.fc && *stack.currentFrame->args.subjectPtr != stack.currentFrame->locals.repeat_othercase)
                                 RRETURN;
-                            ++stack.currentFrame->args.eptr;
+                            ++stack.currentFrame->args.subjectPtr;
                         }
                         /* Control never reaches here */
                     } else {
-                        stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                        stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;
                         for (i = min; i < stack.currentFrame->locals.max; i++) {
-                            if (stack.currentFrame->args.eptr >= md.end_subject)
+                            if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                 break;
-                            if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc && *stack.currentFrame->args.eptr != othercase)
+                            if (*stack.currentFrame->args.subjectPtr != stack.currentFrame->locals.fc && *stack.currentFrame->args.subjectPtr != othercase)
                                 break;
-                            ++stack.currentFrame->args.eptr;
+                            ++stack.currentFrame->args.subjectPtr;
                         }
-                        while (stack.currentFrame->args.eptr >= stack.currentFrame->locals.pp) {
-                            RECURSIVE_MATCH(29, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        while (stack.currentFrame->args.subjectPtr >= stack.currentFrame->locals.subjectPtrAtStartOfInstruction) {
+                            RECURSIVE_MATCH(29, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                             if (is_match)
                                 RRETURN;
-                            --stack.currentFrame->args.eptr;
+                            --stack.currentFrame->args.subjectPtr;
                         }
                         RRETURN_NO_MATCH;
                     }
@@ -1310,10 +1309,10 @@ RECURSE:
                     
                     for (i = 1; i <= min; i++) {
                         int nc;
-                        getChar(nc, stack.currentFrame->args.eptr);
+                        getChar(nc, stack.currentFrame->args.subjectPtr);
                         if (nc != stack.currentFrame->locals.fc)
                             RRETURN_NO_MATCH;
-                        stack.currentFrame->args.eptr += 2;
+                        stack.currentFrame->args.subjectPtr += 2;
                     }
                     
                     if (min == stack.currentFrame->locals.max)
@@ -1322,33 +1321,33 @@ RECURSE:
                     if (minimize) {
                         for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
                             int nc;
-                            RECURSIVE_MATCH(30, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                            RECURSIVE_MATCH(30, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                             if (is_match)
                                 RRETURN;
-                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
+                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.subjectPtr >= md.end_subject)
                                 RRETURN;
-                            getChar(nc, stack.currentFrame->args.eptr);
-                            if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc)
+                            getChar(nc, stack.currentFrame->args.subjectPtr);
+                            if (*stack.currentFrame->args.subjectPtr != stack.currentFrame->locals.fc)
                                 RRETURN;
-                            stack.currentFrame->args.eptr += 2;
+                            stack.currentFrame->args.subjectPtr += 2;
                         }
                         /* Control never reaches here */
                     } else {
-                        stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                        stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;
                         for (i = min; i < stack.currentFrame->locals.max; i++) {
                             int nc;
-                            if (stack.currentFrame->args.eptr > md.end_subject - 2)
+                            if (stack.currentFrame->args.subjectPtr > md.end_subject - 2)
                                 break;
-                            getChar(nc, stack.currentFrame->args.eptr);
-                            if (*stack.currentFrame->args.eptr != stack.currentFrame->locals.fc)
+                            getChar(nc, stack.currentFrame->args.subjectPtr);
+                            if (*stack.currentFrame->args.subjectPtr != stack.currentFrame->locals.fc)
                                 break;
-                            stack.currentFrame->args.eptr += 2;
+                            stack.currentFrame->args.subjectPtr += 2;
                         }
-                        while (stack.currentFrame->args.eptr >= stack.currentFrame->locals.pp) {
-                            RECURSIVE_MATCH(31, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        while (stack.currentFrame->args.subjectPtr >= stack.currentFrame->locals.subjectPtrAtStartOfInstruction) {
+                            RECURSIVE_MATCH(31, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                             if (is_match)
                                 RRETURN;
-                            stack.currentFrame->args.eptr -= 2;
+                            stack.currentFrame->args.subjectPtr -= 2;
                         }
                         RRETURN_NO_MATCH;
                     }
@@ -1360,17 +1359,17 @@ RECURSE:
                  checking can be multibyte. */
                 
                 BEGIN_OPCODE(NOT):
-                if (stack.currentFrame->args.eptr >= md.end_subject)
+                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.ecode++;
-                getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                stack.currentFrame->args.instructionPtr++;
+                getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                 if (md.ignoreCase) {
                     if (c < 128)
                         c = toLowerCase(c);
-                    if (toLowerCase(*stack.currentFrame->args.ecode++) == c)
+                    if (toLowerCase(*stack.currentFrame->args.instructionPtr++) == c)
                         RRETURN_NO_MATCH;
                 } else {
-                    if (*stack.currentFrame->args.ecode++ == c)
+                    if (*stack.currentFrame->args.instructionPtr++ == c)
                         RRETURN_NO_MATCH;
                 }
                 NEXT_OPCODE;
@@ -1383,17 +1382,17 @@ RECURSE:
                  about... */
                 
                 BEGIN_OPCODE(NOTEXACT):
-                min = stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
+                min = stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
                 minimize = false;
-                stack.currentFrame->args.ecode += 3;
+                stack.currentFrame->args.instructionPtr += 3;
                 goto REPEATNOTCHAR;
                 
                 BEGIN_OPCODE(NOTUPTO):
                 BEGIN_OPCODE(NOTMINUPTO):
                 min = 0;
-                stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                minimize = *stack.currentFrame->args.ecode == OP_NOTMINUPTO;
-                stack.currentFrame->args.ecode += 3;
+                stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                minimize = *stack.currentFrame->args.instructionPtr == OP_NOTMINUPTO;
+                stack.currentFrame->args.instructionPtr += 3;
                 goto REPEATNOTCHAR;
                 
                 BEGIN_OPCODE(NOTSTAR):
@@ -1402,7 +1401,7 @@ RECURSE:
                 BEGIN_OPCODE(NOTMINPLUS):
                 BEGIN_OPCODE(NOTQUERY):
                 BEGIN_OPCODE(NOTMINQUERY):
-                c = *stack.currentFrame->args.ecode++ - OP_NOTSTAR;
+                c = *stack.currentFrame->args.instructionPtr++ - OP_NOTSTAR;
                 minimize = (c & 1);
                 min = rep_min[c];                 /* Pick up values from tables; */
                 stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
@@ -1413,9 +1412,9 @@ RECURSE:
                  subject. */
                 
             REPEATNOTCHAR:
-                if (min > md.end_subject - stack.currentFrame->args.eptr)
+                if (min > md.end_subject - stack.currentFrame->args.subjectPtr)
                     RRETURN_NO_MATCH;
-                stack.currentFrame->locals.fc = *stack.currentFrame->args.ecode++;
+                stack.currentFrame->locals.fc = *stack.currentFrame->args.instructionPtr++;
                 
                 /* The code is duplicated for the caseless and caseful cases, for speed,
                  since matching characters is likely to be quite common. First, ensure the
@@ -1434,7 +1433,7 @@ RECURSE:
                     {
                         int d;
                         for (i = 1; i <= min; i++) {
-                            getCharAndAdvance(d, stack.currentFrame->args.eptr);
+                            getCharAndAdvance(d, stack.currentFrame->args.subjectPtr);
                             if (d < 128)
                                 d = toLowerCase(d);
                             if (stack.currentFrame->locals.fc == d)
@@ -1448,13 +1447,13 @@ RECURSE:
                     if (minimize) {
                         int d;
                         for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
-                            RECURSIVE_MATCH(38, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                            RECURSIVE_MATCH(38, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                             if (is_match)
                                 RRETURN;
-                            getCharAndAdvance(d, stack.currentFrame->args.eptr);
+                            getCharAndAdvance(d, stack.currentFrame->args.subjectPtr);
                             if (d < 128)
                                 d = toLowerCase(d);
-                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject || stack.currentFrame->locals.fc == d)
+                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.subjectPtr >= md.end_subject || stack.currentFrame->locals.fc == d)
                                 RRETURN;
                         }
                         /* Control never reaches here */
@@ -1463,28 +1462,28 @@ RECURSE:
                     /* Maximize case */
                     
                     else {
-                        stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                        stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;
                         
                         {
                             int d;
                             for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     break;
                                 int length;
-                                getCharAndLength(d, stack.currentFrame->args.eptr, length);
+                                getCharAndLength(d, stack.currentFrame->args.subjectPtr, length);
                                 if (d < 128)
                                     d = toLowerCase(d);
                                 if (stack.currentFrame->locals.fc == d)
                                     break;
-                                stack.currentFrame->args.eptr += length;
+                                stack.currentFrame->args.subjectPtr += length;
                             }
                             for (;;) {
-                                RECURSIVE_MATCH(40, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                                RECURSIVE_MATCH(40, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                                 if (is_match)
                                     RRETURN;
-                                if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
+                                if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                                     break;        /* Stop if tried at original pos */
-                                BACKCHAR(stack.currentFrame->args.eptr);
+                                BACKCHAR(stack.currentFrame->args.subjectPtr);
                             }
                         }
                         
@@ -1499,7 +1498,7 @@ RECURSE:
                     {
                         int d;
                         for (i = 1; i <= min; i++) {
-                            getCharAndAdvance(d, stack.currentFrame->args.eptr);
+                            getCharAndAdvance(d, stack.currentFrame->args.subjectPtr);
                             if (stack.currentFrame->locals.fc == d)
                                 RRETURN_NO_MATCH;
                         }
@@ -1511,11 +1510,11 @@ RECURSE:
                     if (minimize) {
                         int d;
                         for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
-                            RECURSIVE_MATCH(42, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                            RECURSIVE_MATCH(42, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                             if (is_match)
                                 RRETURN;
-                            getCharAndAdvance(d, stack.currentFrame->args.eptr);
-                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject || stack.currentFrame->locals.fc == d)
+                            getCharAndAdvance(d, stack.currentFrame->args.subjectPtr);
+                            if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.subjectPtr >= md.end_subject || stack.currentFrame->locals.fc == d)
                                 RRETURN;
                         }
                         /* Control never reaches here */
@@ -1524,26 +1523,26 @@ RECURSE:
                     /* Maximize case */
                     
                     else {
-                        stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;
+                        stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;
                         
                         {
                             int d;
                             for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     break;
                                 int length;
-                                getCharAndLength(d, stack.currentFrame->args.eptr, length);
+                                getCharAndLength(d, stack.currentFrame->args.subjectPtr, length);
                                 if (stack.currentFrame->locals.fc == d)
                                     break;
-                                stack.currentFrame->args.eptr += length;
+                                stack.currentFrame->args.subjectPtr += length;
                             }
                             for (;;) {
-                                RECURSIVE_MATCH(44, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                                RECURSIVE_MATCH(44, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                                 if (is_match)
                                     RRETURN;
-                                if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
+                                if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                                     break;        /* Stop if tried at original pos */
-                                BACKCHAR(stack.currentFrame->args.eptr);
+                                BACKCHAR(stack.currentFrame->args.subjectPtr);
                             }
                         }
                         
@@ -1557,17 +1556,17 @@ RECURSE:
                  repeat it in the interests of efficiency. */
                 
                 BEGIN_OPCODE(TYPEEXACT):
-                min = stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
+                min = stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
                 minimize = true;
-                stack.currentFrame->args.ecode += 3;
+                stack.currentFrame->args.instructionPtr += 3;
                 goto REPEATTYPE;
                 
                 BEGIN_OPCODE(TYPEUPTO):
                 BEGIN_OPCODE(TYPEMINUPTO):
                 min = 0;
-                stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                minimize = *stack.currentFrame->args.ecode == OP_TYPEMINUPTO;
-                stack.currentFrame->args.ecode += 3;
+                stack.currentFrame->locals.max = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                minimize = *stack.currentFrame->args.instructionPtr == OP_TYPEMINUPTO;
+                stack.currentFrame->args.instructionPtr += 3;
                 goto REPEATTYPE;
                 
                 BEGIN_OPCODE(TYPESTAR):
@@ -1576,7 +1575,7 @@ RECURSE:
                 BEGIN_OPCODE(TYPEMINPLUS):
                 BEGIN_OPCODE(TYPEQUERY):
                 BEGIN_OPCODE(TYPEMINQUERY):
-                c = *stack.currentFrame->args.ecode++ - OP_TYPESTAR;
+                c = *stack.currentFrame->args.instructionPtr++ - OP_TYPESTAR;
                 minimize = (c & 1);
                 min = rep_min[c];                 /* Pick up values from tables; */
                 stack.currentFrame->locals.max = rep_max[c];                 /* zero for max => infinity */
@@ -1588,7 +1587,7 @@ RECURSE:
                  character types, the valid characters are all one-byte long. */
                 
             REPEATTYPE:
-                stack.currentFrame->locals.ctype = *stack.currentFrame->args.ecode++;      /* Code for the character type */
+                stack.currentFrame->locals.ctype = *stack.currentFrame->args.instructionPtr++;      /* Code for the character type */
                 
                 /* First, ensure the minimum number of matches are present. Use inline
                  code for maximizing the speed, and do the type test once at the start
@@ -1598,25 +1597,25 @@ RECURSE:
                  is tidier. Also separate the UCP code, which can be the same for both UTF-8
                  and single-bytes. */
                 
-                if (min > md.end_subject - stack.currentFrame->args.eptr)
+                if (min > md.end_subject - stack.currentFrame->args.subjectPtr)
                     RRETURN_NO_MATCH;
                 if (min > 0) {
                     switch(stack.currentFrame->locals.ctype) {
                         case OP_ANY:
                             for (i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject || isNewline(*stack.currentFrame->args.eptr))
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || isNewline(*stack.currentFrame->args.subjectPtr))
                                     RRETURN_NO_MATCH;
-                                ++stack.currentFrame->args.eptr;
-                                while (stack.currentFrame->args.eptr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.eptr))
-                                    stack.currentFrame->args.eptr++;
+                                ++stack.currentFrame->args.subjectPtr;
+                                while (stack.currentFrame->args.subjectPtr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.subjectPtr))
+                                    stack.currentFrame->args.subjectPtr++;
                             }
                             break;
                             
                             case OP_NOT_DIGIT:
                             for (i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     RRETURN_NO_MATCH;
-                                getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                                getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                                 if (isASCIIDigit(c))
                                     RRETURN_NO_MATCH;
                             }
@@ -1624,7 +1623,7 @@ RECURSE:
                             
                             case OP_DIGIT:
                             for (i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject || !isASCIIDigit(*stack.currentFrame->args.eptr++))
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || !isASCIIDigit(*stack.currentFrame->args.subjectPtr++))
                                     RRETURN_NO_MATCH;
                                 /* No need to skip more bytes - we know it's a 1-byte character */
                             }
@@ -1632,15 +1631,15 @@ RECURSE:
                             
                             case OP_NOT_WHITESPACE:
                             for (i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject || isSpaceChar(*stack.currentFrame->args.eptr))
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || isSpaceChar(*stack.currentFrame->args.subjectPtr))
                                     RRETURN_NO_MATCH;
-                                while (++stack.currentFrame->args.eptr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.eptr)) { }
+                                while (++stack.currentFrame->args.subjectPtr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.subjectPtr)) { }
                             }
                             break;
                             
                             case OP_WHITESPACE:
                             for (i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject || !isSpaceChar(*stack.currentFrame->args.eptr++))
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || !isSpaceChar(*stack.currentFrame->args.subjectPtr++))
                                     RRETURN_NO_MATCH;
                                 /* No need to skip more bytes - we know it's a 1-byte character */
                             }
@@ -1648,15 +1647,15 @@ RECURSE:
                             
                             case OP_NOT_WORDCHAR:
                             for (i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject || isWordChar(*stack.currentFrame->args.eptr))
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || isWordChar(*stack.currentFrame->args.subjectPtr))
                                     RRETURN_NO_MATCH;
-                                while (++stack.currentFrame->args.eptr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.eptr)) { }
+                                while (++stack.currentFrame->args.subjectPtr < md.end_subject && isTrailingSurrogate(*stack.currentFrame->args.subjectPtr)) { }
                             }
                             break;
                             
                             case OP_WORDCHAR:
                             for (i = 1; i <= min; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject || !isWordChar(*stack.currentFrame->args.eptr++))
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject || !isWordChar(*stack.currentFrame->args.subjectPtr++))
                                     RRETURN_NO_MATCH;
                                 /* No need to skip more bytes - we know it's a 1-byte character */
                             }
@@ -1678,13 +1677,13 @@ RECURSE:
                 
                 if (minimize) {
                     for (stack.currentFrame->locals.fi = min;; stack.currentFrame->locals.fi++) {
-                        RECURSIVE_MATCH(48, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        RECURSIVE_MATCH(48, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.eptr >= md.end_subject)
+                        if (stack.currentFrame->locals.fi >= stack.currentFrame->locals.max || stack.currentFrame->args.subjectPtr >= md.end_subject)
                             RRETURN;
                         
-                        getCharAndAdvance(c, stack.currentFrame->args.eptr);
+                        getCharAndAdvance(c, stack.currentFrame->args.subjectPtr);
                         switch(stack.currentFrame->locals.ctype) {
                         case OP_ANY:
                             if (isNewline(c))
@@ -1733,7 +1732,7 @@ RECURSE:
                  test once at the start (i.e. keep it out of the loop). */
                 
                 else {
-                    stack.currentFrame->locals.pp = stack.currentFrame->args.eptr;  /* Remember where we started */
+                    stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;  /* Remember where we started */
                     
                     switch(stack.currentFrame->locals.ctype) {
                         case OP_ANY:
@@ -1744,11 +1743,11 @@ RECURSE:
                             
                             if (stack.currentFrame->locals.max < INT_MAX) {
                                 for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                    if (stack.currentFrame->args.eptr >= md.end_subject || isNewline(*stack.currentFrame->args.eptr))
+                                    if (stack.currentFrame->args.subjectPtr >= md.end_subject || isNewline(*stack.currentFrame->args.subjectPtr))
                                         break;
-                                    stack.currentFrame->args.eptr++;
-                                    while (stack.currentFrame->args.eptr < md.end_subject && (*stack.currentFrame->args.eptr & 0xc0) == 0x80)
-                                        stack.currentFrame->args.eptr++;
+                                    stack.currentFrame->args.subjectPtr++;
+                                    while (stack.currentFrame->args.subjectPtr < md.end_subject && (*stack.currentFrame->args.subjectPtr & 0xc0) == 0x80)
+                                        stack.currentFrame->args.subjectPtr++;
                                 }
                             }
                             
@@ -1756,9 +1755,9 @@ RECURSE:
                             
                             else {
                                 for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                    if (stack.currentFrame->args.eptr >= md.end_subject || isNewline(*stack.currentFrame->args.eptr))
+                                    if (stack.currentFrame->args.subjectPtr >= md.end_subject || isNewline(*stack.currentFrame->args.subjectPtr))
                                         break;
-                                    stack.currentFrame->args.eptr++;
+                                    stack.currentFrame->args.subjectPtr++;
                                 }
                                 break;
                             }
@@ -1766,73 +1765,73 @@ RECURSE:
                             
                             case OP_NOT_DIGIT:
                             for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     break;
                                 int length;
-                                getCharAndLength(c, stack.currentFrame->args.eptr, length);
+                                getCharAndLength(c, stack.currentFrame->args.subjectPtr, length);
                                 if (isASCIIDigit(c))
                                     break;
-                                stack.currentFrame->args.eptr += length;
+                                stack.currentFrame->args.subjectPtr += length;
                             }
                             break;
                             
                             case OP_DIGIT:
                             for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     break;
                                 int length;
-                                getCharAndLength(c, stack.currentFrame->args.eptr, length);
+                                getCharAndLength(c, stack.currentFrame->args.subjectPtr, length);
                                 if (!isASCIIDigit(c))
                                     break;
-                                stack.currentFrame->args.eptr += length;
+                                stack.currentFrame->args.subjectPtr += length;
                             }
                             break;
                             
                             case OP_NOT_WHITESPACE:
                             for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     break;
                                 int length;
-                                getCharAndLength(c, stack.currentFrame->args.eptr, length);
+                                getCharAndLength(c, stack.currentFrame->args.subjectPtr, length);
                                 if (isSpaceChar(c))
                                     break;
-                                stack.currentFrame->args.eptr += length;
+                                stack.currentFrame->args.subjectPtr += length;
                             }
                             break;
                             
                             case OP_WHITESPACE:
                             for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     break;
                                 int length;
-                                getCharAndLength(c, stack.currentFrame->args.eptr, length);
+                                getCharAndLength(c, stack.currentFrame->args.subjectPtr, length);
                                 if (!isSpaceChar(c))
                                     break;
-                                stack.currentFrame->args.eptr += length;
+                                stack.currentFrame->args.subjectPtr += length;
                             }
                             break;
                             
                             case OP_NOT_WORDCHAR:
                             for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     break;
                                 int length;
-                                getCharAndLength(c, stack.currentFrame->args.eptr, length);
+                                getCharAndLength(c, stack.currentFrame->args.subjectPtr, length);
                                 if (isWordChar(c))
                                     break;
-                                stack.currentFrame->args.eptr += length;
+                                stack.currentFrame->args.subjectPtr += length;
                             }
                             break;
                             
                             case OP_WORDCHAR:
                             for (i = min; i < stack.currentFrame->locals.max; i++) {
-                                if (stack.currentFrame->args.eptr >= md.end_subject)
+                                if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                                     break;
                                 int length;
-                                getCharAndLength(c, stack.currentFrame->args.eptr, length);
+                                getCharAndLength(c, stack.currentFrame->args.subjectPtr, length);
                                 if (!isWordChar(c))
                                     break;
-                                stack.currentFrame->args.eptr += length;
+                                stack.currentFrame->args.subjectPtr += length;
                             }
                             break;
                             
@@ -1841,15 +1840,15 @@ RECURSE:
                             return matchError(JSRegExpErrorInternal, stack);
                     }
                     
-                    /* stack.currentFrame->args.eptr is now past the end of the maximum run */
+                    /* stack.currentFrame->args.subjectPtr is now past the end of the maximum run */
                     
                     for (;;) {
-                        RECURSIVE_MATCH(52, stack.currentFrame->args.ecode, stack.currentFrame->args.subpatternStart);
+                        RECURSIVE_MATCH(52, stack.currentFrame->args.instructionPtr, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        if (stack.currentFrame->args.eptr-- == stack.currentFrame->locals.pp)
+                        if (stack.currentFrame->args.subjectPtr-- == stack.currentFrame->locals.subjectPtrAtStartOfInstruction)
                             break;        /* Stop if tried at original pos */
-                        BACKCHAR(stack.currentFrame->args.eptr);
+                        BACKCHAR(stack.currentFrame->args.subjectPtr);
                     }
                     
                     /* Get here if we can't make it match with any permitted repetitions */
@@ -1888,20 +1887,20 @@ RECURSE:
                  non-capturing bracket. Don't worry about setting the flag for the error case
                  here; that is handled in the code for KET. */
                 
-                ASSERT(*stack.currentFrame->args.ecode > OP_BRA);
+                ASSERT(*stack.currentFrame->args.instructionPtr > OP_BRA);
                 
-                stack.currentFrame->locals.number = *stack.currentFrame->args.ecode - OP_BRA;
+                stack.currentFrame->locals.number = *stack.currentFrame->args.instructionPtr - OP_BRA;
                 
                 /* For extended extraction brackets (large number), we have to fish out the
                  number from a dummy opcode at the start. */
                 
                 if (stack.currentFrame->locals.number > EXTRACT_BASIC_MAX)
-                    stack.currentFrame->locals.number = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.ecode, 2+LINK_SIZE);
+                    stack.currentFrame->locals.number = get2ByteOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 2+LINK_SIZE);
                 stack.currentFrame->locals.offset = stack.currentFrame->locals.number << 1;
                 
 #ifdef DEBUG
                 printf("start bracket %d subject=", stack.currentFrame->locals.number);
-                pchars(stack.currentFrame->args.eptr, 16, true, md);
+                pchars(stack.currentFrame->args.subjectPtr, 16, true, md);
                 printf("\n");
 #endif
                 
@@ -1911,14 +1910,14 @@ RECURSE:
                     stack.currentFrame->locals.save_offset3 = md.offset_vector[md.offset_end - stack.currentFrame->locals.number];
                     
                     DPRINTF(("saving %d %d %d\n", stack.currentFrame->locals.save_offset1, stack.currentFrame->locals.save_offset2, stack.currentFrame->locals.save_offset3));
-                    md.offset_vector[md.offset_end - stack.currentFrame->locals.number] = stack.currentFrame->args.eptr - md.start_subject;
+                    md.offset_vector[md.offset_end - stack.currentFrame->locals.number] = stack.currentFrame->args.subjectPtr - md.start_subject;
                     
                     do {
-                        RECURSIVE_MATCH_STARTNG_NEW_GROUP(1, stack.currentFrame->args.ecode + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
+                        RECURSIVE_MATCH_STARTNG_NEW_GROUP(1, stack.currentFrame->args.instructionPtr + 1 + LINK_SIZE, stack.currentFrame->args.subpatternStart);
                         if (is_match)
                             RRETURN;
-                        stack.currentFrame->args.ecode += getOpcodeValueAtOffset(stack.currentFrame->args.ecode, 1);
-                    } while (*stack.currentFrame->args.ecode == OP_ALT);
+                        stack.currentFrame->args.instructionPtr += getOpcodeValueAtOffset(stack.currentFrame->args.instructionPtr, 1);
+                    } while (*stack.currentFrame->args.instructionPtr == OP_ALT);
                     
                     DPRINTF(("bracket %d failed\n", stack.currentFrame->locals.number));
                     
