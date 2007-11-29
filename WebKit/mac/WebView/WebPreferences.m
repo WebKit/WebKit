@@ -310,7 +310,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         @"",                            WebKitUserStyleSheetLocationPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldPrintBackgroundsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitTextAreasAreResizablePreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitShrinksStandaloneImagesToFit,
+        [NSNumber numberWithBool:NO],   WebKitShrinksStandaloneImagesToFitPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
@@ -787,12 +787,12 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (BOOL)shrinksStandaloneImagesToFit
 {
-    return [self _boolValueForKey:WebKitShrinksStandaloneImagesToFit];
+    return [self _boolValueForKey:WebKitShrinksStandaloneImagesToFitPreferenceKey];
 }
 
 - (void)setShrinksStandaloneImagesToFit:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitShrinksStandaloneImagesToFit];
+    [self _setBoolValue:flag forKey:WebKitShrinksStandaloneImagesToFitPreferenceKey];
 }
 
 - (BOOL)automaticallyDetectsCacheModel

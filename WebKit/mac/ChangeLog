@@ -1,3 +1,18 @@
+2007-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John.
+
+        Rename WebKitShrinksStandaloneImagesToFitKey to WebKitShrinksStandaloneImagesToFit.
+        
+        This is safe to do because the preference is off by default and Safari 3, which is the only client that turns it on,
+        is using the setter and not messing around with NSUserDefaults.
+        
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences shrinksStandaloneImagesToFit]):
+        (-[WebPreferences setShrinksStandaloneImagesToFit:]):
+
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
