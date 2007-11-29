@@ -350,7 +350,7 @@ contain UTF-8 characters with values greater than 255. */
 /* These are escaped items that aren't just an encoding of a particular data
 value such as \n. They must have non-zero values, as check_escape() returns
 their negation. Also, they must appear in the same order as in the opcode
-definitions below, up to ESC_z. There's a dummy for OP_ANY because it
+definitions below, up to ESC_z. There's a dummy for OP_ANY_CHAR because it
 corresponds to "." rather than an escape sequence. The final one must be
 ESC_REF as subsequent values are used for \1, \2, \3, etc. There is are two
 tests in the code for an escape greater than ESC_b and less than ESC_Z to
@@ -378,7 +378,7 @@ must also be updated to match. */
     macro(NOT_WORDCHAR) \
     macro(WORDCHAR) \
     \
-    macro(ANY) \
+    macro(ANY_CHAR) \
     \
     macro(CIRC) \
     macro(DOLL) \

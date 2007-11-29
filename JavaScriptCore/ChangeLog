@@ -26,6 +26,20 @@
 
 2007-11-26  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+
+        Make cur_is_word and prev_is_word locals, and change OP_ANY to OP_ANY_CHAR for clarity
+
+        * pcre/pcre_compile.cpp:
+        (find_fixedlength):
+        (compile_branch):
+        (canApplyFirstCharOptimization):
+        * pcre/pcre_exec.cpp:
+        (match):
+        * pcre/pcre_internal.h:
+
+2007-11-26  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Mitz & Maciej.
 
         Change _NC operators to use _IGNORING_CASE for clarity

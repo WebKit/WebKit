@@ -562,7 +562,7 @@ static int find_fixedlength(uschar* code, int options)
             case OP_WHITESPACE:
             case OP_NOT_WORDCHAR:
             case OP_WORDCHAR:
-            case OP_ANY:
+            case OP_ANY_CHAR:
                 branchlength++;
                 cc++;
                 break;
@@ -841,7 +841,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                 zerofirstbyte = firstbyte;
                 zeroreqbyte = reqbyte;
                 previous = code;
-                *code++ = OP_ANY;
+                *code++ = OP_ANY_CHAR;
                 break;
                 
                 /* Character classes. If the included characters are all < 256, we build a
@@ -1306,7 +1306,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                  create a suitable repeat item. The code is shared with single-character
                  repeats by setting op_type to add a suitable offset into repeat_type. */
                 
-                else if (*previous <= OP_ANY) {
+                else if (*previous <= OP_ANY_CHAR) {
                     op_type = OP_TYPESTAR - OP_STAR;  /* Use type opcodes */
                     c = *previous;
                     
@@ -2130,7 +2130,7 @@ static bool canApplyFirstCharOptimization(const uschar* code, unsigned int brack
          may be referenced. */
         
         } else if (op == OP_TYPESTAR || op == OP_TYPEMINSTAR) {
-            if (scode[1] != OP_ANY || (bracket_map & backref_map))
+            if (scode[1] != OP_ANY_CHAR || (bracket_map & backref_map))
                 return false;
         } else if (op != OP_CIRC) /* Check for explicit circumflex */
             return false;

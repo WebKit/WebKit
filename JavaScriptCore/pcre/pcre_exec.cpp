@@ -404,8 +404,6 @@ static inline void repeatInformationFromInstructionOffset(short instructionOffse
 static int match(UChar* subjectPtr, const uschar* instructionPtr, int offset_top, MatchData& md)
 {
     int is_match = false;
-    bool cur_is_word;
-    bool prev_is_word;
     int min;
     bool minimize = false; /* Initialization not really needed, but some compilers think so. */
     
@@ -731,9 +729,13 @@ RECURSE:
                 
                 BEGIN_OPCODE(NOT_WORD_BOUNDARY):
                 BEGIN_OPCODE(WORD_BOUNDARY):
+            {
                 /* Find out if the previous and current characters are "word" characters.
                  It takes a bit more work in UTF-8 mode. Characters > 128 are assumed to
                  be "non-word" characters. */
+                
+                bool cur_is_word;
+                bool prev_is_word;
                 
                 if (stack.currentFrame->args.subjectPtr == md.start_subject)
                     prev_is_word = false;
@@ -756,10 +758,11 @@ RECURSE:
                 if ((*stack.currentFrame->args.instructionPtr++ == OP_WORD_BOUNDARY) ? cur_is_word == prev_is_word : cur_is_word != prev_is_word)
                     RRETURN_NO_MATCH;
                 NEXT_OPCODE;
+            }
                 
                 /* Match a single character type; inline for speed */
                 
-                BEGIN_OPCODE(ANY):
+                BEGIN_OPCODE(ANY_CHAR):
                 if (stack.currentFrame->args.subjectPtr < md.end_subject && isNewline(*stack.currentFrame->args.subjectPtr))
                     RRETURN_NO_MATCH;
                 if (stack.currentFrame->args.subjectPtr++ >= md.end_subject)
@@ -1570,7 +1573,7 @@ RECURSE:
                     RRETURN_NO_MATCH;
                 if (min > 0) {
                     switch(stack.currentFrame->locals.ctype) {
-                        case OP_ANY:
+                        case OP_ANY_CHAR:
                             for (int i = 1; i <= min; i++) {
                                 if (stack.currentFrame->args.subjectPtr >= md.end_subject || isNewline(*stack.currentFrame->args.subjectPtr))
                                     RRETURN_NO_MATCH;
@@ -1654,7 +1657,7 @@ RECURSE:
                         
                         int c = getCharAndAdvance(stack.currentFrame->args.subjectPtr);
                         switch(stack.currentFrame->locals.ctype) {
-                        case OP_ANY:
+                        case OP_ANY_CHAR:
                             if (isNewline(c))
                                 RRETURN;
                             break;
@@ -1704,7 +1707,7 @@ RECURSE:
                     stack.currentFrame->locals.subjectPtrAtStartOfInstruction = stack.currentFrame->args.subjectPtr;  /* Remember where we started */
                     
                     switch(stack.currentFrame->locals.ctype) {
-                        case OP_ANY:
+                        case OP_ANY_CHAR:
                             
                             /* Special code is required for UTF8, but when the maximum is unlimited
                              we don't need it, so we repeat the non-UTF8 code. This is probably
