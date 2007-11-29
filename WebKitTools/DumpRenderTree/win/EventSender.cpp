@@ -269,37 +269,45 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     ASSERT(!*exception);
     int virtualKeyCode;
     int charCode = 0;
+    bool needsShiftKeyModifier = false;
     if (JSStringIsEqualToUTF8CString(character, "rightArrow")) {
         virtualKeyCode = VK_RIGHT;
     } else {
         charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = toupper(LOBYTE(VkKeyScan(charCode)));
+        if (isupper(LOBYTE(VkKeyScan(charCode))))
+            needsShiftKeyModifier = true;
     }
     JSStringRelease(character);
 
     BYTE keyState[256];
-    if (argumentCount > 1) {
+    if (argumentCount > 1 || needsShiftKeyModifier) {
         ::GetKeyboardState(keyState);
 
         BYTE newKeyState[256];
         memcpy(newKeyState, keyState, sizeof(keyState));
 
-        JSObjectRef modifiersArray = JSValueToObject(context, arguments[1], exception);
-        if (modifiersArray) {
-            int modifiersCount = JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, lengthProperty, 0), 0);
-            for (int i = 0; i < modifiersCount; ++i) {
-                JSValueRef value = JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0);
-                JSStringRef string = JSValueToStringCopy(context, value, 0);
-                if (JSStringIsEqualToUTF8CString(string, "ctrlKey"))
-                    newKeyState[VK_CONTROL] = 0x80;
-                else if (JSStringIsEqualToUTF8CString(string, "shiftKey"))
-                    newKeyState[VK_SHIFT] = 0x80;
-                else if (JSStringIsEqualToUTF8CString(string, "altKey"))
-                    newKeyState[VK_MENU] = 0x80;
-                else if (JSStringIsEqualToUTF8CString(string, "metaKey"))
-                    newKeyState[VK_MENU] = 0x80;
+        if (needsShiftKeyModifier)
+            newKeyState[VK_SHIFT] = 0x80;
 
-                JSStringRelease(string);
+        if (argumentCount > 1) {
+            JSObjectRef modifiersArray = JSValueToObject(context, arguments[1], exception);
+            if (modifiersArray) {
+                int modifiersCount = JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, lengthProperty, 0), 0);
+                for (int i = 0; i < modifiersCount; ++i) {
+                    JSValueRef value = JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0);
+                    JSStringRef string = JSValueToStringCopy(context, value, 0);
+                    if (JSStringIsEqualToUTF8CString(string, "ctrlKey"))
+                        newKeyState[VK_CONTROL] = 0x80;
+                    else if (JSStringIsEqualToUTF8CString(string, "shiftKey"))
+                        newKeyState[VK_SHIFT] = 0x80;
+                    else if (JSStringIsEqualToUTF8CString(string, "altKey"))
+                        newKeyState[VK_MENU] = 0x80;
+                    else if (JSStringIsEqualToUTF8CString(string, "metaKey"))
+                        newKeyState[VK_MENU] = 0x80;
+
+                    JSStringRelease(string);
+                }
             }
         }
 
@@ -316,7 +324,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         ::DispatchMessage(&msg);
     }
 
-    if (argumentCount > 1)
+    if (argumentCount > 1 || needsShiftKeyModifier)
         ::SetKeyboardState(keyState);
 
     return JSValueMakeUndefined(context);

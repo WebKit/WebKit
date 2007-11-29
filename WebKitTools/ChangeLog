@@ -1,3 +1,13 @@
+2007-11-29  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam.
+
+        Fixed <rdar://5133828> fast/frames/iframe-window-focus.html output is lowercase
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+        uppercase letters were being sent as lowercase letters without the shift key down.
+
 2007-11-29  Kevin McCullough  <kmccullough@apple.com>
 
         - Windows build fix. VS express needs some love.
