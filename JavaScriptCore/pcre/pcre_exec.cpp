@@ -122,7 +122,7 @@ struct MatchData {
   int*   offset_vector;         /* Offset vector */
   int    offset_end;            /* One past the end */
   int    offset_max;            /* The maximum usable for return data */
-  const uschar* lcc;            /* Points to lower casing table */
+  const uschar* lowerCaseChars; /* Points to lower casing table */
   const uschar* ctypes;         /* Points to table of type maps */
   bool   offset_overflow;       /* Set if too many extractions */
   UChar*  start_subject;         /* Start of the subject string */
@@ -130,7 +130,7 @@ struct MatchData {
   UChar*  end_match_ptr;         /* Subject position at end match */
   int    end_offset_top;        /* Highwater mark at end of match */
   bool   multiline;
-  bool   caseless;
+  bool   ignoreCase;
 };
 
 #define match_isgroup      true    /* Set if start of bracketed group */
@@ -222,7 +222,7 @@ static bool match_ref(int offset, UChar* eptr, int length, const MatchData& md)
     
     /* Separate the caselesss case for speed */
     
-    if (md.caseless) {
+    if (md.ignoreCase) {
         while (length-- > 0) {
             UChar c = *p++;
             int othercase = _pcre_ucp_othercase(c);
@@ -1307,7 +1307,7 @@ RECURSE:
                 stack.currentFrame->ecode += stack.currentFrame->length;
                 
                 if (stack.currentFrame->fc <= 0xFFFF) {
-                    int othercase = md.caseless ? _pcre_ucp_othercase(stack.currentFrame->fc) : -1;
+                    int othercase = md.ignoreCase ? _pcre_ucp_othercase(stack.currentFrame->fc) : -1;
                     
                     for (i = 1; i <= min; i++) {
                         if (*stack.currentFrame->eptr != stack.currentFrame->fc && *stack.currentFrame->eptr != othercase)
@@ -1408,10 +1408,10 @@ RECURSE:
                     RRETURN_NO_MATCH;
                 stack.currentFrame->ecode++;
                 GETCHARINCTEST(c, stack.currentFrame->eptr);
-                if (md.caseless) {
+                if (md.ignoreCase) {
                     if (c < 128)
-                        c = md.lcc[c];
-                    if (md.lcc[*stack.currentFrame->ecode++] == c)
+                        c = md.lowerCaseChars[c];
+                    if (md.lowerCaseChars[*stack.currentFrame->ecode++] == c)
                         RRETURN_NO_MATCH;
                 } else {
                     if (*stack.currentFrame->ecode++ == c)
@@ -1471,16 +1471,16 @@ RECURSE:
                 
                 DPRINTF(("negative matching %c{%d,%d}\n", stack.currentFrame->fc, min, stack.currentFrame->max));
                 
-                if (md.caseless) {
+                if (md.ignoreCase) {
                     if (stack.currentFrame->fc < 128)
-                        stack.currentFrame->fc = md.lcc[stack.currentFrame->fc];
+                        stack.currentFrame->fc = md.lowerCaseChars[stack.currentFrame->fc];
                     
                     {
                         int d;
                         for (i = 1; i <= min; i++) {
                             GETCHARINC(d, stack.currentFrame->eptr);
                             if (d < 128)
-                                d = md.lcc[d];
+                                d = md.lowerCaseChars[d];
                             if (stack.currentFrame->fc == d)
                                 RRETURN_NO_MATCH;
                         }
@@ -1497,7 +1497,7 @@ RECURSE:
                                 RRETURN;
                             GETCHARINC(d, stack.currentFrame->eptr);
                             if (d < 128)
-                                d = md.lcc[d];
+                                d = md.lowerCaseChars[d];
                             if (stack.currentFrame->fi >= stack.currentFrame->max || stack.currentFrame->eptr >= md.end_subject || stack.currentFrame->fc == d)
                                 RRETURN;
                         }
@@ -1517,7 +1517,7 @@ RECURSE:
                                     break;
                                 GETCHARLEN(d, stack.currentFrame->eptr, len);
                                 if (d < 128)
-                                    d = md.lcc[d];
+                                    d = md.lowerCaseChars[d];
                                 if (stack.currentFrame->fc == d)
                                     break;
                                 stack.currentFrame->eptr += len;
@@ -2076,11 +2076,11 @@ int jsRegExpExecute(const JSRegExp* re,
     match_block.end_subject = match_block.start_subject + length;
     UChar* end_subject = match_block.end_subject;
     
-    match_block.lcc = _pcre_default_tables + lcc_offset;
+    match_block.lowerCaseChars = _pcre_default_tables + lcc_offset;
     match_block.ctypes = _pcre_default_tables + ctypes_offset;
     
     match_block.multiline = (re->options & PCRE_MULTILINE);
-    match_block.caseless = (re->options & PCRE_CASELESS);
+    match_block.ignoreCase = (re->options & OptionIgnoreCase);
     
     /* If the expression has got more back references than the offsets supplied can
      hold, we get a temporary chunk of working store to use during the matching.
@@ -2132,8 +2132,8 @@ int jsRegExpExecute(const JSRegExp* re,
     int first_byte = -1;
     if (re->options & PCRE_FIRSTSET) {
         first_byte = re->first_byte & 255;
-        if ((first_byte_caseless = (re->first_byte & REQ_CASELESS)))
-            first_byte = match_block.lcc[first_byte];
+        if ((first_byte_caseless = (re->first_byte & REQ_IGNORE_CASE)))
+            first_byte = match_block.lowerCaseChars[first_byte];
     }
     
     /* For anchored or unanchored matches, there may be a "last known required
@@ -2144,7 +2144,7 @@ int jsRegExpExecute(const JSRegExp* re,
     int req_byte2 = -1;
     if (re->options & PCRE_REQCHSET) {
         req_byte = re->req_byte & 255;
-        req_byte_caseless = (re->req_byte & REQ_CASELESS) != 0;
+        req_byte_caseless = (re->req_byte & REQ_IGNORE_CASE);
         req_byte2 = (_pcre_default_tables + fcc_offset)[req_byte];  /* case flipped */
     }
     
@@ -2182,7 +2182,7 @@ int jsRegExpExecute(const JSRegExp* re,
                     int sm = *start_match;
                     if (sm > 127)
                         break;
-                    if (match_block.lcc[sm] == first_char)
+                    if (match_block.lowerCaseChars[sm] == first_char)
                         break;
                     start_match++;
                 }

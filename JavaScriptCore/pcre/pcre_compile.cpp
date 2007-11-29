@@ -760,12 +760,12 @@ compile_branch(int options, int* brackets, uschar** codeptr,
     int zeroreqbyte = REQ_UNSET;
     int zerofirstbyte = REQ_UNSET;
     
-    /* The variable req_caseopt contains either the REQ_CASELESS value or zero,
-     according to the current setting of the ignores-case flag. REQ_CASELESS is a bit
+    /* The variable req_caseopt contains either the REQ_IGNORE_CASE value or zero,
+     according to the current setting of the ignores-case flag. REQ_IGNORE_CASE is a bit
      value > 255. It is added into the firstbyte or reqbyte variables to record the
      case status of the value. This is used only for ASCII characters. */
     
-    int req_caseopt = (options & PCRE_CASELESS) ? REQ_CASELESS : 0;
+    int req_caseopt = (options & OptionIgnoreCase) ? REQ_IGNORE_CASE : 0;
     
     /* Switch on next character until the end of the branch */
     
@@ -1002,14 +1002,14 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                          matching for characters > 127 is available only if UCP support is
                          available. */
                         
-                        if ((d > 255 || ((options & PCRE_CASELESS) && d > 127))) {
+                        if ((d > 255 || ((options & OptionIgnoreCase) && d > 127))) {
                             class_utf8 = true;
                             
                             /* With UCP support, we can find the other case equivalents of
                              the relevant characters. There may be several ranges. Optimize how
                              they fit with the basic range. */
                             
-                            if (options & PCRE_CASELESS) {
+                            if (options & OptionIgnoreCase) {
                                 int occ, ocd;
                                 int cc = c;
                                 int origd = d;
@@ -1058,7 +1058,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                         
                         for (; c <= d; c++) {
                             classbits[c/8] |= (1 << (c&7));
-                            if (options & PCRE_CASELESS) {
+                            if (options & OptionIgnoreCase) {
                                 int uc = cd.fcc[c];           /* flip case */
                                 classbits[uc/8] |= (1 << (uc&7));
                             }
@@ -1077,12 +1077,12 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     
                     /* Handle a character that cannot go in the bit map */
                     
-                    if ((c > 255 || ((options & PCRE_CASELESS) && c > 127))) {
+                    if ((c > 255 || ((options & OptionIgnoreCase) && c > 127))) {
                         class_utf8 = true;
                         *class_utf8data++ = XCL_SINGLE;
                         class_utf8data += _pcre_ord2utf8(c, class_utf8data);
                         
-                        if (options & PCRE_CASELESS) {
+                        if (options & OptionIgnoreCase) {
                             int othercase;
                             if ((othercase = _pcre_ucp_othercase(c)) >= 0) {
                                 *class_utf8data++ = XCL_SINGLE;
@@ -1095,7 +1095,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     /* Handle a single-byte character */
                     {
                         classbits[c/8] |= (1 << (c&7));
-                        if (options & PCRE_CASELESS) {
+                        if (options & OptionIgnoreCase) {
                             c = cd.fcc[c];   /* flip case */
                             classbits[c/8] |= (1 << (c&7));
                         }
@@ -1814,7 +1814,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     mclength = 1;
                     mcbuffer[0] = c;
                     
-                    if ((options & PCRE_CASELESS) && (c | 0x20) >= 'a' && (c | 0x20) <= 'z') {
+                    if ((options & OptionIgnoreCase) && (c | 0x20) >= 'a' && (c | 0x20) <= 'z') {
                         *code++ = OP_ASCII_LETTER_NC;
                         *code++ = c | 0x20;
                     } else {
@@ -1824,7 +1824,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                 } else {
                     mclength = _pcre_ord2utf8(c, mcbuffer);
                     
-                    *code++ = ((options & PCRE_CASELESS) != 0)? OP_CHARNC : OP_CHAR;
+                    *code++ = ((options & OptionIgnoreCase) != 0)? OP_CHARNC : OP_CHAR;
                     for (c = 0; c < mclength; c++)
                         *code++ = mcbuffer[c];
                 }
@@ -2205,8 +2205,8 @@ static int find_firstassertedchar(const uschar* code, int options, bool inassert
                 return -1;
             if (c < 0) {
                 c = scode[1];
-                if (options & PCRE_CASELESS)
-                    c |= REQ_CASELESS;
+                if (options & OptionIgnoreCase)
+                    c |= REQ_IGNORE_CASE;
             }
             else if (c != scode[1])
                 return -1;
@@ -2728,13 +2728,13 @@ static void printCompiledRegExp(JSRegExp* re, int length)
     if (re->options) {
         printf("%s%s%s\n",
                ((re->options & PCRE_ANCHORED) != 0)? "anchored " : "",
-               ((re->options & PCRE_CASELESS) != 0)? "ignores case " : "",
+               ((re->options & OptionIgnoreCase) != 0)? "ignores case " : "",
                ((re->options & PCRE_MULTILINE) != 0)? "multiline " : "");
     }
     
     if (re->options & PCRE_FIRSTSET) {
         char ch = re->first_byte & 255;
-        const char* caseless = (re->first_byte & REQ_CASELESS) ? " (ignores case)" : "";
+        const char* caseless = (re->first_byte & REQ_IGNORE_CASE) ? " (ignores case)" : "";
         if (isASCIIAlphanumeric(ch))
             printf("First char = %c%s\n", ch, caseless);
         else
@@ -2743,7 +2743,7 @@ static void printCompiledRegExp(JSRegExp* re, int length)
     
     if (re->options & PCRE_REQCHSET) {
         char ch = re->req_byte & 255;
-        const char* caseless = ((re->req_byte & REQ_CASELESS) == 0) ? "" : " (caseless)";
+        const char* caseless = (re->req_byte & REQ_IGNORE_CASE) ? " (ignores case)" : "";
         if (isASCIIAlphanumeric(ch))
             printf("Req char = %c%s\n", ch, caseless);
         else
@@ -2815,7 +2815,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
      4-byte pointers is run on another with 8-byte pointers. */
     
     re->size = (pcre_uint32)size;
-    re->options = (ignoreCase ? PCRE_CASELESS : 0) | (multiline ? PCRE_MULTILINE : 0);
+    re->options = (ignoreCase ? OptionIgnoreCase : 0) | (multiline ? PCRE_MULTILINE : 0);
     
     /* The starting points of the name/number translation table and of the code are
      passed around in the compile data block. */
@@ -2887,8 +2887,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
         {
             int ch = firstbyte & 255;
             if (ch < 127) {
-                re->first_byte = ((firstbyte & REQ_CASELESS) != 0 &&
-                                  compile_block.fcc[ch] == ch)? ch : firstbyte;
+                re->first_byte = ((firstbyte & REQ_IGNORE_CASE) && compile_block.fcc[ch] == ch) ? ch : firstbyte;
                 re->options |= PCRE_FIRSTSET;
             }
         }
@@ -2903,8 +2902,8 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     if (reqbyte >= 0 && (!(re->options & PCRE_ANCHORED) || (reqbyte & REQ_VARY))) {
         int ch = reqbyte & 255;
         if (ch < 127) {
-            re->req_byte = ((reqbyte & REQ_CASELESS) != 0 &&
-                            compile_block.fcc[ch] == ch)? (reqbyte & ~REQ_CASELESS) : reqbyte;
+            re->req_byte = ((reqbyte & REQ_IGNORE_CASE) != 0 &&
+                            compile_block.fcc[ch] == ch)? (reqbyte & ~REQ_IGNORE_CASE) : reqbyte;
             re->options |= PCRE_REQCHSET;
         }
     }

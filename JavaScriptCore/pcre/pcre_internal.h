@@ -298,7 +298,7 @@ enum PCREOptions {
     PCRE_REQCHSET = 0x20000000,  /* req_byte is set */
     OptionUseMultiLineFirstCharOptimization = 0x10000000,  /* start after \n for multiline */
     PCRE_ANCHORED = 0x02000000,  /* can't use partial with this regex */
-    PCRE_CASELESS = 0x00000001,
+    OptionIgnoreCase = 0x00000001,
     PCRE_MULTILINE = 0x00000002
 };
 
@@ -315,7 +315,7 @@ req_byte match. */
 /* Flags added to firstbyte or reqbyte; a "non-literal" item is either a
 variable-length repeat, or a anything other than literal characters. */
 
-#define REQ_CASELESS 0x0100    /* indicates caselessness */
+#define REQ_IGNORE_CASE 0x0100    /* indicates should ignore case */
 #define REQ_VARY     0x0200    /* reqbyte followed non-literal item */
 
 /* Miscellaneous definitions */
