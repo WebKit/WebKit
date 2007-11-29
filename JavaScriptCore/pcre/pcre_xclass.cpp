@@ -95,13 +95,14 @@ bool _pcre_xclass(int c, const uschar* data)
     
     int t;
     while ((t = *data++) != XCL_END) {
-        int x, y;
         if (t == XCL_SINGLE) {
+            int x;
             getUTF8CharAndAdvancePointer(x, data);
             if (c == x)
                 return !negated;
         }
         else if (t == XCL_RANGE) {
+            int x, y;
             getUTF8CharAndAdvancePointer(x, data);
             getUTF8CharAndAdvancePointer(y, data);
             if (c >= x && c <= y)

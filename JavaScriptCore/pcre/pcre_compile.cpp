@@ -909,40 +909,39 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                             c = '\b';       /* \b is backslash in a class */
                         
                         if (c < 0) {
-                            const uschar* cbits = cd.cbits;
                             class_charcount += 2;     /* Greater than 1 is what matters */
                             switch (-c) {
                                 case ESC_d:
                                     for (c = 0; c < 32; c++)
-                                        classbits[c] |= cbits[c + cbit_digit];
+                                        classbits[c] |= classBitmapForChar(c + cbit_digit);
                                     continue;
                                     
                                 case ESC_D:
                                     should_flip_negation = true;
                                     for (c = 0; c < 32; c++)
-                                        classbits[c] |= ~cbits[c + cbit_digit];
+                                        classbits[c] |= ~classBitmapForChar(c + cbit_digit);
                                     continue;
                                     
                                 case ESC_w:
                                     for (c = 0; c < 32; c++)
-                                        classbits[c] |= cbits[c + cbit_word];
+                                        classbits[c] |= classBitmapForChar(c + cbit_word);
                                     continue;
                                     
                                 case ESC_W:
                                     should_flip_negation = true;
                                     for (c = 0; c < 32; c++)
-                                        classbits[c] |= ~cbits[c + cbit_word];
+                                        classbits[c] |= ~classBitmapForChar(c + cbit_word);
                                     continue;
                                     
                                 case ESC_s:
                                     for (c = 0; c < 32; c++)
-                                         classbits[c] |= cbits[c + cbit_space];
+                                         classbits[c] |= classBitmapForChar(c + cbit_space);
                                     continue;
                                     
                                 case ESC_S:
                                     should_flip_negation = true;
                                     for (c = 0; c < 32; c++)
-                                         classbits[c] |= ~cbits[c + cbit_space];
+                                         classbits[c] |= ~classBitmapForChar(c + cbit_space);
                                     continue;
                                     
                                     /* Unrecognized escapes are faulted if PCRE is running in its
@@ -1059,7 +1058,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                         for (; c <= d; c++) {
                             classbits[c/8] |= (1 << (c&7));
                             if (options & OptionIgnoreCase) {
-                                int uc = cd.fcc[c];           /* flip case */
+                                int uc = flipCase(c);
                                 classbits[uc/8] |= (1 << (uc&7));
                             }
                             class_charcount++;                /* in case a one-char range */
@@ -1096,7 +1095,7 @@ compile_branch(int options, int* brackets, uschar** codeptr,
                     {
                         classbits[c/8] |= (1 << (c&7));
                         if (options & OptionIgnoreCase) {
-                            c = cd.fcc[c];   /* flip case */
+                            c = flipCase(c);
                             classbits[c/8] |= (1 << (c&7));
                         }
                         class_charcount++;
@@ -2887,7 +2886,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
         {
             int ch = firstbyte & 255;
             if (ch < 127) {
-                re->first_byte = ((firstbyte & REQ_IGNORE_CASE) && compile_block.fcc[ch] == ch) ? ch : firstbyte;
+                re->first_byte = ((firstbyte & REQ_IGNORE_CASE) && flipCase(ch) == ch) ? ch : firstbyte;
                 re->options |= PCRE_FIRSTSET;
             }
         }
@@ -2902,8 +2901,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     if (reqbyte >= 0 && (!(re->options & PCRE_ANCHORED) || (reqbyte & REQ_VARY))) {
         int ch = reqbyte & 255;
         if (ch < 127) {
-            re->req_byte = ((reqbyte & REQ_IGNORE_CASE) != 0 &&
-                            compile_block.fcc[ch] == ch)? (reqbyte & ~REQ_IGNORE_CASE) : reqbyte;
+            re->req_byte = ((reqbyte & REQ_IGNORE_CASE) && flipCase(ch) == ch) ? (reqbyte & ~REQ_IGNORE_CASE) : reqbyte;
             re->options |= PCRE_REQCHSET;
         }
     }

@@ -491,21 +491,12 @@ in UTF-8 mode. The code that uses this table must know about such things. */
   1 + LINK_SIZE                    /* BRA                                    */ \
 
 
-/* The real format of the start of the pcre block; the index of names and the
+/* The index of names and the
 code vector run on as long as necessary after the end. We store an explicit
 offset to the name table so that if a regex is compiled on one host, saved, and
 then run on another where the size of pointers is different, all might still
 be well. For the case of compiled-on-4 and run-on-8, we include an extra
-pointer that is always NULL. For future-proofing, a few dummy fields were
-originally included - even though you can never get this planning right - but
-there is only one left now.
-
-NOTE NOTE NOTE:
-Because people can now save and re-use compiled patterns, any additions to this
-structure should be made at the end, and something earlier (e.g. a new
-flag in the options or one of the dummy fields) should indicate that the new
-fields are present. Currently PCRE always sets the dummy fields to zero.
-NOTE NOTE NOTE:
+pointer that is always NULL.
 */
 
 struct JSRegExp {
@@ -532,26 +523,51 @@ extern const uschar _pcre_utf8_table4[0x40];
 
 extern const uschar _pcre_default_tables[tables_length];
 
+static inline uschar toLowerCase(uschar c)
+{
+    static const uschar* lowerCaseChars = _pcre_default_tables + lcc_offset;
+    return lowerCaseChars[c];
+}
+
+static inline uschar flipCase(uschar c)
+{
+    static const uschar* flippedCaseChars = _pcre_default_tables + fcc_offset;
+    return flippedCaseChars[c];
+}
+
+static inline uschar classBitmapForChar(uschar c)
+{
+    static const uschar* charClassBitmaps = _pcre_default_tables + cbits_offset;
+    return charClassBitmaps[c];
+}
+
+static inline uschar charTypeForChar(uschar c)
+{
+    const uschar* charTypeMap = _pcre_default_tables + ctypes_offset;
+    return charTypeMap[c];
+}
+
+static inline bool isWordChar(UChar c)
+{
+    return (c < 128 && (charTypeForChar(c) & ctype_word));
+}
+
+static inline bool isSpaceChar(UChar c)
+{
+    return (c < 128 && (charTypeForChar(c) & ctype_space));
+}
+
 /* Structure for passing "static" information around between the functions
 doing the compiling, so that they are thread-safe. */
 
 struct CompileData {
     CompileData() {
-        lcc = _pcre_default_tables + lcc_offset;
-        fcc = _pcre_default_tables + fcc_offset;
-        cbits = _pcre_default_tables + cbits_offset;
-        ctypes = _pcre_default_tables + ctypes_offset;
         start_code = 0;
         start_pattern = 0;
         top_backref = 0;
         backref_map = 0;
         req_varyopt = 0;
     }
-    
-  const uschar* lcc;            /* Points to lower casing table */
-  const uschar* fcc;            /* Points to case-flipping table */
-  const uschar* cbits;          /* Points to character type table */
-  const uschar* ctypes;         /* Points to table of type maps */
   const uschar* start_code;     /* The start of the compiled code */
   const UChar* start_pattern;   /* The start of the pattern */
   int  top_backref;             /* Maximum back reference */

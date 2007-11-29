@@ -24,6 +24,29 @@
 
         Reviewed by Sam.
 
+        Add inlines for toLowerCase, isWordChar, isSpaceChar for further regexp speedup
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (match):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+        (toLowerCase):
+        (flipCase):
+        (classBitmapForChar):
+        (charTypeForChar):
+        (isWordChar):
+        (isSpaceChar):
+        (CompileData::CompileData):
+        * pcre/pcre_xclass.cpp:
+        (_pcre_xclass):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         cleanup _pcre_ucp_othercase
 
         * pcre/pcre_ucp_searchfuncs.cpp:
