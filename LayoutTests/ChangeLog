@@ -1,3 +1,18 @@
+2007-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Alexey.
+
+        Move Mac-specific tests to platform/mac.
+        
+        * fast/events/objc-event-api-expected.txt: Removed.
+        * fast/events/objc-event-api.html: Removed.
+        * fast/events/objc-keyboard-event-creation-expected.txt: Removed.
+        * fast/events/objc-keyboard-event-creation.html: Removed.
+        * platform/mac/fast/events/objc-event-api-expected.txt: Copied from fast/events/objc-event-api-expected.txt.
+        * platform/mac/fast/events/objc-event-api.html: Copied from fast/events/objc-event-api.html.
+        * platform/mac/fast/events/objc-keyboard-event-creation-expected.txt: Copied from fast/events/objc-keyboard-event-creation-expected.txt.
+        * platform/mac/fast/events/objc-keyboard-event-creation.html: Copied from fast/events/objc-keyboard-event-creation.html.
+
 2007-11-29  Alice Liu  <alice.liu@apple.com>
 
         Removing some fixed tests
