@@ -756,6 +756,7 @@ RECURSE:
                 NEXT_OPCODE;
                 
                 BEGIN_OPCODE(NOT_DIGIT):
+            {
                 if (stack.currentFrame->args.subjectPtr >= md.end_subject)
                     RRETURN_NO_MATCH;
                 int c = getCharAndAdvance(stack.currentFrame->args.subjectPtr);
@@ -763,7 +764,7 @@ RECURSE:
                     RRETURN_NO_MATCH;
                 stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
-                
+            }    
                 BEGIN_OPCODE(DIGIT):
             {
                 if (stack.currentFrame->args.subjectPtr >= md.end_subject)

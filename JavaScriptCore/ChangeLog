@@ -1,3 +1,11 @@
+2007-11-28  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix.  Rubber-stamped by Eric.
+
+        * pcre/pcre_exec.cpp:
+        (match): Add braces around the body of the case statement to prevent
+        wanings about jumps across the initialization of a variable.
+
 2007-11-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
