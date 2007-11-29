@@ -458,146 +458,150 @@ Returns:   the fixed length, or -1 if there is no fixed length,
              or -2 if \C was encountered
 */
 
-static int
-find_fixedlength(uschar *code, int options)
+static int find_fixedlength(uschar *code, int options)
 {
-int length = -1;
-
-int branchlength = 0;
-uschar *cc = code + 1 + LINK_SIZE;
-
-/* Scan along the opcodes for this branch. If we get to the end of the
-branch, check the length against that of the other branches. */
-
-for (;;)
-  {
-  int d;
-  int op = *cc;
-  if (op >= OP_BRA) op = OP_BRA;
-
-  switch (op)
-    {
-    case OP_BRA:
-    case OP_ONCE:
-    d = find_fixedlength(cc, options);
-    if (d < 0) return d;
-    branchlength += d;
-    do cc += GET(cc, 1); while (*cc == OP_ALT);
-    cc += 1 + LINK_SIZE;
-    break;
-
-    /* Reached end of a branch; if it's a ket it is the end of a nested
-    call. If it's ALT it is an alternation in a nested call. If it is
-    END it's the end of the outer call. All can be handled by the same code. */
-
-    case OP_ALT:
-    case OP_KET:
-    case OP_KETRMAX:
-    case OP_KETRMIN:
-    case OP_END:
-    if (length < 0) length = branchlength;
-      else if (length != branchlength) return -1;
-    if (*cc != OP_ALT) return length;
-    cc += 1 + LINK_SIZE;
-    branchlength = 0;
-    break;
-
-    /* Skip over assertive subpatterns */
-
-    case OP_ASSERT:
-    case OP_ASSERT_NOT:
-    do cc += GET(cc, 1); while (*cc == OP_ALT);
-    /* Fall through */
-
-    /* Skip over things that don't match chars */
-
-    case OP_BRANUMBER:
-    case OP_CIRC:
-    case OP_DOLL:
-    case OP_NOT_WORD_BOUNDARY:
-    case OP_WORD_BOUNDARY:
-    cc += OP_lengths[*cc];
-    break;
-
-    /* Handle literal characters */
-
-    case OP_CHAR:
-    case OP_CHARNC:
-    case OP_NOT:
-    branchlength++;
-    cc += 2;
-    while ((*cc & 0xc0) == 0x80) cc++;
-    break;
-
-    case OP_ASCII_CHAR:
-    case OP_ASCII_LETTER_NC:
-    branchlength++;
-    cc += 2;
-    break;
-
-    /* Handle exact repetitions. The count is already in characters, but we
-    need to skip over a multibyte character in UTF8 mode.  */
-
-    case OP_EXACT:
-    branchlength += GET2(cc,1);
-    cc += 4;
-    while((*cc & 0x80) == 0x80) cc++;
-    break;
-
-    case OP_TYPEEXACT:
-    branchlength += GET2(cc,1);
-    cc += 4;
-    break;
-
-    /* Handle single-char matchers */
-
-    case OP_NOT_DIGIT:
-    case OP_DIGIT:
-    case OP_NOT_WHITESPACE:
-    case OP_WHITESPACE:
-    case OP_NOT_WORDCHAR:
-    case OP_WORDCHAR:
-    case OP_ANY:
-    branchlength++;
-    cc++;
-    break;
-
-    /* Check a class for variable quantification */
-
-    case OP_XCLASS:
-    cc += GET(cc, 1) - 33;
-    /* Fall through */
-
-    case OP_CLASS:
-    case OP_NCLASS:
-    cc += 33;
-
-    switch (*cc)
-      {
-      case OP_CRSTAR:
-      case OP_CRMINSTAR:
-      case OP_CRQUERY:
-      case OP_CRMINQUERY:
-      return -1;
-
-      case OP_CRRANGE:
-      case OP_CRMINRANGE:
-      if (GET2(cc,1) != GET2(cc,3)) return -1;
-      branchlength += GET2(cc,1);
-      cc += 5;
-      break;
-
-      default:
-      branchlength++;
-      }
-    break;
-
-    /* Anything else is variable length */
-
-    default:
-    return -1;
+    int length = -1;
+    
+    int branchlength = 0;
+    uschar* cc = code + 1 + LINK_SIZE;
+    
+    /* Scan along the opcodes for this branch. If we get to the end of the
+     branch, check the length against that of the other branches. */
+    
+    while (true) {
+        int d;
+        int op = *cc;
+        if (op >= OP_BRA)
+            op = OP_BRA;
+        
+        switch (op) {
+            case OP_BRA:
+            case OP_ONCE:
+                d = find_fixedlength(cc, options);
+                if (d < 0)
+                    return d;
+                branchlength += d;
+                do cc += GET(cc, 1); while (*cc == OP_ALT);
+                cc += 1 + LINK_SIZE;
+                break;
+                
+                /* Reached end of a branch; if it's a ket it is the end of a nested
+                 call. If it's ALT it is an alternation in a nested call. If it is
+                 END it's the end of the outer call. All can be handled by the same code. */
+                
+            case OP_ALT:
+            case OP_KET:
+            case OP_KETRMAX:
+            case OP_KETRMIN:
+            case OP_END:
+                if (length < 0)
+                    length = branchlength;
+                else if (length != branchlength)
+                    return -1;
+                if (*cc != OP_ALT)
+                    return length;
+                cc += 1 + LINK_SIZE;
+                branchlength = 0;
+                break;
+                
+                /* Skip over assertive subpatterns */
+                
+            case OP_ASSERT:
+            case OP_ASSERT_NOT:
+                do cc += GET(cc, 1); while (*cc == OP_ALT);
+                /* Fall through */
+                
+                /* Skip over things that don't match chars */
+                
+            case OP_BRANUMBER:
+            case OP_CIRC:
+            case OP_DOLL:
+            case OP_NOT_WORD_BOUNDARY:
+            case OP_WORD_BOUNDARY:
+                cc += OP_lengths[*cc];
+                break;
+                
+                /* Handle literal characters */
+                
+            case OP_CHAR:
+            case OP_CHARNC:
+            case OP_NOT:
+                branchlength++;
+                cc += 2;
+                while ((*cc & 0xc0) == 0x80)
+                    cc++;
+                break;
+                
+            case OP_ASCII_CHAR:
+            case OP_ASCII_LETTER_NC:
+                branchlength++;
+                cc += 2;
+                break;
+                
+                /* Handle exact repetitions. The count is already in characters, but we
+                 need to skip over a multibyte character in UTF8 mode.  */
+                
+            case OP_EXACT:
+                branchlength += GET2(cc,1);
+                cc += 4;
+                while((*cc & 0x80) == 0x80)
+                    cc++;
+                break;
+                
+            case OP_TYPEEXACT:
+                branchlength += GET2(cc,1);
+                cc += 4;
+                break;
+                
+                /* Handle single-char matchers */
+                
+            case OP_NOT_DIGIT:
+            case OP_DIGIT:
+            case OP_NOT_WHITESPACE:
+            case OP_WHITESPACE:
+            case OP_NOT_WORDCHAR:
+            case OP_WORDCHAR:
+            case OP_ANY:
+                branchlength++;
+                cc++;
+                break;
+                
+                /* Check a class for variable quantification */
+                
+            case OP_XCLASS:
+                cc += GET(cc, 1) - 33;
+                /* Fall through */
+                
+            case OP_CLASS:
+            case OP_NCLASS:
+                cc += 33;
+                
+                switch (*cc) {
+                case OP_CRSTAR:
+                case OP_CRMINSTAR:
+                case OP_CRQUERY:
+                case OP_CRMINQUERY:
+                    return -1;
+                    
+                case OP_CRRANGE:
+                case OP_CRMINRANGE:
+                    if (GET2(cc, 1) != GET2(cc, 3))
+                        return -1;
+                    branchlength += GET2(cc, 1);
+                    cc += 5;
+                    break;
+                    
+                default:
+                    branchlength++;
+                }
+                break;
+                
+                /* Anything else is variable length */
+                
+            default:
+                return -1;
+        }
     }
-  }
     ASSERT_NOT_REACHED();
 }
 

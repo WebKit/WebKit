@@ -2,6 +2,15 @@
 
         Reviewed by Sam.
 
+        Reformat find_fixedlength
+
+        * pcre/pcre_compile.cpp:
+        (find_fixedlength):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         reformat is_anchored
 
         * pcre/pcre_compile.cpp:
