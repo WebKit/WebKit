@@ -1,5 +1,11 @@
 2007-11-29  Brady Eidson  <beidson@apple.com>
 
+        Better build fix for Gtk
+
+        * WebCoreSupport/ChromeClientGtk.h:
+
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
         Keep it building with new client method
 
         * WebCoreSupport/ChromeClientGtk.cpp:

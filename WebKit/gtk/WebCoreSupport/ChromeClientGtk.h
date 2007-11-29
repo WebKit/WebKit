@@ -102,8 +102,8 @@ namespace WebKit {
 
         virtual void print(WebCore::Frame*);
 
-        virtual unsigned long long requestQuotaIncreaseForNewDatabase(Frame*, const SecurityOriginData&, const String&, unsigned long long);
-        virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(Frame*, const SecurityOriginData&, const String&, unsigned long long);
+        virtual unsigned long long requestQuotaIncreaseForNewDatabase(WebCore::Frame*, const WebCore::SecurityOriginData&, const WebCore::String&, unsigned long long);
+        virtual unsigned long long requestQuotaIncreaseForDatabaseOperation(WebCore::Frame*, const WebCore::SecurityOriginData&, const WebCore::String&, unsigned long long);
 
     private:
         WebKitPage* m_webPage;
