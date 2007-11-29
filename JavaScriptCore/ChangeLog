@@ -1,5 +1,14 @@
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej.
+
+        clean up formating in compile_branch
+
+        * pcre/pcre_compile.cpp:
+        (compile_branch):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Fix spacing for read_repeat_counts
