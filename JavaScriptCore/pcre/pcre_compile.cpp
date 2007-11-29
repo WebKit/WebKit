@@ -1864,7 +1864,6 @@ compile_branch(int options, int* brackets, uschar** codeptr,
     /* Control never reaches here by falling through, only by a goto for all the
      error states. Pass back the position in the pattern so that it can be displayed
      to the user for diagnosing the error. */
-    ASSERT_NOT_REACHED();
     
 FAILED:
     *ptrptr = ptr;
