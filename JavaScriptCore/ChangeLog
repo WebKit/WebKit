@@ -1,5 +1,14 @@
 2007-11-24  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        reformat is_anchored
+
+        * pcre/pcre_compile.cpp:
+        (is_anchored):
+
+2007-11-24  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej.
 
         Remove unused function could_be_empty_branch
