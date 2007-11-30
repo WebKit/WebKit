@@ -33,7 +33,7 @@
 #include "Font.h"
 #include "FontPlatformData.h"
 #include "TextBreakIterator.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -96,7 +96,7 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
 static float stringWidth(const Font& renderer, const UChar* characters, unsigned length, bool disableRoundingHacks)
 {
     TextRun run(characters, length);
-    TextStyle style;
+    FontStyle style;
     if (disableRoundingHacks)
         style.disableRoundingHacks();
     return renderer.floatWidth(run, style);

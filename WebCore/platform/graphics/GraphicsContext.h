@@ -86,7 +86,7 @@ namespace WebCore {
     class KURL;
     class Path;
     class TextRun;
-    class TextStyle;
+    class FontStyle;
 
     // These bits can be ORed together for a total of 8 possible text drawing modes.
     const int cTextInvisible = 0;
@@ -173,9 +173,9 @@ namespace WebCore {
         void setTextDrawingMode(int);
 
         void drawText(const TextRun&, const IntPoint&, int from = 0, int to = -1);
-        void drawText(const TextRun&, const IntPoint&, const TextStyle&, int from = 0, int to = -1);
-        void drawBidiText(const TextRun&, const IntPoint&, const TextStyle&);
-        void drawHighlightForText(const TextRun&, const IntPoint&, int h, const TextStyle&, const Color& backgroundColor, int from = 0, int to = -1);
+        void drawText(const TextRun&, const IntPoint&, const FontStyle&, int from = 0, int to = -1);
+        void drawBidiText(const TextRun&, const IntPoint&, const FontStyle&);
+        void drawHighlightForText(const TextRun&, const IntPoint&, int h, const FontStyle&, const Color& backgroundColor, int from = 0, int to = -1);
 
         FloatRect roundToDevicePixels(const FloatRect&);
         

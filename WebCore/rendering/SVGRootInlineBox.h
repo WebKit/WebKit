@@ -75,7 +75,7 @@ private:
 };
 
 // Shared with SVGRenderTreeAsText / SVGInlineTextBox
-TextStyle svgTextStyleForInlineTextBox(RenderStyle* style, const InlineTextBox* textBox, float xPos);
+FontStyle svgFontStyleForInlineTextBox(RenderStyle* style, const InlineTextBox* textBox, float xPos);
 FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator start, Vector<SVGChar>::iterator end);
 float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range);
 float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range);

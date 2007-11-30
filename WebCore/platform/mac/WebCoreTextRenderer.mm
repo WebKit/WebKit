@@ -30,7 +30,7 @@
 #import "FontData.h"
 #import "GraphicsContext.h"
 #import "IntPoint.h"
-#import "TextStyle.h"
+#import "FontStyle.h"
 #import "WebFontCache.h"
 
 using namespace WebCore;
@@ -48,7 +48,7 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
     FontPlatformData f(font);
     Font renderer(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
     TextRun run(buffer, length);
-    TextStyle style;
+    FontStyle style;
     style.disableRoundingHacks();
     CGFloat red, green, blue, alpha;
     [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
@@ -63,7 +63,7 @@ float WebCoreTextFloatWidth(const UniChar* buffer, unsigned length , NSFont* fon
     FontPlatformData f(font);
     Font renderer(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
     TextRun run(buffer, length);
-    TextStyle style;
+    FontStyle style;
     style.disableRoundingHacks();
     return renderer.floatWidth(run, style);
 }

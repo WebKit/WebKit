@@ -28,7 +28,7 @@
 
 #include "BidiResolver.h"
 #include "Font.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 
 using namespace std;
 
@@ -243,10 +243,10 @@ void GraphicsContext::drawImage(Image* image, const IntRect& dest, const IntRect
 
 void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, int from, int to)
 {
-    drawText(run, point, TextStyle(), from, to);
+    drawText(run, point, FontStyle(), from, to);
 }
 
-void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, const TextStyle& style, int from, int to)
+void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, const FontStyle& style, int from, int to)
 {
     if (paintingDisabled())
         return;
@@ -254,7 +254,7 @@ void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, const 
     font().drawText(this, run, style, point, from, to);
 }
 
-void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point, const TextStyle& style)
+void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point, const FontStyle& style)
 {
     if (paintingDisabled())
         return;
@@ -272,7 +272,7 @@ void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point, co
     FloatPoint currPoint = point;
     BidiCharacterRun* bidiRun = bidiResolver.firstRun();
     while (bidiRun) {
-        TextStyle subrunStyle(style);
+        FontStyle subrunStyle(style);
         subrunStyle.setRTL(bidiRun->level() % 2);
         subrunStyle.setDirectionalOverride(bidiRun->dirOverride(false));
 
@@ -289,7 +289,7 @@ void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point, co
     bidiResolver.deleteRuns();
 }
 
-void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& point, int h, const TextStyle& style, const Color& backgroundColor, int from, int to)
+void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& point, int h, const FontStyle& style, const Color& backgroundColor, int from, int to)
 {
     if (paintingDisabled())
         return;

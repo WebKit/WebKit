@@ -40,7 +40,7 @@
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
 #include "Text.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 #include "UnicodeRange.h"
 
 #include <float.h>
@@ -622,7 +622,7 @@ float cummulatedWidthOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range
     RenderText* text = textBox->textObject();
     RenderStyle* style = text->style();
 
-    return style->font().floatWidth(TextRun(text->characters() + textBox->start() + range.startOffset, range.endOffset - range.startOffset), svgTextStyleForInlineTextBox(style, textBox, 0));
+    return style->font().floatWidth(TextRun(text->characters() + textBox->start() + range.startOffset, range.endOffset - range.startOffset), svgFontStyleForInlineTextBox(style, textBox, 0));
 }
 
 float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& range)
@@ -638,16 +638,16 @@ float cummulatedHeightOfInlineBoxCharacterRange(SVGInlineBoxCharacterRange& rang
     return (range.endOffset - range.startOffset) * (font.ascent() + font.descent());
 }
 
-TextStyle svgTextStyleForInlineTextBox(RenderStyle* style, const InlineTextBox* textBox, float xPos)
+FontStyle svgFontStyleForInlineTextBox(RenderStyle* style, const InlineTextBox* textBox, float xPos)
 {
     ASSERT(textBox);
     ASSERT(style);
 
-    TextStyle textStyle(false, static_cast<int>(xPos), textBox->toAdd(), textBox->m_reversed, textBox->m_dirOverride || style->visuallyOrdered());
+    FontStyle FontStyle(false, static_cast<int>(xPos), textBox->toAdd(), textBox->m_reversed, textBox->m_dirOverride || style->visuallyOrdered());
 
     // We handle letter & word spacing ourselves
-    textStyle.disableSpacing();
-    return textStyle;
+    FontStyle.disableSpacing();
+    return FontStyle;
 }
 
 static float cummulatedWidthOrHeightOfTextChunk(SVGTextChunk& chunk, bool calcWidthOnly)

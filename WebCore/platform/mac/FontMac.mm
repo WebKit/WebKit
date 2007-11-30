@@ -34,7 +34,7 @@
 #import "GraphicsContext.h"
 #import "IntRect.h"
 #import "Logging.h"
-#import "TextStyle.h"
+#import "FontStyle.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreTextRenderer.h"
 #import "ShapeArabic.h"
@@ -57,7 +57,7 @@ namespace WebCore {
 
 struct ATSULayoutParameters
 {
-    ATSULayoutParameters(const TextRun& run, const TextStyle& style)
+    ATSULayoutParameters(const TextRun& run, const FontStyle& style)
         : m_run(run)
         , m_style(style)
         , m_font(0)
@@ -71,7 +71,7 @@ struct ATSULayoutParameters
     void initialize(const Font*, const GraphicsContext* = 0);
 
     const TextRun& m_run;
-    const TextStyle& m_style;
+    const FontStyle& m_style;
     
     const Font* m_font;
     
@@ -477,7 +477,7 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
     delete []params->m_fonts;
 }
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h, int from, int to) const
+FloatRect Font::selectionRectForComplexText(const TextRun& run, const FontStyle& style, const IntPoint& point, int h, int from, int to) const
 {        
     TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(run, style.rtl()) : run;
     if (style.directionalOverride()) {
@@ -509,7 +509,7 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle&
     return rect;
 }
 
-void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const TextStyle& style, const FloatPoint& point, int from, int to) const
+void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const FontStyle& style, const FloatPoint& point, int from, int to) const
 {
     OSStatus status;
     
@@ -544,7 +544,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
         delete []adjustedRun.characters();
 }
 
-float Font::floatWidthForComplexText(const TextRun& run, const TextStyle& style) const
+float Font::floatWidthForComplexText(const TextRun& run, const FontStyle& style) const
 {
     if (run.length() == 0)
         return 0;
@@ -568,7 +568,7 @@ float Font::floatWidthForComplexText(const TextRun& run, const TextStyle& style)
            MIN(FixedToFloat(firstGlyphBounds.upperLeft.x), FixedToFloat(firstGlyphBounds.lowerLeft.x));
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, const TextStyle& style, int x, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, const FontStyle& style, int x, bool includePartialGlyphs) const
 {
     TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(run, style.rtl()) : run;
     

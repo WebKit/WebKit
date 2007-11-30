@@ -46,7 +46,7 @@
 #include "Settings.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <math.h>
@@ -113,7 +113,7 @@ void RenderTextControl::setStyle(RenderStyle* style)
 
     if (m_innerText) {
         RenderBlock* textBlockRenderer = static_cast<RenderBlock*>(m_innerText->renderer());
-        RenderStyle* textBlockStyle = createInnerTextStyle(style);
+        RenderStyle* textBlockStyle = createInnerFontStyle(style);
         // We may have set the width and the height in the old style in layout(). Reset them now to avoid
         // getting a spurious layout hint.
         textBlockRenderer->style()->setHeight(Length());
@@ -156,7 +156,7 @@ RenderStyle* RenderTextControl::createInnerBlockStyle(RenderStyle* startStyle)
     return innerBlockStyle;
 }
 
-RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
+RenderStyle* RenderTextControl::createInnerFontStyle(RenderStyle* startStyle)
 {
     RenderStyle* textBlockStyle = new (renderArena()) RenderStyle();
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
@@ -344,7 +344,7 @@ void RenderTextControl::createSubtreeIfNeeded()
         RenderStyle* parentStyle = style();
         if (m_innerBlock)
             parentStyle = m_innerBlock->renderer()->style();
-        RenderStyle* textBlockStyle = createInnerTextStyle(parentStyle);
+        RenderStyle* textBlockStyle = createInnerFontStyle(parentStyle);
         textBlockRenderer->setStyle(textBlockStyle);
 
         // Add text block renderer to Render tree
@@ -849,7 +849,7 @@ void RenderTextControl::calcPrefWidths()
         // Figure out how big a text control needs to be for a given number of characters
         // (using "0" as the nominal character).
         const UChar ch = '0';
-        float charWidth = style()->font().floatWidth(TextRun(&ch, 1), TextStyle(0, 0, 0, false, false, false));
+        float charWidth = style()->font().floatWidth(TextRun(&ch, 1), FontStyle(0, 0, 0, false, false, false));
         int factor;
         int scrollbarSize = 0;
         if (m_multiLine) {

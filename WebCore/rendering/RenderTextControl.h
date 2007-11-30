@@ -130,7 +130,7 @@ private:
     virtual FontSelector* fontSelector() const;
 
     RenderStyle* createInnerBlockStyle(RenderStyle* startStyle);
-    RenderStyle* createInnerTextStyle(RenderStyle* startStyle);
+    RenderStyle* createInnerFontStyle(RenderStyle* startStyle);
     RenderStyle* createCancelButtonStyle(RenderStyle* startStyle);
     RenderStyle* createResultsButtonStyle(RenderStyle* startStyle);
 

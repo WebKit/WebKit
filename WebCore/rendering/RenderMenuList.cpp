@@ -36,7 +36,7 @@
 #include "RenderBR.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 #include <math.h>
 
 using namespace std;
@@ -140,7 +140,7 @@ void RenderMenuList::updateOptionsWidth()
         if (element->hasTagName(optionTag)) {
             String text = static_cast<HTMLOptionElement*>(element)->optionText();
             if (!text.isEmpty())
-                maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text, TextStyle()));
+                maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text, FontStyle()));
         }
     }
 

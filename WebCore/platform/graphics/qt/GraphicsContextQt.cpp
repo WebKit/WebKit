@@ -279,7 +279,7 @@ void GraphicsContext::restorePlatformState()
 }
 
 /* FIXME: DISABLED WHILE MERGING BACK FROM UNITY
-void GraphicsContext::drawTextShadow(const TextRun& run, const IntPoint& point, const TextStyle& style)
+void GraphicsContext::drawTextShadow(const TextRun& run, const IntPoint& point, const FontStyle& style)
 {
     if (paintingDisabled())
         return;

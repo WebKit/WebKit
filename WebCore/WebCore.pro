@@ -28,7 +28,7 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR
 }
 
 DEPENDPATH += css dom loader editing history html \
-    loader page platform platform/graphics rendering xml
+    loader page platform platform/graphics platform/text rendering xml
 
 include($$OUTPUT_DIR/config.pri)
 
@@ -179,6 +179,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform/graphics/svg \
                 $$PWD/platform/graphics/svg/filters \
                 $$PWD/platform/sql \
+				$$PWD/platform/text \
                 $$PWD/storage \
                 $$PWD/loader $$PWD/loader/icon \
                 $$PWD/css \
@@ -688,11 +689,11 @@ SOURCES += \
     page/Settings.cpp \
     platform/Arena.cpp \
     platform/ArrayImpl.cpp \
-    platform/AtomicString.cpp \
-    platform/Base64.cpp \
-    platform/BidiContext.cpp \
+    platform/text/AtomicString.cpp \
+    platform/text/Base64.cpp \
+    platform/text/BidiContext.cpp \
     platform/ContextMenu.cpp \
-    platform/CString.cpp \
+    platform/text/CString.cpp \
     platform/DeprecatedCString.cpp \
     platform/DeprecatedPtrListImpl.cpp \
     platform/DeprecatedString.cpp \
@@ -701,7 +702,7 @@ SOURCES += \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
-    platform/FontFamily.cpp \
+    platform/text/FontFamily.cpp \
     platform/graphics/AffineTransform.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
@@ -727,25 +728,25 @@ SOURCES += \
     platform/network/ResourceHandle.cpp \
     platform/network/ResourceRequestBase.cpp \
     platform/network/ResourceResponseBase.cpp \
-    platform/RegularExpression.cpp \
+    platform/text/RegularExpression.cpp \
     platform/ScrollBar.cpp \
 #    platform/SearchPopupMenu.cpp \
     platform/SecurityOrigin.cpp \
     platform/SecurityOriginData.cpp \
-    platform/SegmentedString.cpp \
+    platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
-    platform/String.cpp \
-    platform/StringImpl.cpp \
-    platform/TextCodec.cpp \
-    platform/TextCodecLatin1.cpp \
-    platform/TextCodecUserDefined.cpp \
-    platform/TextCodecUTF16.cpp \
-    platform/TextDecoder.cpp \
-    platform/TextEncoding.cpp \
-    platform/TextEncodingRegistry.cpp \
-    platform/TextStream.cpp \
+    platform/text/String.cpp \
+    platform/text/StringImpl.cpp \
+    platform/text/TextCodec.cpp \
+    platform/text/TextCodecLatin1.cpp \
+    platform/text/TextCodecUserDefined.cpp \
+    platform/text/TextCodecUTF16.cpp \
+    platform/text/TextDecoder.cpp \
+    platform/text/TextEncoding.cpp \
+    platform/text/TextEncodingRegistry.cpp \
+    platform/text/TextStream.cpp \
     platform/Timer.cpp \
-    platform/UnicodeRange.cpp \
+    platform/text/UnicodeRange.cpp \
     platform/Widget.cpp \
     rendering/AutoTableLayout.cpp \
     rendering/bidi.cpp \
@@ -830,12 +831,12 @@ SOURCES += \
 
 gtk-port {
   SOURCES += \
-    platform/GlyphPageTreeNode.cpp \
-    platform/GlyphWidthMap.cpp \
-    platform/FontCache.cpp \
-    platform/Font.cpp \
-    platform/FontData.cpp \
-    platform/FontFallbackList.cpp 
+    platform/graphics/GlyphPageTreeNode.cpp \
+    platform/graphics/GlyphWidthMap.cpp \
+    platform/graphics/FontCache.cpp \
+    platform/graphics/Font.cpp \
+    platform/graphics/FontData.cpp \
+    platform/graphics/FontFallbackList.cpp 
 }
 
 qt-port {
@@ -952,9 +953,9 @@ gtk-port {
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
         ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.h
     SOURCES += \
-        platform/StringTruncator.cpp \
-        platform/TextCodecICU.cpp \
-        platform/TextBreakIteratorICU.cpp \
+        platform/graphics/StringTruncator.cpp \
+        platform/text/TextCodecICU.cpp \
+        platform/text/TextBreakIteratorICU.cpp \
         page/gtk/EventHandlerGtk.cpp \
         page/gtk/FrameGtk.cpp \
         page/gtk/DragControllerGtk.cpp \

@@ -1,3 +1,254 @@
+2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubber stamped by Brady.
+
+        Started platform reorganization (platform/text addition).
+        Moving string/text/font related classes into new places - as discussed on webkit-dev.
+
+        In a follow-up commit I'll move classes out of platform/{mac,win,...} into
+        platform/text/{mac,win,...}, and also do the ksvg2/ -> svg/ move.
+
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        * platform/AtomicString.cpp: Removed.
+        * platform/AtomicString.h: Removed.
+        * platform/AtomicStringImpl.h: Removed.
+        * platform/Base64.cpp: Removed.
+        * platform/Base64.h: Removed.
+        * platform/BidiContext.cpp: Removed.
+        * platform/BidiContext.h: Removed.
+        * platform/BidiResolver.h: Removed.
+        * platform/CString.cpp: Removed.
+        * platform/CString.h: Removed.
+        * platform/CharacterNames.h: Removed.
+        * platform/CharsetData.h: Removed.
+        * platform/Font.cpp: Removed.
+        * platform/Font.h: Removed.
+        * platform/FontCache.cpp: Removed.
+        * platform/FontCache.h: Removed.
+        * platform/FontData.cpp: Removed.
+        * platform/FontData.h: Removed.
+        * platform/FontDescription.h: Removed.
+        * platform/FontFallbackList.cpp: Removed.
+        * platform/FontFallbackList.h: Removed.
+        * platform/FontFamily.cpp: Removed.
+        * platform/FontFamily.h: Removed.
+        * platform/FontSelector.h: Removed.
+        * platform/GlyphBuffer.h: Removed.
+        * platform/GlyphPageTreeNode.cpp: Removed.
+        * platform/GlyphPageTreeNode.h: Removed.
+        * platform/GlyphWidthMap.cpp: Removed.
+        * platform/GlyphWidthMap.h: Removed.
+        * platform/PlatformString.h: Removed.
+        * platform/RegularExpression.cpp: Removed.
+        * platform/RegularExpression.h: Removed.
+        * platform/SegmentedString.cpp: Removed.
+        * platform/SegmentedString.h: Removed.
+        * platform/String.cpp: Removed.
+        * platform/StringHash.h: Removed.
+        * platform/StringImpl.cpp: Removed.
+        * platform/StringImpl.h: Removed.
+        * platform/StringTruncator.cpp: Removed.
+        * platform/StringTruncator.h: Removed.
+        * platform/TextBoundaries.h: Removed.
+        * platform/TextBoundariesICU.cpp: Removed.
+        * platform/TextBreakIterator.h: Removed.
+        * platform/TextBreakIteratorICU.cpp: Removed.
+        * platform/TextBreakIteratorInternalICU.h: Removed.
+        * platform/TextCodec.cpp: Removed.
+        * platform/TextCodec.h: Removed.
+        * platform/TextCodecICU.cpp: Removed.
+        * platform/TextCodecICU.h: Removed.
+        * platform/TextCodecLatin1.cpp: Removed.
+        * platform/TextCodecLatin1.h: Removed.
+        * platform/TextCodecUTF16.cpp: Removed.
+        * platform/TextCodecUTF16.h: Removed.
+        * platform/TextCodecUserDefined.cpp: Removed.
+        * platform/TextCodecUserDefined.h: Removed.
+        * platform/TextDecoder.cpp: Removed.
+        * platform/TextDecoder.h: Removed.
+        * platform/TextDirection.h: Removed.
+        * platform/TextEncoding.cpp: Removed.
+        * platform/TextEncoding.h: Removed.
+        * platform/TextEncodingRegistry.cpp: Removed.
+        * platform/TextEncodingRegistry.h: Removed.
+        * platform/TextStream.cpp: Removed.
+        * platform/TextStream.h: Removed.
+        * platform/TextStyle.h: Removed.
+        * platform/UnicodeRange.cpp: Removed.
+        * platform/UnicodeRange.h: Removed.
+        * platform/graphics/Font.cpp: Copied from platform/Font.cpp.
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::Font::width):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawGlyphBuffer):
+        (WebCore::Font::drawText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::floatWidthForSimpleText):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::selectionRectForSimpleText):
+        (WebCore::Font::offsetForPosition):
+        (WebCore::Font::offsetForPositionForSimpleText):
+        * platform/graphics/Font.h: Copied from platform/Font.h.
+        * platform/graphics/FontCache.cpp: Copied from platform/FontCache.cpp.
+        * platform/graphics/FontCache.h: Copied from platform/FontCache.h.
+        * platform/graphics/FontData.cpp: Copied from platform/FontData.cpp.
+        * platform/graphics/FontData.h: Copied from platform/FontData.h.
+        * platform/graphics/FontDescription.h: Copied from platform/FontDescription.h.
+        * platform/graphics/FontFallbackList.cpp: Copied from platform/FontFallbackList.cpp.
+        * platform/graphics/FontFallbackList.h: Copied from platform/FontFallbackList.h.
+        * platform/graphics/FontFamily.cpp: Copied from platform/FontFamily.cpp.
+        * platform/graphics/FontFamily.h: Copied from platform/FontFamily.h.
+        * platform/graphics/FontSelector.h: Copied from platform/FontSelector.h.
+        * platform/graphics/GlyphBuffer.h: Copied from platform/GlyphBuffer.h.
+        * platform/graphics/GlyphPageTreeNode.cpp: Copied from platform/GlyphPageTreeNode.cpp.
+        * platform/graphics/GlyphPageTreeNode.h: Copied from platform/GlyphPageTreeNode.h.
+        * platform/graphics/GlyphWidthMap.cpp: Copied from platform/GlyphWidthMap.cpp.
+        * platform/graphics/GlyphWidthMap.h: Copied from platform/GlyphWidthMap.h.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawBidiText):
+        (WebCore::GraphicsContext::drawHighlightForText):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/StringTruncator.cpp: Copied from platform/StringTruncator.cpp.
+        (WebCore::stringWidth):
+        * platform/graphics/StringTruncator.h: Copied from platform/StringTruncator.h.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/gtk/FontGtk.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * platform/mac/FontMac.mm:
+        (WebCore::ATSULayoutParameters::ATSULayoutParameters):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        (WebCoreTextFloatWidth):
+        * platform/qt/FontQt.cpp:
+        (WebCore::generateComponents):
+        (WebCore::Font::drawText):
+        (WebCore::Font::width):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::offsetForPosition):
+        (WebCore::cursorToX):
+        (WebCore::Font::selectionRectForText):
+        * platform/text: Added.
+        * platform/text/AtomicString.cpp: Copied from platform/AtomicString.cpp.
+        * platform/text/AtomicString.h: Copied from platform/AtomicString.h.
+        * platform/text/AtomicStringImpl.h: Copied from platform/AtomicStringImpl.h.
+        * platform/text/Base64.cpp: Copied from platform/Base64.cpp.
+        * platform/text/Base64.h: Copied from platform/Base64.h.
+        * platform/text/BidiContext.cpp: Copied from platform/BidiContext.cpp.
+        * platform/text/BidiContext.h: Copied from platform/BidiContext.h.
+        * platform/text/BidiResolver.h: Copied from platform/BidiResolver.h.
+        * platform/text/CString.cpp: Copied from platform/CString.cpp.
+        * platform/text/CString.h: Copied from platform/CString.h.
+        * platform/text/CharacterNames.h: Copied from platform/CharacterNames.h.
+        * platform/text/FontStyle.h: Copied from platform/TextStyle.h.
+        (WebCore::FontStyle::FontStyle):
+        * platform/text/PlatformString.h: Copied from platform/PlatformString.h.
+        * platform/text/RegularExpression.cpp: Copied from platform/RegularExpression.cpp.
+        * platform/text/RegularExpression.h: Copied from platform/RegularExpression.h.
+        * platform/text/SegmentedString.cpp: Copied from platform/SegmentedString.cpp.
+        * platform/text/SegmentedString.h: Copied from platform/SegmentedString.h.
+        * platform/text/String.cpp: Copied from platform/String.cpp.
+        * platform/text/StringHash.h: Copied from platform/StringHash.h.
+        * platform/text/StringImpl.cpp: Copied from platform/StringImpl.cpp.
+        * platform/text/StringImpl.h: Copied from platform/StringImpl.h.
+        * platform/text/TextBoundaries.h: Copied from platform/TextBoundaries.h.
+        * platform/text/TextBoundariesICU.cpp: Copied from platform/TextBoundariesICU.cpp.
+        (WebCore::findNextWordFromIndex):
+        * platform/text/TextBreakIterator.h: Copied from platform/TextBreakIterator.h.
+        * platform/text/TextBreakIteratorICU.cpp: Copied from platform/TextBreakIteratorICU.cpp.
+        * platform/text/TextBreakIteratorInternalICU.h: Copied from platform/TextBreakIteratorInternalICU.h.
+        * platform/text/TextCodec.cpp: Copied from platform/TextCodec.cpp.
+        * platform/text/TextCodec.h: Copied from platform/TextCodec.h.
+        * platform/text/TextCodecICU.cpp: Copied from platform/TextCodecICU.cpp.
+        * platform/text/TextCodecICU.h: Copied from platform/TextCodecICU.h.
+        * platform/text/TextCodecLatin1.cpp: Copied from platform/TextCodecLatin1.cpp.
+        * platform/text/TextCodecLatin1.h: Copied from platform/TextCodecLatin1.h.
+        * platform/text/TextCodecUTF16.cpp: Copied from platform/TextCodecUTF16.cpp.
+        * platform/text/TextCodecUTF16.h: Copied from platform/TextCodecUTF16.h.
+        * platform/text/TextCodecUserDefined.cpp: Copied from platform/TextCodecUserDefined.cpp.
+        * platform/text/TextCodecUserDefined.h: Copied from platform/TextCodecUserDefined.h.
+        * platform/text/TextDecoder.cpp: Copied from platform/TextDecoder.cpp.
+        * platform/text/TextDecoder.h: Copied from platform/TextDecoder.h.
+        * platform/text/TextDirection.h: Copied from platform/TextDirection.h.
+        * platform/text/TextEncoding.cpp: Copied from platform/TextEncoding.cpp.
+        * platform/text/TextEncoding.h: Copied from platform/TextEncoding.h.
+        * platform/text/TextEncodingRegistry.cpp: Copied from platform/TextEncodingRegistry.cpp.
+        * platform/text/TextEncodingRegistry.h: Copied from platform/TextEncodingRegistry.h.
+        * platform/text/TextStream.cpp: Copied from platform/TextStream.cpp.
+        * platform/text/TextStream.h: Copied from platform/TextStream.h.
+        * platform/text/UnicodeRange.cpp: Copied from platform/UnicodeRange.cpp.
+        * platform/text/UnicodeRange.h: Copied from platform/UnicodeRange.h.
+        * platform/text/mac: Added.
+        * platform/text/mac/CharsetData.h: Copied from platform/CharsetData.h.
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+        * platform/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::UniscribeController):
+        * platform/win/UniscribeController.h:
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint):
+        * platform/wx/FontWx.cpp:
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::calcPrefWidths):
+        * rendering/RenderImage.cpp:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::calcPrefWidths):
+        (WebCore::RenderText::width):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setStyle):
+        (WebCore::RenderTextControl::createInnerFontStyle):
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        (WebCore::RenderTextControl::calcPrefWidths):
+        * rendering/RenderTextControl.h:
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphWidth):
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        (WebCore::SVGInlineTextBox::paintSelection):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::cummulatedWidthOfInlineBoxCharacterRange):
+        (WebCore::svgFontStyleForInlineTextBox):
+        * rendering/SVGRootInlineBox.h:
+
 2007-11-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -30,7 +30,7 @@
 #include "UniscribeController.h"
 #include "Font.h"
 #include "FontData.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -39,7 +39,7 @@ namespace WebCore {
 // that does stuff in that method instead of doing everything in the constructor.  Have advance()
 // take the GlyphBuffer as an arg so that we don't have to populate the glyph buffer when
 // measuring.
-UniscribeController::UniscribeController(const Font* font, const TextRun& run, const TextStyle& style)
+UniscribeController::UniscribeController(const Font* font, const TextRun& run, const FontStyle& style)
 : m_font(*font)
 , m_run(run)
 , m_style(style)

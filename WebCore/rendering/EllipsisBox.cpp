@@ -25,7 +25,7 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 
 namespace WebCore {
 
@@ -47,8 +47,8 @@ void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     }
 
     const String& str = m_str;
-    TextStyle textStyle(0, 0, 0, false, style->visuallyOrdered());
-    context->drawText(TextRun(str.characters(), str.length()), IntPoint(m_x + tx, m_y + ty + m_baseline), textStyle);
+    FontStyle FontStyle(0, 0, 0, false, style->visuallyOrdered());
+    context->drawText(TextRun(str.characters(), str.length()), IntPoint(m_x + tx, m_y + ty + m_baseline), FontStyle);
 
     if (setShadow)
         context->clearShadow();

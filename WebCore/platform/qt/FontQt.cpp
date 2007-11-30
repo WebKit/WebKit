@@ -23,7 +23,7 @@
 #include "Font.h"
 #include "FontDescription.h"
 #include "FontSelector.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 
 #include "GraphicsContext.h"
 #include <QTextLayout>
@@ -157,7 +157,7 @@ void Font::update(PassRefPtr<FontSelector>) const
     // don't think we need this
 }
 
-static int generateComponents(Vector<TextRunComponent, 1024>* components, const Font &font, const TextRun &run, const TextStyle &style)
+static int generateComponents(Vector<TextRunComponent, 1024>* components, const Font &font, const TextRun &run, const FontStyle &style)
 {
 //     qDebug() << "generateComponents" << QString((const QChar *)run.characters(), run.length());
     int letterSpacing = font.letterSpacing();
@@ -278,7 +278,7 @@ static int generateComponents(Vector<TextRunComponent, 1024>* components, const 
     return offset;
 }
 
-void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& style, const FloatPoint& point, int from, int to) const
+void Font::drawText(GraphicsContext* ctx, const TextRun& run, const FontStyle& style, const FloatPoint& point, int from, int to) const
 {
     if (to < 0)
         to = run.length();
@@ -319,7 +319,7 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const TextStyle& s
         p->restore();
 }
 
-int Font::width(const TextRun& run, const TextStyle& style) const
+int Font::width(const TextRun& run, const FontStyle& style) const
 {
     Vector<TextRunComponent, 1024> components;
     int w = generateComponents(&components, *this, run, style);
@@ -330,10 +330,10 @@ int Font::width(const TextRun& run, const TextStyle& style) const
 
 int Font::width(const TextRun& run) const
 {
-    return width(run, TextStyle());
+    return width(run, FontStyle());
 }
 
-float Font::floatWidth(const TextRun& run, const TextStyle& style) const
+float Font::floatWidth(const TextRun& run, const FontStyle& style) const
 {
     return width(run, style);
 }
@@ -343,7 +343,7 @@ float Font::floatWidth(const TextRun& run) const
     return width(run);
 }
 
-int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int position, bool includePartialGlyphs) const
+int Font::offsetForPosition(const TextRun& run, const FontStyle& style, int position, bool includePartialGlyphs) const
 {
     Vector<TextRunComponent, 1024> components;
     int w = generateComponents(&components, *this, run, style);
@@ -402,7 +402,7 @@ int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int posi
 }
 
 static float cursorToX(const Vector<TextRunComponent, 1024>& components, int width,
-                     const TextStyle& style, int cursor)
+                     const FontStyle& style, int cursor)
 {
     int start = 0;
     for (int i = 0; i < components.size(); ++i) {
@@ -427,7 +427,7 @@ static float cursorToX(const Vector<TextRunComponent, 1024>& components, int wid
     return width;
 }
 
-FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style, const IntPoint& pt,
+FloatRect Font::selectionRectForText(const TextRun& run, const FontStyle& style, const IntPoint& pt,
                                      int h, int from, int to) const
 {
     Vector<TextRunComponent, 1024> components;

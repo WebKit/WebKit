@@ -31,7 +31,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 #include <math.h>
 
 using namespace std;
@@ -176,7 +176,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         const String& displayedFilename = m_fileChooser->basenameForWidth(style()->font(), maxFilenameWidth());        
         unsigned length = displayedFilename.length();
         const UChar* string = displayedFilename.characters();
-        TextStyle textStyle(0, 0, 0, style()->direction() == RTL, style()->unicodeBidi() == Override);
+        FontStyle FontStyle(0, 0, 0, style()->direction() == RTL, style()->unicodeBidi() == Override);
         TextRun textRun(string, length);
         
         // Determine where the filename should be placed
@@ -198,7 +198,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         paintInfo.context->setFillColor(style()->color());
         
         // Draw the filename
-        paintInfo.context->drawBidiText(textRun, IntPoint(textX, textY), textStyle);
+        paintInfo.context->drawBidiText(textRun, IntPoint(textX, textY), FontStyle);
         
         if (m_fileChooser->icon()) {
             // Determine where the icon should be placed
@@ -235,7 +235,7 @@ void RenderFileUploadControl::calcPrefWidths()
         // Figure out how big the filename space needs to be for a given number of characters
         // (using "0" as the nominal character).
         const UChar ch = '0';
-        float charWidth = style()->font().floatWidth(TextRun(&ch, 1), TextStyle(0, 0, 0, false, false, false));
+        float charWidth = style()->font().floatWidth(TextRun(&ch, 1), FontStyle(0, 0, 0, false, false, false));
         m_maxPrefWidth = (int)ceilf(charWidth * defaultWidthNumChars);
     }
 

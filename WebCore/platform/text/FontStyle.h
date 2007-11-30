@@ -18,14 +18,14 @@
  *
  */
 
-#ifndef TextStyle_h
-#define TextStyle_h
+#ifndef FontStyle_h
+#define FontStyle_h
 
 namespace WebCore {
 
-class TextStyle {
+class FontStyle {
 public:
-    TextStyle(bool allowTabs = false, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
+    FontStyle(bool allowTabs = false, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
               bool applyRunRounding = true, bool applyWordRounding = true)
         : m_allowTabs(allowTabs)
         , m_xpos(xpos)

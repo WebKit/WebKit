@@ -32,7 +32,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
-#include "TextStyle.h"
+#include "FontStyle.h"
 #include "UniscribeController.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -95,7 +95,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     wkRestoreFontSmoothingStyle(cgContext, oldFontSmoothingStyle);
 }
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h,
+FloatRect Font::selectionRectForComplexText(const TextRun& run, const FontStyle& style, const IntPoint& point, int h,
                                             int from, int to) const
 {
     UniscribeController it(this, run, style);
@@ -114,7 +114,7 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle&
     return FloatRect(point.x() + floorf(beforeWidth), point.y(), roundf(afterWidth) - floorf(beforeWidth), h);
 }
 
-void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const FloatPoint& point,
+void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FontStyle& style, const FloatPoint& point,
                            int from, int to) const
 {
     // This glyph buffer holds our glyphs + advances + font data for each glyph.
@@ -143,14 +143,14 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const T
     drawGlyphBuffer(context, glyphBuffer, run, style, startPoint);
 }
 
-float Font::floatWidthForComplexText(const TextRun& run, const TextStyle& style) const
+float Font::floatWidthForComplexText(const TextRun& run, const FontStyle& style) const
 {
     UniscribeController controller(this, run, style);
     controller.advance(run.length());
     return controller.runWidthSoFar();
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, const TextStyle& style, int x, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, const FontStyle& style, int x, bool includePartialGlyphs) const
 {
     UniscribeController controller(this, run, style);
     return controller.offsetForPosition(x, includePartialGlyphs);
