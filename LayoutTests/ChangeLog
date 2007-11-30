@@ -1,3 +1,19 @@
+2007-11-29  Brady Eidson  <beidson@apple.com>
+
+        Not reviewed.
+
+        Fixed a hang in the layout tests.
+        My checkin earlier today broke things such that the transaction call errors out instead of succeeds.
+        Therefore LayoutTestController is never notified that the test is done.
+        
+        This changes modifies the test such that the controller is notified of completion even if
+        there's a transaction error.
+
+        The net effect of this fix is to transform the hang to a single layout test failure, so people
+        and the bots don't have their run-webkit-tests hang while I try to fix the real regression.
+
+        * storage/transaction_callback_exception_crash.html:
+
 2007-11-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

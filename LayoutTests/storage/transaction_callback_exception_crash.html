@@ -12,6 +12,10 @@ db.transaction(function(tx) {
     if (window.layoutTestController)
         setTimeout("layoutTestController.notifyDone()", 0);
     throw "TransactionCallbackError";
+}, function(err) {
+    if (window.layoutTestController)
+        setTimout("layoutTestController.notifyDone()", 0);
+    document.body.innerText = "Transaction error occured";
 });
 
 </script>
