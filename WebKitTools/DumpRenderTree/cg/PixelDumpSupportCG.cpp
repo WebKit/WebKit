@@ -87,10 +87,8 @@ static void getMD5HashStringForBitmap(CGContextRef bitmap, char string[33])
 
 void drawSelectionRect(CGContextRef context, const CGRect& rect)
 {
-    const CGFloat redColor[4] = { 1.0, 0.0, 0.0, 0.0 };
-
     CGContextSaveGState(context);
-    CGContextSetStrokeColor(context, redColor);
+    CGContextSetRGBStrokeColor(context, 1.0, 0.0, 0.0, 1.0);
     CGContextStrokeRect(context, rect);
     CGContextRestoreGState(context);
 }

@@ -1,3 +1,12 @@
+2007-11-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix drawSelectionRect to actually draw the selection rect.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (drawSelectionRect):
+
 2007-11-30  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: WildFox already did the TextStyle -> FontStyle one.
