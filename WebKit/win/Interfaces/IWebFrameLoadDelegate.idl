@@ -233,3 +233,14 @@ interface IWebFrameLoadDelegate : IUnknown
     */
     [local] HRESULT windowScriptObjectAvailable([in] IWebView* webView, [in] JSContextRef context, [in] JSObjectRef windowScriptObject);
 }
+
+[
+    object,
+    oleautomation,
+    uuid(3354665B-84BA-4fdf-B35E-BF5CF9D96026),
+    pointer_default(unique)
+]
+interface IWebFrameLoadDelegate2 : IWebFrameLoadDelegate
+{
+    [local] HRESULT didClearWindowObject([in] IWebView* webView, [in] JSContextRef context, [in] JSObjectRef windowScriptObject, [in] IWebFrame* frame);
+}

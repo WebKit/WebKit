@@ -2457,11 +2457,15 @@ void WebFrame::windowObjectCleared()
 
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
     if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
+        COMPtr<IWebFrameLoadDelegate2> frameLoadDelegate2(Query, frameLoadDelegate);
+
         JSContextRef context = toRef(coreFrame->scriptProxy()->interpreter()->globalExec());
         JSObjectRef windowObject = toRef(KJS::Window::retrieve(coreFrame)->getObject());
         ASSERT(windowObject);
 
-        frameLoadDelegate->windowScriptObjectAvailable(d->webView, context, windowObject);
+        if (!frameLoadDelegate2 || 
+            FAILED(frameLoadDelegate2->didClearWindowObject(d->webView, context, windowObject, this)))
+            frameLoadDelegate->windowScriptObjectAvailable(d->webView, context, windowObject);
     }
 
     if (WebScriptDebugServer::listenerCount() > 0) {

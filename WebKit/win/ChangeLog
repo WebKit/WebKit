@@ -1,3 +1,15 @@
+2007-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Add an IWebFrameLoadDelegate2 interface with a didClearWindowObject method 
+        that passes in the frame whose window has been cleared. This matches a newly
+        added delegate method on the Mac.
+        
+        * Interfaces/IWebFrameLoadDelegate.idl:
+        * WebFrame.cpp:
+        (WebFrame::windowObjectCleared):
+
 2007-11-29  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
