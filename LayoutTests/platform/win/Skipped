@@ -26,7 +26,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-# Obj-C Mac only test on Windows?  That's unpossible!
+# Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html
 
 # No Dashboard compatibility mode on Windows
@@ -276,9 +276,12 @@ http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain
 # DRT is not fully implemented in boomer <rdar://problem/5128261>
 fast/dom/Window/setting-properties-on-closed-window.html
 fast/events/objc-event-api.html
+svg/custom/use-events-crash.svg
+
+# dumpResourceLoadCallbacks is not implemented <rdar://5132003>
 http/tests/misc/window-dot-stop.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
-svg/custom/use-events-crash.svg
+security/block-test.html
 
 # Pixel depth and color depth different on boomer <rdar://problem/5137719>
 fast/dom/Window/window-screen-properties.html
@@ -513,9 +516,6 @@ fast/forms/textarea-paste-newline.html
 
 # Unimplemented part of DRT. (This test is currently disabled).
 # http/tests/plugins/npapi-response-headers.html
-
-# used to be crashers but are now failures.
-security/block-test.html
 
 # Timed out Loading Page (check if missing DRT functionality)
 editing/selection/4975120.html
