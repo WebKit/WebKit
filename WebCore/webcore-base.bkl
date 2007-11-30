@@ -87,6 +87,7 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/platform/network</include>
         <include>$(SRCDIR)/platform/network/curl</include>
         <include>$(SRCDIR)/platform/sql</include>
+        <include>$(SRCDIR)/platform/text</include>
         <include>$(SRCDIR)/rendering</include>
         <include>$(SRCDIR)/storage</include>
         <include>$(SRCDIR)/xml</include>

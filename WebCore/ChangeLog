@@ -1,5 +1,12 @@
 2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Trying to fix gtk/qt/wx build. (I expected problems because of the moves)
+
+        * WebCore.pro:
+        * webcore-base.bkl:
+
+2007-11-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubber stamped by Brady.
 
         Started platform reorganization (platform/text addition).

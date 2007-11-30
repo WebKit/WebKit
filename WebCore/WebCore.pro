@@ -702,7 +702,7 @@ SOURCES += \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
-    platform/text/FontFamily.cpp \
+    platform/graphics/FontFamily.cpp \
     platform/graphics/AffineTransform.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
